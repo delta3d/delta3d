@@ -22,6 +22,7 @@
 #include <dtUtil/datapathutils.h>
 #include <dtUtil/log.h>
 #include <dtUtil/mswinmacros.h>
+#include <dtUtil/mswin.h>
 
 #include <osgDB/FileUtils>
 #include <osgDB/FileNameUtils>
@@ -139,7 +140,35 @@ namespace dtUtil
    /////////////////////////////////////////////////////////////////////////////
    std::string GetEnvironment(const std::string& env)
    {
-      if(char* ptr = getenv(env.c_str()))
+#ifdef DELTA_WIN32
+      std::string result;
+      size_t bufferSize = 512U;
+      char* buffer = new char[bufferSize];
+      size_t sizeOut = GetEnvironmentVariable(env.c_str(), buffer, bufferSize);
+      if (sizeOut > bufferSize)
+      {
+         delete[] buffer;
+         bufferSize = sizeOut + 1;
+         buffer = new char[bufferSize];
+         sizeOut = GetEnvironmentVariable(env.c_str(), buffer, 512U);
+      }
+
+      if (sizeOut > 0U && sizeOut < bufferSize)
+      {
+         result = buffer;
+      }
+      
+      delete[] buffer;
+
+      //if this did not return a value then we will attempt to get it from the
+      //getenv function below
+      if(!result.empty())
+      {
+         return result;
+      }
+#endif
+      char* ptr = getenv(env.c_str());
+      if(ptr != NULL)
       {
          return std::string(ptr);
       }
@@ -153,9 +182,9 @@ namespace dtUtil
    void SetEnvironment(const std::string& name, const std::string& value)
    {
 #ifdef DELTA_WIN32
-      std::ostringstream oss;
-      oss << name << "=" << value;  
-      putenv(oss.str().c_str());
+      //technically we have to do both because windows has two different environments
+      SetEnvironmentVariable(name.c_str(), value.c_str());
+      _putenv_s(name.c_str(), value.c_str());
 #else
       setenv(name.c_str(), value.c_str(), true);
 #endif

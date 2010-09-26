@@ -29,6 +29,7 @@
 #include <dtUtil/nodecollector.h>
 #include <dtUtil/refstring.h>
 #include <dtUtil/getsetmacros.h>
+#include <dtUtil/deprecationmgr.h>
 
 #include <dtCore/base.h>
 #include <dtCore/transform.h>
@@ -230,12 +231,13 @@ namespace dtGame
          UpdateMode& GetEffectiveUpdateMode(bool isRemote) const;
          void SetUpdateMode(UpdateMode& newUpdateMode) { mUpdateMode = &newUpdateMode; }
 
-         /// Deprecated - replaced by GroundClampType
-         //bool IsFlying() const { return mFlying; }
          bool IsFlyingDeprecatedProperty();
-         /// Deprecated - replaced by GroundClampType
-         //void SetFlying(bool newFlying);
+         /// Deprecated 8/23/10 - replaced by GroundClampType
+         DEPRECATE_FUNC bool IsFlying();
+
          void SetFlyingDeprecatedProperty(bool newFlying); 
+         /// Deprecated 8/23/10 - replaced by GroundClampType
+         DEPRECATE_FUNC void SetFlying(bool newFlying);
 
          /// GROUND CLAMP TYPE - enum property - replaces the old Flying property
          DT_DECLARE_ACCESSOR(dtUtil::EnumerationPointer<dtGame::GroundClampTypeEnum>, GroundClampType);

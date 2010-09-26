@@ -22,17 +22,11 @@
 #ifndef __DELTA_CAL3DWRAPPER_H__
 #define __DELTA_CAL3DWRAPPER_H__
 
+////////////////////////////////////////////////////////////////////////////////
+// INCLUDE DIRECTIVES
+////////////////////////////////////////////////////////////////////////////////
 #include <dtAnim/export.h>
 #include <dtUtil/deprecationmgr.h>
-
-#include <cal3d/model.h>
-#include <cal3d/hardwaremodel.h>
-#include <cal3d/coremodel.h>
-#include <cal3d/renderer.h>
-#include <cal3d/mixer.h>
-#include <cal3d/morphtargetmixer.h>
-#include <cal3d/physique.h>
-#include <cal3d/springsystem.h>
 
 #include <osg/Quat>                   // for return type
 #include <osg/Referenced>
@@ -40,10 +34,33 @@
 #include <osg/Vec3>
 #include <osg/BoundingBox>
 
+#include <cal3d/global.h>
+
 #include <vector>                     // for param type
+
+
+
+////////////////////////////////////////////////////////////////////////////////
+// FORWARD DECLARATIONS
+////////////////////////////////////////////////////////////////////////////////
+class CalCoreMaterial;
+class CalCoreModel;
+class CalHardwareModel;
+class CalMixer;
+class CalModel;
+class CalMorphTargetMixer;
+class CalPhysique;
+class CalRenderer;
+class CalSpringSystem;
+
+
 
 namespace dtAnim
 {
+   /////////////////////////////////////////////////////////////////////////////
+   // CLASS CODE
+   /////////////////////////////////////////////////////////////////////////////
+
    /**
     * Wraps the Cal3D CalModel class. It is expected that users will use the
     * Cal3DModelWrapper instead of using the CalModel class directly.
@@ -88,42 +105,42 @@ namespace dtAnim
       void HideMesh(int meshID);
       bool IsMeshVisible(int meshID);
 
-      void SetMaterialSet(int materialSetID) { mCalModel->setMaterialSet(materialSetID); }
-      void SetLODLevel(float level) { mCalModel->setLodLevel(level); }
+      void SetMaterialSet(int materialSetID);
+      void SetLODLevel(float level);
 
       /************************************************************************/
       /// Update the Cal3D system using the CalModel's update.
-      void Update(float deltaTime) { mCalModel->update(deltaTime); }
+      void Update(float deltaTime);
 
       /// Update just the Cal3D's animation using the mixer
-      void UpdateAnimation(float deltaTime) { mCalModel->getMixer()->updateAnimation(deltaTime); }
+      void UpdateAnimation(float deltaTime);
 
       /// Update just Cal3D's skeleton using the mixer
-      void UpdateSkeleton() { mCalModel->getMixer()->updateSkeleton(); }
+      void UpdateSkeleton();
 
       /// Update the CalModel's morph target mixer
-      void UpdateMorphTargetMixer(float deltaTime) { mCalModel->getMorphTargetMixer()->update(deltaTime); }
+      void UpdateMorphTargetMixer(float deltaTime);
 
       /// Update the CalModel's physique
-      void UpdatePhysique() { mCalModel->getPhysique()->update(); }
+      void UpdatePhysique();
 
       /// Update the CalModel's spring system
-      void UpdateSpringSystem(float deltaTime) { mCalModel->getSpringSystem()->update(deltaTime); }
+      void UpdateSpringSystem(float deltaTime);
 
       /************************************************************************/
-      bool BeginRenderingQuery() { return mRenderer->beginRendering(); }
-      void EndRenderingQuery()   { mRenderer->endRendering(); }
+      bool BeginRenderingQuery();
+      void EndRenderingQuery();
 
-      bool SelectMeshSubmesh(int meshID, int submeshID) { return mRenderer->selectMeshSubmesh(meshID, submeshID); }
+      bool SelectMeshSubmesh(int meshID, int submeshID);
 
-      int GetVertexCount()               { return mRenderer->getVertexCount(); }
-      int GetFaceCount()                 { return mRenderer->getFaceCount(); }
-      int GetMapCount()                  { return mRenderer->getMapCount(); }
-      int GetMeshCount()                 { return mRenderer->getMeshCount(); }
-      int GetSubmeshCount(int submeshID) { return mRenderer->getSubmeshCount(submeshID); }
+      int GetVertexCount();
+      int GetFaceCount();
+      int GetMapCount();
+      int GetMeshCount();
+      int GetSubmeshCount(int submeshID);
 
       /************************************************************************/
-      int GetCoreMeshCount() const { return mCalModel->getCoreModel()->getCoreMeshCount(); }
+      int GetCoreMeshCount() const;
 
       ///Get the name for the mesh using the supplied meshID
       const std::string& GetCoreMeshName(int meshID) const;
@@ -194,8 +211,8 @@ namespace dtAnim
       ///Get the duration of this animation (seconds?)
       float GetCoreAnimationDuration(int animID) const;
 
-      int GetCoreMaterialCount() const {return mCalModel->getCoreModel()->getCoreMaterialCount();}
-      CalCoreMaterial* GetCoreMaterial(int matID) {return mCalModel->getCoreModel()->getCoreMaterial(matID); }
+      int GetCoreMaterialCount() const;
+      CalCoreMaterial* GetCoreMaterial(int matID);
 
       ///Get the core material diffuse color (rgba 0-255)
       osg::Vec4 GetCoreMaterialDiffuse(int matID) const;
@@ -210,7 +227,7 @@ namespace dtAnim
       float GetCoreMaterialShininess(int matID) const;
 
       ///Get the name associated with the material using the supplied material ID
-      const std::string& GetCoreMaterialName(int matID) const {return mCalModel->getCoreModel()->getCoreMaterial(matID)->getName(); }
+      const std::string& GetCoreMaterialName(int matID) const;
 
       /// Get a bounding box the encompasses the character in its default pose
       osg::BoundingBox GetBoundingBox();
@@ -223,17 +240,17 @@ namespace dtAnim
       void ApplyCoreModelScaleFactor(float scaleFactor) const;
 
       /************************************************************************/
-      int GetFaces(CalIndex* faces)          { return mRenderer->getFaces((CalIndex*)faces); }
-      int GetNormals(float* normals, int stride=0) { return mRenderer->getNormals(normals, stride); }
-      int GetTextureCoords(int mapID, float* coords, int stride=0) { return mRenderer->getTextureCoordinates(mapID, coords, stride); }
-      int GetVertices(float* vertBuffer, int stride=0) { return mRenderer->getVertices(vertBuffer, stride); }
+      int GetFaces(CalIndex* faces);
+      int GetNormals(float* normals, int stride=0);
+      int GetTextureCoords(int mapID, float* coords, int stride=0);
+      int GetVertices(float* vertBuffer, int stride=0);
 
       /************************************************************************/
-      void GetAmbientColor(unsigned char* colorBuffer)  { mRenderer->getAmbientColor(colorBuffer);  }
-      void GetDiffuseColor(unsigned char* colorBuffer)  { mRenderer->getDiffuseColor(colorBuffer);  }
-      void GetSpecularColor(unsigned char* colorBuffer) { mRenderer->getSpecularColor(colorBuffer); }
-      float GetShininess() { return mRenderer->getShininess(); }
-      void* GetMapUserData(int mapID) { return mRenderer->getMapUserData(mapID); }
+      void GetAmbientColor(unsigned char* colorBuffer);
+      void GetDiffuseColor(unsigned char* colorBuffer);
+      void GetSpecularColor(unsigned char* colorBuffer);
+      float GetShininess();
+      void* GetMapUserData(int mapID);
 
       /************************************************************************/
 
@@ -296,6 +313,21 @@ namespace dtAnim
        */
       DEPRECATE_FUNC CalHardwareModel* GetOrCreateCalHardwareModel();
 
+      /**
+       * Determines if animation updates can be performed depending if any queued
+       * animations are present. If bind poses are allowed then this will always
+       * return TRUE; this is because an update with no animation will return to
+       * the neutral bind pose.
+       */
+      bool CanUpdate() const;
+
+      /**
+       * Globally set whether characters should be allowed to go back to bind pose
+       * when animations have completed.
+       */
+      static void SetAllowBindPose(bool allow);
+      static bool GetAllowBindPose();
+
    protected:
       virtual ~Cal3DModelWrapper();
 
@@ -308,6 +340,9 @@ namespace dtAnim
 
       typedef std::map<int, bool> MeshVisibilityMap;
       MeshVisibilityMap mMeshVisibility;
+
+      // Class variables
+      static bool sAllowBindPose;
    };
 
 } // namespace dtAnim
