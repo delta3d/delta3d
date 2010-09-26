@@ -492,7 +492,7 @@ ALint AudioManager::LoadFile(const std::string& file)
    bd->size   = size;
    alBufferData(bd->buf, bd->format, data, bd->size, bd->freq);
     
-#if !defined (_MSC_VER) || defined (DO_ALUT_FREE)
+#if !defined (_MSC_VER) || !defined (DONT_ALUT_FREE)
    free(data);
    data = NULL;
 #endif
