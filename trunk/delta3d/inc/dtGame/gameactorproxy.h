@@ -399,26 +399,6 @@ namespace dtGame
        */
       virtual dtCore::RefPtr<dtDAL::ActorProperty> GetDeprecatedProperty(const std::string& name);
 
-
-      /**
-       * Deprecated - Use NotifyPartialActorUpdate() with dtUtil::RefString instead.
-       * @see NotifyPartialActorUpdate
-       */
-      DEPRECATE_FUNC virtual void NotifyPartialActorUpdate(const std::vector<std::string>& propNames);
-
-      /**
-       * Deprecated - Use NotifyFullActorUpdate() for a full or NotifyPartialActorUpdate() 
-       * for a partial. 
-       * @see NotifyFullActorUpdate
-       * @see NotifyPartialActorUpdate
-       */
-      DEPRECATE_FUNC virtual void NotifyActorUpdate();
-
-      /**
-       * Deprecated - Use PopulateActorUpdate() with dtUtil::RefString instead.
-       * @see PopulateActorUpdate
-       */
-      DEPRECATE_FUNC virtual void PopulateActorUpdate(ActorUpdateMessage& update, const std::vector<std::string>& propNames);
    protected:
       /// Destructor
       virtual ~GameActorProxy();
