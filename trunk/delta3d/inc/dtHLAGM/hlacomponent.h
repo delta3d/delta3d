@@ -440,6 +440,13 @@ namespace dtHLAGM
           */
          const std::string& GetHLAEntityTypeAttributeName() const;
 
+         /**
+          * If the passed in attribute name matches either the value of HLAEntityTypeAttributeName
+          * or one of the overrides in one of the object to actor mappings, then the attribute will be handled
+          * as an entity type.
+          */
+         bool IsEntityTypeAttribute(const std::string& attribName) const;
+
       protected:
 
          /// Calls all of the subscription calculators to update their regions.

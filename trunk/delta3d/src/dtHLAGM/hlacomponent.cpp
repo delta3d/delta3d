@@ -137,6 +137,12 @@ namespace dtHLAGM
    }
 
    /////////////////////////////////////////////////////////////////////////////////
+   bool HLAComponent::IsEntityTypeAttribute(const std::string& attribName) const
+   {
+      return mHLAEntityTypeOtherAttrNames.count(attribName) > 0;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////
    void HLAComponent::RegisterObjectToActorWithRTI(ObjectToActor& objectToActor)
    {
       const std::string& thisObjectClassString = objectToActor.GetObjectClassName();
@@ -889,7 +895,7 @@ namespace dtHLAGM
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   ObjectToActor* HLAComponent::GetActorMapping(const dtDAL::ActorType &type)
+   ObjectToActor* HLAComponent::GetActorMapping(const dtDAL::ActorType& type)
    {
       std::map<dtCore::RefPtr<const dtDAL::ActorType>, dtCore::RefPtr<ObjectToActor> >::iterator actorToObjectIterator;
       dtCore::RefPtr<const dtDAL::ActorType> refActorType = &type;
@@ -1118,7 +1124,7 @@ namespace dtHLAGM
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   const InteractionToMessage* HLAComponent::GetMessageMapping(const dtGame::MessageType &type) const
+   const InteractionToMessage* HLAComponent::GetMessageMapping(const dtGame::MessageType& type) const
    {
       std::map<const dtGame::MessageType*, dtCore::RefPtr<InteractionToMessage> >::const_iterator messageToInteractionIterator;
       const InteractionToMessage* thisInteractionToMessage = NULL;
@@ -1131,7 +1137,7 @@ namespace dtHLAGM
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   InteractionToMessage* HLAComponent::GetMessageMapping(const dtGame::MessageType &type)
+   InteractionToMessage* HLAComponent::GetMessageMapping(const dtGame::MessageType& type)
    {
       std::map<const dtGame::MessageType*, dtCore::RefPtr<InteractionToMessage> >::iterator messageToInteractionIterator;
       InteractionToMessage* thisInteractionToMessage = NULL;
@@ -1333,6 +1339,7 @@ namespace dtHLAGM
       mObjectToActorMap.clear();
       mMessageToInteractionMap.clear();
       mInteractionToMessageMap.clear();
+      mHLAEntityTypeOtherAttrNames.clear();
    }
 
 
@@ -1619,7 +1626,7 @@ namespace dtHLAGM
 
 		   std::string attribName = std::string(mRTIAmbassador->getAttributeName(handle, classHandle));
 
-         if ( mHLAEntityTypeOtherAttrNames.count(attribName) > 0)
+         if (IsEntityTypeAttribute(attribName))
          {
             unsigned long length;
             char* buf = theAttributes.getValuePointer(i, length);
@@ -1651,8 +1658,9 @@ namespace dtHLAGM
                   bestObjectToActor = &thisObjectToActor;
                }
             }
-
-            break;
+            // Took the break out because Physical Entity has an alterate entity type field, and someone MAY want
+            // to key off of that, so we keep looking and doing the best ranking match.
+            // break;
          }
       }
 
