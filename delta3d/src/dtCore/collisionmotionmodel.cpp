@@ -47,8 +47,17 @@ IMPLEMENT_MANAGEMENT_LAYER(CollisionMotionModel);
  * @param mouse the mouse instance, or 0 to avoid
  * creating default input mappings
  */
-CollisionMotionModel::CollisionMotionModel(float pHeight, float pRadius, float k, float theta, dtCore::Scene* pScene, Keyboard* keyboard, Mouse* mouse)
-   : FPSMotionModel(keyboard, mouse, 5.0f, 1.5f, 5.0f, pHeight, k)
+CollisionMotionModel::CollisionMotionModel(float pHeight, float pRadius, float k, float theta,
+                                           dtCore::Scene* pScene,
+                                           Keyboard* keyboard,
+                                           Mouse* mouse,
+                                           float maxWalkSpeed,
+                                           float maxTurnSpeed,
+                                           float maxSidestepSpeed,                                           
+                                           bool useWASD,
+                                           bool useArrowKeys)
+   : FPSMotionModel(keyboard, mouse, maxWalkSpeed, maxTurnSpeed,
+                    maxSidestepSpeed, pHeight, k, useWASD, useArrowKeys)
    , mCollider(pHeight, pRadius, k, theta, pScene)
    , mCanJump(true)
 {
