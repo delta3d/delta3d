@@ -121,7 +121,7 @@ class HLAComponentTests : public CPPUNIT_NS::TestFixture
       //All the tests are run in one method
       //they all use the RTI, which takes a long time
       //to start and stop it setup and teardown.
-      //CPPUNIT_TEST(RunAllTests);
+      CPPUNIT_TEST(RunAllTests);
 
       // 06/15/09
       //Temporarily removing this test from the suite due to a failing test
@@ -263,6 +263,7 @@ void HLAComponentTests::setUp()
    {
       dtCore::RefPtr<dtHLAGM::DDMCameraCalculatorGeographic> cameraCalculator = new dtHLAGM::DDMCameraCalculatorGeographic;
       cameraCalculator->SetCamera(new dtCore::Camera("Geographic"));
+      cameraCalculator->SetName("Geographic");
 
       mHLAComponent->GetDDMSubscriptionCalculators().AddCalculator(*cameraCalculator);
       mGameManager->AddComponent(*mHLAComponent, dtGame::GameManager::ComponentPriority::NORMAL);
@@ -330,7 +331,7 @@ void HLAComponentTests::BetweenTestSetUp()
       mObjectHandle1 = rtiamb->registerObjectInstance(mClassHandle1,
                                                       "TestObject1");
    }
-   catch (const RTI::Exception &e)
+   catch (const RTI::Exception& e)
    {
       std::ostringstream ss;
       ss << e << " '" << rtiamb->getObjectClassName(mClassHandle1) << "'";
@@ -344,7 +345,7 @@ void HLAComponentTests::BetweenTestSetUp()
       mObjectHandle2 = rtiamb->registerObjectInstance(mClassHandle2,
                                                      "TestObject2");
    }
-   catch (const RTI::Exception &e)
+   catch (const RTI::Exception& e)
    {
       std::ostringstream ss;
       ss << e << " '" << rtiamb->getObjectClassName(mClassHandle2) << "'";
@@ -358,7 +359,7 @@ void HLAComponentTests::BetweenTestSetUp()
       mObjectHandle3 = rtiamb->registerObjectInstance(mClassHandle3,
                                                       "TestObject3");
    }
-   catch (const RTI::Exception &e)
+   catch (const RTI::Exception& e)
    {
       std::ostringstream ss;
       ss << e << " '" << rtiamb->getObjectClassName(mClassHandle3) << "'";
@@ -712,11 +713,11 @@ void HLAComponentTests::TestSubscription()
             CPPUNIT_ASSERT_MESSAGE("The entity id attribute should be null if it is not being used.",
                   ota.GetEntityIdAttributeHandle() == 0);
 
-         if (ota.GetDisID() != NULL)
-            CPPUNIT_ASSERT_MESSAGE(ss.str(), ota.GetDisIDAttributeHandle() != 0);
+         if (ota.GetEntityType() != NULL)
+            CPPUNIT_ASSERT_MESSAGE(ss.str(), ota.GetEntityTypeAttributeHandle() != 0);
          else
             CPPUNIT_ASSERT_MESSAGE("The DIS ID attribute should be null if it is not being used.",
-                  ota.GetDisIDAttributeHandle() == 0);
+                  ota.GetEntityTypeAttributeHandle() == 0);
 
          for (std::vector<dtHLAGM::AttributeToPropertyList>::const_iterator j = ota.GetOneToManyMappingVector().begin();
             j != ota.GetOneToManyMappingVector().end(); ++j)
@@ -818,7 +819,7 @@ void HLAComponentTests::TestConfigurationLocking()
    dtCore::RefPtr<dtHLAGM::ObjectToActor> ota = new dtHLAGM::ObjectToActor;
    ota->SetActorType(*at);
    ota->SetObjectClassName("test1");
-   ota->SetDisID(&et);
+   ota->SetEntityType(&et);
    CPPUNIT_ASSERT_THROW_MESSAGE("One may not register an actor mapping while it's connected.",
          mHLAComponent->RegisterActorMapping(*ota), dtUtil::Exception);
 
@@ -875,7 +876,7 @@ void HLAComponentTests::TestReflectAttributesNoEntityType()
       dtCore::System::GetInstance().Step();
 
       id = mHLAComponent->GetRuntimeMappings().GetId(mObjectHandle3);
-      CPPUNIT_ASSERT_MESSAGE("It should have mapped in the new actor id, even with a NULL DisID.",
+      CPPUNIT_ASSERT_MESSAGE("It should have mapped in the new actor id, even with a NULL EntityType.",
                      id != NULL);
 
       //Check the actual message to see if it was a create message.
@@ -1302,19 +1303,19 @@ void HLAComponentTests::TestPrepareUpdate()
          {
             RTI::AttributeHandle attrHandle = ahs->getHandle(i);
 
-            if (attrHandle == oToA->GetDisIDAttributeHandle())
+            if (attrHandle == oToA->GetEntityTypeAttributeHandle())
             {
                foundEntityTypeAttr = true;
                unsigned long length;
                char* buffer = ahs->getValuePointer(i, length);
                CPPUNIT_ASSERT_MESSAGE("The mapped parameter for the DISID should be of the proper length.",
-                  length == oToA->GetDisID()->EncodedLength());
+                  length == oToA->GetEntityType()->EncodedLength());
 
                dtHLAGM::EntityType actual;
                actual.Decode(buffer);
 
                CPPUNIT_ASSERT_MESSAGE("The encoded entity type should match the value.",
-                  *oToA->GetDisID() == actual);
+                  *oToA->GetEntityType() == actual);
             }
             if (attrHandle == oToA->GetEntityIdAttributeHandle())
             {

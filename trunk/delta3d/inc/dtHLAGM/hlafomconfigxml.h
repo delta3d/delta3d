@@ -222,7 +222,9 @@ namespace dtHLAGM
          static const std::string OBJECT_DDM_SPACE_ELEMENT;
          static const std::string OBJECT_ACTOR_TYPE_ELEMENT;
          static const std::string OBJECT_ENTITY_ID_ELEMENT;
+         static const std::string OBJECT_ENTITY_TYPE_ATTR_ELEMENT;
          static const std::string OBJECT_DIS_ENTITY_ELEMENT;
+         static const std::string OBJECT_ENTITY_TYPE_ELEMENT;
          static const std::string OBJECT_ATTR_TO_PROP_ELEMENT;
 
          static const std::string OBJECT_HANDLER_ELEMENT;
@@ -343,7 +345,12 @@ namespace dtHLAGM
 
          void ObjectToActorCharacters(const std::string& elementName, const std::string& characters);
          const dtDAL::ActorType* FindActorType(const std::string& actorTypeFullName);
+
+         // This parses the entity type as one string 10.1.3.... etc
+         void EntityTypeCharacters(EntityType& entityType, const std::string& elementName, const std::string& characters);
+         // This parses the entity type set in pieces using the separate elements.
          void DISIDCharacters(EntityType& entityType, const std::string& elementName, const std::string& characters);
+
          void DDMCharacters(const std::string& elementName, const std::string& characters);
          
          void InteractionToMessageCharacters(const std::string& elementName, const std::string& characters);
