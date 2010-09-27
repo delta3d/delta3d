@@ -222,13 +222,15 @@ void HLAConfigTests::CheckObjectToActorMapping(
       otoa->GetObjectClassName() == objectClassName);
 
    if (entityType == NULL)
-      CPPUNIT_ASSERT_MESSAGE("DIS ID should be NULL.", otoa->GetDisID() == NULL);
+   {
+      CPPUNIT_ASSERT_MESSAGE("DIS ID should be NULL.", otoa->GetEntityType() == NULL);
+   }
    else
    {
-      CPPUNIT_ASSERT_MESSAGE("DIS ID should not be NULL.", otoa->GetDisID() != NULL);
- //     std::ostringstream ss;
-//      ss << "DIS ID should be equal to \"" << *entityType << "\" but it is \"" << *otoa->GetDisID() << ".\"";
- //     CPPUNIT_ASSERT_MESSAGE(ss.str(), *otoa->GetDisID() == *entityType);
+      CPPUNIT_ASSERT_MESSAGE("DIS ID should not be NULL.", otoa->GetEntityType() != NULL);
+      std::ostringstream ss;
+      ss << "DIS ID should be equal to \"" << *entityType << "\" but it is \"" << *otoa->GetEntityType() << ".\"";
+      CPPUNIT_ASSERT_MESSAGE(ss.str(), *otoa->GetEntityType() == *entityType);
    }
 
    const std::vector<dtHLAGM::AttributeToPropertyList>& propsActual = otoa->GetOneToManyMappingVector();
@@ -290,19 +292,10 @@ void HLAConfigTests::TestBroken(const std::string& brokenFile, const std::string
 
    mGameManager->AddComponent(*mTranslator, dtGame::GameManager::ComponentPriority::NORMAL);
 
-   try
-   {
-      std::string path = dtUtil::FindFileInPathList(brokenFile);
-      CPPUNIT_ASSERT(dtUtil::FileUtils::GetInstance().FileExists(path));
+   std::string path = dtUtil::FindFileInPathList(brokenFile);
+   CPPUNIT_ASSERT(dtUtil::FileUtils::GetInstance().FileExists(path));
 
-      config.LoadConfiguration(*mTranslator, path);
-      CPPUNIT_FAIL(failMessage);
-   }
-   catch (const dtUtil::Exception& ex)
-   {
-      CPPUNIT_ASSERT_MESSAGE("the exception should have been an XML_CONFIG_EXCEPTION",
-         ex.TypeEnum() == dtHLAGM::ExceptionEnum::XML_CONFIG_EXCEPTION);
-   }
+   CPPUNIT_ASSERT_THROW_MESSAGE(failMessage, config.LoadConfiguration(*mTranslator, path), dtHLAGM::XmlConfigException);
 }
 
 void HLAConfigTests::TestBrokenHLAMappingNoActorType()
@@ -327,23 +320,13 @@ void HLAConfigTests::TestConfigure()
 {
    try
    {
-      dtDAL::DataType* dt = dtDAL::DataType::GetValueForName("VEC3");
-
 
       CPPUNIT_ASSERT_MESSAGE("Library should not yet be loaded.",
          mGameManager->GetRegistry(mHLAActorRegistry) == NULL);
       dtHLAGM::HLAComponentConfig config;
 
-      try
-      {
-         config.LoadConfiguration(*mTranslator, "Federations/HLAMappingExample.xml");
-         CPPUNIT_FAIL("It should fail since no game manager was assigned to the mTranslator.");
-      }
-      catch (const dtUtil::Exception& ex)
-      {
-         CPPUNIT_ASSERT_MESSAGE("the exception should have been an XML_CONFIG_EXCEPTION",
-            ex.TypeEnum() == dtHLAGM::ExceptionEnum::XML_CONFIG_EXCEPTION);
-      }
+      CPPUNIT_ASSERT_THROW_MESSAGE("It should fail since no game manager was assigned to the mTranslator.",
+                config.LoadConfiguration(*mTranslator, "Federations/HLAMappingExample.xml"), dtHLAGM::XmlConfigException);
 
       mGameManager->AddComponent(*mTranslator, dtGame::GameManager::ComponentPriority::NORMAL);
 
@@ -359,8 +342,9 @@ void HLAConfigTests::TestConfigure()
 
       CPPUNIT_ASSERT(mCalc->GetFriendlyRegionType() == dtHLAGM::DDMCalculatorGeographic::RegionCalculationType::GEOGRAPHIC_SPACE);
       CPPUNIT_ASSERT(mCalc->GetEnemyRegionType() == dtHLAGM::DDMCalculatorGeographic::RegionCalculationType::APP_SPACE_ONLY);
-      CPPUNIT_ASSERT_EQUAL(74L, mCalc->GetFriendlyAppSpace());
-      CPPUNIT_ASSERT_EQUAL(11L, mCalc->GetNeutralAppSpace());
+      CPPUNIT_ASSERT_EQUAL(7L, mCalc->GetFriendlyAppSpace());
+      CPPUNIT_ASSERT_EQUAL(8L, mCalc->GetEnemyAppSpace());
+      CPPUNIT_ASSERT_EQUAL(9L, mCalc->GetNeutralAppSpace());
       CPPUNIT_ASSERT_EQUAL(0L, mCalc->GetAppSpaceMinimum());
       CPPUNIT_ASSERT_EQUAL(199L, mCalc->GetAppSpaceMaximum());
 

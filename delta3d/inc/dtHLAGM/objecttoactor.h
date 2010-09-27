@@ -131,21 +131,21 @@ namespace dtHLAGM
          const RTI::AttributeHandle GetEntityIdAttributeHandle() const;
 
          /// @return The attribute handle storing the dis id attribute.
-         const RTI::AttributeHandle GetDisIDAttributeHandle() const;
+         const RTI::AttributeHandle GetEntityTypeAttributeHandle() const;
 
          /**
           * Gets the Object DIS ID from the Object to Actor mapping
           *
           * @return DIS ID
           */
-         const EntityType* GetDisID() const;
+         const EntityType* GetEntityType() const;
 
          /**
           * Gets the Object DIS ID from the Object to Actor mapping
           *
           * @return DIS ID
           */
-         EntityType* GetDisID();
+         EntityType* GetEntityType();
 
          ///@return the name of the attribute that hold the entity id or empty for not used.
          const std::string& GetEntityIdAttributeName() const;
@@ -153,9 +153,15 @@ namespace dtHLAGM
          ///Assigns the attribute name that holds the entity id so that it can be mapped to an actor id.  Set to empty string for unused.
          void SetEntityIdAttributeName(const std::string& newName);
 
-         const std::vector<AttributeToPropertyList> &GetOneToManyMappingVector() const;
+         ///@return the name of the attribute that hold the entity type or empty for the default.
+         const std::string& GetEntityTypeAttributeName() const;
 
-         std::vector<AttributeToPropertyList> &GetOneToManyMappingVector();
+         ///Assigns the attribute name that holds the entity type so that it can be mapped to an actor type.  Set to use the default.
+         void SetEntityTypeAttributeName(const std::string& newName);
+
+         const std::vector<AttributeToPropertyList>& GetOneToManyMappingVector() const;
+
+         std::vector<AttributeToPropertyList>& GetOneToManyMappingVector();
 
          /**
           * Sets the Game ActorType for this Object to Actor mapping.
@@ -182,21 +188,21 @@ namespace dtHLAGM
          void SetEntityIdAttributeHandle(const RTI::AttributeHandle newEntityIdAttributeHandle);
 
          /// Sets The attribute handle storing DIS Id attribute.
-         void SetDisIDAttributeHandle(const RTI::AttributeHandle newDisIDAttributeHandle);
+         void SetEntityTypeAttributeHandle(const RTI::AttributeHandle newEntityTypeAttributeHandle);
 
          /**
           * Sets the Object DIS ID for this Object to Actor mapping.
           *
-          * @param objectDisID the DIS ID
+          * @param objectEntityType the DIS ID
           */
-         void SetDisID(const EntityType* thisDisID);
+         void SetEntityType(const EntityType* thisEntityType);
 
          /**
           * Sets the One to One Mapping vector for this Object to Actor Mapping.
           *
           * &param thisOneToManyMapping the OnetoOneMapping vector
           */
-         void SetOneToManyMappingVector(std::vector<AttributeToPropertyList> &thisOneToManyMapping);
+         void SetOneToManyMappingVector(std::vector<AttributeToPropertyList>& thisOneToManyMapping);
 
          /**
           * Get the object mapping name.
@@ -242,8 +248,8 @@ namespace dtHLAGM
          std::string mMappingName;
 
          /// The Object DIS ID for this Object to Actor mapping.
-         EntityType mObjectDisID;
-         bool mDISIDSet;
+         EntityType mObjectEntityType;
+         bool mEntityTypeSet;
 
          /// The HLA Object Class Handle for this Object to Actor mapping.
          RTI::ObjectClassHandle mObjectClassHandle;
@@ -254,8 +260,11 @@ namespace dtHLAGM
          //The name of the attribute used for the entity id.
          std::string mEntityIdAttribute;
 
+         //The name of the attribute used for the entity type.
+         std::string mEntityTypeAttribute;
+
          ///DIS Id attribute handle.  This will be set after connection if the name is not empty.
-         RTI::AttributeHandle mDisIDAttributeHandle;
+         RTI::AttributeHandle mEntityTypeAttributeHandle;
 
          /// A vector of One to One mappings for this Object to Actor mapping.
          std::vector<AttributeToPropertyList> mOneToMany;

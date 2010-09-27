@@ -108,6 +108,7 @@ namespace dtHLAGM
       mMachineInfo(new dtGame::MachineInfo)
    {
       mLogger = &dtUtil::Log::GetInstance("hlacomponent.cpp");
+      mLogger->SetLogLevel(dtUtil::Log::LOG_DEBUG);
 
       mSiteIdentifier = (unsigned short)(1 + (rand() % 65535));
       mApplicationIdentifier = (unsigned short)(1 + (rand() % 65535));
@@ -158,9 +159,11 @@ namespace dtHLAGM
       }
 
       if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+      {
          mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                "Object class handle of object class %s is %u.",
                thisObjectClassString.c_str(), thisObjectClassHandle);
+      }
 
       objectToActor.SetObjectClassHandle(thisObjectClassHandle);
       std::vector<AttributeToPropertyList>& thisAttributeToPropertyListVector = objectToActor.GetOneToManyMappingVector();
@@ -179,9 +182,11 @@ namespace dtHLAGM
                mRTIAmbassador->getAttributeHandle(objectToActor.GetEntityIdAttributeName().c_str(), thisObjectClassHandle);
 
             if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+            {
                mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                                    "AttributeHandle for entity identifier on object class %s is %u.",
                                    thisObjectClassString.c_str(), entityIdentifierAttributeHandle);
+            }
 
             objectToActor.SetEntityIdAttributeHandle(entityIdentifierAttributeHandle);
 
@@ -201,17 +206,24 @@ namespace dtHLAGM
       }
 
       //if we have a name for the entity type attribute, subscribe to it and save the handle.
-      if (objectToActor.GetDisID() != NULL)
+      if (objectToActor.GetEntityType() != NULL)
       {
+         std::string entityTypeAttrName = GetHLAEntityTypeAttributeName();
+         if (!objectToActor.GetEntityTypeAttributeName().empty())
+         {
+            entityTypeAttrName = objectToActor.GetEntityTypeAttributeName();
+            mHLAEntityTypeOtherAttrNames.insert(entityTypeAttrName);
+         }
+
          RTI::AttributeHandle disIDAttributeHandle =
-               mRTIAmbassador->getAttributeHandle( GetHLAEntityTypeAttributeName().c_str(), thisObjectClassHandle);
+               mRTIAmbassador->getAttributeHandle(entityTypeAttrName.c_str(), thisObjectClassHandle);
 
          if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
             mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                                 "Attribute handle for DIS ID on object class %s is %u.",
                                 thisObjectClassString.c_str(), disIDAttributeHandle);
 
-         objectToActor.SetDisIDAttributeHandle(disIDAttributeHandle);
+         objectToActor.SetEntityTypeAttributeHandle(disIDAttributeHandle);
 
          ahs->add(disIDAttributeHandle);
       }
@@ -235,7 +247,7 @@ namespace dtHLAGM
                thisAttributeToPropertyList.SetSpecial( true );
 
                // Get the handle of the entity type and set it on this attribute to property mapping.
-               thisAttributeToPropertyList.SetAttributeHandle(objectToActor.GetDisIDAttributeHandle());
+               thisAttributeToPropertyList.SetAttributeHandle(objectToActor.GetEntityTypeAttributeHandle());
             }
             // ...otherwise publish the attribute as usual.
             else
@@ -287,8 +299,11 @@ namespace dtHLAGM
                for (unsigned i = 0; i < mDDMSubscriptionRegions.size(); ++i)
                {
                   if (mDDMSubscriptionCalculators[i]->GetName() != objectToActor.GetDDMCalculatorName())
+                  {
                      continue;
+                  }
 
+                  bool subscribed = false;
                   std::vector<dtCore::RefPtr<DDMRegionData> >& regionVector = mDDMSubscriptionRegions[i];
                   for (unsigned j = 0; j < regionVector.size(); ++j)
                   {
@@ -302,7 +317,15 @@ namespace dtHLAGM
                                                thisObjectClassString.c_str(), thisObjectClassHandle, mDDMSubscriptionCalculators[i]->GetName().c_str());
                         }
                         mRTIAmbassador->subscribeObjectClassAttributesWithRegion(thisObjectClassHandle, *r, *ahs);
+                        subscribed = true;
                      }
+                  }
+
+                  if (!subscribed && mLogger->IsLevelEnabled(dtUtil::Log::LOG_WARNING))
+                  {
+                     mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
+                                         "Subscribing to object class \"%s\" handle %u with region from calculator \"%s\" failed because no such calculator found.",
+                                         thisObjectClassString.c_str(), thisObjectClassHandle, mDDMSubscriptionCalculators[i]->GetName().c_str());
                   }
                }
             }
@@ -311,7 +334,7 @@ namespace dtHLAGM
                mRTIAmbassador->subscribeObjectClassAttributes(thisObjectClassHandle, *ahs);
             }
          }
-         catch (const RTI::Exception &ex)
+         catch (const RTI::Exception& ex)
          {
             failed = true;
             std::ostringstream ss;
@@ -325,8 +348,10 @@ namespace dtHLAGM
       if (!failed && !objectToActor.IsRemoteOnly())
       {
          if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+         {
             mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                                 "Publishing object class \"%s\" handle %u.", thisObjectClassString.c_str(), thisObjectClassHandle);
+         }
 
          try
          {
@@ -373,9 +398,9 @@ namespace dtHLAGM
 
             // Avoid registering special case parameters that are already handled
             // elsewhere in the component, such as Interaction Name.
-            if( thisParameterHandleString == PARAM_NAME_MAPPING_NAME )
+            if (thisParameterHandleString == PARAM_NAME_MAPPING_NAME)
             {
-               thisParameterToParameterList.SetSpecial( true );
+               thisParameterToParameterList.SetSpecial(true);
             }
             else // set the parameter handle as usual.
             {
@@ -409,16 +434,21 @@ namespace dtHLAGM
       try
       {
          if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+         {
             mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                                 "Subscribing to Interaction class %s.", thisInteractionClassString.c_str());
+         }
 
          if (mDDMEnabled)
          {
             for (unsigned i = 0; i < mDDMSubscriptionRegions.size(); ++i)
             {
                if (mDDMSubscriptionCalculators[i]->GetName() != interactionToMessage.GetDDMCalculatorName())
+               {
                   continue;
+               }
 
+               bool subscribed = false;
                std::vector<dtCore::RefPtr<DDMRegionData> >& regionVector = mDDMSubscriptionRegions[i];
                for (unsigned j = 0; j < regionVector.size(); ++j)
                {
@@ -426,11 +456,21 @@ namespace dtHLAGM
                   if (r != NULL)
                   {
                      if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+                     {
                         mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                                             "Subscribing to interaction class \"%s\" handle %u with region from calculator \"%s\"",
                                             thisInteractionClassString.c_str(), thisInteractionClassHandle, mDDMSubscriptionCalculators[i]->GetName().c_str());
+                     }
                      mRTIAmbassador->subscribeInteractionClassWithRegion(thisInteractionClassHandle, *r);
+                     subscribed = true;
                   }
+               }
+
+               if (!subscribed && mLogger->IsLevelEnabled(dtUtil::Log::LOG_WARNING))
+               {
+                  mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
+                                      "Subscribing to interaction class \"%s\" handle %u with region from calculator \"%s\" failed because no such calculator exists.",
+                                      thisInteractionClassString.c_str(), thisInteractionClassHandle, mDDMSubscriptionCalculators[i]->GetName().c_str());
                }
             }
          }
@@ -442,19 +482,25 @@ namespace dtHLAGM
          subscribed = true;
 
          if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+         {
             mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                                 "Publishing to Interaction class %s.", thisInteractionClassString.c_str());
+         }
          //Need to put regions on this.
          mRTIAmbassador->publishInteractionClass(thisInteractionClassHandle);
       }
       catch (const RTI::Exception&)
       {
          if (!subscribed)
+         {
             mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
                                 "Error subscribing to interaction class %s.", thisInteractionClassString.c_str());
+         }
          else
+         {
             mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
                                 "Error publishing interaction class %s.", thisInteractionClassString.c_str());
+         }
       }
    }
 
@@ -473,10 +519,10 @@ namespace dtHLAGM
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   void HLAComponent::JoinFederationExecution(const std::string &executionName,
-                                              const std::string &fedFilename,
-                                              const std::string &federateName,
-                                              const std::string &ridFile)
+   void HLAComponent::JoinFederationExecution(const std::string& executionName,
+                                              const std::string& fedFilename,
+                                              const std::string& federateName,
+                                              const std::string& ridFile)
    {
       dtUtil::FileInfo fi = dtUtil::FileUtils::GetInstance().GetFileInfo(ridFile);
       if (!ridFile.empty() && fi.fileType == dtUtil::FILE_NOT_FOUND)
@@ -496,7 +542,7 @@ namespace dtHLAGM
 
             dtUtil::SetEnvironment("RTI_RID_FILE", absPath + dtUtil::FileUtils::PATH_SEPARATOR + fi.baseName);
          }
-         catch(const dtUtil::Exception &e)
+         catch(const dtUtil::Exception& e)
          {
             mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
                   "Failed to set the RID file name to \"%s\" for the following reason: %s", ridFile.c_str(), e.ToString().c_str());
@@ -677,6 +723,10 @@ namespace dtHLAGM
 
    void HLAComponent::PublishSubscribe()
    {
+      // Clear it so we can collect all the valid names.
+      mHLAEntityTypeOtherAttrNames.clear();
+      mHLAEntityTypeOtherAttrNames.insert(mHLAEntityTypeAttrName);
+
       std::vector<ObjectToActor*> otaVec;
       GetAllObjectToActorMappings(otaVec);
 
@@ -856,33 +906,33 @@ namespace dtHLAGM
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   const ObjectToActor* HLAComponent::GetObjectMapping(const std::string& objTypeName, const EntityType* thisDisID) const
+   const ObjectToActor* HLAComponent::GetObjectMapping(const std::string& objTypeName, const EntityType* thisEntityType) const
    {
-      return InternalGetObjectMapping(objTypeName, thisDisID);
+      return InternalGetObjectMapping(objTypeName, thisEntityType);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   ObjectToActor* HLAComponent::GetObjectMapping(const std::string& objTypeName, const EntityType* thisDisID)
+   ObjectToActor* HLAComponent::GetObjectMapping(const std::string& objTypeName, const EntityType* thisEntityType)
    {
-      return const_cast<ObjectToActor*>(InternalGetObjectMapping(objTypeName, thisDisID));
+      return const_cast<ObjectToActor*>(InternalGetObjectMapping(objTypeName, thisEntityType));
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   const ObjectToActor* HLAComponent::InternalGetObjectMapping(const std::string& objTypeName, const EntityType* thisDisID) const
+   const ObjectToActor* HLAComponent::InternalGetObjectMapping(const std::string& objTypeName, const EntityType* thisEntityType) const
    {
       std::multimap<std::string, dtCore::RefPtr<ObjectToActor> >::const_iterator objectToActorIterator;
       const ObjectToActor* thisObjectToActor = NULL;
       objectToActorIterator = mObjectToActorMap.find(objTypeName);
       if (objectToActorIterator != mObjectToActorMap.end())
       {
-         if (thisDisID != NULL)
+         if (thisEntityType != NULL)
          {
             //find the one with the right DIS ID if it exists.
             while (objectToActorIterator !=  mObjectToActorMap.end() &&
                objectToActorIterator->second->GetObjectClassName() == objTypeName)
             {
-               if (objectToActorIterator->second->GetDisID() != NULL &&
-                  *objectToActorIterator->second->GetDisID() == *thisDisID)
+               if (objectToActorIterator->second->GetEntityType() != NULL &&
+                  *objectToActorIterator->second->GetEntityType() == *thisEntityType)
                   break;
 
                ++objectToActorIterator;
@@ -893,10 +943,10 @@ namespace dtHLAGM
                return NULL;
             }
 
-            if (objectToActorIterator->second->GetDisID() == NULL)
+            if (objectToActorIterator->second->GetEntityType() == NULL)
                return NULL;
 
-            if (*objectToActorIterator->second->GetDisID() != *thisDisID)
+            if (*objectToActorIterator->second->GetEntityType() != *thisEntityType)
                return NULL;
          }
 
@@ -908,7 +958,7 @@ namespace dtHLAGM
    /////////////////////////////////////////////////////////////////////////////////
    void HLAComponent::RegisterActorMapping(dtDAL::ActorType &type,
                                                const std::string& objTypeName,
-                                               const EntityType* thisDisID,
+                                               const EntityType* thisEntityType,
                                                std::vector<AttributeToPropertyList> &oneToOneActorVector,
                                                ObjectToActor::LocalOrRemoteType& localOrRemote)
    {
@@ -922,7 +972,7 @@ namespace dtHLAGM
 
       thisActorMapping->SetActorType(type);
       thisActorMapping->SetObjectClassName(objTypeName);
-      thisActorMapping->SetDisID(thisDisID);
+      thisActorMapping->SetEntityType(thisEntityType);
       thisActorMapping->SetOneToManyMappingVector(oneToOneActorVector);
       thisActorMapping->SetLocalOrRemoteType(localOrRemote);
 
@@ -970,15 +1020,15 @@ namespace dtHLAGM
 
       if (!objectToActor.IsLocalOnly())
       {
-         if (GetObjectMapping(objectToActor.GetObjectClassName(), objectToActor.GetDisID()) != NULL)
+         if (GetObjectMapping(objectToActor.GetObjectClassName(), objectToActor.GetEntityType()) != NULL)
          {
             std::ostringstream ss;
             ss << "Unable to register object mapping \""
                << objectToActor.GetActorType().GetFullName() << ", classname \""
                << objectToActor.GetObjectClassName();
-               if (objectToActor.GetDisID() != NULL)
+               if (objectToActor.GetEntityType() != NULL)
                {
-                  ss <<  "\" and DIS ID \"" << *objectToActor.GetDisID();
+                  ss <<  "\" and DIS ID \"" << *objectToActor.GetEntityType();
 
                }
                ss << ".\"  A mapping with both the same object name and DIS ID (if enabled) exists.  "
@@ -1000,18 +1050,18 @@ namespace dtHLAGM
       }
       dtCore::RefPtr<ObjectToActor> otoa =  InternalUnregisterActorMapping(type);
       if (otoa.valid() && !otoa->IsLocalOnly())
-         InternalUnregisterObjectMapping(otoa->GetObjectClassName(), otoa->GetDisID());
+         InternalUnregisterObjectMapping(otoa->GetObjectClassName(), otoa->GetEntityType());
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   void HLAComponent::UnregisterObjectMapping(const std::string& objTypeName, const EntityType* thisDisID)
+   void HLAComponent::UnregisterObjectMapping(const std::string& objTypeName, const EntityType* thisEntityType)
    {
       if (!mExecutionName.empty())
       {
          throw dtUtil::Exception("The HLAComponent may not unregister a mapping because it is connected to a federation.",
                __FILE__, __LINE__);
       }
-      dtCore::RefPtr<ObjectToActor> otoa =  InternalUnregisterObjectMapping(objTypeName, thisDisID);
+      dtCore::RefPtr<ObjectToActor> otoa =  InternalUnregisterObjectMapping(objTypeName, thisEntityType);
       if (otoa.valid() && !otoa->IsRemoteOnly())
          InternalUnregisterActorMapping(otoa->GetActorType());
    }
@@ -1034,7 +1084,7 @@ namespace dtHLAGM
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   dtCore::RefPtr<ObjectToActor> HLAComponent::InternalUnregisterObjectMapping(const std::string& objTypeName, const EntityType* thisDisID)
+   dtCore::RefPtr<ObjectToActor> HLAComponent::InternalUnregisterObjectMapping(const std::string& objTypeName, const EntityType* thisEntityType)
    {
       std::multimap<std::string, dtCore::RefPtr<ObjectToActor> >::iterator objectToActorIterator;
       dtCore::RefPtr<ObjectToActor> thisObjectToActor;
@@ -1042,23 +1092,23 @@ namespace dtHLAGM
       objectToActorIterator = mObjectToActorMap.find(objTypeName);
       if (objectToActorIterator != mObjectToActorMap.end())
       {
-         if (thisDisID != NULL)
+         if (thisEntityType != NULL)
          {
             //find the one with the right DIS ID if it exists.
             while (objectToActorIterator !=  mObjectToActorMap.end() &&
                objectToActorIterator->second->GetObjectClassName() == objTypeName)
             {
-               if (objectToActorIterator->second->GetDisID() != NULL &&
-                  *objectToActorIterator->second->GetDisID() == *thisDisID)
+               if (objectToActorIterator->second->GetEntityType() != NULL &&
+                  *objectToActorIterator->second->GetEntityType() == *thisEntityType)
                   break;
 
                ++objectToActorIterator;
             }
 
-            if (objectToActorIterator->second->GetDisID() == NULL)
+            if (objectToActorIterator->second->GetEntityType() == NULL)
                return NULL;
 
-            if (*objectToActorIterator->second->GetDisID() != *thisDisID)
+            if (*objectToActorIterator->second->GetEntityType() != *thisEntityType)
                return NULL;
          }
          thisObjectToActor = objectToActorIterator->second;
@@ -1451,7 +1501,7 @@ namespace dtHLAGM
                      buf = mappingName.c_str();
                   }
                   // Is this the Entity Type?
-                  // GetDisID will not be NULL if Entity Types are being used.
+                  // GetEntityType will not be NULL if Entity Types are being used.
                   else if( attributeString == ATTR_NAME_ENTITY_TYPE )
                   {
                      buf = GetAttributeBufferAndLength( theAttributes, *curAttrToProp, length );
@@ -1555,8 +1605,8 @@ namespace dtHLAGM
       std::string classHandleString = mRTIAmbassador->getObjectClassName(classHandle);
 
       static const std::string OBJECT_ROOT("ObjectRoot.");
-      if (classHandleString.size() > OBJECT_ROOT.size() &&
-               classHandleString.substr(0, OBJECT_ROOT.size()) == OBJECT_ROOT)
+      if (classHandleString.length() > OBJECT_ROOT.length() &&
+               classHandleString.substr(0, OBJECT_ROOT.length()) == OBJECT_ROOT)
       {
          classHandleString = classHandleString.substr(OBJECT_ROOT.size());
       }
@@ -1564,13 +1614,13 @@ namespace dtHLAGM
       hadEntityTypeProperty = false;
       EntityType currentEntityType;
 
-      for (unsigned int i=0; i < theAttributes.size(); i++)
+      for (unsigned int i=0; i < theAttributes.size(); ++i)
       {
          RTI::AttributeHandle handle = theAttributes.getHandle(i);
 
 		   std::string attribName = std::string(mRTIAmbassador->getAttributeName(handle, classHandle));
 
-         if ( attribName == GetHLAEntityTypeAttributeName() )
+         if ( mHLAEntityTypeOtherAttrNames.count(attribName) > 0)
          {
             unsigned long length;
             char* buf = theAttributes.getValuePointer(i, length);
@@ -1578,18 +1628,24 @@ namespace dtHLAGM
             hadEntityTypeProperty = true;
             currentEntityType.Decode(buf);
 
-            std::multimap<std::string, dtCore::RefPtr<ObjectToActor> >::iterator objectToActorIterator;
+            std::pair<ObjectToActorMapIter, ObjectToActorMapIter> iterPair;
+            iterPair = mObjectToActorMap.equal_range(classHandleString);
 
-            for (objectToActorIterator = mObjectToActorMap.find(classHandleString); objectToActorIterator != mObjectToActorMap.end()
-                && objectToActorIterator->first == classHandleString;
-                 ++objectToActorIterator)
+            ObjectToActorMapIter i, iend;
+            i = iterPair.first;
+            iend = iterPair.second;
+            for (; i != iend; ++i)
             {
-               ObjectToActor& thisObjectToActor = *objectToActorIterator->second;
+               ObjectToActor& thisObjectToActor = *i->second;
 
-               if (thisObjectToActor.GetDisID() == NULL)
+               if (thisObjectToActor.GetEntityType() == NULL ||
+                        (!thisObjectToActor.GetEntityTypeAttributeName().empty() && attribName != thisObjectToActor.GetEntityTypeAttributeName())
+                        )
+               {
                   continue;
+               }
 
-               int thisRank = currentEntityType.RankMatch(*thisObjectToActor.GetDisID());
+               int thisRank = currentEntityType.RankMatch(*thisObjectToActor.GetEntityType());
                if (thisRank > bestRank)
                {
                   bestRank = thisRank;
@@ -1608,9 +1664,8 @@ namespace dtHLAGM
             std::ostringstream ss;
             ss << currentEntityType;
             mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-               "Creating actor of type %s.%s for DIS ID [%s] and object class \"%s\".",
-               bestObjectToActor->GetActorType().GetCategory().c_str(),
-               bestObjectToActor->GetActorType().GetName().c_str(),
+               "Creating actor of type \"%s\" for DIS ID [%s] and object class \"%s\".",
+               bestObjectToActor->GetActorType().GetFullName().c_str(),
                ss.str().c_str(), classHandleString.c_str());
          }
 
@@ -1641,7 +1696,7 @@ namespace dtHLAGM
                  ++i)
             {
                ObjectToActor& thisObjectToActor = *i->second;
-               if (thisObjectToActor.GetDisID() == NULL)
+               if (thisObjectToActor.GetEntityType() == NULL)
                {
                   bestObjectToActor = &thisObjectToActor;
                   break;
@@ -2554,23 +2609,23 @@ namespace dtHLAGM
          mRuntimeMappings.Put(actorID.ToString(), actorID);
       }
 
-      if (objectToActor.GetDisID() != NULL)
+      if (objectToActor.GetEntityType() != NULL)
       {
          size_t bufferSize;
          char* buffer;
 
          ParameterTranslator::AllocateBuffer(buffer, bufferSize, RPRAttributeType::ENTITY_TYPE);
 
-         objectToActor.GetDisID()->Encode(buffer);
+         objectToActor.GetEntityType()->Encode(buffer);
 
-         updateParams.add(objectToActor.GetDisIDAttributeHandle(),
+         updateParams.add(objectToActor.GetEntityTypeAttributeHandle(),
                             buffer,
                             bufferSize);
 
          if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
          {
             std::ostringstream ss;
-            ss << "Sending DIS id \"" << *objectToActor.GetDisID() << "\" for object " << objectToActor.GetObjectClassName() << ".";
+            ss << "Sending DIS id \"" << *objectToActor.GetEntityType() << "\" for object " << objectToActor.GetObjectClassName() << ".";
             mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, ss.str().c_str());
          }
 
