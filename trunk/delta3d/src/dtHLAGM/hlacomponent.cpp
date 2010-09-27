@@ -108,7 +108,6 @@ namespace dtHLAGM
       mMachineInfo(new dtGame::MachineInfo)
    {
       mLogger = &dtUtil::Log::GetInstance("hlacomponent.cpp");
-      mLogger->SetLogLevel(dtUtil::Log::LOG_DEBUG);
 
       mSiteIdentifier = (unsigned short)(1 + (rand() % 65535));
       mApplicationIdentifier = (unsigned short)(1 + (rand() % 65535));
