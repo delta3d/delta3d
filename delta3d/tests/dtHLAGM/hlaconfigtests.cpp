@@ -98,6 +98,7 @@ class HLAConfigTests : public CPPUNIT_NS::TestFixture
          const std::string& name,
          const std::string& objectClassName,
          const std::string& entityIdAttrName,
+         const std::string& entityTypeAttrName,
          const std::string& ddmSpace,
          const dtHLAGM::EntityType* entityType,
          bool remoteOnly,
@@ -160,6 +161,7 @@ void HLAConfigTests::CheckObjectToActorMapping(
    const std::string& name,
    const std::string& objectClassName,
    const std::string& entityIdAttrName,
+   const std::string& entityTypeAttrName,
    const std::string& ddmSpace,
    const dtHLAGM::EntityType* entityType,
    bool remoteOnly,
@@ -211,6 +213,9 @@ void HLAConfigTests::CheckObjectToActorMapping(
 
    CPPUNIT_ASSERT_MESSAGE("The entity id should be \"" + entityIdAttrName + "\" but it is \"" + otoa->GetEntityIdAttributeName() + "\".",
       otoa->GetEntityIdAttributeName() == entityIdAttrName);
+
+   CPPUNIT_ASSERT_MESSAGE("The entity type should be \"" + entityTypeAttrName + "\" but it is \"" + otoa->GetEntityTypeAttributeName() + "\".",
+      otoa->GetEntityTypeAttributeName() == entityTypeAttrName);
 
    CPPUNIT_ASSERT_MESSAGE("The remote only value of object class mapping for " + objectClassName + " with actor type "
       + category + "." + name + " has the wrong value of remote only.", otoa->IsRemoteOnly() == remoteOnly);
@@ -428,7 +433,7 @@ void HLAConfigTests::TestConfigure()
 
          CheckObjectToActorMapping("TestHLA", "Tank",
             "BaseEntity.PhysicalEntity.Platform.GroundVehicle",
-            "EntityIdentifier", "Geographic", &type, false, false, props);
+            "EntityIdentifier", "AlternateEntityType", "Geographic", &type, false, false, props);
       }
 
       {
@@ -487,17 +492,17 @@ void HLAConfigTests::TestConfigure()
 
          dtHLAGM::EntityType type1(1, 2, 225, 1, 9, 4, 0);
          CheckObjectToActorMapping("TestHLA", "Jet", "BaseEntity.PhysicalEntity.Platform.Aircraft",
-            "EntityIdentifier", "Geographic", &type1, false, false, props);
+            "EntityIdentifier", "", "Geographic", &type1, false, false, props);
 
          dtHLAGM::EntityType type2(1, 2, 222, 20, 2, 6, 0);
 
          //There is a remote only mapping only for this.
          CheckObjectToActorMapping("TestHLA", "Helicopter", "BaseEntity.PhysicalEntity.Platform.Aircraft",
-            "EntityIdentifier", "Another Space", &type2, true, false, props);
+            "EntityIdentifier", "", "Another Space", &type2, true, false, props);
 
          //There is a local only mapping for this that matches the remote one..
          CheckObjectToActorMapping("TestHLA", "Helicopter", "BaseEntity.PhysicalEntity.Platform.Aircraft",
-            "EntityIdentifier", "Another Space", &type2, false, true, props);
+            "EntityIdentifier", "", "Another Space", &type2, false, true, props);
       }
 
       {
@@ -521,7 +526,7 @@ void HLAConfigTests::TestConfigure()
             props.push_back(attrToProp);
          }
 
-         CheckObjectToActorMapping("TestHLA", "Jet", "BaseEntity.PhysicalEntity.Platform.Aircraft", "", "", &type, true, false, props);
+         CheckObjectToActorMapping("TestHLA", "Jet", "BaseEntity.PhysicalEntity.Platform.Aircraft", "", "", "", &type, true, false, props);
       }
       {
          std::vector<dtHLAGM::AttributeToPropertyList> props;
@@ -533,7 +538,7 @@ void HLAConfigTests::TestConfigure()
             props.push_back(attrToProp);
          }
          // Test a NULL dis id.
-         CheckObjectToActorMapping("TestHLA", "CulturalFeature", "BaseEntity.PhysicalEntity.CulturalFeature", "", "", NULL, false, false, props);
+         CheckObjectToActorMapping("TestHLA", "CulturalFeature", "BaseEntity.PhysicalEntity.CulturalFeature", "", "", "", NULL, false, false, props);
       }
 
       // Test Non-Entity Types
@@ -547,7 +552,7 @@ void HLAConfigTests::TestConfigure()
             props.push_back(attrToProp);
          }
          // Test a NULL dis id.
-         CheckObjectToActorMapping("TestHLA", "Sensor", "BaseEntity.PhysicalEntity.Sensor", "", "",  NULL, false, false, props);
+         CheckObjectToActorMapping("TestHLA", "Sensor", "BaseEntity.PhysicalEntity.Sensor", "", "", "", NULL, false, false, props);
       }
 
       {

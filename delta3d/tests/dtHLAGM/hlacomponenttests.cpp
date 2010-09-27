@@ -303,7 +303,7 @@ void HLAComponentTests::setUp()
 // Called implicitly by CPPUNIT when the app terminates
 void HLAComponentTests::tearDown()
 {
-   if(mHLAComponent.valid())
+   if (mHLAComponent.valid())
    {
       mHLAComponent->LeaveFederationExecution();
       CPPUNIT_ASSERT(mHLAComponent->GetRTIAmbassador() == NULL);
@@ -849,6 +849,15 @@ void HLAComponentTests::TestConfigurationLocking()
 
    CPPUNIT_ASSERT_THROW_MESSAGE("One may not Unregister an interaction mapping while it's connected.",
          mHLAComponent->UnregisterInteractionMapping(interactionTypeName), dtUtil::Exception);
+
+   CPPUNIT_ASSERT_MESSAGE("The default entity type attribute should show up as a valid entity type",
+            mHLAComponent->IsEntityTypeAttribute(mHLAComponent->GetHLAEntityTypeAttributeName()));
+
+   CPPUNIT_ASSERT_MESSAGE("The AlternateEntityType on Physical Entity is used on an object to actor mapping in the loaded config.",
+            mHLAComponent->IsEntityTypeAttribute("AlternateEntityType"));
+
+   CPPUNIT_ASSERT_MESSAGE("This string is not a valid entity type attribute.",
+            !mHLAComponent->IsEntityTypeAttribute("some junk"));
 }
 
 void HLAComponentTests::TestReflectAttributesNoEntityType()
@@ -1012,7 +1021,7 @@ void HLAComponentTests::TestReflectAttributes()
 
       entityType.Encode(encodedEntityType);
 
-      AddAttribute("EntityType", mClassHandle1, *ahs, encodedEntityType,
+      AddAttribute("AlternateEntityType", mClassHandle1, *ahs, encodedEntityType,
                    entityType.EncodedLength());
 
 

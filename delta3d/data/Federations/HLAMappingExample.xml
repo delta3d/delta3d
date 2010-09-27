@@ -112,6 +112,8 @@
                 <specific>6</specific>
                 <extra>0</extra>
             </disEntityEnum-->
+            <!-- example overriding the entity type/dis id attribute to use -->
+            <entityTypeAttributeName>AlternateEntityType</entityTypeAttributeName>
             <attrToProp>
                 <gameName>Mesh</gameName>   
                 <gameDataType>StaticMeshes</gameDataType>
