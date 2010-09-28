@@ -36,14 +36,17 @@
 #include <dtAnim/sequencemixer.h>
 #include <dtAnim/animationwrapper.h>
 
+#include <cal3d/model.h>
+#include <cal3d/mixer.h>
+
 namespace dtDirector
 {
    ////////////////////////////////////////////////////////////////////////////////
    AnimateActorAction::AnimateActorAction()
-      : ActionNode()
-      , mTime(0.0f)
-      , mIsActive(false)
-      , mAnimIndex(0)
+   : ActionNode()
+   , mTime(0.0f)
+   , mIsActive(false)
+   , mAnimIndex(0)
    {
       mAnimActor = "";
 

@@ -49,21 +49,22 @@
 #include <dtAnim/animationhelper.h>
 #include <dtAnim/sequencemixer.h>
 
+#include <cal3d/model.h>
+#include <cal3d/mixer.h>
 
 const std::string DirectorCinematicEditorPlugin::PLUGIN_NAME = "Director Cinematic Editor";
 
-
 ////////////////////////////////////////////////////////////////////////////////
 DirectorCinematicEditorPlugin::DirectorCinematicEditorPlugin(MainWindow* mw)
-   : dtDirector::CustomEditorTool("Cinematic")
-   , mTimer(new QTimer())
-   , mMainWindow(mw)
-   , mSelectedActor(-1)
-   , mTransformEvent(NULL)
-   , mAnimationEvent(NULL)
-   , mOutputEvent(NULL)
-   , mPlaying(false)
-   , mTotalTime(1.0f)
+: dtDirector::CustomEditorTool("Cinematic")
+, mTimer(new QTimer())
+, mMainWindow(mw)
+, mSelectedActor(-1)
+, mTransformEvent(NULL)
+, mAnimationEvent(NULL)
+, mOutputEvent(NULL)
+, mPlaying(false)
+, mTotalTime(1.0f)
 {
    mUI.setupUi(this);
 
@@ -359,7 +360,7 @@ void DirectorCinematicEditorPlugin::Close()
    {
       dtCore::Transformable* actor = NULL;
       mActorData[index].mActor->GetActor(actor);
-      
+
       dtAnim::AnimationGameActor* animActor = dynamic_cast<dtAnim::AnimationGameActor*>(actor);
       if (animActor)
       {
@@ -1720,7 +1721,7 @@ void DirectorCinematicEditorPlugin::OnLoad()
                            for (int index = 0; index < count; ++index)
                            {
                               AnimationData data(0, "", 0.0f, 1.0f, 1.0f, NULL);
-                              
+
                               arrayProp->SetIndex(index);
 
                               data.mName = nameProp->GetValue();
@@ -2064,7 +2065,7 @@ void DirectorCinematicEditorPlugin::OnSave()
             dtDAL::FloatActorProperty*   timeProp    = dynamic_cast<dtDAL::FloatActorProperty*>(containerProp->GetProperty(1));
             dtDAL::BooleanActorProperty* playProp    = dynamic_cast<dtDAL::BooleanActorProperty*>(containerProp->GetProperty(2));
             dtDAL::BooleanActorProperty* reverseProp = dynamic_cast<dtDAL::BooleanActorProperty*>(containerProp->GetProperty(3));
-            
+
             if (nameProp && timeProp && playProp && reverseProp)
             {
                int outIndex = 0;
@@ -2419,7 +2420,7 @@ void DirectorCinematicEditorPlugin::OnSave()
                }
             }
          }
-      
+
          height += 400;
       }
    }
@@ -2461,7 +2462,7 @@ KeyFrameEvent* DirectorCinematicEditorPlugin::InsertTransform(int time, const dt
    if (mSelectedActor == -1) return NULL;
 
    KeyFrameEvent* newEvent = event;
-   
+
    if (!newEvent)
    {
       newEvent = new KeyFrameEvent(time);
@@ -2965,19 +2966,19 @@ public:
    /** get a description of the plugin */
    virtual std::string GetDescription() { return "Plugin to access the editing tool for a Director Script."; }
 
-   virtual void GetDependencies(std::list<std::string>& deps) 
+   virtual void GetDependencies(std::list<std::string>& deps)
    {
       deps.push_back("Director Tool");
    }
 
    /** construct the plugin and return a pointer to it */
-   virtual Plugin* Create(MainWindow* mw) 
+   virtual Plugin* Create(MainWindow* mw)
    {
       mPlugin = new DirectorCinematicEditorPlugin(mw);
       return mPlugin;
    }
 
-   virtual void Destroy() 
+   virtual void Destroy()
    {
       delete mPlugin;
    }
@@ -2985,7 +2986,7 @@ public:
 private:
 
    Plugin* mPlugin;
-}; 
+};
 } //namespace DirectorCinematicEditorPlugin
 
 extern "C" DT_DIRECTOR_CINEMATIC_EDITOR_EXPORT dtEditQt::PluginFactory* CreatePluginFactory()
