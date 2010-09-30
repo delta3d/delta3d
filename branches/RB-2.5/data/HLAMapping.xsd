@@ -96,12 +96,16 @@
                   <xsd:element name="remoteOnly" type="xsd:boolean" minOccurs="0" maxOccurs="1" />
                   <xsd:element name="localOnly" type="xsd:boolean" minOccurs="0" maxOccurs="1" />
                 </xsd:choice>
-                <xsd:element name="disEntityEnum" minOccurs="0" maxOccurs="1" type="DISEntityEnumType"/>
+                <xsd:choice>
+                   <xsd:element name="disEntityEnum" minOccurs="0" maxOccurs="1" type="DISEntityEnumType"/>
+                   <xsd:element name="entityType" minOccurs="0" maxOccurs="1" type="EntityTypeString"/>
+                </xsd:choice>
               </xsd:sequence>
               <xsd:element name="abstract" type="xsd:string"/>
             </xsd:choice>
             <xsd:element name="ddmSpace" type="xsd:normalizedString" minOccurs="0" maxOccurs="1"/>
             <xsd:element name="entityIdAttributeName" type="xsd:normalizedString" minOccurs="0" maxOccurs="1" />
+            <xsd:element name="entityTypeAttributeName" type="xsd:normalizedString" minOccurs="0" maxOccurs="1" />
             <xsd:element name="attrToProp" minOccurs="0" maxOccurs="unbounded" type="OneToOneType"/>
           </xsd:sequence>
           <xsd:attribute name="name" type="xsd:normalizedString"/>
@@ -113,6 +117,7 @@
           <xsd:sequence>
             <xsd:element name="objectClass" type="xsd:normalizedString" />
             <xsd:element name="disEntityEnum" minOccurs="0" maxOccurs="1" type="DISEntityEnumType"/>
+            <xsd:element name="entityType" minOccurs="0" maxOccurs="1" type="EntityTypeString"/>
             <xsd:element name="handler" type="xsd:normalizedString"/>
           </xsd:sequence>
         </xsd:complexType>
@@ -177,6 +182,12 @@
        <xsd:element name="extra" type="xsd:int" minOccurs="0" maxOccurs="1"/>      
     </xsd:sequence>
   </xsd:complexType>
+
+  <xsd:simpleType name="EntityTypeString">
+    <xsd:restriction base="xsd:token">
+      <xsd:pattern value="(([0-9])*\.){6}([0-9])*"/>
+    </xsd:restriction>
+  </xsd:simpleType>
 
   <xsd:complexType name="OneToManyType">
     <xsd:sequence>

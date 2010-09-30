@@ -132,7 +132,7 @@ class MappingClassTests : public CPPUNIT_NS::TestFixture
          thisObjectToActor->SetDDMCalculatorName(testCalcName);
          CPPUNIT_ASSERT_EQUAL(testCalcName, thisObjectToActor->GetDDMCalculatorName());
       
-         CPPUNIT_ASSERT_MESSAGE("The DIS ID should default to NULL", thisObjectToActor->GetDisID() == NULL);
+         CPPUNIT_ASSERT_MESSAGE("The DIS ID should default to NULL", thisObjectToActor->GetEntityType() == NULL);
 
          dtDAL::ActorType *thisActorType = new dtDAL::ActorType("Infinite Light",
                              "dtcore.Lights","Directional light actor.");
@@ -156,17 +156,23 @@ class MappingClassTests : public CPPUNIT_NS::TestFixture
          thisObjectToActor->SetObjectClassName(thisObjectName);
          CPPUNIT_ASSERT_MESSAGE("Set Object Type Name should succeed.", thisObjectToActor->GetObjectClassName() == thisObjectName);
 
-         dtHLAGM::EntityType thisDisID(1, 2, 34, 1, 1, 1, 1);
+         dtHLAGM::EntityType thisEntityType(1, 2, 34, 1, 1, 1, 1);
 
-         thisObjectToActor->SetDisID(&thisDisID);
-         CPPUNIT_ASSERT_MESSAGE("Set DIS ID should succeed.", *thisObjectToActor->GetDisID() == thisDisID);
+         thisObjectToActor->SetEntityType(&thisEntityType);
+         CPPUNIT_ASSERT_MESSAGE("Set DIS ID should succeed.", *thisObjectToActor->GetEntityType() == thisEntityType);
 
-         thisObjectToActor->SetDisID(NULL);
-         CPPUNIT_ASSERT_MESSAGE("The DIS ID should be NULL again", thisObjectToActor->GetDisID() == NULL);
+         thisObjectToActor->SetEntityType(NULL);
+         CPPUNIT_ASSERT_MESSAGE("The DIS ID should be NULL again", thisObjectToActor->GetEntityType() == NULL);
+
+         std::string overrideAttrName("jojo");
 
          CPPUNIT_ASSERT(thisObjectToActor->GetEntityIdAttributeName().empty());
-         thisObjectToActor->SetEntityIdAttributeName("jojo");
-         CPPUNIT_ASSERT(thisObjectToActor->GetEntityIdAttributeName() == "jojo");
+         thisObjectToActor->SetEntityIdAttributeName(overrideAttrName);
+         CPPUNIT_ASSERT(thisObjectToActor->GetEntityIdAttributeName() == overrideAttrName);
+
+         CPPUNIT_ASSERT(thisObjectToActor->GetEntityTypeAttributeName().empty());
+         thisObjectToActor->SetEntityTypeAttributeName(overrideAttrName);
+         CPPUNIT_ASSERT(thisObjectToActor->GetEntityTypeAttributeName() == overrideAttrName);
 
          //This def is added in the setup.  This check is verifying it was added properly.
          CPPUNIT_ASSERT(attrToPropListMapping.GetParameterDefinitions()[0] == mParamDef);
@@ -190,9 +196,9 @@ class MappingClassTests : public CPPUNIT_NS::TestFixture
          thisObjectToActor->SetEntityIdAttributeHandle(12);
          CPPUNIT_ASSERT_EQUAL(thisObjectToActor->GetEntityIdAttributeHandle(), RTI::AttributeHandle(12));
 
-         CPPUNIT_ASSERT_EQUAL_MESSAGE("The handle should default to 0", thisObjectToActor->GetDisIDAttributeHandle(), RTI::AttributeHandle(0));
-         thisObjectToActor->SetDisIDAttributeHandle(24);
-         CPPUNIT_ASSERT_EQUAL(thisObjectToActor->GetDisIDAttributeHandle(), RTI::AttributeHandle(24));
+         CPPUNIT_ASSERT_EQUAL_MESSAGE("The handle should default to 0", thisObjectToActor->GetEntityTypeAttributeHandle(), RTI::AttributeHandle(0));
+         thisObjectToActor->SetEntityTypeAttributeHandle(24);
+         CPPUNIT_ASSERT_EQUAL(thisObjectToActor->GetEntityTypeAttributeHandle(), RTI::AttributeHandle(24));
 
          dtCore::RefPtr<dtHLAGM::ObjectToActor> copyObjectToActor(new dtHLAGM::ObjectToActor);
 

@@ -85,7 +85,9 @@ namespace dtHLAGM
    const std::string HLAFOMConfigContentHandler::OBJECT_CLASS_ELEMENT("objectClass");
    const std::string HLAFOMConfigContentHandler::OBJECT_ACTOR_TYPE_ELEMENT("actorType");
    const std::string HLAFOMConfigContentHandler::OBJECT_ENTITY_ID_ELEMENT("entityIdAttributeName");
+   const std::string HLAFOMConfigContentHandler::OBJECT_ENTITY_TYPE_ATTR_ELEMENT("entityTypeAttributeName");
    const std::string HLAFOMConfigContentHandler::OBJECT_DIS_ENTITY_ELEMENT("disEntityEnum");
+   const std::string HLAFOMConfigContentHandler::OBJECT_ENTITY_TYPE_ELEMENT("entityType");
    const std::string HLAFOMConfigContentHandler::OBJECT_ATTR_TO_PROP_ELEMENT("attrToProp");
    const std::string HLAFOMConfigContentHandler::OBJECT_REMOTE_ONLY_ELEMENT("remoteOnly");
    const std::string HLAFOMConfigContentHandler::OBJECT_LOCAL_ONLY_ELEMENT("localOnly");
@@ -200,7 +202,7 @@ namespace dtHLAGM
                {
                   mCurrentObjectToActorIsAbstract = true;
                }
-               else if (sLocalName == OBJECT_DIS_ENTITY_ELEMENT)
+               else if (sLocalName == OBJECT_DIS_ENTITY_ELEMENT || sLocalName == OBJECT_ENTITY_TYPE_ELEMENT)
                {
                   //still mark this as parsing a DIS ID even if mUsingDisID is false
                   //so the parser has no way of getting confused.
@@ -211,7 +213,7 @@ namespace dtHLAGM
                      //assign an empty entity type object to the mapping
                      //that the parser can fill.
                      EntityType et;
-                     mCurrentObjectToActor->SetDisID(&et);
+                     mCurrentObjectToActor->SetEntityType(&et);
                   }
                }
                //if we have an attr to prop construct and a valid object to actor
@@ -633,8 +635,17 @@ namespace dtHLAGM
             return;
          }
 
-         if (mCurrentObjectToActor->GetDisID() != NULL)
-            DISIDCharacters(*mCurrentObjectToActor->GetDisID(), elementName, characters);
+         if (mCurrentObjectToActor->GetEntityType() != NULL)
+         {
+            if (elementName == OBJECT_ENTITY_TYPE_ELEMENT)
+            {
+               EntityTypeCharacters(*mCurrentObjectToActor->GetEntityType(), elementName, characters);
+            }
+            else
+            {
+               DISIDCharacters(*mCurrentObjectToActor->GetEntityType(), elementName, characters);
+            }
+         }
          return;
       }
       else if (mCurrentAttrToProp != NULL)
@@ -677,6 +688,18 @@ namespace dtHLAGM
                                characters.c_str());
          }
          mCurrentObjectToActor->SetEntityIdAttributeName(characters);
+      }
+      else if (elementName == OBJECT_ENTITY_TYPE_ATTR_ELEMENT)
+      {
+         if (mCurrentObjectToActor->GetEntityTypeAttributeName() != characters
+            && mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+         {
+            mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__,
+                               "Overriding the Entity Type field name in a subclassed object mapping.  The old value was \"%s\", the new value is \"%s\".",
+                               mCurrentObjectToActor->GetEntityTypeAttributeName().c_str(),
+                               characters.c_str());
+         }
+         mCurrentObjectToActor->SetEntityTypeAttributeName(characters);
       }
       else if (elementName == OBJECT_REMOTE_ONLY_ELEMENT)
       {
@@ -761,6 +784,7 @@ namespace dtHLAGM
       }
    }
 
+   ///////////////////////////////////////////////////////////////////////////////////
    void HLAFOMConfigContentHandler::OneToManyCharacters(const std::string& elementName, const std::string& characters, OneToManyMapping& mapping)
    {
       int currentParam = mapping.GetParameterDefinitions().size()-1;
@@ -879,6 +903,72 @@ namespace dtHLAGM
 
    }
 
+   //////////////////////////////////////////////////////////////////////////////////////////
+   void HLAFOMConfigContentHandler::EntityTypeCharacters(EntityType& entityType, const std::string& elementName, const std::string& characters)
+   {
+      dtUtil::IsDelimeter delimFunc('.');
+      std::vector<std::string> tokens;
+      dtUtil::StringTokenizer<dtUtil::IsDelimeter>::tokenize(tokens, characters, delimFunc);
+
+      char which = 0;
+      std::vector<std::string>::const_iterator i, iend;
+      i = tokens.begin();
+      iend = tokens.end();
+      for (; i != iend; ++i)
+      {
+         unsigned short val = dtUtil::ToType<unsigned short>(*i);
+         switch(which)
+         {
+            case 0:
+            {
+               entityType.SetKind((unsigned char)val);
+               break;
+            }
+            case 1:
+            {
+               entityType.SetDomain((unsigned char)val);
+               break;
+            }
+            case 2:
+            {
+               entityType.SetCountry(val);
+               break;
+            }
+            case 3:
+            {
+               entityType.SetCategory((unsigned char)val);
+               break;
+            }
+            case 4:
+            {
+               entityType.SetSubcategory((unsigned char)val);
+               break;
+            }
+            case 5:
+            {
+               entityType.SetSpecific((unsigned char)val);
+               break;
+            }
+            case 6:
+            {
+               entityType.SetExtra((unsigned char)val);
+               break;
+            }
+            default:
+            {
+               std::ostringstream ss;
+               ss << "ObjectToActor mapping HLA object class \""
+                  << mCurrentObjectToActor->GetObjectClassName()
+                  << "\" to Actor Type \"" << mCurrentObjectToActor->GetActorType()
+                  << "\" has an entity type with too many fields \"" << which << "\".";
+               LOG_ERROR(ss.str());
+            }
+         }
+         ++which;
+      }
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////////
    void HLAFOMConfigContentHandler::DISIDCharacters(EntityType& entityType, const std::string& elementName, const std::string& characters)
    {
       std::istringstream ss;
@@ -889,21 +979,36 @@ namespace dtHLAGM
       ss >> value;
 
       if (elementName == DIS_ENTITY_KIND_ELEMENT)
+      {
          entityType.SetKind((unsigned char)value);
+      }
       else if (elementName == DIS_ENTITY_DOMAIN_ELEMENT)
+      {
          entityType.SetDomain((unsigned char)value);
-      else if (elementName == DIS_ENTITY_CATEGORY_ELEMENT)
-         entityType.SetCategory((unsigned char)value);
-      else if (elementName == DIS_ENTITY_SUBCATEGORY_ELEMENT)
-         entityType.SetSubcategory((unsigned char)value);
+      }
       else if (elementName == DIS_ENTITY_COUNTRY_ELEMENT)
+      {
          entityType.SetCountry(value);
+      }
+      else if (elementName == DIS_ENTITY_CATEGORY_ELEMENT)
+      {
+         entityType.SetCategory((unsigned char)value);
+      }
+      else if (elementName == DIS_ENTITY_SUBCATEGORY_ELEMENT)
+      {
+         entityType.SetSubcategory((unsigned char)value);
+      }
       else if (elementName == DIS_ENTITY_SPECIFIC_ELEMENT)
+      {
          entityType.SetSpecific((unsigned char)value);
+      }
       else if (elementName == DIS_ENTITY_EXTRA_ELEMENT)
+      {
          entityType.SetExtra((unsigned char)value);
+      }
    }
 
+   /////////////////////////////////////////////////////////////////////////////////////
    const dtDAL::ActorType* HLAFOMConfigContentHandler::FindActorType(const std::string& actorTypeFullName)
    {
       size_t index = actorTypeFullName.find_last_of('.');
@@ -943,6 +1048,7 @@ namespace dtHLAGM
       return NULL;
    }
 
+   /////////////////////////////////////////////////////////////////////////////////////
    void HLAFOMConfigContentHandler::endElement(const XMLCh* const uri, const XMLCh* const localname, const XMLCh* const qname)
    {
       if (mElements.empty())
@@ -982,7 +1088,7 @@ namespace dtHLAGM
          {
             if (mInObject)
             {
-               if (sLocalName == OBJECT_DIS_ENTITY_ELEMENT)
+               if (sLocalName == OBJECT_DIS_ENTITY_ELEMENT || sLocalName == OBJECT_ENTITY_TYPE_ELEMENT)
                {
                   mParsingDISID = false;
                }
@@ -1229,21 +1335,24 @@ namespace dtHLAGM
             mTargetTranslator->GetGameManager()->LoadActorRegistry(mLibName);
          }
       }
+      catch (const dtDAL::ProjectResourceErrorException& e)
+      {
+         mMissingLibraries.push_back(mLibName);
+
+         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+             "Error loading library %s version %s in the library manager.  Exception message to follow.",
+              mLibName.c_str(), mLibVersion.c_str());
+
+         e.LogException(dtUtil::Log::LOG_ERROR, *mLogger);
+         throw e;
+      }
       catch (const dtUtil::Exception& e)
       {
          mMissingLibraries.push_back(mLibName);
-         if (dtDAL::ExceptionEnum::ProjectResourceError == e.TypeEnum())
-         {
-            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-                "Error loading library %s version %s in the library manager.  Exception message to follow.",
-                 mLibName.c_str(), mLibVersion.c_str());
-         }
-         else
-         {
-             mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-                 "Unknown exception loading library %s version %s in the library manager.  Exception message to follow.",
-                   mLibName.c_str(), mLibVersion.c_str());
-         }
+          mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+              "Unknown exception loading library %s version %s in the library manager.  Exception message to follow.",
+                mLibName.c_str(), mLibVersion.c_str());
+
          e.LogException(dtUtil::Log::LOG_ERROR, *mLogger);
          throw e;
       }
@@ -1344,10 +1453,11 @@ namespace dtHLAGM
    void HLAFOMConfigContentHandler::error(const xercesc_dt::SAXParseException& exc)
    {
       mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__,
-         "ERROR %d:%d - %s:%s - %s", exc.getLineNumber(),
-         exc.getColumnNumber(), dtUtil::XMLStringConverter(exc.getPublicId()).c_str(),
-         dtUtil::XMLStringConverter(exc.getSystemId()).c_str(),
-         dtUtil::XMLStringConverter(exc.getMessage()).c_str());
+         //"ERROR %d:%d - %s:%s - %s", exc.getLineNumber(),
+         "ERROR %d:%d", exc.getLineNumber(),
+         exc.getColumnNumber());// dtUtil::XMLStringConverter(exc.getPublicId()).c_str(),
+         //dtUtil::XMLStringConverter(exc.getSystemId()).c_str(),
+         //dtUtil::XMLStringConverter(exc.getMessage()).c_str());
       mTargetTranslator = NULL;
       throw exc;
    }
