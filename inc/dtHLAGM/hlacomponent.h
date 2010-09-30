@@ -135,10 +135,10 @@ namespace dtHLAGM
           * @param fedFilename the fed filename
           * @param federateName the name of this federate
           */
-         void JoinFederationExecution(const std::string &executionName = "dtCore",
-                                      const std::string &fedFilename = "jntc.fed",
-                                      const std::string &federateName = "Participant",
-                                      const std::string &ridFile = "RTI.rid"
+         void JoinFederationExecution(const std::string& executionName = "dtCore",
+                                      const std::string& fedFilename = "jntc.fed",
+                                      const std::string& federateName = "Participant",
+                                      const std::string& ridFile = "RTI.rid"
                                       );
 
          /**
@@ -222,7 +222,7 @@ namespace dtHLAGM
          virtual void reflectAttributeValues(RTI::ObjectHandle theObject,
                                              const RTI::AttributeHandleValuePairSet& theAttributes,
                                              const RTI::FedTime& theTime,
-                                             const char *theTag,
+                                             const char* theTag,
                                              RTI::EventRetractionHandle theHandle)
             throw (RTI::ObjectNotKnown,
                    RTI::AttributeNotKnown,
@@ -240,7 +240,7 @@ namespace dtHLAGM
           */
          virtual void reflectAttributeValues(RTI::ObjectHandle theObject,
                                              const RTI::AttributeHandleValuePairSet& theAttributes,
-                                             const char *theTag)
+                                             const char* theTag)
             throw (RTI::ObjectNotKnown,
                    RTI::AttributeNotKnown,
                    RTI::FederateOwnsAttributes,
@@ -428,16 +428,24 @@ namespace dtHLAGM
 
          /**
           * Set the name of the HLA object attribute that is to be used as
-          * the Entity Type identifier.
+          * the Entity Type identifier.  This is the default, but mappings can define others.
           * @param name Name of the HLA attribute being used as the Entity Type.
           */
          void SetHLAEntityTypeAttributeName( const std::string& name );
 
          /**
           * Get the name of the HLA object attribute that is used as the Entity Type.
+          * This is the default, but mappings can define others.
           * @return name Name of the HLA attribute being used as the Entity Type.
           */
          const std::string& GetHLAEntityTypeAttributeName() const;
+
+         /**
+          * If the passed in attribute name matches either the value of HLAEntityTypeAttributeName
+          * or one of the overrides in one of the object to actor mappings, then the attribute will be handled
+          * as an entity type.
+          */
+         bool IsEntityTypeAttribute(const std::string& attribName) const;
 
       protected:
 
@@ -445,9 +453,9 @@ namespace dtHLAGM
          void UpdateDDMSubscriptions();
          void CreateDDMSubscriptionRegions();
          void DestroyDDMSubscriptionRegions();
-         
+
          void UpdateRegion(DDMRegionData& regionData);
-         
+
          /**
           * Prepares the interaction parameters for an interaction.  This may be overridden in a subclass
           * to do one-off translations of outgoing data.
@@ -620,15 +628,18 @@ namespace dtHLAGM
 
          unsigned short mEntityIdentifierCounter;
          unsigned short mEventIdentifierCounter;
-         
+
          bool mDDMEnabled;
-         
+
          dtUtil::Coordinates mCoordinates;
 
          ObjectRuntimeMappingInfo mRuntimeMappings;
 
          std::map<dtCore::RefPtr<const dtDAL::ActorType>, dtCore::RefPtr<ObjectToActor> > mActorToObjectMap;
-         std::multimap<std::string, dtCore::RefPtr<ObjectToActor> > mObjectToActorMap;
+         typedef std::multimap<std::string, dtCore::RefPtr<ObjectToActor> > ObjectToActorMap;
+         typedef ObjectToActorMap::iterator ObjectToActorMapIter;
+         ObjectToActorMap mObjectToActorMap;
+
 
          std::map<const dtGame::MessageType*, dtCore::RefPtr<InteractionToMessage> > mMessageToInteractionMap;
          std::map<std::string, dtCore::RefPtr<InteractionToMessage> > mInteractionToMessageMap;
@@ -643,7 +654,7 @@ namespace dtHLAGM
          dtCore::RefPtr<InteractionToMessage> InternalUnregisterInteractionMapping(const std::string& interName);
 
          dtCore::RefPtr<dtGame::MachineInfo> mMachineInfo;
-         
+
          DDMRegionCalculatorGroup mDDMSubscriptionCalculators;
          DDMRegionCalculatorGroup mDDMPublishingCalculators;
 
@@ -653,7 +664,14 @@ namespace dtHLAGM
 
          dtCore::RefPtr<dtUtil::Log> mLogger;
 
+         /// This is the default entity attr name.
          std::string mHLAEntityTypeAttrName;
+
+         /**
+          * object to actors are allowed to specify an override name for the entity type.
+          * The component just needs a set of the possibilities.
+          */
+         std::set<std::string> mHLAEntityTypeOtherAttrNames;
 
    };
 

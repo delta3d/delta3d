@@ -36,10 +36,10 @@ namespace dtHLAGM
    /////////////////////////////////////////////////////////////////////
    ObjectToActor::ObjectToActor(): 
       mLocalOrRemoteType(&ObjectToActor::LocalOrRemoteType::LOCAL_AND_REMOTE), 
-      mDISIDSet(false),
+      mEntityTypeSet(false),
       mObjectClassHandle(0), 
       mEntityIdAttributeHandle(0), 
-      mDisIDAttributeHandle(0)
+      mEntityTypeAttributeHandle(0)
    {}
 
    /////////////////////////////////////////////////////////////////////
@@ -103,23 +103,23 @@ namespace dtHLAGM
    }
 
    /////////////////////////////////////////////////////////////////////
-   const RTI::AttributeHandle ObjectToActor::GetDisIDAttributeHandle() const
+   const RTI::AttributeHandle ObjectToActor::GetEntityTypeAttributeHandle() const
    {
-      return mDisIDAttributeHandle;
+      return mEntityTypeAttributeHandle;
    }
 
    /////////////////////////////////////////////////////////////////////
-   const EntityType* ObjectToActor::GetDisID() const
+   const EntityType* ObjectToActor::GetEntityType() const
    {
-      if (!mDISIDSet) return NULL;
-      return &mObjectDisID;
+      if (!mEntityTypeSet) return NULL;
+      return &mObjectEntityType;
    }
 
    /////////////////////////////////////////////////////////////////////
-   EntityType* ObjectToActor::GetDisID()
+   EntityType* ObjectToActor::GetEntityType()
    {
-      if (!mDISIDSet) return NULL;
-      return &mObjectDisID;
+      if (!mEntityTypeSet) return NULL;
+      return &mObjectEntityType;
    }
 
    /////////////////////////////////////////////////////////////////////
@@ -132,6 +132,18 @@ namespace dtHLAGM
    void ObjectToActor::SetEntityIdAttributeName(const std::string& newName)
    { 
       mEntityIdAttribute = newName;
+   }
+
+   /////////////////////////////////////////////////////////////////////
+   const std::string& ObjectToActor::GetEntityTypeAttributeName() const
+   {
+      return mEntityTypeAttribute;
+   }
+
+   /////////////////////////////////////////////////////////////////////
+   void ObjectToActor::SetEntityTypeAttributeName(const std::string& newName)
+   {
+      mEntityTypeAttribute = newName;
    }
 
    /////////////////////////////////////////////////////////////////////
@@ -171,22 +183,22 @@ namespace dtHLAGM
    }
 
    /////////////////////////////////////////////////////////////////////
-   void ObjectToActor::SetDisIDAttributeHandle(const RTI::AttributeHandle newDisIDAttributeHandle)
+   void ObjectToActor::SetEntityTypeAttributeHandle(const RTI::AttributeHandle newEntityTypeAttributeHandle)
    {
-      mDisIDAttributeHandle = newDisIDAttributeHandle;
+      mEntityTypeAttributeHandle = newEntityTypeAttributeHandle;
    }
 
    /////////////////////////////////////////////////////////////////////
-   void ObjectToActor::SetDisID(const EntityType* thisDisID)
+   void ObjectToActor::SetEntityType(const EntityType* thisEntityType)
    {
-      if (thisDisID == NULL)
+      if (thisEntityType == NULL)
       {
-         mDISIDSet = false;
+         mEntityTypeSet = false;
       }
       else
       {
-         mObjectDisID = *thisDisID;
-         mDISIDSet = true;
+         mObjectEntityType = *thisEntityType;
+         mEntityTypeSet = true;
       }
    }
 
@@ -214,11 +226,12 @@ namespace dtHLAGM
       mActorType = setTo.mActorType;
       mObjectClassName = setTo.mObjectClassName;
       mObjectClassHandle = setTo.mObjectClassHandle;
-      mObjectDisID = setTo.mObjectDisID;
-      mDISIDSet = setTo.mDISIDSet;
-      if (mDISIDSet)
-         mObjectDisID = setTo.mObjectDisID;
+      mObjectEntityType = setTo.mObjectEntityType;
+      mEntityTypeSet = setTo.mEntityTypeSet;
+      if (mEntityTypeSet)
+         mObjectEntityType = setTo.mObjectEntityType;
       mEntityIdAttribute = setTo.mEntityIdAttribute;
+      mEntityTypeAttribute = setTo.mEntityTypeAttribute;
       mOneToMany = setTo.mOneToMany;
 
       return *this;
@@ -229,13 +242,13 @@ namespace dtHLAGM
    {
       return mActorType == toCompare.mActorType &&
       mObjectClassName == toCompare.mObjectClassName &&
-      mObjectDisID == toCompare.mObjectDisID &&
-      mDISIDSet == toCompare.mDISIDSet &&
+      mObjectEntityType == toCompare.mObjectEntityType &&
+      mEntityTypeSet == toCompare.mEntityTypeSet &&
       mOneToMany == toCompare.mOneToMany &&
       mEntityIdAttribute == toCompare.mEntityIdAttribute &&
-
-      (!mDISIDSet ||
-               mObjectDisID == toCompare.mObjectDisID);
+      mEntityTypeAttribute == toCompare.mEntityTypeAttribute &&
+      (!mEntityTypeSet ||
+               mObjectEntityType == toCompare.mObjectEntityType);
    }
 
    /////////////////////////////////////////////////////////////////////

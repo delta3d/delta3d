@@ -98,6 +98,7 @@ class HLAConfigTests : public CPPUNIT_NS::TestFixture
          const std::string& name,
          const std::string& objectClassName,
          const std::string& entityIdAttrName,
+         const std::string& entityTypeAttrName,
          const std::string& ddmSpace,
          const dtHLAGM::EntityType* entityType,
          bool remoteOnly,
@@ -160,6 +161,7 @@ void HLAConfigTests::CheckObjectToActorMapping(
    const std::string& name,
    const std::string& objectClassName,
    const std::string& entityIdAttrName,
+   const std::string& entityTypeAttrName,
    const std::string& ddmSpace,
    const dtHLAGM::EntityType* entityType,
    bool remoteOnly,
@@ -212,6 +214,9 @@ void HLAConfigTests::CheckObjectToActorMapping(
    CPPUNIT_ASSERT_MESSAGE("The entity id should be \"" + entityIdAttrName + "\" but it is \"" + otoa->GetEntityIdAttributeName() + "\".",
       otoa->GetEntityIdAttributeName() == entityIdAttrName);
 
+   CPPUNIT_ASSERT_MESSAGE("The entity type should be \"" + entityTypeAttrName + "\" but it is \"" + otoa->GetEntityTypeAttributeName() + "\".",
+      otoa->GetEntityTypeAttributeName() == entityTypeAttrName);
+
    CPPUNIT_ASSERT_MESSAGE("The remote only value of object class mapping for " + objectClassName + " with actor type "
       + category + "." + name + " has the wrong value of remote only.", otoa->IsRemoteOnly() == remoteOnly);
 
@@ -222,13 +227,15 @@ void HLAConfigTests::CheckObjectToActorMapping(
       otoa->GetObjectClassName() == objectClassName);
 
    if (entityType == NULL)
-      CPPUNIT_ASSERT_MESSAGE("DIS ID should be NULL.", otoa->GetDisID() == NULL);
+   {
+      CPPUNIT_ASSERT_MESSAGE("DIS ID should be NULL.", otoa->GetEntityType() == NULL);
+   }
    else
    {
-      CPPUNIT_ASSERT_MESSAGE("DIS ID should not be NULL.", otoa->GetDisID() != NULL);
- //     std::ostringstream ss;
-//      ss << "DIS ID should be equal to \"" << *entityType << "\" but it is \"" << *otoa->GetDisID() << ".\"";
- //     CPPUNIT_ASSERT_MESSAGE(ss.str(), *otoa->GetDisID() == *entityType);
+      CPPUNIT_ASSERT_MESSAGE("DIS ID should not be NULL.", otoa->GetEntityType() != NULL);
+      std::ostringstream ss;
+      ss << "DIS ID should be equal to \"" << *entityType << "\" but it is \"" << *otoa->GetEntityType() << ".\"";
+      CPPUNIT_ASSERT_MESSAGE(ss.str(), *otoa->GetEntityType() == *entityType);
    }
 
    const std::vector<dtHLAGM::AttributeToPropertyList>& propsActual = otoa->GetOneToManyMappingVector();
@@ -290,19 +297,10 @@ void HLAConfigTests::TestBroken(const std::string& brokenFile, const std::string
 
    mGameManager->AddComponent(*mTranslator, dtGame::GameManager::ComponentPriority::NORMAL);
 
-   try
-   {
-      std::string path = dtUtil::FindFileInPathList(brokenFile);
-      CPPUNIT_ASSERT(dtUtil::FileUtils::GetInstance().FileExists(path));
+   std::string path = dtUtil::FindFileInPathList(brokenFile);
+   CPPUNIT_ASSERT(dtUtil::FileUtils::GetInstance().FileExists(path));
 
-      config.LoadConfiguration(*mTranslator, path);
-      CPPUNIT_FAIL(failMessage);
-   }
-   catch (const dtUtil::Exception& ex)
-   {
-      CPPUNIT_ASSERT_MESSAGE("the exception should have been an XML_CONFIG_EXCEPTION",
-         ex.TypeEnum() == dtHLAGM::ExceptionEnum::XML_CONFIG_EXCEPTION);
-   }
+   CPPUNIT_ASSERT_THROW_MESSAGE(failMessage, config.LoadConfiguration(*mTranslator, path), dtHLAGM::XmlConfigException);
 }
 
 void HLAConfigTests::TestBrokenHLAMappingNoActorType()
@@ -327,23 +325,13 @@ void HLAConfigTests::TestConfigure()
 {
    try
    {
-      dtDAL::DataType* dt = dtDAL::DataType::GetValueForName("VEC3");
-
 
       CPPUNIT_ASSERT_MESSAGE("Library should not yet be loaded.",
          mGameManager->GetRegistry(mHLAActorRegistry) == NULL);
       dtHLAGM::HLAComponentConfig config;
 
-      try
-      {
-         config.LoadConfiguration(*mTranslator, "Federations/HLAMappingExample.xml");
-         CPPUNIT_FAIL("It should fail since no game manager was assigned to the mTranslator.");
-      }
-      catch (const dtUtil::Exception& ex)
-      {
-         CPPUNIT_ASSERT_MESSAGE("the exception should have been an XML_CONFIG_EXCEPTION",
-            ex.TypeEnum() == dtHLAGM::ExceptionEnum::XML_CONFIG_EXCEPTION);
-      }
+      CPPUNIT_ASSERT_THROW_MESSAGE("It should fail since no game manager was assigned to the mTranslator.",
+                config.LoadConfiguration(*mTranslator, "Federations/HLAMappingExample.xml"), dtHLAGM::XmlConfigException);
 
       mGameManager->AddComponent(*mTranslator, dtGame::GameManager::ComponentPriority::NORMAL);
 
@@ -359,8 +347,9 @@ void HLAConfigTests::TestConfigure()
 
       CPPUNIT_ASSERT(mCalc->GetFriendlyRegionType() == dtHLAGM::DDMCalculatorGeographic::RegionCalculationType::GEOGRAPHIC_SPACE);
       CPPUNIT_ASSERT(mCalc->GetEnemyRegionType() == dtHLAGM::DDMCalculatorGeographic::RegionCalculationType::APP_SPACE_ONLY);
-      CPPUNIT_ASSERT_EQUAL(74L, mCalc->GetFriendlyAppSpace());
-      CPPUNIT_ASSERT_EQUAL(11L, mCalc->GetNeutralAppSpace());
+      CPPUNIT_ASSERT_EQUAL(7L, mCalc->GetFriendlyAppSpace());
+      CPPUNIT_ASSERT_EQUAL(8L, mCalc->GetEnemyAppSpace());
+      CPPUNIT_ASSERT_EQUAL(9L, mCalc->GetNeutralAppSpace());
       CPPUNIT_ASSERT_EQUAL(0L, mCalc->GetAppSpaceMinimum());
       CPPUNIT_ASSERT_EQUAL(199L, mCalc->GetAppSpaceMaximum());
 
@@ -444,7 +433,7 @@ void HLAConfigTests::TestConfigure()
 
          CheckObjectToActorMapping("TestHLA", "Tank",
             "BaseEntity.PhysicalEntity.Platform.GroundVehicle",
-            "EntityIdentifier", "Geographic", &type, false, false, props);
+            "EntityIdentifier", "AlternateEntityType", "Geographic", &type, false, false, props);
       }
 
       {
@@ -503,17 +492,17 @@ void HLAConfigTests::TestConfigure()
 
          dtHLAGM::EntityType type1(1, 2, 225, 1, 9, 4, 0);
          CheckObjectToActorMapping("TestHLA", "Jet", "BaseEntity.PhysicalEntity.Platform.Aircraft",
-            "EntityIdentifier", "Geographic", &type1, false, false, props);
+            "EntityIdentifier", "", "Geographic", &type1, false, false, props);
 
          dtHLAGM::EntityType type2(1, 2, 222, 20, 2, 6, 0);
 
          //There is a remote only mapping only for this.
          CheckObjectToActorMapping("TestHLA", "Helicopter", "BaseEntity.PhysicalEntity.Platform.Aircraft",
-            "EntityIdentifier", "Another Space", &type2, true, false, props);
+            "EntityIdentifier", "", "Another Space", &type2, true, false, props);
 
          //There is a local only mapping for this that matches the remote one..
          CheckObjectToActorMapping("TestHLA", "Helicopter", "BaseEntity.PhysicalEntity.Platform.Aircraft",
-            "EntityIdentifier", "Another Space", &type2, false, true, props);
+            "EntityIdentifier", "", "Another Space", &type2, false, true, props);
       }
 
       {
@@ -537,7 +526,7 @@ void HLAConfigTests::TestConfigure()
             props.push_back(attrToProp);
          }
 
-         CheckObjectToActorMapping("TestHLA", "Jet", "BaseEntity.PhysicalEntity.Platform.Aircraft", "", "", &type, true, false, props);
+         CheckObjectToActorMapping("TestHLA", "Jet", "BaseEntity.PhysicalEntity.Platform.Aircraft", "", "", "", &type, true, false, props);
       }
       {
          std::vector<dtHLAGM::AttributeToPropertyList> props;
@@ -549,7 +538,7 @@ void HLAConfigTests::TestConfigure()
             props.push_back(attrToProp);
          }
          // Test a NULL dis id.
-         CheckObjectToActorMapping("TestHLA", "CulturalFeature", "BaseEntity.PhysicalEntity.CulturalFeature", "", "", NULL, false, false, props);
+         CheckObjectToActorMapping("TestHLA", "CulturalFeature", "BaseEntity.PhysicalEntity.CulturalFeature", "", "", "", NULL, false, false, props);
       }
 
       // Test Non-Entity Types
@@ -563,7 +552,7 @@ void HLAConfigTests::TestConfigure()
             props.push_back(attrToProp);
          }
          // Test a NULL dis id.
-         CheckObjectToActorMapping("TestHLA", "Sensor", "BaseEntity.PhysicalEntity.Sensor", "", "",  NULL, false, false, props);
+         CheckObjectToActorMapping("TestHLA", "Sensor", "BaseEntity.PhysicalEntity.Sensor", "", "", "", NULL, false, false, props);
       }
 
       {

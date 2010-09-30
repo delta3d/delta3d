@@ -9,7 +9,7 @@
         <disEntityTypeAttribute>EntityType</disEntityTypeAttribute>
         <author>David Guthrie</author>
         <comment>This is for the unit tests</comment>
-        <copyright>2006 Alion</copyright>
+        <copyright>2010 Alion</copyright>
         <schemaVersion>1.0</schemaVersion>
     </header>
     
@@ -24,11 +24,16 @@
       <enabled>true</enabled>
       <space name="Geographic">
          <property name="Friendly Region Type">GEOGRAPHIC_SPACE</property>
+         <property name="Neutral Region Type">APP_SPACE_ONLY</property>
          <property name="Enemy Region Type">APP_SPACE_ONLY</property>
-         <property name="Friendly App Space">74</property>
-         <property name="Neutral App Space">11</property>
          <property name="App Space Min">0</property>
          <property name="App Space Max">199</property>
+         <property name="X Subscription Range">10</property>
+         <property name="Y Subscription Range">10</property>
+         <property name="Friendly App Space">7</property>   
+         <property name="Enemy App Space">8</property>      
+         <property name="Neutral App Space">9</property>    
+         <property name="Min Time Between Updates">0.25</property>
       </space>
       <space name="NoSuchSpace">
          <property name="hi">junk</property>
@@ -97,7 +102,8 @@
         <object extends="BaseEntity" name="Test Tank">
             <objectClass>BaseEntity.PhysicalEntity.Platform.GroundVehicle</objectClass>
             <actorType>TestHLA.Tank</actorType>
-            <disEntityEnum>
+            <entityType>1.1.222.2.4.6.0</entityType>
+            <!--disEntityEnum>
                 <kind>1</kind>
                 <domain>1</domain>
                 <country>222</country>
@@ -105,7 +111,9 @@
                 <subcategory>4</subcategory>
                 <specific>6</specific>
                 <extra>0</extra>
-            </disEntityEnum>
+            </disEntityEnum-->
+            <!-- example overriding the entity type/dis id attribute to use -->
+            <entityTypeAttributeName>AlternateEntityType</entityTypeAttributeName>
             <attrToProp>
                 <gameName>Mesh</gameName>   
                 <gameDataType>StaticMeshes</gameDataType>
@@ -178,15 +186,7 @@
             <objectClass>BaseEntity.PhysicalEntity.Platform.Aircraft</objectClass>
             <actorType>TestHLA.Helicopter</actorType>
             <remoteOnly>true</remoteOnly>
-            <disEntityEnum>
-                <kind>1</kind>
-                <domain>2</domain>
-                <country>222</country>
-                <category>20</category>
-                <subcategory>2</subcategory>
-                <specific>6</specific>
-                <extra>0</extra>
-            </disEntityEnum>
+            <entityType>1.2.222.20.2.6.0</entityType>
             <ddmSpace>Another Space</ddmSpace>
             <entityIdAttributeName>EntityIdentifier</entityIdAttributeName>
             <attrToProp>
@@ -202,15 +202,7 @@
             <objectClass>BaseEntity.PhysicalEntity.Platform.Aircraft</objectClass>
             <actorType>TestHLA.Jet</actorType>
             <remoteOnly>true</remoteOnly>
-            <disEntityEnum>
-                <kind>1</kind>
-                <domain>2</domain>
-                <country>225</country>
-                <category>0</category>
-                <subcategory>0</subcategory>
-                <specific>0</specific>
-                <extra>0</extra>
-            </disEntityEnum>
+            <entityType>1.2.225.0.0.0.0</entityType>
             <attrToProp>
                 <hlaName>VelocityVector</hlaName>
                 <hlaDataType>VELOCITY_VECTOR_TYPE</hlaDataType>

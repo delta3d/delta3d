@@ -65,8 +65,20 @@ namespace dtCore
        * avoid creating default input mappings
        * @param mouse the mouse instance, or 0 to avoid
        * creating default input mappings
+       * @param maxWalkSpeed the maximum walking speed
+       * @param maxTurnSpeed the maximum turning speed
+       * @param maxSidestepSpeed the maximum sidestep speed       
+       * @param maxStepUpDist the maximum distance we can step up to higher terrain
        */
-      CollisionMotionModel(float pHeight, float pRadius, float k, float theta, dtCore::Scene* pScene, Keyboard* keyboard, Mouse* mouse);
+      CollisionMotionModel(float pHeight, float pRadius, float k, float theta,
+                           dtCore::Scene* pScene,
+                           Keyboard* keyboard,
+                           Mouse* mouse,
+                           float maxWalkSpeed = 5.0f,
+                           float maxTurnSpeed = 1.5f,
+                           float maxSidestepSpeed = 5.0f,                           
+                           bool useWASD = true,
+                           bool useArrowKeys = true);
 
    protected:
       /**
