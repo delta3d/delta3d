@@ -370,7 +370,7 @@ int main(int argc, char** argv)
    std::string dataPath = dtUtil::GetDeltaDataPathList();
    dtUtil::SetDataFilePathList(dtUtil::GetDeltaRootPath() + "/examples/data/;" +
                                dtUtil::GetDeltaRootPath() + "/examples/data/gui/;" +
-                               dtUtil::GetDeltaRootPath() + "/examples/testInput" +
+                               dtUtil::GetDeltaRootPath() + "/examples/testInput/;" +
                                dataPath + ";");
 
    app = new TestInputApp("config.xml");
