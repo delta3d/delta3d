@@ -431,6 +431,11 @@ namespace dtAI
       //////////////////////////////////////////////////////////////////////////
       bool LoadLegacyWaypointFile(const std::string& filename)
       {
+         //this will use the WaypointManager to load the file, leaving the WM
+         //fully reconstituted.  Then we can copy the data back into the 
+         //AiInterfaceActor.  If memory allocation is a concern and the WaypointManager
+         //isn't being used in the application, then WaypointManager::Clear() can be
+         //called after this to free up some memory.
          WaypointManager& wm = WaypointManager::GetInstance();
          bool result = wm.ReadFile(filename);
          if (result)
@@ -456,7 +461,8 @@ namespace dtAI
             wm.SetDeleteOnClear(false);
 
             // The WaypointManager doesn't need to hang on to this anymore
-            wm.Clear();
+            ///Note: doing this will prevent existing WaypointManager apps, which use the old .ai files, from working
+            //wm.Clear(); 
          }
          return result;
       }
