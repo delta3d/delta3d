@@ -1,0 +1,105 @@
+<character name="marine">
+   <skeleton fileName="Skeleton.csf" />
+   <animation fileName="LowWalk.caf" name="LowWalk" />
+   <animation fileName="LowWalk_Wpn.caf" name="LowWalk with weapon" />
+   <animation fileName="Breath.caf" name="Idle" />
+   <animation fileName="Run.caf" name="Run" />
+   <animation fileName="Walk.caf" name="Walk" />
+   <mesh fileName="HEAD.cmf" name="Head" />
+   <mesh fileName="BODY.cmf" name="Body" />
+   <mesh fileName="Helmet.cmf" name="Helmet" />
+   <mesh fileName="M16m80.cmf" name="M16" />
+   <material fileName="HEAD.crf" name="Head Material" />
+   <material fileName="BODY.crf" name="Body Material" />
+   <material fileName="Helmet.crf" name="Helmet Material" />
+   <material fileName="M16m80.crf" name="M16 Material" />
+   <LOD>
+      <lodStartDistance>10.0</lodStartDistance>
+      <lodEndDistance>500.0</lodEndDistance>
+      <maxVisibleDistance>1000.0</maxVisibleDistance>
+   </LOD>
+   <animationChannel>
+      <name>Run</name>
+      <animationName>Run</animationName>
+      <startDelay>0.0</startDelay>
+      <fadeIn>0.0</fadeIn>
+      <fadeOut>0.0</fadeOut>
+      <speed>1.0</speed>
+      <baseWeight>1.0</baseWeight>
+      <maxDuration>0.0</maxDuration>
+      <isAction>0</isAction>
+      <isLooping>1</isLooping>
+   </animationChannel>
+   <animationChannel>
+      <name>Walk</name>
+      <animationName>Walk</animationName>
+      <startDelay>0.0</startDelay>
+      <fadeIn>0.0</fadeIn>
+      <fadeOut>0.0</fadeOut>
+      <speed>1.0</speed>
+      <baseWeight>1.0</baseWeight>
+      <maxDuration>0.0</maxDuration>
+      <isAction>0</isAction>
+      <isLooping>1</isLooping>
+   </animationChannel>
+   <animationChannel>
+      <name>Idle</name>
+      <animationName>Idle</animationName>
+      <startDelay>0.0</startDelay>
+      <fadeIn>0.0</fadeIn>
+      <fadeOut>0.0</fadeOut>
+      <speed>1.0</speed>
+      <baseWeight>1.0</baseWeight>
+      <maxDuration>0.0</maxDuration>
+      <isAction>0</isAction>
+      <isLooping>1</isLooping>
+   </animationChannel>
+   <animationChannel>
+      <name>IdleAction</name>
+      <animationName>Idle</animationName>
+      <startDelay>0.1</startDelay>
+      <fadeIn>0.2</fadeIn>
+      <fadeOut>0.3</fadeOut>
+      <speed>1.1</speed>
+      <baseWeight>0.9</baseWeight>
+      <maxDuration>4.5</maxDuration>
+      <isAction>1</isAction>
+      <isLooping>0</isLooping>
+   </animationChannel>
+   <animationChannel>
+      <name>RunDelayed</name>
+      <animationName>Run</animationName>
+      <startDelay>0.5</startDelay>
+      <fadeIn>0.75</fadeIn>
+      <fadeOut>0.0</fadeOut>
+      <speed>1.0</speed>
+      <baseWeight>1.0</baseWeight>
+      <maxDuration>0.0</maxDuration>
+      <isAction>0</isAction>
+      <isLooping>1</isLooping>
+   </animationChannel>
+   <animationChannel>
+      <name>WalkStart</name>
+      <animationName>Walk</animationName>
+      <startDelay>0.0</startDelay>
+      <fadeIn>0.1</fadeIn>
+      <fadeOut>0.75</fadeOut>
+      <speed>1.0</speed>
+      <baseWeight>1.0</baseWeight>
+      <maxDuration>2.0</maxDuration>
+      <isAction>0</isAction>
+      <isLooping>1</isLooping>
+   </animationChannel>
+   <animationSequence>
+      <name>RunWalk</name>
+      <startDelay>0.0</startDelay>
+      <fadeIn>0.2</fadeIn>
+      <fadeOut>0.2</fadeOut>
+      <speed>1.0</speed>
+      <baseWeight>1.0</baseWeight>
+      <children>
+         <child>RunDelayed</child>
+         <child>WalkStart</child>
+      </children>
+   </animationSequence>
+</character>
