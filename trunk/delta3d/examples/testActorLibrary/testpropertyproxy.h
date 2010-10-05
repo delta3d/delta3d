@@ -156,7 +156,7 @@ private:
    int                            mIntArrayIndex;
    int                            mArrayArrayIndex;
 
-   static const std::string GROUPNAME;
+   static const dtUtil::RefString GROUPNAME;
 };
 
 #endif // DELTA_EXAMPLETESTPROPERTYPROXY
