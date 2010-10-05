@@ -28,6 +28,7 @@
 #include <dtUtil/getsetmacros.h>
 #include <dtDAL/namedgroupparameter.h>
 #include <osg/Referenced>
+#include <dtHLAGM/export.h>
 
 namespace dtUtil
 {
@@ -37,7 +38,7 @@ namespace dtUtil
 
 namespace dtHLAGM
 {
-   class EnvironmentProcessRecord : public osg::Referenced
+   class DT_HLAGM_EXPORT EnvironmentProcessRecord : public osg::Referenced
    {
    public:
       enum EnvironmentRecordTypeCode
@@ -110,7 +111,7 @@ namespace dtHLAGM
       dtCore::RefPtr<dtDAL::NamedGroupParameter> mParameterData;
    };
 
-   class EnvironmentProcessRecordList
+   class DT_HLAGM_EXPORT EnvironmentProcessRecordList
    {
    public:
       EnvironmentProcessRecordList(dtUtil::Coordinates& coordConverter, bool littleEndian = false);
