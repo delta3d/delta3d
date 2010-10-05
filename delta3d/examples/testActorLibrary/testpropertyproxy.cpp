@@ -48,7 +48,7 @@ using namespace dtCore;
 using namespace dtDAL;
 using namespace dtActors;
 
-const std::string ExampleTestPropertyProxy::GROUPNAME("Example Test");
+const dtUtil::RefString ExampleTestPropertyProxy::GROUPNAME("Example Test");
 
 IMPLEMENT_ENUM(ExampleTestPropertyProxy::TestEnum);
 ExampleTestPropertyProxy::TestEnum ExampleTestPropertyProxy::TestEnum::OPTION1("My First Option");
