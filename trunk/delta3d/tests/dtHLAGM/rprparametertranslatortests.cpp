@@ -41,7 +41,6 @@
 #include <dtCore/uniqueid.h>
 
 #include <dtDAL/datatype.h>
-#include <dtDAL/namedgroupparameter.h>
 
 #include <dtHLAGM/attributetoproperty.h>
 #include <dtHLAGM/distypes.h>
@@ -52,6 +51,9 @@
 #include <dtHLAGM/parametertoparameter.h>
 #include <dtHLAGM/rprparametertranslator.h>
 #include <dtHLAGM/spatial.h>
+#include <dtHLAGM/environmentprocessrecordlist.h>
+
+#include <dtDAL/namedgroupparameter.inl>
 
 #include <dtUtil/coordinates.h>
 #include <dtUtil/log.h>
@@ -106,7 +108,6 @@ namespace dtHLAGM
       // This function needs to be exposed for testing
       return GetIntegerValue( parameter, mapping, parameterDefIndex );
    }
-}
 
 
 
@@ -117,6 +118,7 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
 {
    CPPUNIT_TEST_SUITE(ParameterTranslatorTests);
 
+      CPPUNIT_TEST(TestInOutEnviornmentProcessRecordListDataTranslation);
       CPPUNIT_TEST(TestOutgoingSpatialDataTranslation);
       CPPUNIT_TEST(TestOutgoingWorldCoordinateDataTranslation);
       CPPUNIT_TEST(TestOutgoingMarkingTypeDataTranslation);
@@ -233,6 +235,107 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
          CPPUNIT_ASSERT(osg::equivalent(expectedVec.x(), wc.GetX(), 1e-6) &&
                         osg::equivalent(expectedVec.y(), wc.GetY(), 1e-6) &&
                         osg::equivalent(expectedVec.z(), wc.GetZ(), 1e-6) );
+
+      }
+
+      void TestInOutEnviornmentProcessRecordListDataTranslation()
+      {
+         mMapping.GetParameterDefinitions()[0].SetGameName("Records");
+         mMapping.GetParameterDefinitions()[0].SetGameType(dtDAL::DataType::GROUP);
+         mMapping.SetHLAType(dtHLAGM::RPRAttributeType::ENVIRONMENT_RECORD_LIST_TYPE);
+
+         dtCore::RefPtr<dtDAL::NamedGroupParameter> groupParam = new dtDAL::NamedGroupParameter("Record");
+
+         dtCore::RefPtr<dtDAL::NamedGroupParameter> rec1 = new dtDAL::NamedGroupParameter("1");
+         dtCore::RefPtr<dtDAL::NamedGroupParameter> rec2 = new dtDAL::NamedGroupParameter("2");
+
+         const osg::Vec3d testPos1(-1000.4, 1.0, 7.3);
+         const osg::Vec3d testPos2(11.4, -1.66, -4366.88);
+         const osg::Vec3f testVec1(27.4f, -3.7f, 36.22f);
+         const osg::Vec3f testVec2(19.22f, 11.6f, -0.0023f);
+
+         const osg::Vec3f testOrient(-1.11, 3.77, 6.28f);
+
+         const float testHeight = 1.88f;
+         const float testRate = 8.73f;
+
+         rec1->SetValue("Index", 7U);
+         rec1->SetValue("TypeCode", unsigned(EnvironmentProcessRecord::GaussianPuffRecordType));
+         rec1->SetValue(EnvironmentProcessRecord::PARAM_LOCATION, testPos1);
+         rec1->SetValue(EnvironmentProcessRecord::PARAM_ORIGINATION_LOCATION, testPos2);
+         rec1->SetValue(EnvironmentProcessRecord::PARAM_DIMENSION, testVec1);
+         rec1->SetValue(EnvironmentProcessRecord::PARAM_DIMENSION_RATE, testVec2);
+         rec1->SetValue(EnvironmentProcessRecord::PARAM_ORIENTATION, testOrient);
+         rec1->SetValue(EnvironmentProcessRecord::PARAM_VELOCITY, testVec1);
+         rec1->SetValue(EnvironmentProcessRecord::PARAM_ANGULAR_VELOCITY, testVec2);
+         rec1->SetValue(EnvironmentProcessRecord::PARAM_CENTROID_HEIGHT, testHeight);
+
+         rec2->SetValue("Index", 8U);
+         rec2->SetValue("TypeCode", unsigned(EnvironmentProcessRecord::SphereRecord2Type));
+         rec2->SetValue(EnvironmentProcessRecord::PARAM_LOCATION, testPos1);
+         rec2->SetValue(EnvironmentProcessRecord::PARAM_RADIUS, testHeight);
+         rec2->SetValue(EnvironmentProcessRecord::PARAM_RADIUS_RATE, testRate);
+         rec2->SetValue(EnvironmentProcessRecord::PARAM_VELOCITY, testVec1);
+         rec2->SetValue(EnvironmentProcessRecord::PARAM_ANGULAR_VELOCITY, testVec2);
+
+         groupParam->AddParameter(*rec1);
+         groupParam->AddParameter(*rec2);
+
+         char* buffer = NULL;
+         size_t bufSize = 0;
+
+         std::vector<dtCore::RefPtr<const dtGame::MessageParameter> > messageParameters;
+         messageParameters.push_back(groupParam);
+
+         TranslateOutgoingParameter(buffer, bufSize, messageParameters, mMapping);
+
+
+         std::vector<dtCore::RefPtr<dtGame::MessageParameter> > messageParametersIn;
+         dtCore::RefPtr<dtDAL::NamedGroupParameter> groupIncoming = new dtDAL::NamedGroupParameter("Record");
+         messageParametersIn.push_back(groupIncoming);
+
+         mParameterTranslator->MapToMessageParameters(buffer, bufSize, messageParametersIn, mMapping);
+
+         CPPUNIT_ASSERT_EQUAL(unsigned(2U), unsigned(groupIncoming->GetParameterCount()));
+
+         std::vector<const dtGame::MessageParameter* > incomingParameters;
+         groupIncoming->GetParameters(incomingParameters);
+
+         for (unsigned i = 0; i < 2; ++i)
+         {
+            CPPUNIT_ASSERT(incomingParameters[i]->GetDataType() == dtDAL::DataType::GROUP);
+
+            const dtDAL::NamedGroupParameter& groupParam = static_cast<const dtDAL::NamedGroupParameter&>(*incomingParameters[i]);
+
+            unsigned typeCode = groupParam.GetValue("TypeCode", 0U);
+            if (typeCode == EnvironmentProcessRecord::SphereRecord2Type)
+            {
+               CPPUNIT_ASSERT_EQUAL(8U, groupParam.GetValue("Index", 0U));
+               CPPUNIT_ASSERT(dtUtil::Equivalent(testPos1, groupParam.GetValue(EnvironmentProcessRecord::PARAM_LOCATION, osg::Vec3d()), 0.01));
+               CPPUNIT_ASSERT_EQUAL(testHeight, groupParam.GetValue(EnvironmentProcessRecord::PARAM_RADIUS, float(0.0f)));
+               CPPUNIT_ASSERT_EQUAL(testRate, groupParam.GetValue(EnvironmentProcessRecord::PARAM_RADIUS_RATE, float(0.0f)));
+               CPPUNIT_ASSERT(dtUtil::Equivalent(testVec1, groupParam.GetValue(EnvironmentProcessRecord::PARAM_VELOCITY, osg::Vec3f()), 0.01f));
+               CPPUNIT_ASSERT_EQUAL(testVec2, groupParam.GetValue(EnvironmentProcessRecord::PARAM_ANGULAR_VELOCITY, osg::Vec3f()));
+            }
+            else if (typeCode == EnvironmentProcessRecord::GaussianPuffRecordType)
+            {
+               CPPUNIT_ASSERT_EQUAL(7U, groupParam.GetValue("Index", 0U));
+               CPPUNIT_ASSERT(dtUtil::Equivalent(testPos1, groupParam.GetValue(EnvironmentProcessRecord::PARAM_LOCATION, osg::Vec3d()), 0.01));
+               CPPUNIT_ASSERT_EQUAL(testVec1, groupParam.GetValue(EnvironmentProcessRecord::PARAM_DIMENSION, osg::Vec3f()));
+               CPPUNIT_ASSERT(dtUtil::Equivalent(testOrient, groupParam.GetValue(EnvironmentProcessRecord::PARAM_ORIENTATION, osg::Vec3f()), 0.01f));
+               CPPUNIT_ASSERT(dtUtil::Equivalent(testPos2, groupParam.GetValue(EnvironmentProcessRecord::PARAM_ORIGINATION_LOCATION, osg::Vec3d()), 0.01));
+               CPPUNIT_ASSERT_EQUAL(testHeight, groupParam.GetValue(EnvironmentProcessRecord::PARAM_CENTROID_HEIGHT, float(0.0f)));
+               CPPUNIT_ASSERT_EQUAL(testVec2, groupParam.GetValue(EnvironmentProcessRecord::PARAM_DIMENSION_RATE, osg::Vec3f()));
+               CPPUNIT_ASSERT(dtUtil::Equivalent(testVec1, groupParam.GetValue(EnvironmentProcessRecord::PARAM_VELOCITY, osg::Vec3f()), 0.01f));
+               CPPUNIT_ASSERT_EQUAL(testVec2, groupParam.GetValue(EnvironmentProcessRecord::PARAM_ANGULAR_VELOCITY, osg::Vec3f()));
+            }
+            else
+            {
+               CPPUNIT_FAIL("The typecode should have matched the gaussian or the sphere record type.");
+            }
+
+         }
+
 
       }
 
@@ -1465,7 +1568,7 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
 
          mMapping.GetParameterDefinitions()[0].SetGameType(dataType);
          mMapping.SetHLAType(dtHLAGM::RPRAttributeType::RTI_OBJECT_ID_STRUCT_TYPE);
-         dtCore::RefPtr<dtGame::MessageParameter> param = dtGame::GroupMessageParameter::CreateFromType(dataType, "test");
+         dtCore::RefPtr<dtGame::MessageParameter> param = dtDAL::NamedParameter::CreateFromType(dataType, "test");
          param->FromString(testValue);
          messageParameters.push_back(param.get());
 
@@ -1939,3 +2042,4 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
 
 // Registers the fixture into the 'registry'
 CPPUNIT_TEST_SUITE_REGISTRATION(ParameterTranslatorTests);
+}

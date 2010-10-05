@@ -1485,7 +1485,7 @@ void NamedParameterTests::TestNamedActorParameter()
 
       dtCore::RefPtr<dtGame::MessageParameter> amp = NULL;
 
-      amp = dtGame::GroupMessageParameter::CreateFromType(dtDAL::DataType::ACTOR, "testNamedActorParameter");
+      amp = dtDAL::NamedParameter::CreateFromType(dtDAL::DataType::ACTOR, "testNamedActorParameter");
 
       CPPUNIT_ASSERT_MESSAGE("The actor message parameter should not be NULL", amp != NULL);
 

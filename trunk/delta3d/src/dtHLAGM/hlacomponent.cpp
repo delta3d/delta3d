@@ -2027,7 +2027,7 @@ namespace dtHLAGM
             (gameParameterName == ABOUT_ACTOR_ID ||
             gameParameterName == SENDING_ACTOR_ID))
          {
-            messageParameter = dtGame::GroupMessageParameter::CreateFromType(
+            messageParameter = dtDAL::NamedParameter::CreateFromType(
                dtDAL::DataType::ACTOR, gameParameterName );
 
             if (gameParameterName == ABOUT_ACTOR_ID)
@@ -2719,7 +2719,7 @@ namespace dtHLAGM
                gameName == ABOUT_ACTOR_ID)
             {
                dtCore::RefPtr<dtGame::MessageParameter> tmpParam =
-                  dtGame::GroupMessageParameter::CreateFromType(dtDAL::DataType::ACTOR,
+                  dtDAL::NamedParameter::CreateFromType(dtDAL::DataType::ACTOR,
                   gameName);
 
                tmpParam->FromString(message.GetAboutActorId().ToString());
@@ -2729,7 +2729,7 @@ namespace dtHLAGM
                gameName == SENDING_ACTOR_ID)
             {
                dtCore::RefPtr<dtGame::MessageParameter> tmpParam =
-                  dtGame::GroupMessageParameter::CreateFromType(dtDAL::DataType::ACTOR,
+                  dtDAL::NamedParameter::CreateFromType(dtDAL::DataType::ACTOR,
                   gameName);
 
                tmpParam->FromString(message.GetSendingActorId().ToString());
@@ -2763,7 +2763,7 @@ namespace dtHLAGM
                try
                {
                   dtCore::RefPtr<dtGame::MessageParameter> tmpMsgParam
-                     = dtGame::GroupMessageParameter::CreateFromType(gameType, gameName);
+                     = dtDAL::NamedParameter::CreateFromType(gameType, gameName);
                   tmpMsgParam->FromString(defaultValue);
                   messageParameters.push_back(tmpMsgParam.get());
                }
@@ -2870,8 +2870,8 @@ namespace dtHLAGM
                gameParameterName == ABOUT_ACTOR_ID)
             {
                dtCore::RefPtr<dtGame::MessageParameter> messageParameter =
-                  dtGame::GroupMessageParameter::CreateFromType(dtDAL::DataType::ACTOR,
-                  gameParameterName);
+                        dtDAL::NamedParameter::CreateFromType(dtDAL::DataType::ACTOR,
+                                 gameParameterName);
 
                messageParameter->FromString(message.GetAboutActorId().ToString());
                messageParameters.push_back(messageParameter.get());
@@ -2881,8 +2881,8 @@ namespace dtHLAGM
                gameParameterName == SENDING_ACTOR_ID)
             {
                dtCore::RefPtr<dtGame::MessageParameter> messageParameter =
-                  dtGame::GroupMessageParameter::CreateFromType(dtDAL::DataType::ACTOR,
-                  gameParameterName);
+                        dtDAL::NamedParameter::CreateFromType(dtDAL::DataType::ACTOR,
+                                 gameParameterName);
 
                messageParameter->FromString(message.GetSendingActorId().ToString());
                messageParameters.push_back(messageParameter.get());
@@ -2907,7 +2907,7 @@ namespace dtHLAGM
                   //add it to the translation list with the proper game name, and set it to the default
                   //value.
                   dtCore::RefPtr<dtGame::MessageParameter> tmpMsgParam
-                     = dtGame::GroupMessageParameter::CreateFromType(gameParameterType, gameParameterName);
+                     = dtDAL::NamedParameter::CreateFromType(gameParameterType, gameParameterName);
                   tmpMsgParam->FromString(defaultValue);
 
                   messageParameter = tmpMsgParam.get();

@@ -87,6 +87,18 @@ namespace dtDAL
          virtual bool operator==(const NamedParameter& toCompare) const = 0;
          bool operator!=(const NamedParameter& toCompare) const { return !(*this == toCompare); }
 
+         /**
+          * Creates anamed parameter that will hold the given type.
+          * @param type the datatype the parameter should hold.
+          * @param name the name of the parameter to create.
+          * @param isList true if the created parameter should be a list type.
+          * @throw dtUtil::Exception with dtGame::ExceptionEnum::INVALID_PARAMETER if the type is unsupported.
+          */
+         static dtCore::RefPtr<NamedParameter> CreateFromType(
+                  dtDAL::DataType& type,
+                  const dtUtil::RefString& name, bool isList = false);
+
+
       protected:
 
          virtual ~NamedParameter() { }

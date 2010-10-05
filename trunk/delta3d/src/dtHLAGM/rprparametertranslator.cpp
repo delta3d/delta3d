@@ -31,33 +31,52 @@
 #include <dtHLAGM/distypes.h>
 #include <dtHLAGM/objectruntimemappinginfo.h>
 #include <dtHLAGM/spatial.h>
+#include <dtHLAGM/environmentprocessrecordlist.h>
 
 #include <dtGame/deadreckoningcomponent.h>
 
 namespace dtHLAGM
 {
    IMPLEMENT_ENUM(RPRAttributeType);
-   const RPRAttributeType RPRAttributeType::SPATIAL_TYPE("SPATIAL_TYPE", 6, 84);
-   const RPRAttributeType RPRAttributeType::WORLD_COORDINATE_TYPE("WORLD_COORDINATE_TYPE", 1, 24);
-   const RPRAttributeType RPRAttributeType::EULER_ANGLES_TYPE("EULER_ANGLES_TYPE", 1, 12);
-   const RPRAttributeType RPRAttributeType::VELOCITY_VECTOR_TYPE("VELOCITY_VECTOR_TYPE", 1, 12);
-   const RPRAttributeType RPRAttributeType::ANGULAR_VELOCITY_VECTOR_TYPE("ANGULAR_VELOCITY_VECTOR_TYPE", 1, 12);
-   const RPRAttributeType RPRAttributeType::UNSIGNED_INT_TYPE("UNSIGNED_INT_TYPE", 1, 4);
-   const RPRAttributeType RPRAttributeType::UNSIGNED_CHAR_TYPE("UNSIGNED_CHAR_TYPE", 1, 1);
-   const RPRAttributeType RPRAttributeType::UNSIGNED_SHORT_TYPE("UNSIGNED_SHORT_TYPE", 1, 2);
-   const RPRAttributeType RPRAttributeType::FLOAT_TYPE("FLOAT_TYPE", 1, 4);
-   const RPRAttributeType RPRAttributeType::DOUBLE_TYPE("DOUBLE_TYPE", 1, 8);
-   const RPRAttributeType RPRAttributeType::ENTITY_TYPE("ENTITY_TYPE", 1, 8);
-   const RPRAttributeType RPRAttributeType::ENTITY_IDENTIFIER_TYPE("ENTITY_IDENTIFIER_TYPE", 1, 6);
-   const RPRAttributeType RPRAttributeType::EVENT_IDENTIFIER_TYPE("EVENT_IDENTIFIER_TYPE", 1, 5);
-   const RPRAttributeType RPRAttributeType::MARKING_TYPE("MARKING_TYPE", 1, 12);
-   const RPRAttributeType RPRAttributeType::MARKING_TYPE_32("MARKING_TYPE_32", 1, 32);
-   const RPRAttributeType RPRAttributeType::OCTET_TYPE("OCTET_TYPE", 1, 65535);
-   const RPRAttributeType RPRAttributeType::STRING_TYPE("STRING_TYPE", 1, 128);
-   const RPRAttributeType RPRAttributeType::ARTICULATED_PART_TYPE("ARTICULATED_PART_TYPE", 1, 512);
-   const RPRAttributeType RPRAttributeType::RTI_OBJECT_ID_STRUCT_TYPE("RTI_OBJECT_ID_STRUCT_TYPE", 1, 128);
-   const RPRAttributeType RPRAttributeType::TIME_TAG_TYPE("TIME_TAG_TYPE", 1, 17);
+   const RPRAttributeType RPRAttributeType::SPATIAL_TYPE("SPATIAL_TYPE", 6, 84, RPRAttributeType::SPATIAL_TYPE_ENUM);
+   const RPRAttributeType RPRAttributeType::WORLD_COORDINATE_TYPE("WORLD_COORDINATE_TYPE", 1, 24, RPRAttributeType::WORLD_COORDINATE_TYPE_ENUM);
+   const RPRAttributeType RPRAttributeType::EULER_ANGLES_TYPE("EULER_ANGLES_TYPE", 1, 12, RPRAttributeType::EULER_ANGLES_TYPE_ENUM);
+   const RPRAttributeType RPRAttributeType::VELOCITY_VECTOR_TYPE("VELOCITY_VECTOR_TYPE", 1, 12, RPRAttributeType::VELOCITY_VECTOR_TYPE_ENUM);
+   const RPRAttributeType RPRAttributeType::ANGULAR_VELOCITY_VECTOR_TYPE("ANGULAR_VELOCITY_VECTOR_TYPE", 1, 12, RPRAttributeType::ANGULAR_VELOCITY_VECTOR_TYPE_ENUM);
+   const RPRAttributeType RPRAttributeType::UNSIGNED_INT_TYPE("UNSIGNED_INT_TYPE", 1, 4, RPRAttributeType::UNSIGNED_INT_TYPE_ENUM);
+   const RPRAttributeType RPRAttributeType::UNSIGNED_CHAR_TYPE("UNSIGNED_CHAR_TYPE", 1, 1, RPRAttributeType::UNSIGNED_CHAR_TYPE_ENUM);
+   const RPRAttributeType RPRAttributeType::UNSIGNED_SHORT_TYPE("UNSIGNED_SHORT_TYPE", 1, 2, RPRAttributeType::UNSIGNED_SHORT_TYPE_ENUM);
+   const RPRAttributeType RPRAttributeType::FLOAT_TYPE("FLOAT_TYPE", 1, 4, RPRAttributeType::FLOAT_TYPE_ENUM);
+   const RPRAttributeType RPRAttributeType::DOUBLE_TYPE("DOUBLE_TYPE", 1, 8, RPRAttributeType::DOUBLE_TYPE_ENUM);
+   const RPRAttributeType RPRAttributeType::ENTITY_TYPE("ENTITY_TYPE", 1, 8, RPRAttributeType::ENTITY_TYPE_ENUM);
+   const RPRAttributeType RPRAttributeType::ENTITY_IDENTIFIER_TYPE("ENTITY_IDENTIFIER_TYPE", 1, 6, RPRAttributeType::ENTITY_IDENTIFIER_TYPE_ENUM);
+   const RPRAttributeType RPRAttributeType::EVENT_IDENTIFIER_TYPE("EVENT_IDENTIFIER_TYPE", 1, 5, RPRAttributeType::EVENT_IDENTIFIER_TYPE_ENUM);
+   const RPRAttributeType RPRAttributeType::MARKING_TYPE("MARKING_TYPE", 1, 12, RPRAttributeType::MARKING_TYPE_ENUM);
+   const RPRAttributeType RPRAttributeType::MARKING_TYPE_32("MARKING_TYPE_32", 1, 32, RPRAttributeType::MARKING_TYPE_32_ENUM);
+   const RPRAttributeType RPRAttributeType::OCTET_TYPE("OCTET_TYPE", 1, 65535, RPRAttributeType::OCTET_TYPE_ENUM);
+   const RPRAttributeType RPRAttributeType::STRING_TYPE("STRING_TYPE", 1, 128, RPRAttributeType::STRING_TYPE_ENUM);
+   const RPRAttributeType RPRAttributeType::ARTICULATED_PART_TYPE("ARTICULATED_PART_TYPE", 1, 512, RPRAttributeType::ARTICULATED_PART_TYPE_ENUM);
+   const RPRAttributeType RPRAttributeType::RTI_OBJECT_ID_STRUCT_TYPE("RTI_OBJECT_ID_STRUCT_TYPE", 1, 128, RPRAttributeType::RTI_OBJECT_ID_STRUCT_TYPE_ENUM);
+   const RPRAttributeType RPRAttributeType::TIME_TAG_TYPE("TIME_TAG_TYPE", 1, 17, RPRAttributeType::TIME_TAG_TYPE_ENUM);
+   const RPRAttributeType RPRAttributeType::ENVIRONMENT_RECORD_LIST_TYPE("ENVIRONMENT_RECORD_LIST_TYPE", 1, 65535, ENVIRONMENT_RECORD_LIST_TYPE_ENUM);
 
+   /////////////////////////////////////////////////////////////////////////////
+   RPRAttributeType::RPRAttributeType(const std::string& name,
+            unsigned char supportedParameters, size_t encodedLength, RPRAttributeType::SwitchEnum enumValue)
+   : AttributeType(name, supportedParameters, encodedLength)
+   , mEnumValue(enumValue)
+   {
+      AddInstance(this);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   RPRAttributeType::SwitchEnum RPRAttributeType::GetEnumValue() const
+   {
+      return mEnumValue;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    /////////////////////////////////////////////////////////////////////////////
    RPRParameterTranslator::RPRParameterTranslator(dtUtil::Coordinates& coordinates, ObjectRuntimeMappingInfo& runtimeMappings):
       mCoordinates(coordinates), mRuntimeMappings(runtimeMappings)
@@ -174,6 +193,57 @@ namespace dtHLAGM
    }
 
    ///////////////////////////////////////////////////////////////////////////////
+   void RPRParameterTranslator::MapFromParamToEnvProcessRecList(
+      char* buffer,
+      size_t& maxSize,
+      const dtGame::MessageParameter& parameter,
+      const OneToManyMapping::ParameterDefinition& paramDef) const
+   {
+      EnvironmentProcessRecordList processList(mCoordinates);
+
+      if (parameter.GetDataType() != dtDAL::DataType::GROUP)
+      {
+         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                             "The parameter named \"%s\" could not be encoded into a \"%s\" struct because it is not a group message parameter.",
+                             parameter.GetName().c_str(),
+                             RPRAttributeType::ENVIRONMENT_RECORD_LIST_TYPE.GetName().c_str());
+      }
+      else
+      {
+         // just checked the datatype above, so no need to dynamic cast.
+         const dtDAL::NamedGroupParameter& rootGroupParam = static_cast<const dtDAL::NamedGroupParameter&>(parameter);
+
+         std::vector<const dtDAL::NamedParameter*> subParams;
+         rootGroupParam.GetParameters(subParams);
+
+         std::vector<const dtDAL::NamedParameter*>::const_iterator i, iend;
+         i = subParams.begin();
+         iend = subParams.end();
+
+         for (;i != iend; ++i)
+         {
+            const dtDAL::NamedParameter* item = *i;
+            const dtDAL::NamedGroupParameter* groupItem = dynamic_cast<const dtDAL::NamedGroupParameter*>(item);
+
+            if (groupItem != NULL)
+            {
+               dtHLAGM::EnvironmentProcessRecord& record = processList.AddRecord();
+               record.GetRecordData().CopyFrom(*groupItem);
+            }
+         }
+
+         if (maxSize < processList.Encode(buffer, maxSize))
+         {
+            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                                "The parameter named \"%s\" could not be encoded into a \"%s\" struct due to insufficent internal buffer space.",
+                                parameter.GetName().c_str(),
+                                RPRAttributeType::ENVIRONMENT_RECORD_LIST_TYPE.GetName().c_str());
+         }
+      }
+   }
+
+
+   ///////////////////////////////////////////////////////////////////////////////
    osg::Vec3d RPRParameterTranslator::CoordConvertPositionParameter(const dtGame::MessageParameter& parameter) const
    {
       osg::Vec3 position;
@@ -243,10 +313,14 @@ namespace dtHLAGM
       }
 
       if (maxSize >= wc.EncodedLength())
+      {
          wc.Encode(buffer);
+      }
       else
+      {
          mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
             "Not enough space was allocated in the buffer to convert", wc.GetX(), wc.GetY(), wc.GetZ());
+      }
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -484,7 +558,7 @@ namespace dtHLAGM
    void RPRParameterTranslator::MapFromMessageParameters(char* buffer, size_t& maxSize,
       std::vector<dtCore::RefPtr<const dtGame::MessageParameter> >& parameters, const OneToManyMapping& mapping) const
    {
-      const AttributeType& hlaType = mapping.GetHLAType();
+      const RPRAttributeType& hlaType = static_cast<const RPRAttributeType&>(mapping.GetHLAType());
 
       if (parameters.empty())
       {
@@ -503,7 +577,7 @@ namespace dtHLAGM
          return;
       }
 
-      //All the current mappings use only one parameter.
+      //most of the current mappings use only one parameter, so save off the first one to make it easy.
       const dtGame::MessageParameter& parameter = *parameters[0];
       const dtDAL::DataType& parameterDataType  = parameter.GetDataType();
       const OneToManyMapping::ParameterDefinition& paramDef = mapping.GetParameterDefinitions()[0];
@@ -523,214 +597,252 @@ namespace dtHLAGM
             paramDef.GetGameType().GetName().c_str());
       }
 
-      if (hlaType == RPRAttributeType::SPATIAL_TYPE)
+      switch (hlaType.GetEnumValue())
       {
-         MapFromParamsToSpatial(buffer, maxSize, parameters, mapping);
-      }
-      else if (hlaType == RPRAttributeType::WORLD_COORDINATE_TYPE)
-      {
-         MapFromParamToWorldCoord(buffer, maxSize, parameter);
-      }
-      else if (hlaType == RPRAttributeType::ENTITY_TYPE)
-      {
-         MapFromParamToEntityType(buffer, maxSize, parameter, mapping, paramDef);
-      }
-      else if (hlaType == RPRAttributeType::EULER_ANGLES_TYPE)
-      {
-         MapFromParamToEulerAngles(buffer, maxSize, parameter);
-      }
-      else if (hlaType == RPRAttributeType::VELOCITY_VECTOR_TYPE)
-      {
-         MapFromParamToVelocityVector(buffer, maxSize, parameter);
-      }
-      else if (hlaType == RPRAttributeType::ANGULAR_VELOCITY_VECTOR_TYPE)
-      {
-         MapFromParamToAngularVelocityVector(buffer, maxSize, parameter);
-      }
-      else if (hlaType == RPRAttributeType::UNSIGNED_INT_TYPE)
-      {
-         unsigned value = (unsigned)GetIntegerValue(parameter, mapping, 0);
-
-         if (osg::getCpuByteOrder() == osg::LittleEndian)
-            osg::swapBytes((char*)(&value), sizeof(unsigned int));
-
-         *(unsigned int*)(&buffer[0]) = value;
-      }
-      else if (hlaType == RPRAttributeType::UNSIGNED_SHORT_TYPE)
-      {
-         unsigned short value = (unsigned short)GetIntegerValue(parameter, mapping, 0);
-
-         if (osg::getCpuByteOrder() == osg::LittleEndian)
-            osg::swapBytes((char*)(&value), sizeof(unsigned short));
-
-         *(unsigned short*)(&buffer[0]) = value;
-      }
-      else if (hlaType == RPRAttributeType::UNSIGNED_CHAR_TYPE)
-      {
-         unsigned char value = (unsigned char)GetIntegerValue(parameter, mapping, 0);
-
-         *(unsigned char*)(&buffer[0]) = value;
-      }
-      else if (hlaType == RPRAttributeType::DOUBLE_TYPE)
-      {
-         double* value = (double*)(&buffer[0]);
-
-         if (parameter.GetDataType() == dtDAL::DataType::DOUBLE)
+         case (RPRAttributeType::SPATIAL_TYPE_ENUM):
          {
-            *value = static_cast<const dtGame::DoubleMessageParameter&>(parameter).GetValue();
+            MapFromParamsToSpatial(buffer, maxSize, parameters, mapping);
+            break;
          }
-         else if (parameter.GetDataType() == dtDAL::DataType::FLOAT)
+         case (RPRAttributeType::WORLD_COORDINATE_TYPE_ENUM):
          {
-            *value = double(static_cast<const dtGame::FloatMessageParameter&>(parameter).GetValue());
+            MapFromParamToWorldCoord(buffer, maxSize, parameter);
+            break;
          }
+         case (RPRAttributeType::ENTITY_TYPE_ENUM):
+         {
+            MapFromParamToEntityType(buffer, maxSize, parameter, mapping, paramDef);
+            break;
+         }
+         case (RPRAttributeType::EULER_ANGLES_TYPE_ENUM):
+         {
+            MapFromParamToEulerAngles(buffer, maxSize, parameter);
+            break;
+         }
+         case (RPRAttributeType::VELOCITY_VECTOR_TYPE_ENUM):
+         {
+            MapFromParamToVelocityVector(buffer, maxSize, parameter);
+            break;
+         }
+         case (RPRAttributeType::ANGULAR_VELOCITY_VECTOR_TYPE_ENUM):
+         {
+            MapFromParamToAngularVelocityVector(buffer, maxSize, parameter);
+            break;
+         }
+         case (RPRAttributeType::UNSIGNED_INT_TYPE_ENUM):
+         {
+            unsigned value = (unsigned)GetIntegerValue(parameter, mapping, 0);
 
-         if (osg::getCpuByteOrder() == osg::LittleEndian)
-            osg::swapBytes((char*)(value), sizeof(double));
-      }
-      else if (hlaType == RPRAttributeType::FLOAT_TYPE)
-      {
-         float* value = (float*)(&buffer[0]);
+            if (osg::getCpuByteOrder() == osg::LittleEndian)
+               osg::swapBytes((char*)(&value), sizeof(unsigned int));
 
-         if (parameter.GetDataType() == dtDAL::DataType::DOUBLE)
-         {
-            *value = float(static_cast<const dtGame::DoubleMessageParameter&>(parameter).GetValue());
+            *(unsigned int*)(&buffer[0]) = value;
+            break;
          }
-         else if (parameter.GetDataType() == dtDAL::DataType::FLOAT)
+         case (RPRAttributeType::UNSIGNED_SHORT_TYPE_ENUM):
          {
-            *value = static_cast<const dtGame::FloatMessageParameter&>(parameter).GetValue();
-         }
+            unsigned short value = (unsigned short)GetIntegerValue(parameter, mapping, 0);
 
-         if (osg::getCpuByteOrder() == osg::LittleEndian)
-            osg::swapBytes((char*)(value), sizeof(float));
-      }
-      else if (hlaType == RPRAttributeType::EVENT_IDENTIFIER_TYPE)
-      {
-         EventIdentifier eventIdentifier;
-         eventIdentifier.SetEventIdentifier(static_cast<const dtGame::UnsignedShortIntMessageParameter&>(parameter).GetValue());
-         eventIdentifier.Encode(buffer);
-      }
-      else if (hlaType == RPRAttributeType::STRING_TYPE ||
-               hlaType == RPRAttributeType::OCTET_TYPE)
-      {
-         bool addNullTerminator = hlaType == RPRAttributeType::STRING_TYPE;
+            if (osg::getCpuByteOrder() == osg::LittleEndian)
+               osg::swapBytes((char*)(&value), sizeof(unsigned short));
 
-         if (parameterDataType == dtDAL::DataType::STRING ||
-             parameterDataType == dtDAL::DataType::ENUMERATION ||
-             parameterDataType == dtDAL::DataType::ACTOR)
-         {
-            MapFromStringParamToCharArray(buffer, maxSize,
-                  parameter.ToString(),
-                  paramDef, parameterDataType, addNullTerminator);
+            *(unsigned short*)(&buffer[0]) = value;
+            break;
          }
-         else
+         case (RPRAttributeType::UNSIGNED_CHAR_TYPE_ENUM):
          {
-            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-               "Unable to map from Game Type \"%s\" to HLA type \"%s\"",
-               parameterDataType.GetName().c_str(),
-               RPRAttributeType::STRING_TYPE.GetName().c_str());
-         }
-      }
-      else if (hlaType == RPRAttributeType::MARKING_TYPE)
-      {
-         if (parameterDataType == dtDAL::DataType::STRING)
-         {
-            const std::string& markingText = static_cast<const dtGame::StringMessageParameter&>(parameter).GetValue();
+            unsigned char value = (unsigned char)GetIntegerValue(parameter, mapping, 0);
 
-            CopyMarkingTextToBuffer(markingText, buffer, RPRAttributeType::MARKING_TYPE.GetEncodedLength());
+            *(unsigned char*)(&buffer[0]) = value;
+            break;
          }
-         else
+         case (RPRAttributeType::DOUBLE_TYPE_ENUM):
          {
-            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-               "Unable to map from Game Type \"%s\" to HLA type \"%s\"",
-               parameterDataType.GetName().c_str(),
-               RPRAttributeType::MARKING_TYPE.GetName().c_str());
-         }
-      }
-      else if (hlaType == RPRAttributeType::MARKING_TYPE_32)
-      {
-         if (parameterDataType == dtDAL::DataType::STRING)
-         {
-            const std::string& markingText = static_cast<const dtGame::StringMessageParameter&>(parameter).GetValue();
+            double* value = (double*)(&buffer[0]);
 
-            CopyMarkingTextToBuffer(markingText, buffer, RPRAttributeType::MARKING_TYPE_32.GetEncodedLength());
-         }
-         else
-         {
-            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-               "Unable to map from Game Type \"%s\" to HLA type \"%s\"",
-               parameterDataType.GetName().c_str(),
-               RPRAttributeType::MARKING_TYPE_32.GetName().c_str());
-         }
-      }
-      else if (hlaType == RPRAttributeType::ENTITY_IDENTIFIER_TYPE)
-      {
-         if (parameterDataType == dtDAL::DataType::ACTOR)
-         {
-            dtCore::UniqueId aid = static_cast<const dtGame::ActorMessageParameter&>(parameter).GetValue();
+            if (parameter.GetDataType() == dtDAL::DataType::DOUBLE)
+            {
+               *value = static_cast<const dtGame::DoubleMessageParameter&>(parameter).GetValue();
+            }
+            else if (parameter.GetDataType() == dtDAL::DataType::FLOAT)
+            {
+               *value = double(static_cast<const dtGame::FloatMessageParameter&>(parameter).GetValue());
+            }
 
-            const EntityIdentifier* eid = mRuntimeMappings.GetEntityId(aid);
-            if (eid != NULL)
-               eid->Encode(buffer);
+            if (osg::getCpuByteOrder() == osg::LittleEndian)
+            {
+               osg::swapBytes((char*)(value), sizeof(double));
+            }
+            break;
+         }
+         case (RPRAttributeType::FLOAT_TYPE_ENUM):
+         {
+            float* value = (float*)(&buffer[0]);
+
+            if (parameter.GetDataType() == dtDAL::DataType::DOUBLE)
+            {
+               *value = float(static_cast<const dtGame::DoubleMessageParameter&>(parameter).GetValue());
+            }
+            else if (parameter.GetDataType() == dtDAL::DataType::FLOAT)
+            {
+               *value = static_cast<const dtGame::FloatMessageParameter&>(parameter).GetValue();
+            }
+
+            if (osg::getCpuByteOrder() == osg::LittleEndian)
+            {
+               osg::swapBytes((char*)(value), sizeof(float));
+            }
+
+            break;
+         }
+         case (RPRAttributeType::EVENT_IDENTIFIER_TYPE_ENUM):
+         {
+            EventIdentifier eventIdentifier;
+            eventIdentifier.SetEventIdentifier(static_cast<const dtGame::UnsignedShortIntMessageParameter&>(parameter).GetValue());
+            eventIdentifier.Encode(buffer);
+            break;
+         }
+         case (RPRAttributeType::OCTET_TYPE_ENUM):
+         case (RPRAttributeType::STRING_TYPE_ENUM):
+                  {
+            bool addNullTerminator = hlaType == RPRAttributeType::STRING_TYPE;
+
+            if (parameterDataType == dtDAL::DataType::STRING ||
+                     parameterDataType == dtDAL::DataType::ENUMERATION ||
+                     parameterDataType == dtDAL::DataType::ACTOR)
+            {
+               MapFromStringParamToCharArray(buffer, maxSize,
+                        parameter.ToString(),
+                        paramDef, parameterDataType, addNullTerminator);
+            }
             else
-               //clear it.
-               memset((void*)buffer, 0, maxSize);
-         }
-         else
-         {
-            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-               "Unable to map from Game Type \"%s\" to HLA type \"%s\"",
-               parameterDataType.GetName().c_str(),
-               RPRAttributeType::MARKING_TYPE.GetName().c_str());
-         }
-      }
-      else if (hlaType == RPRAttributeType::RTI_OBJECT_ID_STRUCT_TYPE)
-      {
-         if (parameterDataType == dtDAL::DataType::ACTOR)
-         {
-            const dtCore::UniqueId& value = static_cast<const dtGame::ActorMessageParameter&>(parameter).GetValue();
-
-            const std::string* rtiId = mRuntimeMappings.GetRTIId(value);
-            if( rtiId == NULL || rtiId->empty())
             {
-               maxSize = 0;
-               return;
-//               mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-//                  "No RTI string ID was mapped to ActorID \"%s\"",
-//                  value.ToString().c_str());
+               mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                        "Unable to map from Game Type \"%s\" to HLA type \"%s\"",
+                        parameterDataType.GetName().c_str(),
+                        RPRAttributeType::STRING_TYPE.GetName().c_str());
             }
-
-            const std::string& stringValue = *rtiId;
-            for (unsigned i = 0; i < RPRAttributeType::RTI_OBJECT_ID_STRUCT_TYPE.GetEncodedLength(); ++i)
+            break;
+         }
+         case (RPRAttributeType::MARKING_TYPE_ENUM):
+         {
+            if (parameterDataType == dtDAL::DataType::STRING)
             {
-               if (i < stringValue.size())
-                  buffer[i] = stringValue[i];
+               const std::string& markingText = static_cast<const dtGame::StringMessageParameter&>(parameter).GetValue();
+
+               CopyMarkingTextToBuffer(markingText, buffer, RPRAttributeType::MARKING_TYPE.GetEncodedLength());
+            }
+            else
+            {
+               mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                        "Unable to map from Game Type \"%s\" to HLA type \"%s\"",
+                        parameterDataType.GetName().c_str(),
+                        RPRAttributeType::MARKING_TYPE.GetName().c_str());
+            }
+            break;
+         }
+         case (RPRAttributeType::MARKING_TYPE_32_ENUM):
+         {
+            if (parameterDataType == dtDAL::DataType::STRING)
+            {
+               const std::string& markingText = static_cast<const dtGame::StringMessageParameter&>(parameter).GetValue();
+
+               CopyMarkingTextToBuffer(markingText, buffer, RPRAttributeType::MARKING_TYPE_32.GetEncodedLength());
+            }
+            else
+            {
+               mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                        "Unable to map from Game Type \"%s\" to HLA type \"%s\"",
+                        parameterDataType.GetName().c_str(),
+                        RPRAttributeType::MARKING_TYPE_32.GetName().c_str());
+            }
+            break;
+         }
+         case (RPRAttributeType::ENTITY_IDENTIFIER_TYPE_ENUM):
+         {
+            if (parameterDataType == dtDAL::DataType::ACTOR)
+            {
+               dtCore::UniqueId aid = static_cast<const dtGame::ActorMessageParameter&>(parameter).GetValue();
+
+               const EntityIdentifier* eid = mRuntimeMappings.GetEntityId(aid);
+               if (eid != NULL)
+                  eid->Encode(buffer);
                else
-                  //zero anything after the string value.
-                  buffer[i] = '\0';
+                  //clear it.
+                  memset((void*)buffer, 0, maxSize);
             }
-            //change the size of this parameter to match the actual string length.
-            maxSize = stringValue.size() + 1;
+            else
+            {
+               mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                        "Unable to map from Game Type \"%s\" to HLA type \"%s\"",
+                        parameterDataType.GetName().c_str(),
+                        RPRAttributeType::MARKING_TYPE.GetName().c_str());
+            }
+            break;
          }
-         // enumeration doesn't really make sense for an ID, but the method it calls supports
-         // enumerations, so there is no reason to limit it.
-         else if (parameterDataType == dtDAL::DataType::STRING ||
-               parameterDataType == dtDAL::DataType::ENUMERATION)
+         case (RPRAttributeType::RTI_OBJECT_ID_STRUCT_TYPE_ENUM):
          {
-            MapFromStringParamToCharArray(buffer, maxSize,
-                  parameter.ToString(),
-                  paramDef, parameterDataType, true);
+            if (parameterDataType == dtDAL::DataType::ACTOR)
+            {
+               const dtCore::UniqueId& value = static_cast<const dtGame::ActorMessageParameter&>(parameter).GetValue();
+
+               const std::string* rtiId = mRuntimeMappings.GetRTIId(value);
+               if( rtiId == NULL || rtiId->empty())
+               {
+                  maxSize = 0;
+                  return;
+                  //               mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                  //                  "No RTI string ID was mapped to ActorID \"%s\"",
+                  //                  value.ToString().c_str());
+               }
+
+               const std::string& stringValue = *rtiId;
+               for (unsigned i = 0; i < RPRAttributeType::RTI_OBJECT_ID_STRUCT_TYPE.GetEncodedLength(); ++i)
+               {
+                  if (i < stringValue.size())
+                     buffer[i] = stringValue[i];
+                  else
+                     //zero anything after the string value.
+                     buffer[i] = '\0';
+               }
+               //change the size of this parameter to match the actual string length.
+               maxSize = stringValue.size() + 1;
+            }
+            // enumeration doesn't really make sense for an ID, but the method it calls supports
+            // enumerations, so there is no reason to limit it.
+            else if (parameterDataType == dtDAL::DataType::STRING ||
+                     parameterDataType == dtDAL::DataType::ENUMERATION)
+            {
+               MapFromStringParamToCharArray(buffer, maxSize,
+                        parameter.ToString(),
+                        paramDef, parameterDataType, true);
+            }
+            else
+            {
+               mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                        "Unable to map from Game Type \"%s\" to HLA type \"%s\"",
+                        parameterDataType.GetName().c_str(),
+                        RPRAttributeType::RTI_OBJECT_ID_STRUCT_TYPE.GetName().c_str());
+            }
+            break;
          }
-         else
+         case (RPRAttributeType::ARTICULATED_PART_TYPE_ENUM):
          {
-            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-               "Unable to map from Game Type \"%s\" to HLA type \"%s\"",
-               parameterDataType.GetName().c_str(),
-               RPRAttributeType::RTI_OBJECT_ID_STRUCT_TYPE.GetName().c_str());
+            MapFromParamToArticulations( buffer, maxSize, parameter, paramDef );
+            break;
          }
-      }
-      else if( hlaType == RPRAttributeType::ARTICULATED_PART_TYPE )
-      {
-         MapFromParamToArticulations( buffer, maxSize, parameter, paramDef );
+         case (RPRAttributeType::ENVIRONMENT_RECORD_LIST_TYPE_ENUM):
+         {
+            MapFromParamToEnvProcessRecList( buffer, maxSize, parameter, paramDef );
+            break;
+         }
+         case (RPRAttributeType::TIME_TAG_TYPE_ENUM):
+         {
+            break;
+         }
+         default:
+         {
+         }
       }
    }
 
@@ -743,9 +855,11 @@ namespace dtHLAGM
       mCoordinates.SetRemoteReferenceForOriginRotationMatrix(worldCoord);
 
       if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+      {
          mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-         "The world coordinate was converted a local coordinate %lf %lf %lf",
-            position[0], position[1], position[2]);
+                  "The world coordinate was converted a local coordinate \"%lf %lf %lf\"",
+                  position[0], position[1], position[2]);
+      }
 
       if (parameter.GetDataType() == dtDAL::DataType::VEC3)
       {
@@ -917,6 +1031,43 @@ namespace dtHLAGM
       }
    }
 
+   ///////////////////////////////////////////////////////////////////////////////
+   void RPRParameterTranslator::MapFromEnvProcessRecListToMessageParams(
+            const char* buffer,
+            const size_t size,
+            dtGame::MessageParameter& parameter) const
+   {
+      if (parameter.GetDataType() != dtDAL::DataType::GROUP)
+      {
+         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                             "The parameter named \"%s\" could not be decoded from a \"%s\" struct because it is not a group message parameter.",
+                             parameter.GetName().c_str(),
+                             RPRAttributeType::ENVIRONMENT_RECORD_LIST_TYPE.GetName().c_str());
+      }
+      else
+      {
+         // just checked the datatype above, so no need to dynamic cast.
+         dtDAL::NamedGroupParameter& rootGroupParam = static_cast<dtDAL::NamedGroupParameter&>(parameter);
+
+         EnvironmentProcessRecordList processList(mCoordinates);
+         if (processList.Decode(buffer, size))
+         {
+            for (unsigned i = 0; i < processList.GetNumRecords(); ++i)
+            {
+               rootGroupParam.AddParameter(processList.GetRecords()[i]->GetRecordData());
+            }
+         }
+         else
+         {
+            mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
+                                "The parameter named \"%s\" could not be decoded from a \"%s\" struct because the incoming data format is incorrect or unsupported.",
+                                parameter.GetName().c_str(),
+                                RPRAttributeType::ENVIRONMENT_RECORD_LIST_TYPE.GetName().c_str());
+         }
+
+      }
+   }
+
    /////////////////////////////////////////////////////////////////////////////
    void RPRParameterTranslator::MapFromWorldCoordToMessageParam(
       const char* buffer,
@@ -1026,7 +1177,7 @@ namespace dtHLAGM
       }
    }
 
-   //////////////////////////c///////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////////////////
    void RPRParameterTranslator::MapFromCharArrayToStringParam(
          const char* buffer, const size_t size,
          dtGame::MessageParameter& parameter,
@@ -1362,7 +1513,7 @@ namespace dtHLAGM
    void RPRParameterTranslator::MapToMessageParameters(const char* buffer, size_t size,
       std::vector<dtCore::RefPtr<dtGame::MessageParameter> >& parameters, const OneToManyMapping& mapping) const
    {
-      const AttributeType& hlaType = mapping.GetHLAType();
+      const RPRAttributeType& hlaType = static_cast<const RPRAttributeType&>(mapping.GetHLAType());
 
       if (parameters.empty())
       {
@@ -1387,249 +1538,275 @@ namespace dtHLAGM
       const dtDAL::DataType& parameterDataType = parameter.GetDataType();
 
       if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+      {
          mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
             "Mapping values from HLA mapping %s to game mapping %s",
             mapping.GetHLAName().c_str(), paramDef.GetGameName().c_str());
+      }
 
-      if (hlaType == RPRAttributeType::SPATIAL_TYPE)
+      switch (hlaType.GetEnumValue())
       {
-         MapFromSpatialToMessageParams( buffer, size, parameters, mapping );
-      }
-      else if (hlaType == RPRAttributeType::WORLD_COORDINATE_TYPE)
-      {
-         MapFromWorldCoordToMessageParam( buffer, size, parameter );
-      }
-      else if (hlaType == RPRAttributeType::EULER_ANGLES_TYPE)
-      {
-         MapFromEulerAnglesToMessageParam( buffer, size, parameter );
-      }
-	   else if (hlaType == RPRAttributeType::ANGULAR_VELOCITY_VECTOR_TYPE)
-      {
-         MapFromAngularVelocityVectorToMessageParam( buffer, size, parameter );
-      }
-      else if (hlaType == RPRAttributeType::VELOCITY_VECTOR_TYPE)
-      {
-         MapFromVelocityVectorToMessageParam( buffer, size, parameter );
-      }
-      else if (hlaType == RPRAttributeType::DOUBLE_TYPE)
-      {
-         double value = *(double*)(&buffer[0]);
-
-         if (osg::getCpuByteOrder() == osg::LittleEndian)
+         case (RPRAttributeType::SPATIAL_TYPE_ENUM):
          {
-            osg::swapBytes((char*)(&value), sizeof(double));
+            MapFromSpatialToMessageParams( buffer, size, parameters, mapping );
+            break;
          }
-
-         if (parameterDataType == dtDAL::DataType::DOUBLE)
+         case (RPRAttributeType::WORLD_COORDINATE_TYPE_ENUM):
          {
-            static_cast<dtGame::DoubleMessageParameter&>(parameter).SetValue(value);
+            MapFromWorldCoordToMessageParam( buffer, size, parameter );
+            break;
          }
-         else if (parameterDataType == dtDAL::DataType::FLOAT)
+         case (RPRAttributeType::EULER_ANGLES_TYPE_ENUM):
          {
-            static_cast<dtGame::FloatMessageParameter&>(parameter).SetValue(float(value));
+            MapFromEulerAnglesToMessageParam( buffer, size, parameter );
+            break;
          }
-
-      }
-      else if (hlaType == RPRAttributeType::FLOAT_TYPE)
-      {
-         float value = *(float*)(&buffer[0]);
-
-         if (osg::getCpuByteOrder() == osg::LittleEndian)
+         case (RPRAttributeType::ANGULAR_VELOCITY_VECTOR_TYPE_ENUM):
          {
-            osg::swapBytes((char*)(&value), sizeof(float));
+            MapFromAngularVelocityVectorToMessageParam( buffer, size, parameter );
+            break;
          }
-
-         if (parameterDataType == dtDAL::DataType::DOUBLE)
+         case (RPRAttributeType::VELOCITY_VECTOR_TYPE_ENUM):
          {
-            static_cast<dtGame::DoubleMessageParameter&>(parameter).SetValue(double(value));
+            MapFromVelocityVectorToMessageParam( buffer, size, parameter );
+            break;
          }
-         else if (parameterDataType == dtDAL::DataType::FLOAT)
+         case (RPRAttributeType::DOUBLE_TYPE_ENUM):
          {
-            static_cast<dtGame::FloatMessageParameter&>(parameter).SetValue(value);
-         }
-      }
-      else if (hlaType == RPRAttributeType::UNSIGNED_INT_TYPE)
-      {
-         unsigned int value = *(unsigned int*)(&buffer[0]);
+            double value = *(double*)(&buffer[0]);
 
-         if (osg::getCpuByteOrder() == osg::LittleEndian)
-         {
-            osg::swapBytes((char*)(&value), sizeof(unsigned int));
-         }
-
-         SetIntegerValue(unsigned (value), parameter, mapping, 0);
-      }
-      else if (hlaType == RPRAttributeType::UNSIGNED_SHORT_TYPE)
-      {
-         unsigned short value = *(unsigned short*)(&buffer[0]);
-
-         if (osg::getCpuByteOrder() == osg::LittleEndian)
-           osg::swapBytes((char*)(&value), sizeof(unsigned short));
-
-         SetIntegerValue(unsigned (value), parameter, mapping, 0);
-      }
-      else if (hlaType == RPRAttributeType::UNSIGNED_CHAR_TYPE)
-      {
-         unsigned char value = *(unsigned char*)(&buffer[0]);
-         SetIntegerValue(unsigned (value), parameter, mapping, 0);
-      }
-      else if (hlaType == RPRAttributeType::EVENT_IDENTIFIER_TYPE)
-      {
-         EventIdentifier eventIdentifier;
-         eventIdentifier.Decode(buffer);
-      }
-      else if (hlaType == RPRAttributeType::ENTITY_TYPE)
-      {
-         // Convert to Entity Type from either an Enum or a String.
-         if( parameterDataType == dtDAL::DataType::ENUMERATION
-            || parameterDataType == dtDAL::DataType::STRING )
-         {
-            // Since this is a valid type, convert the buffer to
-            // an Entity Type object.
-            EntityType entityType;
-            entityType.Decode(buffer);
-
-            std::ostringstream stringValue;
-            //this current code only allows for exact matches and a default.
-            stringValue << entityType;
-
-            // Write the value to the property
-            if( parameterDataType == dtDAL::DataType::ENUMERATION )
+            if (osg::getCpuByteOrder() == osg::LittleEndian)
             {
-               std::string mappedValue = GetEnumValue(stringValue.str(), paramDef, true);
-               static_cast<dtGame::EnumMessageParameter&>(parameter).SetValue(mappedValue);
-            }
-            else // STRING
-            {
-               static_cast<dtGame::StringMessageParameter&>(parameter).SetValue(stringValue.str());
-            }
-         }
-         else
-         {
-            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-               "Unable to map HLA type \"%s\" to \"%s\"",
-               RPRAttributeType::ENTITY_TYPE.GetName().c_str(),
-               parameterDataType.GetName().c_str());
-         }
-      }
-      else if (hlaType == RPRAttributeType::STRING_TYPE ||
-               hlaType == RPRAttributeType::OCTET_TYPE)
-      {
-         bool stopAtNullTerminator = hlaType == RPRAttributeType::STRING_TYPE;
-
-         if (parameterDataType == dtDAL::DataType::STRING ||
-             parameterDataType == dtDAL::DataType::ENUMERATION ||
-             parameterDataType == dtDAL::DataType::ACTOR)
-         {
-            MapFromCharArrayToStringParam(buffer, size,
-                  parameter,
-                  paramDef, stopAtNullTerminator);
-         }
-         else
-         {
-            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-               "Unable to map HLA type \"%s\" to \"%s\"",
-               hlaType.GetName().c_str(),
-               parameterDataType.GetName().c_str());
-         }
-      }
-      else if (hlaType == RPRAttributeType::MARKING_TYPE)
-      {
-         if (parameterDataType == dtDAL::DataType::STRING)
-         {
-            std::string markingText;
-            CopyBufferToMarkingText(buffer, markingText, RPRAttributeType::MARKING_TYPE.GetEncodedLength());
-
-            static_cast<dtGame::StringMessageParameter&>(parameter).SetValue(markingText);
-         }
-         else
-         {
-            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-               "Unable to map HLA type \"%s\" to \"%s\"",
-               RPRAttributeType::MARKING_TYPE.GetName().c_str(),
-               parameterDataType.GetName().c_str());
-         }
-      }
-      else if (hlaType == RPRAttributeType::MARKING_TYPE_32)
-      {
-         if (parameterDataType == dtDAL::DataType::STRING)
-         {
-            std::string markingText;
-            CopyBufferToMarkingText(buffer, markingText, RPRAttributeType::MARKING_TYPE_32.GetEncodedLength());
-
-            static_cast<dtGame::StringMessageParameter&>(parameter).SetValue(markingText);
-         }
-         else
-         {
-            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-               "Unable to map HLA type \"%s\" to \"%s\"",
-               RPRAttributeType::MARKING_TYPE_32.GetName().c_str(),
-               parameterDataType.GetName().c_str());
-         }
-      }
-      else if (hlaType == RPRAttributeType::ENTITY_IDENTIFIER_TYPE)
-      {
-         EntityIdentifier eid;
-         eid.Decode(buffer);
-         if (parameterDataType == dtDAL::DataType::ACTOR)
-         {
-            const dtCore::UniqueId* oid = mRuntimeMappings.GetId(eid);
-            if (oid != NULL)
-               static_cast<dtGame::ActorMessageParameter&>(parameter).SetValue(*oid);
-         }
-         else
-         {
-            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-               "Unable to map HLA type \"%s\" to \"%s\"",
-               RPRAttributeType::ENTITY_IDENTIFIER_TYPE.GetName().c_str(),
-               parameterDataType.GetName().c_str());
-         }
-      }
-      else if (hlaType == RPRAttributeType::RTI_OBJECT_ID_STRUCT_TYPE)
-      {
-         if (parameterDataType == dtDAL::DataType::ACTOR)
-         {
-            std::string value;
-            for (unsigned i = 0; i < size; ++i)
-            {
-               char c = buffer[i];
-               if (c == '\0')
-                  break;
-               value.append(1, c);
+               osg::swapBytes((char*)(&value), sizeof(double));
             }
 
-            // Get the actor id mapped to the RTI id
-            const dtCore::UniqueId* actorId = mRuntimeMappings.GetIdByRTIId(value);
+            if (parameterDataType == dtDAL::DataType::DOUBLE)
+            {
+               static_cast<dtGame::DoubleMessageParameter&>(parameter).SetValue(value);
+            }
+            else if (parameterDataType == dtDAL::DataType::FLOAT)
+            {
+               static_cast<dtGame::FloatMessageParameter&>(parameter).SetValue(float(value));
+            }
+            break;
+         }
+         case (RPRAttributeType::FLOAT_TYPE_ENUM):
+         {
+            float value = *(float*)(&buffer[0]);
 
-            // Set the actor id value
-            static_cast<dtGame::ActorMessageParameter&>(parameter)
-               .SetValue( actorId != NULL ? *actorId : dtCore::UniqueId(""));
+            if (osg::getCpuByteOrder() == osg::LittleEndian)
+            {
+               osg::swapBytes((char*)(&value), sizeof(float));
+            }
+
+            if (parameterDataType == dtDAL::DataType::DOUBLE)
+            {
+               static_cast<dtGame::DoubleMessageParameter&>(parameter).SetValue(double(value));
+            }
+            else if (parameterDataType == dtDAL::DataType::FLOAT)
+            {
+               static_cast<dtGame::FloatMessageParameter&>(parameter).SetValue(value);
+            }
+            break;
          }
-         else if (parameterDataType == dtDAL::DataType::STRING ||
-               parameterDataType == dtDAL::DataType::ENUMERATION)
+         case (RPRAttributeType::UNSIGNED_INT_TYPE_ENUM):
          {
-            MapFromCharArrayToStringParam(buffer, size,
-                  static_cast<dtGame::StringMessageParameter&>(parameter), paramDef);
+            unsigned int value = *(unsigned int*)(&buffer[0]);
+
+            if (osg::getCpuByteOrder() == osg::LittleEndian)
+            {
+               osg::swapBytes((char*)(&value), sizeof(unsigned int));
+            }
+
+            SetIntegerValue(unsigned (value), parameter, mapping, 0);
+            break;
          }
-         else
+         case (RPRAttributeType::UNSIGNED_SHORT_TYPE_ENUM):
          {
+            unsigned short value = *(unsigned short*)(&buffer[0]);
+
+            if (osg::getCpuByteOrder() == osg::LittleEndian)
+              osg::swapBytes((char*)(&value), sizeof(unsigned short));
+
+            SetIntegerValue(unsigned (value), parameter, mapping, 0);
+            break;
+         }
+         case (RPRAttributeType::UNSIGNED_CHAR_TYPE_ENUM):
+         {
+            unsigned char value = *(unsigned char*)(&buffer[0]);
+            SetIntegerValue(unsigned (value), parameter, mapping, 0);
+            break;
+         }
+         case (RPRAttributeType::EVENT_IDENTIFIER_TYPE_ENUM):
+         {
+            EventIdentifier eventIdentifier;
+            eventIdentifier.Decode(buffer);
+            break;
+         }
+         case (RPRAttributeType::ENTITY_TYPE_ENUM):
+         {
+            // Convert to Entity Type from either an Enum or a String.
+            if( parameterDataType == dtDAL::DataType::ENUMERATION
+               || parameterDataType == dtDAL::DataType::STRING )
+            {
+               // Since this is a valid type, convert the buffer to
+               // an Entity Type object.
+               EntityType entityType;
+               entityType.Decode(buffer);
+
+               std::ostringstream stringValue;
+               //this current code only allows for exact matches and a default.
+               stringValue << entityType;
+
+               // Write the value to the property
+               if( parameterDataType == dtDAL::DataType::ENUMERATION )
+               {
+                  std::string mappedValue = GetEnumValue(stringValue.str(), paramDef, true);
+                  static_cast<dtGame::EnumMessageParameter&>(parameter).SetValue(mappedValue);
+               }
+               else // STRING
+               {
+                  static_cast<dtGame::StringMessageParameter&>(parameter).SetValue(stringValue.str());
+               }
+            }
+            else
+            {
+               mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                  "Unable to map HLA type \"%s\" to \"%s\"",
+                  RPRAttributeType::ENTITY_TYPE.GetName().c_str(),
+                  parameterDataType.GetName().c_str());
+            }
+            break;
+         }
+         case (RPRAttributeType::STRING_TYPE_ENUM):
+         case (RPRAttributeType::OCTET_TYPE_ENUM):
+         {
+            bool stopAtNullTerminator = hlaType == RPRAttributeType::STRING_TYPE;
+
+            if (parameterDataType == dtDAL::DataType::STRING ||
+                parameterDataType == dtDAL::DataType::ENUMERATION ||
+                parameterDataType == dtDAL::DataType::ACTOR)
+            {
+               MapFromCharArrayToStringParam(buffer, size,
+                     parameter,
+                     paramDef, stopAtNullTerminator);
+            }
+            else
+            {
+               mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                  "Unable to map HLA type \"%s\" to \"%s\"",
+                  hlaType.GetName().c_str(),
+                  parameterDataType.GetName().c_str());
+            }
+            break;
+         }
+         case (RPRAttributeType::MARKING_TYPE_ENUM):
+         {
+            if (parameterDataType == dtDAL::DataType::STRING)
+            {
+               std::string markingText;
+               CopyBufferToMarkingText(buffer, markingText, RPRAttributeType::MARKING_TYPE.GetEncodedLength());
+
+               static_cast<dtGame::StringMessageParameter&>(parameter).SetValue(markingText);
+            }
+            else
+            {
+               mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                  "Unable to map HLA type \"%s\" to \"%s\"",
+                  RPRAttributeType::MARKING_TYPE.GetName().c_str(),
+                  parameterDataType.GetName().c_str());
+            }
+            break;
+         }
+         case (RPRAttributeType::MARKING_TYPE_32_ENUM):
+         {
+            if (parameterDataType == dtDAL::DataType::STRING)
+            {
+               std::string markingText;
+               CopyBufferToMarkingText(buffer, markingText, RPRAttributeType::MARKING_TYPE_32.GetEncodedLength());
+
+               static_cast<dtGame::StringMessageParameter&>(parameter).SetValue(markingText);
+            }
+            else
+            {
+               mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                  "Unable to map HLA type \"%s\" to \"%s\"",
+                  RPRAttributeType::MARKING_TYPE_32.GetName().c_str(),
+                  parameterDataType.GetName().c_str());
+            }
+            break;
+         }
+         case (RPRAttributeType::ENTITY_IDENTIFIER_TYPE_ENUM):
+         {
+            EntityIdentifier eid;
+            eid.Decode(buffer);
+            if (parameterDataType == dtDAL::DataType::ACTOR)
+            {
+               const dtCore::UniqueId* oid = mRuntimeMappings.GetId(eid);
+               if (oid != NULL)
+                  static_cast<dtGame::ActorMessageParameter&>(parameter).SetValue(*oid);
+            }
+            else
+            {
+               mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                  "Unable to map HLA type \"%s\" to \"%s\"",
+                  RPRAttributeType::ENTITY_IDENTIFIER_TYPE.GetName().c_str(),
+                  parameterDataType.GetName().c_str());
+            }
+            break;
+         }
+         case (RPRAttributeType::RTI_OBJECT_ID_STRUCT_TYPE_ENUM):
+         {
+            if (parameterDataType == dtDAL::DataType::ACTOR)
+            {
+               std::string value;
+               for (unsigned i = 0; i < size; ++i)
+               {
+                  char c = buffer[i];
+                  if (c == '\0')
+                     break;
+                  value.append(1, c);
+               }
+
+               // Get the actor id mapped to the RTI id
+               const dtCore::UniqueId* actorId = mRuntimeMappings.GetIdByRTIId(value);
+
+               // Set the actor id value
+               static_cast<dtGame::ActorMessageParameter&>(parameter)
+                  .SetValue( actorId != NULL ? *actorId : dtCore::UniqueId(""));
+            }
+            else if (parameterDataType == dtDAL::DataType::STRING ||
+                  parameterDataType == dtDAL::DataType::ENUMERATION)
+            {
+               MapFromCharArrayToStringParam(buffer, size,
+                     static_cast<dtGame::StringMessageParameter&>(parameter), paramDef);
+            }
+            else
+            {
+               mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                  "Unable to map HLA type \"%s\" to \"%s\"",
+                  RPRAttributeType::RTI_OBJECT_ID_STRUCT_TYPE.GetName().c_str(),
+                  parameterDataType.GetName().c_str());
+            }
+            break;
+         }
+         case (RPRAttributeType::ARTICULATED_PART_TYPE_ENUM):
+         {
+            MapFromArticulationsToMessageParam(buffer, size, parameter, parameterDataType, paramDef);
+            break;
+         }
+         case (RPRAttributeType::ENVIRONMENT_RECORD_LIST_TYPE_ENUM):
+         {
+            MapFromEnvProcessRecListToMessageParams( buffer, size, parameter );
+         }
+         default:
+         {
+            //This could only happen if someone defined a new Attribute type but didn't write
+            //code to handle it.
             mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-               "Unable to map HLA type \"%s\" to \"%s\"",
-               RPRAttributeType::RTI_OBJECT_ID_STRUCT_TYPE.GetName().c_str(),
-               parameterDataType.GetName().c_str());
+                                "Unhandled attribute type \"%s\"",
+                                hlaType.GetName().c_str());
          }
-      }
-      else if (hlaType == RPRAttributeType::ARTICULATED_PART_TYPE)
-      {
-         MapFromArticulationsToMessageParam(buffer, size, parameter, parameterDataType, paramDef);
-      }
-      else
-      {
-         //This could only happen if someone defined a new Attribute type but didn't write
-         //code to handle it.
-         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-                             "Unhandled attribute type \"%s\"",
-                             hlaType.GetName().c_str());
       }
       parameter.WriteToLog(*mLogger);
    }

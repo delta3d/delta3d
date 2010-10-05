@@ -21,38 +21,24 @@
 
 #include <prefix/dtdalprefix.h>
 #include <dtDAL/namedgroupparameter.h>
-
-#include <dtDAL/namedactorparameter.h>
-#include <dtDAL/namedarrayparameter.h>
-#include <dtDAL/namedbooleanparameter.h>
-#include <dtDAL/namedcontainerparameter.h>
-#include <dtDAL/nameddoubleparameter.h>
-#include <dtDAL/namedenumparameter.h>
-#include <dtDAL/namedfloatparameter.h>
-#include <dtDAL/namedgameeventparameter.h>
-#include <dtDAL/namedgenericparameter.h>
-#include <dtDAL/namedintparameter.h>
-#include <dtDAL/namedlongintparameter.h>
-#include <dtDAL/namedpodparameter.h>
-#include <dtDAL/namedshortintparameter.h>
-#include <dtDAL/namedunsignedcharparameter.h>
-#include <dtDAL/namedunsignedintparameter.h>
-#include <dtDAL/namedunsignedlongintparameter.h>
-#include <dtDAL/namedunsignedshortintparameter.h>
-#include <dtDAL/namedresourceparameter.h>
-#include <dtDAL/namedrgbcolorparameter.h>
-#include <dtDAL/namedrgbacolorparameter.h>
-#include <dtDAL/namedstringparameter.h>
-#include <dtDAL/namedvectorparameters.h>
-
 #include <dtDAL/groupactorproperty.h>
+#include <dtDAL/exceptionenum.h>
+#include <dtUtil/datastream.h>
+#include <dtUtil/stringutils.h>
 
 namespace dtDAL
 {
    ///////////////////////////////////////////////////////////////////////////////
-   NamedGroupParameter::NamedGroupParameter(const dtUtil::RefString& name) :
-      NamedParameter(dtDAL::DataType::GROUP, name, false)
+   NamedGroupParameter::NamedGroupParameter(const dtUtil::RefString& name)
+   : NamedParameter(dtDAL::DataType::GROUP, name, false)
    {}
+
+   ///////////////////////////////////////////////////////////////////////////////
+   NamedGroupParameter::NamedGroupParameter(const NamedGroupParameter& toCopy)
+   : NamedParameter(dtDAL::DataType::GROUP, toCopy.GetName(), false)
+   {
+      CopyFrom(toCopy);
+   }
 
    void NamedGroupParameter::ToDataStream(dtUtil::DataStream& stream) const
    {
@@ -215,22 +201,10 @@ namespace dtDAL
       NamedGroupParameter::ParameterList::const_iterator end = gpm.mParameterList.end();
       for (; i != end; ++i)
       {
-         dtCore::RefPtr<NamedParameter> newParameter = NULL;
-         if (i->second->IsList())
-         {
-            newParameter = CreateFromType(i->second->GetDataType(), i->first, true);
-            AddParameter(*newParameter);
-         }
-         else
-         {
-            newParameter = AddParameter(i->first, i->second->GetDataType());
-         }
-         if (newParameter == NULL)
-            //This case should not happen, the method above should throw an exception if it doesn't work, but
-            //this is a case of paranoid programming.
-            throw dtDAL::BaseException(
-            "Unable to create parameter of type " + i->second->GetDataType().GetName(),
-            __FILE__, __LINE__);
+         NamedParameter& cur = *i->second;
+
+         dtCore::RefPtr<NamedParameter> newParameter =
+                  AddParameter(cur.GetName(), cur.GetDataType(), cur.IsList());
 
          newParameter->CopyFrom(*i->second);
       }
@@ -238,7 +212,7 @@ namespace dtDAL
 
    ///////////////////////////////////////////////////////////////////////////////
    NamedParameter* NamedGroupParameter::AddParameter(const dtUtil::RefString& name,
-      dtDAL::DataType& type)
+      dtDAL::DataType& type, bool createAsList)
    {
       dtCore::RefPtr<NamedParameter> param = CreateFromType(type, name);
       if (param.valid())
@@ -295,7 +269,9 @@ namespace dtDAL
       NamedGroupParameter::ParameterList::iterator i = mParameterList.begin();
       NamedGroupParameter::ParameterList::iterator end = mParameterList.end();
       for (;i != end; ++i)
+      {
          toFill.push_back(i->second.get());
+      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -306,7 +282,9 @@ namespace dtDAL
       NamedGroupParameter::ParameterList::const_iterator i = mParameterList.begin();
       NamedGroupParameter::ParameterList::const_iterator end = mParameterList.end();
       for (;i != end; ++i)
+      {
          toFill.push_back(i->second.get());
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -360,118 +338,6 @@ namespace dtDAL
          return true;
       }
       return false;
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
-   dtCore::RefPtr<NamedParameter> NamedGroupParameter::CreateFromType(
-      dtDAL::DataType& type, const dtUtil::RefString& name, bool isList)
-   {
-      dtCore::RefPtr<NamedParameter> param;
-
-      switch (type.GetTypeId())
-      {
-      case dtDAL::DataType::CHAR_ID:
-      case dtDAL::DataType::UCHAR_ID:
-         param = new NamedUnsignedCharParameter(name,0,isList);
-         break;
-      case dtDAL::DataType::FLOAT_ID:
-         param = new NamedFloatParameter(name,0.0f,isList);
-         break;
-      case dtDAL::DataType::DOUBLE_ID:
-         param = new NamedDoubleParameter(name,0.0,isList);
-         break;
-      case dtDAL::DataType::INT_ID:
-         param = new NamedIntParameter(name,0,isList);
-         break;
-      case dtDAL::DataType::UINT_ID:
-         param = new NamedUnsignedIntParameter(name,0,isList);
-         break;
-      case dtDAL::DataType::ULONGINT_ID:
-         param = new NamedUnsignedLongIntParameter(name,0,isList);
-         break;
-      case dtDAL::DataType::LONGINT_ID:
-         param = new NamedLongIntParameter(name,0,isList);
-         break;
-      case dtDAL::DataType::SHORTINT_ID:
-         param = new NamedShortIntParameter(name,0,isList);
-         break;
-      case dtDAL::DataType::USHORTINT_ID:
-         param = new NamedUnsignedShortIntParameter(name,0,isList);
-         break;
-      case dtDAL::DataType::STRING_ID:
-         param = new NamedStringParameter(name,"",isList);
-         break;
-      case dtDAL::DataType::BOOLEAN_ID:
-         param = new NamedBooleanParameter(name,false,isList);
-         break;
-      case dtDAL::DataType::VEC2_ID:
-         param = new NamedVec2Parameter(name,osg::Vec2(0,0),isList);
-         break;
-      case dtDAL::DataType::VEC3_ID:
-         param = new NamedVec3Parameter(name,osg::Vec3(0,0,0),isList);
-         break;
-      case dtDAL::DataType::VEC4_ID:
-         param = new NamedVec4Parameter(name,osg::Vec4(0,0,0,0),isList);
-         break;
-      case dtDAL::DataType::VEC2F_ID:
-         param = new NamedVec2fParameter(name,osg::Vec2f(0,0),isList);
-         break;
-      case dtDAL::DataType::VEC3F_ID:
-         param = new NamedVec3fParameter(name,osg::Vec3f(0,0,0),isList);
-         break;
-      case dtDAL::DataType::VEC4F_ID:
-         param = new NamedVec4fParameter(name,osg::Vec4f(0,0,0,0),isList);
-         break;
-      case dtDAL::DataType::VEC2D_ID:
-         param = new NamedVec2dParameter(name,osg::Vec2d(0,0),isList);
-         break;
-      case dtDAL::DataType::VEC3D_ID:
-         param = new NamedVec3dParameter(name,osg::Vec3d(0,0,0),isList);
-         break;
-      case dtDAL::DataType::VEC4D_ID:
-         param = new NamedVec4dParameter(name,osg::Vec4d(0,0,0,0),isList);
-         break;
-      case dtDAL::DataType::RGBCOLOR_ID:
-         param = new NamedRGBColorParameter(name,osg::Vec3(0,0,0),isList);
-         break;
-      case dtDAL::DataType::RGBACOLOR_ID:
-         param = new NamedRGBAColorParameter(name,osg::Vec4(0,0,0,0),isList);
-         break;
-      case dtDAL::DataType::ENUMERATION_ID:
-         param = new NamedEnumParameter(name,"",isList);
-         break;
-      case dtDAL::DataType::GAMEEVENT_ID:
-         param = new NamedGameEventParameter(name,dtCore::UniqueId(""),isList);
-         break;
-      case dtDAL::DataType::ACTOR_ID:
-         param = new NamedActorParameter(name,dtCore::UniqueId(""),isList);
-         break;
-      case dtDAL::DataType::GROUP_ID:
-         param = new NamedGroupParameter(name);
-         break;
-      case dtDAL::DataType::ARRAY_ID:
-         param = new NamedArrayParameter(name);
-         break;
-      case dtDAL::DataType::CONTAINER_ID:
-         param = new NamedContainerParameter(name);
-         break;
-      case dtDAL::DataType::STATICMESH_ID:
-      case dtDAL::DataType::TEXTURE_ID:
-      case dtDAL::DataType::TERRAIN_ID:
-      case dtDAL::DataType::SOUND_ID:
-      case dtDAL::DataType::PARTICLESYSTEM_ID:
-      case dtDAL::DataType::SKELETAL_MESH_ID:
-      case dtDAL::DataType::PREFAB_ID:
-      case dtDAL::DataType::SHADER_ID:
-      case dtDAL::DataType::DIRECTOR_ID:
-         param = new NamedResourceParameter(type,name,isList);
-         break;
-      default:
-         throw dtDAL::InvalidParameterException( "Type " + type.GetName() + " is not supported by the MessageParameter class.", __FILE__, __LINE__);
-         break;
-      }
-
-      return param;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
