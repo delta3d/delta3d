@@ -22,7 +22,7 @@ namespace dtHLAGM
           */
          Spatial(bool littleEndian = false);
 
-         virtual ~Spatial();
+         ~Spatial();
 
          char GetDeadReckoningAlgorithm() const { return mDeadReckoningAlgorithm; }
          void SetDeadReckoningAlgorithm(char newAlgorithm) 
@@ -60,7 +60,7 @@ namespace dtHLAGM
           * @return the used buffer size or 0 is encoding failed, probably due to the maxSize being 
           *         too small.
           */
-         size_t Encode(char * buffer, size_t maxSize);
+         size_t Encode(char * buffer, size_t maxSize) const;
          
          /**
           * Decodes the data in the buffer, filling this structure.
@@ -81,7 +81,7 @@ namespace dtHLAGM
          bool            mLittleEndian;
 
          //Helper method used to get the size of the base structure.
-         size_t GetBaseSize();
+         size_t GetBaseSize() const;
  };
 
 }

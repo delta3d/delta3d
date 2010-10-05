@@ -135,13 +135,13 @@ namespace dtHLAGM
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   size_t Spatial::GetBaseSize()
+   size_t Spatial::GetBaseSize() const
    {
       return 8 + mWorldCoordinate.EncodedLength() + 4 + mOrientation.EncodedLength();
    }
    
    /////////////////////////////////////////////////////////////////////////////////
-   size_t Spatial::Encode(char * buffer, size_t maxSize)
+   size_t Spatial::Encode(char* buffer, size_t maxSize) const
    {
       size_t result = 0;
 
@@ -160,9 +160,7 @@ namespace dtHLAGM
          ds << mDeadReckoningAlgorithm;
          ds.WriteBytes(0, 7U);
    
-         ds << mWorldCoordinate.x();
-         ds << mWorldCoordinate.y();
-         ds << mWorldCoordinate.z();
+         ds << mWorldCoordinate;
    
          ds << mIsFrozen;
          ds.WriteBytes(0, 3U);
@@ -180,7 +178,7 @@ namespace dtHLAGM
             case 6:
                if (maxSize >= ds.GetBufferSize() + mVelocity.EncodedLength())
                {
-                  WriteVec(mVelocity, ds);
+                  ds << mVelocity;
                   result = ds.GetBufferSize();
                }
                else
@@ -194,8 +192,8 @@ namespace dtHLAGM
                if (maxSize >= ds.GetBufferSize() + mVelocity.EncodedLength()
                         + mAcceleration.EncodedLength())
                {
-                  WriteVec(mVelocity, ds);
-                  WriteVec(mAcceleration, ds);
+                  ds << mVelocity;
+                  ds << mAcceleration;
                   result = ds.GetBufferSize();
                }
                else
@@ -209,8 +207,8 @@ namespace dtHLAGM
                if (maxSize >= ds.GetBufferSize() + mVelocity.EncodedLength()
                         + mAngularVelocity.EncodedLength())
                {
-                  WriteVec(mVelocity, ds);
-                  WriteVec(mAngularVelocity, ds);
+                  ds << mVelocity;
+                  ds << mAngularVelocity;
                   result = ds.GetBufferSize();
                }
                else
@@ -226,9 +224,9 @@ namespace dtHLAGM
                         + mAngularVelocity.EncodedLength()
                         )
                {
-                  WriteVec(mVelocity, ds);
-                  WriteVec(mAcceleration, ds);
-                  WriteVec(mAngularVelocity, ds);
+                  ds << mVelocity;
+                  ds << mAcceleration;
+                  ds << mAngularVelocity;
                   result = ds.GetBufferSize();
                }
                else
@@ -247,19 +245,10 @@ namespace dtHLAGM
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   static void ReadVec(osg::Vec3f& vec, dtUtil::DataStream& readStream)
-   {
-      for (size_t i = 0; i < 3; ++i)
-      {
-         readStream >> vec[i];
-      }
-   }
-
-   /////////////////////////////////////////////////////////////////////////////////
-   bool Spatial::Decode(const char * buffer, size_t size)
+   bool Spatial::Decode(const char* buffer, size_t size)
    {
       bool result = false;
-      ///ewww, const cast, but the data stream won't use a non-const pointer.
+      //ewww, const cast, but the data stream won't use a const pointer.
       dtUtil::DataStream ds(const_cast<char *>(buffer), size, false);
       ds.SetForceLittleEndian(mLittleEndian);
 
@@ -269,14 +258,12 @@ namespace dtHLAGM
          ds >> mDeadReckoningAlgorithm;
          ds.Seekg(7U, dtUtil::DataStream::SeekTypeEnum::CURRENT);
 
-         ds >> mWorldCoordinate.x();
-         ds >> mWorldCoordinate.y();
-         ds >> mWorldCoordinate.z();
+         ds >> mWorldCoordinate;
 
          ds >> mIsFrozen;
          ds.Seekg(3U, dtUtil::DataStream::SeekTypeEnum::CURRENT);
 
-         ReadVec(mOrientation, ds);
+         ds >> mOrientation;
 
          switch (mDeadReckoningAlgorithm)
          {
@@ -288,7 +275,7 @@ namespace dtHLAGM
             case 6:
                if (size >= baseSize + mVelocity.EncodedLength())
                {
-                  ReadVec(mVelocity, ds);
+                  ds >> mVelocity;
                   result = true;
                }
                break;
@@ -299,8 +286,8 @@ namespace dtHLAGM
                         + mAcceleration.EncodedLength()
                         )
                {
-                  ReadVec(mVelocity, ds);
-                  ReadVec(mAcceleration, ds);
+                  ds >> mVelocity;
+                  ds >> mAcceleration;
                   result = true;
                }
                break;
@@ -311,8 +298,8 @@ namespace dtHLAGM
                         + mAngularVelocity.EncodedLength()
                         )
                {
-                  ReadVec(mVelocity, ds);
-                  ReadVec(mAngularVelocity, ds);
+                  ds >> mVelocity;
+                  ds >> mAngularVelocity;
                }
                result = true;
                break;
@@ -324,9 +311,9 @@ namespace dtHLAGM
                         + mAngularVelocity.EncodedLength()
                         )
                {
-                  ReadVec(mVelocity, ds);
-                  ReadVec(mAcceleration, ds);
-                  ReadVec(mAngularVelocity, ds);
+                  ds >> mVelocity;
+                  ds >> mAcceleration;
+                  ds >> mAngularVelocity;
                   result = true;
                }
                break;
