@@ -56,6 +56,7 @@ SET(LIB_PUBLIC_HEADERS
     ${HEADER_PATH}/namedgameeventparameter.h
     ${HEADER_PATH}/namedgenericparameter.h
     ${HEADER_PATH}/namedgroupparameter.h
+    ${HEADER_PATH}/namedgroupparameter.inl
     ${HEADER_PATH}/namedintparameter.h
     ${HEADER_PATH}/namedlongintparameter.h
     ${HEADER_PATH}/namedparameter.h
