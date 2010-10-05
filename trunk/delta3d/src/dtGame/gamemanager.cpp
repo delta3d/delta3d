@@ -1371,7 +1371,7 @@ namespace dtGame
          }
          else
          {
-            LOG_ERROR("Deleting Actor twice: \"" + id.ToString() + "\" Name: \"" + gameActorProxy.GetName() +
+            LOG_INFO("Deleting Actor twice: \"" + id.ToString() + "\" Name: \"" + gameActorProxy.GetName() +
                "\" Type: \"" + gameActorProxy.GetActorType().GetFullName() + "\".");
          }
       }
