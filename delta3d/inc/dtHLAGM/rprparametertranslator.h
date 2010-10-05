@@ -47,6 +47,31 @@ namespace dtHLAGM
 
       public:
 
+         enum SwitchEnum
+         {
+            SPATIAL_TYPE_ENUM,
+            WORLD_COORDINATE_TYPE_ENUM,
+            EULER_ANGLES_TYPE_ENUM,
+            VELOCITY_VECTOR_TYPE_ENUM,
+            ANGULAR_VELOCITY_VECTOR_TYPE_ENUM,
+            UNSIGNED_INT_TYPE_ENUM,
+            UNSIGNED_CHAR_TYPE_ENUM,
+            UNSIGNED_SHORT_TYPE_ENUM,
+            FLOAT_TYPE_ENUM,
+            DOUBLE_TYPE_ENUM,
+            ENTITY_TYPE_ENUM,
+            ENTITY_IDENTIFIER_TYPE_ENUM,
+            EVENT_IDENTIFIER_TYPE_ENUM,
+            MARKING_TYPE_ENUM,
+            MARKING_TYPE_32_ENUM,
+            STRING_TYPE_ENUM,
+            OCTET_TYPE_ENUM,
+            ARTICULATED_PART_TYPE_ENUM,
+            RTI_OBJECT_ID_STRUCT_TYPE_ENUM,
+            TIME_TAG_TYPE_ENUM,
+            ENVIRONMENT_RECORD_LIST_TYPE_ENUM
+         };
+
          /**
           * The RPR 2.0 spatial structure which provides the position, rotation, and all pertinent
           *  motion information to allow for deadreckoning.
@@ -74,58 +99,62 @@ namespace dtHLAGM
           */
          static const RPRAttributeType ANGULAR_VELOCITY_VECTOR_TYPE;
 
-         ///An unsigned integer.
+         /// An unsigned integer.
          static const RPRAttributeType UNSIGNED_INT_TYPE;
 
-         ///A unsigned character.
+         /// A unsigned character.
          static const RPRAttributeType UNSIGNED_CHAR_TYPE;
 
-         ///An unsigned short integer.
+         /// An unsigned short integer.
          static const RPRAttributeType UNSIGNED_SHORT_TYPE;
 
-         ///single precision floating point value.
+         /// single precision floating point value.
          static const RPRAttributeType FLOAT_TYPE;
 
-         ///double precision floating point value.
+         /// double precision floating point value.
          static const RPRAttributeType DOUBLE_TYPE;
 
-         ///struct holding a DIS entity enumeration.
+         /// struct holding a DIS entity enumeration.
          static const RPRAttributeType ENTITY_TYPE;
 
          /// An identifier uniquely marking an entity.
          static const RPRAttributeType ENTITY_IDENTIFIER_TYPE;
 
-         ///An identifier uniquely marking an event.
+         /// An identifier uniquely marking an event.
          static const RPRAttributeType EVENT_IDENTIFIER_TYPE;
 
-         ///Identifier for an entity marking used to hold both a marking type and the content of the marking.
+         /// Identifier for an entity marking used to hold both a marking type and the content of the marking.
          static const RPRAttributeType MARKING_TYPE;
 
-         ///Identifier for an entity marking used to hold both a marking type and the content of the marking (32 bytes).
+         /// Identifier for an entity marking used to hold both a marking type and the content of the marking (32 bytes).
          static const RPRAttributeType MARKING_TYPE_32;
 
-         ///A variable length string.
+         /// A variable length string.
          static const RPRAttributeType STRING_TYPE;
 
          /// A variable length block of bytes up to 65535 bytes.
          static const RPRAttributeType OCTET_TYPE;
 
-         ///A type for the articulation to be captured / sent
+         /// A type for the articulation to be captured / sent
          static const RPRAttributeType ARTICULATED_PART_TYPE;
 
-         ///RTI string ID type used to identify a single federation entity, usually in firing and detonation events.
+         /// RTI string ID type used to identify a single federation entity, usually in firing and detonation events.
          static const RPRAttributeType RTI_OBJECT_ID_STRUCT_TYPE;
 
-         ///The time string passed to time tag
+         /// The time string passed to time tag
          static const RPRAttributeType TIME_TAG_TYPE;
 
+         /// A list of environment process records.  Will be converted to a record count and a group property holding the parsed data.
+         static const RPRAttributeType ENVIRONMENT_RECORD_LIST_TYPE;
+
+         SwitchEnum GetEnumValue() const;
+
       private:
-         RPRAttributeType(const std::string& name, unsigned char id, size_t encodedLength):AttributeType(name, id, encodedLength)
-         {
-            AddInstance(this);
-         }
+         RPRAttributeType(const std::string& name, unsigned char supportedParameters, size_t encodedLength, SwitchEnum enumValue);
 
          virtual ~RPRAttributeType() {}
+
+         SwitchEnum mEnumValue;
    };
 
    class DT_HLAGM_EXPORT RPRParameterTranslator : public ParameterTranslator
@@ -189,6 +218,12 @@ namespace dtHLAGM
             std::vector<dtCore::RefPtr<const dtGame::MessageParameter> >& parameters,
             const OneToManyMapping& mapping) const;
 
+         void MapFromParamToEnvProcessRecList(
+            char* buffer,
+            size_t& maxSize,
+            const dtGame::MessageParameter& parameter,
+            const OneToManyMapping::ParameterDefinition& paramDef) const;
+
          void MapFromParamToWorldCoord(
             char* buffer,
             const size_t maxSize,
@@ -235,6 +270,11 @@ namespace dtHLAGM
             const size_t maxSize,
             std::vector<dtCore::RefPtr<dtGame::MessageParameter> >& parameters,
             const OneToManyMapping& mapping) const;
+
+         void MapFromEnvProcessRecListToMessageParams(
+            const char* buffer,
+            const size_t size,
+            dtGame::MessageParameter& parameter) const;
 
          void MapFromWorldCoordToMessageParam(
             const char* buffer,

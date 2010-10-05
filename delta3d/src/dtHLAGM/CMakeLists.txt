@@ -7,7 +7,31 @@ INCLUDE_DIRECTORIES(${RTI_INCLUDE_DIR})
 SET(HEADER_PATH ${DELTA3D_SOURCE_DIR}/inc/${LIB_NAME})
 SET(SOURCE_PATH ${DELTA3D_SOURCE_DIR}/src/${LIB_NAME})
 file(GLOB LIB_PUBLIC_HEADERS "${HEADER_PATH}/*.h")
-file(GLOB LIB_SOURCES "*.cpp")
+
+SET(LIB_SOURCES
+   attributetype.cpp
+   ddmappspacecalculator.cpp
+   ddmcalculatorgeographic.cpp
+   ddmcameracalculatorgeographic.cpp
+   ddmgeographicregiondata.cpp
+   ddmmultienumeratedcalculator.cpp
+   ddmregioncalculator.cpp
+   ddmregioncalculatorgroup.cpp
+   ddmregiondata.cpp
+   ddmutil.cpp
+   distypes.cpp
+   environmentprocessrecordlist.cpp
+   exceptionenum.cpp
+   hlacomponent.cpp
+   hlacomponentconfig.cpp
+   hlafomconfigxml.cpp
+   objectruntimemappinginfo.cpp
+   objecttoactor.cpp
+   onetomanymapping.cpp
+   rprparametertranslator.cpp
+   spatial.cpp
+)
+
 list(REMOVE_ITEM LIB_SOURCES ${SOURCE_PATH}/precomp.cpp)
 
 ADD_LIBRARY(${LIB_NAME} SHARED

@@ -25,6 +25,8 @@
 
 #include <dtDAL/namedparameter.h>
 
+#include <dtDAL/datatype.h>
+
 #include <dtCore/refptr.h>
 
 #include <map>
@@ -38,6 +40,25 @@ namespace dtDAL
          typedef std::map<dtUtil::RefString, dtCore::RefPtr<NamedParameter> > ParameterList;
 
          NamedGroupParameter(const dtUtil::RefString& name);
+         NamedGroupParameter(const NamedGroupParameter& toCopy);
+
+         template <typename ParameterContainer >
+         NamedGroupParameter(const dtUtil::RefString& name, const ParameterContainer& parameters)
+         : NamedParameter(dtDAL::DataType::GROUP, name, false)
+         {
+            typename ParameterContainer::const_iterator i, iend;
+            i = parameters.begin();
+            iend = parameters.end();
+            for (; i != iend; ++i)
+            {
+               NamedParameter& cur = **i;
+
+               dtCore::RefPtr<NamedParameter> newParameter =
+                        AddParameter(cur.GetName(), cur.GetDataType(), cur.IsList());
+
+               newParameter->CopyFrom(cur);
+            }
+         }
 
          virtual void ToDataStream(dtUtil::DataStream& stream) const;
 
@@ -49,15 +70,35 @@ namespace dtDAL
 
          virtual void CopyFrom(const NamedParameter& otherParam);
 
+
+         /**
+          * Include namedgroupparameter.inl to use this function
+          */
+         template <typename T>
+         inline void AddValue(const dtUtil::RefString& name, const T& value);
+
+         /**
+          * Include namedgroupparameter.inl to use this function
+          */
+         template <typename T>
+         inline void SetValue(const dtUtil::RefString& name, const T& value);
+
+         /**
+          * Include namedgroupparameter.inl to use this function
+          */
+         template <typename T>
+         inline const T& GetValue(const dtUtil::RefString& name, const T& defaultVal) const;
+
          /**
           * Adds a parameter to the group
           * @param name The name of the parameter to add
           * @param type The type of parameter it is, corresponding with dtDAL::DataType
+          * @param createAsList true if the parameter should be a list parameter.
           * @return A pointer to the parameter
           * @see dtDAL::DataType
           * @throws dtUtil::Exception if the name specified is already used.
           */
-         NamedParameter* AddParameter(const dtUtil::RefString& name, dtDAL::DataType& type);
+         NamedParameter* AddParameter(const dtUtil::RefString& name, dtDAL::DataType& type, bool createAsList = false);
 
          /**
           * Removes a parameter to the group
@@ -83,11 +124,33 @@ namespace dtDAL
          NamedParameter* GetParameter(const dtUtil::RefString& name);
 
          /**
+          * Retrieves the pointer to the parameter for this group parameter with the given name.
+          * @param name The name of the parameter to retrieve
+          * @param outParam outputs a pointer to the parameter or NULL if no such parameter exists or the param is not that type.
+          */
+         template <typename T>
+         void GetParameter(const dtUtil::RefString& name, T*& outParam)
+         {
+            outParam = dynamic_cast<T*>(GetParameter(name));
+         }
+
+         /**
           * Retrieves const pointer to the parameter for this group parameter with the given name.
           * @param name The name of the parameter to retrieve
           * @return A const pointer to the parameter or NULL if no such parameter exists
           */
          const NamedParameter* GetParameter(const dtUtil::RefString& name) const;
+
+         /**
+          * Retrieves const pointer to the parameter for this group parameter with the given name.
+          * @param name The name of the parameter to retrieve
+          * @param outParam outputs a const pointer to the parameter or NULL if no such parameter exists or the param is not that type.
+          */
+         template <typename T>
+         void GetParameter(const dtUtil::RefString& name, const T*& outParam) const
+         {
+            outParam = dynamic_cast<const T*>(GetParameter(name));
+         }
 
          /**
           * Retrieves all of the parameters in this group.
@@ -132,16 +195,6 @@ namespace dtDAL
          virtual void ApplyValueToProperty(dtDAL::ActorProperty& property) const;
 
          virtual bool operator==(const NamedParameter& toCompare) const;
-
-         /**
-          * Creates a message parameter that will hold the given type.
-          * @param type the datatype the parameter should hold.
-          * @param name the name of the parameter to create.
-          * @throw dtUtil::Exception with dtGame::ExceptionEnum::INVALID_PARAMETER if the type is unsupported.
-          */
-         static dtCore::RefPtr<NamedParameter> CreateFromType(
-                  dtDAL::DataType& type,
-                  const dtUtil::RefString& name, bool isList = false);
 
       private:
          ParameterList mParameterList;

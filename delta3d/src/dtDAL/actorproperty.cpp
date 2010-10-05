@@ -22,12 +22,10 @@
 
 #include <prefix/dtdalprefix.h>
 #include <dtDAL/actorproperty.h>
+#include <dtDAL/namedparameter.h>
 #include <iostream>
 
 #include <dtCore/refptr.h>
-
-//For initial ToDataStream solution. Eventually this should be removed when all properties can do the work themselves.
-#include <dtDAL/namedgroupparameter.h>
 
 namespace dtDAL
 {
@@ -64,7 +62,7 @@ namespace dtDAL
    ////////////////////////////////////////
    void ActorProperty::ToDataStream(dtUtil::DataStream& stream) const
    {
-      dtCore::RefPtr<dtDAL::NamedParameter> param = NamedGroupParameter::CreateFromType(GetDataType(), GetName(), false);
+      dtCore::RefPtr<NamedParameter> param = NamedParameter::CreateFromType(GetDataType(), GetName(), false);
       param->SetFromProperty(*this);
       param->ToDataStream(stream);
    }
@@ -77,7 +75,7 @@ namespace dtDAL
          return false;
       }
 
-      dtCore::RefPtr<dtDAL::NamedParameter> param = NamedGroupParameter::CreateFromType(GetDataType(), GetName(), false);
+      dtCore::RefPtr<NamedParameter> param = NamedParameter::CreateFromType(GetDataType(), GetName(), false);
       bool result = param->FromDataStream(stream);
       if (result)
       {
