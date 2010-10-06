@@ -474,64 +474,6 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////
-   void DeadReckoningHelper::ComputeRotationChangeWithAngularVelocity(double deltaTime, osg::Matrix& result)
-   {
-      // THIS METHOD IS NOW OBSOLETE
-
-      if (mAngularVelocityVector.length2() < 1e-6)
-      {
-         result.makeIdentity();
-      }
-      else
-      {
-         double w = sqrt (mAngularVelocityVector[0]*mAngularVelocityVector[0]+
-                       mAngularVelocityVector[1]*mAngularVelocityVector[1]+
-                       mAngularVelocityVector[2]*mAngularVelocityVector[2]);
-
-         double omega00 = 0;
-         double omega01 = -mAngularVelocityVector[2];
-         double omega02 = mAngularVelocityVector[1];
-         double omega03 = 0;
-
-         double omega10 = mAngularVelocityVector[2];
-         double omega11 = 0;
-         double omega12 = -mAngularVelocityVector[0];
-         double omega13 = 0;
-
-         double omega20 = -mAngularVelocityVector[1];
-         double omega21 = mAngularVelocityVector[0];
-         double omega22 = 0;
-         double omega23 = 0;
-
-         double ww00 = mAngularVelocityVector[0]*mAngularVelocityVector[0];
-         double ww01 = mAngularVelocityVector[0]*mAngularVelocityVector[1];
-         double ww02 = mAngularVelocityVector[0]*mAngularVelocityVector[2];
-         double ww03 = 0;
-
-         double ww10 = mAngularVelocityVector[1]*mAngularVelocityVector[0];
-         double ww11 = mAngularVelocityVector[1]*mAngularVelocityVector[1];
-         double ww12 = mAngularVelocityVector[1]*mAngularVelocityVector[2];
-         double ww13 = 0;
-
-         double ww20 = mAngularVelocityVector[2]*mAngularVelocityVector[0];
-         double ww21 = mAngularVelocityVector[2]*mAngularVelocityVector[1];
-         double ww22 = mAngularVelocityVector[2]*mAngularVelocityVector[2];
-         double ww23 = 0;
-
-         double c1 = (1-cos(w*deltaTime))/(w*w);
-         double c2 = cos(w*deltaTime);
-         double c3 = -sin(w*deltaTime)/w;
-
-         result.set(
-         c1*ww00+c2*1+c3*omega00, c1*ww01+c2*0+c3*omega01, c1*ww02+c2*0+c3*omega02,c1*ww03+c2*0+c3*omega03,
-         c1*ww10+c2*0+c3*omega10, c1*ww11+c2*1+c3*omega11, c1*ww12+c2*0+c3*omega12,c1*ww13+c2*0+c3*omega13,
-         c1*ww20+c2*0+c3*omega20, c1*ww21+c2*0+c3*omega21, c1*ww22+c2*1+c3*omega22,c1*ww23+c2*0+c3*omega23,
-         0, 0, 0,1
-         );
-      }
-   }
-
-   //////////////////////////////////////////////////////////////////////
    void DeadReckoningHelper::SetGroundOffset(float newOffset)
    {
       mGroundClampingData.SetGroundOffset(newOffset);
@@ -1034,12 +976,6 @@ namespace dtGame
             osg::Matrix angularRotation;
             float actualRotationTime = std::min(mRotationElapsedTimeSinceUpdate, mRotationEndSmoothingTime);
 
-            // The rotation change method was replaced with a much simpler calculation. 
-            // Create a quaternian using an axis/angle derived from teh ang vel vector. 
-            //ComputeRotationChangeWithAngularVelocity(actualRotationTime, angularRotation);
-            //osg::Quat angularRotAsQuat;//(rotationAngle, angVelAxis);
-            //angularRotation.get(angularRotAsQuat);
-
             osg::Vec3 angVelAxis(mAngularVelocityVector);
             float angVelMag = angVelAxis.normalize(); // returns the length
             // rotation around the axis is magnitude of ang vel * time.
@@ -1173,7 +1109,7 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////
-   void DeadReckoningHelper::DeadReckonThePositionUsingLinearBlend(osg::Vec3& pos, dtUtil::Log* pLogger, GameActor &gameActor)
+   void DeadReckoningHelper::DeadReckonThePositionUsingLinearBlend(osg::Vec3& pos, dtUtil::Log* pLogger, GameActor& gameActor)
    {
       float smoothingFactor = mTranslationElapsedTimeSinceUpdate/mTranslationEndSmoothingTime;
 

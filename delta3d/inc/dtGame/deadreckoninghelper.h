@@ -434,13 +434,6 @@ namespace dtGame
 
          void SetRotationResolved(bool resolved) { mRotationResolved=resolved; }
 
-         /**
-          * Computes the change in rotation based on the angular velocity. This is used by DeadReckonTheRotation().
-          * @param deltaTime the time elapsed since the last measured attitude
-          * @param result the resulting matrix.
-          */
-         void ComputeRotationChangeWithAngularVelocity(double deltaTime, osg::Matrix& result);
-
          GroundClampingData& GetGroundClampingData() { return mGroundClampingData; }
          const GroundClampingData& GetGroundClampingData() const { return mGroundClampingData; }
 
