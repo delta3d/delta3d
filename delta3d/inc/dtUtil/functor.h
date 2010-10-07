@@ -200,7 +200,7 @@ MakeFunctor(CallType fun)
 }
 template <typename CallType, class PObj> inline
 Functor<typename dtUtil::FunTraits<CallType>::ResultType, typename dtUtil::FunTraits<CallType>::TypeListType> 
-MakeFunctor(CallType memfun, PObj const& pobj)
+MakeFunctor(CallType memfun, PObj* const pobj)
 {
    return dtUtil::Functor<typename dtUtil::FunTraits<CallType>::ResultType, typename dtUtil::FunTraits<CallType>::TypeListType>(pobj, memfun);
 }
