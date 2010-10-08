@@ -26,11 +26,9 @@
 #include <cal3d/coreanimation.h>
 #include <cal3d/hardwaremodel.h>
 #include <cal3d/coresubmesh.h>
-#include <dtAnim/characterfilehandler.h>
 #include <dtAnim/animationwrapper.h>
 #include <dtAnim/animationchannel.h>
 #include <dtAnim/animationsequence.h>
-#include <dtAnim/cal3dmodeldata.h>
 #include <dtUtil/datapathutils.h>
 #include <dtUtil/xercesparser.h>
 #include <dtUtil/log.h>
@@ -231,8 +229,246 @@ namespace dtAnim
    }
 
    /////////////////////////////////////////////////////////////////////////////
+   // Helper Function
+   typedef CharacterFileHandler::AnimatableOverrideStruct OverrideStruct;
+   typedef CharacterFileHandler::AnimatableOverrideStructArray OverrideStructArray;
+   typedef CharacterFileHandler::AnimationSequenceStruct AnimationSequenceStruct;
+   void SetAnimatableValues(Animatable& animatable, const OverrideStruct& info)
+   {
+      if(info.mOverrideFadeIn)
+      {
+         animatable.SetFadeIn(info.mFadeIn);
+      }
+
+      if(info.mOverrideFadeOut)
+      {
+         animatable.SetFadeOut(info.mFadeOut);
+      }
+
+      if(info.mOverrideStartDelay)
+      {
+         animatable.SetStartDelay(info.mStartDelay);
+      }
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   // Helper Function
+   /*bool IsAnimatableAlreadyParent(Animatable& animatable)
+   {
+      // TODO:
+
+      return false;
+   }*/
+
+   /////////////////////////////////////////////////////////////////////////////
+   // Helper Function
+   OverrideStruct* GetPreviousOverrideStruct(const std::string& name,
+      AnimationSequenceStruct& sequenceStruct, OverrideStructArray::iterator& startIter)
+   {
+      OverrideStruct* overrideStruct = NULL;
+
+      // Go through and find the last occurrence of the struct
+      // that has the specified name.
+      OverrideStructArray::iterator curIter = sequenceStruct.GetChildren().begin();
+      OverrideStructArray::iterator endIter = startIter;
+      for (; curIter != endIter; ++curIter)
+      {
+         if(name == curIter->mName)
+         {
+            overrideStruct = &(*curIter);
+         }
+      }
+
+      // If the struct was not found before the start point, then look after
+      // the start point.
+      if(overrideStruct == NULL && startIter != sequenceStruct.GetChildren().end())
+      {
+         curIter = startIter;
+         ++curIter;
+         OverrideStructArray::iterator endIter = sequenceStruct.GetChildren().end();
+         for (; curIter != endIter; ++curIter)
+         {
+            if(name == curIter->mName)
+            {
+               overrideStruct = &(*curIter);
+
+               // Found the first occurrence.
+               break;
+            }
+         }
+      }
+
+      return overrideStruct;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   // Helper Function
+   Animatable* GetAnimatable(const std::string& animName, Cal3DModelData::AnimatableArray& animArray)
+   {
+      Animatable* anim = NULL;
+      Cal3DModelData::AnimatableArray::iterator curIter = animArray.begin();
+      Cal3DModelData::AnimatableArray::iterator endIter = animArray.end();
+      for(; curIter != endIter; ++curIter)
+      {
+         if((*curIter)->GetName() == animName)
+         {
+            anim = curIter->get();
+            break;
+         }
+      }
+
+      return anim;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   // Helper Function
+   float ResolveCrossFade(OverrideStruct& previous, OverrideStruct& current)
+   {
+      const float crossFade = current.mCrossFade;
+      
+      // Check for cross fade.
+      if (crossFade != 0.0f)
+      {
+         if (previous.mFadeOut < crossFade)
+         {
+            previous.mOverrideFadeOut = true;
+            previous.mFadeOut = crossFade;
+         }
+
+         if (current.mFadeIn < crossFade)
+         {
+            current.mOverrideFadeIn = true;
+            current.mFadeIn = crossFade;
+         }
+      }
+
+      return crossFade;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   // Helper Function
+   void Cal3DLoader::FinalizeSequenceInfo(AnimationSequenceStruct& sequenceStruct,
+      Cal3DModelData::AnimatableArray& animArray)
+   {
+      // Declare variables to be used by the subsequent loop.
+      float curTimeOffset = 0.0f;
+      Animatable* prevAnim = NULL;
+      Animatable* curAnim = NULL;
+      OverrideStruct* prevStruct = NULL;
+      OverrideStruct* curStruct = NULL;
+      OverrideStructArray::iterator curIter = sequenceStruct.GetChildren().begin();
+      OverrideStructArray::iterator endIter = sequenceStruct.GetChildren().end();
+
+      // For each animation segment...
+      for (; curIter != endIter; ++curIter)
+      {
+         // Get ready for this loop.
+         prevStruct = curStruct;
+         curStruct = &(*curIter);
+
+         prevAnim = curAnim;
+         curAnim = GetAnimatable(curStruct->mName, animArray);
+
+         // TODO:
+         // Prevent recursive nesting of sequences. Avoid situations such as
+         // sequence A includes sequence B, and at a lower level of B, sequence A
+         // could be included again.
+         /*if(IsAnimatableAlreadyParent(curAnim))
+         {
+            // TODO: How?
+            continue;
+         }*/
+
+         // Determine if the this loop should be skipped.
+         if( ! curStruct->mOverrideStartDelay)
+         {
+            curStruct->mOverrideStartDelay = !curStruct->mFollowAnimatableName.empty()
+               || curStruct->mFollowsPrevious;
+
+            if( ! curStruct->mOverrideStartDelay)
+            {
+               // Time offset/delay should not be modified
+               // for the current animatable.
+               continue;
+            }
+         }
+
+         // Determine if the current animation follows another, that
+         // is not the previous one.
+         if (!curStruct->mFollowAnimatableName.empty())
+         {
+            // Get the referenced animation segment info struct.
+            OverrideStruct* foundStruct
+               = GetPreviousOverrideStruct(curStruct->mFollowAnimatableName, sequenceStruct, curIter);
+
+            // Set it as the new previous animation.
+            if(foundStruct != NULL && prevStruct != foundStruct)
+            {
+               // DEBUG:
+               //std::cout << "\n\t\t\t\tFOUND: " << curStruct->mFollowAnimatableName << "\n";
+
+               prevStruct = foundStruct;
+               prevAnim = GetAnimatable(foundStruct->mName, animArray);
+            }
+         }
+         // If not following the previously processed struct...
+         else if(!curStruct->mFollowsPrevious)
+         {
+            // ...do not reference the struct and reset the current offset.
+            prevStruct = NULL;
+            curTimeOffset = 0.0f;
+         }
+
+
+         // Work on things that require information from the previous animatable.
+         if (prevStruct != NULL)
+         {
+            // DEBUG:
+            //std::cout << "\n\t\t\t" << curStruct->mName << " follows: " << prevStruct->mName << "\n";
+
+            // Adjust time offset relative to the previous animation segment.
+            if(prevAnim != NULL)
+            {
+               // Adjust the offset only if there is an end to the animation.
+               float animLength = prevAnim->CalculateDuration();
+               if(animLength != Animatable::INFINITE_TIME)
+               {
+                  // DEBUG:
+                  //std::cout << "\n\t\t\t\tOffset(none) by: " << (prevStruct->mStartDelay + animLength) << "\n";
+
+                  curTimeOffset = prevStruct->mStartDelay + animLength;
+               }
+            }
+
+            // Deduct cross fade time from the current time offset
+            // as the current segment will start withing the time
+            // period of the previous segment.
+            curTimeOffset -= ResolveCrossFade(*prevStruct, *curStruct);
+         }
+
+
+         // Shift the time offset for the current animatable struct.
+         curStruct->mStartDelay += curTimeOffset;
+
+         if(curStruct->mStartDelay < 0.0f)
+         {
+            curStruct->mStartDelay = 0.0f;
+         }
+
+         // DEBUG:
+         //std::cout << "\n\t\t\t\tStarts: " << curStruct->mStartDelay << "\n";
+      }
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
    void Cal3DLoader::LoadModelData(dtAnim::CharacterFileHandler& handler, CalCoreModel& model, Cal3DModelData& modelData)
    {
+      // Redefine some types so that they are easier to read.
+      typedef CharacterFileHandler::AnimationChannelStruct ChannelStruct;
+      typedef CharacterFileHandler::ChannelStructArray ChannelStructArray;
+      typedef CharacterFileHandler::AnimationSequenceStruct SequenceStruct;
+      typedef CharacterFileHandler::SequenceStructArray SequenceStructArray;
+
       // create animation wrappers
       int numAnims = model.getCoreAnimationCount();
       modelData.GetAnimationWrappers().reserve(numAnims);
@@ -277,11 +513,14 @@ namespace dtAnim
          int numAnimatables = handler.mAnimationChannels.size() + handler.mAnimationSequences.size();
          modelData.GetAnimatables().reserve(numAnimatables);
 
-         std::vector<CharacterFileHandler::AnimationChannelStruct>::iterator channelIter = handler.mAnimationChannels.begin();
-         std::vector<CharacterFileHandler::AnimationChannelStruct>::iterator channelEnd = handler.mAnimationChannels.end();
+         ChannelStructArray::iterator channelIter = handler.mAnimationChannels.begin();
+         ChannelStructArray::iterator channelEnd = handler.mAnimationChannels.end();
          for (;channelIter != channelEnd; ++channelIter)
          {
-            CharacterFileHandler::AnimationChannelStruct& pStruct = *channelIter;
+            ChannelStruct& pStruct = *channelIter;
+
+            // DEBUG:
+            //std::cout << "Getting channel:\t" << pStruct.mAnimationName << "\n";
 
             int id = model.getCoreAnimationId(pStruct.mAnimationName);
             if (id >= 0 && id < numAnims)
@@ -300,6 +539,9 @@ namespace dtAnim
                pChannel->SetFadeOut(pStruct.mFadeOut);
                pChannel->SetSpeed(pStruct.mSpeed);
 
+               // DEBUG:
+               //std::cout << "\tAdding channel:\t" << pChannel->GetName() << "\n";
+
                modelData.Add(pChannel.get());
             }
             else
@@ -309,11 +551,17 @@ namespace dtAnim
 
          }
 
-         std::vector<CharacterFileHandler::AnimationSequenceStruct>::iterator sequenceIter = handler.mAnimationSequences.begin();
-         std::vector<CharacterFileHandler::AnimationSequenceStruct>::iterator sequenceEnd = handler.mAnimationSequences.end();
+         SequenceStructArray::iterator sequenceIter = handler.mAnimationSequences.begin();
+         SequenceStructArray::iterator sequenceEnd = handler.mAnimationSequences.end();
          for (;sequenceIter != sequenceEnd; ++sequenceIter)
          {
             CharacterFileHandler::AnimationSequenceStruct& pStruct = *sequenceIter;
+
+            // DEBUG:
+            //std::cout << "\n\tAdding sequence:\t" << pStruct.mName << "\n";
+
+            // Ensure child animation overrides time offsets are setup in relation to each other.
+            FinalizeSequenceInfo(pStruct, modelData.GetAnimatables());
 
             dtCore::RefPtr<AnimationSequence> pSequence = new AnimationSequence();
 
@@ -325,20 +573,34 @@ namespace dtAnim
             pSequence->SetBaseWeight(pStruct.mBaseWeight);
 
             // find children
-            std::vector<std::string>::const_iterator i = pStruct.mChildNames.begin();
-            std::vector<std::string>::const_iterator end = pStruct.mChildNames.end();
+            OverrideStruct* curOverrideStruct = NULL;
+            OverrideStructArray::iterator i = pStruct.GetChildren().begin();
+            OverrideStructArray::iterator end = pStruct.GetChildren().end();
             for (; i != end; ++i)
             {
-               const std::string& nameToFind = *i;
+               curOverrideStruct = &(*i);
+
+               const std::string& nameToFind = curOverrideStruct->mName;
                Cal3DModelData::AnimatableArray::iterator animIter = modelData.GetAnimatables().begin();
                Cal3DModelData::AnimatableArray::iterator animIterEnd = modelData.GetAnimatables().end();
 
                for (; animIter != animIterEnd; ++animIter)
                {
                   Animatable* animatable = animIter->get();
-                  if (animatable->GetName() == nameToFind)
+                  if (animatable->GetName() == nameToFind
+                     && pStruct.mName != nameToFind) // Avoid referencing the sequence itself.
                   {
-                     pSequence->GetChildAnimations().push_back(animatable);
+                     // Copy the found animation since it may be overridden
+                     // within the scope of a sequence.
+                     dtCore::RefPtr<Animatable> newAnim = animatable->Clone(NULL);
+
+                     // Override values as specified in the character file.
+                     SetAnimatableValues(*newAnim, *curOverrideStruct);
+
+                     pSequence->GetChildAnimations().push_back(newAnim.get());
+
+                     // DEBUG:
+                     //std::cout << "\n\t\tSub Anim:\t" << newAnim->GetName() << "\n";
                   }
                }
             }

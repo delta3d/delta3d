@@ -70,6 +70,10 @@ const std::string CharacterFileHandler::MAX_VISIBLE_DISTANCE_ELEMENT("maxVisible
 const std::string CharacterFileHandler::SCALE_ELEMENT("scale");
 const std::string CharacterFileHandler::SCALE_FACTOR_ELEMENT("scalingFactor");
 
+static const std::string FOLLOW_PREV_ELEMENT("followPrevious");
+static const std::string FOLLOWS_ELEMENT("follows");
+static const std::string CROSS_FADE_ELEMENT("crossFade");
+
 ////////////////////////////////////////////////////////////////////////////////
 CharacterFileHandler::AnimatableStruct::AnimatableStruct()
    : mStartDelay(0.0f)
@@ -77,6 +81,16 @@ CharacterFileHandler::AnimatableStruct::AnimatableStruct()
    , mFadeOut(0.0f)
    , mSpeed(0.0f)
    , mBaseWeight(0.0f)
+{
+}
+
+////////////////////////////////////////////////////////////////////////////////
+CharacterFileHandler::AnimatableOverrideStruct::AnimatableOverrideStruct()
+   : mOverrideStartDelay(false)
+   , mOverrideFadeIn(false)
+   , mOverrideFadeOut(false)
+   , mFollowsPrevious(false)
+   , mCrossFade(0.0f)
 {
 }
 
@@ -91,6 +105,15 @@ CharacterFileHandler::AnimationChannelStruct::AnimationChannelStruct()
 ////////////////////////////////////////////////////////////////////////////////
 CharacterFileHandler::AnimationSequenceStruct::AnimationSequenceStruct()
 {
+   mData = new AnimStructContainer;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+CharacterFileHandler::AnimatableOverrideStructArray&
+   CharacterFileHandler::AnimationSequenceStruct::GetChildren()
+{
+   return mData->mChildren;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -114,6 +137,7 @@ CharacterFileHandler::CharacterFileHandler()
    , mInScale(false)
    , mInChannel(false)
    , mInSequence(false)
+   , mInSequenceChild(false)
    , mLogger(NULL)
 {
    mLogger = &dtUtil::Log::GetInstance(CHARACTER_XML_LOGGER);
@@ -347,6 +371,16 @@ void CharacterFileHandler::startElement( const XMLCh* const uri,const XMLCh* con
       mInSequence = true;
       mAnimationSequences.push_back(AnimationSequenceStruct());
    }
+   else if(elementStr == CHILD_ELEMENT)
+   {
+      mInSequenceChild = true;
+
+      if (!mAnimationSequences.empty())
+      {
+         AnimatableOverrideStruct aos;
+         mAnimationSequences.back().GetChildren().push_back(aos);
+      }
+   }
 
    if (!errorString.empty())
    {
@@ -402,6 +436,10 @@ void CharacterFileHandler::endElement(const XMLCh* const uri,
    {
       mInSequence = false;
    }
+   else if(elementStr == CHILD_ELEMENT)
+   {
+      mInSequenceChild = false;
+   }
 
    mElements.pop();
 }
@@ -438,6 +476,10 @@ void CharacterFileHandler::characters(const XMLCh* const chars,
    else if (mInChannel)
    {
       AnimChannelCharacters(chars);
+   }
+   else if (mInSequenceChild)
+   {
+      AnimSequenceChildCharacters(chars);
    }
    else if (mInSequence)
    {
@@ -595,12 +637,7 @@ void CharacterFileHandler::AnimSequenceCharacters(const XMLCh* const chars)
 
    if (!AnimatableCharacters(chars, pSequence))
    {
-      if (topEl == CHILD_ELEMENT)
-      {
-         std::string childName = dtUtil::XMLStringConverter(chars).ToString();
-         pSequence.mChildNames.push_back(childName);
-      }
-      else if (topEl != SEQUENCE_ELEMENT)
+      if (topEl != SEQUENCE_ELEMENT)
       {
          mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__,
                               "Found characters for unknown element \"%s\" \"%s\"",
@@ -613,6 +650,67 @@ void CharacterFileHandler::AnimSequenceCharacters(const XMLCh* const chars)
       mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__,
                            "Found characters for element \"%s\" \"%s\"",
                            topEl.c_str(), dtUtil::XMLStringConverter(chars).c_str());
+   }
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+void CharacterFileHandler::AnimSequenceChildCharacters(const XMLCh* const chars)
+{
+   std::string& topEl = mElements.top();
+   AnimationSequenceStruct& sequence = mAnimationSequences.back();
+   AnimatableOverrideStruct* curStruct = NULL;
+   
+   if ( ! sequence.GetChildren().empty())
+   {
+      curStruct = &sequence.GetChildren().back();
+   }
+
+   if(curStruct != NULL)
+   {
+      std::string value(dtUtil::XMLStringConverter(chars).ToString());
+      dtUtil::Trim(value);
+
+      if (topEl == CHILD_ELEMENT)
+      {
+         // If valid text was entered, then this must be an older version
+         // of the character XML.
+         if (curStruct->mName.empty() && !value.empty())
+         {
+            curStruct->mName = value;
+         }
+      }
+      else if (topEl == NAME_ELEMENT)
+      {
+         curStruct->mName = value;
+      }
+      else if (topEl == FOLLOWS_ELEMENT)
+      {
+         curStruct->mFollowAnimatableName = value;
+      }
+      else if (topEl == FOLLOW_PREV_ELEMENT)
+      {
+         curStruct->mFollowsPrevious = dtUtil::ToType<int>(value) > 0;
+      }
+      else if (topEl == START_DELAY_ELEMENT)
+      {
+         curStruct->mOverrideStartDelay = true;
+         curStruct->mStartDelay = dtUtil::ToType<float>(value);
+      }
+      else if (topEl == FADE_IN_ELEMENT)
+      {
+         curStruct->mOverrideFadeIn = true;
+         curStruct->mFadeIn = dtUtil::ToType<float>(value);
+      }
+      else if (topEl == FADE_OUT_ELEMENT)
+      {
+         curStruct->mOverrideFadeOut = true;
+         curStruct->mFadeOut = dtUtil::ToType<float>(value);
+      }
+      else if (topEl == CROSS_FADE_ELEMENT)
+      {
+         curStruct->mCrossFade = dtUtil::ToType<float>(value);
+      }
    }
 }
 

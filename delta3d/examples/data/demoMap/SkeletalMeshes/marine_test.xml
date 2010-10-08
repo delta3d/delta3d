@@ -36,6 +36,18 @@
       <isLooping>1</isLooping>
    </animationChannel>
    <animationChannel>
+      <name>RunAction</name>
+      <animationName>Run</animationName>
+      <startDelay>0.0</startDelay>
+      <fadeIn>0.0</fadeIn>
+      <fadeOut>0.0</fadeOut>
+      <speed>1.0</speed>
+      <baseWeight>1.0</baseWeight>
+      <maxDuration>0.0</maxDuration>
+      <isAction>1</isAction>
+      <isLooping>0</isLooping>
+   </animationChannel>
+   <animationChannel>
       <name>Walk</name>
       <animationName>Walk</animationName>
       <startDelay>0.0</startDelay>
@@ -81,6 +93,23 @@
       <children>
          <child>Run</child>
          <child>Walk</child>
+      </children>
+   </animationSequence>
+   <animationSequence>
+      <name>ActionSequence</name>
+      <startDelay>0.1</startDelay>
+      <fadeIn>0.2</fadeIn>
+      <fadeOut>0.2</fadeOut>
+      <speed>1.0</speed>
+      <baseWeight>1.0</baseWeight>
+      <children>
+         <child>
+            <name>RunAction</name>
+         </child>
+         <child>
+            <name>IdleAction</name>
+            <followPrevious>1</followPrevious>
+         </child>
       </children>
    </animationSequence>
 </character>
