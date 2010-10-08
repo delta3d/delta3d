@@ -46,13 +46,15 @@ namespace dtAnim
    class TestAnimatable: public Animatable
    {
       public:
-         TestAnimatable(){}
+         TestAnimatable()
+            : mDuration(0.0f) {}
          TestAnimatable(const TestAnimatable& anim):Animatable(anim){}
          TestAnimatable& operator=(const TestAnimatable& anim){Animatable::operator=(anim); return *this;}
 
          void Update(float dt){};
          void ForceFadeOut(float time){}; 
          void Recalculate(){}
+         float CalculateDuration() {return mDuration;}
          dtCore::RefPtr<Animatable> Clone(Cal3DModelWrapper* pWrapper)const{return new TestAnimatable(*this);}
          void Prune(){SetPrune(true);}
 
@@ -65,6 +67,11 @@ namespace dtAnim
          void SetStartDelay2(float start_delay1){ SetStartDelay(start_delay1);}
 
          void SetElapsedTime2(float time){ SetElapsedTime(time);}
+
+         void SetTestDuration(float seconds) {mDuration = seconds;}
+         float GetTestDuration() const {return mDuration;}
+
+         float mDuration;
    };
 
    class TestSequence: public AnimationSequence
@@ -93,6 +100,7 @@ namespace dtAnim
       CPPUNIT_TEST( UnitTestAnimatable );
       CPPUNIT_TEST( TestAnimChannel );
       CPPUNIT_TEST( TestAnimSequence );
+      CPPUNIT_TEST( TestAnimSequenceCalculateDuration );
       CPPUNIT_TEST( TestSequenceMixer );
       CPPUNIT_TEST( TestAnimHelper );
       CPPUNIT_TEST( TestAnimController );
@@ -107,6 +115,7 @@ namespace dtAnim
          void UnitTestAnimatable(); 
          void TestAnimChannel();
          void TestAnimSequence();         
+         void TestAnimSequenceCalculateDuration();         
          void TestSequenceMixer();
          void TestAnimController();
          void TestAnimHelper();
@@ -280,17 +289,42 @@ namespace dtAnim
       dtCore::RefPtr<AnimationWrapper> wrapper1 = new AnimationWrapper("ChickenWalk", 1);
       wrapper1->SetDuration(39.6f);
 
+      CPPUNIT_ASSERT_MESSAGE("Channel should be looping by default.", channel->IsLooping());
+      CPPUNIT_ASSERT_MESSAGE("Channel should not have a definite end when looping.",
+         ! channel->HasDefiniteEnd());
+      CPPUNIT_ASSERT_MESSAGE("Channel should have infinite time limit when looping",
+         channel->CalculateDuration() == Animatable::INFINITE_TIME);
+
       CPPUNIT_ASSERT_MESSAGE("The animation wrapper should default to NULL", channel->GetAnimation() == NULL);
       channel->SetAnimation(wrapper1.get());
       CPPUNIT_ASSERT_MESSAGE("The Getter should work after it's set.", channel->GetAnimation() == wrapper1.get());
 
       const AnimationChannel* channelConst = channel.get();
       CPPUNIT_ASSERT_MESSAGE("The const Getter should work after it's set.", 
-            channelConst->GetAnimation() == wrapper1.get());
+         channelConst->GetAnimation() == wrapper1.get());
 
       channel = new AnimationChannel(NULL, wrapper1.get());
       CPPUNIT_ASSERT_MESSAGE("It should work to set the animation via the constructor.", 
-            channel->GetAnimation() == wrapper1.get());
+         channel->GetAnimation() == wrapper1.get());
+
+      channel->SetLooping(false);
+      CPPUNIT_ASSERT_MESSAGE("Channel should not be looping.", ! channel->IsLooping());
+      CPPUNIT_ASSERT_MESSAGE("Channel should have a definite end when not.",
+         channel->HasDefiniteEnd());
+      CPPUNIT_ASSERT_MESSAGE("Channel should have a time limit when not looping",
+         channel->CalculateDuration() == 39.6f);
+
+      channel->SetMaxDuration(100.0f);
+      CPPUNIT_ASSERT_MESSAGE("Channel should have same duration if the max duration is greater.",
+         channel->CalculateDuration() == 39.6f);
+
+      channel->SetMaxDuration(10.0f);
+      CPPUNIT_ASSERT_MESSAGE("Channel should have a duration equal to max duration if the original duration is greater.",
+         channel->CalculateDuration() == 10.0f);
+
+      channel->SetMaxDuration(0.0f);
+      CPPUNIT_ASSERT_MESSAGE("Channel should have the original duration if max duration is set to zero.",
+         channel->CalculateDuration() == 39.6f);
    }
 
    void AnimationTests::TestAnimSequence()
@@ -348,7 +382,62 @@ namespace dtAnim
       CPPUNIT_ASSERT(clonedAnim1 != NULL);
       CPPUNIT_ASSERT_EQUAL_MESSAGE("The Model wrapper should cascade throughout the cloned animation sequence.", clonedAnim1->GetModel(), mHelper->GetModelWrapper());
    }
-   
+
+   void AnimationTests::TestAnimSequenceCalculateDuration()
+   {
+      float epsilon = 0.001f;
+
+      dtCore::RefPtr<AnimationWrapper> wrapper1 = new AnimationWrapper("Wrapper1", 1);
+      wrapper1->SetDuration(10.0f);
+      dtCore::RefPtr<AnimationWrapper> wrapper2 = new AnimationWrapper("Wrapper2", 2);
+      wrapper2->SetDuration(25.0f);
+
+      dtCore::RefPtr<AnimationChannel> anim1 = new AnimationChannel(NULL, wrapper1.get());
+      dtCore::RefPtr<AnimationChannel> anim2 = new AnimationChannel(NULL, wrapper2.get());
+
+      anim1->SetName(wrapper1->GetName());
+      anim1->SetLooping(false);
+      anim1->SetMaxDuration(0.0f);
+
+      anim2->SetName(wrapper2->GetName());
+      anim2->SetLooping(false);
+      anim2->SetMaxDuration(0.0f);
+      anim2->SetStartDelay(wrapper1->GetDuration());
+
+      dtCore::RefPtr<AnimationSequence> seq = new AnimationSequence();
+      seq->AddAnimation(anim1.get());
+      seq->AddAnimation(anim2.get());
+
+      CPPUNIT_ASSERT(anim1->HasDefiniteEnd());
+      CPPUNIT_ASSERT(anim2->HasDefiniteEnd());
+
+      float duration = wrapper1->GetDuration() + wrapper2->GetDuration();
+      CPPUNIT_ASSERT(seq->HasDefiniteEnd());
+      CPPUNIT_ASSERT_DOUBLES_EQUAL(duration, seq->CalculateDuration(), epsilon);
+      duration = anim1->CalculateDuration() + anim2->CalculateDuration();
+      CPPUNIT_ASSERT_DOUBLES_EQUAL(duration, seq->CalculateDuration(), epsilon);
+
+      anim1->SetLooping(true);
+      CPPUNIT_ASSERT( ! seq->HasDefiniteEnd());
+      CPPUNIT_ASSERT_DOUBLES_EQUAL(Animatable::INFINITE_TIME, seq->CalculateDuration(), epsilon);
+
+      anim1->SetMaxDuration(5.0f);
+      // 2's start delay encompasses the duration of 1.
+      duration = anim2->GetStartDelay() + wrapper2->GetDuration();
+      CPPUNIT_ASSERT(seq->HasDefiniteEnd());
+      CPPUNIT_ASSERT_DOUBLES_EQUAL(duration, seq->CalculateDuration(), epsilon);
+
+      anim1->SetLooping(false);
+      anim2->SetLooping(true);
+      CPPUNIT_ASSERT( ! seq->HasDefiniteEnd());
+      CPPUNIT_ASSERT_DOUBLES_EQUAL(Animatable::INFINITE_TIME, seq->CalculateDuration(), epsilon);
+
+      anim2->SetMaxDuration(5.0f);
+      duration = wrapper1->GetDuration() + anim2->GetMaxDuration();
+      CPPUNIT_ASSERT(seq->HasDefiniteEnd());
+      CPPUNIT_ASSERT_DOUBLES_EQUAL(duration, seq->CalculateDuration(), epsilon);
+   }
+
    void AnimationTests::TestSequenceMixer()
    {
 
