@@ -23,6 +23,7 @@
 #ifndef DELTA_CHARACTER_FILE_HANDLER
 #define DELTA_CHARACTER_FILE_HANDLER
 
+#include <osg/Referenced>
 #include <dtAnim/export.h>
 #include <dtUtil/mswinmacros.h>
 #include <dtCore/refptr.h>
@@ -148,8 +149,8 @@ namespace dtAnim
 
 #ifdef DELTA_WIN32
       //need these definitions to properly export a std::vector<std::string>
-      template class DT_ANIM_EXPORT std::allocator<std::string>;
-      template class DT_ANIM_EXPORT std::vector<std::string>;
+      //template class DT_ANIM_EXPORT std::allocator<std::string>;
+      //template class DT_ANIM_EXPORT std::vector<std::string>;
 
       // disable warning for stl classes "needs to have dll-interface to be used by clients of class"
       #pragma warning(disable : 4251)
@@ -182,12 +183,24 @@ namespace dtAnim
          std::string mName;     ///<The user friendly name of this material
       };
 
-      struct AnimatableStruct
+      struct DT_ANIM_EXPORT AnimatableStruct
       {
          AnimatableStruct();
 
          std::string mName;     ///<The name of this animation channel
          float mStartDelay, mFadeIn, mFadeOut, mSpeed, mBaseWeight;
+      };
+
+      struct DT_ANIM_EXPORT AnimatableOverrideStruct : public AnimatableStruct
+      {
+         AnimatableOverrideStruct();
+
+         bool mOverrideStartDelay;
+         bool mOverrideFadeIn;
+         bool mOverrideFadeOut;
+         bool mFollowsPrevious;
+         float mCrossFade;
+         std::string mFollowAnimatableName;
       };
 
       struct AnimationChannelStruct : public AnimatableStruct
@@ -199,11 +212,24 @@ namespace dtAnim
          bool mIsLooping, mIsAction;
       };
 
-      struct AnimationSequenceStruct : public AnimatableStruct
+      typedef std::vector<AnimatableOverrideStruct> AnimatableOverrideStructArray;
+      class DT_ANIM_EXPORT AnimStructContainer : public osg::Referenced
+      {
+      public:
+         AnimStructContainer() {}
+         AnimatableOverrideStructArray mChildren;
+
+      protected:
+         virtual ~AnimStructContainer() {}
+      };
+
+      struct DT_ANIM_EXPORT AnimationSequenceStruct : public AnimatableStruct
       {
          AnimationSequenceStruct();
 
-         std::vector<std::string> mChildNames;
+         AnimatableOverrideStructArray& GetChildren();
+
+         dtCore::RefPtr<AnimStructContainer> mData;
       };
 
       ///Character Data
@@ -222,8 +248,12 @@ namespace dtAnim
       bool  mFoundScale;
       float mScale; ///< The scaling factor
 
-      std::vector<AnimationChannelStruct> mAnimationChannels; ///<The preconfigured playbable animations
-      std::vector<AnimationSequenceStruct> mAnimationSequences; ///<The preconfigured playbable animations
+      typedef std::vector<AnimationChannelStruct> ChannelStructArray;
+      ChannelStructArray mAnimationChannels; ///<The preconfigured playbable animations
+
+      typedef std::vector<AnimationSequenceStruct> SequenceStructArray;
+      SequenceStructArray mAnimationSequences; ///<The preconfigured playbable animations
+
       std::string mSkeletonFilename;                ///<The one skeleton filename
 
       std::string mPoseMeshFilename;
@@ -233,6 +263,7 @@ namespace dtAnim
       void SkinningShaderCharacters(const XMLCh* const chars);
       void AnimChannelCharacters(const XMLCh* const chars);
       void AnimSequenceCharacters(const XMLCh* const chars);
+      void AnimSequenceChildCharacters(const XMLCh* const chars);
       void LODCharacters(const XMLCh* const chars);
       void ScaleCharacters(const XMLCh* const chars);
 
@@ -244,6 +275,7 @@ namespace dtAnim
       bool mInScale;
       bool mInChannel;
       bool mInSequence;
+      bool mInSequenceChild;
       dtUtil::Log* mLogger;
    };
 }

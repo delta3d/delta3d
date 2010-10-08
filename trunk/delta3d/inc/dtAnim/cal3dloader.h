@@ -23,7 +23,9 @@
 #define DELTA_CAL3DLOADER
 
 #include <dtAnim/export.h>
+#include <dtAnim/cal3dmodeldata.h>
 #include <dtAnim/cal3dmodelwrapper.h>
+#include <dtAnim/characterfilehandler.h>
 #include <dtCore/refptr.h>
 #include <dtUtil/functor.h>
 
@@ -45,8 +47,6 @@ namespace dtAnim
 {
    class AnimationWrapper;
    class Animatable;
-   class CharacterFileHandler;
-   class Cal3DModelData;
 
    /**
     * Loads a animation definition file and returns a valid CalModel.  Caches
@@ -68,6 +68,9 @@ namespace dtAnim
 
       ///empty all containers of CalCoreModels and the stored textures
       void PurgeAllCaches();
+
+      static void FinalizeSequenceInfo(CharacterFileHandler::AnimationSequenceStruct& sequenceStruct,
+         Cal3DModelData::AnimatableArray& animArray);
 
    protected:
       virtual ~Cal3DLoader();

@@ -126,7 +126,23 @@
             <xs:element name="children">
               <xs:complexType>
                 <xs:sequence>
-                  <xs:element name="child" type="xs:normalizedString" minOccurs="1" maxOccurs="unbounded" />
+                   <xs:choice>
+                     <xs:element name="child" minOccurs="1" maxOccurs="unbounded">
+                        <xs:complexType mixed="true">
+                           <xs:sequence>
+                              <xs:element name="name" type="xs:normalizedString" minOccurs="0" />
+                              <xs:element name="startDelay" type="xs:float" minOccurs="0" />
+                              <xs:element name="fadeIn" type="xs:float" minOccurs="0" />
+                              <xs:element name="fadeOut" type="xs:float" minOccurs="0" />
+                              <xs:element name="crossFade" type="xs:float" minOccurs="0" />
+                              <xs:choice minOccurs="0">
+                                 <xs:element name="followPrevious" type="xs:integer" />
+                                 <xs:element name="follows" type="xs:normalizedString" />
+                              </xs:choice>
+                           </xs:sequence>
+                        </xs:complexType>
+                     </xs:element>
+                   </xs:choice>
                 </xs:sequence>
               </xs:complexType>
             </xs:element>
