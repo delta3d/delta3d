@@ -43,8 +43,9 @@ namespace dtAnim
     */
    class DT_ANIM_EXPORT Animatable: public osg::Referenced
    {
-
       public:
+         static const float INFINITE_TIME;
+
          Animatable();
 
          Animatable(const Animatable& pAnim);
@@ -121,6 +122,16 @@ namespace dtAnim
          void SetSpeed(float speed);
 
          /**
+          * Method that determines if the animation will eventually con to an end.
+          * NOTE: This method has a cost in that it traverses some or all of its
+          *       potential child animations to determine if the overall animation
+          *       has a definite end.
+          * @return TRUE if no part of the animation or its potential children
+          *         endlessly loop.
+          */
+         virtual bool HasDefiniteEnd();
+
+         /**
           * This flag specifies whether or not this animation has stopped playing
           */
          bool ShouldPrune() const;
@@ -172,6 +183,14 @@ namespace dtAnim
          void SetCurrentWeight(float weight);
          void SetElapsedTime(float t);
          virtual void Recalculate() = 0;
+
+         /**
+          * Method to determine the actual length of the animation.
+          * @return Length of the animation measured in seconds. The value
+          *         that is returned may be a stored value or one that is
+          *         calculated per method call.
+          */
+         virtual float CalculateDuration() = 0;
 
          /**
           * Set the functor to be called when the animation ends.

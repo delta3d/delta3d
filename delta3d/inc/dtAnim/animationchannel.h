@@ -98,7 +98,7 @@ public:
     * will play in seconds.
     */
    float GetMaxDuration() const;
-   void SetMaxDuration(float b);
+   void SetMaxDuration(float seconds);
 
    /**
     * The per frame update function.
@@ -111,6 +111,12 @@ public:
     * it calculates the start and end times of our animation
     */
    /*virtual*/ void Recalculate();
+
+   /**
+    * Override of a base class method.
+    * @return Length of the animation in seconds; INFINITE_TIME if looping.
+    */
+   virtual float CalculateDuration();
 
    /**
     * Prune is called before the animation is deleted.
@@ -143,8 +149,11 @@ protected:
 
 private:
 
-   bool mIsAction, mIsLooping;
-   float mMaxDuration, mLastWeight;
+   bool mIsAction;
+   bool mIsLooping;
+   float mDuration;
+   float mMaxDuration;
+   float mLastWeight;
 
    // todo, verify holding a refptr to the model wrapper is ok
    dtCore::RefPtr<Cal3DModelWrapper> mModelWrapper;

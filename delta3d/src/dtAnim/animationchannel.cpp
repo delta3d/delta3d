@@ -45,6 +45,7 @@ AnimationChannel::AnimationChannel(Cal3DModelWrapper* pModelWrapper, AnimationWr
    : mIsAction(false)
    , mIsLooping(true)
    , mMaxDuration(0.0f)
+   , mLastWeight(0.0f)
    , mModelWrapper(pModelWrapper)
    , mAnimationWrapper(pAnimationWrapper)
 {
@@ -183,6 +184,24 @@ void AnimationChannel::Recalculate()
 }
 
 /////////////////////////////////////////////////////////////////////////////////
+float AnimationChannel::CalculateDuration()
+{
+   float duration = mAnimationWrapper.valid() ? mAnimationWrapper->GetDuration() : mMaxDuration;
+   
+   if (IsLooping() && mMaxDuration <= 0.0f)
+   {
+      duration = Animatable::INFINITE_TIME;
+   }
+   
+   if(mMaxDuration > 0.0f && duration > mMaxDuration)
+   {
+      duration = mMaxDuration;
+   }
+
+   return duration;
+}
+
+/////////////////////////////////////////////////////////////////////////////////
 void AnimationChannel::Prune()
 {
    if (IsActive())
@@ -246,9 +265,9 @@ float AnimationChannel::GetMaxDuration() const
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-void AnimationChannel::SetMaxDuration(float b)
+void AnimationChannel::SetMaxDuration(float seconds)
 {
-   mMaxDuration = b;
+   mMaxDuration = seconds;
 }
 
 

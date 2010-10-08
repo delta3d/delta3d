@@ -185,6 +185,16 @@ public:
    /*virtual*/ void Recalculate();
 
    /**
+    * Override of a base class method.
+    * Method to determine the actual length of the animation sequence.
+    * @return Length of the animation measured in seconds. The value
+    *         that is returned is calculated per method call by iterating
+    *         over child animations. INFINITE_TIME is returned if any
+    *         part of the sequence has no definite end.
+    */
+   virtual float CalculateDuration();
+
+   /**
     * Force fade out will make this animation and all child animations
     * fade out over time
     * @param the time to fade out over

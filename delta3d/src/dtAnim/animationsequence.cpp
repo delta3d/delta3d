@@ -372,6 +372,43 @@ void AnimationSequence::Recalculate()
    mController->Recalculate();
 }
 
+////////////////////////////////////////////////////////////////////////////////
+float AnimationSequence::CalculateDuration()
+{
+   float seconds = 0.0f;
+
+   // Calculate the duration of this sequence if it will come to
+   // a definite end.
+   bool hasEnd = true;
+   Animatable* curAnim = NULL;
+   AnimationContainer::iterator curIter = mActiveAnimations.begin();
+   AnimationContainer::iterator endIter = mActiveAnimations.end();
+   for (; curIter!= endIter; ++curIter)
+   {
+      curAnim = curIter->get();
+      if (curAnim->HasDefiniteEnd())
+      {
+         // The current animation may have a different start
+         // time relative to the rest of the animations in the
+         // sequence. Calculate the the difference between
+         // the animation's start time to the currently calculated
+         // running total time.
+         float timeDif = curAnim->GetStartDelay() - seconds;
+
+         // Add the duration of the animation to the total time,
+         // but also account for the relative offset of the animation's
+         // actual start time.
+         seconds += curAnim->CalculateDuration() + timeDif;
+      }
+      else
+      {
+         hasEnd = false;
+         break;
+      }
+   }
+
+   return hasEnd ? seconds : Animatable::INFINITE_TIME;
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 //TODO
