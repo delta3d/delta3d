@@ -101,6 +101,48 @@
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   AnimationWrapper* Cal3DModelData::GetAnimationWrapperByName(const std::string& name)
+   {
+      AnimationWrapper* anim = NULL;
+
+      AnimationWrapper* curAnim = NULL;
+      AnimationWrapperArray::iterator curIter = mAnimWrappers.begin();
+      AnimationWrapperArray::iterator endIter = mAnimWrappers.end();
+      for (;curIter != endIter; ++curIter)
+      {
+         curAnim = curIter->get();
+         if(curAnim->GetName() == name)
+         {
+            anim = curAnim;
+            break;
+         }
+      }
+
+      return anim;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   const AnimationWrapper* Cal3DModelData::GetAnimationWrapperByName(const std::string& name) const
+   {
+      const AnimationWrapper* anim = NULL;
+
+      const AnimationWrapper* curAnim = NULL;
+      AnimationWrapperArray::const_iterator curIter = mAnimWrappers.begin();
+      AnimationWrapperArray::const_iterator endIter = mAnimWrappers.end();
+      for (;curIter != endIter; ++curIter)
+      {
+         curAnim = curIter->get();
+         if(curAnim->GetName() == name)
+         {
+            anim = curAnim;
+            break;
+         }
+      }
+
+      return anim;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    Cal3DModelData::AnimationWrapperArray& Cal3DModelData::GetAnimationWrappers()
    {
       return mAnimWrappers;
@@ -110,6 +152,48 @@
    const Cal3DModelData::AnimationWrapperArray& Cal3DModelData::GetAnimationWrappers() const
    {
       return mAnimWrappers;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   Animatable* Cal3DModelData::GetAnimatableByName(const std::string& name)
+   {
+      Animatable* anim = NULL;
+
+      Animatable* curAnim = NULL;
+      AnimatableArray::iterator curIter = mAnimatables.begin();
+      AnimatableArray::iterator endIter = mAnimatables.end();
+      for (;curIter != endIter; ++curIter)
+      {
+         curAnim = curIter->get();
+         if(curAnim->GetName() == name)
+         {
+            anim = curAnim;
+            break;
+         }
+      }
+
+      return anim;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   const Animatable* Cal3DModelData::GetAnimatableByName(const std::string& name) const
+   {
+      const Animatable* anim = NULL;
+
+      Animatable* curAnim = NULL;
+      AnimatableArray::const_iterator curIter = mAnimatables.begin();
+      AnimatableArray::const_iterator endIter = mAnimatables.end();
+      for (;curIter != endIter; ++curIter)
+      {
+         curAnim = curIter->get();
+         if(curAnim->GetName() == name)
+         {
+            anim = curAnim;
+            break;
+         }
+      }
+
+      return anim;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
