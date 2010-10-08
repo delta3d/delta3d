@@ -76,9 +76,9 @@ namespace dtAnim
    {
    public:
       // we will hold all the animation wrappers for each CalCoreModel
-      typedef std::vector<dtCore::RefPtr<AnimationWrapper> > AnimationWrapperArray;
+      typedef std::vector<dtCore::RefPtr<dtAnim::AnimationWrapper> > AnimationWrapperArray;
       // we will hold a vector of animatables for each CalCoreModel
-      typedef std::vector<dtCore::RefPtr<Animatable> > AnimatableArray;
+      typedef std::vector<dtCore::RefPtr<dtAnim::Animatable> > AnimatableArray;
 
    public:
       Cal3DModelData(CalCoreModel* coreModel, const std::string& filename);
@@ -94,8 +94,14 @@ namespace dtAnim
       CalCoreModel* GetCoreModel();
       const CalCoreModel* GetCoreModel() const;
 
+      AnimationWrapper* GetAnimationWrapperByName(const std::string& name);
+      const AnimationWrapper* GetAnimationWrapperByName(const std::string& name) const;
+
       AnimationWrapperArray& GetAnimationWrappers();
       const AnimationWrapperArray& GetAnimationWrappers() const;
+
+      Animatable* GetAnimatableByName(const std::string& name);
+      const Animatable* GetAnimatableByName(const std::string& name) const;
 
       AnimatableArray& GetAnimatables();
       const AnimatableArray& GetAnimatables() const;
