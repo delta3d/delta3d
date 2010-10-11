@@ -112,6 +112,7 @@ void GameActorProxy::Init(const dtDAL::ActorType& actorType)
 {
    BaseClass::Init(actorType);
    BuildInvokables();
+   BuildActorComponents();
 
    // The actor components are stored on the game actor, unlike the other stuff 
    GameActor &ga = GetGameActor();
@@ -233,6 +234,11 @@ void GameActorProxy::BuildPropertyMap()
    //AddPropsFunc addAllProps;
    //addAllProps.gap = this;
    //ga.ForEachComponent(addAllProps);
+}
+
+/////////////////////////////////////////////////////////////////////////////
+void GameActorProxy::BuildActorComponents()
+{
 }
 
 /////////////////////////////////////////////////////////////////////////////
