@@ -227,6 +227,7 @@ namespace dtGame
    //////////////////////////////////////////////////////////////////////
    DeadReckoningHelper::DeadReckoningHelper()
    : ActorComponent(TYPE)
+   , mAutoRegisterWithGMComponent(true)
    , mGroundClampType(&GroundClampTypeEnum::KEEP_ABOVE)
    , mLastTranslationUpdatedTime(0.0)
    , mLastRotationUpdatedTime(0.0)
@@ -262,6 +263,8 @@ namespace dtGame
       delete mDRImpl;
    }
 
+   DT_IMPLEMENT_ACCESSOR(DeadReckoningHelper, bool, AutoRegisterWithGMComponent);
+
    // GROUND CLAMP TYPE PROPERTY
    DT_IMPLEMENT_ACCESSOR_GETTER(DeadReckoningHelper, dtUtil::EnumerationPointer<GroundClampTypeEnum>, GroundClampType);
 
@@ -270,13 +273,69 @@ namespace dtGame
    void DeadReckoningHelper::OnEnteredWorld()
    {
       mExtraDataUpdated = false;
+
+      if (mAutoRegisterWithGMComponent)
+      {
+         RegisterWithGMComponent();
+      }
    }
 
    /// Called when the parent actor leaves the "world".
    //////////////////////////////////////////////////////////////////////
    void DeadReckoningHelper::OnRemovedFromWorld()
    {
+      if (mAutoRegisterWithGMComponent)
+      {
+         UnregisterWithGMComponent();
+      }
+   }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   void DeadReckoningHelper::RegisterWithGMComponent()
+   {
+      dtGame::DeadReckoningComponent* drc = NULL;
+
+      GameActor* ga = NULL;
+      GetOwner(ga);
+      GameActorProxy& act = ga->GetGameActorProxy();
+
+      act.GetGameManager()->
+         GetComponentByName(dtGame::DeadReckoningComponent::DEFAULT_NAME, drc);
+
+      if (drc != NULL)
+      {
+         drc->RegisterActor(act, *this);
+      }
+      else
+      {
+         dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
+            "Actor \"%s\"\"%s\" unable to find DeadReckoningComponent.",
+            act.GetName().c_str(), act.GetId().ToString().c_str());
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void DeadReckoningHelper::UnregisterWithGMComponent()
+   {
+      dtGame::DeadReckoningComponent* drc = NULL;
+
+      GameActor* ga = NULL;
+      GetOwner(ga);
+      GameActorProxy& act = ga->GetGameActorProxy();
+
+      act.GetGameManager()->
+         GetComponentByName(dtGame::DeadReckoningComponent::DEFAULT_NAME, drc);
+
+      if (drc != NULL)
+      {
+         drc->UnregisterActor(act);
+      }
+      else
+      {
+         dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
+            "Actor \"%s\"\"%s\" unable to find DeadReckoningComponent.",
+            act.GetName().c_str(), act.GetId().ToString().c_str());
+      }
    }
 
    //////////////////////////////////////////////////////////////////////
@@ -644,13 +703,11 @@ namespace dtGame
    ////////////////////////////////////////////////////////////////////////////////
    void DeadReckoningHelper::OnAddedToActor(dtGame::GameActor& actor)
    {
-
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    void DeadReckoningHelper::OnRemovedFromActor(dtGame::GameActor& actor)
    {
-
    }
 
    ////////////////////////////////////////////////////////////////////////////////
