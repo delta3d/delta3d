@@ -153,6 +153,13 @@ namespace dtGame
       virtual void BuildInvokables();
 
       /**
+        * Override this to add your own Actor Components.
+        * Note - actor components do the BuildPropertyMap during the AddComponent method, so set
+        * your default values after you that.
+        */
+      virtual void BuildActorComponents();
+
+      /**
        * Adds a new invokable to the this proxy's list of invokables.
        * @param the new invokable to add.
        * @note
@@ -402,12 +409,6 @@ namespace dtGame
    protected:
       /// Destructor
       virtual ~GameActorProxy();
-
-      /**
-       * Instantiates the actor that the proxy abstracts.
-       * This must ALSO call SetGameActorProxy
-       */
-      virtual void CreateActor() = 0;
 
       /**
        * Called when an actor is first placed in the "world"
