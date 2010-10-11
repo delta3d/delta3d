@@ -174,6 +174,11 @@ namespace dtGame
          virtual void OnAddedToActor(dtGame::GameActor& actor);
          virtual void OnRemovedFromActor(dtGame::GameActor& actor);
 
+         DT_DECLARE_ACCESSOR(bool, AutoRegisterWithGMComponent);
+
+         void RegisterWithGMComponent();
+         void UnregisterWithGMComponent();
+
          /// Called when the parent actor enters the "world".
          virtual void OnEnteredWorld();
          /// Called when the parent actor leaves the "world".
