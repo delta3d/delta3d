@@ -14,5 +14,5 @@ ADD_DEPENDENCIES( testPython
                 )
 
 IF (MSVC)
-  SET(CMAKE_EXE_LINKER_FLAGS "/NODEFAULTLIB:python25_d /NODEFAULTLIB:python26_d") #ignore the auto-link library Python adds in
+  SET(CMAKE_EXE_LINKER_FLAGS "/NODEFAULTLIB:python25_d /NODEFAULTLIB:python26_d /NODEFAULTLIB:python27_d") #ignore the auto-link library Python adds in
 ENDIF (MSVC)
