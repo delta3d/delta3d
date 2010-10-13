@@ -243,6 +243,7 @@ namespace dtGame
           const std::string& description, const unsigned short id, const MessageClass*) \
       : dtGame::MessageType(name, category, description, id, (const MessageClass*)(NULL))\
       { \
+         AddInstance(this);\
       }\
       virtual ~CLS() {} \
    public: \
