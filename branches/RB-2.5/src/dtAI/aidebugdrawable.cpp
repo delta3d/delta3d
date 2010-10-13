@@ -573,8 +573,8 @@ namespace dtAI
       {
          for (size_t pairIndex = 0; pairIndex < mImpl->mWaypointPairs->size() - 1; pairIndex += 2)
          {
-            if (mImpl->mWaypointPairs->at(pairIndex) == indexFrom &&
-                mImpl->mWaypointPairs->at(pairIndex + 1) == indexTo)
+            if (int(mImpl->mWaypointPairs->at(pairIndex)) == indexFrom &&
+                int(mImpl->mWaypointPairs->at(pairIndex + 1)) == indexTo)
             {
                mImpl->mWaypointPairs->erase(mImpl->mWaypointPairs->begin() + (pairIndex + 1));
                mImpl->mWaypointPairs->erase(mImpl->mWaypointPairs->begin() + pairIndex);
@@ -599,8 +599,8 @@ namespace dtAI
 
          for (size_t pairIndex = 0; pairIndex < mImpl->mWaypointPairs->size() - 1; pairIndex += 2)
          {
-            if (mImpl->mWaypointPairs->at(pairIndex) == indexFrom ||
-               mImpl->mWaypointPairs->at(pairIndex + 1) == indexFrom)
+            if (int(mImpl->mWaypointPairs->at(pairIndex)) == indexFrom ||
+               int(mImpl->mWaypointPairs->at(pairIndex + 1)) == indexFrom)
             {
                size_t currentSize = mImpl->mWaypointPairs->size();
 
