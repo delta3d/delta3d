@@ -215,12 +215,14 @@ namespace dtGame
       std::map<dtCore::UniqueId, dtCore::RefPtr<LogDebugInformation> >::iterator iter = mDebugLoggerInformation.begin();
       if (mDoStatsOnTheComponents)
       {
+         float compTotalTime = 0.0f;
          ss << "*************** STARTING LOGGING OF TIME IN COMPONENTS *****************" << std::endl;
          for (; iter != mDebugLoggerInformation.end(); ++iter)
          {
             LogDebugInformation& debugInfo = *iter->second;
             if (debugInfo.mIsComponent)
             {
+               compTotalTime += debugInfo.mTotalTime;
                float percentTime = ComputeStatsPercent(truncRealTime, debugInfo.mTotalTime);
                float truncTotalTime = ((int)(debugInfo.mTotalTime * 10000)) / 10000.0; // force data truncation to 4 places
                ss << "* Time[" << percentTime << "% / " << truncTotalTime << " Total], Name[" <<
@@ -235,7 +237,10 @@ namespace dtGame
                   debugDeleteList.push_back(iter->second);
             }
          }
-         ss << "*************** ENDING LOGGING OF TIME IN COMPONENTS *****************" << std::endl;
+         float percentCompTotalTime = ComputeStatsPercent(truncRealTime, compTotalTime);
+         float truncTotalCompTime = ((int)(compTotalTime * 10000)) / 10000.0; // force data truncation to 4 places
+         ss << "********** LOGGING - END OF COMPONENT TIME [" << percentCompTotalTime << 
+            "% / " << truncTotalCompTime << "s Total] ***" << std::endl;
       }
 
       // ACTORs
@@ -243,6 +248,7 @@ namespace dtGame
       {
          int numIgnored = 0;
          float ignoredCumulativeTime = 0.0;
+         float actorTotalTime = 0.0f;
 
          ss << "********** STARTING LOGGING OF TIME IN ACTORS -- if (> 0.2%) ************" << std::endl;
          for (iter = mDebugLoggerInformation.begin(); iter != mDebugLoggerInformation.end(); ++iter)
@@ -250,6 +256,7 @@ namespace dtGame
             LogDebugInformation& debugInfo = *iter->second;
             if (!debugInfo.mIsComponent)
             {
+               actorTotalTime += debugInfo.mTotalTime;
                float percentTime = ComputeStatsPercent(truncRealTime, debugInfo.mTotalTime);
                float truncTotalTime = ((int)(debugInfo.mTotalTime * 10000)) / 10000.0; // force data truncation to 4 places
                if (percentTime > 0.2)
@@ -278,10 +285,13 @@ namespace dtGame
          if (numIgnored > 0)
          {
             float percentTime = ComputeStatsPercent(truncRealTime, ignoredCumulativeTime);
-            ss << "*** Ignored [" << numIgnored << "] actors for [" << ignoredCumulativeTime <<
-               ", " << percentTime << "%]." << std::endl;
+            ss << "*** Ignored [" << numIgnored << "] actors for [" << percentTime <<
+               "%, " << ignoredCumulativeTime << "s]." << std::endl;
          }
-         ss << "************ ENDING LOGGING OF TIME IN ACTORS *********************" << std::endl;
+         float percentActorTotalTime = ComputeStatsPercent(truncRealTime, actorTotalTime);
+         float truncTotalActorTime = ((int)(actorTotalTime * 10000)) / 10000.0; // force data truncation to 4 places
+         ss << "********** LOGGING - END OF ACTORS TIME [" << percentActorTotalTime << 
+            "% / " << truncTotalActorTime << "s Total] ***" << std::endl;
       }
       // total stats
       if (mDoStatsOnTheComponents || mDoStatsOnTheActors)
