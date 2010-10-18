@@ -552,7 +552,8 @@ namespace dtGame
          = &GetBestClampType(type, proxy, data, transformChanged, velocity);
 
       // Avoid any further processing on certain conditions.
-      if(!HasValidSurface() || *clampType == DefaultGroundClamper::GroundClampRangeType::NONE)
+      if(!HasValidSurface() || *clampType == DefaultGroundClamper::GroundClampRangeType::NONE
+         || data.GetGroundClampType() == GroundClampTypeEnum::NONE)
       {
          // If no terrain, just set the position and exit.
          actor->SetTransform(xform, dtCore::Transformable::REL_CS);
