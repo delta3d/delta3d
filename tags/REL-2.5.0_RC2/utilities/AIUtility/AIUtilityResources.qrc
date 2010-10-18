@@ -1,0 +1,18 @@
+<RCC>
+   <qresource prefix="/" >
+   <file>../STAGE/icons/newmap_small.png</file>
+   <file>../STAGE/icons/openmap_small.png</file>
+   <file>../STAGE/icons/savemap_small.png</file>
+   <file>../STAGE/icons/trash_small.png</file>
+   <file>../STAGE/icons/groundclamp_small.png</file>
+   <file>./images/redo.png</file>
+   <file>./images/undo.png</file>
+   <file>./images/ok.png</file>
+   <file>./images/addedge.png</file>
+   <file>./images/removeedge.png</file>
+   <file>./images/addbidirectionaledge.png</file>
+   <file>./images/removebidirectionaledge.png</file>
+   <file>./images/pointselectmode.png</file>
+   <file>./images/brushselectmode.png</file>
+   </qresource>
+</RCC>

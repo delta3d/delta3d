@@ -1,0 +1,35 @@
+<RCC>
+    <qresource prefix="help/">
+	  <file>contents.xml</file>
+	  
+	  <file>tutorial.html</file>
+	  <file>tut01_start.html</file>
+	  <file>tut02_maps.html</file>
+	  <file>tut03_plugins.html</file>
+	  <file>tut04_camera.html</file>
+	  <file>tut05_actors.html</file>
+	  <file>tut06_tools.html</file>
+	  <file>tut07_contacts.html</file>
+
+	  <file>images/Logo.png</file>
+	  <file>images/splash.png</file>
+	  <file>images/Background.gif</file>
+	  <file>images/Figure1.1.png</file>
+	  <file>images/Figure1.2.png</file>
+	  <file>images/Figure1.3.png</file>
+	  <file>images/Figure2.1.png</file>
+	  <file>images/Figure3.1.png</file>
+	  <file>images/Figure4.1.png</file>
+	  <file>images/Figure5.1.png</file>
+	  <file>images/Figure5.2.png</file>
+	  <file>images/Figure5.3.png</file>
+	  <file>images/Figure5.4.png</file>
+	  <file>images/Figure6.1.png</file>
+	  <file>images/Figure6.2.png</file>
+	  <file>images/Figure6.3.png</file>
+	  <file>images/Figure6.4.png</file>
+	  <file>images/Figure6.5.png</file>
+	  <file>images/Figure6.6.png</file>
+	  <file>images/Figure6.7.png</file>
+    </qresource>
+</RCC>
