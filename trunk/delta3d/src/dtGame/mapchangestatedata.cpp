@@ -33,6 +33,7 @@
 #include <dtGame/messagetype.h>
 #include <dtGame/basemessages.h>
 #include <dtGame/messagefactory.h>
+#include <dtGame/gmsettings.h>
 
 #include <dtCore/system.h>
 namespace dtGame
@@ -231,12 +232,25 @@ namespace dtGame
                }
                else
                {
+
                   bool shouldPublish = gameProxy->GetInitialOwnership() == GameActorProxy::Ownership::SERVER_PUBLISHED;
+
+                  bool isClient = mGameManager->GetGMSettings().IsClientRole();
+                  bool isServer = mGameManager->GetGMSettings().IsServerRole();
+                  bool shouldAddActor = 
+                     (isClient && gameProxy->GetInitialOwnership() == GameActorProxy::Ownership::CLIENT_LOCAL)
+                     || ((isClient || isServer) && gameProxy->GetInitialOwnership() == GameActorProxy::Ownership::CLIENT_AND_SERVER_LOCAL)
+                     || (isServer && gameProxy->GetInitialOwnership() == GameActorProxy::Ownership::SERVER_PUBLISHED)
+                     || (isServer && gameProxy->GetInitialOwnership() == GameActorProxy::Ownership::SERVER_LOCAL);
+
                   // neither sends create messages nor adds to the scene when
                   // this object is not in IDLE state :-)
                   try
                   {
-                     mGameManager->AddActor(*gameProxy, false, shouldPublish);
+                     if (shouldAddActor)
+                     {
+                        mGameManager->AddActor(*gameProxy, false, shouldPublish);
+                     }
                   }
                   catch (const dtUtil::Exception& ex)
                   {

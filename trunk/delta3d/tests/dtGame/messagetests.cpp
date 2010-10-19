@@ -100,6 +100,8 @@ class MessageTests : public CPPUNIT_NS::TestFixture
       CPPUNIT_TEST(TestRemoteActorCreatesFromPrototype);
       CPPUNIT_TEST(TestGameEventMessage);
       CPPUNIT_TEST(TestActorEnteredWorldMessage);
+      CPPUNIT_TEST(TestPartialUpdateDoesNotCreateActor);
+      CPPUNIT_TEST(TestNonPartialUpdateDoesCreateActor);
 
    CPPUNIT_TEST_SUITE_END();
 
@@ -130,6 +132,8 @@ public:
    void TestRemoteActorCreatesFromPrototype();
    void TestGameEventMessage();
    void TestActorEnteredWorldMessage();
+   void TestPartialUpdateDoesNotCreateActor();
+   void TestNonPartialUpdateDoesCreateActor();
 
 private:
    static const char* mTestGameActorLibrary;
@@ -144,6 +148,8 @@ private:
    void TestDefaultMessageProcessorWithLocalOrRemoteActorDeletes(bool remote);
    void CheckMapNames(const dtGame::MapMessage& mapLoadedMsg,
       const dtGame::GameManager::NameVector& mapNames);
+   void DoTestOfPartialUpdateDoesNotCreateActor(bool testWithPartial);
+
    dtUtil::Log* mLogger;
 
    dtCore::RefPtr<dtGame::GameManager> mGameManager;
@@ -1859,4 +1865,56 @@ void MessageTests::TestActorEnteredWorldMessage()
    CPPUNIT_ASSERT_MESSAGE("An actor created message should have been sent", receivedCreateMsg);
    scene = gap->GetActor()->GetSceneParent();
    CPPUNIT_ASSERT_MESSAGE("Now that the game actor proxy was added to the game manager, its scene parent should not be NULL", scene != NULL);
+}
+
+///////////////////////////////////////////////////////////////////////
+void MessageTests::TestPartialUpdateDoesNotCreateActor()
+{
+   DoTestOfPartialUpdateDoesNotCreateActor(true);
+}
+
+void MessageTests::TestNonPartialUpdateDoesCreateActor()
+{
+   DoTestOfPartialUpdateDoesNotCreateActor(false);
+}
+
+void MessageTests::DoTestOfPartialUpdateDoesNotCreateActor(bool testWithPartial)
+{
+   dtGame::DefaultMessageProcessor& defMsgProcessor = *new dtGame::DefaultMessageProcessor();
+   mGameManager->AddComponent(defMsgProcessor, dtGame::GameManager::ComponentPriority::NORMAL);
+
+   dtCore::RefPtr<const dtDAL::ActorType> type = mGameManager->FindActorType("ExampleActors","Test1Actor");
+   CPPUNIT_ASSERT(type != NULL);
+   dtCore::RefPtr<dtDAL::ActorProxy> ap = mGameManager->CreateActor(*type);
+
+   CPPUNIT_ASSERT(ap->IsGameActorProxy());
+   dtCore::RefPtr<dtGame::GameActorProxy> gap = dynamic_cast<dtGame::GameActorProxy*>(ap.get());
+   CPPUNIT_ASSERT(gap != NULL);
+
+   dtCore::RefPtr<dtGame::ActorUpdateMessage> actorUpdateMsg =
+      static_cast<dtGame::ActorUpdateMessage*>(mGameManager->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_ACTOR_UPDATED).get());
+
+   CPPUNIT_ASSERT_MESSAGE("Partial should default to false.", !actorUpdateMsg->IsPartialUpdate());
+   actorUpdateMsg->SetPartialUpdate(testWithPartial);
+   CPPUNIT_ASSERT_MESSAGE("Partial should now be set.", testWithPartial == actorUpdateMsg->IsPartialUpdate());
+
+   gap->PopulateActorUpdate(*actorUpdateMsg);
+   //make it remote
+   actorUpdateMsg->SetSource(*new dtGame::MachineInfo());
+   CPPUNIT_ASSERT(actorUpdateMsg->GetParameter("Is Partial Update") != NULL);
+
+   mGameManager->SendMessage(*actorUpdateMsg);
+
+   dtCore::AppSleep(5);
+   dtCore::System::GetInstance().Step();
+
+   dtCore::RefPtr<dtGame::GameActorProxy> gapRemote = mGameManager->FindGameActorById(gap->GetId());
+   if (testWithPartial)
+   {
+      CPPUNIT_ASSERT_MESSAGE("With partial - actor should NOT have been created.", gapRemote == NULL);
+   }
+   else
+   {
+      CPPUNIT_ASSERT_MESSAGE("Not partial - actor should exist.", gapRemote != NULL);
+   }
 }

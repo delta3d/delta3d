@@ -32,6 +32,7 @@ namespace dtGame
    const dtUtil::RefString ActorUpdateMessage::ACTOR_TYPE_CATEGORY_PARAMETER("Actor Type Category");
    const dtUtil::RefString ActorUpdateMessage::UPDATE_GROUP_PARAMETER("Update Group Parameter");
    const dtUtil::RefString ActorUpdateMessage::PROTOTYPE_NAME_PARAMETER("Prototype Parameter");
+   const dtUtil::RefString ActorUpdateMessage::IS_PARTIAL_UPDATE_PARAMETER("Is Partial Update");
 
 
    /////////////////////////////////////////////////////////////////
@@ -41,6 +42,13 @@ namespace dtGame
       AddParameter(new StringMessageParameter(ACTOR_TYPE_NAME_PARAMETER));
       AddParameter(new StringMessageParameter(ACTOR_TYPE_CATEGORY_PARAMETER));
       AddParameter(new StringMessageParameter(PROTOTYPE_NAME_PARAMETER));
+
+      // Default the partial update param to true and assume all actor updates
+      // are full unless set explicitly (see GameActorProxy->NotifyPartialActorUpdate())
+      BooleanMessageParameter* partialParam = new BooleanMessageParameter(IS_PARTIAL_UPDATE_PARAMETER);
+      partialParam->SetValue(false);
+      AddParameter(partialParam);
+
       mUpdateParameters = new GroupMessageParameter(UPDATE_GROUP_PARAMETER);
       AddParameter(mUpdateParameters);
    }
@@ -141,6 +149,18 @@ namespace dtGame
    void ActorUpdateMessage::SetPrototypeName(const std::string& newPrototypeName)
    {
       static_cast<StringMessageParameter*>(GetParameter(PROTOTYPE_NAME_PARAMETER))->SetValue(newPrototypeName);
+   }
+
+   /////////////////////////////////////////////////////////////////
+   bool ActorUpdateMessage::IsPartialUpdate() const
+   {
+      return static_cast<const BooleanMessageParameter*>(GetParameter(IS_PARTIAL_UPDATE_PARAMETER))->GetValue();
+   }
+
+   /////////////////////////////////////////////////////////////////
+   void ActorUpdateMessage::SetPartialUpdate(bool newValue)
+   {
+      static_cast<BooleanMessageParameter*>(GetParameter(IS_PARTIAL_UPDATE_PARAMETER))->SetValue(newValue);
    }
 
 }

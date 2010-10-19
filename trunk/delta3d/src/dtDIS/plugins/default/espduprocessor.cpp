@@ -66,6 +66,7 @@ void ESPduProcessor::SendPartialUpdate(const DIS::EntityStatePdu& pdu, const dtD
    msg->SetName( actor.GetName() );
    msg->SetActorTypeName( actor.GetActorType().GetName() );
    msg->SetActorTypeCategory( actor.GetActorType().GetCategory() );
+   msg->SetPartialUpdate(true);
 
    details::PartialApplicator apply;
    apply(pdu, *msg, mConfig);

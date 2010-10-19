@@ -293,7 +293,8 @@ void GameActorProxy::NotifyFullActorUpdate()
 }
 
 /////////////////////////////////////////////////////////////////////////////
-void GameActorProxy::NotifyPartialActorUpdate(const std::vector<dtUtil::RefString>& propNames)
+void GameActorProxy::NotifyPartialActorUpdate(const std::vector<dtUtil::RefString>& propNames, 
+                                              bool flagAsPartial /*=true*/)
 {
    if (GetGameManager() == NULL || IsRemote())
    {
@@ -306,16 +307,17 @@ void GameActorProxy::NotifyPartialActorUpdate(const std::vector<dtUtil::RefStrin
    dtGame::ActorUpdateMessage *message = static_cast<dtGame::ActorUpdateMessage *>(updateMsg.get());
 
    PopulateActorUpdateImpl(*message, propNames);
+   message->SetPartialUpdate(flagAsPartial); // let's clients know there may not be enough data to create the actor
    GetGameManager()->SendMessage(*updateMsg);
 }
 
 
 /////////////////////////////////////////////////////////////////////////////
-void GameActorProxy::NotifyPartialActorUpdate()
+void GameActorProxy::NotifyPartialActorUpdate(bool flagAsPartial /*= true*/)
 {
    std::vector<dtUtil::RefString> propNames;
    GetPartialUpdateProperties(propNames);
-   NotifyPartialActorUpdate(propNames);
+   NotifyPartialActorUpdate(propNames, flagAsPartial);
 }
 
 /////////////////////////////////////////////////////////////////////////////

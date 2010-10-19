@@ -48,6 +48,7 @@ namespace dtGame
          static const dtUtil::RefString ACTOR_TYPE_NAME_PARAMETER;
          static const dtUtil::RefString ACTOR_TYPE_CATEGORY_PARAMETER;
          static const dtUtil::RefString PROTOTYPE_NAME_PARAMETER;
+         static const dtUtil::RefString IS_PARTIAL_UPDATE_PARAMETER;
          static const dtUtil::RefString UPDATE_GROUP_PARAMETER;
 
          /// Constructor
@@ -174,6 +175,22 @@ namespace dtGame
          * @param newName The name of the prototype this actor is created from, if any.
          */
          void SetPrototypeName(const std::string& newPrototypeName);
+
+         /**
+          * Indicates whether this actor update message is a partial update or not. A partial
+          * actor update implies there is not enough data to create the actor if it does
+          * not already exist. 
+          * @return Whether it's a partial update or not.
+          */
+         bool IsPartialUpdate() const;
+
+         /**
+          * Sets whether this actor update message is a partial update or not. A partial
+          * actor update implies there is not enough data to create the actor if it does
+          * not already exist. 
+          * @param newValue Set the IsPartialUdpate true or false.
+          */
+         void SetPartialUpdate(bool newValue);
 
       protected:
 

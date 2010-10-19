@@ -1,6 +1,6 @@
 /* -*-c++-*-
  * allTests - This source file (.h & .cpp) - Using 'The MIT License'
- * Copyright (C) 2005-2008, Alion Science and Technology Corporation
+ * Copyright (C) 2005-2010, Alion Science and Technology Corporation
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,7 +23,7 @@
  * This software was developed by Alion Science and Technology Corporation under
  * circumstances in which the U. S. Government may have rights in the software.
  *
- * @author Eddie Johnson and David Guthrie
+ * @author Eddie Johnson, David Guthrie, Curtiss Murphy
  */
 
 #include <prefix/unittestprefix.h>
@@ -57,6 +57,7 @@
 #include <dtGame/exceptionenum.h>
 #include <dtGame/gameactor.h>
 #include <dtGame/gamemanager.h>
+#include <dtGame/gmsettings.h>
 #include <dtGame/machineinfo.h>
 #include <dtGame/messagefactory.h>
 #include <dtGame/messageparameter.h>
@@ -103,6 +104,7 @@ class GameManagerTests : public CPPUNIT_NS::TestFixture
         CPPUNIT_TEST(TestFindGameActorById);
         CPPUNIT_TEST(TestPrototypeActors);
         CPPUNIT_TEST(TestGMShutdown);
+        CPPUNIT_TEST(TestGMSettingsServerClientRoles);
 
         CPPUNIT_TEST(TestTimers);
         CPPUNIT_TEST(TestTimersGetDeleted);
@@ -140,6 +142,7 @@ public:
    void TestFindGameActorById();
    void TestPrototypeActors();
    void TestGMShutdown();
+   void TestGMSettingsServerClientRoles();
 
    void TestTimers();
    void TestTimersGetDeleted();
@@ -1598,4 +1601,117 @@ void GameManagerTests::TestGMShutdown()
       }
       throw;
    }
+}
+
+//////////////////////////////////////////////////
+void GameManagerTests::TestGMSettingsServerClientRoles()
+{
+   CPPUNIT_ASSERT(mManager.valid());
+
+   dtCore::RefPtr<TestComponent> tc = new TestComponent;
+   mManager->AddComponent(*tc, dtGame::GameManager::ComponentPriority::NORMAL);
+   dtDAL::Project& project = dtDAL::Project::GetInstance();
+
+   const std::string context = "data/ProjectContext";
+   project.SetContext(context);
+   dtDAL::Map& m = project.CreateMap("testMap", "bbbb");
+
+   CPPUNIT_ASSERT_MESSAGE("Client role should default to true", 
+      mManager->GetGMSettings().IsClientRole());
+   CPPUNIT_ASSERT_MESSAGE("Server role should default to true", 
+      mManager->GetGMSettings().IsServerRole());
+
+   // Test with client off, server on
+   mManager->GetGMSettings().SetClientRole(false);
+   mManager->GetGMSettings().SetServerRole(true);
+
+   // PROTOTYPE  
+   dtCore::RefPtr<dtDAL::ActorProxy> proxy5 =
+      mManager->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE);
+   CPPUNIT_ASSERT(proxy5.valid());
+   dtCore::RefPtr<dtGame::GameActorProxy> gap5 = dynamic_cast<dtGame::GameActorProxy*> (proxy5.get());
+   gap5->SetName("PROTOTYPE");
+   CPPUNIT_ASSERT(gap5.valid());
+   gap5->SetInitialOwnership(dtGame::GameActorProxy::Ownership::PROTOTYPE);
+   m.AddProxy(*proxy5);
+
+
+   // CLIENT_AND_SERVER_LOCAL  
+   dtCore::RefPtr<dtDAL::ActorProxy> proxy4 =
+      mManager->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE);
+   CPPUNIT_ASSERT(proxy4.valid());
+   dtCore::RefPtr<dtGame::GameActorProxy> gap4 = dynamic_cast<dtGame::GameActorProxy*> (proxy4.get());
+   gap4->SetName("CLIENT_AND_SERVER_LOCAL");
+   CPPUNIT_ASSERT(gap4.valid());
+   gap4->SetInitialOwnership(dtGame::GameActorProxy::Ownership::CLIENT_AND_SERVER_LOCAL);
+   m.AddProxy(*proxy4);
+
+   // SERVER_LOCAL  
+   dtCore::RefPtr<dtDAL::ActorProxy> proxy3 =
+      mManager->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE);
+   CPPUNIT_ASSERT(proxy3.valid());
+   dtCore::RefPtr<dtGame::GameActorProxy> gap3 = dynamic_cast<dtGame::GameActorProxy*> (proxy3.get());
+   gap3->SetName("SERVER_LOCAL");
+   CPPUNIT_ASSERT(gap3.valid());
+   gap3->SetInitialOwnership(dtGame::GameActorProxy::Ownership::SERVER_LOCAL);
+   m.AddProxy(*proxy3);
+
+
+   // SERVER_PUBLISHED  
+   dtCore::RefPtr<dtDAL::ActorProxy> proxy2 =
+      mManager->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE);
+   CPPUNIT_ASSERT(proxy2.valid());
+   dtCore::RefPtr<dtGame::GameActorProxy> gap2 = dynamic_cast<dtGame::GameActorProxy*> (proxy2.get());
+   gap2->SetName("SERVER_PUBLISHED");
+   CPPUNIT_ASSERT(gap2.valid());
+   gap2->SetInitialOwnership(dtGame::GameActorProxy::Ownership::SERVER_PUBLISHED);
+   m.AddProxy(*proxy2);
+
+   // CLIENT_LOCAL  
+   dtCore::RefPtr<dtDAL::ActorProxy> proxy1 =
+      mManager->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE);
+   CPPUNIT_ASSERT(proxy1.valid());
+   dtCore::RefPtr<dtGame::GameActorProxy> gap1 = dynamic_cast<dtGame::GameActorProxy*> (proxy1.get());
+   gap1->SetName("CLIENT_LOCAL");
+   CPPUNIT_ASSERT(gap1.valid());
+   gap1->SetInitialOwnership(dtGame::GameActorProxy::Ownership::CLIENT_LOCAL);
+   m.AddProxy(*proxy1);
+
+
+   project.SaveMap(m);
+
+   mManager->ChangeMap(m.GetName(), false);
+
+   //Make sure the map change completes.
+   dtCore::System::GetInstance().Step();
+   dtCore::System::GetInstance().Step();
+   dtCore::System::GetInstance().Step();
+
+   // Test that there are 4 game actors and 1 prototype in the GM. 
+   std::vector<dtDAL::ActorProxy*> proxies;
+   mManager->GetAllPrototypes(proxies);
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("Should be 1 prototype.",(int) proxies.size(), 1);
+
+   mManager->GetAllActors(proxies);
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("Should be 3 total actors.", 3, (int) proxies.size());
+
+   dtActors::GameMeshActorProxy* testMeshProxy = NULL;
+   mManager->FindActorByName("CLIENT_LOCAL", testMeshProxy);
+   CPPUNIT_ASSERT_MESSAGE("CLIENT_LOCAL should NOT be in GM.", testMeshProxy == NULL);
+
+   mManager->FindActorByName("SERVER_PUBLISHED", testMeshProxy);
+   CPPUNIT_ASSERT_MESSAGE("SERVER_PUBLISHED should exist in GM.", testMeshProxy != NULL);
+   CPPUNIT_ASSERT_MESSAGE("SERVER_PUBLISHED should be published.", testMeshProxy->IsPublished());
+
+   mManager->FindActorByName("SERVER_LOCAL", testMeshProxy);
+   CPPUNIT_ASSERT_MESSAGE("SERVER_LOCAL should exist in GM.", testMeshProxy != NULL);
+   CPPUNIT_ASSERT_MESSAGE("SERVER_LOCAL should NOT be published.", !testMeshProxy->IsPublished());
+
+   mManager->FindActorByName("CLIENT_AND_SERVER_LOCAL", testMeshProxy);
+   CPPUNIT_ASSERT_MESSAGE("CLIENT_AND_SERVER_LOCAL should exist in GM.", testMeshProxy != NULL);
+   CPPUNIT_ASSERT_MESSAGE("CLIENT_AND_SERVER_LOCAL should NOT be published.", !testMeshProxy->IsPublished());
+
+
+   mManager->Shutdown();
+   dtDAL::Project::GetInstance().DeleteMap("testMap");
 }

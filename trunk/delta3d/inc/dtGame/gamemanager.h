@@ -16,7 +16,7 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * Matthew W. Campbell, William E. Johnson II, and David Guthrie
+ * David Guthrie, Curtiss Murphy, Matthew W. Campbell, William E. Johnson II, 
  */
 
 #ifndef DELTA_GAMEMANANGER
@@ -71,6 +71,7 @@ namespace dtGame
    class TickMessage;
    class GMStatistics;
    class GMImpl;
+   class GMSettings;
    class MachineInfo;
    class Message;
    class MessageFactory;
@@ -1047,6 +1048,12 @@ namespace dtGame
        * destroyed, but can be called manually at the appropriate time as well.
        */
       void Shutdown();
+
+      ///@return the GMSettings class. You can change this directly.
+      GMSettings& GetGMSettings();
+
+      ///overwrites the gmsettings instance on the GM. Allows you to make your own settings subclasses.
+      void SetGMSettings(GMSettings& newSettings);
 
    protected:
 
