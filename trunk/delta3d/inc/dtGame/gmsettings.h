@@ -24,7 +24,7 @@
 
 #include <dtGame/export.h>
 #include <dtCore/refptr.h>
-
+#include <osg/Referenced>
 
 /**
  * A simple data class that has configurable settings used by the GM. Separated out as a class
