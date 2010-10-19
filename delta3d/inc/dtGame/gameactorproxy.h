@@ -208,16 +208,19 @@ namespace dtGame
        * and calls SendMessage() on the Game Manager.
        * Note - This will do nothing if the actor is Remote.
        * @param propNames  the properties to include in the update message.
+       * @param flagAsPartial Marks the ActorUpdateMessage as partial or not (default is true)
        */
-      virtual void NotifyPartialActorUpdate(const std::vector<dtUtil::RefString>& propNames);
+      virtual void NotifyPartialActorUpdate(const std::vector<dtUtil::RefString>& propNames, 
+         bool flagAsPartial = true);
 
       /**
        * This is like NotifyFullActorUpdate() except that your subclass might only want to 
        * send some properties. If you use this, you MUST override GetPartialUpdateProperties()
        * to set which properties will be sent.
        * Note - This will do nothing if the actor is Remote.
+       * @param flagAsPartial Marks the ActorUpdateMessage as partial or not (default is true)
        */
-      virtual void NotifyPartialActorUpdate();
+      virtual void NotifyPartialActorUpdate(bool flagAsPartial = true);
 
       /**
        * Override this and add whatever properties you want to go out when you call 

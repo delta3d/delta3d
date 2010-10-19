@@ -42,6 +42,7 @@
 
 #include <dtGame/gmstatistics.h>
 #include <dtGame/gmimpl.h>
+#include <dtGame/gmsettings.h>
 
 #include <dtDAL/actortype.h>
 #include <dtDAL/project.h>
@@ -2038,6 +2039,20 @@ namespace dtGame
 
       DeleteAllActors(true);
    }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   GMSettings& GameManager::GetGMSettings()
+   {
+      return *mGMImpl->mGMSettings;
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void GameManager::SetGMSettings(GMSettings& newSettings)
+   {
+      // Simply overwrites the existing settings.
+      mGMImpl->mGMSettings = &newSettings;
+   }
+
 
    ////////////////////////////////////////////////////////////////////////////////
    /*                            Statistics Information                          */

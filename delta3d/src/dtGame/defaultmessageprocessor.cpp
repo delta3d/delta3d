@@ -131,6 +131,12 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////
    dtCore::RefPtr<GameActorProxy> DefaultMessageProcessor::ProcessRemoteCreateActor(const ActorUpdateMessage& msg)
    {
+      // partial updates don't contain enough props to create the actor, so ignore it.
+      if (msg.IsPartialUpdate())
+      {
+         return NULL;
+      }
+
       const std::string& prototypeName = msg.GetPrototypeName();
 
       dtCore::RefPtr<dtGame::GameActorProxy> gap;

@@ -1,6 +1,6 @@
 /* -*-c++-*-
  * Delta3D Open Source Game and Simulation Engine
- * Copyright (C) 2010, BMH Associates, Inc.
+ * Copyright (C) 2010, Alion Science and Technology
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -28,6 +28,7 @@
 #include <dtCore/uniqueid.h>
 #include <dtCore/timer.h>
 #include <dtGame/gmstatistics.h>
+#include <dtGame/gmsettings.h>
 #include <dtGame/machineinfo.h>
 #include <dtGame/messagefactory.h>
 #include <dtDAL/librarymanager.h>
@@ -146,6 +147,8 @@ namespace dtGame
       bool mRemoveGameEventsOnMapChange;
 
       dtUtil::Log* mLogger;
+
+      dtCore::RefPtr<GMSettings> mGMSettings;
    };
 }
 #endif // gmimpl_h__

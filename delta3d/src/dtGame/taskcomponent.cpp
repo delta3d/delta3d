@@ -60,7 +60,7 @@ namespace dtGame
 
          if (proxy == NULL)
          {
-            LOG_WARNING("Newly created actor could not be found in the game manager.");
+            //LOG_WARNING("Newly created actor could not be found in the game manager.");
             return;
          }
       
