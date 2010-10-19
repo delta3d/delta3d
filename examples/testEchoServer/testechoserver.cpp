@@ -51,6 +51,7 @@ void EchoServer::Config()
  
    mServerGM = new dtGame::GameManager(*GetScene());
    mServerGM->GetMachineInfo().SetName("EchoServer");
+   mServerGM->SetApplication(*this);
 
    mServerComp = new dtNetGM::ServerNetworkComponent("EchoNetwork", 1, "echoserver.log");
    mServerGM->AddComponent(*mServerComp, dtGame::GameManager::ComponentPriority::HIGHER);
