@@ -1,0 +1,19 @@
+<RCC>
+   <qresource prefix="/" >
+      <file>images/wireframe.png</file>
+      <file>images/shaded.png</file>
+      <file>images/shadedwire.png</file>
+      <file>images/diffuseLight.png</file>
+      <file>images/pointLight.png</file>
+      <file>images/xygrid.png</file>
+      <file>images/recompile.png</file>
+      <file>images/lightMode.png</file>
+      <file>images/objectMode.png</file>
+      <file>images/vertexShaderSource.png</file>
+      <file>images/fragmentShaderSource.png</file>
+      <file>images/worldspace.png</file>
+      <file>images/localspace.png</file>
+      <file>images/translatemode.png</file>
+      <file>images/rotatemode.png</file>
+   </qresource>
+</RCC>

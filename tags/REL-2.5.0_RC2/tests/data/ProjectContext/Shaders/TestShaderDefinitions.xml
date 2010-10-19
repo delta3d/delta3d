@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<shaderlist>
+   <shadergroup name="TestGroup1">
+      <shader name="Default" default="yes">
+         <source type="Vertex">Shaders/perpixel_lighting_detailmap_vert.glsl</source>
+         <source type="Fragment">Shaders/perpixel_lighting_detailmap_frag.glsl</source>
+         <parameter name="baseTexture">
+            <texture2D textureUnit="0">
+               <source type="Auto"/>
+               <wrap axis="S" mode="Clamp"/>
+               <wrap axis="T" mode="Clamp"/>
+            </texture2D>
+         </parameter>
+      </shader>
+      <shader name="ShaderTwo">
+         <source type="Vertex">Shaders/perpixel_lighting_detailmap_vert.glsl</source>
+         <source type="Fragment">Shaders/perpixel_lighting_detailmap_frag.glsl</source>
+         <parameter name="baseTexture">
+            <texture2D textureUnit="1">
+               <source type="Image">Textures/detailmap.png</source>
+               <wrap axis="S" mode="Repeat"/>
+               <wrap axis="T" mode="Repeat"/>
+            </texture2D>
+         </parameter>
+      </shader>
+   </shadergroup>
+
+   <shadergroup name="TestGroup2">
+      <shader name="ShaderOne">
+         <source type="Vertex">Shaders/perpixel_lighting_detailmap_vert.glsl</source>
+         <source type="Fragment">Shaders/perpixel_lighting_detailmap_frag.glsl</source>
+         <parameter name="baseTexture" shared="no">
+            <texture2D textureUnit="1">
+               <source type="Auto"/>
+            </texture2D>
+         </parameter>
+      </shader>
+      <shader name="ShaderTwo">
+         <source type="Vertex">Shaders/perpixel_lighting_detailmap_vert.glsl</source>
+         <source type="Fragment">Shaders/perpixel_lighting_detailmap_frag.glsl</source>
+         <parameter name="baseTexture" shared="yes">
+            <texture2D textureUnit="2">
+               <source type="Image">Textures/detailmap.png</source>
+               <wrap axis="S" mode="Mirror"/>
+               <wrap axis="T" mode="Mirror"/>
+            </texture2D>
+         </parameter>
+      </shader>
+   </shadergroup>
+
+   <shadergroup name="TestGroup3">
+      <shader name="ShaderOne">
+         <source type="Geometry">Shaders/pass_through_geom.glsl</source>
+         <source type="Vertex">Shaders/perpixel_lighting_detailmap_vert.glsl</source>
+         <source type="Fragment">Shaders/perpixel_lighting_detailmap_frag.glsl</source>
+      </shader>
+   </shadergroup>
+
+   <shadergroup name="ParamsGroup">
+      <shader name="AllParamsShader">
+         <source type="Vertex">Shaders/perpixel_lighting_detailmap_vert.glsl</source>
+         <source type="Fragment">Shaders/perpixel_lighting_detailmap_frag.glsl</source>
+ 
+         <parameter name="FloatParam">
+            <float defaultValue="10.0"/>
+         </parameter>
+
+         <parameter name="Vec4Param">
+            <vec4 defaultValue="10.0 3.0 5.0 1.0"/>
+         </parameter>
+
+         <parameter name="IntParam">
+            <integer defaultValue="25"/>
+         </parameter>
+
+         <parameter name="TimerFloatParam">
+            <oscillator offset="4.0" rangemin="3.0" rangemax="4.0" cycletimemin="2.0" cycletimemax="2.5" userealtime="false" oscillation="UpAndDown"/>
+         </parameter>
+ 
+         <parameter name="Texture2DParam">
+            <texture2D textureUnit="2">
+               <source type="Image">Textures/detailmap.png</source>
+               <wrap axis="S" mode="Mirror"/>
+               <wrap axis="T" mode="Mirror"/>
+            </texture2D>
+         </parameter>
+
+      </shader>
+   </shadergroup>
+ </shaderlist>
