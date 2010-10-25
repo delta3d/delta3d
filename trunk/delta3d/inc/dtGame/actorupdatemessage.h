@@ -177,6 +177,15 @@ namespace dtGame
          void SetPrototypeName(const std::string& newPrototypeName);
 
          /**
+          * This templated function exposes the for each parameter on the update parameters data member.
+          */
+         template <class UnaryFunction>
+         void ForEachUpdateParameter(UnaryFunction function) const
+         {
+            mUpdateParameters->ForEachParameter(function);
+         }
+
+         /**
           * Indicates whether this actor update message is a partial update or not. A partial
           * actor update implies there is not enough data to create the actor if it does
           * not already exist. 
