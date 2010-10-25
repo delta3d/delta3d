@@ -113,11 +113,11 @@ namespace dtActors
 
       /**
        * Gets the method by which this system is rendered.
-       * @return ActorProxy::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON.
+       * @return dtDAL::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON.
        */
-      virtual const ActorProxy::RenderMode& GetRenderMode()
+      virtual const dtDAL::BaseActorObject::RenderMode& GetRenderMode()
       {
-         return ActorProxy::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON;
+         return dtDAL::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON;
       }
 
    protected:

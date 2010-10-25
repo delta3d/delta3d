@@ -29,7 +29,7 @@ namespace dtDAL
 {
    class Map;
    class MapContentHandler;
-   class ActorProxy;
+   class BaseActorObject;
    class ActorPropertySerializer;
    
    /**
@@ -63,7 +63,7 @@ namespace dtDAL
          * @param[in]  proxyList  The list of proxies loaded from the prefab.
          * @param[in]  map        The map we are loading the prefab for.
          */
-         bool ParsePrefab(const std::string& path, std::vector<dtCore::RefPtr<dtDAL::ActorProxy> >& proxyList, dtDAL::Map* map = NULL);
+         bool ParsePrefab(const std::string& path, std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> >& actorList, dtDAL::Map* map = NULL);
 
          /**
          * Parses only the header of a prefab's xml file and extracts the icon
@@ -132,7 +132,7 @@ namespace dtDAL
       /**
        * Saves a number of given actor proxies into a prefab resource.
        */
-      void SavePrefab(std::vector<dtCore::RefPtr<ActorProxy> > proxyList,
+      void SavePrefab(std::vector<dtCore::RefPtr<BaseActorObject> > actorList,
                       const std::string& filePath, const std::string& description,
                       const std::string& iconFile = "");
          

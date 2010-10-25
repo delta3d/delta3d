@@ -224,14 +224,20 @@ namespace dtEditQt
             const std::string& oldValue, const std::string& newValue)
    {
       dtDAL::ActorProxy* proxy = dynamic_cast<dtDAL::ActorProxy*>(&propCon);
-      EditorEvents::GetInstance().emitActorPropertyAboutToChange(proxy, &prop, oldValue, newValue);
+      if (proxy != NULL)
+      {
+         EditorEvents::GetInstance().emitActorPropertyAboutToChange(proxy, &prop, oldValue, newValue);
+      }
    }
 
    /////////////////////////////////////////////////////////////////////////////////
    void PropertyEditor::PropertyChangedFromControl(dtDAL::PropertyContainer& propCon, dtDAL::ActorProperty& prop)
    {
       dtDAL::ActorProxy* proxy = dynamic_cast<dtDAL::ActorProxy*>(&propCon);
-      EditorEvents::GetInstance().emitActorPropertyChanged(proxy, &prop);
+      if (proxy != NULL)
+      {
+         EditorEvents::GetInstance().emitActorPropertyChanged(proxy, &prop);
+      }
    }
 
 

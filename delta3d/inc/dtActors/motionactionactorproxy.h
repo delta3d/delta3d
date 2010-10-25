@@ -62,10 +62,10 @@ public:
    /*virtual*/ void BuildPropertyMap();
    /*virtual*/ bool IsPlaceable();
 
-   void SetActorTargetObject(ActorProxy* node);
+   void SetActorTargetObject(dtDAL::BaseActorObject* node);
    dtCore::DeltaDrawable* GetActorTargetObject();
 
-   void SetActorParentObject(ActorProxy* proxy);
+   void SetActorParentObject(dtDAL::BaseActorObject* actor);
    dtCore::DeltaDrawable* GetActorParentObject();
 
    void SetActorParentRelation(ParentRelationEnum& e);

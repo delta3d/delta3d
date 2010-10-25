@@ -25,11 +25,6 @@
 #include <dtDirector/eventnode.h>
 #include <dtDirectorNodes/nodelibraryexport.h>
 
-namespace dtDAL
-{
-   class ActorProxy;
-}
-
 namespace dtDirector
 {
    /**

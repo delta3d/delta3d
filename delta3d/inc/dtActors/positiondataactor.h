@@ -34,7 +34,7 @@ namespace dtActors
          virtual void CreateActor();
          virtual dtDAL::ActorProxyIcon* GetBillBoardIcon();
          virtual void BuildPropertyMap();
-         virtual const ActorProxy::RenderMode& GetRenderMode();
+         virtual const dtDAL::BaseActorObject::RenderMode& GetRenderMode();
 
          void ApplyDataTo(dtDAL::ActorProxy* actorProxy) const;
          void ApplyDataTo(dtCore::DeltaDrawable* drawable) const;

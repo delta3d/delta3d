@@ -30,7 +30,7 @@
 
 namespace dtDAL
 {
-   class ActorProxy;
+   class BaseActorObject;
    class ActorProperty;
    class AbstractParameter;
    class GameEvent;
@@ -115,7 +115,7 @@ namespace dtDAL
          /**
          * Initializes the content handler to load a prefab.
          */
-         void SetPrefabMode(std::vector<dtCore::RefPtr<dtDAL::ActorProxy> >& proxyList,
+         void SetPrefabMode(std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> >& proxyList,
                PrefabReadMode readMode = PREFAB_READ_ALL, dtDAL::Map* map = NULL);
 
          /**
@@ -177,7 +177,7 @@ namespace dtDAL
 
          dtCore::RefPtr<GameEvent> mGameEvent;
 
-         dtCore::RefPtr<ActorProxy> mActorProxy;
+         dtCore::RefPtr<BaseActorObject> mBaseActorObject;
 
          int mGroupIndex;
 
@@ -186,7 +186,7 @@ namespace dtDAL
          bool mLoadingPrefab;
          PrefabReadMode mPrefabReadMode;
          std::string mPrefabIconFileName;
-         std::vector<dtCore::RefPtr<dtDAL::ActorProxy> >* mPrefabProxyList;
+         std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> >* mPrefabProxyList;
 
          int                   mPresetCameraIndex;
          Map::PresetCameraData mPresetCameraData;

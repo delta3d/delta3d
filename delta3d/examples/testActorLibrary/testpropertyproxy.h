@@ -40,14 +40,14 @@
 #include <dtUtil/enumeration.h>
 #include <dtUtil/getsetmacros.h>
 
-using namespace dtActors;
+#include "testpropertycontainer.h"
 
 namespace dtCore
 {
     class Scene;
 }
 
-class DT_PLUGIN_EXPORT ExampleTestPropertyProxy : public StaticMeshActorProxy
+class DT_PLUGIN_EXPORT ExampleTestPropertyProxy : public dtActors::StaticMeshActorProxy
 {
 public:
    ExampleTestPropertyProxy();
@@ -67,7 +67,7 @@ public:
       static TestEnum OPTION6;
 
    private:
-      TestEnum(const std::string &name) : dtUtil::Enumeration(name)
+      TestEnum(const std::string& name) : dtUtil::Enumeration(name)
       {
          AddInstance(this);
       }
@@ -79,30 +79,32 @@ public:
       int       value;
    };
 
-   DT_DECLARE_ACCESSOR_INLINE(float, TestFloat);
-   DT_DECLARE_ACCESSOR_INLINE(bool, TestBool);
-   DT_DECLARE_ACCESSOR_INLINE(double, TestDouble);
-   DT_DECLARE_ACCESSOR_INLINE(int, TestInt);
-   DT_DECLARE_ACCESSOR_INLINE(int, ReadOnlyTestInt);
-   DT_DECLARE_ACCESSOR_INLINE(long, TestLong);
-   DT_DECLARE_ACCESSOR_INLINE(std::string, TestString);
-   DT_DECLARE_ACCESSOR_INLINE(std::string, TestStringWithLength);
-   DT_DECLARE_ACCESSOR_INLINE(osg::Vec2, TestVec2);
-   DT_DECLARE_ACCESSOR_INLINE(osg::Vec2f, TestVec2f);
-   DT_DECLARE_ACCESSOR_INLINE(osg::Vec2d, TestVec2d);
-   DT_DECLARE_ACCESSOR_INLINE(osg::Vec3, TestVec3);
-   DT_DECLARE_ACCESSOR_INLINE(osg::Vec3f, TestVec3f);
-   DT_DECLARE_ACCESSOR_INLINE(osg::Vec3d, TestVec3d);
-   DT_DECLARE_ACCESSOR_INLINE(osg::Vec4, TestVec4);
-   DT_DECLARE_ACCESSOR_INLINE(osg::Vec4f, TestVec4f);
-   DT_DECLARE_ACCESSOR_INLINE(osg::Vec4d, TestVec4d);
-   DT_DECLARE_ACCESSOR_INLINE(osg::Vec4, TestColor);
-   DT_DECLARE_ACCESSOR_INLINE(dtUtil::EnumerationPointer<TestEnum>, TestEnum);
-   DT_DECLARE_ACCESSOR_INLINE(dtCore::UniqueId, TestActor);
-   DT_DECLARE_ACCESSOR_INLINE(dtCore::RefPtr<dtDAL::GameEvent>, TestGameEvent);
+   DT_DECLARE_ACCESSOR_INLINE(float, TestFloat)
+   DT_DECLARE_ACCESSOR_INLINE(bool, TestBool)
+   DT_DECLARE_ACCESSOR_INLINE(double, TestDouble)
+   DT_DECLARE_ACCESSOR_INLINE(int, TestInt)
+   DT_DECLARE_ACCESSOR_INLINE(int, ReadOnlyTestInt)
+   DT_DECLARE_ACCESSOR_INLINE(long, TestLong)
+   DT_DECLARE_ACCESSOR_INLINE(std::string, TestString)
+   DT_DECLARE_ACCESSOR_INLINE(std::string, TestStringWithLength)
+   DT_DECLARE_ACCESSOR_INLINE(osg::Vec2, TestVec2)
+   DT_DECLARE_ACCESSOR_INLINE(osg::Vec2f, TestVec2f)
+   DT_DECLARE_ACCESSOR_INLINE(osg::Vec2d, TestVec2d)
+   DT_DECLARE_ACCESSOR_INLINE(osg::Vec3, TestVec3)
+   DT_DECLARE_ACCESSOR_INLINE(osg::Vec3f, TestVec3f)
+   DT_DECLARE_ACCESSOR_INLINE(osg::Vec3d, TestVec3d)
+   DT_DECLARE_ACCESSOR_INLINE(osg::Vec4, TestVec4)
+   DT_DECLARE_ACCESSOR_INLINE(osg::Vec4f, TestVec4f)
+   DT_DECLARE_ACCESSOR_INLINE(osg::Vec4d, TestVec4d)
+   DT_DECLARE_ACCESSOR_INLINE(osg::Vec4, TestColor)
+   DT_DECLARE_ACCESSOR_INLINE(dtUtil::EnumerationPointer<TestEnum>, TestEnum)
+   DT_DECLARE_ACCESSOR_INLINE(dtCore::UniqueId, TestActor)
+   DT_DECLARE_ACCESSOR_INLINE(dtCore::RefPtr<dtDAL::GameEvent>, TestGameEvent)
 
-   DT_DECLARE_ACCESSOR_INLINE(dtDAL::ResourceDescriptor, TestSoundResource);
-   DT_DECLARE_ACCESSOR_INLINE(dtDAL::ResourceDescriptor, TestTextureResource);
+   DT_DECLARE_ACCESSOR_INLINE(dtDAL::ResourceDescriptor, TestSoundResource)
+   DT_DECLARE_ACCESSOR_INLINE(dtDAL::ResourceDescriptor, TestTextureResource)
+
+   DT_DECLARE_ACCESSOR(dtCore::RefPtr<TestPropertyContainer>, TestPropertyContainer)
 
 // void SetTestGameEvent(dtDAL::GameEvent* event) { mTestGameEvent = event; }
 // dtDAL::GameEvent* GetTestGameEvent() { return mTestGameEvent; }

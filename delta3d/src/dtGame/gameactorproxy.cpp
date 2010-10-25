@@ -41,7 +41,9 @@
 #include <dtUtil/functor.h>
 #include <dtUtil/log.h>
 
-using namespace dtGame;
+namespace dtGame
+{
+
 
 const dtUtil::RefString GameActorProxy::PROPERTY_NAME("Name");
 
@@ -398,6 +400,118 @@ void GameActorProxy::PopulateActorUpdateImpl(ActorUpdateMessage& update,
    }
 }
 
+struct ApplyActorUpdateFunc
+{
+   ApplyActorUpdateFunc(dtGame::GameActorProxy& gap, dtUtil::Log& logger, bool filterProps)
+   : mGAP(gap)
+   , mLogger(logger)
+   , mFilterProps(filterProps)
+   {
+   }
+
+   void operator() (const dtCore::RefPtr<dtDAL::NamedParameter>& np)
+   {
+      const dtUtil::RefString& paramName = np->GetName();
+
+      if (mFilterProps && !mGAP.ShouldAcceptPropertyInLocalUpdate(paramName))
+      {
+         if (mLogger.IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+         {
+            mLogger.LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+               "On actor with type \"%s\" Ignoring property named \"%s\" because the actor is local,"
+               "it is set to ACCEPT_WITH_PROPERTY_FILTER, and the property is not in the accept list.",
+               mGAP.GetActorType().GetFullName().c_str(),
+               paramName.c_str()
+               );
+         }
+         return;
+      }
+
+      const dtDAL::DataType& paramType = np->GetDataType();
+
+      // The property can now be either real or a deprecated property (which is created each time).
+      dtCore::RefPtr<dtDAL::ActorProperty> property = mGAP.GetProperty(paramName);
+      if (!property.valid())
+      {
+         property = mGAP.GetDeprecatedProperty(paramName);
+      }
+      if (!property.valid())
+      {
+         LOG_WARNING(("Property \"" + paramName +
+            "\" was not found on actor type \"" +
+            mGAP.GetActorType().GetFullName() +
+            "\""));
+         return;
+      }
+
+      //can't set a read-only property.
+      if (property->IsReadOnly())
+      {
+         if (mLogger.IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+         {
+            mLogger.LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+               "Not setting property \"%s\" on actor type \"%s\" to value \"%s\" because the property is read only.",
+               paramName.c_str(), mGAP.GetActorType().GetFullName().c_str(),
+               np->ToString().c_str()
+               );
+         }
+         return;
+      }
+
+      if (mLogger.IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+      {
+         mLogger.LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+            "Setting property \"%s\" on actor type \"%s\" to value \"%s\"",
+            paramName.c_str(), mGAP.GetActorType().GetFullName().c_str(),
+            np->ToString().c_str()
+            );
+      }
+
+
+      dtDAL::ActorActorProperty* aap = NULL;
+
+      if (paramType == dtDAL::DataType::ACTOR)
+      {
+         aap = dynamic_cast<dtDAL::ActorActorProperty*>(property.get());
+      }
+
+      // If the property is of type ACTOR AND it is an ActorActor property not an ActorID property, it's a special case.
+      if (aap != NULL)
+      {
+         const ActorMessageParameter* amp = static_cast<const ActorMessageParameter*>(np.get());
+         if ( mGAP.GetGameManager() != NULL )
+         {
+            dtGame::GameActorProxy* valueProxy = mGAP.GetGameManager()->FindGameActorById(amp->GetValue());
+            aap->SetValue(valueProxy);
+         }
+         else
+         {
+            std::stringstream ss;
+            ss << mGAP.GetActorType().GetName().c_str() << "." << mGAP.GetClassName().c_str()
+               << " GameActorProxy (" << mGAP.GetId().ToString().c_str()
+               << ") could not access the GameManager." << std::endl;
+            mLogger.LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, ss.str() );
+         }
+      }
+      else
+      {
+         try
+         {
+            np->ApplyValueToProperty(*property);
+         }
+         catch (const dtUtil::Exception& ex)
+         {
+            ex.LogException(dtUtil::Log::LOG_ERROR, mLogger);
+         }
+      }
+   }
+
+   dtGame::GameActorProxy& mGAP;
+   dtUtil::Log& mLogger;
+   bool mFilterProps;
+};
+
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 void GameActorProxy::ApplyActorUpdate(const ActorUpdateMessage& msg, bool checkLocalUpdatePolicy)
 {
@@ -434,110 +548,13 @@ void GameActorProxy::ApplyActorUpdate(const ActorUpdateMessage& msg, bool checkL
       // But, we go ahead and allow this if it is the create message.  So, you can create an actor with an
       // empty name, but can't ever override it to an empty string after that.
       if (msg.GetMessageType() == MessageType::INFO_ACTOR_CREATED || !nameInMessage.empty())
+      {
          SetName(nameInMessage);
+      }
    }
 
-   std::vector<const MessageParameter*> params;
-   msg.GetUpdateParameters(params);
-
-   for (unsigned int i = 0; i < params.size(); ++i)
-   {
-      const dtUtil::RefString& paramName = params[i]->GetName();
-
-      if (filterProps && !ShouldAcceptPropertyInLocalUpdate(paramName))
-      {
-         if (mLogger.IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-         {
-            mLogger.LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-               "On actor with type \"%s\" Ignoring property named \"%s\" because the actor is local,"
-               "it is set to ACCEPT_WITH_PROPERTY_FILTER, and the property is not in the accept list.",
-               GetActorType().GetFullName().c_str(),
-               paramName.c_str()
-               );
-         }
-         continue;
-      }
-
-      const dtDAL::DataType& paramType = params[i]->GetDataType();
-
-      // The property can now be either real or a deprecated property (which is created each time). 
-      dtCore::RefPtr<dtDAL::ActorProperty> property = GetProperty(paramName);
-      if (!property.valid())
-      {
-         property = GetDeprecatedProperty(paramName);
-      }  
-      if (!property.valid())
-      {
-         LOG_WARNING(("Property \"" + paramName +
-            "\" was not found on actor type \"" +
-            GetActorType().GetFullName() +
-            "\""));
-         continue;
-      }
-
-      //can't set a read-only property.
-      if (property->IsReadOnly())
-      {
-         if (mLogger.IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-         {
-            mLogger.LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-               "Not setting property \"%s\" on actor type \"%s\" to value \"%s\" because the property is read only.",
-               paramName.c_str(), GetActorType().GetFullName().c_str(),
-               params[i]->ToString().c_str()
-               );
-         }
-         continue;
-      }
-
-      if (mLogger.IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-      {
-         mLogger.LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-            "Setting property \"%s\" on actor type \"%s\" to value \"%s\"",
-            paramName.c_str(), GetActorType().GetFullName().c_str(),
-            params[i]->ToString().c_str()
-            );
-      }
-
-
-      dtDAL::ActorActorProperty* aap = NULL;
-
-      if (paramType == dtDAL::DataType::ACTOR)
-      {
-         aap = dynamic_cast<dtDAL::ActorActorProperty*>(property.get());
-      }
-
-      // If the property is of type ACTOR AND it is an ActorActor property not an ActorID property, it's a special case.
-      if (aap != NULL)
-      {
-         const ActorMessageParameter* amp = static_cast<const ActorMessageParameter*>(params[i]);
-         if ( GetGameManager() != NULL )
-         {
-            dtGame::GameActorProxy* valueProxy = GetGameManager()->FindGameActorById(amp->GetValue());
-            aap->SetValue(valueProxy);
-         }
-         else
-         {
-            std::stringstream ss;
-            ss << GetActorType().GetName().c_str() << "." << GetClassName().c_str()
-               << " GameActorProxy (" << GetId().ToString().c_str()
-               << ") could not access the GameManager." << std::endl;
-            mLogger.LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, ss.str() );
-         }
-      }
-      else
-      {
-         try
-         {
-            params[i]->ApplyValueToProperty(*property);
-         }
-         catch (const dtUtil::Exception& ex)
-         {
-            ex.LogException(dtUtil::Log::LOG_ERROR, mLogger);
-         }
-      }
-
-   }
-
+   ApplyActorUpdateFunc updateFunc(*this, mLogger, filterProps);
+   msg.ForEachUpdateParameter(updateFunc);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -857,4 +874,6 @@ dtCore::RefPtr<dtDAL::ActorProperty> GameActorProxy::GetDeprecatedProperty(const
    }
 
    return prop;
+}
+
 }

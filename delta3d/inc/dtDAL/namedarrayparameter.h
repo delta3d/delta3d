@@ -23,17 +23,24 @@
 #ifndef DELTA_NAMED_ARRAY_PARAMETER
 #define DELTA_NAMED_ARRAY_PARAMETER
 
-#include <dtDAL/namedgenericparameter.h>
+#include <dtDAL/namedparameter.h>
+#include <vector>
 
 namespace dtDAL
 {
    /**
    * @class ArrayMessageParameter
    */
-   class DT_DAL_EXPORT NamedArrayParameter: public NamedGenericParameter<std::string>
+   class DT_DAL_EXPORT NamedArrayParameter: public NamedParameter
    {
       public:
+         typedef std::vector<dtCore::RefPtr<NamedParameter> > ParameterList;
          NamedArrayParameter(const dtUtil::RefString& name);
+
+         virtual void CopyFrom(const NamedParameter& otherParam);
+
+         virtual void ToDataStream(dtUtil::DataStream& stream) const;
+         virtual bool FromDataStream(dtUtil::DataStream& stream);
 
          virtual const std::string ToString() const;
          virtual bool FromString(const std::string& value);
@@ -41,9 +48,31 @@ namespace dtDAL
          virtual void SetFromProperty(const dtDAL::ActorProperty& property);
          virtual void ApplyValueToProperty(dtDAL::ActorProperty& property) const;
 
+         /**
+          * Adds a parameter to the group
+          * @param name The name of the parameter to add
+          * @param type The type of parameter it is, corresponding with dtDAL::DataType
+          * @param createAsList true if the parameter should be a list parameter.
+          * @return A pointer to the parameter
+          * @see dtDAL::DataType
+          * @throws dtUtil::Exception if the name specified is already used.
+          */
+         NamedParameter* AddParameter(const dtUtil::RefString& name, dtDAL::DataType& type, bool createAsList = false);
+
+         NamedParameter* GetParameter(unsigned index);
+         const NamedParameter* GetParameter(unsigned index) const;
+         void AddParameter(NamedParameter& param);
+         void InsertParameter(unsigned index, NamedParameter& param);
+         void RemoveParameter(unsigned index);
+         size_t GetSize() const;
+
+         virtual bool operator==(const NamedParameter& toCompare) const;
+
       protected:
          NamedArrayParameter(DataType& dataType, const dtUtil::RefString& name);
          virtual ~NamedArrayParameter();
+
+         ParameterList mParameterList;
    };
 }
 

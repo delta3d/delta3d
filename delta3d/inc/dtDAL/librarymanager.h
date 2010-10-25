@@ -142,17 +142,18 @@ namespace dtDAL
          std::string FindActorTypeReplacement(const std::string& fullName) const;
 
          /**
-          * Creates a new actor proxy.  The actor type is used by the library
+          * Creates a new actor object.  The actor type is used by the library
           * manager to determine which type of actor proxy to create.
           * @return Returns a pointer to the base actor proxy which can be
           * safely typecast'd to the appropriate derived type.
           * @throws Throws a ObjectFactoryUnknownType exception if the type
           * is unknown.
           */
-         dtCore::RefPtr<ActorProxy> CreateActorProxy(const ActorType& actorType);
+         dtCore::RefPtr<BaseActorObject> CreateActor(const ActorType& actorType);
+         dtCore::RefPtr<BaseActorObject> CreateActorProxy(const ActorType& actorType) { return CreateActor(actorType); }
 
          /**
-          * Creates a new actor proxy.  The actor type is used by the library
+          * Creates a new actor object.  The actor type is used by the library
           * manager to determine which type of actor proxy to create.
           * @return Returns a pointer to the base actor proxy which can be
           * safely typecast'd to the appropriate derived type.
@@ -161,7 +162,9 @@ namespace dtDAL
           * @param name The name corresponding to the actor type
           * is unknown.
           */
-         dtCore::RefPtr<ActorProxy> CreateActorProxy(const std::string &category, const std::string &name);
+         dtCore::RefPtr<BaseActorObject> CreateActor(const std::string& category, const std::string& name);
+         dtCore::RefPtr<BaseActorObject> CreateActorProxy(const std::string& category, const std::string& name)
+         { return CreateActor(category, name); }
 
          /**
           * Gets a registry currently loaded by the library manager.
@@ -169,12 +172,12 @@ namespace dtDAL
           * system independent name.
           * @return A handle to the registry or NULL if it is not currently loaded.
           */
-         ActorPluginRegistry *GetRegistry(const std::string &name);
+         ActorPluginRegistry* GetRegistry(const std::string &name);
 
          /**
           * @param actorType the actor type to get the registry for.
           */
-         ActorPluginRegistry *GetRegistryForType(const ActorType& actorType);
+         ActorPluginRegistry* GetRegistryForType(const ActorType& actorType);
 
          /**
          * Gets the name of a library given the registry.

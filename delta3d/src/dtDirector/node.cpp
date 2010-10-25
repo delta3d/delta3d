@@ -179,7 +179,7 @@ namespace dtDirector
          else if (link->GetPropertyType() == dtDAL::DataType::ACTOR)
          {
             std::string desiredClass;
-            dtDAL::ActorProxy* proxyValue = NULL;
+            dtDAL::BaseActorObject* proxyValue = NULL;
 
             // Handle both: ActorIDActorProperty and ActorActorProperty (do nothing if redirected)
             if (IS_A(link->GetProperty(), dtDAL::ActorIDActorProperty*))
@@ -488,7 +488,7 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   dtDAL::ActorProxy* Node::GetActor(const std::string& name, int index)
+   dtDAL::BaseActorObject* Node::GetActor(const std::string& name, int index)
    {
       dtDAL::ActorProperty* prop = GetProperty(name, index);
       if (!prop) return NULL;
@@ -496,7 +496,7 @@ namespace dtDirector
       dtDAL::ActorIDActorProperty* actorIdProp = dynamic_cast<dtDAL::ActorIDActorProperty*>(prop);
       if (actorIdProp)
       {
-         dtDAL::ActorProxy* proxy = NULL;
+         dtDAL::BaseActorObject* proxy = NULL;
 
          dtCore::UniqueId id = actorIdProp->GetValue();
 

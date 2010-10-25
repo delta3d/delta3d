@@ -18,6 +18,7 @@ SET(LIB_PUBLIC_HEADERS
     ${HEADER_PATH}/actortype.h
     ${HEADER_PATH}/arrayactorproperty.h
     ${HEADER_PATH}/arrayactorpropertybase.h
+    ${HEADER_PATH}/baseactorobject.h
     ${HEADER_PATH}/basexml.h
     ${HEADER_PATH}/basexmlhandler.h
     ${HEADER_PATH}/booleanactorproperty.h
@@ -62,6 +63,7 @@ SET(LIB_PUBLIC_HEADERS
     ${HEADER_PATH}/namedparameter.h
     ${HEADER_PATH}/namedparameters.h
     ${HEADER_PATH}/namedpodparameter.h
+    ${HEADER_PATH}/namedpropertycontainerparameter.h
     ${HEADER_PATH}/namedresourceparameter.h
     ${HEADER_PATH}/namedrgbacolorparameter.h
     ${HEADER_PATH}/namedrgbcolorparameter.h
@@ -77,6 +79,7 @@ SET(LIB_PUBLIC_HEADERS
     ${HEADER_PATH}/plugin_export.h
     ${HEADER_PATH}/project.h
     ${HEADER_PATH}/propertycontainer.h
+    ${HEADER_PATH}/propertycontaineractorproperty.h
     ${HEADER_PATH}/propertymacros.h
     ${HEADER_PATH}/resourceactorproperty.h
     ${HEADER_PATH}/resourcedescriptor.h
@@ -96,10 +99,10 @@ SET(LIB_SOURCES
     ${SOURCE_PATH}/actorpluginregistry.cpp
     ${SOURCE_PATH}/actorproperty.cpp
     ${SOURCE_PATH}/actorpropertyserializer.cpp
-    ${SOURCE_PATH}/actorproxy.cpp
     ${SOURCE_PATH}/actorproxyicon.cpp
     ${SOURCE_PATH}/actortype.cpp
     ${SOURCE_PATH}/arrayactorpropertybase.cpp
+    ${SOURCE_PATH}/baseactorobject.cpp
     ${SOURCE_PATH}/basexml.cpp
     ${SOURCE_PATH}/basexmlhandler.cpp
     ${SOURCE_PATH}/booleanactorproperty.cpp
@@ -135,6 +138,7 @@ SET(LIB_SOURCES
     ${SOURCE_PATH}/namedintparameter.cpp
     ${SOURCE_PATH}/namedlongintparameter.cpp
     ${SOURCE_PATH}/namedparameter.cpp
+    ${SOURCE_PATH}/namedpropertycontainerparameter.cpp
     ${SOURCE_PATH}/namedresourceparameter.cpp
     ${SOURCE_PATH}/namedrgbacolorparameter.cpp
     ${SOURCE_PATH}/namedrgbcolorparameter.cpp
@@ -149,6 +153,7 @@ SET(LIB_SOURCES
     ${SOURCE_PATH}/physicalactorproxy.cpp
     ${SOURCE_PATH}/project.cpp
     ${SOURCE_PATH}/propertycontainer.cpp
+    ${SOURCE_PATH}/propertycontaineractorproperty.cpp
     ${SOURCE_PATH}/resourceactorproperty.cpp
     ${SOURCE_PATH}/resourcedescriptor.cpp
     ${SOURCE_PATH}/resourcehelper.cpp

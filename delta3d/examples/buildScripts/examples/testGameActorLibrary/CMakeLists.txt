@@ -18,14 +18,15 @@ ADD_LIBRARY(${APP_NAME} SHARED
             ${EXAMPLE_PATH}/testgameactorlibrary.h
             ${EXAMPLE_PATH}/testgameenvironmentactor.cpp
             ${EXAMPLE_PATH}/testgameenvironmentactor.h
-            ${EXAMPLE_PATH}/testgamepropertyproxy.cpp
-            ${EXAMPLE_PATH}/testgamepropertyproxy.h
+            ${EXAMPLE_PATH}/testgamepropertyactor.cpp
+            ${EXAMPLE_PATH}/testgamepropertyactor.h
             ${EXAMPLE_PATH}/testhlaobject.cpp
             ${EXAMPLE_PATH}/testhlaobject.h
+            ${EXAMPLE_PATH}/testnestedpropertycontainer.cpp
+            ${EXAMPLE_PATH}/testnestedpropertycontainer.h
             ${EXAMPLE_PATH}/testplayer.cpp
             ${EXAMPLE_PATH}/testplayer.h
             )
-
 
 
 TARGET_LINK_LIBRARIES(${APP_NAME} ${DTCORE_LIBRARIES}
@@ -35,7 +36,7 @@ TARGET_LINK_LIBRARIES(${APP_NAME} ${DTCORE_LIBRARIES}
                                   ${DTDAL_LIBRARIES}
                                   ${DTACTORS_LIBRARIES}
                       )
-                      
-                      
+
+
 SET_TARGET_PROPERTIES(${APP_NAME}
                      PROPERTIES DEFINE_SYMBOL DT_EXAMPLE_LIBRARY)

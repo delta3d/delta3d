@@ -34,6 +34,7 @@
 #include <dtDAL/vectoractorproperties.h>
 
 #include <dtQt/dynamicabstractparentcontrol.h>
+#include <dtQt/dynamicpropertycontainercontrol.h>
 #include <dtQt/dynamicarraycontrol.h>
 #include <dtQt/dynamicboolcontrol.h>
 #include <dtQt/dynamiccolorrgbacontrol.h>
@@ -83,6 +84,7 @@ namespace dtQt
       RegisterControlForDataType<DynamicColorRGBAControl>(dtDAL::DataType::RGBACOLOR);
       RegisterControlForDataType<DynamicArrayControl>(dtDAL::DataType::ARRAY);
       RegisterControlForDataType<DynamicContainerControl>(dtDAL::DataType::CONTAINER);
+      RegisterControlForDataType<DynamicPropertyContainerControl>(dtDAL::DataType::PROPERTY_CONTAINER);
    }
 
    ////////////////////////////////////////////////////////////////////////////////

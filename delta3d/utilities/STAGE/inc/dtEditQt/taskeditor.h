@@ -44,7 +44,7 @@ class QCheckBox;
 
 namespace dtDAL
 {
-   class ActorProxy;
+   class BaseActorObject;
 }
 
 namespace dtEditQt
@@ -65,7 +65,7 @@ namespace dtEditQt
       void GetTaskChildren(dtDAL::NamedGroupParameter& toFill) const;
 
       ///@return true if the list being edited contains the given proxy.
-      bool HasChild(dtDAL::ActorProxy& proxyToTest);
+      bool HasChild(dtDAL::BaseActorObject& proxyToTest);
 
       /**
        * Swaps the two given rows in the model for the table.
@@ -123,7 +123,7 @@ namespace dtEditQt
       /// builds the list of children.
       void PopulateChildren();
       /// Adds a new proxy to the list of children.
-      void AddItemToList(dtDAL::ActorProxy& proxy);
+      void AddItemToList(dtDAL::BaseActorObject& proxy);
       /// sets all the verical header labels on mChildrenView to ""
       void BlankRowLabels();
 
@@ -138,7 +138,7 @@ namespace dtEditQt
       QPushButton* mRemoveChild;
 
       dtCore::RefPtr<dtDAL::NamedGroupParameter> mChildren;
-      std::set< dtCore::RefPtr<dtDAL::ActorProxy> > mRemovedTasks;
+      std::set< dtCore::RefPtr<dtDAL::BaseActorObject> > mRemovedTasks;
    };
 
 } // namespace dtEditQt

@@ -26,11 +26,6 @@
 #include <dtDirector/export.h>
 
 
-namespace dtDAL
-{
-    class ActorProxy;
-}
-
 namespace dtDirector
 {
    class MessageGMComponent;

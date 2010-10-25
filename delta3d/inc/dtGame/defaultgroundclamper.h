@@ -149,7 +149,6 @@ namespace dtGame
           * Calculates the bounding box for the given proxy, stores it in the data object, and populates the Vec3.
           * @param modelDimensions Capture the calculated box dimensions which is also set on data.
           * @param proxy Actor that should have its bounding box calculated.
-          * @param data Set of values to be updated based on the ground clamp operation.
           */
          virtual void CalculateAndSetBoundingBox(osg::Vec3& modelDimensions,
             dtDAL::TransformableActorProxy& proxy, GroundClampingData& data);

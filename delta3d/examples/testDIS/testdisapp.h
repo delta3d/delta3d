@@ -23,7 +23,7 @@ namespace dtCore
 
 namespace dtDAL
 {
-   class ActorProxy;
+   class BaseActorObject;
 }
 
 class TestDISApp : public dtABC::Application
@@ -44,7 +44,7 @@ private:
    dtCore::RefPtr<dtCore::RTSMotionModel> mMotion;
    std::string mConnectionXml;
    std::string mActorTypeMapping;
-   std::vector<dtDAL::ActorProxy*> mActorsToPublish;
+   std::vector<dtDAL::BaseActorObject*> mActorsToPublish;
 
    void FindActorsAndAddComponents();
 };

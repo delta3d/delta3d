@@ -116,7 +116,7 @@ void DirectorComponent::OnMapLoaded()
 
    app.GetWindow()->ShowCursor(false);
 
-   std::vector<dtDAL::ActorProxy*> proxyList;
+   std::vector<dtDAL::BaseActorObject*> proxyList;
    gm->FindActorsByType(*dtActors::EngineActorRegistry::STATIC_MESH_ACTOR_TYPE, proxyList);
 
    // Try to eliminate interpenetration overhead (ODE is the bottleneck here)
@@ -131,7 +131,7 @@ void DirectorComponent::OnMapLoaded()
    }
 
    // Get the player start position
-   dtDAL::ActorProxy* playerStartProxy = NULL;
+   dtDAL::BaseActorObject* playerStartProxy = NULL;
    gm->FindActorByType(*dtActors::EngineActorRegistry::PLAYER_START_ACTOR_TYPE, playerStartProxy);
 
    dtCore::Transformable* playerStart = 

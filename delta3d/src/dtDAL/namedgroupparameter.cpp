@@ -34,12 +34,18 @@ namespace dtDAL
    {}
 
    ///////////////////////////////////////////////////////////////////////////////
+   NamedGroupParameter::NamedGroupParameter(dtDAL::DataType& newDataType, const dtUtil::RefString& name)
+   : NamedParameter(newDataType, name, false)
+   {}
+
+   ///////////////////////////////////////////////////////////////////////////////
    NamedGroupParameter::NamedGroupParameter(const NamedGroupParameter& toCopy)
    : NamedParameter(dtDAL::DataType::GROUP, toCopy.GetName(), false)
    {
       CopyFrom(toCopy);
    }
 
+   ///////////////////////////////////////////////////////////////////////////////
    void NamedGroupParameter::ToDataStream(dtUtil::DataStream& stream) const
    {
       // Write out the size of the list so we know how many times to loop in FromDataStream
@@ -95,18 +101,10 @@ namespace dtDAL
          dtCore::RefPtr<NamedParameter> param = GetParameter(name);
          if (param == NULL)
          {
-            if (isList)
-            {
-               param = CreateFromType(*type, name, true);
-               AddParameter(*param);
-            }
-            else
-            {
-               param = AddParameter(name, *type);
-            }
+            param = AddParameter(name, *type, isList);
          }
 
-         okay = okay && param->FromDataStream(stream);
+         okay = okay && param != NULL && param->FromDataStream(stream);
       }
 
       return okay;
@@ -127,10 +125,7 @@ namespace dtDAL
          toFill.append(" ");
          // output this boolean as "true" or "false" in the string
          bool isList = param.IsList();
-         if (isList)
-            toFill.append("true");
-         else
-            toFill.append("false");
+         toFill.append(isList ? "true": "false");
 
          toFill.append(" ");
          toFill.append(param.ToString());
@@ -168,15 +163,7 @@ namespace dtDAL
 
       if (param == NULL)
       { // add it if it does not exist
-         if (isList)
-         {
-            param = CreateFromType(*type, paramName, true);
-            AddParameter(*param);
-         }
-         else
-         {
-            param = AddParameter(paramName, *type);
-         }
+         param = AddParameter(paramName, *type, isList);
       }
 
       param->FromString(paramValue);
@@ -206,7 +193,7 @@ namespace dtDAL
          dtCore::RefPtr<NamedParameter> newParameter =
                   AddParameter(cur.GetName(), cur.GetDataType(), cur.IsList());
 
-         newParameter->CopyFrom(*i->second);
+         newParameter->CopyFrom(cur);
       }
    }
 
@@ -234,6 +221,12 @@ namespace dtDAL
          return param;
       }
       return NULL;
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void NamedGroupParameter::RemoveAllParameters()
+   {
+      mParameterList.clear();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -298,7 +291,7 @@ namespace dtDAL
    {
       ValidatePropertyType(property);
 
-      const dtDAL::GroupActorProperty *gap = static_cast<const dtDAL::GroupActorProperty*>(&property);
+      const dtDAL::GroupActorProperty* gap = static_cast<const dtDAL::GroupActorProperty*>(&property);
       if (gap->GetValue().valid())
       {
          CopyFrom(*gap->GetValue());
@@ -310,7 +303,7 @@ namespace dtDAL
    {
       ValidatePropertyType(property);
 
-      dtDAL::GroupActorProperty *gap = static_cast<dtDAL::GroupActorProperty*>(&property);
+      dtDAL::GroupActorProperty* gap = static_cast<dtDAL::GroupActorProperty*>(&property);
       gap->SetValue(*this);
    }
 
@@ -322,19 +315,23 @@ namespace dtDAL
          const NamedGroupParameter& groupToCompare = static_cast<const NamedGroupParameter&>(toCompare);
          //if the size doesn't match. it's not equal.
          if (mParameterList.size() != groupToCompare.mParameterList.size())
+         {
             return false;
+         }
          NamedGroupParameter::ParameterList::const_iterator itor = mParameterList.begin();
          NamedGroupParameter::ParameterList::const_iterator itorComp = groupToCompare.mParameterList.begin();
          NamedGroupParameter::ParameterList::const_iterator end = mParameterList.end();
          for (; itor != end; ++itor)
          {
-            //spin through the props and return false if one is not equal.
+            //spin through the params and return false if one is not equal.
             if (*itor->second != *itorComp->second)
+            {
                return false;
+            }
 
             ++itorComp;
          }
-         //all props are equal.
+         //all params are equal.
          return true;
       }
       return false;

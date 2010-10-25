@@ -58,25 +58,25 @@ namespace dtActors
           * Sets the bezier control point on enter for this proxy's actor
           * @param controlPoint The entry controlPoint to set
           */
-         void SetBezierEntryControlPoint(ActorProxy* controlPoint);
+         void SetBezierEntryControlPoint(dtDAL::BaseActorObject* controlPoint);
 
          /**
           * Sets the bezier control point on exit for this proxy's actor
           * @param controlPoint The exit controlPoint to set
           */
-         void SetBezierExitControlPoint(ActorProxy* controlPoint);
+         void SetBezierExitControlPoint(dtDAL::BaseActorObject* controlPoint);
 
          /**
           * Sets the next bezier node on this proxy's actor
           * @param node The node to set
           */
-         void SetNextBezierNode(ActorProxy* node);
+         void SetNextBezierNode(dtDAL::BaseActorObject* node);
 
          /**
           * Sets the previous bezier node on this proxy's actor
           * @param node The node to set
           */
-         void SetPreviousBezierNode(ActorProxy* node);
+         void SetPreviousBezierNode(dtDAL::BaseActorObject* node);
 
          /**
           * Gets the next node on this proxy's actor
@@ -105,7 +105,7 @@ namespace dtActors
          dtDAL::ActorProxyIcon* GetBillBoardIcon();
 
 
-         const dtDAL::ActorProxy::RenderMode& GetRenderMode();
+         const dtDAL::BaseActorObject::RenderMode& GetRenderMode();
 
          /*virtual*/ void OnScale(const osg::Vec3& oldValue, const osg::Vec3& newValue);
          /*virtual*/ void OnRotation(const osg::Vec3& oldValue, const osg::Vec3& newValue);

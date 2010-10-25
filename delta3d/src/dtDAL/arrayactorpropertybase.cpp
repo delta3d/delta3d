@@ -6,13 +6,16 @@
 
 #include <cstdio>
 
-using namespace dtDAL;
+
+namespace dtDAL
+{
+
 
 const char OPEN_CHAR = 1;
 const char CLOSE_CHAR = 2;
 
 ////////////////////////////////////////////////////////////////////////////////
-dtDAL::ArrayActorPropertyBase::ArrayActorPropertyBase(const std::string& name,
+ArrayActorPropertyBase::ArrayActorPropertyBase(const std::string& name,
                                                       const std::string& label,
                                                       const std::string& desc,
                                                       ActorProperty* propertyType,
@@ -30,13 +33,30 @@ ActorProperty(DataType::ARRAY, name, label, desc, groupName, readOnly)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-dtDAL::ArrayActorPropertyBase::~ArrayActorPropertyBase()
+ArrayActorPropertyBase::~ArrayActorPropertyBase()
 {
 
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-bool dtDAL::ArrayActorPropertyBase::FromString(const std::string& value)
+void ArrayActorPropertyBase::CopyFrom(const ActorProperty& otherProp)
+{
+   if (GetDataType() != otherProp.GetDataType())
+   {
+      LOG_ERROR("Property types are incompatible. Cannot make copy.");
+      return;
+   }
+
+   const ArrayActorPropertyBase* src = dynamic_cast<const ArrayActorPropertyBase*>(&otherProp);
+   if (src)
+   {
+      FromString(src->ToString());
+   }
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+bool ArrayActorPropertyBase::FromString(const std::string& value)
 {
    if (!mPropertyType.valid())
    {
@@ -46,24 +66,17 @@ bool dtDAL::ArrayActorPropertyBase::FromString(const std::string& value)
    std::string data = value;
 
    // First read the total size of the array.
-   std::string token = TakeToken(data);
+   std::string token;
+   TakeToken(data, token);
 
    // Make sure our array is the proper size.
    const int arraySize = dtUtil::ToType<int>(token);
-   while (GetArraySize() < arraySize)
-   {
-      Insert(0);
-   }
+   const int actualSize = Resize(arraySize);
 
-   while (GetArraySize() > arraySize)
-   {
-      Remove(0);
-   }
-
-   for (int index = 0; index < arraySize; index++)
+   for (int index = 0; index < arraySize && index < actualSize; index++)
    {
       SetIndex(index);
-      token = TakeToken(data);
+      TakeToken(data, token);
       mPropertyType->FromString(token);
    }
 
@@ -71,15 +84,15 @@ bool dtDAL::ArrayActorPropertyBase::FromString(const std::string& value)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-std::string dtDAL::ArrayActorPropertyBase::TakeToken(std::string& data)
+void ArrayActorPropertyBase::TakeToken(std::string& data, std::string& outToken)
 {
-   std::string returnData;
+   outToken.clear();
 
    // If the first character in the data string is not the opening character,
    //  we will just assume the entire data string is the token.
    if (data.c_str()[0] != OPEN_CHAR)
    {
-      returnData = data;
+      outToken = data;
       data = "";
    }
 
@@ -113,7 +126,7 @@ std::string dtDAL::ArrayActorPropertyBase::TakeToken(std::string& data)
       // All other characters are added to the return buffer.
       if (appendChar)
       {
-         returnData.append(data.c_str(), 1);
+         outToken.append(data.c_str(), 1);
       }
 
       // Remove the left most character from the data string.
@@ -125,12 +138,10 @@ std::string dtDAL::ArrayActorPropertyBase::TakeToken(std::string& data)
          break;
       }
    }
-
-   return returnData;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-const std::string dtDAL::ArrayActorPropertyBase::ToString() const
+const std::string ArrayActorPropertyBase::ToString() const
 {
    if (!mPropertyType.valid())
    {
@@ -159,106 +170,83 @@ const std::string dtDAL::ArrayActorPropertyBase::ToString() const
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void dtDAL::ArrayActorPropertyBase::CopyFrom(const ActorProperty& otherProp)
-{
-   if (GetDataType() != otherProp.GetDataType())
-   {
-      LOG_ERROR("Property types are incompatible. Cannot make copy.");
-      return;
-   }
-
-   const ArrayActorPropertyBase* src = dynamic_cast<const ArrayActorPropertyBase*>(&otherProp);
-   if (src)
-   {
-      FromString(src->ToString());
-   }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-ActorProperty* dtDAL::ArrayActorPropertyBase::GetArrayProperty()
+ActorProperty* ArrayActorPropertyBase::GetArrayProperty()
 {
    return mPropertyType.get();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-const ActorProperty* dtDAL::ArrayActorPropertyBase::GetArrayProperty() const
+const ActorProperty* ArrayActorPropertyBase::GetArrayProperty() const
 {
    return mPropertyType.get();
 }
 
+void ArrayActorPropertyBase::SetArrayProperty(ActorProperty& property)
+{
+   mPropertyType = &property;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
-void dtDAL::ArrayActorPropertyBase::SetMinArraySize(int minSize)
+void ArrayActorPropertyBase::SetMinArraySize(int minSize)
 {
    mMinSize = minSize;
 
-   // TODO ARRAY: Make sure to add indexes if the minimum size is larger than the current size.
+   if (mMinSize > GetArraySize())
+   {
+      Resize(mMinSize);
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-int dtDAL::ArrayActorPropertyBase::GetMinArraySize() const
+int ArrayActorPropertyBase::GetMinArraySize() const
 {
    return mMinSize;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void dtDAL::ArrayActorPropertyBase::SetMaxArraySize(int maxSize)
+void ArrayActorPropertyBase::SetMaxArraySize(int maxSize)
 {
    mMaxSize = maxSize;
 
-   // TODO ARRAY: Make sure to remove indexes if the maximum size exceeds the current size.
+   if (mMaxSize < GetArraySize())
+   {
+      Resize(mMaxSize);
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-int dtDAL::ArrayActorPropertyBase::GetMaxArraySize() const
+int ArrayActorPropertyBase::GetMaxArraySize() const
 {
    return mMaxSize;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-bool dtDAL::ArrayActorPropertyBase::CanReorder() const
+int ArrayActorPropertyBase::Resize(unsigned newSize)
+{
+   int arraySize = GetArraySize();
+
+   int min, max;
+   min = GetMinArraySize() < 0 ? 0 : GetMinArraySize();
+   max = GetMaxArraySize() < 0 ? INT_MAX : GetMaxArraySize();
+
+   // If the array is too small, make it larger
+   while (arraySize > int(newSize) && arraySize > min)
+   {
+      PopBack();
+      arraySize = GetArraySize();
+   }
+
+   while (arraySize < int(newSize) && arraySize < max)
+   {
+      PushBack();
+      arraySize = GetArraySize();
+   }
+
+}
+
+////////////////////////////////////////////////////////////////////////////////
+bool ArrayActorPropertyBase::CanReorder() const
 {
    return mCanReorder;
 }
-
-////////////////////////////////////////////////////////////////////////////////
-int dtDAL::ArrayActorPropertyBase::GetArraySize() const
-{
-   return 0;
 }
-
-////////////////////////////////////////////////////////////////////////////////
-void dtDAL::ArrayActorPropertyBase::SetIndex(int index) const
-{
-
-}
-
-////////////////////////////////////////////////////////////////////////////////
-bool dtDAL::ArrayActorPropertyBase::Insert(int index)
-{
-   return false;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-bool dtDAL::ArrayActorPropertyBase::Remove(int index)
-{
-   return false;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void dtDAL::ArrayActorPropertyBase::Clear()
-{
-
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void dtDAL::ArrayActorPropertyBase::Swap(int first, int second)
-{
-
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void dtDAL::ArrayActorPropertyBase::Copy(int src, int dst)
-{
-
-}
-

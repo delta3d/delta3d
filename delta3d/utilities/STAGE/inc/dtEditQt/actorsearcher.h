@@ -42,10 +42,6 @@ class QGroupBox;
 class QLineEdit;
 class QPushButton;
 
-//namespace dtDAL {
-//    class ActorProxy;
-//}
-
 namespace dtEditQt
 {
 

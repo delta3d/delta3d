@@ -35,17 +35,17 @@ namespace dtActors
 
    void BezierControlPointActorProxy::CreateActor()
    {
-      SetActor(*new dtABC::BezierControlPoint);
+      SetDrawable(*new dtABC::BezierControlPoint);
 
       std::ostringstream ss;
       ss << "ControlPoint" << mNumControlPoints++;
       SetName(ss.str());
    }
 
-   void BezierControlPointActorProxy::SetBezierNode(ActorProxy *node)
+   void BezierControlPointActorProxy::SetBezierNode(dtDAL::BaseActorObject* node)
    {
 
-      //ActorProxy* old = GetLinkedActor("Bezier Node");
+      //BaseActorObject* old = GetLinkedActor("Bezier Node");
       //set the linked actor proxy for safe-keeping
       SetLinkedActor("Bezier Node", node);
 
@@ -109,9 +109,9 @@ namespace dtActors
    }
 
 
-   const dtDAL::ActorProxy::RenderMode& BezierControlPointActorProxy::GetRenderMode()
+   const dtDAL::BaseActorObject::RenderMode& BezierControlPointActorProxy::GetRenderMode()
    {
-         return dtDAL::ActorProxy::RenderMode::DRAW_BILLBOARD_ICON;
+         return dtDAL::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON;
    }
 
    //////////////////////////////////////////////////////////////////////////

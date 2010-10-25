@@ -54,7 +54,7 @@ namespace dtDAL
    class MapWriter;
    class DataType;
    class LibraryManager;
-   class ActorProxy;
+   class BaseActorObject;
    class ResourceDescriptor;
    class ProjectImpl;
    class GameEvent;
@@ -338,32 +338,36 @@ namespace dtDAL
       void ClearBackup(const std::string& mapName);
 
       /**
-       * This will search all open maps until is finds the one that contains the given proxy id.
+       * This will search all open maps until is finds the one that contains the given actor obj id.
        * @return the map that contains a given actor proxy or NULL if it's not found.
-       * @param id the id of the proxy to search for.
+       * @param id the id of the actor to search for.
        */
-      Map* GetMapForActorProxy(const dtCore::UniqueId& id);
+      Map* GetMapForActor(const dtCore::UniqueId& id);
+      Map* GetMapForActorProxy(const dtCore::UniqueId& id) { return GetMapForActor(id); }
 
       /**
-       * This will search all open maps until is finds the one that contains the given proxy id.
+       * This will search all open maps until is finds the one that contains the given actor obj id.
        * @return the map that contains a given actor proxy or NULL if it's not found.
-       * @param id the id of the proxy to search for.
+       * @param id the id of the actor to search for.
        */
-      const Map* GetMapForActorProxy(const dtCore::UniqueId& id) const;
+      const Map* GetMapForActor(const dtCore::UniqueId& id) const;
+      const Map* GetMapForActorProxy(const dtCore::UniqueId& id) const { return GetMapForActor(id); }
 
       /**
-       * This will search all open maps until is finds the one that contains the given proxy.
+       * This will search all open maps until is finds the one that contains the given actor obj.
        * @return the map that contains a given actor proxy or NULL if it's not found.
-       * @param proxy the proxy to search for.
+       * @param proxy the actor to search for.
        */
-      Map* GetMapForActorProxy(const ActorProxy& proxy);
+      Map* GetMapForActor(const BaseActorObject& actor);
+      Map* GetMapForActorProxy(const BaseActorObject& actor) { return GetMapForActor(actor); }
 
       /**
-       * This will search all open maps until is finds the one that contains the given proxy.
+       * This will search all open maps until is finds the one that contains the given actor obj.
        * @return the map that contains a given actor proxy or NULL if it's not found.
-       * @param proxy the proxy to search for.
+       * @param proxy the actor to search for.
        */
-      const Map* GetMapForActorProxy(const ActorProxy& proxy) const;
+      const Map* GetMapForActor(const BaseActorObject& actor) const;
+      const Map* GetMapForActorProxy(const BaseActorObject& actor) const { return GetMapForActor(actor); }
 
       /**
        * This will search for a map event in all currently loaded maps.
@@ -524,8 +528,8 @@ namespace dtDAL
        * @return mIsInSTAGE
        * @note NO USER SHOULD CALL THIS FUNCTION, EVER.
        * If you want to find out if you are running from STAGE,
-       * please use dtDAL::ActorProxy::IsInSTAGE();
-       * @see class dtDAL::ActorProxy
+       * please use dtDAL::BaseActorObject::IsInSTAGE();
+       * @see class dtDAL::BaseActorObject
        */
       bool GetEditMode() const;
    private:

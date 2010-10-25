@@ -48,6 +48,7 @@
 #include <dtDAL/namedrgbacolorparameter.h>
 #include <dtDAL/namedstringparameter.h>
 #include <dtDAL/namedgroupparameter.h>
+#include <dtDAL/namedpropertycontainerparameter.h>
 #include <dtDAL/namedvectorparameters.h>
 
 #include <sstream>
@@ -211,6 +212,9 @@ namespace dtDAL
          break;
       case dtDAL::DataType::GROUP_ID:
          param = new NamedGroupParameter(name);
+         break;
+      case dtDAL::DataType::PROPERTY_CONTAINER_ID:
+         param = new NamedPropertyContainerParameter(name);
          break;
       case dtDAL::DataType::ARRAY_ID:
          param = new NamedArrayParameter(name);

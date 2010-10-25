@@ -42,7 +42,7 @@
 
 namespace dtDAL
 {
-   class ActorProxy;
+   class BaseActorObject;
 }
 
 namespace dtGame
@@ -96,7 +96,7 @@ namespace dtGame
        * Removes the proxy from the scene
        * @param proxy the proxy to remove from the scene.
        */
-      void RemoveActorFromScene(GameManager& gm, dtDAL::ActorProxy& proxy);
+      void RemoveActorFromScene(GameManager& gm, dtDAL::BaseActorObject& proxy);
 
       /**
        * Private helper method to send an environment changed message
@@ -105,7 +105,7 @@ namespace dtGame
       void SendEnvironmentChangedMessage(GameManager& gm, IEnvGameActorProxy* envActor);
 
       typedef std::map< dtCore::UniqueId, dtCore::RefPtr<GameActorProxy> > GameActorMap;
-      typedef std::map< dtCore::UniqueId, dtCore::RefPtr<dtDAL::ActorProxy> > ActorMap;
+      typedef std::map< dtCore::UniqueId, dtCore::RefPtr<dtDAL::BaseActorObject> > ActorMap;
 
       /// stats for the work of the GM - in a class so its less obtrusive to the gm
       GMStatistics mGMStatistics;
@@ -113,7 +113,7 @@ namespace dtGame
       dtCore::RefPtr<IEnvGameActorProxy>  mEnvironment;
       GameActorMap mGameActorProxyMap;
       GameActorMap mPrototypeActors;
-      ActorMap  mActorProxyMap;
+      ActorMap  mBaseActorObjectMap;
       std::vector<dtCore::RefPtr<GameActorProxy> > mDeleteList;
 
       // These are used during changing the map so that

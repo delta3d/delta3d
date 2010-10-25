@@ -43,7 +43,7 @@ namespace DIS
 
 namespace dtDAL
 {
-   class ActorProxy; 
+   class BaseActorObject;
    class ActorType;
 }
 
@@ -67,9 +67,9 @@ namespace dtDIS
       void Process(const DIS::Pdu& p);
 
    protected:
-      void SendPartialUpdate(const DIS::EntityStatePdu& pdu, const dtDAL::ActorProxy& actor);
+      void SendPartialUpdate(const DIS::EntityStatePdu& pdu, const dtDAL::BaseActorObject& actor);
       void ApplyFullUpdateToProxy(const DIS::EntityStatePdu& pdu, dtGame::GameActorProxy& proxy);
-      void AddActor(const DIS::EntityStatePdu& pdu, dtDAL::ActorProxy* proxy);
+      void AddActor(const DIS::EntityStatePdu& pdu, dtDAL::BaseActorObject* proxy);
 
    private:
       ESPduProcessor();  ///< not implemented by design

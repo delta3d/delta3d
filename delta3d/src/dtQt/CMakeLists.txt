@@ -29,6 +29,7 @@ dynamicgroupcontrol.cpp
 dynamicintcontrol.cpp
 dynamiclabelcontrol.cpp
 dynamiclongcontrol.cpp
+dynamicpropertycontainercontrol.cpp
 dynamicresourcecontrolbase.cpp
 dynamicstringcontrol.cpp
 dynamicvectorelementcontrol.cpp

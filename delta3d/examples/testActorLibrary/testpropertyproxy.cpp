@@ -41,6 +41,7 @@
 #include <dtDAL/resourceactorproperty.h>
 #include <dtDAL/stringactorproperty.h>
 #include <dtDAL/vectoractorproperties.h>
+#include <dtDAL/propertycontaineractorproperty.h>
 
 #include <dtUtil/log.h>
 
@@ -68,13 +69,17 @@ ExampleTestPropertyProxy::ExampleTestPropertyProxy()
   , mTestLong(0)
   , mTestString()
   , mTestEnum(&TestEnum::OPTION1)
+  , mTestPropertyContainer(new TestPropertyContainer)
   , mGroupParam(new dtDAL::NamedGroupParameter("test"))
   , mStringArrayIndex(0)
   , mIntArrayIndex(0)
   , mArrayArrayIndex(0)
 {
    SetClassName("dtCore::ExampleTestPropertyProxy");
+   mTestPropertyContainer->BuildPropertyMap();
 }
+
+DT_IMPLEMENT_ACCESSOR(ExampleTestPropertyProxy, dtCore::RefPtr<TestPropertyContainer>, TestPropertyContainer)
 
 void ExampleTestPropertyProxy::BuildPropertyMap()
 {
@@ -271,6 +276,12 @@ void ExampleTestPropertyProxy::BuildPropertyMap()
 
    arrayString = arrayArrayProp->ToString();
    arrayArrayProp->FromString(arrayString);
+
+   AddProperty(new dtDAL::SimplePropertyContainerActorProperty<TestPropertyContainer>("TestPropertyContainer",
+            "Test Property Container",
+            dtDAL::SimplePropertyContainerActorProperty<TestPropertyContainer>::SetFuncType(this, &ExampleTestPropertyProxy::SetTestPropertyContainer),
+            dtDAL::SimplePropertyContainerActorProperty<TestPropertyContainer>::GetFuncType(this, &ExampleTestPropertyProxy::GetTestPropertyContainer),
+            "", GROUPNAME));
 }
 
 ////////////////////////////////////////////////////////////////////////////////

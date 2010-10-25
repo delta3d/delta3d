@@ -260,7 +260,7 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   dtCore::RefPtr<ActorProxy> LibraryManager::CreateActorProxy(const ActorType& actorType)
+   dtCore::RefPtr<BaseActorObject> LibraryManager::CreateActor(const ActorType& actorType)
    {
       ActorPluginRegistry* apr = GetRegistryForType(actorType); 
 
@@ -273,12 +273,12 @@ namespace dtDAL
 
       //Now we know which registry to use, so tell the registry to
       //create the proxy object and return it.
-      dtCore::RefPtr<ActorProxy> proxy = apr->CreateActorProxy(actorType).get();
+      dtCore::RefPtr<BaseActorObject> proxy = apr->CreateActor(actorType).get();
       return proxy;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   dtCore::RefPtr<ActorProxy> LibraryManager::CreateActorProxy(const std::string &category, const std::string &name)
+   dtCore::RefPtr<BaseActorObject> LibraryManager::CreateActor(const std::string& category, const std::string& name)
    {
       dtCore::RefPtr<const ActorType> type = FindActorType(category, name);
       if (!type.valid())
@@ -288,11 +288,11 @@ namespace dtDAL
          category + "].", __FILE__, __LINE__);
       }
 
-      return CreateActorProxy(*type);
+      return CreateActor(*type);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   ActorPluginRegistry *LibraryManager::GetRegistry(const std::string &name)
+   ActorPluginRegistry *LibraryManager::GetRegistry(const std::string& name)
    {
       if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
       {

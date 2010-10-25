@@ -27,11 +27,6 @@
 
 #include <dtGame/message.h>
 
-namespace dtDAL
-{
-   class ActorProxy;
-}
-
 namespace dtDirector
 {
    class MessageGMComponent;

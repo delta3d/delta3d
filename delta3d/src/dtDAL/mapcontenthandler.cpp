@@ -107,7 +107,7 @@ namespace  dtDAL
    /////////////////////////////////////////////////////////////////
    MapContentHandler::MapContentHandler()
       : BaseXMLHandler()
-      , mActorProxy(NULL)
+      , mBaseActorObject(NULL)
       , mGroupIndex(-1)
       , mLoadingPrefab(false)
       , mPrefabReadMode(PREFAB_READ_ALL)
@@ -155,7 +155,7 @@ namespace  dtDAL
       {
          try
          {
-            dtCore::RefPtr<ActorProxy> proxy = mMap->GetProxyById(mEnvActorId);
+            dtCore::RefPtr<BaseActorObject> proxy = mMap->GetProxyById(mEnvActorId);
             if (!proxy.valid())
             {
                if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
@@ -472,7 +472,7 @@ namespace  dtDAL
                   mGroupIndex = 0;
                }
 
-               dtDAL::ActorProxy* proxy = NULL;
+               dtDAL::BaseActorObject* proxy = NULL;
                dtCore::UniqueId id = dtCore::UniqueId(dtUtil::XMLStringConverter(chars).ToString());
                mMap->GetProxyById(id, proxy);
                if (proxy)
@@ -492,12 +492,12 @@ namespace  dtDAL
    void MapContentHandler::ActorCharacters(const XMLCh* const chars)
    {
       xmlCharString& topEl = mElements.top();
-      if (mPropSerializer->Characters(topEl, chars, mActorProxy.get()))
+      if (mPropSerializer->Characters(topEl, chars))
       {
       }
       else if (topEl == MapXMLConstants::ACTOR_NAME_ELEMENT)
       {
-         if (mActorProxy == NULL)
+         if (mBaseActorObject == NULL)
          {
             mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__,
                                 "Encountered the actor name element with value \"%s\", but actor is NULL.",
@@ -505,12 +505,12 @@ namespace  dtDAL
          }
          else
          {
-            mActorProxy->SetName(dtUtil::XMLStringConverter(chars).ToString());
+            mBaseActorObject->SetName(dtUtil::XMLStringConverter(chars).ToString());
          }
       }
       else if (topEl == MapXMLConstants::ACTOR_ID_ELEMENT)
       {
-         if (mActorProxy == NULL)
+         if (mBaseActorObject == NULL)
          {
             mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__,
                                 "Encountered the actor id element with value \"%s\", but actor is NULL.",
@@ -518,7 +518,7 @@ namespace  dtDAL
          }
          else if (!mLoadingPrefab)
          {
-            mActorProxy->SetId(dtCore::UniqueId(dtUtil::XMLStringConverter(chars).ToString()));
+            mBaseActorObject->SetId(dtCore::UniqueId(dtUtil::XMLStringConverter(chars).ToString()));
          }
       }
       else if (topEl == MapXMLConstants::ACTOR_TYPE_ELEMENT)
@@ -559,16 +559,18 @@ namespace  dtDAL
                                    "Creating actor proxy %s with category %s.",
                                    actorTypeName.c_str(), actorTypeCategory.c_str());
 
-               mActorProxy = LibraryManager::GetInstance().CreateActorProxy(*actorType).get();
-               if (mActorProxy == NULL)
+               mBaseActorObject = LibraryManager::GetInstance().CreateActor(*actorType).get();
+               if (mBaseActorObject == NULL)
                {
                   mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__,  __LINE__,
                      "mActorProxy could not be created for ActorType \"%s\" not found.",
                      actorTypeFullName.c_str());
                }
 
+               mPropSerializer->SetCurrentPropertyContainer(mBaseActorObject);
+
                // Notify the proxy that it is being loaded.
-               mActorProxy->OnMapLoadBegin();
+               mBaseActorObject->OnMapLoadBegin();
 
                // When loading a prefab, all actors are put into a group.
                if (mLoadingPrefab)
@@ -578,11 +580,11 @@ namespace  dtDAL
                   //   mGroupIndex = mMap->GetGroupCount();
                   //}
 
-                  //mMap->AddActorToGroup(mGroupIndex, mActorProxy.get());
+                  //mMap->AddActorToGroup(mGroupIndex, mBaseActorObject.get());
 
                   if (mPrefabProxyList)
                   {
-                     mPrefabProxyList->push_back(mActorProxy);
+                     mPrefabProxyList->push_back(mBaseActorObject);
                   }
                }
             }
@@ -720,7 +722,7 @@ namespace  dtDAL
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void MapContentHandler::SetPrefabMode(std::vector<dtCore::RefPtr<dtDAL::ActorProxy> >& proxyList,
+   void MapContentHandler::SetPrefabMode(std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> >& proxyList,
       PrefabReadMode readMode, dtDAL::Map* map)
    {
       mLoadingPrefab = true;
@@ -780,10 +782,9 @@ namespace  dtDAL
    /////////////////////////////////////////////////////////////////
    void MapContentHandler::ClearActorValues()
    {
-      mActorProxy = NULL;
+      mBaseActorObject = NULL;
+      mPropSerializer->SetCurrentPropertyContainer(NULL);
       mIgnoreCurrentActor = false;
-
-      mPropSerializer->ClearParameterValues();
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -798,15 +799,15 @@ namespace  dtDAL
    //////////////////////////////////////////////////////////////////////////
    void MapContentHandler::EndActorElement()
    {
-      if (mActorProxy != NULL)
+      if (mBaseActorObject != NULL)
       {
          if (!mLoadingPrefab)
          {
-            mMap->AddProxy(*mActorProxy);
+            mMap->AddProxy(*mBaseActorObject);
          }
-         mActorProxy->OnMapLoadEnd(); //notify ActorProxy we're done loading it
+         mBaseActorObject->OnMapLoadEnd(); //notify BaseActorObject we're done loading it
       }
-      mActorProxy = NULL;
+      mBaseActorObject = NULL;
       mInActor = false;
       ClearActorValues();
    }
@@ -843,7 +844,7 @@ namespace  dtDAL
    //////////////////////////////////////////////////////////////////////////
    void MapContentHandler::EndActorPropertySection(const XMLCh* const localname)
    {
-      mPropSerializer->ElementEnded(localname, mActorProxy.get());
+      mPropSerializer->ElementEnded(localname);
    }
 
    ////////////////////////////////////////////////////////////////////////////////

@@ -191,7 +191,7 @@ namespace dtEditQt
             if (np->GetDataType() == dtDAL::DataType::ACTOR)
             {
                dtCore::UniqueId id = static_cast<dtDAL::NamedActorParameter*>(np)->GetValue();
-               dtDAL::ActorProxy* child = currMap.GetProxyById(id);
+               dtDAL::BaseActorObject* child = currMap.GetProxyById(id);
                if (child != NULL)
                {
                   AddItemToList(*child);
@@ -243,14 +243,14 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void TaskEditor::AddItemToList(dtDAL::ActorProxy& proxy)
+   void TaskEditor::AddItemToList(dtDAL::BaseActorObject& proxy)
    {
       const dtDAL::ActorType& at = proxy.GetActorType();
       QTableWidgetItem* nm       = new QTableWidgetItem;
       QTableWidgetItem* type     = new QTableWidgetItem;
 
       nm->setText(tr(proxy.GetName().c_str()));
-      nm->setData(Qt::UserRole, QVariant::fromValue(dtCore::RefPtr<dtDAL::ActorProxy>(&proxy)));
+      nm->setData(Qt::UserRole, QVariant::fromValue(dtCore::RefPtr<dtDAL::BaseActorObject>(&proxy)));
       type->setText(tr((at.GetFullName()).c_str()));
 
       int row = mChildrenView->rowCount();
@@ -261,7 +261,7 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   bool TaskEditor::HasChild(dtDAL::ActorProxy& proxyToTest)
+   bool TaskEditor::HasChild(dtDAL::BaseActorObject& proxyToTest)
    {
       for (int i = 0; i < mChildrenView->rowCount(); ++i)
       {
@@ -269,7 +269,7 @@ namespace dtEditQt
          if (item != NULL)
          {
             QVariant v = item->data(Qt::UserRole);
-            dtCore::RefPtr<dtDAL::ActorProxy> proxy = v.value< dtCore::RefPtr<dtDAL::ActorProxy> >();
+            dtCore::RefPtr<dtDAL::BaseActorObject> proxy = v.value< dtCore::RefPtr<dtDAL::BaseActorObject> >();
             if (proxy->GetId() == proxyToTest.GetId())
             {
                return true;
@@ -294,14 +294,14 @@ namespace dtEditQt
 
       const std::string topLevelProperty("IsTopLevel");
 
-      std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > toFill;
-      std::vector<dtDAL::ActorProxy*> selectedActors;
+      std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> > toFill;
+      std::vector<dtDAL::BaseActorObject*> selectedActors;
       m->FindProxies(toFill, "", "dtcore.Tasks", "Task Actor");
       EditorData::GetInstance().GetSelectedActors(selectedActors);
 
       for (unsigned i = 0; i < toFill.size(); ++i)
       {
-         dtDAL::ActorProxy* ap = toFill[i].get();
+         dtDAL::BaseActorObject* ap = toFill[i].get();
          bool isRemoved = mRemovedTasks.find(ap) != mRemovedTasks.end();
          // We don't want to see actors with parents unless it has been removed from the current parent actor
          // or the checkbox has been selected by the user to explicitly show them.
@@ -336,7 +336,7 @@ namespace dtEditQt
          if (!isSelected && !HasChild(*ap))
          {
             //TODO if it's not the currently selected actor
-            QVariant v = QVariant::fromValue(dtCore::RefPtr<dtDAL::ActorProxy>(ap));
+            QVariant v = QVariant::fromValue(dtCore::RefPtr<dtDAL::BaseActorObject>(ap));
             mComboBox->addItem(tr(ap->GetName().c_str()), v);
          }
 
@@ -380,7 +380,7 @@ namespace dtEditQt
          if (item != NULL)
          {
             QVariant v = item->data(Qt::UserRole);
-            dtCore::RefPtr<dtDAL::ActorProxy> proxy = v.value<dtCore::RefPtr<dtDAL::ActorProxy> >();
+            dtCore::RefPtr<dtDAL::BaseActorObject> proxy = v.value<dtCore::RefPtr<dtDAL::BaseActorObject> >();
             mRemovedTasks.insert(proxy);
          }
 
@@ -428,12 +428,12 @@ namespace dtEditQt
       if (index >= 0)
       {
          QVariant v = mComboBox->itemData(index);
-         dtCore::RefPtr<dtDAL::ActorProxy> proxy = v.value<dtCore::RefPtr<dtDAL::ActorProxy> >();
+         dtCore::RefPtr<dtDAL::BaseActorObject> proxy = v.value<dtCore::RefPtr<dtDAL::BaseActorObject> >();
          AddItemToList(*proxy);
          BlankRowLabels();
 
          //remove the item being added from the removed list, if necessary.
-         std::set<dtCore::RefPtr<dtDAL::ActorProxy> >::iterator itor = mRemovedTasks.find(proxy);
+         std::set<dtCore::RefPtr<dtDAL::BaseActorObject> >::iterator itor = mRemovedTasks.find(proxy);
          if (itor != mRemovedTasks.end())
          {
             mRemovedTasks.erase(itor);
@@ -473,7 +473,7 @@ namespace dtEditQt
          if (item != NULL)
          {
             QVariant v = item->data(Qt::UserRole);
-            dtCore::RefPtr<dtDAL::ActorProxy> proxy = v.value<dtCore::RefPtr<dtDAL::ActorProxy> >();
+            dtCore::RefPtr<dtDAL::BaseActorObject> proxy = v.value<dtCore::RefPtr<dtDAL::BaseActorObject> >();
             std::ostringstream ss;
             ss << i;
             dtCore::RefPtr<dtDAL::NamedActorParameter> aParam = new dtDAL::NamedActorParameter(ss.str());

@@ -26,8 +26,6 @@
 
 #include <dtGame/baseinputcomponent.h>
 
-namespace dtGame     { class GameActorProxy; }
-namespace dtDAL      { class ActorProxy;     }
 namespace dtDirector { class Director;       }
 namespace dtCore     { class MotionModel;    }
 

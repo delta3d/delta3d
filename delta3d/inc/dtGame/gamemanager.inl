@@ -47,12 +47,12 @@ namespace dtGame
    class FindFuncWrapper
    {
    public:
-      FindFuncWrapper(FindFunctor ifFunc, std::vector<dtDAL::ActorProxy*>& selectedActors)
+      FindFuncWrapper(FindFunctor ifFunc, std::vector<dtDAL::BaseActorObject*>& selectedActors)
       : mFunc(ifFunc)
       , mSelectedActors(selectedActors)
       {}
 
-      void operator () (dtDAL::ActorProxy& proxy)
+      void operator () (dtDAL::BaseActorObject& proxy)
       {
          if (mFunc(proxy))
          {
@@ -62,14 +62,14 @@ namespace dtGame
 
    private:
       FindFunctor mFunc;
-      std::vector<dtDAL::ActorProxy*>& mSelectedActors;
+      std::vector<dtDAL::BaseActorObject*>& mSelectedActors;
    };
 
    template <typename UnaryFunctor>
    inline void GameManager::ForEachActor(UnaryFunctor func) const
    {
       BindActor<UnaryFunctor, GMImpl::ActorMap::value_type> actorMapBindFunc(func);
-      std::for_each(mGMImpl->mActorProxyMap.begin(), mGMImpl->mActorProxyMap.end(), actorMapBindFunc);
+      std::for_each(mGMImpl->mBaseActorObjectMap.begin(), mGMImpl->mBaseActorObjectMap.end(), actorMapBindFunc);
       BindActor<UnaryFunctor, GMImpl::GameActorMap::value_type> gameActorMapBindFunc(func);
       std::for_each(mGMImpl->mGameActorProxyMap.begin(), mGMImpl->mGameActorProxyMap.end(), gameActorMapBindFunc);
    }
@@ -82,7 +82,7 @@ namespace dtGame
    }
 
    template <typename FindFunctor>
-   inline void GameManager::FindActorsIf(FindFunctor ifFunc, std::vector<dtDAL::ActorProxy*>& toFill) const
+   inline void GameManager::FindActorsIf(FindFunctor ifFunc, std::vector<dtDAL::BaseActorObject*>& toFill) const
    {
       toFill.clear();
       FindFuncWrapper<FindFunctor> findWrapper(ifFunc, toFill);
@@ -90,7 +90,7 @@ namespace dtGame
    }
 
    template <typename FindFunctor>
-   inline void GameManager::FindPrototypesIf(FindFunctor ifFunc, std::vector<dtDAL::ActorProxy*>& toFill) const
+   inline void GameManager::FindPrototypesIf(FindFunctor ifFunc, std::vector<dtDAL::BaseActorObject*>& toFill) const
    {
       toFill.clear();
       FindFuncWrapper<FindFunctor> findWrapper(ifFunc, toFill);

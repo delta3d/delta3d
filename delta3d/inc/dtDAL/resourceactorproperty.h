@@ -32,7 +32,7 @@
 namespace dtDAL
 {
    class ResourceDescriptor;
-   class ActorProxy;
+   class BaseActorObject;
 
    /**
     * @class ResourceActorProperty
@@ -47,7 +47,7 @@ namespace dtDAL
     *    ...
     * };
     * 
-    * class Proxy : public dtDAL::ActorProxy
+    * class Proxy : public dtDAL::BaseActorObject
     * {
     *   void BuildPropertyMap()
     *   {
@@ -82,7 +82,7 @@ namespace dtDAL
          * @param desc The description of the property.
          * @param groupName The group that this property will fall under.
          */
-         ResourceActorProperty(ActorProxy& actorProxy,
+         ResourceActorProperty(BaseActorObject& actorProxy,
                                DataType& type,
                                const dtUtil::RefString& name,
                                const dtUtil::RefString& label,
@@ -103,7 +103,7 @@ namespace dtDAL
          * @param desc The description of the property.
          * @param groupName The group that this property will fall under.
          */
-         ResourceActorProperty(ActorProxy& actorProxy,
+         ResourceActorProperty(BaseActorObject& actorProxy,
                                DataType& type,
                                const dtUtil::RefString& name,
                                const dtUtil::RefString& label,
@@ -116,7 +116,7 @@ namespace dtDAL
          * Preferred constructor that allows you to specify both Get and Set
          * callback functions, both passing the ResourceDescriptor.
          *
-         * @note Will not store the ResourceDescriptor in the ActorProxy.  ActorProxy::GetResource()
+         * @note Will not store the ResourceDescriptor in the BaseActorObject.  BaseActorObject::GetResource()
          * will return NULL.  It is preferred to store the ResourceDescriptor in
          * the actor itself.
          *
@@ -185,7 +185,7 @@ namespace dtDAL
 
 
       private:
-         ActorProxy* mProxy;
+         BaseActorObject* mActor;
          SetFuncType SetPropFunctor;
 
          bool        mHasGetFunctor;

@@ -36,7 +36,7 @@ namespace dtActors
 
    void BezierNodeActorProxy::CreateActor()
    {
-      SetActor(*new dtABC::BezierNode);
+      SetDrawable(*new dtABC::BezierNode);
 
       std::ostringstream ss;
       ss << "BezierNode" << mNumNodes++;
@@ -46,7 +46,7 @@ namespace dtActors
 
    void BezierNodeActorProxy::BuildPropertyMap()
    {
-      dtABC::BezierNode *bn = static_cast<dtABC::BezierNode*> (GetActor());
+      dtABC::BezierNode *bn = static_cast<dtABC::BezierNode*> (GetDrawable());
 
       dtDAL::TransformableActorProxy::BuildPropertyMap();
 
@@ -85,9 +85,9 @@ namespace dtActors
          "Sets the previous node on this node"));
    }
 
-   void BezierNodeActorProxy::SetBezierEntryControlPoint(ActorProxy *controlPoint)
+   void BezierNodeActorProxy::SetBezierEntryControlPoint(dtDAL::BaseActorObject* controlPoint)
    {
-      ActorProxy* old = GetLinkedActor("Entry Control Point");
+      dtDAL::BaseActorObject* old = GetLinkedActor("Entry Control Point");
       //set the linked actor proxy for safe-keeping
       SetLinkedActor("Entry Control Point", controlPoint);
 
@@ -115,13 +115,13 @@ namespace dtActors
       }
 
       //Get our actual actor to set
-      dtABC::BezierNode *bn = static_cast<dtABC::BezierNode*> (GetActor());
+      dtABC::BezierNode *bn = static_cast<dtABC::BezierNode*> (GetDrawable());
 
       dtABC::BezierControlPoint* bcp = NULL;
 
       if (controlPoint)
       {
-         bcp = dynamic_cast<dtABC::BezierControlPoint*> (controlPoint->GetActor());
+         bcp = dynamic_cast<dtABC::BezierControlPoint*> (controlPoint->GetDrawable());
          if (bcp == NULL)
             throw dtDAL::InvalidActorException(
                "Actor should be type dtABC::BezierControlPoint", __FILE__, __LINE__);
@@ -132,9 +132,9 @@ namespace dtActors
    }
 
 
-   void BezierNodeActorProxy::SetBezierExitControlPoint(ActorProxy *controlPoint)
+   void BezierNodeActorProxy::SetBezierExitControlPoint(dtDAL::BaseActorObject* controlPoint)
    {
-      ActorProxy* old = GetLinkedActor("Exit Control Point");
+      dtDAL::BaseActorObject* old = GetLinkedActor("Exit Control Point");
       //set the linked actor proxy for safe-keeping
       SetLinkedActor("Exit Control Point", controlPoint);
 
@@ -162,13 +162,13 @@ namespace dtActors
       }
 
       //Get our actual actor to set
-      dtABC::BezierNode *bn = static_cast<dtABC::BezierNode*> (GetActor());
+      dtABC::BezierNode *bn = static_cast<dtABC::BezierNode*> (GetDrawable());
 
       dtABC::BezierControlPoint* bcp = NULL;
 
       if (controlPoint)
       {
-         bcp = dynamic_cast<dtABC::BezierControlPoint*> (controlPoint->GetActor());
+         bcp = dynamic_cast<dtABC::BezierControlPoint*> (controlPoint->GetDrawable());
          if (bcp == NULL)
             throw dtDAL::InvalidActorException(
                "Actor should be type dtABC::BezierControlPoint", __FILE__, __LINE__);
@@ -180,9 +180,9 @@ namespace dtActors
    }
 
 
-   void BezierNodeActorProxy::SetNextBezierNode(ActorProxy *node)
+   void BezierNodeActorProxy::SetNextBezierNode(dtDAL::BaseActorObject* node)
    {
-      ActorProxy* old = GetLinkedActor("Next Bezier Node");
+      dtDAL::BaseActorObject* old = GetLinkedActor("Next Bezier Node");
       SetLinkedActor("Next Bezier Node", node);
 
       if (old != NULL)
@@ -211,12 +211,12 @@ namespace dtActors
       }
 
       //Get our actual actor to set
-      dtABC::BezierNode *bn = static_cast<dtABC::BezierNode*> (GetActor());
+      dtABC::BezierNode *bn = static_cast<dtABC::BezierNode*> (GetDrawable());
 
       dtABC::BezierNode* nbn = NULL;
       if (node)
       {
-         nbn = dynamic_cast<dtABC::BezierNode*> (node->GetActor());
+         nbn = dynamic_cast<dtABC::BezierNode*> (node->GetDrawable());
          if (nbn == NULL)
             throw dtDAL::InvalidActorException(
                "Actor should be type dtABC::BezierNode", __FILE__, __LINE__);
@@ -227,10 +227,11 @@ namespace dtActors
       //whew! (wipes sweat from brow)
    }
 
-   void BezierNodeActorProxy::SetPreviousBezierNode(ActorProxy *node)
+   //////////////////////////////////////////////////////////////////////////
+   void BezierNodeActorProxy::SetPreviousBezierNode(dtDAL::BaseActorObject* node)
    {
 
-      ActorProxy* old = GetLinkedActor("Previous Bezier Node");
+      dtDAL::BaseActorObject* old = GetLinkedActor("Previous Bezier Node");
       //set the linked actor proxy for safe-keeping
       SetLinkedActor("Previous Bezier Node", node);
 
@@ -259,49 +260,54 @@ namespace dtActors
       }
 
       //Get our actual actor to set
-      dtABC::BezierNode *bn = static_cast<dtABC::BezierNode*> (GetActor());
+      dtABC::BezierNode *bn = static_cast<dtABC::BezierNode*> (GetDrawable());
 
       dtABC::BezierNode* pbn = NULL;
       if (node)
       {
-         pbn = static_cast<dtABC::BezierNode*> (node->GetActor());
+         pbn = static_cast<dtABC::BezierNode*> (node->GetDrawable());
       }
       //set the actual node on the control point.
       bn->SetPrev(pbn);
       //whew! (wipes sweat from brow)
    }
 
+   //////////////////////////////////////////////////////////////////////////
    dtCore::DeltaDrawable* BezierNodeActorProxy::GetNextBezierNode()
    {
-      dtABC::BezierNode* bn = static_cast< dtABC::BezierNode* >( GetActor() );
+      dtABC::BezierNode* bn = static_cast< dtABC::BezierNode* >( GetDrawable() );
 
       return bn->GetNext();
    }
 
+   //////////////////////////////////////////////////////////////////////////
    dtCore::DeltaDrawable* BezierNodeActorProxy::GetPreviousBezierNode()
    {
-      dtABC::BezierNode* bn = static_cast< dtABC::BezierNode* >( GetActor() );
+      dtABC::BezierNode* bn = static_cast< dtABC::BezierNode* >( GetDrawable() );
 
       return bn->GetPrev();
    }
 
+   //////////////////////////////////////////////////////////////////////////
    dtCore::DeltaDrawable* BezierNodeActorProxy::GetBezierEntryControlPoint()
    {
-      dtABC::BezierNode* bn = static_cast< dtABC::BezierNode* >( GetActor() );
+      dtABC::BezierNode* bn = static_cast< dtABC::BezierNode* >( GetDrawable() );
 
       return bn->GetEntry();
    }
 
+   //////////////////////////////////////////////////////////////////////////
    dtCore::DeltaDrawable* BezierNodeActorProxy::GetBezierExitControlPoint()
    {
-      dtABC::BezierNode* bn = static_cast< dtABC::BezierNode* >( GetActor() );
+      dtABC::BezierNode* bn = static_cast< dtABC::BezierNode* >( GetDrawable() );
 
       return bn->GetExit();
    }
 
-   const dtDAL::ActorProxy::RenderMode& BezierNodeActorProxy::GetRenderMode()
+   //////////////////////////////////////////////////////////////////////////
+   const dtDAL::BaseActorObject::RenderMode& BezierNodeActorProxy::GetRenderMode()
    {
-         return dtDAL::ActorProxy::RenderMode::DRAW_BILLBOARD_ICON;
+         return dtDAL::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON;
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -317,21 +323,21 @@ namespace dtActors
 
    void BezierNodeActorProxy::OnScale(const osg::Vec3 &oldValue, const osg::Vec3 &newValue)
    {
-      dtABC::BezierNode *bn = static_cast<dtABC::BezierNode*> (GetActor());
+      dtABC::BezierNode *bn = static_cast<dtABC::BezierNode*> (GetDrawable());
 
       bn->SetDirtyFlag(true);
    }
 
    void BezierNodeActorProxy::OnRotation(const osg::Vec3 &oldValue, const osg::Vec3 &newValue)
    {
-      dtABC::BezierNode *bn = static_cast<dtABC::BezierNode*> (GetActor());
+      dtABC::BezierNode *bn = static_cast<dtABC::BezierNode*> (GetDrawable());
 
       bn->SetDirtyFlag(true);
    }
 
    void BezierNodeActorProxy::OnTranslation(const osg::Vec3 &oldValue, const osg::Vec3 &newValue)
    {
-      dtABC::BezierNode *bn = static_cast<dtABC::BezierNode*> (GetActor());
+      dtABC::BezierNode *bn = static_cast<dtABC::BezierNode*> (GetDrawable());
 
       bn->SetDirtyFlag(true);
    }

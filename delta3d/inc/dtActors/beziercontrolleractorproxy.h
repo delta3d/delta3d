@@ -41,10 +41,8 @@ public:
    /*virtual*/ void BuildPropertyMap();
 
    dtCore::DeltaDrawable* GetActorStartNode();
-   void SetActorStartNode(ActorProxy* node);
+   void SetActorStartNode(dtDAL::BaseActorObject* node);
    
-   /*virtual*/ //const ActorProxy::RenderMode& GetRenderMode();
-
 protected:
    /*virtual*/ ~BezierControllerActorProxy() {}
 

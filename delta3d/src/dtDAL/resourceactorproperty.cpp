@@ -12,7 +12,7 @@ using namespace dtDAL;
 
 ////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////
-ResourceActorProperty::ResourceActorProperty(ActorProxy& actorProxy,
+ResourceActorProperty::ResourceActorProperty(BaseActorObject& actor,
                                              DataType& type,
                                              const dtUtil::RefString& name,
                                              const dtUtil::RefString& label,
@@ -20,7 +20,7 @@ ResourceActorProperty::ResourceActorProperty(ActorProxy& actorProxy,
                                              const dtUtil::RefString& desc,
                                              const dtUtil::RefString& groupName)
 : ActorProperty(type, name, label, desc, groupName)
-, mProxy(&actorProxy)
+, mActor(&actor)
 , SetPropFunctor(Set)
 , mHasGetFunctor(false)
 , mUsingDescFunctors(false)
@@ -28,7 +28,7 @@ ResourceActorProperty::ResourceActorProperty(ActorProxy& actorProxy,
 }
 
 ////////////////////////////////////////////////////////////////////////////
-ResourceActorProperty::ResourceActorProperty(ActorProxy& actorProxy,
+ResourceActorProperty::ResourceActorProperty(BaseActorObject& actor,
                                              DataType& type,
                                              const dtUtil::RefString& name,
                                              const dtUtil::RefString& label,
@@ -37,7 +37,7 @@ ResourceActorProperty::ResourceActorProperty(ActorProxy& actorProxy,
                                              const dtUtil::RefString& desc,
                                              const dtUtil::RefString& groupName)
 : ActorProperty(type, name, label, desc, groupName)
-, mProxy(&actorProxy)
+, mActor(&actor)
 , SetPropFunctor(Set)
 , mHasGetFunctor(true)
 , GetPropFunctor(Get)
@@ -54,7 +54,7 @@ ResourceActorProperty::ResourceActorProperty(DataType& type,
                                              const dtUtil::RefString& desc,
                                              const dtUtil::RefString& groupName)
 : ActorProperty(type, name, label, desc, groupName)
-, mProxy(NULL)
+, mActor(NULL)
 , mHasGetFunctor(false)
 , mUsingDescFunctors(true)
 , SetDescPropFunctor(Set)
@@ -101,9 +101,9 @@ void ResourceActorProperty::SetValue(const ResourceDescriptor& value)
       return;
    }
 
-   if (mProxy)
+   if (mActor)
    {
-      mProxy->SetResource(GetName(), value);
+      mActor->SetResource(GetName(), value);
    }
 
    if (mUsingDescFunctors)
@@ -130,9 +130,9 @@ void ResourceActorProperty::SetValue(const ResourceDescriptor& value)
          }
          catch(const dtUtil::Exception& ex)
          {
-            if (mProxy)
+            if (mActor)
             {
-               mProxy->SetResource(GetName(), dtDAL::ResourceDescriptor::NULL_RESOURCE);
+               mActor->SetResource(GetName(), dtDAL::ResourceDescriptor::NULL_RESOURCE);
             }
             SetPropFunctor("");
             dtUtil::Log::GetInstance("EnginePropertyTypes.h").LogMessage(dtUtil::Log::LOG_WARNING,
@@ -155,15 +155,15 @@ ResourceDescriptor ResourceActorProperty::GetValue() const
    {
       std::string resName = GetPropFunctor();
       dtDAL::ResourceDescriptor descriptor(resName);
-      if (mProxy)
+      if (mActor)
       {
-         mProxy->SetResource(GetName(), descriptor);
+         mActor->SetResource(GetName(), descriptor);
       }
    }
 
-   if (mProxy)
+   if (mActor != NULL)
    {
-      return mProxy->GetResource(GetName());
+      return mActor->GetResource(GetName());
    }
    else
    {

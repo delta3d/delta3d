@@ -95,13 +95,13 @@ public:
    FindDISActor() {};
    ~FindDISActor() {};
 
-   bool operator()(dtDAL::ActorProxy& proxy)
+   bool operator()(dtDAL::BaseActorObject& actor)
    {
-      if (proxy.GetName().find("helo") != std::string::npos)
+      if (actor.GetName().find("helo") != std::string::npos)
       {
-         if (proxy.IsGameActorProxy())
+         if (actor.IsGameActorProxy())
          {
-            return static_cast<dtGame::GameActorProxy*>(&proxy)->IsPublished();
+            return static_cast<dtGame::GameActorProxy&>(actor).IsPublished();
          }
          else return false;
       }
@@ -113,7 +113,7 @@ public:
 void TestDISApp::FindActorsAndAddComponents()
 {
    mGameManager->FindActorsIf(FindDISActor(), mActorsToPublish);
-   std::vector<dtDAL::ActorProxy*>::iterator itr = mActorsToPublish.begin();
+   std::vector<dtDAL::BaseActorObject*>::iterator itr = mActorsToPublish.begin();
    while (itr != mActorsToPublish.end())
    {
       EntityTypeActorComponent* entityTypeComp = new EntityTypeActorComponent(1,1,222,1,2,2);
@@ -134,7 +134,7 @@ void TestDISApp::PostFrame(const double deltaSimTime)
       //find any published GameActors and add some new ActorComponents to them
       if (mActorsToPublish.empty()) { FindActorsAndAddComponents(); }
 
-      std::vector<dtDAL::ActorProxy*>::iterator itr = mActorsToPublish.begin();
+      std::vector<dtDAL::BaseActorObject*>::iterator itr = mActorsToPublish.begin();
       while (itr != mActorsToPublish.end())
       {
          //Tell the GameActorProxy to send an ActorUpdateMessage with all of it's ActorProperties

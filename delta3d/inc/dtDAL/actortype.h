@@ -27,7 +27,7 @@
 namespace dtDAL
 {
 
-   class ActorProxy;
+   class BaseActorObject;
 
    /**
     * This class is more or less a simple data class that has information
@@ -49,7 +49,7 @@ namespace dtDAL
    {
    public:
 
-      typedef ActorProxy CreateType;
+      typedef BaseActorObject CreateType;
 
       /**
        * Constructs a new actor type object.

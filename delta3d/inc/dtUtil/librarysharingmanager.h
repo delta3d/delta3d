@@ -171,7 +171,12 @@ namespace dtUtil
           *  library name would be ExampleActors.dll, however, on Unix based
           *  platforms, the resulting name would be libExampleActors.so.
           */
-         static std::string GetPlatformSpecificLibraryName(const std::string &libBase, bool assumeModule = false);
+         static std::string GetPlatformSpecificLibraryName(const std::string& libBase, bool assumeModule = false);
+
+         /**
+          * @return a filter to use to look for libraries for file browsers and such.
+          */
+         static std::string GetPlatformSpecificLibraryFilterString();
 
          /**
           * Strips off the path and platform specific library prefixs and extensions
@@ -179,7 +184,7 @@ namespace dtUtil
           * @param libName The platform specific library name.
           * @return A platform independent library name.
           */
-         static std::string GetPlatformIndependentLibraryName(const std::string &libName);
+         static std::string GetPlatformIndependentLibraryName(const std::string& libName);
 
       private:
          static dtCore::RefPtr<LibrarySharingManager> mInstance;

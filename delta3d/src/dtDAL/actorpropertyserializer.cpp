@@ -33,6 +33,7 @@
 #include <dtDAL/arrayactorpropertybase.h>
 #include <dtDAL/colorrgbaactorproperty.h>
 #include <dtDAL/containeractorproperty.h>
+#include <dtDAL/propertycontaineractorproperty.h>
 #include <dtDAL/datatype.h>
 #include <dtDAL/exceptionenum.h>
 #include <dtDAL/gameevent.h>
@@ -53,6 +54,7 @@
 #include <dtDAL/vectoractorproperties.h>
 
 #include <dtUtil/xercesutils.h>
+#include <dtUtil/mathdefines.h>
 
 #include <osgDB/FileNameUtils>
 #include <typeinfo> //for std:bad_cast
@@ -64,24 +66,24 @@ namespace dtDAL
    static const std::string logName("actorpropertyserializer.cpp");
 
    //////////////////////////////////////////////////////////////////////////
+   SerializerRuntimeData::SerializerRuntimeData()
+   : mActorPropertyType(NULL)
+   , mParameterTypeToCreate(NULL)
+   , mHasDeprecatedProperty(false)
+   , mInActorProperty(false)
+   , mInGroupProperty(false)
+   {
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    ActorPropertySerializer::ActorPropertySerializer(BaseXMLWriter* writer)
-      : mWriter(writer)
-      , mActorPropertyType(NULL)
-      , mParameterTypeToCreate(NULL)
-      , mHasDeprecatedProperty(false)
-      , mInActorProperty(false)
-      , mInGroupProperty(false)
+   : mWriter(writer)
    {
    }
 
    //////////////////////////////////////////////////////////////////////////
    ActorPropertySerializer::ActorPropertySerializer(BaseXMLHandler* parser)
-      : mParser(parser)
-      , mActorPropertyType(NULL)
-      , mParameterTypeToCreate(NULL)
-      , mHasDeprecatedProperty(false)
-      , mInActorProperty(false)
-      , mInGroupProperty(false)
+   : mParser(parser)
    {
    }
 
@@ -97,36 +99,25 @@ namespace dtDAL
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void ActorPropertySerializer::Reset()
+   void ActorPropertySerializer::SetCurrentPropertyContainer(dtDAL::PropertyContainer* pc)
    {
-      mGroupParameters.clear();
-
-      mInActorProperty = false;
-
-      mActorProperty = NULL;
-      mActorPropertyType = NULL;
-
-      ClearParameterValues();
-
-      //This should NOT be done in the Actor Value because this should
-      //be cleared at the start and finish of a document, not between each actor.
-      mActorLinking.clear();
+      Top().mPropertyContainer = pc;
+      Top().ClearParameterValues();
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void ActorPropertySerializer::ClearParameterValues()
+   void ActorPropertySerializer::Reset()
    {
-      mInGroupProperty = false;
-      mInArrayProperty = 0;
-      mInContainerProperty = 0;
-      while (!mParameterStack.empty())
+      while (!mData.empty())
       {
-         mParameterStack.pop();
+         mData.pop();
       }
-
-      mParameterNameToCreate.clear();
-      mParameterTypeToCreate = NULL;
-      mDescriptorDisplayName.clear();
+      mGroupParameters.clear();
+      //This should NOT be done in the Actor Value because this should
+      //be cleared at the start and finish of a document, not between each actor.
+      mActorLinking.clear();
+      mData.push(dtDAL::SerializerRuntimeData());
+      mData.top().Reset();
    }
 
    /////////////////////////////////////////////////////////////////
@@ -218,6 +209,11 @@ namespace dtDAL
             WriteContainer(static_cast<const ContainerActorProperty&>(property), numberConversionBuffer, bufferMax);
             break;
          }
+      case DataType::PROPERTY_CONTAINER_ID:
+         {
+            WritePropertyContainer(static_cast<const BasePropertyContainerActorProperty&>(property));
+            break;
+         }
       default:
          {
             if (propertyType.IsResource())
@@ -258,42 +254,55 @@ namespace dtDAL
    {
       if (!mParser) return false;
 
-      if (mInActorProperty)
+      if (mData.empty())
       {
-         if (mActorProperty != NULL)
+         mData.push(SerializerRuntimeData());
+         mData.top().Reset();
+      }
+
+      SerializerRuntimeData& data = Top();
+
+      if (data.mInActorProperty)
+      {
+         if (data.mActorProperty != NULL)
          {
-            if (mActorPropertyType == NULL)
+            if (data.mActorPropertyType == NULL)
             {
-               mActorPropertyType = ParsePropertyType(localname);
+               data.mActorPropertyType = ParsePropertyType(localname);
             }
 
-            if (mInGroupProperty)
+            if (data.mInGroupProperty)
             {
-               if (!mParameterNameToCreate.empty())
+               if (!data.mParameterNameToCreate.empty())
                {
-                  mParameterTypeToCreate = ParsePropertyType(localname);
+                  data.mParameterTypeToCreate = ParsePropertyType(localname);
                   //It will be null if it's a resource property.  The value will be parsed later.
-                  if (mParameterTypeToCreate != NULL)
+                  if (data.mParameterTypeToCreate != NULL)
                      CreateAndPushParameter();
                }
             }
             else if (XMLString::compareString(localname,
                MapXMLConstants::ACTOR_PROPERTY_GROUP_ELEMENT) == 0)
             {
-               ClearParameterValues();
-               mInGroupProperty = true;
-               mParameterStack.push(new NamedGroupParameter(mActorProperty->GetName()));
+               data.ClearParameterValues();
+               data.mInGroupProperty = true;
+               data.mParameterStack.push(new NamedGroupParameter(data.mActorProperty->GetName()));
 
             }
             else if (XMLString::compareString(localname,
                MapXMLConstants::ACTOR_PROPERTY_ARRAY_ELEMENT) == 0)
             {
-               mInArrayProperty++;
+               data.mInArrayProperty++;
             }
             else if (XMLString::compareString(localname,
                MapXMLConstants::ACTOR_PROPERTY_CONTAINER_ELEMENT) == 0)
             {
-               mInContainerProperty++;
+               data.mInContainerProperty++;
+            }
+            else if (XMLString::compareString(localname,
+               MapXMLConstants::ACTOR_PROPERTY_PROPERTY_CONTAINER_ELEMENT) == 0)
+            {
+               EnterPropertyContainer();
             }
          }
 
@@ -302,7 +311,7 @@ namespace dtDAL
       else if (XMLString::compareString(localname,
          MapXMLConstants::ACTOR_PROPERTY_ELEMENT) == 0)
       {
-         mInActorProperty = true;
+         data.mInActorProperty = true;
          return true;
       }
 
@@ -310,26 +319,49 @@ namespace dtDAL
    }
 
    //////////////////////////////////////////////////////////////////////////
-   bool ActorPropertySerializer::ElementEnded(const XMLCh* const localname, PropertyContainer* propContainer)
+   bool ActorPropertySerializer::ElementEnded(const XMLCh* const localname)
    {
-      if (mInArrayProperty == 0 && mInContainerProperty == 0 && XMLString::compareString(localname, MapXMLConstants::ACTOR_PROPERTY_ELEMENT) == 0)
+      if (mData.empty())
+      {
+         LOG_ERROR("Data stack is empty, can't end and element.");
+         return false;
+      }
+
+      SerializerRuntimeData& data = Top();
+
+      if (data.mInArrayProperty == 0 && data.mInContainerProperty == 0 && XMLString::compareString(localname, MapXMLConstants::ACTOR_PROPERTY_ELEMENT) == 0)
       {
          EndActorPropertyElement();
          return true;
       }
       else if (XMLString::compareString(localname, MapXMLConstants::ACTOR_PROPERTY_ARRAY_ELEMENT) == 0)
       {
-         mInArrayProperty--;
-         if (mInArrayProperty < 0) mInArrayProperty = 0;
+         data.mInArrayProperty--;
+         if (data.mInArrayProperty < 0) data.mInArrayProperty = 0;
          return true;
       }
       else if (XMLString::compareString(localname, MapXMLConstants::ACTOR_PROPERTY_CONTAINER_ELEMENT) == 0)
       {
-         mInContainerProperty--;
-         if (mInContainerProperty < 0) mInContainerProperty = 0;
+         data.mInContainerProperty--;
+         if (data.mInContainerProperty < 0)
+         {
+            data.mInContainerProperty = 0;
+         }
          return true;
       }
-      else if (mInGroupProperty)
+      else if (XMLString::compareString(localname, MapXMLConstants::ACTOR_PROPERTY_PROPERTY_CONTAINER_ELEMENT) == 0)
+      {
+         if (!mData.empty())
+         {
+            mData.pop();
+         }
+
+         if (mData.empty())
+         {
+            LOG_ERROR("Data stack is empty when completing a property container element.  This stack should never be empty.");
+         }
+      }
+      else if (data.mInGroupProperty)
       {
          if (XMLString::compareString(localname, MapXMLConstants::ACTOR_PROPERTY_PARAMETER_ELEMENT) == 0)
          {
@@ -338,26 +370,26 @@ namespace dtDAL
          }
          else if (XMLString::compareString(localname, MapXMLConstants::ACTOR_PROPERTY_GROUP_ELEMENT) == 0)
          {
-            EndActorPropertyGroupElement(propContainer);
+            EndActorPropertyGroupElement();
             return true;
          }
-         else if (!mParameterStack.empty())
+         else if (!data.mParameterStack.empty())
          {
             // parse the end element into a data type to see if it's an end param element.
             dtDAL::DataType* d = ParsePropertyType(localname, false);
             // The parameter has ended, so pop.
             if (d != NULL)
             {
-               mParameterStack.pop();
+               data.mParameterStack.pop();
             }
             return true;
          }
       }
-      else if (mInActorProperty)
+      else if (data.mInActorProperty)
       {
-         if (mActorProperty != NULL)
+         if (data.mActorProperty != NULL)
          {
-            if (mActorPropertyType != NULL && mInArrayProperty == 0 && mInContainerProperty == 0)
+            if (data.mActorPropertyType != NULL && data.mInArrayProperty == 0 && data.mInContainerProperty == 0)
             {
                // parse the end element into a data type to see if it's an end property element.
                dtDAL::DataType* d = ParsePropertyType(localname, false);
@@ -368,7 +400,7 @@ namespace dtDAL
                   //This works here because the actor types referenced here all set
                   // their property type to NULL when the value is set.
                   NonEmptyDefaultWorkaround();
-                  mActorPropertyType = NULL;
+                  data.mActorPropertyType = NULL;
                   return true;
                }
             }
@@ -379,50 +411,56 @@ namespace dtDAL
    }
 
    //////////////////////////////////////////////////////////////////////////
-   bool ActorPropertySerializer::Characters(BaseXMLHandler::xmlCharString& topEl, const XMLCh* const chars, PropertyContainer* propContainer)
+   bool ActorPropertySerializer::Characters(BaseXMLHandler::xmlCharString& topEl, const XMLCh* const chars)
    {
-      if (!propContainer) return false;
-
-      if (mInActorProperty)
+      if (mData.empty())
       {
-         if (mInGroupProperty)
+         LOG_ERROR("Data stack is empty, can't end and element.");
+         return false;
+      }
+
+      SerializerRuntimeData& data = Top();
+
+      if (data.mInActorProperty)
+      {
+         if (data.mInGroupProperty)
          {
-            ParameterCharacters(topEl, chars, propContainer);
+            ParameterCharacters(topEl, chars);
          }
          else
          {
             // Make sure we don't try and change the current property if we are loading properties from an array.
-            if (mInArrayProperty == 0 && mInContainerProperty == 0 && topEl == MapXMLConstants::ACTOR_PROPERTY_NAME_ELEMENT)
+            if (data.mInArrayProperty == 0 && data.mInContainerProperty == 0 && topEl == MapXMLConstants::ACTOR_PROPERTY_NAME_ELEMENT)
             {
                std::string propName = dtUtil::XMLStringConverter(chars).ToString();
-               mActorProperty = propContainer->GetProperty(propName);
+               data.mActorProperty = data.mPropertyContainer->GetProperty(propName);
 
                // If the property was not found, attempt to get a temporary one instead.
-               if (!mActorProperty.valid())
+               if (!data.mActorProperty.valid())
                {
-                  mActorProperty = propContainer->GetDeprecatedProperty(propName);
-                  if (mActorProperty.valid())
+                  data.mActorProperty = data.mPropertyContainer->GetDeprecatedProperty(propName);
+                  if (data.mActorProperty.valid())
                   {
-                     mHasDeprecatedProperty = true;
+                     data.mHasDeprecatedProperty = true;
                   }
                }
             }
-            else if (mActorProperty != NULL)
+            else if (data.mActorProperty != NULL)
             {
                // Make sure we don't try and change the current property if we are loading properties from an array.
-               if (mInArrayProperty == 0 && mInContainerProperty == 0 && topEl == MapXMLConstants::ACTOR_PROPERTY_RESOURCE_TYPE_ELEMENT)
+               if (data.mInArrayProperty == 0 && data.mInContainerProperty == 0 && topEl == MapXMLConstants::ACTOR_PROPERTY_RESOURCE_TYPE_ELEMENT)
                {
                   std::string resourceTypeString = dtUtil::XMLStringConverter(chars).ToString();
-                  mActorPropertyType = static_cast<DataType*>(DataType::GetValueForName(resourceTypeString));
+                  data.mActorPropertyType = static_cast<DataType*>(DataType::GetValueForName(resourceTypeString));
 
-                  if (mActorPropertyType == NULL)
+                  if (data.mActorPropertyType == NULL)
                   {
                      mParser->mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
                         "No resource type found for type specified in xml \"%s.\"",
                         resourceTypeString.c_str());
                   }
                }
-               else if (mActorPropertyType != NULL)
+               else if (data.mActorPropertyType != NULL)
                {
                   std::string dataValue = dtUtil::XMLStringConverter(chars).ToString();
 
@@ -430,14 +468,14 @@ namespace dtDAL
                   {
                      mParser->mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                         "Setting value of property %s, property type %s, datatype %s, value %s, element name %s.",
-                        mActorProperty->GetName().c_str(),
-                        mActorProperty->GetDataType().GetName().c_str(),
-                        mActorPropertyType->GetName().c_str(),
+                        data.mActorProperty->GetName().c_str(),
+                        data.mActorProperty->GetDataType().GetName().c_str(),
+                        data.mActorPropertyType->GetName().c_str(),
                         dataValue.c_str(), dtUtil::XMLStringConverter(topEl.c_str()).c_str());
                   }
 
                   //we now have the property, the type, and the data.
-                  ParsePropertyData(topEl, dataValue, &mActorPropertyType, mActorProperty.get(), propContainer);
+                  ParsePropertyData(topEl, dataValue, data.mActorPropertyType, data.mActorProperty.get());
                }
             }
          }
@@ -693,6 +731,31 @@ namespace dtDAL
       mWriter->EndElement();
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   void ActorPropertySerializer::WritePropertyContainer(const BasePropertyContainerActorProperty& propConProp)
+   {
+      mWriter->BeginElement(MapXMLConstants::ACTOR_PROPERTY_PROPERTY_CONTAINER_ELEMENT);
+
+      const dtDAL::PropertyContainer* propCon = propConProp.GetValue();
+      // TODO What to write if NULL?
+      if (propCon != NULL)
+      {
+         std::vector<const dtDAL::ActorProperty*> properties;
+         propCon->GetPropertyList(properties);
+
+         std::vector<const dtDAL::ActorProperty*>::const_iterator i, iend;
+         i = properties.begin();
+         iend = properties.end();
+         // Save out the data for each index.
+         for (; i != iend; ++i)
+         {
+            // Write the data for the current property.
+            WriteProperty(**i);
+         }
+      }
+      mWriter->EndElement();
+   }
+
    /////////////////////////////////////////////////////////////////
    void ActorPropertySerializer::WriteSimple(const AbstractParameter& holder)
    {
@@ -745,9 +808,9 @@ namespace dtDAL
          {
             continue;
          }
-         std::pair<std::string, dtCore::RefPtr<dtDAL::NamedGroupParameter> >& data = i->second;
-         std::string& propertyName = data.first;
-         dtCore::RefPtr<dtDAL::NamedGroupParameter>& propValue = data.second;
+         std::pair<std::string, dtCore::RefPtr<dtDAL::NamedGroupParameter> >& param = i->second;
+         std::string& propertyName = param.first;
+         dtCore::RefPtr<dtDAL::NamedGroupParameter>& propValue = param.second;
 
          dtCore::RefPtr<ActorProperty> property = propContainer->GetProperty(propertyName);
          if (!property.valid())
@@ -776,27 +839,43 @@ namespace dtDAL
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void ActorPropertySerializer::EndActorPropertyGroupElement(PropertyContainer* propContainer)
+   void ActorPropertySerializer::EndActorPropertyGroupElement()
    {
-      dtCore::RefPtr<NamedGroupParameter> topParam = static_cast<NamedGroupParameter*>(mParameterStack.top().get());
-      mParameterStack.pop();
+      if (mData.empty())
+      {
+         LOG_ERROR("Data stack is empty.");
+         return;
+      }
+
+      SerializerRuntimeData& data = Top();
+
+      dtCore::RefPtr<NamedGroupParameter> topParam = static_cast<NamedGroupParameter*>(data.mParameterStack.top().get());
+      data.mParameterStack.pop();
       //The only way we know we have completed a group actor property is that the
       //stack of parameters has been emptied since they can nest infinitely.
-      if (mParameterStack.empty())
+      if (data.mParameterStack.empty())
       {
-         mInGroupProperty = false;
-         mGroupParameters.insert(std::make_pair(propContainer,
-            std::make_pair(mActorProperty->GetName(), topParam)));
+         data.mInGroupProperty = false;
+         mGroupParameters.insert(std::make_pair(data.mPropertyContainer,
+            std::make_pair(data.mActorProperty->GetName(), topParam)));
       }
    }
 
    /////////////////////////////////////////////////////////////////
-   void ActorPropertySerializer::ParameterCharacters(BaseXMLHandler::xmlCharString& topEl, const XMLCh* const chars, PropertyContainer* propContainer)
+   void ActorPropertySerializer::ParameterCharacters(BaseXMLHandler::xmlCharString& topEl, const XMLCh* const chars)
    {
+      if (mData.empty())
+      {
+         LOG_ERROR("Data stack is empty.");
+         return;
+      }
+
+      SerializerRuntimeData& data = Top();
+
       if (topEl == MapXMLConstants::ACTOR_PROPERTY_NAME_ELEMENT)
       {
-         mParameterNameToCreate = dtUtil::XMLStringConverter(chars).ToString();
-         if (mParameterNameToCreate.empty())
+         data.mParameterNameToCreate = dtUtil::XMLStringConverter(chars).ToString();
+         if (data.mParameterNameToCreate.empty())
             mParser->mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
             "In named parameter section, found a named parameter with an empty name.");
 
@@ -806,9 +885,9 @@ namespace dtDAL
       else if (topEl == MapXMLConstants::ACTOR_PROPERTY_RESOURCE_TYPE_ELEMENT)
       {
          std::string resourceTypeString = dtUtil::XMLStringConverter(chars).ToString();
-         mParameterTypeToCreate = static_cast<DataType*>(DataType::GetValueForName(resourceTypeString));
+         data.mParameterTypeToCreate = static_cast<DataType*>(DataType::GetValueForName(resourceTypeString));
 
-         if (mParameterTypeToCreate == NULL)
+         if (data.mParameterTypeToCreate == NULL)
          {
             mParser->mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
                "No resource type found for type specified in xml \"%s.\"",
@@ -822,47 +901,67 @@ namespace dtDAL
       }
       //The make sure we are parsing a parameter type other than group.  If not, then no character data
       //makes any sense to handle.
-      else if (!mParameterStack.empty() && mParameterStack.top()->GetDataType() != DataType::GROUP)
+      else if (!data.mParameterStack.empty() && data.mParameterStack.top()->GetDataType() != DataType::GROUP)
       {
          std::string dataValue = dtUtil::XMLStringConverter(chars).ToString();
 
          if (mParser->mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+         {
             mParser->mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
             "Setting value of parameter %s, parameter datatype %s, value %s, element name %s.",
-            mParameterStack.top()->GetName().c_str(),
-            mParameterStack.top()->GetDataType().GetName().c_str(),
+            data.mParameterStack.top()->GetName().c_str(),
+            data.mParameterStack.top()->GetDataType().GetName().c_str(),
             dataValue.c_str(), dtUtil::XMLStringConverter(topEl.c_str()).c_str());
+         }
 
          //we now have the property, the type, and the data.
-         ParseParameterData(topEl, dataValue, propContainer);
+         ParseParameterData(topEl, dataValue);
       }
    }
 
    /////////////////////////////////////////////////////////////////
    void ActorPropertySerializer::CreateAndPushParameter()
    {
+      if (mData.empty())
+      {
+         LOG_ERROR("Data stack is empty.");
+         return;
+      }
+
+      SerializerRuntimeData& data = Top();
+
       try
       {
-         NamedGroupParameter& gp = dynamic_cast<NamedGroupParameter&>(*mParameterStack.top());
-         mParameterStack.push(gp.AddParameter(mParameterNameToCreate, *mParameterTypeToCreate));
-         mParameterTypeToCreate = NULL;
-         mParameterNameToCreate.clear();
+         NamedGroupParameter& gp = dynamic_cast<NamedGroupParameter&>(*data.mParameterStack.top());
+         data.mParameterStack.push(gp.AddParameter(data.mParameterNameToCreate, *data.mParameterTypeToCreate));
+         data.mParameterTypeToCreate = NULL;
+         data.mParameterNameToCreate.clear();
       }
       catch (const std::bad_cast&)
       {
          mParser->mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
             "Tried to add a new parameter \"%s\" with type \"%s\", but failed",
-            mParameterNameToCreate.c_str(), mParameterTypeToCreate->GetName().c_str());
+            data.mParameterNameToCreate.c_str(), data.mParameterTypeToCreate->GetName().c_str());
       }
    }
 
    /////////////////////////////////////////////////////////////////
-   void ActorPropertySerializer::ParsePropertyData(BaseXMLHandler::xmlCharString& topEl, std::string& dataValue, dtDAL::DataType** dataType, dtDAL::ActorProperty* actorProperty, PropertyContainer* propContainer)
+   void ActorPropertySerializer::ParsePropertyData(BaseXMLHandler::xmlCharString& topEl, std::string& dataValue, dtDAL::DataType*& dataType, dtDAL::ActorProperty* actorProperty)
    {
-      if (!IsPropertyCorrectType(dataType, actorProperty))
+      if (mData.empty())
+      {
+         LOG_ERROR("Data stack is empty.");
          return;
+      }
 
-      switch ((*dataType)->GetTypeId())
+      SerializerRuntimeData& data = Top();
+
+      if (!IsPropertyCorrectType(dataType, actorProperty))
+      {
+         return;
+      }
+
+      switch ((dataType)->GetTypeId())
       {
       case DataType::FLOAT_ID:
       case DataType::DOUBLE_ID:
@@ -876,10 +975,10 @@ namespace dtDAL
             {
                mParser->mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
                   "Failed Setting value %s for property type %s named %s",
-                  dataValue.c_str(), (*dataType)->GetName().c_str(),
+                  dataValue.c_str(), (dataType)->GetName().c_str(),
                   actorProperty->GetName().c_str());
             }
-            (*dataType) = NULL;
+            (dataType) = NULL;
             break;
          }
       case DataType::GAMEEVENT_ID:
@@ -916,7 +1015,7 @@ namespace dtDAL
             {
                geProp.SetValue(NULL);
             }
-            (*dataType) = NULL;
+            dataType = NULL;
             break;
          }
       case DataType::VEC2_ID:
@@ -1012,16 +1111,16 @@ namespace dtDAL
                   {
                      mParser->mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
                         "Failed Setting value %s for property type %s named %s",
-                        dataValue.c_str(), (*dataType)->GetName().c_str(),
+                        dataValue.c_str(), dataType->GetName().c_str(),
                         actorProperty->GetName().c_str());
                   }
                }
                else
                {
-                  mActorLinking.insert(std::make_pair(propContainer, std::make_pair(actorProperty->GetName(), dtCore::UniqueId(dataValue))));
+                  mActorLinking.insert(std::make_pair(data.mPropertyContainer, std::make_pair(actorProperty->GetName(), dtCore::UniqueId(dataValue))));
                }
             }
-            (*dataType) = NULL;
+            dataType = NULL;
             break;
          }
       case DataType::GROUP_ID:
@@ -1031,19 +1130,26 @@ namespace dtDAL
          }
       case DataType::ARRAY_ID:
          {
-            ArrayActorPropertyBase& arrayProp = static_cast<ArrayActorPropertyBase&>(*actorProperty);
-            ParseArray(topEl, dataValue, &arrayProp, propContainer);
+            ArrayActorPropertyBase* arrayProp = dynamic_cast<ArrayActorPropertyBase*>(actorProperty);
+            if (arrayProp != NULL)
+            {
+               ParseArray(topEl, dataValue, arrayProp);
+            }
+            break;
+         }
+      case DataType::PROPERTY_CONTAINER_ID:
+         {
             break;
          }
       case DataType::CONTAINER_ID:
          {
             ContainerActorProperty& arrayProp = static_cast<ContainerActorProperty&>(*actorProperty);
-            ParseContainer(topEl, dataValue, &arrayProp, propContainer);
+            ParseContainer(topEl, dataValue, &arrayProp);
             break;
          }
       default:
          {
-            if ((*dataType)->IsResource())
+            if (dataType->IsResource())
             {
                ResourceActorProperty& p = static_cast<ResourceActorProperty&>(*actorProperty);
                if (topEl == MapXMLConstants::ACTOR_PROPERTY_RESOURCE_TYPE_ELEMENT)
@@ -1055,20 +1161,20 @@ namespace dtDAL
                         actorProperty->GetName().c_str(),
                         dataValue.c_str(), p.GetDataType().GetName().c_str());
                      p.SetValue(dtDAL::ResourceDescriptor::NULL_RESOURCE);
-                     (*dataType) = NULL;
+                     dataType = NULL;
                   }                  
                }
                else if (topEl == MapXMLConstants::ACTOR_PROPERTY_RESOURCE_DISPLAY_ELEMENT)
                {
-                  mDescriptorDisplayName = dataValue;
+                  data.mDescriptorDisplayName = dataValue;
                }
                else if (topEl == MapXMLConstants::ACTOR_PROPERTY_RESOURCE_IDENTIFIER_ELEMENT)
                {
                   //if the value is null, then both strings will be empty.
-                  if (dataValue != "" && mDescriptorDisplayName != "")
+                  if (!dataValue.empty() && !data.mDescriptorDisplayName.empty())
                   {
-                     ResourceDescriptor rd(mDescriptorDisplayName, dataValue);
-                     p.SetValue(rd);                     
+                     ResourceDescriptor rd(data.mDescriptorDisplayName, dataValue);
+                     p.SetValue(rd);
                   }
                   else
                   {
@@ -1080,28 +1186,38 @@ namespace dtDAL
             {
                mParser->mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__,  __LINE__,
                   "DataType \"%s\" is not supported in the map loading code.  The data has been ignored.",
-                  (*dataType)->GetName().c_str());
+                  dataType->GetName().c_str());
             }
          }
       }
    }
 
    /////////////////////////////////////////////////////////////////
-   void ActorPropertySerializer::ParseParameterData(BaseXMLHandler::xmlCharString& topEl, std::string& dataValue, PropertyContainer* propContainer)
+   void ActorPropertySerializer::ParseParameterData(BaseXMLHandler::xmlCharString& topEl, std::string& dataValue)
    {
-      if (mParameterStack.empty())
+      if (mData.empty())
+      {
+         LOG_ERROR("Data stack is empty.");
+         return;
+      }
+
+      SerializerRuntimeData& data = Top();
+
+      if (data.mParameterStack.empty())
       {
          mParser->mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
             "Unable to set the value \"%s\" without a valid parameter for group actor property \"%s\"",
-            dataValue.c_str(), mActorProperty->GetName().c_str());
+            dataValue.c_str(), data.mActorProperty->GetName().c_str());
          return;
       }
 
       ///Optimization
       if (topEl == MapXMLConstants::ACTOR_PROPERTY_PARAMETER_ELEMENT)
+      {
          return;
+      }
 
-      NamedParameter& np = *mParameterStack.top();
+      NamedParameter& np = *data.mParameterStack.top();
 
       switch (np.GetDataType().GetTypeId())
       {
@@ -1117,8 +1233,8 @@ namespace dtDAL
             {
                mParser->mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
                   "Failed Setting value \"%s\" for parameter type \"%s\" named \"%s\" in property \"%s\".",
-                  dataValue.c_str(), mActorPropertyType->GetName().c_str(),
-                  mActorProperty->GetName().c_str());
+                  dataValue.c_str(), data.mActorPropertyType->GetName().c_str(),
+                  data.mActorProperty->GetName().c_str());
             }
             break;
          }
@@ -1150,7 +1266,7 @@ namespace dtDAL
                   mParser->mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
                      "Game Event referenced in named parameter \"%s\" in property \"%s\" "
                      "was not found.",
-                     np.GetName().c_str(), mActorProperty->GetName().c_str());
+                     np.GetName().c_str(), data.mActorProperty->GetName().c_str());
                }
             }
             else
@@ -1261,14 +1377,14 @@ namespace dtDAL
 
                if (topEl == MapXMLConstants::ACTOR_PROPERTY_RESOURCE_DISPLAY_ELEMENT)
                {
-                  mDescriptorDisplayName = dataValue;
+                  data.mDescriptorDisplayName = dataValue;
                }
                else if (topEl == MapXMLConstants::ACTOR_PROPERTY_RESOURCE_IDENTIFIER_ELEMENT)
                {
                   //if the value is null, then both strings will be empty.
-                  if (dataValue != "" && mDescriptorDisplayName != "")
+                  if (!dataValue.empty() && !data.mDescriptorDisplayName.empty())
                   {
-                     ResourceDescriptor rd(mDescriptorDisplayName, dataValue);
+                     ResourceDescriptor rd(data.mDescriptorDisplayName, dataValue);
                      p.SetValue(rd);
                   }
                   else
@@ -1318,7 +1434,9 @@ namespace dtDAL
             topEl == MapXMLConstants::ACTOR_PROPERTY_VEC4_ELEMENT ||
             topEl == MapXMLConstants::ACTOR_PROPERTY_COLOR_RGBA_ELEMENT ||
             topEl == MapXMLConstants::ACTOR_PROPERTY_COLOR_RGBA_ELEMENT)
+         {
             return;
+         }
 
          mParser->mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
             "Got an invalid element for a Vec%u: %s", unsigned(vecSize), dtUtil::XMLStringConverter(topEl.c_str()).c_str());
@@ -1326,17 +1444,65 @@ namespace dtDAL
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void ActorPropertySerializer::ParseArray(BaseXMLHandler::xmlCharString& topEl, std::string& dataValue, ArrayActorPropertyBase* arrayProp, PropertyContainer* propContainer)
+   void ActorPropertySerializer::EnterPropertyContainer()
    {
-      // Find the property we want to edit based on how deep the array is nested.
-      for (int nestIndex = 1; nestIndex < mInArrayProperty; nestIndex++)
+      SerializerRuntimeData& data = Top();
+
+      dtDAL::ActorProperty* actorProperty = data.mActorProperty;
+      if (data.mInArrayProperty > 0)
       {
-         arrayProp = static_cast<ArrayActorPropertyBase*>(arrayProp->GetArrayProperty());
+         ArrayActorPropertyBase* arrayActorProp = dynamic_cast<ArrayActorPropertyBase*>(actorProperty);
+         if (arrayActorProp != NULL)
+         {
+            actorProperty = arrayActorProp->GetArrayProperty();
+         }
+      }
+      else if (data.mInContainerProperty > 0)
+      {
+         ContainerActorProperty* contActorProp = dynamic_cast<ContainerActorProperty*>(actorProperty);
+         if (contActorProp != NULL)
+         {
+            actorProperty = contActorProp->GetCurrentProperty();
+         }
+      }
+      mData.push(dtDAL::SerializerRuntimeData());
+      mData.top().Reset();
+      BasePropertyContainerActorProperty* pcProp = dynamic_cast<BasePropertyContainerActorProperty*>(actorProperty);
+      if (pcProp != NULL)
+      {
+         dtDAL::PropertyContainer* pc = pcProp->GetValue();
+         if (pc == NULL)
+         {
+            // TODO figure out a way to pass on the type.
+            pcProp->CreateNew();
+            pc = pcProp->GetValue();
+         }
+
+         // This works even if it's NULL, but will the rest of the code?
+         SetCurrentPropertyContainer(pc);
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void ActorPropertySerializer::ParseArray(BaseXMLHandler::xmlCharString& topEl, std::string& dataValue, ArrayActorPropertyBase* arrayProp)
+   {
+      if (mData.empty())
+      {
+         LOG_ERROR("Data stack is empty.");
+         return;
       }
 
-      if (!arrayProp)
+      SerializerRuntimeData& data = Top();
+
+      // Find the property we want to edit based on how deep the array is nested.
+      for (int nestIndex = 1; nestIndex < data.mInArrayProperty; nestIndex++)
       {
-         return;
+         arrayProp = dynamic_cast<ArrayActorPropertyBase*>(arrayProp->GetArrayProperty());
+
+         if (arrayProp == NULL)
+         {
+            return;
+         }
       }
 
       // Array Size
@@ -1347,17 +1513,23 @@ namespace dtDAL
          stream.str(dataValue);
          stream >> arraySize;
 
+         int min = arrayProp->GetMinArraySize();
+         int max = arrayProp->GetMaxArraySize();
+         min = min < 0 ? 0 : min;
+         max = max < 0 ? arraySize : max;
+         dtUtil::Clamp(arraySize, min, max);
+
          // Add more elements.
          arrayProp->SetIndex(0);
          while (arraySize > arrayProp->GetArraySize())
          {
-            arrayProp->Insert(0);
+            arrayProp->PushBack();
          }
 
          // Remove extra elements.
          while (arraySize < arrayProp->GetArraySize())
          {
-            arrayProp->Remove(0);
+            arrayProp->PopBack();
          }
       }
       // Set current Array Index
@@ -1380,7 +1552,7 @@ namespace dtDAL
       else
       {
          ActorProperty* prop = arrayProp->GetArrayProperty();
-         if (prop)
+         if (prop != NULL)
          {
             DataType* propType = &prop->GetDataType();
 
@@ -1389,23 +1561,31 @@ namespace dtDAL
             if (topEl != MapXMLConstants::ACTOR_PROPERTY_NAME_ELEMENT ||
                (propType == &DataType::ARRAY || propType == &DataType::CONTAINER))
             {
-               ParsePropertyData(topEl, dataValue, &propType, prop, propContainer);
+               ParsePropertyData(topEl, dataValue, propType, prop);
             }
          }
       }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void ActorPropertySerializer::ParseContainer(BaseXMLHandler::xmlCharString& topEl, std::string& dataValue, ContainerActorProperty* arrayProp, PropertyContainer* propContainer)
+   void ActorPropertySerializer::ParseContainer(BaseXMLHandler::xmlCharString& topEl, std::string& dataValue, ContainerActorProperty* arrayProp)
    {
+      if (mData.empty())
+      {
+         LOG_ERROR("Data stack is empty.");
+         return;
+      }
+
+      SerializerRuntimeData& data = Top();
+
       // Find the property we want to edit based on how deep the container is nested.
-      for (int nestIndex = 1; nestIndex < mInContainerProperty; nestIndex++)
+      for (int nestIndex = 1; nestIndex < data.mInContainerProperty; nestIndex++)
       {
          int index = arrayProp->GetCurrentPropertyIndex();
          arrayProp = static_cast<ContainerActorProperty*>(arrayProp->GetProperty(index));
       }
 
-      if (!arrayProp)
+      if (arrayProp == NULL)
       {
          return;
       }
@@ -1442,7 +1622,7 @@ namespace dtDAL
          if (prop)
          {
             DataType* propType = &prop->GetDataType();
-            ParsePropertyData(topEl, dataValue, &propType, prop, propContainer);
+            ParsePropertyData(topEl, dataValue, propType, prop);
          }
       }
    }
@@ -1536,6 +1716,11 @@ namespace dtDAL
          return &DataType::CONTAINER;
       }
       else if (XMLString::compareString(localname,
+         MapXMLConstants::ACTOR_PROPERTY_PROPERTY_CONTAINER_ELEMENT) == 0)
+      {
+         return &DataType::PROPERTY_CONTAINER;
+      }
+      else if (XMLString::compareString(localname,
          MapXMLConstants::ACTOR_PROPERTY_RESOURCE_TYPE_ELEMENT) == 0)
       {
          //Need the character contents to know the type, so this will be
@@ -1554,21 +1739,29 @@ namespace dtDAL
    /////////////////////////////////////////////////////////////////
    void ActorPropertySerializer::NonEmptyDefaultWorkaround()
    {
+      if (mData.empty())
+      {
+         LOG_ERROR("Data stack is empty.");
+         return;
+      }
+
+      SerializerRuntimeData& data = Top();
+
       // We don't have control over what the string or actor
       // property default value is, but if the data in the
       // xml is empty string, no event is generated.  Thus,
       // this preemptively set this string to "" so that
       // empty data will work.
-      if (mActorPropertyType != NULL && !mActorProperty->IsReadOnly())
+      if (data.mActorPropertyType != NULL && !data.mActorProperty->IsReadOnly())
       {
-         if (*mActorPropertyType == DataType::STRING
-            || *mActorPropertyType == DataType::ACTOR)
+         if (*data.mActorPropertyType == DataType::STRING
+            || *data.mActorPropertyType == DataType::ACTOR)
          {
-            mActorProperty->FromString("");
+            data.mActorProperty->FromString("");
          }
-         else if (*mActorPropertyType == DataType::GAME_EVENT)
+         else if (*data.mActorPropertyType == DataType::GAME_EVENT)
          {
-            static_cast<GameEventActorProperty*>(mActorProperty.get())->SetValue(NULL);
+            static_cast<GameEventActorProperty*>(data.mActorProperty.get())->SetValue(NULL);
          }
       }
    }
@@ -1576,47 +1769,63 @@ namespace dtDAL
    //////////////////////////////////////////////////////////////////////////
    void ActorPropertySerializer::EndActorPropertyParameterElement()
    {
+      if (mData.empty())
+      {
+         LOG_ERROR("Data stack is empty.");
+         return;
+      }
+
+      SerializerRuntimeData& data = Top();
+
       ///We pop if the element was never filled in.  This happens if the value is empty for
       ///parameter data.  We don't pop for a group because that is handled separately below.
-      if (!mParameterStack.empty() && mParameterStack.top()->GetDataType() != DataType::GROUP)
+      if (!data.mParameterStack.empty() && data.mParameterStack.top()->GetDataType() != DataType::GROUP)
       {
-         mParameterStack.pop();
+         data.mParameterStack.pop();
       }
    }
 
    //////////////////////////////////////////////////////////////////////////
    void ActorPropertySerializer::EndActorPropertyElement()
    {
-      mInActorProperty = false;
-      mActorProperty = NULL;
-      mActorPropertyType = NULL;
+      if (mData.empty())
+      {
+         LOG_ERROR("Data stack is empty.");
+         return;
+      }
+
+      SerializerRuntimeData& data = Top();
+
+      data.mInActorProperty = false;
+      data.mActorProperty = NULL;
+      data.mActorPropertyType = NULL;
    }
 
    /////////////////////////////////////////////////////////////////
-   bool ActorPropertySerializer::IsPropertyCorrectType(dtDAL::DataType** dataType, dtDAL::ActorProperty* actorProperty)
+   bool ActorPropertySerializer::IsPropertyCorrectType(dtDAL::DataType*& dataType, dtDAL::ActorProperty* actorProperty)
    {
-      if (actorProperty == NULL || (*dataType) == NULL)
+      if (actorProperty == NULL || (dataType) == NULL)
       {
          mParser->mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, "Call made to %s with content handler in incorrect state.", __FUNCTION__);
          return false;
       }
-      bool result = actorProperty->GetDataType() == *(*dataType);
+      bool result = actorProperty->GetDataType() == *(dataType);
       if (!result)
       {
-         if ( (*(*dataType) == DataType::VEC2 && (actorProperty->GetDataType() == DataType::VEC2D || actorProperty->GetDataType() == DataType::VEC2F)) ||
-            (*(*dataType) == DataType::VEC3 && (actorProperty->GetDataType() == DataType::VEC3D || actorProperty->GetDataType() == DataType::VEC3F)) ||
-            (*(*dataType) == DataType::VEC4 && (actorProperty->GetDataType() == DataType::VEC4D || actorProperty->GetDataType() == DataType::VEC4F)) )
+         if ( (*(dataType) == DataType::VEC2 && (actorProperty->GetDataType() == DataType::VEC2D || actorProperty->GetDataType() == DataType::VEC2F)) ||
+            (*(dataType) == DataType::VEC3 && (actorProperty->GetDataType() == DataType::VEC3D || actorProperty->GetDataType() == DataType::VEC3F)) ||
+            (*(dataType) == DataType::VEC4 && (actorProperty->GetDataType() == DataType::VEC4D || actorProperty->GetDataType() == DataType::VEC4F)) )
          {
             mParser->mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__,
                "Differentiating between a osg::vecf/osg::vecd and a osg::vec. Correcting.");
-            (*dataType) = &actorProperty->GetDataType();
+            (dataType) = &actorProperty->GetDataType();
             return true;
          }
 
          mParser->mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
             "Parameter/Property %s was saved as type %s, but is now of type %s. Data will be ignored",
             actorProperty->GetName().c_str(),
-            (*dataType)->GetName().c_str(), actorProperty->GetDataType().GetName().c_str());
+            (dataType)->GetName().c_str(), actorProperty->GetDataType().GetName().c_str());
       }
       return result;
    }
@@ -1624,6 +1833,14 @@ namespace dtDAL
    /////////////////////////////////////////////////////////////////
    void ActorPropertySerializer::LinkActors()
    {
+//      if (mData.empty())
+//      {
+//         LOG_ERROR("Data stack is empty.");
+//         return;
+//      }
+//
+//      SerializerRuntimeData& data = Top();
+
       // Can't link actors if we can't find them using the map.
       if (!mMap.valid()) return;
 
@@ -1644,7 +1861,7 @@ namespace dtDAL
                "Container was defined to have actor property %s set, but the id is empty.",
                propertyName.c_str(), propValueId.ToString().c_str());
          }
-         ActorProxy* valueProxy = mMap->GetProxyById(propValueId);
+         BaseActorObject* valueProxy = mMap->GetProxyById(propValueId);
          if (valueProxy == NULL)
          {
             mParser->mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__,

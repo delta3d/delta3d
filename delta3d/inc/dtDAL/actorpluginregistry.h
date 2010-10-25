@@ -25,7 +25,7 @@
 #include <vector>
 #include <dtUtil/objectfactory.h>
 #include <dtDAL/actortype.h>
-#include <dtDAL/actorproxy.h>
+#include <dtDAL/baseactorobject.h>
 #include <dtDAL/export.h>
 
 namespace dtDAL
@@ -69,7 +69,7 @@ namespace dtDAL
             : mName(name)
             , mDescription(desc)
          {
-            mActorFactory = new dtUtil::ObjectFactory<dtCore::RefPtr<const ActorType>, ActorProxy, ActorType::RefPtrComp>;
+            mActorFactory = new dtUtil::ObjectFactory<dtCore::RefPtr<const ActorType>, BaseActorObject, ActorType::RefPtrComp>;
          }
 
          /**
@@ -149,13 +149,14 @@ namespace dtDAL
          bool IsActorTypeSupported(dtCore::RefPtr<const ActorType> type);
 
          /**
-          * Creates a new actor proxy based on the ActorType given.
+          * Creates a new actor object based on the ActorType given.
           * @param type Type of actor to create.
           * @return Returns a smart pointer to the newly created
           * proxy object.
           * @throws ExceptionEnum::ObjectFactoryUnknownType
           */
-         dtCore::RefPtr<ActorProxy> CreateActorProxy(const ActorType& type);
+         dtCore::RefPtr<BaseActorObject> CreateActor(const ActorType& type);
+         dtCore::RefPtr<BaseActorObject> CreateActorProxy(const ActorType& type) { return CreateActor(type); }
 
       protected:
          std::string mName;
@@ -167,7 +168,7 @@ namespace dtDAL
           * @see ObjectFactory
           */
          dtCore::RefPtr<dtUtil::ObjectFactory<dtCore::RefPtr<const ActorType>,
-            ActorProxy, ActorType::RefPtrComp> > mActorFactory;
+            BaseActorObject, ActorType::RefPtrComp> > mActorFactory;
    };
 } // namespace dtDAL
 

@@ -19,7 +19,7 @@
  * Matthew W. Campbell
  */
 #include <prefix/dtdalprefix.h>
-#include <dtDAL/actorproxy.h>
+#include <dtDAL/baseactorobject.h>
 
 #include <dtCore/scene.h>
 #include <dtCore/uniqueid.h>
@@ -41,50 +41,50 @@
 namespace dtDAL
 {
    ///////////////////////////////////////////////////////////////////////////////////////
-   IMPLEMENT_ENUM(ActorProxy::RenderMode);
-   const ActorProxy::RenderMode ActorProxy::RenderMode::DRAW_ACTOR("DRAW_ACTOR");
-   const ActorProxy::RenderMode ActorProxy::RenderMode::DRAW_BILLBOARD_ICON("DRAW_BILLBOARD_ICON");
-   const ActorProxy::RenderMode ActorProxy::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON("DRAW_ACTOR_AND_BILLBOARD_ICON");
-   const ActorProxy::RenderMode ActorProxy::RenderMode::DRAW_AUTO("DRAW_AUTO");
-   const dtUtil::RefString ActorProxy::DESCRIPTION_PROPERTY("Description");
+   IMPLEMENT_ENUM(BaseActorObject::RenderMode);
+   const BaseActorObject::RenderMode BaseActorObject::RenderMode::DRAW_ACTOR("DRAW_ACTOR");
+   const BaseActorObject::RenderMode BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON("DRAW_BILLBOARD_ICON");
+   const BaseActorObject::RenderMode BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON("DRAW_ACTOR_AND_BILLBOARD_ICON");
+   const BaseActorObject::RenderMode BaseActorObject::RenderMode::DRAW_AUTO("DRAW_AUTO");
+   const dtUtil::RefString BaseActorObject::DESCRIPTION_PROPERTY("Description");
    ///////////////////////////////////////////////////////////////////////////////////////
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   ActorProxy::ActorProxy()
+   BaseActorObject::BaseActorObject()
    {
       SetClassName("dtCore::DeltaDrawable");
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   ActorProxy::ActorProxy(const ActorProxy& rhs)
+   BaseActorObject::BaseActorObject(const BaseActorObject& rhs)
    {
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   ActorProxy::~ActorProxy()
+   BaseActorObject::~BaseActorObject()
    {
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   ActorProxy& ActorProxy::operator=(const ActorProxy& rhs)
+   BaseActorObject& BaseActorObject::operator=(const BaseActorObject& rhs)
    {
       return *this;
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   void ActorProxy::Init(const dtDAL::ActorType& actorType)
+   void BaseActorObject::Init(const dtDAL::ActorType& actorType)
    {
       SetActorType(actorType);
-      CreateActor();
+      CreateDrawable();
       // These are called to make it validate that they aren't Null
       // before proceeding.
       GetActorType();
-      GetActor();
+      GetDrawable();
       BuildPropertyMap();
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   void ActorProxy::SetClassName(const std::string& name)
+   void BaseActorObject::SetClassName(const std::string& name)
    {
       mClassName = name;
       mClassNameSet.insert(mClassName);
@@ -103,7 +103,7 @@ namespace dtDAL
    };
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   const std::set<std::string> ActorProxy::GetClassHierarchy() const
+   const std::set<std::string> BaseActorObject::GetClassHierarchy() const
    {
       RefStringInsert insertFunc;
       std::set<std::string> hierarchy;
@@ -113,28 +113,28 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   const dtCore::UniqueId& ActorProxy::GetId() const
+   const dtCore::UniqueId& BaseActorObject::GetId() const
    {
-      return GetActor()->GetUniqueId();
+      return GetDrawable()->GetUniqueId();
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   void ActorProxy::SetId(const dtCore::UniqueId& newId)
+   void BaseActorObject::SetId(const dtCore::UniqueId& newId)
    {
-      GetActor()->SetUniqueId(newId);
+      GetDrawable()->SetUniqueId(newId);
    }
 
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   const std::string& ActorProxy::GetName() const
+   const std::string& BaseActorObject::GetName() const
    {
-      return GetActor()->GetName();
+      return GetDrawable()->GetName();
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   void ActorProxy::SetName(const std::string& name)
+   void BaseActorObject::SetName(const std::string& name)
    {
-      GetActor()->SetName(name);
+      GetDrawable()->SetName(name);
       if (mBillBoardIcon.valid())
       {
          mBillBoardIcon->GetDrawable()->SetName(name);
@@ -142,29 +142,29 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   bool ActorProxy::IsGhostProxy() const
+   bool BaseActorObject::IsGhostProxy() const
    {
       return false;
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   ResourceDescriptor ActorProxy::GetResource(const std::string& name)
+   ResourceDescriptor BaseActorObject::GetResource(const std::string& name)
    {
       ResourceMapType::iterator itor = mResourceMap.find(name);
       return itor != mResourceMap.end() ? itor->second : dtDAL::ResourceDescriptor::NULL_RESOURCE;
    }
    ///////////////////////////////////////////////////////////////////////////////////////
-   const ResourceDescriptor ActorProxy::GetResource(const std::string& name) const
+   const ResourceDescriptor BaseActorObject::GetResource(const std::string& name) const
    {
       ResourceMapType::const_iterator itor = mResourceMap.find(name);
       return itor != mResourceMap.end() ? itor->second : dtDAL::ResourceDescriptor::NULL_RESOURCE;
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   void ActorProxy::SetResource(const std::string& name, ResourceDescriptor* source)
+   void BaseActorObject::SetResource(const std::string& name, ResourceDescriptor* source)
    {
-      DEPRECATE("void ActorProxy::SetResource(const std::string&, ResourceDescriptor*)",
-                "void ActorProxy::SetResource(const std::string&, const ResourceDescriptor&)");
+      DEPRECATE("void BaseActorObject::SetResource(const std::string&, ResourceDescriptor*)",
+                "void BaseActorObject::SetResource(const std::string&, const ResourceDescriptor&)");
 
       if (source != NULL)
       {
@@ -177,10 +177,10 @@ namespace dtDAL
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void ActorProxy::SetResource(const std::string& name, const ResourceDescriptor& source)
+   void BaseActorObject::SetResource(const std::string& name, const ResourceDescriptor& source)
    {
       //TODO Should probably deprecate this functionality.  The ResourceDescripter value should
-      //be stored in the Actor, not generically in the ActorProxy.
+      //be stored in the Actor, not generically in the BaseActorObject.
 
       if (source.IsEmpty())
       {
@@ -201,31 +201,31 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   const ActorProxy* ActorProxy::GetLinkedActor(const std::string& name) const
+   const BaseActorObject* BaseActorObject::GetLinkedActor(const std::string& name) const
    {
-      ActorProxyMapType::const_iterator itor = mActorProxyMap.find(name);
-      return itor != mActorProxyMap.end() ? itor->second.get() : NULL;
+      BaseActorObjectMapType::const_iterator itor = mBaseActorObjectMap.find(name);
+      return itor != mBaseActorObjectMap.end() ? itor->second.get() : NULL;
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   ActorProxy* ActorProxy::GetLinkedActor(const std::string& name)
+   BaseActorObject* BaseActorObject::GetLinkedActor(const std::string& name)
    {
-      ActorProxyMapType::iterator itor = mActorProxyMap.find(name);
-      return itor != mActorProxyMap.end() ? itor->second.get() : NULL;
+      BaseActorObjectMapType::iterator itor = mBaseActorObjectMap.find(name);
+      return itor != mBaseActorObjectMap.end() ? itor->second.get() : NULL;
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   void ActorProxy::SetLinkedActor(const std::string& name, ActorProxy* newValue)
+   void BaseActorObject::SetLinkedActor(const std::string& name, BaseActorObject* newValue)
    {
       if (newValue == NULL)
       {
-         mActorProxyMap.erase(name);
+         mBaseActorObjectMap.erase(name);
       }
       else
       {
          //attempt to insert the value
-         std::pair<ActorProxyMapType::iterator, bool> result =
-            mActorProxyMap.insert(std::make_pair(name, newValue));
+         std::pair<BaseActorObjectMapType::iterator, bool> result =
+            mBaseActorObjectMap.insert(std::make_pair(name, newValue));
          // result.second tells me if it was inserted
          if (!result.second)
          {
@@ -237,11 +237,11 @@ namespace dtDAL
 
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   static void CheckActorType(const dtDAL::ActorType* actorType)
+   static void CheckDrawableType(const dtDAL::ActorType* actorType)
    {
       if (actorType == NULL)
       {
-         throw dtUtil::Exception("The ActorType on an ActorProxy is NULL.  The only way this could happen is "
+         throw dtUtil::Exception("The ActorType on an BaseActorObject is NULL.  The only way this could happen is "
                   "if the actor was created with the new operator rather than via "
                   "dtDAL::LibraryManager::GetInstance().CreateActorProxy().",
                   __FILE__, __LINE__);
@@ -249,26 +249,26 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   const ActorType& ActorProxy::GetActorType() const
+   const ActorType& BaseActorObject::GetActorType() const
    {
-      CheckActorType(mActorType.get());
+      CheckDrawableType(mActorType.get());
       return *mActorType;
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   const ActorProxy::RenderMode& ActorProxy::GetRenderMode()
+   const BaseActorObject::RenderMode& BaseActorObject::GetRenderMode()
    {
       return RenderMode::DRAW_ACTOR;
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   void ActorProxy::SetBillBoardIcon(ActorProxyIcon* icon)
+   void BaseActorObject::SetBillBoardIcon(ActorProxyIcon* icon)
    {
       mBillBoardIcon = icon;
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   ActorProxyIcon *ActorProxy::GetBillBoardIcon()
+   ActorProxyIcon* BaseActorObject::GetBillBoardIcon()
    {
       if (!mBillBoardIcon.valid())
       {
@@ -279,11 +279,11 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   static void CheckActor(const dtCore::DeltaDrawable* actor)
+   static void CheckDrawable(const dtCore::DeltaDrawable* actor)
    {
       if (actor == NULL)
       {
-         throw dtUtil::Exception("The Actor on an ActorProxy is NULL.  The only ways this could happen is "
+         throw dtUtil::Exception("The Actor on an BaseActorObject is NULL.  The only ways this could happen is "
                   "if the actor was created with the new operator rather than via "
                   "dtDAL::LibraryManager::GetInstance().CreateActorProxy "
                   "or the CreateActor method on the proxy subclass did not call SetActor() with a valid actor.",
@@ -292,37 +292,37 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   dtCore::DeltaDrawable* ActorProxy::GetActor()
+   dtCore::DeltaDrawable* BaseActorObject::GetDrawable()
    {
-      CheckActor(mActor.get());
-      return mActor.get();
+      CheckDrawable(mDrawable.get());
+      return mDrawable.get();
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   const dtCore::DeltaDrawable* ActorProxy::GetActor() const
+   const dtCore::DeltaDrawable* BaseActorObject::GetDrawable() const
    {
-      CheckActor(mActor.get());
-      return mActor.get();
+      CheckDrawable(mDrawable.get());
+      return mDrawable.get();
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   void ActorProxy::SetActor(dtCore::DeltaDrawable& actor)
+   void BaseActorObject::SetDrawable(dtCore::DeltaDrawable& drawable)
    {
-      mActor = &actor;
+      mDrawable = &drawable;
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   dtCore::RefPtr<ActorProxy> ActorProxy::Clone()
+   dtCore::RefPtr<BaseActorObject> BaseActorObject::Clone()
    {
       std::ostringstream error;
 
-      //First tell the library manager to create a new mActor using this
+      //First tell the library manager to create a new mDrawable using this
       // actors actor type.
-      dtCore::RefPtr<ActorProxy> copy;
+      dtCore::RefPtr<BaseActorObject> copy;
 
       try
       {
-         copy = LibraryManager::GetInstance().CreateActorProxy(*mActorType).get();
+         copy = LibraryManager::GetInstance().CreateActor(*mActorType).get();
       }
       catch(const dtUtil::Exception &e)
       {
@@ -341,51 +341,51 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   void ActorProxy::SetActorType(const ActorType& type)
+   void BaseActorObject::SetActorType(const ActorType& type)
    {
       mActorType = &type;
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   void ActorProxy::OnRemove() const
+   void BaseActorObject::OnRemove() const
    {
    }
 
    //////////////////////////////////////////////////////////////////////////
-   const bool ActorProxy::IsInSTAGE() const
+   const bool BaseActorObject::IsInSTAGE() const
    {
       return dtDAL::Project::GetInstance().GetEditMode();
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void ActorProxy::OnMapLoadBegin()
+   void BaseActorObject::OnMapLoadBegin()
    {
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void ActorProxy::OnMapLoadEnd()
+   void BaseActorObject::OnMapLoadEnd()
    {
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void ActorProxy::BuildPropertyMap()
+   void BaseActorObject::BuildPropertyMap()
    {
-      dtCore::DeltaDrawable* actor = GetActor();
+      dtCore::DeltaDrawable* drawable = GetDrawable();
 
       const std::string GROUP_DRAWABLE("DeltaDrawable");
 
       AddProperty(new StringActorProperty(
-                  ActorProxy::DESCRIPTION_PROPERTY.Get(),
+                  BaseActorObject::DESCRIPTION_PROPERTY.Get(),
                   "Description",
-                  StringActorProperty::SetFuncType(actor, &dtCore::DeltaDrawable::SetDescription),
-                  StringActorProperty::GetFuncType(actor, &dtCore::DeltaDrawable::GetDescription),
+                  StringActorProperty::SetFuncType(drawable, &dtCore::DeltaDrawable::SetDescription),
+                  StringActorProperty::GetFuncType(drawable, &dtCore::DeltaDrawable::GetDescription),
                   "Generic text field used to describe this object",
                   GROUP_DRAWABLE));
 
       AddProperty(new dtDAL::BooleanActorProperty(
                   "IsActive", "IsActive",
-                  dtDAL::BooleanActorProperty::SetFuncType(actor, &dtCore::DeltaDrawable::SetActive),
-                  dtDAL::BooleanActorProperty::GetFuncType(actor, &dtCore::DeltaDrawable::GetActive),
+                  dtDAL::BooleanActorProperty::SetFuncType(drawable, &dtCore::DeltaDrawable::SetActive),
+                  dtDAL::BooleanActorProperty::GetFuncType(drawable, &dtCore::DeltaDrawable::GetActive),
                   "Determines whether the drawable will render.", GROUP_DRAWABLE));
    }
 

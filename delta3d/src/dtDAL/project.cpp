@@ -814,21 +814,21 @@ namespace dtDAL
    void Project::LoadMapIntoScene(Map& map, dtCore::Scene& scene, bool addBillBoards)
    {
       mImpl->CheckMapValidity(map, true);
-      std::vector<dtCore::RefPtr<ActorProxy> > container;
+      std::vector<dtCore::RefPtr<BaseActorObject> > container;
       map.GetAllProxies(container);
 
-      for (std::vector<dtCore::RefPtr<ActorProxy> >::iterator proxyIter = container.begin();
+      for (std::vector<dtCore::RefPtr<BaseActorObject> >::iterator proxyIter = container.begin();
            proxyIter != container.end(); ++proxyIter)
       {
-         ActorProxy& proxy = **proxyIter;
+         BaseActorObject& proxy = **proxyIter;
 
          //if we are adding billboards, then we need to check the render modes.
          if (addBillBoards)
          {
-            const ActorProxy::RenderMode &renderMode = proxy.GetRenderMode();
+            const BaseActorObject::RenderMode &renderMode = proxy.GetRenderMode();
 
-            if (renderMode == ActorProxy::RenderMode::DRAW_BILLBOARD_ICON ||
-                renderMode == ActorProxy::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON)
+            if (renderMode == BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON ||
+                renderMode == BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON)
             {
                ActorProxyIcon *billBoard = proxy.GetBillBoardIcon();
 
@@ -852,14 +852,14 @@ namespace dtDAL
 
             }
 
-            if (renderMode == ActorProxy::RenderMode::DRAW_ACTOR ||
-                renderMode == ActorProxy::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON)
+            if (renderMode == BaseActorObject::RenderMode::DRAW_ACTOR ||
+                renderMode == BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON)
             {
                scene.AddDrawable(proxy.GetActor());
             }
 
 
-            if (renderMode == ActorProxy::RenderMode::DRAW_AUTO)
+            if (renderMode == BaseActorObject::RenderMode::DRAW_AUTO)
             {
                //If we got here, then the proxy wishes the system to determine how to display
                //the proxy. (Currently defaults to DRAW_ACTOR.
@@ -912,16 +912,16 @@ namespace dtDAL
    /////////////////////////////////////////////////////////////////////////////
    void ProjectImpl::UnloadUnusedLibraries(Map& mapToClose)
    {
-      std::vector<dtCore::RefPtr<ActorProxy> > proxies;
+      std::vector<dtCore::RefPtr<BaseActorObject> > proxies;
       mapToClose.GetAllProxies(proxies);
 
       // Scoped for proxyIter
       {
-         std::vector<dtCore::RefPtr<ActorProxy> >::iterator proxyIter = proxies.begin();
+         std::vector<dtCore::RefPtr<BaseActorObject> >::iterator proxyIter = proxies.begin();
 
          while (proxyIter != proxies.end())
          {
-            dtCore::RefPtr<ActorProxy>& proxy = *proxyIter;
+            dtCore::RefPtr<BaseActorObject>& proxy = *proxyIter;
             //if this proxy has a reference count greater than 1
             //then its library may not close, but 2 is used here because
             //the vector has a referece to it now.
@@ -974,10 +974,10 @@ namespace dtDAL
 
             //go through proxies still being held onto outside this library
             //and see if the currently library is the source of any.
-            for (std::vector<dtCore::RefPtr<ActorProxy> >::iterator proxyIter = proxies.begin();
+            for (std::vector<dtCore::RefPtr<BaseActorObject> >::iterator proxyIter = proxies.begin();
                  proxyIter != proxies.end(); ++proxyIter)
             {
-               dtCore::RefPtr<ActorProxy>& proxy = *proxyIter;
+               dtCore::RefPtr<BaseActorObject>& proxy = *proxyIter;
 
                try
                {
@@ -1538,7 +1538,7 @@ namespace dtDAL
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   Map* Project::GetMapForActorProxy(const dtCore::UniqueId& id)
+   Map* Project::GetMapForActor(const dtCore::UniqueId& id)
    {
       if (!IsContextValid())
          throw dtDAL::ProjectInvalidContextException(
@@ -1549,7 +1549,7 @@ namespace dtDAL
          Map* m = mImpl->mParser->GetMapBeingParsed();
          if (m != NULL)
          {
-            ActorProxy* ap = m->GetProxyById(id);
+            BaseActorObject* ap = m->GetProxyById(id);
             if (ap != NULL)
                return m;
          }
@@ -1558,7 +1558,7 @@ namespace dtDAL
       std::map< std::string, dtCore::RefPtr<Map> >::iterator i = mImpl->mOpenMaps.begin();
       while (i != mImpl->mOpenMaps.end())
       {
-         ActorProxy* ap = i->second->GetProxyById(id);
+         BaseActorObject* ap = i->second->GetProxyById(id);
          if (ap != NULL)
             return i->second.get();
 
@@ -1568,7 +1568,7 @@ namespace dtDAL
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   const Map* Project::GetMapForActorProxy(const dtCore::UniqueId& id) const
+   const Map* Project::GetMapForActor(const dtCore::UniqueId& id) const
    {
       if (!IsContextValid())
       {
@@ -1581,7 +1581,7 @@ namespace dtDAL
          const Map* m = mImpl->mParser->GetMapBeingParsed();
          if (m != NULL)
          {
-            const ActorProxy* ap = m->GetProxyById(id);
+            const BaseActorObject* ap = m->GetProxyById(id);
             if (ap != NULL)
                return m;
          }
@@ -1590,7 +1590,7 @@ namespace dtDAL
       std::map< std::string, dtCore::RefPtr<Map> >::const_iterator i = mImpl->mOpenMaps.begin();
       while (i != mImpl->mOpenMaps.end())
       {
-         const ActorProxy* ap = i->second->GetProxyById(id);
+         const BaseActorObject* ap = i->second->GetProxyById(id);
          if (ap != NULL)
          {
             return i->second.get();
@@ -1602,7 +1602,7 @@ namespace dtDAL
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   Map* Project::GetMapForActorProxy(const ActorProxy& proxy)
+   Map* Project::GetMapForActor(const BaseActorObject& proxy)
    {
       if (!IsContextValid())
          throw dtDAL::ProjectInvalidContextException(
@@ -1613,7 +1613,7 @@ namespace dtDAL
          Map* m = mImpl->mParser->GetMapBeingParsed();
          if (m != NULL)
          {
-            ActorProxy* ap = m->GetProxyById(proxy.GetId());
+            BaseActorObject* ap = m->GetProxyById(proxy.GetId());
             if (ap != NULL)
                return m;
          }
@@ -1622,7 +1622,7 @@ namespace dtDAL
       std::map< std::string, dtCore::RefPtr<Map> >::iterator i = mImpl->mOpenMaps.begin();
       while (i != mImpl->mOpenMaps.end())
       {
-         ActorProxy* ap = i->second->GetProxyById(proxy.GetId());
+         BaseActorObject* ap = i->second->GetProxyById(proxy.GetId());
          if (ap != NULL)
             return i->second.get();
          
@@ -1632,7 +1632,7 @@ namespace dtDAL
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   const Map* Project::GetMapForActorProxy(const ActorProxy& proxy) const
+   const Map* Project::GetMapForActor(const BaseActorObject& proxy) const
    {
       if (!IsContextValid())
       {
@@ -1645,7 +1645,7 @@ namespace dtDAL
          const Map* m = mImpl->mParser->GetMapBeingParsed();
          if (m != NULL)
          {
-            const ActorProxy* ap = m->GetProxyById(proxy.GetId());
+            const BaseActorObject* ap = m->GetProxyById(proxy.GetId());
             if (ap != NULL)
                return m;
          }
@@ -1654,7 +1654,7 @@ namespace dtDAL
       std::map< std::string, dtCore::RefPtr<Map> >::const_iterator i = mImpl->mOpenMaps.begin();
       while (i != mImpl->mOpenMaps.end())
       {
-         const ActorProxy* ap = i->second->GetProxyById(proxy.GetId());
+         const BaseActorObject* ap = i->second->GetProxyById(proxy.GetId());
          if (ap != NULL)
          {
             return i->second.get();

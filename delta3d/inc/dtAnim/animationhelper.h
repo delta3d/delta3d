@@ -46,7 +46,7 @@ namespace osg
 namespace dtDAL
 {
    class ActorProperty;
-   class ActorProxy;
+   class BaseActorObject;
 }
 
 namespace dtAnim
@@ -177,12 +177,12 @@ namespace dtAnim
        * @param the actor proxy
        * @param an empty vector to fill of actor properties
        */
-      virtual void GetActorProperties(dtDAL::ActorProxy& pProxy,
+      virtual void GetActorProperties(dtDAL::BaseActorObject& pProxy,
             std::vector<dtCore::RefPtr<dtDAL::ActorProperty> >& pFillVector);
 
       /**
        * This flag is used by the AnimationComponent to determine
-       * if this entity should be ground clamped.
+       * if this entity should be ground clamped.d
        */
       bool GetGroundClamp() const;
 
