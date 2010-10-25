@@ -30,13 +30,7 @@
 
 IMPLEMENT_ENUM(TutorialMessageType);
 const TutorialMessageType TutorialMessageType::TANK_TARGET_CHANGED("Target Changed", "Info",
-                                                   "Tank Switched Target", USER_DEFINED_MESSAGE_TYPE + 1);
-
-///////////////////////////////////////////////////////////////////////////////
-void TutorialMessageType::RegisterMessageTypes(dtGame::MessageFactory& factory)
-{
-   factory.RegisterMessageType<TargetChangedMessage>(TANK_TARGET_CHANGED);
-}
+                                                   "Tank Switched Target", USER_DEFINED_MESSAGE_TYPE + 1, DT_MSG_CLASS(TargetChangedMessage));
 
 ///////////////////////////////////////////////////////////////////////////////
 TargetChangedMessage::TargetChangedMessage()
