@@ -35,26 +35,9 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
-class TUTORIAL_TANK_EXPORT TutorialMessageType : public dtGame::MessageType
-{
-   DECLARE_ENUM(TutorialMessageType);
-
-   public:
+DT_DECLARE_MESSAGE_TYPE_CLASS_BEGIN(TutorialMessageType, TUTORIAL_TANK_EXPORT)
       static const TutorialMessageType TANK_TARGET_CHANGED;
-      static void RegisterMessageTypes(dtGame::MessageFactory& factory);
-
-   protected:
-      TutorialMessageType(const std::string& name, 
-                          const std::string& category,
-                          const std::string& description, 
-                          const unsigned short messageId)
-         : dtGame::MessageType(name, category, description, messageId)
-      {
-         AddInstance(this);
-      }
-
-      virtual ~TutorialMessageType() { }
-};
+DT_DECLARE_MESSAGE_TYPE_CLASS_END()
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
