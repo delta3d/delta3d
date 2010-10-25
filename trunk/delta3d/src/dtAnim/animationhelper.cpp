@@ -194,7 +194,7 @@ bool AnimationHelper::LoadModelAsynchronously(const std::string& pFilename, Asyn
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-void AnimationHelper::GetActorProperties(dtDAL::ActorProxy& pProxy,
+void AnimationHelper::GetActorProperties(dtDAL::BaseActorObject& pProxy,
       std::vector< dtCore::RefPtr<dtDAL::ActorProperty> >& pFillVector)
 {
    static const std::string ANIMATION_MODEL_GROUP("AnimationModel");

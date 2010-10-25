@@ -504,9 +504,9 @@ namespace dtActors
           *  there is geometry assigned to this static mesh, RenderMode::DRAW_ACTOR
           *  is returned.
           */
-         virtual const ActorProxy::RenderMode& GetRenderMode()
+         virtual const dtDAL::BaseActorObject::RenderMode& GetRenderMode()
          {
-            return ActorProxy::RenderMode::DRAW_BILLBOARD_ICON;
+            return dtDAL::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON;
          }
 
       protected:

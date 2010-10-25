@@ -123,7 +123,7 @@ namespace dtQt
       }
       else
       {
-         LOG_ERROR("Dynamic array control has an invalid property type");
+         LOG_ERROR("Dynamic property container control has an invalid property type");
          return tr("");
       }
    }

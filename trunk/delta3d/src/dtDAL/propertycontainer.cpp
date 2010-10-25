@@ -111,10 +111,14 @@ namespace dtDAL
       PropertyMapType::iterator itor =
          mPropertyMap.find(name);
 
-      if(itor == mPropertyMap.end())
+      if (itor == mPropertyMap.end())
+      {
          return NULL;
+      }
       else
+      {
          return itor->second.get();
+      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
@@ -123,10 +127,14 @@ namespace dtDAL
       PropertyMapType::const_iterator itor =
          mPropertyMap.find(name);
 
-      if(itor == mPropertyMap.end())
+      if (itor == mPropertyMap.end())
+      {
          return NULL;
+      }
       else
+      {
          return itor->second.get();
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -137,7 +145,7 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   void PropertyContainer::GetPropertyList(std::vector<const ActorProperty*> &propList) const
+   void PropertyContainer::GetPropertyList(std::vector<const ActorProperty*>& propList) const
    {
       propList.clear();
       propList.reserve(mProperties.size());
@@ -150,7 +158,7 @@ namespace dtDAL
 
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   void PropertyContainer::GetPropertyList(std::vector<ActorProperty*> &propList)
+   void PropertyContainer::GetPropertyList(std::vector<ActorProperty*>& propList)
    {
       propList.clear();
       propList.reserve(mProperties.size());

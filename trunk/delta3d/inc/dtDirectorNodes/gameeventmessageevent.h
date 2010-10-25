@@ -29,7 +29,6 @@
 
 namespace dtDAL
 {
-   class ActorProxy;
    class GameEvent;
 }
 

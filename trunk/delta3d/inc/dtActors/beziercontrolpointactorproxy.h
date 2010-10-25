@@ -58,7 +58,7 @@ namespace dtActors
           * Sets the bezier node of this actor proxy
           * @param node The proxy that contains the node
           */
-         void SetBezierNode(ActorProxy* node);
+         void SetBezierNode(dtDAL::BaseActorObject* node);
 
          /**
           * Gets the bezier node of this actor proxy
@@ -68,7 +68,7 @@ namespace dtActors
 
 
          dtDAL::ActorProxyIcon* GetBillBoardIcon();
-         const dtDAL::ActorProxy::RenderMode& GetRenderMode();
+         const dtDAL::BaseActorObject::RenderMode& GetRenderMode();
 
          /*virtual*/ void OnScale(const osg::Vec3& oldValue, const osg::Vec3& newValue);
          /*virtual*/ void OnRotation(const osg::Vec3& oldValue, const osg::Vec3& newValue);

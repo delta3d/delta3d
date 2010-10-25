@@ -105,7 +105,7 @@ void RandomActorGeneratorPlugin::OnGeneratePushed()
    size_t index;
    for (int i = 0; i < mUI.mNumActorsToGenerate->value(); ++i)
    {
-      //Randomly pick from the selectionList which ActorProxy to generate
+      //Randomly pick from the selectionList which BaseActorObject to generate
       //(e.g. if there is a tree Actor, a bush Actor, and a shrub,
       // randomly pick which one gets generated next)
       index = (int)( ((double) rand() / ((double)RAND_MAX + double(1)))
@@ -127,11 +127,11 @@ void RandomActorGeneratorPlugin::OnRefreshActorList()
    dtEditQt::EditorData::GetInstance().getMainWindow()->startWaitCursor();
 
    dtCore::RefPtr<dtDAL::Map> mapPtr = dtEditQt::EditorData::GetInstance().getCurrentMap();
-   std::vector< dtCore::RefPtr<dtDAL::ActorProxy> > foundProxies;
+   std::vector< dtCore::RefPtr<dtDAL::BaseActorObject> > foundProxies;
    mapPtr->FindProxies(foundProxies, std::string(""), std::string(""),
    std::string(""), std::string(""), dtDAL::Map::Either);
 
-   std::vector< dtCore::RefPtr<dtDAL::ActorProxy> >::iterator it;
+   std::vector< dtCore::RefPtr<dtDAL::BaseActorObject> >::iterator it;
    for(it = foundProxies.begin(); it != foundProxies.end(); ++it)
    {
       mUI.mActorToGenerate->addItem((*it).get()->GetActor()->GetName().c_str(),
@@ -159,7 +159,7 @@ void RandomActorGeneratorPlugin::OnSelectedActorChange(ActorProxyRefPtrVector& a
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void RandomActorGeneratorPlugin::NewActorProxyInsideVolumeEditor(dtDAL::ActorProxy* proxyToCopy)
+void RandomActorGeneratorPlugin::NewActorProxyInsideVolumeEditor(dtDAL::BaseActorObject* proxyToCopy)
 {
    dtActors::VolumeEditActor* volEditActor = mMainWindow->GetVolumeEditActor();
    dtCore::RefPtr<dtDAL::Map> currMap = dtEditQt::EditorData::GetInstance().getCurrentMap();
@@ -183,7 +183,7 @@ void RandomActorGeneratorPlugin::NewActorProxyInsideVolumeEditor(dtDAL::ActorPro
    //TODO remainder of shapes:
 
    //spawn a copy of the currently selected actor:
-   dtCore::RefPtr<dtDAL::ActorProxy> aCloneProxy = proxyToCopy->Clone();
+   dtCore::RefPtr<dtDAL::BaseActorObject> aCloneProxy = proxyToCopy->Clone();
    dtCore::Transformable *aClonePtr = dynamic_cast<dtCore::Transformable*>(aCloneProxy->GetActor());
    if(aClonePtr == NULL)
    {

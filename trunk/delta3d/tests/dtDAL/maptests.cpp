@@ -48,6 +48,7 @@
 #include <dtDAL/doubleactorproperty.h>
 #include <dtDAL/environmentactor.h>
 #include <dtDAL/floatactorproperty.h>
+#include <dtDAL/propertycontaineractorproperty.h>
 #include <dtDAL/gameevent.h>
 #include <dtDAL/gameeventmanager.h>
 #include <dtDAL/groupactorproperty.h>
@@ -67,6 +68,8 @@
 #include <dtDAL/namedrgbacolorparameter.h>
 #include <dtDAL/namedstringparameter.h>
 #include <dtDAL/namedvectorparameters.h>
+#include <dtDAL/namedgroupparameter.h>
+#include <dtDAL/namedgroupparameter.inl>
 #include <dtDAL/physicalactorproxy.h>
 #include <dtDAL/project.h>
 #include <dtDAL/resourceactorproperty.h>
@@ -104,6 +107,8 @@ class MapTests : public CPPUNIT_NS::TestFixture
       CPPUNIT_TEST(TestMapSaveAndLoad);
       CPPUNIT_TEST(TestMapSaveAndLoadEvents);
       CPPUNIT_TEST(TestMapSaveAndLoadGroup);
+      CPPUNIT_TEST(TestMapSaveAndLoadPropertyContainerProperty);
+      CPPUNIT_TEST(TestMapSaveAndLoadNestedPropertyContainerArray);
       CPPUNIT_TEST(TestMapSaveAndLoadActorGroups);
       CPPUNIT_TEST(TestLibraryMethods);
       CPPUNIT_TEST(TestWildCard);
@@ -123,6 +128,8 @@ class MapTests : public CPPUNIT_NS::TestFixture
       void TestMapSaveAndLoad();
       void TestMapSaveAndLoadEvents();
       void TestMapSaveAndLoadGroup();
+      void TestMapSaveAndLoadPropertyContainerProperty();
+      void TestMapSaveAndLoadNestedPropertyContainerArray();
       void TestMapSaveAndLoadActorGroups();
       void TestLoadMapIntoScene();
       void TestLibraryMethods();
@@ -132,6 +139,7 @@ class MapTests : public CPPUNIT_NS::TestFixture
       void TestActorProxyRemoveProperties();
    private:
        static const std::string mExampleLibraryName;
+       static const std::string mExampleGameLibraryName;
 
        void createActors(dtDAL::Map& map);
        dtDAL::ActorProperty* getActorProperty(dtDAL::Map& map,
@@ -149,6 +157,8 @@ const std::string MAPPROJECTCONTEXT = TESTS_DIR + dtUtil::FileUtils::PATH_SEPARA
 const std::string PROJECTCONTEXT = TESTS_DIR + dtUtil::FileUtils::PATH_SEPARATOR + "dtDAL" + dtUtil::FileUtils::PATH_SEPARATOR + "WorkingProject";
 
 const std::string MapTests::mExampleLibraryName="testActorLibrary";
+// TODO: this test uses a library that links to dtGame.  Is that okay?
+const std::string MapTests::mExampleGameLibraryName="testGameActorLibrary";
 
 ///////////////////////////////////////////////////////////////////////////////////////
 void MapTests::setUp()
@@ -1369,17 +1379,17 @@ void MapTests::TestMapSaveAndLoadGroup()
       map->GetEventManager().AddEvent(*ge);
 
       dtCore::RefPtr<dtDAL::NamedGroupParameter> expectedResult = new dtDAL::NamedGroupParameter("TestGroup");
-      //static_cast<dtDAL::NamedFloatParameter&>(*expectedResult->AddParameter("SillyFloat", dtDAL::DataType::FLOAT)).SetValue(33.4f);
-      static_cast<dtDAL::NamedIntParameter&>(*expectedResult->AddParameter("SillyInt", dtDAL::DataType::INT)).SetValue(24);
-      static_cast<dtDAL::NamedLongIntParameter&>(*expectedResult->AddParameter("SillyLong", dtDAL::DataType::LONGINT)).SetValue(37L);
-      static_cast<dtDAL::NamedStringParameter&>(*expectedResult->AddParameter("SillyString", dtDAL::DataType::STRING)).SetValue("Jojo");
+      expectedResult->AddValue("SillyInt", 24);
+      expectedResult->AddValue("SillyLong", 37L);
+      expectedResult->AddValue("SillyString", std::string("Jojo"));
       static_cast<dtDAL::NamedResourceParameter&>(*expectedResult->AddParameter("SillyResource1", dtDAL::DataType::STATIC_MESH)).SetValue(rd);
       static_cast<dtDAL::NamedResourceParameter&>(*expectedResult->AddParameter("SillyResource2", dtDAL::DataType::TEXTURE)).SetValue(dtDAL::ResourceDescriptor::NULL_RESOURCE);
+
       dtDAL::NamedGroupParameter& internalGroup = static_cast<dtDAL::NamedGroupParameter&>(*expectedResult->AddParameter("SillyGroup", dtDAL::DataType::GROUP));
-      static_cast<dtDAL::NamedEnumParameter&>(*internalGroup.AddParameter("CuteEnum", dtDAL::DataType::ENUMERATION)).SetValue("Just a string");
+      internalGroup.AddValue("CuteEnum", std::string("Just a string"));
       static_cast<dtDAL::NamedGameEventParameter&>(*internalGroup.AddParameter("CuteEvent", dtDAL::DataType::GAME_EVENT)).SetValue(ge->GetUniqueId());
       static_cast<dtDAL::NamedActorParameter&>(*internalGroup.AddParameter("CuteActor", dtDAL::DataType::ACTOR)).SetValue(proxy->GetId());
-      static_cast<dtDAL::NamedBooleanParameter&>(*internalGroup.AddParameter("CuteBool", dtDAL::DataType::BOOLEAN)).SetValue(true);
+      internalGroup.AddValue("CuteBool", true);
 
       dtCore::RefPtr<dtDAL::NamedGroupParameter> secondInternalGroup = static_cast<dtDAL::NamedGroupParameter*>(expectedResult->AddParameter("FloatGroup", dtDAL::DataType::GROUP));
       static_cast<dtDAL::NamedVec2Parameter&>(*secondInternalGroup->AddParameter("CuteVec2", dtDAL::DataType::VEC2)).SetValue(osg::Vec2(1.0f, 1.3f));
@@ -1497,7 +1507,195 @@ void MapTests::TestMapSaveAndLoadGroup()
    }
    catch (const dtUtil::Exception& e)
    {
-      CPPUNIT_FAIL(std::string("Error: ") + e.What());
+      CPPUNIT_FAIL(e.ToString());
+   }
+}
+
+///////////////////////////////////////////////////////////////////////////////////////
+void MapTests::TestMapSaveAndLoadPropertyContainerProperty()
+{
+   try
+   {
+      dtDAL::Project& project = dtDAL::Project::GetInstance();
+
+      std::string mapName("Neato Map");
+      std::string mapFileName("neatomap");
+
+      dtDAL::Map* map = &project.CreateMap(mapName, mapFileName);
+      map->AddLibrary(mExampleLibraryName, "1.0");
+      dtDAL::LibraryManager::GetInstance().LoadActorRegistry(mExampleLibraryName);
+
+      const dtDAL::ActorType* at = dtDAL::LibraryManager::GetInstance().FindActorType("dtcore.examples", "Test All Properties");
+      CPPUNIT_ASSERT(at != NULL);
+
+      dtCore::RefPtr<dtDAL::BaseActorObject> actor = dtDAL::LibraryManager::GetInstance().CreateActor(*at);
+      map->AddProxy(*actor);
+      dtCore::UniqueId idToSave = actor->GetId();
+
+      dtDAL::BasePropertyContainerActorProperty* bpc = NULL;
+      actor->GetProperty("TestPropertyContainer", bpc);
+      CPPUNIT_ASSERT(bpc != NULL);
+
+      dtDAL::PropertyContainer* pc = bpc->GetValue();
+      CPPUNIT_ASSERT(pc != NULL);
+
+      const float testFloat(37.36f);
+      const double testDouble(-393.334);
+      const bool testBool(true);
+      const int testInt(-347);
+
+      dtDAL::FloatActorProperty* fap;
+      pc->GetProperty("Test_Float", fap);
+      CPPUNIT_ASSERT(fap != NULL);
+      fap->SetValue(testFloat);
+
+      dtDAL::DoubleActorProperty* dap;
+      pc->GetProperty("Test_Double", dap);
+      CPPUNIT_ASSERT(dap != NULL);
+      dap->SetValue(testDouble);
+
+      dtDAL::BooleanActorProperty* bap;
+      pc->GetProperty("Test_Boolean", bap);
+      CPPUNIT_ASSERT(bap != NULL);
+      bap->SetValue(testBool);
+
+      dtDAL::IntActorProperty* iap;
+      pc->GetProperty("Test_Int", iap);
+      CPPUNIT_ASSERT(iap != NULL);
+      iap->SetValue(testInt);
+
+
+      project.SaveMap(*map);
+      project.CloseMap(*map);
+      map = NULL;
+      map = &project.GetMap(mapName);
+
+      actor = map->GetProxyById(idToSave);
+      CPPUNIT_ASSERT(actor != NULL);
+
+      actor->GetProperty("TestPropertyContainer", bpc);
+      CPPUNIT_ASSERT(bpc != NULL);
+
+      pc = bpc->GetValue();
+      CPPUNIT_ASSERT(pc != NULL);
+
+      pc->GetProperty("Test_Float", fap);
+      CPPUNIT_ASSERT(fap != NULL);
+      CPPUNIT_ASSERT_DOUBLES_EQUAL(testFloat, fap->GetValue(), 0.01f);
+
+      pc->GetProperty("Test_Double", dap);
+      CPPUNIT_ASSERT(dap != NULL);
+      CPPUNIT_ASSERT_DOUBLES_EQUAL(testDouble, dap->GetValue(), 0.01);
+
+      pc->GetProperty("Test_Boolean", bap);
+      CPPUNIT_ASSERT(bap != NULL);
+      CPPUNIT_ASSERT(bap->GetValue());
+
+      pc->GetProperty("Test_Int", iap);
+      CPPUNIT_ASSERT(iap != NULL);
+      CPPUNIT_ASSERT_EQUAL(testInt, iap->GetValue());
+
+   }
+   catch (const dtUtil::Exception& e)
+   {
+      CPPUNIT_FAIL(e.ToString());
+   }
+}
+
+///////////////////////////////////////////////////////////////////////////////////////
+void MapTests::TestMapSaveAndLoadNestedPropertyContainerArray()
+{
+   try
+   {
+      dtDAL::Project& project = dtDAL::Project::GetInstance();
+
+      std::string mapName("Neato Map");
+      std::string mapFileName("neatomap");
+
+      dtDAL::Map* map = &project.CreateMap(mapName, mapFileName);
+      map->AddLibrary(mExampleGameLibraryName, "1.0");
+      dtDAL::LibraryManager::GetInstance().LoadActorRegistry(mExampleGameLibraryName);
+
+      const dtDAL::ActorType* at = dtDAL::LibraryManager::GetInstance().FindActorType("ExampleActors", "TestGamePropertyActor");
+      CPPUNIT_ASSERT(at != NULL);
+
+      dtCore::RefPtr<dtDAL::BaseActorObject> actor = dtDAL::LibraryManager::GetInstance().CreateActor(*at);
+      map->AddProxy(*actor);
+      dtCore::UniqueId idToSave = actor->GetId();
+
+      dtDAL::BasePropertyContainerActorProperty* bpc = NULL;
+      actor->GetProperty("TestPropertyContainer", bpc);
+      CPPUNIT_ASSERT(bpc != NULL);
+
+      dtDAL::PropertyContainer* pc = bpc->GetValue();
+      CPPUNIT_ASSERT(pc != NULL);
+
+      dtDAL::ArrayActorPropertyBase* arrayProp = NULL;
+      pc->GetProperty("TestNestedContainerArray", arrayProp);
+      CPPUNIT_ASSERT(arrayProp != NULL);
+
+      CPPUNIT_ASSERT_EQUAL(0, arrayProp->GetArraySize());
+      arrayProp->PushBack();
+      arrayProp->PushBack();
+      arrayProp->PushBack();
+      CPPUNIT_ASSERT_EQUAL(3, arrayProp->GetArraySize());
+      arrayProp->PopBack();
+      CPPUNIT_ASSERT_EQUAL(2, arrayProp->GetArraySize());
+
+      // Select the second item.
+      arrayProp->SetIndex(1);
+
+      dtDAL::BasePropertyContainerActorProperty* bpcD1 = dynamic_cast<dtDAL::BasePropertyContainerActorProperty*>(arrayProp->GetArrayProperty());
+      CPPUNIT_ASSERT(bpcD1 != NULL);
+
+      // Get the new property container at index 1 on the depth 1 array.
+      dtDAL::PropertyContainer* pcD1i1 = bpcD1->GetValue();
+      dtDAL::ArrayActorPropertyBase* arrayPropD1 = NULL;
+      pcD1i1->GetProperty("TestNestedContainerArray", arrayPropD1);
+
+      CPPUNIT_ASSERT(arrayPropD1 != NULL);
+
+      arrayPropD1->PushBack();
+      arrayPropD1->PushBack();
+      arrayPropD1->PushBack();
+      arrayPropD1->PushBack();
+      CPPUNIT_ASSERT_EQUAL(4, arrayPropD1->GetArraySize());
+
+      project.SaveMap(*map);
+      project.CloseMap(*map);
+      map = NULL;
+      map = &project.GetMap(mapName);
+
+      actor = map->GetProxyById(idToSave);
+      CPPUNIT_ASSERT(actor != NULL);
+
+      actor->GetProperty("TestPropertyContainer", bpc);
+      CPPUNIT_ASSERT(bpc != NULL);
+
+      pc = bpc->GetValue();
+      CPPUNIT_ASSERT(pc != NULL);
+
+      pc->GetProperty("TestNestedContainerArray", arrayProp);
+
+      CPPUNIT_ASSERT_EQUAL(2, arrayProp->GetArraySize());
+
+      // Select the second item.
+      arrayProp->SetIndex(1);
+
+      bpcD1 = dynamic_cast<dtDAL::BasePropertyContainerActorProperty*>(arrayProp->GetArrayProperty());
+      CPPUNIT_ASSERT(bpcD1 != NULL);
+
+      // Get the new property container at index 1 on the depth 1 array.
+      pcD1i1 = bpcD1->GetValue();
+      pcD1i1->GetProperty("TestNestedContainerArray", arrayPropD1);
+
+      CPPUNIT_ASSERT(arrayPropD1 != NULL);
+
+      CPPUNIT_ASSERT_EQUAL(4, arrayPropD1->GetArraySize());
+   }
+   catch (const dtUtil::Exception& e)
+   {
+      CPPUNIT_FAIL(e.ToString());
    }
 }
 

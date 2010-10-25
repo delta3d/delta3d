@@ -132,7 +132,7 @@ namespace dtDAL
 
    /////////////////////////////////////////////////////////////////
 
-   bool MapParser::ParsePrefab(const std::string& path, std::vector<dtCore::RefPtr<dtDAL::ActorProxy> >& proxyList, dtDAL::Map* map)
+   bool MapParser::ParsePrefab(const std::string& path, std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> >& proxyList, dtDAL::Map* map)
    {
       mMapHandler->SetPrefabMode(proxyList, dtDAL::MapContentHandler::PREFAB_READ_ALL, map);
       if (BaseXMLParser::Parse(path))
@@ -148,7 +148,7 @@ namespace dtDAL
    ///////////////////////////////////////////////////////////////////////////////
    const std::string MapParser::GetPrefabIconFileName(const std::string& path)
    {
-      std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > proxyList; //just an empty list
+      std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> > proxyList; //just an empty list
       std::string iconFileName = "";
 
       mParsing = true;
@@ -396,17 +396,17 @@ namespace dtDAL
 
          if (map.GetEnvironmentActor() != NULL)
          {
-            ActorProxy &proxy = *map.GetEnvironmentActor();
+            BaseActorObject& proxy = *map.GetEnvironmentActor();
             BeginElement(MapXMLConstants::ACTOR_ENVIRONMENT_ACTOR_ELEMENT);
             AddCharacters(proxy.GetId().ToString());
             EndElement(); // End Actor Environment Actor Element.
          }
 
-         const std::map<dtCore::UniqueId, dtCore::RefPtr<ActorProxy> >& proxies = map.GetAllProxies();
-         for (std::map<dtCore::UniqueId, dtCore::RefPtr<ActorProxy> >::const_iterator i = proxies.begin();
+         const std::map<dtCore::UniqueId, dtCore::RefPtr<BaseActorObject> >& proxies = map.GetAllProxies();
+         for (std::map<dtCore::UniqueId, dtCore::RefPtr<BaseActorObject> >::const_iterator i = proxies.begin();
               i != proxies.end(); i++)
          {
-            const ActorProxy& proxy = *i->second.get();
+            const BaseActorObject& proxy = *i->second.get();
             //printf("Proxy pointer %x\n", &proxy);
             //printf("Actor pointer %x\n", proxy.getActor());
 
@@ -460,7 +460,7 @@ namespace dtDAL
                int actorCount = map.GetGroupActorCount(groupIndex);
                for (int actorIndex = 0; actorIndex < actorCount; actorIndex++)
                {
-                  dtDAL::ActorProxy* proxy = map.GetActorFromGroup(groupIndex, actorIndex);
+                  dtDAL::BaseActorObject* proxy = map.GetActorFromGroup(groupIndex, actorIndex);
                   if (proxy)
                   {
                      BeginElement(MapXMLConstants::ACTOR_GROUP_ACTOR_ELEMENT);
@@ -634,7 +634,7 @@ namespace dtDAL
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void MapWriter::SavePrefab(const std::vector<dtCore::RefPtr<ActorProxy> > proxyList,
+   void MapWriter::SavePrefab(const std::vector<dtCore::RefPtr<BaseActorObject> > proxyList,
                               const std::string& filePath, const std::string& description,
                               const std::string& iconFile /* = "" */)
    {
@@ -676,7 +676,7 @@ namespace dtDAL
          BeginElement(MapXMLConstants::LIBRARIES_ELEMENT);
          for (int proxyIndex = 0; proxyIndex < (int)proxyList.size(); proxyIndex++)
          {
-            ActorProxy* proxy = proxyList[proxyIndex].get();
+            BaseActorObject* proxy = proxyList[proxyIndex].get();
 
             // We can't do anything without a proxy.
             if (!proxy)
@@ -705,7 +705,7 @@ namespace dtDAL
          BeginElement(MapXMLConstants::ACTORS_ELEMENT);
          for (int proxyIndex = 0; proxyIndex < (int)proxyList.size(); proxyIndex++)
          {
-            ActorProxy* proxy = proxyList[proxyIndex].get();
+            BaseActorObject* proxy = proxyList[proxyIndex].get();
 
             // We can't do anything without a proxy.
             if (!proxy)

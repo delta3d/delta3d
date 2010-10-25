@@ -131,6 +131,7 @@ namespace dtDAL
    XMLCh* MapXMLConstants::ACTOR_PROPERTY_GROUP_ELEMENT = NULL;
    XMLCh* MapXMLConstants::ACTOR_PROPERTY_ARRAY_ELEMENT = NULL;
    XMLCh* MapXMLConstants::ACTOR_PROPERTY_CONTAINER_ELEMENT = NULL;
+   XMLCh* MapXMLConstants::ACTOR_PROPERTY_PROPERTY_CONTAINER_ELEMENT = NULL;
 
    XMLCh* MapXMLConstants::ACTOR_PROPERTY_PARAMETER_ELEMENT = NULL;
 
@@ -254,6 +255,7 @@ namespace dtDAL
       ACTOR_PROPERTY_GROUP_ELEMENT = xercesc::XMLString::transcode("group");
       ACTOR_PROPERTY_ARRAY_ELEMENT = xercesc::XMLString::transcode("array");
       ACTOR_PROPERTY_CONTAINER_ELEMENT = xercesc::XMLString::transcode("container");
+      ACTOR_PROPERTY_PROPERTY_CONTAINER_ELEMENT = xercesc::XMLString::transcode("propertyContainer");
 
       ACTOR_PROPERTY_PARAMETER_ELEMENT = xercesc::XMLString::transcode("parameter");
 
@@ -377,6 +379,7 @@ namespace dtDAL
       xercesc::XMLString::release(&ACTOR_PROPERTY_GROUP_ELEMENT);
       xercesc::XMLString::release(&ACTOR_PROPERTY_ARRAY_ELEMENT);
       xercesc::XMLString::release(&ACTOR_PROPERTY_CONTAINER_ELEMENT);
+      xercesc::XMLString::release(&ACTOR_PROPERTY_PROPERTY_CONTAINER_ELEMENT);
 
       xercesc::XMLString::release(&ACTOR_PROPERTY_PARAMETER_ELEMENT);
 

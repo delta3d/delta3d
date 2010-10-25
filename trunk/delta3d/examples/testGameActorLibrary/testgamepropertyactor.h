@@ -25,8 +25,8 @@
 *
 * Curtiss Murphy
 */
-#ifndef DELTA_EXAMPLETESTGAMEPROPERTYPROXY
-#define DELTA_EXAMPLETESTGAMEPROPERTYPROXY
+#ifndef DELTA_EXAMPLETESTGAMEPROPERTYACTOR
+#define DELTA_EXAMPLETESTGAMEPROPERTYACTOR
 
 #include "export.h"
 
@@ -41,9 +41,8 @@
 #include <dtGame/gamemanager.h>
 
 #include <dtUtil/enumeration.h>
+#include "testnestedpropertycontainer.h"
 
-using namespace dtActors;
-using namespace dtGame;
 
 namespace dtCore {
     class Scene;
@@ -55,15 +54,15 @@ namespace dtCore {
  * @see ExampleTestPropertyProxy
  * @see TestGamePropertyProxy
  */
-class DT_EXAMPLE_EXPORT TestGamePropertyActor : public dtGame::GameActor
+class DT_EXAMPLE_EXPORT TestGamePropertyActor : public dtGame::GameActorProxy
 {
    public:
 
-      TestGamePropertyActor(dtGame::GameActorProxy& proxy);
+      TestGamePropertyActor();
 
       virtual void OnTickLocal(const dtGame::TickMessage& tickMessage);
       virtual void OnTickRemote(const dtGame::TickMessage& tickMessage);
-      virtual void ProcessMessage(const dtGame::Message &message);
+      virtual void ProcessMessage(const dtGame::Message& message);
 
       //dtCore::Light has an enumeration.  We define our own enumeration here
       //which can be exported as a property to the editor.
@@ -431,46 +430,6 @@ class DT_EXAMPLE_EXPORT TestGamePropertyActor : public dtGame::GameActor
 
       const dtCore::UniqueId& GetTestActorId() const { return mTestId; }
 
-   protected:
-      virtual ~TestGamePropertyActor();
-
-   private:
-    int mInt, mReadOnlyInt;
-    float mFloat;
-    double mDouble;
-    long mLong;
-    bool mBool;
-    std::string mString;
-    std::string mStringWithLength;
-    osg::Vec2 mVec2;
-    osg::Vec3 mVec3;
-    osg::Vec4 mVec4;
-    osg::Vec2 mVec2f;
-    osg::Vec3 mVec3f;
-    osg::Vec4 mVec4f;
-    osg::Vec2 mVec2d;
-    osg::Vec3 mVec3d;
-    osg::Vec4 mVec4d;
-    osg::Vec4 mColor;
-    TestEnum *mEnum;
-    std::string mSound;
-    std::string mTexture;
-    dtCore::RefPtr<dtDAL::GameEvent> mTestGameEvent;
-    dtCore::UniqueId mTestId;
-
-};
-
-
-/**
- * This actor is like the property test actor in testActorLibrary except that it uses
- * a GameActorProxy as its base.  The purpose of this class is to test sending and
- * handling actor update messages, particularly in high volume.
- * @see ExampleTestPropertyProxy
- */
-class DT_EXAMPLE_EXPORT TestGamePropertyProxy : public GameActorProxy
-{
-   public:
-      TestGamePropertyProxy();
       virtual void BuildPropertyMap();
 
       virtual void CreateActor();
@@ -482,17 +441,40 @@ class DT_EXAMPLE_EXPORT TestGamePropertyProxy : public GameActorProxy
       void SetRemovedFromWorld(bool removedFromWorld) { mWasRemovedFromWorld = removedFromWorld; }
       bool IsRemovedFromWorld() { return mWasRemovedFromWorld; }
 
-   protected:
-      virtual ~TestGamePropertyProxy() { }
+      DT_DECLARE_ACCESSOR(dtCore::RefPtr<TestNestedPropertyContainer>, TestPropertyContainer)
 
-      // Sets mWasRemovedFromWorld to true so we can test OnRemovedFromWorld
+   protected:
       virtual void OnRemovedFromWorld();
+      virtual ~TestGamePropertyActor();
+
 
    private:
-      static const std::string GROUPNAME;
-
-      bool mRegisterListeners;
-      bool mWasRemovedFromWorld;
+     static const std::string GROUPNAME;
+     int mInt, mReadOnlyInt;
+     float mFloat;
+     double mDouble;
+     long mLong;
+     bool mBool;
+     std::string mString;
+     std::string mStringWithLength;
+     osg::Vec2 mVec2;
+     osg::Vec3 mVec3;
+     osg::Vec4 mVec4;
+     osg::Vec2 mVec2f;
+     osg::Vec3 mVec3f;
+     osg::Vec4 mVec4f;
+     osg::Vec2 mVec2d;
+     osg::Vec3 mVec3d;
+     osg::Vec4 mVec4d;
+     osg::Vec4 mColor;
+     TestEnum *mEnum;
+     std::string mSound;
+     std::string mTexture;
+     dtCore::RefPtr<dtDAL::GameEvent> mTestGameEvent;
+     dtCore::UniqueId mTestId;
+     dtCore::RefPtr<TestNestedPropertyContainer> mNestedContainer;
+     bool mRegisterListeners;
+     bool mWasRemovedFromWorld;
 
 };
 

@@ -124,6 +124,7 @@ namespace dtDirector
       dtDAL::BaseXMLHandler::startDocument();
 
       mPropSerializer->SetMap(mMap.get());
+      mPropSerializer->SetCurrentPropertyContainer(mDirector);
    }
 
    /////////////////////////////////////////////////////////////////
@@ -243,7 +244,10 @@ namespace dtDirector
                else if (XMLString::compareString(localname, dtDAL::MapXMLConstants::DIRECTOR_GRAPH_ELEMENT) == 0)
                {
                   if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+                  {
                      mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found a Graph");
+                  }
+
                   mInGraph++;
 
                   DirectorGraph* parent = mGraphs.top();
@@ -252,6 +256,7 @@ namespace dtDirector
                   newGraph->BuildPropertyMap();
                   parent->mSubGraphs.push_back(newGraph);
                   mGraphs.push(newGraph);
+                  mPropSerializer->SetCurrentPropertyContainer(newGraph);
                }
             }
          }
@@ -260,7 +265,9 @@ namespace dtDirector
       else if (XMLString::compareString(localname, dtDAL::MapXMLConstants::HEADER_ELEMENT) == 0)
       {
          if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+         {
             mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found Header");
+         }
          mInHeaders = true;
       }
       // Libraries.
@@ -278,6 +285,7 @@ namespace dtDirector
          mInGraph++;
 
          mGraphs.push(mDirector->GetGraphRoot());
+         mPropSerializer->SetCurrentPropertyContainer(mGraphs.top());
       }
    }
 
@@ -301,6 +309,10 @@ namespace dtDirector
          if (mInNodes)
          {
             EndNodeSection(localname);
+            if (!mInNodes)
+            {
+               mPropSerializer->SetCurrentPropertyContainer(mGraphs.top());
+            }
          }
          else
          {
@@ -321,7 +333,7 @@ namespace dtDirector
       xmlCharString& topEl = mElements.top();
       if (mInHeaders)
       {
-         if (!mPropSerializer->Characters(topEl, chars, mDirector))
+         if (!mPropSerializer->Characters(topEl, chars))
          {
             if (topEl == dtDAL::MapXMLConstants::CREATE_TIMESTAMP_ELEMENT)
             {
@@ -366,6 +378,7 @@ namespace dtDirector
                   mNode = nodeManager.CreateNode(mNodeName, mNodeCategory, graph).get();
                   mNodeName = "";
                   mNodeCategory = "";
+                  mPropSerializer->SetCurrentPropertyContainer(mNode);
                }
             }
             else if (mInLink)
@@ -506,7 +519,7 @@ namespace dtDirector
                }
 
             }
-            else if (!mPropSerializer->Characters(topEl, chars, mNode.get()))
+            else if (!mPropSerializer->Characters(topEl, chars))
             {
                if (topEl == dtDAL::MapXMLConstants::ID_ELEMENT)
                {
@@ -515,7 +528,7 @@ namespace dtDirector
 
             }
          }
-         else if (!mPropSerializer->Characters(topEl, chars, graph))
+         else if (!mPropSerializer->Characters(topEl, chars))
          {
             //else if (topEl == dtDAL::MapXMLConstants::NAME_ELEMENT)
             //{
@@ -576,7 +589,7 @@ namespace dtDirector
       mInNode = false;
 
       ClearLinkValues();
-      mPropSerializer->ClearParameterValues();
+      mPropSerializer->SetCurrentPropertyContainer(NULL);
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -606,7 +619,7 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void DirectorXMLHandler::EndHeaderElement(const XMLCh* const localname)
    {
-      if (!mPropSerializer->ElementEnded(localname, mDirector))
+      if (!mPropSerializer->ElementEnded(localname))
       {
          if (XMLString::compareString(localname, dtDAL::MapXMLConstants::HEADER_ELEMENT) == 0)
          {
@@ -640,10 +653,18 @@ namespace dtDirector
          {
             mGraphs.pop();
             mInGraph--;
+            if (mGraphs.empty())
+            {
+               mPropSerializer->SetCurrentPropertyContainer(NULL);
+            }
+            else
+            {
+               mPropSerializer->SetCurrentPropertyContainer(mGraphs.top());
+            }
          }
          else
          {
-            mPropSerializer->ElementEnded(localname, mGraphs.top());
+            mPropSerializer->ElementEnded(localname);
          }
       }
    }
@@ -676,14 +697,7 @@ namespace dtDirector
       }
       else
       {
-         if (mNode.valid())
-         {
-            mPropSerializer->ElementEnded(localname, mNode.get());
-         }
-         else
-         {
-            mPropSerializer->ElementEnded(localname, mDirector);
-         }
+         mPropSerializer->ElementEnded(localname);
       }
    }
 

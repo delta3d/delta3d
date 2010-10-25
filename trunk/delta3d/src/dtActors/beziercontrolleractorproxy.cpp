@@ -18,15 +18,15 @@ namespace dtActors
 
 int BezierControllerActorProxy::mNumControllers = 0;
 
-//const ActorProxy::RenderMode& BezierControllerActorProxy::GetRenderMode()
+//const dtDAL::BaseActorObject::RenderMode& BezierControllerActorProxy::GetRenderMode()
 //{
-//   return ActorProxy::RenderMode::DRAW_AUTO;
+//   return dtDAL::BaseActorObject::RenderMode::DRAW_AUTO;
 //}
 
 void BezierControllerActorProxy::CreateActor()
 {
-   SetActor(*new BezierController());
-   static_cast<BezierController*>(GetActor())->RenderProxyNode(true);
+   SetDrawable(*new BezierController());
+   static_cast<BezierController*>(GetDrawable())->RenderProxyNode(true);
 
    std::ostringstream ss;
    ss << "Controller" << mNumControllers++;
@@ -38,7 +38,7 @@ void BezierControllerActorProxy::BuildPropertyMap()
 {
    MotionActionActorProxy::BuildPropertyMap();
 
-   BezierController* bc = static_cast<BezierController*>(GetActor());
+   BezierController* bc = static_cast<BezierController*>(GetDrawable());
 
    AddProperty(new dtDAL::ActorActorProperty(*this, "Start Node", "Start Node",
       ActorActorProperty::SetFuncType(this, &BezierControllerActorProxy::SetActorStartNode),
@@ -64,12 +64,12 @@ void BezierControllerActorProxy::BuildPropertyMap()
 
 dtCore::DeltaDrawable* BezierControllerActorProxy::GetActorStartNode()
 {
-   BezierController* bc = static_cast<BezierController*>(GetActor());
+   BezierController* bc = static_cast<BezierController*>(GetDrawable());
 
    return bc->GetStartNode();
 }
 
-void BezierControllerActorProxy::SetActorStartNode(ActorProxy* node)
+void BezierControllerActorProxy::SetActorStartNode(dtDAL::BaseActorObject* node)
 {
 
    SetLinkedActor("Start Node", node);
@@ -77,10 +77,10 @@ void BezierControllerActorProxy::SetActorStartNode(ActorProxy* node)
    BezierNode* bNode = NULL;
    if (node)
    {
-      bNode = static_cast<BezierNode*>(node->GetActor());
+      bNode = static_cast<BezierNode*>(node->GetDrawable());
    }
 
-   BezierController* bc = static_cast<BezierController*>(GetActor());
+   BezierController* bc = static_cast<BezierController*>(GetDrawable());
 
    bc->SetStartNode(bNode);
 

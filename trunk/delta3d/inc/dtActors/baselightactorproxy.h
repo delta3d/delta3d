@@ -63,9 +63,9 @@ namespace dtActors
          * @return Note, this returns RenderMode::DRAW_ACTOR by default.  Other
          *  types of lights such as positional lights have different render modes.
          */
-        virtual const ActorProxy::RenderMode& GetRenderMode()
+        virtual const dtDAL::BaseActorObject::RenderMode& GetRenderMode()
         {
-            return ActorProxy::RenderMode::DRAW_ACTOR;
+            return dtDAL::BaseActorObject::RenderMode::DRAW_ACTOR;
         }
 
         /**

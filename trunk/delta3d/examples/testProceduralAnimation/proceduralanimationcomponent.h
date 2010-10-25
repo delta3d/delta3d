@@ -33,7 +33,6 @@
 namespace dtGame { class GameActorProxy;    }
 namespace dtAnim { class Cal3dModelWrapper; }
 namespace dtAnim { class PoseMeshDatabase;  }
-namespace dtDAL  { class ActorProxy;        }
 
 class CalCoreModel;
 class ProceduralAnimationActor;

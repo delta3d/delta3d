@@ -29,18 +29,67 @@
 #include <dtDAL/basexml.h>
 #include <dtDAL/basexmlhandler.h>
 #include <dtDAL/namedgroupparameter.h>
+#include <dtDAL/propertycontainer.h>
+
+#include <stack>
 
 namespace dtDAL
 {
    class Map;
-   class ActorProxy;
    class AbstractParameter;
    class ActorProperty;
    class DataType;
    class MapContentHandler;
    class ArrayActorPropertyBase;
    class ContainerActorProperty;
-   class PropertyContainer;
+   class BasePropertyContainerActorProperty;
+
+   struct SerializerRuntimeData
+   {
+      SerializerRuntimeData();
+
+      dtCore::RefPtr<PropertyContainer> mPropertyContainer;
+      dtCore::RefPtr<ActorProperty> mActorProperty;
+      DataType* mActorPropertyType;
+      DataType* mParameterTypeToCreate;
+
+      std::string mParameterNameToCreate;
+      std::string mDescriptorDisplayName;
+
+      bool mHasDeprecatedProperty;
+      bool mInActorProperty;
+      bool mInGroupProperty;
+      int  mInArrayProperty;     // Since arrays can be nested, we need to keep track of how deep we are.
+      int  mInContainerProperty; // Since containers can be nested, we need to keep track of how deep we are.
+
+      std::stack<dtCore::RefPtr<NamedParameter> > mParameterStack;
+
+      void Reset()
+      {
+         mInActorProperty = false;
+
+         mActorProperty = NULL;
+         mActorPropertyType = NULL;
+
+         ClearParameterValues();
+      }
+
+      void ClearParameterValues()
+      {
+         mInGroupProperty = false;
+         mInArrayProperty = 0;
+         mInContainerProperty = 0;
+         while (!mParameterStack.empty())
+         {
+            mParameterStack.pop();
+         }
+
+         mParameterNameToCreate.clear();
+         mParameterTypeToCreate = NULL;
+         mDescriptorDisplayName.clear();
+      }
+
+   };
 
    /**
     * @class ActorPropertySerializer
@@ -66,11 +115,13 @@ namespace dtDAL
        */
       void SetMap(Map* map);
 
+      /// Sets the property container to work on.  This will be set the current one on the internal stack.
+      void SetCurrentPropertyContainer(dtDAL::PropertyContainer* pc);
+
       /**
        * Resets the serializer.
        */
       void Reset();
-      void ClearParameterValues();
       
       /**
        * Writes a property.
@@ -93,7 +144,7 @@ namespace dtDAL
        *
        * @return     True if the element belongs to a property.
        */
-      bool ElementEnded(const XMLCh* const localname, PropertyContainer* propContainer);
+      bool ElementEnded(const XMLCh* const localname);
 
       /**
        * Handler to parse the data of an element.
@@ -102,7 +153,7 @@ namespace dtDAL
        *
        * @return     True if the characters belong to a property.
        */
-      bool Characters(BaseXMLHandler::xmlCharString& topEl, const XMLCh* const chars, PropertyContainer* propContainer);
+      bool Characters(BaseXMLHandler::xmlCharString& topEl, const XMLCh* const chars);
 
       //processes the mGroupProperties multimap to set GroupActorProperties.
       void AssignGroupProperties();
@@ -113,9 +164,11 @@ namespace dtDAL
       /**
        * Returns whether or not the map had a temporary property in it.
        */
-      bool HasDeprecatedProperty() const { return mHasDeprecatedProperty; }
+      bool HasDeprecatedProperty() const { return mData.top().mHasDeprecatedProperty; }
 
    private:
+
+      inline SerializerRuntimeData& Top() { return mData.top(); }
 
       /**
        * Writes a Vector actor property.
@@ -140,6 +193,11 @@ namespace dtDAL
       void WriteContainer(const ContainerActorProperty& arrayProp, char* numberConversionBuffer, size_t bufferMax);
 
       /**
+       * Writes a single property container.
+       */
+      void WritePropertyContainer(const BasePropertyContainerActorProperty& propConProp);
+
+      /**
        * Writes a simple actor property.
        */
       void WriteSimple(const AbstractParameter& holder);
@@ -152,29 +210,31 @@ namespace dtDAL
       /**
        * Ends an actor property group element.
        */
-      void EndActorPropertyGroupElement(PropertyContainer* propContainer);
+      void EndActorPropertyGroupElement();
 
       //Called from characters when the state says we are inside a parameter of a group actor property.
-      void ParameterCharacters(BaseXMLHandler::xmlCharString& topEl, const XMLCh* const chars, dtDAL::PropertyContainer* propContainer);
+      void ParameterCharacters(BaseXMLHandler::xmlCharString& topEl, const XMLCh* const chars);
 
       //Creates a named parameter based on the name and type last parsed and pushes it to the top of the stack.
       void CreateAndPushParameter();
 
       //parses the text data from the xml and stores it in the property.
-      void ParsePropertyData(BaseXMLHandler::xmlCharString& topEl, std::string& dataValue, dtDAL::DataType** dataType, dtDAL::ActorProperty* actorProperty, dtDAL::PropertyContainer* propContainer);
+      void ParsePropertyData(BaseXMLHandler::xmlCharString& topEl, std::string& dataValue, dtDAL::DataType*& dataType, dtDAL::ActorProperty* actorProperty);
 
       //parses the text data from the xml and stores it in the property.
-      void ParseParameterData(BaseXMLHandler::xmlCharString& topEl, std::string& dataValue, dtDAL::PropertyContainer* propContainer);
+      void ParseParameterData(BaseXMLHandler::xmlCharString& topEl, std::string& dataValue);
 
       //parses one item out of the xml and stores it in the proper element of the osg Vec#.
       template <typename VecType>
       void ParseVec(BaseXMLHandler::xmlCharString& topEl, const std::string& dataValue, VecType& vec, size_t vecSize);
 
+      void EnterPropertyContainer();
+
       //parses the data for an array property.
-      void ParseArray(BaseXMLHandler::xmlCharString& topEl, std::string& dataValue, ArrayActorPropertyBase* arrayProp, PropertyContainer* propContainer);
+      void ParseArray(BaseXMLHandler::xmlCharString& topEl, std::string& dataValue, ArrayActorPropertyBase* arrayProp);
 
       //parses the data for a container property.
-      void ParseContainer(BaseXMLHandler::xmlCharString& topEl, std::string& dataValue, ContainerActorProperty* arrayProp, PropertyContainer* propContainer);
+      void ParseContainer(BaseXMLHandler::xmlCharString& topEl, std::string& dataValue, ContainerActorProperty* arrayProp);
 
       //decides on a property's datatype base on the name of the element.
       DataType* ParsePropertyType(const XMLCh* const localname, bool errorIfNotFound = true);
@@ -187,25 +247,15 @@ namespace dtDAL
       void EndActorPropertyElement();
 
       //returns true if a property in the actor is the same as the XML expects and adjusts the value.
-      bool IsPropertyCorrectType(dtDAL::DataType** dataType, dtDAL::ActorProperty* actorProperty);
+      bool IsPropertyCorrectType(dtDAL::DataType*& dataType, dtDAL::ActorProperty* actorProperty);
 
       dtCore::RefPtr<Map> mMap;
 
       BaseXMLWriter*  mWriter;
       BaseXMLHandler* mParser;
 
-      dtCore::RefPtr<ActorProperty> mActorProperty;
-      DataType* mActorPropertyType;
-      DataType* mParameterTypeToCreate;
-
-      std::string mParameterNameToCreate;
-      std::string mDescriptorDisplayName;
-
-      bool mHasDeprecatedProperty;
-      bool mInActorProperty;
-      bool mInGroupProperty;
-      int  mInArrayProperty;     // Since arrays can be nested, we need to keep track of how deep we are.
-      int  mInContainerProperty; // Since containers can be nested, we need to keep track of how deep we are.
+      // To support nested property containers, we need a stack of runtime data.
+      std::stack<SerializerRuntimeData> mData;
 
       //The data for group parameters is like linked actors, it needs to be set only after the map is done loading
       //so things are not in a bad state.
@@ -215,7 +265,6 @@ namespace dtDAL
       //is stored until the end.
       std::multimap<dtDAL::PropertyContainer*, std::pair<std::string, dtCore::UniqueId> > mActorLinking;
 
-      std::stack<dtCore::RefPtr<NamedParameter> > mParameterStack;
    };
 }
 

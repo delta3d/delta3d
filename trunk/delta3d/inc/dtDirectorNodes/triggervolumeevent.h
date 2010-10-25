@@ -26,11 +26,6 @@
 #include <dtDirectorNodes/nodelibraryexport.h>
 #include <dtActors/triggervolumeactor.h>
 
-namespace dtDAL
-{
-   class ActorProxy;
-}
-
 namespace dtDirector
 {
    /**

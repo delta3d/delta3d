@@ -31,7 +31,7 @@
 
 #include <testGameActorLibrary/testgameactorlibrary.h>
 #include <testGameActorLibrary/testgameenvironmentactor.h>
-#include <testGameActorLibrary/testgamepropertyproxy.h>
+#include <testGameActorLibrary/testgamepropertyactor.h>
 #include <testGameActorLibrary/testgameactor.h>
 
 #include <dtABC/application.h>
@@ -948,7 +948,7 @@ void GameActorTests::TestMessageProcessingPerformance()
       dtCore::RefPtr<dtGame::DefaultMessageProcessor> dmc = new dtGame::DefaultMessageProcessor();
       mManager->AddComponent(*dmc, dtGame::GameManager::ComponentPriority::HIGHEST);
 
-      dtCore::RefPtr<const dtDAL::ActorType> actor1Type = mManager->FindActorType("ExampleActors", "TestGamePropertyProxy");
+      dtCore::RefPtr<const dtDAL::ActorType> actor1Type = mManager->FindActorType("ExampleActors", "TestGamePropertyActor");
 
       // Start time in microseconds
       dtCore::Timer_t startTime(0);// = mManager->GetRealClockTime();
@@ -956,41 +956,32 @@ void GameActorTests::TestMessageProcessingPerformance()
       //Timer_t frameTickStart(0);
       startTime = statsTickClock.Tick();
 
+      std::vector<TestGamePropertyActor*> testActors;
+      testActors.reserve(size_t(numActors));
       for (int i = 0; i < numActors; ++i)
       {
-         dtCore::RefPtr<TestGamePropertyProxy> proxy1;
-         mManager->CreateActor(*actor1Type, proxy1);
-         //dtCore::RefPtr<dtGame::TestGamePropertyProxy> gap1 = dynamic_cast<dtGame::TestGamePropertyProxy*>(proxy1.get());
-         CPPUNIT_ASSERT_MESSAGE("ActorProxy should not be NULL", proxy1 != NULL);
+         dtCore::RefPtr<TestGamePropertyActor> actor1;
+         mManager->CreateActor(*actor1Type, actor1);
+         CPPUNIT_ASSERT_MESSAGE("Actor should not be NULL", actor1 != NULL);
 
-         //proxy1->GetProperty(dtDAL::TransformableActorProxy::PROPERTY_ROTATION)->SetReadOnly(true);
-         //proxy1->GetProperty(dtDAL::TransformableActorProxy::PROPERTY_TRANSLATION)->SetReadOnly(true);
-         //proxy1->GetProperty(dtDAL::TransformableActorProxy::PROPERTY_SCALE)->SetReadOnly(true);
-         proxy1->SetRegisterListeners(false);
+         actor1->SetRegisterListeners(false);
          // add it as a remote actor
-         mManager->AddActor(*proxy1, true, false);
+         mManager->AddActor(*actor1, true, false);
+         testActors.push_back(actor1);
       }
 
       dtCore::System::GetInstance().Step();
-
-      std::vector<dtDAL::ActorProxy*> testProxies;
-      mManager->FindActorsByType(*actor1Type, testProxies);
 
       // loop multiple ticks.
       for (int tickCounter = 0; tickCounter < numTicks; ++tickCounter)
       {
          // loop through the TON of actors (38 properties each)
-         for (unsigned int actorIndex = 0; actorIndex < testProxies.size(); ++actorIndex)
+         for (unsigned int actorIndex = 0; actorIndex < testActors.size(); ++actorIndex)
          {
-            // get one of the actors
-            dtCore::RefPtr<dtDAL::ActorProxy> actorProxy = testProxies[actorIndex];
-            dtCore::RefPtr<TestGamePropertyProxy> propProxy =
-               dynamic_cast<TestGamePropertyProxy*>(actorProxy.get());
-
             // create and populate an actor update message with ALL properties for this actor
             dtCore::RefPtr<dtGame::ActorUpdateMessage> updateMsg;
             mManager->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_ACTOR_UPDATED, updateMsg);
-            propProxy->PopulateActorUpdate(*updateMsg);
+            testActors[actorIndex]->PopulateActorUpdate(*updateMsg);
             mManager->SendMessage(*updateMsg);
          }
 
@@ -1022,8 +1013,8 @@ void GameActorTests::TestOnRemovedActor()
    // This only tests that the new OnRemovedFromWorld method is called
    // Normal delete actor tests are done elsewhere.
 
-   dtCore::RefPtr<TestGamePropertyProxy> proxy1;
-   dtCore::RefPtr<const dtDAL::ActorType> actor1Type = mManager->FindActorType("ExampleActors", "TestGamePropertyProxy");
+   dtCore::RefPtr<TestGamePropertyActor> proxy1;
+   dtCore::RefPtr<const dtDAL::ActorType> actor1Type = mManager->FindActorType("ExampleActors", "TestGamePropertyActor");
    mManager->CreateActor(*actor1Type, proxy1);
    mManager->AddActor(*proxy1, true, false);
 
@@ -1143,7 +1134,7 @@ void GameActorTests::TestGetAllActorComponents()
    dtGame::GameActor* actor = &gap->GetGameActor();
 
 
-   std::vector<ActorComponent*> components;
+   std::vector<dtGame::ActorComponent*> components;
    actor->GetAllComponents(components);
    const size_t startingSize = components.size();
 
@@ -1154,7 +1145,7 @@ void GameActorTests::TestGetAllActorComponents()
    actor->AddComponent(*component2);
 
    //wipe out any old remnants
-   components = std::vector<ActorComponent*>();
+   components = std::vector<dtGame::ActorComponent*>();
    actor->GetAllComponents(components);
    CPPUNIT_ASSERT_EQUAL_MESSAGE("Actor didn't return back the number of added ActorComponents",
                                 startingSize + 2, components.size());

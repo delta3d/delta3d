@@ -173,8 +173,8 @@ namespace dtDAL
       t->SetTransform(trans, dtCore::Transformable::REL_CS);
 
       //If we have a billboard update its rotation as well.
-      if (GetRenderMode() == ActorProxy::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON ||
-               GetRenderMode() == ActorProxy::RenderMode::DRAW_BILLBOARD_ICON)
+      if (GetRenderMode() == dtDAL::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON ||
+               GetRenderMode() == dtDAL::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON)
       {
          ActorProxyIcon *billBoard = GetBillBoardIcon();
          if (billBoard != NULL)
@@ -219,8 +219,8 @@ namespace dtDAL
       t->SetTransform(trans, dtCore::Transformable::REL_CS);
 
       //If we have a billboard update its position as well.
-      if (GetRenderMode() == ActorProxy::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON ||
-               GetRenderMode() == ActorProxy::RenderMode::DRAW_BILLBOARD_ICON)
+      if (GetRenderMode() == dtDAL::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON ||
+               GetRenderMode() == dtDAL::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON)
       {
          ActorProxyIcon *billBoard = GetBillBoardIcon();
          if (billBoard != NULL)

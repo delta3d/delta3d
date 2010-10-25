@@ -196,7 +196,7 @@ namespace dtQt
          }
          else
          {
-            // create a single label entry for each multi selected proxy
+            // create a single label entry for each multi selected property container
             //DynamicGroupControl* parentControl = new DynamicGroupControl(myProxy->GetName());
             // TODO fix name.
             DynamicGroupControl* parentControl = new DynamicGroupControl(GetContainerGroupName(pc.get()));

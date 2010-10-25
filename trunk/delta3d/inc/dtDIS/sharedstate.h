@@ -40,11 +40,6 @@ namespace dtCore
    class UniqueId;
 }
 
-namespace dtDAL
-{
-   class ActorProxy;
-}
-
 namespace dtDIS
 {
    ///@cond DOXYGEN_SHOULD_SKIP_THIS

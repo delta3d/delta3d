@@ -103,7 +103,7 @@ namespace dtActors
          *  there is geometry assigned to this static mesh, RenderMode::DRAW_ACTOR
          *  is returned.
          */
-        virtual const ActorProxy::RenderMode& GetRenderMode();
+        virtual const dtDAL::BaseActorObject::RenderMode& GetRenderMode();
 
         /**
          * Gets the billboard used to represent static meshes if this proxy's

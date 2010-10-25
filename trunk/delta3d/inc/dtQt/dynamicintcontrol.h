@@ -80,7 +80,7 @@ namespace dtQt
          /**
           * @see DynamicAbstractControl#createEditor
           */
-         virtual QWidget *createEditor(QWidget* parent, const QStyleOptionViewItem& option,
+         virtual QWidget* createEditor(QWidget* parent, const QStyleOptionViewItem& option,
             const QModelIndex& index);
 
          /**

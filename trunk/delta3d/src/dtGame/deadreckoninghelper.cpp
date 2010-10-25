@@ -376,7 +376,7 @@ namespace dtGame
       // THIS METHOD SUPPORTS THE DEPRECATED PROPERTY IN EXISTING MAPS. USE SetGroundClampType() instead.
       (newFlying) ?
          (SetGroundClampType(GroundClampTypeEnum::NONE)) :
-         (SetGroundClampType(GroundClampTypeEnum::KEEP_ABOVE));
+         (SetGroundClampType(GroundClampTypeEnum::FULL));
    }
 
    //////////////////////////////////////////////////////////////////////
@@ -730,7 +730,7 @@ namespace dtGame
    const dtUtil::RefString DeadReckoningHelper::PROPERTY_ACCELERATION_VECTOR("Acceleration Vector");
    const dtUtil::RefString DeadReckoningHelper::PROPERTY_ANGULAR_VELOCITY_VECTOR("Angular Velocity Vector");
    const dtUtil::RefString DeadReckoningHelper::PROPERTY_DEAD_RECKONING_ALGORITHM("Dead Reckoning Algorithm");
-   //const dtUtil::RefString DeadReckoningHelper::PROPERTY_FLYING("Flying");
+   const dtUtil::RefString DeadReckoningHelper::PROPERTY_FLYING("Flying");
    const dtUtil::RefString DeadReckoningHelper::PROPERTY_GROUND_CLAMP_TYPE("GroundClampType");
    const dtUtil::RefString DeadReckoningHelper::PROPERTY_GROUND_OFFSET("Ground Offset");
 
@@ -768,13 +768,6 @@ namespace dtGame
          "Sets the last known angular velocity vector of this Entity", PropRegType, propRegHelper);
       DT_REGISTER_PROPERTY_WITH_NAME(DeadReckoningAlgorithm, PROPERTY_DEAD_RECKONING_ALGORITHM, 
          "Sets the enumerated dead reckoning algorithm to use.", PropRegType, propRegHelper);
-
-      // IsFlying was changed to the enumeration below. The property is depracated and creatd on the fly.
-      // Doesn't use macro cause the Getter is called IsFlying
-      //AddProperty(new dtDAL::BooleanActorProperty(PROPERTY_FLYING, "Should Not Follow the Ground",
-      //   dtDAL::BooleanActorProperty::SetFuncType(this, &DeadReckoningHelper::SetFlying),
-      //   dtDAL::BooleanActorProperty::GetFuncType(this, &DeadReckoningHelper::IsFlying),
-      //   "If flying is true, then it won't ground clamp. Also useful for hovering or jumping vehicles. ", DEADRECKONING_GROUP));
 
       // Doesn't use macro cause the Getter is called IsFlying
       DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(GroundClampType, PROPERTY_GROUND_CLAMP_TYPE, "Ground Clamp Type",
@@ -1237,7 +1230,7 @@ namespace dtGame
    {
       static const dtUtil::RefString DEADRECKONING_GROUP = "Dead Reckoning";
       dtCore::RefPtr<dtDAL::ActorProperty> result;
-      if (name == "Flying")
+      if (name == PROPERTY_FLYING)
       {
          result = new dtDAL::BooleanActorProperty(name, "Should Not Follow the Ground",
             dtDAL::BooleanActorProperty::SetFuncType(this, &DeadReckoningHelper::SetFlyingDeprecatedProperty),

@@ -95,7 +95,9 @@ namespace dtGame
          static const dtUtil::RefString PROPERTY_VELOCITY_VECTOR;
          static const dtUtil::RefString PROPERTY_ACCELERATION_VECTOR;
          static const dtUtil::RefString PROPERTY_ANGULAR_VELOCITY_VECTOR;
-         //static const dtUtil::RefString PROPERTY_FLYING;
+      private:
+         static const dtUtil::RefString PROPERTY_FLYING;
+      public:
          static const dtUtil::RefString PROPERTY_GROUND_CLAMP_TYPE;
          static const dtUtil::RefString PROPERTY_DEAD_RECKONING_ALGORITHM;
          static const dtUtil::RefString PROPERTY_GROUND_OFFSET;

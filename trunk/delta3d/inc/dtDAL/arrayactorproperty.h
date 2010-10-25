@@ -27,6 +27,8 @@
 #include <dtUtil/functor.h>
 #include <dtUtil/log.h>
 
+#include <dtDAL/typetoactorproperty.h>
+
 #include <string>
 #include <vector>
 
@@ -81,56 +83,56 @@ namespace dtDAL
       }
 
       /**
-      * Gets the array.
-      */
+       * Gets the array.
+       */
       virtual std::vector<T> GetValue() const
       {
          return mGetArrayFunc();
       }
 
       /**
-      * Sets the array.
-      */
+       * Sets the array.
+       */
       virtual void SetValue(const std::vector<T>& value)
       {
          mSetArrayFunc(value);
       }
 
       /**
-      * Gets the default value of an array element.
-      */
+       * Gets the default value of an array element.
+       */
       virtual T GetDefault() const
       {
          return mGetDefaultFunc();
       }
 
       /**
-      * Gets the total size of the array.
-      */
+       * Gets the total size of the array.
+       */
       virtual int GetArraySize() const
       {
          return (int)mGetArrayFunc().size();
       }
 
       /**
-      * Sets the current active index.
-      */
+       * Sets the current active index.
+       */
       virtual void SetIndex(int index) const
       {
          mSetIndexFunc(index);
       }
 
       /**
-      * Inserts a new index into the array.
-      *
-      * @param[in]  index  The index to insert at.
-      *
-      * @return     True if an element was inserted properly.
-      */
+       * Inserts a new index into the array.
+       *
+       * @param[in]  index  The index to insert at.
+       *
+       * @return     True if an element was inserted properly.
+       */
       virtual bool Insert(int index)
       {
          // Check if we are at our size limit.
-         if (mMaxSize > -1 && GetArraySize() >= mMaxSize)
+         if (GetMaxArraySize() > -1 && GetArraySize() >= GetMaxArraySize())
          {
             LOG_WARNING("ArrayActorProperty is attempting to insert a new entry when the array is of max size");
             return false;
@@ -151,16 +153,16 @@ namespace dtDAL
       }
 
       /**
-      * Removes an index from the array.
-      *
-      * @param[in]  index  The index to remove from.
-      *
-      * @return     True if an element was removed properly.
-      */
+       * Removes an index from the array.
+       *
+       * @param[in]  index  The index to remove from.
+       *
+       * @return     True if an element was removed properly.
+       */
       virtual bool Remove(int index)
       {
          // Check if we are at our size limit.
-         if (mMinSize > -1 && GetArraySize() <= mMinSize)
+         if (GetMinArraySize() > -1 && GetArraySize() <= GetMinArraySize())
          {
             LOG_WARNING("ArrayActorProperty is attempting to remove an entry when the array is already of minimum size");
             return false;
@@ -177,14 +179,14 @@ namespace dtDAL
       }
 
       /**
-      * Clears the array.
-      */
+       * Clears the array.
+       */
       virtual void Clear()
       {
          int arrayIndex = 0;
-         if (mMinSize > -1)
+         if (GetMinArraySize() > -1)
          {
-            arrayIndex = mMinSize;
+            arrayIndex = GetMinArraySize();
          }
 
          while(arrayIndex < GetArraySize())
@@ -197,15 +199,16 @@ namespace dtDAL
       }
 
       /**
-      * Swaps the contents of the current index with the given.
-      *
-      * @param[in]  first   The first index to swap.
-      * @param[in]  second  The second index to swap.
-      */
+       * Swaps the contents of the current index with the given.
+       *
+       * @param[in]  first   The first index to swap.
+       * @param[in]  second  The second index to swap.
+       */
       virtual void Swap(int first, int second)
       {
          std::vector<T> value = GetValue();
-         if (first < GetArraySize() && second < GetArraySize())
+         int size = GetArraySize();
+         if (first < size && second < size)
          {
             T data = value[first];
             value[first] = value[second];
@@ -215,15 +218,16 @@ namespace dtDAL
       }
 
       /**
-      * Copies the contents of the current index with the given.
-      *
-      * @param[in]  src  The source index to copy from.
-      * @param[in]  dst  The destination index to copy to.
-      */
+       * Copies the contents of the current index with the given.
+       *
+       * @param[in]  src  The source index to copy from.
+       * @param[in]  dst  The destination index to copy to.
+       */
       virtual void Copy(int src, int dst)
       {
          std::vector<T> value = GetValue();
-         if (src < GetArraySize() && dst < GetArraySize())
+         int size = GetArraySize();
+         if (src < size && dst < size)
          {
             value[dst] = value[src];
          }

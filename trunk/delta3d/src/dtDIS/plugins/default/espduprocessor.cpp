@@ -36,7 +36,7 @@ void ESPduProcessor::Process(const DIS::Pdu& packet)
    if (actorID != NULL)
    {
       // the entity is known, so update the previously created actor.
-      dtDAL::ActorProxy* proxy = mGM->FindActorById(*actorID);
+      dtDAL::BaseActorObject* proxy = mGM->FindActorById(*actorID);
       if (proxy)
       {
          SendPartialUpdate(pdu, *proxy);
@@ -55,7 +55,7 @@ void ESPduProcessor::Process(const DIS::Pdu& packet)
    }
 }
 
-void ESPduProcessor::SendPartialUpdate(const DIS::EntityStatePdu& pdu, const dtDAL::ActorProxy& actor)
+void ESPduProcessor::SendPartialUpdate(const DIS::EntityStatePdu& pdu, const dtDAL::BaseActorObject& actor)
 {
    dtCore::RefPtr<dtGame::ActorUpdateMessage> msg;
    mGM->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_ACTOR_UPDATED,msg);
@@ -94,7 +94,7 @@ void ESPduProcessor::ApplyFullUpdateToProxy(const DIS::EntityStatePdu& pdu, dtGa
    proxy.ApplyActorUpdate( *msg );
 }
 
-//void ESPduProcessor::AddActor(const DIS::EntityStatePdu& pdu, dtDAL::ActorProxy* proxy)
+//void ESPduProcessor::AddActor(const DIS::EntityStatePdu& pdu, dtDAL::BaseActorObject* proxy)
 //{
 //   dtGame::GameActorProxy* gap = dynamic_cast<dtGame::GameActorProxy*>( proxy );
 //   if( gap )

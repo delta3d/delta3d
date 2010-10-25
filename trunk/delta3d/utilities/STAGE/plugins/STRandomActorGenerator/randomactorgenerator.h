@@ -17,7 +17,7 @@ class Ui_RandomActorGenerator;
 
 namespace dtDAL
 {
-   class ActorProxy;
+   class BaseActorObject;
 }
 
 namespace dtEditQt
@@ -57,7 +57,7 @@ public slots:
    void OnSelectedActorChange(ActorProxyRefPtrVector& actors);
 
 private:
-   void NewActorProxyInsideVolumeEditor(dtDAL::ActorProxy* proxyToCopy);
+   void NewActorProxyInsideVolumeEditor(dtDAL::BaseActorObject* proxyToCopy);
    osg::Vec3 RandomPointInsideBox();
    osg::Vec3 RandomPointInsideSphere();
 

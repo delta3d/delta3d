@@ -93,6 +93,12 @@ namespace dtDAL
       virtual bool FromString(const std::string& value);
 
       /**
+       * @return a string version of the data.  This value can be used when calling SetStringValue.
+       * @see #SetStringValue
+       */
+      virtual const std::string ToString() const;
+
+      /**
       * Reads the next token form the given string data.
       * This will also remove the token from the data string
       * and return you the token (with the open and close characters removed).
@@ -100,16 +106,9 @@ namespace dtDAL
       * an opening character or this will cause problems.
       *
       * @param[in]  data  The string data.
-      *
-      * @return            The first token from the string data.
+      * @param[out] outToken  The first token from the string data.
       */
-      std::string TakeToken(std::string& data);
-
-      /**
-       * @return a string version of the data.  This value can be used when calling SetStringValue.
-       * @see #SetStringValue
-       */
-      virtual const std::string ToString() const;
+      static void TakeToken(std::string& data, std::string& outToken);
 
       /**
        * This is overridden to make handle the fact that the get method returns a refptr.
@@ -129,6 +128,9 @@ namespace dtDAL
       */
       virtual const ActorProperty* GetArrayProperty() const;
 
+      /// Set the array property after creation
+      void SetArrayProperty(ActorProperty& property);
+
       /**
       * Sets the minimum size of the array.
       */
@@ -141,6 +143,9 @@ namespace dtDAL
       virtual void SetMaxArraySize(int maxSize);
       virtual int GetMaxArraySize() const;
 
+      /// Attemps to resize the array.  Returns the new size respecting min and max size.
+      virtual int Resize(unsigned newSize);
+
       /**
       * Gets whether or not this array can be re-ordered.
       */
@@ -149,14 +154,15 @@ namespace dtDAL
       /**
       * Gets the total number of ActorProperty stored in the array.
       */
-      virtual int GetArraySize() const;
+      virtual int GetArraySize() const = 0;
+
 
       /**
       * Sets the current active index, indicating which of the values
       * in the array will be accessed. [0..GetArraySize()-1]
       * @see GetArrayProperty()
       */
-      virtual void SetIndex(int index) const;
+      virtual void SetIndex(int index) const = 0;
 
       /**
       * Inserts a new index into the array.
@@ -165,7 +171,21 @@ namespace dtDAL
       *
       * @return     True if an element was inserted properly.
       */
-      virtual bool Insert(int index);
+      virtual bool Insert(int index) = 0;
+
+      /**
+      * Adds a new item to the end of the array.
+      *
+      * @return     True if an element was inserted properly.
+      */
+      virtual bool PushBack() { return Insert(GetArraySize()); }
+
+      /**
+      * Removes the last item from the array
+      *
+      * @return     True if an element removed properly.
+      */
+      virtual bool PopBack() { return Remove(GetArraySize() - 1); }
 
       /**
       * Removes an index from the array.
@@ -174,12 +194,12 @@ namespace dtDAL
       *
       * @return     True if an element was removed properly.
       */
-      virtual bool Remove(int index);
+      virtual bool Remove(int index) = 0;
 
       /**
       * Removes all the stored ActorProperty stored in the array.
       */
-      virtual void Clear();
+      virtual void Clear() = 0;
 
       /**
       * Swaps the contents of the current index with the given.
@@ -187,7 +207,7 @@ namespace dtDAL
       * @param[in]  first   The first index to swap.
       * @param[in]  second  The second index to swap.
       */
-      virtual void Swap(int first, int second);
+      virtual void Swap(int first, int second) = 0;
 
       /**
       * Copies the contents of the current index with the given.
@@ -195,12 +215,13 @@ namespace dtDAL
       * @param[in]  src  The source index to copy from.
       * @param[in]  dst  The destination index to copy to.
       */
-      virtual void Copy(int src, int dst);
+      virtual void Copy(int src, int dst) = 0;
 
    protected:
 
       virtual ~ArrayActorPropertyBase();
 
+   private:
       /// The property that each array index uses.
       dtCore::RefPtr<ActorProperty> mPropertyType;
 

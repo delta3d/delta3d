@@ -45,7 +45,7 @@
 
 namespace dtDAL
 {
-   class ActorProxy;
+   class BaseActorObject;
    class GameEvent;
 }
 
@@ -367,7 +367,7 @@ namespace dtDirector
       std::string GetString(const std::string& name = "Value", int index = 0);
       osg::Vec4 GetVec(const std::string& name = "Value", int index = 0);
       dtCore::UniqueId GetActorID(const std::string& name = "Value", int index = 0);
-      dtDAL::ActorProxy* GetActor(const std::string& name = "Value", int index = 0);
+      dtDAL::BaseActorObject* GetActor(const std::string& name = "Value", int index = 0);
       dtDAL::GameEvent* GetGameEvent(const std::string& name = "Value", int index = 0);
 
       /**

@@ -108,6 +108,9 @@ namespace dtDAL
           */
          dtCore::RefPtr<NamedParameter> RemoveParameter(const dtUtil::RefString& name);
 
+         /// Simply clears all parameters in this group parameter.
+         void RemoveAllParameters();
+
          /**
           * Adds a parameter to the group
           * @param param the new parameter to add
@@ -195,7 +198,8 @@ namespace dtDAL
          virtual void ApplyValueToProperty(dtDAL::ActorProperty& property) const;
 
          virtual bool operator==(const NamedParameter& toCompare) const;
-
+      protected:
+         NamedGroupParameter(dtDAL::DataType& newDataType, const dtUtil::RefString& name);
       private:
          ParameterList mParameterList;
    };

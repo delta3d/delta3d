@@ -1041,11 +1041,11 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   dtCore::RefPtr<dtDAL::ActorProxy> GameManager::CreateActor(const dtDAL::ActorType& actorType)
+   dtCore::RefPtr<dtDAL::BaseActorObject> GameManager::CreateActor(const dtDAL::ActorType& actorType)
    {
       try
       {
-         dtCore::RefPtr<dtDAL::ActorProxy> ap = dtDAL::LibraryManager::GetInstance().CreateActorProxy(actorType).get();
+         dtCore::RefPtr<dtDAL::BaseActorObject> ap = dtDAL::LibraryManager::GetInstance().CreateActor(actorType).get();
          if (ap->IsInstanceOf("dtGame::GameActor"))
          {
             dtGame::GameActorProxy* gap = dynamic_cast<dtGame::GameActorProxy*>(ap.get());
@@ -1070,7 +1070,7 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   dtCore::RefPtr<dtDAL::ActorProxy> GameManager::CreateActor(const std::string& category, const std::string& name)
+   dtCore::RefPtr<dtDAL::BaseActorObject> GameManager::CreateActor(const std::string& category, const std::string& name)
    {
       dtCore::RefPtr<const dtDAL::ActorType> type = FindActorType(category, name);
       if (!type.valid())
@@ -1083,7 +1083,7 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::AddActor(dtDAL::ActorProxy& actorProxy)
+   void GameManager::AddActor(dtDAL::BaseActorObject& actorProxy)
    {
       if (actorProxy.GetId().ToString().empty())
       {
@@ -1102,17 +1102,17 @@ namespace dtGame
                return;
             }
             ea->AddActor(*actorProxy.GetActor());
-            mGMImpl->mActorProxyMap.insert(std::make_pair(actorProxy.GetId(), &actorProxy));
+            mGMImpl->mBaseActorObjectMap.insert(std::make_pair(actorProxy.GetId(), &actorProxy));
          }
          else
          {
-            mGMImpl->mActorProxyMap.insert(std::make_pair(mGMImpl->mEnvironment->GetId(), mGMImpl->mEnvironment.get()));
+            mGMImpl->mBaseActorObjectMap.insert(std::make_pair(mGMImpl->mEnvironment->GetId(), mGMImpl->mEnvironment.get()));
             mGMImpl->SendEnvironmentChangedMessage(*this, mGMImpl->mEnvironment.get());
          }
       }
       else
       {
-         mGMImpl->mActorProxyMap.insert(std::make_pair(actorProxy.GetId(), &actorProxy));
+         mGMImpl->mBaseActorObjectMap.insert(std::make_pair(actorProxy.GetId(), &actorProxy));
          mGMImpl->mScene->AddDrawable(actorProxy.GetActor());
       }
    }
@@ -1194,12 +1194,12 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   dtCore::RefPtr<dtDAL::ActorProxy> GameManager::CreateActorFromPrototype(const dtCore::UniqueId& uniqueID)
+   dtCore::RefPtr<dtDAL::BaseActorObject> GameManager::CreateActorFromPrototype(const dtCore::UniqueId& uniqueID)
    {
-      dtDAL::ActorProxy* ourObject = FindPrototypeByID(uniqueID);
+      dtDAL::BaseActorObject* ourObject = FindPrototypeByID(uniqueID);
       if (ourObject != NULL)
       {
-         dtCore::RefPtr<dtDAL::ActorProxy> temp = ourObject->Clone().get();
+         dtCore::RefPtr<dtDAL::BaseActorObject> temp = ourObject->Clone().get();
          dtGame::GameActorProxy* gap = dynamic_cast<dtGame::GameActorProxy*>(temp.get());
          if (gap != NULL)
          {
@@ -1245,7 +1245,7 @@ namespace dtGame
          // Internal pointer is not valid, we are setting a new environment
          // We need to remove all the drawables from the scene and add them
          // to the new environment
-         std::vector<dtDAL::ActorProxy*> actors;
+         std::vector<dtDAL::BaseActorObject*> actors;
          GetAllActors(actors);
          mGMImpl->mScene->RemoveAllDrawables();
          mGMImpl->mScene->UseSceneLight(true);
@@ -1310,7 +1310,7 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::DeleteActor(dtDAL::ActorProxy& actorProxy)
+   void GameManager::DeleteActor(dtDAL::BaseActorObject& actorProxy)
    {
       // Is it an environment actor proxy?
       IEnvGameActorProxy* eap = dynamic_cast<IEnvGameActorProxy*>(&actorProxy);
@@ -1343,12 +1343,12 @@ namespace dtGame
       {
          // it's not in the game manager as a game actor proxy, maybe it's in there
          // as a regular actor proxy.
-         GMImpl::ActorMap::iterator itor = mGMImpl->mActorProxyMap.find(actorProxy.GetId());
+         GMImpl::ActorMap::iterator itor = mGMImpl->mBaseActorObjectMap.find(actorProxy.GetId());
 
-         if (itor != mGMImpl->mActorProxyMap.end())
+         if (itor != mGMImpl->mBaseActorObjectMap.end())
          {
             mGMImpl->RemoveActorFromScene(*this, actorProxy);
-            mGMImpl->mActorProxyMap.erase(itor);
+            mGMImpl->mBaseActorObjectMap.erase(itor);
          }
       }
       else
@@ -1397,7 +1397,7 @@ namespace dtGame
             mGMImpl->mEnvironment = NULL;
          }
 
-         mGMImpl->mActorProxyMap.clear();
+         mGMImpl->mBaseActorObjectMap.clear();
          mGMImpl->mGlobalMessageListeners.clear();
          mGMImpl->mActorMessageListeners.clear();
          mGMImpl->mGameActorProxyMap.clear();
@@ -1408,9 +1408,9 @@ namespace dtGame
       }
       else
       {
-         while (!mGMImpl->mActorProxyMap.empty())
+         while (!mGMImpl->mBaseActorObjectMap.empty())
          {
-            DeleteActor(*mGMImpl->mActorProxyMap.begin()->second);
+            DeleteActor(*mGMImpl->mBaseActorObjectMap.begin()->second);
          }
 
          for (GMImpl::GameActorMap::iterator i = mGMImpl->mGameActorProxyMap.begin();
@@ -1453,8 +1453,8 @@ namespace dtGame
          toFill.insert(&itor->second->GetActorType());
       }
 
-      for (GMImpl::ActorMap::const_iterator itor = mGMImpl->mActorProxyMap.begin();
-           itor != mGMImpl->mActorProxyMap.end(); ++itor)
+      for (GMImpl::ActorMap::const_iterator itor = mGMImpl->mBaseActorObjectMap.begin();
+           itor != mGMImpl->mBaseActorObjectMap.end(); ++itor)
       {
          toFill.insert(&itor->second->GetActorType());
       }
@@ -1480,23 +1480,23 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::GetAllNonGameActors(std::vector<dtDAL::ActorProxy*>& toFill) const
+   void GameManager::GetAllNonGameActors(std::vector<dtDAL::BaseActorObject*>& toFill) const
    {
       toFill.clear();
-      toFill.reserve(mGMImpl->mActorProxyMap.size());
+      toFill.reserve(mGMImpl->mBaseActorObjectMap.size());
 
       GMImpl::ActorMap::const_iterator itor;
-      for (itor = mGMImpl->mActorProxyMap.begin(); itor != mGMImpl->mActorProxyMap.end(); ++itor)
+      for (itor = mGMImpl->mBaseActorObjectMap.begin(); itor != mGMImpl->mBaseActorObjectMap.end(); ++itor)
       {
          toFill.push_back(itor->second.get());
       }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::GetAllActors(std::vector<dtDAL::ActorProxy*>& toFill) const
+   void GameManager::GetAllActors(std::vector<dtDAL::BaseActorObject*>& toFill) const
    {
       toFill.clear();
-      toFill.reserve(mGMImpl->mGameActorProxyMap.size() + mGMImpl->mActorProxyMap.size() + mGMImpl->mPrototypeActors.size());
+      toFill.reserve(mGMImpl->mGameActorProxyMap.size() + mGMImpl->mBaseActorObjectMap.size() + mGMImpl->mPrototypeActors.size());
 
       GMImpl::GameActorMap::const_iterator itor;
       for (itor = mGMImpl->mGameActorProxyMap.begin(); itor != mGMImpl->mGameActorProxyMap.end(); ++itor)
@@ -1505,7 +1505,7 @@ namespace dtGame
       }
 
       GMImpl::ActorMap::const_iterator iter;
-      for (iter = mGMImpl->mActorProxyMap.begin(); iter != mGMImpl->mActorProxyMap.end(); ++iter)
+      for (iter = mGMImpl->mBaseActorObjectMap.begin(); iter != mGMImpl->mBaseActorObjectMap.end(); ++iter)
       {
          toFill.push_back(iter->second.get());
       }
@@ -1519,11 +1519,11 @@ namespace dtGame
    //////////////////////////////////////////////////////////////////////////
    size_t GameManager::GetNumAllActors() const
    {
-      return mGMImpl->mGameActorProxyMap.size() + mGMImpl->mActorProxyMap.size();
+      return mGMImpl->mGameActorProxyMap.size() + mGMImpl->mBaseActorObjectMap.size();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::GetAllPrototypes(std::vector<dtDAL::ActorProxy*>& toFill) const
+   void GameManager::GetAllPrototypes(std::vector<dtDAL::BaseActorObject*>& toFill) const
    {
       toFill.clear();
       toFill.reserve(mGMImpl->mPrototypeActors.size());
@@ -1556,7 +1556,7 @@ namespace dtGame
       {
       }
 
-      bool operator()(dtDAL::ActorProxy& proxy)
+      bool operator()(dtDAL::BaseActorObject& proxy)
       {
          const std::string& name = proxy.GetName();
          return dtUtil::Match(const_cast<char*>(mName.c_str()), const_cast<char*>(name.c_str()));
@@ -1566,9 +1566,9 @@ namespace dtGame
    };
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::FindActorsByName(const std::string& name, std::vector<dtDAL::ActorProxy*>& toFill) const
+   void GameManager::FindActorsByName(const std::string& name, std::vector<dtDAL::BaseActorObject*>& toFill) const
    {
-      toFill.reserve(mGMImpl->mGameActorProxyMap.size() + mGMImpl->mActorProxyMap.size());
+      toFill.reserve(mGMImpl->mGameActorProxyMap.size() + mGMImpl->mBaseActorObjectMap.size());
 
       GMWildMatchSearchFunc searchFunc(name);
       FindActorsIf(searchFunc, toFill);
@@ -1583,7 +1583,7 @@ namespace dtGame
       {
       }
 
-      bool operator()(dtDAL::ActorProxy& proxy)
+      bool operator()(dtDAL::BaseActorObject& proxy)
       {
          return proxy.GetActorType().InstanceOf(mType);
       }
@@ -1592,9 +1592,9 @@ namespace dtGame
    };
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::FindActorsByType(const dtDAL::ActorType& type, std::vector<dtDAL::ActorProxy*>& toFill) const
+   void GameManager::FindActorsByType(const dtDAL::ActorType& type, std::vector<dtDAL::BaseActorObject*>& toFill) const
    {
-      toFill.reserve(mGMImpl->mGameActorProxyMap.size() + mGMImpl->mActorProxyMap.size());
+      toFill.reserve(mGMImpl->mGameActorProxyMap.size() + mGMImpl->mBaseActorObjectMap.size());
 
       GMTypeMatchSearchFunc searchFunc(type);
       FindActorsIf(searchFunc, toFill);
@@ -1609,7 +1609,7 @@ namespace dtGame
       {
       }
 
-      bool operator()(dtDAL::ActorProxy& proxy)
+      bool operator()(dtDAL::BaseActorObject& proxy)
       {
          return proxy.IsInstanceOf(mType);
       }
@@ -1619,11 +1619,11 @@ namespace dtGame
 
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::FindActorsByClassName(const std::string& className,
-      std::vector<dtDAL::ActorProxy*>& toFill) const
+      std::vector<dtDAL::BaseActorObject*>& toFill) const
    {
       if (!className.empty())
       {
-         toFill.reserve(mGMImpl->mActorProxyMap.size() + mGMImpl->mGameActorProxyMap.size());
+         toFill.reserve(mGMImpl->mBaseActorObjectMap.size() + mGMImpl->mGameActorProxyMap.size());
          GMClassMatchSearchFunc searchFunc(className);
          FindActorsIf(searchFunc, toFill);
       }
@@ -1634,7 +1634,7 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::FindPrototypesByActorType(const dtDAL::ActorType& type, std::vector<dtDAL::ActorProxy*>& toFill) const
+   void GameManager::FindPrototypesByActorType(const dtDAL::ActorType& type, std::vector<dtDAL::BaseActorObject*>& toFill) const
    {
       toFill.reserve(mGMImpl->mPrototypeActors.size());
 
@@ -1643,7 +1643,7 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::FindPrototypesByName(const std::string& name, std::vector<dtDAL::ActorProxy*>& toFill) const
+   void GameManager::FindPrototypesByName(const std::string& name, std::vector<dtDAL::BaseActorObject*>& toFill) const
    {
       toFill.reserve(mGMImpl->mPrototypeActors.size());
 
@@ -1652,7 +1652,7 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   dtDAL::ActorProxy* GameManager::FindPrototypeByID(const dtCore::UniqueId& uniqueID)
+   dtDAL::BaseActorObject* GameManager::FindPrototypeByID(const dtCore::UniqueId& uniqueID)
    {
       GMImpl::GameActorMap::const_iterator itor = mGMImpl->mPrototypeActors.find(uniqueID);
       if (itor != mGMImpl->mPrototypeActors.end())
@@ -1664,7 +1664,7 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::FindActorsWithinRadius(const float radius, std::vector<dtDAL::ActorProxy*>& toFill) const
+   void GameManager::FindActorsWithinRadius(const float radius, std::vector<dtDAL::BaseActorObject*>& toFill) const
    {
       toFill.clear();
    }
@@ -1677,17 +1677,17 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   dtDAL::ActorProxy* GameManager::FindActorById(const dtCore::UniqueId& id) const
+   dtDAL::BaseActorObject* GameManager::FindActorById(const dtCore::UniqueId& id) const
    {
-      dtDAL::ActorProxy* actorProxy = FindGameActorById(id);
+      dtDAL::BaseActorObject* actorProxy = FindGameActorById(id);
 
       if (actorProxy != NULL)
       {
          return actorProxy;
       }
 
-      GMImpl::ActorMap::const_iterator itor = mGMImpl->mActorProxyMap.find(id);
-      return itor == mGMImpl->mActorProxyMap.end() ? NULL : itor->second.get();
+      GMImpl::ActorMap::const_iterator itor = mGMImpl->mBaseActorObjectMap.find(id);
+      return itor == mGMImpl->mBaseActorObjectMap.end() ? NULL : itor->second.get();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
