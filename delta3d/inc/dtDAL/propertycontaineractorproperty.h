@@ -78,8 +78,8 @@ namespace dtDAL
       PropertyContainerActorProperty(
                const dtUtil::RefString& name,
                const dtUtil::RefString& label,
-               PropertyContainerActorProperty::SetFuncType set,
-               PropertyContainerActorProperty::GetFuncType get,
+               SetFuncType set,
+               GetFuncType get,
                const dtUtil::RefString& desc,
                const dtUtil::RefString& groupName)
       : BasePropertyContainerActorProperty(name, label, desc, groupName)

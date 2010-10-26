@@ -242,6 +242,7 @@ int ArrayActorPropertyBase::Resize(unsigned newSize)
       arraySize = GetArraySize();
    }
 
+   return arraySize;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
