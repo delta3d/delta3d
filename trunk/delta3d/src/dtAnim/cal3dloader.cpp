@@ -85,7 +85,10 @@ namespace dtAnim
 
             if (!filename.empty())
             {
-               coreModel->loadCoreAnimation(filename, (*animItr).mName);
+               if (coreModel->loadCoreAnimation(filename, (*animItr).mName) < 0)
+               {
+                  LOG_ERROR("Can't load animation '" + filename +"':" + CalError::getLastErrorDescription());
+               }                             
             }
             else
             {
@@ -103,7 +106,10 @@ namespace dtAnim
 
             if (!filename.empty())
             {
-               coreModel->loadCoreAnimatedMorph(filename);
+               if (coreModel->loadCoreAnimatedMorph(filename) < 0)
+               {
+                  LOG_ERROR("Can't load animated morph '" + filename +"':" + CalError::getLastErrorDescription());
+               }               
             }
             else
             {
@@ -120,7 +126,10 @@ namespace dtAnim
             std::string filename = dtUtil::FindFileInPathList(path + (*meshItr).mFileName);
             if (!filename.empty())
             {
-               coreModel->loadCoreMesh(filename, (*meshItr).mName);
+               if (coreModel->loadCoreMesh(filename, (*meshItr).mName) < 0)
+               {
+                  LOG_ERROR("Can't load mesh '" + filename +"':" + CalError::getLastErrorDescription());
+               }              
             }
             else
             {
@@ -145,7 +154,7 @@ namespace dtAnim
                int matID = coreModel->loadCoreMaterial(filename, (*matItr).mName);
                if (matID < 0)
                {
-                  LOG_ERROR("Material file failed to load:'" + path + (*matItr).mFileName + "'.");
+                  LOG_ERROR("Material file failed to load:'" + path + (*matItr).mFileName + "'." + CalError::getLastErrorDescription());
                }
             }
          }
