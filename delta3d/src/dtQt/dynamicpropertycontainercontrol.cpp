@@ -18,10 +18,11 @@
  *
  * This software was developed by Alion Science and Technology Corporation under
  * circumstances in which the U. S. Government may have rights in the software.
- * 
+ *
  * David Guthrie
  */
 
+#include <prefix/dtqtprefix.h>
 #include <dtQt/dynamicpropertycontainercontrol.h>
 
 #include <dtDAL/datatype.h>
