@@ -211,6 +211,12 @@ void CloudPlane::SetWind(float x, float y)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void CloudPlane::SetWind(osg::Vec2 wv)
+{
+   mWind = wv;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void CloudPlane::Create(const std::string& textureFilePath)
 {
    mXform = new MoveEarthySkyWithEyePointTransform();
