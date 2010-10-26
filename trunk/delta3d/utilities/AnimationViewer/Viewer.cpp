@@ -245,8 +245,11 @@ void Viewer::OnLoadCharFile(const QString& filename)
          const std::vector<CalCoreSubMorphTarget *> morphVec = subMeshVec[subMeshID]->getVectorCoreSubMorphTarget();
          for (size_t morphID = 0; morphID < morphVec.size(); ++morphID)
          {
-            //TODO QString nameToSend = QString::fromStdString(morphVec[morphID]->name());
+#if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300
+            QString nameToSend = QString::fromStdString(morphVec[morphID]->name());
+#else
             QString nameToSend = QString::number(morphID);
+#endif
             emit SubMorphTargetLoaded(meshID, subMeshID, morphID, nameToSend);           
          }
       }
