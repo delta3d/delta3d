@@ -25,14 +25,31 @@
 
 namespace dtActors 
 {
-    void CloudPlaneActorProxy::CreateActor()
-    {
-        SetActor(*new dtCore::CloudPlane(6, 0.5f, 6, 1.f, 0.3f, 0.96f, 256, 1800.f));
-    }
+   void CloudPlaneActorProxy::CreateActor()
+   {
+       SetActor(*new dtCore::CloudPlane(6, 0.5f, 6, 1.f, 0.3f, 0.96f, 256, 1800.f));
+   }
 
-    ///////////////////////////////////////////////////////////////////////////////
-    void CloudPlaneActorProxy::BuildPropertyMap()
-    {
-       dtActors::EnvEffectActorProxy::BuildPropertyMap();
-    }
+   ///////////////////////////////////////////////////////////////////////////////
+   void CloudPlaneActorProxy::BuildPropertyMap()
+   {
+      const std::string& GROUPNAME = "Cloud Plane";
+      dtActors::EnvEffectActorProxy::BuildPropertyMap();
+
+      dtCore::CloudPlane* cp = static_cast<dtCore::CloudPlane*>(GetActor());
+
+      AddProperty(new dtDAL::Vec2fActorProperty("Wind Vector", "Wind Vector",
+         dtDAL::Vec2ActorProperty::SetFuncType(this, &dtActors::CloudPlaneActorProxy::SetWindVector),
+         dtDAL::Vec2ActorProperty::GetFuncType(cp, &dtCore::CloudPlane::GetWind),
+         "Set wind vector (speed and direction)", GROUPNAME));
+
+   }
+
+   void CloudPlaneActorProxy::SetWindVector(osg::Vec2 wv)
+   {
+      dtCore::CloudPlane* cp = static_cast<dtCore::CloudPlane*>(GetActor());
+
+      cp->SetWind(wv);
+   }  
 }
+

@@ -46,6 +46,11 @@ namespace dtActors
          */
         virtual void BuildPropertyMap();
 
+        /**
+         * Sets the wind vector (used to disambiguate the methods in cloudplane.h
+         */
+        void SetWindVector(osg::Vec2 wv);
+
     protected:
 
         /**

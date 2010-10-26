@@ -102,8 +102,11 @@ namespace dtCore
       ///@return current cloud color
       osg::Vec4 GetColor() const;
 
-      //Sets the Wind Speed on the Cloud Plane
-      void SetWind(float x, float y);
+      ///Sets the Wind Vector (speed and direction) on the Cloud Plane
+      void SetWind(osg::Vec2 wv);
+
+      ///Sets the Wind Vector (speed and direction) on the Cloud Plane
+      void SetWind(float x, float y);      
 
       osg::Vec2 GetWind() const {return mWind;}
 
