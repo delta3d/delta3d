@@ -643,6 +643,27 @@ namespace dtAI
    }
 
 
+   ////////////////////////////////////////////////////////////////////////////////
+   void WaypointGraph::GetLeavesUnderParent(const WaypointCollection* parent, std::vector<const WaypointInterface*>& outLeaves) const
+   {
+      outLeaves.clear();
+
+      dtAI::Tree<const WaypointInterface*>::const_iterator iter = parent->first_child()->begin();
+      dtAI::Tree<const WaypointInterface*>::const_iterator iterEnd = ++parent->last_descendant()->begin();
+
+      while (iter != iterEnd)
+      {
+         const WaypointInterface* node = iter->value;
+
+         if (node->GetWaypointType() != *dtAI::WaypointTypes::WAYPOINT_COLLECTION)
+         {
+            outLeaves.push_back(node);
+         }
+
+        ++iter;
+      }
+   }
+
    /////////////////////////////////////////////////////////////////////////////
    void WaypointGraph::AddEdge(WaypointID pFrom, const WaypointID pTo)
    {
