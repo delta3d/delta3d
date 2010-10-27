@@ -123,7 +123,10 @@ namespace dtDAL
    /////////////////////////////////////////////////////////////////
    void ActorPropertySerializer::WriteProperty(const ActorProperty& property)
    {
-      if (!mWriter) return;
+      if (mWriter == NULL || property.IsReadOnly())
+      {
+         return;
+      }
 
       const size_t bufferMax = 512;
       char numberConversionBuffer[bufferMax];
