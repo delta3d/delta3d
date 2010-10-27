@@ -439,10 +439,6 @@ namespace dtDAL
                //printf("Printing actor property number %d", x++);
                const ActorProperty& property = *(*i);
 
-               // If the property is read only, skip it
-               if (property.IsReadOnly())
-                  continue;
-
                mPropSerializer->WriteProperty(property);
 
             }
