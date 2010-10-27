@@ -87,13 +87,13 @@ namespace dtAI
       bool CreateSearchLevel(WaypointGraphBuilder* builder, unsigned level);
 
       /**
-      *  Use this function to generate the higher level edges from the lower level edges.	
+      *  Use this function to generate the higher level edges from the lower level edges.
       *  This is only needed if you created your own WaypointCollections and Assigned them manually.
       */
       void CreateAbstractEdges();
 
       /**
-      *  Use this to only refresh a single search level.	
+      *  Use this to only refresh a single search level.
       *  Level must be from 1 to NumSearchLevels - 1.
       */
       void CreateAbstractEdgesAtLevel(unsigned level);
@@ -108,7 +108,7 @@ namespace dtAI
       /**
        *  Takes the WaypointID of a waypoint already added, and assigns it
        *     to a parent waypoint which may or may not be already inserted.
-       * 
+       *
        *   Unless you know specifically which level to insert the WaypointCollection you
        *     must use this function to insert it.  It will auto insert at the childWp level + 1.
        *
@@ -175,11 +175,16 @@ namespace dtAI
       const WaypointCollection* GetParent(WaypointID id) const;
 
       /**
-       * This finds the waypoint and traverss up the tree to find the top most node
+       * This finds the waypoint and traverses up the tree to find the top most node
        * containing this as a child.
        */
       WaypointCollection* GetRootParent(WaypointID id);
       const WaypointCollection* GetRootParent(WaypointID id) const;
+
+      /**
+       * This finds all leaf descendents underneath a given parent collection in the hierarchy.
+       */
+      void GetLeavesUnderParent(const WaypointCollection* parent, std::vector<const WaypointInterface*>& outLeaves) const;
 
       // adding and removing path segments
       void AddEdge(WaypointID idFrom, WaypointID idTo);
