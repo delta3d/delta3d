@@ -61,6 +61,9 @@ const std::string MainWindow::APP_NAME("AIUtility");
 const std::string MainWindow::PROJECT_CONTEXT_SETTING("ProjectContext");
 const std::string MainWindow::CURRENT_MAP_SETTING("CurrentMap");
 const std::string MainWindow::WINDOW_SETTINGS("WindowSettings");
+const std::string MainWindow::PREFERENCES_SETTINGS("Preferences");
+const std::string MainWindow::SELECTION_RENDERING_SETTING("SelectionBasedRendering");
+const std::string MainWindow::RENDER_BACKFACES_SETTING("SelectionBasedRendering");
 
 //////////////////////////////////////////////
 MainWindow::MainWindow(QWidget& mainWidget)
@@ -186,10 +189,24 @@ void MainWindow::showEvent(QShowEvent* e)
 
       QString projectContext = settings.value(PROJECT_CONTEXT_SETTING.c_str()).toString();
 
+      settings.beginGroup(PREFERENCES_SETTINGS.c_str());
+      mSelectionBasedRendering = settings.value(SELECTION_RENDERING_SETTING.c_str()).toBool();
+      mRenderBackfaces = settings.value(RENDER_BACKFACES_SETTING.c_str()).toBool();
+      settings.endGroup();
 
       if (!projectContext.isEmpty())
       {
          emit ProjectContextChanged(projectContext.toStdString());
+      }
+
+      if (mSelectionBasedRendering)
+      {
+         emit RenderOnSelection(true);
+      }
+
+      if (mRenderBackfaces)
+      {
+         emit RenderBackfaces(true);
       }
 
       // The map could induce crashes so don't autoload.
@@ -342,6 +359,13 @@ void MainWindow::OnPreferences()
 
       emit RenderOnSelection(mSelectionBasedRendering);
       emit RenderBackfaces(mRenderBackfaces);
+
+      QSettings settings(ORG_NAME.c_str(), APP_NAME.c_str());
+      settings.beginGroup(PREFERENCES_SETTINGS.c_str());
+      settings.setValue(RENDER_BACKFACES_SETTING.c_str(), mRenderBackfaces);
+      settings.setValue(SELECTION_RENDERING_SETTING.c_str(), mSelectionBasedRendering);
+      settings.endGroup();
+      settings.sync();
    }
 }
 
@@ -407,7 +431,14 @@ dtAI::AIPluginInterface* MainWindow::GetAIPluginInterface()
 void MainWindow::SetAIPluginInterface(dtAI::AIPluginInterface* interface, bool selectionBasedRenderingHint)
 {
    mPluginInterface = interface;
-   mSelectionBasedRendering = selectionBasedRenderingHint;
+
+   // This is a hint, only honor it if the value is true
+   if (selectionBasedRenderingHint)
+   {
+      mSelectionBasedRendering = selectionBasedRenderingHint;
+   }
+
+   emit RenderOnSelection(mSelectionBasedRendering);
 
    EnableOrDisableControls();
    // clear the selection
