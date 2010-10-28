@@ -16,7 +16,7 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * Bradley Anderegg 
+ * Bradley Anderegg
  */
 
 #include <dtAI/waypointcollection.h>
@@ -126,7 +126,7 @@ namespace dtAI
 
       return NULL;
    }
-      
+
    /////////////////////////////////////////////////////////////////////////////
    const WaypointCollection* WaypointCollection::GetParent() const
    {
@@ -139,6 +139,22 @@ namespace dtAI
       return NULL;
    }
 
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void WaypointCollection::GetChildren(std::vector<const dtAI::WaypointInterface*>& children) const
+   {
+      children.clear();
+
+      dtAI::Tree<const WaypointInterface*>::const_child_iterator iter = begin_child();
+      dtAI::Tree<const WaypointInterface*>::const_child_iterator iterEnd = end_child();
+
+      while (iter != iterEnd)
+      {
+         children.push_back(iter->value);
+         ++iter;
+      }
+   }
+
    /////////////////////////////////////////////////////////////////////////////
    void WaypointCollection::Insert(const WaypointInterface* waypoint)
    {
@@ -147,7 +163,7 @@ namespace dtAI
          if(waypoint->GetWaypointType() == *WaypointTypes::WAYPOINT_COLLECTION)
          {
             const WaypointCollection* wc = dynamic_cast<const WaypointCollection*>(waypoint);
-            
+
             if(wc != NULL)
             {
                AddChild(wc);
@@ -202,11 +218,11 @@ namespace dtAI
          push_back(new WaypointTree(waypoint));
          Recalculate();
       }
-      else 
+      else
       {
          LOG_ERROR("Only leaf nodes may hold concrete waypoints, if this is a WaypointCollection use AddChild().");
-      }         
-      
+      }
+
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -222,15 +238,15 @@ namespace dtAI
          WaypointCollection* wc = const_cast<WaypointCollection*>(waypoint.get());
          WaypointTree::insert_subtree(wc, 0);
          Recalculate();
-      }         
+      }
    }
 
    /////////////////////////////////////////////////////////////////////////////
    void WaypointCollection::RemoveChild(dtCore::RefPtr<const WaypointCollection> waypoint)
-   {         
+   {
       //a check to make sure we are indeed the parent
       if( (waypoint->parent() != NULL) && (waypoint->parent()->value->GetID() == GetID()) )
-      {         
+      {
          WaypointCollection* wc = const_cast<WaypointCollection*>(waypoint.get());
          WaypointTree::remove_subtree(wc);
          Recalculate();
@@ -251,9 +267,9 @@ namespace dtAI
          {
             iter = erase(iter);
             break;
-         }            
+         }
       }
-      
+
       Recalculate();
    }
 
@@ -270,7 +286,7 @@ namespace dtAI
          for(;iter != iterEnd; ++iter)
          {
             newCenter += iter->value->GetPosition();
-         }       
+         }
 
          //reset position
          mPosition = newCenter;
@@ -303,7 +319,7 @@ namespace dtAI
          }
 
          mRadius = bs.radius();
-      }      
+      }
 
       //recursively recalculate up to root
       if(!is_root() && parent() != NULL)
@@ -333,7 +349,7 @@ namespace dtAI
 
    /////////////////////////////////////////////////////////////////////////////
    bool WaypointCollection::RemoveEdge(WaypointID sibling, const ChildEdge& edge)
-   {    
+   {
       ChildEdgeMap::iterator iter = mChildEdges.lower_bound(sibling);
       ChildEdgeMap::iterator iterEnd = mChildEdges.upper_bound(sibling);
       for (;iter != iterEnd; ++iter)
@@ -353,7 +369,7 @@ namespace dtAI
    {
       mChildEdges.clear();
    }
-   
+
    /////////////////////////////////////////////////////////////////////////////
    void WaypointCollection::GetEdges(WaypointID sibling, ChildEdgeArray& result) const
    {
@@ -400,7 +416,7 @@ namespace dtAI
          {
             return true;
          }
-      }  
+      }
 
       return false;
    }

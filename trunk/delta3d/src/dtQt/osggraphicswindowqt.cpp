@@ -36,7 +36,7 @@ namespace dtQt
 {
    ////////////////////////////////////////////////////////////
    OSGGraphicsWindowQt::OSGGraphicsWindowQt(osg::GraphicsContext::Traits* traits,
-                                             dtQt::GLWidgetFactory* factory, 
+                                             dtQt::GLWidgetFactory* factory,
                                              dtQt::OSGAdapterWidget* adapter)
    : BaseClass()
    , mValid(false)

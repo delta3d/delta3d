@@ -642,9 +642,8 @@ namespace dtAI
       return wc;
    }
 
-
    ////////////////////////////////////////////////////////////////////////////////
-   void WaypointGraph::GetLeavesUnderParent(const WaypointCollection* parent, std::vector<const WaypointInterface*>& outLeaves) const
+   void WaypointGraph::GetLeavesUnderParent(const WaypointCollection* parent, ConstWaypointArray& outLeaves) const
    {
       outLeaves.clear();
 

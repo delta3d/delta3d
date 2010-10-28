@@ -88,7 +88,7 @@ namespace dtABC
 
       mCurrentElement = stringConv.ToString();
 
-      if ( mCurrentElement == ApplicationConfigSchema::WINDOW )
+      if (mCurrentElement == ApplicationConfigSchema::WINDOW)
       {
          // set up some defaults
          std::string name("DefaultApp"),
@@ -102,39 +102,39 @@ namespace dtABC
 
          // perform the search
          typedef dtUtil::AttributeSearch::ResultMap RMap;
-         RMap results = windowattrs( attrs );
+         RMap results = windowattrs(attrs);
 
          // if the named attributes were found, use them, else use defaults
          RMap::iterator iter = results.find(ApplicationConfigSchema::NAME);
-         if ( iter != results.end() )
+         if (iter != results.end())
             name = iter->second;
 
          iter = results.find(ApplicationConfigSchema::X);
-         if ( iter != results.end() )
+         if (iter != results.end())
             xstring = iter->second;
 
          iter = results.find(ApplicationConfigSchema::Y);
-         if ( iter != results.end() )
+         if (iter != results.end())
             ystring = iter->second;
 
          iter = results.find(ApplicationConfigSchema::WIDTH);
-         if ( iter != results.end() )
+         if (iter != results.end())
             wstring = iter->second;
 
          iter = results.find(ApplicationConfigSchema::HEIGHT);
-         if ( iter != results.end() )
+         if (iter != results.end())
             hstring = iter->second;
 
          iter = results.find(ApplicationConfigSchema::SHOWCURSOR);
-         if ( iter != results.end() )
+         if (iter != results.end())
             showstring = iter->second;
 
          iter = results.find(ApplicationConfigSchema::FULLSCREEN);
-         if ( iter != results.end() )
+         if (iter != results.end())
             fullstring = iter->second;
 
          iter = results.find(ApplicationConfigSchema::REALIZE_UPON_CREATE);
-         if ( iter != results.end() )
+         if (iter != results.end())
             realizestring = iter->second;
 
          iter = results.find(ApplicationConfigSchema::CHANGEDISPLAYRESOLUTION);
@@ -142,19 +142,19 @@ namespace dtABC
             changeres = iter->second;
 
          iter = results.find(ApplicationConfigSchema::PIXELDEPTH);
-         if ( iter != results.end() )
+         if (iter != results.end())
             bitdepth = iter->second;
 
          iter = results.find(ApplicationConfigSchema::REFRESHRATE);
-         if ( iter != results.end() )
+         if (iter != results.end())
             refresh = iter->second;
 
          iter = results.find(ApplicationConfigSchema::VSYNC);
-         if ( iter != results.end() )
+         if (iter != results.end())
             vsyncString = iter->second;
 
          iter = results.find(ApplicationConfigSchema::MULTI_SAMPLE);
-         if ( iter != results.end() )
+         if (iter != results.end())
             multiSampleString = iter->second;
 
          int winX = dtUtil::ToType<int>(xstring);
@@ -186,30 +186,30 @@ namespace dtABC
          mConfigData.VSYNC = vsync;
          mConfigData.MULTI_SAMPLE = multiSample;
       }
-      else if ( mCurrentElement == ApplicationConfigSchema::SCENE )
+      else if (mCurrentElement == ApplicationConfigSchema::SCENE)
       {
          dtUtil::AttributeSearch sceneattrs;
-         dtUtil::AttributeSearch::ResultMap results = sceneattrs( attrs );
+         dtUtil::AttributeSearch::ResultMap results = sceneattrs(attrs);
 
          dtUtil::AttributeSearch::ResultMap::iterator iter = results.find(ApplicationConfigSchema::NAME);
-         if ( iter != results.end() )
+         if (iter != results.end())
          {
             mConfigData.SCENE_NAME = iter->second;
          }
       }
-      else if ( mCurrentElement == ApplicationConfigSchema::VIEW )
+      else if (mCurrentElement == ApplicationConfigSchema::VIEW)
       {
          dtUtil::AttributeSearch sceneattrs;
-         dtUtil::AttributeSearch::ResultMap results = sceneattrs( attrs );
+         dtUtil::AttributeSearch::ResultMap results = sceneattrs(attrs);
 
          dtUtil::AttributeSearch::ResultMap::iterator iter = results.find(ApplicationConfigSchema::NAME);
-         if ( iter != results.end() )
+         if (iter != results.end())
          {
             mConfigData.VIEW_NAME = iter->second;
          }
 
          iter = results.find(ApplicationConfigSchema::CAMERAINSTANCE);
-         if ( iter != results.end() )
+         if (iter != results.end())
          {
              mConfigData.CAMERA_INSTANCE = iter->second;
          }
@@ -219,7 +219,7 @@ namespace dtABC
          }
 
          iter = results.find(ApplicationConfigSchema::SCENEINSTANCE);
-         if ( iter != results.end() )
+         if (iter != results.end())
          {
              mConfigData.SCENE_INSTANCE = iter->second;
          }
@@ -228,22 +228,22 @@ namespace dtABC
              LOG_ERROR("No Scene Instance specified for View, " + mConfigData.VIEW_NAME)
          }
       }
-      else if ( mCurrentElement == ApplicationConfigSchema::CAMERA )
+      else if (mCurrentElement == ApplicationConfigSchema::CAMERA)
       {
          // push some keys
          dtUtil::AttributeSearch camattrs;
 
          // do the attribute search, catch the results
-         dtUtil::AttributeSearch::ResultMap results = camattrs( attrs );
+         dtUtil::AttributeSearch::ResultMap results = camattrs(attrs);
 
          dtUtil::AttributeSearch::ResultMap::iterator iter = results.find(ApplicationConfigSchema::NAME);
-         if ( iter != results.end() )
+         if (iter != results.end())
          {
             mConfigData.CAMERA_NAME = iter->second;
          }
 
          iter = results.find(ApplicationConfigSchema::WINDOWINSTANCE);
-         if ( iter != results.end() )
+         if (iter != results.end())
          {
             mConfigData.WINDOW_INSTANCE = iter->second;
          }
@@ -253,7 +253,7 @@ namespace dtABC
          }
 
          iter = results.find(ApplicationConfigSchema::SCENEINSTANCE);
-         if ( iter != results.end() )
+         if (iter != results.end())
          {
 //            mConfigData.SCENE_INSTANCE = iter->second;
             LOG_ERROR("DEPRECIATED : Scene Instance specified for Camera " + mConfigData.CAMERA_NAME + "must be specified for View")
@@ -295,7 +295,7 @@ namespace dtABC
             mConfigData.VIEWPORT_H = dtUtil::ToType<int>(iter->second);
          }
       }
-      else if ( mCurrentElement == ApplicationConfigSchema::LOG )
+      else if (mCurrentElement == ApplicationConfigSchema::LOG)
       {
          // push some keys
          dtUtil::AttributeSearch logAttrs;
@@ -345,16 +345,16 @@ namespace dtABC
             LOG_WARNING("No global log level defined, the default value will be used.");
          }
       }
-      else if ( mCurrentElement == ApplicationConfigSchema::APP_PROPERTY )
+      else if (mCurrentElement == ApplicationConfigSchema::APP_PROPERTY)
       {
          // push some keys
          dtUtil::AttributeSearch propAttrs;
 
          // do the attribute search, catch the results
-         dtUtil::AttributeSearch::ResultMap results = propAttrs( attrs );
+         dtUtil::AttributeSearch::ResultMap results = propAttrs(attrs);
 
          dtUtil::AttributeSearch::ResultMap::iterator iter = results.find(ApplicationConfigSchema::NAME);
-         if ( iter != results.end() )
+         if (iter != results.end())
          {
             mPropertyName = iter->second;
          }
