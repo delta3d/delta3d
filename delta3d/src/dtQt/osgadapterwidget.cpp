@@ -142,14 +142,14 @@ namespace dtQt
    }
 
    //////////////////////////////////////////////////////////////////////////////////
-   OSGAdapterWidget::OSGAdapterWidget(bool drawOnSeparateThread, QWidget * parent,
-            const QGLWidget * shareWidget, Qt::WindowFlags f):
-               QGLWidget(parent, shareWidget, f),
-               mThreadGLContext(NULL),
-               mDrawOnSeparateThread(drawOnSeparateThread)
+   OSGAdapterWidget::OSGAdapterWidget(bool drawOnSeparateThread, QWidget* parent,
+            const QGLWidget* shareWidget, Qt::WindowFlags f)
+            : QGLWidget(parent, shareWidget, f)
+            , mThreadGLContext(NULL)
+            , mDrawOnSeparateThread(drawOnSeparateThread)
    {
       mTimer.setInterval(10);
-      
+
       //don't let Qt perform the swap buffer since OSG will be handling that
       setAutoBufferSwap(false);
 

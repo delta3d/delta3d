@@ -175,8 +175,8 @@ namespace dtUtil
    //////////////////////////////////////////////////////////////////////////
 
    Log::Log(const std::string& name)
-      : 
-        mImpl(new LogImpl(name))      
+      :
+        mImpl(new LogImpl(name))
    {
    }
 

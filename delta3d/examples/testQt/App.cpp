@@ -45,10 +45,10 @@ App::~App()
       osgGraphWindow->SetQGLWidget(NULL);
    }
 }
-   
+
 //////////////////////////////////////////////////////////////////////////
 void App::Config()
-{      
+{
    Application::Config();
 
    connect(&mMainWindow, SIGNAL(LoadFile(const QString&)), this, SLOT(OnLoadFile(const QString&)));
@@ -72,5 +72,5 @@ void App::Config()
 void App::OnLoadFile(const QString& filename)
 {
    bool valid = mObject1->LoadFile(filename.toStdString());
-   emit FileLoaded(valid);  
+   emit FileLoaded(valid);
 }

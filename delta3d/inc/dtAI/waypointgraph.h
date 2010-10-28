@@ -182,9 +182,9 @@ namespace dtAI
       const WaypointCollection* GetRootParent(WaypointID id) const;
 
       /**
-       * This finds all leaf descendents underneath a given parent collection in the hierarchy.
+       * This finds all leaf descendants underneath a given parent collection in the hierarchy.
        */
-      void GetLeavesUnderParent(const WaypointCollection* parent, std::vector<const WaypointInterface*>& outLeaves) const;
+      void GetLeavesUnderParent(const WaypointCollection* parent, ConstWaypointArray& outLeaves) const;
 
       // adding and removing path segments
       void AddEdge(WaypointID idFrom, WaypointID idTo);

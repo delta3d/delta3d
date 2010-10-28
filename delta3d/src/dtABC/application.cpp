@@ -484,7 +484,7 @@ bool Application::ParseConfigFile(const std::string& file, ApplicationConfigHand
    if (foundPath.empty())
    {
       LOG_WARNING("Application: Can't find config file, " + file + ", using defaults instead.");
-      return false;        
+      return false;
    }
 
    dtUtil::XercesParser parser;
@@ -604,7 +604,7 @@ bool AppXMLApplicator::operator ()(const ApplicationConfigData& data, dtABC::App
 
    //set the default log level for all future Log instances
    dtUtil::Log::SetDefaultLogLevel(dtUtil::Log::GetLogLevelForString(data.GLOBAL_LOG_LEVEL));
-   
+
    //Also set the level for any existing Log instances
    dtUtil::Log::SetAllLogLevels(dtUtil::Log::GetLogLevelForString(data.GLOBAL_LOG_LEVEL));
 

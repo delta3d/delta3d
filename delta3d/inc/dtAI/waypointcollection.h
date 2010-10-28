@@ -106,6 +106,8 @@ namespace dtAI
       WaypointCollection* GetParent();
       const WaypointCollection* GetParent() const;
 
+      void GetChildren(std::vector<const dtAI::WaypointInterface*>& children) const;
+
       void Recalculate();
       
       void AddEdge(WaypointID sibling, const ChildEdge& edge);
