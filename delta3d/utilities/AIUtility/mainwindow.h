@@ -64,6 +64,9 @@ public:
    static const std::string PROJECT_CONTEXT_SETTING;
    static const std::string CURRENT_MAP_SETTING;
    static const std::string WINDOW_SETTINGS;
+   static const std::string PREFERENCES_SETTINGS;
+   static const std::string SELECTION_RENDERING_SETTING;
+   static const std::string RENDER_BACKFACES_SETTING;
 
    MainWindow(QWidget& centralWidget);
    ~MainWindow();

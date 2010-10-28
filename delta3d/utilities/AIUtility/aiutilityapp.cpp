@@ -95,7 +95,6 @@ void AIUtilityApp::Config()
 ////////////////////////////////////////////////////////////////////////////////
 void AIUtilityApp::SetAIPluginInterface(dtAI::AIPluginInterface* interface, bool selectionBasedRenderingHint)
 {
-
    // We can now setup the input component
    mInputComponent = new AIUtilityInputComponent();
    mInputComponent->SetAIPluginInterface(interface);
@@ -108,7 +107,6 @@ void AIUtilityApp::SetAIPluginInterface(dtAI::AIPluginInterface* interface, bool
    mAIInterface = interface;
 
    emit AIPluginInterfaceChanged(interface, selectionBasedRenderingHint);
-   OnRenderOnSelectChanged(selectionBasedRenderingHint);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
