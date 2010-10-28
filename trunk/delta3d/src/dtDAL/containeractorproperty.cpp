@@ -21,11 +21,12 @@
 
 #include <prefix/dtdalprefix.h>
 #include <dtDAL/containeractorproperty.h>
-#include <iostream>
 #include <dtDAL/datatype.h>
+#include <iostream>
+#include <dtUtil/stringutils.h>
 
-const char OPEN_CHAR = 1;
-const char CLOSE_CHAR = 2;
+const char OPEN_CHAR = '{';
+const char CLOSE_CHAR = '}';
 
 namespace dtDAL
 {
@@ -57,72 +58,13 @@ namespace dtDAL
       std::string data = value;
       std::string token;
 
-      for (int index = 0; index < (int)mProperties.size(); index++)
+      for (int index = 0; index < int(mProperties.size()); index++)
       {
-         token = TakeToken(data);
+         dtUtil::TakeToken(data, token, OPEN_CHAR, CLOSE_CHAR);
          mProperties[index]->FromString(token);
       }
 
       return true;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   std::string ContainerActorProperty::TakeToken(std::string& data)
-   {
-      std::string returnData;
-
-      // If the first character in the data string is not the opening character,
-      //  we will just assume the entire data string is the token.
-      if (data.c_str()[0] != OPEN_CHAR)
-      {
-         returnData = data;
-         data = "";
-      }
-
-      int depth = 0;
-      int dataIndex = 0;
-      while (data.length() > 1)
-      {
-         bool appendChar = true;
-
-         // Opening characters increase the depth counter.
-         if (data[dataIndex] == OPEN_CHAR)
-         {
-            depth++;
-
-            if (depth == 1)
-            {
-               appendChar = false;
-            }
-         }
-         // Closing characters decrease the depth counter.
-         else if (data[dataIndex] == CLOSE_CHAR)
-         {
-            depth--;
-
-            if (depth == 0)
-            {
-               appendChar = false;
-            }
-         }
-
-         // All other characters are added to the return buffer.
-         if (appendChar)
-         {
-            returnData.append(data.c_str(), 1);
-         }
-
-         // Remove the left most character from the data string.
-         data = &data[1];
-
-         // We are done once our depth returns to 0.
-         if (depth <= 0)
-         {
-            break;
-         }
-      }
-
-      return returnData;
    }
 
    ////////////////////////////////////////////////////////////////////////////////

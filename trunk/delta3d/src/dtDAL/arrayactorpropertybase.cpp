@@ -11,8 +11,8 @@ namespace dtDAL
 {
 
 
-const char OPEN_CHAR = 1;
-const char CLOSE_CHAR = 2;
+static const char OPEN_CHAR = '{';
+static const char CLOSE_CHAR = '}';
 
 ////////////////////////////////////////////////////////////////////////////////
 ArrayActorPropertyBase::ArrayActorPropertyBase(const std::string& name,
@@ -67,77 +67,25 @@ bool ArrayActorPropertyBase::FromString(const std::string& value)
 
    // First read the total size of the array.
    std::string token;
-   TakeToken(data, token);
+   bool result = dtUtil::TakeToken(data, token, OPEN_CHAR, CLOSE_CHAR);
 
-   // Make sure our array is the proper size.
-   const int arraySize = dtUtil::ToType<int>(token);
-   const int actualSize = Resize(arraySize);
-
-   for (int index = 0; index < arraySize && index < actualSize; index++)
+   if (result)
    {
-      SetIndex(index);
-      TakeToken(data, token);
-      mPropertyType->FromString(token);
-   }
+      // Make sure our array is the proper size.
+      const int arraySize = dtUtil::ToType<int>(token);
+      const int actualSize = Resize(arraySize);
 
-   return true;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void ArrayActorPropertyBase::TakeToken(std::string& data, std::string& outToken)
-{
-   outToken.clear();
-
-   // If the first character in the data string is not the opening character,
-   //  we will just assume the entire data string is the token.
-   if (data.c_str()[0] != OPEN_CHAR)
-   {
-      outToken = data;
-      data = "";
-   }
-
-   int depth = 0;
-   int dataIndex = 0;
-   while (data.length() > 1)
-   {
-      bool appendChar = true;
-
-      // Opening characters increase the depth counter.
-      if (data[dataIndex] == OPEN_CHAR)
+      for (int index = 0; result && index < arraySize && index < actualSize; index++)
       {
-         depth++;
-
-         if (depth == 1)
+         SetIndex(index);
+         result = dtUtil::TakeToken(data, token, OPEN_CHAR, CLOSE_CHAR);
+         if (result)
          {
-            appendChar = false;
+            result = mPropertyType->FromString(token);
          }
       }
-      // Closing characters decrease the depth counter.
-      else if (data[dataIndex] == CLOSE_CHAR)
-      {
-         depth--;
-
-         if (depth == 0)
-         {
-            appendChar = false;
-         }
-      }
-
-      // All other characters are added to the return buffer.
-      if (appendChar)
-      {
-         outToken.append(data.c_str(), 1);
-      }
-
-      // Remove the left most character from the data string.
-      data = &data[1];
-
-      // We are done once our depth returns to 0.
-      if (depth <= 0)
-      {
-         break;
-      }
    }
+   return result;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

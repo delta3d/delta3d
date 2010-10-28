@@ -133,26 +133,34 @@ namespace dtDAL
       return okay;
    }
 
+   static const char OPEN_CHAR = '{';
+   static const char CLOSE_CHAR = '}';
+
    ///////////////////////////////////////////////////////////////////////////////
    const std::string NamedArrayParameter::ToString() const
    {
       std::string toFill;
+
       NamedArrayParameter::ParameterList::const_iterator i = mParameterList.begin();
       NamedArrayParameter::ParameterList::const_iterator end = mParameterList.end();
       for (; i!= end; ++i)
       {
          NamedParameter& param = **i;
+         toFill.append(1, OPEN_CHAR);
          toFill.append(param.GetName());
-         toFill.append(" ");
+         toFill.append(1, CLOSE_CHAR);
+         toFill.append(1, OPEN_CHAR);
          toFill.append(dtUtil::ToString(param.GetDataType().GetName()));
-         toFill.append(" ");
+         toFill.append(1, CLOSE_CHAR);
          // output this boolean as "true" or "false" in the string
+         toFill.append(1, OPEN_CHAR);
          bool isList = param.IsList();
          toFill.append(isList ? "true": "false");
+         toFill.append(1, CLOSE_CHAR);
 
-         toFill.append(" ");
+         toFill.append(1, OPEN_CHAR);
          toFill.append(param.ToString());
-         toFill.append(1, '\n');
+         toFill.append(1, CLOSE_CHAR);
       }
       return toFill;
    }
@@ -160,33 +168,35 @@ namespace dtDAL
    ///////////////////////////////////////////////////////////////////////////////
    bool NamedArrayParameter::FromString(const std::string& value)
    {
-      std::istringstream iss(value);
+      bool result = true;
 
-      std::string paramName;
-      std::string typeString;
-      std::string isListString;
-      std::string paramValue;
+      std::string data = value;
 
-      // get values
-      std::getline(iss, paramName, ' ');
-      std::getline(iss, typeString, ' ');
-      std::getline(iss, isListString, ' ');
-      std::getline(iss, paramValue);
+      dtUtil::Trim(data);
 
-      dtDAL::DataType *type = dtDAL::DataType::GetValueForName(typeString);
 
-      if (type == NULL)
+      // First read the total size of the array.
+      std::string name, datatype, isList, item;
+
+
+      while (!data.empty())
       {
-         return false;
+         result = dtUtil::TakeToken(data, name, OPEN_CHAR, CLOSE_CHAR) &&
+                  dtUtil::TakeToken(data, datatype, OPEN_CHAR, CLOSE_CHAR) &&
+                  dtUtil::TakeToken(data, isList, OPEN_CHAR, CLOSE_CHAR) &&
+                  dtUtil::TakeToken(data, item, OPEN_CHAR, CLOSE_CHAR);
+         dtDAL::DataType* dt = dtDAL::DataType::GetValueForName(datatype);
+         if (result && dt != NULL)
+         {
+            dtCore::RefPtr<NamedParameter> newParameter =
+                     AddParameter(name, *dt, dtUtil::ToType<bool>(isList));
+
+            result = newParameter->FromString(item);
+         }
+         dtUtil::Trim(data);
       }
 
-      // isList
-      bool isList = isListString == "true";
-
-      NamedParameter* param = AddParameter(paramName, *type, isList);
-
-      param->FromString(paramValue);
-      return true;
+      return result;
    }
 
    ///////////////////////////////////////////////////////////////////////////////

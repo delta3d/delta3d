@@ -180,4 +180,74 @@ namespace dtUtil
       ss.str().swap(toFill);
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   bool TakeToken(std::string& data, std::string& outToken, char openChar, char closeChar)
+   {
+      bool result = true;
+      outToken.clear();
+
+      if (data.empty())
+      {
+         result = false;
+      }
+      // If the first character in the data string is not the opening character,
+      //  we will just assume the entire data string is the token.
+      else if (data.c_str()[0] != openChar)
+      {
+         outToken = data;
+         data = "";
+      }
+      else
+      {
+         int depth = 0;
+         int dataIndex = 0;
+         while (!data.empty())
+         {
+            bool appendChar = true;
+
+            // Opening characters increase the depth counter.
+            if (data[dataIndex] == openChar)
+            {
+               depth++;
+
+               if (depth == 1)
+               {
+                  appendChar = false;
+               }
+            }
+            // Closing characters decrease the depth counter.
+            else if (data[dataIndex] == closeChar)
+            {
+               depth--;
+
+               if (depth == 0)
+               {
+                  appendChar = false;
+               }
+            }
+
+            // All other characters are added to the return buffer.
+            if (appendChar)
+            {
+               outToken.append(data.c_str(), 1);
+            }
+
+            // Remove the left most character from the data string.
+            data = &data[1];
+
+            // We are done once our depth returns to 0.
+            if (depth <= 0)
+            {
+               break;
+            }
+         }
+         //  we ran out of string, so we stopped reading, which means the data is invalid.
+         if (depth > 0)
+         {
+            result = false;
+         }
+      }
+      return result;
+   }
+
 } // namespace dtUtil
