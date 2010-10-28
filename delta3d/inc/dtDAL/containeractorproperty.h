@@ -67,19 +67,6 @@ namespace dtDAL
       virtual bool FromString(const std::string& value);
 
       /**
-      * Reads the next token form the given string data.
-      * This will also remove the token from the data string
-      * and return you the token (with the open and close characters removed).
-      * The beginning of the data string must always begin with
-      * an opening character or this will cause problems.
-      *
-      * @param[in]  data  The string data.
-      *
-      * @return            The first token from the string data.
-      */
-      std::string TakeToken(std::string& data);
-
-      /**
       * @return a string version of the data.  This value can be used when calling SetStringValue.
       * @see #SetStringValue
       */

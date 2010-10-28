@@ -110,65 +110,69 @@ namespace dtDAL
       return okay;
    }
 
+   static const char OPEN_CHAR = '{';
+   static const char CLOSE_CHAR = '}';
+
    ///////////////////////////////////////////////////////////////////////////////
    const std::string NamedGroupParameter::ToString() const
    {
-      std::string toFill;
-      NamedGroupParameter::ParameterList::const_iterator i = mParameterList.begin();
-      NamedGroupParameter::ParameterList::const_iterator end = mParameterList.end();
-      for (; i!= end; ++i)
-      {
-         NamedParameter& param = *i->second;
-         toFill.append(param.GetName());
-         toFill.append(" ");
-         toFill.append(dtUtil::ToString(param.GetDataType().GetName()));
-         toFill.append(" ");
-         // output this boolean as "true" or "false" in the string
-         bool isList = param.IsList();
-         toFill.append(isList ? "true": "false");
+       std::string toFill;
 
-         toFill.append(" ");
-         toFill.append(param.ToString());
-         toFill.append(1, '\n');
-      }
-      return toFill;
+       NamedGroupParameter::ParameterList::const_iterator i = mParameterList.begin();
+       NamedGroupParameter::ParameterList::const_iterator end = mParameterList.end();
+       for (; i!= end; ++i)
+       {
+          NamedParameter& param = *i->second;
+          toFill.append(1, OPEN_CHAR);
+          toFill.append(param.GetName());
+          toFill.append(1, CLOSE_CHAR);
+          toFill.append(1, OPEN_CHAR);
+          toFill.append(dtUtil::ToString(param.GetDataType().GetName()));
+          toFill.append(1, CLOSE_CHAR);
+          // output this boolean as "true" or "false" in the string
+          toFill.append(1, OPEN_CHAR);
+          bool isList = param.IsList();
+          toFill.append(isList ? "true": "false");
+          toFill.append(1, CLOSE_CHAR);
+
+          toFill.append(1, OPEN_CHAR);
+          toFill.append(param.ToString());
+          toFill.append(1, CLOSE_CHAR);
+       }
+       return toFill;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    bool NamedGroupParameter::FromString(const std::string& value)
    {
-      std::istringstream iss(value);
+      bool result = true;
 
-      std::string paramName;
-      std::string typeString;
-      std::string isListString;
-      std::string paramValue;
+      std::string data = value;
+      dtUtil::Trim(data);
 
-      // get values
-      std::getline(iss, paramName, ' ');
-      std::getline(iss, typeString, ' ');
-      std::getline(iss, isListString, ' ');
-      std::getline(iss, paramValue);
 
-      dtDAL::DataType *type = dtDAL::DataType::GetValueForName(typeString);
+      // First read the total size of the array.
+      std::string name, datatype, isList, item;
 
-      if (type == NULL)
-         return false;
 
-      // isList
-      bool isList = isListString == "true";
+      while (!data.empty())
+      {
+         result = dtUtil::TakeToken(data, name, OPEN_CHAR, CLOSE_CHAR) &&
+                  dtUtil::TakeToken(data, datatype, OPEN_CHAR, CLOSE_CHAR) &&
+                  dtUtil::TakeToken(data, isList, OPEN_CHAR, CLOSE_CHAR) &&
+                  dtUtil::TakeToken(data, item, OPEN_CHAR, CLOSE_CHAR);
+         dtDAL::DataType* dt = dtDAL::DataType::GetValueForName(datatype);
+         if (result && dt != NULL)
+         {
+            dtCore::RefPtr<NamedParameter> newParameter =
+                     AddParameter(name, *dt, dtUtil::ToType<bool>(isList));
 
-      // try and retrieve the parameter
-      dtCore::RefPtr<NamedParameter> param = GetParameter(paramName);
-
-      if (param == NULL)
-      { // add it if it does not exist
-         param = AddParameter(paramName, *type, isList);
+            result = newParameter->FromString(item);
+         }
+         dtUtil::Trim(data);
       }
 
-      param->FromString(paramValue);
-      return true;
-
+      return result;
    }
 
    ///////////////////////////////////////////////////////////////////////////////

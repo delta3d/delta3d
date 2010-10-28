@@ -241,6 +241,21 @@ namespace dtUtil
    /// @return a string with text as an int value padded to the size specified.
    void DT_UTIL_EXPORT MakeIndexString(unsigned index, std::string& toFill, unsigned paddedLength = 4);
 
+   /**
+    * Reads the next token form the given string data.
+    * This will also remove the token from the data string
+    * and return you the token (with the open and close characters removed).
+    * The beginning of the data string must always begin with
+    * an opening character or this will cause problems.
+    *
+    * @param[in]  data  The string data.
+    * @param[out] outToken  The first token from the string data.
+    * @param[in]  openChar  The character that starts the token
+    * @param[in]  closeChar  The character that ends the token
+    * @return true if a token was found.
+    */
+   bool TakeToken(std::string& data, std::string& outToken, char openChar, char closeChar);
+
 }
 
 #endif // DELTA_STRING_UTILS_INC

@@ -64,16 +64,16 @@ namespace dtDAL
    public:
 
       /**
-      * Creates a new array actor property.
-      * @param[in]  name            The name used to access this property.
-      * @param[in]  label           A more human readable name to use when displaying the property.
-      * @param[in]  desc            A longer description of the property.
-      * @param[in]  propertyType    The property type to use in each index.
-      * @param[in]  groupName       The property grouping to use when editing properties visually.
-      * @param[in]  editorType      A string specifying what type of editor to use for the data in this group.  These
-      *                             will specify a UI to use in STAGE.
-      * @param[in]  readOnly        True if this property should not be editable.  Defaults to false.
-      */
+       * Creates a new array actor property.
+       * @param[in]  name            The name used to access this property.
+       * @param[in]  label           A more human readable name to use when displaying the property.
+       * @param[in]  desc            A longer description of the property.
+       * @param[in]  propertyType    The property type to use in each index.
+       * @param[in]  groupName       The property grouping to use when editing properties visually.
+       * @param[in]  editorType      A string specifying what type of editor to use for the data in this group.  These
+       *                             will specify a UI to use in STAGE.
+       * @param[in]  readOnly        True if this property should not be editable.  Defaults to false.
+       */
       ArrayActorPropertyBase(const std::string& name,
                               const std::string& label,
                               const std::string& desc,
@@ -99,122 +99,110 @@ namespace dtDAL
       virtual const std::string ToString() const;
 
       /**
-      * Reads the next token form the given string data.
-      * This will also remove the token from the data string
-      * and return you the token (with the open and close characters removed).
-      * The beginning of the data string must always begin with
-      * an opening character or this will cause problems.
-      *
-      * @param[in]  data  The string data.
-      * @param[out] outToken  The first token from the string data.
-      */
-      static void TakeToken(std::string& data, std::string& outToken);
-
-      /**
        * This is overridden to make handle the fact that the get method returns a refptr.
        * @param otherProp The property to copy from.
        */
       virtual void CopyFrom(const ActorProperty& otherProp);
 
       /**
-      * This gets the ActorProperty used to access the values in this array,
-      * indexed by the last call to SetIndex().
-      */
+       * This gets the ActorProperty used to access the values in this array,
+       * indexed by the last call to SetIndex().
+       */
       virtual ActorProperty* GetArrayProperty();
 
       /**
-      * This gets the const ActorProperty used to access the values in this array,
-      * indexed by the last call to SetIndex().
-      */
+       * This gets the const ActorProperty used to access the values in this array,
+       * indexed by the last call to SetIndex().
+       */
       virtual const ActorProperty* GetArrayProperty() const;
 
       /// Set the array property after creation
       void SetArrayProperty(ActorProperty& property);
 
       /**
-      * Sets the minimum size of the array.
-      */
+       * Sets the minimum size of the array.
+       */
       virtual void SetMinArraySize(int minSize);
       virtual int GetMinArraySize() const;
 
       /**
-      * Sets the maximum size of the array.
-      */
+       * Sets the maximum size of the array.
+       */
       virtual void SetMaxArraySize(int maxSize);
       virtual int GetMaxArraySize() const;
 
-      /// Attemps to resize the array.  Returns the new size respecting min and max size.
+      /// Attempts to resize the array.  Returns the new size respecting min and max size.
       virtual int Resize(unsigned newSize);
 
       /**
-      * Gets whether or not this array can be re-ordered.
-      */
+       * Gets whether or not this array can be re-ordered.
+       */
       virtual bool CanReorder() const;
 
       /**
-      * Gets the total number of ActorProperty stored in the array.
-      */
+       * Gets the total number of ActorProperty stored in the array.
+       */
       virtual int GetArraySize() const = 0;
 
 
       /**
-      * Sets the current active index, indicating which of the values
-      * in the array will be accessed. [0..GetArraySize()-1]
-      * @see GetArrayProperty()
-      */
+       * Sets the current active index, indicating which of the values
+       * in the array will be accessed. [0..GetArraySize()-1]
+       * @see GetArrayProperty()
+       */
       virtual void SetIndex(int index) const = 0;
 
       /**
-      * Inserts a new index into the array.
-      *
-      * @param[in]  index  The index to insert at.
-      *
-      * @return     True if an element was inserted properly.
-      */
+       * Inserts a new index into the array.
+       *
+       * @param[in]  index  The index to insert at.
+       *
+       * @return     True if an element was inserted properly.
+       */
       virtual bool Insert(int index) = 0;
 
       /**
-      * Adds a new item to the end of the array.
-      *
-      * @return     True if an element was inserted properly.
-      */
+       * Adds a new item to the end of the array.
+       *
+       * @return     True if an element was inserted properly.
+       */
       virtual bool PushBack() { return Insert(GetArraySize()); }
 
       /**
-      * Removes the last item from the array
-      *
-      * @return     True if an element removed properly.
-      */
+       * Removes the last item from the array
+       *
+       * @return     True if an element removed properly.
+       */
       virtual bool PopBack() { return Remove(GetArraySize() - 1); }
 
       /**
-      * Removes an index from the array.
-      *
-      * @param[in]  index  The index to remove from.
-      *
-      * @return     True if an element was removed properly.
-      */
+       * Removes an index from the array.
+       *
+       * @param[in]  index  The index to remove from.
+       *
+       * @return     True if an element was removed properly.
+       */
       virtual bool Remove(int index) = 0;
 
       /**
-      * Removes all the stored ActorProperty stored in the array.
-      */
+       * Removes all the stored ActorProperty stored in the array.
+       */
       virtual void Clear() = 0;
 
       /**
-      * Swaps the contents of the current index with the given.
-      *
-      * @param[in]  first   The first index to swap.
-      * @param[in]  second  The second index to swap.
-      */
+       * Swaps the contents of the current index with the given.
+       *
+       * @param[in]  first   The first index to swap.
+       * @param[in]  second  The second index to swap.
+       */
       virtual void Swap(int first, int second) = 0;
 
       /**
-      * Copies the contents of the current index with the given.
-      *
-      * @param[in]  src  The source index to copy from.
-      * @param[in]  dst  The destination index to copy to.
-      */
+       * Copies the contents of the current index with the given.
+       *
+       * @param[in]  src  The source index to copy from.
+       * @param[in]  dst  The destination index to copy to.
+       */
       virtual void Copy(int src, int dst) = 0;
 
    protected:

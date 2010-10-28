@@ -82,7 +82,7 @@ class NamedParameterTests : public CPPUNIT_NS::TestFixture
       CPPUNIT_TEST(TestNamedGroupParameterCopy);
       CPPUNIT_TEST(TestNamedGroupParameterStream);
       ///This test currently fails and is not being run.
-      //CPPUNIT_TEST(TestNamedGroupParameterString);
+      CPPUNIT_TEST(TestNamedGroupParameterString);
       CPPUNIT_TEST(TestNamedGroupParameterWithProperty);
 
       CPPUNIT_TEST(TestNamedVec2Parameters);
