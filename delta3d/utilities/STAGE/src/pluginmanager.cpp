@@ -62,7 +62,6 @@ namespace dtEditQt
       DirectoryContents::const_iterator i;
       for(i = files.begin(); i != files.end(); ++i)
       {
-
          std::string fileName = *i;
 
          try
@@ -71,7 +70,7 @@ namespace dtEditQt
             const std::string basePluginName = LibrarySharingManager::GetPlatformIndependentLibraryName(fileName);
             PluginFactory* factory = LoadPluginFactory(basePluginName);
             std::string name = factory->GetName();
-
+            
             // check if a plugin with this name already exists
             if(mActivePlugins.find(name) != mActivePlugins.end())
             {
@@ -86,16 +85,15 @@ namespace dtEditQt
             // factory exists, but plugin is not instantiated yet
             mActivePlugins[name] = NULL;
 
-
             // start system plugins immediately
             if(factory->IsSystemPlugin())
             {
                StartPlugin(name, false);
             }
          }
-         catch(Exception&)
+         catch(Exception& e)
          {
-            LOG_ERROR("Can't load plugin " + (*i));
+            LOG_ERROR("Can't load plugin " + (*i) + " because " + e.ToString());
          }
       }
    }
