@@ -1806,21 +1806,37 @@ void NamedParameterTests::TestNamedArrayParameterWithProperty()
 {
    try
    {
-      //TODO Arrays are typed and not necessarily recursive, so this test won't work as is.
-//      dtCore::RefPtr<dtDAL::NamedArrayParameter> arrayParam = CreateNamedArrayParameter();
-//      TestNamedArrayParameter(*arrayParam);
-//
-//      // Assign to a array property then read the value back out.
-//      //dtDAL::GroupActorProperty* arrayProp = dynamic_cast<dtDAL::GroupActorProperty*>(mExampleActor->GetProperty("TestGroup"));
-//      dtDAL::ActorProperty* prop = mExampleActor->GetProperty("TestArray");
-//      CPPUNIT_ASSERT(prop != NULL);
-//
-//      arrayParam->ApplyValueToProperty(*prop);
-//
-//      dtCore::RefPtr<dtDAL::NamedArrayParameter> arrayCopy = new dtDAL::NamedArrayParameter("testCopy");
-//      arrayCopy->SetFromProperty(*prop);
-//
-//      TestNamedArrayParameter(*arrayCopy);
+      dtUtil::RefString testName("joe");
+      dtCore::RefPtr<dtDAL::NamedArrayParameter> arrayParam = new dtDAL::NamedArrayParameter(testName);
+      arrayParam->AddParameter(*new dtDAL::NamedStringParameter(testName, "hi"));
+      arrayParam->AddParameter(*new dtDAL::NamedStringParameter(testName, "Mom"));
+      arrayParam->AddParameter(*new dtDAL::NamedStringParameter(testName, "hi"));
+      arrayParam->AddParameter(*new dtDAL::NamedStringParameter(testName, "Dad"));
+
+      // Assign to a array property then read the value back out.
+      //dtDAL::GroupActorProperty* arrayProp = dynamic_cast<dtDAL::GroupActorProperty*>(mExampleActor->GetProperty("TestGroup"));
+      dtDAL::ActorProperty* prop = mExampleActor->GetProperty("TestStringArray");
+      CPPUNIT_ASSERT(prop != NULL);
+
+      arrayParam->ApplyValueToProperty(*prop);
+
+      dtCore::RefPtr<dtDAL::NamedArrayParameter> arrayCopy = new dtDAL::NamedArrayParameter(testName);
+      arrayCopy->SetFromProperty(*prop);
+
+      CPPUNIT_ASSERT_EQUAL(arrayParam->GetSize(), arrayCopy->GetSize());
+
+      for (unsigned i = 0; i < arrayCopy->GetSize(); ++i)
+      {
+         dtDAL::NamedStringParameter* np = dynamic_cast<dtDAL::NamedStringParameter*>(arrayParam->GetParameter(i));
+         dtDAL::NamedStringParameter* npCopy = dynamic_cast<dtDAL::NamedStringParameter*>(arrayCopy->GetParameter(i));
+
+         CPPUNIT_ASSERT(np != NULL);
+         CPPUNIT_ASSERT(npCopy != NULL);
+
+         CPPUNIT_ASSERT_EQUAL(np->GetDataType(), npCopy->GetDataType());
+         CPPUNIT_ASSERT_EQUAL(np->GetValue(), npCopy->GetValue());
+      }
+
    }
    catch (const dtUtil::Exception& e)
    {
