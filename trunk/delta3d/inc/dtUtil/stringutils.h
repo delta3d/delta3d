@@ -254,7 +254,7 @@ namespace dtUtil
     * @param[in]  closeChar  The character that ends the token
     * @return true if a token was found.
     */
-   bool TakeToken(std::string& data, std::string& outToken, char openChar, char closeChar);
+   bool DT_UTIL_EXPORT TakeToken(std::string& data, std::string& outToken, char openChar, char closeChar);
 
 }
 
