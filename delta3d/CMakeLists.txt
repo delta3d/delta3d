@@ -211,16 +211,16 @@ IF(APPLE)
    SET(CMAKE_C_FLAGS "-pipe -Wnewline-eof")
 
    if (NOT CMAKE_OSX_ARCHITECTURES)
-     set(CMAKE_OSX_ARCHITECTURES "i386")
+     set(CMAKE_OSX_ARCHITECTURES "i386" CACHE STRING "Build architectures for OSX" FORCE)
    endif()
 
    if (NOT CMAKE_OSX_SYSROOT)
-     set(CMAKE_OSX_SYSROOT "/Developer/SDKs/MacOSX10.5.sdk")
+     set(CMAKE_OSX_SYSROOT "/Developer/SDKs/MacOSX10.5.sdk" CACHE STRING "Build SDK root" FORCE )
    endif()
 
    if (NOT CMAKE_OSX_DEPLOYMENT_TARGET)
      # use 10.5 because osg atomics won't build on less. 
-     set(CMAKE_OSX_DEPLOYMENT_TARGET "10.5")
+     set(CMAKE_OSX_DEPLOYMENT_TARGET "10.5" CACHE STRING "Build SDK root" FORCE)
    endif()
 
    SET(CMAKE_SHARED_LINKER_FLAGS "-Wl,-single_module -compatibility_version 3 -current_version 3" )
