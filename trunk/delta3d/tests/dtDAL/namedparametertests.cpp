@@ -38,6 +38,8 @@
 #include <dtDAL/actoractorproperty.h>
 #include <dtDAL/datatype.h>
 #include <dtDAL/namedgroupparameter.h>
+#include <dtDAL/namedarrayparameter.h>
+#include <dtDAL/namedpropertycontainerparameter.h>
 #include <dtDAL/resourcedescriptor.h>
 
 #include <dtGame/gamemanager.h>
@@ -79,11 +81,17 @@ class NamedParameterTests : public CPPUNIT_NS::TestFixture
       CPPUNIT_TEST(TestNamedFloatParameter);
       CPPUNIT_TEST(TestNamedDoubleParameter);
 
+      CPPUNIT_TEST(TestNamedPropertyContainerParameterWithProperty);
+
       CPPUNIT_TEST(TestNamedGroupParameterCopy);
       CPPUNIT_TEST(TestNamedGroupParameterStream);
-      ///This test currently fails and is not being run.
       CPPUNIT_TEST(TestNamedGroupParameterString);
       CPPUNIT_TEST(TestNamedGroupParameterWithProperty);
+
+      CPPUNIT_TEST(TestNamedArrayParameterCopy);
+      CPPUNIT_TEST(TestNamedArrayParameterStream);
+      CPPUNIT_TEST(TestNamedArrayParameterString);
+      CPPUNIT_TEST(TestNamedArrayParameterWithProperty);
 
       CPPUNIT_TEST(TestNamedVec2Parameters);
       CPPUNIT_TEST(TestNamedVec3Parameters);
@@ -116,10 +124,17 @@ public:
    void TestNamedFloatParameter();
    void TestNamedDoubleParameter();
 
+   void TestNamedPropertyContainerParameterWithProperty();
+
    void TestNamedGroupParameterCopy();
    void TestNamedGroupParameterStream();
    void TestNamedGroupParameterString();
    void TestNamedGroupParameterWithProperty();
+
+   void TestNamedArrayParameterCopy();
+   void TestNamedArrayParameterStream();
+   void TestNamedArrayParameterString();
+   void TestNamedArrayParameterWithProperty();
 
    void TestNamedVec2Parameters();
    void TestNamedVec3Parameters();
@@ -677,10 +692,12 @@ private:
    static const char* mTestActorLibrary;
    dtCore::RefPtr<dtGame::GameManager> mManager;
 
-   dtCore::RefPtr<dtDAL::NamedGroupParameter> CreateNamedGroupParameter();
+   dtCore::RefPtr<dtDAL::NamedGroupParameter> CreateNamedGroupParameter(bool createPropCont = false);
+   dtCore::RefPtr<dtDAL::NamedArrayParameter> CreateNamedArrayParameter();
    dtCore::RefPtr<dtDAL::ActorProxy> mExampleActor;
 
    void TestNamedGroupParameter(dtDAL::NamedGroupParameter& groupParam);
+   void TestNamedArrayParameter(dtDAL::NamedArrayParameter& arrarParam);
 };
 
 
@@ -1512,9 +1529,43 @@ void NamedParameterTests::TestNamedActorParameter()
 //   }
 }
 
-dtCore::RefPtr<dtDAL::NamedGroupParameter> NamedParameterTests::CreateNamedGroupParameter()
+void NamedParameterTests::TestNamedPropertyContainerParameterWithProperty()
 {
-   dtCore::RefPtr<dtDAL::NamedGroupParameter> groupParam = new dtDAL::NamedGroupParameter("test");
+   try
+   {
+//      dtCore::RefPtr<dtDAL::NamedGroupParameter> groupParam = CreateNamedGroupParameter();
+//      TestNamedGroupParameter(*groupParam);
+//
+//      // Assign to a group property then read the value back out.
+//      //dtDAL::GroupActorProperty* groupProp = dynamic_cast<dtDAL::GroupActorProperty*>(mExampleActor->GetProperty("TestGroup"));
+//      dtDAL::ActorProperty* prop = mExampleActor->GetProperty("TestGroup");
+//      CPPUNIT_ASSERT(prop != NULL);
+//
+//      groupParam->ApplyValueToProperty(*prop);
+//
+//      dtCore::RefPtr<dtDAL::NamedGroupParameter> groupCopy = new dtDAL::NamedGroupParameter("testCopy");
+//      groupCopy->SetFromProperty(*prop);
+//
+//      TestNamedGroupParameter(*groupCopy);
+   }
+   catch (const dtUtil::Exception& e)
+   {
+      CPPUNIT_FAIL(e.What());
+   }
+
+}
+
+dtCore::RefPtr<dtDAL::NamedGroupParameter> NamedParameterTests::CreateNamedGroupParameter(bool createPropCont)
+{
+   dtCore::RefPtr<dtDAL::NamedGroupParameter> groupParam;
+   if (createPropCont)
+   {
+      groupParam = new dtDAL::NamedPropertyContainerParameter("test");
+   }
+   else
+   {
+      groupParam = new dtDAL::NamedGroupParameter("test");
+   }
 
    groupParam->AddParameter(*new dtDAL::NamedStringParameter("test1"));
    groupParam->AddParameter("test2", dtDAL::DataType::DOUBLE);
@@ -1650,7 +1701,6 @@ void NamedParameterTests::TestNamedGroupParameterStream()
 
 void NamedParameterTests::TestNamedGroupParameterString()
 {
-   ///This test currently fails and is not being run.
    try
    {
       dtCore::RefPtr<dtDAL::NamedGroupParameter> groupParam = CreateNamedGroupParameter();
@@ -1664,6 +1714,159 @@ void NamedParameterTests::TestNamedGroupParameterString()
       groupCopy->FromString(s);
 
       TestNamedGroupParameter(*groupCopy);
+   }
+   catch (const dtUtil::Exception& e)
+   {
+      CPPUNIT_FAIL(e.What());
+   }
+
+}
+dtCore::RefPtr<dtDAL::NamedArrayParameter> NamedParameterTests::CreateNamedArrayParameter()
+{
+   dtCore::RefPtr<dtDAL::NamedArrayParameter> arrayParam;
+   arrayParam = new dtDAL::NamedArrayParameter("test");
+
+   arrayParam->AddParameter(*new dtDAL::NamedStringParameter("test1"));
+   arrayParam->AddParameter("test2", dtDAL::DataType::DOUBLE);
+   arrayParam->AddParameter(*new dtDAL::NamedFloatParameter("test3"));
+   arrayParam->AddParameter("test4", dtDAL::DataType::INT);
+
+   CPPUNIT_ASSERT_MESSAGE("Should have received 4 in list for group param messages" , arrayParam->GetSize() == 4);
+
+   dtCore::RefPtr<dtDAL::NamedArrayParameter> internalArray =
+      static_cast<dtDAL::NamedArrayParameter*>(arrayParam->AddParameter("test5", dtDAL::DataType::ARRAY));
+
+   internalArray->AddParameter(*new dtDAL::NamedStringParameter("test1"));
+   internalArray->AddParameter(*new dtDAL::NamedDoubleParameter("test9"));
+   return arrayParam;
+}
+
+void NamedParameterTests::TestNamedArrayParameter(dtDAL::NamedArrayParameter& arrayParam)
+{
+   CPPUNIT_ASSERT_EQUAL(size_t(5), arrayParam.GetSize());
+
+   CPPUNIT_ASSERT(arrayParam.GetParameter(0) != NULL);
+   CPPUNIT_ASSERT(arrayParam.GetParameter(0)->GetDataType() == dtDAL::DataType::STRING);
+
+   CPPUNIT_ASSERT(arrayParam.GetParameter(1) != NULL);
+   CPPUNIT_ASSERT(arrayParam.GetParameter(1)->GetDataType() == dtDAL::DataType::DOUBLE);
+
+   CPPUNIT_ASSERT(arrayParam.GetParameter(2) != NULL);
+   CPPUNIT_ASSERT(arrayParam.GetParameter(2)->GetDataType() == dtDAL::DataType::FLOAT);
+
+   CPPUNIT_ASSERT(arrayParam.GetParameter(3) != NULL);
+   CPPUNIT_ASSERT(arrayParam.GetParameter(3)->GetDataType() == dtDAL::DataType::INT);
+
+   CPPUNIT_ASSERT(arrayParam.GetParameter(4) != NULL);
+   CPPUNIT_ASSERT(arrayParam.GetParameter(4)->GetDataType() == dtDAL::DataType::ARRAY);
+
+   dtCore::RefPtr<dtDAL::NamedArrayParameter> internalArray =
+      dynamic_cast<dtDAL::NamedArrayParameter*>(arrayParam.GetParameter(4));
+
+   CPPUNIT_ASSERT(internalArray->GetParameter(0) != NULL);
+   CPPUNIT_ASSERT(internalArray->GetParameter(0)->GetDataType() == dtDAL::DataType::STRING);
+
+   CPPUNIT_ASSERT(internalArray->GetParameter(1) != NULL);
+   CPPUNIT_ASSERT(internalArray->GetParameter(1)->GetDataType() == dtDAL::DataType::DOUBLE);
+
+
+   CPPUNIT_ASSERT(arrayParam.GetParameter(51) == NULL);
+
+   //Now test getting parameters as a const group
+   const dtDAL::NamedArrayParameter& amp = arrayParam;
+
+   CPPUNIT_ASSERT(amp.GetParameter(0) != NULL);
+   CPPUNIT_ASSERT(amp.GetParameter(0)->GetDataType() == dtDAL::DataType::STRING);
+
+   CPPUNIT_ASSERT(amp.GetParameter(21) == NULL);
+
+}
+
+void NamedParameterTests::TestNamedArrayParameterCopy()
+{
+   try
+   {
+      dtCore::RefPtr<dtDAL::NamedArrayParameter> arrayParam = CreateNamedArrayParameter();
+      TestNamedArrayParameter(*arrayParam);
+      dtCore::RefPtr<dtDAL::NamedArrayParameter> arrayCopy = new dtDAL::NamedArrayParameter("testCopy");
+      arrayCopy->CopyFrom(*arrayParam);
+      TestNamedArrayParameter(*arrayCopy);
+   }
+   catch (const dtUtil::Exception& e)
+   {
+      CPPUNIT_FAIL(e.What());
+   }
+//   catch (const std::exception& e)
+//   {
+//      CPPUNIT_FAIL(e.what());
+//   }
+}
+
+void NamedParameterTests::TestNamedArrayParameterWithProperty()
+{
+   try
+   {
+      //TODO Arrays are typed and not necessarily recursive, so this test won't work as is.
+//      dtCore::RefPtr<dtDAL::NamedArrayParameter> arrayParam = CreateNamedArrayParameter();
+//      TestNamedArrayParameter(*arrayParam);
+//
+//      // Assign to a array property then read the value back out.
+//      //dtDAL::GroupActorProperty* arrayProp = dynamic_cast<dtDAL::GroupActorProperty*>(mExampleActor->GetProperty("TestGroup"));
+//      dtDAL::ActorProperty* prop = mExampleActor->GetProperty("TestArray");
+//      CPPUNIT_ASSERT(prop != NULL);
+//
+//      arrayParam->ApplyValueToProperty(*prop);
+//
+//      dtCore::RefPtr<dtDAL::NamedArrayParameter> arrayCopy = new dtDAL::NamedArrayParameter("testCopy");
+//      arrayCopy->SetFromProperty(*prop);
+//
+//      TestNamedArrayParameter(*arrayCopy);
+   }
+   catch (const dtUtil::Exception& e)
+   {
+      CPPUNIT_FAIL(e.What());
+   }
+
+}
+
+void NamedParameterTests::TestNamedArrayParameterStream()
+{
+   try
+   {
+      dtCore::RefPtr<dtDAL::NamedArrayParameter> arrayParam = CreateNamedArrayParameter();
+      TestNamedArrayParameter(*arrayParam);
+
+      dtUtil::DataStream ds;
+
+      arrayParam->ToDataStream(ds);
+
+      dtCore::RefPtr<dtDAL::NamedArrayParameter> arrayCopy = new dtDAL::NamedArrayParameter("testCopy");
+      arrayCopy->FromDataStream(ds);
+
+      TestNamedArrayParameter(*arrayCopy);
+   }
+   catch (const dtUtil::Exception& e)
+   {
+      CPPUNIT_FAIL(e.What());
+   }
+
+}
+
+void NamedParameterTests::TestNamedArrayParameterString()
+{
+   try
+   {
+      dtCore::RefPtr<dtDAL::NamedArrayParameter> arrayParam = CreateNamedArrayParameter();
+      TestNamedArrayParameter(*arrayParam);
+
+      std::string s;
+
+      s = arrayParam->ToString();
+
+      dtCore::RefPtr<dtDAL::NamedArrayParameter> arrayCopy = new dtDAL::NamedArrayParameter("testCopy");
+      arrayCopy->FromString(s);
+
+      TestNamedArrayParameter(*arrayCopy);
    }
    catch (const dtUtil::Exception& e)
    {
