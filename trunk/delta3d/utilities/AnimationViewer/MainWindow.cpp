@@ -62,6 +62,8 @@ MainWindow::MainWindow()
   , mCurrentAttachment("")
   , mAnimListWidget(NULL)
   , mMeshListWidget(NULL)
+  , mSubMorphTargetListWidget(NULL)
+  , mSubMorphAnimationListWidget(NULL)
   , mMaterialModel(NULL)
   , mMaterialView(NULL)
   , mPoseDock(NULL)
@@ -109,7 +111,22 @@ MainWindow::MainWindow()
    }
 
    connect(mSubMorphTargetListWidget, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(OnSubMorphChanged(QTableWidgetItem*)));
-   connect(mSubMorphTargetListWidget, SIGNAL(itemDoubleClicked(QTableWidgetItem*)), this, SLOT(OnSubMorphPlay(QTableWidgetItem*)));
+
+
+   mSubMorphAnimationListWidget = new AnimationTableWidget(this);
+   mSubMorphAnimationListWidget->setColumnCount(5);
+   mSubMorphAnimationListWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
+
+   connect(mSubMorphAnimationListWidget, SIGNAL(itemClicked(QTableWidgetItem*)), this, SLOT(OnMorphAnimationClicked(QTableWidgetItem*)));
+   connect(mSubMorphAnimationListWidget, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(OnMorphItemChanged(QTableWidgetItem*)));
+   connect(mSubMorphAnimationListWidget, SIGNAL(itemDoubleClicked(QTableWidgetItem*)), this, SLOT(OnMorphItemDoubleClicked(QTableWidgetItem*)));
+
+   {
+      QStringList headers;
+      headers << "Name" << "Weight" << "Delay In" << "Delay Out" << "Mixer Blend";
+      mSubMorphAnimationListWidget->setHorizontalHeaderLabels(headers);
+   }
+
 
    CreateActions();
    CreateMenus();
@@ -366,6 +383,54 @@ void MainWindow::OnNewAnimation(unsigned int id, const QString& animationName,
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void MainWindow::OnNewMorphAnimation(unsigned int id, const QString& animationName,
+                                unsigned int trackCount, unsigned int keyframes,
+                                float duration)
+{
+   mSubMorphAnimationListWidget->insertRow(mSubMorphAnimationListWidget->rowCount());
+
+   { //name
+      QTableWidgetItem* item = new QTableWidgetItem(animationName);
+      item->setCheckState(Qt::Unchecked);
+      item->setData(Qt::UserRole, id);
+      item->setData(Qt::UserRole+1, trackCount);
+      item->setData(Qt::UserRole+2, keyframes);
+      item->setData(Qt::UserRole+3, duration);
+      item->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+      mSubMorphAnimationListWidget->setItem(id, 0, item);
+   }
+
+   { //weight
+      QTableWidgetItem* item = new QTableWidgetItem(tr("1.0"));
+      item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled);
+      mSubMorphAnimationListWidget->setItem( id, 1, item );
+   }
+
+   { //delay in
+      QTableWidgetItem* item = new QTableWidgetItem(tr("0.5"));
+      item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled);
+      mSubMorphAnimationListWidget->setItem(id, 2, item);
+   }
+
+   { //delay out
+      QTableWidgetItem* item = new QTableWidgetItem(tr("0.5"));
+      item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled);
+      mSubMorphAnimationListWidget->setItem(id, 3, item);
+   }
+
+   { //mixer blend
+      QProgressBar* mixerBlend = new QProgressBar;
+      mixerBlend->setMaximum(100);
+      mixerBlend->setMinimum(0);
+      mixerBlend->setValue(0);
+
+      mSubMorphAnimationListWidget->setCellWidget(id, 4, mixerBlend);
+   }
+
+   mSubMorphAnimationListWidget->resizeColumnToContents(0);
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void MainWindow::OnNewMesh(int meshID, const QString& meshName, const std::vector<std::string>& boneNames)
 {
    QListWidgetItem *meshItem = new QListWidgetItem();
@@ -574,14 +639,13 @@ void MainWindow::OnNewMaterial(int matID, const QString& name,
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void MainWindow::OnBlendUpdate(const std::vector<float>& weightList)
+void MainWindow::OnBlendUpdate(const std::vector<float>& animWeightList, const std::vector<float>& morphWeightList)
 {
-   if (weightList.size() != (size_t)mAnimListWidget->rowCount()) { return; }
-
-   for (size_t rowIndex = 0; rowIndex < weightList.size(); ++rowIndex)
+   // Animation Progress bars.
+   for (size_t rowIndex = 0; rowIndex < animWeightList.size(); ++rowIndex)
    {
       // Show progress as a whole number
-      float newValue = weightList[rowIndex] * 100.0f;
+      float newValue = animWeightList[rowIndex] * 100.0f;
 
       QProgressBar* meter = (QProgressBar*)mAnimListWidget->cellWidget(rowIndex, 5);
       meter->setValue(newValue);
@@ -591,7 +655,7 @@ void MainWindow::OnBlendUpdate(const std::vector<float>& weightList)
          // Update the weight display only when the box is checked
          // This will allow a user to manually enter a weight while unchecked
          disconnect(mAnimListWidget, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(OnItemChanged(QTableWidgetItem*)));
-         mAnimListWidget->item(rowIndex, 1)->setData(Qt::DisplayRole, QString("%1").arg(weightList[rowIndex]));
+         mAnimListWidget->item(rowIndex, 1)->setData(Qt::DisplayRole, QString("%1").arg(animWeightList[rowIndex]));
          connect(mAnimListWidget, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(OnItemChanged(QTableWidgetItem*)));
 
          if (!newValue)
@@ -609,10 +673,20 @@ void MainWindow::OnBlendUpdate(const std::vector<float>& weightList)
       }
    }
 
+   // Morph Animation Progress bars.
+   for (size_t rowIndex = 0; rowIndex < morphWeightList.size(); ++rowIndex)
+   {
+      // Show progress as a whole number
+      float newValue = morphWeightList[rowIndex] * 100.0f;
+
+      QProgressBar* meter = (QProgressBar*)mSubMorphAnimationListWidget->cellWidget(rowIndex, 4);
+      meter->setValue(newValue);
+   }
+
    // Allow the IK tab to update it's blend display if it exists
    if (mPoseMeshProperties)
    {
-      mPoseMeshProperties->OnBlendUpdate(weightList);
+      mPoseMeshProperties->OnBlendUpdate(animWeightList);
    }
 
    // Allow the pose scene to update in response to the blend
@@ -639,6 +713,27 @@ void MainWindow::OnAnimationClicked(QTableWidgetItem* item)
       //item->setCheckState(Qt::Checked);
       //emit StartAnimation( item->data(Qt::UserRole).toUInt() );
       OnStopAnimation(item->row());
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void MainWindow::OnMorphAnimationClicked(QTableWidgetItem* item)
+{
+   if (item->column() != 0) return;
+
+   if (item->checkState() == Qt::Checked)
+   {
+      //item->setCheckState(Qt::Unchecked);
+      //emit StopAnimation( item->data(Qt::UserRole).toUInt() );
+
+      //OnStartAnimation(item->row());
+   }
+   else
+   {
+      //item->setCheckState(Qt::Checked);
+      //emit StartAnimation( item->data(Qt::UserRole).toUInt() );
+
+      //OnStopAnimation(item->row());
    }
 }
 
@@ -677,7 +772,9 @@ void MainWindow::OnChangeScaleFactor()
    emit ScaleFactorChanged(float(mScaleFactorSpinner->value()));
 
    //reset the scaling factor to 1.0
+   mScaleFactorSpinner->blockSignals(true);
    mScaleFactorSpinner->setValue(1.0);
+   mScaleFactorSpinner->blockSignals(false);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -819,6 +916,37 @@ void MainWindow::OnStartAnimation(int row)
    }
 }
 
+//////////////////////////////////////////////////////////////////////////
+void MainWindow::OnStartMorphAnimation(int row, bool looping)
+{
+   float weight = 1.0f;
+   float delayIn = 0.0f;
+   float delayOut = 0.0f;
+
+   if (mSubMorphAnimationListWidget->item(row, 1))
+   {
+      weight = mSubMorphAnimationListWidget->item(row, 1)->text().toFloat();
+   }
+
+   if (mSubMorphAnimationListWidget->item(row, 2))
+   {
+      delayIn = mSubMorphAnimationListWidget->item(row, 2)->text().toFloat();
+   }
+
+   if (mSubMorphAnimationListWidget->item(row, 3))
+   {
+      delayOut = mSubMorphAnimationListWidget->item(row, 3)->text().toFloat();
+   }
+
+   emit PlayMorphAnimation(row, weight, delayIn, delayOut, looping);
+}
+
+//////////////////////////////////////////////////////////////////////////
+void MainWindow::OnStopMorphAnimation(int row, float delay)
+{
+   emit StopMorphAnimation(row, delay);
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 void MainWindow::OnStopAnimation(int row)
 {
@@ -841,6 +969,37 @@ void MainWindow::OnItemDoubleClicked(QTableWidgetItem* item)
    if (item->column() == 0)
    {
       OnStartAction(item->row());
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void MainWindow::OnMorphItemChanged(QTableWidgetItem* item)
+{
+   if (item->column() <= 2)
+   {
+      if (mSubMorphAnimationListWidget->item(item->row(),0)->checkState() == Qt::Checked)
+      {
+         OnStartMorphAnimation(item->row(), true);
+      }
+      else
+      {
+         float delayOut = 0.0f;
+         if (mSubMorphAnimationListWidget->item(item->row(), 3))
+         {
+            delayOut = mSubMorphAnimationListWidget->item(item->row(), 3)->text().toFloat();
+         }
+
+         OnStopMorphAnimation(item->row(), delayOut);
+      }
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void MainWindow::OnMorphItemDoubleClicked(QTableWidgetItem* item)
+{
+   if (item->column() == 0)
+   {
+      OnStartMorphAnimation(item->row(), mSubMorphAnimationListWidget->item(item->row(),0)->checkState() == Qt::Checked);
    }
 }
 
@@ -980,7 +1139,7 @@ void MainWindow::OnConfiged()
 {
    //theoretically, everything is in place, the window is rendering, openGL 
    //context is valid, etc.
-   mHardwareSkinningAction->setChecked(IsAnimNodeBuildingUsingHW());
+   //mHardwareSkinningAction->setChecked(IsAnimNodeBuildingUsingHW());
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -996,14 +1155,6 @@ void MainWindow::OnSubMorphChanged(QTableWidgetItem* item)
 
       emit SubMorphTargetChanged(meshID, subMeshID, morphID, weight);
    }
-}
-
-//////////////////////////////////////////////////////////////////////////
-void MainWindow::OnSubMorphPlay(QTableWidgetItem* item)
-{
-   const int morphID = item->row();
-
-   emit PlayMorphAnimation(morphID);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1033,6 +1184,11 @@ void MainWindow::OnClearCharacterData()
    while (mSubMorphTargetListWidget->rowCount()>0)
    {
       mSubMorphTargetListWidget->removeRow(0);
+   }
+
+   while (mSubMorphAnimationListWidget->rowCount()>0)
+   {
+      mSubMorphAnimationListWidget->removeRow(0);
    }
 
    while (mMaterialModel->rowCount() > 0)
@@ -1110,6 +1266,9 @@ void MainWindow::SetupConnectionsWithViewer()
    connect(mViewer, SIGNAL(AnimationLoaded(unsigned int,const QString &,unsigned int,unsigned int,float)),
       this, SLOT(OnNewAnimation(unsigned int,const QString&,unsigned int,unsigned int,float)));
 
+   connect(mViewer, SIGNAL(MorphAnimationLoaded(unsigned int,const QString &,unsigned int,unsigned int,float)),
+      this, SLOT(OnNewMorphAnimation(unsigned int,const QString&,unsigned int,unsigned int,float)));
+
    connect(mViewer, SIGNAL(MeshLoaded(int,const QString&, const std::vector<std::string>&)), 
            this, SLOT(OnNewMesh(int,const QString&, const std::vector<std::string>&)));
 
@@ -1132,7 +1291,7 @@ void MainWindow::SetupConnectionsWithViewer()
    connect(this, SIGNAL(ScaleFactorChanged(float)), mViewer, SLOT(OnScaleFactorChanged(float)));
 
    //connect(&mTimer, SIGNAL(timeout()), mViewer, SLOT(OnTimeout()));
-   connect(mViewer, SIGNAL(BlendUpdate(const std::vector<float>&)), this, SLOT(OnBlendUpdate(const std::vector<float>&)));
+   connect(mViewer, SIGNAL(BlendUpdate(const std::vector<float>&, const std::vector<float>&)), this, SLOT(OnBlendUpdate(const std::vector<float>&, const std::vector<float>&)));
 
    connect(this->mShadedAction, SIGNAL(triggered()), mViewer, SLOT(OnSetShaded()));
    connect(this->mWireframeAction, SIGNAL(triggered()), mViewer, SLOT(OnSetWireframe()));
@@ -1142,7 +1301,8 @@ void MainWindow::SetupConnectionsWithViewer()
 
    connect(mViewer, SIGNAL(SubMorphTargetLoaded(int,int,int,const QString&)), this, SLOT(OnNewSubMorphTarget(int,int,int,const QString&)));
    connect(this, SIGNAL(SubMorphTargetChanged(int,int,int,float)), mViewer, SLOT(OnMorphChanged(int,int,int,float)));
-   connect(this, SIGNAL(PlayMorphAnimation(int)), mViewer, SLOT(OnPlayMorphAnimation(int)));
+   connect(this, SIGNAL(PlayMorphAnimation(int, float, float, float, bool)), mViewer, SLOT(OnPlayMorphAnimation(int, float, float, float, bool)));
+   connect(this, SIGNAL(StopMorphAnimation(int, float)), mViewer, SLOT(OnStopMorphAnimation(int, float)));
 
 }
 
@@ -1154,6 +1314,7 @@ void MainWindow::CreateDockWidgets()
    mTabs->addTab(mMeshListWidget, tr("Meshes"));
    mTabs->addTab(mMaterialView, tr("Materials"));
    mTabs->addTab(mSubMorphTargetListWidget, tr("SubMorphTargets"));
+   mTabs->addTab(mSubMorphAnimationListWidget, tr("SubMorphAnimations"));
 
    QDockWidget* tabsDockWidget = new QDockWidget(tr("Properties"), this);
    tabsDockWidget->setWidget(mTabs);
