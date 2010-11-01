@@ -51,8 +51,6 @@ namespace dtGame
    class DeadReckoningComponent;
    class GameActor;
 
-   class DeadReckoningHelperImpl;
-
 
    ///////////////////////////////////////////////////////////////////////////
    class DT_GAME_EXPORT DeadReckoningAlgorithm : public dtUtil::Enumeration
@@ -78,6 +76,9 @@ namespace dtGame
     * and then make some determination when to publish (see the DRPublishingActComp). Then,
     * on the remote side, it receives those updates and dead reckons between the update positions.
     * There is a good example of how to use this in the SimulationCore SVN repository in BaseEntity.
+    * 
+    * Note - this class and its behavior are described in extensive detail in an article in 
+    * Game Engine Gems 2 (Mar '11) entitled, 'Believable Dead Reckoning for Networked Games' 
     */
    class DT_GAME_EXPORT DeadReckoningHelper : public dtGame::ActorComponent
    {
@@ -170,6 +171,88 @@ namespace dtGame
          };
 
          ///////////////////////////////////////////////////////////////////////////
+         /** 
+          * Utility data class used by the DRhelper. It works with a vec3 that can be acted on
+          * as if it were a world coordinate. This allows a subclass of the DRHelper to do 
+          * dead reckoning on its own vec3 values (ex an XYZ Scaler that grows/shrinks). 
+          * Note - if used as something other than a world coordiante, the values like
+          * velocity & acceleration can be assumed to be 1st and 2nd derivatives instead. 
+          */
+         class DT_GAME_EXPORT DRVec3Util
+         {
+            public: 
+               DRVec3Util();
+               ~DRVec3Util();
+
+            public:
+               /// @see DeadReckoningHelper::SetLastKnownTranslation()
+               void SetLastKnownTranslation(const osg::Vec3 &vec);
+               /// @see DeadReckoningHelper::SetLastKnownVelocity()
+               void SetLastKnownVelocity(const osg::Vec3 &vec);
+               /// @see DeadReckoningHelper::SetLastTranslationUpdatedTime()
+               void SetLastUpdatedTime(double newUpdatedTime);
+               /// Used by DeadReckonThePosition for straight blend.
+               void DeadReckonUsingLinearBlend(osg::Vec3& pos, dtUtil::Log* pLogger, GameActor& gameActor, bool useAcceleration);
+               /// Used by DeadReckonThePosition if we are using splines -- OLD WAY
+               void DeadReckonUsingSplines(osg::Vec3& pos, dtUtil::Log* pLogger, GameActor &gameActor);
+               /// Called when the trans or vel changes to recompute the parametric values used during spline blending.  
+               void RecomputeTransSplineValues(const osg::Vec3 &currentAccel);
+
+               /// Computes the new position for the object. Splines or linear, but not static.
+               void DeadReckonThePosition(osg::Vec3& pos, dtUtil::Log* pLogger, 
+                  GameActor &gameActor, bool useAcceleration, float curTimeDelta, bool useSplines);
+
+
+               ///the simulation time this was last updated.
+               //double mLastTranslationUpdatedTime;
+               double mLastUpdatedTime;
+               //float mAverageTimeBetweenTranslationUpdates;
+               float mAvgTimeBetweenUpdates;
+
+               ///The maximum amount of time to use when smoothing translation.
+               //float mMaxTranslationSmoothingTime;
+               float mMaxSmoothingTime;
+
+               ///the amount of time since this actor started smoothing.
+               //float mTranslationElapsedTimeSinceUpdate;
+               float mElapsedTimeSinceUpdate;
+
+               ///the end amount of time to use when smoothing the translation.  At this point, the blend should be finished.
+               //float mTranslationEndSmoothingTime;
+               float mEndSmoothingTime;
+
+               ///Last known position of this actor.
+               //osg::Vec3 mLastTranslation;
+               osg::Vec3 mLastValue;
+
+               ///The Dead-Reckoned position prior to the last update.
+               //osg::Vec3 mTransBeforeLastUpdate;
+               osg::Vec3 mValueBeforeLastUpdate;
+               
+               // Current Dead Reckoned Position
+               //osg::Vec3 mCurrentDeadReckonedTranslation;
+               osg::Vec3 mCurrentDeadReckonedValue;
+
+               //osg::Vec3 mLastVelocity;
+               osg::Vec3 mLastVelocity;
+               //osg::Vec3 mVelocityBeforeLastUpdate; /// The velocity we were using just before we got an update
+               osg::Vec3 mVelocityBeforeLastUpdate; /// The velocity we were using just before we got an update
+               osg::Vec3 mPreviousInstantVel;
+               //osg::Vec3 mAccelerationVector;
+               osg::Vec3 mAcceleration;
+               //bool mTranslationInitiated;
+               bool mInitialized;
+               //bool mTranslationUpdated;
+               bool mUpdated;
+
+               // The following variables are used to compute the 'cubic spline' that represents the blended position
+               float mPosSplineXA, mPosSplineXB, mPosSplineXC, mPosSplineXD; // x spline pre-compute values
+               float mPosSplineYA, mPosSplineYB, mPosSplineYC, mPosSplineYD; // y spline pre-compute values
+               float mPosSplineZA, mPosSplineZB, mPosSplineZC, mPosSplineZD; // z spline pre-compute values
+         };
+
+
+         ///////////////////////////////////////////////////////////////////////////
          DeadReckoningHelper();
 
          // base methods for actor components.
@@ -208,7 +291,7 @@ namespace dtGame
           * Includes last known trans, last known rot, velocity, angular velocity, & acceleration
           * Call this from your own GetPartialUpdateProperties() on your actor.
           */
-         void GetPartialUpdateProperties(std::vector<dtUtil::RefString>& propNamesToFill);
+         virtual void GetPartialUpdateProperties(std::vector<dtUtil::RefString>& propNamesToFill);
 
          /**
           * This function is responsible for manipulating the internal data types to do the actual
@@ -228,11 +311,11 @@ namespace dtGame
           * @param helper the DR helper for the actor.
           * @param xform the actors current absolute transform.
           */
-         void CalculateSmoothingTimes(const dtCore::Transform& xform);
+         virtual void CalculateSmoothingTimes(const dtCore::Transform& xform);
 
 
          bool IsUpdated() const { return mUpdated; }
-         void ClearUpdated() { mUpdated = false; mTranslationUpdated= false; mRotationUpdated= false;}
+         void ClearUpdated() { mUpdated = false; mTranslation.mUpdated= false; mRotationUpdated= false;}
 
          UpdateMode& GetUpdateMode() const { return *mUpdateMode; }
          UpdateMode& GetEffectiveUpdateMode(bool isRemote) const;
@@ -296,10 +379,10 @@ namespace dtGame
          const osg::Vec3& GetModelDimensions() { return mGroundClampingData.GetModelDimensions(); }
 
          ///Sets max amount of time to use when smoothing the translation.
-         void SetMaxTranslationSmoothingTime(float newMax) { mMaxTranslationSmoothingTime = newMax; }
+         virtual void SetMaxTranslationSmoothingTime(float newMax) { mTranslation.mMaxSmoothingTime = newMax; }
 
          ///@return the max amount of time to use when smoothing the translation.
-         float GetMaxTranslationSmoothingTime() const { return mMaxTranslationSmoothingTime; }
+         float GetMaxTranslationSmoothingTime() const { return mTranslation.mMaxSmoothingTime; }
 
          ///Sets max amount of time to use when smoothing the rotation.
          void SetMaxRotationSmoothingTime(float newMax) { mMaxRotationSmoothingTime = newMax; }
@@ -319,7 +402,7 @@ namespace dtGame
          /**
           * @return the last known position for this if it's a remote entity.
           */
-         const osg::Vec3& GetLastKnownTranslation() const { return mLastTranslation; }
+         const osg::Vec3& GetLastKnownTranslation() const { return mTranslation.mLastValue; }
 
          /**
           * Sets this entity's last known rotation.  This should
@@ -343,7 +426,7 @@ namespace dtGame
           * Retrieves this entity's DIS/RPR-FOM velocity vector.
           * @return the velocity vector
           */
-         const osg::Vec3& GetLastKnownVelocity() const { return mLastVelocity; }
+         const osg::Vec3& GetLastKnownVelocity() const { return mTranslation.mLastVelocity; }
 
          /** 
           * For moving objects, the DR helper computes the instantaneous velocity each frame. This
@@ -362,7 +445,7 @@ namespace dtGame
           * Retrieves this entity's DIS/RPR-FOM acceleration vector.
           * @return the acceleration vector
           */
-         const osg::Vec3& GetLastKnownAcceleration() const { return mAccelerationVector; }
+         const osg::Vec3& GetLastKnownAcceleration() const { return mTranslation.mAcceleration; }
 
          /**
           * Sets this entity's DIS/RPR-FOM angular velocity vector.
@@ -377,18 +460,18 @@ namespace dtGame
          const osg::Vec3& GetLastKnownAngularVelocity() const { return mAngularVelocityVector; }
 
          ///@return the total amount of time to use when smoothing the translation for this last update.
-         float GetTranslationEndSmoothingTime() const { return mTranslationEndSmoothingTime; }
+         float GetTranslationEndSmoothingTime() const { return mTranslation.mEndSmoothingTime; }
          ///@return the total amount of time to use when smoothing the rotation for this last update.
          float GetRotationEndSmoothingTime() const { return mRotationEndSmoothingTime; }
 
          ///@return the last simulation time this helper was updated for translation.
-         double GetLastTranslationUpdatedTime() const { return mLastTranslationUpdatedTime; };
+         double GetLastTranslationUpdatedTime() const { return mTranslation.mLastUpdatedTime; };
 
          ///@return the last simulation time this helper was updated for rotation.
          double GetLastRotationUpdatedTime() const { return mLastRotationUpdatedTime; };
 
          ///Sets the last time this helper was updated for translation.  This will also updated the average time between updates.
-         void SetLastTranslationUpdatedTime(double newUpdatedTime);
+         virtual void SetLastTranslationUpdatedTime(double newUpdatedTime);
 
          /// Sets the last time this helper was updated for rotation.  This will also updated the average time between updates.
          void SetLastRotationUpdatedTime(double newUpdatedTime);
@@ -403,7 +486,7 @@ namespace dtGame
          void SetNodeCollector(dtUtil::NodeCollector& dofContainerToSet) { mDOFDeadReckoning = &dofContainerToSet; }
 
          ///@return the rough average amount of time between translation updates.  This is based on values sent to SetLastTranslationUpdatedTime.
-         double GetAverageTimeBetweenTranslationUpdates() const { return mAverageTimeBetweenTranslationUpdates; };
+         double GetAverageTimeBetweenTranslationUpdates() const { return mTranslation.mAvgTimeBetweenUpdates; };
          /// Add onto the dof dead reckoning list where the dof should move
          void AddToDeadReckonDOF(const std::string &dofName, const osg::Vec3& position,
             const osg::Vec3& rateOverTime, const std::string& metricName = "");
@@ -418,23 +501,23 @@ namespace dtGame
          /// Remove a drdof by checking against values compared to everything else.
          void RemoveDRDOF(DeadReckoningDOF &obj);
 
-         const osg::Vec3& GetCurrentDeadReckonedTranslation() const { return mCurrentDeadReckonedTranslation; }
+         const osg::Vec3& GetCurrentDeadReckonedTranslation() const { return mTranslation.mCurrentDeadReckonedValue; }
          const osg::Vec3& GetCurrentDeadReckonedRotation() const { return mCurrentAttitudeVector; }
 
          const std::list<dtCore::RefPtr<DeadReckoningDOF> >& GetDeadReckoningDOFs() const { return mDeadReckonDOFS; }
 
-         void SetTranslationBeforeLastUpdate(const osg::Vec3& trans) { mTransBeforeLastUpdate = trans; }
+         void SetTranslationBeforeLastUpdate(const osg::Vec3& trans) { mTranslation.mValueBeforeLastUpdate = trans; }
          void SetRotationBeforeLastUpdate(const osg::Quat& rot) { mRotQuatBeforeLastUpdate = rot; }
 
          const osg::Quat& GetLastKnownRotationByQuaternion() const { return mLastQuatRotation; }
 
-         bool IsTranslationUpdated() const { return mTranslationUpdated; }
+         bool IsTranslationUpdated() const { return mTranslation.mUpdated; }
          bool IsRotationUpdated() const { return mRotationUpdated; }
 
          //void SetTranslationCurrentSmoothingTime(float smoothing) { mTranslationCurrentSmoothingTime=smoothing; }
          //float GetTranslationCurrentSmoothingTime() const { return mTranslationCurrentSmoothingTime; }
-         void SetTranslationElapsedTimeSinceUpdate(float value);// { mTranslationElapsedTimeSinceUpdate = value; }
-         float GetTranslationElapsedTimeSinceUpdate() const { return mTranslationElapsedTimeSinceUpdate; }
+         virtual void SetTranslationElapsedTimeSinceUpdate(float value);// { mTranslationElapsedTimeSinceUpdate = value; }
+         float GetTranslationElapsedTimeSinceUpdate() const { return mTranslation.mElapsedTimeSinceUpdate; }
 
          void SetRotationElapsedTimeSinceUpdate(float value) { mRotationElapsedTimeSinceUpdate = value; }
          float GetRotationElapsedTimeSinceUpdate() const { return mRotationElapsedTimeSinceUpdate; }
@@ -486,19 +569,19 @@ namespace dtGame
          bool GetForceUprightRotation() const;
 
          /// Supports the following deprecated properties: 'Flying' 
-         dtCore::RefPtr<dtDAL::ActorProperty> GetDeprecatedProperty(const std::string& name);
+         virtual dtCore::RefPtr<dtDAL::ActorProperty> GetDeprecatedProperty(const std::string& name);
 
       protected:
          virtual ~DeadReckoningHelper();// {}
 
          ///perform static dead-reckoning, which means applying the new position directly and ground clamping.  xform will be updated.
-         void DRStatic(GameActor& gameActor, dtCore::Transform& xform, dtUtil::Log* pLogger);
+         virtual void DRStatic(GameActor& gameActor, dtCore::Transform& xform, dtUtil::Log* pLogger);
 
          /**
           * perform velocity + acceleration dead-reckoning.  Acceleration may be ignored.  xform will be updated.
           * @return returns true if it thinks it made a change, false otherwise.
           */
-         bool DRVelocityAcceleration(GameActor& gameActor, dtCore::Transform& xform, dtUtil::Log* pLogger);
+         virtual bool DRVelocityAcceleration(GameActor& gameActor, dtCore::Transform& xform, dtUtil::Log* pLogger);
 
          /*
           * Simple dumps out a log that we have started dead reckoning with lots of information.  Pulled out
@@ -512,23 +595,13 @@ namespace dtGame
           */
          void DeadReckonTheRotation(dtCore::Transform &xform);
 
-         /**
-          * Computes the new position for the object.  This method handles VELOCITY_ONLY and
-          * VELOCITY_AND_ACCELERATION, but not static. This is called DRVelocityAcceleration()
-          */
-         void DeadReckonThePosition( osg::Vec3& pos, dtUtil::Log* pLogger, GameActor &gameActor );
-
-         /// Used by DeadReckonThePosition if we are using splines NEW WAY
-         void DeadReckonThePositionUsingSplines(osg::Vec3& pos, dtUtil::Log* pLogger, GameActor &gameActor);
-         /// Used by DeadReckonThePosition for straight blend. OLD WAY
-         void DeadReckonThePositionUsingLinearBlend(osg::Vec3& pos, dtUtil::Log* pLogger, GameActor &gameActor);
 
       private:
          /** 
           * A private, internal version of the SetLastKnownRotation. This is needed 
           * because in STAGE and other tools, the rotation is displayed as XYZ.
           * Note - HPR is like ZXY order so we have to rearrange to be PRH order.
-          * THERE IS NO REASON YOU SHOULD NOT CALL THIS. It is needed for the property only
+          * THERE IS NO REASON YOU SHOULD CALL THIS. It is needed for the property only
           */
          void SetInternalLastKnownRotationInXYZ(const osg::Vec3 &vec);
 
@@ -536,12 +609,12 @@ namespace dtGame
           * A private, internal version of the GetLastKnownRotation. This is needed 
           * because in STAGE and other tools, the rotation is displayed as XYZ.
           * Note - HPR is like ZXY order so we have to rearrange to be PRH order.
-          * THERE IS NO REASON YOU SHOULD NOT CALL THIS. It is needed for the property only
+          * THERE IS NO REASON YOU SHOULD CALL THIS. It is needed for the property only
           */
          osg::Vec3 GetInternalLastKnownRotationInXYZ() const;
 
 
-         DeadReckoningHelperImpl* mDRImpl;
+         DRVec3Util mTranslation; // Holds all the DR data for the world coordiante (aka Translation)
 
          /// The list of DeadReckoningDOFs, might want to change to has table of list later.
          std::list<dtCore::RefPtr<DeadReckoningDOF> > mDeadReckonDOFS;
@@ -552,15 +625,9 @@ namespace dtGame
          GroundClampingData mGroundClampingData;
 
          ///the simulation time this was last updated.
-         double mLastTranslationUpdatedTime;
          double mLastRotationUpdatedTime;
-
-         ///This should be fairly clear.
-         float mAverageTimeBetweenTranslationUpdates;
          float mAverageTimeBetweenRotationUpdates;
 
-         ///The maximum amount of time to use when smoothing translation.
-         float mMaxTranslationSmoothingTime;
          ///The maximum amount of time to use when smoothing rotation.
          float mMaxRotationSmoothingTime;
          /// True means we maintain constant smoothing time for blending. Uses Max Rot or Trans as appropriate
@@ -568,21 +635,10 @@ namespace dtGame
          float mFixedSmoothingTime; /// The smoothing time for rot & trans if mUseFixedSmoothingTime is true
 
          ///the amount of time since this actor started smoothing.
-         float mTranslationElapsedTimeSinceUpdate;
          float mRotationElapsedTimeSinceUpdate;
 
-         ///the end amount of time to use when smoothing the translation.  At this point, the blend should be finished.
-         float mTranslationEndSmoothingTime;
          ///the end amount of time to use when smoothing the rotation.  At this point, the blend should be finished.
          float mRotationEndSmoothingTime;
-
-         ///Last known position of this actor.
-         osg::Vec3 mLastTranslation;
-
-         ///The Dead-Reckoned position prior to the last update.
-         osg::Vec3 mTransBeforeLastUpdate;
-         // Current Dead Reckoned Position
-         osg::Vec3 mCurrentDeadReckonedTranslation;
 
          ///last known orientation (vector)
          osg::Vec3 mLastRotation;
@@ -596,13 +652,6 @@ namespace dtGame
          osg::Quat mCurrentDeadReckonedRotation;
          osg::Vec3 mCurrentAttitudeVector;
 
-         /// The velocity vector.
-         osg::Vec3 mLastVelocity;
-         osg::Vec3 mVelocityBeforeLastUpdate; /// The velocity we were using just before we got an update
-
-         /// The acceleration vector.
-         osg::Vec3 mAccelerationVector;
-
          ///The angular velocity vector.
          osg::Vec3 mAngularVelocityVector;
 
@@ -614,10 +663,8 @@ namespace dtGame
          /// The update mode - whether to actually move the actor or to just calculate.
          UpdateMode* mUpdateMode;
 
-         bool mTranslationInitiated;
          bool mRotationInitiated;
          bool mUpdated;
-         bool mTranslationUpdated;
          bool mRotationUpdated;
          //bool mFlying; // Deprecated now - use GroundClampType instead
          // if the rotation has been resolved to the last updated version.
@@ -627,6 +674,8 @@ namespace dtGame
          bool mExtraDataUpdated; // set to true when an important non-positional related property is changed. 
 
          bool mForceUprightRotation; // Used to keep characters (et al) from wierd leaning over, regardless of the source data
+
+         float mCurTimeDelta; // Tracks how long this process step is for. Used to compute instant vel.
 
          // -----------------------------------------------------------------------
          //  Unimplemented constructors and operators
