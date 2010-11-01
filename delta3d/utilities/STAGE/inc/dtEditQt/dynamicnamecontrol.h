@@ -100,7 +100,7 @@ namespace dtEditQt
          */
         virtual bool updateData(QWidget* widget);
 
-        virtual void ProxyNameChanged(dtDAL::ActorProxy& proxy, std::string oldName);
+        virtual void ProxyNameChanged(dtDAL::BaseActorObject& proxy, std::string oldName);
 
         /**
          * @see DynamicAbstractControl#handleSubEditDestroy
@@ -125,7 +125,7 @@ namespace dtEditQt
         // call our handleSubEditDestroy() method so we know to not hold this anymore
         dtQt::SubQLineEdit *mTemporaryEditControl;
 
-        dtCore::RefPtr<dtDAL::ActorProxy> mProxy;
+        dtCore::RefPtr<dtDAL::BaseActorObject> mProxy;
     };
 
 } // namespace dtEditQt

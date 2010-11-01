@@ -694,7 +694,7 @@ private:
 
    dtCore::RefPtr<dtDAL::NamedGroupParameter> CreateNamedGroupParameter(bool createPropCont = false);
    dtCore::RefPtr<dtDAL::NamedArrayParameter> CreateNamedArrayParameter();
-   dtCore::RefPtr<dtDAL::ActorProxy> mExampleActor;
+   dtCore::RefPtr<dtDAL::BaseActorObject> mExampleActor;
 
    void TestNamedGroupParameter(dtDAL::NamedGroupParameter& groupParam);
    void TestNamedArrayParameter(dtDAL::NamedArrayParameter& arrarParam);
@@ -735,7 +735,7 @@ void NamedParameterTests::tearDown()
    {
       try
       {
-         dtCore::ObserverPtr<dtDAL::ActorProxy> observerExampleActor = mExampleActor.get();
+         dtCore::ObserverPtr<dtDAL::BaseActorObject> observerExampleActor = mExampleActor.get();
          mExampleActor = NULL;
          mManager->UnloadActorRegistry(mTestActorLibrary);
          mManager = NULL;
@@ -1480,10 +1480,10 @@ void NamedParameterTests::TestNamedActorParameter()
 {
    try
    {
-      std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > container;
+      std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> > container;
       std::vector<dtCore::RefPtr<dtDAL::ActorType> > types;
 
-      dtCore::RefPtr<dtDAL::ActorProxy> ap = mManager->CreateActor("dtcore.examples", "Test All Properties");
+      dtCore::RefPtr<dtDAL::BaseActorObject> ap = mManager->CreateActor("dtcore.examples", "Test All Properties");
 
       dtDAL::ActorActorProperty* aap = NULL;
 

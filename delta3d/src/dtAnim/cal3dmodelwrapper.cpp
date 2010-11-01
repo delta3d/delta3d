@@ -24,14 +24,6 @@
 #include <cal3d/cal3d.h>
 #include <cal3d/coretrack.h>
 #include <cal3d/corekeyframe.h>
-#include <cal3d/model.h>
-#include <cal3d/hardwaremodel.h>
-#include <cal3d/coremodel.h>
-#include <cal3d/renderer.h>
-#include <cal3d/mixer.h>
-#include <cal3d/morphtargetmixer.h>
-#include <cal3d/physique.h>
-#include <cal3d/springsystem.h>
 
 #include <cassert>
 #include <algorithm>

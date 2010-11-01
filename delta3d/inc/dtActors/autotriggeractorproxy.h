@@ -36,7 +36,7 @@ namespace dtActors
    * @class AutoTriggerActorProxy
    * @brief This proxy wraps auto triggers.
    */
-   class DT_PLUGIN_EXPORT AutoTriggerActorProxy : public dtDAL::ActorProxy 
+   class DT_PLUGIN_EXPORT AutoTriggerActorProxy : public dtDAL::BaseActorObject 
    {
    public:
 
@@ -63,7 +63,7 @@ namespace dtActors
       /**
       * Wrapper to set the Action on the internal Trigger.
       */
-      void SetAction( dtDAL::ActorProxy* action );
+      void SetAction( dtDAL::BaseActorObject* action );
 
    protected:
 

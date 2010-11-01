@@ -97,9 +97,9 @@ DirectorToolPlugin::~DirectorToolPlugin()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-std::vector<dtDAL::ActorProxy*> DirectorToolPlugin::GetActorSelection()
+std::vector<dtDAL::BaseActorObject*> DirectorToolPlugin::GetActorSelection()
 {
-   std::vector<dtDAL::ActorProxy*> selection;
+   std::vector<dtDAL::BaseActorObject*> selection;
    EditorData::GetInstance().GetSelectedActors(selection);
 
    return selection;
@@ -129,7 +129,7 @@ void DirectorToolPlugin::OnGotoActor()
 {
    if (mProxy.valid())
    {
-      std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > toSelect;
+      std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> > toSelect;
       toSelect.push_back(mProxy);
 
       EditorEvents::GetInstance().emitActorsSelected(toSelect);
@@ -142,7 +142,7 @@ void DirectorToolPlugin::OnUseCurrentActor()
 {
    if (mNode && mNode->GetType().GetFullName() == "General.Actor")
    {
-      std::vector<dtDAL::ActorProxy*> selection;
+      std::vector<dtDAL::BaseActorObject*> selection;
       EditorData::GetInstance().GetSelectedActors(selection);
 
       if (selection.size())

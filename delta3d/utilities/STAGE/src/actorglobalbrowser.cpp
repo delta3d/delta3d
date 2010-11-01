@@ -81,9 +81,9 @@ namespace dtEditQt
          SLOT(onActorPropertyChanged(ActorProxyRefPtr, ActorPropertyRefPtr)));
 
       connect(&EditorEvents::GetInstance(),
-         SIGNAL(ProxyNameChanged(dtDAL::ActorProxy&, std::string)),
+         SIGNAL(ProxyNameChanged(dtDAL::BaseActorObject&, std::string)),
          this,
-         SLOT(onActorProxyNameChanged(dtDAL::ActorProxy&, std::string)));
+         SLOT(onActorProxyNameChanged(dtDAL::BaseActorObject&, std::string)));
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -115,7 +115,7 @@ namespace dtEditQt
    {
       EditorData::GetInstance().getMainWindow()->startWaitCursor();
 
-      std::vector< dtCore::RefPtr<dtDAL::ActorProxy> > globalProxies;
+      std::vector< dtCore::RefPtr<dtDAL::BaseActorObject> > globalProxies;
       dtDAL::Map* map = EditorData::GetInstance().getCurrentMap();
 
       // empty out our table, just in case - Must happen BEFORE libraries are removed
@@ -132,7 +132,7 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ActorGlobalBrowser::onActorProxyCreated(dtCore::RefPtr<dtDAL::ActorProxy> proxy, bool forceNoAdjustments)
+   void ActorGlobalBrowser::onActorProxyCreated(dtCore::RefPtr<dtDAL::BaseActorObject> proxy, bool forceNoAdjustments)
    {
       if (!proxy->IsPlaceable())
       {
@@ -143,7 +143,7 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ActorGlobalBrowser::onActorProxyDestroyed(dtCore::RefPtr<dtDAL::ActorProxy> proxy)
+   void ActorGlobalBrowser::onActorProxyDestroyed(dtCore::RefPtr<dtDAL::BaseActorObject> proxy)
    {
       if (!proxy->IsPlaceable())
       {
@@ -158,7 +158,7 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ActorGlobalBrowser::onActorProxyNameChanged(dtDAL::ActorProxy& proxy, std::string oldName)
+   void ActorGlobalBrowser::onActorProxyNameChanged(dtDAL::BaseActorObject& proxy, std::string oldName)
    {
       mResultsTable->HandleProxyUpdated(&proxy);
    }

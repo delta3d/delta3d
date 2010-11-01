@@ -185,7 +185,7 @@ void DirectorCinematicEditorPlugin::ResetUI()
    int count = (int)mActorData.size();
    for (int index = 0; index < count; ++index)
    {
-      dtDAL::ActorProxy* proxy = mActorData[index].mActor.get();
+      dtDAL::BaseActorObject* proxy = mActorData[index].mActor.get();
       if (proxy)
       {
          QString name = proxy->GetName().c_str();
@@ -322,7 +322,7 @@ void DirectorCinematicEditorPlugin::ResetUI()
 
    if (!NEAR_EQUAL(mUI.mTotalTimeEdit->value(), mTotalTime)) mUI.mTotalTimeEdit->setValue(mTotalTime);
 
-   std::vector<dtDAL::ActorProxy*> selection;
+   std::vector<dtDAL::BaseActorObject*> selection;
    EditorData::GetInstance().GetSelectedActors(selection);
 
    mUI.mAddActorButton->setEnabled(!selection.empty());
@@ -418,7 +418,7 @@ void DirectorCinematicEditorPlugin::onActorsSelected(ActorProxyRefPtrVector& act
       int count = (int)mActorData.size();
       for (int index = 0; index < count; ++index)
       {
-         dtDAL::ActorProxy* proxy = mActorData[index].mActor.get();
+         dtDAL::BaseActorObject* proxy = mActorData[index].mActor.get();
          if (proxy == actors[0].get())
          {
             mSelectedActor = index;
@@ -476,7 +476,7 @@ void DirectorCinematicEditorPlugin::OnActorComboChanged(int index)
 ////////////////////////////////////////////////////////////////////////////////
 void DirectorCinematicEditorPlugin::OnAddActor()
 {
-   std::vector<dtDAL::ActorProxy*> selection;
+   std::vector<dtDAL::BaseActorObject*> selection;
    EditorData::GetInstance().GetSelectedActors(selection);
 
    int addCount = (int)selection.size();
@@ -486,7 +486,7 @@ void DirectorCinematicEditorPlugin::OnAddActor()
       int count = (int)mActorData.size();
       for (int index = 0; index < count; ++index)
       {
-         dtDAL::ActorProxy* proxy = mActorData[index].mActor.get();
+         dtDAL::BaseActorObject* proxy = mActorData[index].mActor.get();
          if (proxy == selection[addIndex])
          {
             canAdd = false;
@@ -552,7 +552,7 @@ void DirectorCinematicEditorPlugin::OnRemoveActor()
       ViewportManager::GetInstance().refreshAllViewports();
    }
 
-   //dtDAL::ActorProxy* proxy = mActorData[mSelectedActor].mActor.get();
+   //dtDAL::BaseActorObject* proxy = mActorData[mSelectedActor].mActor.get();
    mActorData.erase(mActorData.begin() + mSelectedActor);
    if (mSelectedActor >= (int)mActorData.size())
    {
@@ -713,7 +713,7 @@ void DirectorCinematicEditorPlugin::OnAddTransform()
 
    int time = mUI.mTimeSlider->value();
 
-   dtDAL::ActorProxy* proxy = mActorData[mSelectedActor].mActor.get();
+   dtDAL::BaseActorObject* proxy = mActorData[mSelectedActor].mActor.get();
    if (proxy)
    {
       dtCore::Transformable* actor = NULL;
@@ -1053,7 +1053,7 @@ void DirectorCinematicEditorPlugin::OnAddAnimation()
 
    int time = mUI.mTimeSlider->value();
 
-   dtDAL::ActorProxy* proxy = mActorData[mSelectedActor].mActor.get();
+   dtDAL::BaseActorObject* proxy = mActorData[mSelectedActor].mActor.get();
    if (proxy)
    {
       dtCore::Transformable* actor = NULL;
@@ -2449,7 +2449,7 @@ void DirectorCinematicEditorPlugin::GotoSelectedActor()
 {
    if (mSelectedActor > -1)
    {
-      std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > selected;
+      std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> > selected;
       selected.push_back(mActorData[mSelectedActor].mActor.get());
       EditorEvents::GetInstance().emitActorsSelected(selected);
       //EditorEvents::GetInstance().emitGotoActor(selected[0]);
@@ -2873,6 +2873,14 @@ void DirectorCinematicEditorPlugin::LerpActors(int time)
          animActor = dynamic_cast<dtAnim::AnimationGameActor*>(actor);
          if (animActor)
          {
+            // Morph Target stuff.
+            //Cal3DModelWrapper* wrapper = animActor->GetHelper()->GetModelWrapper();
+            //CalMesh* mesh = wrapper->GetCalModel()->getMesh(0);
+            //CalSubmesh *subMesh = mesh->getSubmesh(0);
+            //if (subMesh)
+            //{
+            //   subMesh->setMorphTargetWeight(0, 1);
+            //}
             dtAnim::SequenceMixer& mixer = animActor->GetHelper()->GetSequenceMixer();
             mixer.ClearActiveAnimations(0.0f);
             mixer.Update(0.0f);

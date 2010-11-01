@@ -175,7 +175,7 @@ namespace dtEditQt
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   void EditorData::GetSelectedActors(std::vector<dtDAL::ActorProxy*>& toFill)
+   void EditorData::GetSelectedActors(std::vector<dtDAL::BaseActorObject*>& toFill)
    {
       PropertyEditor* propEditor = getMainWindow()->GetPropertyEditor();
       if(propEditor != NULL)
@@ -188,7 +188,7 @@ namespace dtEditQt
          toFill.reserve(toFillPC.size());
          for (size_t i = 0; i != toFillPC.size(); ++i)
          {
-            toFill.push_back(static_cast<dtDAL::ActorProxy*>(toFillPC[i]));
+            toFill.push_back(static_cast<dtDAL::BaseActorObject*>(toFillPC[i]));
          }
 
       }

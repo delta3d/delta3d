@@ -61,7 +61,7 @@ class CoordinateConfigActorTests : public CPPUNIT_NS::TestFixture
    public:
       void setUp()
       {
-         dtCore::RefPtr<dtDAL::ActorProxy> proxy = dtDAL::LibraryManager::GetInstance().
+         dtCore::RefPtr<dtDAL::BaseActorObject> proxy = dtDAL::LibraryManager::GetInstance().
             CreateActorProxy(*dtActors::EngineActorRegistry::COORDINATE_CONFIG_ACTOR_TYPE);
 
          mCoordinateProxy = dynamic_cast<dtActors::CoordinateConfigActorProxy*>(proxy.get());

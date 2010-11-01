@@ -212,7 +212,7 @@ namespace dtAnim
 
    void AnimationComponentTests::TestAnimationPerformance()
    {
-      typedef std::vector<dtDAL::ActorProxy*> ProxyContainer;
+      typedef std::vector<dtDAL::BaseActorObject*> ProxyContainer;
       ProxyContainer proxies;
       ProxyContainer groundActor;
 
@@ -341,7 +341,7 @@ namespace dtAnim
       if (!groundActor.empty())
       {
          ProxyContainer::iterator iter = groundActor.begin();
-         dtDAL::ActorProxy* proxy = dynamic_cast<dtDAL::ActorProxy*>(*iter);
+         dtDAL::BaseActorObject* proxy = dynamic_cast<dtDAL::BaseActorObject*>(*iter);
          if (proxy)
          {
             dtCore::Transformable* transform

@@ -86,7 +86,7 @@ public:
 
       // translate the camera to the predefined start position
       {
-         std::vector< dtCore::RefPtr<dtDAL::ActorProxy> > proxies;
+         std::vector< dtCore::RefPtr<dtDAL::BaseActorObject> > proxies;
          myMap.FindProxies(proxies, "startPosition");
          if (!proxies.empty())
          {

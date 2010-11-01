@@ -90,7 +90,7 @@ namespace dtDAL
          // Group data.
          struct MapGroupData
          {
-            std::vector<dtDAL::ActorProxy*> actorList;
+            std::vector<dtDAL::BaseActorObject*> actorList;
          };
    
          // Preset camera data.
@@ -215,7 +215,7 @@ namespace dtDAL
           * @param id the id of the proxy to return.
           * @return the proxy found or NULL if it was not found.  This should be stored in a ref_ptr once received.
           */
-         ActorProxy* GetProxyById(const dtCore::UniqueId& id);
+         BaseActorObject* GetProxyById(const dtCore::UniqueId& id);
          
          /**
           * Templated version of GetProxyById that takes a pointer to the desired type and assigns it by dynamic casting
@@ -234,7 +234,7 @@ namespace dtDAL
           * @param id the id of the proxy to return.
           * @return the proxy found or NULL if it was not found.  This should be stored in a ref_ptr once received.
           */
-         const ActorProxy* GetProxyById(const dtCore::UniqueId& id) const;
+         const BaseActorObject* GetProxyById(const dtCore::UniqueId& id) const;
 
          /**
           * Templated version of GetProxyById that takes a pointer to the desired type and assigns it by dynamic casting
@@ -258,7 +258,7 @@ namespace dtDAL
           * @param placeable set to Placeable to search for only proxys that return true for isPlaceable,
           *                  NonPlaceable for false, or Either for both.
           */
-         void FindProxies(std::vector<dtCore::RefPtr<ActorProxy> >& container,
+         void FindProxies(std::vector<dtCore::RefPtr<BaseActorObject> >& container,
                           const std::string& name,
                           const std::string& category = std::string(""),
                           const std::string& typeName = std::string(""),
@@ -267,7 +267,7 @@ namespace dtDAL
 
          /**
           * Const version of find for methods that may need to find a proxy only to read values.
-          * @param container The container to fill, note that it holds const ActorProxy.
+          * @param container The container to fill, note that it holds const BaseActorObject.
           * @param name The name of the proxy to find or empty string to not use the name.
           * @param category The category of the proxy to find, this will also find proxies in subcategories.
           *                  Use empty string to ignore.
@@ -276,7 +276,7 @@ namespace dtDAL
           * @param placeable set to Placeable to search for only proxys that return true for isPlaceable,
           *                  NonPlaceable for false, or Either for both.
           */
-         void FindProxies(std::vector<dtCore::RefPtr<const ActorProxy> >& container,
+         void FindProxies(std::vector<dtCore::RefPtr<const BaseActorObject> >& container,
                           const std::string& name, const std::string& category = std::string(""),
                           const std::string& typeName = std::string(""),
                           const std::string& className = std::string(""),
@@ -285,33 +285,33 @@ namespace dtDAL
          /**
           * @return a vector of ref pointers to the all the proxies in the map.
           */
-         const std::map<dtCore::UniqueId, dtCore::RefPtr<ActorProxy> >& GetAllProxies() const;
+         const std::map<dtCore::UniqueId, dtCore::RefPtr<BaseActorObject> >& GetAllProxies() const;
 
          /**
           * @return fills a vector with ref pointers to all the proxies in the map.
           */
-         void GetAllProxies(std::vector<dtCore::RefPtr<ActorProxy> >& container);
+         void GetAllProxies(std::vector<dtCore::RefPtr<BaseActorObject> >& container);
 
          /**
           * Adds a new proxy to the map.
           * @param proxy the proxy to add.
           * @param reNumber true if we want to re-number the proxy with a unique value
           */
-         void AddProxy(ActorProxy& proxy, bool reNumber = false);
+         void AddProxy(BaseActorObject& proxy, bool reNumber = false);
 
          /**
           * Removes a proxy.
           * @param proxy the proxy to remove.
           * @return true if the proxy passed in was actually removed.
           */
-         bool RemoveProxy(const ActorProxy& proxy);
+         bool RemoveProxy(const BaseActorObject& proxy);
 
          /**
          * Should be called when a proxy has been renamed.
          * This will keep track of our highest number values.
          * @param proxy the proxy that is being renamed.
          */
-         void OnProxyRenamed(ActorProxy& proxy);
+         void OnProxyRenamed(BaseActorObject& proxy);
 
          /**
           * Clear all the proxies from the map.
@@ -413,14 +413,14 @@ namespace dtDAL
           * Returns the environment actor of this map or NULL if no environment is set
           * @return A pointer to the environment actor or NULL
           */
-         ActorProxy* GetEnvironmentActor();
+         BaseActorObject* GetEnvironmentActor();
 
          /**
           * const version of the above function
           * Returns the environment actor of this map or NULL if no environment is set
           * @return A pointer to the environment actor or NULL
           */
-         const ActorProxy* GetEnvironmentActor() const;
+         const BaseActorObject* GetEnvironmentActor() const;
 
          ///@return the GameEventManager that holds the game events for this map.
          GameEventManager& GetEventManager();
@@ -431,7 +431,7 @@ namespace dtDAL
           * Sets the environment actor on this map
           * @param envActor The new environment actor to set
           */
-         void SetEnvironmentActor(ActorProxy *envActor);
+         void SetEnvironmentActor(BaseActorObject *envActor);
 
          /**
           * Retrieves the total number of groups.
@@ -455,7 +455,7 @@ namespace dtDAL
          *
          * @param[in]  actor       The actor to add to the group.
          */
-         void AddActorToGroup(int groupIndex, dtDAL::ActorProxy* actor);
+         void AddActorToGroup(int groupIndex, dtDAL::BaseActorObject* actor);
 
          /**
          * Removes an actor from any groups they are currently in.
@@ -464,7 +464,7 @@ namespace dtDAL
          *
          * @return     True if the actor belonged to any groups.
          */
-         bool RemoveActorFromGroups(dtDAL::ActorProxy* actor);
+         bool RemoveActorFromGroups(dtDAL::BaseActorObject* actor);
 
          /**
          * Retrieves a group that belongs to the given actor.
@@ -473,7 +473,7 @@ namespace dtDAL
          *
          * @return     The group in which this actor belongs to.
          */
-         int FindGroupForActor(dtDAL::ActorProxy* actor);
+         int FindGroupForActor(dtDAL::BaseActorObject* actor);
 
          /**
          * Retrieves an actor from a group.
@@ -483,7 +483,7 @@ namespace dtDAL
          *
          * @return     The actor, or NULL if the group or actor index are out of scope.
          */
-         dtDAL::ActorProxy* GetActorFromGroup(int groupIndex, int actorIndex);
+         dtDAL::BaseActorObject* GetActorFromGroup(int groupIndex, int actorIndex);
 
          /**
          * Gets the matrix of a preset camera position.
@@ -544,7 +544,7 @@ namespace dtDAL
          
        private:
          bool mModified;
-         //typedef std::multimap<std::string, dtCore::RefPtr<ActorProxy> > ProxiesByClassMap;
+         //typedef std::multimap<std::string, dtCore::RefPtr<BaseActorObject> > ProxiesByClassMap;
          std::string mName;
          //The name set when it was created/last saved.
          std::string mSavedName;
@@ -557,12 +557,12 @@ namespace dtDAL
          std::string mCopyright;
          std::string mCreateDateTime;
 
-         dtCore::RefPtr<dtDAL::ActorProxy> mEnvActor;
+         dtCore::RefPtr<dtDAL::BaseActorObject> mEnvActor;
 
          dtCore::RefPtr<GameEventManager> mEventManager;
 
          //ProxiesByClassMap proxiesByClass;
-         std::map<dtCore::UniqueId, dtCore::RefPtr<ActorProxy> > mProxyMap;
+         std::map<dtCore::UniqueId, dtCore::RefPtr<BaseActorObject> > mProxyMap;
 
          std::map<std::string, std::string> mLibraryVersionMap;
          std::vector<std::string> mLibraryOrder;
@@ -579,7 +579,7 @@ namespace dtDAL
 
          std::vector<PresetCameraData> mPresetCameras;
 
-         bool MatchesSearch(const ActorProxy& actorProxy, const std::string& category, const std::string& typemName,
+         bool MatchesSearch(const BaseActorObject& actorProxy, const std::string& category, const std::string& typemName,
                            const std::string& classmName, PlaceableFilter placeable) const;
 
          static bool Match(char* WildCards, char* str);

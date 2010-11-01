@@ -28,7 +28,7 @@
 namespace dtDAL
 {
    ////////////////////////////////////////////////////////////////////////////////
-   GameEventActorProperty::GameEventActorProperty(ActorProxy& actorProxy,
+   GameEventActorProperty::GameEventActorProperty(BaseActorObject& actorProxy,
       const dtUtil::RefString& name, const dtUtil::RefString& label,
       SetFuncType set, GetFuncType get, const dtUtil::RefString& desc /*= ""*/,
       const dtUtil::RefString& groupName /*= ""*/)

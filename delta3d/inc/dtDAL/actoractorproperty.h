@@ -41,9 +41,9 @@ namespace dtDAL
    class DT_DAL_EXPORT ActorActorProperty : public ActorProperty
    {
       public:
-         typedef dtUtil::Functor<void, TYPELIST_1(ActorProxy*)> SetFuncType;
+         typedef dtUtil::Functor<void, TYPELIST_1(BaseActorObject*)> SetFuncType;
          typedef dtUtil::Functor<dtCore::DeltaDrawable*, TYPELIST_0()> GetFuncType;
-         ActorActorProperty(ActorProxy& actorProxy,
+         ActorActorProperty(BaseActorObject& actorProxy,
                            const dtUtil::RefString& name,
                            const dtUtil::RefString& label,
                            SetFuncType Set,
@@ -66,14 +66,14 @@ namespace dtDAL
           * @param value the value to set or NULL to clear it.  The passed in pointer is
           * not stored.  The values are extracted and stored in a separate object.
           */
-         void SetValue(ActorProxy* value);
+         void SetValue(BaseActorObject* value);
 
          /**
           * Gets the value proxy assiged to this property.
           * Hack for the resource class
-          * @return the currently set ActorProxy for this property.
+          * @return the currently set BaseActorObject for this property.
           */
-         ActorProxy* GetValue() const;
+         BaseActorObject* GetValue() const;
 
          /**
           * Gets the drawable that this property is representing
@@ -108,7 +108,7 @@ namespace dtDAL
          const std::string& GetDesiredActorClass() const;
 
       private:
-         ActorProxy* mProxy;
+         BaseActorObject* mProxy;
          SetFuncType SetPropFunctor;
          GetFuncType GetActorFunctor;
          dtUtil::RefString mDesiredActorClass;

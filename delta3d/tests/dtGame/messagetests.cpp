@@ -268,7 +268,7 @@ void MessageTests::createActors(dtDAL::Map& map)
 
    for (unsigned int i = 0; i < actorTypes.size(); ++i)
    {
-      dtCore::RefPtr<dtDAL::ActorProxy> proxy;
+      dtCore::RefPtr<dtDAL::BaseActorObject> proxy;
 
       proxy = mGameManager->CreateActor(*actorTypes[i]);
       proxy->SetName(dtUtil::ToString(i));
@@ -704,7 +704,7 @@ void MessageTests::TestActorPublish()
       dtCore::RefPtr<const dtDAL::ActorType> type = mGameManager->FindActorType("ExampleActors","Test1Actor");
 
       CPPUNIT_ASSERT(type != NULL);
-      dtCore::RefPtr<dtDAL::ActorProxy> ap = mGameManager->CreateActor(*type);
+      dtCore::RefPtr<dtDAL::BaseActorObject> ap = mGameManager->CreateActor(*type);
 
       CPPUNIT_ASSERT(ap->IsGameActorProxy());
       dtCore::RefPtr<dtGame::GameActorProxy> gap = dynamic_cast<dtGame::GameActorProxy*>(ap.get());
@@ -1152,7 +1152,7 @@ void MessageTests::CheckMapNames(const dtGame::MapMessage& mapLoadedMsg,
 
 void MessageTests::RemoveOneProxy(dtDAL::Map& map)
 {
-   std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > toFill;
+   std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> > toFill;
    map.FindProxies(toFill, "", TestGameActorLibrary::TEST_TANK_GAME_ACTOR_PROXY_TYPE->GetCategory(),
          TestGameActorLibrary::TEST_TANK_GAME_ACTOR_PROXY_TYPE->GetName());
 
@@ -1470,7 +1470,7 @@ void MessageTests::TestDefaultMessageProcessorWithLocalOrRemoteActorUpdates(bool
    dtCore::RefPtr<const dtDAL::ActorType> type = mGameManager->FindActorType("ExampleActors","Test1Actor");
 
    CPPUNIT_ASSERT(type != NULL);
-   dtCore::RefPtr<dtDAL::ActorProxy> ap = mGameManager->CreateActor(*type);
+   dtCore::RefPtr<dtDAL::BaseActorObject> ap = mGameManager->CreateActor(*type);
 
    CPPUNIT_ASSERT(ap->IsGameActorProxy());
    dtCore::RefPtr<dtGame::GameActorProxy> gap = dynamic_cast<dtGame::GameActorProxy*>(ap.get());
@@ -1627,7 +1627,7 @@ void MessageTests::TestDefaultMessageProcessorWithLocalOrRemoteActorDeletes(bool
    dtCore::RefPtr<const dtDAL::ActorType> type = mGameManager->FindActorType("ExampleActors","Test1Actor");
 
    CPPUNIT_ASSERT(type != NULL);
-   dtCore::RefPtr<dtDAL::ActorProxy> ap = mGameManager->CreateActor(*type);
+   dtCore::RefPtr<dtDAL::BaseActorObject> ap = mGameManager->CreateActor(*type);
 
    CPPUNIT_ASSERT(ap->IsGameActorProxy());
    dtCore::RefPtr<dtGame::GameActorProxy> gap = dynamic_cast<dtGame::GameActorProxy*>(ap.get());
@@ -1679,7 +1679,7 @@ void MessageTests::TestDefaultMessageProcessorWithLocalOrRemoteActorCreates(bool
    dtCore::RefPtr<const dtDAL::ActorType> type = mGameManager->FindActorType("ExampleActors","Test1Actor");
 
    CPPUNIT_ASSERT(type != NULL);
-   dtCore::RefPtr<dtDAL::ActorProxy> ap = mGameManager->CreateActor(*type);
+   dtCore::RefPtr<dtDAL::BaseActorObject> ap = mGameManager->CreateActor(*type);
 
    CPPUNIT_ASSERT(ap->IsGameActorProxy());
    dtCore::RefPtr<dtGame::GameActorProxy> gap = dynamic_cast<dtGame::GameActorProxy*>(ap.get());
@@ -1776,7 +1776,7 @@ void MessageTests::TestRemoteActorCreatesFromPrototype()
 
    // Now we need to actually create an actor from our prototype. Use that to populate a create message.
    // Note, we don't actually add our temp actor to the GM. It acts like a 'remote' actor on another system.
-   dtCore::RefPtr<dtDAL::ActorProxy> tempBogusPrototype = mGameManager->CreateActorFromPrototype(prototypeId);
+   dtCore::RefPtr<dtDAL::BaseActorObject> tempBogusPrototype = mGameManager->CreateActorFromPrototype(prototypeId);
    dtCore::RefPtr<dtGame::GameActorProxy> tempBogusGameProxy = dynamic_cast<dtGame::GameActorProxy*>(tempBogusPrototype.get());
    dtCore::RefPtr<TestGameActor1> tempBogusActor = dynamic_cast<TestGameActor1*>(tempBogusPrototype->GetActor());
    tempBogusActor->SetTickLocals(11);
@@ -1843,7 +1843,7 @@ void MessageTests::TestActorEnteredWorldMessage()
    mGameManager->AddComponent(*tc, dtGame::GameManager::ComponentPriority::HIGHEST);
    std::vector<dtCore::RefPtr<const dtGame::Message> > msgs;
 
-   dtCore::RefPtr<dtDAL::ActorProxy> proxy = mGameManager->CreateActor("ExampleActors", "Test1Actor");
+   dtCore::RefPtr<dtDAL::BaseActorObject> proxy = mGameManager->CreateActor("ExampleActors", "Test1Actor");
    CPPUNIT_ASSERT(proxy.valid());
    dtGame::GameActorProxy* gap = dynamic_cast<dtGame::GameActorProxy*>(proxy.get());
    CPPUNIT_ASSERT_MESSAGE("A Test1Actor actor was created. The dynamic_cast to a GameActorProxy should not be NULL", gap != NULL);
@@ -1885,7 +1885,7 @@ void MessageTests::DoTestOfPartialUpdateDoesNotCreateActor(bool testWithPartial)
 
    dtCore::RefPtr<const dtDAL::ActorType> type = mGameManager->FindActorType("ExampleActors","Test1Actor");
    CPPUNIT_ASSERT(type != NULL);
-   dtCore::RefPtr<dtDAL::ActorProxy> ap = mGameManager->CreateActor(*type);
+   dtCore::RefPtr<dtDAL::BaseActorObject> ap = mGameManager->CreateActor(*type);
 
    CPPUNIT_ASSERT(ap->IsGameActorProxy());
    dtCore::RefPtr<dtGame::GameActorProxy> gap = dynamic_cast<dtGame::GameActorProxy*>(ap.get());

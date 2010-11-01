@@ -31,7 +31,7 @@ namespace dtActors
     /**
      * This proxy wraps placeable triggers.
      */
-    class DT_PLUGIN_EXPORT TriggerActorProxy : public dtDAL::ActorProxy
+    class DT_PLUGIN_EXPORT TriggerActorProxy : public dtDAL::BaseActorObject
     {
       public:
 
@@ -46,7 +46,7 @@ namespace dtActors
          * "global" actor.
          *
          * @return false
-         * @see ActorProxy::IsPlaceable()
+         * @see BaseActorObject::IsPlaceable()
          */
          virtual bool IsPlaceable() const { return false; }
 
@@ -55,7 +55,7 @@ namespace dtActors
           */
          virtual void BuildPropertyMap();
 
-         void SetAction( dtDAL::ActorProxy* action );
+         void SetAction( dtDAL::BaseActorObject* action );
          dtCore::DeltaDrawable* GetAction();
 
       protected:

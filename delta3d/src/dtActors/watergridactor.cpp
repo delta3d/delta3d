@@ -1251,9 +1251,9 @@ namespace dtActors
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   const dtDAL::ActorProxy::RenderMode& WaterGridActorProxy::GetRenderMode()
+   const dtDAL::BaseActorObject::RenderMode& WaterGridActorProxy::GetRenderMode()
    {
-      return dtDAL::ActorProxy::RenderMode::DRAW_BILLBOARD_ICON;
+      return dtDAL::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON;
    }
 
    ////////////////////////////////////////////////////////////////////////////////

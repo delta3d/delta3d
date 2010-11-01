@@ -28,6 +28,15 @@
 #include <dtAnim/export.h>
 #include <dtUtil/deprecationmgr.h>
 
+#include <cal3d/model.h>
+#include <cal3d/hardwaremodel.h>
+#include <cal3d/coremodel.h>
+#include <cal3d/renderer.h>
+#include <cal3d/mixer.h>
+#include <cal3d/morphtargetmixer.h>
+#include <cal3d/physique.h>
+#include <cal3d/springsystem.h>
+
 #include <osg/Quat>                   // for return type
 #include <osg/Referenced>
 #include <osg/Vec4>

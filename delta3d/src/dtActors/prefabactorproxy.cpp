@@ -102,7 +102,7 @@ namespace dtActors
       // First remove the current actors from any previous Prefabs...
       for (int proxyIndex = 0; proxyIndex < (int)mProxies.size(); proxyIndex++)
       {
-         dtDAL::ActorProxy* proxy = mProxies[proxyIndex].get();
+         dtDAL::BaseActorObject* proxy = mProxies[proxyIndex].get();
          if (proxy)
          {
             dtCore::DeltaDrawable* proxyActor = NULL;
@@ -128,7 +128,7 @@ namespace dtActors
 
             for (int proxyIndex = 0; proxyIndex < (int)mProxies.size(); proxyIndex++)
             {
-               dtDAL::ActorProxy* proxy = mProxies[proxyIndex].get();
+               dtDAL::BaseActorObject* proxy = mProxies[proxyIndex].get();
 
                dtCore::DeltaDrawable* proxyActor = NULL;
                proxy->GetActor(proxyActor);
@@ -148,7 +148,7 @@ namespace dtActors
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   std::vector<dtCore::RefPtr<dtDAL::ActorProxy> >& PrefabActorProxy::GetPrefabProxies()
+   std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> >& PrefabActorProxy::GetPrefabProxies()
    {
       return mProxies;
    }

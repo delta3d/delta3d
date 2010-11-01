@@ -72,7 +72,7 @@ namespace dtActors
         /**
         * Wrapper to set the Action on the internal Trigger.
         */
-        void SetAction(dtDAL::ActorProxy* action);
+        void SetAction(dtDAL::BaseActorObject* action);
 
         /**
         * Wrapper to get the Action on the internal Trigger.

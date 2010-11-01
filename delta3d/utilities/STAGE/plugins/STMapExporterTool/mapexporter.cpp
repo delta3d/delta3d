@@ -79,12 +79,12 @@ void MapExporterPlugin::onExportButtonPressed()
          std::string path = contextPath + "\\maps\\" + map->GetFileName();
          packager.AddFile(path, "maps");
 
-         std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > proxies;
+         std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> > proxies;
          map->GetAllProxies(proxies);
 
          for (int proxyIndex = 0; proxyIndex < (int)proxies.size(); proxyIndex++)
          {
-            dtDAL::ActorProxy* proxy = proxies[proxyIndex];
+            dtDAL::BaseActorObject* proxy = proxies[proxyIndex];
             if (proxy)
             {
                std::vector<const dtDAL::ActorProperty*> properties;

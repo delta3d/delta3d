@@ -274,22 +274,22 @@ namespace dtActors
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   const dtDAL::ActorProxy::RenderMode& GameMeshActorProxy::GetRenderMode()
+   const dtDAL::BaseActorObject::RenderMode& GameMeshActorProxy::GetRenderMode()
    {
       dtDAL::ResourceDescriptor resource = GetResource("static mesh");
       if (resource.IsEmpty() == false)
       {
          if (resource.GetResourceIdentifier().empty() || GetActor()->GetOSGNode() == NULL)
          {
-               return dtDAL::ActorProxy::RenderMode::DRAW_BILLBOARD_ICON;
+               return dtDAL::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON;
          }
          else
          {
-               return dtDAL::ActorProxy::RenderMode::DRAW_ACTOR;
+               return dtDAL::BaseActorObject::RenderMode::DRAW_ACTOR;
          }
       }
       else
-         return dtDAL::ActorProxy::RenderMode::DRAW_BILLBOARD_ICON;
+         return dtDAL::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON;
    }
 
    //////////////////////////////////////////////////////////////////////////

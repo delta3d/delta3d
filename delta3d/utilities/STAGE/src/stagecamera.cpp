@@ -317,11 +317,11 @@ namespace dtEditQt
    void StageCamera::attachActorProxy(dtDAL::TransformableActorProxy* proxy)
    {
       ActorAttachment toAttach;
-      const dtDAL::ActorProxy::RenderMode& renderMode = proxy->GetRenderMode();
+      const dtDAL::BaseActorObject::RenderMode& renderMode = proxy->GetRenderMode();
       osg::Matrix rotMat;
       osg::Quat rotOffset;
 
-      if (renderMode == dtDAL::ActorProxy::RenderMode::DRAW_BILLBOARD_ICON)
+      if (renderMode == dtDAL::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON)
       {
          osg::Vec3 billBoardPos;
          dtDAL::ActorProxyIcon* billBoard = proxy->GetBillBoardIcon();

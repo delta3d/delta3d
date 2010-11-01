@@ -154,7 +154,7 @@ dtCore::View* BaseABC::CreateDefaultView()
 ////////////////////////////////////////////////////////////////////////////////
 void BaseABC::LoadMap(dtDAL::Map& map, bool addBillBoards)
 {
-   typedef std::vector< dtCore::RefPtr<dtDAL::ActorProxy> > ActorProxyVector;
+   typedef std::vector< dtCore::RefPtr<dtDAL::BaseActorObject> > ActorProxyVector;
    ActorProxyVector proxies;
    map.FindProxies(proxies, "*", "dtcore", "Camera");
 

@@ -130,7 +130,7 @@ void TestAnim::OnStartup(dtGame::GameApplication& app)
 
    std::string context = dtUtil::GetDeltaRootPath() + "/examples/data/demoMap";
 
-   typedef std::vector<dtDAL::ActorProxy* > ProxyContainer;
+   typedef std::vector<dtDAL::BaseActorObject* > ProxyContainer;
    ProxyContainer proxies;
    ProxyContainer groundActor;
 
@@ -212,7 +212,7 @@ void TestAnim::OnStartup(dtGame::GameApplication& app)
 
    if (!groundActor.empty())
    {
-      dtDAL::ActorProxy* proxy = dynamic_cast<dtDAL::ActorProxy*>(groundActor.front());
+      dtDAL::BaseActorObject* proxy = dynamic_cast<dtDAL::BaseActorObject*>(groundActor.front());
       if (proxy)
       {
          dtCore::Transformable* transform = dynamic_cast<dtCore::Transformable*>(proxy->GetActor());

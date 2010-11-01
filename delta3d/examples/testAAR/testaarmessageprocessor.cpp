@@ -348,7 +348,7 @@ void TestAARMessageProcessor::Reset()
    }
 
    dtCore::RefPtr<const dtDAL::ActorType> playerType = GetGameManager()->FindActorType("ExampleActors", "TestPlayer");
-   dtCore::RefPtr<dtDAL::ActorProxy> player = GetGameManager()->CreateActor(*playerType);
+   dtCore::RefPtr<dtDAL::BaseActorObject> player = GetGameManager()->CreateActor(*playerType);
    mPlayer = dynamic_cast<dtGame::GameActorProxy*>(player.get());
    GetGameManager()->AddActor(*mPlayer, false, false);
 
@@ -370,7 +370,7 @@ void TestAARMessageProcessor::Reset()
    }
 
    //SetupTasks();
-   std::vector<dtDAL::ActorProxy*> toFill;
+   std::vector<dtDAL::BaseActorObject*> toFill;
    GetGameManager()->FindActorsByName("Move Camera", toFill);
 
    if (toFill.size() == 0)
@@ -449,7 +449,7 @@ void TestAARMessageProcessor::UpdateTaskCamera()
 ///////////////////////////////////////////////////////////////////////////
 void TestAARMessageProcessor::UpdatePlayerActor(const dtGame::ActorUpdateMessage& aum)
 {
-   dtDAL::ActorProxy* gap = GetGameManager()->FindActorById(aum.GetAboutActorId());
+   dtDAL::BaseActorObject* gap = GetGameManager()->FindActorById(aum.GetAboutActorId());
    if (gap != mPlayer)
    {
       return;

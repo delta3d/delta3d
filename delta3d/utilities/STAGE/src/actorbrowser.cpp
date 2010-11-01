@@ -291,7 +291,7 @@ namespace dtEditQt
          EditorData::GetInstance().getMainWindow()->startWaitCursor();
 
          // create our new object
-         dtCore::RefPtr<dtDAL::ActorProxy> proxy =
+         dtCore::RefPtr<dtDAL::BaseActorObject> proxy =
             dtDAL::LibraryManager::GetInstance().CreateActorProxy(*selectedWidget->getActorType()).get();
 
          if (proxy.valid())
@@ -310,7 +310,7 @@ namespace dtEditQt
             EditorEvents::GetInstance().emitEndChangeTransaction();
 
             // Now, let the world that it should select the new actor proxy.
-            std::vector< dtCore::RefPtr<dtDAL::ActorProxy> > actors;
+            std::vector< dtCore::RefPtr<dtDAL::BaseActorObject> > actors;
             actors.push_back(proxy.get());
             EditorEvents::GetInstance().emitActorsSelected(actors);
          }

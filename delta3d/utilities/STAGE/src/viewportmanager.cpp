@@ -178,7 +178,7 @@ namespace dtEditQt
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void ViewportManager::refreshActorSelection(const std::vector< dtCore::RefPtr<dtDAL::ActorProxy> >& actors)
+   void ViewportManager::refreshActorSelection(const std::vector< dtCore::RefPtr<dtDAL::BaseActorObject> >& actors)
    {
       std::map<std::string, Viewport*>::iterator itor;
       for (itor = mViewportList.begin(); itor != mViewportList.end(); ++itor)
@@ -218,17 +218,17 @@ namespace dtEditQt
 
    ///////////////////////////////////////////////////////////////////////////////
    void ViewportManager::clearMasterScene(
-      const std::map<dtCore::UniqueId, dtCore::RefPtr<dtDAL::ActorProxy> >& proxies)
+      const std::map<dtCore::UniqueId, dtCore::RefPtr<dtDAL::BaseActorObject> >& proxies)
    {
-      std::map< dtCore::UniqueId, dtCore::RefPtr<dtDAL::ActorProxy> >::const_iterator itor;
+      std::map< dtCore::UniqueId, dtCore::RefPtr<dtDAL::BaseActorObject> >::const_iterator itor;
 
       for (itor = proxies.begin(); itor != proxies.end(); ++itor)
       {
-         dtDAL::ActorProxy* proxy = const_cast<dtDAL::ActorProxy*>(itor->second.get());
-         const dtDAL::ActorProxy::RenderMode& renderMode = proxy->GetRenderMode();
+         dtDAL::BaseActorObject* proxy = const_cast<dtDAL::BaseActorObject*>(itor->second.get());
+         const dtDAL::BaseActorObject::RenderMode& renderMode = proxy->GetRenderMode();
          dtDAL::ActorProxyIcon* billBoard;
 
-         if (renderMode == dtDAL::ActorProxy::RenderMode::DRAW_BILLBOARD_ICON)
+         if (renderMode == dtDAL::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON)
          {
             billBoard = proxy->GetBillBoardIcon();
             if (billBoard != NULL)
@@ -236,11 +236,11 @@ namespace dtEditQt
                mMasterScene->RemoveDrawable(billBoard->GetDrawable());
             }
          }
-         else if (renderMode == dtDAL::ActorProxy::RenderMode::DRAW_ACTOR)
+         else if (renderMode == dtDAL::BaseActorObject::RenderMode::DRAW_ACTOR)
          {
             mMasterScene->RemoveDrawable(proxy->GetActor());
          }
-         else if (renderMode == dtDAL::ActorProxy::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON)
+         else if (renderMode == dtDAL::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON)
          {
             billBoard = proxy->GetBillBoardIcon();
             if (billBoard != NULL)
@@ -583,14 +583,14 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ViewportManager::onActorPropertyChanged(dtCore::RefPtr<dtDAL::ActorProxy> proxy,
+   void ViewportManager::onActorPropertyChanged(dtCore::RefPtr<dtDAL::BaseActorObject> proxy,
       dtCore::RefPtr<dtDAL::ActorProperty> property)
    {
       unsigned int billBoardIndex, actorIndex;
-      const dtDAL::ActorProxy::RenderMode& renderMode = proxy->GetRenderMode();
+      const dtDAL::BaseActorObject::RenderMode& renderMode = proxy->GetRenderMode();
       dtDAL::ActorProxyIcon* billBoard = proxy->GetBillBoardIcon();
 
-      if (renderMode == dtDAL::ActorProxy::RenderMode::DRAW_BILLBOARD_ICON)
+      if (renderMode == dtDAL::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON)
       {
          mMasterScene->RemoveDrawable(proxy->GetActor());
          mViewportOverlay->unSelect(proxy->GetActor());
@@ -609,7 +609,7 @@ namespace dtEditQt
             }
          }
       }
-      else if (renderMode == dtDAL::ActorProxy::RenderMode::DRAW_ACTOR)
+      else if (renderMode == dtDAL::BaseActorObject::RenderMode::DRAW_ACTOR)
       {
          if (billBoard == NULL)
          {
@@ -628,7 +628,7 @@ namespace dtEditQt
             mViewportOverlay->select(proxy->GetActor());
          }
       }
-      else if (renderMode == dtDAL::ActorProxy::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON)
+      else if (renderMode == dtDAL::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON)
       {
          if (billBoard == NULL)
          {
@@ -675,13 +675,13 @@ namespace dtEditQt
 
    ///////////////////////////////////////////////////////////////////////////////
    void ViewportManager::onActorProxyCreated(
-      dtCore::RefPtr<dtDAL::ActorProxy> proxy, bool forceNoAdjustments)
+      dtCore::RefPtr<dtDAL::BaseActorObject> proxy, bool forceNoAdjustments)
    {
       dtCore::Scene* scene = mMasterScene.get();
       dtDAL::ActorProxyIcon* billBoard = NULL;
 
-      const dtDAL::ActorProxy::RenderMode& renderMode = proxy->GetRenderMode();
-      if (renderMode == dtDAL::ActorProxy::RenderMode::DRAW_BILLBOARD_ICON)
+      const dtDAL::BaseActorObject::RenderMode& renderMode = proxy->GetRenderMode();
+      if (renderMode == dtDAL::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON)
       {
          billBoard = proxy->GetBillBoardIcon();
 
@@ -701,11 +701,11 @@ namespace dtEditQt
             scene->AddDrawable(billBoard->GetDrawable());
          }
       }
-      else if (renderMode == dtDAL::ActorProxy::RenderMode::DRAW_ACTOR)
+      else if (renderMode == dtDAL::BaseActorObject::RenderMode::DRAW_ACTOR)
       {
          scene->AddDrawable(proxy->GetActor());
       }
-      else if (renderMode == dtDAL::ActorProxy::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON)
+      else if (renderMode == dtDAL::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON)
       {
          scene->AddDrawable(proxy->GetActor());
 
@@ -743,7 +743,7 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ViewportManager::placeProxyInFrontOfCamera(dtDAL::ActorProxy* proxy)
+   void ViewportManager::placeProxyInFrontOfCamera(dtDAL::BaseActorObject* proxy)
    {
       // Get the current position and direction the camera is facing.
       osg::Vec3 pos = getWorldViewCamera()->getPosition();

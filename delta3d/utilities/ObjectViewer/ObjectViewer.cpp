@@ -224,14 +224,14 @@ void ObjectViewer::OnLoadMapFile(const std::string& filename)
       osg::Vec3 minBounds;
       osg::Vec3 maxBounds;
 
-      const std::map<dtCore::UniqueId, dtCore::RefPtr<dtDAL::ActorProxy> >& proxies =
+      const std::map<dtCore::UniqueId, dtCore::RefPtr<dtDAL::BaseActorObject> >& proxies =
          mMap->GetAllProxies();
 
-      std::map<dtCore::UniqueId,dtCore::RefPtr<dtDAL::ActorProxy> >::const_iterator itor;
+      std::map<dtCore::UniqueId,dtCore::RefPtr<dtDAL::BaseActorObject> >::const_iterator itor;
 
       for (itor = proxies.begin(); itor != proxies.end(); ++itor)
       {
-         dtDAL::ActorProxy *proxy = const_cast<dtDAL::ActorProxy*>(itor->second.get());
+         dtDAL::BaseActorObject *proxy = const_cast<dtDAL::BaseActorObject*>(itor->second.get());
 
          dtCore::DeltaDrawable* drawable = proxy->GetActor();
          if (drawable)
@@ -917,27 +917,27 @@ void ObjectViewer::ClearLights()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void ObjectViewer::clearProxies( const std::map<dtCore::UniqueId, dtCore::RefPtr<dtDAL::ActorProxy> >& proxies)
+void ObjectViewer::clearProxies( const std::map<dtCore::UniqueId, dtCore::RefPtr<dtDAL::BaseActorObject> >& proxies)
 {
-   std::map<dtCore::UniqueId,dtCore::RefPtr<dtDAL::ActorProxy> >::const_iterator itor;
+   std::map<dtCore::UniqueId,dtCore::RefPtr<dtDAL::BaseActorObject> >::const_iterator itor;
 
    for (itor = proxies.begin(); itor != proxies.end(); ++itor)
    {
-      dtDAL::ActorProxy *proxy = const_cast<dtDAL::ActorProxy*>(itor->second.get());
-      //const dtDAL::ActorProxy::RenderMode &renderMode = proxy->GetRenderMode();
+      dtDAL::BaseActorObject *proxy = const_cast<dtDAL::BaseActorObject*>(itor->second.get());
+      //const dtDAL::BaseActorObject::RenderMode &renderMode = proxy->GetRenderMode();
       //dtDAL::ActorProxyIcon *billBoard;
 
-      //if (renderMode == dtDAL::ActorProxy::RenderMode::DRAW_BILLBOARD_ICON)
+      //if (renderMode == dtDAL::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON)
       //{
       //   billBoard = proxy->GetBillBoardIcon();
       //   if (billBoard != NULL)
       //      GetScene()->RemoveDrawable(billBoard->GetDrawable());
       //}
-      //else if (renderMode == dtDAL::ActorProxy::RenderMode::DRAW_ACTOR)
+      //else if (renderMode == dtDAL::BaseActorObject::RenderMode::DRAW_ACTOR)
       //{
       //   GetScene()->RemoveDrawable(proxy->GetActor());
       //}
-      //else if (renderMode == dtDAL::ActorProxy::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON)
+      //else if (renderMode == dtDAL::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON)
       //{
       //   billBoard = proxy->GetBillBoardIcon();
       //   if (billBoard != NULL)

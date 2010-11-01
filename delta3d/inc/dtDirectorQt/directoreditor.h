@@ -215,8 +215,8 @@ namespace dtDirector
        *
        * @return  The current actor selection.
        */
-      virtual std::vector<dtDAL::ActorProxy*> GetActorSelection()
-      {return std::vector<dtDAL::ActorProxy*>();}
+      virtual std::vector<dtDAL::BaseActorObject*> GetActorSelection()
+      {return std::vector<dtDAL::BaseActorObject*>();}
 
       /**
        * Registers a custom editor tool.

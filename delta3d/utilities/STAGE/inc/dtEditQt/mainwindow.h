@@ -236,7 +236,7 @@ namespace dtEditQt
 
       void onActorProxyDestroyed(ActorProxyRefPtr proxy);
 
-      void onActorProxyNameChanged(dtDAL::ActorProxy& proxy, std::string oldName);
+      void onActorProxyNameChanged(dtDAL::BaseActorObject& proxy, std::string oldName);
 
       void onMapPropertyChanged();
 

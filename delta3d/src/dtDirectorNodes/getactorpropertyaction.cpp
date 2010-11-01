@@ -87,7 +87,7 @@ namespace dtDirector
    /////////////////////////////////////////////////////////////////////////////
    bool GetActorPropertyAction::Update(float simDelta, float delta, int input, bool firstUpdate)
    {
-      dtDAL::ActorProxy* actor = GetActor("Actor");
+      dtDAL::BaseActorObject* actor = GetActor("Actor");
       if (actor)
       {
          std::string propName = GetString("PropertyName");

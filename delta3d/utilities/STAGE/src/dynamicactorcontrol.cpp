@@ -86,7 +86,7 @@ namespace dtEditQt
          //SubQComboBox* editor = static_cast<SubQComboBox*>(widget);
 
          // set the current value from our property
-         dtDAL::ActorProxy* proxy = getActorProxy();
+         dtDAL::BaseActorObject* proxy = getActorProxy();
          if (proxy)
          {
             mTemporaryEditControl->setCurrentIndex(mTemporaryEditControl->findText(proxy->GetName().c_str()));
@@ -112,7 +112,7 @@ namespace dtEditQt
          //unsigned int index = (unsigned int)(mTemporaryEditControl->currentIndex());
          std::string selectionString = selection.toStdString();
 
-         dtDAL::ActorProxy* currentProxy = getActorProxy();
+         dtDAL::BaseActorObject* currentProxy = getActorProxy();
          std::string previousString = currentProxy ? currentProxy->GetName() : "<None>";
 
          // set our value to our object
@@ -129,7 +129,7 @@ namespace dtEditQt
             }
 
             // Find our matching proxy with this name - "<None>" ends up as NULl cause no match
-            std::vector< dtCore::RefPtr<dtDAL::ActorProxy> > proxies;
+            std::vector< dtCore::RefPtr<dtDAL::BaseActorObject> > proxies;
             std::string proxyClass;
             if (mProperty)
             {
@@ -140,7 +140,7 @@ namespace dtEditQt
                proxyClass = mIdProperty->GetDesiredActorClass();
             }
             GetActorProxies(proxies, proxyClass);
-            dtDAL::ActorProxy* proxy = NULL;
+            dtDAL::BaseActorObject* proxy = NULL;
             for (unsigned int i = 0; i < proxies.size(); i++)
             {
                if (proxies[i]->GetName().c_str() == selectionString)
@@ -197,7 +197,7 @@ namespace dtEditQt
 
       connect(mTemporaryGotoButton, SIGNAL(clicked()), this, SLOT(onGotoClicked()));
 
-      std::vector< dtCore::RefPtr<dtDAL::ActorProxy> > names;
+      std::vector< dtCore::RefPtr<dtDAL::BaseActorObject> > names;
       std::string proxyClass;
       if (mProperty)
       {
@@ -240,7 +240,7 @@ namespace dtEditQt
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   dtDAL::ActorProxy* DynamicActorControl::getActorProxy()
+   dtDAL::BaseActorObject* DynamicActorControl::getActorProxy()
    {
       if (mProperty)
       {
@@ -284,7 +284,7 @@ namespace dtEditQt
    {
       DynamicAbstractControl::getValueAsString();
 
-      dtDAL::ActorProxy* proxy = getActorProxy();
+      dtDAL::BaseActorObject* proxy = getActorProxy();
       return proxy != NULL ? QString(proxy->GetName().c_str()) : QString("<None>");
    }
 
@@ -335,14 +335,14 @@ namespace dtEditQt
    void DynamicActorControl::onGotoClicked()
    {
       NotifyParentOfPreUpdate();
-      dtDAL::ActorProxy* proxy = getActorProxy();
+      dtDAL::BaseActorObject* proxy = getActorProxy();
       if (proxy != NULL)
       {
-         dtCore::RefPtr<dtDAL::ActorProxy> refProxy(proxy);
+         dtCore::RefPtr<dtDAL::BaseActorObject> refProxy(proxy);
 
          EditorEvents::GetInstance().emitGotoActor(refProxy);
 
-         std::vector< dtCore::RefPtr<dtDAL::ActorProxy> > vec;
+         std::vector< dtCore::RefPtr<dtDAL::BaseActorObject> > vec;
          vec.push_back(refProxy);
 
          EditorEvents::GetInstance().emitActorsSelected(vec);
@@ -350,7 +350,7 @@ namespace dtEditQt
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   void DynamicActorControl::GetActorProxies(std::vector< dtCore::RefPtr<dtDAL::ActorProxy> >& toFill, const std::string& className)
+   void DynamicActorControl::GetActorProxies(std::vector< dtCore::RefPtr<dtDAL::BaseActorObject> >& toFill, const std::string& className)
    {
       toFill.clear();
 

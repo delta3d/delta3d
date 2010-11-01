@@ -46,7 +46,7 @@ namespace dtActors
          * Infinite lights cannot have a position in the scene.  The indicates
          * that the actor is a "global" actor.
          * @return False
-         * @see ActorProxy::IsPlaceable()
+         * @see BaseActorObject::IsPlaceable()
          */
         virtual bool IsPlaceable() const { return false; }
 

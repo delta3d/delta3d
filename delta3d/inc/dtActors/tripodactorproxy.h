@@ -32,7 +32,7 @@ namespace dtActors
    * @class TripodActorProxy
    * @brief This proxy wraps the dtCore::Tripod Delta3D object.
    */
-   class DT_PLUGIN_EXPORT TripodActorProxy : public dtDAL::ActorProxy
+   class DT_PLUGIN_EXPORT TripodActorProxy : public dtDAL::BaseActorObject
    {
 
    public:
@@ -67,7 +67,7 @@ namespace dtActors
       * that the actor is a "global" actor.
       *
       * @return false
-      * @see ActorProxy::IsPlaceable()
+      * @see BaseActorObject::IsPlaceable()
       */
       virtual bool IsPlaceable() const { return false; }
 
@@ -75,7 +75,7 @@ namespace dtActors
       * Sets the camera which this tripod will move
       * @param cameraProxy the camera to move
       */
-      void SetCamera( dtDAL::ActorProxy* cameraProxy );
+      void SetCamera( dtDAL::BaseActorObject* cameraProxy );
 
       /**
       * Gets the camera which this tripod is moving
@@ -88,7 +88,7 @@ namespace dtActors
       * move the camera in relation to
       * @param transformableProxy the parent transformable
       */
-      void SetAttachToTransformable( dtDAL::ActorProxy* transformableProxy );
+      void SetAttachToTransformable( dtDAL::BaseActorObject* transformableProxy );
 
       /**
       * Gets the transformable (i.e. parent) which this tripod is
@@ -101,7 +101,7 @@ namespace dtActors
       * Sets the transformable you wish to target the parent at
       * @param targetProxy the desired target
       */
-      void SetLookAtTarget( dtDAL::ActorProxy* targetProxy );
+      void SetLookAtTarget( dtDAL::BaseActorObject* targetProxy );
 
       /**
       * Gets the transformable which the parent is targeted at

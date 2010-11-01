@@ -131,7 +131,7 @@ protected:
 
    void ClearLights();
 
-   void clearProxies( const std::map<dtCore::UniqueId, dtCore::RefPtr<dtDAL::ActorProxy> >& proxies);
+   void clearProxies( const std::map<dtCore::UniqueId, dtCore::RefPtr<dtDAL::BaseActorObject> >& proxies);
 
    virtual void PostFrame(const double deltaFrameTime);
 

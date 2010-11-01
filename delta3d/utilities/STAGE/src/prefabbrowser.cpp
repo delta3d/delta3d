@@ -312,7 +312,7 @@ namespace dtEditQt
             EditorEvents::GetInstance().emitBeginChangeTransaction();
 
             dtCore::RefPtr<dtDAL::Map> currMap = EditorData::GetInstance().getCurrentMap();
-            std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > proxyList;
+            std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> > proxyList;
             dtCore::RefPtr<dtDAL::MapParser> parser = new dtDAL::MapParser;
             parser->ParsePrefab(fullPath, proxyList, currMap.get());
 
@@ -337,7 +337,7 @@ namespace dtEditQt
             // Un-select all proxies currently selected.
             for (; itor != itorEnd; ++itor)
             {
-               dtDAL::ActorProxy* proxy = const_cast<dtDAL::ActorProxy*>(itor->get());
+               dtDAL::BaseActorObject* proxy = const_cast<dtDAL::BaseActorObject*>(itor->get());
 
                // Un-highlight the currently selected proxy.
                if (overlay->isActorSelected(proxy))
@@ -352,7 +352,7 @@ namespace dtEditQt
 
             for (int proxyIndex = 0; proxyIndex < (int)proxyList.size(); proxyIndex++)
             {
-               dtDAL::ActorProxy* proxy = proxyList[proxyIndex].get();
+               dtDAL::BaseActorObject* proxy = proxyList[proxyIndex].get();
 
                currMap->AddProxy(*proxy, true);
                currMap->AddActorToGroup(groupIndex, proxy);
@@ -408,7 +408,7 @@ namespace dtEditQt
          EditorData::GetInstance().getMainWindow()->startWaitCursor();
 
          // create our new object
-         dtCore::RefPtr<dtDAL::ActorProxy> proxy =
+         dtCore::RefPtr<dtDAL::BaseActorObject> proxy =
             dtDAL::LibraryManager::GetInstance().CreateActorProxy("dtActors", "Prefab");
 
          if (proxy.valid())
@@ -441,7 +441,7 @@ namespace dtEditQt
             EditorEvents::GetInstance().emitEndChangeTransaction();
 
             // Now, let the world that it should select the new actor proxy.
-            std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > actors;
+            std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> > actors;
             actors.push_back(proxy.get());
             EditorEvents::GetInstance().emitActorsSelected(actors);
          }

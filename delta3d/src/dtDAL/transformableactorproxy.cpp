@@ -58,7 +58,7 @@ namespace dtDAL
    //////////////////////////////////////////////////////
    void TransformableActorProxy::BuildPropertyMap()
    {
-      dtDAL::ActorProxy::BuildPropertyMap();
+      dtDAL::BaseActorObject::BuildPropertyMap();
 
       static const dtUtil::RefString GROUPNAME = "Transformable";
       static const dtUtil::RefString COLLISION_GROUP = "ODE Collision";

@@ -455,7 +455,7 @@ namespace dtQt
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   void BasePropertyEditor::ProxyNameChanged(dtDAL::ActorProxy& propCon, std::string oldName)
+   void BasePropertyEditor::ProxyNameChanged(dtDAL::BaseActorObject& propCon, std::string oldName)
    {
       UpdateTitle();
    }

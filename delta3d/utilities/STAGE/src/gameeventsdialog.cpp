@@ -62,7 +62,7 @@
 using std::vector;
 using dtDAL::GameEvent;
 using dtDAL::Map;
-using dtDAL::ActorProxy;
+using dtDAL::BaseActorObject;
 using dtDAL::ActorProperty;
 
 namespace dtEditQt
@@ -211,7 +211,7 @@ namespace dtEditQt
       }
       GameEvent* eventToDelete = selection->GetEvent();
 
-      vector< dtCore::RefPtr<ActorProxy> > proxies;
+      vector< dtCore::RefPtr<BaseActorObject> > proxies;
       curMap.GetAllProxies(proxies);
 
       vector<ActorProperty*> properties;

@@ -362,8 +362,8 @@ namespace dtEditQt
                   mPropertyWindow, SLOT(ActorPropertyChanged(ActorProxyRefPtr, ActorPropertyRefPtr)));
 
          // listen for name changes so we can update our group box label or handle undo changes
-         connect(&EditorEvents::GetInstance(), SIGNAL(ProxyNameChanged(dtDAL::ActorProxy&, std::string)),
-                  mPropertyWindow, SLOT(ProxyNameChanged(dtDAL::ActorProxy&, std::string)));
+         connect(&EditorEvents::GetInstance(), SIGNAL(ProxyNameChanged(dtDAL::BaseActorObject&, std::string)),
+                  mPropertyWindow, SLOT(ProxyNameChanged(dtDAL::BaseActorObject&, std::string)));
 
          mPropertyWindow->setFeatures(QDockWidget::AllDockWidgetFeatures);
          addDockWidget(Qt::LeftDockWidgetArea,  mPropertyWindow);
@@ -748,8 +748,8 @@ namespace dtEditQt
             ActorPropertyRefPtr)));
 
          // listen for name changes so we can update our group box label or handle undo changes
-         disconnect(&EditorEvents::GetInstance(), SIGNAL(ProxyNameChanged(dtDAL::ActorProxy&, std::string)),
-                  mPropertyWindow, SLOT(ProxyNameChanged(dtDAL::ActorProxy&, std::string)));
+         disconnect(&EditorEvents::GetInstance(), SIGNAL(ProxyNameChanged(dtDAL::BaseActorObject&, std::string)),
+                  mPropertyWindow, SLOT(ProxyNameChanged(dtDAL::BaseActorObject&, std::string)));
       }
 
       EditorData& editorData = EditorData::GetInstance();
@@ -873,7 +873,7 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void MainWindow::onActorPropertyChanged(dtCore::RefPtr<dtDAL::ActorProxy> proxy,
+   void MainWindow::onActorPropertyChanged(dtCore::RefPtr<dtDAL::BaseActorObject> proxy,
       dtCore::RefPtr<dtDAL::ActorProperty> property)
    {
       if (!dtDAL::Project::GetInstance().IsContextValid())
@@ -956,7 +956,7 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void MainWindow::onActorProxyDestroyed(dtCore::RefPtr<dtDAL::ActorProxy> proxy)
+   void MainWindow::onActorProxyDestroyed(dtCore::RefPtr<dtDAL::BaseActorObject> proxy)
    {
       EditorData::GetInstance().getCurrentMap()->SetModified(true);
       updateWindowTitle();
@@ -973,7 +973,7 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void MainWindow::onActorProxyNameChanged(dtDAL::ActorProxy& proxy, std::string oldName)
+   void MainWindow::onActorProxyNameChanged(dtDAL::BaseActorObject& proxy, std::string oldName)
    {
       EditorData::GetInstance().getCurrentMap()->OnProxyRenamed(proxy);
       EditorData::GetInstance().getCurrentMap()->SetModified(true);
@@ -981,7 +981,7 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void MainWindow::onActorProxyCreated(dtCore::RefPtr<dtDAL::ActorProxy> proxy, bool forceNoAdjustments)
+   void MainWindow::onActorProxyCreated(dtCore::RefPtr<dtDAL::BaseActorObject> proxy, bool forceNoAdjustments)
    {
       EditorData::GetInstance().getCurrentMap()->SetModified(true);
       updateWindowTitle();
@@ -1055,8 +1055,8 @@ namespace dtEditQt
       connect(&EditorEvents::GetInstance(),
          SIGNAL(actorPropertyChanged(ActorProxyRefPtr, ActorPropertyRefPtr)),
          this, SLOT(onActorPropertyChanged(ActorProxyRefPtr, ActorPropertyRefPtr)));
-      connect(&EditorEvents::GetInstance(), SIGNAL(ProxyNameChanged(dtDAL::ActorProxy&, std::string)),
-         this, SLOT(onActorProxyNameChanged(dtDAL::ActorProxy&, std::string)));
+      connect(&EditorEvents::GetInstance(), SIGNAL(ProxyNameChanged(dtDAL::BaseActorObject&, std::string)),
+         this, SLOT(onActorProxyNameChanged(dtDAL::BaseActorObject&, std::string)));
       connect(&EditorEvents::GetInstance(), SIGNAL(showStatusBarMessage(const QString, int)),
          this, SLOT(showStatusBarMessage(const QString, int)));
 

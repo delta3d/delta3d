@@ -103,7 +103,7 @@ namespace dtActors
 
         virtual void BuildPropertyMap();
 
-        virtual const dtDAL::ActorProxy::RenderMode& GetRenderMode();
+        virtual const dtDAL::BaseActorObject::RenderMode& GetRenderMode();
          
         dtDAL::ActorProxyIcon* GetBillBoardIcon();
 

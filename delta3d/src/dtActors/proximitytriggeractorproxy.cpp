@@ -127,7 +127,7 @@ namespace dtActors
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void ProximityTriggerActorProxy::SetAction( ActorProxy* action )
+   void ProximityTriggerActorProxy::SetAction( BaseActorObject* action )
    {
       SetLinkedActor("Action", action);
 

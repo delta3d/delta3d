@@ -50,7 +50,7 @@ namespace dtActors
          virtual void BuildPropertyMap();
          virtual void BuildInvokables();
 
-         void SetAttachToProxy(dtDAL::ActorProxy* newAttachToProxy);
+         void SetAttachToProxy(dtDAL::BaseActorObject* newAttachToProxy);
 
       protected:
          virtual ~DistanceSensorActorProxy();

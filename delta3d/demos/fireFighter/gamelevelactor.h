@@ -87,9 +87,9 @@ class FIRE_FIGHTER_EXPORT GameLevelActorProxy : public dtGame::GameActorProxy
        */
       dtDAL::ActorProxyIcon* GetBillBoardIcon();
 
-      virtual const dtDAL::ActorProxy::RenderMode& GetRenderMode()
+      virtual const dtDAL::BaseActorObject::RenderMode& GetRenderMode()
       {
-         return dtDAL::ActorProxy::RenderMode::DRAW_ACTOR;
+         return dtDAL::BaseActorObject::RenderMode::DRAW_ACTOR;
       }
 
    protected:

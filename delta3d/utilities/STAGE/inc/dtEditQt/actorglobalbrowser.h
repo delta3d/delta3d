@@ -89,7 +89,7 @@ namespace dtEditQt
       /**
        * Called when a proxy's name is changed
        */
-      void onActorProxyNameChanged(dtDAL::ActorProxy& proxy, std::string oldName);
+      void onActorProxyNameChanged(dtDAL::BaseActorObject& proxy, std::string oldName);
 
    private:
       QGroupBox* resultsGroup();

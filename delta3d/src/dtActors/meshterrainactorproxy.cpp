@@ -77,18 +77,18 @@ namespace dtActors
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   const dtDAL::ActorProxy::RenderMode& MeshTerrainActorProxy::GetRenderMode()
+   const dtDAL::BaseActorObject::RenderMode& MeshTerrainActorProxy::GetRenderMode()
    {
       dtDAL::ResourceDescriptor resource = GetResource("terrain mesh");
       if (resource.IsEmpty() == false)
       {
          if (resource.GetResourceIdentifier().empty() || GetActor()->GetOSGNode() == NULL)
-            return dtDAL::ActorProxy::RenderMode::DRAW_BILLBOARD_ICON;
+            return dtDAL::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON;
          else
-            return dtDAL::ActorProxy::RenderMode::DRAW_ACTOR;
+            return dtDAL::BaseActorObject::RenderMode::DRAW_ACTOR;
       }
       else
-         return dtDAL::ActorProxy::RenderMode::DRAW_BILLBOARD_ICON;
+         return dtDAL::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON;
    }
 
    //////////////////////////////////////////////////////////////////////////

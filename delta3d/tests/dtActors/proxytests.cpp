@@ -85,12 +85,12 @@ public:
 private:
    dtDAL::LibraryManager& libMgr;
    std::vector<const dtDAL::ActorType*> actors;
-   std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > proxies;
+   std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> > proxies;
    static const std::string mExampleLibraryName;
 
-   void testProps(dtDAL::ActorProxy& proxy);
-   void testProp(dtDAL::ActorProxy& proxy, dtDAL::ActorProperty* prop, bool isElement = false);
-   void compareProxies(dtDAL::ActorProxy& ap1, dtDAL::ActorProxy& ap2);
+   void testProps(dtDAL::BaseActorObject& proxy);
+   void testProp(dtDAL::BaseActorObject& proxy, dtDAL::ActorProperty* prop, bool isElement = false);
+   void compareProxies(dtDAL::BaseActorObject& ap1, dtDAL::BaseActorObject& ap2);
    void compareProperties(dtDAL::ActorProperty* prop1, dtDAL::ActorProperty* prop2);
 };
 
@@ -123,7 +123,7 @@ void ProxyTest::tearDown()
    dtDAL::GameEventManager::GetInstance().ClearAllEvents();
 }
 
-void ProxyTest::testProps(dtDAL::ActorProxy& proxy)
+void ProxyTest::testProps(dtDAL::BaseActorObject& proxy)
 {
    std::vector<dtDAL::ActorProperty*> props;
    proxy.GetPropertyList(props);
@@ -166,7 +166,7 @@ static void SimpleStringToFromDataStreamCheck(dtUtil::DataStream& ds, dtDAL::Act
             " both times", expected, actual);
 }
 
-void ProxyTest::testProp(dtDAL::ActorProxy& proxy, dtDAL::ActorProperty* prop, bool isElement)
+void ProxyTest::testProp(dtDAL::BaseActorObject& proxy, dtDAL::ActorProperty* prop, bool isElement)
 {
    std::string proxyTypeName = proxy.GetActorType().GetName();
    std::string name = prop->GetName();
@@ -404,7 +404,7 @@ void ProxyTest::testProp(dtDAL::ActorProxy& proxy, dtDAL::ActorProperty* prop, b
          CPPUNIT_ASSERT_MESSAGE(std::string("Value should be NULL, but it's not"), aap->GetValue() == NULL);
 
          const std::string& actorClass = aap->GetDesiredActorClass();
-         dtDAL::ActorProxy* tempProxy  = NULL;
+         dtDAL::BaseActorObject* tempProxy  = NULL;
 
          for(unsigned int i = 0; i < proxies.size(); ++i)
          {
@@ -418,7 +418,7 @@ void ProxyTest::testProp(dtDAL::ActorProxy& proxy, dtDAL::ActorProperty* prop, b
          CPPUNIT_ASSERT_MESSAGE("TempProxy should not be NULL", tempProxy != NULL);
 
          aap->SetValue(tempProxy);
-         dtDAL::ActorProxy* ap = aap->GetValue();
+         dtDAL::BaseActorObject* ap = aap->GetValue();
 
          CPPUNIT_ASSERT_MESSAGE("GetValue should return what it was set to", ap == tempProxy);
 
@@ -1026,7 +1026,7 @@ void ProxyTest::testProp(dtDAL::ActorProxy& proxy, dtDAL::ActorProperty* prop, b
    }
 }
 
-void ProxyTest::compareProxies(dtDAL::ActorProxy& ap1, dtDAL::ActorProxy& ap2)
+void ProxyTest::compareProxies(dtDAL::BaseActorObject& ap1, dtDAL::BaseActorObject& ap2)
 {
    std::vector<dtDAL::ActorProperty*> props;
    ap1.GetPropertyList(props);
@@ -1296,7 +1296,7 @@ void ProxyTest::TestProxies()
 {
    try
    {
-      RefPtr<dtDAL::ActorProxy> proxy;
+      RefPtr<dtDAL::BaseActorObject> proxy;
 
       for (unsigned int i = 0; i < actors.size(); ++i)
       {
@@ -1346,15 +1346,15 @@ void ProxyTest::TestBezierProxies()
       RefPtr<const dtDAL::ActorType>  at    = libMgr.FindActorType("dtcore.Curve", "Bezier Node");
       CPPUNIT_ASSERT(at != NULL);
 
-      RefPtr<dtDAL::ActorProxy> one   = libMgr.CreateActorProxy(*at);
-      RefPtr<dtDAL::ActorProxy> two   = libMgr.CreateActorProxy(*at);
-      RefPtr<dtDAL::ActorProxy> three = libMgr.CreateActorProxy(*at);
+      RefPtr<dtDAL::BaseActorObject> one   = libMgr.CreateActorProxy(*at);
+      RefPtr<dtDAL::BaseActorObject> two   = libMgr.CreateActorProxy(*at);
+      RefPtr<dtDAL::BaseActorObject> three = libMgr.CreateActorProxy(*at);
 
       at = libMgr.FindActorType("dtcore.Curve", "Bezier Control Point");
       CPPUNIT_ASSERT(at != NULL);
 
-      RefPtr<dtDAL::ActorProxy> entryBCP = libMgr.CreateActorProxy(*at);
-      RefPtr<dtDAL::ActorProxy> exitBCP = libMgr.CreateActorProxy(*at);
+      RefPtr<dtDAL::BaseActorObject> entryBCP = libMgr.CreateActorProxy(*at);
+      RefPtr<dtDAL::BaseActorObject> exitBCP = libMgr.CreateActorProxy(*at);
 
       dtDAL::ActorActorProperty* prevProp1    = static_cast<dtDAL::ActorActorProperty*>(one->GetProperty("Previous Bezier Node"));
       CPPUNIT_ASSERT_MESSAGE("Actor type should not be NULL", prevProp1 != NULL);

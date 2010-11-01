@@ -322,9 +322,9 @@ namespace dtActors
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   const dtDAL::ActorProxy::RenderMode& DirectorActorProxy::GetRenderMode()
+   const dtDAL::BaseActorObject::RenderMode& DirectorActorProxy::GetRenderMode()
    {
-      return dtDAL::ActorProxy::RenderMode::DRAW_BILLBOARD_ICON;
+      return dtDAL::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON;
    }
 
    //////////////////////////////////////////////////////////////////////////

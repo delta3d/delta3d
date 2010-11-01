@@ -58,7 +58,7 @@ namespace dtActors
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void PositionDataActorProxy::ApplyDataTo(dtDAL::ActorProxy* actorProxy) const
+   void PositionDataActorProxy::ApplyDataTo(dtDAL::BaseActorObject* actorProxy) const
    {
       ApplyDataTo(actorProxy->GetActor());
    }
@@ -107,8 +107,8 @@ namespace dtActors
    }
 
    //////////////////////////////////////////////////////////////////////////
-   const dtDAL::ActorProxy::RenderMode& PositionDataActorProxy::GetRenderMode()
+   const dtDAL::BaseActorObject::RenderMode& PositionDataActorProxy::GetRenderMode()
    {
-      return dtDAL::ActorProxy::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON;
+      return dtDAL::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON;
    }
 }

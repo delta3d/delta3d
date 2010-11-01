@@ -957,7 +957,7 @@ void GMLoggerTests::TestPlaybackRecordCycle()
    //actor create events.
    try
    {
-      dtCore::RefPtr<dtDAL::ActorProxy> proxy = NULL;
+      dtCore::RefPtr<dtDAL::BaseActorObject> proxy = NULL;
       dtCore::RefPtr<dtGame::GameActorProxy> gameProxy = NULL;
 
       mGameManager->AddComponent(*serverController, dtGame::GameManager::ComponentPriority::NORMAL);
@@ -1175,7 +1175,7 @@ void GMLoggerTests::TestLoggerGetKeyframes()
 
    try
    {
-      dtCore::RefPtr<dtDAL::ActorProxy> proxy = NULL;
+      dtCore::RefPtr<dtDAL::BaseActorObject> proxy = NULL;
       dtCore::RefPtr<dtGame::GameActorProxy> gameProxy = NULL;
       std::string errorMsg;
       std::vector<dtGame::LogKeyframe> kfList;
@@ -1683,7 +1683,7 @@ void GMLoggerTests::TestLoggerAutoKeyframeInterval()
 
    try
    {
-      dtCore::RefPtr<dtDAL::ActorProxy> proxy = NULL;
+      dtCore::RefPtr<dtDAL::BaseActorObject> proxy = NULL;
       dtCore::RefPtr<dtGame::GameActorProxy> gameProxy = NULL;
       std::string errorMsg;
       std::vector<dtGame::LogKeyframe> kfList;
@@ -2122,7 +2122,7 @@ void GMLoggerTests::TestLoggerActorIDLists()
    //   std::vector<dtCore::UniqueId>::const_iterator itr = ids.begin();
    //   while (itr != ids.end())
    //   {
-   //      dtDAL::ActorProxy *prox = mGameManager->FindActorById(*itr);
+   //      dtDAL::BaseActorObject *prox = mGameManager->FindActorById(*itr);
    //      if (prox != NULL)
    //      {
    //         names += " " + prox->GetClassName();

@@ -125,7 +125,7 @@ void dtGame::GMImpl::ProcessTimers(GameManager& gm, std::set<TimerInfo>& listToP
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void dtGame::GMImpl::RemoveActorFromScene(GameManager& gm, dtDAL::ActorProxy& proxy)
+void dtGame::GMImpl::RemoveActorFromScene(GameManager& gm, dtDAL::BaseActorObject& proxy)
 {
    dtCore::DeltaDrawable& dd = *proxy.GetActor();
 
@@ -136,11 +136,11 @@ void dtGame::GMImpl::RemoveActorFromScene(GameManager& gm, dtDAL::ActorProxy& pr
 
    // find all of the children that have actor proxies associated with them to move them up
    // one level in the scene.
-   std::vector< dtCore::RefPtr<dtDAL::ActorProxy> > childrenToMove;
+   std::vector< dtCore::RefPtr<dtDAL::BaseActorObject> > childrenToMove;
    for (unsigned i = 0; i < dd.GetNumChildren(); ++i)
    {
       dtCore::DeltaDrawable& child = *dd.GetChild(i);
-      dtDAL::ActorProxy* childProxy = gm.FindActorById(child.GetUniqueId());
+      dtDAL::BaseActorObject* childProxy = gm.FindActorById(child.GetUniqueId());
       if (childProxy != NULL)
       {
          childrenToMove.push_back(childProxy);

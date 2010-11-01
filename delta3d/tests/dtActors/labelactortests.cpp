@@ -77,7 +77,7 @@ void LabelActorTests::setUp()
    try
    {
       // Create the actor for testing.
-      dtCore::RefPtr<dtDAL::ActorProxy> proxy = dtDAL::LibraryManager::GetInstance()
+      dtCore::RefPtr<dtDAL::BaseActorObject> proxy = dtDAL::LibraryManager::GetInstance()
          .CreateActorProxy(*dtActors::EngineActorRegistry::LABEL_ACTOR_TYPE);
       mLabelProxy = dynamic_cast<dtActors::LabelActorProxy*>(proxy.get());
 

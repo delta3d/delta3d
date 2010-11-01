@@ -44,7 +44,7 @@ namespace dtActors
    ///////////////////////////////////////////////////////////////////////////////
    void AutoTriggerActorProxy::BuildPropertyMap()
    {
-      dtDAL::ActorProxy::BuildPropertyMap();
+      dtDAL::BaseActorObject::BuildPropertyMap();
 
       AutoTrigger* trigger = NULL;
       GetActor(trigger);
@@ -68,7 +68,7 @@ namespace dtActors
       return autoTrigger->GetTrigger()->GetAction();
    }
 
-   void AutoTriggerActorProxy::SetAction(ActorProxy* action)
+   void AutoTriggerActorProxy::SetAction(BaseActorObject* action)
    {
       SetLinkedActor("Action", action);
 

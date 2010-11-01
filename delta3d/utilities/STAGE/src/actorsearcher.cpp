@@ -263,7 +263,7 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void ActorSearcher::searchPressed()
    {
-      std::vector< dtCore::RefPtr<dtDAL::ActorProxy> > foundProxies;
+      std::vector< dtCore::RefPtr<dtDAL::BaseActorObject> > foundProxies;
       dtDAL::Map* map = EditorData::GetInstance().getCurrentMap();
       if (map == NULL)
       {
@@ -307,7 +307,7 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ActorSearcher::onActorProxyCreated(dtCore::RefPtr<dtDAL::ActorProxy> proxy, bool forceNoAdjustments)
+   void ActorSearcher::onActorProxyCreated(dtCore::RefPtr<dtDAL::BaseActorObject> proxy, bool forceNoAdjustments)
    {
       EditorData::GetInstance().getMainWindow()->startWaitCursor();
 

@@ -336,7 +336,7 @@ namespace dtAudio
    /////////////////////////////////////////////////////////////////////////////
    void SoundComponent::RemoveSoundActorsFromWorld()
    {
-      typedef std::vector<dtDAL::ActorProxy*> ProxyArray;
+      typedef std::vector<dtDAL::BaseActorObject*> ProxyArray;
       ProxyArray proxyArray;
 
       // Evacuate all the sound actors.
@@ -377,7 +377,7 @@ namespace dtAudio
    /////////////////////////////////////////////////////////////////////////////
    void SoundComponent::GetSoundActorSounds(SoundArray& outArray)
    {
-      typedef std::vector<dtDAL::ActorProxy*> ProxyArray;
+      typedef std::vector<dtDAL::BaseActorObject*> ProxyArray;
       ProxyArray proxyArray;
       GetGameManager()->FindActorsByType(*dtAudio::AudioActorRegistry::SOUND_ACTOR_TYPE, proxyArray);
 

@@ -58,7 +58,7 @@ namespace dtEditQt
 
    public:
       ///Simplifies the interface to a list of actor proxies.
-      typedef std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > ActorProxyList;
+      typedef std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> > ActorProxyList;
 
       /**
        * Constructs the overlay.
@@ -123,8 +123,8 @@ namespace dtEditQt
        * @param proxy The proxy to test.
        * @return True if the proxy is already selected, false otherwise.
        */
-      bool isActorSelected(dtDAL::ActorProxy* proxy) const;
-      bool isActorSelectedFirst(dtDAL::ActorProxy* proxy) const;
+      bool isActorSelected(dtDAL::BaseActorObject* proxy) const;
+      bool isActorSelectedFirst(dtDAL::BaseActorObject* proxy) const;
 
       /**
        * Removes the specified actor proxy from the current selection.
@@ -133,7 +133,7 @@ namespace dtEditQt
        *  selection tree but leave the proxy, logically, in a selected state.  Setting
        *  true for this value clears the selection both visually and logically.
        */
-      void removeActorFromCurrentSelection(dtDAL::ActorProxy* proxy, bool clearAll = true);
+      void removeActorFromCurrentSelection(dtDAL::BaseActorObject* proxy, bool clearAll = true);
 
       /**
        * Clears the current selection.

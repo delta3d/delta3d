@@ -239,7 +239,7 @@ namespace dtDirector
             count = GetPropertyCount("Actor");
             for (int index = 0; index < count; ++index)
             {
-               dtDAL::ActorProxy* proxy = GetActor("Actor", index);
+               dtDAL::BaseActorObject* proxy = GetActor("Actor", index);
                if (proxy)
                {
                   dtAnim::AnimationGameActor* actor = dynamic_cast<dtAnim::AnimationGameActor*>(proxy->GetActor());
@@ -399,7 +399,7 @@ namespace dtDirector
             int count = GetPropertyCount("Actor");
             for (int index = 0; index < count; ++index)
             {
-               dtDAL::ActorProxy* proxy = GetActor("Actor", index);
+               dtDAL::BaseActorObject* proxy = GetActor("Actor", index);
                if (proxy)
                {
                   dtAnim::AnimationGameActor* actor = dynamic_cast<dtAnim::AnimationGameActor*>(proxy->GetActor());

@@ -134,7 +134,7 @@ void GMTaskComponentTests::TestTaskComponentTaskTracking()
    {
       unsigned int i;
       dtCore::RefPtr<dtGame::TaskComponent> taskComponent = new dtGame::TaskComponent();
-      dtCore::RefPtr<dtDAL::ActorProxy> proxy = NULL;
+      dtCore::RefPtr<dtDAL::BaseActorObject> proxy = NULL;
       dtCore::RefPtr<dtGame::GameActorProxy> gameProxy = NULL;
 
       mGameManager->AddComponent(*taskComponent,dtGame::GameManager::ComponentPriority::NORMAL);
@@ -168,7 +168,7 @@ void GMTaskComponentTests::TestTaskComponentTaskTracking()
          else
             proxy = mGameManager->CreateActor(*taskType);
 
-         proxy->SetName("ActorProxy" + dtUtil::ToString(i));
+         proxy->SetName("BaseActorObject" + dtUtil::ToString(i));
          gameProxy = dynamic_cast<dtGame::GameActorProxy*>(proxy.get());
          CPPUNIT_ASSERT_MESSAGE("Should have been a game actor.",gameProxy != NULL);
          mGameManager->AddActor(*gameProxy,false,false);
@@ -217,7 +217,7 @@ void GMTaskComponentTests::TestChangeMap()
 
       for (unsigned int i=0; i<20; i++)
       {
-         dtCore::RefPtr<dtDAL::ActorProxy> proxy = NULL;
+         dtCore::RefPtr<dtDAL::BaseActorObject> proxy = NULL;
          dtCore::RefPtr<dtGame::GameActorProxy> gameProxy = NULL;
 
          proxy = mGameManager->CreateActor(*taskType);
@@ -273,7 +273,7 @@ void GMTaskComponentTests::TestGetTasks()
 
       for (i=0; i<20; i++)
       {
-         dtCore::RefPtr<dtDAL::ActorProxy> proxy = NULL;
+         dtCore::RefPtr<dtDAL::BaseActorObject> proxy = NULL;
          dtCore::RefPtr<dtGame::GameActorProxy> gameProxy = NULL;
 
          proxy = mGameManager->CreateActor(*taskType);

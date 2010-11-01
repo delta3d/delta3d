@@ -281,7 +281,7 @@ namespace dtEditQt
          // found by the results of our hard coded search above.
          if (particleActor != NULL)
          {
-            dtCore::RefPtr<dtDAL::ActorProxy> proxy =
+            dtCore::RefPtr<dtDAL::BaseActorObject> proxy =
                dtDAL::LibraryManager::GetInstance().CreateActorProxy(*particleActor).get();
 
             // check to make sure both the mesh actor and the proxy are valid.
@@ -312,7 +312,7 @@ namespace dtEditQt
                EditorEvents::GetInstance().emitEndChangeTransaction();
 
                // Now, let the world that it should select the new actor proxy.
-               std::vector< dtCore::RefPtr<dtDAL::ActorProxy> > actors;
+               std::vector< dtCore::RefPtr<dtDAL::BaseActorObject> > actors;
 
                actors.push_back(proxy);
                EditorEvents::GetInstance().emitActorsSelected(actors);
