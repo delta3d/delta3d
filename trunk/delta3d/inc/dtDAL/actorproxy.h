@@ -29,7 +29,7 @@
 
 namespace dtDAL
 {
-   typedef BaseActorObject BaseActorObject;
+   typedef BaseActorObject ActorProxy;
 }
 
 #endif
