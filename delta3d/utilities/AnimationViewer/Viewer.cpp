@@ -228,6 +228,7 @@ void Viewer::OnLoadCharFile(const QString& filename)
       emit AnimationLoaded(animID, nameToSend, trackCount, keyframes, dur);
    }
 
+#if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300
    CalMorphTargetMixer *mixer = wrapper->GetCalModel()->getMorphTargetMixer();
    if (mixer)
    {
@@ -241,6 +242,7 @@ void Viewer::OnLoadCharFile(const QString& filename)
          emit MorphAnimationLoaded(animID, nameToSend, trackCount, keyframes, dur);
       }
    }
+#endif
 
    std::vector<std::string> bones;
    wrapper->GetCoreBoneNames(bones);
@@ -577,6 +579,8 @@ void Viewer::OnTimeout()
 
       int count = rapper->GetCalModel()->getMorphTargetMixer()->getMorphTargetCount();
       std::vector<float> morphWeightList;
+
+#if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300
       morphWeightList.reserve(count);
 
       for (int index = 0; index < count; ++index)
@@ -584,6 +588,7 @@ void Viewer::OnTimeout()
          float weight = rapper->GetCalModel()->getMorphTargetMixer()->getCurrentWeight(index);
          morphWeightList.push_back(weight);
       }
+#endif
 
       emit BlendUpdate(animWeightList, morphWeightList);
    }
@@ -685,19 +690,23 @@ void Viewer::OnMorphChanged(int meshID, int subMeshID, int morphID, float weight
 //////////////////////////////////////////////////////////////////////////
 void Viewer::OnPlayMorphAnimation(int morphAnimID, float weight, float delayIn, float delayOut, bool looping)
 {
+#if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300
    CalMorphTargetMixer *mixer = mCharacter->GetCal3DWrapper()->GetCalModel()->getMorphTargetMixer();
    if (mixer)
    {
       mixer->blend(morphAnimID, weight, delayIn, delayOut, looping);
    }
+#endif
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void Viewer::OnStopMorphAnimation(int morphAnimID, float delay)
 {
+#if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300
    CalMorphTargetMixer *mixer = mCharacter->GetCal3DWrapper()->GetCalModel()->getMorphTargetMixer();
    if (mixer)
    {
       mixer->clear(morphAnimID, delay);
    }
+#endif
 }

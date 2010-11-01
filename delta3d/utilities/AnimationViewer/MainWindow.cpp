@@ -1139,7 +1139,7 @@ void MainWindow::OnConfiged()
 {
    //theoretically, everything is in place, the window is rendering, openGL 
    //context is valid, etc.
-   //mHardwareSkinningAction->setChecked(IsAnimNodeBuildingUsingHW());
+   mHardwareSkinningAction->setChecked(IsAnimNodeBuildingUsingHW());
 }
 
 //////////////////////////////////////////////////////////////////////////
