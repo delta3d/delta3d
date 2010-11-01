@@ -120,11 +120,14 @@ namespace dtUtil
          {
             const osg::Drawable* drawable = geode.getDrawable(i);
             const osg::Geometry* geom = dynamic_cast<const osg::Geometry*>(drawable);
-            for (unsigned int ipr = 0; ipr < geom->getNumPrimitiveSets(); ++ipr)
+            if (geom)
             {
-               const osg::PrimitiveSet* prset = geom->getPrimitiveSet(ipr);
-               mOutputStream[0] << indent << "Primitive Set " << ipr << std::endl;
-               AnalyzePrimSet(*prset, *static_cast<const osg::Vec3Array*>(geom->getVertexArray()), indent + "   ");
+               for (unsigned int ipr = 0; ipr < geom->getNumPrimitiveSets(); ++ipr)
+               {
+                  const osg::PrimitiveSet* prset = geom->getPrimitiveSet(ipr);
+                  mOutputStream[0] << indent << "Primitive Set " << ipr << std::endl;
+                  AnalyzePrimSet(*prset, *static_cast<const osg::Vec3Array*>(geom->getVertexArray()), indent + "   ");
+               }
             }
          }
       }

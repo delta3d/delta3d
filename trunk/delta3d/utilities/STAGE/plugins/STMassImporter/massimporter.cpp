@@ -142,9 +142,9 @@ void MassImporterPlugin::CreateActorFromMesh(const dtDAL::ActorType& type, const
 
    // check if an actor with this name is already in map. If it is, update it.
    // If not: create a new actor.
-   dtCore::RefPtr<dtDAL::ActorProxy> proxy;
+   dtCore::RefPtr<dtDAL::BaseActorObject> proxy;
    dtCore::RefPtr<dtDAL::Map> mapPtr = EditorData::GetInstance().getCurrentMap();
-   std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > proxies;
+   std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> > proxies;
    mapPtr->FindProxies(proxies, actorName, type.GetCategory(), type.GetName());
 
    if(proxies.empty())

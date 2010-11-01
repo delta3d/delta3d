@@ -50,7 +50,7 @@ namespace dtAI
     * @class AIInterfaceActorProxy
     * @brief This proxy wraps the AI Interface class Delta3D object.
     */
-   class DT_AI_EXPORT AIInterfaceActorProxy : public dtDAL::ActorProxy
+   class DT_AI_EXPORT AIInterfaceActorProxy : public dtDAL::BaseActorObject
    {
    public:
       static const dtUtil::RefString CLASS_NAME;

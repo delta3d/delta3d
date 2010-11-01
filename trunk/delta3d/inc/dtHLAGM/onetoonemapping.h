@@ -326,10 +326,10 @@ namespace dtHLAGM
          bool mRequiredForGame;
 
          ///mapping of string to string values to map HLA enumerated values to
-         ///ActorProxy stlye type-safe enumeration values.
+         ///BaseActorObject stlye type-safe enumeration values.
          std::map<std::string, std::string> mHLAEnumerationMapping;
 
-         ///mapping of string to string values to map ActorProxy stlye
+         ///mapping of string to string values to map BaseActorObject stlye
          ///type-safe enumeration values to HLA enumerated values.
          std::map<std::string, std::string> mGameEnumerationMapping;
 

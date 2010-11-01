@@ -39,7 +39,7 @@ namespace dtDAL
     *      Registry objects should only be used with the dtCore::RefPtr<>
     *      construct since they are reference counted objects.
     * @see ActorType
-    * @see ActorProxy
+    * @see BaseActorObject
     * @note The dynamic library file containing the Actor Registry must contain
     *  two exported "C" methods, to create and destroy the ActorPluginRegistry.
     *
@@ -86,7 +86,7 @@ namespace dtDAL
           * after it loads a dynamic library and gets a pointer to the
           * registry object it contains.
           * Overwrite and use the inherited mActorFactor to register the mapping
-          * of concrete ActorProxy to ActorType.
+          * of concrete BaseActorObject to ActorType.
           * @code
           * dtCore::RefPtr<dtDAL::ActorType> MY_ACTOR_TYPE(new dtDAL::ActorType("My Actor", "My category", "An Actor"));
           * void MyRegistry::RegisterActorTypes()

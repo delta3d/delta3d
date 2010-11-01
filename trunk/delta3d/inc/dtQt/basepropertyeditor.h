@@ -123,7 +123,7 @@ namespace dtQt
       void ActorPropertyChanged(dtDAL::PropertyContainer& propCon,
          dtDAL::ActorProperty& property);
 
-      void ProxyNameChanged(dtDAL::ActorProxy& pc, std::string oldName);
+      void ProxyNameChanged(dtDAL::BaseActorObject& pc, std::string oldName);
       void UpdateTitle();
 
       virtual void PropertyAboutToChangeFromControl(dtDAL::PropertyContainer&, dtDAL::ActorProperty&,

@@ -152,7 +152,7 @@ void SoundComponentTests::CreateSoundActors(int proxyTotal, bool addToGM)
 ////////////////////////////////////////////////////////////////////////////////
 int SoundComponentTests::GetGMSoundActorCount() const
 {
-   typedef std::vector<dtDAL::ActorProxy*> ProxyArray;
+   typedef std::vector<dtDAL::BaseActorObject*> ProxyArray;
    ProxyArray proxies;
    mGM->FindActorsByType(*mSndActorType, proxies);
    return int(proxies.size());

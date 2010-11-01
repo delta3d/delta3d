@@ -112,7 +112,7 @@ namespace dtDirector
          {
             for (int index = 0; index < count; index++)
             {
-               dtDAL::ActorProxy* proxy = GetActor("Actor", index);
+               dtDAL::BaseActorObject* proxy = GetActor("Actor", index);
                if (proxy)
                {
                   std::string togglePropertyString = GetString("TogglePropertyName");

@@ -38,13 +38,13 @@ namespace dtDIS
       class DT_DIS_EXPORT HasProperty
       {
       public:
-         typedef std::vector<dtDAL::ActorProxy*> ActorVector;
+         typedef std::vector<dtDAL::BaseActorObject*> ActorVector;
 
          HasProperty(const std::string& prop_name);
          ~HasProperty();
          HasProperty(const HasProperty& hp);
 
-         void operator ()(dtDAL::ActorProxy *&proxy);
+         void operator ()(dtDAL::BaseActorObject *&proxy);
 
          ActorVector& GetPassedActors();
          const ActorVector& GetPassedActors() const;

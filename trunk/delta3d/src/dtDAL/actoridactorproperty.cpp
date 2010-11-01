@@ -29,7 +29,7 @@
 namespace dtDAL
 {
    ////////////////////////////////////////////////////////////////////////////
-   ActorIDActorProperty::ActorIDActorProperty(ActorProxy& actorProxy,
+   ActorIDActorProperty::ActorIDActorProperty(BaseActorObject& actorProxy,
       const dtUtil::RefString& name,
       const dtUtil::RefString& label,
       SetFuncType Set,
@@ -98,7 +98,7 @@ namespace dtDAL
    ////////////////////////////////////////////////////////////////////////////
    dtCore::DeltaDrawable* ActorIDActorProperty::GetRealActor()
    {
-      dtDAL::ActorProxy* proxy = GetActorProxy();
+      dtDAL::BaseActorObject* proxy = GetActorProxy();
       if (proxy != NULL)
       {
          return proxy->GetActor();
@@ -110,7 +110,7 @@ namespace dtDAL
    ////////////////////////////////////////////////////////////////////////////
    const dtCore::DeltaDrawable* ActorIDActorProperty::GetRealActor() const
    {
-      const dtDAL::ActorProxy* proxy = GetActorProxy();
+      const dtDAL::BaseActorObject* proxy = GetActorProxy();
       if (proxy != NULL)
       {
          return proxy->GetActor();
@@ -120,7 +120,7 @@ namespace dtDAL
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   dtDAL::ActorProxy* ActorIDActorProperty::GetActorProxy()
+   dtDAL::BaseActorObject* ActorIDActorProperty::GetActorProxy()
    {
       dtCore::UniqueId idValue = GetValue();
       if (idValue.ToString() == "") return NULL;
@@ -138,7 +138,7 @@ namespace dtDAL
             return false;
          }
 
-         ActorProxy* proxyValue = map->GetProxyById(idValue);
+         BaseActorObject* proxyValue = map->GetProxyById(idValue);
          if (proxyValue == NULL)
          {
             dtUtil::Log::GetInstance("enginepropertytypes.cpp").LogMessage(dtUtil::Log::LOG_INFO,
@@ -166,7 +166,7 @@ namespace dtDAL
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   const dtDAL::ActorProxy* ActorIDActorProperty::GetActorProxy() const
+   const dtDAL::BaseActorObject* ActorIDActorProperty::GetActorProxy() const
    {
       dtCore::UniqueId idValue = GetValue();
       if (idValue.ToString() == "") return NULL;
@@ -184,7 +184,7 @@ namespace dtDAL
             return false;
          }
 
-         ActorProxy* proxyValue = map->GetProxyById(idValue);
+         BaseActorObject* proxyValue = map->GetProxyById(idValue);
          if (proxyValue == NULL)
          {
             dtUtil::Log::GetInstance("enginepropertytypes.cpp").LogMessage(dtUtil::Log::LOG_INFO,

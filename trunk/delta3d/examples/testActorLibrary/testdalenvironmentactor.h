@@ -111,7 +111,7 @@ class DT_PLUGIN_EXPORT TestDALEnvironmentActor : public dtDAL::IEnvironmentActor
       dtCore::RefPtr<osg::Node> mNode;
 };
 
-class DT_PLUGIN_EXPORT TestDALEnvironmentActorProxy : public dtDAL::ActorProxy
+class DT_PLUGIN_EXPORT TestDALEnvironmentActorProxy : public dtDAL::BaseActorObject
 {
    public:
 

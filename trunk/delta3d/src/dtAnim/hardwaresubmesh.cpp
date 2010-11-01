@@ -31,11 +31,7 @@
 #include <osg/BoundingBox>
 #include <dtUtil/matrixutil.h>
 #include <dtUtil/log.h>
-#include <cal3d/corematerial.h>
 #include <cal3d/hardwaremodel.h>
-#include <cal3d/model.h>
-#include <cal3d/skeleton.h>
-#include <cal3d/quaternion.h>
 #include <osg/CullFace>
 #include <osg/BlendFunc>
 

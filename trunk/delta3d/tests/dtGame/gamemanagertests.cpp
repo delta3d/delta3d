@@ -256,7 +256,7 @@ void GameManagerTests::tearDown()
 void GameManagerTests::TestFindActorByType()
 {
    const unsigned short int numProxies = 10;
-   std::vector<dtDAL::ActorProxy*> proxies;
+   std::vector<dtDAL::BaseActorObject*> proxies;
    for (unsigned short int i = 0; i < numProxies; ++i)
    {
       dtCore::RefPtr<dtActors::GameMeshActorProxy> p;
@@ -330,7 +330,7 @@ void GameManagerTests::TestFindActorByName()
    gameEventProxy->SetName(eventName);
    mManager->AddActor(*gameEventProxy, false, false);
 
-   std::vector<dtDAL::ActorProxy*> proxies;
+   std::vector<dtDAL::BaseActorObject*> proxies;
    mManager->FindActorsByName(eventName, proxies);
    CPPUNIT_ASSERT_MESSAGE("GameManager failed to find the actor by name.", !proxies.empty());
 
@@ -354,7 +354,7 @@ void GameManagerTests::TestPrototypeActors()
    mManager->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE, toMakeAsAPrototype);
    toMakeAsAPrototype->SetName("PrototypeActorProxy");
 
-   std::vector<dtDAL::ActorProxy*> toFill;
+   std::vector<dtDAL::BaseActorObject*> toFill;
    mManager->GetAllPrototypes(toFill);
    CPPUNIT_ASSERT_MESSAGE("GameManager shouldn't have had prototypes in it currently...", toFill.size() == 0);
 
@@ -365,10 +365,10 @@ void GameManagerTests::TestPrototypeActors()
 
    toFill.clear();
 
-   dtDAL::ActorProxy* prototypeToFill = mManager->FindPrototypeByID(toMakeAsAPrototype->GetId());
+   dtDAL::BaseActorObject* prototypeToFill = mManager->FindPrototypeByID(toMakeAsAPrototype->GetId());
    CPPUNIT_ASSERT_MESSAGE("Tried finding a prototype that should be in the gm, but its not....",prototypeToFill != 0 );
 
-   dtCore::RefPtr<dtDAL::ActorProxy> ourActualActor = mManager->CreateActorFromPrototype(toMakeAsAPrototype->GetId());
+   dtCore::RefPtr<dtDAL::BaseActorObject> ourActualActor = mManager->CreateActorFromPrototype(toMakeAsAPrototype->GetId());
 
    CPPUNIT_ASSERT_MESSAGE("Tried cloning from a prototype, didn't work out too well...", ourActualActor != NULL);
    CPPUNIT_ASSERT_MESSAGE("Tried cloning from a prototype, didn't work out too well...", ourActualActor->GetName() == toMakeAsAPrototype->GetName());
@@ -651,7 +651,7 @@ void GameManagerTests::TestActorSearching()
 
       const unsigned int size = 5;
 
-      dtCore::RefPtr<dtDAL::ActorProxy> proxies[size];
+      dtCore::RefPtr<dtDAL::BaseActorObject> proxies[size];
 
       for (unsigned i = 0; i < size; ++i)
       {
@@ -659,7 +659,7 @@ void GameManagerTests::TestActorSearching()
          gm.AddActor(*proxies[i].get());
       }
 
-      std::vector<dtDAL::ActorProxy*> supportedProxies;
+      std::vector<dtDAL::BaseActorObject*> supportedProxies;
 
       gm.FindActorsByType(**supportedTypes.begin(), supportedProxies);
 
@@ -672,7 +672,7 @@ void GameManagerTests::TestActorSearching()
       dtCore::RefPtr<dtGame::GameActorProxy> gap = NULL;
       for (unsigned int i = 0; i < typeVec.size(); ++i)
       {
-         dtCore::RefPtr<dtDAL::ActorProxy> p = gm.CreateActor(*typeVec[i]);
+         dtCore::RefPtr<dtDAL::BaseActorObject> p = gm.CreateActor(*typeVec[i]);
          if (p->IsGameActorProxy())
          {
             gap = dynamic_cast<dtGame::GameActorProxy*> (p.get());
@@ -960,7 +960,7 @@ void GameManagerTests::TestAddActor()
 
          mManager->AddActor(*proxy, false, false);
 
-         dtCore::RefPtr<dtDAL::ActorProxy> proxyFound = mManager->FindActorById(proxy->GetId());
+         dtCore::RefPtr<dtDAL::BaseActorObject> proxyFound = mManager->FindActorById(proxy->GetId());
          CPPUNIT_ASSERT(proxyFound != NULL);
          CPPUNIT_ASSERT(proxyFound.get() == proxy.get());
          CPPUNIT_ASSERT_MESSAGE("The proxy should have the GameManager pointer set",
@@ -1029,7 +1029,7 @@ void GameManagerTests::TestAddActor()
 
          CPPUNIT_ASSERT(proxy->GetGameManager() == mManager.get());
 
-         dtCore::RefPtr<dtDAL::ActorProxy> proxyFound = mManager->FindActorById(proxy->GetId());
+         dtCore::RefPtr<dtDAL::BaseActorObject> proxyFound = mManager->FindActorById(proxy->GetId());
          CPPUNIT_ASSERT(proxyFound != NULL);
          CPPUNIT_ASSERT(proxyFound.get() == proxy.get());
          dtCore::RefPtr<dtGame::GameActorProxy> gameProxyFound = mManager->FindGameActorById(proxy->GetId());
@@ -1074,7 +1074,7 @@ void GameManagerTests::TestAddActor()
          {
             CPPUNIT_FAIL(std::string("Unknown Exception thrown adding an actor: ") + ex.What());
          }
-         dtCore::RefPtr<dtDAL::ActorProxy> proxyFound = mManager->FindActorById(proxy->GetId());
+         dtCore::RefPtr<dtDAL::BaseActorObject> proxyFound = mManager->FindActorById(proxy->GetId());
          CPPUNIT_ASSERT(proxyFound != NULL);
          CPPUNIT_ASSERT(proxyFound.get() == proxy.get());
          dtCore::RefPtr<dtGame::GameActorProxy> gameProxyFound = mManager->FindGameActorById(proxy->GetId());
@@ -1086,7 +1086,7 @@ void GameManagerTests::TestAddActor()
          CPPUNIT_ASSERT_THROW_MESSAGE("An actor may not be published if it's not added as a game actor.",
                                        mManager->PublishActor(*proxy), dtGame::InvalidActorStateException);
 
-         mManager->DeleteActor(static_cast<dtDAL::ActorProxy&>(*proxy));
+         mManager->DeleteActor(static_cast<dtDAL::BaseActorObject&>(*proxy));
          CPPUNIT_ASSERT_MESSAGE("The proxy should not still be in the game manager", mManager->FindActorById(proxy->GetId()) == NULL);
          CPPUNIT_ASSERT_MESSAGE("The actor should not still be in the scene.",
             mManager->GetScene().GetDrawableIndex(proxy->GetActor()) == mManager->GetScene().GetNumberOfAddedDrawable());
@@ -1551,7 +1551,7 @@ void GameManagerTests::TestGMShutdown()
       const unsigned int numActors = 20;
       for (unsigned int i = 0; i < numActors; ++i)
       {
-         dtCore::RefPtr<dtDAL::ActorProxy> proxy =
+         dtCore::RefPtr<dtDAL::BaseActorObject> proxy =
             mManager->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE);
 
          CPPUNIT_ASSERT(proxy.valid());
@@ -1584,7 +1584,7 @@ void GameManagerTests::TestGMShutdown()
 
       CPPUNIT_ASSERT(mManager->GetCurrentMapSet().empty());
 
-      std::vector<dtDAL::ActorProxy*> proxies;
+      std::vector<dtDAL::BaseActorObject*> proxies;
       mManager->GetAllActors(proxies);
       CPPUNIT_ASSERT_MESSAGE("Shut down of the game manager should have deleted the actors",
          proxies.empty());
@@ -1626,7 +1626,7 @@ void GameManagerTests::TestGMSettingsServerClientRoles()
    mManager->GetGMSettings().SetServerRole(true);
 
    // PROTOTYPE  
-   dtCore::RefPtr<dtDAL::ActorProxy> proxy5 =
+   dtCore::RefPtr<dtDAL::BaseActorObject> proxy5 =
       mManager->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE);
    CPPUNIT_ASSERT(proxy5.valid());
    dtCore::RefPtr<dtGame::GameActorProxy> gap5 = dynamic_cast<dtGame::GameActorProxy*> (proxy5.get());
@@ -1637,7 +1637,7 @@ void GameManagerTests::TestGMSettingsServerClientRoles()
 
 
    // CLIENT_AND_SERVER_LOCAL  
-   dtCore::RefPtr<dtDAL::ActorProxy> proxy4 =
+   dtCore::RefPtr<dtDAL::BaseActorObject> proxy4 =
       mManager->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE);
    CPPUNIT_ASSERT(proxy4.valid());
    dtCore::RefPtr<dtGame::GameActorProxy> gap4 = dynamic_cast<dtGame::GameActorProxy*> (proxy4.get());
@@ -1647,7 +1647,7 @@ void GameManagerTests::TestGMSettingsServerClientRoles()
    m.AddProxy(*proxy4);
 
    // SERVER_LOCAL  
-   dtCore::RefPtr<dtDAL::ActorProxy> proxy3 =
+   dtCore::RefPtr<dtDAL::BaseActorObject> proxy3 =
       mManager->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE);
    CPPUNIT_ASSERT(proxy3.valid());
    dtCore::RefPtr<dtGame::GameActorProxy> gap3 = dynamic_cast<dtGame::GameActorProxy*> (proxy3.get());
@@ -1658,7 +1658,7 @@ void GameManagerTests::TestGMSettingsServerClientRoles()
 
 
    // SERVER_PUBLISHED  
-   dtCore::RefPtr<dtDAL::ActorProxy> proxy2 =
+   dtCore::RefPtr<dtDAL::BaseActorObject> proxy2 =
       mManager->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE);
    CPPUNIT_ASSERT(proxy2.valid());
    dtCore::RefPtr<dtGame::GameActorProxy> gap2 = dynamic_cast<dtGame::GameActorProxy*> (proxy2.get());
@@ -1668,7 +1668,7 @@ void GameManagerTests::TestGMSettingsServerClientRoles()
    m.AddProxy(*proxy2);
 
    // CLIENT_LOCAL  
-   dtCore::RefPtr<dtDAL::ActorProxy> proxy1 =
+   dtCore::RefPtr<dtDAL::BaseActorObject> proxy1 =
       mManager->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE);
    CPPUNIT_ASSERT(proxy1.valid());
    dtCore::RefPtr<dtGame::GameActorProxy> gap1 = dynamic_cast<dtGame::GameActorProxy*> (proxy1.get());
@@ -1688,7 +1688,7 @@ void GameManagerTests::TestGMSettingsServerClientRoles()
    dtCore::System::GetInstance().Step();
 
    // Test that there are 4 game actors and 1 prototype in the GM. 
-   std::vector<dtDAL::ActorProxy*> proxies;
+   std::vector<dtDAL::BaseActorObject*> proxies;
    mManager->GetAllPrototypes(proxies);
    CPPUNIT_ASSERT_EQUAL_MESSAGE("Should be 1 prototype.",(int) proxies.size(), 1);
 

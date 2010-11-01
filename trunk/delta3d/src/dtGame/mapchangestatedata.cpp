@@ -208,12 +208,12 @@ namespace dtGame
          mGameManager->SetEnvironmentActor(eap);
       }
 
-      std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > proxies;
+      std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> > proxies;
       map.GetAllProxies(proxies);
 
       for (unsigned int i = 0; i < proxies.size(); ++i)
       {
-         dtDAL::ActorProxy& aProxy = *proxies[i];
+         dtDAL::BaseActorObject& aProxy = *proxies[i];
          // Ensure that we don't try and add the environment actor
          if (map.GetEnvironmentActor() == &aProxy)
          {

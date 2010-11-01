@@ -32,7 +32,7 @@ namespace dtActors
      * @class EnvEffectActorProxy
      * @brief This proxy wraps environment effects.
      */
-    class DT_PLUGIN_EXPORT EnvEffectActorProxy : public dtDAL::ActorProxy 
+    class DT_PLUGIN_EXPORT EnvEffectActorProxy : public dtDAL::BaseActorObject 
     {
     public:
 

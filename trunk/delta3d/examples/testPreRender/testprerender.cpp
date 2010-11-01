@@ -155,7 +155,7 @@ void TestPreRender::CreateTextureScene()
    // Load the map into our custom scene
    dtDAL::Map& map = dtDAL::Project::GetInstance().LoadMapIntoScene("MyCoolMap", *mTextureScene);
 
-   std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > container;
+   std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> > container;
    map.FindProxies(container, "", "", "", "dtCore::SkyBox");
 
    // Add the skybox to the main scene as well

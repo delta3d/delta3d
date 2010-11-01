@@ -79,7 +79,7 @@ namespace dtActors
    }
 
    ////////////////////////////////////////////////////
-   void DistanceSensorActorProxy::SetAttachToProxy(dtDAL::ActorProxy* newAttachToProxy)
+   void DistanceSensorActorProxy::SetAttachToProxy(dtDAL::BaseActorObject* newAttachToProxy)
    {
       SetLinkedActor(DistanceSensorActorProxy::PROPERTY_ATTACH_TO_ACTOR, newAttachToProxy);
       DistanceSensorActor* actor;

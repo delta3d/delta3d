@@ -37,10 +37,10 @@ namespace dtDAL
     * DAL (Dynamic Actor Layer).  It has a list of the dynamic libraries that
     * are registered with the Manager as well as a list of the ActorTypes
     * that each library can create.  It is also the main vehicle for
-    * creating a new ActorProxy.
+    * creating a new BaseActorObject.
     * @note The LibraryManager follows the Singleton design pattern.
     * @see ActorType
-    * @see ActorProxy
+    * @see BaseActorObject
     * @see ActorPluginRegistry
     */
    class DT_DAL_EXPORT LibraryManager : public osg::Referenced

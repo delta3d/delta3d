@@ -41,7 +41,7 @@ public:
             // loop through all component game actors and
             // get their text label components.
             // Toggle flashing property on components
-            typedef std::vector<dtDAL::ActorProxy*> ProxyList;
+            typedef std::vector<dtDAL::BaseActorObject*> ProxyList;
 
             ProxyList proxies;
             GetGameManager()->FindActorsByType(*TestActorLibraryRegistry::COMPONENT_GAME_ACTOR_TYPE.get(), proxies);

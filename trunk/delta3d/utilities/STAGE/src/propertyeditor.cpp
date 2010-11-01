@@ -115,7 +115,7 @@ namespace dtEditQt
       if (selectedActors.size() == 1)
       {
          // set the name in the group box.
-         dtDAL::ActorProxy* selectedProxy = dynamic_cast<dtDAL::ActorProxy*>(selectedActors[0]);
+         dtDAL::BaseActorObject* selectedProxy = dynamic_cast<dtDAL::BaseActorObject*>(selectedActors[0]);
 
          if (selectedProxy != NULL)
          {
@@ -145,7 +145,7 @@ namespace dtEditQt
          parent = parentControl;
       }
 
-      dtDAL::ActorProxy* proxy = dynamic_cast<dtDAL::ActorProxy*>(&propCon);
+      dtDAL::BaseActorObject* proxy = dynamic_cast<dtDAL::BaseActorObject*>(&propCon);
 
       if (proxy != NULL)
       {
@@ -223,7 +223,7 @@ namespace dtEditQt
    void PropertyEditor::PropertyAboutToChangeFromControl(dtDAL::PropertyContainer& propCon, dtDAL::ActorProperty& prop,
             const std::string& oldValue, const std::string& newValue)
    {
-      dtDAL::ActorProxy* proxy = dynamic_cast<dtDAL::ActorProxy*>(&propCon);
+      dtDAL::BaseActorObject* proxy = dynamic_cast<dtDAL::BaseActorObject*>(&propCon);
       if (proxy != NULL)
       {
          EditorEvents::GetInstance().emitActorPropertyAboutToChange(proxy, &prop, oldValue, newValue);
@@ -233,7 +233,7 @@ namespace dtEditQt
    /////////////////////////////////////////////////////////////////////////////////
    void PropertyEditor::PropertyChangedFromControl(dtDAL::PropertyContainer& propCon, dtDAL::ActorProperty& prop)
    {
-      dtDAL::ActorProxy* proxy = dynamic_cast<dtDAL::ActorProxy*>(&propCon);
+      dtDAL::BaseActorObject* proxy = dynamic_cast<dtDAL::BaseActorObject*>(&propCon);
       if (proxy != NULL)
       {
          EditorEvents::GetInstance().emitActorPropertyChanged(proxy, &prop);

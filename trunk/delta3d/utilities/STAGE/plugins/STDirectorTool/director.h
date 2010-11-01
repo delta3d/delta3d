@@ -64,7 +64,7 @@ public:
     *
     * @return  The current actor selection.
     */
-   virtual std::vector<dtDAL::ActorProxy*> GetActorSelection();
+   virtual std::vector<dtDAL::BaseActorObject*> GetActorSelection();
 
 public slots:
 
@@ -116,7 +116,7 @@ private:
 
    QAction*       mToolButton;
 
-   dtCore::RefPtr<dtDAL::ActorProxy> mProxy;
+   dtCore::RefPtr<dtDAL::BaseActorObject> mProxy;
    dtDirector::Node*  mNode;
 };
 

@@ -10,7 +10,7 @@ namespace dtActors
 {
    void ActionActorProxy::BuildPropertyMap()
    {
-      dtDAL::ActorProxy::BuildPropertyMap();
+      dtDAL::BaseActorObject::BuildPropertyMap();
 
       const std::string GROUPNAME = "Action";
 

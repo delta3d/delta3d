@@ -95,7 +95,7 @@ namespace dtEditQt
        * the proxy from the scene and map and clears up the billboard.  Finally, it emits
        * the appropriate about to and delete proxy events.
        */
-      bool deleteProxy(dtDAL::ActorProxy* proxy, dtCore::RefPtr<dtDAL::Map> currMap);
+      bool deleteProxy(dtDAL::BaseActorObject* proxy, dtCore::RefPtr<dtDAL::Map> currMap);
 
       ///Get the container of ExternalTools, const-like
       const QList<ExternalTool*>& GetExternalTools() const;
@@ -522,7 +522,7 @@ namespace dtEditQt
       void setupWindowActions();
 
       QTimer* mTimer;
-      std::vector< dtCore::RefPtr<dtDAL::ActorProxy> > mActors;
+      std::vector< dtCore::RefPtr<dtDAL::BaseActorObject> > mActors;
 
       ///Singleton instance of this class.
       static dtCore::RefPtr<EditorActions> sInstance;

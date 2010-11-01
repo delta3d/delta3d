@@ -723,7 +723,7 @@ namespace dtAI
     ////////////////////////////////////////////////////////////////////////////
     void AIInterfaceActorProxy::BuildPropertyMap()
     {
-       dtDAL::ActorProxy::BuildPropertyMap();
+       dtDAL::BaseActorObject::BuildPropertyMap();
 
        const dtUtil::RefString GROUPNAME = "AIInterface";
 

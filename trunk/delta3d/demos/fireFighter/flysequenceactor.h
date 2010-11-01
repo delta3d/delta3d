@@ -133,9 +133,9 @@ class FIRE_FIGHTER_EXPORT FlySequenceActorProxy : public dtGame::GameActorProxy
       // Used in STAGE
       dtDAL::ActorProxyIcon* GetBillBoardIcon();
 
-      virtual const dtDAL::ActorProxy::RenderMode& GetRenderMode()
+      virtual const dtDAL::BaseActorObject::RenderMode& GetRenderMode()
       {
-         return dtDAL::ActorProxy::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON;
+         return dtDAL::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON;
       }
 
    protected:

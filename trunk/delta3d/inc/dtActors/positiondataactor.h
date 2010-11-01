@@ -36,7 +36,7 @@ namespace dtActors
          virtual void BuildPropertyMap();
          virtual const dtDAL::BaseActorObject::RenderMode& GetRenderMode();
 
-         void ApplyDataTo(dtDAL::ActorProxy* actorProxy) const;
+         void ApplyDataTo(dtDAL::BaseActorObject* actorProxy) const;
          void ApplyDataTo(dtCore::DeltaDrawable* drawable) const;
          void ApplyDataTo(dtCore::Transformable* transformable) const;
 

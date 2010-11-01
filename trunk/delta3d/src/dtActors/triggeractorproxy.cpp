@@ -50,7 +50,7 @@ namespace dtActors
    ///////////////////////////////////////////////////////////////////////////////
    void TriggerActorProxy::BuildPropertyMap()
    {
-      dtDAL::ActorProxy::BuildPropertyMap();
+      dtDAL::BaseActorObject::BuildPropertyMap();
 
       const std::string GROUPNAME = "Trigger";
 
@@ -72,7 +72,7 @@ namespace dtActors
          "dtABC::Action", "Sets the action which this Trigger will start."));
    }
 
-   void TriggerActorProxy::SetAction( ActorProxy* action )
+   void TriggerActorProxy::SetAction( BaseActorObject* action )
    {
       SetLinkedActor("Action", action);
 

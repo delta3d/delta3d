@@ -216,23 +216,23 @@ namespace dtAnim
       dtGame::GameActorProxy::BuildInvokables();
    }
 
-   const dtDAL::ActorProxy::RenderMode& Cal3DGameActorProxy::GetRenderMode()
+   const dtDAL::BaseActorObject::RenderMode& Cal3DGameActorProxy::GetRenderMode()
    {
       dtDAL::ResourceDescriptor resource = GetResource("Skeletal Mesh");
       if (resource.IsEmpty() == false)
       {
          if (resource.GetResourceIdentifier().empty() || GetActor()->GetOSGNode() == NULL)
          {
-            return dtDAL::ActorProxy::RenderMode::DRAW_BILLBOARD_ICON;
+            return dtDAL::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON;
          }
          else
          {
-            return dtDAL::ActorProxy::RenderMode::DRAW_ACTOR;
+            return dtDAL::BaseActorObject::RenderMode::DRAW_ACTOR;
          }
       }
       else
       {
-         return dtDAL::ActorProxy::RenderMode::DRAW_BILLBOARD_ICON;
+         return dtDAL::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON;
       }
    }
 

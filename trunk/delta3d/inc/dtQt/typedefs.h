@@ -33,12 +33,12 @@
 #include <dtDAL/actorproperty.h>
 #include <vector>
 
-typedef dtCore::RefPtr<dtDAL::ActorProxy> ActorProxyRefPtr;
+typedef dtCore::RefPtr<dtDAL::BaseActorObject> ActorProxyRefPtr;
 typedef std::vector<ActorProxyRefPtr> ActorProxyRefPtrVector;
 typedef dtCore::RefPtr<dtDAL::ActorProperty> ActorPropertyRefPtr;
 
 //allows storage in a QVariant
-Q_DECLARE_METATYPE(dtCore::RefPtr<dtDAL::ActorProxy>);
+Q_DECLARE_METATYPE(dtCore::RefPtr<dtDAL::BaseActorObject>);
 Q_DECLARE_METATYPE(dtCore::RefPtr<dtDAL::ActorProperty>);
 
 #endif // DELTA_PROPERTY_TYPEDEFS

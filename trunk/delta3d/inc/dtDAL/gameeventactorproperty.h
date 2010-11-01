@@ -46,7 +46,7 @@ namespace dtDAL
          typedef BaseClass::SetFuncType SetFuncType;
          typedef BaseClass::GetFuncType GetFuncType;
 
-         GameEventActorProperty(ActorProxy& actorProxy,
+         GameEventActorProperty(BaseActorObject& actorProxy,
                                 const dtUtil::RefString& name, const dtUtil::RefString& label,
                                 SetFuncType set, GetFuncType get,
                                 const dtUtil::RefString& desc = "",
@@ -82,7 +82,7 @@ namespace dtDAL
          virtual ~GameEventActorProperty() { }
 
       private:
-         ActorProxy* mProxy;
+         BaseActorObject* mProxy;
    };
 }
 

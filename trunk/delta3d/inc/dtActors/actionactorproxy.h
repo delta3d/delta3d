@@ -32,7 +32,7 @@ namespace dtActors
 {
 
 
-   class DT_PLUGIN_EXPORT ActionActorProxy: public dtDAL::ActorProxy
+   class DT_PLUGIN_EXPORT ActionActorProxy: public dtDAL::BaseActorObject
    {
 
    public:

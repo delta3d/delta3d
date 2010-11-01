@@ -87,7 +87,7 @@ namespace dtEditQt {
        *
        * @param[in]  actors  The list of all actors being selected.
        */
-      virtual void refreshActorSelection(const std::vector< dtCore::RefPtr<dtDAL::ActorProxy> >& actors);
+      virtual void refreshActorSelection(const std::vector< dtCore::RefPtr<dtDAL::BaseActorObject> >& actors);
 
       /**
        * Tells the viewport to repaint itself.
@@ -97,7 +97,7 @@ namespace dtEditQt {
       /**
       * Retrieves the ghost proxy.
       */
-      dtDAL::ActorProxy* GetGhostProxy() {return mGhostProxy.get();}
+      dtDAL::BaseActorObject* GetGhostProxy() {return mGhostProxy.get();}
 
       /**
       * Retrieves the current mouse button pressed.
@@ -343,7 +343,7 @@ namespace dtEditQt {
       dtCore::RefPtr<STAGECameraMotionModel> mCameraMotionModel;
       dtCore::RefPtr<STAGECameraMotionModel> mDefaultCameraMotionModel;
 
-      dtCore::RefPtr<dtDAL::ActorProxy>      mGhostProxy;
+      dtCore::RefPtr<dtDAL::BaseActorObject>      mGhostProxy;
 
       Qt::MouseButton                        mMouseButton;
       Qt::MouseButtons                       mMouseButtons;

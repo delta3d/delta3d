@@ -708,7 +708,7 @@ namespace dtActors
       // Get the actor at the current index and put it into the non-index slot.
       std::string name = "Task";
       name += dtUtil::ToString(mSubTaskIndex);
-      dtDAL::ActorProxy* proxy = GetLinkedActor(name);
+      dtDAL::BaseActorObject* proxy = GetLinkedActor(name);
       if (proxy)
       {
          SetLinkedActor("Task", proxy);

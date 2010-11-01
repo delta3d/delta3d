@@ -149,7 +149,7 @@ namespace dtAnim
       *  there is geometry assigned to this static mesh, RenderMode::DRAW_ACTOR
       *  is returned.
       */
-      virtual const dtDAL::ActorProxy::RenderMode& GetRenderMode();
+      virtual const dtDAL::BaseActorObject::RenderMode& GetRenderMode();
 
       /**
       * Gets the billboard used to represent static mesh if this proxy's

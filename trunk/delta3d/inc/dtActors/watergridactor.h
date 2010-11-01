@@ -273,14 +273,14 @@ namespace dtActors
       void OnEnteredWorld();
 
       /**
-      *  Called when this ActorProxy has finished loading from a Map and
+      *  Called when this BaseActorObject has finished loading from a Map and
       *  all Property values have been assigned.  Overwrite for custom
       *  behavior.
       */
       void OnMapLoadEnd();
 
       dtDAL::ActorProxyIcon* GetBillBoardIcon();
-      /*virtual*/ const dtDAL::ActorProxy::RenderMode& GetRenderMode();
+      /*virtual*/ const dtDAL::BaseActorObject::RenderMode& GetRenderMode();
 
       void SetSceneCamera(const std::string& name); 
       std::string GetSceneCamera() const;

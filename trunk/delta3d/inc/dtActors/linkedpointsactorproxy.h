@@ -348,14 +348,14 @@ namespace dtActors
       bool IsLoading() {return mLoading;}
 
       /**
-      * Called when this ActorProxy has been created during a map load
+      * Called when this BaseActorObject has been created during a map load
       * before any properties have been assigned.  Overwrite for custom
       * behavior.
       */
       void OnMapLoadBegin();
 
       /**
-      *  Called when this ActorProxy has finished loading from a Map and
+      *  Called when this BaseActorObject has finished loading from a Map and
       *  all Property values have been assigned.  Overwrite for custom
       *  behavior.
       */

@@ -59,7 +59,7 @@ namespace dtEditQt
        * Constructor - showActions lets you indicate whether you should show the
        * buttons for various behaviors such as select and goto.
        */
-      ActorResultsTreeItem(QTreeWidget* parent, dtCore::RefPtr<dtDAL::ActorProxy> proxy);
+      ActorResultsTreeItem(QTreeWidget* parent, dtCore::RefPtr<dtDAL::BaseActorObject> proxy);
 
       /**
        * Destructor
@@ -69,10 +69,10 @@ namespace dtEditQt
       /**
        * Gets the actor proxy for this tree item
        */
-      dtCore::RefPtr<dtDAL::ActorProxy> getProxy()  {  return mProxy;  }
+      dtCore::RefPtr<dtDAL::BaseActorObject> getProxy()  {  return mProxy;  }
 
    private:
-      dtCore::RefPtr<dtDAL::ActorProxy> mProxy;
+      dtCore::RefPtr<dtDAL::BaseActorObject> mProxy;
    };
 
    /**
@@ -99,17 +99,17 @@ namespace dtEditQt
       /**
        * Add a vector of ActorProxies to the table.
        */
-      void addProxies(std::vector< dtCore::RefPtr<dtDAL::ActorProxy> > foundProxies);
+      void addProxies(std::vector< dtCore::RefPtr<dtDAL::BaseActorObject> > foundProxies);
 
       /**
-       * Add just a single ActorProxy to the table. Puts it at the end
+       * Add just a single BaseActorObject to the table. Puts it at the end
        */
-      void addProxy(dtCore::RefPtr<dtDAL::ActorProxy> myProxy, bool updateCount = true);
+      void addProxy(dtCore::RefPtr<dtDAL::BaseActorObject> myProxy, bool updateCount = true);
 
       /**
        * Find the item in our table and update it's display columns.
        */
-      void HandleProxyUpdated(dtCore::RefPtr<dtDAL::ActorProxy> proxy);
+      void HandleProxyUpdated(dtCore::RefPtr<dtDAL::BaseActorObject> proxy);
 
       /**
        * Enable or disable the action buttons appropriately based

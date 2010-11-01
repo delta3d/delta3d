@@ -51,7 +51,7 @@ class TestGameEnvironmentApp : public dtABC::Application
 
          mGM = new dtGame::GameManager(*GetScene());
 
-         dtCore::RefPtr<dtDAL::ActorProxy> proxy = mGM->CreateActor("dtcore.Terrain", "Infinite Terrain");
+         dtCore::RefPtr<dtDAL::BaseActorObject> proxy = mGM->CreateActor("dtcore.Terrain", "Infinite Terrain");
          if (!proxy.valid())
          {
             LOG_ERROR("Failed to create the infinite terrain proxy. Aborting.");

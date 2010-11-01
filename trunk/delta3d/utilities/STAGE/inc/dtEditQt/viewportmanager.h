@@ -141,7 +141,7 @@ namespace dtEditQt
        * Moves an actor such that it is placed in from of the world view camera.
        * @param proxy The proxy to place.
        */
-      void placeProxyInFrontOfCamera(dtDAL::ActorProxy* proxy);
+      void placeProxyInFrontOfCamera(dtDAL::BaseActorObject* proxy);
 
       /**
        * Gets the instance of an overlay object that should be shared between viewports.
@@ -194,7 +194,7 @@ namespace dtEditQt
        * Removes all drawables from the master scene.
        */
       void clearMasterScene(const std::map< dtCore::UniqueId,
-         dtCore::RefPtr<dtDAL::ActorProxy> >& proxies);
+         dtCore::RefPtr<dtDAL::BaseActorObject> >& proxies);
 
       /**
        * Called from the first initialized viewport.  This method sets various
@@ -598,7 +598,7 @@ namespace dtEditQt
        *
        * @param[in]  actors  The list of all actors being selected.
        */
-      void refreshActorSelection(const std::vector< dtCore::RefPtr<dtDAL::ActorProxy> >& actors);
+      void refreshActorSelection(const std::vector< dtCore::RefPtr<dtDAL::BaseActorObject> >& actors);
 
       /**
        * Causes a redraw of all viewports that are connected to the viewport manager

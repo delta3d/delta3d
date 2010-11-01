@@ -79,7 +79,7 @@ namespace dtEditQt
          /**
           * Retrieves the Actor from the ID.
           */
-         dtDAL::ActorProxy* getActorProxy();
+         dtDAL::BaseActorObject* getActorProxy();
 
          /**
           * Retrieves the current actor property.
@@ -142,7 +142,7 @@ namespace dtEditQt
           * @param className The class name to search for
           * @return A vector with the name and proxy pointer mapped
           */
-         void GetActorProxies(std::vector< dtCore::RefPtr<dtDAL::ActorProxy> >& toFill, const std::string& className);
+         void GetActorProxies(std::vector< dtCore::RefPtr<dtDAL::BaseActorObject> >& toFill, const std::string& className);
 
          dtDAL::ActorActorProperty*   mProperty;
          dtDAL::ActorIDActorProperty* mIdProperty;

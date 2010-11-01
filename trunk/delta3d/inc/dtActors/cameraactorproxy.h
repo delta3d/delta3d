@@ -53,9 +53,9 @@ namespace dtActors
       */
       virtual bool IsPlaceable() const { return true; }
 
-      virtual const dtDAL::ActorProxy::RenderMode& GetRenderMode()
+      virtual const dtDAL::BaseActorObject::RenderMode& GetRenderMode()
       {
-         return dtDAL::ActorProxy::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON;
+         return dtDAL::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON;
       }
 
       /**

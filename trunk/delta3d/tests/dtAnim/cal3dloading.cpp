@@ -651,7 +651,7 @@ void CAL3DLoadingTests::TestPlayAnimatedMorph()
    CalModel* model = new CalModel(coreModel);
    model->attachMesh(coreMeshID);
 
-   model->getMorphTargetMixer()->blend(morphID, 1.f, 0.f);
+   model->getMorphTargetMixer()->blend(morphID, 1.f, 0.f, 0.0f, false);
 
    model->update(1.18f);
 

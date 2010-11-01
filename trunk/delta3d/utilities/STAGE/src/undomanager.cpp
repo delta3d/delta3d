@@ -81,8 +81,8 @@ namespace dtEditQt
          std::string, std::string)),
          this, SLOT(actorPropertyAboutToChange(ActorProxyRefPtr, ActorPropertyRefPtr,
          std::string, std::string)));
-      connect(&EditorEvents::GetInstance(), SIGNAL(ProxyNameChanged(dtDAL::ActorProxy&, std::string)),
-         this, SLOT(onProxyNameChanged(dtDAL::ActorProxy&, std::string)));
+      connect(&EditorEvents::GetInstance(), SIGNAL(ProxyNameChanged(dtDAL::BaseActorObject&, std::string)),
+         this, SLOT(onProxyNameChanged(dtDAL::BaseActorObject&, std::string)));
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -91,7 +91,7 @@ namespace dtEditQt
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   void UndoManager::onActorPropertyChanged(dtCore::RefPtr<dtDAL::ActorProxy> proxy,
+   void UndoManager::onActorPropertyChanged(dtCore::RefPtr<dtDAL::BaseActorObject> proxy,
       dtCore::RefPtr<dtDAL::ActorProperty> property)
    {
       if (!mRecursePrevent)
@@ -120,7 +120,7 @@ namespace dtEditQt
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   void UndoManager::actorPropertyAboutToChange(dtCore::RefPtr<dtDAL::ActorProxy> proxy,
+   void UndoManager::actorPropertyAboutToChange(dtCore::RefPtr<dtDAL::BaseActorObject> proxy,
       dtCore::RefPtr<dtDAL::ActorProperty> property, std::string oldValue, std::string newValue)
    {
       if (!mRecursePrevent)
@@ -151,7 +151,7 @@ namespace dtEditQt
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   void UndoManager::onActorProxyCreated(dtCore::RefPtr<dtDAL::ActorProxy> proxy, bool forceNoAdjustments)
+   void UndoManager::onActorProxyCreated(dtCore::RefPtr<dtDAL::BaseActorObject> proxy, bool forceNoAdjustments)
    {
       if (!mRecursePrevent)
       {
@@ -171,7 +171,7 @@ namespace dtEditQt
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   void UndoManager::onProxyNameChanged(dtDAL::ActorProxy& proxy, std::string oldName)
+   void UndoManager::onProxyNameChanged(dtDAL::BaseActorObject& proxy, std::string oldName)
    {
       if (!mRecursePrevent)
       {
@@ -195,7 +195,7 @@ namespace dtEditQt
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   void UndoManager::onActorProxyDestroyed(dtCore::RefPtr<dtDAL::ActorProxy> proxy)
+   void UndoManager::onActorProxyDestroyed(dtCore::RefPtr<dtDAL::BaseActorObject> proxy)
    {
       if (!mRecursePrevent)
       {
@@ -349,7 +349,7 @@ namespace dtEditQt
 
       if (currMap.valid())
       {
-         dtDAL::ActorProxy* proxy = currMap->GetProxyById(dtCore::UniqueId(event->mObjectId));
+         dtDAL::BaseActorObject* proxy = currMap->GetProxyById(dtCore::UniqueId(event->mObjectId));
 
          // Test to see if the proxy ID matches the volume brush.
          if (!proxy)
@@ -395,7 +395,7 @@ namespace dtEditQt
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   void UndoManager::handleUndoRedoNameChange(ChangeEvent* event, dtDAL::ActorProxy* proxy, bool isUndo)
+   void UndoManager::handleUndoRedoNameChange(ChangeEvent* event, dtDAL::BaseActorObject* proxy, bool isUndo)
    {
       // NOTE - The undo/redo methods do both the undo and the redo.  If you are modifying
       // these methods, be VERY careful
@@ -427,7 +427,7 @@ namespace dtEditQt
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   void UndoManager::handleUndoRedoCreateObject(ChangeEvent* event, dtDAL::ActorProxy* proxy, bool isUndo)
+   void UndoManager::handleUndoRedoCreateObject(ChangeEvent* event, dtDAL::BaseActorObject* proxy, bool isUndo)
    {
       // NOTE - The undo/redo methods do both the undo and the redo.  If you are modifying
       // these methods, be VERY careful
@@ -468,7 +468,7 @@ namespace dtEditQt
       EditorActions::GetInstance().deleteProxy(proxy, currMap);
 
       //We are deleting an object, so clear the current selection for safety.
-      std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > emptySelection;
+      std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> > emptySelection;
       EditorEvents::GetInstance().emitActorsSelected(emptySelection);
 
       EditorData::GetInstance().getMainWindow()->endWaitCursor();
@@ -476,7 +476,7 @@ namespace dtEditQt
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void UndoManager::handleUndoRedoCreateGroup(ChangeEvent* event, dtDAL::ActorProxy* proxy, bool createGroup, bool isUndo)
+   void UndoManager::handleUndoRedoCreateGroup(ChangeEvent* event, dtDAL::BaseActorObject* proxy, bool createGroup, bool isUndo)
    {
       if (isUndo)
       {
@@ -508,12 +508,12 @@ namespace dtEditQt
                // Since this is the first actor being grouped, remove our current
                // selection and enable multi-select mode.
 
-               std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > emptySelection;
+               std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> > emptySelection;
                EditorEvents::GetInstance().emitActorsSelected(emptySelection);
             }
 
             // Now add the new proxy to the current selection.
-            std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > toSelect;
+            std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> > toSelect;
             ViewportOverlay::ActorProxyList& selection = ViewportManager::GetInstance().getViewportOverlay()->getCurrentActorSelection();
 
             for (int index = 0; index < (int)selection.size(); index++)
@@ -553,7 +553,7 @@ namespace dtEditQt
          EditorData::GetInstance().getMainWindow()->startWaitCursor();
 
          // recreate the actor!
-         dtCore::RefPtr<dtDAL::ActorProxy> proxy =
+         dtCore::RefPtr<dtDAL::BaseActorObject> proxy =
             dtDAL::LibraryManager::GetInstance().CreateActorProxy(*actorType.get()).get();
          if (proxy.valid())
          {
@@ -604,7 +604,7 @@ namespace dtEditQt
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   void UndoManager::handleUndoRedoPropertyValue(ChangeEvent* event, dtDAL::ActorProxy* proxy, bool isUndo)
+   void UndoManager::handleUndoRedoPropertyValue(ChangeEvent* event, dtDAL::BaseActorObject* proxy, bool isUndo)
    {
       // NOTE - The undo/redo methods do both the undo and the redo.  If you are modifying
       // these methods, be VERY careful
@@ -625,7 +625,7 @@ namespace dtEditQt
             property->FromString(propData->mOldValue);
 
             // notify the world of our change to the data.
-            dtCore::RefPtr<dtDAL::ActorProxy> ActorProxyRefPtr = proxy;
+            dtCore::RefPtr<dtDAL::BaseActorObject> ActorProxyRefPtr = proxy;
             dtCore::RefPtr<dtDAL::ActorProperty> ActorPropertyRefPtr = property;
             mRecursePrevent = true;
             EditorData::GetInstance().getMainWindow()->startWaitCursor();
@@ -652,7 +652,7 @@ namespace dtEditQt
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   UndoManager::ChangeEvent* UndoManager::createFullUndoEvent(dtDAL::ActorProxy* proxy)
+   UndoManager::ChangeEvent* UndoManager::createFullUndoEvent(dtDAL::BaseActorObject* proxy)
    {
       dtDAL::ActorProperty* curProp;
       std::vector<dtDAL::ActorProperty*> propList;

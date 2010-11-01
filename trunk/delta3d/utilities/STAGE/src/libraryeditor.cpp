@@ -152,7 +152,7 @@ namespace dtEditQt
          tr("&Yes"), tr("&No"), QString::null, 1) == 0)
       {
          dtDAL::Map* curMap = EditorData::GetInstance().getCurrentMap();
-         std::vector< dtCore::RefPtr<dtDAL::ActorProxy> > proxies;
+         std::vector< dtCore::RefPtr<dtDAL::BaseActorObject> > proxies;
          curMap->GetAllProxies(proxies);
          std::vector<std::string> loadedLibs = curMap->GetAllLibraries();
 

@@ -161,7 +161,7 @@ namespace dtEditQt
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void Viewport::refreshActorSelection(const std::vector< dtCore::RefPtr<dtDAL::ActorProxy> >& actors)
+   void Viewport::refreshActorSelection(const std::vector< dtCore::RefPtr<dtDAL::BaseActorObject> >& actors)
    {
    }
 
@@ -273,7 +273,7 @@ namespace dtEditQt
          return;
       }
 
-      std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > toSelect;
+      std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> > toSelect;
 
       //ensure that the Brush outline is on (if it turns out the brush is selected it
       //will get disabled later)
@@ -290,7 +290,7 @@ namespace dtEditQt
       ViewportOverlay::ActorProxyList selection = overlay->getCurrentActorSelection();
 
       // First see if the selected drawable is an actor.
-      dtDAL::ActorProxy* newSelection = currMap->GetProxyById(drawable->GetUniqueId());
+      dtDAL::BaseActorObject* newSelection = currMap->GetProxyById(drawable->GetUniqueId());
 
       // if its not an actor that is directly part of the map then it may be the main VolumeEditActor
       if (newSelection == NULL)
@@ -318,17 +318,17 @@ namespace dtEditQt
       // If its not an actor then it may be a billboard placeholder for an actor.
       if (newSelection == NULL)
       {
-         const std::map< dtCore::UniqueId, dtCore::RefPtr<dtDAL::ActorProxy> >&
+         const std::map< dtCore::UniqueId, dtCore::RefPtr<dtDAL::BaseActorObject> >&
             proxyList = currMap->GetAllProxies();
-         std::map< dtCore::UniqueId, dtCore::RefPtr<dtDAL::ActorProxy> >::const_iterator proxyItor;
+         std::map< dtCore::UniqueId, dtCore::RefPtr<dtDAL::BaseActorObject> >::const_iterator proxyItor;
 
          // Loop through the proxies searching for the one with billboard geometry
          // matching what was selected.
          for (proxyItor = proxyList.begin(); proxyItor != proxyList.end(); ++proxyItor)
          {
-            dtDAL::ActorProxy* proxy =const_cast<dtDAL::ActorProxy*>(proxyItor->second.get());
+            dtDAL::BaseActorObject* proxy =const_cast<dtDAL::BaseActorObject*>(proxyItor->second.get());
 
-            if (proxy->GetRenderMode() == dtDAL::ActorProxy::RenderMode::DRAW_ACTOR)
+            if (proxy->GetRenderMode() == dtDAL::BaseActorObject::RenderMode::DRAW_ACTOR)
             {
                continue;
             }
@@ -354,7 +354,7 @@ namespace dtEditQt
             int actorCount = currMap->GetGroupActorCount(groupIndex);
             for (int actorIndex = 0; actorIndex < actorCount; actorIndex++)
             {
-               dtDAL::ActorProxy* proxy = currMap->GetActorFromGroup(groupIndex, actorIndex);
+               dtDAL::BaseActorObject* proxy = currMap->GetActorFromGroup(groupIndex, actorIndex);
                if (proxy != newSelection)
                {
                   toSelect.push_back(proxy);
@@ -396,7 +396,7 @@ namespace dtEditQt
          ViewportOverlay::ActorProxyList::iterator itor = selection.begin();
          for (itor = selection.begin(); itor != selection.end(); ++itor)
          {
-            toSelect.push_back(const_cast<dtDAL::ActorProxy*>(itor->get()));
+            toSelect.push_back(const_cast<dtDAL::BaseActorObject*>(itor->get()));
          }
       }
       // If we are not multi-selecting, then selecting an actor that is already selected
@@ -638,7 +638,7 @@ namespace dtEditQt
 
 
    ///////////////////////////////////////////////////////////////////////////////
-   void Viewport::onGotoActor(dtCore::RefPtr<dtDAL::ActorProxy> proxy)
+   void Viewport::onGotoActor(dtCore::RefPtr<dtDAL::BaseActorObject> proxy)
    {
       dtDAL::TransformableActorProxy* tProxy = dynamic_cast<dtDAL::TransformableActorProxy*>(proxy.get());
 
@@ -810,7 +810,7 @@ namespace dtEditQt
 
       for (itor = selection.begin(); itor != selection.end(); ++itor)
       {
-         dtDAL::ActorProxy* proxy = const_cast<dtDAL::ActorProxy*>(itor->get());
+         dtDAL::BaseActorObject* proxy = const_cast<dtDAL::BaseActorObject*>(itor->get());
          dtDAL::ActorProperty* prop = proxy->GetProperty(propName);
 
          if (prop != NULL)
@@ -840,7 +840,7 @@ namespace dtEditQt
 
       for (itor = selection.begin(); itor != selection.end(); ++itor)
       {
-         dtDAL::ActorProxy*    proxy = const_cast<dtDAL::ActorProxy*>(itor->get());
+         dtDAL::BaseActorObject*    proxy = const_cast<dtDAL::BaseActorObject*>(itor->get());
          dtDAL::ActorProperty* prop  = proxy->GetProperty(propName);
 
          if (prop != NULL)
@@ -860,8 +860,8 @@ namespace dtEditQt
    void Viewport::updateActorProxyBillboards()
    {
       dtDAL::Map* currentMap = EditorData::GetInstance().getCurrentMap();
-      std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > proxies;
-      std::vector<dtCore::RefPtr<dtDAL::ActorProxy> >::iterator itor;
+      std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> > proxies;
+      std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> >::iterator itor;
 
       if (currentMap == NULL || getCamera() == NULL)
       {
@@ -871,11 +871,11 @@ namespace dtEditQt
       currentMap->GetAllProxies(proxies);
       for (itor = proxies.begin(); itor != proxies.end(); ++itor)
       {
-         dtDAL::ActorProxy* proxy = itor->get();
-         const dtDAL::ActorProxy::RenderMode& renderMode = proxy->GetRenderMode();
+         dtDAL::BaseActorObject* proxy = itor->get();
+         const dtDAL::BaseActorObject::RenderMode& renderMode = proxy->GetRenderMode();
 
-         if (renderMode == dtDAL::ActorProxy::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON ||
-            renderMode == dtDAL::ActorProxy::RenderMode::DRAW_BILLBOARD_ICON)
+         if (renderMode == dtDAL::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON ||
+            renderMode == dtDAL::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON)
          {
             dtDAL::ActorProxyIcon* billBoard = proxy->GetBillBoardIcon();
             if (billBoard != NULL)
@@ -883,7 +883,7 @@ namespace dtEditQt
                billBoard->SetRotation(osg::Matrix::rotate(getCamera()->getOrientation()));
             }
          }
-         else if (renderMode == dtDAL::ActorProxy::RenderMode::DRAW_AUTO)
+         else if (renderMode == dtDAL::BaseActorObject::RenderMode::DRAW_AUTO)
          {
          }
       }

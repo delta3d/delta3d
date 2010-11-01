@@ -58,7 +58,7 @@ namespace dtDAL
        * @param[in]  desc               Description of the property.
        * @param[in]  groupName          The group category to place this property.
        */
-      ActorIDActorProperty(ActorProxy& actorProxy,
+      ActorIDActorProperty(BaseActorObject& actorProxy,
          const dtUtil::RefString& name,
          const dtUtil::RefString& label,
          SetFuncType Set,
@@ -95,7 +95,7 @@ namespace dtDAL
       /**
       * Gets the value proxy assiged to this property.
       * Hack for the resource class
-      * @return the currently set ActorProxy for this property.
+      * @return the currently set BaseActorObject for this property.
       */
       dtCore::UniqueId GetValue() const;
 
@@ -115,13 +115,13 @@ namespace dtDAL
       * Gets the actor proxy that this property is representing
       * @return The actor proxy.
       */
-      dtDAL::ActorProxy* GetActorProxy();
+      dtDAL::BaseActorObject* GetActorProxy();
 
       /**
       * Gets the actor proxy that this property is representing
       * @return The actor proxy.
       */
-      const dtDAL::ActorProxy* GetActorProxy() const;
+      const dtDAL::BaseActorObject* GetActorProxy() const;
 
       /**
       * Sets the value of the property based on a string.
@@ -149,7 +149,7 @@ namespace dtDAL
       const std::string& GetDesiredActorClass() const;
 
    private:
-      ActorProxy* mProxy;
+      BaseActorObject* mProxy;
       SetFuncType SetIdFunctor;
       GetFuncType GetIdFunctor;
       dtUtil::RefString mDesiredActorClass;

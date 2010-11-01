@@ -57,7 +57,7 @@ void TripodActorProxy::CreateActor()
 ///////////////////////////////////////////////////////////////////////////////////
 void TripodActorProxy::BuildPropertyMap()
 {
-   dtDAL::ActorProxy::BuildPropertyMap();
+   dtDAL::BaseActorObject::BuildPropertyMap();
 
    static const std::string GROUPNAME = "Tripod";
 
@@ -107,7 +107,7 @@ void TripodActorProxy::BuildPropertyMap()
 }
 
 ///////////////////////////////////////////////////////////////////////////////////
-void TripodActorProxy::SetCamera(ActorProxy* cameraProxy)
+void TripodActorProxy::SetCamera(BaseActorObject* cameraProxy)
 {
    SetLinkedActor("Camera", cameraProxy);
 
@@ -131,7 +131,7 @@ DeltaDrawable* TripodActorProxy::GetCamera()
 }
 
 ///////////////////////////////////////////////////////////////////////////////////
-void TripodActorProxy::SetAttachToTransformable(ActorProxy* transformableProxy)
+void TripodActorProxy::SetAttachToTransformable(BaseActorObject* transformableProxy)
 {
    SetLinkedActor("Parent", transformableProxy);
 
@@ -156,7 +156,7 @@ DeltaDrawable* TripodActorProxy::GetAttachedTransformable()
 }
 
 ///////////////////////////////////////////////////////////////////////////////////
-void TripodActorProxy::SetLookAtTarget(ActorProxy* targetProxy)
+void TripodActorProxy::SetLookAtTarget(BaseActorObject* targetProxy)
 {
    SetLinkedActor("Look-At Target", targetProxy);
 

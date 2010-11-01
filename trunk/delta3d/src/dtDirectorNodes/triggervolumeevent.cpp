@@ -98,7 +98,7 @@ namespace dtDirector
          count = GetPropertyCount("TriggerVolume");
          for (int index = 0; index < count; index++)
          {
-            dtDAL::ActorProxy* proxy = GetActor("TriggerVolume", index);
+            dtDAL::BaseActorObject* proxy = GetActor("TriggerVolume", index);
             if (proxy)
             {
                dtActors::TriggerVolumeActor* volume = NULL;

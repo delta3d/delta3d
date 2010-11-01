@@ -398,7 +398,7 @@ namespace dtEditQt
        *
        * @param[in]  actors  The list of all actors being selected.
        */
-      virtual void refreshActorSelection(const std::vector< dtCore::RefPtr<dtDAL::ActorProxy> >& actors);
+      virtual void refreshActorSelection(const std::vector< dtCore::RefPtr<dtDAL::BaseActorObject> >& actors);
 
       /**
        * Tells the viewport to repaint itself.

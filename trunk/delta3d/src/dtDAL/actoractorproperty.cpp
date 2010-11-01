@@ -26,7 +26,7 @@
 namespace dtDAL
 {
    ////////////////////////////////////////////////////////////////////////////
-   ActorActorProperty::ActorActorProperty(ActorProxy& actorProxy,
+   ActorActorProperty::ActorActorProperty(BaseActorObject& actorProxy,
                      const dtUtil::RefString& name,
                      const dtUtil::RefString& label,
                      SetFuncType Set,
@@ -59,7 +59,7 @@ namespace dtDAL
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void ActorActorProperty::SetValue(ActorProxy* value)
+   void ActorActorProperty::SetValue(BaseActorObject* value)
    {
       if (IsReadOnly())
       {
@@ -71,7 +71,7 @@ namespace dtDAL
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   ActorProxy* ActorActorProperty::GetValue() const
+   BaseActorObject* ActorActorProperty::GetValue() const
    {
       if (!mProxy) return NULL;
 
@@ -115,7 +115,7 @@ namespace dtDAL
             return false;
          }
 
-         ActorProxy* newProxyValue = map->GetProxyById(newIdValue);
+         BaseActorObject* newProxyValue = map->GetProxyById(newIdValue);
          if (newProxyValue == NULL)
          {
             dtUtil::Log::GetInstance("enginepropertytypes.cpp").LogMessage(dtUtil::Log::LOG_INFO,

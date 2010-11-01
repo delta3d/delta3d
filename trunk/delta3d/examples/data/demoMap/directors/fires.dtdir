@@ -2,7 +2,7 @@
 <director xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dDirector" xsi:schemaLocation="delta3dDirector director.xsd">
     <header>
         <createTimestamp>2009-12-23T15:09:12-08:00</createTimestamp>
-        <lastUpdateTimestamp>2010-07-30T10:45:02-08:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2010-08-30T11:28:46-08:00</lastUpdateTimestamp>
         <editorVersion>2.5.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
         <property>
@@ -217,6 +217,85 @@
                     <exposed>true</exposed>
                     <isout>false</isout>
                     <allowmultiple>true</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+            </node>
+            <node>
+                <name>Property Changed Event</name>
+                <category>Messages</category>
+                <id>e2b1de8b-46e5-41f3-8aec-bbef1b3bdc10</id>
+                <property>
+                    <name>Enabled</name>
+                    <boolean>true</boolean>
+                </property>
+                <property>
+                    <name>Comment</name>
+                    <string></string>
+                </property>
+                <property>
+                    <name>LogNode</name>
+                    <boolean>false</boolean>
+                </property>
+                <property>
+                    <name>Position</name>
+                    <vec2>
+                        <value1>944.429504</value1>
+                        <value2>-393.489380</value2>
+                    </vec2>
+                </property>
+                <property>
+                    <name>TriggerCount</name>
+                    <integer>0</integer>
+                </property>
+                <property>
+                    <name>LinkedActor</name>
+                    <actorId>2b0eeb54-0098-4e45-bcb8-15797a5cbe3d</actorId>
+                </property>
+                <property>
+                    <name>PropertyName</name>
+                    <string>Enable Dynamics</string>
+                </property>
+                <outputlink>
+                    <name>Changed</name>
+                    <visible>true</visible>
+                    <link>
+                        <id>8301e55e-f9d4-4a4a-9a01-27133586f560</id>
+                        <name>TurnOff</name>
+                    </link>
+                </outputlink>
+                <valuelink>
+                    <name>Enabled</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+                <valuelink>
+                    <name>TriggerCount</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+                <valuelink>
+                    <name>LinkedActor</name>
+                    <visible>true</visible>
+                    <exposed>true</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                    <link>
+                        <id>2d13b00a-1622-4019-94a8-a6940e2010bf</id>
+                    </link>
+                </valuelink>
+                <valuelink>
+                    <name>PropertyName</name>
+                    <visible>true</visible>
+                    <exposed>true</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
                     <typecheck>true</typecheck>
                 </valuelink>
             </node>
@@ -494,6 +573,10 @@
                     <name>NewValue</name>
                     <string></string>
                 </property>
+                <property>
+                    <name>NotifyGM</name>
+                    <boolean>false</boolean>
+                </property>
                 <inputlink>
                     <name>In</name>
                     <visible>true</visible>
@@ -583,6 +666,10 @@
                 <property>
                     <name>NewValue</name>
                     <string></string>
+                </property>
+                <property>
+                    <name>NotifyGM</name>
+                    <boolean>false</boolean>
                 </property>
                 <inputlink>
                     <name>In</name>
@@ -722,6 +809,85 @@
                 </valuelink>
                 <valuelink>
                     <name>PropertyName</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+            </node>
+            <node>
+                <name>Toggle</name>
+                <category>General</category>
+                <id>8301e55e-f9d4-4a4a-9a01-27133586f560</id>
+                <property>
+                    <name>Enabled</name>
+                    <boolean>true</boolean>
+                </property>
+                <property>
+                    <name>Comment</name>
+                    <string>Turn on the physics for the crates</string>
+                </property>
+                <property>
+                    <name>LogNode</name>
+                    <boolean>false</boolean>
+                </property>
+                <property>
+                    <name>Position</name>
+                    <vec2>
+                        <value1>1164.489136</value1>
+                        <value2>-393.489380</value2>
+                    </vec2>
+                </property>
+                <property>
+                    <name>Actor</name>
+                    <actorId></actorId>
+                </property>
+                <property>
+                    <name>TogglePropertyName</name>
+                    <string>Enable Dynamics</string>
+                </property>
+                <inputlink>
+                    <name>TurnOn</name>
+                    <visible>true</visible>
+                </inputlink>
+                <inputlink>
+                    <name>TurnOff</name>
+                    <visible>true</visible>
+                    <link>
+                        <id>e2b1de8b-46e5-41f3-8aec-bbef1b3bdc10</id>
+                        <name>Changed</name>
+                    </link>
+                </inputlink>
+                <inputlink>
+                    <name>Toggle</name>
+                    <visible>true</visible>
+                </inputlink>
+                <outputlink>
+                    <name>Out</name>
+                    <visible>true</visible>
+                </outputlink>
+                <valuelink>
+                    <name>Enabled</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+                <valuelink>
+                    <name>Actor</name>
+                    <visible>true</visible>
+                    <exposed>true</exposed>
+                    <isout>true</isout>
+                    <allowmultiple>true</allowmultiple>
+                    <typecheck>true</typecheck>
+                    <link>
+                        <id>2d13b00a-1622-4019-94a8-a6940e2010bf</id>
+                    </link>
+                </valuelink>
+                <valuelink>
+                    <name>TogglePropertyName</name>
                     <visible>true</visible>
                     <exposed>false</exposed>
                     <isout>false</isout>
@@ -1282,6 +1448,46 @@
                             </property>
                         </element>
                     </array>
+                </property>
+                <valuelink>
+                    <name>Enabled</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+            </node>
+            <node>
+                <name>Actor</name>
+                <category>General</category>
+                <id>2d13b00a-1622-4019-94a8-a6940e2010bf</id>
+                <property>
+                    <name>Enabled</name>
+                    <boolean>true</boolean>
+                </property>
+                <property>
+                    <name>Comment</name>
+                    <string></string>
+                </property>
+                <property>
+                    <name>LogNode</name>
+                    <boolean>false</boolean>
+                </property>
+                <property>
+                    <name>Position</name>
+                    <vec2>
+                        <value1>959.429382</value1>
+                        <value2>-243.212708</value2>
+                    </vec2>
+                </property>
+                <property>
+                    <name>Name</name>
+                    <string>Actor</string>
+                </property>
+                <property>
+                    <name>Value</name>
+                    <actorId>2b0eeb54-0098-4e45-bcb8-15797a5cbe3d</actorId>
                 </property>
                 <valuelink>
                     <name>Enabled</name>

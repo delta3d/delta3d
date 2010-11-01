@@ -289,7 +289,7 @@ void MapTests::createActors(dtDAL::Map& map)
          continue; // go to next actor
       }
 
-      dtCore::RefPtr<dtDAL::ActorProxy> proxy;
+      dtCore::RefPtr<dtDAL::BaseActorObject> proxy;
       // Test timing Stuff
       dtCore::Timer testClock;
       dtCore::Timer_t testClockStart = testClock.Tick();
@@ -367,7 +367,7 @@ void MapTests::TestMapAddRemoveProxies()
         CPPUNIT_ASSERT_MESSAGE("The set of actor classes should be empty.",
             map.GetProxyActorClasses().empty());
 
-        std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > proxies;
+        std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> > proxies;
         map.GetAllProxies(proxies);
 
         map.AddLibrary(mExampleLibraryName, "1.0");
@@ -376,16 +376,16 @@ void MapTests::TestMapAddRemoveProxies()
         dtCore::RefPtr<const dtDAL::ActorType> exampleType = dtDAL::LibraryManager::GetInstance().FindActorType("dtcore.examples", "Test All Properties");
         CPPUNIT_ASSERT_MESSAGE("The example type is NULL", exampleType.valid());
 
-        dtCore::RefPtr<dtDAL::ActorProxy> proxy1 = dtDAL::LibraryManager::GetInstance().CreateActorProxy(*exampleType);
+        dtCore::RefPtr<dtDAL::BaseActorObject> proxy1 = dtDAL::LibraryManager::GetInstance().CreateActorProxy(*exampleType);
         CPPUNIT_ASSERT_MESSAGE("proxy1 is NULL", proxy1.valid());
 
-        dtCore::RefPtr<dtDAL::ActorProxy> proxy2 = dtDAL::LibraryManager::GetInstance().CreateActorProxy(*exampleType);
+        dtCore::RefPtr<dtDAL::BaseActorObject> proxy2 = dtDAL::LibraryManager::GetInstance().CreateActorProxy(*exampleType);
         CPPUNIT_ASSERT_MESSAGE("proxy2 is NULL", proxy2.valid());
 
-        dtCore::RefPtr<dtDAL::ActorProxy> proxy3 = dtDAL::LibraryManager::GetInstance().CreateActorProxy(*exampleType);
+        dtCore::RefPtr<dtDAL::BaseActorObject> proxy3 = dtDAL::LibraryManager::GetInstance().CreateActorProxy(*exampleType);
         CPPUNIT_ASSERT_MESSAGE("proxy3 is NULL", proxy3.valid());
 
-        dtCore::RefPtr<dtDAL::ActorProxy> proxy4 = dtDAL::LibraryManager::GetInstance().CreateActorProxy(*exampleType);
+        dtCore::RefPtr<dtDAL::BaseActorObject> proxy4 = dtDAL::LibraryManager::GetInstance().CreateActorProxy(*exampleType);
         CPPUNIT_ASSERT_MESSAGE("proxy4 is NULL", proxy4.valid());
 
         map.AddProxy(*proxy1.get());
@@ -424,7 +424,7 @@ void MapTests::TestMapProxySearch()
 
         unsigned maxId = map.GetAllProxies().size();
 
-        std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > results;
+        std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> > results;
 
         map.FindProxies(results, "", "dtcore", "");
 
@@ -439,7 +439,7 @@ void MapTests::TestMapProxySearch()
         CPPUNIT_ASSERT_MESSAGE("trailing dots should end with no results.", results.size() == 0);
 
         map.FindProxies(results, "", "", "","", dtDAL::Map::Placeable);
-        for (std::vector<dtCore::RefPtr<dtDAL::ActorProxy> >::iterator i = results.begin();
+        for (std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> >::iterator i = results.begin();
             i != results.end(); ++i)
         {
             CPPUNIT_ASSERT_MESSAGE(std::string("Proxy ") + (*i)->GetName()
@@ -448,7 +448,7 @@ void MapTests::TestMapProxySearch()
         }
 
         map.FindProxies(results, "", "", "","", dtDAL::Map::NotPlaceable);
-        for (std::vector<dtCore::RefPtr<dtDAL::ActorProxy> >::iterator i = results.begin();
+        for (std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> >::iterator i = results.begin();
             i != results.end(); ++i)
         {
             CPPUNIT_ASSERT_MESSAGE(std::string("Proxy ") + (*i)->GetName()
@@ -460,27 +460,27 @@ void MapTests::TestMapProxySearch()
         CPPUNIT_ASSERT_MESSAGE("There should be some lights in the results.", results.size() >= 3);
 
 
-        for (std::vector<dtCore::RefPtr<dtDAL::ActorProxy> >::iterator i = results.begin();
+        for (std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> >::iterator i = results.begin();
             i != results.end(); ++i)
         {
             CPPUNIT_ASSERT_MESSAGE("All results should be instances of dtCore::Light",
                 (*i)->IsInstanceOf("dtCore::Light"));
         }
 
-        std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > proxies;
+        std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> > proxies;
 
         map.GetAllProxies(proxies);
 
         for (unsigned x = 0;  x < proxies.size(); ++x)
         {
-            dtCore::RefPtr<dtDAL::ActorProxy> proxyPTR = map.GetProxyById(proxies[x]->GetId());
+            dtCore::RefPtr<dtDAL::BaseActorObject> proxyPTR = map.GetProxyById(proxies[x]->GetId());
 
             CPPUNIT_ASSERT_MESSAGE("Proxy should be found in the map by the project.", &map == dtDAL::Project::GetInstance().GetMapForActorProxy(*proxyPTR));
 
             CPPUNIT_ASSERT_MESSAGE((std::string("Proxy not found with id: ") + proxies[x]->GetId().ToString()).c_str()
                 , proxyPTR != NULL);
 
-            dtDAL::ActorProxy& proxy = *proxyPTR.get();
+            dtDAL::BaseActorObject& proxy = *proxyPTR.get();
 
             CPPUNIT_ASSERT_MESSAGE((std::string("Proxy has the wrong id. ") + proxy.GetId().ToString()).c_str() ,
                 proxy.GetId() == proxies[x]->GetId());
@@ -532,11 +532,11 @@ void MapTests::TestMapProxySearch()
 dtDAL::ActorProperty* MapTests::getActorProperty(dtDAL::Map& map,
     const std::string& propName, dtDAL::DataType& type, unsigned which)
 {
-    for (std::map<dtCore::UniqueId, dtCore::RefPtr<dtDAL::ActorProxy> >::const_iterator i = map.GetAllProxies().begin();
+    for (std::map<dtCore::UniqueId, dtCore::RefPtr<dtDAL::BaseActorObject> >::const_iterator i = map.GetAllProxies().begin();
         i != map.GetAllProxies().end(); ++i)
     {
 
-        dtDAL::ActorProxy* proxy = map.GetProxyById(i->first);
+        dtDAL::BaseActorObject* proxy = map.GetProxyById(i->first);
 
         CPPUNIT_ASSERT_MESSAGE("ERROR: Proxy is NULL", proxy!= NULL );
 
@@ -703,7 +703,7 @@ void MapTests::TestMapLibraryHandling()
        reg = dtDAL::LibraryManager::GetInstance().GetRegistry(mExampleLibraryName);
        CPPUNIT_ASSERT_MESSAGE("Registry for testActorLibrary should not be NULL.", reg != NULL);
 
-       std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > proxies;
+       std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> > proxies;
        //hold onto all the proxies so that the actor libraries can't be closed.
        map->GetAllProxies(proxies);
 
@@ -860,7 +860,7 @@ void MapTests::TestMapSaveAndLoad()
         if (aap != NULL)
         {
            const std::string& className = aap->GetDesiredActorClass();
-           std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > toFill;
+           std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> > toFill;
            // Do a search for the class name.
            map->FindProxies(toFill, "", "", "", className);
 
@@ -875,7 +875,7 @@ void MapTests::TestMapSaveAndLoad()
         {
            dtDAL::ActorIDActorProperty* aidap = dynamic_cast<dtDAL::ActorIDActorProperty*>(ap);
            const std::string& className = aidap->GetDesiredActorClass();
-           std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > toFill;
+           std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> > toFill;
            // Do a search for the class name.
            map->FindProxies(toFill, "", "", "", className);
 
@@ -950,7 +950,7 @@ void MapTests::TestMapSaveAndLoad()
 
         unsigned numProxies = map->GetAllProxies().size();
         std::map<dtCore::UniqueId, std::string> names;
-        for (std::map<dtCore::UniqueId, dtCore::RefPtr<dtDAL::ActorProxy> >::const_iterator i = map->GetAllProxies().begin();
+        for (std::map<dtCore::UniqueId, dtCore::RefPtr<dtDAL::BaseActorObject> >::const_iterator i = map->GetAllProxies().begin();
             i != map->GetAllProxies().end(); ++i)
         {
             names.insert(std::make_pair(i->first, i->second->GetName()));
@@ -998,7 +998,7 @@ void MapTests::TestMapSaveAndLoad()
         for (std::map<dtCore::UniqueId, std::string>::const_iterator j = names.begin();
             j != names.end(); ++j)
         {
-            dtDAL::ActorProxy* ap = map->GetProxyById(j->first);
+            dtDAL::BaseActorObject* ap = map->GetProxyById(j->first);
             CPPUNIT_ASSERT(ap != NULL);
             CPPUNIT_ASSERT_MESSAGE(j->first.ToString() + " name should be " + j ->second, j->second == ap->GetName());
         }
@@ -1172,7 +1172,7 @@ void MapTests::TestMapSaveAndLoad()
         if (aap != NULL)
         {
            const std::string& id = aap->ToString();
-           dtDAL::ActorProxy* p  = aap->GetValue();
+           dtDAL::BaseActorObject* p  = aap->GetValue();
 
            CPPUNIT_ASSERT_MESSAGE("The proxy should not be NULL", p != NULL);
 
@@ -1368,7 +1368,7 @@ void MapTests::TestMapSaveAndLoadGroup()
       const dtDAL::ActorType* at = dtDAL::LibraryManager::GetInstance().FindActorType("dtcore.examples", "Test All Properties");
       CPPUNIT_ASSERT(at != NULL);
 
-      dtCore::RefPtr<dtDAL::ActorProxy> proxy = dtDAL::LibraryManager::GetInstance().CreateActorProxy(*at);
+      dtCore::RefPtr<dtDAL::BaseActorObject> proxy = dtDAL::LibraryManager::GetInstance().CreateActorProxy(*at);
 
       dtDAL::GroupActorProperty* groupProp;
       proxy->GetProperty("TestGroup", groupProp);
@@ -1418,7 +1418,7 @@ void MapTests::TestMapSaveAndLoadGroup()
 
       map = &project.GetMap(mapName);
 
-      std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > toFill;
+      std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> > toFill;
 
       map->GetAllProxies(toFill);
       CPPUNIT_ASSERT_EQUAL_MESSAGE("The map was saved with one proxy.  It should have one when loaded.", toFill.size(), size_t(1));
@@ -1721,7 +1721,7 @@ void MapTests::TestMapSaveAndLoadActorGroups()
       const dtDAL::ActorType* at = libraryManager.FindActorType("dtcore.Tasks", "Task Actor");
       CPPUNIT_ASSERT(at != NULL);
 
-      dtCore::RefPtr<dtDAL::ActorProxy> proxy = libraryManager.CreateActorProxy(*at);
+      dtCore::RefPtr<dtDAL::BaseActorObject> proxy = libraryManager.CreateActorProxy(*at);
 
       map->AddProxy(*proxy);
 
@@ -1732,7 +1732,7 @@ void MapTests::TestMapSaveAndLoadActorGroups()
       std::ostringstream ss;
       for (unsigned i = 0; i < 10; ++i)
       {
-         dtCore::RefPtr<dtDAL::ActorProxy> proxy = libraryManager.CreateActorProxy(*at);
+         dtCore::RefPtr<dtDAL::BaseActorObject> proxy = libraryManager.CreateActorProxy(*at);
          subTasks.push_back(proxy->GetId());
          map->AddProxy(*proxy);
          ss.str("");
@@ -1799,13 +1799,13 @@ void MapTests::TestLoadMapIntoScene()
         std::set<dtCore::UniqueId> ids;
 
         //add all the names of the actors that should be in the scene to set so we can track them.
-        for (std::map<dtCore::UniqueId, dtCore::RefPtr<dtDAL::ActorProxy> >::const_iterator i = map.GetAllProxies().begin();
+        for (std::map<dtCore::UniqueId, dtCore::RefPtr<dtDAL::BaseActorObject> >::const_iterator i = map.GetAllProxies().begin();
             i != map.GetAllProxies().end(); ++i)
         {
-            const dtDAL::ActorProxy::RenderMode &renderMode = const_cast<dtDAL::ActorProxy&>(*i->second).GetRenderMode();
+            const dtDAL::BaseActorObject::RenderMode &renderMode = const_cast<dtDAL::BaseActorObject&>(*i->second).GetRenderMode();
 
-            if (renderMode == dtDAL::ActorProxy::RenderMode::DRAW_ACTOR ||
-                renderMode == dtDAL::ActorProxy::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON)
+            if (renderMode == dtDAL::BaseActorObject::RenderMode::DRAW_ACTOR ||
+                renderMode == dtDAL::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON)
                 ids.insert(i->first);
         }
 
@@ -1852,13 +1852,13 @@ void MapTests::TestEnvironmentMapLoading()
       dtDAL::Project &project = dtDAL::Project::GetInstance();
       dtDAL::Map &map = project.CreateMap("TestEnvironmentMap", "TestEnvironmentMap");
 
-      std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > container;
+      std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> > container;
       CPPUNIT_ASSERT(container.empty());
 
       const unsigned int numProxies = 4;
       for (unsigned int i = 0; i < numProxies; ++i)
       {
-         dtCore::RefPtr<dtDAL::ActorProxy> p =
+         dtCore::RefPtr<dtDAL::BaseActorObject> p =
             dtDAL::LibraryManager::GetInstance().CreateActorProxy("dtcore.examples", "Test All Properties");
          CPPUNIT_ASSERT(p.valid());
          container.push_back(p);
@@ -1871,11 +1871,11 @@ void MapTests::TestEnvironmentMapLoading()
          map.AddProxy(*container[i]);
       }
 
-      std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > mapProxies;
+      std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> > mapProxies;
       map.GetAllProxies(mapProxies);
       CPPUNIT_ASSERT_MESSAGE("The map should have the correct number of proxies", mapProxies.size() == numProxies);
 
-      dtCore::RefPtr<dtDAL::ActorProxy> envProxy = dtDAL::LibraryManager::GetInstance().CreateActorProxy("Test Environment Actor", "Test Environment Actor");
+      dtCore::RefPtr<dtDAL::BaseActorObject> envProxy = dtDAL::LibraryManager::GetInstance().CreateActorProxy("Test Environment Actor", "Test Environment Actor");
       CPPUNIT_ASSERT(envProxy.valid());
 
       map.SetEnvironmentActor(envProxy.get());
@@ -1915,13 +1915,13 @@ void MapTests::TestLoadEnvironmentMapIntoScene()
    scene->RemoveAllDrawables();
    CPPUNIT_ASSERT(scene->GetNumberOfAddedDrawable() == 0);
 
-   std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > container;
+   std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> > container;
    CPPUNIT_ASSERT(container.empty());
 
    const unsigned int numProxies = 4;
    for (unsigned int i = 0; i < numProxies; ++i)
    {
-      dtCore::RefPtr<dtDAL::ActorProxy> p =
+      dtCore::RefPtr<dtDAL::BaseActorObject> p =
          dtDAL::LibraryManager::GetInstance().CreateActorProxy("dtcore.examples", "Test All Properties");
       CPPUNIT_ASSERT(p.valid());
       container.push_back(p);
@@ -1934,11 +1934,11 @@ void MapTests::TestLoadEnvironmentMapIntoScene()
       map.AddProxy(*container[i]);
    }
 
-   std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > mapProxies;
+   std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> > mapProxies;
    map.GetAllProxies(mapProxies);
    CPPUNIT_ASSERT_MESSAGE("The map should have the correct number of proxies", mapProxies.size() == numProxies);
 
-   dtCore::RefPtr<dtDAL::ActorProxy> envProxy = dtDAL::LibraryManager::GetInstance().CreateActorProxy("Test Environment Actor", "Test Environment Actor");
+   dtCore::RefPtr<dtDAL::BaseActorObject> envProxy = dtDAL::LibraryManager::GetInstance().CreateActorProxy("Test Environment Actor", "Test Environment Actor");
    CPPUNIT_ASSERT(envProxy.valid());
 
    project.LoadMapIntoScene(map, *scene);

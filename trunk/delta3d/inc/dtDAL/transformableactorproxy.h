@@ -34,7 +34,7 @@ namespace dtDAL
    /**
     * This proxy wraps the Transformable Delta3D object.
     */
-   class DT_DAL_EXPORT TransformableActorProxy : public dtDAL::ActorProxy
+   class DT_DAL_EXPORT TransformableActorProxy : public dtDAL::BaseActorObject
    {
       public:
 

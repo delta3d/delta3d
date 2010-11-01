@@ -121,7 +121,7 @@ namespace dtEditQt
 
       for (itor = selection.begin(); itor != selection.end(); ++itor)
       {
-         dtDAL::ActorProxy* proxy = const_cast<dtDAL::ActorProxy*>(itor->get());
+         dtDAL::BaseActorObject* proxy = const_cast<dtDAL::BaseActorObject*>(itor->get());
          dtDAL::TransformableActorProxy* tProxy =
             dynamic_cast<dtDAL::TransformableActorProxy*>(proxy);
 

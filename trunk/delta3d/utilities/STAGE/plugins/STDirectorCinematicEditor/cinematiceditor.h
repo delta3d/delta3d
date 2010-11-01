@@ -466,7 +466,7 @@ private:
       {
       }
 
-      dtCore::ObserverPtr<dtDAL::ActorProxy> mActor;
+      dtCore::ObserverPtr<dtDAL::BaseActorObject> mActor;
 
       bool                       mTransformEnabled;
       std::vector<TransformData> mTransformData;

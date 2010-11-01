@@ -68,7 +68,7 @@ public:
 
       // translate the camera to the predefined start position
       {
-         std::vector< dtCore::RefPtr<ActorProxy> > proxies;
+         std::vector< dtCore::RefPtr<BaseActorObject> > proxies;
          mMap->FindProxies(proxies, "startPosition");
          if (!proxies.empty())
          {
@@ -108,7 +108,7 @@ public:
    // Re-initialize to default conditions
    void Reset()
    {
-      std::vector< dtCore::RefPtr<ActorProxy> > proxies;
+      std::vector< dtCore::RefPtr<BaseActorObject> > proxies;
       mMap->FindProxies(proxies, "Controller0");
       if (!proxies.empty())
       {

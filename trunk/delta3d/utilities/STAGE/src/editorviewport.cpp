@@ -120,7 +120,7 @@ namespace dtEditQt
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void EditorViewport::refreshActorSelection(const std::vector< dtCore::RefPtr<dtDAL::ActorProxy> >& actors)
+   void EditorViewport::refreshActorSelection(const std::vector< dtCore::RefPtr<dtDAL::BaseActorObject> >& actors)
    {
       Viewport::refreshActorSelection(actors);
 
@@ -243,9 +243,9 @@ namespace dtEditQt
          dtCore::DeltaDrawable* drawable = NULL;
          mGhostProxy->GetActor(drawable);
 
-         const dtDAL::ActorProxy::RenderMode& renderMode = mGhostProxy->GetRenderMode();
-         if (renderMode == dtDAL::ActorProxy::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON ||
-            renderMode == dtDAL::ActorProxy::RenderMode::DRAW_BILLBOARD_ICON)
+         const dtDAL::BaseActorObject::RenderMode& renderMode = mGhostProxy->GetRenderMode();
+         if (renderMode == dtDAL::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON ||
+            renderMode == dtDAL::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON)
          {
             dtDAL::ActorProxyIcon* billBoard = mGhostProxy->GetBillBoardIcon();
             if (billBoard)
@@ -391,9 +391,9 @@ namespace dtEditQt
          // Setup the drawable to be visible in the scene.
          if (drawable && mGhostProxy.valid())
          {
-            const dtDAL::ActorProxy::RenderMode& renderMode = mGhostProxy->GetRenderMode();
-            if (renderMode == dtDAL::ActorProxy::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON ||
-                renderMode == dtDAL::ActorProxy::RenderMode::DRAW_BILLBOARD_ICON)
+            const dtDAL::BaseActorObject::RenderMode& renderMode = mGhostProxy->GetRenderMode();
+            if (renderMode == dtDAL::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON ||
+                renderMode == dtDAL::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON)
             {
                dtDAL::ActorProxyIcon* billBoard = mGhostProxy->GetBillBoardIcon();
                //billBoard->LoadImages();
@@ -530,7 +530,7 @@ namespace dtEditQt
 
                if (mapPtr.valid())
                {
-                  std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > proxies;
+                  std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> > proxies;
                   EditorEvents::GetInstance().emitBeginChangeTransaction();
                   dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
                   fileUtils.PushDirectory(dtDAL::Project::GetInstance().GetContext());
@@ -544,7 +544,7 @@ namespace dtEditQt
 
                      for (int proxyIndex = 0; proxyIndex < (int)proxies.size(); proxyIndex++)
                      {
-                        dtDAL::ActorProxy* proxy = proxies[proxyIndex].get();
+                        dtDAL::BaseActorObject* proxy = proxies[proxyIndex].get();
 
                         mapPtr->AddProxy(*proxy, true);
                         mapPtr->AddActorToGroup(groupIndex, proxy);
@@ -589,13 +589,13 @@ namespace dtEditQt
             EditorEvents::GetInstance().emitEndChangeTransaction();
 
             // Now, let the world that it should select the new actor proxy.
-            std::vector< dtCore::RefPtr<dtDAL::ActorProxy> > actors;
+            std::vector< dtCore::RefPtr<dtDAL::BaseActorObject> > actors;
             actors.push_back(mGhostProxy.get());
             EditorEvents::GetInstance().emitActorsSelected(actors);
 
-            const dtDAL::ActorProxy::RenderMode& renderMode = mGhostProxy->GetRenderMode();
-            if (renderMode == dtDAL::ActorProxy::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON ||
-               renderMode == dtDAL::ActorProxy::RenderMode::DRAW_BILLBOARD_ICON)
+            const dtDAL::BaseActorObject::RenderMode& renderMode = mGhostProxy->GetRenderMode();
+            if (renderMode == dtDAL::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON ||
+               renderMode == dtDAL::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON)
             {
                dtDAL::ActorProxyIcon* billBoard = mGhostProxy->GetBillBoardIcon();
                if (billBoard)
@@ -926,7 +926,7 @@ namespace dtEditQt
          ViewportOverlay::ActorProxyList& selection = ViewportManager::GetInstance().getViewportOverlay()->getCurrentActorSelection();
          for (int selectIndex = 0; selectIndex < (int)selection.size(); selectIndex++)
          {
-            dtDAL::ActorProxy* proxy = selection[selectIndex].get();
+            dtDAL::BaseActorObject* proxy = selection[selectIndex].get();
             if (proxy)
             {
                dtCore::DeltaDrawable* drawable;
@@ -1016,7 +1016,7 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void EditorViewport::onGotoActor(dtCore::RefPtr<dtDAL::ActorProxy> proxy)
+   void EditorViewport::onGotoActor(dtCore::RefPtr<dtDAL::BaseActorObject> proxy)
    {
       Viewport::onGotoActor(proxy);
 

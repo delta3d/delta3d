@@ -82,7 +82,7 @@ namespace dtEditQt
       /**
        * Fills a vector with pointers to all the currently selected actor proxies.
        */
-      void GetSelectedActors(std::vector<dtDAL::ActorProxy*>& toFill);
+      void GetSelectedActors(std::vector<dtDAL::BaseActorObject*>& toFill);
 
       /** 
        * Set the currently selected resource.

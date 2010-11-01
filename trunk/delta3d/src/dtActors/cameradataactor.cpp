@@ -260,7 +260,7 @@ dtActors::CameraDataActorProxy::CameraDataActorProxy()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-const dtDAL::ActorProxy::RenderMode& dtActors::CameraDataActorProxy::GetRenderMode()
+const dtDAL::BaseActorObject::RenderMode& dtActors::CameraDataActorProxy::GetRenderMode()
 {
-   return dtDAL::ActorProxy::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON;
+   return dtDAL::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON;
 }

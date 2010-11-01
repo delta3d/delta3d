@@ -76,7 +76,7 @@ namespace dtEditQt
       void emitCreateActor();
 
       /**
-       * A new ActorProxy was created in the UI.  Anybody that needs to know about the new object
+       * A new BaseActorObject was created in the UI.  Anybody that needs to know about the new object
        * (like viewports) should listen for this.  Note that the object may or may not be selected
        * after creation, but that event will be sent separately.         *
        * @param proxy The proxy that was created is sent with the signal.
@@ -88,7 +88,7 @@ namespace dtEditQt
       void emitActorProxyCreated(ActorProxyRefPtr, bool forceNoAdjustments);
 
       /**
-       * An ActorProxy is about to be destroyed.  The user has previously selected an object and
+       * An BaseActorObject is about to be destroyed.  The user has previously selected an object and
        * is now deleting it.  If you need to unlink this object before the memory goes away, then
        * trap this event, otherwise, if you just want to redraw  something, then trap the actual
        * delete message (below).
@@ -97,7 +97,7 @@ namespace dtEditQt
       void emitActorProxyAboutToBeDestroyed(ActorProxyRefPtr proxy);
 
       /**
-       * An ActorProxy has been destroyed.  The user or some code has deleted it.
+       * An BaseActorObject has been destroyed.  The user or some code has deleted it.
        * Do NOT use this message if you need to unlink this object before the memory
        * goes away.  This message is sent AFTER the object is removed from the map.
        * If you want that, then trap the about to be destroyed message above.
@@ -134,7 +134,7 @@ namespace dtEditQt
       /**
        * This is emitted when the user edits the name in the property editor.
        */
-      void emitProxyNameChanged(dtDAL::ActorProxy& proxy, std::string oldName);
+      void emitProxyNameChanged(dtDAL::BaseActorObject& proxy, std::string oldName);
 
       /**
        * The user has modified the passed in property on the passed in proxy.  There are
@@ -229,7 +229,7 @@ namespace dtEditQt
       void actorPropertyChanged(ActorProxyRefPtr proxy, ActorPropertyRefPtr property);
       void actorPropertyAboutToChange(ActorProxyRefPtr proxy,
          ActorPropertyRefPtr property, std::string oldValue, std::string newValue);
-      void ProxyNameChanged(dtDAL::ActorProxy& proxy, std::string oldName);
+      void ProxyNameChanged(dtDAL::BaseActorObject& proxy, std::string oldName);
       void beginChangeTransaction();
       void endChangeTransaction();
       void mapLibraryImported();
