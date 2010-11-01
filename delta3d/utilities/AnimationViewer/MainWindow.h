@@ -68,7 +68,8 @@ signals:
    void SubMorphTargetChanged(int meshID, int subMeshID,
                               int morphID, float weight);
 
-   void PlayMorphAnimation(int morphAnimID);
+   void PlayMorphAnimation(int morphAnimID, float weight, float delayIn, float delayOut, bool looping);
+   void StopMorphAnimation(int morphAnimID, float delay);
 
    void AttachmentToLoad(const QString&);
 
@@ -77,6 +78,9 @@ signals:
 public slots:
    void OnNewAnimation(unsigned int id, const QString& animationName, unsigned int trackCount,
                        unsigned int keyframes, float duration);
+
+   void OnNewMorphAnimation(unsigned int id, const QString& animationName, unsigned int trackCount,
+      unsigned int keyframes, float duration);
 
    void OnNewMesh(int meshID, const QString& meshName, const std::vector<std::string>& boneNames);
 
@@ -90,9 +94,10 @@ public slots:
                       const QColor& diff, const QColor& amb, const QColor& spec,
                       float shininess);
 
-   void OnBlendUpdate(const std::vector<float>& weightList);
+   void OnBlendUpdate(const std::vector<float>& animWeightList, const std::vector<float>& morphWeightList);
 
    void OnAnimationClicked(QTableWidgetItem* item);
+   void OnMorphAnimationClicked(QTableWidgetItem* item);
    void OnMeshActivated(QListWidgetItem* item);
    void OnLODScale_Changed(double newValue);
    void OnSpeedChanged(double newValue);
@@ -118,6 +123,8 @@ private:
    void SetCurrentFile(const QString& filename);
    void OnStartAnimation(int row);
    void OnStopAnimation(int row);
+   void OnStartMorphAnimation(int row, bool looping);
+   void OnStopMorphAnimation(int row, float delay);
    void OnStartAction(int row);
    bool IsAnimNodeBuildingUsingHW() const;
    void SetupConnectionsWithViewer();
@@ -157,6 +164,7 @@ private:
    AnimationTableWidget* mAnimListWidget;
    QListWidget*          mMeshListWidget;
    QTableWidget*         mSubMorphTargetListWidget;
+   AnimationTableWidget* mSubMorphAnimationListWidget;
 
    QStandardItemModel* mMaterialModel; ///<Model for the character's materials
    QTableView*         mMaterialView;  ///<View for the character's materials
@@ -178,6 +186,9 @@ private slots:
    void OnItemChanged(QTableWidgetItem* item);
    void OnItemDoubleClicked(QTableWidgetItem* item);
 
+   void OnMorphItemChanged(QTableWidgetItem* item);
+   void OnMorphItemDoubleClicked(QTableWidgetItem* item);
+
    void OnSelectModeGrab();
    void OnSelectModeBlendPick();
    void OnSelectModeErrorPick();
@@ -188,6 +199,5 @@ private slots:
    void OnToggleFlipHorizontal();
 
    void OnSubMorphChanged(QTableWidgetItem* item);
-   void OnSubMorphPlay(QTableWidgetItem* item);
 };
 #endif // DELTA_MainWindow

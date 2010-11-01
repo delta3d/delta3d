@@ -228,9 +228,22 @@ void Viewer::OnLoadCharFile(const QString& filename)
       emit AnimationLoaded(animID, nameToSend, trackCount, keyframes, dur);
    }
 
+   CalMorphTargetMixer *mixer = wrapper->GetCalModel()->getMorphTargetMixer();
+   if (mixer)
+   {
+      for (int animID = 0; animID < mixer->getMorphTargetCount(); animID++)
+      {
+         std::string name = mixer->getMorphName(animID).c_str();
+         QString nameToSend = name.c_str();
+         unsigned int trackCount = mixer->getTrackCount(animID);
+         unsigned int keyframes = mixer->getKeyframeCount(animID);
+         float dur = mixer->getDuration(animID);
+         emit MorphAnimationLoaded(animID, nameToSend, trackCount, keyframes, dur);
+      }
+   }
+
    std::vector<std::string> bones;
-   dtAnim::Cal3DModelWrapper* modelWrapper = mCharacter->GetCal3DWrapper();
-   modelWrapper->GetCoreBoneNames(bones);
+   wrapper->GetCoreBoneNames(bones);
 
    //get all data for the meshes and emit
    for (int meshID = 0; meshID < wrapper->GetCoreMeshCount(); ++meshID)
@@ -544,8 +557,8 @@ void Viewer::OnTimeout()
       std::vector<CalAnimation*> animVec = rapper->GetCalModel()->getMixer()->getAnimationVector();
       std::vector<CalAnimation*>::iterator animItr = animVec.begin();
 
-      std::vector<float> weightList;
-      weightList.reserve(animVec.size());
+      std::vector<float> animWeightList;
+      animWeightList.reserve(animVec.size());
 
       while (animItr != animVec.end())
       {
@@ -557,12 +570,22 @@ void Viewer::OnTimeout()
             weight = anim->getWeight();
          }
 
-         weightList.push_back(weight);
+         animWeightList.push_back(weight);
 
          ++animItr;
       }
 
-      emit BlendUpdate(weightList);
+      int count = rapper->GetCalModel()->getMorphTargetMixer()->getMorphTargetCount();
+      std::vector<float> morphWeightList;
+      morphWeightList.reserve(count);
+
+      for (int index = 0; index < count; ++index)
+      {
+         float weight = rapper->GetCalModel()->getMorphTargetMixer()->getCurrentWeight(index);
+         morphWeightList.push_back(weight);
+      }
+
+      emit BlendUpdate(animWeightList, morphWeightList);
    }
 }
 
@@ -660,11 +683,21 @@ void Viewer::OnMorphChanged(int meshID, int subMeshID, int morphID, float weight
 }
 
 //////////////////////////////////////////////////////////////////////////
-void Viewer::OnPlayMorphAnimation(int morphAnimID)
+void Viewer::OnPlayMorphAnimation(int morphAnimID, float weight, float delayIn, float delayOut, bool looping)
 {
    CalMorphTargetMixer *mixer = mCharacter->GetCal3DWrapper()->GetCalModel()->getMorphTargetMixer();
    if (mixer)
    {
-      mixer->blend(morphAnimID, 1.f, 0.f);
+      mixer->blend(morphAnimID, weight, delayIn, delayOut, looping);
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void Viewer::OnStopMorphAnimation(int morphAnimID, float delay)
+{
+   CalMorphTargetMixer *mixer = mCharacter->GetCal3DWrapper()->GetCalModel()->getMorphTargetMixer();
+   if (mixer)
+   {
+      mixer->clear(morphAnimID, delay);
    }
 }

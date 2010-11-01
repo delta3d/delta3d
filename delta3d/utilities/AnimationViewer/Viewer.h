@@ -77,11 +77,15 @@ public slots:
    void OnHideMesh(int meshID);
 
    void OnMorphChanged(int meshID, int subMeshID, int morphID, float weight);
-   void OnPlayMorphAnimation(int morphAnimID);
+   void OnPlayMorphAnimation(int morphAnimID, float weight, float delayIn, float delayOut, bool looping);
+   void OnStopMorphAnimation(int morphAnimID, float delay);
 
 signals:
    void AnimationLoaded(unsigned int, const QString&, unsigned int trackCount,
                         unsigned int keyframes, float duration);
+
+   void MorphAnimationLoaded(unsigned int, const QString&, unsigned int trackCount,
+      unsigned int keyframes, float duration);
 
    void ClearCharacterData();
 
@@ -100,7 +104,7 @@ signals:
 
    void ErrorOccured(const QString& msg);
 
-   void BlendUpdate(const std::vector<float>& weightList);
+   void BlendUpdate(const std::vector<float>& animWeightList, const std::vector<float>& morphWeightList);
 
 protected:
    virtual ~Viewer();
