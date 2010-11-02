@@ -24,6 +24,7 @@
 #include <dtUtil/log.h>
 
 
+
 namespace dtAnim
 {
 ////////////////////////////////////////////////////////////////////////////////
@@ -38,14 +39,54 @@ SequenceMixer::~SequenceMixer()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+const AnimationSequence& SequenceMixer::GetRootSequence() const
+{
+   return *mRootSequence;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void SequenceMixer::Update(float dt)
 {
+   const AnimationSequence::AnimationContainer& childAnims
+      = mRootSequence->GetChildAnimations();
+
+   // Update the root sequence's elapsed time since its update method does not. 
+   if ( ! childAnims.empty())
+   {
+      mRootSequence->SetElapsedTime(mRootSequence->GetElapsedTime() + dt);
+   }
+
    mRootSequence->Update(dt);
+
+   // If all children are gone, set the time to 0.
+   if (childAnims.empty())
+   {
+      mRootSequence->SetElapsedTime(0.0);
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void SequenceMixer::PlayAnimation(Animatable* anim)
 {
+   size_t numAnims = mRootSequence->GetChildAnimations().size();
+   if(numAnims == 0)
+   {
+      mRootSequence->SetElapsedTime(0.0);
+   }
+   // Determine if the time can be reset even if one inactive animation remains.
+   else if(numAnims == 1)
+   {
+      Animatable* other = mRootSequence->GetChildAnimations().front();
+
+      // If the remaining animation is no longer active and has already played,
+      // reset the root sequence timer since the inactive animation will be
+      // removed/pruned on the next call to Update.
+      if ( ! other->IsActive() && other->GetStartTime() < mRootSequence->GetElapsedTime())
+      {
+         mRootSequence->SetElapsedTime(0.0);
+      }
+   }
+
    mRootSequence->AddAnimation(anim);
 }
 
@@ -169,6 +210,44 @@ void SequenceMixer::ForceRecalculate()
 bool SequenceMixer::IsAnimationPlaying(const std::string& pAnim) const
 {
    return mRootSequence->IsAnimationPlaying(pAnim);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Helper Function
+void GetActiveAnimations_Recursive(AnimationSequence& seq, SequenceMixer::AnimatableArray& toFill)
+{
+   if (seq.IsActive())
+   {
+      toFill.push_back(&seq);
+   }
+
+   Animatable* anim = NULL;
+   AnimationSequence* curSeq = NULL;
+   AnimationSequence::AnimationContainer& children = seq.GetChildAnimations();
+   AnimationSequence::AnimationContainer::iterator curIter = children.begin();
+   AnimationSequence::AnimationContainer::iterator endIter = children.end();
+   for (; curIter != endIter; ++curIter)
+   {
+      anim = *curIter;
+      if (anim->IsActive())
+      {
+         curSeq = dynamic_cast<AnimationSequence*>(anim);
+         if (curSeq != NULL)
+         {
+            GetActiveAnimations_Recursive(*curSeq, toFill);
+         }
+         else
+         {
+            toFill.push_back(anim);
+         }
+      }
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void SequenceMixer::GetActiveAnimations(SequenceMixer::AnimatableArray& toFill)
+{
+   GetActiveAnimations_Recursive(*mRootSequence, toFill);
 }
 
 } // namespace dtAnim
