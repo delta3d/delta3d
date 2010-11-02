@@ -29,6 +29,9 @@
 
 #include <dtCore/refptr.h>
 
+#include <dtUtil/command.h>
+#include <dtUtil/enumeration.h>
+
 #include <osg/Group>
 #include <osg/Referenced>
 
@@ -56,6 +59,23 @@ namespace dtAnim
    class Cal3DDatabase;
    class AnimNodeBuilder;
    class AnimationGameActor;
+
+
+
+   /////////////////////////////////////////////////////////////////////////////
+   // TYPEDEFS
+   /////////////////////////////////////////////////////////////////////////////
+   typedef dtUtil::Command<void> AnimCommandCallback;
+   typedef std::vector<dtCore::RefPtr<AnimCommandCallback> > AnimCommandArray;
+   typedef dtUtil::Functor<void,TYPELIST_1(const std::string&)> AnimEventCallback;
+   
+   /**
+    * Special command callback that passes a reference to the animatable
+    * that triggers it.
+    */
+   typedef dtUtil::Functor<void, TYPELIST_1(Animatable*)> AnimReferenceCallback;
+   typedef dtUtil::Command1<void, Animatable*> AnimReferenceCommandCallback;
+
 
    /**
     * The AnimationHelper class is a utility class to simplify adding animation
@@ -205,11 +225,205 @@ namespace dtAnim
        */
       void SetAttachmentController(AttachmentController& newController);
 
+      /**
+       * Set whether command callbacks should be handled for this helper.
+       */
+      void SetCommandCallbacksEnabled(bool enable);
+      bool IsCommandCallbacksEnabled() const;
+
+      /**
+       * Set the callback that is responsible for sending game events.
+       * @param callback The callback that is in charge of responding
+       *        to encountered events on animations.
+       * @return Number of event command callbacks registered under
+       *         the specified Send Event Callback.
+       */
+      unsigned SetSendEventCallback(AnimEventCallback callback);
+
+      /**
+       * Access the callback that was registered.
+       */
+      AnimEventCallback GetSendEventCallback() const;
+
+      /**
+       * Method to register an arbitrary command to be fired at a specific
+       * offset time for a specific animation.
+       * @param animName Name of the animation that should trigger the command.
+       * @param timeOffset Time relative to the animation at which the specified
+       *        command should be triggered.
+       * @param command Command object that holds a callback and parameters to
+       *        be called when the specified time offset is reached.
+       * @return TRUE if the command was successfully registered for the animation;
+       *         FALSE if it has already been registered.
+       */
+      bool RegisterCommandCallback(const std::string& animName,
+         float timeOffset, AnimCommandCallback& command);
+
+      /**
+       * Unregister commands for a specific animation at a specific time offset.
+       * @param animName Name of the animation to unregister command(s) for the
+       *        specified time.
+       * @param timeOffset Time relative to the animation at which a command should
+       *        be removed.
+       * @param command Optional parameter that flags a specific command to be removed.
+       *        By default NULL is used to cause all commands to be removed at the
+       *        the specified time for the specified animation.
+       * @return Number of commands that were removed.
+       */
+      unsigned UnregisterCommandCallback(const std::string& animName,
+         float timeOffset, AnimCommandCallback* command = NULL);
+
+      /**
+       * Unregister all commands associated with the specified animation.
+       * @param animName Name of the animation to have all its associated commands removed.
+       * @return Number of commands that were found and removed.
+       */
+      unsigned UnregisterCommandCallbacks(const std::string& animName);
+      
+      /**
+       * Method to access all commands assigned to an animation for a specified time.
+       * @param animName Name of the animation that may have commands associated with it.
+       * @param timeOffset Time relative to the animation at which command(s)
+       *        may have been added.
+       * @param outArray Collection to capture the commands associated with the animation.
+       * @return Number of items added to outArray.
+       */
+      unsigned GetCommandCallbacks(const std::string& animName,
+         float timeOffset, AnimCommandArray& outArray);
+      
+      /**
+       * Method to access all commands assigned to an animation for a specified time range.
+       * @param animName Name of the animation that may have commands associated with it.
+       * @param startTime Start time for the time range, relative to the animation..
+       * @param endTime End time for the time range, relative to the animation..
+       * @param outArray Collection to capture the commands associated with the animation.
+       * @return Number of items added to outArray.
+       */
+      unsigned GetCommandCallbacks(const std::string& animName,
+         float startTime, float endTime, AnimCommandArray& outArray);
+
+      /**
+       * Collects commands to be executed within the specified time range,
+       * in the time space of the root animation sequence.
+       * @param startTime Range absolute start time in the time space of the root sequence.
+       * @param endTime Range absolute end time in the time space of the root sequence.
+       * @return Number of commands that were collected.
+       */
+      unsigned CollectCommands(double startTime,double endTime);
+
+      /**
+       * Method to execute all commands that were gathered for the
+       * current frame, but that should be executed after all animation
+       * have had a chance to update; for the sake of thread safety.
+       * @return Number of commands that were executed.
+       */
+      unsigned ExecuteCommands();
+
+      /**
+       * Get the count of commands that may have been collected recently.
+       * @return Number of commands waiting to be executed.
+       */
+      unsigned GetCollectedCommandCount() const;
+
+      /**
+       * Method remove event commands registered to the currently set
+       * Send Event Callback.
+       * @return Number of event command callbacks that were removed.
+       */
+      unsigned ClearAnimationEventCallbacks();
+
+      /**
+       * Convenience method for determining the duration of a registered animation.
+       * NOTE: This subsequently calls CalculateDuration on the accessed animation
+       * which is not cheap, relatively speaking. Avoid calling this every frame.
+       * @param animName Name of the animation to be measured.
+       * @return Duration time of the animation.
+       *         0 will normally indicate that nothing was found.
+       */
+      float GetAnimationDuration(const std::string& animName) const;
+
    protected:
       virtual ~AnimationHelper();
 
    private:
+
+      /**
+       * Class for maintaining command callback references
+       * associated with an animation and time offset.
+       */
+      class TimeOffsetCommand : public osg::Referenced
+      {
+      public:
+         TimeOffsetCommand(float offset, AnimCommandCallback& command)
+            : mIsEventCallback(false)
+            , mOffset(offset)
+            , mCommand(&command)
+         {
+         };
+
+         bool mIsEventCallback;
+         float mOffset;
+         dtCore::RefPtr<AnimCommandCallback> mCommand;
+         dtCore::RefPtr<Animatable> mAnim;
+      };
+
+      /**
+       * Internal version of the method of a similar name.
+       * This variant method returns the actual animation name/command/time
+       * information struct that is created on registration. Other methods
+       * in this class call this version of the method for special case
+       * purposes, such as distinguishing which commands are automatically
+       * generated versus custom commands registered external calling code.
+       * @param animName Name of the animation that should trigger the command.
+       * @param timeOffset Time relative to the animation at which the specified
+       *        command should be triggered.
+       * @param command Command object that holds a callback and parameters to
+       *        be called when the specified time offset is reached.
+       * @return Reference to a valid information struct that was created,
+       *         if successfully registered.
+       */
+      TimeOffsetCommand* RegisterCommandCallback_Internal(
+         const std::string& animName, float timeOffset, AnimCommandCallback& command);
+
+      /**
+       * Method to go through all registered animations and create
+       * event command callbacks for each event name that is found
+       * on the animations.
+       * @return Number of commands that were created.
+       */
+      unsigned CreateAnimationEventCallbacks();
+
+      /**
+       * Method to create event command callbacks for each event
+       * name that is found on the specified animatable.
+       * @param anim A globally registered animation that may have events
+       *             to be fired during the course of an animation.
+       * @return Number of commands that were created.
+       */
+      unsigned CreateAnimationEventCallbacks(const Animatable& anim);
+
+      /**
+       * Gather the commands associated with the specified animatable
+       * within the specified range of time.
+       * @param anim An active animatable with information for finding the commands.
+       * @param startTime Range absolute start time in the time space of the root sequence.
+       * @param endTime Range absolute end time in the time space of the root sequence.
+       * @param outArray Collection to capture the commands associated with the animatable.
+       * @return Number of items added to outArray.
+       */
+      unsigned CollectCommandCallbacks(Animatable& anim,
+         double startTime, double endTime, AnimCommandArray& outArray);
+
+      /**
+       * Method to remove a specific command from the command queue.
+       * @param commandToRemove The command that should be removed from the queue.
+       * @return Number of items removed that were pointing to the specified command.
+       */
+      unsigned RemoveCommandFromQueue(AnimCommandCallback& commandToRemove);
+
       bool mGroundClamp;
+      bool mEnableCommands;
+      double mLastUpdateTime;
       std::string mAsynchFile;
       AsynchLoadCompletionCallback mAsynchCompletionCallback;
       dtCore::RefPtr<osg::Group> mParent;
@@ -217,6 +431,12 @@ namespace dtAnim
       dtCore::RefPtr<Cal3DAnimator> mAnimator;
       dtCore::RefPtr<SequenceMixer> mSequenceMixer;
       dtCore::RefPtr<AttachmentController> mAttachmentController;
+
+      typedef std::multimap<std::string, dtCore::RefPtr<TimeOffsetCommand> > CommandMap;
+      CommandMap mCommandMap;
+
+      AnimEventCallback mSendEventCallback;
+      AnimCommandArray mCommands;
 
       void RegisterAnimations(const Cal3DModelData& sourceData);
    };

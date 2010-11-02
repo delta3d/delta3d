@@ -139,6 +139,13 @@ public:
    dtGame::BaseGroundClamper& GetGroundClamper();
    const dtGame::BaseGroundClamper& GetGroundClamper() const;
 
+   /**
+    * Called from helpers when an animatable has reached a point when
+    * an event should be fire, if one is specified.
+    * This method is registered as a callback to Animation Helpers.
+    * @param eventName The name of the event to be fired.
+    */
+   virtual void OnAnimationEvent(const std::string& eventName);
 
 protected:
    virtual ~AnimationComponent();
@@ -156,6 +163,13 @@ private:
 
    dtCore::RefPtr<dtGame::BaseGroundClamper> mGroundClamper;
    std::vector<dtCore::RefPtr<AnimCompUpdateTask> > mThreadTasks;
+
+   // A field used exclusively for the event sending code.
+   // This tracks the current actor that whose helper's commands
+   // are currently being executed. This information is important
+   // for any Game Event Messages fired as a result of command
+   // executions.
+   dtCore::UniqueId mCurrentSendingActorId;
 };
 
 } // namespace dtGame
