@@ -20,6 +20,8 @@
  */
 
 #include <dtAnim/animationcomponent.h>
+#include <dtDAL/gameevent.h>
+#include <dtDAL/gameeventmanager.h>
 #include <dtGame/basemessages.h>
 #include <dtGame/defaultgroundclamper.h>
 #include <dtGame/messagetype.h>
@@ -136,6 +138,23 @@ void AnimationComponent::TickLocal(float dt)
    GroundClamp();
 
    dtUtil::ThreadPool::ExecuteTasks();
+
+   // Go to each helper and execute any commands that they have queued up.
+   AnimationHelper* curHelper = NULL;
+   AnimCompMap::iterator curIter = mRegisteredActors.begin();
+   AnimCompMap::iterator endIter = mRegisteredActors.end();
+   for (; curIter != endIter; ++curIter)
+   {
+      // Track the current actor that may be sending any game events.
+      mCurrentSendingActorId = curIter->first;
+
+      // Get the associated helper and execute any of its commands that
+      // it gathered for the current frame. Some of the commands may
+      // fire game events and subsequently call OnAnimationEvent to fire
+      // a Game Event Message.
+      curHelper = curIter->second.mAnimActorComp.get();
+      curHelper->ExecuteCommands();
+   }
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -163,6 +182,11 @@ void AnimationComponent::RegisterActor(dtGame::GameActorProxy& proxy, dtAnim::An
    else
    {
       mThreadTasks.clear();
+
+      // Register the event firing callbacks that the helper will call
+      // when any animatable reaches a particular state.
+      AnimEventCallback callback(this, &AnimationComponent::OnAnimationEvent);
+      helper.SetSendEventCallback(callback);
    }
 }
 
@@ -278,5 +302,41 @@ void AnimationComponent::GroundClamp()
    } // if
 }
 
+////////////////////////////////////////////////////////////////////////////////
+void AnimationComponent::OnAnimationEvent(const std::string& eventName)
+{
+   dtGame::GameManager* gm = GetGameManager();
+   if (gm != NULL)
+   {
+      // Find any current reference to the specified event name.
+      dtDAL::GameEvent* gameEvent = dtDAL::GameEventManager::GetInstance().FindEvent(eventName);
+
+      // If the event was not found, log a warning and create it to ensure
+      // an event is still fired anyway.
+      if (gameEvent == NULL)
+      {
+         // Log the warning first in case anything goes wrong with creating
+         // and adding the new event (though nothing wrong should happen).
+         std::ostringstream oss;
+         oss << "Animation game event \"" << eventName
+            << "\" was not found, but will now be created and sent.\n";
+         LOG_WARNING(oss.str());
+
+         // Create and add the new event.
+         gameEvent = new dtDAL::GameEvent(eventName);
+         dtDAL::GameEventManager::GetInstance().AddEvent(*gameEvent);
+      }
+
+      // DEBUG:
+      //std::cout << "\n\tSending Anim Event: " << eventName << "\n\n";
+
+      // Create the event message and send it.
+      dtCore::RefPtr<dtGame::GameEventMessage> message;
+      gm->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_GAME_EVENT, message);
+      message->SetSendingActorId(mCurrentSendingActorId);
+      message->SetGameEvent(*gameEvent);
+      gm->SendMessage(*message);
+   }
+}
 
 } // namespace dtGame
