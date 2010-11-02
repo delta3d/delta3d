@@ -22,6 +22,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 // INCLUDE DIRECTIVES
 ////////////////////////////////////////////////////////////////////////////////
+#include <algorithm>
 #include <dtAnim/animatable.h>
 
 namespace dtAnim
@@ -35,17 +36,18 @@ const float Animatable::INFINITE_TIME = -1.0f;
 ////////////////////////////////////////////////////////////////////////////////
 Animatable::Animatable()
    : mSpeed(1.0f)
+   , mInsertTime(0.0)
    , mStartTime(0.0f)
    , mStartDelay(0.0f)
    , mEndTime(0.0f)
    , mFadeIn(0.0f)
    , mFadeOut(0.0f)
-   , mElapsedTime(0.0f)
+   , mElapsedTime(0.0)
    , mBaseWeight(1.0f)
-   , mCurrentWeight(1.0)
-   , mName()
+   , mCurrentWeight(1.0f)
    , mActive(false)
    , mShouldPrune(false)
+   , mName()
 {
 }
 
@@ -58,6 +60,7 @@ Animatable::~Animatable()
 ////////////////////////////////////////////////////////////////////////////////
 Animatable::Animatable(const Animatable& pAnim)
    : mSpeed(pAnim.GetSpeed())
+   , mInsertTime(0.0)
    , mStartTime(pAnim.GetStartTime())
    , mStartDelay(pAnim.GetStartDelay())
    , mEndTime(pAnim.GetEndTime())
@@ -66,9 +69,9 @@ Animatable::Animatable(const Animatable& pAnim)
    , mElapsedTime(pAnim.GetElapsedTime())
    , mBaseWeight(pAnim.GetBaseWeight())
    , mCurrentWeight(0.0f)
-   , mName(pAnim.GetName())
    , mActive(false)
    , mShouldPrune(false)
+   , mName(pAnim.GetName())
 {
 }
 
@@ -85,11 +88,25 @@ Animatable& Animatable::operator=(const Animatable& pAnim)
    mElapsedTime = pAnim.GetElapsedTime();
    mBaseWeight = pAnim.GetBaseWeight();
    mCurrentWeight = 0.0f;
-   mName = pAnim.GetName();
    mActive = false;
    mShouldPrune = false;
+   mName = pAnim.GetName();
+
+   // NOTE: Do not clone the time-event name map.
    
    return *this;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+double Animatable::GetInsertTime() const
+{
+   return mInsertTime;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void Animatable::SetInsertTime(double t)
+{
+   mInsertTime = t;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -129,13 +146,26 @@ void Animatable::SetEndTime(float t)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-float Animatable::GetElapsedTime() const
+double Animatable::GetElapsedTime() const
 {
    return mElapsedTime;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void Animatable::SetElapsedTime(float t)
+float Animatable::GetRelativeElapsedTimeInAnimationScope() const
+{
+   return ConvertToRelativeTimeInAnimationScope(GetElapsedTime());
+}
+
+////////////////////////////////////////////////////////////////////////////////
+float Animatable::ConvertToRelativeTimeInAnimationScope(double timeToConvert) const
+{
+   timeToConvert = timeToConvert - mStartTime - mInsertTime;
+   return timeToConvert < 0.0 ? 0.0f : float(timeToConvert);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void Animatable::SetElapsedTime(double t)
 {
    mElapsedTime = t;
 }
@@ -207,7 +237,7 @@ void Animatable::SetSpeed(float speed)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-bool Animatable::HasDefiniteEnd()
+bool Animatable::HasDefiniteEnd() const
 {
    return CalculateDuration() >= 0.0f;
 }
@@ -253,5 +283,193 @@ void Animatable::SetEndCallback(AnimationCallback callback)
    mEndCallback = callback;
 }
 
+////////////////////////////////////////////////////////////////////////////////
+bool Animatable::AddEventOnStart(const std::string& eventName)
+{
+   return AddEventOnTime(eventName, 0.0f);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+bool Animatable::AddEventOnEnd(const std::string& eventName)
+{
+   return AddEventOnTime(eventName, -1.0f);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+bool Animatable::AddEventOnTime(const std::string& eventName, float timeOffset)
+{
+   bool success = false;
+
+   if(timeOffset < 0.0f)
+   {
+      timeOffset = CalculateDuration();
+   }
+
+   if(timeOffset >= 0.0f && ! HasEventOnTime(eventName, timeOffset))
+   {
+      success = mTimeEventMap.insert(std::make_pair(eventName, timeOffset)) != mTimeEventMap.end();
+   }
+
+   return success;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+bool Animatable::RemoveEventOnTime(const std::string& eventName, float timeOffset)
+{
+   return RemoveEventForTimeRange(eventName, timeOffset, timeOffset);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+unsigned Animatable::GetEventTimeOffsets(const std::string& eventName,
+   Animatable::TimeOffsetArray& outArray) const
+{
+   unsigned count = 0;
+
+   TimeEventMap::const_iterator curIter = mTimeEventMap.lower_bound(eventName);
+   TimeEventMap::const_iterator endIter = mTimeEventMap.upper_bound(eventName);
+   for (; curIter != endIter; ++curIter)
+   {
+      ++count;
+      outArray.push_back(curIter->second);
+   }
+
+   return count;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+unsigned Animatable::RemoveEvent(const std::string& eventName,
+                                 Animatable::TimeOffsetArray* outArray)
+{
+   if (outArray != NULL)
+   {
+      GetEventTimeOffsets(eventName, *outArray);
+   }
+
+   size_t count = mTimeEventMap.size();
+   mTimeEventMap.erase(
+      mTimeEventMap.lower_bound(eventName),
+      mTimeEventMap.upper_bound(eventName));
+
+   return unsigned(count - mTimeEventMap.size());
+}
+
+////////////////////////////////////////////////////////////////////////////////
+bool Animatable::HasEventOnTime(const std::string& eventName, float timeOffset) const
+{
+   return HasEventForTimeRange(eventName, timeOffset, timeOffset);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+bool Animatable::HasEventForTimeRange(const std::string& eventName, float startTime, float endTime) const
+{
+   float curTime = 0.0f;
+   TimeEventMap::const_iterator curIter = mTimeEventMap.lower_bound(eventName);
+   TimeEventMap::const_iterator endIter = mTimeEventMap.upper_bound(eventName);
+   for (; curIter != endIter; ++curIter)
+   {
+      curTime = curIter->second;
+      if (curTime >= startTime && curTime <= endTime)
+      {
+         return true;
+      }
+   }
+
+   return false;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+unsigned Animatable::GetEventsForTimeRange(float startTime, float endTime,
+   EventNameArray& outEventArray) const
+{
+   unsigned count = 0;
+
+   float curTime = 0.0f;
+   TimeEventMap::const_iterator curIter = mTimeEventMap.begin();
+   TimeEventMap::const_iterator endIter = mTimeEventMap.end();
+   for (; curIter != endIter; ++curIter)
+   {
+      curTime = curIter->second;
+      if(curTime >= startTime && curTime <= endTime)
+      {
+         outEventArray.push_back(curIter->first);
+         ++count;
+      }
+   }
+
+   return count;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+unsigned Animatable::GetEvents(float timeOffset, EventNameArray& outEventArray) const
+{
+   return GetEventsForTimeRange(timeOffset, timeOffset, outEventArray);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+unsigned Animatable::RemoveEventsForTimeRange(float startTime, float endTime,
+   EventNameArray* outEventArray)
+{
+   if (outEventArray != NULL)
+   {
+      GetEventsForTimeRange(startTime, endTime, *outEventArray);
+   }
+
+   unsigned count = 0;
+
+   float curTime = 0.0f;
+   TimeEventMap::iterator curIter = mTimeEventMap.begin();
+   for (; curIter != mTimeEventMap.end(); ++curIter)
+   {
+      curTime = curIter->second;
+      if (curTime >= startTime && curTime <= endTime)
+      {
+         TimeEventMap::iterator tmp = curIter;
+         ++curIter;
+         mTimeEventMap.erase(tmp);
+         ++count;
+      }
+   }
+
+   return count;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+bool Animatable::RemoveEventForTimeRange(const std::string& eventName, float startTime, float endTime)
+{
+   bool found = false;
+
+   float curTime = 0.0f;
+   TimeEventMap::iterator curIter = mTimeEventMap.lower_bound(eventName);
+   TimeEventMap::iterator endIter = mTimeEventMap.upper_bound(eventName);
+   for (; curIter != endIter; ++curIter)
+   {
+      curTime = curIter->second;
+      if (curTime >= startTime && curTime <= endTime)
+      {
+         mTimeEventMap.erase(curIter);
+         found = true;
+
+         // Restart the loop since the iterators may be invalid.
+         curIter = mTimeEventMap.lower_bound(eventName);
+         endIter = mTimeEventMap.upper_bound(eventName);
+      }
+   }
+
+   return found;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+unsigned Animatable::ClearEvents()
+{
+   unsigned count = unsigned(mTimeEventMap.size());
+   mTimeEventMap.clear();
+   return count;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+const Animatable::TimeEventMap& Animatable::GetTimeEventMap() const
+{
+   return mTimeEventMap;
+}
 
 }//namespace dtAnim

@@ -184,7 +184,7 @@ void AnimationChannel::Recalculate()
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-float AnimationChannel::CalculateDuration()
+float AnimationChannel::CalculateDuration() const
 {
    float duration = mAnimationWrapper.valid() ? mAnimationWrapper->GetDuration() : mMaxDuration;
    
@@ -270,5 +270,39 @@ void AnimationChannel::SetMaxDuration(float seconds)
    mMaxDuration = seconds;
 }
 
+////////////////////////////////////////////////////////////////////////////////
+float AnimationChannel::ConvertToRelativeTimeInAnimationScope(double timeToConvert) const
+{
+   float duration = mAnimationWrapper.valid() ? mAnimationWrapper->GetDuration() : 0.0f;
+
+   // Get what the the Base Class would set as the relative time.
+   float elapsedTime = BaseClass::ConvertToRelativeTimeInAnimationScope(timeToConvert);
+
+   // If the animation has no determined duration,
+   // then no time could have relatively elapsed.
+   if(duration == 0.0f)
+   {
+      elapsedTime = 0.0f;
+   }
+
+   // Determine the relative elapsed time.
+   if (duration != 0.0f)
+   {
+      // If the animation is looping, wrap the relative time around
+      // back to the beginning if the time has passed the duration.
+      if (IsLooping())
+      {
+         // Reduce the elapsed time to the remainder.
+         elapsedTime -= duration * floor(elapsedTime / duration);
+      }
+      // If the animation was to play once, cap it to the duration.
+      else if (elapsedTime > duration)
+      {
+         elapsedTime = duration;
+      }
+   }
+
+   return elapsedTime;
+}
 
 } // namespace dtAnim
