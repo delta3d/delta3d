@@ -21,7 +21,7 @@
  */
 
 #include <dtAnim/characterfilehandler.h>
-#include <dtUtil/xercesutils.h>
+#include <dtAnim/animatable.h>
 #include <dtUtil/stringutils.h>
 #include <dtUtil/log.h>
 
@@ -73,6 +73,12 @@ const std::string CharacterFileHandler::SCALE_FACTOR_ELEMENT("scalingFactor");
 static const std::string FOLLOW_PREV_ELEMENT("followPrevious");
 static const std::string FOLLOWS_ELEMENT("follows");
 static const std::string CROSS_FADE_ELEMENT("crossFade");
+static const std::string EVENT_ON_START_ELEMENT("eventOnStart");
+static const std::string EVENT_ON_TIME_ELEMENT("eventOnTime");
+static const std::string EVENT_ON_END_ELEMENT("eventOnEnd");
+
+static const std::string EVENT_ATTR("event");
+static const std::string OFFSET_ATTR("offset");
 
 ////////////////////////////////////////////////////////////////////////////////
 CharacterFileHandler::AnimatableStruct::AnimatableStruct()
@@ -184,6 +190,65 @@ void CharacterFileHandler::endDocument()
    {
       mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__,
                            "End Parsing File");
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void CharacterFileHandler::HandleEventAttributes(const std::string& elementName,
+   dtUtil::AttributeSearch::ResultMap& attrs)
+{
+   AnimatableStruct* animatable = NULL;
+
+   // Get the current animatable
+   if (mInChannel)
+   {
+      if ( ! mAnimationChannels.empty())
+      {
+         animatable = &mAnimationChannels.back();
+      }
+   }
+   else if (mInSequenceChild)
+   {
+      AnimationSequenceStruct* sequence
+         = mAnimationSequences.empty() ? NULL : &mAnimationSequences.back();
+
+      if (sequence != NULL && ! sequence->GetChildren().empty())
+      {
+         animatable = &sequence->GetChildren().back();
+      }
+   }
+   else if (mInSequence)
+   {
+      if ( ! mAnimationSequences.empty())
+      {
+         animatable = &mAnimationSequences.back();
+      }
+   }
+
+   // Handle the attributes.
+   if (animatable != NULL)
+   {
+      dtUtil::AttributeSearch::ResultMap::iterator iter = attrs.find(EVENT_ATTR);
+
+      if (iter != attrs.end())
+      {
+         std::string eventName = iter->second;
+         
+         if (elementName == EVENT_ON_START_ELEMENT)
+         {
+            animatable->mEventTimeMap.insert(std::make_pair(eventName, 0.0f));
+         }
+         else if (elementName == EVENT_ON_END_ELEMENT)
+         {
+            animatable->mEventTimeMap.insert(std::make_pair(eventName, Animatable::INFINITE_TIME));
+         }
+         else if (elementName == EVENT_ON_TIME_ELEMENT)
+         {
+            iter = attrs.find(OFFSET_ATTR);
+            float offset = iter == attrs.end() ? 0.0f : dtUtil::ToFloat(iter->second);
+            animatable->mEventTimeMap.insert(std::make_pair(eventName, offset));
+         }
+      }
    }
 }
 
@@ -380,6 +445,12 @@ void CharacterFileHandler::startElement( const XMLCh* const uri,const XMLCh* con
          AnimatableOverrideStruct aos;
          mAnimationSequences.back().GetChildren().push_back(aos);
       }
+   }
+   else if (elementStr == EVENT_ON_START_ELEMENT
+      || elementStr == EVENT_ON_TIME_ELEMENT
+      || elementStr == EVENT_ON_END_ELEMENT)
+   {
+      HandleEventAttributes(elementStr, results);
    }
 
    if (!errorString.empty())

@@ -468,6 +468,29 @@ namespace dtAnim
    }
 
    /////////////////////////////////////////////////////////////////////////////
+   // Helper Function
+   void SetAnimatableEvents(Animatable& anim, const CharacterFileHandler::AnimatableStruct& info)
+   {
+      typedef CharacterFileHandler::AnimatableStruct::EventTimeMap EventTimeMap;
+
+      float curOffset = 0.0f;
+      EventTimeMap::const_iterator curIter = info.mEventTimeMap.begin();
+      EventTimeMap::const_iterator endIter = info.mEventTimeMap.end();
+      for (; curIter != endIter; ++curIter)
+      {
+         curOffset = curIter->second;
+
+         // If the offset is not positive, then the end time (duration) will be used.
+         if (curOffset < 0.0f)
+         {
+            curOffset = anim.CalculateDuration();
+         }
+
+         anim.AddEventOnTime(curIter->first, curOffset);
+      }
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
    void Cal3DLoader::LoadModelData(dtAnim::CharacterFileHandler& handler, CalCoreModel& model, Cal3DModelData& modelData)
    {
       // Redefine some types so that they are easier to read.
@@ -545,6 +568,7 @@ namespace dtAnim
                pChannel->SetFadeIn(pStruct.mFadeIn);
                pChannel->SetFadeOut(pStruct.mFadeOut);
                pChannel->SetSpeed(pStruct.mSpeed);
+               SetAnimatableEvents(*pChannel, pStruct);
 
                // DEBUG:
                //std::cout << "\tAdding channel:\t" << pChannel->GetName() << "\n";
@@ -578,6 +602,7 @@ namespace dtAnim
             pSequence->SetFadeOut(pStruct.mFadeOut);
             pSequence->SetSpeed(pStruct.mSpeed);
             pSequence->SetBaseWeight(pStruct.mBaseWeight);
+            SetAnimatableEvents(*pSequence, pStruct);
 
             // find children
             OverrideStruct* curOverrideStruct = NULL;
@@ -603,6 +628,7 @@ namespace dtAnim
 
                      // Override values as specified in the character file.
                      SetAnimatableValues(*newAnim, *curOverrideStruct);
+                     SetAnimatableEvents(*newAnim, *curOverrideStruct);
 
                      pSequence->GetChildAnimations().push_back(newAnim.get());
 

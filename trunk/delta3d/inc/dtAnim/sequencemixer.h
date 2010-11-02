@@ -57,6 +57,13 @@ namespace dtAnim
          SequenceMixer();
 
          /**
+          * Accessor to the root sequence for read-only purposes.
+          * @return Reference to the root sequence that contains and
+          *         updates all sub-animations.
+          */
+         const AnimationSequence& GetRootSequence() const;
+
+         /**
           * The Update() must be call every frame, this is done automatically using an AnimationHelper
           * @param delta time
           */
@@ -150,6 +157,12 @@ namespace dtAnim
           *	@return whether or not the specified animation is playing
           */
          bool IsAnimationPlaying(const std::string& pAnim) const;
+
+         /**
+          * Get references to all the currently active animations.
+          */
+         typedef std::vector<Animatable*> AnimatableArray;
+         void GetActiveAnimations(AnimatableArray& toFill);
 
       protected:
          virtual ~SequenceMixer();

@@ -26,11 +26,13 @@
 #include <osg/Referenced>
 #include <dtAnim/export.h>
 #include <dtUtil/mswinmacros.h>
+#include <dtUtil/xercesutils.h>
 #include <dtCore/refptr.h>
 #include <xercesc/sax2/ContentHandler.hpp>  // for a base class
 #include <vector>
 #include <string>
 #include <stack>
+#include <map>
 
 namespace dtUtil
 {
@@ -189,6 +191,9 @@ namespace dtAnim
 
          std::string mName;     ///<The name of this animation channel
          float mStartDelay, mFadeIn, mFadeOut, mSpeed, mBaseWeight;
+
+         typedef std::multimap<std::string, float> EventTimeMap;
+         EventTimeMap mEventTimeMap;
       };
 
       struct DT_ANIM_EXPORT AnimatableOverrideStruct : public AnimatableStruct
@@ -266,6 +271,9 @@ namespace dtAnim
       void AnimSequenceChildCharacters(const XMLCh* const chars);
       void LODCharacters(const XMLCh* const chars);
       void ScaleCharacters(const XMLCh* const chars);
+
+      void HandleEventAttributes(const std::string& elementName,
+         dtUtil::AttributeSearch::ResultMap& attrs);
 
       typedef std::stack<std::string> ElementStack;
       ElementStack mElements;
