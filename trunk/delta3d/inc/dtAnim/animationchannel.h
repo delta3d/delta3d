@@ -39,6 +39,8 @@ class DT_ANIM_EXPORT AnimationChannel: public Animatable
 {
 
 public:
+   typedef Animatable BaseClass;
+
    /**
     * If you use the default constructor you must call SetAnimation,
     * and SetModel
@@ -101,6 +103,17 @@ public:
    void SetMaxDuration(float seconds);
 
    /**
+    * Convenience method for turning an absolute time to a time
+    * relative to the animation's scope.
+    * @param timeToConvert Absolute time that should be mapped to this
+    *        animation's time line scope.
+    * @return A value between 0 and duration of one iteration of
+    *         of the animation; 0 is at the beginning and the
+    *         duration is the end time.
+    */
+   virtual float ConvertToRelativeTimeInAnimationScope(double timeToConvert) const;
+
+   /**
     * The per frame update function.
     * @param delta time
     */
@@ -116,7 +129,7 @@ public:
     * Override of a base class method.
     * @return Length of the animation in seconds; INFINITE_TIME if looping.
     */
-   virtual float CalculateDuration();
+   virtual float CalculateDuration() const;
 
    /**
     * Prune is called before the animation is deleted.

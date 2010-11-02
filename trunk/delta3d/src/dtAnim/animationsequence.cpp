@@ -234,7 +234,7 @@ void AnimationSequence::AnimationController::SetComputeSpeed(Animatable* pAnim)
 //Animation Sequence
 ////////////////////////////////////////////////////////////////////////////////
 AnimationSequence::AnimationSequence()
-   : mActiveAnimations()
+   : mChildAnimations()
 {
    // vs complains about using this in initializer list
    SetController(new AnimationController(*this));
@@ -242,7 +242,7 @@ AnimationSequence::AnimationSequence()
 
 ////////////////////////////////////////////////////////////////////////////////
 AnimationSequence::AnimationSequence(AnimationController* pController)
-   : mActiveAnimations()
+   : mChildAnimations()
 {
    SetController(pController);
 }
@@ -255,14 +255,14 @@ AnimationSequence::~AnimationSequence()
 ////////////////////////////////////////////////////////////////////////////////
 AnimationSequence::AnimationSequence(const AnimationSequence& pSeq, Cal3DModelWrapper* wrapper)
    : Animatable(pSeq)
-   , mActiveAnimations()
+   , mChildAnimations()
 {
    if (pSeq.GetController() != NULL)
    {
       SetController(pSeq.GetController()->Clone().get());
    }
 
-   std::for_each(pSeq.mActiveAnimations.begin(), pSeq.mActiveAnimations.end(), CloneFunctor(this, wrapper));
+   std::for_each(pSeq.mChildAnimations.begin(), pSeq.mChildAnimations.end(), CloneFunctor(this, wrapper));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -341,13 +341,13 @@ const Animatable* AnimationSequence::GetAnimation(const std::string& pAnimName) 
 ////////////////////////////////////////////////////////////////////////////////
 AnimationSequence::AnimationContainer& AnimationSequence::GetChildAnimations()
 {
-   return mActiveAnimations;
+   return mChildAnimations;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 const AnimationSequence::AnimationContainer& AnimationSequence::GetChildAnimations() const
 {
-   return mActiveAnimations;
+   return mChildAnimations;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -360,7 +360,7 @@ void AnimationSequence::Update(float dt)
 
    PruneChildren();
 
-   if (mActiveAnimations.empty())
+   if (mChildAnimations.empty())
    {
       SetPrune(true);
    }
@@ -373,16 +373,16 @@ void AnimationSequence::Recalculate()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-float AnimationSequence::CalculateDuration()
+float AnimationSequence::CalculateDuration() const
 {
    float seconds = 0.0f;
 
    // Calculate the duration of this sequence if it will come to
    // a definite end.
    bool hasEnd = true;
-   Animatable* curAnim = NULL;
-   AnimationContainer::iterator curIter = mActiveAnimations.begin();
-   AnimationContainer::iterator endIter = mActiveAnimations.end();
+   const Animatable* curAnim = NULL;
+   AnimationContainer::const_iterator curIter = mChildAnimations.begin();
+   AnimationContainer::const_iterator endIter = mChildAnimations.end();
    for (; curIter!= endIter; ++curIter)
    {
       curAnim = curIter->get();
@@ -420,7 +420,7 @@ void AnimationSequence::CalculateBaseWeight()
 ////////////////////////////////////////////////////////////////////////////////
 void AnimationSequence::ForceFadeOut(float time)
 {
-   std::for_each(mActiveAnimations.begin(), mActiveAnimations.end(), AnimSeqForceFade(time));
+   std::for_each(mChildAnimations.begin(), mChildAnimations.end(), AnimSeqForceFade(time));
 
    SetPrune(true);
 }
@@ -428,21 +428,21 @@ void AnimationSequence::ForceFadeOut(float time)
 ////////////////////////////////////////////////////////////////////////////////
 void AnimationSequence::Prune()
 {
-   AnimationContainer::iterator iter = mActiveAnimations.begin();
-   AnimationContainer::iterator end = mActiveAnimations.end();
+   AnimationContainer::iterator iter = mChildAnimations.begin();
+   AnimationContainer::iterator end = mChildAnimations.end();
 
    for (;iter != end; ++iter)
    {
       (*iter)->Prune();
-      iter = mActiveAnimations.erase(iter);
+      iter = mChildAnimations.erase(iter);
    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void AnimationSequence::PruneChildren()
 {
-   AnimationContainer::iterator iter = mActiveAnimations.begin();
-   AnimationContainer::iterator end = mActiveAnimations.end();
+   AnimationContainer::iterator iter = mChildAnimations.begin();
+   AnimationContainer::iterator end = mChildAnimations.end();
 
    for (;iter != end;)
    {
@@ -451,7 +451,7 @@ void AnimationSequence::PruneChildren()
         (*iter)->Prune();
         AnimationContainer::iterator toDelete = iter;
         ++iter;
-        mActiveAnimations.erase(toDelete);
+        mChildAnimations.erase(toDelete);
       }
       else
       {
@@ -469,15 +469,16 @@ void AnimationSequence::Insert(Animatable* pAnimation)
    }
    else
    {
-      mActiveAnimations.push_back(pAnimation);
+      pAnimation->SetInsertTime(GetElapsedTime());
+      mChildAnimations.push_back(pAnimation);
    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 Animatable* AnimationSequence::GetAnimatable(const std::string& pAnim)
 {
-   AnimationContainer::iterator iter = mActiveAnimations.begin();
-   AnimationContainer::iterator end = mActiveAnimations.end();
+   AnimationContainer::iterator iter = mChildAnimations.begin();
+   AnimationContainer::iterator end = mChildAnimations.end();
 
    for (;iter != end; ++iter)
    {
@@ -492,8 +493,8 @@ Animatable* AnimationSequence::GetAnimatable(const std::string& pAnim)
 ////////////////////////////////////////////////////////////////////////////////
 const Animatable* AnimationSequence::GetAnimatable(const std::string& pAnim) const
 {
-   AnimationContainer::const_iterator iter = mActiveAnimations.begin();
-   AnimationContainer::const_iterator end = mActiveAnimations.end();
+   AnimationContainer::const_iterator iter = mChildAnimations.begin();
+   AnimationContainer::const_iterator end = mChildAnimations.end();
 
    for (;iter != end; ++iter)
    {
@@ -508,14 +509,14 @@ const Animatable* AnimationSequence::GetAnimatable(const std::string& pAnim) con
 ////////////////////////////////////////////////////////////////////////////////
 void AnimationSequence::Remove(const std::string& pAnim)
 {
-   AnimationContainer::iterator iter = mActiveAnimations.begin();
-   AnimationContainer::iterator end = mActiveAnimations.end();
+   AnimationContainer::iterator iter = mChildAnimations.begin();
+   AnimationContainer::iterator end = mChildAnimations.end();
 
    for (;iter != end; ++iter)
    {
       if ((*iter)->GetName() == pAnim)
       {
-         iter = mActiveAnimations.erase(iter);
+         iter = mChildAnimations.erase(iter);
          return;
       }
    }

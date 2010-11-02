@@ -192,7 +192,7 @@ public:
     *         over child animations. INFINITE_TIME is returned if any
     *         part of the sequence has no definite end.
     */
-   virtual float CalculateDuration();
+   virtual float CalculateDuration() const;
 
    /**
     * Force fade out will make this animation and all child animations
@@ -226,7 +226,7 @@ private:
    void PruneChildren();
 
    dtCore::RefPtr<AnimationController> mController;
-   AnimationContainer mActiveAnimations;
+   AnimationContainer mChildAnimations;
 
 };
 
