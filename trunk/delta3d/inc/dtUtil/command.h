@@ -25,6 +25,7 @@
 #include <osg/Referenced>    // for base class
 #include <dtUtil/functor.h>
 #include <dtUtil/generic.h>
+#include <dtUtil/typetraits.h>
 
 namespace dtUtil
 {
@@ -160,6 +161,16 @@ namespace dtUtil
       {
       }
 
+      void SetArg1(typename TypeTraits<MemberType>::param_type arg)
+      {
+         mArg = arg;
+      }
+
+      typename TypeTraits<MemberType>::return_type GetArg1() const
+      {
+         return mArg;
+      }
+
       /*virtual*/ RetT operator ()()
       {
          return mFunctor( mArg );
@@ -204,6 +215,26 @@ namespace dtUtil
          mArg1(arg1),
          mArg2(arg2)
       {
+      }
+
+      void SetArg1(typename TypeTraits<MemberType1>::param_type arg)
+      {
+         mArg1 = arg;
+      }
+
+      typename TypeTraits<MemberType1>::return_type GetArg1() const
+      {
+         return mArg1;
+      }
+
+      void SetArg2(typename TypeTraits<MemberType2>::param_type arg)
+      {
+         mArg2 = arg;
+      }
+
+      typename TypeTraits<MemberType2>::return_type GetArg2() const
+      {
+         return mArg2;
       }
 
       /*virtual*/ RetT operator ()()
