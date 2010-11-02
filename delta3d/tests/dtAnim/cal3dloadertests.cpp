@@ -100,7 +100,7 @@ namespace dtAnim
             mixer.GetRegisteredAnimations(toFill);
 
             CPPUNIT_ASSERT_EQUAL_MESSAGE("The number of animatables loaded from the file is incorrect.", 
-                  size_t(7U), toFill.size());
+                  size_t(8U), toFill.size());
 
             const Animatable* runAnim = mixer.GetRegisteredAnimation("Run");
             TestLoadedAnimatable(runAnim, "Run", 0.0f, 0.0f, 0.0f, 1.0f, 1.0f);
