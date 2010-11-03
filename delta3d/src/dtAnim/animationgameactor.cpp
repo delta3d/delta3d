@@ -98,7 +98,11 @@ namespace dtAnim
    /////////////////////////////////////////////////////////////////////////////
    osg::BoundingBox AnimationGameActor::GetBoundingBox()
    {
-      return GetHelper()->GetModelWrapper()->GetBoundingBox();
+      if (GetHelper()->GetModelWrapper())
+      {
+         return GetHelper()->GetModelWrapper()->GetBoundingBox();
+      }
+      return osg::BoundingBox();
    }
 
    /////////////////////////////////////////////////////////////////////////////
