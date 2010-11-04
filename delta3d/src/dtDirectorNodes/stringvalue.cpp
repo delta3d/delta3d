@@ -20,6 +20,7 @@
  */
 
 #include <dtDirectorNodes/stringvalue.h>
+#include <dtDirector/colors.h>
 
 #include <dtDAL/stringactorproperty.h>
 
@@ -30,8 +31,8 @@ namespace dtDirector
        : ValueNode()
        , mValue("")
    {
-      mName = "String";
       AddAuthor("Jeff P. Houde");
+      //SetColorRGB(Colors::RED); 
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////

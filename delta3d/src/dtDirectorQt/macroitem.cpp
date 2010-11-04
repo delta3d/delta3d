@@ -53,7 +53,13 @@ namespace dtDirector
 
       if (mGraph)
       {
-         SetTitle(mGraph->mName);
+         std::string title = "<i>Macro</i>";
+         std::string name  = mGraph->GetName();
+         if( !name.empty() )
+         {
+            title += "<br><b>"+ name +"</b>";
+         }
+         SetTitle(title);
          DrawInputs();
          SetupValues();
          DrawOutputs();
@@ -74,40 +80,6 @@ namespace dtDirector
          int size = mNodeWidth;
          if (size < mNodeHeight) size = mNodeHeight;
 
-         QLinearGradient linearGradient(0,0,0,mNodeHeight);
-         
-         setPen(QPen(mColorDarken, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-
-         if (mGraph->GetEnabled())
-         {
-            QColor color = Qt::darkGreen;
-            color.setAlphaF(0.80f);
-            linearGradient.setColorAt(1.0, color);
-
-            color = Qt::green;
-            color.setAlphaF(0.80f);
-            linearGradient.setColorAt(0.0, color);
-         }
-         else
-         {
-            QColor color = Qt::darkGreen;
-            color.setAlphaF(0.25f);
-            linearGradient.setColorAt(1.0, color);
-
-            color = Qt::green;
-            color.setAlphaF(0.25f);
-            linearGradient.setColorAt(0.0, color);
-         }
-
-         // If we are in replay mode and if this node is the current node,
-         // make sure we highlight it with a special color.
-         if (mScene->GetEditor()->GetReplayMode() &&
-            HasID(mScene->GetEditor()->GetReplayNode().nodeID))
-         {
-            setPen(QPen(Qt::yellow, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-         }
-
-         setBrush(linearGradient);
          setPolygon(mPolygon);
 
          osg::Vec2 pos = mGraph->GetPosition();
@@ -124,6 +96,9 @@ namespace dtDirector
             setToolTip(QString("A Macro.  Double click this node to step in and view this macro's contents.") +
                QString("\nComment - ") + QString(mGraph->GetComment().c_str()));
          }
+
+         SetDefaultPen();
+         SetBackgroundGradient(mNodeHeight);
       }
 
       mLoading = false;
@@ -237,6 +212,20 @@ namespace dtDirector
       }
 
       return false;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   QColor MacroItem::GetNodeColor() const
+   {
+      QColor color;
+
+      if (mGraph)
+      {
+         osg::Vec4 rgba = mGraph->GetColor();
+         color.setRgbF(rgba.r(), rgba.g(), rgba.b(), rgba.a());
+      }
+
+      return color;
    }
 
    //////////////////////////////////////////////////////////////////////////

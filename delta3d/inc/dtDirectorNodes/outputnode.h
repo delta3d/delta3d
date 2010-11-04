@@ -83,8 +83,7 @@ namespace dtDirector
       /**
        * Accessors for the name of the input node.
        */
-      void SetName(const std::string& name);
-      virtual const std::string& GetName() {return mName;}
+      virtual void SetName(const std::string& name);
 
       /**
        * Retrieves whether the UI should expose output links
@@ -100,10 +99,6 @@ namespace dtDirector
        *	Protected Destructor.  dtCore::RefPtr will handle its destruction.
        */
       virtual ~OutputNode();
-
-   private:
-
-      std::string mName;
    };
 }
 

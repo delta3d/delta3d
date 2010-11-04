@@ -79,20 +79,6 @@ namespace dtDirector
        */
       void SetSize(const osg::Vec2& size) {mSize = size;}
 
-      /**
-       * Retrieves the UI color of the node.
-       *
-       * @return  The Color.
-       */
-      osg::Vec4 GetColor() const {return mColor;}
-
-      /**
-       * Sets the UI color of the node.
-       *
-       * @param[in]  color  The color.
-       */
-      void SetColor(const osg::Vec4& color) {mColor = color;}
-
    protected:
 
       /**
@@ -103,7 +89,6 @@ namespace dtDirector
    private:
 
       osg::Vec2   mSize;
-      osg::Vec4   mColor;
    };
 }
 

@@ -20,6 +20,7 @@
  */
 
 #include <dtDirector/node.h>
+#include <dtDirector/colors.h>
 
 #include <dtDAL/actoractorproperty.h>
 #include <dtDAL/actoridactorproperty.h>
@@ -42,6 +43,7 @@ namespace dtDirector
       , mDirector(NULL)
       , mGraph(NULL)
    {
+      SetColorRGB(Colors::GRAY);
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
@@ -187,10 +189,8 @@ namespace dtDirector
             else if (IS_A(value->GetProperty(), dtDAL::ActorActorProperty*))
                desiredClass = static_cast<dtDAL::ActorActorProperty*>(link->GetProperty())->GetDesiredActorClass();
 
-            if (IS_A(value->GetProperty(), dtDAL::ActorIDActorProperty*))
-               proxyValue = static_cast<dtDAL::ActorIDActorProperty*>(value->GetProperty())->GetActorProxy();
-            else if (IS_A(value->GetProperty(), dtDAL::ActorActorProperty*))
-               proxyValue = static_cast<dtDAL::ActorActorProperty*>(value->GetProperty())->GetValue();
+            if (IS_A(value->GetProperty(), dtDAL::ActorIDActorProperty*) || IS_A(value->GetProperty(), dtDAL::ActorActorProperty*))
+               proxyValue = value->GetActor(value->GetProperty()->GetName());
 
             if (proxyValue && !desiredClass.empty() && !proxyValue->IsInstanceOf(desiredClass))
                return false;
@@ -215,7 +215,13 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    const std::string& Node::GetName()
    {
-      return GetType().GetName();
+      return mName;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void Node::SetName(const std::string& name)
+   {
+      mName = name;
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -505,7 +511,7 @@ namespace dtDirector
             GetDirector()->GetGameManager()->FindActorById(id, proxy);
          }
 
-         if (!proxy)
+         else //if (!proxy)
          {
             proxy = actorIdProp->GetActorProxy();
          }

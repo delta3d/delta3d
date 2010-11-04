@@ -30,13 +30,13 @@
 #include <dtDirector/node.h>
 
 
-#define LINK_SIZE    10
+#define LINK_SIZE    12
 #define LINK_LENGTH  15
-#define LINK_SPACING 0
+#define LINK_PADDING 5
 
 #define MAX_VALUE_NAME_SIZE 80
 
-#define MIN_NODE_WIDTH  50
+#define MIN_NODE_WIDTH  60
 #define MIN_NODE_HEIGHT 50
 
 #define MAX_NODE_WIDTH  500
@@ -228,6 +228,13 @@ namespace dtDirector
       virtual void SetTitle(std::string text);
 
       /**
+       * Create Title
+       *
+       * @param[in]  node  The node to get title from.
+       */
+      virtual std::string GetNodeTitle();
+
+      /**
        * Creates the comment.
        *
        * @param[in]  text  The new comment text.
@@ -276,8 +283,8 @@ namespace dtDirector
        *
        * @return     A color.
        */
-      QColor GetColorForType(unsigned char type);
-      QColor GetDarkColorForType(unsigned char type);
+      //QColor GetColorForType(unsigned char type);
+      //QColor GetDarkColorForType(unsigned char type);
 
       /**
        * Retrieves the node.
@@ -354,6 +361,14 @@ namespace dtDirector
        */
       virtual void childItemChange(QGraphicsItem* changedItem, GraphicsItemChange change, const QVariant &value) {}
 
+      /**
+       *	get qt-color value from node color-property
+       */
+      virtual QColor GetNodeColor() const;
+
+
+      static const QColor LINE_COLOR;
+
    public slots:
 
       /**
@@ -389,7 +404,7 @@ namespace dtDirector
        * @param[in]  input   The input.
        * @param[in]  index   The output link index.
        */
-      void ConnectLinks(OutputData& output, InputData& input, int index);
+      void ConnectLinks(OutputData& output, InputData& input, int index, bool isOutput);
 
       /**
        * Connects a value link to a value node.
@@ -399,6 +414,16 @@ namespace dtDirector
        * @param[in]  index   The value link index.
        */
       void ConnectLinks(ValueData& output, NodeItem* input, int index);
+
+      /**
+       *	Set a gradient brush.
+       */
+      void SetBackgroundGradient(unsigned int gradientHeight);
+
+      /**
+       *	Set a dark foreground pen.
+       */
+      void SetDefaultPen();
 
    protected:
 
@@ -427,7 +452,7 @@ namespace dtDirector
       int         mNodeWidth;
       int         mNodeHeight;
 
-      float       mTextHeight;
+      float       mTitleHeight;
 
       float       mLinkWidth;
       float       mLinkHeight;
@@ -436,7 +461,6 @@ namespace dtDirector
 
       bool        mHasHiddenLinks;
 
-      QColor mColorDarken;
    };
 }
 

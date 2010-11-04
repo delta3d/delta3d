@@ -19,6 +19,7 @@
  * Author: Jeff P. Houde
  */
 
+#include <dtDirector/colors.h>
 #include <dtDirectorNodes/referencescriptaction.h>
 
 #include <dtDAL/project.h>
@@ -33,6 +34,7 @@ namespace dtDirector
       : ActionNode()
    {
       AddAuthor("Jeff P. Houde");
+      SetColorRGB(Colors::GREEN); 
 
       mScriptResource = dtDAL::ResourceDescriptor::NULL_RESOURCE;
       mCoreValueIndex = 0;
@@ -105,8 +107,6 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void ReferenceScriptAction::UpdateLinks()
    {
-      mLabel = GetType().GetName();
-
       // Clear all links.
       mInputs.clear();
       mOutputs.clear();
@@ -140,7 +140,7 @@ namespace dtDirector
             DirectorGraph* graph = mScript->GetGraphRoot();
             if (graph)
             {
-               mLabel += " (" + osgDB::getNameLessExtension(mScriptResource.GetResourceName()) + ")";
+               mLabel = osgDB::getNameLessExtension(mScriptResource.GetResourceName());
 
                // Set up the links.
                std::vector<dtCore::RefPtr<EventNode> > inputs = graph->GetInputNodes();
@@ -182,7 +182,7 @@ namespace dtDirector
                      ValueLink* link = &values[index]->GetValueLinks()[0];
 
                      ValueLink newLink = ValueLink(this, NULL, link->IsOutLink(), link->AllowMultiple(), link->IsTypeChecking(), true);
-                     newLink.SetLabel(link->GetName());
+                     newLink.SetName(link->GetName());
                      mValues.push_back(newLink);
                      link->RedirectLink(&mValues.back());
                   }

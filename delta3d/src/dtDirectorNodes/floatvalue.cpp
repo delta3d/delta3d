@@ -19,6 +19,7 @@
  * Author: Jeff P. Houde
  */
 
+#include <dtDirector/colors.h>
 #include <dtDirectorNodes/floatvalue.h>
 
 #include <dtDAL/floatactorproperty.h>
@@ -30,8 +31,8 @@ namespace dtDirector
        : ValueNode()
        , mValue(0.0f)
    {
-      mName = "Float";
       AddAuthor("Jeff P. Houde");
+      //SetColorRGB(Colors::RED); 
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////

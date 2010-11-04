@@ -19,6 +19,7 @@
  * Author: Jeff P. Houde
  */
 
+#include <dtDirector/colors.h>
 #include <dtDirectorNodes/doublevalue.h>
 
 #include <dtDAL/actorproperty.h>
@@ -31,8 +32,8 @@ namespace dtDirector
        : ValueNode()
        , mValue(0.0)
    {
-      mName = "Double";
       AddAuthor("Jeff P. Houde");
+      //SetColorRGB(Colors::RED); 
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////

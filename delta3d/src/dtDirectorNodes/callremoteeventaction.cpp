@@ -134,7 +134,7 @@ namespace dtDirector
    void CallRemoteEventAction::SetEventName(const std::string& value)
    {
       mEventName = value;
-      mLabel = GetType().GetName() + " (" + mEventName + ")";
+      mLabel = mEventName;
    }
 
    //////////////////////////////////////////////////////////////////////////

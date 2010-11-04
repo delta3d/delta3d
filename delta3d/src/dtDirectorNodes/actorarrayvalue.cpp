@@ -31,7 +31,6 @@ namespace dtDirector
    ActorArrayValue::ActorArrayValue()
        : ArrayValueNode()
    {
-      mName = "Actor Array";
       AddAuthor("Jeff P. Houde");
    }
 

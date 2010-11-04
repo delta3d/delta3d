@@ -83,9 +83,8 @@ namespace dtDirector
       /**
        * Accessors for the name of the node.
        */
-      virtual void SetValueName(const std::string& name);
-      virtual const std::string& GetValueName();
       virtual std::string GetValueLabel();
+      virtual void SetName(const std::string& name);
 
       /**
        * Event handler when a connection has changed.
@@ -151,8 +150,6 @@ namespace dtDirector
       virtual ~ExternalValueNode();
 
       void UpdateLinkType();
-
-      std::string mLinkName;
    };
 }
 

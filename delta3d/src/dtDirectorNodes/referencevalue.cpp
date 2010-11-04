@@ -25,6 +25,7 @@
 
 #include <dtDirector/director.h>
 #include <dtDirector/valuelink.h>
+#include <dtDirector/colors.h>
 
 namespace dtDirector
 {
@@ -32,7 +33,6 @@ namespace dtDirector
    ReferenceValue::ReferenceValue()
        : ValueNode()
    {
-      mName = "Ref";
       AddAuthor("Jeff P. Houde");
    }
 
@@ -76,17 +76,10 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void ReferenceValue::SetValueName(const std::string& name)
+   void ReferenceValue::SetName(const std::string& name)
    {
-      ValueNode::SetValueName(name);
-
-      mValues[0].SetLabel(name);
-   }
-
-   //////////////////////////////////////////////////////////////////////////
-   const std::string& ReferenceValue::GetName()
-   {
-      return mName;
+      ValueNode::SetName(name);
+      //mValues[0].SetName(name);
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -277,6 +270,7 @@ namespace dtDirector
             }
 
             mValues[0].Connect(node);
+            SetColor(node->GetColor());
             return;
          }
       }
@@ -284,5 +278,6 @@ namespace dtDirector
       // If we can't find the node, make sure we are not
       // connected to anything.
       mValues[0].Disconnect();
+      SetColorRGB(Colors::GRAY);
    }
 }

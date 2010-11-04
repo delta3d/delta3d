@@ -20,6 +20,7 @@
  */
 
 #include <dtDirector/eventnode.h>
+#include <dtDirector/colors.h>
 
 #include <dtDAL/actoridactorproperty.h>
 #include <dtDAL/actorproperty.h>
@@ -38,6 +39,7 @@ namespace dtDirector
        , mTriggerCount(0)
    {
       mInstigator = "";
+      SetColorRGB(Colors::BEIGE);
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////

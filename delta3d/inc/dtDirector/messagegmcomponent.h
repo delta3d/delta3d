@@ -91,6 +91,7 @@ namespace dtDirector
        * @param[in]  callback  The callback functor.
        */
       void RegisterMessage(const std::string& msgType, dtDirector::Node* node, MsgFunc callback);
+      void RegisterMessage(const dtGame::MessageType& msgType, dtDirector::Node* node, MsgFunc callback);
 
       /**
        * Un-registers a Message Callback.
@@ -99,6 +100,7 @@ namespace dtDirector
        * @param[in]  node      The node.
        */
       void UnRegisterMessage(const std::string& msgType, dtDirector::Node* node);
+      void UnRegisterMessage(const dtGame::MessageType& msgType, dtDirector::Node* node);
 
       /**
        * Un-registers all messages connected to a given node.

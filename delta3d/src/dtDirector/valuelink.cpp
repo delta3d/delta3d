@@ -36,7 +36,7 @@ namespace dtDirector
    ValueLink::ValueLink(Node* owner, dtDAL::ActorProperty* prop, bool isOut, bool allowMultiple, bool typeCheck, bool exposed)
       : mOwner(owner)
       , mProxyOwner(NULL)
-      , mLabel("NONE")
+      , mName("Value")
       , mVisible(true)
       , mExposed(exposed)
       , mRedirector(NULL)
@@ -60,7 +60,7 @@ namespace dtDirector
    {
       mOwner = src.mOwner;
       mProxyOwner = NULL;
-      mLabel = src.mLabel;
+      mName = src.mName;
       mVisible = src.mVisible;
       mExposed = src.mExposed;
       mRedirector = NULL;
@@ -87,7 +87,7 @@ namespace dtDirector
 
       mOwner = src.mOwner;
       mProxyOwner = NULL;
-      mLabel = src.mLabel;
+      mName = src.mName;
       mVisible = src.mVisible;
       mExposed = src.mExposed;
       mRedirector = NULL;
@@ -294,19 +294,19 @@ namespace dtDirector
          return prop->GetName().Get();
       }
 
-      return mLabel;
+      return mName;
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void ValueLink::SetLabel(const std::string& label)
+   void ValueLink::SetName(const std::string& name)
    {
       if (mRedirector)
       {
-         mRedirector->SetLabel(label);
+         mRedirector->SetName(name);
          return;
       }
 
-      mLabel = label;
+      mName = name;
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -322,11 +322,11 @@ namespace dtDirector
       dtDAL::ActorProperty* prop = GetDefaultProperty();
       if (prop)
       {
-         std::string label = prop->GetLabel() + "<br>(" + prop->GetValueString() + ")";
-         SetLabel(label);
+         std::string name = prop->GetLabel() + "<br>(" + prop->GetValueString() + ")";
+         SetName(name);
       }
 
-      return mLabel;
+      return mName;
    }
 
    //////////////////////////////////////////////////////////////////////////

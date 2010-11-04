@@ -31,7 +31,6 @@ namespace dtDirector
    GroupNode::GroupNode()
        : ActionNode()
        , mSize(100.0f, 100.0f)
-       , mColor(1.0f, 1.0f, 1.0f, 0.25f)
    {
    }
 
@@ -70,8 +69,8 @@ namespace dtDirector
 
       AddProperty(new dtDAL::ColorRgbaActorProperty(
          "Color", "Color",
-         dtDAL::ColorRgbaActorProperty::SetFuncType(this, &GroupNode::SetColor),
-         dtDAL::ColorRgbaActorProperty::GetFuncType(this, &GroupNode::GetColor),
+         dtDAL::ColorRgbaActorProperty::SetFuncType(this, &Node::SetColor),
+         dtDAL::ColorRgbaActorProperty::GetFuncType(this, &Node::GetColor),
          "The UI color of the Node."));
    }
 }

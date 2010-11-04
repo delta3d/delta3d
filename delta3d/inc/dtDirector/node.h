@@ -168,6 +168,11 @@ namespace dtDirector
       virtual const std::string& GetName();
 
       /**
+       * Accessors for the name of the input node.
+       */
+      virtual void SetName(const std::string& name);
+
+      /**
        * Retrieves the description for the node.
        *
        * @return  The description of the node.
@@ -483,6 +488,22 @@ namespace dtDirector
       virtual void RegisterMessages() {}
       virtual void UnRegisterMessages() {}
 
+      /**
+       * Retrieves the UI color of the node.
+       *
+       * @return  The Color.
+       */
+      osg::Vec4 GetColor() const {return mColor;}
+
+      /**
+       * Sets the UI color of the node.
+       *
+       * @param[in]  color  The color.
+       */
+      void SetColor(const osg::Vec4& color) { mColor = color; }
+      void SetColorRGB(const osg::Vec3& color) { SetColor(osg::Vec4(color, 225)/255.0f); }
+      void SetColorRGBA(int r, int g, int b, int a = 225) { SetColor(osg::Vec4(r, g, b, a)/255.0f); }
+
 
       /**
        * Allow access to the NodePluginRegistry.
@@ -501,8 +522,10 @@ namespace dtDirector
       std::vector<OutputLink> mOutputs;
       std::vector<ValueLink>  mValues;
 
+      osg::Vec4      mColor;
+      std::string    mName;
+     
    private:
-
       /**
        * Hidden Copy Constructor.
        *

@@ -154,11 +154,11 @@ namespace dtDirector
       std::string GetName();
 
       /**
-       * Sets the label of the link.
+       * Sets the name of the link.
        *
-       * @return  The label of the link.
+       * @return  The name of the link.
        */
-      void SetLabel(const std::string& label);
+      void SetName(const std::string& name);
 
       /**
        * Retrieves the display name of the link.
@@ -248,7 +248,7 @@ namespace dtDirector
 
       Node* mOwner;
       dtCore::ObserverPtr<Node> mProxyOwner;
-      std::string mLabel;
+      std::string mName;
       bool mVisible;
       bool mExposed;
 

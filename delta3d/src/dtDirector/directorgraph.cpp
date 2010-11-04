@@ -20,13 +20,15 @@
  */
 
 #include <dtDirector/directorgraph.h>
+#include <dtDirector/director.h>
+#include <dtDirector/colors.h>
 
 #include <dtDAL/actorproperty.h>
 #include <dtDAL/booleanactorproperty.h>
 #include <dtDAL/stringactorproperty.h>
 #include <dtDAL/vectoractorproperties.h>
+#include <dtDAL/colorrgbaactorproperty.h>
 
-#include <dtDirector/director.h>
 
 namespace dtDirector
 {
@@ -35,9 +37,10 @@ namespace dtDirector
       : mDirector(director)
       , mParent(NULL)
       , mEnabled(true)
-      , mName("Macro")
+      //, mName("Macro")
       , mComment("")
    {
+      SetColorRGB(Colors::GREEN);
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -75,7 +78,13 @@ namespace dtDirector
             dtDAL::Vec2ActorProperty::SetFuncType(this, &DirectorGraph::SetPosition),
             dtDAL::Vec2ActorProperty::GetFuncType(this, &DirectorGraph::GetPosition),
             "The Position of the Director graph in its parent.", "UI"));
-      }
+
+         AddProperty(new dtDAL::ColorRgbaActorProperty(
+            "Color", "Color",
+            dtDAL::ColorRgbaActorProperty::SetFuncType(this, &DirectorGraph::SetColor),
+            dtDAL::ColorRgbaActorProperty::GetFuncType(this, &DirectorGraph::GetColor),
+            "The UI color of the Node."));
+     }
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -241,7 +250,7 @@ namespace dtDirector
       int count = (int)mValueNodes.size();
       for (int index = 0; index < count; index++)
       {
-         if (mValueNodes[index]->GetValueName() == name)
+         if (mValueNodes[index]->GetName() == name)
          {
             return mValueNodes[index];
          }

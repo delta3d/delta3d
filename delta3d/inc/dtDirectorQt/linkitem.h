@@ -27,20 +27,80 @@
 #include <dtDirectorQt/valueitem.h>
 
 #include <QtGui/QGraphicsPolygonItem>
-
+#include <QtGui/QPen>
 
 namespace dtDirector
 {
    class EditorScene;
 
-   /**
-    * Handles an input link in the UI.
-    */
-   class InputLinkItem
+   class LinkItem
       : public QWidget
       , public QGraphicsPolygonItem
    {
+      //Q_OBJECT
+
+      public:
+
+         /**
+          * Highlights the link.
+          *
+          * @param[in]  enable  True to highlight.
+          */
+         virtual void SetHighlight(bool enable);
+
+         /**
+          * Sets the link to always highlight.
+          *
+          * @param[in]  enabled  True to always highlight.
+          */
+         void SetAlwaysHighlight(bool enabled);
+
+         /**
+          * Retrieves whether this link should always highlight.
+          */
+         bool GetAlwaysHighlight() {return mAlwaysHighlight;}
+
+
+         void SetHighlightConnector(bool enable, QGraphicsPathItem* connector);
+
+         static const unsigned int LINE_WIDTH;
+
+      protected:
+         LinkItem(NodeItem* nodeItem, int linkIndex, QGraphicsItem* parent, EditorScene* scene);
+
+         /**
+          * Event handlers when the user presses a mouse button.
+          *
+          * @param[in]  mouseEvent  The mouse event.
+          */
+         void mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent);
+
+         virtual LinkItem* GetLinkGraphic() = 0;
+
+         std::map<QGraphicsPathItem*, QPen> mConnectorPens;
+
+         QGraphicsPathItem* mDrawing;
+         QGraphicsPathItem* mHighlight;
+
+         QPen mLinkGraphicPen;
+         QPen mHighlightPen;
+         EditorScene*   mScene;
+
+         int            mLinkIndex;
+
+         bool           mAltModifier;
+         bool           mAlwaysHighlight;
+
+         NodeItem*      mNodeItem;
+   };
+
+   /**
+    * Handles an input link in the UI.
+    */
+   class InputLinkItem : public LinkItem
+   {
       Q_OBJECT
+
    public:
 
       /**
@@ -56,14 +116,7 @@ namespace dtDirector
       /**
        * Sets the default highlight on the link.
        */
-      void InitHighlight();
-
-      /**
-       * Highlights the link.
-       *
-       * @param[in]  enable  True to highlight.
-       */
-      void SetHighlight(bool enable);
+      //void InitHighlight();
 
       /**
        * Disconnects a link.
@@ -90,6 +143,7 @@ namespace dtDirector
       void HideLink();
 
    protected:
+      virtual LinkItem* GetLinkGraphic();
 
       /**
        * Event handler when the user hovers their mouse
@@ -98,12 +152,6 @@ namespace dtDirector
       virtual void hoverEnterEvent(QGraphicsSceneHoverEvent* event);
       virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent* event);
 
-      /**
-       * Event handlers when the user presses a mouse button.
-       *
-       * @param[in]  mouseEvent  The mouse event.
-       */
-      void mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent);
 
       /**
        * Event handler when the user releases the mouse.
@@ -125,26 +173,13 @@ namespace dtDirector
        * @param[in]  event  The event.
        */
       void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
-
-
-      EditorScene*   mScene;
-      NodeItem*      mNodeItem;
-      int            mLinkIndex;
-      int            mLineWidth;
-
-      bool           mAltModifier;
-
-      QGraphicsPathItem* mDrawing;
-      QGraphicsPathItem* mHighlight;
    };
 
 
    /**
     * Handles an output link in the UI.
     */
-   class OutputLinkItem
-      : public QWidget
-      , public QGraphicsPolygonItem
+   class OutputLinkItem : public LinkItem
    {
       Q_OBJECT
    public:
@@ -158,18 +193,6 @@ namespace dtDirector
        * @param[in]  scene      The scene.
        */
       OutputLinkItem(NodeItem* nodeItem, int linkIndex, QGraphicsItem* parent, EditorScene* scene);
-
-      /**
-       * Sets the link to always highlight.
-       *
-       * @param[in]  enabled  True to always highlight.
-       */
-      void SetAlwaysHighlight(bool enabled);
-
-      /**
-       * Retrieves whether this link should always highlight.
-       */
-      bool GetAlwaysHighlight() {return mAlwaysHighlight;}
 
       /**
        * Highlights the link.
@@ -205,6 +228,7 @@ namespace dtDirector
       void HideLink();
 
    protected:
+      virtual LinkItem* GetLinkGraphic();
 
       /**
        * Event handler when the user hovers their mouse
@@ -213,12 +237,6 @@ namespace dtDirector
       virtual void hoverEnterEvent(QGraphicsSceneHoverEvent* event);
       virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent* event);
 
-      /**
-       * Event handlers when the user presses a mouse button.
-       *
-       * @param[in]  mouseEvent  The mouse event.
-       */
-      void mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent);
 
       /**
        * Event handler when the user releases the mouse.
@@ -240,26 +258,12 @@ namespace dtDirector
        * @param[in]  event  The event.
        */
       void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
-
-
-      EditorScene*   mScene;
-      NodeItem*      mNodeItem;
-      int            mLinkIndex;
-      int            mLineWidth;
-
-      bool           mAltModifier;
-      bool           mAlwaysHighlight;
-
-      QGraphicsPathItem* mDrawing;
-      QGraphicsPathItem* mHighlight;
    };
 
    /**
     * Handles a value link in the UI.
     */
-   class ValueLinkItem
-      : public QWidget
-      , public QGraphicsPolygonItem
+   class ValueLinkItem : public LinkItem
    {
       Q_OBJECT
    public:
@@ -321,6 +325,7 @@ namespace dtDirector
       void RemoveLink();
 
    protected:
+      virtual LinkItem* GetLinkGraphic();
 
       /**
        * Event handler when the user hovers their mouse
@@ -329,12 +334,6 @@ namespace dtDirector
       virtual void hoverEnterEvent(QGraphicsSceneHoverEvent* event);
       virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent* event);
 
-      /**
-       * Event handlers when the user presses a mouse button.
-       *
-       * @param[in]  mouseEvent  The mouse event.
-       */
-      void mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent);
 
       /**
        * Event handler when the user releases the mouse.
@@ -357,25 +356,13 @@ namespace dtDirector
        */
       void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
 
-      EditorScene*   mScene;
-      NodeItem*      mNodeItem;
-      int            mLinkIndex;
-      int            mLineWidth;
-
-      bool           mAltModifier;
-
       unsigned char  mType;
-
-      QGraphicsPathItem* mDrawing;
-      QGraphicsPathItem* mHighlight;
    };
 
    /**
     * Handles a value node link in the UI.
     */
-   class ValueNodeLinkItem
-      : public QWidget
-      , public QGraphicsPolygonItem
+   class ValueNodeLinkItem: public LinkItem
    {
       Q_OBJECT
    public:
@@ -398,13 +385,6 @@ namespace dtDirector
       unsigned char GetPropertyType() {return mType;}
 
       /**
-       * Highlights the link.
-       *
-       * @param[in]  enable  True to highlight.
-       */
-      void SetHighlight(bool enable);
-
-      /**
        * Disconnects a link.
        *
        * @param[in]  input  The link to disconnected, use NULL to
@@ -424,6 +404,7 @@ namespace dtDirector
       void Disconnect(QAction* action);
 
    protected:
+      virtual LinkItem* GetLinkGraphic();
 
       /**
        * Event handler when the user hovers their mouse
@@ -432,12 +413,6 @@ namespace dtDirector
       virtual void hoverEnterEvent(QGraphicsSceneHoverEvent* event);
       virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent* event);
 
-      /**
-       * Event handlers when the user presses a mouse button.
-       *
-       * @param[in]  mouseEvent  The mouse event.
-       */
-      void mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent);
 
       /**
        * Event handler when the user releases the mouse.
@@ -460,16 +435,7 @@ namespace dtDirector
        */
       void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
 
-      EditorScene*   mScene;
-      ValueItem*     mValueItem;
-      int            mLineWidth;
-
-      bool           mAltModifier;
-
       unsigned char mType;
-
-      QGraphicsPathItem* mDrawing;
-      QGraphicsPathItem* mHighlight;
    };
 }
 

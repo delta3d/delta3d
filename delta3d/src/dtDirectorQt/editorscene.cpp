@@ -565,6 +565,7 @@ namespace dtDirector
 
       std::string name = action->text().toStdString();
       std::string category = action->statusTip().toStdString();
+      if (name.empty() || category.empty()) return;
 
       Node* node = CreateNode(name, category, mMenuPos.x(), mMenuPos.y());
       if (node)

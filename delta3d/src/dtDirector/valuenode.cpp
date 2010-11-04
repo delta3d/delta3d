@@ -20,6 +20,7 @@
  */
 
 #include <dtDirector/valuenode.h>
+#include <dtDirector/colors.h>
 
 #include <dtDAL/actorproperty.h>
 #include <dtDAL/stringactorproperty.h>
@@ -33,7 +34,7 @@ namespace dtDirector
        : Node()
        , mProperty(NULL)
    {
-      mName = "Variable";
+      //SetColorRGB(Colors::ORANGE);
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
@@ -46,8 +47,6 @@ namespace dtDirector
    void ValueNode::Init(const NodeType& nodeType, DirectorGraph* graph)
    {
       Node::Init(nodeType, graph);
-
-      SetValueName(mName);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -57,8 +56,8 @@ namespace dtDirector
 
       AddProperty(new dtDAL::StringActorProperty(
          "Name", "Name",
-         dtDAL::StringActorProperty::SetFuncType(this, &ValueNode::SetValueName),
-         dtDAL::StringActorProperty::GetFuncType(this, &ValueNode::GetValueName),
+         dtDAL::StringActorProperty::SetFuncType(this, &ValueNode::SetName),
+         dtDAL::StringActorProperty::GetFuncType(this, &ValueNode::GetName),
          "The variables name."));
    }
 
@@ -107,25 +106,6 @@ namespace dtDirector
       // Notify all new connections that this value has changed, just in case
       // they need to initialize on this node's current value.
       OnValueChanged();
-   }
-
-   //////////////////////////////////////////////////////////////////////////
-   void ValueNode::SetValueName(const std::string& name)
-   {
-      mName = name;
-   }
-
-   //////////////////////////////////////////////////////////////////////////
-   const std::string& ValueNode::GetValueName()
-   {
-      return mName;
-   }
-
-   //////////////////////////////////////////////////////////////////////////
-   const std::string& ValueNode::GetName()
-   {
-      //mLabel = mName + GetValueLabel();
-      return mName;
    }
 
    //////////////////////////////////////////////////////////////////////////

@@ -33,8 +33,8 @@ namespace dtDirector
       , mActiveCount(0)
       , mOwner(owner)
       , mRedirector(NULL)
+      , mName(name)
    {
-      SetName(name);
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////

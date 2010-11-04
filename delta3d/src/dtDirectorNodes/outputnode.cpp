@@ -20,6 +20,7 @@
  */
 
 #include <dtDirectorNodes/outputnode.h>
+#include <dtDirector/colors.h>
 
 #include <dtDAL/stringactorproperty.h>
 
@@ -30,6 +31,7 @@ namespace dtDirector
        : ActionNode()
    {
       mName = "Out";
+      SetColorRGB(Colors::BEIGE);
       AddAuthor("Jeff P. Houde");
    }
 
@@ -74,8 +76,11 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void OutputNode::SetName(const std::string& name)
    {
-      mName = name;
-      mOutputs[0].SetName(name);
+      if( !name.empty() )
+      {
+         mName = name;
+         mOutputs[0].SetName(name);
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////

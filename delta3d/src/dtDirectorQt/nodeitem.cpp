@@ -28,6 +28,7 @@
 #include <dtDirectorQt/undopropertyevent.h>
 
 #include <dtDirector/valuenode.h>
+#include <dtDirectorNodes/externalvaluenode.h>
 
 #include <QtGui/QGraphicsScene>
 #include <QtGui/QMenu>
@@ -146,6 +147,8 @@ namespace dtDirector
       link = NULL;
    }
 
+   const QColor NodeItem::LINE_COLOR(0, 0, 0, 50);
+
    //////////////////////////////////////////////////////////////////////////
    NodeItem::NodeItem(Node* node, QGraphicsItem* parent, EditorScene* scene)
        : QGraphicsPolygonItem(parent, scene)
@@ -160,12 +163,11 @@ namespace dtDirector
        , mTitleDivider(NULL)
        , mNodeWidth(MIN_NODE_WIDTH)
        , mNodeHeight(MIN_NODE_HEIGHT)
-       , mTextHeight(0.0f)
+       , mTitleHeight(0.0f)
        , mLinkWidth(0.0f)
        , mLinkHeight(0.0f)
        , mValueHeight(0.0f)
        , mHasHiddenLinks(false)
-       , mColorDarken(0, 0, 0, 50)
    {
       setFlag(QGraphicsItem::ItemIsMovable, true);
       setFlag(QGraphicsItem::ItemIsSelectable, true);
@@ -208,7 +210,7 @@ namespace dtDirector
 
       mNodeWidth = MIN_NODE_WIDTH;
       mNodeHeight = MIN_NODE_HEIGHT;
-      mTextHeight = 0.0f;
+      mTitleHeight = 0.0f;
       mLinkWidth = 0.0f;
       mLinkHeight = 0.0f;
       mValueHeight = 0.0f;
@@ -303,6 +305,23 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
+   std::string NodeItem::GetNodeTitle()
+   {
+      if( !mNode )
+      {
+         return "";
+      }
+
+      std::string title = "<i>"+ mNode->GetTypeName() +"</i>";
+      std::string name  = mNode->GetName();
+      if( !name.empty() && !IS_A(mNode.get(), ExternalValueNode*) )
+      {
+         title += "<br><b>"+ name +"</b>";
+      }
+      return title;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    void NodeItem::SetTitle(std::string text)
    {
       if (!mTitle)
@@ -310,8 +329,8 @@ namespace dtDirector
          mTitleBG = new QGraphicsRectItem(this, scene());
          mTitle = new GraphicsTextItem(mTitleBG, scene());
 
-         mTitleBG->setPen(QPen(Qt::transparent, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-         mTitleBG->setBrush(QColor(0, 0, 0, 0));
+         mTitleBG->setPen(Qt::NoPen);
+         mTitleBG->setBrush(Qt::NoBrush);
          mTitleBG->setFlag(QGraphicsItem::ItemClipsChildrenToShape, true);
       }
 
@@ -320,9 +339,9 @@ namespace dtDirector
 
       // Create the title background.
       QRectF bounds = mTitle->boundingRect();
-      mTextHeight = bounds.height();
+      mTitleHeight = bounds.height();
 
-      if (mNodeHeight < int(mTextHeight)) mNodeHeight = int(mTextHeight);
+      if (mNodeHeight < int(mTitleHeight)) mNodeHeight = int(mTitleHeight);
 
       // Clamp the bounds to our min and max.
       if (bounds.width() > MAX_NODE_WIDTH - 2) bounds.setWidth(MAX_NODE_WIDTH - 2);
@@ -342,7 +361,7 @@ namespace dtDirector
       {
          mComment = new GraphicsTextItem(this, scene());
 
-         mComment->setDefaultTextColor(Qt::darkGreen);
+         mComment->setDefaultTextColor(QColor(100,100,100));
       }
 
       mComment->setPlainText(text.c_str());
@@ -454,25 +473,23 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void NodeItem::DrawInputs()
    {
-      float maxSize = 0;
+      float maxSize  = 0;
 
       QPolygonF poly;
       poly << QPointF(0, 0) << QPointF(LINK_LENGTH, 0) <<
          QPointF(LINK_LENGTH, LINK_SIZE) << QPointF(0, LINK_SIZE) <<
          QPointF(LINK_SIZE/2, LINK_SIZE/2);
 
-      int visibleCount = 0;
       int count = (int)mInputs.size();
       for (int index = 0; index < count; index++)
       {
          InputData& data = mInputs[index];
          if (!data.link || !data.link->GetVisible()) continue;
          
-         visibleCount++;
          // Create the link graphic.
          data.linkGraphic->setPolygon(poly);
-         data.linkGraphic->setPen(QPen(Qt::black, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-         data.linkGraphic->setBrush(QColor(50, 50, 50));
+         data.linkGraphic->setPen(Qt::NoPen);
+         data.linkGraphic->setBrush(GetNodeColor());
 
          // Set the link text, and position it right aligned with the link graphic.
          data.linkName->setPlainText(data.link->GetName().c_str());
@@ -486,30 +503,25 @@ namespace dtDirector
       }
 
       // Resize the node width if we have to.
-      float desiredWidth = maxSize;
-      if (mNodeWidth < desiredWidth) mNodeWidth = desiredWidth;
+      int desiredWidth = maxSize;
+      mNodeWidth = std::max( mNodeWidth, desiredWidth );
       mLinkWidth = desiredWidth;
-
-      // Resize the node height if we have to.
-      float desiredHeight = ((visibleCount + 1) * (LINK_SPACING + mTextHeight)) - (LINK_SPACING * 2);
-      if (mNodeHeight < desiredHeight) mNodeHeight = desiredHeight;
-      mLinkHeight = desiredHeight;
 
       // Now position all of the links in a single column.
       count = (int)mInputs.size();
-      visibleCount = 0;
+      float posY = mTitleHeight + (count ? LINK_PADDING : 0);
       for (int index = 0; index < count; index++)
       {
          InputData& data = mInputs[index];
          if (!data.link || !data.link->GetVisible()) continue;
 
-         float x = -LINK_LENGTH;
-         float y = ((LINK_SPACING + mTextHeight) * (visibleCount + 1)) + LINK_SIZE/2 + 1;
+         QRectF nameBounds = data.linkName->boundingRect();
+         data.linkGraphic->setPos(-LINK_LENGTH, posY);
 
-         data.linkGraphic->setPos(x, y);
-
-         visibleCount++;
+         posY += nameBounds.height();
       }
+      mLinkHeight = std::max( mLinkHeight, posY - mTitleHeight );
+      mNodeHeight = std::max( mNodeHeight, (int)(mTitleHeight + mLinkHeight) );
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -524,8 +536,8 @@ namespace dtDirector
       float offset = 0;
 
       int visibleCount = 0;
-      int count = (int)mOutputs.size();
-      for (int index = 0; index < count; index++)
+      unsigned int count = mOutputs.size();
+      for (unsigned int index = 0; index < count; index++)
       {
          OutputData& data = mOutputs[index];
          if (!data.link || !data.link->GetVisible()) continue;
@@ -534,45 +546,46 @@ namespace dtDirector
 
          // Create the link graphic.
          data.linkGraphic->setPolygon(poly);
-         data.linkGraphic->setPen(QPen(Qt::black, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-         data.linkGraphic->setBrush(QColor(50, 50, 50));
+         data.linkGraphic->setPen(Qt::NoPen);
+         data.linkGraphic->setBrush(GetNodeColor());
 
-         bool alwaysHighlight = false;
-         data.linkGraphic->SetAlwaysHighlight(false);
-         if (mScene->GetEditor()->GetReplayMode() &&
-            mScene->GetEditor()->GetReplayOutput() &&
-            mScene->GetEditor()->GetReplayOutput() == data.link)
-         {
-            int linkCount = (int)data.link->GetLinks().size();
-            for (int linkIndex = 0; linkIndex < linkCount; linkIndex++)
-            {
-               InputLink* link = data.link->GetLinks()[linkIndex];
-               if (link && link->GetOwner()->GetID() == mScene->GetEditor()->GetReplayNode().nodeID)
-               {
-                  data.linkGraphic->SetAlwaysHighlight(true);
-                  alwaysHighlight = true;
-                  break;
-               }
-            }
-         }
 
-         if (!alwaysHighlight)
-         {
-            int linkCount = (int)data.link->GetLinks().size();
-            for (int linkIndex = 0; linkIndex < linkCount; linkIndex++)
-            {
-               InputLink* link = data.link->GetLinks()[linkIndex];
+         //bool alwaysHighlight = false;
+         //data.linkGraphic->SetAlwaysHighlight(false);
+         //if (mScene->GetEditor()->GetReplayMode() &&
+         //   mScene->GetEditor()->GetReplayOutput() &&
+         //   mScene->GetEditor()->GetReplayOutput() == data.link)
+         //{
+         //   int linkCount = (int)data.link->GetLinks().size();
+         //   for (int linkIndex = 0; linkIndex < linkCount; linkIndex++)
+         //   {
+         //      InputLink* link = data.link->GetLinks()[linkIndex];
+         //      if (link && link->GetOwner()->GetID() == mScene->GetEditor()->GetReplayNode().nodeID)
+         //      {
+         //         data.linkGraphic->SetAlwaysHighlight(true);
+         //         alwaysHighlight = true;
+         //         break;
+         //      }
+         //   }
+         //}
 
-               if (mScene->GetEditor()->GetReplayMode() &&
-                  mScene->GetEditor()->GetReplayInput() &&
-                  mScene->GetEditor()->GetReplayInput() == link &&
-                  mScene->GetEditor()->GetReplayOutput() == data.link)
-               {
-                  data.linkGraphic->SetAlwaysHighlight(true);
-                  break;
-               }
-            }
-         }
+         //if (!alwaysHighlight)
+         //{
+         //   int linkCount = (int)data.link->GetLinks().size();
+         //   for (int linkIndex = 0; linkIndex < linkCount; linkIndex++)
+         //   {
+         //      InputLink* link = data.link->GetLinks()[linkIndex];
+
+         //      if (mScene->GetEditor()->GetReplayMode() &&
+         //         mScene->GetEditor()->GetReplayInput() &&
+         //         mScene->GetEditor()->GetReplayInput() == link &&
+         //         mScene->GetEditor()->GetReplayOutput() == data.link)
+         //      {
+         //         data.linkGraphic->SetAlwaysHighlight(true);
+         //         break;
+         //      }
+         //   }
+         //}
 
          // Set the link text, and position it right aligned with the link graphic.
          data.linkName->setPlainText(data.link->GetName().c_str());
@@ -587,35 +600,32 @@ namespace dtDirector
       }
 
       // Resize the node width if we have to.
-      float desiredWidth = maxSize + mLinkWidth + LINK_SPACING;
-      if (mNodeWidth < desiredWidth) mNodeWidth = desiredWidth;
+      int desiredWidth = maxSize + mLinkWidth;
+      mNodeWidth = std::max( mNodeWidth, desiredWidth );
 
       // Reposition the link divider if the node is already larger than we need.
       if (mNodeWidth > desiredWidth)
       {
-         mLinkWidth = mLinkWidth + (((mNodeWidth - maxSize + (LINK_SPACING / 2)) - mLinkWidth) / 2);
+         mLinkWidth += ((mNodeWidth - maxSize - mLinkWidth) / 2);
       }
 
       // Resize the node height if we have to.
-      float desiredHeight = ((visibleCount + 1) * (LINK_SPACING + mTextHeight)) - (LINK_SPACING * 2);
-      if (mNodeHeight < desiredHeight + mValueHeight) mNodeHeight = desiredHeight + mValueHeight;
-      if (desiredHeight > mLinkHeight) mLinkHeight = desiredHeight;
 
       // Now position all of the links in a single column.
-      visibleCount = 0;
-      count = (int)mOutputs.size();
-      for (int index = 0; index < count; index++)
+      count = mOutputs.size();
+      float posY = mTitleHeight + (count ? LINK_PADDING : 0);
+      for (unsigned int index = 0; index < count; index++)
       {
          OutputData& data = mOutputs[index];
          if (!data.link || !data.link->GetVisible()) continue;
 
-         float x = mNodeWidth + 1.0f;
-         float y = ((LINK_SPACING + mTextHeight) * (visibleCount + 1)) - LINK_SPACING + offset;
-
-         data.linkGraphic->setPos(x, y);
-
-         visibleCount++;
+         QRectF nameBounds = data.linkName->boundingRect();
+         data.linkGraphic->setPos(mNodeWidth, posY);
+         
+         posY += nameBounds.height();
       }
+      mLinkHeight = std::max( mLinkHeight, posY - mTitleHeight );
+      mNodeHeight = std::max( mNodeHeight, (int)(mTitleHeight + mLinkHeight) );
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -649,21 +659,9 @@ namespace dtDirector
          }
 
          data.linkGraphic->setPolygon(poly);
+         data.linkGraphic->setPen(Qt::NoPen);
+         data.linkGraphic->setBrush(GetNodeColor());
          data.linkGraphic->SetPropertyType(data.link->GetPropertyType().GetTypeId());
-
-         // Set the color of the link based on the property type.
-         dtDAL::DataType& type = data.link->GetPropertyType();
-         if (data.link->IsTypeChecking())
-         {
-            data.linkGraphic->setPen(QPen(GetDarkColorForType(type.GetTypeId()), 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-         }
-         else
-         {
-            data.linkGraphic->setPen(QPen(Qt::black, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-         }
-
-         // Set the color of the link based on the property type.
-         data.linkGraphic->setBrush(GetColorForType(type.GetTypeId()));
 
          // Set the link text, and position it right aligned with the link graphic.
          data.linkName->setHtml((std::string("<center>") + data.link->GetDisplayName() + "</center>").c_str());
@@ -684,17 +682,17 @@ namespace dtDirector
       }
 
       // Resize the node width if we have to.
-      float desiredWidth = (maxWidth + LINK_SPACING) * visibleCount - LINK_SPACING;
+      float desiredWidth = maxWidth * visibleCount;
       if (mNodeWidth < desiredWidth) mNodeWidth = desiredWidth;
-
-      // Resize the node height if we have to.
-      float desiredHeight = mValueHeight + LINK_SPACING + mLinkHeight;
-      if (mNodeHeight < desiredHeight) mNodeHeight = desiredHeight;
    }
 
    //////////////////////////////////////////////////////////////////////////
    void NodeItem::DrawValues()
    {
+      // Resize the node height if we have to.
+      float desiredHeight = mTitleHeight + mLinkHeight + mValueHeight;
+      if (mNodeHeight < desiredHeight) mNodeHeight = desiredHeight;
+
       // Now position all of the links in a single row.
       int count = (int)mValues.size();
       int visibleCount = 0;
@@ -716,14 +714,14 @@ namespace dtDirector
          ValueData& data = mValues[index];
 
          float x = -step / 2;
-         float y = data.linkName->pos().y();
+         float y = data.linkName->y();
          data.linkName->setTextWidth(step);
          data.linkName->setPos(x, y);
 
          data.linkName->setHtml(data.linkName->toHtml());
          if (!mValues[index].link || !mValues[index].link->GetVisible()) continue;
          x = step * (visibleCount + 1) - (step / 2);
-         y = mNodeHeight + 1.0f;
+         y = mNodeHeight;
 
          data.linkGraphic->setPos(x, y);
 
@@ -734,22 +732,24 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void NodeItem::DrawDividers()
    {
+      QPen pen = QPen(LINE_COLOR, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+
       if (!mTitleDivider) mTitleDivider = new QGraphicsRectItem(this, scene());
-      mTitleDivider->setPos(1, mTextHeight + 1);
+      mTitleDivider->setPos(1, mTitleHeight);
       mTitleDivider->setRect(0, 0, mNodeWidth - 2, 0);
-      mTitleDivider->setPen(QPen(mColorDarken, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+      mTitleDivider->setPen(pen);
 
       // Draw the vertical divider if we are displaying both inputs and outputs.
       if (!mInputs.empty() && !mOutputs.empty())
       {
-         float x = mLinkWidth + (LINK_SPACING / 2);
-         float y = mTextHeight + 2;
-         float height = (mValues.empty() ? std::max((float)MIN_NODE_HEIGHT, mLinkHeight) : mLinkHeight) - y - 1;
+         float x = mLinkWidth;
+         float y = mTitleHeight + 1;
+         float height = mLinkHeight - 2;
 
          if (!mLinkDivider) mLinkDivider = new QGraphicsRectItem(this, scene());
          mLinkDivider->setPos(x, y);
          mLinkDivider->setRect(0, 0, 0, height);
-         mLinkDivider->setPen(QPen(mColorDarken, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+         mLinkDivider->setPen(pen);
       }
       else if (mLinkDivider)
       {
@@ -762,9 +762,9 @@ namespace dtDirector
          (!mInputs.empty() || !mOutputs.empty()))
       {
          if (!mValueDivider) mValueDivider = new QGraphicsRectItem(this, scene());
-         mValueDivider->setPos(0, mLinkHeight - 1);
+         mValueDivider->setPos(1, mTitleHeight + mLinkHeight);
          mValueDivider->setRect(1, 0, mNodeWidth - 2, 0);
-         mValueDivider->setPen(QPen(mColorDarken, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+         mValueDivider->setPen(pen);
       }
       else if (mValueDivider)
       {
@@ -774,115 +774,115 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   QColor NodeItem::GetColorForType(unsigned char type)
-   {
-      switch (type)
-      {
-      case dtDAL::DataType::ACTOR_ID:
-         return Qt::magenta;
-         break;
-      case dtDAL::DataType::BOOLEAN_ID:
-         return Qt::red;
-         break;
-      case dtDAL::DataType::INT_ID:
-         return Qt::blue;
-         break;
-      case dtDAL::DataType::FLOAT_ID:
-         return Qt::yellow;
-         break;
-      case dtDAL::DataType::DOUBLE_ID:
-         return Qt::green;
-         break;
-      case dtDAL::DataType::STRING_ID:
-         return Qt::cyan;
-         break;
+   //QColor NodeItem::GetColorForType(unsigned char type)
+   //{
+   //   switch (type)
+   //   {
+   //   case dtDAL::DataType::ACTOR_ID:
+   //      return Qt::magenta;
+   //      break;
+   //   case dtDAL::DataType::BOOLEAN_ID:
+   //      return Qt::red;
+   //      break;
+   //   case dtDAL::DataType::INT_ID:
+   //      return Qt::blue;
+   //      break;
+   //   case dtDAL::DataType::FLOAT_ID:
+   //      return Qt::yellow;
+   //      break;
+   //   case dtDAL::DataType::DOUBLE_ID:
+   //      return Qt::green;
+   //      break;
+   //   case dtDAL::DataType::STRING_ID:
+   //      return Qt::cyan;
+   //      break;
 
-      case dtDAL::DataType::STATICMESH_ID:
-      case dtDAL::DataType::SKELETAL_MESH_ID:
-      case dtDAL::DataType::TEXTURE_ID:
-      case dtDAL::DataType::SOUND_ID:
-      case dtDAL::DataType::PARTICLESYSTEM_ID:
-      case dtDAL::DataType::PREFAB_ID:
-      case dtDAL::DataType::SHADER_ID:
-         return Qt::magenta;
-         break;
+   //   case dtDAL::DataType::STATICMESH_ID:
+   //   case dtDAL::DataType::SKELETAL_MESH_ID:
+   //   case dtDAL::DataType::TEXTURE_ID:
+   //   case dtDAL::DataType::SOUND_ID:
+   //   case dtDAL::DataType::PARTICLESYSTEM_ID:
+   //   case dtDAL::DataType::PREFAB_ID:
+   //   case dtDAL::DataType::SHADER_ID:
+   //      return Qt::magenta;
+   //      break;
 
-      case dtDAL::DataType::VEC2_ID:
-      case dtDAL::DataType::VEC3_ID:
-      case dtDAL::DataType::VEC4_ID:
-      case dtDAL::DataType::VEC2F_ID:
-      case dtDAL::DataType::VEC3F_ID:
-      case dtDAL::DataType::VEC4F_ID:
-      case dtDAL::DataType::VEC2D_ID:
-      case dtDAL::DataType::VEC3D_ID:
-      case dtDAL::DataType::VEC4D_ID:
-         return Qt::magenta;
-         break;
+   //   case dtDAL::DataType::VEC2_ID:
+   //   case dtDAL::DataType::VEC3_ID:
+   //   case dtDAL::DataType::VEC4_ID:
+   //   case dtDAL::DataType::VEC2F_ID:
+   //   case dtDAL::DataType::VEC3F_ID:
+   //   case dtDAL::DataType::VEC4F_ID:
+   //   case dtDAL::DataType::VEC2D_ID:
+   //   case dtDAL::DataType::VEC3D_ID:
+   //   case dtDAL::DataType::VEC4D_ID:
+   //      return Qt::magenta;
+   //      break;
 
-      case dtDAL::DataType::UNKNOWN_ID:
-      default:
-         return Qt::white;
-         break;
-      }
-   }
+   //   case dtDAL::DataType::UNKNOWN_ID:
+   //   default:
+   //      return Qt::white;
+   //      break;
+   //   }
+   //}
 
-   //////////////////////////////////////////////////////////////////////////
-   QColor NodeItem::GetDarkColorForType(unsigned char type)
-   {
-      switch (type)
-      {
-      case dtDAL::DataType::ACTOR_ID:
-         return Qt::darkMagenta;
-         break;
-      case dtDAL::DataType::BOOLEAN_ID:
-         return Qt::darkRed;
-         break;
-      case dtDAL::DataType::INT_ID:
-         return Qt::darkBlue;
-         break;
-      case dtDAL::DataType::FLOAT_ID:
-         return Qt::darkYellow;
-         break;
-      case dtDAL::DataType::DOUBLE_ID:
-         return Qt::darkGreen;
-         break;
-      case dtDAL::DataType::STRING_ID:
-         return Qt::darkCyan;
-         break;
+   ////////////////////////////////////////////////////////////////////////////
+   //QColor NodeItem::GetDarkColorForType(unsigned char type)
+   //{
+   //   switch (type)
+   //   {
+   //   case dtDAL::DataType::ACTOR_ID:
+   //      return Qt::darkMagenta;
+   //      break;
+   //   case dtDAL::DataType::BOOLEAN_ID:
+   //      return Qt::darkRed;
+   //      break;
+   //   case dtDAL::DataType::INT_ID:
+   //      return Qt::darkBlue;
+   //      break;
+   //   case dtDAL::DataType::FLOAT_ID:
+   //      return Qt::darkYellow;
+   //      break;
+   //   case dtDAL::DataType::DOUBLE_ID:
+   //      return Qt::darkGreen;
+   //      break;
+   //   case dtDAL::DataType::STRING_ID:
+   //      return Qt::darkCyan;
+   //      break;
 
-      case dtDAL::DataType::STATICMESH_ID:
-      case dtDAL::DataType::SKELETAL_MESH_ID:
-      case dtDAL::DataType::TEXTURE_ID:
-      case dtDAL::DataType::SOUND_ID:
-      case dtDAL::DataType::PARTICLESYSTEM_ID:
-      case dtDAL::DataType::PREFAB_ID:
-      case dtDAL::DataType::SHADER_ID:
-         return Qt::darkMagenta;
-         break;
+   //   case dtDAL::DataType::STATICMESH_ID:
+   //   case dtDAL::DataType::SKELETAL_MESH_ID:
+   //   case dtDAL::DataType::TEXTURE_ID:
+   //   case dtDAL::DataType::SOUND_ID:
+   //   case dtDAL::DataType::PARTICLESYSTEM_ID:
+   //   case dtDAL::DataType::PREFAB_ID:
+   //   case dtDAL::DataType::SHADER_ID:
+   //      return Qt::darkMagenta;
+   //      break;
 
-      case dtDAL::DataType::VEC2_ID:
-      case dtDAL::DataType::VEC3_ID:
-      case dtDAL::DataType::VEC4_ID:
-      case dtDAL::DataType::VEC2F_ID:
-      case dtDAL::DataType::VEC3F_ID:
-      case dtDAL::DataType::VEC4F_ID:
-      case dtDAL::DataType::VEC2D_ID:
-      case dtDAL::DataType::VEC3D_ID:
-      case dtDAL::DataType::VEC4D_ID:
-         return Qt::darkMagenta;
-         break;
+   //   case dtDAL::DataType::VEC2_ID:
+   //   case dtDAL::DataType::VEC3_ID:
+   //   case dtDAL::DataType::VEC4_ID:
+   //   case dtDAL::DataType::VEC2F_ID:
+   //   case dtDAL::DataType::VEC3F_ID:
+   //   case dtDAL::DataType::VEC4F_ID:
+   //   case dtDAL::DataType::VEC2D_ID:
+   //   case dtDAL::DataType::VEC3D_ID:
+   //   case dtDAL::DataType::VEC4D_ID:
+   //      return Qt::darkMagenta;
+   //      break;
 
-      case dtDAL::DataType::UNKNOWN_ID:
-      default:
-         return Qt::gray;
-         break;
-      }
-   }
+   //   case dtDAL::DataType::UNKNOWN_ID:
+   //   default:
+   //      return Qt::gray;
+   //      break;
+   //   }
+   //}
 
    //////////////////////////////////////////////////////////////////////////
    osg::Vec2 NodeItem::GetPosition()
    {
-      return mNode->GetPosition();
+      return mNode ? mNode->GetPosition() : osg::Vec2(0,0);
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -931,7 +931,7 @@ namespace dtDirector
                {
                   if (item->mInputs[inputIndex].link == link)
                   {
-                     ConnectLinks(output, item->mInputs[inputIndex], linkIndex);
+                     ConnectLinks(output, item->mInputs[inputIndex], linkIndex, true);
                      break;
                   }
                }
@@ -968,7 +968,7 @@ namespace dtDirector
                         {
                            if (output->GetLinks()[index] == input.link)
                            {
-                              ConnectLinks(item->mOutputs[outputIndex], input, index);
+                              ConnectLinks(item->mOutputs[outputIndex], input, index, false);
                               break;
                            }
                         }
@@ -1150,7 +1150,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void NodeItem::ConnectLinks(OutputData& output, InputData& input, int index)
+   void NodeItem::ConnectLinks(OutputData& output, InputData& input, int index, bool isOutput)
    {
       if (index < 0 || (int)output.linkConnectors.size() < index) return;
 
@@ -1165,10 +1165,19 @@ namespace dtDirector
       QPainterPath path = CreateConnectionH(start, end);
       output.linkConnectors[index]->setPath(path);
 
-      output.linkConnectors[index]->setPen(
-         QPen(Qt::black, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+      if(isOutput)
+      {
+         output.linkConnectors[index]->setPen(QPen(GetNodeColor(), 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
 
-      input.linkGraphic->InitHighlight();
+         if(mScene->GetEditor()->GetReplayMode() && 
+            mScene->GetEditor()->GetReplayOutput() == output.link &&
+            mScene->GetEditor()->GetReplayInput() == input.link)
+         {
+            output.linkGraphic->SetAlwaysHighlight(true);
+            output.linkGraphic->SetHighlight(true,input.link);
+            input.linkGraphic->SetAlwaysHighlight(true);
+         }
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -1193,15 +1202,7 @@ namespace dtDirector
 
       QPainterPath path = CreateConnectionV(start, end);
       output.linkConnectors[index]->setPath(path);
-
-      // Set the color of the link line to match the value type.
-      ValueNode* valueNode = dynamic_cast<ValueNode*>(input->mNode.get());
-      if (valueNode)
-      {
-         output.linkConnectors[index]->setPen(
-            QPen(GetDarkColorForType(output.linkGraphic->GetPropertyType()),
-            2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-      }
+      output.linkConnectors[index]->setPen(QPen(input->GetNodeColor(), 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -1276,6 +1277,64 @@ namespace dtDirector
       }
 
       return value;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   QColor NodeItem::GetNodeColor() const
+   {
+      QColor color;
+
+      if (mNode)
+      {
+         osg::Vec4 rgba = mNode->GetColor();
+         color.setRgbF(rgba.r(), rgba.g(), rgba.b(), rgba.a());
+
+         if( !mNode->IsEnabled())
+         {
+            color.setAlphaF(0.25f);
+         }
+      }
+
+      return color;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void NodeItem::SetBackgroundGradient( unsigned int gradientHeight )
+   {
+      QLinearGradient linearGradient(0,0,0,gradientHeight);
+      QColor colorLight = GetNodeColor().light(150);
+      QColor colorDark = GetNodeColor().dark(100);
+
+      linearGradient.setColorAt(0.0, colorLight);
+      linearGradient.setColorAt(1.0, colorDark);
+
+      setBrush(linearGradient);
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void NodeItem::SetDefaultPen()
+   {
+      setPen(QPen(LINE_COLOR, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+      if(!mNode || !mNode->IsEnabled())
+      {
+         return;
+      }
+
+      if (mNode->GetNodeLogging())
+      {
+         setPen(QPen(Qt::green, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+      }
+
+      if(mScene->GetEditor()->GetReplayMode())
+      {
+         const OutputLink* output = mScene->GetEditor()->GetReplayOutput();
+         bool highlight = output ? (mNode->GetOutputLink(output->GetName()) == output) : false;
+
+         if (highlight || mScene->GetEditor()->GetReplayNode().nodeID == mNode->GetID())
+         {
+            setPen(QPen(Qt::yellow, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+         }
+      }
    }
 }
 

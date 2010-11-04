@@ -49,7 +49,8 @@ namespace dtDirector
 
       if (mNode.valid())
       {
-         SetTitle(mNode->GetName());
+
+         SetTitle(GetNodeTitle());
          if (mNode->InputsExposed())  DrawInputs();
          if (mNode->ValuesExposed())  SetupValues();
          if (mNode->OutputsExposed()) DrawOutputs();
@@ -70,48 +71,12 @@ namespace dtDirector
          int size = mNodeWidth;
          if (size < mNodeHeight) size = mNodeHeight;
 
-         QLinearGradient linearGradient(0,0,0,mNodeHeight);
-
-         setPen(QPen(mColorDarken, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-
-         if (mNode->IsEnabled())
-         {
-            if (mNode->GetNodeLogging())
-            {
-               setPen(QPen(Qt::green, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-            }
-
-            QColor color = Qt::darkCyan;
-            color.setAlphaF(0.80f);
-            linearGradient.setColorAt(1.0, color);
-            
-            color = Qt::cyan;
-            color.setAlphaF(0.80f);
-            linearGradient.setColorAt(0.0, color);
-         }
-         else
-         {
-            QColor color = Qt::darkCyan;
-            color.setAlphaF(0.25f);
-            linearGradient.setColorAt(1.0, color);
-            
-            color = Qt::cyan;
-            color.setAlphaF(0.25f);
-            linearGradient.setColorAt(0.0, color);
-         }
-
-         // If we are in replay mode and if this node is the current node,
-         // make sure we highlight it with a special color.
-         if (mScene->GetEditor()->GetReplayMode() &&
-            mScene->GetEditor()->GetReplayNode().nodeID == mNode->GetID())
-         {
-            setPen(QPen(Qt::yellow, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-         }
-
-         setBrush(linearGradient);
          setPolygon(mPolygon);
 
          SetComment(mNode->GetComment());
+
+         SetDefaultPen();
+         SetBackgroundGradient(mNodeHeight);
       }
 
       mLoading = false;

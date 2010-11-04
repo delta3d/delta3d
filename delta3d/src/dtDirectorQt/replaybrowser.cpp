@@ -226,7 +226,14 @@ namespace dtDirector
       ReplayThreadItem* item = dynamic_cast<ReplayThreadItem*>(current);
       if (item && item->IsValid())
       {
-         mEditor->SetReplayNode(item->GetNode(), NULL, item->GetOutput());
+         InputLink* input = NULL;
+         Node* node = mEditor->GetDirector()->GetNode(item->GetNode()->nodeID);
+         if (node)
+         {
+            input = node->GetInputLink(item->GetNode()->input);
+         }
+
+         mEditor->SetReplayNode(item->GetNode(), input, item->GetOutput());
       }
       else if (item && item->IsBackOption() && mNodePath.size() > 1)
       {

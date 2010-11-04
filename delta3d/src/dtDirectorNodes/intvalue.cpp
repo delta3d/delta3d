@@ -19,6 +19,7 @@
  * Author: Jeff P. Houde
  */
 
+#include <dtDirector/colors.h>
 #include <dtDirectorNodes/intvalue.h>
 
 #include <dtDAL/intactorproperty.h>
@@ -30,9 +31,9 @@ namespace dtDirector
        : ValueNode()
        , mValue(0)
    {
-      mName = "Integer";
       AddAuthor("Jeff P. Houde");
-   }
+      //SetColorRGB(Colors::RED); 
+  }
 
    ///////////////////////////////////////////////////////////////////////////////////////
    IntValue::~IntValue()

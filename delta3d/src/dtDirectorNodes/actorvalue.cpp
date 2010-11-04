@@ -19,6 +19,7 @@
  * Author: Jeff P. Houde
  */
 
+#include <dtDirector/colors.h>
 #include <dtDirectorNodes/actorvalue.h>
 
 #include <dtDAL/actoridactorproperty.h>
@@ -32,9 +33,9 @@ namespace dtDirector
    ActorValue::ActorValue()
        : ValueNode()
    {
-      mName = "Actor";
       mValue = "";
       AddAuthor("Jeff P. Houde");
+      SetColorRGB(Colors::MANGENTA);
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////

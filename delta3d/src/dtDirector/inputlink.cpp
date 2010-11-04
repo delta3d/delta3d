@@ -32,8 +32,9 @@ namespace dtDirector
       : mVisible(true)
       , mOwner(owner)
       , mRedirector(NULL)
+      , mName(name)
    {
-      SetName(name);
+
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
