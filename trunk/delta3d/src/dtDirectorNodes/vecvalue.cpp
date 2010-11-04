@@ -20,6 +20,7 @@
  */
 
 #include <dtDirectorNodes/vecvalue.h>
+#include <dtDirector/colors.h>
 
 #include <dtDAL/vectoractorproperties.h>
 
@@ -29,9 +30,9 @@ namespace dtDirector
    VecValue::VecValue()
        : ValueNode()
    {
-      mName = "Vector";
       AddAuthor("Jeff P. Houde");
-   }
+      //SetColorRGB(Colors::RED); 
+  }
 
    ///////////////////////////////////////////////////////////////////////////////////////
    VecValue::~VecValue()

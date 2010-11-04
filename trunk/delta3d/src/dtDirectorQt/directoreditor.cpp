@@ -897,17 +897,40 @@ namespace dtDirector
    void DirectorEditor::OnLoadRecordingButton()
    {
       QString filter = tr(".dtdirreplay");
-      std::string context = dtDAL::Project::GetInstance().GetContext();
+      std::string contextDir = osgDB::convertFileNameToNativeStyle(dtDAL::Project::GetInstance().GetContext()+"/");
+      std::string directorsDir = contextDir + osgDB::convertFileNameToNativeStyle("directors/");
 
       QFileDialog dialog;
-      QFileInfo filePath = dialog.getOpenFileName(this, tr("Load a Director Graph Replay File"),
-         tr((context + "\\directors\\").c_str()),
-         tr("Director Graph Replay (*.dtdirreplay)"), &filter);
+      QFileInfo filePath = dialog.getOpenFileName(
+         this, tr("Load a Director Graph Replay File"), tr(directorsDir.c_str()), tr("Director Graph Replays (*.dtdirreplay)"), &filter);
 
-      QString fileName = filePath.baseName();
-      if (!fileName.isEmpty())
+      if( !filePath.isFile() )
+         return;
+
+      std::string fileName  = osgDB::convertFileNameToNativeStyle(
+         filePath.absolutePath().toStdString() + "/" + filePath.baseName().toStdString());
+      //mFileName = dtUtil::FileUtils::GetInstance().RelativePath( contextDir, absFileName );
+
+
+
+
+
+      //QString filter = tr(".dtdirreplay");
+      //std::string context = dtDAL::Project::GetInstance().GetContext();
+
+      //QFileDialog dialog;
+      //QFileInfo filePath = dialog.getOpenFileName(this, tr("Load a Director Graph Replay File"),
+      //   tr((context + "\\directors\\").c_str()),
+      //   tr("Director Graph Replay (*.dtdirreplay)"), &filter);
+
+      //QString fileName = filePath.baseName();
+
+
+
+
+      if (!fileName.empty())
       {
-         if (!mDirector->LoadRecording(fileName.toStdString()))
+         if (!mDirector->LoadRecording(fileName))
          {
             QMessageBox okBox("Failed",
                "The Replay file failed to load.  This could be because you are "
@@ -1318,13 +1341,13 @@ namespace dtDirector
 
       if (showFiles)
       {
-         QString filter = tr(".dtDir");
+         QString filter = tr(".dtdir");
          std::string contextDir = osgDB::convertFileNameToNativeStyle(dtDAL::Project::GetInstance().GetContext()+"/");
          std::string directorsDir = contextDir + osgDB::convertFileNameToNativeStyle("directors/");
 
          QFileDialog dialog;
          QFileInfo filePath = dialog.getSaveFileName(
-            this, tr("Save a Director Graph File"), tr(directorsDir.c_str()), tr("Director Scripts (*.dtDir)"), &filter);
+            this, tr("Save a Director Graph File"), tr(directorsDir.c_str()), tr("Director Scripts (*.dtdir)"), &filter);
 
          if( filePath.fileName().isEmpty() )
             return false;
@@ -1350,13 +1373,13 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    bool DirectorEditor::LoadScript()
    {
-      QString filter = tr(".dtDir");
+      QString filter = tr(".dtdir");
       std::string contextDir = osgDB::convertFileNameToNativeStyle(dtDAL::Project::GetInstance().GetContext()+"/");
       std::string directorsDir = contextDir + osgDB::convertFileNameToNativeStyle("directors/");
 
       QFileDialog dialog;
       QFileInfo filePath = dialog.getOpenFileName(
-         this, tr("Load a Director Graph File"), tr(directorsDir.c_str()), tr("Director Scripts (*.dtDir)"), &filter);
+         this, tr("Load a Director Graph File"), tr(directorsDir.c_str()), tr("Director Scripts (*.dtdir)"), &filter);
       
       if( !filePath.isFile() )
          return false;

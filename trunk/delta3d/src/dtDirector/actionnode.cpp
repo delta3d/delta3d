@@ -20,6 +20,7 @@
  */
 
 #include <dtDirector/actionnode.h>
+#include <dtDirector/colors.h>
 
 #include <dtDAL/actorproperty.h>
 
@@ -29,6 +30,7 @@ namespace dtDirector
    ActionNode::ActionNode()
        : Node()
    {
+      SetColorRGB(Colors::BLUE);
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////

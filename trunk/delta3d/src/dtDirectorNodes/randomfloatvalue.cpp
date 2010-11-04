@@ -33,7 +33,6 @@ namespace dtDirector
        , mMinValue(0.0f)
        , mMaxValue(1.0f)
    {
-      mName = "Random Float";
       AddAuthor("Jeff P. Houde");
    }
 

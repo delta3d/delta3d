@@ -30,7 +30,6 @@ namespace dtDirector
    StringArrayValue::StringArrayValue()
        : ArrayValueNode()
    {
-      mName = "String Array";
       AddAuthor("Jeff P. Houde");
    }
 

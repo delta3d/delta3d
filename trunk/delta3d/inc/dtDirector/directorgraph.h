@@ -167,6 +167,23 @@ namespace dtDirector
       bool GetEnabled() {return mEnabled;}
 
       /**
+       * Retrieves the UI color of the node.
+       *
+       * @return  The Color.
+       */
+      osg::Vec4 GetColor() const {return mColor;}
+
+      /**
+       * Sets the UI color of the node.
+       *
+       * @param[in]  color  The color.
+       */
+      void SetColor(const osg::Vec4& color) { mColor = color; }
+      void SetColorRGB(const osg::Vec3& color) { SetColor(osg::Vec4(color, 225)/255.0f); }
+      void SetColorRGBA(int r, int g, int b, int a = 225) { SetColor(osg::Vec4(r, g, b, a)/255.0f); }
+
+
+      /**
        * Accessors for the graph name.
        */
       void SetName(const std::string& name) {mName = name;}
@@ -244,6 +261,10 @@ namespace dtDirector
       std::vector<dtCore::RefPtr<EventNode> >  mEventNodes;
       std::vector<dtCore::RefPtr<ActionNode> > mActionNodes;
       std::vector<dtCore::RefPtr<ValueNode> >  mValueNodes;
+
+      protected:
+         osg::Vec4 mColor;
+
    };
 }
 

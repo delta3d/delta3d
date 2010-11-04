@@ -108,6 +108,12 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   void MessageGMComponent::RegisterMessage(const dtGame::MessageType& msgType, dtDirector::Node* node, MsgFunc callback)
+   {
+      RegisterMessage(msgType.GetName(), node, callback);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    void MessageGMComponent::UnRegisterMessage(const std::string& msgType, dtDirector::Node* node)
    {
       std::map<std::string, std::map<dtDirector::Node*, MsgFunc> >::iterator i =
@@ -124,6 +130,12 @@ namespace dtDirector
             i->second.erase(a);
          }
       }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void MessageGMComponent::UnRegisterMessage(const dtGame::MessageType& msgType, dtDirector::Node* node)
+   {
+      UnRegisterMessage(msgType.GetName(), node);
    }
 
    ////////////////////////////////////////////////////////////////////////////////

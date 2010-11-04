@@ -87,8 +87,7 @@ namespace dtDirector
       /**
        * Accessors for the name of the node.
        */
-      virtual void SetValueName(const std::string& name);
-      virtual const std::string& GetName();
+      virtual void SetName(const std::string& name);
       virtual std::string GetValueLabel();
 
       /**

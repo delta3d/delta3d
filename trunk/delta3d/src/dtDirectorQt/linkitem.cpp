@@ -37,72 +37,151 @@
 
 namespace dtDirector
 {
-   //////////////////////////////////////////////////////////////////////////
-   InputLinkItem::InputLinkItem(NodeItem* nodeItem, int linkIndex, QGraphicsItem* parent, EditorScene* scene)
-      : QGraphicsPolygonItem(parent, scene)
-      , mScene(scene)
-      , mNodeItem(nodeItem)
+   const unsigned int LinkItem::LINE_WIDTH = 2;
+
+   LinkItem::LinkItem(NodeItem* nodeItem, int linkIndex, QGraphicsItem* parent, EditorScene* scene): QGraphicsPolygonItem(parent, scene)
+      , mScene(scene), mHighlight(NULL), mDrawing(NULL), mNodeItem(nodeItem)
       , mLinkIndex(linkIndex)
-      , mLineWidth(2)
       , mAltModifier(false)
-      , mDrawing(NULL)
-      , mHighlight(NULL)
+      , mAlwaysHighlight(false)
    {
+      mHighlightPen  = QPen(Qt::yellow, LINE_WIDTH, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+
       setAcceptHoverEvents(true);
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void InputLinkItem::InitHighlight()
+   void LinkItem::SetHighlight(bool enable)
    {
-      // Highlight all connected output links.
-      if (mLinkIndex >= 0 && mLinkIndex < (int)mNodeItem->GetInputs().size())
+      LinkItem* linkGraphic = GetLinkGraphic();
+      if( !linkGraphic )
       {
-         InputData& data = mNodeItem->GetInputs()[mLinkIndex];
-         if (data.link)
-         {
-            int linkCount = (int)data.link->GetLinks().size();
-            for (int linkIndex = 0; linkIndex < linkCount; linkIndex++)
-            {
-               OutputLink* output = data.link->GetLinks()[linkIndex];
-               if (!output) continue;
+         return;
+      }
 
-               NodeItem* item = mScene->GetNodeItem(output->GetOwner()->GetID());
-               if (!item) continue;
-
-               int outputCount = (int)item->GetOutputs().size();
-               for (int outputIndex = 0; outputIndex < outputCount; outputIndex++)
-               {
-                  if (item->GetOutputs()[outputIndex].link == output)
-                  {
-                     item->GetOutputs()[outputIndex].linkGraphic->SetHighlight(false, data.link);
-
-                     if (item->GetOutputs()[outputIndex].linkGraphic->GetAlwaysHighlight())
-                     {
-                        if (mScene->GetEditor()->GetReplayInput() == data.link ||
-                           mNodeItem->HasID(mScene->GetEditor()->GetReplayNode().nodeID))
-                        {
-                           SetHighlight(true);
-                        }
-                     }
-                     break;
-                  }
-               }
-            }
-         }
+      if( enable || mAlwaysHighlight )
+      {
+         mLinkGraphicPen = Qt::NoPen;//linkGraphic->pen();
+         linkGraphic->setPen(mHighlightPen);
+      }
+      else
+      {
+         linkGraphic->setPen(mLinkGraphicPen);
       }
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void InputLinkItem::SetHighlight(bool enable)
+   void LinkItem::SetAlwaysHighlight(bool enabled)
    {
-      if (enable)
+      mAlwaysHighlight = enabled;
+
+      if (enabled)
       {
-         setPen(QPen(Qt::yellow, mLineWidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+         SetHighlight(enabled);
+      }
+   }
+
+
+   //////////////////////////////////////////////////////////////////////////
+   void LinkItem::SetHighlightConnector(bool enable, QGraphicsPathItem* connector)
+   {
+      if( enable )
+      {
+         mConnectorPens.insert(std::pair<QGraphicsPathItem*, QPen>(connector, connector->pen()));
+         connector->setPen(mHighlightPen);
       }
       else
       {
-         setPen(QPen(Qt::black, mLineWidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+         std::map<QGraphicsPathItem*, QPen>::iterator found = mConnectorPens.find(connector);
+         if( found != mConnectorPens.end() )
+         {
+            connector->setPen(found->second);
+            mConnectorPens.erase(found);
+         }
       }
+      connector->setZValue(connector->zValue() + (enable ? 10 : -10));
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void LinkItem::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
+   {
+      if (!mouseEvent) return;
+
+      if (mouseEvent->modifiers() == Qt::AltModifier)
+      {
+         mAltModifier = true;
+         return;
+      }
+
+      mAltModifier = false;
+
+      // Begin drawing a link.
+      if (mHighlight) delete mHighlight;
+
+      mHighlight = new QGraphicsPathItem(NULL, mScene);
+      mHighlight->setZValue(40.0f);
+      mHighlight->setPen(QPen(Qt::yellow, LINE_WIDTH + 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+
+      mDrawing = new QGraphicsPathItem(mHighlight, mScene);
+      mDrawing->setPen(QPen(Qt::black, LINE_WIDTH, Qt::DotLine, Qt::RoundCap, Qt::RoundJoin));
+   }
+
+
+   //////////////////////////////////////////////////////////////////////////
+   InputLinkItem::InputLinkItem(NodeItem* nodeItem, int linkIndex, QGraphicsItem* parent, EditorScene* scene)
+      : LinkItem(nodeItem, linkIndex, parent, scene)
+   {
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   //void InputLinkItem::InitHighlight()
+   //{
+   //   // Highlight all connected output links.
+   //   if (mLinkIndex >= 0 && mLinkIndex < (int)mNodeItem->GetInputs().size())
+   //   {
+   //      InputData& data = mNodeItem->GetInputs()[mLinkIndex];
+   //      if (data.link)
+   //      {
+   //         int linkCount = (int)data.link->GetLinks().size();
+   //         for (int linkIndex = 0; linkIndex < linkCount; linkIndex++)
+   //         {
+   //            OutputLink* output = data.link->GetLinks()[linkIndex];
+   //            if (!output) continue;
+
+   //            NodeItem* item = mScene->GetNodeItem(output->GetOwner()->GetID());
+   //            if (!item) continue;
+
+   //            int outputCount = (int)item->GetOutputs().size();
+   //            for (int outputIndex = 0; outputIndex < outputCount; outputIndex++)
+   //            {
+   //               if (item->GetOutputs()[outputIndex].link == output)
+   //               {
+   //                  item->GetOutputs()[outputIndex].linkGraphic->SetHighlight(false, data.link);
+
+   //                  if (item->GetOutputs()[outputIndex].linkGraphic->GetAlwaysHighlight())
+   //                  {
+   //                     if (mScene->GetEditor()->GetReplayInput() == data.link ||
+   //                        mNodeItem->HasID(mScene->GetEditor()->GetReplayNode().nodeID))
+   //                     {
+   //                        SetHighlight(true);
+   //                     }
+   //                  }
+   //                  break;
+   //               }
+   //            }
+   //         }
+   //      }
+   //   }
+   //}
+
+   //////////////////////////////////////////////////////////////////////////
+   LinkItem* InputLinkItem::GetLinkGraphic()
+   {
+      if( !mNodeItem || mLinkIndex > (int)mNodeItem->GetInputs().size()-1 )
+      {
+         return NULL;
+      }
+      return mNodeItem->GetInputs()[mLinkIndex].linkGraphic;
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -251,28 +330,6 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void InputLinkItem::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
-   {
-      if (!mouseEvent) return;
-
-      // If we are holding alt, we are deleting.
-      if (mouseEvent->modifiers() == Qt::AltModifier)
-      {
-         mAltModifier = true;
-         return;
-      }
-
-      mAltModifier = false;
-      // Begin drawing a link.
-      if (mHighlight) delete mHighlight;
-
-      mHighlight = new QGraphicsPathItem(NULL, mScene);
-      mHighlight->setZValue(40.0f);
-      mHighlight->setPen(QPen(Qt::yellow, mLineWidth + 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-
-      mDrawing = new QGraphicsPathItem(mHighlight, mScene);
-      mDrawing->setPen(QPen(Qt::black, mLineWidth, Qt::DashLine, Qt::RoundCap, Qt::RoundJoin));
-   }
 
    //////////////////////////////////////////////////////////////////////////
    void InputLinkItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
@@ -425,106 +482,63 @@ namespace dtDirector
 
    //////////////////////////////////////////////////////////////////////////
    OutputLinkItem::OutputLinkItem(NodeItem* nodeItem, int linkIndex, QGraphicsItem* parent, EditorScene* scene)
-      : QGraphicsPolygonItem(parent, scene)
-      , mScene(scene)
-      , mNodeItem(nodeItem)
-      , mLinkIndex(linkIndex)
-      , mLineWidth(2)
-      , mAltModifier(false)
-      , mAlwaysHighlight(false)
-      , mDrawing(NULL)
-      , mHighlight(NULL)
+      : LinkItem(nodeItem, linkIndex, parent, scene)
    {
-      setAcceptHoverEvents(true);
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void OutputLinkItem::SetAlwaysHighlight(bool enabled)
+   LinkItem* OutputLinkItem::GetLinkGraphic()
    {
-      mAlwaysHighlight = enabled;
-
-      if (enabled)
+      if( !mNodeItem || mLinkIndex > (int)mNodeItem->GetOutputs().size()-1 )
       {
-         SetHighlight(enabled);
+         return NULL;
       }
+      return mNodeItem->GetOutputs()[mLinkIndex].linkGraphic;
    }
 
    //////////////////////////////////////////////////////////////////////////
    void OutputLinkItem::SetHighlight(bool enable, InputLink* inputLink)
    {
-      QPen highlightPen = QPen(Qt::yellow, mLineWidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
-      QPen normalPen = QPen(Qt::black, mLineWidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
-
-      if (enable || mAlwaysHighlight)
-      {
-         setPen(highlightPen);
-      }
-      else
-      {
-         setPen(normalPen);
-      }
+      LinkItem::SetHighlight(enable);
 
       // Highlight all connection splines.
       if (mLinkIndex >= 0 && mLinkIndex < (int)mNodeItem->GetOutputs().size())
       {
          OutputData& data = mNodeItem->GetOutputs()[mLinkIndex];
+
          if (!inputLink)
          {
-            int count = (int)data.linkConnectors.size();
-            for (int index = 0; index < count; index++)
+            for (unsigned int i = 0; i < data.link->GetLinks().size(); i++)
             {
-               QGraphicsPathItem* connector = data.linkConnectors[index];
+               QGraphicsPathItem* connector = (i < data.linkConnectors.size()) ? data.linkConnectors[i] : NULL;
                if (connector)
                {
-                  if (enable)
-                  {
-                     connector->setPen(highlightPen);
-                     connector->setZValue(connector->zValue() + 9);
-                  }
-                  else
-                  {
-                     connector->setPen(normalPen);
-                     connector->setZValue(connector->zValue() - 9);
-                  }
+                  bool forceHighlight = 
+                     mScene->GetEditor()->GetReplayMode() &&
+                     data.link->GetLinks()[i] == mScene->GetEditor()->GetReplayInput();
+
+                  SetHighlightConnector(forceHighlight || enable, connector);
                }
             }
          }
          else
          {
-            int count = (int)data.link->GetLinks().size();
-            for (int index = 0; index < count; index++)
+            for (unsigned int i = 0; i < data.link->GetLinks().size(); i++)
             {
-               if (data.link->GetLinks()[index] == inputLink)
+               if (data.link->GetLinks()[i] != inputLink)
                {
-                  if (index < (int)data.linkConnectors.size())
-                  {
-                     bool forceHighlight = false;
-                     if (mAlwaysHighlight)
-                     {
-                        if (inputLink->GetOwner()->GetID() ==
-                           mScene->GetEditor()->GetReplayNode().nodeID ||
-                           (mScene->GetEditor()->GetReplayInput() == inputLink &&
-                           mScene->GetEditor()->GetReplayOutput() == data.link))
-                        {
-                           forceHighlight = true;
-                        }
-                     }
+                  continue;
+               }
 
-                     QGraphicsPathItem* connector = data.linkConnectors[index];
-                     if (connector)
-                     {
-                        if (forceHighlight || enable)
-                        {
-                           connector->setPen(highlightPen);
-                           connector->setZValue(connector->zValue() + 9);
-                        }
-                        else
-                        {
-                           connector->setPen(normalPen);
-                           connector->setZValue(connector->zValue() - 9);
-                        }
-                     }
-                  }
+               QGraphicsPathItem* connector = (i < data.linkConnectors.size()) ? data.linkConnectors[i] : NULL;
+               if (connector)
+               {
+                  bool forceHighlight = 
+                     mScene->GetEditor()->GetReplayMode() && 
+                     mScene->GetEditor()->GetReplayInput() == inputLink &&
+                     mScene->GetEditor()->GetReplayOutput() == data.link;
+
+                  SetHighlightConnector(forceHighlight || enable, connector);
                }
             }
          }
@@ -676,29 +690,7 @@ namespace dtDirector
       }
    }
 
-   //////////////////////////////////////////////////////////////////////////
-   void OutputLinkItem::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
-   {
-      if (!mouseEvent) return;
 
-      if (mouseEvent->modifiers() == Qt::AltModifier)
-      {
-         mAltModifier = true;
-         return;
-      }
-
-      mAltModifier = false;
-
-      // Begin drawing a link.
-      if (mHighlight) delete mHighlight;
-
-      mHighlight = new QGraphicsPathItem(NULL, mScene);
-      mHighlight->setZValue(40.0f);
-      mHighlight->setPen(QPen(Qt::yellow, mLineWidth + 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-
-      mDrawing = new QGraphicsPathItem(mHighlight, mScene);
-      mDrawing->setPen(QPen(Qt::black, mLineWidth, Qt::DashLine, Qt::RoundCap, Qt::RoundJoin));
-   }
 
    //////////////////////////////////////////////////////////////////////////
    void OutputLinkItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
@@ -851,51 +843,25 @@ namespace dtDirector
 
    //////////////////////////////////////////////////////////////////////////
    ValueLinkItem::ValueLinkItem(NodeItem* nodeItem, int linkIndex, QGraphicsItem* parent, EditorScene* scene)
-      : QGraphicsPolygonItem(parent, scene)
-      , mScene(scene)
-      , mNodeItem(nodeItem)
-      , mLinkIndex(linkIndex)
-      , mLineWidth(2)
-      , mAltModifier(false)
+      : LinkItem(nodeItem, linkIndex, parent, scene)
       , mType(dtDAL::DataType::UNKNOWN_ID)
-      , mDrawing(NULL)
-      , mHighlight(NULL)
    {
-      setAcceptHoverEvents(true);
+      //SetHighlight(false, NULL);
+   }
+   //////////////////////////////////////////////////////////////////////////
+   LinkItem* ValueLinkItem::GetLinkGraphic()
+   {
+      if( !mNodeItem || mLinkIndex > (int)mNodeItem->GetValues().size()-1 )
+      {
+         return NULL;
+      }
+      return mNodeItem->GetValues()[mLinkIndex].linkGraphic;
    }
 
    //////////////////////////////////////////////////////////////////////////
    void ValueLinkItem::SetHighlight(bool enable, Node* valueNode)
    {
-      QPen typePen;
-
-      if (enable)
-      {
-         typePen = QPen(Qt::yellow, mLineWidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
-         setPen(typePen);
-      }
-      else
-      {
-         typePen = QPen(mNodeItem->GetDarkColorForType(mType), mLineWidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
-
-         if (mLinkIndex >= 0 && mLinkIndex < (int)mNodeItem->GetValues().size())
-         {
-            ValueData& data = mNodeItem->GetValues()[mLinkIndex];
-            dtDAL::DataType& type = data.link->GetPropertyType();
-            if (data.link->IsTypeChecking())
-            {
-               data.linkGraphic->setPen(QPen(mNodeItem->GetDarkColorForType(type.GetTypeId()), mLineWidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-            }
-            else
-            {
-               data.linkGraphic->setPen(QPen(Qt::black, mLineWidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-            }
-         }
-         else
-         {
-            setPen(typePen);
-         }
-      }
+      LinkItem::SetHighlight(enable);
 
       // Highlight the connection splines.
       if (mLinkIndex >= 0 && mLinkIndex < (int)mNodeItem->GetValues().size())
@@ -909,10 +875,7 @@ namespace dtDirector
                QGraphicsPathItem* connector = data.linkConnectors[index];
                if (connector)
                {
-                  connector->setPen(typePen);
-
-                  if (enable) connector->setZValue(connector->zValue() + 9);
-                  else        connector->setZValue(connector->zValue() - 9);
+                  SetHighlightConnector(enable, connector);
                }
             }
          }
@@ -928,10 +891,7 @@ namespace dtDirector
                      QGraphicsPathItem* connector = data.linkConnectors[index];
                      if (connector)
                      {
-                        connector->setPen(typePen);
-
-                        if (enable) connector->setZValue(connector->zValue() + 9);
-                        else        connector->setZValue(connector->zValue() - 9);
+                        SetHighlightConnector(enable, connector);
                      }
                   }
                }
@@ -1090,28 +1050,6 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void ValueLinkItem::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
-   {
-      if (!mouseEvent) return;
-
-      if (mouseEvent->modifiers() == Qt::AltModifier)
-      {
-         mAltModifier = true;
-         return;
-      }
-
-      mAltModifier = false;
-
-      // Begin drawing a link.
-      if (mHighlight) delete mHighlight;
-
-      mHighlight = new QGraphicsPathItem(NULL, mScene);
-      mHighlight->setZValue(40.0f);
-      mHighlight->setPen(QPen(Qt::yellow, mLineWidth + 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-
-      mDrawing = new QGraphicsPathItem(mHighlight, mScene);
-      mDrawing->setPen(QPen(mNodeItem->GetDarkColorForType(mType), mLineWidth, Qt::DashLine, Qt::RoundCap, Qt::RoundJoin));
-   }
 
    //////////////////////////////////////////////////////////////////////////
    void ValueLinkItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
@@ -1149,7 +1087,7 @@ namespace dtDirector
                if (item)
                {
                   ValueLink* input = mNodeItem->GetValues()[mLinkIndex].link;
-                  ValueNode* output = dynamic_cast<ValueNode*>(item->mValueItem->GetNode());
+                  ValueNode* output = dynamic_cast<ValueNode*>(item->mNodeItem->GetNode());
 
                   // Create a new connection between these two links.
                   if (input->Connect(output))
@@ -1272,35 +1210,15 @@ namespace dtDirector
 
    //////////////////////////////////////////////////////////////////////////
    ValueNodeLinkItem::ValueNodeLinkItem(ValueItem* valueItem, QGraphicsItem* parent, EditorScene* scene)
-      : QGraphicsPolygonItem(parent, scene)
-      , mScene(scene)
-      , mValueItem(valueItem)
-      , mLineWidth(2)
-      , mAltModifier(false)
+      : LinkItem(valueItem, 0, parent, scene)
       , mType(dtDAL::DataType::UNKNOWN_ID)
-      , mDrawing(NULL)
-      , mHighlight(NULL)
    {
-      setAcceptHoverEvents(true);
-   }
-
-   //////////////////////////////////////////////////////////////////////////
-   void ValueNodeLinkItem::SetHighlight(bool enable)
-   {
-      if (enable)
-      {
-         setPen(QPen(Qt::yellow, mLineWidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-      }
-      else
-      {
-         setPen(QPen(mValueItem->GetDarkColorForType(mType), mLineWidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-      }
    }
 
    //////////////////////////////////////////////////////////////////////////
    void ValueNodeLinkItem::Disconnect(ValueLink* input)
    {
-      ValueNode* output = dynamic_cast<ValueNode*>(mValueItem->GetNode());
+      ValueNode* output = dynamic_cast<ValueNode*>(mNodeItem->GetNode());
       if (!output) return;
 
       if (!input)
@@ -1345,7 +1263,7 @@ namespace dtDirector
       }
       else
       {
-         ValueNode* output = dynamic_cast<ValueNode*>(mValueItem->GetNode());
+         ValueNode* output = dynamic_cast<ValueNode*>(mNodeItem->GetNode());
          if (!output) return;
          int count = (int)output->GetLinks().size();
          for (int index = 0; index < count; index++)
@@ -1366,9 +1284,9 @@ namespace dtDirector
       SetHighlight(true);
 
       // Highlight all connected value links.
-      if (mValueItem && mValueItem->GetNode())
+      if (mNodeItem && mNodeItem->GetNode())
       {
-         ValueNode* valueNode = dynamic_cast<ValueNode*>(mValueItem->GetNode());
+         ValueNode* valueNode = dynamic_cast<ValueNode*>(mNodeItem->GetNode());
          if (valueNode)
          {
             int count = (int)valueNode->GetLinks().size();
@@ -1389,9 +1307,9 @@ namespace dtDirector
                      int linkCount = (int)value.link->GetLinks().size();
                      for (int linkIndex = 0; linkIndex < linkCount; linkIndex++)
                      {
-                        if (value.link->GetLinks()[linkIndex] == mValueItem->GetNode())
+                        if (value.link->GetLinks()[linkIndex] == mNodeItem->GetNode())
                         {
-                           value.linkGraphic->SetHighlight(true, mValueItem->GetNode());
+                           value.linkGraphic->SetHighlight(true, mNodeItem->GetNode());
                            break;
                         }
                      }
@@ -1408,9 +1326,9 @@ namespace dtDirector
       SetHighlight(false);
 
       // Remove the highlight to all connected value links.
-      if (mValueItem && mValueItem->GetNode())
+      if (mNodeItem && mNodeItem->GetNode())
       {
-         ValueNode* valueNode = dynamic_cast<ValueNode*>(mValueItem->GetNode());
+         ValueNode* valueNode = dynamic_cast<ValueNode*>(mNodeItem->GetNode());
          if (valueNode)
          {
             int count = (int)valueNode->GetLinks().size();
@@ -1431,9 +1349,9 @@ namespace dtDirector
                      int linkCount = (int)value.link->GetLinks().size();
                      for (int linkIndex = 0; linkIndex < linkCount; linkIndex++)
                      {
-                        if (value.link->GetLinks()[linkIndex] == mValueItem->GetNode())
+                        if (value.link->GetLinks()[linkIndex] == mNodeItem->GetNode())
                         {
-                           value.linkGraphic->SetHighlight(false, mValueItem->GetNode());
+                           value.linkGraphic->SetHighlight(false, mNodeItem->GetNode());
                            break;
                         }
                      }
@@ -1445,27 +1363,9 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void ValueNodeLinkItem::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
+   LinkItem* ValueNodeLinkItem::GetLinkGraphic()
    {
-      if (!mouseEvent) return;
-
-      if (mouseEvent->modifiers() == Qt::AltModifier)
-      {
-         mAltModifier = true;
-         return;
-      }
-
-      mAltModifier = false;
-
-      // Begin drawing a link.
-      if (mHighlight) delete mHighlight;
-
-      mHighlight = new QGraphicsPathItem(NULL, mScene);
-      mHighlight->setZValue(40.0f);
-      mHighlight->setPen(QPen(Qt::yellow, mLineWidth + 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-
-      mDrawing = new QGraphicsPathItem(mHighlight, mScene);
-      mDrawing->setPen(QPen(mValueItem->GetDarkColorForType(mType), mLineWidth, Qt::DashLine, Qt::RoundCap, Qt::RoundJoin));
+      return static_cast<ValueItem*>(mNodeItem)->GetValueLink();
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -1504,7 +1404,7 @@ namespace dtDirector
                if (item)
                {
                   ValueLink* input = item->mNodeItem->GetValues()[item->mLinkIndex].link;
-                  ValueNode* output = dynamic_cast<ValueNode*>(mValueItem->GetNode());
+                  ValueNode* output = dynamic_cast<ValueNode*>(mNodeItem->GetNode());
 
                   // Create a new connection between these two links.
                   if (input->Connect(output))
@@ -1536,7 +1436,7 @@ namespace dtDirector
       if (!mouseEvent || !mHighlight || !mDrawing) return;
 
       // Update the drawn spline.
-      QPointF start(mValueItem->scenePos());
+      QPointF start(mNodeItem->scenePos());
       QPointF end(mouseEvent->scenePos());
 
       // Modify the positions based on the translation of the background item.
@@ -1544,7 +1444,7 @@ namespace dtDirector
       start += offset;
       end += offset;
 
-      start.setX(start.x() + mValueItem->mNodeWidth/2);
+      start.setX(start.x() + static_cast<ValueItem*>(mNodeItem)->mNodeWidth/2);
       start.setY(start.y() - LINK_LENGTH);
 
       // Find and highlight any value links being hovered over.
@@ -1575,7 +1475,7 @@ namespace dtDirector
          }
       }
 
-      QPainterPath path = mValueItem->CreateConnectionV(end, start);
+      QPainterPath path = mNodeItem->CreateConnectionV(end, start);
       mHighlight->setPath(path);
       mDrawing->setPath(path);
    }
@@ -1583,7 +1483,7 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void ValueNodeLinkItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
    {
-      ValueNode* output = dynamic_cast<ValueNode*>(mValueItem->GetNode());
+      ValueNode* output = dynamic_cast<ValueNode*>(mNodeItem->GetNode());
       if (output)
       {
          QMenu menu;

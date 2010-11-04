@@ -82,8 +82,11 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void InputNode::SetName(const std::string& name)
    {
-      mName = name;
-      mInputs[0].SetName(name);
+      if( !name.empty() )
+      {
+         mName = name;
+         mInputs[0].SetName(name);
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////

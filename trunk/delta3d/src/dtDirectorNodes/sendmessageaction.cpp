@@ -132,7 +132,7 @@ namespace dtDirector
    void SendMessageAction::UpdateLabel()
    {
       std::string messageType = GetString("Message Type");
-      mLabel = GetType().GetName() + " (" + messageType + ")";
+      mLabel = messageType;
    }
 }
 

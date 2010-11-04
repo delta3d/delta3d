@@ -22,7 +22,7 @@
 #include <dtDirectorNodes/playervalue.h>
 
 #include <dtDAL/actoridactorproperty.h>
-
+#include <dtDirector/colors.h>
 #include <dtDirector/director.h>
 
 namespace dtDirector
@@ -31,8 +31,8 @@ namespace dtDirector
    PlayerValue::PlayerValue()
        : ValueNode()
    {
-      mName = "Player";
       AddAuthor("Jeff P. Houde");
+      SetColorRGB(Colors::MANGENTA2);
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
@@ -52,8 +52,8 @@ namespace dtDirector
       ValueNode::BuildPropertyMap();
 
       // Make the name property read only, so it always says "Player".
-      dtDAL::ActorProperty* nameProp = dtDAL::PropertyContainer::GetProperty("Name");
-      if (nameProp) nameProp->SetReadOnly(true);
+      //dtDAL::ActorProperty* nameProp = dtDAL::PropertyContainer::GetProperty("Name");
+      //if (nameProp) nameProp->SetReadOnly(true);
 
       mProperty = new dtDAL::ActorIDActorProperty(
          "Value", "Value",

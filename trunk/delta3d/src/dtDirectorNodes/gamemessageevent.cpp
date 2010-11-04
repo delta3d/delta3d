@@ -113,7 +113,7 @@ namespace dtDirector
       UnRegisterMessages();
       mLastMessageType = GetString("Message Type");
 
-      mLabel = GetType().GetName() + " (" + mLastMessageType + ")";
+      mLabel = mLastMessageType;
 
       dtDirector::MessageGMComponent* component = GetDirector()->GetMessageGMComponent();
       if (component)

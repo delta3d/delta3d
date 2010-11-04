@@ -58,6 +58,7 @@ namespace dtDirector
       dtCore::RefPtr<dtDirector::GroupNode> groupNode = dynamic_cast<dtDirector::GroupNode*>(mNode.get());
       if (groupNode.valid())
       {
+
          mNodeWidth = groupNode->GetSize().x();
          mNodeHeight = groupNode->GetSize().y();
 
@@ -66,15 +67,6 @@ namespace dtDirector
          DrawPolygonBottomFlat();
          DrawPolygonLeftFlat();
 
-         setPen(QPen(mColorDarken, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-
-         QColor color;
-         color.setRedF(groupNode->GetColor().r());
-         color.setBlueF(groupNode->GetColor().b());
-         color.setGreenF(groupNode->GetColor().g());
-         color.setAlphaF(groupNode->GetColor().a());
-
-         setBrush(color);
          setPolygon(mPolygon);
 
          // Draw the locker.
@@ -96,6 +88,9 @@ namespace dtDirector
          mResizer->setPos(mNodeWidth, mNodeHeight);
 
          SetComment(mNode->GetComment());
+
+         SetDefaultPen();
+         setBrush(GetNodeColor());
       }
 
       mLoading = false;

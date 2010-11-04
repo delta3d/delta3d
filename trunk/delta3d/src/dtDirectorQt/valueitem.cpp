@@ -56,7 +56,7 @@ namespace dtDirector
       ValueNode *valueNode = dynamic_cast<ValueNode *>(mNode.get());
       if (valueNode)
       {
-         SetTitle(mNode->GetName());
+         SetTitle(GetNodeTitle());
          SetValueText(valueNode->GetValueLabel());
          DrawTitle();
 
@@ -68,37 +68,8 @@ namespace dtDirector
          int size = mNodeWidth;
          if (size < mNodeHeight) size = mNodeHeight;
 
-         QLinearGradient linearGradient(0,0,0,mNodeHeight);
-         
-         setPen(QPen(mColorDarken, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-
-         if (mNode->IsEnabled())
-         {
-            if (mNode->GetNodeLogging())
-            {
-               setPen(QPen(Qt::green, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-            }
-
-            QColor color = GetColorForType(valueNode->GetPropertyType().GetTypeId());
-            color.setAlphaF(0.80f);
-            linearGradient.setColorAt(0.0, color);
-
-            color = GetDarkColorForType(valueNode->GetPropertyType().GetTypeId());
-            color.setAlphaF(0.80f);
-            linearGradient.setColorAt(1.0, color);
-         }
-         else
-         {
-            QColor color = GetColorForType(valueNode->GetPropertyType().GetTypeId());
-            color.setAlphaF(0.25f);
-            linearGradient.setColorAt(0.0, color);
-
-            color = GetDarkColorForType(valueNode->GetPropertyType().GetTypeId());
-            color.setAlphaF(0.25f);
-            linearGradient.setColorAt(1.0, color);
-         }
-
-         setBrush(linearGradient);
+         // add height of bottom-round
+         mNodeHeight += mNodeWidth / 2;
 
          if (!mValueLink)
          {
@@ -114,11 +85,11 @@ namespace dtDirector
                QPointF(-LINK_SIZE/2, -LINK_LENGTH + LINK_SIZE/2);
 
             mValueLink->setPolygon(poly);
-            mValueLink->setPos(mNodeWidth / 2, -1.0f);
+            mValueLink->setPos(mNodeWidth / 2, 0.0f);
 
             mValueLink->SetPropertyType(valueNode->GetPropertyType().GetTypeId());
-            mValueLink->setPen(QPen(GetDarkColorForType(mValueLink->GetPropertyType()), 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-            mValueLink->setBrush(GetColorForType(mValueLink->GetPropertyType()));
+            mValueLink->setPen(Qt::NoPen);
+            mValueLink->setBrush(GetNodeColor());
          }
 
          setPolygon(mPolygon);
@@ -127,6 +98,9 @@ namespace dtDirector
          setPos(pos.x(), pos.y());
 
          SetComment(mNode->GetComment());
+
+         SetDefaultPen();
+         SetBackgroundGradient(mNodeHeight);
       }
 
       mLoading = false;
@@ -149,9 +123,9 @@ namespace dtDirector
 
       // Create the title background.
       QRectF bounds = mTitle->boundingRect();
-      mTextHeight = bounds.height();
+      mTitleHeight = bounds.height();
 
-      if (mNodeHeight < int(mTextHeight)) mNodeHeight = int(mTextHeight);
+      if (mNodeHeight < int(mTitleHeight)) mNodeHeight = int(mTitleHeight);
 
       // Clamp the bounds to our min and max.
       if (bounds.width() > MAX_NODE_WIDTH - 2) bounds.setWidth(MAX_NODE_WIDTH - 2);
@@ -185,10 +159,10 @@ namespace dtDirector
       QRectF bounds = mValueText->boundingRect();
 
       float y = mNodeHeight - bounds.height();
-      if (y < mTextHeight)
+      if (y < mTitleHeight)
       {
-         mNodeHeight += int(mTextHeight - y);
-         y = mTextHeight;
+         mNodeHeight += int(mTitleHeight - y);
+         y = mTitleHeight;
       }
 
       mValueText->setPos(0, y + 11);

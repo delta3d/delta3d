@@ -31,7 +31,7 @@ namespace dtDirector
    ExternalValueNode::ExternalValueNode()
        : ValueNode()
    {
-      mName = "External Value";
+      mName = "Value";
       AddAuthor("Jeff P. Houde");
    }
 
@@ -68,24 +68,19 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void ExternalValueNode::SetValueName(const std::string& name)
+   void ExternalValueNode::SetName(const std::string& name)
    {
-      //ValueNode::SetValueName(name);
-
-      mLinkName = name;
-      mValues[0].SetLabel(name);
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   const std::string& ExternalValueNode::GetValueName()
-   {
-      return mLinkName;
+      if( !name.empty() )
+      {
+         ValueNode::SetName(name);
+         mValues[0].SetName(name);
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////
    std::string ExternalValueNode::GetValueLabel()
    {
-      return mLinkName;
+      return mValues[0].GetDisplayName();
    }
 
    //////////////////////////////////////////////////////////////////////////

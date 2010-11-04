@@ -142,7 +142,7 @@ namespace dtDirector
          eventName = gameEvent->GetName();
       }
 
-      mLabel = GetType().GetName() + " (" + eventName + ")";
+      mLabel = eventName;
    }
 }
 

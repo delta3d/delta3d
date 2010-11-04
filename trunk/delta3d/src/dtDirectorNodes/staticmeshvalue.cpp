@@ -30,7 +30,6 @@ namespace dtDirector
        : ValueNode()
        , mValue(dtDAL::ResourceDescriptor::NULL_RESOURCE)
    {
-      mName = "Static Mesh";
       AddAuthor("Jeff P. Houde");
    }
 

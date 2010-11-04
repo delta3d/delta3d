@@ -87,6 +87,8 @@ namespace dtDirector
       virtual void BeginMoveEvent();
       virtual void EndMoveEvent();
 
+      virtual QColor GetNodeColor() const;
+
    public slots:
 
       /**
