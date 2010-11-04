@@ -1,0 +1,201 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "windows.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// Danish resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_DAN)
+#ifdef _WIN32
+LANGUAGE LANG_DANISH, SUBLANG_DEFAULT
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+3 TEXTINCLUDE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+#endif    // Danish resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#include ""windows.h""\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+#ifndef IDC_STATIC
+#define IDC_STATIC -1
+#endif
+
+IDD_EXPORTBOX DIALOGEX 0, 0, 375, 294
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_TOOLWINDOW
+CAPTION "OpenSceneGraph Exporter version 0.9.3 prerelease 4"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    PUSHBUTTON      "OK",IDOK,119,273,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,205,273,50,14
+    GROUPBOX        "Export to Scene",IDC_STATIC,122,18,103,149
+    CONTROL         "Materials",IDC_MATERIALS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,127,42,44,10
+    CONTROL         "Textures",IDC_TEXTURES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,127,56,43,10
+    CONTROL         "Hidden Nodes",IDC_HIDDENNODES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,127,98,61,10
+    CONTROL         "Normalize Normals",IDC_NORMALIZE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,239,84,74,10
+    COMBOBOX        IDC_TEXFORMAT,239,207,48,51,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Texture format:",IDC_STATIC,239,196,48,8
+    GROUPBOX        "Geometry State",IDC_STATIC,234,18,128,95
+    CONTROL         "Geometry",IDC_GEOMETRY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,127,28,46,10
+    CONTROL         "Texture Coordinates",IDC_TEXTURECOORDS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,239,28,79,10
+    CONTROL         "Vertex Normals",IDC_VERTEXNORMALS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,239,42,63,10
+    CONTROL         "Vertex Colors",IDC_VERTEXCOLORS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,239,56,57,10
+    CONTROL         "Lights",IDC_LIGHTS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,127,84,35,10
+    CONTROL         "Cameras",IDC_CAMERAS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,127,70,43,10
+    LTEXT           "Texture Compression:",IDC_STATIC,239,224,69,8
+    CONTROL         "Animations",IDC_ANIMATIONS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,127,112,50,10
+    GROUPBOX        "Texture State",IDC_STATIC,234,185,128,69
+    CONTROL         "Set Diffuse color to white",IDC_WHITENTEXMAT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,239,130,95,10
+    LTEXT           "when 100% textured",IDC_STATIC,252,140,65,8
+    GROUPBOX        "Material State",IDC_STATIC,234,118,128,63
+    COMBOBOX        IDC_TEXCOMPRESSION,239,235,103,67,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "Helpers",IDC_HELPERS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,127,126,40,10
+    GROUPBOX        "Output",IDC_STATIC,11,18,103,85
+    CONTROL         "Save Texture Images",IDC_WRITETEXTURE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,19,63,83,10
+    CONTROL         "Save File",IDC_SAVEFILE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,17,28,45,10
+    CONTROL         "Quick View Scene",IDC_QUICKVIEW,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,19,75,75,10
+    CONTROL         "Include Image Data",IDC_INCLUDEIMAGEDATA,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,30,42,78,10
+    LTEXT           "in Binary ive File",IDC_STATIC,42,52,52,8
+    CONTROL         "Set Self Illumination on baked",IDC_WHITENSELFILLUM,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,239,158,109,10
+    LTEXT           "shell materials",IDC_STATIC,252,168,44,8
+    CONTROL         "Particles",IDC_PARTICLES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,127,152,43,10
+    CONTROL         "Use Indices",IDC_USEINDICES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,239,70,53,10
+    GROUPBOX        "Error Reporting",IDC_STATIC,11,190,103,25
+    CONTROL         "Show Error Messages",IDC_SHOWERRMSG,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,17,203,85,10
+    GROUPBOX        "Node Mask",IDC_STATIC,11,219,103,47
+    CONTROL         "Use Default Node Mask",IDC_USENODEMASK,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,17,231,92,10
+    EDITTEXT        IDC_NODEMASKVALUE,27,244,66,13,ES_AUTOHSCROLL
+    GROUPBOX        "Optimize",IDC_STATIC,11,103,103,87
+    CONTROL         "Spatialize Groups",IDC_SPATIALIZEGROUPS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,17,172,71,10
+    CONTROL         "Tri Strip Geometry",IDC_TRISTRIPGEOMETRY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,17,116,72,10
+    CONTROL         "Merge Geometry",IDC_MERGEGEOMETRY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,17,129,68,10
+    CONTROL         "Flatten Static Transform",IDC_FLATTENSTATICTRANSFORM,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,17,144,91,10
+    CONTROL         "Share Duplicate States",IDC_SHAREDUPLICATESTATES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,17,158,89,10
+    CONTROL         "Turn off Lighting",IDC_TURNOFFLIGHTING,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,239,98,67,10
+    GROUPBOX        "Material",IDC_STATIC,121,169,104,97
+    CONTROL         "Export Opacity Maps",IDC_EXPORTOPACITYMAPS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,126,180,81,10
+    CONTROL         "Export Unknown Maps",IDC_EXPUNKNOWNMAPS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,126,193,88,10
+    CONTROL         "Auto alpha blending for",IDC_AUTOALPHATEXTURES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,126,221,89,10
+    CONTROL         "Automatic 2-sided lighting",IDC_AUTO2SIDEDLIGHTING,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,126,241,94,10
+    LTEXT           "Textures with alpha",IDC_STATIC,137,230,62,8
+    LTEXT           "for 2-sided materials",IDC_STATIC,138,251,63,8
+    CONTROL         "Export Self-Illum Maps",IDC_EXPORTSELFILLUMMAPS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,126,207,85,10
+    CONTROL         "Point Helpers",IDC_POINTHELPERS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,127,139,58,10
+    CONTROL         "Reference Geometry",IDC_USEREFERENCES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,19,87,92,10
+END
+
+IDD_ABOUTBOX DIALOGEX 0, 0, 245, 130
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Dialog"
+FONT 8, "MS Sans Serif", 0, 0, 0x0
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,93,103,50,14
+    LTEXT           "OSGExp version 0.9.3pre4",IDC_STATIC,15,15,85,8
+    LTEXT           "An opensource exporter from 3ds max to OpenSceneGraph",IDC_STATIC,15,27,187,8
+    LTEXT           "Copyright 2003, Rune Schmidt Jensen, rune@schmidt-jensen.com",IDC_STATIC,15,39,209,8
+    GROUPBOX        "",IDC_STATIC,7,7,231,81
+    CTEXT           "http://www.openscenegraph.org/index.php?page=OSGExp.OSGExp",IDC_STATIC,14,77,218,8
+    CTEXT           "see:",IDC_STATIC,19,67,207,8
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_EXPORTBOX, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 368
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 287
+    END
+
+    IDD_ABOUTBOX, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 238
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 122
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

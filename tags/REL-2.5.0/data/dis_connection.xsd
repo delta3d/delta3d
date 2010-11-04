@@ -1,0 +1,18 @@
+<?xml version="1.0" ?>
+<xs:schema id="Delta3D_DISConnection" xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+    <xs:complexType name="ConnectionType">
+        <xs:all>
+            <xs:element name="Port" type="xs:unsignedInt" minOccurs="1" maxOccurs="1"></xs:element>
+            <xs:element name="IP" type="xs:string" minOccurs="1" maxOccurs="1"></xs:element>
+            <xs:element name="Plugins" type="xs:string" minOccurs="1" maxOccurs="1"></xs:element>
+            <xs:element name="ExerciseID" type="xs:unsignedInt" minOccurs="1" maxOccurs="1"></xs:element>
+            <xs:element name="SiteID" type="xs:unsignedShort" minOccurs="1" maxOccurs="1"></xs:element>
+            <xs:element name="ApplicationID" type="xs:unsignedShort" minOccurs="1" maxOccurs="1"></xs:element>
+          <xs:element name="MTU" type="xs:unsignedInt" minOccurs="1" maxOccurs="1"></xs:element>
+        </xs:all>
+        <xs:attribute name="Protocol" type="xs:string" />
+    </xs:complexType>
+
+	<xs:element name="Connection" type="ConnectionType">
+	</xs:element>
+</xs:schema>
