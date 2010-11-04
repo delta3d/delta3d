@@ -24,7 +24,7 @@ namespace dtActors
    * This is the base class used for all geometry nodes inside a point.
    * This should be overloaded by specific geometry classes.
    */
-   class LinkedPointsGeomDataBase : public osg::Referenced
+   class DT_PLUGIN_EXPORT LinkedPointsGeomDataBase : public osg::Referenced
    {
    public:
       LinkedPointsGeomDataBase(LinkedPointsGeomNodeBase* parent): mParent(parent) {}
@@ -90,7 +90,7 @@ namespace dtActors
    * to represent the geometry of the point.
    * This should be overloaded by specific geometry classes.
    */
-   class LinkedPointsGeomNodeBase : public dtCore::Transformable
+   class DT_PLUGIN_EXPORT LinkedPointsGeomNodeBase : public dtCore::Transformable
    {
    public:
 
