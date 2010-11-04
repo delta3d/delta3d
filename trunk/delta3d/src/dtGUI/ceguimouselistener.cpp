@@ -201,7 +201,7 @@ void CEGUIMouseListener::UpdateWindowSize()
 {
 #if CEGUI_VERSION_MAJOR >= 0 && CEGUI_VERSION_MINOR >= 7
    CEGUI::Size size = CEGUI::System::getSingleton().getRenderer()->getDisplaySize();
-   SetWindowSize(size.d_width, size.d_height);
+   SetWindowSize(unsigned(size.d_width), unsigned(size.d_height));
 #else
    SetWindowSize( CEGUI::System::getSingleton().getRenderer()->getWidth(), CEGUI::System::getSingleton().getRenderer()->getHeight() );
 #endif
@@ -215,7 +215,7 @@ void CEGUIMouseListener::MakeCurrent()
    {
       m_pGUI->MakeCurrent();
    }
-#endif;
+#endif
 }
 
 ////////////////////////////////////////////////////////////////////////////////
