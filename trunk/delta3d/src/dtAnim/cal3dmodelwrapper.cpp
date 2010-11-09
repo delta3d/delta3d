@@ -648,7 +648,7 @@ namespace dtAnim
    }
    
    /////////////////////////////////////////////////////////////////////////////
-   int Cal3DModelWrapper::GetMeshCount()
+   int Cal3DModelWrapper::GetMeshCount() const
    {
       return mRenderer->getMeshCount();
    }
