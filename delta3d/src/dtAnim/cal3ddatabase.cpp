@@ -23,11 +23,14 @@
 #include <dtAnim/cal3dmodelwrapper.h>
 #include <dtAnim/animnodebuilder.h>
 #include <dtUtil/log.h>
+#include <dtUtil/xerceswriter.h>
 
 #include <osgDB/FileNameUtils>
 #include <osg/Texture2D>
 
 #include <cal3d/model.h>
+#include <cal3d/skeleton.h>
+#include <cal3d/coreskeleton.h>
 
 namespace dtAnim
 {
@@ -147,6 +150,138 @@ namespace dtAnim
          dtUtil::MakeFunctor(&Cal3DDatabase::OnAsynchronousLoadCompleted, this);
       
       mFileLoader->LoadAsynchronously(file, loadCallback);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool Cal3DDatabase::Save(const std::string& file, const Cal3DModelWrapper& wrapper)
+   {
+#if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300
+      std::string filename = osgDB::convertFileNameToNativeStyle(file);
+
+      dtCore::RefPtr<dtUtil::XercesWriter> writer = new dtUtil::XercesWriter();
+      writer->CreateDocument("character");
+
+      XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc = writer->GetDocument();
+
+      XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* root = doc->getDocumentElement();
+
+      // Root
+      {
+         std::string characterName = wrapper.GetCalModel()->getCoreModel()->getName();
+
+         XMLCh* name = XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode("name");
+         XMLCh* value = XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(characterName.c_str());
+         root->setAttribute(name, value);
+         XERCES_CPP_NAMESPACE_QUALIFIER XMLString::release(&name);
+         XERCES_CPP_NAMESPACE_QUALIFIER XMLString::release(&value);
+      }
+
+      // Skeleton
+      {
+         XMLCh* groupName = XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode("skeleton");
+         XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* groupElement = doc->createElement(groupName);
+         XERCES_CPP_NAMESPACE_QUALIFIER XMLString::release(&groupName);
+
+         std::string skeletonName = wrapper.GetCalModel()->getSkeleton()->getCoreSkeleton()->getName();
+
+         XMLCh* name = XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode("fileName");
+         XMLCh* value = XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(skeletonName.c_str());
+         groupElement->setAttribute(name, value);
+         XERCES_CPP_NAMESPACE_QUALIFIER XMLString::release(&name);
+         XERCES_CPP_NAMESPACE_QUALIFIER XMLString::release(&value);
+
+         root->appendChild(groupElement);
+      }
+
+      // Meshes
+      {
+         int count = wrapper.GetMeshCount();
+         for (int index = 0; index < count; ++index)
+         {
+            XMLCh* groupName = XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode("mesh");
+            XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* groupElement = doc->createElement(groupName);
+            XERCES_CPP_NAMESPACE_QUALIFIER XMLString::release(&groupName);
+
+            std::string meshName = wrapper.GetCoreMeshName(index);
+
+            XMLCh* name = XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode("fileName");
+            XMLCh* value = XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(meshName.c_str());
+            groupElement->setAttribute(name, value);
+            XERCES_CPP_NAMESPACE_QUALIFIER XMLString::release(&name);
+            XERCES_CPP_NAMESPACE_QUALIFIER XMLString::release(&value);
+
+            root->appendChild(groupElement);
+         }
+      }
+
+      // Materials
+      {
+         int count = wrapper.GetCoreMaterialCount();
+         for (int index = 0; index < count; ++index)
+         {
+            XMLCh* groupName = XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode("material");
+            XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* groupElement = doc->createElement(groupName);
+            XERCES_CPP_NAMESPACE_QUALIFIER XMLString::release(&groupName);
+
+            std::string materialName = wrapper.GetCoreMaterialName(index);
+
+            XMLCh* name = XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode("fileName");
+            XMLCh* value = XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(materialName.c_str());
+            groupElement->setAttribute(name, value);
+            XERCES_CPP_NAMESPACE_QUALIFIER XMLString::release(&name);
+            XERCES_CPP_NAMESPACE_QUALIFIER XMLString::release(&value);
+
+            root->appendChild(groupElement);
+         }
+      }
+
+      // Bone Animations
+      {
+         int count = wrapper.GetCoreAnimationCount();
+         for (int index = 0; index < count; ++index)
+         {
+            XMLCh* groupName = XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode("animation");
+            XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* groupElement = doc->createElement(groupName);
+            XERCES_CPP_NAMESPACE_QUALIFIER XMLString::release(&groupName);
+
+            std::string animName = wrapper.GetCoreAnimationName(index);
+
+            XMLCh* name = XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode("fileName");
+            XMLCh* value = XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(animName.c_str());
+            groupElement->setAttribute(name, value);
+            XERCES_CPP_NAMESPACE_QUALIFIER XMLString::release(&name);
+            XERCES_CPP_NAMESPACE_QUALIFIER XMLString::release(&value);
+
+            root->appendChild(groupElement);
+         }
+      }
+
+      // Morph Animations
+      {
+         int count = wrapper.GetCalModel()->getMorphTargetMixer()->getMorphTargetCount();
+         for (int index = 0; index < count; ++index)
+         {
+            XMLCh* groupName = XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode("morph");
+            XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* groupElement = doc->createElement(groupName);
+            XERCES_CPP_NAMESPACE_QUALIFIER XMLString::release(&groupName);
+
+            std::string morphName = wrapper.GetCalModel()->getMorphTargetMixer()->getMorphName(index);
+
+            XMLCh* name = XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode("fileName");
+            XMLCh* value = XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(morphName.c_str());
+            groupElement->setAttribute(name, value);
+            XERCES_CPP_NAMESPACE_QUALIFIER XMLString::release(&name);
+            XERCES_CPP_NAMESPACE_QUALIFIER XMLString::release(&value);
+
+            root->appendChild(groupElement);
+         }
+      }
+
+      writer->WriteFile(filename);
+      return true;
+#else
+      return false;
+#endif
    }
 
    /////////////////////////////////////////////////////////////////////////////

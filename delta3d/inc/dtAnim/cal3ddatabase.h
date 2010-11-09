@@ -53,6 +53,9 @@ namespace dtAnim
 
          void LoadAsynchronously(const std::string &filename);
 
+         ///Save an animated entity definition file.
+         bool Save(const std::string &filename, const Cal3DModelWrapper& wrapper);
+
          ///Get the model data associated with this model wrapper
          const Cal3DModelData* GetModelData(const Cal3DModelWrapper& wrapper) const;
 

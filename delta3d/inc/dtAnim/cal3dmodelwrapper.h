@@ -145,7 +145,7 @@ namespace dtAnim
       int GetVertexCount();
       int GetFaceCount();
       int GetMapCount();
-      int GetMeshCount();
+      int GetMeshCount() const;
       int GetSubmeshCount(int submeshID);
 
       /************************************************************************/

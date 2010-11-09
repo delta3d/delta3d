@@ -69,6 +69,7 @@ namespace dtAnim
          if (!skelFile.empty())
          {
             coreModel->loadCoreSkeleton(dtUtil::FindFileInPathList(path + handler.mSkeletonFilename));
+            coreModel->getCoreSkeleton()->setName(handler.mSkeletonFilename);
          }
          else
          {
