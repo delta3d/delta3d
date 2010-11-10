@@ -69,7 +69,9 @@ namespace dtAnim
          if (!skelFile.empty())
          {
             coreModel->loadCoreSkeleton(dtUtil::FindFileInPathList(path + handler.mSkeletonFilename));
+#if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300
             coreModel->getCoreSkeleton()->setName(handler.mSkeletonFilename);
+#endif
          }
          else
          {
