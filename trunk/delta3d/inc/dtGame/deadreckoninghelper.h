@@ -294,6 +294,13 @@ namespace dtGame
          virtual void GetPartialUpdateProperties(std::vector<dtUtil::RefString>& propNamesToFill);
 
          /**
+          * This function updates the elapsedTimeSinceUpdate for both the rotation and translation. 
+          * @param simTimeDelta the amount of time to increment (sim time elapsed this frame)
+          * @param curSimulationTime the simulationTime from the TickMessage (or from asking the GM). 
+          */
+         virtual void IncrementTimeSinceUpdate(float simTimeDelta, float curSimulationTime);
+
+         /**
           * This function is responsible for manipulating the internal data types to do the actual
           * dead reckoning.  To implement another dead reckoning algorithm, overload this function.
           * @param gameActor the actor to DR
