@@ -30,8 +30,9 @@ LINK_WITH_VARIABLES(${LIB_NAME}
 
 TARGET_LINK_LIBRARIES( ${LIB_NAME}
                        ${DTDAL_LIBRARY}
-					   ${DTDIRECTOR_LIBRARY}
-					   ${DTQT_LIBRARY}
+                       ${DTDIRECTOR_LIBRARY}
+                       dtDirectorNodes # need a macro for this.
+                       ${DTQT_LIBRARY}
                      )
 
 SET_TARGET_PROPERTIES(${LIB_NAME}
