@@ -680,6 +680,12 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void Viewport::trapMouseCursor()
    {
+      // SetPos seems to recurse on mac os, so we drop out early if mMouseTrapped is true.
+      if (mIsMouseTrapped)
+      {
+         return;
+      }
+
       if (this->GetQGLWidget() == NULL)
       {
          return;
@@ -700,14 +706,11 @@ namespace dtEditQt
          mCacheMouseLocation = false;
       }
 
-      // I disabled this because the mouse move event does this whenever the mouse moves.
-      // Commenting this out helps mouse movement work better in Mac OS X.
-
+      mIsMouseTrapped = true;
       // Put the mouse cursor in the center of the viewport.
       QPoint center((this->GetQGLWidget()->x()+this->GetQGLWidget()->width())/2, (this->GetQGLWidget()->y()+this->GetQGLWidget()->height())/2);
       mLastMouseUpdateLocation = center;
       QCursor::setPos(this->GetQGLWidget()->mapToGlobal(center));
-      mIsMouseTrapped = true;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
