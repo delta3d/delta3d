@@ -143,14 +143,15 @@ namespace dtUtil
 #ifdef DELTA_WIN32
       std::string result;
       size_t bufferSize = 512U;
-      char* buffer = new char[bufferSize];
+      LPTSTR buffer;
+      buffer = (LPTSTR) malloc(bufferSize*sizeof(TCHAR));
+
       size_t sizeOut = GetEnvironmentVariable(env.c_str(), buffer, bufferSize);
       if (sizeOut > bufferSize)
       {
-         delete[] buffer;
          bufferSize = sizeOut + 1;
-         buffer = new char[bufferSize];
-         sizeOut = GetEnvironmentVariable(env.c_str(), buffer, 512U);
+         buffer = (LPTSTR) realloc(buffer, bufferSize*sizeof(TCHAR));       
+         sizeOut = GetEnvironmentVariable(env.c_str(), buffer, bufferSize);
       }
 
       if (sizeOut > 0U && sizeOut < bufferSize)
