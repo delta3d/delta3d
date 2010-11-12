@@ -196,6 +196,12 @@ namespace dtAudio
       /// returns the OpenAL context the AudioManager is using
       ALCcontext* GetContext() { return mContext; }
 
+      /// Pause all sounds.
+      void PauseSounds();
+
+      /// UnPause all sounds.
+      void UnPauseSounds();
+
       /** This is an advanced operation that normally isn't necessary! Typically
        *  the default device and context are sufficient.  If you do use this
        *  method make sure you brush up on your OpenAL first!
@@ -364,8 +370,8 @@ namespace dtAudio
 
       SND_LST             mSoundList;
 
-      SoundObjectStateMap mSoundStateMap; ///Maintains state of each Sound object
-                                          ///prior to a system-wide pause message
+      //SoundObjectStateMap mSoundStateMap; ///Maintains state of each Sound object
+      //                                    ///prior to a system-wide pause message
 
       ALCdevice*          mDevice;
       ALCcontext*         mContext;

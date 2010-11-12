@@ -272,58 +272,12 @@ void AudioManager::OnMessage(MessageData* data)
 
       if (data->message == dtCore::System::MESSAGE_PAUSE_START)
       {
-         mSoundStateMap.clear();
-
-         // Pause all sounds that are currently playing, and
-         // save their previous state.
-         for (SND_LST::iterator iter = mSoundList.begin(); iter != mSoundList.end(); ++iter)
-         {
-            Sound* sob = iter->get();
-
-            if (sob == NULL)
-            {
-               continue;
-            }
-
-            if (sob->IsPaused())
-            {
-               mSoundStateMap.insert(SoundObjectStateMap::value_type(sob, PAUSED));
-            }
-            else if (sob->IsPlaying())
-            {
-               mSoundStateMap.insert(SoundObjectStateMap::value_type(sob, PLAYING));
-            }
-            else if (sob->IsStopped())
-            {
-               mSoundStateMap.insert(SoundObjectStateMap::value_type(sob, STOPPED));
-            }
-
-            sob->PauseImmediately();
-         }
+         PauseSounds();
       }
 
       if (data->message == dtCore::System::MESSAGE_PAUSE_END)
       {
-         // Restore all paused sounds to their previous state.
-         for (SND_LST::iterator iter = mSoundList.begin(); iter != mSoundList.end(); ++iter)
-         {
-            Sound* sob = iter->get();
-
-            switch (mSoundStateMap[sob])
-            {
-            case PAUSED:
-               //No need to do anything.
-               break;
-            case PLAYING:
-               sob->Play();
-               break;
-            case STOPPED:
-               sob->Stop();
-               break;
-            default:
-               break;
-            }
-         }
+         UnPauseSounds();
       }
    }
    else
@@ -340,6 +294,69 @@ void AudioManager::OnMessage(MessageData* data)
       }
    }
 }
+
+////////////////////////////////////////////////////////////////////////////////
+void AudioManager::PauseSounds()
+{
+   //mSoundStateMap.clear();
+
+   // Pause all sounds that are currently playing, and
+   // save their previous state.
+   for (SND_LST::iterator iter = mSoundList.begin(); iter != mSoundList.end(); ++iter)
+   {
+      Sound* sob = iter->get();
+      if (sob == NULL)
+      {
+         continue;
+      }
+
+      //if (sob->IsPaused())
+      //{
+      //   mSoundStateMap.insert(SoundObjectStateMap::value_type(sob, PAUSED));
+      //}
+      //else if (sob->IsPlaying())
+      //{
+      //   mSoundStateMap.insert(SoundObjectStateMap::value_type(sob, PLAYING));
+      //}
+      //else if (sob->IsStopped())
+      //{
+      //   mSoundStateMap.insert(SoundObjectStateMap::value_type(sob, STOPPED));
+      //}
+
+      sob->PauseImmediately();
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void AudioManager::UnPauseSounds()
+{
+   // Restore all paused sounds to their previous state.
+   for (SND_LST::iterator iter = mSoundList.begin(); iter != mSoundList.end(); ++iter)
+   {
+      Sound* sob = iter->get();
+      if (sob == NULL)
+      {
+         continue;
+      }
+
+      //switch (mSoundStateMap[sob])
+      //{
+      //case PAUSED:
+      //   //No need to do anything.
+      //   break;
+      //case PLAYING:
+      //   break;
+      //case STOPPED:
+      //   sob->Stop();
+      //   break;
+      //default:
+      //   break;
+      //}
+
+      sob->PauseImmediately();
+   }
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 Sound* AudioManager::NewSound()
