@@ -601,6 +601,37 @@ namespace dtGame
    }
 
    /////////////////////////////////////////////////////////////////////////////////
+   void DeadReckoningHelper::IncrementTimeSinceUpdate(float simTimeDelta, float curSimulationTime)
+   {
+      //Pretend we were updated on the last tick so we have time delta to work with
+      //when calculating movement.
+      if (IsTranslationUpdated())
+      {
+         SetLastTranslationUpdatedTime(curSimulationTime - simTimeDelta);
+         SetTranslationElapsedTimeSinceUpdate(0.0);
+      }
+
+      if (IsRotationUpdated() )
+      {
+         SetLastRotationUpdatedTime(curSimulationTime - simTimeDelta );
+         SetRotationElapsedTimeSinceUpdate(0.0);
+         SetRotationResolved( false );
+      }
+
+      //We want to do this every time. make sure it's greater than 0 in case of time being set.
+
+      // Translation
+      float transElapsedTime = GetTranslationElapsedTimeSinceUpdate() + simTimeDelta;
+      if (transElapsedTime < 0.0) transElapsedTime = 0.0f;
+      SetTranslationElapsedTimeSinceUpdate(transElapsedTime);
+
+      // Rotation
+      float rotElapsedTime = GetRotationElapsedTimeSinceUpdate() + simTimeDelta;
+      if (rotElapsedTime < 0.0) rotElapsedTime = 0.0f;
+      SetRotationElapsedTimeSinceUpdate(rotElapsedTime);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////
    bool DeadReckoningHelper::DoDR(GameActor& gameActor, dtCore::Transform& xform,
          dtUtil::Log* pLogger, BaseGroundClamper::GroundClampRangeType*& gcType)
    {

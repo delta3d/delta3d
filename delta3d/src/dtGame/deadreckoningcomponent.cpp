@@ -263,34 +263,7 @@ namespace dtGame
 
          // Get the current time delta.
          float simTimeDelta = tickMessage.GetDeltaSimTime();
-
-         if (helper.IsUpdated())
-         {
-            //Pretend we were updated on the last tick so we have time delta to work with
-            //when calculating movement.
-            if ( helper.IsTranslationUpdated() )
-            {
-               helper.SetLastTranslationUpdatedTime(tickMessage.GetSimulationTime() - simTimeDelta);
-               //helper.SetLastTranslationUpdatedTime(helper.mLastTimeTag);
-               helper.SetTranslationElapsedTimeSinceUpdate(0.0);
-            }
-
-            if ( helper.IsRotationUpdated() )
-            {
-               helper.SetLastRotationUpdatedTime(tickMessage.GetSimulationTime() - simTimeDelta );
-               //helper.SetLastRotationUpdatedTime(helper.mLastTimeTag);
-               helper.SetRotationElapsedTimeSinceUpdate(0.0);
-               helper.SetRotationResolved( false );
-            }
-         }
-
-         //We want to do this every time. make sure it's greater than 0 in case of time being set.
-         float transElapsedTime = helper.GetTranslationElapsedTimeSinceUpdate() + simTimeDelta;
-         if (transElapsedTime < 0.0) transElapsedTime = 0.0f;
-         helper.SetTranslationElapsedTimeSinceUpdate(transElapsedTime);
-         float rotElapsedTime = helper.GetRotationElapsedTimeSinceUpdate() + simTimeDelta;
-         if (rotElapsedTime < 0.0) rotElapsedTime = 0.0f;
-         helper.SetRotationElapsedTimeSinceUpdate(rotElapsedTime);
+         helper.IncrementTimeSinceUpdate(simTimeDelta, tickMessage.GetSimulationTime());
 
 
          // Actual dead reckoning code moved into the helper..
