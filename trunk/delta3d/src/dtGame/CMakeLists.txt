@@ -21,6 +21,7 @@ SET(LIB_PUBLIC_HEADERS
     ${HEADER_PATH}/defaultgroundclamper.h
     ${HEADER_PATH}/defaultmessageprocessor.h
     ${HEADER_PATH}/defaultnetworkpublishingcomponent.h
+    ${HEADER_PATH}/drpublishingactcomp.h
     ${HEADER_PATH}/dtgame.h
     ${HEADER_PATH}/environmentactor.h
     ${HEADER_PATH}/exceptionenum.h
@@ -69,6 +70,7 @@ SET(LIB_SOURCES
     ${SOURCE_PATH}/defaultgroundclamper.cpp
     ${SOURCE_PATH}/defaultmessageprocessor.cpp
     ${SOURCE_PATH}/defaultnetworkpublishingcomponent.cpp
+    ${SOURCE_PATH}/drpublishingactcomp.cpp
     ${SOURCE_PATH}/environmentactor.cpp
     ${SOURCE_PATH}/exceptionenum.cpp
     ${SOURCE_PATH}/gameactor.cpp
