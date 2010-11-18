@@ -45,6 +45,17 @@ namespace dtHLAGM
    const dtUtil::RefString EnvironmentProcessRecord::PARAM_RADIUS("Radius");
    const dtUtil::RefString EnvironmentProcessRecord::PARAM_RADIUS_RATE("RadiusRate");
 
+   const dtUtil::RefString EnvironmentProcessRecord::PARAM_AGENT_ENUM("AgentEnum");
+   const dtUtil::RefString EnvironmentProcessRecord::PARAM_GEOM_INDEX("GeomIndex");
+   const dtUtil::RefString EnvironmentProcessRecord::PARAM_TOTAL_MASS("TotalMass");
+   const dtUtil::RefString EnvironmentProcessRecord::PARAM_MIN_SIZE("MinUnitSize");
+   const dtUtil::RefString EnvironmentProcessRecord::PARAM_MAX_SIZE("MaxUnitSize");
+   const dtUtil::RefString EnvironmentProcessRecord::PARAM_AVG_MASS_PER_UNIT("AverageMassPerUnit");
+   const dtUtil::RefString EnvironmentProcessRecord::PARAM_PURITY("Purity");
+   const dtUtil::RefString EnvironmentProcessRecord::PARAM_RADIOLOGCIAL_ACTIVITY("RadiologicalActivity");
+   const dtUtil::RefString EnvironmentProcessRecord::PARAM_VIABILITY("Viability");
+   const dtUtil::RefString EnvironmentProcessRecord::PARAM_PROBABILITY("Probability");
+
    /////////////////////////////////////////////////////////
    EnvironmentProcessRecord::EnvironmentProcessRecord(const std::string& recName)
    : mParameterData(new dtDAL::NamedGroupParameter(recName))
@@ -93,8 +104,10 @@ namespace dtHLAGM
       if (ds.GetBufferCapacity() - ds.GetWritePosition() > GetEncodedSize())
       {
          unsigned int headerStartWritePos = ds.GetWritePosition();
-         ds << GetIndex();
-         ds.WriteBytes(0, 4U);
+         // Changed to char from int.
+         ds << (unsigned char)(GetIndex());
+         // No padding
+         //ds.WriteBytes(0, 4U);
 
          // Need to save the read pos so I can skip to a 64 bit boundary after reading the variant data.
          //unsigned int savedReadPos = ds.GetReadPosition();
@@ -103,19 +116,19 @@ namespace dtHLAGM
          // Should the length include 4 bytes of the length variable?
          unsigned int savedWritePos = ds.GetWritePosition();
          // This is the size in bytes. write zeros now, then well, rewind and write the correct value.
-         ds.WriteBytes(0, 4U);
+         ds.WriteBytes(0, 2U); // Changed from 4U in the fom
 
          // TODO figure out if we have enough length left.
          EncodeVariant(ds, coord);
-         // pad to 64 bit.
-         ds.WriteBytes(0, (8U - (ds.GetWritePosition() % 8U)) % 8U);
+         // pad to 64 bit.  -- seems not to actually do this, at least not in relation to the header.
+         // ds.WriteBytes(0, (8U - (ds.GetWritePosition() % 8U)) % 8U);
 
          unsigned int endWritePos = ds.GetWritePosition();
          unsigned int length = endWritePos - savedWritePos;
          // move back to the length position that was saved.
          ds.Seekp(savedWritePos, dtUtil::DataStream::SeekTypeEnum::SET);
          // write the length that was actually written
-         ds << length;
+         ds << (unsigned short)(length); // changed from the unsigned int.
          ds.Seekp(endWritePos, dtUtil::DataStream::SeekTypeEnum::SET);
          result = endWritePos - headerStartWritePos;
       }
@@ -159,11 +172,12 @@ namespace dtHLAGM
          case EllipsoidRecord1Type:
          case EllipsoidRecord2Type:
          case GaussianPuffRecordType:
+         case GaussianPuffRecordEXType:
          {
             osg::Vec3d loc = coord.ConvertToRemoteTranslation(mParameterData->GetValue(PARAM_LOCATION, zeroVecd));
             ds << loc;
 
-            if (typeCode == GaussianPuffRecordType)
+            if (typeCode == GaussianPuffRecordType || typeCode == GaussianPuffRecordEXType)
             {
                loc = coord.ConvertToRemoteTranslation(mParameterData->GetValue(PARAM_ORIGINATION_LOCATION, zeroVecd));
                ds << loc;
@@ -184,14 +198,76 @@ namespace dtHLAGM
                ds << coord.GetOriginRotationMatrix().preMult(mParameterData->GetValue(PARAM_VELOCITY, zeroVecf));
                ds << mParameterData->GetValue(PARAM_ANGULAR_VELOCITY, zeroVecf);
 
-               if (typeCode == GaussianPuffRecordType)
+               if (typeCode == GaussianPuffRecordType || typeCode == GaussianPuffRecordEXType)
                {
                   ds << mParameterData->GetValue(PARAM_CENTROID_HEIGHT, float(1.0f));
+
+                  if (typeCode == GaussianPuffRecordEXType)
+                  {
+                     // Unknown extra floats in this version of a gaussian puff.
+                     ds << osg::Vec3f(0.0f, 0.0f, 0.0f);
+                     ds << 0.0f;
+                  }
                }
                else
                {
                   ds.Seekp(4U, dtUtil::DataStream::SeekTypeEnum::CURRENT);
                }
+            }
+            handled = true;
+            break;
+         }
+         case BiologicalStateType:
+         case ChemLiquidStateType:
+         case RadiologicalStateType:
+         case ChemVaporStateType:
+         {
+            ds << mParameterData->GetValue(PARAM_AGENT_ENUM, (unsigned short)(0));
+            ds << (unsigned short) (mParameterData->GetValue(PARAM_GEOM_INDEX, unsigned(0)));
+            ds << mParameterData->GetValue(PARAM_TOTAL_MASS, float(0.0f));
+
+            if (typeCode != ChemVaporStateType)
+            {
+               ds << mParameterData->GetValue(PARAM_MIN_SIZE, float(0.0f));
+               ds << mParameterData->GetValue(PARAM_MAX_SIZE, float(0.0f));
+               ds << mParameterData->GetValue(PARAM_AVG_MASS_PER_UNIT, float(0.0f));
+
+               if (typeCode != RadiologicalStateType)
+               {
+                  // Only clamp for purity because it's a range of 0 - 1.
+                  float purity = mParameterData->GetValue(PARAM_PURITY, float(0.0f));
+                  dtUtil::Clamp(purity, 0.0f, 1.0f);
+                  ds << purity;
+
+                  if (typeCode == ChemLiquidStateType)
+                  {
+                     ds.WriteBytes(0, 4U);
+                  }
+                  else
+                  {
+                     float viability  = mParameterData->GetValue(PARAM_VIABILITY, float(0.0f));
+                     dtUtil::Clamp(viability, 0.0f, 1.0f);
+                     ds << viability;
+                  }
+               }
+               else
+               {
+                  // No clamp on purity when it's radiological because the value is in Curies
+                  ds << mParameterData->GetValue(PARAM_RADIOLOGCIAL_ACTIVITY, float(0.0f));
+               }
+            }
+            else
+            {
+               ds.WriteBytes(0, 4U);
+            }
+
+            float probability = mParameterData->GetValue(PARAM_PROBABILITY, float(0.0f));
+            dtUtil::Clamp(probability, 0.0f, 1.0f);
+            ds << probability;
+
+            if (typeCode == RadiologicalStateType)
+            {
+               ds.WriteBytes(0, 4U);
             }
             handled = true;
             break;
@@ -224,21 +300,29 @@ namespace dtHLAGM
       bool result = false;
       if (ds.GetRemainingReadSize() > GetEncodedSize())
       {
-         unsigned int temp;
-         ds >> temp;
-         SetIndex(temp);
-         ds.Seekg(4U, dtUtil::DataStream::SeekTypeEnum::CURRENT);
+         unsigned char idxChar = 0;
+         ds >> idxChar;
+         SetIndex(unsigned(idxChar));
+         // ds.Seekg(4U, dtUtil::DataStream::SeekTypeEnum::CURRENT);
          // Need to save the read pos so I can skip to a 64 bit boundary after reading the variant data.
-         //unsigned int savedReadPos = ds.GetReadPosition();
+         // unsigned int savedReadPos = ds.GetReadPosition();
 
-         ds >> temp;
-         SetTypeCode(temp);
-         unsigned int alternativeLengthInBytes = 0U;
+         unsigned int typeCode = 0;
+         ds >> typeCode;
+         SetTypeCode(typeCode);
+         unsigned short alternativeLengthInBytes = 0U;
          ds >> alternativeLengthInBytes;
-         if (ds.GetRemainingReadSize() > alternativeLengthInBytes)
+         if (ds.GetRemainingReadSize() >= alternativeLengthInBytes)
          {
-            result = DecodeVariant(ds, alternativeLengthInBytes, coord);
-            ds.Seekg((8U - (ds.GetReadPosition() % 8U)) % 8U,  dtUtil::DataStream::SeekTypeEnum::CURRENT); // goto 64 bit boundary
+            result = DecodeVariant(ds, unsigned(alternativeLengthInBytes), coord);
+            // Seems not to do this.
+            //ds.Seekg((8U - (ds.GetReadPosition() % 8U)) % 8U,  dtUtil::DataStream::SeekTypeEnum::CURRENT); // goto 64 bit boundary
+         }
+         else
+         {
+            dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
+                     "Not enough data left to decode environment process record variant expected \"%u\" actual \"%u\"",
+                     unsigned(alternativeLengthInBytes), ds.GetRemainingReadSize());
          }
          // Not sure what to if there is not enough data size left, just nothing is what it does now.
       }
@@ -291,6 +375,7 @@ namespace dtHLAGM
          case EllipsoidRecord1Type:
          case EllipsoidRecord2Type:
          case GaussianPuffRecordType:
+         case GaussianPuffRecordEXType:
          {
             osg::Vec3d worldCoordinate;
             osg::Vec3f value;
@@ -299,7 +384,7 @@ namespace dtHLAGM
             worldCoordinate = coord.ConvertToLocalTranslation(worldCoordinate);
             mParameterData->AddValue(PARAM_LOCATION, worldCoordinate);
 
-            if (typeCode == GaussianPuffRecordType)
+            if (typeCode == GaussianPuffRecordType || typeCode == GaussianPuffRecordEXType)
             {
                ds >> worldCoordinate;
                worldCoordinate = coord.ConvertToLocalTranslation(worldCoordinate);
@@ -329,16 +414,85 @@ namespace dtHLAGM
                mParameterData->AddValue(PARAM_ANGULAR_VELOCITY, value);
 
 
-               if (typeCode == GaussianPuffRecordType)
+               if (typeCode == GaussianPuffRecordType || typeCode == GaussianPuffRecordEXType)
                {
                   float centroidHeight = 0.0f;
                   ds >> centroidHeight;
                   mParameterData->AddValue(PARAM_CENTROID_HEIGHT, centroidHeight);
+                  if (typeCode == GaussianPuffRecordEXType)
+                  {
+                     float temp;
+                     // Unknown extra floats in this version of a gaussian puff.
+                     for (unsigned i = 0; i < 4; ++i)
+                     {
+                        ds  >> temp;
+                     }
+                  }
                }
                else
                {
                   ds.Seekg(4U, dtUtil::DataStream::SeekTypeEnum::CURRENT);
                }
+            }
+            handled = true;
+            break;
+         }
+         case BiologicalStateType:
+         case ChemLiquidStateType:
+         case RadiologicalStateType:
+         case ChemVaporStateType:
+         {
+            unsigned short agent = 0, geomIndex = 0;
+            ds >> agent;
+            mParameterData->AddValue(PARAM_AGENT_ENUM, agent);
+            ds >> geomIndex;
+            mParameterData->AddValue(PARAM_GEOM_INDEX, unsigned(geomIndex));
+            float totalMass = 0.0f, probability = 0.0f;
+            ds >> totalMass;
+            mParameterData->AddValue(PARAM_TOTAL_MASS, totalMass);
+
+            if (typeCode != ChemVaporStateType)
+            {
+               float minSize = 0.0f, maxSize = 0.0f, avgMassPer = 0.0f, purity = 0.0f, viability = 0.0f;
+               ds >> minSize >> maxSize >> avgMassPer >> purity;
+
+               mParameterData->AddValue(PARAM_MIN_SIZE, minSize);
+               mParameterData->AddValue(PARAM_MAX_SIZE, maxSize);
+               mParameterData->AddValue(PARAM_AVG_MASS_PER_UNIT, avgMassPer);
+
+               if (typeCode != RadiologicalStateType)
+               {
+                  // Only clamp for purity because it's a range of 0 - 1.
+                  dtUtil::Clamp(purity, 0.0f, 1.0f);
+                  mParameterData->AddValue(PARAM_PURITY, purity);
+                  if (typeCode == ChemLiquidStateType)
+                  {
+                     ds.Seekg(4U, dtUtil::DataStream::SeekTypeEnum::CURRENT);
+                  }
+                  else
+                  {
+                     ds >> viability;
+                     dtUtil::Clamp(viability, 0.0f, 1.0f);
+                     mParameterData->AddValue(PARAM_VIABILITY, viability);
+                  }
+               }
+               else
+               {
+                  // No clamp on purity when it's radiological because the value is in Curies
+                  mParameterData->AddValue(PARAM_RADIOLOGCIAL_ACTIVITY, purity);
+               }
+            }
+            else
+            {
+               // 4 bytes reserved on the chem vapor.
+               ds.Seekg(4U, dtUtil::DataStream::SeekTypeEnum::CURRENT);
+            }
+            ds >> probability;
+            dtUtil::Clamp(probability, 0.0f, 1.0f);
+            mParameterData->AddValue(PARAM_PROBABILITY, probability);
+            if (typeCode == RadiologicalStateType)
+            {
+               ds.Seekg(4U, dtUtil::DataStream::SeekTypeEnum::CURRENT);
             }
             handled = true;
             break;
@@ -368,7 +522,8 @@ namespace dtHLAGM
    /////////////////////////////////////////////////////////
    size_t EnvironmentProcessRecord::GetEncodedSize() const
    {
-      size_t encodedSize = 4 + 4 + 4 + 4;  // index (4) + padding (4) + type enum (4) +length of an HLA unsigned long (4).
+      //size_t encodedSize = 4 + 4 + 4 + 4;  // index (4) + padding (4) + type enum (4) +length of an HLA unsigned long (4).
+      size_t encodedSize = 1 + 4 + 2;  // index (1) + type enum (4) + length of size (2).
       // TODO figure out what size each one is.
       switch (EnvironmentRecordTypeCode(GetTypeCode()))
       {
@@ -406,6 +561,23 @@ namespace dtHLAGM
          case GaussianPuffRecordType:
          {
             encodedSize += 112;
+            break;
+         }
+         case GaussianPuffRecordEXType:
+         {
+            encodedSize += 128;
+            break;
+         }
+         case BiologicalStateType:
+         case ChemLiquidStateType:
+         case RadiologicalStateType:
+         {
+            encodedSize += 32;
+            break;
+         }
+         case ChemVaporStateType:
+         {
+            encodedSize += 16;
             break;
          }
          case COMBICStateRecordType:
@@ -558,7 +730,7 @@ namespace dtHLAGM
       size_t baseSize = GetBaseSize();
       if (size >= baseSize)
       {
-         size_t numberOfRecords;
+         size_t numberOfRecords = 0;
          ds >> numberOfRecords;
          // skip 4 bytes
          ds.Seekg(4U, dtUtil::DataStream::SeekTypeEnum::CURRENT);

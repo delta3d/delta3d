@@ -273,6 +273,7 @@ namespace dtHLAGM
 
                      //Set Entity Id field name
                      mCurrentObjectToActor->SetEntityIdAttributeName(super->GetEntityIdAttributeName());
+                     mCurrentObjectToActor->SetEntityTypeAttributeName(super->GetEntityTypeAttributeName());
                      mCurrentObjectToActor->SetDDMCalculatorName(super->GetDDMCalculatorName());
 
                      //copy all data from the one Attr to Prop vector to the other.
