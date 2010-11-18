@@ -45,6 +45,10 @@ namespace dtHLAGM
       {
          COMBICStateRecordType = 256,
          FlareStateRecordType = 259,
+         BiologicalStateType = 4096,
+         ChemVaporStateType = 4097,
+         RadiologicalStateType = 4098,
+         ChemLiquidStateType = 4099,
          BoundingSphereRecordType = 65536,
          UniformGeometryRecordType = 327680,
          PointRecord1Type = 655360,
@@ -61,7 +65,8 @@ namespace dtHLAGM
          ConeRecord2Type = 805306368,
          RectangularVolRecord2Type = 1342177280,
          GaussianPlumeRecordType = 1610612736,
-         GaussianPuffRecordType = 1879048192
+         GaussianPuffRecordType = 1879048192,
+         GaussianPuffRecordEXType = 1879048193
       };
 
       static const dtUtil::RefString PARAM_LOCATION;
@@ -74,6 +79,17 @@ namespace dtHLAGM
       static const dtUtil::RefString PARAM_CENTROID_HEIGHT;
       static const dtUtil::RefString PARAM_RADIUS;
       static const dtUtil::RefString PARAM_RADIUS_RATE;
+
+      static const dtUtil::RefString PARAM_AGENT_ENUM;
+      static const dtUtil::RefString PARAM_GEOM_INDEX;
+      static const dtUtil::RefString PARAM_TOTAL_MASS;
+      static const dtUtil::RefString PARAM_MIN_SIZE;
+      static const dtUtil::RefString PARAM_MAX_SIZE;
+      static const dtUtil::RefString PARAM_AVG_MASS_PER_UNIT;
+      static const dtUtil::RefString PARAM_PURITY;
+      static const dtUtil::RefString PARAM_RADIOLOGCIAL_ACTIVITY;
+      static const dtUtil::RefString PARAM_PROBABILITY;
+      static const dtUtil::RefString PARAM_VIABILITY;
 
       EnvironmentProcessRecord(const std::string& recName);
 

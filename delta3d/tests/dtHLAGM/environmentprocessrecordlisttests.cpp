@@ -53,6 +53,10 @@ namespace dtHLAGM
       CPPUNIT_TEST(TestEncodeDecodeEllipse1);
       CPPUNIT_TEST(TestEncodeDecodeEllipse2);
       CPPUNIT_TEST(TestEncodeDecodeGaussPuff);
+      CPPUNIT_TEST(TestEncodeDecodeChemVaporState);
+      CPPUNIT_TEST(TestEncodeDecodeChemLiquidState);
+      CPPUNIT_TEST(TestEncodeDecodeRadioState);
+      CPPUNIT_TEST(TestEncodeDecodeBioState);
 
       CPPUNIT_TEST_SUITE_END();
 
@@ -138,7 +142,83 @@ namespace dtHLAGM
          TestEncodeDecodeEllipseOrGaussPuff(EnvironmentProcessRecord::GaussianPuffRecordType, 27U, 112U);
       }
 
+      void TestEncodeDecodeChemVaporState()
+      {
+         TestEncodeDecodeState(EnvironmentProcessRecord::ChemVaporStateType, 16U);
+      }
+
+      void TestEncodeDecodeChemLiquidState()
+      {
+         TestEncodeDecodeState(EnvironmentProcessRecord::ChemLiquidStateType, 32U);
+      }
+
+      void TestEncodeDecodeRadioState()
+      {
+         TestEncodeDecodeState(EnvironmentProcessRecord::RadiologicalStateType, 32U);
+      }
+
+      void TestEncodeDecodeBioState()
+      {
+         TestEncodeDecodeState(EnvironmentProcessRecord::BiologicalStateType, 32U);
+      }
+
    private:
+
+      void TestEncodeDecodeState(EnvironmentProcessRecord::EnvironmentRecordTypeCode typeCode, size_t recVariantSize)
+      {
+         EnvironmentProcessRecord& rec = mEnvRecList.AddRecord();
+         rec.SetIndex(0);
+         rec.SetTypeCode(typeCode);
+
+         CPPUNIT_ASSERT_EQUAL(rec.GetEncodedSize(), recVariantSize + size_t(7)); // Now using 7 bytes for the header.
+         CPPUNIT_ASSERT_EQUAL(size_t(rec.GetEncodedSize() + mEnvRecList.GetBaseSize()), mEnvRecList.GetEncodedSize());
+
+         AddDataForState(rec);
+
+         char bufferLarge[512];
+
+         TestEncodeData(rec, bufferLarge, 512U);
+
+         EnvironmentProcessRecordList decodedRecList(mCoord);
+
+         CPPUNIT_ASSERT(decodedRecList.Decode(bufferLarge, 512U));
+
+         CPPUNIT_ASSERT_EQUAL(size_t(1), decodedRecList.GetNumRecords());
+
+         EnvironmentProcessRecord& recCopy = *decodedRecList.GetRecords().front();
+
+         CPPUNIT_ASSERT_EQUAL(unsigned(0), recCopy.GetIndex());
+         CPPUNIT_ASSERT_EQUAL(unsigned(typeCode), recCopy.GetTypeCode());
+
+         dtDAL::NamedGroupParameter& groupParam = recCopy.GetRecordData();
+
+         const unsigned short defShort = 0;
+         const float defFloat = 0.0f;
+
+         CPPUNIT_ASSERT_EQUAL((unsigned short)(41), groupParam.GetValue(EnvironmentProcessRecord::PARAM_AGENT_ENUM, defShort));
+         CPPUNIT_ASSERT_EQUAL(unsigned(1), groupParam.GetValue(EnvironmentProcessRecord::PARAM_GEOM_INDEX, 0U));
+         CPPUNIT_ASSERT_EQUAL(36.5f, groupParam.GetValue(EnvironmentProcessRecord::PARAM_TOTAL_MASS, defFloat));
+         if (typeCode != EnvironmentProcessRecord::ChemVaporStateType)
+         {
+            CPPUNIT_ASSERT_EQUAL(0.25f, groupParam.GetValue(EnvironmentProcessRecord::PARAM_MIN_SIZE, defFloat));
+            CPPUNIT_ASSERT_EQUAL(100.25f, groupParam.GetValue(EnvironmentProcessRecord::PARAM_MAX_SIZE, defFloat));
+            CPPUNIT_ASSERT_EQUAL(0.5f, groupParam.GetValue(EnvironmentProcessRecord::PARAM_AVG_MASS_PER_UNIT, defFloat));
+
+            if (typeCode == EnvironmentProcessRecord::RadiologicalStateType)
+            {
+               CPPUNIT_ASSERT_EQUAL(45.75f, groupParam.GetValue(EnvironmentProcessRecord::PARAM_RADIOLOGCIAL_ACTIVITY, defFloat));
+            }
+            else
+            {
+               CPPUNIT_ASSERT_EQUAL(1.0f, groupParam.GetValue(EnvironmentProcessRecord::PARAM_PURITY, defFloat));
+               if (typeCode == EnvironmentProcessRecord::BiologicalStateType)
+               {
+                  CPPUNIT_ASSERT_EQUAL(0.0f, groupParam.GetValue(EnvironmentProcessRecord::PARAM_VIABILITY, defFloat + 0.5f));
+               }
+            }
+         }
+         CPPUNIT_ASSERT_EQUAL(0.0f, groupParam.GetValue(EnvironmentProcessRecord::PARAM_PROBABILITY, defFloat + 0.5f));
+      }
 
       void TestEncodeDecodeEllipseOrGaussPuff(EnvironmentProcessRecord::EnvironmentRecordTypeCode typeCode,
                unsigned int index, size_t recVariantSize)
@@ -146,7 +226,7 @@ namespace dtHLAGM
          EnvironmentProcessRecord& rec = mEnvRecList.AddRecord();
          rec.SetIndex(index);
          rec.SetTypeCode(typeCode);
-         CPPUNIT_ASSERT_EQUAL(recVariantSize + size_t(16), rec.GetEncodedSize());
+         CPPUNIT_ASSERT_EQUAL(rec.GetEncodedSize(), recVariantSize + size_t(7)); // Now using 7 bytes for the header.
          CPPUNIT_ASSERT_EQUAL(size_t(rec.GetEncodedSize() + mEnvRecList.GetBaseSize()), mEnvRecList.GetEncodedSize());
          char bufferLarge[512];
 
@@ -207,7 +287,8 @@ namespace dtHLAGM
          EnvironmentProcessRecord& rec = mEnvRecList.AddRecord();
          rec.SetIndex(index);
          rec.SetTypeCode(typeCode);
-         CPPUNIT_ASSERT_EQUAL(recVariantSize + size_t(16), rec.GetEncodedSize());
+         // Now using 7 bytes for the header.
+         CPPUNIT_ASSERT_EQUAL(recVariantSize + size_t(7), rec.GetEncodedSize());
          CPPUNIT_ASSERT_EQUAL(size_t(rec.GetEncodedSize() + mEnvRecList.GetBaseSize()), mEnvRecList.GetEncodedSize());
          char bufferLarge[512];
 
@@ -283,6 +364,21 @@ namespace dtHLAGM
          groupParam.SetValue(EnvironmentProcessRecord::PARAM_ANGULAR_VELOCITY, mTestVec2);
       }
 
+      void AddDataForState(EnvironmentProcessRecord& rec)
+      {
+         dtDAL::NamedGroupParameter& groupParam = rec.GetRecordData();
+         groupParam.SetValue(EnvironmentProcessRecord::PARAM_AGENT_ENUM, (unsigned short)(41));
+         groupParam.SetValue(EnvironmentProcessRecord::PARAM_GEOM_INDEX, unsigned(1));
+         groupParam.SetValue(EnvironmentProcessRecord::PARAM_TOTAL_MASS, float(36.5f));
+         groupParam.SetValue(EnvironmentProcessRecord::PARAM_MIN_SIZE, float(0.25f));
+         groupParam.SetValue(EnvironmentProcessRecord::PARAM_MAX_SIZE, float(100.25f));
+         groupParam.SetValue(EnvironmentProcessRecord::PARAM_AVG_MASS_PER_UNIT, float(0.5f));
+         groupParam.SetValue(EnvironmentProcessRecord::PARAM_RADIOLOGCIAL_ACTIVITY, float(45.75f));
+         // These are out of range on purpose to make sure the clamping works.
+         groupParam.SetValue(EnvironmentProcessRecord::PARAM_PURITY, float(1.2f));
+         groupParam.SetValue(EnvironmentProcessRecord::PARAM_VIABILITY, float(-0.25f));
+         groupParam.SetValue(EnvironmentProcessRecord::PARAM_PROBABILITY, float(-0.11));
+      }
 
       dtUtil::Coordinates mCoord;
       EnvironmentProcessRecordList mEnvRecList;

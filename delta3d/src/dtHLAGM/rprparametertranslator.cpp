@@ -1798,6 +1798,7 @@ namespace dtHLAGM
          case (RPRAttributeType::ENVIRONMENT_RECORD_LIST_TYPE_ENUM):
          {
             MapFromEnvProcessRecListToMessageParams( buffer, size, parameter );
+            break;
          }
          default:
          {

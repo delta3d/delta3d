@@ -1,6 +1,6 @@
 /* -*-c++-*-
  * Delta3D Open Source Game and Simulation Engine
- * Copyright (C) 2006, Alion Science and Technology, BMH Operation.
+ * Copyright (C) 2006-2010, Alion Science and Technology, BMH Operation.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -152,7 +152,7 @@ namespace dtHLAGM
       {
          thisObjectClassHandle = mRTIAmbassador->getObjectClassHandle(thisObjectClassString.c_str());
       }
-      catch (const RTI::Exception &ex)
+      catch (const RTI::Exception& ex)
       {
          std::ostringstream ss;
          //workaround for a strange namespace issue
@@ -220,17 +220,30 @@ namespace dtHLAGM
             mHLAEntityTypeOtherAttrNames.insert(entityTypeAttrName);
          }
 
-         RTI::AttributeHandle disIDAttributeHandle =
-               mRTIAmbassador->getAttributeHandle(entityTypeAttrName.c_str(), thisObjectClassHandle);
+         try
+         {
+            RTI::AttributeHandle disIDAttributeHandle =
+                  mRTIAmbassador->getAttributeHandle(entityTypeAttrName.c_str(), thisObjectClassHandle);
 
-         if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-            mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-                                "Attribute handle for DIS ID on object class %s is %u.",
-                                thisObjectClassString.c_str(), disIDAttributeHandle);
+            if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+               mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+                                   "Attribute handle for DIS ID on object class %s is %u.",
+                                   thisObjectClassString.c_str(), disIDAttributeHandle);
 
-         objectToActor.SetEntityTypeAttributeHandle(disIDAttributeHandle);
+            objectToActor.SetEntityTypeAttributeHandle(disIDAttributeHandle);
 
-         ahs->add(disIDAttributeHandle);
+            ahs->add(disIDAttributeHandle);
+         }
+         catch (const RTI::Exception& ex)
+         {
+            std::ostringstream ss;
+            //workaround for a strange namespace issue
+            ::operator<<(ss, ex);
+            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                                 "Could not find Attribute '%s' for Object Class Name: '%s'. '%s'",
+                                 entityTypeAttrName.c_str(),
+                                 thisObjectClassString.c_str(), ss.str().c_str());
+         }
       }
 
       while (attributeToPropertyListIterator != thisAttributeToPropertyListVector.end())
@@ -3007,18 +3020,31 @@ namespace dtHLAGM
    {
       if (mExecutionName != "")
       {
-         if (message.GetMessageType() == dtGame::MessageType::INFO_ACTOR_DELETED)
+         try
          {
-            DispatchDelete(message);
+            if (message.GetMessageType() == dtGame::MessageType::INFO_ACTOR_DELETED)
+            {
+               DispatchDelete(message);
+            }
+            else if ((message.GetMessageType() == dtGame::MessageType::INFO_ACTOR_CREATED)
+                     || (message.GetMessageType() == dtGame::MessageType::INFO_ACTOR_UPDATED))
+            {
+               DispatchUpdate(message);
+            }
+            else
+            {
+               DispatchInteraction(message);
+            }
          }
-         else if ((message.GetMessageType() == dtGame::MessageType::INFO_ACTOR_CREATED)
-                  || (message.GetMessageType() == dtGame::MessageType::INFO_ACTOR_UPDATED))
+         catch(const RTI::Exception& ex)
          {
-            DispatchUpdate(message);
-         }
-         else
-         {
-            DispatchInteraction(message);
+            std::ostringstream ss;
+            //workaround for a strange namespace issue
+            ::operator<<(ss, ex);
+            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                                 "RTI Exception thrown during network message dispatch! [%s]",
+                                  ss.str().c_str());
+
          }
       }
    }
@@ -3030,11 +3056,24 @@ namespace dtHLAGM
       {
          if (mRTIAmbassador != NULL)
          {
-            if (IsDDMEnabled())
+            try
             {
-               UpdateDDMSubscriptions();
+               if (IsDDMEnabled())
+               {
+                  UpdateDDMSubscriptions();
+               }
+               mRTIAmbassador->tick();
             }
-            mRTIAmbassador->tick();
+            catch(const RTI::Exception& ex)
+            {
+               std::ostringstream ss;
+               //workaround for a strange namespace issue
+               ::operator<<(ss, ex);
+               mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                                    "Exception thrown during rti tick! [%s]",
+                                     ss.str().c_str());
+
+            }
          }
       }
       else if (message.GetMessageType() == dtGame::MessageType::INFO_MAP_UNLOADED)
