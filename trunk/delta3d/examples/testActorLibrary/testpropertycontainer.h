@@ -25,7 +25,7 @@
 #ifndef TESTPROPERTYCONTAINER_H_
 #define TESTPROPERTYCONTAINER_H_
 
-#include <dtDAL/propertycontainer.h>s
+#include <dtDAL/propertycontainer.h>
 #include <dtUtil/getsetmacros.h>
 /*
  * Example simple property container.  For use with the property container property example.

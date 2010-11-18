@@ -27,7 +27,7 @@
 
 #include <dtDAL/actoractorproperty.h>
 #include <dtDAL/enumactorproperty.h>
-#include <dtDAL/exceptionenum.h>
+
 #include <dtDAL/functor.h>
 #include <dtDAL/vectoractorproperties.h>
 

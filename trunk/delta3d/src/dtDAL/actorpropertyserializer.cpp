@@ -35,7 +35,7 @@
 #include <dtDAL/containeractorproperty.h>
 #include <dtDAL/propertycontaineractorproperty.h>
 #include <dtDAL/datatype.h>
-#include <dtDAL/exceptionenum.h>
+
 #include <dtDAL/gameevent.h>
 #include <dtDAL/gameeventactorproperty.h>
 #include <dtDAL/gameeventmanager.h>

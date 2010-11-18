@@ -41,7 +41,6 @@
 #include <QtGui/QLabel>
 #include <dtDAL/project.h>
 #include <dtDAL/map.h>
-#include <dtDAL/exceptionenum.h>
 
 namespace dtEditQt
 {

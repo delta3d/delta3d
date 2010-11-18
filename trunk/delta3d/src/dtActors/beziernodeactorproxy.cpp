@@ -25,7 +25,7 @@
 #include <dtDAL/actorproxyicon.h>
 #include <dtDAL/floatactorproperty.h>
 #include <dtDAL/functor.h>
-
+#include <dtDAL/exceptionenum.h>
 #include <sstream>
 
 namespace dtActors

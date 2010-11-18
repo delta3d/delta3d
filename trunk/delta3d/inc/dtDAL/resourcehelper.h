@@ -29,7 +29,7 @@
 
 #include <dtUtil/fileutils.h>
 #include <dtUtil/tree.h>
-#include <dtDAL/exceptionenum.h>
+
 #include "dtDAL/resourcetreenode.h"
 #include "dtDAL/export.h"
 

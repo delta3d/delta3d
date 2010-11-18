@@ -25,7 +25,6 @@
 #include <dtABC/autotrigger.h>
 
 #include <dtDAL/actoractorproperty.h>
-#include <dtDAL/exceptionenum.h>
 #include <dtDAL/floatactorproperty.h>
 
 using namespace dtABC;

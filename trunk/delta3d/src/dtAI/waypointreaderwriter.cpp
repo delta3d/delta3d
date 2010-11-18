@@ -30,7 +30,6 @@
 #include <dtAI/waypointtypes.h>
 
 #include <dtDAL/actorproperty.h>
-#include <dtDAL/exceptionenum.h>
 
 #include <dtUtil/datastream.h>
 #include <dtUtil/exception.h>

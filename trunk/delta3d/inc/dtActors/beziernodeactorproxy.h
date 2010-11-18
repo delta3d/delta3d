@@ -25,7 +25,6 @@
 
 #include <dtDAL/transformableactorproxy.h>
 #include <dtDAL/plugin_export.h>
-#include <dtDAL/exceptionenum.h>
 #include <dtCore/transformable.h>
 #include <dtABC/beziernode.h>
 #include <dtABC/beziercontrolpoint.h>

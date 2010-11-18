@@ -26,7 +26,7 @@
 #include <climits>
 #include <dtUtil/exception.h>
 #include <dtUtil/typetraits.h>
-#include <dtDAL/exceptionenum.h>
+
 #include <dtDAL/serializeable.h>
 #include <dtGame/export.h>
 #include <dtGame/machineinfo.h>

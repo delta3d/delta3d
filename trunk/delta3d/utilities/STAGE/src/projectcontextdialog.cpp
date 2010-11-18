@@ -44,7 +44,6 @@
 #include "dtEditQt/editorevents.h"
 #include "dtEditQt/viewportmanager.h"
 #include "dtDAL/project.h"
-#include <dtDAL/exceptionenum.h>
 #include "dtDAL/map.h"
 
 #include <osgDB/FileNameUtils>

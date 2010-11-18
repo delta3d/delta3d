@@ -45,7 +45,7 @@
 #include <dtDAL/datatype.h>
 #include <dtDAL/project.h>
 #include <dtDAL/map.h>
-
+#include <dtDAL/exceptionenum.h>
 
 #include <cppunit/extensions/HelperMacros.h>
 

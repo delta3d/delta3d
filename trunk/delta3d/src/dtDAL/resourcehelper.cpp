@@ -27,7 +27,7 @@
 #include <osgDB/FileNameUtils>
 #include <dtUtil/fileutils.h>
 #include <dtUtil/stringutils.h>
-
+#include <dtDAL/exceptionenum.h>
 #include <dtDAL/resourcedescriptor.h>
 #include <dtDAL/datatype.h>
 #include <dtDAL/resourcetreenode.h>

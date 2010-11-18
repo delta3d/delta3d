@@ -48,7 +48,6 @@
 
 #include <dtDAL/project.h>
 #include <dtDAL/map.h>
-#include <dtDAL/exceptionenum.h>
 #include <dtEditQt/editoractions.h>
 #include <dtEditQt/editordata.h>
 

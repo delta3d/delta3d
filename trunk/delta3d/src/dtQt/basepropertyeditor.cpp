@@ -34,7 +34,7 @@
 
 #include <dtDAL/actorproxy.h>
 #include <dtDAL/datatype.h>
-#include <dtDAL/exceptionenum.h>
+
 #include <dtDAL/librarymanager.h>
 #include <dtDAL/map.h>
 

@@ -44,7 +44,6 @@
 
 #include <dtDAL/actorproxyicon.h>
 #include <dtDAL/arrayactorproperty.h>
-#include <dtDAL/exceptionenum.h>
 #include <dtDAL/librarymanager.h>
 #include <dtDAL/map.h>
 #include <dtDAL/mapxml.h>

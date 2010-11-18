@@ -19,7 +19,6 @@
 #include <dtCore/positionallight.h>
 #include <dtCore/spotlight.h>
 #include <dtCore/deltawin.h>
-#include <dtCore/exceptionenum.h>
 #include <dtCore/shadermanager.h>
 
 #include <dtUtil/datapathutils.h>

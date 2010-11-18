@@ -29,7 +29,6 @@
 #include <prefix/stageprefix.h>
 
 #include <dtDAL/datatype.h>
-#include <dtDAL/exceptionenum.h>
 #include <dtDAL/gameevent.h>
 #include <dtDAL/gameeventactorproperty.h>
 #include <dtDAL/map.h>

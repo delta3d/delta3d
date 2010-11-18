@@ -25,6 +25,7 @@
 #include <dtDAL/datatype.h>
 #include <dtDAL/map.h>
 #include <dtDAL/project.h>
+#include <dtDAL/exceptionenum.h>
 
 namespace dtDAL
 {
