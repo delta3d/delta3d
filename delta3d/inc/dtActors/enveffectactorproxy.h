@@ -23,7 +23,6 @@
 
 #include "dtDAL/plugin_export.h"
 #include "dtDAL/actorproxy.h"
-#include <dtDAL/exceptionenum.h>
 
 namespace dtActors 
 {

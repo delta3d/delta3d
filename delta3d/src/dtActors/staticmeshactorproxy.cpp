@@ -26,7 +26,7 @@
 
 #include <dtActors/staticmeshactorproxy.h>
 
-#include <dtDAL/exceptionenum.h>
+
 #include <dtDAL/resourceactorproperty.h>
 #include <dtDAL/resourcedescriptor.h>
 #include <dtDAL/actorproxyicon.h>

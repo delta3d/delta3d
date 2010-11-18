@@ -25,9 +25,10 @@
 #include <typeinfo>
 
 #include <dtDAL/basexmlhandler.h>
-#include <dtDAL/exceptionenum.h>
+
 
 #include <dtUtil/xercesutils.h>
+#include <dtUtil/log.h>
 
 #ifdef _MSC_VER
 #   pragma warning(push)

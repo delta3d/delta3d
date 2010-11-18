@@ -23,7 +23,6 @@
 
 #include <dtUtil/enumeration.h>
 #include <dtCore/light.h>
-#include <dtDAL/exceptionenum.h>
 #include <dtDAL/plugin_export.h>
 #include <dtDAL/transformableactorproxy.h>
 #include <osg/Vec4>

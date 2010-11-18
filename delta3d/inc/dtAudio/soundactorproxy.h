@@ -23,7 +23,7 @@
 #define DELTA_SOUND_ACTOR_PROXY
 
 #include <dtAudio/export.h>
-#include <dtDAL/exceptionenum.h>
+
 #include <dtGame/gameactor.h>
 
 namespace dtAudio

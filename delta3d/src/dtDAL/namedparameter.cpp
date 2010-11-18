@@ -24,7 +24,7 @@
 
 #include <dtDAL/actorproperty.h>
 #include <dtDAL/datatype.h>
-#include <dtDAL/exceptionenum.h>
+
 
 #include <dtDAL/namedactorparameter.h>
 #include <dtDAL/namedarrayparameter.h>

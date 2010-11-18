@@ -23,8 +23,9 @@
 #include <osgDB/FileNameUtils>
 #include <dtUtil/fileutils.h>
 
-#include "dtDAL/datatype.h"
-#include "dtDAL/directoryresourcetypehandler.h"
+#include <dtDAL/datatype.h>
+#include <dtDAL/directoryresourcetypehandler.h>
+#include <dtDAL/exceptionenum.h>
 
 namespace dtDAL
 {

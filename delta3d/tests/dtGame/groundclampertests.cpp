@@ -48,7 +48,6 @@
 #include <dtGame/gameactor.h>
 #include <dtGame/gamemanager.h>
 #include <dtGame/messagefactory.h>
-#include <dtGame/exceptionenum.h>
 #include <dtGame/defaultgroundclamper.h>
 
 #include <dtDAL/actortype.h>

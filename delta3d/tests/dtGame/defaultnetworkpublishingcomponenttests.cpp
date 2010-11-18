@@ -45,7 +45,6 @@
 #include <dtGame/messagefactory.h>
 #include <dtGame/gamemanager.h>
 #include <dtGame/actorupdatemessage.h>
-#include <dtGame/exceptionenum.h>
 #include <dtGame/defaultnetworkpublishingcomponent.h>
 #include <dtGame/defaultmessageprocessor.h>
 

@@ -24,7 +24,7 @@
 #include <dtCore/scene.h>
 
 #include <dtDAL/booleanactorproperty.h>
-#include <dtDAL/exceptionenum.h>
+
 #include <dtDAL/floatactorproperty.h>
 #include <dtDAL/vectoractorproperties.h>
 

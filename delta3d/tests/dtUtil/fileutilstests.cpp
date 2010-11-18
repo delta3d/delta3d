@@ -29,7 +29,6 @@
 #include <prefix/unittestprefix.h>
 
 #include <dtDAL/datatype.h>
-#include <dtDAL/exceptionenum.h>
 
 #include <dtUtil/datapathutils.h>
 #include <dtUtil/exception.h>

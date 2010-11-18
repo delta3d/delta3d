@@ -14,7 +14,6 @@
 #include <dtCore/orbitmotionmodel.h>
 #include <dtCore/light.h>
 #include <dtCore/deltawin.h>
-#include <dtCore/exceptionenum.h>
 
 #include <dtAnim/characterfilehandler.h>
 #include <dtAnim/chardrawable.h>
@@ -31,7 +30,6 @@
 #include <dtUtil/stringutils.h>
 #include <dtUtil/fileutils.h>
 #include <dtUtil/log.h>
-#include <dtUtil/exception.h>
 
 #include <xercesc/sax/SAXParseException.hpp>  // for base class
 #include <xercesc/util/XMLString.hpp>

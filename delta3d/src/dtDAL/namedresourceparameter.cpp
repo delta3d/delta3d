@@ -22,9 +22,9 @@
 #include <prefix/dtdalprefix.h>
 
 #include <dtDAL/namedresourceparameter.h>
-
-#include <dtDAL/datatype.h>
 #include <dtDAL/exceptionenum.h>
+#include <dtDAL/datatype.h>
+
 #include <dtDAL/resourceactorproperty.h>
 
 #include <dtUtil/datastream.h>

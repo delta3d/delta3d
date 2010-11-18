@@ -24,7 +24,6 @@
 
 #include <dtCore/refptr.h>
 #include <dtAI/export.h>
-#include <dtDAL/exceptionenum.h>
 #include <dtDAL/actorproxy.h>
 #include <dtCore/deltadrawable.h>
 

@@ -28,7 +28,6 @@
 
 #include <dtCore/refptr.h>
 #include <dtGame/gameapplication.h>
-#include <dtGame/exceptionenum.h>
 #include <dtGame/gamemanager.h>
 #include <dtUtil/fileutils.h>
 #include <dtUtil/exception.h>
