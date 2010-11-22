@@ -34,6 +34,7 @@
 #include <dtCore/system.h>
 #include <dtCore/scene.h>
 #include <dtUtil/datapathutils.h>
+#include <dtUtil/exception.h>
 
 #include <vector>
 
