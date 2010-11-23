@@ -78,9 +78,10 @@ dtGame::GMImpl::GMImpl(dtCore::Scene& scene) : mGMStatistics()
 , mScene(&scene)
 , mLibMgr(&dtDAL::LibraryManager::GetInstance())
 , mApplication(NULL)
-, mRemoveGameEventsOnMapChange(true)
 , mLogger(&dtUtil::Log::GetInstance("gamemanager.cpp"))
 , mGMSettings(new GMSettings())
+, mRemoveGameEventsOnMapChange(true)
+, mShuttingDown(false)
 {
 
 }
