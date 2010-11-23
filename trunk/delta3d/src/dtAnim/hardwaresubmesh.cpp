@@ -122,7 +122,7 @@ HardwareSubmeshDrawable::HardwareSubmeshDrawable(Cal3DModelWrapper* wrapper, Cal
    : osg::Drawable()
    , mWrapper(wrapper)
    , mHardwareModel(model)
-   , mBoneTransforms(new osg::Uniform(osg::Uniform::FLOAT_VEC4, boneUniformName, numBones))
+   , mBoneTransforms(new osg::Uniform(osg::Uniform::FLOAT_VEC4, boneUniformName, numBones*3))
    , mBoneUniformName(boneUniformName)
    , mNumBones(numBones)
    , mMeshID(mesh)
