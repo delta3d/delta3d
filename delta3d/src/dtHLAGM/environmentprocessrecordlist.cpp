@@ -150,6 +150,7 @@ namespace dtHLAGM
          {
 
             osg::Vec3d loc = coord.ConvertToRemoteTranslation(mParameterData->GetValue(PARAM_LOCATION, zeroVecd));
+            coord.SetRemoteReferenceForOriginRotationMatrix(loc);
             ds << loc;
 
             ds << mParameterData->GetValue(PARAM_RADIUS, float(0.0f));
@@ -175,6 +176,7 @@ namespace dtHLAGM
          case GaussianPuffRecordEXType:
          {
             osg::Vec3d loc = coord.ConvertToRemoteTranslation(mParameterData->GetValue(PARAM_LOCATION, zeroVecd));
+            coord.SetRemoteReferenceForOriginRotationMatrix(loc);
             ds << loc;
 
             if (typeCode == GaussianPuffRecordType || typeCode == GaussianPuffRecordEXType)
@@ -195,7 +197,8 @@ namespace dtHLAGM
 
             if (typeCode != EllipsoidRecord1Type && typeCode != RectangularVolRecord1Type)
             {
-               ds << coord.GetOriginRotationMatrix().preMult(mParameterData->GetValue(PARAM_VELOCITY, zeroVecf));
+               ds << coord.GetOriginRotationMatrixInverse().preMult(mParameterData->GetValue(PARAM_VELOCITY, zeroVecf));
+               //ds << mParameterData->GetValue(PARAM_VELOCITY, zeroVecf);
                ds << mParameterData->GetValue(PARAM_ANGULAR_VELOCITY, zeroVecf);
 
                if (typeCode == GaussianPuffRecordType || typeCode == GaussianPuffRecordEXType)
@@ -344,6 +347,7 @@ namespace dtHLAGM
             float radius = 0.0f;
 
             ds >> worldCoordinate;
+            coord.SetRemoteReferenceForOriginRotationMatrix(worldCoordinate);
             worldCoordinate = coord.ConvertToLocalTranslation(worldCoordinate);
             mParameterData->AddValue(PARAM_LOCATION, worldCoordinate);
 
@@ -357,7 +361,7 @@ namespace dtHLAGM
                osg::Vec3f value;
 
                ds >> value;
-               value = coord.GetOriginRotationMatrixInverse().preMult(value);
+               value = coord.GetOriginRotationMatrix().preMult(value);
                mParameterData->AddValue(PARAM_VELOCITY, value);
 
                ds >> value;
@@ -381,6 +385,7 @@ namespace dtHLAGM
             osg::Vec3f value;
 
             ds >> worldCoordinate;
+            coord.SetRemoteReferenceForOriginRotationMatrix(worldCoordinate);
             worldCoordinate = coord.ConvertToLocalTranslation(worldCoordinate);
             mParameterData->AddValue(PARAM_LOCATION, worldCoordinate);
 
@@ -407,7 +412,7 @@ namespace dtHLAGM
             if (typeCode != EllipsoidRecord1Type && typeCode != RectangularVolRecord1Type)
             {
                ds >> value;
-               value = coord.GetOriginRotationMatrixInverse().preMult(value);
+               value = coord.GetOriginRotationMatrix().preMult(value);
                mParameterData->AddValue(PARAM_VELOCITY, value);
 
                ds >> value;
