@@ -394,7 +394,14 @@ namespace dtGame
       GetMessageFactory().CreateMessage(MessageType::SYSTEM_POST_EVENT_TRAVERSAL, postEventTraversal);
       PopulateTickMessage(*postEventTraversal, deltaSimTime, deltaRealTime, simulationTime);
 
-      DoSendMessage(*postEventTraversal);
+      try
+      {
+         DoSendMessage(*postEventTraversal);
+      }
+      catch (const GMShutdownException&)
+      {
+         // Do nothing, just exit.
+      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -406,61 +413,80 @@ namespace dtGame
       GetMessageFactory().CreateMessage(MessageType::SYSTEM_FRAME_SYNCH, frameSynch);
       PopulateTickMessage(*frameSynch, deltaSimTime, deltaRealTime, simulationTime);
 
-      DoSendMessage(*frameSynch);
+      try
+      {
+         DoSendMessage(*frameSynch);
+      }
+      catch (const GMShutdownException&)
+      {
+         // Do nothing, just exit.
+      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::PreFrame(double deltaSimTime, double deltaRealTime)
    {
-      // information used to track statistics over a fragment of time (ex 30 seconds)
-      dtCore::Timer_t frameTickStart = mGMImpl->mGMStatistics.mStatsTickClock.Tick();
-      //frameTickStart = mGMImpl->mGMStatistics.mStatsTickClock.Tick();
-
-      DoSendNetworkMessages();
-
-      if (mGMImpl->mMapChangeStateData.valid())
+      try
       {
-         mGMImpl->mMapChangeStateData->ContinueMapChange();
-         if (mGMImpl->mMapChangeStateData->GetCurrentState() == MapChangeStateData::MapChangeState::IDLE)
+         // information used to track statistics over a fragment of time (ex 30 seconds)
+         dtCore::Timer_t frameTickStart = mGMImpl->mGMStatistics.mStatsTickClock.Tick();
+         //frameTickStart = mGMImpl->mGMStatistics.mStatsTickClock.Tick();
+
+         DoSendNetworkMessages();
+
+         if (mGMImpl->mMapChangeStateData.valid())
          {
-            mGMImpl->mLoadedMaps = mGMImpl->mMapChangeStateData->GetNewMapNames();
+            mGMImpl->mMapChangeStateData->ContinueMapChange();
+            if (mGMImpl->mMapChangeStateData->GetCurrentState() == MapChangeStateData::MapChangeState::IDLE)
+            {
+               mGMImpl->mLoadedMaps = mGMImpl->mMapChangeStateData->GetNewMapNames();
+            }
          }
+
+         double simulationTime = dtCore::System::GetInstance().GetSimulationTime();
+
+         // Send out Tick Local and process all responses.
+         dtCore::RefPtr<TickMessage> tick;
+         GetMessageFactory().CreateMessage(MessageType::TICK_LOCAL, tick);
+         PopulateTickMessage(*tick, deltaSimTime, deltaRealTime, simulationTime);
+         SendMessage(*tick);
+         mGMImpl->ProcessTimers(*this, mGMImpl->mRealTimeTimers, GetRealClockTime());
+         mGMImpl->ProcessTimers(*this, mGMImpl->mSimulationTimers, dtCore::Timer_t(GetSimTimeSinceStartup() * 1000000.0));
+         DoSendMessages();
+
+         // The tick remote comes after ALL responses to Tick Local
+         dtCore::RefPtr<TickMessage> tickRemote;
+         GetMessageFactory().CreateMessage(MessageType::TICK_REMOTE, tickRemote);
+         PopulateTickMessage(*tickRemote, deltaSimTime, deltaRealTime, simulationTime);
+         SendMessage(*tickRemote);
+         DoSendMessages();
+
+         while (RemoveDeletedActors())
+         {
+            // Process all the delete messages if actors delete other actors.
+            DoSendMessages();
+         }
+
+         dtCore::RefPtr<TickMessage> tickEnd;
+         GetMessageFactory().CreateMessage(MessageType::TICK_END_OF_FRAME, tickEnd);
+         PopulateTickMessage(*tickEnd, deltaSimTime, deltaRealTime, simulationTime);
+
+         DoSendMessageToComponents(*tickEnd, false);
+
+         // End the stats for this frame.
+         mGMImpl->mGMStatistics.FragmentTimeDump(frameTickStart, *this, mGMImpl->mLogger);
+      }
+      catch (const GMShutdownException&)
+      {
+         // Do nothing, just exit.
       }
 
-      double simulationTime = dtCore::System::GetInstance().GetSimulationTime();
-
-      // Send out Tick Local and process all responses.
-      dtCore::RefPtr<TickMessage> tick;
-      GetMessageFactory().CreateMessage(MessageType::TICK_LOCAL, tick);
-      PopulateTickMessage(*tick, deltaSimTime, deltaRealTime, simulationTime);
-      SendMessage(*tick);
-      mGMImpl->ProcessTimers(*this, mGMImpl->mRealTimeTimers, GetRealClockTime());
-      mGMImpl->ProcessTimers(*this, mGMImpl->mSimulationTimers, dtCore::Timer_t(GetSimTimeSinceStartup() * 1000000.0));
-      DoSendMessages();
-
-      // The tick remote comes after ALL responses to Tick Local
-      dtCore::RefPtr<TickMessage> tickRemote;
-      GetMessageFactory().CreateMessage(MessageType::TICK_REMOTE, tickRemote);
-      PopulateTickMessage(*tickRemote, deltaSimTime, deltaRealTime, simulationTime);
-      SendMessage(*tickRemote);
-      DoSendMessages();
-
-
-      dtCore::RefPtr<TickMessage> tickEnd;
-      GetMessageFactory().CreateMessage(MessageType::TICK_END_OF_FRAME, tickEnd);
-      PopulateTickMessage(*tickEnd, deltaSimTime, deltaRealTime, simulationTime);
-
-      DoSendMessageToComponents(*tickEnd, false);
-
-      RemoveDeletedActors();
-
-      // End the stats for this frame.
-      mGMImpl->mGMStatistics.FragmentTimeDump(frameTickStart, *this, mGMImpl->mLogger);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::RemoveDeletedActors()
+   bool GameManager::RemoveDeletedActors()
    {
+      bool result = false;
       // DELETE ACTORS
       // IT IS CRUCIAL TO NOT SAVE OFF THE SIZE OR CHANGE THIS TO AN ITERATOR
       // BECAUSE ACTORS CAN DELETE OTHER ACTORS IN THE ON REMOVED FROM WORLD
@@ -486,9 +512,11 @@ namespace dtGame
          }
 
          gameActorProxy.SetGameManager(NULL);
+         result = true;
       }
 
       mGMImpl->mDeleteList.clear();
+      return result;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -523,6 +551,11 @@ namespace dtGame
       GMImpl::GMComponentContainer::iterator compItr = mGMImpl->mComponentList.begin();
       while (compItr != mGMImpl->mComponentList.end())
       {
+         if (mGMImpl->mShuttingDown)
+         {
+            throw GMShutdownException();
+         }
+
          if (compItr->valid() == false) //set from a previous call to RemoveComponent()
          {
             //Erase this value from the container and move on. Iterator gets pointed to next in container.
@@ -562,6 +595,14 @@ namespace dtGame
          {
             ex.LogException(dtUtil::Log::LOG_ERROR, *mGMImpl->mLogger);
          }
+         catch (const std::exception& ex)
+         {
+            LOG_ERROR(std::string("Caught a std::exception derivative: ") + ex.what());
+         }
+         catch (...)
+         {
+            LOG_ERROR("Caught an unknown exception in the GM!  Continuing.");
+         }
 
          // Statistics information
          if (logComponents)
@@ -583,6 +624,13 @@ namespace dtGame
    void GameManager::DoSendMessage(const Message& message)
    {
       DoSendMessageToComponents(message, false);
+
+      // The component message sending checks for this internally
+      // But if the last component were to call shutdown, then the code would read this point.
+      if (mGMImpl->mShuttingDown)
+      {
+         throw GMShutdownException();
+      }
 
       InvokeGlobalInvokables(message);
 
@@ -879,7 +927,14 @@ namespace dtGame
       GetMessageFactory().CreateMessage(MessageType::SYSTEM_POST_FRAME, postFrame);
       PopulateTickMessage(*postFrame, deltaSimTime, deltaRealTime, simulationTime);
 
-      DoSendMessage(*postFrame);
+      try
+      {
+         DoSendMessage(*postFrame);
+      }
+      catch (const GMShutdownException&)
+      {
+         // Do nothing, just exit.
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -1362,7 +1417,7 @@ namespace dtGame
 
             // Remote actors are deleted in response to a delete message, so sending another is silly.
             // Also, this doen't currently send messages when closing a map, so check here for that state.
-            if (!gameActorProxy.IsRemote() && mGMImpl->mMapChangeStateData->GetCurrentState() == MapChangeStateData::MapChangeState::IDLE)
+            if (!gameActorProxy.IsRemote() /*&& mGMImpl->mMapChangeStateData->GetCurrentState() == MapChangeStateData::MapChangeState::IDLE*/)
             {
                dtCore::RefPtr<Message> msg = mGMImpl->mFactory.CreateMessage(MessageType::INFO_ACTOR_DELETED);
                msg->SetAboutActorId(id);
@@ -2011,6 +2066,13 @@ namespace dtGame
          mGMImpl->mLoadedMaps.clear();
       }
 
+      // Delete the actors
+      DeleteAllActors();
+      // flush all the deleted messages
+      DoSendMessages();
+      // remove all the actors.
+      RemoveDeletedActors();
+
       //tell all the components they've been removed
       GMImpl::GMComponentContainer::iterator compItr = mGMImpl->mComponentList.begin();
       while (compItr != mGMImpl->mComponentList.end())
@@ -2037,7 +2099,7 @@ namespace dtGame
          mGMImpl->mSendMessageQueue.pop();
       }
 
-      DeleteAllActors(true);
+      mGMImpl->mShuttingDown = true;
    }
 
    ///////////////////////////////////////////////////////////////////////////////

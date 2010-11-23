@@ -49,6 +49,10 @@ namespace dtGame
 {
    class GameActorProxy;
 
+   // exception class known only to the GM that fires when shutting down to make the GM exit its tick.
+   class GMShutdownException
+   { };
+
    /// A wrapper for data like stats to prevent includes wherever gamemanager.h is used - uses the pimple pattern (like system)
    class GMImpl
    {
@@ -144,11 +148,13 @@ namespace dtGame
 
       /// application the gm has. the one and only.
       dtABC::Application* mApplication;
-      bool mRemoveGameEventsOnMapChange;
 
       dtUtil::Log* mLogger;
 
       dtCore::RefPtr<GMSettings> mGMSettings;
+
+      bool mRemoveGameEventsOnMapChange;
+      bool mShuttingDown;
    };
 }
 #endif // gmimpl_h__

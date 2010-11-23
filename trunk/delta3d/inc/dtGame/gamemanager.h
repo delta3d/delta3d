@@ -1095,7 +1095,9 @@ namespace dtGame
       void InvokeGlobalInvokables(const Message& message);
       void InvokeForActorInvokables(const Message& message, GameActorProxy& aboutActor);
       void InvokeOtherActorInvokables(const Message& message);
-      void RemoveDeletedActors();
+
+      /// Removes all actors from the list of deleted actors and returns true if any actors.
+      bool RemoveDeletedActors();
 
    private:
       GMImpl* mGMImpl; // Pimple pattern for private data
