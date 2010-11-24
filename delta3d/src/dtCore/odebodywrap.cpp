@@ -62,7 +62,7 @@ void dtCore::ODEBodyWrap::EnableDynamics(bool enable)
 //////////////////////////////////////////////////////////////////////////
 bool dtCore::ODEBodyWrap::DynamicsEnabled() const
 {
-   return mDynamicsEnabled;
+   return (mDynamicsEnabled && (GetBodyID()!=0));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -328,7 +328,7 @@ void dtCore::ODEBodyWrap::GetBodyTransform(dtCore::Transform& xform) const
 ////////////////////////////////////////////////////////////////////////////////
 void dtCore::ODEBodyWrap::UpdateBodyTransform(const dtCore::Transform& newTransform)
 {
-   if (DynamicsEnabled() == false) {return;}
+   if (DynamicsEnabled() == false || (GetBodyID() == 0)) {return;}
 
    dtCore::Transform odeTransform;
    GetBodyTransform(odeTransform);
