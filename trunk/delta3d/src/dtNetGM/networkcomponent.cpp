@@ -432,20 +432,23 @@ namespace dtNetGM
    ////////////////////////////////////////////////////////////////////////////////
    void NetworkComponent::StartSendTask()
    {
-      DispatchTask* task = static_cast<DispatchTask*>(mDispatchTask.get());
+      if (mDispatchTask.valid())
+      {
+         DispatchTask* task = static_cast<DispatchTask*>(mDispatchTask.get());
 
-      // the mQueued is an atomic value that tracks whether the task is busy. If it's not running,
-      // then mQueued will be 0. If, after incrementing, it is 1, then it's not busy, so 
-      // we can swap safely (no thread issue) and add the task to the thread pool.  
-      // The task will decrement mQueued back to 0 when it completes.
-      if (++task->mQueued == 1U)
-      {
-         task->mMessageBuffer.swap(mMessageBufferOut);
-         dtUtil::ThreadPool::AddTask(*mDispatchTask, dtUtil::ThreadPool::BACKGROUND);
-      }
-      else // it was already busy, so we just decrement our queued flag back.
-      {
-         --task->mQueued;
+         // the mQueued is an atomic value that tracks whether the task is busy. If it's not running,
+         // then mQueued will be 0. If, after incrementing, it is 1, then it's not busy, so 
+         // we can swap safely (no thread issue) and add the task to the thread pool.  
+         // The task will decrement mQueued back to 0 when it completes.
+         if (++task->mQueued == 1U)
+         {
+            task->mMessageBuffer.swap(mMessageBufferOut);
+            dtUtil::ThreadPool::AddTask(*mDispatchTask, dtUtil::ThreadPool::BACKGROUND);
+         }
+         else // it was already busy, so we just decrement our queued flag back.
+         {
+            --task->mQueued;
+         }
       }
 
    }
