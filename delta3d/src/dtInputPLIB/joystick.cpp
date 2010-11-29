@@ -15,6 +15,7 @@ IMPLEMENT_MANAGEMENT_LAYER(Joystick)
 //////////////////////////////////////////////////////
 void Joystick::CreateInstances()
 {
+   jsInit();
    bool keepGoing = true;
    jsJoystick* joystick;
 
@@ -32,8 +33,9 @@ void Joystick::CreateInstances()
       }
       else
       {
+#ifndef __APPLE__
          delete joystick;
-
+#endif
          keepGoing = false;
       }
    }
