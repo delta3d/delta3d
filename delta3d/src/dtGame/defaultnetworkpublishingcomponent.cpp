@@ -81,7 +81,7 @@ namespace dtGame
          {
             if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
                mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-                  "Received a message of unknown type: ",  msg.GetMessageType().GetName().c_str());
+                  "Received a message of unknown type: %s",  msg.GetMessageType().GetName().c_str());
             ProcessUnhandledLocalMessage(msg);
          }
       }

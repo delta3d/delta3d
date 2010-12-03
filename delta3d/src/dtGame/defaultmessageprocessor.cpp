@@ -112,7 +112,7 @@ namespace dtGame
          }
          else
          {
-            LOG_DEBUG("The default message component is processing an unhandled local message");
+            LOG_DEBUG("DefaultMessageProcessor is processing an unhandled local message of type: " + msg.GetMessageType().GetName());
             ProcessUnhandledLocalMessage(msg);
          }
       }
