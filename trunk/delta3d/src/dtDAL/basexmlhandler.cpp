@@ -88,7 +88,7 @@ namespace  dtDAL
    /////////////////////////////////////////////////////////////////
    BaseXMLHandler::BaseXMLHandler()
    {
-      mLogger = &dtUtil::Log::GetInstance();
+      mLogger = &dtUtil::Log::GetInstance ( "BaseXMLHandler.cpp" );
       //mLogger->SetLogLevel(dtUtil::Log::LOG_DEBUG);
       mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__,  __LINE__, "Creating Map Content Handler.\n");
    }
