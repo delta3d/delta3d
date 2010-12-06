@@ -305,13 +305,23 @@ void HLAComponentTests::tearDown()
 {
    if (mHLAComponent.valid())
    {
-      mHLAComponent->LeaveFederationExecution();
-      CPPUNIT_ASSERT(mHLAComponent->GetRTIAmbassador() == NULL);
+      try
+      {
+         mHLAComponent->LeaveFederationExecution();
+         CPPUNIT_ASSERT(mHLAComponent->GetRTIAmbassador() == NULL);
+      }
+      catch (...)
+      {
+         //failed leaving execution.      	
+      }
    }
 
    dtCore::System::GetInstance().Stop();
    if (mGameManager.valid())
    {
+      mGameManager->RemoveComponent(*mHLAComponent);
+      mGameManager->RemoveComponent(*mTestComponent);
+      
       mHLAComponent  = NULL;
       mTestComponent = NULL;
       mGameManager->UnloadActorRegistry(mTestGameActorLibrary);
