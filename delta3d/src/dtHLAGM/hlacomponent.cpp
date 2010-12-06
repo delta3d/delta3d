@@ -2422,17 +2422,20 @@ namespace dtHLAGM
          DDMRegionCalculator& calc = *mDDMSubscriptionCalculators[i];
 
          // if the region is actually changed.
-         std::vector<dtCore::RefPtr<DDMRegionData> >& regionVector = mDDMSubscriptionRegions[i];
-         for (unsigned j = 0; j < regionVector.size(); ++j)
+         if (mDDMSubscriptionRegions.size() > i)
          {
-            DDMRegionData& data = *regionVector[j];
-            if (calc.UpdateRegionData(data))
+            std::vector<dtCore::RefPtr<DDMRegionData> >& regionVector = mDDMSubscriptionRegions[i];
+            for (unsigned j = 0; j < regionVector.size(); ++j)
             {
-               RTI::Region* r = data.GetRegion();
-               UpdateRegion(data);
-               if (r != data.GetRegion())
+               DDMRegionData& data = *regionVector[j];
+               if (calc.UpdateRegionData(data))
                {
-                  // TODO subscribe with new region.
+                  RTI::Region* r = data.GetRegion();
+                  UpdateRegion(data);
+                  if (r != data.GetRegion())
+                  {
+                     // TODO subscribe with new region.
+                  }
                }
             }
          }
