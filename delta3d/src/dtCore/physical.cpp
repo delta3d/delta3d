@@ -195,7 +195,8 @@ void Physical::PrePhysicsStepUpdate()
    //manually.  If the dynamics aren't enabled, then pass the call to
    //Transform in case it wants to do something.
 
-   if (mBodyWrap->DynamicsEnabled())
+   if (mBodyWrap->DynamicsEnabled() &&
+       mBodyWrap->GetBodyID())
    {
       Transform transform;
 
