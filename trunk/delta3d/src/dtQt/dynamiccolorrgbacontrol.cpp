@@ -243,14 +243,10 @@ namespace dtQt
       startColor.setRgbF(vectorValue[0], vectorValue[1], vectorValue[2], vectorValue[3]);
 
       // show the dialog.  Blocks for user input.
-      bool ok;
-      QRgb rgba = QColorDialog::getRgba(startColor.rgba(), &ok, mPropertyTree);
-
+      QColor result = QColorDialog::getColor( startColor, mPropertyTree, "", QColorDialog::ShowAlphaChannel );
       // if the user pressed, OK, we set the color and assume it changed
-      if (ok)
+      if (result.isValid())
       {
-         QColor result;
-         result.setRgba(rgba);
          osg::Vec4d propColor;
          result.getRgbF(&propColor[0], &propColor[1], &propColor[2], &propColor[3]);
 
