@@ -1109,11 +1109,14 @@ void MessageTests::TestChangeMapGameEvents()
 
       // test the new flag for removing game events
       mGameManager->CloseCurrentMap();
+      CPPUNIT_ASSERT_MESSAGE("Should be paused now", mGameManager->IsPaused());
+
       //two ticks to finish the change.
       dtCore::System::GetInstance().Step();
       dtCore::System::GetInstance().Step();
       CPPUNIT_ASSERT_EQUAL_MESSAGE("Closing the map should have removed some of the events since we didnt change the flag.",
          geMan.GetNumEvents(), (unsigned int) 1);
+      CPPUNIT_ASSERT_MESSAGE("Paused should have cleared.", !mGameManager->IsPaused());
 
       // re-add the events and try again.
       mGameManager->ChangeMap(mapName, false);

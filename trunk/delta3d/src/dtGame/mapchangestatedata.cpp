@@ -302,6 +302,8 @@ namespace dtGame
          }
          else
          {
+            // set the app to unpause so time stepping is correct
+            mGameManager->SetPaused(false);
             mCurrentState = &MapChangeState::IDLE;
          }
       }
