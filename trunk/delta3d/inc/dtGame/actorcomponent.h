@@ -27,6 +27,7 @@
 #include <dtGame/export.h>
 #include <dtDAL/propertycontainer.h>
 #include <dtUtil/refstring.h>
+#include <dtUtil/getsetmacros.h>
 
 namespace dtGame
 {
@@ -131,7 +132,6 @@ namespace dtGame
        */
       virtual void Init();
 
-
    protected:
 
       virtual ~ActorComponent();
@@ -165,6 +165,9 @@ namespace dtGame
       /// Have we built our property maps, etc.
       bool mInitialized;
 
+   public:
+      /// if this actor component is in the GM.
+      DT_DECLARE_ACCESSOR(bool, IsInGM);
    };
 }
 #endif // actorcomponent_h__

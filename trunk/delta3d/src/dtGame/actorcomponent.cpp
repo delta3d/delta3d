@@ -38,6 +38,7 @@ dtGame::ActorComponent::ActorComponent(const ACType& type)
   : mOwner(NULL)
   , mType(type)  
   , mInitialized(false)
+  , mIsInGM(false)
 {
 
 }
@@ -103,3 +104,5 @@ void ActorComponent::UnregisterForTicks()
    owner->GetGameActorProxy().RemoveInvokable(tickInvokable);
 }
 
+//////////////////////////////////////////////////////////////////////////
+DT_IMPLEMENT_ACCESSOR(ActorComponent, bool, IsInGM);
