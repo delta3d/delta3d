@@ -5,7 +5,7 @@
 #include <dtDAL/datatype.h>
 
 #include <cstdio>
-
+#include <climits>
 
 namespace dtDAL
 {
