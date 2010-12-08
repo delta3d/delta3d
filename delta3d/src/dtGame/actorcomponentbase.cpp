@@ -84,6 +84,7 @@ namespace dtGame
       // if base class is a game actor and the game actor is already instantiated in game:
       if (self != NULL && self->GetGameActorProxy().IsInGM())
       {
+         component.SetIsInGM(true);
          component.OnEnteredWorld();
       }
    }
@@ -140,6 +141,7 @@ namespace dtGame
          GameActor* self = static_cast<GameActor*>(this);
          if (self != NULL && self->GetGameActorProxy().IsInGM())
          {
+            component.SetIsInGM(false);
             component.OnRemovedFromWorld();
          }
          component.OnRemovedFromActor(*self);
@@ -188,6 +190,7 @@ namespace dtGame
       for(std::list<ActorComponent*>::iterator iter = components.begin(); iter != components.end(); ++iter)
       {
          ActorComponent& component = (**iter);
+         component.SetIsInGM(true);
          component.OnEnteredWorld();
       }
    }
@@ -205,6 +208,7 @@ namespace dtGame
       for(std::list<ActorComponent*>::iterator iter = components.begin(); iter != components.end(); ++iter)
       {
          ActorComponent& component = (**iter);
+         component.SetIsInGM(false);
          component.OnRemovedFromWorld();
       }
    }
