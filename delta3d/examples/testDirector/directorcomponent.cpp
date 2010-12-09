@@ -99,7 +99,7 @@ void DirectorComponent::OnMapLoaded()
    // Make sure collision detection is performed on the camera and with the trigger
    camera->SetCollisionSphere(1.0f);
    camera->SetCollisionCollideBits(COLLISION_CATEGORY_MASK_PROXIMITYTRIGGER);
-   app.GetScene()->AddDrawable(camera);
+   app.GetScene()->AddChild(camera);
 
    // Allow the player to walk around the level and collide with objects
    dtCore::CollisionMotionModel* motionModel = 

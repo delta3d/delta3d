@@ -92,8 +92,8 @@ void CoreTests::TestAssignToView()
 
    // Add two drawables to test so that setting the database pager will run the code to re-add them to the
    // pager.  I need a way to test if the drawables are actually added to the pager.
-   scene->AddDrawable(new dtCore::PointAxis());
-   scene->AddDrawable(new dtCore::Environment());
+   scene->AddChild(new dtCore::PointAxis());
+   scene->AddChild(new dtCore::Environment());
 
    view->SetScene(scene.get());
 
@@ -111,8 +111,8 @@ void CoreTests::TestScene()
    grp->addChild(new osg::Group());
    grp->addChild(new osg::Geode());
 
-   scene->AddDrawable(new dtCore::PointAxis());
-   scene->AddDrawable(new dtCore::Environment());
+   scene->AddChild(new dtCore::PointAxis());
+   scene->AddChild(new dtCore::Environment());
 
    unsigned numSceneChildBefore = scene->GetNumberOfAddedDrawable();
    unsigned numGrpChildBefore = grp->getNumChildren();
@@ -216,7 +216,7 @@ void CoreTests::TestGettingAllDeltaDrawablesInScene()
    // the Scene automatically adds a light as a DeltaDrawble.  We'll remove it
    // so that it won't affect out test
    scene->UseSceneLight(false);
-   scene->RemoveDrawable(scene->GetLight(0));
+   scene->RemoveChild(scene->GetLight(0));
 
    dtCore::RefPtr<dtCore::Object> obj1 = new dtCore::Object("one");
    dtCore::RefPtr<dtCore::Object> obj2 = new dtCore::Object("two");
@@ -227,7 +227,7 @@ void CoreTests::TestGettingAllDeltaDrawablesInScene()
    obj2->AddChild(obj3.get());
    obj2->AddChild(obj4.get());
 
-   scene->AddDrawable(obj1.get());
+   scene->AddChild(obj1.get());
 
    CPPUNIT_ASSERT_EQUAL_MESSAGE("Scene should just have one DeltaDrawable added",
                                 (unsigned int)1, scene->GetNumberOfAddedDrawable());

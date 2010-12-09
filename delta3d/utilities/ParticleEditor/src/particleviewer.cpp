@@ -1370,7 +1370,7 @@ void ParticleViewer::OperatorsFluidFrictionOverrideRadiusValueChanged(double new
 void ParticleViewer::MakeCompass()
 {
    dtCore::Compass* compass = new dtCore::Compass(GetCamera());
-   GetScene()->AddDrawable(compass);
+   GetScene()->AddChild(compass);
    mpCompassTransform = (osg::MatrixTransform*)compass->GetOSGNode();
 }
 

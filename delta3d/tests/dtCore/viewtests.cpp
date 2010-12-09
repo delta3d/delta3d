@@ -154,7 +154,7 @@ CPPUNIT_TEST_SUITE_REGISTRATION(ViewTests);
       dtCore::RefPtr<dtCore::Scene> scene = new dtCore::Scene();
       view->SetScene( scene.get() );
 
-      scene->AddDrawable( new TestDrawable() );
+      scene->AddChild( new TestDrawable() );
 
       CPPUNIT_ASSERT_EQUAL_MESSAGE("SHould be 2",
                                     size_t(2),

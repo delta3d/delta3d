@@ -299,7 +299,7 @@ void Viewer::OnUnloadAttachmentFile()
 {
    if(mAttachmentObject != NULL)
    {
-      GetScene()->RemoveDrawable(mAttachmentObject.get());
+      GetScene()->RemoveChild(mAttachmentObject.get());
       mAttachmentObject = NULL;
    }
 }
@@ -311,7 +311,7 @@ void Viewer::OnLoadAttachmentFile(const QString& filename)
    
    mAttachmentObject = new dtCore::Object;
    mAttachmentObject->LoadFile(filename.toStdString());
-   GetScene()->AddDrawable(mAttachmentObject.get());
+   GetScene()->AddChild(mAttachmentObject.get());
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -51,7 +51,7 @@ void dtInspectorQt::SceneView::Update()
       mUI->sceneChildList->clear();
       for (unsigned int childIdx=0; childIdx<mOperateOn->GetNumberOfAddedDrawable(); childIdx++)
       {
-         dtCore::RefPtr<dtCore::DeltaDrawable> child = mOperateOn->GetDrawable(childIdx);
+         dtCore::RefPtr<dtCore::DeltaDrawable> child = mOperateOn->GetChild(childIdx);
          mUI->sceneChildList->addItem(QString::fromStdString(child->GetName()));
       }
 

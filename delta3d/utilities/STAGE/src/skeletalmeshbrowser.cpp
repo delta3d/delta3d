@@ -78,7 +78,7 @@ namespace dtEditQt
       // create a new scene for the skeletal mesh viewport
       meshScene = new dtCore::Scene();
       previewObject = new dtCore::Object();
-      meshScene->AddDrawable(previewObject.get());
+      meshScene->AddChild(previewObject.get());
       camera = new StageCamera();
       camera->makePerspective(60.0f,1.333f,0.1f,100000.0f);
 
@@ -277,9 +277,9 @@ namespace dtEditQt
             file = context + "\\" + file;
             file.replace("\\", "/");
 
-            if (meshScene->GetDrawableIndex(previewObject.get()) == (unsigned)meshScene->GetNumberOfAddedDrawable())
+            if (meshScene->GetChildIndex(previewObject.get()) == (unsigned)meshScene->GetNumberOfAddedDrawable())
             {
-               meshScene->AddDrawable(previewObject.get());
+               meshScene->AddChild(previewObject.get());
             }
 
             // Load the new file.
@@ -305,7 +305,7 @@ namespace dtEditQt
       setCreateAction->setEnabled(false);
 
       // When any item is selected, clear the scene
-      meshScene->RemoveDrawable(previewObject.get());
+      meshScene->RemoveChild(previewObject.get());
       perspView->refresh();
 
       if (mSelection != NULL)
@@ -362,7 +362,7 @@ namespace dtEditQt
       if (mSelection->isResource())
       {
          // When any item is selected, clear the scene
-         meshScene->RemoveDrawable(previewObject.get());
+         meshScene->RemoveChild(previewObject.get());
          perspView->refresh();
          previewBtn->setDisabled(true);
       }

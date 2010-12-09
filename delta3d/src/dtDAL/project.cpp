@@ -847,7 +847,7 @@ namespace dtDAL
                }
                else
                {
-                  scene.AddDrawable(billBoard->GetDrawable());
+                  scene.AddChild(billBoard->GetDrawable());
                }
 
             }
@@ -855,7 +855,7 @@ namespace dtDAL
             if (renderMode == BaseActorObject::RenderMode::DRAW_ACTOR ||
                 renderMode == BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON)
             {
-               scene.AddDrawable(proxy.GetActor());
+               scene.AddChild(proxy.GetActor());
             }
 
 
@@ -874,7 +874,7 @@ namespace dtDAL
                }
                else
                {
-                  scene.AddDrawable(proxy.GetActor());
+                  scene.AddChild(proxy.GetActor());
                }
             }
          }
@@ -898,14 +898,14 @@ namespace dtDAL
             }
             else
             {
-               scene.AddDrawable(proxy.GetActor());
+               scene.AddChild(proxy.GetActor());
             }
          }
       }
 
       if (map.GetEnvironmentActor() != NULL)
       {
-         scene.AddDrawable(map.GetEnvironmentActor()->GetActor());
+         scene.AddChild(map.GetEnvironmentActor()->GetActor());
       }
    }
 

@@ -53,7 +53,7 @@ void TestAI::Config()
 
    // initialize the Waypoint Helper
    WaypointManager::GetInstance();
-   GetScene()->AddDrawable(&WaypointManager::GetInstance());
+   GetScene()->AddChild(&WaypointManager::GetInstance());
 
    // set the waypoint manager to not (redundantly) delete waypoints
    dtAI::WaypointManager::GetInstance().SetDeleteOnClear(false);

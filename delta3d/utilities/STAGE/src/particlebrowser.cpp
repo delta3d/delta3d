@@ -73,7 +73,7 @@ namespace dtEditQt
       // create a new scene for the particle viewport
       particleScene = new dtCore::Scene();
       previewObject = new dtCore::Object();
-      particleScene->AddDrawable(previewObject.get());
+      particleScene->AddChild(previewObject.get());
       camera = new StageCamera();
       camera->makePerspective(60.0f,1.333f,0.1f,100000.0f);
 
@@ -206,7 +206,7 @@ namespace dtEditQt
 
          c->LoadFile(file.toStdString());
          particleScene->RemoveAllDrawables();
-         particleScene->AddDrawable(c.get());
+         particleScene->AddChild(c.get());
          perspView->GetQGLWidget()->setFocus();
          SetCameraLookAt(*camera, *c);
       }

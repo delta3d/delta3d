@@ -1067,7 +1067,7 @@ namespace dtEditQt
             envActor->RemoveAllActors();
             for (unsigned int i = 0; i < drawables.size(); ++i)
             {
-               scene->AddDrawable(drawables[i]);
+               scene->AddChild(drawables[i]);
             }
 
             currMap->SetEnvironmentActor(NULL);
@@ -1088,10 +1088,10 @@ namespace dtEditQt
       if (proxy != NULL && scene != NULL)
       {
          dtCore::RefPtr<dtDAL::BaseActorObject> tempRef = proxy;
-         scene->RemoveDrawable(proxy->GetActor());
+         scene->RemoveChild(proxy->GetActor());
          if (proxy->GetBillBoardIcon()!= NULL)
          {
-            scene->RemoveDrawable(proxy->GetBillBoardIcon()->GetDrawable());
+            scene->RemoveChild(proxy->GetBillBoardIcon()->GetDrawable());
          }
 
          EditorEvents::GetInstance().emitActorProxyAboutToBeDestroyed(tempRef);

@@ -123,7 +123,7 @@ namespace dtActors
          }
          else if (GetSceneParent() != NULL)
          {
-            GetSceneParent()->RemoveDrawable(this);
+            GetSceneParent()->RemoveChild(this);
          }
 
          GetAttachToActor()->AddChild(this);

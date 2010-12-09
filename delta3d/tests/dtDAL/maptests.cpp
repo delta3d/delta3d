@@ -1818,7 +1818,7 @@ void MapTests::TestLoadMapIntoScene()
         //spin through the scene removing each actor found from the set.
         for (unsigned x = 0; x < (unsigned)scene.GetNumberOfAddedDrawable(); ++x)
         {
-            dtCore::DeltaDrawable* dd = scene.GetDrawable(x);
+            dtCore::DeltaDrawable* dd = scene.GetChild(x);
             std::set<dtCore::UniqueId>::iterator found = ids.find(dd->GetUniqueId());
             //Need to check to see if the actor exists in the set before removing it
             //because this is a test and because the scene could add drawables itself.

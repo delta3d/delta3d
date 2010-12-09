@@ -279,7 +279,7 @@ void RandomActorGeneratorPlugin::NewActorProxyInsideVolumeEditor(dtDAL::BaseActo
 
       dtCore::Scene* masterScene = dtEditQt::ViewportManager::GetInstance().getMasterScene();
       //Don't want the new Actor's Drawable to be part of the intersection tests
-      masterScene->RemoveDrawable(aClonePtr);
+      masterScene->RemoveChild(aClonePtr);
 
       //first find "top" of brush
       dtCore::RefPtr<dtCore::Isector> groundFinder = new dtCore::Isector();
@@ -322,7 +322,7 @@ void RandomActorGeneratorPlugin::NewActorProxyInsideVolumeEditor(dtDAL::BaseActo
       }
 
       //put new Actor's Drawable back in Scene
-      masterScene->AddDrawable(aClonePtr);
+      masterScene->AddChild(aClonePtr);
    }
 
    //send out a created event.

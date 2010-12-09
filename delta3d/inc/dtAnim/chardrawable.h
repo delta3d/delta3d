@@ -52,7 +52,7 @@ namespace dtAnim
    *   core->LoadSkeleton(...);
    *   core->LoadAnimation(...);
    *   char->Create( *core );
-   *   myScene->AddDrawable( *char );
+   *   myScene->AddChild( *char );
    * @endcode
    */
    class DT_ANIM_EXPORT CharDrawable : public dtCore::Transformable

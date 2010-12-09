@@ -504,7 +504,7 @@ namespace dtEditQt
       //The persistent pseudo-actor that is used for special-purpose editing
       mVolEditActorProxy =
          dynamic_cast<dtActors::VolumeEditActorProxy*>(dtDAL::LibraryManager::GetInstance().CreateActorProxy("dtutil", "Volume Edit").get());
-      ViewportManager::GetInstance().getMasterScene()->AddDrawable(mVolEditActorProxy->GetActor());
+      ViewportManager::GetInstance().getMasterScene()->AddChild(mVolEditActorProxy->GetActor());
 
       //move the VolumeEditActor away from the Perspective camera so we can see it.
       dtActors::VolumeEditActor* volEditAct =

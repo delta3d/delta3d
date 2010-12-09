@@ -114,7 +114,7 @@ public:
          mGround->SetCollisionMesh();
 
          // Add the object to the Scene to be rendered
-         GetScene()->AddDrawable(mGround.get());
+         GetScene()->AddChild(mGround.get());
 
          // render collision geometry (for debugging)
          mGround->RenderCollisionGeometry(mRenderCollisionGeometry);
@@ -139,7 +139,7 @@ public:
          obj2->EnableDynamics();
 
          // Add the object to the Scene to be rendered
-         GetScene()->AddDrawable(obj2.get());
+         GetScene()->AddChild(obj2.get());
 
          // put the falling crate in the vector of dropped objects
          mObjects.push_back(obj2);
@@ -167,7 +167,7 @@ public:
          obj3->EnableDynamics();
 
          // Add the object to the Scene to be rendered
-         GetScene()->AddDrawable(obj3.get());
+         GetScene()->AddChild(obj3.get());
 
          // put the ground crate in the vector of dropped objects
          mObjects.push_back(obj3);
@@ -203,14 +203,14 @@ protected:
    {
       while (!mToAdd.empty())
       {
-         GetScene()->AddDrawable(mToAdd.front().get());
+         GetScene()->AddChild(mToAdd.front().get());
          mObjects.push_back(mToAdd.front());
          mToAdd.pop();
       }
 
       while (!mToRemove.empty())
       {
-         GetScene()->RemoveDrawable(mToRemove.front().get());
+         GetScene()->RemoveChild(mToRemove.front().get());
          mObjects.pop_front();
          mToRemove.pop();
       }

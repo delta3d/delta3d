@@ -249,11 +249,11 @@ namespace dtEditQt
             dtDAL::ActorProxyIcon* billBoard = mGhostProxy->GetBillBoardIcon();
             if (billBoard)
             {
-               ViewportManager::GetInstance().getMasterScene()->RemoveDrawable(billBoard->GetDrawable());
+               ViewportManager::GetInstance().getMasterScene()->RemoveChild(billBoard->GetDrawable());
             }
          }
 
-         ViewportManager::GetInstance().getMasterScene()->RemoveDrawable(drawable);
+         ViewportManager::GetInstance().getMasterScene()->RemoveChild(drawable);
 
          mGhostProxy = NULL;
       }
@@ -398,11 +398,11 @@ namespace dtEditQt
                //billBoard->LoadImages();
                if (billBoard)
                {
-                  ViewportManager::GetInstance().getMasterScene()->AddDrawable(billBoard->GetDrawable());
+                  ViewportManager::GetInstance().getMasterScene()->AddChild(billBoard->GetDrawable());
                }
             }
 
-            ViewportManager::GetInstance().getMasterScene()->AddDrawable(drawable);
+            ViewportManager::GetInstance().getMasterScene()->AddChild(drawable);
          }
 
          event->accept();
@@ -599,7 +599,7 @@ namespace dtEditQt
                dtDAL::ActorProxyIcon* billBoard = mGhostProxy->GetBillBoardIcon();
                if (billBoard)
                {
-                  ViewportManager::GetInstance().getMasterScene()->RemoveDrawable(billBoard->GetDrawable());
+                  ViewportManager::GetInstance().getMasterScene()->RemoveChild(billBoard->GetDrawable());
                }
             }
 

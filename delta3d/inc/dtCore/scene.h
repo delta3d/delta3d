@@ -25,7 +25,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include <dtCore/base.h>
+#include <dtCore/deltadrawable.h>
 #include <dtUtil/deprecationmgr.h>
 
 #include <osg/Vec3>
@@ -66,7 +66,7 @@ namespace dtCore
    /**
     *  Scene: This class encapsulates the root of the delta scene graph
     */
-   class DT_CORE_EXPORT Scene : public Base
+   class DT_CORE_EXPORT Scene : public DeltaDrawable
    {
       DECLARE_MANAGEMENT_LAYER(Scene)
 
@@ -107,6 +107,12 @@ namespace dtCore
 
    public:
       ///Get a pointer to the internal scene node
+      virtual osg::Node* GetOSGNode();
+
+      ///Get a pointer to the internal scene node
+      virtual const osg::Node* GetOSGNode() const;
+
+      ///Get a pointer to the internal scene node
       osg::Group* GetSceneNode();
       /**
        *  This function will remove all children of the current scene node,
@@ -117,33 +123,48 @@ namespace dtCore
        */
       void SetSceneNode(osg::Group* newSceneNode);
 
-      ///Add a DeltaDrawable to the Scene to be viewed.
-      void AddDrawable(DeltaDrawable* drawable);
+      ///Add a DeltaDrawable as a child of the Scene Node
+      virtual bool AddChild(DeltaDrawable* child);
+
+      /**
+       * This has been deprecated: use the AddChild method instead.
+       * Add a DeltaDrawable to the Scene to be viewed.
+       */
+      DEPRECATE_FUNC void AddDrawable(DeltaDrawable* drawable);
 
       ///Remove a DeltaDrawable from the Scene
-      void RemoveDrawable(DeltaDrawable* drawable);
+      virtual void RemoveChild(DeltaDrawable* child);
+
+      /**
+       * Deprecated: use the RemoveChild method instead
+       * Remove a DeltaDrawable from the Scene
+       */
+      DEPRECATE_FUNC void RemoveDrawable(DeltaDrawable* drawable);
 
       ///clears the scene.
       void RemoveAllDrawables();
 
-      /** Get a handle to the DeltaDrawable using the supplied index number.
+      /** Deprecated. Use GetChild instead.
+       * Get a handle to the DeltaDrawable using the supplied index number.
        * @param i the index of the DeltaDrawable that was added with AddDrawable()
        * @return The selected DeltaDrawable.  Could be NULL.
        */
-      DeltaDrawable* GetDrawable(unsigned int i) const;
+      DEPRECATE_FUNC DeltaDrawable* GetDrawable(unsigned int i) const;
 
-      /// Get the index number of the supplied drawable
-      unsigned int GetDrawableIndex(const DeltaDrawable* drawable) const;
+      /** Deprecated.  Use GetChildIndex instead.
+       * Get the index number of the supplied drawable
+       */
+      DEPRECATE_FUNC unsigned int GetDrawableIndex(const DeltaDrawable* drawable) const;
 
       /** Get the number of DeltaDrawables which have been directly added to the Scene
-       * using AddDrawable().
+       * using AddChild().
        * @return The number of DeltaDrawables that have been directly added to the Scene
        */
       unsigned int GetNumberOfAddedDrawable() const;
 
       /**
        * Get all the DeltaDrawables that are currently in the scene.  This will
-       * return all the DeltaDrawables added by AddDrawable(), plus their DeltaDrawable
+       * return all the DeltaDrawables added by AddChild(), plus their DeltaDrawable
        * children.
        * @see GetDrawable(), GetNumberOfAddedDrawable()
        * @return a container of all the DeltaDrawables, including their children,

@@ -152,7 +152,7 @@ class IsectorTests : public CPPUNIT_NS::TestFixture
          terrain->SetBuildDistance(1500.f);
          terrain->SetSegmentDivisions(64);
          mIsector->SetScene(mScene.get());
-         mScene->AddDrawable(terrain.get());
+         mScene->AddChild(terrain.get());
 
          dtCore::System::GetInstance().Step();
 

@@ -100,7 +100,7 @@ void TestMultiWin::Config()
    //setup scene here
    RefPtr<Object> terr = new Object();
    terr->LoadFile("models/terrain_simple.ive");
-   GetScene()->AddDrawable(terr.get());
+   GetScene()->AddChild(terr.get());
 }
 
 bool TestMultiWin::KeyPressed(const dtCore::Keyboard* keyboard, int kc)

@@ -262,7 +262,7 @@ void DeltaDrawableTests::TestActive()
    CPPUNIT_ASSERT_EQUAL_MESSAGE("DeltaDrawable should be enabled", true, draw->GetActive());
 
    RefPtr<Scene> scene = GetGlobalApplication().GetScene();
-   scene->AddDrawable(draw.get());
+   scene->AddChild(draw.get());
 
    System::GetInstance().Start();
    System::GetInstance().Step();
@@ -270,7 +270,7 @@ void DeltaDrawableTests::TestActive()
    CPPUNIT_ASSERT_EQUAL_MESSAGE("DeltaDrawable should have rendered", true, draw->mCullCallback->mTraversed);
 
    System::GetInstance().Stop();
-   scene->RemoveDrawable(draw.get());
+   scene->RemoveChild(draw.get());
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -282,7 +282,7 @@ void DeltaDrawableTests::TestDeactive()
    RefPtr<TestDrawable> draw = new TestDrawable();
 
    RefPtr<Scene> scene = GetGlobalApplication().GetScene();
-   scene->AddDrawable(draw.get());
+   scene->AddChild(draw.get());
 
    draw->SetActive(false);
 
@@ -292,7 +292,7 @@ void DeltaDrawableTests::TestDeactive()
    CPPUNIT_ASSERT_EQUAL_MESSAGE("DeltaDrawable should not have rendered", false, draw->mCullCallback->mTraversed);
 
    System::GetInstance().Stop();
-   scene->RemoveDrawable(draw.get());
+   scene->RemoveChild(draw.get());
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -305,7 +305,7 @@ void DeltaDrawableTests::TestDeactiveThenAddedToScene()
    draw->SetActive(false);
 
    RefPtr<Scene> scene = GetGlobalApplication().GetScene();
-   scene->AddDrawable(draw.get());
+   scene->AddChild(draw.get());
 
    System::GetInstance().Start();
    System::GetInstance().Step();
@@ -313,7 +313,7 @@ void DeltaDrawableTests::TestDeactiveThenAddedToScene()
    CPPUNIT_ASSERT_EQUAL_MESSAGE("DeltaDrawable should not have rendered", false, draw->mCullCallback->mTraversed);
 
    System::GetInstance().Stop();
-   scene->RemoveDrawable(draw.get());
+   scene->RemoveChild(draw.get());
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -326,7 +326,7 @@ void DeltaDrawableTests::TestDeactiveAddedToSceneThenActive()
    draw->SetActive(false);
 
    RefPtr<Scene> scene = GetGlobalApplication().GetScene();
-   scene->AddDrawable(draw.get());
+   scene->AddChild(draw.get());
 
    draw->SetActive(true);
 
@@ -336,7 +336,7 @@ void DeltaDrawableTests::TestDeactiveAddedToSceneThenActive()
    CPPUNIT_ASSERT_EQUAL_MESSAGE("DeltaDrawable should have rendered", true, draw->mCullCallback->mTraversed);
 
    System::GetInstance().Stop();
-   scene->RemoveDrawable(draw.get());
+   scene->RemoveChild(draw.get());
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -345,19 +345,19 @@ void DeltaDrawableTests::TestAddedAndRemovedCallbacks()
    dtCore::RefPtr<TestAddedAndRemovedDrawable> drawable = new TestAddedAndRemovedDrawable;
 
    RefPtr<Scene> scene = GetGlobalApplication().GetScene();
-   scene->AddDrawable(drawable.get());
+   scene->AddChild(drawable.get());
 
    CPPUNIT_ASSERT_EQUAL(1, drawable->mAddedCalled);
    CPPUNIT_ASSERT_EQUAL(0, drawable->mRemovedCalled);
 
    drawable->ResetCalled();
-   scene->RemoveDrawable(drawable.get());
+   scene->RemoveChild(drawable.get());
 
    CPPUNIT_ASSERT_EQUAL(1, drawable->mAddedCalled);
    CPPUNIT_ASSERT_EQUAL(1, drawable->mRemovedCalled);
 
    drawable->ResetCalled();
-   scene->AddDrawable(drawable.get());
+   scene->AddChild(drawable.get());
 
    dtCore::RefPtr<TestAddedAndRemovedDrawable> subDrawable = new TestAddedAndRemovedDrawable;
    drawable->AddChild(subDrawable.get());
@@ -376,7 +376,7 @@ void DeltaDrawableTests::TestAddedAndRemovedCallbacks()
    drawable->ResetCalled();
    subDrawable->ResetCalled();
 
-   scene->RemoveDrawable(drawable.get());
+   scene->RemoveChild(drawable.get());
 
    CPPUNIT_ASSERT_EQUAL(1, drawable->mAddedCalled);
    CPPUNIT_ASSERT_EQUAL(1, drawable->mRemovedCalled);

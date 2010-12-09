@@ -60,7 +60,7 @@ void PhysicalTests::TestGeomInit()
    RefPtr<Transformable> trans = new Transformable("testTrans");
 
    RefPtr<Scene> scene = new Scene();
-   scene->AddDrawable(trans.get());
+   scene->AddChild(trans.get());
 
    trans->SetCollisionSphere(1.f);
    trans->SetCollisionDetection(true);
@@ -76,7 +76,7 @@ void PhysicalTests::TestGeomInit()
    CPPUNIT_ASSERT_EQUAL_MESSAGE("Geom Transform wasn't initialized the same as the Physical Transform",
                                  true, physXform.EpsilonEquals(geomXform));
 
-   scene->RemoveDrawable(trans.get());
+   scene->RemoveChild(trans.get());
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -87,7 +87,7 @@ void PhysicalTests::TestBodyInit()
    RefPtr<Physical> phys = new Physical("testPhys");
 
    RefPtr<Scene> scene = new Scene();
-   scene->AddDrawable(phys.get());
+   scene->AddChild(phys.get());
 
    Transform physXform;
    phys->GetTransform(physXform);
@@ -102,7 +102,7 @@ void PhysicalTests::TestBodyInit()
    CPPUNIT_ASSERT_EQUAL_MESSAGE("Body Transform wasn't initialized the same as the Physical Transform",
                                  true, physXform.EpsilonEquals(bodyXform));
 
-   scene->RemoveDrawable(phys.get());
+   scene->RemoveChild(phys.get());
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -112,7 +112,7 @@ void PhysicalTests::TestGeomPosition()
    RefPtr<Transformable> trans = new Transformable("testTrans");
 
    RefPtr<Scene> scene = new Scene();
-   scene->AddDrawable(trans.get());
+   scene->AddChild(trans.get());
 
    trans->SetCollisionSphere(1.f);
    trans->SetCollisionDetection(true);
@@ -131,7 +131,7 @@ void PhysicalTests::TestGeomPosition()
    CPPUNIT_ASSERT_EQUAL_MESSAGE("Geom Transform didn't get set when Collision enabled, Dynamics not",
                                  true, startXform.EpsilonEquals(geomXform));
 
-   scene->RemoveDrawable(trans.get());
+   scene->RemoveChild(trans.get());
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -142,7 +142,7 @@ void PhysicalTests::TestBodyPosition()
    RefPtr<Physical> phys = new Physical("testPhys");
 
    RefPtr<Scene> scene = new Scene();
-   scene->AddDrawable(phys.get());
+   scene->AddChild(phys.get());
 
    phys->EnableDynamics(true);
 
@@ -160,7 +160,7 @@ void PhysicalTests::TestBodyPosition()
    CPPUNIT_ASSERT_EQUAL_MESSAGE("Body Transform didn't get set when Dynamics are enabled, collision not enabled",
                                 true, startXform.EpsilonEquals(bodyXform));
 
-   scene->RemoveDrawable(phys.get());
+   scene->RemoveChild(phys.get());
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -171,7 +171,7 @@ void PhysicalTests::TestBodyAndGeomPosition()
    RefPtr<Physical> phys = new Physical("testPhys");
 
    RefPtr<Scene> scene = new Scene();
-   scene->AddDrawable(phys.get());
+   scene->AddChild(phys.get());
 
    phys->SetCollisionSphere(1.f);
    phys->SetCollisionDetection(true);
@@ -197,6 +197,6 @@ void PhysicalTests::TestBodyAndGeomPosition()
    CPPUNIT_ASSERT_EQUAL_MESSAGE("Body Transform didn't get set when Collision and Dynamics are enabled",
                                  true, startXform.EpsilonEquals(bodyXform));
 
-   scene->RemoveDrawable(phys.get());
+   scene->RemoveChild(phys.get());
 }
 

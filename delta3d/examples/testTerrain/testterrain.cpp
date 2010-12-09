@@ -228,7 +228,7 @@ public:
       mEnvironment->AddChild(mTerrain.get());
       mRenderer->SetEnableFog(true);
 
-      GetScene()->AddDrawable(mEnvironment.get());
+      GetScene()->AddChild(mEnvironment.get());
    }
 
    //////////////////////////////////////////////////////////////////////////

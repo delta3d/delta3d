@@ -846,7 +846,7 @@ void Transformable::AddedToScene(Scene* scene)
       //TODO This ends up calling AddedToScene again with a 0.  Is this bad?
       if(GetSceneParent())
       {
-         GetSceneParent()->RemoveDrawable(this);
+         GetSceneParent()->RemoveChild(this);
       }
 
       DeltaDrawable::AddedToScene(scene);

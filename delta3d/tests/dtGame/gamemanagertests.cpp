@@ -974,7 +974,7 @@ void GameManagerTests::TestAddActor()
          CPPUNIT_ASSERT_MESSAGE("Actor should not be published.", !proxy->IsPublished());
 
          CPPUNIT_ASSERT_MESSAGE("The actor should have been added to the scene.",
-            mManager->GetScene().GetDrawableIndex(proxy->GetActor())
+            mManager->GetScene().GetChildIndex(proxy->GetActor())
             != mManager->GetScene().GetNumberOfAddedDrawable());
 
          try
@@ -1000,7 +1000,7 @@ void GameManagerTests::TestAddActor()
          CPPUNIT_ASSERT_MESSAGE("The proxy should not be in the gm", testIsInGM != true);
 
          CPPUNIT_ASSERT_MESSAGE("The actor should still be in the scene.",
-            mManager->GetScene().GetDrawableIndex(proxy->GetActor()) != mManager->GetScene().GetNumberOfAddedDrawable());
+            mManager->GetScene().GetChildIndex(proxy->GetActor()) != mManager->GetScene().GetNumberOfAddedDrawable());
 
          CPPUNIT_ASSERT_MESSAGE("The proxy should still be in the game manager", mManager->FindGameActorById(proxy->GetId()) != NULL);
          CPPUNIT_ASSERT_MESSAGE("The proxy should not have the GameManager pointer set to NULL", proxy->GetGameManager() != NULL);
@@ -1009,7 +1009,7 @@ void GameManagerTests::TestAddActor()
          dtCore::System::GetInstance().Step();
 
          CPPUNIT_ASSERT_MESSAGE("The actor should not be in the scene.",
-            mManager->GetScene().GetDrawableIndex(proxy->GetActor()) == mManager->GetScene().GetNumberOfAddedDrawable());
+            mManager->GetScene().GetChildIndex(proxy->GetActor()) == mManager->GetScene().GetNumberOfAddedDrawable());
 
          CPPUNIT_ASSERT_MESSAGE("The proxy should not still be in the game manager", mManager->FindGameActorById(proxy->GetId()) == NULL);
          CPPUNIT_ASSERT_MESSAGE("The proxy should have the GameManager pointer set to NULL", proxy->GetGameManager() == NULL);
@@ -1038,7 +1038,7 @@ void GameManagerTests::TestAddActor()
          CPPUNIT_ASSERT_MESSAGE("Actor should be remote.", proxy->IsRemote());
          CPPUNIT_ASSERT_MESSAGE("Actor should not be published.", !proxy->IsPublished());
          CPPUNIT_ASSERT_MESSAGE("The actor should have been added to the scene.",
-            mManager->GetScene().GetDrawableIndex(proxy->GetActor()) != mManager->GetScene().GetNumberOfAddedDrawable());
+            mManager->GetScene().GetChildIndex(proxy->GetActor()) != mManager->GetScene().GetNumberOfAddedDrawable());
 
 
          CPPUNIT_ASSERT_THROW_MESSAGE("An actor may not be published if it's remote.",
@@ -1053,13 +1053,13 @@ void GameManagerTests::TestAddActor()
          CPPUNIT_ASSERT_MESSAGE("The proxy should still be in the game manager", mManager->FindGameActorById(proxy->GetId()) != NULL);
          CPPUNIT_ASSERT_MESSAGE("The proxy should not have the GameManager pointer set to NULL", proxy->GetGameManager() != NULL);
          CPPUNIT_ASSERT_MESSAGE("The actor should still be in the scene.",
-            mManager->GetScene().GetDrawableIndex(proxy->GetActor()) != mManager->GetScene().GetNumberOfAddedDrawable());
+            mManager->GetScene().GetChildIndex(proxy->GetActor()) != mManager->GetScene().GetNumberOfAddedDrawable());
          //have to send a from event to make the actor get deleted
          dtCore::AppSleep(10);
          dtCore::System::GetInstance().Step();
 
          CPPUNIT_ASSERT_MESSAGE("The actor should not still be in the scene.",
-            mManager->GetScene().GetDrawableIndex(proxy->GetActor()) == mManager->GetScene().GetNumberOfAddedDrawable());
+            mManager->GetScene().GetChildIndex(proxy->GetActor()) == mManager->GetScene().GetNumberOfAddedDrawable());
          CPPUNIT_ASSERT_MESSAGE("The proxy should not still be in the game manager", mManager->FindGameActorById(proxy->GetId()) == NULL);
          CPPUNIT_ASSERT_MESSAGE("The proxy should have the GameManager pointer set to NULL", proxy->GetGameManager() == NULL);
       }
@@ -1080,7 +1080,7 @@ void GameManagerTests::TestAddActor()
          dtCore::RefPtr<dtGame::GameActorProxy> gameProxyFound = mManager->FindGameActorById(proxy->GetId());
          CPPUNIT_ASSERT_MESSAGE("The actor should not have been added as a game actor", gameProxyFound == NULL);
          CPPUNIT_ASSERT_MESSAGE("The actor should have been added to the scene.",
-            mManager->GetScene().GetDrawableIndex(proxy->GetActor()) != mManager->GetScene().GetNumberOfAddedDrawable());
+            mManager->GetScene().GetChildIndex(proxy->GetActor()) != mManager->GetScene().GetNumberOfAddedDrawable());
 
 
          CPPUNIT_ASSERT_THROW_MESSAGE("An actor may not be published if it's not added as a game actor.",
@@ -1089,7 +1089,7 @@ void GameManagerTests::TestAddActor()
          mManager->DeleteActor(static_cast<dtDAL::BaseActorObject&>(*proxy));
          CPPUNIT_ASSERT_MESSAGE("The proxy should not still be in the game manager", mManager->FindActorById(proxy->GetId()) == NULL);
          CPPUNIT_ASSERT_MESSAGE("The actor should not still be in the scene.",
-            mManager->GetScene().GetDrawableIndex(proxy->GetActor()) == mManager->GetScene().GetNumberOfAddedDrawable());
+            mManager->GetScene().GetChildIndex(proxy->GetActor()) == mManager->GetScene().GetNumberOfAddedDrawable());
       }
    }
 }
@@ -1124,19 +1124,19 @@ void GameManagerTests::TestComplexScene()
       }
 
       CPPUNIT_ASSERT_MESSAGE("Actor should be in the scene.",
-         mManager->GetScene().GetDrawableIndex(proxies[i]->GetActor()) != mManager->GetScene().GetNumberOfAddedDrawable());
+         mManager->GetScene().GetChildIndex(proxies[i]->GetActor()) != mManager->GetScene().GetNumberOfAddedDrawable());
 
    }
 
    dtCore::Scene& scene = mManager->GetScene();
 
-   scene.RemoveDrawable(proxies[0]->GetActor());
-   scene.RemoveDrawable(proxies[1]->GetActor());
-   scene.RemoveDrawable(proxies[2]->GetActor());
-   scene.RemoveDrawable(proxies[6]->GetActor());
-   scene.RemoveDrawable(proxies[7]->GetActor());
-   scene.RemoveDrawable(proxies[8]->GetActor());
-   scene.RemoveDrawable(proxies[9]->GetActor());
+   scene.RemoveChild(proxies[0]->GetActor());
+   scene.RemoveChild(proxies[1]->GetActor());
+   scene.RemoveChild(proxies[2]->GetActor());
+   scene.RemoveChild(proxies[6]->GetActor());
+   scene.RemoveChild(proxies[7]->GetActor());
+   scene.RemoveChild(proxies[8]->GetActor());
+   scene.RemoveChild(proxies[9]->GetActor());
 
    //Add the regular actors as children to the first game actor.
    proxies[5]->GetActor()->AddChild(proxies[0]->GetActor());
@@ -1195,7 +1195,7 @@ void GameManagerTests::TestComplexScene()
       std::ostringstream ss;
       ss << "proxy[" << i << "] should be in the root of the scene.";
       CPPUNIT_ASSERT_MESSAGE(ss.str(),
-         scene.GetDrawableIndex(proxies[currentInScene[i]]->GetActor()) != scene.GetNumberOfAddedDrawable());
+         scene.GetChildIndex(proxies[currentInScene[i]]->GetActor()) != scene.GetNumberOfAddedDrawable());
    }
 
    //check that children of 1 are still that way.

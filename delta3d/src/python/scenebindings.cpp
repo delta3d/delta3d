@@ -12,6 +12,24 @@ using namespace dtCore;
 
 //BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(GetHOT_Overloads, GetHeightOfTerrain, 3, 5)
 
+class SceneWrap : public Scene
+{
+public:
+   SceneWrap(PyObject* self)
+         : mSelf(self)
+      {}
+
+
+   DeltaDrawable* GetChildWrap(unsigned int index)
+   {
+      DeltaDrawable* dd = this->GetChild(index);
+      return dd;
+   }
+
+protected:
+   PyObject* mSelf;
+};
+
 void initSceneBindings()
 {
    Scene* (*SceneGI1)(int) = &Scene::GetInstance;
@@ -31,17 +49,25 @@ void initSceneBindings()
    const Light* (Scene::*GetLight2)(int) const = &Scene::GetLight;
    Light* (Scene::*GetLight3)(const std::string&) = &Scene::GetLight;
    const Light* (Scene::*GetLight4)(const std::string&) const = &Scene::GetLight;
-   
+
+   osg::Node* (Scene::*GetOSGNode1)() = &Scene::GetOSGNode;
+   const osg::Node* (Scene::*GetOSGNode2)() const = &Scene::GetOSGNode;
+  
    scope sceneScope = class_<Scene, bases<Base>, dtCore::RefPtr<Scene>, boost::noncopyable >("Scene", init<optional<const std::string&> >())
       .def("GetInstanceCount", &Scene::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", SceneGI1, return_internal_reference<>())
       .def("GetInstance", SceneGI2, return_internal_reference<>())
       .staticmethod("GetInstance")
+      .def("GetOSGNode", GetOSGNode1, return_internal_reference<>())
+      .def("GetOSGNode", GetOSGNode2, return_internal_reference<>())
       .def("GetSceneNode", &Scene::GetSceneNode, return_internal_reference<>())
       .def("AddDrawable", &Scene::AddDrawable)
+      .def("AddChild", &Scene::AddChild)
       .def("RemoveDrawable", &Scene::RemoveDrawable)
+      .def("RemoveChild", &Scene::RemoveChild)
       .def("GetDrawable", &Scene::GetDrawable, return_internal_reference<>())
+      .def("GetChild", &SceneWrap::GetChildWrap, return_internal_reference<>())
       .def("SetRenderState", &Scene::SetRenderState)
       .def("GetHeightOfTerrain", GetHeightOfTerrain1)
       //.def("GetHeightOfTerrain", &Scene::GetHeightOfTerrain, GetHOT_Overloads())
@@ -59,6 +85,7 @@ void initSceneBindings()
       .def("GetLight", GetLight4, return_internal_reference<>())
       .def("UseSceneLight", &Scene::UseSceneLight)
       .def("GetDrawableIndex", &Scene::GetDrawableIndex)
+      .def("GetChildIndex", &DeltaDrawable::GetChildIndex)
       .def("GetNumberOfAddedDrawable", &Scene::GetNumberOfAddedDrawable);
 
    enum_<Scene::Face>("Face")

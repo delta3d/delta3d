@@ -403,7 +403,7 @@ namespace dtCore
       bool GetRenderCollisionGeometry() const;
 
       /**
-       * This typically gets called from Scene::AddDrawable().
+       * This typically gets called from Scene::AddChild().
        *
        * This method perform the standard DeltaDrawable::AddedToScene() functionality
        * then registers this Transformable object with the supplied Scene to create the

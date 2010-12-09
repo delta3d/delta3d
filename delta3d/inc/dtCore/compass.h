@@ -39,7 +39,7 @@ namespace dtCore
     * The compass is derived from Transformable so the user could manipulate it's translations,
     * however, this is discouraged.
     *
-    * The Compass must be added to a Scene to be viewed using Scene::AddDrawable().
+    * The Compass must be added to a Scene to be viewed using Scene::AddChild().
     */
 
    class DT_CORE_EXPORT Compass :   public   Transformable
