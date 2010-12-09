@@ -1168,7 +1168,7 @@ namespace dtGame
       else
       {
          mGMImpl->mBaseActorObjectMap.insert(std::make_pair(actorProxy.GetId(), &actorProxy));
-         mGMImpl->mScene->AddDrawable(actorProxy.GetActor());
+         mGMImpl->mScene->AddChild(actorProxy.GetActor());
       }
    }
 
@@ -1202,14 +1202,14 @@ namespace dtGame
          else
          {
             mGMImpl->mGameActorProxyMap.insert(std::make_pair(mGMImpl->mEnvironment->GetId(), mGMImpl->mEnvironment.get()));
-            mGMImpl->mScene->AddDrawable(mGMImpl->mEnvironment->GetActor());
+            mGMImpl->mScene->AddChild(mGMImpl->mEnvironment->GetActor());
             mGMImpl->SendEnvironmentChangedMessage(*this, mGMImpl->mEnvironment.get());
          }
       }
       else
       {
          mGMImpl->mGameActorProxyMap.insert(std::make_pair(gameActorProxy.GetId(), &gameActorProxy));
-         mGMImpl->mScene->AddDrawable(gameActorProxy.GetActor());
+         mGMImpl->mScene->AddChild(gameActorProxy.GetActor());
       }
 
       // Remote actors are normally created in response to a create message, so sending another is silly.
@@ -1369,7 +1369,7 @@ namespace dtGame
    {
       // Is it an environment actor proxy?
       IEnvGameActorProxy* eap = dynamic_cast<IEnvGameActorProxy*>(&actorProxy);
-      if (eap != NULL && mGMImpl->mScene->GetDrawableIndex(eap->GetActor()) != mGMImpl->mScene->GetNumberOfAddedDrawable())
+      if (eap != NULL && mGMImpl->mScene->GetChildIndex(eap->GetActor()) != mGMImpl->mScene->GetNumberOfAddedDrawable())
       {
          // First we have to remove all of the actors from it
          IEnvGameActor* e = dynamic_cast<IEnvGameActor*>(&eap->GetGameActor());
@@ -1381,7 +1381,7 @@ namespace dtGame
          // Also invalidate the delete environment parent by calling Emancipate
          for (size_t i = 0; i < actors.size(); ++i)
          {
-            mGMImpl->mScene->AddDrawable(actors[i]);
+            mGMImpl->mScene->AddChild(actors[i]);
          }
 
          // Are we deleting the environment pointer?
@@ -1598,7 +1598,7 @@ namespace dtGame
 
       for (unsigned int i = 0; i < mGMImpl->mScene->GetNumberOfAddedDrawable(); i++)
       {
-         vec.push_back(mGMImpl->mScene->GetDrawable(i));
+         vec.push_back(mGMImpl->mScene->GetChild(i));
       }
    }
 

@@ -233,21 +233,21 @@ namespace dtEditQt
             billBoard = proxy->GetBillBoardIcon();
             if (billBoard != NULL)
             {
-               mMasterScene->RemoveDrawable(billBoard->GetDrawable());
+               mMasterScene->RemoveChild(billBoard->GetDrawable());
             }
          }
          else if (renderMode == dtDAL::BaseActorObject::RenderMode::DRAW_ACTOR)
          {
-            mMasterScene->RemoveDrawable(proxy->GetActor());
+            mMasterScene->RemoveChild(proxy->GetActor());
          }
          else if (renderMode == dtDAL::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON)
          {
             billBoard = proxy->GetBillBoardIcon();
             if (billBoard != NULL)
             {
-               mMasterScene->RemoveDrawable(billBoard->GetDrawable());
+               mMasterScene->RemoveChild(billBoard->GetDrawable());
             }
-            mMasterScene->RemoveDrawable(proxy->GetActor());
+            mMasterScene->RemoveChild(proxy->GetActor());
          }
       }
    }
@@ -592,7 +592,7 @@ namespace dtEditQt
 
       if (renderMode == dtDAL::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON)
       {
-         mMasterScene->RemoveDrawable(proxy->GetActor());
+         mMasterScene->RemoveChild(proxy->GetActor());
          mViewportOverlay->unSelect(proxy->GetActor());
          if (billBoard == NULL)
          {
@@ -601,10 +601,10 @@ namespace dtEditQt
          else
          {
             billBoard->LoadImages();
-            billBoardIndex = mMasterScene->GetDrawableIndex(billBoard->GetDrawable());
+            billBoardIndex = mMasterScene->GetChildIndex(billBoard->GetDrawable());
             if (billBoardIndex == (unsigned)mMasterScene->GetNumberOfAddedDrawable())
             {
-               mMasterScene->AddDrawable(billBoard->GetDrawable());
+               mMasterScene->AddChild(billBoard->GetDrawable());
                mViewportOverlay->select(billBoard->GetDrawable());
             }
          }
@@ -618,13 +618,13 @@ namespace dtEditQt
          else
          {
             mViewportOverlay->unSelect(billBoard->GetDrawable());
-            mMasterScene->RemoveDrawable(billBoard->GetDrawable());
+            mMasterScene->RemoveChild(billBoard->GetDrawable());
          }
 
-         actorIndex = mMasterScene->GetDrawableIndex(proxy->GetActor());
+         actorIndex = mMasterScene->GetChildIndex(proxy->GetActor());
          if (actorIndex == (unsigned)mMasterScene->GetNumberOfAddedDrawable())
          {
-            mMasterScene->AddDrawable(proxy->GetActor());
+            mMasterScene->AddChild(proxy->GetActor());
             mViewportOverlay->select(proxy->GetActor());
          }
       }
@@ -637,18 +637,18 @@ namespace dtEditQt
          else
          {
             billBoard->LoadImages();
-            billBoardIndex = mMasterScene->GetDrawableIndex(billBoard->GetDrawable());
+            billBoardIndex = mMasterScene->GetChildIndex(billBoard->GetDrawable());
             if (billBoardIndex == (unsigned)mMasterScene->GetNumberOfAddedDrawable())
             {
-               mMasterScene->AddDrawable(billBoard->GetDrawable());
+               mMasterScene->AddChild(billBoard->GetDrawable());
                mViewportOverlay->select(billBoard->GetDrawable());
             }
          }
 
-         actorIndex = mMasterScene->GetDrawableIndex(proxy->GetActor());
+         actorIndex = mMasterScene->GetChildIndex(proxy->GetActor());
          if (actorIndex == (unsigned)mMasterScene->GetNumberOfAddedDrawable())
          {
-            mMasterScene->AddDrawable(proxy->GetActor());
+            mMasterScene->AddChild(proxy->GetActor());
             mViewportOverlay->select(proxy->GetActor());
          }
       }
@@ -698,16 +698,16 @@ namespace dtEditQt
          }
          else
          {
-            scene->AddDrawable(billBoard->GetDrawable());
+            scene->AddChild(billBoard->GetDrawable());
          }
       }
       else if (renderMode == dtDAL::BaseActorObject::RenderMode::DRAW_ACTOR)
       {
-         scene->AddDrawable(proxy->GetActor());
+         scene->AddChild(proxy->GetActor());
       }
       else if (renderMode == dtDAL::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON)
       {
-         scene->AddDrawable(proxy->GetActor());
+         scene->AddChild(proxy->GetActor());
 
          billBoard = proxy->GetBillBoardIcon();
 
@@ -724,14 +724,14 @@ namespace dtEditQt
          }
          else
          {
-            scene->AddDrawable(billBoard->GetDrawable());
+            scene->AddChild(billBoard->GetDrawable());
          }
       }
       else
       {
          // If we got here, then the proxy wishes the system to determine how to display
          // the proxy. Currently, not implemented, defaults to DRAW_ACTOR).
-         scene->AddDrawable(proxy->GetActor());
+         scene->AddChild(proxy->GetActor());
       }
 
       // update the viewports unless we're getting lots of changes back to back, in which

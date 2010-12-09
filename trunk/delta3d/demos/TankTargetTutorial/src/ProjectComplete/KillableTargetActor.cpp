@@ -302,13 +302,13 @@ void KillableTargetActor::OnEnteredWorld()
    // small explosion
    mSmallExplosion = new dtCore::ParticleSystem();
    mSmallExplosion->LoadFile("Particles/explosion_small.osg",true);
-   GetGameActorProxy().GetGameManager()->GetScene().AddDrawable(mSmallExplosion.get());
+   GetGameActorProxy().GetGameManager()->GetScene().AddChild(mSmallExplosion.get());
    //AddChild(mSmallExplosion.get());
 
    // large explosion
    mLargeExplosion = new dtCore::ParticleSystem();
    mLargeExplosion->LoadFile("Particles/explosion_large.osg",true);
-   GetGameActorProxy().GetGameManager()->GetScene().AddDrawable(mLargeExplosion.get());
+   GetGameActorProxy().GetGameManager()->GetScene().AddChild(mLargeExplosion.get());
    //AddChild(mLargeExplosion.get());
 
    GetTransform(mOriginalPosition);

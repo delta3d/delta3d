@@ -151,12 +151,12 @@ void dtGame::GMImpl::RemoveActorFromScene(GameManager& gm, dtDAL::BaseActorObjec
    if (dd.GetParent() == NULL)
    {
       // remove the proxy drawable
-      mScene->RemoveDrawable(&dd);
+      mScene->RemoveChild(&dd);
 
       // put all the children in the base scene.
       for (size_t i = 0; i < childrenToMove.size(); ++i)
       {
-         mScene->AddDrawable(childrenToMove[i]->GetActor());
+         mScene->AddChild(childrenToMove[i]->GetActor());
       }
    }
    else

@@ -126,7 +126,7 @@ void TestAARHUD::ProcessMessage(const dtGame::Message& message)
    }
    else if (message.GetMessageType() == dtGame::MessageType::INFO_MAP_LOADED)
    {
-      //GetGameManager()->GetScene().AddDrawable(GetGUIDrawable()); //TODO need to display the UI *after* the map is loaded?
+      //GetGameManager()->GetScene().AddChild(GetGUIDrawable()); //TODO need to display the UI *after* the map is loaded?
    }
 }
 

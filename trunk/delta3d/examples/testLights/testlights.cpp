@@ -37,7 +37,7 @@ void TestLightsApp::Config()
    mGlobalSpot->SetTransform(trans);
    mGlobalSpot->SetSpotCutoff(20.0f);
    mGlobalSpot->SetSpotExponent(50.0f);
-   GetScene()->AddDrawable(mGlobalSpot.get());
+   GetScene()->AddChild(mGlobalSpot.get());
 
    // add a child to the local light
    mSphere = new Object("HappySphere");
@@ -51,12 +51,12 @@ void TestLightsApp::Config()
    mPositional = new PositionalLight(3, "PositionalLight");
    mPositional->SetDiffuse(1.0f, 1.0f, 0.0f, 1.0f); // yellow light
    mPositional->AddChild(mSphere.get()); //move sphere along with light
-   GetScene()->AddDrawable(mPositional.get());
+   GetScene()->AddChild(mPositional.get());
    mPositional->SetEnabled(false);
 
    // create an infinite light
    mGlobalInfinite = new InfiniteLight(4, "GlobalInfiniteLight");
-   GetScene()->AddDrawable(mGlobalInfinite.get());
+   GetScene()->AddChild(mGlobalInfinite.get());
    mGlobalInfinite->SetEnabled(true);
 
    // set camera stuff

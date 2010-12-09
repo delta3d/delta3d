@@ -56,7 +56,7 @@ void AIComponent::CleanUp()
 {
    if (GetAIPluginInterface())
    {
-      GetGameManager()->GetScene().RemoveDrawable(GetAIPluginInterface()->GetDebugDrawable());
+      GetGameManager()->GetScene().RemoveChild(GetAIPluginInterface()->GetDebugDrawable());
    }
 
    dtAI::BaseAIComponent::CleanUp();
@@ -92,7 +92,7 @@ void AIComponent::ProcessMessage(const dtGame::Message& message)
          // Set a custom debug drawable so that we control exactly what is rendered
          aiInterface->SetDebugDrawable(debugDrawable);
 
-         GetGameManager()->GetScene().AddDrawable(debugDrawable);
+         GetGameManager()->GetScene().AddChild(debugDrawable);
       }
 
       AIUtilityApp& aiApp = dynamic_cast<AIUtilityApp&>(GetGameManager()->GetApplication());
@@ -148,7 +148,7 @@ void AIComponent::AddAIInterfaceToMap(const std::string& map)
 
    SetAIPluginInterfaceProxy(aiActor);
    AIUtilityApp& aiApp = dynamic_cast<AIUtilityApp&>(GetGameManager()->GetApplication());
-   GetGameManager()->GetScene().AddDrawable(GetAIPluginInterface()->GetDebugDrawable());
+   GetGameManager()->GetScene().AddChild(GetAIPluginInterface()->GetDebugDrawable());
    aiApp.SetAIPluginInterface(GetAIPluginInterface(), false);
 }
 

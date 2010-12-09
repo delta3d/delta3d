@@ -694,7 +694,7 @@ void TransformableTests::TestGetTransformWithDisabledCamera()
 
    parent->AddChild(child.get());
 
-   scene->AddDrawable(parent.get());
+   scene->AddChild(parent.get());
 
    cam->SetEnabled(false);
 
@@ -723,7 +723,7 @@ void TransformableTests::TestGetTransformInSceneWithNoCamera()
    transformable->SetTransform(startXform);
 
    RefPtr<Scene> scene = new Scene();
-   scene->AddDrawable(transformable.get());
+   scene->AddChild(transformable.get());
 
    Transform endXform;
    transformable->GetTransform(endXform);
@@ -790,7 +790,7 @@ void TransformableTests::TestGetTransformFromInactiveParent()
    parent->SetActive(false);
 
    RefPtr<Scene> scene = new dtCore::Scene();
-   scene->AddDrawable(parent.get());
+   scene->AddChild(parent.get());
 
    RefPtr<Transformable> child = new Transformable();
    child->SetName("child");

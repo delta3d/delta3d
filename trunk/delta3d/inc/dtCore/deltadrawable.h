@@ -47,9 +47,9 @@ namespace dtCore
     * A renderable object. A Drawable is a virtual base class which cannot be
     * created, but rather must be derived.  The derived class must instantiate
     * the mNode protected variable which is some type of osg::Node.
-    * A Drawable instance must be added to the Scene for it to be rendered.
+    * A Drawable instance must be added as a child to the Scene for it to be rendered.
     *
-    * @see Scene::AddDrawable
+    * @see Scene::AddChild
     */
    class DT_CORE_EXPORT DeltaDrawable : public Base
    {

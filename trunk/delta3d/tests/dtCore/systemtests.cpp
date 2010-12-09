@@ -319,7 +319,7 @@ void SystemTests::TestStepping()
    mDummyNode = new DummyNode();
    mDummyCallback = new DummyCallback();
 
-   app->GetScene()->AddDrawable(mDummyDrawable.get());
+   app->GetScene()->AddChild(mDummyDrawable.get());
    app->GetScene()->GetSceneNode()->addChild(mDummyNode->GetOSGNode());
    mDummyNode->GetOSGNode()->setCullCallback(mDummyCallback.get());
 
@@ -409,7 +409,7 @@ void SystemTests::TestSimMode()
    mDummyNode = new DummyNode();
    mDummyCallback = new DummyCallback();
 
-   app->GetScene()->AddDrawable(mDummyDrawable.get());
+   app->GetScene()->AddChild(mDummyDrawable.get());
    app->GetScene()->GetSceneNode()->addChild(mDummyNode->GetOSGNode());
    mDummyNode->GetOSGNode()->setCullCallback(mDummyCallback.get());
 
@@ -468,7 +468,7 @@ void SystemTests::TestSystemStages()
 
    mDummyDrawable = new DummyDrawable();
 
-   app->GetScene()->AddDrawable(mDummyDrawable.get());
+   app->GetScene()->AddChild(mDummyDrawable.get());
 
    dtCore::System& ourSystem = dtCore::System::GetInstance();
    ourSystem.SetShutdownOnWindowClose(false);

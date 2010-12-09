@@ -67,7 +67,7 @@ namespace dtAI
 
       SetPosition(pWaypoint);
 
-      pScene->AddDrawable(mCharacter.get());
+      pScene->AddChild(mCharacter.get());
    }
 
    AICharacter::~AICharacter()

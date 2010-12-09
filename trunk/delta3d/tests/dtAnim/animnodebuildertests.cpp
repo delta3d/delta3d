@@ -127,7 +127,7 @@ namespace dtAnim
 
          osg::Node* node = mHelper->GetNode();
          dtCore::RefPtr<TestDrawable> drawable = new TestDrawable(*node);
-         GetGlobalApplication().GetScene()->AddDrawable(drawable.get());
+         GetGlobalApplication().GetScene()->AddChild(drawable.get());
 
          dtCore::System::GetInstance().Step();
          dtCore::System::GetInstance().Step();
@@ -157,7 +157,7 @@ namespace dtAnim
          CPPUNIT_ASSERT_EQUAL_MESSAGE("The first and second hardware meshes should share VBO's",
                secondModelData->GetElementBufferObject(), modelData->GetElementBufferObject());
 
-         GetGlobalApplication().GetScene()->RemoveDrawable(drawable.get());
+         GetGlobalApplication().GetScene()->RemoveChild(drawable.get());
       }
 
       ///////////////////////////////////////////////////////////////////////
@@ -175,7 +175,7 @@ namespace dtAnim
          dtCore::RefPtr<osg::Node> node = mHelper->GetNode();
 
          dtCore::RefPtr<TestDrawable> drawable = new TestDrawable(*node);
-         GetGlobalApplication().GetScene()->AddDrawable(drawable.get());
+         GetGlobalApplication().GetScene()->AddChild(drawable.get());
          dtCore::System::GetInstance().Step();
          dtCore::System::GetInstance().Step();
 
@@ -189,7 +189,7 @@ namespace dtAnim
 
          CheckGeode(geode, false);
 
-         GetGlobalApplication().GetScene()->RemoveDrawable(drawable.get());
+         GetGlobalApplication().GetScene()->RemoveChild(drawable.get());
       }
 
    private:

@@ -126,7 +126,7 @@ void ParticleSystemFreezer::apply(osg::Node& node)
 
 //////////////////////////////////////////////////////////////////////////
 Scene::Scene(const std::string& name)
-   : Base(name)
+   : DeltaDrawable(name)
    , mImpl(NULL)
 {
    mImpl = new SceneImpl(new ODEController(this));
@@ -135,7 +135,7 @@ Scene::Scene(const std::string& name)
 
 //////////////////////////////////////////////////////////////////////////
 Scene::Scene(dtCore::ODEController* physicsController, const std::string& name)
-   : Base(name)
+   : DeltaDrawable(name)
    , mImpl(NULL)
 {
    mImpl = new SceneImpl(physicsController);
@@ -158,6 +158,18 @@ Scene::~Scene()
 }
 
 //////////////////////////////////////////////////////////////////////////
+osg::Node* Scene::GetOSGNode()
+{
+   return GetSceneNode();
+}
+
+//////////////////////////////////////////////////////////////////////////
+const osg::Node* Scene::GetOSGNode() const
+{
+   return mImpl->mSceneNode.get();
+}
+
+//////////////////////////////////////////////////////////////////////////
 osg::Group* Scene::GetSceneNode()
 {
    return (mImpl->mSceneNode.get());
@@ -177,7 +189,7 @@ void Scene::Ctor()
 
    InfiniteLight* skyLight = new InfiniteLight(0, "SkyLight");
 
-   AddDrawable(skyLight);
+   AddChild(skyLight);
    skyLight->SetEnabled(true);
 
    AddSender(&System::GetInstance());
@@ -211,17 +223,27 @@ void Scene::SetSceneNode(osg::Group* newSceneNode)
    SceneImpl::DrawableList::iterator iterEnd = dl.end();
    for (SceneImpl::DrawableList::iterator iter = dl.begin(); iter != iterEnd; ++iter)
    {
-      AddDrawable((*iter).get());
+      AddChild((*iter).get());
    }
-
 }
-/////////////////////////////////////////////
-void Scene::AddDrawable(DeltaDrawable* drawable)
+
+////////////////////////////////////////////////////////////////////////////////
+bool Scene::AddChild(DeltaDrawable* child)
 {
-   if (drawable == NULL)
+   if (child == NULL)
    {
       LOG_WARNING("A NULL DeltaDrawable was attempted to be added to the Scene");
-      return;
+      return false;
+   }
+
+   if (dynamic_cast<dtCore::Scene*>(child) != NULL)
+   {
+      LOG_WARNING("A Scene is being added as a child of a Scene!");
+   }
+
+   if (! DeltaDrawable::AddChild(child))
+   {
+      return false;
    }
 
    // This is modified to put a RefPtr in the scene
@@ -229,44 +251,71 @@ void Scene::AddDrawable(DeltaDrawable* drawable)
    // Everything is killed and you get a blank screen.
    // I still pushback the original *drawable
    // so remove will still work
-   RefPtr<DeltaDrawable> drawme = drawable;
+   RefPtr<DeltaDrawable> drawme = child;
    mImpl->mSceneNode->addChild(drawme->GetOSGNode());
-   drawable->AddedToScene(this);
+   child->AddedToScene(this);
 
-   mImpl->mAddedDrawables.push_back(drawable);
+   mImpl->mAddedDrawables.push_back(child);
 
    if (mImpl->mPager.valid())
    {
-      mImpl->mPager->RegisterDrawable(*drawable);
+      mImpl->mPager->RegisterDrawable(*child);
    }
+
+   return true;
 }
+
 /////////////////////////////////////////////
-void Scene::RemoveDrawable(DeltaDrawable* drawable)
+void Scene::AddDrawable(DeltaDrawable* drawable)
 {
-   if (drawable == NULL)
+   // Deprecated Nov 19, 2010
+   DEPRECATE("void dtCore::Scene::AddDrawable(DeltaDrawable* drawable)",
+             "bool dtCore::Scene::AddChild(DeltaDrawable* drawable)");
+
+   AddChild(drawable);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void Scene::RemoveChild(DeltaDrawable* child)
+{
+   if (child == NULL)
    {
       LOG_WARNING("A NULL DeltaDrawable was attempted to be removed from the Scene");
       return;
    }
 
-   mImpl->mSceneNode->removeChild(drawable->GetOSGNode());
-   drawable->AddedToScene(NULL);
-   drawable->RemovedFromScene(this);
+   mImpl->mSceneNode->removeChild(child->GetOSGNode());
+   child->AddedToScene(NULL);
+   child->RemovedFromScene(this);
 
-   unsigned int pos = GetDrawableIndex(drawable);
+   unsigned int pos = GetChildIndex(child);
    if (pos < mImpl->mAddedDrawables.size())
    {
       mImpl->mAddedDrawables.erase(mImpl->mAddedDrawables.begin() + pos);
    }
+
+   DeltaDrawable::RemoveChild(child);
 }
+
+
+/////////////////////////////////////////////
+void Scene::RemoveDrawable(DeltaDrawable* drawable)
+{
+   // Deprecated Nov 19, 2010
+   DEPRECATE("void dtCore::Scene::RemoveDrawable(DeltaDrawable* drawable)",
+             "void dtCore::Scene::RemoveChild(DeltaDrawable* drawable)");
+
+   RemoveChild(drawable);   
+}
+
 /////////////////////////////////////////////
 void Scene::RemoveAllDrawables()
 {
    while (!mImpl->mAddedDrawables.empty())
    {
-      if (DeltaDrawable* d = GetDrawable(0))
+      if (DeltaDrawable* d = GetChild(0))
       {
-         RemoveDrawable(d);
+         RemoveChild(d);
       }
    }
 }
@@ -274,22 +323,34 @@ void Scene::RemoveAllDrawables()
 //////////////////////////////////////////////////////////////////////////
 DeltaDrawable* Scene::GetDrawable(unsigned int i) const
 {
-   return mImpl->mAddedDrawables[i].get();
+   // Deprecated Nov 19, 2010
+   DEPRECATE("DeltaDrawable* dtCore::Scene::GetDrawable(unsigned int i) const",
+             "DeltaDrawable* dtCore::DeltaDrawable::GetChild(DeltaDrawable* drawable)");
+
+   //return mImpl->mAddedDrawables[i].get();
+   
+   return (DeltaDrawable*) GetChild(i);
 }
 
 /////////////////////////////////////////////
 ///Get the index number of the supplied drawable
 unsigned int Scene::GetDrawableIndex(const DeltaDrawable* drawable) const
 {
-   for (unsigned int childNum = 0; childNum < mImpl->mAddedDrawables.size(); ++childNum)
-   {
-      if (mImpl->mAddedDrawables[childNum] == drawable)
-      {
-         return childNum;
-      }
-   }
+   // Deprecated Nov 19, 2010
+   DEPRECATE("unsigned int dtCore::Scene::GetDrawableIndex(const DeltaDrawable* drawable) const",
+             "unsigned int GetChildIndex(const DeltaDrawable* child) const;");
 
-   return mImpl->mAddedDrawables.size(); // node not found.
+   
+   //for (unsigned int childNum = 0; childNum < mImpl->mAddedDrawables.size(); ++childNum)
+   //{
+   //   if (mImpl->mAddedDrawables[childNum] == drawable)
+   //   {
+   //      return childNum;
+   //   }
+   //}
+   //return mImpl->mAddedDrawables.size(); // node not found.   
+
+   return GetChildIndex(drawable);   
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -321,7 +382,7 @@ std::vector<dtCore::DeltaDrawable*> Scene::GetAllDrawablesInTheScene() const
 
    for (unsigned int drawableIdx = 0; drawableIdx < GetNumberOfAddedDrawable(); drawableIdx++)
    {
-      DeltaDrawable* drawable = GetDrawable(drawableIdx);
+      DeltaDrawable* drawable = (DeltaDrawable*) GetChild(drawableIdx);
       if (drawable != NULL)
       {
          drawables.push_back(drawable);
@@ -685,15 +746,15 @@ void Scene::UseSceneLight(bool lightState)
    if (mImpl->mLights[0] == NULL && lightState)
    {
       InfiniteLight* skyLight = new InfiniteLight(0, "SkyLight");
-      AddDrawable(skyLight);
+      AddChild(skyLight);
       skyLight->SetEnabled(true);
    }
    else
    {
       mImpl->mLights[0]->SetEnabled(lightState);
-      if (GetDrawableIndex(mImpl->mLights[0].get()) == GetNumberOfAddedDrawable())
+      if (GetChildIndex(mImpl->mLights[0].get()) == GetNumberOfAddedDrawable())
       {
-         AddDrawable(mImpl->mLights[0].get());
+         AddChild(mImpl->mLights[0].get());
       }
    }
 }

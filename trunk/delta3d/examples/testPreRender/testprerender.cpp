@@ -159,7 +159,7 @@ void TestPreRender::CreateTextureScene()
    map.FindProxies(container, "", "", "", "dtCore::SkyBox");
 
    // Add the skybox to the main scene as well
-   GetScene()->AddDrawable(container[0]->GetActor());
+   GetScene()->AddChild(container[0]->GetActor());
 }
 
 ////////////////////////////////////////////////////////////////////////////////

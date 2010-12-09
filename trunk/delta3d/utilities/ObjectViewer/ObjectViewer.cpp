@@ -860,7 +860,7 @@ void ObjectViewer::InitLights()
       //   objectTransformable->AddChild(lightArrow.get());
       //}
 
-      GetScene()->AddDrawable(lightArrowTransformable.get());
+      GetScene()->AddChild(lightArrowTransformable.get());
 
       mLightMotion.push_back(lightMotion);
       mLightArrowTransformable.push_back(lightArrowTransformable);
@@ -907,7 +907,7 @@ void ObjectViewer::ClearLights()
 
    for (int lightIndex = 0; lightIndex < (int)mLightArrowTransformable.size(); lightIndex++)
    {
-      GetScene()->RemoveDrawable(mLightArrowTransformable[lightIndex].get());
+      GetScene()->RemoveChild(mLightArrowTransformable[lightIndex].get());
    }
 
    mLightMotion.clear();

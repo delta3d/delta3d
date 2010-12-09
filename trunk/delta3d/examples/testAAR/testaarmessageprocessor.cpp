@@ -344,7 +344,7 @@ void TestAARMessageProcessor::Reset()
    else
    {
       terrain->LoadFile(path);
-      GetGameManager()->GetScene().AddDrawable(terrain.get());
+      GetGameManager()->GetScene().AddChild(terrain.get());
    }
 
    dtCore::RefPtr<const dtDAL::ActorType> playerType = GetGameManager()->FindActorType("ExampleActors", "TestPlayer");

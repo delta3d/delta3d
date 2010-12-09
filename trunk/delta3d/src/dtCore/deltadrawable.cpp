@@ -559,7 +559,7 @@ bool dtCore::DeltaDrawable::GetIsRenderingProxyNode() const
 
 /**
  * Notifies this drawable object that it has been added to
- * a scene.  This is typically called from Scene::AddDrawable().
+ * a scene.  This is typically called from Scene::AddChild().
  *
  * This method will iterate through the list of children DeltaDrawable's (if any)
  * and call AddedToScene() with the supplied Scene.

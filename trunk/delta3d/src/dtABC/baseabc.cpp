@@ -86,7 +86,7 @@ void BaseABC::AddDrawable(DeltaDrawable* obj)
 {
    if (GetScene() != NULL)
    {
-      GetScene()->AddDrawable(obj);
+      GetScene()->AddChild(obj);
    }
 }
 
@@ -95,7 +95,7 @@ void BaseABC::RemoveDrawable(DeltaDrawable* obj)
 {
    if (GetScene() != NULL)
    {
-      GetScene()->RemoveDrawable(obj);
+      GetScene()->RemoveChild(obj);
    }
 }
 

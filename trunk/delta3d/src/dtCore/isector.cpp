@@ -197,7 +197,7 @@ namespace dtCore
       {
          for (unsigned i = 0; i < mScene->GetNumberOfAddedDrawable(); ++i)
          {
-            drawables.push(mScene->GetDrawable(i));
+            drawables.push(mScene->GetChild(i));
          }
       }
       else

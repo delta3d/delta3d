@@ -129,7 +129,7 @@ void MyNetwork::PreFrame(const double deltaFrameTime)
    // Process the Objects we wish to add to the scene
    while (!mObjectsToAdd.empty())
    {
-      mScene->AddDrawable(mObjectsToAdd.front().get());
+      mScene->AddChild(mObjectsToAdd.front().get());
 
       // Convert the address to a string for logging.
       std::ostringstream oss;
@@ -146,7 +146,7 @@ void MyNetwork::PreFrame(const double deltaFrameTime)
 
       if (iter != mOtherPlayerMap.end())
       {
-         mScene->RemoveDrawable((iter->second).get());
+         mScene->RemoveChild((iter->second).get());
          LOG_INFO("Removed player " + iter->first + " from the scene.")
 
          mOtherPlayerMap.erase(iter);
