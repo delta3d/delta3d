@@ -22,7 +22,6 @@
 #include <dtAI/waypointgraph.h>
 #include <dtAI/waypointcollection.h>
 #include <dtAI/aiplugininterface.h>
-#include <dtAI/tree.h>
 #include <dtAI/navmesh.h>
 #include <dtAI/waypointpair.h>
 #include <dtAI/aidebugdrawable.h>
