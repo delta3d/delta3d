@@ -31,13 +31,12 @@ MACRO(FIND_CAL3D_LIBRARY MYLIBRARY MYLIBRARYNAME)
 
 FIND_LIBRARY(${MYLIBRARY} 
     NAMES ${MYLIBRARYNAME}
-    PATHS
-    $ENV{CAL3D_DIR}/lib
+    HINTS
     $ENV{CAL3D_DIR}
-    ${DELTA3D_EXT_DIR}/lib
+    ${DELTA3D_EXT_DIR}
     ${DELTA_DIR}
-    $ENV{DELTA_ROOT}/ext/lib
     $ENV{DELTA_ROOT}
+	PATHS
     ~/Library/Frameworks
     /Library/Frameworks
     /usr/local/lib
@@ -47,6 +46,11 @@ FIND_LIBRARY(${MYLIBRARY}
     /opt/csw/lib
     /opt/lib    
     /usr/freeware/lib64
+	PATH_SUFFIXES
+	lib
+	bin/Debug
+	bin/Release
+	ext/lib
 )
 
 ENDMACRO(FIND_CAL3D_LIBRARY MYLIBRARY MYLIBRARYNAME)
