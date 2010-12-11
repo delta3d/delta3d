@@ -789,12 +789,13 @@ void MapTests::TestMapEventsModified()
 ///////////////////////////////////////////////////////////////////////////////////////
 void MapTests::TestMapSaveAndLoad()
 {
+   const std::string mapName("Neato Map");
+   const std::string mapFileName("neatomap");
+
     try
     {
         dtDAL::Project& project = dtDAL::Project::GetInstance();
 
-        std::string mapName("Neato Map");
-        std::string mapFileName("neatomap");
 
         dtDAL::Map* map = &project.CreateMap(mapName, mapFileName);
 
@@ -924,29 +925,11 @@ void MapTests::TestMapSaveAndLoad()
             names.insert(std::make_pair(i->first, i->second->GetName()));
         }
 
-        std::string newMapName("Weirdo Map");
+        const std::string newMapName("Weirdo Map");
         //set the name to make sure it can be changed.
         map->SetName(newMapName);
 
-        CPPUNIT_ASSERT_MESSAGE(std::string("Map should have the new name - ") + newMapName,
-            map->GetName() == newMapName);
-
-        CPPUNIT_ASSERT_MESSAGE("Map should have the old saved name - \"Neato Map\".",
-            map->GetSavedName() == "Neato Map");
-
-        project.SaveMapBackup(*map);
-
-        CPPUNIT_ASSERT_MESSAGE("A backup was just saved.  The map should have backups.",
-            project.HasBackup(*map) && project.HasBackup(mapName));
-
         project.SaveMap(*map);
-
-        //test both versions of the call.
-        CPPUNIT_ASSERT_MESSAGE("Map was saved.  The map should have no backups.",
-            !project.HasBackup(*map) && !project.HasBackup(newMapName));
-
-        CPPUNIT_ASSERT_MESSAGE(std::string("Map should have the new saved name - ") + newMapName,
-            map->GetSavedName() == newMapName);
 
         project.CloseMap(*map, true);
 
@@ -1168,65 +1151,6 @@ void MapTests::TestMapSaveAndLoad()
 
            CPPUNIT_ASSERT_MESSAGE("The value should not be equal to the proxy", aidap->GetValue() == p);
         }
-        std::string newAuthor("Dr. Eddie");
-
-        map->SetAuthor(newAuthor);
-
-        const std::string filenameBeforeBackup = map->GetFileName();;
-        project.SaveMapBackup(*map);
-
-        CPPUNIT_ASSERT_EQUAL_MESSAGE("Map filename should not have changed after preforming a backup",
-                                      filenameBeforeBackup, map->GetFileName());
-
-        map = &project.OpenMapBackup(newMapName);
-
-        CPPUNIT_ASSERT_EQUAL_MESSAGE("Map filename should not have changed after loading a backup.",
-                                      filenameBeforeBackup, map->GetFileName());
-        CPPUNIT_ASSERT_MESSAGE(newAuthor + " should be the author of the map.", map->GetAuthor() == newAuthor);
-
-        CPPUNIT_ASSERT_MESSAGE("Loading a backup map should load as modified.", map->IsModified());
-
-        map->SetDescription("test 2");
-
-        //test both versions of the call.
-        CPPUNIT_ASSERT_MESSAGE("Map was loaded as a backup, so it should have backups.",
-            project.HasBackup(*map) && project.HasBackup(newMapName));
-
-        project.SaveMapBackup(*map);
-
-        //test both versions of the call.
-        CPPUNIT_ASSERT_MESSAGE("A backup was just saved.  The map should have a backup.",
-            project.HasBackup(*map) && project.HasBackup(newMapName));
-
-        try
-        {
-            project.SaveMapAs(*map, newMapName, mapFileName);
-            CPPUNIT_FAIL("Calling SaveAs on a map with the same name and filename should fail.");
-        }
-        catch (const dtUtil::Exception&)
-        {
-            //correct
-        }
-
-        try
-        {
-            project.SaveMapAs(*map, mapName, mapFileName);
-            CPPUNIT_FAIL("Calling SaveAs on a map with the same filename should fail.");
-        }
-        catch (const dtUtil::Exception&)
-        {
-            //correct
-        }
-
-        try
-        {
-            project.SaveMapAs(*map, newMapName, "oo");
-            CPPUNIT_FAIL("Calling SaveAs on a map with the same name should fail.");
-        }
-        catch (const dtUtil::Exception&)
-        {
-            //correct
-        }
 
         project.SaveMapAs(*map, mapName, "oo");
 
@@ -1264,6 +1188,7 @@ void MapTests::TestMapSaveAndLoad()
 //        throw ex;
 //    }
 }
+
 
 ///////////////////////////////////////////////////////////////////////////////////////
 void MapTests::TestMapSaveAndLoadEvents()
