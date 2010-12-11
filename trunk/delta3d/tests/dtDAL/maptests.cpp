@@ -798,38 +798,6 @@ void MapTests::TestMapSaveAndLoad()
 
         dtDAL::Map* map = &project.CreateMap(mapName, mapFileName);
 
-        project.SaveMapBackup(*map);
-
-        //test both versions of the call.
-        CPPUNIT_ASSERT_MESSAGE("Map was not modified.  There should be no backup saves.",
-            !project.HasBackup(*map) && !project.HasBackup(mapName));
-
-        map->SetDescription("Teague is league with a \"t\".");
-
-        project.SaveMapBackup(*map);
-
-        //test both versions of the call.
-        CPPUNIT_ASSERT_MESSAGE("A backup was just saved.  The map should have backups.",
-            project.HasBackup(*map) && project.HasBackup(mapName));
-
-        project.ClearBackup(*map);
-
-        //test both versions of the call.
-        CPPUNIT_ASSERT_MESSAGE("Backups were cleared.  The map should have no backups.",
-            !project.HasBackup(*map) && !project.HasBackup(mapName));
-
-        project.SaveMapBackup(*map);
-
-        //test both versions of the call.
-        CPPUNIT_ASSERT_MESSAGE("A backup was just saved.  The map should have backups.",
-            project.HasBackup(*map) && project.HasBackup(mapName));
-
-        project.ClearBackup(mapName);
-
-        //test both versions of the call.
-        CPPUNIT_ASSERT_MESSAGE("Backups were cleared.  The map should have no backups.",
-            !project.HasBackup(*map) && !project.HasBackup(mapName));
-
         map->AddLibrary(mExampleLibraryName, "1.0");
         dtDAL::LibraryManager::GetInstance().LoadActorRegistry(mExampleLibraryName);
 

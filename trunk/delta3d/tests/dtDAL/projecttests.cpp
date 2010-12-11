@@ -55,6 +55,8 @@ namespace dtDAL
    class DataType;
 }
 
+const std::string TEST_PROJECT_DIR("TestProject");
+
 class ProjectTests : public CPPUNIT_NS::TestFixture
 {
    CPPUNIT_TEST_SUITE(ProjectTests);
@@ -64,6 +66,8 @@ class ProjectTests : public CPPUNIT_NS::TestFixture
    CPPUNIT_TEST(TestCategories);
    CPPUNIT_TEST(TestResources);
    CPPUNIT_TEST(TestDeletingBackupFromReadOnlyContext);
+   CPPUNIT_TEST(TestNonModifiedMapBackup);
+   CPPUNIT_TEST(TestModifiedMapBackup);
    CPPUNIT_TEST_SUITE_END();
 
    public:
@@ -77,6 +81,8 @@ class ProjectTests : public CPPUNIT_NS::TestFixture
       void TestReadonlyFailure();
       void TestResources();
       void TestDeletingBackupFromReadOnlyContext();
+      void TestNonModifiedMapBackup();
+      void TestModifiedMapBackup();
    private:
       dtUtil::Log* logger;
       void printTree(const dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator& iter);
@@ -142,9 +148,9 @@ void ProjectTests::tearDown()
    fileUtils.DirDelete("recursiveDir", true);
 
    //Delete a couple other projects
-   if (fileUtils.DirExists("TestProject"))
+   if (fileUtils.DirExists(TEST_PROJECT_DIR))
    {
-      fileUtils.DirDelete("TestProject", true);
+      fileUtils.DirDelete(TEST_PROJECT_DIR, true);
    }
    if (fileUtils.DirExists("TestProject1"))
    {
@@ -244,13 +250,12 @@ void ProjectTests::TestReadonlyFailure()
    {
       dtDAL::Project& p = dtDAL::Project::GetInstance();
 
-      std::string projectDir("TestProject");
 
-      p.CreateContext(projectDir);
+      p.CreateContext(TEST_PROJECT_DIR);
 
       try 
       {
-         p.SetContext(projectDir);
+         p.SetContext(TEST_PROJECT_DIR);
       } 
       catch (const dtUtil::Exception& e)
       {
@@ -259,7 +264,7 @@ void ProjectTests::TestReadonlyFailure()
 
       try 
       {
-         p.SetContext(projectDir, true);
+         p.SetContext(TEST_PROJECT_DIR, true);
       } 
       catch (const dtUtil::Exception& e) 
       {
@@ -341,13 +346,12 @@ void ProjectTests::TestCategories()
 
       dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
 
-      std::string projectDir1("TestProject");
       std::string projectDir2("TestProject2");
 
       try {
-         p.CreateContext(projectDir1);
+         p.CreateContext(TEST_PROJECT_DIR);
          p.CreateContext(projectDir2);
-         p.SetContext(projectDir1);
+         p.SetContext(TEST_PROJECT_DIR);
          p.AddContext(projectDir2);
       } catch (const dtUtil::Exception& e) {
          CPPUNIT_FAIL(std::string(std::string("Project should have been able to set context. Exception: ") + e.ToString()).c_str());
@@ -679,27 +683,26 @@ void ProjectTests::TestProject()
       CPPUNIT_ASSERT_THROW(p.CreateContext(crapPath), dtUtil::Exception);
       CPPUNIT_ASSERT_THROW(p.SetContext(crapPath), dtUtil::Exception);
 
-      std::string projectDir("TestProject");
 
-      if (fileUtils.FileExists(projectDir))
+      if (fileUtils.FileExists(TEST_PROJECT_DIR))
       {
          try
          {
-            fileUtils.DirDelete(projectDir, true);
+            fileUtils.DirDelete(TEST_PROJECT_DIR, true);
          }
          catch (const dtUtil::Exception& ex)
          {
             CPPUNIT_FAIL(ex.ToString().c_str());
          }
 
-         CPPUNIT_ASSERT_MESSAGE("The project Directory should not yet exist.", !fileUtils.FileExists(projectDir));
+         CPPUNIT_ASSERT_MESSAGE("The project Directory should not yet exist.", !fileUtils.FileExists(TEST_PROJECT_DIR));
       }
 
-      fileUtils.MakeDirectory(projectDir);
+      fileUtils.MakeDirectory(TEST_PROJECT_DIR);
 
       try
       {
-         p.SetContext(projectDir);
+         p.SetContext(TEST_PROJECT_DIR);
          CPPUNIT_FAIL("Project should not have been able to Set the context because it is empty.");
       }
       catch (const dtUtil::Exception&)
@@ -708,8 +711,8 @@ void ProjectTests::TestProject()
       }
 
       try {
-         p.CreateContext(projectDir);
-         p.SetContext(projectDir);
+         p.CreateContext(TEST_PROJECT_DIR);
+         p.SetContext(TEST_PROJECT_DIR);
       } catch (const dtUtil::Exception& e) {
          CPPUNIT_FAIL(std::string(std::string("Project should have been able to Set context. Exception: ") + e.ToString()).c_str());
       }
@@ -721,7 +724,7 @@ void ProjectTests::TestProject()
             dtUtil::GetDataFilePathList().find(originalPathList) != std::string::npos);
 
       try {
-         p.SetContext(projectDir, true);
+         p.SetContext(TEST_PROJECT_DIR, true);
       } catch (const dtUtil::Exception& e) {
          CPPUNIT_FAIL(std::string(std::string("Project should have been able to Set context. Exception: ") + e.ToString()).c_str());
       }
@@ -750,18 +753,18 @@ void ProjectTests::TestProject()
       CPPUNIT_ASSERT_MESSAGE("Delta3D search path should contain the context.",
             dtUtil::GetDataFilePathList().find(projectDir2) != std::string::npos);
       CPPUNIT_ASSERT_MESSAGE("Delta3D search path should NOT contain the old context.",
-            dtUtil::GetDataFilePathList().find(projectDir) == std::string::npos);
+            dtUtil::GetDataFilePathList().find(TEST_PROJECT_DIR) == std::string::npos);
       CPPUNIT_ASSERT_MESSAGE("Delta3D search path should contain the original path list.",
             dtUtil::GetDataFilePathList().find(originalPathList) != std::string::npos);
 
       try {
-         fileUtils.DirDelete(projectDir, true);
+         fileUtils.DirDelete(TEST_PROJECT_DIR, true);
       } catch (const dtUtil::Exception& ex) {
          CPPUNIT_FAIL(ex.ToString().c_str());
       }
 
 
-      CPPUNIT_ASSERT_MESSAGE("The project Directory should have been deleted.", !fileUtils.FileExists(projectDir));
+      CPPUNIT_ASSERT_MESSAGE("The project Directory should have been deleted.", !fileUtils.FileExists(TEST_PROJECT_DIR));
 
    } catch (const dtUtil::Exception& ex) {
       CPPUNIT_FAIL(ex.ToString());
@@ -775,12 +778,11 @@ void ProjectTests::TestProject()
 ////////////////////////////////////////////////////////////////////////////////
 void ProjectTests::TestDeletingBackupFromReadOnlyContext()
 {
-   const std::string projectDir("TestProject");
    const std::string mapName("mapWithBackup");
    dtDAL::Project& proj = dtDAL::Project::GetInstance();
 
-   proj.CreateContext(projectDir);
-   proj.SetContext(projectDir, false);
+   proj.CreateContext(TEST_PROJECT_DIR);
+   proj.SetContext(TEST_PROJECT_DIR, false);
 
    //create a Map and save a backup
    dtDAL::Map& testMap = proj.CreateMap(mapName, "mapWithBackup");
@@ -790,11 +792,61 @@ void ProjectTests::TestDeletingBackupFromReadOnlyContext()
    CPPUNIT_ASSERT_MESSAGE("Didn't find a Map backup, can't go on with test",
                           true == proj.HasBackup(testMap));
    
-   proj.SetContext(projectDir, true); //now we're read only
+   proj.SetContext(TEST_PROJECT_DIR, true); //now we're read only
 
    //trying to delete a Map backup in a read-only ProjectContext should throw
    CPPUNIT_ASSERT_THROW(proj.ClearBackup(mapName), dtUtil::Exception);
 
-   proj.SetContext(projectDir, false); //now we're not read only
+   proj.SetContext(TEST_PROJECT_DIR, false); //now we're not read only
    proj.ClearBackup(mapName); //this should work
+}
+//////////////////////////////////////////////////////////////////////////
+void ProjectTests::TestNonModifiedMapBackup()
+{
+   std::string mapName("UnmodifiedMap");
+   std::string mapFileName("UnmodifiedMap");
+
+   dtDAL::Project& project = dtDAL::Project::GetInstance();
+   project.CreateContext(TEST_PROJECT_DIR);
+   project.SetContext(TEST_PROJECT_DIR, false);
+
+   dtDAL::Map* map = &project.CreateMap(mapName, mapFileName);
+
+   project.SaveMapBackup(*map);
+
+   //test both versions of the call.
+   CPPUNIT_ASSERT_MESSAGE("Map was not modified.  There should be no backup saves.",
+      !project.HasBackup(*map) && !project.HasBackup(mapName));
+
+   project.DeleteMap(*map);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ProjectTests::TestModifiedMapBackup()
+{
+   std::string mapName("ModifiedMap");
+   std::string mapFileName("ModifiedMap");
+
+   dtDAL::Project& project = dtDAL::Project::GetInstance();
+   project.CreateContext(TEST_PROJECT_DIR);
+   project.SetContext(TEST_PROJECT_DIR, false);
+
+   dtDAL::Map* map = &project.CreateMap(mapName, mapFileName);
+
+   //modify the map
+   map->SetDescription("Teague is league with a \"t\".");
+
+   project.SaveMapBackup(*map);
+
+   //test both versions of the call.
+   CPPUNIT_ASSERT_MESSAGE("A backup was just saved.  The map should have backups.",
+                           project.HasBackup(*map) && project.HasBackup(mapName));
+
+   project.ClearBackup(*map);
+
+   //test both versions of the call.
+   CPPUNIT_ASSERT_MESSAGE("Backups were cleared.  The map should have no backups.",
+                           !project.HasBackup(*map) && !project.HasBackup(mapName));
+
+   project.DeleteMap(*map);
 }
