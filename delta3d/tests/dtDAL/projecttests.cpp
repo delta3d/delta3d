@@ -68,6 +68,11 @@ class ProjectTests : public CPPUNIT_NS::TestFixture
    CPPUNIT_TEST(TestDeletingBackupFromReadOnlyContext);
    CPPUNIT_TEST(TestNonModifiedMapBackup);
    CPPUNIT_TEST(TestModifiedMapBackup);
+   CPPUNIT_TEST(TestMapSaveAndLoadMapName);
+   CPPUNIT_TEST(TestMapBackupFilename);
+   CPPUNIT_TEST(TestOpenMapBackupCreatesBackups);
+   CPPUNIT_TEST(TestMapSaveAsExceptions);
+   CPPUNIT_TEST(TestMapSaveAsBackups);
    CPPUNIT_TEST_SUITE_END();
 
    public:
@@ -83,6 +88,12 @@ class ProjectTests : public CPPUNIT_NS::TestFixture
       void TestDeletingBackupFromReadOnlyContext();
       void TestNonModifiedMapBackup();
       void TestModifiedMapBackup();
+      void TestMapSaveAndLoadMapName();
+      void TestMapBackupFilename();
+      void TestOpenMapBackupCreatesBackups();
+      void TestMapSaveAsExceptions();
+      void TestMapSaveAsBackups();
+
    private:
       dtUtil::Log* logger;
       void printTree(const dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator& iter);
@@ -836,6 +847,8 @@ void ProjectTests::TestModifiedMapBackup()
    //modify the map
    map->SetDescription("Teague is league with a \"t\".");
 
+   const std::string filenameBeforeBackup = map->GetFileName();
+
    project.SaveMapBackup(*map);
 
    //test both versions of the call.
@@ -847,6 +860,160 @@ void ProjectTests::TestModifiedMapBackup()
    //test both versions of the call.
    CPPUNIT_ASSERT_MESSAGE("Backups were cleared.  The map should have no backups.",
                            !project.HasBackup(*map) && !project.HasBackup(mapName));
+
+   project.DeleteMap(*map);
+}
+
+//////////////////////////////////////////////////////////////////////////
+void ProjectTests::TestMapSaveAndLoadMapName()
+{
+   dtDAL::Project& project = dtDAL::Project::GetInstance();
+   project.CreateContext(TEST_PROJECT_DIR);
+   project.SetContext(TEST_PROJECT_DIR, false);
+
+   const std::string mapName("Neato Map");
+   const std::string mapFileName("neatomap");
+
+   dtDAL::Map* map = &project.CreateMap(mapName, mapFileName);
+
+   const std::string newMapName("Weirdo Map");
+
+   //set the name to make sure it can be changed.
+   map->SetName(newMapName);
+
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("Map should have the new name.", newMapName, map->GetName());
+
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("Map should have the old saved name", mapName, map->GetSavedName());
+
+   project.SaveMapBackup(*map);
+
+   CPPUNIT_ASSERT_MESSAGE("A backup was just saved.  The map should have backups.",
+                          project.HasBackup(*map) && project.HasBackup(mapName));
+
+   project.SaveMap(*map);
+
+   //test both versions of the call.
+   CPPUNIT_ASSERT_MESSAGE("Map was saved.  The map should have no backups.",
+                          !project.HasBackup(*map) && !project.HasBackup(newMapName));
+
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("Map should have the new saved name", newMapName, map->GetSavedName());     
+
+   project.DeleteMap(*map);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ProjectTests::TestMapBackupFilename()
+{
+   dtDAL::Project& project = dtDAL::Project::GetInstance();
+   project.CreateContext(TEST_PROJECT_DIR);
+   project.SetContext(TEST_PROJECT_DIR, false);
+   const std::string mapName("Neato Map");
+   const std::string mapFileName("neatomap");
+
+
+   dtDAL::Map* map = &project.CreateMap(mapName, mapFileName);
+
+   const std::string newAuthor("Dr. Eddie");
+   map->SetAuthor(newAuthor);
+
+   const std::string filenameBeforeBackup = map->GetFileName();;
+   project.SaveMapBackup(*map);
+
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("Map filename should not have changed after preforming a backup",
+                                filenameBeforeBackup, map->GetFileName());
+
+   map = &project.OpenMapBackup(mapName);
+
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("Map filename should not have changed after loading a backup.",
+                                filenameBeforeBackup, map->GetFileName());
+
+   project.DeleteMap(*map);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ProjectTests::TestOpenMapBackupCreatesBackups()
+{
+   dtDAL::Project& project = dtDAL::Project::GetInstance();
+   project.CreateContext(TEST_PROJECT_DIR);
+   project.SetContext(TEST_PROJECT_DIR, false);
+   const std::string mapName("Neato Map");
+   const std::string mapFileName("neatomap");
+
+   dtDAL::Map* map = &project.CreateMap(mapName, mapFileName);
+
+   map->SetAuthor("Dr. Eddie");
+
+   project.SaveMapBackup(*map);
+   map = &project.OpenMapBackup(mapName);
+
+   CPPUNIT_ASSERT_MESSAGE("Map was loaded as a backup, so it should have backups.",
+                           project.HasBackup(*map) && project.HasBackup(mapName));
+
+   project.SaveMapBackup(*map);
+   CPPUNIT_ASSERT_MESSAGE("A backup was just saved.  The map should have a backup.",
+                           project.HasBackup(*map) && project.HasBackup(mapName));
+
+   project.DeleteMap(*map);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ProjectTests::TestMapSaveAsExceptions()
+{
+   dtDAL::Project& project = dtDAL::Project::GetInstance();
+   project.CreateContext(TEST_PROJECT_DIR);
+   project.SetContext(TEST_PROJECT_DIR, false);
+   const std::string mapName("Neato Map");
+   const std::string mapFileName("neatomap");
+
+   dtDAL::Map* map = &project.CreateMap(mapName, mapFileName);
+   map->SetAuthor("unit test");
+
+   CPPUNIT_ASSERT_THROW_MESSAGE("Calling SaveAs on a map with the same name and filename should fail.",
+      project.SaveMapAs(*map, mapName, mapFileName),
+      dtUtil::Exception);
+
+   CPPUNIT_ASSERT_THROW_MESSAGE("Calling SaveAs on a map with the same filename should fail.",
+      project.SaveMapAs(*map, "asdf", mapFileName),
+      dtUtil::Exception);
+
+   CPPUNIT_ASSERT_THROW_MESSAGE("Calling SaveAs on a map with the same name should fail.",
+      project.SaveMapAs(*map, mapName, "asdf"),
+      dtUtil::Exception);
+
+   project.DeleteMap(*map);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ProjectTests::TestMapSaveAsBackups()
+{
+   dtDAL::Project& project = dtDAL::Project::GetInstance();
+   project.CreateContext(TEST_PROJECT_DIR);
+   project.SetContext(TEST_PROJECT_DIR, false);
+   const std::string mapName("Neato Map");
+   const std::string newMapName("new map name");
+   const std::string mapFileName("neatomap");
+   const std::string newMapFileName("oo");
+
+   dtDAL::Map* map = &project.CreateMap(mapName, mapFileName);
+   map->SetAuthor("unit test");
+
+   project.SaveMapAs(*map, newMapName, newMapFileName);
+
+   //test both versions of the call.
+   CPPUNIT_ASSERT_MESSAGE("Map was just saved AS.  The map should have no backups.",
+      !project.HasBackup(*map) && !project.HasBackup(mapName));
+
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("Map file name should have changed during a SaveAs",
+      newMapFileName + dtDAL::Map::MAP_FILE_EXTENSION, map->GetFileName());
+
+   CPPUNIT_ASSERT_MESSAGE("Map name didn't change during a SaveAs.",
+      map->GetName() == newMapName && map->GetSavedName() == newMapName);
+
+   std::string newMapFilePath = project.GetContext() + dtUtil::FileUtils::PATH_SEPARATOR + "maps"
+      + dtUtil::FileUtils::PATH_SEPARATOR + "oo" + dtDAL::Map::MAP_FILE_EXTENSION;
+
+   CPPUNIT_ASSERT_MESSAGE(std::string("The new map file should exist: ") + newMapFilePath,
+      dtUtil::FileUtils::GetInstance().FileExists(newMapFilePath));
 
    project.DeleteMap(*map);
 }
