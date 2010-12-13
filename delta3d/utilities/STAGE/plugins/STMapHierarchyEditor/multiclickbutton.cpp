@@ -1,6 +1,6 @@
 #include "multiclickbutton.h"
 
-#include "NodeButton.h"
+#include "nodebutton.h"
 
 #include <QtGui/QApplication>
 #include <QtGui/QMouseEvent>
