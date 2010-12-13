@@ -1,8 +1,8 @@
 #include "nodebutton.h"
 
 #include "maphierarchyeditor.h"
-#include "topBottomConnectorNoGap.h"
-#include "buttonConnector.h"
+#include "topbottomconnectornogap.h"
+#include "buttonconnector.h"
 
 #include <dtDAL/baseactorobject.h>
 #include <dtEditQt/editorevents.h>
@@ -12,8 +12,8 @@
 
 NodeButton::NodeButton(Type t, dtDAL::BaseActorObject* bao,
                        QWidget* parent, Qt::WindowFlags f /*= 0*/)
-   : mUI()
-   , QWidget(parent, f)
+   : QWidget(parent, f)
+   , mUI()
    , mTreeParent(NULL)
    , mChildren(0)
    , mRow(-1)

@@ -4,6 +4,7 @@ file(GLOB LIB_HEADERS "*.h")
 file(GLOB LIB_SOURCES "*.cpp")
 
 INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/utilities/STAGE/inc
+              ${CMAKE_CURRENT_SOURCE_DIR}
               ${QT_INCLUDE_DIR}
               ${CMAKE_CURRENT_BINARY_DIR} # for ui*.h files
 )
@@ -12,7 +13,7 @@ qt4_wrap_cpp(MOC_SOURCES ${LIB_HEADERS})
 QT4_WRAP_UI(UI_SOURCES buttonconnector.ui)
 QT4_WRAP_UI(UI_SOURCES maphierarchyeditor.ui)
 QT4_WRAP_UI(UI_SOURCES nodebutton.ui)
-QT4_WRAP_UI(UI_SOURCES topBottomConnectorNoGap.ui)
+QT4_WRAP_UI(UI_SOURCES topbottomconnectornogap.ui)
 
 ADD_LIBRARY(${LIB_NAME} MODULE
    ${LIB_HEADERS}
