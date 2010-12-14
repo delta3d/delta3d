@@ -28,6 +28,8 @@
 #include <dtDirector/directorxml.h>
 #include <dtDirector/nodemanager.h>
 
+#include <dtUtil/datapathutils.h>
+
 #include <osgDB/FileNameUtils>
 
 namespace dtDirector
@@ -178,8 +180,17 @@ namespace dtDirector
 
       std::string fileName = osgDB::getNameLessExtension(scriptFile) + ".dtdir";
 
+      bool hasContext = dtDAL::Project::GetInstance().IsContextValid();
+
       dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
-      fileUtils.PushDirectory(dtDAL::Project::GetInstance().GetContext());
+      if (hasContext)
+      {
+         fileUtils.PushDirectory(dtDAL::Project::GetInstance().GetContext());
+      }
+      else
+      {
+         fileName = dtUtil::FindFileInPathList(fileName);
+      }
 
       dtCore::RefPtr<DirectorParser> parser = new DirectorParser();
       if (parser)
@@ -192,18 +203,27 @@ namespace dtDirector
          {
             std::string error = "Unable to parse " + scriptFile + " with error " + e.What();
             mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__, error.c_str());
-            fileUtils.PopDirectory();
+            if (hasContext)
+            {
+               fileUtils.PopDirectory();
+            }
             throw e;
          }
 
-         fileUtils.PopDirectory();
+         if (hasContext)
+         {
+            fileUtils.PopDirectory();
+         }
          mModified = parser->HasDeprecatedProperty();
          mScriptName = fileName;
 
          return true;
       }
 
-      fileUtils.PopDirectory();
+      if (hasContext)
+      {
+         fileUtils.PopDirectory();
+      }
       return false;
    }
 
@@ -644,25 +664,25 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void Director::InsertLibrary(unsigned pos, const std::string& name, const std::string& version) 
+   void Director::InsertLibrary(unsigned pos, const std::string& name, const std::string& version)
    {
       std::map<std::string,std::string>::iterator old = mLibraryVersionMap.find(name);
 
       bool alreadyExists;
-      if (old != mLibraryVersionMap.end()) 
+      if (old != mLibraryVersionMap.end())
       {
          old->second = version;
          alreadyExists = true;
-      } 
-      else 
+      }
+      else
       {
          mLibraryVersionMap.insert(make_pair(name, version));
          alreadyExists = false;
       }
 
-      for (std::vector<std::string>::iterator i = mLibraries.begin(); i != mLibraries.end(); ++i) 
+      for (std::vector<std::string>::iterator i = mLibraries.begin(); i != mLibraries.end(); ++i)
       {
-         if (*i == name) 
+         if (*i == name)
          {
             mLibraries.erase(i);
             break;
@@ -678,13 +698,13 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void Director::AddLibrary(const std::string& name, const std::string& version) 
+   void Director::AddLibrary(const std::string& name, const std::string& version)
    {
       InsertLibrary(mLibraries.size(), name, version);
    }
 
    //////////////////////////////////////////////////////////////////////////
-   bool Director::RemoveLibrary(const std::string& name) 
+   bool Director::RemoveLibrary(const std::string& name)
    {
       std::map<std::string, std::string>::iterator oldMap = mLibraryVersionMap.find(name);
 
@@ -693,9 +713,9 @@ namespace dtDirector
       else
          return false;
 
-      for (std::vector<std::string>::iterator i = mLibraries.begin(); i != mLibraries.end(); ++i) 
+      for (std::vector<std::string>::iterator i = mLibraries.begin(); i != mLibraries.end(); ++i)
       {
-         if (*i == name) 
+         if (*i == name)
          {
             mLibraries.erase(i);
             break;

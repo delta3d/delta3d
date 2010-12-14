@@ -203,7 +203,7 @@ namespace dtDirector
       for (int index = 0; index < count; index++)
       {
          Node* node = nodes[index];
-         
+
          dtDAL::ActorProperty* prop = node->GetProperty(property);
          if (prop && prop->ToString() == value)
          {
@@ -213,7 +213,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void DirectorGraph::GetAllNodes(std::vector<Node*>& outNodes)
+   void DirectorGraph::GetAllNodes(std::vector<Node*>& outNodes, bool searchSubGraphs)
    {
       int count = (int)mEventNodes.size();
       for (int index = 0; index < count; index++)
@@ -233,13 +233,16 @@ namespace dtDirector
          outNodes.push_back(mValueNodes[index]);
       }
 
-      count = (int)mSubGraphs.size();
-      for (int index = 0; index < count; index++)
+      if (searchSubGraphs)
       {
-         DirectorGraph* graph = mSubGraphs[index];
-         if (graph)
+         count = (int)mSubGraphs.size();
+         for (int index = 0; index < count; index++)
          {
-            graph->GetAllNodes(outNodes);
+            DirectorGraph* graph = mSubGraphs[index];
+            if (graph)
+            {
+               graph->GetAllNodes(outNodes);
+            }
          }
       }
    }
