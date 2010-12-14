@@ -13,6 +13,13 @@
 class Ui_MapHierarcyEditor;
 class QGridLayout;
 
+class NodeButton;
+
+namespace dtDAL
+{
+   class ActorHierarchyNode;
+}
+
 namespace dtEditQt
 {
    class MainWindow;
@@ -39,6 +46,8 @@ public:
    virtual void closeEvent(QCloseEvent* event);
    
    void BuildTreeFromMap();
+   void BuildTreeGUI();
+   void BuildGUIBranch(NodeButton* GUIparent, dtDAL::ActorHierarchyNode* branch);
    void RebuildTree();
    QGridLayout* GetGridLayout();
 

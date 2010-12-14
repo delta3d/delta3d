@@ -1,4 +1,3 @@
-
 SET(LIB_NAME     dtDAL)
 
 
@@ -10,6 +9,7 @@ SET(LIB_PUBLIC_HEADERS
     ${HEADER_PATH}/abstractparameter.h
     ${HEADER_PATH}/actoractorproperty.h
     ${HEADER_PATH}/actoridactorproperty.h
+    ${HEADER_PATH}/actorhierarchynode.h
     ${HEADER_PATH}/actorpluginregistry.h
     ${HEADER_PATH}/actorproperty.h
     ${HEADER_PATH}/actorpropertyserializer.h
@@ -96,6 +96,7 @@ SET(LIB_SOURCES
     ${SOURCE_PATH}/abstractenumactorproperty.cpp
     ${SOURCE_PATH}/actoractorproperty.cpp
     ${SOURCE_PATH}/actoridactorproperty.cpp
+    ${SOURCE_PATH}/actorhierarchynode.cpp
     ${SOURCE_PATH}/actorpluginregistry.cpp
     ${SOURCE_PATH}/actorproperty.cpp
     ${SOURCE_PATH}/actorpropertyserializer.cpp

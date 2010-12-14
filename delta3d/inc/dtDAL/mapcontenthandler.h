@@ -192,6 +192,8 @@ namespace dtDAL
          Map::PresetCameraData mPresetCameraData;
          int                   mPresetCameraView;
 
+         ActorHierarchyNode*                       mCurrentHierNode;
+
          //Reset all of the internal data/state variables
          void Reset();
          //reset/clear all of the library data/state variables

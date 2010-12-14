@@ -23,6 +23,7 @@
 
 #include <dtCore/deltadrawable.h>
 
+#include <dtDAL/actorhierarchynode.h>
 #include <dtDAL/actorproperty.h>
 #include <dtDAL/actorproxy.h>
 #include <dtDAL/arrayactorpropertybase.h>
@@ -113,6 +114,7 @@ namespace  dtDAL
       , mPrefabReadMode(PREFAB_READ_ALL)
       , mPrefabIconFileName("")
       , mPrefabProxyList(NULL)
+      , mCurrentHierNode(NULL)
    {
       mPropSerializer = new ActorPropertySerializer(this);
 
@@ -214,7 +216,7 @@ namespace  dtDAL
             {
                mInActor = true;
                ClearActorValues();
-            }
+            }            
          }
          else if (mInGroup)
          {
@@ -222,6 +224,25 @@ namespace  dtDAL
             {
                mGroupIndex = mMap->GetGroupCount();
             }
+         }
+         else if (XMLString::compareString(localname, MapXMLConstants::HIERARCHY_ELEMENT) == 0)
+         {
+            mCurrentHierNode = mMap->GetDrawableActorHierarchy();
+         }
+         else if (XMLString::compareString(localname, MapXMLConstants::HIERARCHY_ELEMENT_NODE) == 0)
+         {
+            const XMLCh* idw = attrs.getValue(XMLString::transcode("actorID"));               
+            
+            char* id = new char[wcslen(idw) + 1]; 
+            wcstombs(id, idw, wcslen(idw) + 1);
+                           
+            dtDAL::ActorHierarchyNode* nextNode = 
+               new ActorHierarchyNode(mMap->GetProxyById(dtCore::UniqueId(id)));
+
+            mCurrentHierNode->AddChild(nextNode);
+            mCurrentHierNode = nextNode;
+
+            delete[] id;
          }
          else if (mInPresetCameras)
          {
@@ -320,6 +341,10 @@ namespace  dtDAL
       else if (mInGroup)
       {
          EndGroupSection(localname);
+      }
+      else if (XMLString::compareString(localname, MapXMLConstants::HIERARCHY_ELEMENT_NODE) == 0)
+      {
+         mCurrentHierNode = mCurrentHierNode->GetParent();
       }
       else if (mInPresetCameras)
       {
@@ -457,11 +482,11 @@ namespace  dtDAL
                   ActorCharacters(chars);
                }
             }
-            else
+            else 
             {
                if (topEl == MapXMLConstants::ACTOR_ENVIRONMENT_ACTOR_ELEMENT)
                   mEnvActorId = dtUtil::XMLStringConverter(chars).ToString();
-            }            
+            }                        
          }
          else if (mInGroup)
          {

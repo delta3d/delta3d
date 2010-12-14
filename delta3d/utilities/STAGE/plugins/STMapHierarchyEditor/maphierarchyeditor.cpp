@@ -5,12 +5,14 @@
 #include <dtCore/environment.h>
 #include <dtCore/transformable.h>
 
+#include <dtDAL/actorhierarchynode.h>
 #include <dtDAL/map.h>
 
 #include <dtEditQt/editordata.h>
 #include <dtEditQt/editorevents.h>
 #include <dtEditQt/mainwindow.h>
 #include <dtEditQt/pluginmanager.h>
+#include <dtEditQt/viewportmanager.h>
 
 const std::string MapHierarchyEditorPlugin::PLUGIN_NAME = "Map Hierarchy Editor";
 
@@ -27,6 +29,8 @@ MapHierarchyEditorPlugin::MapHierarchyEditorPlugin(dtEditQt::MainWindow* mw)
    
    connect(&dtEditQt::EditorEvents::GetInstance(), SIGNAL(currentMapChanged()),
       this, SLOT(onCurrentMapChanged()));
+
+   BuildTreeFromMap();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -43,7 +47,7 @@ void MapHierarchyEditorPlugin::Destroy()
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// user has closed the dock. Stop the plugin
+// user has closed the dock widget. Stop the plugin
 void MapHierarchyEditorPlugin::closeEvent(QCloseEvent* event)
 {
    mMainWindow->GetPluginManager()->StopPlugin(PLUGIN_NAME);
@@ -52,6 +56,53 @@ void MapHierarchyEditorPlugin::closeEvent(QCloseEvent* event)
 ////////////////////////////////////////////////////////////////////////////////
 void MapHierarchyEditorPlugin::BuildTreeFromMap()
 {  
+   dtDAL::Map* m = dtEditQt::EditorData::GetInstance().getCurrentMap();
+   if (m != NULL)   
+   {      
+      dtDAL::ActorHierarchyNode* currentHierNode = m->GetDrawableActorHierarchy();      
+      
+      //The old way -- do this if there is no hierarchy defined in the map
+      if(currentHierNode->GetNumChildren() == 0)
+      {
+         if (m->GetEnvironmentActor() != NULL)
+         {
+            dtDAL::ActorHierarchyNode* envNode = new dtDAL::ActorHierarchyNode(m->GetEnvironmentActor(), currentHierNode);
+            currentHierNode->AddChild(envNode);
+            currentHierNode = envNode;
+         }      
+
+         const std::map<dtCore::UniqueId, dtCore::RefPtr<dtDAL::BaseActorObject> >& allProxies =
+            m->GetAllProxies();
+
+         std::map<dtCore::UniqueId, dtCore::RefPtr<dtDAL::BaseActorObject> >::const_iterator it;
+         for (it = allProxies.begin(); it != allProxies.end(); ++it)
+         {
+            if (m->GetEnvironmentActor() != NULL &&
+                it->first == m->GetEnvironmentActor()->GetId())
+            {
+               //don't include env actor (already been included)
+               continue;
+            }            
+           
+            dtDAL::BaseActorObject* baseActor = it->second;      
+            if (baseActor->GetDrawable() != NULL)  //only adding Drawable Actors to the scene hierarchy
+            {
+               currentHierNode->AddChild(new dtDAL::ActorHierarchyNode(baseActor, currentHierNode));
+            }
+         }// for 
+      }
+      else //There is a hierarchy defined in this map
+      {
+         //Do nothing: the hierarchy was defined when the map was loaded.         
+      }      
+   } //if (map != NULL)
+
+   BuildTreeGUI();   
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void MapHierarchyEditorPlugin::BuildTreeGUI()
+{
    QGridLayout* lo =
       dynamic_cast<QGridLayout*>(mUI.scrollAreaWidgetContents->layout());
 
@@ -86,73 +137,44 @@ void MapHierarchyEditorPlugin::BuildTreeFromMap()
          }
       }
    }
-
    /*
    //const QObjectList& qol = lo->children();
    //printf ("Num children: %d \n", qol.count());
    printf ("Row count: %d , Col count: %d\n", lo->rowCount(), lo->columnCount());   
    */
 
-   //TODO: make a Scene drawable and use it instead of a Transformable here
-   dtCore::Transformable *sceneRoot = new dtCore::Transformable("Scene");
-      
-   NodeButton* root = new NodeButton(NodeButton::SCENE, NULL, this); 
+   NodeButton* root = new NodeButton(NULL, this); 
    root->Place(0, 0);
 
-   NodeButton* currentNode = root;
-   dtCore::DeltaDrawable* currentDrawableNode = sceneRoot;
-   
    dtDAL::Map* m = dtEditQt::EditorData::GetInstance().getCurrentMap();
    if (m != NULL)   
    {
-      if (m->GetEnvironmentActor() != NULL)
+      dtDAL::ActorHierarchyNode* currentHierNode = m->GetDrawableActorHierarchy();
+     
+      for (unsigned int i = 0; i < currentHierNode->GetNumChildren(); ++i)
       {
-         dtCore::Environment* envDrawable;
-         m->GetEnvironmentActor()->GetDrawable<dtCore::Environment*>(envDrawable);
-
-         printf ("Env num children: %d \n", envDrawable->GetNumChildren());
-         printf ("Child's num children: %d \n", envDrawable->GetChild(0)->GetNumChildren());
-
-         sceneRoot->AddChild(envDrawable);         
-
-         NodeButton *env = new NodeButton(NodeButton::ENVIRONMENT, m->GetEnvironmentActor(), this);
-         currentNode->AddChild(env);
-
-         currentNode = env;
-         currentDrawableNode = envDrawable;
-      }      
-
-      const std::map<dtCore::UniqueId, dtCore::RefPtr<dtDAL::BaseActorObject> >& allProxies =
-         m->GetAllProxies();
-
-      std::map<dtCore::UniqueId, dtCore::RefPtr<dtDAL::BaseActorObject> >::const_iterator it;
-      for (it = allProxies.begin(); it != allProxies.end(); ++it)
-      {
-         if (m->GetEnvironmentActor() != NULL &&
-             it->first == m->GetEnvironmentActor()->GetId())
-         {
-            //don't include env actor (already been included)
-            continue;
-         }
-        
-         dtDAL::BaseActorObject* baseActor = it->second;
-         dtCore::DeltaDrawable* nextDrawable = baseActor->GetDrawable();
-         if (nextDrawable != NULL)
-         {
-            currentDrawableNode->AddChild(nextDrawable);
-
-            NodeButton* nextProxyNode = new NodeButton(NodeButton::UNSPECIFIED,
-                                                       /*baseActor->GetClassName().c_str()*/
-                                                       baseActor, this);
-            currentNode->AddChild(nextProxyNode);
-         }
+         BuildGUIBranch(root, currentHierNode->GetChild(i));
       }
-
-   } //if (map != NULL)    
+   }
 
    //rightmost column needs a horizontal spacer 
    QSpacerItem* hs = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
    lo->addItem(hs, 0, lo->columnCount());
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void MapHierarchyEditorPlugin::BuildGUIBranch(NodeButton* GUIparent,
+                                              dtDAL::ActorHierarchyNode* branch)
+{
+   //build a node, place it as a child of parent
+   NodeButton* nextGUINode = new NodeButton(branch->GetBaseActorObject(), this);
+   GUIparent->AddChild(nextGUINode);
+
+   //run through all branch's children   
+   for (unsigned int i = 0; i < branch->GetNumChildren(); ++i)
+   {
+      BuildGUIBranch(nextGUINode, branch->GetChild(i));
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////

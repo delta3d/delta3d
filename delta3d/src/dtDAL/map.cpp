@@ -24,6 +24,7 @@
 
 #include <dtDAL/actoractorproperty.h>
 #include <dtDAL/actoridactorproperty.h>
+#include <dtDAL/actorhierarchynode.h>
 #include <dtDAL/actortype.h>
 #include <dtDAL/environmentactor.h>
 #include <dtDAL/map.h>
@@ -41,6 +42,7 @@ namespace dtDAL
    Map::Map(const std::string& mFileName, const std::string& name)
       : mModified(true)
       , mName(name)
+      , mDrawableActorHierarchy(new ActorHierarchyNode(NULL, true))
    {
       //mFileName requires some processing.
       SetFileName(mFileName);

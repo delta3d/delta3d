@@ -101,6 +101,9 @@ namespace dtDAL
          static XMLCh* DIRECTOR_LINK_VALUE_ALLOW_MULTIPLE_ELEMENT;
          static XMLCh* DIRECTOR_LINK_VALUE_TYPE_CHECK_ELEMENT;
 
+         static XMLCh* HIERARCHY_ELEMENT;
+         static XMLCh* HIERARCHY_ELEMENT_NODE;
+
          static XMLCh* ACTORS_ELEMENT;
          static XMLCh* ACTOR_ELEMENT;
          static XMLCh* ACTOR_TYPE_ELEMENT;

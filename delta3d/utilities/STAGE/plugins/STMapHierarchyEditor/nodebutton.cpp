@@ -10,7 +10,7 @@
 
 #include <QtGui/QDragEnterEvent>
 
-NodeButton::NodeButton(Type t, dtDAL::BaseActorObject* bao,
+NodeButton::NodeButton(dtDAL::BaseActorObject* bao,
                        QWidget* parent, Qt::WindowFlags f /*= 0*/)
    : QWidget(parent, f)
    , mUI()
@@ -23,8 +23,6 @@ NodeButton::NodeButton(Type t, dtDAL::BaseActorObject* bao,
 {
    //apply layout made with QtDesigner
    mUI.setupUi(this);
-
-   SetType(t);
 
    if (bao != NULL)
    {
@@ -60,10 +58,6 @@ void NodeButton::Place(int row, int col)
 
    mRow = row;
    mCol = col;   
-}
-
-void NodeButton::SetType(Type t)
-{
 }
 
 void NodeButton::AddChild(NodeButton* n)

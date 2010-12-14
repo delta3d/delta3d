@@ -31,6 +31,7 @@ namespace dtDAL
    class MapContentHandler;
    class BaseActorObject;
    class ActorPropertySerializer;
+   class ActorHierarchyNode;   
    
    /**
     * @class MapParser
@@ -145,6 +146,8 @@ namespace dtDAL
       MapWriter(const MapWriter& toCopy): BaseXMLWriter(toCopy) {}
       //disable operator =
       MapWriter& operator=(const MapWriter& assignTo) { return *this;}
+
+      void WriteHierarchyBranch(dtDAL::ActorHierarchyNode* hierNode);
 
       ActorPropertySerializer* mPropSerializer;
    };
