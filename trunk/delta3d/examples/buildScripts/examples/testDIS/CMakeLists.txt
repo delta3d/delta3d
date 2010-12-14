@@ -3,6 +3,8 @@ PROJECT(${APP_NAME})
 
 SET(EXAMPLE_PATH ../../../${APP_NAME}/)
 
+INCLUDE_DIRECTORIES( ${DTDIS_INCLUDE_DIRECTORIES} )
+
 ADD_EXECUTABLE(${APP_NAME} ${EXAMPLE_PATH}/main.cpp
                            ${EXAMPLE_PATH}/testdisapp.cpp
                            ${EXAMPLE_PATH}/testdisapp.h
