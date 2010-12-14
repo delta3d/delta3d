@@ -81,8 +81,8 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    bool CompareBoolAction::Update(float simDelta, float delta, int input, bool firstUpdate)
    {
-      double valueA = GetDouble("A");
-      double valueB = GetDouble("B");
+      bool valueA = GetBoolean("A");
+      bool valueB = GetBoolean("B");
 
       OutputLink* link = NULL;
       if (valueA == valueB)
