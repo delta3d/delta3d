@@ -2,7 +2,7 @@
 #define STAGE_MAP_HIERARCHY_TOP_BOTTOM_CONNECTOR_NO_GAP_H__
 
 #include "export.h"
-#include "ui_topBottomConnectorNoGap.h"
+#include "ui_topbottomconnectornogap.h"
 
 #include <QtGui/QWidget>
 
@@ -16,10 +16,10 @@ class STAGE_MAP_HIERARCHY_EDITOR_EXPORT TopBottomConnectorNoGap
 public:
 
    TopBottomConnectorNoGap(QWidget* parent = 0, Qt::WindowFlags f = 0);
-   ~TopBottomConnectorNoGap();   
+   ~TopBottomConnectorNoGap();
 
 private:
-   Ui_TopBottomConnectorNoGap                                mUI;
+   Ui_TopBottomConnectorNoGap mUI;
 };
 
 #endif //STAGE_MAP_HIERARCHY_TOP_BOTTOM_CONNECTOR_NO_GAP_H__
