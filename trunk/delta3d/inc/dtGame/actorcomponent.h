@@ -32,16 +32,16 @@
 namespace dtGame
 {
    class GameActor;
-   class ActorComponentBase;
+   class ActorComponentContainer;
    class TickMessage;
 
    /**
     * Abstract interface class for ActorComponent. ActorComponent can be retrieved from 
-    * ActorComponentBase by type. ActorComponent have to register to receive any GameActor messages.
+    * ActorComponentContainer by type. ActorComponent have to register to receive any GameActor messages.
     * ActorComponent implementing this interface have to provide a value
     * for ACType to identify the ActorComponent type.
-    * When the ActorComponent is added to a ActorComponentBase, it receives a
-    * reference to the ActorComponentBase through the method SetOwner().
+    * When the ActorComponent is added to a ActorComponentContainer, it receives a
+    * reference to the ActorComponentContainer through the method SetOwner().
     *
     * Note - Actor Components can reference each other, but you should not check for another
     * actor component until the OnEnteredWorld() method. This gives each actor component a chance
@@ -101,9 +101,9 @@ namespace dtGame
 
       /**
        * Get ComponentBase this component is a part of
-       * @return The ActorComponentBase that contains this ActorComponent
+       * @return The ActorComponentContainer that contains this ActorComponent
        */
-      ActorComponentBase* GetOwner() const;
+      ActorComponentContainer* GetOwner() const;
 
       /**
        * Get ComponentBase this component is a part of. Cast to given pointer type.
@@ -123,11 +123,11 @@ namespace dtGame
        * Set the ComponentBase that this component is a part of.
        * Don't call this! Should only be called by ComponentBase.
        */
-      virtual void SetOwner(ActorComponentBase* owner);
+      virtual void SetOwner(ActorComponentContainer* owner);
 
       /** 
        * This method builds the property map, sets the initialized state, etc. 
-       * For now, this is called from the AddComponent on the ActorComponentBase. 
+       * For now, this is called from the AddComponent on the ActorComponentContainer.
        * In the future, this should be called from library initialization behavior, like with Actors
        */
       virtual void Init();
@@ -157,7 +157,7 @@ namespace dtGame
    private: 
 
       /** The ComponentBase this component is a part of */
-      ActorComponentBase* mOwner;
+      ActorComponentContainer* mOwner;
 
       /** type string of component */
       const ACType mType;

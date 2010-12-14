@@ -26,6 +26,7 @@
 #include <dtGame/export.h>
 #include <dtDAL/physicalactorproxy.h>
 #include <dtUtil/deprecationmgr.h>
+#include <dtGame/actorcomponentcontainer.h>
 
 namespace dtUtil
 {
@@ -47,7 +48,8 @@ namespace dtGame
     * Game Manager
     * @see dtGame::GameManager
     */
-   class DT_GAME_EXPORT GameActorProxy : public dtDAL::PhysicalActorProxy
+   class DT_GAME_EXPORT GameActorProxy : public dtDAL::PhysicalActorProxy,
+      public dtGame::ActorComponentContainer
    {
    public:
       typedef dtDAL::PhysicalActorProxy BaseClass;
@@ -408,6 +410,75 @@ namespace dtGame
        * @return           A property, or NULL if none found.
        */
       virtual dtCore::RefPtr<dtDAL::ActorProperty> GetDeprecatedProperty(const std::string& name);
+
+      //////////////////////////////
+      // Actor Components are being moved over to BaseActorObject or
+      // To a dtGame subclass of it.  Some of the accessor methods for them are
+      // here to make that transition easier, that is, to make code written to use them
+      // from GameActorProxy still build and allow people to transition away from
+      // accessing them from the GameActor.  Calling these methods should be fine since
+      // they won't go away, but they may be moved around.
+
+      using ActorComponentContainer::GetComponent;
+
+      /**
+       * Get component by type string
+       * @param type The type-string of the ActorComponent to get
+       * @return the selected ActorComponent (could be NULL if not found)
+       */
+      virtual ActorComponent* GetComponent(const ActorComponent::ACType& type) const ;
+
+      /**
+       * Fill the vector with all the actor components.
+       */
+      virtual void GetAllComponents(std::vector<ActorComponent*>& toFill);
+
+      /**
+       * Does base contain a component of given type?
+       * @param type The type-string of the ActorComponent to query
+       * @return true if ActorComponent is found, false otherwise
+       */
+      virtual bool HasComponent(const ActorComponent::ACType& type) const ;
+
+      /**
+       * Add an ActorComponent. Only one ActorComponent of a given type can be added.
+       * @param component The ActorComponent to try to add
+       */
+      virtual void AddComponent(ActorComponent& component);
+
+      /**
+       * Remove component by type
+       * @param type The type-string of the ActorComponent to remove
+       */
+      virtual void RemoveComponent(const ActorComponent::ACType& type);
+
+      /**
+       * Remove component by reference
+       * @param component : Pointer to the ActorComponent to remove
+       */
+      virtual void RemoveComponent(ActorComponent& component);
+
+      /**
+       * Remove all contained ActorComponent
+       */
+      virtual void RemoveAllComponents();
+
+      /**
+       * Loop through all ActorComponents call their OnEnteredWorld()
+       */
+      virtual void CallOnEnteredWorldForActorComponents();
+
+      /**
+       * Loop through all ActorComponents call their OnRemovedWorld()
+       */
+      virtual void CallOnRemovedFromWorldForActorComponents();
+
+      /**
+       * Call the BuildPropertyMap() method of all registered ActorComponent
+       */
+      virtual void BuildComponentPropertyMaps();
+
+      /////////////////////////////
 
    protected:
       /// Destructor

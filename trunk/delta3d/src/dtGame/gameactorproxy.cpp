@@ -806,7 +806,7 @@ void GameActorProxy::InvokeEnteredWorld()
    }
 
    ga->OnEnteredWorld();
-   ga->CallOnEnteredWorldForActorComponents();
+   CallOnEnteredWorldForActorComponents();
 
    OnEnteredWorld();
 }
@@ -826,7 +826,7 @@ void GameActorProxy::InvokeRemovedFromWorld()
          "ERROR: Actor has the type of a GameActor, but casting it to a GameActorProxy failed.", __FILE__, __LINE__);
    }
 
-   ga->CallOnRemovedFromWorldForActorComponents();
+   CallOnRemovedFromWorldForActorComponents();
    OnRemovedFromWorld();
 }
 
@@ -874,6 +874,64 @@ dtCore::RefPtr<dtDAL::ActorProperty> GameActorProxy::GetDeprecatedProperty(const
    }
 
    return prop;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+ActorComponent* GameActorProxy::GetComponent(const ActorComponent::ACType& type) const
+{
+   return GetGameActor().GetComponent(type);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void GameActorProxy::GetAllComponents(std::vector<ActorComponent*>& toFill)
+{
+   GetGameActor().GetAllComponents(toFill);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+bool GameActorProxy::HasComponent(const ActorComponent::ACType& type) const
+{
+   return GetGameActor().HasComponent(type);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void GameActorProxy::AddComponent(ActorComponent& component)
+{
+   GetGameActor().AddComponent(component);
+}
+////////////////////////////////////////////////////////////////////////////////
+void GameActorProxy::RemoveComponent(const ActorComponent::ACType& type)
+{
+   GetGameActor().RemoveComponent(type);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void GameActorProxy::RemoveComponent(ActorComponent& component)
+{
+   GetGameActor().RemoveComponent(component);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void GameActorProxy::RemoveAllComponents()
+{
+   GetGameActor().RemoveAllComponents();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void GameActorProxy::CallOnEnteredWorldForActorComponents()
+{
+   GetGameActor().CallOnEnteredWorldForActorComponents();
+}
+////////////////////////////////////////////////////////////////////////////////
+void GameActorProxy::CallOnRemovedFromWorldForActorComponents()
+{
+   GetGameActor().CallOnRemovedFromWorldForActorComponents();
+}
+////////////////////////////////////////////////////////////////////////////////
+void GameActorProxy::BuildComponentPropertyMaps()
+{
+   GetGameActor().BuildComponentPropertyMaps();
 }
 
 }

@@ -57,13 +57,13 @@ const dtGame::ActorComponent::ACType& dtGame::ActorComponent::GetType() const
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-ActorComponentBase* dtGame::ActorComponent::GetOwner() const
+ActorComponentContainer* dtGame::ActorComponent::GetOwner() const
 {
    return mOwner;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void dtGame::ActorComponent::SetOwner(ActorComponentBase* owner)
+void dtGame::ActorComponent::SetOwner(ActorComponentContainer* owner)
 {
    mOwner = owner;
 }
