@@ -25,3 +25,20 @@ W,S   - Move foward and back.
 A,D   - Strafe left and right.
 Space - Jump
 Esc   - Exit
+
+Running
+-------
+To run, use the GameStart utility and supply the library name on the command line.
+
+Usage:
+"GameStart.exe testDirector" or "GameStartD.exe testDirector"
+
+
+
+** Visual Studio **
+If running via Visual Studio, edit the testAAR project settings:
+ - Debugging->Command: GameStart.exe (or "GameStartD.exe" for debug).
+ - Debugging->Command Arguments: testDirector
+ 
+Note: Make sure your PATH environment is set to %DELTA_ROOT%/bin so MSVC can 
+      find the GameStart executable. 
