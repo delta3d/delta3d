@@ -59,6 +59,7 @@ namespace dtDirector
       static dtCore::RefPtr<dtDirector::NodeType> SET_ACTOR_PROPERTY_ACTION_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> OPERATION_ACTION_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> TOGGLE_ACTION_NODE_TYPE;
+      static dtCore::RefPtr<dtDirector::NodeType> COMPARE_BOOL_ACTION_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> COMPARE_VALUE_ACTION_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> SCHEDULER_ACTION_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> LERP_ACTOR_ROTATION_ACTION_NODE_TYPE;
@@ -88,12 +89,12 @@ namespace dtDirector
       static dtCore::RefPtr<dtDirector::NodeType> GROUP_BOX_NODE_TYPE;
 
       /**
-       *	Constructor.
+       *  Constructor.
        */
       NodeLibraryRegistry();
 
       /**
-       *	Registers all of the nodes to be exported.
+       *  Registers all of the nodes to be exported.
        */
       void RegisterNodeTypes();
    };
