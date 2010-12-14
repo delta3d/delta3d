@@ -133,4 +133,30 @@
          </child>
       </children>
    </animationSequence>
+   <animationSequence>
+      <name>ActionSequence2</name>
+      <startDelay>0.0</startDelay>
+      <fadeIn>0.0</fadeIn>
+      <fadeOut>0.0</fadeOut>
+      <speed>1.0</speed>
+      <baseWeight>1.0</baseWeight>
+      <children>
+         <child>
+            <name>RunAction</name>
+         </child>
+         <child>
+            <name>IdleAction</name>
+            <followPrevious>1</followPrevious>
+         </child>
+      </children>
+      <eventOnStart event="seq_startEvent1"/>
+      <eventOnStart event="seq_startEvent2"/>
+      <eventOnTime offset="0.0" event="seq_startEvent3"/>
+      <eventOnTime offset="0.25" event="seq_midEvent1"/>
+      <eventOnTime offset="0.25" event="seq_midEvent2"/>
+      <eventOnTime offset="0.5" event="seq_midEvent3"/>
+      <eventOnTime offset="-1.0" event="seq_endEvent1"/>
+      <eventOnEnd event="seq_endEvent2"/>
+      <eventOnEnd event="seq_endEvent3"/>
+   </animationSequence>
 </character>

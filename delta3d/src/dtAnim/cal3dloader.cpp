@@ -476,6 +476,9 @@ namespace dtAnim
    {
       typedef CharacterFileHandler::AnimatableStruct::EventTimeMap EventTimeMap;
 
+      // DEBUG:
+      //std::cout << "\nEvents for Anim:\t" << anim.GetName();
+
       float curOffset = 0.0f;
       EventTimeMap::const_iterator curIter = info.mEventTimeMap.begin();
       EventTimeMap::const_iterator endIter = info.mEventTimeMap.end();
@@ -483,11 +486,18 @@ namespace dtAnim
       {
          curOffset = curIter->second;
 
+         // DEBUG:
+         //std::cout << "\n\tEvent:\t" << curIter->first;
+         //std::cout << "\n\t\tOffset:\t" << curOffset;
+
          // If the offset is not positive, then the end time (duration) will be used.
          if (curOffset < 0.0f)
          {
             curOffset = anim.CalculateDuration();
          }
+
+         // DEBUG:
+         //std::cout << "\n\t\tOffset:\t" << curOffset << "\n\n";
 
          anim.AddEventOnTime(curIter->first, curOffset);
       }
@@ -605,7 +615,6 @@ namespace dtAnim
             pSequence->SetFadeOut(pStruct.mFadeOut);
             pSequence->SetSpeed(pStruct.mSpeed);
             pSequence->SetBaseWeight(pStruct.mBaseWeight);
-            SetAnimatableEvents(*pSequence, pStruct);
 
             // find children
             OverrideStruct* curOverrideStruct = NULL;
@@ -640,6 +649,8 @@ namespace dtAnim
                   }
                }
             }
+
+            SetAnimatableEvents(*pSequence, pStruct);
 
             modelData.Add(pSequence.get());
 

@@ -230,7 +230,6 @@ void AnimationChannel::ForceFadeOut(float time)
    if (!mIsAction)
    {
       mModelWrapper->ClearCycle(mAnimationWrapper->GetID(), time);
-      SetActive(false);
    }
 }
 

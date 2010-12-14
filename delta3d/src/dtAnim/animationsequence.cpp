@@ -82,12 +82,7 @@ class RecalcFunctor
 {
 public:
 
-   RecalcFunctor(float pStart) : mStart(pStart), mEnd(0.0f) {}
-
-   float GetEnd()const
-   {
-      return mEnd;
-   }
+   RecalcFunctor(float pStart, float* outEnd) : mStart(pStart), mEnd(outEnd) {}
 
    template <typename T>
    void operator()(T& pChild)
@@ -98,12 +93,27 @@ public:
 
       //keep track of the maximum end time
       float end = pChild->GetEndTime();
-      if (end > mEnd) { mEnd = end; }
+
+      // If the end time was not marked as infinite
+      // and the end time of the current animatable
+      // is valid and greater than the max end time...
+      if (*mEnd >= 0.0f && end > *mEnd)
+      {
+         // ...advance the max end time to the current
+         // animatable's end time.
+         *mEnd = end;
+      }
+      // Otherwise, if the end time is not valid...
+      else if(end <= 0.0f)
+      {
+         // ...mark the max end time as infinite.
+         *mEnd = -1.0f;
+      }
    }
 
 private:
    float mStart;
-   float mEnd;
+   float* mEnd;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -187,10 +197,11 @@ void AnimationSequence::AnimationController::Recalculate()
    float start = mParent->GetStartTime();
    AnimationSequence::AnimationContainer& pCont = mParent->GetChildAnimations();
 
-   RecalcFunctor func(start);
+   float endTime = 0.0f;
+   RecalcFunctor func(start, &endTime);
    std::for_each(pCont.begin(), pCont.end(), func);
 
-   mParent->SetEndTime(func.GetEnd());
+   mParent->SetEndTime(endTime >= 0.0f ? endTime : 0.0f);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -353,6 +364,8 @@ const AnimationSequence::AnimationContainer& AnimationSequence::GetChildAnimatio
 ////////////////////////////////////////////////////////////////////////////////
 void AnimationSequence::Update(float dt)
 {
+   SetActive(true);
+
    if (mController.valid())
    {
       mController->Update(dt);
@@ -428,6 +441,8 @@ void AnimationSequence::ForceFadeOut(float time)
 ////////////////////////////////////////////////////////////////////////////////
 void AnimationSequence::Prune()
 {
+   SetActive(false);
+
    AnimationContainer::iterator iter = mChildAnimations.begin();
    AnimationContainer::iterator end = mChildAnimations.end();
 
