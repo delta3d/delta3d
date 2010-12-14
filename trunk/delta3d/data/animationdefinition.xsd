@@ -158,8 +158,9 @@
                                  <xs:element name="followPrevious" type="xs:integer" />
                                  <xs:element name="follows" type="xs:normalizedString" />
                               </xs:choice>
-                              <xs:element name="eventOnStart" type="xs:normalizedString" minOccurs="0" maxOccurs="1"/>
-                              <xs:element name="eventOnEnd" type="xs:normalizedString" minOccurs="0" maxOccurs="1"/>
+                              <xs:element name="eventOnStart" type="event" minOccurs="0" maxOccurs="1"/>
+                              <xs:element name="eventOnTime" type="eventTimed" minOccurs="0" maxOccurs="unbounded" />
+                              <xs:element name="eventOnEnd" type="event" minOccurs="0" maxOccurs="1"/>
                            </xs:sequence>
                         </xs:complexType>
                      </xs:element>
@@ -167,6 +168,9 @@
                 </xs:sequence>
               </xs:complexType>
             </xs:element>
+            <xs:element name="eventOnStart" type="event" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="eventOnTime" type="eventTimed" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="eventOnEnd" type="event" minOccurs="0" maxOccurs="unbounded" />
          </xs:sequence>
       </xs:complexType>
    </xs:element>

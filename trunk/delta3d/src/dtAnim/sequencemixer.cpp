@@ -73,19 +73,6 @@ void SequenceMixer::PlayAnimation(Animatable* anim)
    {
       mRootSequence->SetElapsedTime(0.0);
    }
-   // Determine if the time can be reset even if one inactive animation remains.
-   else if(numAnims == 1)
-   {
-      Animatable* other = mRootSequence->GetChildAnimations().front();
-
-      // If the remaining animation is no longer active and has already played,
-      // reset the root sequence timer since the inactive animation will be
-      // removed/pruned on the next call to Update.
-      if ( ! other->IsActive() && other->GetStartTime() < mRootSequence->GetElapsedTime())
-      {
-         mRootSequence->SetElapsedTime(0.0);
-      }
-   }
 
    mRootSequence->AddAnimation(anim);
 }

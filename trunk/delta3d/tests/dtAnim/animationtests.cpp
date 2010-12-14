@@ -104,11 +104,13 @@ namespace dtAnim
       CPPUNIT_TEST( TestAnimSequence );
       CPPUNIT_TEST( TestAnimSequenceUpdate );
       CPPUNIT_TEST( TestAnimSequenceCalculateDuration );
+      CPPUNIT_TEST( TestAnimInsert );
       CPPUNIT_TEST( TestAnimRelativeTime );
       CPPUNIT_TEST( TestSequenceMixer );
       CPPUNIT_TEST( TestAnimHelper );
       CPPUNIT_TEST( TestAnimHelperCustomCommands );
-      CPPUNIT_TEST( TestAnimHelperEventCommands );
+      CPPUNIT_TEST( TestAnimHelperEventCommands_Channel );
+      CPPUNIT_TEST( TestAnimHelperEventCommands_Sequence );
       CPPUNIT_TEST( TestAnimController );
       CPPUNIT_TEST( TestAnimCallback );
       CPPUNIT_TEST_SUITE_END();
@@ -124,14 +126,19 @@ namespace dtAnim
          void TestAnimChannelRelativeTime();
          void TestAnimSequence();         
          void TestAnimSequenceUpdate();
-         void TestAnimSequenceCalculateDuration();   
+         void TestAnimSequenceCalculateDuration(); 
+         void TestAnimInsert();
          void TestAnimRelativeTime();      
          void TestSequenceMixer();
          void TestAnimController();
          void TestAnimHelper();
          void TestAnimHelperCustomCommands();
-         void TestAnimHelperEventCommands();
+         void TestAnimHelperEventCommands_Channel();
+         void TestAnimHelperEventCommands_Sequence();
          void TestAnimCallback();
+
+         void SubTestAnimHelperEventCommands(
+            const std::string& testAnim, const std::string& eventPrefix);
 
          void OnAnimationCompleted(const dtAnim::Animatable& anim);
 
@@ -170,6 +177,8 @@ namespace dtAnim
 
    // Registers the fixture into the 'registry'
    CPPUNIT_TEST_SUITE_REGISTRATION( AnimationTests );
+
+   static const int TOTAL_TEST_EVENTS = 18;
 
    /////////////////////////////////////////////////////////////////////////////
    void AnimationTests::setUp()
@@ -720,6 +729,111 @@ namespace dtAnim
    }
 
    /////////////////////////////////////////////////////////////////////////////
+   void AnimationTests::TestAnimInsert()
+   {
+      SequenceMixer& mixer = mHelper->GetSequenceMixer();
+      const AnimationSequence& rootSeq = mixer.GetRootSequence();
+
+      // Play a base animation so that the root sequence's
+      // elapsed time is allowed to increment.
+      CPPUNIT_ASSERT_EQUAL(size_t(0), rootSeq.GetChildAnimations().size());
+      mHelper->PlayAnimation("Idle");
+      CPPUNIT_ASSERT_EQUAL(size_t(1), rootSeq.GetChildAnimations().size());
+
+
+      // Create the test animations.
+      const Animatable* regChan = mixer.GetRegisteredAnimation("Walk");
+      const Animatable* regSeq = mixer.GetRegisteredAnimation("RunWalk");
+      CPPUNIT_ASSERT(regChan != NULL);
+      CPPUNIT_ASSERT(regSeq != NULL);
+
+      // Satisfy subsequent calls to Clone.
+      Cal3DModelWrapper* modelWrapper = mHelper->GetModelWrapper();
+      
+      dtCore::RefPtr<AnimationChannel> chan
+         = dynamic_cast<AnimationChannel*>(regChan->Clone(modelWrapper).get());
+      dtCore::RefPtr<AnimationSequence> seq
+         = dynamic_cast<AnimationSequence*>(regSeq->Clone(modelWrapper).get());
+
+      CPPUNIT_ASSERT(chan.valid());
+      CPPUNIT_ASSERT(seq.valid());
+
+
+      // Declare and set time variables.
+      double epsilon = 0.001;
+      double timeStep = 3.5;
+
+      float startDelay = 0.5f;
+      seq->SetStartDelay(startDelay);
+      chan->SetStartDelay(startDelay);
+
+
+      // Elapse time to a non-zero value.
+      double elapsedTime = timeStep;
+      mHelper->Update(timeStep);
+      CPPUNIT_ASSERT_DOUBLES_EQUAL(elapsedTime, rootSeq.GetElapsedTime(), epsilon);
+
+      // Ensure the insert time is set on an inserted animation sequence.
+      CPPUNIT_ASSERT(chan->GetInsertTime() == 0.0f);
+      CPPUNIT_ASSERT( ! chan->IsActive());
+      mixer.PlayAnimation(chan.get());
+      mixer.Update(0.0f);
+      CPPUNIT_ASSERT_EQUAL(size_t(2), rootSeq.GetChildAnimations().size());
+      CPPUNIT_ASSERT_DOUBLES_EQUAL(elapsedTime, chan->GetInsertTime(), epsilon);
+      CPPUNIT_ASSERT( ! chan->IsActive());
+
+
+      // Elapse time to a non-zero value.
+      elapsedTime += timeStep;
+      mHelper->Update(timeStep);
+      CPPUNIT_ASSERT_DOUBLES_EQUAL(elapsedTime, rootSeq.GetElapsedTime(), epsilon);
+
+      // Ensure the insert time is set on an inserted animation sequence.
+      CPPUNIT_ASSERT(seq->GetInsertTime() == 0.0f);
+      CPPUNIT_ASSERT( ! seq->IsActive());
+      mixer.PlayAnimation(seq.get());
+      mixer.Update(0.0f);
+      CPPUNIT_ASSERT_EQUAL(size_t(3), rootSeq.GetChildAnimations().size());
+      CPPUNIT_ASSERT_DOUBLES_EQUAL(elapsedTime, seq->GetInsertTime(), epsilon);
+      CPPUNIT_ASSERT( ! seq->IsActive());
+      CPPUNIT_ASSERT(chan->IsActive());
+
+
+      // Elapse time to a non-zero value.
+      elapsedTime += timeStep;
+      mHelper->Update(timeStep);
+      CPPUNIT_ASSERT_DOUBLES_EQUAL(elapsedTime, rootSeq.GetElapsedTime(), epsilon);
+
+      // Ensure that the channel and sequence are active.
+      CPPUNIT_ASSERT(chan->IsActive());
+      CPPUNIT_ASSERT(seq->IsActive());
+
+
+      // Ensure that the animations remain active until pruned.
+      mixer.ClearAnimation(chan->GetName(), timeStep);
+      mixer.ClearAnimation(seq->GetName(), timeStep);
+      CPPUNIT_ASSERT(chan->IsActive());
+      CPPUNIT_ASSERT(seq->IsActive());
+
+      double halfStep = timeStep * 0.5;
+      mHelper->Update(halfStep);
+      // TODO: Keep animatables around until they actually complete...
+//      CPPUNIT_ASSERT(seq->IsActive());
+//      CPPUNIT_ASSERT(chan->IsActive());
+//      CPPUNIT_ASSERT(rootSeq.GetAnimation(chan->GetName()) == chan.get());
+//      CPPUNIT_ASSERT(rootSeq.GetAnimation(seq->GetName()) == seq.get());
+//      CPPUNIT_ASSERT_EQUAL(size_t(3), rootSeq.GetChildAnimations().size());
+
+      // Ensure the animations are pruned.
+      mHelper->Update(halfStep + 0.1);
+      CPPUNIT_ASSERT( ! seq->IsActive());
+      CPPUNIT_ASSERT( ! chan->IsActive());
+      CPPUNIT_ASSERT(rootSeq.GetAnimation(chan->GetName()) == NULL);
+      CPPUNIT_ASSERT(rootSeq.GetAnimation(seq->GetName()) == NULL);
+      CPPUNIT_ASSERT_EQUAL(size_t(1), rootSeq.GetChildAnimations().size());
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
    void AnimationTests::TestAnimRelativeTime()
    {
       const AnimationSequence& rootSeq = mHelper->GetSequenceMixer().GetRootSequence();
@@ -1106,7 +1220,7 @@ namespace dtAnim
       // Remove objects that are not needed in this test.
       // --- Animation Event Callbacks will be tested later,
       //     in another test method.
-      CPPUNIT_ASSERT(mHelper->ClearAnimationEventCallbacks() == 9);
+      CPPUNIT_ASSERT(mHelper->ClearAnimationEventCallbacks() == TOTAL_TEST_EVENTS);
       CPPUNIT_ASSERT(mHelper->ClearAnimationEventCallbacks() == 0);
 
 
@@ -1358,14 +1472,30 @@ namespace dtAnim
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void AnimationTests::TestAnimHelperEventCommands()
+   void AnimationTests::TestAnimHelperEventCommands_Channel()
    {
       // Ensure command execution is enabled for the subsequent tests.
       mHelper->SetCommandCallbacksEnabled(true);
       CPPUNIT_ASSERT(mHelper->IsCommandCallbacksEnabled());
 
+      SubTestAnimHelperEventCommands("TestEventsAction", "");
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void AnimationTests::TestAnimHelperEventCommands_Sequence()
+   {
+      // Ensure command execution is enabled for the subsequent tests.
+      mHelper->SetCommandCallbacksEnabled(true);
+      CPPUNIT_ASSERT(mHelper->IsCommandCallbacksEnabled());
+
+      SubTestAnimHelperEventCommands("ActionSequence2", "seq_");
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void AnimationTests::SubTestAnimHelperEventCommands(const std::string& testAnim,
+      const std::string& eventPrefix)
+   {
       // Create test variables
-      const std::string testAnim("TestEventsAction");
       mHelper->PlayAnimation(testAnim);
       const Animatable* regAnim = mHelper->GetSequenceMixer().GetRegisteredAnimation(testAnim);
       Animatable* activeAnim = mHelper->GetSequenceMixer().GetActiveAnimation(testAnim);
@@ -1375,22 +1505,22 @@ namespace dtAnim
       CallbackTester cbt;
 
       // Maintain the names of the anticipated test events.
-      const std::string eventStart1("startEvent1");
-      const std::string eventStart2("startEvent2");
-      const std::string eventStart3("startEvent3");
-      const std::string eventMid1("midEvent1");
-      const std::string eventMid2("midEvent2");
-      const std::string eventMid3("midEvent3");
-      const std::string eventEnd1("endEvent1");
-      const std::string eventEnd2("endEvent2");
-      const std::string eventEnd3("endEvent3");
+      const std::string eventStart1(eventPrefix+"startEvent1");
+      const std::string eventStart2(eventPrefix+"startEvent2");
+      const std::string eventStart3(eventPrefix+"startEvent3");
+      const std::string eventMid1(eventPrefix+"midEvent1");
+      const std::string eventMid2(eventPrefix+"midEvent2");
+      const std::string eventMid3(eventPrefix+"midEvent3");
+      const std::string eventEnd1(eventPrefix+"endEvent1");
+      const std::string eventEnd2(eventPrefix+"endEvent2");
+      const std::string eventEnd3(eventPrefix+"endEvent3");
       float duration = activeAnim->CalculateDuration();
 
 
       // Test setting the crucial event sending callback.
       AnimEventCallback eventFunc(&cbt, &CallbackTester::SendEvent);
       CPPUNIT_ASSERT( ! mHelper->GetSendEventCallback().valid());
-      CPPUNIT_ASSERT(mHelper->SetSendEventCallback(eventFunc) == 9); // 9 Event commands created.
+      CPPUNIT_ASSERT(mHelper->SetSendEventCallback(eventFunc) == TOTAL_TEST_EVENTS); // TOTAL_TEST_EVENTS Event commands created.
       CPPUNIT_ASSERT(mHelper->GetSendEventCallback().valid());
 
       // Ensure the events for the animation have been loaded and set
@@ -1533,7 +1663,7 @@ namespace dtAnim
 
       // Test clearing the event callbacks that were automatically generated
       // by the helper.
-      CPPUNIT_ASSERT(mHelper->ClearAnimationEventCallbacks() == 9);
+      CPPUNIT_ASSERT(mHelper->ClearAnimationEventCallbacks() == TOTAL_TEST_EVENTS);
       CPPUNIT_ASSERT(mHelper->GetCollectedCommandCount() == 0);
       CPPUNIT_ASSERT(mHelper->ClearAnimationEventCallbacks() == 0);
 
