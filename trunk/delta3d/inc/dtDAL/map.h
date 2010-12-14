@@ -35,6 +35,7 @@
 
 namespace dtDAL 
 {
+   class ActorHierarchyNode;
    class Project;
    class GameEvent;
 
@@ -502,6 +503,8 @@ namespace dtDAL
          */
          void SetPresetCameraData(int index, PresetCameraData presetData);
 
+         dtDAL::ActorHierarchyNode* GetDrawableActorHierarchy() { return mDrawableActorHierarchy; }
+
       protected:
          friend class Project;
          friend class ProjectImpl;
@@ -558,6 +561,8 @@ namespace dtDAL
          std::string mCreateDateTime;
 
          dtCore::RefPtr<dtDAL::BaseActorObject> mEnvActor;
+
+         dtCore::RefPtr<ActorHierarchyNode>     mDrawableActorHierarchy;
 
          dtCore::RefPtr<GameEventManager> mEventManager;
 

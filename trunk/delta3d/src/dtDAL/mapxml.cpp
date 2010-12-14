@@ -48,6 +48,7 @@
 #include <dtCore/transformable.h>
 #include <dtCore/transform.h>
 
+#include <dtDAL/actorhierarchynode.h>
 #include <dtDAL/mapxml.h>
 #include <dtDAL/map.h>
 #include <dtDAL/exceptionenum.h>
@@ -470,6 +471,14 @@ namespace dtDAL
          }
          EndElement(); // End Groups Element.
 
+         BeginElement(MapXMLConstants::HIERARCHY_ELEMENT);
+            dtDAL::ActorHierarchyNode* hier = map.GetDrawableActorHierarchy();
+            for(unsigned int i = 0; i < hier->GetNumChildren(); ++i)
+            {
+               WriteHierarchyBranch(hier->GetChild(i));
+            }
+         EndElement(); //End Drawable Hierarchy Element
+
          BeginElement(MapXMLConstants::PRESET_CAMERAS_ELEMENT);
          {
             char numberConversionBuffer[80];
@@ -627,6 +636,24 @@ namespace dtDAL
          mFormatTarget.SetOutputFile(NULL);
          throw dtDAL::MapSaveException( std::string("Unknown exception saving map \"") + map.GetName() + ("\"."), __FILE__, __LINE__);
       }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void MapWriter::WriteHierarchyBranch(dtDAL::ActorHierarchyNode* hierNode)
+   {
+      std::string idAtt = "actorID='";
+      idAtt += hierNode->GetBaseActorObject()->GetId().ToString();
+      idAtt += "'";
+      XMLCh* unicodeForm = XMLString::transcode(idAtt.c_str());
+
+      BeginElement(MapXMLConstants::HIERARCHY_ELEMENT_NODE, unicodeForm);      
+
+      for (unsigned int i = 0; i < hierNode->GetNumChildren(); ++i)
+      {
+         WriteHierarchyBranch(hierNode->GetChild(i));
+      }
+
+      EndElement(); //end HIERARCHY_ELEMENT_NODE
    }
 
    ////////////////////////////////////////////////////////////////////////////////

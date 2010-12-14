@@ -20,14 +20,7 @@ class STAGE_MAP_HIERARCHY_EDITOR_EXPORT NodeButton
    Q_OBJECT
 public:
 
-   enum Type
-   {
-      SCENE = 0,
-      ENVIRONMENT,
-      UNSPECIFIED
-   };
-
-   NodeButton(Type t, dtDAL::BaseActorObject* bao,
+   NodeButton(dtDAL::BaseActorObject* bao,
               QWidget* parent, Qt::WindowFlags f = 0);
    ~NodeButton();
 
@@ -42,7 +35,6 @@ public:
 
    std::string GetActorID() const;
 
-   void SetType(Type t);
    void SetLineWidths(int top, int bottom);
    void SetTopLineWidth(int w);
    void SetBottomLineWidth(int w);

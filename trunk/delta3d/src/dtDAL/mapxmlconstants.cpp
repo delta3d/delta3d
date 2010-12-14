@@ -102,6 +102,9 @@ namespace dtDAL
    XMLCh* MapXMLConstants::DIRECTOR_LINK_VALUE_ALLOW_MULTIPLE_ELEMENT = NULL;
    XMLCh* MapXMLConstants::DIRECTOR_LINK_VALUE_TYPE_CHECK_ELEMENT = NULL;
 
+   XMLCh* MapXMLConstants::HIERARCHY_ELEMENT = NULL;
+   XMLCh* MapXMLConstants::HIERARCHY_ELEMENT_NODE = NULL;
+
    XMLCh* MapXMLConstants::ACTORS_ELEMENT = NULL;
    XMLCh* MapXMLConstants::ACTOR_ELEMENT = NULL;
    XMLCh* MapXMLConstants::ACTOR_TYPE_ELEMENT = NULL;
@@ -225,6 +228,9 @@ namespace dtDAL
       DIRECTOR_LINK_VALUE_IS_OUT_ELEMENT = xercesc::XMLString::transcode("isout");
       DIRECTOR_LINK_VALUE_ALLOW_MULTIPLE_ELEMENT = xercesc::XMLString::transcode("allowmultiple");
       DIRECTOR_LINK_VALUE_TYPE_CHECK_ELEMENT = xercesc::XMLString::transcode("typecheck");
+
+      HIERARCHY_ELEMENT = xercesc::XMLString::transcode("drawablehierarchy");
+      HIERARCHY_ELEMENT_NODE = xercesc::XMLString::transcode("drawablehierarchynode");
 
       ACTORS_ELEMENT = xercesc::XMLString::transcode("actors");
       ACTOR_ELEMENT = xercesc::XMLString::transcode("actor");
