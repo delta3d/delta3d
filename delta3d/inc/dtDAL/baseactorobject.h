@@ -251,14 +251,14 @@ namespace dtDAL
       template <typename TPtr>
       void GetDrawable(TPtr& drawableType)
       {
-         drawableType = static_cast<TPtr>(GetDrawable());
+         drawableType = dynamic_cast<TPtr>(GetDrawable());
       }
 
       /// Call GetDrawable
       template <typename TPtr>
       void GetActor(TPtr& drawableType)
       {
-         drawableType = static_cast<TPtr>(GetDrawable());
+         drawableType = dynamic_cast<TPtr>(GetDrawable());
       }
 
       /** Templated version of GetDrawable() that static casts the actor to the type passed in.
