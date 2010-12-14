@@ -42,6 +42,7 @@
 #include <dtDirectorNodes/getactorpropertyaction.h>
 #include <dtDirectorNodes/setactorpropertyaction.h>
 #include <dtDirectorNodes/operationaction.h>
+#include <dtDirectorNodes/compareboolaction.h>
 #include <dtDirectorNodes/comparevalueaction.h>
 #include <dtDirectorNodes/delayaction.h>
 #include <dtDirectorNodes/toggleaction.h>
@@ -115,7 +116,8 @@ namespace dtDirector
    RefPtr<NodeType> NodeLibraryRegistry::SET_ACTOR_PROPERTY_ACTION_NODE_TYPE(    new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Set Actor Property",        "General",     "Operations",  "Sets the value of a property from an actor."));
    RefPtr<NodeType> NodeLibraryRegistry::OPERATION_ACTION_NODE_TYPE(             new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Binary Operation",          "General",     "Operations",  "Performs a simple operation between two values A and B and outputs to Result."));
    RefPtr<NodeType> NodeLibraryRegistry::TOGGLE_ACTION_NODE_TYPE(                new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Toggle",                    "General",     "Operations",  "Sets a boolean value."));
-   RefPtr<NodeType> NodeLibraryRegistry::COMPARE_VALUE_ACTION_NODE_TYPE(         new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Compare Value",             "General",     "Condition",   "Compares two values A and B."));
+   RefPtr<NodeType> NodeLibraryRegistry::COMPARE_BOOL_ACTION_NODE_TYPE(          new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Compare Bool",              "General",     "Condition",   "Compares two bool values A and B."));
+   RefPtr<NodeType> NodeLibraryRegistry::COMPARE_VALUE_ACTION_NODE_TYPE(         new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Compare Value",             "General",     "Condition",   "Compares two numerical values A and B."));
    RefPtr<NodeType> NodeLibraryRegistry::SCHEDULER_ACTION_NODE_TYPE(             new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Scheduler",                 "Cinematic",   "Cinematic",   "Schedules a sequence of timed events."));
    RefPtr<NodeType> NodeLibraryRegistry::LERP_ACTOR_ROTATION_ACTION_NODE_TYPE(   new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Lerp Actor Rotation",       "Cinematic",   "Cinematic",   "Linearly interpolates the rotation of an actor."));
    RefPtr<NodeType> NodeLibraryRegistry::LERP_ACTOR_SCALE_ACTION_NODE_TYPE(      new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Lerp Actor Scale",          "Cinematic",   "Cinematic",   "Linearly interpolates the scale of an actor."));
@@ -187,6 +189,7 @@ namespace dtDirector
       mNodeFactory->RegisterType<SetActorPropertyAction>(SET_ACTOR_PROPERTY_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<OperationAction>(OPERATION_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<ToggleAction>(TOGGLE_ACTION_NODE_TYPE.get());
+      mNodeFactory->RegisterType<CompareBoolAction>(COMPARE_BOOL_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<CompareValueAction>(COMPARE_VALUE_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<SchedulerAction>(SCHEDULER_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<LerpActorRotationAction>(LERP_ACTOR_ROTATION_ACTION_NODE_TYPE.get());

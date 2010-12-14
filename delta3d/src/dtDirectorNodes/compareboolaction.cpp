@@ -16,58 +16,57 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * Author: Jeff P. Houde
+ * Author: Eric R. Heine
  */
 
-#include <dtDirectorNodes/comparevalueaction.h>
+#include <dtDirectorNodes/compareboolaction.h>
 
-#include <dtDAL/doubleactorproperty.h>
+#include <dtDAL/booleanactorproperty.h>
 
 #include <dtDirector/director.h>
 
 namespace dtDirector
 {
    ////////////////////////////////////////////////////////////////////////////////
-   CompareValueAction::CompareValueAction()
+   CompareBoolAction::CompareBoolAction()
       : ActionNode()
       , mValueA(0)
       , mValueB(0)
    {
-      AddAuthor("Jeff P. Houde");
+      AddAuthor("Eric R. Heine");
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   CompareValueAction::~CompareValueAction()
+   CompareBoolAction::~CompareBoolAction()
    {
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void CompareValueAction::Init(const NodeType& nodeType, DirectorGraph* graph)
+   void CompareBoolAction::Init(const NodeType& nodeType, DirectorGraph* graph)
    {
       ActionNode::Init(nodeType, graph);
 
       mOutputs.clear();
-      mOutputs.push_back(OutputLink(this, "A > B"));
-      mOutputs.push_back(OutputLink(this, "A = B"));
-      mOutputs.push_back(OutputLink(this, "B > A"));
+      mOutputs.push_back(OutputLink(this, "A == B"));
+      mOutputs.push_back(OutputLink(this, "A != B"));
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void CompareValueAction::BuildPropertyMap()
+   void CompareBoolAction::BuildPropertyMap()
    {
       ActionNode::BuildPropertyMap();
 
       // Create our value links.
-      dtDAL::DoubleActorProperty* leftProp = new dtDAL::DoubleActorProperty(
+      dtDAL::BooleanActorProperty* leftProp = new dtDAL::BooleanActorProperty(
          "A", "A",
-         dtDAL::DoubleActorProperty::SetFuncType(this, &CompareValueAction::SetA),
-         dtDAL::DoubleActorProperty::GetFuncType(this, &CompareValueAction::GetA),
+         dtDAL::BooleanActorProperty::SetFuncType(this, &CompareBoolAction::SetA),
+         dtDAL::BooleanActorProperty::GetFuncType(this, &CompareBoolAction::GetA),
          "Value A.");
 
-      dtDAL::DoubleActorProperty* rightProp = new dtDAL::DoubleActorProperty(
+      dtDAL::BooleanActorProperty* rightProp = new dtDAL::BooleanActorProperty(
          "B", "B",
-         dtDAL::DoubleActorProperty::SetFuncType(this, &CompareValueAction::SetB),
-         dtDAL::DoubleActorProperty::GetFuncType(this, &CompareValueAction::GetB),
+         dtDAL::BooleanActorProperty::SetFuncType(this, &CompareBoolAction::SetB),
+         dtDAL::BooleanActorProperty::GetFuncType(this, &CompareBoolAction::GetB),
          "Value B.");
 
       AddProperty(leftProp);
@@ -80,7 +79,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   bool CompareValueAction::Update(float simDelta, float delta, int input, bool firstUpdate)
+   bool CompareBoolAction::Update(float simDelta, float delta, int input, bool firstUpdate)
    {
       double valueA = GetDouble("A");
       double valueB = GetDouble("B");
@@ -88,15 +87,11 @@ namespace dtDirector
       OutputLink* link = NULL;
       if (valueA == valueB)
       {
-         link = GetOutputLink("A = B");
+         link = GetOutputLink("A == B");
       }
-      else if (valueA < valueB)
+      else
       {
-         link = GetOutputLink("B > A");
-      }
-      else if (valueA > valueB)
-      {
-         link = GetOutputLink("A > B");
+         link = GetOutputLink("A != B");
       }
 
       if (link) link->Activate();
@@ -104,16 +99,14 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   bool CompareValueAction::CanConnectValue(ValueLink* link, ValueNode* value)
+   bool CompareBoolAction::CanConnectValue(ValueLink* link, ValueNode* value)
    {
       if (Node::CanConnectValue(link, value))
       {
          dtDAL::DataType& type = value->GetPropertyType();
          switch (type.GetTypeId())
          {
-         case dtDAL::DataType::INT_ID:
-         case dtDAL::DataType::FLOAT_ID:
-         case dtDAL::DataType::DOUBLE_ID:
+         case dtDAL::DataType::BOOLEAN_ID:
             return true;
 
          default:
@@ -125,25 +118,25 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void CompareValueAction::SetA(double value)
+   void CompareBoolAction::SetA(bool value)
    {
       mValueA = value;
    }
 
    //////////////////////////////////////////////////////////////////////////
-   double CompareValueAction::GetA()
+   bool CompareBoolAction::GetA()
    {
       return mValueA;
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void CompareValueAction::SetB(double value)
+   void CompareBoolAction::SetB(bool value)
    {
       mValueB = value;
    }
 
    //////////////////////////////////////////////////////////////////////////
-   double CompareValueAction::GetB()
+   bool CompareBoolAction::GetB()
    {
       return mValueB;
    }
