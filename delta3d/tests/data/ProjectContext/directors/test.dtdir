@@ -2,7 +2,7 @@
 <director xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dDirector" xsi:schemaLocation="delta3dDirector director.xsd">
     <header>
         <createTimestamp>2009-12-16T22:35:23-08:00</createTimestamp>
-        <lastUpdateTimestamp>2010-04-22T17:25:04-08:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2010-12-14T15:48:39-08:00</lastUpdateTimestamp>
         <editorVersion>2.5.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
         <property>
@@ -28,18 +28,6 @@
     </header>
     <libraries></libraries>
     <graph>
-        <property>
-            <name>Enabled</name>
-            <boolean>true</boolean>
-        </property>
-        <property>
-            <name>Comment</name>
-            <string></string>
-        </property>
-        <property>
-            <name>Name</name>
-            <string>Test Graph</string>
-        </property>
         <eventnodes>
             <node>
                 <name>Remote Event</name>
@@ -84,6 +72,14 @@
                         <name>Call Event</name>
                     </link>
                 </outputlink>
+                <valuelink>
+                    <name>Enabled</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
                 <valuelink>
                     <name>TriggerCount</name>
                     <visible>true</visible>
@@ -153,6 +149,14 @@
                     </link>
                 </outputlink>
                 <valuelink>
+                    <name>Enabled</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+                <valuelink>
                     <name>TriggerCount</name>
                     <visible>true</visible>
                     <exposed>false</exposed>
@@ -206,6 +210,10 @@
                     <name>EventName</name>
                     <string>Second</string>
                 </property>
+                <property>
+                    <name>Local Event</name>
+                    <boolean>false</boolean>
+                </property>
                 <inputlink>
                     <name>Call Event</name>
                     <visible>true</visible>
@@ -218,7 +226,7 @@
                     <name>Event Finished</name>
                     <visible>true</visible>
                     <link>
-                        <id>f133997d-6620-46cd-8277-aa606f9da72c</id>
+                        <id>6b5e1ab6-4937-41f2-a9d8-f83aee96856a</id>
                         <name>In</name>
                     </link>
                 </outputlink>
@@ -238,92 +246,13 @@
                     <allowmultiple>false</allowmultiple>
                     <typecheck>true</typecheck>
                 </valuelink>
-            </node>
-            <node>
-                <name>Compare Value</name>
-                <category>General</category>
-                <id>f133997d-6620-46cd-8277-aa606f9da72c</id>
-                <property>
-                    <name>Enabled</name>
-                    <boolean>true</boolean>
-                </property>
-                <property>
-                    <name>Comment</name>
-                    <string></string>
-                </property>
-                <property>
-                    <name>LogNode</name>
-                    <boolean>false</boolean>
-                </property>
-                <property>
-                    <name>Position</name>
-                    <vec2>
-                        <value1>280.000000</value1>
-                        <value2>82.000000</value2>
-                    </vec2>
-                </property>
-                <property>
-                    <name>A</name>
-                    <double>0</double>
-                </property>
-                <property>
-                    <name>B</name>
-                    <double>0</double>
-                </property>
-                <inputlink>
-                    <name>In</name>
-                    <visible>true</visible>
-                    <link>
-                        <id>124e26e9-f4c7-41dd-90da-65aa6cad478b</id>
-                        <name>Event Finished</name>
-                    </link>
-                </inputlink>
-                <outputlink>
-                    <name>A > B</name>
-                    <visible>true</visible>
-                    <link>
-                        <id>8f02caae-30c1-4f62-8475-ce492cefba9b</id>
-                        <name>Add</name>
-                    </link>
-                </outputlink>
-                <outputlink>
-                    <name>A = B</name>
-                    <visible>true</visible>
-                    <link>
-                        <id>8f02caae-30c1-4f62-8475-ce492cefba9b</id>
-                        <name>Subtract</name>
-                    </link>
-                </outputlink>
-                <outputlink>
-                    <name>B > A</name>
-                    <visible>false</visible>
-                </outputlink>
                 <valuelink>
-                    <name>Enabled</name>
+                    <name>Local Event</name>
                     <visible>true</visible>
                     <exposed>false</exposed>
                     <isout>false</isout>
                     <allowmultiple>false</allowmultiple>
                     <typecheck>true</typecheck>
-                </valuelink>
-                <valuelink>
-                    <name>A</name>
-                    <visible>true</visible>
-                    <exposed>true</exposed>
-                    <isout>false</isout>
-                    <allowmultiple>false</allowmultiple>
-                    <typecheck>false</typecheck>
-                    <link>
-                        <id>23a50954-a7d6-4c58-81cc-e7063ff0ebf2</id>
-                    </link>
-                </valuelink>
-                <valuelink>
-                    <name>B</name>
-                    <visible>false</visible>
-                    <exposed>true</exposed>
-                    <isout>false</isout>
-                    <allowmultiple>false</allowmultiple>
-                    <typecheck>false</typecheck>
                 </valuelink>
             </node>
             <node>
@@ -361,16 +290,16 @@
                     <name>Add</name>
                     <visible>true</visible>
                     <link>
-                        <id>f133997d-6620-46cd-8277-aa606f9da72c</id>
-                        <name>A > B</name>
+                        <id>6b5e1ab6-4937-41f2-a9d8-f83aee96856a</id>
+                        <name>A != B</name>
                     </link>
                 </inputlink>
                 <inputlink>
                     <name>Subtract</name>
                     <visible>true</visible>
                     <link>
-                        <id>f133997d-6620-46cd-8277-aa606f9da72c</id>
-                        <name>A = B</name>
+                        <id>6b5e1ab6-4937-41f2-a9d8-f83aee96856a</id>
+                        <name>A == B</name>
                     </link>
                 </inputlink>
                 <inputlink>
@@ -419,6 +348,89 @@
                     <link>
                         <id>fbfa5874-9e9c-4718-90b0-e15abf87afc9</id>
                     </link>
+                </valuelink>
+            </node>
+            <node>
+                <name>Compare Bool</name>
+                <category>General</category>
+                <id>6b5e1ab6-4937-41f2-a9d8-f83aee96856a</id>
+                <property>
+                    <name>Enabled</name>
+                    <boolean>true</boolean>
+                </property>
+                <property>
+                    <name>Comment</name>
+                    <string></string>
+                </property>
+                <property>
+                    <name>LogNode</name>
+                    <boolean>false</boolean>
+                </property>
+                <property>
+                    <name>Position</name>
+                    <vec2>
+                        <value1>287.499817</value1>
+                        <value2>82.000000</value2>
+                    </vec2>
+                </property>
+                <property>
+                    <name>A</name>
+                    <boolean>false</boolean>
+                </property>
+                <property>
+                    <name>B</name>
+                    <boolean>false</boolean>
+                </property>
+                <inputlink>
+                    <name>In</name>
+                    <visible>true</visible>
+                    <link>
+                        <id>124e26e9-f4c7-41dd-90da-65aa6cad478b</id>
+                        <name>Event Finished</name>
+                    </link>
+                </inputlink>
+                <outputlink>
+                    <name>A == B</name>
+                    <visible>true</visible>
+                    <link>
+                        <id>8f02caae-30c1-4f62-8475-ce492cefba9b</id>
+                        <name>Subtract</name>
+                    </link>
+                </outputlink>
+                <outputlink>
+                    <name>A != B</name>
+                    <visible>true</visible>
+                    <link>
+                        <id>8f02caae-30c1-4f62-8475-ce492cefba9b</id>
+                        <name>Add</name>
+                    </link>
+                </outputlink>
+                <valuelink>
+                    <name>Enabled</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+                <valuelink>
+                    <name>A</name>
+                    <visible>true</visible>
+                    <exposed>true</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                    <link>
+                        <id>23a50954-a7d6-4c58-81cc-e7063ff0ebf2</id>
+                    </link>
+                </valuelink>
+                <valuelink>
+                    <name>B</name>
+                    <visible>false</visible>
+                    <exposed>true</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
                 </valuelink>
             </node>
         </actionnodes>
@@ -575,12 +587,12 @@
                     <string>Complete</string>
                 </property>
                 <valuelink>
-                    <name>Ref</name>
+                    <name>Value</name>
                     <visible>true</visible>
                     <exposed>false</exposed>
                     <isout>false</isout>
                     <allowmultiple>false</allowmultiple>
-                    <typecheck>false</typecheck>
+                    <typecheck>true</typecheck>
                     <link>
                         <id>77d3e2f8-a576-4d99-9d5c-ddf4c1dda1f2</id>
                     </link>
@@ -618,7 +630,7 @@
                     <string>Result</string>
                 </property>
                 <valuelink>
-                    <name>Ref</name>
+                    <name>Value</name>
                     <visible>true</visible>
                     <exposed>false</exposed>
                     <isout>true</isout>
@@ -644,11 +656,24 @@
                 <string>Third</string>
             </property>
             <property>
+                <name>Custom Editor</name>
+                <string></string>
+            </property>
+            <property>
                 <name>Position</name>
                 <vec2>
                     <value1>83.545609</value1>
                     <value2>217.999802</value2>
                 </vec2>
+            </property>
+            <property>
+                <name>Color</name>
+                <colorRGBA>
+                    <valueR>0.462745</valueR>
+                    <valueG>0.596078</valueG>
+                    <valueB>0.290196</valueB>
+                    <valueA>0.882353</valueA>
+                </colorRGBA>
             </property>
             <eventnodes>
                 <node>
@@ -698,6 +723,14 @@
                             <name>Start</name>
                         </link>
                     </outputlink>
+                    <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
                     <valuelink>
                         <name>TriggerCount</name>
                         <visible>true</visible>
@@ -964,7 +997,7 @@
                         <string>Count</string>
                     </property>
                     <valuelink>
-                        <name>Ref</name>
+                        <name>Value</name>
                         <visible>true</visible>
                         <exposed>false</exposed>
                         <isout>true</isout>
@@ -991,11 +1024,24 @@
                 <string>Second</string>
             </property>
             <property>
+                <name>Custom Editor</name>
+                <string></string>
+            </property>
+            <property>
                 <name>Position</name>
                 <vec2>
                     <value1>96.590141</value1>
                     <value2>149.341064</value2>
                 </vec2>
+            </property>
+            <property>
+                <name>Color</name>
+                <colorRGBA>
+                    <valueR>0.462745</valueR>
+                    <valueG>0.596078</valueG>
+                    <valueB>0.290196</valueB>
+                    <valueA>0.882353</valueA>
+                </colorRGBA>
             </property>
             <eventnodes>
                 <node>
@@ -1041,6 +1087,14 @@
                             <name>Call Event</name>
                         </link>
                     </outputlink>
+                    <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
                     <valuelink>
                         <name>TriggerCount</name>
                         <visible>true</visible>
@@ -1095,6 +1149,10 @@
                         <name>EventName</name>
                         <string>Third</string>
                     </property>
+                    <property>
+                        <name>Local Event</name>
+                        <boolean>false</boolean>
+                    </property>
                     <inputlink>
                         <name>Call Event</name>
                         <visible>true</visible>
@@ -1122,6 +1180,14 @@
                     <valuelink>
                         <name>EventName</name>
                         <visible>false</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>Local Event</name>
+                        <visible>true</visible>
                         <exposed>false</exposed>
                         <isout>false</isout>
                         <allowmultiple>false</allowmultiple>
@@ -1336,7 +1402,7 @@
                         <string>Count</string>
                     </property>
                     <valuelink>
-                        <name>Ref</name>
+                        <name>Value</name>
                         <visible>true</visible>
                         <exposed>false</exposed>
                         <isout>false</isout>
@@ -1379,7 +1445,7 @@
                         <string>Complete</string>
                     </property>
                     <valuelink>
-                        <name>Ref</name>
+                        <name>Value</name>
                         <visible>true</visible>
                         <exposed>false</exposed>
                         <isout>true</isout>
