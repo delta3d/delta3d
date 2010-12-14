@@ -25,11 +25,7 @@
 #define actorcomponentbase_h__
 
 #include <dtGame/export.h>
-#include <dtGame/actorcomponent.h>
-#include <dtCore/refptr.h>
-
-#include <algorithm>
-#include <map>
+#include <dtGame/actorcomponentcontainer.h>
 
 namespace dtGame
 {
@@ -42,7 +38,7 @@ namespace dtGame
     * GameActors can be extended with ActorComponentBase (using multiple inheritance) to 
     * include component functionality.
     */
-   class DT_GAME_EXPORT ActorComponentBase
+   class DT_GAME_EXPORT ActorComponentBase : public ActorComponentContainer
    {
    public:
 
@@ -52,52 +48,7 @@ namespace dtGame
       //CTOR
       ActorComponentBase();
 
-      /** 
-       * Get a component by type. Usage:
-       * @code
-       * MyComponentClass* component;
-       * myComponentBase->GetComponent(component);
-       * @endcode
-       * @param compType pointer to be set to component
-       * @return True if component of this type exists, else false
-       */
-      template <typename TComp>
-      bool GetComponent(TComp*& compType) const
-      {
-         compType = static_cast<TComp*>(GetComponent(TComp::TYPE));
-         return compType != NULL;
-      }
-
-
-      /**
-       * Get a component by type. Usage:
-       * @code
-       * dtCore::RefPtr<MyComponentClass> component;
-       * myComponentBase->GetComponent(component);
-       * @endcode
-       * @param compType pointer to be set to component
-       * @return True if component of this type exists, else false
-       */
-      template <typename TComp>
-      bool GetComponent(dtCore::RefPtr<TComp>& compType) const
-      {
-         compType = static_cast<TComp*>(GetComponent(TComp::TYPE));
-         return compType.valid();
-      }
-      
-      /** 
-       * Get a component by type. Usage:
-       * @code
-       * MyComponentClass* component = myComponentBase->GetComponent<MyComponentClass>();
-       * @endcode       
-       * @return The ActorComponent of that type, or NULL if it doesn't exist
-       */
-      template <class T> T* GetComponent()
-      {
-         T* component = NULL;
-         GetComponent(component);
-         return component;
-      }
+      using ActorComponentContainer::GetComponent;
 
       /**
        * Allows performing an operation on each actor component.
@@ -207,7 +158,6 @@ namespace dtGame
       BindActorComponent<UnaryFunctor, ActorComponentBase::ActorComponentMap::value_type> actorCompMapBindFunc(func);
       std::for_each(mComponents.begin(), mComponents.end(), actorCompMapBindFunc);
    }
-
 }
 
 #endif // actorcomponentbase_h__
