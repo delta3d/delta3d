@@ -62,10 +62,7 @@ namespace dtGame
          static DeadReckoningAlgorithm VELOCITY_ONLY;
          static DeadReckoningAlgorithm VELOCITY_AND_ACCELERATION;
       private:
-         DeadReckoningAlgorithm(const std::string &name) : dtUtil::Enumeration(name)
-         {
-            AddInstance(this);
-         }
+         DeadReckoningAlgorithm(const std::string& name);
    };
 
 
@@ -164,10 +161,7 @@ namespace dtGame
                static UpdateMode CALCULATE_ONLY;
                static UpdateMode CALCULATE_AND_MOVE_ACTOR;
             private:
-               UpdateMode(const std::string &name) : dtUtil::Enumeration(name)
-               {
-                  AddInstance(this);
-               }
+               UpdateMode(const std::string& name);
          };
 
          ///////////////////////////////////////////////////////////////////////////
@@ -186,21 +180,21 @@ namespace dtGame
 
             public:
                /// @see DeadReckoningHelper::SetLastKnownTranslation()
-               void SetLastKnownTranslation(const osg::Vec3 &vec);
+               void SetLastKnownTranslation(const osg::Vec3& vec);
                /// @see DeadReckoningHelper::SetLastKnownVelocity()
-               void SetLastKnownVelocity(const osg::Vec3 &vec);
+               void SetLastKnownVelocity(const osg::Vec3& vec);
                /// @see DeadReckoningHelper::SetLastTranslationUpdatedTime()
                void SetLastUpdatedTime(double newUpdatedTime);
                /// Used by DeadReckonThePosition for straight blend.
                void DeadReckonUsingLinearBlend(osg::Vec3& pos, dtUtil::Log* pLogger, GameActor& gameActor, bool useAcceleration);
                /// Used by DeadReckonThePosition if we are using splines -- OLD WAY
-               void DeadReckonUsingSplines(osg::Vec3& pos, dtUtil::Log* pLogger, GameActor &gameActor);
+               void DeadReckonUsingSplines(osg::Vec3& pos, dtUtil::Log* pLogger, GameActor& gameActor);
                /// Called when the trans or vel changes to recompute the parametric values used during spline blending.  
-               void RecomputeTransSplineValues(const osg::Vec3 &currentAccel);
+               void RecomputeTransSplineValues(const osg::Vec3& currentAccel);
 
                /// Computes the new position for the object. Splines or linear, but not static.
                void DeadReckonThePosition(osg::Vec3& pos, dtUtil::Log* pLogger, 
-                  GameActor &gameActor, bool useAcceleration, float curTimeDelta, bool useSplines);
+                  GameActor& gameActor, bool useAcceleration, float curTimeDelta, bool useSplines);
 
 
                ///the simulation time this was last updated.
@@ -404,7 +398,7 @@ namespace dtGame
           *
           * @param vec the new last position.
           */
-         void SetLastKnownTranslation(const osg::Vec3 &vec);
+         void SetLastKnownTranslation(const osg::Vec3& vec);
 
          /**
           * @return the last known position for this if it's a remote entity.
@@ -416,7 +410,7 @@ namespace dtGame
           * only be set for remote actors.
           * @param vec the new last rotation as yaw, pitch, roll.
           */
-         void SetLastKnownRotation(const osg::Vec3 &vec);
+         void SetLastKnownRotation(const osg::Vec3& vec);
 
          /**
           * @return the last known rotation for this if it's a remote entity as yaw, pitch, roll.
@@ -427,7 +421,7 @@ namespace dtGame
           * Sets this entity's DIS/RPR-FOM velocity vector.
           * @param vec the velocity vector to copy
           */
-         void SetLastKnownVelocity(const osg::Vec3 &vec);
+         void SetLastKnownVelocity(const osg::Vec3& vec);
 
          /**
           * Retrieves this entity's DIS/RPR-FOM velocity vector.
@@ -446,7 +440,7 @@ namespace dtGame
           * Sets this entity's DIS/RPR-FOM acceleration vector.
           * @param accelerationVector the acceleration vector to copy
           */
-         void SetLastKnownAcceleration(const osg::Vec3 &vec);
+         void SetLastKnownAcceleration(const osg::Vec3& vec);
 
          /**
           * Retrieves this entity's DIS/RPR-FOM acceleration vector.
@@ -458,7 +452,7 @@ namespace dtGame
           * Sets this entity's DIS/RPR-FOM angular velocity vector.
           * @param angularVelocityVector the angular velocity vector to copy
           */
-         void SetLastKnownAngularVelocity(const osg::Vec3 &vec);
+         void SetLastKnownAngularVelocity(const osg::Vec3& vec);
 
          /**
           * Retrieves this entity's DIS/RPR-FOM angular velocity vector.
@@ -495,18 +489,18 @@ namespace dtGame
          ///@return the rough average amount of time between translation updates.  This is based on values sent to SetLastTranslationUpdatedTime.
          double GetAverageTimeBetweenTranslationUpdates() const { return mTranslation.mAvgTimeBetweenUpdates; };
          /// Add onto the dof dead reckoning list where the dof should move
-         void AddToDeadReckonDOF(const std::string &dofName, const osg::Vec3& position,
+         void AddToDeadReckonDOF(const std::string& dofName, const osg::Vec3& position,
             const osg::Vec3& rateOverTime, const std::string& metricName = "");
 
          ///@return the rough average amount of time between rotation updates.  This is based on values sent to SetLastRotationUpdatedTime.
          double GetAverageTimeBetweenRotationUpdates() const { return mAverageTimeBetweenRotationUpdates; };
          /// Remove a drDOF from the list at this spot
-         void RemoveDRDOF(std::list<dtCore::RefPtr<DeadReckoningDOF> >::iterator &iter);
+         void RemoveDRDOF(std::list<dtCore::RefPtr<DeadReckoningDOF> >::iterator& iter);
 
          void RemoveAllDRDOFByName(const std::string& removeName);
 
          /// Remove a drdof by checking against values compared to everything else.
-         void RemoveDRDOF(DeadReckoningDOF &obj);
+         void RemoveDRDOF(DeadReckoningDOF& obj);
 
          const osg::Vec3& GetCurrentDeadReckonedTranslation() const { return mTranslation.mCurrentDeadReckonedValue; }
          const osg::Vec3& GetCurrentDeadReckonedRotation() const { return mCurrentAttitudeVector; }
@@ -600,7 +594,7 @@ namespace dtGame
           * Computes the new rotation for the object.  This method handles VELOCITY_ONLY and
           * VELOCITY_AND_ACCELERATION, but not static. This is called DRVelocityAcceleration().
           */
-         void DeadReckonTheRotation(dtCore::Transform &xform);
+         void DeadReckonTheRotation(dtCore::Transform& xform);
 
 
       private:
@@ -610,7 +604,7 @@ namespace dtGame
           * Note - HPR is like ZXY order so we have to rearrange to be PRH order.
           * THERE IS NO REASON YOU SHOULD CALL THIS. It is needed for the property only
           */
-         void SetInternalLastKnownRotationInXYZ(const osg::Vec3 &vec);
+         void SetInternalLastKnownRotationInXYZ(const osg::Vec3& vec);
 
          /** 
           * A private, internal version of the GetLastKnownRotation. This is needed 
