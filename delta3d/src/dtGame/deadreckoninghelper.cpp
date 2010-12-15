@@ -43,6 +43,10 @@ namespace dtGame
    DeadReckoningAlgorithm DeadReckoningAlgorithm::STATIC("Static");
    DeadReckoningAlgorithm DeadReckoningAlgorithm::VELOCITY_ONLY("Velocity Only");
    DeadReckoningAlgorithm DeadReckoningAlgorithm::VELOCITY_AND_ACCELERATION("Velocity and Acceleration");
+   DeadReckoningAlgorithm::DeadReckoningAlgorithm(const std::string& name) : dtUtil::Enumeration(name)
+   {
+      AddInstance(this);
+   }
 
    const float DeadReckoningHelper::DEFAULT_MAX_SMOOTHING_TIME_ROT = 2.0f;
    const float DeadReckoningHelper::DEFAULT_MAX_SMOOTHING_TIME_POS = 4.0f;
@@ -69,6 +73,10 @@ namespace dtGame
    DeadReckoningHelper::UpdateMode DeadReckoningHelper::UpdateMode::CALCULATE_ONLY("CALCULATE_ONLY");
    DeadReckoningHelper::UpdateMode
       DeadReckoningHelper::UpdateMode::CALCULATE_AND_MOVE_ACTOR("CALCULATE_AND_MOVE_ACTOR");
+   DeadReckoningHelper::UpdateMode::UpdateMode(const std::string& name) : dtUtil::Enumeration(name)
+   {
+      AddInstance(this);
+   }
 
 
    //////////////////////////////////////////////////////////////////////
@@ -267,14 +275,14 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////
-   void DeadReckoningHelper::SetLastKnownTranslation(const osg::Vec3 &vec)
+   void DeadReckoningHelper::SetLastKnownTranslation(const osg::Vec3& vec)
    {
       mTranslation.SetLastKnownTranslation(vec);
       mUpdated = true;
    }
 
    //////////////////////////////////////////////////////////////////////
-   void DeadReckoningHelper::SetLastKnownRotation(const osg::Vec3 &newRot)
+   void DeadReckoningHelper::SetLastKnownRotation(const osg::Vec3& newRot)
    {
       // Some objects only care about heading, so we zero out pitch/yaw.
       osg::Vec3 vec = (!mForceUprightRotation) ? (newRot) : (osg::Vec3(newRot.x(), 0.0f, 0.0f));
@@ -301,21 +309,21 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////
-   void DeadReckoningHelper::SetLastKnownVelocity(const osg::Vec3 &vec)
+   void DeadReckoningHelper::SetLastKnownVelocity(const osg::Vec3& vec)
    {
       mTranslation.SetLastKnownVelocity(vec);
       mUpdated = true;
    }
 
    //////////////////////////////////////////////////////////////////////
-   void DeadReckoningHelper::SetLastKnownAcceleration(const osg::Vec3 &vec)
+   void DeadReckoningHelper::SetLastKnownAcceleration(const osg::Vec3& vec)
    {
       mTranslation.mAcceleration = vec;
       mUpdated = true;
    }
 
    //////////////////////////////////////////////////////////////////////
-   void DeadReckoningHelper::SetLastKnownAngularVelocity(const osg::Vec3 &vec)
+   void DeadReckoningHelper::SetLastKnownAngularVelocity(const osg::Vec3& vec)
    {
       mAngularVelocityVector = vec;
       mUpdated = true;
@@ -379,7 +387,7 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////
-   void DeadReckoningHelper::AddToDeadReckonDOF(const std::string &dofName,
+   void DeadReckoningHelper::AddToDeadReckonDOF(const std::string& dofName,
       const osg::Vec3& position,
       const osg::Vec3& rateOverTime,
       const std::string& metricName)
@@ -431,7 +439,7 @@ namespace dtGame
    struct RemoveByName
    {
    public:
-      RemoveByName(const std::string & name) : mName(name)
+      RemoveByName(const std::string&  name) : mName(name)
       {
 
       }
@@ -452,7 +460,7 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////
-   void DeadReckoningHelper::RemoveDRDOF(DeadReckoningDOF &obj)
+   void DeadReckoningHelper::RemoveDRDOF(DeadReckoningDOF& obj)
    {
       std::list<dtCore::RefPtr<DeadReckoningDOF> >::iterator iterDOF;
       for (iterDOF = mDeadReckonDOFS.begin();iterDOF != mDeadReckonDOFS.end(); ++iterDOF)
@@ -471,7 +479,7 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////
-   void DeadReckoningHelper::RemoveDRDOF(std::list<dtCore::RefPtr<DeadReckoningDOF> >::iterator &iter)
+   void DeadReckoningHelper::RemoveDRDOF(std::list<dtCore::RefPtr<DeadReckoningDOF> >::iterator& iter)
    {
       // if theres more after it
       if ((*iter)->mNext != NULL)
@@ -833,7 +841,7 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////
-   void DeadReckoningHelper::DeadReckonTheRotation(dtCore::Transform &xform)
+   void DeadReckoningHelper::DeadReckonTheRotation(dtCore::Transform& xform)
    {
       osg::Quat newRot;
       osg::Quat drQuat = mLastQuatRotation; // velocity only just uses the last.
@@ -891,7 +899,7 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////
-   void DeadReckoningHelper::LogDeadReckonStarted(osg::Vec3 &unclampedTranslation, osg::Matrix& rot, dtUtil::Log* pLogger)
+   void DeadReckoningHelper::LogDeadReckonStarted(osg::Vec3& unclampedTranslation, osg::Matrix& rot, dtUtil::Log* pLogger)
    {
       std::ostringstream ss;
       ss << "Actor passed optimization checks: fully dead-reckoning actor.\n"
@@ -912,7 +920,7 @@ namespace dtGame
    }
 
    ////////////////////////////////////////////////////////////////////////////////////
-   void DeadReckoningHelper::SetInternalLastKnownRotationInXYZ(const osg::Vec3 &vec)
+   void DeadReckoningHelper::SetInternalLastKnownRotationInXYZ(const osg::Vec3& vec)
    {
       SetLastKnownRotation(osg::Vec3(vec[2], vec[0], vec[1]));
    }
@@ -964,7 +972,7 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////
-   void DeadReckoningHelper::DRVec3Util::SetLastKnownTranslation(const osg::Vec3 &vec)
+   void DeadReckoningHelper::DRVec3Util::SetLastKnownTranslation(const osg::Vec3& vec)
    {
       if (mInitialized)
       {
@@ -982,7 +990,7 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////
-   void DeadReckoningHelper::DRVec3Util::SetLastKnownVelocity(const osg::Vec3 &vec)
+   void DeadReckoningHelper::DRVec3Util::SetLastKnownVelocity(const osg::Vec3& vec)
    {
       // Clamp the instant velocity to never be more than 4x the last velocity. 
       // This prevents a rare issue that occurs when toggling between 
@@ -1017,7 +1025,7 @@ namespace dtGame
 
    //////////////////////////////////////////////////////////////////////
    void DeadReckoningHelper::DRVec3Util::DeadReckonThePosition
-      (osg::Vec3& pos, dtUtil::Log* pLogger, GameActor &gameActor, 
+      (osg::Vec3& pos, dtUtil::Log* pLogger, GameActor& gameActor,
          bool useAcceleration, float curTimeDelta, bool useSplines)
    {
       // Do we just need to project or do we need more smoothing?
@@ -1103,7 +1111,7 @@ namespace dtGame
 
    //////////////////////////////////////////////////////////////////////
    void DeadReckoningHelper::DRVec3Util::DeadReckonUsingSplines
-      (osg::Vec3& pos, dtUtil::Log* pLogger, GameActor &gameActor)
+      (osg::Vec3& pos, dtUtil::Log* pLogger, GameActor& gameActor)
    {
       //////////////////////////////////////////////////
       // With cubic splines, we work with 4 points and several pre-computed values
@@ -1153,10 +1161,10 @@ namespace dtGame
 
  
    //////////////////////////////////////////////////////////////////////
-   void DeadReckoningHelper::DRVec3Util::RecomputeTransSplineValues(const osg::Vec3 &currentAccel)
+   void DeadReckoningHelper::DRVec3Util::RecomputeTransSplineValues(const osg::Vec3& currentAccel)
    {        
-      //const osg::Vec3 &transBeforeLastUpdate, const osg::Vec3 &velBeforeLastUpdate, 
-      //   const osg::Vec3 &lastTrans, const osg::Vec3 &lastVel, float transEndSmoothingTime,;
+      //const osg::Vec3& transBeforeLastUpdate, const osg::Vec3& velBeforeLastUpdate,
+      //   const osg::Vec3& lastTrans, const osg::Vec3& lastVel, float transEndSmoothingTime,;
       //mTranslation.mValueBeforeLastUpdate,
       //   mTranslation.mVelocityBeforeLastUpdate, mTranslation.mLastValue, 
       //   mTranslation.mLastVelocity, mTranslation.mEndSmoothingTime, ;;
