@@ -111,8 +111,11 @@ dtCore::ODEController::~ODEController()
         iter != mCollidableContents.end();
         ++iter)
    {
-      mSpaceWrapper->UnRegisterCollidable((*iter));
-      mWorldWrapper->UnRegisterCollidable((*iter));
+      if ((*iter).valid())
+      {
+         mSpaceWrapper->UnRegisterCollidable((*iter).get());
+         mWorldWrapper->UnRegisterCollidable((*iter).get());
+      }
    }
 
    mCollidableContents.clear();
