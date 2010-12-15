@@ -1003,6 +1003,9 @@ void ProjectTests::TestMapSaveAsBackups()
    CPPUNIT_ASSERT_MESSAGE("Map was just saved AS.  The map should have no backups.",
       !project.HasBackup(*map) && !project.HasBackup(mapName));
 
+   CPPUNIT_ASSERT_MESSAGE("Map was just saved AS.  The old map should have no backups.",
+      !project.HasBackup(mapName));
+
    CPPUNIT_ASSERT_EQUAL_MESSAGE("Map file name should have changed during a SaveAs",
       newMapFileName + dtDAL::Map::MAP_FILE_EXTENSION, map->GetFileName());
 
