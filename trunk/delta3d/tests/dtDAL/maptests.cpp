@@ -1084,36 +1084,26 @@ void MapTests::TestMapSaveAndLoad()
         CPPUNIT_ASSERT_MESSAGE("The resource Descriptor does not match.  Value is :" + std::string(""),
             !rdMeshVal.IsEmpty() && rdMeshVal == dirtRD);
 
-        const int value1 = 5, value2 = 27;
-        ap = getActorProperty(*map, "Test_Read_Only_Int", dtDAL::DataType::INT);
+        //Ensure the read-only Property is read correctly from ExampleTestPropertyProxy(?)
+        { 
+           const int value1 = 5, value2 = 27;
+           ap = getActorProperty(*map, "Test_Read_Only_Int", dtDAL::DataType::INT);
 
-        {
-            CPPUNIT_ASSERT_MESSAGE("Test_Read_Only_Int should be in the map", ap != NULL);
-            dtDAL::IntActorProperty *p = dynamic_cast<dtDAL::IntActorProperty*> (ap);
-            CPPUNIT_ASSERT_MESSAGE("Test_Read_Only_Int is an IntActorProperty, dynamic_cast should have succeeded", p != NULL);
-            p->SetReadOnly(true);
-            p->SetValue(value2);
-            CPPUNIT_ASSERT_MESSAGE("Property is read only, value should not have been set", p->GetValue() == value1);
-            p->SetReadOnly(false);
-            p->SetValue(value2);
-            CPPUNIT_ASSERT_MESSAGE("Property is not read only, value should have been set", p->GetValue() == value2);
+           CPPUNIT_ASSERT_MESSAGE("Test_Read_Only_Int should be in the map", ap != NULL);
+           dtDAL::IntActorProperty *p = dynamic_cast<dtDAL::IntActorProperty*> (ap);
+           CPPUNIT_ASSERT_MESSAGE("Test_Read_Only_Int is an IntActorProperty, dynamic_cast should have succeeded", p != NULL);
+
+           //test if read only
+           CPPUNIT_ASSERT_EQUAL_MESSAGE("The Test_Read_Only_Int property should be read-only", true, p->IsReadOnly());
+
+           //ensure the read-only property is the default (from ExampleTestPropertyProxy)
+           CPPUNIT_ASSERT_EQUAL_MESSAGE("The Test_Read_Only_Int Property value doesn't match the default value",5, p->GetValue());
         }
 
         project.SaveMap(*map);
         project.CloseMap(*map);
 
         map = &project.GetMap(newMapName);
-        ap = getActorProperty(*map, "Test_Read_Only_Int", dtDAL::DataType::INT);
-
-        {
-            CPPUNIT_ASSERT_MESSAGE("Test_Read_Only_Int should be in the map", ap != NULL);
-            dtDAL::IntActorProperty *p = dynamic_cast<dtDAL::IntActorProperty*> (ap);
-            CPPUNIT_ASSERT_MESSAGE("Test_Read_Only_Int is an IntActorProperty, dynamic_cast should have succeeded", p != NULL);
-            CPPUNIT_ASSERT_MESSAGE("Test_Read_Only_Int should be readonly.", p->IsReadOnly());
-            std::stringstream ss;
-            ss << "Readonly int value should be the original readonly value " << value1 << " but it is " << p->GetValue();
-            CPPUNIT_ASSERT_MESSAGE(ss.str(), p->GetValue() == value1);
-        }
 
         ap = getActorProperty(*map, "", dtDAL::DataType::ACTOR);
 
@@ -1154,25 +1144,6 @@ void MapTests::TestMapSaveAndLoad()
 
         project.SaveMapAs(*map, mapName, "oo");
 
-        //test both versions of the call.
-        CPPUNIT_ASSERT_MESSAGE("Map was just saved AS.  The map should have no backups.",
-            !project.HasBackup(*map) && !project.HasBackup(mapName));
-
-        //test both versions of the call.
-        CPPUNIT_ASSERT_MESSAGE("Map was just saved AS.  The old map should have no backups.",
-            !project.HasBackup(newMapName));
-
-        CPPUNIT_ASSERT_MESSAGE("Map file name should be oo.",
-            map->GetFileName() == std::string("oo")+ dtDAL::Map::MAP_FILE_EXTENSION);
-        CPPUNIT_ASSERT_MESSAGE(mapName + " should be the new map name.",
-            map->GetName() == mapName && map->GetSavedName() == mapName);
-
-        std::string newMapFilePath = project.GetContext() + dtUtil::FileUtils::PATH_SEPARATOR + "maps"
-            + dtUtil::FileUtils::PATH_SEPARATOR + "oo" + dtDAL::Map::MAP_FILE_EXTENSION;
-
-        CPPUNIT_ASSERT_MESSAGE(std::string("The new map file should exist: ") + newMapFilePath,
-            dtUtil::FileUtils::GetInstance().FileExists(newMapFilePath));
-
         //set the map name before deleting it to make sure
         //I can delete with a changed name.
         map->SetName("some new name");
@@ -1183,10 +1154,6 @@ void MapTests::TestMapSaveAndLoad()
     {
         CPPUNIT_FAIL((std::string("Error: ") + e.ToString()));
     }
-//    catch (const std::exception& ex) {
-//        LOGN_ERROR("maptests.cpp", ex.what());
-//        throw ex;
-//    }
 }
 
 
