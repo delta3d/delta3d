@@ -111,10 +111,10 @@ dtCore::ODEController::~ODEController()
         iter != mCollidableContents.end();
         ++iter)
    {
-      if ((*iter).valid())
+      if (iter->valid())
       {
-         mSpaceWrapper->UnRegisterCollidable((*iter).get());
-         mWorldWrapper->UnRegisterCollidable((*iter).get());
+         mSpaceWrapper->UnRegisterCollidable(iter->get());
+         mWorldWrapper->UnRegisterCollidable(iter->get());
       }
    }
 
@@ -141,7 +141,10 @@ void dtCore::ODEController::Iterate(double deltaFrameTime)
         it != GetRegisteredCollidables().end();
         ++it)
    {
-      (*it)->PrePhysicsStepUpdate();
+      if (it->valid())
+      {
+         (*it)->PrePhysicsStepUpdate();
+      }
    }
 
    for (int i=0; i<numSteps; ++i)
@@ -160,7 +163,10 @@ void dtCore::ODEController::Iterate(double deltaFrameTime)
         it != GetRegisteredCollidables().end();
         ++it)
    {
-      (*it)->PostPhysicsStepUpdate();
+      if (it->valid())
+      {
+         (*it)->PostPhysicsStepUpdate();
+      }
    }
 }
 
