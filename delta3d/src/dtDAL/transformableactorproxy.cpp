@@ -48,6 +48,7 @@ namespace dtDAL
 
    //////////////////////////////////////////////////////
    TransformableActorProxy::TransformableActorProxy()
+   : mHideDTCorePhysicsProps(false)
    {
       SetClassName("dtCore::Transformable");
       mCollisionType = &dtCore::Transformable::CollisionGeomType::NONE;
@@ -63,7 +64,8 @@ namespace dtDAL
       static const dtUtil::RefString GROUPNAME = "Transformable";
       static const dtUtil::RefString COLLISION_GROUP = "ODE Collision";
 
-      dtCore::Transformable *trans = static_cast<dtCore::Transformable*>(GetActor());
+      dtCore::Transformable* trans;
+      GetActor(trans);
 
       if (IsRotationPropertyShown())
       {
@@ -89,49 +91,51 @@ namespace dtDAL
                "Enables the automatic scaling of normals when a Transformable is scaled",
                GROUPNAME));
 
-      //COLLISION PROPS...
-      AddProperty(new BooleanActorProperty("Show Collision Geometry", "ODE Show Collision Geometry",
-               BooleanActorProperty::SetFuncType(this, &TransformableActorProxy::SetRenderCollisionGeometry),
-               BooleanActorProperty::GetFuncType(this, &TransformableActorProxy::GetRenderCollisionGeometry),
-               "Enables/Disables the rendering of collision geometry assigned to this actor (using ODE).",
-               COLLISION_GROUP));
+      if (!mHideDTCorePhysicsProps)
+      {
+         //COLLISION PROPS...
+         AddProperty(new BooleanActorProperty("Show Collision Geometry", "ODE Show Collision Geometry",
+                  BooleanActorProperty::SetFuncType(this, &TransformableActorProxy::SetRenderCollisionGeometry),
+                  BooleanActorProperty::GetFuncType(this, &TransformableActorProxy::GetRenderCollisionGeometry),
+                  "Enables/Disables the rendering of collision geometry assigned to this actor (using ODE).",
+                  COLLISION_GROUP));
 
-      AddProperty(new EnumActorProperty<dtCore::Transformable::CollisionGeomType>(
-               PROPERTY_COLLISION_TYPE,"ODE Collision Type",
-               EnumActorProperty<dtCore::Transformable::CollisionGeomType>::SetFuncType(this,&TransformableActorProxy::SetCollisionType),
-               EnumActorProperty<dtCore::Transformable::CollisionGeomType>::GetFuncType(this,&TransformableActorProxy::GetCollisionType),
-               "Sets the type of geometry to use for collision detection (using ODE)",
-               COLLISION_GROUP));
+         AddProperty(new EnumActorProperty<dtCore::Transformable::CollisionGeomType>(
+                  PROPERTY_COLLISION_TYPE,"ODE Collision Type",
+                  EnumActorProperty<dtCore::Transformable::CollisionGeomType>::SetFuncType(this,&TransformableActorProxy::SetCollisionType),
+                  EnumActorProperty<dtCore::Transformable::CollisionGeomType>::GetFuncType(this,&TransformableActorProxy::GetCollisionType),
+                  "Sets the type of geometry to use for collision detection (using ODE)",
+                  COLLISION_GROUP));
 
-      AddProperty(new FloatActorProperty(PROPERTY_COLLISION_RADIUS,"ODE Collision Radius",
-               FloatActorProperty::SetFuncType(this, &TransformableActorProxy::SetCollisionRadius),
-               FloatActorProperty::GetFuncType(this, &TransformableActorProxy::GetCollisionRadius),
-               "Sets the radius for collision calculations (using ODE). This value is used differently "
-               "depending on the type of collision assigned to this actor.  For example, "
-               "if the collision type is set to SPHERE, this will be the sphere's radius.",
-               COLLISION_GROUP));
+         AddProperty(new FloatActorProperty(PROPERTY_COLLISION_RADIUS,"ODE Collision Radius",
+                  FloatActorProperty::SetFuncType(this, &TransformableActorProxy::SetCollisionRadius),
+                  FloatActorProperty::GetFuncType(this, &TransformableActorProxy::GetCollisionRadius),
+                  "Sets the radius for collision calculations (using ODE). This value is used differently "
+                  "depending on the type of collision assigned to this actor.  For example, "
+                  "if the collision type is set to SPHERE, this will be the sphere's radius.",
+                  COLLISION_GROUP));
 
-      AddProperty(new FloatActorProperty(PROPERTY_COLLISION_LENGTH,"ODE Collision Length",
-               FloatActorProperty::SetFuncType(this, &TransformableActorProxy::SetCollisionLength),
-               FloatActorProperty::GetFuncType(this, &TransformableActorProxy::GetCollisionLength),
-               "Sets the length of the collision geometry (using ODE). This value is used differently "
-               "depending on the type of collision assigned to this actor.  For example, "
-               "if the collision type is set to CYLINDER, this will be the cylinder's length.",
-               COLLISION_GROUP));
+         AddProperty(new FloatActorProperty(PROPERTY_COLLISION_LENGTH,"ODE Collision Length",
+                  FloatActorProperty::SetFuncType(this, &TransformableActorProxy::SetCollisionLength),
+                  FloatActorProperty::GetFuncType(this, &TransformableActorProxy::GetCollisionLength),
+                  "Sets the length of the collision geometry (using ODE). This value is used differently "
+                  "depending on the type of collision assigned to this actor.  For example, "
+                  "if the collision type is set to CYLINDER, this will be the cylinder's length.",
+                  COLLISION_GROUP));
 
-      AddProperty(new Vec3ActorProperty(PROPERTY_COLLISION_BOX,"ODE Collision Box",
-               Vec3ActorProperty::SetFuncType(this, &TransformableActorProxy::SetCollisionBoxDims),
-               Vec3ActorProperty::GetFuncType(this, &TransformableActorProxy::GetCollisionBoxDims),
-               "Sets the size of the bounding box used for collision detection (using ODE).  This property "
-               "is used if the collision type is set to BOX.",
-               COLLISION_GROUP));
+         AddProperty(new Vec3ActorProperty(PROPERTY_COLLISION_BOX,"ODE Collision Box",
+                  Vec3ActorProperty::SetFuncType(this, &TransformableActorProxy::SetCollisionBoxDims),
+                  Vec3ActorProperty::GetFuncType(this, &TransformableActorProxy::GetCollisionBoxDims),
+                  "Sets the size of the bounding box used for collision detection (using ODE).  This property "
+                  "is used if the collision type is set to BOX.",
+                  COLLISION_GROUP));
 
-      AddProperty(new BooleanActorProperty(PROPERTY_ENABLE_COLLISION, "ODE Collision Enable",
-               BooleanActorProperty::SetFuncType(trans, &dtCore::Transformable::SetCollisionDetection),
-               BooleanActorProperty::GetFuncType(trans, &dtCore::Transformable::GetCollisionDetection),
-               "Enables collision detection on this actor (using ODE).",
-               COLLISION_GROUP));
-
+         AddProperty(new BooleanActorProperty(PROPERTY_ENABLE_COLLISION, "ODE Collision Enable",
+                  BooleanActorProperty::SetFuncType(trans, &dtCore::Transformable::SetCollisionDetection),
+                  BooleanActorProperty::GetFuncType(trans, &dtCore::Transformable::GetCollisionDetection),
+                  "Enables collision detection on this actor (using ODE).",
+                  COLLISION_GROUP));
+      }
 
       static const dtUtil::RefString RENDER_PROXY_NODE_DESC("Enables the rendering of the proxy node for this Transformable");
       AddProperty(new BooleanActorProperty(PROPERTY_RENDER_PROXY_NODE, PROPERTY_RENDER_PROXY_NODE,
@@ -409,4 +413,7 @@ namespace dtDAL
       phys->ClearCollisionGeometry();
       phys->SetCollisionMesh(NULL);
    }
+
+   DT_IMPLEMENT_ACCESSOR(TransformableActorProxy, bool, HideDTCorePhysicsProps);
+
 }

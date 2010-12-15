@@ -18,7 +18,7 @@
  *
  * William E. Johnson II
  */
-#include "dtActors/playerstartactorproxy.h"
+#include <dtActors/playerstartactorproxy.h>
 
 #include <dtDAL/actorproxyicon.h>
 
@@ -29,12 +29,12 @@ namespace dtActors
    ///////////////////////////////////////////////////
    PlayerStartActorProxy::PlayerStartActorProxy()
    {
-
+      SetClassName("dtActors::PlayerStartActor");
+      SetHideDTCorePhysicsProps(true);
    }
 
    PlayerStartActorProxy::~PlayerStartActorProxy()
    {
-
    }
 
    void PlayerStartActorProxy::BuildPropertyMap()
