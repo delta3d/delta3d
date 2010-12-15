@@ -4,6 +4,7 @@
 #include <dtCore/scene.h>
 #include <dtCore/system.h>
 #include <dtCore/collisioncategorydefaults.h>
+#include <dtCore/odecontroller.h>
 
 #include <ode/collision.h>
 
@@ -22,8 +23,6 @@ TriggerVolumeActor::TriggerVolumeActor(dtActors::TriggerVolumeActorProxy& proxy)
 {
    RegisterInstance(this);
 
-   AddSender(&dtCore::System::GetInstance());
-
    // Give a default collision shape and size.
    SetCollisionSphere(5.0f);
 
@@ -41,22 +40,9 @@ void TriggerVolumeActor::OnMessage(dtCore::Base::MessageData* data)
       return;
    }
 
-   if (data->message == dtCore::System::MESSAGE_PRE_FRAME)
+   if (data->message == dtCore::ODEController::MESSAGE_PHYSICS_STEP)
    {
-      //double dt = *static_cast<double*>(data->userData);
-
-      // Check to see if any occupants have left the volume
-      for (size_t actorIndex = 0; actorIndex < mOccupancyList.size(); ++actorIndex)
-      {
-         dtCore::Transformable* occupant = mOccupancyList[actorIndex].get();
-         if (!IsActorInVolume(occupant))
-         {
-            mOccupancyList.erase(mOccupancyList.begin() + actorIndex);
-            actorIndex--;
-
-            TriggerEvent(occupant, LEAVE_EVENT);
-         }
-      }
+      mNewCollisions.clear(); //ensure we start with no new collisions
    }
 }
 
@@ -74,14 +60,9 @@ bool TriggerVolumeActor::FilterContact(dContact* contact, Transformable* collide
    {
       return false;
    }
-
-   // Is this actor in the volume for the first time?
-   if (!IsActorAnOccupant(collider))
-   {
-      mOccupancyList.push_back(collider);
-
-      TriggerEvent(collider, ENTER_EVENT);
-   }
+ 
+   //store this collision
+   mNewCollisions.insert(collider);
 
    return false;
 }
@@ -135,12 +116,9 @@ bool TriggerVolumeActor::IsActorInVolume(dtCore::Transformable* actor)
 
    if (actor)
    {
-      dGeomID volumeID = GetGeomID();
-      dGeomID actorID  = actor->GetGeomID();
+      dContactGeom contactGeoms[1];
 
-      dContactGeom contactGeoms[8];
-
-      int numContacts = dCollide(volumeID, actorID, 8, contactGeoms, sizeof(dContactGeom));
+      int numContacts = dCollide(GetGeomID(), actor->GetGeomID(), 1, contactGeoms, sizeof(dContactGeom));
 
       inVolume = numContacts > 0;
    }
@@ -151,13 +129,11 @@ bool TriggerVolumeActor::IsActorInVolume(dtCore::Transformable* actor)
 ////////////////////////////////////////////////////////////////////////////////
 bool TriggerVolumeActor::IsActorAnOccupant(dtCore::Transformable* actor)
 {
-   // If we've have the actor in the list (the volume), it's an occupant
-   for (size_t actorIndex = 0; actorIndex < mOccupancyList.size(); ++actorIndex)
+   // If we have the actor in the list (the volume), it's an occupant
+   CollidableContainer::iterator found = mOccupancyList.find(actor);
+   if (found != mOccupancyList.end())
    {
-      if (actor == mOccupancyList[actorIndex].get())
-      {
-         return true;
-      }
+      return true;
    }
 
    return false;
@@ -166,7 +142,7 @@ bool TriggerVolumeActor::IsActorAnOccupant(dtCore::Transformable* actor)
 ////////////////////////////////////////////////////////////////////////////////
 void TriggerVolumeActor::TriggerEvent(dtCore::Transformable* instigator, TriggerEventType eventType)
 {
-   // Increment the trigger cound whenever an occupant has entered the volume.
+   // Increment the trigger count whenever an occupant has entered the volume.
    if (eventType == ENTER_EVENT)
    {
       ++mTriggerCount;
@@ -193,5 +169,80 @@ void TriggerVolumeActor::TriggerEvent(dtCore::Transformable* instigator, Trigger
             DeregisterInstance(this);
          }
       }
+   }
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+void dtActors::TriggerVolumeActor::PostPhysicsStepUpdate()
+{
+  
+   //what's in the new that isn't in the old: these are collidables that just entered the volume 
+   {
+      CollidableContainer result;
+
+      CollidableContainer::iterator itr;
+      std::set_difference(mNewCollisions.begin(), mNewCollisions.end(), 
+                          mOccupancyList.begin(), mOccupancyList.end(), std::inserter(result, result.begin()));
+
+      CollidableContainer::iterator enteredItr = result.begin();
+      while (enteredItr != result.end())
+      {
+         dtCore::Transformable* occupant = (*enteredItr).get();
+         if (occupant)
+         {
+            TriggerEvent(occupant, ENTER_EVENT);
+         }
+         ++enteredItr;
+      }
+      
+   }
+
+   //what's in the old that isn't in the new: these are collidables that just left the volume 
+   {
+      CollidableContainer result;
+      std::set_difference(mOccupancyList.begin(), mOccupancyList.end(),
+                          mNewCollisions.begin(), mNewCollisions.end(),std::inserter(result, result.begin()));
+
+      CollidableContainer::iterator leftItr = result.begin();
+      while (leftItr != result.end())
+      {
+         dtCore::Transformable* occupant = (*leftItr).get();
+         if (occupant)
+         {
+            TriggerEvent(occupant, LEAVE_EVENT);
+            CollidableContainer::iterator foundItr = mOccupancyList.find(occupant);
+            if (foundItr != mOccupancyList.end())
+            {
+               mOccupancyList.erase(foundItr);
+            }
+         }
+         ++leftItr;
+      }
+   }
+
+   //Add the newly collided to the old
+   mOccupancyList.insert(mNewCollisions.begin(), mNewCollisions.end());
+
+   dtGame::GameActor::PostPhysicsStepUpdate();   
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void dtActors::TriggerVolumeActor::AddedToScene(dtCore::Scene* scene)
+{
+   if (scene)
+   {
+      AddSender(scene);
+      dtGame::GameActor::AddedToScene(scene);
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void dtActors::TriggerVolumeActor::RemovedFromScene(dtCore::Scene* scene)
+{
+   if (scene)
+   {
+      RemoveSender(scene);
+      dtGame::GameActor::RemovedFromScene(scene);
    }
 }

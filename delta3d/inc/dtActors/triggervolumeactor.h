@@ -60,6 +60,16 @@ namespace dtActors
       */
       virtual bool FilterContact(dContact* contact, Transformable* collider);
 
+      ///From dtCore::Transformable
+      virtual void PostPhysicsStepUpdate(); 
+
+      ///From DeltaDrawable
+      virtual void AddedToScene(dtCore::Scene* scene);
+
+      ///From DeltaDrawable
+      virtual void RemovedFromScene(dtCore::Scene* scene);
+
+
       /**
       * Registers a listener for trigger events caused by this volume.
       *
@@ -102,7 +112,9 @@ namespace dtActors
          EventFuncType  onEvent;
       };
 
-      std::vector<dtCore::ObserverPtr<dtCore::Transformable> > mOccupancyList;
+      typedef std::set<dtCore::ObserverPtr<dtCore::Transformable> > CollidableContainer;
+      CollidableContainer mOccupancyList; ///<list of previous collided objects
+      CollidableContainer mNewCollisions; ///<list of this-frame collided objects
 
       std::vector<RegisterData> mListenerList;
 
