@@ -94,7 +94,7 @@ namespace dtCore
        */
       void UnRegisterCollidable(Transformable* collidable);
 
-      typedef std::vector<Transformable*> TransformableVector;
+      typedef std::vector<dtCore::ObserverPtr<Transformable> > TransformableVector;
 
       /** Get the container of previously registered collidables.
        * @return The const container of registered collidables
