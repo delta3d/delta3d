@@ -24,6 +24,8 @@
 
 #include <dtCore/refptr.h>
 
+#include <osg/Referenced>
+
 #include <vector>
 
 /**
