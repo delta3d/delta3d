@@ -32,3 +32,4 @@ protected:
 };
 
 #endif STAGE_MAP_HIERARCHY_MULTICLICK_BUTTON_H__
+
