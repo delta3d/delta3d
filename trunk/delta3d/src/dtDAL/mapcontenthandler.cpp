@@ -231,18 +231,13 @@ namespace  dtDAL
          }
          else if (XMLString::compareString(localname, MapXMLConstants::HIERARCHY_ELEMENT_NODE) == 0)
          {
-            const XMLCh* idw = attrs.getValue(XMLString::transcode("actorID"));               
-            
-            char* id = new char[wcslen(idw) + 1]; 
-            wcstombs(id, idw, wcslen(idw) + 1);
+            dtCore::UniqueId id(dtUtil::XMLStringConverter(attrs.getValue(XMLString::transcode("actorID"))).ToString());
                            
             dtDAL::ActorHierarchyNode* nextNode = 
-               new ActorHierarchyNode(mMap->GetProxyById(dtCore::UniqueId(id)));
+               new ActorHierarchyNode(mMap->GetProxyById(id));
 
             mCurrentHierNode->AddChild(nextNode);
             mCurrentHierNode = nextNode;
-
-            delete[] id;
          }
          else if (mInPresetCameras)
          {
