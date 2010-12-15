@@ -41,24 +41,27 @@ namespace dtDAL
 
       TransformableActorProxy::BuildPropertyMap();
 
-      dtCore::Physical* phys = static_cast<dtCore::Physical*>(GetActor());
+      if (!GetHideDTCorePhysicsProps())
+      {
+         dtCore::Physical* phys = static_cast<dtCore::Physical*>(GetActor());
 
-      static const dtUtil::RefString ODE_PREFIX("ODE ");
-      //PHYSICS PROPS...
-      AddProperty(new BooleanActorProperty(PROPERTY_ENABLE_DYNAMICS, ODE_PREFIX + PROPERTY_ENABLE_DYNAMICS,
-               BooleanActorProperty::SetFuncType(phys, &dtCore::Physical::EnableDynamics),
-               BooleanActorProperty::GetFuncType(phys, &dtCore::Physical::DynamicsEnabled),
-               "Enables physics calculations on this actor (using ODE).", GROUPNAME));
+         static const dtUtil::RefString ODE_PREFIX("ODE ");
+         //PHYSICS PROPS...
+         AddProperty(new BooleanActorProperty(PROPERTY_ENABLE_DYNAMICS, ODE_PREFIX + PROPERTY_ENABLE_DYNAMICS,
+                  BooleanActorProperty::SetFuncType(phys, &dtCore::Physical::EnableDynamics),
+                  BooleanActorProperty::GetFuncType(phys, &dtCore::Physical::DynamicsEnabled),
+                  "Enables physics calculations on this actor (using ODE).", GROUPNAME));
 
-      AddProperty(new FloatActorProperty(PROPERTY_MASS, ODE_PREFIX + PROPERTY_MASS,
-               FloatActorProperty::SetFuncType(this, &PhysicalActorProxy::SetMass),
-               FloatActorProperty::GetFuncType(this, &PhysicalActorProxy::GetMass),
-               "Sets the mass of this actor (using ODE).",GROUPNAME));
+         AddProperty(new FloatActorProperty(PROPERTY_MASS, ODE_PREFIX + PROPERTY_MASS,
+                  FloatActorProperty::SetFuncType(this, &PhysicalActorProxy::SetMass),
+                  FloatActorProperty::GetFuncType(this, &PhysicalActorProxy::GetMass),
+                  "Sets the mass of this actor (using ODE).",GROUPNAME));
 
-      AddProperty(new Vec3ActorProperty(PROPERTY_CENTER_OF_GRAVITY, ODE_PREFIX + PROPERTY_CENTER_OF_GRAVITY,
-               Vec3ActorProperty::SetFuncType(this, &PhysicalActorProxy::SetCenterOfGravity),
-               Vec3ActorProperty::GetFuncType(this, &PhysicalActorProxy::GetCenterOfGravity),
-               "Sets the center of gravity for this actor (using ODE).", GROUPNAME));
+         AddProperty(new Vec3ActorProperty(PROPERTY_CENTER_OF_GRAVITY, ODE_PREFIX + PROPERTY_CENTER_OF_GRAVITY,
+                  Vec3ActorProperty::SetFuncType(this, &PhysicalActorProxy::SetCenterOfGravity),
+                  Vec3ActorProperty::GetFuncType(this, &PhysicalActorProxy::GetCenterOfGravity),
+                  "Sets the center of gravity for this actor (using ODE).", GROUPNAME));
+      }
    }
 
    /////////////////////////////////////////////////////////////////////////////

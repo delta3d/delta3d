@@ -29,6 +29,8 @@
 #include <dtDAL/export.h>
 #include <dtCore/transformable.h>
 
+#include <dtUtil/getsetmacros.h>
+
 namespace dtDAL
 {
    /**
@@ -176,6 +178,12 @@ namespace dtDAL
           * @return The collision length.
           */
          float GetCollisionLength() const;
+
+         /**
+          * Set this to true if your actors don't use the dt core physics.
+          * You need to set this in the constructor or at the beginning of BuildPropertyMap.
+          */
+         DT_DECLARE_ACCESSOR(bool, HideDTCorePhysicsProps);
 
       protected:
 

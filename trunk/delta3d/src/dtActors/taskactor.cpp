@@ -187,6 +187,7 @@ namespace dtActors
       : mSubTaskIndex(0)
    {
       SetClassName(TaskActorProxy::CLASS_NAME);
+      SetHideDTCorePhysicsProps(true);
       mParentTaskProxy = NULL;
    }
 
