@@ -225,30 +225,12 @@ namespace dtEditQt
       for (itor = proxies.begin(); itor != proxies.end(); ++itor)
       {
          dtDAL::BaseActorObject* proxy = const_cast<dtDAL::BaseActorObject*>(itor->second.get());
-         const dtDAL::BaseActorObject::RenderMode& renderMode = proxy->GetRenderMode();
-         dtDAL::ActorProxyIcon* billBoard;
-
-         if (renderMode == dtDAL::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON)
+         dtDAL::ActorProxyIcon* billBoard = proxy->GetBillBoardIcon();
+         if (billBoard != NULL)
          {
-            billBoard = proxy->GetBillBoardIcon();
-            if (billBoard != NULL)
-            {
-               mMasterScene->RemoveChild(billBoard->GetDrawable());
-            }
+            mMasterScene->RemoveChild(billBoard->GetDrawable());
          }
-         else if (renderMode == dtDAL::BaseActorObject::RenderMode::DRAW_ACTOR)
-         {
-            mMasterScene->RemoveChild(proxy->GetActor());
-         }
-         else if (renderMode == dtDAL::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON)
-         {
-            billBoard = proxy->GetBillBoardIcon();
-            if (billBoard != NULL)
-            {
-               mMasterScene->RemoveChild(billBoard->GetDrawable());
-            }
-            mMasterScene->RemoveChild(proxy->GetActor());
-         }
+         mMasterScene->RemoveChild(proxy->GetActor());
       }
    }
 
