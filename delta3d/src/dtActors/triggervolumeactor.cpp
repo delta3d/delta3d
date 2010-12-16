@@ -233,8 +233,9 @@ void dtActors::TriggerVolumeActor::AddedToScene(dtCore::Scene* scene)
    if (scene)
    {
       AddSender(scene);
-      dtGame::GameActor::AddedToScene(scene);
    }
+
+   dtGame::GameActor::AddedToScene(scene);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -243,6 +244,7 @@ void dtActors::TriggerVolumeActor::RemovedFromScene(dtCore::Scene* scene)
    if (scene)
    {
       RemoveSender(scene);
-      dtGame::GameActor::RemovedFromScene(scene);
    }
+
+   dtGame::GameActor::RemovedFromScene(scene);
 }
