@@ -84,7 +84,7 @@ namespace dtGame
        * @endcode
        * @return The ActorComponent of that type, or NULL if it doesn't exist
        */
-      template <class T> T* GetComponent()
+      template <class T> T* GetComponent() const
       {
          T* component = NULL;
          GetComponent(component);
