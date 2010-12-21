@@ -465,7 +465,7 @@ void TankActor::OnEnteredWorld()
    if (mDOFTran == NULL)
    {
       LOG_ERROR ("DOF TURRET WAS NOT FOUND");
-      throw dtUtil::Exception(dtUtil::BaseExceptionType::GENERAL_EXCEPTION, "Could Not Find Turret", __FILE__, __LINE__);
+      throw dtUtil::Exception("Could Not Find Turret", __FILE__, __LINE__);
    }
 }
 
