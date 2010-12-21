@@ -50,9 +50,10 @@ namespace dtUtil
       return ((from) + (rand() % (((to) - (from)) + 1)));
    }
 
-   inline float RandFloat(float min, float max)
+   template <typename Real>
+   inline Real RandFloat(Real min, Real max)
    {
-      return ( (min) + (((rand() & RAND_MAX) / ((float)RAND_MAX)) * ( (max) - (min)) )  );
+      return ( (min) + (Real(double(rand() & RAND_MAX) / (double(RAND_MAX))) * ( (max) - (min)) )  );
    }
 
    inline float RandPercent()

@@ -222,7 +222,7 @@ void TestAARMessageProcessor::PlaceActor(bool ignored)
       velocity = 0.0f;
    }
 
-   chance = dtUtil::RandFloat(0.0, 1.0f);
+   chance = dtUtil::RandFloat(0.0f, 1.0f);
 
    // make only some of them move cause it causes problems computing
    // the intersection with the ground. (Performance bug..)
