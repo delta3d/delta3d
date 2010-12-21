@@ -143,7 +143,7 @@ void AIComponent::AddAIInterfaceToMap(const std::string& map)
    {
       throw dtUtil::Exception("AI interface actor doesn't have a waypoint resource property, so it can't be added to the map.", __FILE__, __LINE__);
    }
-   rap->SetValue(&rd);
+   rap->SetValue(rd);
    dtDAL::Project::GetInstance().SaveMap(m);
 
    SetAIPluginInterfaceProxy(aiActor);
