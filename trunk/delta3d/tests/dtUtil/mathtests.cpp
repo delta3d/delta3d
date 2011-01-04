@@ -49,6 +49,7 @@ namespace dtUtil
          CPPUNIT_TEST(TestFiniteAndNAN);
          CPPUNIT_TEST(TestVecFinite);
          CPPUNIT_TEST(TestNormalizer);
+         CPPUNIT_TEST(TestRandFloat);
          CPPUNIT_TEST(TestEquivalentVec2);
          CPPUNIT_TEST(TestEquivalentVec3);
          CPPUNIT_TEST(TestEquivalentVecUsingEqualVecs);
@@ -66,6 +67,7 @@ namespace dtUtil
       void TestFiniteAndNAN();
       void TestVecFinite();
       void TestNormalizer();
+      void TestRandFloat();
       void TestEquivalentVec2();
       void TestEquivalentVec3();
       void TestEquivalentVecUsingEqualVecs();
@@ -73,9 +75,11 @@ namespace dtUtil
       void TestEquivalentVecUsingVeryDifferentVecs();
       void TestEquivalentVec4();
       void TestEquivalentReals();
-    void TestMatrixEulerConversions();
+      void TestMatrixEulerConversions();
 
    private:
+      template <typename Real>
+      void TestRandFloatTmpl();
    };
 
    // Registers the fixture into the 'registry'
@@ -211,6 +215,31 @@ namespace dtUtil
 
       double my( MapRangeValue(x,xMin,xMax,yMin,yMax) );
       CPPUNIT_ASSERT_EQUAL( 0.0 , my );
+   }
+
+   template <typename Real>
+   void MathTests::TestRandFloatTmpl()
+   {
+      const Real range1min = -12.7, range1max = 50020.9;
+      const Real range2min = 9.6, range2max = 1497.16;
+      const Real range3min = -96000.1, range3max = -94000.3;
+      Real result = 0.0f;
+
+      result = RandFloat(range1min, range1max);
+      CPPUNIT_ASSERT(result >= range1min && result <= range1max );
+      result = RandFloat(range2min, range2max);
+      CPPUNIT_ASSERT(result >= range2min && result <= range2max );
+      result = RandFloat(range3min, range3max);
+      CPPUNIT_ASSERT(result >= range3min && result <= range3max );
+   }
+
+   void MathTests::TestRandFloat()
+   {
+      for (unsigned i = 0; i < 50; ++i)
+      {
+         TestRandFloatTmpl<float>();
+         TestRandFloatTmpl<double>();
+      }
    }
 
    void MathTests::TestEquivalentVec2()
