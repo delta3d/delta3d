@@ -26,8 +26,10 @@
 #include <dtUtil/mswinmacros.h>
 
 
-#ifndef RAND_MAX
-#define RAND_MAX 0x7fff
+// This used to define RAND_MAX, but since that is in cstdlib, this define was doing nothing
+// and the rand float and rand percent were broken due to floating point imprecision.
+#ifndef DT_RAND_RANGE_MAX
+#define DT_RAND_RANGE_MAX 0x7fff
 #endif
 
 namespace dtUtil
@@ -45,20 +47,33 @@ namespace dtUtil
       return (a > b) ? a : b;
    }
 
-   inline int RandRange(int from, int to)
+   /**
+    * @return a random integer between min and max.
+    */
+   template <typename IntType>
+   inline IntType RandRange(IntType min, IntType max)
    {
-      return ((from) + (rand() % (((to) - (from)) + 1)));
+      return ((min) + (IntType(rand()) % (((max) - (min)) + 1)));
    }
 
+   /**
+    * @return a random floating point number between min and max.
+    */
    template <typename Real>
    inline Real RandFloat(Real min, Real max)
    {
-      return ( (min) + (Real(double(rand() & RAND_MAX) / (double(RAND_MAX))) * ( (max) - (min)) )  );
+      Real randomNumber = Real(rand() & DT_RAND_RANGE_MAX);
+      Real randMax = Real(DT_RAND_RANGE_MAX);
+      Real rangeSize = max - min;
+      return ( min + ((randomNumber / randMax) * rangeSize ));
    }
 
+   /**
+    * @return a random float value between 0 and 1.
+    */
    inline float RandPercent()
    {
-      return ((rand() & RAND_MAX) / ((float)RAND_MAX));
+      return RandFloat(0.0f, 1.0f);
    }
 
    template <typename Real>
