@@ -108,6 +108,7 @@ public:
    ResourceDock();  
    virtual ~ResourceDock();
 
+   QTreeWidgetItem* FindListItem(std::string fullName) const;
    QTreeWidgetItem* FindMapItem(std::string fullName) const;
    QTreeWidgetItem* FindGeometryItem(const std::string& fullName) const;
    QTreeWidgetItem* FindShaderFileItem(const std::string& filename) const;

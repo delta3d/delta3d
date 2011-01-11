@@ -120,28 +120,35 @@ void ObjectWorkspace::dropEvent(QDropEvent *event)
       QString filename = urlList.first().toLocalFile();
       QString baseName = QFileInfo(filename).baseName();
 
+      bool attemptToLoad = true;
+
      if (filename.endsWith(".xml"))
-      {
+     {
          eXmlFileType fileType = GetXmlFileType(filename.toStdString());
 
-         if (fileType == MAP)
+         // Is this an unsupported xml like a map?
+         if (fileType != SKELETAL_MESH)
          {
-            // Note: maps are tricky since the filename does not necessarily
-            // correspond to the map's actual name.  Furthermore, map names
-            // are not guaranteed to be unique.  ...drag and drop not recommended.
-            QMessageBox::information(this, "Info", "Drag & drop not supported for maps.", QMessageBox::Ok);
+            attemptToLoad = false;
 
-            //OnLoadMap(baseName.toStdString());
-         }
-         else if (fileType == SKELETAL_MESH)
-         {
-         }
-         else
-         {
-            QMessageBox::critical(this, "Error", "Unknown file type.", QMessageBox::Ok);
+            if (fileType == MAP)
+            {
+               // Note: maps are tricky since the filename does not necessarily
+               // correspond to the map's actual name.  Furthermore, map names
+               // are not guaranteed to be unique.  ...drag and drop not recommended.
+               QMessageBox::information(this, "Info", "Drag & drop not supported for maps.", QMessageBox::Ok);
+
+               //OnLoadMap(baseName.toStdString());
+            }
+            else
+            {
+               QMessageBox::critical(this, "Error", "Unknown file type.", QMessageBox::Ok);
+            }
          }
       }
-      else
+
+      // If the file was identified as either static or skeletal mesh
+      if (attemptToLoad)
       {
          OnLoadGeometry(filename.toStdString());
       }
@@ -438,7 +445,7 @@ void ObjectWorkspace::UpdateResourceLists()
          mResourceDock->OnNewMap(mapList.at(mapIndex).toStdString());
       }
 
-      // Populate the object list.
+      // Populate the static mesh list.
       QString staticMeshDir = QString(mContextPath.c_str()) + "/staticmeshes";
 
       if (directory.cd(staticMeshDir))
@@ -452,6 +459,28 @@ void ObjectWorkspace::UpdateResourceLists()
          {
             QFileInfo fileInfo = fileList.takeFirst();
             mResourceDock->OnNewGeometry(staticMeshDir.toStdString(), fileInfo.fileName().toStdString());
+         }
+      }
+
+      // Populate the skeletal mesh list.
+      QString skeletalMeshDir = QString(mContextPath.c_str()) + "/skeletalmeshes";
+
+      if (directory.cd(skeletalMeshDir))
+      {
+         QStringList nameFilters;
+         nameFilters << "*.xml";
+
+         QFileInfoList fileList = directory.entryInfoList(nameFilters, QDir::Files);
+
+         while (!fileList.empty())
+         {
+            QFileInfo fileInfo = fileList.takeFirst();
+
+            // If the xml is a character
+            if (GetXmlFileType(fileInfo.absoluteFilePath().toStdString()) == SKELETAL_MESH)
+            {
+               mResourceDock->OnNewGeometry(skeletalMeshDir.toStdString(), fileInfo.fileName().toStdString());
+            }
          }
       }
    }

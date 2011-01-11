@@ -299,6 +299,27 @@ ResourceDock::ResourceDock()
 ///////////////////////////////////////////////////////////////////////////////
 ResourceDock::~ResourceDock(){}
 
+
+////////////////////////////////////////////////////////////////////////////////
+QTreeWidgetItem* ResourceDock::FindListItem(std::string fullName) const
+{
+   QTreeWidgetItem* listItem = NULL;
+
+   for (int itemIndex = 0; itemIndex < mGeometryTreeWidget->topLevelItemCount(); ++itemIndex)
+   {
+      QTreeWidgetItem* childItem = mGeometryTreeWidget->topLevelItem(itemIndex);
+
+      if (childItem->text(0) == fullName.c_str())
+      {
+         listItem = childItem;
+         break;
+      }
+   }
+
+   return listItem;
+}
+
+
 ////////////////////////////////////////////////////////////////////////////////
 QTreeWidgetItem* ResourceDock::FindMapItem(std::string fullName) const
 {
@@ -340,13 +361,9 @@ QTreeWidgetItem* ResourceDock::FindGeometryItem(const std::string& fullName) con
    {
       QTreeWidgetItem* childItem = mGeometryTreeWidget->topLevelItem(itemIndex);
 
-      if (childItem->text(0) == STATIC_MESH_LABEL)
+      if (childItem->text(0) == STATIC_MESH_LABEL ||
+          childItem->text(0) == SKELETAL_MESH_LABEL)
       {
-         if (fullName == "")
-         {
-            return childItem;
-         }
-
          for (int geometryIndex = 0; geometryIndex < childItem->childCount(); geometryIndex++)
          {
             QTreeWidgetItem* geometryItem = childItem->child(geometryIndex);
@@ -519,7 +536,19 @@ void ResourceDock::OnNewGeometry(const std::string& path, const std::string& fil
 
    geometryItem->setCheckState(0, Qt::Unchecked);
 
-   QTreeWidgetItem* listItem = FindGeometryItem("");
+   QString qtFilename(filename.c_str());
+   std::string listLabel;
+
+   if (qtFilename.endsWith(".xml"))
+   {
+      listLabel = SKELETAL_MESH_LABEL.toStdString();
+   }
+   else
+   {
+      listLabel = STATIC_MESH_LABEL.toStdString();
+   }
+
+   QTreeWidgetItem* listItem = FindListItem(listLabel);
    if (listItem)
    {
       listItem->addChild(geometryItem);
