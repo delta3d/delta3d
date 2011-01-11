@@ -5,8 +5,12 @@
 #include "ObjectViewer.h"
 
 #include <dtUtil/fileutils.h>
+#include <dtUtil/xercesparser.h>
 #include <dtDAL/project.h>
+#include <dtDAL/map.h>
 #include <dtCore/deltawin.h>
+
+#include <xercesc/parsers/XercesDOMParser.hpp>
 
 #include <QtGui/QMenuBar>
 #include <QtGui/QAction>
@@ -17,7 +21,6 @@
 #include <QtGui/QDockWidget>
 #include <QtGui/QMessageBox>
 #include <QtGui/QHBoxLayout>
-
 
 #include <QtCore/QSettings>
 #include <QtCore/QDir>
@@ -71,6 +74,34 @@ QObject* ObjectWorkspace::GetResourceObject()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+ObjectWorkspace::eXmlFileType ObjectWorkspace::GetXmlFileType(const std::string& filename)
+{
+   XERCES_CPP_NAMESPACE_USE
+
+   XERCES_CPP_NAMESPACE_QUALIFIER XercesDOMParser mXercesParser;
+   XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc;
+
+   mXercesParser.parse(filename.c_str());
+   doc = mXercesParser.getDocument();
+
+   // Default to unknown
+   eXmlFileType fileType = UNKNOWN;
+
+   // The first tag should give us enough information to determine the file type
+   char* firstElement = XMLString::transcode(doc->getFirstChild()->getNodeName());
+   if (strcmp(firstElement, "map") == 0)
+   {
+      fileType = MAP;
+   }
+   else if (strcmp(firstElement, "character") == 0)
+   {
+      fileType = SKELETAL_MESH;
+   }
+
+   return fileType;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void ObjectWorkspace::dragEnterEvent(QDragEnterEvent *event)
 {
    if (event->mimeData()->hasFormat("text/uri-list"))
@@ -87,7 +118,33 @@ void ObjectWorkspace::dropEvent(QDropEvent *event)
    if (!urlList.empty())
    {
       QString filename = urlList.first().toLocalFile();
-      OnLoadGeometry(filename.toStdString());
+      QString baseName = QFileInfo(filename).baseName();
+
+     if (filename.endsWith(".xml"))
+      {
+         eXmlFileType fileType = GetXmlFileType(filename.toStdString());
+
+         if (fileType == MAP)
+         {
+            // Note: maps are tricky since the filename does not necessarily
+            // correspond to the map's actual name.  Furthermore, map names
+            // are not guaranteed to be unique.  ...drag and drop not recommended.
+            QMessageBox::information(this, "Info", "Drag & drop not supported for maps.", QMessageBox::Ok);
+
+            //OnLoadMap(baseName.toStdString());
+         }
+         else if (fileType == SKELETAL_MESH)
+         {
+         }
+         else
+         {
+            QMessageBox::critical(this, "Error", "Unknown file type.", QMessageBox::Ok);
+         }
+      }
+      else
+      {
+         OnLoadGeometry(filename.toStdString());
+      }
    }
 }
 
@@ -434,6 +491,7 @@ void ObjectWorkspace::OnLoadShaderDefinition()
 void ObjectWorkspace::OnLoadMap(const std::string& mapName)
 {
    QTreeWidgetItem* mapItem = mResourceDock->FindMapItem(mapName);
+
    if (mapItem)
    {
       mapItem->setCheckState(0, Qt::Checked);
