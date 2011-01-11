@@ -281,6 +281,8 @@ namespace dtNetGM
       // Send Info to all other clients
       machineMsg->SetDestination(NULL);
       SendNetworkMessage(*machineMsg, DestinationType::ALL_CLIENTS);
+      // Send it locally too.
+      GetGameManager()->SendMessage(*machineMsg);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -291,8 +293,8 @@ namespace dtNetGM
       GetConnectedClients(connectedClients);
 
       // Create the Message
-      dtCore::RefPtr<dtGame::Message> msg = GetGameManager()->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_CLIENT_CONNECTED);
-      dtGame::MachineInfoMessage* machineMsg = static_cast<dtGame::MachineInfoMessage*> (msg.get());
+      dtCore::RefPtr<dtGame::MachineInfoMessage> machineMsg;
+      GetGameManager()->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_CLIENT_CONNECTED, machineMsg);
 
       while (!connectedClients.empty())
       {
