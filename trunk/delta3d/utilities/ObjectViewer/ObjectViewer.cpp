@@ -158,8 +158,10 @@ void ObjectViewer::OnLoadMapFile(const std::string& filename)
    {
       QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
 
-      //map = &dtDAL::Project::GetInstance().GetMap(filename);
-      map = &dtDAL::Project::GetInstance().LoadMapIntoScene(filename, *GetScene());
+      // We'll be creating the scene by hand using decorators
+      // and since the load function needs a scene, give it temp
+      dtCore::RefPtr<dtCore::Scene> dummy = new dtCore::Scene;
+      map = &dtDAL::Project::GetInstance().LoadMapIntoScene(filename, *dummy);
    }
    catch (dtUtil::Exception &e)
    {
@@ -286,7 +288,7 @@ void ObjectViewer::OnLoadMapFile(const std::string& filename)
                radius = testRadius;
             }
          }
-    
+
          // Reset the camera outside the bounding sphere.
          mModelMotion->SetDistance(radius * 2.0f);
          mModelMotion->SetFocalPoint(center);
@@ -916,33 +918,13 @@ void ObjectViewer::ClearLights()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void ObjectViewer::clearProxies( const std::map<dtCore::UniqueId, dtCore::RefPtr<dtDAL::BaseActorObject> >& proxies)
+void ObjectViewer::clearProxies(const std::map<dtCore::UniqueId, dtCore::RefPtr<dtDAL::BaseActorObject> >& proxies)
 {
    std::map<dtCore::UniqueId,dtCore::RefPtr<dtDAL::BaseActorObject> >::const_iterator itor;
 
    for (itor = proxies.begin(); itor != proxies.end(); ++itor)
    {
-      dtDAL::BaseActorObject *proxy = const_cast<dtDAL::BaseActorObject*>(itor->second.get());
-      //const dtDAL::BaseActorObject::RenderMode &renderMode = proxy->GetRenderMode();
-      //dtDAL::ActorProxyIcon *billBoard;
-
-      //if (renderMode == dtDAL::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON)
-      //{
-      //   billBoard = proxy->GetBillBoardIcon();
-      //   if (billBoard != NULL)
-      //      GetScene()->RemoveDrawable(billBoard->GetDrawable());
-      //}
-      //else if (renderMode == dtDAL::BaseActorObject::RenderMode::DRAW_ACTOR)
-      //{
-      //   GetScene()->RemoveDrawable(proxy->GetActor());
-      //}
-      //else if (renderMode == dtDAL::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON)
-      //{
-      //   billBoard = proxy->GetBillBoardIcon();
-      //   if (billBoard != NULL)
-      //      GetScene()->RemoveDrawable(billBoard->GetDrawable());
-      //   GetScene()->RemoveDrawable(proxy->GetActor());
-      //}
+      dtDAL::BaseActorObject* proxy = const_cast<dtDAL::BaseActorObject*>(itor->second.get());
 
       dtCore::DeltaDrawable* drawable = proxy->GetActor();
       if (drawable)
@@ -957,7 +939,7 @@ void ObjectViewer::clearProxies( const std::map<dtCore::UniqueId, dtCore::RefPtr
 void ObjectViewer::PostFrame(const double)
 {
    // Broadcast the current state of all the lights in the scene
-   for (int lightIndex = 0; lightIndex < dtCore::MAX_LIGHTS; ++lightIndex)
+   for (int lightIndex = 0; lightIndex < mLightMotion.size(); ++lightIndex)
    {
       // Update the scale of the light arrow to match the current scale of the motion model.
       float lightScale = mLightMotion[lightIndex]->GetAutoScaleSize();
@@ -1011,7 +993,7 @@ void ObjectViewer::GenerateTangentsForObject(dtCore::Object* object)
 {
    // Get all geometry in the graph to apply the shader to
    osg::ref_ptr<dtUtil::GeometryCollector> geomCollector = new dtUtil::GeometryCollector;
-   object->GetOSGNode()->accept(*geomCollector);        
+   object->GetOSGNode()->accept(*geomCollector);
 
    // Calculate tangent vectors for all faces and store them as vertex attributes
    for (size_t geomIndex = 0; geomIndex < geomCollector->mGeomList.size(); ++geomIndex)
