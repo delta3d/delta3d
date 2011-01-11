@@ -56,6 +56,10 @@
 #include <sstream>
 #include <assert.h>
 
+const QString MAP_LABEL("Maps");
+const QString STATIC_MESH_LABEL("Static Meshes");
+const QString SKELETAL_MESH_LABEL("Skeletal Meshes");
+
 ////////////////////////////////////////////////////////////////////////////////
 GeometryTree::GeometryTree(QWidget* parent)
    : QTreeWidget(parent)
@@ -113,7 +117,7 @@ void GeometryTree::contextMenuEvent(QContextMenuEvent *contextEvent)
    {
       QTreeWidgetItem* categoryItem = topLevelItem(itemIndex);
 
-      if (categoryItem->text(0) == QString("Objects"))
+      if (categoryItem->text(0) == STATIC_MESH_LABEL)
       {
          // Find the selected object.
          for (int objectIndex = 0; objectIndex < categoryItem->childCount(); objectIndex++)
@@ -304,7 +308,7 @@ QTreeWidgetItem* ResourceDock::FindMapItem(std::string fullName) const
    {
       QTreeWidgetItem* childItem = mGeometryTreeWidget->topLevelItem(itemIndex);
 
-      if (childItem->text(0) == QString("Maps"))
+      if (childItem->text(0) == MAP_LABEL)
       {
          if (fullName == "")
          {
@@ -336,7 +340,7 @@ QTreeWidgetItem* ResourceDock::FindGeometryItem(const std::string& fullName) con
    {
       QTreeWidgetItem* childItem = mGeometryTreeWidget->topLevelItem(itemIndex);
 
-      if (childItem->text(0) == QString("Objects"))
+      if (childItem->text(0) == STATIC_MESH_LABEL)
       {
          if (fullName == "")
          {
@@ -1281,14 +1285,19 @@ void ResourceDock::OnLightItemChanged(QTreeWidgetItem* item, int column)
 void ResourceDock::InitGeometryTree()
 {
    QTreeWidgetItem* mapItem = new QTreeWidgetItem;
-   mapItem->setText(0, "Maps");
+   mapItem->setText(0, MAP_LABEL);
    mapItem->setFlags(Qt::ItemIsEnabled);
    mGeometryTreeWidget->addTopLevelItem(mapItem);
 
-   QTreeWidgetItem* geometryItem = new QTreeWidgetItem;
-   geometryItem->setText(0, "Objects");
-   geometryItem->setFlags(Qt::ItemIsEnabled);
-   mGeometryTreeWidget->addTopLevelItem(geometryItem);
+   QTreeWidgetItem* staticMeshItem = new QTreeWidgetItem;
+   staticMeshItem->setText(0, STATIC_MESH_LABEL);
+   staticMeshItem->setFlags(Qt::ItemIsEnabled);
+   mGeometryTreeWidget->addTopLevelItem(staticMeshItem);
+
+   QTreeWidgetItem* skeletalMeshItem = new QTreeWidgetItem;
+   skeletalMeshItem->setText(0, SKELETAL_MESH_LABEL);
+   skeletalMeshItem->setFlags(Qt::ItemIsEnabled);
+   mGeometryTreeWidget->addTopLevelItem(skeletalMeshItem);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
