@@ -55,7 +55,7 @@ namespace dtUtil
 
             private:
 
-               TimeOrigin(const std::string &name) : dtUtil::Enumeration(name)
+               TimeOrigin(const std::string& name) : dtUtil::Enumeration(name)
                {
                   AddInstance(this);
                }
@@ -81,7 +81,7 @@ namespace dtUtil
 
             private:
 
-               TimeType(const std::string &name) : dtUtil::Enumeration(name)
+               TimeType(const std::string& name) : dtUtil::Enumeration(name)
                {
                   AddInstance(this);
                }
@@ -128,7 +128,7 @@ namespace dtUtil
                /*virtual*/ ~TimeFormat(){}
 
             private:
-               TimeFormat(const std::string &name) : dtUtil::Enumeration(name)
+               TimeFormat(const std::string& name) : dtUtil::Enumeration(name)
                {
                   AddInstance(this);
                }
