@@ -85,7 +85,7 @@ namespace dtGame
           */
          void Invoke(const Message& message);
       protected:
-         ///refenceced classes should always have protected desctructor
+         ///referenced classes should always have protected destructor
          virtual ~Invokable();
       private:
          std::string mName;
