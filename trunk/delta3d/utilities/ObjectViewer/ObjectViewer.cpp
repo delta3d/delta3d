@@ -32,6 +32,9 @@
 #include <dtDAL/project.h>
 #include <dtDAL/map.h>
 
+#include <dtAnim/chardrawable.h>
+#include <dtAnim/cal3ddatabase.h>
+
 #include <osg/Geode>
 #include <osg/Shape>
 #include <osg/ShapeDrawable>
@@ -322,50 +325,78 @@ void ObjectViewer::OnLoadGeometryFile(const std::string& filename)
 {
    OnUnloadGeometryFile();
 
-   mObject = new dtCore::Object;
-   mObject->LoadFile(filename);
+   QString qtFilename(filename.c_str());
 
-   // set up the ObjectViewer's scene graph
-   mShadeDecorator->addChild(mObject->GetOSGNode());
-   mWireDecorator->addChild(mObject->GetOSGNode());
-
-   osg::Vec3 center;
-
-   if (mObject.valid())
+   // If this is a static mesh
+   if (!qtFilename.endsWith(".xml"))
    {
-      float radius;
-      mObject->GetBoundingSphere(center, radius);
+      mObject = new dtCore::Object;
+      mObject->LoadFile(filename);
 
-      // Reset the camera outside the bounding sphere.
-      mModelMotion->SetDistance(radius * 2.0f);
-      mModelMotion->SetFocalPoint(center);
+      // set up the ObjectViewer's scene graph
+      mShadeDecorator->addChild(mObject->GetOSGNode());
+      mWireDecorator->addChild(mObject->GetOSGNode());
 
-      //// Adjust the size of the light arrow
-      //mLightScale = radius * 0.5f;
+      osg::Vec3 center;
 
-      //for (int lightIndex = 0; lightIndex < (int)mLightMotion.size(); lightIndex++)
-      //{
-      //   float arrowScale = mLightScale;
-
-      //   //dtCore::Light* light = GetScene()->GetLight(lightIndex);
-      //   //if (light)
-      //   //{
-      //   //   // Infinite lights do not get scaled.
-      //   //   dtCore::InfiniteLight* infiniteLight = dynamic_cast<dtCore::InfiniteLight*>(light);
-      //   //   if (infiniteLight)
-      //   //   {
-      //   //      arrowScale = 1.0f;
-      //   //   }
-      //   //}
-
-      //   mLightMotion[lightIndex]->SetScale(arrowScale);
-      //   mLightArrow[lightIndex]->SetScale(osg::Vec3(arrowScale, arrowScale, arrowScale));
-      //}
-
-      if (mShouldGenerateTangents)
+      if (mObject.valid())
       {
-         GenerateTangentsForObject(mObject.get());
+         float radius;
+         mObject->GetBoundingSphere(center, radius);
+
+         // Reset the camera outside the bounding sphere.
+         mModelMotion->SetDistance(radius * 2.0f);
+         mModelMotion->SetFocalPoint(center);
+
+         //// Adjust the size of the light arrow
+         //mLightScale = radius * 0.5f;
+
+         //for (int lightIndex = 0; lightIndex < (int)mLightMotion.size(); lightIndex++)
+         //{
+         //   float arrowScale = mLightScale;
+
+         //   //dtCore::Light* light = GetScene()->GetLight(lightIndex);
+         //   //if (light)
+         //   //{
+         //   //   // Infinite lights do not get scaled.
+         //   //   dtCore::InfiniteLight* infiniteLight = dynamic_cast<dtCore::InfiniteLight*>(light);
+         //   //   if (infiniteLight)
+         //   //   {
+         //   //      arrowScale = 1.0f;
+         //   //   }
+         //   //}
+
+         //   mLightMotion[lightIndex]->SetScale(arrowScale);
+         //   mLightArrow[lightIndex]->SetScale(osg::Vec3(arrowScale, arrowScale, arrowScale));
+         //}
+
+         if (mShouldGenerateTangents)
+         {
+            GenerateTangentsForObject(mObject.get());
+         }
       }
+   }
+   else
+   {
+      QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+
+      dtCore::RefPtr<dtAnim::Cal3DModelWrapper> wrapper =
+         dtAnim::Cal3DDatabase::GetInstance().Load(filename);
+
+      if (wrapper.valid())
+      {
+         mCharacter = new dtAnim::CharDrawable(wrapper.get());
+
+         // set up the ObjectViewer's scene graph
+         mShadeDecorator->addChild(mCharacter->GetOSGNode());
+         mWireDecorator->addChild(mCharacter->GetOSGNode());
+      }
+      else
+      {
+         emit ErrorOccured(QString("Unable to load %1").arg(filename.c_str()));
+      }
+
+      QApplication::restoreOverrideCursor();
    }
 }
 
@@ -378,6 +409,14 @@ void ObjectViewer::OnUnloadGeometryFile()
       mWireDecorator->removeChild(mObject->GetOSGNode());
 
       mObject = NULL;
+   }
+
+   if (mCharacter.valid())
+   {
+      mShadeDecorator->removeChild(mCharacter->GetOSGNode());
+      mWireDecorator->removeChild(mCharacter->GetOSGNode());
+
+      mCharacter = NULL;
    }
 
    // Remove the old map.

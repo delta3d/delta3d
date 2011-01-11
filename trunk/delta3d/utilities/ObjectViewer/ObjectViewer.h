@@ -42,9 +42,8 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 
-class QColor;
-
 struct LightInfo;
+class QColor;
 
 namespace dtCore
 {
@@ -61,8 +60,6 @@ namespace osg
 namespace dtAnim
 {
    class CharDrawable;
-   class Cal3DDatabase;
-   class PoseMeshDatabase;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -139,8 +136,9 @@ protected:
 
 private:
 
-   dtCore::RefPtr<dtDAL::Map>      mMap;
-   dtCore::RefPtr<dtCore::Object>  mObject;
+   dtCore::RefPtr<dtDAL::Map> mMap;
+   dtCore::RefPtr<dtCore::Object> mObject;
+   dtCore::RefPtr<dtAnim::CharDrawable> mCharacter;
    dtCore::RefPtr<dtCore::Compass> mCompass;
 
    dtCore::RefPtr<dtCore::OrbitMotionModel> mModelMotion;
