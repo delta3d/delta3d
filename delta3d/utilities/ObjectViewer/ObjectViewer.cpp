@@ -22,7 +22,6 @@
 #include <dtCore/shadermanager.h>
 
 #include <dtUtil/datapathutils.h>
-#include <dtUtil/xercesparser.h>
 #include <dtUtil/stringutils.h>
 #include <dtUtil/fileutils.h>
 #include <dtUtil/log.h>
@@ -939,7 +938,7 @@ void ObjectViewer::clearProxies(const std::map<dtCore::UniqueId, dtCore::RefPtr<
 void ObjectViewer::PostFrame(const double)
 {
    // Broadcast the current state of all the lights in the scene
-   for (int lightIndex = 0; lightIndex < mLightMotion.size(); ++lightIndex)
+   for (int lightIndex = 0; lightIndex < (int)mLightMotion.size(); ++lightIndex)
    {
       // Update the scale of the light arrow to match the current scale of the motion model.
       float lightScale = mLightMotion[lightIndex]->GetAutoScaleSize();

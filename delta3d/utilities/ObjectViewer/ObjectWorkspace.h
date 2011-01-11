@@ -49,7 +49,7 @@ public:
    virtual void dropEvent(QDropEvent* event);
 
 signals:
-   
+
    // File menu
    void FileToLoad(const QString&);
    void LoadShaderDefinition(const QString&);
@@ -74,16 +74,13 @@ public slots:
    void OnLoadGeometry(const std::string& fullName);
 
 private:
-   QObject* GetResourceObject();
-   void CreateMenus();
-   void CreateFileMenuActions();
-   void CreateModeToolbarActions();
-   void CreateEditingToolbarAction();
-   void CreateDisplayToolbarActions();
-   void CreateShaderToolbarActions();
-   void CreateToolbars();
-   void UpdateResourceLists();
-   void LoadObjectFile(const QString& filename);
+
+   enum eXmlFileType
+   {
+      UNKNOWN = -1,
+      SKELETAL_MESH,
+      MAP
+   };
 
    QHBoxLayout* mCentralLayout;
 
@@ -130,6 +127,18 @@ private:
    QList<std::string> mAdditionalShaderFiles;
 
    ObjectViewer* mViewer;
+
+   QObject* GetResourceObject();
+   eXmlFileType GetXmlFileType(const std::string& filename);
+   void CreateMenus();
+   void CreateFileMenuActions();
+   void CreateModeToolbarActions();
+   void CreateEditingToolbarAction();
+   void CreateDisplayToolbarActions();
+   void CreateShaderToolbarActions();
+   void CreateToolbars();
+   void UpdateResourceLists();
+   bool IsDeltaMapFile(const QString& filename);
 
 private slots:
 

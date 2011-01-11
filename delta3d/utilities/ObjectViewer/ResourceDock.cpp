@@ -322,7 +322,7 @@ QTreeWidgetItem* ResourceDock::FindMapItem(std::string fullName) const
             std::transform(mapName.begin(), mapName.end(), mapName.begin(), (int(*)(int))std::tolower);
 
             // Case insensitive comparison
-            if (fullName == fullName)
+            if (fullName == mapName)
             {
                return geometryItem;
             }
