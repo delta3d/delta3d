@@ -57,9 +57,6 @@ ObjectViewer::ObjectViewer()
 {
    mShadedScene   = new osg::Group;
    mUnShadedScene = new osg::Group;
-
-   osg::StateSet* shadedState = mShadedScene->getOrCreateStateSet();
-   shadedState->setMode(GL_LIGHTING, osg::StateAttribute::ON);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -88,6 +85,10 @@ void ObjectViewer::Config()
 
    GetCamera()->SetTransform(camPos);
    GetCamera()->SetNearFarCullingMode(dtCore::Camera::NO_AUTO_NEAR_FAR);
+
+   double vfov, aspect, nearClip, farClip;
+   GetCamera()->GetPerspectiveParams(vfov, aspect, nearClip, farClip);
+   GetCamera()->SetPerspectiveParams(vfov, aspect, 0.1, farClip);
 
    // Add the compass (3d basis axes) to the bottom left of the screen
    mCompass = new dtCore::Compass(GetCamera());
@@ -504,14 +505,6 @@ void ObjectViewer::OnToggleGrid(bool shouldDisplay)
    {
       mUnShadedScene->removeChild(mGridGeode.get());
    }
-}
-
-///////////////////////////////////////////////////////////////////////////////
-void ObjectViewer::OnAddLight(int id)
-{
-   //dtCore::Light* l = GetScene()->GetLight(0);
-   //l->SetAmbient(0.7f, 0.7f, 0.7f, 1.f);
-   //l->SetDiffuse(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
