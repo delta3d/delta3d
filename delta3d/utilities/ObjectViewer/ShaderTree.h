@@ -18,23 +18,41 @@
 *
 */
 
-#ifndef _OBJECT_VIEWER_DATA_
-#define _OBJECT_VIEWER_DATA_
+#ifndef SHADER_TREE
+#define SHADER_TREE
 
-namespace dtCore
-{
-   class Transform;
-   class Light;
-}
+#include <QtGui/QTreeWidget>
 
-struct LightInfo
+///////////////////////////////////////////////////////////////////////////////
+
+/**
+/* @class ShaderTree
+/* @brief This class contains the context menu support for the shader tree.
+ */
+class ShaderTree : public QTreeWidget
 {
-   dtCore::Transform* transform;
-   dtCore::Light* light;
+public:
+   ShaderTree(QWidget* parent = NULL);
+   ~ShaderTree();
+
+   void SetShaderSourceEnabled(bool vertexEnabled, bool fragmentEnabled);
+
+private:
+
+   void CreateContextActions();
+   void CreateContextMenus();
+
+   void contextMenuEvent(QContextMenuEvent* contextEvent);
+
+   // Context Menu
+   QAction* mEditShaderDef;
+   QAction* mRemoveShaderDef;
+
+   QAction* mOpenVertexSource;
+   QAction* mOpenFragmentSource;
+
+   QMenu*   mDefinitionContext;
+   QMenu*   mProgramContext;
 };
 
-const QString MAP_LABEL("Maps");
-const QString STATIC_MESH_LABEL("Static Meshes");
-const QString SKELETAL_MESH_LABEL("Skeletal Meshes");
-
-#endif
+#endif // SHADER_TREE

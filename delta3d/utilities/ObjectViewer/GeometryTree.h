@@ -18,23 +18,32 @@
 *
 */
 
-#ifndef _OBJECT_VIEWER_DATA_
-#define _OBJECT_VIEWER_DATA_
+#ifndef GEOMETRY_TREE
+#define GEOMETRY_TREE
 
-namespace dtCore
-{
-   class Transform;
-   class Light;
-}
+#include <QtGui/QTreeWidget>
 
-struct LightInfo
+///////////////////////////////////////////////////////////////////////////////
+
+/**
+* @class GeometryTree
+* @brief This class contains the context menu support for the geometry tree.
+*/
+class GeometryTree : public QTreeWidget
 {
-   dtCore::Transform* transform;
-   dtCore::Light* light;
+public:
+   GeometryTree(QWidget* parent = NULL);
+   ~GeometryTree();
+
+private:
+
+   void CreateContextActions();
+   void CreateContextMenus();
+
+   void contextMenuEvent(QContextMenuEvent* contextEvent);
+
+   QAction* mSaveAs;
+   QMenu*   mObjectContext;
 };
 
-const QString MAP_LABEL("Maps");
-const QString STATIC_MESH_LABEL("Static Meshes");
-const QString SKELETAL_MESH_LABEL("Skeletal Meshes");
-
-#endif
+#endif // GEOMETRY_TREE
