@@ -519,7 +519,7 @@ void ResourceDock::OnNewMap(const std::string& mapName)
    if (listItem)
    {
       listItem->addChild(mapItem);
-      listItem->setExpanded(true);
+      //listItem->setExpanded(true);
    }
 }
 
@@ -552,7 +552,7 @@ void ResourceDock::OnNewGeometry(const std::string& path, const std::string& fil
    if (listItem)
    {
       listItem->addChild(geometryItem);
-      listItem->setExpanded(true);
+      //listItem->setExpanded(true);
    }
 }
 
@@ -1313,11 +1313,6 @@ void ResourceDock::OnLightItemChanged(QTreeWidgetItem* item, int column)
 ////////////////////////////////////////////////////////////////////////////////
 void ResourceDock::InitGeometryTree()
 {
-   QTreeWidgetItem* mapItem = new QTreeWidgetItem;
-   mapItem->setText(0, MAP_LABEL);
-   mapItem->setFlags(Qt::ItemIsEnabled);
-   mGeometryTreeWidget->addTopLevelItem(mapItem);
-
    QTreeWidgetItem* staticMeshItem = new QTreeWidgetItem;
    staticMeshItem->setText(0, STATIC_MESH_LABEL);
    staticMeshItem->setFlags(Qt::ItemIsEnabled);
@@ -1327,6 +1322,11 @@ void ResourceDock::InitGeometryTree()
    skeletalMeshItem->setText(0, SKELETAL_MESH_LABEL);
    skeletalMeshItem->setFlags(Qt::ItemIsEnabled);
    mGeometryTreeWidget->addTopLevelItem(skeletalMeshItem);
+
+   QTreeWidgetItem* mapItem = new QTreeWidgetItem;
+   mapItem->setText(0, MAP_LABEL);
+   mapItem->setFlags(Qt::ItemIsEnabled);
+   mGeometryTreeWidget->addTopLevelItem(mapItem);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

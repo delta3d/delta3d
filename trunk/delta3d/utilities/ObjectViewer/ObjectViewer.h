@@ -90,7 +90,6 @@ public slots:
    void OnToggleGrid(bool shouldDisplay);
 
    // Lighting slots
-   void OnAddLight(int id);
    void OnFixLights();
    void OnSetCurrentLight(int id);
    void OnSetLightEnabled(int id, bool enabled);
