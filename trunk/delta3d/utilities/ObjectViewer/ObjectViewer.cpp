@@ -887,12 +887,6 @@ void ObjectViewer::InitLights()
       lightMotion->SetTarget(lightArrowTransformable.get());
       lightMotion->SetScale(0.5f);
 
-      //dtCore::Transformable* objectTransformable = lightMotion->GetTransformable();
-      //if (objectTransformable)
-      //{
-      //   objectTransformable->AddChild(lightArrow.get());
-      //}
-
       GetScene()->AddChild(lightArrowTransformable.get());
 
       mLightMotion.push_back(lightMotion);
@@ -900,6 +894,10 @@ void ObjectViewer::InitLights()
       mLightArrow.push_back(lightArrow);
       light->SetEnabled(enabled);
    }
+
+   // The built in scene skylight has problems with being updated
+   // by the motion model so reset it with a custom one here.
+   OnSetLightType(0, 0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
