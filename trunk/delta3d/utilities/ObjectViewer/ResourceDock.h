@@ -1,20 +1,20 @@
 /*
-* Delta3D Open Source Game and Simulation Engine 
-* Copyright (C) 2008 MOVES Institute 
+* Delta3D Open Source Game and Simulation Engine
+* Copyright (C) 2008 MOVES Institute
 *
 * This library is free software; you can redistribute it and/or modify it under
-* the terms of the GNU Lesser General Public License as published by the Free 
-* Software Foundation; either version 2.1 of the License, or (at your option) 
+* the terms of the GNU Lesser General Public License as published by the Free
+* Software Foundation; either version 2.1 of the License, or (at your option)
 * any later version.
 *
 * This library is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
-* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more 
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
 * details.
 *
-* You should have received a copy of the GNU Lesser General Public License 
-* along with this library; if not, write to the Free Software Foundation, Inc., 
-* 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+* You should have received a copy of the GNU Lesser General Public License
+* along with this library; if not, write to the Free Software Foundation, Inc.,
+* 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 *
 */
 
@@ -31,6 +31,8 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 
+class GeometryTree;
+class ShaderTree;
 class QTabWidget;
 class QTreeWidgetItem;
 
@@ -44,59 +46,6 @@ namespace dtCore
 ///////////////////////////////////////////////////////////////////////////////
 
 /**
-* @class GeometryTree
-* @brief This class contains the context menu support for the geometry tree.
-*/
-class GeometryTree : public QTreeWidget
-{
-public:
-   GeometryTree(QWidget* parent = NULL);
-   ~GeometryTree();
-
-private:
-
-   void CreateContextActions();
-   void CreateContextMenus();
-
-   void contextMenuEvent(QContextMenuEvent* contextEvent);
-
-   // Context Menu
-   QAction* mSaveAs;
-
-   QMenu*   mObjectContext;
-};
-
-/**
-* @class ShaderTree
-* @brief This class contains the context menu support for the shader tree.
-*/
-class ShaderTree : public QTreeWidget
-{
-public:
-   ShaderTree(QWidget* parent = NULL);
-   ~ShaderTree();
-
-   void SetShaderSourceEnabled(bool vertexEnabled, bool fragmentEnabled);
-
-private:
-
-   void CreateContextActions();
-   void CreateContextMenus();
-
-   void contextMenuEvent(QContextMenuEvent* contextEvent);
-
-   // Context Menu
-   QAction* mEditShaderDef;
-   QAction* mRemoveShaderDef;
-
-   QAction* mOpenVertexSource;
-   QAction* mOpenFragmentSource;
-
-   QMenu*   mDefinitionContext;
-   QMenu*   mProgramContext;
-};
-
-/**
 * @class ResourceDock
 * @brief This class holds all project resource tabs.
 */
@@ -104,8 +53,8 @@ class ResourceDock : public QDockWidget
 {
    Q_OBJECT
 public:
-  
-   ResourceDock();  
+
+   ResourceDock();
    virtual ~ResourceDock();
 
    QTreeWidgetItem* FindListItem(std::string fullName) const;
@@ -150,7 +99,7 @@ signals:
    void SetLightQuadratic(int id, float quadratic);
 
 public slots:
-   
+
    void OnNewMap(const std::string& mapName);
    void OnNewGeometry(const std::string& path, const std::string& filename);
    void OnGeometryItemChanged(QTreeWidgetItem* item, int column);
@@ -186,11 +135,11 @@ private:
 
    QTabWidget* mTabs;
 
-   GeometryTree*  mGeometryTreeWidget;  
+   GeometryTree*  mGeometryTreeWidget;
    ShaderTree*    mShaderTreeWidget;
-   QTreeWidget*   mLightTreeWidget; 
+   QTreeWidget*   mLightTreeWidget;
 
-   LightItems mLightItems[dtCore::MAX_LIGHTS];  
+   LightItems mLightItems[dtCore::MAX_LIGHTS];
 
    QString mCurrentShaderFile;
    QString mCurrentShaderGroup;

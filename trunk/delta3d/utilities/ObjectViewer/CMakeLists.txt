@@ -7,16 +7,20 @@ INCLUDE_DIRECTORIES(${QT_INCLUDE_DIR}
 
 SET(SOURCE_PATH ${DELTA3D_SOURCE_DIR}/utilities/${APP_NAME})
 
-SET(PROG_HEADERS ${SOURCE_PATH}/ObjectViewer.h
+SET(PROG_HEADERS ${SOURCE_PATH}/GeometryTree.h                 
+                 ${SOURCE_PATH}/ObjectViewer.h
                  ${SOURCE_PATH}/ObjectViewerData.h
                  ${SOURCE_PATH}/ObjectWorkspace.h
                  ${SOURCE_PATH}/ResourceDock.h
+                 ${SOURCE_PATH}/ShaderTree.h
                  ${SOURCE_PATH}/TextEdit.h)
                  
-SET(PROG_SOURCES ${SOURCE_PATH}/main.cpp
+SET(PROG_SOURCES ${SOURCE_PATH}/GeometryTree.cpp
+                 ${SOURCE_PATH}/main.cpp
                  ${SOURCE_PATH}/ObjectViewer.cpp
                  ${SOURCE_PATH}/ObjectWorkspace.cpp
                  ${SOURCE_PATH}/ResourceDock.cpp
+                 ${SOURCE_PATH}/ShaderTree.cpp
                  ${SOURCE_PATH}/TextEdit.cpp
                  ${SOURCE_PATH}/ObjectViewer.rc)
                  
