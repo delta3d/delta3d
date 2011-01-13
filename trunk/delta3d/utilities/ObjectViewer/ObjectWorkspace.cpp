@@ -8,9 +8,8 @@
 #include <dtUtil/xercesparser.h>
 #include <dtDAL/project.h>
 #include <dtDAL/map.h>
+#include <dtAnim/cal3ddatabase.h>
 #include <dtCore/deltawin.h>
-
-#include <xercesc/parsers/XercesDOMParser.hpp>
 
 #include <QtGui/QMenuBar>
 #include <QtGui/QAction>
@@ -76,24 +75,14 @@ QObject* ObjectWorkspace::GetResourceObject()
 ////////////////////////////////////////////////////////////////////////////////
 ObjectWorkspace::eXmlFileType ObjectWorkspace::GetXmlFileType(const std::string& filename)
 {
-   XERCES_CPP_NAMESPACE_USE
-
-   XERCES_CPP_NAMESPACE_QUALIFIER XercesDOMParser mXercesParser;
-   XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc;
-
-   mXercesParser.parse(filename.c_str());
-   doc = mXercesParser.getDocument();
-
    // Default to unknown
    eXmlFileType fileType = UNKNOWN;
 
-   // The first tag should give us enough information to determine the file type
-   char* firstElement = XMLString::transcode(doc->getFirstChild()->getNodeName());
-   if (strcmp(firstElement, "map") == 0)
+   if (dtDAL::Project::GetInstance().IsValidMapFile(filename))
    {
       fileType = MAP;
    }
-   else if (strcmp(firstElement, "character") == 0)
+   else if (dtAnim::Cal3DDatabase::GetInstance().IsFileValid(filename))
    {
       fileType = SKELETAL_MESH;
    }

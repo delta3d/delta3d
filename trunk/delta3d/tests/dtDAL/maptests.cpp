@@ -797,8 +797,8 @@ void MapTests::TestIsMapFileValid()
    std::string invalidFile("SkeletalMeshes/marine_test.xml");
 
    dtDAL::Project& project = dtDAL::Project::GetInstance();
-   CPPUNIT_ASSERT(project.IsMapFileValid(validFile));
-   CPPUNIT_ASSERT(!project.IsMapFileValid(invalidFile));
+   CPPUNIT_ASSERT(project.IsValidMapFile(validFile));
+   CPPUNIT_ASSERT(!project.IsValidMapFile(invalidFile));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
