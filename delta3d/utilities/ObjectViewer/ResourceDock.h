@@ -106,7 +106,6 @@ public slots:
    void OnSaveAs();
 
    void OnNewShader(const std::string& filename, const std::string& shaderGroup, const std::string& shaderProgram);
-   void OnShaderSelectionChanged();
    void OnShaderItemChanged(QTreeWidgetItem* item, int column);
    void OnReloadShaderFiles();
    void OnEditShaderDef();
@@ -148,6 +147,8 @@ private:
    bool mLoadingMap;
 
    void InitGeometryTree();
+   void InitShaderTree();
+   void InitLightTree();
    void ExportTexturesFromNode(const QString& path, osg::Node* node);
    void ExportTexturesFromStateSet(const QString& path, osg::StateSet* stateSet);
 

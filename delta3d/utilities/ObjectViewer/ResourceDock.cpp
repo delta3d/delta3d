@@ -70,10 +70,6 @@ ResourceDock::ResourceDock()
    mShaderTreeWidget   = new ShaderTree(this);
    mLightTreeWidget    = new QTreeWidget(this);
 
-   mGeometryTreeWidget->headerItem()->setText(0, "");
-   mShaderTreeWidget->headerItem()->setText(0, "");
-   mLightTreeWidget->headerItem()->setText(0, "");
-
    connect(mGeometryTreeWidget, SIGNAL(itemChanged(QTreeWidgetItem*, int)),
            this, SLOT(OnGeometryItemChanged(QTreeWidgetItem*, int)));
 
@@ -97,6 +93,9 @@ ResourceDock::ResourceDock()
    setWidget(mTabs);
 
    InitGeometryTree();
+   InitShaderTree();
+   InitLightTree();
+
    CreateLightItems();
 }
 
@@ -547,72 +546,6 @@ void ResourceDock::OnNewShader(const std::string& filename, const std::string& s
            this, SLOT(OnShaderItemChanged(QTreeWidgetItem*, int)));
 }
 
-////////////////////////////////////////////////////////////////////////////////
-void ResourceDock::OnShaderSelectionChanged()
-{
-   dtCore::ShaderManager& shaderManager = dtCore::ShaderManager::GetInstance();
-
-   QList<QTreeWidgetItem*> itemList = mShaderTreeWidget->selectedItems();
-
-   if (itemList.size() > 0)
-   {
-      QTreeWidgetItem* selectedItem = itemList.at(0);
-
-      // Now determine if the selected item is a program.
-      for (int itemIndex = 0; itemIndex < mShaderTreeWidget->topLevelItemCount(); ++itemIndex)
-      {
-         QTreeWidgetItem* fileItem = mShaderTreeWidget->topLevelItem(itemIndex);
-
-         if (fileItem == selectedItem)
-         {
-            ToggleVertexShaderSources(false);
-            ToggleFragmentShaderSources(false);
-            mShaderTreeWidget->SetShaderSourceEnabled(false, false);
-            return;
-         }
-
-         // Iterate through each program to see if they were selected.
-         for (int groupIndex = 0; groupIndex < fileItem->childCount(); groupIndex++)
-         {
-            QTreeWidgetItem* groupItem = fileItem->child(groupIndex);
-
-            if (groupItem == selectedItem)
-            {
-               ToggleVertexShaderSources(false);
-               ToggleFragmentShaderSources(false);
-               mShaderTreeWidget->SetShaderSourceEnabled(false, false);
-               return;
-            }
-
-            for (int programIndex = 0; programIndex < groupItem->childCount(); programIndex++)
-            {
-               QTreeWidgetItem* programItem = groupItem->child(programIndex);
-
-               if (programItem == selectedItem)
-               {
-                  dtCore::ShaderProgram *program =
-                     shaderManager.FindShaderPrototype(programItem->text(0).toStdString(), groupItem->text(0).toStdString());
-                  if (program)
-                  {
-                     const std::vector<std::string>& vertShaderList = program->GetVertexShaders();
-                     const std::vector<std::string>& fragShaderList = program->GetFragmentShaders();
-
-                     bool vertexEnabled = vertShaderList.size()? true: false;
-                     bool fragmentEnabled = fragShaderList.size()? true: false;
-
-                     ToggleVertexShaderSources(vertexEnabled);
-                     ToggleFragmentShaderSources(fragmentEnabled);
-                     mShaderTreeWidget->SetShaderSourceEnabled(vertexEnabled, fragmentEnabled);
-                  }
-                  return;
-               }
-            }
-         }
-      }
-   }
-}
-
-
 ///////////////////////////////////////////////////////////////////////////////
 void ResourceDock::OnShaderItemChanged(QTreeWidgetItem* item, int column)
 {
@@ -626,11 +559,33 @@ void ResourceDock::OnShaderItemChanged(QTreeWidgetItem* item, int column)
 
       if (item->checkState(0) == Qt::Checked)
       {
+         // Selection is used to highlight the item and determine
+         // from the workspace which shader to load into the text editor
+         item->setSelected(true);
+
          // Now load the shader file if it isn't already loaded.
          if (mCurrentShaderFile != fileName)
          {
             shaderManager.Clear();
             shaderManager.LoadShaderDefinitions(fileName.toStdString());
+         }
+
+         std::string programString = item->text(0).toStdString();
+         std::string groupString =  item->parent()->text(0).toStdString();
+
+         dtCore::ShaderProgram *program =
+            shaderManager.FindShaderPrototype(programString, groupString);
+         if (program)
+         {
+            const std::vector<std::string>& vertShaderList = program->GetVertexShaders();
+            const std::vector<std::string>& fragShaderList = program->GetFragmentShaders();
+
+            bool vertexEnabled = vertShaderList.size()? true: false;
+            bool fragmentEnabled = fragShaderList.size()? true: false;
+
+            ToggleVertexShaderSources(vertexEnabled);
+            ToggleFragmentShaderSources(fragmentEnabled);
+            mShaderTreeWidget->SetShaderSourceEnabled(vertexEnabled, fragmentEnabled);
          }
 
          // Store so we know where the source files can be found
@@ -655,6 +610,8 @@ void ResourceDock::OnShaderItemChanged(QTreeWidgetItem* item, int column)
       }
       else if (item->checkState(0) == Qt::Unchecked)
       {
+         item->setSelected(false);
+
          // Only clear the shader program if we are unchecking the current one.
          if (fileName == mCurrentShaderFile &&
             groupName == mCurrentShaderGroup &&
@@ -662,6 +619,10 @@ void ResourceDock::OnShaderItemChanged(QTreeWidgetItem* item, int column)
          {
             mCurrentShaderGroup.clear();
             mCurrentShaderProgram.clear();
+
+            ToggleVertexShaderSources(false);
+            ToggleFragmentShaderSources(false);
+            mShaderTreeWidget->SetShaderSourceEnabled(false, false);
          }
 
          emit RemoveShader();
@@ -1131,6 +1092,29 @@ void ResourceDock::InitGeometryTree()
    mapItem->setText(0, MAP_LABEL);
    mapItem->setFlags(Qt::ItemIsEnabled);
    mGeometryTreeWidget->addTopLevelItem(mapItem);
+
+   mGeometryTreeWidget->setAnimated(true);
+   mGeometryTreeWidget->setAlternatingRowColors(true);
+   mGeometryTreeWidget->headerItem()->setText(0, "");
+   mGeometryTreeWidget->setSelectionMode(QAbstractItemView::NoSelection);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ResourceDock::InitShaderTree()
+{
+   mShaderTreeWidget->setAnimated(true);
+   mShaderTreeWidget->setAlternatingRowColors(true);
+   mShaderTreeWidget->headerItem()->setText(0, "");
+   mShaderTreeWidget->setSelectionMode(QAbstractItemView::NoSelection);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ResourceDock::InitLightTree()
+{
+   mLightTreeWidget->setAnimated(true);
+   mLightTreeWidget->setAlternatingRowColors(true);
+   mLightTreeWidget->headerItem()->setText(0, "");
+   mLightTreeWidget->setSelectionMode(QAbstractItemView::NoSelection);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

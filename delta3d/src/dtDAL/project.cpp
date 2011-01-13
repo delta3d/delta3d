@@ -516,7 +516,7 @@ namespace dtDAL
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   bool Project::IsMapFileValid(const std::string& mapFileName)
+   bool Project::IsValidMapFile(const std::string& mapFileName)
    {
       std::string fullFilePath = dtUtil::FindFileInPathList(mapFileName);
 
