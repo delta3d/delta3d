@@ -568,9 +568,9 @@ namespace dtGame
          {
             frameTickStartCurrent = mGMImpl->mGMStatistics.mStatsTickClock.Tick();
          }
-         
+
          //RefPtr in case it get deleted during a Message. We need to hang onto it for a bit.
-         dtCore::RefPtr<GMComponent>& component = *compItr; 
+         dtCore::RefPtr<GMComponent>& component = *compItr;
 
          if (mGMImpl->mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
          {
@@ -948,7 +948,7 @@ namespace dtGame
          return (first->GetComponentPriority().GetOrderId() < second->GetComponentPriority().GetOrderId());
       }
       else
-      {         
+      {
          return first < second;//compare pointers?  Not sure we care what happens here
       }
 
@@ -962,13 +962,13 @@ namespace dtGame
       {
          std::string errorText = "A component was already registered with the Game Manager with the name: " + component.GetName();
          LOG_ERROR(errorText);
-         throw dtGame::InvalidParameterException( errorText, __FILE__, __LINE__);
+         throw dtGame::InvalidParameterException(errorText, __FILE__, __LINE__);
       }
 
       component.SetGameManager(this);
       component.SetComponentPriority(priority);
 
-      mGMImpl->mComponentList.push_back(dtCore::RefPtr<GMComponent>(&component)); //vector, list 
+      mGMImpl->mComponentList.push_back(dtCore::RefPtr<GMComponent>(&component)); //vector, list
 
       // we sort the items by priority so that components of higher priority get messages first.
       mGMImpl->mComponentList.sort(CompareComponentPriority);
@@ -980,9 +980,9 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::RemoveComponent(GMComponent& component)
    {
-      GMImpl::GMComponentContainer::iterator found = 
+      GMImpl::GMComponentContainer::iterator found =
          std::find(mGMImpl->mComponentList.begin(), mGMImpl->mComponentList.end(), &component);
-      
+
       if (found != mGMImpl->mComponentList.end())
       {
          (*found)->OnRemovedFromGM();
@@ -1033,7 +1033,7 @@ namespace dtGame
    {
       ComponentNameFind(const std::string& name):mName(name)
       {}
- 
+
       bool operator()(dtCore::RefPtr<GMComponent> elem) const
       {
          if (elem.valid() && elem->GetName() == mName) {return true;}
@@ -1042,7 +1042,7 @@ namespace dtGame
 
       std::string mName;
    };
-    
+
    ///////////////////////////////////////////////////////////////////////////////
    GMComponent* GameManager::GetComponentByName(const std::string& name)
    {
@@ -1065,11 +1065,11 @@ namespace dtGame
       GMImpl::GMComponentContainer::const_iterator found = std::find_if(mGMImpl->mComponentList.begin(),
                                                                 mGMImpl->mComponentList.end(),
                                                                 ComponentNameFind(name));
-      if (found != mGMImpl->mComponentList.end()) 
+      if (found != mGMImpl->mComponentList.end())
       {
          return *found;
       }
-      else 
+      else
       {
          return NULL;
       }
@@ -1514,7 +1514,7 @@ namespace dtGame
          toFill.insert(&itor->second->GetActorType());
       }
    }
-   
+
    //////////////////////////////////////////////////////////////////////////
    size_t GameManager::GetNumGameActors() const
    {
@@ -2151,21 +2151,21 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void GameManager::SetRemoveGameEventsOnMapChange(const bool removeGameEventsOnMapChange) 
+   void GameManager::SetRemoveGameEventsOnMapChange(const bool removeGameEventsOnMapChange)
    {
       mGMImpl->mRemoveGameEventsOnMapChange = removeGameEventsOnMapChange;
    }
 
    //////////////////////////////////////////////////////////////////////////
    MessageFactory& GameManager::GetMessageFactory()
-   { 
-      return mGMImpl->mFactory; 
+   {
+      return mGMImpl->mFactory;
    }
 
    //////////////////////////////////////////////////////////////////////////
    const MessageFactory& GameManager::GetMessageFactory() const
-   { 
-      return mGMImpl->mFactory; 
+   {
+      return mGMImpl->mFactory;
    }
 
    //////////////////////////////////////////////////////////////////////////////

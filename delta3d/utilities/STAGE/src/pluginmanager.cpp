@@ -70,7 +70,7 @@ namespace dtEditQt
             const std::string basePluginName = LibrarySharingManager::GetPlatformIndependentLibraryName(fileName);
             PluginFactory* factory = LoadPluginFactory(basePluginName);
             std::string name = factory->GetName();
-            
+
             // check if a plugin with this name already exists
             if(mActivePlugins.find(name) != mActivePlugins.end())
             {
@@ -153,9 +153,9 @@ namespace dtEditQt
    void PluginManager::StartPluginsInConfigFile()
    {
       dtEditQt::EditorSettings settings;
-            
+
       settings.beginGroup(EditorSettings::ACTIVE_PLUGINS);
-      std::string activated = 
+      std::string activated =
          settings.value(EditorSettings::ACTIVE_PLUGINS).toString().toStdString();
       settings.endGroup();
 
@@ -201,7 +201,7 @@ namespace dtEditQt
             os << *i << "/";
          }
       }
-      
+
       dtEditQt::EditorSettings settings;
       settings.beginGroup(EditorSettings::ACTIVE_PLUGINS);
       settings.setValue(EditorSettings::ACTIVE_PLUGINS, os.str().c_str());
@@ -300,7 +300,7 @@ namespace dtEditQt
 
       // call Create() callback of plugin
       mActivePlugins[name]->Create();
-      
+
    }
 
 
@@ -351,7 +351,7 @@ namespace dtEditQt
 
       // erase plugin from list of active plugins
       mActivePlugins.erase(mActivePlugins.find(name));
-      
+
    }
 
 

@@ -235,11 +235,17 @@ namespace  dtDAL
    /////////////////////////////////////////////////////////////////
    void BaseXMLHandler::error(const xercesc::SAXParseException& exc)
    {
+      // Xerces returns 64 bit numbers that are incompatible with
+      // LogMessage so we truncate them to 32 bits here.
+      unsigned int lineNumber = exc.getLineNumber();
+      unsigned int columnNumber = exc.getColumnNumber();
+
       mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__,
-                          "ERROR %d:%d - %s:%s - %s", exc.getLineNumber(),
-                          exc.getColumnNumber(), dtUtil::XMLStringConverter(exc.getPublicId()).c_str(),
+                          "ERROR %d:%d - %s:%s - %s", lineNumber, columnNumber,
+                          dtUtil::XMLStringConverter(exc.getPublicId()).c_str(),
                           dtUtil::XMLStringConverter(exc.getSystemId()).c_str(),
                           dtUtil::XMLStringConverter(exc.getMessage()).c_str());
+
       throw exc;
    }
 

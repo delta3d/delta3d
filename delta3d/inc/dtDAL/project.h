@@ -144,6 +144,13 @@ namespace dtDAL
       void Refresh();
 
       /**
+       * Attempts to parse a file as a map.
+       * @param mapFileName the name of the map file to test
+       * @return true if the map parser was able to parse the file as a map.
+       */
+      bool IsMapFileValid(const std::string& mapFileName);
+
+      /**
        * @return a vector with the names of the maps currently in the project.
        * @throws ExceptionEnum::ProjectInvalidContext if the context is not set.
        */

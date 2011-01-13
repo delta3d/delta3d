@@ -56,6 +56,8 @@
 #include <dtDAL/actorproxy.h>
 #include <dtDAL/resourcedescriptor.h>
 
+
+
 namespace dtDAL
 {
    const std::string Project::LOG_NAME("project.cpp");
@@ -179,7 +181,7 @@ namespace dtDAL
    dtCore::RefPtr<Project> Project::mInstance(NULL);
 
    /////////////////////////////////////////////////////////////////////////////
-   Project::Project() 
+   Project::Project()
    : mImpl(new ProjectImpl())
    {
    }
@@ -511,6 +513,27 @@ namespace dtDAL
       {
          mMapNames.insert(i->first);
       }
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   bool Project::IsMapFileValid(const std::string& mapFileName)
+   {
+      std::string fullFilePath = dtUtil::FindFileInPathList(mapFileName);
+
+      // Memory for the last map is maintained by the MapContentHandler
+      Map* map = NULL;
+      bool isMapValid = true;
+
+      try
+      {
+         mImpl->mParser->Parse(fullFilePath, &map);
+      }
+      catch (dtDAL::XMLLoadParsingException&)
+      {
+         isMapValid = false;
+      }
+
+      return isMapValid;
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -1625,7 +1648,7 @@ namespace dtDAL
          BaseActorObject* ap = i->second->GetProxyById(proxy.GetId());
          if (ap != NULL)
             return i->second.get();
-         
+
          i++;
       }
       return NULL;

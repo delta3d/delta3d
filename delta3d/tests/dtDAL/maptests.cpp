@@ -103,6 +103,7 @@ class MapTests : public CPPUNIT_NS::TestFixture
       CPPUNIT_TEST(TestMapProxySearch);
       CPPUNIT_TEST(TestMapLibraryHandling);
       CPPUNIT_TEST(TestMapEventsModified);
+      CPPUNIT_TEST(TestIsMapFileValid);
       CPPUNIT_TEST(TestLoadMapIntoScene);
       CPPUNIT_TEST(TestMapSaveAndLoad);
       CPPUNIT_TEST(TestMapSaveAndLoadEvents);
@@ -131,6 +132,7 @@ class MapTests : public CPPUNIT_NS::TestFixture
       void TestMapSaveAndLoadPropertyContainerProperty();
       void TestMapSaveAndLoadNestedPropertyContainerArray();
       void TestMapSaveAndLoadActorGroups();
+      void TestIsMapFileValid();
       void TestLoadMapIntoScene();
       void TestLibraryMethods();
       void TestEnvironmentMapLoading();
@@ -786,7 +788,20 @@ void MapTests::TestMapEventsModified()
    }
 }
 
-///////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+void MapTests::TestIsMapFileValid()
+{
+   dtDAL::Project::GetInstance().SetContext(dtUtil::GetDeltaRootPath() + "/examples/data/demoMap");
+
+   std::string validFile("maps/MyCoolMap.xml");
+   std::string invalidFile("SkeletalMeshes/marine_test.xml");
+
+   dtDAL::Project& project = dtDAL::Project::GetInstance();
+   CPPUNIT_ASSERT(project.IsMapFileValid(validFile));
+   CPPUNIT_ASSERT(!project.IsMapFileValid(invalidFile));
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void MapTests::TestMapSaveAndLoad()
 {
    const std::string mapName("Neato Map");
@@ -1085,7 +1100,7 @@ void MapTests::TestMapSaveAndLoad()
             !rdMeshVal.IsEmpty() && rdMeshVal == dirtRD);
 
         //Ensure the read-only Property is read correctly from ExampleTestPropertyProxy(?)
-        { 
+        {
            const int value1 = 5, value2 = 27;
            ap = getActorProperty(*map, "Test_Read_Only_Int", dtDAL::DataType::INT);
 
