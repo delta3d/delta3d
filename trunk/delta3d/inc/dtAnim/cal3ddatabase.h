@@ -47,6 +47,9 @@ namespace dtAnim
       public:
 
          static Cal3DDatabase& GetInstance();
+
+         /// Try to parse a file as a character file
+         bool IsFileValid(const std::string& filename);
          
          ///Load an animated entity definition file and return the Cal3DModelWrapper
          dtCore::RefPtr<Cal3DModelWrapper> Load(const std::string &filename);

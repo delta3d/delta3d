@@ -24,6 +24,7 @@
 #include <dtAnim/animnodebuilder.h>
 #include <dtUtil/log.h>
 #include <dtUtil/xerceswriter.h>
+#include <dtUtil/xercesparser.h>
 
 #include <osgDB/FileNameUtils>
 #include <osg/Texture2D>
@@ -112,6 +113,15 @@ namespace dtAnim
       return *mInstance;
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   bool Cal3DDatabase::IsFileValid(const std::string& filename)
+   {
+      dtUtil::XercesParser parser;
+      CharacterFileHandler handler;
+
+      return parser.Parse(filename, handler, "animationdefinition.xsd");
+   }
+
    /////////////////////////////////////////////////////////////////////////////
    AnimNodeBuilder& Cal3DDatabase::GetNodeBuilder()
    {
@@ -148,7 +158,7 @@ namespace dtAnim
    {
       dtUtil::Functor<void, TYPELIST_1(Cal3DModelData*)> loadCallback =
          dtUtil::MakeFunctor(&Cal3DDatabase::OnAsynchronousLoadCompleted, this);
-      
+
       mFileLoader->LoadAsynchronously(file, loadCallback);
    }
 
@@ -287,9 +297,9 @@ namespace dtAnim
    /////////////////////////////////////////////////////////////////////////////
    void Cal3DDatabase::OnAsynchronousLoadCompleted(Cal3DModelData* loadedModelData)
    {
-      if (loadedModelData == NULL) 
-      { 
-         return; 
+      if (loadedModelData == NULL)
+      {
+         return;
       }
 
       OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mAsynchronousLoadLock);
@@ -361,4 +371,5 @@ namespace dtAnim
       OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mAsynchronousLoadLock);
       return FindWithFunctor(mModelData, findWithCoreModel(coreModel));
    }
+
 } // namespace dtAnim
