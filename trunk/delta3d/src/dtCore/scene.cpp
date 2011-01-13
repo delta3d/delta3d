@@ -752,6 +752,8 @@ void Scene::UseSceneLight(bool lightState)
    else
    {
       mImpl->mLights[0]->SetEnabled(lightState);
+
+      // If the light is not already in the scene, add it
       if (GetChildIndex(mImpl->mLights[0].get()) == GetNumberOfAddedDrawable())
       {
          AddChild(mImpl->mLights[0].get());
