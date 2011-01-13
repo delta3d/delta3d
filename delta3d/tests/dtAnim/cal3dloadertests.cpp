@@ -19,7 +19,7 @@
 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 * THE SOFTWARE.
-* 
+*
 * This software was developed by Alion Science and Technology Corporation under
 * circumstances in which the U. S. Government may have rights in the software.
 *
@@ -55,6 +55,7 @@ namespace dtAnim
    class Cal3DLoaderTests : public CPPUNIT_NS::TestFixture
    {
       CPPUNIT_TEST_SUITE(Cal3DLoaderTests);
+         CPPUNIT_TEST(TestIsFileValid);
          CPPUNIT_TEST(TestLoadFile);
          CPPUNIT_TEST(TestLODOptions);
          CPPUNIT_TEST(TestModelData);
@@ -64,7 +65,7 @@ namespace dtAnim
          Cal3DLoaderTests()
          {
          }
-         
+
          void setUp()
          {
             dtDAL::Project::GetInstance().SetContext(dtUtil::GetDeltaRootPath() + "/examples/data/demoMap");
@@ -72,7 +73,7 @@ namespace dtAnim
             if (nodeBuilder.SupportsSoftware())
             {
                nodeBuilder.SetCreate(AnimNodeBuilder::CreateFunc(&nodeBuilder, &AnimNodeBuilder::CreateSoftware));
-            } 
+            }
 
             mHelper = new dtAnim::AnimationHelper;
          }
@@ -81,6 +82,16 @@ namespace dtAnim
          {
             Cal3DDatabase::GetInstance().TruncateDatabase();
             mHelper = NULL;
+         }
+
+         void TestIsFileValid()
+         {
+            std::string validFile = dtUtil::FindFileInPathList("SkeletalMeshes/marine_test.xml");
+            std::string invalidFile = dtUtil::FindFileInPathList("maps/TestAnim.xml");
+
+            dtAnim::Cal3DDatabase& database = dtAnim::Cal3DDatabase::GetInstance();
+            CPPUNIT_ASSERT(database.IsFileValid(validFile));
+            CPPUNIT_ASSERT(!database.IsFileValid(invalidFile));
          }
 
          void TestLoadFile()
@@ -95,11 +106,11 @@ namespace dtAnim
             mHelper->LoadModel(modelPath);
 
             SequenceMixer& mixer = mHelper->GetSequenceMixer();
-            
+
             std::vector<const Animatable*> toFill;
             mixer.GetRegisteredAnimations(toFill);
 
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("The number of animatables loaded from the file is incorrect.", 
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("The number of animatables loaded from the file is incorrect.",
                   size_t(9U), toFill.size());
 
             const Animatable* runAnim = mixer.GetRegisteredAnimation("Run");
@@ -107,13 +118,13 @@ namespace dtAnim
 
             const AnimationChannel* runChannel = dynamic_cast<const AnimationChannel*>(runAnim);
             TestLoadedAnimationChannel(runChannel, 0.0f, false, true);
-            
+
             const Animatable* walkAnim = mixer.GetRegisteredAnimation("Walk");
             TestLoadedAnimatable(walkAnim, "Walk", 0.0f, 0.0f, 0.0f, 1.0f, 1.0f);
 
             const AnimationChannel* walkChannel = dynamic_cast<const AnimationChannel*>(walkAnim);
             TestLoadedAnimationChannel(walkChannel, 0.0f, false, true);
-            
+
             const Animatable* idleAnim = mixer.GetRegisteredAnimation("Idle");
             TestLoadedAnimatable(idleAnim, "Idle", 0.0f, 0.0f, 0.0f, 1.0f, 1.0f);
 
@@ -166,7 +177,7 @@ namespace dtAnim
             lodOptions.SetMaxVisibleDistance(5.0);
             CPPUNIT_ASSERT_DOUBLES_EQUAL(lodOptions.GetMaxVisibleDistance(), 5.0, 0.01);
          }
-         
+
          void TestModelData()
          {
             std::string modelPath = dtUtil::FindFileInPathList("SkeletalMeshes/marine_test.xml");
@@ -182,10 +193,10 @@ namespace dtAnim
 
             CPPUNIT_ASSERT_EQUAL(modelData->GetFilename(), modelPath);
 
-            CPPUNIT_ASSERT(modelData->GetVertexBufferObject() == NULL); 
+            CPPUNIT_ASSERT(modelData->GetVertexBufferObject() == NULL);
             CPPUNIT_ASSERT(modelData->GetElementBufferObject() == NULL);
 
-            CPPUNIT_ASSERT(modelData->GetCoreModel() == wrapper->GetCalModel()->getCoreModel()); 
+            CPPUNIT_ASSERT(modelData->GetCoreModel() == wrapper->GetCalModel()->getCoreModel());
 
             const dtAnim::LODOptions& lodOptions = modelData->GetLODOptions();
 
@@ -204,14 +215,14 @@ namespace dtAnim
             modelData->SetShaderGroupName(testString);
             CPPUNIT_ASSERT_EQUAL(testString, modelData->GetShaderGroupName());
 
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("71 should have been loaded from the test xml file", 
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("71 should have been loaded from the test xml file",
                   71U, modelData->GetShaderMaxBones());
             modelData->SetShaderMaxBones(72);
             CPPUNIT_ASSERT_EQUAL(72U, modelData->GetShaderMaxBones());
          }
-         
+
       private:
-         
+
          void TestEmptyHelper()
          {
             CPPUNIT_ASSERT(mHelper->GetNode() == NULL);
@@ -222,9 +233,9 @@ namespace dtAnim
             CPPUNIT_ASSERT_EQUAL(0U, unsigned(toFill.size()));
          }
 
-         void TestLoadedAnimatable(const Animatable* anim, 
-               const std::string& name, float startDelay, 
-               float fadeIn, float fadeOut, 
+         void TestLoadedAnimatable(const Animatable* anim,
+               const std::string& name, float startDelay,
+               float fadeIn, float fadeOut,
                float speed, float baseWeight)
          {
             CPPUNIT_ASSERT(anim != NULL);
@@ -236,7 +247,7 @@ namespace dtAnim
             CPPUNIT_ASSERT_DOUBLES_EQUAL(baseWeight, anim->GetBaseWeight(), 0.001f);
          }
 
-         void TestLoadedAnimationChannel(const AnimationChannel* channel, 
+         void TestLoadedAnimationChannel(const AnimationChannel* channel,
                float maxDuration, bool isAction, bool isLooping)
          {
             CPPUNIT_ASSERT(channel != NULL);
@@ -244,15 +255,15 @@ namespace dtAnim
             CPPUNIT_ASSERT_EQUAL(isAction, channel->IsAction());
             CPPUNIT_ASSERT_EQUAL(isLooping, channel->IsLooping());
          }
-         
-         void TestLoadedAnimationSequence(const AnimationSequence* sequence, 
+
+         void TestLoadedAnimationSequence(const AnimationSequence* sequence,
                const std::vector<std::string>& childNames)
          {
             CPPUNIT_ASSERT(sequence != NULL);
             const AnimationSequence::AnimationContainer& children = sequence->GetChildAnimations();
-            
+
             CPPUNIT_ASSERT_EQUAL(childNames.size(), children.size());
-            
+
             AnimationSequence::AnimationContainer::const_iterator i = children.begin();
             std::vector<std::string>::const_iterator j = childNames.begin();
             for (;i != children.end(); ++i, ++j)
@@ -265,7 +276,7 @@ namespace dtAnim
    };
 
    // Registers the fixture into the 'registry'
-   CPPUNIT_TEST_SUITE_REGISTRATION( Cal3DLoaderTests ); 
+   CPPUNIT_TEST_SUITE_REGISTRATION( Cal3DLoaderTests );
 
 
 
@@ -527,5 +538,5 @@ namespace dtAnim
    const float SequenceLoadingTests::EPSILON = 0.001f;
 
    // Registers the fixture into the 'registry'
-   CPPUNIT_TEST_SUITE_REGISTRATION( SequenceLoadingTests ); 
+   CPPUNIT_TEST_SUITE_REGISTRATION( SequenceLoadingTests );
 }
