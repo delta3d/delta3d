@@ -401,40 +401,37 @@ void ObjectWorkspace::UpdateGeometryList()
    // Populate the static mesh list.
    QString staticMeshDir = QString(mContextPath.c_str()) + "/staticmeshes";
 
-   if (directory.cd(staticMeshDir))
+   QStringList staticMeshNameFilters;
+   staticMeshNameFilters << "*.ive" << "*.osg";
+
+   QFileInfoList staticMeshFileList;
+   GetRecursiveFileInfoFromDir(staticMeshDir, staticMeshNameFilters, staticMeshFileList);
+
+   while (!staticMeshFileList.empty())
    {
-      QStringList nameFilters;
-      nameFilters << "*.ive" << "*.osg";
+      QFileInfo fileInfo = staticMeshFileList.takeFirst();
 
-      QFileInfoList fileList = directory.entryInfoList(nameFilters, QDir::Files);
-
-      while (!fileList.empty())
-      {
-         QFileInfo fileInfo = fileList.takeFirst();
-         mResourceDock->OnNewGeometry(staticMeshDir.toStdString(), fileInfo.fileName().toStdString());
-      }
+      std::string pathName = fileInfo.absolutePath().toStdString();
+      std::string fileName = fileInfo.fileName().toStdString();
+      mResourceDock->OnNewGeometry(pathName, fileName);
    }
 
    // Populate the skeletal mesh list.
    QString skeletalMeshDir = QString(mContextPath.c_str()) + "/skeletalmeshes";
 
-   QStringList nameFilters;
-   nameFilters << "*.dtChar";
+   QStringList skeltalMeshNameFilter;
+   skeltalMeshNameFilter << "*.dtChar";
 
    QFileInfoList skeletalMeshFileList;
-   GetRecursiveFileInfoFromDir(skeletalMeshDir, nameFilters, skeletalMeshFileList);
+   GetRecursiveFileInfoFromDir(skeletalMeshDir, skeltalMeshNameFilter, skeletalMeshFileList);
 
    while (!skeletalMeshFileList.empty())
    {
       QFileInfo fileInfo = skeletalMeshFileList.takeFirst();
 
-      // If the xml is a character
-      if (fileInfo.absoluteFilePath().endsWith(".dtChar"))
-      {
-         std::string pathName = fileInfo.absolutePath().toStdString();
-         std::string fileName = fileInfo.fileName().toStdString();
-         mResourceDock->OnNewGeometry(pathName, fileName);
-      }
+      std::string pathName = fileInfo.absolutePath().toStdString();
+      std::string fileName = fileInfo.fileName().toStdString();
+      mResourceDock->OnNewGeometry(pathName, fileName);
    }
 }
 

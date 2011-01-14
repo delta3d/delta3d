@@ -355,7 +355,6 @@ void ResourceDock::OnNewGeometry(const std::string& path, const std::string& fil
    if (listItem)
    {
       listItem->addChild(geometryItem);
-      //listItem->setExpanded(true);
    }
 }
 
@@ -1093,6 +1092,8 @@ void ResourceDock::InitGeometryTree()
    mapItem->setFlags(Qt::ItemIsEnabled);
    mGeometryTreeWidget->addTopLevelItem(mapItem);
 
+   mGeometryTreeWidget->setSortingEnabled(true);
+   mGeometryTreeWidget->sortByColumn(0, Qt::AscendingOrder);
    mGeometryTreeWidget->setAnimated(true);
    mGeometryTreeWidget->setAlternatingRowColors(true);
    mGeometryTreeWidget->headerItem()->setText(0, "");
