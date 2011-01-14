@@ -54,6 +54,7 @@
 #include <dtDirectorNodes/animateactoraction.h>
 #include <dtDirectorNodes/sendmessageaction.h>
 #include <dtDirectorNodes/sendeventmessageaction.h>
+#include <dtDirectorNodes/logaction.h>
 
 // Values
 #include <dtDirectorNodes/externalvaluenode.h>
@@ -127,6 +128,7 @@ namespace dtDirector
    RefPtr<NodeType> NodeLibraryRegistry::ANIMATE_ACTOR_ACTION_NODE_TYPE(         new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Animate Actor",             "Cinematic",   "Cinematic",   "Animates a skeletal mesh actor."));
    RefPtr<NodeType> NodeLibraryRegistry::SEND_MESSAGE_ACTION_NODE_TYPE(          new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Send Message Action",       "Messages",    "Messages",    "Sends a Game Message."));
    RefPtr<NodeType> NodeLibraryRegistry::SEND_EVENT_MESSAGE_ACTION_NODE_TYPE(    new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Send Event Message Action", "Messages",    "Messages",    "Sends a Game Event Message."));
+   RefPtr<NodeType> NodeLibraryRegistry::LOG_ACTION_NODE_TYPE(                   new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Log Message",               "General",     "Actions",     "Writes out a message to the log."));
 
    // Values
    RefPtr<NodeType> NodeLibraryRegistry::EXTERNAL_VALUE_NODE_TYPE(               new dtDirector::NodeType(dtDirector::NodeType::LINK_NODE,   "Value Link",                "Core",        "Links",       "This node creates a value link connector in its parent graph."));
@@ -201,6 +203,7 @@ namespace dtDirector
       mNodeFactory->RegisterType<AnimateActorAction>(ANIMATE_ACTOR_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<SendMessageAction>(SEND_MESSAGE_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<SendEventMessageAction>(SEND_EVENT_MESSAGE_ACTION_NODE_TYPE.get());
+      mNodeFactory->RegisterType<LogAction>(LOG_ACTION_NODE_TYPE.get());
 
       // Values
       mNodeFactory->RegisterType<ExternalValueNode>(EXTERNAL_VALUE_NODE_TYPE.get());

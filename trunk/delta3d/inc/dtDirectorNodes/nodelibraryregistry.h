@@ -69,6 +69,7 @@ namespace dtDirector
       static dtCore::RefPtr<dtDirector::NodeType> ANIMATE_ACTOR_ACTION_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> SEND_MESSAGE_ACTION_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> SEND_EVENT_MESSAGE_ACTION_NODE_TYPE;
+      static dtCore::RefPtr<dtDirector::NodeType> LOG_ACTION_NODE_TYPE;
 
       /// Values
       static dtCore::RefPtr<dtDirector::NodeType> EXTERNAL_VALUE_NODE_TYPE;
