@@ -22,6 +22,7 @@
 #define DELTA_OBJECTWORKSPACE
 
 #include <QtGui/QMainWindow>
+#include <QtCore/QFileInfoList>
 #include <dtCore/refptr.h>
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -30,7 +31,6 @@ class ResourceDock;
 class QAction;
 class QToolBar;
 class QHBoxLayout;
-
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -74,13 +74,6 @@ public slots:
    void OnLoadGeometry(const std::string& fullName);
 
 private:
-
-   enum eXmlFileType
-   {
-      UNKNOWN = -1,
-      SKELETAL_MESH,
-      MAP
-   };
 
    QHBoxLayout* mCentralLayout;
 
@@ -129,7 +122,7 @@ private:
    ObjectViewer* mViewer;
 
    QObject* GetResourceObject();
-   eXmlFileType GetXmlFileType(const std::string& filename);
+   void GetRecursiveFileInfoFromDir(const QString& rootDir, const QStringList& fileFilters, QFileInfoList& outList);
    void CreateMenus();
    void CreateFileMenuActions();
    void CreateModeToolbarActions();
@@ -138,6 +131,9 @@ private:
    void CreateShaderToolbarActions();
    void CreateToolbars();
    void UpdateResourceLists();
+   void UpdateGeometryList();
+   void UpdateShaderList();
+   void UpdateMapList();
    bool IsDeltaMapFile(const QString& filename);
 
 private slots:

@@ -73,21 +73,29 @@ QObject* ObjectWorkspace::GetResourceObject()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-ObjectWorkspace::eXmlFileType ObjectWorkspace::GetXmlFileType(const std::string& filename)
+void ObjectWorkspace::GetRecursiveFileInfoFromDir(const QString& rootDir, const QStringList& nameFilters, QFileInfoList& outList)
 {
-   // Default to unknown
-   eXmlFileType fileType = UNKNOWN;
+   QDir directory;
 
-   if (dtDAL::Project::GetInstance().IsValidMapFile(filename))
+   if (directory.cd(rootDir))
    {
-      fileType = MAP;
-   }
-   else if (dtAnim::Cal3DDatabase::GetInstance().IsFileValid(filename))
-   {
-      fileType = SKELETAL_MESH;
-   }
+      outList = directory.entryInfoList(nameFilters, QDir::Files);
 
-   return fileType;
+      QFileInfoList dirList = directory.entryInfoList(QStringList(), QDir::AllDirs);
+
+      while (!dirList.empty())
+      {
+         QFileInfoList subDirectoryFiles;
+         QFileInfo fileInfo = dirList.takeFirst();
+
+         if (fileInfo.fileName() != "." && fileInfo.fileName() != "..")
+         {
+            GetRecursiveFileInfoFromDir(fileInfo.absoluteFilePath(), nameFilters, subDirectoryFiles);
+         }
+
+         outList += subDirectoryFiles;
+      }
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -107,33 +115,18 @@ void ObjectWorkspace::dropEvent(QDropEvent *event)
    if (!urlList.empty())
    {
       QString filename = urlList.first().toLocalFile();
-      QString baseName = QFileInfo(filename).baseName();
 
       bool attemptToLoad = true;
 
-     if (filename.endsWith(".xml"))
-     {
-         eXmlFileType fileType = GetXmlFileType(filename.toStdString());
+      // Is this an unsupported xml like a map?
+      if (filename.endsWith(".dtMap"))
+      {
+         attemptToLoad = false;
 
-         // Is this an unsupported xml like a map?
-         if (fileType != SKELETAL_MESH)
-         {
-            attemptToLoad = false;
-
-            if (fileType == MAP)
-            {
-               // Note: maps are tricky since the filename does not necessarily
-               // correspond to the map's actual name.  Furthermore, map names
-               // are not guaranteed to be unique.  ...drag and drop not recommended.
-               QMessageBox::information(this, "Info", "Drag & drop not supported for maps.", QMessageBox::Ok);
-
-               //OnLoadMap(baseName.toStdString());
-            }
-            else
-            {
-               QMessageBox::critical(this, "Error", "Unknown file type.", QMessageBox::Ok);
-            }
-         }
+         // Note: maps are tricky since the filename does not necessarily
+         // correspond to the map's actual name.  Furthermore, map names
+         // are not guaranteed to be unique.  ...drag and drop not recommended.
+         QMessageBox::information(this, "Info", "Drag & drop not supported for maps.", QMessageBox::Ok);
       }
 
       // If the file was identified as either static or skeletal mesh
@@ -394,84 +387,103 @@ void ObjectWorkspace::UpdateResourceLists()
    if (dtDAL::Project::GetInstance().IsContextValid())
    {
       assert(!mContextPath.empty());
+      UpdateShaderList();
+      UpdateGeometryList();
+      UpdateMapList();
+   }
+}
 
-      QDir directory(mContextPath.c_str());
+////////////////////////////////////////////////////////////////////////////////
+void ObjectWorkspace::UpdateGeometryList()
+{
+   QDir directory(mContextPath.c_str());
 
-      if (directory.cd(QString(mContextPath.c_str()) + "/shaders"))
+   // Populate the static mesh list.
+   QString staticMeshDir = QString(mContextPath.c_str()) + "/staticmeshes";
+
+   if (directory.cd(staticMeshDir))
+   {
+      QStringList nameFilters;
+      nameFilters << "*.ive" << "*.osg";
+
+      QFileInfoList fileList = directory.entryInfoList(nameFilters, QDir::Files);
+
+      while (!fileList.empty())
       {
-         QStringList nameFilters;
-         nameFilters << "*.dtShader" << "*.xml";
+         QFileInfo fileInfo = fileList.takeFirst();
+         mResourceDock->OnNewGeometry(staticMeshDir.toStdString(), fileInfo.fileName().toStdString());
+      }
+   }
 
-         QFileInfoList fileList = directory.entryInfoList(nameFilters, QDir::Files);
+   // Populate the skeletal mesh list.
+   QString skeletalMeshDir = QString(mContextPath.c_str()) + "/skeletalmeshes";
 
-         // Try to load all definitions
-         while (!fileList.empty())
-         {
-            QFileInfo fileInfo = fileList.takeFirst();
-            mShaderDefinitionName = QString("%1/shaders/%2").arg(QString(mContextPath.c_str()), fileInfo.fileName());
-            emit LoadShaderDefinition(mShaderDefinitionName);
-         }
+   QStringList nameFilters;
+   nameFilters << "*.dtChar";
 
-         directory.cdUp();
+   QFileInfoList skeletalMeshFileList;
+   GetRecursiveFileInfoFromDir(skeletalMeshDir, nameFilters, skeletalMeshFileList);
+
+   while (!skeletalMeshFileList.empty())
+   {
+      QFileInfo fileInfo = skeletalMeshFileList.takeFirst();
+
+      // If the xml is a character
+      if (fileInfo.absoluteFilePath().endsWith(".dtChar"))
+      {
+         std::string pathName = fileInfo.absolutePath().toStdString();
+         std::string fileName = fileInfo.fileName().toStdString();
+         mResourceDock->OnNewGeometry(pathName, fileName);
+      }
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ObjectWorkspace::UpdateShaderList()
+{
+   QDir directory(mContextPath.c_str());
+
+   if (directory.cd(QString(mContextPath.c_str()) + "/shaders"))
+   {
+      QStringList nameFilters;
+      nameFilters << "*.dtShader" << "*.xml";
+
+      QFileInfoList fileList = directory.entryInfoList(nameFilters, QDir::Files);
+
+      // Try to load all definitions
+      while (!fileList.empty())
+      {
+         QFileInfo fileInfo = fileList.takeFirst();
+         mShaderDefinitionName = QString("%1/shaders/%2").arg(QString(mContextPath.c_str()), fileInfo.fileName());
+         emit LoadShaderDefinition(mShaderDefinitionName);
       }
 
-      // Now load all the additional shader files in the shader lists.
-      for (int shaderIndex = 0; shaderIndex < mAdditionalShaderFiles.size(); shaderIndex++)
-      {
-         emit LoadShaderDefinition(mAdditionalShaderFiles.at(shaderIndex).c_str());
-      }
+      directory.cdUp();
+   }
 
-      // Populate the map list.
-      QStringList mapList;
-      std::set<std::string> mapNames = dtDAL::Project::GetInstance().GetMapNames();
-      for (std::set<std::string>::iterator map = mapNames.begin(); map != mapNames.end(); map++)
-      {
-         mapList << map->c_str();
-      }
+   // Now load all the additional shader files in the shader lists.
+   for (int shaderIndex = 0; shaderIndex < mAdditionalShaderFiles.size(); shaderIndex++)
+   {
+      emit LoadShaderDefinition(mAdditionalShaderFiles.at(shaderIndex).c_str());
+   }
+}
 
-      for (int mapIndex = 0; mapIndex < mapList.size(); mapIndex++)
-      {
-         mResourceDock->OnNewMap(mapList.at(mapIndex).toStdString());
-      }
+////////////////////////////////////////////////////////////////////////////////
+void ObjectWorkspace::UpdateMapList()
+{
+   QDir directory(mContextPath.c_str());
 
-      // Populate the static mesh list.
-      QString staticMeshDir = QString(mContextPath.c_str()) + "/staticmeshes";
+   // Populate the map list.
+   QStringList mapList;
+   std::set<std::string> mapNames = dtDAL::Project::GetInstance().GetMapNames();
+   for (std::set<std::string>::iterator map = mapNames.begin(); map != mapNames.end(); map++)
+   {
+      mapList << map->c_str();
+   }
 
-      if (directory.cd(staticMeshDir))
-      {
-         QStringList nameFilters;
-         nameFilters << "*.ive" << "*.osg";
-
-         QFileInfoList fileList = directory.entryInfoList(nameFilters, QDir::Files);
-
-         while (!fileList.empty())
-         {
-            QFileInfo fileInfo = fileList.takeFirst();
-            mResourceDock->OnNewGeometry(staticMeshDir.toStdString(), fileInfo.fileName().toStdString());
-         }
-      }
-
-      // Populate the skeletal mesh list.
-      QString skeletalMeshDir = QString(mContextPath.c_str()) + "/skeletalmeshes";
-
-      if (directory.cd(skeletalMeshDir))
-      {
-         QStringList nameFilters;
-         nameFilters << "*.xml";
-
-         QFileInfoList fileList = directory.entryInfoList(nameFilters, QDir::Files);
-
-         while (!fileList.empty())
-         {
-            QFileInfo fileInfo = fileList.takeFirst();
-
-            // If the xml is a character
-            if (GetXmlFileType(fileInfo.absoluteFilePath().toStdString()) == SKELETAL_MESH)
-            {
-               mResourceDock->OnNewGeometry(skeletalMeshDir.toStdString(), fileInfo.fileName().toStdString());
-            }
-         }
-      }
+   for (int mapIndex = 0; mapIndex < mapList.size(); mapIndex++)
+   {
+      mResourceDock->OnNewMap(mapList.at(mapIndex).toStdString());
    }
 }
 
