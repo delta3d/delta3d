@@ -30,13 +30,7 @@
 #include <dtCore/compass.h>
 
 #include <dtABC/application.h>
-
 #include <dtDAL/actorproxy.h>
-
-#include <dtAnim/posemeshdatabase.h>
-#include <dtAnim/posemeshutility.h>
-#include <dtAnim/posemesh.h>
-#include <dtAnim/attachmentcontroller.h>
 
 #include <vector>
 
@@ -150,11 +144,10 @@ private:
    dtCore::RefPtr<osg::Geode> mGridGeode;
 
    std::vector<dtCore::RefPtr<dtCore::Transformable> > mLightArrowTransformable;
-   std::vector<dtCore::RefPtr<dtCore::Object> >        mLightArrow;
+   std::vector<dtCore::RefPtr<dtCore::Object> > mLightArrow;
 
    int   mCurrentLight;
    bool  mShouldGenerateTangents;
-   //float mLightScale;
 };
 
 #endif // DELTA_OBJECT_VIEWER

@@ -1,9 +1,9 @@
 #include "ObjectWorkspace.h"
-#include <dtQt/osggraphicswindowqt.h>
-#include <dtQt/projectcontextdialog.h>
 #include "ResourceDock.h"
 #include "ObjectViewer.h"
 
+#include <dtQt/osggraphicswindowqt.h>
+#include <dtQt/projectcontextdialog.h>
 #include <dtUtil/fileutils.h>
 #include <dtUtil/xercesparser.h>
 #include <dtDAL/project.h>
@@ -266,6 +266,7 @@ void ObjectWorkspace::CreateShaderToolbarActions()
 
    mOpenVertexShaderAction->setEnabled(false);
    mOpenFragmentShaderAction->setEnabled(false);
+   mRecompileAction->setEnabled(false);
 
    connect(mRecompileAction, SIGNAL(triggered()), this, SLOT(OnRecompileClicked()));
 
@@ -362,12 +363,20 @@ void ObjectWorkspace::OnRecompileClicked()
 void ObjectWorkspace::OnToggleVertexShaderSource(bool enabled)
 {
    mOpenVertexShaderAction->setEnabled(enabled);
+
+   // If a shader is editable, allow recompile
+   mRecompileAction->setEnabled(mOpenVertexShaderAction->isEnabled() ||
+                                mOpenFragmentShaderAction->isEnabled());
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void ObjectWorkspace::OnToggleFragmentShaderSource(bool enabled)
 {
    mOpenFragmentShaderAction->setEnabled(enabled);
+
+   // If a shader is editable, allow recompile
+   mRecompileAction->setEnabled(mOpenVertexShaderAction->isEnabled() ||
+                                mOpenFragmentShaderAction->isEnabled());
 }
 
 ////////////////////////////////////////////////////////////////////////////////

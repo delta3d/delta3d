@@ -35,36 +35,31 @@
 #include <dtAnim/chardrawable.h>
 #include <dtAnim/cal3ddatabase.h>
 
-#include <osg/Geode>
-#include <osg/Shape>
-#include <osg/ShapeDrawable>
 #include <osg/PolygonMode>
 #include <osg/PolygonOffset>
 #include <osg/Material>
 #include <osg/MatrixTransform>
 #include <osgUtil/TangentSpaceGenerator>
 
-#include <osgViewer/GraphicsWindow>
 #include <osgViewer/CompositeViewer>
 
 #include <assert.h>
 
-///////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 ObjectViewer::ObjectViewer()
    : mCurrentLight(0)
    , mShouldGenerateTangents(true)
-   //, mLightScale(1.0f)
 {
    mShadedScene   = new osg::Group;
    mUnShadedScene = new osg::Group;
 }
 
-///////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 ObjectViewer::~ObjectViewer()
 {
 }
 
-///////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void ObjectViewer::Config()
 {
    dtABC::Application::Config();
@@ -115,7 +110,7 @@ void ObjectViewer::Config()
    OnEnterObjectMode();
 }
 
-///////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void ObjectViewer::OnLoadShaderFile(const QString& filename)
 {
    try
@@ -292,7 +287,7 @@ void ObjectViewer::OnLoadMapFile(const std::string& filename)
    }
 }
 
-///////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void ObjectViewer::OnLoadGeometryFile(const std::string& filename)
 {
    OnUnloadGeometryFile();
@@ -350,7 +345,7 @@ void ObjectViewer::OnLoadGeometryFile(const std::string& filename)
    }
 }
 
-///////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void ObjectViewer::OnUnloadGeometryFile()
 {
    if (mObject.valid())
@@ -387,7 +382,7 @@ void ObjectViewer::OnUnloadGeometryFile()
    }
 }
 
-///////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void ObjectViewer::OnApplyShader(const std::string& groupName, const std::string& programName)
 {
    dtCore::ShaderManager& shaderManager = dtCore::ShaderManager::GetInstance();
@@ -402,14 +397,14 @@ void ObjectViewer::OnApplyShader(const std::string& groupName, const std::string
    osgProgram->addBindAttribLocation("tangentAttrib", 6);
 }
 
-///////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void ObjectViewer::OnRemoveShader()
 {
    dtCore::ShaderManager &shaderManager = dtCore::ShaderManager::GetInstance();
    shaderManager.UnassignShaderFromNode(*mShadedScene);
 }
 
-///////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void ObjectViewer::OnSetShaded()
 {
    mShadedScene->removeChild(mWireDecorator.get());
@@ -418,7 +413,7 @@ void ObjectViewer::OnSetShaded()
    mShadedScene->addChild(mShadeDecorator.get());
 }
 
-///////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void ObjectViewer::OnSetWireframe()
 {
    mShadedScene->removeChild(mWireDecorator.get());
@@ -427,7 +422,7 @@ void ObjectViewer::OnSetWireframe()
    mShadedScene->addChild(mWireDecorator.get());
 }
 
-///////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void ObjectViewer::OnSetShadedWireframe()
 {
    mShadedScene->removeChild(mWireDecorator.get());
@@ -437,13 +432,13 @@ void ObjectViewer::OnSetShadedWireframe()
    mShadedScene->addChild(mShadeDecorator.get());
 }
 
-///////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void ObjectViewer::OnSetGenerateTangentAttribute(bool shouldGenerate)
 {
    mShouldGenerateTangents = shouldGenerate;
 }
 
-///////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void ObjectViewer::OnToggleGrid(bool shouldDisplay)
 {
    if (shouldDisplay)
@@ -597,21 +592,21 @@ void ObjectViewer::OnSetLightRotation(int id, const osg::Vec3& rotation)
    mLightArrowTransformable[id]->SetTransform(transform);
 }
 
-///////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void ObjectViewer::OnSetAmbient(int id, const osg::Vec4& color)
 {
    dtCore::Light* light = GetScene()->GetLight(id);
    light->SetAmbient(color);
 }
 
-///////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void ObjectViewer::OnSetDiffuse(int id, const osg::Vec4& color)
 {
    dtCore::Light* light = GetScene()->GetLight(id);
    light->SetDiffuse(color);
 }
 
-///////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void ObjectViewer::OnSetSpecular(int id, const osg::Vec4& color)
 {
    dtCore::Light* light = GetScene()->GetLight(id);
@@ -674,7 +669,7 @@ void ObjectViewer::OnSetLightQuadratic(int id, float quadratic)
    }
 }
 
-///////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void ObjectViewer::OnEnterObjectMode()
 {
    mModelMotion->SetEnabled(true);
@@ -685,7 +680,7 @@ void ObjectViewer::OnEnterObjectMode()
    }
 }
 
-///////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void ObjectViewer::OnEnterLightMode()
 {
    mModelMotion->SetEnabled(false);
@@ -714,13 +709,14 @@ void ObjectViewer::OnLocalSpaceMode()
    }
 }
 
-///////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void ObjectViewer::InitWireDecorator()
 {
    osg::StateSet* stateset = new osg::StateSet;
    osg::PolygonOffset* polyOffset = new osg::PolygonOffset;
    polyOffset->setFactor(-1.0f);
    polyOffset->setUnits(-1.0f);
+
    osg::PolygonMode* polyMode = new osg::PolygonMode;
    polyMode->setMode(osg::PolygonMode::FRONT_AND_BACK, osg::PolygonMode::LINE);
    stateset->setAttributeAndModes(polyOffset, osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON);
@@ -738,7 +734,7 @@ void ObjectViewer::InitWireDecorator()
          osg::StateAttribute::PROTECTED | osg::StateAttribute::OFF);
 }
 
-///////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void ObjectViewer::InitGridPlanes()
 {
    const int GRID_LINE_COUNT = 49;
@@ -752,18 +748,18 @@ void ObjectViewer::InitGridPlanes()
 
    for (int ii(0L); ii < GRID_LINE_COUNT; ii++)
    {
-      verts[indx++].set( -length + ii * GRID_LINE_SPACING,  length, 0.0f);
-      verts[indx++].set( -length + ii * GRID_LINE_SPACING, -length, 0.0f);
+      verts[indx++].set(-length + ii * GRID_LINE_SPACING,  length, 0.0f);
+      verts[indx++].set(-length + ii * GRID_LINE_SPACING, -length, 0.0f);
    }
 
-   for ( int ii(0L); ii < GRID_LINE_COUNT; ii++ )
+   for (int ii(0L); ii < GRID_LINE_COUNT; ii++ )
    {
-      verts[indx++].set(  length, -length + ii * GRID_LINE_SPACING, 0.0f);
-      verts[indx++].set( -length, -length + ii * GRID_LINE_SPACING, 0.0f);
+      verts[indx++].set(length, -length + ii * GRID_LINE_SPACING, 0.0f);
+      verts[indx++].set(-length, -length + ii * GRID_LINE_SPACING, 0.0f);
    }
 
    osg::Geometry* geometry = new osg::Geometry;
-   assert( geometry );
+   assert(geometry);
 
    geometry->setVertexArray(new osg::Vec3Array(numVerts, verts));
    geometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::LINES, 0, numVerts));
@@ -886,7 +882,7 @@ void ObjectViewer::ClearLights()
    mLightArrow.clear();
 }
 
-///////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void ObjectViewer::clearProxies(const std::map<dtCore::UniqueId, dtCore::RefPtr<dtDAL::BaseActorObject> >& proxies)
 {
    std::map<dtCore::UniqueId,dtCore::RefPtr<dtDAL::BaseActorObject> >::const_iterator itor;
@@ -904,7 +900,7 @@ void ObjectViewer::clearProxies(const std::map<dtCore::UniqueId, dtCore::RefPtr<
    }
 }
 
-///////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void ObjectViewer::PostFrame(const double)
 {
    // Broadcast the current state of all the lights in the scene
@@ -919,31 +915,6 @@ void ObjectViewer::PostFrame(const double)
       {
          dtCore::Transform arrowTransform;
          mLightArrowTransformable[lightIndex]->GetTransform(arrowTransform);
-
-         //// Position all infinite lights in front of the camera.
-         //dtCore::InfiniteLight* infiniteLight = dynamic_cast<dtCore::InfiniteLight*>(light);
-         //if (infiniteLight)
-         //{
-         //   dtCore::Transform transform;
-         //   GetCamera()->GetTransform(transform);
-
-         //   osg::Vec3 right, up, at;
-         //   transform.GetOrientation(right, up, at);
-         //   osg::Vec3 pos = transform.GetTranslation();
-         //   pos += at * 2.0f;
-         //   pos += right * 0.4f;
-         //   pos -= up * 0.4f;
-
-         //   arrowTransform.SetTranslation(pos);
-         //   mLightArrowTransformable[lightIndex]->SetTransform(arrowTransform);
-         //}
-
-         //osg::Vec3 lightPos = arrowTransform.GetTranslation();
-
-         //std::ostringstream oss;
-         //oss << "arrow pos: (" << lightPos.x() << ", " << lightPos.y() << ", " << lightPos.z() << ")";
-
-         //std::cout << oss.str() << std::endl;
 
          LightInfo lightInfo;
          lightInfo.light = light;
