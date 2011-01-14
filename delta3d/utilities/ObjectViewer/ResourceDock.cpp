@@ -342,7 +342,7 @@ void ResourceDock::OnNewGeometry(const std::string& path, const std::string& fil
    QString qtFilename(filename.c_str());
    std::string listLabel;
 
-   if (qtFilename.endsWith(".xml"))
+   if (qtFilename.endsWith(".dtChar"))
    {
       listLabel = SKELETAL_MESH_LABEL.toStdString();
    }

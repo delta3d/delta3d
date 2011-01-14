@@ -121,7 +121,12 @@ void ObjectViewer::OnLoadShaderFile(const QString& filename)
    try
    {
       dtCore::ShaderManager& shaderManager = dtCore::ShaderManager::GetInstance();
+
+      // Since the shader manager cannot deal with duplicate shader names,
+      // we clear it out before we load each file.  This means that in order
+      // to reference shaders later, the file just be reloaded.
       shaderManager.Clear();
+
       shaderManager.LoadShaderDefinitions(filename.toStdString());
 
       std::vector<dtCore::RefPtr<dtCore::ShaderGroup> > shaderGroupList;
@@ -201,18 +206,6 @@ void ObjectViewer::OnLoadMapFile(const std::string& filename)
          QMessageBox::warning(NULL, tr("Missing Libraries"), errors, tr("OK"));
          QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
       }
-
-      //try
-      //{
-      //   dtDAL::Project::GetInstance().LoadMapIntoScene(*map,
-      //      *GetScene(), true);
-      //}
-      //catch (const dtUtil::Exception& e)
-      //{
-      //   QApplication::restoreOverrideCursor();
-      //   QMessageBox::critical(NULL, tr("Error"), e.What().c_str(), tr("OK"));
-      //   QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
-      //}
    }
 
    QApplication::restoreOverrideCursor();
@@ -295,28 +288,6 @@ void ObjectViewer::OnLoadMapFile(const std::string& filename)
          // Reset the camera outside the bounding sphere.
          mModelMotion->SetDistance(radius * 2.0f);
          mModelMotion->SetFocalPoint(center);
-
-         // Adjust the size of the light arrow
-         //mLightScale = radius * 0.5f;
-
-         //for (int lightIndex = 0; lightIndex < (int)mLightMotion.size(); lightIndex++)
-         //{
-         //   float arrowScale = mLightScale;
-
-         //   //dtCore::Light* light = GetScene()->GetLight(lightIndex);
-         //   //if (light)
-         //   //{
-         //   //   // Infinite lights do not get scaled.
-         //   //   dtCore::InfiniteLight* infiniteLight = dynamic_cast<dtCore::InfiniteLight*>(light);
-         //   //   if (infiniteLight)
-         //   //   {
-         //   //      arrowScale = 1.0f;
-         //   //   }
-         //   //}
-
-         //   //mLightMotion[lightIndex]->SetScale(arrowScale);
-         //   mLightArrow[lightIndex]->SetScale(osg::Vec3(arrowScale, arrowScale, arrowScale));
-         //}
       }
    }
 }
@@ -329,7 +300,7 @@ void ObjectViewer::OnLoadGeometryFile(const std::string& filename)
    QString qtFilename(filename.c_str());
 
    // If this is a static mesh
-   if (!qtFilename.endsWith(".xml"))
+   if (!qtFilename.endsWith(".dtMap") && !qtFilename.endsWith(".dtChar"))
    {
       mObject = new dtCore::Object;
       mObject->LoadFile(filename);
@@ -348,28 +319,6 @@ void ObjectViewer::OnLoadGeometryFile(const std::string& filename)
          // Reset the camera outside the bounding sphere.
          mModelMotion->SetDistance(radius * 2.0f);
          mModelMotion->SetFocalPoint(center);
-
-         //// Adjust the size of the light arrow
-         //mLightScale = radius * 0.5f;
-
-         //for (int lightIndex = 0; lightIndex < (int)mLightMotion.size(); lightIndex++)
-         //{
-         //   float arrowScale = mLightScale;
-
-         //   //dtCore::Light* light = GetScene()->GetLight(lightIndex);
-         //   //if (light)
-         //   //{
-         //   //   // Infinite lights do not get scaled.
-         //   //   dtCore::InfiniteLight* infiniteLight = dynamic_cast<dtCore::InfiniteLight*>(light);
-         //   //   if (infiniteLight)
-         //   //   {
-         //   //      arrowScale = 1.0f;
-         //   //   }
-         //   //}
-
-         //   mLightMotion[lightIndex]->SetScale(arrowScale);
-         //   mLightArrow[lightIndex]->SetScale(osg::Vec3(arrowScale, arrowScale, arrowScale));
-         //}
 
          if (mShouldGenerateTangents)
          {
@@ -556,10 +505,7 @@ void ObjectViewer::OnSetLightType(int id, int type)
    QString lightName = QString("Light%1").arg(id);
 
    dtCore::Light* light = GetScene()->GetLight(id);
-
    dtCore::Light* newLight = NULL;
-
-   //float arrowScale = mLightScale;
 
    switch (type)
    {
@@ -629,13 +575,7 @@ void ObjectViewer::OnSetLightType(int id, int type)
          lightArrow->SetTransform(transform, dtCore::Transformable::REL_CS);
       }
 
-//      dtCore::Transform transform;
-//      lightArrowTransformable->SetTransform(transform);
-
       GetScene()->RegisterLight(newLight);
-
-//      mLightMotion[id]->SetScale(arrowScale);
-//      mLightArrow[id]->SetScale(osg::Vec3(arrowScale, arrowScale, arrowScale));
    }
 }
 
