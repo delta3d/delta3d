@@ -34,12 +34,14 @@ namespace dtDirector
 {
    /////////////////////////////////////////////////////////////////////////////
    ToggleAction::ToggleAction()
-      : ActionNode()  
+      : ActionNode()
    {
       mToggleActor = "";
       mTogglePropertyName = "IsActive";
+      mToggleBool = false;
 
       AddAuthor("Michael Guerrero");
+      AddAuthor("Eric R. Heine");
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -79,10 +81,17 @@ namespace dtDirector
          "The name of the boolean actor property to toggle.");
       AddProperty(toggleActorProp);
 
+      dtDAL::BooleanActorProperty* toggleBoolean = new dtDAL::BooleanActorProperty(
+         "ToggleBoolean", "Toggle Boolean",
+         dtDAL::BooleanActorProperty::SetFuncType(this, &ToggleAction::SetToggleBoolean),
+         dtDAL::BooleanActorProperty::GetFuncType(this, &ToggleAction::GetToggleBoolean),
+         "A boolean value to toggle on and off with this action.");
+
       // This will expose the properties in the editor and allow
       // them to be connected to ValueNodes.
-      mValues.push_back(ValueLink(this, actorProp, true, true, true));    
+      mValues.push_back(ValueLink(this, actorProp, true, true, true));
       mValues.push_back(ValueLink(this, toggleActorProp, false, false, true, false));
+      mValues.push_back(ValueLink(this, toggleBoolean, true));
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -110,6 +119,7 @@ namespace dtDirector
          }
       case INPUT_TURN_OFF:
          {
+            // Toggle our attached actor property
             for (int index = 0; index < count; index++)
             {
                dtDAL::BaseActorObject* proxy = GetActor("Actor", index);
@@ -132,6 +142,13 @@ namespace dtDirector
                   }
                }
             }
+
+            // Toggle our attached boolean
+            if (shouldToggle)
+            {
+               onOrOff = !mToggleBool;
+            }
+            SetBoolean(onOrOff, "ToggleBoolean");
          }
          break;
       }
@@ -161,6 +178,18 @@ namespace dtDirector
    std::string ToggleAction::GetTogglePropertyName() const
    {
       return mTogglePropertyName;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void ToggleAction::SetToggleBoolean(bool value)
+   {
+      mToggleBool = value;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   bool ToggleAction::GetToggleBoolean() const
+   {
+      return mToggleBool;
    }
 }
 

@@ -89,6 +89,9 @@ namespace dtDirector
       void SetTogglePropertyName(const std::string& value);
       std::string GetTogglePropertyName() const;
 
+      void SetToggleBoolean(bool value);
+      bool GetToggleBoolean() const;
+
    protected:
 
       /**
@@ -100,6 +103,7 @@ namespace dtDirector
 
       dtCore::UniqueId mToggleActor;
       std::string mTogglePropertyName;
+      bool mToggleBool;
    };
 }
 

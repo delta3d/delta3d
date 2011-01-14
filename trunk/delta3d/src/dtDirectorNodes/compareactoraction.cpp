@@ -19,30 +19,30 @@
  * Author: Eric R. Heine
  */
 
-#include <dtDirectorNodes/compareboolaction.h>
+#include <dtDirectorNodes/compareactoraction.h>
 
-#include <dtDAL/booleanactorproperty.h>
+#include <dtDAL/actoridactorproperty.h>
 
 #include <dtDirector/director.h>
 
 namespace dtDirector
 {
    ////////////////////////////////////////////////////////////////////////////////
-   CompareBoolAction::CompareBoolAction()
+   CompareActorAction::CompareActorAction()
       : ActionNode()
-      , mValueA(0)
-      , mValueB(0)
+      , mValueA("")
+      , mValueB("")
    {
       AddAuthor("Eric R. Heine");
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   CompareBoolAction::~CompareBoolAction()
+   CompareActorAction::~CompareActorAction()
    {
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void CompareBoolAction::Init(const NodeType& nodeType, DirectorGraph* graph)
+   void CompareActorAction::Init(const NodeType& nodeType, DirectorGraph* graph)
    {
       ActionNode::Init(nodeType, graph);
 
@@ -52,21 +52,21 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void CompareBoolAction::BuildPropertyMap()
+   void CompareActorAction::BuildPropertyMap()
    {
       ActionNode::BuildPropertyMap();
 
       // Create our value links.
-      dtDAL::BooleanActorProperty* leftProp = new dtDAL::BooleanActorProperty(
+      dtDAL::ActorIDActorProperty* leftProp = new dtDAL::ActorIDActorProperty(
          "A", "A",
-         dtDAL::BooleanActorProperty::SetFuncType(this, &CompareBoolAction::SetA),
-         dtDAL::BooleanActorProperty::GetFuncType(this, &CompareBoolAction::GetA),
+         dtDAL::ActorIDActorProperty::SetFuncType(this, &CompareActorAction::SetA),
+         dtDAL::ActorIDActorProperty::GetFuncType(this, &CompareActorAction::GetA),
          "Value A.");
 
-      dtDAL::BooleanActorProperty* rightProp = new dtDAL::BooleanActorProperty(
+      dtDAL::ActorIDActorProperty* rightProp = new dtDAL::ActorIDActorProperty(
          "B", "B",
-         dtDAL::BooleanActorProperty::SetFuncType(this, &CompareBoolAction::SetB),
-         dtDAL::BooleanActorProperty::GetFuncType(this, &CompareBoolAction::GetB),
+         dtDAL::ActorIDActorProperty::SetFuncType(this, &CompareActorAction::SetB),
+         dtDAL::ActorIDActorProperty::GetFuncType(this, &CompareActorAction::GetB),
          "Value B.");
 
       AddProperty(leftProp);
@@ -74,15 +74,15 @@ namespace dtDirector
 
       // This will expose the properties in the editor and allow
       // them to be connected to ValueNodes.
-      mValues.push_back(ValueLink(this, leftProp));
-      mValues.push_back(ValueLink(this, rightProp));
+      mValues.push_back(ValueLink(this, leftProp, false, false, false));
+      mValues.push_back(ValueLink(this, rightProp, false, false, false));
    }
 
    //////////////////////////////////////////////////////////////////////////
-   bool CompareBoolAction::Update(float simDelta, float delta, int input, bool firstUpdate)
+   bool CompareActorAction::Update(float simDelta, float delta, int input, bool firstUpdate)
    {
-      bool valueA = GetBoolean("A");
-      bool valueB = GetBoolean("B");
+      dtCore::UniqueId valueA = GetActorID("A");
+      dtCore::UniqueId valueB = GetActorID("B");
 
       OutputLink* link = NULL;
       if (valueA == valueB)
@@ -99,14 +99,15 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   bool CompareBoolAction::CanConnectValue(ValueLink* link, ValueNode* value)
+   bool CompareActorAction::CanConnectValue(ValueLink* link, ValueNode* value)
    {
       if (Node::CanConnectValue(link, value))
       {
          dtDAL::DataType& type = value->GetPropertyType();
          switch (type.GetTypeId())
          {
-         case dtDAL::DataType::BOOLEAN_ID:
+         case dtDAL::DataType::ACTOR_ID:
+         case dtDAL::DataType::STRING_ID:
             return true;
 
          default:
@@ -118,25 +119,25 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void CompareBoolAction::SetA(bool value)
+   void CompareActorAction::SetA(const dtCore::UniqueId& value)
    {
       mValueA = value;
    }
 
    //////////////////////////////////////////////////////////////////////////
-   bool CompareBoolAction::GetA() const
+   dtCore::UniqueId CompareActorAction::GetA()
    {
       return mValueA;
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void CompareBoolAction::SetB(bool value)
+   void CompareActorAction::SetB(const dtCore::UniqueId& value)
    {
       mValueB = value;
    }
 
    //////////////////////////////////////////////////////////////////////////
-   bool CompareBoolAction::GetB() const
+   dtCore::UniqueId CompareActorAction::GetB()
    {
       return mValueB;
    }
