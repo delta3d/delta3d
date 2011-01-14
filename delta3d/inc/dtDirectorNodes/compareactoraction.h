@@ -19,8 +19,8 @@
  * Author: Eric R. Heine
  */
 
-#ifndef COMPARE_BOOL_ACTION_NODE
-#define COMPARE_BOOL_ACTION_NODE
+#ifndef COMPARE_ACTOR_ACTION_NODE
+#define COMPARE_ACTOR_ACTION_NODE
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -31,14 +31,14 @@
 namespace dtDirector
 {
    ////////////////////////////////////////////////////////////////////////////////
-   class NODE_LIBRARY_EXPORT CompareBoolAction : public ActionNode
+   class NODE_LIBRARY_EXPORT CompareActorAction : public ActionNode
    {
    public:
 
       /**
        * Constructor.
        */
-      CompareBoolAction();
+      CompareActorAction();
 
       /**
        * Initializes the Node.
@@ -88,11 +88,11 @@ namespace dtDirector
       /**
        * Accessors for property values.
        */
-      void SetA(bool value);
-      bool GetA() const;
+      void SetA(const dtCore::UniqueId& value);
+      dtCore::UniqueId GetA();
 
-      void SetB(bool value);
-      bool GetB() const;
+      void SetB(const dtCore::UniqueId& value);
+      dtCore::UniqueId GetB();
 
 
    protected:
@@ -100,15 +100,15 @@ namespace dtDirector
       /**
        * Destructor.
        */
-      ~CompareBoolAction();
+      ~CompareActorAction();
 
    private:
 
-      bool mValueA;
-      bool mValueB;
+      dtCore::UniqueId mValueA;
+      dtCore::UniqueId mValueB;
    };
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#endif // COMPARE_BOOL_ACTION_NODE
+#endif // COMPARE_ACTOR_ACTION_NODE
