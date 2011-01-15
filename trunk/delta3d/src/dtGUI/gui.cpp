@@ -173,7 +173,17 @@ GUI::~GUI()
 ////////////////////////////////////////////////////////////////////////////////
 void GUI::_SetupInternalGraph()
 {
-   mInternalGraph = new osg::Group();
+   osg::Camera* camera = new osg::Camera();
+
+   //don't clear the color buffer (allows the UI to be superimposed on the scene)
+   camera->setClearMask(GL_DEPTH_BUFFER_BIT); 
+   camera->setRenderOrder(osg::Camera::POST_RENDER);
+
+   // we don't want the camera to grab event focus from the viewers main camera(s).
+   camera->setAllowEventFocus(false);
+
+   mInternalGraph = camera;
+
    osg::StateSet* states = mInternalGraph->getOrCreateStateSet();
 
    //m_pInternalGraph->setName("internal_GUI_Geode");
