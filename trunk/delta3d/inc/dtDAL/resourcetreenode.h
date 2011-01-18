@@ -22,8 +22,9 @@
 #ifndef DELTA_RESOURCE_TREE_NODE
 #define DELTA_RESOURCE_TREE_NODE
 
-#include "dtDAL/resourcedescriptor.h"
-#include "dtDAL/export.h"
+#include <dtDAL/resourcedescriptor.h>
+#include <dtDAL/export.h>
+
 
 namespace dtDAL 
 {
@@ -38,8 +39,10 @@ namespace dtDAL
          ResourceTreeNode() {}
 
          ResourceTreeNode(const std::string& nodeText,
-                        const std::string& fullCategory, ResourceDescriptor* resource = NULL):
-            nodeText(nodeText), fullCategory(fullCategory) 
+                        const std::string& fullCategory, ResourceDescriptor* resource, unsigned slot)
+         : nodeText(nodeText)
+         , fullCategory(fullCategory)
+         , mContextSlot(slot)
          {
             if (resource == NULL) 
             {
@@ -48,50 +51,61 @@ namespace dtDAL
             else
             {
                category = false;
-               this->resource = *resource;
+               mResource = *resource;
             }
          }
 
          ResourceTreeNode(const ResourceTreeNode& toCopy) 
          {
-            this->resource = toCopy.resource;
-            this->nodeText = toCopy.nodeText;
-            this->category = toCopy.category;
-            this->fullCategory = toCopy.fullCategory;
+            mResource = toCopy.mResource;
+            nodeText = toCopy.nodeText;
+            category = toCopy.category;
+            fullCategory = toCopy.fullCategory;
+            mContextSlot = toCopy.mContextSlot;
          }
 
          ResourceTreeNode& operator=(const ResourceTreeNode& toAssign) 
          {
-            this->resource = toAssign.resource;
-            this->nodeText = toAssign.nodeText;
-            this->category = toAssign.category;
-            this->fullCategory = toAssign.fullCategory;
+            if (this != &toAssign)
+            {
+               mResource = toAssign.mResource;
+               nodeText = toAssign.nodeText;
+               category = toAssign.category;
+               fullCategory = toAssign.fullCategory;
+               mContextSlot = toAssign.mContextSlot;
+            }
             return *this;
          }
 
          bool operator==(const ResourceTreeNode& toCompare) const 
          {
             if (category)
-               return this->nodeText == toCompare.nodeText &&
-                  this->category == toCompare.category;
+            {
+               return nodeText == toCompare.nodeText &&
+                  category == toCompare.category;
+            }
             else
-               return this->resource == toCompare.resource &&
-                  this->category == toCompare.category;
+            {
+               return mResource == toCompare.mResource &&
+                  category == toCompare.category;
+            }
          }
 
          bool operator>(const ResourceTreeNode& toCompare) const 
          {
             if (isCategory())
-               return this->nodeText > toCompare.nodeText;
-            return this->resource > toCompare.resource;
+            {
+               return nodeText > toCompare.nodeText;
+            }
+            return mResource > toCompare.mResource;
          }
 
          bool operator<(const ResourceTreeNode& toCompare) const 
          {
             if (isCategory())
 
-               return this->nodeText < toCompare.nodeText;
-            return this->resource < toCompare.resource;
+               return nodeText < toCompare.nodeText;
+            return mResource < toCompare.mResource;
          }
 
          /**
@@ -113,12 +127,13 @@ namespace dtDAL
          /**
           * @return the resource descriptor.  This descriptor is dataless if the node is a category.
           */
-         const ResourceDescriptor& getResource() const { return resource; }
+         const ResourceDescriptor& getResource() const { return mResource; }
       private:
          std::string nodeText;
          std::string fullCategory;
-         ResourceDescriptor resource;
+         ResourceDescriptor mResource;
          bool category;
+         unsigned mContextSlot;
    };
 }
 

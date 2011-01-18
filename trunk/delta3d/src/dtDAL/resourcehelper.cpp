@@ -582,8 +582,10 @@ namespace dtDAL
       //Finding out the datatype for the resource descriptor.
       dtUtil::Enumeration* e = DataType::GetValueForName(*tokens.begin());
       if (e == NULL)
+      {
          throw dtDAL::ProjectResourceErrorException(
                 std::string("Could not find data type to match ") + *tokens.begin() + ".", __FILE__, __LINE__);
+      }
 
       DataType& type = static_cast<DataType&>(*e);
 
@@ -595,16 +597,22 @@ namespace dtDAL
             currentPath = *i;
          }
          else
+         {
             currentPath += dtUtil::FileUtils::PATH_SEPARATOR + *i;
+         }
 
          //file and directories handled by handlers MUST have extensions.
          const std::string& ext = osgDB::getLowerCaseFileExtension(currentPath);
 
          if (!ext.empty())
+         {
             handler = GetHandlerForFile(type, currentPath);
+         }
 
          if (handler != NULL)
+         {
             break;
+         }
       }
 
       //it's only a problem that we don't have a handler if the file doesn't exist.
@@ -630,7 +638,8 @@ namespace dtDAL
    //////////////////////////////////////////////////////////
    const ResourceDescriptor ResourceHelper::AddResource(const std::string& newName,
                                                         const std::string& pathToFile, const std::string& category,
-                                                        const DataType& type, dtUtil::tree<ResourceTreeNode>*  dataTypeTree) const
+                                                        const DataType& type, dtUtil::tree<ResourceTreeNode>*  dataTypeTree,
+                                                        unsigned contextSlot) const
    {
 
       dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
@@ -646,7 +655,7 @@ namespace dtDAL
       dtUtil::tree<ResourceTreeNode>* categoryInTree;
 
       //create or get the path to the resource category
-      std::string resourcePath = CreateResourceCategory(category, type,
+      std::string resourcePath = CreateResourceCategory(category, type, contextSlot,
                                                         dataTypeTree, categoryInTree);
 
       //get the handler for the file or directory to copy in.
@@ -666,7 +675,7 @@ namespace dtDAL
             mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                                 "Adding new resource \"%s\" to tree.",
                                 result.GetResourceIdentifier().c_str());
-         categoryInTree->insert(ResourceTreeNode(resourceFileName, category, &result));
+         categoryInTree->insert(ResourceTreeNode(resourceFileName, category, &result, contextSlot));
 
       }
       return result;
@@ -674,11 +683,12 @@ namespace dtDAL
 
    //////////////////////////////////////////////////////////
    const std::string ResourceHelper::CreateResourceCategory(const std::string& category, const DataType& type,
+                                                            unsigned contextSlot,
                                                             dtUtil::tree<ResourceTreeNode>* dataTypeTree,
                                                             dtUtil::tree<ResourceTreeNode>*& categoryInTree) const
    {
 
-      VerifyDirectoryExists(type.GetName());
+      VerifyDirectoryExists(type.GetName(), contextSlot);
 
       dtUtil::tree<ResourceTreeNode>* currentLevelTree;
       if (dataTypeTree != NULL)
@@ -686,7 +696,9 @@ namespace dtDAL
          currentLevelTree = dataTypeTree;
       }
       else
+      {
          currentLevelTree = NULL;
+      }
 
       std::string sofar = type.GetName();
 
@@ -696,14 +708,14 @@ namespace dtDAL
 
       for (std::vector<std::string>::const_iterator i = tokens.begin(); i != tokens.end(); ++i)
       {
-         if (currentCategory == "")
+         if (currentCategory.empty())
             currentCategory += *i;
          else
             currentCategory += ResourceDescriptor::DESCRIPTOR_SEPARATOR + *i;
 
          sofar += dtUtil::FileUtils::PATH_SEPARATOR + *i;
 
-         currentLevelTree = VerifyDirectoryExists(sofar, currentCategory, currentLevelTree);
+         currentLevelTree = VerifyDirectoryExists(sofar, contextSlot, currentCategory, currentLevelTree);
       }
 
       categoryInTree = currentLevelTree;
@@ -788,7 +800,8 @@ namespace dtDAL
             }
          }
          
-         dtUtil::tree<ResourceTreeNode>::iterator temp = ti.tree_ref().find(ResourceTreeNode(*i, currentCategory));
+         // The ref slot on the ResourceTreeNode isn't used in searching.
+         dtUtil::tree<ResourceTreeNode>::iterator temp = ti.tree_ref().find(ResourceTreeNode(*i, currentCategory, NULL, 0));
 
          //if it hasn't been found, check to see if the current node represents a non-category
          //node
@@ -796,7 +809,7 @@ namespace dtDAL
          {
             ResourceDescriptor searchTemp(currentCategory, id);
             //if this isn't found, we'll just return .end() anyway.
-            return ti.tree_ref().find(ResourceTreeNode(*i, oldCategory, &searchTemp));
+            return ti.tree_ref().find(ResourceTreeNode(*i, oldCategory, &searchTemp, 0));
          } //else {
          //    std::cout << temp->getNodeText() << " " << temp->getFullCategory() << std::endl;
          //}
@@ -807,8 +820,11 @@ namespace dtDAL
    }
 
    //////////////////////////////////////////////////////////
-   dtUtil::tree<ResourceTreeNode>* ResourceHelper::VerifyDirectoryExists(const std::string& path,
-                                                                         const std::string& category, dtUtil::tree<ResourceTreeNode>* parentTree) const
+   dtUtil::tree<ResourceTreeNode>* ResourceHelper::VerifyDirectoryExists(
+            const std::string& path,
+            unsigned contextSlot,
+            const std::string& category,
+            dtUtil::tree<ResourceTreeNode>* parentTree) const
    {
       dtUtil::FileType ft = dtUtil::FileUtils::GetInstance().GetFileInfo(path).fileType;
       if (ft == dtUtil::REGULAR_FILE)
@@ -834,7 +850,7 @@ namespace dtDAL
       if (parentTree != NULL)
       {
          std::string lastPathPart = osgDB::getSimpleFileName(path);
-         ResourceTreeNode newNode(lastPathPart, category);
+         ResourceTreeNode newNode(lastPathPart, category, NULL, contextSlot);
          dtUtil::tree<ResourceTreeNode>::iterator iter= parentTree->find(newNode);
          if (iter == parentTree->end())
             return parentTree->insert(newNode).tree_ptr();
@@ -864,14 +880,16 @@ namespace dtDAL
       else
       {
          if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_WARNING))
+         {
             mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
                                 (std::string("Couldn't find resource tree node matching resource: ")
                                  + resource.GetResourceIdentifier() + ".").c_str());
+         }
       }
    }
 
    //////////////////////////////////////////////////////////
-   void ResourceHelper::IndexResources(dtUtil::tree<ResourceTreeNode>& tree) const
+   void ResourceHelper::IndexResources(dtUtil::tree<ResourceTreeNode>& tree, unsigned referenceSlot) const
    {
       dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
       for (std::vector<dtDAL::DataType *>::const_iterator i = DataType::EnumerateType().begin();
@@ -880,8 +898,12 @@ namespace dtDAL
          const DataType& dt = **i;
          if (dt.IsResource())
          {
-            ResourceTreeNode newNode(dt.GetName(), "");
-            dtUtil::tree<ResourceTreeNode>::iterator dataTypeTree = tree.insert(newNode);
+            ResourceTreeNode newNode(dt.GetName(), "", NULL, referenceSlot);
+            dtUtil::tree<ResourceTreeNode>::iterator dataTypeTree = tree.find(newNode);
+            if (dataTypeTree == tree.end())
+            {
+               dataTypeTree = tree.insert(newNode);
+            }
 
             //make sure the directory exists before even attempting to parse it.
             if (!fileUtils.DirExists(dt.GetName()))
@@ -895,7 +917,7 @@ namespace dtDAL
             fileUtils.PushDirectory(dt.GetName());
             try
             {
-               IndexResources(dtUtil::FileUtils::GetInstance(), dataTypeTree, dt, std::string(""), std::string(""));
+               IndexResources(dtUtil::FileUtils::GetInstance(), dataTypeTree, dt, std::string(""), std::string(""), referenceSlot);
             }
             catch (const dtUtil::Exception& ex)
             {
@@ -909,7 +931,8 @@ namespace dtDAL
 
    //////////////////////////////////////////////////////////
    void ResourceHelper::IndexResources(dtUtil::FileUtils& fileUtils, dtUtil::tree<ResourceTreeNode>::iterator& i,
-                                       const DataType& dt, const std::string& categoryPath, const std::string& category) const
+                                       const DataType& dt, const std::string& categoryPath, const std::string& category,
+                                       unsigned referenceSlot) const
    {
       std::string resourcePath = categoryPath;
       if (resourcePath.empty())
@@ -922,8 +945,8 @@ namespace dtDAL
       try
       {
          dtUtil::DirectoryContents contents = fileUtils.DirGetFiles(fileUtils.CurrentDirectory());
-         dtUtil::DirectoryContents folders;
-         dtUtil::DirectoryContents files;
+         dtUtil::DirectoryContents folders(contents.size());
+         dtUtil::DirectoryContents files(contents.size());
          for (dtUtil::DirectoryContents::const_iterator j = contents.begin(); j != contents.end(); ++j)
          {
             if (*j == "." || *j == "..")
@@ -936,6 +959,7 @@ namespace dtDAL
 
             const std::string& currentFile = *j;
 
+            // For the sake of the indexer, directories with an extension are treated like files.
             std::string::size_type dot = currentFile.find_last_of('.');
             if (dot == std::string::npos)
             {
@@ -947,11 +971,9 @@ namespace dtDAL
             }
          }
 
-         contents = folders;
-         for (dtUtil::DirectoryContents::const_iterator j = files.begin(); j != files.end(); ++j)
-         {
-            contents.push_back(*j);
-         }
+         contents.swap(folders);
+         // size was reserved above
+         contents.insert(contents.end(), files.begin(), files.end());
 
          for (int fileIndex = 0; fileIndex < (int)contents.size(); fileIndex++)
          {
@@ -990,18 +1012,29 @@ namespace dtDAL
                   newCategory = currentFile;
                }
 
-               ResourceTreeNode newNode(currentFile,newCategory);
+               ResourceTreeNode newNode(currentFile,newCategory, NULL, referenceSlot);
 
-               dtUtil::tree<ResourceTreeNode>::iterator subTree = i.tree_ref().insert(newNode);
+               dtUtil::tree<ResourceTreeNode>::iterator subtree = i.tree_ref().find(newNode);
 
-               IndexResources(fileUtils, subTree, dt, newCategoryPath, newCategory);
+               if (subtree == i.tree_ref().end())
+               {
+                  subtree = i.tree_ref().insert(newNode);
+               }
+
+               IndexResources(fileUtils, subtree, dt, newCategoryPath, newCategory, referenceSlot);
             }
             else if (handler != NULL)
             {
                //the category will have a path separator on both ends.
                ResourceDescriptor rd = handler->CreateResourceDescriptor(category, currentFile);
-               ResourceTreeNode newNode(currentFile, category, &rd);
-               i.tree_ref().insert(newNode);
+               ResourceTreeNode newNode(currentFile, category, &rd, referenceSlot);
+
+               dtUtil::tree<ResourceTreeNode>::iterator collidingNode = i.tree_ref().find(newNode);
+
+               if (collidingNode == i.tree_ref().end())
+               {
+                  i.tree_ref().insert(newNode);
+               }
             }
             else
             {
@@ -1010,10 +1043,6 @@ namespace dtDAL
                   mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "No hander returned for file %s.",
                                       currentFile.c_str());
                }
-
-               // Remove the unhandled resource from the list.
-               contents.erase(contents.begin() + fileIndex);
-               fileIndex--;
             }
          }
       }

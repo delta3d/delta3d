@@ -30,8 +30,8 @@
 #include <dtUtil/fileutils.h>
 #include <dtUtil/tree.h>
 
-#include "dtDAL/resourcetreenode.h"
-#include "dtDAL/export.h"
+#include <dtDAL/resourcetreenode.h>
+#include <dtDAL/export.h>
 
 namespace dtDAL
 {
@@ -173,8 +173,9 @@ namespace dtDAL
           * The current directory should be the top of the project when this is called.
           * @note The current directory must be the top of the project.
           * @param tree the tree of resources to fill.
+          * @param referenceSlot project context slot being indexed so the numbers can be stored in the tree.
           */
-         void IndexResources(dtUtil::tree<ResourceTreeNode>& tree) const;
+         void IndexResources(dtUtil::tree<ResourceTreeNode>& tree, unsigned referenceSlot) const;
 
          /**
           * Creates a resource category.  The current directory should be
@@ -182,12 +183,14 @@ namespace dtDAL
           * @note The current directory must be the top of the project.
           * @param category The category of the resource.
           * @param type the datatype of the category
+          * @param contextSlot the slot to store in the tree nodes.
           * @param dataTypeTree a pointer to the resource tree for the datatype, or null to ignore resource indexing.
           * @param categoryInTree a output parameter that will be the resource tree for the newly created category.
           *                       This value is undefined if the dataTypeTree parameter is NULL.
           * @return the file path to the category relative to the project context.
           */
          const std::string CreateResourceCategory(const std::string& category, const DataType& type,
+                                                  unsigned contextSlot,
                                                   dtUtil::tree<ResourceTreeNode>* dataTypeTree,
                                                   dtUtil::tree<ResourceTreeNode>*& categoryInTree) const;
 
@@ -226,11 +229,13 @@ namespace dtDAL
           * @param category the category for the new resource.
           * @param type the datatype of the resource.
           * @param dataTypeTree pointer to the tree for the dataType to update, or NULL to ignore
+          * @param contextSlot the slot to store in the tree node.
           * @return the resource descriptor for the newly added resource.
           */
          const ResourceDescriptor AddResource(const std::string& newName,
                                               const std::string& pathToFile, const std::string& category,
-                                              const DataType& type, dtUtil::tree<ResourceTreeNode>* dataTypeTree) const;
+                                              const DataType& type, dtUtil::tree<ResourceTreeNode>* dataTypeTree,
+                                              unsigned contextSlot) const;
 
          /**
           * Removes a resource from the tree.  This is called by removeResource.
@@ -255,10 +260,12 @@ namespace dtDAL
          ResourceHelper& operator=(const ResourceHelper&) { return *this; }
 
          void IndexResources(dtUtil::FileUtils& fileUtils, dtUtil::tree<ResourceTreeNode>::iterator& i,
-                           const DataType& dt, const std::string& categoryPath, const std::string& category) const;
+                           const DataType& dt, const std::string& categoryPath, const std::string& category, unsigned referenceSlot) const;
 
          dtUtil::tree<ResourceTreeNode>* VerifyDirectoryExists(const std::string& path,
-                                                               const std::string& category = "", dtUtil::tree<ResourceTreeNode>* parentTree = NULL) const;
+                                                               unsigned contextSlot,
+                                                               const std::string& category = "",
+                                                               dtUtil::tree<ResourceTreeNode>* parentTree = NULL) const;
 
          const ResourceTypeHandler* FindHandlerForDataTypeAndExtension(
             const std::map<DataType*, std::map<std::string, dtCore::RefPtr<ResourceTypeHandler> > >& mapToSearch,
