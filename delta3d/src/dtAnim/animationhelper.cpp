@@ -139,7 +139,7 @@ void AnimationHelper::ClearAll(float fadeOut)
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-bool AnimationHelper::LoadModel(const std::string& pFilename)
+bool AnimationHelper::LoadModel(const std::string& pFilename, bool immediate)
 {
    if (!pFilename.empty())
    {
@@ -149,7 +149,7 @@ bool AnimationHelper::LoadModel(const std::string& pFilename)
       if (newModel.valid())
       {
          mAnimator = new Cal3DAnimator(newModel.get());
-         mNode = database.GetNodeBuilder().CreateNode(newModel.get());
+         mNode = database.GetNodeBuilder().CreateNode(newModel.get(), immediate);
 
          const Cal3DModelData*  modelData = database.GetModelData(*newModel);
          if (modelData == NULL)
