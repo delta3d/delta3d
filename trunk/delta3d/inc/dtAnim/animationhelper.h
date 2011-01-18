@@ -103,14 +103,17 @@ namespace dtAnim
       virtual void Update(float dt);
 
       /**
-       * This function loads a character XML file from string,
-       * on loading it creates a Cal3DAnimator with the Cal3DModelWrapper
+       * This function loads a character XML (.dtChar) file.  On loading it
+       * creates a Cal3DAnimator with the Cal3DModelWrapper
        * and then calls CreateGeode() on the AnimNodeBuilder
        *
-       * @param the name of the file to load
+       * @param pFilename the name of the file to load
+       * @param immediate Optional parameter to immediately load the character.  True
+       * requires that an OpenGL context is available.  False will defer the loading
+       * until a valid OpenGL context is present. (default = false)
        * @return whether or not we successfully loaded the file
        */
-      bool LoadModel(const std::string& pFilename);
+      bool LoadModel(const std::string& pFilename, bool immediate = false);
 
       /**
        * This function enqueues a character XML file from string where it

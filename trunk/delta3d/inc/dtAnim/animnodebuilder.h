@@ -102,11 +102,16 @@ namespace dtAnim
        * might not be present until the returned node is rendered in a Scene.
        * @param pWrapper : Pointer to the Cal3DModelWrapper to be used when building
        * the geometry.
+       *
+       * @param immediate : Optional parameter, when set to true, will immediately
+       * create the character's geometry.  This requires a valid OpenGL Context.
+       * When false, will defer the creation until a valid OpenGL Context is present.
+       * 
        * @return : RefPtr of a osg::Node which will contain the renderable geometry.  Temporary
        * geometry is a osg::Group with a child osg::Geode which contains one osg::Drawable
        * that has a Drawcallback assigned to it.
        */
-      dtCore::RefPtr<osg::Node> CreateNode(Cal3DModelWrapper* pWrapper);
+      dtCore::RefPtr<osg::Node> CreateNode(Cal3DModelWrapper* pWrapper, bool immediate = false);
 
       virtual dtCore::RefPtr<osg::Node> CreateSoftware(Cal3DModelWrapper* pWrapper);
       virtual dtCore::RefPtr<osg::Node> CreateSoftwareNoVBO(Cal3DModelWrapper* pWrapper);

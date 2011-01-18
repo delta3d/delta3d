@@ -171,24 +171,30 @@ void AnimNodeBuilder::SetCreate(const CreateFunc& pCreate)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateNode(Cal3DModelWrapper* pWrapper)
+dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateNode(Cal3DModelWrapper* pWrapper, bool immediate)
 {
-   ///Add a temporary rendered shape with a draw callback to a Group.  The callback
-   ///will postpone the creation of the real geometry until a valid openGL
-   ///context is available.
-   CreateGeometryDrawCallback* createCallback = new CreateGeometryDrawCallback(mCreateFunc, pWrapper);
-   osg::Group* rootNode = new osg::Group();
-   rootNode->setUpdateCallback(new UpdateCallback(createCallback, *rootNode));
+   if( !immediate )
+   {
+      ///Add a temporary rendered shape with a draw callback to a Group.  The callback
+      ///will postpone the creation of the real geometry until a valid openGL
+      ///context is available.
+      CreateGeometryDrawCallback* createCallback = new CreateGeometryDrawCallback(mCreateFunc, pWrapper);
+      osg::Group* rootNode = new osg::Group();
+      rootNode->setUpdateCallback(new UpdateCallback(createCallback, *rootNode));
 
-   osg::Geode* defaultGeode = new osg::Geode();
-   osg::Cylinder* shape = new osg::Cylinder(osg::Vec3(0.f, 0.f, 0.f), 2.f, 4.f);
-   osg::ShapeDrawable* defaultDrawable = new osg::ShapeDrawable(shape);
-   defaultDrawable->setDrawCallback(createCallback);
+      osg::Geode* defaultGeode = new osg::Geode();
+      osg::Cylinder* shape = new osg::Cylinder(osg::Vec3(0.f, 0.f, 0.f), 2.f, 4.f);
+      osg::ShapeDrawable* defaultDrawable = new osg::ShapeDrawable(shape);
+      defaultDrawable->setDrawCallback(createCallback);
 
-   defaultGeode->addDrawable(defaultDrawable);
-   rootNode->addChild(defaultGeode);
-
-   return rootNode;
+      defaultGeode->addDrawable(defaultDrawable);
+      rootNode->addChild(defaultGeode);
+      return rootNode;
+   }
+   else
+   {
+      return mCreateFunc(pWrapper);
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
