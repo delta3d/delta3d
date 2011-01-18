@@ -40,6 +40,8 @@ namespace dtGame
     * To add new message types subclass this type using
     * @code
     * DT_DECLARE_MESSAGE_TYPE_CLASS_BEGIN(CustomMessageType, NEW_EXPORT_MACRO)
+    *    static const unsigned short START_SHORT_INT_VALUE;
+    *
     *    static const CustomMessageType MSG_TYPE_1;
     *    static const CustomMessageType MSG_TYPE_2;
     * DT_DECLARE_MESSAGE_TYPE_CLASS_END()
@@ -48,7 +50,7 @@ namespace dtGame
     * ..in the cpp file
     * @code
     * DT_IMPLEMENT_MESSAGE_TYPE_CLASS(CustomMessageType);
-    * static const unsigned short START_SHORT_INT_VALUE = dtGame::MessageType::USER_DEFINED_MESSAGE_TYPE;
+    * const unsigned short START_SHORT_INT_VALUE = dtGame::MessageType::USER_DEFINED_MESSAGE_TYPE;
     *
     * const CustomMessageType CustomMessageType::MSG_TYPE_1("MSG_TYPE_1", "Info", "Description", START_SHORT_INT_VALUE, DT_MSG_CLASS(Message));
     * const CustomMessageType CustomMessageType::MSG_TYPE_2("MSG_TYPE_2", "Info", "Description", START_SHORT_INT_VALUE + 1US, DT_MSG_CLASS(Message));
