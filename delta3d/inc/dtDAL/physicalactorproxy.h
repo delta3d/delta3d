@@ -36,7 +36,6 @@ namespace dtDAL
 
          static const dtUtil::RefString PROPERTY_ENABLE_DYNAMICS;
          static const dtUtil::RefString PROPERTY_MASS;
-         static const dtUtil::RefString PROPERTY_CENTER_OF_GRAVITY;
          
          /**
           * Constructor
