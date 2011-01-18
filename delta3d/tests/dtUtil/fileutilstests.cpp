@@ -120,6 +120,11 @@ void FileUtilsTests::setUp()
       fileUtils.ChangeDirectory(TESTS_DIR);
       fileUtils.PushDirectory("dtDAL");
 
+      if (!fileUtils.DirExists("WorkingProject"))
+      {
+         fileUtils.MakeDirectory("WorkingProject");
+      }
+
       fileUtils.PushDirectory("WorkingProject");
       fileUtils.DirDelete(dtDAL::DataType::STATIC_MESH.GetName(), true);
       fileUtils.DirDelete(dtDAL::DataType::TERRAIN.GetName(), true);
@@ -157,6 +162,11 @@ void FileUtilsTests::tearDown()
    if (fileUtils.DirExists("Test2Project"))
    {
       fileUtils.DirDelete("Test2Project", true);
+   }
+
+   if (fileUtils.DirExists("WorkingProject"))
+   {
+      fileUtils.DirDelete("WorkingProject", true);
    }
 
    std::string currentDir = fileUtils.CurrentDirectory();
