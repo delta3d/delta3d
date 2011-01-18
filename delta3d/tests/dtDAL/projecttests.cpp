@@ -111,8 +111,10 @@ const std::string MAPPROJECTCONTEXT = TESTS_DIR + dtUtil::FileUtils::PATH_SEPARA
 const std::string PROJECTCONTEXT = TESTS_DIR + dtUtil::FileUtils::PATH_SEPARATOR + "dtDAL" + dtUtil::FileUtils::PATH_SEPARATOR + "WorkingProject";
 
 
-void ProjectTests::setUp() {
-   try {
+void ProjectTests::setUp()
+{
+   try
+   {
       dtUtil::SetDataFilePathList(dtUtil::GetDeltaDataPathList());
       std::string logName("projectTest");
 
@@ -131,6 +133,10 @@ void ProjectTests::setUp() {
       fileUtils.ChangeDirectory(TESTS_DIR);
       fileUtils.PushDirectory("dtDAL");
 
+      if (!fileUtils.DirExists("WorkingProject"))
+      {
+         fileUtils.MakeDirectory("WorkingProject");
+      }
       fileUtils.PushDirectory("WorkingProject");
       fileUtils.DirDelete(dtDAL::DataType::STATIC_MESH.GetName(), true);
       fileUtils.DirDelete(dtDAL::DataType::TERRAIN.GetName(), true);
@@ -143,7 +149,12 @@ void ProjectTests::setUp() {
 
       fileUtils.FileCopy(DATA_DIR + "/models/terrain_simple.ive", ".", false);
       fileUtils.FileCopy(DATA_DIR + "/models/flatdirt.ive", ".", false);
-   } catch (const dtUtil::Exception& ex) {
+
+      dtDAL::Project::GetInstance().ClearAllContexts();
+      dtDAL::Project::GetInstance().SetReadOnly(false);
+   }
+   catch (const dtUtil::Exception& ex)
+   {
       CPPUNIT_FAIL(ex.ToString());
    }
 }
@@ -151,6 +162,9 @@ void ProjectTests::setUp() {
 
 void ProjectTests::tearDown()
 {
+   dtDAL::Project::GetInstance().ClearAllContexts();
+   dtDAL::Project::GetInstance().SetReadOnly(false);
+
    dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
 
    fileUtils.FileDelete("terrain_simple.ive");
@@ -174,6 +188,14 @@ void ProjectTests::tearDown()
    if (fileUtils.DirExists("Test2Project"))
    {
       fileUtils.DirDelete("Test2Project", true);
+   }
+   if (fileUtils.DirExists("WorkingProject"))
+   {
+      fileUtils.DirDelete("WorkingProject", true);
+   }
+   if (fileUtils.DirExists("WorkingProject2"))
+   {
+      fileUtils.DirDelete("WorkingProject2", true);
    }
 
    std::string currentDir = fileUtils.CurrentDirectory();
@@ -223,7 +245,7 @@ dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator ProjectTests::findTreeNode
          }
       }
 
-      ti = ti.tree_ref().find(dtDAL::ResourceTreeNode(*i, currentCategory));
+      ti = ti.tree_ref().find(dtDAL::ResourceTreeNode(*i, currentCategory, NULL, 0));
    }
    return ti;
 }
@@ -456,13 +478,16 @@ void ProjectTests::TestResources()
 
       dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
 
-      //Open an existing project.
-      std::string projectDir = "WorkingProject";
+      //Open an existing project with two directories.
+      const std::string projectDir = "WorkingProject";
+      const std::string projectDir2 = "WorkingProject2";
 
       try
       {
          p.CreateContext(projectDir);
-         p.SetContext(projectDir);
+         p.CreateContext(projectDir2);
+         p.AddContext(projectDir);
+         p.AddContext(projectDir2);
       }
       catch (const dtUtil::Exception& e)
       {
@@ -472,7 +497,9 @@ void ProjectTests::TestResources()
 
       CPPUNIT_ASSERT_MESSAGE("Project should not be read only.", !p.IsReadOnly());
       CPPUNIT_ASSERT_MESSAGE("Delta3D search path should contain the context.",
-            dtUtil::GetDataFilePathList().find(p.GetContext()) != std::string::npos);
+            dtUtil::GetDataFilePathList().find(p.GetContext(0)) != std::string::npos);
+      CPPUNIT_ASSERT_MESSAGE("Delta3D search path should contain the context.",
+            dtUtil::GetDataFilePathList().find(p.GetContext(1)) != std::string::npos);
 
       const std::set<std::string>& mapNames = p.GetMapNames();
 
@@ -493,26 +520,25 @@ void ProjectTests::TestResources()
       std::string testResult;
 
       CPPUNIT_ASSERT_THROW_MESSAGE("The AddResource() to add a non-existent file should have failed.",
-                                   p.AddResource("mojo", "../jojo.ive", "fun:bigmamajama", dtDAL::DataType::STATIC_MESH),
+                                   p.AddResource("mojo", "../jojo.ive", "fun:bigmamajama", dtDAL::DataType::STATIC_MESH, 0),
                                    dtUtil::Exception);
 
       CPPUNIT_ASSERT_THROW_MESSAGE("The AddResource() to add a mis-matched DataType should have failed.",
-                                   p.AddResource("dirt", "../terrain_simple.ive", "fun:bigmamajama", dtDAL::DataType::BOOLEAN),
+                                   p.AddResource("dirt", "../terrain_simple.ive", "fun:bigmamajama", dtDAL::DataType::BOOLEAN, 1),
                                    dtUtil::Exception);
 
       std::string dirtCategory = "fun:bigmamajama";
 
 
       dtDAL::ResourceDescriptor terrain1RD = p.AddResource("terrain1", DATA_DIR + "/models/exampleTerrain", "terrain",
-            dtDAL::DataType::TERRAIN);
+            dtDAL::DataType::TERRAIN, 0);
 
       //force resources to be indexed.
       p.GetAllResources();
 
 
-
       dtDAL::ResourceDescriptor terrain2RD = p.AddResource("terrain2", DATA_DIR + "/models/exampleTerrain/terrain.3ds", "",
-            dtDAL::DataType::TERRAIN);
+            dtDAL::DataType::TERRAIN, 1);
 
       //printTree(p.GetAllResources());
 
@@ -526,33 +552,34 @@ void ProjectTests::TestResources()
             + "\" should have been found in the resource tree", terrainCategory != p.GetAllResources().end());
 
       dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator terrain2Resource =
-         terrainCategory.tree_ref().find(dtDAL::ResourceTreeNode("terrain2", terrainCategory->getFullCategory(), &terrain2RD));
-
+         terrainCategory.tree_ref().find(dtDAL::ResourceTreeNode("terrain2", terrainCategory->getFullCategory(), &terrain2RD, 0));
 
       terrainCategory = findTreeNodeFromCategory(toFill, NULL, "terrain");
+      printTree(p.GetAllResources());
 
       CPPUNIT_ASSERT_MESSAGE(std::string("the category \"terrain")
             + "\" should have been found in the resource tree", terrainCategory != p.GetAllResources().end());
 
       dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator terrain1Resource =
-         terrainCategory.tree_ref().find(dtDAL::ResourceTreeNode("terrain1", terrainCategory->getFullCategory(), &terrain1RD));
+         terrainCategory.tree_ref().find(dtDAL::ResourceTreeNode("terrain1", terrainCategory->getFullCategory(), &terrain1RD, 0));
 
       CPPUNIT_ASSERT_MESSAGE("The terrain2 resource should have been found.", terrain2Resource != p.GetAllResources().end());
       CPPUNIT_ASSERT_MESSAGE("The terrain1 resource should have been found.", terrain1Resource != p.GetAllResources().end());
 
-      std::string terrainDir(p.GetContext() + dtUtil::FileUtils::PATH_SEPARATOR + dtDAL::DataType::TERRAIN.GetName() + dtUtil::FileUtils::PATH_SEPARATOR);
+      std::string terrainDir0(p.GetContext(0) + dtUtil::FileUtils::PATH_SEPARATOR + dtDAL::DataType::TERRAIN.GetName() + dtUtil::FileUtils::PATH_SEPARATOR);
+      std::string terrainDir1(p.GetContext(1) + dtUtil::FileUtils::PATH_SEPARATOR + dtDAL::DataType::TERRAIN.GetName() + dtUtil::FileUtils::PATH_SEPARATOR);
 
-      CPPUNIT_ASSERT(fileUtils.DirExists(terrainDir + "terrain2.3dst" ) &&
-            fileUtils.FileExists(terrainDir + "terrain2.3dst" + dtUtil::FileUtils::PATH_SEPARATOR + "terrain.3ds"));
+      CPPUNIT_ASSERT(fileUtils.DirExists(terrainDir1 + "terrain2.3dst" ) &&
+            fileUtils.FileExists(terrainDir1 + "terrain2.3dst" + dtUtil::FileUtils::PATH_SEPARATOR + "terrain.3ds"));
 
-      CPPUNIT_ASSERT(fileUtils.DirExists(terrainDir + "terrain" +
+      CPPUNIT_ASSERT(fileUtils.DirExists(terrainDir0 + "terrain" +
             dtUtil::FileUtils::PATH_SEPARATOR + "terrain1.3dst") &&
-            fileUtils.FileExists(terrainDir + "terrain" + dtUtil::FileUtils::PATH_SEPARATOR + "terrain1.3dst" + dtUtil::FileUtils::PATH_SEPARATOR + "terrain.3ds"));
+            fileUtils.FileExists(terrainDir0 + "terrain" + dtUtil::FileUtils::PATH_SEPARATOR + "terrain1.3dst" + dtUtil::FileUtils::PATH_SEPARATOR + "terrain.3ds"));
 
       //Done with the terrains
 
       dtDAL::ResourceDescriptor rd = p.AddResource("flatdirt", std::string(DATA_DIR + "/models/flatdirt.ive"),
-            dirtCategory, dtDAL::DataType::STATIC_MESH);
+            dirtCategory, dtDAL::DataType::STATIC_MESH, 0);
 
       CPPUNIT_ASSERT_MESSAGE("Descriptor id should not be empty.", !rd.GetResourceIdentifier().empty());
 
@@ -563,8 +590,8 @@ void ProjectTests::TestResources()
             + "fun" + dtUtil::FileUtils::PATH_SEPARATOR + "bigmamajama"
             + dtUtil::FileUtils::PATH_SEPARATOR + "flatdirt.ive");
 
-
-      for (std::set<std::string>::const_iterator i = mapNames.begin(); i != mapNames.end(); i++) {
+      for (std::set<std::string>::const_iterator i = mapNames.begin(); i != mapNames.end(); i++)
+      {
          logger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found map named %s.", i->c_str());
          //dtDAL::Map& m = p.GetMap(*i);
 
@@ -588,7 +615,7 @@ void ProjectTests::TestResources()
 
       CPPUNIT_ASSERT_MESSAGE(std::string("the resource \"") + rd.GetResourceIdentifier()
             + "\" should have been found in the resource tree",
-            treeResult.tree_ref().find(dtDAL::ResourceTreeNode(rd.GetDisplayName(), dirtCategory, &rd))
+            treeResult.tree_ref().find(dtDAL::ResourceTreeNode(rd.GetDisplayName(), dirtCategory, &rd, 0))
             != p.GetAllResources().end());
 
       p.RemoveResource(rd);
@@ -601,7 +628,7 @@ void ProjectTests::TestResources()
 
       CPPUNIT_ASSERT_MESSAGE(std::string("the resource \"") + rd.GetResourceIdentifier()
             + "\" should have NOT been found in the resource tree",
-            treeResult.tree_ref().find(dtDAL::ResourceTreeNode(rd.GetDisplayName(), dirtCategory,  &rd))
+            treeResult.tree_ref().find(dtDAL::ResourceTreeNode(rd.GetDisplayName(), dirtCategory,  &rd, 0))
             == p.GetAllResources().end());
 
       CPPUNIT_ASSERT(!p.RemoveResourceCategory("fun", dtDAL::DataType::STATIC_MESH, false));
@@ -617,7 +644,7 @@ void ProjectTests::TestResources()
       CPPUNIT_ASSERT_MESSAGE(std::string("the category \"") + "fun"
             + "\" should not have been found in the resource tree", treeResult == p.GetAllResources().end());
 
-      rd = p.AddResource("pow", std::string(DATA_DIR + "/sounds/pow.wav"), std::string("tea:money"), dtDAL::DataType::SOUND);
+      rd = p.AddResource("pow", std::string(DATA_DIR + "/sounds/pow.wav"), std::string("tea:money"), dtDAL::DataType::SOUND, 0);
       testResult = p.GetResourcePath(rd);
 
       CPPUNIT_ASSERT_EQUAL_MESSAGE("Getting the resource path returned the wrong value: ",
@@ -627,7 +654,7 @@ void ProjectTests::TestResources()
             + "money" + dtUtil::FileUtils::PATH_SEPARATOR + "pow.wav");
 
       dtDAL::ResourceDescriptor rd1 = p.AddResource("bang", std::string(DATA_DIR + "/sounds/bang.wav"),
-            std::string("tee:cash"), dtDAL::DataType::SOUND);
+            std::string("tee:cash"), dtDAL::DataType::SOUND, 0);
       testResult = p.GetResourcePath(rd1);
 
       CPPUNIT_ASSERT_EQUAL_MESSAGE("Getting the resource path returned the wrong value:",
@@ -655,15 +682,19 @@ void ProjectTests::TestResources()
 
       fileUtils.PushDirectory(projectDir);
       CPPUNIT_ASSERT_MESSAGE("Resource should have been deleted, but the file still exists.",
-            !fileUtils.FileExists(dtDAL::DataType::STATIC_MESH.GetName() + std::string("/fun/bigmamajama/terrain_simple.ive")));
-      CPPUNIT_ASSERT_MESSAGE("Resource should have been deleted, but the file still exists.",
             !fileUtils.FileExists(dtDAL::DataType::SOUND.GetName() + std::string("/tea/money/pow.wav")));
       CPPUNIT_ASSERT_MESSAGE("Resource should have been deleted, but the file still exists.",
-            !fileUtils.FileExists(dtDAL::DataType::SOUND.GetName() + std::string("/tee/cash/bang.wav")));
+            !fileUtils.DirExists(dtDAL::DataType::TERRAIN.GetName() + std::string("/terrain/terrain1.3dst")));
+      fileUtils.PopDirectory();
+
+      fileUtils.PushDirectory(projectDir2);
+      CPPUNIT_ASSERT_MESSAGE("Resource should have never been in the project, but the file still exists.",
+            !fileUtils.FileExists(dtDAL::DataType::STATIC_MESH.GetName() + std::string("/fun/bigmamajama/terrain_simple.ive")));
+
       CPPUNIT_ASSERT_MESSAGE("Resource should have been deleted, but the file still exists.",
             !fileUtils.DirExists(dtDAL::DataType::TERRAIN.GetName() + std::string("/terrain2.3dst")));
       CPPUNIT_ASSERT_MESSAGE("Resource should have been deleted, but the file still exists.",
-            !fileUtils.DirExists(dtDAL::DataType::TERRAIN.GetName() + std::string("/terrain/terrain1.3dst")));
+            !fileUtils.FileExists(dtDAL::DataType::SOUND.GetName() + std::string("/tee/cash/bang.wav")));
       fileUtils.PopDirectory();
 
       //this should work fine even if the file is deleted.

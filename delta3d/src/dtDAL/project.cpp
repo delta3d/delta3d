@@ -1908,6 +1908,7 @@ namespace dtDAL
          iend = mImpl->mContexts.begin() + slot + 1;
       }
 
+      ContextSlot curSlot = 0;
       for (; i != iend; ++i)
       {
          fileUtils.PushDirectory(*i);
@@ -1923,7 +1924,7 @@ namespace dtDAL
             }
 
             // TODO see what this does if it thinks it has this resource already.
-            mImpl->mResourceHelper.CreateResourceCategory(category, type, dataTypeTree, categoryInTree);
+            mImpl->mResourceHelper.CreateResourceCategory(category, type, curSlot, dataTypeTree, categoryInTree);
          }
          catch (const dtUtil::Exception& ex)
          {
@@ -1932,6 +1933,7 @@ namespace dtDAL
             throw ex;
          }
          fileUtils.PopDirectory();
+         ++curSlot;
       }
    }
 
@@ -2054,7 +2056,7 @@ namespace dtDAL
          if (mImpl->mResourcesIndexed)
             dataTypeTree = &mImpl->GetResourcesOfType(type);
 
-         result = mImpl->mResourceHelper.AddResource(newName, pathToFile, category, type, dataTypeTree);
+         result = mImpl->mResourceHelper.AddResource(newName, pathToFile, category, type, dataTypeTree, slot);
 
       }
       catch (const dtUtil::Exception& ex)
@@ -2071,7 +2073,6 @@ namespace dtDAL
    /////////////////////////////////////////////////////////////////////////////
    void Project::RemoveResource(const ResourceDescriptor& resource, ContextSlot slot)
    {
-      if (slot == Project::DEFAULT_SLOT_VALUE) { slot = 0; }
       if (!IsContextValid(slot))
       {
          throw dtDAL::ProjectInvalidContextException(
@@ -2084,25 +2085,36 @@ namespace dtDAL
          std::string("The context is readonly."), __FILE__, __LINE__);
       }
 
+
+      ContextSlot first = slot, last = slot + 1;
+      if (slot == Project::DEFAULT_SLOT_VALUE)
+      {
+         first = 0;
+         last = mImpl->mContexts.size();
+      }
+
       dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
-      fileUtils.PushDirectory(mImpl->mContexts[slot]);
-      try
+      for (ContextSlot i = first; i < last; ++i)
       {
-
-         dtUtil::tree<ResourceTreeNode>* resourceTree = NULL;
-         if (mImpl->mResourcesIndexed)
+         fileUtils.PushDirectory(mImpl->mContexts[i]);
+         try
          {
-            resourceTree = &mImpl->mResources;
-         }
 
-         mImpl->mResourceHelper.RemoveResource(resource, resourceTree);
-      }
-      catch (const dtUtil::Exception& ex)
-      {
+            dtUtil::tree<ResourceTreeNode>* resourceTree = NULL;
+            if (mImpl->mResourcesIndexed)
+            {
+               resourceTree = &mImpl->mResources;
+            }
+
+            mImpl->mResourceHelper.RemoveResource(resource, resourceTree);
+         }
+         catch (const dtUtil::Exception& ex)
+         {
+            fileUtils.PopDirectory();
+            throw ex;
+         }
          fileUtils.PopDirectory();
-         throw ex;
       }
-      fileUtils.PopDirectory();
    }
 
    //////////////////////////////////////////////////////////
@@ -2116,16 +2128,13 @@ namespace dtDAL
       mResources.clear();
 
       dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
-      std::vector<std::string>::const_iterator i, iend;
-      i = mContexts.begin();
-      iend = mContexts.end();
-      for (; i != iend; ++i)
+      for (Project::ContextSlot i = 0; i != mContexts.size(); ++i)
       {
-         fileUtils.PushDirectory(*i);
+         fileUtils.PushDirectory(mContexts[i]);
          try
          {
             // TODO ? break up the resources somehow by context rather than merging them all?
-            mResourceHelper.IndexResources(mResources);
+            mResourceHelper.IndexResources(mResources, i);
          }
          catch (const dtUtil::Exception& ex)
          {
@@ -2146,7 +2155,7 @@ namespace dtDAL
          IndexResources();
       }
 
-      ResourceTreeNode tr(dataType.GetName(), "");
+      ResourceTreeNode tr(dataType.GetName(), "", NULL, 0);
       dtUtil::tree<ResourceTreeNode>::iterator it = mResources.find(tr);
 
       if (it  == mResources.end())
