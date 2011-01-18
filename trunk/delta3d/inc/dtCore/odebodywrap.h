@@ -102,7 +102,10 @@ namespace dtCore
       /**
        * Sets this object's center of gravity.
        *
+       * @note: This is an advanced method and requires in-depth knowledge of how
+       *        Open Dynamics Engine handles it's internal Mass.
        * @param centerOfGravity the new center of gravity
+       * @see SetInertiaTensor()
        */
       void SetCenterOfGravity(const osg::Vec3& centerOfGravity);
 
