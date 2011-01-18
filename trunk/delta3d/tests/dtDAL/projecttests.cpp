@@ -62,7 +62,6 @@ class ProjectTests : public CPPUNIT_NS::TestFixture
    CPPUNIT_TEST_SUITE(ProjectTests);
    CPPUNIT_TEST(TestReadonlyFailure);
    CPPUNIT_TEST(TestProject);
-   CPPUNIT_TEST(TestMultipleContexts);
    CPPUNIT_TEST(TestCategories);
    CPPUNIT_TEST(TestResources);
    CPPUNIT_TEST(TestDeletingBackupFromReadOnlyContext);
@@ -80,7 +79,6 @@ class ProjectTests : public CPPUNIT_NS::TestFixture
       void tearDown();
 
       void TestProject();
-      void TestMultipleContexts();
       void TestFileIO();
       void TestCategories();
       void TestReadonlyFailure();
@@ -465,11 +463,6 @@ void ProjectTests::TestCategories()
 
 }
 
-void ProjectTests::TestMultipleContexts()
-{
-
-}
-
 void ProjectTests::TestResources()
 {
    try
@@ -668,6 +661,11 @@ void ProjectTests::TestResources()
       CPPUNIT_ASSERT_EQUAL_MESSAGE("Getting the path to a resource directory should work in this case.",
                p.GetContext(0) + dtUtil::FileUtils::PATH_SEPARATOR + dtDAL::DataType::SOUND.GetName(),
                p.GetResourcePath(dtDAL::DataType::SOUND.GetName(), true));
+
+      dtDAL::ResourceDescriptor rdNoCat = p.AddResource("pow", std::string(DATA_DIR + "/sounds/pow.wav"), std::string(""), dtDAL::DataType::SOUND, 1);
+      CPPUNIT_ASSERT_EQUAL(dtDAL::DataType::SOUND.GetName() + ":pow.wav", rdNoCat.GetDisplayName());
+
+      p.RemoveResource(rdNoCat);
 
       p.Refresh();
 

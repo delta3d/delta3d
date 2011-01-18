@@ -60,8 +60,14 @@ namespace dtDAL
       virtual ResourceDescriptor CreateResourceDescriptor(
          const std::string& category, const std::string& fileName) const
       {
-         const std::string resultString = mDataType->GetName() + ResourceDescriptor::DESCRIPTOR_SEPARATOR +
-            category + ResourceDescriptor::DESCRIPTOR_SEPARATOR + fileName;
+         std::string resultString = mDataType->GetName() + ResourceDescriptor::DESCRIPTOR_SEPARATOR;
+
+         if (!category.empty())
+         {
+            resultString += category + ResourceDescriptor::DESCRIPTOR_SEPARATOR;
+         }
+         resultString += fileName;
+
          return ResourceDescriptor(resultString,resultString);
       }
 
@@ -702,20 +708,23 @@ namespace dtDAL
 
       std::string sofar = type.GetName();
 
-      std::vector<std::string> tokens;
-      dtUtil::StringTokenizer<IsCategorySeparator>::tokenize(tokens, category);
-      std::string currentCategory;
-
-      for (std::vector<std::string>::const_iterator i = tokens.begin(); i != tokens.end(); ++i)
+      if (!category.empty())
       {
-         if (currentCategory.empty())
-            currentCategory += *i;
-         else
-            currentCategory += ResourceDescriptor::DESCRIPTOR_SEPARATOR + *i;
+         std::vector<std::string> tokens;
+         dtUtil::StringTokenizer<IsCategorySeparator>::tokenize(tokens, category);
+         std::string currentCategory;
 
-         sofar += dtUtil::FileUtils::PATH_SEPARATOR + *i;
+         for (std::vector<std::string>::const_iterator i = tokens.begin(); i != tokens.end(); ++i)
+         {
+            if (currentCategory.empty())
+               currentCategory += *i;
+            else
+               currentCategory += ResourceDescriptor::DESCRIPTOR_SEPARATOR + *i;
 
-         currentLevelTree = VerifyDirectoryExists(sofar, contextSlot, currentCategory, currentLevelTree);
+            sofar += dtUtil::FileUtils::PATH_SEPARATOR + *i;
+
+            currentLevelTree = VerifyDirectoryExists(sofar, contextSlot, currentCategory, currentLevelTree);
+         }
       }
 
       categoryInTree = currentLevelTree;
