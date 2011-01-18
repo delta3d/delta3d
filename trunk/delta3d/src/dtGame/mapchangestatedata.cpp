@@ -84,10 +84,11 @@ namespace dtGame
          MapChangeStateData::NameVector::const_iterator end = mNewMapNames.end();
          for (; i != end; ++i)
          {
-            if (names.find(*i) == names.end())
+            const std::string& curName = *i;
+            if (names.find(curName) == names.end())
             {
                mCurrentState = &MapChangeState::IDLE;
-               std::string msg = *i + " is not a valid map.";
+               std::string msg = curName + " is not a valid map.";
                throw dtGame::GeneralGameManagerException( msg, __FUNCTION__, __LINE__);
             }
          }
