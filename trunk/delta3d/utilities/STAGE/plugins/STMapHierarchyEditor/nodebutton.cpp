@@ -172,11 +172,7 @@ void NodeButton::dropEvent(QDropEvent* myEvent)
    {
       myEvent->acceptProposedAction();
 
-      printf("Dropped!\n");
-
       QByteArray ba = myEvent->mimeData()->data("Node");
-
-      printf("ba: %s \n", ba.data());
    }
 }
 
