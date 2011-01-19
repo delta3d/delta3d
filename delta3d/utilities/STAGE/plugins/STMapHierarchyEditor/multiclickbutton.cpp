@@ -32,9 +32,7 @@ void MultiClickButton::mouseMoveEvent(QMouseEvent* myEvent)
 {
    if ((myEvent->buttons() & Qt::LeftButton) &&
       (myEvent->pos() - mDragStartPosition).manhattanLength() < QApplication::startDragDistance())
-   {
-      printf ("Dragging!\n");
-      
+   {     
       NodeButton* nb = dynamic_cast<NodeButton*>(this->parent());
 
       QDrag* drag = new QDrag(this);
