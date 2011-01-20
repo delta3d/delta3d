@@ -34,6 +34,8 @@
 class DT_PLUGIN_EXPORT ExampleActorLib : public dtDAL::ActorPluginRegistry
 {
    public:
+      static dtCore::RefPtr<dtDAL::ActorType> TEST_ACTOR_PROPERTY_TYPE;
+
       ExampleActorLib();
       void RegisterActorTypes();
              

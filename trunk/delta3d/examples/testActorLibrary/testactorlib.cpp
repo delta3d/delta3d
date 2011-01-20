@@ -30,6 +30,12 @@
 #include "testpropertyproxy.h"
 #include "testdalenvironmentactor.h"
 
+//Mapped to the ExampleTestPropertyProxy
+dtCore::RefPtr<dtDAL::ActorType> ExampleActorLib::TEST_ACTOR_PROPERTY_TYPE(
+   new dtDAL::ActorType("Test All Properties",
+   "dtcore.examples", "Used to test any property types that haven't been tested."));
+
+
 extern "C" DT_PLUGIN_EXPORT dtDAL::ActorPluginRegistry* CreatePluginRegistry()
 {
    return new ExampleActorLib;
@@ -48,11 +54,8 @@ ExampleActorLib::ExampleActorLib() : ActorPluginRegistry("ExampleActors")
 
 void ExampleActorLib::RegisterActorTypes()
 {
-    dtDAL::ActorType *testAllPropertiesType = new dtDAL::ActorType("Test All Properties",
-        "dtcore.examples", "Used to test any property types that haven't been tested.");
-
     dtDAL::ActorType *testEnvActor = new dtDAL::ActorType("Test Environment Actor", "Test Environment Actor");
 
-    mActorFactory->RegisterType<ExampleTestPropertyProxy>(testAllPropertiesType);
+    mActorFactory->RegisterType<ExampleTestPropertyProxy>(ExampleActorLib::TEST_ACTOR_PROPERTY_TYPE.get());
     mActorFactory->RegisterType<TestDALEnvironmentActorProxy>(testEnvActor);
 }
