@@ -575,10 +575,10 @@ void Viewer::OnTimeout()
          ++animItr;
       }
 
-      int count = rapper->GetCalModel()->getMorphTargetMixer()->getMorphTargetCount();
       std::vector<float> morphWeightList;
 
 #if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300
+      int count = rapper->GetCalModel()->getMorphTargetMixer()->getMorphTargetCount();
       morphWeightList.reserve(count);
 
       for (int index = 0; index < count; ++index)
@@ -708,3 +708,5 @@ void Viewer::OnStopMorphAnimation(int morphAnimID, float delay)
    }
 #endif
 }
+
+
