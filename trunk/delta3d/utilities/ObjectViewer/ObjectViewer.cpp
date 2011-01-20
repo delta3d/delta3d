@@ -776,9 +776,9 @@ void ObjectViewer::InitLights()
 {
    for (int lightIndex = 0; lightIndex < dtCore::MAX_LIGHTS; ++lightIndex)
    {
-      dtCore::Light* light = GetScene()->GetLight(lightIndex);
+      dtCore::RefPtr<dtCore::Light> light = GetScene()->GetLight(lightIndex);
 
-      if (!light)
+      if (!light.valid())
       {
          QString lightName = QString("Light%1").arg(lightIndex);
 
@@ -803,7 +803,7 @@ void ObjectViewer::InitLights()
       dtCore::Transform transform;
 
       // Infinite lights point in a different direction than others.
-      if (dynamic_cast<dtCore::InfiniteLight*>(light))
+      if (dynamic_cast<dtCore::InfiniteLight*>(light.get()))
       {
          transform.SetRotation(osg::Matrix::rotate(osg::DegreesToRadians(-90.0f), osg::X_AXIS));
          lightArrow->SetTransform(transform);
@@ -811,6 +811,7 @@ void ObjectViewer::InitLights()
 
       dtCore::RefPtr<dtCore::Transformable> lightArrowTransformable = new dtCore::Transformable;
       lightArrowTransformable->AddChild(lightArrow.get());
+      light->Emancipate();
       lightArrowTransformable->AddChild(light);
 
       // Copy the transform from the light to the attached transformable.

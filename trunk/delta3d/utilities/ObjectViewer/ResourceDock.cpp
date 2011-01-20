@@ -76,9 +76,6 @@ ResourceDock::ResourceDock()
    connect(mShaderTreeWidget, SIGNAL(itemChanged(QTreeWidgetItem*, int)),
       this, SLOT(OnShaderItemChanged(QTreeWidgetItem*, int)));
 
-   connect(mShaderTreeWidget, SIGNAL(itemSelectionChanged()),
-      this, SLOT(OnShaderSelectionChanged()));
-
    connect(mLightTreeWidget, SIGNAL(itemClicked(QTreeWidgetItem*, int)),
            this, SLOT(OnLightItemClicked(QTreeWidgetItem*, int)));
 
