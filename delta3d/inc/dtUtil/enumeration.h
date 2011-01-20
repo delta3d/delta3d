@@ -153,12 +153,10 @@ namespace dtUtil
  * needed to enumerate an enumeration.
  */
 #define DECLARE_ENUM(EnumType)                                 \
-private:                                                       \
-   static std::vector<EnumType*> mInstances;                   \
-   static std::vector<dtUtil::Enumeration*> mGenericInstances; \
-   static void AddInstance(EnumType* instance);                 \
 public:                                                        \
-   static const std::vector<EnumType*>& EnumerateType()        \
+   typedef std::vector<EnumType*> EnumerateListType;           \
+                                                               \
+   static const EnumerateListType& EnumerateType()             \
    {                                                           \
       return EnumType::mInstances;                             \
    }                                                           \
@@ -168,10 +166,16 @@ public:                                                        \
       return EnumType::mGenericInstances;                      \
    }                                                           \
                                                                \
-   static EnumType* GetValueForName(const std::string& name);
+   static EnumType* GetValueForName(const std::string& name);  \
+                                                               \
+private:                                                       \
+   static EnumerateListType mInstances;                        \
+   static std::vector<dtUtil::Enumeration*> mGenericInstances; \
+   static void AddInstance(EnumType* instance);
 
-#define IMPLEMENT_ENUM(EnumType)                       \
-   std::vector<EnumType*> EnumType::mInstances;        \
+
+#define IMPLEMENT_ENUM(EnumType)                               \
+   EnumType::EnumerateListType EnumType::mInstances;           \
    std::vector<dtUtil::Enumeration*> EnumType::mGenericInstances; \
    void EnumType::AddInstance(EnumType* instance)                 \
    {                                                           \
