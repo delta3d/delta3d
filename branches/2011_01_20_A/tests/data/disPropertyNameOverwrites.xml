@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DIS  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="dis_mapping.xsd">
+  <PropertyNames>
+    <EntityOrientation>NewOrientationName</EntityOrientation>
+    <EntityLocation>NewLocationName</EntityLocation>
+  </PropertyNames>
+</DIS>

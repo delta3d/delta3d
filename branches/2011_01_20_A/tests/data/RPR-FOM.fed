@@ -1,0 +1,864 @@
+(FED
+(Federation DVTE)
+(FEDversion v1.3)
+ (spaces 
+  (space HyperSpace
+    (dimension subspace)
+    (dimension one)
+    (dimension two)
+  )
+ )
+ (objects 
+    (class ObjectRoot 
+       (attribute privilegeToDelete  reliable timestamp)
+       (class RTIprivate)
+ (class BaseEntity
+     (attribute AccelerationVector best_effort receive HyperSpace)
+     (attribute AngularVelocityVector best_effort receive HyperSpace)
+     (attribute DeadReckoningAlgorithm best_effort receive HyperSpace)
+     (attribute EntityType best_effort receive HyperSpace)
+     (attribute EntityIdentifier best_effort receive HyperSpace)
+     (attribute IsFrozen best_effort receive HyperSpace)
+     (attribute Orientation best_effort receive HyperSpace)
+     (attribute WorldLocation best_effort receive HyperSpace)
+     (attribute VelocityVector best_effort receive HyperSpace)
+ (class EnvironmentalEntity
+     (attribute OpacityCode best_effort receive HyperSpace)
+ )
+ (class PhysicalEntity
+     (attribute AlternateEntityType best_effort receive HyperSpace)
+     (attribute ArticulatedParametersArray best_effort receive HyperSpace)
+     (attribute CamouflageType best_effort receive HyperSpace)
+     (attribute DamageState best_effort receive HyperSpace)
+     (attribute EngineSmokeOn best_effort receive HyperSpace)
+     (attribute FirePowerDisabled best_effort receive HyperSpace)
+     (attribute FlamesPresent best_effort receive HyperSpace)
+     (attribute ForceIdentifier best_effort receive HyperSpace)
+     (attribute HasAmmunitionSupplyCap best_effort receive HyperSpace)
+     (attribute HasFuelSupplyCap best_effort receive HyperSpace)
+     (attribute HasRecoveryCap best_effort receive HyperSpace)
+     (attribute HasRepairCap best_effort receive HyperSpace)
+     (attribute Immobilized best_effort receive HyperSpace)
+     (attribute IsConcealed best_effort receive HyperSpace)
+     (attribute Marking best_effort receive HyperSpace)
+     (attribute PowerPlantOn best_effort receive HyperSpace)
+     (attribute SmokePlumePresent best_effort receive HyperSpace)
+     (attribute TentDeployed best_effort receive HyperSpace)
+     (attribute TrailingEffectsCode best_effort receive HyperSpace)
+ (class Platform
+     (attribute AfterburnerOn best_effort receive HyperSpace)
+     (attribute AntiCollisionLightsOn best_effort receive HyperSpace)
+     (attribute BlackOutBrakeLightsOn best_effort receive HyperSpace)
+     (attribute BlackOutLightsOn best_effort receive HyperSpace)
+     (attribute BrakeLightsOn best_effort receive HyperSpace)
+     (attribute FormationLightsOn best_effort receive HyperSpace)
+     (attribute HatchState best_effort receive HyperSpace)
+     (attribute HeadLightsOn best_effort receive HyperSpace)
+     (attribute InteriorLightsOn best_effort receive HyperSpace)
+     (attribute LandingLightsOn best_effort receive HyperSpace)
+     (attribute LauncherRaised best_effort receive HyperSpace)
+     (attribute NavigationLightsOn best_effort receive HyperSpace)
+     (attribute RampDeployed best_effort receive HyperSpace)
+     (attribute RunningLightsOn best_effort receive HyperSpace)
+     (attribute SpotLightsOn best_effort receive HyperSpace)
+     (attribute TailLightsOn best_effort receive HyperSpace)
+ (class Aircraft
+ )
+ (class AmphibiousVehicle
+ )
+ (class GroundVehicle
+ )
+ (class MultiDomainPlatform
+ )
+ (class Spacecraft
+ )
+ (class SubmersibleVessel
+ )
+ (class SurfaceVessel
+ )
+ )
+ (class Lifeform
+     (attribute FlashLightsOn best_effort receive HyperSpace)
+     (attribute StanceCode best_effort receive HyperSpace)
+     (attribute PrimaryWeaponState best_effort receive HyperSpace)
+     (attribute SecondaryWeaponState best_effort receive HyperSpace)
+ (class Human
+ )
+ (class NonHuman
+ )
+ )
+ (class CulturalFeature
+     (attribute ExternalLightsOn best_effort receive HyperSpace)
+     (attribute InternalHeatSourceOn best_effort receive HyperSpace)
+     (attribute InternalLightsOn best_effort receive HyperSpace)
+ )
+ (class Expendables
+ )
+ (class Munition
+     (attribute LauncherFlashPresent best_effort receive HyperSpace)
+ )
+ (class Radio
+ )
+ (class Sensor
+     (attribute AntennaRaised best_effort receive HyperSpace)
+     (attribute BlackoutLightsOn best_effort receive HyperSpace)
+     (attribute LightsOn best_effort receive HyperSpace)
+     (attribute InteriorLightsOn best_effort receive HyperSpace)
+     (attribute MissionKill best_effort receive HyperSpace)
+ )
+ (class Supplies
+ )
+ )
+ )
+ (class EmbeddedSystem
+     (attribute EntityIdentifier best_effort receive HyperSpace)
+     (attribute HostObjectIdentifier best_effort receive HyperSpace)
+     (attribute RelativePosition best_effort receive HyperSpace)
+ (class Designator
+     (attribute CodeName best_effort receive HyperSpace)
+     (attribute DesignatedObjectIdentifier best_effort receive HyperSpace)
+     (attribute DesignatorCode best_effort receive HyperSpace)
+     (attribute DesignatorEmissionWavelength best_effort receive HyperSpace)
+     (attribute DesignatorOutputPower best_effort receive HyperSpace)
+     (attribute DesignatorSpotLocation best_effort receive HyperSpace)
+     (attribute DeadReckoningAlgorithm best_effort receive HyperSpace)
+     (attribute RelativeSpotLocation best_effort receive HyperSpace)
+     (attribute SpotLinearAccelerationVector best_effort receive HyperSpace)
+ )
+ (class EmitterSystem
+     (attribute EmitterFunctionCode best_effort receive HyperSpace)
+     (attribute EmitterType best_effort receive HyperSpace)
+     (attribute EmitterIndex best_effort receive HyperSpace)
+     (attribute EventIdentifier best_effort receive HyperSpace)
+ )
+ (class RadioReceiver
+     (attribute RadioIndex best_effort receive HyperSpace)
+     (attribute ReceivedPower best_effort receive HyperSpace)
+     (attribute ReceivedTransmitterIdentifier best_effort receive HyperSpace)
+     (attribute ReceiverOperationalStatus best_effort receive HyperSpace)
+ )
+ (class RadioTransmitter
+     (attribute AntennaPatternData best_effort receive HyperSpace)
+     (attribute CryptographicMode best_effort receive HyperSpace)
+     (attribute CryptoSystem best_effort receive HyperSpace)
+     (attribute EncryptionKeyIdentifier best_effort receive HyperSpace)
+     (attribute Frequency best_effort receive HyperSpace)
+     (attribute FrequencyBandwidth best_effort receive HyperSpace)
+     (attribute FrequencyHopInUse best_effort receive HyperSpace)
+     (attribute ModulationParameters best_effort receive HyperSpace)
+     (attribute PsuedoNoiseSpectrumInUse best_effort receive HyperSpace)
+     (attribute RadioIndex best_effort receive HyperSpace)
+     (attribute RadioInputSource best_effort receive HyperSpace)
+     (attribute RadioSystemType best_effort receive HyperSpace)
+     (attribute RFModulationSystemType best_effort receive HyperSpace)
+     (attribute RFModulationType best_effort receive HyperSpace)
+     (attribute TimeHopInUse best_effort receive HyperSpace)
+     (attribute TransmittedPower best_effort receive HyperSpace)
+     (attribute TransmitterOperationalStatus best_effort receive HyperSpace)
+     (attribute WorldLocation best_effort receive HyperSpace)
+ )
+ )
+ (class EmitterBeam
+     (attribute BeamAzimuthCenter best_effort receive HyperSpace)
+     (attribute BeamAzimuthSweep best_effort receive HyperSpace)
+     (attribute BeamElevationCenter best_effort receive HyperSpace)
+     (attribute BeamElevationSweep best_effort receive HyperSpace)
+     (attribute BeamFunctionCode best_effort receive HyperSpace)
+     (attribute BeamIdentifier best_effort receive HyperSpace)
+     (attribute BeamParameterIndex best_effort receive HyperSpace)
+     (attribute EffectiveRadiatedPower best_effort receive HyperSpace)
+     (attribute EmissionFrequency best_effort receive HyperSpace)
+     (attribute EmitterSystemIdentifier best_effort receive HyperSpace)
+     (attribute EventIdentifier best_effort receive HyperSpace)
+     (attribute FrequencyRange best_effort receive HyperSpace)
+     (attribute PulseRepetitionFrequency best_effort receive HyperSpace)
+     (attribute PulseWidth best_effort receive HyperSpace)
+     (attribute SweepSynch best_effort receive HyperSpace)
+ (class RadarBeam
+     (attribute HighDensityTrack best_effort receive HyperSpace)
+     (attribute TrackObjectIdentifiers best_effort receive HyperSpace)
+ )
+ (class JammerBeam
+     (attribute JammingModeSequence best_effort receive HyperSpace)
+     (attribute JammedObjectIdentifiers best_effort receive HyperSpace)
+     (attribute HighDensityJam best_effort receive HyperSpace)
+ )
+ )
+ (class Manager
+ (class Federation
+     (attribute FederationName reliable receive HyperSpace)
+     (attribute FederatesInFederation reliable receive HyperSpace)
+     (attribute RTIversion reliable receive HyperSpace)
+     (attribute FEDid reliable receive HyperSpace)
+     (attribute LastSaveName reliable receive HyperSpace)
+     (attribute LastSaveTime reliable receive HyperSpace)
+     (attribute NextSaveName reliable receive HyperSpace)
+     (attribute NextSaveTime reliable receive HyperSpace)
+ )
+ (class Federate
+     (attribute FederateHandle reliable receive HyperSpace)
+     (attribute FederateType reliable receive HyperSpace)
+     (attribute FederateHost reliable receive HyperSpace)
+     (attribute RTIversion reliable receive HyperSpace)
+     (attribute FEDid reliable receive HyperSpace)
+     (attribute TimeConstrained reliable receive HyperSpace)
+     (attribute TimeRegulating reliable receive HyperSpace)
+     (attribute AsynchronousDelivery reliable receive HyperSpace)
+     (attribute FederateState reliable receive HyperSpace)
+     (attribute TimeManagerState reliable receive HyperSpace)
+     (attribute FederateTime reliable receive HyperSpace)
+     (attribute Lookahead reliable receive HyperSpace)
+     (attribute LBTS reliable receive HyperSpace)
+     (attribute MinNextEventTime reliable receive HyperSpace)
+     (attribute ROlength reliable receive HyperSpace)
+     (attribute TSOlength reliable receive HyperSpace)
+     (attribute ReflectionsReceived reliable receive HyperSpace)
+     (attribute UpdatesSent reliable receive HyperSpace)
+     (attribute InteractionsReceived reliable receive HyperSpace)
+     (attribute InteractionsSent reliable receive HyperSpace)
+     (attribute ObjectsOwned reliable receive HyperSpace)
+     (attribute ObjectsUpdated reliable receive HyperSpace)
+     (attribute ObjectsReflected reliable receive HyperSpace)
+ )
+ )
+    )
+)
+ (interactions 
+    (class InteractionRoot  reliable timestamp
+       (class RTIprivate  reliable timestamp)
+  (class Acknowledge best_effort receive HyperSpace
+     (parameter OriginatingEntity)
+      (parameter ReceivingEntity)
+      (parameter RequestIdentifier)
+      (parameter AcknowledgeFlag)
+      (parameter ResponseFlag)
+  )
+
+  (class ActionRequest best_effort receive HyperSpace
+     (parameter OriginatingEntity)
+      (parameter ReceivingEntity)
+      (parameter RequestIdentifier)
+      (parameter ActionRequestCode)
+      (parameter FixedDatums)
+      (parameter VariableDatumSet)
+  )
+
+  (class ActionResponse best_effort receive HyperSpace
+     (parameter OriginatingEntity)
+      (parameter ReceivingEntity)
+      (parameter RequestIdentifier)
+      (parameter RequestStatus)
+      (parameter FixedDatums)
+      (parameter VariableDatumSet)
+  )
+
+  (class ActionRequestToObject best_effort receive HyperSpace
+     (parameter ObjectIdentifiers)
+      (parameter ActionRequestCode)
+  )
+
+  (class ActionResponseFromObject best_effort receive HyperSpace
+     (parameter ActionResult)
+  )
+
+  (class AttributeChangeRequest best_effort receive HyperSpace
+     (parameter ObjectIdentifiers)
+      (parameter AttributeValueSet)
+  )
+
+  (class AttributeChangeResult best_effort receive HyperSpace
+     (parameter ObjectIdentifier)
+      (parameter AttributeChangeResult)
+      (parameter AttributeValueSet)
+  )
+
+  (class Collision best_effort receive HyperSpace
+     (parameter CollidingObjectIdentifier)
+      (parameter IssuingObjectMass)
+      (parameter IssuingObjectVelocityVector)
+      (parameter CollisionType)
+      (parameter CollisionLocation)
+      (parameter EventIdentifier)
+      (parameter IssuingObjectIdentifier)
+  )
+
+  (class Comment best_effort receive HyperSpace
+     (parameter OriginatingEntity)
+      (parameter ReceivingEntity)
+      (parameter VariableDatumSet)
+  )
+
+  (class CreateObjectRequest best_effort receive HyperSpace
+     (parameter ObjectClass)
+      (parameter AttributeValueSet)
+      (parameter RequestIdentifier)
+  )
+
+  (class CreateObjectResult best_effort receive HyperSpace
+     (parameter CreateObjectResult)
+      (parameter RequestIdentifier)
+  )
+
+  (class CreateEntity best_effort receive HyperSpace
+     (parameter OriginatingEntity)
+      (parameter ReceivingEntity)
+      (parameter RequestIdentifier)
+  )
+
+  (class Data best_effort receive HyperSpace
+     (parameter OriginatingEntity)
+      (parameter ReceivingEntity)
+      (parameter RequestIdentifier)
+      (parameter FixedDatums)
+      (parameter VariableDatumSet)
+  )
+
+  (class DataQuery best_effort receive HyperSpace
+     (parameter OriginatingEntity)
+      (parameter ReceivingEntity)
+      (parameter RequestIdentifier)
+      (parameter TimeInterval)
+      (parameter FixedDatumIdentifiers)
+      (parameter VariableDatumIdentifiers)
+  )
+
+  (class EventReport best_effort receive HyperSpace
+     (parameter OriginatingEntity)
+      (parameter ReceivingEntity)
+      (parameter EventType)
+      (parameter FixedDatums)
+      (parameter VariableDatumSet)
+  )
+
+  (class MunitionDetonation best_effort receive HyperSpace
+     (parameter ArticulatedPartData)
+      (parameter DetonationLocation)
+      (parameter DetonationResultCode)
+      (parameter EventIdentifier)
+      (parameter FiringObjectIdentifier)
+      (parameter FinalVelocityVector)
+      (parameter FuseType)
+      (parameter MunitionObjectIdentifier)
+      (parameter MunitionType)
+      (parameter QuantityFired)
+      (parameter RateOfFire)
+      (parameter RelativeDetonationLocation)
+      (parameter TargetObjectIdentifier)
+      (parameter WarheadType)
+  )
+
+  (class RadioSignal best_effort receive HyperSpace
+  (class ApplicationSpecificRadioSignal best_effort receive HyperSpace
+     (parameter HostRadioIndex)
+      (parameter DataRate)
+      (parameter SignalDataLength)
+      (parameter SignalData)
+      (parameter TacticalDataLinkType)
+      (parameter TDLMessageCount)
+      (parameter UserProtocolID)
+  )
+
+  (class DatabaseIndexRadioSignal best_effort receive HyperSpace
+     (parameter HostRadioIndex)
+      (parameter DatabaseIndex)
+      (parameter Duration)
+      (parameter StartOffset)
+      (parameter TacticalDataLinkType)
+      (parameter TDLMessageCount)
+  )
+
+  (class EncodedAudioRadioSignal best_effort receive HyperSpace
+     (parameter HostRadioIndex)
+      (parameter TransmitterSignalEncodingType)
+      (parameter SignalSampleRate)
+      (parameter SampleCount)
+      (parameter SignalDataLength)
+      (parameter SignalData)
+  )
+
+  (class RawBinaryRadioSignal best_effort receive HyperSpace
+     (parameter HostRadioIndex)
+      (parameter DataRate)
+      (parameter SignalDataLength)
+      (parameter SignalData)
+      (parameter TacticalDataLinkType)
+      (parameter TDLMessageCount)
+  )
+
+ )
+
+  (class RemoveObjectRequest best_effort receive HyperSpace
+     (parameter ObjectIdentifiers)
+      (parameter RequestIdentifier)
+  )
+
+  (class RemoveObjectResult best_effort receive HyperSpace
+     (parameter RemoveObjectResult)
+      (parameter RequestIdentifier)
+  )
+
+  (class RemoveEntity best_effort receive HyperSpace
+     (parameter OriginatingEntity)
+      (parameter ReceivingEntity)
+      (parameter RequestIdentifier)
+  )
+
+  (class RepairComplete best_effort receive HyperSpace
+     (parameter ReceivingObject)
+      (parameter RepairingObject)
+      (parameter RepairType)
+  )
+
+  (class RepairResponse best_effort receive HyperSpace
+     (parameter ReceivingObject)
+      (parameter RepairingObject)
+      (parameter RepairResultCode)
+  )
+
+  (class ResupplyCancel best_effort receive HyperSpace
+     (parameter ReceivingObject)
+      (parameter SupplyingObject)
+  )
+
+  (class ResupplyOffer best_effort receive HyperSpace
+     (parameter ReceivingObject)
+      (parameter SupplyingObject)
+      (parameter SuppliesData)
+  )
+
+  (class ResupplyReceived best_effort receive HyperSpace
+     (parameter ReceivingObject)
+      (parameter SupplyingObject)
+      (parameter SuppliesData)
+  )
+
+  (class ServiceRequest best_effort receive HyperSpace
+     (parameter RequestingObject)
+      (parameter ServicingObject)
+      (parameter ServiceType)
+      (parameter SuppliesData)
+  )
+
+  (class SetData best_effort receive HyperSpace
+     (parameter OriginatingEntity)
+      (parameter ReceivingEntity)
+      (parameter RequestIdentifier)
+      (parameter FixedDatums)
+      (parameter VariableDatumSet)
+  )
+
+  (class StartResume best_effort receive HyperSpace
+     (parameter OriginatingEntity)
+      (parameter ReceivingEntity)
+      (parameter RequestIdentifier)
+      (parameter RealWorldTime)
+      (parameter SimulationTime)
+  )
+
+  (class StopFreeze best_effort receive HyperSpace
+     (parameter OriginatingEntity)
+      (parameter ReceivingEntity)
+      (parameter RequestIdentifier)
+      (parameter RealWorldTime)
+      (parameter Reason)
+      (parameter ReflectValues)
+      (parameter RunInternalSimulationClock)
+      (parameter UpdateAttributes)
+  )
+
+  (class WeaponFire best_effort receive HyperSpace
+     (parameter EventIdentifier)
+      (parameter FireControlSolutionRange)
+      (parameter FireMissionIndex)
+      (parameter FiringLocation)
+      (parameter FiringObjectIdentifier)
+      (parameter FuseType)
+      (parameter InitialVelocityVector)
+      (parameter MunitionObjectIdentifier)
+      (parameter MunitionType)
+      (parameter QuantityFired)
+      (parameter RateOfFire)
+      (parameter TargetObjectIdentifier)
+      (parameter WarheadType)
+  )
+
+  (class SimMark best_effort receive HyperSpace
+     (parameter SimMarkTime)
+      (parameter SimMarkSubject)
+      (parameter SimMarkDescription)
+  )
+
+  (class TacticalBookmark best_effort receive HyperSpace
+     (parameter Time)
+   (class BlueOnBlueDirect best_effort receive HyperSpace
+     (parameter FiringPlatformID)
+      (parameter FiringPlatformLocation)
+      (parameter TargetPlatformID)
+      (parameter TargetPlatformLocation)
+      (parameter TargetDamageState1)
+      (parameter TargetDamageState2)
+      (parameter NumberOfRounds)
+      (parameter TypeOfRounds)
+      (parameter DetonationLocation)
+      (parameter FriendlyMDCount)
+      (parameter EnemyMDCount)
+  )
+
+  (class FirstFire best_effort receive HyperSpace
+     (parameter FiringPlatformID)
+      (parameter FiringPlatformLocation)
+      (parameter TargetPlatformID)
+  )
+
+ )
+
+  (class DamageAssessment best_effort receive HyperSpace
+     (parameter SimulationName)
+      (parameter SimulationVersion)
+      (parameter EventIdentifier)
+      (parameter FiringObjectIdentifier)
+      (parameter FiringObjectGuise)
+      (parameter FiringObjectForce)
+      (parameter FiringObjectLocation)
+      (parameter FiringObjectVelocity)
+      (parameter FiringObjectOrientation)
+      (parameter FiringObjectMarking)
+      (parameter TargetFromDetonation)
+      (parameter TargetObjectIdentifier)
+      (parameter TargetObjectGuise)
+      (parameter TargetObjectForce)
+      (parameter TargetObjectLocation)
+      (parameter TargetObjectVelocity)
+      (parameter TargetObjectOrientation)
+      (parameter TargetObjectMarking)
+      (parameter MunitionObjectIdentifier)
+      (parameter MunitionType)
+      (parameter MunitionName)
+      (parameter SubstituteMunitionType)
+      (parameter SubstituteMunitionName)
+      (parameter FuseType)
+      (parameter WarheadType)
+      (parameter QuantityFired)
+      (parameter RateOfFire)
+      (parameter DetonationLocation)
+      (parameter FinalVelocityVector)
+      (parameter DetonationResultCode)
+      (parameter RelativeDetonationLocation)
+      (parameter Range)
+      (parameter Error)
+      (parameter PCatastrophic)
+      (parameter PMobilityAndFirepower)
+      (parameter PMobilityOnly)
+      (parameter PFirePowerOnly)
+      (parameter PNoKill)
+      (parameter ComputedDamageResult)
+      (parameter DamageResultReason)
+      (parameter PreviousDamageState)
+      (parameter NewDamageState)
+  )
+
+  (class CFEnvironmentInteraction best_effort receive HyperSpace
+     (parameter Year)
+      (parameter Month)
+      (parameter Day)
+      (parameter Hour)
+      (parameter Minute)
+      (parameter Second)
+      (parameter MilliSecond)
+      (parameter ElapsedTime)
+      (parameter WeatherCondition)
+      (parameter SeaState)
+      (parameter WindSpeed)
+      (parameter WindDirection)
+      (parameter Temperature)
+      (parameter Visibility)
+      (parameter ProcessID)
+  )
+
+  (class Manager reliable receive HyperSpace
+  (class Federate reliable receive HyperSpace
+     (parameter Federate)
+   (class Request reliable receive HyperSpace
+  (class RequestPublications reliable receive HyperSpace
+ )
+
+  (class RequestSubscriptions reliable receive HyperSpace
+ )
+
+  (class RequestObjectsOwned reliable receive HyperSpace
+ )
+
+  (class RequestObjectsUpdated reliable receive HyperSpace
+ )
+
+  (class RequestObjectsReflected reliable receive HyperSpace
+ )
+
+  (class RequestUpdatesSent reliable receive HyperSpace
+ )
+
+  (class RequestInteractionsSent reliable receive HyperSpace
+ )
+
+  (class RequestReflectionsReceived reliable receive HyperSpace
+ )
+
+  (class RequestInteractionsReceived reliable receive HyperSpace
+ )
+
+  (class RequestObjectInformation reliable receive HyperSpace
+     (parameter ObjectInstance)
+  )
+
+ )
+
+  (class Report reliable receive HyperSpace
+  (class ReportObjectPublication reliable receive HyperSpace
+     (parameter NumberOfClasses)
+      (parameter ObjectClass)
+      (parameter AttributeList)
+  )
+
+  (class ReportObjectSubscription reliable receive HyperSpace
+     (parameter NumberOfClasses)
+      (parameter ObjectClass)
+      (parameter Active)
+      (parameter AttributeList)
+  )
+
+  (class ReportInteractionPublication reliable receive HyperSpace
+     (parameter InteractionClassList)
+  )
+
+  (class ReportInteractionSubscription reliable receive HyperSpace
+     (parameter InteractionClassList)
+  )
+
+  (class ReportObjectsOwned reliable receive HyperSpace
+     (parameter ObjectCounts)
+  )
+
+  (class ReportObjectsUpdated reliable receive HyperSpace
+     (parameter ObjectCounts)
+  )
+
+  (class ReportObjectsReflected reliable receive HyperSpace
+     (parameter ObjectCounts)
+  )
+
+  (class ReportUpdatesSent reliable receive HyperSpace
+     (parameter TransportationType)
+      (parameter UpdateCounts)
+  )
+
+  (class ReportReflectionsReceived reliable receive HyperSpace
+     (parameter TransportationType)
+      (parameter ReflectCounts)
+  )
+
+  (class ReportInteractionsSent reliable receive HyperSpace
+     (parameter TransportationType)
+      (parameter InteractionCounts)
+  )
+
+  (class ReportInteractionsReceived reliable receive HyperSpace
+     (parameter TransportationType)
+      (parameter InteractionCounts)
+  )
+
+  (class ReportObjectInformation reliable receive HyperSpace
+     (parameter ObjectInstance)
+      (parameter OwnedAttributeList)
+      (parameter RegisteredClass)
+      (parameter KnownClass)
+  )
+
+  (class Alert reliable receive HyperSpace
+     (parameter AlertSeverity)
+      (parameter AlertDescription)
+      (parameter AlertID)
+  )
+
+  (class ReportServiceInvocation reliable receive HyperSpace
+     (parameter Service)
+      (parameter Initiator)
+      (parameter SuccessIndicator)
+      (parameter SuppliedArgument1)
+      (parameter SuppliedArgument2)
+      (parameter SuppliedArgument3)
+      (parameter SuppliedArgument4)
+      (parameter SuppliedArgument5)
+      (parameter ReturnedArgument)
+      (parameter ExceptionDescription)
+      (parameter ExceptionID)
+  )
+
+ )
+
+  (class Adjust reliable receive HyperSpace
+  (class SetTiming reliable receive HyperSpace
+     (parameter ReportPeriod)
+  )
+
+  (class ModifyAttributeState reliable receive HyperSpace
+     (parameter ObjectInstance)
+      (parameter Attribute)
+      (parameter AttributeState)
+  )
+
+  (class SetServiceReporting reliable receive HyperSpace
+     (parameter ReportingState)
+  )
+
+  (class SetExceptionLogging reliable receive HyperSpace
+     (parameter LoggingState)
+  )
+
+ )
+
+  (class Service reliable receive HyperSpace
+  (class ResignFederationExecution reliable receive HyperSpace
+     (parameter ResignAction)
+  )
+
+  (class SynchronizationPointAchieved reliable receive HyperSpace
+     (parameter Label)
+  )
+
+  (class FederateSaveBegun reliable receive HyperSpace
+ )
+
+  (class FederateSaveComplete reliable receive HyperSpace
+     (parameter SuccessIndicator)
+  )
+
+  (class FederateRestoreComplete reliable receive HyperSpace
+     (parameter SuccessIndicator)
+  )
+
+  (class PublishObjectClass reliable receive HyperSpace
+     (parameter ObjectClass)
+      (parameter AttributeList)
+  )
+
+  (class UnpublishObjectClass reliable receive HyperSpace
+     (parameter ObjectClass)
+  )
+
+  (class PublishInteractionClass reliable receive HyperSpace
+     (parameter InteractionClass)
+  )
+
+  (class UnpublishInteractionClass reliable receive HyperSpace
+     (parameter InteractionClass)
+  )
+
+  (class SubscribeObjectClassAttributes reliable receive HyperSpace
+     (parameter ObjectClass)
+      (parameter AttributeList)
+      (parameter Active)
+  )
+
+  (class UnsubscribeObjectClass reliable receive HyperSpace
+     (parameter ObjectClass)
+  )
+
+  (class SubscribeInteractionClass reliable receive HyperSpace
+     (parameter InteractionClass)
+      (parameter Active)
+  )
+
+  (class UnsubscribeInteractionClass reliable receive HyperSpace
+     (parameter InteractionClass)
+  )
+
+  (class DeleteObjectInstance reliable receive HyperSpace
+     (parameter ObjectInstance)
+      (parameter Tag)
+      (parameter FederationTime)
+  )
+
+  (class LocalDeleteObjectInstance reliable receive HyperSpace
+     (parameter ObjectInstance)
+  )
+
+  (class ChangeAttributeTransportationType reliable receive HyperSpace
+     (parameter ObjectInstance)
+      (parameter AttributeList)
+      (parameter TransportationType)
+  )
+
+  (class ChangeAttributeOrderType reliable receive HyperSpace
+     (parameter ObjectInstance)
+      (parameter AttributeList)
+      (parameter OrderingType)
+  )
+
+  (class ChangeInteractionTransportationType reliable receive HyperSpace
+     (parameter InteractionClass)
+      (parameter TransportationType)
+  )
+
+  (class ChangeInteractionOrderType reliable receive HyperSpace
+     (parameter InteractionClass)
+      (parameter OrderingType)
+  )
+
+  (class UnconditionalAttributeOwnershipDivestiture reliable receive HyperSpace
+     (parameter ObjectInstance)
+      (parameter AttributeList)
+  )
+
+  (class EnableTimeRegulation reliable receive HyperSpace
+     (parameter FederationTime)
+      (parameter Lookahead)
+  )
+
+  (class DisableTimeRegulation reliable receive HyperSpace
+ )
+
+  (class EnableTimeConstrained reliable receive HyperSpace
+ )
+
+  (class DisableTimeConstrained reliable receive HyperSpace
+ )
+
+  (class EnableAsynchronousDelivery reliable receive HyperSpace
+ )
+
+  (class DisableAsynchronousDelivery reliable receive HyperSpace
+ )
+
+  (class ModifyLookahead reliable receive HyperSpace
+     (parameter Lookahead)
+  )
+
+  (class TimeAdvanceRequest reliable receive HyperSpace
+     (parameter FederationTime)
+  )
+
+  (class TimeAdvanceRequestAvailable reliable receive HyperSpace
+     (parameter FederationTime)
+  )
+
+  (class NextEventRequest reliable receive HyperSpace
+     (parameter FederationTime)
+  )
+
+  (class NextEventRequestAvailable reliable receive HyperSpace
+     (parameter FederationTime)
+  )
+
+  (class FlushQueueRequest reliable receive HyperSpace
+     (parameter FederationTime)
+  )
+
+ )
+
+ )
+
+ )
+
+    )
+ )
+)
