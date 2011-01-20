@@ -328,7 +328,7 @@ protected:
             double length = 1.0;
 
             dMass mass;
-            dMassSetCappedCylinder(&mass, 1.0, 2, radius, length);
+            dMassSetCapsule(&mass, 1.0, 2, radius, length);
             cyl->SetMass(&mass);
 
             cyl->EnableDynamics();
