@@ -6,9 +6,14 @@
 #include <osg/Node>
 #include <osgDB/ReadFile>
 #include <osgDB/Registry>
+#include <osgDB/FileNameUtils>
+#include <sstream>
+#include <strstream>
 
 using namespace dtCore;
 using namespace dtUtil;
+
+DataFilter *Loadable::smDataFilter = NULL;
 
 Loadable::Loadable(void)
 {
@@ -22,6 +27,11 @@ void Loadable::FlushObjectCache()
 {
    osgDB::Registry::instance()->releaseGLObjects();
    osgDB::Registry::instance()->clearObjectCache();
+}
+
+void Loadable::SetFilter(DataFilter *filter)
+{
+   smDataFilter = filter;
 }
 
 /*!
@@ -49,7 +59,29 @@ osg::Node* Loadable::LoadFile(const std::string& filename, bool useCache)
       options->setObjectCacheHint(osgDB::ReaderWriter::Options::CACHE_NONE);
    }
 
-   osg::Node *model = osgDB::readNodeFile(mFilename, options.get());
+   if(smDataFilter == NULL)
+   {
+      // No filter, so just do it the old way: let OSG do the load
+      return osgDB::readNodeFile(mFilename, options.get());
+   }
+
+   osg::Node *model = NULL;
+
+   // Find a ReaderWriter for the stream based on filename extension
+   osgDB::ReaderWriter *rw = osgDB::Registry::instance()->getReaderWriterForExtension(osgDB::getLowerCaseFileExtension(mFilename));
+   if(rw != NULL)
+   {
+      std::ifstream file(mFilename.c_str(), std::ios::in|std::ios::binary|std::ios::ate);
+      if(file.is_open())
+      {
+         std::istream &filteredStream = smDataFilter->FilterData(file);
+         file.close();
+         osgDB::ReaderWriter::ReadResult rr = rw->readNode(filteredStream, options.get());
+         model = rr.takeNode();
+         smDataFilter->ShutdownFilter(file);
+      }
+   }
+
    if (model != 0)
    {
       // this crashes - prolly should be called from the Update traversal
