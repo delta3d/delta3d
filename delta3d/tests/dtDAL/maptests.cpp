@@ -801,374 +801,254 @@ void MapTests::TestIsMapFileValid()
    CPPUNIT_ASSERT(!project.IsValidMapFile(invalidFile));
 }
 
+//////////////////////////////////////////////////////////////////////////
+template<class PropertyType> 
+PropertyType* GetActorProperty(dtDAL::ActorProxy& proxy, dtDAL::DataType& type)
+{
+   std::vector<dtDAL::ActorProperty*> props;
+   proxy.GetPropertyList(props);
+
+   std::vector<dtDAL::ActorProperty*>::iterator propItr = props.begin();
+   while (propItr != props.end())
+   {
+      if ((*propItr)->GetDataType() == type)
+      {
+         return dynamic_cast<PropertyType*>((*propItr));
+      }
+      ++propItr;
+   }
+
+   CPPUNIT_FAIL(std::string("No property found with type:") + type.GetName());
+   return NULL;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 void MapTests::TestMapSaveAndLoad()
 {
+   //Create a Map, add an Actor, and set it's properties with known values.
+   //Then close and reopen the Map, verify the Actor's Properties have the same
+   //values as when set.
+
    const std::string mapName("Neato Map");
    const std::string mapFileName("neatomap");
 
-    try
-    {
-        dtDAL::Project& project = dtDAL::Project::GetInstance();
-
-
-        dtDAL::Map* map = &project.CreateMap(mapName, mapFileName);
-
-        map->AddLibrary(mExampleLibraryName, "1.0");
-        dtDAL::LibraryManager::GetInstance().LoadActorRegistry(mExampleLibraryName);
-
-
-        dtDAL::ResourceDescriptor dirtRD = project.AddResource("dirt",
-           DATA_DIR + "/models/terrain_simple.ive", "dirt", dtDAL::DataType::STATIC_MESH);
-
-        createActors(*map);
-
-        dtDAL::ActorProperty* ap;
-
-        ap = getActorProperty(*map, "", dtDAL::DataType::STRING);
-        ((dtDAL::StringActorProperty*)ap)->SetValue("2006-04-20T06:22:08");
-
-        ap = getActorProperty(*map, "Parent Relative", dtDAL::DataType::BOOLEAN);
-        ((dtDAL::BooleanActorProperty*)ap)->SetValue(false);
-        ap = getActorProperty(*map, "use cache object", dtDAL::DataType::BOOLEAN);
-        ((dtDAL::BooleanActorProperty*)ap)->SetValue(true);
-        ap = getActorProperty(*map, "", dtDAL::DataType::FLOAT);
-        ((dtDAL::FloatActorProperty*)ap)->SetValue(40.00f);
-        ap = getActorProperty(*map, "", dtDAL::DataType::DOUBLE);
-        ((dtDAL::DoubleActorProperty*)ap)->SetValue(39.70);
-
-
-        // ActorActorProperty
-        ap = getActorProperty(*map, "", dtDAL::DataType::ACTOR);
-        dtDAL::ActorActorProperty* aap = dynamic_cast<dtDAL::ActorActorProperty*>(ap);
-        if (aap != NULL)
-        {
-           const std::string& className = aap->GetDesiredActorClass();
-           std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> > toFill;
-           // Do a search for the class name.
-           map->FindProxies(toFill, "", "", "", className);
-
-           CPPUNIT_ASSERT(toFill.size() > 0);
-           // Set the value.
-           aap->SetValue(toFill[0]);
-           // need to clear this because it could cause a segfault if this is not deleted before a
-           // library is unloadad.
-           toFill.clear();
-        }
-        else
-        {
-           dtDAL::ActorIDActorProperty* aidap = dynamic_cast<dtDAL::ActorIDActorProperty*>(ap);
-           const std::string& className = aidap->GetDesiredActorClass();
-           std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> > toFill;
-           // Do a search for the class name.
-           map->FindProxies(toFill, "", "", "", className);
-
-           CPPUNIT_ASSERT(toFill.size() > 0);
-           // Set the value.
-           aidap->SetValue(toFill[0]->GetId());
-           // need to clear this because it could cause a segfault if this is not deleted before a
-           // library is unloadad.
-           toFill.clear();
-        }
-
-        osg::Vec3 testVec3_1(33.5f, 12.25f, 49.125f);
-        osg::Vec3 testVec3_2(-34.75f, 96.03125f, 8.0f);
-        osg::Vec3 testVec3_3(12.3f, 18.1f, -4.7f);
-
-        ap = getActorProperty(*map, dtDAL::TransformableActorProxy::PROPERTY_ROTATION, dtDAL::DataType::VEC3, 1);
-        static_cast<dtDAL::Vec3ActorProperty*>(ap)->SetValue(testVec3_1);
-        testVec3_1 = static_cast<dtDAL::Vec3ActorProperty*>(ap)->GetValue();
-
-        ap = getActorProperty(*map, dtDAL::TransformableActorProxy::PROPERTY_TRANSLATION, dtDAL::DataType::VEC3, 1);
-        static_cast<dtDAL::Vec3ActorProperty*>(ap)->SetValue(testVec3_2);
-        testVec3_2 = static_cast<dtDAL::Vec3ActorProperty*>(ap)->GetValue();
-
-        // Note - some properties, especially orientation ones, tend to mangle the
-        // values that we set so that we don't get back what we passed in.  To handle that
-        // in the test, we get back whatever they think the value should be.
-        ap = getActorProperty(*map, "", dtDAL::DataType::VEC3F);
-        static_cast<dtDAL::Vec3fActorProperty*>(ap)->SetValue(testVec3_2);
-        osg::Vec3 testVec3_2_actualValues = static_cast<dtDAL::Vec3fActorProperty*>(ap)->GetValue();
-
-        ap = getActorProperty(*map, "", dtDAL::DataType::VEC3D);
-        static_cast<dtDAL::Vec3dActorProperty*>(ap)->SetValue(testVec3_3);
-
-        osg::Vec4 testVec4_1(0.125f, 0.253f, 1.0f, 1.0f);
-        osg::Vec4 testVec4_2(0.125f, 0.27f, 0.03f, 1.0f);
-
-        osg::Vec4f testVec4f_1(0.125f, 33.25f, 94.63f, 11.211f);
-        osg::Vec4d testVec4d_1(10.125, 3.25, 94.3, 1.211);
-
-        ap = getActorProperty(*map, "Test_Color", dtDAL::DataType::RGBACOLOR, 0);
-        static_cast<dtDAL::ColorRgbaActorProperty*>(ap)->SetValue(testVec4_2);
-        CPPUNIT_ASSERT_EQUAL(testVec4_2, static_cast<dtDAL::ColorRgbaActorProperty*>(ap)->GetValue());
-
-        ap = getActorProperty(*map, "Test_Vec4", dtDAL::DataType::VEC4, 0);
-        static_cast<dtDAL::Vec4ActorProperty*>(ap)->SetValue(testVec4_1);
-        CPPUNIT_ASSERT_EQUAL(testVec4_1, static_cast<dtDAL::Vec4ActorProperty*>(ap)->GetValue());
-
-        ap = getActorProperty(*map, "Test_Vec4f", dtDAL::DataType::VEC4F, 0);
-        static_cast<dtDAL::Vec4fActorProperty*>(ap)->SetValue(testVec4f_1);
-        CPPUNIT_ASSERT_EQUAL(testVec4f_1, static_cast<dtDAL::Vec4fActorProperty*>(ap)->GetValue());
-
-        ap = getActorProperty(*map, "Test_Vec4d", dtDAL::DataType::VEC4D, 0);
-        static_cast<dtDAL::Vec4dActorProperty*>(ap)->SetValue(testVec4d_1);
-        //CPPUNIT_ASSERT_EQUAL(testVec4d_1, static_cast<dtDAL::Vec4dActorProperty*>(ap)->GetValue());
-
-        ap = getActorProperty(*map, "Test_Int", dtDAL::DataType::INT);
-        static_cast<dtDAL::IntActorProperty*>(ap)->SetValue(128);
-        CPPUNIT_ASSERT_EQUAL(128, static_cast<dtDAL::IntActorProperty*>(ap)->GetValue());
-
-
-        ap = getActorProperty(*map, "Test_Enum", dtDAL::DataType::ENUMERATION, 0);
-        dtDAL::AbstractEnumActorProperty* eap = dynamic_cast<dtDAL::AbstractEnumActorProperty*>(ap);
-        CPPUNIT_ASSERT(eap != NULL);
-
-        if (eap->GetList().size() > 1)
-           eap->SetEnumValue(const_cast<dtUtil::Enumeration&>(**(eap->GetList().begin()+1)));
-        else
-           logger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__, "Enum only has one value.");
-
-        ap = getActorProperty(*map, "", dtDAL::DataType::STATIC_MESH);
-        static_cast<dtDAL::ResourceActorProperty*>(ap)->SetValue(dirtRD);
-
-        unsigned numProxies = map->GetAllProxies().size();
-        std::map<dtCore::UniqueId, std::string> names;
-        for (std::map<dtCore::UniqueId, dtCore::RefPtr<dtDAL::BaseActorObject> >::const_iterator i = map->GetAllProxies().begin();
-            i != map->GetAllProxies().end(); ++i)
-        {
-            names.insert(std::make_pair(i->first, i->second->GetName()));
-        }
-
-        const std::string newMapName("Weirdo Map");
-        //set the name to make sure it can be changed.
-        map->SetName(newMapName);
-
-        project.SaveMap(*map);
-
-        project.CloseMap(*map, true);
-
-        map = &project.GetMap(newMapName);
-
-
-        CPPUNIT_ASSERT_MESSAGE("Map should not have any loading errors.", !map->HasLoadingErrors());
-
-        std::ostringstream ss;
-
-        ss << "map has the wrong number of elements. It has "
-            << map->GetAllProxies().size() << ". It should have been " << numProxies << ".";
-
-        CPPUNIT_ASSERT_MESSAGE(ss.str(),
-            map->GetAllProxies().size() == numProxies);
-
-        for (std::map<dtCore::UniqueId, std::string>::const_iterator j = names.begin();
-            j != names.end(); ++j)
-        {
-            dtDAL::BaseActorObject* ap = map->GetProxyById(j->first);
-            CPPUNIT_ASSERT(ap != NULL);
-            CPPUNIT_ASSERT_MESSAGE(j->first.ToString() + " name should be " + j ->second, j->second == ap->GetName());
-        }
-
-        ap = getActorProperty(*map, "", dtDAL::DataType::STRING, 0);
-        CPPUNIT_ASSERT_MESSAGE(ap->GetName() + " value should be 2006-04-20T06:22:08",
-            ((dtDAL::StringActorProperty*)ap)->GetValue() == "2006-04-20T06:22:08");
-
-        ap = getActorProperty(*map, "Parent Relative", dtDAL::DataType::BOOLEAN);
-        CPPUNIT_ASSERT_MESSAGE(ap->GetName() + " value should be false",
-            !static_cast<dtDAL::BooleanActorProperty*>(ap)->GetValue());
-        ap = getActorProperty(*map, "use cache object", dtDAL::DataType::BOOLEAN);
-        CPPUNIT_ASSERT_MESSAGE(ap->GetName() + " value should be true",
-            static_cast<dtDAL::BooleanActorProperty*>(ap)->GetValue());
-        ap = getActorProperty(*map, "", dtDAL::DataType::FLOAT);
-        CPPUNIT_ASSERT_MESSAGE(ap->GetName() + " value should be 40.00.",
-            std::abs(static_cast<dtDAL::FloatActorProperty*>(ap)->GetValue() - 40.00f) < 0.0001);
-
-        ap = getActorProperty(*map, "", dtDAL::DataType::DOUBLE);
-        CPPUNIT_ASSERT_MESSAGE(ap->GetName() + " value should be 39.70.",
-            std::abs(static_cast<dtDAL::DoubleActorProperty*>(ap)->GetValue() - 39.70) < 0.0001);
-
-        ap = getActorProperty(*map, dtDAL::TransformableActorProxy::PROPERTY_ROTATION, dtDAL::DataType::VEC3,1);
-
-        dtDAL::Vec3ActorProperty* v3ap = static_cast<dtDAL::Vec3ActorProperty*>(ap);
-        ss.str("");
-        ss << v3ap->GetValue() << "." ;
-        CPPUNIT_ASSERT_MESSAGE(ap->GetName() + " value should be 33.5f, 12.25f, 49.125f but it is " + ss.str(),
-                 dtUtil::Equivalent(v3ap->GetValue(), testVec3_1, 1e-2f)
-            );
-
-        ap = getActorProperty(*map, dtDAL::TransformableActorProxy::PROPERTY_TRANSLATION, dtDAL::DataType::VEC3, 1);
-
-        v3ap = static_cast<dtDAL::Vec3ActorProperty*>(ap);
-        ss.str("");
-        ss << v3ap->GetValue() << "." ;
-        CPPUNIT_ASSERT_MESSAGE(ap->GetName() + " value should be -34.75f, 96.03125f, 8.0f the value is " + ss.str(),
-                 dtUtil::Equivalent(v3ap->GetValue(), testVec3_2, 1e-2f)
-            );
-
-        // VEC3
-        ap = getActorProperty(*map, "", dtDAL::DataType::VEC3F, 0);
-        if (logger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-        {
-            osg::Vec3 val = static_cast<dtDAL::Vec3fActorProperty*>(ap)->GetValue();
-            logger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-                "Vec3f Property values: %f, %f, %f", val[0], val[1], val[2]);
-            logger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-               "Property: name [%s], label [%s], desc [%s], readonly[%d], tostring[%s], precision[%d]",
-               ap->GetName().c_str(), ap->GetLabel().c_str(), ap->GetDescription().c_str(), ap->IsReadOnly(),
-               ap->ToString().c_str(), ap->GetNumberPrecision());
-        }
-        osg::Vec3 val3 = static_cast<dtDAL::Vec3fActorProperty*>(ap)->GetValue();
-        CPPUNIT_ASSERT_MESSAGE(ap->GetName() + " value should be -34.75f, 96.03125f, 8.0f (unless mangled)",
-                 dtUtil::Equivalent(val3, testVec3_2, 1e-2f)
-            );
-
-
-        ap = getActorProperty(*map, "", dtDAL::DataType::VEC3D, 0);
-        if (logger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-        {
-            osg::Vec3 val = static_cast<dtDAL::Vec3dActorProperty*>(ap)->GetValue();
-            logger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-                "Vec3f Property values: %f, %f, %f", val[0], val[1], val[2]);
-        }
-        osg::Vec3d v3d = static_cast<dtDAL::Vec3dActorProperty*>(ap)->GetValue();
-        ss.str("");
-        ss << ap->GetName() << " value should be " << testVec3_3 << " but it is " << v3d;
-        CPPUNIT_ASSERT_MESSAGE(ss.str(),
-                 dtUtil::Equivalent(v3d, osg::Vec3d(testVec3_3), 1e-2));
-
-        //ap = GetActorProperty(*map, "Lat/Long", dtDAL::DataType::VEC2);
-        //CPPUNIT_ASSERT_MESSAGE(ap->GetName() + " value should be 3.125, 90.25",
-        //     osg::equivalent(((dtDAL::Vec2ActorProperty*)ap)->GetValue()[0], testVec2_1[0], 1e-2f)
-        //     && osg::equivalent(((dtDAL::Vec2ActorProperty*)ap)->GetValue()[1], testVec2_1[1], 1e-2f)
-        //     );
-
-
-        ap = getActorProperty(*map, "Test_Color", dtDAL::DataType::RGBACOLOR, 0);
-        dtDAL::ColorRgbaActorProperty* colorProp1 = static_cast<dtDAL::ColorRgbaActorProperty*>(ap);
-        ss.str("");
-        ss << testVec4_2 << " but it is " << colorProp1->GetValue() << "." ;
-        CPPUNIT_ASSERT_MESSAGE(ap->GetName() + " value should be " + ss.str(),
-                 dtUtil::Equivalent(colorProp1->GetValue(), testVec4_2, 1e-2f)
-            );
-
-        ap = getActorProperty(*map, "Test_Vec4", dtDAL::DataType::VEC4, 0);
-        osg::Vec4 v4 = static_cast<dtDAL::Vec4ActorProperty*>(ap)->GetValue();
-        ss.str("");
-        ss << testVec4_1 << " but it is " << v4 << "." ;
-        CPPUNIT_ASSERT_MESSAGE(ap->GetName() + " value should be " + ss.str(),
-           dtUtil::Equivalent(v4, testVec4_1, 1e-2f)
-            );
-
-        ap = getActorProperty(*map, "Test_Vec4f", dtDAL::DataType::VEC4F, 0);
-        osg::Vec4f v4f = static_cast<dtDAL::Vec4fActorProperty*>(ap)->GetValue();
-        ss.str("");
-        ss << ap->GetName() << " value should be " << testVec4f_1 << " but it is " << v4f << "." ;
-        CPPUNIT_ASSERT_MESSAGE(ss.str(),
-                 dtUtil::Equivalent(v4f, testVec4f_1, 1e-2f)
-            );
-
-        ap = getActorProperty(*map, "Test_Vec4d", dtDAL::DataType::VEC4D, 0);
-
-        osg::Vec4d v4d = static_cast<dtDAL::Vec4dActorProperty*>(ap)->GetValue();
-        ss.str("");
-        ss << testVec4d_1 << " but it is " << v4d << "." ;
-        CPPUNIT_ASSERT_MESSAGE(ap->GetName() + " value should be " + ss.str(),
-                 dtUtil::Equivalent(v4d, testVec4d_1, 1e-2)
-            );
-
-        ap = getActorProperty(*map, "Test_Int", dtDAL::DataType::INT);
-        CPPUNIT_ASSERT_MESSAGE(ap->GetName() + " value should be 128",
-             ((dtDAL::IntActorProperty*)ap)->GetValue() == 128);
-
-        ap = getActorProperty(*map, "Test_Enum", dtDAL::DataType::ENUMERATION,0);
-        eap = dynamic_cast<dtDAL::AbstractEnumActorProperty*>(ap);
-        ap = eap->AsActorProperty();
-        CPPUNIT_ASSERT_MESSAGE(std::string("Value should be ") + (*(eap->GetList().begin()+1))->GetName()
-           + " but it is " + eap->GetEnumValue().GetName(),
-           eap->GetEnumValue() == **(eap->GetList().begin()+1));
-
-
-        ap = getActorProperty(*map, "", dtDAL::DataType::STATIC_MESH);
-        dtDAL::ResourceDescriptor rdMeshVal = static_cast<dtDAL::ResourceActorProperty*>(ap)->GetValue();
-        //testRD is declared in the setup section prior to the save and load.
-        if (rdMeshVal.IsEmpty())
-        {
-            CPPUNIT_FAIL("Static Mesh ResourceDescriptor should not be NULL.");
-        }
-
-        CPPUNIT_ASSERT_MESSAGE("The resource Descriptor does not match.  Value is :" + std::string(""),
-            !rdMeshVal.IsEmpty() && rdMeshVal == dirtRD);
-
-        //Ensure the read-only Property is read correctly from ExampleTestPropertyProxy(?)
-        {
-           const int value1 = 5, value2 = 27;
-           ap = getActorProperty(*map, "Test_Read_Only_Int", dtDAL::DataType::INT);
-
-           CPPUNIT_ASSERT_MESSAGE("Test_Read_Only_Int should be in the map", ap != NULL);
-           dtDAL::IntActorProperty *p = dynamic_cast<dtDAL::IntActorProperty*> (ap);
-           CPPUNIT_ASSERT_MESSAGE("Test_Read_Only_Int is an IntActorProperty, dynamic_cast should have succeeded", p != NULL);
-
-           //test if read only
-           CPPUNIT_ASSERT_EQUAL_MESSAGE("The Test_Read_Only_Int property should be read-only", true, p->IsReadOnly());
-
-           //ensure the read-only property is the default (from ExampleTestPropertyProxy)
-           CPPUNIT_ASSERT_EQUAL_MESSAGE("The Test_Read_Only_Int Property value doesn't match the default value",5, p->GetValue());
-        }
-
-        project.SaveMap(*map);
-        project.CloseMap(*map);
-
-        map = &project.GetMap(newMapName);
-
-        ap = getActorProperty(*map, "", dtDAL::DataType::ACTOR);
-
-        //aap is used above in the method
-        aap = dynamic_cast<dtDAL::ActorActorProperty*> (ap);
-
-        if (aap != NULL)
-        {
-           const std::string& id = aap->ToString();
-           dtDAL::BaseActorObject* p  = aap->GetValue();
-
-           CPPUNIT_ASSERT_MESSAGE("The proxy should not be NULL", p != NULL);
-
-           aap->SetValue(NULL);
-
-           CPPUNIT_ASSERT_MESSAGE("GetValue should return NULL", aap->GetValue() == NULL);
-
-           aap->FromString(id);
-
-           CPPUNIT_ASSERT_MESSAGE("The value should not be equal to the proxy", aap->GetValue() == p);
-        }
-        else
-        {
-           dtDAL::ActorIDActorProperty* aidap = dynamic_cast<dtDAL::ActorIDActorProperty*> (ap);
-           const std::string& id = aidap->ToString();
-           dtCore::UniqueId p  = aidap->GetValue();
-
-           CPPUNIT_ASSERT_MESSAGE("The proxy should not be NULL", !p.ToString().empty());
-
-           aidap->SetValue(dtCore::UniqueId(""));
-
-           CPPUNIT_ASSERT_MESSAGE("GetValue should return NULL", aidap->GetValue().ToString().empty());
-
-           aidap->FromString(id);
-
-           CPPUNIT_ASSERT_MESSAGE("The value should not be equal to the proxy", aidap->GetValue() == p);
-        }
-
-        project.SaveMapAs(*map, mapName, "oo");
-
-        //set the map name before deleting it to make sure
-        //I can delete with a changed name.
-        map->SetName("some new name");
-
-        project.DeleteMap(*map, false);
-    }
-    catch (const dtUtil::Exception& e)
-    {
-        CPPUNIT_FAIL((std::string("Error: ") + e.ToString()));
-    }
+   dtDAL::Map* map = NULL;
+
+   try
+   {
+      //create new map
+      map = &dtDAL::Project::GetInstance().CreateMap(mapName, mapFileName);
+   }
+   catch (const dtUtil::Exception& e)
+   {
+      CPPUNIT_FAIL(std::string("Error: ") + e.ToString());
+   }
+
+   map->AddLibrary(mExampleLibraryName, "1.0");
+
+   dtDAL::LibraryManager::GetInstance().LoadActorRegistry(mExampleLibraryName);
+
+   //create test actor
+   dtCore::RefPtr<dtDAL::BaseActorObject> proxy;
+   try
+   {
+      proxy = dtDAL::LibraryManager::GetInstance().CreateActorProxy(*ExampleActorLib::TEST_ACTOR_PROPERTY_TYPE.get());
+   }
+   catch (const dtUtil::Exception& e)
+   {
+      CPPUNIT_FAIL(std::string("Error: ") + e.ToString());
+   }
+
+   map->AddProxy(*proxy);
+
+   dtDAL::ActorProperty* prop(NULL);
+
+   const std::string TEST_STRING("test123  !@#");
+   const bool TEST_BOOL(true);
+   const float TEST_FLOAT(12345.12345f);
+   const double TEST_DOUBLE(12345.54321);
+   const int TEST_INT(123345);
+   const osg::Vec3 TEST_VEC3(1.f, 2.f, 3.f);
+   const osg::Vec3 TEST_VEC3F(123.123f, 456.456f, 789.789f);
+   const osg::Vec3d TEST_VEC3D(123.123, 456.456, 789.789);
+   const osg::Vec4f TEST_VEC4F(1.f, 2.f, 3.f, 4.f);
+   const osg::Vec4d TEST_VEC4D(2.0, 3.0, 4.0, 5.0);
+   const osg::Vec4 TEST_RGBA(255.f, 245.f, 235.f, 1235.f);
+   const dtCore::UniqueId TEST_ACTORID;
+   const dtDAL::ResourceDescriptor TEST_RESOURCE("test", "somethingelse");
+
+   //string
+   {
+      dtDAL::StringActorProperty* prop = GetActorProperty<dtDAL::StringActorProperty>(*proxy, dtDAL::DataType::STRING);
+      prop->SetValue(TEST_STRING);
+   }
+
+   //boolean
+   {
+      dtDAL::BooleanActorProperty* prop = GetActorProperty<dtDAL::BooleanActorProperty>(*proxy, dtDAL::DataType::BOOLEAN);
+      prop->SetValue(TEST_BOOL);
+   }
+
+   //float
+   {
+      dtDAL::FloatActorProperty* prop = GetActorProperty<dtDAL::FloatActorProperty>(*proxy, dtDAL::DataType::FLOAT);
+      prop->SetValue(TEST_FLOAT);
+   }
+
+   //double
+   {
+      dtDAL::DoubleActorProperty* prop = GetActorProperty<dtDAL::DoubleActorProperty>(*proxy, dtDAL::DataType::DOUBLE);
+      prop->SetValue(TEST_DOUBLE);
+   }
+
+   //int
+   {
+      dtDAL::IntActorProperty* prop = GetActorProperty<dtDAL::IntActorProperty>(*proxy, dtDAL::DataType::INT);
+      prop->SetValue(TEST_INT);
+   }
+
+
+   //vec3 / vec3f
+   {
+      dtDAL::Vec3ActorProperty* prop = GetActorProperty<dtDAL::Vec3ActorProperty>(*proxy, dtDAL::DataType::VEC3);
+      prop->SetValue(TEST_VEC3);
+   }
+
+
+   //vec3d
+   {
+      dtDAL::Vec3dActorProperty* prop = GetActorProperty<dtDAL::Vec3dActorProperty>(*proxy, dtDAL::DataType::VEC3D);
+      prop->SetValue(TEST_VEC3D);
+   }
+        
+   //vec4f
+   {
+      dtDAL::Vec4fActorProperty* prop = GetActorProperty<dtDAL::Vec4fActorProperty>(*proxy, dtDAL::DataType::VEC4F);
+      prop->SetValue(TEST_VEC4F);
+   }
+   
+   //vec4d
+   {
+      dtDAL::Vec4dActorProperty* prop = GetActorProperty<dtDAL::Vec4dActorProperty>(*proxy, dtDAL::DataType::VEC4D);
+      prop->SetValue(TEST_VEC4D);
+   }
+
+   //rgbacolor
+   {
+      dtDAL::ColorRgbaActorProperty* prop = GetActorProperty<dtDAL::ColorRgbaActorProperty>(*proxy, dtDAL::DataType::RGBACOLOR);
+      prop->SetValue(TEST_RGBA);
+   }
+
+   // ActorIDProperty
+   {
+      dtDAL::ActorIDActorProperty* prop = GetActorProperty<dtDAL::ActorIDActorProperty>(*proxy, dtDAL::DataType::ACTOR);
+      prop->SetValue(TEST_ACTORID);
+   }
+
+   //enumeration
+   {
+      dtDAL::AbstractEnumActorProperty* prop = GetActorProperty<dtDAL::AbstractEnumActorProperty>(*proxy, dtDAL::DataType::ENUMERATION);
+      prop->SetEnumValue( *(*prop->GetList().begin()) );
+   }
+
+   //Resource
+   {
+      dtDAL::ResourceActorProperty* prop = GetActorProperty<dtDAL::ResourceActorProperty>(*proxy, dtDAL::DataType::SOUND);
+      prop->SetValue(TEST_RESOURCE);
+   }
+
+   //save map
+   dtDAL::Project::GetInstance().SaveMap(*map);
+
+   //close map
+   dtDAL::Project::GetInstance().CloseMap(*map, true);
+   map = NULL;
+
+   //reopen map
+   map = &dtDAL::Project::GetInstance().GetMap(mapName);
+
+   const std::string kAssertMsg("Property value returned from Map doesn't match what was set");
+
+   //string
+   {
+      dtDAL::StringActorProperty* prop = GetActorProperty<dtDAL::StringActorProperty>(*proxy, dtDAL::DataType::STRING);
+      CPPUNIT_ASSERT_EQUAL_MESSAGE(kAssertMsg, TEST_STRING, prop->GetValue());
+   }
+
+   //boolean
+   {
+      dtDAL::BooleanActorProperty* prop = GetActorProperty<dtDAL::BooleanActorProperty>(*proxy, dtDAL::DataType::BOOLEAN);
+      CPPUNIT_ASSERT_EQUAL_MESSAGE(kAssertMsg, TEST_BOOL, prop->GetValue());
+   }
+   
+   //float
+   {
+      dtDAL::FloatActorProperty* prop = GetActorProperty<dtDAL::FloatActorProperty>(*proxy, dtDAL::DataType::FLOAT);
+      CPPUNIT_ASSERT_EQUAL_MESSAGE(kAssertMsg, TEST_FLOAT, prop->GetValue());
+   }
+   
+   //double
+   {
+      dtDAL::DoubleActorProperty* prop = GetActorProperty<dtDAL::DoubleActorProperty>(*proxy, dtDAL::DataType::DOUBLE);
+      CPPUNIT_ASSERT_EQUAL_MESSAGE(kAssertMsg, TEST_DOUBLE, prop->GetValue());
+   }
+  
+   //int
+   {
+      dtDAL::IntActorProperty* prop = GetActorProperty<dtDAL::IntActorProperty>(*proxy, dtDAL::DataType::INT);
+      CPPUNIT_ASSERT_EQUAL_MESSAGE(kAssertMsg, TEST_INT, prop->GetValue());
+   }
+
+
+   //vec3 /vec3f
+   {
+      dtDAL::Vec3ActorProperty* prop = GetActorProperty<dtDAL::Vec3ActorProperty>(*proxy, dtDAL::DataType::VEC3);
+      CPPUNIT_ASSERT_MESSAGE(kAssertMsg, dtUtil::Equivalent(TEST_VEC3, prop->GetValue(), 1e-2f));
+   }
+   
+   //vec3d
+   {
+      dtDAL::Vec3dActorProperty* prop = GetActorProperty<dtDAL::Vec3dActorProperty>(*proxy, dtDAL::DataType::VEC3D);
+      CPPUNIT_ASSERT_MESSAGE(kAssertMsg, dtUtil::Equivalent(TEST_VEC3D, prop->GetValue(), 1e-2));
+   }
+
+   //vec4f
+   {
+      dtDAL::Vec4fActorProperty* prop = GetActorProperty<dtDAL::Vec4fActorProperty>(*proxy, dtDAL::DataType::VEC4F);
+      CPPUNIT_ASSERT_MESSAGE(kAssertMsg, dtUtil::Equivalent(TEST_VEC4F, prop->GetValue(), 1e-2f));
+   }
+
+   //vec4d
+   {
+      dtDAL::Vec4dActorProperty* prop = GetActorProperty<dtDAL::Vec4dActorProperty>(*proxy, dtDAL::DataType::VEC4D);
+      CPPUNIT_ASSERT_MESSAGE(kAssertMsg, dtUtil::Equivalent(TEST_VEC4D, prop->GetValue(), 1e-2));
+   }
+
+   //rgbacolor
+   {
+      dtDAL::ColorRgbaActorProperty* prop = GetActorProperty<dtDAL::ColorRgbaActorProperty>(*proxy, dtDAL::DataType::RGBACOLOR);
+      CPPUNIT_ASSERT_MESSAGE(kAssertMsg, dtUtil::Equivalent(TEST_RGBA, prop->GetValue(), 1e-2f));
+   }
+
+   // ActoridProperty
+   {
+      dtDAL::ActorIDActorProperty* prop = GetActorProperty<dtDAL::ActorIDActorProperty>(*proxy, dtDAL::DataType::ACTOR);
+      CPPUNIT_ASSERT_EQUAL_MESSAGE(kAssertMsg, TEST_ACTORID, prop->GetValue());
+   }
+       
+   //enumeration
+   {
+      dtDAL::AbstractEnumActorProperty* prop = GetActorProperty<dtDAL::AbstractEnumActorProperty>(*proxy, dtDAL::DataType::ENUMERATION);
+      CPPUNIT_ASSERT_EQUAL_MESSAGE(kAssertMsg, (*prop->GetList().begin())->GetName(), prop->GetEnumValue().GetName());
+   }
+
+   //Resource
+   {
+      dtDAL::ResourceActorProperty* prop = GetActorProperty<dtDAL::ResourceActorProperty>(*proxy, dtDAL::DataType::SOUND);
+      CPPUNIT_ASSERT_EQUAL_MESSAGE(kAssertMsg, TEST_RESOURCE.GetResourceIdentifier(), prop->GetValue().GetResourceIdentifier()); 
+   }
+
+   dtDAL::Project::GetInstance().DeleteMap(*map, true);
 }
 
 
