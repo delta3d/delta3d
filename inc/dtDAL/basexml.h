@@ -32,6 +32,7 @@
 #include <osg/Referenced>
 
 #include <dtCore/refptr.h>
+#include <dtCore/datafilter.h>
 #include <dtDAL/export.h>
 
 #include <xercesc/util/XercesDefs.hpp>
@@ -70,6 +71,10 @@ namespace dtDAL
       ///@return true if the map is currently being parsed.
       bool IsParsing() const { return mParsing; }
 
+      // Set filter through which data should pass as it's loaded
+      // (default is NULL, for pass-through)
+      static void SetFilter(dtCore::DataFilter *filter);
+
    protected:
 
       virtual ~BaseXMLParser();
@@ -96,6 +101,10 @@ namespace dtDAL
       dtCore::RefPtr<BaseXMLHandler> mHandler;
       xercesc::SAX2XMLReader* mXercesParser;
       bool mParsing;
+
+      // Filter through which data should pass as it's loaded
+      // (default is NULL, for pass-through)
+      static dtCore::DataFilter *smDataFilter;
    };
 
 
