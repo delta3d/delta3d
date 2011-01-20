@@ -178,7 +178,7 @@ namespace dtAnim
    // Registers the fixture into the 'registry'
    CPPUNIT_TEST_SUITE_REGISTRATION( AnimationTests );
 
-   static const int TOTAL_TEST_EVENTS = 18;
+   static const unsigned TOTAL_TEST_EVENTS = 18;
 
    /////////////////////////////////////////////////////////////////////////////
    void AnimationTests::setUp()
