@@ -138,6 +138,24 @@ namespace dtUtil
     */
    DT_UTIL_EXPORT int StrCompare(const std::string& one, const std::string& two, bool caseSensitive = true);
 
+   /// A functor for using std::find or whatever that will compare two strings case sensitive or insensitive.
+   struct StrCompareFunc
+   {
+      StrCompareFunc(const std::string& mainString, bool caseSensitive = true)
+      : mString(mainString)
+      , mCaseSensitive(caseSensitive)
+      {
+      }
+
+      bool operator() (const std::string& toCompare)
+      {
+         return StrCompare(toCompare, mString, mCaseSensitive) != 0;
+      }
+
+      const std::string& mString;
+      bool mCaseSensitive;
+   };
+
    /**
     * A templated function for taking any of the osg vector types and reading the data from a string.
     * If the string is empty or "NULL" it will set the vector to all 0s. It expects the data to be the proper number
