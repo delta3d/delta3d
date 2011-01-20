@@ -24,7 +24,7 @@
 
 #include <dtDirector/node.h>
 #include <dtDirector/export.h>
-
+#include <dtDAL/actorproperty.h>
 
 namespace dtDirector
 {
@@ -137,6 +137,8 @@ namespace dtDirector
       int mMaxTriggerCount;
       int mTriggerCount;
       dtCore::UniqueId mInstigator;
+
+      dtCore::RefPtr<dtDAL::ActorProperty> mInstigatorProp;
   };
 }
 

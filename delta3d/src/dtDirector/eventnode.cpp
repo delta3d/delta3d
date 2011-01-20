@@ -74,14 +74,13 @@ namespace dtDirector
       // Create the instigator property.
       if (UsesInstigator())
       {
-         dtDAL::ActorIDActorProperty* instigatorProp =
-            new dtDAL::ActorIDActorProperty("Instigator", "Instigator", 
+         mInstigatorProp =
+            new dtDAL::ActorIDActorProperty("Instigator", "Instigator",
             dtDAL::ActorIDActorProperty::SetFuncType(this, &EventNode::SetInstigator),
             dtDAL::ActorIDActorProperty::GetFuncType(this, &EventNode::GetInstigator),
             "", "The Instigator that can trigger this event.");
-         AddProperty(instigatorProp);
 
-         mValues.push_back(ValueLink(this, instigatorProp, false, true, true));
+         mValues.push_back(ValueLink(this, mInstigatorProp.get(), true, true, true));
       }
    }
 
@@ -91,6 +90,10 @@ namespace dtDirector
       // Can't trigger a disabled event.
       if (!IsEnabled()) return;
 
+      if (instigator != NULL)
+      {
+         SetActorID(*instigator, "Instigator");
+      }
       if (Test(outputName, instigator, countTrigger))
       {
          OutputLink* link = GetOutputLink(outputName);
@@ -135,31 +138,31 @@ namespace dtDirector
                bValidValue = true;
             }
 
-            for (int index = 0; index < count; index++)
-            {
-               dtCore::UniqueId id = GetActorID("Instigator", index);
-               if (id.ToString() != "")
-               {
-                  // The test is valid if we have valid connections
-                  // to the instigator link.
-                  bValidValue = true;
+            //for (int index = 0; index < count; index++)
+            //{
+            //   dtCore::UniqueId id = GetActorID("Instigator", index);
+            //   if (id.ToString() != "")
+            //   {
+            //      // The test is valid if we have valid connections
+            //      // to the instigator link.
+            //      bValidValue = true;
 
-                  // Can't do proper matching if we have no instigator.
-                  if (!instigator || instigator->ToString().empty()) break;
+            //      // Can't do proper matching if we have no instigator.
+            //      if (!instigator || instigator->ToString().empty()) break;
 
-                  if (*instigator == id)
-                  {
-                     bFound = true;
-                     break;
-                  }
-               }
-            }
+            //      if (*instigator == id)
+            //      {
+            //         bFound = true;
+            //         break;
+            //      }
+            //   }
+            //}
          }
 
          // Only activate the event if there is no instigator connected
          // to the node that we care to test with, or if the instigating
          // actor matched an instigator connected to this node.
-         if (!bValidValue || bFound)
+         if (!bValidValue/* || bFound*/)
          {
             return true;
          }
