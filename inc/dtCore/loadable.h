@@ -3,6 +3,7 @@
 
 #include <string>
 #include <dtCore/export.h>
+#include <dtCore/datafilter.h>
 
 /// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace osg
@@ -36,11 +37,20 @@ namespace dtCore
       ///flush all objects that have been previously cached.
       static void FlushObjectCache();
 
+      // Set filter through which data should pass as it's loaded
+      // (default is NULL, for pass-through)
+      static void SetFilter(DataFilter *filter);
+
    protected:
       Loadable();
       virtual ~Loadable();
 
       std::string mFilename; ///<The filename of the last file loaded
+
+      // Filter through which data should pass as it's loaded
+      // (default is NULL, for pass-through)
+      static DataFilter *smDataFilter;
+
    };
 
 }
