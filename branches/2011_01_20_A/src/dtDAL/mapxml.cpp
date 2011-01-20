@@ -30,6 +30,8 @@
 #   pragma warning(disable : 4267) // for warning C4267: 'argument' : conversion from 'size_t' to 'const unsigned int', possible loss of data
 #endif
 
+#include <fstream>
+#include <xercesc/framework/MemBufInputSource.hpp>
 #include <xercesc/util/XMLString.hpp>
 #include <xercesc/util/OutOfMemoryException.hpp>
 #include <xercesc/sax2/XMLReaderFactory.hpp>
@@ -48,7 +50,6 @@
 #include <dtCore/transformable.h>
 #include <dtCore/transform.h>
 
-#include <dtDAL/actorhierarchynode.h>
 #include <dtDAL/mapxml.h>
 #include <dtDAL/map.h>
 #include <dtDAL/exceptionenum.h>
@@ -133,7 +134,7 @@ namespace dtDAL
 
    /////////////////////////////////////////////////////////////////
 
-   bool MapParser::ParsePrefab(const std::string& path, std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> >& proxyList, dtDAL::Map* map)
+   bool MapParser::ParsePrefab(const std::string& path, std::vector<dtCore::RefPtr<dtDAL::ActorProxy> >& proxyList, dtDAL::Map* map)
    {
       mMapHandler->SetPrefabMode(proxyList, dtDAL::MapContentHandler::PREFAB_READ_ALL, map);
       if (BaseXMLParser::Parse(path))
@@ -149,7 +150,7 @@ namespace dtDAL
    ///////////////////////////////////////////////////////////////////////////////
    const std::string MapParser::GetPrefabIconFileName(const std::string& path)
    {
-      std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> > proxyList; //just an empty list
+      std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > proxyList; //just an empty list
       std::string iconFileName = "";
 
       mParsing = true;
@@ -186,8 +187,32 @@ namespace dtDAL
       {
          mXercesParser->setContentHandler(mMapHandler.get());
          mXercesParser->setErrorHandler(mMapHandler.get());
+         bool result = false;
 
-         if (mXercesParser->parseFirst(path.c_str(), token))
+         if(smDataFilter == NULL)
+         {
+            // No filter, so just do it the old way: let Xerces do the load
+            result = mXercesParser->parseFirst(path.c_str(), token);
+         }
+         else
+         {
+            std::ifstream unfilteredFileStream(path.c_str(), std::ios::in|std::ios::binary|std::ios::ate);
+            if(unfilteredFileStream.is_open())
+            {
+               std::istrstream &filteredStream = smDataFilter->FilterData(unfilteredFileStream);
+               unfilteredFileStream.close();
+         
+               char *filteredBytes = filteredStream.str();
+               filteredStream.seekg(0, std::ios_base::end);
+               std::streamsize filteredByteCount = filteredStream.tellg();
+               filteredStream.seekg(0, std::ios::beg);
+
+               MemBufInputSource memBuf((XMLByte*)filteredBytes, filteredByteCount, path.c_str());
+               result = mXercesParser->parseFirst(memBuf, token);
+            }
+         }
+
+         if (result)
          {
             parserNeedsReset = true;
 
@@ -397,17 +422,17 @@ namespace dtDAL
 
          if (map.GetEnvironmentActor() != NULL)
          {
-            BaseActorObject& proxy = *map.GetEnvironmentActor();
+            ActorProxy &proxy = *map.GetEnvironmentActor();
             BeginElement(MapXMLConstants::ACTOR_ENVIRONMENT_ACTOR_ELEMENT);
             AddCharacters(proxy.GetId().ToString());
             EndElement(); // End Actor Environment Actor Element.
          }
 
-         const std::map<dtCore::UniqueId, dtCore::RefPtr<BaseActorObject> >& proxies = map.GetAllProxies();
-         for (std::map<dtCore::UniqueId, dtCore::RefPtr<BaseActorObject> >::const_iterator i = proxies.begin();
+         const std::map<dtCore::UniqueId, dtCore::RefPtr<ActorProxy> >& proxies = map.GetAllProxies();
+         for (std::map<dtCore::UniqueId, dtCore::RefPtr<ActorProxy> >::const_iterator i = proxies.begin();
               i != proxies.end(); i++)
          {
-            const BaseActorObject& proxy = *i->second.get();
+            const ActorProxy& proxy = *i->second.get();
             //printf("Proxy pointer %x\n", &proxy);
             //printf("Actor pointer %x\n", proxy.getActor());
 
@@ -440,6 +465,10 @@ namespace dtDAL
                //printf("Printing actor property number %d", x++);
                const ActorProperty& property = *(*i);
 
+               // If the property is read only, skip it
+               if (property.IsReadOnly())
+                  continue;
+
                mPropSerializer->WriteProperty(property);
 
             }
@@ -457,7 +486,7 @@ namespace dtDAL
                int actorCount = map.GetGroupActorCount(groupIndex);
                for (int actorIndex = 0; actorIndex < actorCount; actorIndex++)
                {
-                  dtDAL::BaseActorObject* proxy = map.GetActorFromGroup(groupIndex, actorIndex);
+                  dtDAL::ActorProxy* proxy = map.GetActorFromGroup(groupIndex, actorIndex);
                   if (proxy)
                   {
                      BeginElement(MapXMLConstants::ACTOR_GROUP_ACTOR_ELEMENT);
@@ -470,14 +499,6 @@ namespace dtDAL
             }
          }
          EndElement(); // End Groups Element.
-
-         BeginElement(MapXMLConstants::HIERARCHY_ELEMENT);
-            dtDAL::ActorHierarchyNode* hier = map.GetDrawableActorHierarchy();
-            for(unsigned int i = 0; i < hier->GetNumChildren(); ++i)
-            {
-               WriteHierarchyBranch(hier->GetChild(i));
-            }
-         EndElement(); //End Drawable Hierarchy Element
 
          BeginElement(MapXMLConstants::PRESET_CAMERAS_ELEMENT);
          {
@@ -639,25 +660,7 @@ namespace dtDAL
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void MapWriter::WriteHierarchyBranch(dtDAL::ActorHierarchyNode* hierNode)
-   {
-      std::string idAtt = "actorID='";
-      idAtt += hierNode->GetBaseActorObject()->GetId().ToString();
-      idAtt += "'";
-      XMLCh* unicodeForm = XMLString::transcode(idAtt.c_str());
-
-      BeginElement(MapXMLConstants::HIERARCHY_ELEMENT_NODE, unicodeForm);      
-
-      for (unsigned int i = 0; i < hierNode->GetNumChildren(); ++i)
-      {
-         WriteHierarchyBranch(hierNode->GetChild(i));
-      }
-
-      EndElement(); //end HIERARCHY_ELEMENT_NODE
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   void MapWriter::SavePrefab(const std::vector<dtCore::RefPtr<BaseActorObject> > proxyList,
+   void MapWriter::SavePrefab(const std::vector<dtCore::RefPtr<ActorProxy> > proxyList,
                               const std::string& filePath, const std::string& description,
                               const std::string& iconFile /* = "" */)
    {
@@ -699,7 +702,7 @@ namespace dtDAL
          BeginElement(MapXMLConstants::LIBRARIES_ELEMENT);
          for (int proxyIndex = 0; proxyIndex < (int)proxyList.size(); proxyIndex++)
          {
-            BaseActorObject* proxy = proxyList[proxyIndex].get();
+            ActorProxy* proxy = proxyList[proxyIndex].get();
 
             // We can't do anything without a proxy.
             if (!proxy)
@@ -728,7 +731,7 @@ namespace dtDAL
          BeginElement(MapXMLConstants::ACTORS_ELEMENT);
          for (int proxyIndex = 0; proxyIndex < (int)proxyList.size(); proxyIndex++)
          {
-            BaseActorObject* proxy = proxyList[proxyIndex].get();
+            ActorProxy* proxy = proxyList[proxyIndex].get();
 
             // We can't do anything without a proxy.
             if (!proxy)

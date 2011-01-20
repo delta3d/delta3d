@@ -25,6 +25,11 @@
 #include <cstdlib>
 #include <string>
 #include <cmath>
+#include <xercesc/framework/MemBufInputSource.hpp>
+#include <fstream>
+#include <strstream>
+
+
 
 #ifdef _MSC_VER
 #   pragma warning(push)
@@ -65,6 +70,8 @@ namespace dtDAL
 {
 
    static const std::string logName("basexml.cpp");
+
+   dtCore::DataFilter *BaseXMLParser::smDataFilter = NULL;
 
    /////////////////////////////////////////////////////////////////
    BaseXMLParser::BaseXMLParser()
@@ -108,6 +115,12 @@ namespace dtDAL
    }
 
    /////////////////////////////////////////////////////////////////
+   void BaseXMLParser::SetFilter(dtCore::DataFilter *filter)
+   {
+      smDataFilter = filter;
+   }
+
+   /////////////////////////////////////////////////////////////////
    bool BaseXMLParser::Parse(const std::string& path)
    {
       try
@@ -115,7 +128,30 @@ namespace dtDAL
          mParsing = true;
          mXercesParser->setContentHandler(mHandler.get());
          mXercesParser->setErrorHandler(mHandler.get());
-         mXercesParser->parse(path.c_str());
+
+         if(smDataFilter == NULL)
+         {
+            // No filter, so just do it the old way: let Xerces do the load
+            mXercesParser->parse(path.c_str());
+         }
+         else
+         {
+            std::ifstream unfilteredFileStream(path.c_str(), std::ios::in|std::ios::binary|std::ios::ate);
+            if(unfilteredFileStream.is_open())
+            {
+               std::istrstream &filteredStream = smDataFilter->FilterData(unfilteredFileStream);
+               unfilteredFileStream.close();
+         
+               char *filteredBytes = filteredStream.str();
+               filteredStream.seekg(0, std::ios_base::end);
+               std::streamsize filteredByteCount = filteredStream.tellg();
+               filteredStream.seekg(0, std::ios::beg);
+
+               MemBufInputSource memBuf((XMLByte*)filteredBytes, filteredByteCount, path.c_str());
+               mXercesParser->parse(memBuf);
+            }
+         }
+
          mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Parsing complete.\n");
          mParsing = false;
          return true;
