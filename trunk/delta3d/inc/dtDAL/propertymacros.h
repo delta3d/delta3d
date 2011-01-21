@@ -141,6 +141,15 @@ PropertyStringName, PropertyLabel, DESC_ ## PropertyName);\
    DT_CREATE_PROPERTY_GETTER_HELPER_MACRO(RegHelperType_, PropertyName), \
 PropertyStringName, PropertyLabel, DESC_ ## PropertyName);\
 
+/**
+* Macro used to register a dtDAL::ActorIDActorProperty
+* @param BaseClassString The string name of the type of class to store (e.g., "dtCore::Transformable")
+* @param PropertyName The name of the Property to define (e.g., MyProperty)
+* @param PropertyLabel The string used to as a label display of this Property. (e.g., "My Property")
+* @param PropertyDesc The string used to display as the description of this Property (e.g., "This is the description")
+* @param RegHelperType_ The concrete type definition of the dtDAL::PropertyRegHelper
+* @param RegHelperInstance An instance of the RegHelperType_
+ */
 #define DT_REGISTER_ACTOR_ID_PROPERTY(BaseClassString, PropertyName, PropertyLabel, PropertyDesc, RegHelperType_, RegHelperInstance) \
    static const dtUtil::RefString DESC_ ## PropertyName (PropertyDesc);\
    static const dtUtil::RefString BASE_ ## PropertyName (BaseClassString);\
