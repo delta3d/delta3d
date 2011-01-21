@@ -217,6 +217,8 @@ namespace dtDirector
          case dtDAL::DataType::INT_ID:
          case dtDAL::DataType::FLOAT_ID:
          case dtDAL::DataType::DOUBLE_ID:
+         case dtDAL::DataType::VEC2F_ID:
+         case dtDAL::DataType::VEC3F_ID:
          case dtDAL::DataType::VEC4F_ID:
          case dtDAL::DataType::UNKNOWN_ID:
             return true;
