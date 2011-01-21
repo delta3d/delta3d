@@ -71,7 +71,7 @@ namespace dtDirector
        *
        * @return     True if the current node should remain active.
        */
-      virtual bool Update(float simDelta, float delta, int input, bool firstUpdate);     
+      virtual bool Update(float simDelta, float delta, int input, bool firstUpdate);
 
       /**
        * Accessors for property values.
@@ -84,6 +84,8 @@ namespace dtDirector
 
       void SetResult(const std::string& value);
       std::string GetResult() const;
+
+      virtual const std::string& GetName();
 
    protected:
 
