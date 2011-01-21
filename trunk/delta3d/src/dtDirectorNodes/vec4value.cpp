@@ -19,7 +19,7 @@
  * Author: Jeff P. Houde
  */
 
-#include <dtDirectorNodes/vecvalue.h>
+#include <dtDirectorNodes/vec4value.h>
 #include <dtDirector/colors.h>
 
 #include <dtDAL/vectoractorproperties.h>
@@ -27,7 +27,7 @@
 namespace dtDirector
 {
    ///////////////////////////////////////////////////////////////////////////////////////
-   VecValue::VecValue()
+   Vec4Value::Vec4Value()
        : ValueNode()
    {
       AddAuthor("Jeff P. Houde");
@@ -35,38 +35,38 @@ namespace dtDirector
   }
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   VecValue::~VecValue()
+   Vec4Value::~Vec4Value()
    {
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   void VecValue::Init(const NodeType& nodeType, DirectorGraph* graph)
+   void Vec4Value::Init(const NodeType& nodeType, DirectorGraph* graph)
    {
       ValueNode::Init(nodeType, graph);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void VecValue::BuildPropertyMap()
+   void Vec4Value::BuildPropertyMap()
    {
       ValueNode::BuildPropertyMap();
 
       mProperty = new dtDAL::Vec4ActorProperty(
          "Value", "Value",
-         dtDAL::Vec4ActorProperty::SetFuncType(this, &VecValue::SetValue),
-         dtDAL::Vec4ActorProperty::GetFuncType(this, &VecValue::GetValue),
+         dtDAL::Vec4ActorProperty::SetFuncType(this, &Vec4Value::SetValue),
+         dtDAL::Vec4ActorProperty::GetFuncType(this, &Vec4Value::GetValue),
          "The value.");
       AddProperty(mProperty);
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void VecValue::SetValue(const osg::Vec4& value)
+   void Vec4Value::SetValue(const osg::Vec4& value)
    {
       mValue = value;
       ValueNode::OnValueChanged();
    }
 
    //////////////////////////////////////////////////////////////////////////
-   const osg::Vec4& VecValue::GetValue()
+   const osg::Vec4& Vec4Value::GetValue()
    {
       ValueNode::OnValueRetrieved();
       return mValue;

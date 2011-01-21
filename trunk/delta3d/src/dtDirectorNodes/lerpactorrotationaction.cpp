@@ -102,14 +102,14 @@ namespace dtDirector
          "The current time.");
 
       dtDAL::Vec4ActorProperty* startRotProp = new dtDAL::Vec4ActorProperty(
-         "StartRotation", "Start Rotation", 
+         "StartRotation", "Start Rotation",
          dtDAL::Vec4ActorProperty::SetFuncType(this, &LerpActorRotationAction::SetStartRot),
          dtDAL::Vec4ActorProperty::GetFuncType(this, &LerpActorRotationAction::GetStartRot),
          "The starting rotation of the actor.");
       AddProperty(startRotProp);
 
       dtDAL::Vec4ActorProperty* endRotProp = new dtDAL::Vec4ActorProperty(
-         "EndRotation", "End Rotation", 
+         "EndRotation", "End Rotation",
          dtDAL::Vec4ActorProperty::SetFuncType(this, &LerpActorRotationAction::SetEndRot),
          dtDAL::Vec4ActorProperty::GetFuncType(this, &LerpActorRotationAction::GetEndRot),
          "The ending rotation of the actor.");
@@ -135,6 +135,13 @@ namespace dtDirector
             // Activate the "Started" output link.
             if (firstUpdate)
             {
+               // If this is a first update and we already started, then kill the
+               // new thread since we're running on another thread
+               if (mIsActive)
+               {
+                  return false;
+               }
+
                OutputLink* link = GetOutputLink("Started");
                if (link) link->Activate();
             }
@@ -152,6 +159,13 @@ namespace dtDirector
                }
                else
                {
+                  // Reset the current time to the beginning since we finished
+                  // if we're internally tracking it
+                  if (IsTimeInternal())
+                  {
+                     SetFloat(GetFloat("StartTime"), "Time");
+                  }
+
                   OutputLink* link = GetOutputLink("Finished");
                   if (link) link->Activate();
                   return false;
@@ -185,8 +199,8 @@ namespace dtDirector
             }
             float alpha = (curTime - startTime) * mLerpTimeScalar;
 
-            osg::Quat startRot(GetVec("StartRotation"));
-            osg::Quat endRot(GetVec("EndRotation"));
+            osg::Quat startRot(GetVec4("StartRotation"));
+            osg::Quat endRot(GetVec4("EndRotation"));
 
             osg::Quat newRot;
             newRot.slerp(alpha, startRot, endRot);
@@ -209,6 +223,12 @@ namespace dtDirector
                      actor->SetTransform(transform);
                   }
                }
+            }
+
+            // Update the current time if we're internally tracking it
+            if (IsTimeInternal())
+            {
+               SetFloat(curTime + simDelta, "Time");
             }
 
             return true;
@@ -319,6 +339,14 @@ namespace dtDirector
    osg::Vec4 LerpActorRotationAction::GetEndRot()
    {
       return mEndRot;
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   bool LerpActorRotationAction::IsTimeInternal()
+   {
+      // If we have any external links to our Time property, then we are not
+      // internally tracking the time
+      return GetValueLink("Time")->GetLinks().size() == 0;
    }
 }
 

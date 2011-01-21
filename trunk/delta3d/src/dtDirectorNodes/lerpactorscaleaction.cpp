@@ -100,17 +100,17 @@ namespace dtDirector
          dtDAL::FloatActorProperty::GetFuncType(this, &LerpActorScaleAction::GetTime),
          "The current time.");
 
-      dtDAL::Vec4ActorProperty* startPosProp = new dtDAL::Vec4ActorProperty(
-         "StartScale", "Start Scale", 
-         dtDAL::Vec4ActorProperty::SetFuncType(this, &LerpActorScaleAction::SetStartScale),
-         dtDAL::Vec4ActorProperty::GetFuncType(this, &LerpActorScaleAction::GetStartScale),
+      dtDAL::Vec3ActorProperty* startPosProp = new dtDAL::Vec3ActorProperty(
+         "StartScale", "Start Scale",
+         dtDAL::Vec3ActorProperty::SetFuncType(this, &LerpActorScaleAction::SetStartScale),
+         dtDAL::Vec3ActorProperty::GetFuncType(this, &LerpActorScaleAction::GetStartScale),
          "The starting rotation of the actor.");
       AddProperty(startPosProp);
 
-      dtDAL::Vec4ActorProperty* endPosProp = new dtDAL::Vec4ActorProperty(
-         "EndScale", "End Scale", 
-         dtDAL::Vec4ActorProperty::SetFuncType(this, &LerpActorScaleAction::SetEndScale),
-         dtDAL::Vec4ActorProperty::GetFuncType(this, &LerpActorScaleAction::GetEndScale),
+      dtDAL::Vec3ActorProperty* endPosProp = new dtDAL::Vec3ActorProperty(
+         "EndScale", "End Scale",
+         dtDAL::Vec3ActorProperty::SetFuncType(this, &LerpActorScaleAction::SetEndScale),
+         dtDAL::Vec3ActorProperty::GetFuncType(this, &LerpActorScaleAction::GetEndScale),
          "The ending rotation of the actor.");
       AddProperty(endPosProp);
 
@@ -134,6 +134,13 @@ namespace dtDirector
             // Activate the "Started" output link.
             if (firstUpdate)
             {
+               // If this is a first update and we already started, then kill the
+               // new thread since we're running on another thread
+               if (mIsActive)
+               {
+                  return false;
+               }
+
                OutputLink* link = GetOutputLink("Started");
                if (link) link->Activate();
             }
@@ -151,6 +158,13 @@ namespace dtDirector
                }
                else
                {
+                  // Reset the current time to the beginning since we finished
+                  // if we're internally tracking it
+                  if (IsTimeInternal())
+                  {
+                     SetFloat(GetFloat("StartTime"), "Time");
+                  }
+
                   OutputLink* link = GetOutputLink("Finished");
                   if (link) link->Activate();
                   return false;
@@ -172,23 +186,36 @@ namespace dtDirector
                mWaitingForStart = false;
             }
 
+            if (GetNodeLogging())
+            {
+               LOG_ALWAYS(dtUtil::ToString(curTime));
+            }
+
             if (curTime < startTime)
             {
+               if (GetNodeLogging())
+               {
+                  LOG_ALWAYS(dtUtil::ToString(startTime));
+               }
                curTime = startTime;
                mIsActive = false;
             }
             else if (curTime > endTime)
             {
+               if (GetNodeLogging())
+               {
+                  LOG_ALWAYS(dtUtil::ToString(endTime));
+               }
                curTime = endTime;
                mIsActive = false;
             }
             float alpha = (curTime - startTime) * mLerpTimeScalar;
 
-            osg::Vec4 startScale = GetVec("StartScale");
-            osg::Vec4 endScale = GetVec("EndScale");
-            osg::Vec4 track = endScale - startScale;
+            osg::Vec3 startScale = GetVec3("StartScale");
+            osg::Vec3 endScale = GetVec3("EndScale");
+            osg::Vec3 track = endScale - startScale;
 
-            osg::Vec4 newScale = startScale + (track * alpha);
+            osg::Vec3 newScale = startScale + (track * alpha);
 
             int count = GetPropertyCount("Actor");
             for (int index = 0; index < count; index++)
@@ -203,6 +230,12 @@ namespace dtDirector
                      actor->SetScale(osg::Vec3(newScale.x(), newScale.y(), newScale.z()));
                   }
                }
+            }
+
+            // Update the current time if we're internally tracking it
+            if (IsTimeInternal())
+            {
+               SetFloat(curTime + simDelta, "Time");
             }
 
             return true;
@@ -292,27 +325,35 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void LerpActorScaleAction::SetStartScale(const osg::Vec4& value)
+   void LerpActorScaleAction::SetStartScale(const osg::Vec3& value)
    {
       mStartScale = value;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   osg::Vec4 LerpActorScaleAction::GetStartScale()
+   osg::Vec3 LerpActorScaleAction::GetStartScale()
    {
       return mStartScale;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void LerpActorScaleAction::SetEndScale(const osg::Vec4& value)
+   void LerpActorScaleAction::SetEndScale(const osg::Vec3& value)
    {
       mEndScale = value;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   osg::Vec4 LerpActorScaleAction::GetEndScale()
+   osg::Vec3 LerpActorScaleAction::GetEndScale()
    {
       return mEndScale;
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   bool LerpActorScaleAction::IsTimeInternal()
+   {
+      // If we have any external links to our Time property, then we are not
+      // internally tracking the time
+      return GetValueLink("Time")->GetLinks().size() == 0;
    }
 }
 

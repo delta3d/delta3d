@@ -19,8 +19,8 @@
  * Author: Jeff P. Houde
  */
 
-#ifndef DIRECTOR_VEC_VALUE_NODE
-#define DIRECTOR_VEC_VALUE_NODE
+#ifndef DIRECTOR_VEC4_VALUE_NODE
+#define DIRECTOR_VEC4_VALUE_NODE
 
 #include <dtDirector/valuenode.h>
 #include <dtDirectorNodes/nodelibraryexport.h>
@@ -36,19 +36,19 @@ namespace dtDirector
     *      the NodeManager. If they are not created in this fashion,
     *      the node types will not be set correctly.
     */
-   class NODE_LIBRARY_EXPORT VecValue : public ValueNode
+   class NODE_LIBRARY_EXPORT Vec4Value : public ValueNode
    {
    public:
 
       /**
        * Constructs the Node.
        */
-      VecValue();
+      Vec4Value();
 
       /**
        *	Protected Destructor.  dtCore::RefPtr will handle its destruction.
        */
-      virtual ~VecValue();
+      virtual ~Vec4Value();
 
       /**
        * Initializes the Node.

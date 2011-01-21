@@ -370,7 +370,9 @@ namespace dtDirector
       float GetFloat(const std::string& name = "Value", int index = 0);
       double GetDouble(const std::string& name = "Value", int index = 0);
       std::string GetString(const std::string& name = "Value", int index = 0);
-      osg::Vec4 GetVec(const std::string& name = "Value", int index = 0);
+      osg::Vec2 GetVec2(const std::string& name = "Value", int index = 0);
+      osg::Vec3 GetVec3(const std::string& name = "Value", int index = 0);
+      osg::Vec4 GetVec4(const std::string& name = "Value", int index = 0);
       dtCore::UniqueId GetActorID(const std::string& name = "Value", int index = 0);
       dtDAL::BaseActorObject* GetActor(const std::string& name = "Value", int index = 0);
       dtDAL::GameEvent* GetGameEvent(const std::string& name = "Value", int index = 0);
@@ -424,7 +426,9 @@ namespace dtDirector
       void SetInt(int value, const std::string& name = "Value", int index = -1);
       void SetFloat(float value, const std::string& name = "Value", int index = -1);
       void SetDouble(double value, const std::string& name = "Value", int index = -1);
-      void SetVec(osg::Vec4 value, const std::string& name = "Value", int index = -1);
+      void SetVec2(osg::Vec2 value, const std::string& name = "Value", int index = -1);
+      void SetVec3(osg::Vec3 value, const std::string& name = "Value", int index = -1);
+      void SetVec4(osg::Vec4 value, const std::string& name = "Value", int index = -1);
       void SetString(const std::string& value, const std::string& name = "Value", int index = -1);
       void SetActorID(const dtCore::UniqueId& value, const std::string& name = "Value", int index = -1);
       void SetGameEvent(dtDAL::GameEvent* value, const std::string& name = "Value", int index = -1);

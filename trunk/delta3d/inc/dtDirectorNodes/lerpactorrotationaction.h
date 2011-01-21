@@ -113,6 +113,7 @@ namespace dtDirector
       ~LerpActorRotationAction();
 
    private:
+      bool IsTimeInternal();
 
       dtCore::UniqueId mLerpActor;
       float            mStartTime;

@@ -100,18 +100,19 @@ namespace dtDirector
          dtDAL::FloatActorProperty::SetFuncType(this, &LerpActorTranslationAction::SetTime),
          dtDAL::FloatActorProperty::GetFuncType(this, &LerpActorTranslationAction::GetTime),
          "The current time.");
+      AddProperty(timeProp);
 
-      dtDAL::Vec4ActorProperty* startPosProp = new dtDAL::Vec4ActorProperty(
-         "StartPosition", "Start Position", 
-         dtDAL::Vec4ActorProperty::SetFuncType(this, &LerpActorTranslationAction::SetStartPos),
-         dtDAL::Vec4ActorProperty::GetFuncType(this, &LerpActorTranslationAction::GetStartPos),
+      dtDAL::Vec3ActorProperty* startPosProp = new dtDAL::Vec3ActorProperty(
+         "StartPosition", "Start Position",
+         dtDAL::Vec3ActorProperty::SetFuncType(this, &LerpActorTranslationAction::SetStartPos),
+         dtDAL::Vec3ActorProperty::GetFuncType(this, &LerpActorTranslationAction::GetStartPos),
          "The starting rotation of the actor.");
       AddProperty(startPosProp);
 
-      dtDAL::Vec4ActorProperty* endPosProp = new dtDAL::Vec4ActorProperty(
-         "EndPosition", "End Position", 
-         dtDAL::Vec4ActorProperty::SetFuncType(this, &LerpActorTranslationAction::SetEndPos),
-         dtDAL::Vec4ActorProperty::GetFuncType(this, &LerpActorTranslationAction::GetEndPos),
+      dtDAL::Vec3ActorProperty* endPosProp = new dtDAL::Vec3ActorProperty(
+         "EndPosition", "End Position",
+         dtDAL::Vec3ActorProperty::SetFuncType(this, &LerpActorTranslationAction::SetEndPos),
+         dtDAL::Vec3ActorProperty::GetFuncType(this, &LerpActorTranslationAction::GetEndPos),
          "The ending rotation of the actor.");
       AddProperty(endPosProp);
 
@@ -120,7 +121,7 @@ namespace dtDirector
       mValues.push_back(ValueLink(this, actorProp, true, true, true));
       mValues.push_back(ValueLink(this, startTimeProp, false, false, true, false));
       mValues.push_back(ValueLink(this, endTimeProp, false, false, true, false));
-      mValues.push_back(ValueLink(this, timeProp, false, false, true));
+      mValues.push_back(ValueLink(this, timeProp));
       mValues.push_back(ValueLink(this, startPosProp, false, false, true, false));
       mValues.push_back(ValueLink(this, endPosProp, false, false, true, false));
    }
@@ -134,6 +135,13 @@ namespace dtDirector
          {
             if (firstUpdate)
             {
+               // If this is a first update and we already started, then kill the
+               // new thread since we're running on another thread
+               if (mIsActive)
+               {
+                  return false;
+               }
+
                OutputLink* link = GetOutputLink("Started");
                if (link) link->Activate();
             }
@@ -151,6 +159,13 @@ namespace dtDirector
                }
                else
                {
+                  // Reset the current time to the beginning since we finished
+                  // if we're internally tracking it
+                  if (IsTimeInternal())
+                  {
+                     SetFloat(GetFloat("StartTime"), "Time");
+                  }
+
                   OutputLink* link = GetOutputLink("Finished");
                   if (link) link->Activate();
                   return false;
@@ -184,11 +199,11 @@ namespace dtDirector
             }
             float alpha = (curTime - startTime) * mLerpTimeScalar;
 
-            osg::Vec4 startPos = GetVec("StartPosition");
-            osg::Vec4 endPos = GetVec("EndPosition");
-            osg::Vec4 track = endPos - startPos;
+            osg::Vec3 startPos = GetVec3("StartPosition");
+            osg::Vec3 endPos = GetVec3("EndPosition");
+            osg::Vec3 track = endPos - startPos;
 
-            osg::Vec4 newPos = startPos + (track * alpha);
+            osg::Vec3 newPos = startPos + (track * alpha);
 
             int count = GetPropertyCount("Actor");
             for (int index = 0; index < count; index++)
@@ -206,6 +221,12 @@ namespace dtDirector
                      actor->SetTransform(transform);
                   }
                }
+            }
+
+            // Update the current time if we're internally tracking it
+            if (IsTimeInternal())
+            {
+               SetFloat(curTime + simDelta, "Time");
             }
 
             return true;
@@ -295,27 +316,35 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void LerpActorTranslationAction::SetStartPos(const osg::Vec4& value)
+   void LerpActorTranslationAction::SetStartPos(const osg::Vec3& value)
    {
       mStartPos = value;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   osg::Vec4 LerpActorTranslationAction::GetStartPos()
+   osg::Vec3 LerpActorTranslationAction::GetStartPos()
    {
       return mStartPos;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void LerpActorTranslationAction::SetEndPos(const osg::Vec4& value)
+   void LerpActorTranslationAction::SetEndPos(const osg::Vec3& value)
    {
       mEndPos = value;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   osg::Vec4 LerpActorTranslationAction::GetEndPos()
+   osg::Vec3 LerpActorTranslationAction::GetEndPos()
    {
       return mEndPos;
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   bool LerpActorTranslationAction::IsTimeInternal()
+   {
+      // If we have any external links to our Time property, then we are not
+      // internally tracking the time
+      return GetValueLink("Time")->GetLinks().size() == 0;
    }
 }
 

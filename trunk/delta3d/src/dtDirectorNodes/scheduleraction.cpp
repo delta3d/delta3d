@@ -159,6 +159,13 @@ namespace dtDirector
             // the "Out" output once at the beginning.
             if (firstUpdate)
             {
+               // If this is a first update and we already started, then kill the
+               // new thread since we're running on another thread
+               if (mIsActive && input == mPlayDirection)
+               {
+                  return false;
+               }
+
                mIsActive = true;
 
                if (input == INPUT_PLAY)

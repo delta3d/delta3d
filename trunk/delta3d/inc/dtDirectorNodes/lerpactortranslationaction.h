@@ -99,11 +99,11 @@ namespace dtDirector
       void SetTime(float value);
       float GetTime();
 
-      void SetStartPos(const osg::Vec4& value);
-      osg::Vec4 GetStartPos();
+      void SetStartPos(const osg::Vec3& value);
+      osg::Vec3 GetStartPos();
 
-      void SetEndPos(const osg::Vec4& value);
-      osg::Vec4 GetEndPos();
+      void SetEndPos(const osg::Vec3& value);
+      osg::Vec3 GetEndPos();
 
    protected:
 
@@ -113,13 +113,14 @@ namespace dtDirector
       ~LerpActorTranslationAction();
 
    private:
+      bool IsTimeInternal();
 
       dtCore::UniqueId mLerpActor;
       float            mStartTime;
       float            mEndTime;
       float            mTime;
-      osg::Vec4        mStartPos;
-      osg::Vec4        mEndPos;
+      osg::Vec3        mStartPos;
+      osg::Vec3        mEndPos;
 
       float            mLerpTimeScalar;
       bool             mWaitingForStart;

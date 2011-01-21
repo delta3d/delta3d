@@ -2,7 +2,7 @@
 <director xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dDirector" xsi:schemaLocation="delta3dDirector director.xsd">
     <header>
         <createTimestamp>2009-12-22T14:26:31-08:00</createTimestamp>
-        <lastUpdateTimestamp>2010-08-16T10:48:14-08:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2011-01-21T10:35:07-08:00</lastUpdateTimestamp>
         <editorVersion>2.5.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
         <property>
@@ -32,267 +32,6 @@
             <node>
                 <name>Trigger Volume Event</name>
                 <category>General</category>
-                <id>e2970c35-3412-4ce7-8ba5-badbd8008f49</id>
-                <property>
-                    <name>Enabled</name>
-                    <boolean>true</boolean>
-                </property>
-                <property>
-                    <name>Comment</name>
-                    <string>Basic swinging door.</string>
-                </property>
-                <property>
-                    <name>LogNode</name>
-                    <boolean>false</boolean>
-                </property>
-                <property>
-                    <name>Position</name>
-                    <vec2>
-                        <value1>-198.506866</value1>
-                        <value2>-35.000000</value2>
-                    </vec2>
-                </property>
-                <property>
-                    <name>TriggerCount</name>
-                    <integer>0</integer>
-                </property>
-                <property>
-                    <name>Instigator</name>
-                    <actorId></actorId>
-                </property>
-                <property>
-                    <name>TriggerVolume</name>
-                    <actorId>bc26bde5-a331-4bca-b824-381626683d69</actorId>
-                </property>
-                <outputlink>
-                    <name>Enter</name>
-                    <visible>true</visible>
-                    <link>
-                        <id>d01d1853-ce26-4c00-96a8-f3b81b822a0e</id>
-                        <name>Play</name>
-                    </link>
-                </outputlink>
-                <outputlink>
-                    <name>Leave</name>
-                    <visible>true</visible>
-                    <link>
-                        <id>a47dca4b-8d33-4d48-b169-2532c11622af</id>
-                        <name>Reverse</name>
-                    </link>
-                </outputlink>
-                <valuelink>
-                    <name>Enabled</name>
-                    <visible>true</visible>
-                    <exposed>false</exposed>
-                    <isout>false</isout>
-                    <allowmultiple>false</allowmultiple>
-                    <typecheck>true</typecheck>
-                </valuelink>
-                <valuelink>
-                    <name>TriggerCount</name>
-                    <visible>true</visible>
-                    <exposed>false</exposed>
-                    <isout>false</isout>
-                    <allowmultiple>false</allowmultiple>
-                    <typecheck>true</typecheck>
-                </valuelink>
-                <valuelink>
-                    <name>Instigator</name>
-                    <visible>true</visible>
-                    <exposed>true</exposed>
-                    <isout>false</isout>
-                    <allowmultiple>true</allowmultiple>
-                    <typecheck>true</typecheck>
-                    <link>
-                        <id>d9dd528e-a663-44ce-aceb-317357b6e32d</id>
-                    </link>
-                </valuelink>
-                <valuelink>
-                    <name>TriggerVolume</name>
-                    <visible>true</visible>
-                    <exposed>true</exposed>
-                    <isout>false</isout>
-                    <allowmultiple>true</allowmultiple>
-                    <typecheck>true</typecheck>
-                </valuelink>
-            </node>
-            <node>
-                <name>Trigger Volume Event</name>
-                <category>General</category>
-                <id>99b67ea9-0797-48fc-9d53-7a1bc7f00439</id>
-                <property>
-                    <name>Enabled</name>
-                    <boolean>true</boolean>
-                </property>
-                <property>
-                    <name>Comment</name>
-                    <string>This door slides back and then opens.</string>
-                </property>
-                <property>
-                    <name>LogNode</name>
-                    <boolean>false</boolean>
-                </property>
-                <property>
-                    <name>Position</name>
-                    <vec2>
-                        <value1>324.493134</value1>
-                        <value2>-36.897446</value2>
-                    </vec2>
-                </property>
-                <property>
-                    <name>TriggerCount</name>
-                    <integer>0</integer>
-                </property>
-                <property>
-                    <name>Instigator</name>
-                    <actorId></actorId>
-                </property>
-                <property>
-                    <name>TriggerVolume</name>
-                    <actorId>439d5910-68e3-4efe-a122-893f9a0de0c6</actorId>
-                </property>
-                <outputlink>
-                    <name>Enter</name>
-                    <visible>true</visible>
-                    <link>
-                        <id>3a775efd-83dc-4829-b596-e680133559f5</id>
-                        <name>Play</name>
-                    </link>
-                </outputlink>
-                <outputlink>
-                    <name>Leave</name>
-                    <visible>true</visible>
-                    <link>
-                        <id>d42ac8a3-a27b-4677-a8ff-e924dbb1cd04</id>
-                        <name>Reverse</name>
-                    </link>
-                </outputlink>
-                <valuelink>
-                    <name>Enabled</name>
-                    <visible>true</visible>
-                    <exposed>false</exposed>
-                    <isout>false</isout>
-                    <allowmultiple>false</allowmultiple>
-                    <typecheck>true</typecheck>
-                </valuelink>
-                <valuelink>
-                    <name>TriggerCount</name>
-                    <visible>true</visible>
-                    <exposed>false</exposed>
-                    <isout>false</isout>
-                    <allowmultiple>false</allowmultiple>
-                    <typecheck>true</typecheck>
-                </valuelink>
-                <valuelink>
-                    <name>Instigator</name>
-                    <visible>true</visible>
-                    <exposed>true</exposed>
-                    <isout>false</isout>
-                    <allowmultiple>true</allowmultiple>
-                    <typecheck>true</typecheck>
-                    <link>
-                        <id>1512f78b-a7e6-4a58-a053-93b3483bcfb8</id>
-                    </link>
-                </valuelink>
-                <valuelink>
-                    <name>TriggerVolume</name>
-                    <visible>true</visible>
-                    <exposed>true</exposed>
-                    <isout>false</isout>
-                    <allowmultiple>true</allowmultiple>
-                    <typecheck>true</typecheck>
-                </valuelink>
-            </node>
-            <node>
-                <name>Trigger Volume Event</name>
-                <category>General</category>
-                <id>acfb0b5b-469c-4559-bc19-32560af8543e</id>
-                <property>
-                    <name>Enabled</name>
-                    <boolean>true</boolean>
-                </property>
-                <property>
-                    <name>Comment</name>
-                    <string>Scaling door.</string>
-                </property>
-                <property>
-                    <name>LogNode</name>
-                    <boolean>false</boolean>
-                </property>
-                <property>
-                    <name>Position</name>
-                    <vec2>
-                        <value1>325.993134</value1>
-                        <value2>272.359375</value2>
-                    </vec2>
-                </property>
-                <property>
-                    <name>TriggerCount</name>
-                    <integer>0</integer>
-                </property>
-                <property>
-                    <name>Instigator</name>
-                    <actorId></actorId>
-                </property>
-                <property>
-                    <name>TriggerVolume</name>
-                    <actorId>c99b0323-6a23-4f9c-aeab-e6a595338506</actorId>
-                </property>
-                <outputlink>
-                    <name>Enter</name>
-                    <visible>true</visible>
-                    <link>
-                        <id>fec3ee70-a4d6-4fe5-9b0b-373a1e79279f</id>
-                        <name>Play</name>
-                    </link>
-                </outputlink>
-                <outputlink>
-                    <name>Leave</name>
-                    <visible>true</visible>
-                    <link>
-                        <id>f8b8c778-d59d-42b5-8fe2-8f751ae58d43</id>
-                        <name>Reverse</name>
-                    </link>
-                </outputlink>
-                <valuelink>
-                    <name>Enabled</name>
-                    <visible>true</visible>
-                    <exposed>false</exposed>
-                    <isout>false</isout>
-                    <allowmultiple>false</allowmultiple>
-                    <typecheck>true</typecheck>
-                </valuelink>
-                <valuelink>
-                    <name>TriggerCount</name>
-                    <visible>true</visible>
-                    <exposed>false</exposed>
-                    <isout>false</isout>
-                    <allowmultiple>false</allowmultiple>
-                    <typecheck>true</typecheck>
-                </valuelink>
-                <valuelink>
-                    <name>Instigator</name>
-                    <visible>true</visible>
-                    <exposed>true</exposed>
-                    <isout>false</isout>
-                    <allowmultiple>true</allowmultiple>
-                    <typecheck>true</typecheck>
-                    <link>
-                        <id>dcd7af1b-1d3e-4dff-9f19-d7e4066990fb</id>
-                    </link>
-                </valuelink>
-                <valuelink>
-                    <name>TriggerVolume</name>
-                    <visible>true</visible>
-                    <exposed>true</exposed>
-                    <isout>false</isout>
-                    <allowmultiple>true</allowmultiple>
-                    <typecheck>true</typecheck>
-                </valuelink>
-            </node>
-            <node>
-                <name>Trigger Volume Event</name>
-                <category>General</category>
                 <id>d799e982-afa7-4b04-b134-92f273feef5d</id>
                 <property>
                     <name>Enabled</name>
@@ -318,10 +57,6 @@
                     <integer>0</integer>
                 </property>
                 <property>
-                    <name>Instigator</name>
-                    <actorId></actorId>
-                </property>
-                <property>
                     <name>TriggerVolume</name>
                     <actorId></actorId>
                 </property>
@@ -329,24 +64,16 @@
                     <name>Enter</name>
                     <visible>true</visible>
                     <link>
-                        <id>dc48ac33-e10a-42ca-b535-a5db7f3a3d00</id>
-                        <name>Call Event</name>
-                    </link>
-                    <link>
-                        <id>b780c619-807e-40bf-95fe-635f0613ad06</id>
-                        <name>Play</name>
+                        <id>d3bce9d4-9046-4bc8-a487-086fdda8bb1b</id>
+                        <name>In</name>
                     </link>
                 </outputlink>
                 <outputlink>
                     <name>Leave</name>
                     <visible>true</visible>
                     <link>
-                        <id>dc48ac33-e10a-42ca-b535-a5db7f3a3d00</id>
-                        <name>Call Event</name>
-                    </link>
-                    <link>
-                        <id>b2714af3-dcd0-400d-86b2-5cec6a398e5c</id>
-                        <name>Reverse</name>
+                        <id>0e628a5d-7320-48e5-9d70-af1d349037cd</id>
+                        <name>In</name>
                     </link>
                 </outputlink>
                 <valuelink>
@@ -373,7 +100,7 @@
                     <allowmultiple>true</allowmultiple>
                     <typecheck>true</typecheck>
                     <link>
-                        <id>020b574e-d8e1-4d3d-8a12-4fc0686bdbd0</id>
+                        <id>f3e562b9-91b7-4418-9229-66b0e9a54281</id>
                     </link>
                 </valuelink>
                 <valuelink>
@@ -480,10 +207,6 @@
                     <integer>0</integer>
                 </property>
                 <property>
-                    <name>Instigator</name>
-                    <actorId></actorId>
-                </property>
-                <property>
                     <name>EventName</name>
                     <string>MarineIdle</string>
                 </property>
@@ -556,10 +279,6 @@
                     <integer>0</integer>
                 </property>
                 <property>
-                    <name>Instigator</name>
-                    <actorId></actorId>
-                </property>
-                <property>
                     <name>EventName</name>
                     <string>MarineStop</string>
                 </property>
@@ -601,6 +320,255 @@
                     <exposed>false</exposed>
                     <isout>false</isout>
                     <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+            </node>
+            <node>
+                <name>Trigger Volume Event</name>
+                <category>General</category>
+                <id>9c448f3d-4ea4-4c1b-9b1e-056d18d9e53f</id>
+                <property>
+                    <name>Enabled</name>
+                    <boolean>true</boolean>
+                </property>
+                <property>
+                    <name>Comment</name>
+                    <string>Basic swinging door.</string>
+                </property>
+                <property>
+                    <name>LogNode</name>
+                    <boolean>false</boolean>
+                </property>
+                <property>
+                    <name>Position</name>
+                    <vec2>
+                        <value1>-201.191696</value1>
+                        <value2>-29.000000</value2>
+                    </vec2>
+                </property>
+                <property>
+                    <name>TriggerCount</name>
+                    <integer>0</integer>
+                </property>
+                <property>
+                    <name>TriggerVolume</name>
+                    <actorId>bc26bde5-a331-4bca-b824-381626683d69</actorId>
+                </property>
+                <outputlink>
+                    <name>Enter</name>
+                    <visible>true</visible>
+                    <link>
+                        <id>017a705e-c0ec-4722-8ead-2902d9071632</id>
+                        <name>In</name>
+                    </link>
+                </outputlink>
+                <outputlink>
+                    <name>Leave</name>
+                    <visible>true</visible>
+                    <link>
+                        <id>d323b687-4fe5-49ba-a732-423c9ff815f2</id>
+                        <name>In</name>
+                    </link>
+                </outputlink>
+                <valuelink>
+                    <name>Enabled</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+                <valuelink>
+                    <name>TriggerCount</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+                <valuelink>
+                    <name>Instigator</name>
+                    <visible>true</visible>
+                    <exposed>true</exposed>
+                    <isout>true</isout>
+                    <allowmultiple>true</allowmultiple>
+                    <typecheck>true</typecheck>
+                    <link>
+                        <id>a1923891-0430-4978-ac19-050e1d9bcf77</id>
+                    </link>
+                </valuelink>
+                <valuelink>
+                    <name>TriggerVolume</name>
+                    <visible>false</visible>
+                    <exposed>true</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>true</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+            </node>
+            <node>
+                <name>Trigger Volume Event</name>
+                <category>General</category>
+                <id>f41eaec2-ff15-46b1-ade6-100f045dc137</id>
+                <property>
+                    <name>Enabled</name>
+                    <boolean>true</boolean>
+                </property>
+                <property>
+                    <name>Comment</name>
+                    <string>This door slides back and then opens.</string>
+                </property>
+                <property>
+                    <name>LogNode</name>
+                    <boolean>false</boolean>
+                </property>
+                <property>
+                    <name>Position</name>
+                    <vec2>
+                        <value1>351.393158</value1>
+                        <value2>-36.897446</value2>
+                    </vec2>
+                </property>
+                <property>
+                    <name>TriggerCount</name>
+                    <integer>0</integer>
+                </property>
+                <property>
+                    <name>TriggerVolume</name>
+                    <actorId>439d5910-68e3-4efe-a122-893f9a0de0c6</actorId>
+                </property>
+                <outputlink>
+                    <name>Enter</name>
+                    <visible>true</visible>
+                    <link>
+                        <id>f4dd87ef-6cc1-4dd0-89e2-1bfb72b82a12</id>
+                        <name>In</name>
+                    </link>
+                </outputlink>
+                <outputlink>
+                    <name>Leave</name>
+                    <visible>true</visible>
+                    <link>
+                        <id>f3fd96d1-e222-488b-88e7-8df17a2e56e0</id>
+                        <name>In</name>
+                    </link>
+                </outputlink>
+                <valuelink>
+                    <name>Enabled</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+                <valuelink>
+                    <name>TriggerCount</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+                <valuelink>
+                    <name>Instigator</name>
+                    <visible>true</visible>
+                    <exposed>true</exposed>
+                    <isout>true</isout>
+                    <allowmultiple>true</allowmultiple>
+                    <typecheck>true</typecheck>
+                    <link>
+                        <id>e92716ba-79d4-47d6-8a36-4c330fa51245</id>
+                    </link>
+                </valuelink>
+                <valuelink>
+                    <name>TriggerVolume</name>
+                    <visible>false</visible>
+                    <exposed>true</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>true</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+            </node>
+            <node>
+                <name>Trigger Volume Event</name>
+                <category>General</category>
+                <id>7ab55cd7-3469-4918-8818-ab48c89c7d09</id>
+                <property>
+                    <name>Enabled</name>
+                    <boolean>true</boolean>
+                </property>
+                <property>
+                    <name>Comment</name>
+                    <string>Scaling door.</string>
+                </property>
+                <property>
+                    <name>LogNode</name>
+                    <boolean>false</boolean>
+                </property>
+                <property>
+                    <name>Position</name>
+                    <vec2>
+                        <value1>319.021301</value1>
+                        <value2>261.898834</value2>
+                    </vec2>
+                </property>
+                <property>
+                    <name>TriggerCount</name>
+                    <integer>0</integer>
+                </property>
+                <property>
+                    <name>TriggerVolume</name>
+                    <actorId>c99b0323-6a23-4f9c-aeab-e6a595338506</actorId>
+                </property>
+                <outputlink>
+                    <name>Enter</name>
+                    <visible>true</visible>
+                    <link>
+                        <id>d8affe32-a545-440e-95bd-eec286df5f76</id>
+                        <name>In</name>
+                    </link>
+                </outputlink>
+                <outputlink>
+                    <name>Leave</name>
+                    <visible>true</visible>
+                    <link>
+                        <id>8a13ecb5-b82c-4809-8820-110368144bbf</id>
+                        <name>In</name>
+                    </link>
+                </outputlink>
+                <valuelink>
+                    <name>Enabled</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+                <valuelink>
+                    <name>TriggerCount</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+                <valuelink>
+                    <name>Instigator</name>
+                    <visible>true</visible>
+                    <exposed>true</exposed>
+                    <isout>true</isout>
+                    <allowmultiple>true</allowmultiple>
+                    <typecheck>true</typecheck>
+                    <link>
+                        <id>215495c7-50ba-465c-baa3-759a708b6061</id>
+                    </link>
+                </valuelink>
+                <valuelink>
+                    <name>TriggerVolume</name>
+                    <visible>false</visible>
+                    <exposed>true</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>true</allowmultiple>
                     <typecheck>true</typecheck>
                 </valuelink>
             </node>
@@ -761,8 +729,8 @@
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>-10.937936</value1>
-                        <value2>891.808228</value2>
+                        <value1>128.062073</value1>
+                        <value2>855.808228</value2>
                     </vec2>
                 </property>
                 <property>
@@ -777,12 +745,12 @@
                     <name>Call Event</name>
                     <visible>true</visible>
                     <link>
-                        <id>d799e982-afa7-4b04-b134-92f273feef5d</id>
-                        <name>Enter</name>
+                        <id>d3bce9d4-9046-4bc8-a487-086fdda8bb1b</id>
+                        <name>A == B</name>
                     </link>
                     <link>
-                        <id>d799e982-afa7-4b04-b134-92f273feef5d</id>
-                        <name>Leave</name>
+                        <id>0e628a5d-7320-48e5-9d70-af1d349037cd</id>
+                        <name>A == B</name>
                     </link>
                 </inputlink>
                 <outputlink>
@@ -833,8 +801,8 @@
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>137.634689</value1>
-                        <value2>951.707703</value2>
+                        <value1>276.634705</value1>
+                        <value2>915.707764</value2>
                     </vec2>
                 </property>
                 <property>
@@ -886,6 +854,670 @@
                     <typecheck>true</typecheck>
                 </valuelink>
             </node>
+            <node>
+                <name>Compare Actors</name>
+                <category>General</category>
+                <id>017a705e-c0ec-4722-8ead-2902d9071632</id>
+                <property>
+                    <name>Enabled</name>
+                    <boolean>true</boolean>
+                </property>
+                <property>
+                    <name>Comment</name>
+                    <string></string>
+                </property>
+                <property>
+                    <name>LogNode</name>
+                    <boolean>false</boolean>
+                </property>
+                <property>
+                    <name>Position</name>
+                    <vec2>
+                        <value1>-43.227135</value1>
+                        <value2>-29.000000</value2>
+                    </vec2>
+                </property>
+                <property>
+                    <name>A</name>
+                    <actorId></actorId>
+                </property>
+                <property>
+                    <name>B</name>
+                    <actorId></actorId>
+                </property>
+                <inputlink>
+                    <name>In</name>
+                    <visible>true</visible>
+                    <link>
+                        <id>9c448f3d-4ea4-4c1b-9b1e-056d18d9e53f</id>
+                        <name>Enter</name>
+                    </link>
+                </inputlink>
+                <outputlink>
+                    <name>A == B</name>
+                    <visible>true</visible>
+                    <link>
+                        <id>d01d1853-ce26-4c00-96a8-f3b81b822a0e</id>
+                        <name>Play</name>
+                    </link>
+                </outputlink>
+                <outputlink>
+                    <name>A != B</name>
+                    <visible>false</visible>
+                </outputlink>
+                <valuelink>
+                    <name>Enabled</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+                <valuelink>
+                    <name>A</name>
+                    <visible>true</visible>
+                    <exposed>true</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>false</typecheck>
+                    <link>
+                        <id>a1923891-0430-4978-ac19-050e1d9bcf77</id>
+                    </link>
+                </valuelink>
+                <valuelink>
+                    <name>B</name>
+                    <visible>true</visible>
+                    <exposed>true</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>false</typecheck>
+                    <link>
+                        <id>d9dd528e-a663-44ce-aceb-317357b6e32d</id>
+                    </link>
+                </valuelink>
+            </node>
+            <node>
+                <name>Compare Actors</name>
+                <category>General</category>
+                <id>d323b687-4fe5-49ba-a732-423c9ff815f2</id>
+                <property>
+                    <name>Enabled</name>
+                    <boolean>true</boolean>
+                </property>
+                <property>
+                    <name>Comment</name>
+                    <string></string>
+                </property>
+                <property>
+                    <name>LogNode</name>
+                    <boolean>false</boolean>
+                </property>
+                <property>
+                    <name>Position</name>
+                    <vec2>
+                        <value1>-43.227135</value1>
+                        <value2>-8.000000</value2>
+                    </vec2>
+                </property>
+                <property>
+                    <name>A</name>
+                    <actorId></actorId>
+                </property>
+                <property>
+                    <name>B</name>
+                    <actorId></actorId>
+                </property>
+                <inputlink>
+                    <name>In</name>
+                    <visible>true</visible>
+                    <link>
+                        <id>9c448f3d-4ea4-4c1b-9b1e-056d18d9e53f</id>
+                        <name>Leave</name>
+                    </link>
+                </inputlink>
+                <outputlink>
+                    <name>A == B</name>
+                    <visible>true</visible>
+                    <link>
+                        <id>a47dca4b-8d33-4d48-b169-2532c11622af</id>
+                        <name>Reverse</name>
+                    </link>
+                </outputlink>
+                <outputlink>
+                    <name>A != B</name>
+                    <visible>false</visible>
+                </outputlink>
+                <valuelink>
+                    <name>Enabled</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+                <valuelink>
+                    <name>A</name>
+                    <visible>true</visible>
+                    <exposed>true</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>false</typecheck>
+                    <link>
+                        <id>a1923891-0430-4978-ac19-050e1d9bcf77</id>
+                    </link>
+                </valuelink>
+                <valuelink>
+                    <name>B</name>
+                    <visible>true</visible>
+                    <exposed>true</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>false</typecheck>
+                    <link>
+                        <id>d9dd528e-a663-44ce-aceb-317357b6e32d</id>
+                    </link>
+                </valuelink>
+            </node>
+            <node>
+                <name>Compare Actors</name>
+                <category>General</category>
+                <id>f4dd87ef-6cc1-4dd0-89e2-1bfb72b82a12</id>
+                <property>
+                    <name>Enabled</name>
+                    <boolean>true</boolean>
+                </property>
+                <property>
+                    <name>Comment</name>
+                    <string></string>
+                </property>
+                <property>
+                    <name>LogNode</name>
+                    <boolean>false</boolean>
+                </property>
+                <property>
+                    <name>Position</name>
+                    <vec2>
+                        <value1>513.274231</value1>
+                        <value2>-36.897446</value2>
+                    </vec2>
+                </property>
+                <property>
+                    <name>A</name>
+                    <actorId></actorId>
+                </property>
+                <property>
+                    <name>B</name>
+                    <actorId></actorId>
+                </property>
+                <inputlink>
+                    <name>In</name>
+                    <visible>true</visible>
+                    <link>
+                        <id>f41eaec2-ff15-46b1-ade6-100f045dc137</id>
+                        <name>Enter</name>
+                    </link>
+                </inputlink>
+                <outputlink>
+                    <name>A == B</name>
+                    <visible>true</visible>
+                    <link>
+                        <id>3a775efd-83dc-4829-b596-e680133559f5</id>
+                        <name>Play</name>
+                    </link>
+                </outputlink>
+                <outputlink>
+                    <name>A != B</name>
+                    <visible>false</visible>
+                </outputlink>
+                <valuelink>
+                    <name>Enabled</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+                <valuelink>
+                    <name>A</name>
+                    <visible>true</visible>
+                    <exposed>true</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>false</typecheck>
+                    <link>
+                        <id>e92716ba-79d4-47d6-8a36-4c330fa51245</id>
+                    </link>
+                </valuelink>
+                <valuelink>
+                    <name>B</name>
+                    <visible>true</visible>
+                    <exposed>true</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>false</typecheck>
+                    <link>
+                        <id>1512f78b-a7e6-4a58-a053-93b3483bcfb8</id>
+                    </link>
+                </valuelink>
+            </node>
+            <node>
+                <name>Compare Actors</name>
+                <category>General</category>
+                <id>f3fd96d1-e222-488b-88e7-8df17a2e56e0</id>
+                <property>
+                    <name>Enabled</name>
+                    <boolean>true</boolean>
+                </property>
+                <property>
+                    <name>Comment</name>
+                    <string></string>
+                </property>
+                <property>
+                    <name>LogNode</name>
+                    <boolean>false</boolean>
+                </property>
+                <property>
+                    <name>Position</name>
+                    <vec2>
+                        <value1>513.274231</value1>
+                        <value2>-15.897446</value2>
+                    </vec2>
+                </property>
+                <property>
+                    <name>A</name>
+                    <actorId></actorId>
+                </property>
+                <property>
+                    <name>B</name>
+                    <actorId></actorId>
+                </property>
+                <inputlink>
+                    <name>In</name>
+                    <visible>true</visible>
+                    <link>
+                        <id>f41eaec2-ff15-46b1-ade6-100f045dc137</id>
+                        <name>Leave</name>
+                    </link>
+                </inputlink>
+                <outputlink>
+                    <name>A == B</name>
+                    <visible>true</visible>
+                    <link>
+                        <id>d42ac8a3-a27b-4677-a8ff-e924dbb1cd04</id>
+                        <name>Reverse</name>
+                    </link>
+                </outputlink>
+                <outputlink>
+                    <name>A != B</name>
+                    <visible>false</visible>
+                </outputlink>
+                <valuelink>
+                    <name>Enabled</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+                <valuelink>
+                    <name>A</name>
+                    <visible>true</visible>
+                    <exposed>true</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>false</typecheck>
+                    <link>
+                        <id>e92716ba-79d4-47d6-8a36-4c330fa51245</id>
+                    </link>
+                </valuelink>
+                <valuelink>
+                    <name>B</name>
+                    <visible>true</visible>
+                    <exposed>true</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>false</typecheck>
+                    <link>
+                        <id>1512f78b-a7e6-4a58-a053-93b3483bcfb8</id>
+                    </link>
+                </valuelink>
+            </node>
+            <node>
+                <name>Compare Actors</name>
+                <category>General</category>
+                <id>d8affe32-a545-440e-95bd-eec286df5f76</id>
+                <property>
+                    <name>Enabled</name>
+                    <boolean>true</boolean>
+                </property>
+                <property>
+                    <name>Comment</name>
+                    <string></string>
+                </property>
+                <property>
+                    <name>LogNode</name>
+                    <boolean>false</boolean>
+                </property>
+                <property>
+                    <name>Position</name>
+                    <vec2>
+                        <value1>478.071655</value1>
+                        <value2>261.898834</value2>
+                    </vec2>
+                </property>
+                <property>
+                    <name>A</name>
+                    <actorId></actorId>
+                </property>
+                <property>
+                    <name>B</name>
+                    <actorId></actorId>
+                </property>
+                <inputlink>
+                    <name>In</name>
+                    <visible>true</visible>
+                    <link>
+                        <id>7ab55cd7-3469-4918-8818-ab48c89c7d09</id>
+                        <name>Enter</name>
+                    </link>
+                </inputlink>
+                <outputlink>
+                    <name>A == B</name>
+                    <visible>true</visible>
+                    <link>
+                        <id>fec3ee70-a4d6-4fe5-9b0b-373a1e79279f</id>
+                        <name>Play</name>
+                    </link>
+                </outputlink>
+                <outputlink>
+                    <name>A != B</name>
+                    <visible>false</visible>
+                </outputlink>
+                <valuelink>
+                    <name>Enabled</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+                <valuelink>
+                    <name>A</name>
+                    <visible>true</visible>
+                    <exposed>true</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>false</typecheck>
+                    <link>
+                        <id>215495c7-50ba-465c-baa3-759a708b6061</id>
+                    </link>
+                </valuelink>
+                <valuelink>
+                    <name>B</name>
+                    <visible>true</visible>
+                    <exposed>true</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>false</typecheck>
+                    <link>
+                        <id>dcd7af1b-1d3e-4dff-9f19-d7e4066990fb</id>
+                    </link>
+                </valuelink>
+            </node>
+            <node>
+                <name>Compare Actors</name>
+                <category>General</category>
+                <id>8a13ecb5-b82c-4809-8820-110368144bbf</id>
+                <property>
+                    <name>Enabled</name>
+                    <boolean>true</boolean>
+                </property>
+                <property>
+                    <name>Comment</name>
+                    <string></string>
+                </property>
+                <property>
+                    <name>LogNode</name>
+                    <boolean>false</boolean>
+                </property>
+                <property>
+                    <name>Position</name>
+                    <vec2>
+                        <value1>478.071655</value1>
+                        <value2>282.898834</value2>
+                    </vec2>
+                </property>
+                <property>
+                    <name>A</name>
+                    <actorId></actorId>
+                </property>
+                <property>
+                    <name>B</name>
+                    <actorId></actorId>
+                </property>
+                <inputlink>
+                    <name>In</name>
+                    <visible>true</visible>
+                    <link>
+                        <id>7ab55cd7-3469-4918-8818-ab48c89c7d09</id>
+                        <name>Leave</name>
+                    </link>
+                </inputlink>
+                <outputlink>
+                    <name>A == B</name>
+                    <visible>true</visible>
+                    <link>
+                        <id>f8b8c778-d59d-42b5-8fe2-8f751ae58d43</id>
+                        <name>Reverse</name>
+                    </link>
+                </outputlink>
+                <outputlink>
+                    <name>A != B</name>
+                    <visible>false</visible>
+                </outputlink>
+                <valuelink>
+                    <name>Enabled</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+                <valuelink>
+                    <name>A</name>
+                    <visible>true</visible>
+                    <exposed>true</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>false</typecheck>
+                    <link>
+                        <id>215495c7-50ba-465c-baa3-759a708b6061</id>
+                    </link>
+                </valuelink>
+                <valuelink>
+                    <name>B</name>
+                    <visible>true</visible>
+                    <exposed>true</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>false</typecheck>
+                    <link>
+                        <id>dcd7af1b-1d3e-4dff-9f19-d7e4066990fb</id>
+                    </link>
+                </valuelink>
+            </node>
+            <node>
+                <name>Compare Actors</name>
+                <category>General</category>
+                <id>d3bce9d4-9046-4bc8-a487-086fdda8bb1b</id>
+                <property>
+                    <name>Enabled</name>
+                    <boolean>true</boolean>
+                </property>
+                <property>
+                    <name>Comment</name>
+                    <string></string>
+                </property>
+                <property>
+                    <name>LogNode</name>
+                    <boolean>false</boolean>
+                </property>
+                <property>
+                    <name>Position</name>
+                    <vec2>
+                        <value1>-10.937936</value1>
+                        <value2>891.808228</value2>
+                    </vec2>
+                </property>
+                <property>
+                    <name>A</name>
+                    <actorId></actorId>
+                </property>
+                <property>
+                    <name>B</name>
+                    <actorId></actorId>
+                </property>
+                <inputlink>
+                    <name>In</name>
+                    <visible>true</visible>
+                    <link>
+                        <id>d799e982-afa7-4b04-b134-92f273feef5d</id>
+                        <name>Enter</name>
+                    </link>
+                </inputlink>
+                <outputlink>
+                    <name>A == B</name>
+                    <visible>true</visible>
+                    <link>
+                        <id>dc48ac33-e10a-42ca-b535-a5db7f3a3d00</id>
+                        <name>Call Event</name>
+                    </link>
+                    <link>
+                        <id>b780c619-807e-40bf-95fe-635f0613ad06</id>
+                        <name>Play</name>
+                    </link>
+                </outputlink>
+                <outputlink>
+                    <name>A != B</name>
+                    <visible>false</visible>
+                </outputlink>
+                <valuelink>
+                    <name>Enabled</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+                <valuelink>
+                    <name>A</name>
+                    <visible>true</visible>
+                    <exposed>true</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>false</typecheck>
+                    <link>
+                        <id>f3e562b9-91b7-4418-9229-66b0e9a54281</id>
+                    </link>
+                </valuelink>
+                <valuelink>
+                    <name>B</name>
+                    <visible>true</visible>
+                    <exposed>true</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>false</typecheck>
+                    <link>
+                        <id>020b574e-d8e1-4d3d-8a12-4fc0686bdbd0</id>
+                    </link>
+                </valuelink>
+            </node>
+            <node>
+                <name>Compare Actors</name>
+                <category>General</category>
+                <id>0e628a5d-7320-48e5-9d70-af1d349037cd</id>
+                <property>
+                    <name>Enabled</name>
+                    <boolean>true</boolean>
+                </property>
+                <property>
+                    <name>Comment</name>
+                    <string></string>
+                </property>
+                <property>
+                    <name>LogNode</name>
+                    <boolean>false</boolean>
+                </property>
+                <property>
+                    <name>Position</name>
+                    <vec2>
+                        <value1>-10.937936</value1>
+                        <value2>912.808228</value2>
+                    </vec2>
+                </property>
+                <property>
+                    <name>A</name>
+                    <actorId></actorId>
+                </property>
+                <property>
+                    <name>B</name>
+                    <actorId></actorId>
+                </property>
+                <inputlink>
+                    <name>In</name>
+                    <visible>true</visible>
+                    <link>
+                        <id>d799e982-afa7-4b04-b134-92f273feef5d</id>
+                        <name>Leave</name>
+                    </link>
+                </inputlink>
+                <outputlink>
+                    <name>A == B</name>
+                    <visible>true</visible>
+                    <link>
+                        <id>dc48ac33-e10a-42ca-b535-a5db7f3a3d00</id>
+                        <name>Call Event</name>
+                    </link>
+                    <link>
+                        <id>b2714af3-dcd0-400d-86b2-5cec6a398e5c</id>
+                        <name>Reverse</name>
+                    </link>
+                </outputlink>
+                <outputlink>
+                    <name>A != B</name>
+                    <visible>false</visible>
+                </outputlink>
+                <valuelink>
+                    <name>Enabled</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+                <valuelink>
+                    <name>A</name>
+                    <visible>true</visible>
+                    <exposed>true</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>false</typecheck>
+                    <link>
+                        <id>f3e562b9-91b7-4418-9229-66b0e9a54281</id>
+                    </link>
+                </valuelink>
+                <valuelink>
+                    <name>B</name>
+                    <visible>true</visible>
+                    <exposed>true</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>false</typecheck>
+                    <link>
+                        <id>020b574e-d8e1-4d3d-8a12-4fc0686bdbd0</id>
+                    </link>
+                </valuelink>
+            </node>
         </actionnodes>
         <valuenodes>
             <node>
@@ -907,9 +1539,13 @@
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>-183.506866</value1>
-                        <value2>131.205109</value2>
+                        <value1>-5.727135</value1>
+                        <value2>127.205109</value2>
                     </vec2>
+                </property>
+                <property>
+                    <name>Name</name>
+                    <string></string>
                 </property>
                 <valuelink>
                     <name>Enabled</name>
@@ -939,9 +1575,13 @@
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>339.493134</value1>
-                        <value2>131.205109</value2>
+                        <value1>550.774170</value1>
+                        <value2>103.126999</value2>
                     </vec2>
+                </property>
+                <property>
+                    <name>Name</name>
+                    <string></string>
                 </property>
                 <valuelink>
                     <name>Enabled</name>
@@ -971,9 +1611,13 @@
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>339.493286</value1>
-                        <value2>427.766541</value2>
+                        <value1>515.571533</value1>
+                        <value2>406.314087</value2>
                     </vec2>
+                </property>
+                <property>
+                    <name>Name</name>
+                    <string></string>
                 </property>
                 <valuelink>
                     <name>Enabled</name>
@@ -1003,8 +1647,8 @@
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>-121.039207</value1>
-                        <value2>1063.773682</value2>
+                        <value1>-126.039574</value1>
+                        <value2>1033.773682</value2>
                     </vec2>
                 </property>
                 <property>
@@ -1043,9 +1687,173 @@
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>-198.039215</value1>
-                        <value2>1063.773682</value2>
+                        <value1>26.561989</value1>
+                        <value2>1038.773682</value2>
                     </vec2>
+                </property>
+                <property>
+                    <name>Name</name>
+                    <string></string>
+                </property>
+                <valuelink>
+                    <name>Enabled</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+            </node>
+            <node>
+                <name>Actor</name>
+                <category>General</category>
+                <id>a1923891-0430-4978-ac19-050e1d9bcf77</id>
+                <property>
+                    <name>Enabled</name>
+                    <boolean>true</boolean>
+                </property>
+                <property>
+                    <name>Comment</name>
+                    <string></string>
+                </property>
+                <property>
+                    <name>LogNode</name>
+                    <boolean>false</boolean>
+                </property>
+                <property>
+                    <name>Position</name>
+                    <vec2>
+                        <value1>-133.142654</value1>
+                        <value2>137.172943</value2>
+                    </vec2>
+                </property>
+                <property>
+                    <name>Name</name>
+                    <string></string>
+                </property>
+                <property>
+                    <name>Value</name>
+                    <actorId></actorId>
+                </property>
+                <valuelink>
+                    <name>Enabled</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+            </node>
+            <node>
+                <name>Actor</name>
+                <category>General</category>
+                <id>e92716ba-79d4-47d6-8a36-4c330fa51245</id>
+                <property>
+                    <name>Enabled</name>
+                    <boolean>true</boolean>
+                </property>
+                <property>
+                    <name>Comment</name>
+                    <string></string>
+                </property>
+                <property>
+                    <name>LogNode</name>
+                    <boolean>false</boolean>
+                </property>
+                <property>
+                    <name>Position</name>
+                    <vec2>
+                        <value1>410.771912</value1>
+                        <value2>119.741890</value2>
+                    </vec2>
+                </property>
+                <property>
+                    <name>Name</name>
+                    <string></string>
+                </property>
+                <property>
+                    <name>Value</name>
+                    <actorId></actorId>
+                </property>
+                <valuelink>
+                    <name>Enabled</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+            </node>
+            <node>
+                <name>Actor</name>
+                <category>General</category>
+                <id>215495c7-50ba-465c-baa3-759a708b6061</id>
+                <property>
+                    <name>Enabled</name>
+                    <boolean>true</boolean>
+                </property>
+                <property>
+                    <name>Comment</name>
+                    <string></string>
+                </property>
+                <property>
+                    <name>LogNode</name>
+                    <boolean>false</boolean>
+                </property>
+                <property>
+                    <name>Position</name>
+                    <vec2>
+                        <value1>419.138824</value1>
+                        <value2>406.314087</value2>
+                    </vec2>
+                </property>
+                <property>
+                    <name>Name</name>
+                    <string></string>
+                </property>
+                <property>
+                    <name>Value</name>
+                    <actorId></actorId>
+                </property>
+                <valuelink>
+                    <name>Enabled</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+            </node>
+            <node>
+                <name>Actor</name>
+                <category>General</category>
+                <id>f3e562b9-91b7-4418-9229-66b0e9a54281</id>
+                <property>
+                    <name>Enabled</name>
+                    <boolean>true</boolean>
+                </property>
+                <property>
+                    <name>Comment</name>
+                    <string></string>
+                </property>
+                <property>
+                    <name>LogNode</name>
+                    <boolean>false</boolean>
+                </property>
+                <property>
+                    <name>Position</name>
+                    <vec2>
+                        <value1>-203.039581</value1>
+                        <value2>1033.773682</value2>
+                    </vec2>
+                </property>
+                <property>
+                    <name>Name</name>
+                    <string></string>
+                </property>
+                <property>
+                    <name>Value</name>
+                    <actorId></actorId>
                 </property>
                 <valuelink>
                     <name>Enabled</name>
@@ -1081,173 +1889,16 @@
                     <value2>268.054871</value2>
                 </vec2>
             </property>
+            <property>
+                <name>Color</name>
+                <colorRGBA>
+                    <valueR>0.462745</valueR>
+                    <valueG>0.596078</valueG>
+                    <valueB>0.290196</valueB>
+                    <valueA>0.882353</valueA>
+                </colorRGBA>
+            </property>
             <eventnodes>
-                <node>
-                    <name>Trigger Volume Event</name>
-                    <category>General</category>
-                    <id>65ea465c-46dc-4fc2-aa01-7fe14b50e5b3</id>
-                    <property>
-                        <name>Enabled</name>
-                        <boolean>true</boolean>
-                    </property>
-                    <property>
-                        <name>Comment</name>
-                        <string>Outer trigger</string>
-                    </property>
-                    <property>
-                        <name>LogNode</name>
-                        <boolean>false</boolean>
-                    </property>
-                    <property>
-                        <name>Position</name>
-                        <vec2>
-                            <value1>-642.675476</value1>
-                            <value2>222.789764</value2>
-                        </vec2>
-                    </property>
-                    <property>
-                        <name>TriggerCount</name>
-                        <integer>0</integer>
-                    </property>
-                    <property>
-                        <name>Instigator</name>
-                        <actorId></actorId>
-                    </property>
-                    <property>
-                        <name>TriggerVolume</name>
-                        <actorId>e2afc2e9-de77-4137-87a9-a4e05d4e11c9</actorId>
-                    </property>
-                    <outputlink>
-                        <name>Enter</name>
-                        <visible>true</visible>
-                    </outputlink>
-                    <outputlink>
-                        <name>Leave</name>
-                        <visible>true</visible>
-                        <link>
-                            <id>824c212b-1acc-4aa5-aa31-6e81e025db1f</id>
-                            <name>In</name>
-                        </link>
-                    </outputlink>
-                    <valuelink>
-                        <name>Enabled</name>
-                        <visible>true</visible>
-                        <exposed>false</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>true</typecheck>
-                    </valuelink>
-                    <valuelink>
-                        <name>TriggerCount</name>
-                        <visible>true</visible>
-                        <exposed>false</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>true</typecheck>
-                    </valuelink>
-                    <valuelink>
-                        <name>Instigator</name>
-                        <visible>true</visible>
-                        <exposed>true</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>true</allowmultiple>
-                        <typecheck>true</typecheck>
-                        <link>
-                            <id>ce5ee6d4-c530-4582-bff1-0b54d2fc2af5</id>
-                        </link>
-                    </valuelink>
-                    <valuelink>
-                        <name>TriggerVolume</name>
-                        <visible>true</visible>
-                        <exposed>true</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>true</allowmultiple>
-                        <typecheck>true</typecheck>
-                    </valuelink>
-                </node>
-                <node>
-                    <name>Trigger Volume Event</name>
-                    <category>General</category>
-                    <id>6779afca-186a-4362-a0f6-9a0203110e31</id>
-                    <property>
-                        <name>Enabled</name>
-                        <boolean>true</boolean>
-                    </property>
-                    <property>
-                        <name>Comment</name>
-                        <string>Side 0 trigger</string>
-                    </property>
-                    <property>
-                        <name>LogNode</name>
-                        <boolean>false</boolean>
-                    </property>
-                    <property>
-                        <name>Position</name>
-                        <vec2>
-                            <value1>-642.675049</value1>
-                            <value2>-455.394592</value2>
-                        </vec2>
-                    </property>
-                    <property>
-                        <name>TriggerCount</name>
-                        <integer>0</integer>
-                    </property>
-                    <property>
-                        <name>Instigator</name>
-                        <actorId></actorId>
-                    </property>
-                    <property>
-                        <name>TriggerVolume</name>
-                        <actorId>d0c5545f-07fa-4f37-9012-3c577d76b8e2</actorId>
-                    </property>
-                    <outputlink>
-                        <name>Enter</name>
-                        <visible>true</visible>
-                        <link>
-                            <id>75155ff9-b31f-442f-b02b-c38836b37a63</id>
-                            <name>In</name>
-                        </link>
-                    </outputlink>
-                    <outputlink>
-                        <name>Leave</name>
-                        <visible>true</visible>
-                    </outputlink>
-                    <valuelink>
-                        <name>Enabled</name>
-                        <visible>true</visible>
-                        <exposed>false</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>true</typecheck>
-                    </valuelink>
-                    <valuelink>
-                        <name>TriggerCount</name>
-                        <visible>true</visible>
-                        <exposed>false</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>true</typecheck>
-                    </valuelink>
-                    <valuelink>
-                        <name>Instigator</name>
-                        <visible>true</visible>
-                        <exposed>true</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>true</allowmultiple>
-                        <typecheck>true</typecheck>
-                        <link>
-                            <id>6388de18-2694-4b25-97c0-3eff14beca25</id>
-                        </link>
-                    </valuelink>
-                    <valuelink>
-                        <name>TriggerVolume</name>
-                        <visible>true</visible>
-                        <exposed>true</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>true</allowmultiple>
-                        <typecheck>true</typecheck>
-                    </valuelink>
-                </node>
                 <node>
                     <name>Remote Event</name>
                     <category>Core</category>
@@ -1267,17 +1918,13 @@
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>1191.221924</value1>
-                            <value2>-9.457184</value2>
+                            <value1>1187.221924</value1>
+                            <value2>-22.457184</value2>
                         </vec2>
                     </property>
                     <property>
                         <name>TriggerCount</name>
                         <integer>0</integer>
-                    </property>
-                    <property>
-                        <name>Instigator</name>
-                        <actorId></actorId>
                     </property>
                     <property>
                         <name>EventName</name>
@@ -1343,17 +1990,13 @@
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>1191.221924</value1>
-                            <value2>294.542847</value2>
+                            <value1>1185.221924</value1>
+                            <value2>281.542847</value2>
                         </vec2>
                     </property>
                     <property>
                         <name>TriggerCount</name>
                         <integer>0</integer>
-                    </property>
-                    <property>
-                        <name>Instigator</name>
-                        <actorId></actorId>
                     </property>
                     <property>
                         <name>EventName</name>
@@ -1401,89 +2044,6 @@
                     </valuelink>
                 </node>
                 <node>
-                    <name>Trigger Volume Event</name>
-                    <category>General</category>
-                    <id>2ecab1f1-93c2-4d14-ac05-4e1326e814b2</id>
-                    <property>
-                        <name>Enabled</name>
-                        <boolean>true</boolean>
-                    </property>
-                    <property>
-                        <name>Comment</name>
-                        <string>Side 1 trigger</string>
-                    </property>
-                    <property>
-                        <name>LogNode</name>
-                        <boolean>false</boolean>
-                    </property>
-                    <property>
-                        <name>Position</name>
-                        <vec2>
-                            <value1>-642.675232</value1>
-                            <value2>-117.360527</value2>
-                        </vec2>
-                    </property>
-                    <property>
-                        <name>TriggerCount</name>
-                        <integer>0</integer>
-                    </property>
-                    <property>
-                        <name>Instigator</name>
-                        <actorId></actorId>
-                    </property>
-                    <property>
-                        <name>TriggerVolume</name>
-                        <actorId>31a1ae1c-5e42-42c6-bd68-9f5ed791ed1a</actorId>
-                    </property>
-                    <outputlink>
-                        <name>Enter</name>
-                        <visible>true</visible>
-                        <link>
-                            <id>34b4b03a-8eee-44ab-b4cc-66331bb8c0f7</id>
-                            <name>In</name>
-                        </link>
-                    </outputlink>
-                    <outputlink>
-                        <name>Leave</name>
-                        <visible>true</visible>
-                    </outputlink>
-                    <valuelink>
-                        <name>Enabled</name>
-                        <visible>true</visible>
-                        <exposed>false</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>true</typecheck>
-                    </valuelink>
-                    <valuelink>
-                        <name>TriggerCount</name>
-                        <visible>true</visible>
-                        <exposed>false</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>true</typecheck>
-                    </valuelink>
-                    <valuelink>
-                        <name>Instigator</name>
-                        <visible>true</visible>
-                        <exposed>true</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>true</allowmultiple>
-                        <typecheck>true</typecheck>
-                        <link>
-                            <id>f92d81ef-13a9-486c-94e4-d7cb449d12e4</id>
-                        </link>
-                    </valuelink>
-                    <valuelink>
-                        <name>TriggerVolume</name>
-                        <visible>true</visible>
-                        <exposed>true</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>true</allowmultiple>
-                        <typecheck>true</typecheck>
-                    </valuelink>
-                </node>
-                <node>
                     <name>Remote Event</name>
                     <category>Core</category>
                     <id>fc098465-c78b-4b0d-af83-34f8789993af</id>
@@ -1503,16 +2063,12 @@
                         <name>Position</name>
                         <vec2>
                             <value1>559.082825</value1>
-                            <value2>-140.680008</value2>
+                            <value2>-141.177002</value2>
                         </vec2>
                     </property>
                     <property>
                         <name>TriggerCount</name>
                         <integer>0</integer>
-                    </property>
-                    <property>
-                        <name>Instigator</name>
-                        <actorId></actorId>
                     </property>
                     <property>
                         <name>EventName</name>
@@ -1587,10 +2143,6 @@
                         <integer>0</integer>
                     </property>
                     <property>
-                        <name>Instigator</name>
-                        <actorId></actorId>
-                    </property>
-                    <property>
                         <name>EventName</name>
                         <string>2SwingDoor_OpenSide1</string>
                     </property>
@@ -1661,10 +2213,6 @@
                     <property>
                         <name>TriggerCount</name>
                         <integer>0</integer>
-                    </property>
-                    <property>
-                        <name>Instigator</name>
-                        <actorId></actorId>
                     </property>
                     <property>
                         <name>EventName</name>
@@ -1739,10 +2287,6 @@
                         <integer>0</integer>
                     </property>
                     <property>
-                        <name>Instigator</name>
-                        <actorId></actorId>
-                    </property>
-                    <property>
                         <name>EventName</name>
                         <string>2SwingDoor_CloseSide0</string>
                     </property>
@@ -1784,6 +2328,243 @@
                         <exposed>false</exposed>
                         <isout>false</isout>
                         <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                </node>
+                <node>
+                    <name>Trigger Volume Event</name>
+                    <category>General</category>
+                    <id>9a79712c-6a0f-4a22-b3ea-76a7d868e348</id>
+                    <property>
+                        <name>Enabled</name>
+                        <boolean>true</boolean>
+                    </property>
+                    <property>
+                        <name>Comment</name>
+                        <string>Side 0 trigger</string>
+                    </property>
+                    <property>
+                        <name>LogNode</name>
+                        <boolean>false</boolean>
+                    </property>
+                    <property>
+                        <name>Position</name>
+                        <vec2>
+                            <value1>-659.408813</value1>
+                            <value2>-455.394592</value2>
+                        </vec2>
+                    </property>
+                    <property>
+                        <name>TriggerCount</name>
+                        <integer>0</integer>
+                    </property>
+                    <property>
+                        <name>TriggerVolume</name>
+                        <actorId>d0c5545f-07fa-4f37-9012-3c577d76b8e2</actorId>
+                    </property>
+                    <outputlink>
+                        <name>Enter</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>a0d67dea-2dcd-4703-ab72-e4ec0f2abd11</id>
+                            <name>In</name>
+                        </link>
+                    </outputlink>
+                    <outputlink>
+                        <name>Leave</name>
+                        <visible>false</visible>
+                    </outputlink>
+                    <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>TriggerCount</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>Instigator</name>
+                        <visible>true</visible>
+                        <exposed>true</exposed>
+                        <isout>true</isout>
+                        <allowmultiple>true</allowmultiple>
+                        <typecheck>true</typecheck>
+                        <link>
+                            <id>a10be99c-67e7-4b1b-8ad2-73a057cc2dda</id>
+                        </link>
+                    </valuelink>
+                    <valuelink>
+                        <name>TriggerVolume</name>
+                        <visible>false</visible>
+                        <exposed>true</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>true</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                </node>
+                <node>
+                    <name>Trigger Volume Event</name>
+                    <category>General</category>
+                    <id>380a7166-6079-4708-ba1a-b5b01c093a57</id>
+                    <property>
+                        <name>Enabled</name>
+                        <boolean>true</boolean>
+                    </property>
+                    <property>
+                        <name>Comment</name>
+                        <string>Side 1 trigger</string>
+                    </property>
+                    <property>
+                        <name>LogNode</name>
+                        <boolean>false</boolean>
+                    </property>
+                    <property>
+                        <name>Position</name>
+                        <vec2>
+                            <value1>-668.675476</value1>
+                            <value2>-117.360527</value2>
+                        </vec2>
+                    </property>
+                    <property>
+                        <name>TriggerCount</name>
+                        <integer>0</integer>
+                    </property>
+                    <property>
+                        <name>TriggerVolume</name>
+                        <actorId>31a1ae1c-5e42-42c6-bd68-9f5ed791ed1a</actorId>
+                    </property>
+                    <outputlink>
+                        <name>Enter</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>48b85523-771f-46bc-8727-bcf5df8d4785</id>
+                            <name>In</name>
+                        </link>
+                    </outputlink>
+                    <outputlink>
+                        <name>Leave</name>
+                        <visible>false</visible>
+                    </outputlink>
+                    <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>TriggerCount</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>Instigator</name>
+                        <visible>true</visible>
+                        <exposed>true</exposed>
+                        <isout>true</isout>
+                        <allowmultiple>true</allowmultiple>
+                        <typecheck>true</typecheck>
+                        <link>
+                            <id>e9cf5a29-1c9e-40c5-b0f7-8c6fb26180d4</id>
+                        </link>
+                    </valuelink>
+                    <valuelink>
+                        <name>TriggerVolume</name>
+                        <visible>false</visible>
+                        <exposed>true</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>true</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                </node>
+                <node>
+                    <name>Trigger Volume Event</name>
+                    <category>General</category>
+                    <id>c1a8fb97-29e9-4d4c-a57b-9f172c4b3b8f</id>
+                    <property>
+                        <name>Enabled</name>
+                        <boolean>true</boolean>
+                    </property>
+                    <property>
+                        <name>Comment</name>
+                        <string>Outer trigger</string>
+                    </property>
+                    <property>
+                        <name>LogNode</name>
+                        <boolean>false</boolean>
+                    </property>
+                    <property>
+                        <name>Position</name>
+                        <vec2>
+                            <value1>-661.345215</value1>
+                            <value2>224.024384</value2>
+                        </vec2>
+                    </property>
+                    <property>
+                        <name>TriggerCount</name>
+                        <integer>0</integer>
+                    </property>
+                    <property>
+                        <name>TriggerVolume</name>
+                        <actorId>e2afc2e9-de77-4137-87a9-a4e05d4e11c9</actorId>
+                    </property>
+                    <outputlink>
+                        <name>Enter</name>
+                        <visible>false</visible>
+                    </outputlink>
+                    <outputlink>
+                        <name>Leave</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>d882045b-49c5-461f-8aad-e830bda0a21d</id>
+                            <name>In</name>
+                        </link>
+                    </outputlink>
+                    <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>TriggerCount</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>Instigator</name>
+                        <visible>true</visible>
+                        <exposed>true</exposed>
+                        <isout>true</isout>
+                        <allowmultiple>true</allowmultiple>
+                        <typecheck>true</typecheck>
+                        <link>
+                            <id>3559fc6e-855c-4b81-b7c1-94f41a80ca03</id>
+                        </link>
+                    </valuelink>
+                    <valuelink>
+                        <name>TriggerVolume</name>
+                        <visible>false</visible>
+                        <exposed>true</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>true</allowmultiple>
                         <typecheck>true</typecheck>
                     </valuelink>
                 </node>
@@ -1863,9 +2644,6 @@
                         <isout>false</isout>
                         <allowmultiple>false</allowmultiple>
                         <typecheck>false</typecheck>
-                        <link>
-                            <id>217032af-cb7d-4a0e-be21-f993aa8bdf0f</id>
-                        </link>
                     </valuelink>
                     <valuelink>
                         <name>B</name>
@@ -1895,7 +2673,7 @@
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>-383.793396</value1>
+                            <value1>-366.293152</value1>
                             <value2>-455.394592</value2>
                         </vec2>
                     </property>
@@ -1911,8 +2689,8 @@
                         <name>In</name>
                         <visible>true</visible>
                         <link>
-                            <id>6779afca-186a-4362-a0f6-9a0203110e31</id>
-                            <name>Enter</name>
+                            <id>a0d67dea-2dcd-4703-ab72-e4ec0f2abd11</id>
+                            <name>A == B</name>
                         </link>
                     </inputlink>
                     <outputlink>
@@ -1946,9 +2724,6 @@
                         <isout>false</isout>
                         <allowmultiple>false</allowmultiple>
                         <typecheck>false</typecheck>
-                        <link>
-                            <id>88145614-2f86-4ff4-baa1-7e16c44d1deb</id>
-                        </link>
                     </valuelink>
                     <valuelink>
                         <name>B</name>
@@ -2046,7 +2821,7 @@
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>-391.447906</value1>
+                            <value1>-373.947906</value1>
                             <value2>-117.360527</value2>
                         </vec2>
                     </property>
@@ -2062,8 +2837,8 @@
                         <name>In</name>
                         <visible>true</visible>
                         <link>
-                            <id>2ecab1f1-93c2-4d14-ac05-4e1326e814b2</id>
-                            <name>Enter</name>
+                            <id>48b85523-771f-46bc-8727-bcf5df8d4785</id>
+                            <name>A == B</name>
                         </link>
                     </inputlink>
                     <outputlink>
@@ -2097,9 +2872,6 @@
                         <isout>false</isout>
                         <allowmultiple>false</allowmultiple>
                         <typecheck>false</typecheck>
-                        <link>
-                            <id>b7d69a2c-9cf8-42dc-ab79-a6aaa954125b</id>
-                        </link>
                     </valuelink>
                     <valuelink>
                         <name>B</name>
@@ -2269,7 +3041,7 @@
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>-405.976074</value1>
+                            <value1>-373.947906</value1>
                             <value2>224.024384</value2>
                         </vec2>
                     </property>
@@ -2285,8 +3057,8 @@
                         <name>In</name>
                         <visible>true</visible>
                         <link>
-                            <id>65ea465c-46dc-4fc2-aa01-7fe14b50e5b3</id>
-                            <name>Leave</name>
+                            <id>d882045b-49c5-461f-8aad-e830bda0a21d</id>
+                            <name>A == B</name>
                         </link>
                     </inputlink>
                     <outputlink>
@@ -2320,9 +3092,6 @@
                         <isout>false</isout>
                         <allowmultiple>false</allowmultiple>
                         <typecheck>false</typecheck>
-                        <link>
-                            <id>8968f28e-ecbd-44c5-90e6-99c52d463a68</id>
-                        </link>
                     </valuelink>
                     <valuelink>
                         <name>B</name>
@@ -3057,6 +3826,252 @@
                         </colorRGBA>
                     </property>
                 </node>
+                <node>
+                    <name>Compare Actors</name>
+                    <category>General</category>
+                    <id>d882045b-49c5-461f-8aad-e830bda0a21d</id>
+                    <property>
+                        <name>Enabled</name>
+                        <boolean>true</boolean>
+                    </property>
+                    <property>
+                        <name>Comment</name>
+                        <string></string>
+                    </property>
+                    <property>
+                        <name>LogNode</name>
+                        <boolean>false</boolean>
+                    </property>
+                    <property>
+                        <name>Position</name>
+                        <vec2>
+                            <value1>-504.990204</value1>
+                            <value2>224.024384</value2>
+                        </vec2>
+                    </property>
+                    <property>
+                        <name>A</name>
+                        <actorId></actorId>
+                    </property>
+                    <property>
+                        <name>B</name>
+                        <actorId></actorId>
+                    </property>
+                    <inputlink>
+                        <name>In</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>c1a8fb97-29e9-4d4c-a57b-9f172c4b3b8f</id>
+                            <name>Leave</name>
+                        </link>
+                    </inputlink>
+                    <outputlink>
+                        <name>A == B</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>824c212b-1acc-4aa5-aa31-6e81e025db1f</id>
+                            <name>In</name>
+                        </link>
+                    </outputlink>
+                    <outputlink>
+                        <name>A != B</name>
+                        <visible>false</visible>
+                    </outputlink>
+                    <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>A</name>
+                        <visible>true</visible>
+                        <exposed>true</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>false</typecheck>
+                        <link>
+                            <id>3559fc6e-855c-4b81-b7c1-94f41a80ca03</id>
+                        </link>
+                    </valuelink>
+                    <valuelink>
+                        <name>B</name>
+                        <visible>true</visible>
+                        <exposed>true</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>false</typecheck>
+                        <link>
+                            <id>ce5ee6d4-c530-4582-bff1-0b54d2fc2af5</id>
+                        </link>
+                    </valuelink>
+                </node>
+                <node>
+                    <name>Compare Actors</name>
+                    <category>General</category>
+                    <id>48b85523-771f-46bc-8727-bcf5df8d4785</id>
+                    <property>
+                        <name>Enabled</name>
+                        <boolean>true</boolean>
+                    </property>
+                    <property>
+                        <name>Comment</name>
+                        <string></string>
+                    </property>
+                    <property>
+                        <name>LogNode</name>
+                        <boolean>false</boolean>
+                    </property>
+                    <property>
+                        <name>Position</name>
+                        <vec2>
+                            <value1>-504.990265</value1>
+                            <value2>-117.360527</value2>
+                        </vec2>
+                    </property>
+                    <property>
+                        <name>A</name>
+                        <actorId></actorId>
+                    </property>
+                    <property>
+                        <name>B</name>
+                        <actorId></actorId>
+                    </property>
+                    <inputlink>
+                        <name>In</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>380a7166-6079-4708-ba1a-b5b01c093a57</id>
+                            <name>Enter</name>
+                        </link>
+                    </inputlink>
+                    <outputlink>
+                        <name>A == B</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>34b4b03a-8eee-44ab-b4cc-66331bb8c0f7</id>
+                            <name>In</name>
+                        </link>
+                    </outputlink>
+                    <outputlink>
+                        <name>A != B</name>
+                        <visible>false</visible>
+                    </outputlink>
+                    <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>A</name>
+                        <visible>true</visible>
+                        <exposed>true</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>false</typecheck>
+                        <link>
+                            <id>e9cf5a29-1c9e-40c5-b0f7-8c6fb26180d4</id>
+                        </link>
+                    </valuelink>
+                    <valuelink>
+                        <name>B</name>
+                        <visible>true</visible>
+                        <exposed>true</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>false</typecheck>
+                        <link>
+                            <id>f92d81ef-13a9-486c-94e4-d7cb449d12e4</id>
+                        </link>
+                    </valuelink>
+                </node>
+                <node>
+                    <name>Compare Actors</name>
+                    <category>General</category>
+                    <id>a0d67dea-2dcd-4703-ab72-e4ec0f2abd11</id>
+                    <property>
+                        <name>Enabled</name>
+                        <boolean>true</boolean>
+                    </property>
+                    <property>
+                        <name>Comment</name>
+                        <string></string>
+                    </property>
+                    <property>
+                        <name>LogNode</name>
+                        <boolean>false</boolean>
+                    </property>
+                    <property>
+                        <name>Position</name>
+                        <vec2>
+                            <value1>-496.276428</value1>
+                            <value2>-455.394592</value2>
+                        </vec2>
+                    </property>
+                    <property>
+                        <name>A</name>
+                        <actorId></actorId>
+                    </property>
+                    <property>
+                        <name>B</name>
+                        <actorId></actorId>
+                    </property>
+                    <inputlink>
+                        <name>In</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>9a79712c-6a0f-4a22-b3ea-76a7d868e348</id>
+                            <name>Enter</name>
+                        </link>
+                    </inputlink>
+                    <outputlink>
+                        <name>A == B</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>75155ff9-b31f-442f-b02b-c38836b37a63</id>
+                            <name>In</name>
+                        </link>
+                    </outputlink>
+                    <outputlink>
+                        <name>A != B</name>
+                        <visible>false</visible>
+                    </outputlink>
+                    <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>A</name>
+                        <visible>true</visible>
+                        <exposed>true</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>false</typecheck>
+                        <link>
+                            <id>a10be99c-67e7-4b1b-8ad2-73a057cc2dda</id>
+                        </link>
+                    </valuelink>
+                    <valuelink>
+                        <name>B</name>
+                        <visible>true</visible>
+                        <exposed>true</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>false</typecheck>
+                        <link>
+                            <id>6388de18-2694-4b25-97c0-3eff14beca25</id>
+                        </link>
+                    </valuelink>
+                </node>
             </actionnodes>
             <valuenodes>
                 <node>
@@ -3078,9 +4093,13 @@
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>-627.675476</value1>
-                            <value2>404.229462</value2>
+                            <value1>-467.490143</value1>
+                            <value2>344.200378</value2>
                         </vec2>
+                    </property>
+                    <property>
+                        <name>Name</name>
+                        <string></string>
                     </property>
                     <valuelink>
                         <name>Enabled</name>
@@ -3150,9 +4169,13 @@
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>-627.675354</value1>
-                            <value2>-274.189484</value2>
+                            <value1>-458.776245</value1>
+                            <value2>-332.282135</value2>
                         </vec2>
+                    </property>
+                    <property>
+                        <name>Name</name>
+                        <string></string>
                     </property>
                     <valuelink>
                         <name>Enabled</name>
@@ -3195,7 +4218,7 @@
                         <string>Opened Side</string>
                     </property>
                     <valuelink>
-                        <name>Ref</name>
+                        <name>Value</name>
                         <visible>true</visible>
                         <exposed>false</exposed>
                         <isout>false</isout>
@@ -3278,7 +4301,7 @@
                         <string>DoorOpened</string>
                     </property>
                     <valuelink>
-                        <name>Ref</name>
+                        <name>Value</name>
                         <visible>true</visible>
                         <exposed>false</exposed>
                         <isout>true</isout>
@@ -3321,7 +4344,7 @@
                         <string>DoorOpened</string>
                     </property>
                     <valuelink>
-                        <name>Ref</name>
+                        <name>Value</name>
                         <visible>true</visible>
                         <exposed>false</exposed>
                         <isout>true</isout>
@@ -3351,9 +4374,13 @@
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>-627.675476</value1>
-                            <value2>63.844582</value2>
+                            <value1>-467.490204</value1>
+                            <value2>4.783724</value2>
                         </vec2>
+                    </property>
+                    <property>
+                        <name>Name</name>
+                        <string></string>
                     </property>
                     <valuelink>
                         <name>Enabled</name>
@@ -3396,7 +4423,7 @@
                         <string>Opened Side</string>
                     </property>
                     <valuelink>
-                        <name>Ref</name>
+                        <name>Value</name>
                         <visible>true</visible>
                         <exposed>false</exposed>
                         <isout>true</isout>
@@ -3439,7 +4466,7 @@
                         <string>DoorOpened</string>
                     </property>
                     <valuelink>
-                        <name>Ref</name>
+                        <name>Value</name>
                         <visible>true</visible>
                         <exposed>false</exposed>
                         <isout>false</isout>
@@ -3482,7 +4509,7 @@
                         <string>DoorOpened</string>
                     </property>
                     <valuelink>
-                        <name>Ref</name>
+                        <name>Value</name>
                         <visible>true</visible>
                         <exposed>false</exposed>
                         <isout>false</isout>
@@ -3491,6 +4518,126 @@
                         <link>
                             <id>88145614-2f86-4ff4-baa1-7e16c44d1deb</id>
                         </link>
+                    </valuelink>
+                </node>
+                <node>
+                    <name>Actor</name>
+                    <category>General</category>
+                    <id>3559fc6e-855c-4b81-b7c1-94f41a80ca03</id>
+                    <property>
+                        <name>Enabled</name>
+                        <boolean>true</boolean>
+                    </property>
+                    <property>
+                        <name>Comment</name>
+                        <string></string>
+                    </property>
+                    <property>
+                        <name>LogNode</name>
+                        <boolean>false</boolean>
+                    </property>
+                    <property>
+                        <name>Position</name>
+                        <vec2>
+                            <value1>-570.700623</value1>
+                            <value2>344.200378</value2>
+                        </vec2>
+                    </property>
+                    <property>
+                        <name>Name</name>
+                        <string></string>
+                    </property>
+                    <property>
+                        <name>Value</name>
+                        <actorId></actorId>
+                    </property>
+                    <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                </node>
+                <node>
+                    <name>Actor</name>
+                    <category>General</category>
+                    <id>e9cf5a29-1c9e-40c5-b0f7-8c6fb26180d4</id>
+                    <property>
+                        <name>Enabled</name>
+                        <boolean>true</boolean>
+                    </property>
+                    <property>
+                        <name>Comment</name>
+                        <string></string>
+                    </property>
+                    <property>
+                        <name>LogNode</name>
+                        <boolean>false</boolean>
+                    </property>
+                    <property>
+                        <name>Position</name>
+                        <vec2>
+                            <value1>-571.668762</value1>
+                            <value2>4.783724</value2>
+                        </vec2>
+                    </property>
+                    <property>
+                        <name>Name</name>
+                        <string></string>
+                    </property>
+                    <property>
+                        <name>Value</name>
+                        <actorId></actorId>
+                    </property>
+                    <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                </node>
+                <node>
+                    <name>Actor</name>
+                    <category>General</category>
+                    <id>a10be99c-67e7-4b1b-8ad2-73a057cc2dda</id>
+                    <property>
+                        <name>Enabled</name>
+                        <boolean>true</boolean>
+                    </property>
+                    <property>
+                        <name>Comment</name>
+                        <string></string>
+                    </property>
+                    <property>
+                        <name>LogNode</name>
+                        <boolean>false</boolean>
+                    </property>
+                    <property>
+                        <name>Position</name>
+                        <vec2>
+                            <value1>-567.796021</value1>
+                            <value2>-332.282135</value2>
+                        </vec2>
+                    </property>
+                    <property>
+                        <name>Name</name>
+                        <string></string>
+                    </property>
+                    <property>
+                        <name>Value</name>
+                        <actorId></actorId>
+                    </property>
+                    <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
                     </valuelink>
                 </node>
             </valuenodes>
@@ -3517,6 +4664,15 @@
                         <value1>836.789978</value1>
                         <value2>-141.177002</value2>
                     </vec2>
+                </property>
+                <property>
+                    <name>Color</name>
+                    <colorRGBA>
+                        <valueR>0.462745</valueR>
+                        <valueG>0.596078</valueG>
+                        <valueB>0.290196</valueB>
+                        <valueA>0.882353</valueA>
+                    </colorRGBA>
                 </property>
                 <eventnodes>
                     <node>
@@ -3795,10 +4951,6 @@
                             <integer>0</integer>
                         </property>
                         <property>
-                            <name>Instigator</name>
-                            <actorId></actorId>
-                        </property>
-                        <property>
                             <name>EventName</name>
                             <string>Started</string>
                         </property>
@@ -3869,10 +5021,6 @@
                         <property>
                             <name>TriggerCount</name>
                             <integer>0</integer>
-                        </property>
-                        <property>
-                            <name>Instigator</name>
-                            <actorId></actorId>
                         </property>
                         <property>
                             <name>EventName</name>
@@ -4544,7 +5692,7 @@
                             <string>Current Time</string>
                         </property>
                         <valuelink>
-                            <name>Ref</name>
+                            <name>Value</name>
                             <visible>true</visible>
                             <exposed>false</exposed>
                             <isout>false</isout>
@@ -4580,6 +5728,15 @@
                         <value1>830.789978</value1>
                         <value2>105.320000</value2>
                     </vec2>
+                </property>
+                <property>
+                    <name>Color</name>
+                    <colorRGBA>
+                        <valueR>0.462745</valueR>
+                        <valueG>0.596078</valueG>
+                        <valueB>0.290196</valueB>
+                        <valueA>0.882353</valueA>
+                    </colorRGBA>
                 </property>
                 <eventnodes>
                     <node>
@@ -4858,10 +6015,6 @@
                             <integer>0</integer>
                         </property>
                         <property>
-                            <name>Instigator</name>
-                            <actorId></actorId>
-                        </property>
-                        <property>
                             <name>EventName</name>
                             <string>Started</string>
                         </property>
@@ -4932,10 +6085,6 @@
                         <property>
                             <name>TriggerCount</name>
                             <integer>0</integer>
-                        </property>
-                        <property>
-                            <name>Instigator</name>
-                            <actorId></actorId>
                         </property>
                         <property>
                             <name>EventName</name>
@@ -5607,7 +6756,7 @@
                             <string>Current Time</string>
                         </property>
                         <valuelink>
-                            <name>Ref</name>
+                            <name>Value</name>
                             <visible>true</visible>
                             <exposed>false</exposed>
                             <isout>false</isout>
@@ -5641,9 +6790,18 @@
             <property>
                 <name>Position</name>
                 <vec2>
-                    <value1>550.746582</value1>
-                    <value2>-36.897446</value2>
+                    <value1>650.472290</value1>
+                    <value2>-50.452396</value2>
                 </vec2>
+            </property>
+            <property>
+                <name>Color</name>
+                <colorRGBA>
+                    <valueR>0.462745</valueR>
+                    <valueG>0.596078</valueG>
+                    <valueB>0.290196</valueB>
+                    <valueA>0.882353</valueA>
+                </colorRGBA>
             </property>
             <eventnodes>
                 <node>
@@ -5681,8 +6839,8 @@
                         <name>Play</name>
                         <visible>true</visible>
                         <link>
-                            <id>99b67ea9-0797-48fc-9d53-7a1bc7f00439</id>
-                            <name>Enter</name>
+                            <id>f4dd87ef-6cc1-4dd0-89e2-1bfb72b82a12</id>
+                            <name>A == B</name>
                         </link>
                     </inputlink>
                     <outputlink>
@@ -5745,8 +6903,8 @@
                         <name>Reverse</name>
                         <visible>true</visible>
                         <link>
-                            <id>99b67ea9-0797-48fc-9d53-7a1bc7f00439</id>
-                            <name>Leave</name>
+                            <id>f3fd96d1-e222-488b-88e7-8df17a2e56e0</id>
+                            <name>A == B</name>
                         </link>
                     </inputlink>
                     <outputlink>
@@ -5922,10 +7080,6 @@
                         <integer>0</integer>
                     </property>
                     <property>
-                        <name>Instigator</name>
-                        <actorId></actorId>
-                    </property>
-                    <property>
                         <name>EventName</name>
                         <string>Started</string>
                     </property>
@@ -5996,10 +7150,6 @@
                     <property>
                         <name>TriggerCount</name>
                         <integer>0</integer>
-                    </property>
-                    <property>
-                        <name>Instigator</name>
-                        <actorId></actorId>
                     </property>
                     <property>
                         <name>EventName</name>
@@ -6449,22 +7599,24 @@
                         <float>0.5</float>
                     </property>
                     <property>
+                        <name>Time</name>
+                        <float>0</float>
+                    </property>
+                    <property>
                         <name>StartPosition</name>
-                        <vec4>
+                        <vec3>
                             <value1>-0.483625</value1>
                             <value2>14.973146</value2>
                             <value3>0.001683</value3>
-                            <value4>0.000000</value4>
-                        </vec4>
+                        </vec3>
                     </property>
                     <property>
                         <name>EndPosition</name>
-                        <vec4>
+                        <vec3>
                             <value1>-0.467612</value1>
                             <value2>15.022278</value2>
                             <value3>0.001683</value3>
-                            <value4>0.000000</value4>
-                        </vec4>
+                        </vec3>
                     </property>
                     <inputlink>
                         <name>Start</name>
@@ -6601,22 +7753,24 @@
                         <float>0.98500001</float>
                     </property>
                     <property>
+                        <name>Time</name>
+                        <float>0</float>
+                    </property>
+                    <property>
                         <name>StartPosition</name>
-                        <vec4>
+                        <vec3>
                             <value1>-0.467612</value1>
                             <value2>15.022278</value2>
                             <value3>0.001683</value3>
-                            <value4>0.000000</value4>
-                        </vec4>
+                        </vec3>
                     </property>
                     <property>
                         <name>EndPosition</name>
-                        <vec4>
+                        <vec3>
                             <value1>-0.951292</value1>
                             <value2>15.022278</value2>
                             <value3>0.001683</value3>
-                            <value4>0.000000</value4>
-                        </vec4>
+                        </vec3>
                     </property>
                     <inputlink>
                         <name>Start</name>
@@ -6753,22 +7907,24 @@
                         <float>1.5</float>
                     </property>
                     <property>
+                        <name>Time</name>
+                        <float>0</float>
+                    </property>
+                    <property>
                         <name>StartPosition</name>
-                        <vec4>
+                        <vec3>
                             <value1>-0.951292</value1>
                             <value2>15.022278</value2>
                             <value3>0.001683</value3>
-                            <value4>0.000000</value4>
-                        </vec4>
+                        </vec3>
                     </property>
                     <property>
                         <name>EndPosition</name>
-                        <vec4>
+                        <vec3>
                             <value1>-1.466951</value1>
                             <value2>15.022278</value2>
                             <value3>0.001683</value3>
-                            <value4>0.000000</value4>
-                        </vec4>
+                        </vec3>
                     </property>
                     <inputlink>
                         <name>Start</name>
@@ -6975,7 +8131,7 @@
                         <string>Current Time</string>
                     </property>
                     <valuelink>
-                        <name>Ref</name>
+                        <name>Value</name>
                         <visible>true</visible>
                         <exposed>false</exposed>
                         <isout>false</isout>
@@ -7058,7 +8214,7 @@
                         <string>Current Time</string>
                     </property>
                     <valuelink>
-                        <name>Ref</name>
+                        <name>Value</name>
                         <visible>true</visible>
                         <exposed>false</exposed>
                         <isout>false</isout>
@@ -7141,7 +8297,7 @@
                         <string>Current Time</string>
                     </property>
                     <valuelink>
-                        <name>Ref</name>
+                        <name>Value</name>
                         <visible>true</visible>
                         <exposed>false</exposed>
                         <isout>false</isout>
@@ -7174,9 +8330,18 @@
             <property>
                 <name>Position</name>
                 <vec2>
-                    <value1>22.246582</value1>
-                    <value2>-35.000000</value2>
+                    <value1>92.246582</value1>
+                    <value2>-36.897446</value2>
                 </vec2>
+            </property>
+            <property>
+                <name>Color</name>
+                <colorRGBA>
+                    <valueR>0.462745</valueR>
+                    <valueG>0.596078</valueG>
+                    <valueB>0.290196</valueB>
+                    <valueA>0.882353</valueA>
+                </colorRGBA>
             </property>
             <eventnodes>
                 <node>
@@ -7214,8 +8379,8 @@
                         <name>Play</name>
                         <visible>true</visible>
                         <link>
-                            <id>e2970c35-3412-4ce7-8ba5-badbd8008f49</id>
-                            <name>Enter</name>
+                            <id>017a705e-c0ec-4722-8ead-2902d9071632</id>
+                            <name>A == B</name>
                         </link>
                     </inputlink>
                     <outputlink>
@@ -7278,8 +8443,8 @@
                         <name>Reverse</name>
                         <visible>true</visible>
                         <link>
-                            <id>e2970c35-3412-4ce7-8ba5-badbd8008f49</id>
-                            <name>Leave</name>
+                            <id>d323b687-4fe5-49ba-a732-423c9ff815f2</id>
+                            <name>A == B</name>
                         </link>
                     </inputlink>
                     <outputlink>
@@ -7455,10 +8620,6 @@
                         <integer>0</integer>
                     </property>
                     <property>
-                        <name>Instigator</name>
-                        <actorId></actorId>
-                    </property>
-                    <property>
                         <name>EventName</name>
                         <string>Started</string>
                     </property>
@@ -7529,10 +8690,6 @@
                     <property>
                         <name>TriggerCount</name>
                         <integer>0</integer>
-                    </property>
-                    <property>
-                        <name>Instigator</name>
-                        <actorId></actorId>
                     </property>
                     <property>
                         <name>EventName</name>
@@ -8204,7 +9361,7 @@
                         <string>Current Time</string>
                     </property>
                     <valuelink>
-                        <name>Ref</name>
+                        <name>Value</name>
                         <visible>true</visible>
                         <exposed>false</exposed>
                         <isout>false</isout>
@@ -8237,9 +9394,18 @@
             <property>
                 <name>Position</name>
                 <vec2>
-                    <value1>544.945679</value1>
-                    <value2>272.359375</value2>
+                    <value1>615.625061</value1>
+                    <value2>249.122314</value2>
                 </vec2>
+            </property>
+            <property>
+                <name>Color</name>
+                <colorRGBA>
+                    <valueR>0.462745</valueR>
+                    <valueG>0.596078</valueG>
+                    <valueB>0.290196</valueB>
+                    <valueA>0.882353</valueA>
+                </colorRGBA>
             </property>
             <eventnodes>
                 <node>
@@ -8277,8 +9443,8 @@
                         <name>Play</name>
                         <visible>true</visible>
                         <link>
-                            <id>acfb0b5b-469c-4559-bc19-32560af8543e</id>
-                            <name>Enter</name>
+                            <id>d8affe32-a545-440e-95bd-eec286df5f76</id>
+                            <name>A == B</name>
                         </link>
                     </inputlink>
                     <outputlink>
@@ -8341,8 +9507,8 @@
                         <name>Reverse</name>
                         <visible>true</visible>
                         <link>
-                            <id>acfb0b5b-469c-4559-bc19-32560af8543e</id>
-                            <name>Leave</name>
+                            <id>8a13ecb5-b82c-4809-8820-110368144bbf</id>
+                            <name>A == B</name>
                         </link>
                     </inputlink>
                     <outputlink>
@@ -8518,10 +9684,6 @@
                         <integer>0</integer>
                     </property>
                     <property>
-                        <name>Instigator</name>
-                        <actorId></actorId>
-                    </property>
-                    <property>
                         <name>EventName</name>
                         <string>Started</string>
                     </property>
@@ -8592,10 +9754,6 @@
                     <property>
                         <name>TriggerCount</name>
                         <integer>0</integer>
-                    </property>
-                    <property>
-                        <name>Instigator</name>
-                        <actorId></actorId>
                     </property>
                     <property>
                         <name>EventName</name>
@@ -9042,25 +10200,23 @@
                     </property>
                     <property>
                         <name>EndTime</name>
-                        <float>0.50099999</float>
+                        <float>0.5</float>
                     </property>
                     <property>
                         <name>StartScale</name>
-                        <vec4>
+                        <vec3>
                             <value1>1.000000</value1>
                             <value2>1.000000</value2>
                             <value3>1.000000</value3>
-                            <value4>0.000000</value4>
-                        </vec4>
+                        </vec3>
                     </property>
                     <property>
                         <name>EndScale</name>
-                        <vec4>
+                        <vec3>
                             <value1>0.500000</value1>
                             <value2>1.000000</value2>
                             <value3>1.000000</value3>
-                            <value4>0.000000</value4>
-                        </vec4>
+                        </vec3>
                     </property>
                     <inputlink>
                         <name>Start</name>
@@ -9190,7 +10346,7 @@
                     </property>
                     <property>
                         <name>StartTime</name>
-                        <float>0.50099999</float>
+                        <float>0.5</float>
                     </property>
                     <property>
                         <name>EndTime</name>
@@ -9198,21 +10354,19 @@
                     </property>
                     <property>
                         <name>StartScale</name>
-                        <vec4>
+                        <vec3>
                             <value1>0.500000</value1>
                             <value2>1.000000</value2>
                             <value3>1.000000</value3>
-                            <value4>0.000000</value4>
-                        </vec4>
+                        </vec3>
                     </property>
                     <property>
                         <name>EndScale</name>
-                        <vec4>
+                        <vec3>
                             <value1>0.500000</value1>
                             <value2>1.000000</value2>
                             <value3>0.500000</value3>
-                            <value4>0.000000</value4>
-                        </vec4>
+                        </vec3>
                     </property>
                     <inputlink>
                         <name>Start</name>
@@ -9419,7 +10573,7 @@
                         <string>Current Time</string>
                     </property>
                     <valuelink>
-                        <name>Ref</name>
+                        <name>Value</name>
                         <visible>true</visible>
                         <exposed>false</exposed>
                         <isout>false</isout>
@@ -9502,7 +10656,7 @@
                         <string>Current Time</string>
                     </property>
                     <valuelink>
-                        <name>Ref</name>
+                        <name>Value</name>
                         <visible>true</visible>
                         <exposed>false</exposed>
                         <isout>false</isout>
@@ -9538,6 +10692,15 @@
                     <value1>-10.937936</value1>
                     <value2>774.854553</value2>
                 </vec2>
+            </property>
+            <property>
+                <name>Color</name>
+                <colorRGBA>
+                    <valueR>0.462745</valueR>
+                    <valueG>0.596078</valueG>
+                    <valueB>0.290196</valueB>
+                    <valueA>0.882353</valueA>
+                </colorRGBA>
             </property>
             <eventnodes>
                 <node>
@@ -9816,10 +10979,6 @@
                         <integer>0</integer>
                     </property>
                     <property>
-                        <name>Instigator</name>
-                        <actorId></actorId>
-                    </property>
-                    <property>
                         <name>EventName</name>
                         <string>Started</string>
                     </property>
@@ -9890,10 +11049,6 @@
                     <property>
                         <name>TriggerCount</name>
                         <integer>0</integer>
-                    </property>
-                    <property>
-                        <name>Instigator</name>
-                        <actorId></actorId>
                     </property>
                     <property>
                         <name>EventName</name>
@@ -10565,7 +11720,7 @@
                         <string>Current Time</string>
                     </property>
                     <valuelink>
-                        <name>Ref</name>
+                        <name>Value</name>
                         <visible>true</visible>
                         <exposed>false</exposed>
                         <isout>false</isout>
@@ -10598,9 +11753,18 @@
             <property>
                 <name>Position</name>
                 <vec2>
-                    <value1>-10.937936</value1>
-                    <value2>951.707703</value2>
+                    <value1>128.062073</value1>
+                    <value2>915.660645</value2>
                 </vec2>
+            </property>
+            <property>
+                <name>Color</name>
+                <colorRGBA>
+                    <valueR>0.462745</valueR>
+                    <valueG>0.596078</valueG>
+                    <valueB>0.290196</valueB>
+                    <valueA>0.882353</valueA>
+                </colorRGBA>
             </property>
             <eventnodes>
                 <node>
@@ -10638,8 +11802,8 @@
                         <name>Play</name>
                         <visible>true</visible>
                         <link>
-                            <id>d799e982-afa7-4b04-b134-92f273feef5d</id>
-                            <name>Enter</name>
+                            <id>d3bce9d4-9046-4bc8-a487-086fdda8bb1b</id>
+                            <name>A == B</name>
                         </link>
                     </inputlink>
                     <outputlink>
@@ -10702,8 +11866,8 @@
                         <name>Reverse</name>
                         <visible>true</visible>
                         <link>
-                            <id>d799e982-afa7-4b04-b134-92f273feef5d</id>
-                            <name>Leave</name>
+                            <id>0e628a5d-7320-48e5-9d70-af1d349037cd</id>
+                            <name>A == B</name>
                         </link>
                     </inputlink>
                     <outputlink>
@@ -10879,10 +12043,6 @@
                         <integer>0</integer>
                     </property>
                     <property>
-                        <name>Instigator</name>
-                        <actorId></actorId>
-                    </property>
-                    <property>
                         <name>EventName</name>
                         <string>Started</string>
                     </property>
@@ -10953,10 +12113,6 @@
                     <property>
                         <name>TriggerCount</name>
                         <integer>0</integer>
-                    </property>
-                    <property>
-                        <name>Instigator</name>
-                        <actorId></actorId>
                     </property>
                     <property>
                         <name>EventName</name>
@@ -11842,22 +12998,24 @@
                         <float>0.222</float>
                     </property>
                     <property>
+                        <name>Time</name>
+                        <float>0</float>
+                    </property>
+                    <property>
                         <name>StartPosition</name>
-                        <vec4>
+                        <vec3>
                             <value1>14.056686</value1>
                             <value2>8.538706</value2>
                             <value3>0.073650</value3>
-                            <value4>0.000000</value4>
-                        </vec4>
+                        </vec3>
                     </property>
                     <property>
                         <name>EndPosition</name>
-                        <vec4>
+                        <vec3>
                             <value1>14.056686</value1>
                             <value2>8.538706</value2>
                             <value3>0.073650</value3>
-                            <value4>0.000000</value4>
-                        </vec4>
+                        </vec3>
                     </property>
                     <inputlink>
                         <name>Start</name>
@@ -12146,22 +13304,24 @@
                         <float>1.526</float>
                     </property>
                     <property>
+                        <name>Time</name>
+                        <float>0</float>
+                    </property>
+                    <property>
                         <name>StartPosition</name>
-                        <vec4>
+                        <vec3>
                             <value1>14.056686</value1>
                             <value2>8.538706</value2>
                             <value3>0.073650</value3>
-                            <value4>0.000000</value4>
-                        </vec4>
+                        </vec3>
                     </property>
                     <property>
                         <name>EndPosition</name>
-                        <vec4>
+                        <vec3>
                             <value1>9.299291</value1>
                             <value2>8.538706</value2>
                             <value3>0.073650</value3>
-                            <value4>0.000000</value4>
-                        </vec4>
+                        </vec3>
                     </property>
                     <inputlink>
                         <name>Start</name>
@@ -12298,22 +13458,24 @@
                         <float>1.598</float>
                     </property>
                     <property>
+                        <name>Time</name>
+                        <float>0</float>
+                    </property>
+                    <property>
                         <name>StartPosition</name>
-                        <vec4>
+                        <vec3>
                             <value1>9.299291</value1>
                             <value2>8.538706</value2>
                             <value3>0.073650</value3>
-                            <value4>0.000000</value4>
-                        </vec4>
+                        </vec3>
                     </property>
                     <property>
                         <name>EndPosition</name>
-                        <vec4>
+                        <vec3>
                             <value1>9.122586</value1>
                             <value2>8.538706</value2>
                             <value3>0.073650</value3>
-                            <value4>0.000000</value4>
-                        </vec4>
+                        </vec3>
                     </property>
                     <inputlink>
                         <name>Start</name>
@@ -12450,22 +13612,24 @@
                         <float>1.743</float>
                     </property>
                     <property>
+                        <name>Time</name>
+                        <float>0</float>
+                    </property>
+                    <property>
                         <name>StartPosition</name>
-                        <vec4>
+                        <vec3>
                             <value1>9.122586</value1>
                             <value2>8.538706</value2>
                             <value3>0.073650</value3>
-                            <value4>0.000000</value4>
-                        </vec4>
+                        </vec3>
                     </property>
                     <property>
                         <name>EndPosition</name>
-                        <vec4>
+                        <vec3>
                             <value1>9.254625</value1>
                             <value2>8.538706</value2>
                             <value3>0.073650</value3>
-                            <value4>0.000000</value4>
-                        </vec4>
+                        </vec3>
                     </property>
                     <inputlink>
                         <name>Start</name>
@@ -12672,7 +13836,7 @@
                         <string>Current Time</string>
                     </property>
                     <valuelink>
-                        <name>Ref</name>
+                        <name>Value</name>
                         <visible>true</visible>
                         <exposed>false</exposed>
                         <isout>false</isout>
@@ -12755,7 +13919,7 @@
                         <string>Current Time</string>
                     </property>
                     <valuelink>
-                        <name>Ref</name>
+                        <name>Value</name>
                         <visible>true</visible>
                         <exposed>false</exposed>
                         <isout>false</isout>
@@ -12838,7 +14002,7 @@
                         <string>Current Time</string>
                     </property>
                     <valuelink>
-                        <name>Ref</name>
+                        <name>Value</name>
                         <visible>true</visible>
                         <exposed>false</exposed>
                         <isout>false</isout>
@@ -12921,7 +14085,7 @@
                         <string>Current Time</string>
                     </property>
                     <valuelink>
-                        <name>Ref</name>
+                        <name>Value</name>
                         <visible>true</visible>
                         <exposed>false</exposed>
                         <isout>false</isout>
@@ -13004,7 +14168,7 @@
                         <string>Current Time</string>
                     </property>
                     <valuelink>
-                        <name>Ref</name>
+                        <name>Value</name>
                         <visible>true</visible>
                         <exposed>false</exposed>
                         <isout>false</isout>
@@ -13087,7 +14251,7 @@
                         <string>Current Time</string>
                     </property>
                     <valuelink>
-                        <name>Ref</name>
+                        <name>Value</name>
                         <visible>true</visible>
                         <exposed>false</exposed>
                         <isout>false</isout>
