@@ -38,10 +38,10 @@ void initSceneBindings()
    //TODO This has 2 default arguments, but can't seem to get BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS() to work.
    //Maybe because there's two Scene::GetHeightOfTerrain()?
    bool (Scene::*GetHeightOfTerrain1)(float& hot, float x, float y, float maxZ, float minZ) = &Scene::GetHeightOfTerrain;
-   
+
    void (Scene::*SetGravity1)(const osg::Vec3&) const = &Scene::SetGravity;
    void (Scene::*SetGravity2)(float, float, float) const = &Scene::SetGravity;
-   
+
    void (Scene::*GetGravity1)(osg::Vec3&) const = &Scene::GetGravity;
    void (Scene::*GetGravity2)(float&, float&, float&) const = &Scene::GetGravity;
 
@@ -52,7 +52,7 @@ void initSceneBindings()
 
    osg::Node* (Scene::*GetOSGNode1)() = &Scene::GetOSGNode;
    const osg::Node* (Scene::*GetOSGNode2)() const = &Scene::GetOSGNode;
-  
+
    scope sceneScope = class_<Scene, bases<Base>, dtCore::RefPtr<Scene>, boost::noncopyable >("Scene", init<optional<const std::string&> >())
       .def("GetInstanceCount", &Scene::GetInstanceCount)
       .staticmethod("GetInstanceCount")
@@ -62,11 +62,8 @@ void initSceneBindings()
       .def("GetOSGNode", GetOSGNode1, return_internal_reference<>())
       .def("GetOSGNode", GetOSGNode2, return_internal_reference<>())
       .def("GetSceneNode", &Scene::GetSceneNode, return_internal_reference<>())
-      .def("AddDrawable", &Scene::AddDrawable)
       .def("AddChild", &Scene::AddChild)
-      .def("RemoveDrawable", &Scene::RemoveDrawable)
       .def("RemoveChild", &Scene::RemoveChild)
-      .def("GetDrawable", &Scene::GetDrawable, return_internal_reference<>())
       .def("GetChild", &SceneWrap::GetChildWrap, return_internal_reference<>())
       .def("SetRenderState", &Scene::SetRenderState)
       .def("GetHeightOfTerrain", GetHeightOfTerrain1)
@@ -84,7 +81,6 @@ void initSceneBindings()
       .def("GetLight", GetLight3, return_internal_reference<>())
       .def("GetLight", GetLight4, return_internal_reference<>())
       .def("UseSceneLight", &Scene::UseSceneLight)
-      .def("GetDrawableIndex", &Scene::GetDrawableIndex)
       .def("GetChildIndex", &DeltaDrawable::GetChildIndex)
       .def("GetNumberOfAddedDrawable", &Scene::GetNumberOfAddedDrawable);
 
@@ -98,7 +94,7 @@ void initSceneBindings()
       .value("POINT", Scene::POINT)
       .value("LINE", Scene::LINE)
       .value("FILL", Scene::FILL)
-      .export_values();    
+      .export_values();
 
-   
+
 }
