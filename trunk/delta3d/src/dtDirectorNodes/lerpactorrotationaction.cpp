@@ -135,15 +135,22 @@ namespace dtDirector
             // Activate the "Started" output link.
             if (firstUpdate)
             {
+               OutputLink* link = GetOutputLink("Started");
+               if (link) link->Activate();
+
+               // If we have our own internal clock, restart it since someone
+               // fired Start again
+               if (IsTimeInternal())
+               {
+                  SetFloat(GetFloat("StartTime"), "Time");
+               }
+
                // If this is a first update and we already started, then kill the
                // new thread since we're running on another thread
                if (mIsActive)
                {
                   return false;
                }
-
-               OutputLink* link = GetOutputLink("Started");
-               if (link) link->Activate();
             }
 
             // On the first activation, initialize.
@@ -159,13 +166,6 @@ namespace dtDirector
                }
                else
                {
-                  // Reset the current time to the beginning since we finished
-                  // if we're internally tracking it
-                  if (IsTimeInternal())
-                  {
-                     SetFloat(GetFloat("StartTime"), "Time");
-                  }
-
                   OutputLink* link = GetOutputLink("Finished");
                   if (link) link->Activate();
                   return false;
