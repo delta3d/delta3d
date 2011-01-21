@@ -30,7 +30,7 @@ namespace dtDirector
 {
    /////////////////////////////////////////////////////////////////////////////
    GetActorPropertyAction::GetActorPropertyAction()
-      : ActionNode()  
+      : ActionNode()
    {
       mActor = "";
       mPropertyName = "";
@@ -139,6 +139,12 @@ namespace dtDirector
    std::string GetActorPropertyAction::GetResult() const
    {
       return "";
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   const std::string& GetActorPropertyAction::GetName()
+   {
+      return mPropertyName;
    }
 }
 
