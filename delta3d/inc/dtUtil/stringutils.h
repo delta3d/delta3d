@@ -149,7 +149,7 @@ namespace dtUtil
 
       bool operator() (const std::string& toCompare)
       {
-         return StrCompare(toCompare, mString, mCaseSensitive) != 0;
+         return StrCompare(toCompare, mString, mCaseSensitive) == 0;
       }
 
       const std::string& mString;
