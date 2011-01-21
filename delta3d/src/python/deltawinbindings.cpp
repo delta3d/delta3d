@@ -32,7 +32,7 @@ void initDeltaWinBindings()
 
    void (DeltaWin::*SetPosition1)(const DeltaWin::PositionSize&) = &DeltaWin::SetPosition;
    void (DeltaWin::*SetPosition2)(int, int, int, int) = &DeltaWin::SetPosition;
-   DeltaWin::PositionSize (DeltaWin::*GetPosition1)() = &DeltaWin::GetPosition;
+   DeltaWin::PositionSize (DeltaWin::*GetPosition1)() const = &DeltaWin::GetPosition;
 
    osgViewer::GraphicsWindow* (DeltaWin::*GetOsgViewerGraphicsWindow1)() = &DeltaWin::GetOsgViewerGraphicsWindow;
 
