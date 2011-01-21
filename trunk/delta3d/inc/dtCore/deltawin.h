@@ -207,20 +207,20 @@ namespace dtCore
       void SetPosition(int x, int y, int width, int height);
       void SetPosition(const PositionSize& positionSize);
 
-      /** 
+      /**
        * Get the size and position of the DeltaWin.
        * @param x The x position of the DeltaWin (pixels)
        * @param y The y position of the DeltaWin (pixels)
        * @param width The width of the DeltaWin (pixels)
        * @param height The height of the DeltaWin (pixels)
        */
-      void GetPosition(int& x, int& y, int& width, int& height);
+      void GetPosition(int& x, int& y, int& width, int& height) const;
 
-      /** 
+      /**
        * Get the size and position of the DeltaWin.
        * @return The size and position of the DeltaWin (pixels) in a PositionSize struct
        */
-      PositionSize GetPosition();
+      PositionSize GetPosition() const;
 
       ///Get a handle to the underlying GraphicsWindow
       osgViewer::GraphicsWindow* GetOsgViewerGraphicsWindow() { return mOsgViewerGraphicsWindow.get(); }
@@ -243,19 +243,19 @@ namespace dtCore
 
       typedef std::vector<Resolution> ResolutionVec;
 
-      /** 
+      /**
        * Get a container of valid screen resolutions supported by this device.
        * @return A container of valid resolutions
        */
       static ResolutionVec GetResolutions();
 
-      /** 
+      /**
        * Get the current screen resolution.
        * @return The current screen resolutions
        */
       static Resolution GetCurrentResolution();
 
-      /** 
+      /**
        * Change the current screen resolution.  This screen resolution will stay
        * until the application exits.
        * @param width The width of the screen (pixels)
@@ -266,7 +266,7 @@ namespace dtCore
        */
       static bool ChangeScreenResolution(int width, int height, int colorDepth, int refreshRate);
 
-      /** 
+      /**
        * Change the current screen resolution.  This screen resolution will stay
        * until the application exits.
        * @param res The Resolution struct describing the new screen resolution
@@ -274,7 +274,7 @@ namespace dtCore
        */
       static bool ChangeScreenResolution(Resolution res);
 
-      /** 
+      /**
        * Iterate through the supplied ResolutionVec and see if any of the supplied
        * parameters are a match.
        * @param rv A container of valid screen resolutions
@@ -286,7 +286,7 @@ namespace dtCore
        */
       static int IsValidResolution(const ResolutionVec &rv, int width = 0, int height = 0, int refreshRate = 0, int colorDepth = 0);
 
-      /** 
+      /**
        * Tests to see if the system supports the desired resolution.
        * @param candidate the Resolution to be tested.
        * @return 'true' when the Resolution is supported.
