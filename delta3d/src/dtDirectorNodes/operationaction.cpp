@@ -103,9 +103,25 @@ namespace dtDirector
       osg::Vec4 right;
       osg::Vec4 result;
 
-      if (leftType == dtDAL::DataType::VEC4F)
+      if (leftType == dtDAL::DataType::VEC2F)
       {
-         left = GetVec("A");
+         osg::Vec2 vec2A = GetVec2("A");
+         left.x() = vec2A.x();
+         left.y() = vec2A.y();
+         left.z() = left.x();
+         left.w() = left.x();
+      }
+      else if (leftType == dtDAL::DataType::VEC3F)
+      {
+         osg::Vec3 vec3A = GetVec3("A");
+         left.x() = vec3A.x();
+         left.y() = vec3A.y();
+         left.z() = vec3A.z();
+         left.w() = left.x();
+      }
+      else if (leftType == dtDAL::DataType::VEC4F)
+      {
+         left = GetVec4("A");
       }
       else
       {
@@ -115,9 +131,25 @@ namespace dtDirector
          left.w() = left.x();
       }
 
-      if (rightType == dtDAL::DataType::VEC4F)
+      if (rightType == dtDAL::DataType::VEC2F)
       {
-         right = GetVec("B");
+         osg::Vec2 vec2A = GetVec2("B");
+         right.x() = vec2A.x();
+         right.y() = vec2A.y();
+         right.z() = right.x();
+         right.w() = right.x();
+      }
+      else if (rightType == dtDAL::DataType::VEC3F)
+      {
+         osg::Vec3 vec3A = GetVec3("B");
+         right.x() = vec3A.x();
+         right.y() = vec3A.y();
+         right.z() = vec3A.z();
+         right.w() = right.x();
+      }
+      else if (rightType == dtDAL::DataType::VEC4F)
+      {
+         right = GetVec4("B");
       }
       else
       {
@@ -151,10 +183,18 @@ namespace dtDirector
       for (int index = 0; index < count; index++)
       {
          dtDAL::DataType& resultType = GetPropertyType("Result", index);
-         
-         if (resultType == dtDAL::DataType::VEC4F)
+
+         if (resultType == dtDAL::DataType::VEC2F)
          {
-            SetVec(result, "Result", index);
+            SetVec2(osg::Vec2(result.x(), result.y()), "Result", index);
+         }
+         else if (resultType == dtDAL::DataType::VEC3F)
+         {
+            SetVec3(osg::Vec3(result.x(), result.y(), result.z()), "Result", index);
+         }
+         else if (resultType == dtDAL::DataType::VEC4F)
+         {
+            SetVec4(result, "Result", index);
          }
          else
          {

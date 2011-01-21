@@ -1772,13 +1772,13 @@ void DirectorCinematicEditorPlugin::OnLoad()
                }
                {
                   int time = node->GetFloat("StartTime") * 1000;
-                  osg::Vec4 pos = node->GetVec("StartPosition");
+                  osg::Vec3 pos = node->GetVec3("StartPosition");
                   TransformData* data = GetOrCreateTransformData(time, lastTransform, lastScale, canScale);
                   if (data) data->mTransform.SetTranslation(pos.x(), pos.y(), pos.z());
                }
                {
                   int time = node->GetFloat("EndTime") * 1000;
-                  osg::Vec4 pos = node->GetVec("EndPosition");
+                  osg::Vec3 pos = node->GetVec3("EndPosition");
                   TransformData* data = GetOrCreateTransformData(time, lastTransform, lastScale, canScale);
                   if (data) data->mTransform.SetTranslation(pos.x(), pos.y(), pos.z());
                   lastTransform.SetTranslation(pos.x(), pos.y(), pos.z());
@@ -1810,13 +1810,13 @@ void DirectorCinematicEditorPlugin::OnLoad()
                }
                {
                   int time = node->GetFloat("StartTime") * 1000;
-                  osg::Vec4 rot = node->GetVec("StartRotation");
+                  osg::Vec4 rot = node->GetVec4("StartRotation");
                   TransformData* data = GetOrCreateTransformData(time, lastTransform, lastScale, canScale);
                   if (data) data->mTransform.SetRotation(rot.z(), rot.x(), rot.y());
                }
                {
                   int time = node->GetFloat("EndTime") * 1000;
-                  osg::Vec4 rot = node->GetVec("EndRotation");
+                  osg::Vec4 rot = node->GetVec4("EndRotation");
                   TransformData* data = GetOrCreateTransformData(time, lastTransform, lastScale, canScale);
                   if (data) data->mTransform.SetRotation(rot.z(), rot.x(), rot.y());
                   lastTransform.SetRotation(rot.z(), rot.x(), rot.y());
@@ -1848,13 +1848,13 @@ void DirectorCinematicEditorPlugin::OnLoad()
                }
                {
                   int time = node->GetFloat("StartTime") * 1000;
-                  osg::Vec4 scale = node->GetVec("StartScale");
+                  osg::Vec3 scale = node->GetVec3("StartScale");
                   TransformData* data = GetOrCreateTransformData(time, lastTransform, lastScale, canScale);
                   if (data) data->mScale.set(scale.x(), scale.y(), scale.z());
                }
                {
                   int time = node->GetFloat("EndTime") * 1000;
-                  osg::Vec4 scale = node->GetVec("EndScale");
+                  osg::Vec3 scale = node->GetVec3("EndScale");
                   TransformData* data = GetOrCreateTransformData(time, lastTransform, lastScale, canScale);
                   if (data) data->mScale.set(scale.x(), scale.y(), scale.z());
                   lastScale.set(scale.x(), scale.y(), scale.z());
@@ -2313,8 +2313,8 @@ void DirectorCinematicEditorPlugin::OnSave()
                      lerpNode->GetInputLink("Stop")->Connect(stopLink);
                      lerpNode->SetFloat(prevData.mTime * 0.001f, "StartTime");
                      lerpNode->SetFloat(nextData.mTime * 0.001f, "EndTime");
-                     lerpNode->SetVec(osg::Vec4(prevData.mTransform.GetTranslation(), 0.0f), "StartPosition");
-                     lerpNode->SetVec(osg::Vec4(nextData.mTransform.GetTranslation(), 0.0f), "EndPosition");
+                     lerpNode->SetVec3(prevData.mTransform.GetTranslation(), "StartPosition");
+                     lerpNode->SetVec3(nextData.mTransform.GetTranslation(), "EndPosition");
                      lerpNode->SetPosition(osg::Vec2(column, height));
                      GetEditor()->OnNodeCreated(lerpNode);
                      startLink = lerpNode->GetOutputLink("Started");
@@ -2353,8 +2353,8 @@ void DirectorCinematicEditorPlugin::OnSave()
                      lerpNode->SetFloat(nextData.mTime * 0.001f, "EndTime");
                      osg::Vec3 prevRot = prevData.mTransform.GetRotation();
                      osg::Vec3 nextRot = nextData.mTransform.GetRotation();
-                     lerpNode->SetVec(osg::Vec4(prevRot.y(), prevRot.z(), prevRot.x(), 0.0f), "StartRotation");
-                     lerpNode->SetVec(osg::Vec4(nextRot.y(), nextRot.z(), nextRot.x(), 0.0f), "EndRotation");
+                     lerpNode->SetVec4(osg::Vec4(prevRot.y(), prevRot.z(), prevRot.x(), 0.0f), "StartRotation");
+                     lerpNode->SetVec4(osg::Vec4(nextRot.y(), nextRot.z(), nextRot.x(), 0.0f), "EndRotation");
                      lerpNode->SetPosition(osg::Vec2(column, height));
                      GetEditor()->OnNodeCreated(lerpNode);
                      startLink = lerpNode->GetOutputLink("Started");
@@ -2391,8 +2391,8 @@ void DirectorCinematicEditorPlugin::OnSave()
                      lerpNode->GetInputLink("Stop")->Connect(stopLink);
                      lerpNode->SetFloat(prevData.mTime * 0.001f, "StartTime");
                      lerpNode->SetFloat(nextData.mTime * 0.001f, "EndTime");
-                     lerpNode->SetVec(osg::Vec4(prevData.mScale, 0.0f), "StartScale");
-                     lerpNode->SetVec(osg::Vec4(nextData.mScale, 0.0f), "EndScale");
+                     lerpNode->SetVec3(prevData.mScale, "StartScale");
+                     lerpNode->SetVec3(nextData.mScale, "EndScale");
                      lerpNode->SetPosition(osg::Vec2(column, height));
                      GetEditor()->OnNodeCreated(lerpNode);
                      startLink = lerpNode->GetOutputLink("Started");

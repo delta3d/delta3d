@@ -66,7 +66,9 @@
 #include <dtDirectorNodes/doublevalue.h>
 #include <dtDirectorNodes/stringvalue.h>
 #include <dtDirectorNodes/stringarrayvalue.h>
-#include <dtDirectorNodes/vecvalue.h>
+#include <dtDirectorNodes/vec2value.h>
+#include <dtDirectorNodes/vec3value.h>
+#include <dtDirectorNodes/vec4value.h>
 #include <dtDirectorNodes/referencevalue.h>
 #include <dtDirectorNodes/actorvalue.h>
 #include <dtDirectorNodes/actorarrayvalue.h>
@@ -141,7 +143,9 @@ namespace dtDirector
    RefPtr<NodeType> NodeLibraryRegistry::DOUBLE_VALUE_NODE_TYPE(                 new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "Double",                    "General",     "Variables",   "A double value."));
    RefPtr<NodeType> NodeLibraryRegistry::STRING_VALUE_NODE_TYPE(                 new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "String",                    "General",     "Variables",   "A string value."));
    RefPtr<NodeType> NodeLibraryRegistry::STRING_ARRAY_VALUE_NODE_TYPE(           new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "String Array",              "General",     "Arrays",      "An array of string values."));
-   RefPtr<NodeType> NodeLibraryRegistry::VEC_VALUE_NODE_TYPE(                    new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "Vector",                    "General",     "Variables",   "A vector value."));
+   RefPtr<NodeType> NodeLibraryRegistry::VEC2_VALUE_NODE_TYPE(                   new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "Vec2",                      "General",     "Variables",   "An x,y vector value."));
+   RefPtr<NodeType> NodeLibraryRegistry::VEC3_VALUE_NODE_TYPE(                   new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "Vec3",                      "General",     "Variables",   "An x,y,z vector value."));
+   RefPtr<NodeType> NodeLibraryRegistry::VEC4_VALUE_NODE_TYPE(                   new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "Vec4",                      "General",     "Variables",   "An x,y,z,w vector value."));
    RefPtr<NodeType> NodeLibraryRegistry::REFERENCE_VALUE_NODE_TYPE(              new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "Reference",                 "Core",        "Variables",   "This will reference another value in the script."));
    RefPtr<NodeType> NodeLibraryRegistry::ACTOR_VALUE_NODE_TYPE(                  new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "Actor",                     "General",     "Actors",      "An actor value."));
    RefPtr<NodeType> NodeLibraryRegistry::ACTOR_ARRAY_VALUE_NODE_TYPE(            new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "Actor Array",               "General",     "Arrays",      "An array of actor values."));
@@ -217,7 +221,9 @@ namespace dtDirector
       mNodeFactory->RegisterType<DoubleValue>(DOUBLE_VALUE_NODE_TYPE.get());
       mNodeFactory->RegisterType<StringValue>(STRING_VALUE_NODE_TYPE.get());
       mNodeFactory->RegisterType<StringArrayValue>(STRING_ARRAY_VALUE_NODE_TYPE.get());
-      mNodeFactory->RegisterType<VecValue>(VEC_VALUE_NODE_TYPE.get());
+      mNodeFactory->RegisterType<Vec2Value>(VEC2_VALUE_NODE_TYPE.get());
+      mNodeFactory->RegisterType<Vec3Value>(VEC3_VALUE_NODE_TYPE.get());
+      mNodeFactory->RegisterType<Vec4Value>(VEC4_VALUE_NODE_TYPE.get());
       mNodeFactory->RegisterType<ReferenceValue>(REFERENCE_VALUE_NODE_TYPE.get());
       mNodeFactory->RegisterType<ActorValue>(ACTOR_VALUE_NODE_TYPE.get());
       mNodeFactory->RegisterType<ActorArrayValue>(ACTOR_ARRAY_VALUE_NODE_TYPE.get());

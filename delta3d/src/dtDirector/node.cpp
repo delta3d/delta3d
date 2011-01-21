@@ -124,7 +124,7 @@ namespace dtDirector
          dtDAL::BooleanActorProperty::GetFuncType(this, &Node::GetNodeLogging),
          "Prints a log message when this node is executed."));
 
-      dtDAL::StringActorProperty* authorProp = 
+      dtDAL::StringActorProperty* authorProp =
          new dtDAL::StringActorProperty("Authors", "Node Author(s)",
          dtDAL::StringActorProperty::SetFuncType(),
          dtDAL::StringActorProperty::GetFuncType(this, &Node::GetAuthors),
@@ -342,6 +342,8 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    int Node::GetPropertyCount(const std::string& name)
    {
+      int propertyCount = 0;
+
       // First iterate through all value links to see if this property
       // is redirected.
       for (int valueIndex = 0; valueIndex < (int)mValues.size(); valueIndex++)
@@ -349,17 +351,17 @@ namespace dtDirector
          dtDAL::ActorProperty* prop = mValues[valueIndex].GetDefaultProperty();
          if (prop && prop->GetName() == name)
          {
-            return mValues[valueIndex].GetPropertyCount();
+            propertyCount = mValues[valueIndex].GetPropertyCount();
          }
       }
 
       // Did not find any overrides, so return the default.
-      if (dtDAL::PropertyContainer::GetProperty(name))
+      if (propertyCount == 0 && dtDAL::PropertyContainer::GetProperty(name))
       {
          return 1;
       }
 
-      return 0;
+      return propertyCount;
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -470,7 +472,33 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   osg::Vec4 Node::GetVec(const std::string& name, int index)
+   osg::Vec2 Node::GetVec2(const std::string& name, int index)
+   {
+      dtDAL::ActorProperty* prop = GetProperty(name, index);
+      dtDAL::Vec2ActorProperty* vecProp = dynamic_cast<dtDAL::Vec2ActorProperty*>(prop);
+      if (vecProp)
+      {
+         return vecProp->GetValue();
+      }
+
+      return osg::Vec2();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   osg::Vec3 Node::GetVec3(const std::string& name, int index)
+   {
+      dtDAL::ActorProperty* prop = GetProperty(name, index);
+      dtDAL::Vec3ActorProperty* vecProp = dynamic_cast<dtDAL::Vec3ActorProperty*>(prop);
+      if (vecProp)
+      {
+         return vecProp->GetValue();
+      }
+
+      return osg::Vec3();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   osg::Vec4 Node::GetVec4(const std::string& name, int index)
    {
       dtDAL::ActorProperty* prop = GetProperty(name, index);
       dtDAL::Vec4ActorProperty* vecProp = dynamic_cast<dtDAL::Vec4ActorProperty*>(prop);
@@ -587,7 +615,61 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void Node::SetVec(osg::Vec4 value, const std::string& name, int index)
+   void Node::SetVec2(osg::Vec2 value, const std::string& name, int index)
+   {
+      if (index == -1)
+      {
+         int count = GetPropertyCount(name);
+         for (index = 0; index < count; index++)
+         {
+            dtDAL::ActorProperty* prop = GetProperty(name, index);
+            dtDAL::Vec2ActorProperty* vecProp = dynamic_cast<dtDAL::Vec2ActorProperty*>(prop);
+            if (vecProp)
+            {
+               vecProp->SetValue(value);
+            }
+         }
+      }
+      else
+      {
+         dtDAL::ActorProperty* prop = GetProperty(name, index);
+         dtDAL::Vec2ActorProperty* vecProp = dynamic_cast<dtDAL::Vec2ActorProperty*>(prop);
+         if (vecProp)
+         {
+            vecProp->SetValue(value);
+         }
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void Node::SetVec3(osg::Vec3 value, const std::string& name, int index)
+   {
+      if (index == -1)
+      {
+         int count = GetPropertyCount(name);
+         for (index = 0; index < count; index++)
+         {
+            dtDAL::ActorProperty* prop = GetProperty(name, index);
+            dtDAL::Vec3ActorProperty* vecProp = dynamic_cast<dtDAL::Vec3ActorProperty*>(prop);
+            if (vecProp)
+            {
+               vecProp->SetValue(value);
+            }
+         }
+      }
+      else
+      {
+         dtDAL::ActorProperty* prop = GetProperty(name, index);
+         dtDAL::Vec3ActorProperty* vecProp = dynamic_cast<dtDAL::Vec3ActorProperty*>(prop);
+         if (vecProp)
+         {
+            vecProp->SetValue(value);
+         }
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void Node::SetVec4(osg::Vec4 value, const std::string& name, int index)
    {
       if (index == -1)
       {

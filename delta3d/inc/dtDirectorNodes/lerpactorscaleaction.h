@@ -99,11 +99,11 @@ namespace dtDirector
       void SetTime(float value);
       float GetTime();
 
-      void SetStartScale(const osg::Vec4& value);
-      osg::Vec4 GetStartScale();
+      void SetStartScale(const osg::Vec3& value);
+      osg::Vec3 GetStartScale();
 
-      void SetEndScale(const osg::Vec4& value);
-      osg::Vec4 GetEndScale();
+      void SetEndScale(const osg::Vec3& value);
+      osg::Vec3 GetEndScale();
 
    protected:
 
@@ -113,13 +113,14 @@ namespace dtDirector
       ~LerpActorScaleAction();
 
    private:
+      bool IsTimeInternal();
 
       dtCore::UniqueId mLerpActor;
       float            mStartTime;
       float            mEndTime;
       float            mTime;
-      osg::Vec4        mStartScale;
-      osg::Vec4        mEndScale;
+      osg::Vec3        mStartScale;
+      osg::Vec3        mEndScale;
 
       float            mLerpTimeScalar;
       bool             mWaitingForStart;
