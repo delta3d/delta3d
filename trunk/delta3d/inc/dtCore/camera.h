@@ -126,9 +126,9 @@ namespace dtCore
       * @param farClip : the distance from the Camera to the far clipping plane
       * @return false if the Camera is not setup as a perspective camera
       */
-      bool GetPerspectiveParams(double& vfov, double& aspectRatio, double& nearClip, double& farClip);
+      bool GetPerspectiveParams(double& vfov, double& aspectRatio, double& nearClip, double& farClip) const;
 
-      /** 
+      /**
        * Set the perspective parameters of the camera using a frustum.
        * @param left Coordinate for the left vertical clipping plane
        * @param right Coordinate for the right vertical clipping plane
@@ -141,7 +141,7 @@ namespace dtCore
                       double bottom, double top,
                       double nearClip, double farClip);
 
-      /** 
+      /**
        * Get the perspective parameters of the camera using a frustum.
        * @param left Coordinate for the left vertical clipping plane
        * @param right Coordinate for the right vertical clipping plane
@@ -153,9 +153,9 @@ namespace dtCore
        */
       bool GetFrustum(double& left, double& right,
                       double& bottom, double& top,
-                      double& nearClip, double& farClip);
+                      double& nearClip, double& farClip) const;
 
-      /** 
+      /**
        * Set the orthographic parameters of the camera.
        * @param left Coordinate for the left vertical clipping plane
        * @param right Coordinate for the right vertical clipping plane
@@ -168,7 +168,7 @@ namespace dtCore
                     double bottom, double top,
                     double nearClip, double farClip);
 
-      /** 
+      /**
        * Get the orthographic parameters of the camera.
        * @param left Coordinate for the left vertical clipping plane
        * @param right Coordinate for the right vertical clipping plane
@@ -185,17 +185,17 @@ namespace dtCore
       static double ComputeAspectFromFOV(double hfov, double vfov);
 
       ///@return HOV
-      float GetHorizontalFov();
+      float GetHorizontalFov() const;
 
       ///@return FOV
-      float GetVerticalFov();
+      float GetVerticalFov() const;
 
       void SetProjectionResizePolicy( osg::Camera::ProjectionResizePolicy prp )
       {
          mOsgCamera->setProjectionResizePolicy(prp);
       }
 
-      osg::Camera::ProjectionResizePolicy GetProjection()
+      osg::Camera::ProjectionResizePolicy GetProjection() const
       {
          return (mOsgCamera->getProjectionResizePolicy());
       }
@@ -204,7 +204,7 @@ namespace dtCore
       void SetAspectRatio(double aspectRatio);
 
       ///@return aspect ratio
-      double GetAspectRatio();
+      double GetAspectRatio() const;
 
       void SetClearColor(float r, float g, float b, float a);
       void SetClearColor(const osg::Vec4& color);
@@ -240,7 +240,7 @@ namespace dtCore
        * Call this to get the auto lod scale callback so you can set values on it.  It will return NULL if none has been set
        * and SetAutoLODScaleEnabled is set to false.  If you set the callback, this will return the instance or subclass you assigned.
        */
-      AutoLODScaleCameraCallback* GetAutoLODScaleCallback();
+      AutoLODScaleCameraCallback* GetAutoLODScaleCallback() const;
 
       /**
        * Sets the callback for handling auto lod scaling. You only need to set this if you want to subclass and

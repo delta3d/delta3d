@@ -212,13 +212,13 @@ void DeltaWin::SetPosition(const DeltaWin::PositionSize& positionSize)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void DeltaWin::GetPosition(int& x, int& y, int& width, int& height)
+void DeltaWin::GetPosition(int& x, int& y, int& width, int& height) const
 {
    mOsgViewerGraphicsWindow->getWindowRectangle(x, y, width, height);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-DeltaWin::PositionSize DeltaWin::GetPosition()
+DeltaWin::PositionSize DeltaWin::GetPosition() const
 {
    PositionSize positionSize;
    GetPosition(positionSize.mX, positionSize.mY, positionSize.mWidth, positionSize.mHeight);

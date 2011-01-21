@@ -275,7 +275,7 @@ namespace dtCore
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   bool Camera::GetPerspectiveParams(double& vfov, double& aspectRatio, double& nearClip, double& farClip)
+   bool Camera::GetPerspectiveParams(double& vfov, double& aspectRatio, double& nearClip, double& farClip) const
    {
       return mOsgCamera->getProjectionMatrixAsPerspective(vfov, aspectRatio, nearClip, farClip);
    }
@@ -287,7 +287,7 @@ namespace dtCore
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   bool Camera::GetFrustum(double& left, double& right, double& bottom, double& top, double& nearClip, double& farClip)
+   bool Camera::GetFrustum(double& left, double& right, double& bottom, double& top, double& nearClip, double& farClip) const
    {
       return mOsgCamera->getProjectionMatrixAsFrustum(left, right, bottom, top, nearClip, farClip);
    }
@@ -376,7 +376,7 @@ namespace dtCore
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   AutoLODScaleCameraCallback* Camera::GetAutoLODScaleCallback()
+   AutoLODScaleCameraCallback* Camera::GetAutoLODScaleCallback() const
    {
       return mAutoLODScaleCameraCallback;
    }
@@ -399,7 +399,7 @@ namespace dtCore
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   float Camera::GetHorizontalFov()
+   float Camera::GetHorizontalFov() const
    {
       double vfov, aspectRatio, nearClip, farClip;
       GetPerspectiveParams(vfov, aspectRatio, nearClip, farClip);
@@ -409,7 +409,7 @@ namespace dtCore
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   float Camera::GetVerticalFov()
+   float Camera::GetVerticalFov() const
    {
       double vfov, aspectRatio, nearClip, farClip;
       GetPerspectiveParams(vfov, aspectRatio, nearClip, farClip);
@@ -425,7 +425,7 @@ namespace dtCore
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   double Camera::GetAspectRatio()
+   double Camera::GetAspectRatio() const
    {
       double vfov, aspectRatio, nearClip, farClip;
       GetPerspectiveParams(vfov, aspectRatio, nearClip, farClip);
