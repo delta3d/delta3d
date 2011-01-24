@@ -58,6 +58,7 @@ namespace dtDirector
       static dtCore::RefPtr<dtDirector::NodeType> GET_ACTOR_PROPERTY_ACTION_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> SET_ACTOR_PROPERTY_ACTION_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> OPERATION_ACTION_NODE_TYPE;
+      static dtCore::RefPtr<dtDirector::NodeType> CALCULATE_DISTANCE_ACTION_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> TOGGLE_ACTION_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> COMPARE_ACTOR_ACTION_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> COMPARE_BOOL_ACTION_NODE_TYPE;
