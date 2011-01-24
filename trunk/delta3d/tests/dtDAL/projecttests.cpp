@@ -61,6 +61,7 @@ class ProjectTests : public CPPUNIT_NS::TestFixture
 {
    CPPUNIT_TEST_SUITE(ProjectTests);
    CPPUNIT_TEST(TestReadonlyFailure);
+   CPPUNIT_TEST(TestCreateContextWithMapsDir);
    CPPUNIT_TEST(TestProject);
    CPPUNIT_TEST(TestCategories);
    CPPUNIT_TEST(TestResources);
@@ -82,6 +83,7 @@ class ProjectTests : public CPPUNIT_NS::TestFixture
       void TestFileIO();
       void TestCategories();
       void TestReadonlyFailure();
+      void TestCreateContextWithMapsDir();
       void TestResources();
       void TestDeletingBackupFromReadOnlyContext();
       void TestNonModifiedMapBackup();
@@ -367,6 +369,28 @@ void ProjectTests::TestReadonlyFailure()
    //       CPPUNIT_FAIL(std::string("Caught an exception of type") + typeid(e).name() + " with message " + e.what());
    //    }
 
+}
+
+void ProjectTests::TestCreateContextWithMapsDir()
+{
+   try
+   {
+      dtDAL::Project& p = dtDAL::Project::GetInstance();
+      p.CreateContext(TEST_PROJECT_DIR, true);
+      CPPUNIT_ASSERT(dtUtil::FileUtils::GetInstance().DirExists(TEST_PROJECT_DIR + dtUtil::FileUtils::PATH_SEPARATOR + "maps"));
+      dtUtil::FileUtils::GetInstance().DirDelete(TEST_PROJECT_DIR, true);
+      p.CreateContext(TEST_PROJECT_DIR, false);
+      CPPUNIT_ASSERT( ! dtUtil::FileUtils::GetInstance().DirExists(TEST_PROJECT_DIR + dtUtil::FileUtils::PATH_SEPARATOR + "maps"));
+      dtUtil::FileUtils::GetInstance().DirDelete(TEST_PROJECT_DIR, true);
+   }
+   catch (const dtUtil::Exception& ex)
+   {
+      CPPUNIT_FAIL(ex.ToString());
+   }
+   //    catch (const std::exception& ex)
+   //    {
+   //        CPPUNIT_FAIL(ex.what());
+   //    }
 }
 
 void ProjectTests::TestCategories()
@@ -743,11 +767,10 @@ void ProjectTests::TestProject()
       try
       {
          p.SetContext(TEST_PROJECT_DIR);
-         CPPUNIT_FAIL("Project should not have been able to Set the context because it is empty.");
       }
       catch (const dtUtil::Exception&)
       {
-         //correct
+         CPPUNIT_FAIL("Project should have been able to Set the context because the maps dir is no longer required.");
       }
 
       try {
