@@ -171,7 +171,8 @@ public:                                                        \
 private:                                                       \
    static EnumerateListType mInstances;                        \
    static std::vector<dtUtil::Enumeration*> mGenericInstances; \
-   static void AddInstance(EnumType* instance);
+   static void AddInstance(EnumType* instance);                \
+public:
 
 
 #define IMPLEMENT_ENUM(EnumType)                               \
