@@ -88,6 +88,9 @@ namespace dtCore
       ///Change how the near/far culling planes get automatically calculated
       void SetNearFarCullingMode(AutoNearFarCullingMode mode);
 
+      ///Return how the near/far culling planes are getting calculated
+      AutoNearFarCullingMode GetNearFarCullingMode() const;
+
       //Enabled or disable this Camera. Disabled Cameras will not render.
       void SetEnabled(bool enabled);
 

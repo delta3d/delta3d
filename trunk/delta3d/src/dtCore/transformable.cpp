@@ -805,7 +805,7 @@ void Transformable::RenderCollisionGeometry(bool enable /* = true */,
          RemoveRenderedCollisionGeometry();
       }
 
-      mImpl->mGeomGeod = 
+      mImpl->mGeomGeod =
          mImpl->mGeomWrap->CreateRenderedCollisionGeometry(wireFrame);
 
       if (mImpl->mGeomGeod.valid())

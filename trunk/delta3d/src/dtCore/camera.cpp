@@ -195,6 +195,22 @@ namespace dtCore
       GetOSGCamera()->setComputeNearFarMode(osgMode);
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   Camera::AutoNearFarCullingMode Camera::GetNearFarCullingMode() const
+   {
+      AutoNearFarCullingMode deltaMode;
+
+      switch(GetOSGCamera()->getComputeNearFarMode())
+      {
+         case osg::CullSettings::DO_NOT_COMPUTE_NEAR_FAR:                 deltaMode = NO_AUTO_NEAR_FAR; break;
+         case osg::CullSettings::COMPUTE_NEAR_FAR_USING_BOUNDING_VOLUMES: deltaMode = BOUNDING_VOLUME_NEAR_FAR; break;
+         case osg::CullSettings::COMPUTE_NEAR_FAR_USING_PRIMITIVES:       deltaMode = PRIMITIVE_NEAR_FAR; break;
+         default:                                                         deltaMode = PRIMITIVE_NEAR_FAR; break;
+      }
+
+      return deltaMode;
+   }
+
    /////////////////////////////////////////////////////////////////////////////
    void Camera::UpdateViewMatrixFromTransform()
    {
