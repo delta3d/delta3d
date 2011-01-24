@@ -117,6 +117,7 @@ class MapTests : public CPPUNIT_NS::TestFixture
       CPPUNIT_TEST(TestLoadEnvironmentMapIntoScene);
       CPPUNIT_TEST(TestActorProxyRemoveProperties);
       CPPUNIT_TEST(TestCreateMapsMultiContext);
+      CPPUNIT_TEST(TestSaveAsMultiContext);
    CPPUNIT_TEST_SUITE_END();
 
    public:
@@ -141,6 +142,7 @@ class MapTests : public CPPUNIT_NS::TestFixture
       void TestWildCard();
       void TestActorProxyRemoveProperties();
       void TestCreateMapsMultiContext();
+      void TestSaveAsMultiContext();
 
       static const std::string TEST_PROJECT_DIR;
       static const std::string TEST_PROJECT_DIR_2;
@@ -200,12 +202,12 @@ void MapTests::setUp()
             fileUtils.FileDelete(rbodyToDelete);
         }
 
-        if (fileUtils.DirExists(TEST_PROJECT_DIR));
+        if (fileUtils.DirExists(TEST_PROJECT_DIR))
         {
            fileUtils.DirDelete(TEST_PROJECT_DIR, true);
         }
 
-        if (fileUtils.DirExists(TEST_PROJECT_DIR_2));
+        if (fileUtils.DirExists(TEST_PROJECT_DIR_2))
         {
            fileUtils.DirDelete(TEST_PROJECT_DIR_2, true);
         }
@@ -901,7 +903,7 @@ void MapTests::TestMapSaveAndLoad()
 
    map->AddProxy(*proxy);
 
-   dtDAL::ActorProperty* prop(NULL);
+   //dtDAL::ActorProperty* prop(NULL);
 
    const std::string TEST_STRING("test123  !@#");
    const bool TEST_BOOL(true);
@@ -1832,6 +1834,36 @@ void MapTests::TestCreateMapsMultiContext()
       CPPUNIT_ASSERT(fileUtils.FileExists(p.GetContext(1) + dtUtil::FileUtils::PATH_SEPARATOR + "maps" + dtUtil::FileUtils::PATH_SEPARATOR + map1 + ".dtmap"));
       p.DeleteMap(map1);
       CPPUNIT_ASSERT( ! fileUtils.FileExists(p.GetContext(1) + dtUtil::FileUtils::PATH_SEPARATOR + "maps" + dtUtil::FileUtils::PATH_SEPARATOR + map1 + ".dtmap"));
+   }
+   catch (const dtUtil::Exception& ex)
+   {
+      CPPUNIT_FAIL(ex.ToString());
+   }
+   //    catch (const std::exception& ex)
+   //    {
+   //        CPPUNIT_FAIL(ex.what());
+   //    }
+}
+
+void MapTests::TestSaveAsMultiContext()
+{
+   try
+   {
+      dtDAL::Project& p = dtDAL::Project::GetInstance();
+      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
+
+      const std::string map1("Orz");
+      const std::string mapSecond("*Frumple*");
+
+      dtDAL::Map& map = p.CreateMap(map1, map1, 0);
+
+      CPPUNIT_ASSERT(fileUtils.FileExists(p.GetContext(0) + dtUtil::FileUtils::PATH_SEPARATOR + "maps" + dtUtil::FileUtils::PATH_SEPARATOR + map1 + ".dtmap"));
+      CPPUNIT_ASSERT(!fileUtils.FileExists(p.GetContext(1) + dtUtil::FileUtils::PATH_SEPARATOR + "maps" + dtUtil::FileUtils::PATH_SEPARATOR + mapSecond + ".dtmap"));
+
+      p.SaveMapAs(map, mapSecond, mapSecond, 1);
+
+      CPPUNIT_ASSERT(fileUtils.FileExists(p.GetContext(0) + dtUtil::FileUtils::PATH_SEPARATOR + "maps" + dtUtil::FileUtils::PATH_SEPARATOR + map1 + ".dtmap"));
+      CPPUNIT_ASSERT(fileUtils.FileExists(p.GetContext(1) + dtUtil::FileUtils::PATH_SEPARATOR + "maps" + dtUtil::FileUtils::PATH_SEPARATOR + mapSecond + ".dtmap"));
    }
    catch (const dtUtil::Exception& ex)
    {
