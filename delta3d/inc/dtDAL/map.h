@@ -135,6 +135,15 @@ namespace dtDAL
          };
 
          /**
+          * Creates a new map
+          * @param filemName the filemName to use to save the map.
+          *                  If the extension is left off, it will be added.
+          * @param mName the mName to give the map.
+          * @todo make constructor protected
+          */
+         Map(const std::string& filemName, const std::string& mName = std::string(""));
+
+         /**
           * @return the mName of the map.
           */
          const std::string& GetName() const;
@@ -392,15 +401,6 @@ namespace dtDAL
           * @return true or false if an item was actually removed.
           */
          bool RemoveLibrary(const std::string& mName);
-
-         /**
-          * Creates a new map
-          * @param filemName the filemName to use to save the map.
-          *                  If the extension is left off, it will be added.
-          * @param mName the mName to give the map.
-          * @todo make constructor protected
-          */
-         Map(const std::string& filemName, const std::string& mName = std::string(""));
 
          /**
           * Matches a string against wildcard string.  "*" matches anything.  "?" matches any single character.

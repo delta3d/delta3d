@@ -87,9 +87,11 @@ namespace dtDAL
       /**
        * Creates a new project context if it doesn't exist.
        * @param path the full path to the new context directory
+       * @param createMapsDir create the maps directory.  Otherwise the code just validates that the passed in path
+       *                      could be a valid project context.
        * @throws dtUtil::Exception with ExceptionEnum::ProjectInvalidContext if the path specified is invalid.
        */
-      void CreateContext(const std::string& path);
+      void CreateContext(const std::string& path, bool createMapsDir = true);
 
       /**
        * @param slot if this is set, it will return true if the number passed represents

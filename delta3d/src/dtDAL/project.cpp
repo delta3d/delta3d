@@ -56,8 +56,6 @@
 #include <dtDAL/actorproxy.h>
 #include <dtDAL/resourcedescriptor.h>
 
-
-
 namespace dtDAL
 {
    const std::string Project::LOG_NAME("project.cpp");
@@ -164,6 +162,10 @@ namespace dtDAL
 
       const std::string GetBackupDir() const;
 
+      dtUtil::FileInfo GetMapsDirectory(const std::string& contextPath, bool createIfNeeded);
+
+      dtUtil::FileInfo GetMapsDirectory(bool createIfNeeded);
+
       bool mIsInSTAGE;
 
       // for the get context method.
@@ -202,7 +204,7 @@ namespace dtDAL
       return *this;
    }
 
-   void Project::CreateContext(const std::string& path)
+   void Project::CreateContext(const std::string& path, bool createMapsDir)
    {
       dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
       dtUtil::FileType ft = fileUtils.GetFileInfo(path).fileType;
@@ -237,67 +239,8 @@ namespace dtDAL
          pPath.erase(last);
       }
 
-      fileUtils.PushDirectory(path);
+      mImpl->GetMapsDirectory(path, createMapsDir);
 
-      try
-      {
-         const dtUtil::DirectoryContents contents = fileUtils.DirGetFiles(".");
-         if (contents.empty())
-         {
-            try
-            {
-               fileUtils.MakeDirectory(Project::MAP_DIRECTORY);
-            }
-            catch(const dtUtil::Exception& ex)
-            {
-               std::ostringstream ss;
-               ss << "Unable to create directory " << Project::MAP_DIRECTORY << ". Error: " << ex.What();
-               throw dtDAL::ProjectInvalidContextException(
-                  ss.str(), __FILE__, __LINE__);
-            }
-         }
-         else
-         {
-            std::set<std::string> contentsSet;
-            contentsSet.insert(contents.begin(), contents.end());
-            if (contentsSet.find(Project::MAP_DIRECTORY) == contentsSet.end())
-            {
-               try
-               {
-                  fileUtils.MakeDirectory(Project::MAP_DIRECTORY);
-               }
-               catch (const dtUtil::Exception& ex)
-               {
-                  std::ostringstream ss;
-                  ss << "Unable to create directory " << Project::MAP_DIRECTORY << ". Error: " << ex.What();
-                  throw dtDAL::ProjectInvalidContextException(ss.str(), __FILE__, __LINE__);
-               }
-            }
-            else if (fileUtils.GetFileInfo(Project::MAP_DIRECTORY).fileType != dtUtil::DIRECTORY)
-            {
-               std::string s(path);
-               s.append(" is not a valid project directory.  The ");
-               s.append(Project::MAP_DIRECTORY);
-
-               if (fileUtils.GetFileInfo(Project::MAP_DIRECTORY).fileType == dtUtil::REGULAR_FILE)
-               {
-                  s.append(" is not a directory.");
-               }
-               else
-               {
-                  s.append(" cannot be created.");
-               }
-
-               throw dtDAL::ProjectInvalidContextException(s, __FILE__, __LINE__);
-            }
-         }
-      }
-      catch (const dtUtil::Exception& ex)
-      {
-         dtUtil::FileUtils::GetInstance().PopDirectory();
-         throw ex;
-      }
-      dtUtil::FileUtils::GetInstance().PopDirectory();
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -364,31 +307,26 @@ namespace dtDAL
 
       try
       {
-         const dtUtil::DirectoryContents contents = fileUtils.DirGetFiles(".");
-         if (contents.empty())
+         GetMapsDirectory(false);
+
+
+         // Check not to see that the resource directories exist, but that they aren't regular files
+         // and can therefore be created if needed.
+         dtDAL::DataType::EnumerateListType::const_iterator i, iend;
+         i = dtDAL::DataType::EnumerateType().begin();
+         iend = dtDAL::DataType::EnumerateType().end();
+         for (;i != iend; ++i)
          {
-            std::string s(path);
-            s.append(" is not a valid project directory.");
-            throw dtDAL::ProjectInvalidContextException(s, __FILE__, __LINE__);
-         }
-         else
-         {
-            if (fileUtils.GetFileInfo(Project::MAP_DIRECTORY).fileType != dtUtil::DIRECTORY)
+            dtDAL::DataType& dt = **i;
+            if (dt.IsResource())
             {
-               std::string s(path);
-               s.append(" is not a valid project directory.  The ");
-               s.append(Project::MAP_DIRECTORY);
-
-               if (fileUtils.GetFileInfo(Project::MAP_DIRECTORY).fileType == dtUtil::REGULAR_FILE)
+               if (fileUtils.GetFileInfo(dt.GetName()).fileType == dtUtil::REGULAR_FILE)
                {
-                  s.append(" file is not a directory.");
+                  std::string s(path);
+                  s.append(" is not a valid project directory.  The ");
+                  s.append(dt.GetName());
+                  s.append(" file is not a directory.  It doesn't have to exist, but it may not be a regular file.");
                }
-               else
-               {
-                  s.append(" directory does not exist.");
-               }
-
-               throw dtDAL::ProjectInvalidContextException(s, __FILE__, __LINE__);
             }
          }
 
@@ -573,7 +511,7 @@ namespace dtDAL
          extensions.push_back(dtDAL::Map::MAP_FILE_EXTENSION);
          extensions.push_back(".xml");
 
-         dtUtil::FileInfo fi = fileUtils.GetFileInfo(Project::MAP_DIRECTORY);
+         dtUtil::FileInfo fi = GetMapsDirectory(false);
          // It may not have a maps directory, so we have to check.
          if (fi.fileType == dtUtil::DIRECTORY)
          {
@@ -629,13 +567,15 @@ namespace dtDAL
    {
       std::string fullPath = mContexts[fileData.mSlotId] + dtUtil::FileUtils::PATH_SEPARATOR;
 
+      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
+
+
+
+      fullPath += dtUtil::FileUtils::PATH_SEPARATOR + GetMapsDirectory(mContexts[fileData.mSlotId], true).fileName;
+
       if (backup)
       {
-         fullPath += GetBackupDir();
-      }
-      else
-      {
-         fullPath += Project::MAP_DIRECTORY;
+         fullPath += dtUtil::FileUtils::PATH_SEPARATOR + GetBackupDir();
       }
 
       fullPath += dtUtil::FileUtils::PATH_SEPARATOR + fileData.mFileName;
@@ -644,7 +584,6 @@ namespace dtDAL
          fullPath += ".backup";
       }
 
-      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
       Map* map = NULL;
       try
       {
@@ -801,10 +740,11 @@ namespace dtDAL
             throw dtDAL::ProjectException(
                    std::string("Map named ") + name + " already exists.", __FILE__, __LINE__);
          }
-         else if (mapIter->second.mFileName == map->GetFileName())
+         else if (mapIter->second.mFileName == map->GetFileName() && mapIter->second.mSlotId == slot)
          {
             throw dtDAL::ProjectException(
-                   std::string("A map with file name ") + fileName + " already exists.", __FILE__, __LINE__);
+                   std::string("A map with file name ") + fileName + " in context \"" + mImpl->mContexts[slot] + "\" already exists.",
+                   __FILE__, __LINE__);
          }
       }
 
@@ -1355,6 +1295,8 @@ namespace dtDAL
    {
       MapWriter& mw = *mWriter;
 
+      bool isNew = map.GetSavedName().empty();
+
       if (map.GetSavedName() != map.GetName())
       {
          if (mMapList.find(map.GetName()) != mMapList.end())
@@ -1364,27 +1306,15 @@ namespace dtDAL
          }
       }
 
-      std::string fullPath = Project::MAP_DIRECTORY + dtUtil::FileUtils::PATH_SEPARATOR + map.GetFileName();
-      std::string fullPathSaving = fullPath + ".saving";
-
       dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
-      // TODO need path.
-      fileUtils.PushDirectory(mContexts[slot]);
-      try
-      {
-         //save the file to a separate name first so that
-         //it won't blast the old one unless it is successful.
-         mw.Save(map, fullPathSaving);
-         //if it's successful, move it to the final file name
-         fileUtils.FileMove(fullPathSaving, fullPath, true);
-      }
-      catch (const dtUtil::Exception& e)
-      {
-         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, e.What().c_str());
-         fileUtils.PopDirectory();
-         throw e;
-      }
-      fileUtils.PopDirectory();
+      std::string fullPath = mContexts[slot] + dtUtil::FileUtils::PATH_SEPARATOR +
+               GetMapsDirectory(mContexts[slot], true).fileName + dtUtil::FileUtils::PATH_SEPARATOR + map.GetFileName();
+      std::string fullPathSaving = fullPath + ".saving";
+      //save the file to a separate name first so that
+      //it won't blast the old one unless it is successful.
+      mw.Save(map, fullPathSaving);
+      //if it's successful, move it to the final file name
+      fileUtils.FileMove(fullPathSaving, fullPath, true);
 
       //Update the internal lists to make sure that
       //map is keyed properly by name.
@@ -1409,16 +1339,19 @@ namespace dtDAL
 
       map.ClearModified();
 
-      try
+      if (!isNew)
       {
-         Project::mInstance->ClearBackup(map.GetSavedName());
-      }
-      catch (const dtDAL::ProjectFileNotFoundException& ex)
-      {
-         //if the map in new, the following exception will be thrown
-         //so don't print an error in that case.
-         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-                            "Error clearing map backups when saving: %s", ex.What().c_str());
+         try
+         {
+            Project::mInstance->ClearBackup(map.GetSavedName());
+         }
+         catch (const dtDAL::ProjectFileNotFoundException& ex)
+         {
+            //if the map is new, the following exception will be thrown
+            //so don't print an error in that case.
+            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                               "Error clearing map backups when saving: %s", ex.What().c_str());
+         }
       }
    }
 
@@ -1434,15 +1367,15 @@ namespace dtDAL
          return;
       }
 
-      std::string backupDir = mImpl->GetBackupDir();
-
-      std::string path = backupDir + dtUtil::FileUtils::PATH_SEPARATOR + map.GetFileName();
-
       dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
 
       fileUtils.PushDirectory(mImpl->mContexts[slot]);
       try
       {
+         std::string backupDir = mImpl->GetMapsDirectory(true).fileName + dtUtil::FileUtils::PATH_SEPARATOR + mImpl->GetBackupDir();
+
+         std::string path = backupDir + dtUtil::FileUtils::PATH_SEPARATOR + map.GetFileName();
+
          if (!fileUtils.DirExists(backupDir))
          {
             fileUtils.MakeDirectory(backupDir);
@@ -1492,11 +1425,20 @@ namespace dtDAL
 
       const std::string& fileName = found->second.mFileName;
 
-      std::string backupDir = mImpl->mContexts[found->second.mSlotId] + dtUtil::FileUtils::PATH_SEPARATOR + mImpl->GetBackupDir();
+      bool result = false;
 
-      const std::string& backupFileName = backupDir + dtUtil::FileUtils::PATH_SEPARATOR + fileName + ".backup";
+      dtUtil::FileInfo fi = mImpl->GetMapsDirectory(mImpl->mContexts[found->second.mSlotId], false);
+      if (fi.fileType == dtUtil::DIRECTORY)
+      {
+         std::string backupDir =  mImpl->mContexts[found->second.mSlotId] + dtUtil::FileUtils::PATH_SEPARATOR
+                  + fi.fileName + dtUtil::FileUtils::PATH_SEPARATOR + mImpl->GetBackupDir();
 
-      return dtUtil::FileUtils::GetInstance().FileExists(backupFileName);
+         const std::string& backupFileName = backupDir + dtUtil::FileUtils::PATH_SEPARATOR + fileName + ".backup";
+
+         result = dtUtil::FileUtils::GetInstance().FileExists(backupFileName);
+      }
+
+      return result;
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -1519,12 +1461,20 @@ namespace dtDAL
       if (found == mImpl->mMapList.end())
       {
          throw dtDAL::ProjectFileNotFoundException(
-         std::string("No such map: \"") + mapName + "\"", __FILE__, __LINE__);
+                  std::string("No such map: \"") + mapName + "\"", __FILE__, __LINE__);
       }
 
       const std::string& fileName = found->second.mFileName;
 
-      std::string backupDir = mImpl->mContexts[found->second.mSlotId] + dtUtil::FileUtils::PATH_SEPARATOR + mImpl->GetBackupDir();
+      dtUtil::FileInfo fiMaps = mImpl->GetMapsDirectory(mImpl->mContexts[found->second.mSlotId], false);
+
+      if (fiMaps.fileType == dtUtil::FILE_NOT_FOUND)
+      {
+         return;
+      }
+
+      std::string backupDir = mImpl->mContexts[found->second.mSlotId] + dtUtil::FileUtils::PATH_SEPARATOR +
+                fiMaps.fileName + dtUtil::FileUtils::PATH_SEPARATOR + mImpl->GetBackupDir();
 
       dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
 
@@ -1761,7 +1711,81 @@ namespace dtDAL
    /////////////////////////////////////////////////////////////////////////////
    const std::string ProjectImpl::GetBackupDir() const
    {
-      return Project::MAP_DIRECTORY + dtUtil::FileUtils::PATH_SEPARATOR + Project::MAP_BACKUP_SUB_DIRECTORY;
+      return Project::MAP_BACKUP_SUB_DIRECTORY;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   dtUtil::FileInfo ProjectImpl::GetMapsDirectory(const std::string& contextPath, bool createIfNeeded)
+   {
+      dtUtil::FileInfo result;
+
+      dtUtil::FileUtils::GetInstance().PushDirectory(contextPath);
+      try
+      {
+         result = GetMapsDirectory(createIfNeeded);
+      }
+      catch (const dtUtil::Exception& ex)
+      {
+         dtUtil::FileUtils::GetInstance().PopDirectory();
+         throw ex;
+      }
+      dtUtil::FileUtils::GetInstance().PopDirectory();
+
+      return result;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   dtUtil::FileInfo ProjectImpl::GetMapsDirectory(bool createIfNeeded)
+   {
+      dtUtil::FileInfo fileInfo;
+
+      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
+
+      dtUtil::StrCompareFunc cmpfunc(Project::MAP_DIRECTORY, false);
+
+      const dtUtil::DirectoryContents contents = fileUtils.DirGetFiles(".");
+
+      dtUtil::DirectoryContents::const_iterator dirIt = std::find_if(contents.begin(), contents.end(), cmpfunc);
+      bool hasMapsDir = dirIt != contents.end();
+
+      if (!hasMapsDir)
+      {
+         if (createIfNeeded)
+         {
+            try
+            {
+               fileUtils.MakeDirectory(Project::MAP_DIRECTORY);
+               fileInfo = fileUtils.GetFileInfo(Project::MAP_DIRECTORY);
+            }
+            catch(const dtUtil::Exception& ex)
+            {
+               std::ostringstream ss;
+               ss << "Unable to create directory " << Project::MAP_DIRECTORY << ". Error: " << ex.What();
+               throw dtDAL::ProjectInvalidContextException(
+                  ss.str(), __FILE__, __LINE__);
+            }
+         }
+         else
+         {
+            // Should result in a file not found fileInfo.
+            fileInfo = fileUtils.GetFileInfo(Project::MAP_DIRECTORY);
+         }
+      }
+      else
+      {
+         fileInfo = fileUtils.GetFileInfo(*dirIt);
+
+         if (fileInfo.fileType != dtUtil::DIRECTORY)
+         {
+            std::string s(fileUtils.CurrentDirectory());
+            s.append(" is not a valid project directory.  The file \"");
+            s.append(*dirIt);
+            s.append("\" is not a directory.  Delete or rename the file.");
+
+            throw dtDAL::ProjectInvalidContextException(s, __FILE__, __LINE__);
+         }
+      }
+      return fileInfo;
    }
 
    /////////////////////////////////////////////////////////////////////////////

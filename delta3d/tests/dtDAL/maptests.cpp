@@ -116,6 +116,7 @@ class MapTests : public CPPUNIT_NS::TestFixture
       CPPUNIT_TEST(TestEnvironmentMapLoading);
       CPPUNIT_TEST(TestLoadEnvironmentMapIntoScene);
       CPPUNIT_TEST(TestActorProxyRemoveProperties);
+      CPPUNIT_TEST(TestCreateMapsMultiContext);
    CPPUNIT_TEST_SUITE_END();
 
    public:
@@ -139,6 +140,11 @@ class MapTests : public CPPUNIT_NS::TestFixture
       void TestLoadEnvironmentMapIntoScene();
       void TestWildCard();
       void TestActorProxyRemoveProperties();
+      void TestCreateMapsMultiContext();
+
+      static const std::string TEST_PROJECT_DIR;
+      static const std::string TEST_PROJECT_DIR_2;
+
    private:
        static const std::string mExampleLibraryName;
        static const std::string mExampleGameLibraryName;
@@ -153,14 +159,17 @@ class MapTests : public CPPUNIT_NS::TestFixture
 // Registers the fixture into the 'registry'
 CPPUNIT_TEST_SUITE_REGISTRATION(MapTests);
 
-const std::string DATA_DIR = dtUtil::GetDeltaRootPath() + dtUtil::FileUtils::PATH_SEPARATOR + "examples/data";
-const std::string TESTS_DIR = dtUtil::GetDeltaRootPath() + dtUtil::FileUtils::PATH_SEPARATOR + "tests";
-const std::string MAPPROJECTCONTEXT = TESTS_DIR + dtUtil::FileUtils::PATH_SEPARATOR + "dtDAL" + dtUtil::FileUtils::PATH_SEPARATOR + "WorkingMapProject";
-const std::string PROJECTCONTEXT = TESTS_DIR + dtUtil::FileUtils::PATH_SEPARATOR + "dtDAL" + dtUtil::FileUtils::PATH_SEPARATOR + "WorkingProject";
-
 const std::string MapTests::mExampleLibraryName="testActorLibrary";
 // TODO: this test uses a library that links to dtGame.  Is that okay?
 const std::string MapTests::mExampleGameLibraryName="testGameActorLibrary";
+
+const std::string MapTests::TEST_PROJECT_DIR="WorkingMapProject";
+const std::string MapTests::TEST_PROJECT_DIR_2="WorkingMapProject2";
+
+const std::string DATA_DIR = dtUtil::GetDeltaRootPath() + dtUtil::FileUtils::PATH_SEPARATOR + "examples/data";
+const std::string TESTS_DIR = dtUtil::GetDeltaRootPath() + dtUtil::FileUtils::PATH_SEPARATOR + "tests";
+const std::string MAPPROJECTCONTEXT = TESTS_DIR + dtUtil::FileUtils::PATH_SEPARATOR + "dtDAL" + dtUtil::FileUtils::PATH_SEPARATOR + MapTests::TEST_PROJECT_DIR;
+const std::string PROJECTCONTEXT = TESTS_DIR + dtUtil::FileUtils::PATH_SEPARATOR + "dtDAL" + dtUtil::FileUtils::PATH_SEPARATOR + "WorkingProject";
 
 ///////////////////////////////////////////////////////////////////////////////////////
 void MapTests::setUp()
@@ -191,8 +200,27 @@ void MapTests::setUp()
             fileUtils.FileDelete(rbodyToDelete);
         }
 
-        dtDAL::Project::GetInstance().CreateContext("WorkingMapProject");
-        dtDAL::Project::GetInstance().SetContext("WorkingMapProject");
+        if (fileUtils.DirExists(TEST_PROJECT_DIR));
+        {
+           fileUtils.DirDelete(TEST_PROJECT_DIR, true);
+        }
+
+        if (fileUtils.DirExists(TEST_PROJECT_DIR_2));
+        {
+           fileUtils.DirDelete(TEST_PROJECT_DIR_2, true);
+        }
+
+        // Create without a maps directory so the code will test that will be created on demand.
+        dtDAL::Project::GetInstance().CreateContext(TEST_PROJECT_DIR, false);
+        dtDAL::Project::GetInstance().SetContext(TEST_PROJECT_DIR);
+        dtDAL::Project::GetInstance().CreateContext(TEST_PROJECT_DIR_2, true);
+        dtDAL::Project::GetInstance().AddContext(TEST_PROJECT_DIR_2);
+
+        CPPUNIT_ASSERT_MESSAGE("Context 0 should have no maps dir",
+                 !fileUtils.DirExists(dtDAL::Project::GetInstance().GetContext(0) + dtUtil::FileUtils::PATH_SEPARATOR + "maps"));
+        CPPUNIT_ASSERT_MESSAGE("Context 1 should have a maps dir",
+                 fileUtils.DirExists(dtDAL::Project::GetInstance().GetContext(1) + dtUtil::FileUtils::PATH_SEPARATOR + "maps"));
+
         //copy the vector because the act of deleting a map will reload the map names list.
         const std::set<std::string> v = dtDAL::Project::GetInstance().GetMapNames();
 
@@ -220,7 +248,8 @@ void MapTests::tearDown()
 
    try
    {
-      dtDAL::Project::GetInstance().SetContext("WorkingMapProject");
+      dtDAL::Project::GetInstance().SetContext(TEST_PROJECT_DIR);
+      dtDAL::Project::GetInstance().AddContext(TEST_PROJECT_DIR_2);
       //copy the vector because the act of deleting a map will reload the map names list.
       const std::set<std::string> v = dtDAL::Project::GetInstance().GetMapNames();
 
@@ -238,6 +267,17 @@ void MapTests::tearDown()
       else if (fileUtils.FileExists(rbodyToDelete))
       {
          fileUtils.FileDelete(rbodyToDelete);
+      }
+
+      dtDAL::Project::GetInstance().ClearAllContexts();
+
+      if (fileUtils.DirExists("WorkingProject"))
+      {
+         fileUtils.DirDelete("WorkingProject", true);
+      }
+      if (fileUtils.DirExists("WorkingProject2"))
+      {
+         fileUtils.DirDelete("WorkingProject2", true);
       }
 
       if (dtDAL::LibraryManager::GetInstance().GetRegistry(mExampleLibraryName) != NULL)
@@ -418,7 +458,7 @@ void MapTests::TestMapProxySearch()
     {
         dtDAL::Project& project = dtDAL::Project::GetInstance();
 
-        project.SetContext("WorkingMapProject");
+        project.SetContext(TEST_PROJECT_DIR);
 
         dtDAL::Map& map = project.CreateMap(std::string("Neato Map"), std::string("neatomap"));
 
@@ -1747,4 +1787,58 @@ void MapTests::TestActorProxyRemoveProperties()
    CPPUNIT_ASSERT_MESSAGE("Tried to remove a property after initialized should have returned true", actorProxy->RemoveTheProperty(NameToRemove) == true );
    CPPUNIT_ASSERT_MESSAGE("Tried to remove a property after initialized for a second time should have returned false", actorProxy->RemoveTheProperty(NameToRemove) == false );
    CPPUNIT_ASSERT_MESSAGE("Tried to remove a property that we know doesnt exist should have returned false", actorProxy->RemoveTheProperty(DoesntExist) == false );
+}
+
+void MapTests::TestCreateMapsMultiContext()
+{
+   try
+   {
+      dtDAL::Project& p = dtDAL::Project::GetInstance();
+      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
+
+      const std::string map1("Orz");
+      const std::string map2("Androsynth");
+      const std::string map3("Frumple");
+
+      CPPUNIT_ASSERT_NO_THROW(p.CreateMap(map1, map1, 1));
+
+      CPPUNIT_ASSERT(fileUtils.FileExists(p.GetContext(1) + dtUtil::FileUtils::PATH_SEPARATOR + "maps" + dtUtil::FileUtils::PATH_SEPARATOR + map1 + ".dtmap"));
+      CPPUNIT_ASSERT_MESSAGE( "The new map file should not be in context 0",
+               ! fileUtils.FileExists(p.GetContext(0) + dtUtil::FileUtils::PATH_SEPARATOR + "maps" + dtUtil::FileUtils::PATH_SEPARATOR + map1 + ".dtmap"));
+
+      CPPUNIT_ASSERT_NO_THROW(p.CreateMap(map2, map2, 0));
+
+      CPPUNIT_ASSERT(fileUtils.FileExists(p.GetContext(0) + dtUtil::FileUtils::PATH_SEPARATOR + "maps" + dtUtil::FileUtils::PATH_SEPARATOR + map2 + ".dtmap"));
+      CPPUNIT_ASSERT_MESSAGE( "The new map file should not be in context 1",
+               ! fileUtils.FileExists(p.GetContext(1) + dtUtil::FileUtils::PATH_SEPARATOR + "maps" + dtUtil::FileUtils::PATH_SEPARATOR + map2 + ".dtmap"));
+
+      // Same file name, different name, different context.
+      CPPUNIT_ASSERT_NO_THROW(p.CreateMap(map3, map2, 1));
+
+      CPPUNIT_ASSERT(fileUtils.FileExists(p.GetContext(1) + dtUtil::FileUtils::PATH_SEPARATOR + "maps" + dtUtil::FileUtils::PATH_SEPARATOR + map2 + ".dtmap"));
+
+
+      p.DeleteMap(map2);
+
+      CPPUNIT_ASSERT( ! fileUtils.FileExists(p.GetContext(0) + dtUtil::FileUtils::PATH_SEPARATOR + "maps" + dtUtil::FileUtils::PATH_SEPARATOR + map2 + ".dtmap"));
+
+      CPPUNIT_ASSERT_MESSAGE("the map with the same file name in context 1 should not have been deleted.",
+               fileUtils.FileExists(p.GetContext(1) + dtUtil::FileUtils::PATH_SEPARATOR + "maps" + dtUtil::FileUtils::PATH_SEPARATOR + map2 + ".dtmap"));
+
+      p.DeleteMap(map3);
+
+      CPPUNIT_ASSERT( ! fileUtils.FileExists(p.GetContext(0) + dtUtil::FileUtils::PATH_SEPARATOR + "maps" + dtUtil::FileUtils::PATH_SEPARATOR + map2 + ".dtmap"));
+
+      CPPUNIT_ASSERT(fileUtils.FileExists(p.GetContext(1) + dtUtil::FileUtils::PATH_SEPARATOR + "maps" + dtUtil::FileUtils::PATH_SEPARATOR + map1 + ".dtmap"));
+      p.DeleteMap(map1);
+      CPPUNIT_ASSERT( ! fileUtils.FileExists(p.GetContext(1) + dtUtil::FileUtils::PATH_SEPARATOR + "maps" + dtUtil::FileUtils::PATH_SEPARATOR + map1 + ".dtmap"));
+   }
+   catch (const dtUtil::Exception& ex)
+   {
+      CPPUNIT_FAIL(ex.ToString());
+   }
+   //    catch (const std::exception& ex)
+   //    {
+   //        CPPUNIT_FAIL(ex.what());
+   //    }
 }
