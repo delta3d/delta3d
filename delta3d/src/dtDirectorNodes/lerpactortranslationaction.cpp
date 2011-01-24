@@ -38,7 +38,6 @@ namespace dtDirector
       , mStartTime(0.0f)
       , mEndTime(1.0f)
       , mTime(0.0f)
-      , mLerpTimeScalar(1.0f)
       , mWaitingForStart(true)
       , mIsActive(false)
    {
@@ -145,8 +144,9 @@ namespace dtDirector
                   SetFloat(GetFloat("StartTime"), "Time");
                }
 
-               // If this is a first update and we already started, then kill the
-               // new thread since we're running on another thread
+               // If this is a first update and we already started, then re-init
+               // our old thread and kill this new thread since we're already
+               // running
                if (mIsActive)
                {
                   return false;
@@ -158,7 +158,7 @@ namespace dtDirector
             {
                if (firstUpdate)
                {
-                  InitLerp();
+                  mWaitingForStart = true;
                   mIsActive = true;
 
                   // Activate the "Out" output link.
@@ -197,7 +197,13 @@ namespace dtDirector
                curTime = endTime;
                mIsActive = false;
             }
-            float alpha = (curTime - startTime) * mLerpTimeScalar;
+            float timeScalar = 1.0f;
+            float delta = endTime - startTime;
+            if (delta != 0.0f)
+            {
+               timeScalar = 1.0f / delta;
+            }
+            float alpha = (curTime - startTime) * timeScalar;
 
             osg::Vec3 startPos = GetVec3("StartPosition");
             osg::Vec3 endPos = GetVec3("EndPosition");
@@ -248,23 +254,6 @@ namespace dtDirector
       }
 
       return false;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   void LerpActorTranslationAction::InitLerp()
-   {
-      // Calculate the total lerp time scalar.
-      float startTime = GetFloat("StartTime");
-      float endTime = GetFloat("EndTime");
-
-      mLerpTimeScalar = 1.0f;
-      float delta = endTime - startTime;
-      if (delta != 0.0f)
-      {
-         mLerpTimeScalar = 1.0f / delta;
-      }
-
-      mWaitingForStart = true;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
