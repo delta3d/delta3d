@@ -26,7 +26,6 @@
 #include <dtABC/application.h>
 #include <dtABC/labelactor.h>
 #include <dtCore/refptr.h>
-#include <dtNet/dtnet.h>
 #include <dtCore/flymotionmodel.h>
 
 namespace dtCore
