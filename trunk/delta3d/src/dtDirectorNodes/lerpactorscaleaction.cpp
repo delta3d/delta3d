@@ -37,7 +37,6 @@ namespace dtDirector
       , mStartTime(0.0f)
       , mEndTime(1.0f)
       , mTime(0.0f)
-      , mLerpTimeScalar(1.0f)
       , mWaitingForStart(true)
       , mIsActive(false)
    {
@@ -157,7 +156,7 @@ namespace dtDirector
             {
                if (firstUpdate)
                {
-                  InitLerp();
+                  mWaitingForStart = true;
                   mIsActive = true;
 
                   // Activate the "Out" output link.
@@ -209,7 +208,13 @@ namespace dtDirector
                curTime = endTime;
                mIsActive = false;
             }
-            float alpha = (curTime - startTime) * mLerpTimeScalar;
+            float timeScalar = 1.0f;
+            float delta = endTime - startTime;
+            if (delta != 0.0f)
+            {
+               timeScalar = 1.0f / delta;
+            }
+            float alpha = (curTime - startTime) * timeScalar;
 
             osg::Vec3 startScale = GetVec3("StartScale");
             osg::Vec3 endScale = GetVec3("EndScale");
@@ -257,23 +262,6 @@ namespace dtDirector
       }
 
       return false;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   void LerpActorScaleAction::InitLerp()
-   {
-      // Calculate the total lerp time scalar.
-      float startTime = GetFloat("StartTime");
-      float endTime = GetFloat("EndTime");
-
-      mLerpTimeScalar = 1.0f;
-      float delta = endTime - startTime;
-      if (delta != 0.0f)
-      {
-         mLerpTimeScalar = 1.0f / delta;
-      }
-
-      mWaitingForStart = true;
    }
 
    ////////////////////////////////////////////////////////////////////////////////

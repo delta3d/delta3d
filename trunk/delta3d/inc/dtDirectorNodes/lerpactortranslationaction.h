@@ -80,11 +80,6 @@ namespace dtDirector
       virtual bool Update(float simDelta, float delta, int input, bool firstUpdate);
 
       /**
-      * Initializes the lerp.
-      */
-      void InitLerp();
-
-      /**
        * Accessors for property values.
        */
       void SetLerpActor(const dtCore::UniqueId& value);
@@ -122,7 +117,6 @@ namespace dtDirector
       osg::Vec3        mStartPos;
       osg::Vec3        mEndPos;
 
-      float            mLerpTimeScalar;
       bool             mWaitingForStart;
 
       bool mIsActive;
