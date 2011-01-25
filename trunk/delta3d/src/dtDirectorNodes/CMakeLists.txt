@@ -4,9 +4,110 @@ SET(LIB_NAME     dtDirectorNodes)
 
 SET(HEADER_PATH ${DELTA3D_SOURCE_DIR}/inc/${LIB_NAME})
 SET(SOURCE_PATH ${DELTA3D_SOURCE_DIR}/src/${LIB_NAME})
-file(GLOB LIB_PUBLIC_HEADERS "${HEADER_PATH}/*.h")
-file(GLOB LIB_SOURCES "*.cpp")
-list(REMOVE_ITEM LIB_SOURCES ${SOURCE_PATH}/precomp.cpp)
+
+SET(LIB_PUBLIC_HEADERS ${HEADER_PATH}/actorarrayvalue.h
+    ${HEADER_PATH}/actorvalue.h
+    ${HEADER_PATH}/animateactoraction.h
+    ${HEADER_PATH}/booleanvalue.h
+    ${HEADER_PATH}/Calculatedistanceaction.h
+    ${HEADER_PATH}/Callremoteeventaction.h
+    ${HEADER_PATH}/Compareactoraction.h
+    ${HEADER_PATH}/Compareactorpropertyaction.h
+    ${HEADER_PATH}/Compareboolaction.h
+    ${HEADER_PATH}/Comparevalueaction.h
+    ${HEADER_PATH}/delayaction.h
+    ${HEADER_PATH}/doublevalue.h
+    ${HEADER_PATH}/externalvaluenode.h
+    ${HEADER_PATH}/floatvalue.h
+    ${HEADER_PATH}/gameeventmessageevent.h
+    ${HEADER_PATH}/gamemessageevent.h
+    ${HEADER_PATH}/getactorpropertyaction.h
+    ${HEADER_PATH}/getarrayaction.h
+    ${HEADER_PATH}/getarraysizeaction.h
+    ${HEADER_PATH}/inputnode.h
+    ${HEADER_PATH}/intvalue.h
+    ${HEADER_PATH}/lerpactorrotationaction.h
+    ${HEADER_PATH}/lerpactorscaleaction.h
+    ${HEADER_PATH}/lerpactortranslationaction.h
+    ${HEADER_PATH}/logaction.h
+    ${HEADER_PATH}/nodelibraryexport.h
+    ${HEADER_PATH}/nodelibraryregistry.h
+    ${HEADER_PATH}/operationaction.h
+    ${HEADER_PATH}/outputnode.h
+    ${HEADER_PATH}/playervalue.h
+    ${HEADER_PATH}/randomfloatvalue.h
+    ${HEADER_PATH}/referencescriptaction.h
+    ${HEADER_PATH}/referencevalue.h
+    ${HEADER_PATH}/remoteevent.h
+    ${HEADER_PATH}/removearrayaction.h
+    ${HEADER_PATH}/scheduleraction.h
+    ${HEADER_PATH}/sendeventmessageaction.h
+    ${HEADER_PATH}/sendmessageaction.h
+    ${HEADER_PATH}/setactorpropertyaction.h
+    ${HEADER_PATH}/setarrayaction.h
+    ${HEADER_PATH}/setvalueaction.h
+    ${HEADER_PATH}/startevent.h
+    ${HEADER_PATH}/staticmeshvalue.h
+    ${HEADER_PATH}/stringarrayvalue.h
+    ${HEADER_PATH}/stringvalue.h
+    ${HEADER_PATH}/toggleaction.h
+    ${HEADER_PATH}/triggervolumeevent.h
+    ${HEADER_PATH}/vec2value.h
+    ${HEADER_PATH}/vec3value.h
+    ${HEADER_PATH}/vec4value.h
+)
+
+
+SET(LIB_SOURCES ${SOURCE_PATH}/actorarrayvalue.cpp
+    ${SOURCE_PATH}/actorvalue.cpp
+    ${SOURCE_PATH}/animateactoraction.cpp
+    ${SOURCE_PATH}/booleanvalue.cpp
+    ${SOURCE_PATH}/calculatedistanceaction.cpp
+    ${SOURCE_PATH}/callremoteeventaction.cpp
+    ${SOURCE_PATH}/compareactoraction.cpp
+    ${SOURCE_PATH}/compareactorpropertyaction.cpp
+    ${SOURCE_PATH}/compareboolaction.cpp
+    ${SOURCE_PATH}/comparevalueaction.cpp
+    ${SOURCE_PATH}/delayaction.cpp
+    ${SOURCE_PATH}/doublevalue.cpp
+    ${SOURCE_PATH}/externalvaluenode.cpp
+    ${SOURCE_PATH}/floatvalue.cpp
+    ${SOURCE_PATH}/gameeventmessageevent.cpp
+    ${SOURCE_PATH}/gamemessageevent.cpp
+    ${SOURCE_PATH}/getactorpropertyaction.cpp
+    ${SOURCE_PATH}/getarrayaction.cpp
+    ${SOURCE_PATH}/getarraysizeaction.cpp
+    ${SOURCE_PATH}/inputnode.cpp
+    ${SOURCE_PATH}/intvalue.cpp
+    ${SOURCE_PATH}/lerpactorrotationaction.cpp
+    ${SOURCE_PATH}/lerpactorscaleaction.cpp
+    ${SOURCE_PATH}/lerpactortranslationaction.cpp
+    ${SOURCE_PATH}/logaction.cpp
+    ${SOURCE_PATH}/nodelibraryregistry.cpp
+    ${SOURCE_PATH}/operationaction.cpp
+    ${SOURCE_PATH}/outputnode.cpp
+    ${SOURCE_PATH}/playervalue.cpp
+    ${SOURCE_PATH}/randomfloatvalue.cpp
+    ${SOURCE_PATH}/referencescriptaction.cpp
+    ${SOURCE_PATH}/referencevalue.cpp
+    ${SOURCE_PATH}/remoteevent.cpp
+    ${SOURCE_PATH}/removearrayaction.cpp
+    ${SOURCE_PATH}/scheduleraction.cpp
+    ${SOURCE_PATH}/sendeventmessageaction.cpp
+    ${SOURCE_PATH}/sendmessageaction.cpp
+    ${SOURCE_PATH}/setactorpropertyaction.cpp
+    ${SOURCE_PATH}/setarrayaction.cpp
+    ${SOURCE_PATH}/setvalueaction.cpp
+    ${SOURCE_PATH}/startevent.cpp
+    ${SOURCE_PATH}/staticmeshvalue.cpp
+    ${SOURCE_PATH}/stringarrayvalue.cpp
+    ${SOURCE_PATH}/stringvalue.cpp
+    ${SOURCE_PATH}/toggleaction.cpp
+    ${SOURCE_PATH}/triggervolumeevent.cpp
+    ${SOURCE_PATH}/vec2value.cpp
+    ${SOURCE_PATH}/vec3value.cpp
+    ${SOURCE_PATH}/vec4value.cpp
+)
 
 INCLUDE_DIRECTORIES(${CAL3D_INCLUDE_DIR})
 
