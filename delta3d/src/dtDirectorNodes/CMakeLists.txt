@@ -9,12 +9,12 @@ SET(LIB_PUBLIC_HEADERS ${HEADER_PATH}/actorarrayvalue.h
     ${HEADER_PATH}/actorvalue.h
     ${HEADER_PATH}/animateactoraction.h
     ${HEADER_PATH}/booleanvalue.h
-    ${HEADER_PATH}/Calculatedistanceaction.h
-    ${HEADER_PATH}/Callremoteeventaction.h
-    ${HEADER_PATH}/Compareactoraction.h
-    ${HEADER_PATH}/Compareactorpropertyaction.h
-    ${HEADER_PATH}/Compareboolaction.h
-    ${HEADER_PATH}/Comparevalueaction.h
+    ${HEADER_PATH}/calculatedistanceaction.h
+    ${HEADER_PATH}/callremoteeventaction.h
+    ${HEADER_PATH}/compareactoraction.h
+    ${HEADER_PATH}/compareactorpropertyaction.h
+    ${HEADER_PATH}/compareboolaction.h
+    ${HEADER_PATH}/comparevalueaction.h
     ${HEADER_PATH}/delayaction.h
     ${HEADER_PATH}/doublevalue.h
     ${HEADER_PATH}/externalvaluenode.h
@@ -24,6 +24,7 @@ SET(LIB_PUBLIC_HEADERS ${HEADER_PATH}/actorarrayvalue.h
     ${HEADER_PATH}/getactorpropertyaction.h
     ${HEADER_PATH}/getarrayaction.h
     ${HEADER_PATH}/getarraysizeaction.h
+    ${HEADER_PATH}/getvectorvaluesaction.h
     ${HEADER_PATH}/inputnode.h
     ${HEADER_PATH}/intvalue.h
     ${HEADER_PATH}/lerpactorrotationaction.h
@@ -77,6 +78,7 @@ SET(LIB_SOURCES ${SOURCE_PATH}/actorarrayvalue.cpp
     ${SOURCE_PATH}/getactorpropertyaction.cpp
     ${SOURCE_PATH}/getarrayaction.cpp
     ${SOURCE_PATH}/getarraysizeaction.cpp
+    ${SOURCE_PATH}/getvectorvaluesaction.cpp
     ${SOURCE_PATH}/inputnode.cpp
     ${SOURCE_PATH}/intvalue.cpp
     ${SOURCE_PATH}/lerpactorrotationaction.cpp
