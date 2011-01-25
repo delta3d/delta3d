@@ -1853,17 +1853,17 @@ void MapTests::TestSaveAsMultiContext()
       dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
 
       const std::string map1("Orz");
-      const std::string mapSecond("*Frumple*");
+      const std::string mapSecond("/Frumple/"); // slashes because it can't be in file name.
 
       dtDAL::Map& map = p.CreateMap(map1, map1, 0);
 
       CPPUNIT_ASSERT(fileUtils.FileExists(p.GetContext(0) + dtUtil::FileUtils::PATH_SEPARATOR + "maps" + dtUtil::FileUtils::PATH_SEPARATOR + map1 + ".dtmap"));
-      CPPUNIT_ASSERT(!fileUtils.FileExists(p.GetContext(1) + dtUtil::FileUtils::PATH_SEPARATOR + "maps" + dtUtil::FileUtils::PATH_SEPARATOR + mapSecond + ".dtmap"));
+      CPPUNIT_ASSERT(!fileUtils.FileExists(p.GetContext(1) + dtUtil::FileUtils::PATH_SEPARATOR + "maps" + dtUtil::FileUtils::PATH_SEPARATOR + map1 + ".dtmap"));
 
-      p.SaveMapAs(map, mapSecond, mapSecond, 1);
+      p.SaveMapAs(map, mapSecond, map1, 1);
 
       CPPUNIT_ASSERT(fileUtils.FileExists(p.GetContext(0) + dtUtil::FileUtils::PATH_SEPARATOR + "maps" + dtUtil::FileUtils::PATH_SEPARATOR + map1 + ".dtmap"));
-      CPPUNIT_ASSERT(fileUtils.FileExists(p.GetContext(1) + dtUtil::FileUtils::PATH_SEPARATOR + "maps" + dtUtil::FileUtils::PATH_SEPARATOR + mapSecond + ".dtmap"));
+      CPPUNIT_ASSERT(fileUtils.FileExists(p.GetContext(1) + dtUtil::FileUtils::PATH_SEPARATOR + "maps" + dtUtil::FileUtils::PATH_SEPARATOR + map1 + ".dtmap"));
    }
    catch (const dtUtil::Exception& ex)
    {
