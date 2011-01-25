@@ -125,7 +125,8 @@ bool TestMultiWin::KeyPressed(const dtCore::Keyboard* keyboard, int kc)
 int main()
 {
    //set data search path to parent directory and delta3d/data
-   dtUtil::SetDataFilePathList(dtUtil::GetDeltaRootPath() + "/examples/data" + ";");
+   dtUtil::SetDataFilePathList(dtUtil::GetDeltaRootPath() + "/examples/data;" + 
+                               dtUtil::GetDeltaRootPath() + "/examples/testMultiWin/;");
 
    //Instantiate the application and look for the config file
    RefPtr<TestMultiWin> app = new TestMultiWin("config.xml");
