@@ -4,9 +4,64 @@ SET(LIB_NAME     dtDirectorQt)
 
 SET(HEADER_PATH ${DELTA3D_SOURCE_DIR}/inc/${LIB_NAME})
 SET(SOURCE_PATH ${DELTA3D_SOURCE_DIR}/src/${LIB_NAME})
-file(GLOB LIB_PUBLIC_HEADERS "${HEADER_PATH}/*.h")
-file(GLOB LIB_SOURCES "*.cpp")
-list(REMOVE_ITEM LIB_SOURCES ${SOURCE_PATH}/precomp.cpp)
+
+SET(LIB_PUBLIC_HEADERS ${HEADER_PATH}/actionitem.h
+    ${HEADER_PATH}/clipboard.h
+    ${HEADER_PATH}/customeditortool.h
+    ${HEADER_PATH}/directoreditor.h
+    ${HEADER_PATH}/editorscene.h
+    ${HEADER_PATH}/editorview.h
+    ${HEADER_PATH}/export.h
+    ${HEADER_PATH}/graphbrowser.h
+    ${HEADER_PATH}/graphtabs.h
+    ${HEADER_PATH}/groupitem.h
+    ${HEADER_PATH}/libraryeditor.h
+    ${HEADER_PATH}/linkitem.h
+    ${HEADER_PATH}/lockitem.h
+    ${HEADER_PATH}/macroitem.h
+    ${HEADER_PATH}/nodeitem.h
+    ${HEADER_PATH}/propertyeditor.h
+    ${HEADER_PATH}/replaybrowser.h
+    ${HEADER_PATH}/resizeitem.h
+    ${HEADER_PATH}/scriptitem.h
+    ${HEADER_PATH}/undocreateevent.h
+    ${HEADER_PATH}/undodeleteevent.h
+    ${HEADER_PATH}/undoevent.h
+    ${HEADER_PATH}/undolinkevent.h
+    ${HEADER_PATH}/undomanager.h
+    ${HEADER_PATH}/undomultipleevent.h
+    ${HEADER_PATH}/undopropertyevent.h
+    ${HEADER_PATH}/valueitem.h
+)
+
+SET(LIB_SOURCES ${SOURCE_PATH}/actionitem.cpp
+    ${SOURCE_PATH}/Clipboard.cpp
+    ${SOURCE_PATH}/Customeditortool.cpp
+    ${SOURCE_PATH}/directoreditor.cpp
+    ${SOURCE_PATH}/editorscene.cpp
+    ${SOURCE_PATH}/editorview.cpp
+    ${SOURCE_PATH}/graphbrowser.cpp
+    ${SOURCE_PATH}/graphtabs.cpp
+    ${SOURCE_PATH}/groupitem.cpp
+    ${SOURCE_PATH}/libraryeditor.cpp
+    ${SOURCE_PATH}/linkitem.cpp
+    ${SOURCE_PATH}/lockitem.cpp
+    ${SOURCE_PATH}/macroitem.cpp
+    ${SOURCE_PATH}/nodeitem.cpp
+    ${SOURCE_PATH}/propertyeditor.cpp
+    ${SOURCE_PATH}/replaybrowser.cpp
+    ${SOURCE_PATH}/resizeitem.cpp
+    ${SOURCE_PATH}/scriptitem.cpp
+    ${SOURCE_PATH}/undocreateevent.cpp
+    ${SOURCE_PATH}/undodeleteevent.cpp
+    ${SOURCE_PATH}/undoevent.cpp
+    ${SOURCE_PATH}/undolinkevent.cpp
+    ${SOURCE_PATH}/undomanager.cpp
+    ${SOURCE_PATH}/undomultipleevent.cpp
+    ${SOURCE_PATH}/undopropertyevent.cpp
+    ${SOURCE_PATH}/valueitem.cpp
+)
+
 
 QT4_WRAP_CPP(MOC_SOURCES ${LIB_PUBLIC_HEADERS})
 QT4_ADD_RESOURCES(RCC_SOURCES directorqt.qrc)
@@ -14,7 +69,7 @@ QT4_ADD_RESOURCES(RCC_SOURCES directorqt.qrc)
 ADD_LIBRARY(${LIB_NAME} SHARED
     ${LIB_PUBLIC_HEADERS}
     ${LIB_SOURCES}
-	${MOC_SOURCES}
+    ${MOC_SOURCES}
     ${RCC_SOURCES}
 )
 

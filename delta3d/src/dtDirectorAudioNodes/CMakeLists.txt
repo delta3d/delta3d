@@ -4,9 +4,18 @@ SET(LIB_NAME     dtDirectorAudioNodes)
 
 SET(HEADER_PATH ${DELTA3D_SOURCE_DIR}/inc/${LIB_NAME})
 SET(SOURCE_PATH ${DELTA3D_SOURCE_DIR}/src/${LIB_NAME})
-file(GLOB LIB_PUBLIC_HEADERS "${HEADER_PATH}/*.h")
-file(GLOB LIB_SOURCES "*.cpp")
-list(REMOVE_ITEM LIB_SOURCES ${SOURCE_PATH}/precomp.cpp)
+
+
+SET(LIB_PUBLIC_HEADERS ${HEADER_PATH}/nodelibraryexport.h
+    ${HEADER_PATH}/nodelibraryregistry.h
+    ${HEADER_PATH}/soundaction.h
+   )
+
+
+SET(LIB_SOURCES ${SOURCE_PATH}/nodelibraryregistry.cpp
+    ${SOURCE_PATH}/soundaction.cpp
+   )
+
 
 
 ADD_LIBRARY(${LIB_NAME} SHARED
@@ -17,7 +26,7 @@ ADD_LIBRARY(${LIB_NAME} SHARED
 TARGET_LINK_LIBRARIES(${LIB_NAME}
                       ${DTDAL_LIBRARY}
                       ${DTDIRECTOR_LIBRARY}
-					  ${DTAUDIO_LIBRARY}
+                      ${DTAUDIO_LIBRARY}
                       ${DTACTORS_LIBRARY}
                      )
 
