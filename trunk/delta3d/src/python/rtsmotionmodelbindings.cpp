@@ -13,8 +13,8 @@ using namespace dtCore;
 
 void initRTSMotionModelBindings()
 {
-	class_<RTSMotionModel, bases<MotionModel>, dtCore::RefPtr<RTSMotionModel> >("RTSMotionModel", init<Keyboard*, Mouse*, optional<bool> >())
-	   .def("AxisStateChanged", &RTSMotionModel::AxisStateChanged)
-	   .def("SetTerrain", &RTSMotionModel::SetTerrain)
-	   ;
+  class_<RTSMotionModel, bases<MotionModel>, dtCore::RefPtr<RTSMotionModel> >("RTSMotionModel", init<Keyboard*, Mouse*, optional<bool> >())
+     .def("HandleAxisStateChanged", &RTSMotionModel::HandleAxisStateChanged)
+     .def("SetTerrain", &RTSMotionModel::SetTerrain)
+     ;
 }
