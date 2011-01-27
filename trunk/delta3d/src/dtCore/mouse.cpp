@@ -80,7 +80,7 @@ osg::Vec2 Mouse::GetPosition() const
 
 void Mouse::SetPosition(float x, float y)
 {
-   if( mView.valid() && 
+   if( mView.valid() &&
       mView->GetOsgViewerView() &&
       mView->GetOsgViewerView()->getCamera() &&
       mView->GetOsgViewerView()->getCamera()->getGraphicsContext() &&
@@ -148,22 +148,15 @@ bool Mouse::MouseScroll( osgGA::GUIEventAdapter::ScrollingMotion sm )
    bool handled(false);
    MouseListenerList::iterator iter = mMouseListeners.begin();
    MouseListenerList::iterator enditer = mMouseListeners.end();
-   while( !handled && iter!=enditer )
+   while (!handled && iter != enditer)
    {
       handled = (*iter)->HandleMouseScrolled(this, delta);
       ++iter;
    }
 
-   // a workaround for classes that listen to input device features
+   // Set the axis' state
    dtCore::RefPtr<Axis> scrollAxis = GetAxis(2);
-   if( !handled )
-   {
-      handled = scrollAxis->SetState( scrollAxis->GetState() + delta, delta );
-   }
-   else  // don't affect the return value, but change the state for "pollers of the state"
-   {
-      scrollAxis->SetState( scrollAxis->GetState() + delta, delta );
-   }
+   handled = scrollAxis->SetState(scrollAxis->GetState() + delta, delta, handled);
 
    return handled;
 }
@@ -173,25 +166,20 @@ bool Mouse::MouseMotion(float x, float y)
    bool handled(false);
    MouseListenerList::iterator iter = mMouseListeners.begin();
    MouseListenerList::iterator enditer = mMouseListeners.end();
-   while( !handled && iter!=enditer )
+   while (!handled && iter != enditer)
    {
       handled = (*iter)->HandleMouseDragged(this, x, y);
       ++iter;
    }
 
-   // a workaround for classes that listen to input device features
+   // Set the axes' state
    Axis* zero = GetAxis(0);
    Axis* one = GetAxis(1);
-   if( !handled )
+   if (!handled)
    {
-      bool zero_handled = zero->SetState(x, x - zero->GetState());
-      bool one_handled = one->SetState(y, y - one->GetState());
+      bool zero_handled = zero->SetState(x, x - zero->GetState(), handled);
+      bool one_handled = one->SetState(y, y - one->GetState(), handled);
       handled = (one_handled || zero_handled);
-   }
-   else  // don't affect the return value, but change the state for "pollers of the state"
-   {
-      zero->SetState(x, x - zero->GetState());
-      one->SetState(y, y - one->GetState());
    }
 
    return handled;
@@ -202,25 +190,20 @@ bool Mouse::PassiveMouseMotion(float x, float y)
    bool handled(false);
    MouseListenerList::iterator iter = mMouseListeners.begin();
    MouseListenerList::iterator enditer = mMouseListeners.end();
-   while( !handled && iter!=enditer )
+   while (!handled && iter != enditer)
    {
       handled = (*iter)->HandleMouseMoved(this, x, y);
       ++iter;
    }
 
-   // a workaround for classes that listen to input device features
+   // Set the axes' state
    Axis* zero = GetAxis(0);
    Axis* one = GetAxis(1);
-   if( !handled )  // affect the return value
+   if (!handled)
    {
-      bool zero_handled = zero->SetState(x, x - zero->GetState());
-      bool one_handled = one->SetState(y, y - one->GetState());
+      bool zero_handled = zero->SetState(x, x - zero->GetState(), handled);
+      bool one_handled = one->SetState(y, y - one->GetState(), handled);
       handled = (one_handled || zero_handled);
-   }
-   else  // don't affect the return value, but change the state for "pollers of the state"
-   {
-      zero->SetState(x, x - zero->GetState());
-      one->SetState(y, y - one->GetState());
    }
 
    return handled;
@@ -228,76 +211,57 @@ bool Mouse::PassiveMouseMotion(float x, float y)
 
 bool Mouse::ButtonDown(float x, float y, MouseButton button)
 {
-   if (int(button) > GetButtonCount() ) return false;
+   if (int(button) > GetButtonCount()) return false;
 
    bool handled(false);
    MouseListenerList::iterator iter = mMouseListeners.begin();
    MouseListenerList::iterator enditer = mMouseListeners.end();
-   while( !handled && iter!=enditer )
+   while (!handled && iter != enditer)
    {
       handled = (*iter)->HandleButtonPressed(this, button);
       ++iter;
    }
 
-   // a workaround for classes that listen to input device features
-   if( !handled )  // affect the return value
-   {
-      handled = GetButton(button)->SetState(true);
-   }
-   else  // don't affect the return value, but change the state for "pollers of the state"
-   {
-      GetButton(button)->SetState(true);
-   }
+   // Set the button's state
+   handled = GetButton(button)->SetState(true, handled);
 
    return handled;
 }
 
 bool Mouse::DoubleButtonDown(float x, float y, MouseButton button)
 {
-   if (int(button) > GetButtonCount() ) return false;
+   if (int(button) > GetButtonCount()) return false;
 
    bool handled(false);
    MouseListenerList::iterator iter = mMouseListeners.begin();
    MouseListenerList::iterator enditer = mMouseListeners.end();
-   while( !handled && iter!=enditer )
+   while (!handled && iter != enditer)
    {
       handled = (*iter)->HandleButtonClicked(this, button, 2);
       ++iter;
    }
 
-   if( !handled )  // affect the return value
-   {
-      handled = GetButton(button)->SetState(true);
-   }
-   else  // don't affect the return value, but change the state for "pollers of the state"
-   {
-      GetButton(button)->SetState(true);
-   }
+   // Set the button's state
+   handled = GetButton(button)->SetState(true, handled);
 
    return handled;
 }
 
 bool Mouse::ButtonUp(float x, float y, MouseButton button)
 {
-   if (int(button) > GetButtonCount() ) return false;
+   if (int(button) > GetButtonCount()) return false;
 
    bool handled(false);
    MouseListenerList::iterator iter = mMouseListeners.begin();
    MouseListenerList::iterator enditer = mMouseListeners.end();
-   while( !handled && iter!=enditer )
+   while(!handled && iter != enditer)
    {
       handled = (*iter)->HandleButtonReleased(this, button);
       ++iter;
    }
 
-   if( !handled )   // affect the return value
-   {
-      handled = GetButton(button)->SetState(false);
-   }
-   else  // don't affect the return value, but change the state for "pollers of the state"
-   {
-      GetButton(button)->SetState(false);
-   }
+   // Set the button's state
+   handled = GetButton(button)->SetState(false, handled);
 
    return handled;
 }
@@ -306,24 +270,24 @@ bool Mouse::GetHasFocus()
 {
    DeltaWin *win = mView->GetCamera()->GetWindow();
 #if defined(__APPLE__)
-   
-   osgViewer::GraphicsWindowCarbon *carbon = 
+
+   osgViewer::GraphicsWindowCarbon *carbon =
       dynamic_cast<osgViewer::GraphicsWindowCarbon*>(win->GetOsgViewerGraphicsWindow());
    if (carbon != NULL)
       return IsWindowActive(carbon->getNativeWindowRef());
-   
+
 #elif defined(DELTA_WIN32)
-   
-   osgViewer::GraphicsWindowWin32 *win32 = 
+
+   osgViewer::GraphicsWindowWin32 *win32 =
       dynamic_cast<osgViewer::GraphicsWindowWin32*>(win->GetOsgViewerGraphicsWindow());
    if(win32 != NULL)
    {
       return win32->getHWND() == GetForegroundWindow();
    }
-   
+
 #else
-   
-   osgViewer::GraphicsWindowX11 *x11 = 
+
+   osgViewer::GraphicsWindowX11 *x11 =
       dynamic_cast<osgViewer::GraphicsWindowX11*>(win->GetOsgViewerGraphicsWindow());
    if (x11 != NULL)
    {

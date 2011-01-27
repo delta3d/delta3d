@@ -98,7 +98,7 @@ namespace dtCore
       }
    }
 
-   bool InputMapper::ButtonStateChanged(const Button* button, bool oldState, bool newState)
+   bool InputMapper::HandleButtonStateChanged(const Button* button, bool oldState, bool newState)
    {
       if(newState)
       {
@@ -149,7 +149,7 @@ namespace dtCore
       return false;
    }
 
-   bool InputMapper::AxisStateChanged(const Axis* axis, double oldState, double newState, double delta)
+   bool InputMapper::HandleAxisStateChanged(const Axis* axis, double oldState, double newState, double delta)
    {
       if(mAcquiringAxisMapping)
       {

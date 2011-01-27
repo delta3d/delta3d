@@ -1,20 +1,20 @@
-/* 
- * Delta3D Open Source Game and Simulation Engine 
- * Copyright (C) 2004-2005 MOVES Institute 
+/*
+ * Delta3D Open Source Game and Simulation Engine
+ * Copyright (C) 2004-2005 MOVES Institute
  *
  * This library is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free 
- * Software Foundation; either version 2.1 of the License, or (at your option) 
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
  * any later version.
  *
  * This library is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
- * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more 
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  *
- * You should have received a copy of the GNU Lesser General Public License 
- * along with this library; if not, write to the Free Software Foundation, Inc., 
- * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
 */
 
@@ -26,6 +26,10 @@
 //////////////////////////////////////////////////////////////////////
 
 #include <dtCore/inputdevice.h>
+#include <dtCore/axis.h>
+#include <dtCore/axislistener.h>
+#include <dtCore/button.h>
+#include <dtCore/buttonlistener.h>
 
 namespace dtCore
 {
@@ -71,14 +75,14 @@ namespace dtCore
          LogicalButton* AddButton(const std::string& description,
                                   Button* sourceButton,
                                   int buttonSymbol);
-         
+
          /**
           * Removes a logical button from this device.
           *
           * @param button the button to remove
           */
          void RemoveButton(LogicalButton* button);
-         
+
          /**
           * Adds a new logical axis.
           *
@@ -95,14 +99,14 @@ namespace dtCore
           * @param sourceAxis the source axis
           */
          LogicalAxis* AddAxis(const std::string& description, Axis* sourceAxis);
-         
+
          /**
           * Removes a logical axis from this device.
           *
           * @param axis the axis to remove
           */
-         void RemoveAxis(LogicalAxis* axis);   
-      
+         void RemoveAxis(LogicalAxis* axis);
+
       protected:
 
          /**
@@ -113,7 +117,7 @@ namespace dtCore
       private:
 
    };
-   
+
    /**
     * A logical button.
     */
@@ -130,7 +134,7 @@ namespace dtCore
           * @param mapping the initial button mapping
           */
          LogicalButton(LogicalInputDevice* owner,
-                       const std::string& description, 
+                       const std::string& description,
                        int buttonSymbol,
                        ButtonMapping *mapping);
 
@@ -163,7 +167,7 @@ namespace dtCore
           */
          RefPtr<ButtonMapping> mMapping;
    };
-   
+
 
    /**
     * A mapping for a logical button.
@@ -175,7 +179,7 @@ namespace dtCore
       public:
 
          ButtonMapping();
-      
+
       protected:
 
          virtual ~ButtonMapping();
@@ -212,7 +216,7 @@ namespace dtCore
          ButtonToButton(Button* sourceButton);
 
       protected:
-         
+
          /**
           * Destructor.
           */
@@ -255,7 +259,7 @@ namespace dtCore
           * @param oldState the old state of the button
           * @param newState the new state of the button
           */
-         virtual bool ButtonStateChanged(const Button* button,
+         virtual bool HandleButtonStateChanged(const Button* button,
                                          bool oldState,
                                          bool newState);
 
@@ -360,7 +364,7 @@ namespace dtCore
       * @param oldState the old state of the button
       * @param newState the new state of the button
       */
-      virtual bool ButtonStateChanged(const Button* button,
+      virtual bool HandleButtonStateChanged(const Button* button,
          bool oldState,
          bool newState);
 
@@ -542,9 +546,9 @@ namespace dtCore
           * @param delta a delta value indicating stateless motion
           * @return Whether the event was handled.
           */
-         virtual bool AxisStateChanged(const Axis* axis,
-                                       double oldState, 
-                                       double newState, 
+         virtual bool HandleAxisStateChanged(const Axis* axis,
+                                       double oldState,
+                                       double newState,
                                        double delta);
 
       private:
@@ -574,7 +578,7 @@ namespace dtCore
                                        public AxisListener
    {
       public:
-         
+
          /**
           * Constructor.
           *
@@ -590,7 +594,7 @@ namespace dtCore
           * Destructor.
           */
          virtual ~AxesToAxis();
-         
+
       public:
 
          /**
@@ -599,21 +603,21 @@ namespace dtCore
           * @param sourceAxis the source axis to add
           */
          void AddSourceAxis(Axis* sourceAxis);
-         
+
          /**
           * Removes a source axis.
           *
           * @param sourceAxis the source axis to remove
           */
          void RemoveSourceAxis(Axis* sourceAxis);
-         
+
          /**
           * Returns the number of source axes.
           *
           * @return the number of source axes
           */
          int GetNumSourceAxes();
-         
+
          /**
           * Returns the source axis at the specified index.
           *
@@ -621,7 +625,7 @@ namespace dtCore
           * @return the axis at the specified index
           */
          Axis* GetSourceAxis(int index);
-         
+
          /**
           * Sets the target axis.
           *
@@ -635,7 +639,7 @@ namespace dtCore
           * @return the current target axis
           */
          virtual LogicalAxis* GetTargetAxis();
-         
+
          /**
           * Called when an axis' state has changed.
           *
@@ -644,22 +648,22 @@ namespace dtCore
           * @param newState the new state of the axis
           * @param delta a delta value indicating stateless motion
           */
-         virtual bool AxisStateChanged(const Axis* axis, double oldState, double newState, double delta);
-      
-         
+         virtual bool HandleAxisStateChanged(const Axis* axis, double oldState, double newState, double delta);
+
+
       private:
          /// The source axes.
          std::vector< RefPtr<Axis> > mSourceAxes;
-         
+
          /// The target axis.
          RefPtr<LogicalAxis> mTargetAxis;
-         
+
 
          /// Updates the state of the target axis.
          bool UpdateTargetAxisState();
    };
-   
-   
+
+
    /**
     * Maps two buttons to a logical axis.
     */
@@ -687,7 +691,7 @@ namespace dtCore
                        double neutralValue = 0.0);
 
       protected:
-      
+
          /**
           * Destructor.
           */
@@ -751,7 +755,7 @@ namespace dtCore
           * the value corresponding to the neutral state
           */
          void GetValues(double* firstButtonValue,
-                        double* secondButtonValue, 
+                        double* secondButtonValue,
                         double* neutralValue) const;
 
          /**
@@ -761,7 +765,7 @@ namespace dtCore
           * @param oldState the old state of the button
           * @param newState the new state of the button
           */
-         virtual bool ButtonStateChanged(const Button* button,
+         virtual bool HandleButtonStateChanged(const Button* button,
                                          bool oldState,
                                          bool newState);
 
@@ -795,8 +799,8 @@ namespace dtCore
          /// Updates the state of the target axis.
          virtual bool UpdateTargetAxisState();
    };
-   
-   
+
+
    /**
     * Maps two buttons to a logical axis and passes their values as the delta when
     * they call SetState in UpdateTargetAxisState.
@@ -824,7 +828,7 @@ namespace dtCore
                        double neutralValue = 0.0);
 
       protected:
-      
+
          /**
           * Destructor.
           */
@@ -847,7 +851,7 @@ namespace dtCore
                                              public AxisListener
    {
       public:
-      
+
          /**
           * Constructor.
           *
@@ -855,14 +859,14 @@ namespace dtCore
           * @param sourceAxis the source axis
           */
          ButtonAxisToAxis(Button* sourceButton, Axis* sourceAxis);
-         
+
       protected:
 
          /**
           * Destructor.
           */
          virtual ~ButtonAxisToAxis();
-         
+
       public:
 
          /**
@@ -871,28 +875,28 @@ namespace dtCore
           * @param sourceButton the new source button
           */
          void SetSourceButton(Button* sourceButton);
-         
+
          /**
           * Returns the source button.
           *
           * @return the current source button
           */
          Button* GetSourceButton();
-         
+
          /**
           * Sets the source axis.
           *
           * @param sourceAxis the new source axis
           */
          void SetSourceAxis(Axis* sourceAxis);
-         
+
          /**
           * Returns the source axis.
           *
           * @return the current source axis.
           */
          Axis* GetSourceAxis();
-         
+
          /**
           * Sets the target axis.
           *
@@ -906,7 +910,7 @@ namespace dtCore
           * @return the current target axis
           */
          virtual LogicalAxis* GetTargetAxis();
-         
+
          /**
           * Called when a button's state has changed.
           *
@@ -914,8 +918,8 @@ namespace dtCore
           * @param oldState the old state of the button
           * @param newState the new state of the button
           */
-         virtual bool ButtonStateChanged(const Button* button, bool oldState, bool newState);
-         
+         virtual bool HandleButtonStateChanged(const Button* button, bool oldState, bool newState);
+
          /**
           * Called when an axis' state has changed.
           *
@@ -924,7 +928,7 @@ namespace dtCore
           * @param newState the new state of the axis
           * @param delta a delta value indicating stateless motion
           */
-         virtual bool AxisStateChanged(const Axis* axis, double oldState, double newState, double delta);
+         virtual bool HandleAxisStateChanged(const Axis* axis, double oldState, double newState, double delta);
 
 
       private:

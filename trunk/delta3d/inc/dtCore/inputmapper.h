@@ -138,7 +138,7 @@ namespace dtCore
           * @param oldState the old state of the button
           * @param newState the new state of the button
           */
-         virtual bool ButtonStateChanged(const Button* button, bool oldState, bool newState);
+         virtual bool HandleButtonStateChanged(const Button* button, bool oldState, bool newState);
                                          
          /**
           * Called when an axis' state has changed.
@@ -149,7 +149,7 @@ namespace dtCore
           * @param delta a delta value indicating stateless motion
           * \todo fix this compile error!
           */
-         virtual bool AxisStateChanged(const Axis* axis,
+         virtual bool HandleAxisStateChanged(const Axis* axis,
                                        double oldState, 
                                        double newState, 
                                        double delta);

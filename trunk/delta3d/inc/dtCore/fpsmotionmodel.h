@@ -26,6 +26,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include <dtCore/motionmodel.h>
+#include <dtCore/axislistener.h>
 #include <dtCore/inputdevice.h>
 #include <dtUtil/functor.h>
 #include <dtCore/scene.h>
@@ -142,7 +143,7 @@ namespace dtCore
 
          virtual ~FPSAxisListener() {};
 
-         virtual bool AxisStateChanged(const Axis* axis,
+         virtual bool HandleAxisStateChanged(const Axis* axis,
                                        double oldState,
                                        double newState,
                                        double delta);

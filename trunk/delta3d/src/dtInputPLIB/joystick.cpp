@@ -120,12 +120,12 @@ void Joystick::Poll()
 
    mJoystick->read(&buttons, axes);
 
-   for (unsigned int i=0; i<numButtons;i++)
+   for (unsigned int i = 0; i < numButtons; i++)
    {
       GetButton(i)->SetState((buttons & (1 << i)) != 0);
    }
 
-   for (unsigned int j=0; j<numAxes;j++)
+   for (unsigned int j = 0; j < numAxes; j++)
    {
       GetAxis(j)->SetState(axes[j]);
    }

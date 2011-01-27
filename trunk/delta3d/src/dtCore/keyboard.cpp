@@ -193,23 +193,17 @@ bool Keyboard::KeyDown(int kc)
    
    KeyboardListenerList::iterator iter = mKeyboardListeners.begin();
    KeyboardListenerList::iterator enditer = mKeyboardListeners.end();
-   while( !handled && iter!=enditer )
+   while (!handled && iter != enditer)
    {
       handled = (*iter)->HandleKeyPressed(this, kc);
       ++iter;
    }
 
    Button* b = GetButton(kc);
-   if(b != NULL)
+   if (b != NULL)
    {
-      if( !handled ) // affect the return value
-      {
-         handled = b->SetState(true);
-      }
-      else // don't affect the return value, but change the state for "pollers of the state"
-      {
-         b->SetState(true);
-      }
+      // Set the button's state
+      handled = b->SetState(true, handled);
    }
 
    return handled;
@@ -220,23 +214,17 @@ bool Keyboard::KeyUp(int kc)
    bool handled(false);
    KeyboardListenerList::iterator iter = mKeyboardListeners.begin();
    KeyboardListenerList::iterator enditer = mKeyboardListeners.end();
-   while( !handled && iter!=enditer )
+   while (!handled && iter != enditer)
    {
       handled = (*iter)->HandleKeyReleased(this, kc);
       ++iter;
    }
 
    Button* b = GetButton(kc);
-   if(b != NULL)
+   if (b != NULL)
    {
-      if( !handled ) // affect the return value
-      {
-         handled = b->SetState(false);
-      }
-      else // don't affect the return value, but change the state for "pollers of the state"
-      {
-         b->SetState(false);
-      }
+      // Set the button's state
+      handled = b->SetState(false, handled);
    }
 
    return handled;

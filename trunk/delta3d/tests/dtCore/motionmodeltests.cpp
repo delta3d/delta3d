@@ -44,7 +44,7 @@ class TestAxisListener : public AxisListener
       {
       }
 
-      virtual bool AxisStateChanged( const Axis*, double, double, double )
+      virtual bool HandleAxisStateChanged( const Axis*, double, double, double )
       {
          mAxisStateChanged = true;
 
