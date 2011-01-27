@@ -8,7 +8,7 @@ namespace dtCore
 {
 
    IMPLEMENT_MANAGEMENT_LAYER(LogicalInputDevice)
-   
+
    /**
     * Constructor.
     *
@@ -18,7 +18,7 @@ namespace dtCore
    {
       RegisterInstance(this);
    }
-   
+
    /**
     * Destructor.
     */
@@ -26,7 +26,7 @@ namespace dtCore
    {
       DeregisterInstance(this);
    }
-   
+
    /**
     * Adds a new logical button to this device.
     *
@@ -38,7 +38,7 @@ namespace dtCore
                                                 ButtonMapping* mapping)
    {
       osg::ref_ptr<LogicalButton> button = new LogicalButton(this, description, buttonSymbol, mapping);
-      
+
       if (AddFeature( button.get() ))
       {
          return button.get();
@@ -47,9 +47,9 @@ namespace dtCore
       {
          return NULL;
       }
-   
+
    }
-   
+
    /**
     * Adds a new logical button to this device.  Equivalent to AddButton(description,
     * new ButtonToButton(sourceButton)).
@@ -63,7 +63,7 @@ namespace dtCore
    {
       return AddButton(description, buttonSymbol, new ButtonToButton(sourceButton));
    }
-   
+
    /**
     * Removes a logical button from this device.
     *
@@ -73,7 +73,7 @@ namespace dtCore
    {
       RemoveFeature(button);
    }
-            
+
    /**
     * Adds a new logical axis.
     *
@@ -84,12 +84,12 @@ namespace dtCore
                                             AxisMapping* mapping)
    {
       LogicalAxis* axis = new LogicalAxis(this, description, mapping);
-   
+
       AddFeature(axis);
-   
+
       return axis;
    }
-   
+
    /**
     * Adds a new logical axis.  Equivalent to AddAxis(description,
     * new AxisToAxis(sourceAxis)).
@@ -102,7 +102,7 @@ namespace dtCore
    {
       return AddAxis(description, new AxisToAxis(sourceAxis));
    }
-   
+
    /**
     * Removes a logical axis from this device.
     *
@@ -112,7 +112,7 @@ namespace dtCore
    {
       RemoveFeature(axis);
    }
-   
+
    /**
     * Constructor.
     *
@@ -121,7 +121,7 @@ namespace dtCore
     * @param mapping the initial button mapping
     */
    LogicalButton::LogicalButton(LogicalInputDevice* owner,
-                                const std::string& description, 
+                                const std::string& description,
                                 int buttonSymbol,
                                 ButtonMapping *mapping) :
       Button(owner, buttonSymbol, description),
@@ -132,7 +132,7 @@ namespace dtCore
          mMapping->SetTargetButton(this);
       }
    }
-   
+
    /**
     * Sets this button's mapping.
     *
@@ -144,15 +144,15 @@ namespace dtCore
       {
          mMapping->SetTargetButton(NULL);
       }
-   
+
       mMapping = mapping;
-   
+
       if(mMapping.valid())
       {
          mMapping->SetTargetButton(this);
       }
    }
-   
+
    /**
     * Returns this button's mapping.
     *
@@ -162,19 +162,19 @@ namespace dtCore
    {
       return mMapping.get();
    }
-   
+
    /**
     * Constructor.
     */
    ButtonMapping::ButtonMapping()
    {}
-   
+
    /**
     * Destructor.
     */
    ButtonMapping::~ButtonMapping()
    {}
-   
+
    /**
     * Constructor.
     *
@@ -184,7 +184,7 @@ namespace dtCore
       mSourceButton(sourceButton),
       mTargetButton(NULL)
    {}
-   
+
    /**
     * Destructor.
     */
@@ -195,7 +195,7 @@ namespace dtCore
          mSourceButton->RemoveButtonListener(this);
       }
    }
-   
+
    /**
     * Sets the source button.
     *
@@ -207,17 +207,17 @@ namespace dtCore
       {
          mSourceButton->RemoveButtonListener(this);
       }
-   
+
       mSourceButton = sourceButton;
-   
+
       if(mSourceButton.valid() && mTargetButton.valid())
       {
          mSourceButton->AddButtonListener(this);
       }
-   
+
       UpdateTargetButtonState();
    }
-   
+
    /**
     * Returns the source button.
     *
@@ -227,7 +227,7 @@ namespace dtCore
    {
       return mSourceButton.get();
    }
-   
+
    /**
     * Sets the target button.
     *
@@ -236,7 +236,7 @@ namespace dtCore
    void ButtonToButton::SetTargetButton(LogicalButton* targetButton)
    {
       mTargetButton = targetButton;
-   
+
       if(mSourceButton.valid())
       {
          if(mTargetButton.valid())
@@ -248,7 +248,7 @@ namespace dtCore
             mSourceButton->RemoveButtonListener(this);
          }
       }
-   
+
       UpdateTargetButtonState();
    }
 
@@ -269,7 +269,7 @@ namespace dtCore
    * @param oldState the old state of the button
    * @param newState the new state of the button
    */
-   bool ButtonToButton::ButtonStateChanged(const Button* button, bool oldState, bool newState)
+   bool ButtonToButton::HandleButtonStateChanged(const Button* button, bool oldState, bool newState)
    {
       if(mTargetButton.valid())
       {
@@ -432,7 +432,7 @@ namespace dtCore
    * @param oldState the old state of the button
    * @param newState the new state of the button
    */
-   bool ButtonsToButton::ButtonStateChanged(const Button* button, bool oldState, bool newState)
+   bool ButtonsToButton::HandleButtonStateChanged(const Button* button, bool oldState, bool newState)
    {
       if(mTargetButton.valid())
       {
@@ -520,7 +520,7 @@ namespace dtCore
          mMapping->SetTargetAxis(this);
       }
    }
-   
+
    /**
     * Sets this axis' mapping.
     *
@@ -532,26 +532,26 @@ namespace dtCore
       {
          mMapping->SetTargetAxis(NULL);
       }
-   
+
       mMapping = mapping;
-   
+
       if(mMapping.valid())
       {
          mMapping->SetTargetAxis(this);
       }
    }
-   
+
    AxisMapping* LogicalAxis::GetMapping()
    {
       return mMapping.get();
    }
-   
+
    AxisMapping::AxisMapping()
    {}
-   
+
    AxisMapping::~AxisMapping()
    {}
-   
+
    /**
     * Constructor.
     *
@@ -565,7 +565,7 @@ namespace dtCore
         mScale(scale),
         mOffset(offset)
    {}
-   
+
    AxisToAxis::~AxisToAxis()
    {
       if(mSourceAxis.valid())
@@ -573,7 +573,7 @@ namespace dtCore
          mSourceAxis->RemoveAxisListener(this);
       }
    }
-   
+
    /**
     * Sets the source axis.
     *
@@ -585,17 +585,17 @@ namespace dtCore
       {
          mSourceAxis->RemoveAxisListener(this);
       }
-   
+
       mSourceAxis = sourceAxis;
-   
+
       if(mSourceAxis.valid() && mTargetAxis.valid())
       {
          mSourceAxis->AddAxisListener(this);
       }
-   
+
       UpdateTargetAxisState();
    }
-   
+
    /**
     * Returns the source axis.
     *
@@ -605,7 +605,7 @@ namespace dtCore
    {
       return mSourceAxis.get();
    }
-   
+
    /**
     * Sets the target axis.
     *
@@ -614,7 +614,7 @@ namespace dtCore
    void AxisToAxis::SetTargetAxis(LogicalAxis* targetAxis)
    {
       mTargetAxis = targetAxis;
-   
+
       if(mSourceAxis.valid() && mTargetAxis.valid())
       {
          mSourceAxis->AddAxisListener(this);
@@ -623,10 +623,10 @@ namespace dtCore
       {
          mSourceAxis->RemoveAxisListener(this);
       }
-   
+
       UpdateTargetAxisState();
    }
-   
+
    /**
     * Gets the target axis.
     *
@@ -636,7 +636,7 @@ namespace dtCore
    {
       return mTargetAxis.get();
    }
-   
+
    /**
     * Sets this mapping's linear transformation parameters.
     *
@@ -647,10 +647,10 @@ namespace dtCore
    {
       mScale = scale;
       mOffset = offset;
-   
+
       UpdateTargetAxisState();
    }
-   
+
    /**
     * Retrieves this mapping's linear transformation parameters.
     *
@@ -664,7 +664,7 @@ namespace dtCore
       (*scale) = mScale;
       (*offset) = mOffset;
    }
-   
+
    /**
     * Called when an axis' state has changed.
     *
@@ -673,9 +673,9 @@ namespace dtCore
     * @param newState the new state of the axis
     * @param delta a delta value indicating stateless motion
     */
-   bool AxisToAxis::AxisStateChanged(const Axis* axis,
-                                     double oldState, 
-                                     double newState, 
+   bool AxisToAxis::HandleAxisStateChanged(const Axis* axis,
+                                     double oldState,
+                                     double newState,
                                      double delta)
    {
       if(mTargetAxis.valid())
@@ -691,19 +691,19 @@ namespace dtCore
       if(mTargetAxis.valid())
       {
          double value = 0.0;
-   
+
          if(mSourceAxis.valid())
          {
             value = mSourceAxis->GetState();
          }
-   
+
          return mTargetAxis->SetState(value*mScale + mOffset);
       }
 
       return false;
    }
-   
-   
+
+
    /**
     * Constructor.
     *
@@ -718,13 +718,13 @@ namespace dtCore
       {
          AddSourceAxis(firstSourceAxis);
       }
-      
+
       if(secondSourceAxis != NULL)
       {
          AddSourceAxis(secondSourceAxis);
       }
    }
-   
+
    AxesToAxis::~AxesToAxis()
    {
       for(std::vector< RefPtr<Axis> >::iterator it = mSourceAxes.begin();
@@ -734,7 +734,7 @@ namespace dtCore
          (*it)->RemoveAxisListener(this);
       }
    }
-   
+
    /**
     * Adds a source axis.
     *
@@ -743,12 +743,12 @@ namespace dtCore
    void AxesToAxis::AddSourceAxis(Axis* sourceAxis)
    {
       sourceAxis->AddAxisListener(this);
-      
+
       mSourceAxes.push_back(sourceAxis);
-      
+
       UpdateTargetAxisState();
    }
-   
+
    /**
     * Removes a source axis.
     *
@@ -763,16 +763,16 @@ namespace dtCore
          if((*it).get() == sourceAxis)
          {
             sourceAxis->RemoveAxisListener(this);
-            
+
             mSourceAxes.erase(it);
-            
+
             return;
          }
       }
-      
+
       UpdateTargetAxisState();
    }
-   
+
    /**
     * Returns the number of source axes.
     *
@@ -782,7 +782,7 @@ namespace dtCore
    {
       return mSourceAxes.size();
    }
-   
+
    /**
     * Returns the source axis at the specified index.
     *
@@ -793,7 +793,7 @@ namespace dtCore
    {
       return mSourceAxes[index].get();
    }
-   
+
    /**
     * Sets the target axis.
     *
@@ -802,10 +802,10 @@ namespace dtCore
    void AxesToAxis::SetTargetAxis(LogicalAxis* targetAxis)
    {
       mTargetAxis = targetAxis;
-      
+
       UpdateTargetAxisState();
    }
-   
+
    /**
     * Gets the target axis.
     *
@@ -815,7 +815,7 @@ namespace dtCore
    {
       return mTargetAxis.get();
    }
-   
+
    /**
     * Called when an axis' state has changed.
     *
@@ -824,9 +824,9 @@ namespace dtCore
     * @param newState the new state of the axis
     * @param delta a delta value indicating stateless motion
     */
-   bool AxesToAxis::AxisStateChanged(const Axis* axis,
-                                     double oldState, 
-                                     double newState, 
+   bool AxesToAxis::HandleAxisStateChanged(const Axis* axis,
+                                     double oldState,
+                                     double newState,
                                      double delta)
    {
       if(mTargetAxis.valid())
@@ -836,7 +836,7 @@ namespace dtCore
 
       return false;
    }
-   
+
    bool AxesToAxis::UpdateTargetAxisState()
    {
       if(mTargetAxis.valid())
@@ -877,7 +877,7 @@ namespace dtCore
         mSecondButtonValue(secondButtonValue),
         mNeutralValue(neutralValue)
    {}
-   
+
    /**
     * Destructor.
     */
@@ -887,13 +887,13 @@ namespace dtCore
       {
          mFirstSourceButton->RemoveButtonListener(this);
       }
-   
+
       if(mSecondSourceButton.valid())
       {
          mSecondSourceButton->RemoveButtonListener(this);
       }
    }
-   
+
    /**
     * Sets the two source buttons.
     *
@@ -907,31 +907,31 @@ namespace dtCore
       {
          mFirstSourceButton->RemoveButtonListener(this);
       }
-   
+
       if(mSecondSourceButton.valid())
       {
          mSecondSourceButton->RemoveButtonListener(this);
       }
-   
+
       mFirstSourceButton = firstSourceButton;
       mSecondSourceButton = secondSourceButton;
-   
+
       if(mTargetAxis.valid())
       {
          if(mFirstSourceButton.valid())
          {
             mFirstSourceButton->AddButtonListener(this);
          }
-   
+
          if(mSecondSourceButton.valid())
          {
             mSecondSourceButton->AddButtonListener(this);
          }
       }
-   
+
       UpdateTargetAxisState();
    }
-   
+
    /**
     * Retrieves pointers to the two source buttons.
     *
@@ -946,7 +946,7 @@ namespace dtCore
       (*firstSourceButton) = mFirstSourceButton.get();
       (*secondSourceButton) = mSecondSourceButton.get();
    }
-   
+
    /**
     * Sets the target axis.
     *
@@ -955,14 +955,14 @@ namespace dtCore
    void ButtonsToAxis::SetTargetAxis(LogicalAxis* targetAxis)
    {
       mTargetAxis = targetAxis;
-   
+
       if(mTargetAxis.valid())
       {
          if(mFirstSourceButton.valid())
          {
             mFirstSourceButton->AddButtonListener(this);
          }
-   
+
          if(mSecondSourceButton.valid())
          {
             mSecondSourceButton->AddButtonListener(this);
@@ -974,16 +974,16 @@ namespace dtCore
          {
             mFirstSourceButton->RemoveButtonListener(this);
          }
-   
+
          if(mSecondSourceButton.valid())
          {
             mSecondSourceButton->RemoveButtonListener(this);
          }
       }
-   
+
       UpdateTargetAxisState();
    }
-   
+
    /**
     * Gets the target axis.
     *
@@ -993,7 +993,7 @@ namespace dtCore
    {
       return mTargetAxis.get();
    }
-   
+
    /**
     * Sets the axis values.
     *
@@ -1008,10 +1008,10 @@ namespace dtCore
       mFirstButtonValue = firstButtonValue;
       mSecondButtonValue = secondButtonValue;
       mNeutralValue = neutralValue;
-   
+
       UpdateTargetAxisState();
    }
-   
+
    /**
     * Retrieves the axis values.
     *
@@ -1023,7 +1023,7 @@ namespace dtCore
     * the value corresponding to the neutral state
     */
    void ButtonsToAxis::GetValues(double* firstButtonValue,
-                                 double* secondButtonValue, 
+                                 double* secondButtonValue,
                                  double* neutralValue) const
    {
       (*firstButtonValue) = mFirstButtonValue;
@@ -1031,7 +1031,7 @@ namespace dtCore
       (*neutralValue) = mNeutralValue;
    }
 
-   bool ButtonsToAxis::ButtonStateChanged(const Button* button, bool oldState, bool newState)
+   bool ButtonsToAxis::HandleButtonStateChanged(const Button* button, bool oldState, bool newState)
    {
       return UpdateTargetAxisState();
    }
@@ -1042,17 +1042,17 @@ namespace dtCore
       {
          bool firstButtonState = false,
               secondButtonState = false;
-   
+
          if(mFirstSourceButton.valid())
          {
             firstButtonState = mFirstSourceButton->GetState();
          }
-   
+
          if(mSecondSourceButton.valid())
          {
             secondButtonState = mSecondSourceButton->GetState();
          }
-   
+
          if(firstButtonState && !secondButtonState)
          {
             return mTargetAxis->SetState(mFirstButtonValue);
@@ -1069,7 +1069,7 @@ namespace dtCore
 
       return false;
    }
-   
+
    /**
     * Constructor.
     *
@@ -1098,7 +1098,7 @@ namespace dtCore
    {
    }
 
-   
+
    bool DeltaButtonsToAxis::UpdateTargetAxisState()
    {
       if(GetTargetAxis() != NULL)
@@ -1147,20 +1147,20 @@ namespace dtCore
       : mSourceButton(sourceButton),
         mSourceAxis(sourceAxis)
    {}
-   
+
    ButtonAxisToAxis::~ButtonAxisToAxis()
    {
       if(mSourceButton.valid())
       {
          mSourceButton->RemoveButtonListener(this);
       }
-   
+
       if(mSourceAxis.valid())
       {
          mSourceAxis->RemoveAxisListener(this);
       }
    }
-   
+
    /**
     * Sets the source button.
     *
@@ -1172,17 +1172,17 @@ namespace dtCore
       {
          mSourceButton->RemoveButtonListener(this);
       }
-      
+
       mSourceButton = sourceButton;
-      
+
       if(mSourceButton.valid())
       {
          mSourceButton->AddButtonListener(this);
       }
-      
+
       UpdateTargetAxisState();
    }
-   
+
    /**
     * Returns the source button.
     *
@@ -1192,7 +1192,7 @@ namespace dtCore
    {
       return mSourceButton.get();
    }
-   
+
    /**
     * Sets the source axis.
     *
@@ -1204,17 +1204,17 @@ namespace dtCore
       {
          mSourceAxis->RemoveAxisListener(this);
       }
-      
+
       mSourceAxis = sourceAxis;
-      
+
       if(mSourceAxis.valid())
       {
          mSourceAxis->AddAxisListener(this);
       }
-      
+
       UpdateTargetAxisState();
    }
-   
+
    /**
     * Returns the source axis.
     *
@@ -1224,7 +1224,7 @@ namespace dtCore
    {
       return mSourceAxis.get();
    }
-   
+
    /**
     * Sets the target axis.
     *
@@ -1233,14 +1233,14 @@ namespace dtCore
    void ButtonAxisToAxis::SetTargetAxis(LogicalAxis* targetAxis)
    {
       mTargetAxis = targetAxis;
-      
+
       if(mTargetAxis.valid())
       {
          if(mSourceButton.valid())
          {
             mSourceButton->AddButtonListener(this);
          }
-   
+
          if(mSourceAxis.valid())
          {
             mSourceAxis->AddAxisListener(this);
@@ -1252,16 +1252,16 @@ namespace dtCore
          {
             mSourceButton->RemoveButtonListener(this);
          }
-   
+
          if(mSourceAxis.valid())
          {
             mSourceAxis->RemoveAxisListener(this);
          }
       }
-   
+
       UpdateTargetAxisState();
    }
-   
+
    /**
     * Gets the target axis.
     *
@@ -1271,7 +1271,7 @@ namespace dtCore
    {
       return mTargetAxis.get();
    }
-   
+
    /**
     * Called when a button's state has changed.
     *
@@ -1279,13 +1279,13 @@ namespace dtCore
     * @param oldState the old state of the button
     * @param newState the new state of the button
     */
-   bool ButtonAxisToAxis::ButtonStateChanged(const Button* button,
+   bool ButtonAxisToAxis::HandleButtonStateChanged(const Button* button,
                                              bool oldState,
                                              bool newState)
    {
       return UpdateTargetAxisState();
    }
-   
+
    /**
     * Called when an axis' state has changed.
     *
@@ -1294,9 +1294,9 @@ namespace dtCore
     * @param newState the new state of the axis
     * @param delta a delta value indicating stateless motion
     */
-   bool ButtonAxisToAxis::AxisStateChanged(const Axis* axis,
-                                           double oldState, 
-                                           double newState, 
+   bool ButtonAxisToAxis::HandleAxisStateChanged(const Axis* axis,
+                                           double oldState,
+                                           double newState,
                                            double delta)
    {
       if(mTargetAxis.valid() &&
@@ -1308,7 +1308,7 @@ namespace dtCore
 
       return false;
    }
-   
+
    bool ButtonAxisToAxis::UpdateTargetAxisState()
    {
       if(mTargetAxis.valid())

@@ -413,7 +413,7 @@ void OrbitMotionModel::SetFocalPoint(const osg::Vec3f& point)
  * @param newState the new state of the axis
  * @param delta a delta value indicating stateless motion
  */
-bool OrbitMotionModel::AxisStateChanged(const Axis* axis,
+bool OrbitMotionModel::HandleAxisStateChanged(const Axis* axis,
                                         double oldState,
                                         double newState,
                                         double delta)

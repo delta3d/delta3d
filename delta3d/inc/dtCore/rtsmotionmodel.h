@@ -56,7 +56,7 @@ namespace dtCore
        * @param delta a delta value indicating stateless motion
        * @return If the
        */
-      virtual bool AxisStateChanged(const dtCore::Axis* axis,
+      virtual bool HandleAxisStateChanged(const dtCore::Axis* axis,
                                     double oldState,
                                     double newState,
                                     double delta);

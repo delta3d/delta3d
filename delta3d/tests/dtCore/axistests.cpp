@@ -24,7 +24,7 @@
 */
 #include <prefix/unittestprefix.h>
 #include <cppunit/extensions/HelperMacros.h>
-#include <dtCore/inputdevice.h>   // for testing the Axis definition
+#include <dtCore/axislistener.h>   // for testing the Axis definition
 
 namespace dtTest
 {
@@ -69,7 +69,7 @@ namespace dtTest
    template<>
    class AObserver<true> : public HitObserver2<dtCore::AxisListener>
    {
-      bool AxisStateChanged(const dtCore::Axis* axis, double oldState, double newState, double delta)
+      bool HandleAxisStateChanged(const dtCore::Axis* axis, double oldState, double newState, double delta)
       {
          mHit = true;
          return true;
@@ -80,7 +80,7 @@ namespace dtTest
    template<>
    class AObserver<false> : public HitObserver2<dtCore::AxisListener>
    {
-      bool AxisStateChanged(const dtCore::Axis* axis, double oldState, double newState, double delta)
+      bool HandleAxisStateChanged(const dtCore::Axis* axis, double oldState, double newState, double delta)
       {
          mHit = true;
          return false;

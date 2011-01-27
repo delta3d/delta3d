@@ -33,7 +33,7 @@ FPSMotionModel::FPSAxisListener::FPSAxisListener(const SetFunctor& setFunc)
 }
 
 ///When the axis changes, just call the functor with the new values
-bool FPSMotionModel::FPSAxisListener::AxisStateChanged(const Axis* axis,
+bool FPSMotionModel::FPSAxisListener::HandleAxisStateChanged(const Axis* axis,
                                                        double oldState,
                                                        double newState,
                                                        double delta)

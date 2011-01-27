@@ -87,7 +87,7 @@ namespace dtCore {
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   bool AxisToAxisTransformation::AxisStateChanged(const Axis* axis,
+   bool AxisToAxisTransformation::HandleAxisStateChanged(const Axis* axis,
                                                    double oldState, 
                                                    double newState, 
                                                    double delta)

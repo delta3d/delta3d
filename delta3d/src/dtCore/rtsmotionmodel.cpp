@@ -114,15 +114,15 @@ RTSMotionModel::RTSMotionModel( dtCore::Keyboard *keyboard
 
 ////////////////////////////////////////////////////////////////////////////////
 
-bool RTSMotionModel::AxisStateChanged(const dtCore::Axis *axis, double oldState, double newState, double delta)
+bool RTSMotionModel::HandleAxisStateChanged(const dtCore::Axis *axis, double oldState, double newState, double delta)
 {
    if (!IsEnabled())
    {
       return false;
    }
 
-   //printf("RTSMotionModel::AxisStateChanged(axis=%p, oldState=%g, newState=%g, delta=%g)\n", axis, oldState, newState, delta);
-   bool rval = dtCore::OrbitMotionModel::AxisStateChanged(axis, oldState, newState, delta);
+   //printf("RTSMotionModel::HandleAxisStateChanged(axis=%p, oldState=%g, newState=%g, delta=%g)\n", axis, oldState, newState, delta);
+   bool rval = dtCore::OrbitMotionModel::HandleAxisStateChanged(axis, oldState, newState, delta);
 
    // do value correction here
 

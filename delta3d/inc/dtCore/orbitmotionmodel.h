@@ -25,7 +25,7 @@
 #ifndef DELTA_ORBIT_MOTION_MODEL
 #define DELTA_ORBIT_MOTION_MODEL
 
-#include <dtCore/inputdevice.h>
+#include <dtCore/axislistener.h>
 #include <dtCore/motionmodel.h>
 
 namespace dtCore
@@ -229,7 +229,7 @@ namespace dtCore
        * @param delta a delta value indicating stateless motion
        * @return If the
        */
-      virtual bool AxisStateChanged(const Axis* axis,
+      virtual bool HandleAxisStateChanged(const Axis* axis,
                                     double oldState,
                                     double newState,
                                     double delta);

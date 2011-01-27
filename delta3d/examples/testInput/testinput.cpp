@@ -121,7 +121,7 @@ public:
 
 protected:
 
-   virtual ~TestInputApp() 
+   virtual ~TestInputApp()
    {
       mConnections.clear();
    }

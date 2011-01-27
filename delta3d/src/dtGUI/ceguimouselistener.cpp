@@ -82,13 +82,14 @@ bool CEGUIMouseListener::HandleMouseMoved(const dtCore::Mouse* mouse, float x, f
 
    UpdateWindowSize();
 
-   mMouseX = x - mMouseX;
-   mMouseY = y - mMouseY;
-   CEGUI::System::getSingleton().injectMouseMove(mMouseX * mHalfWidth, mMouseY * -mHalfHeight);
+   //float xDelta = x - mMouseX;
+   //float yDelta = y - mMouseY;
+   CEGUI::System::getSingleton().injectMouseMove((x - mMouseX) * mHalfWidth, (y - mMouseY) * -mHalfHeight);
    mMouseX = x;
    mMouseY = y;
 
    ///\todo document these magic constants from the CEUIDrawable-days.
+   //return verifyHandled(CEGUI::System::getSingleton().injectMouseMove(xDelta * mHalfWidth, yDelta * -mHalfHeight));
    return verifyHandled(CEGUI::System::getSingleton().injectMousePosition( ((x+1)*0.5f)*mWidth, ((-y+1)*0.5f)*mHeight));
 }
 
@@ -128,7 +129,7 @@ bool CEGUIMouseListener::HandleButtonReleased(const dtCore::Mouse* mouse, dtCore
    MakeCurrent();
 
    UpdateWindowSize();
-   
+
    bool handled = false;
    switch(button)
    {
@@ -166,7 +167,7 @@ bool CEGUIMouseListener::HandleButtonClicked(const dtCore::Mouse* mouse, dtCore:
 {
    CEGUI::System& system = CEGUI::System::getSingleton();
    bool handled = false;
-   for (int i = 0; i < clickCount; ++i) 
+   for (int i = 0; i < clickCount; ++i)
    {
       switch(button)
       {

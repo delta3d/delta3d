@@ -24,7 +24,7 @@
 */
 #include <prefix/unittestprefix.h>
 #include <cppunit/extensions/HelperMacros.h>
-#include <dtCore/inputdevice.h>   // for testing the Button definition
+#include <dtCore/buttonlistener.h>   // for testing the Button definition
 
 namespace dtTest
 {
@@ -66,7 +66,7 @@ namespace dtTest
    template<>
    class BObserver<true> : public HitObserver
    {
-      bool ButtonStateChanged(const dtCore::Button* bt, bool oldstate, bool newstate)
+      bool HandleButtonStateChanged(const dtCore::Button* bt, bool oldstate, bool newstate)
       {
          mHit = true;
          return true;
@@ -76,7 +76,7 @@ namespace dtTest
    template<>
    class BObserver<false> : public HitObserver
    {
-      bool ButtonStateChanged(const dtCore::Button* bt, bool oldstate, bool newstate)
+      bool HandleButtonStateChanged(const dtCore::Button* bt, bool oldstate, bool newstate)
       {
          mHit = true;
          return false;
