@@ -12,12 +12,12 @@ using namespace dtCore;
 class ButtonListenerWrap : public ButtonListener, public wrapper<ButtonListener>
 {
    public:
-      bool ButtonStateChanged(const Button* button, bool oldState, bool newState)
+      bool HandleButtonStateChanged(const Button* button, bool oldState, bool newState)
       {
          #if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
-         return call<bool>( this->get_override("ButtonStateChanged").ptr(), button, oldState, newState );
+         return call<bool>( this->get_override("HandleButtonStateChanged").ptr(), button, oldState, newState );
          #else
-         return this->get_override("ButtonStateChanged")( button, oldState, newState );
+         return this->get_override("HandleButtonStateChanged")( button, oldState, newState );
          #endif
       }
 };
@@ -25,12 +25,12 @@ class ButtonListenerWrap : public ButtonListener, public wrapper<ButtonListener>
 class AxisListenerWrap : public AxisListener, public wrapper<AxisListener>
 {
    public:
-      bool AxisStateChanged(const Axis* axis, double oldState, double newState, double delta)
+      bool HandleAxisStateChanged(const Axis* axis, double oldState, double newState, double delta)
       {
          #if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
-         return call<bool>( this->get_override("AxisStateChanged").ptr(), axis, oldState, newState, delta );
+         return call<bool>( this->get_override("HandleAxisStateChanged").ptr(), axis, oldState, newState, delta );
          #else
-         return this->get_override("AxisStateChanged")( axis, oldState, newState, delta );
+         return this->get_override("HandleAxisStateChanged")( axis, oldState, newState, delta );
          #endif
       }
 };
@@ -85,7 +85,7 @@ void initInputDeviceBindings()
       .def("RemoveButtonListener", &Button::RemoveButtonListener);
 
    class_<ButtonListenerWrap, ButtonListenerWrap*, boost::noncopyable>("ButtonListener")
-      .def("ButtonStateChanged", pure_virtual(&ButtonListener::ButtonStateChanged));
+      .def("HandleButtonStateChanged", pure_virtual(&ButtonListener::HandleButtonStateChanged));
 
    class_<Axis, bases<InputDeviceFeature>, dtCore::RefPtr<Axis> >("Axis", no_init)
       .def("SetState", &Axis::SetState, SS_overloads())
@@ -94,5 +94,5 @@ void initInputDeviceBindings()
       .def("RemoveAxisListener", &Axis::RemoveAxisListener);
 
    class_<AxisListenerWrap, AxisListenerWrap*, boost::noncopyable>("AxisListener")
-      .def("AxisStateChanged", pure_virtual(&AxisListener::AxisStateChanged));
+      .def("HandleAxisStateChanged", pure_virtual(&AxisListener::HandleAxisStateChanged));
 }
