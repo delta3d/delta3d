@@ -25,6 +25,8 @@
 #include <prefix/unittestprefix.h>
 #include <cppunit/extensions/HelperMacros.h>
 #include <dtCore/buttonlistener.h>   // for testing the Button definition
+#include <dtCore/refptr.h>
+#include <dtCore/inputdevice.h>
 
 namespace dtTest
 {

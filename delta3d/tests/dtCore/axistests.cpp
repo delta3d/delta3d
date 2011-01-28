@@ -25,6 +25,9 @@
 #include <prefix/unittestprefix.h>
 #include <cppunit/extensions/HelperMacros.h>
 #include <dtCore/axislistener.h>   // for testing the Axis definition
+#include <dtCore/inputdevice.h>
+#include <dtCore/axis.h>
+#include <dtCore/refptr.h>
 
 namespace dtTest
 {

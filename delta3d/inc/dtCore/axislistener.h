@@ -24,6 +24,7 @@
 // axislistener.h: Declaration of the AxisListener class.
 //
 //////////////////////////////////////////////////////////////////////
+#include <dtCore/export.h>
 #include <dtUtil/breakoverride.h>
 
 namespace dtCore
