@@ -193,6 +193,7 @@ namespace dtCore
       if(mSourceButton.valid())
       {
          mSourceButton->RemoveButtonListener(this);
+         mSourceButton->RemoveButtonObserver(this);
       }
    }
 
@@ -206,6 +207,7 @@ namespace dtCore
       if(mSourceButton.valid())
       {
          mSourceButton->RemoveButtonListener(this);
+         mSourceButton->RemoveButtonObserver(this);
       }
 
       mSourceButton = sourceButton;
@@ -213,6 +215,7 @@ namespace dtCore
       if(mSourceButton.valid() && mTargetButton.valid())
       {
          mSourceButton->AddButtonListener(this);
+         mSourceButton->AddButtonObserver(this);
       }
 
       UpdateTargetButtonState();
@@ -242,10 +245,12 @@ namespace dtCore
          if(mTargetButton.valid())
          {
             mSourceButton->AddButtonListener(this);
+            mSourceButton->AddButtonObserver(this);
          }
          else
          {
             mSourceButton->RemoveButtonListener(this);
+            mSourceButton->RemoveButtonObserver(this);
          }
       }
 
@@ -273,10 +278,22 @@ namespace dtCore
    {
       if(mTargetButton.valid())
       {
-         return mTargetButton->SetState(newState);
+         return mTargetButton->NotifyStateChange();
       }
 
       return false;
+   }
+
+   /// Called when a button's state has changed.
+   /// @param button the origin of the event
+   /// @param oldState the old state of the button
+   /// @param newState the new state of the button
+   void ButtonToButton::OnButtonStateChanged(const Button* button, bool oldState, bool newState)
+   {
+      if(mTargetButton.valid())
+      {
+         mTargetButton->SetState(newState);
+      }
    }
 
    /**
@@ -318,10 +335,12 @@ namespace dtCore
       if(mFirstButton.valid())
       {
          mFirstButton->RemoveButtonListener(this);
+         mFirstButton->RemoveButtonObserver(this);
       }
       if(mSecondButton.valid())
       {
          mSecondButton->RemoveButtonListener(this);
+         mSecondButton->RemoveButtonObserver(this);
       }
    }
 
@@ -335,6 +354,7 @@ namespace dtCore
       if(mFirstButton.valid())
       {
          mFirstButton->RemoveButtonListener(this);
+         mFirstButton->RemoveButtonObserver(this);
       }
 
       mFirstButton = button;
@@ -342,6 +362,7 @@ namespace dtCore
       if(mFirstButton.valid() && mTargetButton.valid())
       {
          mFirstButton->AddButtonListener(this);
+         mFirstButton->AddButtonObserver(this);
       }
 
       UpdateTargetButtonState();
@@ -357,6 +378,7 @@ namespace dtCore
       if(mSecondButton.valid())
       {
          mSecondButton->RemoveButtonListener(this);
+         mSecondButton->RemoveButtonObserver(this);
       }
 
       mSecondButton = button;
@@ -364,6 +386,7 @@ namespace dtCore
       if(mSecondButton.valid() && mTargetButton.valid())
       {
          mSecondButton->AddButtonListener(this);
+         mSecondButton->AddButtonObserver(this);
       }
 
       UpdateTargetButtonState();
@@ -403,12 +426,16 @@ namespace dtCore
          if(mTargetButton.valid())
          {
             mFirstButton->AddButtonListener(this);
+            mFirstButton->AddButtonObserver(this);
             mSecondButton->AddButtonListener(this);
+            mSecondButton->AddButtonObserver(this);
          }
          else
          {
             mFirstButton->RemoveButtonListener(this);
+            mFirstButton->RemoveButtonObserver(this);
             mSecondButton->RemoveButtonListener(this);
+            mSecondButton->RemoveButtonObserver(this);
          }
       }
 
@@ -436,21 +463,35 @@ namespace dtCore
    {
       if(mTargetButton.valid())
       {
+         return mTargetButton->NotifyStateChange();
+      }
+
+      return false;
+   }
+
+   /// Called when a button's state has changed.
+   /// @param button the origin of the event
+   /// @param oldState the old state of the button
+   /// @param newState the new state of the button
+   void ButtonsToButton::OnButtonStateChanged(const Button* button, bool oldState, bool newState)
+   {
+      if(mTargetButton.valid())
+      {
          if (mFirstButton.valid() && mSecondButton.valid())
          {
             switch (mFlag)
             {
-            // Both buttons must be active at the same time.
+               // Both buttons must be active at the same time.
             case BOTH_BUTTONS:
                newState = mFirstButton->GetState() && mSecondButton->GetState();
                break;
 
-            // Only a single button can be active.
+               // Only a single button can be active.
             case SINGLE_BUTTON:
                newState = mFirstButton->GetState() != mSecondButton->GetState();
                break;
 
-            // Any combination of buttons can be active.
+               // Any combination of buttons can be active.
             case ANY_BUTTONS:
                newState = mFirstButton->GetState() || mSecondButton->GetState();
                break;
@@ -458,14 +499,7 @@ namespace dtCore
          }
 
          mTargetButton->SetState(newState);
-         //return mTargetButton->SetState(newState);
-
-         // We return false to make sure any other listeners listening for
-         // these buttons will also receive their messages.
-         return false;
       }
-
-      return false;
    }
 
    /**
@@ -571,6 +605,7 @@ namespace dtCore
       if(mSourceAxis.valid())
       {
          mSourceAxis->RemoveAxisListener(this);
+         mSourceAxis->RemoveAxisObserver(this);
       }
    }
 
@@ -584,6 +619,7 @@ namespace dtCore
       if(mSourceAxis.valid())
       {
          mSourceAxis->RemoveAxisListener(this);
+         mSourceAxis->RemoveAxisObserver(this);
       }
 
       mSourceAxis = sourceAxis;
@@ -591,6 +627,7 @@ namespace dtCore
       if(mSourceAxis.valid() && mTargetAxis.valid())
       {
          mSourceAxis->AddAxisListener(this);
+         mSourceAxis->AddAxisObserver(this);
       }
 
       UpdateTargetAxisState();
@@ -618,10 +655,12 @@ namespace dtCore
       if(mSourceAxis.valid() && mTargetAxis.valid())
       {
          mSourceAxis->AddAxisListener(this);
+         mSourceAxis->AddAxisObserver(this);
       }
       else
       {
          mSourceAxis->RemoveAxisListener(this);
+         mSourceAxis->RemoveAxisObserver(this);
       }
 
       UpdateTargetAxisState();
@@ -678,30 +717,50 @@ namespace dtCore
                                      double newState,
                                      double delta)
    {
-      if(mTargetAxis.valid())
+      if (mTargetAxis.valid())
       {
-         return mTargetAxis->SetState(newState*mScale + mOffset, delta*mScale);
+         return mTargetAxis->NotifyStateChange(delta * mScale);
       }
 
       return false;
+   }
+
+   /**
+   * Called when an axis' state has changed.
+   *
+   * @param axis the changed axis
+   * @param oldState the old state of the axis
+   * @param newState the new state of the axis
+   * @param delta a delta value indicating stateless motion
+   */
+   void AxisToAxis::OnAxisStateChanged(const Axis* axis, double oldState, double newState, double delta)
+   {
+      if (mTargetAxis.valid())
+      {
+         mTargetAxis->SetState(newState * mScale + mOffset, delta * mScale);
+      }
    }
 
    bool AxisToAxis::UpdateTargetAxisState()
    {
-      if(mTargetAxis.valid())
+      if (mTargetAxis.valid())
       {
          double value = 0.0;
 
-         if(mSourceAxis.valid())
+         if (mSourceAxis.valid())
          {
             value = mSourceAxis->GetState();
          }
 
-         return mTargetAxis->SetState(value*mScale + mOffset);
+         if (mTargetAxis->SetState(value*mScale + mOffset))
+         {
+            return mTargetAxis->NotifyStateChange();
+         }
       }
 
       return false;
    }
+
 
 
    /**
@@ -732,6 +791,7 @@ namespace dtCore
           it++)
       {
          (*it)->RemoveAxisListener(this);
+         (*it)->RemoveAxisObserver(this);
       }
    }
 
@@ -743,6 +803,7 @@ namespace dtCore
    void AxesToAxis::AddSourceAxis(Axis* sourceAxis)
    {
       sourceAxis->AddAxisListener(this);
+      sourceAxis->AddAxisObserver(this);
 
       mSourceAxes.push_back(sourceAxis);
 
@@ -763,6 +824,7 @@ namespace dtCore
          if((*it).get() == sourceAxis)
          {
             sourceAxis->RemoveAxisListener(this);
+            sourceAxis->RemoveAxisObserver(this);
 
             mSourceAxes.erase(it);
 
@@ -831,10 +893,26 @@ namespace dtCore
    {
       if(mTargetAxis.valid())
       {
-         return mTargetAxis->SetState(newState, delta);
+         return mTargetAxis->NotifyStateChange(delta);
       }
 
       return false;
+   }
+
+   /**
+   * Called when an axis' state has changed.
+   *
+   * @param axis the changed axis
+   * @param oldState the old state of the axis
+   * @param newState the new state of the axis
+   * @param delta a delta value indicating stateless motion
+   */
+   void AxesToAxis::OnAxisStateChanged(const Axis* axis, double oldState, double newState, double delta)
+   {
+      if(mTargetAxis.valid())
+      {
+         mTargetAxis->SetState(newState, delta);
+      }
    }
 
    bool AxesToAxis::UpdateTargetAxisState()
@@ -843,11 +921,17 @@ namespace dtCore
       {
          if(mSourceAxes.size() != 0)
          {
-            return mTargetAxis->SetState( mSourceAxes[mSourceAxes.size()-1]->GetState() );
+            if (mTargetAxis->SetState(mSourceAxes[mSourceAxes.size()-1]->GetState()))
+            {
+               return mTargetAxis->NotifyStateChange();
+            }
          }
          else
          {
-            return mTargetAxis->SetState(0.0f);
+            if (mTargetAxis->SetState(0.0f))
+            {
+               return mTargetAxis->NotifyStateChange();
+            }
          }
       }
 
@@ -886,11 +970,13 @@ namespace dtCore
       if(mFirstSourceButton.valid())
       {
          mFirstSourceButton->RemoveButtonListener(this);
+         mFirstSourceButton->RemoveButtonObserver(this);
       }
 
       if(mSecondSourceButton.valid())
       {
          mSecondSourceButton->RemoveButtonListener(this);
+         mSecondSourceButton->RemoveButtonObserver(this);
       }
    }
 
@@ -906,11 +992,13 @@ namespace dtCore
       if(mFirstSourceButton.valid())
       {
          mFirstSourceButton->RemoveButtonListener(this);
+         mFirstSourceButton->RemoveButtonObserver(this);
       }
 
       if(mSecondSourceButton.valid())
       {
          mSecondSourceButton->RemoveButtonListener(this);
+         mSecondSourceButton->RemoveButtonObserver(this);
       }
 
       mFirstSourceButton = firstSourceButton;
@@ -921,11 +1009,13 @@ namespace dtCore
          if(mFirstSourceButton.valid())
          {
             mFirstSourceButton->AddButtonListener(this);
+            mFirstSourceButton->AddButtonObserver(this);
          }
 
          if(mSecondSourceButton.valid())
          {
             mSecondSourceButton->AddButtonListener(this);
+            mSecondSourceButton->AddButtonObserver(this);
          }
       }
 
@@ -961,11 +1051,13 @@ namespace dtCore
          if(mFirstSourceButton.valid())
          {
             mFirstSourceButton->AddButtonListener(this);
+            mFirstSourceButton->AddButtonObserver(this);
          }
 
          if(mSecondSourceButton.valid())
          {
             mSecondSourceButton->AddButtonListener(this);
+            mSecondSourceButton->AddButtonObserver(this);
          }
       }
       else
@@ -973,11 +1065,13 @@ namespace dtCore
          if(mFirstSourceButton.valid())
          {
             mFirstSourceButton->RemoveButtonListener(this);
+            mFirstSourceButton->RemoveButtonObserver(this);
          }
 
          if(mSecondSourceButton.valid())
          {
             mSecondSourceButton->RemoveButtonListener(this);
+            mSecondSourceButton->RemoveButtonObserver(this);
          }
       }
 
@@ -1033,7 +1127,21 @@ namespace dtCore
 
    bool ButtonsToAxis::HandleButtonStateChanged(const Button* button, bool oldState, bool newState)
    {
-      return UpdateTargetAxisState();
+      if (mTargetAxis.valid())
+      {
+         return mTargetAxis->NotifyStateChange();
+      }
+
+      return false;
+   }
+
+   /// Called when a button's state has changed.
+   /// @param button the origin of the event
+   /// @param oldState the old state of the button
+   /// @param newState the new state of the button
+   void ButtonsToAxis::OnButtonStateChanged(const Button* button, bool oldState, bool newState)
+   {
+      UpdateTargetAxisState();
    }
 
    bool ButtonsToAxis::UpdateTargetAxisState()
@@ -1153,11 +1261,13 @@ namespace dtCore
       if(mSourceButton.valid())
       {
          mSourceButton->RemoveButtonListener(this);
+         mSourceButton->RemoveButtonObserver(this);
       }
 
       if(mSourceAxis.valid())
       {
          mSourceAxis->RemoveAxisListener(this);
+         mSourceAxis->RemoveAxisObserver(this);
       }
    }
 
@@ -1171,6 +1281,7 @@ namespace dtCore
       if(mSourceButton.valid())
       {
          mSourceButton->RemoveButtonListener(this);
+         mSourceButton->RemoveButtonObserver(this);
       }
 
       mSourceButton = sourceButton;
@@ -1178,6 +1289,7 @@ namespace dtCore
       if(mSourceButton.valid())
       {
          mSourceButton->AddButtonListener(this);
+         mSourceButton->AddButtonObserver(this);
       }
 
       UpdateTargetAxisState();
@@ -1203,6 +1315,7 @@ namespace dtCore
       if(mSourceAxis.valid())
       {
          mSourceAxis->RemoveAxisListener(this);
+         mSourceAxis->RemoveAxisObserver(this);
       }
 
       mSourceAxis = sourceAxis;
@@ -1210,6 +1323,7 @@ namespace dtCore
       if(mSourceAxis.valid())
       {
          mSourceAxis->AddAxisListener(this);
+         mSourceAxis->AddAxisObserver(this);
       }
 
       UpdateTargetAxisState();
@@ -1239,11 +1353,13 @@ namespace dtCore
          if(mSourceButton.valid())
          {
             mSourceButton->AddButtonListener(this);
+            mSourceButton->AddButtonObserver(this);
          }
 
          if(mSourceAxis.valid())
          {
             mSourceAxis->AddAxisListener(this);
+            mSourceAxis->AddAxisObserver(this);
          }
       }
       else
@@ -1251,11 +1367,13 @@ namespace dtCore
          if(mSourceButton.valid())
          {
             mSourceButton->RemoveButtonListener(this);
+            mSourceButton->RemoveButtonObserver(this);
          }
 
          if(mSourceAxis.valid())
          {
             mSourceAxis->RemoveAxisListener(this);
+            mSourceAxis->RemoveAxisObserver(this);
          }
       }
 
@@ -1283,7 +1401,21 @@ namespace dtCore
                                              bool oldState,
                                              bool newState)
    {
-      return UpdateTargetAxisState();
+      if (mTargetAxis.valid())
+      {
+         return mTargetAxis->NotifyStateChange();
+      }
+
+      return false;
+   }
+
+   /// Called when a button's state has changed.
+   /// @param button the origin of the event
+   /// @param oldState the old state of the button
+   /// @param newState the new state of the button
+   void ButtonAxisToAxis::OnButtonStateChanged(const Button* button, bool oldState, bool newState)
+   {
+      UpdateTargetAxisState();
    }
 
    /**
@@ -1303,10 +1435,28 @@ namespace dtCore
          mSourceButton.valid() &&
          mSourceButton->GetState())
       {
-         return mTargetAxis->SetState(newState, delta);
+         return mTargetAxis->NotifyStateChange(delta);
       }
 
       return false;
+   }
+
+   /**
+    * Called when an axis' state has changed.
+    *
+    * @param axis the changed axis
+    * @param oldState the old state of the axis
+    * @param newState the new state of the axis
+    * @param delta a delta value indicating stateless motion
+    */
+   void ButtonAxisToAxis::OnAxisStateChanged(const Axis* axis, double oldState, double newState, double delta)
+   {
+      if(mTargetAxis.valid() &&
+         mSourceButton.valid() &&
+         mSourceButton->GetState())
+      {
+         mTargetAxis->SetState(newState, delta);
+      }
    }
 
    bool ButtonAxisToAxis::UpdateTargetAxisState()

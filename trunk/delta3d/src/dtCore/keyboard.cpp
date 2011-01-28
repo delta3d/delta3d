@@ -100,7 +100,7 @@ Keyboard::Keyboard(const std::string& name) : InputDevice(name)
    AddFeature(new Button(this, 'y'                                      ,"y"));
    AddFeature(new Button(this, 'z'                                      ,"z"));
 
-   
+
    AddFeature(new Button(this, '['                                      ,"["));
    AddFeature(new Button(this, ']'                                      ,"]"));
    AddFeature(new Button(this, '\\'                                     ,"\\"));
@@ -190,7 +190,7 @@ void Keyboard::RemoveKeyboardListener(KeyboardListener* keyboardListener)
 bool Keyboard::KeyDown(int kc)
 {
    bool handled(false);
-   
+
    KeyboardListenerList::iterator iter = mKeyboardListeners.begin();
    KeyboardListenerList::iterator enditer = mKeyboardListeners.end();
    while (!handled && iter != enditer)
@@ -203,7 +203,10 @@ bool Keyboard::KeyDown(int kc)
    if (b != NULL)
    {
       // Set the button's state
-      handled = b->SetState(true, handled);
+      if (b->SetState(true) && !handled)
+      {
+         handled = b->NotifyStateChange();
+      }
    }
 
    return handled;
@@ -224,7 +227,10 @@ bool Keyboard::KeyUp(int kc)
    if (b != NULL)
    {
       // Set the button's state
-      handled = b->SetState(false, handled);
+      if (b->SetState(false) && !handled)
+      {
+         handled = b->NotifyStateChange();
+      }
    }
 
    return handled;

@@ -32,12 +32,14 @@
 namespace dtCore
 {
    class ButtonListener;
+   class ButtonObserver;
 
    /// Buttons are features with binary state.
    class DT_CORE_EXPORT Button : public InputDeviceFeature
    {
    public:
       typedef std::list<ButtonListener*> ButtonListenerList;  ///< A container of ButtonListeners
+      typedef std::list<ButtonObserver*> ButtonObserverList;  ///< A container of ButtonObservers
 
       /**
        * Constructor.
@@ -64,7 +66,7 @@ namespace dtCore
       /// Sets the state of this button.
       /// @param state the new state
       /// @return The result of the listeners
-      bool SetState(bool state, bool handled = false);
+      bool SetState(bool state);
 
       /**
        * Returns the current state of this button.
@@ -73,6 +75,12 @@ namespace dtCore
        * otherwise
        */
       bool GetState() const;
+
+      /**
+       * Notifies all the button listeners of a state change
+       * @return whether the state change was handled or not
+       */
+      bool NotifyStateChange();
 
       /**
        * Returns the symbole of this button.
@@ -86,6 +94,9 @@ namespace dtCore
        */
       void AddButtonListener(ButtonListener* buttonListener);
 
+      /// Inserts the listener into the list at a position BEFORE pos.
+      void InsertButtonListener(const ButtonListenerList::value_type& pos, ButtonListener* bl);
+
       /**
        * Removes a button listener.
        *
@@ -93,15 +104,32 @@ namespace dtCore
        */
       void RemoveButtonListener(ButtonListener* buttonListener);
 
-      /// Inserts the listener into the list at a position BEFORE pos.
-      void InsertButtonListener(const ButtonListenerList::value_type& pos, ButtonListener* bl);
-
       const ButtonListenerList& GetListeners() const { return mButtonListeners; }
+
+      /**
+       * Adds a button observer.
+       *
+       * @param buttonObserver a pointer to the observer to add
+       */
+      void AddButtonObserver(ButtonObserver* buttonObserver);
+
+      /// Inserts the observer into the list at a position BEFORE pos.
+      void InsertButtonObserver(const ButtonObserverList::value_type& pos, ButtonObserver* bl);
+
+      /**
+       * Removes a button observer.
+       *
+       * @param buttonObserver a pointer to the observer to remove
+       */
+      void RemoveButtonObserver(ButtonObserver* buttonObserver);
+
+      const ButtonObserverList& GetObservers() const { return mButtonObservers; }
 
    private:
       bool mState;  ///< The state of this button.
       int mSymbol;  ///< The symbol of this button.
       ButtonListenerList mButtonListeners;  ///< Listeners to this button.
+      ButtonObserverList mButtonObservers;  ///< Observers to this button.
    };
 }
 

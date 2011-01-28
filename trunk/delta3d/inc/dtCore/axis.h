@@ -32,11 +32,13 @@
 namespace dtCore
 {
    class AxisListener;
+   class AxisObserver;
 
    class DT_CORE_EXPORT Axis : public InputDeviceFeature
    {
    public:
       typedef std::list<AxisListener*> AxisListenerList;
+      typedef std::list<AxisObserver*> AxisObserverList;
 
       /**
        * Constructor.
@@ -58,8 +60,10 @@ namespace dtCore
        *
        * @param state the new state
        * @param delta the optional delta value
+       *
+       * @return Whether the state was changed or not
        */
-      bool SetState(double state, double delta = 0.0, bool handled = false);
+      bool SetState(double state, double delta = 0.0);
 
       /**
        * Returns the current state of this axis.
@@ -69,11 +73,23 @@ namespace dtCore
       double GetState() const;
 
       /**
+       * Notifies all the axis listeners of a state change
+       *
+       * @param delta   the optional delta value
+       *
+       * @return whether the state change was handled or not
+       */
+      bool NotifyStateChange(double delta = 0.0);
+
+      /**
        * Adds an axis listener.
        *
        * @param axisListener a pointer to the listener to add
        */
       void AddAxisListener(AxisListener* axisListener);
+
+      /// Inserts the listener into the list at a position BEFORE pos.
+      void InsertAxisListener(const AxisListenerList::value_type& pos, AxisListener* al);
 
       /**
        * Removes an axis listener.
@@ -84,12 +100,30 @@ namespace dtCore
 
       const AxisListenerList& GetListeners() const { return mAxisListeners; }
 
-      /// Inserts the listener into the list at a position BEFORE pos.
-      void InsertAxisListener(const AxisListenerList::value_type& pos, AxisListener* al);
+      /**
+       * Adds an axis observer.
+       *
+       * @param axisObserver a pointer to the observer to add
+       */
+      void AddAxisObserver(AxisObserver* axisObserver);
+
+      /// Inserts the observer into the list at a position BEFORE pos.
+      void InsertAxisObserver(const AxisObserverList::value_type& pos, AxisObserver* al);
+
+      /**
+       * Removes an axis observer.
+       *
+       * @param axisObserver a pointer to the observer to remove
+       */
+      void RemoveAxisObserver(AxisObserver* axisObserver);
+
+      const AxisObserverList& GetObservers() const { return mAxisObservers; }
 
    private:
       double mState;  ///< The state of this axis.
+      double mPrevState; ///< The previous state of the axis.
       AxisListenerList mAxisListeners;  ///< Listeners to this axis.
+      AxisObserverList mAxisObservers;  ///< Observers to this axis.
    };
 }
 

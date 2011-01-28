@@ -172,7 +172,7 @@ public:
    }
 
    /**
-    * Notifies the listener that the button mapping acquisition has
+    * Notifies the observer that the button mapping acquisition has
     * completed.
     *
     * @param mapping the newly acquired button mapping, or NULL if
@@ -193,7 +193,7 @@ public:
    }
 
    /**
-    * Notifies the listener that the axis mapping acquisition has
+    * Notifies the observer that the axis mapping acquisition has
     * completed.
     *
     * @param mapping the newly acquired axis mapping, or NULL if

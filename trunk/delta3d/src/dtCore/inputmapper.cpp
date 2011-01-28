@@ -8,7 +8,7 @@ namespace dtCore
 {
 
    IMPLEMENT_MANAGEMENT_LAYER(InputMapper)
-   
+
     InputMapper::InputMapper(const std::string& name)
       : Base(name),
         mAcquiringButtonMapping(false),
@@ -16,20 +16,20 @@ namespace dtCore
    {
       RegisterInstance(this);
    }
-   
+
    InputMapper::~InputMapper()
    {
       DeregisterInstance(this);
    }
-   
+
    void InputMapper::AddDevice(InputDevice* device)
    {
-      device->AddButtonListener(this);
-      device->AddAxisListener(this);
-      
+      device->AddButtonObserver(this);
+      device->AddAxisObserver(this);
+
       mDevices.push_back(device);
    }
-   
+
    void InputMapper::RemoveDevice(InputDevice* device)
    {
       for(std::vector< RefPtr<InputDevice> >::iterator it = mDevices.begin();
@@ -38,43 +38,43 @@ namespace dtCore
       {
          if(*it == device)
          {
-            device->RemoveButtonListener(this);
-            device->RemoveAxisListener(this);
-            
+            device->RemoveButtonObserver(this);
+            device->RemoveAxisObserver(this);
+
             mDevices.erase(it);
-            
+
             return;
          }
       }
    }
-   
+
    int InputMapper::GetNumDevices()
    {
       return mDevices.size();
    }
-   
+
    InputDevice* InputMapper::GetDevice(int index)
    {
       return mDevices[index].get();
    }
-   
+
    void InputMapper::SetCancelButton(Button* button)
    {
       mCancelButton = button;
    }
-   
+
    Button* InputMapper::GetCancelButton()
    {
       return mCancelButton.get();
    }
-   
+
    bool InputMapper::AcquireButtonMapping(InputMapperCallback* callback)
    {
       if(!mAcquiringButtonMapping && !mAcquiringAxisMapping)
       {
          mCallback = callback;
          mAcquiringButtonMapping = true;
-      
+
          return true;
       }
       else
@@ -89,7 +89,7 @@ namespace dtCore
       {
          mCallback = callback;
          mAcquiringAxisMapping = true;
-      
+
          return true;
       }
       else
@@ -98,22 +98,22 @@ namespace dtCore
       }
    }
 
-   bool InputMapper::HandleButtonStateChanged(const Button* button, bool oldState, bool newState)
+   void InputMapper::OnButtonStateChanged(const Button* button, bool oldState, bool newState)
    {
       if(newState)
       {
          if(button == mCancelButton.get())
          {
             if(mAcquiringButtonMapping)
-            {  
+            {
                mAcquiringButtonMapping = false;
-               
-               mCallback->ButtonMappingAcquired(NULL);  
+
+               mCallback->ButtonMappingAcquired(NULL);
             }
             else if(mAcquiringAxisMapping)
             {
                mAcquiringAxisMapping = false;
-               
+
                mCallback->AxisMappingAcquired(NULL);
             }
          }
@@ -145,40 +145,36 @@ namespace dtCore
             }
          }
       }
-
-      return false;
    }
 
-   bool InputMapper::HandleAxisStateChanged(const Axis* axis, double oldState, double newState, double delta)
+   void InputMapper::OnAxisStateChanged(const Axis* axis, double oldState, double newState, double delta)
    {
       if(mAcquiringAxisMapping)
       {
          mAcquiringAxisMapping = false;
 
-            // find the first device containing the non const axis that is equivalent to this axis
-            bool axis_found(false);
-            DeviceVector::iterator deviter = mDevices.begin();
-            DeviceVector::iterator devend = mDevices.end();
-            while( deviter != devend && !axis_found )
+         // find the first device containing the non const axis that is equivalent to this axis
+         bool axis_found(false);
+         DeviceVector::iterator deviter = mDevices.begin();
+         DeviceVector::iterator devend = mDevices.end();
+         while( deviter != devend && !axis_found )
+         {
+            InputDevice::AxisVector& idav = (*deviter)->GetAxes();
+            InputDevice::AxisVector::iterator axsiter = idav.begin();
+            InputDevice::AxisVector::iterator axsend = idav.end();
+            while( axsiter != axsend && !axis_found )
             {
-               InputDevice::AxisVector& idav = (*deviter)->GetAxes();
-               InputDevice::AxisVector::iterator axsiter = idav.begin();
-               InputDevice::AxisVector::iterator axsend = idav.end();
-               while( axsiter != axsend && !axis_found )
+               if(axis == (*axsiter).get() )
                {
-                  if(axis == (*axsiter).get() )
-                  {
-                     axis_found = true;
-                     mCallback->AxisMappingAcquired(new AxisToAxis( axsiter->get() ));
-                  }
-
-                  axsiter++;
+                  axis_found = true;
+                  mCallback->AxisMappingAcquired(new AxisToAxis( axsiter->get() ));
                }
 
-               deviter++;
+               axsiter++;
             }
-      }
 
-      return false;
+            deviter++;
+         }
+      }
    }
 }

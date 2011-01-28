@@ -161,9 +161,10 @@ namespace dtExample
 
          try
          {
-            CEGUI::Window* rootWindow = CreateWidget("DefaultGUISheet", "root");
-            rootWindow->setArea(CEGUI::UVector2(cegui_reldim(0),cegui_reldim(0)),
-               CEGUI::UVector2(cegui_reldim(1.0),cegui_reldim(1.0)));
+            //CEGUI::Window* rootWindow = CreateWidget("DefaultGUISheet", "root");
+            //rootWindow->setMousePassThroughEnabled(true);
+            //rootWindow->setArea(CEGUI::UVector2(cegui_reldim(0),cegui_reldim(0)),
+            //   CEGUI::UVector2(cegui_reldim(1.0),cegui_reldim(1.0)));
 
             CEGUI::Window* frame = CreateWidget("WindowsLook/StaticText","frame");
             frame->setArea(CEGUI::UVector2(cegui_reldim(0.f),cegui_reldim(0.08f /*0.f*/)),
@@ -173,7 +174,7 @@ namespace dtExample
             frame->setProperty("BackgroundColours","tl:FFDFDFDF tr:FFDFDFDF bl:FFDFDFDF br:FFDFDFDF");
             //frame->setProperty("BackgroundEnabled", "false");
             frame->setText("");
-            rootWindow->addChildWindow(frame);
+            //rootWindow->addChildWindow(frame);
 
             CEGUI::Window* menu = CreateWidget("DefaultWindow","SelectionBar");
             menu->setArea(CEGUI::UVector2(cegui_reldim(0),cegui_reldim(0)),
@@ -241,16 +242,16 @@ namespace dtExample
             mPausedUI->setText("(F2) Not Paused");
             mPausedUI->setPosition(CEGUI::UVector2(cegui_absdim(10), cegui_absdim(400)));
             mPausedUI->setSize(CEGUI::UVector2(cegui_absdim(155), cegui_absdim(20)));
-            rootWindow->addChildWindow(mPausedUI);
+            //rootWindow->addChildWindow(mPausedUI);
 
             mUseSimTimeUI = CreateWidget("WindowsLook/StaticText", "UseSimTimeUI");
             mUseSimTimeUI->setText("(F3) REAL Time (if applies)");
             mUseSimTimeUI->setPosition(CEGUI::UVector2(cegui_absdim(10), cegui_absdim(421)));
             mUseSimTimeUI->setSize(CEGUI::UVector2(cegui_absdim(155), cegui_absdim(20)));
-            rootWindow->addChildWindow(mUseSimTimeUI);
+            //rootWindow->addChildWindow(mUseSimTimeUI);
 
 
-            CEGUI::System::getSingleton().setGUISheet(rootWindow/*menu*/);
+            //CEGUI::System::getSingleton().setGUISheet(rootWindow/*menu*/);
 
             InitializeWidgets(static_cast<CEGUI::RadioButton*>(walk),
                               static_cast<CEGUI::RadioButton*>(fly),
@@ -361,7 +362,7 @@ public:
          mTown->LoadFile("/demoMap/StaticMeshes/TestTownLt.ive");
       }
 
-     
+
       mTown->SetCollisionMesh();
       AddDrawable(mTown.get());
       GetScene()->GetSceneNode()->getOrCreateStateSet()->setMode(GL_LIGHTING, osg::StateAttribute::OVERRIDE | osg::StateAttribute::OFF);
@@ -477,7 +478,7 @@ public:
       return verdict;
    }
 
-   
+
 
    public:
       // Allow command settings to override the default filename. Allows this app to be used to test external models.
@@ -508,8 +509,8 @@ private:
 
          if (i == index)
          {
-            // figure out which MM we have so we can set the option flags appropriately.  
-            // Currently, only Fly supports this 
+            // figure out which MM we have so we can set the option flags appropriately.
+            // Currently, only Fly supports this
             FlyMotionModel *flyMM = dynamic_cast<FlyMotionModel*> (mMotionModels[i].get());
             if (flyMM != NULL)
                flyMM->SetUseSimTimeForSpeed(mUseSimTime);

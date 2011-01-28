@@ -37,7 +37,9 @@
 namespace dtCore
 {
    class AxisListener;
+   class AxisObserver;
    class ButtonListener;
+   class ButtonObserver;
    class InputDeviceFeature;
 
    /// Represents an input device.
@@ -163,6 +165,34 @@ namespace dtCore
        */
       void RemoveAxisListener(AxisListener* axisListener);
 
+      /**
+      * Adds a button observer.
+       *
+       * @param buttonObserver a pointer to the observer to add
+       */
+      void AddButtonObserver(ButtonObserver* buttonObserver);
+
+      /**
+       * Removes a button observer.
+       *
+       * @param buttonObserver a pointer to the observer to remove
+       */
+      void RemoveButtonObserver(ButtonObserver* buttonObserver);
+
+      /**
+       * Adds an axis observer.
+       *
+       * @param axisObserver a pointer to the observer to add
+       */
+      void AddAxisObserver(AxisObserver* axisObserver);
+
+      /**
+       * Removes an axis observer.
+       *
+       * @param axisObserver a pointer to the observer to remove
+       */
+      void RemoveAxisObserver(AxisObserver* axisObserver);
+
       /// Adds a feature to this device.
       /// @param feature a pointer to the feature to add
       bool AddFeature(InputDeviceFeature* feature);
@@ -184,9 +214,13 @@ namespace dtCore
 
       typedef std::list<ButtonListener*> ButtonListenerList; ///< A container of ButtonListeners.
       typedef std::list<AxisListener*> AxisListenerList;     ///< A container of AxisListeners.
+      typedef std::list<ButtonObserver*> ButtonObserverList; ///< A container of ButtonListeners.
+      typedef std::list<AxisObserver*> AxisObserverList;     ///< A container of AxisListeners.
 
       ButtonListenerList mButtonListeners;  ///< The container of ButtonListeners.
       AxisListenerList mAxisListeners;      ///< The container of AxisListeners.
+      ButtonObserverList mButtonObservers;  ///< The container of ButtonListeners.
+      AxisObserverList mAxisObservers;      ///< The container of AxisListeners.
    };
 }
 
