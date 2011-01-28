@@ -5,6 +5,7 @@
 #include <python/dtpython.h>
 #include <dtCore/axislistener.h>
 #include <dtCore/buttonlistener.h>
+#include <dtCore/inputdevice.h>
 
 using namespace boost::python;
 using namespace dtCore;
