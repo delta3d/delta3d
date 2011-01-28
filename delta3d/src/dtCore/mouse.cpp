@@ -156,7 +156,10 @@ bool Mouse::MouseScroll( osgGA::GUIEventAdapter::ScrollingMotion sm )
 
    // Set the axis' state
    dtCore::RefPtr<Axis> scrollAxis = GetAxis(2);
-   handled = scrollAxis->SetState(scrollAxis->GetState() + delta, delta, handled);
+   if (scrollAxis->SetState(scrollAxis->GetState() + delta, delta) && !handled)
+   {
+      handled = scrollAxis->NotifyStateChange(delta);
+   }
 
    return handled;
 }
@@ -175,12 +178,18 @@ bool Mouse::MouseMotion(float x, float y)
    // Set the axes' state
    Axis* zero = GetAxis(0);
    Axis* one = GetAxis(1);
-   if (!handled)
+   bool zero_handled = false, one_handled = false;
+   double zeroDelta = x - zero->GetState();
+   double oneDelta = y - one->GetState();
+   if(zero->SetState(x, zeroDelta) && !handled)
    {
-      bool zero_handled = zero->SetState(x, x - zero->GetState(), handled);
-      bool one_handled = one->SetState(y, y - one->GetState(), handled);
-      handled = (one_handled || zero_handled);
+      zero_handled = zero->NotifyStateChange(zeroDelta);
    }
+   if (one->SetState(y, oneDelta) && !handled)
+   {
+      one_handled = one->NotifyStateChange(oneDelta);
+   }
+   handled = handled || one_handled || zero_handled;
 
    return handled;
 }
@@ -199,12 +208,18 @@ bool Mouse::PassiveMouseMotion(float x, float y)
    // Set the axes' state
    Axis* zero = GetAxis(0);
    Axis* one = GetAxis(1);
-   if (!handled)
+   bool zero_handled = false, one_handled = false;
+   double zeroDelta = x - zero->GetState();
+   double oneDelta = y - one->GetState();
+   if(zero->SetState(x, zeroDelta) && !handled)
    {
-      bool zero_handled = zero->SetState(x, x - zero->GetState(), handled);
-      bool one_handled = one->SetState(y, y - one->GetState(), handled);
-      handled = (one_handled || zero_handled);
+      zero_handled = zero->NotifyStateChange(zeroDelta);
    }
+   if (one->SetState(y, oneDelta) && !handled)
+   {
+      one_handled = one->NotifyStateChange(oneDelta);
+   }
+   handled = handled || one_handled || zero_handled;
 
    return handled;
 }
@@ -223,7 +238,11 @@ bool Mouse::ButtonDown(float x, float y, MouseButton button)
    }
 
    // Set the button's state
-   handled = GetButton(button)->SetState(true, handled);
+   dtCore::RefPtr<Button> mouseButton = GetButton(button);
+   if (mouseButton->SetState(true) && !handled)
+   {
+      handled = mouseButton->NotifyStateChange();
+   }
 
    return handled;
 }
@@ -242,7 +261,11 @@ bool Mouse::DoubleButtonDown(float x, float y, MouseButton button)
    }
 
    // Set the button's state
-   handled = GetButton(button)->SetState(true, handled);
+   dtCore::RefPtr<Button> mouseButton = GetButton(button);
+   if (mouseButton->SetState(true) && !handled)
+   {
+      handled = mouseButton->NotifyStateChange();
+   }
 
    return handled;
 }
@@ -261,7 +284,11 @@ bool Mouse::ButtonUp(float x, float y, MouseButton button)
    }
 
    // Set the button's state
-   handled = GetButton(button)->SetState(false, handled);
+   dtCore::RefPtr<Button> mouseButton = GetButton(button);
+   if (mouseButton->SetState(false) && !handled)
+   {
+      handled = mouseButton->NotifyStateChange();
+   }
 
    return handled;
 }

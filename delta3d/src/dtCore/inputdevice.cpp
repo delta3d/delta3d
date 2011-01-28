@@ -144,6 +144,26 @@ namespace dtCore
       mAxisListeners.remove(axisListener);
    }
 
+   void InputDevice::AddButtonObserver(ButtonObserver* buttonObserver)
+   {
+      mButtonObservers.push_back(buttonObserver);
+   }
+
+   void InputDevice::RemoveButtonObserver(ButtonObserver* buttonObserver)
+   {
+      mButtonObservers.remove(buttonObserver);
+   }
+
+   void InputDevice::AddAxisObserver(AxisObserver* axisObserver)
+   {
+      mAxisObservers.push_back(axisObserver);
+   }
+
+   void InputDevice::RemoveAxisObserver(AxisObserver* axisObserver)
+   {
+      mAxisObservers.remove(axisObserver);
+   }
+
    /**
     * Adds a feature to this device.
     *

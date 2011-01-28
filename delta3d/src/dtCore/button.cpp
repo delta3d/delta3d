@@ -4,6 +4,7 @@
 #include <prefix/dtcoreprefix.h>
 #include <dtCore/button.h>
 #include <dtCore/buttonlistener.h>
+#include <dtCore/buttonobserver.h>
 #include <dtCore/inputdevice.h>
 #include <algorithm> //for std::find
 
@@ -21,44 +22,70 @@ namespace dtCore
       mSymbol(symbol)
    {}
 
-   bool Button::SetState(bool state, bool handled /*= false*/)
+   bool Button::SetState(bool state)
    {
-      bool buttonHandled(false);
-
       if (state != mState)
       {
          mState = state;
 
-         ButtonListenerList::iterator it;
-
-         // perform the chain of responsibility
-         ButtonListenerList::iterator iter = mButtonListeners.begin();
-         ButtonListenerList::iterator enditer = mButtonListeners.end();
-         while (!buttonHandled && iter != enditer)
+         // Notify all of our observers
+         ButtonObserverList::iterator observerIter = mButtonObservers.begin();
+         ButtonObserverList::iterator observerEnditer = mButtonObservers.end();
+         while (observerIter != observerEnditer)
          {
-            buttonHandled = (*iter)->HandleButtonStateChanged(this, !mState, mState);
-            ++iter;
+            (*observerIter)->OnButtonStateChanged(this, !mState, mState);
+            ++observerIter;
          }
 
-         // Notify owner's button listeners if this hasn't been handled already
+         // Notify all owner's axis observers
          if (GetOwner() != NULL)
          {
-            ButtonListenerList::iterator iter = GetOwner()->mButtonListeners.begin();
-            ButtonListenerList::iterator enditer = GetOwner()->mButtonListeners.end();
-            while (/*!handled && */iter != enditer)
+            ButtonObserverList::iterator observerIter = GetOwner()->mButtonObservers.begin();
+            ButtonObserverList::iterator observerEnditer = GetOwner()->mButtonObservers.end();
+            while (observerIter != observerEnditer)
             {
-               (*iter)->HandleButtonStateChanged(this, !mState, mState);
-               ++iter;
+               (*observerIter)->OnButtonStateChanged(this, !mState, mState);
+               ++observerIter;
             }
          }
+
+         return true;
       }
 
-      return handled || buttonHandled;
+      return false;
    }
 
    bool Button::GetState() const
    {
       return mState;
+   }
+
+   bool Button::NotifyStateChange()
+   {
+      bool handled = false;
+
+      // perform the chain of responsibility
+      ButtonListenerList::iterator listenerIter = mButtonListeners.begin();
+      ButtonListenerList::iterator listenerEnditer = mButtonListeners.end();
+      while (!handled && listenerIter != listenerEnditer)
+      {
+         handled = (*listenerIter)->HandleButtonStateChanged(this, !mState, mState);
+         ++listenerIter;
+      }
+
+      // Notify owner's button listeners if this hasn't been handled already
+      if (GetOwner() != NULL)
+      {
+         ButtonListenerList::iterator listenerIter = GetOwner()->mButtonListeners.begin();
+         ButtonListenerList::iterator listenerEnditer = GetOwner()->mButtonListeners.end();
+         while (!handled && listenerIter != listenerEnditer)
+         {
+            handled = (*listenerIter)->HandleButtonStateChanged(this, !mState, mState);
+            ++listenerIter;
+         }
+      }
+
+      return handled;
    }
 
    int Button::GetSymbol() const
@@ -73,12 +100,28 @@ namespace dtCore
 
    void Button::InsertButtonListener(const ButtonListenerList::value_type& pos, ButtonListener* bl)
    {
-      ButtonListenerList::iterator iter = std::find( mButtonListeners.begin() , mButtonListeners.end() , pos );
+      ButtonListenerList::iterator iter = std::find(mButtonListeners.begin(), mButtonListeners.end(), pos);
       mButtonListeners.insert(iter,bl);
    }
 
    void Button::RemoveButtonListener(ButtonListener* buttonListener)
    {
       mButtonListeners.remove(buttonListener);
+   }
+
+   void Button::AddButtonObserver(ButtonObserver* buttonObserver)
+   {
+      mButtonObservers.push_back(buttonObserver);
+   }
+
+   void Button::InsertButtonObserver(const ButtonObserverList::value_type& pos, ButtonObserver* bl)
+   {
+      ButtonObserverList::iterator iter = std::find(mButtonObservers.begin(), mButtonObservers.end(), pos);
+      mButtonObservers.insert(iter, bl);
+   }
+
+   void Button::RemoveButtonObserver(ButtonObserver* buttonObserver)
+   {
+      mButtonObservers.remove(buttonObserver);
    }
 }

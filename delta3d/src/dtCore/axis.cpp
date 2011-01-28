@@ -4,6 +4,7 @@
 #include <prefix/dtcoreprefix.h>
 #include <dtCore/axis.h>
 #include <dtCore/axislistener.h>
+#include <dtCore/axisobserver.h>
 #include <dtCore/inputdevice.h>
 #include <algorithm>
 
@@ -11,46 +12,75 @@ namespace dtCore
 {
    Axis::Axis(InputDevice* owner, const std::string& description) :
       InputDeviceFeature(owner, description),
-      mState(0.0)
+      mState(0.0),
+      mPrevState(0.0)
    {}
 
-   bool Axis::SetState(double state, double delta, bool handled /*= false*/)
+   bool Axis::SetState(double state, double delta)
    {
-      bool axisHandled(false);
-
       if (state != mState || delta != 0.0)
       {
-         double oldState = mState;
+         mPrevState = mState;
          mState = state;
 
-         // perform the chain of responsibility
-         AxisListenerList::iterator iter = mAxisListeners.begin();
-         AxisListenerList::iterator enditer = mAxisListeners.end();
-         while (!axisHandled && iter != enditer)
+         // Notify all of our observers
+         AxisObserverList::iterator observerIter = mAxisObservers.begin();
+         AxisObserverList::iterator observerEnditer = mAxisObservers.end();
+         while (observerIter != observerEnditer)
          {
-            axisHandled = (*iter)->HandleAxisStateChanged(this, oldState, mState, delta);
-            ++iter;
+            (*observerIter)->OnAxisStateChanged(this, mPrevState, mState, delta);
+            ++observerIter;
          }
 
-         // Notify owner's axis listeners if this hasn't been handled already
+         // Notify all owner's axis observers
          if (GetOwner() != NULL)
          {
-            AxisListenerList::iterator iter = GetOwner()->mAxisListeners.begin();
-            AxisListenerList::iterator enditer = GetOwner()->mAxisListeners.end();
-            while (/*!handled && */iter != enditer)
+            AxisObserverList::iterator observerIter = GetOwner()->mAxisObservers.begin();
+            AxisObserverList::iterator observerEnditer = GetOwner()->mAxisObservers.end();
+            while (observerIter != observerEnditer)
             {
-               (*iter)->HandleAxisStateChanged(this, oldState, mState, delta);
-               ++iter;
+               (*observerIter)->OnAxisStateChanged(this, mPrevState, mState, delta);
+               ++observerIter;
             }
          }
+
+         return true;
       }
 
-      return handled || axisHandled;
+      return false;
    }
 
    double Axis::GetState() const
    {
       return mState;
+   }
+
+   bool Axis::NotifyStateChange(double delta /*= 0.0*/)
+   {
+      bool handled = false;
+
+      // perform the chain of responsibility
+      AxisListenerList::iterator listenerIter = mAxisListeners.begin();
+      AxisListenerList::iterator listenerEnditer = mAxisListeners.end();
+      while (!handled && listenerIter != listenerEnditer)
+      {
+         handled = (*listenerIter)->HandleAxisStateChanged(this, mPrevState, mState, delta);
+         ++listenerIter;
+      }
+
+      // Notify owner's axis listeners if this hasn't been handled already
+      if (GetOwner() != NULL)
+      {
+         AxisListenerList::iterator listenerIter = GetOwner()->mAxisListeners.begin();
+         AxisListenerList::iterator listenerEnditer = GetOwner()->mAxisListeners.end();
+         while (!handled && listenerIter != listenerEnditer)
+         {
+            handled = (*listenerIter)->HandleAxisStateChanged(this, mPrevState, mState, delta);
+            ++listenerIter;
+         }
+      }
+
+      return handled;
    }
 
    void Axis::AddAxisListener(AxisListener* axisListener)
@@ -60,12 +90,28 @@ namespace dtCore
 
    void Axis::InsertAxisListener(const AxisListenerList::value_type& pos, AxisListener* al)
    {
-      AxisListenerList::iterator iter = std::find( mAxisListeners.begin() , mAxisListeners.end() , pos );
-      mAxisListeners.insert(iter,al);
+      AxisListenerList::iterator iter = std::find(mAxisListeners.begin(), mAxisListeners.end(), pos);
+      mAxisListeners.insert(iter, al);
    }
 
    void Axis::RemoveAxisListener(AxisListener* axisListener)
    {
       mAxisListeners.remove(axisListener);
+   }
+
+   void Axis::AddAxisObserver(AxisObserver* axisObserver)
+   {
+      mAxisObservers.push_back(axisObserver);
+   }
+
+   void Axis::InsertAxisObserver(const AxisObserverList::value_type& pos, AxisObserver* al)
+   {
+      AxisObserverList::iterator iter = std::find(mAxisObservers.begin(), mAxisObservers.end(), pos);
+      mAxisObservers.insert(iter, al);
+   }
+
+   void Axis::RemoveAxisObserver(AxisObserver* axisObserver)
+   {
+      mAxisObservers.remove(axisObserver);
    }
 }

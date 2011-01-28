@@ -28,8 +28,10 @@
 #include <dtCore/inputdevice.h>
 #include <dtCore/axis.h>
 #include <dtCore/axislistener.h>
+#include <dtCore/axisobserver.h>
 #include <dtCore/button.h>
 #include <dtCore/buttonlistener.h>
+#include <dtCore/buttonobserver.h>
 
 namespace dtCore
 {
@@ -204,7 +206,8 @@ namespace dtCore
     * Maps a button to a logical button.
     */
    class DT_CORE_EXPORT ButtonToButton :  public ButtonMapping,
-                                          public ButtonListener
+                                          public ButtonListener,
+                                          public ButtonObserver
    {
       public:
 
@@ -263,6 +266,12 @@ namespace dtCore
                                          bool oldState,
                                          bool newState);
 
+         /// Called when a button's state has changed.
+         /// @param button the origin of the event
+         /// @param oldState the old state of the button
+         /// @param newState the new state of the button
+         virtual void OnButtonStateChanged(const Button* button, bool oldState, bool newState);
+
       private:
 
          /**
@@ -286,7 +295,8 @@ namespace dtCore
    * Maps two buttons to a logical button.
    */
    class DT_CORE_EXPORT ButtonsToButton :  public ButtonMapping,
-      public ButtonListener
+                                           public ButtonListener,
+                                           public ButtonObserver
    {
    public:
 
@@ -367,6 +377,12 @@ namespace dtCore
       virtual bool HandleButtonStateChanged(const Button* button,
          bool oldState,
          bool newState);
+
+      /// Called when a button's state has changed.
+      /// @param button the origin of the event
+      /// @param oldState the old state of the button
+      /// @param newState the new state of the button
+      virtual void OnButtonStateChanged(const Button* button, bool oldState, bool newState);
 
    private:
 
@@ -472,7 +488,8 @@ namespace dtCore
     * Maps an axis to a logical axis with an optional linear transformation.
     */
    class DT_CORE_EXPORT AxisToAxis :   public AxisMapping,
-                                       public AxisListener
+                                       public AxisListener,
+                                       public AxisObserver
    {
       public:
 
@@ -551,6 +568,16 @@ namespace dtCore
                                        double newState,
                                        double delta);
 
+         /**
+         * Called when an axis' state has changed.
+         *
+         * @param axis the changed axis
+         * @param oldState the old state of the axis
+         * @param newState the new state of the axis
+         * @param delta a delta value indicating stateless motion
+         */
+         virtual void OnAxisStateChanged(const Axis* axis, double oldState, double newState, double delta);
+
       private:
          /// The source axis.
          RefPtr<Axis> mSourceAxis;
@@ -575,7 +602,8 @@ namespace dtCore
     * to the value of the last source axis updated.
     */
    class DT_CORE_EXPORT AxesToAxis :   public AxisMapping,
-                                       public AxisListener
+                                       public AxisListener,
+                                       public AxisObserver
    {
       public:
 
@@ -650,6 +678,15 @@ namespace dtCore
           */
          virtual bool HandleAxisStateChanged(const Axis* axis, double oldState, double newState, double delta);
 
+         /**
+          * Called when an axis' state has changed.
+          *
+          * @param axis the changed axis
+          * @param oldState the old state of the axis
+          * @param newState the new state of the axis
+          * @param delta a delta value indicating stateless motion
+          */
+         virtual void OnAxisStateChanged(const Axis* axis, double oldState, double newState, double delta);
 
       private:
          /// The source axes.
@@ -668,7 +705,8 @@ namespace dtCore
     * Maps two buttons to a logical axis.
     */
    class DT_CORE_EXPORT ButtonsToAxis :   public AxisMapping,
-                                          public ButtonListener
+                                          public ButtonListener,
+                                          public ButtonObserver
    {
       public:
 
@@ -769,6 +807,12 @@ namespace dtCore
                                          bool oldState,
                                          bool newState);
 
+         /// Called when a button's state has changed.
+         /// @param button the origin of the event
+         /// @param oldState the old state of the button
+         /// @param newState the new state of the button
+         virtual void OnButtonStateChanged(const Button* button, bool oldState, bool newState);
+
          // Accessors for child classes
          Button* GetFirstSourceButton() const  { return mFirstSourceButton.get();  }
          Button* GetSecondSourceButton() const { return mSecondSourceButton.get(); }
@@ -848,7 +892,9 @@ namespace dtCore
     */
    class DT_CORE_EXPORT ButtonAxisToAxis :   public AxisMapping,
                                              public ButtonListener,
-                                             public AxisListener
+                                             public ButtonObserver,
+                                             public AxisListener,
+                                             public AxisObserver
    {
       public:
 
@@ -920,6 +966,12 @@ namespace dtCore
           */
          virtual bool HandleButtonStateChanged(const Button* button, bool oldState, bool newState);
 
+         /// Called when a button's state has changed.
+         /// @param button the origin of the event
+         /// @param oldState the old state of the button
+         /// @param newState the new state of the button
+         virtual void OnButtonStateChanged(const Button* button, bool oldState, bool newState);
+
          /**
           * Called when an axis' state has changed.
           *
@@ -930,6 +982,15 @@ namespace dtCore
           */
          virtual bool HandleAxisStateChanged(const Axis* axis, double oldState, double newState, double delta);
 
+         /**
+          * Called when an axis' state has changed.
+          *
+          * @param axis the changed axis
+          * @param oldState the old state of the axis
+          * @param newState the new state of the axis
+          * @param delta a delta value indicating stateless motion
+          */
+         virtual void OnAxisStateChanged(const Axis* axis, double oldState, double newState, double delta);
 
       private:
          /// The source button.

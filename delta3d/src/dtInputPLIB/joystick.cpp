@@ -122,12 +122,20 @@ void Joystick::Poll()
 
    for (unsigned int i = 0; i < numButtons; i++)
    {
-      GetButton(i)->SetState((buttons & (1 << i)) != 0);
+      dtCore::Button* button = GetButton(i);
+      if (button->SetState((buttons & (1 << i)) != 0))
+      {
+         button->NotifyStateChange();
+      }
    }
 
    for (unsigned int j = 0; j < numAxes; j++)
    {
-      GetAxis(j)->SetState(axes[j]);
+      dtCore::Axis* axis = GetAxis(j);
+      if (axis->SetState(axes[j]))
+      {
+         axis->NotifyStateChange();
+      }
    }
 
    delete axes;
