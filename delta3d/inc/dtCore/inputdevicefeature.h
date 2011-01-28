@@ -27,6 +27,7 @@
 
 #include <dtCore/export.h>
 #include <dtCore/observerptr.h>
+#include <osg/Referenced>
 
 namespace dtCore
 {

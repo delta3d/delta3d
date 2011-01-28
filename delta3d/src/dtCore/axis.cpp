@@ -5,6 +5,7 @@
 #include <dtCore/axis.h>
 #include <dtCore/axislistener.h>
 #include <dtCore/inputdevice.h>
+#include <algorithm>
 
 namespace dtCore
 {

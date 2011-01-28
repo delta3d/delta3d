@@ -5,6 +5,7 @@
 #include <dtCore/button.h>
 #include <dtCore/buttonlistener.h>
 #include <dtCore/inputdevice.h>
+#include <algorithm> //for std::find
 
 namespace dtCore
 {

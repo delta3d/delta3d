@@ -27,6 +27,7 @@
 
 #include <dtCore/export.h>
 #include <dtCore/inputdevicefeature.h>
+#include <list>
 
 namespace dtCore
 {
