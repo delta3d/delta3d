@@ -35,7 +35,7 @@ SET(LIB_PUBLIC_HEADERS ${HEADER_PATH}/actionitem.h
 )
 
 SET(LIB_SOURCES ${SOURCE_PATH}/actionitem.cpp
-    ${SOURCE_PATH}/Clipboard.cpp
+    ${SOURCE_PATH}/clipboard.cpp
     ${SOURCE_PATH}/Customeditortool.cpp
     ${SOURCE_PATH}/directoreditor.cpp
     ${SOURCE_PATH}/editorscene.cpp
