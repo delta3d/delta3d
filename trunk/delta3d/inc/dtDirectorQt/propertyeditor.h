@@ -66,7 +66,14 @@ namespace dtDirector
       /**
        * Constructor
        */
-      PropertyEditor(DirectorEditor* parent);
+      PropertyEditor(QMainWindow* parent);
+
+      /**
+      * Sets the Property Editor's DirectorEditor
+      *
+      * @param[in]  editor  The director editor that owns this widget.
+      */
+      void SetDirectorEditor(DirectorEditor* editor);
 
       /**
        * Sets the scene.

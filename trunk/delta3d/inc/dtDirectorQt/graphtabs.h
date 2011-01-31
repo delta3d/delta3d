@@ -44,9 +44,15 @@ namespace dtDirector
       * Constructs a document tabs viewer.
       *
       * @param[in]  parent  The parent widget.
+      */
+      GraphTabs(QWidget* parent);
+
+      /**
+      * Sets the Graph Tabs DirectorEditor
+      *
       * @param[in]  editor  The director editor that owns this widget.
       */
-      GraphTabs(QWidget* parent, DirectorEditor* editor);
+      void SetDirectorEditor(DirectorEditor* editor);
 
    protected:
 

@@ -111,9 +111,8 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
 
    //////////////////////////////////////////////////////////////////////////
-   ReplayBrowser::ReplayBrowser(DirectorEditor* parent)
+   ReplayBrowser::ReplayBrowser(QMainWindow* parent)
       : QDockWidget(parent)
-      , mEditor(parent)
       , mGroupBox(NULL)
       , mThreadList(NULL)
    {
@@ -136,6 +135,12 @@ namespace dtDirector
 
       connect(mThreadList, SIGNAL(itemDoubleClicked(QListWidgetItem*)),
          this, SLOT(OnItemDoubleClicked(QListWidgetItem*)));
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void ReplayBrowser::SetDirectorEditor(DirectorEditor* editor)
+   {
+      mEditor = editor;
    }
 
    //////////////////////////////////////////////////////////////////////////

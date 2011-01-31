@@ -219,7 +219,7 @@ namespace dtDirector
       else if (mNode->GetType().GetFullName() == "Core.Input Link" ||
          mNode->GetType().GetFullName() == "Core.Output Link")
       {
-         mScene->GetEditor()->OnParentButton();
+         mScene->GetEditor()->on_action_Step_Out_Of_Graph_triggered();
       }
    }
 }

@@ -106,7 +106,14 @@ namespace dtDirector
        *
        * @param[in]  parent    This editor parent.
        */
-      ReplayBrowser(DirectorEditor* parent);
+      ReplayBrowser(QMainWindow* parent);
+
+      /**
+      * Sets the Replay Browser's DirectorEditor
+      *
+      * @param[in]  editor  The director editor that owns this widget.
+      */
+      void SetDirectorEditor(DirectorEditor* editor);
 
       /**
        * Builds the Graph list.

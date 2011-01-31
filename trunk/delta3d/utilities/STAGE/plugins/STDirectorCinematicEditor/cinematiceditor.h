@@ -32,7 +32,6 @@
 #include <dtEditQt/plugininterface.h>
 
 #include <dtDirector/director.h>
-#include <dtDirectorQt/directoreditor.h>
 #include <dtDirectorQt/customeditortool.h>
 
 #include <dtCore/transform.h>
@@ -68,7 +67,7 @@ namespace dtEditQt
  * The DirectorCinematicEditorPlugin is a plugin that is used as a tool
  * to place a LinkedPointsActor into the world.
  */
-class DT_DIRECTOR_CINEMATIC_EDITOR_EXPORT DirectorCinematicEditorPlugin 
+class DT_DIRECTOR_CINEMATIC_EDITOR_EXPORT DirectorCinematicEditorPlugin
    : public QWidget
    , public dtDirector::CustomEditorTool
    , public Plugin
@@ -78,7 +77,7 @@ class DT_DIRECTOR_CINEMATIC_EDITOR_EXPORT DirectorCinematicEditorPlugin
 public:
 
    const static std::string PLUGIN_NAME;
-   
+
    /**
     * Constructor
     *

@@ -75,7 +75,14 @@ namespace dtDirector
        *
        * @param[in]  parent    This editor parent.
        */
-      GraphBrowser(DirectorEditor* parent);
+      GraphBrowser(QMainWindow* parent);
+
+      /**
+      * Sets the Graph Browser's DirectorEditor
+      *
+      * @param[in]  editor  The director editor that owns this widget.
+      */
+      void SetDirectorEditor(DirectorEditor* editor);
 
       /**
        * Builds the Graph list.
