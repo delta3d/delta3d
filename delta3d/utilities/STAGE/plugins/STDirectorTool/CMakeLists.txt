@@ -6,7 +6,7 @@ file(GLOB LIB_SOURCES "*.cpp")
 
 INCLUDE_DIRECTORIES(  ${CMAKE_SOURCE_DIR}/utilities/STAGE/inc
             ${QT_INCLUDE_DIR}
-            ${CMAKE_CURRENT_BINARY_DIR} # for ui*.h files
+            ${DELTA3D_SOURCE_DIR}/ui/dtDirectorQt # for ui*.h files
 )
 
 qt4_wrap_cpp(MOC_SOURCES ${LIB_HEADERS})

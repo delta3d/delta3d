@@ -606,7 +606,7 @@ namespace dtDirector
       if (graph)
       {
          // If there are any nodes selected, cut them.
-         mEditor->OnCut();
+         mEditor->on_action_Cut_triggered();
 
          // Switch the current graph to the new macro.
          SetGraph(graph);

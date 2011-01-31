@@ -1,9 +1,25 @@
-
 SET(LIB_NAME     dtDirectorQt)
-
 
 SET(HEADER_PATH ${DELTA3D_SOURCE_DIR}/inc/${LIB_NAME})
 SET(SOURCE_PATH ${DELTA3D_SOURCE_DIR}/src/${LIB_NAME})
+SET(UI_PATH ${DELTA3D_SOURCE_DIR}/ui/${LIB_NAME})
+
+# Define Qt macro to put ui_*.h files into a set place
+MACRO (QT4_WRAP_UI outfiles)
+  QT4_EXTRACT_OPTIONS(ui_files ui_options ${ARGN})
+
+  FOREACH (it ${ui_files})
+    GET_FILENAME_COMPONENT(outfile ${it} NAME_WE)
+    GET_FILENAME_COMPONENT(infile ${it} ABSOLUTE)
+    SET(outfile ${UI_PATH}/ui_${outfile}.h) # Here we set output
+    ADD_CUSTOM_COMMAND(OUTPUT ${outfile}
+      COMMAND ${QT_UIC_EXECUTABLE}
+      ARGS ${ui_options} -o ${outfile} ${infile}
+      MAIN_DEPENDENCY ${infile})
+    SET(${outfiles} ${${outfiles}} ${outfile})
+  ENDFOREACH (it)
+
+ENDMACRO (QT4_WRAP_UI)
 
 SET(LIB_PUBLIC_HEADERS ${HEADER_PATH}/actionitem.h
     ${HEADER_PATH}/clipboard.h
@@ -62,19 +78,33 @@ SET(LIB_SOURCES ${SOURCE_PATH}/actionitem.cpp
     ${SOURCE_PATH}/valueitem.cpp
 )
 
+SET(QT_UI_SOURCES
+    ${UI_PATH}/directoreditor.ui
+)
 
 QT4_WRAP_CPP(MOC_SOURCES ${LIB_PUBLIC_HEADERS})
 QT4_ADD_RESOURCES(RCC_SOURCES directorqt.qrc)
+QT4_WRAP_UI(UI_SOURCES ${QT_UI_SOURCES})
+
+############### SOURCE FILE ORGANIZATION #################
+SOURCE_GROUP("Auto-Generated" FILES ${MOC_SOURCES})
+SOURCE_GROUP("Auto-Generated" FILES ${RCC_SOURCES})
+SOURCE_GROUP("Auto-Generated" FILES ${UI_SOURCES})
+
+SOURCE_GROUP("UI Files" FILES ${QT_UI_SOURCES})
+##########################################################
 
 ADD_LIBRARY(${LIB_NAME} SHARED
     ${LIB_PUBLIC_HEADERS}
     ${LIB_SOURCES}
     ${MOC_SOURCES}
     ${RCC_SOURCES}
+    ${UI_SOURCES}
 )
 
 INCLUDE_DIRECTORIES(${SOURCE_PATH}/inc
                     ${QT_INCLUDE_DIR}
+                    ${UI_PATH}
                    )
 
 LINK_WITH_VARIABLES(${LIB_NAME}

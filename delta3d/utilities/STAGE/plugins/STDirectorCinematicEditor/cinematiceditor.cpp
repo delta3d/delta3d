@@ -30,7 +30,6 @@
 
 #include <dtDirector/nodemanager.h>
 
-#include <dtDirectorQt/directoreditor.h>
 #include <dtDirectorQt/propertyeditor.h>
 #include <dtDirectorQt/editorscene.h>
 #include <dtDirectorQt/undomanager.h>

@@ -54,315 +54,31 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////////
    DirectorEditor::DirectorEditor(QWidget* parent)
       : QMainWindow(parent, Qt::Window)
-      , mGraphTabs(NULL)
-      , mPropertyEditor(NULL)
-      , mGraphBrowser(NULL)
-      , mReplayBrowser(NULL)
       , mUndoManager(NULL)
       , mDirector(NULL)
       , mReplayMode(false)
       , mReplayInput(NULL)
       , mReplayOutput(NULL)
-      , mMenuBar(NULL)
-      , mFileToolbar(NULL)
-      , mEditToolbar(NULL)
-      , mFileMenu(NULL)
-      , mEditMenu(NULL)
-      , mViewMenu(NULL)
-      , mNewAction(NULL)
-      , mLoadAction(NULL)
-      , mSaveAction(NULL)
-      , mSaveAsAction(NULL)
-      , mLoadRecordingAction(NULL)
-      , mParentAction(NULL)
-      , mSnapGridAction(NULL)
-      , mUndoAction(NULL)
-      , mRedoAction(NULL)
-      , mDeleteAction(NULL)
-      , mCutAction(NULL)
-      , mCopyAction(NULL)
-      , mPasteAction(NULL)
-      , mLibrariesAction(NULL)
-      , mViewPropertiesAction(NULL)
-      , mViewGraphBrowserAction(NULL)
-      , mViewReplayBrowserAction(NULL)
-      , mShowLinksAction(NULL)
-      , mHideLinksAction(NULL)
-      , mRefreshAction(NULL)
    {
-      // Set the default size of the window.
-      resize(900, 600);
-
-      setWindowTitle("No Director Graph Loaded");
+      mUI.setupUi(this);
 
       // Undo Manager.
       mUndoManager = new UndoManager(this);
 
-      // Property editor.
-      mPropertyEditor = new PropertyEditor(this);
-      addDockWidget(Qt::BottomDockWidgetArea, mPropertyEditor);
-
-      // Graph browser.
-      mGraphBrowser = new GraphBrowser(this);
-      addDockWidget(Qt::BottomDockWidgetArea, mGraphBrowser);
-
-      // Replay browser.
-      mReplayBrowser = new ReplayBrowser(this);
-      addDockWidget(Qt::RightDockWidgetArea, mReplayBrowser);
-      mReplayBrowser->hide();
-
-      // New Action.
-      mNewAction = new QAction(QIcon(":/icons/new.png"), tr("&New"), this);
-      mNewAction->setShortcut(tr("Ctrl+N"));
-      mNewAction->setToolTip(tr("Begins a new Director script (Ctrl+N)."));
-
-      // Load Action.
-      mLoadAction = new QAction(QIcon(":/icons/open.png"), tr("&Load"), this);
-      mLoadAction->setShortcut(tr("Ctrl+L"));
-      mLoadAction->setToolTip(tr("Loads a Director script from a file (Ctrl+L)."));
-
-      // Save Action.
-      mSaveAction = new QAction(QIcon(":/icons/save.png"), tr("&Save"), this);
-      mSaveAction->setShortcut(tr("Ctrl+S"));
-      mSaveAction->setToolTip(tr("Saves the current Director script (Ctrl+S)."));
-
-      // Save Action.
-      mSaveAsAction = new QAction(QIcon(":/icons/save.png"), tr("&Save as..."), this);
-      mSaveAsAction->setToolTip(tr("Saves the current Director script."));
-
-      // Load Recording Action.
-      mLoadRecordingAction = new QAction(QIcon(":/icons/open.png"), tr("&Load Recording"), this);
-      mLoadRecordingAction->setToolTip(tr("Loads recorded script data."));
-
-      // Parent Action.
-      mParentAction = new QAction(QIcon(":/icons/parent.png"), tr("Step out of Graph"), this);
-      mParentAction->setShortcut(tr("Ctrl+U"));
-      mParentAction->setToolTip(tr("Returns to the parent graph (Ctrl+U)."));
-
-      // Show Links Action.
-      mSnapGridAction = new QAction(QIcon(":/icons/snapgrid.png"), tr("Smart Grid Snap"), this);
-      mSnapGridAction->setShortcut(tr("Ctrl+G"));
-      mSnapGridAction->setToolTip(tr("Snaps nodes to a smart grid determined by the placement of other nodes (Ctrl+G)."));
-      mSnapGridAction->setCheckable(true);
-      mSnapGridAction->setChecked(true);
-
-      // Undo Action.
-      mUndoAction = new QAction(QIcon(":/icons/undo.png"), tr("Undo"), this);
-      mUndoAction->setShortcut(tr("Ctrl+Z"));
-      mUndoAction->setToolTip(tr("Reverts to your last action (Ctrl+Z)."));
-
-      // Redo Action.
-      mRedoAction = new QAction(QIcon(":/icons/redo.png"), tr("Redo"), this);
-      mRedoAction->setShortcut(tr("Ctrl+Y"));
-      mRedoAction->setToolTip(tr("Reverts your last undo action (Ctrl+Y)."));
-
-      // Delete Action.
-      mDeleteAction = new QAction(QIcon(":/icons/delete.png"), tr("Delete"), this);
-      mDeleteAction->setShortcut(tr("Delete"));
-      mDeleteAction->setToolTip(tr("Reverts your last undo action (Delete)."));
-
-      // Cut Action.
-      mCutAction = new QAction(QIcon(":/icons/cut.png"), tr("Cut"), this);
-      mCutAction->setShortcut(tr("Ctrl+X"));
-      mCutAction->setToolTip(tr("Cuts the currently selected nodes to the clipboard (Ctrl+X)."));
-
-      // Copy Action.
-      mCopyAction = new QAction(QIcon(":/icons/duplicate.png"), tr("Copy"), this);
-      mCopyAction->setShortcut(tr("Ctrl+C"));
-      mCopyAction->setToolTip(tr("Copies the currently selected nodes to the clipboard (Ctrl+C)."));
-
-      // Cut Action.
-      mPasteAction = new QAction(QIcon(":/icons/paste.png"), tr("Paste"), this);
-      mPasteAction->setShortcut(tr("Ctrl+V"));
-      mPasteAction->setToolTip(tr("Pastes the nodes saved in the clipboard to the current graph (Ctrl+V)."));
-
-      // Libraries Action.
-      mLibrariesAction = new QAction("Manage Libraries...", this);
-      mLibrariesAction->setToolTip(tr("Manages the Node Libraries for the script."));
-
-      // Show Properties Action.
-      mViewPropertiesAction = new QAction(tr("Property Editor"), this);
-      mViewPropertiesAction->setShortcut(tr("Ctrl+P"));
-      mViewPropertiesAction->setToolTip(tr("Shows the Property Editor (Ctrl+P)."));
-      mViewPropertiesAction->setCheckable(true);
-      mViewPropertiesAction->setChecked(true);
-
-      // Show Graph browser Action.
-      mViewGraphBrowserAction = new QAction(tr("Graph Browser"), this);
-      mViewGraphBrowserAction->setShortcut(tr("Ctrl+B"));
-      mViewGraphBrowserAction->setToolTip(tr("Shows the Graph Browser (Ctrl+B)."));
-      mViewGraphBrowserAction->setCheckable(true);
-      mViewGraphBrowserAction->setChecked(true);
-
-      // Show Replay browser Action.
-      mViewReplayBrowserAction = new QAction(tr("Replay Browser"), this);
-      mViewReplayBrowserAction->setShortcut(tr("Ctrl+R"));
-      mViewReplayBrowserAction->setToolTip(tr("Shows the Replay Browser (Ctrl+R)."));
-      mViewReplayBrowserAction->setCheckable(true);
-      mViewReplayBrowserAction->setChecked(false);
-
-      // Show Links Action.
-      mShowLinksAction = new QAction(QIcon(":/icons/showlinks.png"), tr("Show Links"), this);
-      mShowLinksAction->setShortcut(tr("Ctrl+U"));
-      mShowLinksAction->setToolTip(tr("Shows all hidden links on selected nodes (Ctrl+U)."));
-
-      // Hide Links Action.
-      mHideLinksAction = new QAction(QIcon(":/icons/hidelinks.png"), tr("Hide Links"), this);
-      mHideLinksAction->setShortcut(tr("Ctrl+H"));
-      mHideLinksAction->setToolTip(tr("Hides all unused links on selected nodes (Ctrl+H)."));
-
-      // Show refresh Action.
-      mRefreshAction = new QAction(QIcon(":/icons/refresh.png"), tr("Refresh"), this);
-      mRefreshAction->setShortcut(tr("F5"));
-      mRefreshAction->setToolTip(tr("Refresh the current view (F5)."));
+      // Setup widgets
+      mUI.graphTab->SetDirectorEditor(this);
+      mUI.propertyEditor->SetDirectorEditor(this);
+      mUI.graphBrowser->SetDirectorEditor(this);
+      mUI.replayBrowser->SetDirectorEditor(this);
+      mUI.replayBrowser->hide();
 
       // Graph tabs.
-      mGraphTabs = new GraphTabs(this, this);
-      mGraphTabs->setTabsClosable(true);
-      mGraphTabs->setMovable(true);
-      mGraphTabs->setTabShape(QTabWidget::Rounded);
-      mPropertyEditor->SetGraphTabs(mGraphTabs);
-
-      // Menu Bar.
-      mMenuBar = new QMenuBar(this);
-      setMenuBar(mMenuBar);
-      mMenuBar->setObjectName("Menu Bar");
-      mMenuBar->setWindowTitle("Menu Bar");
-
-      // File Menu.
-      mFileMenu = mMenuBar->addMenu("&File");
-      mFileMenu->addAction(mNewAction);
-      mFileMenu->addAction(mLoadAction);
-      mFileMenu->addAction(mSaveAction);
-      mFileMenu->addAction(mSaveAsAction);
-      mFileMenu->addSeparator();
-      mFileMenu->addAction(mLoadRecordingAction);
-
-      // Edit Menu.
-      mEditMenu = mMenuBar->addMenu("&Edit");
-      mEditMenu->addAction(mParentAction);
-      mEditMenu->addSeparator();
-      mEditMenu->addAction(mSnapGridAction);
-      mEditMenu->addSeparator();
-      mEditMenu->addAction(mUndoAction);
-      mEditMenu->addAction(mRedoAction);
-      mEditMenu->addSeparator();
-      mEditMenu->addAction(mCutAction);
-      mEditMenu->addAction(mCopyAction);
-      mEditMenu->addAction(mPasteAction);
-      mEditMenu->addSeparator();
-      mEditMenu->addAction(mDeleteAction);
-      mEditMenu->addSeparator();
-      mEditMenu->addAction(mLibrariesAction);
-
-      // View Menu.
-      mViewMenu = mMenuBar->addMenu("&View");
-      mViewMenu->addAction(mViewPropertiesAction);
-      mViewMenu->addAction(mViewGraphBrowserAction);
-      mViewMenu->addAction(mViewReplayBrowserAction);
-      mViewMenu->addSeparator();
-      mViewMenu->addAction(mShowLinksAction);
-      mViewMenu->addAction(mHideLinksAction);
-      mViewMenu->addSeparator();
-      mViewMenu->addAction(mRefreshAction);
-
-      // File Toolbar.
-      mFileToolbar = new QToolBar(this);
-      addToolBar(mFileToolbar);
-      mFileToolbar->setObjectName("File Toolbar");
-      mFileToolbar->setWindowTitle(tr("File Toolbar"));
-
-      mFileToolbar->addAction(mNewAction);
-      mFileToolbar->addAction(mLoadAction);
-      mFileToolbar->addAction(mSaveAction);
-
-      // Edit Toolbar.
-      mEditToolbar = new QToolBar(this);
-      addToolBar(mEditToolbar);
-      mEditToolbar->setObjectName("Edit Toolbar");
-      mEditToolbar->setWindowTitle(tr("Edit Toolbar"));
-
-      mEditToolbar->addAction(mParentAction);
-      mEditToolbar->addSeparator();
-      mEditToolbar->addAction(mSnapGridAction);
-      mEditToolbar->addSeparator();
-      mEditToolbar->addAction(mUndoAction);
-      mEditToolbar->addAction(mRedoAction);
-      mEditToolbar->addSeparator();
-      mEditToolbar->addAction(mCutAction);
-      mEditToolbar->addAction(mCopyAction);
-      mEditToolbar->addAction(mPasteAction);
-      mEditToolbar->addSeparator();
-      mEditToolbar->addAction(mDeleteAction);
-
-      mEditToolbar->addSeparator();
-      mEditToolbar->addAction(mShowLinksAction);
-      mEditToolbar->addAction(mHideLinksAction);
-      mEditToolbar->addSeparator();
-      mEditToolbar->addAction(mRefreshAction);
-
-      // Main layout.
-      setCentralWidget(mGraphTabs);
-
-      // Connect slots.
-      connect(mGraphTabs, SIGNAL(currentChanged(int)),
-         this, SLOT(OnGraphTabChanged(int)));
-      connect(mGraphTabs, SIGNAL(tabCloseRequested(int)),
-         this, SLOT(OnGraphTabClosed(int)));
-
-      connect(mPropertyEditor, SIGNAL(visibilityChanged(bool)),
-         this, SLOT(OnPropertyEditorVisibilityChange(bool)));
-      connect(mGraphBrowser, SIGNAL(visibilityChanged(bool)),
-         this, SLOT(OnGraphBrowserVisibilityChange(bool)));
-      connect(mReplayBrowser, SIGNAL(visibilityChanged(bool)),
-         this, SLOT(OnReplayBrowserVisibilityChange(bool)));
-
-      connect(mSaveAction, SIGNAL(triggered()),
-         this, SLOT(OnSaveButton()));
-      connect(mSaveAsAction, SIGNAL(triggered()),
-         this, SLOT(OnSaveAsButton()));
-      connect(mLoadAction, SIGNAL(triggered()),
-         this, SLOT(OnLoadButton()));
-      connect(mNewAction, SIGNAL(triggered()),
-         this, SLOT(OnNewButton()));
-      connect(mLoadRecordingAction, SIGNAL(triggered()),
-         this, SLOT(OnLoadRecordingButton()));
-
-      connect(mParentAction, SIGNAL(triggered()),
-         this, SLOT(OnParentButton()));
-      connect(mUndoAction, SIGNAL(triggered()),
-         this, SLOT(OnUndo()));
-      connect(mRedoAction, SIGNAL(triggered()),
-         this, SLOT(OnRedo()));
-      connect(mCutAction, SIGNAL(triggered()),
-         this, SLOT(OnCut()));
-      connect(mCopyAction, SIGNAL(triggered()),
-         this, SLOT(OnCopy()));
-      connect(mPasteAction, SIGNAL(triggered()),
-         this, SLOT(OnPaste()));
-      connect(mDeleteAction, SIGNAL(triggered()),
-         this, SLOT(OnDelete()));
-      connect(mLibrariesAction, SIGNAL(triggered()),
-         this, SLOT(OnManageLibraries()));
-
-      connect(mViewPropertiesAction, SIGNAL(triggered()),
-         this, SLOT(OnShowPropertyEditor()));
-      connect(mViewGraphBrowserAction, SIGNAL(triggered()),
-         this, SLOT(OnShowGraphBrowser()));
-      connect(mViewReplayBrowserAction, SIGNAL(triggered()),
-         this, SLOT(OnShowReplayBrowser()));
-      connect(mShowLinksAction, SIGNAL(triggered()),
-         this, SLOT(OnShowLinks()));
-      connect(mHideLinksAction, SIGNAL(triggered()),
-         this, SLOT(OnHideLinks()));
-      connect(mRefreshAction, SIGNAL(triggered()),
-         this, SLOT(OnRefresh()));
+      mUI.propertyEditor->SetGraphTabs(mUI.graphTab);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    DirectorEditor::~DirectorEditor()
    {
-      delete mPropertyEditor;
       delete mUndoManager;
    }
 
@@ -371,12 +87,12 @@ namespace dtDirector
    {
       mDirector = director;
 
-      mGraphTabs->clear();
+      mUI.graphTab->clear();
 
       if (mDirector)
       {
          setWindowTitle(mDirector->GetName().c_str());
-         mGraphBrowser->BuildGraphList(mDirector->GetGraphRoot());
+         mUI.graphBrowser->BuildGraphList(mDirector->GetGraphRoot());
       }
       else
       {
@@ -389,18 +105,18 @@ namespace dtDirector
    {
       // Create a new page if we are forcing a new page or
       // if we don't have any pages yet.
-      if (mGraphTabs->count() < 1 || newTab)
+      if (mUI.graphTab->count() < 1 || newTab)
       {
-         EditorScene* scene = new EditorScene(mPropertyEditor, mGraphTabs);
+         EditorScene* scene = new EditorScene(mUI.propertyEditor, mUI.graphTab);
          EditorView* view = new EditorView(scene, this);
          scene->SetEditor(this);
          scene->SetView(view);
 
-         int index = mGraphTabs->addTab(view, "");
-         mGraphTabs->setCurrentIndex(index);
+         int index = mUI.graphTab->addTab(view, "");
+         mUI.graphTab->setCurrentIndex(index);
       }
 
-      EditorView* view = dynamic_cast<EditorView*>(mGraphTabs->currentWidget());
+      EditorView* view = dynamic_cast<EditorView*>(mUI.graphTab->currentWidget());
       if (view && graph)
       {
          view->GetScene()->SetGraph(graph);
@@ -431,7 +147,7 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    osg::Vec2 DirectorEditor::GetSnapPosition(osg::Vec2 position)
    {
-      if (mSnapGridAction->isChecked())
+      if (mUI.action_Smart_Grid_snap->isChecked())
       {
          position.x() = float(int(position.x() / 10) * 10);
          position.y() = float(int(position.y() / 10) * 10);
@@ -447,40 +163,40 @@ namespace dtDirector
       RefreshButtonStates();
 
       // Refresh the graph tabs with their graph names.
-      int count = mGraphTabs->count();
+      int count = mUI.graphTab->count();
       for (int index = 0; index < count; index++)
       {
-         EditorView* view = dynamic_cast<EditorView*>(mGraphTabs->widget(index));
+         EditorView* view = dynamic_cast<EditorView*>(mUI.graphTab->widget(index));
          if (view && view->GetScene())
          {
             DirectorGraph* graph = view->GetScene()->GetGraph();
             if (graph)
             {
-               mGraphTabs->setTabText(index, graph->mName.c_str());
+               mUI.graphTab->setTabText(index, graph->mName.c_str());
             }
          }
       }
 
       // Refresh the Scene.
-      mPropertyEditor->GetScene()->Refresh();
-      
+      mUI.propertyEditor->GetScene()->Refresh();
+
       // Refresh the Properties.
-      mPropertyEditor->GetScene()->RefreshProperties();
+      mUI.propertyEditor->GetScene()->RefreshProperties();
 
       // Refresh the graph list.
-      mGraphBrowser->SelectGraph(mPropertyEditor->GetScene()->GetGraph());
+      mUI.graphBrowser->SelectGraph(mUI.propertyEditor->GetScene()->GetGraph());
 
-      mReplayBrowser->BuildThreadList();
+      mUI.replayBrowser->BuildThreadList();
    }
 
    //////////////////////////////////////////////////////////////////////////
    void DirectorEditor::RefreshGraph(DirectorGraph* graph)
    {
       // Now refresh the all editors that view the same graph.
-      int count = mGraphTabs->count();
+      int count = mUI.graphTab->count();
       for (int index = 0; index < count; index++)
       {
-         EditorView* view = dynamic_cast<EditorView*>(mGraphTabs->widget(index));
+         EditorView* view = dynamic_cast<EditorView*>(mUI.graphTab->widget(index));
          if (view && view->GetScene())
          {
             if (view->GetScene()->GetGraph() == graph)
@@ -494,8 +210,8 @@ namespace dtDirector
       }
 
       // Now make sure we re-build our graph list.
-      mGraphBrowser->BuildGraphList(graph);
-      mReplayBrowser->BuildThreadList();
+      mUI.graphBrowser->BuildGraphList(graph);
+      mUI.replayBrowser->BuildThreadList();
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -513,10 +229,10 @@ namespace dtDirector
       bool bCanShowLinks = false;
       bool bCanHideLinks = false;
 
-      int tabIndex = mGraphTabs->currentIndex();
-      if (tabIndex >= 0 && tabIndex < mGraphTabs->count())
+      int tabIndex = mUI.graphTab->currentIndex();
+      if (tabIndex >= 0 && tabIndex < mUI.graphTab->count())
       {
-         EditorView* view = dynamic_cast<EditorView*>(mGraphTabs->widget(tabIndex));
+         EditorView* view = dynamic_cast<EditorView*>(mUI.graphTab->widget(tabIndex));
          if (view && view->GetScene() && view->GetScene()->GetGraph())
          {
             bool bCanCreateSubMacro = false;
@@ -619,27 +335,27 @@ namespace dtDirector
       }
 
       // Parent button.
-      mParentAction->setEnabled(bHasParent);
+      mUI.action_Step_Out_Of_Graph->setEnabled(bHasParent);
 
       // Undo button.
-      mUndoAction->setEnabled(mUndoManager->CanUndo());
+      mUI.action_Undo->setEnabled(mUndoManager->CanUndo());
 
       // Redo button.
-      mRedoAction->setEnabled(mUndoManager->CanRedo());
+      mUI.action_Redo->setEnabled(mUndoManager->CanRedo());
 
       // Copy and Cut buttons.
-      mCutAction->setEnabled(bCanCopy);
-      mCopyAction->setEnabled(bCanCopy);
+      mUI.action_Cut->setEnabled(bCanCopy);
+      mUI.action_Copy->setEnabled(bCanCopy);
 
       // Paste button.
-      mPasteAction->setEnabled(Clipboard::GetInstance().CanPaste());
+      mUI.action_Paste->setEnabled(Clipboard::GetInstance().CanPaste());
 
       // Delete button.
-      mDeleteAction->setEnabled(bCanDelete);
+      mUI.action_Delete->setEnabled(bCanDelete);
 
       // Show Links
-      mShowLinksAction->setEnabled(bCanShowLinks);
-      mHideLinksAction->setEnabled(bCanHideLinks);
+      mUI.action_Show_Links->setEnabled(bCanShowLinks);
+      mUI.action_Hide_Links->setEnabled(bCanHideLinks);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -651,10 +367,10 @@ namespace dtDirector
          mUndoManager->AddEvent(event);
 
          // Now refresh the all editors that view the same graph.
-         int count = mGraphTabs->count();
+         int count = mUI.graphTab->count();
          for (int index = 0; index < count; index++)
          {
-            EditorView* view = dynamic_cast<EditorView*>(mGraphTabs->widget(index));
+            EditorView* view = dynamic_cast<EditorView*>(mUI.graphTab->widget(index));
             if (view && view->GetScene())
             {
                if (view->GetScene()->GetGraph() == node->GetGraph())
@@ -683,10 +399,10 @@ namespace dtDirector
          mDirector->DeleteNode(id);
 
          // Remove the node from all UI's
-         int graphCount = mGraphTabs->count();
+         int graphCount = mUI.graphTab->count();
          for (int graphIndex = 0; graphIndex < graphCount; graphIndex++)
          {
-            EditorView* view = dynamic_cast<EditorView*>(mGraphTabs->widget(graphIndex));
+            EditorView* view = dynamic_cast<EditorView*>(mUI.graphTab->widget(graphIndex));
             if (view && view->GetScene())
             {
                // We need to find the node item that belongs to the scene.
@@ -696,7 +412,7 @@ namespace dtDirector
          }
       }
 
-      mReplayBrowser->BuildThreadList();
+      mUI.replayBrowser->BuildThreadList();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -772,77 +488,77 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void DirectorEditor::OnPropertyEditorVisibilityChange(bool visible)
+   void DirectorEditor::on_propertyEditor_visibilityChanged(bool visible)
    {
-      mViewPropertiesAction->setChecked(visible);
+      mUI.action_Property_Editor->setChecked(visible);
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void DirectorEditor::OnGraphBrowserVisibilityChange(bool visible)
+   void DirectorEditor::on_graphBrowser_visibilityChanged(bool visible)
    {
-      mViewGraphBrowserAction->setChecked(visible);
+      mUI.action_Graph_Browser->setChecked(visible);
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void DirectorEditor::OnReplayBrowserVisibilityChange(bool visible)
+   void DirectorEditor::on_replayBrowser_visibilityChanged(bool visible)
    {
-      mViewReplayBrowserAction->setChecked(visible);
+      mUI.action_Replay_Browser->setChecked(visible);
       mReplayMode = visible;
 
       // Refresh the replay browser.
-      mReplayBrowser->BuildThreadList();
+      mUI.replayBrowser->BuildThreadList();
 
       // Always refresh all the scenes.
       Refresh();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void DirectorEditor::OnGraphTabChanged(int index)
+   void DirectorEditor::on_graphTab_currentChanged(int index)
    {
       // Refresh the graph.
-      if (index < mGraphTabs->count())
+      if (index < mUI.graphTab->count())
       {
-         EditorView* view = dynamic_cast<EditorView*>(mGraphTabs->widget(index));
+         EditorView* view = dynamic_cast<EditorView*>(mUI.graphTab->widget(index));
          if (view)
          {
-            mPropertyEditor->SetScene(view->GetScene());
+            mUI.propertyEditor->SetScene(view->GetScene());
             view->GetScene()->Refresh();
             view->GetScene()->RefreshProperties();
-            mReplayBrowser->BuildThreadList();
+            mUI.replayBrowser->BuildThreadList();
             RefreshButtonStates();
          }
       }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void DirectorEditor::OnGraphTabClosed(int index)
+   void DirectorEditor::on_graphTab_tabCloseRequested(int index)
    {
       // Remove the tab.
-      if (index < mGraphTabs->count())
+      if (index < mUI.graphTab->count())
       {
-         EditorView* view = dynamic_cast<EditorView*>(mGraphTabs->widget(index));
+         EditorView* view = dynamic_cast<EditorView*>(mUI.graphTab->widget(index));
          if (view)
          {
-            mGraphTabs->removeTab(index);
+            mUI.graphTab->removeTab(index);
             RefreshButtonStates();
          }
       }
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void DirectorEditor::OnSaveButton()
+   void DirectorEditor::on_action_Save_triggered()
    {
       SaveScript();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void DirectorEditor::OnSaveAsButton()
+   void DirectorEditor::on_action_Save_as_triggered()
    {
       SaveScript(true);
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void DirectorEditor::OnLoadButton()
+   void DirectorEditor::on_action_Load_triggered()
    {
       // Check if the undo manager has some un-committed changes first.
       if (mUndoManager->IsModified())
@@ -868,7 +584,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void DirectorEditor::OnNewButton()
+   void DirectorEditor::on_action_New_triggered()
    {
       // Check if the undo manager has some un-committed changes first.
       if (mUndoManager->IsModified())
@@ -894,7 +610,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void DirectorEditor::OnLoadRecordingButton()
+   void DirectorEditor::on_action_Load_Recording_triggered()
    {
       QString filter = tr(".dtdirreplay");
       std::string contextDir = osgDB::convertFileNameToNativeStyle(dtDAL::Project::GetInstance().GetContext()+"/");
@@ -944,8 +660,8 @@ namespace dtDirector
          }
          else
          {
-            mReplayBrowser->show();
-            
+            mUI.replayBrowser->show();
+
             // Make sure we refresh all the views for replay mode.
             Refresh();
          }
@@ -953,12 +669,12 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void DirectorEditor::OnParentButton()
+   void DirectorEditor::on_action_Step_Out_Of_Graph_triggered()
    {
-      int index = mGraphTabs->currentIndex();
-      if (index >= 0 && index < mGraphTabs->count())
+      int index = mUI.graphTab->currentIndex();
+      if (index >= 0 && index < mUI.graphTab->count())
       {
-         EditorView* view = dynamic_cast<EditorView*>(mGraphTabs->widget(index));
+         EditorView* view = dynamic_cast<EditorView*>(mUI.graphTab->widget(index));
          if (view)
          {
             dtDirector::DirectorGraph* graph = view->GetScene()->GetGraph();
@@ -966,7 +682,7 @@ namespace dtDirector
             {
                view->GetScene()->SetGraph(graph->mParent);
                RefreshButtonStates();
-               
+
                // Find the sub graph that we just zoomed out of, and center on it.
                QList<QGraphicsItem*> nodes = view->GetScene()->items();
                int count = nodes.count();
@@ -986,35 +702,35 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void DirectorEditor::OnUndo()
+   void DirectorEditor::on_action_Undo_triggered()
    {
       mUndoManager->Undo();
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void DirectorEditor::OnRedo()
+   void DirectorEditor::on_action_Redo_triggered()
    {
       mUndoManager->Redo();
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void DirectorEditor::OnCut()
+   void DirectorEditor::on_action_Cut_triggered()
    {
       // First copy the contents.
-      OnCopy();
-      OnDelete();
+      on_action_Copy_triggered();
+      on_action_Delete_triggered();
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void DirectorEditor::OnCopy()
+   void DirectorEditor::on_action_Copy_triggered()
    {
       Clipboard& clipboard = Clipboard::GetInstance();
       clipboard.Clear();
 
-      int index = mGraphTabs->currentIndex();
-      if (index >= 0 && index < mGraphTabs->count())
+      int index = mUI.graphTab->currentIndex();
+      if (index >= 0 && index < mUI.graphTab->count())
       {
-         EditorView* view = dynamic_cast<EditorView*>(mGraphTabs->widget(index));
+         EditorView* view = dynamic_cast<EditorView*>(mUI.graphTab->widget(index));
          if (!view) return;
 
          EditorScene* scene = view->GetScene();
@@ -1032,16 +748,16 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void DirectorEditor::OnPaste()
+   void DirectorEditor::on_action_Paste_triggered()
    {
       PasteNodes();
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void DirectorEditor::OnDelete()
+   void DirectorEditor::on_action_Delete_triggered()
    {
       // Get the current selection.
-      EditorScene* scene = mPropertyEditor->GetScene();
+      EditorScene* scene = mUI.propertyEditor->GetScene();
       if (!scene) return;
 
       bool graphsDeleted = false;
@@ -1091,10 +807,10 @@ namespace dtDirector
             mDirector->DeleteGraph(id);
 
             // Remove the node from all UI's
-            int graphCount = mGraphTabs->count();
+            int graphCount = mUI.graphTab->count();
             for (int graphIndex = 0; graphIndex < graphCount; graphIndex++)
             {
-               EditorView* view = dynamic_cast<EditorView*>(mGraphTabs->widget(graphIndex));
+               EditorView* view = dynamic_cast<EditorView*>(mUI.graphTab->widget(graphIndex));
                if (view && view->GetScene())
                {
                   // If the current graph or any of its parents are being deleted,
@@ -1125,13 +841,13 @@ namespace dtDirector
       Refresh();
 
       // If we deleted any graphs, then we must re-build the graph browser.
-      mGraphBrowser->BuildGraphList(scene->GetGraph());
+      mUI.graphBrowser->BuildGraphList(scene->GetGraph());
 
-      mReplayBrowser->BuildThreadList();
+      mUI.replayBrowser->BuildThreadList();
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void DirectorEditor::OnManageLibraries()
+   void DirectorEditor::on_action_Manage_Libraries_triggered()
    {
       // We need a director to manager libraries.
       if (!GetDirector())
@@ -1147,49 +863,49 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void DirectorEditor::OnShowPropertyEditor()
+   void DirectorEditor::on_action_Property_Editor_triggered()
    {
-      if (mViewPropertiesAction->isChecked())
+      if (mUI.action_Property_Editor->isChecked())
       {
-         mPropertyEditor->show();
+         mUI.propertyEditor->show();
       }
       else
       {
-         mPropertyEditor->hide();
+         mUI.propertyEditor->hide();
       }
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void DirectorEditor::OnShowGraphBrowser()
+   void DirectorEditor::on_action_Graph_Browser_triggered()
    {
-      if (mViewGraphBrowserAction->isChecked())
+      if (mUI.action_Graph_Browser->isChecked())
       {
-         mGraphBrowser->show();
+         mUI.graphBrowser->show();
       }
       else
       {
-         mGraphBrowser->hide();
+         mUI.graphBrowser->hide();
       }
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void DirectorEditor::OnShowReplayBrowser()
+   void DirectorEditor::on_action_Replay_Browser_triggered()
    {
-      if (mViewReplayBrowserAction->isChecked())
+      if (mUI.action_Replay_Browser->isChecked())
       {
-         mReplayBrowser->show();
+         mUI.replayBrowser->show();
       }
       else
       {
-         mReplayBrowser->hide();
+         mUI.replayBrowser->hide();
       }
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void DirectorEditor::OnShowLinks()
+   void DirectorEditor::on_action_Show_Links_triggered()
    {
       // Get the current selection.
-      EditorScene* scene = mPropertyEditor->GetScene();
+      EditorScene* scene = mUI.propertyEditor->GetScene();
       if (!scene) return;
 
       QList<QGraphicsItem*> selection = scene->selectedItems();
@@ -1226,10 +942,10 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void DirectorEditor::OnHideLinks()
+   void DirectorEditor::on_action_Hide_Links_triggered()
    {
       // Get the current selection.
-      EditorScene* scene = mPropertyEditor->GetScene();
+      EditorScene* scene = mUI.propertyEditor->GetScene();
       if (!scene) return;
 
       QList<QGraphicsItem*> selection = scene->selectedItems();
@@ -1275,7 +991,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void DirectorEditor::OnRefresh()
+   void DirectorEditor::on_action_Refresh_triggered()
    {
       Refresh();
    }
@@ -1298,7 +1014,7 @@ namespace dtDirector
       // Redo event.
       if (e->key() == Qt::Key_Z && holdingControl && holdingShift)
       {
-         OnUndo();
+         on_action_Undo_triggered();
       }
    }
 
@@ -1307,7 +1023,7 @@ namespace dtDirector
    {
       QMainWindow::showEvent(event);
 
-      if (mDirector.valid() && mGraphTabs->count() == 0)
+      if (mDirector.valid() && mUI.graphTab->count() == 0)
       {
          OpenGraph(mDirector->GetGraphRoot());
       }
@@ -1317,15 +1033,15 @@ namespace dtDirector
    void DirectorEditor::ClearScript()
    {
       // Clear the script.
-      mGraphTabs->clear();
+      mUI.graphTab->clear();
       mDirector->Clear();
       mUndoManager->Clear();
       mFileName.clear();
 
       // Create a single tab with the default graph.
       OpenGraph(mDirector->GetGraphRoot());
-      mReplayBrowser->BuildThreadList();
-      mGraphBrowser->BuildGraphList(mDirector->GetGraphRoot());
+      mUI.replayBrowser->BuildThreadList();
+      mUI.graphBrowser->BuildGraphList(mDirector->GetGraphRoot());
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -1380,7 +1096,7 @@ namespace dtDirector
       QFileDialog dialog;
       QFileInfo filePath = dialog.getOpenFileName(
          this, tr("Load a Director Graph File"), tr(directorsDir.c_str()), tr("Director Scripts (*.dtdir)"), &filter);
-      
+
       if( !filePath.isFile() )
          return false;
 
@@ -1392,15 +1108,15 @@ namespace dtDirector
       {
          // Clear the script.
          mDirector->Clear();
-         mGraphTabs->clear();
+         mUI.graphTab->clear();
          mUndoManager->Clear();
 
          mDirector->LoadScript(mFileName);
 
          // Create a single tab with the default graph.
          OpenGraph(mDirector->GetGraphRoot());
-         mReplayBrowser->BuildThreadList();
-         mGraphBrowser->BuildGraphList(mDirector->GetGraphRoot());
+         mUI.replayBrowser->BuildThreadList();
+         mUI.graphBrowser->BuildGraphList(mDirector->GetGraphRoot());
          return true;
       }
 
@@ -1412,10 +1128,10 @@ namespace dtDirector
    {
       Clipboard& clipboard = Clipboard::GetInstance();
 
-      int index = mGraphTabs->currentIndex();
-      if (index >= 0 && index < mGraphTabs->count())
+      int index = mUI.graphTab->currentIndex();
+      if (index >= 0 && index < mUI.graphTab->count())
       {
-         EditorView* view = dynamic_cast<EditorView*>(mGraphTabs->widget(index));
+         EditorView* view = dynamic_cast<EditorView*>(mUI.graphTab->widget(index));
          if (!view) return;
 
          EditorScene* scene = view->GetScene();

@@ -370,7 +370,7 @@ namespace dtDirector
          // If this value is a value link node, jump to the parent graph.
          else if (mNode->GetType().GetFullName() == "Core.Value Link")
          {
-            mScene->GetEditor()->OnParentButton();
+            mScene->GetEditor()->on_action_Step_Out_Of_Graph_triggered();
          }
          // Anything else creates a new reference.
          else

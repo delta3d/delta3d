@@ -26,8 +26,7 @@
 
 #include <dtDirector/director.h>
 
-#include <QtGui/QMainWindow>
-
+#include "ui_directoreditor.h"
 
 class QAction;
 class QMenuBar;
@@ -85,12 +84,12 @@ namespace dtDirector
       /**
        * Accessor for the graph tab widget.
        */
-      GraphTabs* GetGraphTabs() {return mGraphTabs;}
+      GraphTabs* GetGraphTabs() { return mUI.graphTab; }
 
       /**
        * Accessor for the Property Editor.
        */
-      PropertyEditor* GetPropertyEditor() {return mPropertyEditor;}
+      PropertyEditor* GetPropertyEditor() {return mUI.propertyEditor;}
 
       /**
        * Accessor for the undo manager.
@@ -100,7 +99,7 @@ namespace dtDirector
       /**
        * Accessor for the replay browser.
        */
-      ReplayBrowser* GetReplayBrowser() {return mReplayBrowser;}
+      ReplayBrowser* GetReplayBrowser() {return mUI.replayBrowser;}
 
       /**
        * Retrieves whether we are in replay mode.
@@ -134,17 +133,17 @@ namespace dtDirector
       /**
        * Retrieves actions.
        */
-      QAction* GetParentAction()   {return mParentAction;}
-      QAction* GetUndoAction()     {return mUndoAction;}
-      QAction* GetRedoAction()     {return mRedoAction;}
-      QAction* GetCutAction()      {return mCutAction;}
-      QAction* GetCopyAction()     {return mCopyAction;}
-      QAction* GetPasteAction()    {return mPasteAction;}
-      QAction* GetDeleteAction()   {return mDeleteAction;}
-      QAction* GetSnapGridAction() {return mSnapGridAction;}
-      QAction* GetShowLinkAction() {return mShowLinksAction;}
-      QAction* GetHideLinkAction() {return mHideLinksAction;}
-      QAction* GetRefreshAction()  {return mRefreshAction;}
+      QAction* GetParentAction()   { return mUI.action_Step_Out_Of_Graph; }
+      QAction* GetUndoAction()     { return mUI.action_Undo; }
+      QAction* GetRedoAction()     { return mUI.action_Redo; }
+      QAction* GetCutAction()      { return mUI.action_Cut; }
+      QAction* GetCopyAction()     { return mUI.action_Copy; }
+      QAction* GetPasteAction()    { return mUI.action_Paste; }
+      QAction* GetDeleteAction()   { return mUI.action_Delete; }
+      QAction* GetSnapGridAction() { return mUI.action_Smart_Grid_snap; }
+      QAction* GetShowLinkAction() { return mUI.action_Show_Links; }
+      QAction* GetHideLinkAction() { return mUI.action_Hide_Links; }
+      QAction* GetRefreshAction()  { return mUI.action_Refresh; }
 
       /**
        * Calculates a snapped position.
@@ -261,130 +260,130 @@ namespace dtDirector
        *
        * @param[in]  visible  True if the editor is visible.
        */
-      void OnPropertyEditorVisibilityChange(bool visible);
+      void on_propertyEditor_visibilityChanged(bool visible);
 
       /**
        * Event handler when the visibility of the graph browser is changed.
        *
        * @param[in]  visible  True if the browser is visible.
        */
-      void OnGraphBrowserVisibilityChange(bool visible);
+      void on_graphBrowser_visibilityChanged(bool visible);
 
       /**
        * Event handler when the visibility of the replay browser is changed.
        *
        * @param[in]  visible  True if the browser is visible.
        */
-      void OnReplayBrowserVisibilityChange(bool visible);
+      void on_replayBrowser_visibilityChanged(bool visible);
 
       /**
       * Event handler when the current document tab has changed.
       *
       * @param[in]  index  The index of the new tab.
       */
-      void OnGraphTabChanged(int index);
+      void on_graphTab_currentChanged(int index);
 
       /**
       * Event handler when the current document tab has closed.
       *
       * @param[in]  index  The index of the closed tab.
       */
-      void OnGraphTabClosed(int index);
+      void on_graphTab_tabCloseRequested(int index);
 
       /**
        * Event handler when the save button is pressed.
        */
-      void OnSaveButton();
+      void on_action_Save_triggered();
 
       /**
       * Event handler when the save as button is pressed.
       */
-      void OnSaveAsButton();
+      void on_action_Save_as_triggered();
 
       /**
        * Event handler when the load button is pressed.
        */
-      void OnLoadButton();
+      void on_action_Load_triggered();
 
       /**
        * Event handler when the new button is pressed.
        */
-      void OnNewButton();
+      void on_action_New_triggered();
 
       /**
        * Event handler when the load button is pressed.
        */
-      void OnLoadRecordingButton();
+      void on_action_Load_Recording_triggered();
 
       /**
        * Event handler when the parent button is pressed.
        */
-      void OnParentButton();
+      void on_action_Step_Out_Of_Graph_triggered();
 
       /**
        * Event handler when the undo button is pressed.
        */
-      void OnUndo();
+      void on_action_Undo_triggered();
 
       /**
        * Event handler when the redo button is pressed.
        */
-      void OnRedo();
+      void on_action_Redo_triggered();
 
       /**
        * Event handler when the cut button is pressed.
        */
-      void OnCut();
+      void on_action_Cut_triggered();
 
       /**
        * Event handler when the copy button is pressed.
        */
-      void OnCopy();
+      void on_action_Copy_triggered();
 
       /**
        * Event handler when the paste button is pressed.
        */
-      void OnPaste();
+      void on_action_Paste_triggered();
 
       /**
        * Event handler when the delete button is pressed.
        */
-      void OnDelete();
+      void on_action_Delete_triggered();
 
       /**
        * Event handler when the manager libraries button is pressed.
        */
-      void OnManageLibraries();
+      void on_action_Manage_Libraries_triggered();
 
       /**
        * Event handler when the show property editor button is pressed.
        */
-      void OnShowPropertyEditor();
+      void on_action_Property_Editor_triggered();
 
       /**
        * Event handler when the show graph browser button is pressed.
        */
-      void OnShowGraphBrowser();
+      void on_action_Graph_Browser_triggered();
 
       /**
        * Event handler when the show replay browser button is pressed.
        */
-      void OnShowReplayBrowser();
+      void on_action_Replay_Browser_triggered();
 
       /**
        * Event handler when the show links button is pressed.
        */
-      void OnShowLinks();
+      void on_action_Show_Links_triggered();
 
       /**
        * Event handler when the hide links button is pressed.
        */
-      void OnHideLinks();
+      void on_action_Hide_Links_triggered();
 
       /**
        * Event handler when the refresh button is pressed.
        */
-      void OnRefresh();
+      void on_action_Refresh_triggered();
 
    protected:
 
@@ -409,7 +408,7 @@ namespace dtDirector
        * Saves the current script.
        *
        * @param[in]  saveAs  True if we want to show the file dialog.
-       * 
+       *
        * @return  True if the script was saved.
        */
       bool SaveScript(bool saveAs = false);
@@ -428,11 +427,8 @@ namespace dtDirector
        */
       void PasteNodes(bool createLinks = false);
 
+      Ui::DirectorEditor mUI;
 
-      GraphTabs*           mGraphTabs;
-      PropertyEditor*      mPropertyEditor;
-      GraphBrowser*        mGraphBrowser;
-      ReplayBrowser*       mReplayBrowser;
       UndoManager*         mUndoManager;
 
       dtCore::RefPtr<Director> mDirector;
@@ -444,43 +440,6 @@ namespace dtDirector
       OutputLink*              mReplayOutput;
 
       std::map<std::string, CustomEditorTool*> mCustomTools;
-
-      QMenuBar* mMenuBar;
-      QToolBar* mFileToolbar;
-      QToolBar* mEditToolbar;
-
-      QMenu*    mFileMenu;
-      QMenu*    mEditMenu;
-      QMenu*    mViewMenu;
-
-      // File Actions.
-      QAction*  mNewAction;
-      QAction*  mLoadAction;
-      QAction*  mSaveAction;
-      QAction*  mSaveAsAction;
-
-      QAction*  mLoadRecordingAction;
-
-      // Edit Actions.
-      QAction*  mParentAction;
-      QAction*  mSnapGridAction;
-      QAction*  mUndoAction;
-      QAction*  mRedoAction;
-      QAction*  mDeleteAction;
-
-      QAction*  mCutAction;
-      QAction*  mCopyAction;
-      QAction*  mPasteAction;
-
-      QAction*  mLibrariesAction;
-
-      // View Actions.
-      QAction*  mViewPropertiesAction;
-      QAction*  mViewGraphBrowserAction;
-      QAction*  mViewReplayBrowserAction;
-      QAction*  mShowLinksAction;
-      QAction*  mHideLinksAction;
-      QAction*  mRefreshAction;
    };
 
 } // namespace dtDirector

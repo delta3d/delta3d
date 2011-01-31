@@ -41,10 +41,8 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   GraphBrowser::GraphBrowser(DirectorEditor* parent)
+   GraphBrowser::GraphBrowser(QMainWindow* parent)
       : QDockWidget(parent)
-      , mEditor(parent)
-      , mGroupBox(NULL)
    {
       setWindowTitle("Graph Browser");
 
@@ -61,6 +59,12 @@ namespace dtDirector
       innerLayout->addWidget(mGraphTree);
       mGraphTree->setHeaderLabel("");
       mGraphTree->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void GraphBrowser::SetDirectorEditor(DirectorEditor* editor)
+   {
+      mEditor = editor;
    }
 
    //////////////////////////////////////////////////////////////////////////
