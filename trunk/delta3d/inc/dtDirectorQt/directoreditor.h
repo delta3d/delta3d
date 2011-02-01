@@ -34,12 +34,12 @@ class QToolBar;
 
 namespace dtDirector
 {
+   class CustomEditorTool;
+   class GraphBrowser;
    class GraphTabs;
    class PropertyEditor;
-   class GraphBrowser;
-   class UndoManager;
    class ReplayBrowser;
-   class CustomEditorTool;
+   class UndoManager;
 
    /**
     * @class DirectorEditor
@@ -426,6 +426,25 @@ namespace dtDirector
        * Pastes the contents of the clipboard to the current scene.
        */
       void PasteNodes(bool createLinks = false);
+
+   private:
+      /**
+       * Creates the node scenes
+       */
+      void CreateNodeScene(QGraphicsView* view);
+
+      /**
+       * Refreshes the node scenes with newly loaded node libraries
+       */
+      void RefreshNodeScenes();
+
+      /**
+       * Refreshes one given node scene to display newly loaded nodes
+       *
+       * @param view     The view containing the scene to update
+       * @param nodeType The type of nodes to display in the scene
+       */
+      void RefreshNodeScene(QGraphicsView* view, NodeType::NodeTypeEnum nodeType);
 
       Ui::DirectorEditor mUI;
 

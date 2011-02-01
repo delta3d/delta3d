@@ -36,6 +36,7 @@ SET(LIB_PUBLIC_HEADERS ${HEADER_PATH}/actionitem.h
     ${HEADER_PATH}/lockitem.h
     ${HEADER_PATH}/macroitem.h
     ${HEADER_PATH}/nodeitem.h
+    ${HEADER_PATH}/nodescene.h
     ${HEADER_PATH}/propertyeditor.h
     ${HEADER_PATH}/replaybrowser.h
     ${HEADER_PATH}/resizeitem.h
@@ -64,6 +65,7 @@ SET(LIB_SOURCES ${SOURCE_PATH}/actionitem.cpp
     ${SOURCE_PATH}/lockitem.cpp
     ${SOURCE_PATH}/macroitem.cpp
     ${SOURCE_PATH}/nodeitem.cpp
+    ${SOURCE_PATH}/nodescene.cpp
     ${SOURCE_PATH}/propertyeditor.cpp
     ${SOURCE_PATH}/replaybrowser.cpp
     ${SOURCE_PATH}/resizeitem.cpp

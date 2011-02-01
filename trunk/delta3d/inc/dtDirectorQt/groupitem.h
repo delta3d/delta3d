@@ -43,11 +43,12 @@ namespace dtDirector
       /**
        * Constructor.
        *
-       * @param[in]  node    The Director Node.
-       * @param[in]  parent  The parent item.
-       * @param[in]  scene   The scene.
+       * @param[in]  node       The Director Node.
+       * @param[in]  parent     The parent item.
+       * @param[in]  scene      The scene.
+       * @param[in]  canResize  Whether the group box can be resized or not.
        */
-      GroupItem(Node* node, QGraphicsItem* parent = 0, EditorScene* scene = 0);
+      GroupItem(Node* node, QGraphicsItem* parent = 0, EditorScene* scene = 0, bool canResize = true);
 
       /**
        * Draws the node.
@@ -95,6 +96,7 @@ namespace dtDirector
       ResizeItem* mResizer;
 
       QList<NodeItem*> mMovingNodes;
+      bool mCanResize;
    };
 }
 
