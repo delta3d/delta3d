@@ -174,6 +174,14 @@ namespace dtDAL
                handler = new DefaultResourceTypeHandler(d, "Open Scene Graph binary scene data.", extFilter);
                extMap.insert(std::make_pair("ive", dtCore::RefPtr<ResourceTypeHandler>(handler)));
 
+               extFilter.insert(std::make_pair("osgt","Open Scene Graph binary scene data."));
+               handler = new DefaultResourceTypeHandler(d, "Open Scene Graph binary scene data.", extFilter);
+               extMap.insert(std::make_pair("osgt", dtCore::RefPtr<ResourceTypeHandler>(handler)));
+
+               extFilter.insert(std::make_pair("osgb","Open Scene Graph binary scene data."));
+               handler = new DefaultResourceTypeHandler(d, "Open Scene Graph binary scene data.", extFilter);
+               extMap.insert(std::make_pair("osgb", dtCore::RefPtr<ResourceTypeHandler>(handler)));
+
                extFilter.clear();
                extFilter.insert(std::make_pair("osg","Open Scene Graph ascii scene data."));
                handler = new DefaultResourceTypeHandler(d, "Open Scene Graph ascii scene data.", extFilter);
@@ -209,6 +217,20 @@ namespace dtDAL
                extFilter.insert(std::make_pair("ive","Open Scene Graph binary terrain."));
                handler = new DefaultResourceTypeHandler(d, "Open Scene Graph binary terrain.", extFilter);
                extMap.insert(std::make_pair("ive", dtCore::RefPtr<ResourceTypeHandler>(handler)));
+
+               extFilter.insert(std::make_pair("osgt","Open Scene Graph binary scene data."));
+               handler = new DefaultResourceTypeHandler(d, "Open Scene Graph binary scene data.", extFilter);
+               extMap.insert(std::make_pair("osgt", dtCore::RefPtr<ResourceTypeHandler>(handler)));
+
+               extFilter.insert(std::make_pair("osgb","Open Scene Graph binary scene data."));
+               handler = new DefaultResourceTypeHandler(d, "Open Scene Graph binary scene data.", extFilter);
+               extMap.insert(std::make_pair("osgb", dtCore::RefPtr<ResourceTypeHandler>(handler)));
+
+               extFilter.clear();
+               extFilter.insert(std::make_pair("osg","Open Scene Graph ascii scene data."));
+               handler = new DefaultResourceTypeHandler(d, "Open Scene Graph ascii scene data.", extFilter);
+               extMap.insert(std::make_pair("osg", dtCore::RefPtr<ResourceTypeHandler>(handler)));
+
             }
             else if (d == DataType::TEXTURE)
             {
@@ -293,8 +315,8 @@ namespace dtDAL
                                                                    "master.flt", "flt", "fltt", "Open Flight Terrains", fltMasterFiles));
 
       std::vector<std::string> terrexMasterFiles;
-      fltMasterFiles.push_back("main.txp");
-      fltMasterFiles.push_back("master.txp");
+      terrexMasterFiles.push_back("main.txp");
+      terrexMasterFiles.push_back("master.txp");
       RegisterResourceTypeHander(*new DirectoryResourceTypeHandler(DataType::TERRAIN,
                                                                    "archive.txp", "txp", "terrex", "Terrex Terra Page Terrains", terrexMasterFiles));
 
@@ -324,7 +346,9 @@ namespace dtDAL
          //there is a bug in the function to get the extension when using relative paths
          //and the file has no extension.
          if (ext.find(dtUtil::FileUtils::PATH_SEPARATOR) != std::string::npos)
+         {
             ext.clear();
+         }
 
          //To work around a weird compiler bug...
          DataType* dt = const_cast<DataType*>(&resourceType);
@@ -336,7 +360,9 @@ namespace dtDAL
             const ResourceTypeHandler* handler = FindHandlerForDataTypeAndExtension(mTypeHandlers, *dt, ext);
             //ask the handler if it handles the given file.
             if (handler != NULL && handler->HandlesFile(filePath, fType))
+            {
                return handler;
+            }
          }
          else
          {
@@ -964,7 +990,9 @@ namespace dtDAL
             }
 
             if (*j == ".svn")
+            {
                continue;
+            }
 
             const std::string& currentFile = *j;
 

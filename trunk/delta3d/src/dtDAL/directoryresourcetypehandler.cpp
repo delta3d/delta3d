@@ -53,12 +53,18 @@ namespace dtDAL
    bool DirectoryResourceTypeHandler::HandlesFile(const std::string& path, dtUtil::FileType type) const
    {
       dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
+
+      if (path.empty())
+      {
+         return false;
+      }
+
       if (type == dtUtil::REGULAR_FILE)
       {
          //check for the file in a way that will handle both case sensitive and insensitive filesystems.
          if (osgDB::equalCaseInsensitive(osgDB::getSimpleFileName(path), mMasterFile))
          {
-            return fileUtils.FileExists(osgDB::getFilePath(path) + dtUtil::FileUtils::PATH_SEPARATOR + mMasterFile);
+            return fileUtils.FileExists(path);
          }
          else if (osgDB::getLowerCaseFileExtension(path) == mExtension)
          {
