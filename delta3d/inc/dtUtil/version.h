@@ -44,7 +44,7 @@ extern "C"
  #
  # Check for the Delta3D library
  #
- AC_CHECK_LIB(osg, delta3DGetVersion, ,
+ AC_CHECK_LIB(dtUtil, delta3DGetVersion, ,
     [AC_MSG_ERROR(Delta3D library not found. See http://www.delta3d.org)],)
  \endverbatim
 */
