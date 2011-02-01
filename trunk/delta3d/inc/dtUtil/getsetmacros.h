@@ -94,4 +94,70 @@
       DT_IMPLEMENT_ACCESSOR_GETTER(ClassName, PropertyType, PropertyName)\
       \
 
+#define DT_DECLARE_ARRAY_ACCESSOR(AccessorType, AccessorName, AccessorNamePlural) \
+   private:\
+      std::vector<dtUtil::TypeTraits<AccessorType>::value_type>  m ## AccessorNamePlural; \
+   public: \
+      \
+      PROPERTY_MODIFIERS_SETTER void Set ## AccessorName(unsigned idx, dtUtil::TypeTraits<AccessorType>::param_type value);\
+      \
+      PROPERTY_MODIFIERS_GETTER dtUtil::TypeTraits<AccessorType>::return_type Get ## AccessorName(unsigned idx) const;\
+      \
+      PROPERTY_MODIFIERS_GETTER unsigned GetNum ## AccessorNamePlural() const { return  m ## AccessorNamePlural.size(); }\
+      \
+      PROPERTY_MODIFIERS_SETTER void Add ## AccessorName(dtUtil::TypeTraits<AccessorType>::param_type value);\
+      \
+      PROPERTY_MODIFIERS_SETTER void Insert ## AccessorName(unsigned idx, dtUtil::TypeTraits<AccessorType>::param_type value);\
+      \
+      PROPERTY_MODIFIERS_SETTER void Insert ## AccessorName(unsigned idx);\
+      \
+      PROPERTY_MODIFIERS_SETTER void Remove ## AccessorName(unsigned idx);\
+      \
+      PROPERTY_MODIFIERS_SETTER void ClearAll ## AccessorNamePlural();
+      \
+
+#define DT_IMPLEMENT_ARRAY_ACCESSOR(ClassName, AccessorType, AccessorName, AccessorNamePlural, DefaultNewValue) \
+      void ClassName :: Set ## AccessorName(unsigned idx, dtUtil::TypeTraits<AccessorType>::param_type value)\
+      {\
+         if (m ## AccessorNamePlural.size() > idx)\
+         {\
+            m ## AccessorNamePlural[idx] = value;\
+         }\
+      }\
+      \
+      dtUtil::TypeTraits<AccessorType>::return_type ClassName :: Get ## AccessorName(unsigned idx) const\
+      {\
+         if (m ## AccessorNamePlural.size() > idx)\
+         {\
+            return m ## AccessorNamePlural[idx];\
+         }\
+         throw dtUtil::Exception("Index out of range.", __FUNCTION__, __LINE__);\
+      }\
+      \
+      void ClassName :: Add ## AccessorName(dtUtil::TypeTraits<AccessorType>::param_type value)\
+      {\
+         m ## AccessorNamePlural.push_back(value);\
+      }\
+      \
+      void ClassName :: Insert ## AccessorName(unsigned idx, dtUtil::TypeTraits<AccessorType>::param_type value)\
+      {\
+         m ## AccessorNamePlural.insert(m ## AccessorNamePlural.begin() + idx, value);\
+      }\
+      \
+      void ClassName :: Insert ## AccessorName(unsigned idx)\
+      {\
+         Insert ## AccessorName(idx, (DefaultNewValue) );\
+      }\
+      \
+      void ClassName :: Remove ## AccessorName(unsigned idx)\
+      {\
+         m ## AccessorNamePlural.erase(m ## AccessorNamePlural.begin() + idx);\
+      }\
+      \
+      void ClassName :: ClearAll ## AccessorNamePlural ()\
+      {\
+         m ## AccessorNamePlural.clear();\
+      }\
+      \
+
 #endif
