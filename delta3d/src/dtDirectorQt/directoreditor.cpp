@@ -20,17 +20,18 @@
  */
 
 #include <dtDirectorQt/directoreditor.h>
-#include <dtDirectorQt/graphtabs.h>
-#include <dtDirectorQt/graphbrowser.h>
-#include <dtDirectorQt/replaybrowser.h>
+#include <dtDirectorQt/clipboard.h>
+#include <dtDirectorQt/customeditortool.h>
 #include <dtDirectorQt/editorview.h>
 #include <dtDirectorQt/editorscene.h>
+#include <dtDirectorQt/graphbrowser.h>
+#include <dtDirectorQt/graphtabs.h>
+#include <dtDirectorQt/libraryeditor.h>
+#include <dtDirectorQt/nodescene.h>
+#include <dtDirectorQt/replaybrowser.h>
 #include <dtDirectorQt/undomanager.h>
 #include <dtDirectorQt/undodeleteevent.h>
 #include <dtDirectorQt/undocreateevent.h>
-#include <dtDirectorQt/clipboard.h>
-#include <dtDirectorQt/libraryeditor.h>
-#include <dtDirectorQt/customeditortool.h>
 
 #include <dtDirectorQt/actionitem.h>
 #include <dtDirectorQt/valueitem.h>
@@ -65,7 +66,7 @@ namespace dtDirector
       // Undo Manager.
       mUndoManager = new UndoManager(this);
 
-      // Setup widgets
+      // Setup dock widgets
       mUI.graphTab->SetDirectorEditor(this);
       mUI.propertyEditor->SetDirectorEditor(this);
       mUI.graphBrowser->SetDirectorEditor(this);
@@ -86,6 +87,15 @@ namespace dtDirector
    void DirectorEditor::SetDirector(Director* director)
    {
       mDirector = director;
+
+      // Setup node scenes
+      CreateNodeScene(mUI.eventNodeView);
+      CreateNodeScene(mUI.actionNodeView);
+      CreateNodeScene(mUI.variableNodeView);
+      CreateNodeScene(mUI.macroNodeView);
+      CreateNodeScene(mUI.linkNodeView);
+      CreateNodeScene(mUI.miscNodeView);
+      RefreshNodeScenes();
 
       mUI.graphTab->clear();
 
@@ -860,6 +870,8 @@ namespace dtDirector
 
       LibraryEditor libEdit(this);
       libEdit.exec();
+
+      RefreshNodeScenes();
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -1117,6 +1129,8 @@ namespace dtDirector
          OpenGraph(mDirector->GetGraphRoot());
          mUI.replayBrowser->BuildThreadList();
          mUI.graphBrowser->BuildGraphList(mDirector->GetGraphRoot());
+
+         RefreshNodeScenes();
          return true;
       }
 
@@ -1168,6 +1182,34 @@ namespace dtDirector
                }
             }
          }
+      }
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::CreateNodeScene(QGraphicsView* view)
+   {
+      NodeScene* scene = new NodeScene(this);
+      view->setScene(scene);
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::RefreshNodeScenes()
+   {
+      RefreshNodeScene(mUI.eventNodeView, NodeType::EVENT_NODE);
+      RefreshNodeScene(mUI.actionNodeView, NodeType::ACTION_NODE);
+      RefreshNodeScene(mUI.variableNodeView, NodeType::VALUE_NODE);
+      RefreshNodeScene(mUI.macroNodeView, NodeType::MACRO_NODE);
+      RefreshNodeScene(mUI.linkNodeView, NodeType::LINK_NODE);
+      RefreshNodeScene(mUI.miscNodeView, NodeType::MISC_NODE);
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::RefreshNodeScene(QGraphicsView* view, NodeType::NodeTypeEnum nodeType)
+   {
+      NodeScene* scene = dynamic_cast<NodeScene*>(view->scene());
+      if (scene != NULL)
+      {
+         scene->RefreshNodes(nodeType);
       }
    }
 } // namespace dtDirector

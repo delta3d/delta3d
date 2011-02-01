@@ -485,7 +485,7 @@ namespace dtDirector
       {
          InputData& data = mInputs[index];
          if (!data.link || !data.link->GetVisible()) continue;
-         
+
          // Create the link graphic.
          data.linkGraphic->setPolygon(poly);
          data.linkGraphic->setPen(Qt::NoPen);
@@ -621,7 +621,7 @@ namespace dtDirector
 
          QRectF nameBounds = data.linkName->boundingRect();
          data.linkGraphic->setPos(mNodeWidth, posY);
-         
+
          posY += nameBounds.height();
       }
       mLinkHeight = std::max( mLinkHeight, posY - mTitleHeight );
@@ -1169,7 +1169,7 @@ namespace dtDirector
       {
          output.linkConnectors[index]->setPen(QPen(GetNodeColor(), 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
 
-         if(mScene->GetEditor()->GetReplayMode() && 
+         if(mScene->GetEditor()->GetReplayMode() &&
             mScene->GetEditor()->GetReplayOutput() == output.link &&
             mScene->GetEditor()->GetReplayInput() == input.link)
          {
@@ -1220,7 +1220,7 @@ namespace dtDirector
       menu.addAction(mScene->GetEditor()->GetCutAction());
       menu.addAction(mScene->GetEditor()->GetCopyAction());
       menu.addSeparator();
-      
+
       QMenu* exposeMenu = NULL;
       std::vector<ValueLink> &values = mNode->GetValueLinks();
       int count = (int)values.size();
@@ -1325,7 +1325,7 @@ namespace dtDirector
          setPen(QPen(Qt::green, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
       }
 
-      if(mScene->GetEditor()->GetReplayMode())
+      if(mScene != NULL && mScene->GetEditor()->GetReplayMode())
       {
          const OutputLink* output = mScene->GetEditor()->GetReplayOutput();
          bool highlight = output ? (mNode->GetOutputLink(output->GetName()) == output) : false;

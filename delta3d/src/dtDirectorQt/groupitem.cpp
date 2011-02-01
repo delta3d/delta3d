@@ -41,10 +41,11 @@
 namespace dtDirector
 {
    //////////////////////////////////////////////////////////////////////////
-   GroupItem::GroupItem(Node* node, QGraphicsItem* parent, EditorScene* scene)
+   GroupItem::GroupItem(Node* node, QGraphicsItem* parent, EditorScene* scene, bool canResize /*= true*/)
        : NodeItem(node, parent, scene)
        , mLocker(NULL)
        , mResizer(NULL)
+       , mCanResize(canResize)
    {
    }
 
@@ -78,14 +79,17 @@ namespace dtDirector
 
          mLocker->setPos(0, 0);
 
-         // Draw the resizer.
-         if (!mResizer)
+         if (mCanResize)
          {
-            mResizer = new ResizeItem(this, this, mScene);
-            mResizer->Init();
-         }
+            // Draw the resizer.
+            if (!mResizer)
+            {
+               mResizer = new ResizeItem(this, this, mScene);
+               mResizer->Init();
+            }
 
-         mResizer->setPos(mNodeWidth, mNodeHeight);
+            mResizer->setPos(mNodeWidth, mNodeHeight);
+         }
 
          SetComment(mNode->GetComment());
 

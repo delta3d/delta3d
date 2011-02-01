@@ -867,7 +867,7 @@ namespace dtDirector
       if (!event->isAccepted())
       {
          QMenu menu;
-         
+
          // If this is a child graph, show the goto parent option.
          if (mGraph->mParent)
          {
@@ -918,7 +918,7 @@ namespace dtDirector
             QMenu* miscMenu = nodeMenu->addMenu("Misc");
             miscFolders["Misc"] = miscMenu;
             connect(miscMenu, SIGNAL(triggered(QAction*)), this, SLOT(OnCreateNodeEvent(QAction*)));
-           
+
             QAction* createGroupAction = miscMenu->addAction("Group Box");
             connect(createGroupAction, SIGNAL(triggered()), this, SLOT(OnCreateGroupFrame()));
 
