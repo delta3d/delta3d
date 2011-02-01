@@ -22,6 +22,7 @@
 #include <prefix/dtdalprefix.h>
 #include <osgDB/FileNameUtils>
 #include <dtUtil/fileutils.h>
+#include <dtUtil/stringutils.h>
 
 #include <dtDAL/datatype.h>
 #include <dtDAL/directoryresourcetypehandler.h>
@@ -43,7 +44,9 @@ namespace dtDAL
       mFilters.insert(make_pair(masterFile, resourceDescription));
 
       for (std::vector<std::string>::iterator i = alternateMasterFiles.begin(); i != alternateMasterFiles.end(); ++i)
+      {
          mFilters.insert(make_pair(*i, resourceDescription));
+      }
 
       mFilters.insert(make_pair(masterExtension, resourceDescription));
    }
@@ -62,7 +65,7 @@ namespace dtDAL
       if (type == dtUtil::REGULAR_FILE)
       {
          //check for the file in a way that will handle both case sensitive and insensitive filesystems.
-         if (osgDB::equalCaseInsensitive(osgDB::getSimpleFileName(path), mMasterFile))
+         if (dtUtil::StrCompare(osgDB::getSimpleFileName(path), mMasterFile, false) == 0)
          {
             return fileUtils.FileExists(path);
          }
@@ -74,7 +77,7 @@ namespace dtDAL
       else if (type == dtUtil::DIRECTORY)
       {
          // quick short circuit for speed in the resource directory.
-         if (osgDB::getFileExtension(path) == mResourceDirectoryExtension)
+         if (dtUtil::StrCompare(osgDB::getFileExtension(path), mResourceDirectoryExtension, false) == 0)
          {
             return true;
          }
@@ -109,7 +112,14 @@ namespace dtDAL
       {
          displayString += ResourceDescriptor::DESCRIPTOR_SEPARATOR + fileName;
       }
-      resultString = displayString + ResourceDescriptor::DESCRIPTOR_SEPARATOR + mMasterFile;
+
+      resultString = displayString;
+
+      if (dtUtil::StrCompare(osgDB::getSimpleFileName(fileName), mMasterFile, false) != 0 &&
+               dtUtil::StrCompare(osgDB::getFileExtension(fileName), mResourceDirectoryExtension, false) == 0)
+      {
+         resultString += ResourceDescriptor::DESCRIPTOR_SEPARATOR + mMasterFile;
+      }
 
       return ResourceDescriptor(displayString,resultString);
    }
