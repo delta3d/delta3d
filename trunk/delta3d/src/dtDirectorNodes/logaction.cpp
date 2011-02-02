@@ -77,7 +77,7 @@ namespace dtDirector
       int count = GetPropertyCount("Value");
       for (int index = 0; index < count; index++)
       {
-         LOG_ALWAYS("Value: " + GetString("Value"));
+         LOG_ALWAYS("Value: " + GetString("Value", index));
       }
 
       return ActionNode::Update(simDelta, delta, input, firstUpdate);

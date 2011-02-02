@@ -15,6 +15,7 @@ SET(LIB_PUBLIC_HEADERS ${HEADER_PATH}/actorarrayvalue.h
     ${HEADER_PATH}/compareactorpropertyaction.h
     ${HEADER_PATH}/compareboolaction.h
     ${HEADER_PATH}/comparevalueaction.h
+    ${HEADER_PATH}/createvectoraction.h
     ${HEADER_PATH}/delayaction.h
     ${HEADER_PATH}/doublevalue.h
     ${HEADER_PATH}/externalvaluenode.h
@@ -69,6 +70,7 @@ SET(LIB_SOURCES ${SOURCE_PATH}/actorarrayvalue.cpp
     ${SOURCE_PATH}/compareactorpropertyaction.cpp
     ${SOURCE_PATH}/compareboolaction.cpp
     ${SOURCE_PATH}/comparevalueaction.cpp
+    ${SOURCE_PATH}/createvectoraction.cpp
     ${SOURCE_PATH}/delayaction.cpp
     ${SOURCE_PATH}/doublevalue.cpp
     ${SOURCE_PATH}/externalvaluenode.cpp
