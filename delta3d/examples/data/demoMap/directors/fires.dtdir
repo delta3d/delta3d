@@ -2,7 +2,7 @@
 <director xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dDirector" xsi:schemaLocation="delta3dDirector director.xsd">
     <header>
         <createTimestamp>2009-12-23T15:09:12-08:00</createTimestamp>
-        <lastUpdateTimestamp>2011-01-20T12:04:20-08:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2011-02-02T14:52:51-08:00</lastUpdateTimestamp>
         <editorVersion>2.5.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
         <property>
@@ -69,15 +69,31 @@
                     <name>Enter</name>
                     <visible>true</visible>
                     <link>
-                        <id>7c31d016-9bcc-4778-bc07-3030ad0c3f88</id>
+                        <id>7416f338-ce42-4227-a1c7-153b7fa7dfb5</id>
                         <name>In</name>
+                    </link>
+                    <link>
+                        <id>fd20a387-fa2b-47d1-8699-fa47e6bcfb73</id>
+                        <name>Play</name>
+                    </link>
+                    <link>
+                        <id>65e4f452-978d-43e5-9c56-b796d910b79d</id>
+                        <name>TurnOn</name>
                     </link>
                 </outputlink>
                 <outputlink>
                     <name>Leave</name>
                     <visible>true</visible>
                     <link>
-                        <id>e91eab01-3eef-4f40-b483-a08b599f6115</id>
+                        <id>fd20a387-fa2b-47d1-8699-fa47e6bcfb73</id>
+                        <name>Stop</name>
+                    </link>
+                    <link>
+                        <id>65e4f452-978d-43e5-9c56-b796d910b79d</id>
+                        <name>TurnOff</name>
+                    </link>
+                    <link>
+                        <id>f081e490-d612-4567-9e22-ecfc43edaf6f</id>
                         <name>In</name>
                     </link>
                 </outputlink>
@@ -104,8 +120,16 @@
                     <isout>true</isout>
                     <allowmultiple>true</allowmultiple>
                     <typecheck>true</typecheck>
+                </valuelink>
+                <valuelink>
+                    <name>ActorFilters</name>
+                    <visible>true</visible>
+                    <exposed>true</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>true</allowmultiple>
+                    <typecheck>true</typecheck>
                     <link>
-                        <id>4e078b63-8f3d-467c-9bda-cf778d07fa2f</id>
+                        <id>c0fb59c9-2491-4319-9fa6-8a275d9aa41c</id>
                     </link>
                 </valuelink>
                 <valuelink>
@@ -136,7 +160,7 @@
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>452.749329</value1>
+                        <value1>590.831970</value1>
                         <value2>-435.489380</value2>
                     </vec2>
                 </property>
@@ -152,8 +176,8 @@
                     <name>Enter</name>
                     <visible>true</visible>
                     <link>
-                        <id>14ee8206-57d7-4bc8-831b-78b96f67f97e</id>
-                        <name>In</name>
+                        <id>26cbc3ff-6d04-4632-a59f-39c04f043ab3</id>
+                        <name>TurnOn</name>
                     </link>
                 </outputlink>
                 <outputlink>
@@ -183,8 +207,16 @@
                     <isout>true</isout>
                     <allowmultiple>true</allowmultiple>
                     <typecheck>true</typecheck>
+                </valuelink>
+                <valuelink>
+                    <name>ActorFilters</name>
+                    <visible>true</visible>
+                    <exposed>true</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>true</allowmultiple>
+                    <typecheck>true</typecheck>
                     <link>
-                        <id>257dc151-2750-441d-b19b-8ae9bab78ca6</id>
+                        <id>e8c688ff-a0cb-47e3-9899-c630cd820227</id>
                     </link>
                 </valuelink>
                 <valuelink>
@@ -233,16 +265,16 @@
                     <name>TurnOn</name>
                     <visible>true</visible>
                     <link>
-                        <id>7c31d016-9bcc-4778-bc07-3030ad0c3f88</id>
-                        <name>A == B</name>
+                        <id>c2c24eec-6591-4438-bab0-fe05a0d97795</id>
+                        <name>Enter</name>
                     </link>
                 </inputlink>
                 <inputlink>
                     <name>TurnOff</name>
                     <visible>true</visible>
                     <link>
-                        <id>e91eab01-3eef-4f40-b483-a08b599f6115</id>
-                        <name>A == B</name>
+                        <id>c2c24eec-6591-4438-bab0-fe05a0d97795</id>
+                        <name>Leave</name>
                     </link>
                 </inputlink>
                 <inputlink>
@@ -320,16 +352,16 @@
                     <name>Play</name>
                     <visible>true</visible>
                     <link>
-                        <id>7c31d016-9bcc-4778-bc07-3030ad0c3f88</id>
-                        <name>A == B</name>
+                        <id>c2c24eec-6591-4438-bab0-fe05a0d97795</id>
+                        <name>Enter</name>
                     </link>
                 </inputlink>
                 <inputlink>
                     <name>Stop</name>
                     <visible>true</visible>
                     <link>
-                        <id>e91eab01-3eef-4f40-b483-a08b599f6115</id>
-                        <name>A == B</name>
+                        <id>c2c24eec-6591-4438-bab0-fe05a0d97795</id>
+                        <name>Leave</name>
                     </link>
                 </inputlink>
                 <inputlink>
@@ -399,8 +431,8 @@
                     <name>TurnOn</name>
                     <visible>true</visible>
                     <link>
-                        <id>14ee8206-57d7-4bc8-831b-78b96f67f97e</id>
-                        <name>A == B</name>
+                        <id>04cdfeb2-bb02-425c-9a8b-c0b0bb869550</id>
+                        <name>Enter</name>
                     </link>
                 </inputlink>
                 <inputlink>
@@ -580,8 +612,8 @@
                     <name>In</name>
                     <visible>true</visible>
                     <link>
-                        <id>e91eab01-3eef-4f40-b483-a08b599f6115</id>
-                        <name>A == B</name>
+                        <id>c2c24eec-6591-4438-bab0-fe05a0d97795</id>
+                        <name>Leave</name>
                     </link>
                 </inputlink>
                 <outputlink>
@@ -666,8 +698,8 @@
                     <name>In</name>
                     <visible>true</visible>
                     <link>
-                        <id>7c31d016-9bcc-4778-bc07-3030ad0c3f88</id>
-                        <name>A == B</name>
+                        <id>c2c24eec-6591-4438-bab0-fe05a0d97795</id>
+                        <name>Enter</name>
                     </link>
                 </inputlink>
                 <outputlink>
@@ -804,272 +836,6 @@
                     <typecheck>true</typecheck>
                 </valuelink>
             </node>
-            <node>
-                <name>Compare Actors</name>
-                <category>General</category>
-                <id>14ee8206-57d7-4bc8-831b-78b96f67f97e</id>
-                <property>
-                    <name>Enabled</name>
-                    <boolean>true</boolean>
-                </property>
-                <property>
-                    <name>Comment</name>
-                    <string></string>
-                </property>
-                <property>
-                    <name>LogNode</name>
-                    <boolean>false</boolean>
-                </property>
-                <property>
-                    <name>Position</name>
-                    <vec2>
-                        <value1>622.331909</value1>
-                        <value2>-435.489380</value2>
-                    </vec2>
-                </property>
-                <property>
-                    <name>A</name>
-                    <actorId></actorId>
-                </property>
-                <property>
-                    <name>B</name>
-                    <actorId></actorId>
-                </property>
-                <inputlink>
-                    <name>In</name>
-                    <visible>true</visible>
-                    <link>
-                        <id>fbed59a3-5039-4533-94ee-ae94f86a1296</id>
-                        <name>Enter</name>
-                    </link>
-                    <link>
-                        <id>04cdfeb2-bb02-425c-9a8b-c0b0bb869550</id>
-                        <name>Enter</name>
-                    </link>
-                </inputlink>
-                <outputlink>
-                    <name>A == B</name>
-                    <visible>true</visible>
-                    <link>
-                        <id>26cbc3ff-6d04-4632-a59f-39c04f043ab3</id>
-                        <name>TurnOn</name>
-                    </link>
-                </outputlink>
-                <outputlink>
-                    <name>A != B</name>
-                    <visible>false</visible>
-                </outputlink>
-                <valuelink>
-                    <name>Enabled</name>
-                    <visible>true</visible>
-                    <exposed>false</exposed>
-                    <isout>false</isout>
-                    <allowmultiple>false</allowmultiple>
-                    <typecheck>true</typecheck>
-                </valuelink>
-                <valuelink>
-                    <name>A</name>
-                    <visible>true</visible>
-                    <exposed>true</exposed>
-                    <isout>false</isout>
-                    <allowmultiple>false</allowmultiple>
-                    <typecheck>false</typecheck>
-                    <link>
-                        <id>257dc151-2750-441d-b19b-8ae9bab78ca6</id>
-                    </link>
-                </valuelink>
-                <valuelink>
-                    <name>B</name>
-                    <visible>true</visible>
-                    <exposed>true</exposed>
-                    <isout>false</isout>
-                    <allowmultiple>false</allowmultiple>
-                    <typecheck>false</typecheck>
-                    <link>
-                        <id>e8c688ff-a0cb-47e3-9899-c630cd820227</id>
-                    </link>
-                </valuelink>
-            </node>
-            <node>
-                <name>Compare Actors</name>
-                <category>General</category>
-                <id>7c31d016-9bcc-4778-bc07-3030ad0c3f88</id>
-                <property>
-                    <name>Enabled</name>
-                    <boolean>true</boolean>
-                </property>
-                <property>
-                    <name>Comment</name>
-                    <string></string>
-                </property>
-                <property>
-                    <name>LogNode</name>
-                    <boolean>false</boolean>
-                </property>
-                <property>
-                    <name>Position</name>
-                    <vec2>
-                        <value1>-138.000000</value1>
-                        <value2>2.000000</value2>
-                    </vec2>
-                </property>
-                <property>
-                    <name>A</name>
-                    <actorId></actorId>
-                </property>
-                <property>
-                    <name>B</name>
-                    <actorId></actorId>
-                </property>
-                <inputlink>
-                    <name>In</name>
-                    <visible>true</visible>
-                    <link>
-                        <id>c2c24eec-6591-4438-bab0-fe05a0d97795</id>
-                        <name>Enter</name>
-                    </link>
-                </inputlink>
-                <outputlink>
-                    <name>A == B</name>
-                    <visible>true</visible>
-                    <link>
-                        <id>65e4f452-978d-43e5-9c56-b796d910b79d</id>
-                        <name>TurnOn</name>
-                    </link>
-                    <link>
-                        <id>fd20a387-fa2b-47d1-8699-fa47e6bcfb73</id>
-                        <name>Play</name>
-                    </link>
-                    <link>
-                        <id>7416f338-ce42-4227-a1c7-153b7fa7dfb5</id>
-                        <name>In</name>
-                    </link>
-                </outputlink>
-                <outputlink>
-                    <name>A != B</name>
-                    <visible>false</visible>
-                </outputlink>
-                <valuelink>
-                    <name>Enabled</name>
-                    <visible>true</visible>
-                    <exposed>false</exposed>
-                    <isout>false</isout>
-                    <allowmultiple>false</allowmultiple>
-                    <typecheck>true</typecheck>
-                </valuelink>
-                <valuelink>
-                    <name>A</name>
-                    <visible>true</visible>
-                    <exposed>true</exposed>
-                    <isout>false</isout>
-                    <allowmultiple>false</allowmultiple>
-                    <typecheck>false</typecheck>
-                    <link>
-                        <id>4e078b63-8f3d-467c-9bda-cf778d07fa2f</id>
-                    </link>
-                </valuelink>
-                <valuelink>
-                    <name>B</name>
-                    <visible>true</visible>
-                    <exposed>true</exposed>
-                    <isout>false</isout>
-                    <allowmultiple>false</allowmultiple>
-                    <typecheck>false</typecheck>
-                    <link>
-                        <id>c0fb59c9-2491-4319-9fa6-8a275d9aa41c</id>
-                    </link>
-                </valuelink>
-            </node>
-            <node>
-                <name>Compare Actors</name>
-                <category>General</category>
-                <id>e91eab01-3eef-4f40-b483-a08b599f6115</id>
-                <property>
-                    <name>Enabled</name>
-                    <boolean>true</boolean>
-                </property>
-                <property>
-                    <name>Comment</name>
-                    <string></string>
-                </property>
-                <property>
-                    <name>LogNode</name>
-                    <boolean>false</boolean>
-                </property>
-                <property>
-                    <name>Position</name>
-                    <vec2>
-                        <value1>-138.000000</value1>
-                        <value2>23.022879</value2>
-                    </vec2>
-                </property>
-                <property>
-                    <name>A</name>
-                    <actorId></actorId>
-                </property>
-                <property>
-                    <name>B</name>
-                    <actorId></actorId>
-                </property>
-                <inputlink>
-                    <name>In</name>
-                    <visible>true</visible>
-                    <link>
-                        <id>c2c24eec-6591-4438-bab0-fe05a0d97795</id>
-                        <name>Leave</name>
-                    </link>
-                </inputlink>
-                <outputlink>
-                    <name>A == B</name>
-                    <visible>true</visible>
-                    <link>
-                        <id>65e4f452-978d-43e5-9c56-b796d910b79d</id>
-                        <name>TurnOff</name>
-                    </link>
-                    <link>
-                        <id>fd20a387-fa2b-47d1-8699-fa47e6bcfb73</id>
-                        <name>Stop</name>
-                    </link>
-                    <link>
-                        <id>f081e490-d612-4567-9e22-ecfc43edaf6f</id>
-                        <name>In</name>
-                    </link>
-                </outputlink>
-                <outputlink>
-                    <name>A != B</name>
-                    <visible>false</visible>
-                </outputlink>
-                <valuelink>
-                    <name>Enabled</name>
-                    <visible>true</visible>
-                    <exposed>false</exposed>
-                    <isout>false</isout>
-                    <allowmultiple>false</allowmultiple>
-                    <typecheck>true</typecheck>
-                </valuelink>
-                <valuelink>
-                    <name>A</name>
-                    <visible>true</visible>
-                    <exposed>true</exposed>
-                    <isout>false</isout>
-                    <allowmultiple>false</allowmultiple>
-                    <typecheck>false</typecheck>
-                    <link>
-                        <id>4e078b63-8f3d-467c-9bda-cf778d07fa2f</id>
-                    </link>
-                </valuelink>
-                <valuelink>
-                    <name>B</name>
-                    <visible>true</visible>
-                    <exposed>true</exposed>
-                    <isout>false</isout>
-                    <allowmultiple>false</allowmultiple>
-                    <typecheck>false</typecheck>
-                    <link>
-                        <id>c0fb59c9-2491-4319-9fa6-8a275d9aa41c</id>
-                    </link>
-                </valuelink>
-            </node>
         </actionnodes>
         <valuenodes>
             <node>
@@ -1131,8 +897,8 @@
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>-100.499962</value1>
-                        <value2>154.352081</value2>
+                        <value1>-255.990753</value1>
+                        <value2>170.352081</value2>
                     </vec2>
                 </property>
                 <property>
@@ -1671,86 +1437,6 @@
                 <property>
                     <name>Value</name>
                     <actorId>2b0eeb54-0098-4e45-bcb8-15797a5cbe3d</actorId>
-                </property>
-                <valuelink>
-                    <name>Enabled</name>
-                    <visible>true</visible>
-                    <exposed>false</exposed>
-                    <isout>false</isout>
-                    <allowmultiple>false</allowmultiple>
-                    <typecheck>true</typecheck>
-                </valuelink>
-            </node>
-            <node>
-                <name>Actor</name>
-                <category>General</category>
-                <id>257dc151-2750-441d-b19b-8ae9bab78ca6</id>
-                <property>
-                    <name>Enabled</name>
-                    <boolean>true</boolean>
-                </property>
-                <property>
-                    <name>Comment</name>
-                    <string></string>
-                </property>
-                <property>
-                    <name>LogNode</name>
-                    <boolean>false</boolean>
-                </property>
-                <property>
-                    <name>Position</name>
-                    <vec2>
-                        <value1>545.141113</value1>
-                        <value2>-316.385406</value2>
-                    </vec2>
-                </property>
-                <property>
-                    <name>Name</name>
-                    <string></string>
-                </property>
-                <property>
-                    <name>Value</name>
-                    <actorId></actorId>
-                </property>
-                <valuelink>
-                    <name>Enabled</name>
-                    <visible>true</visible>
-                    <exposed>false</exposed>
-                    <isout>false</isout>
-                    <allowmultiple>false</allowmultiple>
-                    <typecheck>true</typecheck>
-                </valuelink>
-            </node>
-            <node>
-                <name>Actor</name>
-                <category>General</category>
-                <id>4e078b63-8f3d-467c-9bda-cf778d07fa2f</id>
-                <property>
-                    <name>Enabled</name>
-                    <boolean>true</boolean>
-                </property>
-                <property>
-                    <name>Comment</name>
-                    <string></string>
-                </property>
-                <property>
-                    <name>LogNode</name>
-                    <boolean>false</boolean>
-                </property>
-                <property>
-                    <name>Position</name>
-                    <vec2>
-                        <value1>-255.990677</value1>
-                        <value2>185.220535</value2>
-                    </vec2>
-                </property>
-                <property>
-                    <name>Name</name>
-                    <string></string>
-                </property>
-                <property>
-                    <name>Value</name>
-                    <actorId></actorId>
                 </property>
                 <valuelink>
                     <name>Enabled</name>

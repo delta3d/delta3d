@@ -125,6 +125,12 @@ namespace dtDirector
       void SetInstigator(const dtCore::UniqueId& id);
       dtCore::UniqueId GetInstigator();
 
+      /**
+       * Accessors for the actor filters property.
+       */
+      void SetActorFilters(const dtCore::UniqueId& id);
+      dtCore::UniqueId GetActorFilters();
+
    protected:
 
       /**
@@ -133,10 +139,10 @@ namespace dtDirector
       virtual ~EventNode();
 
    private:
-
       int mMaxTriggerCount;
       int mTriggerCount;
       dtCore::UniqueId mInstigator;
+      dtCore::UniqueId mActorFilter;
 
       dtCore::RefPtr<dtDAL::ActorProperty> mInstigatorProp;
   };

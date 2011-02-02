@@ -79,8 +79,14 @@ namespace dtDirector
             dtDAL::ActorIDActorProperty::SetFuncType(this, &EventNode::SetInstigator),
             dtDAL::ActorIDActorProperty::GetFuncType(this, &EventNode::GetInstigator),
             "", "The Instigator that can trigger this event.");
+         dtDAL::ActorIDActorProperty* filterProp =
+            new dtDAL::ActorIDActorProperty("ActorFilters", "Actor Filters",
+            dtDAL::ActorIDActorProperty::SetFuncType(this, &EventNode::SetActorFilters),
+            dtDAL::ActorIDActorProperty::GetFuncType(this, &EventNode::GetActorFilters),
+            "", "The actors that need to cause this event to fire the output.");
 
          mValues.push_back(ValueLink(this, mInstigatorProp.get(), true, true, true));
+         mValues.push_back(ValueLink(this, filterProp, false, true, true));
       }
    }
 
@@ -119,56 +125,45 @@ namespace dtDirector
          if (countTrigger) mTriggerCount++;
       }
 
+      bool success = false;
       OutputLink* link = GetOutputLink(outputName);
       if (link)
       {
-         bool bFound = false;
-         bool bValidValue = false;
-
          // Check the instigator.
          if (UsesInstigator())
          {
-            int count = GetPropertyCount("Instigator");
+            int count = GetPropertyCount("ActorFilters");
 
             // If our count is 0 then we are connected to an empty array,
             // If our count is greater than 0 then we are connected to multiple
             // values.  Either case, the instigator will be valid.
-            if (count != 1)
+            if (GetValueLink("ActorFilters")->GetLinks().size() == 0)
             {
-               bValidValue = true;
+               success = true;
             }
-
-            //for (int index = 0; index < count; index++)
-            //{
-            //   dtCore::UniqueId id = GetActorID("Instigator", index);
-            //   if (id.ToString() != "")
-            //   {
-            //      // The test is valid if we have valid connections
-            //      // to the instigator link.
-            //      bValidValue = true;
-
-            //      // Can't do proper matching if we have no instigator.
-            //      if (!instigator || instigator->ToString().empty()) break;
-
-            //      if (*instigator == id)
-            //      {
-            //         bFound = true;
-            //         break;
-            //      }
-            //   }
-            //}
+            if (instigator != NULL && !instigator->ToString().empty())
+            {
+               for (int index = 0; index < count; index++)
+               {
+                  dtCore::UniqueId id = GetActorID("ActorFilters", index);
+                  if (id.ToString() != "")
+                  {
+                     if (*instigator == id)
+                     {
+                        success = true;
+                        break;
+                     }
+                  }
+               }
+            }
          }
-
-         // Only activate the event if there is no instigator connected
-         // to the node that we care to test with, or if the instigating
-         // actor matched an instigator connected to this node.
-         if (!bValidValue/* || bFound*/)
+         else
          {
-            return true;
+            success = true;
          }
       }
 
-      return false;
+      return success;
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -199,5 +194,17 @@ namespace dtDirector
    dtCore::UniqueId EventNode::GetInstigator()
    {
       return mInstigator;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void EventNode::SetActorFilters(const dtCore::UniqueId& id)
+   {
+      mActorFilter = id;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   dtCore::UniqueId EventNode::GetActorFilters()
+   {
+      return mActorFilter;
    }
 }
