@@ -385,6 +385,11 @@ namespace dtDirector
        */
       void on_action_Refresh_triggered();
 
+      /**
+       * Event handler when a node creation menu item is triggered.
+       */
+      void OnCreateNodeEvent(const QString& name, const QString& category);
+
    protected:
 
       /**

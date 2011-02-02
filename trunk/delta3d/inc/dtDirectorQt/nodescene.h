@@ -31,6 +31,7 @@ namespace dtDirector
 {
    class DirectorEditor;
    class DirectorGraph;
+   class NodeItem;
 
    /**
    * @class EditorScene
@@ -55,14 +56,40 @@ namespace dtDirector
        */
       void RefreshNodes(NodeType::NodeTypeEnum nodeType);
 
+   signals:
+      void CreateNode(const QString& name, const QString& category);
+
    protected:
+      virtual void dragMoveEvent(QGraphicsSceneDragDropEvent* event);
+      virtual void mouseDoubleClickEvent(QGraphicsSceneMouseEvent* mouseEvent);
+      virtual void mousePressEvent(QGraphicsSceneMouseEvent* mouseEvent);
+      virtual void mouseMoveEvent(QGraphicsSceneMouseEvent* mouseEvent);
+
    private:
+      /**
+       * Creates a new node.
+       *
+       * @param[in]     name      The name of the node.
+       * @param[in]     category  The category of the node.
+       * @param[in,out] x, y      Starting UI coordinates to spawn the node.
+       * @param[in,out] maxWidth  The maximum width of all nodes in this scene.
+       */
       void CreateNode(NodeType::NodeTypeEnum nodeType, const std::string& name,
          const std::string& category, float x, float& y, float& maxWidth);
+
+      /**
+       * Gets the NodeItem at the given position
+       *
+       * @param[in]  pos  The position to find a NodeItem from
+       *
+       * @return The NodeItem at the given position
+       */
+      NodeItem* GetNodeItemAtPos(const QPointF& pos);
 
       DirectorEditor* mpEditor;
       DirectorGraph* mpGraph;
       QGraphicsRectItem* mpTranslationItem;
+      NodeItem* mpDraggedItem;
    };
 } // namespace dtDirector
 

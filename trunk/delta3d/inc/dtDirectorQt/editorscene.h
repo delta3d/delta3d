@@ -191,6 +191,15 @@ namespace dtDirector
       Node* CreateNode(const std::string& name, const std::string& category, float x, float y);
 
       /**
+       * Creates a new node item.
+       *
+       * @param[in]  name      The name of the node.
+       * @param[in]  category  The category of the node.
+       * @param[in[  x, y      Starting UI coordinates to spawn the node.
+       */
+      void CreateNodeItem(const std::string& name, const std::string& category, float x, float y);
+
+      /**
        * Deletes a node from the list.
        *
        * @param[in]  node  The node to delete.
@@ -266,6 +275,20 @@ namespace dtDirector
       void mouseMoveEvent(QGraphicsSceneMouseEvent* event);  
 
       /**
+       * Drag event moved on this scene.
+       *
+       * @param[in]  event  The drag event.
+       */
+      virtual void dragMoveEvent(QGraphicsSceneDragDropEvent* event);
+
+      /**
+       * Drag event dropped on this scene.
+       *
+       * @param[in]  event  The drag event.
+       */
+      virtual void dropEvent(QGraphicsSceneDragDropEvent* event);
+
+      /**
        * Event handler when the context menu event has triggered.
        */
       void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
@@ -276,7 +299,6 @@ namespace dtDirector
       DirectorGraph* CreateMacro();
 
    private:
-
       DirectorEditor*            mEditor;
       EditorView*                mView;
 

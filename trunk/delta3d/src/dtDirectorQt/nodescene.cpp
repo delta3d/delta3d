@@ -30,6 +30,9 @@
 #include <dtDirectorQt/scriptitem.h>
 #include <dtDirectorQt/valueitem.h>
 
+#include <QtGui/QDrag>
+#include <QtCore/QMimeData>
+
 ////////////////////////////////////////////////////////////////////////////////
 static const float NODE_BUFFER = 25.0f;
 
@@ -39,10 +42,9 @@ namespace dtDirector
    NodeScene::NodeScene(DirectorEditor* parent)
       : QGraphicsScene(parent)
       , mpEditor(parent)
+      , mpDraggedItem(NULL)
    {
       setBackgroundBrush(Qt::lightGray);
-
-      //setSceneRect(0, 0, 100, 100);
 
       mpGraph = new DirectorGraph(parent->GetDirector());
    }
@@ -87,6 +89,49 @@ namespace dtDirector
       sceneBounds.setHeight(nodeY + NODE_BUFFER);
       sceneBounds.setWidth(maxWidth + NODE_BUFFER);
       setSceneRect(sceneBounds);
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void NodeScene::dragMoveEvent(QGraphicsSceneDragDropEvent* event)
+   {
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void NodeScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* mouseEvent)
+   {
+      QGraphicsScene::mouseDoubleClickEvent(mouseEvent);
+      QPointF scenePos = mouseEvent->scenePos() - mpTranslationItem->scenePos();
+      NodeItem* selectedItem = GetNodeItemAtPos(scenePos);
+      if (selectedItem != NULL)
+      {
+         QString name = selectedItem->QGraphicsItem::data(Qt::UserRole).toString();
+         QString category = selectedItem->QGraphicsItem::data(Qt::UserRole + 1).toString();
+         emit CreateNode(name, category);
+      }
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void NodeScene::mousePressEvent(QGraphicsSceneMouseEvent* mouseEvent)
+   {
+      QPointF scenePos = mouseEvent->scenePos() - mpTranslationItem->scenePos();
+      mpDraggedItem = GetNodeItemAtPos(scenePos);
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void NodeScene::mouseMoveEvent(QGraphicsSceneMouseEvent* mouseEvent)
+   {
+      if (mpDraggedItem != NULL)
+      {
+         QDrag* drag = new QDrag(mouseEvent->widget());
+         QMimeData* mime = new QMimeData;
+         drag->setMimeData(mime);
+         QVariant name = mpDraggedItem->QGraphicsItem::data(Qt::UserRole);
+         QVariant category = mpDraggedItem->QGraphicsItem::data(Qt::UserRole + 1);
+         mime->setData("Name", name.toByteArray());
+         mime->setData("Category", category.toByteArray());
+         drag->exec();
+         mpDraggedItem = NULL;
+      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -136,6 +181,9 @@ namespace dtDirector
          {
             item->setFlag(QGraphicsItem::ItemIsMovable, false);
             item->setFlag(QGraphicsItem::ItemIsSelectable, false);
+            item->setAcceptedMouseButtons(Qt::NoButton);
+            item->setData(Qt::UserRole, QString::fromStdString(name));
+            item->setData(Qt::UserRole + 1, QString::fromStdString(category));
 
 #if(QT_VERSION >= 0x00040600)
             item->setFlag(QGraphicsItem::ItemSendsGeometryChanges, false);
@@ -149,6 +197,24 @@ namespace dtDirector
          }
       }
    }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   NodeItem* NodeScene::GetNodeItemAtPos(const QPointF& pos)
+   {
+      QList<QGraphicsItem*> nodes = items(pos);
+      int count = (int)nodes.size();
+      for (int index = 0; index < count; index++)
+      {
+         NodeItem* nodeItem = dynamic_cast<NodeItem*>(nodes[index]);
+         if (nodeItem != NULL)
+         {
+            return nodeItem;
+         }
+      }
+
+      return NULL;
+   }
+
 } // namespace dtDirector
 
 //////////////////////////////////////////////////////////////////////////

@@ -1008,6 +1008,24 @@ namespace dtDirector
       Refresh();
    }
 
+   ///////////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::OnCreateNodeEvent(const QString& name, const QString& category)
+   {
+      EditorView* view = dynamic_cast<EditorView*>(mUI.graphTab->currentWidget());
+      if (!view) return;
+
+      EditorScene* scene = view->GetScene();
+      if (!scene) return;
+
+      QPointF pos = view->mapToScene(view->width()/2, view->height()/2);
+      pos -= scene->GetTranslationItem()->scenePos();
+
+      scene->CreateNodeItem(name.toStdString(), category.toStdString(), pos.x(), pos.y());
+
+      // Refresh the graph to create all the newly created node items.
+      RefreshGraph(scene->GetGraph());
+   }
+
    ////////////////////////////////////////////////////////////////////////////////
    void DirectorEditor::keyPressEvent(QKeyEvent* e)
    {
@@ -1189,6 +1207,8 @@ namespace dtDirector
    void DirectorEditor::CreateNodeScene(QGraphicsView* view)
    {
       NodeScene* scene = new NodeScene(this);
+      connect(scene, SIGNAL(CreateNode(const QString&, const QString&)),
+         this, SLOT(OnCreateNodeEvent(const QString&, const QString&)));
       view->setScene(scene);
    }
 
