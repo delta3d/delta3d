@@ -58,7 +58,7 @@ void DirectorComponent::ProcessMessage(const dtGame::Message& message)
 ////////////////////////////////////////////////////////////////////////////////
 bool DirectorComponent::HandleKeyPressed(const dtCore::Keyboard* keyBoard, int key)
 {
-   bool handled = true;
+   bool handled = false;
 
    switch (key)
    {
@@ -70,7 +70,7 @@ bool DirectorComponent::HandleKeyPressed(const dtCore::Keyboard* keyBoard, int k
    case '~':
       {
          GetGameManager()->GetApplication().SetNextStatisticsType();
-         return false;
+         return true;
       }
    default:
       break;
@@ -102,12 +102,12 @@ void DirectorComponent::OnMapLoaded()
    app.GetScene()->AddChild(camera);
 
    // Allow the player to walk around the level and collide with objects
-   dtCore::CollisionMotionModel* motionModel = 
+   dtCore::CollisionMotionModel* motionModel =
       new dtCore::CollisionMotionModel(1.5f, 0.2f, 0.1f, 0.05f, app.GetScene(), app.GetKeyboard(), app.GetMouse());
 
    // Prevent the motion model from colliding with the camera
    motionModel->GetFPSCollider().SetCollisionBitsForFeet(COLLISION_CATEGORY_MASK_OBJECT);
-   motionModel->GetFPSCollider().SetCollisionBitsForTorso(COLLISION_CATEGORY_MASK_OBJECT);  
+   motionModel->GetFPSCollider().SetCollisionBitsForTorso(COLLISION_CATEGORY_MASK_OBJECT);
 
    motionModel->SetScene(&gm->GetScene());
    motionModel->SetTarget(camera);
@@ -122,7 +122,7 @@ void DirectorComponent::OnMapLoaded()
    // Try to eliminate interpenetration overhead (ODE is the bottleneck here)
    for (size_t proxyIndex = 0; proxyIndex < proxyList.size(); ++proxyIndex)
    {
-      dtCore::Transformable* actor = 
+      dtCore::Transformable* actor =
          dynamic_cast<dtCore::Transformable*>(proxyList[proxyIndex]->GetActor());
 
       actor->SetCollisionCategoryBits(COLLISION_CATEGORY_MASK_OBJECT);
@@ -134,7 +134,7 @@ void DirectorComponent::OnMapLoaded()
    dtDAL::BaseActorObject* playerStartProxy = NULL;
    gm->FindActorByType(*dtActors::EngineActorRegistry::PLAYER_START_ACTOR_TYPE, playerStartProxy);
 
-   dtCore::Transformable* playerStart = 
+   dtCore::Transformable* playerStart =
       dynamic_cast<dtCore::Transformable*>(playerStartProxy->GetActor());
 
    dtCore::Transform startTransform;
