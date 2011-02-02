@@ -57,12 +57,28 @@ namespace dtDirector
          dtDAL::StringActorProperty::GetFuncType(this, &LogAction::GetMessage),
          "The message that will be logged.");
       AddProperty(messageProp);
+
+      dtDAL::StringActorProperty* valueProp = new dtDAL::StringActorProperty(
+         "Value", "Value",
+         dtDAL::StringActorProperty::SetFuncType(this, &LogAction::SetValue),
+         dtDAL::StringActorProperty::GetFuncType(this, &LogAction::GetValue),
+         "The value(s) that will be logged.");
+      mValues.push_back(ValueLink(this, valueProp, false, true, false));
    }
 
    //////////////////////////////////////////////////////////////////////////
    bool LogAction::Update(float simDelta, float delta, int input, bool firstUpdate)
    {
-      LOG_ALWAYS(mMessage);
+      if (!mMessage.empty())
+      {
+         LOG_ALWAYS(mMessage);
+      }
+
+      int count = GetPropertyCount("Value");
+      for (int index = 0; index < count; index++)
+      {
+         LOG_ALWAYS("Value: " + GetString("Value"));
+      }
 
       return ActionNode::Update(simDelta, delta, input, firstUpdate);
    }
@@ -77,6 +93,18 @@ namespace dtDirector
    const std::string& LogAction::GetMessage()
    {
       return mMessage;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void LogAction::SetValue(const std::string& value)
+   {
+      mValue = value;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   const std::string& LogAction::GetValue()
+   {
+      return mValue;
    }
 
    //////////////////////////////////////////////////////////////////////////

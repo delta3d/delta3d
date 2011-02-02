@@ -79,13 +79,15 @@ namespace dtDirector
       void SetMessage(const std::string& value);
       const std::string& GetMessage();
 
+      void SetValue(const std::string& value);
+      const std::string& GetValue();
+
       /**
        * Retrieves the display name for the node.
        *
        * @return  The display name of the node.
        */
       virtual const std::string& GetName();
-
 
    protected:
 
@@ -95,8 +97,8 @@ namespace dtDirector
       ~LogAction();
 
    private:
-
       std::string mMessage;
+      std::string mValue;
    };
 }
 
