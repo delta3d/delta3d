@@ -38,7 +38,9 @@
 #include <dtDirector/nodetype.h>
 #include <dtDirector/groupnode.h>
 
+#include <QtCore/QMimeData>
 #include <QtGui/QGraphicsSceneMouseEvent>
+#include <QtGui/QInputDialog>
 #include <QtGui/QMenu>
 
 #include <dtDAL/actoridactorproperty.h>
@@ -528,6 +530,17 @@ namespace dtDirector
       return node.get();
    }
 
+   ///////////////////////////////////////////////////////////////////////////////
+   void EditorScene::CreateNodeItem(const std::string& name, const std::string& category, float x, float y)
+   {
+      Node* node = CreateNode(name, category, x, y);
+      if (node)
+      {
+         dtCore::RefPtr<UndoCreateEvent> event = new UndoCreateEvent(mEditor, node->GetID(), mGraph->GetID());
+         mEditor->GetUndoManager()->AddEvent(event);
+      }
+   }
+
    //////////////////////////////////////////////////////////////////////////
    void EditorScene::DeleteNode(NodeItem* node)
    {
@@ -850,6 +863,26 @@ namespace dtDirector
       }
    }
 
+   ///////////////////////////////////////////////////////////////////////////////
+   void EditorScene::dragMoveEvent(QGraphicsSceneDragDropEvent* event)
+   {
+
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void EditorScene::dropEvent(QGraphicsSceneDragDropEvent* event)
+   {
+      QString name = event->mimeData()->data("Name");
+      QString category = event->mimeData()->data("Category");
+      if (!name.isEmpty() && !category.isEmpty())
+      {
+         QPointF pos = event->scenePos();
+         pos -= mTranslationItem->scenePos();
+         CreateNodeItem(name.toStdString(), category.toStdString(),
+            pos.x(), pos.y());
+      }
+   }
+
    //////////////////////////////////////////////////////////////////////////
    void EditorScene::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
    {
@@ -875,196 +908,11 @@ namespace dtDirector
             menu.addSeparator();
          }
 
-         QMenu* nodeMenu = menu.addMenu("Create Node");
+         QAction* createMacroAction = menu.addAction("Create Macro");
+         connect(createMacroAction, SIGNAL(triggered()), this, SLOT(OnCreateMacro()));
 
-         if (nodeMenu)
-         {
-            std::map<std::string, QMenu*> eventFolders;
-            std::map<std::string, QMenu*> actionFolders;
-            std::map<std::string, QMenu*> valueFolders;
-            std::map<std::string, QMenu*> macroFolders;
-            std::map<std::string, QMenu*> linkFolders;
-            std::map<std::string, QMenu*> miscFolders;
-
-            // Events.
-            QMenu* eventMenu = nodeMenu->addMenu("Events");
-            eventFolders["Events"] = eventMenu;
-            connect(eventMenu, SIGNAL(triggered(QAction*)), this, SLOT(OnCreateNodeEvent(QAction*)));
-
-            // Actions.
-            QMenu* actionMenu = nodeMenu->addMenu("Actions");
-            actionFolders["Actions"] = actionMenu;
-            connect(actionMenu, SIGNAL(triggered(QAction*)), this, SLOT(OnCreateNodeEvent(QAction*)));
-
-            // Values.
-            QMenu* valueMenu = nodeMenu->addMenu("Variables");
-            valueFolders["Variables"] = valueMenu;
-            connect(valueMenu, SIGNAL(triggered(QAction*)), this, SLOT(OnCreateNodeEvent(QAction*)));
-
-            // Macros.
-            QMenu* macroMenu = nodeMenu->addMenu("Macros");
-            macroFolders["Macros"] = macroMenu;
-            connect(macroMenu, SIGNAL(triggered(QAction*)), this, SLOT(OnCreateNodeEvent(QAction*)));
-
-            QAction* createMacroAction = macroMenu->addAction("Normal Macro");
-            connect(createMacroAction, SIGNAL(triggered()), this, SLOT(OnCreateMacro()));
-
-            // Links.
-            QMenu* linkMenu = nodeMenu->addMenu("Links");
-            linkFolders["Links"] = linkMenu;
-            connect(linkMenu, SIGNAL(triggered(QAction*)), this, SLOT(OnCreateNodeEvent(QAction*)));
-
-            // Misc.
-            QMenu* miscMenu = nodeMenu->addMenu("Misc");
-            miscFolders["Misc"] = miscMenu;
-            connect(miscMenu, SIGNAL(triggered(QAction*)), this, SLOT(OnCreateNodeEvent(QAction*)));
-
-            QAction* createGroupAction = miscMenu->addAction("Group Box");
-            connect(createGroupAction, SIGNAL(triggered()), this, SLOT(OnCreateGroupFrame()));
-
-            // Get the list of available nodes to create.
-            std::vector<const NodeType*> nodes;
-            NodeManager::GetInstance().GetNodeTypes(nodes);
-
-            int count = (int)nodes.size();
-            for (int index = 0; index < count; index++)
-            {
-               const NodeType* node = nodes[index];
-
-               if (node)
-               {
-                  // Make sure the node we found is a type valid for this script.
-                  NodePluginRegistry* reg = NodeManager::GetInstance().GetRegistryForType(*node);
-                  if (!reg || (reg->GetName() != "dtDirectorNodes" && !mEditor->GetDirector()->HasLibrary(reg->GetName())))
-                  {
-                     continue;
-                  }
-
-                  // Find the primary folder to map the node to.
-                  std::map<std::string, QMenu*>* folderMap = NULL;
-
-                  if (node->GetNodeType() == NodeType::EVENT_NODE)
-                  {
-                     folderMap = &eventFolders;
-                  }
-                  else if (node->GetNodeType() == NodeType::ACTION_NODE)
-                  {
-                     folderMap = &actionFolders;
-                  }
-                  else if (node->GetNodeType() == NodeType::VALUE_NODE)
-                  {
-                     folderMap = &valueFolders;
-                  }
-                  else if (node->GetNodeType() == NodeType::MACRO_NODE)
-                  {
-                     folderMap = &macroFolders;
-                  }
-                  else if (node->GetNodeType() == NodeType::LINK_NODE)
-                  {
-                     folderMap = &linkFolders;
-                  }
-
-                  if (folderMap)
-                  {
-                     // Find the sub-folder to map the node to.
-                     if (folderMap->find(node->GetFolder()) == folderMap->end())
-                     {
-                        (*folderMap)[node->GetFolder()] = new QMenu(node->GetFolder().c_str());
-                     }
-
-                     QMenu* folder = (*folderMap)[node->GetFolder()];
-                     if (folder)
-                     {
-                        QAction* action = folder->addAction(node->GetName().c_str());
-                        if (action)
-                        {
-                           action->setStatusTip(node->GetCategory().c_str());
-                           action->setToolTip(node->GetDescription().c_str());
-                        }
-                     }
-                  }
-               }
-            }
-
-            // Now copy the contents of all of the folders into the context menu.
-            std::map<std::string, QMenu*>::iterator i = eventFolders.begin();
-            for (i = eventFolders.begin(); i != eventFolders.end(); i++)
-            {
-               QMenu* folder = i->second;
-               if (!folder->parent())
-               {
-                  eventMenu->addMenu(folder);
-               }
-            }
-
-            for (i = actionFolders.begin(); i != actionFolders.end(); i++)
-            {
-               QMenu* folder = i->second;
-               if (!folder->parent())
-               {
-                  actionMenu->addMenu(folder);
-               }
-            }
-
-            for (i = valueFolders.begin(); i != valueFolders.end(); i++)
-            {
-               QMenu* folder = i->second;
-               if (!folder->parent())
-               {
-                  valueMenu->addMenu(folder);
-               }
-            }
-
-            for (i = macroFolders.begin(); i != macroFolders.end(); i++)
-            {
-               QMenu* folder = i->second;
-               if (!folder->parent())
-               {
-                  macroMenu->addMenu(folder);
-               }
-            }
-
-            // Add custom macro editing tools
-            std::vector<std::string> toolList = mEditor->GetRegisteredToolList();
-            if (!toolList.empty())
-            {
-               macroMenu->addSeparator();
-               QMenu* toolMenu = macroMenu->addMenu("Custom Editor Macro's");
-               if (toolMenu)
-               {
-                  connect(toolMenu, SIGNAL(triggered(QAction*)), this, SLOT(OnCreateCustomEditedMacro(QAction*)));
-
-                  int count = (int)toolList.size();
-                  for (int index = 0; index < count; ++index)
-                  {
-                     QAction* macroAction = toolMenu->addAction(QString("\'") + toolList[index].c_str() + "\' Macro");
-                     if (macroAction)
-                     {
-                        macroAction->setStatusTip(toolList[index].c_str());
-                        macroAction->setToolTip(QString("Creates a macro that is edited by the custom \'") + toolList[index].c_str() + "\' Editor.");
-                     }
-                  }
-               }
-            }
-
-            for (i = linkFolders.begin(); i != linkFolders.end(); i++)
-            {
-               QMenu* folder = i->second;
-               if (!folder->parent())
-               {
-                  linkMenu->addMenu(folder);
-               }
-            }
-
-            for (i = miscFolders.begin(); i != miscFolders.end(); i++)
-            {
-               QMenu* folder = i->second;
-               if (!folder->parent())
-               {
-                  miscMenu->addMenu(folder);
-               }
-            }
-         }
+         QAction* createGroupAction = menu.addAction("Create Group Box");
+         connect(createGroupAction, SIGNAL(triggered()), this, SLOT(OnCreateGroupFrame()));
 
          // If we have selected actors in STAGE, add an option to create values for those actors.
          if (mEditor->GetActorSelection().size() > 0)
@@ -1095,6 +943,7 @@ namespace dtDirector
       DirectorGraph* graph = mGraph->AddGraph();
       if (graph)
       {
+         graph->SetName(QInputDialog::getText(NULL, "Name Macro", "Enter the name of the new macro:").toStdString());
          graph->SetPosition(osg::Vec2(mMenuPos.x(), mMenuPos.y()));
 
          dtCore::RefPtr<UndoCreateEvent> event = new UndoCreateEvent(mEditor, graph->GetID(), mGraph->GetID());
@@ -1103,7 +952,6 @@ namespace dtDirector
 
       return graph;
    }
-
 } // namespace dtDirector
 
 //////////////////////////////////////////////////////////////////////////
