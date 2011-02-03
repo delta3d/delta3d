@@ -660,17 +660,6 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void EditorScene::OnCreateGroupFrame()
-   {
-      Node* node = CreateNode("Group Box", "Core", mMenuPos.x(), mMenuPos.y());
-      if (node)
-      {
-         dtCore::RefPtr<UndoCreateEvent> event = new UndoCreateEvent(mEditor, node->GetID(), mGraph->GetID());
-         mEditor->GetUndoManager()->AddEvent(event);
-      }
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
    void EditorScene::OnCreateActorsFromSelection()
    {
       std::vector<dtDAL::BaseActorObject*> proxies = mEditor->GetActorSelection();
@@ -910,9 +899,6 @@ namespace dtDirector
 
          QAction* createMacroAction = menu.addAction("Create Macro");
          connect(createMacroAction, SIGNAL(triggered()), this, SLOT(OnCreateMacro()));
-
-         QAction* createGroupAction = menu.addAction("Create Group Box");
-         connect(createGroupAction, SIGNAL(triggered()), this, SLOT(OnCreateGroupFrame()));
 
          // If we have selected actors in STAGE, add an option to create values for those actors.
          if (mEditor->GetActorSelection().size() > 0)
