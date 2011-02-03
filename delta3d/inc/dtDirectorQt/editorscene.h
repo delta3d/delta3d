@@ -243,11 +243,6 @@ namespace dtDirector
       void OnCreateCustomEditedMacro(QAction* action);
 
       /**
-       * Event handler to create a group frame.
-       */
-      void OnCreateGroupFrame();
-
-      /**
        * Event handler to create actor nodes for the current selected actors in STAGE.
        */
       void OnCreateActorsFromSelection();
@@ -258,7 +253,7 @@ namespace dtDirector
       void OnCreateGroupForSelection();
 
    protected:
-      
+
       /**
        * Mouse button events.
        *
@@ -272,7 +267,7 @@ namespace dtDirector
        *
        * @param[in]  event  The mouse event.
        */
-      void mouseMoveEvent(QGraphicsSceneMouseEvent* event);  
+      void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
 
       /**
        * Drag event moved on this scene.
@@ -319,7 +314,7 @@ namespace dtDirector
 
       QPointF            mMenuPos;
       QGraphicsRectItem* mTranslationItem;
-      
+
       PropertyEditor::PropertyContainerRefPtrVector mSelected;
    };
 } // namespace dtDirector
