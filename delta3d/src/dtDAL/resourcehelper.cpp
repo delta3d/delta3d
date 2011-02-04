@@ -201,6 +201,11 @@ namespace dtDAL
                extFilter.insert(std::make_pair("ai","Waypoint file."));
                handler = new DefaultResourceTypeHandler(d, "Waypoint File.", extFilter);
                extMap.insert(std::make_pair("ai", dtCore::RefPtr<ResourceTypeHandler>(handler)));
+
+               extFilter.clear();
+               extFilter.insert(std::make_pair("zip","Wrapping another file in a zip."));
+               handler = new DefaultResourceTypeHandler(d, "Wrapping another file in a zip.", extFilter);
+               extMap.insert(std::make_pair("zip", dtCore::RefPtr<ResourceTypeHandler>(handler)));
             }
             else if (d == DataType::SKELETAL_MESH)
             {
@@ -209,6 +214,11 @@ namespace dtDAL
                extFilter.insert(std::make_pair("xml","Extensible Markup Language."));
                handler = new DefaultResourceTypeHandler(d, "Extensible Markup Language.", extFilter);
                extMap.insert(std::make_pair("xml", dtCore::RefPtr<ResourceTypeHandler>(handler)));
+
+               extFilter.clear();
+               extFilter.insert(std::make_pair("zip","Wrapping another file in a zip."));
+               handler = new DefaultResourceTypeHandler(d, "Wrapping another file in a zip.", extFilter);
+               extMap.insert(std::make_pair("zip", dtCore::RefPtr<ResourceTypeHandler>(handler)));
             }
             else if (d == DataType::TERRAIN)
             {
@@ -231,6 +241,10 @@ namespace dtDAL
                handler = new DefaultResourceTypeHandler(d, "Open Scene Graph ascii scene data.", extFilter);
                extMap.insert(std::make_pair("osg", dtCore::RefPtr<ResourceTypeHandler>(handler)));
 
+               extFilter.clear();
+               extFilter.insert(std::make_pair("zip","Wrapping another file in a zip."));
+               handler = new DefaultResourceTypeHandler(d, "Wrapping another file in a zip.", extFilter);
+               extMap.insert(std::make_pair("zip", dtCore::RefPtr<ResourceTypeHandler>(handler)));
             }
             else if (d == DataType::TEXTURE)
             {

@@ -36,6 +36,7 @@ SET( LIB_SOURCES
     ${SOURCE_PATH}/tangentspacevisitor.cpp
     ${SOURCE_PATH}/threadpool.cpp
     ${SOURCE_PATH}/version.cpp
+    ${SOURCE_PATH}/xercesbininputstreamistream.cpp
     ${SOURCE_PATH}/xerceserrorhandler.cpp
     ${SOURCE_PATH}/xercesparser.cpp
     ${SOURCE_PATH}/xercesutils.cpp
@@ -107,6 +108,7 @@ SET( LIB_PUBLIC_HEADERS
     ${HEADER_PATH}/typetraits.h
     ${HEADER_PATH}/typemanip.h
     ${HEADER_PATH}/version.h
+    ${HEADER_PATH}/xercesbininputstreamistream.h
     ${HEADER_PATH}/xerceserrorhandler.h
     ${HEADER_PATH}/xercesparser.h
     ${HEADER_PATH}/xercesutils.h

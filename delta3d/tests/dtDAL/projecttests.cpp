@@ -44,6 +44,7 @@
 #include <dtDAL/mapxml.h>
 #include <dtDAL/datatype.h>
 #include <dtDAL/project.h>
+#include <dtDAL/projectconfig.h>
 #include <dtDAL/map.h>
 #include <dtDAL/exceptionenum.h>
 
@@ -63,6 +64,7 @@ class ProjectTests : public CPPUNIT_NS::TestFixture
    CPPUNIT_TEST(TestReadonlyFailure);
    CPPUNIT_TEST(TestCreateContextWithMapsDir);
    CPPUNIT_TEST(TestProject);
+   CPPUNIT_TEST(TestSetupFromProjectConfig);
    CPPUNIT_TEST(TestCategories);
    CPPUNIT_TEST(TestResources);
    CPPUNIT_TEST(TestDeletingBackupFromReadOnlyContext);
@@ -80,6 +82,7 @@ class ProjectTests : public CPPUNIT_NS::TestFixture
       void tearDown();
 
       void TestProject();
+      void TestSetupFromProjectConfig();
       void TestFileIO();
       void TestCategories();
       void TestReadonlyFailure();
@@ -393,6 +396,54 @@ void ProjectTests::TestCreateContextWithMapsDir()
    //    }
 }
 
+#define TEST_ACCESSOR(varPtr, accessor, defaultVal, testVal) \
+         CPPUNIT_ASSERT_EQUAL(defaultVal, varPtr->Get ## accessor()); \
+         varPtr->Set ## accessor(testVal); \
+         CPPUNIT_ASSERT_EQUAL(testVal, varPtr->Get ## accessor()); \
+
+
+void ProjectTests::TestSetupFromProjectConfig()
+{
+   dtCore::RefPtr<dtDAL::ProjectConfig> pconfig = new dtDAL::ProjectConfig;
+   TEST_ACCESSOR(pconfig, Name, std::string(), std::string("Grumpy"));
+   TEST_ACCESSOR(pconfig, Description, std::string(), std::string("Grumpy1"));
+   TEST_ACCESSOR(pconfig, Author, std::string(), std::string("Grumpy2"));
+   TEST_ACCESSOR(pconfig, Comment, std::string(), std::string("Grumpy3"));
+   TEST_ACCESSOR(pconfig, Copyright, std::string(), std::string("Grumpy4"));
+   TEST_ACCESSOR(pconfig, ReadOnly, false, true);
+
+   pconfig->AddContextData(dtDAL::ContextData("WorkingProject"));
+   pconfig->AddContextData(dtDAL::ContextData("WorkingProject2"));
+
+   try
+   {
+      dtDAL::Project& p = dtDAL::Project::GetInstance();
+      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
+
+      p.CreateContext("WorkingProject");
+      p.CreateContext("WorkingProject2");
+
+      p.SetupFromProjectConfig(*pconfig);
+
+      // The config was set to true in the above TEST_ACCESSOR
+      CPPUNIT_ASSERT(p.IsReadOnly());
+
+      CPPUNIT_ASSERT(p.IsContextValid(0));
+      CPPUNIT_ASSERT(p.IsContextValid(1));
+      CPPUNIT_ASSERT(!p.IsContextValid(2));
+
+      CPPUNIT_ASSERT_EQUAL(fileUtils.GetAbsolutePath(pconfig->GetContextData(0).GetPath()), p.GetContext(0));
+      CPPUNIT_ASSERT_EQUAL(fileUtils.GetAbsolutePath(pconfig->GetContextData(1).GetPath()), p.GetContext(1));
+   }
+   catch (const dtUtil::Exception& ex)
+   {
+      CPPUNIT_FAIL(ex.ToString());
+   }
+   //    catch (const std::exception& ex) {
+   //        CPPUNIT_FAIL(ex.what());
+   //    }
+}
+
 void ProjectTests::TestCategories()
 {
    try
@@ -473,9 +524,6 @@ void ProjectTests::TestCategories()
                   !fileUtils.DirExists(catPath));
          }
       }
-
-
-
    }
    catch (const dtUtil::Exception& ex)
    {
@@ -532,7 +580,7 @@ void ProjectTests::TestResources()
       std::vector<const dtDAL::ResourceTypeHandler* > handlers;
 
       p.GetHandlersForDataType(dtDAL::DataType::TERRAIN, handlers);
-      CPPUNIT_ASSERT_MESSAGE("There should be 4 terrain type handlers",  handlers.size() == 4);
+      CPPUNIT_ASSERT_MESSAGE("There should be 8 terrain type handlers",  handlers.size() == 8);
 
       std::string testResult;
 

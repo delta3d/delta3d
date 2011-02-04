@@ -51,6 +51,8 @@
 #include <dtDAL/exceptionenum.h>
 #include <dtDAL/mapxmlconstants.h>
 
+#include <dtUtil/xercesbininputstreamistream.h>
+
 #include <dtUtil/datapathutils.h>
 #include <dtUtil/fileutils.h>
 #include <dtUtil/datetime.h>
@@ -58,6 +60,7 @@
 #include <dtUtil/log.h>
 
 #include <iostream>
+#include <fstream>
 
 XERCES_CPP_NAMESPACE_USE
 
@@ -81,41 +84,33 @@ namespace dtDAL
       delete mXercesParser;
    }
 
-   /////////////////////////////////////////////////////////////////
-   void BaseXMLParser::StaticInit()
+   class InputSourcefStream : public xercesc::InputSource
    {
-      try
+   public:
+      InputSourcefStream(std::istream& stream)
+      : mStream(stream)
       {
-         XMLPlatformUtils::Initialize();
       }
-      catch (const XMLException& toCatch)
+
+      virtual xercesc::BinInputStream* makeStream() const
       {
-         //if this happens, something is very very wrong.
-         char* message = XMLString::transcode( toCatch.getMessage() );
-         std::string msg(message);
-         LOG_ERROR("Error during parser initialization!: "+ msg)
-            XMLString::release( &message );
-         return;
+         return new dtUtil::XercesBinInputStreamIStream(mStream);
       }
-   }
+
+      std::istream& mStream;
+   };
 
    /////////////////////////////////////////////////////////////////
-   void BaseXMLParser::StaticShutdown()
-   {
-      //This causes too many problems and it in only called at app shutdown
-      //so the memory leak in not a problem.
-      //XMLPlatformUtils::Terminate();
-   }
-
-   /////////////////////////////////////////////////////////////////
-   bool BaseXMLParser::Parse(const std::string& path)
+   bool BaseXMLParser::Parse(std::istream& stream)
    {
       try
       {
          mParsing = true;
          mXercesParser->setContentHandler(mHandler.get());
          mXercesParser->setErrorHandler(mHandler.get());
-         mXercesParser->parse(path.c_str());
+         //mXercesParser->parse(path.c_str());
+         InputSourcefStream xerStream(stream);
+         mXercesParser->parse(xerStream);
          mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Parsing complete.\n");
          mParsing = false;
          return true;
@@ -140,6 +135,13 @@ namespace dtDAL
          throw dtDAL::XMLLoadParsingException( "Error while parsing XML file. See log for more information.", __FILE__, __LINE__);
       }
       return false;
+   }
+
+   /////////////////////////////////////////////////////////////////
+   bool BaseXMLParser::Parse(const std::string& path)
+   {
+      std::ifstream fileStream(path.c_str());
+      Parse(fileStream);
    }
 
    /////////////////////////////////////////////////////////////////

@@ -38,6 +38,8 @@
 #include <xercesc/framework/XMLFormatter.hpp>
 #include <xercesc/sax2/SAX2XMLReader.hpp>
 
+#include <iosfwd>
+
 namespace dtUtil
 {
    class Log;
@@ -67,6 +69,8 @@ namespace dtDAL
        */
       virtual bool Parse(const std::string& path);
 
+      virtual bool Parse(std::istream& stream);
+
       ///@return true if the map is currently being parsed.
       bool IsParsing() const { return mParsing; }
 
@@ -75,16 +79,6 @@ namespace dtDAL
       virtual ~BaseXMLParser();
 
    public:
-
-      /**
-       * this is called automatically on startup.
-       */
-      static void StaticInit();
-
-      /**
-       * this is called automatically on shutdown.
-       */
-      static void StaticShutdown();
 
       dtUtil::Log* mLogger;
 

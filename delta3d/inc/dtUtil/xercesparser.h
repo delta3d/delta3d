@@ -45,6 +45,10 @@ namespace dtUtil
       XercesParser();
       ~XercesParser();
 
+      static void StaticInit();
+      static void StaticShutdown();
+
+
       /** \brief The function that parses the file.
         * This function uses the Xerces SAX2Reader to parse a XML document.
         * \param data the file to be parsed.

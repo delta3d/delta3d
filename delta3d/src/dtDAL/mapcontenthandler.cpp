@@ -161,15 +161,19 @@ namespace  dtDAL
             if (!proxy.valid())
             {
                if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+               {
                   mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                   "No environment actor was located in the map.");
+               }
                return;
             }
             else
             {
                if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+               {
                   mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                   "An environment actor was located in the map.");
+               }
             }
 
             IEnvironmentActor *ea = dynamic_cast<IEnvironmentActor*>(proxy->GetActor());

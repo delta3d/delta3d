@@ -172,6 +172,15 @@ namespace dtDAL
    XMLCh* MapXMLConstants::PRESET_CAMERA_ROTATION_W_ELEMENT = NULL;
    XMLCh* MapXMLConstants::PRESET_CAMERA_ZOOM_ELEMENT = NULL;
 
+   class MaxXMLConstantsInit
+   {
+   public:
+      MaxXMLConstantsInit() { MapXMLConstants::StaticInit(); }
+      ~MaxXMLConstantsInit() { MapXMLConstants::StaticShutdown(); }
+   };
+
+   static MaxXMLConstantsInit gInitMe;
+
    void MapXMLConstants::StaticInit()
    {
       END_XML_ELEMENT = xercesc::XMLString::transcode("</");

@@ -78,6 +78,8 @@ SET(LIB_PUBLIC_HEADERS
     ${HEADER_PATH}/physicalactorproxy.h
     ${HEADER_PATH}/plugin_export.h
     ${HEADER_PATH}/project.h
+    ${HEADER_PATH}/projectconfig.h
+    ${HEADER_PATH}/projectconfigxmlhandler.h
     ${HEADER_PATH}/propertycontainer.h
     ${HEADER_PATH}/propertycontaineractorproperty.h
     ${HEADER_PATH}/propertymacros.h
@@ -153,6 +155,8 @@ SET(LIB_SOURCES
     ${SOURCE_PATH}/objecttype.cpp
     ${SOURCE_PATH}/physicalactorproxy.cpp
     ${SOURCE_PATH}/project.cpp
+    ${SOURCE_PATH}/projectconfig.cpp
+    ${SOURCE_PATH}/projectconfigxmlhandler.cpp
     ${SOURCE_PATH}/propertycontainer.cpp
     ${SOURCE_PATH}/propertycontaineractorproperty.cpp
     ${SOURCE_PATH}/resourceactorproperty.cpp
