@@ -17,6 +17,15 @@ using namespace dtUtil;
 
 XERCES_CPP_NAMESPACE_USE
 
+class XercesParserInit
+{
+public:
+   XercesParserInit() { XercesParser::StaticInit(); }
+   ~XercesParserInit() { XercesParser::StaticShutdown(); }
+};
+
+static XercesParserInit gInitMe;
+
 ////////////////////////////////////////////////////////////////////////////////
 XercesParser::XercesParser()
    : mParser(NULL)
@@ -31,6 +40,28 @@ XercesParser::~XercesParser()
       delete mParser;
       mParser = NULL;
    }
+}
+
+void XercesParser::StaticInit()
+{
+   try
+   {
+      XMLPlatformUtils::Initialize();
+   }
+   catch (const XMLException& toCatch)
+   {
+      //if this happens, something is very very wrong.
+      char* message = XMLString::transcode( toCatch.getMessage() );
+      std::string msg(message);
+      LOG_ERROR("Error during parser initialization!: "+ msg)
+         XMLString::release( &message );
+      return;
+   }
+}
+
+void XercesParser::StaticShutdown()
+{
+   // shutting down xerces causes a crash.
 }
 
 ////////////////////////////////////////////////////////////////////////////////

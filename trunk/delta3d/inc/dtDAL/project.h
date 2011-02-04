@@ -58,6 +58,7 @@ namespace dtDAL
    class ResourceDescriptor;
    class ProjectImpl;
    class GameEvent;
+   class ProjectConfig;
 
    /**
     * @class Project
@@ -85,11 +86,19 @@ namespace dtDAL
       }
 
       /**
+       * Sets up the context paths and the project in general based on the given project config.
+       * @note If adding any of the context paths in the config fail in AddContext, all of the context paths will be cleared
+       * @throw dtUtil::Exception if setting up the project fails.
+       * @throw dtDAL::ProjectInvalidContextException if any of the paths specified are invalid.
+       */
+      void SetupFromProjectConfig(const ProjectConfig& config);
+
+      /**
        * Creates a new project context if it doesn't exist.
        * @param path the full path to the new context directory
        * @param createMapsDir create the maps directory.  Otherwise the code just validates that the passed in path
        *                      could be a valid project context.
-       * @throws dtUtil::Exception with ExceptionEnum::ProjectInvalidContext if the path specified is invalid.
+       * @throw dtDAL::ProjectInvalidContextException if the path specified is invalid.
        */
       void CreateContext(const std::string& path, bool createMapsDir = true);
 

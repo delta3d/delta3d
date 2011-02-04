@@ -44,9 +44,11 @@
 #include <dtUtil/fileutils.h>
 
 #include <dtDAL/project.h>
+#include <dtDAL/projectconfig.h>
+//just to init the constants.  being consistent on the way it works.
+#include <dtDAL/projectconfigxmlhandler.h>
 #include <dtDAL/map.h>
 #include <dtDAL/mapxml.h>
-#include <dtDAL/mapxmlconstants.h>
 #include <dtDAL/datatype.h>
 #include <dtDAL/exceptionenum.h>
 #include <dtDAL/librarymanager.h>
@@ -76,9 +78,6 @@ namespace dtDAL
       , mResourcesIndexed(false)
       , mEditMode(false)
       {
-         MapParser::StaticInit();
-         MapXMLConstants::StaticInit();
-
          mWriter = new MapWriter;
          libraryManager = &LibraryManager::GetInstance();
          mLogger = &dtUtil::Log::GetInstance(Project::LOG_NAME);
@@ -86,8 +85,6 @@ namespace dtDAL
 
       ~ProjectImpl()
       {
-         MapXMLConstants::StaticShutdown();
-         MapParser::StaticShutdown();
          //make sure the maps get closed before
          //the library manager is deleted
          mOpenMaps.clear();
@@ -204,6 +201,29 @@ namespace dtDAL
       return *this;
    }
 
+   /////////////////////////////////////////////////////////////////////////////
+   void Project::SetupFromProjectConfig(const ProjectConfig& config)
+   {
+      ClearAllContexts();
+
+      SetReadOnly(config.GetReadOnly());
+
+      try
+      {
+         for (unsigned i = 0; i < config.GetNumContextData(); ++i)
+         {
+            AddContext(config.GetContextData(i).GetPath());
+         }
+      }
+      catch (const dtUtil::Exception& ex)
+      {
+         // Clear everything if any part of the config fails.
+         ClearAllContexts();
+         throw ex;
+      }
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
    void Project::CreateContext(const std::string& path, bool createMapsDir)
    {
       dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
@@ -308,7 +328,6 @@ namespace dtDAL
       try
       {
          GetMapsDirectory(false);
-
 
          // Check not to see that the resource directories exist, but that they aren't regular files
          // and can therefore be created if needed.
@@ -748,7 +767,6 @@ namespace dtDAL
          }
       }
 
-
       mImpl->InternalSaveMap(*map, slot);
 
       mImpl->mOpenMaps.insert(make_pair(name, dtCore::RefPtr<Map>(map.get())));
@@ -1173,12 +1191,20 @@ namespace dtDAL
                 + map.GetSavedName() + " cannot be saved again as the same name", __FILE__, __LINE__);
       }
 
-      std::string newFileNameCopy(newFileName);
+      //std::string newFileNameCopy(newFileName);
       std::string currentFileName(map.GetFileName());
+
+      std::string oldMapName = map.GetSavedName();
+
+      MapFileData oldFileData = mImpl->mMapList[oldMapName];
+      if (slot == DEFAULT_SLOT_VALUE)
+      {
+         slot = oldFileData.mSlotId;
+      }
 
       //compare the file name without the extension.
       if (currentFileName.substr(0, currentFileName.size() - Map::MAP_FILE_EXTENSION.size())
-          == newFileNameCopy)
+          == newFileName && oldFileData.mSlotId == slot)
       {
          throw dtDAL::ProjectException( std::string("Map named ") + map.GetSavedName()
                 + " cannot be saved as a different map with the same file name.", __FILE__, __LINE__);
@@ -1188,22 +1214,17 @@ namespace dtDAL
            i != mImpl->mMapList.end(); ++i )
       {
          const std::string& mapFileNameRef = i->second.mFileName;
-         if (newFileNameCopy == mapFileNameRef.substr(0, mapFileNameRef.size() - Map::MAP_FILE_EXTENSION.size()))
+         if (newFileName == mapFileNameRef.substr(0, mapFileNameRef.size() - Map::MAP_FILE_EXTENSION.size())
+                  && i->second.mSlotId == slot)
+         {
             throw dtDAL::ProjectException( std::string("Map named ")
                    + map.GetSavedName() + " cannot be saved with file name "
                    + newFileName + " because it matches another map.", __FILE__, __LINE__);
+         }
       }
-
-      std::string oldMapName = map.GetSavedName();
-
-      MapFileData oldFileData = mImpl->mMapList[oldMapName];
 
       map.SetName(newName);
-      map.SetFileName(newFileNameCopy);
-      if (slot == DEFAULT_SLOT_VALUE)
-      {
-         slot = oldFileData.mSlotId;
-      }
+      map.SetFileName(newFileName);
 
       mImpl->InternalSaveMap(map, slot);
 

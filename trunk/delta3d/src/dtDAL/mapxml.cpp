@@ -67,6 +67,7 @@
 #include <dtUtil/log.h>
 
 #include <iostream>
+#include <fstream>
 
 XERCES_CPP_NAMESPACE_USE
 
@@ -77,8 +78,8 @@ namespace dtDAL
 
    /////////////////////////////////////////////////////////////////
    MapParser::MapParser()
-      : BaseXMLParser()
-      , mMapHandler(new MapContentHandler())
+   : BaseXMLParser()
+   , mMapHandler(new MapContentHandler())
    {
       mHandler = mMapHandler.get();
 
@@ -115,7 +116,9 @@ namespace dtDAL
    bool MapParser::Parse(const std::string& path, Map** map)
    {
       mMapHandler->SetMapMode();
-      if (BaseXMLParser::Parse(path))
+
+      std::ifstream mapfstream(path.c_str());
+      if (BaseXMLParser::Parse(mapfstream))
       {
          dtCore::RefPtr<Map> mapRef = mMapHandler->GetMap();
          mMapHandler->ClearMap();
@@ -136,7 +139,8 @@ namespace dtDAL
    bool MapParser::ParsePrefab(const std::string& path, std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> >& proxyList, dtDAL::Map* map)
    {
       mMapHandler->SetPrefabMode(proxyList, dtDAL::MapContentHandler::PREFAB_READ_ALL, map);
-      if (BaseXMLParser::Parse(path))
+      std::ifstream mapfstream(path.c_str());
+      if (BaseXMLParser::Parse(mapfstream))
       {
          dtCore::RefPtr<Map> mapRef = mMapHandler->GetMap();
          mMapHandler->ClearMap();
