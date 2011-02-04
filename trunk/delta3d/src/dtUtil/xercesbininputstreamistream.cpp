@@ -22,6 +22,7 @@
  * David Guthrie
  */
 
+#include <prefix/dtutilprefix.h>
 #include <dtUtil/xercesbininputstreamistream.h>
 #include <istream>
 
@@ -34,7 +35,7 @@ namespace dtUtil
 
    XMLFilePos XercesBinInputStreamIStream::curPos() const
    {
-      XMLFilePos(mStream.gcount());
+      return XMLFilePos(mStream.gcount());
    }
 
    XMLSize_t XercesBinInputStreamIStream::readBytes(XMLByte* const toFill, const XMLSize_t maxToRead)

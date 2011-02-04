@@ -18,10 +18,11 @@
  *
  * This software was developed by Alion Science and Technology Corporation under
  * circumstances in which the U. S. Government may have rights in the software.
- * 
+ *
  * David Guthrie
  */
 
+#include <prefix/dtdalprefix.h>
 #include <dtDAL/projectconfig.h>
 #include <dtUtil/exception.h>
 

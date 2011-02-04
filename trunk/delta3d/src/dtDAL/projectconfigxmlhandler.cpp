@@ -18,10 +18,11 @@
  *
  * This software was developed by Alion Science and Technology Corporation under
  * circumstances in which the U. S. Government may have rights in the software.
- * 
+ *
  * David Guthrie
  */
 
+#include <prefix/dtdalprefix.h>
 #include <dtDAL/projectconfigxmlhandler.h>
 #include <xercesc/util/XMLString.hpp>
 #include <xercesc/util/OutOfMemoryException.hpp>
