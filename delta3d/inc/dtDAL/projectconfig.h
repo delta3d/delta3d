@@ -18,7 +18,7 @@
  *
  * This software was developed by Alion Science and Technology Corporation under
  * circumstances in which the U. S. Government may have rights in the software.
- * 
+ *
  * David Guthrie
  */
 
@@ -26,13 +26,14 @@
 #define PROJECTCONFIG_H_
 
 #include <osg/Referenced>
+#include <dtDAL/export.h>
 #include <dtUtil/getsetmacros.h>
 #include <string>
 
 namespace dtDAL
 {
 
-   class ContextData
+   class DT_DAL_EXPORT ContextData
    {
    public:
       ContextData(const std::string& path);
@@ -42,7 +43,7 @@ namespace dtDAL
    /**
     * Defines a configuration for a project that could span multiple directories.
     */
-   class ProjectConfig : public osg::Referenced
+   class DT_DAL_EXPORT ProjectConfig : public osg::Referenced
    {
    public:
       ProjectConfig();

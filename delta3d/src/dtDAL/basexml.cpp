@@ -141,7 +141,7 @@ namespace dtDAL
    bool BaseXMLParser::Parse(const std::string& path)
    {
       std::ifstream fileStream(path.c_str());
-      Parse(fileStream);
+      return Parse(fileStream);
    }
 
    /////////////////////////////////////////////////////////////////
