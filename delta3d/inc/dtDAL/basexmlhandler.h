@@ -1,6 +1,6 @@
 /* -*-c++-*-
  * Delta3D Open Source Game and Simulation Engine
- * Copyright (C) 2006, Alion Science and Technology, BMH Operation.
+ * Copyright (C) 2006-2011, Alion Science and Technology, BMH Operation.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -23,11 +23,8 @@
 #ifndef DELTA_BASE_XML_HANDLER
 #define DELTA_BASE_XML_HANDLER
 
-#include <vector>
 #include <string>
 #include <stack>
-#include <map>
-#include <set>
 
 #include <dtDAL/export.h>
 #include <dtCore/refptr.h>
@@ -158,6 +155,7 @@ namespace dtDAL
        */
       virtual void fatalError(const xercesc::SAXParseException& exc);
 
+
       /**
        * @see xercesc::ErrorHandler#warning
        * @see xercesc::SAXParseException#SAXParseException
@@ -182,6 +180,8 @@ namespace dtDAL
       // -----------------------------------------------------------------------
       BaseXMLHandler(const BaseXMLHandler&);
       BaseXMLHandler& operator=(const BaseXMLHandler&);
+
+      virtual std::string MakeErrorString(const xercesc::SAXParseException &exc);
 
       std::stack<xmlCharString> mElements;
 
