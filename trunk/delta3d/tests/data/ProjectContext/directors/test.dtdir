@@ -256,7 +256,7 @@
                 </valuelink>
             </node>
             <node>
-                <name>Binary Operation</name>
+                <name>Arithmetic Operation</name>
                 <category>General</category>
                 <id>8f02caae-30c1-4f62-8475-ce492cefba9b</id>
                 <property>
@@ -743,7 +743,7 @@
             </eventnodes>
             <actionnodes>
                 <node>
-                    <name>Binary Operation</name>
+                    <name>Arithmetic Operation</name>
                     <category>General</category>
                     <id>f4779360-d336-4c47-a69b-df87dad815ec</id>
                     <property>
@@ -1278,7 +1278,7 @@
                     </valuelink>
                 </node>
                 <node>
-                    <name>Binary Operation</name>
+                    <name>Arithmetic Operation</name>
                     <category>General</category>
                     <id>3b5eaea2-5d07-4d82-85aa-454a7460d23e</id>
                     <property>

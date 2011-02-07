@@ -1156,7 +1156,7 @@
                 </valuelink>
             </node>
             <node>
-                <name>Binary Operation</name>
+                <name>Arithmetic Operation</name>
                 <category>General</category>
                 <id>1877f783-f7a8-470a-8435-4569d7272672</id>
                 <property>
