@@ -220,7 +220,7 @@
                 </valuelink>
             </node>
             <node>
-                <name>Binary Operation</name>
+                <name>Arithmetic Operation</name>
                 <category>General</category>
                 <id>912406b5-a1e9-479b-84b7-b4c318debcc8</id>
                 <property>
