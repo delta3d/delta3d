@@ -117,8 +117,8 @@ namespace dtDAL
    {
       mMapHandler->SetMapMode();
 
-      std::ifstream mapfstream(path.c_str());
-      if (BaseXMLParser::Parse(mapfstream))
+      //std::ifstream mapfstream(path.c_str());
+      if (BaseXMLParser::Parse(path))
       {
          dtCore::RefPtr<Map> mapRef = mMapHandler->GetMap();
          mMapHandler->ClearMap();

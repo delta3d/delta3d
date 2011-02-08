@@ -140,8 +140,36 @@ namespace dtDAL
    /////////////////////////////////////////////////////////////////
    bool BaseXMLParser::Parse(const std::string& path)
    {
-      std::ifstream fileStream(path.c_str());
-      return Parse(fileStream);
+      try
+      {
+         mParsing = true;
+         mXercesParser->setContentHandler(mHandler.get());
+         mXercesParser->setErrorHandler(mHandler.get());
+         mXercesParser->parse(path.c_str());
+         mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Parsing complete.\n");
+         mParsing = false;
+         return true;
+      }
+      catch (const OutOfMemoryException&)
+      {
+         mParsing = false;
+         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__, "Ran out of memory parsing!");
+         throw dtDAL::XMLLoadParsingException( "Ran out of memory parsing save file.", __FILE__, __LINE__);
+      }
+      catch (const XMLException& toCatch)
+      {
+         mParsing = false;
+         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__, "Error during parsing! %ls :\n",
+            toCatch.getMessage());
+         throw dtDAL::XMLLoadParsingException( "Error while parsing XML file. See log for more information.", __FILE__, __LINE__);
+      }
+      catch (const SAXParseException&)
+      {
+         mParsing = false;
+         //this will already by logged by the
+         throw dtDAL::XMLLoadParsingException( "Error while parsing XML file. See log for more information.", __FILE__, __LINE__);
+      }
+      return false;
    }
 
    /////////////////////////////////////////////////////////////////
