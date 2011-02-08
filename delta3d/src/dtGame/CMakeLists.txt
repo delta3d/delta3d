@@ -11,6 +11,7 @@ SET(SOURCE_PATH ${DELTA3D_SOURCE_DIR}/src/${LIB_NAME})
 SET(LIB_PUBLIC_HEADERS
     ${HEADER_PATH}/actorcomponent.h
     ${HEADER_PATH}/actorcomponentbase.h
+    ${HEADER_PATH}/actorcomponentcontainer.h
     ${HEADER_PATH}/actorupdatemessage.h
     ${HEADER_PATH}/basegroundclamper.h
     ${HEADER_PATH}/baseinputcomponent.h
