@@ -29,11 +29,11 @@ namespace dtDirector
 {
    ///////////////////////////////////////////////////////////////////////////////////////
    InputLink::InputLink(Node* owner, const std::string& name)
-      : mVisible(true)
+      : mName(name)
+      , mVisible(true)
       , mOwner(owner)
       , mRedirector(NULL)
-      , mName(name)
-   {
+    {
 
    }
 

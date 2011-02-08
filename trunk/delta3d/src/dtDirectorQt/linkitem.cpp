@@ -40,10 +40,13 @@ namespace dtDirector
    const unsigned int LinkItem::LINE_WIDTH = 2;
 
    LinkItem::LinkItem(NodeItem* nodeItem, int linkIndex, QGraphicsItem* parent, EditorScene* scene): QGraphicsPolygonItem(parent, scene)
-      , mScene(scene), mHighlight(NULL), mDrawing(NULL), mNodeItem(nodeItem)
+      , mDrawing(NULL)
+      , mHighlight(NULL)
+      , mScene(scene)
       , mLinkIndex(linkIndex)
       , mAltModifier(false)
       , mAlwaysHighlight(false)
+      , mNodeItem(nodeItem)
    {
       mHighlightPen  = QPen(Qt::yellow, LINE_WIDTH, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
 

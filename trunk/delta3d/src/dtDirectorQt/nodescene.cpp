@@ -75,9 +75,6 @@ namespace dtDirector
                continue;
             }
 
-            // Find the primary folder to map the node to.
-            std::map<std::string, QMenu*>* folderMap = NULL;
-
             if (node->GetNodeType() == nodeType)
             {
                CreateNode(nodeType, node->GetName(), node->GetCategory(), NODE_BUFFER, nodeY, maxWidth);
