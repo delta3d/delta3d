@@ -169,6 +169,8 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void DirectorEditor::Refresh()
    {
+      if (!mDirector.valid()) {return;}
+
       // Refresh the button states.
       RefreshButtonStates();
 
