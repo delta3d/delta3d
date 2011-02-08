@@ -131,8 +131,11 @@ void ButtonTests::TestObservers()
    CPPUNIT_ASSERT( my_button->GetListeners().size()==1 );
 
    // no check to see if it was handled, don't care for this test
-   CPPUNIT_ASSERT( !my_button->SetState( !my_button->GetState() ) );   // make sure a change occurs, should not be handled by FalseObserver
+   CPPUNIT_ASSERT( my_button->SetState( !my_button->GetState() ) );   // make sure a change occurs, should not be handled by FalseObserver
    CPPUNIT_ASSERT( my_button->GetState() );  // should have 'true' state by now since original state was 'false'
+
+   // Notify the listeners of the change
+   my_button->NotifyStateChange();
 
    // check to see if my_listener was hit
    CPPUNIT_ASSERT( my_listener.GetHit() );   // better be hit
@@ -150,6 +153,10 @@ void ButtonTests::TestObservers()
    CPPUNIT_ASSERT( !my_listener2.GetHit() );  // better not be hit
 
    CPPUNIT_ASSERT( my_button->SetState( !my_button->GetState() ) );   // make sure a change occurs, should be handled by TrueObserver
+
+   // Notify the listeners of the change
+   my_button->NotifyStateChange();
+
    CPPUNIT_ASSERT( !my_listener.GetHit() );  // better not be hit
    CPPUNIT_ASSERT( my_listener2.GetHit() );  // better be hit
 }

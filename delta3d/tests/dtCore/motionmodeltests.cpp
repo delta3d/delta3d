@@ -21,7 +21,7 @@
 * THE SOFTWARE.
 *
 * @author Chris Osborn
-*/ 
+*/
 #include <prefix/unittestprefix.h>
 #include <cppunit/extensions/HelperMacros.h>
 #include <dtCore/inputdevice.h>
@@ -51,7 +51,7 @@ class TestAxisListener : public AxisListener
          // We really don't care about the return value in this context.
          // The tests will use this class as the last object in the input
          // chain.
-         return false; 
+         return false;
       }
 
       bool HasAxisStateChanged() const { return mAxisStateChanged; }
@@ -62,7 +62,7 @@ class TestAxisListener : public AxisListener
       bool mAxisStateChanged;
 };
 
-class MotionModelTests : public CPPUNIT_NS::TestFixture 
+class MotionModelTests : public CPPUNIT_NS::TestFixture
 {
    CPPUNIT_TEST_SUITE(MotionModelTests);
    CPPUNIT_TEST(TestOrbitMotionModelAxisStateClobbering);
@@ -112,14 +112,15 @@ void MotionModelTests::TestOrbitMotionModelAxisStateClobbering()
    // does NOT handle the update, we need to make sure it is in a state that will
    // cause it to not handle the update (i.e. it is not enabled OR there is not
    // target set).
-   omm->SetEnabled(false); 
+   omm->SetEnabled(false);
    omm->SetTarget(0);
 
    inputDevice->GetAxis(0)->AddAxisListener( omm.get() );
    inputDevice->GetAxis(0)->AddAxisListener( &testAxisListener );
-   
+
    CPPUNIT_ASSERT( !testAxisListener.HasAxisStateChanged() );
    inputDevice->GetAxis( 0 )->SetState( 2.0 );
+   inputDevice->GetAxis( 0 )->NotifyStateChange();
    CPPUNIT_ASSERT( testAxisListener.HasAxisStateChanged() );
  }
 
