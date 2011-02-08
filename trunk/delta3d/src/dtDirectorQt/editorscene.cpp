@@ -37,6 +37,7 @@
 #include <dtDirector/nodemanager.h>
 #include <dtDirector/nodetype.h>
 #include <dtDirector/groupnode.h>
+#include <dtDirectorNodes/referencescriptaction.h>
 
 #include <QtCore/QMimeData>
 #include <QtGui/QGraphicsSceneMouseEvent>
@@ -143,13 +144,13 @@ namespace dtDirector
          NodeItem* item = NULL;
 
          // Special case for reference script nodes.
-         if (node && node->GetType().GetFullName() == "Core.Reference Script Action")
+         if (IS_A(node, ReferenceScriptAction*))
          {
             item = new ScriptItem(node, mTranslationItem, this);
             item->setZValue(10.0f);
          }
          // Special case for group frame nodes.
-         else if (node && node->GetType().GetFullName() == "Core.Group Box")
+         else if (IS_A(node, GroupNode*))
          {
             item = new GroupItem(node, mTranslationItem, this);
             item->setZValue(0.0f);
