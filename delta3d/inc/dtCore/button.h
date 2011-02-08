@@ -78,6 +78,11 @@ namespace dtCore
 
       /**
        * Notifies all the button listeners of a state change
+       * This needs to be called anytime a button's state initially
+       * gets changed (i.e. from the Mouse, Keyboard, Joystick, etc.)
+       * as opposed to when it changes from a mapping (AxisToAxis,
+       * ButtonToButton, etc)
+       *
        * @return whether the state change was handled or not
        */
       bool NotifyStateChange();
