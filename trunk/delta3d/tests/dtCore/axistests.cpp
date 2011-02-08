@@ -113,17 +113,18 @@ void AxisTests::TestObservers()
    dtCore::RefPtr<dtCore::InputDevice> my_device(new dtCore::InputDevice("my_device"));
    // finally, make the button.
    dtCore::RefPtr<dtCore::Axis> my_axis(new dtCore::Axis(my_device.get(),"my_axis"));
-   my_axis->SetState(false);
-   CPPUNIT_ASSERT( !my_axis->GetState() );  // should have 'false' state
+   my_axis->SetState(0);
+
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("Axis didn't take the SetState() value", 0.0, my_axis->GetState());  // should have 'false' state
 
    // oh yeah, add it too, even though it has an owner
    my_device->AddFeature( my_axis.get() );
 
    // verify it has been added
-   CPPUNIT_ASSERT( my_device->GetFeatureCount()==1 );
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("Feature didn't get added to InputDevice", 1, my_device->GetFeatureCount());
 
    // assert for extra listeners
-   CPPUNIT_ASSERT( my_axis->GetListeners().size()==0 );
+   CPPUNIT_ASSERT_MESSAGE("Axis shouldn't have any listeners", my_axis->GetListeners().empty());
 
    // -- make a listener -- //
    FalseObserver my_listener;
@@ -133,28 +134,30 @@ void AxisTests::TestObservers()
    my_axis->AddAxisListener( &my_listener );
 
    // assert for missing listeners
-   CPPUNIT_ASSERT( my_axis->GetListeners().size()==1 );
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("Axis should have 1 listener", size_t(1), my_axis->GetListeners().size());
 
-   // no check to see if it was handled, don't care for this test
-   CPPUNIT_ASSERT( !my_axis->SetState( my_axis->GetState()+1.0 ) );   // make sure a change occurs, should not be handled by FalseObserver
-   CPPUNIT_ASSERT( my_axis->GetState() );  // should have 'true' state by now since original state was 'false'
+   //Setting the state directly just updates the AxisObservers.
+   //No notion of chain of responsibility here.
+   CPPUNIT_ASSERT(my_axis->SetState(1.0) == true);   // make sure a change occurs, should not be handled by FalseObserver
+
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("Axis state didn't change", 1.0, my_axis->GetState());  // should have 'true' state by now since original state was 'false'
 
    // check to see if my_listener was hit
-   CPPUNIT_ASSERT( my_listener.GetHit() );   // better be hit
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("AxisListener didn't get triggered", true, my_listener.GetHit());   // better be hit
 
    // insert a new listener in front of the current listener
    TrueObserver my_listener2;
    my_axis->InsertAxisListener( &my_listener, &my_listener2 );
-   CPPUNIT_ASSERT( my_axis->GetListeners().size()==2 );
+   CPPUNIT_ASSERT_EQUAL(size_t(2), my_axis->GetListeners().size());
    CPPUNIT_ASSERT( my_axis->GetListeners().front() == &my_listener2 );
 
    // test chain of responsibility
    my_listener.ResetHit();
-   CPPUNIT_ASSERT( !my_listener.GetHit() );  // better not be hit
+   CPPUNIT_ASSERT_EQUAL(false, my_listener.GetHit());  // better not be hit
    my_listener2.ResetHit();
-   CPPUNIT_ASSERT( !my_listener2.GetHit() );  // better not be hit
+   CPPUNIT_ASSERT_EQUAL(false, my_listener2.GetHit());  // better not be hit
 
    CPPUNIT_ASSERT( my_axis->SetState( my_axis->GetState()+1.0 ) );   // make sure a change occurs, should be handled by TrueObserver
-   CPPUNIT_ASSERT( !my_listener.GetHit() );  // better not be hit
-   CPPUNIT_ASSERT( my_listener2.GetHit() );  // better be hit
+   CPPUNIT_ASSERT_EQUAL(false, my_listener.GetHit());  // better not be hit
+   CPPUNIT_ASSERT_EQUAL(true, my_listener2.GetHit());  // better be hit
 }
