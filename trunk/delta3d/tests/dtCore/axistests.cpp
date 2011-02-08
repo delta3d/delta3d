@@ -140,6 +140,9 @@ void AxisTests::TestObservers()
    //No notion of chain of responsibility here.
    CPPUNIT_ASSERT(my_axis->SetState(1.0) == true);   // make sure a change occurs, should not be handled by FalseObserver
 
+   // Notify the listeners of the change
+   my_axis->NotifyStateChange();
+
    CPPUNIT_ASSERT_EQUAL_MESSAGE("Axis state didn't change", 1.0, my_axis->GetState());  // should have 'true' state by now since original state was 'false'
 
    // check to see if my_listener was hit
@@ -147,7 +150,7 @@ void AxisTests::TestObservers()
 
    // insert a new listener in front of the current listener
    TrueObserver my_listener2;
-   my_axis->InsertAxisListener( &my_listener, &my_listener2 );
+   my_axis->InsertAxisListener(&my_listener, &my_listener2);
    CPPUNIT_ASSERT_EQUAL(size_t(2), my_axis->GetListeners().size());
    CPPUNIT_ASSERT( my_axis->GetListeners().front() == &my_listener2 );
 
@@ -157,7 +160,11 @@ void AxisTests::TestObservers()
    my_listener2.ResetHit();
    CPPUNIT_ASSERT_EQUAL(false, my_listener2.GetHit());  // better not be hit
 
-   CPPUNIT_ASSERT( my_axis->SetState( my_axis->GetState()+1.0 ) );   // make sure a change occurs, should be handled by TrueObserver
+   CPPUNIT_ASSERT(my_axis->SetState(my_axis->GetState() + 1.0));   // make sure a change occurs, should be handled by TrueObserver
+
+   // Notify the listeners of the change
+   my_axis->NotifyStateChange();
+
    CPPUNIT_ASSERT_EQUAL(false, my_listener.GetHit());  // better not be hit
    CPPUNIT_ASSERT_EQUAL(true, my_listener2.GetHit());  // better be hit
 }

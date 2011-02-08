@@ -588,9 +588,7 @@ namespace dtDAL
 
       dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
 
-
-
-      fullPath += dtUtil::FileUtils::PATH_SEPARATOR + GetMapsDirectory(mContexts[fileData.mSlotId], true).fileName;
+      fullPath += GetMapsDirectory(mContexts[fileData.mSlotId], true).fileName;
 
       if (backup)
       {

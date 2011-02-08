@@ -73,7 +73,11 @@ namespace dtCore
       double GetState() const;
 
       /**
-       * Notifies all the axis listeners of a state change
+       * Notifies all the axis listeners of a state change.
+       * This needs to be called anytime an axis' state initially
+       * gets changed (i.e. from the Mouse, Keyboard, Joystick, etc.)
+       * as opposed to when it changes from a mapping (AxisToAxis,
+       * ButtonToButton, etc)
        *
        * @param delta   the optional delta value
        *
