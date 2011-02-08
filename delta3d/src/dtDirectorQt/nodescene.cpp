@@ -29,6 +29,8 @@
 #include <dtDirectorQt/macroitem.h>
 #include <dtDirectorQt/scriptitem.h>
 #include <dtDirectorQt/valueitem.h>
+#include <dtDirector/groupnode.h>
+#include <dtDirectorNodes/referencescriptaction.h>
 
 #include <QtGui/QDrag>
 #include <QtCore/QMimeData>
@@ -149,7 +151,7 @@ namespace dtDirector
             }
             case NodeType::MACRO_NODE:
             {
-               if (node->GetType().GetFullName() == "Core.Reference Script")
+               if (IS_A(node.get(), ReferenceScriptAction*))
                {
                   item = new ScriptItem(node, mpTranslationItem, NULL);
                }
@@ -161,7 +163,7 @@ namespace dtDirector
             }
             case NodeType::MISC_NODE:
             {
-               if (node->GetType().GetFullName() == "Core.Group Box")
+               if (IS_A(node.get(), GroupNode*))
                {
                   item = new GroupItem(node, mpTranslationItem, NULL, false);
                   break;
