@@ -39,6 +39,8 @@ namespace dtDirector
    ///////////////////////////////////////////////////////////////////////////////
    PropertyEditor::PropertyEditor(QMainWindow* parent)
       : dtQt::BasePropertyEditor(parent)
+      , mScene(NULL)
+      , mGraphTabs(NULL)
    {
    }
 
