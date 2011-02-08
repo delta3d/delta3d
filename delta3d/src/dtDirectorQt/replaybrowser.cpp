@@ -146,7 +146,7 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void ReplayBrowser::BuildThreadList()
    {
-      if (!mEditor) return;
+      if (!mEditor || !mEditor->GetPropertyEditor()->GetScene()) {return;}
 
       disconnect(mThreadList, SIGNAL(currentItemChanged(QListWidgetItem*, QListWidgetItem*)),
          this, SLOT(OnItemChanged(QListWidgetItem*, QListWidgetItem*)));
