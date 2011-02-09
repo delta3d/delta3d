@@ -30,9 +30,35 @@
 #include <dtUtil/datapathutils.h>
 #include <dtUtil/xercesparser.h>
 #include <dtUtil/log.h>
+#include <dtUtil/threadpool.h>
 
 namespace dtAnim
 {
+
+   class LoadTask : public dtUtil::ThreadPoolTask
+   {
+   public:
+      LoadTask(Cal3DLoader& loader, const std::string fileName, Cal3DLoader::LoadCompletionCallback callback)
+      : mLoader(loader)
+      , mCompletionCallback(callback)
+      {
+         SetName(fileName);
+      }
+
+      virtual void operator()()
+      {
+         Cal3DModelData* loadedData = NULL;
+
+         mLoader.Load(GetName(), loadedData);
+
+         // Return the loaded data via a callback (could be NULL if not loaded correctly)
+         mCompletionCallback(loadedData);
+      }
+   private:
+      Cal3DLoader& mLoader;
+      Cal3DLoader::LoadCompletionCallback mCompletionCallback;
+   };
+
    /////////////////////////////////////////////////////////////////////////////
    Cal3DLoader::Cal3DLoader()
       : mTextures()
@@ -224,18 +250,10 @@ namespace dtAnim
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void Cal3DLoader::LoadAsynchronously(const std::string& filename, LoadCompletionCallback loadCallback)
+   void Cal3DLoader::LoadAsynchronously(const std::string& filename, Cal3DLoader::LoadCompletionCallback loadCallback)
    {
-      OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mFileQueueMutex);
-      
-      mAsynchFilesToLoad.push(filename);
-      mAsynchCompletionCallbacks.push(loadCallback);
-
-      // Kick the thread off if it's not already running
-      if (!isRunning())
-      {
-         start();
-      }
+      dtCore::RefPtr<LoadTask> loadTask = new LoadTask(*this, filename, loadCallback);
+      dtUtil::ThreadPool::AddTask(*loadTask, dtUtil::ThreadPool::BACKGROUND);
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -736,42 +754,6 @@ namespace dtAnim
    void Cal3DLoader::PurgeAllCaches()
    {
       mTextures.clear();
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   void Cal3DLoader::run()
-   {
-      std::string currentFile;
-
-      while (1) 
-      {
-         // Get the next file to load or quit
-         {
-            OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mFileQueueMutex);
-            if (mAsynchFilesToLoad.empty())
-            {
-               //no more files to load?  Better clear out the callbacks to match.
-               std::queue<LoadCompletionCallback> clearQueue;
-               mAsynchCompletionCallbacks = clearQueue;
-               break;
-            }
-
-            currentFile = mAsynchFilesToLoad.front();
-            mAsynchFilesToLoad.pop();
-         }
-
-         Cal3DModelData* loadedData = NULL;
-
-         Load(currentFile, loadedData);
-
-         LoadCompletionCallback completionCallback = mAsynchCompletionCallbacks.front();
-         mAsynchCompletionCallbacks.pop();
-
-         // Return the loaded data via a callback (could be NULL if not loaded correctly)
-         completionCallback(loadedData);
-         
-         currentFile.clear();
-      } 
    }
 
    ////////////////////////////////////////////////////////////////////////////////
