@@ -33,9 +33,6 @@
 #include <osg/ref_ptr>
 #include <osg/Texture2D>
 
-#include <OpenThreads/Thread>
-#include <OpenThreads/Mutex>
-
 #include <string>
 #include <map>
 #include <queue>
@@ -54,7 +51,7 @@ namespace dtAnim
     * instances of CalModels.  If you call Load() with the same filename twice,
     * it actually only loads once.
     */
-   class DT_ANIM_EXPORT Cal3DLoader: public osg::Referenced, public OpenThreads::Thread
+   class DT_ANIM_EXPORT Cal3DLoader: public osg::Referenced
    {
    public:
       typedef dtUtil::Functor<void, TYPELIST_1(Cal3DModelData*)> LoadCompletionCallback;
@@ -75,9 +72,6 @@ namespace dtAnim
    protected:
       virtual ~Cal3DLoader();
 
-      // Threaded loading is done here
-      virtual void run();
-
    private:
       CalCoreModel* GetCoreModel(CharacterFileHandler& handler, const std::string &filename, const std::string& path);
 
@@ -94,11 +88,6 @@ namespace dtAnim
       typedef std::map<std::string, osg::ref_ptr<osg::Texture2D> > TextureMap;
       typedef TextureMap::allocator_type::value_type TextureMapping;
       TextureMap mTextures;
-
-      OpenThreads::Mutex mFileQueueMutex;
-
-      std::queue<std::string> mAsynchFilesToLoad;
-      std::queue<LoadCompletionCallback> mAsynchCompletionCallbacks;
    };
 
 } // namespace dtAnim
