@@ -1188,6 +1188,12 @@ namespace dtGame
          throw dtGame::ActorIsRemoteException( "A remote game actor may not be published", __FILE__, __LINE__);
       }
 
+      if (gameActorProxy.GetInitialOwnership() == dtGame::GameActorProxy::Ownership::PROTOTYPE)
+      {
+         // don't leave it as prototype.
+         gameActorProxy.SetInitialOwnership(dtGame::GameActorProxy::Ownership::SERVER_LOCAL);
+      }
+
       gameActorProxy.SetGameManager(this);
       gameActorProxy.SetRemote(isRemote);
 
@@ -1259,7 +1265,6 @@ namespace dtGame
          if (gap != NULL)
          {
             gap->SetGameManager(this);
-
             // Actors created from prototype hold onto the prototype name - for use
             // across networks, via replay, and so forth.
             dtGame::GameActor* gameActor = dynamic_cast<dtGame::GameActor*>(gap->GetActor());
