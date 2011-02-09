@@ -387,10 +387,31 @@ void GameManagerTests::TestPrototypeActors()
    CPPUNIT_ASSERT_MESSAGE("The prototype find by name method should have found the correct prototype",
       testFindPrototype->GetId() == testFindPrototypeByName->GetId());
 
+   // set this so that when i creates an actor, I can see that it changes the value.
+   toMakeAsAPrototype->SetInitialOwnership(dtGame::GameActorProxy::Ownership::PROTOTYPE);
+
    dtCore::RefPtr<dtActors::GameMeshActorProxy> testCreatePrototype;
    mManager->CreateActorFromPrototype(toMakeAsAPrototype->GetId(), testCreatePrototype);
    CPPUNIT_ASSERT_MESSAGE("The prototyped method should have been able to create the prototype",
       testCreatePrototype.valid());
+   mManager->AddActor(*testCreatePrototype, false, false);
+
+   CPPUNIT_ASSERT_MESSAGE("I don't care what initial ownership it is changed to, that could change, an actor created"
+         "as a prototype should not still be marked as such once it is added to the world.",
+         testCreatePrototype->GetInitialOwnership() != dtGame::GameActorProxy::Ownership::PROTOTYPE);
+   mManager->DeleteActor(*testCreatePrototype);
+   dtCore::System::GetInstance().Step();
+   CPPUNIT_ASSERT_EQUAL(1, testCreatePrototype->referenceCount());
+
+   // set this so that when i creates an actor, I can see that the value is preserved.
+   toMakeAsAPrototype->SetInitialOwnership(dtGame::GameActorProxy::Ownership::SERVER_PUBLISHED);
+   testCreatePrototype = NULL;
+   mManager->CreateActorFromPrototype(toMakeAsAPrototype->GetId(), testCreatePrototype);
+   CPPUNIT_ASSERT_MESSAGE("The prototyped method should have been able to create the prototype",
+      testCreatePrototype.valid());
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("The ownership should be the same since it was not PROTOTYPE",
+      dtGame::GameActorProxy::Ownership::SERVER_PUBLISHED, testCreatePrototype->GetInitialOwnership());
+
 }
 /////////////////////////////////////////////////
 void GameManagerTests::TestApplicationMember()
