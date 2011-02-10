@@ -5,7 +5,7 @@ SET(SOURCE_PATH ${DELTA3D_SOURCE_DIR}/src/${LIB_NAME})
 SET(UI_PATH ${DELTA3D_SOURCE_DIR}/ui/${LIB_NAME})
 
 # Define Qt macro to put ui_*.h files into a set place
-MACRO (QT4_WRAP_UI outfiles)
+MACRO (QT4_WRAP_UI_COPY outfiles)
   QT4_EXTRACT_OPTIONS(ui_files ui_options ${ARGN})
 
   FOREACH (it ${ui_files})
@@ -19,7 +19,7 @@ MACRO (QT4_WRAP_UI outfiles)
     SET(${outfiles} ${${outfiles}} ${outfile})
   ENDFOREACH (it)
 
-ENDMACRO (QT4_WRAP_UI)
+ENDMACRO (QT4_WRAP_UI_COPY)
 
 SET(LIB_PUBLIC_HEADERS ${HEADER_PATH}/actionitem.h
     ${HEADER_PATH}/clipboard.h
@@ -86,7 +86,7 @@ SET(QT_UI_SOURCES
 
 QT4_WRAP_CPP(MOC_SOURCES ${LIB_PUBLIC_HEADERS})
 QT4_ADD_RESOURCES(RCC_SOURCES directorqt.qrc)
-QT4_WRAP_UI(UI_SOURCES ${QT_UI_SOURCES})
+QT4_WRAP_UI_COPY(UI_SOURCES ${QT_UI_SOURCES})
 
 ############### SOURCE FILE ORGANIZATION #################
 SOURCE_GROUP("Auto-Generated" FILES ${MOC_SOURCES})
