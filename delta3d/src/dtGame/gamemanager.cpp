@@ -1724,12 +1724,6 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::FindActorsWithinRadius(const float radius, std::vector<dtDAL::BaseActorObject*>& toFill) const
-   {
-      toFill.clear();
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
    GameActorProxy* GameManager::FindGameActorById(const dtCore::UniqueId& id) const
    {
       GMImpl::GameActorMap::const_iterator itor = mGMImpl->mGameActorProxyMap.find(id);
