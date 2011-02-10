@@ -29,13 +29,23 @@
 #include <prefix/dtqtprefix.h>
 #include <dtQt/deltastepper.h>
 #include <dtCore/system.h>
-
+#include <QtCore/QtGlobal>
+ 
 namespace dtQt
 {
 
    DeltaStepper::DeltaStepper()
    {
-      mTimer.setInterval(0);
+      int msDelay = 0;
+   
+      //For some reason, Qt 4.7.x causes some dialog windows to hang up when 
+      //used with a 0 time delay.  This is a temporary fix until the real cause
+      //is rooted out.
+      #if defined(QT_VERSION) && (QT_VERSION > 0x040600)
+      msDelay = 1;
+      #endif
+
+      mTimer.setInterval(msDelay);
       connect(&mTimer, SIGNAL(timeout()), this, SLOT(Tick()), Qt::QueuedConnection);
    }
 
