@@ -49,16 +49,20 @@ namespace dtUtil
    {
    public:
       //The predicate should evaluate to true when applied to a separator.
-      static void tokenize(std::vector<std::string> &tokens,
-                           const std::string &stringToParse,
-                           const Pred &predFxn = Pred());
+      static void tokenize(std::vector<std::string>& tokens,
+                           const std::string& stringToParse,
+                           const Pred& predFxn = Pred());
+
+      static void tokenize(std::vector<std::string>& tokens,
+                           const std::string& stringToParse,
+                           const std::string& delimiter);
    };
 
    //The predicate should evaluate to true when applied to a separator.
    template <class Pred>
-   inline void StringTokenizer<Pred>::tokenize(std::vector<std::string> &tokens,
-                                               const std::string &stringToParse,
-                                               const Pred &predFxn)
+   inline void StringTokenizer<Pred>::tokenize(std::vector<std::string>& tokens,
+                                               const std::string& stringToParse,
+                                               const Pred& predFxn)
    {
       //First clear the results std::vector
       tokens.clear();
@@ -81,6 +85,47 @@ namespace dtUtil
                tokens.push_back(std::string(it, itTokenEnd));
             }
             it = itTokenEnd;
+         }
+      }
+   }
+
+   template <class Pred>
+   inline void StringTokenizer<Pred>::tokenize(std::vector<std::string>& tokens,
+                                               const std::string& stringToParse,
+                                               const std::string& delimiter)
+
+   {
+      //First clear the results std::vector
+      tokens.clear();
+
+      size_t startPosition = 0;
+      while (1)
+      {
+         size_t delimPosition = stringToParse.find(delimiter, startPosition);
+
+         if (delimPosition != std::string::npos)
+         {
+            std::string::const_iterator startIter = stringToParse.begin() + startPosition;
+            std::string::const_iterator endIter = stringToParse.begin() + delimPosition;
+
+            // If there are characters between the current position
+            // and the next delimiter, add them.
+            if (startIter != endIter)
+            {
+               tokens.push_back(std::string(startIter, endIter));
+            }
+
+            // Increment to the position past the delimiter
+            startPosition = delimPosition + delimiter.length();
+         }
+         else
+         {
+            // Grab text remaining after the last delimiter
+            if (startPosition < stringToParse.length())
+            {
+               tokens.push_back(std::string(stringToParse.begin() + startPosition, stringToParse.end()));
+            }
+            break;
          }
       }
    }
@@ -260,7 +305,7 @@ namespace dtUtil
    void DT_UTIL_EXPORT MakeIndexString(unsigned index, std::string& toFill, unsigned paddedLength = 4);
 
    /**
-    * Reads the next token form the given string data.
+    * Reads the next token fromm the given string data.
     * This will also remove the token from the data string
     * and return you the token (with the open and close characters removed).
     * The beginning of the data string must always begin with
