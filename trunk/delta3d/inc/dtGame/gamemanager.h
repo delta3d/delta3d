@@ -639,12 +639,6 @@ namespace dtGame
        */
       void FindActorsByClassName(const std::string& className, std::vector<dtDAL::BaseActorObject*>& toFill) const;
 
-      /**
-       * Fills a vector with the game proxys whose position is within the radius parameter
-       * @param radius The radius to search in
-       * @param toFill The vector to fill
-       */
-      void FindActorsWithinRadius(const float radius, std::vector<dtDAL::BaseActorObject*>& toFill) const;
 
       /**
        * Returns the game actor proxy whose is matches the parameter
