@@ -416,6 +416,32 @@ void StringUtilTests::TestTokenizer()
       CPPUNIT_ASSERT_MESSAGE("Token should be \"x\"", tokens[0] == "x");
       CPPUNIT_ASSERT_MESSAGE("Token should be \"y\"", tokens[1] == "y");
 
+      tokString = "%%";
+      tokens.clear();
+      tokenizer.tokenize(tokens, tokString, "%%");
+      CPPUNIT_ASSERT_MESSAGE("Vector size should be 0", tokens.size() == 0);
+
+      tokString = "x%%y";
+      tokens.clear();
+      tokenizer.tokenize(tokens, tokString, "%%");
+      CPPUNIT_ASSERT_MESSAGE("Vector size should be 2", tokens.size() == 2);
+      CPPUNIT_ASSERT_MESSAGE("Token should be \"x\"", tokens[0] == "x");
+      CPPUNIT_ASSERT_MESSAGE("Token should be \"y\"", tokens[1] == "y");
+
+      tokString = "%%x%%y";
+      tokens.clear();
+      tokenizer.tokenize(tokens, tokString, "%%");
+      CPPUNIT_ASSERT_MESSAGE("Vector size should be 2", tokens.size() == 2);
+      CPPUNIT_ASSERT_MESSAGE("Token should be \"x\"", tokens[0] == "x");
+      CPPUNIT_ASSERT_MESSAGE("Token should be \"y\"", tokens[1] == "y");
+
+      tokString = "%%x%%y%%";
+      tokens.clear();
+      tokenizer.tokenize(tokens, tokString, "%%");
+      CPPUNIT_ASSERT_MESSAGE("Vector size should be 2", tokens.size() == 2);
+      CPPUNIT_ASSERT_MESSAGE("Token should be \"x\"", tokens[0] == "x");
+      CPPUNIT_ASSERT_MESSAGE("Token should be \"y\"", tokens[1] == "y");
+
    }
    catch (const dtUtil::Exception& e)
    {
