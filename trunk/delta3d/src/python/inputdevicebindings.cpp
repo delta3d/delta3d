@@ -3,14 +3,14 @@
 //////////////////////////////////////////////////////////////////////
 
 #include <python/dtpython.h>
-#include <dtCore/axislistener.h>
-#include <dtCore/buttonlistener.h>
+#include <dtCore/axishandler.h>
+#include <dtCore/buttonhandler.h>
 #include <dtCore/inputdevice.h>
 
 using namespace boost::python;
 using namespace dtCore;
 
-class ButtonListenerWrap : public ButtonListener, public wrapper<ButtonListener>
+class ButtonHandlerWrap : public ButtonHandler, public wrapper<ButtonHandler>
 {
    public:
       bool HandleButtonStateChanged(const Button* button, bool oldState, bool newState)
@@ -23,7 +23,7 @@ class ButtonListenerWrap : public ButtonListener, public wrapper<ButtonListener>
       }
 };
 
-class AxisListenerWrap : public AxisListener, public wrapper<AxisListener>
+class AxisHandlerWrap : public AxisHandler, public wrapper<AxisHandler>
 {
    public:
       bool HandleAxisStateChanged(const Axis* axis, double oldState, double newState, double delta)
@@ -69,10 +69,10 @@ void initInputDeviceBindings()
       .def("GetAxisCount", &InputDevice::GetAxisCount)
       .def("GetAxis", caxes, return_internal_reference<>())
       .def("GetAxis", ncaxes, return_internal_reference<>())
-      .def("AddButtonListener", &InputDevice::AddButtonListener)
-      .def("RemoveButtonListener", &InputDevice::RemoveButtonListener)
-      .def("AddAxisListener", &InputDevice::AddAxisListener)
-      .def("RemoveAxisListener", &InputDevice::RemoveAxisListener);
+      .def("AddButtonHandler", &InputDevice::AddButtonHandler)
+      .def("RemoveButtonHandler", &InputDevice::RemoveButtonHandler)
+      .def("AddAxisHandler", &InputDevice::AddAxisHandler)
+      .def("RemoveAxisHandler", &InputDevice::RemoveAxisHandler);
 
    class_<InputDeviceFeature, dtCore::RefPtr<InputDeviceFeature>, boost::noncopyable>("InputDeviceFeature", no_init)
       .def("GetOwner", &InputDeviceFeature::GetOwner, return_internal_reference<>())
@@ -82,18 +82,18 @@ void initInputDeviceBindings()
    class_<Button, bases<InputDeviceFeature>, dtCore::RefPtr<Button> >("Button", no_init)
       .def("SetState", &Button::SetState)
       .def("GetState", &Button::GetState)
-      .def("AddButtonListener", &Button::AddButtonListener)
-      .def("RemoveButtonListener", &Button::RemoveButtonListener);
+      .def("AddButtonHandler", &Button::AddButtonHandler)
+      .def("RemoveButtonHandler", &Button::RemoveButtonHandler);
 
-   class_<ButtonListenerWrap, ButtonListenerWrap*, boost::noncopyable>("ButtonListener")
-      .def("HandleButtonStateChanged", pure_virtual(&ButtonListener::HandleButtonStateChanged));
+   class_<ButtonHandlerWrap, ButtonHandlerWrap*, boost::noncopyable>("ButtonHandler")
+      .def("HandleButtonStateChanged", pure_virtual(&ButtonHandler::HandleButtonStateChanged));
 
    class_<Axis, bases<InputDeviceFeature>, dtCore::RefPtr<Axis> >("Axis", no_init)
       .def("SetState", &Axis::SetState, SS_overloads())
       .def("GetState", &Axis::GetState)
-      .def("AddAxisListener", &Axis::AddAxisListener)
-      .def("RemoveAxisListener", &Axis::RemoveAxisListener);
+      .def("AddAxisHandler", &Axis::AddAxisHandler)
+      .def("RemoveAxisHandler", &Axis::RemoveAxisHandler);
 
-   class_<AxisListenerWrap, AxisListenerWrap*, boost::noncopyable>("AxisListener")
-      .def("HandleAxisStateChanged", pure_virtual(&AxisListener::HandleAxisStateChanged));
+   class_<AxisHandlerWrap, AxisHandlerWrap*, boost::noncopyable>("AxisHandler")
+      .def("HandleAxisStateChanged", pure_virtual(&AxisHandler::HandleAxisStateChanged));
 }

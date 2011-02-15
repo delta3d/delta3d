@@ -27,10 +27,10 @@
 
 #include <dtCore/inputdevice.h>
 #include <dtCore/axis.h>
-#include <dtCore/axislistener.h>
+#include <dtCore/axishandler.h>
 #include <dtCore/axisobserver.h>
 #include <dtCore/button.h>
-#include <dtCore/buttonlistener.h>
+#include <dtCore/buttonhandler.h>
 #include <dtCore/buttonobserver.h>
 
 namespace dtCore
@@ -206,7 +206,7 @@ namespace dtCore
     * Maps a button to a logical button.
     */
    class DT_CORE_EXPORT ButtonToButton :  public ButtonMapping,
-                                          public ButtonListener,
+                                          public ButtonHandler,
                                           public ButtonObserver
    {
       public:
@@ -295,7 +295,7 @@ namespace dtCore
    * Maps two buttons to a logical button.
    */
    class DT_CORE_EXPORT ButtonsToButton :  public ButtonMapping,
-                                           public ButtonListener,
+                                           public ButtonHandler,
                                            public ButtonObserver
    {
    public:
@@ -488,7 +488,7 @@ namespace dtCore
     * Maps an axis to a logical axis with an optional linear transformation.
     */
    class DT_CORE_EXPORT AxisToAxis :   public AxisMapping,
-                                       public AxisListener,
+                                       public AxisHandler,
                                        public AxisObserver
    {
       public:
@@ -602,7 +602,7 @@ namespace dtCore
     * to the value of the last source axis updated.
     */
    class DT_CORE_EXPORT AxesToAxis :   public AxisMapping,
-                                       public AxisListener,
+                                       public AxisHandler,
                                        public AxisObserver
    {
       public:
@@ -705,7 +705,7 @@ namespace dtCore
     * Maps two buttons to a logical axis.
     */
    class DT_CORE_EXPORT ButtonsToAxis :   public AxisMapping,
-                                          public ButtonListener,
+                                          public ButtonHandler,
                                           public ButtonObserver
    {
       public:
@@ -891,9 +891,9 @@ namespace dtCore
     * source button is pressed (the value is zero otherwise).
     */
    class DT_CORE_EXPORT ButtonAxisToAxis :   public AxisMapping,
-                                             public ButtonListener,
+                                             public ButtonHandler,
                                              public ButtonObserver,
-                                             public AxisListener,
+                                             public AxisHandler,
                                              public AxisObserver
    {
       public:

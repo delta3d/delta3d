@@ -21,39 +21,12 @@
 #ifndef axislistener_h__
 #define axislistener_h__
 
-// axislistener.h: Declaration of the AxisListener class.
-//
-//////////////////////////////////////////////////////////////////////
-#include <dtCore/export.h>
-#include <dtUtil/breakoverride.h>
+#include <dtCore/axishandler.h>
 
 namespace dtCore
 {
-   class Axis;
-
-   /// An interface for objects interested in handling changes to axes.
-   class DT_CORE_EXPORT AxisListener
-   {
-   public:
-
-      virtual ~AxisListener() {}
-
-      /**
-       * Called when an axis' state has changed.
-       *
-       * @param axis the changed axis
-       * @param oldState the old state of the axis
-       * @param newState the new state of the axis
-       * @param delta a delta value indicating stateless motion
-       * @return whether this listener handled the state change or not
-       */
-      virtual bool HandleAxisStateChanged(const Axis* axis, double oldState, double newState, double delta)=0;
-
-   private:
-      /** Deprecated 1/27/11.  Use HandleAxisStateChanged instead.
-       */
-      BREAK_OVERRIDE(AxisStateChanged(const Axis* axis, double oldState, double newState, double delta))
-   };
+   typedef AxisHandler AxisListener;
 }
+
 
 #endif // axislistener_h__

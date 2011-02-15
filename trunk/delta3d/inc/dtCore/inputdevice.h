@@ -32,13 +32,15 @@
 #include <dtCore/button.h>
 #include <dtCore/refptr.h>
 
+#include <dtUtil/deprecationmgr.h>
+
 #include <map>
 
 namespace dtCore
 {
-   class AxisListener;
+   class AxisHandler;
    class AxisObserver;
-   class ButtonListener;
+   class ButtonHandler;
    class ButtonObserver;
    class InputDeviceFeature;
 
@@ -138,32 +140,52 @@ namespace dtCore
       int GetAxisIndex(const Axis* axis) const;
 
       /**
-       * Adds a button listener.
+       * Adds a button handler.
        *
-       * @param buttonListener a pointer to the listener to add
+       * @param buttonHandler a pointer to the handler to add
        */
-      void AddButtonListener(ButtonListener* buttonListener);
+      void AddButtonHandler(ButtonHandler* buttonHandler);
 
       /**
-       * Removes a button listener.
+       * Removes a button handler.
        *
-       * @param buttonListener a pointer to the listener to remove
+       * @param buttonHandler a pointer to the handler to remove
        */
-      void RemoveButtonListener(ButtonListener* buttonListener);
+      void RemoveButtonHandler(ButtonHandler* buttonHandler);
 
       /**
-       * Adds an axis listener.
+       * Adds an axis handler.
        *
-       * @param axisListener a pointer to the listener to add
+       * @param axisHandler a pointer to the handler to add
        */
-      void AddAxisListener(AxisListener* axisListener);
+      void AddAxisHandler(AxisHandler* axisHandler);
 
       /**
-       * Removes an axis listener.
+       * Removes an axis handler.
        *
-       * @param axisListener a pointer to the listener to remove
+       * @param axisHandler a pointer to the handler to remove
        */
-      void RemoveAxisListener(AxisListener* axisListener);
+      void RemoveAxisHandler(AxisHandler* axisHandler);
+
+      /**
+       * This has been deprecated: use the AddButtonHandler method instead.
+       */
+      DEPRECATE_FUNC void AddButtonListener(ButtonHandler* buttonHandler);
+
+      /**
+       * This has been deprecated: use the RemoveButtonHandler method instead.
+       */
+      DEPRECATE_FUNC void RemoveButtonListener(ButtonHandler* buttonHandler);
+
+      /**
+       * This has been deprecated: use the AddAxisHandler method instead.
+       */
+      DEPRECATE_FUNC void AddAxisListener(AxisHandler* axisHandler);
+
+      /**
+       * This has been deprecated: use the RemoveAxisHandler method instead.
+       */
+      DEPRECATE_FUNC void RemoveAxisListener(AxisHandler* axisHandler);
 
       /**
       * Adds a button observer.
@@ -212,15 +234,15 @@ namespace dtCore
       ButtonMap mButtons;  ///< The list of buttons.
       AxisVector mAxes;  ///< The list of axes.
 
-      typedef std::list<ButtonListener*> ButtonListenerList; ///< A container of ButtonListeners.
-      typedef std::list<AxisListener*> AxisListenerList;     ///< A container of AxisListeners.
-      typedef std::list<ButtonObserver*> ButtonObserverList; ///< A container of ButtonListeners.
-      typedef std::list<AxisObserver*> AxisObserverList;     ///< A container of AxisListeners.
+      typedef std::list<ButtonHandler*> ButtonHandlerList; ///< A container of ButtonHandlers.
+      typedef std::list<AxisHandler*> AxisHandlerList;     ///< A container of AxisHandlers.
+      typedef std::list<ButtonObserver*> ButtonObserverList; ///< A container of ButtonObservers.
+      typedef std::list<AxisObserver*> AxisObserverList;     ///< A container of AxisObservers.
 
-      ButtonListenerList mButtonListeners;  ///< The container of ButtonListeners.
-      AxisListenerList mAxisListeners;      ///< The container of AxisListeners.
-      ButtonObserverList mButtonObservers;  ///< The container of ButtonListeners.
-      AxisObserverList mAxisObservers;      ///< The container of AxisListeners.
+      ButtonHandlerList mButtonHandlers;  ///< The container of ButtonHandlers.
+      AxisHandlerList mAxisHandlers;      ///< The container of AxisHandlers.
+      ButtonObserverList mButtonObservers;  ///< The container of ButtonObservers.
+      AxisObserverList mAxisObservers;      ///< The container of AxisObservers.
    };
 }
 

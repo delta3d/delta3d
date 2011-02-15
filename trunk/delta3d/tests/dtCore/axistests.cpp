@@ -24,7 +24,7 @@
 */
 #include <prefix/unittestprefix.h>
 #include <cppunit/extensions/HelperMacros.h>
-#include <dtCore/axislistener.h>   // for testing the Axis definition
+#include <dtCore/axishandler.h>   // for testing the Axis definition
 #include <dtCore/inputdevice.h>
 #include <dtCore/axis.h>
 #include <dtCore/refptr.h>
@@ -42,7 +42,7 @@ namespace dtTest
          void setUp();
          void tearDown();
 
-         /// tests handling and order of handling of multiple listeners for state changes.
+         /// tests handling and order of handling of multiple handlers for state changes.
          void TestObservers();
 
       private:
@@ -64,13 +64,13 @@ namespace dtTest
       bool mHit;
    };
 
-   /// definition of concrete AxisListener
+   /// definition of concrete AxisHandler
    template<bool>
    class AObserver {};
 
    /// partial specialization of AObserver
    template<>
-   class AObserver<true> : public HitObserver2<dtCore::AxisListener>
+   class AObserver<true> : public HitObserver2<dtCore::AxisHandler>
    {
       bool HandleAxisStateChanged(const dtCore::Axis* axis, double oldState, double newState, double delta)
       {
@@ -81,7 +81,7 @@ namespace dtTest
 
    /// partial specialization of AObserver
    template<>
-   class AObserver<false> : public HitObserver2<dtCore::AxisListener>
+   class AObserver<false> : public HitObserver2<dtCore::AxisHandler>
    {
       bool HandleAxisStateChanged(const dtCore::Axis* axis, double oldState, double newState, double delta)
       {
@@ -123,48 +123,48 @@ void AxisTests::TestObservers()
    // verify it has been added
    CPPUNIT_ASSERT_EQUAL_MESSAGE("Feature didn't get added to InputDevice", 1, my_device->GetFeatureCount());
 
-   // assert for extra listeners
-   CPPUNIT_ASSERT_MESSAGE("Axis shouldn't have any listeners", my_axis->GetListeners().empty());
+   // assert for extra handlers
+   CPPUNIT_ASSERT_MESSAGE("Axis shouldn't have any handlers", my_axis->GetHandlers().empty());
 
-   // -- make a listener -- //
-   FalseObserver my_listener;
-   CPPUNIT_ASSERT( !my_listener.GetHit() );  // better not be hit
+   // -- make a handler -- //
+   FalseObserver my_handler;
+   CPPUNIT_ASSERT( !my_handler.GetHit() );  // better not be hit
 
-   // -- connect the listener -- //
-   my_axis->AddAxisListener( &my_listener );
+   // -- connect the handler -- //
+   my_axis->AddAxisHandler( &my_handler );
 
-   // assert for missing listeners
-   CPPUNIT_ASSERT_EQUAL_MESSAGE("Axis should have 1 listener", size_t(1), my_axis->GetListeners().size());
+   // assert for missing handlers
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("Axis should have 1 handler", size_t(1), my_axis->GetHandlers().size());
 
    //Setting the state directly just updates the AxisObservers.
    //No notion of chain of responsibility here.
    CPPUNIT_ASSERT(my_axis->SetState(1.0) == true);   // make sure a change occurs, should not be handled by FalseObserver
 
-   // Notify the listeners of the change
+   // Notify the handlers of the change
    my_axis->NotifyStateChange();
 
    CPPUNIT_ASSERT_EQUAL_MESSAGE("Axis state didn't change", 1.0, my_axis->GetState());  // should have 'true' state by now since original state was 'false'
 
-   // check to see if my_listener was hit
-   CPPUNIT_ASSERT_EQUAL_MESSAGE("AxisListener didn't get triggered", true, my_listener.GetHit());   // better be hit
+   // check to see if my_handler was hit
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("AxisHandler didn't get triggered", true, my_handler.GetHit());   // better be hit
 
-   // insert a new listener in front of the current listener
-   TrueObserver my_listener2;
-   my_axis->InsertAxisListener(&my_listener, &my_listener2);
-   CPPUNIT_ASSERT_EQUAL(size_t(2), my_axis->GetListeners().size());
-   CPPUNIT_ASSERT( my_axis->GetListeners().front() == &my_listener2 );
+   // insert a new handler in front of the current handler
+   TrueObserver my_handler2;
+   my_axis->InsertAxisHandler(&my_handler, &my_handler2);
+   CPPUNIT_ASSERT_EQUAL(size_t(2), my_axis->GetHandlers().size());
+   CPPUNIT_ASSERT( my_axis->GetHandlers().front() == &my_handler2 );
 
    // test chain of responsibility
-   my_listener.ResetHit();
-   CPPUNIT_ASSERT_EQUAL(false, my_listener.GetHit());  // better not be hit
-   my_listener2.ResetHit();
-   CPPUNIT_ASSERT_EQUAL(false, my_listener2.GetHit());  // better not be hit
+   my_handler.ResetHit();
+   CPPUNIT_ASSERT_EQUAL(false, my_handler.GetHit());  // better not be hit
+   my_handler2.ResetHit();
+   CPPUNIT_ASSERT_EQUAL(false, my_handler2.GetHit());  // better not be hit
 
    CPPUNIT_ASSERT(my_axis->SetState(my_axis->GetState() + 1.0));   // make sure a change occurs, should be handled by TrueObserver
 
-   // Notify the listeners of the change
+   // Notify the handlers of the change
    my_axis->NotifyStateChange();
 
-   CPPUNIT_ASSERT_EQUAL(false, my_listener.GetHit());  // better not be hit
-   CPPUNIT_ASSERT_EQUAL(true, my_listener2.GetHit());  // better be hit
+   CPPUNIT_ASSERT_EQUAL(false, my_handler.GetHit());  // better not be hit
+   CPPUNIT_ASSERT_EQUAL(true, my_handler2.GetHit());  // better be hit
 }

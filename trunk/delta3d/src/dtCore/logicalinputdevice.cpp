@@ -192,7 +192,7 @@ namespace dtCore
    {
       if(mSourceButton.valid())
       {
-         mSourceButton->RemoveButtonListener(this);
+         mSourceButton->RemoveButtonHandler(this);
          mSourceButton->RemoveButtonObserver(this);
       }
    }
@@ -206,7 +206,7 @@ namespace dtCore
    {
       if(mSourceButton.valid())
       {
-         mSourceButton->RemoveButtonListener(this);
+         mSourceButton->RemoveButtonHandler(this);
          mSourceButton->RemoveButtonObserver(this);
       }
 
@@ -214,7 +214,7 @@ namespace dtCore
 
       if(mSourceButton.valid() && mTargetButton.valid())
       {
-         mSourceButton->AddButtonListener(this);
+         mSourceButton->AddButtonHandler(this);
          mSourceButton->AddButtonObserver(this);
       }
 
@@ -244,12 +244,12 @@ namespace dtCore
       {
          if(mTargetButton.valid())
          {
-            mSourceButton->AddButtonListener(this);
+            mSourceButton->AddButtonHandler(this);
             mSourceButton->AddButtonObserver(this);
          }
          else
          {
-            mSourceButton->RemoveButtonListener(this);
+            mSourceButton->RemoveButtonHandler(this);
             mSourceButton->RemoveButtonObserver(this);
          }
       }
@@ -334,12 +334,12 @@ namespace dtCore
    {
       if(mFirstButton.valid())
       {
-         mFirstButton->RemoveButtonListener(this);
+         mFirstButton->RemoveButtonHandler(this);
          mFirstButton->RemoveButtonObserver(this);
       }
       if(mSecondButton.valid())
       {
-         mSecondButton->RemoveButtonListener(this);
+         mSecondButton->RemoveButtonHandler(this);
          mSecondButton->RemoveButtonObserver(this);
       }
    }
@@ -353,7 +353,7 @@ namespace dtCore
    {
       if(mFirstButton.valid())
       {
-         mFirstButton->RemoveButtonListener(this);
+         mFirstButton->RemoveButtonHandler(this);
          mFirstButton->RemoveButtonObserver(this);
       }
 
@@ -361,7 +361,7 @@ namespace dtCore
 
       if(mFirstButton.valid() && mTargetButton.valid())
       {
-         mFirstButton->AddButtonListener(this);
+         mFirstButton->AddButtonHandler(this);
          mFirstButton->AddButtonObserver(this);
       }
 
@@ -377,7 +377,7 @@ namespace dtCore
    {
       if(mSecondButton.valid())
       {
-         mSecondButton->RemoveButtonListener(this);
+         mSecondButton->RemoveButtonHandler(this);
          mSecondButton->RemoveButtonObserver(this);
       }
 
@@ -385,7 +385,7 @@ namespace dtCore
 
       if(mSecondButton.valid() && mTargetButton.valid())
       {
-         mSecondButton->AddButtonListener(this);
+         mSecondButton->AddButtonHandler(this);
          mSecondButton->AddButtonObserver(this);
       }
 
@@ -425,16 +425,16 @@ namespace dtCore
       {
          if(mTargetButton.valid())
          {
-            mFirstButton->AddButtonListener(this);
+            mFirstButton->AddButtonHandler(this);
             mFirstButton->AddButtonObserver(this);
-            mSecondButton->AddButtonListener(this);
+            mSecondButton->AddButtonHandler(this);
             mSecondButton->AddButtonObserver(this);
          }
          else
          {
-            mFirstButton->RemoveButtonListener(this);
+            mFirstButton->RemoveButtonHandler(this);
             mFirstButton->RemoveButtonObserver(this);
-            mSecondButton->RemoveButtonListener(this);
+            mSecondButton->RemoveButtonHandler(this);
             mSecondButton->RemoveButtonObserver(this);
          }
       }
@@ -604,7 +604,7 @@ namespace dtCore
    {
       if(mSourceAxis.valid())
       {
-         mSourceAxis->RemoveAxisListener(this);
+         mSourceAxis->RemoveAxisHandler(this);
          mSourceAxis->RemoveAxisObserver(this);
       }
    }
@@ -618,7 +618,7 @@ namespace dtCore
    {
       if(mSourceAxis.valid())
       {
-         mSourceAxis->RemoveAxisListener(this);
+         mSourceAxis->RemoveAxisHandler(this);
          mSourceAxis->RemoveAxisObserver(this);
       }
 
@@ -626,7 +626,7 @@ namespace dtCore
 
       if(mSourceAxis.valid() && mTargetAxis.valid())
       {
-         mSourceAxis->AddAxisListener(this);
+         mSourceAxis->AddAxisHandler(this);
          mSourceAxis->AddAxisObserver(this);
       }
 
@@ -654,12 +654,12 @@ namespace dtCore
 
       if(mSourceAxis.valid() && mTargetAxis.valid())
       {
-         mSourceAxis->AddAxisListener(this);
+         mSourceAxis->AddAxisHandler(this);
          mSourceAxis->AddAxisObserver(this);
       }
       else
       {
-         mSourceAxis->RemoveAxisListener(this);
+         mSourceAxis->RemoveAxisHandler(this);
          mSourceAxis->RemoveAxisObserver(this);
       }
 
@@ -790,7 +790,7 @@ namespace dtCore
           it != mSourceAxes.end();
           it++)
       {
-         (*it)->RemoveAxisListener(this);
+         (*it)->RemoveAxisHandler(this);
          (*it)->RemoveAxisObserver(this);
       }
    }
@@ -802,7 +802,7 @@ namespace dtCore
     */
    void AxesToAxis::AddSourceAxis(Axis* sourceAxis)
    {
-      sourceAxis->AddAxisListener(this);
+      sourceAxis->AddAxisHandler(this);
       sourceAxis->AddAxisObserver(this);
 
       mSourceAxes.push_back(sourceAxis);
@@ -823,7 +823,7 @@ namespace dtCore
       {
          if((*it).get() == sourceAxis)
          {
-            sourceAxis->RemoveAxisListener(this);
+            sourceAxis->RemoveAxisHandler(this);
             sourceAxis->RemoveAxisObserver(this);
 
             mSourceAxes.erase(it);
@@ -969,13 +969,13 @@ namespace dtCore
    {
       if(mFirstSourceButton.valid())
       {
-         mFirstSourceButton->RemoveButtonListener(this);
+         mFirstSourceButton->RemoveButtonHandler(this);
          mFirstSourceButton->RemoveButtonObserver(this);
       }
 
       if(mSecondSourceButton.valid())
       {
-         mSecondSourceButton->RemoveButtonListener(this);
+         mSecondSourceButton->RemoveButtonHandler(this);
          mSecondSourceButton->RemoveButtonObserver(this);
       }
    }
@@ -991,13 +991,13 @@ namespace dtCore
    {
       if(mFirstSourceButton.valid())
       {
-         mFirstSourceButton->RemoveButtonListener(this);
+         mFirstSourceButton->RemoveButtonHandler(this);
          mFirstSourceButton->RemoveButtonObserver(this);
       }
 
       if(mSecondSourceButton.valid())
       {
-         mSecondSourceButton->RemoveButtonListener(this);
+         mSecondSourceButton->RemoveButtonHandler(this);
          mSecondSourceButton->RemoveButtonObserver(this);
       }
 
@@ -1008,13 +1008,13 @@ namespace dtCore
       {
          if(mFirstSourceButton.valid())
          {
-            mFirstSourceButton->AddButtonListener(this);
+            mFirstSourceButton->AddButtonHandler(this);
             mFirstSourceButton->AddButtonObserver(this);
          }
 
          if(mSecondSourceButton.valid())
          {
-            mSecondSourceButton->AddButtonListener(this);
+            mSecondSourceButton->AddButtonHandler(this);
             mSecondSourceButton->AddButtonObserver(this);
          }
       }
@@ -1050,13 +1050,13 @@ namespace dtCore
       {
          if(mFirstSourceButton.valid())
          {
-            mFirstSourceButton->AddButtonListener(this);
+            mFirstSourceButton->AddButtonHandler(this);
             mFirstSourceButton->AddButtonObserver(this);
          }
 
          if(mSecondSourceButton.valid())
          {
-            mSecondSourceButton->AddButtonListener(this);
+            mSecondSourceButton->AddButtonHandler(this);
             mSecondSourceButton->AddButtonObserver(this);
          }
       }
@@ -1064,13 +1064,13 @@ namespace dtCore
       {
          if(mFirstSourceButton.valid())
          {
-            mFirstSourceButton->RemoveButtonListener(this);
+            mFirstSourceButton->RemoveButtonHandler(this);
             mFirstSourceButton->RemoveButtonObserver(this);
          }
 
          if(mSecondSourceButton.valid())
          {
-            mSecondSourceButton->RemoveButtonListener(this);
+            mSecondSourceButton->RemoveButtonHandler(this);
             mSecondSourceButton->RemoveButtonObserver(this);
          }
       }
@@ -1260,13 +1260,13 @@ namespace dtCore
    {
       if(mSourceButton.valid())
       {
-         mSourceButton->RemoveButtonListener(this);
+         mSourceButton->RemoveButtonHandler(this);
          mSourceButton->RemoveButtonObserver(this);
       }
 
       if(mSourceAxis.valid())
       {
-         mSourceAxis->RemoveAxisListener(this);
+         mSourceAxis->RemoveAxisHandler(this);
          mSourceAxis->RemoveAxisObserver(this);
       }
    }
@@ -1280,7 +1280,7 @@ namespace dtCore
    {
       if(mSourceButton.valid())
       {
-         mSourceButton->RemoveButtonListener(this);
+         mSourceButton->RemoveButtonHandler(this);
          mSourceButton->RemoveButtonObserver(this);
       }
 
@@ -1288,7 +1288,7 @@ namespace dtCore
 
       if(mSourceButton.valid())
       {
-         mSourceButton->AddButtonListener(this);
+         mSourceButton->AddButtonHandler(this);
          mSourceButton->AddButtonObserver(this);
       }
 
@@ -1314,7 +1314,7 @@ namespace dtCore
    {
       if(mSourceAxis.valid())
       {
-         mSourceAxis->RemoveAxisListener(this);
+         mSourceAxis->RemoveAxisHandler(this);
          mSourceAxis->RemoveAxisObserver(this);
       }
 
@@ -1322,7 +1322,7 @@ namespace dtCore
 
       if(mSourceAxis.valid())
       {
-         mSourceAxis->AddAxisListener(this);
+         mSourceAxis->AddAxisHandler(this);
          mSourceAxis->AddAxisObserver(this);
       }
 
@@ -1352,13 +1352,13 @@ namespace dtCore
       {
          if(mSourceButton.valid())
          {
-            mSourceButton->AddButtonListener(this);
+            mSourceButton->AddButtonHandler(this);
             mSourceButton->AddButtonObserver(this);
          }
 
          if(mSourceAxis.valid())
          {
-            mSourceAxis->AddAxisListener(this);
+            mSourceAxis->AddAxisHandler(this);
             mSourceAxis->AddAxisObserver(this);
          }
       }
@@ -1366,13 +1366,13 @@ namespace dtCore
       {
          if(mSourceButton.valid())
          {
-            mSourceButton->RemoveButtonListener(this);
+            mSourceButton->RemoveButtonHandler(this);
             mSourceButton->RemoveButtonObserver(this);
          }
 
          if(mSourceAxis.valid())
          {
-            mSourceAxis->RemoveAxisListener(this);
+            mSourceAxis->RemoveAxisHandler(this);
             mSourceAxis->RemoveAxisObserver(this);
          }
       }

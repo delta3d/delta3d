@@ -26,7 +26,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include <dtCore/motionmodel.h>
-#include <dtCore/axislistener.h>
+#include <dtCore/axishandler.h>
 #include <dtCore/inputdevice.h>
 #include <dtUtil/functor.h>
 #include <dtCore/scene.h>
@@ -134,14 +134,14 @@ namespace dtCore
        * Helper class used to call the supplied functor when an axis value
        * changes.  Used only by the FPSMotionModel.
        */
-      class DT_CORE_EXPORT FPSAxisListener :  public dtCore::AxisListener
+      class DT_CORE_EXPORT FPSAxisHandler :  public dtCore::AxisHandler
       {
       public:
          typedef dtUtil::Functor<bool, TYPELIST_2(double,double)> SetFunctor;
 
-         FPSAxisListener(const SetFunctor& setFunc);
+         FPSAxisHandler(const SetFunctor& setFunc);
 
-         virtual ~FPSAxisListener() {};
+         virtual ~FPSAxisHandler() {};
 
          virtual bool HandleAxisStateChanged(const Axis* axis,
                                        double oldState,
@@ -434,10 +434,10 @@ namespace dtCore
        */
       dtCore::RefPtr<Axis> mSidestepLeftRightAxis;
 
-      FPSAxisListener* mSidestepListener;       ///<Side step Axis listener
-      FPSAxisListener* mForwardBackwardListener;///<Forward/back Axis listener
-      FPSAxisListener* mLookLeftRightListener;  ///<LeftRight Axis listener
-      FPSAxisListener* mLookUpDownListener;     ///<Up/Down Axis listener
+      FPSAxisHandler* mSidestepHandler;       ///<Side step Axis handler
+      FPSAxisHandler* mForwardBackwardHandler;///<Forward/back Axis handler
+      FPSAxisHandler* mLookLeftRightHandler;  ///<LeftRight Axis handler
+      FPSAxisHandler* mLookUpDownHandler;     ///<Up/Down Axis handler
 
       /**
        * The maximum walk speed (meters per second).

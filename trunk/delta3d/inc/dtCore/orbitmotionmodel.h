@@ -25,7 +25,7 @@
 #ifndef DELTA_ORBIT_MOTION_MODEL
 #define DELTA_ORBIT_MOTION_MODEL
 
-#include <dtCore/axislistener.h>
+#include <dtCore/axishandler.h>
 #include <dtCore/motionmodel.h>
 
 namespace dtCore
@@ -55,7 +55,7 @@ namespace dtCore
     *
     */
    class DT_CORE_EXPORT OrbitMotionModel : public MotionModel,
-                                           public AxisListener
+                                           public AxisHandler
    {
       DECLARE_MANAGEMENT_LAYER(OrbitMotionModel)
 

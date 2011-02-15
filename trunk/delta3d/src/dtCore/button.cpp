@@ -3,7 +3,7 @@
 //////////////////////////////////////////////////////////////////////
 #include <prefix/dtcoreprefix.h>
 #include <dtCore/button.h>
-#include <dtCore/buttonlistener.h>
+#include <dtCore/buttonhandler.h>
 #include <dtCore/buttonobserver.h>
 #include <dtCore/inputdevice.h>
 #include <algorithm> //for std::find
@@ -65,23 +65,23 @@ namespace dtCore
       bool handled = false;
 
       // perform the chain of responsibility
-      ButtonListenerList::iterator listenerIter = mButtonListeners.begin();
-      ButtonListenerList::iterator listenerEnditer = mButtonListeners.end();
-      while (!handled && listenerIter != listenerEnditer)
+      ButtonHandlerList::iterator handlerIter = mButtonHandlers.begin();
+      ButtonHandlerList::iterator handlerEnditer = mButtonHandlers.end();
+      while (!handled && handlerIter != handlerEnditer)
       {
-         handled = (*listenerIter)->HandleButtonStateChanged(this, !mState, mState);
-         ++listenerIter;
+         handled = (*handlerIter)->HandleButtonStateChanged(this, !mState, mState);
+         ++handlerIter;
       }
 
-      // Notify owner's button listeners if this hasn't been handled already
+      // Notify owner's button handlers if this hasn't been handled already
       if (GetOwner() != NULL)
       {
-         ButtonListenerList::iterator listenerIter = GetOwner()->mButtonListeners.begin();
-         ButtonListenerList::iterator listenerEnditer = GetOwner()->mButtonListeners.end();
-         while (!handled && listenerIter != listenerEnditer)
+         ButtonHandlerList::iterator handlerIter = GetOwner()->mButtonHandlers.begin();
+         ButtonHandlerList::iterator handlerEnditer = GetOwner()->mButtonHandlers.end();
+         while (!handled && handlerIter != handlerEnditer)
          {
-            handled = (*listenerIter)->HandleButtonStateChanged(this, !mState, mState);
-            ++listenerIter;
+            handled = (*handlerIter)->HandleButtonStateChanged(this, !mState, mState);
+            ++handlerIter;
          }
       }
 
@@ -93,20 +93,35 @@ namespace dtCore
       return mSymbol;
    }
 
-   void Button::AddButtonListener(ButtonListener* buttonListener)
+   void Button::AddButtonHandler(ButtonHandler* buttonHandler)
    {
-      mButtonListeners.push_back(buttonListener);
+      mButtonHandlers.push_back(buttonHandler);
    }
 
-   void Button::InsertButtonListener(const ButtonListenerList::value_type& pos, ButtonListener* bl)
+   void Button::InsertButtonHandler(const ButtonHandlerList::value_type& pos, ButtonHandler* bl)
    {
-      ButtonListenerList::iterator iter = std::find(mButtonListeners.begin(), mButtonListeners.end(), pos);
-      mButtonListeners.insert(iter,bl);
+      ButtonHandlerList::iterator iter = std::find(mButtonHandlers.begin(), mButtonHandlers.end(), pos);
+      mButtonHandlers.insert(iter,bl);
    }
 
-   void Button::RemoveButtonListener(ButtonListener* buttonListener)
+   void Button::RemoveButtonHandler(ButtonHandler* buttonHandler)
    {
-      mButtonListeners.remove(buttonListener);
+      mButtonHandlers.remove(buttonHandler);
+   }
+
+   void Button::AddButtonListener(ButtonHandler* buttonHandler)
+   {
+      AddButtonHandler(buttonHandler);
+   }
+
+   void Button::InsertButtonListener(const ButtonHandlerList::value_type& pos, ButtonHandler* bl)
+   {
+      InsertButtonHandler(pos, bl);
+   }
+
+   void Button::RemoveButtonListener(ButtonHandler* buttonHandler)
+   {
+      RemoveButtonHandler(buttonHandler);
    }
 
    void Button::AddButtonObserver(ButtonObserver* buttonObserver)

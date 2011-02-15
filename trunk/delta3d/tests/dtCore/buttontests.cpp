@@ -24,7 +24,7 @@
 */
 #include <prefix/unittestprefix.h>
 #include <cppunit/extensions/HelperMacros.h>
-#include <dtCore/buttonlistener.h>   // for testing the Button definition
+#include <dtCore/buttonhandler.h>   // for testing the Button definition
 #include <dtCore/refptr.h>
 #include <dtCore/inputdevice.h>
 
@@ -41,14 +41,14 @@ namespace dtTest
          void setUp();
          void tearDown();
 
-         /// tests handling and order of handling of multiple listeners for key presses and releases.
+         /// tests handling and order of handling of multiple handlers for key presses and releases.
          void TestObservers();
 
       private:
    };
 
    /// button test validator
-   class HitObserver : public dtCore::ButtonListener
+   class HitObserver : public dtCore::ButtonHandler
    {
    public:
       HitObserver(): mHit(false) {}
@@ -117,46 +117,46 @@ void ButtonTests::TestObservers()
    // verify it has been added
    CPPUNIT_ASSERT( my_device->GetFeatureCount()==1 );
 
-   // assert for extra listeners
-   CPPUNIT_ASSERT( my_button->GetListeners().size()==0 );
+   // assert for extra handlers
+   CPPUNIT_ASSERT( my_button->GetHandlers().size()==0 );
 
-   // -- make a listener -- //
-   FalseObserver my_listener;
-   CPPUNIT_ASSERT( !my_listener.GetHit() );  // better not be hit
+   // -- make a handler -- //
+   FalseObserver my_handler;
+   CPPUNIT_ASSERT( !my_handler.GetHit() );  // better not be hit
 
-   // -- connect the listener -- //
-   my_button->AddButtonListener( &my_listener );
+   // -- connect the handler -- //
+   my_button->AddButtonHandler( &my_handler );
 
-   // assert for missing listeners
-   CPPUNIT_ASSERT( my_button->GetListeners().size()==1 );
+   // assert for missing handlers
+   CPPUNIT_ASSERT( my_button->GetHandlers().size()==1 );
 
    // no check to see if it was handled, don't care for this test
    CPPUNIT_ASSERT( my_button->SetState( !my_button->GetState() ) );   // make sure a change occurs, should not be handled by FalseObserver
    CPPUNIT_ASSERT( my_button->GetState() );  // should have 'true' state by now since original state was 'false'
 
-   // Notify the listeners of the change
+   // Notify the handlers of the change
    my_button->NotifyStateChange();
 
-   // check to see if my_listener was hit
-   CPPUNIT_ASSERT( my_listener.GetHit() );   // better be hit
+   // check to see if my_handler was hit
+   CPPUNIT_ASSERT( my_handler.GetHit() );   // better be hit
 
-   // insert a new listener in front of the current listener
-   TrueObserver my_listener2;
-   my_button->InsertButtonListener( &my_listener, &my_listener2 );
-   CPPUNIT_ASSERT( my_button->GetListeners().size()==2 );
-   CPPUNIT_ASSERT( my_button->GetListeners().front() == &my_listener2 );
+   // insert a new handler in front of the current handler
+   TrueObserver my_handler2;
+   my_button->InsertButtonHandler( &my_handler, &my_handler2 );
+   CPPUNIT_ASSERT( my_button->GetHandlers().size()==2 );
+   CPPUNIT_ASSERT( my_button->GetHandlers().front() == &my_handler2 );
 
    // test chain of responsibility
-   my_listener.ResetHit();
-   CPPUNIT_ASSERT( !my_listener.GetHit() );  // better not be hit
-   my_listener2.ResetHit();
-   CPPUNIT_ASSERT( !my_listener2.GetHit() );  // better not be hit
+   my_handler.ResetHit();
+   CPPUNIT_ASSERT( !my_handler.GetHit() );  // better not be hit
+   my_handler2.ResetHit();
+   CPPUNIT_ASSERT( !my_handler2.GetHit() );  // better not be hit
 
    CPPUNIT_ASSERT( my_button->SetState( !my_button->GetState() ) );   // make sure a change occurs, should be handled by TrueObserver
 
-   // Notify the listeners of the change
+   // Notify the handlers of the change
    my_button->NotifyStateChange();
 
-   CPPUNIT_ASSERT( !my_listener.GetHit() );  // better not be hit
-   CPPUNIT_ASSERT( my_listener2.GetHit() );  // better be hit
+   CPPUNIT_ASSERT( !my_handler.GetHit() );  // better not be hit
+   CPPUNIT_ASSERT( my_handler2.GetHit() );  // better be hit
 }

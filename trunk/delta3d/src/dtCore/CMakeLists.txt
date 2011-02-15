@@ -18,12 +18,14 @@ SET(HEADER_PATH ${DELTA3D_SOURCE_DIR}/inc/${LIB_NAME})
 SET(SOURCE_PATH ${DELTA3D_SOURCE_DIR}/src/${LIB_NAME})
 
 SET(LIB_PUBLIC_HEADERS ${HEADER_PATH}/axis.h
+                ${HEADER_PATH}/axishandler.h
                 ${HEADER_PATH}/axislistener.h
                 ${HEADER_PATH}/axisobserver.h
                 ${HEADER_PATH}/axistoaxistransformation.h
                 ${HEADER_PATH}/base.h
                 ${HEADER_PATH}/batchisector.h
                 ${HEADER_PATH}/button.h
+                ${HEADER_PATH}/buttonhandler.h
                 ${HEADER_PATH}/buttonlistener.h
                 ${HEADER_PATH}/buttonobserver.h
                 ${HEADER_PATH}/camera.h
