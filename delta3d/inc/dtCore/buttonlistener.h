@@ -21,38 +21,11 @@
 #ifndef buttonlistener_h__
 #define buttonlistener_h__
 
-// buttonlistener.h: Declaration of the ButtonListener class.
-//
-//////////////////////////////////////////////////////////////////////
-#include <dtCore/export.h>
-#include <dtUtil/breakoverride.h>
+#include <dtCore/buttonhandler.h>
 
 namespace dtCore
 {
-   class Button;
-
-   /// An interface for objects interested in handling button state changes.
-   class DT_CORE_EXPORT ButtonListener
-   {
-   public:
-
-      virtual ~ButtonListener() {}
-
-      /**
-       * Called when a button's state has changed.
-       *
-       * @param button the origin of the event
-       * @param oldState the old state of the button
-       * @param newState the new state of the button
-       * @return whether this listener handled the state change or not
-       */
-      virtual bool HandleButtonStateChanged(const Button* button, bool oldState, bool newState)=0;
-
-   private:
-      /** Deprecated 1/27/11.  Use HandleButtonStateChanged instead.
-       */
-      BREAK_OVERRIDE(ButtonStateChanged(const Button* button, bool oldState, bool newState))
-   };
+   typedef ButtonHandler ButtonListener;
 }
 
 #endif // buttonlistener_h__

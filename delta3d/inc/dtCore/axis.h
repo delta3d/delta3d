@@ -27,17 +27,18 @@
 
 #include <dtCore/export.h>
 #include <dtCore/inputdevicefeature.h>
+#include <dtUtil/deprecationmgr.h>
 #include <list>
 
 namespace dtCore
 {
-   class AxisListener;
+   class AxisHandler;
    class AxisObserver;
 
    class DT_CORE_EXPORT Axis : public InputDeviceFeature
    {
    public:
-      typedef std::list<AxisListener*> AxisListenerList;
+      typedef std::list<AxisHandler*> AxisHandlerList;
       typedef std::list<AxisObserver*> AxisObserverList;
 
       /**
@@ -88,21 +89,37 @@ namespace dtCore
       /**
        * Adds an axis listener.
        *
-       * @param axisListener a pointer to the listener to add
+       * @param axisHandler a pointer to the listener to add
        */
-      void AddAxisListener(AxisListener* axisListener);
+      void AddAxisHandler(AxisHandler* axisHandler);
 
       /// Inserts the listener into the list at a position BEFORE pos.
-      void InsertAxisListener(const AxisListenerList::value_type& pos, AxisListener* al);
+      void InsertAxisHandler(const AxisHandlerList::value_type& pos, AxisHandler* al);
 
       /**
        * Removes an axis listener.
        *
-       * @param axisListener a pointer to the listener to remove
+       * @param axisHandler a pointer to the listener to remove
        */
-      void RemoveAxisListener(AxisListener* axisListener);
+      void RemoveAxisHandler(AxisHandler* axisHandler);
 
-      const AxisListenerList& GetListeners() const { return mAxisListeners; }
+      const AxisHandlerList& GetHandlers() const { return mAxisHandlers; }
+
+      /**
+       * This has been deprecated: use the AddAxisHandler method instead.
+       */
+      DEPRECATE_FUNC void AddAxisListener(AxisHandler* axisHandler);
+
+      /// This has been deprecated: use the InsertAxisHandler method instead.
+      DEPRECATE_FUNC void InsertAxisListener(const AxisHandlerList::value_type& pos, AxisHandler* al);
+
+      /**
+       * This has been deprecated: use the RemoveAxisHandler method instead.
+       */
+      DEPRECATE_FUNC void RemoveAxisListener(AxisHandler* axisHandler);
+
+      /// This has been deprecated: use the GetHandlers method instead.
+      DEPRECATE_FUNC const AxisHandlerList& GetListeners() const { return GetHandlers(); }
 
       /**
        * Adds an axis observer.
@@ -126,7 +143,7 @@ namespace dtCore
    private:
       double mState;  ///< The state of this axis.
       double mPrevState; ///< The previous state of the axis.
-      AxisListenerList mAxisListeners;  ///< Listeners to this axis.
+      AxisHandlerList mAxisHandlers;  ///< Handlers to this axis.
       AxisObserverList mAxisObservers;  ///< Observers to this axis.
    };
 }

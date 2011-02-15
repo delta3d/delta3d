@@ -27,13 +27,13 @@ namespace dtCore
 IMPLEMENT_MANAGEMENT_LAYER(FPSMotionModel)
 
 
-FPSMotionModel::FPSAxisListener::FPSAxisListener(const SetFunctor& setFunc)
+FPSMotionModel::FPSAxisHandler::FPSAxisHandler(const SetFunctor& setFunc)
    : mSetFunctor(setFunc)
 {
 }
 
 ///When the axis changes, just call the functor with the new values
-bool FPSMotionModel::FPSAxisListener::HandleAxisStateChanged(const Axis* axis,
+bool FPSMotionModel::FPSAxisHandler::HandleAxisStateChanged(const Axis* axis,
                                                        double oldState,
                                                        double newState,
                                                        double delta)
@@ -65,10 +65,10 @@ FPSMotionModel::FPSMotionModel(Keyboard* keyboard,
    , mTurnLeftRightAxis(NULL)
    , mLookUpDownAxis(NULL)
    , mSidestepLeftRightAxis(NULL)
-   , mSidestepListener(NULL)
-   , mForwardBackwardListener(NULL)
-   , mLookLeftRightListener(NULL)
-   , mLookUpDownListener(NULL)
+   , mSidestepHandler(NULL)
+   , mForwardBackwardHandler(NULL)
+   , mLookLeftRightHandler(NULL)
+   , mLookUpDownHandler(NULL)
    , mMaximumWalkSpeed(maxWalkSpeed)
    , mMaximumTurnSpeed(maxTurnSpeed)
    , mMaximumSidestepSpeed(maxSidestepSpeed)
@@ -90,16 +90,16 @@ FPSMotionModel::FPSMotionModel(Keyboard* keyboard,
 {
    RegisterInstance(this);
 
-   //setup some axis listeners with functors
-   FPSAxisListener::SetFunctor fbFunc(this, &FPSMotionModel::OnForwardBackwardChanged);
-   FPSAxisListener::SetFunctor sideStepFunc(this, &FPSMotionModel::OnSidestepChanged);
-   FPSAxisListener::SetFunctor lookLeftRightFunc(this, &FPSMotionModel::OnLookLeftRightChanged);
-   FPSAxisListener::SetFunctor lookUpDownFunc(this, &FPSMotionModel::OnLookUpDownChanged);
+   //setup some axis handlers with functors
+   FPSAxisHandler::SetFunctor fbFunc(this, &FPSMotionModel::OnForwardBackwardChanged);
+   FPSAxisHandler::SetFunctor sideStepFunc(this, &FPSMotionModel::OnSidestepChanged);
+   FPSAxisHandler::SetFunctor lookLeftRightFunc(this, &FPSMotionModel::OnLookLeftRightChanged);
+   FPSAxisHandler::SetFunctor lookUpDownFunc(this, &FPSMotionModel::OnLookUpDownChanged);
 
-   mLookUpDownListener      = new FPSAxisListener(lookUpDownFunc);
-   mLookLeftRightListener   = new FPSAxisListener(lookLeftRightFunc);
-   mSidestepListener        = new FPSAxisListener(sideStepFunc);
-   mForwardBackwardListener = new FPSAxisListener(fbFunc);
+   mLookUpDownHandler      = new FPSAxisHandler(lookUpDownFunc);
+   mLookLeftRightHandler   = new FPSAxisHandler(lookLeftRightFunc);
+   mSidestepHandler        = new FPSAxisHandler(sideStepFunc);
+   mForwardBackwardHandler = new FPSAxisHandler(fbFunc);
 
    if (keyboard != NULL && mouse != NULL)
    {
@@ -121,23 +121,23 @@ FPSMotionModel::~FPSMotionModel()
 
    if (mLookUpDownAxis.get())
    {
-      mLookUpDownAxis->RemoveAxisListener(mLookUpDownListener);
-      delete mLookUpDownListener;
+      mLookUpDownAxis->RemoveAxisHandler(mLookUpDownHandler);
+      delete mLookUpDownHandler;
    }
    if (mTurnLeftRightAxis.get())
    {
-      mTurnLeftRightAxis->RemoveAxisListener(mLookLeftRightListener);
-      delete mLookLeftRightListener;
+      mTurnLeftRightAxis->RemoveAxisHandler(mLookLeftRightHandler);
+      delete mLookLeftRightHandler;
    }
    if (mSidestepLeftRightAxis.get())
    {
-      mSidestepLeftRightAxis->RemoveAxisListener(mSidestepListener);
-      delete mSidestepListener;
+      mSidestepLeftRightAxis->RemoveAxisHandler(mSidestepHandler);
+      delete mSidestepHandler;
    }
    if (mWalkForwardBackwardAxis.get())
    {
-      mWalkForwardBackwardAxis->RemoveAxisListener(mForwardBackwardListener);
-      delete mForwardBackwardListener;
+      mWalkForwardBackwardAxis->RemoveAxisHandler(mForwardBackwardHandler);
+      delete mForwardBackwardHandler;
    }
 
    DeregisterInstance(this);
@@ -181,39 +181,39 @@ void FPSMotionModel::SetEnabled(bool enabled)
       if (mLookUpDownAxis.valid())
       {
          mLookUpDownAxis->SetState(0.0f);
-         mLookUpDownAxis->AddAxisListener(mLookUpDownListener);
+         mLookUpDownAxis->AddAxisHandler(mLookUpDownHandler);
       }
       if (mTurnLeftRightAxis.valid())
       {
          mTurnLeftRightAxis->SetState(0.0f);
-         mTurnLeftRightAxis->AddAxisListener(mLookLeftRightListener);
+         mTurnLeftRightAxis->AddAxisHandler(mLookLeftRightHandler);
       }
       if (mSidestepLeftRightAxis.valid())
       {
-         mSidestepLeftRightAxis->AddAxisListener(mSidestepListener);
+         mSidestepLeftRightAxis->AddAxisHandler(mSidestepHandler);
       }
       if (mWalkForwardBackwardAxis.valid())
       {
-         mWalkForwardBackwardAxis->AddAxisListener(mForwardBackwardListener);
+         mWalkForwardBackwardAxis->AddAxisHandler(mForwardBackwardHandler);
       }
    }
    if (!enabled && MotionModel::IsEnabled())
    {
       if (mLookUpDownAxis.valid())
       {
-         mLookUpDownAxis->RemoveAxisListener(mLookUpDownListener);
+         mLookUpDownAxis->RemoveAxisHandler(mLookUpDownHandler);
       }
       if (mTurnLeftRightAxis.valid())
       {
-         mTurnLeftRightAxis->RemoveAxisListener(mLookLeftRightListener);
+         mTurnLeftRightAxis->RemoveAxisHandler(mLookLeftRightHandler);
       }
       if (mSidestepLeftRightAxis.valid())
       {
-         mSidestepLeftRightAxis->RemoveAxisListener(mSidestepListener);
+         mSidestepLeftRightAxis->RemoveAxisHandler(mSidestepHandler);
       }
       if (mWalkForwardBackwardAxis.valid())
       {
-         mWalkForwardBackwardAxis->RemoveAxisListener(mForwardBackwardListener);
+         mWalkForwardBackwardAxis->RemoveAxisHandler(mForwardBackwardHandler);
       }
    }
 
@@ -337,14 +337,14 @@ void FPSMotionModel::SetWalkForwardBackwardAxis(Axis* walkForwardBackwardAxis)
 {
    if (mWalkForwardBackwardAxis.valid())
    {
-      mWalkForwardBackwardAxis->RemoveAxisListener(mForwardBackwardListener);
+      mWalkForwardBackwardAxis->RemoveAxisHandler(mForwardBackwardHandler);
    }
 
    mWalkForwardBackwardAxis = walkForwardBackwardAxis;
 
    if (mWalkForwardBackwardAxis.valid())
    {
-      mWalkForwardBackwardAxis->AddAxisListener(mForwardBackwardListener);
+      mWalkForwardBackwardAxis->AddAxisHandler(mForwardBackwardHandler);
    }
 }
 
@@ -369,14 +369,14 @@ void FPSMotionModel::SetTurnLeftRightAxis(Axis* turnLeftRightAxis)
 {
    if (mTurnLeftRightAxis.valid())
    {
-      mTurnLeftRightAxis->RemoveAxisListener(mLookLeftRightListener);
+      mTurnLeftRightAxis->RemoveAxisHandler(mLookLeftRightHandler);
    }
 
    mTurnLeftRightAxis = turnLeftRightAxis;
 
    if (mTurnLeftRightAxis.valid())
    {
-      mTurnLeftRightAxis->AddAxisListener(mLookLeftRightListener);
+      mTurnLeftRightAxis->AddAxisHandler(mLookLeftRightHandler);
    }
 }
 
@@ -401,14 +401,14 @@ void FPSMotionModel::SetLookUpDownAxis(Axis* lookUpDownAxis)
 {
    if (mLookUpDownAxis.valid())
    {
-      mLookUpDownAxis->RemoveAxisListener(mLookUpDownListener);
+      mLookUpDownAxis->RemoveAxisHandler(mLookUpDownHandler);
    }
 
    mLookUpDownAxis = lookUpDownAxis;
 
    if (mLookUpDownAxis.valid())
    {
-      mLookUpDownAxis->AddAxisListener(mLookUpDownListener);
+      mLookUpDownAxis->AddAxisHandler(mLookUpDownHandler);
    }
 }
 
@@ -433,14 +433,14 @@ void FPSMotionModel::SetSidestepLeftRightAxis(Axis* sidestepLeftRightAxis)
 {
    if (mSidestepLeftRightAxis.valid())
    {
-      mSidestepLeftRightAxis->RemoveAxisListener(mSidestepListener);
+      mSidestepLeftRightAxis->RemoveAxisHandler(mSidestepHandler);
    }
 
    mSidestepLeftRightAxis = sidestepLeftRightAxis;
 
    if (mSidestepLeftRightAxis.valid())
    {
-      mSidestepLeftRightAxis->AddAxisListener(mSidestepListener);
+      mSidestepLeftRightAxis->AddAxisHandler(mSidestepHandler);
    }
 }
 

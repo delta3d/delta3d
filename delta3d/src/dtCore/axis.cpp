@@ -3,7 +3,7 @@
 //////////////////////////////////////////////////////////////////////
 #include <prefix/dtcoreprefix.h>
 #include <dtCore/axis.h>
-#include <dtCore/axislistener.h>
+#include <dtCore/axishandler.h>
 #include <dtCore/axisobserver.h>
 #include <dtCore/inputdevice.h>
 #include <algorithm>
@@ -60,43 +60,58 @@ namespace dtCore
       bool handled = false;
 
       // perform the chain of responsibility
-      AxisListenerList::iterator listenerIter = mAxisListeners.begin();
-      AxisListenerList::iterator listenerEnditer = mAxisListeners.end();
-      while (!handled && listenerIter != listenerEnditer)
+      AxisHandlerList::iterator handlerIter = mAxisHandlers.begin();
+      AxisHandlerList::iterator handlerEnditer = mAxisHandlers.end();
+      while (!handled && handlerIter != handlerEnditer)
       {
-         handled = (*listenerIter)->HandleAxisStateChanged(this, mPrevState, mState, delta);
-         ++listenerIter;
+         handled = (*handlerIter)->HandleAxisStateChanged(this, mPrevState, mState, delta);
+         ++handlerIter;
       }
 
-      // Notify owner's axis listeners if this hasn't been handled already
+      // Notify owner's axis handlers if this hasn't been handled already
       if (GetOwner() != NULL)
       {
-         AxisListenerList::iterator listenerIter = GetOwner()->mAxisListeners.begin();
-         AxisListenerList::iterator listenerEnditer = GetOwner()->mAxisListeners.end();
-         while (!handled && listenerIter != listenerEnditer)
+         AxisHandlerList::iterator handlerIter = GetOwner()->mAxisHandlers.begin();
+         AxisHandlerList::iterator handlerEnditer = GetOwner()->mAxisHandlers.end();
+         while (!handled && handlerIter != handlerEnditer)
          {
-            handled = (*listenerIter)->HandleAxisStateChanged(this, mPrevState, mState, delta);
-            ++listenerIter;
+            handled = (*handlerIter)->HandleAxisStateChanged(this, mPrevState, mState, delta);
+            ++handlerIter;
          }
       }
 
       return handled;
    }
 
-   void Axis::AddAxisListener(AxisListener* axisListener)
+   void Axis::AddAxisHandler(AxisHandler* axisHandler)
    {
-      mAxisListeners.push_back(axisListener);
+      mAxisHandlers.push_back(axisHandler);
    }
 
-   void Axis::InsertAxisListener(const AxisListenerList::value_type& pos, AxisListener* al)
+   void Axis::InsertAxisHandler(const AxisHandlerList::value_type& pos, AxisHandler* al)
    {
-      AxisListenerList::iterator iter = std::find(mAxisListeners.begin(), mAxisListeners.end(), pos);
-      mAxisListeners.insert(iter, al);
+      AxisHandlerList::iterator iter = std::find(mAxisHandlers.begin(), mAxisHandlers.end(), pos);
+      mAxisHandlers.insert(iter, al);
    }
 
-   void Axis::RemoveAxisListener(AxisListener* axisListener)
+   void Axis::RemoveAxisHandler(AxisHandler* axisHandler)
    {
-      mAxisListeners.remove(axisListener);
+      mAxisHandlers.remove(axisHandler);
+   }
+
+   void Axis::AddAxisListener(AxisHandler* axisHandler)
+   {
+      AddAxisHandler(axisHandler);
+   }
+
+   void Axis::InsertAxisListener(const AxisHandlerList::value_type& pos, AxisHandler* al)
+   {
+      InsertAxisHandler(pos, al);
+   }
+
+   void Axis::RemoveAxisListener(AxisHandler* axisHandler)
+   {
+      RemoveAxisHandler(axisHandler);
    }
 
    void Axis::AddAxisObserver(AxisObserver* axisObserver)

@@ -124,24 +124,44 @@ namespace dtCore
       return -1;
    }
 
-   void InputDevice::AddButtonListener(ButtonListener* buttonListener)
+   void InputDevice::AddButtonHandler(ButtonHandler* buttonHandler)
    {
-      mButtonListeners.push_back(buttonListener);
+      mButtonHandlers.push_back(buttonHandler);
    }
 
-   void InputDevice::RemoveButtonListener(ButtonListener* buttonListener)
+   void InputDevice::RemoveButtonHandler(ButtonHandler* buttonHandler)
    {
-      mButtonListeners.remove(buttonListener);
+      mButtonHandlers.remove(buttonHandler);
    }
 
-   void InputDevice::AddAxisListener(AxisListener* axisListener)
+   void InputDevice::AddAxisHandler(AxisHandler* axisHandler)
    {
-      mAxisListeners.push_back(axisListener);
+      mAxisHandlers.push_back(axisHandler);
    }
 
-   void InputDevice::RemoveAxisListener(AxisListener* axisListener)
+   void InputDevice::RemoveAxisHandler(AxisHandler* axisHandler)
    {
-      mAxisListeners.remove(axisListener);
+      mAxisHandlers.remove(axisHandler);
+   }
+
+   void InputDevice::AddButtonListener(ButtonHandler* buttonHandler)
+   {
+      AddButtonHandler(buttonHandler);
+   }
+
+   void InputDevice::RemoveButtonListener(ButtonHandler* buttonHandler)
+   {
+      RemoveButtonHandler(buttonHandler);
+   }
+
+   void InputDevice::AddAxisListener(AxisHandler* axisHandler)
+   {
+      AddAxisHandler(axisHandler);
+   }
+
+   void InputDevice::RemoveAxisListener(AxisHandler* axisHandler)
+   {
+      RemoveAxisHandler(axisHandler);
    }
 
    void InputDevice::AddButtonObserver(ButtonObserver* buttonObserver)

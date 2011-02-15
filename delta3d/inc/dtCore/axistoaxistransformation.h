@@ -10,7 +10,7 @@ namespace dtCore {
    * Maps an axis to a logical axis with an arbitrary transformation.
    */
    class DT_CORE_EXPORT AxisToAxisTransformation : public AxisMapping,
-                                                   public AxisListener
+                                                   public AxisHandler
    {
    public:
 
@@ -80,8 +80,8 @@ namespace dtCore {
       * @return Whether the event was handled.
       */
       virtual bool HandleAxisStateChanged(const Axis *axis,
-                                    double oldState, 
-                                    double newState, 
+                                    double oldState,
+                                    double newState,
                                     double delta);
 
    private:

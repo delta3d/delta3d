@@ -135,14 +135,14 @@ void OrbitMotionModel::SetAzimuthAxis(Axis* azimuthAxis)
 {
    if (mAzimuthAxis.valid())
    {
-      mAzimuthAxis->RemoveAxisListener(this);
+      mAzimuthAxis->RemoveAxisHandler(this);
    }
 
    mAzimuthAxis = azimuthAxis;
 
    if (mAzimuthAxis.valid())
    {
-      mAzimuthAxis->AddAxisListener(this);
+      mAzimuthAxis->AddAxisHandler(this);
    }
 }
 
@@ -165,14 +165,14 @@ void OrbitMotionModel::SetElevationAxis(Axis* elevationAxis)
 {
    if (mElevationAxis.valid())
    {
-      mElevationAxis->RemoveAxisListener(this);
+      mElevationAxis->RemoveAxisHandler(this);
    }
 
    mElevationAxis = elevationAxis;
 
    if (mElevationAxis.valid())
    {
-      mElevationAxis->AddAxisListener(this);
+      mElevationAxis->AddAxisHandler(this);
    }
 }
 
@@ -195,14 +195,14 @@ void OrbitMotionModel::SetDistanceAxis(Axis* distanceAxis)
 {
    if (mDistanceAxis.valid())
    {
-      mDistanceAxis->RemoveAxisListener(this);
+      mDistanceAxis->RemoveAxisHandler(this);
    }
 
    mDistanceAxis = distanceAxis;
 
    if (mDistanceAxis.valid())
    {
-      mDistanceAxis->AddAxisListener(this);
+      mDistanceAxis->AddAxisHandler(this);
    }
 }
 
@@ -225,14 +225,14 @@ void OrbitMotionModel::SetLeftRightTranslationAxis(Axis* leftRightTranslationAxi
 {
    if (mLeftRightTranslationAxis.valid())
    {
-      mLeftRightTranslationAxis->RemoveAxisListener(this);
+      mLeftRightTranslationAxis->RemoveAxisHandler(this);
    }
 
    mLeftRightTranslationAxis = leftRightTranslationAxis;
 
    if (mLeftRightTranslationAxis.valid())
    {
-      mLeftRightTranslationAxis->AddAxisListener(this);
+      mLeftRightTranslationAxis->AddAxisHandler(this);
    }
 }
 
@@ -255,14 +255,14 @@ void OrbitMotionModel::SetUpDownTranslationAxis(Axis* upDownTranslationAxis)
 {
    if (mUpDownTranslationAxis.valid())
    {
-      mUpDownTranslationAxis->RemoveAxisListener(this);
+      mUpDownTranslationAxis->RemoveAxisHandler(this);
    }
 
    mUpDownTranslationAxis = upDownTranslationAxis;
 
    if (mUpDownTranslationAxis.valid())
    {
-      mUpDownTranslationAxis->AddAxisListener(this);
+      mUpDownTranslationAxis->AddAxisHandler(this);
    }
 }
 

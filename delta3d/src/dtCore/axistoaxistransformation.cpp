@@ -15,7 +15,7 @@ namespace dtCore {
    {
       if (mSourceAxis.valid())
       {
-         mSourceAxis->RemoveAxisListener(this);
+         mSourceAxis->RemoveAxisHandler(this);
       }
 
       if (mpTransformation)
@@ -30,14 +30,14 @@ namespace dtCore {
    {
       if (mSourceAxis.valid())
       {
-         mSourceAxis->RemoveAxisListener(this);
+         mSourceAxis->RemoveAxisHandler(this);
       }
 
       mSourceAxis = sourceAxis;
 
       if (mSourceAxis.valid() && mTargetAxis.valid())
       {
-         mSourceAxis->AddAxisListener(this);
+         mSourceAxis->AddAxisHandler(this);
       }
 
       UpdateTargetAxisState();
@@ -56,16 +56,16 @@ namespace dtCore {
 
       if (mSourceAxis.valid() && mTargetAxis.valid())
       {
-         mSourceAxis->AddAxisListener(this);
+         mSourceAxis->AddAxisHandler(this);
       }
       else
       {
-         mSourceAxis->RemoveAxisListener(this);
+         mSourceAxis->RemoveAxisHandler(this);
       }
 
       UpdateTargetAxisState();
    }
-  
+
    /////////////////////////////////////////////////////////////////////////////
    LogicalAxis* AxisToAxisTransformation::GetTargetAxis()
    {
@@ -88,8 +88,8 @@ namespace dtCore {
 
    /////////////////////////////////////////////////////////////////////////////
    bool AxisToAxisTransformation::HandleAxisStateChanged(const Axis* axis,
-                                                   double oldState, 
-                                                   double newState, 
+                                                   double oldState,
+                                                   double newState,
                                                    double delta)
    {
       if (mTargetAxis.valid())

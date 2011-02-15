@@ -35,11 +35,11 @@
 
 using namespace dtCore;
 
-class TestAxisListener : public AxisListener
+class TestAxisHandler : public AxisHandler
 {
    public:
 
-      TestAxisListener() :
+      TestAxisHandler() :
          mAxisStateChanged(false)
       {
       }
@@ -97,7 +97,7 @@ void MotionModelTests::tearDown()
 void MotionModelTests::TestOrbitMotionModelAxisStateClobbering()
 {
    // This is a fun test. For a while, OribitMotionModel (with his
-   // best intentions), was clobbering the ability of axis listeners
+   // best intentions), was clobbering the ability of axis handlers
    // sharing the same axis with him to have their chance to be
    // notified of the axis state change. This test ensures this won't
    // ever happen again. Ever. -osb
@@ -105,7 +105,7 @@ void MotionModelTests::TestOrbitMotionModelAxisStateClobbering()
    RefPtr<InputDevice> inputDevice( new InputDevice() );
    inputDevice->AddFeature( new Axis( inputDevice.get(), "Axis" ) );
 
-   TestAxisListener testAxisListener;
+   TestAxisHandler testAxisHandler;
    RefPtr<OrbitMotionModel> omm( new OrbitMotionModel() );
 
    // Since we are testing what happens when OrbitMotionModel's AxisStateChanged
@@ -115,13 +115,13 @@ void MotionModelTests::TestOrbitMotionModelAxisStateClobbering()
    omm->SetEnabled(false);
    omm->SetTarget(0);
 
-   inputDevice->GetAxis(0)->AddAxisListener( omm.get() );
-   inputDevice->GetAxis(0)->AddAxisListener( &testAxisListener );
+   inputDevice->GetAxis(0)->AddAxisHandler( omm.get() );
+   inputDevice->GetAxis(0)->AddAxisHandler( &testAxisHandler );
 
-   CPPUNIT_ASSERT( !testAxisListener.HasAxisStateChanged() );
+   CPPUNIT_ASSERT( !testAxisHandler.HasAxisStateChanged() );
    inputDevice->GetAxis( 0 )->SetState( 2.0 );
    inputDevice->GetAxis( 0 )->NotifyStateChange();
-   CPPUNIT_ASSERT( testAxisListener.HasAxisStateChanged() );
+   CPPUNIT_ASSERT( testAxisHandler.HasAxisStateChanged() );
  }
 
 

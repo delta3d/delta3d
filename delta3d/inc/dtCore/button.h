@@ -27,18 +27,19 @@
 
 #include <dtCore/export.h>
 #include <dtCore/inputdevicefeature.h>
+#include <dtUtil/deprecationmgr.h>
 #include <list>
 
 namespace dtCore
 {
-   class ButtonListener;
+   class ButtonHandler;
    class ButtonObserver;
 
    /// Buttons are features with binary state.
    class DT_CORE_EXPORT Button : public InputDeviceFeature
    {
    public:
-      typedef std::list<ButtonListener*> ButtonListenerList;  ///< A container of ButtonListeners
+      typedef std::list<ButtonHandler*> ButtonHandlerList;  ///< A container of ButtonHandlers
       typedef std::list<ButtonObserver*> ButtonObserverList;  ///< A container of ButtonObservers
 
       /**
@@ -95,21 +96,37 @@ namespace dtCore
       /**
        * Adds a button listener.
        *
-       * @param buttonListener a pointer to the listener to add
+       * @param buttonHandler a pointer to the listener to add
        */
-      void AddButtonListener(ButtonListener* buttonListener);
+      void AddButtonHandler(ButtonHandler* buttonHandler);
 
       /// Inserts the listener into the list at a position BEFORE pos.
-      void InsertButtonListener(const ButtonListenerList::value_type& pos, ButtonListener* bl);
+      void InsertButtonHandler(const ButtonHandlerList::value_type& pos, ButtonHandler* bl);
 
       /**
        * Removes a button listener.
        *
-       * @param buttonListener a pointer to the listener to remove
+       * @param buttonHandler a pointer to the listener to remove
        */
-      void RemoveButtonListener(ButtonListener* buttonListener);
+      void RemoveButtonHandler(ButtonHandler* buttonHandler);
 
-      const ButtonListenerList& GetListeners() const { return mButtonListeners; }
+      const ButtonHandlerList& GetHandlers() const { return mButtonHandlers; }
+
+      /**
+      * This has been deprecated: use the AddButtonHandler method instead.
+       */
+      DEPRECATE_FUNC void AddButtonListener(ButtonHandler* buttonHandler);
+
+      /// This has been deprecated: use the InsertButtonHandler method instead.
+      DEPRECATE_FUNC void InsertButtonListener(const ButtonHandlerList::value_type& pos, ButtonHandler* bl);
+
+      /**
+      * This has been deprecated: use the RemoveButtonHandler method instead.
+       */
+      DEPRECATE_FUNC void RemoveButtonListener(ButtonHandler* buttonHandler);
+
+      /// This has been deprecated: use the GetHandlers method instead.
+      DEPRECATE_FUNC const ButtonHandlerList& GetListeners() const { return mButtonHandlers; }
 
       /**
        * Adds a button observer.
@@ -133,7 +150,7 @@ namespace dtCore
    private:
       bool mState;  ///< The state of this button.
       int mSymbol;  ///< The symbol of this button.
-      ButtonListenerList mButtonListeners;  ///< Listeners to this button.
+      ButtonHandlerList mButtonHandlers;  ///< Handlers to this button.
       ButtonObserverList mButtonObservers;  ///< Observers to this button.
    };
 }
