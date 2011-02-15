@@ -79,7 +79,7 @@ namespace dtGame
       {
          ProcessTickMessage(static_cast<const TickMessage&>(message));
       }
-      else if (type == MessageType::TICK_REMOTE)
+      else if (type.GetCategory() == "Tick"  || type.GetCategory() == "System")
       {
          // do nothing.  Don't let it fall through or it will get logged!
       }
