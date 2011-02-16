@@ -111,7 +111,15 @@ namespace dtDirector
 
    private:
 
+      struct deleteQueue
+      {
+         std::string msgType;
+         dtDirector::Node* node;
+      };
+
       std::map<std::string, std::map<dtDirector::Node*, MsgFunc> > mRegisteredCallbacks;
+
+      std::vector<deleteQueue> mDeleteQueue;
    };
 
 } // namespace dtDirector
