@@ -37,7 +37,6 @@ namespace dtUtil
    {
    public:
       ThreadPoolTask();
-      virtual ~ThreadPoolTask();
 
       /// Implement this method to actually do the work for the task
       virtual void operator()() = 0;
@@ -56,6 +55,8 @@ namespace dtUtil
       /// Will block the current thread until this task completes.
       bool WaitUntilComplete(int timeoutMS = -1);
 
+   protected:
+      virtual ~ThreadPoolTask();
    private:
       OpenThreads::Block mBlockUntilComplete;
    };
