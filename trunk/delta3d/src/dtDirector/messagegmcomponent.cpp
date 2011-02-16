@@ -56,7 +56,7 @@ namespace dtDirector
          for (std::map<dtDirector::Node*, MsgFunc>::iterator a = callbacks.begin();
             a != callbacks.end(); ++a)
          {
-            if( a->first->GetDirector()->GetActive() )
+            if (a->first->GetDirector()->GetActive())
                a->second(message);
          }
       }
@@ -71,9 +71,42 @@ namespace dtDirector
          for (std::map<dtDirector::Node*, MsgFunc>::iterator a = callbacks.begin();
             a != callbacks.end(); ++a)
          {
-            if( a->first->GetDirector()->GetActive() )
+            if (a->first->GetDirector()->GetActive())
                a->second(message);
          }
+      }
+
+      // Now clear all unregistered messages from the listing.
+      if (!mDeleteQueue.empty())
+      {
+         for (size_t q = 0; q < mDeleteQueue.size(); ++q)
+         {
+            const std::string& msgType = mDeleteQueue[q].msgType;
+
+            i = mRegisteredCallbacks.begin();
+            while (i != mRegisteredCallbacks.end())
+            {
+               std::map<dtDirector::Node*, MsgFunc>::iterator a = i->second.begin();
+
+               while(a != i->second.end())
+               {
+                  if (msgType == "" || msgType == i->first)
+                  {
+                     if (mDeleteQueue[q].node == a->first)
+                     {
+                        i->second.erase(a++);
+                        break;
+                     }
+                  }
+
+                  ++a;
+               }
+
+               ++i;
+            }
+         }
+
+         mDeleteQueue.clear();
       }
    }
 
@@ -116,20 +149,10 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void MessageGMComponent::UnRegisterMessage(const std::string& msgType, dtDirector::Node* node)
    {
-      std::map<std::string, std::map<dtDirector::Node*, MsgFunc> >::iterator i =
-         mRegisteredCallbacks.find(msgType);
-
-      // Find the callback.
-      if (i != mRegisteredCallbacks.end())
-      {
-         std::map<dtDirector::Node*, MsgFunc>::iterator a =
-            i->second.find(node);
-
-         if (a != i->second.end())
-         {
-            i->second.erase(a);
-         }
-      }
+      deleteQueue item;
+      item.msgType = msgType;
+      item.node = node;
+      mDeleteQueue.push_back(item);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -141,16 +164,7 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void MessageGMComponent::UnRegisterMessages(dtDirector::Node* node)
    {
-      std::map<std::string, std::map<dtDirector::Node*, MsgFunc> >::iterator i;
-      for (i = mRegisteredCallbacks.begin(); i != mRegisteredCallbacks.end(); ++i)
-      {
-         std::map<dtDirector::Node*, MsgFunc>::iterator found = i->second.find(node);
-
-         if (found != i->second.end())
-         {
-            i->second.erase(found);
-         }
-      }
+      UnRegisterMessage("", node);
    }
 }
 
