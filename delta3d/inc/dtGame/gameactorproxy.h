@@ -76,6 +76,7 @@ namespace dtGame
          static Ownership CLIENT_LOCAL;
          static Ownership CLIENT_AND_SERVER_LOCAL;
          static Ownership PROTOTYPE;
+      protected:
          Ownership(const std::string& name);
       };
 
@@ -87,6 +88,7 @@ namespace dtGame
          static LocalActorUpdatePolicy IGNORE_ALL;
          static LocalActorUpdatePolicy ACCEPT_ALL;
          static LocalActorUpdatePolicy ACCEPT_WITH_PROPERTY_FILTER;
+      protected:
          LocalActorUpdatePolicy(const std::string& name);
       };
 
