@@ -269,6 +269,47 @@ namespace dtUtil
    {
       return (Abs(lhs - rhs) <= epsilon);
    }
+
+   /**
+    * Returns the angle between the two given vectors
+    * @param v1 The first vector.
+    * @param v2 The second vector.
+    * @return the angle in degrees between the vectors
+    */
+   template <typename TVec>
+   inline float GetAngleBetweenVectors(TVec v1, TVec v2)
+   {
+      v1.normalize();
+      v2.normalize();
+      return osg::RadiansToDegrees(std::acos(v1 * v2));
+   }
+
+   /**
+    * Returns an integer representing on what side of a vector a point lies
+    * @param point   The point.
+    * @param start   The starting point of the vector.
+    * @param forward The forward vector from the start point.
+    * @param up      The up vector in relation to vector.
+    * @return -1 if the points is to the left of the vector, 1 if it's to the
+    * right and 0 if the point is parallel to the vector.
+    */
+   template <typename TVec>
+   inline int ComparePointToVector(TVec point, TVec start, TVec forward, TVec up)
+   {
+      osg::Vec3 right = forward ^ up;
+      osg::Vec3 pointVector = point - start;
+      pointVector.normalize();
+      float dot = right * pointVector;
+      if (dot > 0.0f)
+      {
+         return 1.0f;
+      }
+      else if (dot < 0.0f)
+      {
+         return -1.0f;
+      }
+      return 0.0f;
+   }
 }
 
 
