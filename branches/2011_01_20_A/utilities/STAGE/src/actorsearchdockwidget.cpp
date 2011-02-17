@@ -97,6 +97,11 @@ namespace dtEditQt
       }
    }
 
+   ActorSearcher* ActorSearchDockWidget::getActorSearchWidget()
+   {
+      return mActorSearchWidget;
+   }
+
    /////////////////////////////////////////////////////////////////////////////////
    QWidget* ActorSearchDockWidget::getWidget()
    {

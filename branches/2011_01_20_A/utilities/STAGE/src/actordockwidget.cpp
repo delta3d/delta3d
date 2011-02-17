@@ -109,4 +109,10 @@ namespace dtEditQt
       EditorActions::GetInstance().mActionWindowsActor->setChecked(false);
    }
 
+   /////////////////////////////////////////////////////////////////////////////////
+   ActorBrowser* ActorDockWidget::getActorBrowser()
+   {
+      return mActorBrowserWidget;
+   }
+
 } // namespace dtEditQt

@@ -29,6 +29,8 @@
 #ifndef DELTA_ACTORTYPETREEWIDGET
 #define DELTA_ACTORTYPETREEWIDGET
 
+#include <dtEditQt/export.h>
+
 #include <QtGui/QTreeWidgetItem>
 #include <QtGui/QTreeWidget>
 #include <dtDAL/actortype.h>
@@ -41,7 +43,7 @@ namespace dtEditQt
     * nodes represent categories.  The leaf nodes represent actor types.  They should
     * be drawn differently and only leaf nodes can be created or selected (in theory).
     */
-   class ActorTypeTreeWidget : public QTreeWidgetItem
+   class DT_EDITQT_EXPORT ActorTypeTreeWidget : public QTreeWidgetItem
    {
    public:
       static const std::string CATEGORY_SEPARATOR;

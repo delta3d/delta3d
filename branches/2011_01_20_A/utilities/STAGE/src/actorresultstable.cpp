@@ -262,6 +262,19 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
+   QList<QTreeWidgetItem*> ActorResultsTable::getSelectedResults()
+   {
+      QList<QTreeWidgetItem*> returnValue;
+
+      if (mResultsTree != NULL)
+      {
+         returnValue = mResultsTree->selectedItems();
+      }
+
+      return returnValue;
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
    void ActorResultsTable::doEnableButtons()
    {
       QList<QTreeWidgetItem*> list = mResultsTree->selectedItems();
