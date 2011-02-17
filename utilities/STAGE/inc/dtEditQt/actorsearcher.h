@@ -30,6 +30,8 @@
 #ifndef DELTA_ACTORSEARCHER
 #define DELTA_ACTORSEARCHER
 
+#include <dtEditQt/export.h>
+
 #include <QtGui/QWidget>
 #include <vector>
 #include <dtCore/refptr.h>
@@ -52,7 +54,7 @@ namespace dtEditQt
     * @class ActorSearcher
     * @brief This class allows the user to search for actors in the map
     */
-   class ActorSearcher : public QWidget
+   class DT_EDITQT_EXPORT ActorSearcher : public QWidget
    {
       Q_OBJECT
 
@@ -83,6 +85,12 @@ namespace dtEditQt
        * When a new actor is created, we have to add it's classes to our class list.
        */
       void onActorProxyCreated(ActorProxyRefPtr proxy, bool forceNoAdjustments);
+
+      /**
+       * Get table used to house actor search results.
+       */
+      ActorResultsTable* getActorResultsTable();
+
 
    private:
       QGroupBox* resultsGroup();

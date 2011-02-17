@@ -355,4 +355,11 @@ namespace dtEditQt
       searchPressed();
    }
 
+
+   ActorResultsTable* ActorSearcher::getActorResultsTable()
+   {
+      return mResultsTable;
+   }
+
+
 } // namespace dtEditQt

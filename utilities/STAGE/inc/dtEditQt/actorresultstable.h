@@ -30,6 +30,7 @@
 #ifndef DELTA_ACTORRESULTSTABLE
 #define DELTA_ACTORRESULTSTABLE
 
+#include <dtEditQt/export.h>
 #include <QtGui/QWidget>
 #include <QtGui/QTreeWidget>
 #include <QtGui/QTreeWidgetItem>
@@ -80,7 +81,7 @@ namespace dtEditQt
     * @brief This is a utility table that shows a list of actor Proxies and allows some
     * basic behavior on them such as select and goto.
     */
-   class ActorResultsTable : public QWidget
+   class DT_EDITQT_EXPORT ActorResultsTable : public QWidget
    {
       Q_OBJECT
 
@@ -122,6 +123,11 @@ namespace dtEditQt
        * Yes, clearSelection() does that, but this method fixes glitches. See the method for details.
        */
       void UnselectAllItemsManually(QTreeWidgetItem* item);
+
+      /**
+       * Get a list of the currently selected items
+       */
+      QList<QTreeWidgetItem*> getSelectedResults();
 
    public slots:
       /**

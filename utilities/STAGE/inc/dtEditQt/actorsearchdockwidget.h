@@ -29,6 +29,8 @@
 #ifndef DELTA_STAGE_ACTORSEACHTAB__H_
 #define DELTA_STAGE_ACTORSEACHTAB__H_
 
+#include <dtEditQt/export.h>
+
 #include <QtCore/QObject>
 #include <QtGui/QDockWidget>
 #include <QtGui/QMainWindow>
@@ -49,7 +51,7 @@ namespace dtEditQt
     * @class ActorSearchDockWidget
     * @brief This class holds all actor related tabs.
     */
-    class ActorSearchDockWidget : public QDockWidget
+    class DT_EDITQT_EXPORT ActorSearchDockWidget : public QDockWidget
     {
     public:
         /**
@@ -72,6 +74,11 @@ namespace dtEditQt
         * @return The main QWidget control for the tab
         */
         QWidget* getWidget();
+
+        /**
+         * Get widget that controls searches for actors
+         */
+        ActorSearcher* getActorSearchWidget();
 
     private:
         TabContainer* mTabC;        

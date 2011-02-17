@@ -30,6 +30,8 @@
 #ifndef DELTA_ACTOR_BROWSER
 #define DELTA_ACTOR_BROWSER
 
+#include <dtEditQt/export.h>
+
 #include <QtGui/QWidget>
 #include <vector>
 
@@ -52,7 +54,7 @@ namespace dtEditQt
     * @class ActorBrowser
     * @brief This class displays the currently available actors loaded with the map
     */
-   class ActorBrowser : public QWidget
+   class DT_EDITQT_EXPORT ActorBrowser : public QWidget
    {
       Q_OBJECT
 
@@ -96,6 +98,12 @@ namespace dtEditQt
        */
       void clearActorTypesTree();
 
+      /**
+       * A convenience method to returns the selected tree widget or NULL.
+       * @return The selected actor tree widget.  NULL if no selection.
+       */
+      ActorTypeTreeWidget* getSelectedActorTreeWidget();
+
    private:
       // known list of actor types
       std::vector<const dtDAL::ActorType*> mActorTypes;
@@ -110,12 +118,6 @@ namespace dtEditQt
        * you suspect that the list of Actor Types changed in the DAL.
        */
       void reloadActors();
-
-      /**
-       * A convenience method to returns the selected tree widget or NULL.
-       * @return The selected actor tree widget.  NULL if no selection.
-       */
-      ActorTypeTreeWidget* getSelectedActorTreeWidget();
 
       ActorDragTree* mTree;
       QPushButton* mCreateActorBtn;

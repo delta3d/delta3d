@@ -29,6 +29,8 @@
 #ifndef DELTA_ACTORTAB
 #define DELTA_ACTORTAB
 
+#include <dtEditQt/export.h>
+
 #include <QtCore/QObject>
 #include <QtGui/QDockWidget>
 #include <QtGui/QMainWindow>
@@ -49,7 +51,7 @@ namespace dtEditQt
     * @class ActorDockWidget
     * @brief This class holds all actor related tabs.
     */
-    class ActorDockWidget : public QDockWidget
+    class DT_EDITQT_EXPORT ActorDockWidget : public QDockWidget
     {
     public:
         /**
@@ -72,6 +74,11 @@ namespace dtEditQt
         * @return The main QWidget control for the tab
         */
         QWidget* getWidget();
+
+        /**
+        * @return a pointer to the ActorBrowser widget (may be NULL if configuration has it off)
+        */
+        ActorBrowser* getActorBrowser();
 
     private:
         TabContainer* mTabC;
