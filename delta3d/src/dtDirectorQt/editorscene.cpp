@@ -862,14 +862,28 @@ namespace dtDirector
    ///////////////////////////////////////////////////////////////////////////////
    void EditorScene::dropEvent(QGraphicsSceneDragDropEvent* event)
    {
-      QString name = event->mimeData()->data("Name");
-      QString category = event->mimeData()->data("Category");
+      const QMimeData *mime = event->mimeData();
+      if (!mime->hasFormat("data"))
+      {
+         event->ignore();
+         return;
+      }
+
+      QByteArray itemData = mime->data("data");
+      QDataStream dataStream(&itemData, QIODevice::ReadOnly);
+
+      QString name; //name of the Node type
+      QString category; //category of the Node 
+      QPoint hotspot; //the dragging hotspot position (distance from the left corner)
+
+      dataStream >> name >> category >> hotspot;
+
       if (!name.isEmpty() && !category.isEmpty())
       {
-         QPointF pos = event->scenePos();
-         pos -= mTranslationItem->scenePos();
+         QPointF pos = event->scenePos() - mTranslationItem->scenePos() - hotspot;
+
          CreateNodeItem(name.toStdString(), category.toStdString(),
-            pos.x(), pos.y());
+                        pos.x(), pos.y());
       }
    }
 
