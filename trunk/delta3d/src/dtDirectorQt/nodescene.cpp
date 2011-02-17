@@ -34,6 +34,9 @@
 
 #include <QtGui/QDrag>
 #include <QtCore/QMimeData>
+#include <QtGui/QPainter>
+#include <QtGui/QImage>
+
 
 ////////////////////////////////////////////////////////////////////////////////
 static const float NODE_BUFFER = 25.0f;
@@ -114,23 +117,54 @@ namespace dtDirector
    {
       QPointF scenePos = mouseEvent->scenePos() - mpTranslationItem->scenePos();
       mpDraggedItem = GetNodeItemAtPos(scenePos);
-   }
 
-   ///////////////////////////////////////////////////////////////////////////////
-   void NodeScene::mouseMoveEvent(QGraphicsSceneMouseEvent* mouseEvent)
-   {
-      if (mpDraggedItem != NULL)
+      if (mpDraggedItem == NULL)
       {
-         QDrag* drag = new QDrag(mouseEvent->widget());
-         QMimeData* mime = new QMimeData;
-         drag->setMimeData(mime);
-         QVariant name = mpDraggedItem->QGraphicsItem::data(Qt::UserRole);
-         QVariant category = mpDraggedItem->QGraphicsItem::data(Qt::UserRole + 1);
-         mime->setData("Name", name.toByteArray());
-         mime->setData("Category", category.toByteArray());
-         drag->exec();
-         mpDraggedItem = NULL;
+         mouseEvent->ignore();
+         return;
       }
+      
+      //we'll render the NodeItem into a Pixmap, so there's something to see while
+      //it's being dragged.
+
+      //size of the image to cover the item.  The width is padded to account for 
+      //any additional geometry on the left side.
+      int imageWidth = mpDraggedItem->boundingRect().width()+mpDraggedItem->boundingRect().height();
+      int imageHeight = mpDraggedItem->boundingRect().height();
+      
+      QImage image(imageWidth, imageHeight, QImage::Format_ARGB32_Premultiplied);
+      image.fill(qRgba(0, 0, 0, 0));
+
+      QPainter painter;
+      painter.begin(&image);
+      painter.setBrush(mpDraggedItem->brush());
+      
+      //shift to the right to account for some negative geometry
+      painter.translate(mpDraggedItem->boundingRect().height()/2, 0); 
+
+      painter.drawPolygon(mpDraggedItem->polygon(), Qt::WindingFill);
+      painter.end();
+
+      QDrag* drag = new QDrag(mouseEvent->widget());
+      QMimeData* mime = new QMimeData;
+      drag->setMimeData(mime);
+      drag->setPixmap(QPixmap::fromImage(image));
+
+      QPoint hotspot(mouseEvent->scenePos().toPoint() - static_cast<QGraphicsItem*>(mpDraggedItem)->scenePos().toPoint());
+
+      drag->setHotSpot(hotspot + QPoint(mpDraggedItem->boundingRect().height()/2.f, 0.f));
+
+      QVariant name = mpDraggedItem->QGraphicsItem::data(Qt::UserRole);
+      QVariant category = mpDraggedItem->QGraphicsItem::data(Qt::UserRole + 1);
+
+      QByteArray itemData;
+      QDataStream dataStream(&itemData, QIODevice::WriteOnly);
+      dataStream <<  name.toString() << category.toString() << QPoint(hotspot);
+
+      //store the name, category, and hotspot data for the upcoming drop event
+      mime->setData("data", itemData);
+      drag->exec();
+      mpDraggedItem = NULL;
    }
 
    ///////////////////////////////////////////////////////////////////////////////

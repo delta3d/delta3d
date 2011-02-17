@@ -63,7 +63,6 @@ namespace dtDirector
       virtual void dragMoveEvent(QGraphicsSceneDragDropEvent* event);
       virtual void mouseDoubleClickEvent(QGraphicsSceneMouseEvent* mouseEvent);
       virtual void mousePressEvent(QGraphicsSceneMouseEvent* mouseEvent);
-      virtual void mouseMoveEvent(QGraphicsSceneMouseEvent* mouseEvent);
 
    private:
       /**
