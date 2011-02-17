@@ -116,7 +116,7 @@ namespace dtGame
       template <typename TActorPtr>
       void GetOwner(TActorPtr& actorType) const
       {
-         actorType = static_cast<TActorPtr>(mOwner);
+         actorType = dynamic_cast<TActorPtr>(mOwner);
       }
 
       /**
