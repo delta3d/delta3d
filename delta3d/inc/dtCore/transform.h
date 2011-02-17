@@ -147,6 +147,12 @@ namespace dtCore
 
       ///gets the contents of the matrix as the basis vectors that make up it's rows
       void GetOrientation(osg::Vec3& right, osg::Vec3& up, osg::Vec3& forward);
+      ///gets the vector that represents the right direction from this transform
+      osg::Vec3 GetRightVector();
+      ///gets the vector that represents the up direction from this transform
+      osg::Vec3 GetUpVector();
+      ///gets the vector that represents the forward direction from this transform
+      osg::Vec3 GetForwardVector();
 
       /// calculates the scale using a polar decomposition.
       void CalcScale(osg::Vec3f& scale) const;
