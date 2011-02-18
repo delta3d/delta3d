@@ -307,7 +307,7 @@ namespace dtCore
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void Transform::GetOrientation(osg::Vec3& right, osg::Vec3& up, osg::Vec3& forward)
+   void Transform::GetOrientation(osg::Vec3& right, osg::Vec3& up, osg::Vec3& forward) const
    {
       right   = GetRightVector();
       up      = GetUpVector();
@@ -315,19 +315,19 @@ namespace dtCore
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   osg::Vec3 Transform::GetRightVector()
+   osg::Vec3 Transform::GetRightVector() const
    {
       return dtUtil::MatrixUtil::GetRow3(mTransform, 0);
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   osg::Vec3 Transform::GetUpVector()
+   osg::Vec3 Transform::GetUpVector() const
    {
       return dtUtil::MatrixUtil::GetRow3(mTransform, 2);
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   osg::Vec3 Transform::GetForwardVector()
+   osg::Vec3 Transform::GetForwardVector() const
    {
       return dtUtil::MatrixUtil::GetRow3(mTransform, 1);
    }

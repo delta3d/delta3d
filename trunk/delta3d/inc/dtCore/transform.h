@@ -146,13 +146,13 @@ namespace dtCore
       osg::Vec3 GetRotation() const { osg::Vec3 hpr; GetRotation(hpr); return hpr; }
 
       ///gets the contents of the matrix as the basis vectors that make up it's rows
-      void GetOrientation(osg::Vec3& right, osg::Vec3& up, osg::Vec3& forward);
+      void GetOrientation(osg::Vec3& right, osg::Vec3& up, osg::Vec3& forward) const;
       ///gets the vector that represents the right direction from this transform
-      osg::Vec3 GetRightVector();
+      osg::Vec3 GetRightVector() const;
       ///gets the vector that represents the up direction from this transform
-      osg::Vec3 GetUpVector();
+      osg::Vec3 GetUpVector() const;
       ///gets the vector that represents the forward direction from this transform
-      osg::Vec3 GetForwardVector();
+      osg::Vec3 GetForwardVector() const;
 
       /// calculates the scale using a polar decomposition.
       void CalcScale(osg::Vec3f& scale) const;
