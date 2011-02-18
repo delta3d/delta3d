@@ -310,8 +310,8 @@ namespace dtCore
    void Transform::GetOrientation(osg::Vec3& right, osg::Vec3& up, osg::Vec3& forward)
    {
       right   = GetRightVector();
-      forward = GetUpVector();
-      up      = GetForwardVector();
+      up      = GetUpVector();
+      forward = GetForwardVector();
    }
 
    /////////////////////////////////////////////////////////////////////////////
