@@ -142,6 +142,10 @@ namespace dtDirector
        */
       virtual dtDAL::DataType& GetPropertyType();
 
+      // Accessor for properties
+      void SetDefaultType(const dtDAL::DataType& value);
+      dtDAL::DataType& GetDefaultType() const;
+
    protected:
 
       /**
@@ -150,6 +154,9 @@ namespace dtDirector
       virtual ~ExternalValueNode();
 
       void UpdateLinkType();
+
+   private:
+      const dtDAL::DataType* mDefaultType;
    };
 }
 
