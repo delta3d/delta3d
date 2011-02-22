@@ -22,6 +22,7 @@
 #include <dtDirectorNodes/externalvaluenode.h>
 
 #include <dtDAL/actorproperty.h>
+#include <dtDAL/enumactorproperty.h>
 
 #include <dtDirector/valuelink.h>
 
@@ -30,6 +31,7 @@ namespace dtDirector
    ///////////////////////////////////////////////////////////////////////////////////////
    ExternalValueNode::ExternalValueNode()
        : ValueNode()
+       , mDefaultType(&dtDAL::DataType::UNKNOWN)
    {
       mName = "Value";
       AddAuthor("Jeff P. Houde");
@@ -51,6 +53,13 @@ namespace dtDirector
    void ExternalValueNode::BuildPropertyMap()
    {
       ValueNode::BuildPropertyMap();
+
+      dtDAL::EnumActorProperty<dtDAL::DataType>* defaultTypeProp = new dtDAL::EnumActorProperty<dtDAL::DataType>(
+         "DefaultType", "Default Type",
+         dtDAL::EnumActorProperty<dtDAL::DataType>::SetFuncType(this, &ExternalValueNode::SetDefaultType),
+         dtDAL::EnumActorProperty<dtDAL::DataType>::GetFuncType(this, &ExternalValueNode::GetDefaultType),
+         "The default type of this value link node.");
+      AddProperty(defaultTypeProp);
 
       // The external value requires a value link so it can use it to link
       // externally with any values outside of it.
@@ -136,7 +145,7 @@ namespace dtDirector
       {
          return true;
       }
-      
+
       return false;
    }
 
@@ -163,7 +172,19 @@ namespace dtDirector
       }
 
       // If we have no connections yet, the type is undefined.
-      return dtDAL::DataType::UNKNOWN;
+      return GetDefaultType();
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void ExternalValueNode::SetDefaultType(const dtDAL::DataType& value)
+   {
+      mDefaultType = &value;
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   dtDAL::DataType& ExternalValueNode::GetDefaultType() const
+   {
+      return const_cast<dtDAL::DataType&>(*mDefaultType);
    }
 
    //////////////////////////////////////////////////////////////////////////
