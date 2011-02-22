@@ -30,6 +30,8 @@
 #include <cppunit/extensions/HelperMacros.h>
 
 #include <dtAudio/audiomanager.h>
+#include <dtUtil/datapathutils.h>
+#include <dtUtil/exception.h>
 
 class AudioManagerTests : public CPPUNIT_NS::TestFixture
 {
@@ -37,6 +39,7 @@ class AudioManagerTests : public CPPUNIT_NS::TestFixture
       CPPUNIT_TEST(TestInitialize);
       CPPUNIT_TEST(TestInitializeCustomContext);
       CPPUNIT_TEST(TestInitializeCustomContextNoShutdown);
+      CPPUNIT_TEST(TestPausing);
    CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -46,6 +49,7 @@ public:
    void TestInitialize();
    void TestInitializeCustomContext();
    void TestInitializeCustomContextNoShutdown();
+   void TestPausing();
 };
 
 CPPUNIT_TEST_SUITE_REGISTRATION(AudioManagerTests);
@@ -127,4 +131,90 @@ void AudioManagerTests::TestInitializeCustomContextNoShutdown()
    CPPUNIT_ASSERT(alcMakeContextCurrent(NULL));
    alcDestroyContext(context);
    CPPUNIT_ASSERT(alcCloseDevice(device));
+}
+
+void AudioManagerTests::TestPausing()
+{
+   try
+   {
+      using namespace dtAudio;
+
+      // Init the Audio Manager.
+      ALCdevice* device = NULL;
+      ALCcontext* context = NULL;
+      CreateDeviceAndContext(device, context);
+      AudioManager::Instantiate("joe", device, context, false);
+      CPPUNIT_ASSERT(AudioManager::IsInitialized());
+
+      // Get the Audio Manager.
+      AudioManager& am = AudioManager::GetInstance();
+
+      const std::string unitTestDataFilePath = dtUtil::GetDeltaRootPath() + "/tests/data/";
+      const std::string testSoundFile = unitTestDataFilePath + "Sounds/silence.wav";
+
+      Sound* sound1 = am.NewSound();
+      Sound* sound2 = am.NewSound();
+      Sound* sound3 = am.NewSound();
+      sound1->LoadFile(testSoundFile.c_str());
+      sound2->LoadFile(testSoundFile.c_str());
+      sound3->LoadFile(testSoundFile.c_str());
+      
+      // Loop all sounds for test purposes.
+      sound1->SetLooping(true);
+      sound2->SetLooping(true);
+      sound3->SetLooping(true);
+
+      // Test a few sounds in playing and stopped states.
+      sound1->Play();
+      sound2->Play();
+      CPPUNIT_ASSERT(sound1->IsPlaying());
+      CPPUNIT_ASSERT(sound2->IsPlaying());
+      CPPUNIT_ASSERT( ! sound3->IsPaused());
+      CPPUNIT_ASSERT( ! sound3->IsPlaying());
+      CPPUNIT_ASSERT(sound3->IsStopped());
+
+      // Ensure pausing sounds only affects sounds that were playing
+      // and not those that were stopped.
+      am.PauseSounds();
+      CPPUNIT_ASSERT(sound1->IsPaused());
+      CPPUNIT_ASSERT(sound2->IsPaused());
+      CPPUNIT_ASSERT( ! sound3->IsPaused());
+      CPPUNIT_ASSERT( ! sound3->IsPlaying());
+      CPPUNIT_ASSERT(sound3->IsStopped());
+
+      // Unpause only sounds that are in a paused state
+      // and not in a stopped state.
+      am.UnPauseSounds();
+      CPPUNIT_ASSERT(sound1->IsPlaying());
+      CPPUNIT_ASSERT(sound2->IsPlaying());
+      CPPUNIT_ASSERT( ! sound3->IsPaused());
+      CPPUNIT_ASSERT( ! sound3->IsPlaying());
+      CPPUNIT_ASSERT(sound3->IsStopped());
+
+      // Prepare for the next test of calling Unpause.
+      // All sounds should not be playing before that test.
+      am.PauseSounds();
+      CPPUNIT_ASSERT(sound1->IsPaused());
+      CPPUNIT_ASSERT(sound2->IsPaused());
+      CPPUNIT_ASSERT( ! sound3->IsPaused());
+      CPPUNIT_ASSERT( ! sound3->IsPlaying());
+      CPPUNIT_ASSERT(sound3->IsStopped());
+
+      // Start up sound 3.
+      sound3->Play();
+      CPPUNIT_ASSERT(sound1->IsPaused());
+      CPPUNIT_ASSERT(sound2->IsPaused());
+      CPPUNIT_ASSERT(sound3->IsPlaying());
+
+      // Unpause currently paused ones, without affecting
+      // the sound that is currently playing.
+      am.UnPauseSounds();
+      CPPUNIT_ASSERT(sound1->IsPlaying());
+      CPPUNIT_ASSERT(sound2->IsPlaying());
+      CPPUNIT_ASSERT(sound3->IsPlaying());
+   }
+   catch (const dtUtil::Exception& e)
+   {
+      CPPUNIT_FAIL(e.ToString());
+   }
 }

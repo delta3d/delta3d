@@ -323,7 +323,10 @@ void AudioManager::PauseSounds()
       //   mSoundStateMap.insert(SoundObjectStateMap::value_type(sob, STOPPED));
       //}
 
-      sob->PauseImmediately();
+      if (sob->IsPlaying())
+      {
+         sob->PauseImmediately();
+      }
    }
 }
 
@@ -353,7 +356,10 @@ void AudioManager::UnPauseSounds()
       //   break;
       //}
 
-      sob->PauseImmediately();
+      if (sob->IsPaused())
+      {
+         sob->PauseImmediately();
+      }
    }
 }
 
