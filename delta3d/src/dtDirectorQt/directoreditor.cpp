@@ -681,6 +681,12 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::on_action_Exit_triggered()
+   {
+      close();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    void DirectorEditor::on_action_Step_Out_Of_Graph_triggered()
    {
       int index = mUI.graphTab->currentIndex();

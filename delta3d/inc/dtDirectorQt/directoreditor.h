@@ -316,6 +316,11 @@ namespace dtDirector
       void on_action_Load_Recording_triggered();
 
       /**
+       * Event handler when the load button is pressed.
+       */
+      void on_action_Exit_triggered();
+
+      /**
        * Event handler when the parent button is pressed.
        */
       void on_action_Step_Out_Of_Graph_triggered();

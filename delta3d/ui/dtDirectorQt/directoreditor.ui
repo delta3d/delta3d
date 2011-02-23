@@ -196,6 +196,7 @@
     <addaction name="action_Save_as"/>
     <addaction name="separator"/>
     <addaction name="action_Load_Recording"/>
+    <addaction name="action_Exit"/>
    </widget>
    <widget class="QMenu" name="menu_Edit">
     <property name="title">
@@ -585,6 +586,17 @@
    </property>
    <property name="shortcut">
     <string>F5</string>
+   </property>
+  </action>
+  <action name="action_Exit">
+   <property name="text">
+    <string>Exit</string>
+   </property>
+   <property name="toolTip">
+    <string>Exit the editor</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+X</string>
    </property>
   </action>
  </widget>
