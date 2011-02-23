@@ -296,8 +296,8 @@ namespace dtUtil
    template <typename TVec>
    inline int ComparePointToVector(TVec point, TVec start, TVec forward, TVec up)
    {
-      osg::Vec3 right = forward ^ up;
-      osg::Vec3 pointVector = point - start;
+      TVec right = forward ^ up;
+      TVec pointVector = point - start;
       pointVector.normalize();
       float dot = right * pointVector;
       if (dot > 0.0f)
