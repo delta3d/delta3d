@@ -113,6 +113,7 @@ LINK_WITH_VARIABLES(${LIB_NAME}
                     QT_QTCORE_LIBRARY
                     QT_QTGUI_LIBRARY
                     QT_QTOPENGL_LIBRARY
+                    QT_PHONON_LIBRARY
                    )
 
 TARGET_LINK_LIBRARIES( ${LIB_NAME}

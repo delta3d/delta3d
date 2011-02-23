@@ -17,5 +17,6 @@
 		<file>icons/texture.png</file>
 		<file>icons/undo.png</file>
 		<file>icons/ungroup.png</file>
+		<file>sounds/click.wav</file>
     </qresource>
 </RCC>

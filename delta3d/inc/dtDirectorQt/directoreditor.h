@@ -32,6 +32,13 @@ class QAction;
 class QMenuBar;
 class QToolBar;
 
+namespace Phonon
+{
+   class MediaObject;
+   enum State;
+}
+
+
 namespace dtDirector
 {
    class CustomEditorTool;
@@ -395,6 +402,11 @@ namespace dtDirector
        */
       void OnCreateNodeEvent(const QString& name, const QString& category);
 
+      /** 
+       *  Play a "click" sound.  Used when connecting Links together.
+       */
+      void OnPlayClickSound();
+
    protected:
 
       /**
@@ -437,6 +449,11 @@ namespace dtDirector
        */
       void PasteNodes(bool createLinks = false);
 
+   private slots:
+
+      ///Used for managing the sound states
+      void OnStateChanged(Phonon::State newState, Phonon::State oldState);
+
    private:
       /**
        * Creates the node scenes
@@ -467,6 +484,8 @@ namespace dtDirector
       Director::RecordNodeData mReplayNode;
       InputLink*               mReplayInput;
       OutputLink*              mReplayOutput;
+
+      Phonon::MediaObject *mClickSound;
 
       std::map<std::string, CustomEditorTool*> mCustomTools;
    };
