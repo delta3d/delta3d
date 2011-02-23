@@ -37,7 +37,7 @@ namespace dtDirector
       : public QWidget
       , public QGraphicsPolygonItem
    {
-      //Q_OBJECT
+      Q_OBJECT
 
       public:
 
@@ -64,6 +64,9 @@ namespace dtDirector
          void SetHighlightConnector(bool enable, QGraphicsPathItem* connector);
 
          static const unsigned int LINE_WIDTH;
+
+      signals:
+         void LinkConnected();
 
       protected:
          LinkItem(NodeItem* nodeItem, int linkIndex, QGraphicsItem* parent, EditorScene* scene);

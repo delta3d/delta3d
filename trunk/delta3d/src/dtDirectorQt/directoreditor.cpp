@@ -48,7 +48,7 @@
 
 #include <dtDAL/project.h>
 #include <osgDB/FileNameUtils>
-
+#include <Phonon/MediaObject> //for sounds
 
 namespace dtDirector
 {
@@ -60,6 +60,7 @@ namespace dtDirector
       , mReplayMode(false)
       , mReplayInput(NULL)
       , mReplayOutput(NULL)
+      , mClickSound(NULL)
    {
       mUI.setupUi(this);
 
@@ -75,6 +76,10 @@ namespace dtDirector
 
       // Graph tabs.
       mUI.propertyEditor->SetGraphTabs(mUI.graphTab);
+
+      mClickSound = Phonon::createPlayer(Phonon::MusicCategory,
+                                         Phonon::MediaSource(":/sounds/click.wav"));
+      connect(mClickSound, SIGNAL(stateChanged(Phonon::State, Phonon::State)), this, SLOT(OnStateChanged(Phonon::State, Phonon::State)));
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -1240,6 +1245,24 @@ namespace dtDirector
          scene->RefreshNodes(nodeType);
       }
    }
+
+   //////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::OnPlayClickSound()
+   {
+      mClickSound->play();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::OnStateChanged(Phonon::State newState, Phonon::State oldState)
+   {
+      //when the play is finished, the sound goes to paused.  Set it to "stop" to
+      //get it ready for next play.
+      if (mClickSound->state() == Phonon::PausedState)
+      {
+         mClickSound->stop();
+      }
+   }
+
 } // namespace dtDirector
 
 //////////////////////////////////////////////////////////////////////////

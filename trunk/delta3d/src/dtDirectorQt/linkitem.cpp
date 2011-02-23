@@ -51,6 +51,11 @@ namespace dtDirector
       mHighlightPen  = QPen(Qt::yellow, LINE_WIDTH, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
 
       setAcceptHoverEvents(true);
+
+      if ((mScene) && mScene->GetEditor())
+      {
+         connect(this, SIGNAL(LinkConnected()), mScene->GetEditor(), SLOT(OnPlayClickSound()));
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -388,6 +393,7 @@ namespace dtDirector
                      mScene->GetEditor()->GetUndoManager()->AddEvent(event);
                   }
                   mNodeItem->ConnectLinks(true);
+                  emit LinkConnected();
                   break;
                }
             }
@@ -749,6 +755,7 @@ namespace dtDirector
                      mScene->GetEditor()->GetUndoManager()->AddEvent(event);
                   }
                   mNodeItem->ConnectLinks(true);
+                  emit LinkConnected();
                   break;
                }
             }
@@ -1104,6 +1111,7 @@ namespace dtDirector
                         output->GetName(),
                         true);
                      mScene->GetEditor()->GetUndoManager()->AddEvent(event);
+                     emit LinkConnected();
                   }
 
                   // Refresh the entire scene to make sure all nodes and links are
@@ -1421,6 +1429,7 @@ namespace dtDirector
                         output->GetName(),
                         true);
                      mScene->GetEditor()->GetUndoManager()->AddEvent(event);
+                     emit LinkConnected();
                   }
 
                   // Refresh the entire scene to make sure all nodes and links are
