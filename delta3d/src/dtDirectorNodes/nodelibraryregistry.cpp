@@ -48,6 +48,7 @@
 #include <dtDirectorNodes/compareactoraction.h>
 #include <dtDirectorNodes/compareboolaction.h>
 #include <dtDirectorNodes/comparevalueaction.h>
+#include <dtDirectorNodes/comparevectoraction.h>
 #include <dtDirectorNodes/compareactorpropertyaction.h>
 #include <dtDirectorNodes/delayaction.h>
 #include <dtDirectorNodes/toggleaction.h>
@@ -130,6 +131,7 @@ namespace dtDirector
    RefPtr<NodeType> NodeLibraryRegistry::COMPARE_ACTOR_ACTION_NODE_TYPE(         new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Compare Actors",            "General",     "Condition",   "Compares two actor IDs A and B."));
    RefPtr<NodeType> NodeLibraryRegistry::COMPARE_BOOL_ACTION_NODE_TYPE(          new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Compare Bool",              "General",     "Condition",   "Compares two bool values A and B."));
    RefPtr<NodeType> NodeLibraryRegistry::COMPARE_VALUE_ACTION_NODE_TYPE(         new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Compare Value",             "General",     "Condition",   "Compares two numerical values A and B."));
+   RefPtr<NodeType> NodeLibraryRegistry::COMPARE_VECTOR_ACTION_NODE_TYPE(        new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Compare Vector",            "General",     "Condition",   "Compares two vectors A and B."));
    RefPtr<NodeType> NodeLibraryRegistry::COMPARE_ACTOR_PROPERTY_ACTION_NODE_TYPE(new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Compare Actor Property",    "General",     "Condition",   "Compares an actor property with a value."));
    RefPtr<NodeType> NodeLibraryRegistry::SCHEDULER_ACTION_NODE_TYPE(             new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Scheduler",                 "Cinematic",   "Cinematic",   "Schedules a sequence of timed events."));
    RefPtr<NodeType> NodeLibraryRegistry::LERP_ACTOR_ROTATION_ACTION_NODE_TYPE(   new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Lerp Actor Rotation",       "Cinematic",   "Cinematic",   "Linearly interpolates the rotation of an actor."));
@@ -211,6 +213,7 @@ namespace dtDirector
       mNodeFactory->RegisterType<CompareActorAction>(COMPARE_ACTOR_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<CompareBoolAction>(COMPARE_BOOL_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<CompareValueAction>(COMPARE_VALUE_ACTION_NODE_TYPE.get());
+      mNodeFactory->RegisterType<CompareVectorAction>(COMPARE_VECTOR_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<CompareActorPropertyAction>(COMPARE_ACTOR_PROPERTY_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<SchedulerAction>(SCHEDULER_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<LerpActorRotationAction>(LERP_ACTOR_ROTATION_ACTION_NODE_TYPE.get());
