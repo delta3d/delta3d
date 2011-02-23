@@ -111,5 +111,6 @@ namespace dtDAL
 
          rd = dtDAL::ResourceDescriptor(displayName, identifier);
       }
+      return i;
    }
 }
