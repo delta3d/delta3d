@@ -473,9 +473,9 @@ namespace dtDirector
        */
       void RefreshNodeScene(QGraphicsView* view, NodeType::NodeTypeEnum nodeType);
 
-      Ui::DirectorEditor mUI;
+      Ui::DirectorEditor       mUI;
 
-      UndoManager*         mUndoManager;
+      UndoManager*             mUndoManager;
 
       dtCore::RefPtr<Director> mDirector;
       std::string              mFileName;
