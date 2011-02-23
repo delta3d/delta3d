@@ -648,7 +648,7 @@ namespace dtDirector
          mEditor->GetUndoManager()->AddEvent(event.get());
 
          // Change the name of the macro to reflect its editor.
-         graph->SetName(action->statusTip().toStdString() + " Macro");
+         //graph->SetName(action->statusTip().toStdString() + " Macro");
 
          event = new UndoPropertyEvent(mEditor, graph->GetID(), "Name", "Macro", graph->GetName());
          mEditor->GetUndoManager()->AddEvent(event.get());
@@ -914,6 +914,28 @@ namespace dtDirector
 
          QAction* createMacroAction = menu.addAction("Create Macro");
          connect(createMacroAction, SIGNAL(triggered()), this, SLOT(OnCreateMacro()));
+
+         // Add custom macro editing tools
+         std::vector<std::string> toolList = mEditor->GetRegisteredToolList();
+         if (!toolList.empty())
+         {
+            QMenu* toolMenu = menu.addMenu("Custom Editor Macro's");
+            if (toolMenu)
+            {
+               connect(toolMenu, SIGNAL(triggered(QAction*)), this, SLOT(OnCreateCustomEditedMacro(QAction*)));
+
+               int count = (int)toolList.size();
+               for (int index = 0; index < count; ++index)
+               {
+                  QAction* macroAction = toolMenu->addAction(QString("\'") + toolList[index].c_str() + "\' Macro");
+                  if (macroAction)
+                  {
+                     macroAction->setStatusTip(toolList[index].c_str());
+                     macroAction->setToolTip(QString("Creates a macro that is edited by the custom \'") + toolList[index].c_str() + "\' Editor.");
+                  }
+               }
+            }
+         }
 
          // If we have selected actors in STAGE, add an option to create values for those actors.
          if (mEditor->GetActorSelection().size() > 0)

@@ -53,7 +53,13 @@ namespace dtDirector
 
       if (mGraph)
       {
-         std::string title = "<i>Macro</i>";
+         std::string title = "<i>";
+         if (!mGraph->GetEditor().empty())
+         {
+            title += mGraph->GetEditor() + " ";
+         }
+         title += "Macro</i>";
+
          std::string name  = mGraph->GetName();
          if( !name.empty() )
          {
