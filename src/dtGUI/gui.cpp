@@ -27,6 +27,7 @@
 #include <CEGUI/CEGUIFont.h>
 #include <CEGUI/CEGUIPropertyHelper.h>
 #include <CEGUI/CEGUITexture.h>
+#include <CEGUI/CEGUILogger.h>
 #include <CEGUI/RendererModules/OpenGL/CEGUIOpenGLTexture.h>
 #include <CEGUI/falagard/CEGUIFalWidgetLookManager.h>
 
@@ -100,6 +101,42 @@ namespace dtGUI
 
 };
 
+//////////////////////////////////////////////////////////////////////////
+//CEGUI Logger 
+//////////////////////////////////////////////////////////////////////////
+class CEGUILogger : public CEGUI::Logger
+{
+   void logEvent(const CEGUI::String& message, CEGUI::LoggingLevel logLevel)
+   {
+      dtUtil::Log& log = dtUtil::Log::GetInstance("CEGUI");
+
+      if(logLevel == CEGUI::Errors)
+      {
+         log.LogMessage(__FUNCTION__, __LINE__, message.c_str(), dtUtil::Log::LOG_ERROR);
+      }
+      else if(logLevel == CEGUI::Warnings)
+      {
+         log.LogMessage(__FUNCTION__, __LINE__, message.c_str(), dtUtil::Log::LOG_WARNING);
+      }
+      else if(logLevel == CEGUI::Standard)
+      {
+         log.LogMessage(__FUNCTION__, __LINE__, message.c_str(), dtUtil::Log::LOG_INFO);
+      }
+      else
+      {
+         log.LogMessage(__FUNCTION__, __LINE__, message.c_str(), dtUtil::Log::LOG_DEBUG);
+      }
+
+   }
+
+   void setLogFilename(const CEGUI::String& str, bool b)
+   {
+      //we dont need to do anything here
+   }
+};
+
+//declaring this overrides the default logger for CEGUI
+CEGUILogger CEGUILogger;
 
 
 ////////////////////////////////////////////////////////////////////////////////
