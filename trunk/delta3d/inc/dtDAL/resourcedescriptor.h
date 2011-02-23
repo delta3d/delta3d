@@ -25,6 +25,7 @@
 #include <string>
 #include <functional>
 #include <dtDAL/export.h>
+#include <iosfwd>
 
 namespace dtDAL 
 {
@@ -110,6 +111,10 @@ namespace dtDAL
    {
       return c == ResourceDescriptor::DESCRIPTOR_SEPARATOR;
    }
+
+   DT_DAL_EXPORT std::ostream& operator << (std::ostream& o, const dtDAL::ResourceDescriptor& rd);
+
+   DT_DAL_EXPORT std::istream& operator >> (std::istream& i, dtDAL::ResourceDescriptor& rd);
 
 }
 
