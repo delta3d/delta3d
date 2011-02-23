@@ -29,12 +29,14 @@
 #include <prefix/unittestprefix.h>
 #include <cppunit/extensions/HelperMacros.h>
 #include <dtDAL/resourcedescriptor.h>
+#include <sstream>
 
 class ResourceDescriptorTests : public CPPUNIT_NS::TestFixture
 {
    CPPUNIT_TEST_SUITE(ResourceDescriptorTests);
       CPPUNIT_TEST(TestNULLResource);
       CPPUNIT_TEST(TestCreatingNULLResource);
+      CPPUNIT_TEST(TestStreamOperators);
    CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -43,6 +45,7 @@ public:
 
    void TestNULLResource();
    void TestCreatingNULLResource();
+   void TestStreamOperators();
 };
 
 // Registers the fixture into the 'registry'
@@ -78,4 +81,32 @@ void ResourceDescriptorTests::TestCreatingNULLResource()
    CPPUNIT_ASSERT_EQUAL_MESSAGE("Resource should be NULL after Clear()",
                                  true, resource.IsEmpty());
 
+}
+
+void ResourceDescriptorTests::TestStreamOperators()
+{
+   dtDAL::ResourceDescriptor resource("name", "id");
+
+   std::ostringstream ss;
+   ss << resource;
+
+   std::istringstream iss;
+   iss.str(ss.str());
+
+   dtDAL::ResourceDescriptor resultResource;
+
+   iss >> resultResource;
+
+   CPPUNIT_ASSERT_EQUAL(resource, resultResource);
+
+   resource = dtDAL::ResourceDescriptor::NULL_RESOURCE;
+
+   ss.str("");
+
+   ss << resource;
+
+   iss.str(ss.str());
+
+   iss >> resultResource;
+   CPPUNIT_ASSERT(resultResource.IsEmpty());
 }

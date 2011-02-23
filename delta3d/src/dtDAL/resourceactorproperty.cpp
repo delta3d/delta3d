@@ -188,13 +188,7 @@ bool ResourceActorProperty::FromString(const std::string& value)
    else
    {
       std::vector<std::string> tokens;
-      dtUtil::StringTokenizer<dtUtil::IsSlash> stok;
-
-#ifdef _MSC_VER
-      stok = stok; // Silence unsed variable warning in MSVC.
-#endif
-
-      stok.tokenize(tokens, value);
+      dtUtil::StringTokenizer<dtUtil::IsSlash>::tokenize(tokens, value);
 
       std::string displayName;
       std::string identifier;

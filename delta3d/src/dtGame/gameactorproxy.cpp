@@ -794,7 +794,7 @@ void GameActorProxy::SetPublished(bool published)
 void GameActorProxy::InvokeEnteredWorld()
 {
    /**
-   * We will preform a check to make sure this actor actually is a GameActor
+   * We will perform a check to make sure this actor actually is a GameActor
    */
 
    GameActor* ga = dynamic_cast<GameActor*>(GetActor());

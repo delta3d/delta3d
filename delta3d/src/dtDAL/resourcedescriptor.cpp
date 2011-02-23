@@ -20,6 +20,7 @@
  */
 #include <prefix/dtdalprefix.h>
 #include <dtDAL/resourcedescriptor.h>
+#include <dtUtil/stringutils.h>
 
 namespace dtDAL 
 {
@@ -58,5 +59,57 @@ namespace dtDAL
    {
       mResourceIdentifier.clear();
       mDisplayName.clear();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   std::ostream& operator << (std::ostream& o, const dtDAL::ResourceDescriptor& rd)
+   {
+      if (rd.IsEmpty())
+      {
+         o << "NULL";
+      }
+      else
+      {
+         o << rd.GetDisplayName() << "/" << rd.GetResourceIdentifier();
+      }
+      return o;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   std::istream& operator >> (std::istream& i, dtDAL::ResourceDescriptor& rd)
+   {
+      std::string buffer;
+      i >> buffer;
+
+      if (buffer.empty() || dtUtil::StrCompare(buffer, "NULL", false) == 0)
+      {
+         rd = dtDAL::ResourceDescriptor::NULL_RESOURCE;
+      }
+      else
+      {
+         std::vector<std::string> tokens;
+         dtUtil::StringTokenizer<dtUtil::IsSlash>::tokenize(tokens, buffer);
+
+         std::string displayName;
+         std::string identifier;
+
+         if (tokens.size() == 2)
+         {
+            displayName = tokens[0];
+            identifier = tokens[1];
+         }
+         else
+         {
+            //assume the value is a descriptor and use it for both the
+            //data and the display name.
+            displayName = tokens[0];
+            identifier = tokens[0];
+         }
+
+         dtUtil::Trim(identifier);
+         dtUtil::Trim(displayName);
+
+         rd = dtDAL::ResourceDescriptor(displayName, identifier);
+      }
    }
 }
