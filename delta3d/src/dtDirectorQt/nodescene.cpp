@@ -205,6 +205,11 @@ namespace dtDirector
             }
             default:
             {
+               if (name == "Value Link" && category == "Core")
+               {
+                  item = new ValueItem(node, mpTranslationItem, NULL);
+                  break;
+               }
                item = new ActionItem(node, mpTranslationItem, NULL);
                break;
             }
