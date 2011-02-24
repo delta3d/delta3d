@@ -1095,8 +1095,41 @@ namespace dtDirector
             LoadScript(lastScript.toStdString());
          }
 
+         settings.beginGroup("MainWindow");
+         resize(settings.value("Size", QSize(800, 600)).toSize());
+         move(settings.value("Pos", QPoint(100, 100)).toPoint());
+
+         // When restoring the window state, first see if the key exists.
+         if (settings.contains("State"))
+         {
+            QByteArray state = settings.value("State").toByteArray();
+            restoreState(state);
+         }
+
+         // When restoring the window state, first see if the key exists.
+         if (settings.contains("Geom"))
+         {
+            QByteArray state = settings.value("Geom").toByteArray();
+            restoreGeometry(state);
+         }
+         settings.endGroup();
+
          OpenGraph(mDirector->GetGraphRoot());
       }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::hideEvent(QHideEvent* event)
+   {
+      QMainWindow::hideEvent(event);
+
+      QSettings settings("MOVES", "Director Editor");
+      settings.beginGroup("MainWindow");
+      settings.setValue("Pos", pos());
+      settings.setValue("Size", size());
+      settings.setValue("State", saveState());
+      settings.setValue("Geom", saveGeometry());
+      settings.endGroup();
    }
 
    //////////////////////////////////////////////////////////////////////////
