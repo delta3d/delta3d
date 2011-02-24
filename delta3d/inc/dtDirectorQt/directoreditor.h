@@ -27,6 +27,7 @@
 #include <dtDirector/director.h>
 
 #include "ui_directoreditor.h"
+#include <phonon/phonon>
 
 class QAction;
 class QMenuBar;
