@@ -14,11 +14,6 @@
 #include <osg/Geometry>
 #include <dtDAL/resourcedescriptor.h>
 
-namespace dtDAL
-{
-   class ResourceDescriptor;
-}
-
 namespace dtActors
 {
    ////////////////////////////////////////////////////////////////////////////////
@@ -27,7 +22,7 @@ namespace dtActors
    class BuildingGeomData : public LinkedPointsGeomDataBase
    {
    public:
-      BuildingGeomData(LinkedPointsGeomNodeBase* parent): 
+      BuildingGeomData(LinkedPointsGeomNodeBase* parent):
          LinkedPointsGeomDataBase(parent) {}
 
       /**
@@ -41,12 +36,12 @@ namespace dtActors
       bool Shutdown();
 
       // Wall
-      osg::ref_ptr<osg::Geometry>      mWallGeom[2];
-      osg::ref_ptr<osg::Geode>         mWallGeode;
+      osg::ref_ptr<osg::Geometry>  mWallGeom[2];
+      osg::ref_ptr<osg::Geode>     mWallGeode;
 
-      osg::ref_ptr<osg::Vec3Array>     mWallVertexList;
-      osg::ref_ptr<osg::Vec2Array>     mWallTextureList;
-      osg::ref_ptr<osg::Vec3Array>     mWallNormalList;
+      osg::ref_ptr<osg::Vec3Array> mWallVertexList;
+      osg::ref_ptr<osg::Vec2Array> mWallTextureList;
+      osg::ref_ptr<osg::Vec3Array> mWallNormalList;
    };
 
    ////////////////////////////////////////////////////////////////////////////////

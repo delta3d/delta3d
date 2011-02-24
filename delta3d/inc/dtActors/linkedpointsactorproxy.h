@@ -52,10 +52,10 @@ namespace dtActors
    * a sphere for the point and a cylinder to represent the
    * connection between points.
    */
-   class LinkedPointsGeomData : public LinkedPointsGeomDataBase
+   class DT_PLUGIN_EXPORT LinkedPointsGeomData : public LinkedPointsGeomDataBase
    {
    public:
-      LinkedPointsGeomData(LinkedPointsGeomNodeBase* parent): 
+      LinkedPointsGeomData(LinkedPointsGeomNodeBase* parent):
          LinkedPointsGeomDataBase(parent) {}
 
       /**
@@ -146,7 +146,7 @@ namespace dtActors
    * of the LinkedPointsGeomDataBase class used to represent the
    * geometry of a point.
    */
-   class LinkedPointsGeomNode : public LinkedPointsGeomNodeBase
+   class DT_PLUGIN_EXPORT LinkedPointsGeomNode : public LinkedPointsGeomNodeBase
    {
    public:
 
@@ -341,7 +341,7 @@ namespace dtActors
       * Builds the property map.
       */
       void BuildPropertyMap();
-      
+
       /**
       * Retrieves whether we are in the middle of a map load.
       */

@@ -620,7 +620,7 @@ void DeltaDrawable::GetBoundingSphere(osg::Vec3& center, float& radius)
 //////////////////////////////////////////////////////////////////////////
 osg::BoundingBox DeltaDrawable::GetBoundingBox()
 {
-   osg::Node* topNode = this->GetOSGNode();      
+   osg::Node* topNode = this->GetOSGNode();
 
    if (topNode == NULL)
    {
@@ -632,7 +632,7 @@ osg::BoundingBox DeltaDrawable::GetBoundingBox()
    osg::ComputeBoundsVisitor cbv;
    topNode->accept(cbv);
 
-   return cbv.getBoundingBox();   
+   return cbv.getBoundingBox();
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -122,7 +122,10 @@ namespace dtDirector
             return false;
          }
 
-         if (countTrigger) mTriggerCount++;
+         if (countTrigger)
+         {
+            mTriggerCount++;
+         }
       }
 
       bool success = false;
