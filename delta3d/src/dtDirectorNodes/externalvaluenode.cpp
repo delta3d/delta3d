@@ -20,11 +20,14 @@
  */
 
 #include <dtDirectorNodes/externalvaluenode.h>
+#include <dtDirectorNodes/referencevalue.h>
 
 #include <dtDAL/actorproperty.h>
 #include <dtDAL/enumactorproperty.h>
 
 #include <dtDirector/valuelink.h>
+
+#include <dtUtil/macros.h>
 
 namespace dtDirector
 {
@@ -158,7 +161,9 @@ namespace dtDirector
          int count = (int)mLinks.size();
          for (int index = 0; index < count; index++)
          {
-            if (mLinks[index]->GetPropertyType() != dtDAL::DataType::UNKNOWN)
+            ValueLink* link = mLinks[index];
+            Node* owner = link->GetOwner();
+            if (owner != NULL && !IS_A(owner, ReferenceValue*) && link->GetPropertyType() != dtDAL::DataType::UNKNOWN)
             {
                return mLinks[index]->GetPropertyType();
             }
