@@ -443,6 +443,15 @@ namespace dtDirector
        */
       bool LoadScript();
 
+      /**
+       * Loads an existing script.
+       *
+       * @param[in]  The file path to the script.
+       *
+       * @return     True if a script was loaded.
+       */
+      bool LoadScript(const std::string& fileName);
+
    public:
 
       /**

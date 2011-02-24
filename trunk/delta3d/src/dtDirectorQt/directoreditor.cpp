@@ -39,6 +39,8 @@
 
 #include <dtUtil/mathdefines.h>
 
+#include <QtCore/QSettings>
+
 #include <QtGui/QMenuBar>
 #include <QtGui/QToolBar>
 #include <QtGui/QAction>
@@ -597,7 +599,21 @@ namespace dtDirector
          }
       }
 
-      LoadScript();
+      if (LoadScript())
+      {
+         // Retrieve the last loaded script.
+         QSettings settings("MOVES", "Director Editor");
+         QStringList files = settings.value("recentFileList").toStringList();
+         files.removeAll(mFileName.c_str());
+         files.prepend(mFileName.c_str());
+
+         while (files.size() > 5)
+         {
+            files.removeLast();
+         }
+
+         settings.setValue("recentFileList", files);
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -1068,6 +1084,17 @@ namespace dtDirector
 
       if (mDirector.valid() && mUI.graphTab->count() == 0)
       {
+         // Retrieve the last loaded script.
+         QSettings settings("MOVES", "Director Editor");
+         QStringList files = settings.value("recentFileList").toStringList();
+
+         if (!files.empty())
+         {
+            QString lastScript = files.first();
+
+            LoadScript(lastScript.toStdString());
+         }
+
          OpenGraph(mDirector->GetGraphRoot());
       }
    }
@@ -1123,6 +1150,20 @@ namespace dtDirector
          mUndoManager->OnSaved();
 
          RefreshButtonStates();
+
+         // Input the new file to the recent file list.
+         QSettings settings("MOVES", "Director Editor");
+         QStringList files = settings.value("recentFileList").toStringList();
+         files.removeAll(mFileName.c_str());
+         files.prepend(mFileName.c_str());
+
+         while (files.size() > 5)
+         {
+            files.removeLast();
+         }
+
+         settings.setValue("recentFileList", files);
+
          return true;
       }
 
@@ -1147,14 +1188,20 @@ namespace dtDirector
          filePath.absolutePath().toStdString() + "/" + filePath.baseName().toStdString());
       mFileName = dtUtil::FileUtils::GetInstance().RelativePath( contextDir, absFileName );
 
-      if (!mFileName.empty())
+      return LoadScript(mFileName);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool DirectorEditor::LoadScript(const std::string& fileName)
+   {
+      if (!fileName.empty())
       {
          // Clear the script.
          mDirector->Clear();
          mUI.graphTab->clear();
          mUndoManager->Clear();
 
-         mDirector->LoadScript(mFileName);
+         mDirector->LoadScript(fileName);
 
          // Create a single tab with the default graph.
          OpenGraph(mDirector->GetGraphRoot());
