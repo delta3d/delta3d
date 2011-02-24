@@ -151,9 +151,9 @@ namespace dtCore
       virtual void GetBoundingSphere(osg::Vec3& center, float& radius);
 
       /**
-       * Get the bounding box information for this Drawable.              
+       * Get the bounding box information for this Drawable.
        *
-       * @return BoundingBox that encloses the Drawable.  
+       * @return BoundingBox that encloses the Drawable.
        */
       virtual osg::BoundingBox GetBoundingBox();
 
@@ -176,15 +176,15 @@ namespace dtCore
        */
       virtual bool GetActive() const;
 
-      /** 
-       * Allows a description to be added to this DeltaDrawable for 
+      /**
+       * Allows a description to be added to this DeltaDrawable for
        * application purposes.
        * @param description The string used to describe this object
        * @see GetDescription()
        */
       void SetDescription(const std::string& description);
 
-      /** 
+      /**
        * Get a previously set description string of this object.
        * @return The description string (could be empty)
        * @see SetDescription()

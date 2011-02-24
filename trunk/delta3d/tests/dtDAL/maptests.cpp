@@ -844,7 +844,7 @@ void MapTests::TestIsMapFileValid()
 }
 
 //////////////////////////////////////////////////////////////////////////
-template<class PropertyType> 
+template<class PropertyType>
 PropertyType* GetActorProperty(dtDAL::ActorProxy& proxy, dtDAL::DataType& type)
 {
    std::vector<dtDAL::ActorProperty*> props;
@@ -962,13 +962,13 @@ void MapTests::TestMapSaveAndLoad()
       dtDAL::Vec3dActorProperty* prop = GetActorProperty<dtDAL::Vec3dActorProperty>(*proxy, dtDAL::DataType::VEC3D);
       prop->SetValue(TEST_VEC3D);
    }
-        
+
    //vec4f
    {
       dtDAL::Vec4fActorProperty* prop = GetActorProperty<dtDAL::Vec4fActorProperty>(*proxy, dtDAL::DataType::VEC4F);
       prop->SetValue(TEST_VEC4F);
    }
-   
+
    //vec4d
    {
       dtDAL::Vec4dActorProperty* prop = GetActorProperty<dtDAL::Vec4dActorProperty>(*proxy, dtDAL::DataType::VEC4D);
@@ -1022,19 +1022,19 @@ void MapTests::TestMapSaveAndLoad()
       dtDAL::BooleanActorProperty* prop = GetActorProperty<dtDAL::BooleanActorProperty>(*proxy, dtDAL::DataType::BOOLEAN);
       CPPUNIT_ASSERT_EQUAL_MESSAGE(kAssertMsg, TEST_BOOL, prop->GetValue());
    }
-   
+
    //float
    {
       dtDAL::FloatActorProperty* prop = GetActorProperty<dtDAL::FloatActorProperty>(*proxy, dtDAL::DataType::FLOAT);
       CPPUNIT_ASSERT_EQUAL_MESSAGE(kAssertMsg, TEST_FLOAT, prop->GetValue());
    }
-   
+
    //double
    {
       dtDAL::DoubleActorProperty* prop = GetActorProperty<dtDAL::DoubleActorProperty>(*proxy, dtDAL::DataType::DOUBLE);
       CPPUNIT_ASSERT_EQUAL_MESSAGE(kAssertMsg, TEST_DOUBLE, prop->GetValue());
    }
-  
+
    //int
    {
       dtDAL::IntActorProperty* prop = GetActorProperty<dtDAL::IntActorProperty>(*proxy, dtDAL::DataType::INT);
@@ -1047,7 +1047,7 @@ void MapTests::TestMapSaveAndLoad()
       dtDAL::Vec3ActorProperty* prop = GetActorProperty<dtDAL::Vec3ActorProperty>(*proxy, dtDAL::DataType::VEC3);
       CPPUNIT_ASSERT_MESSAGE(kAssertMsg, dtUtil::Equivalent(TEST_VEC3, prop->GetValue(), 1e-2f));
    }
-   
+
    //vec3d
    {
       dtDAL::Vec3dActorProperty* prop = GetActorProperty<dtDAL::Vec3dActorProperty>(*proxy, dtDAL::DataType::VEC3D);
@@ -1077,7 +1077,7 @@ void MapTests::TestMapSaveAndLoad()
       dtDAL::ActorIDActorProperty* prop = GetActorProperty<dtDAL::ActorIDActorProperty>(*proxy, dtDAL::DataType::ACTOR);
       CPPUNIT_ASSERT_EQUAL_MESSAGE(kAssertMsg, TEST_ACTORID, prop->GetValue());
    }
-       
+
    //enumeration
    {
       dtDAL::AbstractEnumActorProperty* prop = GetActorProperty<dtDAL::AbstractEnumActorProperty>(*proxy, dtDAL::DataType::ENUMERATION);
@@ -1087,7 +1087,7 @@ void MapTests::TestMapSaveAndLoad()
    //Resource
    {
       dtDAL::ResourceActorProperty* prop = GetActorProperty<dtDAL::ResourceActorProperty>(*proxy, dtDAL::DataType::SOUND);
-      CPPUNIT_ASSERT_EQUAL_MESSAGE(kAssertMsg, TEST_RESOURCE.GetResourceIdentifier(), prop->GetValue().GetResourceIdentifier()); 
+      CPPUNIT_ASSERT_EQUAL_MESSAGE(kAssertMsg, TEST_RESOURCE.GetResourceIdentifier(), prop->GetValue().GetResourceIdentifier());
    }
 
    dtDAL::Project::GetInstance().DeleteMap(*map, true);

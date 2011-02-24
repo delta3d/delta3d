@@ -43,10 +43,10 @@ namespace dtCore
 
       Timer_t Tick() const;
 
-      double DeltaSec( Timer_t t1, Timer_t t2 ) const;
-      double DeltaMil( Timer_t t1, Timer_t t2 ) const;
-      double DeltaMicro( Timer_t t1, Timer_t t2 ) const;
-      double DeltaNano( Timer_t t1, Timer_t t2 ) const;
+      double DeltaSec(Timer_t t1, Timer_t t2) const;
+      double DeltaMil(Timer_t t1, Timer_t t2) const;
+      double DeltaMicro(Timer_t t1, Timer_t t2) const;
+      double DeltaNano(Timer_t t1, Timer_t t2) const;
 
       double ElapsedSeconds() const;
       double ElapsedMilliseconds() const;
