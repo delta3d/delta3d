@@ -48,7 +48,7 @@
 
 #include <dtDAL/project.h>
 #include <osgDB/FileNameUtils>
-#include <Phonon/MediaObject> //for sounds
+#include <phonon/MediaObject> //for sounds
 
 namespace dtDirector
 {
