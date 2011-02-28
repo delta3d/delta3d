@@ -1214,14 +1214,15 @@ namespace dtDirector
       QFileInfo filePath = dialog.getOpenFileName(
          this, tr("Load a Director Graph File"), tr(directorsDir.c_str()), tr("Director Scripts (*.dtdir)"), &filter);
 
-      if( !filePath.isFile() )
+      if(!filePath.isFile())
+      {
          return false;
+      }
 
       std::string absFileName  = osgDB::convertFileNameToNativeStyle(
          filePath.absolutePath().toStdString() + "/" + filePath.baseName().toStdString());
-      mFileName = dtUtil::FileUtils::GetInstance().RelativePath( contextDir, absFileName );
 
-      return LoadScript(mFileName);
+      return LoadScript(absFileName);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -1242,6 +1243,9 @@ namespace dtDirector
          mUI.graphBrowser->BuildGraphList(mDirector->GetGraphRoot());
 
          RefreshNodeScenes();
+
+         std::string contextDir = osgDB::convertFileNameToNativeStyle(dtDAL::Project::GetInstance().GetContext()+"/");
+         mFileName = dtUtil::FileUtils::GetInstance().RelativePath(contextDir, fileName);
          return true;
       }
 
