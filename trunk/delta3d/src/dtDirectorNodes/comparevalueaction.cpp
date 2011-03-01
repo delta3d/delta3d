@@ -82,24 +82,22 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    bool CompareValueAction::Update(float simDelta, float delta, int input, bool firstUpdate)
    {
-      double valueA = GetDouble("A");
-      double valueB = GetDouble("B");
+      ValueNode* nodeA = NULL;
+      ValueNode* nodeB = NULL;
 
-      OutputLink* link = NULL;
-      if (valueA == valueB)
+      GetProperty("A", 0, &nodeA);
+      GetProperty("B", 0, &nodeB);
+
+      if (nodeA->GetPropertyType() == dtDAL::DataType::STRING ||
+          nodeB->GetPropertyType() == dtDAL::DataType::STRING)
       {
-         link = GetOutputLink("A = B");
+         CompareAsStrings(*nodeA, *nodeB);
       }
-      else if (valueA < valueB)
+      else
       {
-         link = GetOutputLink("B > A");
-      }
-      else if (valueA > valueB)
-      {
-         link = GetOutputLink("A > B");
+         CompareAsNumbers(*nodeA, *nodeB);
       }
 
-      if (link) link->Activate();
       return false;
    }
 
@@ -111,13 +109,13 @@ namespace dtDirector
          dtDAL::DataType& type = value->GetPropertyType();
          switch (type.GetTypeId())
          {
-         case dtDAL::DataType::INT_ID:
-         case dtDAL::DataType::FLOAT_ID:
-         case dtDAL::DataType::DOUBLE_ID:
-            return true;
-
-         default:
-            return false;
+            case dtDAL::DataType::INT_ID:
+            case dtDAL::DataType::FLOAT_ID:
+            case dtDAL::DataType::DOUBLE_ID:
+            case dtDAL::DataType::STRING_ID:
+               return true;
+            default:
+               return false;
          }
       }
 
@@ -146,6 +144,58 @@ namespace dtDirector
    double CompareValueAction::GetB()
    {
       return mValueB;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void CompareValueAction::CompareAsStrings(ValueNode& nodeA, ValueNode& nodeB)
+   {
+      std::string valueA = GetString("A");
+      std::string valueB = GetString("B");
+
+      OutputLink* link = NULL;
+      if (valueA == valueB)
+      {
+         link = GetOutputLink("A = B");
+      }
+      else if (valueA < valueB)
+      {
+         link = GetOutputLink("B > A");
+      }
+      else if (valueA > valueB)
+      {
+         link = GetOutputLink("A > B");
+      }
+
+      if (link)
+      {
+         link->Activate();
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void CompareValueAction::CompareAsNumbers(ValueNode& nodeA, ValueNode& nodeB)
+   {
+      double valueA = GetDouble("A");
+      double valueB = GetDouble("B");
+
+      OutputLink* link = NULL;
+      if (valueA == valueB)
+      {
+         link = GetOutputLink("A = B");
+      }
+      else if (valueA < valueB)
+      {
+         link = GetOutputLink("B > A");
+      }
+      else if (valueA > valueB)
+      {
+         link = GetOutputLink("A > B");
+      }
+
+      if (link)
+      {
+         link->Activate();
+      }
    }
 }
 
