@@ -49,6 +49,7 @@ namespace dtDirector
       mOutputs.clear();
       mOutputs.push_back(OutputLink(this, "A > B"));
       mOutputs.push_back(OutputLink(this, "A = B"));
+      mOutputs.push_back(OutputLink(this, "A != B"));
       mOutputs.push_back(OutputLink(this, "B > A"));
    }
 
@@ -153,6 +154,8 @@ namespace dtDirector
       std::string valueB = GetString("B");
 
       OutputLink* link = NULL;
+      OutputLink* inequalityLink = NULL;
+
       if (valueA == valueB)
       {
          link = GetOutputLink("A = B");
@@ -160,15 +163,22 @@ namespace dtDirector
       else if (valueA < valueB)
       {
          link = GetOutputLink("B > A");
+         inequalityLink = GetOutputLink("A != B");
       }
       else if (valueA > valueB)
       {
          link = GetOutputLink("A > B");
+         inequalityLink = GetOutputLink("A != B");
       }
 
       if (link)
       {
          link->Activate();
+      }
+
+      if (inequalityLink)
+      {
+         inequalityLink->Activate();
       }
    }
 
@@ -179,6 +189,8 @@ namespace dtDirector
       double valueB = GetDouble("B");
 
       OutputLink* link = NULL;
+      OutputLink* inequalityLink = NULL;
+
       if (valueA == valueB)
       {
          link = GetOutputLink("A = B");
@@ -195,6 +207,11 @@ namespace dtDirector
       if (link)
       {
          link->Activate();
+      }
+
+      if (inequalityLink)
+      {
+         inequalityLink->Activate();
       }
    }
 }
