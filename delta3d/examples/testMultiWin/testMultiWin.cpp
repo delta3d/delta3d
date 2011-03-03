@@ -36,6 +36,11 @@ void TestMultiWin::Config()
    //call the parent Config()
    dtABC::Application::Config();
 
+   //setup scene here
+   RefPtr<Object> terr = new Object();
+   terr->LoadFile("models/terrain_simple.ive");
+   GetScene()->AddChild(terr.get());
+
    //change the title of the pre-built Window
    //(this already has a Camera and Scene assignApped to it)
    GetWindow()->SetWindowTitle("testMultWin - Window 1");
@@ -65,8 +70,6 @@ void TestMultiWin::Config()
 
    //use the default, pre-built Scene
    mView2->SetScene(GetScene());
-   this->AddView(*mView2);
-
    //create second Camera, added to second View, second Window
    mCam2 = new Camera("Camera 2");
    mCam2->SetWindow(mWin2.get());
@@ -75,6 +78,9 @@ void TestMultiWin::Config()
    mCam2->SetClearColor(1.f, 0.f, 0.f, 1.f);
    mCam2->SetAspectRatio(DEFAULT_ASPECT_RATIO);
    mView2->SetCamera(mCam2.get());
+
+   AddView(*mView2);
+
    mMotion2 = new OrbitMotionModel(mView2->GetKeyboard(), mView2->GetMouse());
    mMotion2->SetTarget(mCam2.get());
 
@@ -83,24 +89,21 @@ void TestMultiWin::Config()
 
    //use the default, pre-built Scene
    mView3->SetScene(GetScene());
-   this->AddView(*mView3);
-
    //create a third Camera, added to third View, sharing the second Window
    mCam3 = new Camera("Camera 3");
-   mView3->SetCamera(mCam3.get());
    mCam3->SetWindow(mWin2.get());
    mCam3->GetOSGCamera()->setViewport(new osg::Viewport(0.0, 480.0, (float)DEFAULT_WIN_WIDTH, (float)DEFAULT_WIN_HEIGHT));
    mCam3->SetTransform(transform);
    mCam3->SetClearColor(0.f, 1.f, 0.f, 1.f);
    mCam3->SetAspectRatio(DEFAULT_ASPECT_RATIO);
 
+   mView3->SetCamera(mCam3.get());
+   AddView(*mView3);
+
    mMotion3 = new OrbitMotionModel(mView3->GetKeyboard(), mView3->GetMouse());
    mMotion3->SetTarget(mCam3.get());
 
-   //setup scene here
-   RefPtr<Object> terr = new Object();
-   terr->LoadFile("models/terrain_simple.ive");
-   GetScene()->AddChild(terr.get());
+   GetCompositeViewer()->setUpThreading();
 }
 
 bool TestMultiWin::KeyPressed(const dtCore::Keyboard* keyboard, int kc)
