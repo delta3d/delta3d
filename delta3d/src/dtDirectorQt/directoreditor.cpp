@@ -1086,14 +1086,14 @@ namespace dtDirector
       {
          // Retrieve the last loaded script.
          QSettings settings("MOVES", "Director Editor");
-         QStringList files = settings.value("recentFileList").toStringList();
+         //QStringList files = settings.value("recentFileList").toStringList();
 
-         if (!files.empty())
-         {
-            QString lastScript = files.first();
+         //if (!files.empty())
+         //{
+         //   QString lastScript = files.first();
 
-            LoadScript(lastScript.toStdString());
-         }
+         //   LoadScript(lastScript.toStdString());
+         //}
 
          settings.beginGroup("MainWindow");
          resize(settings.value("Size", QSize(800, 600)).toSize());
@@ -1114,6 +1114,8 @@ namespace dtDirector
          }
          settings.endGroup();
 
+         // TODO: Restore property and graph tree windows.
+
          OpenGraph(mDirector->GetGraphRoot());
       }
    }
@@ -1130,6 +1132,8 @@ namespace dtDirector
       settings.setValue("State", saveState());
       settings.setValue("Geom", saveGeometry());
       settings.endGroup();
+
+      // TODO: Also save and close the property/graph tree windows.
    }
 
    //////////////////////////////////////////////////////////////////////////

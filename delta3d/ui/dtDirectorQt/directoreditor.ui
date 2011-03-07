@@ -596,7 +596,7 @@
     <string>Exit the editor</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+X</string>
+    <string>Ctrl+Q</string>
    </property>
   </action>
  </widget>
