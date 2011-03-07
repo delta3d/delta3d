@@ -120,7 +120,7 @@ namespace dtGame
 
 
       /// Set - Accum Acceleration is computed each frame inside ComputeCurrentVel. Override that if you want to set this.
-      void SetAccumulatedAcceleration(const osg::Vec3 &newValue);
+      void SetAccumulatedAcceleration(const osg::Vec3& newValue);
       /// Get - Accum Acceleration is computed each frame inside ComputeCurrentVel. Override that if you want to set this.
       osg::Vec3 GetAccumulatedAcceleration() const; 
 
