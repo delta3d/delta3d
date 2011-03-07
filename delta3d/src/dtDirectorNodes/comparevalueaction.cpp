@@ -83,23 +83,16 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    bool CompareValueAction::Update(float simDelta, float delta, int input, bool firstUpdate)
    {
-      ValueNode* nodeA = NULL;
-      ValueNode* nodeB = NULL;
-
-      GetProperty("A", 0, &nodeA);
-      GetProperty("B", 0, &nodeB);
-
-      if (nodeA != NULL && nodeB != NULL)
+      dtDAL::DataType& aType = GetPropertyType("A");
+      dtDAL::DataType& bType = GetPropertyType("B");
+      if (aType == dtDAL::DataType::STRING ||
+         bType == dtDAL::DataType::STRING)
       {
-         if (nodeA->GetPropertyType() == dtDAL::DataType::STRING ||
-             nodeB->GetPropertyType() == dtDAL::DataType::STRING)
-         {
-            CompareAsStrings(*nodeA, *nodeB);
-         }
-         else
-         {
-            CompareAsNumbers(*nodeA, *nodeB);
-         }
+         CompareAsStrings();
+      }
+      else
+      {
+         CompareAsNumbers();
       }
 
       return false;
@@ -151,7 +144,7 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void CompareValueAction::CompareAsStrings(ValueNode& nodeA, ValueNode& nodeB)
+   void CompareValueAction::CompareAsStrings()
    {
       std::string valueA = GetString("A");
       std::string valueB = GetString("B");
@@ -186,7 +179,7 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void CompareValueAction::CompareAsNumbers(ValueNode& nodeA, ValueNode& nodeB)
+   void CompareValueAction::CompareAsNumbers()
    {
       double valueA = GetDouble("A");
       double valueB = GetDouble("B");
@@ -201,10 +194,12 @@ namespace dtDirector
       else if (valueA < valueB)
       {
          link = GetOutputLink("B > A");
+         inequalityLink = GetOutputLink("A != B");
       }
       else if (valueA > valueB)
       {
          link = GetOutputLink("A > B");
+         inequalityLink = GetOutputLink("A != B");
       }
 
       if (link)

@@ -107,8 +107,8 @@ namespace dtDirector
       double mValueA;
       double mValueB;
 
-      void CompareAsStrings(ValueNode& nodeA, ValueNode& nodeB);
-      void CompareAsNumbers(ValueNode& nodeA, ValueNode& nodeB);
+      void CompareAsStrings();
+      void CompareAsNumbers();
    };
 }
 
