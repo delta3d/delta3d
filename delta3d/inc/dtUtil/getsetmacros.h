@@ -113,7 +113,7 @@
       \
       PROPERTY_MODIFIERS_SETTER void Remove ## AccessorName(unsigned idx);\
       \
-      PROPERTY_MODIFIERS_SETTER void ClearAll ## AccessorNamePlural();
+      PROPERTY_MODIFIERS_SETTER void ClearAll ## AccessorNamePlural(); \
       \
 
 #define DT_IMPLEMENT_ARRAY_ACCESSOR(ClassName, AccessorType, AccessorName, AccessorNamePlural, DefaultNewValue) \
