@@ -342,7 +342,7 @@ void TextEdit::fileNew()
 void TextEdit::fileOpen()
 {
     QString fn = QFileDialog::getOpenFileName(this, tr("Open File..."),
-                                              QString(), tr("HTML-Files (*.htm *.html);;All Files (*)"));
+                                              QString(), tr("All Files (*)"));
     if (!fn.isEmpty())
         load(fn);
 }
@@ -365,7 +365,7 @@ bool TextEdit::fileSave()
 bool TextEdit::fileSaveAs()
 {
     QString fn = QFileDialog::getSaveFileName(this, tr("Save as..."),
-                                              QString(), tr("HTML-Files (*.htm *.html);;All Files (*)"));
+                                              QString(), tr("All Files (*)"));
     if (fn.isEmpty())
         return false;
     setCurrentFileName(fn);
