@@ -119,14 +119,14 @@ namespace dtDAL
       {
          mParsing = false;
          mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__, "Error during parsing! %s :\n",
-			 dtUtil::XMLStringConverter(toCatch.getMessage()).c_str());
+                  dtUtil::XMLStringConverter(toCatch.getMessage()).c_str());
          throw dtDAL::XMLLoadParsingException( "Error while parsing XML file. See log for more information.", __FILE__, __LINE__);
       }
       catch (const SAXParseException& toCatch)
       {
          mParsing = false;
          mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__, "Error during sax parsing! %s :\n",
-			 dtUtil::XMLStringConverter(toCatch.getMessage()).c_str());
+                  dtUtil::XMLStringConverter(toCatch.getMessage()).c_str());
          //this will already by logged by the code above
          throw dtDAL::XMLLoadParsingException( "Error while parsing XML file. See log for more information.", __FILE__, __LINE__);
       }
@@ -136,7 +136,7 @@ namespace dtDAL
    /////////////////////////////////////////////////////////////////
    bool BaseXMLParser::Parse(const std::string& path)
    {
-      std::ifstream fileStream(path.c_str());
+      std::ifstream fileStream(path.c_str(), std::ios_base::binary | std::ios_base::in);
       return Parse(fileStream);
    }
 
