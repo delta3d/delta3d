@@ -23,12 +23,48 @@
  */
 
 #include <dtDAL/projectconfigreaderwriter.h>
+#include <dtDAL/basexml.h>
+#include <dtDAL/projectconfigxmlhandler.h>
 #include <osgDB/Registry>
 
 #include <iostream>
 
 namespace dtDAL
 {
+   class WrapperOSGObject : public osg::Object
+   {
+   public:
+      WrapperOSGObject() : osg::Object() {}
+      explicit WrapperOSGObject(bool threadSafeRefUnref) : osg::Object(threadSafeRefUnref) {}
+
+      WrapperOSGObject(const osg::Object& obj,const osg::CopyOp& copyop=osg::CopyOp::SHALLOW_COPY)
+      : osg::Object(obj, copyop)
+      {}
+
+      META_Object("dtDAL", WrapperOSGObject);
+   };
+
+   class ProjectConfigXMLParser : public BaseXMLParser
+   {
+   public:
+      ProjectConfigXMLParser()
+      : BaseXMLParser()
+      {
+         SetHandler(new ProjectConfigXMLHandler());
+      }
+
+      void Parse(std::istream& fin, dtCore::RefPtr<ProjectConfig> toFill)
+      {
+         if (BaseXMLParser::Parse(fin))
+         {
+            toFill = &(static_cast<ProjectConfigXMLHandler*>(GetHandler())->GetProjectConfig());
+         }
+         else
+         {
+            toFill = NULL;
+         }
+      }
+   };
 
    //////////////////////////////////////////////////////////////////////////////////
    ProjectConfigReaderWriter::ProjectConfigReaderWriter()
@@ -42,38 +78,52 @@ namespace dtDAL
    }
 
    //////////////////////////////////////////////////////////////////////////////////
-   osgDB::ReadResult ProjectConfigReaderWriter::readObject(const std::string& fileName,const osgDB::Options* options) const
+   osgDB::ReaderWriter::ReadResult ProjectConfigReaderWriter::readObject(const std::string& fileName,const osgDB::Options* options) const
    {
       if (!dtUtil::FileUtils::GetInstance().FileExists(fileName))
       {
-         return osgDB::ReadResult(osgDB::ReadResult::FILE_NOT_FOUND);
+         return osgDB::ReaderWriter::ReadResult(osgDB::ReaderWriter::ReadResult::FILE_NOT_FOUND);
       }
 
       std::ifstream confStream(fileName);
 
       if (!confStream.is_open())
       {
-         return osgDB::ReadResult(osgDB::ReadResult::ERROR_IN_READING_FILE);
+         return osgDB::ReaderWriter::ReadResult(osgDB::ReaderWriter::ReadResult::ERROR_IN_READING_FILE);
       }
 
       return readObject(confStream, options);
    }
 
    //////////////////////////////////////////////////////////////////////////////////
-   osgDB::ReadResult ProjectConfigReaderWriter::readObject(std::istream& fin, const osgDB::Options* options) const
+   osgDB::ReaderWriter::ReadResult ProjectConfigReaderWriter::readObject(std::istream& fin, const osgDB::Options* options) const
    {
+      dtCore::RefPtr<ProjectConfigXMLParser> pcxml = new ProjectConfigXMLParser();
 
+      dtCore::RefPtr<ProjectConfig> projConfig;
+      pcxml->Parse(fin, projConfig);
+
+      if (projConfig != NULL)
+      {
+         dtCore::RefPtr<WrapperOSGObject> obj = new WrapperOSGObject;
+         obj->setUserData(ProjectConfig);
+         osgDB::ReaderWriter::ReadResult result =
+                  osgDB::ReaderWriter::ReadResult(
+                           obj,
+                           osgDB::ReaderWriter::ReadResult::FILE_LOADED);
+         return result;
+      }
+      return osgDB::ReaderWriter::ReadResult(osgDB::ReaderWriter::ReadResult::ERROR_IN_READING_FILE);
    }
 
    //////////////////////////////////////////////////////////////////////////////////
-   osgDB::WriteResult ProjectConfigReaderWriter::writeObject(const osg::Object& /*obj*/,const std::string& /*fileName*/,const osgDB::Options* =NULL) const
+   osgDB::ReaderWriter::WriteResult ProjectConfigReaderWriter::writeObject(const osg::Object& /*obj*/,const std::string& /*fileName*/,const osgDB::Options* =NULL) const
    {
    }
 
    //////////////////////////////////////////////////////////////////////////////////
-   osgDB::WriteResult ProjectConfigReaderWriter::writeObject(const osg::Object& /*obj*/,std::ostream& /*fout*/,const osgDB::Options* =NULL) const
+   osgDB::ReaderWriter::WriteResult ProjectConfigReaderWriter::writeObject(const osg::Object& /*obj*/,std::ostream& /*fout*/,const osgDB::Options* =NULL) const
    {
-
    }
 
 }

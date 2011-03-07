@@ -26,6 +26,10 @@
 #include <dtUtil/xercesbininputstreamistream.h>
 #include <istream>
 
+#if XERCES_VERSION_MAJOR < 3 
+typedef unsigned int XMLSize_t; 
+#endif
+
 namespace dtUtil
 {
    XercesBinInputStreamIStream::XercesBinInputStreamIStream(std::istream& stream)
@@ -35,13 +39,14 @@ namespace dtUtil
 
    XMLFilePos XercesBinInputStreamIStream::curPos() const
    {
-      return XMLFilePos(mStream.gcount());
+      return XMLFilePos(mStream.tellg());
    }
 
    XMLSize_t XercesBinInputStreamIStream::readBytes(XMLByte* const toFill, const XMLSize_t maxToRead)
    {
+      mStream.read((char*)(toFill), maxToRead);
       // This would be bad if XMLByte is not the same size as char.
-      return XMLSize_t(mStream.readsome((char*)(toFill), maxToRead));
+      return XMLSize_t(mStream.gcount());
    }
 
 }

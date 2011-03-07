@@ -43,8 +43,11 @@ namespace dtUtil
 
       virtual XMLFilePos curPos() const;
 
+#if XERCES_VERSION_MAJOR < 3 
+      virtual unsigned int readBytes(XMLByte* const toFill, const unsigned int maxToRead);
+#else
       virtual XMLSize_t readBytes(XMLByte* const toFill, const XMLSize_t maxToRead);
-
+#endif
       virtual const XMLCh* getContentType() const { return 0; }
    private:
       std::istream& mStream;

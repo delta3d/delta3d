@@ -58,6 +58,9 @@
 #include <dtDAL/actorproxy.h>
 #include <dtDAL/resourcedescriptor.h>
 
+#include <osgDB/Registry>
+#include <osgDB/ReadFile>
+
 namespace dtDAL
 {
    const std::string Project::LOG_NAME("project.cpp");
@@ -221,6 +224,33 @@ namespace dtDAL
          ClearAllContexts();
          throw ex;
       }
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   dtCore::RefPtr<ProjectConfig> Project::SetupFromProjectConfigFile(const std::string& path)
+   {
+      dtCore::RefPtr<ProjectConfig> result = LoadProjectConfigFile(path);
+      if (result.valid())
+      {
+         SetupFromProjectConfig(*result);
+      }
+      return result;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   dtCore::RefPtr<ProjectConfig> Project::LoadProjectConfigFile(const std::string& path)
+   {
+      dtCore::RefPtr<osgDB::ReaderWriter::Options> options =
+               dynamic_cast<osgDB::ReaderWriter::Options*>(osgDB::Registry::instance()->getOptions()->clone(osg::CopyOp::DEEP_COPY_ALL));
+
+      options->setObjectCacheHint(osgDB::ReaderWriter::Options::CacheHintOptions(options->getObjectCacheHint() | osgDB::ReaderWriter::Options::CACHE_ARCHIVES));
+
+      dtCore::RefPtr<osg::Object> result = osgDB::readObjectFile(path, options.get());
+      if (result.valid())
+      {
+         return dynamic_cast<ProjectConfig*>(result->getUserData());
+      }
+      return NULL;
    }
 
    /////////////////////////////////////////////////////////////////////////////

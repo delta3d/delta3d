@@ -75,7 +75,7 @@ namespace dtDirector
       : dtDAL::BaseXMLParser()
       , mDirectorHandler(new DirectorXMLHandler())
    {
-      mHandler = mDirectorHandler.get();
+      SetHandler(mDirectorHandler.get());
 
       mXercesParser->setFeature(XMLUni::fgSAX2CoreValidation, true);
       mXercesParser->setFeature(XMLUni::fgXercesDynamic, false);
