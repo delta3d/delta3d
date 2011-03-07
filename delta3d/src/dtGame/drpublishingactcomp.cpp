@@ -232,7 +232,7 @@ namespace dtGame
          mDeadReckoningHelper = deadReckoningHelper;
          if (!mDeadReckoningHelper.valid())
          {
-            std::string error = std::string("Actor [") + actor->GetName() + "] is setup to use a Dead Reckoning Helper in the DRPublishingActComp but doesn't have one. If you want one, add it before adding this component. If you don't want one, pass false to the constructor.";
+            std::string error = std::string("Actor \"") + actor->GetName() + "\" is setup to use a Dead Reckoning Helper in the DRPublishingActComp but doesn't have one. If you want one, add it before adding this component. If you don't want one, pass false to the constructor.";
             LOGN_ERROR("DRPublishingActComp.cpp", error);
          }
       }
@@ -482,7 +482,7 @@ namespace dtGame
       if (mPublishLinearVelocity)
       {
          // VELOCITY 
-         osg::Vec3 velocity = GetCurrentVelocity();            
+         osg::Vec3 velocity = GetCurrentVelocity();
          if (velocity.length() < 0.0001) // If close to 0, set to 0 to prevent wiggling/shaking
          {
             velocity = osg::Vec3(0.f, 0.f, 0.f);
@@ -652,10 +652,14 @@ namespace dtGame
    float DRPublishingActComp::GetPercentageChangeDifference(float startValue, float newValue) const
    {
       if(std::abs(startValue) < 0.01f && std::abs(newValue) < 0.01f)
+      {
          return 1.0;
+      }
 
       if(startValue == 0)
+      {
          startValue = 1.0f;
+      }
 
       return std::abs((((newValue - startValue) / startValue) * 100.0f));
    }
