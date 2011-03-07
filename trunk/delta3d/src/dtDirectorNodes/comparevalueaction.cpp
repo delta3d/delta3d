@@ -89,14 +89,17 @@ namespace dtDirector
       GetProperty("A", 0, &nodeA);
       GetProperty("B", 0, &nodeB);
 
-      if (nodeA->GetPropertyType() == dtDAL::DataType::STRING ||
-          nodeB->GetPropertyType() == dtDAL::DataType::STRING)
+      if (nodeA != NULL && nodeB != NULL)
       {
-         CompareAsStrings(*nodeA, *nodeB);
-      }
-      else
-      {
-         CompareAsNumbers(*nodeA, *nodeB);
+         if (nodeA->GetPropertyType() == dtDAL::DataType::STRING ||
+             nodeB->GetPropertyType() == dtDAL::DataType::STRING)
+         {
+            CompareAsStrings(*nodeA, *nodeB);
+         }
+         else
+         {
+            CompareAsNumbers(*nodeA, *nodeB);
+         }
       }
 
       return false;
