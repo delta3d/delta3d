@@ -37,6 +37,7 @@
 #include <xercesc/util/XercesDefs.hpp>
 #include <xercesc/framework/XMLFormatter.hpp>
 #include <xercesc/sax2/SAX2XMLReader.hpp>
+#include <xercesc/sax/InputSource.hpp>
 
 #include <iosfwd>
 
@@ -48,6 +49,16 @@ namespace dtUtil
 namespace dtDAL
 {
    class BaseXMLHandler;
+
+   class InputSourcefStream : public xercesc::InputSource
+   {
+   public:
+      InputSourcefStream(std::istream& stream);
+
+      virtual xercesc::BinInputStream* makeStream() const;
+
+      std::istream& mStream;
+   };
 
    /**
     * @class BaseXMLParser
@@ -74,7 +85,12 @@ namespace dtDAL
       ///@return true if the map is currently being parsed.
       bool IsParsing() const { return mParsing; }
 
+      void SetHandler(BaseXMLHandler* handler);
+      BaseXMLHandler* GetHandler();
+
    protected:
+
+      void SetParsing(bool parsing);
 
       virtual ~BaseXMLParser();
 
@@ -86,10 +102,11 @@ namespace dtDAL
       BaseXMLParser(const BaseXMLParser& copyParser);
       BaseXMLParser& operator=(const BaseXMLParser& assignParser);
 
-   protected:
-      dtCore::RefPtr<BaseXMLHandler> mHandler;
-      xercesc::SAX2XMLReader* mXercesParser;
       bool mParsing;
+      dtCore::RefPtr<BaseXMLHandler> mHandler;
+
+   protected:
+      xercesc::SAX2XMLReader* mXercesParser;
    };
 
 
@@ -121,7 +138,7 @@ namespace dtDAL
             FormatTarget();
             virtual ~FormatTarget();
 
-                  void SetOutputFile(FILE* newFile);
+            void SetOutputFile(FILE* newFile);
             const FILE* GetOutputFile(FILE* newFile) const { return mOutFile; }
 
 #if XERCES_VERSION_MAJOR < 3

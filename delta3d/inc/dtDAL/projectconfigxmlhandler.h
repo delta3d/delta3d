@@ -58,8 +58,8 @@ namespace dtDAL
    };
 
 
-   /*
-    *
+   /**
+    * Sax parser handler class for loading a project config xml file.
     */
    class ProjectConfigXMLHandler : public BaseXMLHandler
    {

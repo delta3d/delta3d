@@ -94,6 +94,18 @@ namespace dtDAL
       void SetupFromProjectConfig(const ProjectConfig& config);
 
       /**
+       * @see SetupFromProjectConfig
+       * Works the same as SetupFromProjectConfig, but it loads it from file.  It also
+       */
+      dtCore::RefPtr<ProjectConfig> SetupFromProjectConfigFile(const std::string& path);
+
+      /**
+       * simply reads the project config from a file and returns the object.  This path can
+       * be inside an archive that osg supports.
+       */
+      dtCore::RefPtr<ProjectConfig> LoadProjectConfigFile(const std::string& path);
+
+      /**
        * Creates a new project context if it doesn't exist.
        * @param path the full path to the new context directory
        * @param createMapsDir create the maps directory.  Otherwise the code just validates that the passed in path

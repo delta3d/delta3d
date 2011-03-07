@@ -69,6 +69,16 @@ namespace dtDAL
 
    static const std::string logName("basexml.cpp");
 
+   InputSourcefStream::InputSourcefStream(std::istream& stream)
+   : mStream(stream)
+   {
+   }
+
+   xercesc::BinInputStream* InputSourcefStream::makeStream() const
+   {
+      return new dtUtil::XercesBinInputStreamIStream(mStream);
+   }
+
    /////////////////////////////////////////////////////////////////
    BaseXMLParser::BaseXMLParser()
       : mParsing(false)
@@ -84,26 +94,10 @@ namespace dtDAL
       delete mXercesParser;
    }
 
-   class InputSourcefStream : public xercesc::InputSource
-   {
-   public:
-      InputSourcefStream(std::istream& stream)
-      : mStream(stream)
-      {
-      }
-
-      virtual xercesc::BinInputStream* makeStream() const
-      {
-         return new dtUtil::XercesBinInputStreamIStream(mStream);
-      }
-
-      std::istream& mStream;
-   };
-
    /////////////////////////////////////////////////////////////////
    bool BaseXMLParser::Parse(std::istream& stream)
    {
-      try
+	   try
       {
          mParsing = true;
          mXercesParser->setContentHandler(mHandler.get());
@@ -124,14 +118,16 @@ namespace dtDAL
       catch (const XMLException& toCatch)
       {
          mParsing = false;
-         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__, "Error during parsing! %ls :\n",
-                             toCatch.getMessage());
+         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__, "Error during parsing! %s :\n",
+			 dtUtil::XMLStringConverter(toCatch.getMessage()).c_str());
          throw dtDAL::XMLLoadParsingException( "Error while parsing XML file. See log for more information.", __FILE__, __LINE__);
       }
-      catch (const SAXParseException&)
+      catch (const SAXParseException& toCatch)
       {
          mParsing = false;
-         //this will already by logged by the
+         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__, "Error during sax parsing! %s :\n",
+			 dtUtil::XMLStringConverter(toCatch.getMessage()).c_str());
+         //this will already by logged by the code above
          throw dtDAL::XMLLoadParsingException( "Error while parsing XML file. See log for more information.", __FILE__, __LINE__);
       }
       return false;
@@ -140,36 +136,26 @@ namespace dtDAL
    /////////////////////////////////////////////////////////////////
    bool BaseXMLParser::Parse(const std::string& path)
    {
-      try
-      {
-         mParsing = true;
-         mXercesParser->setContentHandler(mHandler.get());
-         mXercesParser->setErrorHandler(mHandler.get());
-         mXercesParser->parse(path.c_str());
-         mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Parsing complete.\n");
-         mParsing = false;
-         return true;
-      }
-      catch (const OutOfMemoryException&)
-      {
-         mParsing = false;
-         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__, "Ran out of memory parsing!");
-         throw dtDAL::XMLLoadParsingException( "Ran out of memory parsing save file.", __FILE__, __LINE__);
-      }
-      catch (const XMLException& toCatch)
-      {
-         mParsing = false;
-         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__, "Error during parsing! %ls :\n",
-            toCatch.getMessage());
-         throw dtDAL::XMLLoadParsingException( "Error while parsing XML file. See log for more information.", __FILE__, __LINE__);
-      }
-      catch (const SAXParseException&)
-      {
-         mParsing = false;
-         //this will already by logged by the
-         throw dtDAL::XMLLoadParsingException( "Error while parsing XML file. See log for more information.", __FILE__, __LINE__);
-      }
-      return false;
+      std::ifstream fileStream(path.c_str());
+      return Parse(fileStream);
+   }
+
+   /////////////////////////////////////////////////////////////////
+   void BaseXMLParser::SetHandler(BaseXMLHandler* handler)
+   {
+      mHandler = handler;
+   }
+
+   /////////////////////////////////////////////////////////////////
+   BaseXMLHandler* BaseXMLParser::GetHandler()
+   {
+      return mHandler;
+   }
+
+   /////////////////////////////////////////////////////////////////
+   void BaseXMLParser::SetParsing(bool parsing)
+   {
+      mParsing = parsing;
    }
 
    /////////////////////////////////////////////////////////////////

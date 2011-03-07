@@ -81,7 +81,7 @@ namespace dtDAL
    : BaseXMLParser()
    , mMapHandler(new MapContentHandler())
    {
-      mHandler = mMapHandler.get();
+      SetHandler(mMapHandler.get());
 
       mXercesParser->setFeature(XMLUni::fgSAX2CoreValidation, true);
       mXercesParser->setFeature(XMLUni::fgXercesDynamic, false);
@@ -117,8 +117,8 @@ namespace dtDAL
    {
       mMapHandler->SetMapMode();
 
-      //std::ifstream mapfstream(path.c_str());
-      if (BaseXMLParser::Parse(path))
+	  std::ifstream mapfstream(path.c_str(), std::ios_base::binary);
+      if (BaseXMLParser::Parse(mapfstream))
       {
          dtCore::RefPtr<Map> mapRef = mMapHandler->GetMap();
          mMapHandler->ClearMap();
@@ -156,16 +156,18 @@ namespace dtDAL
       std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> > proxyList; //just an empty list
       std::string iconFileName = "";
 
-      mParsing = true;
+      SetParsing(true);
       mMapHandler->SetPrefabMode(proxyList, MapContentHandler::PREFAB_ICON_ONLY);
       mXercesParser->setContentHandler(mMapHandler.get());
       mXercesParser->setErrorHandler(mMapHandler.get());
 
+      std::ifstream fileStream(path.c_str());
       try
       {
-         mXercesParser->parse(path.c_str());
+         InputSourcefStream xerStream(fileStream);
+         mXercesParser->parse(xerStream);
       }
-      catch(dtUtil::Exception iconFoundWeAreDone)
+      catch(const dtUtil::Exception& iconFoundWeAreDone)
       {
          //Probably the icon has been found, the exception to stop parsing has
          //been thrown, so there's nothing to do here.  
@@ -173,8 +175,8 @@ namespace dtDAL
       
       iconFileName = mMapHandler->GetPrefabIconFileName();
    
-      mMapHandler->ClearMap();      
-      mParsing = false;
+      mMapHandler->ClearMap();
+      SetParsing(false);
 
       return iconFileName;
    }
@@ -191,7 +193,10 @@ namespace dtDAL
          mXercesParser->setContentHandler(mMapHandler.get());
          mXercesParser->setErrorHandler(mMapHandler.get());
 
-         if (mXercesParser->parseFirst(path.c_str(), token))
+         std::ifstream fileStream(path.c_str());
+         InputSourcefStream xerStream(fileStream);
+
+         if (mXercesParser->parseFirst(xerStream, token))
          {
             parserNeedsReset = true;
 
