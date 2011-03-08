@@ -28,7 +28,7 @@
 #include <prefix/unittestprefix.h>
 
 #include <dtUtil/fileutils.h>
-
+#include <dtCore/autolodscalecameracallback.h>
 #include <dtCore/refptr.h>
 #include <dtCore/system.h>
 #include <dtCore/camera.h>

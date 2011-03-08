@@ -17,7 +17,9 @@ ENDIF (WIN32)
 SET(HEADER_PATH ${DELTA3D_SOURCE_DIR}/inc/${LIB_NAME})
 SET(SOURCE_PATH ${DELTA3D_SOURCE_DIR}/src/${LIB_NAME})
 
-SET(LIB_PUBLIC_HEADERS ${HEADER_PATH}/axis.h
+SET(LIB_PUBLIC_HEADERS 
+                ${HEADER_PATH}/autolodscalecameracallback.h
+                ${HEADER_PATH}/axis.h
                 ${HEADER_PATH}/axishandler.h
                 ${HEADER_PATH}/axislistener.h
                 ${HEADER_PATH}/axisobserver.h
@@ -126,7 +128,9 @@ SET(LIB_PUBLIC_HEADERS ${HEADER_PATH}/axis.h
                 ${HEADER_PATH}/windowresizecallback.h
                 ${HEADER_PATH}/windowresizecontainer.h)
 				
-SET(LIB_SOURCES ${SOURCE_PATH}/axis.cpp
+SET(LIB_SOURCES 
+                ${SOURCE_PATH}/autolodscalecameracallback.cpp
+                ${SOURCE_PATH}/axis.cpp
                 ${SOURCE_PATH}/axistoaxistransformation.cpp
                 ${SOURCE_PATH}/base.cpp
                 ${SOURCE_PATH}/batchisector.cpp
