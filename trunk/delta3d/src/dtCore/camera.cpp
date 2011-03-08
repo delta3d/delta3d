@@ -99,11 +99,10 @@ namespace dtCore
          }
          mCallbackContainer = NULL;
       }
-
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   const std::string Camera::TakeScreenShot(const std::string& namePrefix)
+   const std::string Camera::TakeScreenShot(const std::string& namePrefix, bool appendTimestamp)
    {
       if (mScreenShotTaker.valid() == false)
       {
@@ -117,19 +116,24 @@ namespace dtCore
          }
       }
 
-      std::string timeString = dtUtil::DateTime::ToString(dtUtil::DateTime(dtUtil::DateTime::TimeOrigin::LOCAL_TIME),
-                                                          dtUtil::DateTime::TimeFormat::CALENDAR_DATE_AND_TIME_FORMAT);
-      for (unsigned int i = 0 ; i < timeString.length(); ++i)
+      std::string timeString;
+      if (appendTimestamp)
       {
-         char c = timeString[i];
-         if (c == '.'
-            || c == ':'
-            || c == '-')
+         timeString = "_" + dtUtil::DateTime::ToString(dtUtil::DateTime(dtUtil::DateTime::TimeOrigin::LOCAL_TIME),
+                                                                        dtUtil::DateTime::TimeFormat::CALENDAR_DATE_AND_TIME_FORMAT);
+         for (unsigned int i = 0 ; i < timeString.length(); ++i)
          {
-            timeString[i] = '_';
+            char c = timeString[i];
+            if (c == '.'
+               || c == ':'
+               || c == '-')
+            {
+               timeString[i] = '_';
+            }
          }
       }
-      const std::string outputName = namePrefix + "_" + timeString + ".jpg";
+
+      const std::string outputName = namePrefix + timeString + ".jpg";
       mScreenShotTaker->SetNameToOutput(outputName);
       return outputName;
    }
