@@ -631,14 +631,10 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void DirectorXMLHandler::EndNodeElement()
    {
-      // Initialize messages on event nodes.
-      if (mInEventNodes && mNode.valid())
+      // Initialize messages on all nodes.
+      if (mNode.valid())
       {
-         dtDirector::EventNode* node = dynamic_cast<dtDirector::EventNode*>(mNode.get());
-         if (node)
-         {
-            node->RegisterMessages();
-         }
+         mNode.get()->RegisterMessages();
       }
 
       ClearNodeValues();
