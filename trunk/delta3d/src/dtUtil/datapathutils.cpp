@@ -141,31 +141,13 @@ namespace dtUtil
    std::string GetEnvironment(const std::string& env)
    {
 #ifdef DELTA_WIN32
-      std::string result;
-      size_t bufferSize = 512U;
-      LPTSTR buffer;
-      buffer = (LPTSTR) malloc(bufferSize*sizeof(TCHAR));
-
-      size_t sizeOut = GetEnvironmentVariable(env.c_str(), buffer, bufferSize);
-      if (sizeOut > bufferSize)
+      const size_t bufferSize = 32767;
+      TCHAR  buffer[bufferSize], buffer2[bufferSize];
+      size_t sizeOut1 = GetEnvironmentVariable(env.c_str(), buffer, bufferSize);
+      size_t sizeOut2 = ExpandEnvironmentStrings(buffer, buffer2, bufferSize);
+      if (sizeOut1 <= bufferSize && sizeOut2 <= bufferSize && sizeOut1 > 0 && sizeOut2 > 0)
       {
-         bufferSize = sizeOut + 1;
-         buffer = (LPTSTR) realloc(buffer, bufferSize*sizeof(TCHAR));       
-         sizeOut = GetEnvironmentVariable(env.c_str(), buffer, bufferSize);
-      }
-
-      if (sizeOut > 0U && sizeOut < bufferSize)
-      {
-         result = buffer;
-      }
-      
-      delete[] buffer;
-
-      //if this did not return a value then we will attempt to get it from the
-      //getenv function below
-      if(!result.empty())
-      {
-         return result;
+         return buffer2;
       }
 #endif
       char* ptr = getenv(env.c_str());
