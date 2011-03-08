@@ -1,6 +1,6 @@
 /*
  * Delta3D Open Source Game and Simulation Engine
- * Copyright (C) 2004-2005 MOVES Institute
+ * Copyright (C) 2004-2011 MOVES Institute
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -106,11 +106,12 @@ namespace dtCore
       void SetWindow(DeltaWin *win);
 
       /**
-       * Take a screen shot at end of next frame
+       * Take a screen shot at end of the next frame
        * @param namePrefix the prefix of the screenshot file to write
+       * @param appendTimestamp Optional parameter to include the date/time in the filename (default = true)
        * @return the final file name of the screenshot that will be written next frame.
        */
-      const std::string TakeScreenShot(const std::string& namePrefix);
+      const std::string TakeScreenShot(const std::string& namePrefix, bool appendTimestamp = true);
 
       /**
        * Set the perspective parameters of this Camera.
