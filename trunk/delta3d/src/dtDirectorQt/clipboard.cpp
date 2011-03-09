@@ -309,10 +309,10 @@ namespace dtDirector
       }
 
       // Link value nodes.
-      ValueNode* valueNode = dynamic_cast<ValueNode*>(fromNode);
+      ValueNode* valueNode = fromNode->AsValueNode();
       if (valueNode)
       {
-         LinkValueNode(dynamic_cast<ValueNode*>(node),
+         LinkValueNode(node->AsValueNode(),
             valueNode, parent, undoManager, linkNodes, createLinks);
       }
 
@@ -535,20 +535,20 @@ namespace dtDirector
                // links are on the same graph.
                if (myNodeGraph == otherNodeGraph)
                {
-                  newOwner = dynamic_cast<ValueNode*>(owner);
+                  newOwner = owner->AsValueNode();
                }
 
                // If we are creating new link nodes, then create
                // a new input link node and connect them together.
                if (createLinks && !newOwner &&
                   otherNodeGraph == parent->mParent &&
-                  !dynamic_cast<ValueNode*>(link->GetOwner()))
+                  !link->GetOwner()->AsValueNode())
                {
                   dtCore::RefPtr<ValueNode> rampNode = dynamic_cast<ValueNode*>(NodeManager::GetInstance().CreateNode("Value Link", "Core", parent).get());
                   if (rampNode.valid())
                   {
                      // Link them together.
-                     ValueNode* ownerValue = dynamic_cast<ValueNode*>(owner);
+                     ValueNode* ownerValue = owner->AsValueNode();
                      rampNode->GetValueLinks()[0].Connect(ownerValue);
 
                      link->Connect(rampNode);
@@ -583,7 +583,7 @@ namespace dtDirector
             }
             else
             {
-               newOwner = dynamic_cast<ValueNode*>(mIDOldToNew[owner->GetID()]);
+               newOwner = mIDOldToNew[owner->GetID()]->AsValueNode();
             }
 
             if (newOwner) link->Connect(newOwner);

@@ -53,7 +53,7 @@ namespace dtDirector
 
       mLoading = true;
 
-      ValueNode *valueNode = dynamic_cast<ValueNode *>(mNode.get());
+      ValueNode *valueNode = mNode->AsValueNode();
       if (valueNode)
       {
          SetTitle(GetNodeTitle());
@@ -194,7 +194,7 @@ namespace dtDirector
 
       if (fullConnect && mNode.valid())
       {
-         ValueNode* valueNode = dynamic_cast<ValueNode*>(mNode.get());
+         ValueNode* valueNode = mNode->AsValueNode();
          if (valueNode)
          {
             int count = (int)valueNode->GetLinks().size();

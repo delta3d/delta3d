@@ -110,7 +110,7 @@ namespace dtDirector
       int count = (int)nodes.size();
       for (int index = 0; index < count; index++)
       {
-         EventNode* event = dynamic_cast<EventNode*>(nodes[index]);
+         EventNode* event = nodes[index]->AsEventNode();
          if (!event) continue;
 
          // If we have not created a new call stack yet, create it.

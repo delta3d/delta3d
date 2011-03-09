@@ -20,6 +20,9 @@
  */
 
 #include <dtDirector/node.h>
+#include <dtDirector/eventnode.h>
+#include <dtDirector/actionnode.h>
+#include <dtDirector/valuenode.h>
 #include <dtDirector/colors.h>
 
 #include <dtDAL/actoractorproperty.h>
@@ -789,6 +792,24 @@ namespace dtDirector
    bool Node::ValuesExposed()
    {
       return true;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   EventNode* Node::AsEventNode()
+   {
+      return NULL;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   ActionNode* Node::AsActionNode()
+   {
+      return NULL;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   ValueNode* Node::AsValueNode()
+   {
+      return NULL;
    }
 }
 
