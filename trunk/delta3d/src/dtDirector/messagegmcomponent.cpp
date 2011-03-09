@@ -57,7 +57,9 @@ namespace dtDirector
             a != callbacks.end(); ++a)
          {
             if (a->first->GetDirector()->GetActive())
+            {
                a->second(message);
+            }
          }
       }
 
@@ -72,7 +74,9 @@ namespace dtDirector
             a != callbacks.end(); ++a)
          {
             if (a->first->GetDirector()->GetActive())
+            {
                a->second(message);
+            }
          }
       }
 
