@@ -2,6 +2,7 @@
 #include <dtCore/cameracallbackcontainer.h>
 #include <dtCore/camera.h>
 #include <dtCore/cameradrawcallback.h>
+#include <iterator>
 
 using namespace dtCore;
 
