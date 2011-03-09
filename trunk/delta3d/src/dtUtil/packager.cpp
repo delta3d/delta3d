@@ -275,12 +275,12 @@ namespace dtUtil
             }
 
             bool bFound = false;
-            for (int index = 0; index < (int)tree->folders.size(); index++)
+            for (int folderIndex = 0; index < (int)tree->folders.size(); folderIndex++)
             {
-               if (tree->folders[index].name == folder)
+               if (tree->folders[folderIndex].name == folder)
                {
                   bFound = true;
-                  tree = &tree->folders[index];
+                  tree = &tree->folders[folderIndex];
                   break;
                }
             }
@@ -325,12 +325,12 @@ namespace dtUtil
             }
 
             bool bFound = false;
-            for (int index = 0; index < (int)tree->folders.size(); index++)
+            for (int folderIndex = 0; folderIndex < (int)tree->folders.size(); folderIndex++)
             {
-               if (tree->folders[index].name == folder)
+               if (tree->folders[folderIndex].name == folder)
                {
                   bFound = true;
-                  tree = &tree->folders[index];
+                  tree = &tree->folders[folderIndex];
                   break;
                }
             }
@@ -475,7 +475,7 @@ namespace dtUtil
          fwrite(&bufferLength, sizeof(long), 1, packFile);
          fwrite(buffer, sizeof(char), bufferLength, packFile);
 
-         if (buffer) delete buffer;
+         if (buffer) delete[] buffer;
          return true;
       }
 
@@ -527,7 +527,7 @@ namespace dtUtil
 
          tree->files.push_back(data);
 
-         if (buffer) delete buffer;
+         if (buffer) delete[] buffer;
          return true;
       }
       else
@@ -544,7 +544,7 @@ namespace dtUtil
             fwrite(buffer, sizeof(char), bufferLength, file);
             fclose(file);
 
-            delete buffer;
+            delete[] buffer;
             return true;
          }
 
