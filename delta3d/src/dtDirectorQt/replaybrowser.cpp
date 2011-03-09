@@ -81,11 +81,11 @@ namespace dtDirector
             text += "Fired (" + nodeData->input + ") on ";
          }
 
-         if (dynamic_cast<EventNode*>(node))
+         if (node->AsEventNode())
          {
             text += "Event ";
          }
-         else if (dynamic_cast<ActionNode*>(node))
+         else if (node->AsActionNode())
          {
             text += "Action ";
          }

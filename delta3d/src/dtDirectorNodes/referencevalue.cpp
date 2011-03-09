@@ -91,7 +91,7 @@ namespace dtDirector
       {
          if (!mValues[0].GetLinks().empty())
          {
-            ValueNode* valueNode = dynamic_cast<ValueNode*>(mValues[0].GetLinks()[0]);
+            ValueNode* valueNode = mValues[0].GetLinks()[0]->AsValueNode();
             if (valueNode)
             {
                return mReference + "<br>" + valueNode->GetValueLabel();

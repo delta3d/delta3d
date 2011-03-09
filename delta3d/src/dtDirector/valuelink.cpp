@@ -152,11 +152,11 @@ namespace dtDirector
          // Use the proxy if it exists.
          if (mProxyOwner.valid())
          {
-            ownerValue = dynamic_cast<ValueNode*>(mProxyOwner.get());
+            ownerValue = mProxyOwner->AsValueNode();
          }
          else
          {
-            ownerValue = dynamic_cast<ValueNode*>(mOwner);
+            ownerValue = mOwner->AsValueNode();
          }
 
          if (ownerValue)

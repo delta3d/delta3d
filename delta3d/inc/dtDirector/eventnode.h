@@ -56,6 +56,11 @@ namespace dtDirector
       virtual void Init(const NodeType& nodeType, DirectorGraph* graph);
 
       /**
+       * Retrieves the event node, if valid.
+       */
+      virtual EventNode* AsEventNode();
+
+      /**
        * This method is called in init, which instructs the node
        * to create its properties.  Methods implementing this should
        * be sure to call their parent class's buildPropertyMap method to

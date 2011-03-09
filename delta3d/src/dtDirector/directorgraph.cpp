@@ -279,21 +279,21 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    bool DirectorGraph::AddNode(Node* node)
    {
-      ValueNode* valueNode = dynamic_cast<ValueNode*>(node);
+      ValueNode* valueNode = node->AsValueNode();
       if (valueNode)
       {
          mValueNodes.push_back(valueNode);
          return true;
       }
 
-      EventNode* eventNode = dynamic_cast<EventNode*>(node);
+      EventNode* eventNode = node->AsEventNode();
       if (eventNode)
       {
          mEventNodes.push_back(eventNode);
          return true;
       }
 
-      ActionNode* actionNode = dynamic_cast<ActionNode*>(node);
+      ActionNode* actionNode = node->AsActionNode();
       if (actionNode)
       {
          mActionNodes.push_back(actionNode);

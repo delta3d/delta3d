@@ -73,7 +73,7 @@ namespace dtDirector
             SaveLink(node->GetValueLinks()[index]);
          }
 
-         ValueNode* valueNode = dynamic_cast<ValueNode*>(node);
+         ValueNode* valueNode = node->AsValueNode();
          if (valueNode)
          {
             count = (int)valueNode->GetLinks().size();
@@ -473,7 +473,7 @@ namespace dtDirector
 
                if (destNode)
                {
-                  sourceLink->Connect(dynamic_cast<ValueNode*>(destNode));
+                  sourceLink->Connect(destNode->AsValueNode());
                }
             }
          }

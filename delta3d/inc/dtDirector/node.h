@@ -53,6 +53,9 @@ namespace dtDirector
 {
    class Director;
    class DirectorGraph;
+   class EventNode;
+   class ActionNode;
+   class ValueNode;
 
    /**
     * This is the base class for all node objects.
@@ -483,6 +486,12 @@ namespace dtDirector
        */
       virtual bool ValuesExposed();
 
+      /**
+       * Retrieves the node as a given type, if valid.
+       */
+      virtual EventNode* AsEventNode();
+      virtual ActionNode* AsActionNode();
+      virtual ValueNode* AsValueNode();
 
       /**
        * Registration function for registering message types this

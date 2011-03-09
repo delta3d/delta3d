@@ -104,7 +104,7 @@ namespace dtDirector
 
                if (sourceLink)
                {
-                  sourceLink->Connect(dynamic_cast<ValueNode*>(destNode));
+                  sourceLink->Connect(destNode->AsValueNode());
                }
             }
          }
@@ -148,7 +148,7 @@ namespace dtDirector
 
                if (sourceLink)
                {
-                  sourceLink->Disconnect(dynamic_cast<ValueNode*>(destNode));
+                  sourceLink->Disconnect(destNode->AsValueNode());
                }
             }
          }

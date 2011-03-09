@@ -1097,7 +1097,7 @@ namespace dtDirector
                if (item)
                {
                   ValueLink* input = mNodeItem->GetValues()[mLinkIndex].link;
-                  ValueNode* output = dynamic_cast<ValueNode*>(item->mNodeItem->GetNode());
+                  ValueNode* output = item->mNodeItem->GetNode()->AsValueNode();
 
                   // Create a new connection between these two links.
                   if (input->Connect(output))
@@ -1229,7 +1229,7 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void ValueNodeLinkItem::Disconnect(ValueLink* input)
    {
-      ValueNode* output = dynamic_cast<ValueNode*>(mNodeItem->GetNode());
+      ValueNode* output = mNodeItem->GetNode()->AsValueNode();
       if (!output) return;
 
       if (!input)
@@ -1274,7 +1274,7 @@ namespace dtDirector
       }
       else
       {
-         ValueNode* output = dynamic_cast<ValueNode*>(mNodeItem->GetNode());
+         ValueNode* output = mNodeItem->GetNode()->AsValueNode();
          if (!output) return;
          int count = (int)output->GetLinks().size();
          for (int index = 0; index < count; index++)
@@ -1297,7 +1297,7 @@ namespace dtDirector
       // Highlight all connected value links.
       if (mNodeItem && mNodeItem->GetNode())
       {
-         ValueNode* valueNode = dynamic_cast<ValueNode*>(mNodeItem->GetNode());
+         ValueNode* valueNode = mNodeItem->GetNode()->AsValueNode();
          if (valueNode)
          {
             int count = (int)valueNode->GetLinks().size();
@@ -1339,7 +1339,7 @@ namespace dtDirector
       // Remove the highlight to all connected value links.
       if (mNodeItem && mNodeItem->GetNode())
       {
-         ValueNode* valueNode = dynamic_cast<ValueNode*>(mNodeItem->GetNode());
+         ValueNode* valueNode = mNodeItem->GetNode()->AsValueNode();
          if (valueNode)
          {
             int count = (int)valueNode->GetLinks().size();
@@ -1415,7 +1415,7 @@ namespace dtDirector
                if (item)
                {
                   ValueLink* input = item->mNodeItem->GetValues()[item->mLinkIndex].link;
-                  ValueNode* output = dynamic_cast<ValueNode*>(mNodeItem->GetNode());
+                  ValueNode* output = mNodeItem->GetNode()->AsValueNode();
 
                   // Create a new connection between these two links.
                   if (input->Connect(output))
@@ -1495,7 +1495,7 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void ValueNodeLinkItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
    {
-      ValueNode* output = dynamic_cast<ValueNode*>(mNodeItem->GetNode());
+      ValueNode* output = mNodeItem->GetNode()->AsValueNode();
       if (output)
       {
          QMenu menu;
