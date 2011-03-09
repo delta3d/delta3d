@@ -857,6 +857,20 @@ namespace dtDirector
          makeNewThread = currentNode->Update(simDelta, delta, input, first);
          continued = !makeNewThread;
 
+         // If we are just starting this action node and it is latent,
+         // register this node for messages.
+         if (!currentNode->AsEventNode())
+         {
+            if (first && makeNewThread)
+            {
+               currentNode->RegisterMessages();
+            }
+            else if (!first && !makeNewThread)
+            {
+               currentNode->UnRegisterMessages();
+            }
+         }
+
          // Check for activated outputs and create new threads for them.
          std::vector<OutputLink*> outputs;
          int outputCount = (int)currentNode->GetOutputLinks().size();

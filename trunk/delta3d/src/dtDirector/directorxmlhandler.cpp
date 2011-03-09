@@ -632,9 +632,9 @@ namespace dtDirector
    void DirectorXMLHandler::EndNodeElement()
    {
       // Initialize messages on all nodes.
-      if (mNode.valid())
+      if (mInEventNodes && mNode.valid())
       {
-         mNode.get()->RegisterMessages();
+         mNode->RegisterMessages();
       }
 
       ClearNodeValues();
@@ -786,7 +786,7 @@ namespace dtDirector
             // Connect a value link to a value node.
             if (mLinkList[index].valueLink)
             {
-               ValueNode* valueNode = dynamic_cast<ValueNode*>(linkNode.get());
+               ValueNode* valueNode = linkNode->AsValueNode();
                if (!mLinkList[index].valueLink->Connect(valueNode))
                {
                   // If the connection failed, it may require another link
