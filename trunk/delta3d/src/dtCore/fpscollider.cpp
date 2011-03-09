@@ -543,7 +543,16 @@ namespace dtCore
 
       if (!TestPosition(p1, deltaFrameTime))
       {
-         newXYZ = p1;
+         // Prevent camera bounce - return previous values if only z-changing and walk mode.
+         if( p0[0] == p1[0] && p0[1] == p1[1] && p0[2] != p1[2] && mCurrentMode == WALKING )
+         {
+            newXYZ = p0;
+         }
+         else
+         {
+            newXYZ = p1;
+         }
+
          mLastVelocity = v0;
       }
       else
