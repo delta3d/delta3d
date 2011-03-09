@@ -162,10 +162,8 @@ namespace dtDirector
                   // Activate the "Out" output link.
                   ActionNode::Update(simDelta, delta, input, firstUpdate);
                }
-               else
+               else // We shouldn't be updating anymore
                {
-                  OutputLink* link = GetOutputLink("Finished");
-                  if (link) link->Activate();
                   return false;
                }
             }
@@ -235,6 +233,14 @@ namespace dtDirector
                      actor->SetScale(osg::Vec3(newScale.x(), newScale.y(), newScale.z()));
                   }
                }
+            }
+
+            // If we aren't active anymore, then we are finished
+            if (!mIsActive)
+            {
+               OutputLink* link = GetOutputLink("Finished");
+               if (link) link->Activate();
+               return false;
             }
 
             // Update the current time if we're internally tracking it
