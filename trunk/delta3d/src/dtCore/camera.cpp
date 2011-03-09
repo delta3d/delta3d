@@ -16,11 +16,13 @@
 #include <dtUtil/functor.h>
 
 #include <osg/Matrix>
+#include <osg/MatrixTransform>
 
 #include <osg/GraphicsContext>
 #include <osgViewer/GraphicsWindow>
 
 #include <cmath>
+#include <algorithm>
 
 using namespace dtUtil;
 
