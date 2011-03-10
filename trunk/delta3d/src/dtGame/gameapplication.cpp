@@ -167,7 +167,7 @@ namespace dtGame
 
          mEntryPoint->Initialize(*this, mArgc, mArgv);
          Application::Config();
-
+         GetCompositeViewer()->setUpThreading();
 
          mGameManager->SetApplication(*this);
          mEntryPoint->OnStartup(*this);

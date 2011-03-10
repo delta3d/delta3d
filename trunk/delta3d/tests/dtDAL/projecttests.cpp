@@ -65,6 +65,7 @@ class ProjectTests : public CPPUNIT_NS::TestFixture
    CPPUNIT_TEST(TestCreateContextWithMapsDir);
    CPPUNIT_TEST(TestProject);
    CPPUNIT_TEST(TestSetupFromProjectConfig);
+   CPPUNIT_TEST(TestLoadProjectConfigFromFile);
    CPPUNIT_TEST(TestCategories);
    CPPUNIT_TEST(TestResources);
    CPPUNIT_TEST(TestDeletingBackupFromReadOnlyContext);
@@ -83,6 +84,7 @@ class ProjectTests : public CPPUNIT_NS::TestFixture
 
       void TestProject();
       void TestSetupFromProjectConfig();
+      void TestLoadProjectConfigFromFile();
       void TestFileIO();
       void TestCategories();
       void TestReadonlyFailure();
@@ -170,6 +172,7 @@ void ProjectTests::tearDown()
 
    dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
 
+   fileUtils.FileDelete("testConfig.dtproj");
    fileUtils.FileDelete("terrain_simple.ive");
    fileUtils.FileDelete("flatdirt.ive");
    fileUtils.DirDelete("Testing", true);
@@ -442,6 +445,53 @@ void ProjectTests::TestSetupFromProjectConfig()
    //    catch (const std::exception& ex) {
    //        CPPUNIT_FAIL(ex.what());
    //    }
+}
+
+void ProjectTests::TestLoadProjectConfigFromFile()
+{
+   dtCore::RefPtr<dtDAL::ProjectConfig> pconfig = new dtDAL::ProjectConfig;
+   TEST_ACCESSOR(pconfig, Name, std::string(), std::string("Grumpy"));
+   TEST_ACCESSOR(pconfig, Description, std::string(), std::string("Grumpy1"));
+   TEST_ACCESSOR(pconfig, Author, std::string(), std::string("Grumpy2"));
+   TEST_ACCESSOR(pconfig, Comment, std::string(), std::string("Grumpy3"));
+   TEST_ACCESSOR(pconfig, Copyright, std::string(), std::string("Grumpy4"));
+   TEST_ACCESSOR(pconfig, ReadOnly, false, true);
+
+   pconfig->AddContextData(dtDAL::ContextData("WorkingProject"));
+   pconfig->AddContextData(dtDAL::ContextData("WorkingProject2"));
+
+   try
+   {
+      dtDAL::Project& p = dtDAL::Project::GetInstance();
+      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
+
+      p.CreateContext("WorkingProject");
+      p.CreateContext("WorkingProject2");
+
+      p.SaveProjectConfigFile(*pconfig, "testConfig.dtproj");
+      CPPUNIT_ASSERT(fileUtils.FileExists("testConfig.dtproj"));
+      CPPUNIT_ASSERT_THROW_MESSAGE("It should not allow saving over a file.", p.SaveProjectConfigFile(*pconfig, "testConfig.dtproj"), dtUtil::Exception);
+
+      dtCore::RefPtr<dtDAL::ProjectConfig> loadedConfig = p.LoadProjectConfigFile("testConfig.dtproj");
+
+      // Just check the values, not change them.
+      TEST_ACCESSOR(loadedConfig, Name, pconfig->GetName(), pconfig->GetName());
+      TEST_ACCESSOR(loadedConfig, Description, pconfig->GetDescription(), pconfig->GetDescription());
+      TEST_ACCESSOR(loadedConfig, Author, pconfig->GetAuthor(), pconfig->GetAuthor());
+      TEST_ACCESSOR(loadedConfig, Comment, pconfig->GetComment(), pconfig->GetComment());
+      TEST_ACCESSOR(loadedConfig, Copyright, pconfig->GetCopyright(), pconfig->GetCopyright());
+      TEST_ACCESSOR(loadedConfig, ReadOnly, pconfig->GetReadOnly(), pconfig->GetReadOnly());
+
+      CPPUNIT_ASSERT_EQUAL(loadedConfig->GetNumContextData(), pconfig->GetNumContextData());
+      for (unsigned i = 0; i < loadedConfig->GetNumContextData(); ++i)
+      {
+         CPPUNIT_ASSERT_EQUAL(loadedConfig->GetContextData(i), pconfig->GetContextData(i));
+      }
+   }
+   catch (const dtUtil::Exception& ex)
+   {
+      CPPUNIT_FAIL(ex.ToString());
+   }
 }
 
 void ProjectTests::TestCategories()

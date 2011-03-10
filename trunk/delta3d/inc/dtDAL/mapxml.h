@@ -126,9 +126,18 @@ namespace dtDAL
        * @param map the map to save.
        * @param filePath the path to the file to save.  The map has a file name property,
        *  but it does not include any directories needed or the extension.
-       * @throws ExceptionEnum::MapSaveError if any errors occur saving the file.
+       * @throws MapSaveException if any errors occur saving the file.
        */
       void Save(Map& map, const std::string& filePath);
+
+      /**
+       * Saves the map to an XML file.
+       * The create time will be set on the map if this is the first time it has been saved.
+       * @param map the map to save.
+       * @param stream the stream to write into.
+       * @throws MapSaveException if any errors occur saving the file.
+       */
+      void Save(Map& map, std::ostream& stream);
 
       /**
        * Saves a number of given actor proxies into a prefab resource.

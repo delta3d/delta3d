@@ -97,7 +97,7 @@ namespace dtDAL
    /////////////////////////////////////////////////////////////////
    bool BaseXMLParser::Parse(std::istream& stream)
    {
-	   try
+      try
       {
          mParsing = true;
          mXercesParser->setContentHandler(mHandler.get());
@@ -175,7 +175,7 @@ namespace dtDAL
 
    //////////////////////////////////////////////////////////////////////////
    BaseXMLWriter::FormatTarget::FormatTarget()
-      : mOutFile(NULL)
+      : mOutStream(NULL)
    {
       mLogger = &dtUtil::Log::GetInstance(logName);
    }
@@ -183,16 +183,17 @@ namespace dtDAL
    /////////////////////////////////////////////////////////////////
    BaseXMLWriter::FormatTarget::~FormatTarget()
    {
-      SetOutputFile(NULL);
+      SetOutputStream(&std::cout);
    }
 
    /////////////////////////////////////////////////////////////////
-   void BaseXMLWriter::FormatTarget::SetOutputFile(FILE* newFile)
+   void BaseXMLWriter::FormatTarget::SetOutputStream(std::ostream* stream)
    {
-      if (mOutFile != NULL)
-         fclose(mOutFile);
-
-      mOutFile = newFile;
+      mOutStream = stream;
+      if (mOutStream == NULL)
+      {
+         mOutStream = &std::cout;
+      }
    }
 
    /////////////////////////////////////////////////////////////////
@@ -208,39 +209,24 @@ namespace dtDAL
       xercesc::XMLFormatter* const formatter)
 #endif
    {
-      if (mOutFile != NULL)
-      {
-         size_t size = fwrite((char *) toWrite, sizeof(char), (size_t)count, mOutFile);
-         if (size < (size_t)count)
-         {
-            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-                                "Error writing to file.  Write count less than expected.");
-         }
-
-         //fflush(mOutFile);
-      }
-      else
-      {
-         XERCES_STD_QUALIFIER cout.write((char *) toWrite, (int) count);
-         XERCES_STD_QUALIFIER cout.flush();
-      }
+      mOutStream->write((char *) toWrite, size_t(count));
+      mOutStream->flush();
    }
 
    /////////////////////////////////////////////////////////////////
    void BaseXMLWriter::FormatTarget::flush()
    {
-      if (mOutFile != NULL)
-      {
-         fflush(mOutFile);
-      }
-      else
-      {
-         XERCES_STD_QUALIFIER cout.flush();
-      }
+      mOutStream->flush();
    }
 
    /////////////////////////////////////////////////////////////////
-   void BaseXMLWriter::BeginElement(const XMLCh* name, const XMLCh* attributes)
+   void BaseXMLWriter::WriteHeader()
+   {
+      mFormatter << MapXMLConstants::BEGIN_XML_DECL << mFormatter.getEncodingName() << MapXMLConstants::END_XML_DECL << chLF;
+   }
+
+   /////////////////////////////////////////////////////////////////
+   void BaseXMLWriter::BeginElement(const XMLCh* name, const XMLCh* attributes, bool closeImmediately)
    {
       xmlCharString s(name);
       mElements.push(name);
@@ -250,7 +236,17 @@ namespace dtDAL
       if (attributes != NULL)
          mFormatter << chSpace << attributes;
 
-      mFormatter << chCloseAngle;
+      if (closeImmediately)
+      {
+         mFormatter << chForwardSlash << chCloseAngle << chLF;
+         mLastCharWasLF = true;
+         mElements.pop();
+      }
+      else
+      {
+         mFormatter << chCloseAngle;
+         mLastCharWasLF = false;
+      }
    }
 
    /////////////////////////////////////////////////////////////////
@@ -258,9 +254,11 @@ namespace dtDAL
    {
       const xmlCharString& name = mElements.top();
       if (mLastCharWasLF)
+      {
          AddIndent();
+      }
 
-      mFormatter << MapXMLConstants::END_XML_ELEMENT << name.c_str() << chCloseAngle << chLF;
+      mFormatter << chOpenAngle << chForwardSlash << name.c_str() << chCloseAngle << chLF;
       mLastCharWasLF = true;
       mElements.pop();
    }
@@ -300,7 +298,9 @@ namespace dtDAL
       for (size_t x = 0; x < indentCount; x++)
       {
          for (int y = 0; y < BaseXMLWriter::indentSize; y++)
+         {
             mFormatter << chSpace;
+         }
       }
    }
 }

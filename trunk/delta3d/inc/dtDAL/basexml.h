@@ -138,8 +138,8 @@ namespace dtDAL
             FormatTarget();
             virtual ~FormatTarget();
 
-            void SetOutputFile(FILE* newFile);
-            const FILE* GetOutputFile(FILE* newFile) const { return mOutFile; }
+            void SetOutputStream(std::ostream* stream);
+            std::ostream* GetOutputStream() const { return mOutStream; }
 
 #if XERCES_VERSION_MAJOR < 3
             virtual void writeChars(
@@ -155,7 +155,7 @@ namespace dtDAL
             virtual void flush();
 
          private:
-            FILE* mOutFile;
+            std::ostream* mOutStream;
             dtUtil::Log*  mLogger;
       };
          
@@ -170,9 +170,12 @@ namespace dtDAL
 
    public:
 
-      //writes out the open tags for a new element including indentation.
-      virtual void BeginElement(const XMLCh* const name, const XMLCh* const attributes = NULL);
-      //writes out the end element tag including indentation if necessary.
+      ///writes out a standard xml header with encoding.
+      virtual void WriteHeader();
+
+      ///writes out the open tags for a new element including indentation or the complete self-closing element if closeImmediatly is true.
+      virtual void BeginElement(const XMLCh* const name, const XMLCh* const attributes = NULL, bool closeImmediately = false);
+      ///writes out the end element tag including indentation if necessary.
       virtual void EndElement();
 
       virtual void AddCharacters(const xmlCharString& string);

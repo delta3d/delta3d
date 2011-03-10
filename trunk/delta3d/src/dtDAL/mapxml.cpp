@@ -117,7 +117,7 @@ namespace dtDAL
    {
       mMapHandler->SetMapMode();
 
-	  std::ifstream mapfstream(path.c_str(), std::ios_base::binary);
+      std::ifstream  mapfstream(path.c_str(), std::ios_base::binary);
       if (BaseXMLParser::Parse(mapfstream))
       {
          dtCore::RefPtr<Map> mapRef = mMapHandler->GetMap();
@@ -135,7 +135,6 @@ namespace dtDAL
    }
 
    /////////////////////////////////////////////////////////////////
-
    bool MapParser::ParsePrefab(const std::string& path, std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> >& proxyList, dtDAL::Map* map)
    {
       mMapHandler->SetPrefabMode(proxyList, dtDAL::MapContentHandler::PREFAB_READ_ALL, map);
@@ -314,14 +313,18 @@ namespace dtDAL
    /////////////////////////////////////////////////////////////////
    void MapWriter::Save(Map& map, const std::string& filePath)
    {
-      FILE* outfile = fopen(filePath.c_str(), "w");
-
-      if (outfile == NULL)
+      std::ofstream stream(filePath.c_str(), std::ios_base::trunc|std::ios_base::binary);
+      if (!stream.is_open())
       {
          throw dtDAL::MapSaveException( std::string("Unable to open map file \"") + filePath + "\" for writing.", __FILE__, __LINE__);
       }
+      Save(map, stream);
+   }
 
-      mFormatTarget.SetOutputFile(outfile);
+   /////////////////////////////////////////////////////////////////
+   void MapWriter::Save(Map& map, std::ostream& stream)
+   {
+      mFormatTarget.SetOutputStream(&stream);
 
       try {
 
@@ -627,14 +630,14 @@ namespace dtDAL
          EndElement(); // End Map Element.
 
          //closes the file.
-         mFormatTarget.SetOutputFile(NULL);
+         mFormatTarget.SetOutputStream(NULL);
       }
       catch (dtUtil::Exception& ex)
       {
          mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
                              "Caught Exception \"%s\" while attempting to save map \"%s\".",
                              ex.What().c_str(), map.GetName().c_str());
-         mFormatTarget.SetOutputFile(NULL);
+         mFormatTarget.SetOutputStream(NULL);
          throw ex;
       }
       catch (...)
@@ -642,7 +645,7 @@ namespace dtDAL
          mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
                              "Unknown exception while attempting to save map \"%s\".",
                              map.GetName().c_str());
-         mFormatTarget.SetOutputFile(NULL);
+         mFormatTarget.SetOutputStream(NULL);
          throw dtDAL::MapSaveException( std::string("Unknown exception saving map \"") + map.GetName() + ("\"."), __FILE__, __LINE__);
       }
    }
@@ -655,7 +658,7 @@ namespace dtDAL
       idAtt += "'";
       XMLCh* unicodeForm = XMLString::transcode(idAtt.c_str());
 
-      BeginElement(MapXMLConstants::HIERARCHY_ELEMENT_NODE, unicodeForm);      
+      BeginElement(MapXMLConstants::HIERARCHY_ELEMENT_NODE, unicodeForm);
 
       for (unsigned int i = 0; i < hierNode->GetNumChildren(); ++i)
       {
@@ -670,18 +673,17 @@ namespace dtDAL
                               const std::string& filePath, const std::string& description,
                               const std::string& iconFile /* = "" */)
    {
-      FILE* outfile = fopen(filePath.c_str(), "w");
-
-      if (outfile == NULL)
+      std::ofstream stream(filePath.c_str(), std::ios_base::trunc|std::ios_base::binary);
+      if (!stream.is_open())
       {
          throw dtDAL::MapSaveException( std::string("Unable to open map file \"") + filePath + "\" for writing.", __FILE__, __LINE__);
       }
 
-      mFormatTarget.SetOutputFile(outfile);
+      mFormatTarget.SetOutputStream(&stream);
 
       try
       {
-         mFormatter << MapXMLConstants::BEGIN_XML_DECL << mFormatter.getEncodingName() << MapXMLConstants::END_XML_DECL << chLF;
+         WriteHeader();
 
          //const std::string& utcTime = dtUtil::DateTime::ToString(dtUtil::DateTime(dtUtil::DateTime::TimeOrigin::LOCAL_TIME),
             //dtUtil::DateTime::TimeFormat::CALENDAR_DATE_AND_TIME_FORMAT);
@@ -805,14 +807,14 @@ namespace dtDAL
          EndElement(); // End Prefab Element.
 
          //closes the file.
-         mFormatTarget.SetOutputFile(NULL);
+         mFormatTarget.SetOutputStream(NULL);
       }
       catch (dtUtil::Exception& ex)
       {
          mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
             "Caught Exception \"%s\" while attempting to save prefab \"%s\".",
             ex.What().c_str(), filePath.c_str());
-         mFormatTarget.SetOutputFile(NULL);
+         mFormatTarget.SetOutputStream(NULL);
          throw ex;
       }
       catch (...)
@@ -820,7 +822,7 @@ namespace dtDAL
          mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
             "Unknown exception while attempting to save prefab \"%s\".",
             filePath.c_str());
-         mFormatTarget.SetOutputFile(NULL);
+         mFormatTarget.SetOutputStream(NULL);
          throw dtDAL::MapSaveException( std::string("Unknown exception saving map \"") + filePath + ("\"."), __FILE__, __LINE__);
       }
    }

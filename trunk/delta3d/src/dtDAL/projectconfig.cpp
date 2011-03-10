@@ -33,7 +33,18 @@ namespace dtDAL
    {
    }
 
-   DT_IMPLEMENT_ACCESSOR(ContextData, std::string, Path);
+   DT_IMPLEMENT_ACCESSOR(ContextData, std::string, Path)
+
+   bool ContextData::operator==(const ContextData& toCompare) const
+   {
+      return mPath == toCompare.mPath;
+   }
+
+   std::ostream& operator << (std::ostream& out, const ContextData& data)
+   {
+      out << data.GetPath();
+      return out;
+   }
 
    ProjectConfig::ProjectConfig()
    : mReadOnly(false)
@@ -44,12 +55,12 @@ namespace dtDAL
    {
    }
 
-   DT_IMPLEMENT_ACCESSOR(ProjectConfig, std::string, Name);
-   DT_IMPLEMENT_ACCESSOR(ProjectConfig, std::string, Description);
-   DT_IMPLEMENT_ACCESSOR(ProjectConfig, std::string, Author);
-   DT_IMPLEMENT_ACCESSOR(ProjectConfig, std::string, Comment);
-   DT_IMPLEMENT_ACCESSOR(ProjectConfig, std::string, Copyright);
-   DT_IMPLEMENT_ACCESSOR(ProjectConfig, bool, ReadOnly);
+   DT_IMPLEMENT_ACCESSOR(ProjectConfig, std::string, Name)
+   DT_IMPLEMENT_ACCESSOR(ProjectConfig, std::string, Description)
+   DT_IMPLEMENT_ACCESSOR(ProjectConfig, std::string, Author)
+   DT_IMPLEMENT_ACCESSOR(ProjectConfig, std::string, Comment)
+   DT_IMPLEMENT_ACCESSOR(ProjectConfig, std::string, Copyright)
+   DT_IMPLEMENT_ACCESSOR(ProjectConfig, bool, ReadOnly)
 
-   DT_IMPLEMENT_ARRAY_ACCESSOR(ProjectConfig, ContextData, ContextData, ContextData, ContextData(std::string("")));
+   DT_IMPLEMENT_ARRAY_ACCESSOR(ProjectConfig, ContextData, ContextData, ContextData, ContextData(std::string("")))
 }

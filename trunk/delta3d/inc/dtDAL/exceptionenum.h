@@ -125,6 +125,13 @@ namespace dtDAL
       virtual ~MapException() {};
    };
 
+   class DT_DAL_EXPORT ProjectConfigSaveException : public dtUtil::Exception
+   {
+   public:
+      ProjectConfigSaveException(const std::string& message, const std::string& filename, unsigned int linenum);
+      virtual ~ProjectConfigSaveException() {};
+   };
+
    class DT_DAL_EXPORT XMLLoadParsingException : public dtUtil::Exception
    {
    public:
