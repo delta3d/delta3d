@@ -3,6 +3,7 @@
 //////////////////////////////////////////////////////////////////////
 
 #include <python/dtpython.h>
+#include <dtCore/globals.h>
 
 using namespace boost::python;
 using namespace dtCore;
@@ -36,6 +37,12 @@ void initCollisionMotionModelBindings();
 void initViewBindings();
 void initRTSMotionModelBindings();
 void initODEBodyWrapBindings();
+void initShaderParameterBindings();
+void initShaderParamFloatBindings();
+void initShaderParamIntBindings();
+void initShaderParamVec4Bindings();
+void initShaderParamTextureBindings();
+void initShaderParamTexture2DBindings();
 void initShaderManagerBindings();
 void initShaderProgramBindings();
 void initOSGNodeBindings();
@@ -68,10 +75,14 @@ void initUFOMotionModelBindings();
 void initWalkMotionModelBindings();
 void initFPSColliderBindings();
 
-
-
 BOOST_PYTHON_MODULE(PyDtCore)
 {
+   def("SetDataFilePathList", SetDataFilePathList);
+   def("GetDataFilePathList", GetDataFilePathList);
+   def("GetDeltaDataPathList", GetDeltaDataPathList);
+   def("GetDeltaRootPath", GetDeltaRootPath);
+   def("GetEnvironment", GetEnvironment);
+
    initOSGVec2();
    initOSGVec3();
    initOSGVec4();
@@ -134,6 +145,12 @@ BOOST_PYTHON_MODULE(PyDtCore)
    initRTSMotionModelBindings();
 
    initODEBodyWrapBindings();
+   initShaderParameterBindings();
+   initShaderParamFloatBindings();
+   initShaderParamIntBindings();
+   initShaderParamVec4Bindings();
+   initShaderParamTextureBindings();
+   initShaderParamTexture2DBindings();
    initShaderManagerBindings();
    initShaderProgramBindings();
    initOSGNodeBindings();

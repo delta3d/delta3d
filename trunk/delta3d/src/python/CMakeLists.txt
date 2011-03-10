@@ -17,9 +17,6 @@ BUILD_PYTHON_BINDING( ${UTIL_BINDINGS}
                     )
                     
 
-
-
-
 ################
 SET(CORE_BINDINGS "PyDtCore")
   
@@ -69,6 +66,14 @@ SET(TARGET_SRC
   scenebindings.cpp      
   shadermanagerbindings.cpp
   shaderprogrambindings.cpp
+
+  shaderparameterbindings.cpp
+  shaderparamfloatbindings.cpp
+  shaderparamintbindings.cpp
+  shaderparamtexture2dbindings.cpp
+  shaderparamtexturebindings.cpp
+  shaderparamvec4bindings.cpp
+
   skyboxbindings.cpp       
   skydomebindings.cpp      
   spotlightbindings.cpp    

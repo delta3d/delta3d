@@ -5,8 +5,6 @@ using namespace boost::python;
 using namespace dtCore;
 
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(LSD_overloads, LoadShaderDefinitions, 1, 2)
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(FSP1_overloads, FindShaderPrototype1, 1, 2)
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(FSP2_overloads, FindShaderPrototype2, 1, 2)
 
 class ShaderManagerWrap
 {
@@ -20,22 +18,27 @@ public:
       }
       return *mInstance;
    }
+ 
    void LoadShaderDefinitions(const std::string& fileName, bool merge = true)
    {  
       ShaderManager::GetInstance().LoadShaderDefinitions(fileName, merge);
    }
+
    const ShaderProgram* FindShaderPrototype(const std::string& name, const std::string& groupName="") const
    {
       return ShaderManager::GetInstance().FindShaderPrototype(name, groupName);
    }
+
    ShaderProgram* FindShaderPrototype(const std::string& name, const std::string& groupName="")
    {
       return ShaderManager::GetInstance().FindShaderPrototype(name, groupName);
    }
+
    ShaderProgram* AssignShaderFromPrototype(dtCore::ShaderProgram& shader, osg::Node& node)
    {
       return ShaderManager::GetInstance().AssignShaderFromPrototype(shader, node);
    }
+
    void UnassignShaderFromNode(osg::Node& node)
    {
       ShaderManager::GetInstance().UnassignShaderFromNode(node);
@@ -56,8 +59,8 @@ void initShaderManagerBindings()
       .def("GetInstance", &ShaderManagerWrap::GetInstance, return_value_policy<reference_existing_object>())
       .staticmethod("GetInstance")
       .def("LoadShaderDefinitions", &ShaderManagerWrap::LoadShaderDefinitions, LSD_overloads())
-      .def("FindShaderPrototype", FindShaderPrototype1, return_internal_reference<>(), FSP1_overloads())
-      .def("FindShaderPrototype", FindShaderPrototype2, return_internal_reference<>(), FSP2_overloads())
+      .def("FindShaderPrototype", FindShaderPrototype1, return_internal_reference<>())
+      .def("FindShaderPrototype", FindShaderPrototype2, return_internal_reference<>())
       .def("AssignShaderFromPrototype", &ShaderManagerWrap::AssignShaderFromPrototype, return_internal_reference<>())
       .def("UnassignShaderFromNode", &ShaderManagerWrap::UnassignShaderFromNode)
       ;
