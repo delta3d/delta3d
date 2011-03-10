@@ -63,6 +63,7 @@
 #include <dtUtil/log.h>
 
 #include <iostream>
+#include <fstream>
 
 XERCES_CPP_NAMESPACE_USE
 
@@ -75,7 +76,7 @@ namespace dtDirector
       : dtDAL::BaseXMLParser()
       , mDirectorHandler(new DirectorXMLHandler())
    {
-      SetHandler(mDirectorHandler.get());
+      SetHandler(mDirectorHandler);
 
       mXercesParser->setFeature(XMLUni::fgSAX2CoreValidation, true);
       mXercesParser->setFeature(XMLUni::fgXercesDynamic, false);
@@ -157,18 +158,17 @@ namespace dtDirector
    {
       if (!director) return;
 
-      FILE* outfile = fopen(filePath.c_str(), "w");
-
-      if (outfile == NULL)
+      std::ofstream stream(filePath.c_str(), std::ios_base::trunc|std::ios_base::binary);
+      if (!stream.is_open())
       {
          throw dtDAL::MapSaveException( std::string("Unable to open map file \"") + filePath + "\" for writing.", __FILE__, __LINE__);
       }
 
-      mFormatTarget.SetOutputFile(outfile);
+      mFormatTarget.SetOutputStream(&stream);
 
       try
       {
-         mFormatter << dtDAL::MapXMLConstants::BEGIN_XML_DECL << mFormatter.getEncodingName() << dtDAL::MapXMLConstants::END_XML_DECL << chLF;
+         WriteHeader();
 
          const std::string& utcTime = dtUtil::DateTime::ToString(dtUtil::DateTime(dtUtil::DateTime::TimeOrigin::LOCAL_TIME),
             dtUtil::DateTime::TimeFormat::CALENDAR_DATE_AND_TIME_FORMAT);
@@ -260,14 +260,14 @@ namespace dtDirector
          EndElement(); // End Director Element.
 
          //closes the file.
-         mFormatTarget.SetOutputFile(NULL);
+         mFormatTarget.SetOutputStream(NULL);
       }
       catch (dtUtil::Exception& ex)
       {
          mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
                              "Caught Exception \"%s\" while attempting to save Director script \"%s\".",
                              ex.What().c_str(), director->GetName().c_str());
-         mFormatTarget.SetOutputFile(NULL);
+         mFormatTarget.SetOutputStream(NULL);
          throw ex;
       }
       catch (...)
@@ -275,7 +275,7 @@ namespace dtDirector
          mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
                              "Unknown exception while attempting to save Director script \"%s\".",
                              director->GetName().c_str());
-         mFormatTarget.SetOutputFile(NULL);
+         mFormatTarget.SetOutputStream(NULL);
          throw dtDAL::MapSaveException( std::string("Unknown exception saving Director script \"") + director->GetName() + ("\"."), __FILE__, __LINE__);
       }
    }

@@ -47,7 +47,6 @@ namespace dtDAL
    const char* const MapXMLConstants::EDITOR_VERSION = Delta3DGetVersion();
    const char* const MapXMLConstants::SCHEMA_VERSION = "1.0";
 
-   XMLCh* MapXMLConstants::END_XML_ELEMENT = NULL;
    XMLCh* MapXMLConstants::BEGIN_XML_DECL = NULL;
    XMLCh* MapXMLConstants::END_XML_DECL = NULL;
 
@@ -183,7 +182,6 @@ namespace dtDAL
 
    void MapXMLConstants::StaticInit()
    {
-      END_XML_ELEMENT = xercesc::XMLString::transcode("</");
       BEGIN_XML_DECL = xercesc::XMLString::transcode("<?xml version=\"1.0\" encoding=\"");
       END_XML_DECL = xercesc::XMLString::transcode("\"?>");
 
@@ -311,7 +309,6 @@ namespace dtDAL
 
    void MapXMLConstants::StaticShutdown()
    {
-      xercesc::XMLString::release(&END_XML_ELEMENT);
       xercesc::XMLString::release(&BEGIN_XML_DECL);
       xercesc::XMLString::release(&END_XML_DECL);
 

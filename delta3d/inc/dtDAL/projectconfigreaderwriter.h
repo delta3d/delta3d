@@ -40,11 +40,11 @@ namespace dtDAL
       ProjectConfigReaderWriter();
       virtual ~ProjectConfigReaderWriter();
 
-      virtual osgDB::ReaderWriter::ReadResult readObject(const std::string& /*fileName*/,const osgDB::Options*) const;
-      virtual osgDB::ReaderWriter::ReadResult readObject(std::istream& /*fin*/,const osgDB::Options*) const;
+      virtual osgDB::ReaderWriter::ReadResult readObject(const std::string& /*fileName*/,const osgDB::ReaderWriter::Options*) const;
+      virtual osgDB::ReaderWriter::ReadResult readObject(std::istream& /*fin*/,const osgDB::ReaderWriter::Options*) const;
 
-      virtual osgDB::ReaderWriter::WriteResult writeObject(const osg::Object& /*obj*/,const std::string& /*fileName*/,const osgDB::Options*) const;
-      virtual osgDB::ReaderWriter::WriteResult writeObject(const osg::Object& /*obj*/,std::ostream& /*fout*/,const osgDB::Options* =NULL) const;
+      virtual osgDB::ReaderWriter::WriteResult writeObject(const osg::Object& /*obj*/,const std::string& /*fileName*/,const osgDB::ReaderWriter::Options*) const;
+      virtual osgDB::ReaderWriter::WriteResult writeObject(const osg::Object& /*obj*/,std::ostream& /*fout*/,const osgDB::ReaderWriter::Options* =NULL) const;
 
       static void LoadProjectConfig(const std::string& path, dtCore::RefPtr<ProjectConfig>& projectPtr);
       static void SaveProjectConfig(const std::string& path, const ProjectConfig& projectPtr);

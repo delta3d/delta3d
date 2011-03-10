@@ -24,6 +24,7 @@
 
 #include <prefix/dtdalprefix.h>
 #include <dtDAL/projectconfigxmlhandler.h>
+#include <dtDAL/exceptionenum.h>
 #include <xercesc/util/XMLString.hpp>
 #include <xercesc/util/OutOfMemoryException.hpp>
 #include <xercesc/sax/SAXParseException.hpp>
@@ -40,7 +41,10 @@ namespace dtDAL
       ~ProjectConfigXMLConstantsInit() { ProjectConfigXMLConstants::StaticShutdown(); }
    };
 
+   const char* const ProjectConfigXMLConstants::SCHEMA_VERSION = "1.0";
 
+   XMLCh* ProjectConfigXMLConstants::PROJECT_CONFIG_ELEMENT = NULL;
+   XMLCh* ProjectConfigXMLConstants::PROJECT_CONFIG_NAMESPACE = NULL;
    XMLCh* ProjectConfigXMLConstants::HEADER_ELEMENT = NULL;
    XMLCh* ProjectConfigXMLConstants::NAME_ELEMENT = NULL;
    XMLCh* ProjectConfigXMLConstants::DESCRIPTION_ELEMENT = NULL;
@@ -58,6 +62,8 @@ namespace dtDAL
 
    void ProjectConfigXMLConstants::StaticInit()
    {
+      PROJECT_CONFIG_ELEMENT = xercesc::XMLString::transcode("projectConfig");
+      PROJECT_CONFIG_NAMESPACE = xercesc::XMLString::transcode("xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:noNamespaceSchemaLocation=\"project_config.xsd\"");
       HEADER_ELEMENT = xercesc::XMLString::transcode("header");
       NAME_ELEMENT = xercesc::XMLString::transcode("name");
       DESCRIPTION_ELEMENT = xercesc::XMLString::transcode("description");
@@ -68,12 +74,14 @@ namespace dtDAL
 
       CONTEXTS_ELEMENT = xercesc::XMLString::transcode("contexts");
       READ_ONLY_ATTRIBUTE = xercesc::XMLString::transcode("readOnly");
-      CONTEXTS_ELEMENT = xercesc::XMLString::transcode("context");
+      CONTEXT_ELEMENT = xercesc::XMLString::transcode("context");
       PATH_ATTRIBUTE = xercesc::XMLString::transcode("path");
    }
 
    void ProjectConfigXMLConstants::StaticShutdown()
    {
+      xercesc::XMLString::release(&PROJECT_CONFIG_ELEMENT);
+      xercesc::XMLString::release(&PROJECT_CONFIG_NAMESPACE);
       xercesc::XMLString::release(&HEADER_ELEMENT);
       xercesc::XMLString::release(&NAME_ELEMENT);
       xercesc::XMLString::release(&DESCRIPTION_ELEMENT);
@@ -84,10 +92,11 @@ namespace dtDAL
 
       xercesc::XMLString::release(&CONTEXTS_ELEMENT);
       xercesc::XMLString::release(&READ_ONLY_ATTRIBUTE);
-      xercesc::XMLString::release(&CONTEXTS_ELEMENT);
+      xercesc::XMLString::release(&CONTEXT_ELEMENT);
       xercesc::XMLString::release(&PATH_ATTRIBUTE);
    }
 
+   //////////////////////////////////////////////////////////////////////////
    ProjectConfigXMLHandler::ParsingData::ParsingData()
    : mInHeader(false)
    , mInContexts(false)
@@ -113,7 +122,11 @@ namespace dtDAL
    }
 
    //////////////////////////////////////////////////////////////////////////
+#if XERCES_VERSION_MAJOR < 3
+   void ProjectConfigXMLHandler::characters(const XMLCh* const chars, const unsigned int length)
+#else
    void ProjectConfigXMLHandler::characters(const XMLCh* const chars, const XMLSize_t length)
+#endif
    {
       BaseXMLHandler::characters(chars, length);
 
@@ -166,8 +179,6 @@ namespace dtDAL
          {
             mData.mInContexts = true;
 
-            mConfig->SetReadOnly(true);
-
             const XMLCh* readOnlyStr = attrs.getValue(ProjectConfigXMLConstants::READ_ONLY_ATTRIBUTE);
             if (readOnlyStr != NULL)
             {
@@ -218,5 +229,77 @@ namespace dtDAL
       mConfig = new ProjectConfig();
    }
 
+   //////////////////////////////////////////////////////////////////////////
+   //////////////////////////////////////////////////////////////////////////
+   ProjectConfigXMLWriter::ProjectConfigXMLWriter()
+   {
+   }
 
+   //////////////////////////////////////////////////////////////////////////
+   void ProjectConfigXMLWriter::Save(const ProjectConfig& projConf, std::ostream& outStr)
+   {
+      mFormatTarget.SetOutputStream(&outStr);
+
+      try {
+
+         WriteHeader();
+
+         BeginElement(ProjectConfigXMLConstants::PROJECT_CONFIG_ELEMENT, ProjectConfigXMLConstants::PROJECT_CONFIG_NAMESPACE);
+         BeginElement(ProjectConfigXMLConstants::HEADER_ELEMENT);
+         BeginElement(ProjectConfigXMLConstants::NAME_ELEMENT);
+         AddCharacters(projConf.GetName());
+         EndElement(); // End Project Config Name Element.
+         BeginElement(ProjectConfigXMLConstants::DESCRIPTION_ELEMENT);
+         AddCharacters(projConf.GetDescription());
+         EndElement(); // End Description Element.
+         BeginElement(ProjectConfigXMLConstants::AUTHOR_ELEMENT);
+         AddCharacters(projConf.GetAuthor());
+         EndElement(); // End Author Element.
+         BeginElement(ProjectConfigXMLConstants::COMMENT_ELEMENT);
+         AddCharacters(projConf.GetComment());
+         EndElement(); // End Comment Element.
+         BeginElement(ProjectConfigXMLConstants::COPYRIGHT_ELEMENT);
+         AddCharacters(projConf.GetCopyright());
+         EndElement(); // End Copyright Element.
+         BeginElement(ProjectConfigXMLConstants::SCHEMA_VERSION_ELEMENT);
+         AddCharacters(std::string(ProjectConfigXMLConstants::SCHEMA_VERSION));
+         EndElement(); // End Schema Version Element.
+         EndElement(); // End Header Element.
+
+         XMLCh* stringReadOnly = xercesc::XMLString::transcode((std::string("readOnly=\"") + dtUtil::ToString(projConf.GetReadOnly()) + "\"").c_str());
+         BeginElement(ProjectConfigXMLConstants::CONTEXTS_ELEMENT, stringReadOnly);
+         xercesc::XMLString::release(&stringReadOnly);
+         for (unsigned i = 0; i < projConf.GetNumContextData(); ++i)
+         {
+            XMLCh* stringX = xercesc::XMLString::transcode((std::string("path=\"") + projConf.GetContextData(i).GetPath() + "\"").c_str());
+            BeginElement(ProjectConfigXMLConstants::CONTEXT_ELEMENT, stringX, true);
+            xercesc::XMLString::release(&stringX);
+         }
+         EndElement(); // End Contexts Element.
+         EndElement(); // End Project Config Element.
+      }
+      catch (dtUtil::Exception& ex)
+      {
+         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                             "Caught Exception \"%s\" while attempting to save project config \"%s\".",
+                             ex.What().c_str(), projConf.GetName().c_str());
+         mFormatTarget.SetOutputStream(NULL);
+         throw ex;
+      }
+      catch (...)
+      {
+         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                             "Unknown exception while attempting to save map \"%s\".",
+                             projConf.GetName().c_str());
+         mFormatTarget.SetOutputStream(NULL);
+         throw dtDAL::MapSaveException( std::string("Unknown exception saving map \"") + projConf.GetName() + ("\"."), __FILE__, __LINE__);
+      }
+
+   }
+
+
+   //////////////////////////////////////////////////////////////////////////
+   ProjectConfigXMLWriter::~ProjectConfigXMLWriter()
+   {
+   }
 }

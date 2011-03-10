@@ -94,6 +94,12 @@ namespace dtDAL
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   dtDAL::ProjectConfigSaveException::ProjectConfigSaveException(const std::string& message, const std::string& filename, unsigned int linenum)
+   : dtUtil::Exception(message, filename, linenum)
+   {
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    dtDAL::XMLLoadParsingException::XMLLoadParsingException(const std::string& message, const std::string& filename, unsigned int linenum)
       : dtUtil::Exception(message, filename, linenum)
    {

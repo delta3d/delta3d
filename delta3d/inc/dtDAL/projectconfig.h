@@ -37,8 +37,11 @@ namespace dtDAL
    {
    public:
       ContextData(const std::string& path);
-      DT_DECLARE_ACCESSOR(std::string, Path);
+      DT_DECLARE_ACCESSOR(std::string, Path)
+      bool operator==(const ContextData&) const;
    };
+
+   DT_DAL_EXPORT std::ostream& operator << (std::ostream& out, const ContextData& data);
 
    /**
     * Defines a configuration for a project that could span multiple directories.
@@ -48,14 +51,14 @@ namespace dtDAL
    public:
       ProjectConfig();
 
-      DT_DECLARE_ACCESSOR(std::string, Name);
-      DT_DECLARE_ACCESSOR(std::string, Description);
-      DT_DECLARE_ACCESSOR(std::string, Author);
-      DT_DECLARE_ACCESSOR(std::string, Comment);
-      DT_DECLARE_ACCESSOR(std::string, Copyright);
-      DT_DECLARE_ACCESSOR(bool, ReadOnly);
+      DT_DECLARE_ACCESSOR(std::string, Name)
+      DT_DECLARE_ACCESSOR(std::string, Description)
+      DT_DECLARE_ACCESSOR(std::string, Author)
+      DT_DECLARE_ACCESSOR(std::string, Comment)
+      DT_DECLARE_ACCESSOR(std::string, Copyright)
+      DT_DECLARE_ACCESSOR(bool, ReadOnly)
 
-      DT_DECLARE_ARRAY_ACCESSOR(ContextData, ContextData, ContextData);
+      DT_DECLARE_ARRAY_ACCESSOR(ContextData, ContextData, ContextData)
    private:
       virtual ~ProjectConfig();
    };

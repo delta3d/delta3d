@@ -42,6 +42,7 @@
 #include <dtUtil/stringutils.h>
 #include <dtUtil/datapathutils.h>
 #include <dtUtil/fileutils.h>
+#include <dtUtil/wrapperosgobject.h>
 
 #include <dtDAL/project.h>
 #include <dtDAL/projectconfig.h>
@@ -60,6 +61,7 @@
 
 #include <osgDB/Registry>
 #include <osgDB/ReadFile>
+#include <osgDB/WriteFile>
 
 namespace dtDAL
 {
@@ -240,17 +242,62 @@ namespace dtDAL
    /////////////////////////////////////////////////////////////////////////////
    dtCore::RefPtr<ProjectConfig> Project::LoadProjectConfigFile(const std::string& path)
    {
-      dtCore::RefPtr<osgDB::ReaderWriter::Options> options =
-               dynamic_cast<osgDB::ReaderWriter::Options*>(osgDB::Registry::instance()->getOptions()->clone(osg::CopyOp::DEEP_COPY_ALL));
+      if (!dtUtil::FileUtils::GetInstance().FileExists(path))
+      {
+         throw XMLLoadParsingException(std::string("Unable to save project config file \"") + path + "\", the file already exists.", __FILE__, __LINE__);
+      }
+
+      dtCore::RefPtr<osgDB::ReaderWriter::Options> options = NULL;
+      if (osgDB::Registry::instance()->getOptions() != NULL)
+      {
+         dynamic_cast<osgDB::ReaderWriter::Options*>(osgDB::Registry::instance()->getOptions()->clone(osg::CopyOp::DEEP_COPY_ALL));
+      }
+      else
+      {
+         options = new osgDB::ReaderWriter::Options();
+      }
 
       options->setObjectCacheHint(osgDB::ReaderWriter::Options::CacheHintOptions(options->getObjectCacheHint() | osgDB::ReaderWriter::Options::CACHE_ARCHIVES));
 
       dtCore::RefPtr<osg::Object> result = osgDB::readObjectFile(path, options.get());
       if (result.valid())
       {
-         return dynamic_cast<ProjectConfig*>(result->getUserData());
+         ProjectConfig* pc = dynamic_cast<ProjectConfig*>(result->getUserData());
+         if (pc != NULL)
+         {
+            return pc;
+         }
       }
-      return NULL;
+
+      throw XMLLoadParsingException(std::string("Unable to load project config file \"") + path + "\".", __FILE__, __LINE__);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void Project::SaveProjectConfigFile(ProjectConfig& projectConfig, const std::string& path)
+   {
+      if (dtUtil::FileUtils::GetInstance().FileExists(path))
+      {
+         throw ProjectConfigSaveException(std::string("Unable to save project config file \"") + path + "\", the file already exists.", __FILE__, __LINE__);
+      }
+
+      dtCore::RefPtr<osgDB::ReaderWriter::Options> options = NULL;
+      if (osgDB::Registry::instance()->getOptions() != NULL)
+      {
+         dynamic_cast<osgDB::ReaderWriter::Options*>(osgDB::Registry::instance()->getOptions()->clone(osg::CopyOp::DEEP_COPY_ALL));
+      }
+      else
+      {
+         options = new osgDB::ReaderWriter::Options();
+      }
+
+      options->setObjectCacheHint(osgDB::ReaderWriter::Options::CacheHintOptions(options->getObjectCacheHint() | osgDB::ReaderWriter::Options::CACHE_ARCHIVES));
+
+      dtCore::RefPtr<dtUtil::WrapperOSGObject> wrapObj = new dtUtil::WrapperOSGObject;
+      wrapObj->setUserData(&projectConfig);
+      if (!osgDB::writeObjectFile(*wrapObj, path, options))
+      {
+         throw ProjectConfigSaveException(std::string("Unable to save project config file \"") + path + "\".", __FILE__, __LINE__);
+      }
    }
 
    /////////////////////////////////////////////////////////////////////////////

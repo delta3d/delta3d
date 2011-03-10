@@ -26,16 +26,20 @@
 #define PROJECTCONFIGXMLHANDLER_H_
 
 #include <dtDAL/basexmlhandler.h>
+#include <dtDAL/basexml.h>
 #include <dtDAL/projectconfig.h>
+#include <iosfwd>
 
 namespace dtDAL
 {
 
-   class ProjectConfigXMLConstants
+   class DT_DAL_EXPORT ProjectConfigXMLConstants
    {
    public:
       static const char* const SCHEMA_VERSION;
 
+      static XMLCh* PROJECT_CONFIG_ELEMENT;
+      static XMLCh* PROJECT_CONFIG_NAMESPACE;
       static XMLCh* HEADER_ELEMENT;
       static XMLCh* NAME_ELEMENT;
       static XMLCh* DESCRIPTION_ELEMENT;
@@ -61,7 +65,7 @@ namespace dtDAL
    /**
     * Sax parser handler class for loading a project config xml file.
     */
-   class ProjectConfigXMLHandler : public BaseXMLHandler
+   class DT_DAL_EXPORT ProjectConfigXMLHandler : public BaseXMLHandler
    {
    public:
       class ParsingData
@@ -78,7 +82,11 @@ namespace dtDAL
 
       ProjectConfig& GetProjectConfig();
 
+#if XERCES_VERSION_MAJOR < 3
+      virtual void characters(const XMLCh* const chars, const unsigned int length);
+#else
       virtual void characters(const XMLCh* const chars, const XMLSize_t length);
+#endif
 
       virtual void ElementStarted(const XMLCh* const uri, const XMLCh* const localname, const XMLCh* const qname, const xercesc::Attributes& attrs);
       virtual void ElementEnded(const XMLCh* const uri, const XMLCh* const localname, const XMLCh* const qname);
@@ -88,6 +96,40 @@ namespace dtDAL
       dtCore::RefPtr<ProjectConfig> mConfig;
 
       ParsingData mData;
+   };
+
+   /**
+    * @class ProjectConfigXMLWriter
+    * @brief Writes a project config out to an XML file
+    */
+   class DT_DAL_EXPORT ProjectConfigXMLWriter: public BaseXMLWriter
+   {
+   public:
+
+      /**
+       * Constructor.
+       */
+      ProjectConfigXMLWriter();
+
+      /**
+       * Saves the project config to an XML file.
+       * The create time will be set on the config if this is the first time it has been saved.
+       * @param projConf the ProjectConfig object to save.
+       * @param outStr the ostream to write into.
+       * @throws ProjectConfigSaveException if any errors occur saving the file.
+       */
+      void Save(const ProjectConfig& projConf, std::ostream& outStr);
+
+
+   protected:
+      virtual ~ProjectConfigXMLWriter(); ///Protected destructor so that this could be subclassed.
+
+   private:
+
+      //disable copy constructor
+      ProjectConfigXMLWriter(const ProjectConfigXMLWriter& toCopy): BaseXMLWriter(toCopy) {}
+      //disable operator =
+      ProjectConfigXMLWriter& operator=(const ProjectConfigXMLWriter& assignTo) { return *this;}
    };
 
 }

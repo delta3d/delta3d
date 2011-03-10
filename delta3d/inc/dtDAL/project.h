@@ -102,8 +102,15 @@ namespace dtDAL
       /**
        * simply reads the project config from a file and returns the object.  This path can
        * be inside an archive that osg supports.
+       * @throw XMLLoadParsingException if it can't load and parse the file.
        */
       dtCore::RefPtr<ProjectConfig> LoadProjectConfigFile(const std::string& path);
+
+      /**
+       * Saves the project object to a project config file.
+       * @throw ProjectConfigSaveException if it is unable to save the file.
+       */
+      void SaveProjectConfigFile(ProjectConfig& projectConfig, const std::string& path);
 
       /**
        * Creates a new project context if it doesn't exist.
