@@ -21,7 +21,7 @@
  * 
  * David Guthrie
  */
-
+#include <prefix/dtdalprefix.h>
 #include <dtDAL/projectconfigreaderwriter.h>
 #include <dtDAL/basexml.h>
 #include <dtDAL/projectconfigxmlhandler.h>
