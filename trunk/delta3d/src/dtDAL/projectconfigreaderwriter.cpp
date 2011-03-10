@@ -41,6 +41,8 @@
 #endif
 #include <xercesc/sax/SAXParseException.hpp>
 
+#include <osgDB/FileNameUtils>
+
 #include <iostream>
 #include <fstream>
 
@@ -108,6 +110,9 @@ namespace dtDAL
    //////////////////////////////////////////////////////////////////////////////////
    osgDB::ReaderWriter::ReadResult ProjectConfigReaderWriter::readObject(const std::string& fileName,const osgDB::ReaderWriter::Options* options) const
    {
+      std::string ext = osgDB::getLowerCaseFileExtension(fileName);
+      if (!acceptsExtension(ext)) return ReadResult::FILE_NOT_HANDLED;
+
       if (!dtUtil::FileUtils::GetInstance().FileExists(fileName))
       {
          return osgDB::ReaderWriter::ReadResult(osgDB::ReaderWriter::ReadResult::FILE_NOT_FOUND);
@@ -147,6 +152,9 @@ namespace dtDAL
    //////////////////////////////////////////////////////////////////////////////////
    osgDB::ReaderWriter::WriteResult ProjectConfigReaderWriter::writeObject(const osg::Object& obj, const std::string& fileName, const osgDB::ReaderWriter::Options* options) const
    {
+      std::string ext = osgDB::getLowerCaseFileExtension(fileName);
+      if (!acceptsExtension(ext)) return WriteResult::FILE_NOT_HANDLED;
+
       if (dtUtil::FileUtils::GetInstance().FileExists(fileName))
       {
          return osgDB::ReaderWriter::WriteResult::ERROR_IN_WRITING_FILE;
