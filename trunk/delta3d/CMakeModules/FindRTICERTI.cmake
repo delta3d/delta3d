@@ -13,6 +13,7 @@ FIND_PATH(RTI_INCLUDE_DIR
       /usr/include
       "$ENV{PROGRAMFILES}/certi 3.3.2/include"
       "$ENV{PROGRAMFILES}/certi 3.3.3/include"
+      "$ENV{PROGRAMFILES}/certi 3.4.0/include"
        $ENV{CERTI_HOME}/include
 )
 
@@ -22,6 +23,7 @@ SET(CERTI_PATHS
       /usr/lib 
       "$ENV{PROGRAMFILES}/certi 3.3.2/lib"
       "$ENV{PROGRAMFILES}/certi 3.3.3/lib"
+      "$ENV{PROGRAMFILES}/certi 3.4.0/lib"
       $ENV{CERTI_HOME}/release
       ENV{CERTI_HOME}/lib)
 
@@ -60,3 +62,8 @@ IF(RTI_LIBRARY AND RTI_INCLUDE_DIR)
            ${RTI_PARSER_LIBRARY}
     )
 ENDIF(RTI_LIBRARY AND RTI_INCLUDE_DIR)
+
+# handle the QUIETLY and REQUIRED arguments and set DELTA3D_FOUND to TRUE if 
+# all listed variables are TRUE
+INCLUDE(FindPackageHandleStandardArgs)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(RTICERTI DEFAULT_MSG RTI_INCLUDE_DIR RTI_LIBRARY)
