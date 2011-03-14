@@ -198,6 +198,12 @@ namespace dtGame
    const MessageType MessageType::INFO_CLIENT_CONNECTED("Client Connected", "Info", "Sent to other clients when a new client has connected", 15, (MachineInfoMessage*)(NULL));
    const MessageType MessageType::INFO_MAP_LOADED("Map Loaded", "Info", "Sent after a new map has been loaded successfully", 16, (MapMessage*)(NULL));
    const MessageType MessageType::INFO_MAP_UNLOADED("Map UnLoaded", "Info", "Sent after an old map has been unloaded successfully", 31, (MapMessage*)(NULL));
+
+   // TODO check message IDs, not to overlap with anything else in Delta
+   const MessageType MessageType::INFO_MAPS_OPENED("Maps Opened", "Info", "Sent after a (set of) new map(s) has been loaded", 32, (MapMessage*)(NULL));
+   const MessageType MessageType::INFO_MAPS_CLOSED("Maps Closed", "Info", "Sent after a (set of) old map(s) has been unloaded", 33, (MapMessage*)(NULL));
+
+
    const MessageType MessageType::INFO_PAUSED("Paused", "Info", "Sent when a game manager pauses the game or simulation", 17, (Message*)(NULL));
    const MessageType MessageType::INFO_RESUMED("Resumed", "Info", "Sent when a game manager resumes from a paused state", 18, (Message*)(NULL));
    const MessageType MessageType::INFO_RESTARTED("Restarted", "Info", "Sent when a game manager restarts the game or simulation", 19, (RestartMessage*)(NULL));
@@ -216,12 +222,16 @@ namespace dtGame
    const MessageType MessageType::COMMAND_RESUME("Resume", "Command", "Tells the recipient to resume from a paused state", 52, (Message*)(NULL));
    const MessageType MessageType::COMMAND_RESTART("Restart", "Command", "Tells the recipient to restart the game or simulation", 53, (RestartMessage*)(NULL));
    const MessageType MessageType::COMMAND_SET_TIME("Set Time", "Command", "Tells the recipient to change the simulation time", 54, (TimeChangeMessage*)(NULL));
+   const MessageType MessageType::COMMAND_UNLOAD_MAP("Unload Map", "Command", "Tells the recipient to unload a loaded map", 55, (MapMessage*)(NULL));
+   const MessageType MessageType::COMMAND_CHANGE_MAP("Change Map", "Command", "Tells the recipient to change the map set", 56, (MapMessage*)(NULL));
 
-   const MessageType MessageType::REQUEST_LOAD_MAP("Request Load Map", "Request", "A client request that a map be loaded", 80, (MapMessage*)(NULL));
+   const MessageType MessageType::REQUEST_LOAD_MAP("Request Load Map", "Request", "A client request to load a new map", 80, (MapMessage*)(NULL));
    const MessageType MessageType::REQUEST_PAUSE("Pause", "Request", "A client request that asks the recipient to pause the game or simulation", 81, (Message*)(NULL));
    const MessageType MessageType::REQUEST_RESUME("Resume", "Request", "A client request that asks the recipient to resume from a paused state", 82, (Message*)(NULL));
    const MessageType MessageType::REQUEST_RESTART("Restart", "Request", "A client request that asks the recipient to restart the game or simulation", 83, (RestartMessage*)(NULL));
    const MessageType MessageType::REQUEST_SET_TIME("Set Time", "Request", "A client request that asks the recipient to change the simulation time", 84, (TimeChangeMessage*)(NULL));
+   const MessageType MessageType::REQUEST_UNLOAD_MAP("Request Unload Map", "Request", "A client request to unload a loaded map", 85, (MapMessage*)(NULL));
+   const MessageType MessageType::REQUEST_CHANGE_MAP("Request Change Map", "Request", "A client request to change the map set", 86, (MapMessage*)(NULL));
 
    const MessageType MessageType::SERVER_REQUEST_REJECTED("Message Rejected", "Server", "A server message sent to a client that a message it sent was rejected as invalid", 110, (ServerMessageRejected*)(NULL));
    const MessageType MessageType::NETCLIENT_REQUEST_CONNECTION("Client Request Connection", "Client", "Sent when a client wants to connect to the server", 150, (MachineInfoMessage*)(NULL));

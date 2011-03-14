@@ -81,6 +81,11 @@ namespace dtGame
          static const MessageType INFO_CLIENT_CONNECTED;
          static const MessageType INFO_MAP_LOADED;
          static const MessageType INFO_MAP_UNLOADED;
+
+         static const MessageType INFO_MAPS_OPENED;
+         static const MessageType INFO_MAPS_CLOSED;
+
+
          static const MessageType INFO_PAUSED;
          static const MessageType INFO_RESUMED;
          static const MessageType INFO_RESTARTED;
@@ -98,12 +103,16 @@ namespace dtGame
          static const MessageType INFO_PLAYER_ENTERED_WORLD;
 
          static const MessageType COMMAND_LOAD_MAP;
+         static const MessageType COMMAND_UNLOAD_MAP;
+         static const MessageType COMMAND_CHANGE_MAP;
          static const MessageType COMMAND_PAUSE;
          static const MessageType COMMAND_RESUME;
          static const MessageType COMMAND_RESTART;
          static const MessageType COMMAND_SET_TIME;
 
          static const MessageType REQUEST_LOAD_MAP;
+         static const MessageType REQUEST_UNLOAD_MAP;
+         static const MessageType REQUEST_CHANGE_MAP;
          static const MessageType REQUEST_PAUSE;
          static const MessageType REQUEST_RESUME;
          static const MessageType REQUEST_RESTART;

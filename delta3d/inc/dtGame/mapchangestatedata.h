@@ -85,17 +85,33 @@ namespace dtGame
           */
          void ContinueMapChange();
 
-
-      protected:
-
-         //Takes an open map name and loads all the actors into the GM
+         
+         /// Takes a map name and loads all the actors into the GM
+         /**
+          This utility might be used either during a whole Change Map routine,
+          or to load an additional map to the current set.
+          \param: mapName the name of the map to be loaded          
+          */
          void LoadSingleMapIntoGM(const std::string& mapName);
+
+         /// Closes a single map from the Project, remove the map's gameEvent
+         /**
+          This utility might be used either during a whole Change Map routine,
+          or to load an additional map to the current set.
+          \param: mapName the name of the map to be loaded
+          \param: deleteLibraries flag to delete dynamic libraries used by the map to be closed          
+          \see dtDal::Project::CloseMap()
+          */
+         void CloseSingleMap(const std::string& mapName, bool deleteLibraries = true);
+
+
+      protected:         
 
          // Opens all of the new maps in the new map vector. Returns true if successful
          bool OpenNewMaps();
 
          // Closes all of the old maps in the old map vector.
-         void CloseOldMaps();
+         void CloseOldMaps();         
 
       private:
          dtCore::ObserverPtr<GameManager> mGameManager;

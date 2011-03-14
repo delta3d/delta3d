@@ -105,6 +105,7 @@ class GameManagerTests : public CPPUNIT_NS::TestFixture
         CPPUNIT_TEST(TestPrototypeActors);
         CPPUNIT_TEST(TestGMShutdown);
         CPPUNIT_TEST(TestGMSettingsServerClientRoles);
+        CPPUNIT_TEST(TestOpenCloseAdditionalMaps);
 
         CPPUNIT_TEST(TestTimers);
         CPPUNIT_TEST(TestTimersGetDeleted);
@@ -143,6 +144,7 @@ public:
    void TestPrototypeActors();
    void TestGMShutdown();
    void TestGMSettingsServerClientRoles();
+   void TestOpenCloseAdditionalMaps();
 
    void TestTimers();
    void TestTimersGetDeleted();
@@ -1625,6 +1627,137 @@ void GameManagerTests::TestGMShutdown()
 }
 
 //////////////////////////////////////////////////
+void GameManagerTests::TestOpenCloseAdditionalMaps()
+{
+   CPPUNIT_ASSERT(mManager.valid());
+   dtCore::RefPtr<TestComponent> tc = new TestComponent;
+   mManager->AddComponent(*tc, dtGame::GameManager::ComponentPriority::NORMAL);
+
+   dtDAL::Project& project = dtDAL::Project::GetInstance();
+
+   try
+   {
+      const std::string context = "data/ProjectContext";
+      project.SetContext(context);
+
+      std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> > actorsInMaps;
+
+      {
+         dtDAL::Map& m = project.CreateMap("testMap", "testMap");
+         dtDAL::Map& m2 = project.CreateMap("testMap2", "testMap2");
+
+
+         for (unsigned i = 0; i < 10; ++i)
+         {
+            dtCore::RefPtr<dtDAL::BaseActorObject> actor =
+               mManager->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE);
+            CPPUNIT_ASSERT(actor.valid());
+            m.AddProxy(*actor);
+
+            actorsInMaps.push_back(actor);
+         }
+
+         for (unsigned i = 0; i < 10; ++i)
+         {
+            dtCore::RefPtr<dtDAL::BaseActorObject> actor =
+               mManager->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE);
+            CPPUNIT_ASSERT(actor.valid());
+            m2.AddProxy(*actor);
+
+            actorsInMaps.push_back(actor);
+         }
+
+         project.SaveMap(m);
+         project.SaveMap(m2);
+
+         project.CloseMap(m);
+         project.CloseMap(m2);
+      }
+
+      dtCore::RefPtr<dtGame::GameActorProxy> actorNoMap;
+      mManager->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE, actorNoMap);
+      CPPUNIT_ASSERT(actorNoMap.valid());
+      actorNoMap->SetName("I have no map");
+
+      mManager->AddActor(*actorNoMap, false, false);
+
+      std::vector<std::string> mapNames;
+      mapNames.push_back("testMap");
+      mapNames.push_back("testMap2");
+
+      mManager->OpenAdditionalMapSet(mapNames);
+      // process the messages.
+      dtCore::System::GetInstance().Step();
+
+      dtCore::RefPtr<const dtGame::Message> msg = tc->FindProcessMessageOfType(dtGame::MessageType::INFO_MAPS_OPENED);
+      std::vector<std::string> retrievedMaps;
+      CPPUNIT_ASSERT(msg.valid());
+      dynamic_cast<const dtGame::MapMessage*>(msg.get())->GetMapNames(retrievedMaps);
+      CPPUNIT_ASSERT_EQUAL(retrievedMaps.size(), mapNames.size());
+      for (unsigned i = 0; i < retrievedMaps.size(); ++i)
+      {
+         CPPUNIT_ASSERT_EQUAL(mapNames[i], retrievedMaps[i]);
+      }
+
+      tc->reset();
+
+      CPPUNIT_ASSERT(mManager->FindGameActorById(actorNoMap->GetId()) == actorNoMap.get());
+
+      std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> >::iterator i, iend;
+      i = actorsInMaps.begin();
+      iend = actorsInMaps.end();
+      for (; i != iend; ++i)
+      {
+         dtDAL::BaseActorObject* bao = i->get();
+         CPPUNIT_ASSERT(mManager->FindGameActorById(bao->GetId()) != NULL);
+      }
+
+      mManager->CloseAdditionalMapSet(mapNames);
+
+      //Make sure the actor deletes complete.
+      dtCore::System::GetInstance().Step();
+
+      msg = tc->FindProcessMessageOfType(dtGame::MessageType::INFO_MAPS_CLOSED);
+      CPPUNIT_ASSERT(msg.valid());
+      dynamic_cast<const dtGame::MapMessage*>(msg.get())->GetMapNames(retrievedMaps);
+      CPPUNIT_ASSERT_EQUAL(retrievedMaps.size(), mapNames.size());
+      for (unsigned i = 0; i < retrievedMaps.size(); ++i)
+      {
+         CPPUNIT_ASSERT_EQUAL(mapNames[i], retrievedMaps[i]);
+      }
+
+      tc->reset();
+
+
+      CPPUNIT_ASSERT_MESSAGE("this on actor should still be in the gm.", mManager->FindGameActorById(actorNoMap->GetId()) == actorNoMap.get());
+
+      // all of the map actors should be removed.
+      i = actorsInMaps.begin();
+      iend = actorsInMaps.end();
+      for (; i != iend; ++i)
+      {
+         dtDAL::BaseActorObject* bao = i->get();
+         CPPUNIT_ASSERT(mManager->FindGameActorById(bao->GetId()) == NULL);
+      }
+
+      project.DeleteMap("testMap");
+      project.DeleteMap("testMap2");
+   }
+   catch (const dtUtil::Exception& ex)
+   {
+      project.DeleteMap("testMap");
+      project.DeleteMap("testMap2");
+      CPPUNIT_FAIL(ex.ToString());
+   }
+   catch (...)
+   {
+      project.DeleteMap("testMap");
+      project.DeleteMap("testMap2");
+      throw;
+   }
+}
+
+//////////////////////////////////////////////////
 void GameManagerTests::TestGMSettingsServerClientRoles()
 {
    CPPUNIT_ASSERT(mManager.valid());
@@ -1651,8 +1784,8 @@ void GameManagerTests::TestGMSettingsServerClientRoles()
       mManager->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE);
    CPPUNIT_ASSERT(proxy5.valid());
    dtCore::RefPtr<dtGame::GameActorProxy> gap5 = dynamic_cast<dtGame::GameActorProxy*> (proxy5.get());
-   gap5->SetName("PROTOTYPE");
    CPPUNIT_ASSERT(gap5.valid());
+   gap5->SetName("PROTOTYPE");
    gap5->SetInitialOwnership(dtGame::GameActorProxy::Ownership::PROTOTYPE);
    m.AddProxy(*proxy5);
 
@@ -1662,8 +1795,8 @@ void GameManagerTests::TestGMSettingsServerClientRoles()
       mManager->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE);
    CPPUNIT_ASSERT(proxy4.valid());
    dtCore::RefPtr<dtGame::GameActorProxy> gap4 = dynamic_cast<dtGame::GameActorProxy*> (proxy4.get());
-   gap4->SetName("CLIENT_AND_SERVER_LOCAL");
    CPPUNIT_ASSERT(gap4.valid());
+   gap4->SetName("CLIENT_AND_SERVER_LOCAL");
    gap4->SetInitialOwnership(dtGame::GameActorProxy::Ownership::CLIENT_AND_SERVER_LOCAL);
    m.AddProxy(*proxy4);
 
@@ -1672,8 +1805,8 @@ void GameManagerTests::TestGMSettingsServerClientRoles()
       mManager->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE);
    CPPUNIT_ASSERT(proxy3.valid());
    dtCore::RefPtr<dtGame::GameActorProxy> gap3 = dynamic_cast<dtGame::GameActorProxy*> (proxy3.get());
-   gap3->SetName("SERVER_LOCAL");
    CPPUNIT_ASSERT(gap3.valid());
+   gap3->SetName("SERVER_LOCAL");
    gap3->SetInitialOwnership(dtGame::GameActorProxy::Ownership::SERVER_LOCAL);
    m.AddProxy(*proxy3);
 
@@ -1683,8 +1816,8 @@ void GameManagerTests::TestGMSettingsServerClientRoles()
       mManager->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE);
    CPPUNIT_ASSERT(proxy2.valid());
    dtCore::RefPtr<dtGame::GameActorProxy> gap2 = dynamic_cast<dtGame::GameActorProxy*> (proxy2.get());
-   gap2->SetName("SERVER_PUBLISHED");
    CPPUNIT_ASSERT(gap2.valid());
+   gap2->SetName("SERVER_PUBLISHED");
    gap2->SetInitialOwnership(dtGame::GameActorProxy::Ownership::SERVER_PUBLISHED);
    m.AddProxy(*proxy2);
 
@@ -1693,8 +1826,8 @@ void GameManagerTests::TestGMSettingsServerClientRoles()
       mManager->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE);
    CPPUNIT_ASSERT(proxy1.valid());
    dtCore::RefPtr<dtGame::GameActorProxy> gap1 = dynamic_cast<dtGame::GameActorProxy*> (proxy1.get());
-   gap1->SetName("CLIENT_LOCAL");
    CPPUNIT_ASSERT(gap1.valid());
+   gap1->SetName("CLIENT_LOCAL");
    gap1->SetInitialOwnership(dtGame::GameActorProxy::Ownership::CLIENT_LOCAL);
    m.AddProxy(*proxy1);
 
