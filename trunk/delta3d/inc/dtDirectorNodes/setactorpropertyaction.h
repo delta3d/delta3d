@@ -85,6 +85,8 @@ namespace dtDirector
       void SetNewValue(const std::string& value);
       std::string GetNewValue() const;
 
+      virtual const std::string& GetName();
+
    protected:
 
       /**
