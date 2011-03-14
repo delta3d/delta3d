@@ -116,27 +116,38 @@ namespace dtGame
 
          for (; i != end; ++i)
          {
-            dtDAL::Map& oldMap = dtDAL::Project::GetInstance().GetMap(*i);
-            // Clear out all the game events that came from the old map
-            if (mGameManager->GetRemoveGameEventsOnMapChange())
-            {
-               std::vector<dtDAL::GameEvent*> events;
-               oldMap.GetEventManager().GetAllEvents(events);
-               dtDAL::GameEventManager& mainGEM = dtDAL::GameEventManager::GetInstance();
-
-               std::vector<dtDAL::GameEvent*>::const_iterator j = events.begin();
-               std::vector<dtDAL::GameEvent*>::const_iterator jend = events.end();
-               for (; j != jend; ++j)
-               {
-                  mainGEM.RemoveEvent((*j)->GetUniqueId());
-               }
-            }
-            dtDAL::Project::GetInstance().CloseMap(oldMap, true);
+            CloseSingleMap(*i, true);
          }
 
+         SendMapMessage(MessageType::INFO_MAPS_CLOSED, mOldMapNames);
          SendMapMessage(MessageType::INFO_MAP_UNLOADED, mOldMapNames);
       }
    }
+
+
+   //////////////////////////////////////////////////////////////////////////
+   void MapChangeStateData::CloseSingleMap(const std::string& mapName, bool deleteLibraries )
+   {
+      dtDAL::Map& oldMap = dtDAL::Project::GetInstance().GetMap(mapName);
+
+      // Clear out all the game events that came from the old map
+      if (mGameManager->GetRemoveGameEventsOnMapChange())
+      {
+         std::vector<dtDAL::GameEvent*> events;
+         oldMap.GetEventManager().GetAllEvents(events);
+         dtDAL::GameEventManager& mainGEM = dtDAL::GameEventManager::GetInstance();
+
+         std::vector<dtDAL::GameEvent*>::const_iterator j = events.begin();
+         std::vector<dtDAL::GameEvent*>::const_iterator jend = events.end();
+         for (; j != jend; ++j)
+         {
+            mainGEM.RemoveEvent((*j)->GetUniqueId());
+         }
+      }
+      dtDAL::Project::GetInstance().CloseMap(oldMap, deleteLibraries);
+   }
+
+
 
    ///////////////////////////////////////////////////////////////////////////////
    bool MapChangeStateData::OpenNewMaps()
@@ -321,6 +332,7 @@ namespace dtGame
          // set the app to unpause so time stepping is correct
          mGameManager->SetPaused(false);
 
+         SendMapMessage(MessageType::INFO_MAPS_OPENED, mNewMapNames);
          SendMapMessage(MessageType::INFO_MAP_LOADED, mNewMapNames);
          SendMapMessage(MessageType::INFO_MAP_CHANGED, mNewMapNames);
          mCurrentState = &MapChangeState::IDLE;
@@ -337,4 +349,5 @@ namespace dtGame
       mGameManager->SendMessage(*mapMessage);
    }
 
+   
 } // namespace dtGame

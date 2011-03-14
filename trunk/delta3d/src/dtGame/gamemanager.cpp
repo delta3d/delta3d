@@ -436,8 +436,15 @@ namespace dtGame
 
          if (mGMImpl->mMapChangeStateData.valid())
          {
+            
+            const MapChangeStateData::MapChangeState* pPrevState = &mGMImpl->mMapChangeStateData->GetCurrentState();
             mGMImpl->mMapChangeStateData->ContinueMapChange();
-            if (mGMImpl->mMapChangeStateData->GetCurrentState() == MapChangeStateData::MapChangeState::IDLE)
+
+            // Update mLoadedMaps only when a Map Change takes place.
+            // This check is needed to keep the name vec consistent, as single maps may be loaded/unloaded 
+            // without changing the whole set.
+            if (*pPrevState == MapChangeStateData::MapChangeState::LOAD &&
+               mGMImpl->mMapChangeStateData->GetCurrentState() == MapChangeStateData::MapChangeState::IDLE)
             {
                mGMImpl->mLoadedMaps = mGMImpl->mMapChangeStateData->GetNewMapNames();
             }
@@ -1803,6 +1810,110 @@ namespace dtGame
       }
 
       mGMImpl->mMapChangeStateData->BeginMapChange(mGMImpl->mLoadedMaps, mapNames, addBillboards);
+   }
+
+
+
+   //////////////////////////////////////////////////////////////////////////
+   void GameManager::OpenAdditionalMapSet( const NameVector& mapNames )
+   {
+      NameVector actuallyLoadedMaps;
+      
+      // Loop on map vec, and directly load all of them.
+      // This will send 
+      NameVector::const_iterator mapItor = mapNames.begin();
+      for(; mapItor != mapNames.end(); ++mapItor)
+      {         
+         // check whether this is a good map on the current project
+         try
+         {
+            dtDAL::Project::GetInstance().GetMap(*mapItor);
+         }         
+         catch (const dtUtil::Exception& ex)
+         {
+            // if can't open this map, log an erro and keep going with the rest of the map list
+            mGMImpl->mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+               "GameManager failed to open map [%s].", mapItor->c_str());
+            ex.LogException(dtUtil::Log::LOG_ERROR, dtUtil::Log::GetInstance("mapchangestatedata.cpp"));
+
+            continue;
+         }
+
+         // Actual map loading routine.
+         // This will fire the INFO_ACTOR_CREATE message for every loaded actor
+         mGMImpl->mMapChangeStateData->LoadSingleMapIntoGM(*mapItor);
+
+         // Add a reference to the loaded map set on the GM
+         mGMImpl->mLoadedMaps.push_back(*mapItor);
+
+         // add a ref to send out a message at the end of the routing
+         actuallyLoadedMaps.push_back(*mapItor);
+      }
+
+      // when we're done with the maps, end the sequence with a INFO_MAPS_OPENED message
+      if (!actuallyLoadedMaps.empty())
+      {
+         dtCore::RefPtr<MapMessage> mapMessage;
+         GetMessageFactory().CreateMessage(MessageType::INFO_MAPS_OPENED, mapMessage);
+         mapMessage->SetMapNames(actuallyLoadedMaps);
+
+         SendMessage(*mapMessage);
+      }      
+   }
+
+
+   //////////////////////////////////////////////////////////////////////////
+   void GameManager::CloseAdditionalMapSet(const NameVector& mapNames)
+   {
+      NameVector actuallyUnloadedMaps;
+
+      // loop on maps to unload
+      NameVector::const_iterator mapItor = mapNames.begin();
+      for(; mapItor != mapNames.end(); ++mapItor)
+      {
+         // skip the map if it's not currently loaded in the GM
+         NameVector::iterator foundMap = std::find(mGMImpl->mLoadedMaps.begin(), mGMImpl->mLoadedMaps.end(), *mapItor);
+         if (foundMap == mGMImpl->mLoadedMaps.end())
+         {
+            continue;
+         }
+
+            // Get the map - no need to check further for map validity,
+         // as it has already been loaded...
+         dtDAL::Map& map = dtDAL::Project::GetInstance().GetMap(*mapItor);
+
+         // loop on all map's actors
+         std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> > proxies;
+         map.GetAllProxies(proxies);
+
+         // this call will actually fire the INFO_ACTOR_DELETE message for every deleted actor
+         // and will delete actors at the end of this frame.
+         std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> >::iterator i, iend;
+         i = proxies.begin();
+         iend = proxies.end();
+         for (; i != iend; ++i)
+         {
+            DeleteActor(**i);
+         }
+
+         // delete from the list of loaded map on the GM
+         mGMImpl->mLoadedMaps.erase(foundMap);
+         actuallyUnloadedMaps.push_back(*mapItor);
+
+         // TODO what to do with the libraries?? maybe they're needed by other maps...
+         mGMImpl->mMapChangeStateData->CloseSingleMap(*mapItor, false);
+      }
+
+      // when done, send out the INFO_MAPS_CLOSED message
+      if (!actuallyUnloadedMaps.empty())
+      {
+         dtCore::RefPtr<MapMessage> mapMessage;
+         GetMessageFactory().CreateMessage(MessageType::INFO_MAPS_CLOSED, mapMessage);
+         mapMessage->SetMapNames(actuallyUnloadedMaps);
+
+         SendMessage(*mapMessage);
+      }
+
    }
 
    ///////////////////////////////////////////////////////////////////////////////

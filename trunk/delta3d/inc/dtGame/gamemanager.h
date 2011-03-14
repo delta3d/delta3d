@@ -741,6 +741,35 @@ namespace dtGame
        */
       void CloseCurrentMap();
 
+
+      /// Load a set of maps.
+      /**
+       This method adds a set of map to what is currently loaded in the scene.
+       For every added actor, and INFO_ACTOR_CREATE message is fired, 
+       and the end of the sequence is marked by the INFO_MAPS_OPENED message.
+       The whole process is done in a single frame.
+       \param: mapNames the set of map names to be loaded.
+       \param: addBillboards  optional parameter that defaults to false that says whether or not proxy billboards should be
+                              added to the scene.  This should only be true for debugging purposes.
+       \see: ChangeMapSet
+       */
+      void OpenAdditionalMapSet(const NameVector& mapNames /*, bool addBillboards = false*/);
+
+      /// Unload a set of maps.
+      /**
+       This method unload a set of maps from the GameManager.
+       Actors belonging to the maps to be unloaded are deleted from the scene and a 
+       INFO_ACTOR_DELETE message is fired for each actor.
+       At the end of the sequence, and INFO_MAPS_CLOSED message is fired.
+       \note: The function ONLY removes actors belonging to maps currently loaded in the GameManager,
+              and leaves other actors in the scene. For a complete map change, check ChangeMapSet().
+       \param: mapNames the set of map names to be loaded.       
+       \see: ChangeMapSet
+       */
+      void CloseAdditionalMapSet(const NameVector& mapNames);
+
+
+
       /**
        * Sets a timer on the game mananger.  It will send out a timer message when it expires.
        * @param name The name of the timer
