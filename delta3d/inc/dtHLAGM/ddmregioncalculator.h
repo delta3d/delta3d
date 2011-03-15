@@ -21,11 +21,6 @@
 #ifndef DELTA_DDM_REGION_CALCULATOR
 #define DELTA_DDM_REGION_CALCULATOR
 
-#ifndef RTI_USES_STD_FSTREAM
-#define RTI_USES_STD_FSTREAM
-#endif
-#include <RTI.hh>
-
 #include <dtCore/refptr.h>
 #include <dtDAL/propertycontainer.h>
 #include <dtDAL/actorproperty.h>
