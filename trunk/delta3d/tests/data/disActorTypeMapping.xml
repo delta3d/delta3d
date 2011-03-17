@@ -24,5 +24,29 @@
         </Resource>
       </ActorData>
     </Mapping>
-  </DIS>
-</DISEntityMap>
+
+    <Mapping>
+      <EntityType>
+        <EntityKind>1</EntityKind>
+        <Domain>1</Domain>
+        <Country>1</Country>
+        <Category>0</Category>
+        <Subcategory>0</Subcategory>
+        <Specific>0</Specific>
+        <Extra>0</Extra>
+      </EntityType>
+      <ActorData>
+        <ActorType>
+          <Name>Static Mesh</Name>
+          <Category>dtcore</Category>
+        </ActorType>
+        <Resource>
+          <Descriptor>StaticMeshes:physics_crate.ive</Descriptor>
+          <Descriptor>Descriptor2</Descriptor>
+          <Descriptor>Descriptor3</Descriptor>
+          <ActorProperty>ActorProperty1</ActorProperty>
+        </Resource>
+      </ActorData>
+    </Mapping>
+  </DISEntityMap>    
+</DIS>

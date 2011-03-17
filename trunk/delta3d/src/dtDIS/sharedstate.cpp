@@ -9,59 +9,87 @@ using namespace dtDIS;
 
 
 
+//////////////////////////////////////////////////////////////////////////
 bool ActorMapConfig::AddActorMapping(const DIS::EntityType& eid, const dtDAL::ActorType* at)
 {
-   return( mMap.insert( ActorMap::value_type(eid,at) ).second );
+   DEPRECATE("bool ActorMapConfig::AddActorMapping(const DIS::EntityType&, const dtDAL::ActorType*)",
+             "void EntityMap::SetEntityActorType(const DIS::EntityType&, const dtDAL::ActorType*)");
+
+   mEntityMap->SetEntityActorType(eid, at);
+   return true;
 }
 
+//////////////////////////////////////////////////////////////////////////
 bool ActorMapConfig::RemoveActorMapping(const DIS::EntityType& eid)
 {
-   return( mMap.erase( eid )>0 );
+   DEPRECATE("bool ActorMapConfig::RemoveActorMapping(const DIS::EntityType&)",
+             "void EntityMap::RemoveEntityActorType(const DIS::EntityType&)");
+
+   mEntityMap->RemoveEntityActorType(eid);   
+   return true;
 }
 
+//////////////////////////////////////////////////////////////////////////
 bool ActorMapConfig::GetMappedActor(const DIS::EntityType& eid, const dtDAL::ActorType*& toWrite)
 {
-   ActorMap::iterator iter = mMap.find( eid );
-   if( iter != mMap.end() )
+   DEPRECATE("bool ActorMapConfig::GetMappedActor(const DIS::EntityType&, const dtDAL::ActorType*&)",
+             "const dtDAL::ActorType* EntityMap::GetMappedActorType(const DIS::EntityType&) const");
+
+   toWrite = mEntityMap->GetMappedActorType(eid);
+
+   if (toWrite)
    {
-      toWrite = iter->second.get();
       return true;
    }
-
-   //toWrite = NULL;
-   return false;
+   else
+   {
+      return false;
+   }
 }
 
-
+//////////////////////////////////////////////////////////////////////////
 bool ResourceMapConfig::AddResourceMapping(const DIS::EntityType& eid, const dtDAL::ResourceDescriptor& resource)
 {
-   return( mMap.insert( ResourceMap::value_type(eid,resource) ).second );
+   DEPRECATE("bool ResourceMapConfig::AddResourceMapping(const DIS::EntityType&, const dtDAL::ResourceDescriptor&)",
+             "void EntityMap::SetEntityResource(const DIS::EntityType&, const dtDAL::ResourceDescriptor&)");
+   
+   mEntityMap->SetEntityResource(eid, resource);
+   return true;
 }
 
+//////////////////////////////////////////////////////////////////////////
 bool ResourceMapConfig::RemoveResourceMapping(const DIS::EntityType& eid)
 {
-   return( mMap.erase( eid )>0 );
+   DEPRECATE("bool ResourceMapConfig::RemoveResourceMapping(const DIS::EntityType&)",
+             "void EntityMap::RemoveEntityResource(const DIS::EntityType&)");
+
+   mEntityMap->RemoveEntityResource(eid);
+   return true;;
 }
 
+//////////////////////////////////////////////////////////////////////////
 bool ResourceMapConfig::GetMappedResource(const DIS::EntityType& eid, dtDAL::ResourceDescriptor& toWrite) const
 {
-   ResourceMap::const_iterator iter = mMap.find( eid );
-   if( iter != mMap.end() )
-   {
-      toWrite = (iter->second);
-      return true;
-   }
+   DEPRECATE("bool ResourceMapConfig::GetMappedResource(const DIS::EntityType&, dtDAL::ResourceDescriptor&) const",
+             "const dtDAL::ResourceDescriptor& EntityMap::GetMappedResource(const DIS::EntityType&) const");
 
-   //toWrite = NULL;
-   return false;
+   toWrite = mEntityMap->GetMappedResource(eid);
+   if (toWrite == dtDAL::ResourceDescriptor::NULL_RESOURCE)
+   {
+      return false;
+   }
+   else
+   {
+      return true;
+   }   
 }
 
 
-
+//////////////////////////////////////////////////////////////////////////
 SharedState::SharedState(const std::string& connectionXMLFile,
                          const std::string& entityMappingXMLFile)
-   : mActorMapConfig()
-   , mResourceMapConfig()
+   : mActorMapConfig(&mEntityTypeMap)
+   , mResourceMapConfig(&mEntityTypeMap)
    , mActiveEntityControl()
    , mConnectionData()
    , mSiteID(1)
@@ -202,4 +230,16 @@ const dtUtil::Coordinates& dtDIS::SharedState::GetCoordinateConverter() const
 dtUtil::Coordinates& dtDIS::SharedState::GetCoordinateConverter()
 {
    return mCoordConverter;
+}
+
+//////////////////////////////////////////////////////////////////////////
+EntityMap& dtDIS::SharedState::GetEntityMap()
+{
+   return mEntityTypeMap;
+}
+
+//////////////////////////////////////////////////////////////////////////
+const EntityMap& dtDIS::SharedState::GetEntityMap() const
+{
+   return mEntityTypeMap;
 }

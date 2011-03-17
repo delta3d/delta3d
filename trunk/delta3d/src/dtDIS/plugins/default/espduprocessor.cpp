@@ -113,11 +113,10 @@ void ESPduProcessor::ApplyFullUpdateToProxy(const DIS::EntityStatePdu& pdu, dtGa
 
 void dtDIS::ESPduProcessor::CreateRemoteActor(const DIS::EntityStatePdu& pdu)
 {
-   const dtDAL::ActorType* actorType(NULL);
-   dtDIS::ActorMapConfig& emapper = mConfig->GetActorMap();
    const DIS::EntityType& entityType = pdu.getEntityType();
+   const dtDAL::ActorType* actorType = mConfig->GetEntityMap().GetMappedActorType(entityType);
 
-   if(emapper.GetMappedActor(entityType, actorType))
+   if (actorType)
    {
       dtCore::RefPtr<dtGame::ActorUpdateMessage> msg;
       mGM->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_ACTOR_CREATED, msg);

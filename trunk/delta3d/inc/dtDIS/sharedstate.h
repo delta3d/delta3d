@@ -24,16 +24,22 @@
 
 #include <dtDIS/dtdisexport.h>         // for export symbols
 
-#include <DIS/EntityID.h>              // for mapped dependency type.
 #include <DIS/EntityType.h>            // for mapped dependency type.
 #include <dtDAL/actortype.h>           // for mapped dependency type.
 #include <dtDAL/resourcedescriptor.h>  // for mapped type
 #include <dtCore/uniqueid.h>           // for mapped dependency type.
 #include <dtUtil/coordinates.h>
+#include <dtUtil/deprecationmgr.h>
 
 #include <map>
 #include <dtDIS/entityidcompare.h>     // for typedef
 #include <dtDIS/activeentitycontrol.h>
+#include <dtDIS/entitymap.h>
+#include <dtUtil/mswinmacros.h>
+
+#if defined (DELTA_WIN32)
+   #pragma warning(default:4996) //ensure the deprecated compile warning isn't disabled
+#endif
 
 namespace dtCore
 {
@@ -42,89 +48,61 @@ namespace dtCore
 
 namespace dtDIS
 {
-   ///@cond DOXYGEN_SHOULD_SKIP_THIS
-   namespace details
-   {
-      /// the model of how to compare DIS::EntityType instances.
-      struct EntityTypeCompare
-      {
-         bool operator ()(const DIS::EntityType& lhs, const DIS::EntityType& rhs) const
-         {
-            if (lhs.getCategory() != rhs.getCategory())
-               return lhs.getCategory() < rhs.getCategory();
-            else if (lhs.getCountry() != rhs.getCountry())
-               return lhs.getCountry() < rhs.getCountry();
-            else if (lhs.getDomain() != rhs.getDomain())
-               return lhs.getDomain() < rhs.getDomain();
-            else if (lhs.getEntityKind() != rhs.getEntityKind())
-               return lhs.getEntityKind() < rhs.getEntityKind();
-            else if (lhs.getExtra() != rhs.getExtra())
-               return lhs.getExtra() < rhs.getExtra();
-            else if (lhs.getSpecific() != rhs.getSpecific())
-               return lhs.getSpecific() < rhs.getSpecific();
-            else if (lhs.getSubcategory() != rhs.getSubcategory())
-               return lhs.getSubcategory() < rhs.getSubcategory();           
-            else 
-               return false;
-         }
-      };
-   } // end namespace details
-   ///@endcond
 
-
-   ///\brief a structure to maintain the one-to-one
-   /// relationship between the DIS::EntityID and the dtDAL::ActorType.
+   ///Deprecated 3/17/2011  Use dtDIS::EntityMap instead
    struct DT_DIS_EXPORT ActorMapConfig
    {
+      ActorMapConfig(EntityMap* entityMap)
+         :mEntityMap(entityMap)
+      {         
+      }
+
       /// Adds a mapping from the DIS::EntityID to the dtDAL::ActorType if no mapping exists.
       /// @return true if no previous mapping existed.  false if a mapping existed already.
-      bool AddActorMapping(const DIS::EntityType& eid, const dtDAL::ActorType* at);
+      bool DEPRECATE_FUNC AddActorMapping(const DIS::EntityType& eid, const dtDAL::ActorType* at);
 
       /// Takes the one to one mapping from the container for the supplied key.
       /// @param eid the key to the mapping.
       /// @return true if eid was found in the map.  false if it was not found.
-      bool RemoveActorMapping(const DIS::EntityType& eid);
+      bool DEPRECATE_FUNC RemoveActorMapping(const DIS::EntityType& eid);
 
       /// Introduces the ActorType mapped to the EntityID.
       /// @param toWrite Overwritten with the instance of the mapped ActorType.
       /// @param eid The key being stored.
       /// @return true if eid was found in the map.  false if it was not found.
-      bool GetMappedActor(const DIS::EntityType& eid, const dtDAL::ActorType*& toWrite);
+      bool DEPRECATE_FUNC GetMappedActor(const DIS::EntityType& eid, const dtDAL::ActorType*& toWrite);
 
    private:
-      /// a convenience typedef
-      typedef dtCore::RefPtr<const dtDAL::ActorType> RefActorType;
-
-      /// a convenience typedef
-      typedef std::map<DIS::EntityType,RefActorType,details::EntityTypeCompare> ActorMap;
-
-      /// The controlled data.
-      ActorMap mMap;
+      EntityMap* mEntityMap;
    };
 
-   ///\brief a structure to maintain the relationship between the DIS::EntityID and the resources available.
+   ///Deprecated 3/17/2011  Use dtDIS::EntityMap instead
    struct DT_DIS_EXPORT ResourceMapConfig
    {
    public:
+      ResourceMapConfig(EntityMap* entityMap):
+         mEntityMap(entityMap)
+      {       
+      }
+
       /// Adds a mapping from the DIS::EntityID to the resource identifier if no mapping exists.
       /// @return true if no previous mapping existed.  false if a mapping existed already.
-      bool AddResourceMapping(const DIS::EntityType& eid, const dtDAL::ResourceDescriptor& resource);
+      bool DEPRECATE_FUNC AddResourceMapping(const DIS::EntityType& eid, const dtDAL::ResourceDescriptor& resource);
 
       /// Takes the one to one mapping from the container for the supplied key.
       /// @param eid the key to the mapping.
       /// @return true if eid was found and removed from the map.  false if it was not removed.
-      bool RemoveResourceMapping(const DIS::EntityType& eid);
+      bool DEPRECATE_FUNC RemoveResourceMapping(const DIS::EntityType& eid);
 
       /// Introduces the ActorType mapped to the EntityID.
       /// @param toWrite Overwritten with the instance of the mapped resource identifier.
       /// @param eid The key being stored.
       /// @return true if eid was found in the map.  false if it was not found.
-      bool GetMappedResource(const DIS::EntityType& eid, dtDAL::ResourceDescriptor& toWrite) const;
+      bool DEPRECATE_FUNC GetMappedResource(const DIS::EntityType& eid, dtDAL::ResourceDescriptor& toWrite) const;
 
    private:
-      typedef std::map<DIS::EntityType,dtDAL::ResourceDescriptor,details::EntityTypeCompare> ResourceMap;
+      EntityMap* mEntityMap;
 
-      ResourceMap mMap;
    };
 
    ///\brief the information needed to connect to the DIS network.
@@ -159,8 +137,6 @@ namespace dtDIS
    };
 
    ///\brief The data to be shared among plugins.
-   ///\todo it would be good to have a file that maps the 'appearance' values to an asset handle,
-   /// rather than full actor "types" just to change the asset.
    class DT_DIS_EXPORT SharedState
    {
    public:
@@ -168,11 +144,8 @@ namespace dtDIS
                   const std::string& entityMappingXMLFile = "");
       ~SharedState();
 
-      ActorMapConfig& GetActorMap();
-      const ActorMapConfig& GetActorMap() const;
-
-      ResourceMapConfig& GetResourceMap();
-      const ResourceMapConfig& GetResourceMap() const;
+      EntityMap& GetEntityMap();
+      const EntityMap& GetEntityMap() const;
 
       ActiveEntityControl& GetActiveEntityControl();
       const ActiveEntityControl& GetActiveEntityControl() const;
@@ -190,9 +163,19 @@ namespace dtDIS
       const dtUtil::Coordinates& GetCoordinateConverter() const;
       dtUtil::Coordinates& GetCoordinateConverter();
 
+      ///Deprecated 3/17/2011
+      DEPRECATE_FUNC ActorMapConfig& GetActorMap();
+      ///Deprecated 3/17/2011
+      DEPRECATE_FUNC const ActorMapConfig& GetActorMap() const;
+      ///Deprecated 3/17/2011
+      DEPRECATE_FUNC ResourceMapConfig& GetResourceMap();
+      ///Deprecated 3/17/2011
+      DEPRECATE_FUNC const ResourceMapConfig& GetResourceMap() const;
+
    private:
-      ActorMapConfig mActorMapConfig;
-      ResourceMapConfig mResourceMapConfig;
+      ActorMapConfig mActorMapConfig; ///>Deprecated
+      ResourceMapConfig mResourceMapConfig; ///>Deprecated
+      EntityMap mEntityTypeMap;
       ActiveEntityControl mActiveEntityControl;
       ConnectionData mConnectionData;
       unsigned short mSiteID;       ///<For outgoing DIS packets

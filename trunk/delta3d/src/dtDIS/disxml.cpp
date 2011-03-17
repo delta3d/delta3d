@@ -428,18 +428,14 @@ void EntityMapXMLHandler::endElement(const XMLCh* const uri,const XMLCh* const l
       return;
    }
 
-   switch( mNodeStack.top() )
+   switch (mNodeStack.top())
    {
    case ACTORDATA_RESOURCE:
       {
          // modify the resource mapping
-         dtDAL::ResourceDescriptor descriptor( mCurrentResourceIdentifier );
+         dtDAL::ResourceDescriptor descriptor(mCurrentResourceIdentifier);
 
-         ResourceMapConfig& rmapper = mSharedState->GetResourceMap();
-         if( !rmapper.AddResourceMapping( mCurrentEntityType, descriptor ) )
-         {
-            LOG_ERROR("DIS Entity was not mapped for resource with identifier: " + mCurrentResourceIdentifier )
-         }
+         mSharedState->GetEntityMap().SetEntityResource(mCurrentEntityType, descriptor);
 
          mCurrentResourceIdentifier.clear();
       } 
@@ -483,13 +479,10 @@ void EntityMapXMLHandler::endElement(const XMLCh* const uri,const XMLCh* const l
          // find the actortype
          const dtDAL::ActorType* actortype = dtDAL::LibraryManager::GetInstance().FindActorType(mCurrentActorTypeCategory, mCurrentActorTypeName);
 
-         if( actortype != NULL )
+         if (actortype != NULL)
          {
             // make a mapping
-            if( !mSharedState->GetActorMap().AddActorMapping( mCurrentEntityType, actortype ) )
-            {
-               LOG_ERROR("DIS Entity was not mapped for Actor Type with name: " + mCurrentActorTypeName )
-            }
+            mSharedState->GetEntityMap().SetEntityActorType(mCurrentEntityType, actortype);
          }
          else
          {
