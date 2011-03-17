@@ -99,10 +99,6 @@ public:
    {
       dtCore::ShaderManager& shaderManager = dtCore::ShaderManager::GetInstance();
       shaderManager.LoadAndAssignShader(*mObject, "Shaders/testshader.dtshader");
-      
-      dtCore::ShaderProgram* testProgram = shaderManager.FindShaderPrototype("TestShader");
-      osg::Program* osgProgram = testProgram->GetShaderProgram();
-      osgProgram->setParameter(GL_GEOMETRY_VERTICES_OUT_EXT, 3);
 
       mEnabled = true;
    }
@@ -143,7 +139,7 @@ public:
       return verdict;
    }
 
-   virtual void PreFrame(const double deltaFrameTime )
+   virtual void PreFrame(const double deltaFrameTime)
    {
       mTotalTime += deltaFrameTime;
 
@@ -188,8 +184,8 @@ private:
 
    RefPtr<dtABC::LabelActor> mLabel;
 
-   float                  mTotalTime;
-   bool                   mEnabled;
+   float mTotalTime;
+   bool mEnabled;
 
 };
 

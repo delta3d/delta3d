@@ -99,7 +99,7 @@ void ObjectWorkspace::GetRecursiveFileInfoFromDir(const QString& rootDir, const 
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ObjectWorkspace::dragEnterEvent(QDragEnterEvent *event)
+void ObjectWorkspace::dragEnterEvent(QDragEnterEvent* event)
 {
    if (event->mimeData()->hasFormat("text/uri-list"))
    {
@@ -258,20 +258,26 @@ void ObjectWorkspace::CreateShaderToolbarActions()
 {
    QIcon compileIcon(":/images/recompile.png");
    QIcon vertexSourceIcon(":/images/vertexShaderSource.png");
+   QIcon geomSourceIcon(":/images/geomShaderSource.png");
    QIcon fragmentSourceIcon(":/images/fragmentShaderSource.png");
 
    mRecompileAction = new QAction(compileIcon, tr("Recompile Shaders"), this);
    mOpenVertexShaderAction = new QAction(vertexSourceIcon, tr("Open Current Vertex Shader"), this);
+   mOpenGeometryShaderAction = new QAction(geomSourceIcon, tr("Open Current Geometry Shader"), this);
    mOpenFragmentShaderAction = new QAction(fragmentSourceIcon, tr("Open Current Fragment Shader"), this);
 
    mOpenVertexShaderAction->setEnabled(false);
    mOpenFragmentShaderAction->setEnabled(false);
+   mOpenGeometryShaderAction->setEnabled(false);
    mRecompileAction->setEnabled(false);
 
    connect(mRecompileAction, SIGNAL(triggered()), this, SLOT(OnRecompileClicked()));
 
    connect(mOpenVertexShaderAction, SIGNAL(triggered()),
            mResourceDock, SLOT(OnOpenCurrentVertexShaderSources()));
+
+   connect(mOpenGeometryShaderAction, SIGNAL(triggered()),
+           mResourceDock, SLOT(OnOpenCurrentGeometryShaderSources()));
 
    connect(mOpenFragmentShaderAction, SIGNAL(triggered()),
            mResourceDock, SLOT(OnOpenCurrentFragmentShaderSources()));
@@ -297,6 +303,7 @@ void ObjectWorkspace::CreateToolbars()
 
    mShaderToolbar = addToolBar("Shader toolbar");
    mShaderToolbar->addAction(mOpenVertexShaderAction);
+   mShaderToolbar->addAction(mOpenGeometryShaderAction);
    mShaderToolbar->addAction(mOpenFragmentShaderAction);
    mShaderToolbar->addAction(mRecompileAction);
 }
@@ -367,6 +374,12 @@ void ObjectWorkspace::OnToggleVertexShaderSource(bool enabled)
    // If a shader is editable, allow recompile
    mRecompileAction->setEnabled(mOpenVertexShaderAction->isEnabled() ||
                                 mOpenFragmentShaderAction->isEnabled());
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ObjectWorkspace::OnToggleGeometryShaderSource(bool enabled)
+{
+   mOpenGeometryShaderAction->setEnabled(enabled);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -770,6 +783,9 @@ void ObjectWorkspace::SetupConnectionsWithViewer()
    connect(this->GetResourceObject(), SIGNAL(ToggleVertexShaderSources(bool)),
       this, SLOT(OnToggleVertexShaderSource(bool)));
 
+   connect(this->GetResourceObject(), SIGNAL(ToggleGeometryShaderSources(bool)),
+      this, SLOT(OnToggleGeometryShaderSource(bool)));
+
    connect(this->GetResourceObject(), SIGNAL(ToggleFragmentShaderSources(bool)),
       this, SLOT(OnToggleFragmentShaderSource(bool)));
 
@@ -786,6 +802,5 @@ void ObjectWorkspace::SetupConnectionsWithViewer()
    // Editing connections
    connect((QObject*)this->mWorldSpaceAction, SIGNAL(triggered()), mViewer, SLOT(OnWorldSpaceMode()));
    connect((QObject*)this->mLocalSpaceAction, SIGNAL(triggered()), mViewer, SLOT(OnLocalSpaceMode()));
-
 }
 

@@ -574,14 +574,18 @@ void ResourceDock::OnShaderItemChanged(QTreeWidgetItem* item, int column)
          if (program)
          {
             const std::vector<std::string>& vertShaderList = program->GetVertexShaders();
+            const std::vector<std::string>& geomShaderList = program->GetGeometryShaders();
             const std::vector<std::string>& fragShaderList = program->GetFragmentShaders();
 
             bool vertexEnabled = vertShaderList.size()? true: false;
+            bool geomEnabled = geomShaderList.size() ? true: false;
             bool fragmentEnabled = fragShaderList.size()? true: false;
 
             ToggleVertexShaderSources(vertexEnabled);
+            ToggleGeometryShaderSources(geomEnabled);
             ToggleFragmentShaderSources(fragmentEnabled);
-            mShaderTreeWidget->SetShaderSourceEnabled(vertexEnabled, fragmentEnabled);
+
+            mShaderTreeWidget->SetShaderSourceEnabled(vertexEnabled, geomEnabled, fragmentEnabled);
          }
 
          // Store so we know where the source files can be found
@@ -610,15 +614,17 @@ void ResourceDock::OnShaderItemChanged(QTreeWidgetItem* item, int column)
 
          // Only clear the shader program if we are unchecking the current one.
          if (fileName == mCurrentShaderFile &&
-            groupName == mCurrentShaderGroup &&
-            programName == mCurrentShaderProgram)
+             groupName == mCurrentShaderGroup &&
+             programName == mCurrentShaderProgram)
          {
             mCurrentShaderGroup.clear();
             mCurrentShaderProgram.clear();
 
             ToggleVertexShaderSources(false);
+            ToggleGeometryShaderSources(false);
             ToggleFragmentShaderSources(false);
-            mShaderTreeWidget->SetShaderSourceEnabled(false, false);
+
+            mShaderTreeWidget->SetShaderSourceEnabled(false, false, false);
          }
 
          emit RemoveShader();
@@ -712,7 +718,7 @@ void ResourceDock::OnOpenCurrentVertexShaderSources()
    {
       QTreeWidgetItem* currentItem = itemList.at(0);
 
-      dtCore::ShaderProgram *program =
+      dtCore::ShaderProgram* program =
          shaderManager.FindShaderPrototype(currentItem->text(0).toStdString(), currentItem->parent()->text(0).toStdString());
 
       if (program)
@@ -723,8 +729,8 @@ void ResourceDock::OnOpenCurrentVertexShaderSources()
    }
 }
 
-///////////////////////////////////////////////////////////////////////////////
-void ResourceDock::OnOpenCurrentFragmentShaderSources()
+////////////////////////////////////////////////////////////////////////////////
+void ResourceDock::OnOpenCurrentGeometryShaderSources()
 {
    dtCore::ShaderManager &shaderManager = dtCore::ShaderManager::GetInstance();
 
@@ -734,7 +740,29 @@ void ResourceDock::OnOpenCurrentFragmentShaderSources()
    {
       QTreeWidgetItem* currentItem = itemList.at(0);
 
-      dtCore::ShaderProgram *program =
+      dtCore::ShaderProgram* program =
+         shaderManager.FindShaderPrototype(currentItem->text(0).toStdString(), currentItem->parent()->text(0).toStdString());
+
+      if (program)
+      {
+         const std::vector<std::string>& fragShaderList = program->GetGeometryShaders();
+         OpenFilesInTextEditor(fragShaderList);
+      }
+   }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void ResourceDock::OnOpenCurrentFragmentShaderSources()
+{
+   dtCore::ShaderManager& shaderManager = dtCore::ShaderManager::GetInstance();
+
+   QList<QTreeWidgetItem*> itemList = mShaderTreeWidget->selectedItems();
+
+   if (itemList.size() > 0)
+   {
+      QTreeWidgetItem* currentItem = itemList.at(0);
+
+      dtCore::ShaderProgram* program =
          shaderManager.FindShaderPrototype(currentItem->text(0).toStdString(), currentItem->parent()->text(0).toStdString());
 
       if (program)
@@ -920,11 +948,11 @@ void ResourceDock::OnLightItemClicked(QTreeWidgetItem* item, int column)
 
          // Change a color attribute of the light.
          if (item == light.ambient ||
-            item == light.diffuse ||
-            item == light.specular ||
-            light.ambient->indexOfChild(item) != -1 ||
-            light.diffuse->indexOfChild(item) != -1 ||
-            light.specular->indexOfChild(item) != -1)
+             item == light.diffuse ||
+             item == light.specular ||
+             light.ambient->indexOfChild(item) != -1 ||
+             light.diffuse->indexOfChild(item) != -1 ||
+             light.specular->indexOfChild(item) != -1)
          {
             QColor color;
 

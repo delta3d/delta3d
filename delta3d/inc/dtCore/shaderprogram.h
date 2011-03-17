@@ -67,7 +67,6 @@ namespace dtCore
       */
       const std::string& GetName() const { return mName; }
 
-
       /**
       * This method adds a shader source meant for geometry processing from the
       * specified file name.
@@ -76,6 +75,19 @@ namespace dtCore
       * @throw ShaderSourceException
       */
       void AddGeometryShader(const std::string& fileName);
+
+      /**
+      * This method sets the number of vertices that the geometry shader is expected to output.
+      * This value must be correctly set in order for the program to work.
+      * @param The number of vertices that the geometry shader should output.
+      */
+      void SetGeometryShaderVerticesOut(unsigned int verticesOut) { mGeometryShaderVerticesOut = verticesOut; }
+
+      /**
+      * Gets the number of vertices that the geometry shader is expected to emit.
+      * @return The number of vertices the geometry shader should emit.
+      */
+      unsigned int GetGeometryShaderVerticesOut() { return mGeometryShaderVerticesOut; }
 
       /**
       * Gets the vertex shaders file names.
@@ -267,6 +279,8 @@ namespace dtCore
       std::vector<std::string> mGeometryShaderFileName;
       std::vector<std::string> mVertexShaderFileName;
       std::vector<std::string> mFragmentShaderFileName;
+
+      unsigned int mGeometryShaderVerticesOut;
 
       //List of parameters attached to this shader.  Parameters could be texture handles,
       //floats, ints, or special parameters like simulation time, or simulation delta time.

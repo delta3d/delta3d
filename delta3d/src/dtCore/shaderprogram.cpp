@@ -62,6 +62,7 @@ namespace dtCore
       mGeometryCacheKey = "";
       mVertexCacheKey = "";
       mFragmentCacheKey = "";
+      mGeometryShaderVerticesOut = 3;
       mFragmentShaderFileName.clear();
       mVertexShaderFileName.clear();
       mGeometryShaderFileName.clear();
@@ -295,7 +296,9 @@ namespace dtCore
 
       // copy main values
       newShader->mVertexShaderFileName = GetVertexShaders();
+      newShader->mGeometryShaderFileName = GetGeometryShaders();
       newShader->mFragmentShaderFileName = GetFragmentShaders();
+      newShader->mGeometryShaderVerticesOut = mGeometryShaderVerticesOut;
       newShader->mGLSLProgram = mGLSLProgram;
 	   newShader->mGeometryCacheKey = mGeometryCacheKey;
       newShader->mVertexCacheKey = mVertexCacheKey;
