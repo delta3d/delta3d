@@ -53,7 +53,7 @@ namespace dtCore
           * Gets the name currently assigned to this group.
           * @return The groups name.
           */
-         const std::string &GetName() const { return mName; }
+         const std::string& GetName() const { return mName; }
 
          /**
           * Adds a shader to the group's list of shaders.
@@ -88,13 +88,13 @@ namespace dtCore
           * Searches the group for a shader with the specified name.
           * @return The shader if found, or NULL if the shader could not be located.
           */
-         ShaderProgram *FindShader(const std::string &name);
+         ShaderProgram* FindShader(const std::string &name);
 
          /**
           * Searches the group for a shader with the specified name. (const-version).
           * @return A const pointer to the shader or NULL if the shader could not be found.
           */
-         const ShaderProgram *FindShader(const std::string &name) const;
+         const ShaderProgram* FindShader(const std::string &name) const;
 
          /**
           * Gets the number of shaders currently owned by this shader group.
@@ -116,12 +116,12 @@ namespace dtCore
           *    list, or the shader specified as default when it was added,
           *    or NULL if there are no shaders in this group.
           */
-         const ShaderProgram *GetDefaultShader() const { return mDefaultShader.get(); }
+         const ShaderProgram* GetDefaultShader() const { return mDefaultShader.get(); }
 
          /**
           * Non const verstion of GetDefaultShader().
           */
-         ShaderProgram *GetDefaultShader() { return mDefaultShader.get(); }
+         ShaderProgram* GetDefaultShader() { return mDefaultShader.get(); }
 
          /**
           * Updates this shader group's state by calling update on each shader it is

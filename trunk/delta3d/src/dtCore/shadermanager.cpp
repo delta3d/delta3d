@@ -362,6 +362,13 @@ namespace dtCore
       {
          LOG_WARNING("Error assigning shader: " + newShader->GetName() + "  Shader program was invalid.");
       }
+    
+      // If this contains a geometry shader, the vertex output number needs to be set
+      if (newShader->GetGeometryShaders().size() > 0)
+      {
+         unsigned int verticesOut = newShader->GetGeometryShaderVerticesOut();
+         newShader->GetShaderProgram()->setParameter(GL_GEOMETRY_VERTICES_OUT_EXT, verticesOut);
+      }
 
       //I realize const-cast is not a great idea here, but I did not want the have a non-const version
       //of the GetShaderProgram() method on the shader class.

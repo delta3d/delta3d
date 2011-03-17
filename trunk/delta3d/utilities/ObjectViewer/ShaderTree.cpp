@@ -38,9 +38,12 @@ ShaderTree::~ShaderTree()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ShaderTree::SetShaderSourceEnabled(bool vertexEnabled, bool fragmentEnabled)
+void ShaderTree::SetShaderSourceEnabled(bool vertexEnabled,
+                                        bool geometryEnabled,
+                                        bool fragmentEnabled)
 {
    mOpenVertexSource->setEnabled(vertexEnabled);
+   mOpenGeometrySource->setEnabled(geometryEnabled);
    mOpenFragmentSource->setEnabled(fragmentEnabled);
 }
 
@@ -64,6 +67,11 @@ void ShaderTree::CreateContextActions()
    mOpenVertexSource->setCheckable(false);
    mOpenVertexSource->setStatusTip(tr("Open Current Vertex Shader"));
    connect(mOpenVertexSource, SIGNAL(triggered()), parent(), SLOT(OnOpenCurrentVertexShaderSources()));
+
+   mOpenGeometrySource = new QAction(tr("&Open Geometry Source"), this);
+   mOpenGeometrySource->setCheckable(false);
+   mOpenGeometrySource->setStatusTip(tr("Open Current Geometry Shader"));
+   connect(mOpenGeometrySource, SIGNAL(triggered()), parent(), SLOT(OnOpenCurrentGeometryShaderSources()));
 
    mOpenFragmentSource = new QAction(tr("&Open Fragment Source"), this);
    mOpenFragmentSource->setCheckable(false);

@@ -35,7 +35,9 @@ public:
    ShaderTree(QWidget* parent = NULL);
    ~ShaderTree();
 
-   void SetShaderSourceEnabled(bool vertexEnabled, bool fragmentEnabled);
+   void SetShaderSourceEnabled(bool vertexEnabled, 
+                               bool geometryEnabled,
+                               bool fragmentEnabled);
 
 private:
 
@@ -49,6 +51,7 @@ private:
    QAction* mRemoveShaderDef;
 
    QAction* mOpenVertexSource;
+   QAction* mOpenGeometrySource;
    QAction* mOpenFragmentSource;
 
    QMenu*   mDefinitionContext;

@@ -33,6 +33,7 @@
 #include <dtCore/shaderparamoscillator.h>
 
 #include <dtUtil/exception.h>
+#include <dtUtil/stringutils.h>
 #include <dtUtil/xercesutils.h>
 #include <dtUtil/xerceserrorhandler.h>
 
@@ -59,6 +60,7 @@ namespace dtCore
 
    const std::string ShaderXML::SHADER_ELEMENT("shader");
    const std::string ShaderXML::SHADER_ATTRIBUTE_NAME("name");
+   const std::string ShaderXML::SHADER_ATTRIBUTE_VERTICES_OUT("verticesout");
    const std::string ShaderXML::SHADER_ATTRIBUTE_DEFAULT("default");
    const std::string ShaderXML::SHADER_SOURCE_ELEMENT("source");
    const std::string ShaderXML::SHADER_SOURCE_ATTRIBUTE_TYPE("type");
@@ -287,9 +289,17 @@ namespace dtCore
    {
       //Shader elements have a name attribute and possibly a default attribute telling the
       //shader group that this shader is the default.
-      std::string shaderName = GetElementAttribute(*shaderElem,ShaderXML::SHADER_ATTRIBUTE_NAME);
-      std::string isDefault = GetElementAttribute(*shaderElem,ShaderXML::SHADER_ATTRIBUTE_DEFAULT);
+      std::string shaderName = GetElementAttribute(*shaderElem, ShaderXML::SHADER_ATTRIBUTE_NAME);
+      std::string isDefault = GetElementAttribute(*shaderElem, ShaderXML::SHADER_ATTRIBUTE_DEFAULT);
+      std::string verticesout = GetElementAttribute(*shaderElem, ShaderXML::SHADER_ATTRIBUTE_VERTICES_OUT);
+
       dtCore::RefPtr<ShaderProgram> newShader = new ShaderProgram(shaderName);
+
+      // If the shader uses a geometry shader, this should be specified
+      if (!verticesout.empty())
+      {
+         newShader->SetGeometryShaderVerticesOut(dtUtil::ToType<unsigned int>(verticesout));
+      }
 
       //Children of a shader element are either shader sources or parameters...
       xercesc::DOMNodeList* children = shaderElem->getChildNodes();
@@ -354,9 +364,11 @@ namespace dtCore
 
       dtUtil::XMLStringConverter fileConverter(file->getNodeValue());
 
-	  if (type == ShaderXML::SHADER_SOURCE_TYPE_GEOMETRY)
+     if (type == ShaderXML::SHADER_SOURCE_TYPE_GEOMETRY)
      {
-		  shader.AddGeometryShader(fileConverter.ToString());
+        std::string verticesOut = GetElementAttribute(*sourceElem, ShaderXML::SHADER_ATTRIBUTE_VERTICES_OUT);
+
+        shader.AddGeometryShader(fileConverter.ToString());
      }
      else if (type == ShaderXML::SHADER_SOURCE_TYPE_VERTEX)
      {

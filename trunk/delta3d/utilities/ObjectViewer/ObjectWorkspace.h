@@ -68,6 +68,7 @@ public slots:
    void OnToggleGenerateTangents();
    void OnRecompileClicked();
    void OnToggleVertexShaderSource(bool enabled);
+   void OnToggleGeometryShaderSource(bool enabled);
    void OnToggleFragmentShaderSource(bool enabled);
    void OnRemoveShaderDef(const std::string& filename);
    void OnLoadMap(const std::string& mapName);
@@ -105,6 +106,7 @@ private:
    // Shader Toolbar
    QAction* mRecompileAction;
    QAction* mOpenVertexShaderAction;
+   QAction* mOpenGeometryShaderAction;
    QAction* mOpenFragmentShaderAction;
 
    QToolBar* mCoordinateToolbar;

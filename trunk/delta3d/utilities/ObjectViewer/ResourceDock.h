@@ -62,6 +62,7 @@ public:
    QTreeWidgetItem* FindGeometryItem(const std::string& fullName) const;
    QTreeWidgetItem* FindShaderFileItem(const std::string& filename) const;
    QTreeWidgetItem* FindShaderGroupItem(const std::string& groupName, const QTreeWidgetItem* fileItem) const;
+
    void ReselectCurrentShaderItem();
 
    bool FindShaderFileEntryName(const std::string& entryName) const;
@@ -78,6 +79,7 @@ signals:
    void ApplyShader(const std::string& group, const std::string& name);
    void RemoveShader();
    void ToggleVertexShaderSources(bool enabled);
+   void ToggleGeometryShaderSources(bool enabled);
    void ToggleFragmentShaderSources(bool enabled);
    void RemoveShaderDef(const std::string& filename);
 
@@ -112,6 +114,7 @@ public slots:
    void OnRemoveShaderDef();
 
    void OnOpenCurrentVertexShaderSources();
+   void OnOpenCurrentGeometryShaderSources();
    void OnOpenCurrentFragmentShaderSources();
 
    void OnLightUpdate(const LightInfo& lightInfo);

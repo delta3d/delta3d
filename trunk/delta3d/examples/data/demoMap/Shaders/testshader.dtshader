@@ -2,7 +2,7 @@
 
 <shaderlist>
    <shadergroup name="DemoShaders">
-      <shader name="TestShader" default="yes">
+      <shader name="TestShader" default="yes" verticesout="3">
          <source type="Vertex">Shaders/testshader.vert</source>
          <source type="Geometry">Shaders/testshader.geom</source>
          <source type="Fragment">Shaders/testshader.frag</source>
