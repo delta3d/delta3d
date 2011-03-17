@@ -20,6 +20,8 @@
 * THE SOFTWARE.
 */
 #include <prefix/unittestprefix.h>
+
+
 #include <cppunit/extensions/HelperMacros.h>
 #include <dtDIS/disxml.h>
 #include <dtDIS/propertyname.h>
@@ -37,14 +39,18 @@ namespace dtDIS
    {
       CPPUNIT_TEST_SUITE( XMLParsing );
       CPPUNIT_TEST( TestOverwritingPropertyNames );
-      CPPUNIT_TEST( TestMappingEntityTypeToActorType );
+      CPPUNIT_TEST( TestEntityTypeToActorTypeExactMatch );
+      CPPUNIT_TEST(TestEntityTypeToActorTypeNoMatch);
+      CPPUNIT_TEST(TestEntityTypeToActorTypeCloseMatch);
       CPPUNIT_TEST_SUITE_END();
 
       void setup();
       void teardown();
 
       void TestOverwritingPropertyNames();
-      void TestMappingEntityTypeToActorType();
+      void TestEntityTypeToActorTypeExactMatch();
+      void TestEntityTypeToActorTypeNoMatch();
+      void TestEntityTypeToActorTypeCloseMatch();
    };
 
    using namespace dtDIS;
@@ -86,7 +92,7 @@ namespace dtDIS
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void XMLParsing::TestMappingEntityTypeToActorType()
+   void XMLParsing::TestEntityTypeToActorTypeExactMatch()
    {
       //example file maps the DIS EntityType below to a StaticMesh actor
 
@@ -97,16 +103,63 @@ namespace dtDIS
       dtDIS::SharedState config("", path);
       DIS::EntityType eid;
       eid.setEntityKind(1);
-      eid.setCategory(2);
+      eid.setDomain(0);
       eid.setCountry(3);
+      eid.setCategory(2);
+      eid.setSubcategory(0);
+      eid.setSpecific(0);
 
-      const dtDAL::ActorType* actorType = NULL;
-
-      bool res = config.GetActorMap().GetMappedActor(eid, actorType);
+      const dtDAL::ActorType* actorType = config.GetEntityMap().GetMappedActorType(eid);
+      
       CPPUNIT_ASSERT_MESSAGE("Did not find a matching ActorType based on the supplied DIS::EntityType",
-                            res == true);
+                            actorType != NULL);
 
       CPPUNIT_ASSERT_MESSAGE("ActorMap returned back the wrong ActorType for the supplied DIS::EntityType",
                               dtActors::EngineActorRegistry::STATIC_MESH_ACTOR_TYPE.get() == actorType);      
    }
+
+   //////////////////////////////////////////////////////////////////////////
+   void XMLParsing::TestEntityTypeToActorTypeNoMatch()
+   {
+      dtUtil::SetDataFilePathList(dtUtil::GetDeltaDataPathList() + ":" + dtUtil::GetDeltaRootPath() + "/tests/data");
+      std::string path = dtUtil::FindFileInPathList("disActorTypeMapping.xml");
+      CPPUNIT_ASSERT(dtUtil::FileUtils::GetInstance().FileExists(path));
+
+      dtDIS::SharedState config("", path);
+      DIS::EntityType eid;
+      eid.setEntityKind(0);
+      eid.setDomain(1);
+      eid.setCountry(2);
+      eid.setCategory(3);
+      eid.setSubcategory(4);
+      eid.setSpecific(5);
+
+      const dtDAL::ActorType* actorType = config.GetEntityMap().GetMappedActorType(eid);
+
+      CPPUNIT_ASSERT_MESSAGE("Should not have found a matching ActorType based on the supplied DIS::EntityType",
+                              NULL == actorType);
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void XMLParsing::TestEntityTypeToActorTypeCloseMatch()
+   {
+      dtUtil::SetDataFilePathList(dtUtil::GetDeltaDataPathList() + ":" + dtUtil::GetDeltaRootPath() + "/tests/data");
+      std::string path = dtUtil::FindFileInPathList("disActorTypeMapping.xml");
+      CPPUNIT_ASSERT(dtUtil::FileUtils::GetInstance().FileExists(path));
+
+      dtDIS::SharedState config("", path);
+      DIS::EntityType eid;
+      eid.setEntityKind(1);
+      eid.setDomain(1);
+      eid.setCountry(1);
+      eid.setCategory(5);
+      eid.setSubcategory(6);
+      eid.setSpecific(7);
+
+      const dtDAL::ActorType* actorType = config.GetEntityMap().GetMappedActorType(eid);
+
+      CPPUNIT_ASSERT_MESSAGE("Should have found a close match ActorType based on the supplied DIS::EntityType",
+                              actorType != NULL);
+   }
+
 }

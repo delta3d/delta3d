@@ -24,7 +24,9 @@
 
 #include <cppunit/extensions/HelperMacros.h>
 #include <DIS/EntityType.h>
+#include <dtDIS/entitymap.h>
 #include <dtDIS/sharedstate.h>
+#include <dtDAL/librarymanager.h>
 
 namespace dtDIS
 {
@@ -32,12 +34,24 @@ namespace dtDIS
    {
       CPPUNIT_TEST_SUITE( ActorMapConfigTests );
       CPPUNIT_TEST( EntityTypeCompare );
+      CPPUNIT_TEST(TestActorTypeAdding);
+      CPPUNIT_TEST(TestActorTypeRemovingNoAddedResource);
+      CPPUNIT_TEST(TestActorTypeRemovingWithAddedResource);
+      CPPUNIT_TEST(TestResourceDescriptorAdding);
+      CPPUNIT_TEST(TestResourceDescriptorRemovingNoAddedActorType);
+      CPPUNIT_TEST(TestResourceDescriptorRemovingWithAddedActorType);
       CPPUNIT_TEST_SUITE_END();
 
       void setup(){};
       void teardown(){};
 
       void EntityTypeCompare();
+      void TestActorTypeAdding();
+      void TestActorTypeRemovingNoAddedResource();
+      void TestActorTypeRemovingWithAddedResource();
+      void TestResourceDescriptorAdding();
+      void TestResourceDescriptorRemovingNoAddedActorType();
+      void TestResourceDescriptorRemovingWithAddedActorType();
    };
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -67,6 +81,155 @@ namespace dtDIS
 
       CPPUNIT_ASSERT_MESSAGE("dtDIS::EntityTypeCompare failed the 'Strict Weak Ordering'",
                              lrResult != rlResult);
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void ActorMapConfigTests::TestActorTypeAdding()
+   {
+      DIS::EntityType eid;
+      eid.setEntityKind(1);
+      eid.setDomain(0);
+      eid.setCountry(3);
+      eid.setCategory(2);
+      eid.setSubcategory(0);
+      eid.setSpecific(0);
+
+      std::vector<const dtDAL::ActorType*> actorTypes;
+      dtDAL::LibraryManager::GetInstance().GetActorTypes(actorTypes);
+      
+      EntityMap mapping;
+      mapping.SetEntityActorType(eid, actorTypes[0]);
+
+      const dtDAL::ActorType* foundType = mapping.GetMappedActorType(eid);
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("EntityMap didn't return back the correct ActorType",
+                                   actorTypes[0], foundType);
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void ActorMapConfigTests::TestActorTypeRemovingNoAddedResource()
+   {
+      DIS::EntityType eid;
+      eid.setEntityKind(1);
+      eid.setDomain(0);
+      eid.setCountry(3);
+      eid.setCategory(2);
+      eid.setSubcategory(0);
+      eid.setSpecific(0);
+
+      std::vector<const dtDAL::ActorType*> actorTypes;
+      dtDAL::LibraryManager::GetInstance().GetActorTypes(actorTypes);
+
+      EntityMap mapping;
+      mapping.SetEntityActorType(eid, actorTypes[0]);
+      mapping.RemoveEntityActorType(eid); //should have removed all reference to eid
+
+      const dtDAL::ActorType* actorType = mapping.GetMappedActorType(eid);
+      const dtDAL::ActorType* nullType = NULL;
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("EntityMap didn't remove the reference to the EntityType",
+                                    nullType, actorType);
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void ActorMapConfigTests::TestActorTypeRemovingWithAddedResource()
+   {
+      DIS::EntityType eid;
+      eid.setEntityKind(1);
+      eid.setDomain(0);
+      eid.setCountry(3);
+      eid.setCategory(2);
+      eid.setSubcategory(0);
+      eid.setSpecific(0);
+
+      std::vector<const dtDAL::ActorType*> actorTypes;
+      dtDAL::LibraryManager::GetInstance().GetActorTypes(actorTypes);
+      const dtDAL::ResourceDescriptor rd("name", "description");
+
+      EntityMap mapping;
+      mapping.SetEntityActorType(eid, actorTypes[0]);
+      mapping.SetEntityResource(eid, rd);
+      mapping.RemoveEntityActorType(eid); //should have only removed the ActorType for this EntityType
+
+      const dtDAL::ActorType* actorType = mapping.GetMappedActorType(eid);
+      const dtDAL::ActorType* nullType = NULL;
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("EntityMap didn't remove the reference to the EntityType",
+                                    nullType, actorType);
+
+      const dtDAL::ResourceDescriptor& returnedRD = mapping.GetMappedResource(eid);
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("EntityMap should not have removed the reference to the ResourceDescriptor",
+                                   rd, returnedRD);
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void ActorMapConfigTests::TestResourceDescriptorAdding()
+   {
+      DIS::EntityType eid;
+      eid.setEntityKind(1);
+      eid.setDomain(0);
+      eid.setCountry(3);
+      eid.setCategory(2);
+      eid.setSubcategory(0);
+      eid.setSpecific(0);
+
+      const dtDAL::ResourceDescriptor rd("name", "description");
+
+      EntityMap mapping;
+      mapping.SetEntityResource(eid, rd);
+
+      const dtDAL::ResourceDescriptor& returnedRD = mapping.GetMappedResource(eid);
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("EntityMap didn't return back the correct ResourceDescriptor",
+                                  rd, returnedRD);
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void ActorMapConfigTests::TestResourceDescriptorRemovingNoAddedActorType()
+   {
+      DIS::EntityType eid;
+      eid.setEntityKind(1);
+      eid.setDomain(0);
+      eid.setCountry(3);
+      eid.setCategory(2);
+      eid.setSubcategory(0);
+      eid.setSpecific(0);
+
+      const dtDAL::ResourceDescriptor rd("name", "description");
+
+      EntityMap mapping;
+      mapping.SetEntityResource(eid, rd);
+      mapping.RemoveEntityResource(eid); //should have removed all reference to eid
+
+      const dtDAL::ResourceDescriptor& returnedRD = mapping.GetMappedResource(eid);
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("EntityMap didn't remove the reference to the EntityType",
+                                   dtDAL::ResourceDescriptor::NULL_RESOURCE, returnedRD);
+
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void ActorMapConfigTests::TestResourceDescriptorRemovingWithAddedActorType()
+   {
+      DIS::EntityType eid;
+      eid.setEntityKind(1);
+      eid.setDomain(0);
+      eid.setCountry(3);
+      eid.setCategory(2);
+      eid.setSubcategory(0);
+      eid.setSpecific(0);
+
+      std::vector<const dtDAL::ActorType*> actorTypes;
+      dtDAL::LibraryManager::GetInstance().GetActorTypes(actorTypes);
+      const dtDAL::ResourceDescriptor rd("name", "description");
+
+      EntityMap mapping;
+      mapping.SetEntityActorType(eid, actorTypes[0]);
+      mapping.SetEntityResource(eid, rd);
+      mapping.RemoveEntityResource(eid); //should have only removed the ResourceDescriptor for this EntityType
+
+      const dtDAL::ActorType* actorType = mapping.GetMappedActorType(eid);      
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("EntityMap shouldn't remove the reference to the ActorType",
+         actorTypes[0], actorType);
+
+      const dtDAL::ResourceDescriptor& returnedRD = mapping.GetMappedResource(eid);
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("EntityMap should have removed the reference to the ResourceDescriptor",
+                                    dtDAL::ResourceDescriptor::NULL_RESOURCE, returnedRD);
    }
 
    CPPUNIT_TEST_SUITE_REGISTRATION( ActorMapConfigTests );

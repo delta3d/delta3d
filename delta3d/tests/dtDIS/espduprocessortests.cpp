@@ -103,7 +103,7 @@ void ESPduProcessorTests::CreateRemoteActorFromEntityStatePDU()
 
    //add a new mapping of DIS entity type and ActorType
    dtDIS::SharedState sharedState;
-   sharedState.GetActorMap().AddActorMapping(pdu.getEntityType(), 
+   sharedState.GetEntityMap().SetEntityActorType(pdu.getEntityType(), 
       dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE.get());
  
    //create our entity state pdu processor and feed it a PDU to work on.
