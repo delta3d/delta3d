@@ -61,6 +61,12 @@ namespace dtDirector
       mValues.push_back(ValueLink(this, nameProp, false, false, true, false));
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   bool RemoteEvent::UsesInstigator()
+   {
+      return false;
+   }
+
    //////////////////////////////////////////////////////////////////////////
    void RemoteEvent::SetEventName(const std::string& eventName)
    {
