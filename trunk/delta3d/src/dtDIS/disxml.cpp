@@ -24,6 +24,7 @@ const char details::XMLConnectionSchema::NODE_EXERCISE_ID[] = {"ExerciseID\0"};
 const char details::XMLConnectionSchema::NODE_SITE_ID[] = {"SiteID\0"};
 const char details::XMLConnectionSchema::NODE_APPLICATION_ID[] = {"ApplicationID\0"};
 const char details::XMLConnectionSchema::NODE_MTU[] = {"MTU\0"};
+const char details::XMLConnectionSchema::NODE_USE_BROADCAST[] = {"Broadcast\0"};
 
 
 const dtDIS::ConnectionData ConnectionXMLHandler::DEFAULT_CONNECTION_DATA;
@@ -94,6 +95,11 @@ void ConnectionXMLHandler::characters(const XMLCh* const chars, const XMLSize_t 
          mConnectionData.MTU = dtUtil::ToType<unsigned int>(cstr);
       } break;
 
+   case USE_BROADCAST:
+      {
+         mConnectionData.use_broadcast = dtUtil::ToType<bool>(cstr);
+      } break;
+
    default:
       {
          LOG_ERROR("Could not determine xml node type.")
@@ -139,38 +145,42 @@ void ConnectionXMLHandler::startDocument()
 
 void ConnectionXMLHandler::startElement(const XMLCh* const uri,const XMLCh* const localname,const XMLCh* const qname, const XERCES_CPP_NAMESPACE_QUALIFIER Attributes& attrs)
 {
-   char* cstr = XMLString::transcode( localname );
+   char* cstr = XMLString::transcode(localname);
 
-   if( XMLString::equals(cstr, dtDIS::details::XMLConnectionSchema::NODE_IP) )
+   if (XMLString::equals(cstr, dtDIS::details::XMLConnectionSchema::NODE_IP))
    {
-      mNodeStack.push( IP );
+      mNodeStack.push(IP);
    }
-   else if( XMLString::equals(cstr, dtDIS::details::XMLConnectionSchema::NODE_PLUGINS) )
+   else if (XMLString::equals(cstr, dtDIS::details::XMLConnectionSchema::NODE_PLUGINS))
    {
-      mNodeStack.push( PLUGINS );
+      mNodeStack.push(PLUGINS);
    }
-   else if( XMLString::equals(cstr, dtDIS::details::XMLConnectionSchema::NODE_PORT) )
+   else if (XMLString::equals(cstr, dtDIS::details::XMLConnectionSchema::NODE_PORT))
    {
-      mNodeStack.push( PORT );
+      mNodeStack.push(PORT);
    }
-   else if( XMLString::equals(cstr, dtDIS::details::XMLConnectionSchema::NODE_EXERCISE_ID) )
+   else if (XMLString::equals(cstr, dtDIS::details::XMLConnectionSchema::NODE_EXERCISE_ID))
    {
-      mNodeStack.push( EXERCISE_ID );
+      mNodeStack.push(EXERCISE_ID);
    }
-   else if( XMLString::equals(cstr, dtDIS::details::XMLConnectionSchema::NODE_SITE_ID) )
+   else if (XMLString::equals(cstr, dtDIS::details::XMLConnectionSchema::NODE_SITE_ID))
    {
-      mNodeStack.push( SITE_ID );
+      mNodeStack.push(SITE_ID);
    }
-   else if( XMLString::equals(cstr, dtDIS::details::XMLConnectionSchema::NODE_APPLICATION_ID) )
+   else if (XMLString::equals(cstr, dtDIS::details::XMLConnectionSchema::NODE_APPLICATION_ID))
    {
-      mNodeStack.push( APPLICATION_ID );
+      mNodeStack.push(APPLICATION_ID);
    }
-   else if( XMLString::equals(cstr, dtDIS::details::XMLConnectionSchema::NODE_MTU) )
+   else if (XMLString::equals(cstr, dtDIS::details::XMLConnectionSchema::NODE_MTU))
    {
-      mNodeStack.push( MTU );
+      mNodeStack.push(MTU);
+   }
+   else if (XMLString::equals(cstr, dtDIS::details::XMLConnectionSchema::NODE_USE_BROADCAST))
+   {
+      mNodeStack.push(USE_BROADCAST);
    }
 
-   XMLString::release( &cstr );
+   XMLString::release(&cstr);
 }
 
 void ConnectionXMLHandler::startPrefixMapping(const XMLCh* const prefix,const XMLCh* const uri)

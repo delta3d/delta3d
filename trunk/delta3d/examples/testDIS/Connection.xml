@@ -7,4 +7,5 @@
   <SiteID>1</SiteID>
   <ApplicationID>1</ApplicationID>
   <MTU>1500</MTU>
+  <Broadcast>false</Broadcast>
 </Connection>

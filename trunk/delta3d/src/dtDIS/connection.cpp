@@ -5,10 +5,8 @@
 
 using namespace dtDIS;
 
-void Connection::Connect(unsigned int port, const char* host)
+void Connection::Connect(unsigned int port, const char* host, bool useBroadcast)
 {
-   const bool kUseBroadcast = true;
-
    NLboolean success = nlInit();
 
    if (!success)
@@ -37,7 +35,7 @@ void Connection::Connect(unsigned int port, const char* host)
    nlHint(NL_REUSE_ADDRESS, NL_TRUE);
 
 
-   if (kUseBroadcast)
+   if (useBroadcast)
    {
       mSocket = nlOpen(port, NL_BROADCAST);
    }
@@ -55,7 +53,7 @@ void Connection::Connect(unsigned int port, const char* host)
       LOG_ERROR( strm.str() )
    }
 
-   if (!kUseBroadcast)
+   if (!useBroadcast)
    {
       if(nlConnect(mSocket, &maddr) == NL_FALSE)
       {

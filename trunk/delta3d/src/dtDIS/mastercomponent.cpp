@@ -62,7 +62,7 @@ void MasterComponent::OnAddedToGM()
    std::for_each( plugins.begin(), plugins.end(), func );
 
    // make a connection to the DIS multicast network
-   mConnection.Connect( connect_data.port , connect_data.ip.c_str() );
+   mConnection.Connect(connect_data.port, connect_data.ip.c_str(), connect_data.use_broadcast);
 }
 
 void MasterComponent::OnRemovedFromGM()

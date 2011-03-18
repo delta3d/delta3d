@@ -8,7 +8,8 @@
             <xs:element name="ExerciseID" type="xs:unsignedInt" minOccurs="1" maxOccurs="1"></xs:element>
             <xs:element name="SiteID" type="xs:unsignedShort" minOccurs="1" maxOccurs="1"></xs:element>
             <xs:element name="ApplicationID" type="xs:unsignedShort" minOccurs="1" maxOccurs="1"></xs:element>
-          <xs:element name="MTU" type="xs:unsignedInt" minOccurs="1" maxOccurs="1"></xs:element>
+            <xs:element name="MTU" type="xs:unsignedInt" minOccurs="1" maxOccurs="1"></xs:element>
+            <xs:element name="Broadcast" type="xs:boolean" minOccurs="1" maxOccurs="1"></xs:element>
         </xs:all>
         <xs:attribute name="Protocol" type="xs:string" />
     </xs:complexType>
