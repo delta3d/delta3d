@@ -18,6 +18,7 @@ SET(LIB_PUBLIC_HEADERS
     ${HEADER_PATH}/actortype.h
     ${HEADER_PATH}/arrayactorproperty.h
     ${HEADER_PATH}/arrayactorpropertybase.h
+    ${HEADER_PATH}/arrayactorpropertycomplex.h
     ${HEADER_PATH}/baseactorobject.h
     ${HEADER_PATH}/basexml.h
     ${HEADER_PATH}/basexmlhandler.h
