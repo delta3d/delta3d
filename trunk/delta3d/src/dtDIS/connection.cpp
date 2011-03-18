@@ -7,6 +7,8 @@ using namespace dtDIS;
 
 void Connection::Connect(unsigned int port, const char* host)
 {
+   const bool kUseBroadcast = true;
+
    NLboolean success = nlInit();
 
    if (!success)
@@ -32,10 +34,18 @@ void Connection::Connect(unsigned int port, const char* host)
 
    nlSetAddrPort(&maddr, port);
 
-   nlHint(NL_MULTICAST_TTL, NL_TTL_LOCAL);
    nlHint(NL_REUSE_ADDRESS, NL_TRUE);
 
-   mSocket = nlOpen(port, NL_UDP_MULTICAST);
+
+   if (kUseBroadcast)
+   {
+      mSocket = nlOpen(port, NL_BROADCAST);
+   }
+   else
+   {
+      nlHint(NL_MULTICAST_TTL, NL_TTL_LOCAL);
+      mSocket = nlOpen(port, NL_UDP_MULTICAST);
+   }
 
    if(mSocket == NL_INVALID)
    {
@@ -45,15 +55,19 @@ void Connection::Connect(unsigned int port, const char* host)
       LOG_ERROR( strm.str() )
    }
 
-   if(nlConnect(mSocket, &maddr) == NL_FALSE)
+   if (!kUseBroadcast)
    {
-      nlClose(mSocket);
+      if(nlConnect(mSocket, &maddr) == NL_FALSE)
+      {
+         nlClose(mSocket);
 
-      std::ostringstream strm;
-      strm << "Can't connect to socket: " << nlGetErrorStr(nlGetError())
-           << ". System: " << nlGetSystemErrorStr(nlGetSystemError());
-      LOG_ERROR( strm.str() );
+         std::ostringstream strm;
+         strm << "Can't connect to socket: " << nlGetErrorStr(nlGetError())
+            << ". System: " << nlGetSystemErrorStr(nlGetSystemError());
+         LOG_ERROR( strm.str() );
+      }   
    }
+ 
 }
 
 ///\todo is this the ideal NL call?
