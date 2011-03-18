@@ -69,11 +69,6 @@ namespace dtDirector
       virtual void BuildPropertyMap();
 
       /**
-       * Retrieves whether this Event uses an instigator.
-       */
-      virtual bool UsesInstigator();
-
-      /**
        * Retrieves the display name for the node.
        *
        * @return  The display name of the node.

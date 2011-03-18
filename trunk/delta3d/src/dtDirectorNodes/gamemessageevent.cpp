@@ -66,18 +66,12 @@ namespace dtDirector
       mValues.push_back(ValueLink(this, messageTypeProp, false, false, true, false));
    }
 
-   ////////////////////////////////////////////////////////////////////////////////
-   bool GameMessageEvent::UsesInstigator()
-   {
-      return false;
-   }
-
    //////////////////////////////////////////////////////////////////////////
    void GameMessageEvent::SetMessageType(const std::string& typeName)
    {
       mMessageType = typeName;
 
-      RegisterMessages();
+      //RegisterMessages();
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -97,7 +91,7 @@ namespace dtDirector
    {
       if (linkName == "Message Type")
       {
-         RegisterMessages();
+         //RegisterMessages();
       }
    }
 
@@ -106,7 +100,7 @@ namespace dtDirector
    {
       return true;
    }
-   
+
    ////////////////////////////////////////////////////////////////////////////////
    void GameMessageEvent::RegisterMessages()
    {
@@ -126,10 +120,13 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void GameMessageEvent::UnRegisterMessages()
    {
-      dtDirector::MessageGMComponent* component = GetDirector()->GetMessageGMComponent();
-      if (component)
+      if (mLastMessageType != "")
       {
-         component->UnRegisterMessage(mLastMessageType, this);
+         dtDirector::MessageGMComponent* component = GetDirector()->GetMessageGMComponent();
+         if (component)
+         {
+            component->UnRegisterMessage(mLastMessageType, this);
+         }
       }
    }
 
@@ -137,6 +134,6 @@ namespace dtDirector
    void GameMessageEvent::OnMessage(const dtGame::Message& message)
    {
       // Trigger this event on this message.
-      Trigger();
+      Trigger("Out", &message.GetAboutActorId());
    }
 }
