@@ -114,7 +114,8 @@ namespace dtDIS
          unsigned char ex_id = 1,
          unsigned short site = 1,
          unsigned short app_id = 1,
-         unsigned int mtu = 1500
+         unsigned int mtu = 1500,
+         bool broadcast = false
          )
          :port(port)
          ,ip(url)
@@ -123,6 +124,7 @@ namespace dtDIS
          , site_id(site)
          , application_id(app_id)
          , MTU(mtu)
+         , use_broadcast(broadcast)
       {
       }
 
@@ -134,6 +136,7 @@ namespace dtDIS
       unsigned short site_id; ///<The ID of the sending site
       unsigned short application_id; ///<the ID of the sending application
       unsigned int MTU;      // 1500
+      bool use_broadcast;    ///< Connect to a broadcast network (if false, connect via multicast)
    };
 
    ///\brief The data to be shared among plugins.

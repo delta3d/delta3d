@@ -61,6 +61,7 @@ namespace dtDIS
       static const char NODE_SITE_ID[];
       static const char NODE_APPLICATION_ID[];
       static const char NODE_MTU[];
+      static const char NODE_USE_BROADCAST[];
    };
 
    } // end namespace details
@@ -107,7 +108,8 @@ namespace dtDIS
          EXERCISE_ID,
          SITE_ID,
          APPLICATION_ID,
-         MTU
+         MTU,
+         USE_BROADCAST
       };
 
       typedef std::stack<Nodes> NodeStack;

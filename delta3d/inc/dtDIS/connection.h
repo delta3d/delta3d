@@ -37,7 +37,9 @@ namespace dtDIS
       ///\brief makes a socket connection for the specified network.
       /// @param port the serial port for the connection's network host.
       /// @param host the name of the network host.
-      void Connect(unsigned int port, const char* host);
+      /// @param useBroadcast Connect to port as a broadcast network. If false
+      ///        connect to host/port using as a multicast
+      void Connect(unsigned int port, const char* host, bool useBroadcast=false);
 
       ///\brief closes the socket connection.
       void Disconnect();
