@@ -281,7 +281,17 @@ namespace dtUtil
    {
       v1.normalize();
       v2.normalize();
-      return osg::RadiansToDegrees(std::acos(v1 * v2));
+      // Floating error can cause dot product to be greater than 1 or less than -1
+      TVec::value_type dotProduct = v1 * v2;
+      if (dotProduct > 1)
+      {
+         dotProduct = 1;
+      }
+      else if (dotProduct < -1)
+      {
+         dotProduct = -1;
+      }
+      return osg::RadiansToDegrees(std::acos(dotProduct));
    }
 
    /**
