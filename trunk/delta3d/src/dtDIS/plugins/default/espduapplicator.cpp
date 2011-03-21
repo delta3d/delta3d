@@ -24,6 +24,22 @@
 
 using namespace dtDIS::details;
 
+//////////////////////////////////////////////////////////////////////////
+std::string EntityTypeToString(const DIS::EntityType &entityType) 
+{
+   std::string entTypeStr;
+   entTypeStr += dtUtil::ToString<unsigned short>(entityType.getEntityKind()) + 
+      "/" + dtUtil::ToString<unsigned short>(entityType.getDomain()) +
+      "/" + dtUtil::ToString<unsigned short>(entityType.getCountry()) + 
+      "/" + dtUtil::ToString<unsigned short>(entityType.getCategory()) + 
+      "/" + dtUtil::ToString<unsigned short>(entityType.getSubcategory()) +
+      "/" + dtUtil::ToString<unsigned short>(entityType.getSpecific()) + 
+      "/" + dtUtil::ToString<unsigned short>(entityType.getExtra());
+
+   return entTypeStr;
+}
+
+//////////////////////////////////////////////////////////////////////////
 void FullApplicator::operator ()(const DIS::EntityStatePdu& source,
                                  dtGame::ActorUpdateMessage& dest,
                                  dtDIS::SharedState* config) const
@@ -33,12 +49,48 @@ void FullApplicator::operator ()(const DIS::EntityStatePdu& source,
 
    dtDAL::NamedParameter* mp;
 
+   ///Entity Marking
    mp = dest.AddUpdateParameter(dtDIS::EnginePropertyName::ENTITY_MARKING, dtDAL::DataType::STRING);
    if (mp != NULL)
    {
       dtDAL::NamedStringParameter* strAP = static_cast<dtDAL::NamedStringParameter*>(mp);
       
       strAP->SetValue(source.getMarking().getCharacters());
+   }
+
+   ///Entity Type
+   mp = dest.AddUpdateParameter(dtDIS::EntityPropertyName::ENTITY_TYPE, dtDAL::DataType::STRING);
+   if (mp != NULL)
+   {
+      dtDAL::NamedStringParameter* strAP = static_cast<dtDAL::NamedStringParameter*>(mp);
+
+      const DIS::EntityType& entityType = source.getEntityType();
+
+      strAP->SetValue(EntityTypeToString(entityType));
+   }
+
+
+   //Force ID
+   mp = dest.AddUpdateParameter(dtDIS::EnginePropertyName::FORCE_ID, dtDAL::DataType::ENUMERATION);
+   if (mp != NULL)
+   {
+      dtDAL::NamedEnumParameter* eAP = static_cast<dtDAL::NamedEnumParameter*>(mp);
+      std::string enumValue;
+      switch (source.getForceId())
+      {
+      case 0:
+         enumValue = "OTHER"; break;
+      case 1:
+         enumValue = "FRIENDLY"; break;
+      case 2:
+         enumValue = "OPPOSING"; break;
+      case 3:
+         enumValue = "NEUTRAL"; break;
+      default:
+         enumValue = "OTHER"; break;
+      };
+      
+      eAP->SetValue(enumValue);
    }
 
    ///entity ID
@@ -60,6 +112,10 @@ void FullApplicator::operator ()(const DIS::EntityStatePdu& source,
          {
             dtDAL::NamedResourceParameter* nrp = static_cast<dtDAL::NamedResourceParameter*>(mp);
             nrp->SetValue(resource);
+         }
+         else
+         {
+            LOG_WARNING("No ResourceDescriptor mapped to " + EntityTypeToString(source.getEntityType()));
          }
       }
    }
@@ -418,3 +474,5 @@ void PartialApplicator::AddStringParam(const std::string& name, const std::strin
    param->SetValue( value );
    parent->AddParameter( *param );
 }
+
+
