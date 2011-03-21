@@ -282,7 +282,7 @@ namespace dtUtil
       v1.normalize();
       v2.normalize();
       // Floating error can cause dot product to be greater than 1 or less than -1
-      TVec::value_type dotProduct = v1 * v2;
+      typename TVec::value_type dotProduct = v1 * v2;
       if (dotProduct > 1)
       {
          dotProduct = 1;
