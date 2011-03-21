@@ -119,8 +119,10 @@ const dtDAL::ResourceDescriptor& EntityMap::GetMappedResource(const DIS::EntityT
    {
       return iter->second.second;
    }
-
-   return dtDAL::ResourceDescriptor::NULL_RESOURCE;
+   else
+   {
+      return GetBestMatchedResource(entityType);
+   }
 }
 
 //////////////////////////////////////////////////////////////////////////
