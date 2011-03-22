@@ -60,6 +60,12 @@ namespace dtDIS
       /// @param etype the EntityType interested to know if ground clamping is desired.
       /// @return true if there exists a known interpretation of the EntityType
       static bool GetRequiresGroundClamping(const DIS::EntityType& etype, bool& requires);
+
+      /** Get the string for the domain of the supplied EntityType.
+       * @param etype The DIS EntityType
+       * @return the string representation of the EntityType's domain
+       */
+      static std::string GetDomain(const DIS::EntityType& etype);
    };
 }
 

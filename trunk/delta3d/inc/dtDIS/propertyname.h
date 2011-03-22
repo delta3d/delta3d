@@ -78,6 +78,10 @@ namespace dtDIS
       static dtUtil::RefString DEAD_RECKONING_ALGORITHM;
       static dtUtil::RefString GROUND_CLAMP;
 
+      /** Incoming DIS EntityState PDU's set this EnumProperty based on the EntityType ID.
+      */
+      static dtUtil::RefString ENTITY_DOMAIN;
+
       static dtUtil::RefString RESOURCE_DAMAGE_OFF;
       static dtUtil::RefString RESOURCE_DAMAGE_ON;
       static dtUtil::RefString RESOURCE_DAMAGE_DESTROYED;
