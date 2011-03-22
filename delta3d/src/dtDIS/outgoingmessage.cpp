@@ -48,7 +48,7 @@ void OutgoingMessage::Handle(const dtGame::Message& msg)
    }
    else
    {
-      LOG_WARNING("No packet adapter for Message of type '" + mt.GetName() + "'" );
+      LOGN_DEBUG("DIS", "No packet adapter for Message of type '" + mt.GetName() + "'" );
    }
 }
 

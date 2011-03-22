@@ -1,5 +1,6 @@
 #include <dtDIS/activeentitycontrol.h>
 #include <dtDAL/actorproxy.h>
+#include <dtUtil/log.h>
 
 using namespace dtDIS;
 
@@ -13,6 +14,10 @@ bool ActiveEntityControl::AddEntity(const DIS::EntityID& eid, const dtCore::Uniq
       {
          // keep it in sync with the other container
          mActorToEntityMap.erase(id);
+      }
+      else
+      {
+         LOGN_DEBUG("DIS", "Stored DIS actor: " + id.ToString());
       }
 
       return inserted;

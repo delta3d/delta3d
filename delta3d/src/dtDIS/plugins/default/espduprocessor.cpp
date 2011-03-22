@@ -28,6 +28,10 @@ void ESPduProcessor::Process(const DIS::Pdu& packet)
    if (mConfig == NULL) return;
 
    const DIS::EntityStatePdu& pdu = static_cast<const DIS::EntityStatePdu&>(packet);
+ 
+   //LOGN_DEBUG("DIS", "EntityID: " + dtUtil::ToString(pdu.getEntityID().getSite()) + "." +
+   //   dtUtil::ToString(pdu.getEntityID().getApplication())+ "." +
+   //   dtUtil::ToString(pdu.getEntityID().getEntity()));
 
    // find out if there is an actor for this ID
    const dtCore::UniqueId* actorID = mConfig->GetActiveEntityControl().GetActor(pdu.getEntityID());
@@ -40,6 +44,7 @@ void ESPduProcessor::Process(const DIS::Pdu& packet)
       if (proxy)
       {
          SendPartialUpdate(pdu, *proxy);
+         //LOGN_DEBUG("DIS", "Processing actor: " + actorID->ToString());
       }     
    }
    else
