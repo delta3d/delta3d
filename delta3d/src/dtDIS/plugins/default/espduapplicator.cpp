@@ -75,7 +75,7 @@ void FullApplicator::operator ()(const DIS::EntityStatePdu& source,
    if (mp != NULL)
    {
       dtDAL::NamedEnumParameter* eAP = static_cast<dtDAL::NamedEnumParameter*>(mp);
-      std::string enumValue;
+      std::string enumValue; //matches the SimCore BaseEntity enum values
       switch (source.getForceId())
       {
       case 0:
@@ -131,27 +131,17 @@ void FullApplicator::operator ()(const DIS::EntityStatePdu& source,
       }
    }
 
-   // ground clamping property
+   // Domain property
    {
-      bool doclamp(false);
-      bool issupported = ValueMap::GetRequiresGroundClamping( source.getEntityType(),doclamp );
-      if( issupported )
+      const std::string domainStr = ValueMap::GetDomain(source.getEntityType());
+      if (!domainStr.empty())
       {
-         dtDAL::NamedBooleanParameter* nbpptr = new dtDAL::NamedBooleanParameter(dtDIS::EnginePropertyName::GROUND_CLAMP);
-         ///\todo BMH actor likes "do flying",
-         /// so use the opposite until delta3d offers an actor that uses this property.
-         nbpptr->SetValue( !doclamp );
-         dest.AddUpdateParameter( *nbpptr );
-      }
-      else
-      {
-         std::ostringstream strm;
-         strm << "Can not determine if ground clamping is needed for Entity:" << std::endl
-              << source.getEntityID() << std::endl
-              << "of type:" << std::endl
-              << source.getEntityType();
-         LOG_ERROR( strm.str() )
-         ///\todo should not have added the parameter, so remove it here, or change the code above.
+         mp = dest.AddUpdateParameter(dtDIS::EnginePropertyName::ENTITY_DOMAIN, dtDAL::DataType::ENUMERATION);
+         if (mp != NULL)
+         {
+            dtDAL::NamedEnumParameter* ep = static_cast<dtDAL::NamedEnumParameter*>(mp);
+            ep->SetValue(domainStr);        
+         }
       }
    }
 }

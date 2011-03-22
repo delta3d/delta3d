@@ -20,8 +20,8 @@ namespace dtDIS
 
    dtUtil::RefString EnginePropertyName::DEAD_RECKONING_ALGORITHM  ("Dead Reckoning Algorithm");
 
-   ///\todo this only named "Flying" for now because of the dvte::IG::Entity actor.
    dtUtil::RefString EnginePropertyName::GROUND_CLAMP              ("Flying");
+   dtUtil::RefString EnginePropertyName::ENTITY_DOMAIN             ("Domain");
 
    dtUtil::RefString EnginePropertyName::RESOURCE_DAMAGE_OFF       ("Non-damaged actor");
    dtUtil::RefString EnginePropertyName::RESOURCE_DAMAGE_ON        ("Damaged actor");

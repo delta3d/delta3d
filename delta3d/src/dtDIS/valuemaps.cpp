@@ -127,42 +127,67 @@ bool ValueMap::GetDeadReckoningModelPropertyValue(unsigned char drm, std::string
    return supported;
 }
 
-bool ValueMap::GetRequiresGroundClamping(const DIS::EntityType& etype, bool& requires)
+//////////////////////////////////////////////////////////////////////////
+void GetGroundClampAndDomainString(const DIS::EntityType& etype,
+                                   bool& requiredGroundClamp,
+                                   std::string& domainString)
 {
-   bool supported( true );
-
-   switch( etype.getDomain() )
+   switch (etype.getDomain())
    {
    case dtDIS::DOMAIN_LAND:
       {
-         requires = true;
+         domainString = "GROUND";
+         requiredGroundClamp = true;
       } break;
 
    case dtDIS::DOMAIN_AIR:
       {
-         requires = false;
+         domainString = "AIR";
+         requiredGroundClamp = false;
       } break;
 
    case dtDIS::DOMAIN_SPACE:
       {
-         requires = false;
+         domainString = "SPACE";
+         requiredGroundClamp = false;
       } break;
 
    case dtDIS::DOMAIN_SURFACE:
       {
-         requires = false;
+         domainString = "SURFACE";
+         requiredGroundClamp = false;
       } break;
 
    case dtDIS::DOMAIN_SUBSURFACE:
       {
-         requires = false;
+         domainString = "SUBMARINE";
+         requiredGroundClamp = false;
       } break;
 
    default:
       {
-         supported = false;
+         domainString = "";
+         requiredGroundClamp = false;
       } break;
-   }
+   }  
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool ValueMap::GetRequiresGroundClamping(const DIS::EntityType& etype, bool& requires)
+{
+   std::string domainStr;
+   bool supported =true;
+
+   GetGroundClampAndDomainString(etype, supported, domainStr);
 
    return supported;
+}
+
+//////////////////////////////////////////////////////////////////////////
+std::string dtDIS::ValueMap::GetDomain(const DIS::EntityType& etype)
+{
+   std::string domainStr;
+   bool groundClamp;
+   GetGroundClampAndDomainString(etype, groundClamp, domainStr);
+   return domainStr;
 }
