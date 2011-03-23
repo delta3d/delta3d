@@ -873,7 +873,7 @@ namespace dtDirector
       QDataStream dataStream(&itemData, QIODevice::ReadOnly);
 
       QString name; //name of the Node type
-      QString category; //category of the Node 
+      QString category; //category of the Node
       QPoint hotspot; //the dragging hotspot position (distance from the left corner)
 
       dataStream >> name >> category >> hotspot;
@@ -963,17 +963,22 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    DirectorGraph* EditorScene::CreateMacro()
    {
-      DirectorGraph* graph = mGraph->AddGraph();
-      if (graph)
+      QString macroName = QInputDialog::getText(NULL, "Name Macro", "Enter the name of the new macro:");
+      if (!macroName.isEmpty())
       {
-         graph->SetName(QInputDialog::getText(NULL, "Name Macro", "Enter the name of the new macro:").toStdString());
-         graph->SetPosition(osg::Vec2(mMenuPos.x(), mMenuPos.y()));
+         DirectorGraph* graph = mGraph->AddGraph();
+         if (graph)
+         {
+            graph->SetName(macroName.toStdString());
+            graph->SetPosition(osg::Vec2(mMenuPos.x(), mMenuPos.y()));
 
-         dtCore::RefPtr<UndoCreateEvent> event = new UndoCreateEvent(mEditor, graph->GetID(), mGraph->GetID());
-         mEditor->GetUndoManager()->AddEvent(event);
+            dtCore::RefPtr<UndoCreateEvent> event = new UndoCreateEvent(mEditor, graph->GetID(), mGraph->GetID());
+            mEditor->GetUndoManager()->AddEvent(event);
+         }
+         return graph;
       }
 
-      return graph;
+      return NULL;
    }
 } // namespace dtDirector
 
