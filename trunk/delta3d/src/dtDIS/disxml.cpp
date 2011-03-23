@@ -242,6 +242,8 @@ const char details::XMLEntityMapSchema::NODE_ENTITY_DESTROYED[] = {"EntityDestro
 const char details::XMLEntityMapSchema::NODE_ENTITY_TYPE[] = {"EntityTypeProperty\0"};
 const char details::XMLEntityMapSchema::NODE_ENTITY_ID[] = {"EntityID\0"};
 const char details::XMLEntityMapSchema::NODE_ENTITY_FORCE_ID[] = {"EntityForceID\0"};
+const char details::XMLEntityMapSchema::NODE_ENTITY_SMOKE_PLUME[] = {"EntitySmokePlumePresent\0"};
+const char details::XMLEntityMapSchema::NODE_ENTITY_FLAMES[] = {"EntityFlamesPresent\0"};
 
 EntityMapXMLHandler::EntityMapXMLHandler(SharedState* config)
    : mSharedState(config)
@@ -417,6 +419,14 @@ void EntityMapXMLHandler::characters(const XMLCh* const chars, const XMLSize_t l
    case ENTITY_FORCE_ID:
       {
          dtDIS::EnginePropertyName::FORCE_ID = std::string(cstr);
+      } break;
+   case ENTITY_SMOKE_PLUME_PRESENT:
+      {
+         dtDIS::EnginePropertyName::SMOKE_PLUME_PRESENT = std::string(cstr);
+      } break;
+   case ENTITY_FLAMES_PRESENT:
+      {
+         dtDIS::EnginePropertyName::FLAMES_PRESENT = std::string(cstr);
       } break;
    default:
       {
@@ -679,6 +689,14 @@ void EntityMapXMLHandler::startElement(const XMLCh* const uri,const XMLCh* const
    else if( XMLString::equals(cstr, dtDIS::details::XMLEntityMapSchema::NODE_ENTITY_FORCE_ID) )
    {
       mNodeStack.push( ENTITY_FORCE_ID );
+   }
+   else if( XMLString::equals(cstr, dtDIS::details::XMLEntityMapSchema::NODE_ENTITY_SMOKE_PLUME) )
+   {
+      mNodeStack.push(ENTITY_SMOKE_PLUME_PRESENT);
+   }
+   else if( XMLString::equals(cstr, dtDIS::details::XMLEntityMapSchema::NODE_ENTITY_FLAMES) )
+   {
+      mNodeStack.push(ENTITY_FLAMES_PRESENT);
    }
 
 

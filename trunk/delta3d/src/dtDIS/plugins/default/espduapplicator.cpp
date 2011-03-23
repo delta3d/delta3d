@@ -14,11 +14,13 @@
 #include <dtDAL/resourcedescriptor.h>
 
 #include <dtDIS/propertyname.h>
+#include <dtDIS/entitytypeconstants.h>
 
 #include <dtDAL/actorproxy.h>
 #include <dtDAL/namedparameter.h>
 #include <dtGame/deadreckoningcomponent.h>
 #include <dtUtil/coordinates.h>
+#include <dtUtil/bits.h>
 
 #include <sstream>
 
@@ -260,12 +262,13 @@ void FullApplicator::operator ()(const dtGame::ActorUpdateMessage& source,
    }
 
 
-   if(const dtGame::MessageParameter* mp = source.GetUpdateParameter(dtDIS::EntityPropertyName::APPEARANCE) )
-   {
-      const dtGame::IntMessageParameter* imp = static_cast<const dtGame::IntMessageParameter*>( mp );
-      int appearance = imp->GetValue();
-      dest.setEntityAppearance( appearance );
-   }
+   //deprecated?  Probably handled better via the SMOKE/FLAMES parameters
+   //if(const dtGame::MessageParameter* mp = source.GetUpdateParameter(dtDIS::EntityPropertyName::APPEARANCE) )
+   //{
+   //   const dtGame::IntMessageParameter* imp = static_cast<const dtGame::IntMessageParameter*>( mp );
+   //   int appearance = imp->GetValue();
+   //   dest.setEntityAppearance(appearance);
+   //}
 
    //Force ID from ActorUpdateMesage to EntityStatePDU
    if (const dtGame::MessageParameter* mp = source.GetUpdateParameter(dtDIS::EnginePropertyName::FORCE_ID))
@@ -335,6 +338,42 @@ void PartialApplicator::operator ()(const DIS::EntityStatePdu& source,
       v3mp->SetValue(vel);
    }
 
+   //Smoke plume
+   if (ValueMap::CanHaveSmokePlume(source.getEntityType()))
+   {
+      if ((mp = dest.AddUpdateParameter(dtDIS::EnginePropertyName::SMOKE_PLUME_PRESENT, dtDAL::DataType::BOOLEAN)))
+      {
+         dtDAL::NamedBooleanParameter* boolAP = static_cast<dtDAL::NamedBooleanParameter*>(mp);
+
+         if (dtUtil::Bits::Has(source.getEntityAppearance(), SMOKING_BIT) ||
+             dtUtil::Bits::Has(source.getEntityAppearance(), SMOKING2_BIT))
+         {
+            boolAP->SetValue(true);
+         }
+         else
+         {
+            boolAP->SetValue(false);
+         }         
+      }
+   }
+
+   //flames present
+   if (ValueMap::CanHaveFlames(source.getEntityType()))
+   {
+      if ((mp = dest.AddUpdateParameter(dtDIS::EnginePropertyName::FLAMES_PRESENT, dtDAL::DataType::BOOLEAN)))
+      {
+         dtDAL::NamedBooleanParameter* boolAP = static_cast<dtDAL::NamedBooleanParameter*>(mp);
+
+         if (dtUtil::Bits::Has(source.getEntityAppearance(), FLAMING_BIT))
+         {
+            boolAP->SetValue(true);
+         }
+         else
+         {
+            boolAP->SetValue(false);
+         }         
+      }
+   }
 
 #if 0
    UpdateAcceleration( vel ) ;

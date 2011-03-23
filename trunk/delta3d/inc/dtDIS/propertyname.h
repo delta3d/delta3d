@@ -92,6 +92,16 @@ namespace dtDIS
       /** Outgoing DIS packets read from this IntActorProperty, for the value of the ForceID.  
         */
       static dtUtil::RefString FORCE_ID;
+
+      /** Incoming DIS packets will set this BoolActorProperty if the EntityState
+        * appearance has the smoke bit set.
+        */
+      static dtUtil::RefString SMOKE_PLUME_PRESENT;
+
+      /** Incoming DIS packets will set this BoolActorProperty if the EntityState
+        * appearance has the flames present bit set.
+        */
+      static dtUtil::RefString FLAMES_PRESENT;
    } ;
 
    //struct DT_DIS_EXPORT HLABaseEntityPropertyName

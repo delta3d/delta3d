@@ -34,6 +34,12 @@ namespace dtDIS
    dtUtil::RefString EnginePropertyName::DOF_NODE_NAME             ("OurName");
 
    dtUtil::RefString EnginePropertyName::FORCE_ID                  ("Force Affiliation");
+   
+   dtUtil::RefString EnginePropertyName::SMOKE_PLUME_PRESENT       ("SmokePlumePresent");
+
+   dtUtil::RefString EnginePropertyName::FLAMES_PRESENT            ("FlamesPresent");
+
+
 
    // -- HLABaseEntityPropertyName -- //
    //const std::string HLABaseEntityPropertyName::PROPERTY_ACCELERATION_VECTOR        = "Acceleration Vector"        ;
