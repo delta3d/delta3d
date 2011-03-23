@@ -191,3 +191,29 @@ std::string dtDIS::ValueMap::GetDomain(const DIS::EntityType& etype)
    GetGroundClampAndDomainString(etype, groundClamp, domainStr);
    return domainStr;
 }
+
+//////////////////////////////////////////////////////////////////////////
+bool dtDIS::ValueMap::CanHaveSmokePlume(const DIS::EntityType& etype)
+{
+
+   if ((etype.getEntityKind() == KIND_LIFE_FORM) ||
+      (etype.getEntityKind() == KIND_ENVIRONMENTAL) ||
+      (etype.getEntityKind() == KIND_SUPPLY) ||
+      (etype.getEntityKind() == KIND_RADIO) ||
+      (etype.getEntityKind() == KIND_EXPENDABLE))
+   {
+      return false;
+   }
+   else
+   {
+      return true;
+   }
+
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool dtDIS::ValueMap::CanHaveFlames(const DIS::EntityType& etype)
+{
+   //where there's smoke, there's fire.  Seems like the same rules apply for smoke & fire
+   return CanHaveSmokePlume(etype);
+}

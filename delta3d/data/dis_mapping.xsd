@@ -81,6 +81,8 @@
               <xsd:element name="EntityTypeProperty" type="xsd:string" />
               <xsd:element name="EntityID" type="xsd:string" />
               <xsd:element name="EntityForceID" type="xsd:string" />
+              <xsd:element name="EntitySmokePlumePresent" type="xsd:string" />
+              <xsd:element name="EntityFlamesPresent" type="xsd:string" />
             </xsd:choice>
           </xsd:complexType>
         </xsd:element>

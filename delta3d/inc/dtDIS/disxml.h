@@ -169,6 +169,8 @@ namespace dtDIS
       static const char NODE_ENTITY_TYPE[];
       static const char NODE_ENTITY_ID[];
       static const char NODE_ENTITY_FORCE_ID[];
+      static const char NODE_ENTITY_SMOKE_PLUME[];
+      static const char NODE_ENTITY_FLAMES[];
    };
    } // end namespace details
    ///@endcond
@@ -239,7 +241,9 @@ namespace dtDIS
          ENTITY_DESTROYED,
          ENTITY_TYPE,                    //<Property name override for DIS Entity Type
          ENTITY_ID,                     //<Property name override for DIS EntityID
-         ENTITY_FORCE_ID
+         ENTITY_FORCE_ID,
+         ENTITY_SMOKE_PLUME_PRESENT,
+         ENTITY_FLAMES_PRESENT
       };
 
       typedef std::stack<Nodes> NodeStack;

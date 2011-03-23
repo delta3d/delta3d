@@ -34,6 +34,24 @@ namespace dtDIS
       DOMAIN_SUBSURFACE = 4,
       DOMAIN_SPACE = 5,
    };
+   
+   enum KindType
+   {
+      KIND_OTHER = 0,
+      KIND_PLATFORM = 1,
+      KIND_MUNITION = 2,
+      KIND_LIFE_FORM = 3, 
+      KIND_ENVIRONMENTAL = 4,
+      KIND_CULTURAL = 5,
+      KIND_SUPPLY = 6,
+      KIND_RADIO = 7,
+      KIND_EXPENDABLE = 8,
+      KIND_SENSOR = 9,
+   };
+
+   static const int SMOKING_BIT = 32; ///<5th bit of the EntityState appearance
+   static const int SMOKING2_BIT = 64; ///<6th bit of the EntityState appearance
+   static const int FLAMING_BIT = 32768;///<15th bit of the EntityState appearance
 }
 
 #endif // __DELTA_DTDIS_ENTITY_TYPE_CONSTANTS_H__

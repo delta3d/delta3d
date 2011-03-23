@@ -66,6 +66,18 @@ namespace dtDIS
        * @return the string representation of the EntityType's domain
        */
       static std::string GetDomain(const DIS::EntityType& etype);
+
+      /** Can the supplied EntityType have a smoke plume?
+      * @param etype The DIS EntityType to check if compatible.
+      * @return True if a smoke plume is a feature of this EntityType
+      */
+      static bool CanHaveSmokePlume(const DIS::EntityType& etype);
+
+      /** Can the supplied EntityType have flames?
+      * @param etype The DIS EntityType to check if compatible.
+      * @return True if flames are a feature of this EntityType
+      */
+      static bool CanHaveFlames(const DIS::EntityType& etype);
    };
 }
 
