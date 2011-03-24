@@ -93,54 +93,51 @@ namespace dtDirector
       switch (input)
       {
       case INPUT_START:
+         // Start this node only once to avoid time-stepping to be multiplied!
+         if (mIsActive && firstUpdate)
          {
-            bool result = false;
-
-            // We need to check the current active status because this node
-            // will be updated multiple times using this same index until
-            // the desired time has elapsed.  And we only want to trigger
-            // the "Out" output once at the beginning.
-            if (!mIsActive)
-            {
-               if (firstUpdate)
-               {
-                  mIsActive = true;
-                  mGoalTime = GetFloat("Delay");
-
-                  // Call the parent so the default "Out" link is triggered.
-                  ActionNode::Update(simDelta, delta, input, firstUpdate);
-                  result = true;
-               }
-               // If this is not the first update for this node, then
-               // we must be paused or stopped, so we want to stop this update.
-               else
-               {
-                  return false;
-               }
-            }
-
-            // Test if the desired time has elapsed.
-            result = true;
-            if (mElapsedTime >= mGoalTime)
-            {
-               // Reset the time and trigger the "Time Elapsed" output.
-               mElapsedTime = 0.0f;
-               OutputLink* link = GetOutputLink("Time Elapsed");
-               if (link) link->Activate();
-
-               mIsActive = false;
-
-               // Return false so this node does not remain active.
-               result = false;
-            }
-
-            // Continue the timer (force at least one update before this node
-            // can be completed to ensure that it will break any chain).
-            mElapsedTime += elapsedTime;
-
-            // return true to keep this node active in the current thread.
-            return result;
+            return false;
          }
+
+         // We need to check the current active status because this node
+         // will be updated multiple times using this same index until
+         // the desired time has elapsed.  And we only want to trigger
+         // the "Out" output once at the beginning.
+         if (!mIsActive)
+         {
+            if (firstUpdate)
+            {
+               mIsActive = true;
+               mGoalTime = GetFloat("Delay");
+
+               // Call the parent so the default "Out" link is triggered.
+               ActionNode::Update(simDelta, delta, input, firstUpdate);
+            }
+            // If this is not the first update for this node, then
+            // we must be paused or stopped, so we want to stop this update.
+            else
+            {
+               return false;
+            }
+         }
+
+         // Test if the desired time has elapsed.
+         if (mElapsedTime >= mGoalTime)
+         {
+            // Reset the time and trigger the "Time Elapsed" output.
+            mElapsedTime = 0.0f;
+            OutputLink* link = GetOutputLink("Time Elapsed");
+            if (link) link->Activate();
+
+            mIsActive = false;
+         }
+
+         // Continue the timer (force at least one update before this node
+         // can be completed to ensure that it will break any chain).
+         mElapsedTime += elapsedTime;
+
+         // return true to keep this node active in the current thread.
+         return mIsActive;
 
       case INPUT_STOP:
          // Reset the elapsed time and deactivate it.
