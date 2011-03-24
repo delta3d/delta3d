@@ -284,6 +284,15 @@ void Scene::RemoveChild(DeltaDrawable* child)
       return;
    }
 
+   // Activate the child to ensure that no switch node is between child and the scene-group-node.
+   // With that the child can be removed properly.  This is a fix to get
+   // around a problem with the DeltaDrawable's active/inactive internal structure.
+   bool active = child->GetActive();
+   if (!active)
+   {
+      child->SetActive(true);
+   }
+
    mImpl->mSceneNode->removeChild(child->GetOSGNode());
    child->AddedToScene(NULL);
    child->RemovedFromScene(this);
@@ -292,6 +301,12 @@ void Scene::RemoveChild(DeltaDrawable* child)
    if (pos < mImpl->mAddedDrawables.size())
    {
       mImpl->mAddedDrawables.erase(mImpl->mAddedDrawables.begin() + pos);
+   }
+
+   // Restore active flag. 
+   if (!active)
+   {
+      child->SetActive(false);
    }
 
    DeltaDrawable::RemoveChild(child);
