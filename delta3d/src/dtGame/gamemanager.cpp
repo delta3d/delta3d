@@ -436,14 +436,13 @@ namespace dtGame
 
          if (mGMImpl->mMapChangeStateData.valid())
          {
-            
             const MapChangeStateData::MapChangeState* pPrevState = &mGMImpl->mMapChangeStateData->GetCurrentState();
             mGMImpl->mMapChangeStateData->ContinueMapChange();
 
             // Update mLoadedMaps only when a Map Change takes place.
             // This check is needed to keep the name vec consistent, as single maps may be loaded/unloaded 
             // without changing the whole set.
-            if (*pPrevState == MapChangeStateData::MapChangeState::LOAD &&
+            if ((*pPrevState == MapChangeStateData::MapChangeState::LOAD || *pPrevState == MapChangeStateData::MapChangeState::UNLOAD) &&
                mGMImpl->mMapChangeStateData->GetCurrentState() == MapChangeStateData::MapChangeState::IDLE)
             {
                mGMImpl->mLoadedMaps = mGMImpl->mMapChangeStateData->GetNewMapNames();
