@@ -27,6 +27,7 @@
 #include <dtCore/camera.h>
 #include <dtCore/refptr.h>
 #include <osg/Version>
+#include <osgViewer/View>
 
 #include <dtCore/databasepager.h>
 #include <osgDB/DatabasePager>
@@ -39,6 +40,7 @@ namespace dtTest
          CPPUNIT_TEST(TestCameraSceneOrder);
          CPPUNIT_TEST(TestPagerPropogation);
          CPPUNIT_TEST(TestPagedLODRegistration);
+         CPPUNIT_TEST(TestRemovingSceneFromView);
       CPPUNIT_TEST_SUITE_END();
 
    public:
@@ -48,6 +50,7 @@ namespace dtTest
       void TestCameraSceneOrder();
       void TestPagerPropogation();
       void TestPagedLODRegistration();
+      void TestRemovingSceneFromView();
    };
 
 
@@ -167,5 +170,22 @@ CPPUNIT_TEST_SUITE_REGISTRATION(ViewTests);
       CPPUNIT_ASSERT_EQUAL_MESSAGE("Should be 2, and should have worked when setting the pager AFTER setting the scene.",
                                     size_t(2),
                                     testPager2->GetPagedLODList().size() );
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void ViewTests::TestRemovingSceneFromView()
+   {
+      //ensure the dtCore::View's internals are getting the Scene set/unset
+      dtCore::RefPtr<dtCore::View> view = new dtCore::View();
+
+      dtCore::RefPtr<dtCore::Scene> scene = new dtCore::Scene();
+      view->SetScene(scene.get());
+      CPPUNIT_ASSERT_MESSAGE("The supplied Scene didn't propagate to the View's osgViewer:View",
+                              scene->GetOSGNode() == view->GetOsgViewerView()->getSceneData());
+
+      view->SetScene(NULL);
+
+      CPPUNIT_ASSERT_MESSAGE("Setting the View's Scene to NULL didn't propagate to the View's osgViewer:View",
+                                   NULL == view->GetOsgViewerView()->getSceneData());
    }
 }
