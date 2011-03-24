@@ -201,7 +201,7 @@ namespace dtGame
    ////////////////////////////////////////////////////////////////////////////////
    void DRPublishingActComp::OnEnteredWorld()
    {
-      dtGame::GameActor* actor;
+      dtGame::GameActor* actor = NULL;
       GetOwner(actor);
 
       // LOCAL ACTOR -  do our setup
@@ -212,7 +212,7 @@ namespace dtGame
          // Now we register for tick remote, so that we guarantee it happens AFTER our actor 
          // It also needs to run AFTER the DeadReckoningComponent
          std::string tickInvokable = "Tick Remote " + GetType().Get();
-         if(!actor->GetGameActorProxy().GetInvokable(tickInvokable))
+         if (actor->GetGameActorProxy().GetInvokable(tickInvokable) == NULL)
          {
             actor->GetGameActorProxy().AddInvokable(*new dtGame::Invokable(tickInvokable, 
                dtUtil::MakeFunctor(&DRPublishingActComp::OnTickRemote, this)));
