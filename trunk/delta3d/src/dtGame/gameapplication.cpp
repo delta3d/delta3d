@@ -1,5 +1,5 @@
 /*
- * Delta3D Open Source Game and Simulation Engine
+  * Delta3D Open Source Game and Simulation Engine
  * Copyright (C) 2005, BMH Associates, Inc.
  *
  * This library is free software; you can redistribute it and/or modify it under
@@ -167,7 +167,7 @@ namespace dtGame
 
          mEntryPoint->Initialize(*this, mArgc, mArgv);
          Application::Config();
-         GetCompositeViewer()->setUpThreading();
+         //GetCompositeViewer()->setUpThreading();
 
          mGameManager->SetApplication(*this);
          mEntryPoint->OnStartup(*this);
