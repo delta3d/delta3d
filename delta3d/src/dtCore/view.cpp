@@ -219,8 +219,8 @@ void View::SetScene(Scene* scene)
       {
          mImpl->mScene->AddView(*this);
          mImpl->mScene->SetDatabasePager(mImpl->mPager.get());
-         UpdateFromScene();
       }
+      UpdateFromScene();
    }
 }
 
@@ -299,8 +299,15 @@ const Mouse* View::GetMouse() const
 ////////////////////////////////////////////////////////////////////////////////
 void View::UpdateFromScene()
 {
-   mImpl->mOsgViewerView->setSceneData(mImpl->mScene->GetSceneNode());
-   mImpl->mOsgViewerView->assignSceneDataToCameras();
+   if (mImpl->mScene.valid())
+   {
+      mImpl->mOsgViewerView->setSceneData(mImpl->mScene->GetSceneNode());
+      mImpl->mOsgViewerView->assignSceneDataToCameras();
+   }
+   else
+   {
+      mImpl->mOsgViewerView->setSceneData(NULL);
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
