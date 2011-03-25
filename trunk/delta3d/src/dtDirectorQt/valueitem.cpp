@@ -29,6 +29,7 @@
 #include <dtDirector/valuenode.h>
 
 #include <QtGui/QGraphicsScene>
+#include <QtGui/QInputDialog>
 #include <QtGui/QMenu>
 
 #include <dtDAL/datatype.h>
@@ -290,6 +291,20 @@ namespace dtDirector
             {
                break;
             }
+         }
+      }
+      // If the value to be referenced is not named yet, prompt the user
+      else if (name.empty())
+      {
+         QString valueName = QInputDialog::getText(NULL, "Name Value", "Please enter a unique name for the value to be referenced:");
+         if (!valueName.isEmpty())
+         {
+            name = valueName.toStdString();
+            mNode->SetName(name);
+         }
+         else
+         {
+            return;
          }
       }
 
