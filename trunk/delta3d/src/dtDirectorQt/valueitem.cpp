@@ -24,6 +24,7 @@
 #include <dtDirectorQt/editorscene.h>
 #include <dtDirectorQt/linkitem.h>
 #include <dtDirectorQt/undomanager.h>
+#include <dtDirectorQt/undopropertyevent.h>
 #include <dtDirectorQt/undocreateevent.h>
 
 #include <dtDirector/valuenode.h>
@@ -273,6 +274,9 @@ namespace dtDirector
       EditorScene* scene = mScene;
       std::string name = mNode->GetName();
 
+      UndoManager* undoManager = scene->GetEditor()->GetUndoManager();
+      bool multipleEvents = false;
+
       // If the value is already a reference, make sure we reference
       // the actual value instead of the reference.
       const NodeType& type = mNode->GetType();
@@ -299,6 +303,12 @@ namespace dtDirector
          QString valueName = QInputDialog::getText(NULL, "Name Value", "Please enter a unique name for the value to be referenced:");
          if (!valueName.isEmpty())
          {
+            undoManager->BeginMultipleEvents();
+            multipleEvents = true;
+
+            dtCore::RefPtr<UndoPropertyEvent> event = new UndoPropertyEvent(undoManager->GetEditor(), mNode->GetID(), "Name", "", valueName.toStdString());
+            undoManager->AddEvent(event);
+
             name = valueName.toStdString();
             mNode->SetName(name);
          }
@@ -319,12 +329,16 @@ namespace dtDirector
          scene->Refresh();
 
          // Create an undo event for this creation event.
-         UndoManager* undoManager = scene->GetEditor()->GetUndoManager();
          if (undoManager)
          {
             dtCore::RefPtr<UndoCreateEvent> event = new UndoCreateEvent(undoManager->GetEditor(), node->GetID(), scene->GetGraph()->GetID());
             undoManager->AddEvent(event);
          }
+      }
+
+      if (multipleEvents)
+      {
+         undoManager->EndMultipleEvents();
       }
    }
 
