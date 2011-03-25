@@ -84,6 +84,7 @@ namespace dtDAL
                          bool canReorder = true,
                          bool readOnly = false)
       : ArrayActorPropertyBase(name, label, desc, NULL, groupName, editorType, canReorder, readOnly)
+      , mIndex(0)
       , mSetFunc(set)
       , mGetFunc(get)
       , mGetSizeFunc(size)
