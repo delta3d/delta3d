@@ -319,6 +319,15 @@ namespace dtUtil
     */
    bool DT_UTIL_EXPORT TakeToken(std::string& data, std::string& outToken, char openChar, char closeChar);
 
+   /**
+    * Finds all instances of the findWhat string in the string modifiedString
+    * and replaces them with the replaceWith string.
+    *
+    * @param[out] modifiedString The string we are modifying
+    * @param[in]  findWhat       The string we want to remove from modifiedString
+    * @param[in]  replaceWith    The string we want to put in modifiedString
+    */
+   void DT_UTIL_EXPORT FindAndReplace(std::string& modifiedString, const std::string& findWhat, const std::string& replaceWith);
 }
 
 #endif // DELTA_STRING_UTILS_INC

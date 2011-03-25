@@ -250,4 +250,14 @@ namespace dtUtil
       return result;
    }
 
+   ///////////////////////////////////////////////////////////////////////////////
+   void FindAndReplace(std::string& modifiedString, const std::string& findWhat, const std::string& replaceWith)
+   {
+      size_t pos = 0;
+      while((pos = modifiedString.find(findWhat, pos)) != std::string::npos)
+      {
+         modifiedString.replace(pos, findWhat.length(), replaceWith);
+         pos += replaceWith.length();
+      }
+   }
 } // namespace dtUtil
