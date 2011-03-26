@@ -7,6 +7,8 @@ namespace dtDirector
    {
       public:
          static const osg::Vec3 GRAY;
+         static const osg::Vec3 GRAY2;
+         static const osg::Vec3 GRAY3;
          static const osg::Vec3 RED;
          static const osg::Vec3 GREEN;
          static const osg::Vec3 GREEN2;
@@ -21,5 +23,7 @@ namespace dtDirector
          static const osg::Vec3 MANGENTA;
          static const osg::Vec3 MANGENTA2;
          static const osg::Vec3 BEIGE;
+         static const osg::Vec3 WHITE;
+         static const osg::Vec3 BLACK;
    };
 }
