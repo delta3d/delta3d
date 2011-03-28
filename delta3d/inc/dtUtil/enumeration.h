@@ -210,13 +210,13 @@ public:
       operator T*() const { return mEnum; }
       operator T&() const { return *mEnum; }
 
-      EnumerationPointer& operator = (EnumerationPointer& rp)
+      EnumerationPointer& operator = (const EnumerationPointer& rp)
       {
          mEnum = rp.mEnum;
          return *this;
       }
 
-      template<class Other> EnumerationPointer& operator = (EnumerationPointer<Other>& rp)
+      template<class Other> EnumerationPointer& operator = (const EnumerationPointer<Other>& rp)
       {
          mEnum = rp.mEnum;
          return *this;
