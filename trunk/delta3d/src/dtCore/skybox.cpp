@@ -153,8 +153,8 @@ void SkyBox::CheckHardware()
    //this should always be supported
    mSupportedProfiles[RP_FIXED_FUNCTION] = true;
 
-   if(osg::isGLExtensionSupported(0, "GL_ARB_texture_cube_map") && 
-      osg::isGLExtensionSupported(0, "GL_ARB_fragment_shader") && 
+   if(osg::isGLExtensionSupported(0, "GL_ARB_texture_cube_map") &&
+      osg::isGLExtensionSupported(0, "GL_ARB_fragment_shader") &&
       osg::isGLExtensionSupported(0, "GL_ARB_vertex_shader"))
    {
       mSupportedProfiles[RP_CUBE_MAP] = true;
@@ -164,7 +164,7 @@ void SkyBox::CheckHardware()
       mSupportedProfiles[RP_CUBE_MAP] = false;
    }
 
-   if (osg::isGLExtensionSupported(0, "GL_ARB_fragment_shader") && 
+   if (osg::isGLExtensionSupported(0, "GL_ARB_fragment_shader") &&
        osg::isGLExtensionSupported(0, "GL_ARB_vertex_shader"))
    {
         mSupportedProfiles[RP_ANGULAR_MAP] = true;
@@ -189,6 +189,12 @@ void SkyBox::SetTexture(SkyBoxSideEnum side, const std::string& filename)
       mTexPreSetList[side] = true;
       mInitializedTextures = true;
    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void dtCore::SkyBox::SetRenderProfilePreference(RenderProfileEnum profileHint)
+{
+   mRenderProfilePreference = profileHint;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

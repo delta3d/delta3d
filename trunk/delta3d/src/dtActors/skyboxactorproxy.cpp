@@ -23,20 +23,41 @@
 #include <dtDAL/resourceactorproperty.h>
 #include <dtDAL/datatype.h>
 #include <dtDAL/functor.h>
+#include <dtDAL/enumactorproperty.h>
 
 namespace dtActors
 {
-   void SkyBoxActorProxy::CreateActor()
+   IMPLEMENT_ENUM(SkyBoxActorProxy::RenderProfile);
+   SkyBoxActorProxy::RenderProfile SkyBoxActorProxy::RenderProfile::FIXED_FUNCTION("Fixed Function");
+   SkyBoxActorProxy::RenderProfile SkyBoxActorProxy::RenderProfile::CUBE_MAP("Cubemap");
+   SkyBoxActorProxy::RenderProfile SkyBoxActorProxy::RenderProfile::ANGULAR_MAP("Angular map");
+   SkyBoxActorProxy::RenderProfile SkyBoxActorProxy::RenderProfile::DEFAULT("Default");
+
+   /////////////////////////////////////////////////////////////////////////////
+   SkyBoxActorProxy::SkyBoxActorProxy()
+      : mRenderProfile(&RenderProfile::DEFAULT)
    {
-      SetActor(*new dtCore::SkyBox);
+
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
+   void SkyBoxActorProxy::CreateActor()
+   {
+      SetActor(*new dtCore::SkyBox("skybox"));
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
    void SkyBoxActorProxy::BuildPropertyMap()
    {
       dtActors::EnvEffectActorProxy::BuildPropertyMap();
 
       const std::string GROUPNAME = "SkyBox Textures";
+
+      AddProperty(new dtDAL::EnumActorProperty<RenderProfile>("Render Profile", "Render Profile",
+         dtDAL::EnumActorProperty<RenderProfile>::SetFuncType(this, &SkyBoxActorProxy::SetRenderProfilePreference),
+         dtDAL::EnumActorProperty<RenderProfile>::GetFuncType(this, &SkyBoxActorProxy::GetRenderProfilePreference),
+         "Sets the way the skybox renders.",
+         "Skybox Profile"));
 
       AddProperty(new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::TEXTURE,
          "Top Texture", "Top Texture",
@@ -68,4 +89,39 @@ namespace dtActors
          dtDAL::ResourceActorProperty::SetFuncType(this, &SkyBoxActorProxy::SetBackTexture),
          "Sets the texture on the back of the sky box", GROUPNAME));
    }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void SkyBoxActorProxy::SetRenderProfilePreference(RenderProfile& profile)
+   {
+      mRenderProfile = &profile;
+
+      dtCore::SkyBox::RenderProfileEnum newProfile;
+
+      // Translate the enumeration profile to the c++ enum
+      if (mRenderProfile == &RenderProfile::FIXED_FUNCTION)
+      {
+         newProfile = dtCore::SkyBox::RP_FIXED_FUNCTION;
+      }
+      else if (mRenderProfile == &RenderProfile::CUBE_MAP)
+      {
+         newProfile = dtCore::SkyBox::RP_CUBE_MAP;
+      }
+      else if (mRenderProfile == &RenderProfile::ANGULAR_MAP)
+      {
+         newProfile = dtCore::SkyBox::RP_ANGULAR_MAP;
+      }
+      else
+      {
+         newProfile = dtCore::SkyBox::RP_DEFAULT;
+      }
+
+      dtCore::DeltaDrawable* actor = GetActor();
+
+      if (actor)
+      {
+         dtCore::SkyBox* skybox = dynamic_cast<dtCore::SkyBox*>(actor);
+         skybox->SetRenderProfilePreference(newProfile);
+      }
+   }
+
 }
