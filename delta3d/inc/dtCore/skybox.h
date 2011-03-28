@@ -133,7 +133,7 @@ namespace dtCore
          SkyBoxDrawable(){setUseDisplayList(false);}
 
          /*virtual*/ void drawImplementation(osg::RenderInfo& renderInfo) const;
-      };  
+      };
 
       class ConfigCallback: public osg::NodeCallback
       {
@@ -160,7 +160,7 @@ namespace dtCore
 
    public:
 
-      /// This will automatically be called to create resources 
+      /// This will automatically be called to create resources
       /// but can be manually called if needed
       virtual void Config();
 
@@ -174,11 +174,14 @@ namespace dtCore
       /// Set the texture for this side of the skybox
       void SetTexture(SkyBoxSideEnum side, const std::string& filename);
 
+      /// Set the preferred skybox profile
+      void SetRenderProfilePreference(RenderProfileEnum profileHint);
+
       // Get the current render profile
       RenderProfile* GetRenderProfile() { return mRenderProfile.get(); }
 
    protected:
-      
+
       virtual void CheckHardware();
       virtual void SetRenderProfile(RenderProfileEnum pRenderProfile);
 

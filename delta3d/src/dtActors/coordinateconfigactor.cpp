@@ -231,7 +231,7 @@ namespace dtActors
    }
 
    /////////////////////////////////////////////////////
-   void CoordinateConfigActor::SetIncomingCoordinateType(dtUtil::IncomingCoordinateType &type)
+   void CoordinateConfigActor::SetIncomingCoordinateType(dtUtil::IncomingCoordinateType& type)
    {
       mCoordinates.SetIncomingCoordinateType(type);
    }
@@ -244,7 +244,7 @@ namespace dtActors
    }
 
    /////////////////////////////////////////////////////
-   void CoordinateConfigActor::SetLocalCoordinateType(dtUtil::LocalCoordinateType &type)
+   void CoordinateConfigActor::SetLocalCoordinateType(dtUtil::LocalCoordinateType& type)
    {
       mCoordinates.SetLocalCoordinateType(type);
    }

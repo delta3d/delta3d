@@ -99,7 +99,7 @@ namespace dtActors
           * Sets the incoming coordinate type
           * @param type The new coordinate type
           */
-         void SetIncomingCoordinateType(dtUtil::IncomingCoordinateType &type);
+         void SetIncomingCoordinateType(dtUtil::IncomingCoordinateType& type);
 
          /**
           * Gets the current local coordinate type
@@ -111,7 +111,7 @@ namespace dtActors
           * Sets the local coordinate type
           * @param type The new coordinate type
           */
-         void SetLocalCoordinateType(dtUtil::LocalCoordinateType &type);
+         void SetLocalCoordinateType(dtUtil::LocalCoordinateType& type);
 
          /**
           * Gets the current local coordinate type
