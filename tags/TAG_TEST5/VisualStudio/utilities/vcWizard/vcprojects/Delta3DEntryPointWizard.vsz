@@ -1,0 +1,6 @@
+VSWIZARD 7.0
+Wizard=VsWizard.VsWizardEngine.8.0
+
+Param="WIZARD_NAME = Delta3DEntryPointWizard"
+Param="RELATIVE_PATH = VCWizards"
+Param="FALLBACK_LCID = 1033"
