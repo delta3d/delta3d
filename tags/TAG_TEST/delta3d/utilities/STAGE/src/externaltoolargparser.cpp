@@ -1,0 +1,13 @@
+#include <prefix/stageprefix.h>
+#include <dtEditQt/externaltoolargparser.h>
+
+
+//////////////////////////////////////////////////////////////////////////
+dtEditQt::ExternalToolArgParser::ExternalToolArgParser()
+{
+}
+
+//////////////////////////////////////////////////////////////////////////
+dtEditQt::ExternalToolArgParser::~ExternalToolArgParser()
+{
+}
