@@ -1,0 +1,164 @@
+Group {
+  DataVariance DYNAMIC
+  nodeMask 0xffffffff
+  cullingActive TRUE
+  num_children 4
+  Geode {
+    DataVariance DYNAMIC
+    nodeMask 0xffffffff
+    cullingActive TRUE
+    num_drawables 1
+    osgParticle::ParticleSystem {
+      UniqueID ParticleSystem_0
+      DataVariance DYNAMIC
+      StateSet {
+        DataVariance STATIC
+        rendering_hint TRANSPARENT_BIN
+        renderBinMode USE
+        binNumber 10
+        binName DepthSortedBin
+        GL_LIGHTING OFF
+        GL_BLEND ON
+        Material {
+          DataVariance STATIC
+          ColorMode OFF
+          ambientColor 0.2 0.2 0.2 1
+          diffuseColor 0.8 0.8 0.8 1
+          specularColor FRONT 0 0 0 1
+          specularColor BACK  0 0 0 1
+          emissionColor FRONT 0 0 0 1
+          emissionColor BACK  0 0 0 1
+          shininess 0
+        }
+        BlendFunc {
+          DataVariance STATIC
+          source SRC_ALPHA
+          destination ONE_MINUS_SRC_ALPHA
+        }
+        textureUnit 0 {
+          GL_TEXTURE_2D ON
+          Texture2D {
+            DataVariance STATIC
+            file "Textures/waterParticle.tga"
+            wrap_s REPEAT
+            wrap_t REPEAT
+            wrap_r REPEAT
+            min_filter LINEAR
+            mag_filter LINEAR
+            maxAnisotropy 1
+            useHardwareMipMapGeneration TRUE
+            unRefImageDataAfterApply FALSE
+            internalFormatMode USE_IMAGE_DATA_FORMAT
+          }
+          TexEnv {
+            DataVariance STATIC
+            mode MODULATE
+          }
+        }
+      }
+      supportsDisplayList FALSE
+      useDisplayList FALSE
+      particleAlignment BILLBOARD
+      alignVectorX 1 0 0
+      alignVectorY 0 1 0
+      doublePassRendering FALSE
+      frozen FALSE
+      freezeOnCull FALSE
+      defaultBoundingBox -10 -10 -10 10 10 10
+      particleTemplate {
+        shape QUAD
+        lifeTime 0.26
+        sizeRange 0.06 0.03
+        alphaRange 1 0
+        colorRange 0.756342 0.726446 1 1 0.992223 0.931389 1 1
+        position 0 0 0
+        velocity 0 0 0
+        angle 0 0 0
+        angularVelocity 0 0 0
+        radius 0.2
+        mass 0.1
+        sizeInterpolator {
+          osgParticle::LinearInterpolator {
+            UniqueID LinearInterpolator_1
+            DataVariance DYNAMIC
+          }
+        }
+        alphaInterpolator {
+          osgParticle::LinearInterpolator {
+            UniqueID LinearInterpolator_2
+            DataVariance DYNAMIC
+          }
+        }
+        colorInterpolator {
+          osgParticle::LinearInterpolator {
+            UniqueID LinearInterpolator_3
+            DataVariance DYNAMIC
+          }
+        }
+      }
+    }
+  }
+  MatrixTransform {
+    DataVariance DYNAMIC
+    nodeMask 0xffffffff
+    cullingActive TRUE
+    referenceFrame RELATIVE_TO_PARENTS
+    Matrix {
+      1 0 0 0
+      0 1 0 0
+      0 0 1 0
+      0 0 0 1
+    }
+    num_children 1
+    osgParticle::ModularEmitter {
+      DataVariance DYNAMIC
+      nodeMask 0xffffffff
+      cullingActive FALSE
+      Use ParticleSystem_0
+      enabled TRUE
+      referenceFrame RELATIVE_TO_PARENTS
+      endless TRUE
+      lifeTime 0
+      startTime 0
+      currentTime 1377.2
+      resetTime 0
+      useDefaultTemplate TRUE
+      osgParticle::RandomRateCounter {
+        DataVariance DYNAMIC
+        rateRange 10 10.8
+      }
+      osgParticle::SectorPlacer {
+        DataVariance DYNAMIC
+        center 0 0 0
+        radiusRange 0 0.01
+        phiRange 0 6.28319
+      }
+      osgParticle::RadialShooter {
+        DataVariance DYNAMIC
+        thetaRange 0 0.1
+        phiRange 0 6.28319
+        initialSpeedRange 1.4 3.3
+        initialRotationalSpeedRange 0 0 -3.1 0 0 3.2
+      }
+    }
+  }
+  osgParticle::ModularProgram {
+    DataVariance DYNAMIC
+    nodeMask 0xffffffff
+    cullingActive FALSE
+    Use ParticleSystem_0
+    enabled TRUE
+    referenceFrame RELATIVE_TO_PARENTS
+    endless TRUE
+    lifeTime 0
+    startTime 0
+    currentTime 1377.2
+    resetTime 0
+  }
+  osgParticle::ParticleSystemUpdater {
+    DataVariance DYNAMIC
+    nodeMask 0xffffffff
+    cullingActive FALSE
+    Use ParticleSystem_0
+  }
+}
