@@ -1,0 +1,11 @@
+<RCC>
+  <qresource prefix="psEditor" >
+    <file>particle.ico</file>
+    <file>trashlayer.png</file>
+    <file>hidelayer.png</file>
+    <file>newlayer.png</file>
+  </qresource>
+  <qresource>
+    <file>../STAGE/icons/play_sound.png</file>
+  </qresource>
+</RCC>
