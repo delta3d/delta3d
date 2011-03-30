@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<DIS>
+  <DISEntityMap>
+    <Mapping>
+      <EntityType>
+        <EntityKind>1</EntityKind>
+        <Domain>1</Domain>
+        <Country>222</Country>
+        <Category>1</Category>
+        <Subcategory>2</Subcategory>
+        <Specific>2</Specific>
+        <Extra>0</Extra>
+      </EntityType>
+      <ActorData>
+        <ActorType>
+          <Name>Game Mesh Actor</Name>
+          <Category>dtcore.Game.Actors</Category>
+        </ActorType>
+        <Resource>
+          <Descriptor>StaticMeshes:physics_crate.ive</Descriptor>
+          <ActorProperty>dunno</ActorProperty>
+        </Resource>
+      </ActorData>
+    </Mapping>
+    
+    <Mapping> 
+      <EntityType>
+         <EntityKind>1</EntityKind>
+         <Domain>2</Domain> 
+         <Country>225</Country>
+         <Category>20</Category>
+         <Subcategory>2</Subcategory> 
+         <Specific>10</Specific>
+         <Extra>0</Extra>
+      </EntityType>
+      <ActorData> 
+         <ActorType>
+           <Name>Game Mesh Actor</Name> 
+           <Category>dtcore.Game.Actors</Category>
+         </ActorType>
+         <Resource> 
+           <Descriptor>StaticMeshes:uh-1n.ive</Descriptor> 
+           <ActorProperty>dunno</ActorProperty>
+         </Resource>
+      </ActorData>
+    </Mapping>      
+  </DISEntityMap>
+  
+  <PropertyNames>
+    <EntityNonDamaged>static mesh</EntityNonDamaged>
+    <EntityLastKnownLocation>Translation</EntityLastKnownLocation>
+    <EntityLastKnownOrientation>Rotation</EntityLastKnownOrientation>
+  </PropertyNames>
+</DIS>
