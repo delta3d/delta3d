@@ -229,7 +229,7 @@ void CloudPlane::Create(const std::string& textureFilePath)
 
    int planeSize = 20000;
 
-    mPlane = createPlane(planeSize, mHeight);
+   mPlane = createPlane(planeSize, mHeight);
    osg::StateSet *stateset = mPlane->getOrCreateStateSet();
 
    CreateCloudTexture(textureFilePath);

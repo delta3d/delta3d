@@ -178,7 +178,7 @@ MoveWaypointCommand::MoveWaypointCommand(const osg::Vec3& oldXYZ, const osg::Vec
                                          dtAI::WaypointInterface& waypoint,
                                          dtAI::AIPluginInterface* aiInterface,
                                          QUndoCommand* parent)
-:QUndoCommand(parent)
+: QUndoCommand(parent)
 , mOldXYZ(oldXYZ)
 , mNewXYZ(newXYZ)
 , mWp(&waypoint)

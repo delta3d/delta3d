@@ -267,6 +267,9 @@ void AIUtilityApp::OnGroundClampSelectedWaypoints()
    if (motionWasEnabled)
    {
       mWaypointMotionModel->SetEnabled(true);
+
+      // Force the object motion model to move with the clamped points
+      mWaypointMotionModel->OnWaypointSelectionChanged(selected);
    }
 
    if (idWasEnabled)
@@ -277,7 +280,7 @@ void AIUtilityApp::OnGroundClampSelectedWaypoints()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-QUndoCommand* AIUtilityApp::GroundClampWaypoints(std::vector<dtAI::WaypointInterface*> &selected)
+QUndoCommand* AIUtilityApp::GroundClampWaypoints(std::vector<dtAI::WaypointInterface*>& selected)
 {
    if (selected.empty())
    {
