@@ -160,6 +160,12 @@ namespace dtCore
       const dtUtil::DateTime& GetDateTime() const;
       dtUtil::DateTime& GetDateTime();
 
+      ///Set whether we use sim time for the environment or our internal timer
+      void SetUseSimTime(bool useSimTime);
+
+      ///True if we use sim time to update the environment or not
+      bool GetUseSimTime() const;
+
       ///Set the ephemeris reference lat/long
       void SetRefLatLong(const osg::Vec2& latLong);
       void GetRefLatLong(osg::Vec2& latLong) const;
@@ -268,6 +274,8 @@ namespace dtCore
       RefPtr<SkyDome> mSkyDome; ///<the added SkyDome (couuld be 0)
 
       RefPtr<osg::Node> mNode;
+
+      bool mUseSimTime; ///<Whether we should use sim time as our environment time or not
 
       /**
       * Updates the sky light based on the sun angle.

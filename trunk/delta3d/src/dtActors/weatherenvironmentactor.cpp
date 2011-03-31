@@ -95,6 +95,11 @@ namespace dtActors
          StringActorProperty::GetFuncType(env, &WeatherEnvironmentActor::GetTimeAndDateString),
          "Sets the time and date of the application. This string must be in the following UTC format: yyyy-mm-ddThh:mm:ss"));
 
+      AddProperty(new BooleanActorProperty("Use Sim Time", "Use Sim Time",
+         BooleanActorProperty::SetFuncType(env, &WeatherEnvironmentActor::SetUseSimTime),
+         BooleanActorProperty::GetFuncType(env, &WeatherEnvironmentActor::GetUseSimTime),
+         "Determines whether the environment should use sim time to update or not"));
+
       AddProperty(new ColorRgbaActorProperty("Sky Color", "Sky Color",
          dtDAL::ColorRgbaActorProperty::SetFuncType(env, &WeatherEnvironmentActor::SetSkyColor),
          dtDAL::ColorRgbaActorProperty::GetFuncType(env, &WeatherEnvironmentActor::GetSkyColor),
@@ -247,6 +252,16 @@ namespace dtActors
    {
       return dtUtil::DateTime::ToString(dtUtil::DateTime(dtUtil::DateTime::TimeOrigin::LOCAL_TIME),
          dtUtil::DateTime::TimeFormat::CALENDAR_DATE_AND_TIME_FORMAT);
+   }
+
+   void WeatherEnvironmentActor::SetUseSimTime(bool useSimTime)
+   {
+      mWeather->GetEnvironment()->SetUseSimTime(useSimTime);
+   }
+
+   bool WeatherEnvironmentActor::GetUseSimTime() const
+   {
+      return mWeather->GetEnvironment()->GetUseSimTime();
    }
 
    dtABC::Weather& WeatherEnvironmentActor::GetWeather()

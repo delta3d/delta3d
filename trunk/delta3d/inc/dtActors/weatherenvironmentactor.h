@@ -265,6 +265,12 @@ namespace dtActors
           */
          std::string GetCurrentTimeAndDateString() const;
 
+         ///Set whether the environment uses sim time for the environment or an internal time
+         void SetUseSimTime(bool useSimTime);
+
+         ///True if the environment uses sim time to update the environment or an internal time
+         bool GetUseSimTime() const;
+
          /**
           * Gets the weather object contained by this actor.
           * @return The weather object contained by this actor.
