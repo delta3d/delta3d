@@ -295,7 +295,14 @@ namespace dtUtil
    //////////////////////////////////////////////////////////////////////////
    Log& Log::GetInstance()
    {
-      return GetInstance(LogImpl::mDefaultName);
+      static Log* kDefaultLog = NULL;
+
+      if (kDefaultLog == NULL)
+      {
+         kDefaultLog = &GetInstance(LogImpl::mDefaultName);
+      }
+
+      return *kDefaultLog;
    }
 
    //////////////////////////////////////////////////////////////////////////
