@@ -48,6 +48,7 @@ Environment::Environment(const std::string& name)
    , mSunlightShader(new SunlightShader())
    , mSkyDomeShader(new SkyDomeShader())
    , mSkyDome(NULL)
+   , mUseSimTime(false)
 {
    RegisterInstance(this);
 
@@ -509,6 +510,18 @@ dtUtil::DateTime& dtCore::Environment::GetDateTime()
    return mCurrTime;
 }
 
+///////////////////////////////////////////////////////////////////////////////
+void dtCore::Environment::SetUseSimTime(bool useSimTime)
+{
+   mUseSimTime = useSimTime;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+bool dtCore::Environment::GetUseSimTime() const
+{
+   return mUseSimTime;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 void dtCore::Environment::Update(const double deltaFrameTime)
 {
@@ -517,7 +530,14 @@ void dtCore::Environment::Update(const double deltaFrameTime)
    if (mLastUpdate > 1.0)
    {
       mLastUpdate = 0.0;
-      GetSunPos(mCurrTime.GetGMTTime(), mRefLatLong[0], mRefLatLong[1], 1.0, &mSunAltitude, &mSunAzimuth);
+      time_t time = mCurrTime.GetGMTTime();
+      if (mUseSimTime)
+      {
+         DateTime simTime = dtCore::System::GetInstance().GetSimulationClockTime() / 1000000;
+         simTime.SetGMTOffset(mRefLatLong.x(), mRefLatLong.y(), false);
+         time = simTime.GetGMTTime();
+      }
+      GetSunPos(time, mRefLatLong[0], mRefLatLong[1], 1.0, &mSunAltitude, &mSunAzimuth);
       UpdateSkyLight();
       UpdateSunColor();
       UpdateEnvColors();
