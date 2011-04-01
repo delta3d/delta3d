@@ -166,7 +166,7 @@ namespace dtDAL
          InputSourcefStream xerStream(fileStream);
          mXercesParser->parse(xerStream);
       }
-      catch(const dtUtil::Exception& iconFoundWeAreDone)
+      catch(const dtUtil::Exception& /*iconFoundWeAreDone*/)
       {
          //Probably the icon has been found, the exception to stop parsing has
          //been thrown, so there's nothing to do here.  

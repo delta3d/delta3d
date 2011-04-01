@@ -48,7 +48,7 @@ namespace dtDAL
        * the ActorType will not be the key, but the memory address
        * of the ActorType will be the key.  Therefore, this comparison
        * function exists so that the ActorType smart pointer is
-       * deferenced before the comparison.
+       * dereferenced before the comparison.
        */
       struct RefPtrComp
       {

@@ -19,8 +19,8 @@
  * Bradley Anderegg
  */
 
-#ifndef DELTA_AI_INTERFACE_ACTOR
-#define DELTA_AI_INTERFACE_ACTOR
+#ifndef AI_INTERFACE_ACTOR
+#define AI_INTERFACE_ACTOR
 
 #include <dtCore/refptr.h>
 #include <dtAI/export.h>
@@ -73,7 +73,6 @@ namespace dtAI
 
       /*virtual*/ bool IsPlaceable() const;
 
-
       // Use the AIPluginInterface object to interface with dtAI through this actor
       // using this instead of dtAI directly will ensure you will be
       // compatible with future versions of dtAI
@@ -88,10 +87,6 @@ namespace dtAI
       */
      virtual AIPluginInterface* CreateAIInterface();
 
-
-     /**
-      * Destructor
-      */
      /*virtual*/ ~AIInterfaceActorProxy();
 
    private:
@@ -100,4 +95,4 @@ namespace dtAI
 
 } // namespace dtAI
 
-#endif // DELTA_AI_INTERFACE_ACTOR
+#endif // AI_INTERFACE_ACTOR
