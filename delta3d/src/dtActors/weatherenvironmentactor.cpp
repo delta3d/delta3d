@@ -430,6 +430,16 @@ namespace dtActors
       return WeatherEnvironmentActor::WindTypeEnum::WIND_NONE;
    }
 
+   float WeatherEnvironmentActor::GetWindSpeed() const
+   {
+      return mWeather->GetEnvironment()->GetWindSpeed();
+   }
+
+   osg::Vec3 WeatherEnvironmentActor::GetWindDirection() const
+   {
+      return mWeather->GetEnvironment()->GetWindDirection();
+   }
+
    void WeatherEnvironmentActor::SetSkyColor(const osg::Vec4& color)
    {
       osg::Vec3 tempColor(color[0], color[1], color[2]);
