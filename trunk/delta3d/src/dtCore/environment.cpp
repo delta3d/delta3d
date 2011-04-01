@@ -48,6 +48,7 @@ Environment::Environment(const std::string& name)
    , mSunlightShader(new SunlightShader())
    , mSkyDomeShader(new SkyDomeShader())
    , mSkyDome(NULL)
+   , mWindSpeed(0.0f)
    , mUseSimTime(false)
 {
    RegisterInstance(this);
@@ -859,6 +860,30 @@ osg::Vec2 dtCore::Environment::GetSunAzEl() const
 void dtCore::Environment::GetRefLatLong(osg::Vec2& latLong) const
 {
    latLong = mRefLatLong;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void dtCore::Environment::SetWindSpeed(float speed)
+{
+   mWindSpeed = speed;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+float dtCore::Environment::GetWindSpeed() const
+{
+   return mWindSpeed;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void dtCore::Environment::SetWindDirection(const osg::Vec3& direction)
+{
+   mWindDirection = direction;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+osg::Vec3 dtCore::Environment::GetWindDirection() const
+{
+   return mWindDirection;
 }
 
 //////////////////////////////////////////////////////////////////////////

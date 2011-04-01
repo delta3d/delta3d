@@ -344,6 +344,18 @@ namespace dtActors
          WindTypeEnum& GetWindType();
 
          /**
+          * Gets the current wind speed
+          * @return The wind speed
+          */
+         float GetWindSpeed() const;
+
+         /**
+          * Gets the current wind direction
+          * @return The wind direction
+          */
+         osg::Vec3 GetWindDirection() const;
+
+         /**
           * Sets the sky color on this environment
           * @param color The color to set, in RGBA format
           */

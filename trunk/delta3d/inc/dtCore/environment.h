@@ -170,6 +170,12 @@ namespace dtCore
       void SetRefLatLong(const osg::Vec2& latLong);
       void GetRefLatLong(osg::Vec2& latLong) const;
 
+      void SetWindSpeed(float speed);
+      float GetWindSpeed() const;
+
+      void SetWindDirection(const osg::Vec3& direction);
+      osg::Vec3 GetWindDirection() const;
+
       ///required by DeltaDrawable
       osg::Node* GetOSGNode();
       const osg::Node* GetOSGNode() const;
@@ -272,6 +278,9 @@ namespace dtCore
       SunlightShader* mSunlightShader; ///<pixel shader for light scattering
       SkyDomeShader* mSkyDomeShader; ///<pixel shader for the skydome
       RefPtr<SkyDome> mSkyDome; ///<the added SkyDome (couuld be 0)
+
+      float mWindSpeed; ///<the speed of the wind
+      osg::Vec3 mWindDirection; ///<the direction of the wind
 
       RefPtr<osg::Node> mNode;
 
