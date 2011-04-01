@@ -198,6 +198,8 @@ void MoveWaypointCommand::redo()
 {
    mAIInterface->MoveWaypoint(mWp, mNewXYZ);
    mAIInterface->GetDebugDrawable()->InsertWaypoint(*mWp);
+
+   emit WaypointsMoved();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -205,4 +207,6 @@ void MoveWaypointCommand::undo()
 {
    mAIInterface->MoveWaypoint(mWp, mOldXYZ);
    mAIInterface->GetDebugDrawable()->InsertWaypoint(*mWp);
+
+   emit WaypointsMoved();
 }

@@ -267,9 +267,6 @@ void AIUtilityApp::OnGroundClampSelectedWaypoints()
    if (motionWasEnabled)
    {
       mWaypointMotionModel->SetEnabled(true);
-
-      // Force the object motion model to move with the clamped points
-      mWaypointMotionModel->OnWaypointSelectionChanged(selected);
    }
 
    if (idWasEnabled)
@@ -303,6 +300,8 @@ QUndoCommand* AIUtilityApp::GroundClampWaypoints(std::vector<dtAI::WaypointInter
                            osg::Vec3(wpXYZ[0], wpXYZ[1], hot),
                            **itr,
                            mAIInterface.get(), parentUndo);
+
+         connect(undoMove, SIGNAL(WaypointsMoved()), mWaypointMotionModel, SLOT(OnWaypointsMoved()));
       }
 
       ++itr;
