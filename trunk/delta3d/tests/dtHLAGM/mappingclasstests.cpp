@@ -47,7 +47,6 @@
 #include <dtHLAGM/hlacomponent.h>
 #include <dtHLAGM/attributetoproperty.h>
 #include <dtHLAGM/parametertoparameter.h>
-#include <dtHLAGM/onetoonemapping.h>
 #include <dtHLAGM/onetomanymapping.h>
 #include <dtHLAGM/distypes.h>
 #include <dtHLAGM/hlacomponentconfig.h>
@@ -60,8 +59,6 @@ class MappingClassTests : public CPPUNIT_NS::TestFixture
 {
    CPPUNIT_TEST_SUITE(MappingClassTests);
 
-      CPPUNIT_TEST(TestAttributeToProperty);
-      CPPUNIT_TEST(TestParameterToParameter);
       CPPUNIT_TEST(TestAttributeToPropertyList);
       CPPUNIT_TEST(TestParameterToParameterList);
       CPPUNIT_TEST(TestObjectToActor);
@@ -97,25 +94,11 @@ class MappingClassTests : public CPPUNIT_NS::TestFixture
       {
       }
 
-      void TestAttributeToProperty()
-      {
-         dtHLAGM::AttributeToProperty thisOneToOneMapping;
-         TestOneToOneMapping(thisOneToOneMapping);
-      }
-
-
       void TestAttributeToPropertyList()
       {
          dtHLAGM::AttributeToPropertyList thisMapping;
          TestOneToManyMapping(thisMapping);
       }
-
-      void TestParameterToParameter()
-      {
-         dtHLAGM::ParameterToParameter thisParameterToParameterMapping;
-         TestOneToOneMapping(thisParameterToParameterMapping);
-      }
-
 
       void TestParameterToParameterList()
       {
@@ -271,12 +254,6 @@ class MappingClassTests : public CPPUNIT_NS::TestFixture
       }
    private:
 
-      void TestOneToOneMapping(dtHLAGM::OneToOneMapping& thisOneToOneMapping)
-      {
-         TestOneToXMapping(thisOneToOneMapping);
-         TestGameParameterMapping(thisOneToOneMapping);
-      }
-
       void TestOneToManyMapping(dtHLAGM::OneToManyMapping& thisOneToManyMapping)
       {
          TestOneToXMapping(thisOneToManyMapping);
@@ -323,6 +300,14 @@ class MappingClassTests : public CPPUNIT_NS::TestFixture
 
          thisOneToXMapping.SetRequiredForHLA(true);
          CPPUNIT_ASSERT_MESSAGE("Set Attribute Required should succeed.", thisOneToXMapping.IsRequiredForHLA());
+
+         CPPUNIT_ASSERT_MESSAGE("Should not default to special", !thisOneToXMapping.GetSpecial());
+         thisOneToXMapping.SetSpecial(true);
+         CPPUNIT_ASSERT_MESSAGE("Should be special.", thisOneToXMapping.GetSpecial());
+
+         CPPUNIT_ASSERT_MESSAGE("Should not default to array", !thisOneToXMapping.GetIsArray());
+         thisOneToXMapping.SetIsArray(true);
+         CPPUNIT_ASSERT_MESSAGE("Should be an array.", thisOneToXMapping.GetIsArray());
       }
 
       template <typename MappingType>

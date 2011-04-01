@@ -64,12 +64,16 @@ namespace dtHLAGM
           * @param size an output parameter that is the size of the buffer.
           * @param type the AttributeType that this buffer should be created to hold.
           */
-         static void AllocateBuffer(char*& buffer, size_t& size, const AttributeType& type)
+         static void AllocateBuffer(char*& buffer, size_t& size, const AttributeType& type, size_t elements = 1, size_t padding = 0)
          {
             size = type.GetEncodedLength();
-            buffer = new char[size];
-            //zero the buffer.
-            memset((void*)buffer, 0, size);
+            size = (size * elements) + padding;
+            if (size > 0)
+            {
+               buffer = new char[size];
+               //zero the buffer.
+               memset((void*)buffer, 0, size);
+            }
          }
    
          /**

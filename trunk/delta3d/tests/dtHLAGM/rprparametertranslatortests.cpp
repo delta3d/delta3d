@@ -1216,9 +1216,18 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
       {
          std::vector<dtCore::RefPtr<dtGame::MessageParameter> > messageParameters;
 
-         dtHLAGM::ArticulatedParts* ap = new dtHLAGM::ArticulatedParts(1212, 8, -20.21f);
-         dtHLAGM::ArticulatedParameter artParam(0,0, dtHLAGM::ParameterValue(*ap));
+         dtHLAGM::ArticulatedParts ap(1212, 8, -20.21f);
+         dtHLAGM::ArticulatedParameter artParam(0,0, dtHLAGM::ParameterValue(ap));
          artParam.Encode(mBuffer);
+
+         dtHLAGM::ArticulatedParts ap2(2231, 8, -13.61f);
+         dtHLAGM::ArticulatedParameter artParam2(1, 2231, dtHLAGM::ParameterValue(ap2));
+         artParam2.Encode(mBuffer + artParam.EncodedLength());
+
+         EntityType et(1, 1 , 225, 3, 4, 5, 6);
+         dtHLAGM::AttachedParts at(1, et);
+         dtHLAGM::ArticulatedParameter artParam3(0, 3334, dtHLAGM::ParameterValue(at));
+         artParam3.Encode(mBuffer + 2 * artParam.EncodedLength());
 
          dtCore::RefPtr<dtGame::GroupMessageParameter> groupParam = new dtGame::GroupMessageParameter("Group Test");
          messageParameters.push_back(groupParam.get());
@@ -1229,10 +1238,13 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
          pd.AddEnumerationMapping("2231", "dof_fakerz");
          oneToMany.GetParameterDefinitions().push_back(pd);
 
-         mParameterTranslator->MapToMessageParameters(mBuffer, artParam.EncodedLength(), messageParameters, oneToMany);
+         mParameterTranslator->MapToMessageParameters(mBuffer, artParam.EncodedLength() * 3, messageParameters, oneToMany);
 
          dtGame::MessageParameter* msgParam = groupParam.get()->GetParameter("AttachedPartMessageParam0");
-         CPPUNIT_ASSERT_MESSAGE("Found an articulated message param that should have not been added", msgParam == NULL);
+         CPPUNIT_ASSERT_MESSAGE("Did not find an articulated message param that should have been added", msgParam != NULL);
+
+         msgParam = groupParam.get()->GetParameter("ArticulatedPartMessageParam1");
+         CPPUNIT_ASSERT_MESSAGE("Did not find the articulated message param that should have been added", msgParam != NULL);
 
          msgParam = groupParam.get()->GetParameter("ArticulatedPartMessageParam0");
          CPPUNIT_ASSERT_MESSAGE("Did not find the articulated message param that should have been added", msgParam != NULL);

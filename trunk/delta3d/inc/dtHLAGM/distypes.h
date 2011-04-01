@@ -239,6 +239,10 @@ namespace dtHLAGM
             return *this;
          }
 
+         void ToString(std::string& toFill, char delimiter = '.') const;
+
+         bool FromString(const std::string& str, char delimiter = '.');
+
          /**
           * Compares this object to another of its type.  Imposes
           * a total ordering, allowing this object to be used as a
@@ -1105,7 +1109,7 @@ namespace dtHLAGM
           * @param articulatedParameterChange the articulated parameter change
           * @param partAttachedTo the part attached to
           */
-         ArticulatedParameter(unsigned char articulatedParameterChange = 0,
+         explicit ArticulatedParameter(unsigned char articulatedParameterChange = 0,
                               unsigned short partAttachedTo = 0);
 
          /**
@@ -1115,7 +1119,7 @@ namespace dtHLAGM
           * @param partAttachedTo the part attached to
           * @param parameterValue the parameter value
           */
-         ArticulatedParameter(unsigned char articulatedParameterChange,
+         explicit ArticulatedParameter(unsigned char articulatedParameterChange,
                               unsigned short partAttachedTo,
                               const ParameterValue& parameterValue);
 

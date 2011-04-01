@@ -135,6 +135,20 @@
                <gameDataType>STRING</gameDataType>
                <gameRequired>false</gameRequired>
             </attrToProp>
+            <attrToProp>
+               <hlaName>ArticulatedParametersArray</hlaName>
+               <hlaDataType array="true" >ARTICULATED_PART_SINGLE_TYPE</hlaDataType>
+               <gameName>Articulated Parameters Array</gameName>
+               <gameDataType>GROUP</gameDataType>
+               <default>unknown</default>
+               <enumerationMapping>
+                  <value id="0">unknown</value>
+                  <value id="2048">dof_periscope</value>
+                  <!--value id="2112">dof_snorkel</value-->
+                  <value id="4416">dof_gun_01</value>
+                  <value id="4096">dof_turret_01</value>
+               </enumerationMapping>
+            </attrToProp>
         </object>
 
         <object extends="BaseEntity" name="F18">

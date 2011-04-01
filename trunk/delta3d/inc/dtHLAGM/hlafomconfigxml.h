@@ -260,6 +260,7 @@ namespace dtHLAGM
          static const std::string ONE_TO_MANY_HLA_NAME_ELEMENT;
          static const std::string ONE_TO_MANY_GAME_NAME_ELEMENT;
          static const std::string ONE_TO_MANY_HLA_DATATYPE_ELEMENT;
+         static const std::string ONE_TO_MANY_DATATYPE_ARRAY;
          static const std::string ONE_TO_MANY_GAME_DATATYPE_ELEMENT;
          static const std::string ONE_TO_MANY_HLA_REQUIRED_ELEMENT;
          static const std::string ONE_TO_MANY_GAME_REQUIRED_ELEMENT;
@@ -282,7 +283,7 @@ namespace dtHLAGM
 
          std::stack<std::string> mElements;
          std::vector<std::string> mMissingLibraries;
-         std::set<std::string> mMissingActorTypes;         
+         std::set<std::string> mMissingActorTypes;
          
          std::string mCurrentEnumHLAID;
 

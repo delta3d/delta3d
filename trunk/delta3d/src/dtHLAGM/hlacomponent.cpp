@@ -1878,7 +1878,9 @@ namespace dtHLAGM
       const ParameterTranslator* pt = FindTranslatorForAttributeType(mapping.GetHLAType());
 
       if (pt != NULL)
+      {
          pt->MapFromMessageParameters(buffer, maxSize, parameters, mapping);
+      }
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -1999,6 +2001,91 @@ namespace dtHLAGM
    }
 
    /////////////////////////////////////////////////////////////////////////////////
+    bool HLAComponent::CreateMessageParametersArray(
+      const char* paramNameBuffer,
+      unsigned long bufferLength,
+      const OneToManyMapping& paramToParamMapping,
+      dtGame::Message& message,
+      bool addMissingParams,
+      const std::string& classHandleString // HLA Interaction class name
+      )
+   {
+       bool success = true;
+
+
+       const std::vector<OneToManyMapping::ParameterDefinition>& paramDefList = paramToParamMapping.GetParameterDefinitions();
+       if (paramDefList.size() > 1)
+       {
+          mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
+             "Array hla types don't yet support adding multiple parameters."
+             "  Use a group or container if you want this behavior.  Message type \"%s\", class handle \"%s\"",
+             message.GetMessageType().GetName().c_str(),
+             classHandleString.c_str());
+          success = false;
+       }
+       else if (!paramDefList.empty())
+       {
+          const OneToManyMapping::ParameterDefinition& paramDef = paramDefList[0];
+
+          // Prepare a reference for capturing parameters.
+          dtCore::RefPtr<dtDAL::NamedArrayParameter> arrayParameter;
+          if (addMissingParams)
+          {
+             arrayParameter = static_cast<dtDAL::NamedArrayParameter*>(FindOrAddMessageParameter(
+                paramDef.GetGameName(), dtDAL::DataType::ARRAY, message));
+
+          }
+          // This is an interaction. Do not add mapped parameters that do not belong.
+          else
+          {
+             arrayParameter = dynamic_cast<dtDAL::NamedArrayParameter*>(message.GetParameter(paramDef.GetGameName()));
+          }
+
+          if (!arrayParameter.valid() )
+          {
+             success = false;
+             mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
+                "Unable to add or find a array parameter for a message.  Parameter: \"%s\",  Message \"%s\", HLA Class name \"%s\"",
+                paramDef.GetGameName().c_str(),
+                message.GetMessageType().GetName().c_str(),
+                classHandleString.c_str());
+          }
+          else
+          {
+             unsigned long remainder = bufferLength;
+             unsigned long perLength = paramToParamMapping.GetHLAType().GetEncodedLength();
+             const char* bufferPtr = paramNameBuffer;
+
+             std::vector<dtCore::RefPtr<dtGame::MessageParameter> > messageParams;
+
+             while (remainder >= perLength)
+             {
+                messageParams.clear();
+                try
+                {
+                   dtDAL::NamedParameter* np = arrayParameter->AddParameter(paramDef.GetGameName(), paramDef.GetGameType());
+                   messageParams.push_back(np);
+                }
+                catch (const dtDAL::InvalidParameterException& ex)
+                {
+                   ex.LogException(dtUtil::Log::LOG_WARNING, *mLogger);
+                }
+
+                MapToMessageParameters( bufferPtr, perLength,
+                   messageParams, paramToParamMapping );
+
+                bufferPtr += perLength;
+                remainder -= perLength;
+             }
+          }
+       }
+       else
+       {
+          success = false;
+       }
+       return success;
+   }
+   /////////////////////////////////////////////////////////////////////////////////
    bool HLAComponent::CreateMessageParameters(
       const char* paramNameBuffer,
       unsigned long bufferLength,
@@ -2011,6 +2098,14 @@ namespace dtHLAGM
       // Initiate the state of this procedure. Mapping is successful until
       // anyone of of the parameter mappings fail.
       bool success = true;
+
+      if (paramToParamMapping.GetIsArray())
+      {
+         // Do the array and return.
+         success = CreateMessageParameters(paramNameBuffer, bufferLength,
+               paramToParamMapping, message, addMissingParams, classHandleString);
+         return success;
+      }
 
       std::vector<dtCore::RefPtr<dtGame::MessageParameter> > messageParams;
       dtCore::RefPtr<dtGame::MessageParameter> aboutParameter;
@@ -2569,6 +2664,289 @@ namespace dtHLAGM
       mDDMSubscriptionRegions.clear();
    }
 
+   void HLAComponent::PrepareSingleUpdateParameter(AttributeToPropertyList& curAttrToProp,
+         RTI::AttributeHandleValuePairSet& updateParams,
+         const dtGame::ActorUpdateMessage& message,
+         bool newObject)
+   {
+      const AttributeType& hlaType = curAttrToProp.GetHLAType();
+
+      if (hlaType == AttributeType::UNKNOWN)
+         return;
+
+      std::vector<dtCore::RefPtr<const dtGame::MessageParameter> > messageParameters;
+      bool hasAtLeastOneNonDefaultedParameter = false;
+
+      typedef std::vector<dtHLAGM::OneToManyMapping::ParameterDefinition> ParamDefsList;
+      ParamDefsList& paramDefs = curAttrToProp.GetParameterDefinitions();
+      ParamDefsList::iterator curParamDef = paramDefs.begin();
+      messageParameters.reserve(paramDefs.size());
+
+      for( unsigned i = 0; curParamDef != paramDefs.end(); ++curParamDef, ++i )
+      {
+         const std::string& gameName = curParamDef->GetGameName();
+         dtDAL::DataType& gameType = curParamDef->GetGameType();
+         const std::string& defaultValue = curParamDef->GetDefaultValue();
+
+         if (gameType == dtDAL::DataType::UNKNOWN)
+         {
+            std::ostringstream reason;
+            reason << "Parameter definition \"" << curParamDef->GetGameName() << "\" ["
+                  << i << "] for mapping of HLA object attribute \""
+                  << curAttrToProp.GetHLAName()
+                  << "\" has \"UNKNOWN\" game data type.  Ingoring." << std::endl;
+            LogMappingError( curAttrToProp, reason.str() );
+            continue;
+         }
+
+         //First check for a regular parameter.
+         dtCore::RefPtr<const dtGame::MessageParameter> messageParameter;
+
+         // This maps with message parameters, so if the about actor id or sending actor id is
+         // needed, it needs to be copied to a message parameter.
+         if (gameType == dtDAL::DataType::ACTOR &&
+               gameName == ABOUT_ACTOR_ID)
+         {
+            dtCore::RefPtr<dtGame::MessageParameter> tmpParam =
+                  dtDAL::NamedParameter::CreateFromType(dtDAL::DataType::ACTOR,
+                        gameName);
+
+            tmpParam->FromString(message.GetAboutActorId().ToString());
+            messageParameter = tmpParam.get();
+         }
+         else if (gameType == dtDAL::DataType::ACTOR &&
+               gameName == SENDING_ACTOR_ID)
+         {
+            dtCore::RefPtr<dtGame::MessageParameter> tmpParam =
+                  dtDAL::NamedParameter::CreateFromType(dtDAL::DataType::ACTOR,
+                        gameName);
+
+            tmpParam->FromString(message.GetSendingActorId().ToString());
+            messageParameter = tmpParam.get();
+         }
+         else
+         {
+            messageParameter = message.GetParameter(gameName);
+
+            if (!messageParameter.valid())
+            {
+               //If no regular parameter was found, check for an actor update parameter.
+               messageParameter = message.GetUpdateParameter(gameName);
+            }
+         }
+
+         if (messageParameter.valid())
+         {
+            messageParameters.push_back(messageParameter);
+            hasAtLeastOneNonDefaultedParameter = true;
+         }
+         else if (!defaultValue.empty())
+         {
+            //send out the default if it's required or if it's the first time this object is
+            //being updated.
+            if( curAttrToProp.IsRequiredForHLA() || newObject )
+               hasAtLeastOneNonDefaultedParameter = true;
+            //Since the default value is in terms of the game value always, create a fake parameter
+            //add it to the translation list with the proper game name, and set it to the default
+            //value.
+            try
+            {
+               dtCore::RefPtr<dtGame::MessageParameter> tmpMsgParam
+               = dtDAL::NamedParameter::CreateFromType(gameType, gameName);
+               tmpMsgParam->FromString(defaultValue);
+               messageParameters.push_back(tmpMsgParam.get());
+            }
+            catch (const dtUtil::Exception& ex)
+            {
+               mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                     "Error creating dummy message parameter with name \"%s\" to use for mapping a default value.  Error message should follow.",
+                     gameName.c_str());
+               ex.LogException(dtUtil::Log::LOG_ERROR, *mLogger);
+               // see the else below for a description of why this needs to happen.
+               messageParameters.push_back(NULL);
+
+               continue;
+            }
+         }
+         else
+         {
+            //For mappings with many parameters, we want the indices to line up with
+            //the mapping parameter definitions, so just
+            //pass in NULL for missing parameters
+            //A NULL will, therefore, never end up as the only parameter.
+            messageParameters.push_back(NULL);
+         }
+      }
+
+      if (hasAtLeastOneNonDefaultedParameter)
+      {
+         size_t bufferSize;
+         char* buffer;
+
+         ParameterTranslator::AllocateBuffer(buffer, bufferSize, hlaType);
+
+         try
+         {
+            MapFromMessageParameters( buffer, bufferSize, messageParameters, curAttrToProp );
+            if (bufferSize > 0) // A parameter may decide not to send anything without throwing an exception
+               updateParams.add( curAttrToProp.GetAttributeHandle(), buffer, bufferSize );
+
+            ParameterTranslator::DeallocateBuffer(buffer);
+         }
+         catch (...)
+         {
+            //be sure the buffer is deleted.
+            if (buffer != NULL)
+               ParameterTranslator::DeallocateBuffer(buffer);
+
+            throw;
+         }
+      }
+   }
+
+   void HLAComponent::PrepareArrayUpdateParameter(AttributeToPropertyList& curAttrToProp,
+                        RTI::AttributeHandleValuePairSet& updateParams,
+                        const dtGame::ActorUpdateMessage& message,
+                        bool newObject)
+   {
+      const AttributeType& hlaType = curAttrToProp.GetHLAType();
+
+      if (hlaType == AttributeType::UNKNOWN)
+         return;
+
+      typedef std::vector<dtHLAGM::OneToManyMapping::ParameterDefinition> ParamDefsList;
+      ParamDefsList& paramDefs = curAttrToProp.GetParameterDefinitions();
+
+      if (paramDefs.size() > 1)
+      {
+         std::ostringstream reason;
+         reason << "Attribute to property has multiple parameter definitions, but it also defines it as an array.  This is not supported yet.";
+         LogMappingError( curAttrToProp, reason.str() );
+
+         curAttrToProp.SetInvalid(true);
+      }
+
+      dtHLAGM::OneToManyMapping::ParameterDefinition& curParamDef = *paramDefs.begin();
+
+      const std::string& gameName = curParamDef.GetGameName();
+      dtDAL::DataType& gameType = curParamDef.GetGameType();
+      const std::string& defaultValue = curParamDef.GetDefaultValue();
+
+      if (gameType == dtDAL::DataType::UNKNOWN)
+      {
+         std::ostringstream reason;
+         reason << "Parameter definition \"" << curParamDef.GetGameName() << "\" ["
+               << 0 << "] for mapping of HLA object attribute \""
+               << curAttrToProp.GetHLAName()
+               << "\" has \"UNKNOWN\" game data type." << std::endl;
+         LogMappingError( curAttrToProp, reason.str() );
+         return;
+      }
+
+      dtCore::RefPtr<const dtDAL::NamedParameter> messageParameter;
+      dtCore::RefPtr<const dtDAL::NamedArrayParameter> arrayParameter;
+
+      //First check for a regular parameter.
+      messageParameter = message.GetParameter(gameName);
+
+      if (!messageParameter.valid())
+      {
+         //If no regular parameter was found, check for an actor update parameter.
+         messageParameter = message.GetUpdateParameter(gameName);
+      }
+
+      bool hasAtLeastOneNonDefaultedParameter = false;
+
+      if (messageParameter.valid())
+      {
+         hasAtLeastOneNonDefaultedParameter = true;
+
+         if (messageParameter->GetDataType() != dtDAL::DataType::ARRAY)
+         {
+            std::ostringstream reason;
+            reason << "Parameter definition \"" << curParamDef.GetGameName() << "\" ["
+                  << 0 << "] for mapping of HLA object attribute \""
+                  << curAttrToProp.GetHLAName()
+                  << "\" should be an array of defined datatype.  If you were attempting to send only one element as a value "
+                  "without storing it in an array message parameter, "
+                  "then you can just make the mapping as not being an array and it will simply use the first element."
+                  << std::endl;
+            LogMappingError( curAttrToProp, reason.str() );
+            return;
+         }
+
+         arrayParameter = static_cast<const dtDAL::NamedArrayParameter*>(messageParameter.get());
+      }
+      else if (!defaultValue.empty())
+      {
+         //send out the default if it's required or if it's the first time this object is
+         //being updated.
+         if( curAttrToProp.IsRequiredForHLA() || newObject )
+            hasAtLeastOneNonDefaultedParameter = true;
+         //Since the default value is in terms of the game value always, create a fake parameter
+         //add it to the translation list with the proper game name, and set it to the default
+         //value.
+         dtCore::RefPtr<dtDAL::NamedArrayParameter> newArrayParameter = new dtDAL::NamedArrayParameter(gameName);
+         arrayParameter = newArrayParameter;
+
+         try
+         {
+            dtCore::RefPtr<dtDAL::NamedParameter> tmpMsgParam
+            = dtDAL::NamedParameter::CreateFromType(gameType, gameName);
+            tmpMsgParam->FromString(defaultValue);
+            newArrayParameter->AddParameter(*tmpMsgParam);
+         }
+         catch (const dtUtil::Exception& ex)
+         {
+            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                  "Error creating dummy message parameter with name \"%s\" to use for mapping a default value.  Error message should follow.",
+                  gameName.c_str());
+            ex.LogException(dtUtil::Log::LOG_ERROR, *mLogger);
+         }
+      }
+
+      if (hasAtLeastOneNonDefaultedParameter && arrayParameter.valid())
+      {
+         size_t bufferSize = 0;
+         char* buffer = NULL;
+
+         ParameterTranslator::AllocateBuffer(buffer, bufferSize, hlaType, arrayParameter->GetSize());
+
+         std::vector<dtCore::RefPtr<const dtDAL::NamedParameter> > messageParameters;
+
+         size_t curSize = hlaType.GetEncodedLength();
+         char* curBuf = buffer;
+         size_t totalSize = 0;
+
+         for (size_t i = 0; i < arrayParameter->GetSize() && totalSize + curSize <= (bufferSize); ++i)
+         {
+            messageParameters.push_back(arrayParameter->GetParameter(i));
+            try
+            {
+               MapFromMessageParameters( curBuf, curSize, messageParameters, curAttrToProp );
+
+               curBuf += curSize;
+               totalSize += curSize;
+               curSize = hlaType.GetEncodedLength();
+            }
+            catch (...)
+            {
+               //be sure the buffer is deleted.
+               if (buffer != NULL)
+                  ParameterTranslator::DeallocateBuffer(buffer);
+
+               throw;
+            }
+         }
+
+         if (totalSize > 0) // A parameter may decide not to send anything without throwing an exception
+            updateParams.add( curAttrToProp.GetAttributeHandle(), buffer, totalSize );
+
+         ParameterTranslator::DeallocateBuffer(buffer);
+      }
+
+   }
+
    /////////////////////////////////////////////////////////////////////////////////
    void HLAComponent::PrepareUpdate(const dtGame::ActorUpdateMessage& message, RTI::AttributeHandleValuePairSet& updateParams,
       const ObjectToActor& objectToActor, bool newObject)
@@ -2660,27 +3038,23 @@ namespace dtHLAGM
 
       std::vector<AttributeToPropertyList>::iterator vectorIterator;
 
-      std::vector<dtCore::RefPtr<const dtGame::MessageParameter> > messageParameters;
-
       const std::string* attrName = NULL;
-
-      AttributeToPropertyList* curAttrToProp = NULL;
 
       for (vectorIterator = attributeToPropertyListVector.begin();
            vectorIterator != attributeToPropertyListVector.end();
            ++vectorIterator)
       {
          // Dereference the iterator once into a simple pointer to the current mapping.
-         curAttrToProp = &(*vectorIterator);
+         AttributeToPropertyList& curAttrToProp = (*vectorIterator);
 
          // Avoid invalid mappings.
-         if( curAttrToProp->IsInvalid() )
+         if( curAttrToProp.IsInvalid() )
          {
-            LogMappingError( *curAttrToProp, "PrepareUpdate found mapping to be INVALID. Ignoring." );
+            LogMappingError( curAttrToProp, "PrepareUpdate found mapping to be INVALID. Ignoring." );
             continue;
          }
 
-         attrName = &curAttrToProp->GetHLAName();
+         attrName = &curAttrToProp.GetHLAName();
 
          // Don't map attributes with no name.
          if ( attrName->empty() )
@@ -2697,143 +3071,20 @@ namespace dtHLAGM
          //
          // The mapped object name should not be sent as it will not
          // work as outgoing through the RTI.
-         if( curAttrToProp->IsSpecial() )
+         if( curAttrToProp.IsSpecial() )
          {
             continue;
          }
 
-         messageParameters.clear();
-         bool hasAtLeastOneNonDefaultedParameter = false;
-
-         typedef std::vector<dtHLAGM::OneToManyMapping::ParameterDefinition> ParamDefsList;
-         ParamDefsList& paramDefs = curAttrToProp->GetParameterDefinitions();
-         ParamDefsList::iterator curParamDef = paramDefs.begin();
-
-         for( unsigned i = 0; curParamDef != paramDefs.end(); ++curParamDef, ++i )
+         if (curAttrToProp.GetIsArray())
          {
-            const std::string& gameName = vectorIterator->GetParameterDefinitions()[i].GetGameName();
-            dtDAL::DataType& gameType = vectorIterator->GetParameterDefinitions()[i].GetGameType();
-            const std::string& defaultValue = vectorIterator->GetParameterDefinitions()[i].GetDefaultValue();
-
-            if (gameType == dtDAL::DataType::UNKNOWN)
-            {
-               std::ostringstream reason;
-               reason << "Parameter definition \"" << curParamDef->GetGameName() << "\" ["
-                  << i << "] for mapping of HLA object attribute \""
-                  << curAttrToProp->GetHLAName()
-                  << "\" has \"UNKNOWN\" game data type.  Ingoring." << std::endl;
-               LogMappingError( *curAttrToProp, reason.str() );
-               continue;
-            }
-
-            //First check for a regular parameter.
-            dtCore::RefPtr<const dtGame::MessageParameter> messageParameter;
-
-            // This maps with message parameters, so if the about actor id or sending actor id is
-            // needed, it needs to be copied to a message parameter.
-            if (gameType == dtDAL::DataType::ACTOR &&
-               gameName == ABOUT_ACTOR_ID)
-            {
-               dtCore::RefPtr<dtGame::MessageParameter> tmpParam =
-                  dtDAL::NamedParameter::CreateFromType(dtDAL::DataType::ACTOR,
-                  gameName);
-
-               tmpParam->FromString(message.GetAboutActorId().ToString());
-               messageParameter = tmpParam.get();
-            }
-            else if (gameType == dtDAL::DataType::ACTOR &&
-               gameName == SENDING_ACTOR_ID)
-            {
-               dtCore::RefPtr<dtGame::MessageParameter> tmpParam =
-                  dtDAL::NamedParameter::CreateFromType(dtDAL::DataType::ACTOR,
-                  gameName);
-
-               tmpParam->FromString(message.GetSendingActorId().ToString());
-               messageParameter = tmpParam.get();
-            }
-            else
-            {
-               messageParameter = message.GetParameter(gameName);
-
-               if (!messageParameter.valid())
-               {
-                  //If no regular parameter was found, check for an actor update parameter.
-                  messageParameter = message.GetUpdateParameter(gameName);
-               }
-            }
-
-            if (messageParameter.valid())
-            {
-               messageParameters.push_back(messageParameter);
-               hasAtLeastOneNonDefaultedParameter = true;
-            }
-            else if (!defaultValue.empty())
-            {
-               //send out the default if it's required or if it's the first time this object is
-               //being updated.
-               if( curAttrToProp->IsRequiredForHLA() || newObject )
-                  hasAtLeastOneNonDefaultedParameter = true;
-               //Since the default value is in terms of the game value always, create a fake parameter
-               //add it to the translation list with the proper game name, and set it to the default
-               //value.
-               try
-               {
-                  dtCore::RefPtr<dtGame::MessageParameter> tmpMsgParam
-                     = dtDAL::NamedParameter::CreateFromType(gameType, gameName);
-                  tmpMsgParam->FromString(defaultValue);
-                  messageParameters.push_back(tmpMsgParam.get());
-               }
-               catch (const dtUtil::Exception& ex)
-               {
-                  mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-                     "Error creating dummy message parameter with name \"%s\" to use for mapping a default value.  Error message should follow.",
-                     gameName.c_str());
-                  ex.LogException(dtUtil::Log::LOG_ERROR, *mLogger);
-                  // see the else below for a description of why this needs to happen.
-                  messageParameters.push_back(NULL);
-
-                  continue;
-               }
-            }
-            else
-            {
-               //For mappings with many parameters, we want the indices to line up with
-               //the mapping parameter definitions, so just
-               //pass in NULL for missing parameters
-               //A NULL will, therefore, never end up as the only parameter.
-               messageParameters.push_back(NULL);
-            }
+            PrepareArrayUpdateParameter(curAttrToProp, updateParams, message, newObject);
+         }
+         else
+         {
+            PrepareSingleUpdateParameter(curAttrToProp, updateParams, message, newObject);
          }
 
-         if (hasAtLeastOneNonDefaultedParameter)
-         {
-            const AttributeType& hlaType = curAttrToProp->GetHLAType();
-
-            if (hlaType == AttributeType::UNKNOWN)
-               continue;
-
-            size_t bufferSize;
-            char* buffer;
-
-            ParameterTranslator::AllocateBuffer(buffer, bufferSize, hlaType);
-
-            try
-            {
-               MapFromMessageParameters( buffer, bufferSize, messageParameters, *curAttrToProp );
-               if (bufferSize > 0) // A parameter may decide not to send anything without throwing an exception
-                  updateParams.add( curAttrToProp->GetAttributeHandle(), buffer, bufferSize );
-
-               ParameterTranslator::DeallocateBuffer(buffer);
-            }
-            catch (...)
-            {
-               //be sure the buffer is deleted.
-               if (buffer != NULL)
-                  ParameterTranslator::DeallocateBuffer(buffer);
-
-               throw;
-            }
-         }
       }
    }
 

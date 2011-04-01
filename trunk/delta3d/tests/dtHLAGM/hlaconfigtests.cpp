@@ -239,7 +239,7 @@ void HLAConfigTests::CheckObjectToActorMapping(
    }
 
    const std::vector<dtHLAGM::AttributeToPropertyList>& propsActual = otoa->GetOneToManyMappingVector();
-   CPPUNIT_ASSERT(propsActual.size() == props.size());
+   CPPUNIT_ASSERT_EQUAL(propsActual.size(), props.size());
    for (unsigned i = 0; i < props.size(); ++i)
    {
       std::ostringstream ss;
@@ -428,6 +428,21 @@ void HLAConfigTests::TestConfigure()
             attrToProp.GetParameterDefinitions().push_back(
                dtHLAGM::OneToManyMapping::ParameterDefinition(
                   "Object Mapping Name", dtDAL::DataType::STRING, "", false));
+            props.push_back(attrToProp);
+         }
+
+         {
+            dtHLAGM::AttributeToPropertyList attrToProp("ArticulatedParametersArray", dtHLAGM::RPRAttributeType::ARTICULATED_PART_SINGLE_TYPE, false);
+            attrToProp.SetIsArray(true);
+
+            dtHLAGM::OneToManyMapping::ParameterDefinition pd("Articulated Parameters Array", dtDAL::DataType::GROUP, "unknown", false);
+
+            pd.AddEnumerationMapping("0", "unknown");
+            pd.AddEnumerationMapping("2048", "dof_periscope");
+            pd.AddEnumerationMapping("4416", "dof_gun_01");
+            pd.AddEnumerationMapping("4096", "dof_turret_01");
+
+            attrToProp.GetParameterDefinitions().push_back(pd);
             props.push_back(attrToProp);
          }
 

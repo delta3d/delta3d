@@ -29,7 +29,9 @@ namespace dtHLAGM
      return ((mHLAName == compareTo.mHLAName)
              && (mHLAType == compareTo.mHLAType)
              && (mRequiredForHLA == compareTo.mRequiredForHLA)
-             && (mGameParameters == compareTo.mGameParameters));
+             && (mGameParameters == compareTo.mGameParameters)
+             && (mSpecial == compareTo.mSpecial)
+             && (mIsArray == compareTo.mIsArray));
    }
 
    void OneToManyMapping::ParameterDefinition::AddEnumerationMapping(const std::string& hlaValue, const std::string& gameValue)
@@ -79,7 +81,9 @@ namespace dtHLAGM
       os << "HLAName: " << otmm.GetHLAName() << std::endl;
       os << "HLAType: " << otmm.GetHLAType().GetName() << std::endl;
       os << "Required For HLA: " << otmm.IsRequiredForHLA() << std::endl;
-      os << "Invalid: " << otmm.IsInvalid() << std::endl;
+      os << "Invalid: " << otmm.GetInvalid() << std::endl;
+      os << "Special: " << otmm.GetSpecial() << std::endl;
+      os << "Array: " << otmm.GetIsArray() << std::endl;
       os << "Parameters Begin: " << std::endl << std::endl;
 
       const std::vector<OneToManyMapping::ParameterDefinition>& pds = otmm.GetParameterDefinitions();

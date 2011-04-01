@@ -109,13 +109,14 @@ namespace dtHLAGM
           * @param hlaName the name of the HLA value to map to.
           * @param hlaType the type of the HLA value.
           * @param requiredForHLA true if this field is required in the HLA FOM.
+          * @param isArray if the network data type is an array.
           */
          ParameterToParameterList(const std::string& hlaName,
                              const AttributeType& attributeType,
-                             bool requiredForHLA):
+                             bool requiredForHLA, bool isArray = false):
                              OneToManyMapping(hlaName,
                                 attributeType,
-                                requiredForHLA),
+                                requiredForHLA, false, isArray),
                              mParameterHandle(0)
          {}
 
