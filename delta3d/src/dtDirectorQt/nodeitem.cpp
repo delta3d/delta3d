@@ -23,11 +23,13 @@
 #include <dtDirectorQt/directoreditor.h>
 #include <dtDirectorQt/editorscene.h>
 #include <dtDirectorQt/linkitem.h>
+#include <dtDirectorQt/groupitem.h>
 
 #include <dtDirectorQt/undomanager.h>
 #include <dtDirectorQt/undopropertyevent.h>
 
 #include <dtDirector/valuenode.h>
+#include <dtDirector/groupnode.h>
 #include <dtDirectorNodes/externalvaluenode.h>
 
 #include <QtGui/QGraphicsScene>
@@ -1322,7 +1324,7 @@ namespace dtDirector
 
       if (mNode->GetNodeLogging())
       {
-         setPen(QPen(Qt::green, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+         setPen(QPen(Qt::white, 2, Qt::DotLine, Qt::RoundCap, Qt::RoundJoin));
       }
 
       if(mScene != NULL && mScene->GetEditor()->GetReplayMode())

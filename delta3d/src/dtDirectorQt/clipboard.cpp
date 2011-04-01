@@ -164,7 +164,7 @@ namespace dtDirector
             if (graph)
             {
                dtCore::RefPtr<UndoCreateEvent> event = new UndoCreateEvent(
-                  undoManager->GetEditor(), graph->GetID(), graph->mParent->GetID());
+                  undoManager->GetEditor(), graph->GetID(), graph->GetParent()->GetID());
                undoManager->AddEvent(event);
             }
          }
@@ -340,13 +340,13 @@ namespace dtDirector
                // connect its input to a node that is on its parent graph.
                if (link->GetOwner()->GetType().GetFullName() == "Core.Input Link")
                {
-                  myNodeGraph = myNodeGraph->mParent;
+                  myNodeGraph = myNodeGraph->GetParent();
                }
                // If the other node is an output link node, it can only
                // connect its output to a node that is on its parent graph.
                if (owner->GetType().GetFullName() == "Core.Output Link")
                {
-                  otherNodeGraph = otherNodeGraph->mParent;
+                  otherNodeGraph = otherNodeGraph->GetParent();
                }
 
                // The two nodes can only link together if their connecting
@@ -359,7 +359,7 @@ namespace dtDirector
                // If we are creating new link nodes, then create
                // a new input link node and connect them together.
                if (createLinks && !newOwner &&
-                  otherNodeGraph == parent->mParent)
+                  otherNodeGraph == parent->GetParent())
                {
                   dtCore::RefPtr<Node> rampNode = NodeManager::GetInstance().CreateNode("Input Link", "Core", parent);
                   if (rampNode.valid())
@@ -434,13 +434,13 @@ namespace dtDirector
                // connect its outputs to a node that is on its parent graph.
                if (link->GetOwner()->GetType().GetFullName() == "Core.Output Link")
                {
-                  myNodeGraph = myNodeGraph->mParent;
+                  myNodeGraph = myNodeGraph->GetParent();
                }
                // If the other node is an input link node, it can only
                // connect its input to a node that is on its parent graph.
                if (owner->GetType().GetFullName() == "Core.Input Link")
                {
-                  otherNodeGraph = otherNodeGraph->mParent;
+                  otherNodeGraph = otherNodeGraph->GetParent();
                }
 
                // The two nodes can only link together if their connecting
@@ -453,7 +453,7 @@ namespace dtDirector
                // If we are creating new link nodes, then create
                // a new output link node and connect them together.
                if (createLinks && !newOwner &&
-                  otherNodeGraph == parent->mParent)
+                  otherNodeGraph == parent->GetParent())
                {
                   dtCore::RefPtr<Node> rampNode = NodeManager::GetInstance().CreateNode("Output Link", "Core", parent);
                   if (rampNode.valid())
@@ -528,7 +528,7 @@ namespace dtDirector
                // connect its value to a node that is on its parent graph.
                if (link->GetOwner()->GetType().GetFullName() == "Core.Value Link")
                {
-                  myNodeGraph = myNodeGraph->mParent;
+                  myNodeGraph = myNodeGraph->GetParent();
                }
 
                // The two nodes can only link together if their connecting
@@ -541,7 +541,7 @@ namespace dtDirector
                // If we are creating new link nodes, then create
                // a new input link node and connect them together.
                if (createLinks && !newOwner &&
-                  otherNodeGraph == parent->mParent &&
+                  otherNodeGraph == parent->GetParent() &&
                   !link->GetOwner()->AsValueNode())
                {
                   dtCore::RefPtr<ValueNode> rampNode = dynamic_cast<ValueNode*>(NodeManager::GetInstance().CreateNode("Value Link", "Core", parent).get());
@@ -611,7 +611,7 @@ namespace dtDirector
                // connect its value to a node that is on its parent graph.
                if (valueLink->GetOwner()->GetType().GetFullName() == "Core.Value Link")
                {
-                  otherNodeGraph = otherNodeGraph->mParent;
+                  otherNodeGraph = otherNodeGraph->GetParent();
                }
 
                // The two nodes can only link together if their connecting

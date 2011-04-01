@@ -47,12 +47,6 @@ namespace dtDirector
       ValueNode::Init(nodeType, graph);
    }
 
-   ////////////////////////////////////////////////////////////////////////////////
-   void ArrayValueNode::BuildPropertyMap()
-   {
-      ValueNode::BuildPropertyMap();
-   }
-
    //////////////////////////////////////////////////////////////////////////
    std::string ArrayValueNode::GetValueLabel()
    {

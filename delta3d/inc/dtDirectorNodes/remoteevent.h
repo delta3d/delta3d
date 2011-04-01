@@ -38,7 +38,6 @@ namespace dtDirector
    class NODE_LIBRARY_EXPORT RemoteEvent : public EventNode
    {
    public:
-
       /**
        * Constructs the Node.
        */
@@ -75,23 +74,13 @@ namespace dtDirector
       void SetEventName(const std::string& eventName);
       const std::string& GetEventName() const;
 
-      /**
-       * Retrieves the display name for the node.
-       *
-       * @return  The display name of the node.
-       */
-      virtual const std::string& GetName();
-
    protected:
-
       /**
        *	Protected Destructor.  dtCore::RefPtr will handle its destruction.
        */
       virtual ~RemoteEvent();
 
    private:
-
-      std::string mLabel;
       std::string mEventName;
    };
 }

@@ -57,11 +57,11 @@ namespace dtDirector
 
       setAcceptHoverEvents(true);
 
-      const float size = 10;
+      const float size = 15;
       QPolygonF poly;
-      poly << QPointF(-1, -size)
-         << QPointF(-1, -1)
-         << QPointF(-size, -1);
+      poly << QPointF(0, -size)
+         << QPointF(0, 0)
+         << QPointF(-size, 0);
       setPolygon(poly);
 
       SetHighlight(false);
@@ -70,19 +70,8 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void ResizeItem::SetHighlight(bool enable)
    {
-      QColor color;
-      if (enable)
-      {
-         color = Qt::yellow;
-         //color.setAlpha(50);
-      }
-      else
-      {
-         color = QColor(0, 0, 0, 50);
-      }
-
-      setPen(QPen(color, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-      setBrush(QBrush(QColor(0, 0, 0, 50)));
+      setPen(Qt::NoPen);
+      setBrush(QBrush( enable ? Qt::yellow : QColor(0, 0, 0, 75) ));
    }
 
    //////////////////////////////////////////////////////////////////////////

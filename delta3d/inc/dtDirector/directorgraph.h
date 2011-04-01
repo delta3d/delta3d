@@ -130,6 +130,15 @@ namespace dtDirector
       ValueNode* GetValueNode(const std::string& name, bool searchSubgraphs = true);
 
       /**
+       * Setter for parent.
+       */
+      void SetParent(DirectorGraph* parent) {mParent = parent;}
+      /**
+       * Getter for parent.
+       */
+      DirectorGraph* GetParent() {return mParent;}
+
+      /**
        * Adds a node to the graph.
        *
        * @param[in]  node  The node.
@@ -245,6 +254,7 @@ namespace dtDirector
        */
       std::vector<dtCore::RefPtr<DirectorGraph> >& GetSubGraphs() {return mSubGraphs;}
 
+   protected:
       dtCore::UniqueId mID;
 
       Director*      mDirector;
@@ -263,8 +273,7 @@ namespace dtDirector
       std::vector<dtCore::RefPtr<ActionNode> > mActionNodes;
       std::vector<dtCore::RefPtr<ValueNode> >  mValueNodes;
 
-      protected:
-         osg::Vec4 mColor;
+      osg::Vec4 mColor;
 
    };
 }

@@ -86,16 +86,7 @@ namespace dtDirector
       void SetLocalEvent(bool value);
       bool IsLocalEvent() const;
 
-      /**
-       * Retrieves the display name for the node.
-       *
-       * @return  The display name of the node.
-       */
-      virtual const std::string& GetName();
-
-
    protected:
-
       /**
        * Destructor.
        */
@@ -103,7 +94,6 @@ namespace dtDirector
 
    private:
 
-      std::string mLabel;
       std::string mEventName;
       bool        mIsLocalEvent;
    };

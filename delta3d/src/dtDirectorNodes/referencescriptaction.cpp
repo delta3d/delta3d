@@ -53,8 +53,6 @@ namespace dtDirector
       // Create multiple inputs for different operations.
       mInputs.clear();
       mOutputs.clear();
-
-      mLabel = ActionNode::GetName();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -77,12 +75,6 @@ namespace dtDirector
    bool ReferenceScriptAction::Update(float simDelta, float delta, int input, bool firstUpdate)
    {
       return false;
-   }
-
-   //////////////////////////////////////////////////////////////////////////
-   const std::string& ReferenceScriptAction::GetName()
-   {
-      return mLabel;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -140,7 +132,7 @@ namespace dtDirector
             DirectorGraph* graph = mScript->GetGraphRoot();
             if (graph)
             {
-               mLabel = osgDB::getNameLessExtension(mScriptResource.GetResourceName());
+               mName = osgDB::getNameLessExtension(mScriptResource.GetResourceName());
 
                // Set up the links.
                std::vector<dtCore::RefPtr<EventNode> > inputs = graph->GetInputNodes();

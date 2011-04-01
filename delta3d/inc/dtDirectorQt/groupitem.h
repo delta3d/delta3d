@@ -81,6 +81,11 @@ namespace dtDirector
       void SizeToFit();
       
    protected:
+      /**
+       *	Find and store all node-items inside our rect.
+       * Update all grouping-informations of current and new node-items.
+       */
+      void UpdateGroupedItems();
 
       /**
        * Event handler when the context menu event has triggered.
@@ -95,7 +100,7 @@ namespace dtDirector
       LockItem*   mLocker;
       ResizeItem* mResizer;
 
-      QList<NodeItem*> mMovingNodes;
+      QList<NodeItem*> mGroupedItems;
       bool mCanResize;
    };
 }

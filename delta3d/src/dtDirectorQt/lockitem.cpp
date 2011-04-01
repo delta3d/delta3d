@@ -59,12 +59,12 @@ namespace dtDirector
 
       setAcceptHoverEvents(true);
 
-      const float size = 10;
+      const float size = 15;
       QPolygonF poly;
-      poly << QPointF(1, 1)
-         << QPointF(size, 1)
-         << QPointF(size, size)
-         << QPointF(1, size);
+      poly << QPointF(0, 0)
+         << QPointF(-size, 0)
+         << QPointF(-size, size)
+         << QPointF(0, size);
       setPolygon(poly);
 
       SetHighlight(false);
@@ -73,26 +73,16 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void LockItem::SetHighlight(bool enable)
    {
-      QColor color;
       if (enable)
       {
-         color = Qt::yellow;
+         setBrush(QBrush(Qt::yellow));
       }
       else
       {
-         color = QColor(0, 0, 0, 255);
+         setBrush(QBrush( mIsLocked ? QColor(0, 0, 0, 75) : Qt::white ));
       }
 
-      setPen(QPen(color, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-
-      if (mIsLocked)
-      {
-         setBrush(QBrush(QColor(255, 0, 0, 255)));
-      }
-      else
-      {
-         setBrush(QBrush(QColor(255, 255, 255, 255)));
-      }
+      setPen(Qt::NoPen);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -130,6 +120,8 @@ namespace dtDirector
       QGraphicsPolygonItem::mouseReleaseEvent(mouseEvent);
 
       if (!mouseEvent) return;
+
+      SetHighlight(false);
    }
 
    //////////////////////////////////////////////////////////////////////////

@@ -133,8 +133,7 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void CallRemoteEventAction::SetEventName(const std::string& value)
    {
-      mEventName = value;
-      mLabel = mEventName;
+      mEventName = mName = value;
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -153,12 +152,6 @@ namespace dtDirector
    bool CallRemoteEventAction::IsLocalEvent() const
    {
       return mIsLocalEvent;
-   }
-
-   //////////////////////////////////////////////////////////////////////////
-   const std::string& CallRemoteEventAction::GetName()
-   {
-      return mLabel;
    }
 }
 

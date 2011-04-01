@@ -89,16 +89,9 @@ namespace dtDirector
       const std::string& GetMessageType() const;
 
       /**
-       * Retrieves the display name for the node.
-       *
-       * @return  The display name of the node.
-       */
-      virtual const std::string& GetName();
-
-      /**
        * Updates the Label.
        */
-      void UpdateLabel();
+      void UpdateName();
 
    protected:
 
@@ -108,8 +101,6 @@ namespace dtDirector
       ~SendMessageAction();
 
    private:
-
-      std::string mLabel;
       std::string mMessageType;
    };
 }

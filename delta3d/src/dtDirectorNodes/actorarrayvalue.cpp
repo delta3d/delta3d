@@ -87,9 +87,7 @@ namespace dtDirector
          return mValues[mPropertyIndex];
       }
 
-      dtCore::UniqueId id;
-      id = "";
-      return id;
+      return GetDefaultValue();
    }
 
    ////////////////////////////////////////////////////////////////////////////////

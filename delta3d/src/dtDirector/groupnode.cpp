@@ -20,6 +20,7 @@
  */
 
 #include <dtDirector/groupnode.h>
+#include <dtDirector/colors.h>
 
 #include <dtDAL/actorproperty.h>
 #include <dtDAL/vectoractorproperties.h>
@@ -32,6 +33,7 @@ namespace dtDirector
        : ActionNode()
        , mSize(100.0f, 100.0f)
    {
+      SetColorRGB(Colors::GRAY2);
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////

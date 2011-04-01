@@ -125,10 +125,10 @@ namespace dtDirector
       if (!mGraph) return;
 
       // Create all nodes in the graph.
-      count = (int)mGraph->mEventNodes.size();
+      count = (int)mGraph->GetEventNodes().size();
       for (int index = 0; index < count; index++)
       {
-         Node* node = mGraph->mEventNodes[index].get();
+         Node* node = mGraph->GetEventNodes()[index].get();
          ActionItem* item = new ActionItem(node, mTranslationItem, this);
          if (item)
          {
@@ -137,10 +137,10 @@ namespace dtDirector
          }
       }
 
-      count = (int)mGraph->mActionNodes.size();
+      count = (int)mGraph->GetActionNodes().size();
       for (int index = 0; index < count; index++)
       {
-         Node* node = mGraph->mActionNodes[index].get();
+         Node* node = mGraph->GetActionNodes()[index].get();
          NodeItem* item = NULL;
 
          // Special case for reference script nodes.
@@ -167,10 +167,10 @@ namespace dtDirector
          }
       }
 
-      count = (int)mGraph->mValueNodes.size();
+      count = (int)mGraph->GetValueNodes().size();
       for (int index = 0; index < count; index++)
       {
-         Node* node = mGraph->mValueNodes[index].get();
+         Node* node = mGraph->GetValueNodes()[index].get();
          ValueItem* item = new ValueItem(node, mTranslationItem, this);
          if (item)
          {
@@ -179,10 +179,10 @@ namespace dtDirector
          }
       }
 
-      count = (int)mGraph->mSubGraphs.size();
+      count = (int)mGraph->GetSubGraphs().size();
       for (int index = 0; index < count; index++)
       {
-         DirectorGraph* graph = mGraph->mSubGraphs[index].get();
+         DirectorGraph* graph = mGraph->GetSubGraphs()[index].get();
          MacroItem* item = new MacroItem(graph, mTranslationItem, this);
          if (item)
          {
@@ -906,7 +906,7 @@ namespace dtDirector
          QMenu menu;
 
          // If this is a child graph, show the goto parent option.
-         if (mGraph->mParent)
+         if (mGraph->GetParent())
          {
             menu.addAction(mEditor->GetParentAction());
             menu.addSeparator();

@@ -49,14 +49,6 @@ namespace dtDirector
       GameMessageEvent();
 
       /**
-       * Initializes the Node.
-       *
-       * @param[in]  nodeType  The node type.
-       * @param[in]  graph     The graph that owns this node.
-       */
-      virtual void Init(const NodeType& nodeType, DirectorGraph* graph);
-
-      /**
        * This method is called in init, which instructs the node
        * to create its properties.  Methods implementing this should
        * be sure to call their parent class's buildPropertyMap method to
@@ -67,13 +59,6 @@ namespace dtDirector
        *       to be removed.
        */
       virtual void BuildPropertyMap();
-
-      /**
-       * Retrieves the display name for the node.
-       *
-       * @return  The display name of the node.
-       */
-      virtual const std::string& GetName();
 
       /**
        * Determines whether a value link on this node can connect
@@ -123,8 +108,6 @@ namespace dtDirector
       virtual ~GameMessageEvent();
 
    private:
-
-      std::string mLabel;
       std::string mMessageType;
 
       std::string mLastMessageType;

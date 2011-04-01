@@ -62,18 +62,6 @@ namespace dtDirector
       virtual void Init(const NodeType& nodeType, DirectorGraph* graph);
 
       /**
-       * This method is called in init, which instructs the node
-       * to create its properties.  Methods implementing this should
-       * be sure to call their parent class's buildPropertyMap method to
-       * ensure all properties in the proxy inheritance hierarchy are
-       * correctly added to the property map.
-       *
-       * @see GetDeprecatedProperty to handle old properties that need
-       *       to be removed.
-       */
-      virtual void BuildPropertyMap();
-
-      /**
        * Accessors for the name of the node.
        */
       virtual std::string GetValueLabel();
