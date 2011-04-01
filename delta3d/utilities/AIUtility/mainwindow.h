@@ -87,6 +87,7 @@ signals:
    void GroundClampSelectedWaypoints();
    void RenderOnSelection(bool enabled);
    void RenderBackfaces(bool shouldRender);
+   void WaypointPropertyBaseChanged();
 
 public slots:
    void OnError(const std::string& message);
@@ -114,20 +115,20 @@ public slots:
    void OnDeselectAllWaypoints();
    void OnSelectInverseWaypoints();
    void OnUndoCommandCreated(QUndoCommand* undoCommand);
-   
+
 private slots:
-      void OnModifiedChanged();
-      void OnSelectWaypointPointMode();
-      void OnSelectWaypontBrushMode();
-      void OnWaypointBrushSizeChanged(double value);
-      void OnGroundClampSelectedWaypoints();
+   void OnModifiedChanged();
+   void OnSelectWaypointPointMode();
+   void OnSelectWaypontBrushMode();
+   void OnWaypointBrushSizeChanged(double value);
+   void OnGroundClampSelectedWaypoints();
 
 private:
    void ChangeMap(const QString& newMap);
 
    bool DoesEdgeExistBetweenWaypoints(dtAI::WaypointInterface* waypointStart,
                                       dtAI::WaypointInterface* waypointEnd);
-   
+
    void RefreshPropertyEditor(std::vector<dtAI::WaypointInterface*>& selectedWaypoints);
 
    bool MaybeSave();
