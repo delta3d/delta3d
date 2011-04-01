@@ -126,23 +126,12 @@ namespace dtDirector
       return mEvent;
    }
 
-   //////////////////////////////////////////////////////////////////////////
-   const std::string& SendEventMessageAction::GetName()
-   {
-      return mLabel;
-   }
-
    ////////////////////////////////////////////////////////////////////////////////
    void SendEventMessageAction::UpdateLabel()
    {
-      std::string eventName = "";
       dtDAL::GameEvent* gameEvent = GetGameEvent("Event");
-      if (gameEvent)
-      {
-         eventName = gameEvent->GetName();
-      }
 
-      mLabel = eventName;
+      mName = gameEvent ? gameEvent->GetName() : "";
    }
 }
 

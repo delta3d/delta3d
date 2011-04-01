@@ -45,12 +45,6 @@ namespace dtDirector
    {
    }
 
-   ///////////////////////////////////////////////////////////////////////////////////////
-   void GameMessageEvent::Init(const NodeType& nodeType, DirectorGraph* graph)
-   {
-      EventNode::Init(nodeType, graph);
-   }
-
    ////////////////////////////////////////////////////////////////////////////////
    void GameMessageEvent::BuildPropertyMap()
    {
@@ -80,12 +74,6 @@ namespace dtDirector
       return mMessageType;
    }
 
-   //////////////////////////////////////////////////////////////////////////
-   const std::string& GameMessageEvent::GetName()
-   {
-      return mLabel;
-   }
-
    ////////////////////////////////////////////////////////////////////////////////
    void GameMessageEvent::OnLinkValueChanged(const std::string& linkName)
    {
@@ -107,7 +95,7 @@ namespace dtDirector
       UnRegisterMessages();
       mLastMessageType = GetString("Message Type");
 
-      mLabel = mLastMessageType;
+      mName = mLastMessageType;
 
       dtDirector::MessageGMComponent* component = GetDirector()->GetMessageGMComponent();
       if (component)

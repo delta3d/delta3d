@@ -146,6 +146,11 @@ namespace dtDirector
        */
       virtual dtDAL::DataType& GetPropertyType();
 
+      /**
+       *	Returns the referenced value node.
+       */
+      ValueNode* GetReferencedValue();
+
    protected:
 
       /**

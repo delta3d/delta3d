@@ -94,13 +94,6 @@ namespace dtDirector
       dtDAL::GameEvent* GetEvent() const;
 
       /**
-       * Retrieves the display name for the node.
-       *
-       * @return  The display name of the node.
-       */
-      virtual const std::string& GetName();
-
-      /**
        * Updates the Label.
        */
       void UpdateLabel();
@@ -113,8 +106,6 @@ namespace dtDirector
       ~SendEventMessageAction();
 
    private:
-
-      std::string mLabel;
       dtDAL::GameEvent*  mEvent;
    };
 }

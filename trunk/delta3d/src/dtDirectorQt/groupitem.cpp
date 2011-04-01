@@ -59,14 +59,15 @@ namespace dtDirector
       dtCore::RefPtr<dtDirector::GroupNode> groupNode = dynamic_cast<dtDirector::GroupNode*>(mNode.get());
       if (groupNode.valid())
       {
-
          mNodeWidth = groupNode->GetSize().x();
          mNodeHeight = groupNode->GetSize().y();
+         SetTitle(GetNodeTitle());
 
          DrawPolygonTop();
          DrawPolygonRightFlat();
          DrawPolygonBottomFlat();
          DrawPolygonLeftFlat();
+         DrawTitle();
 
          setPolygon(mPolygon);
 
@@ -77,7 +78,7 @@ namespace dtDirector
             mLocker->Init();
          }
 
-         mLocker->setPos(0, 0);
+         mLocker->setPos(mNodeWidth, 0);
 
          if (mCanResize)
          {
@@ -105,33 +106,15 @@ namespace dtDirector
    {
       NodeItem::BeginMoveEvent();
 
-      mMovingNodes.clear();
+      UpdateGroupedItems();
+
       if (mLocker->IsLocked())
       {
-         // Find all nodes that are placed on top of this group and have them
-         // selected as well so they will move along with the group.
-         QList<QGraphicsItem*> movingItems = mScene->items(scenePos().x(), scenePos().y(), GetNodeWidth(), GetNodeHeight(), Qt::ContainsItemShape);
-
-         int count = (int)movingItems.size();
-         for (int index = 0; index < count; index++)
-         {
-            NodeItem* item = dynamic_cast<NodeItem*>(movingItems[index]);
-            if (item && !item->isSelected() && item != this)
-            {
-               mMovingNodes.push_back(item);
-            }
-         }
-
          mScene->BeginBatchSelection();
-         count = (int)mMovingNodes.size();
-         for (int index = 0; index < count; index++)
+         for (int i = 0; i < mGroupedItems.size(); i++)
          {
-            NodeItem* item = mMovingNodes[index];
-            if (item)
-            {
-               item->setSelected(true);
-               item->BeginMoveEvent();
-            }
+            mGroupedItems[i]->setSelected(true);
+            mGroupedItems[i]->BeginMoveEvent();
          }
          mScene->EndBatchSelection();
       }
@@ -141,21 +124,31 @@ namespace dtDirector
    void GroupItem::EndMoveEvent()
    {
       NodeItem::EndMoveEvent();
-
+      
       mScene->BeginBatchSelection();
-      osg::Vec2 pos = GetPosition();
-      int count = (int)mMovingNodes.size();
-      for (int index = 0; index < count; index++)
+      for (int i = 0; i < mGroupedItems.size(); i++)
       {
-         NodeItem* item = mMovingNodes[index];
-         if (item)
+         mGroupedItems[i]->setSelected(false);
+      }
+      mScene->EndBatchSelection();
+
+      //mScene->Refresh();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void GroupItem::UpdateGroupedItems()
+   {
+      // Update the internal grouped-items-vector and the items' group-information.
+      mGroupedItems.clear();
+      QList<QGraphicsItem*> items = mScene->items(scenePos().x(), scenePos().y(), GetNodeWidth(), GetNodeHeight(), Qt::ContainsItemShape);
+      for (int i = 0; i < items.size(); i++)
+      {
+         NodeItem* item = dynamic_cast<NodeItem*>(items[i]);
+         if (item && item != this)
          {
-            item->setSelected(false);
+            mGroupedItems.push_back(item);
          }
       }
-      mMovingNodes.clear();
-      mScene->EndBatchSelection();
-      //mScene->Refresh();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -276,20 +269,8 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void GroupItem::SizeToFit()
    {
-      QList<QGraphicsItem*> fittingItems = mScene->items(scenePos().x(), scenePos().y(), GetNodeWidth(), GetNodeHeight(), Qt::ContainsItemShape);
-      QList<NodeItem*> nodeItems;
-
-      int count = (int)fittingItems.size();
-      for (int index = 0; index < count; index++)
-      {
-         NodeItem* item = dynamic_cast<NodeItem*>(fittingItems[index]);
-         if (item && item != this)
-         {
-            nodeItems.push_back(item);
-         }
-      }
-
-      SizeToFit(nodeItems);
+      UpdateGroupedItems();
+      SizeToFit(mGroupedItems);
    }
 
    //////////////////////////////////////////////////////////////////////////

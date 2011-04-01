@@ -48,7 +48,7 @@ namespace dtDirector
    {
       ActionNode::Init(nodeType, graph);
 
-      UpdateLabel();
+      UpdateName();
 
       mOutputs.push_back(OutputLink(this, "Success"));
       mOutputs.push_back(OutputLink(this, "Failed"));
@@ -58,6 +58,7 @@ namespace dtDirector
    void SendMessageAction::BuildPropertyMap()
    {
       ActionNode::BuildPropertyMap();
+      RemoveProperty("Name");
 
       dtDAL::StringActorProperty* messageTypeProp = new dtDAL::StringActorProperty(
          "Message Type", "Message Type",
@@ -106,14 +107,14 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void SendMessageAction::OnLinkValueChanged(const std::string& linkName)
    {
-      UpdateLabel();
+      UpdateName();
    }
 
    //////////////////////////////////////////////////////////////////////////
    void SendMessageAction::SetMessageType(const std::string& typeName)
    {
       mMessageType = typeName;
-      UpdateLabel();
+      UpdateName();
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -122,17 +123,10 @@ namespace dtDirector
       return mMessageType;
    }
 
-   //////////////////////////////////////////////////////////////////////////
-   const std::string& SendMessageAction::GetName()
-   {
-      return mLabel;
-   }
-
    ////////////////////////////////////////////////////////////////////////////////
-   void SendMessageAction::UpdateLabel()
+   void SendMessageAction::UpdateName()
    {
-      std::string messageType = GetString("Message Type");
-      mLabel = messageType;
+      mName = GetString("Message Type");
    }
 }
 

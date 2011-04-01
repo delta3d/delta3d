@@ -194,8 +194,6 @@ namespace dtDirector
        */
       virtual ~ValueNode();
 
-      std::string    mLabel;
-
       dtCore::RefPtr<dtDAL::ActorProperty> mProperty;
 
       std::vector<ValueLink*> mLinks;

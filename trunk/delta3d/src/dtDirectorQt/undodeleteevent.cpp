@@ -247,11 +247,11 @@ namespace dtDirector
             {
                if (graph->GetID() == mNodeID)
                {
-                  view->GetScene()->SetGraph(graph->mParent);
+                  view->GetScene()->SetGraph(graph->GetParent());
                   break;
                }
 
-               graph = graph->mParent;
+               graph = graph->GetParent();
             }
 
             // We need to find the node item that belongs to the scene.
@@ -494,7 +494,7 @@ namespace dtDirector
    {
       if (!graph) return;
 
-      dtCore::RefPtr<UndoDeleteEvent> event = new UndoDeleteEvent(mEditor, graph->GetID(), graph->mParent->GetID());
+      dtCore::RefPtr<UndoDeleteEvent> event = new UndoDeleteEvent(mEditor, graph->GetID(), graph->GetParent()->GetID());
       mSubEvents.push_back(event);
    }
 }

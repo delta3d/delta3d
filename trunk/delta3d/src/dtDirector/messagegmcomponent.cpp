@@ -56,7 +56,7 @@ namespace dtDirector
          for (std::map<dtDirector::Node*, MsgFunc>::iterator a = callbacks.begin();
             a != callbacks.end(); ++a)
          {
-            if (a->first->GetDirector()->GetActive())
+            if( a->first->IsEnabled() && a->first->GetDirector()->GetActive() )
             {
                a->second(message);
             }
@@ -73,7 +73,7 @@ namespace dtDirector
          for (std::map<dtDirector::Node*, MsgFunc>::iterator a = callbacks.begin();
             a != callbacks.end(); ++a)
          {
-            if (a->first->GetDirector()->GetActive())
+            if( a->first->IsEnabled() && a->first->GetDirector()->GetActive() )
             {
                a->second(message);
             }

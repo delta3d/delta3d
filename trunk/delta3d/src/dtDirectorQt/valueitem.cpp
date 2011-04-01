@@ -249,7 +249,7 @@ namespace dtDirector
             refNode = graph->GetValueNode(name, false);
             if (refNode) break;
 
-            graph = graph->mParent;
+            graph = graph->GetParent();
          }
 
          if (refNode)

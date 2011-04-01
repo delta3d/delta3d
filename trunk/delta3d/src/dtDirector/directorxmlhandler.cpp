@@ -252,9 +252,9 @@ namespace dtDirector
 
                   DirectorGraph* parent = mGraphs.top();
                   DirectorGraph* newGraph = new DirectorGraph(mDirector);
-                  newGraph->mParent = parent;
+                  newGraph->SetParent(parent);
                   newGraph->BuildPropertyMap();
-                  parent->mSubGraphs.push_back(newGraph);
+                  parent->GetSubGraphs().push_back(newGraph);
                   mGraphs.push(newGraph);
                   mPropSerializer->SetCurrentPropertyContainer(newGraph);
                }

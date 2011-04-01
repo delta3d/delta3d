@@ -191,7 +191,7 @@ namespace dtDirector
             DirectorGraph* graph = view->GetScene()->GetGraph();
             if (graph)
             {
-               mUI.graphTab->setTabText(index, graph->mName.c_str());
+               mUI.graphTab->setTabText(index, graph->GetName().c_str());
             }
          }
       }
@@ -258,7 +258,7 @@ namespace dtDirector
 
             EditorScene* scene = view->GetScene();
 
-            if (scene->GetGraph()->mParent)
+            if (scene->GetGraph()->GetParent())
             {
                bHasParent = true;
             }
@@ -717,9 +717,9 @@ namespace dtDirector
          if (view)
          {
             dtDirector::DirectorGraph* graph = view->GetScene()->GetGraph();
-            if (graph && graph->mParent)
+            if (graph && graph->GetParent())
             {
-               view->GetScene()->SetGraph(graph->mParent);
+               view->GetScene()->SetGraph(graph->GetParent());
                RefreshButtonStates();
 
                // Find the sub graph that we just zoomed out of, and center on it.
@@ -826,7 +826,7 @@ namespace dtDirector
                if (macro && macro->GetGraph())
                {
                   id = macro->GetGraph()->GetID();
-                  parentID = macro->GetGraph()->mParent->GetID();
+                  parentID = macro->GetGraph()->GetParent()->GetID();
                   graphsDeleted = true;
                }
                else
@@ -859,11 +859,11 @@ namespace dtDirector
                   {
                      if (graph->GetID() == id)
                      {
-                        view->GetScene()->SetGraph(graph->mParent);
+                        view->GetScene()->SetGraph(graph->GetParent());
                         break;
                      }
 
-                     graph = graph->mParent;
+                     graph = graph->GetParent();
                   }
 
                   // We need to find the node item that belongs to the scene.

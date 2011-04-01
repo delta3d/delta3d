@@ -45,14 +45,6 @@ namespace dtDirector
    {
    }
 
-   ///////////////////////////////////////////////////////////////////////////////////////
-   void GameEventMessageEvent::Init(const NodeType& nodeType, DirectorGraph* graph)
-   {
-      EventNode::Init(nodeType, graph);
-
-      mLabel = EventNode::GetName();
-   }
-
    ////////////////////////////////////////////////////////////////////////////////
    void GameEventMessageEvent::BuildPropertyMap()
    {
@@ -79,7 +71,7 @@ namespace dtDirector
    {
       mEvent = value;
 
-      UpdateLabel();
+      UpdateName();
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -88,18 +80,12 @@ namespace dtDirector
       return mEvent;
    }
 
-   //////////////////////////////////////////////////////////////////////////
-   const std::string& GameEventMessageEvent::GetName()
-   {
-      return mLabel;
-   }
-
    ////////////////////////////////////////////////////////////////////////////////
    void GameEventMessageEvent::OnLinkValueChanged(const std::string& linkName)
    {
       if (linkName == "Event")
       {
-         UpdateLabel();
+         UpdateName();
       }
    }
 
@@ -147,14 +133,10 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void GameEventMessageEvent::UpdateLabel()
+   void GameEventMessageEvent::UpdateName()
    {
-      std::string eventName = "";
       dtDAL::GameEvent* gameEvent = GetGameEvent("Event");
-      if (gameEvent)
-      {
-         eventName = gameEvent->GetName();
-      }
-      mLabel = GetType().GetName() + " (" + eventName + ")";
+      
+      mName = gameEvent ? gameEvent->GetName() : "";
    }
 }

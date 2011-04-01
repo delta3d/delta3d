@@ -50,6 +50,7 @@ namespace dtDirector
    void RemoteEvent::BuildPropertyMap()
    {
       EventNode::BuildPropertyMap();
+      RemoveProperty("Name");
 
       dtDAL::StringActorProperty* nameProp = new dtDAL::StringActorProperty(
          "EventName", "Event Name",
@@ -70,19 +71,12 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void RemoteEvent::SetEventName(const std::string& eventName)
    {
-      mEventName = eventName;
-      mLabel = GetType().GetName() + " (" + mEventName + ")";
+      mEventName = mName = eventName;
    }
 
    //////////////////////////////////////////////////////////////////////////
    const std::string& RemoteEvent::GetEventName() const
    {
       return mEventName;
-   }
-
-   //////////////////////////////////////////////////////////////////////////
-   const std::string& RemoteEvent::GetName()
-   {
-      return mLabel;
    }
 }

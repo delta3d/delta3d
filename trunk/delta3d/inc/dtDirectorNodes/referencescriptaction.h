@@ -82,13 +82,6 @@ namespace dtDirector
       virtual bool Update(float simDelta, float delta, int input, bool firstUpdate);
 
       /**
-       * Retrieves the display name for the node.
-       *
-       * @return  The display name of the node.
-       */
-      virtual const std::string& GetName();
-
-      /**
        * Accessors for property values.
        */
       void SetDirectorResource(const dtDAL::ResourceDescriptor& value);
@@ -117,8 +110,6 @@ namespace dtDirector
       dtCore::RefPtr<dtDirector::Director> mScript;
 
       int mCoreValueIndex;
-
-      std::string mLabel;
    };
 }
 

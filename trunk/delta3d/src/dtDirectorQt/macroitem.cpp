@@ -331,7 +331,7 @@ namespace dtDirector
       if (change == QGraphicsItem::ItemPositionHasChanged)
       {
          QPointF newPos = value.toPointF();
-         mGraph->mPosition.set(newPos.x(), newPos.y());
+         mGraph->SetPosition(osg::Vec2(newPos.x(), newPos.y()));
 
          if (!mLoading)
          {

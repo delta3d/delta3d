@@ -21,7 +21,7 @@
 
 #include <dtDirectorNodes/referencevalue.h>
 
-#include <dtDAL/stringactorproperty.h>
+#include <dtDAL/propertymacros.h>
 
 #include <dtDirector/director.h>
 #include <dtDirector/valuelink.h>
@@ -79,7 +79,6 @@ namespace dtDirector
    void ReferenceValue::SetName(const std::string& name)
    {
       ValueNode::SetName(name);
-      //mValues[0].SetName(name);
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -87,15 +86,12 @@ namespace dtDirector
    {
       UpdateReference();
 
-      if (mValues.size())
+      if (!mValues.empty() && !mValues[0].GetLinks().empty())
       {
-         if (!mValues[0].GetLinks().empty())
+         ValueNode* valueNode = dynamic_cast<ValueNode*>(mValues[0].GetLinks()[0]);
+         if (valueNode)
          {
-            ValueNode* valueNode = mValues[0].GetLinks()[0]->AsValueNode();
-            if (valueNode)
-            {
-               return mReference + "<br>" + valueNode->GetValueLabel();
-            }
+            return "<i>"+ valueNode->GetTypeName() + "<br><b>" + valueNode->GetName() + "</b><br>" + valueNode->GetValueLabel() +"</i>";
          }
       }
 
@@ -112,7 +108,7 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    int ReferenceValue::GetPropertyCount(const std::string& name)
    {
-      if (name == "Value" && mValues.size())
+      if (name == "Value" && !mValues.empty())
       {
          return mValues[0].GetPropertyCount();
       }
@@ -123,7 +119,7 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    dtDAL::ActorProperty* ReferenceValue::GetProperty(const std::string& name, int index, ValueNode** outNode)
    {
-      if (name == "Value" && mValues.size())
+      if (name == "Value" && !mValues.empty())
       {
          dtDAL::ActorProperty* prop = mValues[0].GetProperty(index, outNode);
          //if (prop && prop->GetName() == name) return prop;
@@ -138,12 +134,9 @@ namespace dtDirector
    {
       //UpdateReference();
 
-      if (mValues.size())
+      if (!mValues.empty() && !mValues[0].GetLinks().empty())
       {
-         if (mValues[0].GetLinks().size())
-         {
-            return mValues[0].GetLinks()[0]->GetProperty(index, outNode);
-         }
+         return mValues[0].GetLinks()[0]->GetProperty(index, outNode);
       }
 
       return ValueNode::GetProperty(index, outNode);
@@ -153,20 +146,15 @@ namespace dtDirector
    bool ReferenceValue::CanBeType(dtDAL::DataType& type)
    {
       dtDAL::DataType& myType = GetPropertyType();
-      if (myType == dtDAL::DataType::UNKNOWN ||
-         myType == type)
-      {
-         return true;
-      }
-      
-      return false;
+
+      return myType == dtDAL::DataType::UNKNOWN || myType == type;
    }
 
    //////////////////////////////////////////////////////////////////////////
    dtDAL::DataType& ReferenceValue::GetPropertyType()
    {
       // If we are linked to another value node, use that value's type.
-      if (mValues.size() && mValues[0].GetLinks().size())
+      if (!mValues.empty() && !mValues[0].GetLinks().empty())
       {
          dtDAL::DataType& type = mValues[0].GetLinks()[0]->GetPropertyType();
          if (type != dtDAL::DataType::UNKNOWN)
@@ -176,7 +164,7 @@ namespace dtDirector
       }
 
       // If we are linked to a value link, use the type of that link.
-      if (mLinks.size())
+      if (!mLinks.empty())
       {
          int count = (int)mLinks.size();
          for (int index = 0; index < count; index++)
@@ -199,7 +187,7 @@ namespace dtDirector
       bool isOut = false;
       bool isTypeChecking = false;
 
-      if (mLinks.size())
+      if (!mLinks.empty())
       {
          int count = (int)mLinks.size();
          for (int index = 0; index < count; index++)
@@ -217,13 +205,13 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void ReferenceValue::SetReference(const std::string& value)
    {
-      if (value != mName)
+      if (value != GetID().ToString())
       {
          mReference = value;
-      }
 
-      // Now attempt to find the actual value and link with it.
-      UpdateReference();
+         // Now attempt to find the actual value and link with it.
+         UpdateReference();
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -233,26 +221,33 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
+   ValueNode* ReferenceValue::GetReferencedValue()
+   {
+      // Search for the referenced node anywhere in the current graph
+      // or any of its parents.      
+      ValueNode* node      = NULL;
+      DirectorGraph* graph = GetGraph();
+      while (graph)
+      {
+         if (node = graph->GetValueNode(mReference, false))
+         {
+            break;
+         }
+         graph = graph->GetParent();
+      }
+      return node;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    void ReferenceValue::UpdateReference()
    {
       if (!mReference.empty())
       {
-         // Search for the referenced node anywhere in the current graph
-         // or any of its parents.
-         ValueNode* node = NULL;
-         DirectorGraph* graph = GetGraph();
-         while (graph)
-         {
-            node = graph->GetValueNode(mReference, false);
-            if (node) break;
-
-            graph = graph->mParent;
-         }
-
+         ValueNode* node = GetReferencedValue();
          if (node)
          {
             // Disconnect all links that are no longer valid based on type.
-            if (mLinks.size())
+            if (!mLinks.empty())
             {
                int count = (int)mLinks.size();
                for (int index = 0; index < count; index++)

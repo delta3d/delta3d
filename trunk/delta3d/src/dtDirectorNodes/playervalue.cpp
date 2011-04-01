@@ -51,10 +51,6 @@ namespace dtDirector
    {
       ValueNode::BuildPropertyMap();
 
-      // Make the name property read only, so it always says "Player".
-      //dtDAL::ActorProperty* nameProp = dtDAL::PropertyContainer::GetProperty("Name");
-      //if (nameProp) nameProp->SetReadOnly(true);
-
       mProperty = new dtDAL::ActorIDActorProperty(
          "Value", "Value",
          dtDAL::ActorIDActorProperty::SetFuncType(this, &PlayerValue::SetValue),
