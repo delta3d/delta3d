@@ -69,14 +69,15 @@ namespace dtAI
 
       /**
        * Removes a waypoint by Id from the system
-       * @param the ID of the waypoint to remove
+       * @param waypoint the waypoint to remove
        * @return whether the waypoint was found and successfully removed
        */
       virtual bool RemoveWaypoint(WaypointInterface* waypoint) = 0;
 
       /**
        * The proper way to move a waypoint, re-inserting may will create duplicates
-       * @param the waypoint which has presumably been moved
+       * @param wi The waypoint to move.
+       * @param newPos The new position to move the waypoint to.
        * @return whether the waypoint was found and successfully moved
        */
       virtual bool MoveWaypoint(WaypointInterface* wi, const osg::Vec3& newPos) = 0;

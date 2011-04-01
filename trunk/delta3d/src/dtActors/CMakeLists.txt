@@ -113,9 +113,6 @@ SET(LIB_SOURCES
     ${SOURCE_PATH}/weatherenvironmentactor.cpp
 )
 
-list(REMOVE_ITEM LIB_SOURCES ${SOURCE_PATH}/precomp.cpp)
-
-
 ADD_LIBRARY(${LIB_NAME} SHARED                        
     ${LIB_PUBLIC_HEADERS}                         
     ${LIB_SOURCES}
