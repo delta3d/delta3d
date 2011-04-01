@@ -185,6 +185,11 @@ namespace dtDirector
        */
       virtual bool ValuesExposed();
 
+      /**
+       * Accessors for the name of the input node.
+       */
+      virtual void SetName(const std::string& name);
+
       friend class ValueLink;
 
    protected:

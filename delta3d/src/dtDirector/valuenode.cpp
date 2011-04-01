@@ -195,4 +195,28 @@ namespace dtDirector
    {
       return false;
    }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void ValueNode::SetName(const std::string& name)
+   {
+      Node::SetName(name);
+
+      // Notify any reference nodes that reference this value.
+      if (!mLinks.empty())
+      {
+         int count = (int)mLinks.size();
+         for (int index = 0; index < count; index++)
+         {
+            ValueLink* link = mLinks[index];
+            if (link)
+            {
+               ValueNode* node = link->GetOwner()->AsValueNode();
+               if (node)
+               {
+                  node->SetString(name, "Reference");
+               }
+            }
+         }
+      }
+   }
 }
