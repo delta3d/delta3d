@@ -30,6 +30,7 @@
 #include <dtHLAGM/export.h>
 #include <dtHLAGM/distypes.h>
 #include <dtHLAGM/attributetype.h>
+#include <dtUtil/getsetmacros.h>
 
 namespace dtHLAGM
 {
@@ -68,84 +69,15 @@ namespace dtHLAGM
                virtual ~ParameterDefinition()
                {}
 
-               /**
-                * Sets the Name for this Game Type
-                *
-                * @param mGameTypeName Game Name
-                */
-               void SetGameName(const std::string& thisGameTypeName)
-               {
-                  mGameName = thisGameTypeName;
-               }
-
-               /**
-                * Gets the Name of a Game Type.
-                *
-                * @return the Game Name
-                */
-               const std::string& GetGameName() const
-               {
-                  return mGameName;
-               }
-
-               /**
-                * Gets the Data Type of the Game Type.
-                *
-                * @return the Data Type of the Game Type
-                */
-               dtDAL::DataType& GetGameType() const
-               {
-                  return *mGameType;
-               }
-
-               /**
-                * Get the default value of this One to One mapping.
-                *
-                * @return the default value
-                */
-               const std::string& GetDefaultValue() const
-               {
-                  return mDefaultValue;
-               }
-
-               /**
-                * Whether or not this field is required for the Game update.
-                *
-                * @return is this field required
-                */
+               DT_DECLARE_ACCESSOR_INLINE(std::string, GameName);
+               DT_DECLARE_ACCESSOR_INLINE(dtUtil::EnumerationPointer<dtDAL::DataType>, GameType);
+               /// The Default Value for this Attribute/Property
+               DT_DECLARE_ACCESSOR_INLINE(std::string, DefaultValue);
+               /// Boolean for whether this field is required for an Actor Update.
+               DT_DECLARE_ACCESSOR_INLINE(bool, RequiredForGame);
                bool IsRequiredForGame() const
                {
                   return mRequiredForGame;
-               }
-
-               /**
-                * Sets the Data Type of the Game Type
-                *
-                * @param GameType Data Type
-                */
-               void SetGameType(dtDAL::DataType& thisGameTypeType)
-               {
-                  mGameType = &thisGameTypeType;
-               }
-
-               /**
-                * Sets the default value of this mapping
-                *
-                * @param defaultValue Default Value
-                */
-               void SetDefaultValue(const std::string& defValue)
-               {
-                  mDefaultValue = defValue;
-               }
-
-               /**
-                * Sets whether or not field is required for an Game Update.
-                *
-                * @param requiredForGame true if this field is required for the game messaging
-                */
-               void SetRequiredForGame(bool requiredForGame)
-               {
-                  mRequiredForGame = requiredForGame;
                }
 
                /**
@@ -201,17 +133,6 @@ namespace dtHLAGM
                bool operator==(const ParameterDefinition& compareTo) const;
 
             private:
-               ///The Game Parameter Name.
-               std::string mGameName;
-
-               ///The Game Parameter Type.
-               dtDAL::DataType* mGameType;
-
-               ///The Default Value for this Attribute/Property
-               std::string mDefaultValue;
-
-               ///Boolean for whether this field is required for an Actor Update.
-               bool mRequiredForGame;
 
                ///mapping of string to string values to map HLA enumerated values to
                ///type-safe enumeration values.
@@ -227,7 +148,7 @@ namespace dtHLAGM
           */
          OneToManyMapping(): mHLAType(&AttributeType::UNKNOWN),
             mRequiredForHLA(false), mInvalid(false),
-            mSpecial(false)
+            mSpecial(false), mIsArray(false)
          {}
 
          /**
@@ -240,11 +161,13 @@ namespace dtHLAGM
          OneToManyMapping(const std::string& hlaName,
             const AttributeType& attributeType,
             bool requiredForHLA,
-            bool special = false):
+            bool special = false,
+            bool array = false):
             mHLAName(hlaName),
             mHLAType(&attributeType),
             mRequiredForHLA(requiredForHLA),
-            mSpecial(special)
+            mSpecial(special),
+            mIsArray(array)
          {}
 
          /**
@@ -253,98 +176,28 @@ namespace dtHLAGM
          virtual ~OneToManyMapping()
          {}
 
-         /**
-          * Gets the Name of the HLA value.
-          *
-          * @return the HLA Name
-          */
-         const std::string& GetHLAName() const
-         {
-            return mHLAName;
-         }
-
-         /**
-          * Sets the Name for this HLA Type
-          *
-          * @param mHLATypeName HLA Name
-          */
-         void SetHLAName(const std::string& thisHLATypeName)
-         {
-            mHLAName = thisHLATypeName;
-         }
-
-         /**
-          * Gets the Data Type of the HLA Type.
-          *
-          * @return the Data Type of the HLA Type
-          */
-         const AttributeType& GetHLAType() const
-         {
-            return *mHLAType;
-         }
-
-         /**
-          * Sets the Data Type of the HLA Type
-          *
-          * @param HLAType HLA Data Type
-          */
-         void SetHLAType(const AttributeType& thisHLATypeType)
-         {
-            mHLAType = &thisHLATypeType;
-         }
-
-         /**
-          * Whether or not this field is required for an HLA update.
-          *
-          * @return is this field required
-          */
+         DT_DECLARE_ACCESSOR_INLINE(std::string, HLAName);
+         DT_DECLARE_ACCESSOR_INLINE(dtUtil::EnumerationPointer<const AttributeType>, HLAType);
+         DT_DECLARE_ACCESSOR_INLINE(bool, RequiredForHLA);
          bool IsRequiredForHLA() const
          {
             return mRequiredForHLA;
          }
 
-         /**
-          * Sets whether or not field is required for an HLA Update.
-          *
-          * @param requiredForHLA true if this field is required for an HLA update
-          */
-         void SetRequiredForHLA(bool requiredForHLA)
-         {
-            mRequiredForHLA = requiredForHLA;
-         }
-
-         /**
-          * @return true if this mapping is not valid and should be ignored
-          */
+         DT_DECLARE_ACCESSOR_INLINE(bool, Invalid);
          bool IsInvalid() const
          {
             return mInvalid;
          }
 
-         /**
-          * Sets if this mapping is invaild and should be ignored.
-          */
-         void SetInvalid( bool newInvalid )
-         {
-            mInvalid = newInvalid;
-         }
-
-         /**
-          * Set whether this mapping is a special case, such as an
-          * incoming-only mapping.
-          */
-         void SetSpecial( bool special )
-         {
-            mSpecial = special;
-         }
-
-         /**
-          * @return TRUE if this mapping is flagged as a special case.
-          */
+         DT_DECLARE_ACCESSOR_INLINE(bool, Special);
          bool IsSpecial() const
          {
             return mSpecial;
          }
+
+         // if this mapping is defined as an array of the hla type.
+         DT_DECLARE_ACCESSOR_INLINE(bool, IsArray);
 
          ///@return a reference to the vector of ParameterDefinitions that are used in this mapping.
          std::vector<ParameterDefinition>& GetParameterDefinitions() { return mGameParameters; };
@@ -356,22 +209,7 @@ namespace dtHLAGM
 
       protected:
 
-         ///The HLA field name.
-         std::string mHLAName;
-
-         ///The HLA Type.
-         const AttributeType* mHLAType;
-
-         ///Boolean for whether this field is required for an Obejct Update.
-         bool mRequiredForHLA;
-
-         ///whether or not this mapping is invalid.
-         bool mInvalid;
-
-         // Flag for marking this mapping as a special case, such as an incoming-only mapping.
-         bool mSpecial;
-
-         //A vector of the game parameter definitions for this mapping to use.
+         /// A vector of the game parameter definitions for this mapping to use.
          std::vector<ParameterDefinition> mGameParameters;
    };
 

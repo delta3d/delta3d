@@ -34,6 +34,7 @@
 #include <dtHLAGM/environmentprocessrecordlist.h>
 
 #include <dtGame/deadreckoningcomponent.h>
+#include <dtDAL/namedgroupparameter.inl>
 
 namespace dtHLAGM
 {
@@ -55,6 +56,7 @@ namespace dtHLAGM
    const RPRAttributeType RPRAttributeType::MARKING_TYPE_32("MARKING_TYPE_32", 1, 32, RPRAttributeType::MARKING_TYPE_32_ENUM);
    const RPRAttributeType RPRAttributeType::OCTET_TYPE("OCTET_TYPE", 1, 65535, RPRAttributeType::OCTET_TYPE_ENUM);
    const RPRAttributeType RPRAttributeType::STRING_TYPE("STRING_TYPE", 1, 128, RPRAttributeType::STRING_TYPE_ENUM);
+   const RPRAttributeType RPRAttributeType::ARTICULATED_PART_SINGLE_TYPE("ARTICULATED_PART_SINGLE_TYPE", 1, 20, RPRAttributeType::ARTICULATED_PART_SINGLE_TYPE_ENUM);
    const RPRAttributeType RPRAttributeType::ARTICULATED_PART_TYPE("ARTICULATED_PART_TYPE", 1, 512, RPRAttributeType::ARTICULATED_PART_TYPE_ENUM);
    const RPRAttributeType RPRAttributeType::RTI_OBJECT_ID_STRUCT_TYPE("RTI_OBJECT_ID_STRUCT_TYPE", 1, 128, RPRAttributeType::RTI_OBJECT_ID_STRUCT_TYPE_ENUM);
    const RPRAttributeType RPRAttributeType::TIME_TAG_TYPE("TIME_TAG_TYPE", 1, 17, RPRAttributeType::TIME_TAG_TYPE_ENUM);
@@ -826,6 +828,30 @@ namespace dtHLAGM
             }
             break;
          }
+         case (RPRAttributeType::ARTICULATED_PART_SINGLE_TYPE_ENUM):
+         {
+            if (parameterDataType == dtDAL::DataType::GROUP)
+            {
+               ArticulatedParameter artParam;
+               if (MapFromParamToArticulation(artParam, parameter, paramDef))
+               {
+                  if (maxSize < artParam.EncodedLength())
+                  {
+                     artParam.Encode(buffer);
+                     maxSize = artParam.EncodedLength();
+                  }
+                  else
+                  {
+                     maxSize = 0;
+                  }
+               }
+               else
+               {
+                  maxSize = 0;
+               }
+            }
+            break;
+         }
          case (RPRAttributeType::ARTICULATED_PART_TYPE_ENUM):
          {
             MapFromParamToArticulations( buffer, maxSize, parameter, paramDef );
@@ -1199,6 +1225,223 @@ namespace dtHLAGM
       parameter.FromString(value);
    }
 
+   bool RPRParameterTranslator::MapFromParamToArticulation(
+      ArticulatedParameter& curArtParam,
+      const dtGame::MessageParameter& parameter,
+      const OneToManyMapping::ParameterDefinition& paramDef) const
+   {
+      // Reference the sub group that could be attach parts or articulate parts.
+      const dtGame::GroupMessageParameter* curGroupParam = static_cast<const dtGame::GroupMessageParameter*> (&parameter);
+
+      if( curGroupParam == NULL )
+      {
+         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+            "Outgoing articulation parameter does not have a valid grouping of sub parameters." );
+         return false;
+      }
+
+      // Get the name of the sub group that will determine the group type.
+      const std::string& groupName = curGroupParam->GetName();
+
+      // Determine if name is not long enough for comparison.
+      if( groupName.size() < 2 )
+      {
+         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+            "Outgoing articulation parameter does not have a long enough name for comparison." );
+         return false;
+      }
+
+      // Get the ArticulatedParameterChange value
+      const dtGame::UnsignedIntMessageParameter* changeParam
+         = static_cast<const dtGame::UnsignedIntMessageParameter*>
+         (curGroupParam->GetParameter("Change"));
+
+      if( changeParam != NULL )
+      {
+         curArtParam.SetArticulatedParameterChange( changeParam->GetValue() );
+      }
+
+      ParameterValue& curParamValue = curArtParam.GetParameterValue();
+
+      // Fill in Attached Parts
+      if( groupName[1] == 't' ) // "AttachedPartMessageParam"
+      {
+         curParamValue.SetArticulatedParameterType( AttachedPart ); // 1
+
+         AttachedParts& attachParts = curParamValue.GetAttachedParts();
+
+         // Get the station
+         const dtGame::UnsignedIntMessageParameter* stationParam
+            = static_cast<const dtGame::UnsignedIntMessageParameter*>
+            (curGroupParam->GetParameter("Station"));
+
+         if( stationParam != NULL )
+         {
+            attachParts.SetStation( stationParam->GetValue() );
+         }
+
+         // Get the dis info
+         const dtGame::EnumMessageParameter* disParam
+            = static_cast<const dtGame::EnumMessageParameter*>
+            (curGroupParam->GetParameter("DISInfo")); // Enum Param
+
+         if( disParam != NULL )
+         {
+            const std::string& value = GetEnumValue( disParam->GetValue(), paramDef, false );
+            std::vector<std::string> tokens;
+            dtUtil::StringTokenizer<dtUtil::IsSpace>::tokenize( tokens, value );
+
+            EntityType et;
+            et.FromString(value, ' ');
+            attachParts.SetStoreType( et );
+         }
+
+
+         // Get the attach parent; this will be a class id (unsigned int when mapped from the contained name)
+         const dtGame::IntMessageParameter* attachToParam
+            = dynamic_cast<const dtGame::IntMessageParameter*>
+            (curGroupParam->GetParameter("OurParent"));
+
+         if( attachToParam != NULL )
+         {
+            curArtParam.SetPartAttachedTo((unsigned short)(attachToParam->GetValue()));
+         }
+      }
+      // Fill in Articulated Parts
+      else if( groupName[1] == 'r' ) // "ArticulatedPartMessageParam"
+      {
+         curParamValue.SetArticulatedParameterType( ArticulatedPart ); // 0
+
+         // Get a reference to the parts object to be filled
+         ArticulatedParts& artParts = curParamValue.GetArticulatedParts();
+
+         // Prepare loop variables
+         const dtDAL::NamedParameter* curNamedParam = NULL;
+         std::vector<const dtDAL::NamedParameter*> params;
+         curGroupParam->GetParameters( params );
+         std::vector<const dtDAL::NamedParameter*>::iterator paramIter = params.begin();
+
+         // Collect the articulated value. The loop avoids the overhead of
+         // searching over several names possible for the float parameter.
+         // There should only be three parameters in this group, so the loop
+         // will be very short and the name of the parameter will be
+         // accessed faster.
+         for( ; paramIter != params.end(); ++paramIter )
+         {
+            curNamedParam = *paramIter;
+
+            if( curNamedParam == NULL ) { continue; }
+
+            // Get the Class
+            if( curNamedParam->GetName() == "OurName" )
+            {
+               const dtGame::StringMessageParameter* classParam
+                  = dynamic_cast<const dtGame::StringMessageParameter*> (curNamedParam); // Enum Param
+
+               // Capture the class value
+               if( classParam != NULL )
+               {
+                  const std::string& classValue = GetEnumValue( classParam->GetValue(), paramDef, false );
+                  artParts.SetClass( dtUtil::ToUnsignedInt( classValue ) );
+               }
+            }
+            else if( curNamedParam->GetName() == "OurParent" )
+            {
+               // Get the attach parent; this will be a class id (unsigned int when mapped from the contained name)
+               const dtGame::IntMessageParameter* attachToParam
+                  = dynamic_cast<const dtGame::IntMessageParameter*> (curNamedParam);
+
+               if (attachToParam != NULL)
+               {
+                  curArtParam.SetPartAttachedTo((unsigned short)(attachToParam->GetValue()));
+               }
+            }
+            // Get the value
+            else if( curNamedParam->GetName() != "Change" ) // Change is the only other parameter (already captured)
+            {
+               const dtGame::FloatMessageParameter* floatParam
+                  = dynamic_cast<const dtGame::FloatMessageParameter*> (curNamedParam);
+
+               // Capture the float value
+               if( floatParam != NULL )
+               {
+                  artParts.SetValue( floatParam->GetValue() );
+
+                  const std::string& paramName = curNamedParam->GetName();
+
+                  // Capture the metric type via the name of the parameter.
+                  // For now, this linear comparison is unavoidable.
+                  //(Enumeration (Enumerator "Position")         (Representation 1))
+                  if( paramName == dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_POSITION )
+                  { artParts.SetTypeMetric( 1 ); }
+
+                  //(Enumeration (Enumerator "PositionRate")     (Representation 2))
+                  else if( paramName == dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_POSITIONRATE )
+                  { artParts.SetTypeMetric( 2 ); }
+
+                  //(Enumeration (Enumerator "Extension")        (Representation 3))
+                  else if( paramName == dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_EXTENSION )
+                  { artParts.SetTypeMetric( 3 ); }
+
+                  //(Enumeration (Enumerator "ExtensionRate")    (Representation 4))
+                  else if( paramName == dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_EXTENSIONRATE )
+                  { artParts.SetTypeMetric( 4 ); }
+
+                  //(Enumeration (Enumerator "X")                (Representation 5))
+                  else if( paramName == dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_X )
+                  { artParts.SetTypeMetric( 5 ); }
+
+                  //(Enumeration (Enumerator "XRate")            (Representation 6))
+                  else if( paramName == dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_XRATE )
+                  { artParts.SetTypeMetric( 6 ); }
+
+                  //(Enumeration (Enumerator "Y")                (Representation 7))
+                  else if( paramName == dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_Y )
+                  { artParts.SetTypeMetric( 7 ); }
+
+                  //(Enumeration (Enumerator "YRate")            (Representation 8))
+                  else if( paramName == dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_YRATE )
+                  { artParts.SetTypeMetric( 8 ); }
+
+                  //(Enumeration (Enumerator "Z")                (Representation 9))
+                  else if( paramName == dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_Z )
+                  { artParts.SetTypeMetric( 9 ); }
+
+                  //(Enumeration (Enumerator "ZRate")            (Representation 10))
+                  else if( paramName == dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_ZRATE )
+                  { artParts.SetTypeMetric( 10 ); }
+
+                  //(Enumeration (Enumerator "Azimuth")          (Representation 11))
+                  else if( paramName == dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_AZIMUTH )
+                  { artParts.SetTypeMetric( 11 ); }
+
+                  //(Enumeration (Enumerator "AzimuthRate")      (Representation 12))
+                  else if( paramName == dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_AZIMUTHRATE )
+                  { artParts.SetTypeMetric( 12 ); }
+
+                  //(Enumeration (Enumerator "Elevation")        (Representation 13))
+                  else if( paramName == dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_ELEVATION )
+                  { artParts.SetTypeMetric( 13 ); }
+
+                  //(Enumeration (Enumerator "ElevationRate")    (Representation 14))
+                  else if( paramName == dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_ELEVATIONRATE )
+                  { artParts.SetTypeMetric( 14 ); }
+
+                  //(Enumeration (Enumerator "Rotation")         (Representation 15))
+                  else if( paramName == dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_ROTATION )
+                  { artParts.SetTypeMetric( 15 ); }
+
+                  //(Enumeration (Enumerator "RotationRate")     (Representation 16))
+                  else if( paramName == dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_ROTATIONRATE )
+                  { artParts.SetTypeMetric( 16 ); }
+               }
+
+            }
+         }
+      }
+      return true;
+   }
+
    /////////////////////////////////////////////////////////////////////////////////////////
    void RPRParameterTranslator::MapFromParamToArticulations(
       char* buffer,
@@ -1212,300 +1455,63 @@ namespace dtHLAGM
       const size_t bufferMaxSize = maxSize;
       maxSize = 0;
 
-      unsigned bufferOffset = 0;
       const dtGame::GroupMessageParameter* gParams = (dynamic_cast<const dtGame::GroupMessageParameter*>(&parameter));
-      const dtGame::GroupMessageParameter* curGroupParam = NULL;
-      std::vector<unsigned> parentClassIds;
       std::vector<ArticulatedParameter> articulatedParams;
 
       std::vector<const dtGame::MessageParameter*> groupParamsList;
       gParams->GetParameters( groupParamsList );
       unsigned paramCount = groupParamsList.size();
 
+      size_t sizeLeft = bufferMaxSize;
+      char* bufferPos = buffer;
       for( unsigned i = 0; i < paramCount; ++i )
       {
-         // Reference the sub group that could be attach parts or articulate parts.
-         curGroupParam = static_cast<const dtGame::GroupMessageParameter*> (groupParamsList[i]);
-
-         if( curGroupParam == NULL )
-         {
-            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-               "Outgoing articulation parameter does not have a valid grouping of sub parameters." );
-            continue;
-         }
-
-         // Get the name of the sub group that will determine the group type.
-         const std::string& groupName = curGroupParam->GetName();
-
-         // Determine if name is not long enough for comparison.
-         if( groupName.size() < 2 )
-         {
-            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-               "Outgoing articulation parameter does not have a long enough name for comparison." );
-            continue;
-         }
-
-         // Capture message parameters in a new articulated parameter to be
-         // written to the buffer.
          ArticulatedParameter curArtParam;
-
-         // Get the ArticulatedParameterChange value
-         const dtGame::UnsignedIntMessageParameter* changeParam
-            = static_cast<const dtGame::UnsignedIntMessageParameter*>
-            (curGroupParam->GetParameter("Change"));
-
-         if( changeParam != NULL )
+         if (MapFromParamToArticulation(curArtParam, *groupParamsList[i], paramDef))
          {
-            curArtParam.SetArticulatedParameterChange( changeParam->GetValue() );
-         }
-
-         // Ensure that the class id list will be the same length as the final
-         // articulation parameters output list.
-         parentClassIds.push_back( 0 );
-
-         ParameterValue& curParamValue = curArtParam.GetParameterValue();
-
-         // Fill in Attached Parts
-         if( groupName[1] == 't' ) // "AttachedPartMessageParam"
-         {
-            curParamValue.SetArticulatedParameterType( AttachedPart ); // 1
-
-            AttachedParts& attachParts = curParamValue.GetAttachedParts();
-
-            // Get the station
-            const dtGame::UnsignedIntMessageParameter* stationParam
-               = static_cast<const dtGame::UnsignedIntMessageParameter*>
-               (curGroupParam->GetParameter("Station"));
-
-            if( stationParam != NULL )
+            const dtGame::GroupMessageParameter* lastParam = static_cast<const dtGame::GroupMessageParameter*>(groupParamsList[i]);
+            std::string parentString = lastParam->GetValue("OurParent", std::string(""));
+            if (!parentString.empty())
             {
-               attachParts.SetStation( stationParam->GetValue() );
-            }
-
-            // Get the dis info
-            const dtGame::EnumMessageParameter* disParam
-               = static_cast<const dtGame::EnumMessageParameter*>
-               (curGroupParam->GetParameter("DISInfo")); // Enum Param
-
-            if( disParam != NULL )
-            {
-               const std::string& value = GetEnumValue( disParam->GetValue(), paramDef, false );
-               std::vector<std::string> tokens;
-               dtUtil::StringTokenizer<dtUtil::IsSpace>::tokenize( tokens, value );
-
-               EntityType dis;
-               switch( tokens.size() )
+               const std::string& classValue = GetEnumValue( parentString, paramDef, false );
+               if (!classValue.empty())
                {
-               case 7: dis.SetExtra( (unsigned char) dtUtil::ToUnsignedInt(tokens[6]) );
-               case 6: dis.SetSpecific( (unsigned char) dtUtil::ToUnsignedInt(tokens[5]) );
-               case 5: dis.SetSubcategory( (unsigned char) dtUtil::ToUnsignedInt(tokens[4]) );
-               case 4: dis.SetCategory( (unsigned char) dtUtil::ToUnsignedInt(tokens[3]) );
-               case 3: dis.SetCountry( (unsigned short) dtUtil::ToUnsignedInt(tokens[2]) );
-               case 2: dis.SetDomain( (unsigned char) dtUtil::ToUnsignedInt(tokens[1]) );
-               case 1: dis.SetKind( (unsigned char) dtUtil::ToUnsignedInt(tokens[0]) );
-               default:
-                  break;
-               }
-
-               attachParts.SetStoreType( dis );
-            }
-
-
-
-            // Get the attach parent; this will be a class id (unsigned int when mapped from the contained name)
-            const dtGame::StringMessageParameter* attachToParam
-               = static_cast<const dtGame::EnumMessageParameter*>
-               (curGroupParam->GetParameter("OurParent"));
-
-            if( attachToParam != NULL )
-            {
-               // Map from the parent name to a class id.
-               const std::string& classValue = GetEnumValue( attachToParam->GetValue(), paramDef, false );
-
-               // Add the class id to a list so that it can be
-               // referenced by and assigned as an index relative
-               // to the articulation parameters array.
-               parentClassIds[i] = dtUtil::ToUnsignedInt( classValue );
-            }
-         }
-         // Fill in Articulated Parts
-         else if( groupName[1] == 'r' ) // "ArticulatedPartMessageParam"
-         {
-            curParamValue.SetArticulatedParameterType( ArticulatedPart ); // 0
-
-            // Get a reference to the parts object to be filled
-            ArticulatedParts& artParts = curParamValue.GetArticulatedParts();
-
-            // Prepare loop variables
-            const dtDAL::NamedParameter* curNamedParam = NULL;
-            std::vector<const dtDAL::NamedParameter*> params;
-            curGroupParam->GetParameters( params );
-            std::vector<const dtDAL::NamedParameter*>::iterator paramIter = params.begin();
-
-            // Collect the articulated value. The loop avoids the overhead of
-            // searching over several names possible for the float parameter.
-            // There should only be three parameters in this group, so the loop
-            // will be very short and the name of the parameter will be
-            // accessed faster.
-            for( ; paramIter != params.end(); ++paramIter )
-            {
-               curNamedParam = *paramIter;
-
-               if( curNamedParam == NULL ) { continue; }
-
-               // Get the Class
-               if( curNamedParam->GetName() == "OurName" )
-               {
-                  const dtGame::StringMessageParameter* classParam
-                     = static_cast<const dtGame::StringMessageParameter*> (curNamedParam); // Enum Param
-
-                  // Capture the class value
-                  if( classParam != NULL )
+                  unsigned classNumber = dtUtil::ToType<unsigned int>(classValue);
+                  for (unsigned j = 0; j < articulatedParams.size(); ++j)
                   {
-                     const std::string& classValue = GetEnumValue( classParam->GetValue(), paramDef, false );
-                     artParts.SetClass( dtUtil::ToUnsignedInt( classValue ) );
+                     ArticulatedParameter& possibleParent = articulatedParams[j];
+                     if (possibleParent.GetParameterValue().GetArticulatedParameterType() == ArticulatedPart
+                           && possibleParent.GetParameterValue().GetArticulatedParts().GetClass() == classNumber)
+                     {
+                        curArtParam.SetPartAttachedTo(j);
+                     }
                   }
                }
-               else if( curNamedParam->GetName() == "OurParent" )
-               {
-                  // Get the attach parent; this will be a class id (unsigned int when mapped from the contained name)
-                  const dtGame::StringMessageParameter* attachToParam
-                     = static_cast<const dtGame::StringMessageParameter*> (curNamedParam);
-
-                  if( attachToParam != NULL )
-                  {
-                     // Map from the parent name to a class id.
-                     const std::string& classValue = GetEnumValue( attachToParam->GetValue(), paramDef, false );
-
-                     // Add the class id to a list so that it can be
-                     // referenced by and assigned as an index relative
-                     // to the articulation parameters array.
-                     parentClassIds[i] = dtUtil::ToUnsignedInt( classValue );
-                  }
-               }
-               // Get the value
-               else if( curNamedParam->GetName() != "Change" ) // Change is the only other parameter (already captured)
-               {
-                  const dtGame::FloatMessageParameter* floatParam
-                     = dynamic_cast<const dtGame::FloatMessageParameter*> (curNamedParam);
-
-                  // Capture the float value
-                  if( floatParam != NULL )
-                  {
-                     artParts.SetValue( floatParam->GetValue() );
-
-                     const std::string& paramName = curNamedParam->GetName();
-
-                     // Capture the metric type via the name of the parameter.
-                     // For now, this linear comparison is unavoidable.
-                     //(Enumeration (Enumerator "Position")         (Representation 1))
-                     if( paramName == dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_POSITION )
-                     { artParts.SetTypeMetric( 1 ); }
-
-                     //(Enumeration (Enumerator "PositionRate")     (Representation 2))
-                     else if( paramName == dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_POSITIONRATE )
-                     { artParts.SetTypeMetric( 2 ); }
-
-                     //(Enumeration (Enumerator "Extension")        (Representation 3))
-                     else if( paramName == dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_EXTENSION )
-                     { artParts.SetTypeMetric( 3 ); }
-
-                     //(Enumeration (Enumerator "ExtensionRate")    (Representation 4))
-                     else if( paramName == dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_EXTENSIONRATE )
-                     { artParts.SetTypeMetric( 4 ); }
-
-                     //(Enumeration (Enumerator "X")                (Representation 5))
-                     else if( paramName == dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_X )
-                     { artParts.SetTypeMetric( 5 ); }
-
-                     //(Enumeration (Enumerator "XRate")            (Representation 6))
-                     else if( paramName == dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_XRATE )
-                     { artParts.SetTypeMetric( 6 ); }
-
-                     //(Enumeration (Enumerator "Y")                (Representation 7))
-                     else if( paramName == dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_Y )
-                     { artParts.SetTypeMetric( 7 ); }
-
-                     //(Enumeration (Enumerator "YRate")            (Representation 8))
-                     else if( paramName == dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_YRATE )
-                     { artParts.SetTypeMetric( 8 ); }
-
-                     //(Enumeration (Enumerator "Z")                (Representation 9))
-                     else if( paramName == dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_Z )
-                     { artParts.SetTypeMetric( 9 ); }
-
-                     //(Enumeration (Enumerator "ZRate")            (Representation 10))
-                     else if( paramName == dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_ZRATE )
-                     { artParts.SetTypeMetric( 10 ); }
-
-                     //(Enumeration (Enumerator "Azimuth")          (Representation 11))
-                     else if( paramName == dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_AZIMUTH )
-                     { artParts.SetTypeMetric( 11 ); }
-
-                     //(Enumeration (Enumerator "AzimuthRate")      (Representation 12))
-                     else if( paramName == dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_AZIMUTHRATE )
-                     { artParts.SetTypeMetric( 12 ); }
-
-                     //(Enumeration (Enumerator "Elevation")        (Representation 13))
-                     else if( paramName == dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_ELEVATION )
-                     { artParts.SetTypeMetric( 13 ); }
-
-                     //(Enumeration (Enumerator "ElevationRate")    (Representation 14))
-                     else if( paramName == dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_ELEVATIONRATE )
-                     { artParts.SetTypeMetric( 14 ); }
-
-                     //(Enumeration (Enumerator "Rotation")         (Representation 15))
-                     else if( paramName == dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_ROTATION )
-                     { artParts.SetTypeMetric( 15 ); }
-
-                     //(Enumeration (Enumerator "RotationRate")     (Representation 16))
-                     else if( paramName == dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_ROTATIONRATE )
-                     { artParts.SetTypeMetric( 16 ); }
-                  }
-
-               }
             }
+
+            articulatedParams.push_back(curArtParam);
+
+            // Ensure another articulate parameter will fit the buffer
+            if( curArtParam.EncodedLength() > bufferMaxSize )
+            {
+               mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                  "HLA buffer is not large enough to write all outgoing articulation parameters. Articulations have been written to the buffer.");
+               maxSize = 0;
+               return;
+            }
+
+            // Write the articulation to the buffer
+            curArtParam.Encode( bufferPos );
+            sizeLeft -= curArtParam.EncodedLength();
+            bufferPos += curArtParam.EncodedLength();
+            maxSize += curArtParam.EncodedLength();
          }
-
-         // Store the newly collected values of the current articulated parameter.
-         articulatedParams.push_back( curArtParam );
-      }
-
-
-      // Go over each parameter, referencing its attach parent by index
-      // and then write it to the buffer.
-      ArticulatedParameter* curArtParam = NULL;
-      paramCount = articulatedParams.size();
-      for( unsigned i = 0; i < paramCount; ++i )
-      {
-         curArtParam = &articulatedParams[i];
-
-         // Ensure another articulate parameter will fit the buffer
-         if( bufferOffset + curArtParam->EncodedLength() > bufferMaxSize )
+         else
          {
-            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-               "HLA buffer is not large enough to write all outgoing articulation parameters. %i of %i articulations have been written to the buffer.",
-               i, paramCount );
             break;
          }
-
-         // Assign the index of the articulate parameter that
-         // is the parent of this articulate parameter (matched on class id).
-         for( unsigned j = 0; j < paramCount; ++j )
-         {
-            if( articulatedParams[j].GetParameterValue().GetArticulatedParameterType() == ArticulatedPart
-               && articulatedParams[j].GetParameterValue().GetArticulatedParts().GetClass() == parentClassIds[i] )
-            {
-               curArtParam->SetPartAttachedTo( j );
-               break;
-            }
-         }
-
-         // Write the articulation to the buffer
-         curArtParam->Encode( &buffer[bufferOffset] );
-         bufferOffset += curArtParam->EncodedLength();
-         maxSize += curArtParam->EncodedLength();
       }
+
    }
 
 
@@ -1790,6 +1796,22 @@ namespace dtHLAGM
             }
             break;
          }
+         case (RPRAttributeType::ARTICULATED_PART_SINGLE_TYPE_ENUM):
+         {
+            ArticulatedParameter artParam;
+            if (size >= artParam.EncodedLength())
+            {
+               MapFromArticulationToMessageParam(artParam, parameter, parameterDataType, paramDef);
+            }
+            else
+            {
+               mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                  "Unable to map HLA type \"%s\" to \"%s\", data size not long enough",
+                  RPRAttributeType::ARTICULATED_PART_SINGLE_TYPE.GetName().c_str(),
+                  parameterDataType.GetName().c_str());
+            }
+            break;
+         }
          case (RPRAttributeType::ARTICULATED_PART_TYPE_ENUM):
          {
             MapFromArticulationsToMessageParam(buffer, size, parameter, parameterDataType, paramDef);
@@ -1932,7 +1954,163 @@ namespace dtHLAGM
    }
 
 
+   /////////////////////////////////////////////////////////////////////////////////////////
+   void RPRParameterTranslator::MapFromArticulationToMessageParam(
+      ArticulatedParameter tempparam,
+      dtGame::MessageParameter& parameter,
+      const dtDAL::DataType& parameterDataType,
+      const OneToManyMapping::ParameterDefinition& paramDef) const
+   {
+      ParameterValue& curParamValue = tempparam.GetParameterValue();
 
+      dtDAL::NamedGroupParameter* newGroupParam = dynamic_cast<dtDAL::NamedGroupParameter*>(&parameter);
+
+      if (newGroupParam == NULL)
+      {
+         return;
+      }
+
+      // attached part check
+      if((int)curParamValue.GetArticulatedParameterType() == 1)
+      {
+         if(curParamValue.GetAttachedParts().GetStation() == 0)
+         {
+            if(mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+               mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+               "Received inaccurate data from hla in the articulated parts area, Station ID is = %d",
+               (unsigned int)curParamValue.GetAttachedParts().GetStation());
+         }
+      }
+      else // articulation part check
+      {
+         if((unsigned int)curParamValue.GetArticulatedParts().GetClass() == 0)
+         {
+            if(mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+               mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+               "Received inaccurate data from hla in the articulated parts area, Unknown Class type = %d",
+               (unsigned int)curParamValue.GetArticulatedParts().GetClass());
+         }
+         if((unsigned int)curParamValue.GetArticulatedParts().GetTypeMetric() == 0
+            || (unsigned int)curParamValue.GetArticulatedParts().GetTypeMetric() > 16)
+         {
+            if(mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+               mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+               "Received inaccurate data from hla in the articulated parts area, Unknown Metric type = %d",
+               (unsigned int)curParamValue.GetArticulatedParts().GetTypeMetric());
+         }
+      }
+
+      if((int)curParamValue.GetArticulatedParameterType() == 1)
+      {
+         // fill in with all messages we need to send for this data
+         newGroupParam->AddParameter( *new dtGame::UnsignedIntMessageParameter(
+            "Station", (unsigned int)curParamValue.GetAttachedParts().GetStation()) );
+
+         std::ostringstream disStream;
+         disStream << (curParamValue.GetAttachedParts().GetStoreType());
+         std::string finalEnumString = GetEnumValue(disStream.str(), paramDef, true);
+         newGroupParam->AddParameter( *new dtGame::EnumMessageParameter("DISInfo", finalEnumString.c_str()) );
+
+      }
+      else
+      {
+         // fill in with all messages we need to send for this data
+         std::ostringstream classEnumValue;
+         classEnumValue << (unsigned int)curParamValue.GetArticulatedParts().GetClass();
+         std::string dofName = GetEnumValue(classEnumValue.str(), paramDef, true);
+
+         // WHat dof are we, which one we moving.
+         newGroupParam->AddParameter( *new dtGame::StringMessageParameter("OurName", dofName.c_str()) );
+
+         newGroupParam->AddValue("OurParent", int(tempparam.GetPartAttachedTo()) );
+
+         float value = (float)curParamValue.GetArticulatedParts().GetValue();
+
+         switch((unsigned int)curParamValue.GetArticulatedParts().GetTypeMetric())
+         {
+         //(Enumeration (Enumerator "Position")         (Representation 1))
+         case 1:
+            newGroupParam->AddValue(dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_POSITION, value);
+            break;
+
+            //(Enumeration (Enumerator "PositionRate")     (Representation 2))
+         case 2:
+            newGroupParam->AddValue(dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_POSITIONRATE, value);
+            break;
+
+            //(Enumeration (Enumerator "Extension")        (Representation 3))
+         case 3:
+            newGroupParam->AddValue( dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_EXTENSION, value);
+            break;
+
+            //(Enumeration (Enumerator "ExtensionRate")    (Representation 4))
+         case 4:
+            newGroupParam->AddValue(dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_EXTENSIONRATE, value);
+            break;
+
+            //(Enumeration (Enumerator "X")                (Representation 5))
+         case 5:
+            newGroupParam->AddValue(dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_X, value);
+            break;
+
+            //(Enumeration (Enumerator "XRate")            (Representation 6))
+         case 6:
+            newGroupParam->AddValue( dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_XRATE, value);
+            break;
+
+            //(Enumeration (Enumerator "Y")                (Representation 7))
+         case 7:
+            newGroupParam->AddValue(dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_Y, value);
+            break;
+            //(Enumeration (Enumerator "YRate")            (Representation 8))
+         case 8:
+            newGroupParam->AddValue( dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_YRATE, value);
+            break;
+            //(Enumeration (Enumerator "Z")                (Representation 9))
+         case 9:
+            newGroupParam->AddValue( dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_Z, value);
+            break;
+
+            //(Enumeration (Enumerator "ZRate")            (Representation 10))
+         case 10:
+            newGroupParam->AddValue( dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_ZRATE, value);
+            break;
+
+            //(Enumeration (Enumerator "Azimuth")          (Representation 11))
+         case 11:
+            newGroupParam->AddValue( dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_AZIMUTH, -value);
+            break;
+
+            //(Enumeration (Enumerator "AzimuthRate")      (Representation 12))
+         case 12:
+            newGroupParam->AddValue( dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_AZIMUTHRATE, -value);
+            break;
+
+            //(Enumeration (Enumerator "Elevation")        (Representation 13))
+         case 13:
+            newGroupParam->AddValue( dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_ELEVATION, value);
+            break;
+
+            //(Enumeration (Enumerator "ElevationRate")    (Representation 14))
+         case 14:
+            newGroupParam->AddValue( dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_ELEVATIONRATE, value);
+            break;
+
+            //(Enumeration (Enumerator "Rotation")         (Representation 15))
+         case 15:
+            newGroupParam->AddValue( dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_ROTATION, value);
+            break;
+
+            //(Enumeration (Enumerator "RotationRate")     (Representation 16))
+         case 16:
+            newGroupParam->AddValue( dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_ROTATIONRATE, value);
+            break;
+
+         default: // log error
+            break;
+         }
+      }
+   }
 
    /////////////////////////////////////////////////////////////////////////////////////////
    void RPRParameterTranslator::MapFromArticulationsToMessageParam(
@@ -1947,283 +2125,90 @@ namespace dtHLAGM
       ArticulatedParameter artParam;
       artParam.Decode(buffer);
       artParams.push_back(artParam);
-      int amount = (int)(size / artParam.EncodedLength());
+      unsigned amount = (size / artParam.EncodedLength());
 
       /////////////////////////////////////////////////////////////////////////////////////////
       // ERROR CHECKING TO MAKE SURE SIZE IS CORRECT
       if(size % artParam.EncodedLength() != 0)
       {
          // Log error they sent us bad data
-         if(mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+         if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+         {
             mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
             "Received inaccurate data from hla in the articulated parts area, size is %d",
             (int)size);
+         }
       }
       else if(amount == 0)
       {
-         if(mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+         if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+         {
             mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
             "Received inaccurate data from hla in the articulated parts area, amount is 0");
-      }
-
-      /////////////////////////////////////////////////////////////////////////////////////////
-      // Add all the data onto the vector
-      for(int i = 1; i < amount; i++)
-      {
-         ArticulatedParameter tempparam;
-         const char* tempString =  &buffer[i * artParam.EncodedLength()];
-         tempparam.Decode(tempString);
-         artParams.push_back(tempparam);
+         }
       }
 
       /////////////////////////////////////////////////////////////////////////////////////////
       // Error Check values
-      std::vector<ArticulatedParameter>::iterator paramsIter;
-      const ParameterValue* curParamValue = NULL;
-      for(paramsIter = artParams.begin(); paramsIter != artParams.end(); ++paramsIter)
-      {
-         curParamValue = &(*paramsIter).GetParameterValue();
-         // attached part check
-         if((int)curParamValue->GetArticulatedParameterType() == 1)
-         {
-            if(curParamValue->GetAttachedParts().GetStation() == 0)
-            {
-               if(mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-                  mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-                  "Received inaccurate data from hla in the articulated parts area, Station ID is = %d",
-                  (unsigned int)(*paramsIter).GetParameterValue().GetAttachedParts().GetStation());
-            }
-         }
-         else // articulation part check
-         {
-            if((unsigned int)curParamValue->GetArticulatedParts().GetClass() == 0)
-            {
-               if(mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-                  mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-                  "Received inaccurate data from hla in the articulated parts area, Unknown Class type = %d",
-                  (unsigned int)curParamValue->GetArticulatedParts().GetClass());
-            }
-            if((unsigned int)curParamValue->GetArticulatedParts().GetTypeMetric() == 0
-               || (unsigned int)curParamValue->GetArticulatedParts().GetTypeMetric() > 16)
-            {
-               if(mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-                  mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-                  "Received inaccurate data from hla in the articulated parts area, Unknown Metric type = %d",
-                  (unsigned int)curParamValue->GetArticulatedParts().GetTypeMetric());
-            }
-         }
-      }
-
       /////////////////////////////////////////////////////////////////////////////////////////
       // fill in all info to a group message parameter
       dtGame::GroupMessageParameter* gParams = (dynamic_cast<dtGame::GroupMessageParameter*>(&parameter));
-      int j = 0;
-      int k = 0;
-      for(paramsIter = artParams.begin(); paramsIter != artParams.end(); ++paramsIter)
+      size_t perSize = artParam.EncodedLength();
+      const char* bufferPos = buffer;
+
+      static const std::string baseNameArtic("ArticulatedPartMessageParam");
+      static const std::string baseNameAttach("AttachedPartMessageParam");
+      std::string nameString;
+
+      std::vector<dtDAL::NamedGroupParameter*> createdGroups;
+
+      int attach = 0, artic = 0;
+      for(unsigned count = 0; count < amount; ++count)
       {
-         curParamValue = &(*paramsIter).GetParameterValue();
-         char buffer[64];
-         if((int)curParamValue->GetArticulatedParameterType() == 1)
+         ArticulatedParameter artParam;
+         artParam.Decode(bufferPos);
+         dtCore::RefPtr<dtDAL::NamedGroupParameter> newGroup;
+
+         if (artParam.GetParameterValue().GetArticulatedParameterType() == ArticulatedPart)
          {
-            sprintf(buffer, "AttachedPartMessageParam%d", k);
-            k++;
-
-            dtCore::RefPtr<dtGame::GroupMessageParameter> newGroupParam = new dtGame::GroupMessageParameter(buffer);
-
-            // fill in with all messages we need to send for this data
-            newGroupParam->AddParameter( *new dtGame::UnsignedIntMessageParameter(
-               "Station", (unsigned int)curParamValue->GetAttachedParts().GetStation()) );
-
-            std::ostringstream disStream;
-            disStream << (curParamValue->GetAttachedParts().GetStoreType());
-            std::string finalEnumString = GetEnumValue(disStream.str(), paramDef, true);
-            newGroupParam->AddParameter( *new dtGame::EnumMessageParameter("DISInfo", finalEnumString.c_str()) );
-
-            // we're done add to big group
-            gParams->AddParameter( *newGroupParam );
+            dtUtil::MakeIndexString(artic, nameString, 1);
+            ++artic;
+            newGroup = new dtDAL::NamedGroupParameter(baseNameArtic + nameString);
          }
          else
          {
-            sprintf(buffer, "ArticulatedPartMessageParam%d", j);
-            j++;
-
-            dtCore::RefPtr<dtGame::GroupMessageParameter> newGroupParam = new dtGame::GroupMessageParameter(buffer);
-
-            // fill in with all messages we need to send for this data
-            std::ostringstream classEnumValue;
-            classEnumValue << (unsigned int)curParamValue->GetArticulatedParts().GetClass();
-            std::string dofName = GetEnumValue(classEnumValue.str(), paramDef, true);
-
-            // WHat dof are we, which one we moving.
-            newGroupParam->AddParameter( *new dtGame::StringMessageParameter("OurName", dofName.c_str()) );
-
-            // what is our parent that we are attached to.
-            std::vector<ArticulatedParameter>::iterator paramsIterTwo;
-            int l = 0;
-            std::string parentDofName = "";
-            for(paramsIterTwo = artParams.begin(); paramsIterTwo != artParams.end(); ++paramsIterTwo)
-            {
-               if((unsigned short)(*paramsIter).GetPartAttachedTo() == 0)
-               {
-                  // change to read from enum???
-                  newGroupParam->AddParameter( *new dtGame::StringMessageParameter("OurParent", "dof_chasis") );
-                  break;
-               }
-               else if((unsigned short)(*paramsIter).GetPartAttachedTo() == l)
-               {
-                  std::ostringstream parentClassEnumValue;
-                  parentClassEnumValue << (unsigned int)curParamValue->GetArticulatedParts().GetClass();
-                  parentDofName = GetEnumValue(parentClassEnumValue.str(), paramDef, true);
-                  newGroupParam->AddParameter( *new dtGame::StringMessageParameter("OurParent", parentDofName.c_str()) );
-                  break;
-               }
-               l++;
-            }
-
-            float value = (float)curParamValue->GetArticulatedParts().GetValue();
-
-            switch((unsigned int)curParamValue->GetArticulatedParts().GetTypeMetric())
-            {
-               //(Enumeration (Enumerator "Position")         (Representation 1))
-            case 1:
-               {
-                  newGroupParam->AddParameter(
-                     *new dtGame::FloatMessageParameter( dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_POSITION, value) );
-               }
-               break;
-
-               //(Enumeration (Enumerator "PositionRate")     (Representation 2))
-            case 2:
-               {
-                  newGroupParam->AddParameter(
-                     *new dtGame::FloatMessageParameter( dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_POSITIONRATE, value) );
-               }
-               break;
-
-               //(Enumeration (Enumerator "Extension")        (Representation 3))
-            case 3:
-               {
-                  newGroupParam->AddParameter(
-                     *new dtGame::FloatMessageParameter( dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_EXTENSION, value) );
-               }
-               break;
-
-               //(Enumeration (Enumerator "ExtensionRate")    (Representation 4))
-            case 4:
-               {
-                  newGroupParam->AddParameter(
-                     *new dtGame::FloatMessageParameter( dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_EXTENSIONRATE, value) );
-               }
-               break;
-
-               //(Enumeration (Enumerator "X")                (Representation 5))
-            case 5:
-               {
-                  newGroupParam->AddParameter(
-                     *new dtGame::FloatMessageParameter(  dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_X, value) );
-               }
-               break;
-
-               //(Enumeration (Enumerator "XRate")            (Representation 6))
-            case 6:
-               {
-                  newGroupParam->AddParameter(
-                     *new dtGame::FloatMessageParameter( dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_XRATE, value) );
-               }
-               break;
-
-               //(Enumeration (Enumerator "Y")                (Representation 7))
-            case 7:
-               {
-                  newGroupParam->AddParameter(
-                     *new dtGame::FloatMessageParameter( dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_Y, value) );
-               }
-               break;
-
-               //(Enumeration (Enumerator "YRate")            (Representation 8))
-            case 8:
-               {
-                  newGroupParam->AddParameter(
-                     *new dtGame::FloatMessageParameter( dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_YRATE, value) );
-               }
-               break;
-
-               //(Enumeration (Enumerator "Z")                (Representation 9))
-            case 9:
-               {
-                  newGroupParam->AddParameter(
-                     *new dtGame::FloatMessageParameter( dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_Z, value) );
-               }
-               break;
-
-               //(Enumeration (Enumerator "ZRate")            (Representation 10))
-            case 10:
-               {
-                  newGroupParam->AddParameter(
-                     *new dtGame::FloatMessageParameter( dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_ZRATE, value) );
-               }
-               break;
-
-               //(Enumeration (Enumerator "Azimuth")          (Representation 11))
-            case 11:
-               {
-                  float tempValue = -value;
-                  newGroupParam->AddParameter(
-                     *new dtGame::FloatMessageParameter( dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_AZIMUTH, tempValue) );
-               }
-               break;
-
-               //(Enumeration (Enumerator "AzimuthRate")      (Representation 12))
-            case 12:
-               {
-                  float tempValue = -value;
-                  newGroupParam->AddParameter(
-                     *new dtGame::FloatMessageParameter( dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_AZIMUTHRATE, tempValue) );
-               }
-               break;
-
-               //(Enumeration (Enumerator "Elevation")        (Representation 13))
-            case 13:
-               {
-                  newGroupParam->AddParameter(
-                     *new dtGame::FloatMessageParameter( dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_ELEVATION, value) );
-               }
-               break;
-
-               //(Enumeration (Enumerator "ElevationRate")    (Representation 14))
-            case 14:
-               {
-                  newGroupParam->AddParameter(
-                     *new dtGame::FloatMessageParameter( dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_ELEVATIONRATE, value) );
-               }
-               break;
-
-               //(Enumeration (Enumerator "Rotation")         (Representation 15))
-            case 15:
-               {
-                  newGroupParam->AddParameter(
-                     *new dtGame::FloatMessageParameter( dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_ROTATION, value) );
-               }
-               break;
-
-               //(Enumeration (Enumerator "RotationRate")     (Representation 16))
-            case 16:
-               {
-                  newGroupParam->AddParameter(
-                     *new dtGame::FloatMessageParameter( dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_ROTATIONRATE, value) );
-               }
-               break;
-
-            default: // log error
-               {
-                  // Logged above in error check there.
-               }
-               break;
-            }
-
-            // we're done add to big group
-            gParams->AddParameter( *newGroupParam );
+            dtUtil::MakeIndexString(attach, nameString, 1);
+            ++attach;
+            newGroup = new dtDAL::NamedGroupParameter(baseNameAttach + nameString);
          }
+
+         MapFromArticulationToMessageParam(artParam, *newGroup, parameterDataType, paramDef);
+         bufferPos += perSize;
+
+         createdGroups.push_back(newGroup);
+
+         gParams->AddParameter(*newGroup);
+      }
+
+      std::vector<dtDAL::NamedGroupParameter*>::iterator i, iend;
+      i = createdGroups.begin();
+      iend = createdGroups.end();
+
+      for (; i != iend; ++i)
+      {
+         dtDAL::NamedGroupParameter* curArtParam = *i;
+
+         int attachedTo = curArtParam->GetValue("OurParent", int(0));
+         curArtParam->RemoveParameter("OurParent");
+         if (unsigned(attachedTo) < createdGroups.size())
+         {
+            curArtParam->SetValue("OurParent", std::string(createdGroups[attachedTo]->GetValue("OurName", std::string("dof_chassis"))));
+         }
+         else
+         {
+            curArtParam->SetValue("OurParent", std::string("dof_chassis"));
+         }
+
       }
    }
 

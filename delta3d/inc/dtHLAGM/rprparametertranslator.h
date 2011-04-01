@@ -66,6 +66,7 @@ namespace dtHLAGM
             MARKING_TYPE_32_ENUM,
             STRING_TYPE_ENUM,
             OCTET_TYPE_ENUM,
+            ARTICULATED_PART_SINGLE_TYPE_ENUM,
             ARTICULATED_PART_TYPE_ENUM,
             RTI_OBJECT_ID_STRUCT_TYPE_ENUM,
             TIME_TAG_TYPE_ENUM,
@@ -134,6 +135,9 @@ namespace dtHLAGM
 
          /// A variable length block of bytes up to 65535 bytes.
          static const RPRAttributeType OCTET_TYPE;
+
+         /// Type representing a single articulated part.
+         static const RPRAttributeType ARTICULATED_PART_SINGLE_TYPE;
 
          /// A type for the articulation to be captured / sent
          static const RPRAttributeType ARTICULATED_PART_TYPE;
@@ -251,6 +255,11 @@ namespace dtHLAGM
             const OneToManyMapping& mapping,
             const OneToManyMapping::ParameterDefinition& paramDef) const;
 
+         bool MapFromParamToArticulation(
+            ArticulatedParameter& artParam,
+            const dtGame::MessageParameter& parameter,
+            const OneToManyMapping::ParameterDefinition& paramDef) const;
+
          void MapFromParamToArticulations(
             char* buffer,
             size_t& maxSize,
@@ -302,6 +311,12 @@ namespace dtHLAGM
             dtGame::MessageParameter& parameter,
             const OneToManyMapping::ParameterDefinition& paramDef,
             bool stopAtNullTerminator = true) const;
+
+         void MapFromArticulationToMessageParam(
+            ArticulatedParameter artParam,
+            dtGame::MessageParameter& parameter,
+            const dtDAL::DataType& parameterDataType,
+            const OneToManyMapping::ParameterDefinition& paramDef) const;
 
          void MapFromArticulationsToMessageParam(
             const char* buffer,

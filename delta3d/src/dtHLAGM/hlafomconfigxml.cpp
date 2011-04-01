@@ -123,6 +123,7 @@ namespace dtHLAGM
    const std::string HLAFOMConfigContentHandler::ONE_TO_MANY_HLA_NAME_ELEMENT("hlaName");
    const std::string HLAFOMConfigContentHandler::ONE_TO_MANY_GAME_NAME_ELEMENT("gameName");
    const std::string HLAFOMConfigContentHandler::ONE_TO_MANY_HLA_DATATYPE_ELEMENT("hlaDataType");
+   const std::string HLAFOMConfigContentHandler::ONE_TO_MANY_DATATYPE_ARRAY("array");
    const std::string HLAFOMConfigContentHandler::ONE_TO_MANY_GAME_DATATYPE_ELEMENT("gameDataType");
    const std::string HLAFOMConfigContentHandler::ONE_TO_MANY_HLA_REQUIRED_ELEMENT("hlaRequired");
    const std::string HLAFOMConfigContentHandler::ONE_TO_MANY_GAME_REQUIRED_ELEMENT("gameRequired");
@@ -243,7 +244,20 @@ namespace dtHLAGM
                }
                else if (mCurrentAttrToProp != NULL)
                {
-                  if (mParsingEnumMapping && sLocalName == ONE_TO_MANY_ENUM_VALUE_ELEMENT)
+                  if (sLocalName == ONE_TO_MANY_HLA_DATATYPE_ELEMENT)
+                  {
+                     std::string value;
+                     GetAttributeValue(ONE_TO_MANY_DATATYPE_ARRAY, attrs, value);
+                     if (value.empty())
+                     {
+                        mCurrentAttrToProp->SetIsArray(false);
+                     }
+                     else
+                     {
+                        mCurrentAttrToProp->SetIsArray(dtUtil::ToType<bool>(value));
+                     }
+                  }
+                  else if (mParsingEnumMapping && sLocalName == ONE_TO_MANY_ENUM_VALUE_ELEMENT)
                   {
                      StartElementEnumMapping(sLocalName, attrs);
                   }
@@ -338,7 +352,9 @@ namespace dtHLAGM
                         "Message parameter with no current mapping");
 
                   if (mInMultiParam)
+                  {
                      mCurrentParamToParam->GetParameterDefinitions().push_back(OneToManyMapping::ParameterDefinition());
+                  }
 
                   mInMultiParam = true;
 
@@ -350,7 +366,20 @@ namespace dtHLAGM
                }
                else if (mCurrentParamToParam != NULL)
                {
-                  if (mParsingEnumMapping)
+                  if (sLocalName == ONE_TO_MANY_HLA_DATATYPE_ELEMENT)
+                  {
+                     std::string value;
+                     GetAttributeValue(ONE_TO_MANY_DATATYPE_ARRAY, attrs, value);
+                     if (value.empty())
+                     {
+                        mCurrentParamToParam->SetIsArray(false);
+                     }
+                     else
+                     {
+                        mCurrentParamToParam->SetIsArray(dtUtil::ToType<bool>(value));
+                     }
+                  }
+                  else if (mParsingEnumMapping)
                   {
                      StartElementEnumMapping(sLocalName, attrs);
                   }
@@ -907,65 +936,14 @@ namespace dtHLAGM
    //////////////////////////////////////////////////////////////////////////////////////////
    void HLAFOMConfigContentHandler::EntityTypeCharacters(EntityType& entityType, const std::string& elementName, const std::string& characters)
    {
-      dtUtil::IsDelimeter delimFunc('.');
-      std::vector<std::string> tokens;
-      dtUtil::StringTokenizer<dtUtil::IsDelimeter>::tokenize(tokens, characters, delimFunc);
-
-      char which = 0;
-      std::vector<std::string>::const_iterator i, iend;
-      i = tokens.begin();
-      iend = tokens.end();
-      for (; i != iend; ++i)
+      if (!entityType.FromString(characters))
       {
-         unsigned short val = dtUtil::ToType<unsigned short>(*i);
-         switch(which)
-         {
-            case 0:
-            {
-               entityType.SetKind((unsigned char)val);
-               break;
-            }
-            case 1:
-            {
-               entityType.SetDomain((unsigned char)val);
-               break;
-            }
-            case 2:
-            {
-               entityType.SetCountry(val);
-               break;
-            }
-            case 3:
-            {
-               entityType.SetCategory((unsigned char)val);
-               break;
-            }
-            case 4:
-            {
-               entityType.SetSubcategory((unsigned char)val);
-               break;
-            }
-            case 5:
-            {
-               entityType.SetSpecific((unsigned char)val);
-               break;
-            }
-            case 6:
-            {
-               entityType.SetExtra((unsigned char)val);
-               break;
-            }
-            default:
-            {
-               std::ostringstream ss;
-               ss << "ObjectToActor mapping HLA object class \""
-                  << mCurrentObjectToActor->GetObjectClassName()
-                  << "\" to Actor Type \"" << mCurrentObjectToActor->GetActorType()
-                  << "\" has an entity type with too many fields \"" << which << "\".";
-               LOG_ERROR(ss.str());
-            }
-         }
-         ++which;
+         std::ostringstream ss;
+         ss << "ObjectToActor mapping HLA object class \""
+            << mCurrentObjectToActor->GetObjectClassName()
+            << "\" to Actor Type \"" << mCurrentObjectToActor->GetActorType()
+            << "\" has an entity type with too many fields.";
+         LOG_ERROR(ss.str());
       }
    }
 
@@ -1486,8 +1464,12 @@ namespace dtHLAGM
 
    void HLAFOMConfigContentHandler::resetDocument()
    {
-      while (!mElements.empty()) mElements.pop();
-         mMissingActorTypes.clear();
+      while (!mElements.empty())
+      {
+         mElements.pop();
+      }
+
+      mMissingActorTypes.clear();
 
       mUsingDisID = false;
 

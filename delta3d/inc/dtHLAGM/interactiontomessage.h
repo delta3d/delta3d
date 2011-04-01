@@ -73,22 +73,22 @@ namespace dtHLAGM
             return *mType;
          }
 
-         const std::string &GetInteractionName() const
+         const std::string& GetInteractionName() const
          {
             return mInteractionName;
          }
 
-         const RTI::InteractionClassHandle &GetInteractionClassHandle() const
+         const RTI::InteractionClassHandle& GetInteractionClassHandle() const
          {
             return mInteractionHandle;
          }
 
-         const std::vector<ParameterToParameterList> &GetOneToManyMappingVector() const
+         const std::vector<ParameterToParameterList>& GetOneToManyMappingVector() const
          {
             return mOneToMany;
          }
 
-         std::vector<ParameterToParameterList> &GetOneToManyMappingVector()
+         std::vector<ParameterToParameterList>& GetOneToManyMappingVector()
          {
             return mOneToMany;
          }
@@ -108,7 +108,7 @@ namespace dtHLAGM
             mInteractionHandle = interactionHandle;
          }
 
-         void SetOneToManyMappingVector(std::vector<ParameterToParameterList> &thisOneToManyVector)
+         void SetOneToManyMappingVector(std::vector<ParameterToParameterList>& thisOneToManyVector)
          {
             mOneToMany = thisOneToManyVector;
          }

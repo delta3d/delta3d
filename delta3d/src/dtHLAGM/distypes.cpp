@@ -230,6 +230,42 @@ namespace dtHLAGM
         mExtra(extra)
    {}
 
+   /////////////////////////////////////////////////////////////
+   void EntityType::ToString(std::string& toFill, char delimiter) const
+   {
+      std::ostringstream ss;
+      ss << unsigned(GetKind()) << delimiter
+            << unsigned(GetDomain()) << delimiter
+            << unsigned(GetCountry()) << delimiter
+            << unsigned(GetCategory()) << delimiter
+            << unsigned(GetSubcategory()) << delimiter
+            << unsigned(GetSpecific()) << delimiter
+            << unsigned(GetExtra());
+   }
+
+   /////////////////////////////////////////////////////////////
+   bool EntityType::FromString(const std::string& str, char delimiter)
+   {
+      dtUtil::IsDelimeter delimFunc(delimiter);
+      std::vector<std::string> tokens;
+      dtUtil::StringTokenizer<dtUtil::IsDelimeter>::tokenize(tokens, str, delimFunc);
+
+      switch( tokens.size() )
+      {
+      case 7: SetExtra( (unsigned char) dtUtil::ToType<unsigned short>(tokens[6]) );
+      case 6: SetSpecific( (unsigned char) dtUtil::ToType<unsigned short>(tokens[5]) );
+      case 5: SetSubcategory( (unsigned char) dtUtil::ToType<unsigned short>(tokens[4]) );
+      case 4: SetCategory( (unsigned char) dtUtil::ToType<unsigned short>(tokens[3]) );
+      case 3: SetCountry( (unsigned short) dtUtil::ToType<unsigned short>(tokens[2]) );
+      case 2: SetDomain( (unsigned char) dtUtil::ToType<unsigned short>(tokens[1]) );
+      case 1: SetKind( (unsigned char) dtUtil::ToType<unsigned short>(tokens[0]) );
+      break;
+      default:
+         return false;
+      }
+      return true;
+   }
+
    /**
     * Compares this object to another of its type.
     *

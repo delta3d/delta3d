@@ -254,7 +254,7 @@ void HLAComponentTests::setUp()
    }
    catch (const dtUtil::Exception& e)
    {
-      CPPUNIT_FAIL((std::string("Error: ") + e.What()).c_str());
+      CPPUNIT_FAIL(e.ToString());
    }
 
    mHLAComponent = new TestHLAComponent();
@@ -272,7 +272,7 @@ void HLAComponentTests::setUp()
    }
    catch (const dtUtil::Exception& ex)
    {
-      CPPUNIT_FAIL(ex.What());
+      CPPUNIT_FAIL(ex.ToString());
    }
 
    try
@@ -1270,6 +1270,36 @@ void HLAComponentTests::TestPrepareUpdate()
 
       PopulateTestActorUpdate(*testMsg);
 
+      dtCore::RefPtr<dtDAL::NamedArrayParameter> articArray = new dtDAL::NamedArrayParameter("Articulated Parameters Array");
+      testMsg->AddUpdateParameter(*articArray);
+
+      // The sub group of parameters pertaining to either an
+      // ArticulatedPart or an AttachPart
+      dtCore::RefPtr<dtGame::GroupMessageParameter> subParam = NULL;
+
+      // Create other articulated parameters to lengthen the array
+      // --- Extra 0
+      subParam = new dtGame::GroupMessageParameter( "ArticulatedPartMessageParam0" );
+      subParam->AddValue( "Azimuth", 0.0f  );
+      subParam->AddValue( "OurName", std::string("DOF1")  );
+      subParam->AddValue( "OurParent", std::string("Parent_DOF0")  );
+      subParam->AddValue( "Change", (unsigned short)(11) );
+      articArray->AddParameter( *subParam );
+      // --- Extra 1
+      subParam = new dtGame::GroupMessageParameter( "ArticulatedPartMessageParam1" );
+      subParam->AddValue( "Azimuth", 0.0f );
+      subParam->AddValue( "OurName", std::string("DOF2") );
+      subParam->AddValue( "OurParent", std::string("Parent_DOF1") );
+      subParam->AddValue( "Change", (unsigned short)(84) );
+      articArray->AddParameter( *subParam );
+      // Attach Parts
+      subParam = new dtGame::GroupMessageParameter( "AttachedPartMessageParam0" );
+      subParam->AddValue( "DISInfo", std::string("3.4.225.6.8.9.4" ) );
+      subParam->AddValue( "Station", 1U );
+      subParam->AddValue( "OurParent", std::string("Parent_DOF2") );
+      subParam->AddValue( "Change", (unsigned short)(123) );
+      articArray->AddParameter( *subParam );
+
       const dtCore::UniqueId& fakeActorId = testMsg->GetAboutActorId();
 
       dtHLAGM::EntityIdentifier entityId(3,3,2);
@@ -1316,6 +1346,7 @@ void HLAComponentTests::TestPrepareUpdate()
          bool foundEntityIdAttr1 = false;
          bool foundEntityIdAttr2 = false;
          bool foundOrientationAttr = false;
+         bool foundArrayAttr = false;
          bool foundDamageStateAttr = false;
 
          for (unsigned i = 0; i < ahs->size(); ++i)
@@ -1391,6 +1422,17 @@ void HLAComponentTests::TestPrepareUpdate()
                         ahs->getValuePointer(i, length);
                         CPPUNIT_ASSERT_MESSAGE("The mapped parameter for the orientation should be the size of three floats.",
                            length == aToPList.GetHLAType().GetEncodedLength() && length == 3 * sizeof(float));
+                        //There are other tests that check the converter for rotation.
+                     }
+                     else if ("Articulated Parameters Array" == paramDef.GetGameName())
+                     {
+                        foundArrayAttr = true;
+                        unsigned long length;
+                        //I just want the length.
+                        ahs->getValuePointer(i, length);
+                        dtHLAGM::ArticulatedParameter artParam;
+                        CPPUNIT_ASSERT_MESSAGE("The mapped parameter for the articulated parameters should be the size of three articulated parameters.",
+                           length == 3 * aToPList.GetHLAType().GetEncodedLength() && length == 3 * artParam.EncodedLength());
                         //There are other tests that check the converter for rotation.
                      }
                      else if (dtDAL::TransformableActorProxy::PROPERTY_TRANSLATION == paramDef.GetGameName())

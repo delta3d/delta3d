@@ -567,6 +567,16 @@ namespace dtHLAGM
                                     bool bNewObject, 
                                     dtGame::Message *msg );
 
+         void PrepareSingleUpdateParameter(AttributeToPropertyList& curAttrToProp,
+               RTI::AttributeHandleValuePairSet& updateParams,
+               const dtGame::ActorUpdateMessage& message,
+               bool newObject);
+
+         void PrepareArrayUpdateParameter(AttributeToPropertyList& curAttrToProp,
+               RTI::AttributeHandleValuePairSet& updateParams,
+               const dtGame::ActorUpdateMessage& message,
+               bool newObject);
+
          /**
           * Convenience method for creating message parameters from a mapping between
           * interaction parameters to game message parameters.
@@ -587,6 +597,21 @@ namespace dtHLAGM
             bool addMissingParams = false, // 
             const std::string& classHandleString = "" // HLA Interaction class name (for log output)
             );
+
+         /**
+          * Convenience method for creating message parameters from a mapping between
+          * interaction parameters to game message parameters.
+          *
+          * Same as #CreateMessageParameters but works when the values are stored in a NamedArrayParameter
+          */
+         bool CreateMessageParametersArray(
+           const char* paramNameBuffer,
+           unsigned long bufferLength,
+           const OneToManyMapping& paramToParamMapping,
+           dtGame::Message& message,
+           bool addMissingParams,
+           const std::string& classHandleString // HLA Interaction class name
+           );
 
          /**
           * Helper method for obtaining an RTI attribute's buffer and length if the
