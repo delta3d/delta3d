@@ -73,6 +73,7 @@ public slots:
    void OnRenderBackfacesChanged(bool enabled);
    void OnUndoCommandCreated(QUndoCommand* undoCommand);
    void OnGroundClampSelectedWaypoints();
+   void OnWaypointPropertyBaseChanged();
    void OnWaypointSelectionChanged(std::vector<dtAI::WaypointInterface*>& selectedWaypoints);
 
 protected:

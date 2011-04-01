@@ -21,6 +21,7 @@ public:
 
    virtual void OnTranslate(const osg::Vec3& delta);
 
+   void UpdateWidgetsForSelection();
    void SetAIInterface(dtAI::AIPluginInterface* aiInterface);
 
 public slots:
@@ -40,7 +41,5 @@ private:
    std::vector<dtAI::WaypointInterface*> mCurrentWaypoints;
    dtCore::ObserverPtr<dtAI::AIPluginInterface> mAIInterface;
    osg::Vec3 mStartMoveXYZ; ///<the position of the MotionModel target when the move begins
-
-   void UpdateWidgetsForSelection();
 };
 #endif // WAYPOINTMOTIONMODEL_h__

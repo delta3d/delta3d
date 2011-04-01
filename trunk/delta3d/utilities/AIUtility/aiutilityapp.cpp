@@ -318,6 +318,15 @@ QUndoCommand* AIUtilityApp::GroundClampWaypoints(std::vector<dtAI::WaypointInter
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void AIUtilityApp::OnWaypointPropertyBaseChanged()
+{
+   if (mWaypointMotionModel.valid())
+   {
+      mWaypointMotionModel->UpdateWidgetsForSelection();
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void AIUtilityApp::OnWaypointSelectionChanged(std::vector<dtAI::WaypointInterface*>& selectedWaypoints)
 {
    if (mAIInterface == NULL)

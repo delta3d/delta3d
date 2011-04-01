@@ -573,6 +573,8 @@ void MainWindow::PropertyChangedFromControl(dtDAL::PropertyContainer& pc, dtDAL:
       {
          //adjust the graphical representation of the waypoint to match the new property changes
          mPluginInterface->GetDebugDrawable()->InsertWaypoint(*wpb->Get());
+
+         emit WaypointPropertyBaseChanged();
       }
 
       OnModifiedChanged();
