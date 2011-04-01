@@ -25,6 +25,7 @@ public:
 
 public slots:
    void OnWaypointSelectionChanged(std::vector<dtAI::WaypointInterface*>& selectedWaypoints);
+   void OnWaypointsMoved();
 
 signals:
    void UndoCommandGenerated(QUndoCommand* command);
@@ -34,10 +35,12 @@ protected:
 
    virtual void OnTranslateBegin();
    virtual void OnTranslateEnd();
-   
+
 private:
    std::vector<dtAI::WaypointInterface*> mCurrentWaypoints;
    dtCore::ObserverPtr<dtAI::AIPluginInterface> mAIInterface;
    osg::Vec3 mStartMoveXYZ; ///<the position of the MotionModel target when the move begins
+
+   void UpdateWidgetsForSelection();
 };
 #endif // WAYPOINTMOTIONMODEL_h__

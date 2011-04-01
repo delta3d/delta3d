@@ -89,7 +89,6 @@ private:
    dtCore::RefPtr<AIUtilityInputComponent> mInputComponent;
    dtCore::RefPtr<dtAI::AIPluginInterface> mAIInterface;
    bool mSelectionBasedRendering; ///Do we only render expensive graphics for selected waypoints
-
 };
 
 #endif /* AIUTILITYAPP_H_ */
