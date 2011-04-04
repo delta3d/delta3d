@@ -366,6 +366,11 @@ namespace dtDirector
        */
       virtual QColor GetNodeColor() const;
 
+      /**
+       * get value link color.
+       */
+      virtual QColor GetValueLinkColor(ValueLink* link) const;
+
 
       static const QColor LINE_COLOR;
 

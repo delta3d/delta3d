@@ -30,6 +30,7 @@
 
 #include <dtDirector/valuenode.h>
 #include <dtDirector/groupnode.h>
+#include <dtDirector/nodemanager.h>
 #include <dtDirectorNodes/externalvaluenode.h>
 
 #include <QtGui/QGraphicsScene>
@@ -660,9 +661,23 @@ namespace dtDirector
                QPointF(-LINK_SIZE/2, LINK_LENGTH);
          }
 
+         QColor color = GetValueLinkColor(data.link);
+
          data.linkGraphic->setPolygon(poly);
-         data.linkGraphic->setPen(Qt::NoPen);
-         data.linkGraphic->setBrush(GetNodeColor());
+         if (data.link->AllowMultiple())
+         {
+            data.linkGraphic->SetPenColor(Qt::black);
+         }
+         else
+         {
+            int red = color.red() * 0.5f;
+            int green = color.green() * 0.5f;
+            int blue = color.blue() * 0.5f;
+            int alpha = color.alpha();
+            data.linkGraphic->SetPenColor(QColor(red, green, blue, alpha));
+         }
+         data.linkGraphic->SetHighlight(false);
+         data.linkGraphic->setBrush(color);
          data.linkGraphic->SetPropertyType(data.link->GetPropertyType().GetTypeId());
 
          // Set the link text, and position it right aligned with the link graphic.
@@ -1291,6 +1306,53 @@ namespace dtDirector
          osg::Vec4 rgba = mNode->GetColor();
          color.setRgbF(rgba.r(), rgba.g(), rgba.b(), rgba.a());
 
+         if( !mNode->IsEnabled())
+         {
+            color.setAlphaF(0.25f);
+         }
+      }
+
+      return color;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   QColor NodeItem::GetValueLinkColor(ValueLink* link) const
+   {
+      QColor color;
+
+      if (!link)
+      {
+         return color;
+      }
+
+      const dtDirector::NodeType* type = NULL;
+
+      switch (link->GetPropertyType().GetTypeId())
+      {
+      case dtDAL::DataType::BOOLEAN_ID:
+         type = NodeManager::GetInstance().FindNodeType("Boolean", "General");
+         break;
+      case dtDAL::DataType::INT_ID:
+         type = NodeManager::GetInstance().FindNodeType("Int", "General");
+         break;
+      case dtDAL::DataType::FLOAT_ID:
+         type = NodeManager::GetInstance().FindNodeType("Float", "General");
+         break;
+      case dtDAL::DataType::DOUBLE_ID:
+         type = NodeManager::GetInstance().FindNodeType("Double", "General");
+         break;
+      case dtDAL::DataType::STRING_ID:
+         type = NodeManager::GetInstance().FindNodeType("String", "General");
+         break;
+      default:
+      case dtDAL::DataType::ACTOR_ID:
+         type = NodeManager::GetInstance().FindNodeType("Actor", "General");
+         break;
+      }
+
+      if (type)
+      {
+         color = QColor(type->GetColorRed(), type->GetColorGreen(), type->GetColorBlue(), 225);
          if( !mNode->IsEnabled())
          {
             color.setAlphaF(0.25f);
