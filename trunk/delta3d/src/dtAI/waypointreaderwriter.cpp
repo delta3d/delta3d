@@ -44,7 +44,7 @@ namespace dtAI
    namespace WaypointFileHeader
    {
       const unsigned FILE_IDENT = 5705313;
-      
+
       const unsigned VERSION_MAJOR = 1;
       const unsigned VERSION_MINOR = 0;
 
@@ -61,16 +61,19 @@ namespace dtAI
 
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    WaypointReaderWriter::~WaypointReaderWriter()
    {
 
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    void WaypointReaderWriter::Clear()
    {
       mCollectionChildren.clear();
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    bool WaypointReaderWriter::LoadWaypointFile(const std::string& filename)
    {
       bool read_file_ok = false;
@@ -100,14 +103,14 @@ namespace dtAI
             unsigned fileIdent, vMajor, vMinor;
 
             ds >> fileStart >> fileIdent >> vMajor >> vMinor;
-            
+
             if(fileStart == WaypointFileHeader::FILE_START_END_CHAR &&
                fileIdent == WaypointFileHeader::FILE_IDENT &&
                vMajor == 1 && vMinor == 0)
             {
                unsigned numWaypointTypes = 0;
                ds.Read(numWaypointTypes);
-               
+
                for(unsigned waypointTypeCount = 0; waypointTypeCount < numWaypointTypes; ++waypointTypeCount)
                {
                   std::string objectTypeName;
@@ -128,7 +131,7 @@ namespace dtAI
                         //the first thing written out is the Waypoint ID
                         unsigned curWaypointID = 0;
                         ds.Read(curWaypointID);
-                        
+
                         //and now we set the id on the waypoint
                         wi->SetID(curWaypointID);
 
@@ -136,7 +139,7 @@ namespace dtAI
                         {
                             propCon = mAIInterface->CreateWaypointPropertyContainer(*ot, wi);
                         }
-                        
+
                         propCon->Set(wi);
 
                         //we have a special case when for waypoint collections to preserve
@@ -190,7 +193,7 @@ namespace dtAI
                         WaypointID currentID = wi->GetID();
                         unsigned numEdges = 0;
                         ds.Read(numEdges);
-                        
+
                         for(unsigned edgeCount = 0; edgeCount < numEdges; ++edgeCount)
                         {
                            unsigned id = 0;
@@ -205,7 +208,7 @@ namespace dtAI
                         "Error reading Waypoint file '" + filename + ".", __FILE__, __LINE__);
                   }
                }
-               
+
                ds.Read(fileStart);
                if(fileStart != WaypointFileHeader::FILE_START_END_CHAR)
                {
@@ -217,7 +220,7 @@ namespace dtAI
                //todo: move this out into a function
                EdgeArray::iterator edgeDataIter = edgeData.begin();
                EdgeArray::iterator edgeDataIterEnd = edgeData.end();
-               
+
                for(;edgeDataIter != edgeDataIterEnd; ++edgeDataIter)
                {
                   mAIInterface->AddEdge(edgeDataIter->first, edgeDataIter->second);
@@ -225,7 +228,7 @@ namespace dtAI
 
                //and now assign all children and child edges
                AssignChildren();
-               AssignChildEdges();               
+               AssignChildEdges();
 
                read_file_ok = true;
             }
@@ -235,12 +238,13 @@ namespace dtAI
             e.LogException();
          }
       }
-      
+
       Clear();
       infile.close();
       return read_file_ok;
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    void WaypointReaderWriter::AssignChildren()
    {
       WaypointIDPairArray::iterator iter = mCollectionChildren.begin();
@@ -273,6 +277,7 @@ namespace dtAI
       }
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    void WaypointReaderWriter::AssignChildEdges()
    {
       WaypointGraph& wpGraph = mAIInterface->GetWaypointGraph();
@@ -288,6 +293,7 @@ namespace dtAI
       }
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    bool WaypointReaderWriter::SaveWaypointFile(const std::string& filename)
    {
       std::ofstream outfile;
@@ -303,12 +309,12 @@ namespace dtAI
       ds.Write(WaypointFileHeader::FILE_IDENT);
       ds.Write(WaypointFileHeader::VERSION_MAJOR);
       ds.Write(WaypointFileHeader::VERSION_MINOR);
-      
+
       typedef std::vector<dtCore::RefPtr<const dtDAL::ObjectType> > ObjectTypeArray;
-      
+
       ObjectTypeArray waypointTypes;
       mAIInterface->GetSupportedWaypointTypes(waypointTypes);
-      
+
       ds.Write(unsigned(waypointTypes.size()));
       ObjectTypeArray::iterator ob_iter = waypointTypes.begin();
       ObjectTypeArray::iterator ob_iterEnd = waypointTypes.end();
@@ -317,7 +323,7 @@ namespace dtAI
       {
          AIPluginInterface::WaypointArray wpArray;
          mAIInterface->GetWaypointsByType(**ob_iter, wpArray);
-         
+
          ds.Write((**ob_iter).GetName());
          ds.Write(unsigned(wpArray.size()));
 
@@ -353,7 +359,7 @@ namespace dtAI
                      //write num children
                      numChildren = wc->degree();
                      ds.Write(numChildren);
-                     
+
                      //write child id's
                      WaypointCollection::WaypointTree::child_iterator childWpIter = wc->begin_child();
                      WaypointCollection::WaypointTree::child_iterator childWpIterEnd = wc->end_child();
@@ -369,7 +375,7 @@ namespace dtAI
                   }
 
                }
-               
+
                //write the number of properties to read in
                ds.Write(unsigned(propArray.size()));
 
@@ -378,7 +384,7 @@ namespace dtAI
                for(;pcIter != pcIterEnd; ++pcIter)
                {
                   ds.Write((*pcIter)->GetName());
-                  
+
                   //skip read-only
                   //note: we do write their name, which could be more optimal and should
                   //probably be refactored
@@ -393,7 +399,7 @@ namespace dtAI
                mAIInterface->GetAllEdgesFromWaypoint((*wpIter)->GetID(), edges);
 
                ds.Write(unsigned(edges.size()));
-               
+
                AIPluginInterface::ConstWaypointArray::iterator edgeIter = edges.begin();
                AIPluginInterface::ConstWaypointArray::iterator edgeIterEnd = edges.end();
                for(;edgeIter != edgeIterEnd; ++edgeIter)
@@ -404,7 +410,7 @@ namespace dtAI
             }
          }
       }
-      
+
       ds.Write(WaypointFileHeader::FILE_START_END_CHAR);
       outfile.write(ds.GetBuffer(), ds.GetBufferSize());
       outfile.close();
@@ -412,6 +418,7 @@ namespace dtAI
       return !outfile.fail();
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    void WaypointReaderWriter::Insert(WaypointInterface* waypoint, int searchLevel)
    {
       if(searchLevel != -1 || waypoint->GetWaypointType() == *WaypointTypes::WAYPOINT_COLLECTION)
@@ -434,7 +441,7 @@ namespace dtAI
       }
    }
 
-   //////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    void WaypointReaderWriter::CreateWaypointCollectionEdges(ConstWaypointArray& wps, const NavMesh& nm)
    {
       WaypointGraph& wpGraph = mAIInterface->GetWaypointGraph();
@@ -471,9 +478,7 @@ namespace dtAI
                   wc->AddEdge(wpToParent->GetID(), WaypointCollection::ChildEdge(childPtr->GetID(), (*nm_iter).second->GetWaypointTo()->GetID()));
                }
             }
-
          }
-
       }
    }
 }//namespace dtAI

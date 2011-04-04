@@ -39,7 +39,6 @@ namespace dtAI
       WaypointPropertyCache()
          : mPropertyFactory(new WaypointPropertyFactory())
       {
-
       }
 
       WaypointPropertyBase* GetPropertyContainer(const dtDAL::ObjectType& waypointType, WaypointInterface* wt)

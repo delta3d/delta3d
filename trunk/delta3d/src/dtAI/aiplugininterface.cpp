@@ -59,9 +59,9 @@ namespace dtAI
       WaypointInterface* result = GetClosestWaypoint(pos, radius);
 
       if(result == NULL)
-      {         
+      {
          result = CreateWaypoint(pos, type);
-      }      
+      }
 
       return result;
    }
@@ -76,10 +76,10 @@ namespace dtAI
    void AIPluginInterface::GetSupportedWaypointTypes(std::vector<dtCore::RefPtr<const dtDAL::ObjectType> >& actors) const
    {
       mFactory->GetSupportedTypes(actors);
-   }   
+   }
 
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   const dtDAL::ObjectType* AIPluginInterface::GetWaypointTypeByName( const std::string& name ) const
+   const dtDAL::ObjectType* AIPluginInterface::GetWaypointTypeByName(const std::string& name) const
    {
       typedef std::vector<dtCore::RefPtr<const dtDAL::ObjectType> > ObjectTypeArray;
 

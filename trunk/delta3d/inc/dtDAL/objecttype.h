@@ -37,9 +37,9 @@ namespace dtDAL
    {
    public:
       ObjectType(const std::string& name,
-               const std::string& category="nocategory",
-               const std::string& desc="",
-               const ObjectType* parentType = NULL);
+                 const std::string& category="nocategory",
+                 const std::string& desc="",
+                 const ObjectType* parentType = NULL);
 
       /**
        * Simple less than comparison function for the ObjectFactory.
