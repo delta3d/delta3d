@@ -43,6 +43,7 @@
 #include <dtDAL/project.h>
 #include <dtDAL/resourceactorproperty.h>
 #include <dtDAL/resourcedescriptor.h>
+#include <dtDAL/namedgroupparameter.inl>
 
 #include <dtHLAGM/attributetoproperty.h>
 #include <dtHLAGM/ddmcameracalculatorgeographic.h>
@@ -1056,6 +1057,22 @@ void HLAComponentTests::TestReflectAttributes()
                    encodedEulerAngles,
                    rotation.EncodedLength());
 
+      dtHLAGM::ArticulatedParameter ap[] =
+      {
+               dtHLAGM::ArticulatedParameter(4, 0, dtHLAGM::ParameterValue(dtHLAGM::ArticulatedParts(2048, 8, 3.7))),
+               dtHLAGM::ArticulatedParameter(3, 2048, dtHLAGM::ParameterValue(dtHLAGM::ArticulatedParts(4416, 8, -3.7))),
+               dtHLAGM::ArticulatedParameter(1, 2048, dtHLAGM::ParameterValue(dtHLAGM::AttachedParts(0, dtHLAGM::EntityType(1, 1, 88, 7, 4, 3, 3))))
+      };
+      char encodedArticulations[ap[0].EncodedLength() * 3];
+      ap[0].Encode(encodedArticulations );
+      ap[1].Encode(encodedArticulations + ap[0].EncodedLength());
+      ap[2].Encode(encodedArticulations + (ap[0].EncodedLength() * 2));
+
+      AddAttribute("ArticulatedParametersArray",
+                   mClassHandle1,
+                   *ahs,
+                   encodedArticulations,
+                   ap[0].EncodedLength() * 3);
 
       // Add World Location
       char encodedWorldCoordinate[sizeof(double) * 3];
@@ -1103,6 +1120,24 @@ void HLAComponentTests::TestReflectAttributes()
 
       const dtGame::ActorUpdateMessage& createMsg = static_cast<const dtGame::ActorUpdateMessage&>(*msg);
       CPPUNIT_ASSERT(createMsg.GetUpdateParameter("Mesh") != NULL);
+
+      CPPUNIT_ASSERT(createMsg.GetUpdateParameter("Articulated Parameters Array") != NULL);
+      CPPUNIT_ASSERT_EQUAL(dtDAL::DataType::ARRAY, createMsg.GetUpdateParameter("Articulated Parameters Array")->GetDataType());
+      const dtDAL::NamedArrayParameter* articulatedParams = static_cast<const dtDAL::NamedArrayParameter*>(createMsg.GetUpdateParameter("Articulated Parameters Array"));
+      CPPUNIT_ASSERT_EQUAL(size_t(3), articulatedParams->GetSize());
+
+      // just checking the names here to as a cursory test of functionality.
+      // Since the array feature just calls the single item in a loop, as long
+      // it basically is correct, the parameter translator test is sufficient to test the overall
+      // behavior.
+      for (unsigned i = 0; i < articulatedParams->GetSize(); ++i)
+      {
+         CPPUNIT_ASSERT(articulatedParams->GetParameter(i)->GetDataType() == dtDAL::DataType::GROUP);
+         const dtDAL::NamedGroupParameter* curGroup = static_cast<const dtDAL::NamedGroupParameter*>(articulatedParams->GetParameter(i));
+         CPPUNIT_ASSERT_EQUAL_MESSAGE(curGroup->GetName(), size_t(0), curGroup->GetName()->find("Articulated", 0));
+         CPPUNIT_ASSERT(curGroup->GetParameter("OurName") != NULL);
+       }
+
 
       //check the entity id mapping.
       id = mHLAComponent->GetRuntimeMappings().GetId(entityId);
@@ -1326,8 +1361,7 @@ void HLAComponentTests::TestPrepareUpdate()
          // The Object Mapping Name and Entity Type should be avoided.
          const dtGame::MessageParameter* paramMappingName = testMsg->GetParameter( "Object Mapping Name" );
          const dtGame::MessageParameter* paramEntityType = testMsg->GetParameter( "Entity Type As String" );
-         if( paramMappingName != NULL
-            || paramEntityType != NULL )
+         if (paramMappingName != NULL || paramEntityType != NULL)
          {
             std::ostringstream oss;
             oss << "Outgoing Actor Updates should NOT contain outgoing parameter \""
