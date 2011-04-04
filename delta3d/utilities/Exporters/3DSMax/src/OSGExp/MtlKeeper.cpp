@@ -927,7 +927,7 @@ osg::ref_ptr<osg::Image> MtlKeeper::createImage(Mtl* maxMtl, Bitmap* bmap, std::
 		unsigned int internalFormat = hasAlpha ? 4 : 3;
 		unsigned int pixelFormat = hasAlpha ? GL_RGBA  : GL_RGB;
 
-		data = new unsigned char[width*height*internalFormat*sizeof(unsigned char)];
+      data = new (std::nothrow) unsigned char[width*height*internalFormat];
 
 		if(data){
 			BMM_Color_64 *in = new BMM_Color_64[width];
