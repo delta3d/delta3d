@@ -42,6 +42,7 @@
 #include <dtDAL/datatype.h>
 #include <dtDAL/project.h>
 #include <dtDAL/librarymanager.h>
+#include <dtDAL/namedgroupparameter.inl>
 #include <dtGame/messagetype.h>
 #include <dtGame/gamemanager.h>
 

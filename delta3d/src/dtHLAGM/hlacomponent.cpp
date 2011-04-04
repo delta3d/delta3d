@@ -2102,7 +2102,7 @@ namespace dtHLAGM
       if (paramToParamMapping.GetIsArray())
       {
          // Do the array and return.
-         success = CreateMessageParameters(paramNameBuffer, bufferLength,
+         success = CreateMessageParametersArray(paramNameBuffer, bufferLength,
                paramToParamMapping, message, addMissingParams, classHandleString);
          return success;
       }
