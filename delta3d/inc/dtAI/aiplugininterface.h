@@ -30,6 +30,7 @@
 
 #include <osg/Referenced>
 
+#include <dtAI/aidebugdrawable.h>
 #include <dtAI/pathfinding.h>
 #include <dtAI/export.h>
 #include <dtAI/waypointinterface.h>
@@ -42,7 +43,6 @@
 
 namespace dtAI
 {
-   class AIDebugDrawable;
    class WaypointCollection;
    class WaypointGraph;
 

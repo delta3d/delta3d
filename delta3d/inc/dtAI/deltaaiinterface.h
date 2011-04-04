@@ -23,6 +23,7 @@
 #define DELTA_AI_INTERFACE
 
 #include <dtAI/aiplugininterface.h>
+#include <dtAI/export.h>
 #include <dtAI/waypointgraphastar.h>
 #include <dtUtil/kdtree.h>
 
@@ -83,7 +84,7 @@ namespace dtAI
    typedef dtUtil::KDTree<3, KDHolder, tree_search_func> WaypointKDTree;
    typedef std::pair<WaypointKDTree::const_iterator, float> find_result;
 
-   class DeltaAIInterface: public AIPluginInterface
+   class DT_AI_EXPORT DeltaAIInterface: public AIPluginInterface
    {
    public:
 
