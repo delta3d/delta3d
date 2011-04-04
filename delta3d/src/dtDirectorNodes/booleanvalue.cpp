@@ -33,7 +33,7 @@ namespace dtDirector
        , mValue(false)
    {
       AddAuthor("Jeff P. Houde");
-      //SetColorRGB(Colors::RED); 
+      SetColorRGB(Colors::RED);
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////

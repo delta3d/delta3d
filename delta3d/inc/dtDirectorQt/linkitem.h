@@ -42,6 +42,11 @@ namespace dtDirector
       public:
 
          /**
+          * Sets the pen color.
+          */
+         void SetPenColor(const QColor& color);
+
+         /**
           * Highlights the link.
           *
           * @param[in]  enable  True to highlight.

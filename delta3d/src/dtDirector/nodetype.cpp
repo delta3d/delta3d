@@ -29,10 +29,14 @@ namespace dtDirector
                      const std::string& category,
                      const std::string& folder,
                      const std::string& desc,
-                     const NodeType* parentType)
+                     const NodeType* parentType,
+                     int red, int green, int blue)
       : ObjectType(name, category, desc, parentType)
       , mFolder(folder)
       , mType(type)
+      , mColorRed(red)
+      , mColorGreen(green)
+      , mColorBlue(blue)
    {
    }
 
@@ -58,6 +62,24 @@ namespace dtDirector
    void NodeType::SetFolder(const std::string& folder)
    {
       mFolder = folder;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   int NodeType::GetColorRed() const
+   {
+      return mColorRed;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   int NodeType::GetColorGreen() const
+   {
+      return mColorGreen;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   int NodeType::GetColorBlue() const
+   {
+      return mColorBlue;
    }
 
    //////////////////////////////////////////////////////////////////////////

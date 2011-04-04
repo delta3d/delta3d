@@ -49,6 +49,7 @@ namespace dtDirector
       , mNodeItem(nodeItem)
    {
       mHighlightPen  = QPen(Qt::yellow, LINE_WIDTH, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+      mLinkGraphicPen = Qt::NoPen;
 
       setAcceptHoverEvents(true);
 
@@ -56,6 +57,12 @@ namespace dtDirector
       {
          connect(this, SIGNAL(LinkConnected()), mScene->GetEditor(), SLOT(OnPlayClickSound()));
       }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void LinkItem::SetPenColor(const QColor& color)
+   {
+      mLinkGraphicPen = QPen(color, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -69,7 +76,7 @@ namespace dtDirector
 
       if( enable || mAlwaysHighlight )
       {
-         mLinkGraphicPen = Qt::NoPen;//linkGraphic->pen();
+         //mLinkGraphicPen = Qt::NoPen;//linkGraphic->pen();
          linkGraphic->setPen(mHighlightPen);
       }
       else
@@ -185,11 +192,12 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    LinkItem* InputLinkItem::GetLinkGraphic()
    {
-      if( !mNodeItem || mLinkIndex > (int)mNodeItem->GetInputs().size()-1 )
-      {
-         return NULL;
-      }
-      return mNodeItem->GetInputs()[mLinkIndex].linkGraphic;
+      return this;
+      //if( !mNodeItem || mLinkIndex > (int)mNodeItem->GetInputs().size()-1 )
+      //{
+      //   return NULL;
+      //}
+      //return mNodeItem->GetInputs()[mLinkIndex].linkGraphic;
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -498,11 +506,12 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    LinkItem* OutputLinkItem::GetLinkGraphic()
    {
-      if( !mNodeItem || mLinkIndex > (int)mNodeItem->GetOutputs().size()-1 )
-      {
-         return NULL;
-      }
-      return mNodeItem->GetOutputs()[mLinkIndex].linkGraphic;
+      return this;
+      //if( !mNodeItem || mLinkIndex > (int)mNodeItem->GetOutputs().size()-1 )
+      //{
+      //   return NULL;
+      //}
+      //return mNodeItem->GetOutputs()[mLinkIndex].linkGraphic;
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -856,16 +865,23 @@ namespace dtDirector
       : LinkItem(nodeItem, linkIndex, parent, scene)
       , mType(dtDAL::DataType::UNKNOWN_ID)
    {
-      //SetHighlight(false, NULL);
+      //ValueData& data = nodeItem->GetValues()[linkIndex];
+      //if (data.link->AllowMultiple())
+      //{
+      //   mLinkGraphicPen = QPen(Qt::black, LINE_WIDTH, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+      //}
+      //SetHighlight(false);
    }
+
    //////////////////////////////////////////////////////////////////////////
    LinkItem* ValueLinkItem::GetLinkGraphic()
    {
-      if( !mNodeItem || mLinkIndex > (int)mNodeItem->GetValues().size()-1 )
-      {
-         return NULL;
-      }
-      return mNodeItem->GetValues()[mLinkIndex].linkGraphic;
+      return this;
+      //if( !mNodeItem || mLinkIndex > (int)mNodeItem->GetValues().size()-1 )
+      //{
+      //   return NULL;
+      //}
+      //return mNodeItem->GetValues()[mLinkIndex].linkGraphic;
    }
 
    //////////////////////////////////////////////////////////////////////////

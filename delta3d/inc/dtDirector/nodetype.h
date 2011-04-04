@@ -74,7 +74,8 @@ namespace dtDirector
             const std::string& category,
             const std::string& folder="",
             const std::string& desc="",
-            const NodeType* parentType = NULL);
+            const NodeType* parentType = NULL,
+            int red = 176, int green = 137, int blue = 98);
 
       /**
        * Gets the parent or "super" type of this node type.
@@ -100,6 +101,14 @@ namespace dtDirector
        */
       void SetFolder(const std::string& folder);
 
+      /**
+       * Retrieves the color for this node type.
+       *
+       * @return  The nodes color.
+       */
+      int GetColorRed() const;
+      int GetColorGreen() const;
+      int GetColorBlue() const;
 
    protected:
 
@@ -112,6 +121,9 @@ namespace dtDirector
 
       std::string    mFolder;
       NodeTypeEnum   mType;
+      int            mColorRed;
+      int            mColorGreen;
+      int            mColorBlue;
    };
 }
 
