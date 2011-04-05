@@ -170,7 +170,7 @@ namespace dtUtil
       Log::LogObserverContainer mObservers;
    };
 
-   const std::string LogImpl::mDefaultName("__+default+__");
+   const std::string LogImpl::mDefaultName("");
    //////////////////////////////////////////////////////////////////////////
    //////////////////////////////////////////////////////////////////////////
 
@@ -211,18 +211,23 @@ namespace dtUtil
 
       OpenThreads::ScopedLock<OpenThreads::Mutex> lock(LOG_MANAGER->mMutex);
 
+      LogObserver::LogData logData;
+      logData.type = msgType;
+      logData.time = *t;
+      logData.logName = mImpl->mName;
+      logData.source = source;
+      logData.line = line;
+      logData.msg = msg;
+
+
       if (dtUtil::Bits::Has(mImpl->mOutputStreamBit, Log::TO_FILE))
-      {
-         LOG_MANAGER->mLogObserverFile->LogMessage(msgType,
-                                                   t->tm_hour, t->tm_min, t->tm_sec,
-                                                   source, line, msg);
+      {         
+         LOG_MANAGER->mLogObserverFile->LogMessage(logData);
       }
 
       if (dtUtil::Bits::Has(mImpl->mOutputStreamBit, Log::TO_CONSOLE))
       {
-         LOG_MANAGER->mLogObserverConsole->LogMessage(msgType,
-                                                      t->tm_hour, t->tm_min, t->tm_sec,
-                                                      source, line, msg);
+         LOG_MANAGER->mLogObserverConsole->LogMessage(logData);
       }
 
       if (dtUtil::Bits::Has(mImpl->mOutputStreamBit, Log::TO_OBSERVER) && !mImpl->mObservers.empty())
@@ -230,7 +235,7 @@ namespace dtUtil
          Log::LogObserverContainer::iterator itr = mImpl->mObservers.begin();
          while (itr != mImpl->mObservers.end())
          {
-            (*itr)->LogMessage(msgType, t->tm_hour, t->tm_min, t->tm_sec, source, line, msg);
+            (*itr)->LogMessage(logData);
             ++itr;
          }
       }

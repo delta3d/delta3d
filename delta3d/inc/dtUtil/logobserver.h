@@ -23,6 +23,7 @@
 
 #include <dtUtil/export.h>
 #include <dtUtil/log.h>
+#include <dtUtil/breakoverride.h>
 
 namespace dtUtil
 {
@@ -33,11 +34,29 @@ namespace dtUtil
    class DT_UTIL_EXPORT LogObserver : public osg::Referenced
    {
    public:
-      virtual void LogMessage(Log::LogMessageType type, int hour, int min, int sec,
-                              const std::string& source, int line, const std::string& msg) = 0;
+      struct LogData
+      {
+         LogData() {};
+      	
+         Log::LogMessageType type; ///<Log level
+         struct tm time;           ///<Time of message
+         std::string logName;      ///<The name of the Log instance (could be empty)
+         std::string source;       ///<The source file/function of the message
+         int line;                 ///<The line number of the source code of the message
+         std::string msg;          ///<The message itself
+      };
+
+      virtual void LogMessage(const LogData& logData) = 0;
 
    protected:
       virtual ~LogObserver() {}
+
+   private:
+
+      ///Deprecated 4/5/2011. Use LogMessage(const LogData& logData) instead.
+      BREAK_OVERRIDE (LogMessage(Log::LogMessageType type, int hour, int min, int sec,
+                                 const std::string& source, int line, const std::string& msg))
+
    };
 
 }
