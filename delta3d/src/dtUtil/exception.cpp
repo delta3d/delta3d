@@ -24,6 +24,7 @@
 #include <dtUtil/exception.h>
 #include <dtUtil/log.h>
 #include <iostream>
+#include <osgDB/FileNameUtils>
 
 namespace dtUtil
 {
@@ -35,7 +36,7 @@ namespace dtUtil
          unsigned int lineNum)
       : mType(&type)
       , mMessage(message)
-      , mFileName(filename)
+      , mFileName(osgDB::getSimpleFileName(filename))
       , mLineNum(lineNum)
    {
       DEPRECATE("dtUtil::Exception(dtUtil::Enumeration&, const std::string&, const std::string&, unsigned int)",
@@ -49,7 +50,7 @@ namespace dtUtil
          unsigned int lineNum)
       : mType(&BaseExceptionType::GENERAL_EXCEPTION)
       , mMessage(message)
-      , mFileName(filename)
+      , mFileName(osgDB::getSimpleFileName(filename))
       , mLineNum(lineNum)
    {
       LogException(dtUtil::Log::LOG_DEBUG, dtUtil::Log::GetInstance());
