@@ -1063,7 +1063,7 @@ void HLAComponentTests::TestReflectAttributes()
                dtHLAGM::ArticulatedParameter(3, 2048, dtHLAGM::ParameterValue(dtHLAGM::ArticulatedParts(4416, 8, -3.7))),
                dtHLAGM::ArticulatedParameter(1, 2048, dtHLAGM::ParameterValue(dtHLAGM::AttachedParts(0, dtHLAGM::EntityType(1, 1, 88, 7, 4, 3, 3))))
       };
-      char encodedArticulations[ap[0].EncodedLength() * 3];
+      char* encodedArticulations = static_cast<char*>(alloca(ap[0].EncodedLength() * 3));
       ap[0].Encode(encodedArticulations );
       ap[1].Encode(encodedArticulations + ap[0].EncodedLength());
       ap[2].Encode(encodedArticulations + (ap[0].EncodedLength() * 2));
