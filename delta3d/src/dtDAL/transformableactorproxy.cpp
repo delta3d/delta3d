@@ -64,7 +64,7 @@ namespace dtDAL
       static const dtUtil::RefString GROUPNAME = "Transformable";
       static const dtUtil::RefString COLLISION_GROUP = "ODE Collision";
 
-      dtCore::Transformable* trans;
+      dtCore::Transformable* trans = NULL;
       GetActor(trans);
 
       if (IsRotationPropertyShown())

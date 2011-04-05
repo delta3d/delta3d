@@ -192,11 +192,6 @@ namespace dtDAL
           */
          virtual ~TransformableActorProxy() {}
 
-         /**
-          * Initializes the actor.
-          */
-         virtual void CreateActor() = 0;
-
          ///Sets box collision geometry.
          void SetBoxCollision();
 
