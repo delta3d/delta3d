@@ -81,11 +81,6 @@ namespace dtDAL
           */
          virtual ~PhysicalActorProxy() {}
 
-         /**
-          * Initializes the actor.
-          */
-         virtual void CreateActor() = 0;
-
    };
 }
 
