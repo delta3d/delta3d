@@ -908,6 +908,17 @@ osg::ref_ptr<osg::Image> MtlKeeper::createImage(Mtl* maxMtl, Bitmap* bmap, std::
 	osg::ref_ptr<osg::Image> image = new osg::Image();
 	image->setFileName(name);
 
+   // The file being output may be either an OSG or IVE.
+   // If the option to include textures is not set for
+   // the case of exporting to IVE...
+   if( ! options->getIncludeImageDataInIveFile())
+   {
+      // ...force the texture to be externally referenced.
+      // This will be the case either way for OSG format,
+      // since it is merely text and will not embed image data.
+      image->setWriteHint(osg::Image::EXTERNAL_FILE);
+   }
+
 	// Write the image to disk.
 	if(options->getWriteTexture()){
 		int status = writeBitmap(bmap, name, options);
