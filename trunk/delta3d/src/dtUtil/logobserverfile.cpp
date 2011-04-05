@@ -108,8 +108,8 @@ void dtUtil::LogObserverFile::TimeTag(std::string prefix)
    logFile.flush();
 }
 
-////////////////////////////////////////////////////////////////////////////////
-void dtUtil::LogObserverFile::LogMessage(Log::LogMessageType type, int hour, int min, int sec, const std::string& source, int line, const std::string& msg)
+//////////////////////////////////////////////////////////////////////////
+void dtUtil::LogObserverFile::LogMessage(const LogData& logData)
 {
    if (!logFile.is_open())
    {
@@ -122,7 +122,7 @@ void dtUtil::LogObserverFile::LogMessage(Log::LogMessageType type, int hour, int
    }
 
    std::string color;
-   switch (type)
+   switch (logData.type)
    {
    case Log::LOG_DEBUG:
       color = "<b><font color=#808080>";
@@ -146,25 +146,35 @@ void dtUtil::LogObserverFile::LogMessage(Log::LogMessageType type, int hour, int
    }
 
    static const std::string htmlNewline ("<br>\n");
-   std::string htmlMsg (msg);
+   std::string htmlMsg (logData.msg);
+
    for (size_t lineEnd = htmlMsg.find('\n');
-      lineEnd != std::string::npos;
-      lineEnd = htmlMsg.find('\n', lineEnd))
+        lineEnd != std::string::npos;
+        lineEnd = htmlMsg.find('\n', lineEnd))
    {
       htmlMsg.replace (lineEnd, 1, htmlNewline);
       lineEnd += htmlNewline.size() + 1;
    }
-   logFile << color << Log::GetLogLevelString(type) << ": "
-      << std::setw(2) << std::setfill('0') << hour << ":"
-      << std::setw(2) << std::setfill('0') << min << ":"
-      << std::setw(2) << std::setfill('0') << sec << ": &lt;"
-      << source;
-   if (line > 0)
+   
+   logFile << color << Log::GetLogLevelString(logData.type) << " "
+      << std::setw(2) << std::setfill('0') << logData.time.tm_hour
+      << std::setw(2) << std::setfill('0') << logData.time.tm_min
+      << std::setw(2) << std::setfill('0') << logData.time.tm_sec << " ";
+
+   if (!logData.logName.empty())
    {
-      logFile << ":" << line;
+      logFile << "'" << logData.logName << "' ";
+   }
+   
+   
+   logFile << logData.source;
+
+   if (logData.line > 0)
+   {
+      logFile << ":" << logData.line;
    }
 
-   logFile << "&gt; " << htmlMsg << "</font></b><br>" << std::endl;
+   logFile << "-" << htmlMsg << "</font></b><br>" << std::endl;
 
    logFile.flush(); //Make sure everything is written, in case of a crash.
 }

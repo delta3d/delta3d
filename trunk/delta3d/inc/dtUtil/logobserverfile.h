@@ -37,9 +37,8 @@ namespace dtUtil
       LogObserverFile();
 
       void OpenFile();
-
-      virtual void LogMessage(Log::LogMessageType type, int hour, int min, int sec,
-                              const std::string& source, int line, const std::string& msg);
+      
+      virtual void LogMessage(const LogData& logData);
 
       void LogHorizRule();
 

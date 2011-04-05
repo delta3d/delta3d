@@ -33,20 +33,26 @@ dtUtil::LogObserverConsole::~LogObserverConsole()
 {
 }
 
-////////////////////////////////////////////////////////////////////////////////
-void dtUtil::LogObserverConsole::LogMessage(Log::LogMessageType type, int hour, int min, int sec,
-                                            const std::string& source, int line, const std::string& msg)
+//////////////////////////////////////////////////////////////////////////
+void dtUtil::LogObserverConsole::LogMessage(const LogData& logData)
 {
-   std::cout << Log::GetLogLevelString(type) << ": "
-      << std::setw(2) << std::setfill('0') << hour << ":"
-      << std::setw(2) << std::setfill('0') << min << ":"
-      << std::setw(2) << std::setfill('0') << sec << ":<"
-      << source;
-
-   if (line > 0)
+   std::cout << Log::GetLogLevelString(logData.type) << " " 
+      << std::setw(2) << std::setfill('0') << logData.time.tm_hour
+      << std::setw(2) << std::setfill('0') << logData.time.tm_min 
+      << std::setw(2) << std::setfill('0') << logData.time.tm_sec << " ";
+     
+   if (!logData.logName.empty())
    {
-      std:: cout << ":" << line;
+      std::cout << "'" << logData.logName << "' ";
    }
 
-   std::cout << ">" << msg << std::endl;
+   std::cout << logData.source;
+
+   if (logData.line > 0)
+   {
+      std:: cout << ":" << logData.line;
+   }
+
+   std::cout << "-" <<  logData.msg << std::endl;
 }
+
