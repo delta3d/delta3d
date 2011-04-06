@@ -25,6 +25,7 @@
 #include <dtUtil/logobserverconsole.h>
 #include <dtUtil/logobserverfile.h>
 #include <dtCore/refptr.h>
+#include <osgDB/FileNameUtils>
 
 #include <OpenThreads/Mutex>
 #include <OpenThreads/ScopedLock>
@@ -192,6 +193,14 @@ namespace dtUtil
    void Log::LogMessage(const std::string& source, int line, const std::string& msg,
                 LogMessageType msgType) const
    {
+      LogMessage("", source, line, msg, msgType);
+   }
+
+
+   //////////////////////////////////////////////////////////////////////////
+   void Log::LogMessage(const std::string& file, const std::string& method, 
+                        int line, const std::string& msg, LogMessageType msgType) const
+   {
       if (mImpl->mOutputStreamBit == Log::NO_OUTPUT)
       {
          return;
@@ -215,7 +224,8 @@ namespace dtUtil
       logData.type = msgType;
       logData.time = *t;
       logData.logName = mImpl->mName;
-      logData.source = source;
+      logData.file = osgDB::getSimpleFileName(file);
+      logData.method = method;
       logData.line = line;
       logData.msg = msg;
 

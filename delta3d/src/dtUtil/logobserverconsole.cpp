@@ -39,14 +39,22 @@ void dtUtil::LogObserverConsole::LogMessage(const LogData& logData)
    std::cout << Log::GetLogLevelString(logData.type) << " " 
       << std::setw(2) << std::setfill('0') << logData.time.tm_hour
       << std::setw(2) << std::setfill('0') << logData.time.tm_min 
-      << std::setw(2) << std::setfill('0') << logData.time.tm_sec << " ";
+      << std::setw(2) << std::setfill('0') << logData.time.tm_sec;
      
    if (!logData.logName.empty())
    {
-      std::cout << "'" << logData.logName << "' ";
+      std::cout << " '" << logData.logName << "'";
    }
 
-   std::cout << logData.source;
+   if (!logData.file.empty())
+   {
+      std::cout << " " << logData.file;
+   }
+
+   if (!logData.method.empty())
+   {
+      std::cout << ":" << logData.method;
+   }
 
    if (logData.line > 0)
    {
