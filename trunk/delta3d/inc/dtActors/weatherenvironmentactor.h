@@ -48,14 +48,14 @@ namespace dtActors
 
             private:
 
-               CloudCoverEnum(const std::string &name, dtABC::Weather::CloudType tp) 
-                  : dtUtil::Enumeration(name), mValue(tp) 
+               CloudCoverEnum(const std::string &name, dtABC::Weather::CloudType tp)
+                  : dtUtil::Enumeration(name), mValue(tp)
                {
                   AddInstance(this);
                }
 
                dtABC::Weather::CloudType mValue;
-         }; 
+         };
 
          /**
           * Class that encapsulates Visibility Type
@@ -73,11 +73,11 @@ namespace dtActors
                static VisibilityTypeEnum VISIBILITY_LIMITED;
                static VisibilityTypeEnum VISIBILITY_CLOSE;
 
-               dtABC::Weather::VisibilityType GetEnumValue() const { return mType; } 
+               dtABC::Weather::VisibilityType GetEnumValue() const { return mType; }
 
             private:
 
-               VisibilityTypeEnum(const std::string &name, dtABC::Weather::VisibilityType type) 
+               VisibilityTypeEnum(const std::string &name, dtABC::Weather::VisibilityType type)
                   : dtUtil::Enumeration(name), mType(type)
                {
                   AddInstance(this);
@@ -101,9 +101,9 @@ namespace dtActors
                dtABC::Weather::WeatherTheme GetEnumValue() const { return mTheme; }
 
             private:
-               
-               WeatherThemeEnum(const std::string &name, dtABC::Weather::WeatherTheme theme) 
-                  : dtUtil::Enumeration(name), mTheme(theme) 
+
+               WeatherThemeEnum(const std::string &name, dtABC::Weather::WeatherTheme theme)
+                  : dtUtil::Enumeration(name), mTheme(theme)
                {
                   AddInstance(this);
                }
@@ -126,14 +126,14 @@ namespace dtActors
 
             private:
 
-               TimePeriodEnum(const std::string &name, dtABC::Weather::TimePeriod tp) 
-                  : dtUtil::Enumeration(name), mTimePeriod(tp) 
+               TimePeriodEnum(const std::string &name, dtABC::Weather::TimePeriod tp)
+                  : dtUtil::Enumeration(name), mTimePeriod(tp)
                {
                   AddInstance(this);
                }
 
                dtABC::Weather::TimePeriod mTimePeriod;
-         }; 
+         };
 
          class DT_PLUGIN_EXPORT SeasonEnum : public dtUtil::Enumeration
          {
@@ -150,8 +150,8 @@ namespace dtActors
 
             private:
 
-               SeasonEnum(const std::string &name, dtABC::Weather::Season season) 
-                  : dtUtil::Enumeration(name), mSeason(season) 
+               SeasonEnum(const std::string &name, dtABC::Weather::Season season)
+                  : dtUtil::Enumeration(name), mSeason(season)
                {
                   AddInstance(this);
                }
@@ -166,23 +166,52 @@ namespace dtActors
             public:
 
                static WindTypeEnum WIND_NONE;
-               static WindTypeEnum WIND_BREEZE;
                static WindTypeEnum WIND_LIGHT;
+               static WindTypeEnum WIND_BREEZE;
                static WindTypeEnum WIND_MODERATE;
                static WindTypeEnum WIND_HEAVY;
                static WindTypeEnum WIND_SEVERE;
+               static WindTypeEnum WIND_HURRICANE;
 
                dtABC::Weather::WindType GetEnumValue() const { return mWindType; }
 
             private:
 
-               WindTypeEnum(const std::string &name, dtABC::Weather::WindType wt) 
-                  : dtUtil::Enumeration(name), mWindType(wt) 
+               WindTypeEnum(const std::string &name, dtABC::Weather::WindType wt)
+                  : dtUtil::Enumeration(name), mWindType(wt)
                {
                   AddInstance(this);
                }
 
                dtABC::Weather::WindType mWindType;
+         };
+
+         class DT_PLUGIN_EXPORT WindDirectionEnum : public dtUtil::Enumeration
+         {
+            DECLARE_ENUM(WindDirectionEnum);
+
+         public:
+
+            static WindDirectionEnum WIND_DIRECTION_NORTH;
+            static WindDirectionEnum WIND_DIRECTION_NORTH_EAST;
+            static WindDirectionEnum WIND_DIRECTION_EAST;
+            static WindDirectionEnum WIND_DIRECTION_SOUTH_EAST;
+            static WindDirectionEnum WIND_DIRECTION_SOUTH;
+            static WindDirectionEnum WIND_DIRECTION_SOUTH_WEST;
+            static WindDirectionEnum WIND_DIRECTION_WEST;
+            static WindDirectionEnum WIND_DIRECTION_NORTH_WEST;
+
+            dtABC::Weather::WindDirection GetEnumValue() const { return mWindDirection; }
+
+         private:
+
+            WindDirectionEnum(const std::string &name, dtABC::Weather::WindDirection wt)
+               : dtUtil::Enumeration(name), mWindDirection(wt)
+            {
+               AddInstance(this);
+            }
+
+            dtABC::Weather::WindDirection mWindDirection;
          };
 
          /// Constructor
@@ -298,7 +327,7 @@ namespace dtActors
          /**
           * Returns true if fog is enabled
           */
-         bool IsFogEnabled() const; 
+         bool IsFogEnabled() const;
 
          /**
           * Sets the visibility on the weather
@@ -344,6 +373,18 @@ namespace dtActors
          WindTypeEnum& GetWindType();
 
          /**
+          * Sets the wind direction on this environment
+          * @param windType The new wind type
+          */
+         void SetWindDirection(WindDirectionEnum &windDirection);
+
+         /**
+          * Gets the current wind direction
+          * @return The wind type
+          */
+         WindDirectionEnum& GetWindDirection();
+
+         /**
           * Gets the current wind speed
           * @return The wind speed
           */
@@ -353,7 +394,7 @@ namespace dtActors
           * Gets the current wind direction
           * @return The wind direction
           */
-         osg::Vec3 GetWindDirection() const;
+         osg::Vec3 GetWindDirectionVector() const;
 
          /**
           * Sets the sky color on this environment
@@ -441,9 +482,9 @@ namespace dtActors
          /**
            * Creates the actor associated with this proxy
            */
-         virtual void CreateActor() 
-         { 
-            SetActor(*new WeatherEnvironmentActor(*this)); 
+         virtual void CreateActor()
+         {
+            SetActor(*new WeatherEnvironmentActor(*this));
          }
 
          /**

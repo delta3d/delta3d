@@ -170,6 +170,9 @@ namespace dtCore
       void SetRefLatLong(const osg::Vec2& latLong);
       void GetRefLatLong(osg::Vec2& latLong) const;
 
+      ///Set the wind's minimum and maximum speed in m/s
+      void SetWindSpeedMinMaxValues(float minSpeed, float maxSpeed);
+
       void SetWindSpeed(float speed);
       float GetWindSpeed() const;
 
@@ -203,6 +206,9 @@ namespace dtCore
         * @return The Light the Environment is controlling.  Could be NULL.
         */
       Light* GetSkyLight() const;
+
+      //Signal fired when the wind changes
+      sigslot::signal2<const osg::Vec3&, float> WindChangedSignal;
 
    private:
 
@@ -279,12 +285,28 @@ namespace dtCore
       SkyDomeShader* mSkyDomeShader; ///<pixel shader for the skydome
       RefPtr<SkyDome> mSkyDome; ///<the added SkyDome (couuld be 0)
 
-      float mWindSpeed; ///<the speed of the wind
-      osg::Vec3 mWindDirection; ///<the direction of the wind
+      float mWindMinSpeed; ///<the minimum speed of the wind in m/s
+      float mWindMaxSpeed; ///<the maximum speed of the wind in m/s
+      float mCurrentWindSpeed; ///<the current speed of the wind
+      float mDesiredWindSpeed; ///<the wind speed we want the current speed to iterate towards
+      osg::Vec3 mDesiredWindDirection; ///<the desired direction of the wind
+      osg::Vec3 mCurrentWindDirection; ///<the current direction of the wind
 
       RefPtr<osg::Node> mNode;
 
       bool mUseSimTime; ///<Whether we should use sim time as our environment time or not
+
+      /**
+      * Recalculates wind speed based on current wind min and max
+      */
+      void RecalculateWindSpeed();
+
+      /**
+      * Updates the current wind speed to iterate towards the desired wind speed
+      * and updates the current wind direction to iterate towards the desired wind
+      * direction
+      */
+      void UpdateWind();
 
       /**
       * Updates the sky light based on the sun angle.

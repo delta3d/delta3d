@@ -174,6 +174,94 @@ void Weather::SetBasicWindType(const WindType windType)
    if (mWindType != windType)
    {
       mWindType = windType;
+      switch (mWindType)
+      {
+      case WIND_NONE:
+         mEnvironment->SetWindSpeedMinMaxValues(0.0f, 1.5f);
+         break;
+      case WIND_LIGHT:
+         mEnvironment->SetWindSpeedMinMaxValues(1.6f, 5.4f);
+         break;
+      case WIND_BREEZE:
+         mEnvironment->SetWindSpeedMinMaxValues(5.5f, 10.7f);
+         break;
+      case WIND_MODERATE:
+         mEnvironment->SetWindSpeedMinMaxValues(10.8f, 17.1f);
+         break;
+      case WIND_HEAVY:
+         mEnvironment->SetWindSpeedMinMaxValues(17.2f, 24.4f);
+         break;
+      case WIND_SEVERE:
+         mEnvironment->SetWindSpeedMinMaxValues(24.5f, 32.6f);
+         break;
+      case WIND_HURRICANE:
+         mEnvironment->SetWindSpeedMinMaxValues(32.7f, 40.0f);
+         break;
+      }
+   }
+}
+
+/**
+ *
+ */
+void Weather::SetBasicWindDirection(const WindDirection windDirection)
+{
+   mTheme = THEME_CUSTOM;
+
+   if (mWindDirection != windDirection)
+   {
+      mWindDirection = windDirection;
+      switch (mWindDirection)
+      {
+      case WIND_DIRECTION_NORTH:
+         {
+            mEnvironment->SetWindDirection(-osg::Y_AXIS);
+            break;
+         }
+      case WIND_DIRECTION_NORTH_EAST:
+         {
+            osg::Vec3 direction(-1.0f, -1.0f, 0.0f);
+            direction.normalize();
+            mEnvironment->SetWindDirection(direction);
+            break;
+         }
+      case WIND_DIRECTION_EAST:
+         {
+            mEnvironment->SetWindDirection(-osg::X_AXIS);
+            break;
+         }
+      case WIND_DIRECTION_SOUTH_EAST:
+         {
+            osg::Vec3 direction(-1.0f, 1.0f, 0.0f);
+            direction.normalize();
+            mEnvironment->SetWindDirection(direction);
+            break;
+         }
+      case WIND_DIRECTION_SOUTH:
+         {
+            mEnvironment->SetWindDirection(osg::Y_AXIS);
+            break;
+         }
+      case WIND_DIRECTION_SOUTH_WEST:
+         {
+            osg::Vec3 direction(1.0f, 1.0f, 0.0f);
+            direction.normalize();
+            mEnvironment->SetWindDirection(direction);
+            break;
+         }
+      case WIND_DIRECTION_WEST:
+         {
+            mEnvironment->SetWindDirection(osg::X_AXIS);
+            break;
+         }
+      case WIND_DIRECTION_NORTH_WEST:
+         {
+            osg::Vec3 direction(1.0f, -1.0f, 0.0f);
+            direction.normalize();
+            mEnvironment->SetWindDirection(direction);
+            break;
+         }
+      }
    }
 }
 
