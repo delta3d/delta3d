@@ -23,8 +23,9 @@
 
 #include <QtCore/QObject>
 #include <dtGame/baseinputcomponent.h>
-#include <dtCore/objectmotionmodel.h>
 #include <dtAI/aiplugininterface.h>
+
+#include "waypointmotionmodel.h"
 
 class AIUtilityInputComponent : public QObject, public dtGame::BaseInputComponent
 {
@@ -47,7 +48,7 @@ public:
 
    virtual bool HandleMouseDragged(const dtCore::Mouse* mouse, float x, float y);
 
-   void SetObjectMotionModel(dtCore::ObjectMotionModel* objectMotionModel);
+   void SetWaypointMotionModel(WaypointMotionModel* waypointMotionModel);
 
    void SetAIPluginInterface(dtAI::AIPluginInterface* aiInterface);
 
@@ -58,12 +59,16 @@ public:
 
    void OnSelectBrushSizeChanged(double size);
 
+private slots:
+   void OnWaypointTranslationBeginning();
+
 protected:
    virtual ~AIUtilityInputComponent();
 
 private:
    dtCore::RefPtr<dtAI::AIPluginInterface> mpAIInterface;
    bool IsShiftHeld();
+   bool IsCtrlHeld();
    double GetSelectionBrushSize() const;
    bool IsOkToSelect() const;
 
@@ -71,7 +76,7 @@ private:
 
    bool mSelectBrushMode;
    double mSelectBrushSize; ///<Size (meters) of the selection brush
-   dtCore::ObserverPtr<dtCore::ObjectMotionModel> mObjectMotionModel;
+   dtCore::ObserverPtr<WaypointMotionModel> mWaypointMotionModel;
 };
 
 #endif //AIUTILITY_INPUT_COMPONENT

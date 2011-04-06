@@ -441,10 +441,10 @@ ObjectMotionModel::MotionType ObjectMotionModel::Update(const osg::Vec2& pos)
                   //callbacks
                   switch(mMotionType)
                   {
-                  case MOTION_TYPE_TRANSLATION: OnTranslateEnd(); break;
-                  case MOTION_TYPE_ROTATION: OnRotateEnd(); break;
-                  case MOTION_TYPE_SCALE: OnScaleEnd(); break;
-                  default: break;
+                     case MOTION_TYPE_TRANSLATION: OnTranslateEnd(); break;
+                     case MOTION_TYPE_ROTATION: OnRotateEnd(); break;
+                     case MOTION_TYPE_SCALE: OnScaleEnd(); break;
+                     default: break;
                   }
                }
 
@@ -482,10 +482,10 @@ ObjectMotionModel::MotionType ObjectMotionModel::Update(const osg::Vec2& pos)
                         //callbacks
                         switch(mMotionType)
                         {
-                        case MOTION_TYPE_TRANSLATION: OnTranslateBegin(); break;
-                        case MOTION_TYPE_ROTATION: OnRotateBegin(); break;
-                        case MOTION_TYPE_SCALE: OnScaleBegin(); break;
-                        default: break;
+                           case MOTION_TYPE_TRANSLATION: OnTranslateBegin(); break;
+                           case MOTION_TYPE_ROTATION: OnRotateBegin(); break;
+                           case MOTION_TYPE_SCALE: OnScaleBegin(); break;
+                           default: break;
                         }
                      }
                   }

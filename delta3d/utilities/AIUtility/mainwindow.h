@@ -142,7 +142,7 @@ private:
    QString mCurrentMapName;
    dtCore::Transform mCurrentCameraTransform;
 
-   QUndoStack *mUndoStack;
+   QUndoStack* mUndoStack;
    bool mSelectionBasedRendering; ///Do we only render expensive graphics for selected waypoints
    bool mRenderBackfaces;
 };

@@ -633,6 +633,9 @@ void MainWindow::RefreshPropertyEditor(std::vector<dtAI::WaypointInterface*>& se
    }
 
    mPropertyEditor.HandlePropertyContainersSelected(propertyContainers);
+
+   // Auto expand everything
+   mPropertyEditor.ExpandAll();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
