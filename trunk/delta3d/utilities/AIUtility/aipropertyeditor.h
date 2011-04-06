@@ -33,6 +33,8 @@ public:
    AIPropertyEditor(QMainWindow& parent);
    virtual ~AIPropertyEditor();
 
+   void ExpandAll();
+
 signals:
 
    void SignalPropertyChangedFromControl(dtDAL::PropertyContainer&, dtDAL::ActorProperty&);

@@ -55,7 +55,7 @@ bool AIUtilityInputComponent::HandleButtonPressed(const dtCore::Mouse* mouse, dt
    {
       return false;
    }
-   
+
    switch (button)
    {
       case dtCore::Mouse::LeftButton:
@@ -63,7 +63,7 @@ bool AIUtilityInputComponent::HandleButtonPressed(const dtCore::Mouse* mouse, dt
          osg::Vec3f pickedPosition;
          GetGameManager()->GetApplication().GetView()->GetMousePickPosition(pickedPosition);
 
-         // See if we are adding to the selection list or not     
+         // See if we are adding to the selection list or not
          if (IsShiftHeld() == false)
          {
             WaypointSelection::GetInstance().DeselectAllWaypoints();
@@ -106,6 +106,7 @@ bool AIUtilityInputComponent::HandleMouseDragged(const dtCore::Mouse* mouse, flo
       return handled;
    }
 
+   // Don't select if we're using the motion model
    if (!IsOkToSelect())
    {
       return false;
@@ -161,6 +162,16 @@ bool AIUtilityInputComponent::IsShiftHeld()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+bool AIUtilityInputComponent::IsCtrlHeld()
+{
+   dtCore::Keyboard* keyboard = GetGameManager()->GetApplication().GetKeyboard();
+   bool isShiftHeld = keyboard && (keyboard->GetKeyState(osgGA::GUIEventAdapter::KEY_Control_L) ||
+      keyboard->GetKeyState(osgGA::GUIEventAdapter::KEY_Control_R));
+
+   return isShiftHeld;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 float AIUtilityInputComponent::GetPickDistanceBuffer() const
 {
    return mPickDistanceBuffer;
@@ -191,17 +202,39 @@ double AIUtilityInputComponent::GetSelectionBrushSize() const
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void AIUtilityInputComponent::SetObjectMotionModel(dtCore::ObjectMotionModel* objectMotionModel)
+void AIUtilityInputComponent::SetWaypointMotionModel(WaypointMotionModel* waypointMotionModel)
 {
-   mObjectMotionModel = objectMotionModel;
+   mWaypointMotionModel = waypointMotionModel;
+   connect(mWaypointMotionModel.get(), SIGNAL(WaypointTranslationBeginning()), this, SLOT(OnWaypointTranslationBeginning()));
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void AIUtilityInputComponent::OnWaypointTranslationBeginning()
+{
+   if (IsCtrlHeld())
+   {
+      std::vector<dtAI::WaypointInterface*> cloneList;
+      std::vector<dtAI::WaypointInterface*>& waypointList =
+         WaypointSelection::GetInstance().GetWaypointList();
+
+      for (size_t pointIndex = 0; pointIndex < waypointList.size(); ++pointIndex)
+      {
+         const osg::Vec3& pos = waypointList[pointIndex]->GetPosition();
+         const dtDAL::ObjectType& type = waypointList[pointIndex]->GetWaypointType();
+
+         cloneList.push_back(mpAIInterface->CreateWaypoint(pos, type));
+      }
+
+      WaypointSelection::GetInstance().SetWaypointSelectionList(cloneList);
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 bool AIUtilityInputComponent::IsOkToSelect() const
 {
-   if (mObjectMotionModel.valid() &&
-      mObjectMotionModel->IsEnabled() &&
-      mObjectMotionModel->GetMotionType() != dtCore::ObjectMotionModel::MOTION_TYPE_MAX)
+   if (mWaypointMotionModel.valid() &&
+       mWaypointMotionModel->IsEnabled() &&
+       mWaypointMotionModel->GetMotionType() != dtCore::ObjectMotionModel::MOTION_TYPE_MAX)
    {
       return false;
    }

@@ -1,20 +1,20 @@
-/* 
- * Delta3D Open Source Game and Simulation Engine 
- * Copyright (C) 2004-2005 MOVES Institute 
+/*
+ * Delta3D Open Source Game and Simulation Engine
+ * Copyright (C) 2004-2005 MOVES Institute
  *
  * This library is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free 
- * Software Foundation; either version 2.1 of the License, or (at your option) 
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
  * any later version.
  *
  * This library is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
- * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more 
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  *
- * You should have received a copy of the GNU Lesser General Public License 
- * along with this library; if not, write to the Free Software Foundation, Inc., 
- * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
 */
 
@@ -31,7 +31,7 @@
 
 namespace dtCore
 {
-   
+
    /**
     * The base class for all motion models: objects that update the
     * transforms of Transformable objects according to input gathered
@@ -51,21 +51,21 @@ namespace dtCore
          MotionModel(const std::string& name = "MotionModel");
 
       protected:
-      
+
          /**
           * Destructor.
           */
          virtual ~MotionModel();
 
       public:
-      
+
          /**
           * Sets the target of this motion model.
           *
           * @param target the new target
           */
          virtual void SetTarget(Transformable* target);
-         
+
          /**
           * Returns the target of this motion model.
           *
@@ -73,7 +73,7 @@ namespace dtCore
           */
          Transformable* GetTarget();
          const Transformable* GetTarget() const;
-         
+
          /**
           * Enables or disables this motion model.
           *
@@ -81,7 +81,7 @@ namespace dtCore
           * to disable it
           */
          virtual void SetEnabled(bool enabled);
-         
+
          /**
           * Checks whether or not this motion model is enabled.
           *
@@ -89,14 +89,14 @@ namespace dtCore
           * if it is disabled
           */
          bool IsEnabled() const;
-                  
+
       private:
-      
+
          /**
           * The motion model target.
           */
          RefPtr<Transformable> mTarget;
-         
+
          /**
           * Whether or not the motion model is enabled.
           */

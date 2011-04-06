@@ -69,6 +69,9 @@ void WaypointMotionModel::SetAIInterface(dtAI::AIPluginInterface* aiInterface)
 ////////////////////////////////////////////////////////////////////////////////
 void WaypointMotionModel::OnTranslateBegin()
 {
+   // Alert the app so that it can clone and reselect if needed
+   emit WaypointTranslationBeginning();
+
    dtCore::Transform xform;
    GetTarget()->GetTransform(xform);
    mStartMoveXYZ = xform.GetTranslation();
@@ -79,16 +82,16 @@ void WaypointMotionModel::OnTranslateEnd()
 {
    dtCore::Transform xform;
    GetTarget()->GetTransform(xform);
-   const osg::Vec3 deltaXYZ = xform.GetTranslation()-mStartMoveXYZ;
+   const osg::Vec3 deltaXYZ = xform.GetTranslation() - mStartMoveXYZ;
 
    //if there's more than one to move, batch the commands under one parent undo command
-   QUndoCommand* parentUndo(mCurrentWaypoints.size()==1 ? NULL : new QUndoCommand("Move Waypoints"));
+   QUndoCommand* parentUndo(mCurrentWaypoints.size() == 1 ? NULL : new QUndoCommand("Move Waypoints"));
 
    std::vector<dtAI::WaypointInterface*>::iterator itr = mCurrentWaypoints.begin();
 
    while (itr != mCurrentWaypoints.end())
    {
-      const osg::Vec3 oldPos = (*itr)->GetPosition()-deltaXYZ;
+      const osg::Vec3 oldPos = (*itr)->GetPosition() - deltaXYZ;
       MoveWaypointCommand* undoMove = new MoveWaypointCommand(oldPos,
                                                               (*itr)->GetPosition(),
                                                               **itr,

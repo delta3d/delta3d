@@ -101,7 +101,7 @@ void AIUtilityApp::SetAIPluginInterface(dtAI::AIPluginInterface* interface, bool
    mGM->AddComponent(*mInputComponent, dtGame::GameManager::ComponentPriority::NORMAL);
 
    //input component needs to know about the ObjectMotionModel, so they don't collide on mouse events
-   mInputComponent->SetObjectMotionModel(mWaypointMotionModel.get());
+   mInputComponent->SetWaypointMotionModel(mWaypointMotionModel.get());
 
    mWaypointMotionModel->SetAIInterface(interface);
    mAIInterface = interface;
@@ -373,4 +373,5 @@ void AIUtilityApp::OnWaypointSelectionChanged(std::vector<dtAI::WaypointInterfac
       }
    }
 }
+
 ////////////////////////////////////////////////////////////////////////////////

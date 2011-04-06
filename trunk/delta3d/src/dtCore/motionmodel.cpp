@@ -1,6 +1,3 @@
-// motionmodel.cpp: Implementation of the MotionModel class.
-//
-//////////////////////////////////////////////////////////////////////
 #include <prefix/dtcoreprefix.h>
 #include <dtCore/motionmodel.h>
 
@@ -8,74 +5,50 @@
 
 namespace dtCore
 {
+   IMPLEMENT_MANAGEMENT_LAYER(MotionModel)
 
-IMPLEMENT_MANAGEMENT_LAYER(MotionModel)
+   ////////////////////////////////////////////////////////////////////////////////
+   MotionModel::MotionModel(const std::string& name)
+      : Base(name)
+      , mEnabled(true)
+   {
+      RegisterInstance(this);
+   }
 
-/**
- * Constructor.
- *
- * @param name the instance name
- */
-MotionModel::MotionModel(const std::string& name)
-   : Base(name),
-     mEnabled(true)
-{
-   RegisterInstance(this);
-}
+   ////////////////////////////////////////////////////////////////////////////////
+   MotionModel::~MotionModel()
+   {
+      DeregisterInstance(this);
+   }
 
-/**
- * Destructor.
- */
-MotionModel::~MotionModel()
-{
-   DeregisterInstance(this);
-}
+   ////////////////////////////////////////////////////////////////////////////////
+   void MotionModel::SetTarget(Transformable* target)
+   {
+      mTarget = target;
+   }
 
-/**
- * Sets the target of this motion model.
- *
- * @param target the new target
- */
-void MotionModel::SetTarget(Transformable* target)
-{
-   mTarget = target;
-}
+   ////////////////////////////////////////////////////////////////////////////////
+   Transformable* MotionModel::GetTarget()
+   {
+      return mTarget.get();
+   }
 
-/**
- * Returns the target of this motion model.
- *
- * @return the current target
- */
-Transformable* MotionModel::GetTarget()
-{
-   return mTarget.get();
-}
+   ////////////////////////////////////////////////////////////////////////////////
+   const Transformable* MotionModel::GetTarget() const
+   {
+      return mTarget.get();
+   }
 
-const Transformable* MotionModel::GetTarget() const
-{
-   return mTarget.get();
-}
+   ////////////////////////////////////////////////////////////////////////////////
+   void MotionModel::SetEnabled(bool enabled)
+   {
+      mEnabled = enabled;
+   }
 
-/**
- * Enables or disables this motion model.
- *
- * @param enabled true to enable this motion model, false
- * to disable it
- */
-void MotionModel::SetEnabled(bool enabled)
-{
-   mEnabled = enabled;
-}
-
-/**
- * Checks whether or not this motion model is enabled.
- *
- * @return true if this motion model is enabled, false
- * if it is disabled
- */
-bool MotionModel::IsEnabled() const
-{
-   return mEnabled;
-}
+   ////////////////////////////////////////////////////////////////////////////////
+   bool MotionModel::IsEnabled() const
+   {
+      return mEnabled;
+   }
 
 }

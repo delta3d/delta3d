@@ -145,6 +145,8 @@ namespace dtQt
 
       PropertyEditorModel& GetPropertyEditorModel();
 
+      PropertyEditorTreeView& GetPropertyEditorView();
+
    private:
       // list of what the editor thinks is the last known selected actors
       std::vector<dtCore::RefPtr<dtDAL::PropertyContainer> > mSelectedPC;

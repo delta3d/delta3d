@@ -30,6 +30,7 @@ public slots:
 
 signals:
    void UndoCommandGenerated(QUndoCommand* command);
+   void WaypointTranslationBeginning();
 
 protected:
    virtual ~WaypointMotionModel();
