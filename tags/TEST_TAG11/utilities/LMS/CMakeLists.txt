@@ -1,0 +1,4 @@
+
+ADD_SUBDIRECTORY(GameLaunch)
+ADD_SUBDIRECTORY(WebPackager)
+
