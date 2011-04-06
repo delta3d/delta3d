@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<hla  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="HLAMapping.xsd">
+        
+    <header>
+        <name>Test</name>
+        <description>test mapping</description>
+        <disEntityTypes>true</disEntityTypes> 
+        <disEntityTypeAttribute>EntityType</disEntityTypeAttribute>
+        <author>David Guthrie</author>
+        <comment>This is for the unit tests</comment>
+        <copyright>2006 Alion</copyright>
+        <schemaVersion>1.0</schemaVersion>
+    </header>
+    
+    <libraries>
+      <actorLibrary>
+        <name>testGameActorLibrary</name>
+        <version>1.0</version>
+      </actorLibrary>
+    </libraries>
+    
+    <ddm>
+      <enabled>true</enabled>
+      <space name="Geographic">
+         <property name="Friendly Region Type">GEOGRAPHIC_SPACE</property>
+         <property name="Enemy Region Type">APP_SPACE_ONLY</property>
+         <property name="Friendly App Space">74</property>
+         <property name="Neutral App Space">11</property>
+         <property name="App Space Min">0</property>
+         <property name="App Space Max">199</property>
+      </space>
+      <space name="NoSuchSpace">
+         <property name="hi">junk</property>
+         <property name="another">rubbish</property>
+      </space>
+    </ddm>
+    
+    <objects>
+        <object name="BaseEntity">
+            <abstract/>
+            <ddmSpace>Geographic</ddmSpace>
+            <entityIdAttributeName>EntityIdentifier</entityIdAttributeName>
+            <attrToProp>
+                <hlaName>ENTITY_TYPE_ID</hlaName>
+                <hlaDataType>ENTITY_TYPE</hlaDataType>
+                <hlaRequired>true</hlaRequired>
+                <gameName>Entity Type</gameName>
+                <gameDataType>ENUMERATION</gameDataType>
+                <gameRequired>false</gameRequired>
+                <default></default>
+            </attrToProp>            
+            <attrToProp>
+                <hlaName>EntityIdentifier</hlaName>
+                <hlaDataType>ENTITY_IDENTIFIER_TYPE</hlaDataType>
+                <hlaRequired>true</hlaRequired>
+                <gameName>sendingActorId</gameName>
+                <gameDataType>ACTOR</gameDataType>
+                <gameRequired>true</gameRequired>
+                <default></default>
+            </attrToProp>            
+            <attrToProp>
+                <hlaName>DamageState</hlaName>
+                <hlaDataType>UNSIGNED_INT_TYPE</hlaDataType>
+                <hlaRequired>false</hlaRequired>
+                <gameName>Damage State</gameName>
+                <gameDataType>ENUMERATION</gameDataType>
+                <gameRequired>false</gameRequired>
+                <default>Destroyed</default>
+                <enumerationMapping>
+                    <value id="0">No Damage</value>
+                    <value id="1">Damaged</value>
+                    <value id="2">Damaged</value>
+                    <value id="3">Destroyed</value>
+                </enumerationMapping>
+            </attrToProp>            
+            <attrToProp>
+                <hlaName>Orientation</hlaName>
+                <hlaDataType>EULER_ANGLES_TYPE</hlaDataType>
+                <hlaRequired>true</hlaRequired>
+                <gameName>Rotation</gameName>
+                <gameDataType>VEC3</gameDataType>
+                <gameRequired>true</gameRequired>
+                <default></default>
+            </attrToProp>            
+            <attrToProp>
+                <hlaName>WorldLocation</hlaName>
+                <hlaDataType>WORLD_COORDINATE_TYPE</hlaDataType>
+                <hlaRequired>true</hlaRequired>
+                <gameName>Translation</gameName>
+                <gameDataType>VEC3</gameDataType>
+                <gameRequired>true</gameRequired>
+                <default></default>
+            </attrToProp>            
+        </object>
+
+        <object extends="BaseEntity" name="Test Tank">
+            <objectClass>BaseEntity.PhysicalEntity.Platform.GroundVehicle</objectClass>
+            <actorType>TestHLA.Tank</actorType>
+            <disEntityEnum>
+                <kind>1</kind>
+                <domain>1</domain>
+                <country>222</country>
+                <category>2</category>
+                <subcategory>4</subcategory>
+                <specific>6</specific>
+                <extra>0</extra>
+            </disEntityEnum>
+            <attrToProp>
+                <gameName>Mesh</gameName>   
+                <gameDataType>StaticMeshes</gameDataType>
+                <default>StaticMeshes:articulation_test.ive</default>
+            </attrToProp>
+            <attrToProp>
+               <hlaName>ENTITY_TYPE_ID</hlaName>
+               <hlaDataType>ENTITY_TYPE</hlaDataType>
+               <hlaRequired>true</hlaRequired>
+               <gameName>Entity Type As String</gameName>
+               <gameDataType>STRING</gameDataType>
+               <gameRequired>false</gameRequired>
+            </attrToProp>
+            <attrToProp>
+               <hlaName>MAPPING_NAME</hlaName>
+               <hlaDataType>STRING_TYPE</hlaDataType>
+               <hlaRequired>false</hlaRequired>
+               <gameName>Object Mapping Name</gameName>
+               <gameDataType>STRING</gameDataType>
+               <gameRequired>false</gameRequired>
+            </attrToProp>
+        </object>
+
+        <object extends="BaseEntity" name="Test Tank can't override remote with same dis id">
+            <objectClass>BaseEntity.PhysicalEntity.Platform.GroundVehicle</objectClass>
+            <actorType>TestHLA.Jet</actorType>
+            <disEntityEnum>
+                <kind>1</kind>
+                <domain>1</domain>
+                <country>222</country>
+                <category>2</category>
+                <subcategory>4</subcategory>
+                <specific>6</specific>
+                <extra>0</extra>
+            </disEntityEnum>
+            <attrToProp>
+                <gameName>Mesh</gameName>   
+                <gameDataType>StaticMeshes</gameDataType>
+                <default>StaticMeshes:articulation_test.ive</default>
+            </attrToProp>
+            <attrToProp>
+               <hlaName>ENTITY_TYPE_ID</hlaName>
+               <hlaDataType>ENTITY_TYPE</hlaDataType>
+               <hlaRequired>true</hlaRequired>
+               <gameName>Entity Type As String</gameName>
+               <gameDataType>STRING</gameDataType>
+               <gameRequired>false</gameRequired>
+            </attrToProp>
+            <attrToProp>
+               <hlaName>MAPPING_NAME</hlaName>
+               <hlaDataType>STRING_TYPE</hlaDataType>
+               <hlaRequired>false</hlaRequired>
+               <gameName>Object Mapping Name</gameName>
+               <gameDataType>STRING</gameDataType>
+               <gameRequired>false</gameRequired>
+            </attrToProp>
+        </object>
+   </objects>
+   <interactions/>
+</hla>
