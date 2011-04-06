@@ -48,7 +48,12 @@ Environment::Environment(const std::string& name)
    , mSunlightShader(new SunlightShader())
    , mSkyDomeShader(new SkyDomeShader())
    , mSkyDome(NULL)
-   , mWindSpeed(0.0f)
+   , mWindMinSpeed(0.0f)
+   , mWindMaxSpeed(1.5f)
+   , mCurrentWindSpeed(0.0f)
+   , mDesiredWindSpeed(0.0f)
+   , mCurrentWindDirection(-osg::Y_AXIS)
+   , mDesiredWindDirection(-osg::Y_AXIS)
    , mUseSimTime(false)
 {
    RegisterInstance(this);
@@ -133,6 +138,7 @@ Environment::Environment(const std::string& name)
    SetFogMode(EXP2);
    SetVisibility(16000.f);
    SetFogEnable(true);
+   RecalculateWindSpeed();
 
    Update(999.99);
 
@@ -543,6 +549,7 @@ void dtCore::Environment::Update(const double deltaFrameTime)
       UpdateSunColor();
       UpdateEnvColors();
       UpdateFogColor();
+      UpdateWind();
       Repaint();
    }
 
@@ -615,6 +622,32 @@ double Environment::InterpTable::Interpolate(double x) const
          (mTable[i-1].ind - mTable[i].ind);
 
    return y;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void dtCore::Environment::RecalculateWindSpeed()
+{
+   mDesiredWindSpeed = dtUtil::RandFloat(mWindMinSpeed, mWindMaxSpeed);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void dtCore::Environment::UpdateWind()
+{
+   // Current speed = desired speed + a random flutter amount
+   float flutterRange = (mWindMaxSpeed - mWindMinSpeed) * 0.1f;
+   mCurrentWindSpeed = mDesiredWindSpeed + dtUtil::RandFloat(-flutterRange, flutterRange);
+   dtUtil::ClampMin(mCurrentWindSpeed, 0.0f);
+
+   // Current direction = desired direction + a random direction offset
+   float angleOffset = osg::DegreesToRadians(dtUtil::RandFloat(-5.0f, 5.0f));
+   mCurrentWindDirection.x() = std::cos(angleOffset) * mDesiredWindDirection.x() -
+      std::sin(angleOffset) * mDesiredWindDirection.y();
+   mCurrentWindDirection.y() = std::sin(angleOffset) * mDesiredWindDirection.x() +
+      std::cos(angleOffset) * mDesiredWindDirection.y();
+   mCurrentWindDirection.z() = mDesiredWindDirection.z();
+   mCurrentWindDirection.normalize();
+
+   WindChangedSignal(mCurrentWindDirection, mCurrentWindSpeed);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -863,27 +896,39 @@ void dtCore::Environment::GetRefLatLong(osg::Vec2& latLong) const
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+void dtCore::Environment::SetWindSpeedMinMaxValues(float minSpeed, float maxSpeed)
+{
+   mWindMinSpeed = minSpeed;
+   mWindMaxSpeed = maxSpeed;
+
+   if (mCurrentWindSpeed < mWindMinSpeed || mCurrentWindSpeed > mWindMaxSpeed)
+   {
+      RecalculateWindSpeed();
+   }
+}
+
+///////////////////////////////////////////////////////////////////////////////
 void dtCore::Environment::SetWindSpeed(float speed)
 {
-   mWindSpeed = speed;
+   mCurrentWindSpeed = speed;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 float dtCore::Environment::GetWindSpeed() const
 {
-   return mWindSpeed;
+   return mCurrentWindSpeed;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 void dtCore::Environment::SetWindDirection(const osg::Vec3& direction)
 {
-   mWindDirection = direction;
+   mDesiredWindDirection = direction;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 osg::Vec3 dtCore::Environment::GetWindDirection() const
 {
-   return mWindDirection;
+   return mCurrentWindDirection;
 }
 
 //////////////////////////////////////////////////////////////////////////

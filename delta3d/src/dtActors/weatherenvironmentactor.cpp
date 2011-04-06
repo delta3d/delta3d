@@ -80,6 +80,11 @@ namespace dtActors
          EnumActorProperty<WeatherEnvironmentActor::WindTypeEnum>::GetFuncType(env, &WeatherEnvironmentActor::GetWindType),
          "Sets the type of wind in the scene"));
 
+      AddProperty(new EnumActorProperty<WeatherEnvironmentActor::WindDirectionEnum>("Wind Direction", "Wind Direction",
+         EnumActorProperty<WeatherEnvironmentActor::WindDirectionEnum>::SetFuncType(env, &WeatherEnvironmentActor::SetWindDirection),
+         EnumActorProperty<WeatherEnvironmentActor::WindDirectionEnum>::GetFuncType(env, &WeatherEnvironmentActor::GetWindDirection),
+         "Sets the general direction of the wind in the scene"));
+
       AddProperty(new EnumActorProperty<WeatherEnvironmentActor::TimePeriodEnum>("Time Period", "Time Period",
          EnumActorProperty<WeatherEnvironmentActor::TimePeriodEnum>::SetFuncType(env, &WeatherEnvironmentActor::SetTimePeriod),
          EnumActorProperty<WeatherEnvironmentActor::TimePeriodEnum>::GetFuncType(env, &WeatherEnvironmentActor::GetTimePeriod),
@@ -160,12 +165,23 @@ namespace dtActors
    WeatherEnvironmentActor::SeasonEnum WeatherEnvironmentActor::SeasonEnum::SEASON_WINTER("Season Winter", dtABC::Weather::SEASON_WINTER);
 
    IMPLEMENT_ENUM(WeatherEnvironmentActor::WindTypeEnum);
-   WeatherEnvironmentActor::WindTypeEnum WeatherEnvironmentActor::WindTypeEnum::WIND_BREEZE("Wind Breeze", dtABC::Weather::WIND_BREEZE);
    WeatherEnvironmentActor::WindTypeEnum WeatherEnvironmentActor::WindTypeEnum::WIND_NONE("Wind None", dtABC::Weather::WIND_NONE);
-   WeatherEnvironmentActor::WindTypeEnum WeatherEnvironmentActor::WindTypeEnum::WIND_MODERATE("Wind Moderate", dtABC::Weather::WIND_MODERATE);
    WeatherEnvironmentActor::WindTypeEnum WeatherEnvironmentActor::WindTypeEnum::WIND_LIGHT("Wind Light", dtABC::Weather::WIND_LIGHT);
+   WeatherEnvironmentActor::WindTypeEnum WeatherEnvironmentActor::WindTypeEnum::WIND_BREEZE("Wind Breeze", dtABC::Weather::WIND_BREEZE);
+   WeatherEnvironmentActor::WindTypeEnum WeatherEnvironmentActor::WindTypeEnum::WIND_MODERATE("Wind Moderate", dtABC::Weather::WIND_MODERATE);
    WeatherEnvironmentActor::WindTypeEnum WeatherEnvironmentActor::WindTypeEnum::WIND_SEVERE("Wind Severe", dtABC::Weather::WIND_SEVERE);
    WeatherEnvironmentActor::WindTypeEnum WeatherEnvironmentActor::WindTypeEnum::WIND_HEAVY("Wind Heavy", dtABC::Weather::WIND_HEAVY);
+   WeatherEnvironmentActor::WindTypeEnum WeatherEnvironmentActor::WindTypeEnum::WIND_HURRICANE("Wind Hurricane", dtABC::Weather::WIND_HURRICANE);
+
+   IMPLEMENT_ENUM(WeatherEnvironmentActor::WindDirectionEnum);
+   WeatherEnvironmentActor::WindDirectionEnum WeatherEnvironmentActor::WindDirectionEnum::WIND_DIRECTION_NORTH("Wind Direction North", dtABC::Weather::WIND_DIRECTION_NORTH);
+   WeatherEnvironmentActor::WindDirectionEnum WeatherEnvironmentActor::WindDirectionEnum::WIND_DIRECTION_NORTH_EAST("Wind Direction North East", dtABC::Weather::WIND_DIRECTION_NORTH_EAST);
+   WeatherEnvironmentActor::WindDirectionEnum WeatherEnvironmentActor::WindDirectionEnum::WIND_DIRECTION_EAST("Wind Direction East", dtABC::Weather::WIND_DIRECTION_EAST);
+   WeatherEnvironmentActor::WindDirectionEnum WeatherEnvironmentActor::WindDirectionEnum::WIND_DIRECTION_SOUTH_EAST("Wind Direction South East", dtABC::Weather::WIND_DIRECTION_SOUTH_EAST);
+   WeatherEnvironmentActor::WindDirectionEnum WeatherEnvironmentActor::WindDirectionEnum::WIND_DIRECTION_SOUTH("Wind Direction South", dtABC::Weather::WIND_DIRECTION_SOUTH);
+   WeatherEnvironmentActor::WindDirectionEnum WeatherEnvironmentActor::WindDirectionEnum::WIND_DIRECTION_SOUTH_WEST("Wind Direction South West", dtABC::Weather::WIND_DIRECTION_SOUTH_WEST);
+   WeatherEnvironmentActor::WindDirectionEnum WeatherEnvironmentActor::WindDirectionEnum::WIND_DIRECTION_WEST("Wind Direction West", dtABC::Weather::WIND_DIRECTION_WEST);
+   WeatherEnvironmentActor::WindDirectionEnum WeatherEnvironmentActor::WindDirectionEnum::WIND_DIRECTION_NORTH_WEST("Wind Direction North West", dtABC::Weather::WIND_DIRECTION_NORTH_WEST);
 
    WeatherEnvironmentActor::WeatherEnvironmentActor(dtGame::GameActorProxy &proxy)
       : dtGame::IEnvGameActor(proxy)
@@ -430,12 +446,31 @@ namespace dtActors
       return WeatherEnvironmentActor::WindTypeEnum::WIND_NONE;
    }
 
+   void WeatherEnvironmentActor::SetWindDirection(WeatherEnvironmentActor::WindDirectionEnum& windDirection)
+   {
+      mWeather->SetBasicWindDirection(windDirection.GetEnumValue());
+   }
+
+   WeatherEnvironmentActor::WindDirectionEnum& WeatherEnvironmentActor::GetWindDirection()
+   {
+      for (unsigned int i = 0; i < WeatherEnvironmentActor::WindDirectionEnum::EnumerateType().size(); i++)
+      {
+         WeatherEnvironmentActor::WindDirectionEnum& v = *WeatherEnvironmentActor::WindDirectionEnum::EnumerateType()[i];
+
+         if (mWeather->GetBasicWindDirection() == v.GetEnumValue())
+         {
+            return v;
+         }
+      }
+      return WeatherEnvironmentActor::WindDirectionEnum::WIND_DIRECTION_NORTH;
+   }
+
    float WeatherEnvironmentActor::GetWindSpeed() const
    {
       return mWeather->GetEnvironment()->GetWindSpeed();
    }
 
-   osg::Vec3 WeatherEnvironmentActor::GetWindDirection() const
+   osg::Vec3 WeatherEnvironmentActor::GetWindDirectionVector() const
    {
       return mWeather->GetEnvironment()->GetWindDirection();
    }
