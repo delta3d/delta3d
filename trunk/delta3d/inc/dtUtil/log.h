@@ -29,7 +29,6 @@
 #include <osg/Referenced>
 #include <dtCore/refptr.h>
 #include <dtUtil/export.h>
-#include <osgDB/FileNameUtils>
 
 namespace dtUtil
 {
@@ -57,38 +56,35 @@ namespace dtUtil
     * Helps making logging a little easier.  However, if printf style
     *   logging is desired, you cannot use this macro.
     */
-
-   #define LOG_SOURCE osgDB::getSimpleFileName(__FILE__)+":"+__FUNCTION__
-
    #define LOG_DEBUG(msg)\
-      dtUtil::Log::GetInstance().LogMessage(LOG_SOURCE, __LINE__, msg, dtUtil::Log::LOG_DEBUG);
+      dtUtil::Log::GetInstance().LogMessage(__FILE__, __FUNCTION__, __LINE__, msg, dtUtil::Log::LOG_DEBUG);
 
    #define LOG_INFO(msg)\
-      dtUtil::Log::GetInstance().LogMessage(LOG_SOURCE, __LINE__, msg, dtUtil::Log::LOG_INFO);
+      dtUtil::Log::GetInstance().LogMessage(__FILE__, __FUNCTION__, __LINE__, msg, dtUtil::Log::LOG_INFO);
 
    #define LOG_WARNING(msg)\
-      dtUtil::Log::GetInstance().LogMessage(LOG_SOURCE, __LINE__, msg, dtUtil::Log::LOG_WARNING);
+      dtUtil::Log::GetInstance().LogMessage(__FILE__, __FUNCTION__, __LINE__, msg, dtUtil::Log::LOG_WARNING);
 
    #define LOG_ERROR(msg)\
-      dtUtil::Log::GetInstance().LogMessage(LOG_SOURCE, __LINE__, msg, dtUtil::Log::LOG_ERROR);
+      dtUtil::Log::GetInstance().LogMessage(__FILE__, __FUNCTION__, __LINE__, msg, dtUtil::Log::LOG_ERROR);
 
    #define LOG_ALWAYS(msg)\
-      dtUtil::Log::GetInstance().LogMessage(LOG_SOURCE, __LINE__, msg, dtUtil::Log::LOG_ALWAYS);
+      dtUtil::Log::GetInstance().LogMessage(__FILE__, __FUNCTION__, __LINE__, msg, dtUtil::Log::LOG_ALWAYS);
 
    #define LOGN_DEBUG(name, msg)\
-      dtUtil::Log::GetInstance(name).LogMessage(LOG_SOURCE, __LINE__, msg, dtUtil::Log::LOG_DEBUG);
+      dtUtil::Log::GetInstance(name).LogMessage(__FILE__, __FUNCTION__, __LINE__, msg, dtUtil::Log::LOG_DEBUG);
 
    #define LOGN_INFO(name, msg)\
-      dtUtil::Log::GetInstance(name).LogMessage(LOG_SOURCE, __LINE__, msg, dtUtil::Log::LOG_INFO);
+      dtUtil::Log::GetInstance(name).LogMessage(__FILE__, __FUNCTION__, __LINE__, msg, dtUtil::Log::LOG_INFO);
 
    #define LOGN_WARNING(name, msg)\
-      dtUtil::Log::GetInstance(name).LogMessage(LOG_SOURCE, __LINE__, msg, dtUtil::Log::LOG_WARNING);
+      dtUtil::Log::GetInstance(name).LogMessage(__FILE__, __FUNCTION__, __LINE__, msg, dtUtil::Log::LOG_WARNING);
 
    #define LOGN_ERROR(name, msg)\
-      dtUtil::Log::GetInstance(name).LogMessage(LOG_SOURCE, __LINE__, msg, dtUtil::Log::LOG_ERROR);
+      dtUtil::Log::GetInstance(name).LogMessage(__FILE__, __FUNCTION__, __LINE__, msg, dtUtil::Log::LOG_ERROR);
 
    #define LOGN_ALWAYS(name, msg)\
-      dtUtil::Log::GetInstance(name).LogMessage(LOG_SOURCE, __LINE__, msg, dtUtil::Log::LOG_ALWAYS);
+      dtUtil::Log::GetInstance(name).LogMessage(__FILE__, __FUNCTION__, __LINE__, msg, dtUtil::Log::LOG_ALWAYS);
 
    struct LogImpl;
 
@@ -115,14 +111,15 @@ namespace dtUtil
 
       /**
        * Logs a time-stamped message.
-       * @param source - String identifier of the source of the message.
-       *  (__FUNCTION__ is useful here.
-       * @param line the line number.
-       *  @param msg - Message to display.
-       *  @param msgType - Type of message being displayed. (error,warning,info)
+       * @param file - The source file name which generated this message
+       * @param method The calling method which generated this message
+       * @param line The source code line number.
+       * @param msg The message to display.
+       * @param msgType Level of message being displayed. (error,warning,info, etc)
        */
-      void LogMessage(const std::string& source, int line, const std::string& msg,
-                      LogMessageType msgType = LOG_INFO) const;
+      void LogMessage(const std::string& file, const std::string& method,
+                      int line, const std::string& msg,
+                      LogMessageType msgType) const;
 
       /**
        * Little more sophisticated method for logging messages.  Allows for
@@ -282,6 +279,11 @@ namespace dtUtil
 
       ///Returns the name of this logger.
       const std::string& GetName() const;
+
+
+      ///Deprecate 4/6/2011.  Use LogMessage(const std::string&, const std::string&, int, const std::string&, LogMessageType)
+      void LogMessage(const std::string& source, int line, const std::string& msg,
+                      LogMessageType msgType = LOG_INFO) const;
 
    //Constructor and destructor are both protected since this is a singleton.
    protected:

@@ -163,11 +163,18 @@ void dtUtil::LogObserverFile::LogMessage(const LogData& logData)
 
    if (!logData.logName.empty())
    {
-      logFile << "'" << logData.logName << "' ";
+      logFile << "'" << logData.logName << "'";
    }
    
-   
-   logFile << logData.source;
+   if (!logData.file.empty())
+   {
+      logFile << " " << logData.file;
+   }
+
+   if (!logData.method.empty())
+   {
+      logFile << ":" << logData.method;
+   }
 
    if (logData.line > 0)
    {

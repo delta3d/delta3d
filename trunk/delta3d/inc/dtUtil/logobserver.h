@@ -41,7 +41,8 @@ namespace dtUtil
          Log::LogMessageType type; ///<Log level
          struct tm time;           ///<Time of message
          std::string logName;      ///<The name of the Log instance (could be empty)
-         std::string source;       ///<The source file/function of the message
+         std::string file;         ///<The source file of the message
+         std::string method;       ///<The callng method of the message
          int line;                 ///<The line number of the source code of the message
          std::string msg;          ///<The message itself
       };

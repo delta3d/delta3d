@@ -89,9 +89,8 @@ namespace dtUtil
    {
       if (logger.IsLevelEnabled(level))
       {
-         logger.LogMessage(level,__FUNCTION__, __LINE__,
-               "Exception Thrown: %s File: %s  Line: %d",
-               mMessage.c_str(), mFileName.c_str(), mLineNum);
+         logger.LogMessage(mFileName, __FUNCTION__, __LINE__,
+                           "Exception Thrown: " + mMessage, level);
       }
    }
 
