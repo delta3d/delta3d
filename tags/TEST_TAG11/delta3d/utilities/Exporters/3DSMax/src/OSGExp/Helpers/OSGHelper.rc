@@ -1,0 +1,730 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "Helpers/resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "windows.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// Danish resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_DAN)
+#ifdef _WIN32
+LANGUAGE LANG_DANISH, SUBLANG_DEFAULT
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+3 TEXTINCLUDE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+#endif    // Danish resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#include ""windows.h""\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_PANEL DIALOG  0, 0, 108, 156
+STYLE DS_SETFONT | WS_CHILD | WS_VISIBLE
+FONT 8, "MS Sans Serif"
+BEGIN
+    CTEXT           "Template for OSG helpers",IDC_STATIC,7,7,94,36
+    CONTROL         "",IDC_EDIT,"CustEdit",WS_TABSTOP,29,114,35,10
+    CONTROL         "",IDC_SPIN,"SpinnerControl",0x0,65,114,7,10
+    LTEXT           "Spinner Cust Control:",IDC_STATIC,20,102,67,8
+END
+
+IDD_BILLBOARD DIALOGEX 0, 0, 108, 446
+STYLE DS_SETFONT | WS_CHILD | WS_VISIBLE
+FONT 8, "MS Sans Serif", 0, 0, 0x0
+BEGIN
+    GROUPBOX        "Mode",IDC_STATIC,7,7,94,56
+    CONTROL         "Axial Rot",IDC_ROT_AXIAL,"Button",BS_AUTORADIOBUTTON,15,18,44,10
+    CONTROL         "Point Rot World",IDC_ROT_WORLD,"Button",BS_AUTORADIOBUTTON,15,31,66,10
+    CONTROL         "Point Rot eye",IDC_ROT_EYE,"Button",BS_AUTORADIOBUTTON,15,44,59,10
+    GROUPBOX        "Axis",IDC_STATIC,7,70,94,55
+    CONTROL         "",IDC_BILL_EDIT1,"CustEdit",WS_TABSTOP,30,82,35,10
+    CONTROL         "",IDC_BILL_SPIN1,"SpinnerControl",0x0,66,82,7,10
+    LTEXT           "X",IDC_STATIC,15,83,8,8
+    CONTROL         "",IDC_BILL_EDIT2,"CustEdit",WS_TABSTOP,30,94,35,10
+    CONTROL         "",IDC_BILL_SPIN2,"SpinnerControl",0x0,66,94,7,10
+    LTEXT           "Y",IDC_STATIC,15,95,8,8
+    CONTROL         "",IDC_BILL_EDIT3,"CustEdit",WS_TABSTOP,30,107,35,10
+    CONTROL         "",IDC_BILL_SPIN3,"SpinnerControl",0x0,66,107,7,10
+    LTEXT           "Z",IDC_STATIC,15,108,8,8
+    GROUPBOX        "Normal",IDC_STATIC,7,133,94,55
+    CONTROL         "",IDC_BILL_EDIT4,"CustEdit",WS_TABSTOP,30,144,35,10
+    CONTROL         "",IDC_BILL_SPIN4,"SpinnerControl",0x0,66,144,7,10
+    LTEXT           "X",IDC_STATIC,15,146,8,8
+    CONTROL         "",IDC_BILL_EDIT5,"CustEdit",WS_TABSTOP,30,157,35,10
+    CONTROL         "",IDC_BILL_SPIN5,"SpinnerControl",0x0,66,157,7,10
+    LTEXT           "Y",IDC_STATIC,15,157,8,8
+    CONTROL         "",IDC_BILL_EDIT6,"CustEdit",WS_TABSTOP,30,169,35,10
+    CONTROL         "",IDC_BILL_SPIN6,"SpinnerControl",0x0,66,169,7,10
+    LTEXT           "Z",IDC_STATIC,15,170,8,8
+    CONTROL         "Add",IDC_PICKNODE,"CustButton",WS_TABSTOP,10,208,42,12
+    LISTBOX         IDC_LIST,9,238,89,44,LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "Remove",IDC_REMOVE_BILL,"CustButton",WS_TABSTOP,56,208,42,12
+    GROUPBOX        "Billboard Geometry",IDC_STATIC,7,196,94,95
+    CONTROL         "Add Multiple",IDC_MULTIPLE_PICKNODE,"CustButton",WS_TABSTOP,10,223,88,12
+END
+
+IDD_STATESET DIALOGEX 0, 0, 108, 102
+STYLE DS_SETFONT | WS_CHILD | WS_VISIBLE
+FONT 8, "MS Sans Serif", 0, 0, 0x0
+BEGIN
+    CONTROL         "Add",IDC_PICKNODE,"CustButton",WS_TABSTOP,10,14,42,12
+    LISTBOX         IDC_STATESET_NODELIST,9,44,89,44,LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "Remove",IDC_STATESET_REMOVENODE,"CustButton",WS_TABSTOP,56,14,42,12
+    GROUPBOX        "Apply StateSet On:",IDC_STATIC,7,3,94,90
+    CONTROL         "Add Multiple",IDC_MULTIPLE_PICKNODE,"CustButton",WS_TABSTOP,10,29,88,12
+END
+
+IDD_LOD DIALOGEX 0, 0, 108, 481
+STYLE DS_SETFONT | WS_CHILD | WS_VISIBLE
+FONT 8, "MS Sans Serif", 0, 0, 0x0
+BEGIN
+    GROUPBOX        "LOD Objects",IDC_STATIC,7,112,92,150
+    GROUPBOX        "LOD Center",IDC_STATIC,7,300,92,60,NOT WS_VISIBLE
+    CONTROL         "",IDC_LOD_CENTER_X_EDIT,"CustEdit",NOT WS_VISIBLE | WS_TABSTOP,48,313,35,10
+    CONTROL         "",IDC_LOD_CENTER_X_SPIN,"SpinnerControl",NOT WS_VISIBLE,84,313,7,10
+    LTEXT           "X:",IDC_STATIC,14,313,8,8,NOT WS_VISIBLE
+    CONTROL         "",IDC_LOD_MIN_EDIT1,"CustEdit",WS_TABSTOP,13,133,30,10
+    CONTROL         "",IDC_LOD_MIN_SPIN1,"SpinnerControl",0x0,44,133,7,10
+    LTEXT           "Min:",IDC_STATIC,14,123,14,8
+    CONTROL         "",IDC_LOD_MAX_EDIT1,"CustEdit",WS_TABSTOP,55,133,30,10
+    CONTROL         "",IDC_LOD_MAX_SPIN1,"SpinnerControl",0x0,86,133,7,10
+    LTEXT           "Max:",IDC_STATIC,56,123,16,8
+    CONTROL         "",IDC_LOD_CENTER_Y_EDIT,"CustEdit",NOT WS_VISIBLE | WS_TABSTOP,48,328,35,10
+    CONTROL         "",IDC_LOD_CENTER_Y_SPIN,"SpinnerControl",NOT WS_VISIBLE,84,328,7,10
+    LTEXT           "Y:",IDC_STATIC,14,328,8,8,NOT WS_VISIBLE
+    CONTROL         "",IDC_LOD_CENTER_Z_EDIT,"CustEdit",NOT WS_VISIBLE | WS_TABSTOP,48,343,35,10
+    CONTROL         "",IDC_LOD_CENTER_Z_SPIN,"SpinnerControl",NOT WS_VISIBLE,84,343,7,10
+    LTEXT           "Z:",IDC_STATIC,14,343,8,8,NOT WS_VISIBLE
+    CONTROL         "",IDC_LOD_MIN_EDIT2,"CustEdit",WS_TABSTOP,13,159,30,10
+    CONTROL         "",IDC_LOD_MIN_SPIN2,"SpinnerControl",0x0,44,159,7,10
+    LTEXT           "Min:",IDC_STATIC,13,150,14,8
+    CONTROL         "",IDC_LOD_MAX_EDIT2,"CustEdit",WS_TABSTOP,55,159,30,10
+    CONTROL         "",IDC_LOD_MAX_SPIN2,"SpinnerControl",0x0,86,159,7,10
+    LTEXT           "Max:",IDC_STATIC,55,150,16,8
+    CONTROL         "",IDC_LOD_MIN_EDIT3,"CustEdit",WS_TABSTOP,13,187,30,10
+    CONTROL         "",IDC_LOD_MIN_SPIN3,"SpinnerControl",0x0,44,187,7,10
+    LTEXT           "Min:",IDC_STATIC,14,177,14,8
+    CONTROL         "",IDC_LOD_MAX_EDIT3,"CustEdit",WS_TABSTOP,55,187,30,10
+    CONTROL         "",IDC_LOD_MAX_SPIN3,"SpinnerControl",0x0,86,187,7,10
+    LTEXT           "Max:",IDC_STATIC,56,177,16,8
+    CONTROL         "",IDC_LOD_MIN_EDIT4,"CustEdit",WS_TABSTOP,13,216,30,10
+    CONTROL         "",IDC_LOD_MIN_SPIN4,"SpinnerControl",0x0,44,216,7,10
+    LTEXT           "Min:",IDC_STATIC,13,205,14,8
+    CONTROL         "",IDC_LOD_MAX_EDIT4,"CustEdit",WS_TABSTOP,55,216,30,10
+    CONTROL         "",IDC_LOD_MAX_SPIN4,"SpinnerControl",0x0,86,216,7,10
+    LTEXT           "Max:",IDC_STATIC,55,205,16,8
+    CONTROL         "",IDC_LOD_MIN_EDIT5,"CustEdit",WS_TABSTOP,13,244,30,10
+    CONTROL         "",IDC_LOD_MIN_SPIN5,"SpinnerControl",0x0,44,244,7,10
+    LTEXT           "Min:",IDC_STATIC,14,233,14,8
+    CONTROL         "",IDC_LOD_MAX_EDIT5,"CustEdit",WS_TABSTOP,55,244,30,10
+    CONTROL         "",IDC_LOD_MAX_SPIN5,"SpinnerControl",0x0,86,244,7,10
+    LTEXT           "Max:",IDC_STATIC,56,233,16,8
+    CONTROL         "",IDC_PAGEDLOD_FILENAME,"CustEdit",WS_TABSTOP,13,299,80,12
+    CONTROL         "Use Paged LOD",IDC_LOD_USEPAGED,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,271,80,14
+    GROUPBOX        "Paged LOD",IDC_STATIC,7,265,92,51
+    LTEXT           "Template filename:",IDC_STATIC,14,288,64,8
+    CONTROL         "Add",IDC_PICKNODE,"CustButton",WS_TABSTOP,9,14,42,12
+    LISTBOX         IDC_LIST,7,30,94,56,LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "Remove",IDC_SWITCH_REMNODE,"CustButton",WS_TABSTOP,55,14,42,12
+    GROUPBOX        "LOD Children",IDC_STATIC,7,3,94,103
+    CONTROL         "Add",IDC_LOD_PICKNODE1,"CustButton",NOT WS_VISIBLE | WS_TABSTOP,7,309,42,12
+    CONTROL         "Add",IDC_LOD_PICKNODE2,"CustButton",NOT WS_VISIBLE | WS_TABSTOP,7,317,42,12
+    CONTROL         "Add",IDC_LOD_PICKNODE3,"CustButton",NOT WS_VISIBLE | WS_TABSTOP,7,328,42,12
+    CONTROL         "Add",IDC_LOD_PICKNODE4,"CustButton",NOT WS_VISIBLE | WS_TABSTOP,7,335,42,12
+    CONTROL         "Add",IDC_LOD_PICKNODE5,"CustButton",NOT WS_VISIBLE | WS_TABSTOP,7,348,42,12
+    CONTROL         "Up",IDC_NODE_MOVE_UP,"CustButton",WS_TABSTOP,9,90,42,12
+    CONTROL         "Down",IDC_NODE_MOVE_DOWN,"CustButton",WS_TABSTOP,55,90,42,12
+END
+
+IDD_SEQUENCE DIALOG  0, 0, 108, 526
+STYLE DS_SETFONT | WS_CHILD | WS_VISIBLE
+FONT 8, "MS Sans Serif"
+BEGIN
+    CONTROL         "Add",IDC_SEQUENCE_PICKNODE1,"CustButton",WS_TABSTOP,25,308,68,12
+    GROUPBOX        "Sequence Objects",IDC_STATIC,7,197,92,302
+    GROUPBOX        "Sequence Interval",IDC_STATIC,7,5,92,70
+    CONTROL         "",IDC_SEQUENCE_BEGIN_EDIT,"CustEdit",WS_TABSTOP,48,18,35,10
+    CONTROL         "",IDC_SEQUENCE_BEGIN_SPIN,"SpinnerControl",0x0,84,18,7,10
+    LTEXT           "Begin",IDC_STATIC,14,18,19,8
+    CONTROL         "",IDC_SEQUENCE_TIME_EDIT1,"CustEdit",WS_TABSTOP,26,294,30,10
+    CONTROL         "",IDC_SEQUENCE_TIME_SPIN1,"SpinnerControl",0x0,57,294,7,10
+    LTEXT           "Frame Time:",IDC_STATIC,26,282,40,8
+    CONTROL         "",IDC_SEQUENCE_END_EDIT,"CustEdit",WS_TABSTOP,48,33,35,10
+    CONTROL         "",IDC_SEQUENCE_END_SPIN,"SpinnerControl",0x0,84,33,7,10
+    LTEXT           "End:",IDC_STATIC,14,33,16,8
+    LTEXT           "Loop Mode:",IDC_STATIC,14,48,39,8
+    CONTROL         "Add",IDC_SEQUENCE_PICKNODE2,"CustButton",WS_TABSTOP,25,350,68,12
+    CONTROL         "",IDC_SEQUENCE_TIME_EDIT2,"CustEdit",WS_TABSTOP,26,335,30,10
+    CONTROL         "",IDC_SEQUENCE_TIME_SPIN2,"SpinnerControl",0x0,57,335,7,10
+    LTEXT           "Frame Time:",IDC_STATIC,26,324,40,8
+    CONTROL         "Add",IDC_SEQUENCE_PICKNODE3,"CustButton",WS_TABSTOP,25,392,68,12
+    CONTROL         "",IDC_SEQUENCE_TIME_EDIT3,"CustEdit",WS_TABSTOP,26,378,30,10
+    CONTROL         "",IDC_SEQUENCE_TIME_SPIN3,"SpinnerControl",0x0,57,378,7,10
+    LTEXT           "Frame Time:",IDC_STATIC,26,366,40,8
+    CONTROL         "Add",IDC_SEQUENCE_PICKNODE4,"CustButton",WS_TABSTOP,25,435,68,12
+    CONTROL         "",IDC_SEQUENCE_TIME_EDIT4,"CustEdit",WS_TABSTOP,26,421,30,10
+    CONTROL         "",IDC_SEQUENCE_TIME_SPIN4,"SpinnerControl",0x0,57,421,7,10
+    LTEXT           "Frame Time:",IDC_STATIC,26,408,40,8
+    CONTROL         "Add",IDC_SEQUENCE_PICKNODE5,"CustButton",WS_TABSTOP,25,478,68,12
+    CONTROL         "",IDC_SEQUENCE_TIME_EDIT5,"CustEdit",WS_TABSTOP,26,464,30,10
+    CONTROL         "",IDC_SEQUENCE_TIME_SPIN5,"SpinnerControl",0x0,57,464,7,10
+    LTEXT           "Frame Time:",IDC_STATIC,26,451,40,8
+    CONTROL         "Loop",IDC_SEQUENCE_LOOP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,60,32,10
+    CONTROL         "Swing",IDC_SEQUENCE_SWING,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,57,60,35,10
+    GROUPBOX        "Sequence Duration",IDC_STATIC,7,80,92,44
+    CONTROL         "",IDC_SEQUENCE_SPEED_EDIT,"CustEdit",WS_TABSTOP,48,92,35,10
+    CONTROL         "",IDC_SEQUENCE_SPEED_SPIN,"SpinnerControl",0x0,84,92,7,10
+    LTEXT           "Speed:",IDC_STATIC,14,92,24,8
+    CONTROL         "",IDC_SEQUENCE_REPS_EDIT,"CustEdit",WS_TABSTOP,48,108,35,10
+    CONTROL         "",IDC_SEQUENCE_REPS_SPIN,"SpinnerControl",0x0,84,108,7,10
+    LTEXT           "Reps:",IDC_STATIC,14,108,20,8
+    GROUPBOX        "Sequence Mode",IDC_STATIC,7,129,92,62
+    CONTROL         "Start",IDC_SEQUENCE_START,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,141,31,10
+    CONTROL         "Stop",IDC_SEQUENCE_STOP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,153,31,10
+    CONTROL         "Pause",IDC_SEQUENCE_PAUSE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,165,36,10
+    CONTROL         "Resume",IDC_SEQUENCE_RESUME,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,177,42,10
+    CONTROL         "Add",IDC_SEQUENCE_SAMPLE_PICKNODE,"CustButton",WS_TABSTOP,25,223,68,12
+    CONTROL         "",IDC_SEQUENCE_SAMPLE_EDIT,"CustEdit",WS_TABSTOP,26,250,30,10
+    CONTROL         "",IDC_SEQUENCE_SAMPLE_SPIN,"SpinnerControl",0x0,57,250,7,10
+    LTEXT           "Frame per Sample:",IDC_STATIC,26,238,60,8
+    CONTROL         "Sample Geometry",IDC_SEQUENCE_SAMPLE,"Button",BS_AUTORADIOBUTTON,14,209,71,10
+    CONTROL         "Use Static Geometry",IDC_SEQUENCE_STATIC,"Button",BS_AUTORADIOBUTTON,14,270,81,10
+END
+
+IDD_NODEMASK DIALOG  0, 0, 108, 446
+STYLE DS_SETFONT | WS_CHILD | WS_VISIBLE
+FONT 8, "MS Sans Serif"
+BEGIN
+    GROUPBOX        "NodeMask Value",-1,7,11,94,87
+    CONTROL         "Add",IDC_PICKNODE,"CustButton",WS_TABSTOP,10,111,42,12
+    LISTBOX         IDC_LIST,9,142,89,44,LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "Remove",IDC_NODEMASK_REMNODE,"CustButton",WS_TABSTOP,56,111,42,12
+    GROUPBOX        "NodeMask Geometry",-1,7,101,94,89
+    CONTROL         "Add Multiple",IDC_MULTIPLE_PICKNODE,"CustButton",WS_TABSTOP,10,126,88,12
+    CONTROL         "Terrain mask",IDC_NODEMASK_TERRAIN,"Button",BS_AUTORADIOBUTTON,15,25,57,10
+    CONTROL         "Collision mask",IDC_NODEMASK_COLLISION,"Button",BS_AUTORADIOBUTTON,15,38,60,10
+    CONTROL         "No Collision mask",IDC_NODEMASK_NO_COLLISION,"Button",BS_AUTORADIOBUTTON,15,51,71,10
+    CONTROL         "Custom mask",IDC_NODEMASK_CUSTOM,"Button",BS_AUTORADIOBUTTON,15,64,58,10
+    CONTROL         "",IDC_NODEMASK_EDIT,"CustEdit",WS_TABSTOP,27,77,67,12
+END
+
+IDD_SWITCH DIALOGEX 0, 0, 108, 446
+STYLE DS_SETFONT | WS_CHILD | WS_VISIBLE
+FONT 8, "MS Sans Serif", 0, 0, 0x0
+BEGIN
+    CONTROL         "Add",IDC_PICKNODE,"CustButton",WS_TABSTOP,10,23,42,12
+    LISTBOX         IDC_LIST,7,53,94,53,LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "Remove",IDC_SWITCH_REMNODE,"CustButton",WS_TABSTOP,56,23,42,12
+    GROUPBOX        "Switch Geometry",-1,7,11,94,113
+    CONTROL         "Add Multiple",IDC_MULTIPLE_PICKNODE,"CustButton",WS_TABSTOP,10,38,88,12
+    CONTROL         "Child 2",IDC_SWITCH_ENABLE_CHILDREN2,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,141,86,10
+    CONTROL         "Child 1",IDC_SWITCH_ENABLE_CHILDREN1,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,128,86,10
+    CONTROL         "Child 3",IDC_SWITCH_ENABLE_CHILDREN4,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,154,86,10
+    CONTROL         "Child 4",IDC_SWITCH_ENABLE_CHILDREN5,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,167,86,10
+    CONTROL         "Child 5",IDC_SWITCH_ENABLE_CHILDREN6,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,180,86,10
+    CONTROL         "Child 6",IDC_SWITCH_ENABLE_CHILDREN7,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,193,86,10
+    CONTROL         "Child 7",IDC_SWITCH_ENABLE_CHILDREN8,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,206,86,10
+    CONTROL         "Child 8",IDC_SWITCH_ENABLE_CHILDREN9,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,219,86,10
+    CONTROL         "Child 9",IDC_SWITCH_ENABLE_CHILDREN10,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,232,86,10
+    CONTROL         "Up",IDC_NODE_MOVE_UP,"CustButton",WS_TABSTOP,10,109,42,12
+    CONTROL         "Down",IDC_NODE_MOVE_DOWN,"CustButton",WS_TABSTOP,56,109,42,12
+END
+
+IDD_IMPOSTOR DIALOG  0, 0, 108, 446
+STYLE DS_SETFONT | WS_CHILD | WS_VISIBLE
+FONT 8, "MS Sans Serif"
+BEGIN
+    GROUPBOX        "Threshold Value",-1,7,11,94,30
+    CONTROL         "",IDC_IMPOSTOR_EDIT,"CustEdit",WS_TABSTOP,13,23,71,10
+    CONTROL         "",IDC_IMPOSTOR_SPIN,"SpinnerControl",0x0,85,23,7,10
+    CONTROL         "Add",IDC_PICKNODE,"CustButton",WS_TABSTOP,10,62,42,12
+    LISTBOX         IDC_LIST,9,93,89,44,LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "Remove",IDC_IMPOSTOR_REMNODE,"CustButton",WS_TABSTOP,56,62,42,12
+    GROUPBOX        "Impostor Geometry",-1,7,50,94,91
+    CONTROL         "Add Multiple",IDC_MULTIPLE_PICKNODE,"CustButton",WS_TABSTOP,10,77,88,12
+END
+
+IDD_OCCLUDER DIALOG  0, 0, 108, 446
+STYLE DS_SETFONT | WS_CHILD | WS_VISIBLE
+FONT 8, "MS Sans Serif"
+BEGIN
+    CONTROL         "Add",IDC_PICKNODE,"CustButton",WS_TABSTOP,10,22,42,12
+    LISTBOX         IDC_LIST,9,38,89,44,LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "Remove",IDC_OCCLUDER_REMNODE,"CustButton",WS_TABSTOP,56,22,42,12
+    GROUPBOX        "Occluder Shapes",-1,7,10,94,79
+END
+
+IDD_VISIBILITYGROUP DIALOG  0, 0, 108, 446
+STYLE DS_SETFONT | WS_CHILD | WS_VISIBLE
+FONT 8, "MS Sans Serif"
+BEGIN
+    CONTROL         "Add",IDC_PICKNODE,"CustButton",WS_TABSTOP,10,59,42,12
+    LISTBOX         IDC_LIST,9,90,89,44,LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "Remove",IDC_VISIBILITYGROUP_REMNODE,"CustButton",WS_TABSTOP,56,59,42,12
+    GROUPBOX        "Visibility Geometry",-1,7,47,94,92
+    CONTROL         "Add Multiple",IDC_MULTIPLE_PICKNODE,"CustButton",WS_TABSTOP,10,74,88,12
+    CONTROL         "Add",IDC_VISIBILITYGROUP_VOLUME,"CustButton",WS_TABSTOP,13,20,80,12
+    GROUPBOX        "Visibility Volume",-1,6,5,94,36
+END
+
+IDD_POLYGONOFFSET DIALOGEX 0, 0, 108, 91
+STYLE DS_SETFONT | WS_CHILD | WS_VISIBLE
+FONT 8, "MS Sans Serif", 0, 0, 0x0
+BEGIN
+    CONTROL         "Enable",IDC_POLYGONOFFSET_ENABLE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,35,7,37,10
+    GROUPBOX        "Parameters",IDC_STATIC,7,21,94,62
+    LTEXT           "Factor:",IDC_STATIC,19,35,23,8
+    LTEXT           "Units:",IDC_STATIC,23,49,19,8
+    CONTROL         "",IDC_POLYOFF_FACTOR_EDIT,"CustEdit",WS_TABSTOP,44,34,35,10
+    CONTROL         "",IDC_POLYOFF_FACTOR_SPIN,"SpinnerControl",0x0,80,34,7,10
+    CONTROL         "",IDC_POLYOFF_UNIT_EDIT,"CustEdit",WS_TABSTOP,44,48,35,10
+    CONTROL         "",IDC_POLYOFF_UNIT_SPIN,"SpinnerControl",0x0,80,48,7,10
+    CONTROL         "DepthFunct to",IDC_POLYGONOFFSET_DEPTHFUNC,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,30,63,61,10
+    LTEXT           "GL_LEQUAL",IDC_STATIC,42,72,42,8
+END
+
+IDD_POLYGONMODE DIALOGEX 0, 0, 108, 125
+STYLE DS_SETFONT | WS_CHILD | WS_VISIBLE
+FONT 8, "MS Sans Serif", 0, 0, 0x0
+BEGIN
+    CONTROL         "Enable",IDC_POLYGONMODE_ENABLE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,35,7,37,10
+    GROUPBOX        "Front Face",IDC_STATIC,7,22,94,46
+    CONTROL         "Fill",IDC_PMFF_RADIO1,"Button",BS_AUTORADIOBUTTON,15,33,24,10
+    CONTROL         "Line",IDC_PMFF_RADIO2,"Button",BS_AUTORADIOBUTTON,15,44,29,10
+    CONTROL         "Point",IDC_PMFF_RADIO3,"Button",BS_AUTORADIOBUTTON,15,55,32,10
+    GROUPBOX        "Back Face",IDC_STATIC,7,71,94,46
+    CONTROL         "Fill",IDC_PMBF_RADIO1,"Button",BS_AUTORADIOBUTTON,15,81,24,10
+    CONTROL         "Line",IDC_PMBF_RADIO2,"Button",BS_AUTORADIOBUTTON,15,92,29,10
+    CONTROL         "Point",IDC_PMBF_RADIO3,"Button",BS_AUTORADIOBUTTON,15,103,32,10
+END
+
+IDD_RENDERBIN DIALOGEX 0, 0, 108, 146
+STYLE DS_SETFONT | WS_CHILD | WS_VISIBLE
+FONT 8, "MS Sans Serif", 0, 0, 0x0
+BEGIN
+    CONTROL         "Enable",IDC_RENDERBIN_ENABLE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,35,7,37,10
+    GROUPBOX        "Render Bin Details",IDC_STATIC,7,22,94,116
+    CONTROL         "Inherit Render Bin",IDC_RENDER_INHERIT,"Button",BS_AUTORADIOBUTTON,15,82,73,10
+    CONTROL         "Use Render Bin",IDC_RENDER_USE,"Button",BS_AUTORADIOBUTTON,15,95,66,10
+    CONTROL         "Override Render Bin",IDC_RENDER_OVERRIDE,"Button",BS_AUTORADIOBUTTON,15,108,80,10
+    CONTROL         "Enclose Render Bin",IDC_RENDER_ENCLOSE,"Button",BS_AUTORADIOBUTTON,15,121,79,10
+    LTEXT           "Mode:",IDC_STATIC,14,67,21,8
+    CONTROL         "",IDC_STATESET_BIN_EDIT,"CustEdit",WS_TABSTOP,48,35,35,10
+    CONTROL         "",IDC_STATESET_BIN_SPIN,"SpinnerControl",0x0,84,35,7,10
+    LTEXT           "Number:",IDC_STATIC,14,35,28,8
+    LTEXT           "Name:",IDC_STATIC,14,51,22,8
+    CONTROL         "",IDC_STATESET_BIN_NAME,"CustEdit",WS_TABSTOP,48,51,43,10
+END
+
+IDD_GLMODE DIALOGEX 0, 0, 108, 87
+STYLE DS_SETFONT | WS_CHILD | WS_VISIBLE
+FONT 8, "MS Sans Serif", 0, 0, 0x0
+BEGIN
+    GROUPBOX        "GL mode",IDC_STATIC,7,7,94,72
+    CONTROL         "Cull Face",IDC_GLMODE_CULLFACE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,18,45,10
+    CONTROL         "Normalize",IDC_GLMODE_NORMALIZE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,32,47,10
+    CONTROL         "Turn off Lighting",IDC_GLMODE_TURNOFFLIGHTING,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,46,67,10
+    CONTROL         "Use Alpha Blending",IDC_GLMODE_ALPHABLENDING,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,60,78,10
+END
+
+IDD_OSGGROUP DIALOGEX 0, 0, 108, 446
+STYLE DS_SETFONT | WS_CHILD | WS_VISIBLE
+FONT 8, "MS Sans Serif", 0, 0, 0x0
+BEGIN
+    CONTROL         "Add",IDC_PICKNODE,"CustButton",WS_TABSTOP,10,23,42,12
+    LISTBOX         IDC_LIST,7,79,94,85,LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "Remove",IDC_SWITCH_REMNODE,"CustButton",WS_TABSTOP,56,23,42,12
+    GROUPBOX        "Group Children",-1,7,11,94,161
+    CONTROL         "Add Multiple",IDC_MULTIPLE_PICKNODE,"CustButton",WS_TABSTOP,10,38,88,12
+END
+
+IDD_DOFTRANSFORM DIALOGEX 0, 0, 108, 625
+STYLE DS_SETFONT | WS_CHILD | WS_VISIBLE
+FONT 8, "MS Sans Serif", 0, 0, 0x0
+BEGIN
+    CONTROL         "Add",IDC_PICKNODE,"CustButton",WS_TABSTOP,10,23,42,12
+    LISTBOX         IDC_LIST,7,69,94,85,LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "Remove",IDC_SWITCH_REMNODE,"CustButton",WS_TABSTOP,56,23,42,12
+    GROUPBOX        "DOF Children",IDC_STATIC,7,11,94,150
+    CONTROL         "Add Multiple",IDC_MULTIPLE_PICKNODE,"CustButton",WS_TABSTOP,10,38,88,12
+    GROUPBOX        "Min Translate",IDC_STATIC,7,376,94,55
+    CONTROL         "",IDC_BILL_EDIT1,"CustEdit",WS_TABSTOP,30,388,35,10
+    CONTROL         "",IDC_BILL_SPIN1,"SpinnerControl",0x0,66,388,7,10
+    LTEXT           "X",IDC_STATIC,15,389,8,8
+    CONTROL         "",IDC_BILL_EDIT2,"CustEdit",WS_TABSTOP,30,400,35,10
+    CONTROL         "",IDC_BILL_SPIN2,"SpinnerControl",0x0,66,400,7,10
+    LTEXT           "Y",IDC_STATIC,15,401,8,8
+    CONTROL         "",IDC_BILL_EDIT3,"CustEdit",WS_TABSTOP,30,413,35,10
+    CONTROL         "",IDC_BILL_SPIN3,"SpinnerControl",0x0,66,413,7,10
+    LTEXT           "Z",IDC_STATIC,15,414,8,8
+    GROUPBOX        "Max Translate",IDC_STATIC,7,440,94,55
+    CONTROL         "",IDC_BILL_EDIT4,"CustEdit",WS_TABSTOP,30,451,35,10
+    CONTROL         "",IDC_BILL_SPIN4,"SpinnerControl",0x0,66,451,7,10
+    LTEXT           "X",IDC_STATIC,15,453,8,8
+    CONTROL         "",IDC_BILL_EDIT5,"CustEdit",WS_TABSTOP,30,464,35,10
+    CONTROL         "",IDC_BILL_SPIN5,"SpinnerControl",0x0,66,464,7,10
+    LTEXT           "Y",IDC_STATIC,15,464,8,8
+    CONTROL         "",IDC_BILL_EDIT6,"CustEdit",WS_TABSTOP,30,476,35,10
+    CONTROL         "",IDC_BILL_SPIN6,"SpinnerControl",0x0,66,476,7,10
+    LTEXT           "Z",IDC_STATIC,15,477,8,8
+    GROUPBOX        "Min HPR",IDC_STATIC,7,254,94,55
+    CONTROL         "",IDC_BILL_EDIT7,"CustEdit",WS_TABSTOP,30,266,35,10
+    CONTROL         "",IDC_BILL_SPIN7,"SpinnerControl",0x0,66,266,7,10
+    LTEXT           "H",IDC_STATIC,15,267,8,8
+    CONTROL         "",IDC_BILL_EDIT8,"CustEdit",WS_TABSTOP,30,278,35,10
+    CONTROL         "",IDC_BILL_SPIN8,"SpinnerControl",0x0,66,278,7,10
+    LTEXT           "P",IDC_STATIC,15,279,8,8
+    CONTROL         "",IDC_BILL_EDIT9,"CustEdit",WS_TABSTOP,30,291,35,10
+    CONTROL         "",IDC_BILL_SPIN9,"SpinnerControl",0x0,66,291,7,10
+    LTEXT           "R",IDC_STATIC,15,292,8,8
+    GROUPBOX        "Max HPR",IDC_STATIC,7,317,94,55
+    CONTROL         "",IDC_BILL_EDIT10,"CustEdit",WS_TABSTOP,30,328,35,10
+    CONTROL         "",IDC_BILL_SPIN10,"SpinnerControl",0x0,66,328,7,10
+    LTEXT           "H",IDC_STATIC,15,330,8,8
+    CONTROL         "",IDC_BILL_EDIT11,"CustEdit",WS_TABSTOP,30,341,35,10
+    CONTROL         "",IDC_BILL_SPIN11,"SpinnerControl",0x0,66,341,7,10
+    LTEXT           "P",IDC_STATIC,15,341,8,8
+    CONTROL         "",IDC_BILL_EDIT12,"CustEdit",WS_TABSTOP,30,353,35,10
+    CONTROL         "",IDC_BILL_SPIN12,"SpinnerControl",0x0,66,353,7,10
+    LTEXT           "R",IDC_STATIC,15,354,8,8
+    GROUPBOX        "Min Scale",IDC_STATIC,7,502,94,55
+    CONTROL         "",IDC_BILL_EDIT13,"CustEdit",WS_TABSTOP,30,514,35,10
+    CONTROL         "",IDC_BILL_SPIN13,"SpinnerControl",0x0,66,514,7,10
+    LTEXT           "X",IDC_STATIC,15,515,8,8
+    CONTROL         "",IDC_BILL_EDIT14,"CustEdit",WS_TABSTOP,30,526,35,10
+    CONTROL         "",IDC_BILL_SPIN14,"SpinnerControl",0x0,66,526,7,10
+    LTEXT           "Y",IDC_STATIC,15,527,8,8
+    CONTROL         "",IDC_BILL_EDIT15,"CustEdit",WS_TABSTOP,30,539,35,10
+    CONTROL         "",IDC_BILL_SPIN15,"SpinnerControl",0x0,66,539,7,10
+    LTEXT           "Z",IDC_STATIC,15,540,8,8
+    GROUPBOX        "Max Scale",IDC_STATIC,7,565,94,55
+    CONTROL         "",IDC_BILL_EDIT16,"CustEdit",WS_TABSTOP,30,576,35,10
+    CONTROL         "",IDC_BILL_SPIN16,"SpinnerControl",0x0,66,576,7,10
+    LTEXT           "X",IDC_STATIC,15,578,8,8
+    CONTROL         "",IDC_BILL_EDIT17,"CustEdit",WS_TABSTOP,30,589,35,10
+    CONTROL         "",IDC_BILL_SPIN17,"SpinnerControl",0x0,66,589,7,10
+    LTEXT           "Y",IDC_STATIC,15,589,8,8
+    CONTROL         "",IDC_BILL_EDIT18,"CustEdit",WS_TABSTOP,30,601,35,10
+    CONTROL         "",IDC_BILL_SPIN18,"SpinnerControl",0x0,66,601,7,10
+    LTEXT           "Z",IDC_STATIC,15,602,8,8
+    GROUPBOX        "Mult Order",IDC_STATIC,7,164,94,90
+    CONTROL         "PRH",IDC_PRH,"Button",BS_AUTORADIOBUTTON,15,175,44,10
+    CONTROL         "PHR",IDC_PHR,"Button",BS_AUTORADIOBUTTON,15,188,66,10
+    CONTROL         "HPR",IDC_HPR,"Button",BS_AUTORADIOBUTTON,15,201,59,10
+    CONTROL         "HRP",IDC_HRP,"Button",BS_AUTORADIOBUTTON,15,213,44,10
+    CONTROL         "RPH",IDC_RPH,"Button",BS_AUTORADIOBUTTON,15,226,66,10
+    CONTROL         "RHP",IDC_RHP,"Button",BS_AUTORADIOBUTTON,15,239,59,10
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_PANEL, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 101
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 149
+    END
+
+    IDD_BILLBOARD, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 101
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 291
+    END
+
+    IDD_STATESET, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 101
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 94
+    END
+
+    IDD_LOD, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 99
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 360
+    END
+
+    IDD_SEQUENCE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 99
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 499
+    END
+
+    IDD_NODEMASK, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 101
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 217
+    END
+
+    IDD_SWITCH, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 101
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 250
+    END
+
+    IDD_IMPOSTOR, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 101
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 185
+    END
+
+    IDD_OCCLUDER, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 101
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 142
+    END
+
+    IDD_VISIBILITYGROUP, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 101
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 188
+    END
+
+    IDD_POLYGONOFFSET, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 101
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 83
+    END
+
+    IDD_POLYGONMODE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 101
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 117
+    END
+
+    IDD_RENDERBIN, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 101
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 138
+    END
+
+    IDD_GLMODE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 101
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 79
+    END
+
+    IDD_OSGGROUP, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 101
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 172
+    END
+
+    IDD_DOFTRANSFORM, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 101
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 579
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE 
+BEGIN
+    IDS_LIBDESCRIPTION      "OpenSceneGraph Helper Object"
+    IDS_CATEGORY            "OpenSceneGraph"
+    IDS_CLASS_NAME          "Standard Helper"
+    IDS_PARAMS              "Parameters"
+    IDS_SPIN                "Spin"
+    IDS_BILLBOARD           "Billboard"
+    IDS_BILL_MODE           "Mode"
+    IDS_BILL_AXIS           "Axis"
+    IDS_BILL_NORMAL         "Normal"
+    IDS_BILL_NODES          "Billboard Referenced Nodes"
+    IDS_OSGHELPER           "OSGHelper"
+    IDS_STATESET_NODES      "StateSet Referenced Nodes"
+    IDS_STATESET            "StateSet"
+    IDS_STATESET_RENDER_HINT "Render Hint"
+    IDS_STATESET_RENDER_MODE "Render Bin mode"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_STATESET_NORMALIZE  "GL Mode Normalize"
+    IDS_STATESET_CULLFACE   "GL Mode Cull Face"
+    IDS_STATESET_BIN_NUMBER "StateSet Bin Number"
+    IDS_STATESET_BIN_NAME   "StateSet Bin Name"
+    IDS_LOD                 "LOD"
+    IDS_LOD_NODES           "LOD Referenced Nodes"
+    IDS_LOD_CENTER          "Center"
+    IDS_LOD_MIN             "LOD Min Values"
+    IDS_LOD_MAX             "LOD Max Values"
+    IDS_PICK_GEOM_OBJECT    "Pick a geometry object from the scene."
+    IDS_SEQUENCE            "Sequence"
+    IDS_SEQUENCE_INTERVAL   "Sequence Interval"
+    IDS_SEQUENCE_DURATION   "Sequence Duration"
+    IDS_SEQUENCE_MODE       "Sequence Mode"
+    IDS_SEQUENCE_TIME       "Sequence Time"
+    IDS_SEQUENCE_NODES      "Sequence Referenced Nodes"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_SEQUENCE_APPROACH   "Sequence Approach"
+    IDS_SEQUENCE_SAMPLE_NODE "Sequence Referenced Sample Node"
+    IDS_SEQUENCE_FRAME_PER_SAMPLE "Sequence Frame per Sample"
+    IDS_NODEMASK_VALUE      "NodeMask Value"
+    IDS_NODEMASK_NODES      "NodeMask Referenced Nodes"
+    IDS_NODEMASK            "NodeMask"
+    IDS_SWITCH              "Switch"
+    IDS_SWITCH_NODES        "Switch Referenced Nodes"
+    IDS_IMPOSTOR_VALUE      "Threshold Value"
+    IDS_IMPOSTOR_NODES      "Impostor Referenced Nodes"
+    IDS_IMPOSTOR            "NodeMask"
+    IDS_OCCLUDER            "Occluder"
+    IDS_OCCLUDER_NODES      "Occluder Referenced Nodes"
+    IDS_NODEMASK_MODE       "NodeMask Mode"
+    IDS_LOD_USEPAGED        "Use Paged LODs"
+    IDS_PAGEDLOD_FILENAME   "Paged LOD Template Filename"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_STATESET_TURNOFFLIGHTING "GL Mode Turn Off Lighting"
+    IDS_VISIBILITYGROUP     "VisibilityGroup"
+    IDS_VISIBILITYGROUP_VOLUME "VisibilityGroup Volume"
+    IDS_VISIBILITYGROUP_NODES "VisibilityGroup Referenced Nodes"
+    IDS_POLYGONOFFSET       "PolygonOffset"
+    IDS_POLYGONMODE         "PolygonMode"
+    IDS_RENDERBIN           "RenderBin"
+    IDS_GLMODE              "GLMode"
+    IDS_STATESET_RENDERBIN_ENABLE "Render Bin Enable"
+    IDS_STATESET_POLYMODE_ENABLE "PolygonMode Enable"
+    IDS_STATESET_POLYMODE_FRONTFACE "PolygonMode FrontFace"
+    IDS_STATESET_POLYMODE_BACKFACE "PolygonMode BackFace"
+    IDS_STATESET_POLYOFF_ENABLE "PolygonOffset Enable"
+    IDS_STATESET_POLYOFF_FACTOR "PolygonOffset Factor"
+    IDS_STATESET_POLYOFF_UNIT "PolygonOffset Unit"
+    IDS_STATESET_POLYOFF_DEPTHFUNC "PolygonOffset DepthFunc"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_STATESET_USEALPHABLENDING "Use Alpha Blending"
+    IDS_SWITCH_ENABLE_CHILDREN "Enable Child"
+    IDS_GROUP               "Group Node"
+    IDS_DOF_NODES           "DOF Referenced Nodes"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_GROUP_NODES         "Group Referenced Nodes"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_DOF                 "DOF Node"
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

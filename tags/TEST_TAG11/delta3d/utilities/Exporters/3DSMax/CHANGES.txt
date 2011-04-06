@@ -1,0 +1,105 @@
+OSGExp Goes Delta3D- (2-Feb-2007)
+-added support for DOFNodes
+-added support for selecting which switch nodes are active by default
+-fixed support for mixing vertex colors with a diffuse texture
+-fixed linking issues which disabled support for max linking
+-updated to compile against OSG 1.2
+
+OSGExp 0.9.3pre4 (4-Apr-2006)
+- Static Linked version
+- Made changes so that it compiles with the HEAD revision of OpenSceneGraph
+
+OSGExp 0.9.3pre3 (20-Feb-2006)
+- Added (untested) support for Architectural materials.
+
+OSGExp 0.9.3pre2 (23-Jan-2006)
+- Added installation support for Max 8
+- Bug fix: Fixed exporting of the StateSet Helper. Exporting settings like 
+  polygon offset now works correctly. Problem was that stateset where shared.
+
+
+OSGExp 0.9.3pre1 (26-Okt-2005)
+- Bug fix: Fixed a bug in the normal generation for billboards.
+- Bug fix: Now the reader writer options are reset. So when you turn 'include
+  images' in ive on again, it will work.
+- Bug fix: In stead of setting self illumination to white, the diffuse color is
+  copied to the emissive color. This way also none diffuse baked textures will
+  work.
+- Bug fix: It doesn't crash anymore on exporting multi-materials and the
+  Self-Illumination is handeled right.
+- Bug fix: Fixed a texture repeating bug. Negative texture coordinates would not
+  result in texture repeating unless values became smaller then -1.
+- Bug fix: Fixed a bug that messed up the texture coordinates. Also changed the
+  vertex color generation in the same way.
+- Bug fix: Fixed filename output in errormessage.
+- Created a new installer for Max6 and Max7 using NSIS
+  (http://nsis.sourceforge.net/).
+- Added Use Alpha Blending option to the OSG StateSet helper object.
+- Added support for PolygonOffset.
+- Added support for PolygonMode.
+- Added support for Point helpers.
+- Added support for Dummy helpers. A dummy helper will be exported as an empty
+  group.
+- Added Self Illumination map export. Can be used for applying light maps (multi
+  texture) using Render to Texture from Max.
+- Automaticly turn two sided lighting on for two sided materials.
+- When saving as ive and a texture compression is selected, the images will be
+  saved compressed in the ive file. Behaviour taken from osgconv.
+- Made the following features optional (using the export dialog):
+  * The exporting of opacity maps
+  * The exporting of unknown maps
+  * The automaticy setting the alpha blending for materials where the texture 
+    map has an alpha channel.
+  * The automaticly turing on two sided lighting if the material is two sided.
+  * The exporting of the self illumination map
+  * The exporting of point helpers
+- Modified stateset helper to a super stateset helper. Idea based on the OSGExp
+  of Emmanuel Roche. It modifies the stateset helper by adding a number of
+  rollups:
+  * GLMode rollup
+  * RenderBin rollup
+  * PolygonOffset rollup
+  * PolygonMode rollup
+- Improved animation support from Emmanuel Roche including dummy animation and
+  group animation.
+- When using the setDiffuseToWhite color not only the diffuse component is set
+  to white, but also the ambient component is converted to gray.
+- Only set the emissive color when it is turned on. Otherwize set it to black.
+- Modified the project files so that Hybrid is now called Debug and that the
+  debug version now outputs OSGExpd and OSGHelperd files.
+- Modified the project files so that when the project is put in the same
+  directory as OpenScenegraph, Producer and OpenThreads, the include files and
+  library files are automaticly located. So no need to put these in the global
+  VisualStudio settings. The only paths that need to be put in the visual studio
+  include and lib paths are those for the maxsdk.
+
+
+OSGExp 0.9.2b (5-Dec-2003)
+- Support for the new osgUtil::Optimizer including Tri Strip Geometry, Merge
+  Geometry, Flatten Static Transforms, Share Duplicate State, and Spatialize
+  Groups.
+- Every node is optimized to use STATIC datavariance instead of OSG's default
+  DYNAMIC.
+- Small bug fixes.
+
+
+OSGExp 0.9.2a (22-Nov-2003)
+- Support for PagedLOD - just check the PagedLOD box in the LOD helper object
+  and OSGExp does the rest ;-)
+- Better support for Opacity maps, it is now possible to specify the blend
+  amount.
+- Better support for standard and default NodeMasks, introducing Terrain,
+  Collision, No Collision and Custom NodeMasks.
+- OSGExp now comes with a simpel preview function directly from within 3ds max.
+
+
+OSGExp 0.9.2 (6-Okt-2003)
+- OSGExp version 0.9.2 is released as Open Source
+
+OSGExp (Summer 2003)
+- OSGExp goes beta - thanks to all the beta testers!
+
+
+OSGExp (Spring 2003)
+- OSGExp is used for real time architechtual visualization of the new head
+  quarter of the Danish Broadcast Cooperation in Örestaden.
