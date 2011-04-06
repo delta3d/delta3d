@@ -1353,7 +1353,7 @@ namespace dtDirector
       if (type)
       {
          color = QColor(type->GetColorRed(), type->GetColorGreen(), type->GetColorBlue(), 225);
-         if( !mNode->IsEnabled())
+         if(mNode != NULL && !mNode->IsEnabled())
          {
             color.setAlphaF(0.25f);
          }
