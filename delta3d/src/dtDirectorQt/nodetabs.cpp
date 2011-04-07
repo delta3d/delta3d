@@ -78,7 +78,7 @@ namespace dtDirector
                int tabCount = count();
                for (int tabIndex = 0; tabIndex < tabCount; ++tabIndex)
                {
-                  if (tabText(tabIndex).toStdString() == node->GetCategory())
+                  if (tabText(tabIndex).toStdString() == node->GetFolder())
                   {
                      QGraphicsView* view = dynamic_cast<QGraphicsView*>(widget(tabIndex));
                      if (view)
@@ -97,7 +97,7 @@ namespace dtDirector
                      this, SLOT(OnCreateNodeEvent(const QString&, const QString&)));
                   view->setScene(scene);
 
-                  addTab(view, node->GetCategory().c_str());
+                  addTab(view, node->GetFolder().c_str());
                }
 
                if (scene)
