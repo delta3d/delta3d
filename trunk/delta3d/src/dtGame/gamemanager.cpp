@@ -1203,25 +1203,36 @@ namespace dtGame
       gameActorProxy.SetGameManager(this);
       gameActorProxy.SetRemote(isRemote);
 
+      bool hasNoParent = gameActorProxy.GetActor()->GetParent() == NULL;
+
       if (mGMImpl->mEnvironment.valid())
       {
          if (mGMImpl->mEnvironment.get() != &gameActorProxy)
          {
             IEnvGameActor* ea = static_cast<IEnvGameActor*>(mGMImpl->mEnvironment->GetActor());
-            ea->AddActor(*gameActorProxy.GetActor());
+            if (hasNoParent)
+            {
+               ea->AddActor(*gameActorProxy.GetActor());
+            }
             mGMImpl->mGameActorProxyMap.insert(std::make_pair(gameActorProxy.GetId(), &gameActorProxy));
          }
          else
          {
             mGMImpl->mGameActorProxyMap.insert(std::make_pair(mGMImpl->mEnvironment->GetId(), mGMImpl->mEnvironment.get()));
-            mGMImpl->mScene->AddChild(mGMImpl->mEnvironment->GetActor());
+            if (hasNoParent)
+            {
+               mGMImpl->mScene->AddChild(mGMImpl->mEnvironment->GetActor());
+            }
             mGMImpl->SendEnvironmentChangedMessage(*this, mGMImpl->mEnvironment.get());
          }
       }
       else
       {
          mGMImpl->mGameActorProxyMap.insert(std::make_pair(gameActorProxy.GetId(), &gameActorProxy));
-         mGMImpl->mScene->AddChild(gameActorProxy.GetActor());
+         if (hasNoParent)
+         {
+            mGMImpl->mScene->AddChild(gameActorProxy.GetActor());
+         }
       }
 
       // Remote actors are normally created in response to a create message, so sending another is silly.
