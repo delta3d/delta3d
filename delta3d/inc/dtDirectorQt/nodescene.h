@@ -46,8 +46,9 @@ namespace dtDirector
       * Constructor.
       *
       * @param[in] parent The parent editor.
+      * @param[in] graph  The graph.
       */
-      NodeScene(DirectorEditor* parent);
+      NodeScene(DirectorEditor* parent, DirectorGraph* graph);
 
       /**
        * Refresh the scene to display newly loaded nodes
@@ -55,6 +56,17 @@ namespace dtDirector
        * @param nodeType The type of nodes to display in the scene
        */
       void RefreshNodes(NodeType::NodeTypeEnum nodeType);
+
+      /**
+       * Creates a new node.
+       *
+       * @param[in]     name      The name of the node.
+       * @param[in]     category  The category of the node.
+       * @param[in,out] x, y      Starting UI coordinates to spawn the node.
+       * @param[in,out] maxWidth  The maximum width of all nodes in this scene.
+       */
+      void CreateNode(NodeType::NodeTypeEnum nodeType, const std::string& name,
+         const std::string& category);
 
    signals:
       void CreateNode(const QString& name, const QString& category);
@@ -65,16 +77,6 @@ namespace dtDirector
       virtual void mousePressEvent(QGraphicsSceneMouseEvent* mouseEvent);
 
    private:
-      /**
-       * Creates a new node.
-       *
-       * @param[in]     name      The name of the node.
-       * @param[in]     category  The category of the node.
-       * @param[in,out] x, y      Starting UI coordinates to spawn the node.
-       * @param[in,out] maxWidth  The maximum width of all nodes in this scene.
-       */
-      void CreateNode(NodeType::NodeTypeEnum nodeType, const std::string& name,
-         const std::string& category, float x, float& y, float& maxWidth);
 
       /**
        * Gets the NodeItem at the given position
@@ -87,8 +89,11 @@ namespace dtDirector
 
       DirectorEditor* mpEditor;
       DirectorGraph* mpGraph;
-      QGraphicsRectItem* mpTranslationItem;
+      QGraphicsRectItem* mpItem;
       NodeItem* mpDraggedItem;
+
+      float mHeight;
+      float mWidth;
    };
 } // namespace dtDirector
 

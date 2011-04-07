@@ -44,53 +44,93 @@ static const float NODE_BUFFER = 25.0f;
 namespace dtDirector
 {
    ////////////////////////////////////////////////////////////////////////////////
-   NodeScene::NodeScene(DirectorEditor* parent)
+   NodeScene::NodeScene(DirectorEditor* parent, DirectorGraph* graph)
       : QGraphicsScene(parent)
       , mpEditor(parent)
+      , mpGraph(graph)
       , mpDraggedItem(NULL)
+      , mHeight(0.0f)
+      , mWidth(0.0f)
    {
       setBackgroundBrush(Qt::lightGray);
 
-      mpGraph = new DirectorGraph(parent->GetDirector());
+      mpItem = new QGraphicsRectItem(NULL, this);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void NodeScene::RefreshNodes(NodeType::NodeTypeEnum nodeType)
+   void NodeScene::CreateNode(NodeType::NodeTypeEnum nodeType, const std::string& name,
+      const std::string& category)
    {
-      // Clear out any previous items and re-add translation item
-      clear();
-      mpTranslationItem = new QGraphicsRectItem(NULL, this);
-
-      std::vector<const NodeType*> nodes;
-      NodeManager::GetInstance().GetNodeTypes(nodes);
-
-      int count = (int)nodes.size();
-      float nodeY = 0.0f;
-      float maxWidth = 0.0f;
-      for (int index = 0; index < count; index++)
+      dtCore::RefPtr<Node> node = NodeManager::GetInstance().CreateNode(name, category, mpGraph);
+      if (node.valid())
       {
-         const NodeType* node = nodes[index];
-
-         if (node)
+         NodeItem* item = NULL;
+         node->SetPosition(osg::Vec2(NODE_BUFFER, mHeight));
+         switch (nodeType)
          {
-            // Make sure the node we found is a type valid for this script.
-            NodePluginRegistry* reg = NodeManager::GetInstance().GetRegistryForType(*node);
-            if (!reg || (reg->GetName() != "dtDirectorNodes" && !mpEditor->GetDirector()->HasLibrary(reg->GetName())))
+         case NodeType::VALUE_NODE:
             {
-               continue;
+               item = new ValueItem(node, mpItem, NULL);
+               break;
             }
-
-            if (node->GetNodeType() == nodeType)
+         case NodeType::MACRO_NODE:
             {
-               CreateNode(nodeType, node->GetName(), node->GetCategory(), NODE_BUFFER, nodeY, maxWidth);
-               nodeY += NODE_BUFFER;
+               if (IS_A(node.get(), ReferenceScriptAction*))
+               {
+                  item = new ScriptItem(node, mpItem, NULL);
+               }
+               else
+               {
+                  item = new MacroItem(NULL, mpItem, NULL);
+               }
+               break;
+            }
+         case NodeType::MISC_NODE:
+            {
+               if (IS_A(node.get(), GroupNode*))
+               {
+                  item = new GroupItem(node, mpItem, NULL, false);
+                  break;
+               }
+            }
+         default:
+            {
+               if (name == "Value Link" && category == "Core")
+               {
+                  item = new ValueItem(node, mpItem, NULL);
+                  break;
+               }
+               item = new ActionItem(node, mpItem, NULL);
+               break;
             }
          }
+
+         if (item != NULL)
+         {
+            item->setFlag(QGraphicsItem::ItemIsMovable, false);
+            item->setFlag(QGraphicsItem::ItemIsSelectable, false);
+            item->setAcceptedMouseButtons(Qt::NoButton);
+            item->setData(Qt::UserRole, QString::fromStdString(name));
+            item->setData(Qt::UserRole + 1, QString::fromStdString(category));
+
+#if(QT_VERSION >= 0x00040600)
+            item->setFlag(QGraphicsItem::ItemSendsGeometryChanges, false);
+#endif
+            item->Draw();
+            mHeight += item->boundingRect().height();
+            if (item->boundingRect().width() > mWidth)
+            {
+               mWidth = item->boundingRect().width();
+            }
+
+            QRectF sceneBounds = sceneRect();
+            sceneBounds.setHeight(mHeight + NODE_BUFFER);
+            sceneBounds.setWidth(mWidth + NODE_BUFFER);
+            setSceneRect(sceneBounds);
+
+            mHeight += NODE_BUFFER;
+         }
       }
-      QRectF sceneBounds = sceneRect();
-      sceneBounds.setHeight(nodeY + NODE_BUFFER);
-      sceneBounds.setWidth(maxWidth + NODE_BUFFER);
-      setSceneRect(sceneBounds);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -102,7 +142,7 @@ namespace dtDirector
    void NodeScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* mouseEvent)
    {
       QGraphicsScene::mouseDoubleClickEvent(mouseEvent);
-      QPointF scenePos = mouseEvent->scenePos() - mpTranslationItem->scenePos();
+      QPointF scenePos = mouseEvent->scenePos();
       NodeItem* selectedItem = GetNodeItemAtPos(scenePos);
       if (selectedItem != NULL)
       {
@@ -115,7 +155,7 @@ namespace dtDirector
    ///////////////////////////////////////////////////////////////////////////////
    void NodeScene::mousePressEvent(QGraphicsSceneMouseEvent* mouseEvent)
    {
-      QPointF scenePos = mouseEvent->scenePos() - mpTranslationItem->scenePos();
+      QPointF scenePos = mouseEvent->scenePos();
       mpDraggedItem = GetNodeItemAtPos(scenePos);
 
       if (mpDraggedItem == NULL)
@@ -165,75 +205,6 @@ namespace dtDirector
       mime->setData("data", itemData);
       drag->exec();
       mpDraggedItem = NULL;
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
-   void NodeScene::CreateNode(NodeType::NodeTypeEnum nodeType, const std::string& name,
-      const std::string& category, float x, float& y, float& maxWidth)
-   {
-      dtCore::RefPtr<Node> node = NodeManager::GetInstance().CreateNode(name, category, mpGraph);
-      if (node.valid())
-      {
-         NodeItem* item = NULL;
-         node->SetPosition(osg::Vec2(x, y));
-         switch (nodeType)
-         {
-            case NodeType::VALUE_NODE:
-            {
-               item = new ValueItem(node, mpTranslationItem, NULL);
-               break;
-            }
-            case NodeType::MACRO_NODE:
-            {
-               if (IS_A(node.get(), ReferenceScriptAction*))
-               {
-                  item = new ScriptItem(node, mpTranslationItem, NULL);
-               }
-               else
-               {
-                  item = new MacroItem(NULL, mpTranslationItem, NULL);
-               }
-               break;
-            }
-            case NodeType::MISC_NODE:
-            {
-               if (IS_A(node.get(), GroupNode*))
-               {
-                  item = new GroupItem(node, mpTranslationItem, NULL, false);
-                  break;
-               }
-            }
-            default:
-            {
-               if (name == "Value Link" && category == "Core")
-               {
-                  item = new ValueItem(node, mpTranslationItem, NULL);
-                  break;
-               }
-               item = new ActionItem(node, mpTranslationItem, NULL);
-               break;
-            }
-         }
-
-         if (item != NULL)
-         {
-            item->setFlag(QGraphicsItem::ItemIsMovable, false);
-            item->setFlag(QGraphicsItem::ItemIsSelectable, false);
-            item->setAcceptedMouseButtons(Qt::NoButton);
-            item->setData(Qt::UserRole, QString::fromStdString(name));
-            item->setData(Qt::UserRole + 1, QString::fromStdString(category));
-
-#if(QT_VERSION >= 0x00040600)
-            item->setFlag(QGraphicsItem::ItemSendsGeometryChanges, false);
-#endif
-            item->Draw();
-            y += item->boundingRect().height();
-            if (item->boundingRect().width() > maxWidth)
-            {
-               maxWidth = item->boundingRect().width();
-            }
-         }
-      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
