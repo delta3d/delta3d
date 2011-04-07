@@ -35,25 +35,24 @@ namespace dtDAL
    static const std::string ACTOR_LIBRARY("dtActors");
    static const std::string AUDIO_ACTOR_LIBRARY("dtAudio");
    static const std::string ANIM_ACTOR_LIBRARY("dtAnim");
-   
+
    //Singleton global variable for the library manager.
    dtCore::RefPtr<LibraryManager> LibraryManager::mInstance(NULL);
 
-   ///////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    LibraryManager::LibraryManager()
    {
       mLogger = &dtUtil::Log::GetInstance("librarymanager.cpp");
       mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__, "Initializing actor library manager.");
       LoadActorRegistry(ACTOR_LIBRARY);
 
-
       //try to load some optional actor libraries that depend on optional
-      //external dependencies.  If the file isn't found, don't try to load it. 
-      LoadOptionalActorRegistry( AUDIO_ACTOR_LIBRARY );
-      LoadOptionalActorRegistry( ANIM_ACTOR_LIBRARY );
+      //external dependencies.  If the file isn't found, don't try to load it.
+      LoadOptionalActorRegistry(AUDIO_ACTOR_LIBRARY);
+      LoadOptionalActorRegistry(ANIM_ACTOR_LIBRARY);
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    LibraryManager::~LibraryManager()
    {
       mActors.clear();
@@ -64,7 +63,7 @@ namespace dtDAL
       RegistryMapItor itor = mRegistries.begin();
       while (itor != mRegistries.end())
       {
-         ActorPluginRegistry *reg = itor->second.registry;
+         ActorPluginRegistry* reg = itor->second.registry;
          itor->second.destroyFn(reg);
          ++itor;
       }
@@ -74,8 +73,8 @@ namespace dtDAL
       mReplacementActors.clear();
    }
 
-   //////////////////////////////////////////////////////////////////////////
-   bool LibraryManager::IsInRegistry( const std::string &libName ) const
+   /////////////////////////////////////////////////////////////////////////////
+   bool LibraryManager::IsInRegistry(const std::string& libName) const
    {
       RegistryMap::const_iterator regItor = mRegistries.find(libName);
       if (regItor != mRegistries.end())
@@ -88,8 +87,8 @@ namespace dtDAL
       }
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
-   void LibraryManager::LoadActorRegistry(const std::string &libName)
+   /////////////////////////////////////////////////////////////////////////////
+   void LibraryManager::LoadActorRegistry(const std::string& libName)
    {
       //Used to format log messages.
       std::ostringstream msg;
@@ -108,9 +107,9 @@ namespace dtDAL
       }
 
       dtUtil::LibrarySharingManager& lsm = dtUtil::LibrarySharingManager::GetInstance();
-        
+
       RegistryEntry newEntry;
-        
+
       try
       {
          newEntry.lib = lsm.LoadSharedLibrary(libName);
@@ -122,7 +121,7 @@ namespace dtDAL
          msg << "Unable to load actor registry " << libName;
          throw dtDAL::ProjectResourceErrorException(msg.str(), __FILE__, __LINE__);
       }
-        
+
       dtUtil::LibrarySharingManager::LibraryHandle::SYMBOL_ADDRESS createFn;
       dtUtil::LibrarySharingManager::LibraryHandle::SYMBOL_ADDRESS destroyFn;
       createFn = newEntry.lib->FindSymbol("CreatePluginRegistry");
@@ -136,7 +135,7 @@ namespace dtDAL
          msg.str("");
          msg << "Actor plugin libraries must implement the function " <<
             " CreatePluginRegistry.";
-         throw dtDAL::ProjectResourceErrorException( msg.str(), __FILE__, __LINE__);
+         throw dtDAL::ProjectResourceErrorException(msg.str(), __FILE__, __LINE__);
       }
 
       if (!destroyFn)
@@ -164,7 +163,8 @@ namespace dtDAL
       }
    }
 
-   bool LibraryManager::AddRegistryEntry(const std::string &libName, const RegistryEntry& entry)
+   /////////////////////////////////////////////////////////////////////////////
+   bool LibraryManager::AddRegistryEntry(const std::string& libName, const RegistryEntry& entry)
    {
       //Finally we can actually add the new registry to the library manager.
       //The map key is the system independent library name.
@@ -181,13 +181,13 @@ namespace dtDAL
       std::vector<dtCore::RefPtr<const ActorType> > actorTypes;
       entry.registry->RegisterActorTypes();
       entry.registry->GetSupportedActorTypes(actorTypes);
-      
+
       dtDAL::ActorPluginRegistry::ActorTypeReplacements replacements;
       entry.registry->GetReplacementActorTypes(replacements);
       mReplacementActors.insert(mReplacementActors.end(), replacements.begin(), replacements.end());
-      
+
       int numUniqueActors = 0;
-      for (unsigned int i=0; i<actorTypes.size(); i++)
+      for (unsigned int i = 0; i < actorTypes.size(); ++i)
       {
          ActorTypeMapItor itor = mActors.find(dtCore::RefPtr<const ActorType>(actorTypes[i].get()));
          if (itor != mActors.end())
@@ -213,8 +213,8 @@ namespace dtDAL
       return true;
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
-   void LibraryManager::GetActorTypes(std::vector<const ActorType*> &actorTypes)
+   /////////////////////////////////////////////////////////////////////////////
+   void LibraryManager::GetActorTypes(std::vector<const ActorType*>& actorTypes)
    {
       actorTypes.clear();
       actorTypes.reserve(mActors.size());
@@ -226,9 +226,9 @@ namespace dtDAL
       }
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
-   const ActorType* LibraryManager::FindActorType(const std::string &category,
-                                                           const std::string &name)
+   /////////////////////////////////////////////////////////////////////////////
+   const ActorType* LibraryManager::FindActorType(const std::string& category,
+                                                  const std::string& name)
    {
       dtCore::RefPtr<const ActorType> typeToFind = new ActorType(name,category);
       ActorTypeMapItor itor = mActors.find(typeToFind);
@@ -243,7 +243,7 @@ namespace dtDAL
       }
    }
 
-   //////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    std::string LibraryManager::FindActorTypeReplacement(const std::string& fullName) const
    {
       ActorPluginRegistry::ActorTypeReplacements::const_iterator itr = mReplacementActors.begin();
@@ -259,15 +259,15 @@ namespace dtDAL
       return std::string();
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    dtCore::RefPtr<BaseActorObject> LibraryManager::CreateActor(const ActorType& actorType)
    {
-      ActorPluginRegistry* apr = GetRegistryForType(actorType); 
+      ActorPluginRegistry* apr = GetRegistryForType(actorType);
 
       if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
       {
-         mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, 
-            "Creating actor proxy of type \"%s\".", 
+         mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+            "Creating actor proxy of type \"%s\".",
             actorType.GetFullName().c_str());
       }
 
@@ -277,33 +277,33 @@ namespace dtDAL
       return proxy;
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    dtCore::RefPtr<BaseActorObject> LibraryManager::CreateActor(const std::string& category, const std::string& name)
    {
       dtCore::RefPtr<const ActorType> type = FindActorType(category, name);
       if (!type.valid())
       {
-         throw dtDAL::ObjectFactoryUnknownTypeException( 
-         "No actor exists of the specified name [" + name + "] and category[" + 
+         throw dtDAL::ObjectFactoryUnknownTypeException(
+         "No actor exists of the specified name [" + name + "] and category[" +
          category + "].", __FILE__, __LINE__);
       }
 
       return CreateActor(*type);
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
-   ActorPluginRegistry *LibraryManager::GetRegistry(const std::string& name)
+   /////////////////////////////////////////////////////////////////////////////
+   ActorPluginRegistry* LibraryManager::GetRegistry(const std::string& name)
    {
       if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
       {
          for (RegistryMapItor i = mRegistries.begin(); i != mRegistries.end(); ++i)
          {
             mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-                              "Library manager has loaded registry library \"%s\"", 
+                              "Library manager has loaded registry library \"%s\"",
                               i->first.c_str());
-         }          
+         }
       }
-       
+
       RegistryMapItor itor = mRegistries.find(name);
 
       if (itor == mRegistries.end())
@@ -316,8 +316,8 @@ namespace dtDAL
       }
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
-   ActorPluginRegistry *LibraryManager::GetRegistryForType(const ActorType& actorType) 
+   /////////////////////////////////////////////////////////////////////////////
+   ActorPluginRegistry* LibraryManager::GetRegistryForType(const ActorType& actorType)
    {
       std::ostringstream error;
 
@@ -325,7 +325,7 @@ namespace dtDAL
       //to locate the actor registry that knows how to create a proxy of the
       //requested type.
       dtCore::RefPtr<const ActorType> actorTypePtr(&actorType);
-        
+
       ActorTypeMapItor found = mActors.find(actorTypePtr);
       if (found == mActors.end())
       {
@@ -333,11 +333,11 @@ namespace dtDAL
             "\" but is unknown or has not been registered.";
          throw dtDAL::ObjectFactoryUnknownTypeException(error.str(), __FILE__, __LINE__);
       }
-        
-      return found->second;        
+
+      return found->second;
    }
 
-   ////////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    std::string LibraryManager::GetLibraryNameForRegistry(ActorPluginRegistry* registry)
    {
       for (RegistryMapItor i = mRegistries.begin(); i != mRegistries.end(); ++i)
@@ -351,21 +351,21 @@ namespace dtDAL
       return "";
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
-   void LibraryManager::UnloadActorRegistry(const std::string &libName)
+   /////////////////////////////////////////////////////////////////////////////
+   void LibraryManager::UnloadActorRegistry(const std::string& libName)
    {
       if (libName == ACTOR_LIBRARY)
       {
-         mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, 
+         mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
             "Unloading the default actor library \"%s\".", ACTOR_LIBRARY.c_str());
       }
-                      
+
       RegistryMapItor regItor = mRegistries.find(libName);
 
       if (regItor == mRegistries.end())
       {
-         mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__, 
-            "Attempted to unload actor registry \"%s\" which was not loaded.", 
+         mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
+            "Attempted to unload actor registry \"%s\" which was not loaded.",
             libName.c_str());
          return;
       }
@@ -405,18 +405,18 @@ namespace dtDAL
 
       //Now that all references are gone, take the pointer to the registry so that we can
       //manually free it in the plugin.
-      ActorPluginRegistry *reg = regEntry.registry;
+      ActorPluginRegistry* reg = regEntry.registry;
 
       if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
       {
          mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Unloading actor plugin registry: \"%s\"", reg->GetName().c_str());
       }
-         
+
       regEntry.destroyFn(reg);
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
-   LibraryManager &LibraryManager::GetInstance()
+   /////////////////////////////////////////////////////////////////////////////
+   LibraryManager& LibraryManager::GetInstance()
    {
       if (!LibraryManager::mInstance.valid())
       {
@@ -425,23 +425,23 @@ namespace dtDAL
       return *(LibraryManager::mInstance.get());
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
-   std::string LibraryManager::GetPlatformSpecificLibraryName(const std::string &libBase)
+   /////////////////////////////////////////////////////////////////////////////
+   std::string LibraryManager::GetPlatformSpecificLibraryName(const std::string& libBase)
    {
       return dtUtil::LibrarySharingManager::GetPlatformSpecificLibraryName(libBase);
    }
-   
-   ///////////////////////////////////////////////////////////////////////////////
-   std::string LibraryManager::GetPlatformIndependentLibraryName(const std::string &libName)
+
+   /////////////////////////////////////////////////////////////////////////////
+   std::string LibraryManager::GetPlatformIndependentLibraryName(const std::string& libName)
    {
       return dtUtil::LibrarySharingManager::GetPlatformIndependentLibraryName(libName);
    }
 
-   //////////////////////////////////////////////////////////////////////////
-   void LibraryManager::LoadOptionalActorRegistry( const std::string &libName )
+   /////////////////////////////////////////////////////////////////////////////
+   void LibraryManager::LoadOptionalActorRegistry(const std::string& libName)
    {
       const std::string actualLibName = GetPlatformSpecificLibraryName(libName);
-      std::string fullLibraryName = osgDB::findLibraryFile(actualLibName);            
+      std::string fullLibraryName = osgDB::findLibraryFile(actualLibName);
 
       //If the file wasn't found using OSG paths, try the LibrarySharingManager's paths
       if (fullLibraryName.empty())
@@ -466,5 +466,4 @@ namespace dtDAL
          LOG_WARNING("Failed loading optional library '" + libName + "'.  Some actors may not be available.");
       }
    }
-
 }

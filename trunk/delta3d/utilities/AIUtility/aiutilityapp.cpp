@@ -95,10 +95,14 @@ void AIUtilityApp::Config()
 ////////////////////////////////////////////////////////////////////////////////
 void AIUtilityApp::SetAIPluginInterface(dtAI::AIPluginInterface* interface, bool selectionBasedRenderingHint)
 {
+   if (!mInputComponent.valid())
+   {
+      mInputComponent = new AIUtilityInputComponent();
+      mGM->AddComponent(*mInputComponent, dtGame::GameManager::ComponentPriority::NORMAL);
+   }
+
    // We can now setup the input component
-   mInputComponent = new AIUtilityInputComponent();
    mInputComponent->SetAIPluginInterface(interface);
-   mGM->AddComponent(*mInputComponent, dtGame::GameManager::ComponentPriority::NORMAL);
 
    //input component needs to know about the ObjectMotionModel, so they don't collide on mouse events
    mInputComponent->SetWaypointMotionModel(mWaypointMotionModel.get());

@@ -49,7 +49,7 @@ namespace dtDAL
          /**
           * Function pointer to the create function implemented in the ActorPlugin.
           */
-         typedef ActorPluginRegistry *(*CreatePluginRegistryFn)();
+         typedef ActorPluginRegistry* (*CreatePluginRegistryFn)();
 
          /**
           * Function pointer to the destroy function implemented in the ActorPlugin.
@@ -81,12 +81,12 @@ namespace dtDAL
          /**
           * Gets the singleton instance of the LibraryManager.
           */
-         static LibraryManager &GetInstance();
+         static LibraryManager& GetInstance();
 
          /**
           * Loads an actor registry by loading a dynamic library
           * containing the actor registry implementation.
-          * @note The library file must contain two exported "C" methods: 
+          * @note The library file must contain two exported "C" methods:
           * "CreatePluginRegistry" and "DestroyPluginRegistry".  See ActorPluginRegistry
           * for more information.
           *
@@ -95,7 +95,7 @@ namespace dtDAL
           *         library cannot be found or the create and destroy
           *         functions are not found in the library.
           */
-         void LoadActorRegistry(const std::string &libName);
+         void LoadActorRegistry(const std::string& libName);
 
          /**
            * Inserts the pair of parameters into the container.
@@ -105,7 +105,7 @@ namespace dtDAL
            * @param entry The RegistryEntry mapped to the library name.
            * @return true if successully added, false if not
            */
-         bool AddRegistryEntry(const std::string &libName, const RegistryEntry& entry);
+         bool AddRegistryEntry(const std::string& libName, const RegistryEntry& entry);
 
          /**
           * Unloads an actor registry.  This unloads the dynamic library
@@ -114,13 +114,13 @@ namespace dtDAL
           *
           * @param libName The system independent name of the library to load.
           */
-         void UnloadActorRegistry(const std::string &libName);
+         void UnloadActorRegistry(const std::string& libName);
 
          /**
           * Returns a list of all the actor types the library manager knows how
           * to create.
           */
-         void GetActorTypes(std::vector<const ActorType*> &actorTypes);
+         void GetActorTypes(std::vector<const ActorType*>& actorTypes);
 
          /**
           * Gets a single actor type that matches the name and category specified.
@@ -129,11 +129,11 @@ namespace dtDAL
           * @param name Name of the actor type.
           * @return A pointer if the actor type was found or NULL if not.
           */
-         const ActorType* FindActorType(const std::string &category,
-                                  const std::string &name);
+         const ActorType* FindActorType(const std::string& category,
+                                        const std::string& name);
 
 
-         /** 
+         /**
           *  Given the supplied ActorType full name, see if an ActorType
           *  replacement has been registered.
           * @param fullName : The fullName of an older, deprecated ActorType
@@ -197,7 +197,7 @@ namespace dtDAL
           *  library name would be ExampleActors.dll, however, on Unix based
           *  platforms, the resulting name would be libExampleActors.so.
           */
-         std::string GetPlatformSpecificLibraryName(const std::string &libBase);
+         std::string GetPlatformSpecificLibraryName(const std::string& libBase);
 
          /**
           * Strips off the path and platform specific library prefixs and extensions
@@ -205,7 +205,7 @@ namespace dtDAL
           * @param libName The platform specific library name.
           * @return A platform independent library name.
           */
-         std::string GetPlatformIndependentLibraryName(const std::string &libName);
+         std::string GetPlatformIndependentLibraryName(const std::string& libName);
 
       private:
 
@@ -222,17 +222,17 @@ namespace dtDAL
 
 
          ///Is the supplied library name already in the registry?
-         bool IsInRegistry( const std::string &libName ) const;
+         bool IsInRegistry(const std::string& libName) const;
 
          ///If the supplied library exists, then try to load it.
-         void LoadOptionalActorRegistry(const std::string &libName);
+         void LoadOptionalActorRegistry(const std::string& libName);
 
          ///Singleton instance of this class.
          static dtCore::RefPtr<LibraryManager> mInstance;
 
          ///Maps an actor type to the registry that created it.
          ActorTypeMap mActors;
-         
+
          ActorPluginRegistry::ActorTypeReplacements mReplacementActors;
 
          ///List of the currently loaded actor registries.

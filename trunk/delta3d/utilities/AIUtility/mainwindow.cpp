@@ -225,7 +225,6 @@ void MainWindow::showEvent(QShowEvent* e)
 //////////////////////////////////////////////
 void MainWindow::closeEvent(QCloseEvent* e)
 {
-
    if (MaybeSave())
    {
       //Disconnect the central widget because OSG wants to close it itself.
