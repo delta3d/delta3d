@@ -135,9 +135,18 @@ namespace dtDirector
        * @param[in]  name      The name of the node.
        * @param[in]  category  The category of the node.
        *
-       * @return               A pointer if the actor type was found or NULL if not.
+       * @return               A pointer if the node type was found or NULL if not.
        */
       const NodeType* FindNodeType(const std::string& name, const std::string& category);
+
+      /**
+       * Gets a single node type that matches the data type specified.
+       *
+       * @param[in]  dataType  The data type.
+       *
+       * @return               A pointer if the node type was found or NULL if not.
+       */
+      const NodeType* FindNodeType(const dtDAL::DataType& dataType);
 
       /** 
        *  Given the supplied NodeType full name, see if an NodeType

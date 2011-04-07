@@ -33,7 +33,6 @@ namespace dtDirector
        : ActionNode()
        , mSize(100.0f, 100.0f)
    {
-      SetColorRGB(Colors::GRAY2);
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////

@@ -237,6 +237,24 @@ namespace dtDirector
       }
    }
 
+   ///////////////////////////////////////////////////////////////////////////////
+   const NodeType* NodeManager::FindNodeType(const dtDAL::DataType& dataType)
+   {
+      NodeTypeMapItor itor = mNodes.begin();
+      while (itor != mNodes.end())
+      {
+         dtCore::RefPtr<const NodeType> nodeType = itor->first;
+         if (nodeType->GetDataType() == dataType)
+         {
+            return nodeType.get();
+         }
+
+         ++itor;
+      }
+
+      return NULL;
+   }
+
    //////////////////////////////////////////////////////////////////////////
    std::string NodeManager::FindNodeTypeReplacement(const std::string& fullName) const
    {

@@ -46,7 +46,6 @@ namespace dtDirector
       , mDirector(NULL)
       , mGraph(NULL)
    {
-      SetColorRGB(Colors::GRAY);
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
@@ -77,6 +76,8 @@ namespace dtDirector
       }
 
       SetType(nodeType);
+      SetColorRGB(nodeType.GetColor());
+
       BuildPropertyMap();
    }
 

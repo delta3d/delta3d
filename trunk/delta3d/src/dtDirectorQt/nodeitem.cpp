@@ -1325,35 +1325,20 @@ namespace dtDirector
          return color;
       }
 
-      const dtDirector::NodeType* type = NULL;
-
-      switch (link->GetPropertyType().GetTypeId())
+      dtDAL::DataType& dataType = link->GetPropertyType();
+      if (dataType == dtDAL::DataType::UNKNOWN)
       {
-      case dtDAL::DataType::BOOLEAN_ID:
-         type = NodeManager::GetInstance().FindNodeType("Boolean", "General");
-         break;
-      case dtDAL::DataType::INT_ID:
-         type = NodeManager::GetInstance().FindNodeType("Int", "General");
-         break;
-      case dtDAL::DataType::FLOAT_ID:
-         type = NodeManager::GetInstance().FindNodeType("Float", "General");
-         break;
-      case dtDAL::DataType::DOUBLE_ID:
-         type = NodeManager::GetInstance().FindNodeType("Double", "General");
-         break;
-      case dtDAL::DataType::STRING_ID:
-         type = NodeManager::GetInstance().FindNodeType("String", "General");
-         break;
-      default:
-      case dtDAL::DataType::ACTOR_ID:
-         type = NodeManager::GetInstance().FindNodeType("Actor", "General");
-         break;
+         osg::Vec4 ownerColor = link->GetOwner()->GetColor();
+         color = QColor(ownerColor[0]*255, ownerColor[1]*255, ownerColor[2]*255, ownerColor[3]*255);
+         return color;
       }
+
+      const dtDirector::NodeType* type = NodeManager::GetInstance().FindNodeType(dataType);
 
       if (type)
       {
-         color = QColor(type->GetColorRed(), type->GetColorGreen(), type->GetColorBlue(), 225);
-         if(mNode != NULL && !mNode->IsEnabled())
+         color = QColor(type->GetColor()[0], type->GetColor()[1], type->GetColor()[2], 225);
+         if(mNode && !mNode->IsEnabled())
          {
             color.setAlphaF(0.25f);
          }

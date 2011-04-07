@@ -34,7 +34,6 @@ namespace dtDirector
        : Node()
        , mProperty(NULL)
    {
-      //SetColorRGB(Colors::ORANGE);
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
@@ -47,8 +46,6 @@ namespace dtDirector
    void ValueNode::Init(const NodeType& nodeType, DirectorGraph* graph)
    {
       Node::Init(nodeType, graph);
-
-      SetColorRGB(osg::Vec3(nodeType.GetColorRed(), nodeType.GetColorGreen(), nodeType.GetColorBlue()));
    }
 
    ////////////////////////////////////////////////////////////////////////////////

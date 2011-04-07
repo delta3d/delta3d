@@ -30,7 +30,6 @@ namespace dtDirector
    ActionNode::ActionNode()
        : Node()
    {
-      SetColorRGB(Colors::BLUE);
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////

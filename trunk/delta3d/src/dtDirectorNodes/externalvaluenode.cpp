@@ -25,6 +25,7 @@
 #include <dtDAL/actorproperty.h>
 #include <dtDAL/enumactorproperty.h>
 
+#include <dtDirector/nodemanager.h>
 #include <dtDirector/valuelink.h>
 
 #include <dtUtil/macros.h>
@@ -77,6 +78,7 @@ namespace dtDirector
 
       // If the linked value has changed, make sure we notify.
       OnValueChanged();
+      UpdateLinkType();
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -199,14 +201,27 @@ namespace dtDirector
       bool isTypeChecking = false;
       bool allowMultiple = false;
 
+      osg::Vec3 color = GetType().GetColor();
+
       if (mLinks.size())
       {
          int count = (int)mLinks.size();
          for (int index = 0; index < count; index++)
          {
-            isOut |= mLinks[index]->IsOutLink();
-            isTypeChecking |= mLinks[index]->IsTypeChecking();
-            allowMultiple |= mLinks[index]->AllowMultiple();
+            ValueLink* link = mLinks[index];
+            if (link)
+            {
+               isOut |= link->IsOutLink();
+               isTypeChecking |= link->IsTypeChecking();
+               allowMultiple |= link->AllowMultiple();
+
+               dtDAL::DataType& dataType = link->GetPropertyType();
+               const NodeType* type = NodeManager::GetInstance().FindNodeType(dataType);
+               if (type)
+               {
+                  color = type->GetColor();
+               }
+            }
          }
       }
 
@@ -214,5 +229,14 @@ namespace dtDirector
       mValues[0].SetOutLink(isOut);
       mValues[0].SetTypeChecking(isTypeChecking);
       mValues[0].SetAllowMultiple(allowMultiple);
+
+      if (!mValues[0].GetLinks().empty())
+      {
+         SetColor(mValues[0].GetLinks()[0]->GetColor());
+      }
+      else
+      {
+         SetColorRGB(color);
+      }
    }
 }

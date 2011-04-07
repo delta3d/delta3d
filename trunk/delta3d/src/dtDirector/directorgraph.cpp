@@ -37,7 +37,6 @@ namespace dtDirector
       : mDirector(director)
       , mParent(NULL)
       , mEnabled(true)
-      //, mName("Macro")
       , mComment("")
    {
       SetColorRGB(Colors::GREEN);

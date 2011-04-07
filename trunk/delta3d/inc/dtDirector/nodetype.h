@@ -25,6 +25,8 @@
 #include <dtDirector/export.h>
 
 #include <dtDAL/objecttype.h>
+#include <dtDAL/datatype.h>
+#include <osg/Vec3>
 
 namespace dtDirector
 {
@@ -68,6 +70,9 @@ namespace dtDirector
        *                          within the UI.
        * @param[in]  desc        The description of the node.
        * @param[in]  parentType  The parent node.
+       * @param[in]  color       The color of this node type.
+       * @param[in]  dataType    For value nodes, this represents the data
+       *                          type of the value.
        */
       NodeType(NodeTypeEnum type,
             const std::string& name,
@@ -75,7 +80,8 @@ namespace dtDirector
             const std::string& folder="",
             const std::string& desc="",
             const NodeType* parentType = NULL,
-            int red = 176, int green = 137, int blue = 98);
+            const osg::Vec3& color = osg::Vec3(150, 150, 150),
+            dtDAL::DataType& dataType = dtDAL::DataType::UNKNOWN);
 
       /**
        * Gets the parent or "super" type of this node type.
@@ -106,9 +112,14 @@ namespace dtDirector
        *
        * @return  The nodes color.
        */
-      int GetColorRed() const;
-      int GetColorGreen() const;
-      int GetColorBlue() const;
+      const osg::Vec3& GetColor() const;
+
+      /**
+       * Retrieves the data type of this node type.
+       *
+       * @return  The data type.
+       */
+      const dtDAL::DataType& GetDataType() const;
 
    protected:
 
@@ -119,11 +130,10 @@ namespace dtDirector
 
    private:
 
-      std::string    mFolder;
-      NodeTypeEnum   mType;
-      int            mColorRed;
-      int            mColorGreen;
-      int            mColorBlue;
+      std::string       mFolder;
+      NodeTypeEnum      mType;
+      osg::Vec3         mColor;
+      dtDAL::DataType&  mDataType;
    };
 }
 
