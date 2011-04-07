@@ -27,7 +27,7 @@
 #include <dtDirectorQt/graphbrowser.h>
 #include <dtDirectorQt/graphtabs.h>
 #include <dtDirectorQt/libraryeditor.h>
-#include <dtDirectorQt/nodescene.h>
+#include <dtDirectorQt/nodetabs.h>
 #include <dtDirectorQt/replaybrowser.h>
 #include <dtDirectorQt/undomanager.h>
 #include <dtDirectorQt/undodeleteevent.h>
@@ -96,12 +96,12 @@ namespace dtDirector
       mDirector = director;
 
       // Setup node scenes
-      CreateNodeScene(mUI.eventNodeView);
-      CreateNodeScene(mUI.actionNodeView);
-      CreateNodeScene(mUI.variableNodeView);
-      CreateNodeScene(mUI.macroNodeView);
-      CreateNodeScene(mUI.linkNodeView);
-      CreateNodeScene(mUI.miscNodeView);
+      CreateNodeScene(mUI.eventNodeTabWidget);
+      CreateNodeScene(mUI.actionNodeTabWidget);
+      CreateNodeScene(mUI.variableNodeTabWidget);
+      CreateNodeScene(mUI.macroNodeTabWidget);
+      CreateNodeScene(mUI.linkNodeTabWidget);
+      CreateNodeScene(mUI.miscNodeTabWidget);
       RefreshNodeScenes();
 
       mUI.graphTab->clear();
@@ -1305,33 +1305,29 @@ namespace dtDirector
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void DirectorEditor::CreateNodeScene(QGraphicsView* view)
+   void DirectorEditor::CreateNodeScene(NodeTabs* nodeTabs)
    {
-      NodeScene* scene = new NodeScene(this);
-      connect(scene, SIGNAL(CreateNode(const QString&, const QString&)),
+      nodeTabs->SetEditor(this);
+
+      connect(nodeTabs, SIGNAL(CreateNode(const QString&, const QString&)),
          this, SLOT(OnCreateNodeEvent(const QString&, const QString&)));
-      view->setScene(scene);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void DirectorEditor::RefreshNodeScenes()
    {
-      RefreshNodeScene(mUI.eventNodeView, NodeType::EVENT_NODE);
-      RefreshNodeScene(mUI.actionNodeView, NodeType::ACTION_NODE);
-      RefreshNodeScene(mUI.variableNodeView, NodeType::VALUE_NODE);
-      RefreshNodeScene(mUI.macroNodeView, NodeType::MACRO_NODE);
-      RefreshNodeScene(mUI.linkNodeView, NodeType::LINK_NODE);
-      RefreshNodeScene(mUI.miscNodeView, NodeType::MISC_NODE);
+      RefreshNodeScene(mUI.eventNodeTabWidget, NodeType::EVENT_NODE);
+      RefreshNodeScene(mUI.actionNodeTabWidget, NodeType::ACTION_NODE);
+      RefreshNodeScene(mUI.variableNodeTabWidget, NodeType::VALUE_NODE);
+      RefreshNodeScene(mUI.macroNodeTabWidget, NodeType::MACRO_NODE);
+      RefreshNodeScene(mUI.linkNodeTabWidget, NodeType::LINK_NODE);
+      RefreshNodeScene(mUI.miscNodeTabWidget, NodeType::MISC_NODE);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void DirectorEditor::RefreshNodeScene(QGraphicsView* view, NodeType::NodeTypeEnum nodeType)
+   void DirectorEditor::RefreshNodeScene(NodeTabs* nodeTabs, NodeType::NodeTypeEnum nodeType)
    {
-      NodeScene* scene = dynamic_cast<NodeScene*>(view->scene());
-      if (scene != NULL)
-      {
-         scene->RefreshNodes(nodeType);
-      }
+      nodeTabs->RefreshNodes(nodeType);
    }
 
    //////////////////////////////////////////////////////////////////////////

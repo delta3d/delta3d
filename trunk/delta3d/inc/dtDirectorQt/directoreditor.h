@@ -473,7 +473,7 @@ namespace dtDirector
       /**
        * Creates the node scenes
        */
-      void CreateNodeScene(QGraphicsView* view);
+      void CreateNodeScene(NodeTabs* nodeTabs);
 
       /**
        * Refreshes the node scenes with newly loaded node libraries
@@ -483,10 +483,10 @@ namespace dtDirector
       /**
        * Refreshes one given node scene to display newly loaded nodes
        *
-       * @param view     The view containing the scene to update
+       * @param widget   The widget containing the scene to update
        * @param nodeType The type of nodes to display in the scene
        */
-      void RefreshNodeScene(QGraphicsView* view, NodeType::NodeTypeEnum nodeType);
+      void RefreshNodeScene(NodeTabs* nodeTabs, NodeType::NodeTypeEnum nodeType);
 
       Ui::DirectorEditor       mUI;
 
