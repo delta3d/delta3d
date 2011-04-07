@@ -39,7 +39,6 @@ namespace dtDirector
        , mTriggerCount(0)
    {
       mInstigator = "";
-      SetColorRGB(Colors::BEIGE);
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////

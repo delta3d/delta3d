@@ -30,13 +30,13 @@ namespace dtDirector
                      const std::string& folder,
                      const std::string& desc,
                      const NodeType* parentType,
-                     int red, int green, int blue)
+                     const osg::Vec3& color,
+                     dtDAL::DataType& dataType)
       : ObjectType(name, category, desc, parentType)
       , mFolder(folder)
       , mType(type)
-      , mColorRed(red)
-      , mColorGreen(green)
-      , mColorBlue(blue)
+      , mColor(color)
+      , mDataType(dataType)
    {
    }
 
@@ -65,21 +65,15 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   int NodeType::GetColorRed() const
+   const osg::Vec3& NodeType::GetColor() const
    {
-      return mColorRed;
+      return mColor;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   int NodeType::GetColorGreen() const
+   const dtDAL::DataType& NodeType::GetDataType() const
    {
-      return mColorGreen;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   int NodeType::GetColorBlue() const
-   {
-      return mColorBlue;
+      return mDataType;
    }
 
    //////////////////////////////////////////////////////////////////////////
