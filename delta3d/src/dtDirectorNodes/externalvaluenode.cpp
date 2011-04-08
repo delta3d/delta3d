@@ -186,6 +186,7 @@ namespace dtDirector
    void ExternalValueNode::SetDefaultType(const dtDAL::DataType& value)
    {
       mDefaultType = &value;
+      UpdateLinkType();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -202,6 +203,16 @@ namespace dtDirector
       bool allowMultiple = false;
 
       osg::Vec3 color = GetType().GetColor();
+
+      if (GetDefaultType() != dtDAL::DataType::UNKNOWN)
+      {
+         dtDAL::DataType& dataType = GetDefaultType();
+         const NodeType* type = NodeManager::GetInstance().FindNodeType(dataType);
+         if (type)
+         {
+            color = type->GetColor();
+         }
+      }
 
       if (mLinks.size())
       {
