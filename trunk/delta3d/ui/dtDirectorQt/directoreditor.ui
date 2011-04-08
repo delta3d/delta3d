@@ -43,7 +43,10 @@
          </property>
          <item row="0" column="0">
           <widget class="dtDirector::NodeTabs" name="eventNodeTabWidget">
-           <widget class="QWidget" name="eventNodeTabWidgetPage1" native="true">
+           <property name="tabPosition">
+            <enum>QTabWidget::North</enum>
+           </property>
+           <widget class="QWidget" name="eventNodeTabWidgetPage1">
             <attribute name="title">
              <string/>
             </attribute>
@@ -62,7 +65,10 @@
          </property>
          <item row="0" column="0">
           <widget class="dtDirector::NodeTabs" name="actionNodeTabWidget">
-           <widget class="QWidget" name="actionNodeTabWidgetPage1" native="true">
+           <property name="tabPosition">
+            <enum>QTabWidget::North</enum>
+           </property>
+           <widget class="QWidget" name="actionNodeTabWidgetPage1">
             <attribute name="title">
              <string/>
             </attribute>
@@ -81,7 +87,10 @@
          </property>
          <item row="0" column="0">
           <widget class="dtDirector::NodeTabs" name="variableNodeTabWidget">
-           <widget class="QWidget" name="variableNodeTabWidgetPage1" native="true">
+           <property name="tabPosition">
+            <enum>QTabWidget::North</enum>
+           </property>
+           <widget class="QWidget" name="variableNodeTabWidgetPage1">
             <attribute name="title">
              <string/>
             </attribute>
@@ -100,7 +109,10 @@
          </property>
          <item row="0" column="0">
           <widget class="dtDirector::NodeTabs" name="macroNodeTabWidget">
-           <widget class="QWidget" name="macroNodeTabWidgetPage1" native="true">
+           <property name="tabPosition">
+            <enum>QTabWidget::North</enum>
+           </property>
+           <widget class="QWidget" name="macroNodeTabWidgetPage1">
             <attribute name="title">
              <string/>
             </attribute>
@@ -119,7 +131,10 @@
          </property>
          <item row="0" column="0">
           <widget class="dtDirector::NodeTabs" name="linkNodeTabWidget">
-           <widget class="QWidget" name="linkNodeTabWidgetPage1" native="true">
+           <property name="tabPosition">
+            <enum>QTabWidget::North</enum>
+           </property>
+           <widget class="QWidget" name="linkNodeTabWidgetPage1">
             <attribute name="title">
              <string/>
             </attribute>
@@ -144,7 +159,10 @@
              <height>0</height>
             </size>
            </property>
-           <widget class="QWidget" name="miscNodeTabWidgetPage1" native="true">
+           <property name="tabPosition">
+            <enum>QTabWidget::North</enum>
+           </property>
+           <widget class="QWidget" name="miscNodeTabWidgetPage1">
             <attribute name="title">
              <string/>
             </attribute>

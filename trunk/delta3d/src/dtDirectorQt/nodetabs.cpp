@@ -39,6 +39,7 @@ namespace dtDirector
       , mpGraph(NULL)
    {
       setTabsClosable(false);
+      setMovable(true);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -97,7 +98,15 @@ namespace dtDirector
                      this, SLOT(OnCreateNodeEvent(const QString&, const QString&)));
                   view->setScene(scene);
 
-                  addTab(view, node->GetFolder().c_str());
+                  if (node->GetFolder() == "Base")
+                  {
+                     insertTab(0, view, node->GetFolder().c_str());
+                     setCurrentIndex(0);
+                  }
+                  else
+                  {
+                     addTab(view, node->GetFolder().c_str());
+                  }
                }
 
                if (scene)
