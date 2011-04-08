@@ -25,7 +25,7 @@
 #include <dtDirectorQt/export.h>
 #include <dtDirector/nodetype.h>
 
-#include <QtGui/QTabWidget>
+#include <QtGui/QToolBox>
 
 namespace dtDirector
 {
@@ -35,7 +35,7 @@ namespace dtDirector
    /**
    * @class EditorScene
    */
-   class DT_DIRECTOR_QT_EXPORT NodeTabs : public QTabWidget
+   class DT_DIRECTOR_QT_EXPORT NodeTabs : public QToolBox
    {
       Q_OBJECT
 

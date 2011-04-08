@@ -39,12 +39,12 @@ namespace Phonon
    enum State;
 }
 
-
 namespace dtDirector
 {
    class CustomEditorTool;
    class GraphBrowser;
    class GraphTabs;
+   class NodeTabs;
    class PropertyEditor;
    class ReplayBrowser;
    class UndoManager;
@@ -403,7 +403,7 @@ namespace dtDirector
        */
       void OnCreateNodeEvent(const QString& name, const QString& category);
 
-      /** 
+      /**
        *  Play a "click" sound.  Used when connecting Links together.
        */
       void OnPlayClickSound();
