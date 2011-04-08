@@ -43,11 +43,11 @@
          </property>
          <item row="0" column="0">
           <widget class="dtDirector::NodeTabs" name="eventNodeTabWidget">
-           <property name="tabPosition">
-            <enum>QTabWidget::North</enum>
+           <property name="tabSpacing">
+            <number>0</number>
            </property>
-           <widget class="QWidget" name="eventNodeTabWidgetPage1">
-            <attribute name="title">
+           <widget class="QWidget" name="eventNodeTabWidgetPage1_2" native="true">
+            <attribute name="label">
              <string/>
             </attribute>
            </widget>
@@ -65,11 +65,11 @@
          </property>
          <item row="0" column="0">
           <widget class="dtDirector::NodeTabs" name="actionNodeTabWidget">
-           <property name="tabPosition">
-            <enum>QTabWidget::North</enum>
+           <property name="tabSpacing">
+            <number>0</number>
            </property>
-           <widget class="QWidget" name="actionNodeTabWidgetPage1">
-            <attribute name="title">
+           <widget class="QWidget" name="actionNodeTabWidgetPage1_2" native="true">
+            <attribute name="label">
              <string/>
             </attribute>
            </widget>
@@ -87,11 +87,11 @@
          </property>
          <item row="0" column="0">
           <widget class="dtDirector::NodeTabs" name="variableNodeTabWidget">
-           <property name="tabPosition">
-            <enum>QTabWidget::North</enum>
+           <property name="tabSpacing">
+            <number>0</number>
            </property>
-           <widget class="QWidget" name="variableNodeTabWidgetPage1">
-            <attribute name="title">
+           <widget class="QWidget" name="variableNodeTabWidgetPage1_2" native="true">
+            <attribute name="label">
              <string/>
             </attribute>
            </widget>
@@ -109,11 +109,11 @@
          </property>
          <item row="0" column="0">
           <widget class="dtDirector::NodeTabs" name="macroNodeTabWidget">
-           <property name="tabPosition">
-            <enum>QTabWidget::North</enum>
+           <property name="tabSpacing">
+            <number>0</number>
            </property>
-           <widget class="QWidget" name="macroNodeTabWidgetPage1">
-            <attribute name="title">
+           <widget class="QWidget" name="macroNodeTabWidgetPage1_2" native="true">
+            <attribute name="label">
              <string/>
             </attribute>
            </widget>
@@ -131,11 +131,11 @@
          </property>
          <item row="0" column="0">
           <widget class="dtDirector::NodeTabs" name="linkNodeTabWidget">
-           <property name="tabPosition">
-            <enum>QTabWidget::North</enum>
+           <property name="tabSpacing">
+            <number>0</number>
            </property>
-           <widget class="QWidget" name="linkNodeTabWidgetPage1">
-            <attribute name="title">
+           <widget class="QWidget" name="linkNodeTabWidgetPage1_2" native="true">
+            <attribute name="label">
              <string/>
             </attribute>
            </widget>
@@ -159,11 +159,11 @@
              <height>0</height>
             </size>
            </property>
-           <property name="tabPosition">
-            <enum>QTabWidget::North</enum>
+           <property name="tabSpacing">
+            <number>0</number>
            </property>
-           <widget class="QWidget" name="miscNodeTabWidgetPage1">
-            <attribute name="title">
+           <widget class="QWidget" name="miscNodeTabWidgetPage1_2" native="true">
+            <attribute name="label">
              <string/>
             </attribute>
            </widget>
@@ -645,7 +645,7 @@
   </customwidget>
   <customwidget>
    <class>dtDirector::NodeTabs</class>
-   <extends>QTabWidget</extends>
+   <extends>QToolBox</extends>
    <header location="global">dtDirectorQt/nodetabs.h</header>
    <container>1</container>
   </customwidget>

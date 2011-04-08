@@ -34,12 +34,10 @@ namespace dtDirector
 {
    ////////////////////////////////////////////////////////////////////////////////
    NodeTabs::NodeTabs(QWidget* parent)
-      : QTabWidget(parent)
+      : QToolBox(parent)
       , mpEditor(NULL)
       , mpGraph(NULL)
    {
-      setTabsClosable(false);
-      setMovable(true);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -53,7 +51,12 @@ namespace dtDirector
    void NodeTabs::RefreshNodes(NodeType::NodeTypeEnum nodeType)
    {
       // Clear out any previous items and re-add translation item
-      clear();
+      for (int toolIndex = count() - 1; toolIndex >= 0; --toolIndex)
+      {
+         QWidget* item = widget(toolIndex);
+         removeItem(toolIndex);
+         delete item;
+      }
 
       std::vector<const NodeType*> nodes;
       NodeManager::GetInstance().GetNodeTypes(nodes);
@@ -79,7 +82,7 @@ namespace dtDirector
                int tabCount = count();
                for (int tabIndex = 0; tabIndex < tabCount; ++tabIndex)
                {
-                  if (tabText(tabIndex).toStdString() == node->GetFolder())
+                  if (itemText(tabIndex).toStdString() == node->GetFolder())
                   {
                      QGraphicsView* view = dynamic_cast<QGraphicsView*>(widget(tabIndex));
                      if (view)
@@ -100,12 +103,12 @@ namespace dtDirector
 
                   if (node->GetFolder() == "Base")
                   {
-                     insertTab(0, view, node->GetFolder().c_str());
+                     insertItem(0, view, node->GetFolder().c_str());
                      setCurrentIndex(0);
                   }
                   else
                   {
-                     addTab(view, node->GetFolder().c_str());
+                     addItem(view, node->GetFolder().c_str());
                   }
                }
 
@@ -116,6 +119,8 @@ namespace dtDirector
             }
          }
       }
+
+      layout()->setSpacing(0);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
