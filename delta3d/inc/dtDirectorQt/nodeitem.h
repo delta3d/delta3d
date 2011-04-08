@@ -466,6 +466,8 @@ namespace dtDirector
 
       bool        mHasHiddenLinks;
 
+      bool        mChainSelecting;
+
    };
 }
 
