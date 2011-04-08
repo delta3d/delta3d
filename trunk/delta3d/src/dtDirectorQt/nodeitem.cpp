@@ -171,6 +171,7 @@ namespace dtDirector
        , mLinkHeight(0.0f)
        , mValueHeight(0.0f)
        , mHasHiddenLinks(false)
+       , mChainSelecting(false)
    {
       setFlag(QGraphicsItem::ItemIsMovable, true);
       setFlag(QGraphicsItem::ItemIsSelectable, true);
@@ -1133,6 +1134,53 @@ namespace dtDirector
    {
       dtDAL::ActorProperty* prop = mNode->GetProperty("Position");
       if (prop) mOldPosition = prop->ToString();
+
+      mChainSelecting = mScene->IsHoldingShift();
+      if (mChainSelecting)
+      {
+         mScene->BeginBatchSelection();
+         int outCount = (int)mOutputs.size();
+         for (int outIndex = 0; outIndex < outCount; ++outIndex)
+         {
+            OutputData& data = mOutputs[outIndex];
+            std::vector<InputLink*>& links = data.link->GetLinks();
+            int linkCount = (int)links.size();
+            for (int linkIndex = 0; linkIndex < linkCount; ++linkIndex)
+            {
+               InputLink* link = links[linkIndex];
+               if (link)
+               {
+                  dtDirector::NodeItem* item = mScene->GetNodeItem(link->GetOwner()->GetID());
+                  if (item && !item->isSelected())
+                  {
+                     item->setSelected(true);
+                     item->BeginMoveEvent();
+                  }
+               }
+            }
+         }
+         int valCount = (int)mValues.size();
+         for (int valIndex = 0; valIndex < valCount; ++valIndex)
+         {
+            ValueData& data = mValues[valIndex];
+            std::vector<ValueNode*>& nodes = data.link->GetLinks();
+            int nodeCount = (int)nodes.size();
+            for (int nodeIndex = 0; nodeIndex < nodeCount; ++nodeIndex)
+            {
+               ValueNode* node = nodes[nodeIndex];
+               if (node)
+               {
+                  dtDirector::NodeItem* item = mScene->GetNodeItem(node->GetID());
+                  if (item && !item->isSelected())
+                  {
+                     item->setSelected(true);
+                     item->BeginMoveEvent();
+                  }
+               }
+            }
+         }
+         mScene->EndBatchSelection();
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -1149,6 +1197,52 @@ namespace dtDirector
          // Notify the undo manager of the property changes.
          dtCore::RefPtr<UndoPropertyEvent> event = new UndoPropertyEvent(mScene->GetEditor(), mNode->GetID(), prop->GetName(), mOldPosition, value);
          mScene->GetEditor()->GetUndoManager()->AddEvent(event.get());
+      }
+
+      if (mChainSelecting)
+      {
+         mScene->BeginBatchSelection();
+         int outCount = (int)mOutputs.size();
+         for (int outIndex = 0; outIndex < outCount; ++outIndex)
+         {
+            OutputData& data = mOutputs[outIndex];
+            std::vector<InputLink*>& links = data.link->GetLinks();
+            int linkCount = (int)links.size();
+            for (int linkIndex = 0; linkIndex < linkCount; ++linkIndex)
+            {
+               InputLink* link = links[linkIndex];
+               if (link)
+               {
+                  dtDirector::NodeItem* item = mScene->GetNodeItem(link->GetOwner()->GetID());
+                  if (item && item->isSelected())
+                  {
+                     item->setSelected(false);
+                     item->EndMoveEvent();
+                  }
+               }
+            }
+         }
+         int valCount = (int)mValues.size();
+         for (int valIndex = 0; valIndex < valCount; ++valIndex)
+         {
+            ValueData& data = mValues[valIndex];
+            std::vector<ValueNode*>& nodes = data.link->GetLinks();
+            int nodeCount = (int)nodes.size();
+            for (int nodeIndex = 0; nodeIndex < nodeCount; ++nodeIndex)
+            {
+               ValueNode* node = nodes[nodeIndex];
+               if (node)
+               {
+                  dtDirector::NodeItem* item = mScene->GetNodeItem(node->GetID());
+                  if (item && item->isSelected())
+                  {
+                     item->setSelected(false);
+                     item->EndMoveEvent();
+                  }
+               }
+            }
+         }
+         mScene->EndBatchSelection();
       }
    }
 

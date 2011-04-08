@@ -60,6 +60,9 @@ namespace dtDirector
       , mHasDragged(false)
       , mBandSelecting(false)
       , mBatchSelecting(false)
+      , mHoldingAlt(false)
+      , mHoldingControl(false)
+      , mHoldingShift(false)
       , mMacroSelectionAction(NULL)
       , mTranslationItem(NULL)
    {
@@ -724,6 +727,10 @@ namespace dtDirector
       mDragging = false;
       mHasDragged = false;
       mBandSelecting = false;
+      mHoldingAlt = (event->modifiers() == Qt::AltModifier);
+      mHoldingControl = (event->modifiers() == Qt::ControlModifier);
+      mHoldingShift = (event->modifiers() == Qt::ShiftModifier);
+
       if (event->modifiers() == Qt::ShiftModifier ||
          event->button() == Qt::RightButton)
       {

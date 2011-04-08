@@ -112,6 +112,13 @@ namespace dtDirector
       QPointF GetCenter(const QList<QGraphicsItem*>& nodes);
 
       /**
+       * Retrieves whether the control or shift modifiers are being held.
+       */
+      bool IsHoldingAlt() const { return mHoldingAlt; }
+      bool IsHoldingControl() const { return mHoldingControl; }
+      bool IsHoldingShift() const { return mHoldingShift; }
+
+      /**
        * Focuses the view on the center of all node items.
        */
       void CenterAll();
@@ -309,6 +316,9 @@ namespace dtDirector
       bool     mHasDragged;
       bool     mBandSelecting;
       bool     mBatchSelecting;
+      bool     mHoldingAlt;
+      bool     mHoldingControl;
+      bool     mHoldingShift;
 
       QAction* mMacroSelectionAction;
 
