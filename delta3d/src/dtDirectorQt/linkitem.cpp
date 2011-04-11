@@ -1115,6 +1115,14 @@ namespace dtDirector
                   ValueLink* input = mNodeItem->GetValues()[mLinkIndex].link;
                   ValueNode* output = item->mNodeItem->GetNode()->AsValueNode();
 
+                  // If this link does not allow multiple connections, then
+                  // make sure we disconnect the link from any values first.
+                  if (!input->AllowMultiple())
+                  {
+                     mScene->GetEditor()->GetUndoManager()->BeginMultipleEvents();
+                     Disconnect();
+                  }
+
                   // Create a new connection between these two links.
                   if (input->Connect(output))
                   {
@@ -1128,6 +1136,11 @@ namespace dtDirector
                         true);
                      mScene->GetEditor()->GetUndoManager()->AddEvent(event);
                      emit LinkConnected();
+                  }
+
+                  if (!input->AllowMultiple())
+                  {
+                     mScene->GetEditor()->GetUndoManager()->EndMultipleEvents();
                   }
 
                   // Refresh the entire scene to make sure all nodes and links are
@@ -1433,6 +1446,14 @@ namespace dtDirector
                   ValueLink* input = item->mNodeItem->GetValues()[item->mLinkIndex].link;
                   ValueNode* output = mNodeItem->GetNode()->AsValueNode();
 
+                  // If this link does not allow multiple connections, then
+                  // make sure we disconnect the link from any values first.
+                  if (!input->AllowMultiple())
+                  {
+                     mScene->GetEditor()->GetUndoManager()->BeginMultipleEvents();
+                     item->mNodeItem->GetValues()[item->mLinkIndex].linkGraphic->Disconnect();
+                  }
+
                   // Create a new connection between these two links.
                   if (input->Connect(output))
                   {
@@ -1446,6 +1467,11 @@ namespace dtDirector
                         true);
                      mScene->GetEditor()->GetUndoManager()->AddEvent(event);
                      emit LinkConnected();
+                  }
+
+                  if (!input->AllowMultiple())
+                  {
+                     mScene->GetEditor()->GetUndoManager()->EndMultipleEvents();
                   }
 
                   // Refresh the entire scene to make sure all nodes and links are
