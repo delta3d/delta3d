@@ -44,6 +44,24 @@ namespace dtUtil
 
    class TaskThread;
 
+template<class _Ty,
+   class _Container = std::vector<_Ty>,
+   class _Pr = std::less<typename _Container::value_type> >
+   class checked_priority_queue : public std::priority_queue<_Ty, _Container, _Pr>
+   {
+   public:
+      bool checkme()
+      {
+         for (unsigned i = 1; i < c.size(); ++i)
+         {
+            // c[0] should have the highest priority.
+            if (c[0] < c[i])
+               return false;
+         }
+         return true;
+      }
+   };
+
 
    class DT_UTIL_EXPORT TaskQueue : public osg::Referenced
    {
@@ -106,10 +124,11 @@ namespace dtUtil
       {
          dtCore::RefPtr<ThreadPoolTask> mTask;
          unsigned mQueueId;
-         bool operator < (const TaskQueueItem& item) const { return mQueueId < item.mQueueId; }
+         // We want low to high, not high to low.
+         bool operator < (const TaskQueueItem& item) const { return mQueueId > item.mQueueId; }
       };
 
-      typedef std::priority_queue<TaskQueueItem> Tasks;
+      typedef checked_priority_queue<TaskQueueItem> Tasks;
 
       OpenThreads::Mutex     mTasksMutex;
       OpenThreads::Block     mTasksBlock;
@@ -227,6 +246,10 @@ namespace dtUtil
          }
          else
          {
+            //if (!mTasks.checkme())
+            //{
+            //   LOG_ERROR("Task Queue was not in the correct order");
+            //}
 
             queueId = mTasks.top().mQueueId;
 
