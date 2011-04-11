@@ -50,12 +50,13 @@ template<class _Ty,
    class checked_priority_queue : public std::priority_queue<_Ty, _Container, _Pr>
    {
    public:
+      typedef std::priority_queue<_Ty, _Container, _Pr> BaseClass;
       bool checkme()
       {
-         for (unsigned i = 1; i < c.size(); ++i)
+         for (unsigned i = 1; i < BaseClass::c.size(); ++i)
          {
             // c[0] should have the highest priority.
-            if (c[0] < c[i])
+            if (BaseClass::c[0] < BaseClass::c[i])
                return false;
          }
          return true;
