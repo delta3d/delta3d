@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<shaderlist>     
+   
+   <shadergroup name="TestShaders">
+
+      <shader name="TestBumpMap" default="yes">
+         <source type="Vertex">shaders/TestBumpMap.vert</source>
+         <source type="Fragment">shaders/TestBumpMap.frag</source>
+		 
+         <parameter name="diffuseTexture">
+            <texture2D textureUnit="0">
+               <source type="Auto"/>
+            </texture2D>
+         </parameter>
+	 
+	     <parameter name="normalTexture">
+            <texture2D textureUnit="1">
+               <source type="Auto"/>
+            </texture2D>
+         </parameter>
+		 
+		 <parameter name="specTexture">
+            <texture2D textureUnit="2">
+               <source type="Auto"/>
+            </texture2D>
+         </parameter>
+       
+       <parameter name="mode">
+   		<integer defaultValue="0"/>
+   	 </parameter>
+
+      </shader>
+
+	  <shader name="AttributelessBump" default="no">
+         <source type="Vertex">shaders/AttributelessBump.vert</source>	
+         <source type="Fragment">shaders/AttributelessBump.frag</source>
+
+         <parameter name="diffuseTexture">
+            <texture2D textureUnit="0">
+               <source type="Auto"/>
+            </texture2D>
+         </parameter>
+
+         <parameter name="normalTexture">
+            <texture2D textureUnit="1">
+               <source type="Auto"/>
+            </texture2D>
+         </parameter>
+
+         <parameter name="uViewPosition">
+            <vec4 defaultValue="0 0 0 0" />
+         </parameter>
+
+		<parameter name="uViewDirection">
+			<vec4 defaultValue="0 0 0 0" />
+		 </parameter>
+
+		<parameter name="mode">
+			<integer defaultValue="0" />
+		 </parameter>
+	     
+      </shader>
+   </shadergroup>
+    
+</shaderlist>
