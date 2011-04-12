@@ -41,7 +41,6 @@ namespace dtDAL
       , GetActorFunctor(Get)
       , mDesiredActorClass(desiredActorClass)
    {
-
    }
 
    ////////////////////////////////////////////////////////////////////////////

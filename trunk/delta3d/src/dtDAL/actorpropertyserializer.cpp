@@ -123,7 +123,7 @@ namespace dtDAL
    /////////////////////////////////////////////////////////////////
    void ActorPropertySerializer::WriteProperty(const ActorProperty& property)
    {
-      if (mWriter == NULL || property.IsReadOnly())
+      if (mWriter == NULL || property.IsReadOnly() || property.IsDefault())
       {
          return;
       }

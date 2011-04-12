@@ -41,9 +41,9 @@ namespace dtDirector
    ///////////////////////////////////////////////////////////////////////////////////////
    void RemoteEvent::Init(const NodeType& nodeType, DirectorGraph* graph)
    {
-      EventNode::Init(nodeType, graph);
-
       SetEventName("Event Name");
+
+      EventNode::Init(nodeType, graph);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
