@@ -1152,6 +1152,8 @@ namespace dtGame
             "Actors may not be added the GM with an empty unique id", __FILE__, __LINE__);
       }
 
+      bool hasNoParent = actorProxy.GetActor()->GetParent() == NULL;
+
       if (mGMImpl->mEnvironment.valid())
       {
          if (mGMImpl->mEnvironment.get() != &actorProxy)
@@ -1162,7 +1164,10 @@ namespace dtGame
                LOG_ERROR("An environment actor proxy has an invalid actor");
                return;
             }
-            ea->AddActor(*actorProxy.GetActor());
+            if (hasNoParent)
+            {
+               ea->AddActor(*actorProxy.GetActor());
+            }
             mGMImpl->mBaseActorObjectMap.insert(std::make_pair(actorProxy.GetId(), &actorProxy));
          }
          else
@@ -1174,7 +1179,10 @@ namespace dtGame
       else
       {
          mGMImpl->mBaseActorObjectMap.insert(std::make_pair(actorProxy.GetId(), &actorProxy));
-         mGMImpl->mScene->AddChild(actorProxy.GetActor());
+         if (hasNoParent)
+         {
+            mGMImpl->mScene->AddChild(actorProxy.GetActor());
+         }
       }
    }
 
@@ -1329,7 +1337,7 @@ namespace dtGame
          size_t actorsSize = actors.size();
          for (size_t i = 0; i < actorsSize; i++)
          {
-            if (actors[i] != oldProxy.get())
+            if (actors[i] != oldProxy.get() && actors[i]->GetActor()->GetParent() == NULL)
             {
                ea->AddActor(*actors[i]->GetActor());
             }
