@@ -239,6 +239,35 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////
+   bool NamedArrayParameter::operator==(const ActorProperty& toCompare) const
+   {
+      bool result = true;
+      if (toCompare.GetDataType() == GetDataType())
+      {
+         const dtDAL::ArrayActorPropertyBase* ap = static_cast<const dtDAL::ArrayActorPropertyBase*> (&toCompare);
+         const dtDAL::ActorProperty* internalProp = ap->GetArrayProperty();
+         unsigned numParams = mParameterList.size();
+         if (numParams != unsigned(ap->GetArraySize()))
+         {
+            result = false;
+         }
+
+         for (unsigned i = 0; result && i < numParams; ++i)
+         {
+            ap->SetIndex(int(i));
+            const NamedParameter* param = GetParameter(i);
+            if (param == NULL)
+            {
+               result = false;
+               break;
+            }
+            result = result && (*param) == (*internalProp);
+         }
+      }
+      return result;
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
    NamedParameter* NamedArrayParameter::GetParameter(unsigned index)
    {
       if (index < mParameterList.size())

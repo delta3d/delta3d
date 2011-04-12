@@ -128,6 +128,8 @@ namespace dtDAL
          virtual void SetFromProperty(const dtDAL::ActorProperty& property);
          virtual void ApplyValueToProperty(dtDAL::ActorProperty& property) const;
 
+         virtual bool operator==(const ActorProperty& toCompare) const;
+
       protected:
          virtual ~NamedVec2fParameter();
    };
@@ -148,6 +150,8 @@ namespace dtDAL
          virtual void SetFromProperty(const dtDAL::ActorProperty& property);
          virtual void ApplyValueToProperty(dtDAL::ActorProperty& property) const;
 
+         virtual bool operator==(const ActorProperty& toCompare) const;
+
       protected:
          virtual ~NamedVec2dParameter();
    };
@@ -166,6 +170,8 @@ namespace dtDAL
 
          virtual void SetFromProperty(const dtDAL::ActorProperty& property);
          virtual void ApplyValueToProperty(dtDAL::ActorProperty& property) const;
+
+         virtual bool operator==(const ActorProperty& toCompare) const;
 
       protected:
          NamedVec3fParameter(DataType& dataType, const dtUtil::RefString& name,
@@ -189,6 +195,8 @@ namespace dtDAL
          virtual void SetFromProperty(const dtDAL::ActorProperty& property);
          virtual void ApplyValueToProperty(dtDAL::ActorProperty& property) const;
 
+         virtual bool operator==(const ActorProperty& toCompare) const;
+
       protected:
          virtual ~NamedVec3dParameter();
    };
@@ -206,6 +214,8 @@ namespace dtDAL
 
          virtual void SetFromProperty(const dtDAL::ActorProperty& property);
          virtual void ApplyValueToProperty(dtDAL::ActorProperty& property) const;
+
+         virtual bool operator==(const ActorProperty& toCompare) const;
 
       protected:
          NamedVec4fParameter(DataType& dataType, const dtUtil::RefString& name,
@@ -228,6 +238,8 @@ namespace dtDAL
 
          virtual void SetFromProperty(const dtDAL::ActorProperty& property);
          virtual void ApplyValueToProperty(dtDAL::ActorProperty& property) const;
+
+         virtual bool operator==(const ActorProperty& toCompare) const;
 
       protected:
          virtual ~NamedVec4dParameter();

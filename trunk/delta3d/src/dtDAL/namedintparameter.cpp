@@ -57,4 +57,12 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////
+   bool NamedIntParameter::operator==(const ActorProperty& toCompare) const
+   {
+      if (toCompare.GetDataType() == GetDataType())
+      {
+         return GetValue() == static_cast<const dtDAL::IntActorProperty&>(toCompare).GetValue();
+      }
+      return false;
+   }
 }

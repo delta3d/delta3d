@@ -124,12 +124,9 @@ namespace dtDAL
       }
       else
       {
-
          throw dtDAL::InvalidParameterException(
             "Cannot call ApplyValueToProperty()on an ActorMessageParameter.  See the GameActor::ApplyActorUpdate() for an example of how to do this.",
             __FILE__, __LINE__);
       }
    }
-
-   ///////////////////////////////////////////////////////////////////////////////
 }

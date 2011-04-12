@@ -59,4 +59,12 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////
+   bool NamedFloatParameter::operator==(const ActorProperty& toCompare) const
+   {
+      if (toCompare.GetDataType() == GetDataType())
+      {
+         return GetValue() == static_cast<const dtDAL::FloatActorProperty&>(toCompare).GetValue();
+      }
+      return false;
+   }
 }

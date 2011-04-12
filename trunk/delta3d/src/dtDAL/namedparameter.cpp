@@ -101,6 +101,16 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////
+   bool NamedParameter::operator==(const ActorProperty& toCompare) const
+   {
+      if (toCompare.GetDataType() == GetDataType())
+      {
+         return ToString() == toCompare.ToString();
+      }
+      return false;
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
    void NamedParameter::ValidatePropertyType(const dtDAL::ActorProperty& property) const
    {
       if (property.GetDataType() != GetDataType())

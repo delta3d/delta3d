@@ -123,5 +123,13 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////
+   bool NamedBooleanParameter::operator==(const ActorProperty& toCompare) const
+   {
+      if (toCompare.GetDataType() == GetDataType())
+      {
+         return GetValue() == static_cast<const dtDAL::BooleanActorProperty&>(toCompare).GetValue();
+      }
+      return false;
+   }
 }
 

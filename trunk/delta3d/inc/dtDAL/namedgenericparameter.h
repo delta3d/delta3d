@@ -39,6 +39,8 @@ namespace dtDAL
    class NamedGenericParameter : public NamedParameter
    {
       public:
+         typedef ParamType value_type;
+
          NamedGenericParameter(DataType& dataType, const dtUtil::RefString& name, const ParamType& defaultValue, bool isList = false)
             : NamedParameter(dataType, name, isList)
             , mValue(defaultValue)
