@@ -296,9 +296,10 @@ namespace dtDAL
       ValidatePropertyType(property);
 
       const dtDAL::GroupActorProperty* gap = static_cast<const dtDAL::GroupActorProperty*>(&property);
-      if (gap->GetValue().valid())
+      dtCore::RefPtr<NamedGroupParameter> createdParam = gap->GetValue();
+      if (createdParam.valid())
       {
-         CopyFrom(*gap->GetValue());
+         CopyFrom(*createdParam);
       }
    }
 
@@ -309,6 +310,21 @@ namespace dtDAL
 
       dtDAL::GroupActorProperty* gap = static_cast<dtDAL::GroupActorProperty*>(&property);
       gap->SetValue(*this);
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   bool NamedGroupParameter::operator==(const ActorProperty& toCompare) const
+   {
+      if (toCompare.GetDataType() == GetDataType())
+      {
+         const dtDAL::GroupActorProperty* gap = static_cast<const dtDAL::GroupActorProperty*>(&toCompare);
+         dtCore::RefPtr<NamedGroupParameter> createdParam = gap->GetValue();
+         if (createdParam.valid())
+         {
+            return (*this) == (*createdParam);
+         }
+      }
+      return false;
    }
 
    ///////////////////////////////////////////////////////////////////////////////

@@ -38,6 +38,8 @@ namespace dtDAL
          virtual void SetFromProperty(const dtDAL::ActorProperty& property);
          virtual void ApplyValueToProperty(dtDAL::ActorProperty& property) const;
 
+         virtual bool operator==(const ActorProperty& toCompare) const;
+
       protected:
          virtual ~NamedFloatParameter();
    };

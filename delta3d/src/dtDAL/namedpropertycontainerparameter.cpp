@@ -148,4 +148,11 @@ namespace dtDAL
       }
    }
 
+   ///////////////////////////////////////////////////////////////////////////////
+   bool NamedPropertyContainerParameter::operator==(const ActorProperty& toCompare) const
+   {
+      // For now, they can't really be the same.
+      return false;
+   }
+
 }

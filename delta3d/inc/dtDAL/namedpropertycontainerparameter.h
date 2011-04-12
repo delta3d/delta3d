@@ -61,6 +61,8 @@ namespace dtDAL
 
       virtual void ApplyValueToProperty(dtDAL::ActorProperty& property) const;
 
+      virtual bool operator==(const ActorProperty& toCompare) const;
+
    protected:
       NamedPropertyContainerParameter(dtDAL::DataType& newDataType, const dtUtil::RefString& name);
 

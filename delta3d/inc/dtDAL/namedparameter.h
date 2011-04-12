@@ -87,8 +87,11 @@ namespace dtDAL
          virtual bool operator==(const NamedParameter& toCompare) const = 0;
          bool operator!=(const NamedParameter& toCompare) const { return !(*this == toCompare); }
 
+         virtual bool operator==(const ActorProperty& toCompare) const;
+         bool operator!=(const ActorProperty& toCompare) const { return !(*this == toCompare); }
+
          /**
-          * Creates anamed parameter that will hold the given type.
+          * Creates a named parameter that will hold the given type.
           * @param type the datatype the parameter should hold.
           * @param name the name of the parameter to create.
           * @param isList true if the created parameter should be a list type.

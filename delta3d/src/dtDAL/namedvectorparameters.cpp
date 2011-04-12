@@ -58,6 +58,16 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////
+   bool NamedVec2fParameter::operator==(const ActorProperty& toCompare) const
+   {
+      if (toCompare.GetDataType() == GetDataType())
+      {
+         return GetValue() == static_cast<const dtDAL::Vec2fActorProperty*>(&toCompare)->GetValue();
+      }
+      return false;
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
    ///////////////////////////////////////////////////////////////////////////////
    NamedVec2dParameter::NamedVec2dParameter(const dtUtil::RefString& name,
       const osg::Vec2d& defaultValue, bool isList)
@@ -88,6 +98,15 @@ namespace dtDAL
       ap->SetValue(GetValue());
    }
 
+   ///////////////////////////////////////////////////////////////////////////////
+   bool NamedVec2dParameter::operator==(const ActorProperty& toCompare) const
+   {
+      if (toCompare.GetDataType() == GetDataType())
+      {
+         return GetValue() == static_cast<const dtDAL::Vec2dActorProperty*>(&toCompare)->GetValue();
+      }
+      return false;
+   }
 
    ///////////////////////////////////////////////////////////////////////////////
    ///////////////////////////////////////////////////////////////////////////////
@@ -128,6 +147,16 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////
+   bool NamedVec3fParameter::operator==(const ActorProperty& toCompare) const
+   {
+      if (toCompare.GetDataType() == GetDataType())
+      {
+         return GetValue() == static_cast<const dtDAL::Vec3fActorProperty*>(&toCompare)->GetValue();
+      }
+      return false;
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
    ///////////////////////////////////////////////////////////////////////////////
    NamedVec3dParameter::NamedVec3dParameter(const dtUtil::RefString& name,
       const osg::Vec3d& defaultValue, bool isList)
@@ -156,6 +185,16 @@ namespace dtDAL
 
       dtDAL::Vec3dActorProperty *ap = static_cast<dtDAL::Vec3dActorProperty*> (&property);
       ap->SetValue(GetValue());
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   bool NamedVec3dParameter::operator==(const ActorProperty& toCompare) const
+   {
+      if (toCompare.GetDataType() == GetDataType())
+      {
+         return GetValue() == static_cast<const dtDAL::Vec3dActorProperty*>(&toCompare)->GetValue();
+      }
+      return false;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -197,6 +236,16 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////
+   bool NamedVec4fParameter::operator==(const ActorProperty& toCompare) const
+   {
+      if (toCompare.GetDataType() == GetDataType())
+      {
+         return GetValue() == static_cast<const dtDAL::Vec4fActorProperty*>(&toCompare)->GetValue();
+      }
+      return false;
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
    ///////////////////////////////////////////////////////////////////////////////
    NamedVec4dParameter::NamedVec4dParameter(const dtUtil::RefString& name,
       const osg::Vec4d& defaultValue, bool isList)
@@ -228,4 +277,12 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////
+   bool NamedVec4dParameter::operator==(const ActorProperty& toCompare) const
+   {
+      if (toCompare.GetDataType() == GetDataType())
+      {
+         return GetValue() == static_cast<const dtDAL::Vec4dActorProperty*>(&toCompare)->GetValue();
+      }
+      return false;
+   }
 }
