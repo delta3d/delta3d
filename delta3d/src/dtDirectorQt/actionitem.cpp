@@ -49,7 +49,6 @@ namespace dtDirector
 
       if (mNode.valid())
       {
-
          SetTitle(GetNodeTitle());
          if (mNode->InputsExposed())  DrawInputs();
          if (mNode->ValuesExposed())  SetupValues();

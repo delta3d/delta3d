@@ -67,6 +67,8 @@ namespace dtDAL
       }
       else
       {
+         newProp->Init();
+
          mPropertyMap.insert(std::make_pair(dtUtil::RefString(newProp->GetName()),newProp));
 
          if (index >= 0 && index < (int)mProperties.size())

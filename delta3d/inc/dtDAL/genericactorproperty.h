@@ -67,7 +67,6 @@ namespace dtDAL
          , SetPropFunctor(set)
          , GetPropFunctor(get)
       {
-
       }
 
       /**

@@ -54,6 +54,18 @@ namespace dtDAL
       public:
 
          /**
+          * Initializes the property.
+          */
+         virtual void Init();
+
+         /**
+          * Returns whether the current value of the property is the default.
+          *
+          * @return  True if the value is default.
+          */
+         bool IsDefault() const;
+
+         /**
           * @return Returns an enumeration of the data type that this property
           * represents.
           */
@@ -62,7 +74,7 @@ namespace dtDAL
          /**
           * Retrieves a human readable version of the property's value.
           */
-         virtual std::string GetValueString() {return ToString();}
+         virtual std::string GetValueString() const {return ToString();}
 
          /**
           * Assigns the value of this property the value contained in the
@@ -162,6 +174,9 @@ namespace dtDAL
 
          ///Description of what the property represents.
          dtUtil::RefString mDescription;
+
+         ///The Default value of this property when it was created.
+         dtUtil::RefString mDefaultValue;
 
          ///the precision used for floating point numbers when doing a GetStringValue and SetStringValue
          unsigned int mNumberPrecision;
