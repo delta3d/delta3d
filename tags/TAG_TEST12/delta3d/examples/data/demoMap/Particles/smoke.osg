@@ -1,0 +1,177 @@
+Group {
+  DataVariance DYNAMIC
+  nodeMask 0xffffffff
+  cullingActive TRUE
+  num_children 4
+  Geode {
+    UniqueID Geode_0
+    DataVariance DYNAMIC
+    name "Layer 0"
+    nodeMask 0xffffffff
+    cullingActive TRUE
+    num_drawables 1
+    osgParticle::ParticleSystem {
+      UniqueID ParticleSystem_1
+      DataVariance DYNAMIC
+      StateSet {
+        DataVariance STATIC
+        rendering_hint TRANSPARENT_BIN
+        renderBinMode USE
+        binNumber 10
+        binName DepthSortedBin
+        GL_LIGHTING OFF
+        GL_BLEND ON
+        Material {
+          DataVariance STATIC
+          ColorMode OFF
+          ambientColor 0.2 0.2 0.2 1
+          diffuseColor 0.8 0.8 0.8 1
+          specularColor FRONT 0 0 0 1
+          specularColor BACK  0 0 0 1
+          emissionColor FRONT 0 0 0 1
+          emissionColor BACK  0 0 0 1
+          shininess 0
+        }
+        BlendFunc {
+          DataVariance STATIC
+          source SRC_ALPHA
+          destination ONE_MINUS_SRC_ALPHA
+        }
+        textureUnit 0 {
+          GL_TEXTURE_2D ON
+          Texture2D {
+            DataVariance STATIC
+            file "smoke.rgb"
+            wrap_s REPEAT
+            wrap_t REPEAT
+            wrap_r REPEAT
+            min_filter LINEAR
+            mag_filter LINEAR
+            maxAnisotropy 1
+            borderColor 0 0 0 0
+            borderWidth 0
+            useHardwareMipMapGeneration TRUE
+            unRefImageDataAfterApply FALSE
+            internalFormatMode USE_IMAGE_DATA_FORMAT
+          }
+          TexEnv {
+            DataVariance STATIC
+            mode MODULATE
+          }
+        }
+      }
+      supportsDisplayList FALSE
+      useDisplayList FALSE
+      useVertexBufferObjects FALSE
+      particleAlignment BILLBOARD
+      alignVectorX 1 0 0
+      alignVectorY 0 1 0
+      doublePassRendering FALSE
+      frozen FALSE
+      freezeOnCull FALSE
+      defaultBoundingBox -10 -10 -10 10 10 10
+      particleTemplate {
+        shape QUAD
+        lifeTime 3
+        sizeRange 0.5 15.02
+        alphaRange 0.82 0
+        colorRange 0.36036 0.36036 0.36036 1 1 1 1 1
+        position 0 0 0
+        velocity 0 0 0
+        angle 0 0 0
+        angularVelocity 0 0 0
+        radius 0.2
+        mass 0.1
+        sizeInterpolator {
+          osgParticle::LinearInterpolator {
+            UniqueID LinearInterpolator_2
+            DataVariance DYNAMIC
+          }
+        }
+        alphaInterpolator {
+          osgParticle::LinearInterpolator {
+            UniqueID LinearInterpolator_3
+            DataVariance DYNAMIC
+          }
+        }
+        colorInterpolator {
+          osgParticle::LinearInterpolator {
+            UniqueID LinearInterpolator_4
+            DataVariance DYNAMIC
+          }
+        }
+      }
+    }
+  }
+  MatrixTransform {
+    UniqueID MatrixTransform_5
+    DataVariance DYNAMIC
+    nodeMask 0xffffffff
+    cullingActive TRUE
+    referenceFrame RELATIVE
+    Matrix {
+      1 0 0 0
+      0 1 0 0
+      0 0 1 0
+      0 0 0 1
+    }
+    num_children 1
+    osgParticle::ModularEmitter {
+      UniqueID ModularEmitter_6
+      DataVariance DYNAMIC
+      nodeMask 0xffffffff
+      cullingActive FALSE
+      Use ParticleSystem_1
+      enabled TRUE
+      referenceFrame RELATIVE
+      endless TRUE
+      lifeTime 0
+      startTime 0
+      currentTime 0
+      resetTime 0
+      useDefaultTemplate TRUE
+      osgParticle::RandomRateCounter {
+        DataVariance DYNAMIC
+        rateRange 8.1 10
+      }
+      osgParticle::SectorPlacer {
+        DataVariance DYNAMIC
+        center 0 0 0
+        radiusRange 0 0.6
+        phiRange 0 6.28319
+      }
+      osgParticle::RadialShooter {
+        DataVariance DYNAMIC
+        thetaRange -0.392699 0.392699
+        phiRange 0 6.2832
+        initialSpeedRange 5 7
+        initialRotationalSpeedRange 0 0 -0.8 0 0 0.8
+      }
+    }
+  }
+  osgParticle::ModularProgram {
+    UniqueID ModularProgram_7
+    DataVariance DYNAMIC
+    nodeMask 0xffffffff
+    cullingActive FALSE
+    Use ParticleSystem_1
+    enabled TRUE
+    referenceFrame RELATIVE
+    endless TRUE
+    lifeTime 0
+    startTime 0
+    currentTime 813.68
+    resetTime 0
+    osgParticle::FluidFrictionOperator {
+      DataVariance DYNAMIC
+      fluidDensity 0.108
+      fluidViscosity 1.8e-005
+      overrideRadius 0    }
+  }
+  osgParticle::ParticleSystemUpdater {
+    DataVariance DYNAMIC
+    nodeMask 0xffffffff
+    cullingActive FALSE
+    Use ParticleSystem_1
+  }
+}
