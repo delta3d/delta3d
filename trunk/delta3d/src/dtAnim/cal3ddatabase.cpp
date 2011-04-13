@@ -132,8 +132,8 @@ namespace dtAnim
    dtCore::RefPtr<Cal3DModelWrapper> Cal3DDatabase::Load(const std::string& file)
    {
       std::string filename = osgDB::convertFileNameToNativeStyle(file);
-      Cal3DModelData* data = Find(filename);
-      if (!data)
+      dtCore::RefPtr<Cal3DModelData> data = Find(filename);
+      if (!data.valid())
       {
          if (mFileLoader->Load(filename, data))
          {
@@ -156,10 +156,22 @@ namespace dtAnim
    /////////////////////////////////////////////////////////////////////////////
    void Cal3DDatabase::LoadAsynchronously(const std::string& file)
    {
-      dtUtil::Functor<void, TYPELIST_1(Cal3DModelData*)> loadCallback =
-         dtUtil::MakeFunctor(&Cal3DDatabase::OnAsynchronousLoadCompleted, this);
 
-      mFileLoader->LoadAsynchronously(file, loadCallback);
+      // TODO find a way to mark a spot in the database for the models that this is going to load it so that
+      // subsequent async calls for the same model will simply wait for this load to finish.
+      // right now it just finds out after the fact.
+      dtCore::RefPtr<Cal3DModelData> data = Find(file);
+      if (data.valid())
+      {
+         OnAsynchronousLoadCompleted(data);
+      }
+      else
+      {
+         dtUtil::Functor<void, TYPELIST_1(Cal3DModelData*)> loadCallback =
+            dtUtil::MakeFunctor(&Cal3DDatabase::OnAsynchronousLoadCompleted, this);
+
+         mFileLoader->LoadAsynchronously(file, loadCallback);
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -305,7 +317,14 @@ namespace dtAnim
       OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mAsynchronousLoadLock);
 
       dtCore::RefPtr<Cal3DModelData> newModelData = loadedModelData;
-      mModelData.push_back(newModelData);
+
+      // Can't use function because on pthreads systems, open threads doesn't use reentrant locks.
+      // Checking again because someone else may have loaded the same data on another thread at the same time.
+      dtCore::RefPtr<const Cal3DModelData> data = FindWithFunctor(mModelData, findWithFilename(newModelData->GetFilename()));
+      if (!data.valid())
+      {
+         mModelData.push_back(newModelData);
+      }
    }
 
    /////////////////////////////////////////////////////////////////////////////
