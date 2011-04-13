@@ -489,6 +489,7 @@ template<class _Ty,
 
       dtCore::RefPtr<TaskQueue> mTaskQueue;
       dtCore::RefPtr<TaskQueue> mBackgroundQueue;
+      dtCore::RefPtr<TaskQueue> mIOQueue;
 
       std::vector<dtCore::RefPtr<TaskThread> > mTaskThreads;
       bool mTaskThreadForBackgroundOnly;
@@ -530,6 +531,8 @@ template<class _Ty,
          gThreadPoolImpl.mBackgroundQueue = new TaskQueue;
       }
 
+      gThreadPoolImpl.mIOQueue = new TaskQueue;
+
       for (int i = 0; i < numThreads; ++i)
       {
          dtCore::RefPtr<TaskThread> newThread;
@@ -539,6 +542,16 @@ template<class _Ty,
          gThreadPoolImpl.mTaskThreads.push_back(newThread);
          newThread->start();
       }
+
+      {
+         dtCore::RefPtr<TaskThread> newThread;
+         // the make a thread just for the io queue.
+         newThread = new TaskThread(*gThreadPoolImpl.mIOQueue);
+
+         gThreadPoolImpl.mTaskThreads.push_back(newThread);
+         newThread->start();
+      }
+
       gThreadPoolImpl.mInitialized = true;
    }
 
@@ -548,6 +561,7 @@ template<class _Ty,
       gThreadPoolImpl.mTaskThreads.clear();
       gThreadPoolImpl.mTaskQueue = NULL;
       gThreadPoolImpl.mBackgroundQueue = NULL;
+      gThreadPoolImpl.mIOQueue = NULL;
       gThreadPoolImpl.mInitialized = false;
    }
 
@@ -563,6 +577,10 @@ template<class _Ty,
       {
          // in cases where worker threads > 0, the background queue is the same pointer as the task queue
          gThreadPoolImpl.mBackgroundQueue->Add(task, 1);
+      }
+      else if (queue == IO)
+      {
+         gThreadPoolImpl.mIOQueue->Add(task, 1);
       }
    }
 
@@ -580,7 +598,7 @@ template<class _Ty,
          return 1U;
       }
 
-      return gThreadPoolImpl.mTaskThreads.size() + 1U;
+      return gThreadPoolImpl.mTaskThreads.size();
    }
 
    //////////////////////////////////////////////////

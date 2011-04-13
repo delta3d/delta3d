@@ -106,7 +106,8 @@ namespace dtUtil
       enum PoolQueue
       {
          IMMEDIATE, ///< Should run immediately
-         BACKGROUND ///< Runs as lower priority and only when IMMEDIATE tasks are not available.
+         BACKGROUND, ///< Runs as lower priority and only when IMMEDIATE tasks are not available.
+         IO ///< Runs as lower priority and on an additional thread because these tasks block but aren't cpu intensive.
       };
 
       static bool IsInitialized();
