@@ -47,7 +47,7 @@ namespace dtAnim
 
       virtual void operator()()
       {
-         Cal3DModelData* loadedData = NULL;
+         dtCore::RefPtr<Cal3DModelData> loadedData;
 
          mLoader.Load(GetName(), loadedData);
 
@@ -201,7 +201,7 @@ namespace dtAnim
     * @see SetDataFilePathList()
     * @throw SAXParseException If the file wasn't formatted correctly
     */
-   bool Cal3DLoader::Load(const std::string& filename, Cal3DModelData*& data_in)
+   bool Cal3DLoader::Load(const std::string& filename, dtCore::RefPtr<Cal3DModelData>& data_in)
    {
       std::string path;
       std::string::size_type stringIndex = filename.find_last_of("\\");
@@ -253,7 +253,7 @@ namespace dtAnim
    void Cal3DLoader::LoadAsynchronously(const std::string& filename, Cal3DLoader::LoadCompletionCallback loadCallback)
    {
       dtCore::RefPtr<LoadTask> loadTask = new LoadTask(*this, filename, loadCallback);
-      dtUtil::ThreadPool::AddTask(*loadTask, dtUtil::ThreadPool::BACKGROUND);
+      dtUtil::ThreadPool::AddTask(*loadTask, dtUtil::ThreadPool::IO);
    }
 
    /////////////////////////////////////////////////////////////////////////////

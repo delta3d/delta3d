@@ -59,7 +59,7 @@ namespace dtAnim
       Cal3DLoader();      
 
       ///Load an animated entity definition file and return the Cal3DModelWrapper
-      bool Load(const std::string& filename, Cal3DModelData*& data_in);
+      bool Load(const std::string& filename, dtCore::RefPtr<Cal3DModelData>& data_in);
 
       void LoadAsynchronously(const std::string& filename, LoadCompletionCallback loadCallback);
 
