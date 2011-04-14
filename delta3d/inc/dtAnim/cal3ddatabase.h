@@ -52,12 +52,12 @@ namespace dtAnim
          bool IsFileValid(const std::string& filename);
          
          ///Load an animated entity definition file and return the Cal3DModelWrapper
-         dtCore::RefPtr<Cal3DModelWrapper> Load(const std::string &filename);
+         dtCore::RefPtr<Cal3DModelWrapper> Load(const std::string& filename);
 
-         void LoadAsynchronously(const std::string &filename);
+         void LoadAsynchronously(const std::string& filename);
 
          ///Save an animated entity definition file.
-         bool Save(const std::string &filename, const Cal3DModelWrapper& wrapper);
+         bool Save(const std::string& filename, const Cal3DModelWrapper& wrapper);
 
          ///Get the model data associated with this model wrapper
          const Cal3DModelData* GetModelData(const Cal3DModelWrapper& wrapper) const;
@@ -78,7 +78,7 @@ namespace dtAnim
          Cal3DDatabase();
          virtual ~Cal3DDatabase();
 
-         void OnAsynchronousLoadCompleted(Cal3DModelData* loadedModelData);
+         bool InternalLoad(const std::string& filename, dtCore::RefPtr<Cal3DModelData>& data_in);
 
          Cal3DModelData* Find(const std::string& filename);
          Cal3DModelData* Find(const CalCoreModel* coreModel);
@@ -92,8 +92,11 @@ namespace dtAnim
          dtCore::RefPtr<AnimNodeBuilder> mNodeBuilder;
 
          mutable OpenThreads::Mutex mAsynchronousLoadLock;
+         mutable OpenThreads::Mutex mLoadingLock;
 
          static dtCore::RefPtr<Cal3DDatabase> mInstance;
+
+         friend class LoadTask;
    };
 
 }

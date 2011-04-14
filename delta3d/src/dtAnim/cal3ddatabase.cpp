@@ -33,8 +33,29 @@
 #include <cal3d/skeleton.h>
 #include <cal3d/coreskeleton.h>
 
+#include <dtUtil/threadpool.h>
+
 namespace dtAnim
 {
+
+   class LoadTask : public dtUtil::ThreadPoolTask
+   {
+   public:
+      LoadTask(Cal3DDatabase& db, const std::string& fileName)
+      : mDatabase(db)
+      {
+         SetName(fileName);
+      }
+
+      virtual void operator()()
+      {
+         dtCore::RefPtr<Cal3DModelData> loadedData;
+         mDatabase.InternalLoad(GetName(), loadedData);
+      }
+   private:
+      Cal3DDatabase& mDatabase;
+   };
+
    /////////////////////////////////////////////////////////////////////////////
    //a custom find function that uses a functor
    template<class T, class Array>
@@ -132,20 +153,13 @@ namespace dtAnim
    dtCore::RefPtr<Cal3DModelWrapper> Cal3DDatabase::Load(const std::string& file)
    {
       std::string filename = osgDB::convertFileNameToNativeStyle(file);
-      dtCore::RefPtr<Cal3DModelData> data = Find(filename);
-      if (!data.valid())
+
+      dtCore::RefPtr<Cal3DModelData> data;
+
+      if (!InternalLoad(filename, data))
       {
-         if (mFileLoader->Load(filename, data))
-         {
-            // Protect the data in case another thread is accessing it
-            OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mAsynchronousLoadLock);
-            mModelData.push_back(data);
-         }
-         else
-         {
-            LOG_ERROR("Unable to load Character XML file '" + filename + "'.");
-            return NULL;
-         }
+         LOG_ERROR("Unable to load Character XML file '" + filename + "'.");
+         return NULL;
       }
 
       CalModel* model = new CalModel(data->GetCoreModel());
@@ -157,20 +171,16 @@ namespace dtAnim
    void Cal3DDatabase::LoadAsynchronously(const std::string& file)
    {
 
-      // TODO find a way to mark a spot in the database for the models that this is going to load it so that
-      // subsequent async calls for the same model will simply wait for this load to finish.
-      // right now it just finds out after the fact.
-      dtCore::RefPtr<Cal3DModelData> data = Find(file);
-      if (data.valid())
+      dtCore::RefPtr<Cal3DModelData> data;
       {
-         OnAsynchronousLoadCompleted(data);
+         OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mAsynchronousLoadLock);
+         data = Find(file);
       }
-      else
-      {
-         dtUtil::Functor<void, TYPELIST_1(Cal3DModelData*)> loadCallback =
-            dtUtil::MakeFunctor(&Cal3DDatabase::OnAsynchronousLoadCompleted, this);
 
-         mFileLoader->LoadAsynchronously(file, loadCallback);
+      if (!data.valid())
+      {
+         dtCore::RefPtr<LoadTask> loadTask = new LoadTask(*this, file);
+         dtUtil::ThreadPool::AddTask(*loadTask, dtUtil::ThreadPool::IO);
       }
    }
 
@@ -307,24 +317,29 @@ namespace dtAnim
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void Cal3DDatabase::OnAsynchronousLoadCompleted(Cal3DModelData* loadedModelData)
+   bool Cal3DDatabase::InternalLoad(const std::string& filename, dtCore::RefPtr<Cal3DModelData>& data_in)
    {
-      if (loadedModelData == NULL)
+      bool result = true;
+      // have to lock for this entire call because the load function is not thread safe
+      // plus it also prevents anyone from adding data to the cache unless they just loaded it.
+      OpenThreads::ScopedLock<OpenThreads::Mutex> lockLoad(mLoadingLock);
       {
-         return;
+         OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mAsynchronousLoadLock);
+         data_in = Find(filename);
       }
 
-      OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mAsynchronousLoadLock);
-
-      dtCore::RefPtr<Cal3DModelData> newModelData = loadedModelData;
-
-      // Can't use function because on pthreads systems, open threads doesn't use reentrant locks.
-      // Checking again because someone else may have loaded the same data on another thread at the same time.
-      dtCore::RefPtr<const Cal3DModelData> data = FindWithFunctor(mModelData, findWithFilename(newModelData->GetFilename()));
-      if (!data.valid())
+      if (!data_in.valid())
       {
-         mModelData.push_back(newModelData);
+         result = mFileLoader->Load(filename, data_in);
+
+         if (data_in.valid())
+         {
+            OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mAsynchronousLoadLock);
+            mModelData.push_back(data_in);
+         }
       }
+
+      return result;
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -342,6 +357,7 @@ namespace dtAnim
    /////////////////////////////////////////////////////////////////////////////
    const Cal3DModelData* Cal3DDatabase::GetModelData(const Cal3DModelWrapper& wrapper) const
    {
+      OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mAsynchronousLoadLock);
       return Find(wrapper.GetCalModel()->getCoreModel());
    }
 
@@ -352,42 +368,38 @@ namespace dtAnim
       {
          return NULL;
       }
+      OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mAsynchronousLoadLock);
       return Find(wrapper.GetCalModel()->getCoreModel());
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    Cal3DModelData* Cal3DDatabase::GetModelData(const std::string& filename)
    {
+      OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mAsynchronousLoadLock);
       return Find(filename);
    }
 
    /////////////////////////////////////////////////////////////////////////////
    Cal3DModelData* Cal3DDatabase::Find(const std::string& filename)
    {
-      // todo- this is ugly, get rid of it
-      OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mAsynchronousLoadLock);
       return const_cast<Cal3DModelData*>(FindWithFunctor(mModelData, findWithFilename(filename)));
    }
 
    /////////////////////////////////////////////////////////////////////////////
    const Cal3DModelData* Cal3DDatabase::Find(const std::string& filename) const
    {
-      OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mAsynchronousLoadLock);
       return FindWithFunctor(mModelData, findWithFilename(filename));
    }
 
    /////////////////////////////////////////////////////////////////////////////
    Cal3DModelData* Cal3DDatabase::Find(const CalCoreModel* coreModel)
    {
-      // todo- this is ugly, get rid of it
-      OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mAsynchronousLoadLock);
       return const_cast<Cal3DModelData*>(FindWithFunctor(mModelData, findWithCoreModel(coreModel)));
    }
 
    /////////////////////////////////////////////////////////////////////////////
    const Cal3DModelData* Cal3DDatabase::Find(const CalCoreModel* coreModel) const
    {
-      OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mAsynchronousLoadLock);
       return FindWithFunctor(mModelData, findWithCoreModel(coreModel));
    }
 

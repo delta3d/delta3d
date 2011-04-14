@@ -35,30 +35,6 @@
 namespace dtAnim
 {
 
-   class LoadTask : public dtUtil::ThreadPoolTask
-   {
-   public:
-      LoadTask(Cal3DLoader& loader, const std::string fileName, Cal3DLoader::LoadCompletionCallback callback)
-      : mLoader(loader)
-      , mCompletionCallback(callback)
-      {
-         SetName(fileName);
-      }
-
-      virtual void operator()()
-      {
-         dtCore::RefPtr<Cal3DModelData> loadedData;
-
-         mLoader.Load(GetName(), loadedData);
-
-         // Return the loaded data via a callback (could be NULL if not loaded correctly)
-         mCompletionCallback(loadedData);
-      }
-   private:
-      Cal3DLoader& mLoader;
-      Cal3DLoader::LoadCompletionCallback mCompletionCallback;
-   };
-
    /////////////////////////////////////////////////////////////////////////////
    Cal3DLoader::Cal3DLoader()
       : mTextures()
@@ -247,13 +223,6 @@ namespace dtAnim
       LoadHardwareData(data_in);
       
       return true;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   void Cal3DLoader::LoadAsynchronously(const std::string& filename, Cal3DLoader::LoadCompletionCallback loadCallback)
-   {
-      dtCore::RefPtr<LoadTask> loadTask = new LoadTask(*this, filename, loadCallback);
-      dtUtil::ThreadPool::AddTask(*loadTask, dtUtil::ThreadPool::IO);
    }
 
    /////////////////////////////////////////////////////////////////////////////
