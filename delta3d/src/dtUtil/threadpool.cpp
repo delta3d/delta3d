@@ -386,7 +386,7 @@ template<class _Ty,
       int result = 0;
       if (isRunning())
       {
-         result = OpenThreads::Thread::cancel();
+         //result = OpenThreads::Thread::cancel();
          mDone = true;
          mTaskQueue->ReleaseTasksBlock();
 
@@ -425,6 +425,10 @@ template<class _Ty,
 
          testCancel();
       }
+
+      //Probably not required. If we got here, we're already canceled.
+      OpenThreads::Thread::cancel();
+      mDone = true;
 
    }
 
