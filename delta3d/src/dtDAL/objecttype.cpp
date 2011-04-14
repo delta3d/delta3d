@@ -35,12 +35,12 @@ namespace dtDAL
                            const std::string& category,
                            const std::string& desc,
                            const ObjectType* parentType)
-  : mName(name)
-  , mCategory(category)
-  , mDescription(desc)
-  , mParentType(parentType)
-  {
-           GenerateUniqueId();
+   : mName(name)
+   , mCategory(category)
+   , mDescription(desc)
+   , mParentType(parentType)
+   {
+      GenerateUniqueId();
    }
 
    ///////////////////////////////////////////////////////////////////////////

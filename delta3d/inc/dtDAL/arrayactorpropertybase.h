@@ -84,11 +84,6 @@ namespace dtDAL
                               bool readOnly = false);
 
       /**
-       * Initializes the property.
-       */
-      virtual void Init();
-
-      /**
        * Sets the value of the property based on a string.
        * @note This method will attempt to use the data to set the value, but it may return false if the data
        * could not be used.

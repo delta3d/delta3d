@@ -73,7 +73,6 @@ namespace dtDAL
           */
          void SetParamDelimeter(char delim);
 
-
          /**
           * Sets the message parameter's value from the actor property's value
           */

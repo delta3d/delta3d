@@ -26,6 +26,7 @@ SET(LIB_PUBLIC_HEADERS
     ${HEADER_PATH}/colorrgbaactorproperty.h
     ${HEADER_PATH}/containeractorproperty.h
     ${HEADER_PATH}/datatype.h
+    ${HEADER_PATH}/defaultpropertymanager.h
     ${HEADER_PATH}/directoryresourcetypehandler.h
     ${HEADER_PATH}/doubleactorproperty.h
     ${HEADER_PATH}/dtdal.h
@@ -114,6 +115,7 @@ SET(LIB_SOURCES
     ${SOURCE_PATH}/colorrgbaactorproperty.cpp
     ${SOURCE_PATH}/containeractorproperty.cpp
     ${SOURCE_PATH}/datatype.cpp
+    ${SOURCE_PATH}/defaultpropertymanager.cpp
     ${SOURCE_PATH}/directoryresourcetypehandler.cpp
     ${SOURCE_PATH}/doubleactorproperty.cpp
     ${SOURCE_PATH}/enumactorproperty.cpp

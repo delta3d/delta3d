@@ -81,6 +81,7 @@ namespace dtDAL
       GetActorType();
       GetDrawable();
       BuildPropertyMap();
+      InitDefaults();
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
@@ -389,4 +390,9 @@ namespace dtDAL
                   "Determines whether the drawable will render.", GROUP_DRAWABLE));
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   std::string BaseActorObject::GetDefaultPropertyKey() const
+   {
+      return std::string("Actor: ") + GetActorType().GetFullName();
+   }
 } // namespace dtDAL

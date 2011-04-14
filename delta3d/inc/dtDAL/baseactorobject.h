@@ -336,6 +336,13 @@ namespace dtDAL
       virtual void BuildPropertyMap();
 
       /**
+       * Retrieves the key name used to identify this container with the
+       * default property manager.  This method should be overloaded to
+       * provide a valid key based on the container type.
+       */
+      virtual std::string GetDefaultPropertyKey() const;
+
+      /**
        * Not all objects are "placeable" in the scene.  For example, an infinite
        * light does not really have a position in the scene, therefore, it is
        * not a placeable actor.  Non-placeable actors are still added to a

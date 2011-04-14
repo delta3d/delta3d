@@ -30,7 +30,6 @@
 
 namespace dtDAL
 {
-
    class DataType;
 
    /**
@@ -52,18 +51,6 @@ namespace dtDAL
    class DT_DAL_EXPORT ActorProperty : public AbstractParameter
    {
       public:
-
-         /**
-          * Initializes the property.
-          */
-         virtual void Init();
-
-         /**
-          * Returns whether the current value of the property is the default.
-          *
-          * @return  True if the value is default.
-          */
-         bool IsDefault() const;
 
          /**
           * @return Returns an enumeration of the data type that this property
@@ -174,9 +161,6 @@ namespace dtDAL
 
          ///Description of what the property represents.
          dtUtil::RefString mDescription;
-
-         ///The Default value of this property when it was created.
-         dtUtil::RefString mDefaultValue;
 
          ///the precision used for floating point numbers when doing a GetStringValue and SetStringValue
          unsigned int mNumberPrecision;

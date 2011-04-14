@@ -32,7 +32,6 @@
 
 namespace dtDAL
 {
-
    class DT_DAL_EXPORT ObjectType: public osg::Referenced
    {
    public:
@@ -155,7 +154,6 @@ namespace dtDAL
 
       ///Parent of this actor type.  Null indicates there is no super type to this one.
       const dtCore::RefPtr<const ObjectType> mParentType;
-
    };
 
    ///Provide a method for printing the actor type to a stream.

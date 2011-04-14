@@ -42,6 +42,18 @@ namespace dtDAL
       PropertyContainer();
 
       /**
+       * Initializes the default values of this actor.
+       */
+      void InitDefaults();
+
+      /**
+       * Retrieves the key name used to identify this container with the
+       * default property manager.  This method should be overloaded to
+       * provide a valid key based on the container type.
+       */
+      virtual std::string GetDefaultPropertyKey() const;
+
+      /**
        * Gets a list of the properties currently registered for this
        * actor proxy.
        */
@@ -114,6 +126,22 @@ namespace dtDAL
       virtual dtCore::RefPtr<ActorProperty> GetDeprecatedProperty(const std::string& name);
 
       /**
+       * Checks if a given property is already set to its default value.
+       *
+       * @param[in]  prop  The property.
+       *
+       * @return     True if the given property is already set to default.
+       */
+      bool IsPropertyDefault(const dtDAL::ActorProperty& prop) const;
+
+      /**
+       * Resets the value of the given property to its default value.
+       *
+       * @param[in]   prop  The property to reset.
+       */
+      void ResetProperty(dtDAL::ActorProperty& prop);
+
+      /**
        * Copies the property values from the passed in property container to it's own properties
        */
       void CopyPropertiesFrom(const PropertyContainer& copyFrom);
@@ -132,7 +160,6 @@ namespace dtDAL
 
       ///vector of properties (for order).
       PropertyVectorType mProperties;
-
    };
 
 }
