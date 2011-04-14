@@ -417,7 +417,7 @@ namespace dtGame
    ////////////////////////////////////////////////////////////////////////////////
    void DRPublishingActComp::ResetFullUpdateTimer(bool doBigRandomOffset)
    {
-      mTimeUntilNextFullUpdate = TIME_BETWEEN_UPDATES * 1.05f;
+      mTimeUntilNextFullUpdate = TIME_BETWEEN_UPDATES;
 
       if (doBigRandomOffset)
       {
