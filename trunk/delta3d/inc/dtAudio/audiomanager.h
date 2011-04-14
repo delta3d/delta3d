@@ -109,7 +109,7 @@ namespace dtAudio
    {
       DECLARE_MANAGEMENT_LAYER(AudioManager)
 
-   private:
+   public:
       /**
        * BufferData is an internal structure
        * used to identify an OpenAL buffer and

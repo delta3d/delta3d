@@ -3,6 +3,11 @@
 
 #include <osg/Vec3>
 #include <osg/io_utils>
+#include <osgDB/FileNameUtils>
+#include <osgDB/FileUtils>
+#include <osgDB/ReaderWriter>
+#include <osgDB/ReadFile>
+#include <osgDB/Registry>
 
 #ifdef __APPLE__
   #include <OpenAL/alut.h>
@@ -37,6 +42,81 @@ const char*           AudioManager::_EaxGet = "EAXGet";
 IMPLEMENT_MANAGEMENT_LAYER(AudioManager)
 
 namespace dtAudio {
+
+
+   /////////////////////////////////////////////////////////////////////////////
+   // OSG Object for holding sound buffer data loaded from the following
+   // OSG plugin. This will allow the Audio Manager to access buffer information
+   // supplied from alut, after the file has been loaded from memory but before
+   // the buffer is registered with OpenAL; this is to allow the Audio Manager
+   // to have veto power over the loaded file, before its buffer is
+   // officially registered.
+   /////////////////////////////////////////////////////////////////////////////
+   class WrapperOSGSoundObject : public osg::Object
+   {
+   public:
+      typedef osg::Object BaseClass;
+
+      WrapperOSGSoundObject()
+         : BaseClass()
+         , mRawData(NULL)
+      {}
+
+      explicit WrapperOSGSoundObject(bool threadSafeRefUnref)
+         : BaseClass(threadSafeRefUnref)
+         , mRawData(NULL)
+      {}
+
+      WrapperOSGSoundObject(const osg::Object& obj,const osg::CopyOp& copyop=osg::CopyOp::SHALLOW_COPY)
+         : BaseClass(obj, copyop)
+         , mRawData(NULL)
+      {}
+
+      ALvoid* mRawData;
+      AudioManager::BufferData mBufferData;
+
+      META_Object("dtAudio", WrapperOSGSoundObject);
+   };
+
+   /////////////////////////////////////////////////////////////////////////////
+   // OSG Plugin for loading encrypted/non-encrypted sound files through OSG.
+   /////////////////////////////////////////////////////////////////////////////
+   class ReaderWriterWAV : public osgDB::ReaderWriter
+   {
+   public:
+
+      ReaderWriterWAV()
+      {
+         supportsExtension("wav","Wav sound format");
+      }
+
+      virtual const char* className() const { return "WAV Sound Reader"; }
+
+      virtual osgDB::ReaderWriter::ReadResult readObject(const std::string& file,
+         const osgDB::ReaderWriter::Options* options =NULL) const
+      {
+         using namespace osgDB;
+
+         std::string ext = osgDB::getLowerCaseFileExtension(file);
+         if (!acceptsExtension(ext)) return ReaderWriter::ReadResult::FILE_NOT_HANDLED;
+
+         std::string fileName = osgDB::findDataFile( file, options );
+         if (fileName.empty()) return ReaderWriter::ReadResult::FILE_NOT_FOUND;
+
+         dtCore::RefPtr<WrapperOSGSoundObject> userData = new WrapperOSGSoundObject;
+         AudioManager::BufferData& bf = userData->mBufferData;
+
+         // NON-DEPRECATED version for ALUT >= 1.0.0
+         ALfloat freq(0);
+         userData->mRawData = alutLoadMemoryFromFile(file.c_str(), &bf.format, &bf.size, &freq);
+         bf.freq = ALsizei(freq);
+         CheckForError("data = alutLoadMemoryFromFile", __FUNCTION__, __LINE__);
+
+         return ReaderWriter::ReadResult(userData.get(), ReaderWriter::ReadResult::FILE_LOADED);
+      }
+   };
+   REGISTER_OSGPLUGIN(wav, ReaderWriterWAV)
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // Utility function used to work with OpenAL's error messaging system. It's used
@@ -488,10 +568,14 @@ ALint AudioManager::LoadFile(const std::string& file)
 
    #else
 
-   // NON-DEPRECATED version for ALUT >= 1.0.0
-   ALfloat freq(0);
-   data = alutLoadMemoryFromFile(filename.c_str(), &format, &size, &freq);
-   CheckForError("data = alutLoadMemoryFromFile", __FUNCTION__, __LINE__);
+   // Load the sound through OSG so that the sound file
+   // may or may not be loaded from an encrypted file.
+   dtCore::RefPtr<WrapperOSGSoundObject> userData
+      = dynamic_cast<WrapperOSGSoundObject*>(osgDB::readRefObjectFile(filename).get());
+   if(userData.valid())
+   {
+      data = userData->mRawData;
+   }
 
    #endif // ALUT_API_MAJOR_VERSION
 
@@ -510,9 +594,17 @@ ALint AudioManager::LoadFile(const std::string& file)
       return AL_NONE;
    }
 
+#ifndef ALUT_API_MAJOR_VERSION
    bd->format = format;
    bd->freq   = ALsizei(freq);
    bd->size   = size;
+#else
+   BufferData& userBD = userData->mBufferData;
+   bd->format = userBD.format;
+   bd->freq   = userBD.freq;
+   bd->size   = userBD.size;
+#endif // ALUT_API_MAJOR_VERSION
+
    alBufferData(bd->buf, bd->format, data, bd->size, bd->freq);
     
 #if !defined (_MSC_VER) || !defined (DONT_ALUT_FREE)
