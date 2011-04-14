@@ -301,6 +301,7 @@ namespace dtDAL
    //////////////////////////////////////////////////////////////////////////
    MapWriter::MapWriter()
       : BaseXMLWriter()
+      , mPropSerializer(NULL)
    {
       mPropSerializer = new ActorPropertySerializer(this);
    }
@@ -308,6 +309,7 @@ namespace dtDAL
    //////////////////////////////////////////////////////////////////////////
    MapWriter::~MapWriter()
    {
+      delete mPropSerializer; mPropSerializer = NULL;
    }
 
    /////////////////////////////////////////////////////////////////
@@ -636,6 +638,7 @@ namespace dtDAL
 
          //closes the file.
          mFormatTarget.SetOutputStream(NULL);
+         mPropSerializer->SetMap(NULL);
       }
       catch (dtUtil::Exception& ex)
       {
@@ -643,6 +646,7 @@ namespace dtDAL
                              "Caught Exception \"%s\" while attempting to save map \"%s\".",
                              ex.What().c_str(), map.GetName().c_str());
          mFormatTarget.SetOutputStream(NULL);
+         mPropSerializer->SetMap(NULL);
          throw ex;
       }
       catch (...)
@@ -651,8 +655,10 @@ namespace dtDAL
                              "Unknown exception while attempting to save map \"%s\".",
                              map.GetName().c_str());
          mFormatTarget.SetOutputStream(NULL);
+         mPropSerializer->SetMap(NULL);
          throw dtDAL::MapSaveException( std::string("Unknown exception saving map \"") + map.GetName() + ("\"."), __FILE__, __LINE__);
       }
+
    }
 
    ////////////////////////////////////////////////////////////////////////////////
