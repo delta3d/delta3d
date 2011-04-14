@@ -54,14 +54,10 @@ namespace dtAnim
    class DT_ANIM_EXPORT Cal3DLoader: public osg::Referenced
    {
    public:
-      typedef dtUtil::Functor<void, TYPELIST_1(Cal3DModelData*)> LoadCompletionCallback;
-
-      Cal3DLoader();      
+      Cal3DLoader();
 
       ///Load an animated entity definition file and return the Cal3DModelWrapper
       bool Load(const std::string& filename, dtCore::RefPtr<Cal3DModelData>& data_in);
-
-      void LoadAsynchronously(const std::string& filename, LoadCompletionCallback loadCallback);
 
       ///empty all containers of CalCoreModels and the stored textures
       void PurgeAllCaches();
@@ -88,6 +84,7 @@ namespace dtAnim
       typedef std::map<std::string, osg::ref_ptr<osg::Texture2D> > TextureMap;
       typedef TextureMap::allocator_type::value_type TextureMapping;
       TextureMap mTextures;
+
    };
 
 } // namespace dtAnim
