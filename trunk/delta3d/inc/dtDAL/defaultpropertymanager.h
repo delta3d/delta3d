@@ -27,6 +27,7 @@
 #include <dtUtil/refstring.h>
 #include <dtDAL/namedparameter.h>
 #include <dtDAL/export.h>
+#include <map>
 
 namespace dtDAL
 {
