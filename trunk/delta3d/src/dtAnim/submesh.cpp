@@ -144,11 +144,6 @@ namespace dtAnim
             osg::Material* material = new osg::Material();
             set->setAttributeAndModes(material, osg::StateAttribute::ON);
 
-            osg::BlendFunc* bf = new osg::BlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-            set->setMode(GL_BLEND, osg::StateAttribute::ON);
-            set->setAttributeAndModes(bf, osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
-            set->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
-
             unsigned char meshColor[4];
             osg::Vec4 materialColor;
 
@@ -159,7 +154,8 @@ namespace dtAnim
             materialColor[2] = meshColor[2] / 255.0f;
             materialColor[3] = meshColor[3] / 255.0f;
             //if (materialColor[3] == 0) materialColor[3]=1.0f;
-            material->setAmbient(osg::Material::FRONT_AND_BACK, materialColor);
+
+            bool materialTranslucent = materialColor[3] < 1.0f;
 
             // set the material diffuse color
             mWrapper->GetDiffuseColor(&meshColor[0]);
@@ -168,7 +164,6 @@ namespace dtAnim
             materialColor[2] = meshColor[2] / 255.0f;
             materialColor[3] = meshColor[3] / 255.0f;
             //if (materialColor[3] == 0) materialColor[3]=1.0f;
-            material->setDiffuse(osg::Material::FRONT_AND_BACK, materialColor);
 
             // set the material specular color
             mWrapper->GetSpecularColor(&meshColor[0]);
@@ -177,12 +172,10 @@ namespace dtAnim
             materialColor[2] = meshColor[2] / 255.0f;
             materialColor[3] = meshColor[3] / 255.0f;
             //if (materialColor[3] == 0) materialColor[3]=1.0f;
-            material->setSpecular(osg::Material::FRONT_AND_BACK, materialColor);
 
             // set the material shininess factor
             float shininess;
             shininess = mWrapper->GetShininess();
-            material->setShininess(osg::Material::FRONT_AND_BACK, shininess);
 
             if (mWrapper->GetMapCount() > 0)
             {
@@ -191,9 +184,36 @@ namespace dtAnim
 
                while (texture != NULL)
                {
+                  // Mark the mesh as a transparency if the image is found to have alpha values.
+                  osg::Image* image = texture->getImage();
+                  if(image != NULL && image->isImageTranslucent())
+                  {
+                     materialTranslucent = true;
+                  }
+
                   set->setTextureAttributeAndModes(i, texture, osg::StateAttribute::ON);
                   texture = reinterpret_cast<osg::Texture2D*>(mWrapper->GetMapUserData(++i));
                }
+            }
+
+            if(materialTranslucent)
+            {
+               osg::BlendFunc* bf = new osg::BlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+               set->setMode(GL_BLEND, osg::StateAttribute::ON);
+               set->setAttributeAndModes(bf, osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
+               set->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+
+               material->setAmbient(osg::Material::FRONT_AND_BACK, materialColor);
+               material->setDiffuse(osg::Material::FRONT_AND_BACK, materialColor);
+               material->setSpecular(osg::Material::FRONT_AND_BACK, materialColor);
+               material->setShininess(osg::Material::FRONT_AND_BACK, shininess);
+            }
+            else
+            {
+               material->setAmbient(osg::Material::FRONT, materialColor);
+               material->setDiffuse(osg::Material::FRONT, materialColor);
+               material->setSpecular(osg::Material::FRONT, materialColor);
+               material->setShininess(osg::Material::FRONT, shininess);
             }
          }
          mWrapper->EndRenderingQuery();
