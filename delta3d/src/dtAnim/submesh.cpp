@@ -147,16 +147,6 @@ namespace dtAnim
             unsigned char meshColor[4];
             osg::Vec4 materialColor;
 
-            // set the material ambient color
-            mWrapper->GetAmbientColor(&meshColor[0]);
-            materialColor[0] = meshColor[0] / 255.0f;
-            materialColor[1] = meshColor[1] / 255.0f;
-            materialColor[2] = meshColor[2] / 255.0f;
-            materialColor[3] = meshColor[3] / 255.0f;
-            //if (materialColor[3] == 0) materialColor[3]=1.0f;
-
-            bool materialTranslucent = materialColor[3] < 1.0f;
-
             // set the material diffuse color
             mWrapper->GetDiffuseColor(&meshColor[0]);
             materialColor[0] = meshColor[0] / 255.0f;
@@ -165,6 +155,20 @@ namespace dtAnim
             materialColor[3] = meshColor[3] / 255.0f;
             //if (materialColor[3] == 0) materialColor[3]=1.0f;
 
+            bool materialTranslucent = materialColor[3] < 1.0f;
+            osg::Material::Face materialFace = materialTranslucent ? osg::Material::FRONT_AND_BACK : osg::Material::FRONT;
+
+            material->setDiffuse(materialFace, materialColor);
+
+            // set the material ambient color
+            mWrapper->GetAmbientColor(&meshColor[0]);
+            materialColor[0] = meshColor[0] / 255.0f;
+            materialColor[1] = meshColor[1] / 255.0f;
+            materialColor[2] = meshColor[2] / 255.0f;
+            materialColor[3] = meshColor[3] / 255.0f;
+            //if (materialColor[3] == 0) materialColor[3]=1.0f;
+            material->setAmbient(materialFace, materialColor);
+
             // set the material specular color
             mWrapper->GetSpecularColor(&meshColor[0]);
             materialColor[0] = meshColor[0] / 255.0f;
@@ -172,10 +176,12 @@ namespace dtAnim
             materialColor[2] = meshColor[2] / 255.0f;
             materialColor[3] = meshColor[3] / 255.0f;
             //if (materialColor[3] == 0) materialColor[3]=1.0f;
+            material->setSpecular(materialFace, materialColor);
 
             // set the material shininess factor
             float shininess;
             shininess = mWrapper->GetShininess();
+            material->setShininess(materialFace, shininess);
 
             if (mWrapper->GetMapCount() > 0)
             {
@@ -202,18 +208,6 @@ namespace dtAnim
                set->setMode(GL_BLEND, osg::StateAttribute::ON);
                set->setAttributeAndModes(bf, osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
                set->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
-
-               material->setAmbient(osg::Material::FRONT_AND_BACK, materialColor);
-               material->setDiffuse(osg::Material::FRONT_AND_BACK, materialColor);
-               material->setSpecular(osg::Material::FRONT_AND_BACK, materialColor);
-               material->setShininess(osg::Material::FRONT_AND_BACK, shininess);
-            }
-            else
-            {
-               material->setAmbient(osg::Material::FRONT, materialColor);
-               material->setDiffuse(osg::Material::FRONT, materialColor);
-               material->setSpecular(osg::Material::FRONT, materialColor);
-               material->setShininess(osg::Material::FRONT, shininess);
             }
          }
          mWrapper->EndRenderingQuery();
