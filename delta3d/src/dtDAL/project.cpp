@@ -1673,65 +1673,13 @@ namespace dtDAL
    /////////////////////////////////////////////////////////////////////////////
    Map* Project::GetMapForActor(const BaseActorObject& proxy)
    {
-      if (!IsContextValid())
-         throw dtDAL::ProjectInvalidContextException(
-         std::string("The context is not valid."), __FILE__, __LINE__);
-
-      if (mImpl->mParser->IsParsing())
-      {
-         Map* m = mImpl->mParser->GetMapBeingParsed();
-         if (m != NULL)
-         {
-            BaseActorObject* ap = m->GetProxyById(proxy.GetId());
-            if (ap != NULL)
-               return m;
-         }
-      }
-
-      std::map< std::string, dtCore::RefPtr<Map> >::iterator i = mImpl->mOpenMaps.begin();
-      while (i != mImpl->mOpenMaps.end())
-      {
-         BaseActorObject* ap = i->second->GetProxyById(proxy.GetId());
-         if (ap != NULL)
-            return i->second.get();
-
-         i++;
-      }
-      return NULL;
+      return GetMapForActor(proxy.GetId());
    }
 
    /////////////////////////////////////////////////////////////////////////////
    const Map* Project::GetMapForActor(const BaseActorObject& proxy) const
    {
-      if (!IsContextValid())
-      {
-         throw dtDAL::ProjectInvalidContextException(
-         std::string("The context is not valid."), __FILE__, __LINE__);
-      }
-
-      if (mImpl->mParser->IsParsing())
-      {
-         const Map* m = mImpl->mParser->GetMapBeingParsed();
-         if (m != NULL)
-         {
-            const BaseActorObject* ap = m->GetProxyById(proxy.GetId());
-            if (ap != NULL)
-               return m;
-         }
-      }
-
-      std::map< std::string, dtCore::RefPtr<Map> >::const_iterator i = mImpl->mOpenMaps.begin();
-      while (i != mImpl->mOpenMaps.end())
-      {
-         const BaseActorObject* ap = i->second->GetProxyById(proxy.GetId());
-         if (ap != NULL)
-         {
-            return i->second.get();
-         }
-
-         i++;
-      }
-      return NULL;
+      return GetMapForActor(proxy.GetId());
    }
 
    ////////////////////////////////////////////////////////////////////////////////
