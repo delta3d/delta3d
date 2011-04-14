@@ -252,23 +252,10 @@ void HardwareSubmeshDrawable::SetUpMaterial()
    osg::Material* material = new osg::Material();
    ss->setAttributeAndModes(material, osg::StateAttribute::ON);
 
-   osg::BlendFunc* bf = new osg::BlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-   ss->setMode(GL_BLEND, osg::StateAttribute::ON);
-   ss->setAttributeAndModes(bf, osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
-   ss->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
-
    if (!mHardwareModel->selectHardwareMesh(mMeshID)) {return;}
 
    unsigned char meshColor[4];
    osg::Vec4 materialColor;
-
-   // set the material ambient color
-   mHardwareModel->getAmbientColor(&meshColor[0]);
-   materialColor[0] = meshColor[0] / 255.0f;
-   materialColor[1] = meshColor[1] / 255.0f;
-   materialColor[2] = meshColor[2] / 255.0f;
-   materialColor[3] = meshColor[3] / 255.0f;
-   material->setAmbient(osg::Material::FRONT_AND_BACK, materialColor);
 
    // set the material diffuse color
    mHardwareModel->getDiffuseColor(&meshColor[0]);
@@ -276,7 +263,19 @@ void HardwareSubmeshDrawable::SetUpMaterial()
    materialColor[1] = meshColor[1] / 255.0f;
    materialColor[2] = meshColor[2] / 255.0f;
    materialColor[3] = meshColor[3] / 255.0f;
-   material->setDiffuse(osg::Material::FRONT_AND_BACK, materialColor);
+
+   bool materialTranslucent = materialColor[3] < 1.0f;
+   osg::Material::Face materialFace = materialTranslucent ? osg::Material::FRONT_AND_BACK : osg::Material::FRONT;
+
+   material->setDiffuse(materialFace, materialColor);
+
+   // set the material ambient color
+   mHardwareModel->getAmbientColor(&meshColor[0]);
+   materialColor[0] = meshColor[0] / 255.0f;
+   materialColor[1] = meshColor[1] / 255.0f;
+   materialColor[2] = meshColor[2] / 255.0f;
+   materialColor[3] = meshColor[3] / 255.0f;
+   material->setAmbient(materialFace, materialColor);
 
    // set the material specular color
    mHardwareModel->getSpecularColor(&meshColor[0]);
@@ -284,12 +283,11 @@ void HardwareSubmeshDrawable::SetUpMaterial()
    materialColor[1] = meshColor[1] / 255.0f;
    materialColor[2] = meshColor[2] / 255.0f;
    materialColor[3] = meshColor[3] / 255.0f;
-   material->setSpecular(osg::Material::FRONT_AND_BACK, materialColor);
+   material->setSpecular(materialFace, materialColor);
 
    // set the material shininess factor
-   float shininess;
-   shininess = mHardwareModel->getShininess();
-   material->setShininess(osg::Material::FRONT_AND_BACK, shininess);
+   float shininess = mHardwareModel->getShininess();
+   material->setShininess(materialFace, shininess);
 
    std::vector<CalHardwareModel::CalHardwareMesh>& meshVec = mHardwareModel->getVectorHardwareMesh();
 
@@ -313,6 +311,13 @@ void HardwareSubmeshDrawable::SetUpMaterial()
          osg::Texture2D* texture = reinterpret_cast<osg::Texture2D*>(iter->userData);
          if (texture != NULL)
          {
+            // Mark the mesh as a transparency if the image is found to have alpha values.
+            osg::Image* image = texture->getImage();
+            if(image != NULL && image->isImageTranslucent())
+            {
+               materialTranslucent = true;
+            }
+
             ss->setTextureAttributeAndModes(i, texture, osg::StateAttribute::ON);
          }
       }
@@ -320,6 +325,14 @@ void HardwareSubmeshDrawable::SetUpMaterial()
    else
    {
       ss->setTextureMode(0, GL_TEXTURE_2D, osg::StateAttribute::OFF|osg::StateAttribute::PROTECTED);
+   }
+
+   if(materialTranslucent)
+   {
+      osg::BlendFunc* bf = new osg::BlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+      ss->setMode(GL_BLEND, osg::StateAttribute::ON);
+      ss->setAttributeAndModes(bf, osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
+      ss->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
    }
 
    mWrapper->EndRenderingQuery();
