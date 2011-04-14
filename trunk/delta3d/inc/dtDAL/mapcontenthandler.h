@@ -134,7 +134,7 @@ namespace dtDAL
          /**
           * Returns whether or not the map had a temporary property in it.
           */
-         bool HasDeprecatedProperty() const { return mPropSerializer->HasDeprecatedProperty(); }
+         bool HasDeprecatedProperty() const;
 
          /**
           * This causes the parser to release its reference to the map.

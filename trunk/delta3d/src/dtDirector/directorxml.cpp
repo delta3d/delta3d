@@ -151,6 +151,7 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    DirectorWriter::~DirectorWriter()
    {
+      delete mPropSerializer; mPropSerializer = NULL;
    }
 
    /////////////////////////////////////////////////////////////////
@@ -264,6 +265,7 @@ namespace dtDirector
 
          //closes the file.
          mFormatTarget.SetOutputStream(NULL);
+         mPropSerializer->SetMap(NULL);
       }
       catch (dtUtil::Exception& ex)
       {

@@ -124,7 +124,7 @@ namespace  dtDAL
    /////////////////////////////////////////////////////////////////
    MapContentHandler::~MapContentHandler()
    {
-      delete mPropSerializer;
+      delete mPropSerializer; mPropSerializer = NULL;
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -981,4 +981,11 @@ namespace  dtDAL
          }
       }
    }
+
+   //////////////////////////////////////////////////////////////////////////
+   bool MapContentHandler::HasDeprecatedProperty() const
+   {
+      return mPropSerializer->HasDeprecatedProperty();
+   }
+
 }
