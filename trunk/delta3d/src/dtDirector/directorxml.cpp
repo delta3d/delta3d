@@ -157,6 +157,9 @@ namespace dtDirector
    void DirectorWriter::Save(Director* director, const std::string& filePath)
    {
       if (!director) return;
+      mPropSerializer->Reset();
+      mPropSerializer->SetMap(director->GetMap());
+      mPropSerializer->SetCurrentPropertyContainer(director);
 
       std::ofstream stream(filePath.c_str(), std::ios_base::trunc|std::ios_base::binary);
       if (!stream.is_open())
@@ -283,6 +286,8 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void DirectorWriter::SaveGraphs(DirectorGraph* graph)
    {
+      mPropSerializer->SetCurrentPropertyContainer(graph);
+
       // Graph.
       BeginElement(dtDAL::MapXMLConstants::DIRECTOR_GRAPH_ELEMENT);
       {
@@ -352,6 +357,8 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void DirectorWriter::SaveNode(Node* node)
    {
+      mPropSerializer->SetCurrentPropertyContainer(node);
+
       BeginElement(dtDAL::MapXMLConstants::DIRECTOR_NODE_ELEMENT);
       {
          // Node Name.

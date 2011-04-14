@@ -48,18 +48,6 @@ namespace dtDAL
    ActorProperty::~ActorProperty() { }
 
    ////////////////////////////////////////
-   void ActorProperty::Init()
-   {
-      mDefaultValue = ToString();
-   }
-
-   ////////////////////////////////////////
-   bool ActorProperty::IsDefault() const
-   {
-      return mDefaultValue == ToString();
-   }
-
-   ////////////////////////////////////////
    void ActorProperty::SetNumberPrecision(unsigned int precision)
    {
       mNumberPrecision = precision;

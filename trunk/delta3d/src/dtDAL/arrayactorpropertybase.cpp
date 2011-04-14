@@ -38,17 +38,6 @@ ArrayActorPropertyBase::~ArrayActorPropertyBase()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ArrayActorPropertyBase::Init()
-{
-   ActorProperty::Init();
-
-   if (mPropertyType)
-   {
-      mPropertyType->Init();
-   }
-}
-
-////////////////////////////////////////////////////////////////////////////////
 void ArrayActorPropertyBase::CopyFrom(const ActorProperty& otherProp)
 {
    if (GetDataType() != otherProp.GetDataType())

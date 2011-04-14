@@ -111,7 +111,6 @@ namespace dtDAL
          return;
       }
 
-      property->Init();
       mProperties.push_back(property);
    }
 

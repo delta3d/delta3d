@@ -123,7 +123,14 @@ namespace dtDAL
    /////////////////////////////////////////////////////////////////
    void ActorPropertySerializer::WriteProperty(const ActorProperty& property)
    {
-      if (mWriter == NULL || property.IsReadOnly() || property.IsDefault())
+      if (mWriter == NULL || property.IsReadOnly())
+      {
+         return;
+      }
+
+      // Skip properties that have not been changed from their default values.
+      dtDAL::SerializerRuntimeData& data = Top();
+      if (data.mPropertyContainer && data.mPropertyContainer->IsPropertyDefault(property))
       {
          return;
       }

@@ -79,6 +79,7 @@ namespace dtDirector
       SetColorRGB(nodeType.GetColor());
 
       BuildPropertyMap();
+      InitDefaults();
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
@@ -202,6 +203,12 @@ namespace dtDirector
       }
 
       return true;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   std::string Node::GetDefaultPropertyKey() const
+   {
+      return std::string("Director Node: ") + mType->GetFullName();
    }
 
    //////////////////////////////////////////////////////////////////////////

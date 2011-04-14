@@ -143,6 +143,13 @@ namespace dtDirector
       virtual void OnLinkValueChanged(const std::string& linkName) {}
 
       /**
+       * Retrieves the key name used to identify this container with the
+       * default property manager.  This method should be overloaded to
+       * provide a valid key based on the container type.
+       */
+      virtual std::string GetDefaultPropertyKey() const;
+
+      /**
        * Retrieves the type of this node.
        *
        * @return  The type of this node.

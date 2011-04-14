@@ -25,6 +25,7 @@
 #include <prefix/dtdalprefix.h>
 #include <dtDAL/propertycontainer.h>
 #include <dtDAL/exceptionenum.h>
+#include <dtDAL/defaultpropertymanager.h>
 #include <dtUtil/exception.h>
 #include <dtUtil/log.h>
 
@@ -39,6 +40,45 @@ namespace dtDAL
 
    PropertyContainer::~PropertyContainer()
    {
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void PropertyContainer::InitDefaults()
+   {
+      std::string keyName = GetDefaultPropertyKey();
+
+      // If the key already exists, we don't need to add it again.
+      if (DefaultPropertyManager::GetInstance().KeyExists(keyName))
+      {
+         return;
+      }
+
+      std::vector<const ActorProperty*> propList;
+      GetPropertyList(propList);
+
+      int propCount = (int)propList.size();
+      for (int propIndex = 0; propIndex < propCount; ++propIndex)
+      {
+         const ActorProperty* prop = propList[propIndex];
+         if (prop)
+         {
+            std::string propName = prop->GetName();
+            dtCore::RefPtr<NamedParameter> param = NamedParameter::CreateFromType(
+               prop->GetDataType(), prop->GetName());
+            if (param)
+            {
+               param->SetFromProperty(*prop);
+               DefaultPropertyManager::GetInstance().SetDefaultValue(
+                  keyName, propName, param);
+            }
+         }
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   std::string PropertyContainer::GetDefaultPropertyKey() const
+   {
+      return "";
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
@@ -67,8 +107,6 @@ namespace dtDAL
       }
       else
       {
-         newProp->Init();
-
          mPropertyMap.insert(std::make_pair(dtUtil::RefString(newProp->GetName()),newProp));
 
          if (index >= 0 && index < (int)mProperties.size())
@@ -171,6 +209,32 @@ namespace dtDAL
       }
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   bool PropertyContainer::IsPropertyDefault(const dtDAL::ActorProperty& prop) const
+   {
+      const NamedParameter* param =
+         DefaultPropertyManager::GetInstance().GetDefaultValue(
+         GetDefaultPropertyKey(), prop.GetName());
+      if (param && *param == prop)
+      {
+         return true;
+      }
+
+      return false;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void PropertyContainer::ResetProperty(dtDAL::ActorProperty& prop)
+   {
+      const NamedParameter* param =
+         DefaultPropertyManager::GetInstance().GetDefaultValue(
+         GetDefaultPropertyKey(), prop.GetName());
+      if (param)
+      {
+         param->ApplyValueToProperty(prop);
+      }
+   }
+
    ///////////////////////////////////////////////////////////////////////////////////////
    void PropertyContainer::CopyPropertiesFrom(const PropertyContainer& copyFrom)
    {
@@ -184,5 +248,4 @@ namespace dtDAL
          }
       }
    }
-
 }
