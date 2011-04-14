@@ -325,6 +325,8 @@ namespace dtDAL
    void MapWriter::Save(Map& map, std::ostream& stream)
    {
       mFormatTarget.SetOutputStream(&stream);
+      mPropSerializer->Reset();
+      mPropSerializer->SetMap(&map);
 
       try {
 
@@ -427,6 +429,9 @@ namespace dtDAL
             //added 7/10/06 -banderegg
             if (proxy.IsGhostProxy())
                continue;
+
+            mPropSerializer->SetCurrentPropertyContainer(i->second.get());
+
 
             BeginElement(MapXMLConstants::ACTOR_ELEMENT);
             BeginElement(MapXMLConstants::ACTOR_TYPE_ELEMENT);
