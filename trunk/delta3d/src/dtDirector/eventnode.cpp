@@ -37,6 +37,7 @@ namespace dtDirector
        : Node()
        , mMaxTriggerCount(0)
        , mTriggerCount(0)
+       , mActorFilter(dtCore::UniqueId(""))
    {
       mInstigator = "";
    }
