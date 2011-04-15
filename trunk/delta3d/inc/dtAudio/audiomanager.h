@@ -167,7 +167,7 @@ namespace dtAudio
 
       /** Create the singleton and initialize OpenAL and ALUT.
        *
-       *  Specifying the OpenAL device and context is considered an advaced,
+       *  Specifying the OpenAL device and context is considered an advanced,
        *  operation.  Be sure that you know what you're doing before you try it!
        *  Usually you don't need to specify the device and context.  Typically,
        *  the AudioManager creates them automatically.

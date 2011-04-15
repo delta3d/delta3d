@@ -88,7 +88,6 @@ _CRTIMP extern int errno;
 
 namespace dtUtil
 {
-
    IMPLEMENT_ENUM(FileExceptionEnum)
 
    FileExceptionEnum FileExceptionEnum::IOException("File IO Exception");
@@ -170,13 +169,13 @@ namespace dtUtil
       return true;
    }
 
-   //-----------------------------------------------------------------------
+   /////////////////////////////////////////////////////////////////////////////
    bool FileUtils::FileExists(const std::string& strFile) const
    {
       return GetFileInfo(strFile).fileType != FILE_NOT_FOUND;
    }
 
-   //-----------------------------------------------------------------------
+   /////////////////////////////////////////////////////////////////////////////
    void FileUtils::FileCopy(const std::string& strSrc, const std::string& strDest, bool bOverwrite) const
    {
       FILE* pSrcFile;
@@ -294,13 +293,13 @@ namespace dtUtil
          }
 
       }
+
       // if the source equals the destination, this method is really a noop.
       // (Not to mention the fact that if you attempt to copy a file onto itself
       // in this manner then you will end up blowing it away).
-
    }
 
-   //-----------------------------------------------------------------------
+   /////////////////////////////////////////////////////////////////////////////
    void FileUtils::FileMove(const std::string& strSrc, const std::string& strDest, bool bOverwrite) const
    {
       if (GetFileInfo(strSrc).fileType != REGULAR_FILE)
@@ -347,7 +346,6 @@ namespace dtUtil
                 std::string("Destination file exists and the call was not set to overwrite: \"") + strDest + "\"", __FILE__, __LINE__);
       }
 
-
       // first check to see if the file can be moved without copying it.
       if (rename(strSrc.c_str(), destFile.c_str()) == 0)
       {
@@ -370,7 +368,7 @@ namespace dtUtil
       }
    }
 
-   //-----------------------------------------------------------------------
+   /////////////////////////////////////////////////////////////////////////////
    void FileUtils::FileDelete(const std::string& strFile) const
    {
       FileType ft = GetFileInfo(strFile).fileType;
@@ -394,7 +392,7 @@ namespace dtUtil
       }
    }
 
-   //-----------------------------------------------------------------------
+   /////////////////////////////////////////////////////////////////////////////
    const struct FileInfo FileUtils::GetFileInfo(const std::string& strFile) const
    {
       struct FileInfo info;
@@ -439,7 +437,7 @@ namespace dtUtil
       return info;
    }
 
-   //-----------------------------------------------------------------------
+   /////////////////////////////////////////////////////////////////////////////
    void FileUtils::CleanupFileString(std::string& strFileOrDir)
    {
       if (strFileOrDir.empty())
@@ -463,7 +461,7 @@ namespace dtUtil
       }
    }
 
-   //-----------------------------------------------------------------------
+   /////////////////////////////////////////////////////////////////////////////
    bool FileUtils::IsAbsolutePath(std::string strFileOrDir)
    {
       // just in case, make sure we are using a valid path
@@ -490,7 +488,7 @@ namespace dtUtil
       return false;
    }
 
-   //-----------------------------------------------------------------------
+   /////////////////////////////////////////////////////////////////////////////
    void FileUtils::MakeDirectoryEX(std::string strDir)
    {
       if (strDir.empty())
@@ -546,20 +544,20 @@ namespace dtUtil
       delete [] buffer;
    }
 
-   //-----------------------------------------------------------------------
+   /////////////////////////////////////////////////////////////////////////////
    void FileUtils::ChangeDirectory(const std::string& path)
    {
       ChangeDirectoryInternal(path);
       mStackOfDirectories.clear();
    }
 
-   //-----------------------------------------------------------------------
+   /////////////////////////////////////////////////////////////////////////////
    const std::string& FileUtils::CurrentDirectory() const
    {
       return mCurrentDirectory;
    }
 
-   //-----------------------------------------------------------------------
+   /////////////////////////////////////////////////////////////////////////////
    void FileUtils::ChangeDirectoryInternal(const std::string& path)
    {
       if (chdir(path.c_str()) == -1)
@@ -584,7 +582,7 @@ namespace dtUtil
       }
    }
 
-   //-----------------------------------------------------------------------
+   /////////////////////////////////////////////////////////////////////////////
    void FileUtils::PushDirectory(const std::string& path)
    {
       if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
@@ -599,7 +597,7 @@ namespace dtUtil
       mStackOfDirectories.push_back(old);
    }
 
-   //-----------------------------------------------------------------------
+   /////////////////////////////////////////////////////////////////////////////
    void FileUtils::PopDirectory()
    {
       if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
@@ -616,7 +614,7 @@ namespace dtUtil
       mStackOfDirectories.pop_back();
    }
 
-   //-----------------------------------------------------------------------
+   /////////////////////////////////////////////////////////////////////////////
    const std::string FileUtils::GetAbsolutePath(const std::string& relativePath) const
    {
       std::string result;
@@ -652,7 +650,7 @@ namespace dtUtil
       return result;
    }
 
-   //////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    std::string getFileExtensionIncludingDot(const std::string& fileName)
    {
 #if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR <= 2  && OSG_VERSION_MINOR <= 6
@@ -665,7 +663,7 @@ namespace dtUtil
 #endif
    }
 
-   ////////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    class ToLowerClass
    {
    public:
@@ -677,7 +675,7 @@ namespace dtUtil
       }
    };
 
-   //////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    DirectoryContents FileUtils::DirGetFiles(const std::string& path,
                                             const FileExtensionList& extensions) const
    {
@@ -726,7 +724,7 @@ namespace dtUtil
       return filteredContents;
    }
 
-   //-----------------------------------------------------------------------
+   /////////////////////////////////////////////////////////////////////////////
    DirectoryContents FileUtils::DirGetSubs(const std::string& path) const
    {
       DirectoryContents vec;
@@ -744,7 +742,7 @@ namespace dtUtil
       return vec;
    }
 
-
+   /////////////////////////////////////////////////////////////////////////////
    void FileUtils::InternalDirCopy(const std::string& srcPath,
                                    const std::string& destPath, bool bOverwrite) const
    {
@@ -795,7 +793,7 @@ namespace dtUtil
       }
    }
 
-   //-----------------------------------------------------------------------
+   /////////////////////////////////////////////////////////////////////////////
    void FileUtils::DirCopy(const std::string& srcPath,
                            const std::string& destPath, bool bOverwrite, bool copyContentsOnly) const
    {
@@ -888,7 +886,7 @@ namespace dtUtil
       InternalDirCopy(fullSrcPath, fullDestPath, bOverwrite);
    }
 
-   //-----------------------------------------------------------------------
+   /////////////////////////////////////////////////////////////////////////////
    bool FileUtils::DirDelete(const std::string& strDir, bool bRecursive)
    {
       if (bRecursive)
@@ -969,6 +967,7 @@ namespace dtUtil
       return true;
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    void FileUtils::MakeDirectory(const std::string& strDir) const
    {
       if (!iMakeDirectory(strDir))
@@ -996,14 +995,13 @@ namespace dtUtil
       }
    }
 
-
-   //-----------------------------------------------------------------------
+   /////////////////////////////////////////////////////////////////////////////
    bool FileUtils::DirExists(const std::string& strDir) const
    {
       return GetFileInfo(strDir).fileType == DIRECTORY;
    }
 
-   //-----------------------------------------------------------------------
+   /////////////////////////////////////////////////////////////////////////////
    std::string FileUtils::RelativePath(const std::string& absolutePath, const std::string& file) const
    {
       std::string relativePath;
@@ -1028,7 +1026,7 @@ namespace dtUtil
       return relativePath;
    }
 
-   //-----------------------------------------------------------------------
+   /////////////////////////////////////////////////////////////////////////////
    bool FileUtils::IsSameFile(const std::string& file1, const std::string& file2) const
    {
       // If path names are different, we still could be pointing at the same file
@@ -1078,7 +1076,7 @@ namespace dtUtil
       return false;
    }
 
-   //-----------------------------------------------------------------------
+   /////////////////////////////////////////////////////////////////////////////
    void FileUtils::RecursDeleteDir(bool bRecursive)
    {
       // this method assumes one is IN the directory that you want to delete.
@@ -1131,7 +1129,7 @@ namespace dtUtil
       ChangeDirectoryInternal(std::string(".."));
    }
 
-   ////////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    std::string FileUtils::ConcatPaths(const std::string& left, const std::string& right)
    {
 #if defined(OPENSCENEGRAPH_MAJOR_VERSION) && OPENSCENEGRAPH_MAJOR_VERSION <= 2 && defined(OPENSCENEGRAPH_MINOR_VERSION) && OPENSCENEGRAPH_MINOR_VERSION <= 8 && defined(OPENSCENEGRAPH_PATCH_VERSION) && OPENSCENEGRAPH_PATCH_VERSION < 3
@@ -1144,7 +1142,7 @@ namespace dtUtil
       return osgDB::concatPaths(left, right);
    }
 
-   //-----------------------------------------------------------------------
+   /////////////////////////////////////////////////////////////////////////////
    FileUtils::FileUtils()
    {
       mLogger = &dtUtil::Log::GetInstance(std::string("fileutils.cpp"));
@@ -1152,7 +1150,7 @@ namespace dtUtil
       ChangeDirectory(".");
    }
 
-   //-----------------------------------------------------------------------
+   /////////////////////////////////////////////////////////////////////////////
    FileUtils::~FileUtils() {}
 
    /*void FileUtils::AbsoluteToRelative(const std::string& pcAbsPath, std::string& relPath)
@@ -1247,14 +1245,14 @@ namespace dtUtil
       relPath = sTmp;
    }*/
 
-   ////////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    FileUtilIOException::FileUtilIOException(const std::string& message, const std::string& filename, unsigned int linenum)
       : dtUtil::Exception(message, filename, linenum)
    {
       mType = &dtUtil::FileExceptionEnum::IOException;
    }
 
-   ////////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    FileNotFoundException::FileNotFoundException(const std::string& message, const std::string& filename, unsigned int linenum)
       : dtUtil::Exception(message, filename, linenum)
    {
