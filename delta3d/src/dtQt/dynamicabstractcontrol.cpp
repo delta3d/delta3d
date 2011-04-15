@@ -48,6 +48,7 @@
 #include <dtQt/dynamicstringcontrol.h>
 #include <dtQt/dynamicvecncontrol.h>
 #include <dtQt/propertyeditortreeview.h>
+#include <dtQt/dynamicsubwidgets.h>
 
 #include <QtCore/QSize>
 
@@ -56,6 +57,7 @@
 #include <QtGui/QPalette>
 #include <QtGui/QStyleOptionViewItem>
 #include <QtGui/QWidget>
+#include <QtGui/QGridLayout>
 
 namespace dtQt
 {
@@ -105,6 +107,10 @@ namespace dtQt
       , mParent(NULL)
       , mModel(NULL)
       , mPropertyTree(NULL)
+      , mDefaultResetButton(NULL)
+      , mGridLayout(NULL)
+      , mFocusWidget(NULL)
+      , mWrapper(NULL)
       //, mNewCommitEmitter(NULL)
    {
    }
@@ -129,14 +135,20 @@ namespace dtQt
    /////////////////////////////////////////////////////////////////////////////////
    void DynamicAbstractControl::updateEditorFromModel(QWidget* widget)
    {
-      // do nothing here, but allows controls without an editor to not have to override it
+      if (widget == mWrapper)
+      {
+         UpdateResetButtonStatus();
+      }
    }
 
    /////////////////////////////////////////////////////////////////////////////////
    bool DynamicAbstractControl::updateModelFromEditor(QWidget* widget)
    {
-      // Notify the parent that the control is about to be updated.
-      NotifyParentOfPreUpdate();
+      if (widget == mWrapper)
+      {
+         // Notify the parent that the control is about to be updated.
+         NotifyParentOfPreUpdate();
+      }
       return false;
    }
 
@@ -147,7 +159,8 @@ namespace dtQt
       mInitialized = true;
 
       mParent = newParent;
-      mPropContainer  = newPC;
+      mPropContainer = newPC;
+      mBaseProperty = newProperty;
       mModel  = newModel;
 
       // Set the tooltip description on the control.
@@ -155,14 +168,38 @@ namespace dtQt
       {
          mModel->setDescription(this);
       }
+
+      connect(this, SIGNAL(PropertyChanged(dtDAL::PropertyContainer&, dtDAL::ActorProperty&)),
+         this, SLOT(OnPropertyChanged(dtDAL::PropertyContainer&, dtDAL::ActorProperty&)));
    }
 
    /////////////////////////////////////////////////////////////////////////////////
    QWidget* DynamicAbstractControl::createEditor(QWidget* parent,
       const QStyleOptionViewItem& option, const QModelIndex& index)
    {
-      // do nothing.  This method allows controls with no editor to not have to override it.
-      return NULL;
+      QWidget* wrapper = new QWidget(parent);
+      wrapper->setFocusPolicy(Qt::StrongFocus);
+      SetBackgroundColor(wrapper, PropertyEditorTreeView::ROW_COLOR_ODD);
+
+      mGridLayout = new QGridLayout(wrapper);
+      mGridLayout->setMargin(0);
+      mGridLayout->setSpacing(1);
+
+      if (mPropContainer->DoesDefaultExist(*mBaseProperty))
+      {
+         mDefaultResetButton = new SubQPushButton(tr("Reset"), parent, this);
+         mDefaultResetButton->setToolTip("Reset the property to its default value.");
+
+         connect(mDefaultResetButton, SIGNAL(clicked()), this, SLOT(onResetClicked()));
+
+         mDefaultResetButton->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+
+         mGridLayout->addWidget(mDefaultResetButton, 0, 10, 1, 1);
+         mGridLayout->setColumnStretch(10, 0);
+      }
+
+      mWrapper = wrapper;
+      return wrapper;
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -200,6 +237,12 @@ namespace dtQt
    void DynamicAbstractControl::PropertyChangedPassThrough(dtDAL::PropertyContainer& proxy, dtDAL::ActorProperty& prop)
    {
       emit PropertyChanged(proxy, prop);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void DynamicAbstractControl::OnPropertyChanged(dtDAL::PropertyContainer&, dtDAL::ActorProperty& prop)
+   {
+      UpdateResetButtonStatus();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -261,6 +304,31 @@ namespace dtQt
    /////////////////////////////////////////////////////////////////////////////////
    void DynamicAbstractControl::handleSubEditDestroy(QWidget* widget, QAbstractItemDelegate::EndEditHint hint)
    {
+      if (widget == mWrapper)
+      {
+         mWrapper = NULL;
+         mDefaultResetButton = NULL;
+         mFocusWidget = NULL;
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void DynamicAbstractControl::onResetClicked()
+   {
+      if (mFocusWidget)
+      {
+         mFocusWidget->setFocus();
+      }
+
+      NotifyParentOfPreUpdate();
+      std::string oldValue = mBaseProperty->ToString();
+      mPropContainer->ResetProperty(*mBaseProperty);
+      updateEditorFromModel(mWrapper);
+
+      // give undo manager the ability to create undo/redo events
+      emit PropertyAboutToChange(*mPropContainer, *mBaseProperty,
+         oldValue, mBaseProperty->ToString());
+      emit PropertyChanged(*mPropContainer, *mBaseProperty);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -285,6 +353,23 @@ namespace dtQt
    void DynamicAbstractControl::InstallEventFilterOnControl(QObject* filterObj)
    {
       QObject::installEventFilter(filterObj);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void DynamicAbstractControl::UpdateResetButtonStatus()
+   {
+      if (mDefaultResetButton)
+      {
+         if (!mPropContainer->DoesDefaultExist(*mBaseProperty) ||
+            mPropContainer->IsPropertyDefault(*mBaseProperty))
+         {
+            mDefaultResetButton->setEnabled(false);
+         }
+         else
+         {
+            mDefaultResetButton->setEnabled(true);
+         }
+      }
    }
 
 } // namespace dtEditQt

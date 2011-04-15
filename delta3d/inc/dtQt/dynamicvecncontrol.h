@@ -80,6 +80,17 @@ namespace dtQt
          dtDAL::PropertyContainer* newPC, dtDAL::ActorProperty* property);
 
       /**
+       * @see DynamicAbstractControl#updateEditorFromModel
+       */
+      virtual void updateEditorFromModel(QWidget* widget);
+
+      /**
+       * @see DynamicAbstractControl#createEditor
+       */
+      virtual QWidget* createEditor(QWidget* parent, const QStyleOptionViewItem& option,
+         const QModelIndex& index);
+
+      /**
        * @see DynamicAbstractControl#getDisplayName
        */
       virtual const QString getDisplayName();
@@ -103,6 +114,7 @@ namespace dtQt
 
       DynamicVectorElementControl* CreateElementControl(PropertyType* prop, int index, const std::string& label,
                PropertyEditorModel* newModel, dtDAL::PropertyContainer* newPC);
+
    private:
       DynamicVectorElementControl* xElement;
       DynamicVectorElementControl* yElement;
@@ -111,6 +123,8 @@ namespace dtQt
 
       // the tool tip type label indicates that the vector is a float or a double
       std::string toolTipTypeLabel;
+
+      SubQLabel* mTemporaryEditControl;
 
       dtCore::RefPtr<PropertyType> mProperty;
    };
@@ -122,6 +136,7 @@ namespace dtQt
       , yElement(NULL)
       , zElement(NULL)
       , wElement(NULL)
+      , mTemporaryEditControl(NULL)
    {
    }
 
@@ -180,6 +195,44 @@ namespace dtQt
 
    /////////////////////////////////////////////////////////////////////////////////
    template <typename PropertyType>
+   void DynamicVecNControl<PropertyType>::updateEditorFromModel(QWidget* widget)
+   {
+      if (widget == mWrapper && mTemporaryEditControl)
+      {
+         // set the current value from our property
+         mTemporaryEditControl->setText(getValueAsString());
+      }
+
+      DynamicAbstractControl::updateEditorFromModel(widget);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////
+   template <typename PropertyType>
+   QWidget *DynamicVecNControl<PropertyType>::createEditor(QWidget* parent,
+      const QStyleOptionViewItem& option, const QModelIndex& index)
+   {
+      QWidget* wrapper = DynamicAbstractControl::createEditor(parent, option, index);
+
+      if (!mInitialized)
+      {
+         LOG_ERROR("Tried to add itself to the parent widget before being initialized");
+         return wrapper;
+      }
+
+      // create and init the edit box
+      mTemporaryEditControl = new SubQLabel(getValueAsString(), wrapper, this);
+      mTemporaryEditControl->setToolTip(getDescription());
+      mFocusWidget = mTemporaryEditControl;
+
+      mGridLayout->addWidget(mTemporaryEditControl, 0, 0, 1, 1);
+      mGridLayout->setColumnMinimumWidth(0, mTemporaryEditControl->sizeHint().width() / 2);
+      mGridLayout->setColumnStretch(0, 1);
+
+      return wrapper;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////
+   template <typename PropertyType>
    const QString DynamicVecNControl<PropertyType>::getDisplayName()
    {
          return tr(mProperty->GetLabel().c_str());
@@ -228,10 +281,11 @@ namespace dtQt
       return result;
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
    template <typename PropertyType>
    bool DynamicVecNControl<PropertyType>::isEditable()
    {
-      return false;
+      return !mProperty->IsReadOnly();
    }
 
 } // namespace dtEditQt

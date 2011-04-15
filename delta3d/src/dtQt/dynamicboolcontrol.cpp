@@ -83,14 +83,14 @@ namespace dtQt
    /////////////////////////////////////////////////////////////////////////////////
    void DynamicBoolControl::updateEditorFromModel(QWidget* widget)
    {
-      if (widget != NULL)
+      if (widget == mWrapper && mTemporaryEditControl)
       {
-         SubQComboBox* editor = static_cast<SubQComboBox*>(widget);
-
          // set the current value from our property
          bool value = mProperty->GetValue();
-         editor->setCurrentIndex(editor->findText((value) ? TRUE_LABEL : FALSE_LABEL));
+         mTemporaryEditControl->setCurrentIndex(mTemporaryEditControl->findText((value) ? TRUE_LABEL : FALSE_LABEL));
       }
+
+      DynamicAbstractControl::updateEditorFromModel(widget);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -100,12 +100,10 @@ namespace dtQt
 
       bool dataChanged = false;
 
-      if (widget != NULL)
+      if (widget == mWrapper && mTemporaryEditControl)
       {
-         SubQComboBox* editor = static_cast<SubQComboBox*>(widget);
-
          // set the current value from our property
-         QString selection = editor->currentText();
+         QString selection = mTemporaryEditControl->currentText();
          bool    result    = (selection == TRUE_LABEL);
 
          // set our value to our object
@@ -133,25 +131,30 @@ namespace dtQt
    QWidget* DynamicBoolControl::createEditor(QWidget* parent,
       const QStyleOptionViewItem& option, const QModelIndex& index)
    {
+      QWidget* wrapper = DynamicAbstractControl::createEditor(parent, option, index);
+
       // create and init the combo box
-      mTemporaryEditControl = new SubQComboBox(parent, this);
+      mTemporaryEditControl = new SubQComboBox(wrapper, this);
       mTemporaryEditControl->addItem(TRUE_LABEL);
       mTemporaryEditControl->addItem(FALSE_LABEL);
+      mTemporaryEditControl->setToolTip(getDescription());
+      mFocusWidget = mTemporaryEditControl;
+
+      mGridLayout->addWidget(mTemporaryEditControl, 0, 0, 1, 1);
+      mGridLayout->setColumnMinimumWidth(0, mTemporaryEditControl->sizeHint().width() / 2);
+      mGridLayout->setColumnStretch(0, 1);
 
       if (!mInitialized)
       {
          LOG_ERROR("Tried to add itself to the parent widget before being initialized");
-         return mTemporaryEditControl;
+         return wrapper;
       }
 
-      updateEditorFromModel(mTemporaryEditControl);
+      updateEditorFromModel(mWrapper);
 
-      connect(mTemporaryEditControl, SIGNAL(activated (int)), this, SLOT(itemSelected(int)));
+      connect(mTemporaryEditControl, SIGNAL(activated(int)), this, SLOT(itemSelected(int)));
 
-      // set the tooltip
-      mTemporaryEditControl->setToolTip(getDescription());
-
-      return mTemporaryEditControl;
+      return wrapper;
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -190,7 +193,7 @@ namespace dtQt
    {
       if (mTemporaryEditControl != NULL)
       {
-         updateModelFromEditor(mTemporaryEditControl);
+         updateModelFromEditor(mWrapper);
       }
    }
 
@@ -214,8 +217,20 @@ namespace dtQt
 
       if (mTemporaryEditControl != NULL && &propCon == mPropContainer && &property == mProperty)
       {
-         updateEditorFromModel(mTemporaryEditControl);
+         updateEditorFromModel(mWrapper);
       }
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   void DynamicBoolControl::handleSubEditDestroy(QWidget* widget, QAbstractItemDelegate::EndEditHint hint)
+   {
+      // we have to check - sometimes the destructor won't get called before the
+      // next widget is created.  Then, when it is called, it sets the NEW editor to NULL!
+      if (widget == mWrapper)
+      {
+         mTemporaryEditControl = NULL;
+      }
+
+      DynamicAbstractControl::handleSubEditDestroy(widget, hint);
+   }
 } // namespace dtQt

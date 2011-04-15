@@ -124,15 +124,7 @@ namespace dtQt
         /**
          * @see DynamicAbstractControl#handleSubEditDestroy
          */
-        void handleSubEditDestroy(QWidget* widget, QAbstractItemDelegate::EndEditHint hint = QAbstractItemDelegate::NoHint)
-        {
-            // we have to check - sometimes the destructor won't get called before the
-            // next widget is created.  Then, when it is called, it sets the NEW editor to NULL!
-            if (widget == mTemporaryEditControl)
-            {
-               mTemporaryEditControl = NULL;
-            }
-        }
+        void handleSubEditDestroy(QWidget* widget, QAbstractItemDelegate::EndEditHint hint = QAbstractItemDelegate::NoHint);
 
     protected:
 

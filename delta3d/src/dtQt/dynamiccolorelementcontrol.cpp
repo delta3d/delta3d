@@ -40,6 +40,7 @@
 #include <dtUtil/log.h>
 
 #include <QtGui/QWidget>
+#include <QtGui/QGridLayout>
 
 namespace dtQt
 {
@@ -85,14 +86,14 @@ namespace dtQt
    /////////////////////////////////////////////////////////////////////////////////
    void DynamicColorElementControl::updateEditorFromModel(QWidget* widget)
    {
-      if (widget != NULL)
+      if (widget == mWrapper && mTemporaryEditControl)
       {
-         SubQSpinBox* control = static_cast<SubQSpinBox*>(widget);
-
          // set the current value from our property
          int value = getValue();
-         control->setValue(value);
+         mTemporaryEditControl->setValue(value);
       }
+
+      DynamicAbstractControl::updateEditorFromModel(widget);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -102,10 +103,9 @@ namespace dtQt
 
       bool dataChanged = false;
 
-      if (widget != NULL)
+      if (widget == mWrapper && mTemporaryEditControl)
       {
-         SubQSpinBox* control = static_cast<SubQSpinBox*>(widget);
-         int result = control->value();
+         int result = mTemporaryEditControl->value();
 
          // set our value to our object
          if (result != getValue())
@@ -132,10 +132,13 @@ namespace dtQt
    QWidget* DynamicColorElementControl::createEditor(QWidget* parent,
       const QStyleOptionViewItem& option, const QModelIndex& index)
    {
+      //QWidget* wrapper = DynamicAbstractControl::createEditor(parent, option, index);
+
       // create and init the edit box
       mTemporaryEditControl = new SubQSpinBox(parent, this);
       mTemporaryEditControl->setMinimum(-512);
       mTemporaryEditControl->setMaximum(512);
+      mFocusWidget = mTemporaryEditControl;
 
       if (!mInitialized)
       {
@@ -143,12 +146,15 @@ namespace dtQt
          return mTemporaryEditControl;
       }
 
-      updateEditorFromModel(mTemporaryEditControl);
+      //mGridLayout->addWidget(mTemporaryEditControl, 0, 0, 1, 1);
+      //mGridLayout->setColumnMinimumWidth(0, mTemporaryEditControl->sizeHint().width() / 2);
+      //mGridLayout->setColumnStretch(0, 1);
+
+      updateEditorFromModel(mWrapper);
       mTemporaryEditControl->setToolTip(getDescription());
 
       return mTemporaryEditControl;
    }
-
 
    /////////////////////////////////////////////////////////////////////////////////
    const QString DynamicColorElementControl::getDisplayName()
@@ -250,7 +256,7 @@ namespace dtQt
 
       if (mTemporaryEditControl != NULL && &propCon == mPropContainer && &property == mColorRGBA)
       {
-         updateEditorFromModel(mTemporaryEditControl);
+         updateEditorFromModel(mWrapper);
       }
    }
 
@@ -271,4 +277,16 @@ namespace dtQt
       return result;
    }
 
+   /////////////////////////////////////////////////////////////////////////////////
+   void DynamicColorElementControl::handleSubEditDestroy(QWidget* widget, QAbstractItemDelegate::EndEditHint hint)
+   {
+      // we have to check - sometimes the destructor won't get called before the
+      // next widget is created.  Then, when it is called, it sets the NEW editor to NULL!
+      if (widget == mWrapper)
+      {
+         mTemporaryEditControl = NULL;
+      }
+
+      DynamicAbstractControl::handleSubEditDestroy(widget, hint);
+   }
 } // namespace dtQt

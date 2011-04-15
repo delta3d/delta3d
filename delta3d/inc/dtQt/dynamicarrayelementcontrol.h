@@ -155,7 +155,6 @@ namespace dtQt
 
       int             mIndex;
 
-      QWidget*        mWrapper;
       SubQLabel*      mTextLabel;
       SubQPushButton* mShiftUpButton;
       SubQPushButton* mShiftDownButton;

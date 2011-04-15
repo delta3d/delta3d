@@ -42,6 +42,12 @@ namespace dtDirector
       SetColorRGB(Colors::GREEN);
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   std::string DirectorGraph::GetDefaultPropertyKey() const
+   {
+      return "Director Graph";
+   }
+
    //////////////////////////////////////////////////////////////////////////
    void DirectorGraph::BuildPropertyMap(bool isParent)
    {

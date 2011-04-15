@@ -65,6 +65,7 @@ namespace dtQt
    class PropertyEditorTreeView;
 
    class DynamicControlFactory;
+   class SubQPushButton;
 
    /**
    * @class DynamicAbstractControl
@@ -265,6 +266,11 @@ namespace dtQt
       virtual void InstallEventFilterOnControl(QObject* filterObj);
 
       /**
+       * Updates the status of the reset button.
+       */
+      void UpdateResetButtonStatus();
+
+      /**
       * This will notify the parent that the child is about to be updated.
       */
       virtual void NotifyParentOfPreUpdate()
@@ -290,6 +296,9 @@ namespace dtQt
       /// This is so child controls can, if desired can be connected to this which will emit the related signal.
       void PropertyChangedPassThrough(dtDAL::PropertyContainer&, dtDAL::ActorProperty& prop);
 
+      /// Event handler when the property has changed.
+      void OnPropertyChanged(dtDAL::PropertyContainer&, dtDAL::ActorProperty& prop);
+
       /**
       * Called when we should take the data out of the controls and put it into the
       * actor.  This is typically trapped to a lost focus or return pressed or similar
@@ -311,6 +320,7 @@ namespace dtQt
       virtual void actorPropertyChanged(dtDAL::PropertyContainer& propCon,
                dtDAL::ActorProperty& property)
       {
+         UpdateResetButtonStatus();
          NotifyParentOfPreUpdate();
       }
 
@@ -324,12 +334,17 @@ namespace dtQt
       */
       virtual void handleSubEditDestroy(QWidget* widget, QAbstractItemDelegate::EndEditHint hint = QAbstractItemDelegate::NoHint);
 
+      /**
+       * Signal when the Reset button has been clicked.
+       */
+      virtual void onResetClicked();
 
    protected:
       // indicates whether the object has been initialized
       bool mInitialized;
 
       dtCore::RefPtr<dtDAL::PropertyContainer> mPropContainer;
+      dtDAL::ActorProperty*                    mBaseProperty;
 
       // The parent control of this control.  All controls have a parent except root level
       // controls which are likely to be groups
@@ -337,6 +352,16 @@ namespace dtQt
       PropertyEditorModel *mModel;
 
       PropertyEditorTreeView *mPropertyTree;
+
+      // Reset to default button.
+      SubQPushButton* mDefaultResetButton;
+
+      // Grid layout for editor widget.
+      QGridLayout* mGridLayout;
+
+      QWidget* mFocusWidget;
+      QWidget* mWrapper;
+
    private:
       dtCore::RefPtr<DynamicControlFactory> mControlFactory;
    };

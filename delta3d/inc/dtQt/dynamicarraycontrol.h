@@ -62,6 +62,16 @@ namespace dtQt
       ~DynamicArrayControl();
 
       /**
+      * This method is called by the delegate between the model and the view when data should
+      * be pushed to the editor from the model.  I'm not exactly sure when that happens, but
+      * I assume that's at construction time of the editor.  The default does nothing.
+      *
+      * @NOTE - In all likelihood, this method won't need the widget that's passed in,
+      * since it's tracked by the individual subclass.
+      */
+      virtual void updateEditorFromModel(QWidget* widget);
+
+      /**
        * @see DynamicAbstractControl#InitializeData
        */
       virtual void InitializeData(DynamicAbstractControl* newParent, PropertyEditorModel* model,
@@ -122,6 +132,11 @@ namespace dtQt
        */
       void onClearClicked();
 
+      /**
+       * Signal when the Reset button has been clicked.
+       */
+      virtual void onResetClicked();
+
    private:
       /**
        * Updates the enabled status of the control buttons after an update.
@@ -130,7 +145,6 @@ namespace dtQt
 
       dtCore::RefPtr<dtDAL::ArrayActorPropertyBase> mProperty;
 
-      QWidget*        mWrapper;
       SubQLabel*      mTextLabel;
       SubQPushButton* mAddButton;
       SubQPushButton* mClearButton;

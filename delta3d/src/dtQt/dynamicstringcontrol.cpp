@@ -37,10 +37,10 @@
 
 #include <dtUtil/log.h>
 
-#include <QtGui/QGridLayout>
 #include <QtGui/QLabel>
 #include <QtGui/QLineEdit>
 #include <QtGui/QWidget>
+#include <QtGui/QGridLayout>
 
 namespace dtQt
 {
@@ -80,14 +80,14 @@ namespace dtQt
    /////////////////////////////////////////////////////////////////////////////////
    void DynamicStringControl::updateEditorFromModel(QWidget* widget)
    {
-      if (widget != NULL)
+      if (widget == mWrapper && mTemporaryEditControl)
       {
-         SubQLineEdit* editBox = static_cast<SubQLineEdit*>(widget);
-
          // set the current value from our property
-         editBox->setText(tr(mProperty->GetValue().c_str()));
-         editBox->selectAll();
+         mTemporaryEditControl->setText(tr(mProperty->GetValue().c_str()));
+         mTemporaryEditControl->selectAll();
       }
+
+      DynamicAbstractControl::updateEditorFromModel(widget);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -97,12 +97,10 @@ namespace dtQt
 
       bool dataChanged = false;
 
-      if (widget != NULL)
+      if (widget == mWrapper && mTemporaryEditControl)
       {
-         SubQLineEdit* editBox = static_cast<SubQLineEdit*>(widget);
-
          // get the data from our control
-         std::string result = editBox->text().toStdString();
+         std::string result = mTemporaryEditControl->text().toStdString();
 
          // set our value to our object
          if (result != mProperty->GetValue())
@@ -117,7 +115,7 @@ namespace dtQt
 
          // reselect all the text when we commit.
          // Gives the user visual feedback that something happened.
-         editBox->selectAll();
+         mTemporaryEditControl->selectAll();
       }
 
       // notify the world (mostly the viewports) that our property changed
@@ -134,23 +132,30 @@ namespace dtQt
    QWidget *DynamicStringControl::createEditor(QWidget* parent,
       const QStyleOptionViewItem& option, const QModelIndex& index)
    {
+      QWidget* wrapper = DynamicAbstractControl::createEditor(parent, option, index);
+
+      if (!mInitialized)
+      {
+         LOG_ERROR("Tried to add itself to the parent widget before being initialized");
+         return wrapper;
+      }
+
       // create and init the edit box
-      mTemporaryEditControl = new SubQLineEdit (parent, this);
+      mTemporaryEditControl = new SubQLineEdit(wrapper, this);
+      mTemporaryEditControl->setToolTip(getDescription());
+      mFocusWidget = mTemporaryEditControl;
       if (mProperty->GetMaxLength() > 0)
       {
          mTemporaryEditControl->setMaxLength(mProperty->GetMaxLength());
       }
 
-      if (!mInitialized)
-      {
-         LOG_ERROR("Tried to add itself to the parent widget before being initialized");
-         return mTemporaryEditControl;
-      }
+      updateEditorFromModel(mWrapper);
 
-      updateEditorFromModel(mTemporaryEditControl);
-      mTemporaryEditControl->setToolTip(getDescription());
+      mGridLayout->addWidget(mTemporaryEditControl, 0, 0, 1, 1);
+      mGridLayout->setColumnMinimumWidth(0, mTemporaryEditControl->sizeHint().width() / 2);
+      mGridLayout->setColumnStretch(0, 1);
 
-      return mTemporaryEditControl;
+      return wrapper;
    }
 
    const QString DynamicStringControl::getDisplayName()
@@ -202,8 +207,17 @@ namespace dtQt
 
       if (mTemporaryEditControl != NULL && &propCon == mPropContainer && &property == mProperty)
       {
-         updateEditorFromModel(mTemporaryEditControl);
+         updateEditorFromModel(mWrapper);
       }
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   void DynamicStringControl::handleSubEditDestroy(QWidget* widget, QAbstractItemDelegate::EndEditHint hint)
+   {
+      if (widget == mWrapper)
+      {
+         mTemporaryEditControl = NULL;
+      }
+      DynamicAbstractControl::handleSubEditDestroy(widget, hint);
+   }
 } // namespace dtQt

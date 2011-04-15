@@ -65,6 +65,12 @@ namespace dtQt
          dtDAL::PropertyContainer* newPC, dtDAL::ActorProperty* property);
 
       /**
+       * @see DynamicAbstractControl#createEditor
+       */
+      virtual QWidget* createEditor(QWidget* parent, const QStyleOptionViewItem& option,
+               const QModelIndex& index);
+
+      /**
       * @see DynamicAbstractControl#getDisplayName
       */
       virtual const QString getDisplayName();

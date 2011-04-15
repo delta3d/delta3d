@@ -155,12 +155,6 @@ namespace dtQt
 
       dtDAL::ColorRgbaActorProperty* mProperty;
 
-      // This pointer is not really in our control.  It is constructed in the createEditor()
-      // method and destroyed whenever QT feels like it (mostly when the control looses focus).
-      // We work around this by trapping the destruction of this object, it should
-      // call our handleSubEditDestroy() method so we know to not hold this anymore
-      QWidget* mTemporaryWrapper;
-
       SubQLabel *mTemporaryEditOnlyTextLabel;
       SubQPushButton *mTemporaryColorPicker;
 

@@ -173,13 +173,14 @@ namespace dtQt
    {
       if (widget == mWrapper)
       {
-         mWrapper         = NULL;
          mTextLabel       = NULL;
          mShiftUpButton   = NULL;
          mShiftDownButton = NULL;
          mCopyButton      = NULL;
          mDeleteButton    = NULL;
       }
+
+      DynamicAbstractParentControl::handleSubEditDestroy(widget, hint);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
