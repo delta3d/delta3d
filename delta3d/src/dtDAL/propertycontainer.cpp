@@ -210,6 +210,20 @@ namespace dtDAL
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   bool PropertyContainer::DoesDefaultExist(const dtDAL::ActorProperty& prop) const
+   {
+      const NamedParameter* param =
+         DefaultPropertyManager::GetInstance().GetDefaultValue(
+         GetDefaultPropertyKey(), prop.GetName());
+      if (param)
+      {
+         return true;
+      }
+
+      return false;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    bool PropertyContainer::IsPropertyDefault(const dtDAL::ActorProperty& prop) const
    {
       const NamedParameter* param =

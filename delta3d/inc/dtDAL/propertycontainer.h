@@ -126,6 +126,15 @@ namespace dtDAL
       virtual dtCore::RefPtr<ActorProperty> GetDeprecatedProperty(const std::string& name);
 
       /**
+       * Checks if a given property has a default value.
+       *
+       * @param[in]  prop  The property.
+       *
+       * @return     True if a default value exists for the given property.
+       */
+      bool DoesDefaultExist(const dtDAL::ActorProperty& prop) const;
+
+      /**
        * Checks if a given property is already set to its default value.
        *
        * @param[in]  prop  The property.
