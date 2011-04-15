@@ -40,6 +40,7 @@
 #include <QtGui/QDoubleValidator>
 #include <QtGui/QLineEdit>
 #include <QtGui/QWidget>
+#include <QtGui/QGridLayout>
 
 namespace dtQt
 {
@@ -78,15 +79,15 @@ namespace dtQt
    /////////////////////////////////////////////////////////////////////////////////
    void DynamicFloatControl::updateEditorFromModel(QWidget* widget)
    {
-      if (widget != NULL && widget == mTemporaryEditControl)
+      if (widget == mWrapper && mTemporaryEditControl)
       {
-         SubQLineEdit* editBox = static_cast<SubQLineEdit*>(widget);
-
          // set the current value from our property
          float floatValue = mProperty->GetValue();
-         editBox->setText(QString::number(floatValue, 'f', NUM_DECIMAL_DIGITS_FLOAT));
-         editBox->selectAll();
+         mTemporaryEditControl->setText(QString::number(floatValue, 'f', NUM_DECIMAL_DIGITS_FLOAT));
+         mTemporaryEditControl->selectAll();
       }
+
+      DynamicAbstractControl::updateEditorFromModel(widget);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -96,11 +97,10 @@ namespace dtQt
 
       bool dataChanged = false;
 
-      if (widget != NULL && widget == mTemporaryEditControl)
+      if (widget == mWrapper && mTemporaryEditControl)
       {
-         SubQLineEdit* editBox = static_cast<SubQLineEdit*>(widget);
          bool success = false;
-         float result = editBox->text().toFloat(&success);
+         float result = mTemporaryEditControl->text().toFloat(&success);
 
          // set our value to our object
          if (success)
@@ -108,7 +108,7 @@ namespace dtQt
             // Save the data if they are different.  Note, we also need to compare the QString value,
             // else we get epsilon differences that cause the map to be marked dirty with no edits :(
             QString proxyValue = QString::number(mProperty->GetValue(), 'f', NUM_DECIMAL_DIGITS_FLOAT);
-            QString newValue = editBox->text();
+            QString newValue = mTemporaryEditControl->text();
             if (result != mProperty->GetValue() && proxyValue != newValue)
             {
                // give undo manager the ability to create undo/redo events
@@ -126,7 +126,7 @@ namespace dtQt
 
          // reselect all the text when we commit.
          // Gives the user visual feedback that something happened.
-         editBox->selectAll();
+         mTemporaryEditControl->selectAll();
       }
 
       // notify the world (mostly the viewports) that our property changed
@@ -142,23 +142,29 @@ namespace dtQt
    QWidget *DynamicFloatControl::createEditor(QWidget* parent,
       const QStyleOptionViewItem& option, const QModelIndex& index)
    {
-      // create and init the edit box
-      mTemporaryEditControl = new SubQLineEdit(parent, this);
-      QDoubleValidator* validator = new QDoubleValidator(mTemporaryEditControl);
-      validator->setDecimals(NUM_DECIMAL_DIGITS_FLOAT);
-      mTemporaryEditControl->setValidator(validator);
+      QWidget* wrapper = DynamicAbstractControl::createEditor(parent, option, index);
 
       if (!mInitialized)
       {
          LOG_ERROR("Tried to add itself to the parent widget before being initialized");
-         return mTemporaryEditControl;
+         return wrapper;
       }
 
-      updateEditorFromModel(mTemporaryEditControl);
-
+      // create and init the edit box
+      mTemporaryEditControl = new SubQLineEdit(wrapper, this);
+      QDoubleValidator* validator = new QDoubleValidator(mTemporaryEditControl);
+      validator->setDecimals(NUM_DECIMAL_DIGITS_FLOAT);
+      mTemporaryEditControl->setValidator(validator);
       mTemporaryEditControl->setToolTip(getDescription());
+      mFocusWidget = mTemporaryEditControl;
 
-      return mTemporaryEditControl;
+      mGridLayout->addWidget(mTemporaryEditControl, 0, 0, 1, 1);
+      mGridLayout->setColumnMinimumWidth(0, mTemporaryEditControl->sizeHint().width() / 2);
+      mGridLayout->setColumnStretch(0, 1);
+
+      updateEditorFromModel(mWrapper);
+
+      return wrapper;
    }
 
    const QString DynamicFloatControl::getDisplayName()
@@ -208,8 +214,20 @@ namespace dtQt
 
       if (mTemporaryEditControl != NULL && &propCon == mPropContainer && &property == mProperty)
       {
-         updateEditorFromModel(mTemporaryEditControl);
+         updateEditorFromModel(mWrapper);
       }
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   void DynamicFloatControl::handleSubEditDestroy(QWidget* widget, QAbstractItemDelegate::EndEditHint hint)
+   {
+      // we have to check - sometimes the destructor won't get called before the
+      // next widget is created.  Then, when it is called, it sets the NEW editor to NULL!
+      if (widget == mWrapper)
+      {
+         mTemporaryEditControl = NULL;
+      }
+
+      DynamicAbstractControl::handleSubEditDestroy(widget, hint);
+   }
 } // namespace dtQt

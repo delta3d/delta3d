@@ -99,6 +99,13 @@ namespace dtQt
       }
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   QWidget* DynamicContainerControl::createEditor(QWidget* parent, const QStyleOptionViewItem& option, const QModelIndex& index)
+   {
+//      QWidget* wrapper = DynamicAbstractControl::createEditor(parent, option, index);
+      return NULL;
+   }
+
    /////////////////////////////////////////////////////////////////////////////////
    const QString DynamicContainerControl::getDisplayName()
    {

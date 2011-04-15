@@ -59,8 +59,7 @@ namespace dtQt
 
    ///////////////////////////////////////////////////////////////////////////////
    DynamicColorRGBAControl::DynamicColorRGBAControl()
-      : mTemporaryWrapper(NULL)
-      , mTemporaryEditOnlyTextLabel(NULL)
+      : mTemporaryEditOnlyTextLabel(NULL)
       , mTemporaryColorPicker(NULL)
    {
    }
@@ -130,6 +129,7 @@ namespace dtQt
    /////////////////////////////////////////////////////////////////////////////////
    void DynamicColorRGBAControl::updateEditorFromModel(QWidget* widget)
    {
+      DynamicAbstractControl::updateEditorFromModel(widget);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -142,10 +142,7 @@ namespace dtQt
    QWidget *DynamicColorRGBAControl::createEditor(QWidget* parent,
       const QStyleOptionViewItem& option, const QModelIndex& index)
    {
-      QWidget* wrapper = new QWidget(parent);
-      wrapper->setFocusPolicy(Qt::StrongFocus);
-      // set the background color to white so that it sort of blends in with the rest of the controls
-      SetBackgroundColor(wrapper, PropertyEditorTreeView::ROW_COLOR_ODD);
+      QWidget* wrapper = DynamicAbstractControl::createEditor(parent, option, index);
 
       if (!mInitialized)
       {
@@ -161,12 +158,18 @@ namespace dtQt
       mTemporaryEditOnlyTextLabel = new SubQLabel(getValueAsString(), wrapper, this);
       // set the background color to white so that it sort of blends in with the rest of the controls
       SetBackgroundColor(mTemporaryEditOnlyTextLabel, PropertyEditorTreeView::ROW_COLOR_ODD);
+      mFocusWidget = mTemporaryEditOnlyTextLabel;
 
       // button
       mTemporaryColorPicker = new SubQPushButton(tr("Pick ..."), wrapper, this);
-      //temporaryColorPicker->setMaximumHeight(18);
-      connect(mTemporaryColorPicker, SIGNAL(clicked()), this, SLOT(colorPickerPressed()));
       mTemporaryColorPicker->setToolTip(getDescription());
+      //temporaryColorPicker->setMaximumHeight(18);
+
+      connect(mTemporaryColorPicker, SIGNAL(clicked()), this, SLOT(colorPickerPressed()));
+
+      mGridLayout->addLayout(hBox, 0, 0, 1, 1);
+      mGridLayout->setColumnMinimumWidth(0, hBox->sizeHint().width() / 2);
+      mGridLayout->setColumnStretch(0, 1);
 
       // setup the horizontal layout
       hBox->addWidget(mTemporaryColorPicker);
@@ -174,7 +177,6 @@ namespace dtQt
       hBox->addWidget(mTemporaryEditOnlyTextLabel);
       hBox->addStretch(1);
 
-      mTemporaryWrapper = wrapper;
       return wrapper;
    }
 
@@ -194,12 +196,13 @@ namespace dtQt
    /////////////////////////////////////////////////////////////////////////////////
    void DynamicColorRGBAControl::handleSubEditDestroy(QWidget* widget, QAbstractItemDelegate::EndEditHint hint)
    {
-      if (widget == mTemporaryWrapper)
+      if (widget == mWrapper)
       {
-         mTemporaryWrapper = NULL;
          mTemporaryEditOnlyTextLabel = NULL;
          mTemporaryColorPicker = NULL;
       }
+
+      DynamicAbstractControl::handleSubEditDestroy(widget, hint);
    }
 
    /////////////////////////////////////////////////////////////////////////////////

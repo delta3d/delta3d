@@ -78,15 +78,15 @@ namespace dtQt
    /////////////////////////////////////////////////////////////////////////////////
    void DynamicLongControl::updateEditorFromModel(QWidget* widget)
    {
-      if (widget != NULL)
+      if (widget == mWrapper && mTemporaryEditControl)
       {
-         SubQLineEdit* editBox = static_cast<SubQLineEdit*>(widget);
-
          // set the current value from our property
          long longValue = mProperty->GetValue();
-         editBox->setText(QString::number(longValue));
-         editBox->selectAll();
+         mTemporaryEditControl->setText(QString::number(longValue));
+         mTemporaryEditControl->selectAll();
       }
+
+      DynamicAbstractControl::updateEditorFromModel(widget);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -96,11 +96,10 @@ namespace dtQt
 
       bool dataChanged = false;
 
-      if (widget != NULL)
+      if (widget == mWrapper && mTemporaryEditControl)
       {
-         SubQLineEdit* editBox = static_cast<SubQLineEdit*>(widget);
          bool success = false;
-         long result = editBox->text().toLong(&success);
+         long result = mTemporaryEditControl->text().toLong(&success);
 
          // set our value to our object
          if (success)
@@ -122,7 +121,7 @@ namespace dtQt
 
          // reselect all the text when we commit.
          // Gives the user visual feedback that something happened.
-         editBox->selectAll();
+         mTemporaryEditControl->selectAll();
       }
 
       // notify the world (mostly the viewports) that our property changed
@@ -139,22 +138,29 @@ namespace dtQt
    QWidget* DynamicLongControl::createEditor(QWidget* parent,
       const QStyleOptionViewItem& option, const QModelIndex& index)
    {
-      // create and init the edit box
-      mTemporaryEditControl = new SubQLineEdit(parent, this);
-      // note that there is no long validator.  ...  /shrug
-      QIntValidator* validator = new QIntValidator(mTemporaryEditControl);
-      mTemporaryEditControl->setValidator(validator);
+      QWidget* wrapper = DynamicAbstractControl::createEditor(parent, option, index);
 
       if (!mInitialized)
       {
          LOG_ERROR("Tried to add itself to the parent widget before being initialized");
-         return mTemporaryEditControl;
+         return wrapper;
       }
 
-      updateEditorFromModel(mTemporaryEditControl);
+      // create and init the edit box
+      mTemporaryEditControl = new SubQLineEdit(wrapper, this);
+      // note that there is no long validator.  ...  /shrug
+      QIntValidator* validator = new QIntValidator(mTemporaryEditControl);
+      mTemporaryEditControl->setValidator(validator);
       mTemporaryEditControl->setToolTip(getDescription());
+      mFocusWidget = mTemporaryEditControl;
 
-      return mTemporaryEditControl;
+      mGridLayout->addWidget(mTemporaryEditControl, 0, 0, 1, 1);
+      mGridLayout->setColumnMinimumWidth(0, mTemporaryEditControl->sizeHint().width() / 2);
+      mGridLayout->setColumnStretch(0, 1);
+
+      updateEditorFromModel(mWrapper);
+
+      return wrapper;
    }
 
    const QString DynamicLongControl::getDisplayName()
@@ -204,8 +210,20 @@ namespace dtQt
 
       if (mTemporaryEditControl != NULL && &propCon == mPropContainer && &property == mProperty)
       {
-         updateEditorFromModel(mTemporaryEditControl);
+         updateEditorFromModel(mWrapper);
       }
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   void DynamicLongControl::handleSubEditDestroy(QWidget* widget, QAbstractItemDelegate::EndEditHint hint)
+   {
+      // we have to check - sometimes the destructor won't get called before the
+      // next widget is created.  Then, when it is called, it sets the NEW editor to NULL!
+      if (widget == mWrapper)
+      {
+         mTemporaryEditControl = NULL;
+      }
+
+      DynamicAbstractControl::handleSubEditDestroy(widget, hint);
+   }
 } // namespace dtQt

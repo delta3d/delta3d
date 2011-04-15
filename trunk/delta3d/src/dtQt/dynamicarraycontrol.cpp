@@ -51,8 +51,7 @@ namespace dtQt
 
    ///////////////////////////////////////////////////////////////////////////////
    DynamicArrayControl::DynamicArrayControl()
-      : mWrapper(NULL)
-      , mTextLabel(NULL)
+      : mTextLabel(NULL)
       , mAddButton(NULL)
       , mClearButton(NULL)
    {
@@ -61,6 +60,12 @@ namespace dtQt
    /////////////////////////////////////////////////////////////////////////////////
    DynamicArrayControl::~DynamicArrayControl()
    {
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////
+   void DynamicArrayControl::updateEditorFromModel(QWidget* widget)
+   {
+      DynamicAbstractParentControl::updateEditorFromModel(widget);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -88,20 +93,13 @@ namespace dtQt
    /////////////////////////////////////////////////////////////////////////////////
    QWidget* DynamicArrayControl::createEditor(QWidget* parent, const QStyleOptionViewItem& option, const QModelIndex& index)
    {
-      QWidget* wrapper = new QWidget(parent);
-      wrapper->setFocusPolicy(Qt::StrongFocus);
-      // set the background color to white so that it sort of blends in with the rest of the controls
-      SetBackgroundColor(wrapper, PropertyEditorTreeView::ROW_COLOR_ODD);
+      QWidget* wrapper = DynamicAbstractParentControl::createEditor(parent, option, index);
 
       if (!mInitialized)
       {
          LOG_ERROR("Tried to add itself to the parent widget before being initialized");
          return wrapper;
       }
-
-      QGridLayout* grid = new QGridLayout(wrapper);
-      grid->setMargin(0);
-      grid->setSpacing(1);
 
       // label
       mTextLabel = new SubQLabel(getValueAsString(), wrapper, this);
@@ -110,6 +108,7 @@ namespace dtQt
       mAddButton   = new SubQPushButton(tr("Add"),   wrapper, this);
       mClearButton = new SubQPushButton(tr("Clear"), wrapper, this);
 
+      mFocusWidget = mAddButton;
       UpdateButtonStates();
 
       connect(mAddButton,   SIGNAL(clicked()), this, SLOT(onAddClicked()));
@@ -117,16 +116,15 @@ namespace dtQt
 
       mTextLabel->setToolTip(getDescription());
 
-      grid->addWidget(mTextLabel,   0, 0, 1, 1);
-      grid->addWidget(mAddButton,   0, 1, 1, 1);
-      grid->addWidget(mClearButton, 0, 2, 1, 1);
-      grid->setColumnMinimumWidth(1, mAddButton->sizeHint().width() / 2);
-      grid->setColumnMinimumWidth(2, mClearButton->sizeHint().width() / 2);
-      grid->setColumnStretch(0, 2);
-      grid->setColumnStretch(1, 0);
-      grid->setColumnStretch(2, 0);
+      mGridLayout->addWidget(mTextLabel,   0, 0, 1, 1);
+      mGridLayout->addWidget(mAddButton,   0, 1, 1, 1);
+      mGridLayout->addWidget(mClearButton, 0, 2, 1, 1);
+      mGridLayout->setColumnMinimumWidth(1, mAddButton->sizeHint().width() / 2);
+      mGridLayout->setColumnMinimumWidth(2, mClearButton->sizeHint().width() / 2);
+      mGridLayout->setColumnStretch(0, 2);
+      mGridLayout->setColumnStretch(1, 0);
+      mGridLayout->setColumnStretch(2, 0);
 
-      mWrapper = wrapper;
       return wrapper;
    }
 
@@ -135,11 +133,12 @@ namespace dtQt
    {
       if (widget == mWrapper)
       {
-         mWrapper     = NULL;
          mTextLabel   = NULL;
          mAddButton   = NULL;
          mClearButton = NULL;
       }
+
+      DynamicAbstractParentControl::handleSubEditDestroy(widget, hint);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -299,6 +298,13 @@ namespace dtQt
    {
       NotifyParentOfPreUpdate();
       mProperty->Clear();
+      resizeChildren();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void DynamicArrayControl::onResetClicked()
+   {
+      DynamicAbstractParentControl::onResetClicked();
       resizeChildren();
    }
 

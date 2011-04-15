@@ -57,8 +57,7 @@ namespace dtQt
 
    ///////////////////////////////////////////////////////////////////////////////
    DynamicResourceControlBase::DynamicResourceControlBase()
-      : mTemporaryWrapper(NULL)
-      , mTemporaryEditOnlyTextLabel(NULL)
+      : mTemporaryEditOnlyTextLabel(NULL)
       , mTemporaryUseCurrentBtn(NULL)
       , mTemporaryClearBtn(NULL)
    {
@@ -130,6 +129,7 @@ namespace dtQt
    /////////////////////////////////////////////////////////////////////////////////
    void DynamicResourceControlBase::updateEditorFromModel(QWidget* widget)
    {
+      DynamicAbstractControl::updateEditorFromModel(widget);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -142,10 +142,7 @@ namespace dtQt
    QWidget *DynamicResourceControlBase::createEditor(QWidget* parent,
       const QStyleOptionViewItem& option, const QModelIndex& index)
    {
-      QWidget* wrapper = new QWidget(parent);
-      wrapper->setFocusPolicy(Qt::StrongFocus);
-      // set the background color to white so that it sort of blends in with the rest of the controls
-      SetBackgroundColor(wrapper, PropertyEditorTreeView::ROW_COLOR_ODD);
+      QWidget* wrapper = DynamicAbstractControl::createEditor(parent, option, index);
 
       if (!mInitialized)
       {
@@ -153,14 +150,11 @@ namespace dtQt
          return wrapper;
       }
 
-      QGridLayout* grid = new QGridLayout(wrapper);
-      grid->setMargin(0);
-      grid->setSpacing(1);
-
       // label
       mTemporaryEditOnlyTextLabel = new SubQLabel(getValueAsString(), wrapper, this);
       // set the background color to white so that it sort of blends in with the rest of the controls
       SetBackgroundColor(mTemporaryEditOnlyTextLabel, PropertyEditorTreeView::ROW_COLOR_ODD);
+      mFocusWidget = mTemporaryEditOnlyTextLabel;
 
       // Use Current button
       mTemporaryUseCurrentBtn = new SubQPushButton(tr("Use Current"), wrapper, this);
@@ -168,6 +162,7 @@ namespace dtQt
       // allowed the button to get really tiny and stupid looking (had 'U' instead of 'Use Current')
       QSize size = mTemporaryUseCurrentBtn->sizeHint();
       mTemporaryUseCurrentBtn->setMaximumWidth(size.width());
+      mTemporaryUseCurrentBtn->setToolTip(getDescription());
       connect(mTemporaryUseCurrentBtn, SIGNAL(clicked()), this, SLOT(useCurrentPressed()));
 
       // Clear button
@@ -178,17 +173,14 @@ namespace dtQt
       std::string tooltip = mProperty->GetDescription() + " - Clears the current resource";
       mTemporaryClearBtn->setToolTip(QString(tr(tooltip.c_str())));
 
-      grid->addWidget(mTemporaryEditOnlyTextLabel, 0, 0, 1, 1);
-      grid->addWidget(mTemporaryUseCurrentBtn,     0, 1, 1, 1);
-      grid->addWidget(mTemporaryClearBtn,          0, 2, 1, 1);
-      grid->setColumnMinimumWidth(1, mTemporaryUseCurrentBtn->sizeHint().width());
-      grid->setColumnMinimumWidth(2, mTemporaryClearBtn->sizeHint().width());
-      grid->setColumnStretch(0, 2);
-      grid->setColumnStretch(1, 1);
-      grid->setColumnStretch(2, 0);
-
-      mTemporaryUseCurrentBtn->setToolTip(getDescription());
-      mTemporaryWrapper = wrapper;
+      mGridLayout->addWidget(mTemporaryEditOnlyTextLabel, 0, 0, 1, 1);
+      mGridLayout->addWidget(mTemporaryUseCurrentBtn,     0, 1, 1, 1);
+      mGridLayout->addWidget(mTemporaryClearBtn,          0, 2, 1, 1);
+      mGridLayout->setColumnMinimumWidth(1, mTemporaryUseCurrentBtn->sizeHint().width());
+      mGridLayout->setColumnMinimumWidth(2, mTemporaryClearBtn->sizeHint().width());
+      mGridLayout->setColumnStretch(0, 2);
+      mGridLayout->setColumnStretch(1, 1);
+      mGridLayout->setColumnStretch(2, 0);
 
       return wrapper;
    }
@@ -197,18 +189,6 @@ namespace dtQt
    bool DynamicResourceControlBase::isEditable()
    {
       return !mProperty->IsReadOnly();
-   }
-
-   /////////////////////////////////////////////////////////////////////////////////
-   void DynamicResourceControlBase::handleSubEditDestroy(QWidget* widget, QAbstractItemDelegate::EndEditHint hint)
-   {
-      if (widget == mTemporaryWrapper)
-      {
-         mTemporaryWrapper = NULL;
-         mTemporaryEditOnlyTextLabel = NULL;
-         mTemporaryUseCurrentBtn = NULL;
-         mTemporaryClearBtn = NULL;
-      }
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -322,4 +302,16 @@ namespace dtQt
       }
    }
 
+   /////////////////////////////////////////////////////////////////////////////////
+   void DynamicResourceControlBase::handleSubEditDestroy(QWidget* widget, QAbstractItemDelegate::EndEditHint hint)
+   {
+      if (widget == mWrapper)
+      {
+         mTemporaryEditOnlyTextLabel = NULL;
+         mTemporaryUseCurrentBtn = NULL;
+         mTemporaryClearBtn = NULL;
+      }
+
+      DynamicAbstractControl::handleSubEditDestroy(widget, hint);
+   }
 } // namespace dtEditQt
