@@ -83,17 +83,17 @@ namespace dtUtil
    class FileUtilIOException : public dtUtil::Exception
    {
    public:
-   	FileUtilIOException(const std::string& message, const std::string& filename, unsigned int linenum);
-   	virtual ~FileUtilIOException() {};
+     FileUtilIOException(const std::string& message, const std::string& filename, unsigned int linenum);
+     virtual ~FileUtilIOException() {};
    };
-   
+
    class FileNotFoundException : public dtUtil::Exception
    {
    public:
-   	FileNotFoundException(const std::string& message, const std::string& filename, unsigned int linenum);
-   	virtual ~FileNotFoundException() {};
+     FileNotFoundException(const std::string& message, const std::string& filename, unsigned int linenum);
+     virtual ~FileNotFoundException() {};
    };
-   
+
 
    /**
     * @name FileUtils
@@ -167,7 +167,7 @@ namespace dtUtil
        * @param strFileOrDir The string to cleanup.
        * @note The original string passed in is changed.
        */
-      void CleanupFileString( std::string &strFileOrDir );
+      void CleanupFileString(std::string& strFileOrDir);
 
       /**
        * Query whether a given string is an absolute path or not.
@@ -175,7 +175,7 @@ namespace dtUtil
        * @return True if absolute, False if relative.
        * @note This maybe a subjective determination, may need to add to this later.
        */
-      bool IsAbsolutePath( std::string strFileOrDir );
+      bool IsAbsolutePath(std::string strFileOrDir);
 
       /**
        * A more powerful version of the standard mkdir.  This function will check to
@@ -184,7 +184,7 @@ namespace dtUtil
        * the passed in string.
        * @param strDir The directory to create.
        */
-      void MakeDirectoryEX( std::string strDir );
+      void MakeDirectoryEX(std::string strDir);
 
       /**
        * Changes the current directory to the one given in "path."
@@ -328,7 +328,7 @@ namespace dtUtil
 
       virtual ~FileUtils();
 
-      void RecursDeleteDir( bool bRecursive );
+      void RecursDeleteDir(bool bRecursive);
 
       static dtCore::RefPtr<FileUtils> mInstance;
 

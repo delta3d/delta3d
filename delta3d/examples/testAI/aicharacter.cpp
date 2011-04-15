@@ -55,6 +55,7 @@ struct funcRenderGreen
 
 namespace dtAI
 {
+   /////////////////////////////////////////////////////////////////////////////
    AICharacter::AICharacter(dtCore::Scene* pScene, const WaypointInterface* pWaypoint, const std::string& pFilename, unsigned pSpeed)
       : mSpeed(pSpeed)
       , mCharacter(new dtAnim::CharacterWrapper(pFilename))
@@ -70,10 +71,12 @@ namespace dtAI
       pScene->AddChild(mCharacter.get());
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    AICharacter::~AICharacter()
    {
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    void AICharacter::SetPosition(const WaypointInterface* pWaypoint)
    {
       osg::Matrix mat;
@@ -84,6 +87,7 @@ namespace dtAI
       mCharacter->GetMatrixNode()->setMatrix(mat);
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    bool AICharacter::FindPathAndGoToWaypoint(const WaypointInterface* pWaypoint)
    {
       // to use AStar, we call reset with the two points we want to path between
@@ -115,11 +119,13 @@ namespace dtAI
       return false;
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    const WaypointAStar::config_type& AICharacter::GetConfig() const
    {
       return mAStar.GetConfig();
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    void AICharacter::GoToWaypoint(float dt, const WaypointInterface* pWaypoint)
    {
       // simple... just rotate to the waypoint over time and set a
@@ -151,6 +157,7 @@ namespace dtAI
       //}
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    osg::Vec3 AICharacter::GetPosition() const
    {
      osg::Matrix mat = mCharacter->GetMatrixNode()->getMatrix();
@@ -158,6 +165,7 @@ namespace dtAI
      return pos;
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    osg::Vec3 AICharacter::GetForward() const
    {
       osg::Matrix mat = mCharacter->GetMatrixNode()->getMatrix();
@@ -165,6 +173,7 @@ namespace dtAI
       return forward;
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    bool AICharacter::AmAtWaypoint(const WaypointInterface* pWaypoint)
    {
       // a simple distance comparison to determine if we are within
@@ -184,6 +193,7 @@ namespace dtAI
       }
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    void AICharacter::Update(float dt)
    {
       // if we have waypoints to goto
@@ -227,6 +237,7 @@ namespace dtAI
       mCharacter->Update(dt);
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    void AICharacter::ApplyStringPulling()
    {
       if (mWaypointPath.size() < 2) return;
@@ -259,4 +270,5 @@ namespace dtAI
       while (mWaypointPath.size() > 2);
    }
 
+   /////////////////////////////////////////////////////////////////////////////
 } // namespace dtAI

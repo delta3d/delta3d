@@ -199,7 +199,7 @@ bool TestAI::KeyPressed(const dtCore::Keyboard* keyboard, int key)
    return false;
 }
 
-void TestAI::PreFrame( const double deltaFrameTime )
+void TestAI::PreFrame(const double deltaFrameTime)
 {
    mCharacter->Update(float(deltaFrameTime));
 
