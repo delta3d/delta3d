@@ -98,6 +98,13 @@ namespace dtDirector
       virtual void Clear();
 
       /**
+       * Retrieves the key name used to identify this container with the
+       * default property manager.  This method should be overloaded to
+       * provide a valid key based on the container type.
+       */
+      virtual std::string GetDefaultPropertyKey() const;
+
+      /**
        * Clears all recording data.
        *
        * @param[in]  threads  The recording threadlist to clear.

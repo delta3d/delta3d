@@ -49,6 +49,13 @@ namespace dtDirector
       DirectorGraph(Director* director);
 
       /**
+       * Retrieves the key name used to identify this container with the
+       * default property manager.  This method should be overloaded to
+       * provide a valid key based on the container type.
+       */
+      virtual std::string GetDefaultPropertyKey() const;
+
+      /**
        * This method is called in init, which instructs the director
        * to create its properties.  Methods implementing this should
        * be sure to call their parent class's buildPropertyMap method to
