@@ -81,7 +81,6 @@ namespace dtDAL
       GetActorType();
       GetDrawable();
       BuildPropertyMap();
-      InitDefaults();
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////

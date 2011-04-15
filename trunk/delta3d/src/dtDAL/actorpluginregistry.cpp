@@ -42,6 +42,7 @@ namespace dtDAL
    {
       dtCore::RefPtr<BaseActorObject> proxy = mActorFactory->CreateObject(dtCore::RefPtr<const ActorType>(&type));
       proxy->Init(type);
+      proxy->InitDefaults();
       return proxy;
    }
 
