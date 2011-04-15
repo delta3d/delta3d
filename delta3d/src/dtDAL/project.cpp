@@ -83,7 +83,6 @@ namespace dtDAL
       , mResourcesIndexed(false)
       , mEditMode(false)
       {
-         mWriter = new MapWriter;
          libraryManager = &LibraryManager::GetInstance();
          mLogger = &dtUtil::Log::GetInstance(Project::LOG_NAME);
       }
@@ -112,7 +111,7 @@ namespace dtDAL
       mutable dtUtil::tree<ResourceTreeNode> mResources; //< a tree of all the resources.  This is more of a cache.
 
       dtCore::RefPtr<MapParser> mParser;
-      dtCore::RefPtr<MapWriter> mWriter;
+
       //This is here to make sure the library manager is deleted AFTER the maps are closed.
       //so that libraries won't be closed and the proxies deleted out from under the map.
       dtCore::RefPtr<LibraryManager> libraryManager;
@@ -436,16 +435,6 @@ namespace dtDAL
          }
 
          dtUtil::SetDataFilePathList(searchPath + ':' + context);
-
-         if (mParser == NULL)
-         {
-            //create the parser after setting the context.
-            //because the parser looks for map.xsd in the constructor.
-            //that way users can put map.xsd in the project and not need
-            //a "data" path(.
-            mParser = new MapParser;
-         }
-
       }
       catch (const dtUtil::Exception& ex)
       {
@@ -558,9 +547,10 @@ namespace dtDAL
       Map* map = NULL;
       bool isMapValid = true;
 
+      dtCore::RefPtr<MapParser> parser = new MapParser();
       try
       {
-         mImpl->mParser->Parse(fullFilePath, &map);
+         parser->Parse(fullFilePath, &map);
       }
       catch (dtDAL::XMLLoadParsingException&)
       {
@@ -611,6 +601,8 @@ namespace dtDAL
          // It may not have a maps directory, so we have to check.
          if (fi.fileType == dtUtil::DIRECTORY)
          {
+            dtCore::RefPtr<MapParser> parser = new MapParser();
+
             const dtUtil::DirectoryContents contents = fileUtils.DirGetFiles(fi.fileName, extensions);
 
             for (dtUtil::DirectoryContents::const_iterator fileIter = contents.begin(); fileIter < contents.end(); ++fileIter)
@@ -622,7 +614,7 @@ namespace dtDAL
                {
                   try
                   {
-                     std::string mapName = mParser->ParseMapName(fullPath);
+                     std::string mapName = parser->ParseMapName(fullPath);
 
                      MapFileData fileData;
                      fileData.mOrigName = mapName;
@@ -679,6 +671,16 @@ namespace dtDAL
       }
 
       Map* map = NULL;
+
+      //create the parser after setting the context.
+      //because the parser looks for map.xsd in the constructor.
+      //that way users can put map.xsd in the project and not need
+      //a "data" path.
+      if (!mParser.valid())
+      {
+         mParser = new MapParser();
+      }
+
       try
       {
          if (fileUtils.GetFileInfo(fullPath).fileType != dtUtil::REGULAR_FILE)
@@ -716,10 +718,13 @@ namespace dtDAL
       }
       catch (const dtUtil::Exception& e)
       {
+         mParser = NULL;
          std::string error = "Unable to parse \"" + fullPath + "\" with error \"" + e.What() + "\"";
          mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__, error.c_str());
          throw e;
       }
+
+      mParser = NULL; //done using this MapParser, delete it
 
       return *map;
    }
@@ -1389,8 +1394,6 @@ namespace dtDAL
    /////////////////////////////////////////////////////////////////////////////
    void ProjectImpl::InternalSaveMap(Map& map, Project::ContextSlot slot)
    {
-      MapWriter& mw = *mWriter;
-
       bool isNew = map.GetSavedName().empty();
 
       if (map.GetSavedName() != map.GetName())
@@ -1408,7 +1411,8 @@ namespace dtDAL
       std::string fullPathSaving = fullPath + ".saving";
       //save the file to a separate name first so that
       //it won't blast the old one unless it is successful.
-      mw.Save(map, fullPathSaving);
+      dtCore::RefPtr<MapWriter> writer = new MapWriter();
+      writer->Save(map, fullPathSaving);
       //if it's successful, move it to the final file name
       fileUtils.FileMove(fullPathSaving, fullPath, true);
 
@@ -1456,8 +1460,6 @@ namespace dtDAL
    {
       Project::ContextSlot slot = mImpl->CheckMapValidity(map);
 
-      MapWriter& mw = *mImpl->mWriter;
-
       if (!map.IsModified())
       {
          return;
@@ -1482,7 +1484,9 @@ namespace dtDAL
 
          //save the file to a "saving" file so that if it blows or is killed while saving, the data
          //will not be lost.
-         mw.Save(map, fileName);
+         dtCore::RefPtr<MapWriter> writer = new MapWriter();
+         writer->Save(map, fileName);
+
 
          //when it completes, move the file to the final name.
          fileUtils.FileMove(fileName, finalFileName, true);
@@ -1613,7 +1617,7 @@ namespace dtDAL
          throw dtDAL::ProjectInvalidContextException(
          std::string("The context is not valid."), __FILE__, __LINE__);
 
-      if (mImpl->mParser->IsParsing())
+      if (mImpl->mParser.valid() && mImpl->mParser->IsParsing())
       {
          Map* m = mImpl->mParser->GetMapBeingParsed();
          if (m != NULL)
@@ -1645,7 +1649,7 @@ namespace dtDAL
             std::string("The context is not valid."), __FILE__, __LINE__);
       }
 
-      if (mImpl->mParser->IsParsing())
+      if (mImpl->mParser.valid() && mImpl->mParser->IsParsing())
       {
          const Map* m = mImpl->mParser->GetMapBeingParsed();
          if (m != NULL)
