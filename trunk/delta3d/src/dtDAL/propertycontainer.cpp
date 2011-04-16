@@ -53,24 +53,16 @@ namespace dtDAL
          return;
       }
 
-      std::vector<const ActorProperty*> propList;
+      std::vector<ActorProperty*> propList;
       GetPropertyList(propList);
 
       int propCount = (int)propList.size();
       for (int propIndex = 0; propIndex < propCount; ++propIndex)
       {
-         const ActorProperty* prop = propList[propIndex];
+         ActorProperty* prop = propList[propIndex];
          if (prop)
          {
-            std::string propName = prop->GetName();
-            dtCore::RefPtr<NamedParameter> param = NamedParameter::CreateFromType(
-               prop->GetDataType(), prop->GetName());
-            if (param)
-            {
-               param->SetFromProperty(*prop);
-               DefaultPropertyManager::GetInstance().SetDefaultValue(
-                  keyName, propName, param);
-            }
+            prop->InitDefault(keyName);
          }
       }
    }

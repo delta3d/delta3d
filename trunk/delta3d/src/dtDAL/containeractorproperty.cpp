@@ -48,6 +48,22 @@ namespace dtDAL
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   void ContainerActorProperty::InitDefault(const std::string& keyName)
+   {
+      BaseClass::InitDefault(keyName);
+
+      int count = (int)mProperties.size();
+      for (int index = 0; index < count; ++index)
+      {
+         ActorProperty* prop = mProperties[index];
+         if (prop)
+         {
+            prop->InitDefault(keyName);
+         }
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    bool ContainerActorProperty::FromString(const std::string& value)
    {
       if (mProperties.size() <= 0)

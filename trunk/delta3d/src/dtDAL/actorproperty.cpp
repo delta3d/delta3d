@@ -23,6 +23,7 @@
 #include <prefix/dtdalprefix.h>
 #include <dtDAL/actorproperty.h>
 #include <dtDAL/namedparameter.h>
+#include <dtDAL/defaultpropertymanager.h>
 #include <iostream>
 
 #include <dtCore/refptr.h>
@@ -46,6 +47,22 @@ namespace dtDAL
 
    ////////////////////////////////////////
    ActorProperty::~ActorProperty() { }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void ActorProperty::InitDefault(const std::string& keyName)
+   {
+      // Bail if we have no key name.
+      if (keyName.empty()) return;
+
+      dtCore::RefPtr<NamedParameter> param = NamedParameter::CreateFromType(
+         GetDataType(), GetName());
+      if (param)
+      {
+         param->SetFromProperty(*this);
+         DefaultPropertyManager::GetInstance().SetDefaultValue(
+            keyName, GetName(), param);
+      }
+   }
 
    ////////////////////////////////////////
    void ActorProperty::SetNumberPrecision(unsigned int precision)

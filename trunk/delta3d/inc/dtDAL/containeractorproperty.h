@@ -39,6 +39,7 @@ namespace dtDAL
    class DT_DAL_EXPORT ContainerActorProperty : public ActorProperty
    {
    public:
+      typedef ActorProperty BaseClass;
 
       /**
       * Creates a new container actor property.
@@ -56,6 +57,13 @@ namespace dtDAL
                               const std::string& groupName,
                               const std::string& editorType = "",
                               bool readOnly = false);
+
+      /**
+       * Initializes the default value for this property.
+       *
+       * @param[in]  keyName  The key for this property.
+       */
+      virtual void InitDefault(const std::string& keyName);
 
       /**
       * Sets the value of the property based on a string.

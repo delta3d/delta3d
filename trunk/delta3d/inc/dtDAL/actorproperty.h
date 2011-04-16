@@ -53,6 +53,13 @@ namespace dtDAL
       public:
 
          /**
+          * Initializes the default value for this property.
+          *
+          * @param[in]  keyName  The key for this property.
+          */
+         virtual void InitDefault(const std::string& keyName);
+
+         /**
           * @return Returns an enumeration of the data type that this property
           * represents.
           */

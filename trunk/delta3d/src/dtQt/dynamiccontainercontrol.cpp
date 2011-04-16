@@ -100,10 +100,38 @@ namespace dtQt
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   void DynamicContainerControl::updateEditorFromModel(QWidget* widget)
+   {
+      if (widget == mWrapper && mTemporaryEditControl)
+      {
+         // set the current value from our property
+         mTemporaryEditControl->setText(getValueAsString());
+      }
+
+      DynamicAbstractControl::updateEditorFromModel(widget);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    QWidget* DynamicContainerControl::createEditor(QWidget* parent, const QStyleOptionViewItem& option, const QModelIndex& index)
    {
-//      QWidget* wrapper = DynamicAbstractControl::createEditor(parent, option, index);
-      return NULL;
+      QWidget* wrapper = DynamicAbstractControl::createEditor(parent, option, index);
+
+      if (!mInitialized)
+      {
+         LOG_ERROR("Tried to add itself to the parent widget before being initialized");
+         return wrapper;
+      }
+
+      // create and init the edit box
+      mTemporaryEditControl = new SubQLabel(getValueAsString(), wrapper, this);
+      mTemporaryEditControl->setToolTip(getDescription());
+      mFocusWidget = mTemporaryEditControl;
+
+      mGridLayout->addWidget(mTemporaryEditControl, 0, 0, 1, 1);
+      mGridLayout->setColumnMinimumWidth(0, mTemporaryEditControl->sizeHint().width() / 2);
+      mGridLayout->setColumnStretch(0, 1);
+
+      return wrapper;
    }
 
    /////////////////////////////////////////////////////////////////////////////////
