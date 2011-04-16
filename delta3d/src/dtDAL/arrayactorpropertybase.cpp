@@ -38,6 +38,20 @@ ArrayActorPropertyBase::~ArrayActorPropertyBase()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void ArrayActorPropertyBase::InitDefault(const std::string& keyName)
+{
+   BaseClass::InitDefault(keyName);
+
+   if (mPropertyType.valid())
+   {
+      Insert(0);
+      SetIndex(0);
+      mPropertyType->InitDefault(keyName);
+      Remove(0);
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void ArrayActorPropertyBase::CopyFrom(const ActorProperty& otherProp)
 {
    if (GetDataType() != otherProp.GetDataType())

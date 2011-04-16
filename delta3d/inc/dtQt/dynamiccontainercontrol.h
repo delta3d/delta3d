@@ -65,6 +65,11 @@ namespace dtQt
          dtDAL::PropertyContainer* newPC, dtDAL::ActorProperty* property);
 
       /**
+       * @see DynamicAbstractControl#updateEditorFromModel
+       */
+      virtual void updateEditorFromModel(QWidget* widget);
+
+      /**
        * @see DynamicAbstractControl#createEditor
        */
       virtual QWidget* createEditor(QWidget* parent, const QStyleOptionViewItem& option,
@@ -102,6 +107,8 @@ namespace dtQt
    private:
 
       dtCore::RefPtr<dtDAL::ContainerActorProperty> mProperty;
+
+      SubQLabel* mTemporaryEditControl;
    };
 }
 
