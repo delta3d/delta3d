@@ -58,6 +58,7 @@
 #include <dtDAL/defaultpropertymanager.h>
 
 #include <dtActors/engineactorregistry.h>
+#include <testActorLibrary/testactorlib.h>
 
 #include <dtUtil/log.h>
 #include <dtUtil/stringutils.h>
@@ -1317,20 +1318,9 @@ void ProxyTest::TestProxies()
    {
       RefPtr<dtDAL::BaseActorObject> proxy;
 
-      for (unsigned int i = 0; i < actors.size(); ++i)
-      {
-         // In order to keep the tests fasts, we skip the nasty slow ones.
-         if (actors[i]->GetName() == dtActors::EngineActorRegistry::CLOUD_PLANE_ACTOR_TYPE->GetName() ||
-             actors[i]->GetName() == dtActors::EngineActorRegistry::CLOUD_DOME_ACTOR_TYPE->GetName()  ||
-             actors[i]->GetName() == dtActors::EngineActorRegistry::WEATHER_ENVIRONMENT_ACTOR_TYPE->GetName() ||
-             actors[i]->GetName() == "Test Environment Actor" ||
-             actors[i]->GetName() == "Sound Actor") //can't use the ActorType here; it adds a dependency to dtAudio, which might not exist
-            continue;
-
-         proxy = libMgr.CreateActorProxy(*actors[i]).get();
-         CPPUNIT_ASSERT(proxy != NULL);
-         proxies.push_back(proxy.get());
-      }
+      proxy = libMgr.CreateActorProxy(*ExampleActorLib::TEST_ACTOR_PROPERTY_TYPE).get();
+      CPPUNIT_ASSERT(proxy != NULL);
+      proxies.push_back(proxy.get());
 
       for (unsigned int i = 0; i < proxies.size(); ++i)
       {
