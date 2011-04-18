@@ -23,7 +23,7 @@
 
 #include <dtDAL/namedactorparameter.h>
 
-#include <dtDAL/actoridactorproperty.h>
+#include <dtDAL/actorproperty.h>
 
 #include <dtUtil/stringutils.h>
 
@@ -117,10 +117,12 @@ namespace dtDAL
    ///////////////////////////////////////////////////////////////////////////////
    void NamedActorParameter::ApplyValueToProperty(dtDAL::ActorProperty& property) const
    {
-      ActorIDActorProperty* actorIDProp = dynamic_cast<ActorIDActorProperty*>(&property);
-      if (actorIDProp != NULL)
+      ValidatePropertyType(property);
+
+      if (property.GetDataType() == DataType::ACTOR)
       {
-         actorIDProp->SetValue(GetValue());
+         std::string id(GetValue().ToString());
+         property.FromString(id);
       }
       else
       {
