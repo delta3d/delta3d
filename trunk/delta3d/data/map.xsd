@@ -137,7 +137,7 @@
   <xsd:complexType name="ElementType">
     <xsd:sequence>
       <xsd:element name="index" type="xsd:int"/>
-      <xsd:element name="property" type="PropertyType"/>
+      <xsd:element name="property" minOccurs="0" maxOccurs="1" type="PropertyType"/>
     </xsd:sequence>
   </xsd:complexType>
 
