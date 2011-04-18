@@ -55,6 +55,7 @@
 #include <dtDAL/project.h>
 #include <dtDAL/stringactorproperty.h>
 #include <dtDAL/vectoractorproperties.h>
+#include <dtDAL/defaultpropertymanager.h>
 
 #include <dtActors/engineactorregistry.h>
 
@@ -186,6 +187,15 @@ void ProxyTest::testProp(dtDAL::BaseActorObject& proxy, dtDAL::ActorProperty* pr
       ds.Rewind();
       CPPUNIT_ASSERT_MESSAGE("From datastream should fail on readonly properties", !p->FromDataStream(ds));
       return;
+   }
+
+   bool defaultExists = proxy.DoesDefaultExist(*prop);
+   std::string defaultValue;
+   
+   if (defaultExists)
+   {
+      proxy.ResetProperty(*prop);
+      defaultValue = prop->ToString();
    }
 
    if (prop->GetDataType() == DataType::FLOAT)
@@ -1023,6 +1033,15 @@ void ProxyTest::testProp(dtDAL::BaseActorObject& proxy, dtDAL::ActorProperty* pr
       }
 
       SimpleStringToFromDataStreamCheck(ds, *prop);
+   }
+
+   // Now reset the property back to its default value and check if it worked propertly.
+   if (defaultExists)
+   {
+      proxy.ResetProperty(*prop);
+      CPPUNIT_ASSERT_MESSAGE(name + " property on " + proxyTypeName
+         + " should have default value of \"" + defaultValue + "\", but it is: "
+         + prop->ToString() + " instead.", prop->ToString() == defaultValue);
    }
 }
 
