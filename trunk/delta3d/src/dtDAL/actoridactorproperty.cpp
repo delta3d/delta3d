@@ -239,9 +239,9 @@ namespace dtDAL
    }
 
    //////////////////////////////////////////////////////////////////////////
-   std::string ActorIDActorProperty::GetValueString()
+   std::string ActorIDActorProperty::GetValueString() const
    {
-      dtCore::DeltaDrawable* drawable = GetRealActor();
+      const dtCore::DeltaDrawable* drawable = GetRealActor();
       if (drawable)
       {
          return drawable->GetName();
