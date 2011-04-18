@@ -141,7 +141,7 @@ namespace dtDAL
       /**
        * Retrieves a human readable version of the property's value.
        */
-      virtual std::string GetValueString();
+      virtual std::string GetValueString() const;
 
       /**
       * @return the class of proxy this expects so that the UI can filter the list.
