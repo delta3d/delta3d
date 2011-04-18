@@ -160,6 +160,7 @@ namespace dtQt
 
       updateEditorFromModel(mWrapper);
 
+      wrapper->setFocusProxy(mFocusWidget);
       return wrapper;
    }
 

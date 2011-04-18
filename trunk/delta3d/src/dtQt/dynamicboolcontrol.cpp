@@ -154,6 +154,7 @@ namespace dtQt
 
       connect(mTemporaryEditControl, SIGNAL(activated(int)), this, SLOT(itemSelected(int)));
 
+      wrapper->setFocusProxy(mFocusWidget);
       return wrapper;
    }
 

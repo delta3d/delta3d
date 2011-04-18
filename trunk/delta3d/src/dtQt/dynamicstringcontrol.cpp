@@ -155,6 +155,7 @@ namespace dtQt
       mGridLayout->setColumnMinimumWidth(0, mTemporaryEditControl->sizeHint().width() / 2);
       mGridLayout->setColumnStretch(0, 1);
 
+      wrapper->setFocusProxy(mFocusWidget);
       return wrapper;
    }
 
