@@ -133,9 +133,6 @@ namespace dtQt
        */
       void colorPickerPressed();
 
-      void actorPropertyChanged(dtDAL::PropertyContainer& propCon,
-               dtDAL::ActorProperty& property);
-
       /**
        * @see DynamicAbstractControl#handleSubEditDestroy
        */

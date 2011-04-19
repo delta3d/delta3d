@@ -129,6 +129,11 @@ namespace dtQt
    /////////////////////////////////////////////////////////////////////////////////
    void DynamicColorRGBAControl::updateEditorFromModel(QWidget* widget)
    {
+      if (widget == mWrapper && mTemporaryEditOnlyTextLabel)
+      {
+         mTemporaryEditOnlyTextLabel->setText(getValueAsString());
+      }
+
       DynamicAbstractControl::updateEditorFromModel(widget);
    }
 
@@ -268,18 +273,6 @@ namespace dtQt
 
          // notify the world (mostly the viewports) that our property changed
          emit PropertyChanged(*mPropContainer, *mProperty);
-      }
-   }
-
-   /////////////////////////////////////////////////////////////////////////////////
-   void DynamicColorRGBAControl::actorPropertyChanged(dtDAL::PropertyContainer& propCon,
-            dtDAL::ActorProperty& property)
-   {
-      DynamicAbstractControl::actorPropertyChanged(propCon, property);
-
-      if (mTemporaryEditOnlyTextLabel != NULL && &propCon == mPropContainer && &property == mProperty)
-      {
-         mTemporaryEditOnlyTextLabel->setText(getValueAsString());
       }
    }
 

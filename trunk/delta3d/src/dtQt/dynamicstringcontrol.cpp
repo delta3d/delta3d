@@ -199,18 +199,6 @@ namespace dtQt
       return updateModelFromEditor(widget);
    }
 
-   /////////////////////////////////////////////////////////////////////////////////
-   void DynamicStringControl::actorPropertyChanged(dtDAL::PropertyContainer& propCon,
-            dtDAL::ActorProperty& property)
-   {
-      DynamicAbstractControl::actorPropertyChanged(propCon, property);
-
-      if (mTemporaryEditControl != NULL && &propCon == mPropContainer && &property == mProperty)
-      {
-         updateEditorFromModel(mWrapper);
-      }
-   }
-
    ////////////////////////////////////////////////////////////////////////////////
    void DynamicStringControl::handleSubEditDestroy(QWidget* widget, QAbstractItemDelegate::EndEditHint hint)
    {

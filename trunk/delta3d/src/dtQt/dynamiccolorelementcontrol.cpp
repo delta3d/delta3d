@@ -242,18 +242,6 @@ namespace dtQt
       return updateModelFromEditor(widget);
    }
 
-   /////////////////////////////////////////////////////////////////////////////////
-   void DynamicColorElementControl::actorPropertyChanged(dtDAL::PropertyContainer& propCon,
-            dtDAL::ActorProperty& property)
-   {
-      DynamicAbstractControl::actorPropertyChanged(propCon, property);
-
-      if (mTemporaryEditControl != NULL && &propCon == mPropContainer && &property == mColorRGBA)
-      {
-         updateEditorFromModel(mWrapper);
-      }
-   }
-
    // STATIC methods
 
    /////////////////////////////////////////////////////////////////////////////////

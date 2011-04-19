@@ -132,9 +132,6 @@ namespace dtQt
        */
       void clearPressed();
 
-      void actorPropertyChanged(dtDAL::PropertyContainer& propCon,
-               dtDAL::ActorProperty& property);
-
       /**
        * @see DynamicAbstractControl#handleSubEditDestroy
        */

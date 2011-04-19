@@ -113,9 +113,6 @@ namespace dtQt
          */
         virtual bool updateData(QWidget* widget);
 
-        void actorPropertyChanged(dtDAL::PropertyContainer& propCon,
-                 dtDAL::ActorProperty& property);
-
         /**
          * Called when the user selects an item in the combo box
          */

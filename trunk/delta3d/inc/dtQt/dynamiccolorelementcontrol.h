@@ -143,9 +143,6 @@ namespace dtQt
     public slots:
         virtual bool updateData(QWidget* widget);
 
-        void actorPropertyChanged(dtDAL::PropertyContainer& propCon,
-                 dtDAL::ActorProperty& property);
-
         /**
          * @see DynamicAbstractControl#handleSubEditDestroy
          */

@@ -129,6 +129,12 @@ namespace dtQt
    /////////////////////////////////////////////////////////////////////////////////
    void DynamicResourceControlBase::updateEditorFromModel(QWidget* widget)
    {
+      // update our label
+      if (widget == mWrapper && mTemporaryEditOnlyTextLabel)
+      {
+         mTemporaryEditOnlyTextLabel->setText(getValueAsString());
+      }
+
       DynamicAbstractControl::updateEditorFromModel(widget);
    }
 
@@ -236,7 +242,7 @@ namespace dtQt
       bool isCurEmpty = curResource.IsEmpty();
       bool isNewEmpty = newResource.IsEmpty();
 
-      // if different, than we make the change
+      // if different, then we make the change
       if (isCurEmpty != isNewEmpty || curResource != newResource)
       {
          std::string oldValue = mProperty->ToString();
@@ -286,19 +292,6 @@ namespace dtQt
 
          // notify the world (mostly the viewports) that our property changed
          emit PropertyChanged(*mPropContainer, *mProperty);
-      }
-   }
-
-   /////////////////////////////////////////////////////////////////////////////////
-   void DynamicResourceControlBase::actorPropertyChanged(dtDAL::PropertyContainer& propCon,
-            dtDAL::ActorProperty& property)
-   {
-      DynamicAbstractControl::actorPropertyChanged(propCon, property);
-
-      // update our label
-      if (mTemporaryEditOnlyTextLabel != NULL && &propCon == mPropContainer && &property == mProperty)
-      {
-         mTemporaryEditOnlyTextLabel->setText(getValueAsString());
       }
    }
 

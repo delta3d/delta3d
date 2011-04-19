@@ -453,10 +453,15 @@ namespace dtQt
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void BasePropertyEditor::ActorPropertyChanged(dtDAL::PropertyContainer& propCon,
-      dtDAL::ActorProperty& property)
+   void BasePropertyEditor::ActorPropertyChanged(dtDAL::PropertyContainer& propCon, dtDAL::ActorProperty& property)
    {
       propertyTree->viewport()->update();
+
+      // Update each of the property widgets.
+      if (GetRootControl())
+      {
+         GetRootControl()->OnPropertyChanged(propCon, property);
+      }
    }
 
    /////////////////////////////////////////////////////////////////////////////
