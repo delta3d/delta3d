@@ -104,21 +104,14 @@ namespace dtEditQt
           * @see DynamicAbstractControl#updateData
           */
          virtual bool updateData(QWidget* widget);
-         /**
-          * @see DynamicAbstractControl#handleSubEditDestroy
-          */
-         void handleSubEditDestroy(QWidget* widget, QAbstractItemDelegate::EndEditHint hint = QAbstractItemDelegate::NoHint)
-         {
-            // we have to check - sometimes the destructor won't get called before the
-            // next widget is created.  Then, when it is called, it sets the NEW editor to NULL!
-            if (widget == mTemporaryEditControl)
-            {
-               mTemporaryEditControl = NULL;
-            }
-         }
 
          void actorPropertyChanged(dtDAL::PropertyContainer& propCon,
                   dtDAL::ActorProperty& property);
+
+         /**
+          * @see DynamicAbstractControl#handleSubEditDestroy
+          */
+         void handleSubEditDestroy(QWidget* widget, QAbstractItemDelegate::EndEditHint hint = QAbstractItemDelegate::NoHint);
 
          /**
           * Called when the user selects an item in the combo box
