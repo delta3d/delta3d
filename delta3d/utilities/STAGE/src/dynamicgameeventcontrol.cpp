@@ -72,10 +72,8 @@ namespace dtEditQt
    /////////////////////////////////////////////////////////////////////////////////
    void DynamicGameEventControl::updateEditorFromModel(QWidget* widget)
    {
-      if (widget != NULL)
+      if (widget == mWrapper && mTemporaryEditControl)
       {
-         //SubQComboBox *editor = static_cast<SubQComboBox*>(widget);
-
          // set the current value from our property
          if (mProperty->GetValue() != NULL)
          {
@@ -86,6 +84,8 @@ namespace dtEditQt
             mTemporaryEditControl->setCurrentIndex(mTemporaryEditControl->findText("<None>"));
          }
       }
+
+      DynamicAbstractControl::updateEditorFromModel(widget);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -95,10 +95,8 @@ namespace dtEditQt
 
       bool dataChanged = false;
 
-      if (widget != NULL)
+      if (widget == mWrapper && mTemporaryEditControl)
       {
-         //SubQComboBox *editor = static_cast<SubQComboBox*>(widget);
-
          // Get the current selected string and the previously set string value
          QString selection = mTemporaryEditControl->currentText();
          //int index = temporaryEditControl->findText(selection);
@@ -141,13 +139,15 @@ namespace dtEditQt
    /////////////////////////////////////////////////////////////////////////////////
    QWidget* DynamicGameEventControl::createEditor(QWidget* parent, const QStyleOptionViewItem& option, const QModelIndex& index)
    {
-      mTemporaryEditControl = new dtQt::SubQComboBox(parent, this);
+      QWidget* wrapper = DynamicAbstractControl::createEditor(parent, option, index);
+
       if (!mInitialized)
       {
          LOG_ERROR("Tried to add itself to the parent widget before being initialized");
-         return mTemporaryEditControl;
+         return wrapper;
       }
 
+      mTemporaryEditControl = new dtQt::SubQComboBox(wrapper, this);
       std::vector<dtDAL::GameEvent*> events;
       dtDAL::Map& map = *EditorData::GetInstance().getCurrentMap();
       map.GetEventManager().GetAllEvents(events);
@@ -163,14 +163,19 @@ namespace dtEditQt
       listPlusNone.append(QString("<None>"));
       listPlusNone += sortedEventNames;
       mTemporaryEditControl->addItems(listPlusNone);
+      mTemporaryEditControl->setToolTip(getDescription());
+      mFocusWidget = mTemporaryEditControl;
 
       connect(mTemporaryEditControl, SIGNAL(activated(int)), this, SLOT(itemSelected(int)));
 
-      updateEditorFromModel(mTemporaryEditControl);
+      updateEditorFromModel(mWrapper);
 
-      // set the tooltip
-      mTemporaryEditControl->setToolTip(getDescription());
-      return mTemporaryEditControl;
+      mGridLayout->addWidget(mTemporaryEditControl, 0, 0, 1, 1);
+      mGridLayout->setColumnMinimumWidth(0, mTemporaryEditControl->sizeHint().width() / 2);
+      mGridLayout->setColumnStretch(0, 1);
+
+      wrapper->setFocusProxy(mFocusWidget);
+      return wrapper;
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -208,7 +213,7 @@ namespace dtEditQt
    {
       if (mTemporaryEditControl != NULL)
       {
-         updateModelFromEditor(mTemporaryEditControl);
+         updateModelFromEditor(mWrapper);
       }
    }
 
@@ -234,8 +239,20 @@ namespace dtEditQt
 
       if (mTemporaryEditControl != NULL && &propCon == mPropContainer && changedProp == mProperty)
       {
-         updateEditorFromModel(mTemporaryEditControl);
+         updateEditorFromModel(mWrapper);
       }
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   void DynamicGameEventControl::handleSubEditDestroy(QWidget* widget, QAbstractItemDelegate::EndEditHint hint)
+   {
+      // we have to check - sometimes the destructor won't get called before the
+      // next widget is created.  Then, when it is called, it sets the NEW editor to NULL!
+      if (widget == mWrapper)
+      {
+         mTemporaryEditControl = NULL;
+      }
+
+      DynamicAbstractControl::handleSubEditDestroy(widget, hint);
+   }
 } // namespace dtEditQt

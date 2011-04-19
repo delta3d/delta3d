@@ -47,7 +47,6 @@ namespace dtEditQt
    DynamicActorControl::DynamicActorControl()
       : mProperty(NULL)
       , mIdProperty(NULL)
-      , mTemporaryWrapper(NULL)
       , mTemporaryEditControl(NULL)
       , mTemporaryGotoButton(NULL)
    {
@@ -81,10 +80,8 @@ namespace dtEditQt
    /////////////////////////////////////////////////////////////////////////////////
    void DynamicActorControl::updateEditorFromModel(QWidget* widget)
    {
-      if (widget != NULL)
+      if (widget == mWrapper && mTemporaryEditControl)
       {
-         //SubQComboBox* editor = static_cast<SubQComboBox*>(widget);
-
          // set the current value from our property
          dtDAL::BaseActorObject* proxy = getActorProxy();
          if (proxy)
@@ -94,6 +91,8 @@ namespace dtEditQt
          }
          mTemporaryEditControl->setCurrentIndex(mTemporaryEditControl->findText("<None>"));
       }
+
+      DynamicAbstractControl::updateEditorFromModel(widget);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -103,10 +102,8 @@ namespace dtEditQt
 
       bool dataChanged = false;
 
-      if (widget != NULL)
+      if (widget == mWrapper && mTemporaryEditControl)
       {
-         //SubQComboBox* editor = static_cast<SubQComboBox*>(widget);
-
          // Get the current selected string and the previously set string value
          QString selection = mTemporaryEditControl->currentText();
          //unsigned int index = (unsigned int)(mTemporaryEditControl->currentIndex());
@@ -176,10 +173,7 @@ namespace dtEditQt
    /////////////////////////////////////////////////////////////////////////////////
    QWidget* DynamicActorControl::createEditor(QWidget* parent, const QStyleOptionViewItem& option, const QModelIndex& index)
    {
-      QWidget* wrapper = new QWidget(parent);
-      wrapper->setFocusPolicy(Qt::StrongFocus);
-      // set the background color to white so that it sort of blends in with the rest of the controls
-      SetBackgroundColor(wrapper, dtQt::PropertyEditorTreeView::ROW_COLOR_ODD);
+      QWidget* wrapper = DynamicAbstractControl::createEditor(parent, option, index);
 
       if (!mInitialized)
       {
@@ -187,15 +181,7 @@ namespace dtEditQt
          return wrapper;
       }
 
-      QGridLayout* grid = new QGridLayout(wrapper);
-      grid->setMargin(0);
-      grid->setSpacing(1);
-
       mTemporaryEditControl = new dtQt::SubQComboBox(wrapper, this);
-
-      mTemporaryGotoButton = new dtQt::SubQPushButton(tr("Goto"), wrapper, this);
-
-      connect(mTemporaryGotoButton, SIGNAL(clicked()), this, SLOT(onGotoClicked()));
 
       std::vector< dtCore::RefPtr<dtDAL::BaseActorObject> > names;
       std::string proxyClass;
@@ -221,21 +207,22 @@ namespace dtEditQt
       listPlusNone.append(QString("<None>"));
       listPlusNone += sortedNames;
       mTemporaryEditControl->addItems(listPlusNone);
-      //mTemporaryEditControl->addItem(QString("<None>"));
+      mTemporaryEditControl->setToolTip(getDescription());
+      mFocusWidget = mTemporaryEditControl;
+
+      mTemporaryGotoButton = new dtQt::SubQPushButton(tr("Goto"), wrapper, this);
 
       connect(mTemporaryEditControl, SIGNAL(activated(int)), this, SLOT(itemSelected(int)));
+      connect(mTemporaryGotoButton, SIGNAL(clicked()), this, SLOT(onGotoClicked()));
 
-      updateEditorFromModel(mTemporaryEditControl);
+      updateEditorFromModel(mWrapper);
 
-      // set the tooltip
-      mTemporaryEditControl->setToolTip(getDescription());
+      mGridLayout->addWidget(mTemporaryEditControl, 0, 0, 1, 1);
+      mGridLayout->addWidget(mTemporaryGotoButton,  0, 1, 1, 1);
+      mGridLayout->setColumnMinimumWidth(1, mTemporaryGotoButton->sizeHint().width() / 2);
+      mGridLayout->setColumnStretch(0, 2);
 
-      grid->addWidget(mTemporaryEditControl, 0, 0, 1, 1);
-      grid->addWidget(mTemporaryGotoButton,  0, 1, 1, 1);
-      grid->setColumnMinimumWidth(1, mTemporaryGotoButton->sizeHint().width() / 2);
-      grid->setColumnStretch(0, 2);
-
-      mTemporaryWrapper = wrapper;
+      wrapper->setFocusProxy(mFocusWidget);
       return wrapper;
    }
 
@@ -303,7 +290,7 @@ namespace dtEditQt
    {
       if (mTemporaryEditControl != NULL)
       {
-         updateModelFromEditor(mTemporaryEditControl);
+         updateModelFromEditor(mWrapper);
       }
    }
 
@@ -327,8 +314,20 @@ namespace dtEditQt
 
       if (mTemporaryEditControl != NULL && &propCon == mPropContainer && &property == getActorProperty())
       {
-         updateEditorFromModel(mTemporaryEditControl);
+         updateEditorFromModel(mWrapper);
       }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void DynamicActorControl::handleSubEditDestroy(QWidget* widget, QAbstractItemDelegate::EndEditHint hint)
+   {
+      if (widget == mWrapper)
+      {
+         mTemporaryEditControl = NULL;
+         mTemporaryGotoButton  = NULL;
+      }
+
+      DynamicAbstractControl::handleSubEditDestroy(widget, hint);
    }
 
    /////////////////////////////////////////////////////////////////////////////////

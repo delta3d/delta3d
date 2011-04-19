@@ -116,24 +116,16 @@ namespace dtEditQt
                   dtDAL::ActorProperty& property);
 
          /**
+          * @see DynamicAbstractControl#handleSubEditDestroy
+          */
+         void handleSubEditDestroy(QWidget* widget, QAbstractItemDelegate::EndEditHint hint = QAbstractItemDelegate::NoHint);
+
+         /**
           * Called when the user selects an item in the combo box
           */
          void itemSelected(int index);
 
          void onGotoClicked();
-
-         /**
-          * @see DynamicAbstractControl#handleSubEditDestroy
-          */
-         void handleSubEditDestroy(QWidget* widget, QAbstractItemDelegate::EndEditHint hint = QAbstractItemDelegate::NoHint)
-         {
-            if (widget == mTemporaryWrapper)
-            {
-               mTemporaryWrapper     = NULL;
-               mTemporaryEditControl = NULL;
-               mTemporaryGotoButton  = NULL;
-            }
-         }
 
       private:
          /**
@@ -151,7 +143,6 @@ namespace dtEditQt
          // method and destroyed whenever QT feels like it (mostly when the control looses focus).
          // We work around this by trapping the destruction of this object, it should
          // call our handleSubEditDestroy() method so we know to not hold this anymore
-         QWidget*        mTemporaryWrapper;
          dtQt::SubQComboBox*   mTemporaryEditControl;
          dtQt::SubQPushButton* mTemporaryGotoButton;
    };
