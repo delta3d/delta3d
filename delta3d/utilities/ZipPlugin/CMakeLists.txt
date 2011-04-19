@@ -4,7 +4,7 @@ SET(LIB_NAME     osgdb_zip)
 SET(SOURCE_PATH ${CMAKE_SOURCE_DIR}/utilities/ZipPlugin)
 
 SET( LIB_SOURCES 
-    ${SOURCE_PATH}/ReaderWriterZip.cpp
+    ${SOURCE_PATH}/ReaderWriterZIP.cpp
     ${SOURCE_PATH}/unzip.h
     ${SOURCE_PATH}/unzip.cpp
     ${SOURCE_PATH}/ZipArchive.h
@@ -26,6 +26,10 @@ LINK_WITH_VARIABLES(${LIB_NAME}
                         OPENTHREADS_LIBRARY)
 
 INCLUDE(ModuleInstall OPTIONAL)
+
+IF (UNIX)
+  ADD_DEFINITIONS(-DZIP_STD)
+ENDIF (UNIX)
 
 #little hack to get the .dll into /bin and .lib into /lib
 IF (MSVC_IDE)
