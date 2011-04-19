@@ -59,12 +59,19 @@
 #include <dtDAL/transformableactorproxy.h>
 #include <dtDAL/librarymanager.h>
 #include <dtDAL/actorpropertyserializer.h>
+#include <dtDAL/project.h>
 
 #include <dtUtil/datapathutils.h>
 #include <dtUtil/fileutils.h>
 #include <dtUtil/datetime.h>
 #include <dtUtil/xercesutils.h>
 #include <dtUtil/log.h>
+
+
+#include <osgDB/FileUtils>
+#include <osgDB/FileNameUtils>
+#include <osgDB/ReadFile>
+#include <osgDB/Registry>
 
 #include <iostream>
 #include <fstream>
@@ -73,6 +80,163 @@ XERCES_CPP_NAMESPACE_USE
 
 namespace dtDAL
 {
+
+
+   /////////////////////////////////////////////////////////////////
+   //this class is used as a wrapper to read the map files through osgdb
+   //which will support loading through archives such as .zip files
+   class MapReaderWriter : public osgDB::ReaderWriter
+   {
+   private:
+      //this is a temporary workaround to make maps with xml extension load
+      bool mShouldIgnoreExtension;
+
+   public:
+
+      class MapStream : public osg::Object
+      {
+      public:
+         MapStream(): mMapPtr(NULL){};
+
+         bool ParseMap(std::istream& str)
+         {
+            dtCore::RefPtr<MapParser> parser = Project::GetInstance().GetCurrentMapParser();
+            
+            if(parser == NULL)
+            {
+               parser = new MapParser();
+            }
+            
+            parser->Parse(str, &mMapPtr);
+            mMap = mMapPtr;
+            
+
+            return mMap.valid();
+         }
+
+         std::string ParseMapName(std::istream& str)
+         {
+            std::string mapName;
+
+            dtCore::RefPtr<MapParser> parser = Project::GetInstance().GetCurrentMapParser();
+            
+            if(parser == NULL)
+            {
+               parser = new MapParser();
+            }
+
+            mapName = parser->ParseMapName(str);
+            if(!mapName.empty())
+            {
+               //only the name will be valid
+               mMap = new Map(mapName, mapName);
+
+               mMapPtr = mMap.get();
+            }
+
+            return mapName;
+         }
+
+         virtual const char* libraryName() const {return "dtDAL";};
+         virtual const char* className() const {return "MapReaderWriter";}
+
+         virtual osg::Object* cloneType() const{ return new MapStream();}
+         virtual osg::Object* clone(const osg::CopyOp&) const {return new MapStream();}
+
+         Map* mMapPtr;
+         dtCore::RefPtr<Map> mMap;
+      };
+
+      MapReaderWriter()
+         : mShouldIgnoreExtension(false)
+      {
+         supportsExtension("dtmap","Delta3D map file format");
+      }
+
+      void SetShouldIgnoreExtension(bool b)
+      {
+         mShouldIgnoreExtension = b;
+      }
+
+      bool GetShouldIgnoreExtension() const
+      {
+         return mShouldIgnoreExtension;
+      }
+
+      const char* className() const
+      {
+         return "Delta3D Map Reader/Writer"; 
+      }
+
+      osgDB::ReaderWriter::ReadResult readObject(const std::string& fileName, const osgDB::ReaderWriter::Options* options = NULL) const
+      {
+         std::string ext = osgDB::getLowerCaseFileExtension(fileName);
+
+         //this is temporarily to support maps that do not have a .dtmap extension
+         if (mShouldIgnoreExtension || acceptsExtension(ext))
+         {
+            std::ifstream fileStream;
+            fileStream.open(fileName.c_str());
+            if(!fileStream.fail())
+            {
+               dtCore::RefPtr<MapStream> ms = new MapStream();
+               bool result = false;
+
+               //using this option will keep the parser from parsing the whole map
+               if(options != NULL && !(options->getPluginStringData("DELTA3D_PARSEMAPNAME")).empty())
+               {
+                  std::string name = ms->ParseMapName(fileStream);
+                  result = !name.empty();
+               }
+               else
+               {
+                  result = ms->ParseMap(fileStream);
+               }
+
+               if(result)
+               {
+                  return osgDB::ReaderWriter::ReadResult(ms);
+               }
+            }
+
+            return ReadResult::ERROR_IN_READING_FILE;
+         }
+         else
+         {
+            return ReadResult::FILE_NOT_HANDLED;
+         }
+      }
+      
+
+      osgDB::ReaderWriter::ReadResult readObject(std::istream& fin, const osgDB::ReaderWriter::Options* options = NULL) const
+      {
+         dtCore::RefPtr<MapStream> ms = new MapStream();
+
+         bool result = false;
+         //using this option will keep the parser from parsing the whole map
+         if(options != NULL && !(options->getPluginStringData("DELTA3D_PARSEMAPNAME").empty()))
+         {
+            std::string name = ms->ParseMapName(fin);
+            result = !name.empty();
+         }
+         else
+         {
+            result = ms->ParseMap(fin);
+         }
+
+         if(result)
+         {
+            return osgDB::ReaderWriter::ReadResult(ms);
+         }
+
+         return osgDB::ReaderWriter::ReadResult::ERROR_IN_READING_FILE;
+      }
+
+   };
+
+
+   REGISTER_OSGPLUGIN(dtmap, MapReaderWriter)
+
 
    static const std::string logName("mapxml.cpp");
 
@@ -115,10 +279,66 @@ namespace dtDAL
    /////////////////////////////////////////////////////////////////
    bool MapParser::Parse(const std::string& path, Map** map)
    {
+      bool result = false;
+      dtCore::RefPtr<MapReaderWriter::MapStream> mapStreamObject;
+     
+      //if the map is an .xml file we must load it manually
+      //temporarily here to support non .dtmap extensions
+      bool isBackupExt = false;
+      std::string fileExt = osgDB::getLowerCaseFileExtension(path);
+      if(fileExt == "backup")
+      {
+         fileExt = osgDB::getLowerCaseFileExtension(osgDB::getNameLessExtension(path));
+         if(fileExt == "xml" || fileExt == "dtmap")
+         {
+            isBackupExt = true;
+         }
+      }
+
+      if(isBackupExt || fileExt == "xml")
+      {
+         std::string filename = osgDB::findDataFile(path);
+         if(!filename.empty())
+         {
+            dtCore::RefPtr<MapReaderWriter> mrw = new MapReaderWriter();
+
+            mrw->SetShouldIgnoreExtension(true);
+            osgDB::ReaderWriter::ReadResult readMapResult = mrw->readObject(filename);
+
+            if(readMapResult.success())
+            {
+               mapStreamObject = dynamic_cast<MapReaderWriter::MapStream*>(readMapResult.getObject());
+            }
+         }
+         
+      }
+      else
+      {
+         dtCore::RefPtr<osg::Object> obj = dtUtil::FileUtils::GetInstance().ReadObject(path);
+         if(obj.valid())
+         {
+            mapStreamObject = dynamic_cast<MapReaderWriter::MapStream*>(obj.get());
+         }
+      }
+
+      if(mapStreamObject.valid() && mapStreamObject->mMap.valid())
+      {
+         dtCore::RefPtr<Map> mapRef = mapStreamObject->mMap;
+         mapStreamObject->mMap = NULL;
+         *map = mapRef.release();
+
+         result = true;
+      }
+
+      return result;
+   }
+
+   /////////////////////////////////////////////////////////////////
+   bool MapParser::Parse(std::istream& stream, Map** map)
+   {
       mMapHandler->SetMapMode();
 
-      std::ifstream  mapfstream(path.c_str(), std::ios_base::binary);
-      if (BaseXMLParser::Parse(mapfstream))
+      if (BaseXMLParser::Parse(stream))
       {
          dtCore::RefPtr<Map> mapRef = mMapHandler->GetMap();
          mMapHandler->ClearMap();
@@ -166,7 +386,7 @@ namespace dtDAL
          InputSourcefStream xerStream(fileStream);
          mXercesParser->parse(xerStream);
       }
-      catch(const dtUtil::Exception& /*iconFoundWeAreDone*/)
+      catch(const dtUtil::Exception&)
       {
          //Probably the icon has been found, the exception to stop parsing has
          //been thrown, so there's nothing to do here.  
@@ -179,21 +399,20 @@ namespace dtDAL
 
       return iconFileName;
    }
-   
+
    /////////////////////////////////////////////////////////////////
-   const std::string MapParser::ParseMapName(const std::string& path)
+   const std::string MapParser::ParseMapName( std::istream& stream )
    {
-      //this is a flag that will make sure
-      //the parser gets reset if an exception is thrown.
       bool parserNeedsReset = false;
       XMLPScanToken token;
+
+      mXercesParser->setContentHandler(mMapHandler.get());
+      mXercesParser->setErrorHandler(mMapHandler.get());
+
+
       try
       {
-         mXercesParser->setContentHandler(mMapHandler.get());
-         mXercesParser->setErrorHandler(mMapHandler.get());
-
-         std::ifstream fileStream(path.c_str());
-         InputSourcefStream xerStream(fileStream);
+         InputSourcefStream xerStream(stream);
 
          if (mXercesParser->parseFirst(xerStream, token))
          {
@@ -240,7 +459,7 @@ namespace dtDAL
             mXercesParser->parseReset(token);
 
          mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__, "Error during parsing! %ls :\n",
-                             toCatch.getMessage());
+            toCatch.getMessage());
          throw dtDAL::MapParsingException( "Error while parsing map file. See log for more information.", __FILE__, __LINE__);
       }
       catch (const SAXParseException&)
@@ -251,6 +470,61 @@ namespace dtDAL
          //this will already by logged by the content handler
          throw dtDAL::MapParsingException( "Error while parsing map file. See log for more information.", __FILE__, __LINE__);
       }
+   }
+
+   
+   /////////////////////////////////////////////////////////////////
+   const std::string MapParser::ParseMapName(const std::string& path)
+   {
+      osgDB::Registry* reg = osgDB::Registry::instance();
+      dtCore::RefPtr<MapReaderWriter::MapStream> mapStreamObject;
+
+      //setting this option will keep the map reader writer from having to parse the whole map
+      osg::ref_ptr<osgDB::ReaderWriter::Options> options = reg->getOptions() ?
+         static_cast<osgDB::ReaderWriter::Options*>(reg->getOptions()->clone(osg::CopyOp::SHALLOW_COPY)) :
+      new osgDB::ReaderWriter::Options;
+
+      options->setPluginStringData("DELTA3D_PARSEMAPNAME", "1");
+
+      //if the map is an .xml file we must load it manually
+      //this is a temporary workaround and should be deprecated
+      if(osgDB::getLowerCaseFileExtension(path) == "xml")
+      {
+         std::string filename = osgDB::findDataFile(path);
+         if(!filename.empty())
+         {
+            dtCore::RefPtr<MapReaderWriter> mrw = new MapReaderWriter();
+            mrw->SetShouldIgnoreExtension(true);
+
+            osgDB::ReaderWriter::ReadResult readMapResult = mrw->readObject(filename, options);
+
+            if(readMapResult.success())
+            {
+               mapStreamObject = dynamic_cast<MapReaderWriter::MapStream*>(readMapResult.getObject());
+            }
+         }
+
+      }
+      else
+      {
+         dtCore::RefPtr<osg::Object> obj = dtUtil::FileUtils::GetInstance().ReadObject(path, options);
+         if(obj.valid())
+         {
+            mapStreamObject = dynamic_cast<MapReaderWriter::MapStream*>(obj.get());
+         }
+      }
+
+      if(mapStreamObject.valid() && mapStreamObject->mMap.valid())
+      {
+         std::string mapName = mapStreamObject->mMap->GetName();
+         return mapName;
+      }
+      else
+      {
+         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__, "Error during parsing! %ls :\n", "Unable to parse map name.");
+         throw dtDAL::MapParsingException( "Error while parsing map file. See log for more information.", __FILE__, __LINE__);      
+      }
+
    }
 
    /////////////////////////////////////////////////////////////////
@@ -837,6 +1111,11 @@ namespace dtDAL
          throw dtDAL::MapSaveException( std::string("Unknown exception saving map \"") + filePath + ("\"."), __FILE__, __LINE__);
       }
    }
+
+
 }
 
+
+
 //////////////////////////////////////////////////////////////////////////
+

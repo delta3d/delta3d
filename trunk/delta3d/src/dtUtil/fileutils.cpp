@@ -51,13 +51,22 @@ _CRTIMP extern int errno;
 #include <stack>
 
 #include <dtUtil/fileutils.h>
+#include <dtUtil/stringutils.h>
 #include <dtUtil/exception.h>
 #include <dtUtil/log.h>
+#include <osgDB/ReadFile>
 
 #include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <iostream>
+
+//this ArchiveExtended header will be part of osg 3.0 so we will no longer need it after the 3.0 release
+#if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR >= 3
+#include <osgDB/Archive>
+#else
+#include "../utilities/ZipPlugin/ArchiveExtended"
+#endif
 
 #include <osgDB/FileUtils>
 #include <osgDB/FileNameUtils>
@@ -396,49 +405,151 @@ namespace dtUtil
    const struct FileInfo FileUtils::GetFileInfo(const std::string& strFile) const
    {
       struct FileInfo info;
+
+      if(!strFile.empty())
+      {
+         std::string filename = strFile;
+         CleanupFileString(filename);
+
+         //we have a CWD in an archive and we have specified a relative path
+         if (ContainsArchiveExtension(filename) || (!IsAbsolutePath(filename) && ContainsArchiveExtension(mCurrentDirectory)))
+         {
+             if(!IsAbsolutePath(filename))
+             {
+                filename = ArchiveRelativeToAbsolute(filename);
+             }
+
+            info = GetFileInfo_Internal(filename);
+         }
+         else
+         {
+            info = GetFileInfo_Internal(filename);
+         }
+      }
+      return info;
+   }
+
+   //-----------------------------------------------------------------------
+   std::string FileUtils::ArchiveRelativeToAbsolute(const std::string& relativeFile) const
+   {
+
+      //we use cleanup string on the path so this accept becomes very simple
+      class IsFileSeparator: public std::unary_function<char, bool>
+      {
+      public:
+         IsFileSeparator() {}
+         bool operator()(char c) const { return c == '/'; }
+
+      };
+
+      std::string absDir = mCurrentDirectory;
+      CleanupFileString(absDir);
+
+      std::vector<std::string> tokens;
+      dtUtil::StringTokenizer<IsFileSeparator>::tokenize(tokens, relativeFile);
+
+
+      std::vector<std::string>::iterator iter = tokens.begin();
+      std::vector<std::string>::iterator iterEnd = tokens.end();
+      for(;iter != iterEnd; ++iter)
+      {
+         std::string& curToken = *iter;
+
+         if(curToken == ".")
+         {
+            //do nothing
+         }
+         else if(curToken == "..")
+         {
+            size_t lastSlash = absDir.find_last_of('/');
+            if(lastSlash != std::string::npos)
+            {
+               absDir = absDir.substr(0, lastSlash);
+            }
+            
+         }
+         else
+         {
+            absDir.append("/");
+            absDir.append(curToken);
+         }
+      }
+
+      return absDir;
+   }
+
+   //-----------------------------------------------------------------------
+   const struct FileInfo FileUtils::GetFileInfo_Internal(const std::string& strFile) const
+   {
+      struct FileInfo info;
       struct stat tagStat;
 
-      // chop trailing slashes off
-      std::string choppedStr = strFile;
-      if (strFile.size() > 0 && (strFile[strFile.size() - 1] == '\\' ||
-                                 strFile[strFile.size() - 1] == '/'))
+      std::string archiveName;
+      std::string fileInArchive;
+      
+      bool isInArchive = SplitArchiveFilename(strFile, archiveName, fileInArchive);
+
+      if(isInArchive)
       {
-         choppedStr = strFile.substr(0, strFile.length() - 1);
-      }
+         const osgDB::ArchiveExtended* a = FindArchive(archiveName);
+         if(a == NULL)
+         {
+            a = FindArchive(archiveName);
+         }
 
-      if (stat(choppedStr.c_str(), &tagStat) != 0)
-      {
-         // throw dtUtil::FileNotFoundException( std::string("Cannot open file ") + choppedStr);
-         info.fileType = FILE_NOT_FOUND;
-         return info;
-      }
-
-      info.extensionlessFileName = osgDB::getStrippedName(choppedStr);
-      info.baseName = osgDB::getSimpleFileName(choppedStr);
-      info.fileName = choppedStr;
-      info.path = osgDB::getFilePath(choppedStr);
-      info.extension = osgDB::getFileExtension(choppedStr);
-
-      info.size = tagStat.st_size;
-      info.lastModified = tagStat.st_mtime;
-
-      if (S_ISDIR(tagStat.st_mode))
-      {
-         info.fileType = DIRECTORY;
+         if(a != NULL)
+         {
+            info = GetFileInfoForFileInArchive(*a, fileInArchive);
+         }
       }
       else
       {
-         // Anything else is a regular file, including special files
-         // this is incomplete, but not a case that we deemed necessary to handle.
-         // Symbolic links should NOT show up because stat was called, not lstat.
-         info.fileType = REGULAR_FILE;
+         // chop trailing slashes off
+         std::string choppedStr = strFile;
+         if (strFile.size() > 0 && (strFile[strFile.size() - 1] == '\\' ||
+                                    strFile[strFile.size() - 1] == '/'))
+         {
+            choppedStr = strFile.substr(0, strFile.length() - 1);
+         }
+
+         if (stat(choppedStr.c_str(), &tagStat) != 0)
+         {
+            // throw dtUtil::FileNotFoundException( std::string("Cannot open file ") + choppedStr);
+            info.fileType = FILE_NOT_FOUND;
+            return info;
+         }
+
+         info.extensionlessFileName = osgDB::getStrippedName(choppedStr);
+         info.baseName = osgDB::getSimpleFileName(choppedStr);
+         info.fileName = choppedStr;
+         info.path = osgDB::getFilePath(choppedStr);
+         info.extension = osgDB::getFileExtension(choppedStr);
+
+         info.size = tagStat.st_size;
+         info.lastModified = tagStat.st_mtime;
+
+         if (S_ISDIR(tagStat.st_mode))
+         {
+            info.fileType = DIRECTORY;
+         }
+         else if(!archiveName.empty())
+         {
+            info.fileType = ARCHIVE;
+         }
+         else
+         {
+            // Anything else is a regular file, including special files
+            // this is incomplete, but not a case that we deemed necessary to handle.
+            // Symbolic links should NOT show up because stat was called, not lstat.
+            info.fileType = REGULAR_FILE;
+         }
       }
 
       return info;
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void FileUtils::CleanupFileString(std::string& strFileOrDir)
+   void FileUtils::CleanupFileString(std::string& strFileOrDir) const
    {
       if (strFileOrDir.empty())
       {
@@ -452,6 +563,11 @@ namespace dtUtil
          {
             strFileOrDir[i] = '/';
          }
+         if(strFileOrDir[i] == '/' && i > 0 && strFileOrDir[i-1] == '/')
+         {
+            strFileOrDir.erase(strFileOrDir.begin() + i);
+            --i;
+         }
       }
 
       // get rid of trailing separators
@@ -462,16 +578,18 @@ namespace dtUtil
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   bool FileUtils::IsAbsolutePath(std::string strFileOrDir)
+   bool FileUtils::IsAbsolutePath(std::string strFileOrDir) const
    {
       // just in case, make sure we are using a valid path
       CleanupFileString(strFileOrDir);
 
-      dtUtil::FileInfo info = GetFileInfo(strFileOrDir);
+      //todo- fix this, getfileinfo calls this so we have a cyclic problem
+      //so this had to be commented out
+      /*dtUtil::FileInfo info = GetFileInfo(strFileOrDir);
       if (info.fileType == dtUtil::FILE_NOT_FOUND)
       {
          return false;
-      }
+      }*/
 
       // handle unix-style paths
       if (strFileOrDir.length() > 0 && strFileOrDir[0] == '/')
@@ -547,8 +665,28 @@ namespace dtUtil
    /////////////////////////////////////////////////////////////////////////////
    void FileUtils::ChangeDirectory(const std::string& path)
    {
-      ChangeDirectoryInternal(path);
-      mStackOfDirectories.clear();
+      if(!path.empty())
+      {
+         std::string filename = path;
+         CleanupFileString(filename);
+
+         //we have a CWD in an archive and we have specified a relative path
+         if (ContainsArchiveExtension(filename) || (!IsAbsolutePath(filename) && ContainsArchiveExtension(mCurrentDirectory)))
+         {
+            if(!IsAbsolutePath(filename))
+            {
+               filename = ArchiveRelativeToAbsolute(filename);
+            }
+
+            ChangeDirectoryInternal(filename);
+         }
+         else
+         {
+            ChangeDirectoryInternal(filename);
+         }
+
+         mStackOfDirectories.clear();
+      }
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -560,18 +698,54 @@ namespace dtUtil
    /////////////////////////////////////////////////////////////////////////////
    void FileUtils::ChangeDirectoryInternal(const std::string& path)
    {
-      if (chdir(path.c_str()) == -1)
-      {
-         throw dtUtil::FileNotFoundException( std::string("Cannot open directory ") + path, __FILE__, __LINE__);
-      }
-      char buf[512];
-      char* bufAddress = getcwd(buf, 512);
-      if (buf != bufAddress)
-      {
-         throw dtUtil::FileUtilIOException( std::string("Cannot get current working directory"), __FILE__, __LINE__);
-      }
+      std::string archiveName;
+      std::string fileInArchive;
 
-      mCurrentDirectory = buf;
+      bool inArchive = SplitArchiveFilename(path, archiveName, fileInArchive);
+
+      if(inArchive || !archiveName.empty())
+      {
+         osgDB::ArchiveExtended* a = FindArchive(archiveName);
+         if(a != NULL)
+         {
+            if(inArchive)
+            {
+               FileInfo info = GetFileInfoForFileInArchive(*a, fileInArchive);
+               if(info.fileType == DIRECTORY)
+               {
+                  mCurrentDirectory = archiveName + "/" + fileInArchive;
+               }
+               else
+               {
+                  throw dtUtil::FileNotFoundException( std::string("Cannot change directory into path: ") + path, __FILE__, __LINE__);
+               }
+            }
+            else
+            {
+               //it is the archive itself
+               mCurrentDirectory = osgDB::getRealPath(archiveName);
+            }
+         }
+         else
+         {
+            throw dtUtil::FileNotFoundException( std::string("Cannot find valid archive for path: ") + path, __FILE__, __LINE__);
+         }
+      }
+      else 
+      {
+         if (chdir(path.c_str()) == -1)
+         {
+            throw dtUtil::FileNotFoundException( std::string("Cannot open directory ") + path, __FILE__, __LINE__);
+         }
+         char buf[512];
+         char* bufAddress = getcwd(buf, 512);
+         if (buf != bufAddress)
+         {
+            throw dtUtil::FileUtilIOException( std::string("Cannot get current working directory"), __FILE__, __LINE__);
+         }
+
+         mCurrentDirectory = buf;
+      }
 
       if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
       {
@@ -617,6 +791,7 @@ namespace dtUtil
    /////////////////////////////////////////////////////////////////////////////
    const std::string FileUtils::GetAbsolutePath(const std::string& relativePath) const
    {
+      //todo- add archive support here
       std::string result;
       std::string old = mCurrentDirectory;
       try
@@ -679,6 +854,8 @@ namespace dtUtil
    DirectoryContents FileUtils::DirGetFiles(const std::string& path,
                                             const FileExtensionList& extensions) const
    {
+      DirectoryContents dirContents;
+
       FileInfo ft = GetFileInfo(path);
       if (ft.fileType == FILE_NOT_FOUND)
       {
@@ -690,9 +867,35 @@ namespace dtUtil
          throw dtUtil::FileUtilIOException(
                 std::string("Path does not specify a directory: \"") + path + "\".", __FILE__, __LINE__);
       }
+      else if(ft.fileType == ARCHIVE || ft.isInArchive)
+      {
+         std::string archiveName;
+         std::string fileInArchiveName;
+         std::string absoluteFilename = path;
+         if(!IsAbsolutePath(path))
+         {
+            absoluteFilename = ArchiveRelativeToAbsolute(path);
+         }
 
-      DirectoryContents dirContents = osgDB::getDirectoryContents(path);
-      if (extensions.empty())
+         SplitArchiveFilename(absoluteFilename, archiveName, fileInArchiveName);
+         
+         const osgDB::ArchiveExtended* a = FindArchive(archiveName);
+         if(a != NULL)
+         {
+             DirGetFilesInArchive(*a, absoluteFilename, dirContents);
+         }        
+         else
+         {
+            throw dtUtil::FileUtilIOException(
+               std::string("Archive must be opened to search into: \"") + path + "\".", __FILE__, __LINE__);
+         }
+      }
+      else //should be a directory
+      {
+         dirContents = osgDB::getDirectoryContents(path);
+      }
+   
+      if(extensions.empty())
       {
          return dirContents;
       }
@@ -706,10 +909,9 @@ namespace dtUtil
          while (extItr != extensions.end())
          {
             std::string testExt = getFileExtensionIncludingDot((*dirItr));
-            std::transform(testExt.begin(), testExt.end(), testExt.begin(), ToLowerClass());
             std::string validExt = (*extItr);
-            std::transform(validExt.begin(), validExt.end(), validExt.begin(), ToLowerClass());
-            if (testExt == validExt)
+
+            if (dtUtil::StrCompare(testExt, validExt, false) == 0)
             {
                filteredContents.push_back((*dirItr));
                // stop when we find at least one match, to avoid duplicate file entries, in
@@ -1029,6 +1231,49 @@ namespace dtUtil
    /////////////////////////////////////////////////////////////////////////////
    bool FileUtils::IsSameFile(const std::string& file1, const std::string& file2) const
    {
+      bool result = false;
+
+      FileInfo fileInfo1 = GetFileInfo(file1);
+      FileInfo fileInfo2 = GetFileInfo(file2);
+
+      if(!fileInfo1.isInArchive && !fileInfo2.isInArchive)
+      {
+         //the former, and non archive route..
+         result = IsSameFile_Internal(file1, file2);
+      }
+      else
+      {
+         std::string file1ArchiveName = file1;
+         std::string file2ArchiveName = file2;
+         std::string file1InArchive, file2InArchive;
+
+
+         if(!IsAbsolutePath(file1))
+         {
+            file1ArchiveName = ArchiveRelativeToAbsolute(file1);
+         }
+         if(!IsAbsolutePath(file2))
+         {
+            file2ArchiveName = ArchiveRelativeToAbsolute(file2);
+         }
+         
+         SplitArchiveFilename(file1ArchiveName, file1ArchiveName, file1InArchive);
+         SplitArchiveFilename(file2ArchiveName, file2ArchiveName, file2InArchive);
+
+         //compare the actual archives first
+         if(IsSameFile_Internal(file1ArchiveName, file2ArchiveName))
+         {
+            result = (file1InArchive == file2InArchive);
+         }
+
+      }
+
+      return result;
+   }
+
+   //-----------------------------------------------------------------------
+   bool FileUtils::IsSameFile_Internal(const std::string& file1, const std::string& file2) const
+   {
       // If path names are different, we still could be pointing at the same file
       // on disk.
       struct stat stat1 = {0};
@@ -1148,10 +1393,316 @@ namespace dtUtil
       mLogger = &dtUtil::Log::GetInstance(std::string("fileutils.cpp"));
       // assign the current directory
       ChangeDirectory(".");
+
+      //adding zip extension for use as archive
+      osgDB::Registry::instance()->addArchiveExtension("zip");
    }
 
    /////////////////////////////////////////////////////////////////////////////
    FileUtils::~FileUtils() {}
+
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool FileUtils::SplitArchiveFilename(const std::string& fullFilename, std::string& archiveFilename, std::string& fileInArchive) const
+   {
+
+      std::string filename = fullFilename;
+      CleanupFileString(filename);
+
+      osgDB::Registry* reg = osgDB::Registry::instance();
+
+//osgDB::Registry::getArchiveExtensions() was submitted and should be released in OSG 3.0
+#if defined(OPENSCENEGRAPH_MAJOR_VERSION) && OPENSCENEGRAPH_MAJOR_VERSION >= 3
+
+      const osgDB::Registry::ArchiveExtensionList& extensions = reg->getArchiveExtensions();
+
+      osgDB::Registry::ArchiveExtensionList::const_iterator iter = extensions.begin();
+      osgDB::Registry::ArchiveExtensionList::const_iterator iterEnd = extensions.end();
+      for(;iter != iterEnd; ++iter)
+      {
+         const std::string& archiveExtension = *iter;
+#else
+         std::string archiveExtension = ".zip";
+         {
+#endif      
+
+         std::string::size_type positionArchive = filename.find(archiveExtension+'/');
+         if (positionArchive==std::string::npos) positionArchive = filename.find(archiveExtension+'\\');
+         if (positionArchive!=std::string::npos)
+         {
+            std::string::size_type endArchive = positionArchive + archiveExtension.length();
+            //copy filename -in case the function was called with filename and archivefilename the same string
+            std::string filenameCopy = filename;
+            archiveFilename = filenameCopy.substr(0,endArchive);
+            fileInArchive = filenameCopy.substr(endArchive+1,std::string::npos);
+            return true;
+         }
+         else //maybe it is an archive
+         {
+            std::string::size_type positionArchive = filename.find(archiveExtension);
+            if (positionArchive!=std::string::npos)
+            {
+               archiveFilename = filename;
+               return false;
+            }
+         }
+      }
+      
+      return false;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   dtUtil::FileType FileUtils::GetFileTypeForFileInArchive(const osgDB::ArchiveExtended& a, const std::string& path) const
+   {
+      return GetFileTypeFromOSGDBFileType(a.getFileType(path));
+   }
+
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void FileUtils::DirGetFilesInArchive(const osgDB::ArchiveExtended& a, const std::string& path, DirectoryContents& result) const
+   {
+
+      std::string archiveName;
+      std::string fileInArchive;
+
+      bool inArchive = SplitArchiveFilename(path, archiveName, fileInArchive);
+
+      result = a.getDirectoryContents(fileInArchive);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   dtUtil::FileInfo FileUtils::GetFileInfoForFileInArchive(const osgDB::ArchiveExtended& a, const std::string& strFile) const
+   {
+      dtUtil::FileInfo info;
+
+      // chop trailing slashes off
+      std::string choppedStr = strFile;
+      if (strFile.size() > 0 && (strFile[strFile.size() - 1] == '\\' ||
+         strFile[strFile.size() - 1] == '/'))
+      {
+         choppedStr = strFile.substr(0, strFile.length() - 1);
+      }
+
+      info.fileType = GetFileTypeFromOSGDBFileType(a.getFileType(strFile));
+
+      if(info.fileType != FILE_NOT_FOUND)
+      {
+         
+         info.extensionlessFileName = osgDB::getStrippedName(choppedStr);
+         info.baseName = osgDB::getSimpleFileName(choppedStr);
+         info.fileName = choppedStr;
+         info.path = osgDB::getFilePath(choppedStr);
+         info.extension = osgDB::getFileExtension(choppedStr);
+         info.isInArchive = true;
+
+         //todo- how to get these?
+         info.size = 0;
+         info.lastModified = 0;
+      }
+
+      return info;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   osgDB::ArchiveExtended* FileUtils::FindArchive(const std::string& filename) const
+   {
+      dtCore::RefPtr<osgDB::Archive> archiveResult = NULL;
+      FileInfo archiveInfo = GetFileInfo(filename);
+
+      if(archiveInfo.fileType != FILE_NOT_FOUND)
+      {
+         osgDB::Registry* reg = osgDB::Registry::instance();
+
+         osgDB::ReaderWriter::ReadResult result = osgDB::ReaderWriter::ReadResult::FILE_NOT_HANDLED;
+
+         std::string archiveFilename;
+         std::string strippedFilename;
+         std::string absoluteFilename = filename;
+
+         if(!IsAbsolutePath(filename))
+         {
+            absoluteFilename = ArchiveRelativeToAbsolute(filename);
+         }
+
+         SplitArchiveFilename(absoluteFilename, archiveFilename, strippedFilename);
+
+         archiveResult = reg->getFromArchiveCache(archiveFilename);
+         if(archiveResult == NULL)
+         {
+            //attempt to load  
+            dtCore::RefPtr<osgDB::ReaderWriter::Options> options = reg->getOptions() ?
+               static_cast<osgDB::ReaderWriter::Options*>(reg->getOptions()->clone(osg::CopyOp::SHALLOW_COPY)) :
+            new osgDB::ReaderWriter::Options;
+
+            osgDB::ReaderWriter::ReadResult readResult = reg->openArchive(archiveFilename, osgDB::ReaderWriter::READ, 4096, options.get());
+            if(readResult.success())
+            {
+               archiveResult = readResult.getArchive();
+            }
+
+         }
+      }
+
+      if(archiveResult.valid())
+      {
+         return dynamic_cast<osgDB::ArchiveExtended*>(archiveResult.get());
+      }
+      else
+      {
+         return NULL;
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   dtUtil::FileType FileUtils::GetFileTypeFromOSGDBFileType( osgDB::FileType ft ) const
+   {
+      if(ft == osgDB::REGULAR_FILE)
+      {
+         return dtUtil::REGULAR_FILE;
+      }
+      else if (ft == osgDB::DIRECTORY)
+      {
+         return dtUtil::DIRECTORY;
+      }
+      else
+      {
+         return dtUtil::FILE_NOT_FOUND;
+      }
+
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool FileUtils::ContainsArchiveExtension(const std::string& path) const
+   {
+      osgDB::Registry* reg = osgDB::Registry::instance();
+
+//osgDB::Registry::getArchiveExtensions() was submitted and should be released in OSG 3.0
+#if defined(OPENSCENEGRAPH_MAJOR_VERSION) && OPENSCENEGRAPH_MAJOR_VERSION >= 3
+
+      const osgDB::Registry::ArchiveExtensionList& extensions = reg->getArchiveExtensions();
+
+      osgDB::Registry::ArchiveExtensionList::const_iterator iter = extensions.begin();
+      osgDB::Registry::ArchiveExtensionList::const_iterator iterEnd = extensions.end();
+      for(;iter != iterEnd; ++iter)
+      {
+         const std::string& archiveExtension = *iter;
+#else
+         std::string archiveExtension = ".zip";
+         {
+#endif
+
+         std::string::size_type positionArchive = path.find(archiveExtension);
+         if(positionArchive != std::string::npos)
+         {
+            return true;
+         }
+      }
+
+      return false;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   dtCore::RefPtr<osg::Object> FileUtils::ReadObject(const std::string& filename, osgDB::ReaderWriter::Options* options)
+   {
+      FileInfo info = GetFileInfo(filename);
+      osgDB::Registry* reg = osgDB::Registry::instance();
+
+      dtCore::RefPtr<osg::Object> result = NULL;
+
+      if(info.fileType == ARCHIVE || info.isInArchive)
+      {
+         std::string archiveFilename;
+         std::string strippedFilename;
+         std::string absoluteFilename = filename;
+
+         if(!IsAbsolutePath(filename))
+         {
+            absoluteFilename = ArchiveRelativeToAbsolute(filename);
+         }
+
+         SplitArchiveFilename(absoluteFilename, archiveFilename, strippedFilename);
+
+         osg::Object* obj = reg->getFromObjectCache(strippedFilename);
+         if(obj != NULL)
+         {
+            result = obj;
+         }
+         else
+         {       
+            osgDB::Archive* arch = FindArchive(archiveFilename);
+            if(arch != NULL)
+            {
+               osgDB::ReaderWriter::ReadResult readResult = arch->readObject(strippedFilename, options);
+               if(readResult.success())
+               {
+                  result = readResult.getObject();
+                  if (result != NULL && options != NULL && (options->getObjectCacheHint() & osgDB::ReaderWriter::Options::CACHE_OBJECTS))
+                  {
+                     reg->addEntryToObjectCache(strippedFilename, result);
+                  }
+               }
+            }
+         }
+      }
+      else if(info.fileType == REGULAR_FILE)
+      {
+         result = osgDB::readObjectFile(filename, options);
+      }
+
+      return result;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   dtCore::RefPtr<osg::Node> FileUtils::ReadNode(const std::string& filename, osgDB::ReaderWriter::Options* options)
+   {
+      FileInfo info = GetFileInfo(filename);
+      osgDB::Registry* reg = osgDB::Registry::instance();
+
+      dtCore::RefPtr<osg::Node> result = NULL;
+
+      if(info.fileType == ARCHIVE || info.isInArchive)
+      {
+         std::string archiveFilename;
+         std::string strippedFilename;
+         std::string absoluteFilename = filename;
+
+         if(!IsAbsolutePath(filename))
+         {
+            absoluteFilename = ArchiveRelativeToAbsolute(filename);
+         }
+
+         SplitArchiveFilename(absoluteFilename, archiveFilename, strippedFilename);
+
+         osg::Object* obj = reg->getFromObjectCache(strippedFilename);
+         if(obj != NULL)
+         {
+            result = dynamic_cast<osg::Node*>(obj);
+         }
+         else
+         {         
+            osgDB::Archive* arch = FindArchive(archiveFilename);
+            if(arch != NULL)
+            {
+               osgDB::ReaderWriter::ReadResult readResult = arch->readNode(strippedFilename, options);
+               if(readResult.success())
+               {
+                  result = readResult.getNode();
+
+                  if (result != NULL && options != NULL && (options->getObjectCacheHint() & osgDB::ReaderWriter::Options::CACHE_NODES))
+                  {
+                     reg->addEntryToObjectCache(strippedFilename, result);
+                  }
+               }
+            }
+         }
+      }
+      else if(info.fileType == REGULAR_FILE)
+      {
+         result = osgDB::readNodeFile(filename, options);
+      }
+
+      return result;
+   }
 
    /*void FileUtils::AbsoluteToRelative(const std::string& pcAbsPath, std::string& relPath)
    {

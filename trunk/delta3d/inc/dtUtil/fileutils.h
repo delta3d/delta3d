@@ -25,10 +25,19 @@
 #include <string>
 #include <vector>
 #include <dtCore/refptr.h>
+#include <dtCore/observerptr.h>
 #include <osg/Referenced>
 #include <dtUtil/enumeration.h>
 #include <dtUtil/exception.h>
 #include <dtUtil/export.h>
+
+#include <osgDB/FileUtils>
+#include <osgDB/ReaderWriter>
+
+namespace osgDB
+{
+   class ArchiveExtended;
+}
 
 namespace dtUtil
 {
@@ -41,7 +50,8 @@ namespace dtUtil
    {
       FILE_NOT_FOUND,
       REGULAR_FILE,
-      DIRECTORY
+      DIRECTORY,
+      ARCHIVE
    };
 
    /**
@@ -58,8 +68,9 @@ namespace dtUtil
       size_t size; //< the size of the file in bytes.
       time_t lastModified; //< when the file was last modified.
       FileType fileType;
+      bool isInArchive; //< true if the specified file lives within an archive
 
-      FileInfo(): size(0), lastModified(0), fileType(FILE_NOT_FOUND) {}
+      FileInfo(): size(0), lastModified(0), fileType(FILE_NOT_FOUND), isInArchive(false) {}
    };
 
    /**
@@ -167,7 +178,7 @@ namespace dtUtil
        * @param strFileOrDir The string to cleanup.
        * @note The original string passed in is changed.
        */
-      void CleanupFileString(std::string& strFileOrDir);
+      void CleanupFileString(std::string &strFileOrDir) const;
 
       /**
        * Query whether a given string is an absolute path or not.
@@ -175,7 +186,7 @@ namespace dtUtil
        * @return True if absolute, False if relative.
        * @note This maybe a subjective determination, may need to add to this later.
        */
-      bool IsAbsolutePath(std::string strFileOrDir);
+      bool IsAbsolutePath(std::string strFileOrDir) const;
 
       /**
        * A more powerful version of the standard mkdir.  This function will check to
@@ -323,12 +334,51 @@ namespace dtUtil
       /// Concatenates two paths adding a path separator in between if necessary.
       static std::string ConcatPaths(const std::string& left, const std::string& right);
 
-   private:
-      FileUtils();
 
+      dtCore::RefPtr<osg::Object> ReadObject(const std::string& filename, osgDB::ReaderWriter::Options* options = NULL);
+      dtCore::RefPtr<osg::Node> ReadNode(const std::string& filename, osgDB::ReaderWriter::Options* options = NULL);
+      
+      /**
+       * Used to search for archives by filename.
+       */
+      osgDB::ArchiveExtended* FindArchive(const std::string& archiveFileName) const;
+      
+   private:
+
+      static const int PATH_BUFFER_SIZE = 512;
+
+      FileUtils();
       virtual ~FileUtils();
 
+      void ChangeDirectoryInternal(const std::string& path);
+      void InternalDirCopy(const std::string& srcPath,
+         const std::string& destPath, bool bOverwrite) const;
+
       void RecursDeleteDir(bool bRecursive);
+
+      /**
+       * Splits a filename for a file within an archive into two parts, the archive filename and the actual
+       *    filename relative to the archive root.
+       */
+      bool SplitArchiveFilename(const std::string& fullFilename, std::string& archiveFilename, std::string& fileInArchive) const;
+
+      /**
+       * Internal function used to find files within an archive subdirectory.
+       */
+      void DirGetFilesInArchive(const osgDB::ArchiveExtended& a, const std::string& path, DirectoryContents& result) const;
+
+      FileType GetFileTypeForFileInArchive(const osgDB::ArchiveExtended& a, const std::string& path) const;
+      FileInfo GetFileInfoForFileInArchive(const osgDB::ArchiveExtended& a, const std::string& path) const;
+
+      FileType GetFileTypeFromOSGDBFileType(osgDB::FileType ft) const;
+      
+      bool ContainsArchiveExtension(const std::string& path) const;  
+
+      std::string ArchiveRelativeToAbsolute(const std::string& relativeFile) const;
+
+      const struct FileInfo GetFileInfo_Internal(const std::string& strFile) const;
+      bool IsSameFile_Internal(const std::string& file1, const std::string& file2) const;
+
 
       static dtCore::RefPtr<FileUtils> mInstance;
 
@@ -336,12 +386,10 @@ namespace dtUtil
 
       std::string mCurrentDirectory;
       std::vector<std::string> mStackOfDirectories;
-      static const int PATH_BUFFER_SIZE = 512;
-      void ChangeDirectoryInternal(const std::string& path);
-      void InternalDirCopy(const std::string& srcPath,
-                           const std::string& destPath, bool bOverwrite) const;
+
    };
 
 } // namespace dtUtil
 
 #endif // DELTA_FILEUTILS
+

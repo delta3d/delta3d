@@ -2342,4 +2342,10 @@ namespace dtDAL
    {
       return mImpl->mEditMode;
    }
+
+   /////////////////////////////////////////////////////////////////////////////
+   MapParser* Project::GetCurrentMapParser()
+   {
+      return mImpl->mParser.get();
+   }
 }
