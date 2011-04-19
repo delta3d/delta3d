@@ -156,7 +156,6 @@ namespace dtQt
    void DynamicAbstractControl::InitializeData(DynamicAbstractControl* newParent,
       PropertyEditorModel* newModel, dtDAL::PropertyContainer* newPC, dtDAL::ActorProperty* newProperty)
    {
-      mInitialized = true;
 
       mParent = newParent;
       mPropContainer = newPC;
@@ -171,6 +170,9 @@ namespace dtQt
 
       connect(this, SIGNAL(PropertyChanged(dtDAL::PropertyContainer&, dtDAL::ActorProperty&)),
          this, SLOT(OnPropertyChanged(dtDAL::PropertyContainer&, dtDAL::ActorProperty&)));
+
+      mInitialized = true;
+
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -369,6 +371,25 @@ namespace dtQt
          {
             mDefaultResetButton->setEnabled(true);
          }
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   bool DynamicAbstractControl::IsPropertyDefault() const
+   {
+      if (!mInitialized || !mPropContainer.valid() || mBaseProperty == NULL)
+      {
+         return true;
+      }
+
+      if (!mPropContainer->DoesDefaultExist(*mBaseProperty) ||
+          mPropContainer->IsPropertyDefault(*mBaseProperty))
+      {
+         return true;
+      }
+      else
+      {
+         return false;
       }
    }
 

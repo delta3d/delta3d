@@ -283,6 +283,13 @@ namespace dtQt
          }
       }
 
+      /**
+       * Is the value this Control is displaying the default for the ActorProperty?
+       *
+       * @return true if the ActorProperty is set to it's default value, false otherwise
+       */
+      bool IsPropertyDefault() const;
+
    signals:
       void PropertyAboutToChange(dtDAL::PropertyContainer&, dtDAL::ActorProperty& prop,
                std::string oldValue, std::string newValue);
