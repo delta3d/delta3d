@@ -118,4 +118,17 @@ namespace dtQt
       return true;
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   void DynamicGroupControl::actorPropertyChanged(dtDAL::PropertyContainer& propCon, dtDAL::ActorProperty& property)
+   {
+      DynamicAbstractParentControl::actorPropertyChanged(propCon, property);
+
+      std::vector<DynamicAbstractControl*>::const_iterator itr = mChildren.begin();
+
+      while (itr != mChildren.end())
+      {
+         (*itr)->actorPropertyChanged(propCon, property);
+         ++itr;
+      }
+   }
 } // namespace dtQt

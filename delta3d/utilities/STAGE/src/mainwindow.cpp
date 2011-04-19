@@ -356,10 +356,10 @@ namespace dtEditQt
          connect(&EditorEvents::GetInstance(), SIGNAL(selectedActors(ActorProxyRefPtrVector&)),
                   mPropertyWindow, SLOT(HandleActorsSelected(ActorProxyRefPtrVector&)));
 
-         //// listen for property change events and update the tree.  These can be generated
-         //// by the viewports, or the tree itself.
-         //connect(&EditorEvents::GetInstance(), SIGNAL(actorPropertyChanged(ActorProxyRefPtr, ActorPropertyRefPtr)),
-         //         mPropertyWindow, SLOT(ActorPropertyChanged(ActorProxyRefPtr, ActorPropertyRefPtr)));
+         // listen for property change events and update the tree.  These can be generated
+         // by the viewports, or the tree itself.
+         connect(&EditorEvents::GetInstance(), SIGNAL(actorPropertyChanged(ActorProxyRefPtr, ActorPropertyRefPtr)),
+                  mPropertyWindow, SLOT(ActorPropertyChanged(ActorProxyRefPtr, ActorPropertyRefPtr)));
 
          // listen for name changes so we can update our group box label or handle undo changes
          connect(&EditorEvents::GetInstance(), SIGNAL(ProxyNameChanged(dtDAL::BaseActorObject&, std::string)),
@@ -740,12 +740,12 @@ namespace dtEditQt
          disconnect(&EditorEvents::GetInstance(), SIGNAL(selectedActors(ActorProxyRefPtrVector&)),
             mPropertyWindow, SLOT(HandleActorsSelected(ActorProxyRefPtrVector&)));
 
-         //// listen for property change events and update the tree.  These can be generated
-         //// by the viewports, or the tree itself.
-         //disconnect(&EditorEvents::GetInstance(), SIGNAL(actorPropertyChanged(ActorProxyRefPtr,
-         //   ActorPropertyRefPtr)),
-         //   mPropertyWindow, SLOT(ActorPropertyChanged(ActorProxyRefPtr,
-         //   ActorPropertyRefPtr)));
+         // listen for property change events and update the tree.  These can be generated
+         // by the viewports, or the tree itself.
+         disconnect(&EditorEvents::GetInstance(), SIGNAL(actorPropertyChanged(ActorProxyRefPtr,
+            ActorPropertyRefPtr)),
+            mPropertyWindow, SLOT(ActorPropertyChanged(ActorProxyRefPtr,
+            ActorPropertyRefPtr)));
 
          // listen for name changes so we can update our group box label or handle undo changes
          disconnect(&EditorEvents::GetInstance(), SIGNAL(ProxyNameChanged(dtDAL::BaseActorObject&, std::string)),

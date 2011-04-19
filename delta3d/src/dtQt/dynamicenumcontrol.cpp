@@ -216,21 +216,6 @@ namespace dtQt
       return updateModelFromEditor(widget);
    }
 
-   /////////////////////////////////////////////////////////////////////////////////
-   void DynamicEnumControl::actorPropertyChanged(dtDAL::PropertyContainer& propCon,
-            dtDAL::ActorProperty& property)
-   {
-      DynamicAbstractControl::actorPropertyChanged(propCon, property);
-
-      dtDAL::AbstractEnumActorProperty* changedProp =
-         dynamic_cast<dtDAL::AbstractEnumActorProperty *>(&property);
-
-      if (mTemporaryEditControl != NULL && &propCon == mPropContainer && changedProp == mProperty)
-      {
-         updateEditorFromModel(mWrapper);
-      }
-   }
-
    ////////////////////////////////////////////////////////////////////////////////
    void DynamicEnumControl::handleSubEditDestroy(QWidget* widget, QAbstractItemDelegate::EndEditHint hint)
    {

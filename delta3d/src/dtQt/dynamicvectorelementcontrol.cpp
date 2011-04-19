@@ -276,6 +276,7 @@ namespace dtQt
       QDoubleValidator* validator = new QDoubleValidator(mTemporaryEditControl);
       validator->setDecimals(NUM_DECIMAL_DIGITS_DOUBLE);
       mTemporaryEditControl->setValidator(validator);
+      mWrapper = mTemporaryEditControl;
 
       if (!mInitialized)
       {
@@ -424,18 +425,6 @@ namespace dtQt
       }
 
       return updateModelFromEditor(widget);
-   }
-
-   /////////////////////////////////////////////////////////////////////////////////
-   void DynamicVectorElementControl::actorPropertyChanged(dtDAL::PropertyContainer& propCon,
-            dtDAL::ActorProperty& property)
-   {
-      DynamicAbstractControl::actorPropertyChanged(propCon, property);
-
-      if (mTemporaryEditControl != NULL && &propCon == mPropContainer && &property == mActiveProp)
-      {
-         updateEditorFromModel(mTemporaryEditControl);
-      }
    }
 
 } // namespace dtQt

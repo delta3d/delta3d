@@ -241,9 +241,9 @@ namespace dtQt
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void DynamicAbstractControl::OnPropertyChanged(dtDAL::PropertyContainer&, dtDAL::ActorProperty& prop)
+   void DynamicAbstractControl::OnPropertyChanged(dtDAL::PropertyContainer& propCon, dtDAL::ActorProperty& prop)
    {
-      UpdateResetButtonStatus();
+      actorPropertyChanged(propCon, prop);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -360,8 +360,7 @@ namespace dtQt
    {
       if (mDefaultResetButton)
       {
-         if (!mPropContainer->DoesDefaultExist(*mBaseProperty) ||
-            mPropContainer->IsPropertyDefault(*mBaseProperty))
+         if (IsPropertyDefault())
          {
             mDefaultResetButton->setEnabled(false);
          }
@@ -391,4 +390,11 @@ namespace dtQt
       }
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   void DynamicAbstractControl::actorPropertyChanged(dtDAL::PropertyContainer& propCon, dtDAL::ActorProperty& property)
+   {
+      UpdateResetButtonStatus();
+      NotifyParentOfPreUpdate();
+      updateEditorFromModel(mWrapper);
+   }
 } // namespace dtEditQt

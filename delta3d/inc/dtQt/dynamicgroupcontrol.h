@@ -41,72 +41,82 @@ namespace dtDAL
 
 namespace dtQt
 {
+   class PropertyEditorModel;
 
-    class PropertyEditorModel;
+   /**
+   * @class DynamicGroupControl
+   * The primary purpose of the group control is to provide a visual grouping of property types
+   * so that they aren't all laid out together. Used for Property category headings.
+   */
+   class DT_QT_EXPORT DynamicGroupControl : public DynamicAbstractParentControl
+   {
+      Q_OBJECT
+   public:
+      /**
+       * Constructor
+       */
+      DynamicGroupControl(const std::string& newName);
 
-    /**
-    * @class DynamicGroupControl
-    * The primary purpose of the group control is to provide a visual grouping of property types
-    * so that they aren't all laid out together. Used for Property category headings.
-    */
-    class DT_QT_EXPORT DynamicGroupControl : public DynamicAbstractParentControl
-    {
-        Q_OBJECT
-    public:
-        /**
-         * Constructor
-         */
-        DynamicGroupControl(const std::string& newName);
+      /**
+       * Destructor
 
-        /**
-         * Destructor
+       */
+      virtual ~DynamicGroupControl();
 
-         */
-        virtual ~DynamicGroupControl();
+      /**
+       * Attempt to find a group control with the passed in name.  This is used primarily
+       * on the root object to find an existing group.  However, it could easily be used
+       * for nested groups once that is supported.
+       */
+      DynamicGroupControl* getChildGroupControl(QString name);
 
-        /**
-         * Attempt to find a group control with the passed in name.  This is used primarily
-         * on the root object to find an existing group.  However, it could easily be used
-         * for nested groups once that is supported.
-         */
-        DynamicGroupControl* getChildGroupControl(QString name);
+      /**
+       * Groups can have children.  This is how you add children to the group. Note that you can't
+       * remove a child once it's added.
+       */
+      void addChildControl(DynamicAbstractControl* child, PropertyEditorModel* model);
 
-        /**
-         * Groups can have children.  This is how you add children to the group. Note that you can't
-         * remove a child once it's added.
-         */
-        void addChildControl(DynamicAbstractControl* child, PropertyEditorModel* model);
+      // OVERRIDDEN METHODS FROM ABSTRACT BASE
 
-        // OVERRIDDEN METHODS FROM ABSTRACT BASE
+      /**
+       * @see DynamicAbstractControl#addSelfToParentWidget
+       */
+      void addSelfToParentWidget(QWidget& parent, QGridLayout& layout, int row);
 
-        /**
-         * @see DynamicAbstractControl#addSelfToParentWidget
-         */
-        void addSelfToParentWidget(QWidget& parent, QGridLayout& layout, int row);
+      /**
+       * @see DynamicAbstractControl#getDisplayName
+       */
+      virtual const QString getDisplayName();
 
-        /**
-         * @see DynamicAbstractControl#getDisplayName
-         */
-        virtual const QString getDisplayName();
+      /** 
+       * Overwritten to also check if all child Properties are Default.
+       * @return True if all child ActorProperties are default, false otherwise
+       */
+      virtual bool IsPropertyDefault() const;
 
-        /** 
-         * Overwritten to also check if all child Properties are Default.
-         * @return True if all child ActorProperties are default, false otherwise
-         */
-        virtual bool IsPropertyDefault() const;
+      /**
+       * When a property changes, we have to update our editor.  It is likely that
+       * many properties will change with no effect, but if the user is using undo/redo
+       * or is moving an actor in the viewport, then it is possible that they will also
+       * be sitting on the editor for one of the affected values. This gives us a chance
+       * to reflect the change in our editor.
+       * @Note The default implementation does nothing.
+       */
+      virtual void actorPropertyChanged(dtDAL::PropertyContainer& propCon,
+               dtDAL::ActorProperty& property);
 
-    public slots:
+   public slots:
 
-        /**
-         * @see DynamicAbstractControl#updateData
-         */
-        virtual bool updateData(QWidget* widget);
+      /**
+       * @see DynamicAbstractControl#updateData
+       */
+      virtual bool updateData(QWidget* widget);
 
-    protected:
+   protected:
 
-    private:
-        QString mName;
-    };
+   private:
+      QString mName;
+   };
 
 } // namespace dtQt
 

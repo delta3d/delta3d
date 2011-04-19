@@ -290,11 +290,22 @@ namespace dtQt
        */
       virtual bool IsPropertyDefault() const;
 
+      /**
+      * When a property changes, we have to update our editor.  It is likely that
+      * many properties will change with no effect, but if the user is using undo/redo
+      * or is moving an actor in the viewport, then it is possible that they will also
+      * be sitting on the editor for one of the affected values. This gives us a chance
+      * to reflect the change in our editor.
+      * @Note The default implementation does nothing.
+      */
+      virtual void actorPropertyChanged(dtDAL::PropertyContainer& propCon, dtDAL::ActorProperty& property);
+
    signals:
       void PropertyAboutToChange(dtDAL::PropertyContainer&, dtDAL::ActorProperty& prop,
                std::string oldValue, std::string newValue);
 
       void PropertyChanged(dtDAL::PropertyContainer&, dtDAL::ActorProperty& prop);
+
    public slots:
       /// This is so child controls can, if desired can be connected to this which will emit the related signal.
       void PropertyAboutToChangePassThrough(dtDAL::PropertyContainer&, dtDAL::ActorProperty& prop,
@@ -304,7 +315,7 @@ namespace dtQt
       void PropertyChangedPassThrough(dtDAL::PropertyContainer&, dtDAL::ActorProperty& prop);
 
       /// Event handler when the property has changed.
-      void OnPropertyChanged(dtDAL::PropertyContainer&, dtDAL::ActorProperty& prop);
+      void OnPropertyChanged(dtDAL::PropertyContainer& propCon, dtDAL::ActorProperty& prop);
 
       /**
       * Called when we should take the data out of the controls and put it into the
@@ -315,21 +326,6 @@ namespace dtQt
       * @Note - This is purely virtual
       */
       virtual bool updateData(QWidget* widget) = 0;
-
-      /**
-      * When a property changes, we have to update our editor.  It is likely that
-      * many properties will change with no effect, but if the user is using undo/redo
-      * or is moving an actor in the viewport, then it is possible that they will also
-      * be sitting on the editor for one of the affected values. This gives us a chance
-      * to reflect the change in our editor.
-      * @Note The default implementation does nothing.
-      */
-      virtual void actorPropertyChanged(dtDAL::PropertyContainer& propCon,
-               dtDAL::ActorProperty& property)
-      {
-         UpdateResetButtonStatus();
-         NotifyParentOfPreUpdate();
-      }
 
       /**
       * This method is called by one of the Sub Widgets from DynamicSubWidgets.h from the
@@ -347,6 +343,7 @@ namespace dtQt
       virtual void onResetClicked();
 
    protected:
+
       // indicates whether the object has been initialized
       bool mInitialized;
 
