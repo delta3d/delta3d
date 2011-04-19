@@ -280,6 +280,10 @@ namespace dtEditQt
       {
          setCurrentShaderResource(selectedResource);
       }
+      else if (type == dtDAL::DataType::PREFAB)
+      {
+         setCurrentPrefabResource(selectedResource);
+      }
       else if (type == dtDAL::DataType::DIRECTOR)
       {
          setCurrentDirectorResource(selectedResource);
@@ -316,6 +320,10 @@ namespace dtEditQt
       else if (type == dtDAL::DataType::SHADER)
       {
          return getCurrentShaderResource();
+      }
+      else if (type == dtDAL::DataType::PREFAB)
+      {
+         return getCurrentPrefabResource();
       }
       else if (type == dtDAL::DataType::DIRECTOR)
       {
