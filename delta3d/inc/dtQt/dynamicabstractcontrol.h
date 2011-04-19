@@ -288,7 +288,7 @@ namespace dtQt
        *
        * @return true if the ActorProperty is set to it's default value, false otherwise
        */
-      bool IsPropertyDefault() const;
+      virtual bool IsPropertyDefault() const;
 
    signals:
       void PropertyAboutToChange(dtDAL::PropertyContainer&, dtDAL::ActorProperty& prop,
