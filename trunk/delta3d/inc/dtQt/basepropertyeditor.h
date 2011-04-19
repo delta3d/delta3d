@@ -128,7 +128,7 @@ namespace dtQt
 
       virtual void PropertyAboutToChangeFromControl(dtDAL::PropertyContainer&, dtDAL::ActorProperty&,
                const std::string& oldValue, const std::string& newValue) = 0;
-      virtual void PropertyChangedFromControl(dtDAL::PropertyContainer&, dtDAL::ActorProperty&) = 0;
+      virtual void PropertyChangedFromControl(dtDAL::PropertyContainer&, dtDAL::ActorProperty&);
 
    protected:
 

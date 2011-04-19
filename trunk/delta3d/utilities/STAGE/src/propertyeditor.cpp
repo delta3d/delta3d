@@ -232,6 +232,8 @@ namespace dtEditQt
    /////////////////////////////////////////////////////////////////////////////////
    void PropertyEditor::PropertyChangedFromControl(dtDAL::PropertyContainer& propCon, dtDAL::ActorProperty& prop)
    {
+      BasePropertyEditor::PropertyChangedFromControl(propCon, prop);
+
       dtDAL::BaseActorObject* proxy = dynamic_cast<dtDAL::BaseActorObject*>(&propCon);
       if (proxy != NULL)
       {
