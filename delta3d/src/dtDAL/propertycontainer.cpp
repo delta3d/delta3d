@@ -204,6 +204,11 @@ namespace dtDAL
    ////////////////////////////////////////////////////////////////////////////////
    bool PropertyContainer::DoesDefaultExist(const dtDAL::ActorProperty& prop) const
    {
+      if (prop.IsReadOnly())
+      {
+         return false;
+      }
+
       const NamedParameter* param =
          DefaultPropertyManager::GetInstance().GetDefaultValue(
          GetDefaultPropertyKey(), prop.GetName());
@@ -218,6 +223,11 @@ namespace dtDAL
    ////////////////////////////////////////////////////////////////////////////////
    bool PropertyContainer::IsPropertyDefault(const dtDAL::ActorProperty& prop) const
    {
+      if (prop.IsReadOnly())
+      {
+         return true;
+      }
+
       const NamedParameter* param =
          DefaultPropertyManager::GetInstance().GetDefaultValue(
          GetDefaultPropertyKey(), prop.GetName());
@@ -232,6 +242,11 @@ namespace dtDAL
    ////////////////////////////////////////////////////////////////////////////////
    void PropertyContainer::ResetProperty(dtDAL::ActorProperty& prop)
    {
+      if (prop.IsReadOnly())
+      {
+         return;
+      }
+
       const NamedParameter* param =
          DefaultPropertyManager::GetInstance().GetDefaultValue(
          GetDefaultPropertyKey(), prop.GetName());
