@@ -52,7 +52,16 @@ namespace dtDAL
    void ActorProperty::InitDefault(const std::string& keyName)
    {
       // Bail if we have no key name.
-      if (keyName.empty()) return;
+      if (keyName.empty())
+      {
+         return;
+      }
+
+      // Don't store defaults for properties that are read only.
+      if (IsReadOnly())
+      {
+         return;
+      }
 
       dtCore::RefPtr<NamedParameter> param = NamedParameter::CreateFromType(
          GetDataType(), GetName());
