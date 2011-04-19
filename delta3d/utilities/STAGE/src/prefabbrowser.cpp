@@ -129,12 +129,18 @@ namespace dtEditQt
             //enable the button      
             mCreatePrefabBtn->setEnabled(true);
             mCreateInstanceBtn->setEnabled(true);
+
+            // Set the current resource.
+            EditorData::GetInstance().setCurrentResource(dtDAL::DataType::PREFAB, selectedWidget->getResourceDescriptor());
             return;
       }
 
       // disable the button if we got here.
       mCreatePrefabBtn->setEnabled(false);
       mCreateInstanceBtn->setEnabled(false);
+
+      // Clear the current resource.
+      EditorData::GetInstance().setCurrentResource(dtDAL::DataType::PREFAB, dtDAL::ResourceDescriptor());
    }
 
    ///////////////////////////////////////////////////////////////////////////////
