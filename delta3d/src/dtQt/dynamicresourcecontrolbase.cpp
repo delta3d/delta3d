@@ -154,7 +154,6 @@ namespace dtQt
       mTemporaryEditOnlyTextLabel = new SubQLabel(getValueAsString(), wrapper, this);
       // set the background color to white so that it sort of blends in with the rest of the controls
       SetBackgroundColor(mTemporaryEditOnlyTextLabel, PropertyEditorTreeView::ROW_COLOR_ODD);
-      mFocusWidget = mTemporaryEditOnlyTextLabel;
 
       // Use Current button
       mTemporaryUseCurrentBtn = new SubQPushButton(tr("Use Current"), wrapper, this);
@@ -182,6 +181,7 @@ namespace dtQt
       mGridLayout->setColumnStretch(1, 1);
       mGridLayout->setColumnStretch(2, 0);
 
+      wrapper->setFocusProxy(mTemporaryEditOnlyTextLabel);
       return wrapper;
    }
 

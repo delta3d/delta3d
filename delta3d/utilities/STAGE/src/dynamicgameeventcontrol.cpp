@@ -164,7 +164,6 @@ namespace dtEditQt
       listPlusNone += sortedEventNames;
       mTemporaryEditControl->addItems(listPlusNone);
       mTemporaryEditControl->setToolTip(getDescription());
-      mFocusWidget = mTemporaryEditControl;
 
       connect(mTemporaryEditControl, SIGNAL(activated(int)), this, SLOT(itemSelected(int)));
 
@@ -174,7 +173,7 @@ namespace dtEditQt
       mGridLayout->setColumnMinimumWidth(0, mTemporaryEditControl->sizeHint().width() / 2);
       mGridLayout->setColumnStretch(0, 1);
 
-      wrapper->setFocusProxy(mFocusWidget);
+      wrapper->setFocusProxy(mTemporaryEditControl);
       return wrapper;
    }
 

@@ -143,7 +143,6 @@ namespace dtQt
       // create and init the edit box
       mTemporaryEditControl = new SubQLineEdit(wrapper, this);
       mTemporaryEditControl->setToolTip(getDescription());
-      mFocusWidget = mTemporaryEditControl;
       if (mProperty->GetMaxLength() > 0)
       {
          mTemporaryEditControl->setMaxLength(mProperty->GetMaxLength());
@@ -155,7 +154,7 @@ namespace dtQt
       mGridLayout->setColumnMinimumWidth(0, mTemporaryEditControl->sizeHint().width() / 2);
       mGridLayout->setColumnStretch(0, 1);
 
-      wrapper->setFocusProxy(mFocusWidget);
+      wrapper->setFocusProxy(mTemporaryEditControl);
       return wrapper;
    }
 

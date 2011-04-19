@@ -156,7 +156,6 @@ namespace dtQt
       validator->setDecimals(NUM_DECIMAL_DIGITS_FLOAT);
       mTemporaryEditControl->setValidator(validator);
       mTemporaryEditControl->setToolTip(getDescription());
-      mFocusWidget = mTemporaryEditControl;
 
       mGridLayout->addWidget(mTemporaryEditControl, 0, 0, 1, 1);
       mGridLayout->setColumnMinimumWidth(0, mTemporaryEditControl->sizeHint().width() / 2);
@@ -164,7 +163,7 @@ namespace dtQt
 
       updateEditorFromModel(mWrapper);
 
-      wrapper->setFocusProxy(mFocusWidget);
+      wrapper->setFocusProxy(mTemporaryEditControl);
       return wrapper;
    }
 

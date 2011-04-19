@@ -125,12 +125,12 @@ namespace dtQt
       // create and init the edit box
       mTemporaryEditControl = new SubQLabel(getValueAsString(), wrapper, this);
       mTemporaryEditControl->setToolTip(getDescription());
-      mFocusWidget = mTemporaryEditControl;
 
       mGridLayout->addWidget(mTemporaryEditControl, 0, 0, 1, 1);
       mGridLayout->setColumnMinimumWidth(0, mTemporaryEditControl->sizeHint().width() / 2);
       mGridLayout->setColumnStretch(0, 1);
 
+      wrapper->setFocusProxy(mTemporaryEditControl);
       return wrapper;
    }
 

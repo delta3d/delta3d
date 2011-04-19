@@ -366,7 +366,6 @@ namespace dtQt
       // Grid layout for editor widget.
       QGridLayout* mGridLayout;
 
-      QWidget* mFocusWidget;
       QWidget* mWrapper;
 
    private:

@@ -158,7 +158,6 @@ namespace dtQt
       mTemporaryEditOnlyTextLabel = new SubQLabel(getValueAsString(), wrapper, this);
       // set the background color to white so that it sort of blends in with the rest of the controls
       SetBackgroundColor(mTemporaryEditOnlyTextLabel, PropertyEditorTreeView::ROW_COLOR_ODD);
-      mFocusWidget = mTemporaryEditOnlyTextLabel;
 
       // button
       mTemporaryColorPicker = new SubQPushButton(tr("Pick ..."), wrapper, this);
@@ -177,6 +176,7 @@ namespace dtQt
       hBox->addWidget(mTemporaryEditOnlyTextLabel);
       hBox->addStretch(1);
 
+      wrapper->setFocusProxy(mTemporaryEditOnlyTextLabel);
       return wrapper;
    }
 
