@@ -106,7 +106,7 @@ namespace dtAnim
        * @param immediate : Optional parameter, when set to true, will immediately
        * create the character's geometry.  This requires a valid OpenGL Context.
        * When false, will defer the creation until a valid OpenGL Context is present.
-       * 
+       *
        * @return : RefPtr of a osg::Node which will contain the renderable geometry.  Temporary
        * geometry is a osg::Group with a child osg::Geode which contains one osg::Drawable
        * that has a Drawcallback assigned to it.
@@ -163,7 +163,7 @@ namespace dtAnim
       CreateFunc mCreateFunc;
 
       void CalcNumVertsAndIndices(Cal3DModelWrapper* pWrapper,
-                           int& numVerts, int& numIndices);
+                                  int& numVerts, int& numIndices);
 
       ///Does the hardware support vertex buffers?
       bool SupportsVertexBuffers() const;
