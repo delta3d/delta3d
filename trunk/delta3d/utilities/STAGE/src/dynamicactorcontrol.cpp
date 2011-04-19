@@ -87,9 +87,11 @@ namespace dtEditQt
          if (proxy)
          {
             mTemporaryEditControl->setCurrentIndex(mTemporaryEditControl->findText(proxy->GetName().c_str()));
-            return;
          }
-         mTemporaryEditControl->setCurrentIndex(mTemporaryEditControl->findText("<None>"));
+         else
+         {
+            mTemporaryEditControl->setCurrentIndex(mTemporaryEditControl->findText("<None>"));
+         }
       }
 
       DynamicAbstractControl::updateEditorFromModel(widget);
@@ -105,56 +107,18 @@ namespace dtEditQt
       if (widget == mWrapper && mTemporaryEditControl)
       {
          // Get the current selected string and the previously set string value
-         QString selection = mTemporaryEditControl->currentText();
-         //unsigned int index = (unsigned int)(mTemporaryEditControl->currentIndex());
-         std::string selectionString = selection.toStdString();
+         std::string currentActorID = mTemporaryEditControl->itemData(mTemporaryEditControl->currentIndex()).toString().toStdString();
 
          dtDAL::BaseActorObject* currentProxy = getActorProxy();
-         std::string previousString = currentProxy ? currentProxy->GetName() : "<None>";
+         std::string previousActorID = currentProxy ? currentProxy->GetId().ToString() : "";
 
          // set our value to our object
-         if (previousString != selectionString)
+         if (currentActorID != previousActorID)
          {
             // give undo manager the ability to create undo/redo events
-            emit PropertyAboutToChange(*mPropContainer, *getActorProperty(), previousString, selectionString);
+            emit PropertyAboutToChange(*mPropContainer, *getActorProperty(), previousActorID, currentActorID);
 
-            dtDAL::Map* curMap = EditorData::GetInstance().getCurrentMap();
-            if (curMap == NULL)
-            {
-               throw dtDAL::MapException(
-               "There is no map open, there shouldn't be any controls", __FILE__, __LINE__);
-            }
-
-            // Find our matching proxy with this name - "<None>" ends up as NULl cause no match
-            std::vector< dtCore::RefPtr<dtDAL::BaseActorObject> > proxies;
-            std::string proxyClass;
-            if (mProperty)
-            {
-               proxyClass = mProperty->GetDesiredActorClass();
-            }
-            else if (mIdProperty)
-            {
-               proxyClass = mIdProperty->GetDesiredActorClass();
-            }
-            GetActorProxies(proxies, proxyClass);
-            dtDAL::BaseActorObject* proxy = NULL;
-            for (unsigned int i = 0; i < proxies.size(); i++)
-            {
-               if (proxies[i]->GetName().c_str() == selectionString)
-               {
-                  proxy = proxies[i].get();
-                  break;
-               }
-            }
-
-            if (mProperty)
-            {
-               mProperty->SetValue(proxy);
-            }
-            else if (mIdProperty)
-            {
-               mIdProperty->SetValue((proxy == NULL) ? dtCore::UniqueId("") : proxy->GetId());
-            }
+            mBaseProperty->FromString(currentActorID);
 
             dataChanged = true;
          }
@@ -195,18 +159,31 @@ namespace dtEditQt
       }
       GetActorProxies(names, proxyClass);
 
-      // Insert the None option at the end of the list
       QStringList sortedNames;
       for (unsigned int i = 0; i < names.size(); ++i)
       {
          sortedNames.append(QString(names[i]->GetName().c_str()));
       }
       sortedNames.sort();
-      // Insert the None option at the end of the list
-      QStringList listPlusNone;
-      listPlusNone.append(QString("<None>"));
-      listPlusNone += sortedNames;
-      mTemporaryEditControl->addItems(listPlusNone);
+
+      mTemporaryEditControl->addItem("<None>");
+
+      for (unsigned int i = 0; i < sortedNames.size(); ++i)
+      {
+         QString name = sortedNames[i];
+
+         // Find the actor that matches this name.
+         for (unsigned int n = 0; n < names.size(); ++n)
+         {
+            if (name == names[n]->GetName().c_str())
+            {
+               mTemporaryEditControl->addItem(name, QVariant(names[n]->GetId().ToString().c_str()));
+
+               names.erase(names.begin() + n);
+               break;
+            }
+         }
+      }
       mTemporaryEditControl->setToolTip(getDescription());
 
       mTemporaryGotoButton = new dtQt::SubQPushButton(tr("Goto"), wrapper, this);
