@@ -24,10 +24,12 @@ namespace dtCore
 }
 
 
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace osg
 {
    class Group;
 }
+/// @endcond
 
 
 namespace dtAnim

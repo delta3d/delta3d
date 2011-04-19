@@ -21,10 +21,12 @@ namespace dtDAL
    class ActorProperty;
 }
 
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace osg
 {
    class Node;
 }
+/// @endcond
 
 /**
  * The MapExporterPlugin is a plugin that is used as a tool

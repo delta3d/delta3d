@@ -33,11 +33,13 @@ class QAction;
 class QMenuBar;
 class QToolBar;
 
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace Phonon
 {
    class MediaObject;
    enum State;
 }
+/// @endcond
 
 namespace dtDirector
 {

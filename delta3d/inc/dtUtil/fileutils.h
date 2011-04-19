@@ -34,10 +34,12 @@
 #include <osgDB/FileUtils>
 #include <osgDB/ReaderWriter>
 
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace osgDB
 {
    class ArchiveExtended;
 }
+/// @endcond
 
 namespace dtUtil
 {
@@ -60,15 +62,15 @@ namespace dtUtil
     */
    struct FileInfo
    {
-      std::string fileName; //< the file name with full path
-      std::string path; //< the path to the file
-      std::string baseName; //< the file name with extension
-      std::string extensionlessFileName; //< the file name with extension
-      std::string extension; //< the file extension
-      size_t size; //< the size of the file in bytes.
-      time_t lastModified; //< when the file was last modified.
-      FileType fileType;
-      bool isInArchive; //< true if the specified file lives within an archive
+      std::string fileName; ///< the file name with full path
+      std::string path; ///< the path to the file
+      std::string baseName; ///< the file name with extension
+      std::string extensionlessFileName; ///< the file name with extension
+      std::string extension; ///< the file extension
+      size_t size; ///< the size of the file in bytes.
+      time_t lastModified; ///< when the file was last modified.
+      FileType fileType; ///< The enum value specifying the type of file
+      bool isInArchive; ///< true if the specified file lives within an archive
 
       FileInfo(): size(0), lastModified(0), fileType(FILE_NOT_FOUND), isInArchive(false) {}
    };
