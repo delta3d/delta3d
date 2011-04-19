@@ -429,10 +429,6 @@ namespace dtUtil
       return info;
    }
 
-   //-----------------------------------------------------------------------
-   std::string FileUtils::ArchiveRelativeToAbsolute(const std::string& relativeFile) const
-   {
-
       //we use cleanup string on the path so this accept becomes very simple
       class IsFileSeparator: public std::unary_function<char, bool>
       {
@@ -441,6 +437,11 @@ namespace dtUtil
          bool operator()(char c) const { return c == '/'; }
 
       };
+
+   //-----------------------------------------------------------------------
+   std::string FileUtils::ArchiveRelativeToAbsolute(const std::string& relativeFile) const
+   {
+
 
       std::string absDir = mCurrentDirectory;
       CleanupFileString(absDir);
@@ -1409,11 +1410,11 @@ namespace dtUtil
       std::string filename = fullFilename;
       CleanupFileString(filename);
 
-      osgDB::Registry* reg = osgDB::Registry::instance();
 
 //osgDB::Registry::getArchiveExtensions() was submitted and should be released in OSG 3.0
 #if defined(OPENSCENEGRAPH_MAJOR_VERSION) && OPENSCENEGRAPH_MAJOR_VERSION >= 3
 
+      osgDB::Registry* reg = osgDB::Registry::instance();
       const osgDB::Registry::ArchiveExtensionList& extensions = reg->getArchiveExtensions();
 
       osgDB::Registry::ArchiveExtensionList::const_iterator iter = extensions.begin();
@@ -1465,7 +1466,7 @@ namespace dtUtil
       std::string archiveName;
       std::string fileInArchive;
 
-      bool inArchive = SplitArchiveFilename(path, archiveName, fileInArchive);
+      SplitArchiveFilename(path, archiveName, fileInArchive);
 
       result = a.getDirectoryContents(fileInArchive);
    }
@@ -1574,10 +1575,10 @@ namespace dtUtil
    ////////////////////////////////////////////////////////////////////////////////
    bool FileUtils::ContainsArchiveExtension(const std::string& path) const
    {
-      osgDB::Registry* reg = osgDB::Registry::instance();
 
 //osgDB::Registry::getArchiveExtensions() was submitted and should be released in OSG 3.0
 #if defined(OPENSCENEGRAPH_MAJOR_VERSION) && OPENSCENEGRAPH_MAJOR_VERSION >= 3
+      osgDB::Registry* reg = osgDB::Registry::instance();
 
       const osgDB::Registry::ArchiveExtensionList& extensions = reg->getArchiveExtensions();
 
