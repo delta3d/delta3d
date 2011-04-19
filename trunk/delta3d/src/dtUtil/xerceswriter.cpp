@@ -19,6 +19,7 @@
 XERCES_CPP_NAMESPACE_USE
 using namespace dtUtil;
 
+////////////////////////////////////////////////////////////////////////////////
 XercesWriter::XercesWriter()
    : mImplementation(0)
    , mDocument(0)
@@ -56,6 +57,7 @@ XercesWriter::XercesWriter()
    }
 }
 
+////////////////////////////////////////////////////////////////////////////////
 XercesWriter::~XercesWriter()
 {
    // clean up the _document stuff
@@ -65,6 +67,7 @@ XercesWriter::~XercesWriter()
    }
 }
 
+////////////////////////////////////////////////////////////////////////////////
 void XercesWriter::CreateDocument(const std::string& rootname)
 {
    if (mImplementation)
@@ -92,6 +95,7 @@ void XercesWriter::CreateDocument(const std::string& rootname)
    }
 }
 
+////////////////////////////////////////////////////////////////////////////////
 void XercesWriter::WriteFile(const std::string& outputfile)
 {
    if (mImplementation)

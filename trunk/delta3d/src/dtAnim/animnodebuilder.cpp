@@ -52,10 +52,10 @@ namespace dtAnim
    {
    public:
       CreateGeometryDrawCallback(AnimNodeBuilder::CreateFunc& func,
-         Cal3DModelWrapper* wrapper):
-         mCreatedNode(NULL)
-         ,mCreateFunc(func)
-         ,mWrapper(wrapper)
+         Cal3DModelWrapper* wrapper)
+         : mCreatedNode(NULL)
+         , mCreateFunc(func)
+         , mWrapper(wrapper)
       {
       };
 
@@ -67,7 +67,7 @@ namespace dtAnim
       {
          if (!mCreatedNode.valid())
          {
-            CreateGeometryDrawCallback* const_this = const_cast<CreateGeometryDrawCallback*>( this );
+            CreateGeometryDrawCallback* const_this = const_cast<CreateGeometryDrawCallback*>(this);
             const_this->mCreatedNode = mCreateFunc(mWrapper);
          }
       }
@@ -76,7 +76,7 @@ namespace dtAnim
 
    private:
       AnimNodeBuilder::CreateFunc mCreateFunc;
-      Cal3DModelWrapper *mWrapper;
+      Cal3DModelWrapper* mWrapper;
    };
 
    ///Used to grab the created geometry from the CreateGeometryDrawCallback
@@ -84,7 +84,7 @@ namespace dtAnim
    class UpdateCallback : public osg::NodeCallback
    {
    public:
-      UpdateCallback(CreateGeometryDrawCallback *callback, osg::Group &group)
+      UpdateCallback(CreateGeometryDrawCallback* callback, osg::Group& group)
          : mCreateCB(callback)
          , mGroupToAddTo(&group)
       {
@@ -100,7 +100,7 @@ namespace dtAnim
          if (mCreateCB->mCreatedNode.valid())
          {
             //then add it, remove the temp geometry, and remove this callback
-            mGroupToAddTo->addChild( mCreateCB->mCreatedNode.get() );
+            mGroupToAddTo->addChild(mCreateCB->mCreatedNode.get());
             mGroupToAddTo->removeChild(0, 1);
             mGroupToAddTo->setUpdateCallback(NULL);
          }
@@ -111,7 +111,7 @@ namespace dtAnim
       }
 
    private:
-      CreateGeometryDrawCallback *mCreateCB;
+      CreateGeometryDrawCallback* mCreateCB;
       osg::ref_ptr<osg::Group> mGroupToAddTo;
    };
 
@@ -173,7 +173,7 @@ void AnimNodeBuilder::SetCreate(const CreateFunc& pCreate)
 ////////////////////////////////////////////////////////////////////////////////
 dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateNode(Cal3DModelWrapper* pWrapper, bool immediate)
 {
-   if( !immediate )
+   if(!immediate)
    {
       ///Add a temporary rendered shape with a draw callback to a Group.  The callback
       ///will postpone the creation of the real geometry until a valid openGL
@@ -238,11 +238,13 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateSoftwareInternal(Cal3DModelWrap
    return geode;
 }
 
+////////////////////////////////////////////////////////////////////////////////
 dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateSoftware(Cal3DModelWrapper* pWrapper)
 {
    return AnimNodeBuilder::CreateSoftwareInternal(pWrapper, true);
 }
 
+////////////////////////////////////////////////////////////////////////////////
 dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateSoftwareNoVBO(Cal3DModelWrapper* pWrapper)
 {
    return AnimNodeBuilder::CreateSoftwareInternal(pWrapper, false);
@@ -305,7 +307,7 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pWr
 
          osg::DrawElements* drawElements = NULL;
 
-         // Allocate the draw elements for the element size that CalIndex defines 
+         // Allocate the draw elements for the element size that CalIndex defines
          if (sizeof(CalIndex) < 4)
          {
             drawElements = new osg::DrawElementsUShort(GL_TRIANGLES, numIndices, (GLushort*)indexArray);
@@ -442,8 +444,8 @@ dtCore::ShaderProgram* AnimNodeBuilder::LoadShaders(Cal3DModelData& modelData, o
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void AnimNodeBuilder::CalcNumVertsAndIndices( Cal3DModelWrapper* pWrapper,
-                                             int &numVerts, int &numIndices)
+void AnimNodeBuilder::CalcNumVertsAndIndices(Cal3DModelWrapper* pWrapper,
+                                             int& numVerts, int& numIndices)
 {
    CalCoreModel* model = pWrapper->GetCalModel()->getCoreModel();
 
