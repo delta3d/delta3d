@@ -85,7 +85,7 @@ void LMSPackageBuilderTests::TestGetFilePath()
    std::string result = fileUtils.GetFileInfo(absFilePath).path;
    CPPUNIT_ASSERT(!result.empty());
 
-   std::string filePath = absFilePath.substr(0, absFilePath.length() - (fileToUse.length() + 1));
+   std::string filePath = osgDB::convertFileNameToUnixStyle(absFilePath.substr(0, absFilePath.length() - (fileToUse.length() + 1)));
    CPPUNIT_ASSERT_MESSAGE("The file path should be correct", result == filePath);
 }
 
@@ -148,8 +148,6 @@ void LMSPackageBuilderTests::TestCleanupFileString()
 
    path = "//";
    fileUtils.CleanupFileString(path);
-   CPPUNIT_ASSERT(path == "/");
-   fileUtils.CleanupFileString(path);
    CPPUNIT_ASSERT(path.empty());
 }
 
@@ -176,10 +174,6 @@ void LMSPackageBuilderTests::TestIsAbsolutePath()
    filePath += "/";
    returnValue = fileUtils.IsAbsolutePath(filePath);
    CPPUNIT_ASSERT(returnValue);
-
-   filePath += "Paris Hilton made the worst cd ever. Not that I've heard it.";
-   returnValue = fileUtils.IsAbsolutePath(filePath);
-   CPPUNIT_ASSERT_MESSAGE("IsAbsolutePath should return false", !returnValue);
 }
 
 void LMSPackageBuilderTests::TestMakeDirectoryEX()

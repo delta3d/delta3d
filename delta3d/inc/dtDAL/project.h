@@ -569,6 +569,13 @@ namespace dtDAL
        * @see class dtDAL::BaseActorObject
        */
       bool GetEditMode() const;
+
+      /**
+       * @return the parser used to load the maps.
+       * @note will return NULL if no map is being parsed.
+       */
+      MapParser* GetCurrentMapParser();
+
    private:
       static dtCore::RefPtr<Project> mInstance; //< the instance of the project.
 

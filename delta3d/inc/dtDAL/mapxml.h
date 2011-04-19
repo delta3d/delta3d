@@ -25,6 +25,7 @@
 #include <dtDAL/export.h>
 #include <dtDAL/basexml.h>
 
+
 namespace dtDAL
 {
    class Map;
@@ -55,6 +56,7 @@ namespace dtDAL
           * @throws MapLoadParseError if a fatal error occurs in the parsing.
           */
          bool Parse(const std::string& path, Map** map);
+         bool Parse(std::istream& stream, Map** map);
 
          /**
          * Parses a prefab resource and places it in the given map
@@ -79,6 +81,8 @@ namespace dtDAL
           * @throws MapLoadParseError if any errors occurs in the parsing.
           */
          const std::string ParseMapName(const std::string& path);
+         const std::string ParseMapName(std::istream& stream);
+
 
          /**
           * This method exists to allow actors being parsed to access their map.  It's to help 
@@ -160,6 +164,7 @@ namespace dtDAL
 
       ActorPropertySerializer* mPropSerializer;
    };
+
 }
 
 #endif

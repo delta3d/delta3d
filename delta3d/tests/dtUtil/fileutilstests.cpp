@@ -53,13 +53,20 @@ class FileUtilsTests : public CPPUNIT_NS::TestFixture
       CPPUNIT_TEST(testDirectoryContentsWithTwoFilters);
       CPPUNIT_TEST(testDirectoryContentsWithDuplicateFilter);
 
+      CPPUNIT_TEST(testLoadFromArchive);
+      CPPUNIT_TEST(testArchiveRelativePath);
+      CPPUNIT_TEST(testIsSameFileInArchive);
+      CPPUNIT_TEST(testDirExistsInArchive);
+      CPPUNIT_TEST(testFileExistsInArchive);
+
+
    CPPUNIT_TEST_SUITE_END();
 
    public:
 
       void setUp();
       void tearDown();
-
+      
       void testFileIO1();
       void testFileIO2();
       void testRelativePath();
@@ -69,6 +76,12 @@ class FileUtilsTests : public CPPUNIT_NS::TestFixture
       void testDirectoryContentsWithOneFilter();
       void testDirectoryContentsWithTwoFilters();
       void testDirectoryContentsWithDuplicateFilter();
+
+      void testLoadFromArchive();
+      void testArchiveRelativePath();
+      void testIsSameFileInArchive();
+      void testDirExistsInArchive();
+      void testFileExistsInArchive();
 
    private:
 
@@ -667,3 +680,115 @@ void FileUtilsTests::testDirectoryContentsWithDuplicateFilter()
                                  singleFilterList.size(), duplicateFilter.size());
 }
 
+void FileUtilsTests::testLoadFromArchive()
+{
+   std::string archivePath("./data/ProjectArchive.zip");
+
+   dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
+
+   fileUtils.ChangeDirectory(TESTS_DIR);
+
+   dtUtil::FileInfo info = fileUtils.GetFileInfo(archivePath);
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("The file type for a zip file should be an archive", dtUtil::ARCHIVE, info.fileType);
+
+   dtUtil::DirectoryContents zipContents = fileUtils.DirGetFiles(archivePath);
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("The zip should have 2 folders.", 2, int(zipContents.size()));
+
+   fileUtils.ChangeDirectory(archivePath);
+   fileUtils.ChangeDirectory("StaticMeshes");
+
+   dtUtil::DirectoryContents meshContents = fileUtils.DirGetFiles(".");
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("The mesh directory should have 1 file.", 1, int(meshContents.size()));
+
+   fileUtils.ChangeDirectory(TESTS_DIR);
+   
+}
+
+void FileUtilsTests::testArchiveRelativePath()
+{
+
+   std::string archivePath("./data/ProjectArchive.zip");
+
+   dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
+
+   fileUtils.ChangeDirectory(TESTS_DIR);
+
+   dtUtil::FileInfo info = fileUtils.GetFileInfo(archivePath);
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("The file type for a zip file should be an archive", dtUtil::ARCHIVE, info.fileType);
+
+   osgDB::ArchiveExtended* a = fileUtils.FindArchive(archivePath);
+
+   CPPUNIT_ASSERT(a != NULL);
+   fileUtils.ChangeDirectory(TESTS_DIR);
+
+}
+
+void FileUtilsTests::testIsSameFileInArchive()
+{
+
+   std::string archivePath("./data/ProjectArchive.zip");
+   std::string pathToFile = TESTS_DIR + "/data/ProjectArchive.zip/StaticMeshes/articulation_test.ive";
+   std::string filename("articulation_test.ive");
+
+
+   dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
+
+   fileUtils.ChangeDirectory(TESTS_DIR);
+
+   dtUtil::FileInfo info = fileUtils.GetFileInfo(archivePath);
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("The file type for a zip file should be an archive", dtUtil::ARCHIVE, info.fileType);
+
+   dtUtil::DirectoryContents zipContents = fileUtils.DirGetFiles(archivePath);
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("The zip should have 2 folders.", 2, int(zipContents.size()));
+
+   fileUtils.ChangeDirectory(archivePath + "/StaticMeshes");
+
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("Given a full path to the file and a relative, it should be able to compare them and find them to be the same",
+                                 true, fileUtils.IsSameFile(pathToFile, filename));
+
+   fileUtils.ChangeDirectory(TESTS_DIR);
+}
+
+void FileUtilsTests::testDirExistsInArchive()
+{
+
+   std::string archivePath("./data/ProjectArchive.zip");
+
+   dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
+
+   fileUtils.ChangeDirectory(TESTS_DIR);
+
+   dtUtil::FileInfo info = fileUtils.GetFileInfo(archivePath);
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("The file type for a zip file should be an archive", dtUtil::ARCHIVE, info.fileType);
+
+   dtUtil::DirectoryContents zipContents = fileUtils.DirGetFiles(archivePath);
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("The zip should have 2 folders.", 2, int(zipContents.size()));
+
+   fileUtils.ChangeDirectory(archivePath);
+
+   bool relativeTest = fileUtils.DirExists("StaticMeshes");
+   bool absoluteTest = fileUtils.DirExists(TESTS_DIR + "/data/ProjectArchive.zip/StaticMeshes");
+
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("The directory in the archive should be found to exist when searching with a relative path", true, relativeTest);
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("The directory in the archive should be found to exist when searching with an absolute path", true, absoluteTest);
+
+   fileUtils.ChangeDirectory(TESTS_DIR);
+}
+
+void FileUtilsTests::testFileExistsInArchive()
+{
+
+   std::string archivePath("./data/ProjectArchive.zip");
+
+   dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
+
+   fileUtils.ChangeDirectory(TESTS_DIR + "/data/ProjectArchive.zip/StaticMeshes");
+
+   bool relativeTest = fileUtils.FileExists("articulation_test.ive");
+   bool absoluteTest = fileUtils.FileExists(TESTS_DIR + "/data/ProjectArchive.zip/StaticMeshes/articulation_test.ive");
+
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("The static mesh in the archive should be found to exist when searching with a relative path", true, relativeTest);
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("The static mesh in the archive should be found to exist when searching with an absolute path", true, absoluteTest);
+
+   fileUtils.ChangeDirectory(TESTS_DIR);
+}
