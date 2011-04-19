@@ -46,10 +46,12 @@ namespace dtCore
    class Light;
 }
 
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace osg
 {
    class Group;
 }
+/// @endcond
 
 namespace dtAnim
 {

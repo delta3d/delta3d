@@ -24,10 +24,12 @@
 #include <dtNetGM/export.h>
 #include <dtNetGM/networkcomponent.h>
 
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace OpenThreads
 {
    class Block;
 }
+/// @endcond
 
 namespace dtNetGM
 {

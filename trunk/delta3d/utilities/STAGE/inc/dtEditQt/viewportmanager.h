@@ -46,10 +46,12 @@ class QWidget;
 class QMouseEvent;
 class QWheelEvent;
 
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace osg
 {
    class GraphicsContext;
 }
+/// @endcond
 
 namespace dtEditQt
 {
