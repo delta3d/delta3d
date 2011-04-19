@@ -101,4 +101,21 @@ namespace dtQt
       return false;
    }
 
+   //////////////////////////////////////////////////////////////////////////
+   bool DynamicGroupControl::IsPropertyDefault() const
+   {
+      std::vector<DynamicAbstractControl*>::const_iterator itr = mChildren.begin();
+
+      while (itr != mChildren.end())
+      {
+         if ((*itr)->IsPropertyDefault() == false)
+         {
+            return false;
+         }
+         ++itr;
+      }
+
+      return true;
+   }
+
 } // namespace dtQt

@@ -46,9 +46,8 @@ namespace dtQt
 
     /**
     * @class DynamicGroupControl
-    * @brief This is the dynamic control for the Group data type - used in the property editor
     * The primary purpose of the group control is to provide a visual grouping of property types
-    * so that they aren't all laid out together.
+    * so that they aren't all laid out together. Used for Property category headings.
     */
     class DT_QT_EXPORT DynamicGroupControl : public DynamicAbstractParentControl
     {
@@ -89,6 +88,12 @@ namespace dtQt
          * @see DynamicAbstractControl#getDisplayName
          */
         virtual const QString getDisplayName();
+
+        /** 
+         * Overwritten to also check if all child Properties are Default.
+         * @return True if all child ActorProperties are default, false otherwise
+         */
+        virtual bool IsPropertyDefault() const;
 
     public slots:
 
