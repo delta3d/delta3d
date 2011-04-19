@@ -109,7 +109,6 @@ namespace dtQt
       , mPropertyTree(NULL)
       , mDefaultResetButton(NULL)
       , mGridLayout(NULL)
-      , mFocusWidget(NULL)
       , mWrapper(NULL)
       //, mNewCommitEmitter(NULL)
    {
@@ -310,16 +309,15 @@ namespace dtQt
       {
          mWrapper = NULL;
          mDefaultResetButton = NULL;
-         mFocusWidget = NULL;
       }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    void DynamicAbstractControl::onResetClicked()
    {
-      if (mFocusWidget)
+      if (mWrapper)
       {
-         mFocusWidget->setFocus();
+         mWrapper->setFocus();
       }
 
       NotifyParentOfPreUpdate();

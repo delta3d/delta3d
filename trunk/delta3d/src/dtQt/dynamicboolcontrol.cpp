@@ -138,7 +138,6 @@ namespace dtQt
       mTemporaryEditControl->addItem(TRUE_LABEL);
       mTemporaryEditControl->addItem(FALSE_LABEL);
       mTemporaryEditControl->setToolTip(getDescription());
-      mFocusWidget = mTemporaryEditControl;
 
       mGridLayout->addWidget(mTemporaryEditControl, 0, 0, 1, 1);
       mGridLayout->setColumnMinimumWidth(0, mTemporaryEditControl->sizeHint().width() / 2);
@@ -154,7 +153,7 @@ namespace dtQt
 
       connect(mTemporaryEditControl, SIGNAL(activated(int)), this, SLOT(itemSelected(int)));
 
-      wrapper->setFocusProxy(mFocusWidget);
+      wrapper->setFocusProxy(mTemporaryEditControl);
       return wrapper;
    }
 

@@ -132,13 +132,12 @@ namespace dtQt
    QWidget* DynamicColorElementControl::createEditor(QWidget* parent,
       const QStyleOptionViewItem& option, const QModelIndex& index)
    {
-      //QWidget* wrapper = DynamicAbstractControl::createEditor(parent, option, index);
-
       // create and init the edit box
       mTemporaryEditControl = new SubQSpinBox(parent, this);
       mTemporaryEditControl->setMinimum(-512);
       mTemporaryEditControl->setMaximum(512);
-      mFocusWidget = mTemporaryEditControl;
+      mTemporaryEditControl->setToolTip(getDescription());
+      mWrapper = mTemporaryEditControl;
 
       if (!mInitialized)
       {
@@ -146,12 +145,7 @@ namespace dtQt
          return mTemporaryEditControl;
       }
 
-      //mGridLayout->addWidget(mTemporaryEditControl, 0, 0, 1, 1);
-      //mGridLayout->setColumnMinimumWidth(0, mTemporaryEditControl->sizeHint().width() / 2);
-      //mGridLayout->setColumnStretch(0, 1);
-
       updateEditorFromModel(mWrapper);
-      mTemporaryEditControl->setToolTip(getDescription());
 
       return mTemporaryEditControl;
    }

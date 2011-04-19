@@ -208,7 +208,6 @@ namespace dtEditQt
       listPlusNone += sortedNames;
       mTemporaryEditControl->addItems(listPlusNone);
       mTemporaryEditControl->setToolTip(getDescription());
-      mFocusWidget = mTemporaryEditControl;
 
       mTemporaryGotoButton = new dtQt::SubQPushButton(tr("Goto"), wrapper, this);
 
@@ -222,7 +221,7 @@ namespace dtEditQt
       mGridLayout->setColumnMinimumWidth(1, mTemporaryGotoButton->sizeHint().width() / 2);
       mGridLayout->setColumnStretch(0, 2);
 
-      wrapper->setFocusProxy(mFocusWidget);
+      wrapper->setFocusProxy(mTemporaryEditControl);
       return wrapper;
    }
 

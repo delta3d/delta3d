@@ -108,7 +108,6 @@ namespace dtQt
       mAddButton   = new SubQPushButton(tr("Add"),   wrapper, this);
       mClearButton = new SubQPushButton(tr("Clear"), wrapper, this);
 
-      mFocusWidget = mAddButton;
       UpdateButtonStates();
 
       connect(mAddButton,   SIGNAL(clicked()), this, SLOT(onAddClicked()));
@@ -125,6 +124,7 @@ namespace dtQt
       mGridLayout->setColumnStretch(1, 0);
       mGridLayout->setColumnStretch(2, 0);
 
+      wrapper->setFocusProxy(mAddButton);
       return wrapper;
    }
 
