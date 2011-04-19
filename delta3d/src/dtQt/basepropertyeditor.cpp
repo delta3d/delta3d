@@ -465,6 +465,12 @@ namespace dtQt
       UpdateTitle();
    }
 
+   /////////////////////////////////////////////////////////////////////////////////
+   void BasePropertyEditor::PropertyChangedFromControl(dtDAL::PropertyContainer& propCon, dtDAL::ActorProperty& prop)
+   {
+      ActorPropertyChanged(propCon, prop);
+   }
+
    /////////////////////////////////////////////////////////////////////////////
    void BasePropertyEditor::UpdateTitle()
    {
