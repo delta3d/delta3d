@@ -112,6 +112,9 @@ namespace dtQt
    void PropertyEditorDelegate::paint(QPainter* painter, const QStyleOptionViewItem& opt,
       const QModelIndex& index) const
    {
+
+      QStyleOptionViewItem myopt(opt);
+
       // give the control a chance to do custom painting for this column
       const PropertyEditorModel* model = dynamic_cast<const PropertyEditorModel* >(index.model());
       if (model != NULL)
@@ -122,9 +125,18 @@ namespace dtQt
             control->paintColumn(index.column(), painter, opt);
             return;
          }
+
+         //render the first column, the ActorProperty displayed name, bold, if not the default value
+         if (index.column() == 0)
+         {
+            if (!control->IsPropertyDefault())
+            {
+               myopt.font.setBold(true);
+            }
+         }
       }
 
-      QItemDelegate::paint(painter, opt, index);
+      QItemDelegate::paint(painter, myopt, index);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
