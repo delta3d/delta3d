@@ -153,6 +153,38 @@ namespace dtDAL
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   ActorProperty* ContainerActorProperty::GetProperty(const std::string& name)
+   {
+      int count = (int)mProperties.size();
+      for (int index = 0; index < count; ++index)
+      {
+         ActorProperty* prop = mProperties[index];
+         if (prop && prop->GetName() == name)
+         {
+            return prop;
+         }
+      }
+
+      return NULL;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   const ActorProperty* ContainerActorProperty::GetProperty(const std::string& name) const
+   {
+      int count = (int)mProperties.size();
+      for (int index = 0; index < count; ++index)
+      {
+         const ActorProperty* prop = mProperties[index];
+         if (prop && prop->GetName() == name)
+         {
+            return prop;
+         }
+      }
+
+      return NULL;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    ActorProperty* ContainerActorProperty::GetCurrentProperty()
    {
       if (mCurrentIndex >= 0 && mCurrentIndex < (int)mProperties.size())
