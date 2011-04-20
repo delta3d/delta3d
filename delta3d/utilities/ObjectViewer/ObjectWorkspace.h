@@ -100,8 +100,7 @@ private:
    QAction* mShadedAction;
    QAction* mShadedWireAction;
    QAction* mGridAction;
-   QAction* mDiffuseLightAction;
-   QAction* mPointLightAction;
+   QAction* mStatisticsAction;
 
    // Shader Toolbar
    QAction* mRecompileAction;
@@ -122,7 +121,6 @@ private:
    QList<std::string> mAdditionalShaderFiles;
 
    ObjectViewer* mViewer;
-
    QObject* GetResourceObject();
    void GetRecursiveFileInfoFromDir(const QString& rootDir, const QStringList& fileFilters, QFileInfoList& outList);
    void CreateMenus();
