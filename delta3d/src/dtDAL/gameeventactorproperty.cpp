@@ -76,7 +76,7 @@ namespace dtDAL
    }
 
    //////////////////////////////////////////////////////////////////////////
-   std::string GameEventActorProperty::GetValueString()
+   std::string GameEventActorProperty::GetValueString() const
    {
       GameEvent* gameEvent = GetValue();
       if (gameEvent)
