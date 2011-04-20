@@ -957,4 +957,9 @@ void ObjectViewer::GenerateTangentsForObject(dtCore::Object* object)
    }
 }
 
+//////////////////////////////////////////////////////////////////////////
+void ObjectViewer::OnNextStatistics()
+{
+   SetNextStatisticsType();
+}
 

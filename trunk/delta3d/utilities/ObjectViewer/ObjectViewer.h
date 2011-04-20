@@ -84,6 +84,7 @@ public slots:
    void OnSetShadedWireframe();
    void OnSetGenerateTangentAttribute(bool shouldGenerate);
    void OnToggleGrid(bool shouldDisplay);
+   void OnNextStatistics();
 
    // Lighting slots
    void OnFixLights();

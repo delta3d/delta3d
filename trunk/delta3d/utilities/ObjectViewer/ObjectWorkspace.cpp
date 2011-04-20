@@ -236,6 +236,7 @@ void ObjectWorkspace::CreateDisplayToolbarActions()
    QIcon shadedIcon(":/images/shaded.png");
    QIcon shadedWireIcon(":/images/shadedwire.png");
    QIcon gridIcon(":/images/xygrid.png");
+   QIcon statIcon(":/images/statistics.png");
 
    mWireframeAction  = actionGroup->addAction(wireframeIcon, "Wireframe");
    mShadedAction     = actionGroup->addAction(shadedIcon, "Shaded");
@@ -243,6 +244,8 @@ void ObjectWorkspace::CreateDisplayToolbarActions()
 
    mGridAction = new QAction(gridIcon, "Toggle Grid", this);
    connect(mGridAction, SIGNAL(toggled(bool)), this, SLOT(OnToggleGridClicked(bool)));
+
+   mStatisticsAction = new QAction(statIcon, "Stats", this);
 
    mWireframeAction->setCheckable(true);
    mShadedAction->setCheckable(true);
@@ -300,6 +303,8 @@ void ObjectWorkspace::CreateToolbars()
    mDisplayToolbar->addAction(mShadedWireAction);
    mDisplayToolbar->addSeparator();
    mDisplayToolbar->addAction(mGridAction);
+   mDisplayToolbar->addSeparator();
+   mDisplayToolbar->addAction(mStatisticsAction);
 
    mShaderToolbar = addToolBar("Shader toolbar");
    mShaderToolbar->addAction(mOpenVertexShaderAction);
@@ -779,6 +784,7 @@ void ObjectWorkspace::SetupConnectionsWithViewer()
       mViewer, SLOT(OnSetLightQuadratic(int, float)));
 
    connect(this, SIGNAL(ToggleGrid(bool)), mViewer, SLOT(OnToggleGrid(bool)));
+   connect(mStatisticsAction, SIGNAL(triggered()), mViewer, SLOT(OnNextStatistics()));
 
    connect(this->GetResourceObject(), SIGNAL(ToggleVertexShaderSources(bool)),
       this, SLOT(OnToggleVertexShaderSource(bool)));
