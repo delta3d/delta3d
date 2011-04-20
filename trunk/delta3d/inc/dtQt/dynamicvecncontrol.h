@@ -32,8 +32,10 @@
 #include <dtQt/dynamicabstractparentcontrol.h>
 #include <dtQt/dynamicvectorelementcontrol.h>
 #include <dtCore/refptr.h>
+#include <dtUtil/log.h>
 
 #include <QtCore/QString>
+#include <QtGui/QGridLayout>
 
 namespace dtQt
 {
