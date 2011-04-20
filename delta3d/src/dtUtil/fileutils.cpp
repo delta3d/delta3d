@@ -1603,12 +1603,12 @@ namespace dtUtil
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   dtCore::RefPtr<osg::Object> FileUtils::ReadObject(const std::string& filename, osgDB::ReaderWriter::Options* options)
+   osg::Object* FileUtils::ReadObject(const std::string& filename, osgDB::ReaderWriter::Options* options)
    {
       FileInfo info = GetFileInfo(filename);
       osgDB::Registry* reg = osgDB::Registry::instance();
 
-      dtCore::RefPtr<osg::Object> result = NULL;
+      osg::Object* result = NULL;
 
       if(info.fileType == ARCHIVE || info.isInArchive)
       {
@@ -1634,9 +1634,9 @@ namespace dtUtil
             if(arch != NULL)
             {
                osgDB::ReaderWriter::ReadResult readResult = arch->readObject(strippedFilename, options);
-               if(readResult.success())
+               if(readResult.validObject())
                {
-                  result = readResult.getObject();
+                  result = readResult.takeObject();
                   if (result != NULL && options != NULL && (options->getObjectCacheHint() & osgDB::ReaderWriter::Options::CACHE_OBJECTS))
                   {
                      reg->addEntryToObjectCache(strippedFilename, result);
@@ -1654,12 +1654,12 @@ namespace dtUtil
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   dtCore::RefPtr<osg::Node> FileUtils::ReadNode(const std::string& filename, osgDB::ReaderWriter::Options* options)
+   osg::Node* FileUtils::ReadNode(const std::string& filename, osgDB::ReaderWriter::Options* options)
    {
       FileInfo info = GetFileInfo(filename);
       osgDB::Registry* reg = osgDB::Registry::instance();
 
-      dtCore::RefPtr<osg::Node> result = NULL;
+      osg::Node* result = NULL;
 
       if(info.fileType == ARCHIVE || info.isInArchive)
       {
@@ -1685,9 +1685,9 @@ namespace dtUtil
             if(arch != NULL)
             {
                osgDB::ReaderWriter::ReadResult readResult = arch->readNode(strippedFilename, options);
-               if(readResult.success())
+               if(readResult.validNode())
                {
-                  result = readResult.getNode();
+                  result = readResult.takeNode();
 
                   if (result != NULL && options != NULL && (options->getObjectCacheHint() & osgDB::ReaderWriter::Options::CACHE_NODES))
                   {

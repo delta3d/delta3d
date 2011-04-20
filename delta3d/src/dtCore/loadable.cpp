@@ -2,6 +2,7 @@
 #include <dtCore/loadable.h>
 #include <dtCore/refptr.h>
 #include <dtUtil/log.h>
+#include <dtUtil/fileutils.h>
 
 #include <osg/Node>
 #include <osgDB/ReadFile>
@@ -38,7 +39,12 @@ osg::Node* Loadable::LoadFile(const std::string& filename, bool useCache)
    Log::GetInstance().LogMessage(Log::LOG_DEBUG, __FUNCTION__,
                                  "Loading '%s'", filename.c_str());
 
-   RefPtr<osgDB::ReaderWriter::Options> options = new osgDB::ReaderWriter::Options;
+   // Attempt to clone our options if possible, otherwise options cannot be passed onto the plugins
+   osgDB::Registry* reg = osgDB::Registry::instance();
+
+   dtCore::RefPtr<osgDB::ReaderWriter::Options> options = reg->getOptions() ?
+      static_cast<osgDB::ReaderWriter::Options*>(reg->getOptions()->clone(osg::CopyOp::SHALLOW_COPY)) :
+   new osgDB::ReaderWriter::Options;
 
    if (useCache)
    {
@@ -49,7 +55,7 @@ osg::Node* Loadable::LoadFile(const std::string& filename, bool useCache)
       options->setObjectCacheHint(osgDB::ReaderWriter::Options::CACHE_NONE);
    }
 
-   osg::Node *model = osgDB::readNodeFile(mFilename, options.get());
+   osg::Node* model = dtUtil::FileUtils::GetInstance().ReadNode(mFilename, options.get());
    if (model != 0)
    {
       // this crashes - prolly should be called from the Update traversal
