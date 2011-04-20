@@ -96,10 +96,13 @@ namespace dtDAL
       /**
       * Retrieves a property in the container.
       *
-      * @param[in]  The index to the property to retrieve.
+      * @param[in]  index  The index to the property to retrieve.
+      * @param[in]  name   The name of the property to retrieve.
       */
       ActorProperty* GetProperty(int index);
       const ActorProperty* GetProperty(int index) const;
+      ActorProperty* GetProperty(const std::string& name);
+      const ActorProperty* GetProperty(const std::string& name) const;
 
       /**
       * Retrieves the current property (used in save/load).
