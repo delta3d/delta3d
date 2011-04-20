@@ -337,8 +337,8 @@ namespace dtUtil
       static std::string ConcatPaths(const std::string& left, const std::string& right);
 
 
-      dtCore::RefPtr<osg::Object> ReadObject(const std::string& filename, osgDB::ReaderWriter::Options* options = NULL);
-      dtCore::RefPtr<osg::Node> ReadNode(const std::string& filename, osgDB::ReaderWriter::Options* options = NULL);
+      osg::Object* ReadObject(const std::string& filename, osgDB::ReaderWriter::Options* options = NULL);
+      osg::Node* ReadNode(const std::string& filename, osgDB::ReaderWriter::Options* options = NULL);
       
       /**
        * Used to search for archives by filename.
