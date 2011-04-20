@@ -228,7 +228,7 @@ const std::string ResourceActorProperty::ToString() const
 }
 
 //////////////////////////////////////////////////////////////////////////
-std::string ResourceActorProperty::GetValueString()
+std::string ResourceActorProperty::GetValueString() const
 {
    ResourceDescriptor r = GetValue();
    if (!r.IsEmpty())

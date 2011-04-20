@@ -178,7 +178,7 @@ namespace dtDAL
          /**
           * Retrieves a human readable version of the property's value.
           */
-         virtual std::string GetValueString();
+         virtual std::string GetValueString() const;
          
          ///Deprecated 12/11/09
          DEPRECATE_FUNC void SetValue(ResourceDescriptor* value);
