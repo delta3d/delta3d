@@ -1,3 +1,0 @@
-This is a sample file that will be packed into a package.
-
-It should have three lines!
