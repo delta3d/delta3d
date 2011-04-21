@@ -152,6 +152,7 @@ namespace dtEditQt {
       void dragMoveEvent(QDragMoveEvent* event);
       void dropEvent(QDropEvent* event);
 
+
    public slots:
       /**
        * Puts the perspective viewport options in sync with the editor preferences.
@@ -234,6 +235,13 @@ namespace dtEditQt {
        * @param dy the adjusted change in y that the mouse moved.
        */
       virtual void onMouseMoveEvent(QMouseEvent* e, float dx, float dy);
+
+      /** 
+       * Is this QDropEvent something the Viewport supports?
+       * @return true if the QDropEvent is supported, false otherwise
+       */
+      virtual bool IsSupportedDragDropFormat(const QDropEvent* event) const;
+
 
    public:
       /**
@@ -354,6 +362,10 @@ namespace dtEditQt {
    private:
       bool                                   mEnabled;  //is this Viewport Enabled?
       bool                                   mIsRemoved;
+
+      ///From the QDropEvent, unroll the Prefab actor and add to the Map
+      void UnrollPrefab(QDropEvent* event, dtDAL::Map* mapPtr);
+
    };
 
 } // namespace dtEditQt
