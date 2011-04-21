@@ -500,119 +500,56 @@ namespace dtEditQt
    ////////////////////////////////////////////////////////////////////////////////
    void EditorViewport::dropEvent(QDropEvent* event)
    {
-      if (event->mimeData()->hasFormat("Prefab")      ||
-         event->mimeData()->hasFormat("StaticMesh")   ||
-         event->mimeData()->hasFormat("SkeletalMesh") ||
-         event->mimeData()->hasFormat("Particle")     ||
-         event->mimeData()->hasFormat("Sound")        ||
-         event->mimeData()->hasFormat("Actor")        ||
-         event->mimeData()->hasFormat("Director"))
-      {
-         if (mGhostProxy.valid())
-         {
-            dtCore::RefPtr<dtDAL::Map> mapPtr = EditorData::GetInstance().getCurrentMap();
-
-            // Unroll prefabs
-            if (event->mimeData()->hasFormat("Prefab"))
-            {
-               dtDAL::TransformableActorProxy* tProxy =
-                  dynamic_cast<dtDAL::TransformableActorProxy*>(mGhostProxy.get());
-               osg::Vec3 offset;
-               if (tProxy) offset = tProxy->GetTranslation();
-
-               QByteArray ghostData = event->mimeData()->data("Prefab");
-               QDataStream dataStream(&ghostData, QIODevice::ReadOnly);
-               QString resourceIdentity;
-               dataStream >> resourceIdentity;
-
-               dtDAL::ResourceDescriptor descriptor = dtDAL::ResourceDescriptor(resourceIdentity.toStdString());
-
-               if (mapPtr.valid())
-               {
-                  std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> > proxies;
-                  EditorEvents::GetInstance().emitBeginChangeTransaction();
-                  dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
-                  fileUtils.PushDirectory(dtDAL::Project::GetInstance().GetContext());
-                  try
-                  {
-                     int groupIndex = mapPtr->GetGroupCount();
-                     std::string fullPath = dtDAL::Project::GetInstance().GetResourcePath(descriptor);
-
-                     dtCore::RefPtr<dtDAL::MapParser> parser = new dtDAL::MapParser;
-                     parser->ParsePrefab(fullPath, proxies, mapPtr.get());
-
-                     for (int proxyIndex = 0; proxyIndex < (int)proxies.size(); proxyIndex++)
-                     {
-                        dtDAL::BaseActorObject* proxy = proxies[proxyIndex].get();
-
-                        mapPtr->AddProxy(*proxy, true);
-                        mapPtr->AddActorToGroup(groupIndex, proxy);
-
-                        tProxy = dynamic_cast<dtDAL::TransformableActorProxy*>(proxy);
-                        if (tProxy)
-                        {
-                           tProxy->SetTranslation(tProxy->GetTranslation() + offset);
-                        }
-
-                        // Notify the creation of the proxies.
-                        EditorEvents::GetInstance().emitActorProxyCreated(proxy, false);
-                     }
-                  }
-                  catch (const dtUtil::Exception& e)
-                  {
-                     LOG_ERROR(e.What());
-                  }
-                  fileUtils.PopDirectory();
-                  EditorEvents::GetInstance().emitEndChangeTransaction();
-
-                  ClearGhostProxy();
-
-                  ViewportManager::GetInstance().getViewportOverlay()->clearCurrentSelection();
-                  ViewportManager::GetInstance().getViewportOverlay()->setMultiSelectMode(true);
-                  EditorEvents::GetInstance().emitActorsSelected(proxies);
-               }
-
-               event->setDropAction(Qt::MoveAction);
-               event->accept();
-               return;
-            }
-
-            if (mapPtr.valid())
-            {
-               mapPtr->AddProxy(*mGhostProxy.get(), true);
-            }
-
-            // let the world know that a new proxy exists
-            EditorEvents::GetInstance().emitBeginChangeTransaction();
-            EditorEvents::GetInstance().emitActorProxyCreated(mGhostProxy.get(), false);
-            EditorEvents::GetInstance().emitEndChangeTransaction();
-
-            // Now, let the world that it should select the new actor proxy.
-            std::vector< dtCore::RefPtr<dtDAL::BaseActorObject> > actors;
-            actors.push_back(mGhostProxy.get());
-            EditorEvents::GetInstance().emitActorsSelected(actors);
-
-            const dtDAL::BaseActorObject::RenderMode& renderMode = mGhostProxy->GetRenderMode();
-            if (renderMode == dtDAL::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON ||
-               renderMode == dtDAL::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON)
-            {
-               dtDAL::ActorProxyIcon* billBoard = mGhostProxy->GetBillBoardIcon();
-               if (billBoard)
-               {
-                  ViewportManager::GetInstance().getMasterScene()->RemoveChild(billBoard->GetDrawable());
-               }
-            }
-
-            mGhostProxy = NULL;
-         }
-
-         event->setDropAction(Qt::MoveAction);
-         event->accept();
-      }
-      else
+      if (!IsSupportedDragDropFormat(event) ||
+          EditorData::GetInstance().getCurrentMap() == NULL)
       {
          event->ignore();
+
+         //wipe out any potential ghost proxy that might be triggering this drop
+         ClearGhostProxy(); 
+
+         return;
       }
+
+      if (mGhostProxy.valid())
+      {
+         dtCore::RefPtr<dtDAL::Map> mapPtr = EditorData::GetInstance().getCurrentMap();
+
+         // Unroll prefabs
+         if (event->mimeData()->hasFormat("Prefab"))
+         {
+            UnrollPrefab(event, mapPtr.get());
+            return;
+         }
+
+         mapPtr->AddProxy(*mGhostProxy.get(), true);
+
+         // let the world know that a new proxy exists
+         EditorEvents::GetInstance().emitBeginChangeTransaction();
+         EditorEvents::GetInstance().emitActorProxyCreated(mGhostProxy.get(), false);
+         EditorEvents::GetInstance().emitEndChangeTransaction();
+
+         // Now, let the world that it should select the new actor proxy.
+         std::vector< dtCore::RefPtr<dtDAL::BaseActorObject> > actors;
+         actors.push_back(mGhostProxy.get());
+         EditorEvents::GetInstance().emitActorsSelected(actors);
+
+         const dtDAL::BaseActorObject::RenderMode& renderMode = mGhostProxy->GetRenderMode();
+         if (renderMode == dtDAL::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON ||
+             renderMode == dtDAL::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON)
+         {
+            dtDAL::ActorProxyIcon* billBoard = mGhostProxy->GetBillBoardIcon();
+            if (billBoard)
+            {
+               ViewportManager::GetInstance().getMasterScene()->RemoveChild(billBoard->GetDrawable());
+            }
+         }
+
+         mGhostProxy = NULL;
+      }
+
+      event->setDropAction(Qt::MoveAction);
+      event->accept();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -1134,4 +1071,87 @@ namespace dtEditQt
    {
       return mEnabled;
    }
+
+   //////////////////////////////////////////////////////////////////////////
+   bool EditorViewport::IsSupportedDragDropFormat(const QDropEvent* event) const 
+   {
+      if (event->mimeData()->hasFormat("Prefab")      ||
+         event->mimeData()->hasFormat("StaticMesh")   ||
+         event->mimeData()->hasFormat("SkeletalMesh") ||
+         event->mimeData()->hasFormat("Particle")     ||
+         event->mimeData()->hasFormat("Sound")        ||
+         event->mimeData()->hasFormat("Actor")        ||
+         event->mimeData()->hasFormat("Director"))
+      {
+         return true;
+      }
+
+      return false;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void EditorViewport::UnrollPrefab(QDropEvent* event, dtDAL::Map* mapPtr)
+   {
+      dtDAL::TransformableActorProxy* tProxy =
+         dynamic_cast<dtDAL::TransformableActorProxy*>(mGhostProxy.get());
+      osg::Vec3 offset;
+      if (tProxy) offset = tProxy->GetTranslation();
+
+      QByteArray ghostData = event->mimeData()->data("Prefab");
+      QDataStream dataStream(&ghostData, QIODevice::ReadOnly);
+      QString resourceIdentity;
+      dataStream >> resourceIdentity;
+
+      dtDAL::ResourceDescriptor descriptor = dtDAL::ResourceDescriptor(resourceIdentity.toStdString());
+
+      if (mapPtr)
+      {
+         std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> > proxies;
+         EditorEvents::GetInstance().emitBeginChangeTransaction();
+         dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
+         fileUtils.PushDirectory(dtDAL::Project::GetInstance().GetContext());
+         try
+         {
+            int groupIndex = mapPtr->GetGroupCount();
+            std::string fullPath = dtDAL::Project::GetInstance().GetResourcePath(descriptor);
+
+            dtCore::RefPtr<dtDAL::MapParser> parser = new dtDAL::MapParser;
+            parser->ParsePrefab(fullPath, proxies, mapPtr);
+
+            for (int proxyIndex = 0; proxyIndex < (int)proxies.size(); proxyIndex++)
+            {
+               dtDAL::BaseActorObject* proxy = proxies[proxyIndex].get();
+
+               mapPtr->AddProxy(*proxy, true);
+               mapPtr->AddActorToGroup(groupIndex, proxy);
+
+               tProxy = dynamic_cast<dtDAL::TransformableActorProxy*>(proxy);
+               if (tProxy)
+               {
+                  tProxy->SetTranslation(tProxy->GetTranslation() + offset);
+               }
+
+               // Notify the creation of the proxies.
+               EditorEvents::GetInstance().emitActorProxyCreated(proxy, false);
+            }
+         }
+         catch (const dtUtil::Exception& e)
+         {
+            LOG_ERROR(e.What());
+         }
+         fileUtils.PopDirectory();
+         EditorEvents::GetInstance().emitEndChangeTransaction();
+
+         ClearGhostProxy();
+
+         ViewportManager::GetInstance().getViewportOverlay()->clearCurrentSelection();
+         ViewportManager::GetInstance().getViewportOverlay()->setMultiSelectMode(true);
+         EditorEvents::GetInstance().emitActorsSelected(proxies);
+      }
+
+      event->setDropAction(Qt::MoveAction);
+      event->accept();
+      return;
+   }
+
 } // namespace dtEditQt
