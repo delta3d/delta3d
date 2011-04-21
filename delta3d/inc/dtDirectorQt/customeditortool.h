@@ -37,14 +37,14 @@ namespace dtDirector
    {
    public:
       /**
-       * Constructs a new help box.
+       * Constructs the custom editor.
        *
        * @param[in]  name  The name of the tool.
        */
       CustomEditorTool(const std::string& name);
 
       /**
-       * Destructor
+       * Destructs the custom editor.
        */
       virtual ~CustomEditorTool();
 
@@ -97,9 +97,81 @@ namespace dtDirector
        */
       bool IsOpen() const {return mIsOpen;}
 
+      /**
+       * Handles all common actions at the beginning of a save:
+       * - Saves all current external link node connections.
+       * - Clears all current nodes in the graph.
+       * - Initializes the undo manager for all changes to be made during
+       *    the save operation.
+       *
+       * @return  True if initialization was successful.
+       */
+      virtual bool BeginSave();
+
+      /**
+       * Handles all common actions to finalize a save operation:
+       * - Re-connects all external link node connections.
+       * - Organizes the positions of all nodes based on their connections.
+       * - Finalizes all node changes to the undo manager.
+       *
+       * @return  True if the finalization was successful.
+       */
+      virtual bool EndSave();
+
+      /**
+       * Creates a new node.  Any non-value node created will automatically
+       * be positioned to the right of the given Chained Node.  If no
+       * chained node is specified, the new node will be placed in its
+       * own empty row.  For value nodes, the positioning is done during
+       * the Connect method.
+       *
+       * The node height determines how far below any new nodes are
+       * positioned relative to this newly created node.
+       *
+       * @param[in]  name         Name of the node to create.
+       * @param[in]  category     Category name of the node to create.
+       * @param[in]  chainedNode  The node to chain with.
+       * @param[in]  nodeHeight   The estimated height of the node being created.
+       *
+       * @return     A pointer to the newly created node.
+       */
+      dtDirector::Node* CreateNode(const std::string& name, const std::string& category, dtDirector::Node* chainedNode = NULL, int nodeHeight = 400);
+
+      /**
+       * Connects an output on a node to the input of another node.
+       *
+       * @param[in]  node1       The left node to connect.
+       * @param[in]  node2       The right node to connect.
+       * @param[in]  outputName  The name of the output link on Node2.
+       * @param[in]  inputName   The name of the input link on Node1.
+       *
+       * @return     True if the connection was made.
+       */
+      bool Connect(dtDirector::Node* node1, dtDirector::Node* node2, const std::string& outputName, const std::string& inputName);
+
+      /**
+       * Connects a value link on a node to a value node.  This will also
+       * re-position the value node so it is beneath the link it is
+       * connected to.
+       *
+       * @param[in]  node         The node to connect.
+       * @param[in]  valueNode    The value node to connect to.
+       * @param[in]  linkName     The name of the value link on node.
+       */
+      bool Connect(dtDirector::Node* node, dtDirector::Node* valueNode, const std::string& linkName);
+
    protected:
 
    private:
+
+      struct ConnectionData
+      {
+         bool visible;
+         std::string sourceNode;
+
+         dtDirector::Node* destNode;
+         std::string destNodeLink;
+      };
 
       bool              mIsOpen;
 
@@ -107,6 +179,13 @@ namespace dtDirector
       DirectorEditor*   mEditor;
 
       DirectorGraph*    mGraph;
+
+      std::vector<ConnectionData> mInputConnections;
+      std::vector<ConnectionData> mOutputConnections;
+      std::vector<ConnectionData> mValueConnections;
+
+      std::map<dtDirector::Node*, osg::Vec2> mChainedNodeMap;
+      int mRowHeight;
    };
 
 } // namespace dtDirector
