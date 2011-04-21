@@ -160,6 +160,32 @@ namespace dtDirector
        */
       bool Connect(dtDirector::Node* node, dtDirector::Node* valueNode, const std::string& linkName);
 
+      /**
+       * Retrieves a list of all input links connected to a given nodes
+       * output link.
+       * the outNodes value is not cleared before this operation.
+       *
+       * @param[in]   node      The current node.
+       * @param[in]   linkName  The output link to search.
+       * @param[out]  outLinks  The list of input links connected.
+       *
+       * @return      False if data could not be found.
+       */
+      bool GetNext(dtDirector::Node* node, const std::string& linkName, std::vector<dtDirector::InputLink*>& outLinks);
+
+      /**
+       * Retrieves a list of all output links connected to a given nodes
+       * input link.
+       * the outNodes value is not cleared before this operation.
+       *
+       * @param[in]   node      The current node.
+       * @param[in]   linkName  The input link to search.
+       * @param[out]  outLinks  The list of output links connected.
+       *
+       * @return      False if data could not be found.
+       */
+      bool GetPrev(dtDirector::Node* node, const std::string& linkName, std::vector<dtDirector::OutputLink*>& outLinks);
+
    protected:
 
    private:
