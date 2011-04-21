@@ -99,7 +99,7 @@ namespace dtEditQt
       {
          // Get the current selected string and the previously set string value
          QString selection = mTemporaryEditControl->currentText();
-         //int index = temporaryEditControl->findText(selection);
+
          std::string selectionString = selection.toStdString();
          std::string previousString = mProperty->GetValue() != NULL ? mProperty->GetValue()->GetName() : "<None>";
 
@@ -110,19 +110,10 @@ namespace dtEditQt
             emit PropertyAboutToChange(*mPropContainer, *mProperty, previousString, selectionString);
 
             dtDAL::GameEvent* eventToSet = NULL;
-            //std::vector<dtDAL::GameEvent*> events;
             dtDAL::Map& curMap = *EditorData::GetInstance().getCurrentMap();
-            //curMap.GetEventManager().GetAllEvents(events);
-            //for (unsigned int i = 0; i < events.size(); i++)
             eventToSet = curMap.GetEventManager().FindEvent(selectionString);
-            //{
-            //   if (events[i]->GetName() == selectionString)
-            //   {
-            //      eventToSet = events[i];
-            //      break;
-            //   }
-            //}
             mProperty->SetValue(eventToSet);
+
             dataChanged = true;
          }
       }
