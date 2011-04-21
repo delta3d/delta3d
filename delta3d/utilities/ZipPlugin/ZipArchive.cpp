@@ -114,11 +114,7 @@ bool ZipArchive::open(const std::string& file, ArchiveStatus status, const osgDB
    std::string fileName = osgDB::findDataFile( file, options );
    if (fileName.empty()) return osgDB::ReaderWriter::ReadResult::FILE_NOT_FOUND;
 
-   std::string password = "";
-   if (options)
-   {
-      password = options->getPluginStringData("password");
-   }
+   std::string password = ReadPassword(options);
 
    HZIP hz = OpenZip(fileName.c_str(), password.c_str());
 
@@ -150,11 +146,7 @@ bool ZipArchive::open(std::istream& fin, const osgDB::ReaderWriter::Options* opt
    char * pMemBuffer = new char [ulzipFileLength];
    if (!pMemBuffer) return false;
 
-   std::string password = "";
-   if (options)
-   {
-      password = options->getPluginStringData("password");
-   }
+   std::string password = ReadPassword(options);
 
    HZIP hz = NULL;
    fin.read(pMemBuffer, ulzipFileLength);
@@ -511,4 +503,22 @@ osgDB::DirectoryContents ZipArchive::getDirectoryContents(const std::string& dir
    return dirContents;
 }
 
+std::string ZipArchive::ReadPassword(const osgDB::ReaderWriter::Options* options) const
+{
+   std::string password = "";
+   if(options != NULL)
+   {
+      const osgDB::AuthenticationMap* credentials = options->getAuthenticationMap();
+      if(credentials != NULL)
+      {
+         const osgDB::AuthenticationDetails* details = credentials->getAuthenticationDetails("ZipPlugin");
+         if(details != NULL)
+         {
+            password = details->password;
+         }
+      }
+   }
+
+   return password;
+}
 
