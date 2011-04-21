@@ -28,11 +28,11 @@
 #include <dtEditQt/editorevents.h>
 #include <dtEditQt/viewportmanager.h>
 
-#include <dtDirector/nodemanager.h>
-
 #include <dtDirectorQt/propertyeditor.h>
 #include <dtDirectorQt/editorscene.h>
-#include <dtDirectorQt/undomanager.h>
+
+#include <dtDirectorNodes/scheduleraction.h>
+#include <dtDirectorNodes/animateactoraction.h>
 
 #include <dtCore/object.h>
 #include <dtDAL/arrayactorpropertybase.h>
@@ -1625,10 +1625,10 @@ void DirectorCinematicEditorPlugin::OnLoad()
          dtDAL::ContainerActorProperty* containerProp = dynamic_cast<dtDAL::ContainerActorProperty*>(arrayProp->GetArrayProperty());
          if (containerProp)
          {
-            dtDAL::StringActorProperty*  nameProp    = dynamic_cast<dtDAL::StringActorProperty*>(containerProp->GetProperty(0));
-            dtDAL::FloatActorProperty*   timeProp    = dynamic_cast<dtDAL::FloatActorProperty*>(containerProp->GetProperty(1));
-            dtDAL::BooleanActorProperty* playProp    = dynamic_cast<dtDAL::BooleanActorProperty*>(containerProp->GetProperty(2));
-            dtDAL::BooleanActorProperty* reverseProp = dynamic_cast<dtDAL::BooleanActorProperty*>(containerProp->GetProperty(3));
+            dtDAL::StringActorProperty*  nameProp    = dynamic_cast<dtDAL::StringActorProperty*>(containerProp->GetProperty("EventName"));
+            dtDAL::FloatActorProperty*   timeProp    = dynamic_cast<dtDAL::FloatActorProperty*>(containerProp->GetProperty("EventTime"));
+            dtDAL::BooleanActorProperty* playProp    = dynamic_cast<dtDAL::BooleanActorProperty*>(containerProp->GetProperty("TriggerNormal"));
+            dtDAL::BooleanActorProperty* reverseProp = dynamic_cast<dtDAL::BooleanActorProperty*>(containerProp->GetProperty("TriggerReverse"));
 
             if (nameProp && timeProp && playProp && reverseProp)
             {
@@ -1705,14 +1705,14 @@ void DirectorCinematicEditorPlugin::OnLoad()
                      dtDAL::ContainerActorProperty* containerProp = dynamic_cast<dtDAL::ContainerActorProperty*>(arrayProp->GetArrayProperty());
                      if (containerProp)
                      {
-                        dtDAL::StringActorProperty* nameProp = dynamic_cast<dtDAL::StringActorProperty*>(containerProp->GetProperty(0));
-                        dtDAL::FloatActorProperty*  timeProp = dynamic_cast<dtDAL::FloatActorProperty*>(containerProp->GetProperty(1));
-                        dtDAL::FloatActorProperty*  durationProp = dynamic_cast<dtDAL::FloatActorProperty*>(containerProp->GetProperty(2));
-                        dtDAL::FloatActorProperty*  blendInProp = dynamic_cast<dtDAL::FloatActorProperty*>(containerProp->GetProperty(3));
-                        dtDAL::FloatActorProperty*  blendOutProp = dynamic_cast<dtDAL::FloatActorProperty*>(containerProp->GetProperty(4));
-                        dtDAL::FloatActorProperty*  weightProp = dynamic_cast<dtDAL::FloatActorProperty*>(containerProp->GetProperty(5));
-                        dtDAL::FloatActorProperty*  offsetProp = dynamic_cast<dtDAL::FloatActorProperty*>(containerProp->GetProperty(6));
-                        dtDAL::FloatActorProperty*  speedProp = dynamic_cast<dtDAL::FloatActorProperty*>(containerProp->GetProperty(7));
+                        dtDAL::StringActorProperty* nameProp = dynamic_cast<dtDAL::StringActorProperty*>(containerProp->GetProperty("Name"));
+                        dtDAL::FloatActorProperty*  timeProp = dynamic_cast<dtDAL::FloatActorProperty*>(containerProp->GetProperty("Start Time"));
+                        dtDAL::FloatActorProperty*  durationProp = dynamic_cast<dtDAL::FloatActorProperty*>(containerProp->GetProperty("Duration"));
+                        dtDAL::FloatActorProperty*  blendInProp = dynamic_cast<dtDAL::FloatActorProperty*>(containerProp->GetProperty("Blend in Time"));
+                        dtDAL::FloatActorProperty*  blendOutProp = dynamic_cast<dtDAL::FloatActorProperty*>(containerProp->GetProperty("Blend out Time"));
+                        dtDAL::FloatActorProperty*  weightProp = dynamic_cast<dtDAL::FloatActorProperty*>(containerProp->GetProperty("Weight"));
+                        dtDAL::FloatActorProperty*  offsetProp = dynamic_cast<dtDAL::FloatActorProperty*>(containerProp->GetProperty("Start Offset"));
+                        dtDAL::FloatActorProperty*  speedProp = dynamic_cast<dtDAL::FloatActorProperty*>(containerProp->GetProperty("Speed"));
 
                         if (nameProp && timeProp && durationProp && blendInProp && blendOutProp && weightProp && offsetProp && speedProp)
                         {
@@ -1886,297 +1886,112 @@ void DirectorCinematicEditorPlugin::OnLoad()
 ////////////////////////////////////////////////////////////////////////////////
 void DirectorCinematicEditorPlugin::OnSave()
 {
-   GetEditor()->GetUndoManager()->BeginMultipleEvents();
+   BeginSave();
 
-   // Start by removing all nodes from the current sub-graph.
-   std::vector<dtDirector::Node*> nodes;
-   GetGraph()->GetAllNodes(nodes);
+   // Create our input links.
+   dtDirector::Node* newPlayNode    = CreateNode("Input Link", "Core", NULL, 80);
+   dtDirector::Node* newReverseNode = CreateNode("Input Link", "Core", NULL, 80);
+   dtDirector::Node* newStopNode    = CreateNode("Input Link", "Core", NULL, 80);
+   dtDirector::Node* newPauseNode   = CreateNode("Input Link", "Core", NULL, 80);
 
-   dtDirector::Node* playNode    = NULL;
-   dtDirector::Node* reverseNode = NULL;
-   dtDirector::Node* stopNode    = NULL;
-   dtDirector::Node* pauseNode   = NULL;
-   std::vector<dtCore::ObserverPtr<dtDirector::Node> > outputNodes;
-
-   int count = (int)nodes.size();
-   for (int index = 0; index < count; ++index)
-   {
-      dtDirector::Node* node = nodes[index];
-      if (!node) continue;
-
-      bool keepNode = false;
-      if (node->GetType().GetNodeType() == dtDirector::NodeType::LINK_NODE)
-      {
-         // Input nodes can only be "Play", "Reverse", "Stop", and "Pause".
-         if (node->GetType().GetFullName() == "Core.Input Link")
-         {
-            std::string name = node->GetString("Name");
-            if (name == "Play")
-            {
-               playNode = node;
-               keepNode = true;
-            }
-            else if (name == "Reverse")
-            {
-               reverseNode = node;
-               keepNode = true;
-            }
-            else if (name == "Stop")
-            {
-               stopNode = node;
-               keepNode = true;
-            }
-            else if (name == "Pause")
-            {
-               pauseNode = node;
-               keepNode = true;
-            }
-         }
-         // Output links can only remain if they match one of the output links listed
-         // in the cinematic.
-         else if (node->GetType().GetFullName() == "Core.Output Link")
-         {
-            std::string name = node->GetString("Name");
-
-            if (name == "Started" || name == "Ended")
-            {
-               outputNodes.push_back(node);
-               keepNode = true;
-            }
-            else
-            {
-               int outputCount = (int)mOutputData.size();
-               for (int outputIndex = 0; outputIndex < outputCount; ++outputIndex)
-               {
-                  OutputData& data = mOutputData[outputIndex];
-                  if (data.mName == name)
-                  {
-                     outputNodes.push_back(node);
-                     keepNode = true;
-                     break;
-                  }
-               }
-            }
-         }
-      }
-
-      // If we reach this point, this node should be removed.
-      if (!keepNode)
-      {
-         GetEditor()->DeleteNode(node->GetID());
-      }
-   }
+   newPlayNode->SetString("Play", "Name");
+   newReverseNode->SetString("Reverse", "Name");
+   newStopNode->SetString("Stop", "Name");
+   newPauseNode->SetString("Pause", "Name");
 
    // Create our scheduler node.
-   dtDirector::Node* schedulerNode = dtDirector::NodeManager::GetInstance().CreateNode("Scheduler", "Cinematic", GetGraph());
+   dtDirector::SchedulerAction* schedulerNode =
+      dynamic_cast<dtDirector::SchedulerAction*>(
+      CreateNode("Scheduler", "Cinematic", newPlayNode));
    if (schedulerNode)
    {
       schedulerNode->SetFloat(mTotalTime, "TotalTime");
 
-      // Create our input links.
-      dtDirector::Node* newPlayNode = dtDirector::NodeManager::GetInstance().CreateNode("Input Link", "Core", GetGraph());
-      dtDirector::Node* newReverseNode = dtDirector::NodeManager::GetInstance().CreateNode("Input Link", "Core", GetGraph());
-      dtDirector::Node* newStopNode = dtDirector::NodeManager::GetInstance().CreateNode("Input Link", "Core", GetGraph());
-      dtDirector::Node* newPauseNode = dtDirector::NodeManager::GetInstance().CreateNode("Input Link", "Core", GetGraph());
+      // Connect our input link nodes to the scheduler.
+      Connect(newPlayNode,    schedulerNode, "Out", "Play");
+      Connect(newReverseNode, schedulerNode, "Out", "Reverse");
+      Connect(newStopNode,    schedulerNode, "Out", "Stop");
+      Connect(newPauseNode,   schedulerNode, "Out", "Pause");
 
-      newPlayNode->SetString("Play", "Name");
-      newReverseNode->SetString("Reverse", "Name");
-      newStopNode->SetString("Stop", "Name");
-      newPauseNode->SetString("Pause", "Name");
-
-      newPlayNode->SetPosition(osg::Vec2(-200, 0));
-      newReverseNode->SetPosition(osg::Vec2(-200, 50));
-      newStopNode->SetPosition(osg::Vec2(-200, 100));
-      newPauseNode->SetPosition(osg::Vec2(-200, 150));
-
-      newPlayNode->GetOutputLink("Out")->Connect(schedulerNode->GetInputLink("Play"));
-      newReverseNode->GetOutputLink("Out")->Connect(schedulerNode->GetInputLink("Reverse"));
-      newStopNode->GetOutputLink("Out")->Connect(schedulerNode->GetInputLink("Stop"));
-      newPauseNode->GetOutputLink("Out")->Connect(schedulerNode->GetInputLink("Pause"));
-
-      // Now copy the links from the original input nodes, if able.
-      if (playNode)
-      {
-         dtDirector::InputLink* newInLink = &newPlayNode->GetInputLinks()[0];
-         dtDirector::InputLink* inLink = &playNode->GetInputLinks()[0];
-         std::vector<dtDirector::OutputLink*>& outLinks = inLink->GetLinks();
-         int count = (int)outLinks.size();
-         for (int index = 0; index < count; ++index)
-         {
-            newInLink->Connect(outLinks[index]);
-         }
-
-         GetEditor()->DeleteNode(playNode->GetID());
-      }
-      if (reverseNode)
-      {
-         dtDirector::InputLink* newInLink = &newReverseNode->GetInputLinks()[0];
-         dtDirector::InputLink* inLink = &reverseNode->GetInputLinks()[0];
-         std::vector<dtDirector::OutputLink*>& outLinks = inLink->GetLinks();
-         int count = (int)outLinks.size();
-         for (int index = 0; index < count; ++index)
-         {
-            newInLink->Connect(outLinks[index]);
-         }
-
-         GetEditor()->DeleteNode(reverseNode->GetID());
-      }
-      if (stopNode)
-      {
-         dtDirector::InputLink* newInLink = &newStopNode->GetInputLinks()[0];
-         dtDirector::InputLink* inLink = &stopNode->GetInputLinks()[0];
-         std::vector<dtDirector::OutputLink*>& outLinks = inLink->GetLinks();
-         int count = (int)outLinks.size();
-         for (int index = 0; index < count; ++index)
-         {
-            newInLink->Connect(outLinks[index]);
-         }
-
-         GetEditor()->DeleteNode(stopNode->GetID());
-      }
-      if (pauseNode)
-      {
-         dtDirector::InputLink* newInLink = &newPauseNode->GetInputLinks()[0];
-         dtDirector::InputLink* inLink = &pauseNode->GetInputLinks()[0];
-         std::vector<dtDirector::OutputLink*>& outLinks = inLink->GetLinks();
-         int count = (int)outLinks.size();
-         for (int index = 0; index < count; ++index)
-         {
-            newInLink->Connect(outLinks[index]);
-         }
-
-         GetEditor()->DeleteNode(pauseNode->GetID());
-      }
-
-      GetEditor()->OnNodeCreated(newPlayNode);
-      GetEditor()->OnNodeCreated(newReverseNode);
-      GetEditor()->OnNodeCreated(newStopNode);
-      GetEditor()->OnNodeCreated(newPauseNode);
-
-      // Create our scheduled event list.
-      dtDAL::ArrayActorPropertyBase* arrayProp = dynamic_cast<dtDAL::ArrayActorPropertyBase*>(schedulerNode->GetProperty("EventList"));
-      if (arrayProp)
-      {
-         dtDAL::ContainerActorProperty* containerProp = dynamic_cast<dtDAL::ContainerActorProperty*>(arrayProp->GetArrayProperty());
-         if (containerProp)
-         {
-            dtDAL::StringActorProperty*  nameProp    = dynamic_cast<dtDAL::StringActorProperty*>(containerProp->GetProperty(0));
-            dtDAL::FloatActorProperty*   timeProp    = dynamic_cast<dtDAL::FloatActorProperty*>(containerProp->GetProperty(1));
-            dtDAL::BooleanActorProperty* playProp    = dynamic_cast<dtDAL::BooleanActorProperty*>(containerProp->GetProperty(2));
-            dtDAL::BooleanActorProperty* reverseProp = dynamic_cast<dtDAL::BooleanActorProperty*>(containerProp->GetProperty(3));
-
-            if (nameProp && timeProp && playProp && reverseProp)
-            {
-               int outIndex = 0;
-
-               int count = (int)mOutputData.size();
-               for (int index = 0; index < count; ++index)
-               {
-                  OutputData& data = mOutputData[index];
-
-                  arrayProp->Insert(outIndex);
-                  arrayProp->SetIndex(outIndex);
-                  nameProp->SetValue(data.mName);
-                  timeProp->SetValue(data.mTime * 0.001f);
-                  playProp->SetValue(data.mTriggerPlay);
-                  reverseProp->SetValue(data.mTriggerReverse);
-
-                  outIndex++;
-               }
-            }
-         }
-      }
-
-      // Create our started remote event caller.
-      dtDirector::Node* startedCallNode = dtDirector::NodeManager::GetInstance().CreateNode("Call Remote Event", "Core", GetGraph());
+      // Create a call remote event node that will trigger on start.
+      dtDirector::Node* startedCallNode = CreateNode("Call Remote Event", "Core", schedulerNode, 80);
       if (startedCallNode)
       {
-         schedulerNode->GetOutputLink("Started")->Connect(startedCallNode->GetInputLink("Call Event"));
          startedCallNode->SetString("Started", "EventName");
          startedCallNode->SetBoolean(true, "Local Event");
-         startedCallNode->SetPosition(osg::Vec2(400, 0));
-         GetEditor()->OnNodeCreated(startedCallNode);
+
+         Connect(schedulerNode, startedCallNode, "Started", "Call Event");
       }
 
-      // Now create our output links for each scheduled event.
-      int height = 50;
-      std::vector<dtDirector::OutputLink>& links = schedulerNode->GetOutputLinks();
-      int linkCount = (int)links.size();
-      for (int linkIndex = 0; linkIndex < linkCount-1; ++linkIndex)
+      // Create our output link to trigger on start.
+      dtDirector::Node* startedOutputNode = CreateNode("Output Link", "Core", schedulerNode, 80);
+      if (startedOutputNode)
       {
-         dtDirector::OutputLink& link = links[linkIndex];
+         startedOutputNode->SetString("Started", "Name");
 
-         // find out if the output already exists.
-         dtDirector::Node* outputNode = NULL;
-         int outNodeCount = (int)outputNodes.size();
-         for (int outNodeIndex = 0; outNodeIndex < outNodeCount; ++outNodeIndex)
+         Connect(schedulerNode, startedOutputNode, "Started", "In");
+      }
+
+      // Create our output links for each scheduled event.
+      std::vector<dtDirector::SchedulerAction::OutputEventData> eventList;
+      int eventCount = (int)mOutputData.size();
+      for (int eventIndex = 0; eventIndex < eventCount; ++eventIndex)
+      {
+         OutputData& data = mOutputData[eventIndex];
+         dtDirector::SchedulerAction::OutputEventData newData;
+
+         newData.name = data.mName;
+         newData.time = data.mTime;
+         newData.triggerNormal = data.mTriggerPlay;
+         newData.triggerReverse = data.mTriggerReverse;
+         eventList.push_back(newData);
+      }
+      schedulerNode->SetEventList(eventList);
+
+      // Connect each of our output links to an output link node.
+      for (int eventIndex = 0; eventIndex < eventCount; ++eventIndex)
+      {
+         dtDirector::SchedulerAction::OutputEventData& data = eventList[eventIndex];
+
+         dtDirector::Node* outputNode = CreateNode("Output Link", "Core", schedulerNode, 80);
+         if (outputNode)
          {
-            dtDirector::Node* testNode = outputNodes[outNodeIndex].get();
+            outputNode->SetString(data.name, "Name");
 
-            if (testNode && testNode->GetString("Name") == link.GetName())
-            {
-               outputNode = testNode;
-               outputNodes.erase(outputNodes.begin() + outNodeIndex);
-               break;
-            }
-         }
-
-         // Create the output node if needed.
-         dtDirector::Node* newOutputNode = dtDirector::NodeManager::GetInstance().CreateNode("Output Link", "Core", GetGraph());
-
-         // Position and connect this output node.
-         if (newOutputNode)
-         {
-            link.Connect(newOutputNode->GetInputLink("In"));
-            newOutputNode->SetPosition(osg::Vec2(400, height));
-            newOutputNode->SetString(link.GetName(), "Name");
-
-            // Copy links from the original output node, if able
-            if (outputNode)
-            {
-               dtDirector::OutputLink* newOutLink = &newOutputNode->GetOutputLinks()[0];
-               dtDirector::OutputLink* outLink = &outputNode->GetOutputLinks()[0];
-               std::vector<dtDirector::InputLink*>& inLinks = outLink->GetLinks();
-               int count = (int)inLinks.size();
-               for (int index = 0; index < count; ++index)
-               {
-                  newOutLink->Connect(inLinks[index]);
-               }
-
-               GetEditor()->DeleteNode(outputNode->GetID());
-            }
-
-            GetEditor()->OnNodeCreated(newOutputNode);
-            height += 50;
+            Connect(schedulerNode, outputNode, data.name, "In");
          }
       }
 
-      // Create our ended remote event caller.
-      dtDirector::Node* endedCallNode = dtDirector::NodeManager::GetInstance().CreateNode("Call Remote Event", "Core", GetGraph());
+      // Create our output link to trigger on end.
+      dtDirector::Node* endedOutputNode = CreateNode("Output Link", "Core", schedulerNode, 80);
+      if (endedOutputNode)
+      {
+         endedOutputNode->SetString("Ended", "Name");
+
+         Connect(schedulerNode, endedOutputNode, "Ended", "In");
+      }
+
+      // Create a call remote event node that will trigger on end.
+      dtDirector::Node* endedCallNode = CreateNode("Call Remote Event", "Core", schedulerNode);
       if (endedCallNode)
       {
-         schedulerNode->GetOutputLink("Ended")->Connect(endedCallNode->GetInputLink("Call Event"));
-         schedulerNode->GetOutputLink("Stopped")->Connect(endedCallNode->GetInputLink("Call Event"));
          endedCallNode->SetString("Ended", "EventName");
          endedCallNode->SetBoolean(true, "Local Event");
-         endedCallNode->SetPosition(osg::Vec2(400, height));
-         GetEditor()->OnNodeCreated(endedCallNode);
-         height += 50;
+
+         Connect(schedulerNode, endedCallNode, "Ended", "Call Event");
+         Connect(schedulerNode, endedCallNode, "Stopped", "Call Event");
       }
 
       // Create our current time value node.
-      dtDirector::Node* timeValueNode = dtDirector::NodeManager::GetInstance().CreateNode("Float", "General", GetGraph());
+      dtDirector::Node* timeValueNode = CreateNode("Float", "General");
       if (timeValueNode)
       {
-         timeValueNode->SetPosition(osg::Vec2(0, height));
          timeValueNode->SetString("Current Time", "Name");
-         schedulerNode->GetValueLink("Time")->Connect(dynamic_cast<dtDirector::ValueNode*>(timeValueNode));
+
+         Connect(schedulerNode, timeValueNode, "Time");
       }
 
-      GetEditor()->OnNodeCreated(schedulerNode);
-
       // Now create our transformation chains for each actor.
-      height += 100;
       int actorCount = (int)mActorData.size();
       for (int actorIndex = 0; actorIndex < actorCount; ++actorIndex)
       {
@@ -2184,250 +1999,223 @@ void DirectorCinematicEditorPlugin::OnSave()
 
          int column = 0;
 
-         dtDirector::OutputLink* startLink = NULL;
-         dtDirector::OutputLink* stopLink = NULL;
+         dtDirector::Node* startNode = NULL;
+         dtDirector::Node* endNode = NULL;
+         std::string startLink = "";
+         std::string endLink = "";
 
-         // Start with our start and end remote events to start the chain.
-         dtDirector::Node* startEvent = dtDirector::NodeManager::GetInstance().CreateNode("Remote Event", "Core", GetGraph());
+         // Start with our start and end remote events to start the chains.
+         dtDirector::Node* startEvent = CreateNode("Remote Event", "Core", NULL, 80);
          if (startEvent)
          {
             startEvent->SetString("Started", "EventName");
-            startEvent->SetPosition(osg::Vec2(column, height));
-            GetEditor()->OnNodeCreated(startEvent);
-            startLink = startEvent->GetOutputLink("Out");
+            startNode = startEvent;
+            startLink = "Out";
          }
 
-         dtDirector::Node* endEvent   = dtDirector::NodeManager::GetInstance().CreateNode("Remote Event", "Core", GetGraph());
+         dtDirector::Node* endEvent   = CreateNode("Remote Event", "Core");
          if (endEvent)
          {
             endEvent->SetString("Ended", "EventName");
-            endEvent->SetPosition(osg::Vec2(column + 6, height + 100));
-            GetEditor()->OnNodeCreated(endEvent);
-            stopLink = endEvent->GetOutputLink("Out");
+            endNode = endEvent;
+            endLink = "Out";
          }
-
-         column += 200;
 
          // Create our animation action.
          if (actorData.mAnimationData.size())
          {
-            dtDirector::Node* animNode = dtDirector::NodeManager::GetInstance().CreateNode("Animate Actor", "Cinematic", GetGraph());
+            dtDirector::AnimateActorAction* animNode = 
+               dynamic_cast<dtDirector::AnimateActorAction*>(
+               CreateNode("Animate Actor", "Cinematic", startNode));
             if (animNode)
             {
-               animNode->GetInputLink("Start")->Connect(startLink);
-               animNode->GetInputLink("Stop")->Connect(stopLink);
-
-               animNode->SetPosition(osg::Vec2(column, height));
-               GetEditor()->OnNodeCreated(animNode);
-               startLink = animNode->GetOutputLink("Started");
-               stopLink = animNode->GetOutputLink("Stopped");
-
                // Create our scheduled animation list.
-               dtDAL::ArrayActorPropertyBase* arrayProp = dynamic_cast<dtDAL::ArrayActorPropertyBase*>(animNode->GetProperty("Animations"));
-               if (arrayProp)
+               std::vector<dtDirector::AnimateActorAction::AnimData> animList;
+
+               int animCount = (int)actorData.mAnimationData.size();
+               for (int animIndex = 0; animIndex < animCount; ++animIndex)
                {
-                  dtDAL::ContainerActorProperty* containerProp = dynamic_cast<dtDAL::ContainerActorProperty*>(arrayProp->GetArrayProperty());
-                  if (containerProp)
-                  {
-                     dtDAL::StringActorProperty* nameProp = dynamic_cast<dtDAL::StringActorProperty*>(containerProp->GetProperty(0));
-                     dtDAL::FloatActorProperty*  timeProp = dynamic_cast<dtDAL::FloatActorProperty*>(containerProp->GetProperty(1));
-                     dtDAL::FloatActorProperty*  durationProp = dynamic_cast<dtDAL::FloatActorProperty*>(containerProp->GetProperty(2));
-                     dtDAL::FloatActorProperty*  blendInProp = dynamic_cast<dtDAL::FloatActorProperty*>(containerProp->GetProperty(3));
-                     dtDAL::FloatActorProperty*  blendOutProp = dynamic_cast<dtDAL::FloatActorProperty*>(containerProp->GetProperty(4));
-                     dtDAL::FloatActorProperty*  weightProp = dynamic_cast<dtDAL::FloatActorProperty*>(containerProp->GetProperty(5));
-                     dtDAL::FloatActorProperty*  offsetProp = dynamic_cast<dtDAL::FloatActorProperty*>(containerProp->GetProperty(6));
-                     dtDAL::FloatActorProperty*  speedProp = dynamic_cast<dtDAL::FloatActorProperty*>(containerProp->GetProperty(7));
+                  AnimationData& data = actorData.mAnimationData[animIndex];
+                  float duration = (data.mEndTime - data.mStartTime) / data.mSpeed;
 
-                     if (nameProp && timeProp && durationProp && blendInProp && blendOutProp && weightProp && offsetProp && speedProp)
-                     {
-                        int outIndex = 0;
+                  dtDirector::AnimateActorAction::AnimData newData;
 
-                        int count = (int)actorData.mAnimationData.size();
-                        for (int index = 0; index < count; ++index)
-                        {
-                           AnimationData& data = actorData.mAnimationData[index];
-                           float duration = (data.mEndTime - data.mStartTime) / data.mSpeed;
-
-                           arrayProp->Insert(outIndex);
-                           arrayProp->SetIndex(outIndex);
-                           nameProp->SetValue(data.mName);
-                           timeProp->SetValue(data.mTime * 0.001f);
-                           durationProp->SetValue(duration);
-                           blendInProp->SetValue(data.mBlendInTime);
-                           blendOutProp->SetValue(data.mBlendOutTime);
-                           weightProp->SetValue(data.mWeight);
-                           offsetProp->SetValue(data.mStartTime);
-                           speedProp->SetValue(data.mSpeed);
-
-                           outIndex++;
-                        }
-                     }
-                  }
+                  newData.mName = data.mName;
+                  newData.mTime = data.mTime * 0.001f;
+                  newData.mDuration = duration;
+                  newData.mBlendInTime = data.mBlendInTime;
+                  newData.mBlendOutTime = data.mBlendOutTime;
+                  newData.mWeight = data.mWeight;
+                  newData.mStartOffset = data.mStartTime;
+                  newData.mSpeed = data.mSpeed;
+                  animList.push_back(newData);
                }
+               animNode->SetAnimArray(animList);
 
-               dtDirector::Node* actorValue = dtDirector::NodeManager::GetInstance().CreateNode("Actor", "General", GetGraph());
+               // Create an actor value node to store the animated actor.
+               dtDirector::Node* actorValue = CreateNode("Actor", "General");
                if (actorValue)
                {
                   actorValue->SetActorID(actorData.mActor->GetId());
-                  actorValue->SetPosition(osg::Vec2(column - 5, height + 200));
-                  animNode->GetValueLink("Actor")->Connect(dynamic_cast<dtDirector::ValueNode*>(actorValue));
-                  GetEditor()->OnNodeCreated(actorValue);
+
+                  Connect(animNode, actorValue, "Actor");
                }
 
-               dtDirector::Node* timeRefValue = dtDirector::NodeManager::GetInstance().CreateNode("Reference", "Core", GetGraph());
+               // Create our reference to the current time.
+               dtDirector::Node* timeRefValue = CreateNode("Reference", "Core");
                if (timeRefValue)
                {
                   timeRefValue->SetString("Current Time", "Reference");
-                  timeRefValue->SetPosition(osg::Vec2(column + 46, height + 200));
-                  animNode->GetValueLink("Time")->Connect(dynamic_cast<dtDirector::ValueNode*>(timeRefValue));
-                  GetEditor()->OnNodeCreated(timeRefValue);
+
+                  Connect(animNode, timeRefValue, "Time");
                }
-               column += 200;
+
+               // Now connect this node to the previous node in the chain.
+               Connect(startNode, animNode, startLink, "Start");
+               Connect(endNode, animNode, endLink, "Stop");
+               startNode = endNode = animNode;
+               startLink = "Started";
+               endLink = "Stopped";
             }
          }
 
          // Iterate through each transformation key frame.
          if (actorData.mTransformEnabled)
          {
-            int count = (int)actorData.mTransformData.size();
+            int transformCount = (int)actorData.mTransformData.size();
             int nextIndex = 0;
-            if (count > 1)
+            if (transformCount > 1)
             {
-               count--;
+               transformCount--;
                nextIndex = 1;
             }
 
-            for (int index = 0; index < count; ++index, ++nextIndex)
+            for (int transformIndex = 0; transformIndex < transformCount; ++transformIndex, ++nextIndex)
             {
-               TransformData& prevData = actorData.mTransformData[index];
+               TransformData& prevData = actorData.mTransformData[transformIndex];
                TransformData& nextData = actorData.mTransformData[nextIndex];
 
                // Translation.
-               if (index == 0 || prevData.mTransform.GetTranslation() != nextData.mTransform.GetTranslation())
+               if (transformIndex == 0 || prevData.mTransform.GetTranslation() != nextData.mTransform.GetTranslation())
                {
-                  dtDirector::Node* lerpNode = dtDirector::NodeManager::GetInstance().CreateNode("Lerp Actor Translation", "Cinematic", GetGraph());
+                  dtDirector::Node* lerpNode = CreateNode("Lerp Actor Translation", "Cinematic", startNode);
                   if (lerpNode)
                   {
-                     lerpNode->GetInputLink("Start")->Connect(startLink);
-                     lerpNode->GetInputLink("Stop")->Connect(stopLink);
                      lerpNode->SetFloat(prevData.mTime * 0.001f, "StartTime");
                      lerpNode->SetFloat(nextData.mTime * 0.001f, "EndTime");
                      lerpNode->SetVec3(prevData.mTransform.GetTranslation(), "StartPosition");
                      lerpNode->SetVec3(nextData.mTransform.GetTranslation(), "EndPosition");
-                     lerpNode->SetPosition(osg::Vec2(column, height));
-                     GetEditor()->OnNodeCreated(lerpNode);
-                     startLink = lerpNode->GetOutputLink("Started");
-                     stopLink = lerpNode->GetOutputLink("Stopped");
 
-                     dtDirector::Node* actorValue = dtDirector::NodeManager::GetInstance().CreateNode("Actor", "General", GetGraph());
+                     // Create an actor value node to store the animated actor.
+                     dtDirector::Node* actorValue = CreateNode("Actor", "General");
                      if (actorValue)
                      {
                         actorValue->SetActorID(actorData.mActor->GetId());
-                        actorValue->SetPosition(osg::Vec2(column + 3, height + 200));
-                        lerpNode->GetValueLink("Actor")->Connect(dynamic_cast<dtDirector::ValueNode*>(actorValue));
-                        GetEditor()->OnNodeCreated(actorValue);
+
+                        Connect(lerpNode, actorValue, "Actor");
                      }
 
-                     dtDirector::Node* timeRefValue = dtDirector::NodeManager::GetInstance().CreateNode("Reference", "Core", GetGraph());
+                     // Create our reference to the current time.
+                     dtDirector::Node* timeRefValue = CreateNode("Reference", "Core");
                      if (timeRefValue)
                      {
                         timeRefValue->SetString("Current Time", "Reference");
-                        timeRefValue->SetPosition(osg::Vec2(column + 59, height + 200));
-                        lerpNode->GetValueLink("Time")->Connect(dynamic_cast<dtDirector::ValueNode*>(timeRefValue));
-                        GetEditor()->OnNodeCreated(timeRefValue);
+
+                        Connect(lerpNode, timeRefValue, "Time");
                      }
-                     column += 200;
+
+                     // Now connect this node to the previous node in the chain.
+                     Connect(startNode, lerpNode, startLink, "Start");
+                     Connect(endNode, lerpNode, endLink, "Stop");
+                     startNode = endNode = lerpNode;
+                     startLink = "Started";
+                     endLink = "Stopped";
                   }
                }
 
                // Rotation.
-               if (index == 0 || prevData.mTransform.GetRotation() != nextData.mTransform.GetRotation())
+               if (transformIndex == 0 || prevData.mTransform.GetRotation() != nextData.mTransform.GetRotation())
                {
-                  dtDirector::Node* lerpNode = dtDirector::NodeManager::GetInstance().CreateNode("Lerp Actor Rotation", "Cinematic", GetGraph());
+                  dtDirector::Node* lerpNode = CreateNode("Lerp Actor Rotation", "Cinematic", startNode);
                   if (lerpNode)
                   {
-                     lerpNode->GetInputLink("Start")->Connect(startLink);
-                     lerpNode->GetInputLink("Stop")->Connect(stopLink);
                      lerpNode->SetFloat(prevData.mTime * 0.001f, "StartTime");
                      lerpNode->SetFloat(nextData.mTime * 0.001f, "EndTime");
                      osg::Vec3 prevRot = prevData.mTransform.GetRotation();
                      osg::Vec3 nextRot = nextData.mTransform.GetRotation();
                      lerpNode->SetVec4(osg::Vec4(prevRot.y(), prevRot.z(), prevRot.x(), 0.0f), "StartRotation");
                      lerpNode->SetVec4(osg::Vec4(nextRot.y(), nextRot.z(), nextRot.x(), 0.0f), "EndRotation");
-                     lerpNode->SetPosition(osg::Vec2(column, height));
-                     GetEditor()->OnNodeCreated(lerpNode);
-                     startLink = lerpNode->GetOutputLink("Started");
-                     stopLink = lerpNode->GetOutputLink("Stopped");
 
-                     dtDirector::Node* actorValue = dtDirector::NodeManager::GetInstance().CreateNode("Actor", "General", GetGraph());
+                     // Create an actor value node to store the animated actor.
+                     dtDirector::Node* actorValue = CreateNode("Actor", "General");
                      if (actorValue)
                      {
                         actorValue->SetActorID(actorData.mActor->GetId());
-                        actorValue->SetPosition(osg::Vec2(column, height + 200));
-                        lerpNode->GetValueLink("Actor")->Connect(dynamic_cast<dtDirector::ValueNode*>(actorValue));
-                        GetEditor()->OnNodeCreated(actorValue);
+
+                        Connect(lerpNode, actorValue, "Actor");
                      }
 
-                     dtDirector::Node* timeRefValue = dtDirector::NodeManager::GetInstance().CreateNode("Reference", "Core", GetGraph());
+                     // Create our reference to the current time.
+                     dtDirector::Node* timeRefValue = CreateNode("Reference", "Core");
                      if (timeRefValue)
                      {
                         timeRefValue->SetString("Current Time", "Reference");
-                        timeRefValue->SetPosition(osg::Vec2(column + 52, height + 200));
-                        lerpNode->GetValueLink("Time")->Connect(dynamic_cast<dtDirector::ValueNode*>(timeRefValue));
-                        GetEditor()->OnNodeCreated(timeRefValue);
+
+                        Connect(lerpNode, timeRefValue, "Time");
                      }
-                     column += 200;
+
+                     // Now connect this node to the previous node in the chain.
+                     Connect(startNode, lerpNode, startLink, "Start");
+                     Connect(endNode, lerpNode, endLink, "Stop");
+                     startNode = endNode = lerpNode;
+                     startLink = "Started";
+                     endLink = "Stopped";
                   }
                }
 
                // Scale.
-               if (prevData.mCanScale && (index == 0 || prevData.mScale != nextData.mScale))
+               if (prevData.mCanScale && (transformIndex == 0 || prevData.mScale != nextData.mScale))
                {
-                  dtDirector::Node* lerpNode = dtDirector::NodeManager::GetInstance().CreateNode("Lerp Actor Scale", "Cinematic", GetGraph());
+                  dtDirector::Node* lerpNode = CreateNode("Lerp Actor Scale", "Cinematic", startNode);
                   if (lerpNode)
                   {
-                     lerpNode->GetInputLink("Start")->Connect(startLink);
-                     lerpNode->GetInputLink("Stop")->Connect(stopLink);
                      lerpNode->SetFloat(prevData.mTime * 0.001f, "StartTime");
                      lerpNode->SetFloat(nextData.mTime * 0.001f, "EndTime");
                      lerpNode->SetVec3(prevData.mScale, "StartScale");
                      lerpNode->SetVec3(nextData.mScale, "EndScale");
-                     lerpNode->SetPosition(osg::Vec2(column, height));
-                     GetEditor()->OnNodeCreated(lerpNode);
-                     startLink = lerpNode->GetOutputLink("Started");
-                     stopLink = lerpNode->GetOutputLink("Stopped");
 
-                     dtDirector::Node* actorValue = dtDirector::NodeManager::GetInstance().CreateNode("Actor", "General", GetGraph());
+                     // Create an actor value node to store the animated actor.
+                     dtDirector::Node* actorValue = CreateNode("Actor", "General");
                      if (actorValue)
                      {
                         actorValue->SetActorID(actorData.mActor->GetId());
-                        actorValue->SetPosition(osg::Vec2(column - 8, height + 200));
-                        lerpNode->GetValueLink("Actor")->Connect(dynamic_cast<dtDirector::ValueNode*>(actorValue));
-                        GetEditor()->OnNodeCreated(actorValue);
+
+                        Connect(lerpNode, actorValue, "Actor");
                      }
 
-                     dtDirector::Node* timeRefValue = dtDirector::NodeManager::GetInstance().CreateNode("Reference", "Core", GetGraph());
+                     // Create our reference to the current time.
+                     dtDirector::Node* timeRefValue = CreateNode("Reference", "Core");
                      if (timeRefValue)
                      {
                         timeRefValue->SetString("Current Time", "Reference");
-                        timeRefValue->SetPosition(osg::Vec2(column + 44, height + 200));
-                        lerpNode->GetValueLink("Time")->Connect(dynamic_cast<dtDirector::ValueNode*>(timeRefValue));
-                        GetEditor()->OnNodeCreated(timeRefValue);
+
+                        Connect(lerpNode, timeRefValue, "Time");
                      }
-                     column += 200;
+
+                     // Now connect this node to the previous node in the chain.
+                     Connect(startNode, lerpNode, startLink, "Start");
+                     Connect(endNode, lerpNode, endLink, "Stop");
+                     startNode = endNode = lerpNode;
+                     startLink = "Started";
+                     endLink = "Stopped";
                   }
                }
             }
          }
-
-         height += 400;
       }
    }
 
-   GetEditor()->Refresh();
-
-   //GetEditor()->GetPropertyEditor()->GetScene()->CreateNode();
-   GetEditor()->GetUndoManager()->EndMultipleEvents();
+   EndSave();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
