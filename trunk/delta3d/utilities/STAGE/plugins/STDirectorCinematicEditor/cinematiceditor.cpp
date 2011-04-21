@@ -1593,14 +1593,21 @@ void DirectorCinematicEditorPlugin::OnLoad()
    mTotalTime = 1.0f;
    if (mPlaying) OnPlay();
 
+   blockSignals(true);
+   mUI.mStartTimeEdit->setValue(0.0);
+   mUI.mEndTimeEdit->setMinimum(0.01);
+   mUI.mEndTimeEdit->setMaximum(1.0);
+   mUI.mEndTimeEdit->setValue(1.0);
+   blockSignals(false);
+
    std::vector<dtDirector::Node*> nodes;
    GetGraph()->GetNodes("Scheduler", "Cinematic", nodes);
 
    // Find the scheduler node, if it exists.
-   dtDirector::Node* schedulerNode = NULL;
+   dtDirector::SchedulerAction* schedulerNode = NULL;
    if (nodes.size())
    {
-      schedulerNode = nodes[0];
+      schedulerNode = dynamic_cast<dtDirector::SchedulerAction*>(nodes[0]);
    }
 
    if (schedulerNode)
@@ -1608,50 +1615,33 @@ void DirectorCinematicEditorPlugin::OnLoad()
       // Determine the total cinematic time.
       mTotalTime = schedulerNode->GetFloat("TotalTime");
 
-      mUI.mStartTimeEdit->blockSignals(true);
-      mUI.mStartTimeEdit->setValue(0.0);
-      mUI.mStartTimeEdit->blockSignals(false);
-      mUI.mEndTimeEdit->blockSignals(true);
-      mUI.mEndTimeEdit->setValue(mTotalTime);
-      mUI.mEndTimeEdit->setMinimum(0.01);
+      blockSignals(true);
       mUI.mEndTimeEdit->setMaximum(mTotalTime);
-      mUI.mEndTimeEdit->blockSignals(false);
+      mUI.mEndTimeEdit->setValue(mTotalTime);
+      blockSignals(false);
 
       // Load all scheduled event outputs.
       mUI.mOutputTrack->ClearEvents();
-      dtDAL::ArrayActorPropertyBase* arrayProp = dynamic_cast<dtDAL::ArrayActorPropertyBase*>(schedulerNode->GetProperty("EventList"));
-      if (arrayProp)
+      std::vector<dtDirector::SchedulerAction::OutputEventData> eventList =
+         schedulerNode->GetEventList();
+      int eventCount = (int)eventList.size();
+      for (int eventIndex = 0; eventIndex < eventCount; ++eventIndex)
       {
-         dtDAL::ContainerActorProperty* containerProp = dynamic_cast<dtDAL::ContainerActorProperty*>(arrayProp->GetArrayProperty());
-         if (containerProp)
-         {
-            dtDAL::StringActorProperty*  nameProp    = dynamic_cast<dtDAL::StringActorProperty*>(containerProp->GetProperty("EventName"));
-            dtDAL::FloatActorProperty*   timeProp    = dynamic_cast<dtDAL::FloatActorProperty*>(containerProp->GetProperty("EventTime"));
-            dtDAL::BooleanActorProperty* playProp    = dynamic_cast<dtDAL::BooleanActorProperty*>(containerProp->GetProperty("TriggerNormal"));
-            dtDAL::BooleanActorProperty* reverseProp = dynamic_cast<dtDAL::BooleanActorProperty*>(containerProp->GetProperty("TriggerReverse"));
+         dtDirector::SchedulerAction::OutputEventData& data =
+            eventList[eventIndex];
 
-            if (nameProp && timeProp && playProp && reverseProp)
-            {
-               int count = arrayProp->GetArraySize();
-               for (int index = 0; index < count; ++index)
-               {
-                  arrayProp->SetIndex(index);
-
-                  InsertOutput(timeProp->GetValue() * 1000, nameProp->GetValue(), playProp->GetValue(), reverseProp->GetValue());
-               }
-            }
-         }
+         InsertOutput(data.time * 1000, data.name, data.triggerNormal, data.triggerReverse);
       }
    }
 
    // Find all Starting remote events and follow their chains to find all cinematic data.
    nodes.clear();
-   GetGraph()->GetNodes("Remote Event", "Core", nodes);
+   GetGraph()->GetNodes("Remote Event", "Core", "EventName", "Started", nodes);
    int eventCount = (int)nodes.size();
    for (int eventIndex = 0; eventIndex < eventCount; ++eventIndex)
    {
       dtDirector::Node* node = nodes[eventIndex];
-      if (node && node->GetString("EventName") == "Started")
+      if (node)
       {
          mSelectedActor = (int)mActorData.size();
          mActorData.push_back(ActorData());
@@ -1663,14 +1653,18 @@ void DirectorCinematicEditorPlugin::OnLoad()
          actorData.mTransformEnabled = false;
 
          // Iterate to the next node in the chain.
-         if (node->GetOutputLink("Out")->GetLinks().empty()) continue;
+         std::vector<dtDirector::InputLink*> nextLinks;
+         if (!GetNext(node, "Out", nextLinks))
+         {
+            continue;
+         }
 
-         node = node->GetOutputLink("Out")->GetLinks()[0]->GetOwner();
+         node = nextLinks[0]->GetOwner();
          while (node)
          {
-            dtDirector::OutputLink* outLink = NULL;
+            nextLinks.clear();
 
-            // Load an Animate Actor node.
+            // Load an Animate Actor data.
             if (node->GetType().GetFullName() == "Cinematic.Animate Actor")
             {
                if (!actorData.mActor)
@@ -1698,56 +1692,44 @@ void DirectorCinematicEditorPlugin::OnLoad()
                {
                   dtAnim::SequenceMixer& mixer = animActor->GetHelper()->GetSequenceMixer();
 
-                  // Load our scheduled animation list.
-                  dtDAL::ArrayActorPropertyBase* arrayProp = dynamic_cast<dtDAL::ArrayActorPropertyBase*>(node->GetProperty("Animations"));
-                  if (arrayProp)
+                  dtDirector::AnimateActorAction* animNode =
+                     dynamic_cast<dtDirector::AnimateActorAction*>(node);
+                  if (animNode)
                   {
-                     dtDAL::ContainerActorProperty* containerProp = dynamic_cast<dtDAL::ContainerActorProperty*>(arrayProp->GetArrayProperty());
-                     if (containerProp)
+                     // Load our scheduled animation list.
+                     std::vector<dtDirector::AnimateActorAction::AnimData>&
+                        animList = animNode->GetAnimArray();
+                     int animCount = (int)animList.size();
+                     for (int animIndex = 0; animIndex < animCount; ++animIndex)
                      {
-                        dtDAL::StringActorProperty* nameProp = dynamic_cast<dtDAL::StringActorProperty*>(containerProp->GetProperty("Name"));
-                        dtDAL::FloatActorProperty*  timeProp = dynamic_cast<dtDAL::FloatActorProperty*>(containerProp->GetProperty("Start Time"));
-                        dtDAL::FloatActorProperty*  durationProp = dynamic_cast<dtDAL::FloatActorProperty*>(containerProp->GetProperty("Duration"));
-                        dtDAL::FloatActorProperty*  blendInProp = dynamic_cast<dtDAL::FloatActorProperty*>(containerProp->GetProperty("Blend in Time"));
-                        dtDAL::FloatActorProperty*  blendOutProp = dynamic_cast<dtDAL::FloatActorProperty*>(containerProp->GetProperty("Blend out Time"));
-                        dtDAL::FloatActorProperty*  weightProp = dynamic_cast<dtDAL::FloatActorProperty*>(containerProp->GetProperty("Weight"));
-                        dtDAL::FloatActorProperty*  offsetProp = dynamic_cast<dtDAL::FloatActorProperty*>(containerProp->GetProperty("Start Offset"));
-                        dtDAL::FloatActorProperty*  speedProp = dynamic_cast<dtDAL::FloatActorProperty*>(containerProp->GetProperty("Speed"));
+                        dtDirector::AnimateActorAction::AnimData& data =
+                           animList[animIndex];
 
-                        if (nameProp && timeProp && durationProp && blendInProp && blendOutProp && weightProp && offsetProp && speedProp)
+                        AnimationData newData(0, "", 0.0f, 1.0f, 1.0f, NULL);
+
+                        newData.mName = data.mName;
+                        const dtAnim::AnimationChannel* anim = dynamic_cast<const dtAnim::AnimationChannel*>(mixer.GetRegisteredAnimation(data.mName));
+                        if (anim)
                         {
-                           int count = arrayProp->GetArraySize();
-                           for (int index = 0; index < count; ++index)
-                           {
-                              AnimationData data(0, "", 0.0f, 1.0f, 1.0f, NULL);
-
-                              arrayProp->SetIndex(index);
-
-                              data.mName = nameProp->GetValue();
-                              const dtAnim::AnimationChannel* anim = dynamic_cast<const dtAnim::AnimationChannel*>(mixer.GetRegisteredAnimation(data.mName));
-                              if (anim)
-                              {
-                                 data.mDuration = anim->GetAnimation()->GetDuration();
-                              }
-
-                              data.mSpeed = speedProp->GetValue();
-                              data.mTime = timeProp->GetValue() * 1000;
-                              data.mStartTime = offsetProp->GetValue();
-                              data.mEndTime = (durationProp->GetValue() * data.mSpeed) + data.mStartTime;
-                              data.mBlendInTime = blendInProp->GetValue();
-                              data.mBlendOutTime = blendOutProp->GetValue();
-                              data.mWeight = weightProp->GetValue();
-
-                              InsertAnimation(data);
-                           }
+                           newData.mDuration = anim->GetAnimation()->GetDuration();
                         }
+
+                        newData.mSpeed = data.mSpeed;
+                        newData.mTime = data.mTime * 1000;
+                        newData.mStartTime = data.mStartOffset;
+                        newData.mEndTime = (data.mDuration * newData.mSpeed) + newData.mStartTime;
+                        newData.mBlendInTime = data.mBlendInTime;
+                        newData.mBlendOutTime = data.mBlendOutTime;
+                        newData.mWeight = data.mWeight;
+
+                        InsertAnimation(newData);
                      }
                   }
                }
 
-               outLink = node->GetOutputLink("Started");
+               GetNext(node, "Started", nextLinks);
             }
-            // Load a Translation lerp node.
+            // Load a Translation lerp data.
             else if (node->GetType().GetFullName() == "Cinematic.Lerp Actor Translation")
             {
                actorData.mTransformEnabled = true;
@@ -1783,7 +1765,7 @@ void DirectorCinematicEditorPlugin::OnLoad()
                   lastTransform.SetTranslation(pos.x(), pos.y(), pos.z());
                }
 
-               outLink = node->GetOutputLink("Started");
+               GetNext(node, "Started", nextLinks);
             }
             // Load a Rotation lerp node.
             else if (node->GetType().GetFullName() == "Cinematic.Lerp Actor Rotation")
@@ -1821,7 +1803,7 @@ void DirectorCinematicEditorPlugin::OnLoad()
                   lastTransform.SetRotation(rot.z(), rot.x(), rot.y());
                }
 
-               outLink = node->GetOutputLink("Started");
+               GetNext(node, "Started", nextLinks);
             }
             // Load a Scale lerp node.
             else if (node->GetType().GetFullName() == "Cinematic.Lerp Actor Scale")
@@ -1859,14 +1841,14 @@ void DirectorCinematicEditorPlugin::OnLoad()
                   lastScale.set(scale.x(), scale.y(), scale.z());
                }
 
-               outLink = node->GetOutputLink("Started");
+               GetNext(node, "Started", nextLinks);
             }
 
             // Continue down the chain.
             node = NULL;
-            if (outLink && !outLink->GetLinks().empty())
+            if (!nextLinks.empty())
             {
-               node = outLink->GetLinks()[0]->GetOwner();
+               node = nextLinks[0]->GetOwner();
             }
          }
       }
