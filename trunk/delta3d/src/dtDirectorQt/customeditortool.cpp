@@ -449,6 +449,62 @@ namespace dtDirector
       return result;
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   bool CustomEditorTool::GetNext(dtDirector::Node* node, const std::string& linkName, std::vector<dtDirector::InputLink*>& outLinks)
+   {
+      if (!node)
+      {
+         return false;
+      }
+
+      dtDirector::OutputLink* link = node->GetOutputLink(linkName);
+      if (!link)
+      {
+         return false;
+      }
+
+      std::vector<dtDirector::InputLink*>& links = link->GetLinks();
+      int count = (int)links.size();
+      for (int index = 0; index < count; ++index)
+      {
+         dtDirector::InputLink* inputLink = links[index];
+         if (inputLink && inputLink->GetOwner())
+         {
+            outLinks.push_back(inputLink);
+         }
+      }
+
+      return !outLinks.empty();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool CustomEditorTool::GetPrev(dtDirector::Node* node, const std::string& linkName, std::vector<dtDirector::OutputLink*>& outLinks)
+   {
+      if (!node)
+      {
+         return false;
+      }
+
+      dtDirector::InputLink* link = node->GetInputLink(linkName);
+      if (!link)
+      {
+         return false;
+      }
+
+      std::vector<dtDirector::OutputLink*>& links = link->GetLinks();
+      int count = (int)links.size();
+      for (int index = 0; index < count; ++index)
+      {
+         dtDirector::OutputLink* outputLink = links[index];
+         if (outputLink && outputLink->GetOwner())
+         {
+            outLinks.push_back(outputLink);
+         }
+      }
+
+      return !outLinks.empty();
+   }
+
 } // namespace dtDirector
 
 //////////////////////////////////////////////////////////////////////////
