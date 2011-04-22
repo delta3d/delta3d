@@ -69,6 +69,7 @@
 #include <dtDirectorNodes/intvalue.h>
 #include <dtDirectorNodes/floatvalue.h>
 #include <dtDirectorNodes/randomfloatvalue.h>
+#include <dtDirectorNodes/randomintvalue.h>
 #include <dtDirectorNodes/doublevalue.h>
 #include <dtDirectorNodes/stringvalue.h>
 #include <dtDirectorNodes/stringarrayvalue.h>
@@ -151,6 +152,7 @@ namespace dtDirector
    RefPtr<NodeType> NodeLibraryRegistry::INT_VALUE_NODE_TYPE(                    new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "Int",                       "General",     "Base",        "An integer value.", NULL, Colors::BLUE, dtDAL::DataType::INT));
    RefPtr<NodeType> NodeLibraryRegistry::FLOAT_VALUE_NODE_TYPE(                  new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "Float",                     "General",     "Base",        "A float value.", NULL, Colors::YELLOW, dtDAL::DataType::FLOAT));
    RefPtr<NodeType> NodeLibraryRegistry::RANDOM_FLOAT_VALUE_NODE_TYPE(           new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "Random Float",              "General",     "Random",      "A random float value.", NULL, Colors::YELLOW, dtDAL::DataType::FLOAT));
+   RefPtr<NodeType> NodeLibraryRegistry::RANDOM_INT_VALUE_NODE_TYPE(             new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "Random Int",                "General",     "Random",      "A random int value.", NULL, Colors::BLUE, dtDAL::DataType::INT));
    RefPtr<NodeType> NodeLibraryRegistry::DOUBLE_VALUE_NODE_TYPE(                 new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "Double",                    "General",     "Base",        "A double value.", NULL, Colors::ORANGE, dtDAL::DataType::DOUBLE));
    RefPtr<NodeType> NodeLibraryRegistry::STRING_VALUE_NODE_TYPE(                 new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "String",                    "General",     "Base",        "A string value.", NULL, Colors::CYAN, dtDAL::DataType::STRING));
    RefPtr<NodeType> NodeLibraryRegistry::STRING_ARRAY_VALUE_NODE_TYPE(           new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "String Array",              "General",     "Arrays",      "An array of string values.", NULL, Colors::CYAN, dtDAL::DataType::STRING));
@@ -234,6 +236,7 @@ namespace dtDirector
       mNodeFactory->RegisterType<IntValue>(INT_VALUE_NODE_TYPE.get());
       mNodeFactory->RegisterType<FloatValue>(FLOAT_VALUE_NODE_TYPE.get());
       mNodeFactory->RegisterType<RandomFloatValue>(RANDOM_FLOAT_VALUE_NODE_TYPE.get());
+      mNodeFactory->RegisterType<RandomIntValue>(RANDOM_INT_VALUE_NODE_TYPE.get());
       mNodeFactory->RegisterType<DoubleValue>(DOUBLE_VALUE_NODE_TYPE.get());
       mNodeFactory->RegisterType<StringValue>(STRING_VALUE_NODE_TYPE.get());
       mNodeFactory->RegisterType<StringArrayValue>(STRING_ARRAY_VALUE_NODE_TYPE.get());
