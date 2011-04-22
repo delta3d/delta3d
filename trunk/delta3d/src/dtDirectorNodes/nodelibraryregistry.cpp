@@ -61,6 +61,7 @@
 #include <dtDirectorNodes/sendmessageaction.h>
 #include <dtDirectorNodes/sendeventmessageaction.h>
 #include <dtDirectorNodes/logaction.h>
+#include <dtDirectorNodes/switchaction.h>
 
 // Values
 #include <dtDirectorNodes/externalvaluenode.h>
@@ -142,6 +143,7 @@ namespace dtDirector
    RefPtr<NodeType> NodeLibraryRegistry::SEND_MESSAGE_ACTION_NODE_TYPE(          new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Send Message Action",       "Messages",    "Messages",    "Sends a Game Message.", NULL, Colors::BLUE));
    RefPtr<NodeType> NodeLibraryRegistry::SEND_EVENT_MESSAGE_ACTION_NODE_TYPE(    new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Send Event Message Action", "Messages",    "Messages",    "Sends a Game Event Message.", NULL, Colors::BLUE));
    RefPtr<NodeType> NodeLibraryRegistry::LOG_ACTION_NODE_TYPE(                   new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Log Message",               "General",     "Base",        "Writes out a message to the log.", NULL, Colors::BLUE));
+   RefPtr<NodeType> NodeLibraryRegistry::SWITCH_ACTION_NODE_TYPE(                new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Switch",                    "General",     "Base",        "Fires outputs in sequence based on the number of inputs received.", NULL, Colors::BLUE));
 
    // Values
    RefPtr<NodeType> NodeLibraryRegistry::EXTERNAL_VALUE_NODE_TYPE(               new dtDirector::NodeType(dtDirector::NodeType::LINK_NODE,   "Value Link",                "Core",        "Base",        "This node creates a value link connector in its parent graph.", NULL, Colors::VIOLET));
@@ -224,6 +226,7 @@ namespace dtDirector
       mNodeFactory->RegisterType<SendMessageAction>(SEND_MESSAGE_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<SendEventMessageAction>(SEND_EVENT_MESSAGE_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<LogAction>(LOG_ACTION_NODE_TYPE.get());
+      mNodeFactory->RegisterType<SwitchAction>(SWITCH_ACTION_NODE_TYPE.get());
 
       // Values
       mNodeFactory->RegisterType<ExternalValueNode>(EXTERNAL_VALUE_NODE_TYPE.get());

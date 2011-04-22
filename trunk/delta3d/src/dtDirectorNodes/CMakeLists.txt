@@ -53,6 +53,7 @@ SET(LIB_PUBLIC_HEADERS ${HEADER_PATH}/actorarrayvalue.h
     ${HEADER_PATH}/staticmeshvalue.h
     ${HEADER_PATH}/stringarrayvalue.h
     ${HEADER_PATH}/stringvalue.h
+    ${HEADER_PATH}/switchaction.h
     ${HEADER_PATH}/toggleaction.h
     ${HEADER_PATH}/triggervolumeevent.h
     ${HEADER_PATH}/vec2value.h
@@ -108,6 +109,7 @@ SET(LIB_SOURCES ${SOURCE_PATH}/actorarrayvalue.cpp
     ${SOURCE_PATH}/staticmeshvalue.cpp
     ${SOURCE_PATH}/stringarrayvalue.cpp
     ${SOURCE_PATH}/stringvalue.cpp
+    ${SOURCE_PATH}/switchaction.cpp
     ${SOURCE_PATH}/toggleaction.cpp
     ${SOURCE_PATH}/triggervolumeevent.cpp
     ${SOURCE_PATH}/vec2value.cpp
