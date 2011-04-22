@@ -163,16 +163,11 @@ namespace dtDirector
    {
       if (Node::CanConnectValue(link, value))
       {
-         dtDAL::DataType& type = value->GetPropertyType();
-         switch (type.GetTypeId())
+         if (value->CanBeType(dtDAL::DataType::VEC2) ||
+            value->CanBeType(dtDAL::DataType::VEC3) ||
+            value->CanBeType(dtDAL::DataType::VEC4))
          {
-         case dtDAL::DataType::VEC2F_ID:
-         case dtDAL::DataType::VEC3F_ID:
-         case dtDAL::DataType::VEC4F_ID:
             return true;
-
-         default:
-            return false;
          }
       }
 

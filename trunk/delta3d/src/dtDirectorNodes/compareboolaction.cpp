@@ -99,25 +99,6 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   bool CompareBoolAction::CanConnectValue(ValueLink* link, ValueNode* value)
-   {
-      if (Node::CanConnectValue(link, value))
-      {
-         dtDAL::DataType& type = value->GetPropertyType();
-         switch (type.GetTypeId())
-         {
-         case dtDAL::DataType::BOOLEAN_ID:
-            return true;
-
-         default:
-            return false;
-         }
-      }
-
-      return false;
-   }
-
-   //////////////////////////////////////////////////////////////////////////
    void CompareBoolAction::SetA(bool value)
    {
       mValueA = value;
