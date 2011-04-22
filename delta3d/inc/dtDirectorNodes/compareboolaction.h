@@ -75,17 +75,6 @@ namespace dtDirector
       virtual bool Update(float simDelta, float delta, int input, bool firstUpdate);
 
       /**
-       * Determines whether a value link on this node can connect
-       * to a given value.
-       *
-       * @param[in]  link   The link.
-       * @param[in]  value  The value to connect to.
-       *
-       * @return     True if a connection can be made.
-       */
-      virtual bool CanConnectValue(ValueLink* link, ValueNode* value);
-
-      /**
        * Accessors for property values.
        */
       void SetA(bool value);

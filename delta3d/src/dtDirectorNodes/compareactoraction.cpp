@@ -103,15 +103,10 @@ namespace dtDirector
    {
       if (Node::CanConnectValue(link, value))
       {
-         dtDAL::DataType& type = value->GetPropertyType();
-         switch (type.GetTypeId())
+         if (value->CanBeType(dtDAL::DataType::ACTOR) ||
+            value->CanBeType(dtDAL::DataType::STRING))
          {
-         case dtDAL::DataType::ACTOR_ID:
-         case dtDAL::DataType::STRING_ID:
             return true;
-
-         default:
-            return false;
          }
       }
 
