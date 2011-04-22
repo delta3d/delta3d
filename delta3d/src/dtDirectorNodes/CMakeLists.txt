@@ -39,6 +39,7 @@ SET(LIB_PUBLIC_HEADERS ${HEADER_PATH}/actorarrayvalue.h
     ${HEADER_PATH}/outputnode.h
     ${HEADER_PATH}/playervalue.h
     ${HEADER_PATH}/randomfloatvalue.h
+    ${HEADER_PATH}/randomintvalue.h
     ${HEADER_PATH}/referencescriptaction.h
     ${HEADER_PATH}/referencevalue.h
     ${HEADER_PATH}/remoteevent.h
@@ -95,6 +96,7 @@ SET(LIB_SOURCES ${SOURCE_PATH}/actorarrayvalue.cpp
     ${SOURCE_PATH}/outputnode.cpp
     ${SOURCE_PATH}/playervalue.cpp
     ${SOURCE_PATH}/randomfloatvalue.cpp
+    ${SOURCE_PATH}/randomintvalue.cpp
     ${SOURCE_PATH}/referencescriptaction.cpp
     ${SOURCE_PATH}/referencevalue.cpp
     ${SOURCE_PATH}/remoteevent.cpp
