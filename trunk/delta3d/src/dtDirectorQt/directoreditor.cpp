@@ -37,6 +37,8 @@
 #include <dtDirectorQt/valueitem.h>
 #include <dtDirectorQt/macroitem.h>
 
+#include <dtQt/docbrowser.h>
+
 #include <dtUtil/mathdefines.h>
 
 #include <QtCore/QSettings>
@@ -57,6 +59,7 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////////
    DirectorEditor::DirectorEditor(QWidget* parent)
       : QMainWindow(parent, Qt::Window)
+      , mDocBrowser(NULL)
       , mUndoManager(NULL)
       , mDirector(NULL)
       , mReplayMode(false)
@@ -1035,6 +1038,18 @@ namespace dtDirector
    void DirectorEditor::on_action_Refresh_triggered()
    {
       Refresh();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::on_actionDirector_Help_triggered()
+   {
+      if (!mDocBrowser)
+      {
+         mDocBrowser = new dtQt::DocBrowser(":director/contents.xml", this);
+      }
+
+      mDocBrowser->show();
+      mDocBrowser->raise();
    }
 
    ///////////////////////////////////////////////////////////////////////////////

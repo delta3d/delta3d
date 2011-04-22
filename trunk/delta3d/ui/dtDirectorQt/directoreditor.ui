@@ -46,7 +46,15 @@
            <property name="tabSpacing">
             <number>0</number>
            </property>
-           <widget class="QWidget" name="eventNodeTabWidgetPage1_2" native="true">
+           <widget class="QWidget" name="eventNodeTabWidgetPage1_2">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>251</width>
+              <height>454</height>
+             </rect>
+            </property>
             <attribute name="label">
              <string/>
             </attribute>
@@ -68,7 +76,15 @@
            <property name="tabSpacing">
             <number>0</number>
            </property>
-           <widget class="QWidget" name="actionNodeTabWidgetPage1_2" native="true">
+           <widget class="QWidget" name="actionNodeTabWidgetPage1_2">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>251</width>
+              <height>454</height>
+             </rect>
+            </property>
             <attribute name="label">
              <string/>
             </attribute>
@@ -90,7 +106,15 @@
            <property name="tabSpacing">
             <number>0</number>
            </property>
-           <widget class="QWidget" name="variableNodeTabWidgetPage1_2" native="true">
+           <widget class="QWidget" name="variableNodeTabWidgetPage1_2">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>251</width>
+              <height>454</height>
+             </rect>
+            </property>
             <attribute name="label">
              <string/>
             </attribute>
@@ -112,7 +136,15 @@
            <property name="tabSpacing">
             <number>0</number>
            </property>
-           <widget class="QWidget" name="macroNodeTabWidgetPage1_2" native="true">
+           <widget class="QWidget" name="macroNodeTabWidgetPage1_2">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>251</width>
+              <height>454</height>
+             </rect>
+            </property>
             <attribute name="label">
              <string/>
             </attribute>
@@ -134,7 +166,15 @@
            <property name="tabSpacing">
             <number>0</number>
            </property>
-           <widget class="QWidget" name="linkNodeTabWidgetPage1_2" native="true">
+           <widget class="QWidget" name="linkNodeTabWidgetPage1_2">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>251</width>
+              <height>454</height>
+             </rect>
+            </property>
             <attribute name="label">
              <string/>
             </attribute>
@@ -162,7 +202,15 @@
            <property name="tabSpacing">
             <number>0</number>
            </property>
-           <widget class="QWidget" name="miscNodeTabWidgetPage1_2" native="true">
+           <widget class="QWidget" name="miscNodeTabWidgetPage1_2">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>251</width>
+              <height>454</height>
+             </rect>
+            </property>
             <attribute name="label">
              <string/>
             </attribute>
@@ -248,9 +296,16 @@
     <addaction name="separator"/>
     <addaction name="action_Refresh"/>
    </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="actionDirector_Help"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menu_Edit"/>
    <addaction name="menu_View"/>
+   <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QToolBar" name="FileToolbar">
@@ -615,6 +670,11 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+Q</string>
+   </property>
+  </action>
+  <action name="actionDirector_Help">
+   <property name="text">
+    <string>Director Help...</string>
    </property>
   </action>
  </widget>

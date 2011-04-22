@@ -41,6 +41,11 @@ namespace Phonon
 }
 /// @endcond
 
+namespace dtQt
+{
+   class DocBrowser;
+}
+
 namespace dtDirector
 {
    class CustomEditorTool;
@@ -401,6 +406,11 @@ namespace dtDirector
       void on_action_Refresh_triggered();
 
       /**
+       * Event handler when the help button is pressed.
+       */
+      void on_actionDirector_Help_triggered();
+
+      /**
        * Event handler when a node creation menu item is triggered.
        */
       void OnCreateNodeEvent(const QString& name, const QString& category);
@@ -491,6 +501,8 @@ namespace dtDirector
       void RefreshNodeScene(NodeTabs* nodeTabs, NodeType::NodeTypeEnum nodeType);
 
       Ui::DirectorEditor       mUI;
+
+      dtQt::DocBrowser*        mDocBrowser;
 
       UndoManager*             mUndoManager;
 
