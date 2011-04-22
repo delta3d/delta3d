@@ -24,6 +24,7 @@
 
 #include <dtDAL/datatype.h>
 #include <dtDAL/intactorproperty.h>
+#include <dtDAL/actorproxyicon.h>
 
 using namespace dtActors;
 
@@ -66,4 +67,30 @@ void TriggerVolumeActorProxy::BuildPropertyMap()
       dtDAL::IntActorProperty::GetFuncType(actor, &TriggerVolumeActor::GetMaxTriggerCount),
       "Sets the maximum number of times the trigger can active.  0 means an infinite number.",
       GROUP_TRIGGER));
+}
+
+//////////////////////////////////////////////////////////////////////////
+const dtDAL::BaseActorObject::RenderMode& dtActors::TriggerVolumeActorProxy::GetRenderMode()
+{
+   if (IsInSTAGE())
+   {
+      if (GetRenderCollisionGeometry() == false)
+      {
+         return dtDAL::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON;
+      }
+   }
+
+   return dtGame::GameActorProxy::GetRenderMode();
+}
+
+//////////////////////////////////////////////////////////////////////////
+dtDAL::ActorProxyIcon* dtActors::TriggerVolumeActorProxy::GetBillBoardIcon()
+{
+   if (!mBillBoardIcon.valid())
+   {
+      dtDAL::ActorProxyIcon::ActorProxyIconConfig cfg(false,false,1.f);
+      mBillBoardIcon = new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IMAGE_BILLBOARD_TRIGGER, cfg);
+   }
+
+   return mBillBoardIcon.get();
 }

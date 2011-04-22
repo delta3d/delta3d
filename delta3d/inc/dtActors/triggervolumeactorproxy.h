@@ -36,6 +36,10 @@ namespace dtActors
 
       virtual void BuildPropertyMap();
 
+      virtual const dtDAL::BaseActorObject::RenderMode& GetRenderMode();
+
+      virtual dtDAL::ActorProxyIcon* GetBillBoardIcon();
+
    protected:
 
       virtual ~TriggerVolumeActorProxy();
