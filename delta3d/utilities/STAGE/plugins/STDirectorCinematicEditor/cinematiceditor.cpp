@@ -1697,7 +1697,7 @@ void DirectorCinematicEditorPlugin::OnLoad()
                   if (animNode)
                   {
                      // Load our scheduled animation list.
-                     std::vector<dtDirector::AnimateActorAction::AnimData>&
+                     std::vector<dtDirector::AnimateActorAction::AnimData>
                         animList = animNode->GetAnimArray();
                      int animCount = (int)animList.size();
                      for (int animIndex = 0; animIndex < animCount; ++animIndex)
