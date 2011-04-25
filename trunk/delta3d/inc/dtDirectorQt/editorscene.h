@@ -198,10 +198,12 @@ namespace dtDirector
       Node* CreateNode(const std::string& name, const std::string& category, float x, float y);
 
       /**
-       * Creates a new node item.
+       * Creates a new node item.  Providing a blank name will cause a
+       * macro node to be created instead using the category as the custom
+       * editor name.
        *
-       * @param[in]  name      The name of the node.
-       * @param[in]  category  The category of the node.
+       * @param[in]  name      The name of the node or blank to create macro.
+       * @param[in]  category  The category of the node or custom editor for a macro.
        * @param[in[  x, y      Starting UI coordinates to spawn the node.
        */
       void CreateNodeItem(const std::string& name, const std::string& category, float x, float y);

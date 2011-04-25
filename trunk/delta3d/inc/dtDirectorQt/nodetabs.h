@@ -60,11 +60,15 @@ namespace dtDirector
        */
       void RefreshNodes(NodeType::NodeTypeEnum nodeType);
 
+      /**
+       * Adds a custom editor macro to the node selection.
+       *
+       * @param[in]  editor  The name of the custom editor.
+       */
+      void AddCustomEditor(const std::string& editor);
+
    signals:
       void CreateNode(const QString& name, const QString& category);
-
-   public slots:
-      void OnCreateNodeEvent(const QString& name, const QString& category);
 
    private:
 

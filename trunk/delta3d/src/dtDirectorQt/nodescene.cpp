@@ -81,7 +81,8 @@ namespace dtDirector
                }
                else
                {
-                  item = new MacroItem(NULL, mpItem, NULL);
+                  CreateMacro("");
+                  return;
                }
                break;
             }
@@ -112,6 +113,44 @@ namespace dtDirector
             item->setAcceptedMouseButtons(Qt::NoButton);
             item->setData(Qt::UserRole, QString::fromStdString(name));
             item->setData(Qt::UserRole + 1, QString::fromStdString(category));
+
+#if(QT_VERSION >= 0x00040600)
+            item->setFlag(QGraphicsItem::ItemSendsGeometryChanges, false);
+#endif
+            item->Draw();
+            mHeight += item->boundingRect().height();
+            if (item->boundingRect().width() > mWidth)
+            {
+               mWidth = item->boundingRect().width();
+            }
+
+            QRectF sceneBounds = sceneRect();
+            sceneBounds.setHeight(mHeight + NODE_BUFFER);
+            sceneBounds.setWidth(mWidth + NODE_BUFFER);
+            setSceneRect(sceneBounds);
+
+            mHeight += NODE_BUFFER;
+         }
+      }
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void NodeScene::CreateMacro(const std::string& editor)
+   {
+      dtCore::RefPtr<DirectorGraph> graph = mpGraph->AddGraph();
+      if (graph.valid())
+      {
+         graph->SetEditor(editor);
+         graph->SetPosition(osg::Vec2(NODE_BUFFER, mHeight));
+
+         NodeItem* item = new MacroItem(graph, mpItem, NULL);
+         if (item != NULL)
+         {
+            item->setFlag(QGraphicsItem::ItemIsMovable, false);
+            item->setFlag(QGraphicsItem::ItemIsSelectable, false);
+            item->setAcceptedMouseButtons(Qt::NoButton);
+            item->setData(Qt::UserRole, "");
+            item->setData(Qt::UserRole + 1, QString::fromStdString(editor));
 
 #if(QT_VERSION >= 0x00040600)
             item->setFlag(QGraphicsItem::ItemSendsGeometryChanges, false);
