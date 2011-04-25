@@ -777,18 +777,24 @@ void FileUtilsTests::testDirExistsInArchive()
 
 void FileUtilsTests::testFileExistsInArchive()
 {
+   try
+   {
+      std::string archivePath("./data/ProjectArchive.zip");
 
-   std::string archivePath("./data/ProjectArchive.zip");
+      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
 
-   dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
+      fileUtils.ChangeDirectory(TESTS_DIR + "/data/ProjectArchive.zip/StaticMeshes");
 
-   fileUtils.ChangeDirectory(TESTS_DIR + "/data/ProjectArchive.zip/StaticMeshes");
+      bool relativeTest = fileUtils.FileExists("articulation_test.ive");
+      bool absoluteTest = fileUtils.FileExists(TESTS_DIR + "/data/ProjectArchive.zip/StaticMeshes/articulation_test.ive");
 
-   bool relativeTest = fileUtils.FileExists("articulation_test.ive");
-   bool absoluteTest = fileUtils.FileExists(TESTS_DIR + "/data/ProjectArchive.zip/StaticMeshes/articulation_test.ive");
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("The static mesh in the archive should be found to exist when searching with a relative path", true, relativeTest);
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("The static mesh in the archive should be found to exist when searching with an absolute path", true, absoluteTest);
 
-   CPPUNIT_ASSERT_EQUAL_MESSAGE("The static mesh in the archive should be found to exist when searching with a relative path", true, relativeTest);
-   CPPUNIT_ASSERT_EQUAL_MESSAGE("The static mesh in the archive should be found to exist when searching with an absolute path", true, absoluteTest);
-
-   fileUtils.ChangeDirectory(TESTS_DIR);
+      fileUtils.ChangeDirectory(TESTS_DIR);
+   }
+   catch (const dtUtil::Exception& ex)
+   {
+      CPPUNIT_FAIL(ex.ToString());
+   }
 }
