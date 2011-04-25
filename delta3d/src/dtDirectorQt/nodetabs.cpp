@@ -58,6 +58,45 @@ namespace dtDirector
          delete item;
       }
 
+      // In the case of showing Macro nodes, make sure we show our
+      // standard Macro along with custom editor macros.
+      if (nodeType == NodeType::MACRO_NODE)
+      {
+         // Make sure the category tab exists.
+         NodeScene* scene = NULL;
+         int tabCount = count();
+         for (int tabIndex = 0; tabIndex < tabCount; ++tabIndex)
+         {
+            if (itemText(tabIndex).toStdString() == "Base")
+            {
+               QGraphicsView* view = dynamic_cast<QGraphicsView*>(widget(tabIndex));
+               if (view)
+               {
+                  scene = dynamic_cast<NodeScene*>(view->scene());
+               }
+               break;
+            }
+         }
+
+         if (!scene)
+         {
+            scene = new NodeScene(mpEditor, mpGraph);
+            QGraphicsView* view = new QGraphicsView(scene);
+            connect(scene, SIGNAL(CreateNode(const QString&, const QString&)),
+               this, SIGNAL(CreateNode(const QString&, const QString&)));
+            view->setScene(scene);
+
+            insertItem(0, view, "Base");
+            setCurrentIndex(0);
+         }
+
+         if (scene)
+         {
+            // Add our default empty macro.
+            scene->CreateMacro("");
+         }
+      }
+
       std::vector<const NodeType*> nodes;
       NodeManager::GetInstance().GetNodeTypes(nodes);
 
@@ -98,7 +137,7 @@ namespace dtDirector
                   scene = new NodeScene(mpEditor, mpGraph);
                   QGraphicsView* view = new QGraphicsView(scene);
                   connect(scene, SIGNAL(CreateNode(const QString&, const QString&)),
-                     this, SLOT(OnCreateNodeEvent(const QString&, const QString&)));
+                     this, SIGNAL(CreateNode(const QString&, const QString&)));
                   view->setScene(scene);
 
                   if (node->GetFolder() == "Base")
@@ -124,10 +163,44 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void NodeTabs::OnCreateNodeEvent(const QString& name, const QString& category)
+   void NodeTabs::AddCustomEditor(const std::string& editor)
    {
-      emit CreateNode(name, category);
+      // Make sure the category tab exists.
+      NodeScene* scene = NULL;
+      int tabCount = count();
+      for (int tabIndex = 0; tabIndex < tabCount; ++tabIndex)
+      {
+         if (itemText(tabIndex).toStdString() == "Base")
+         {
+            QGraphicsView* view = dynamic_cast<QGraphicsView*>(widget(tabIndex));
+            if (view)
+            {
+               scene = dynamic_cast<NodeScene*>(view->scene());
+            }
+            break;
+         }
+      }
+
+      if (!scene)
+      {
+         scene = new NodeScene(mpEditor, mpGraph);
+         QGraphicsView* view = new QGraphicsView(scene);
+         connect(scene, SIGNAL(CreateNode(const QString&, const QString&)),
+            this, SIGNAL(CreateNode(const QString&, const QString&)));
+         view->setScene(scene);
+
+         insertItem(0, view, "Base");
+         setCurrentIndex(0);
+      }
+
+      if (scene)
+      {
+         scene->CreateMacro(editor);
+      }
+
+      layout()->setSpacing(0);
    }
+
 } // namespace dtDirector
 
 //////////////////////////////////////////////////////////////////////////

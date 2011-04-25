@@ -537,11 +537,39 @@ namespace dtDirector
    ///////////////////////////////////////////////////////////////////////////////
    void EditorScene::CreateNodeItem(const std::string& name, const std::string& category, float x, float y)
    {
-      Node* node = CreateNode(name, category, x, y);
-      if (node)
+      // If the node name is empty, it means we are creating a macro.
+      if (name.empty())
       {
-         dtCore::RefPtr<UndoCreateEvent> event = new UndoCreateEvent(mEditor, node->GetID(), mGraph->GetID());
-         mEditor->GetUndoManager()->AddEvent(event);
+         mEditor->GetUndoManager()->BeginMultipleEvents();
+         mMenuPos.setX(x);
+         mMenuPos.setY(y);
+         DirectorGraph* graph = CreateMacro();
+         if (graph)
+         {
+            dtCore::RefPtr<UndoPropertyEvent> event = new UndoPropertyEvent(mEditor, graph->GetID(), "Name", "Macro", graph->GetName());
+            mEditor->GetUndoManager()->AddEvent(event.get());
+
+            if (!category.empty())
+            {
+               graph->SetEditor(category);
+
+               event = new UndoPropertyEvent(mEditor, graph->GetID(), "Custom Editor", "", category);
+               mEditor->GetUndoManager()->AddEvent(event.get());
+            }
+         }
+         mEditor->GetUndoManager()->EndMultipleEvents();
+
+         mEditor->RefreshGraph(mGraph);
+         mEditor->Refresh();
+      }
+      else
+      {
+         Node* node = CreateNode(name, category, x, y);
+         if (node)
+         {
+            dtCore::RefPtr<UndoCreateEvent> event = new UndoCreateEvent(mEditor, node->GetID(), mGraph->GetID());
+            mEditor->GetUndoManager()->AddEvent(event);
+         }
       }
    }
 
@@ -649,9 +677,6 @@ namespace dtDirector
 
          dtCore::RefPtr<UndoPropertyEvent> event = new UndoPropertyEvent(mEditor, graph->GetID(), "Custom Editor", "", action->statusTip().toStdString());
          mEditor->GetUndoManager()->AddEvent(event.get());
-
-         // Change the name of the macro to reflect its editor.
-         //graph->SetName(action->statusTip().toStdString() + " Macro");
 
          event = new UndoPropertyEvent(mEditor, graph->GetID(), "Name", "Macro", graph->GetName());
          mEditor->GetUndoManager()->AddEvent(event.get());
@@ -885,13 +910,9 @@ namespace dtDirector
 
       dataStream >> name >> category >> hotspot;
 
-      if (!name.isEmpty() && !category.isEmpty())
-      {
-         QPointF pos = event->scenePos() - mTranslationItem->scenePos() - hotspot;
+      QPointF pos = event->scenePos() - mTranslationItem->scenePos() - hotspot;
 
-         CreateNodeItem(name.toStdString(), category.toStdString(),
-                        pos.x(), pos.y());
-      }
+      CreateNodeItem(name.toStdString(), category.toStdString(), pos.x(), pos.y());
    }
 
    //////////////////////////////////////////////////////////////////////////

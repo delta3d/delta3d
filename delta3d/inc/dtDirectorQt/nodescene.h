@@ -60,13 +60,19 @@ namespace dtDirector
       /**
        * Creates a new node.
        *
+       * @param[in]     nodeType  The type of node.
        * @param[in]     name      The name of the node.
        * @param[in]     category  The category of the node.
-       * @param[in,out] x, y      Starting UI coordinates to spawn the node.
-       * @param[in,out] maxWidth  The maximum width of all nodes in this scene.
        */
       void CreateNode(NodeType::NodeTypeEnum nodeType, const std::string& name,
          const std::string& category);
+
+      /**
+       * Creates a new macro.
+       *
+       * @param[in]  editor  The custom editor for this macro.
+       */
+      void CreateMacro(const std::string& editor);
 
    signals:
       void CreateNode(const QString& name, const QString& category);

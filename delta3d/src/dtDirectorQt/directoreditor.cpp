@@ -450,6 +450,10 @@ namespace dtDirector
       }
 
       mCustomTools.insert(std::make_pair<std::string, CustomEditorTool*>(tool->GetName(), tool));
+
+      // Also add the custom editor to the node palette.
+      mUI.macroNodeTabWidget->AddCustomEditor(tool->GetName());
+
       return true;
    }
 
