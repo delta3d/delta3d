@@ -12,7 +12,7 @@ SET( LIB_SOURCES
    )
    
 
-ADD_LIBRARY(${LIB_NAME} SHARED
+ADD_LIBRARY(${LIB_NAME} MODULE
     ${LIB_PUBLIC_HEADERS} 
     ${LIB_SOURCES}
 )
@@ -29,6 +29,8 @@ INCLUDE(ModuleInstall OPTIONAL)
 
 IF (UNIX)
   ADD_DEFINITIONS(-DZIP_STD)
+  # OSG doesn't want the "lib" on the front
+  SET(CMAKE_SHARED_MODULE_PREFIX "")
 ENDIF (UNIX)
 
 #little hack to get the .dll into /bin and .lib into /lib
