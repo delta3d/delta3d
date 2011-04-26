@@ -518,6 +518,7 @@ osgDB::DirectoryContents ZipArchive::getDirectoryContents(const std::string& dir
 
 std::string ZipArchive::ReadPassword(const osgDB::ReaderWriter::Options* options) const
 {
+   //try pulling it off the options first
    std::string password = "";
    if(options != NULL)
    {
@@ -528,6 +529,24 @@ std::string ZipArchive::ReadPassword(const osgDB::ReaderWriter::Options* options
          if(details != NULL)
          {
             password = details->password;
+         }
+      }
+   }
+
+   //if no password, try the registry
+   if(password.empty())
+   {
+      osgDB::Registry* reg = osgDB::Registry::instance();
+      if(reg != NULL)
+      {
+         const osgDB::AuthenticationMap* credentials = reg->getAuthenticationMap();
+         if(credentials != NULL)
+         {
+            const osgDB::AuthenticationDetails* details = credentials->getAuthenticationDetails("ZipPlugin");
+            if(details != NULL)
+            {
+               password = details->password;
+            }
          }
       }
    }
