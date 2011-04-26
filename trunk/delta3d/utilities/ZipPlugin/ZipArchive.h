@@ -68,6 +68,7 @@ class ZipArchive : public osgDB::ArchiveExtended
        ZIPENTRY* GetZipEntry(const std::string& filename);
 
        std::string ReadPassword(const osgDB::ReaderWriter::Options* options) const;
+       bool CheckZipErrorCode(ZRESULT result) const;
 
     private:
 
