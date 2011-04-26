@@ -28,6 +28,8 @@
 
 #include <prefix/unittestprefix.h>
 
+#include <dtUtil/datapathutils.h>
+
 #include <dtDAL/datatype.h>
 
 #include <dtUtil/datapathutils.h>
@@ -41,6 +43,7 @@
 #include <osgDB/FileNameUtils>
 #include <osgDB/Registry>
 #include <osgDB/AuthenticationMap>
+#include <osgDB/ReadFile>
 
 class FileUtilsTests : public CPPUNIT_NS::TestFixture
 {
@@ -61,6 +64,7 @@ class FileUtilsTests : public CPPUNIT_NS::TestFixture
       CPPUNIT_TEST(testDirExistsInArchive);
       CPPUNIT_TEST(testFileExistsInArchive);
       CPPUNIT_TEST(testLoadFromPasswordProtectedArchive);
+      CPPUNIT_TEST(testArchiveReadNodeFile);
 
 
    CPPUNIT_TEST_SUITE_END();
@@ -79,13 +83,14 @@ class FileUtilsTests : public CPPUNIT_NS::TestFixture
       void testDirectoryContentsWithOneFilter();
       void testDirectoryContentsWithTwoFilters();
       void testDirectoryContentsWithDuplicateFilter();
-
+      
       void testLoadFromArchive();
       void testArchiveRelativePath();
       void testIsSameFileInArchive();
       void testDirExistsInArchive();
       void testFileExistsInArchive();
       void testLoadFromPasswordProtectedArchive();
+      void testArchiveReadNodeFile();
 
    private:
 
@@ -842,3 +847,34 @@ void FileUtilsTests::testLoadFromPasswordProtectedArchive()
    fileUtils.ChangeDirectory(TESTS_DIR);
 
 }
+
+
+void FileUtilsTests::testArchiveReadNodeFile()
+{
+   try
+   {
+      std::string archivePath("../data/ProjectArchive.zip");
+      std::string originalFilePathList = dtUtil::GetDataFilePathList();
+      std::string newFilePathList = originalFilePathList + ";" + archivePath;
+      dtUtil::SetDataFilePathList(newFilePathList);
+
+      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
+
+      std::string fileToFind("/StaticMeshes/articulation_test.ive");
+      //this below should work and doesnt
+      std::string fileFound = dtUtil::FindFileInPathList(fileToFind);
+      osg::Node* node = osgDB::readNodeFile(archivePath + fileToFind);
+
+      //this should work and is an osg bug, currently commented out
+      //CPPUNIT_ASSERT_MESSAGE("Should be able to find a file within an archive using dtUtil::FindFileInPathList.", !fileFound.empty());
+
+      CPPUNIT_ASSERT_MESSAGE("Should be able to call osgDB::readNodeFile() for a file within an archive.", node != NULL);
+
+      fileUtils.ChangeDirectory(TESTS_DIR);
+   }
+   catch (const dtUtil::Exception& ex)
+   {
+      CPPUNIT_FAIL(ex.ToString());
+   }
+}
+
