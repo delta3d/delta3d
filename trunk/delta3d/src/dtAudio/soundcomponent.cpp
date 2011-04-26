@@ -27,8 +27,10 @@
 #include <dtAudio/audioactorregistry.h>
 #include <dtAudio/soundactorproxy.h>
 #include <dtAudio/soundinfo.h>
-
+#include <dtDAL/project.h>
 #include <dtUtil/datapathutils.h>
+#include <dtUtil/fileutils.h>
+#include <sstream>
 
 
 namespace dtAudio
@@ -87,15 +89,43 @@ namespace dtAudio
       bool success = false;
       dtCore::RefPtr<dtAudio::Sound> sound;
 
-      if (!dtUtil::FindFileInPathList(soundFile).empty())
+      std::string fileName;
+      if (dtUtil::FileUtils::GetInstance().IsAbsolutePath(soundFile))
+      {
+         fileName = soundFile;
+      }
+      else
+      {
+         fileName = dtUtil::FindFileInPathList(soundFile);
+
+         if(fileName.empty())
+         {
+            try
+            {
+               fileName = dtDAL::Project::GetInstance().GetResourcePath(soundFile);
+            }
+            catch (...)
+            {
+               // Print out happens at the end of this method if file is bad.
+            }
+         }
+      }
+
+      if (!fileName.empty())
       {
          // Create the sound object.
          sound = dtAudio::AudioManager::GetInstance().NewSound();
-         sound->LoadFile(soundFile.c_str());
+         sound->LoadFile(fileName.c_str());
          sound->SetName(soundName);
 
          // Attempt adding it to the map.
          success = AddSound(*sound, soundName, soundType);
+      }
+      else
+      {
+         std::ostringstream oss;
+         oss << "could not load sound file \"" << soundFile << "\"." << std::endl;
+         LOG_WARNING(oss.str());
       }
 
       return success ? sound.get() : NULL;
