@@ -19,6 +19,7 @@
 #include <dtAudio/dtaudio.h>
 #include <dtCore/system.h>
 #include <dtCore/camera.h>
+#include <dtDAL/project.h>
 #include <dtUtil/stringutils.h>
 #include <dtUtil/datapathutils.h>
 
@@ -85,33 +86,67 @@ namespace dtAudio {
    {
    public:
 
+      //////////////////////////////////////////////////////////////////////////
       ReaderWriterWAV()
       {
          supportsExtension("wav","Wav sound format");
       }
 
+      //////////////////////////////////////////////////////////////////////////
       virtual const char* className() const { return "WAV Sound Reader"; }
 
+      //////////////////////////////////////////////////////////////////////////
       virtual osgDB::ReaderWriter::ReadResult readObject(const std::string& file,
          const osgDB::ReaderWriter::Options* options =NULL) const
       {
-         using namespace osgDB;
-
          std::string ext = osgDB::getLowerCaseFileExtension(file);
-         if (!acceptsExtension(ext)) return ReaderWriter::ReadResult::FILE_NOT_HANDLED;
+         if (!acceptsExtension(ext)) return ReadResult::FILE_NOT_HANDLED;
 
-         std::string fileName = osgDB::findDataFile( file, options );
-         if (fileName.empty()) return ReaderWriter::ReadResult::FILE_NOT_FOUND;
+         if (!dtUtil::FileUtils::GetInstance().FileExists(file))
+         {
+            return osgDB::ReaderWriter::ReadResult(osgDB::ReaderWriter::ReadResult::FILE_NOT_FOUND);
+         }
+
+         std::ifstream confStream(file.c_str(), std::ios_base::binary);
+
+         if (!confStream.is_open())
+         {
+            return osgDB::ReaderWriter::ReadResult(osgDB::ReaderWriter::ReadResult::ERROR_IN_READING_FILE);
+         }
+
+         return readObject(confStream, options);
+      }
+
+      //////////////////////////////////////////////////////////////////////////
+      virtual ReadResult readObject(std::istream& fin,const Options* = NULL) const
+      {
+         osgDB::ReaderWriter::ReadResult result = osgDB::ReaderWriter::ReadResult(osgDB::ReaderWriter::ReadResult::FILE_NOT_HANDLED);
+
+         if (fin.fail()) return false;
+
+         fin.seekg(0,std::ios_base::end);
+         unsigned int ulzipFileLength = fin.tellg();
+         fin.seekg(0,std::ios_base::beg);
+
+         char* memBuffer = new (std::nothrow) char [ulzipFileLength];
+         if (memBuffer == NULL)
+         {
+            return false;
+         }
+
+         fin.read(memBuffer, ulzipFileLength);
 
          dtCore::RefPtr<WrapperOSGSoundObject> userData = new WrapperOSGSoundObject;
          AudioManager::BufferData& bf = userData->mBufferData;
 
          // NON-DEPRECATED version for ALUT >= 1.0.0
          ALfloat freq(0);
-         userData->mRawData = alutLoadMemoryFromFile(file.c_str(), &bf.format, &bf.size, &freq);
+         userData->mRawData = alutLoadMemoryFromFileImage(
+            memBuffer, ALsizei(ulzipFileLength), &bf.format, &bf.size, &freq);
          bf.freq = ALsizei(freq);
-         CheckForError("data = alutLoadMemoryFromFile", __FUNCTION__, __LINE__);
-
+         CheckForError("data = alutLoadMemoryFromFileImage", __FUNCTION__, __LINE__);
+         delete [] memBuffer;
+         
          return ReaderWriter::ReadResult(userData.get(), ReaderWriter::ReadResult::FILE_LOADED);
       }
    };
@@ -512,7 +547,16 @@ ALint AudioManager::LoadFile(const std::string& file)
       return false;
    }
 
-   std::string filename = dtUtil::FindFileInPathList(file);
+   std::string filename;
+   if (dtUtil::FileUtils::GetInstance().IsAbsolutePath(file))
+   {
+      filename = file;
+   }
+   else
+   {
+      filename = dtDAL::Project::GetInstance().GetResourcePath(file);
+   }
+
    if (filename.empty())
    {
       // still no file name, bail...
@@ -570,9 +614,9 @@ ALint AudioManager::LoadFile(const std::string& file)
 
    // Load the sound through OSG so that the sound file
    // may or may not be loaded from an encrypted file.
-   dtCore::RefPtr<WrapperOSGSoundObject> userData
-      = dynamic_cast<WrapperOSGSoundObject*>(osgDB::readRefObjectFile(filename).get());
-   if(userData.valid())
+   dtCore::RefPtr<osg::Object> osgObj = osgDB::readRefObjectFile(filename);
+   WrapperOSGSoundObject* userData = dynamic_cast<WrapperOSGSoundObject*>(osgObj.get());
+   if(userData != NULL)
    {
       data = userData->mRawData;
    }
