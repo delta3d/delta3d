@@ -458,6 +458,7 @@ osgDB::FileType ZipArchive::getFileType(const std::string& filename) const
       if (ze->attr & S_IFDIR)
 #else
       if (ze->attr & FILE_ATTRIBUTE_DIRECTORY)
+#endif
       {
          return osgDB::DIRECTORY;
       }
