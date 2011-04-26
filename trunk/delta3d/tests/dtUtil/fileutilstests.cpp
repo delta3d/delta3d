@@ -39,6 +39,8 @@
 
 #include <osg/Version>
 #include <osgDB/FileNameUtils>
+#include <osgDB/Registry>
+#include <osgDB/AuthenticationMap>
 
 class FileUtilsTests : public CPPUNIT_NS::TestFixture
 {
@@ -58,6 +60,7 @@ class FileUtilsTests : public CPPUNIT_NS::TestFixture
       CPPUNIT_TEST(testIsSameFileInArchive);
       CPPUNIT_TEST(testDirExistsInArchive);
       CPPUNIT_TEST(testFileExistsInArchive);
+      CPPUNIT_TEST(testLoadFromPasswordProtectedArchive);
 
 
    CPPUNIT_TEST_SUITE_END();
@@ -82,6 +85,7 @@ class FileUtilsTests : public CPPUNIT_NS::TestFixture
       void testIsSameFileInArchive();
       void testDirExistsInArchive();
       void testFileExistsInArchive();
+      void testLoadFromPasswordProtectedArchive();
 
    private:
 
@@ -150,6 +154,7 @@ void FileUtilsTests::setUp()
 
       fileUtils.FileCopy(DATA_DIR + "/models/terrain_simple.ive", ".", false);
       fileUtils.FileCopy(DATA_DIR + "/models/flatdirt.ive", ".", false);
+
    }
    catch (const dtUtil::Exception& ex)
    {
@@ -803,4 +808,37 @@ void FileUtilsTests::testFileExistsInArchive()
    {
       CPPUNIT_FAIL(ex.ToString());
    }
+}
+
+void FileUtilsTests::testLoadFromPasswordProtectedArchive()
+{
+   std::string archivePath("./data/TestArchive_password_is_delta3d.zip");
+
+   //for testing password on .zip
+   osgDB::Registry* reg = osgDB::Registry::instance();
+   if(reg != NULL)
+   {
+      osgDB::AuthenticationMap* auth = new osgDB::AuthenticationMap();  
+      auth->addAuthenticationDetails("ZipPlugin", new osgDB::AuthenticationDetails("ZipPlugin", "delta3d"));
+      reg->setAuthenticationMap(auth);
+   }
+
+   dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
+
+   fileUtils.ChangeDirectory(TESTS_DIR);
+
+   dtUtil::FileInfo info = fileUtils.GetFileInfo(archivePath);
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("The file type for a zip file should be an archive", dtUtil::ARCHIVE, info.fileType);
+
+   fileUtils.ChangeDirectory(archivePath + "/StaticMeshes");
+
+   dtUtil::DirectoryContents meshContents = fileUtils.DirGetFiles(".");
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("The mesh directory should have 1 file.", 1, int(meshContents.size()));
+
+   osg::Node* nodeFile = dtUtil::FileUtils::GetInstance().ReadNode(meshContents[0]);
+   CPPUNIT_ASSERT_MESSAGE("Node should not be NULL", nodeFile != NULL);
+   
+
+   fileUtils.ChangeDirectory(TESTS_DIR);
+
 }
