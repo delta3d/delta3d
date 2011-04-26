@@ -22,7 +22,7 @@
 #include <sys/stat.h>
 
 #include <sstream>
-
+#include <cstdio>
 #include "unzip.h"
 
 #if !defined(S_ISDIR)
@@ -321,15 +321,20 @@ osgDB::ReaderWriter::WriteResult ZipArchive::writeNode(const osg::Node& /*node*/
 }
 
 
-osgDB::ReaderWriter* ZipArchive::ReadFromZipEntry( const ZIPENTRY* ze, const osgDB::ReaderWriter::Options* options, std::stringstream& buffer) const
+osgDB::ReaderWriter* ZipArchive::ReadFromZipEntry(const ZIPENTRY* ze, const osgDB::ReaderWriter::Options* options, std::stringstream& buffer) const
 {
    if (ze != 0)
    {
-      char* ibuf = new char[ze->unc_size];
+      char* ibuf = new (std::nothrow) char[ze->unc_size];
       if (ibuf)
       {
-         UnzipItem(mZipRecord, ze->index, ibuf, ze->unc_size);
-         buffer.write(ibuf,ze->unc_size);
+         ZRESULT result = UnzipItem(mZipRecord, ze->index, ibuf, ze->unc_size);
+         bool unzipSuccesful = CheckZipErrorCode(result);
+         if(unzipSuccesful)
+         {
+            buffer.write(ibuf,ze->unc_size);
+         }
+
          delete[] ibuf;
 
          std::string file_ext = osgDB::getFileExtension(ze->name);
@@ -339,6 +344,10 @@ osgDB::ReaderWriter* ZipArchive::ReadFromZipEntry( const ZIPENTRY* ze, const osg
          {
             return rw;
          }
+      }
+      else
+      {
+         //std::cout << "Error- failed to allocate enough memory to unzip file '" << ze->name << ", with size '" << ze->unc_size << std::endl;
       }
    }
 
@@ -449,7 +458,6 @@ osgDB::FileType ZipArchive::getFileType(const std::string& filename) const
       if (ze->attr & S_IFDIR)
 #else
       if (ze->attr & FILE_ATTRIBUTE_DIRECTORY)
-#endif
       {
          return osgDB::DIRECTORY;
       }
@@ -524,5 +532,31 @@ std::string ZipArchive::ReadPassword(const osgDB::ReaderWriter::Options* options
    }
 
    return password;
+}
+
+bool ZipArchive::CheckZipErrorCode(ZRESULT result) const
+{
+   if(result == ZR_OK)
+   {
+      return true;
+   }
+   else
+   {
+      unsigned buf_size  = 1025;
+      char* buf = new (std::nothrow) char[buf_size];
+      buf[buf_size - 1] = 0;
+
+      if (buf)
+      {
+         int len = FormatZipMessage(result, buf, buf_size - 1);
+
+         //print error message
+         sprintf(buf, "%s");
+         delete [] buf;
+      }
+
+      return false;
+   }
+
 }
 

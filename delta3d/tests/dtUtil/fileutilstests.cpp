@@ -700,6 +700,12 @@ void FileUtilsTests::testLoadFromArchive()
    dtUtil::DirectoryContents meshContents = fileUtils.DirGetFiles(".");
    CPPUNIT_ASSERT_EQUAL_MESSAGE("The mesh directory should have 1 file.", 1, int(meshContents.size()));
 
+   for(int i = 0; i < 10; ++i)
+   {
+      osg::Node* nodeFile = dtUtil::FileUtils::GetInstance().ReadNode(meshContents[0]);
+      CPPUNIT_ASSERT_MESSAGE("Node should not be NULL", nodeFile != NULL);
+   }
+
    fileUtils.ChangeDirectory(TESTS_DIR);
    
 }
