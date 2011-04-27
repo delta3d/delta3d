@@ -221,7 +221,7 @@ namespace dtCore
 
       toFill.clear();
       toFill.reserve(mShaderGroups.size());
-      
+
       for (itor=mShaderGroups.begin(); itor!=mShaderGroups.end(); ++itor)
       {
          toFill.push_back(itor->second);
@@ -333,7 +333,7 @@ namespace dtCore
             for (currParam=params.begin(); currParam!=params.end(); ++currParam)
                (*currParam)->DetachFromRenderState(*stateSet);
 
-            // remove the program - which causes it to inherit. 
+            // remove the program - which causes it to inherit.
             //stateSet->setAttributeAndModes(new osg::Program(), osg::StateAttribute::ON); // or INHERIT
             stateSet->removeAttribute(osg::StateAttribute::PROGRAM);
          }
@@ -345,7 +345,7 @@ namespace dtCore
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   dtCore::ShaderProgram *ShaderManager::AssignShaderFromPrototype(const dtCore::ShaderProgram& templateShader, osg::Node& node)
+   dtCore::ShaderProgram* ShaderManager::AssignShaderFromPrototype(const dtCore::ShaderProgram& templateShader, osg::Node& node)
    {
       // If this node is already assigned to a shader, remove it from our active list.
       RemoveShaderFromActiveNodeList(&node);
@@ -362,7 +362,7 @@ namespace dtCore
       {
          LOG_WARNING("Error assigning shader: " + newShader->GetName() + "  Shader program was invalid.");
       }
-    
+
       // If this contains a geometry shader, the vertex output number needs to be set
       if (newShader->GetGeometryShaders().size() > 0)
       {
@@ -425,7 +425,7 @@ namespace dtCore
 
       while(geometryShaderIterator != shader.GetGeometryShaders().end())
       {
-          // Load and set the geometry shader - note, this is not required         
+          // Load and set the geometry shader - note, this is not required
           path = dtUtil::FindFileInPathList(*geometryShaderIterator);
 
           if (!path.empty())
@@ -585,7 +585,7 @@ namespace dtCore
          throw ShaderXmlParserException(e.ToString(), __FILE__, __LINE__);
       }
 
-      //store the loaded ShaderGroups 
+      //store the loaded ShaderGroups
       const ShaderXML::ShaderContainer &shaders = parser.GetLoadedShaders();
       ShaderXML::ShaderContainer::const_iterator itr = shaders.begin();
       while (itr != shaders.end())
@@ -629,7 +629,7 @@ namespace dtCore
          AddShaderGroupPrototype(*shaders[0]);
 
          shaderGroupToAssign = FindShaderGroupPrototype(newlyLoadedShaderName);
-      }     
+      }
 
       //Apply the first ShaderProgram in the ShaderGroup
       if (shaderGroupToAssign->GetNumShaders() > 0 && drawable.GetOSGNode())

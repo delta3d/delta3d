@@ -134,7 +134,6 @@ MainWindow::MainWindow()
    CreateToolbars();
    CreateDockWidgets();
 
-
    QWidget* glParent = new QWidget();
 
    mCentralLayout = new QHBoxLayout(glParent);
@@ -325,7 +324,7 @@ void MainWindow::LoadAttachment(const QString& filename)
    {
       QString errorString = QString("File not found: %1").arg(filename);
       QMessageBox::warning(this, "Warning", errorString, "&Ok");
-   }   
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -618,15 +617,15 @@ void MainWindow::OnNewMaterial(int matID, const QString& name,
    QStandardItem* diffItem = new QStandardItem(MakeColorString(diff));
    diffItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
    diffItem->setData(diff, Qt::BackgroundRole);
- 
+
    QStandardItem* ambItem = new QStandardItem(MakeColorString(amb));
    ambItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
    ambItem->setData(amb, Qt::BackgroundRole);
- 
+
    QStandardItem* specItem = new QStandardItem(MakeColorString(spec));
    specItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
    specItem->setData(amb, Qt::BackgroundRole);
- 
+
    QStandardItem* shinItem = new QStandardItem(QString::number(shininess));
    shinItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
 
@@ -648,28 +647,34 @@ void MainWindow::OnBlendUpdate(const std::vector<float>& animWeightList, const s
       float newValue = animWeightList[rowIndex] * 100.0f;
 
       QProgressBar* meter = (QProgressBar*)mAnimListWidget->cellWidget(rowIndex, 5);
-      meter->setValue(newValue);
 
-      if (mAnimListWidget->item(rowIndex, 0)->checkState() == Qt::Checked)
+      // If posemeshes fail to load, the list widget will not
+      // have been populated yet and this will be NULL
+      if (meter)
       {
-         // Update the weight display only when the box is checked
-         // This will allow a user to manually enter a weight while unchecked
-         disconnect(mAnimListWidget, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(OnItemChanged(QTableWidgetItem*)));
-         mAnimListWidget->item(rowIndex, 1)->setData(Qt::DisplayRole, QString("%1").arg(animWeightList[rowIndex]));
-         connect(mAnimListWidget, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(OnItemChanged(QTableWidgetItem*)));
+         meter->setValue(newValue);
 
-         if (!newValue)
+         if (mAnimListWidget->item(rowIndex, 0)->checkState() == Qt::Checked)
          {
-            // If animations were turned off from the pose mesh viewer
-            // mark them as turned off in the animation table
-            mAnimListWidget->item(rowIndex, 0)->setCheckState(Qt::Unchecked);
+            // Update the weight display only when the box is checked
+            // This will allow a user to manually enter a weight while unchecked
+            disconnect(mAnimListWidget, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(OnItemChanged(QTableWidgetItem*)));
+            mAnimListWidget->item(rowIndex, 1)->setData(Qt::DisplayRole, QString("%1").arg(animWeightList[rowIndex]));
+            connect(mAnimListWidget, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(OnItemChanged(QTableWidgetItem*)));
+
+            if (!newValue)
+            {
+               // If animations were turned off from the pose mesh viewer
+               // mark them as turned off in the animation table
+               mAnimListWidget->item(rowIndex, 0)->setCheckState(Qt::Unchecked);
+            }
          }
-      }
-      else if (newValue)
-      {
-         // If animations were turned on from the pose mesh viewer
-         // mark them as turned on in the animation table
-         mAnimListWidget->item(rowIndex, 0)->setCheckState(Qt::Checked);
+         else if (newValue)
+         {
+            // If animations were turned on from the pose mesh viewer
+            // mark them as turned on in the animation table
+            mAnimListWidget->item(rowIndex, 0)->setCheckState(Qt::Checked);
+         }
       }
    }
 
@@ -849,7 +854,7 @@ void MainWindow::SetCurrentFile(const QString& filename)
       mCloseCharAction->setEnabled(false);
       return;
    }
-   
+
    setWindowTitle(tr("%1 - %2").arg(QFileInfo(filename).fileName()).arg(tr("Animation Viewer")));
    mCloseCharAction->setEnabled(true);
 
@@ -1137,7 +1142,7 @@ bool MainWindow::IsAnimNodeBuildingUsingHW() const
 //////////////////////////////////////////////////////////////////////////
 void MainWindow::OnConfiged()
 {
-   //theoretically, everything is in place, the window is rendering, openGL 
+   //theoretically, everything is in place, the window is rendering, openGL
    //context is valid, etc.
    mHardwareSkinningAction->setChecked(IsAnimNodeBuildingUsingHW());
 }
@@ -1269,7 +1274,7 @@ void MainWindow::SetupConnectionsWithViewer()
    connect(mViewer, SIGNAL(MorphAnimationLoaded(unsigned int,const QString &,unsigned int,unsigned int,float)),
       this, SLOT(OnNewMorphAnimation(unsigned int,const QString&,unsigned int,unsigned int,float)));
 
-   connect(mViewer, SIGNAL(MeshLoaded(int,const QString&, const std::vector<std::string>&)), 
+   connect(mViewer, SIGNAL(MeshLoaded(int,const QString&, const std::vector<std::string>&)),
            this, SLOT(OnNewMesh(int,const QString&, const std::vector<std::string>&)));
 
    connect(mViewer, SIGNAL(PoseMeshesLoaded(const std::vector<dtAnim::PoseMesh*>&, dtAnim::CharDrawable*)),
@@ -1363,7 +1368,7 @@ void MainWindow::CreateDockWidgets()
 
       QGridLayout* layout = new QGridLayout();
       box->setLayout(layout);
-      
+
       mScaleFactorSpinner = new QDoubleSpinBox(this);
       mScaleFactorSpinner->setRange(0.001, 500.0);
       mScaleFactorSpinner->setSingleStep(0.01);
@@ -1399,7 +1404,7 @@ void MainWindow::CreateDockWidgets()
       mAttachmentParent = new QComboBox();
       mAttachmentParent->setToolTip(tr("Parent Name"));
       mAttachmentParent->setMinimumSize(QSize(150, 0));
-      layout->addWidget(mAttachmentParent, 1, 1);   
+      layout->addWidget(mAttachmentParent, 1, 1);
       connect(mAttachmentParent, SIGNAL(currentIndexChanged(int)), this, SLOT(OnChangeAttachmentSettings()));
 
       QLabel* xLabel = new QLabel("X");

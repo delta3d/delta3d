@@ -19,7 +19,6 @@
 #include <osg/Version> // For #ifdef
 
 
-
 #if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR == 1 && OSG_VERSION_MINOR == 0
 #include <osg/CameraNode>
 #endif
@@ -53,7 +52,6 @@ Transformable::CollisionGeomType::MESH("MESH");
 
 namespace dtCore
 {
-
    /** Custom NodeVisitor used to collect the parent NodePaths of a Node.
      * This Visitor will only traverse osg::Transforms and is used to
      * calculate a Node's absolute coordinate.  It sets a node mask
@@ -137,7 +135,7 @@ namespace dtCore
 /////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////
 
-/////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 Transformable::Transformable(const std::string& name)
    : DeltaDrawable(name)
    , mImpl(new TransformableImpl(*new TransformableNode))
@@ -148,7 +146,7 @@ Transformable::Transformable(const std::string& name)
    Ctor();
 }
 
-/////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 Transformable::Transformable(TransformableNode& node, const std::string& name)
    : DeltaDrawable(name)
    , mImpl(new TransformableImpl(node))
@@ -157,12 +155,12 @@ Transformable::Transformable(TransformableNode& node, const std::string& name)
    Ctor();
 }
 
-/////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void Transformable::Ctor()
 {
    RegisterInstance(this);
 
-   SetNormalRescaling( true );
+   SetNormalRescaling(true);
 
    SetCollisionCategoryBits(COLLISION_CATEGORY_MASK_TRANSFORMABLE);
 
@@ -170,7 +168,7 @@ void Transformable::Ctor()
    SetCollisionCollideBits(COLLISION_CATEGORY_MASK_ALL);
 }
 
-/////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 Transformable::~Transformable()
 {
    mImpl->mGeomWrap = NULL;
@@ -187,19 +185,19 @@ Transformable::~Transformable()
    mImpl = NULL;
 }
 
-/////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 osg::Node* Transformable::GetOSGNode()
 {
    return mImpl->mNode.get();
 }
 
-/////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 const osg::Node* Transformable::GetOSGNode() const
 {
    return mImpl->mNode.get();
 }
 
-/////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 bool Transformable::GetAbsoluteMatrix(const osg::Node* node, osg::Matrix& wcMatrix)
 {
    if(node != NULL)
@@ -228,7 +226,7 @@ bool Transformable::GetAbsoluteMatrix(const osg::Node* node, osg::Matrix& wcMatr
    return false;
 }
 
-////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void Transformable::SetTransform(const Transform& xform, CoordSysEnum cs)
 {
    osg::Matrix newMat;
@@ -267,7 +265,7 @@ void Transformable::SetTransform(const Transform& xform, CoordSysEnum cs)
    PrePhysicsStepUpdate();
 }
 
-////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void Transformable::GetTransform(Transform& xform, CoordSysEnum cs) const
 {
    const TransformableNode* mt = GetMatrixNode();
@@ -276,7 +274,7 @@ void Transformable::GetTransform(Transform& xform, CoordSysEnum cs) const
    {
       osg::Matrix newMat;
       GetAbsoluteMatrix(mt, newMat);
-      xform.Set( newMat );
+      xform.Set(newMat);
    }
    else if(cs == REL_CS)
    {
@@ -285,31 +283,31 @@ void Transformable::GetTransform(Transform& xform, CoordSysEnum cs) const
 
 }
 
-////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 Transformable::TransformableNode* Transformable::GetMatrixNode()
 {
    return mImpl->mNode.get();
 }
 
-////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 const Transformable::TransformableNode* Transformable::GetMatrixNode() const
 {
    return mImpl->mNode.get();
 }
 
-////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 const osg::Matrix& Transformable::GetMatrix() const
 {
    return mImpl->mNode->getMatrix();
 }
 
-////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void Transformable::SetMatrix(const osg::Matrix& mat)
 {
    mImpl->mNode->setMatrix(mat);
 }
 
-////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 bool Transformable::AddChild(DeltaDrawable* child)
 {
    // Add the child's node to our's
@@ -324,14 +322,14 @@ bool Transformable::AddChild(DeltaDrawable* child)
    }
 }
 
-////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void Transformable::RemoveChild(DeltaDrawable* child)
 {
    GetMatrixNode()->removeChild(child->GetOSGNode());
    DeltaDrawable::RemoveChild(child);
 }
 
-////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void Transformable::RenderProxyNode(const bool enable)
 {
    if (enable == GetIsRenderingProxyNode())
@@ -352,7 +350,7 @@ void Transformable::RenderProxyNode(const bool enable)
       // Make sphere
       float radius = 0.5f;
 
-      osg::Sphere* sphere = new osg::Sphere(osg::Vec3( 0.0, 0.0, 0.0 ), radius);
+      osg::Sphere* sphere = new osg::Sphere(osg::Vec3(0.0f, 0.0f, 0.0f), radius);
 
       osg::Geode* proxyGeode = new osg::Geode();
       mImpl->mPointAxis->GetMatrixNode()->addChild(proxyGeode);
@@ -373,7 +371,7 @@ void Transformable::RenderProxyNode(const bool enable)
       polyoffset->setFactor(-1.0f);
       polyoffset->setUnits(-1.0f);
 
-      osg::StateSet *ss = mImpl->mPointAxis->GetOSGNode()->getOrCreateStateSet();
+      osg::StateSet* ss = mImpl->mPointAxis->GetOSGNode()->getOrCreateStateSet();
       ss->setAttributeAndModes(mat, osg::StateAttribute::OVERRIDE|osg::StateAttribute::ON);
       ss->setMode(GL_BLEND, osg::StateAttribute::ON);
       ss->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
@@ -394,14 +392,14 @@ void Transformable::RenderProxyNode(const bool enable)
    mImpl->mRenderProxyNode = enable;
 }
 
-////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 bool Transformable::GetIsRenderingProxyNode() const
 {
    return mImpl->mRenderProxyNode;
 }
 
 
-////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void Transformable::SetNormalRescaling(const bool enable)
 {
    osg::StateAttribute::GLModeValue state;
@@ -413,7 +411,7 @@ void Transformable::SetNormalRescaling(const bool enable)
    }
 }
 
-////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 bool Transformable::GetNormalRescaling() const
 {
    if(GetOSGNode() == NULL)
@@ -425,7 +423,7 @@ bool Transformable::GetNormalRescaling() const
    return (state & osg::StateAttribute::ON) ? true : false;
 }
 
-/////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 Transformable::CollisionGeomType* Transformable::GetCollisionGeomType() const
 {
    //ugly bit of code used to convert the ODEGeomWrap enums to Transformable enums.
@@ -465,7 +463,7 @@ Transformable::CollisionGeomType* Transformable::GetCollisionGeomType() const
    }
 }
 
-///////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void Transformable::GetCollisionGeomDimensions(std::vector<float>& dimensions)
 {
    // Sync up ODE with our OSG transforms.
@@ -474,7 +472,7 @@ void Transformable::GetCollisionGeomDimensions(std::vector<float>& dimensions)
    mImpl->mGeomWrap->GetCollisionGeomDimensions(dimensions);
  }
 
-///////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void Transformable::SetCollisionCategoryBits(unsigned long bits)
 {
    mImpl->mGeomWrap->SetCollisionCategoryBits(bits);
@@ -490,13 +488,13 @@ void Transformable::SetCollisionCategoryBits(unsigned long bits)
    }
 }
 
-////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 unsigned long Transformable::GetCollisionCategoryBits() const
 {
    return mImpl->mGeomWrap->GetCollisionCategoryBits();
 }
 
-//////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void Transformable::SetCollisionCollideBits(unsigned long bits)
 {
    mImpl->mGeomWrap->SetCollisionCollideBits(bits);
@@ -519,7 +517,7 @@ unsigned long Transformable::GetCollisionCollideBits() const
 }
 
 
-/////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void Transformable::SetCollisionDetection(bool enabled)
 {
    mImpl->mGeomWrap->SetCollisionDetection(enabled);
@@ -535,20 +533,19 @@ void Transformable::SetCollisionDetection(bool enabled)
    }
 }
 
-////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 bool Transformable::GetCollisionDetection() const
 {
    return mImpl->mGeomWrap->GetCollisionDetection();
 }
 
-
+////////////////////////////////////////////////////////////////////////////////
 dGeomID Transformable::GetGeomID() const
 {
    return mImpl->mGeomWrap->GetGeomID();
 }
 
-
-////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void Transformable::SetCollisionGeom(dGeomID geom)
 {
    mImpl->mGeomWrap->SetCollisionGeom(geom);
@@ -559,7 +556,7 @@ void Transformable::SetCollisionGeom(dGeomID geom)
    PrePhysicsStepUpdate();
 }
 
-////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void Transformable::SetCollisionSphere(float radius)
 {
    mImpl->mGeomWrap->SetCollisionSphere(radius);
@@ -573,7 +570,7 @@ void Transformable::SetCollisionSphere(float radius)
 }
 
 
-////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void Transformable::SetCollisionSphere(osg::Node* node)
 {
    if(node == 0)
@@ -601,7 +598,7 @@ void Transformable::SetCollisionSphere(osg::Node* node)
    }
 }
 
-/////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void Transformable::SetCollisionBox(float lx, float ly, float lz)
 {
    mImpl->mGeomWrap->SetCollisionBox(lx, ly, lz);
@@ -613,7 +610,7 @@ void Transformable::SetCollisionBox(float lx, float ly, float lz)
    PrePhysicsStepUpdate();
 }
 
-/////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void Transformable::SetCollisionBox(osg::Node* node)
 {
    if(node == 0)
@@ -637,7 +634,7 @@ void Transformable::SetCollisionBox(osg::Node* node)
    }
 }
 
-/////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void Transformable::SetCollisionCylinder(float radius, float length)
 {
    mImpl->mGeomWrap->SetCollisionCylinder(radius, length);
@@ -649,8 +646,7 @@ void Transformable::SetCollisionCylinder(float radius, float length)
    PrePhysicsStepUpdate();
 }
 
-
-/////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void Transformable::SetCollisionCylinder(osg::Node* node)
 {
    if(node == 0)
@@ -675,7 +671,7 @@ void Transformable::SetCollisionCylinder(osg::Node* node)
    }
 }
 
-/////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void Transformable::SetCollisionCappedCylinder(float radius, float length)
 {
    mImpl->mGeomWrap->SetCollisionCappedCylinder(radius, length);
@@ -688,7 +684,7 @@ void Transformable::SetCollisionCappedCylinder(float radius, float length)
 }
 
 
-/////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void Transformable::SetCollisionCappedCylinder(osg::Node* node)
 {
    if(node == 0)
@@ -713,7 +709,7 @@ void Transformable::SetCollisionCappedCylinder(osg::Node* node)
    }
 }
 
-/////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void Transformable::SetCollisionRay(float length)
 {
    mImpl->mGeomWrap->SetCollisionRay(length);
@@ -726,7 +722,7 @@ void Transformable::SetCollisionRay(float length)
 }
 
 
-/////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void Transformable::SetCollisionMesh(osg::Node* node)
 {
    if(node == 0)
@@ -752,7 +748,7 @@ void Transformable::SetCollisionMesh(osg::Node* node)
    }
 }
 
-/////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void Transformable::ClearCollisionGeometry()
 {
    mImpl->mGeomWrap->ClearCollisionGeometry();
@@ -771,10 +767,13 @@ void Transformable::ClearCollisionGeometry()
    }
 }
 
-/////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void Transformable::PrePhysicsStepUpdate()
 {
-   if (mImpl->mGeomWrap->GetCollisionDetection() == false) {return;}
+   if (mImpl->mGeomWrap->GetCollisionDetection() == false)
+   {
+      return;
+   }
 
    Transform transform;
 
@@ -783,11 +782,11 @@ void Transformable::PrePhysicsStepUpdate()
    mImpl->mGeomWrap->UpdateGeomTransform(transform);
 }
 
-/////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void Transformable::RenderCollisionGeometry(bool enable /* = true */,
    bool wireFrame /*= false */)
 {
-   TransformableNode *xform = this->GetMatrixNode();
+   TransformableNode* xform = this->GetMatrixNode();
 
    if(!xform)
    {
@@ -831,13 +830,13 @@ void Transformable::RenderCollisionGeometry(bool enable /* = true */,
    }
 }
 
-/////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 bool Transformable::GetRenderCollisionGeometry() const
 {
    return mImpl->mRenderingGeometry;
 }
 
-/////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void Transformable::AddedToScene(Scene* scene)
 {
    if(scene)
@@ -862,7 +861,7 @@ void Transformable::AddedToScene(Scene* scene)
    }
 }
 
-///////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void Transformable::RemoveRenderedCollisionGeometry()
 {
    if(mImpl->mGeomGeod.valid())
@@ -872,13 +871,13 @@ void Transformable::RemoveRenderedCollisionGeometry()
    }
 }
 
-//////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 const ODEGeomWrap* Transformable::GetGeomWrapper() const
 {
    return mImpl->mGeomWrap.get();
 }
 
-//////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 ODEGeomWrap* Transformable::GetGeomWrapper()
 {
    return mImpl->mGeomWrap.get();
