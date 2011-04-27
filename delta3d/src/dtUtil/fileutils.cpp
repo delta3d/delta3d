@@ -1697,7 +1697,7 @@ namespace dtUtil
             }
          }
       }
-      else if(info.fileType == REGULAR_FILE)
+      else // resume with usual loading
       {
          result = osgDB::readNodeFile(filename, options);
       }
