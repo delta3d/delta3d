@@ -27,7 +27,7 @@ STAGERTSCameraMotionModel::STAGERTSCameraMotionModel(dtCore::Mouse* mouse, const
    , mDistance(100.0f)
    , mCurrentDistance(100.0f)
    , mLinearRate(1.0f)
-   , mMinCameraHeight(10.0f)
+   , mMinCameraHeight(1.0f)
    , mTransitionSpeed(2.0f)
    , mMouse(mouse)
 {
