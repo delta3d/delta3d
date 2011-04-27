@@ -55,7 +55,6 @@ namespace dtAnim
 
       virtual osg::BoundingBox GetBoundingBox();
 
-
    protected:
       dtCore::RefPtr<dtAnim::AnimationHelper> mHelper;
 

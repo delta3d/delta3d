@@ -105,6 +105,9 @@ void AnimationHelper::Update(float dt)
 
          // Alert the caller via the functor passed in on the load call
          mAsynchCompletionCallback();
+
+         // Notify observers that the model has been loaded
+         ModelLoadedSignal();
       }
    }
 }
@@ -159,6 +162,9 @@ bool AnimationHelper::LoadModel(const std::string& pFilename, bool immediate)
          }
 
          RegisterAnimations(*modelData);
+
+         // Notify observers that the model has been loaded
+         ModelLoadedSignal();
       }
       else
       {
@@ -177,13 +183,13 @@ bool AnimationHelper::LoadModel(const std::string& pFilename, bool immediate)
 
 /////////////////////////////////////////////////////////////////////////////////
 bool AnimationHelper::LoadModelAsynchronously(const std::string& pFilename, AsynchLoadCompletionCallback completionCallback)
-{   
+{
    if (!pFilename.empty())
    {
       Cal3DDatabase& database = Cal3DDatabase::GetInstance();
 
       database.LoadAsynchronously(pFilename);
-      
+
       // Store the filename so that we can poll for load completion
       mAsynchFile = pFilename;
 
@@ -433,7 +439,7 @@ unsigned AnimationHelper::UnregisterCommandCallback(const std::string& animName,
          }
       }
    }
-   
+
    return count;
 }
 
@@ -585,7 +591,7 @@ unsigned AnimationHelper::CollectCommands(double startTime, double endTime)
       Animatable* anim = NULL;
       AnimationSequence::AnimationContainer::const_iterator curIter = animArray.begin();
       AnimationSequence::AnimationContainer::const_iterator endIter = animArray.end();
-      
+
       // Collect commands that should trigger for the specified time range.
       for (; curIter != endIter; ++curIter)
       {
