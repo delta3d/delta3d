@@ -571,7 +571,7 @@ bool ZipArchive::CheckZipErrorCode(ZRESULT result) const
          int len = FormatZipMessage(result, buf, buf_size - 1);
 
          //print error message
-         sprintf(buf, "%s");
+         //sprintf(buf, "%s");
          delete [] buf;
       }
 

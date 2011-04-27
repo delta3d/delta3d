@@ -584,8 +584,6 @@ ALint AudioManager::LoadFile(const std::string& file)
       return AL_NONE;
    }
 
-   ALenum format(0);
-   ALsizei size(0);
    ALvoid* data = NULL;
 
    // We are trying to support the new version of ALUT as well as the old intergated

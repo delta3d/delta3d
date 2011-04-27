@@ -1979,8 +1979,6 @@ void DirectorCinematicEditorPlugin::OnSave()
       {
          ActorData& actorData = mActorData[actorIndex];
 
-         int column = 0;
-
          dtDirector::Node* startNode = NULL;
          dtDirector::Node* endNode = NULL;
          std::string startLink = "";
