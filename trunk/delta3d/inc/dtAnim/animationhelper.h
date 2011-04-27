@@ -28,6 +28,7 @@
 #include <dtAnim/attachmentcontroller.h>
 
 #include <dtCore/refptr.h>
+#include <dtCore/sigslot.h>
 
 #include <dtUtil/command.h>
 #include <dtUtil/enumeration.h>
@@ -68,7 +69,7 @@ namespace dtAnim
    typedef dtUtil::Command<void> AnimCommandCallback;
    typedef std::vector<dtCore::RefPtr<AnimCommandCallback> > AnimCommandArray;
    typedef dtUtil::Functor<void,TYPELIST_1(const std::string&)> AnimEventCallback;
-   
+
    /**
     * Special command callback that passes a reference to the animatable
     * that triggers it.
@@ -125,6 +126,12 @@ namespace dtAnim
        * @return whether or not we successfully loaded the file
        */
       bool LoadModelAsynchronously(const std::string& pFilename, AsynchLoadCompletionCallback completionCallback);
+
+      /**
+       * Emits a signal when the model files have been loaded but before OSG
+       * has had a chance to create the geometry.
+       */
+      sigslot::signal0<> ModelLoadedSignal;
 
       /**
        * This function plays the specified animation defined within the character XML
@@ -282,7 +289,7 @@ namespace dtAnim
        * @return Number of commands that were found and removed.
        */
       unsigned UnregisterCommandCallbacks(const std::string& animName);
-      
+
       /**
        * Method to access all commands assigned to an animation for a specified time.
        * @param animName Name of the animation that may have commands associated with it.
@@ -293,7 +300,7 @@ namespace dtAnim
        */
       unsigned GetCommandCallbacks(const std::string& animName,
          float timeOffset, AnimCommandArray& outArray);
-      
+
       /**
        * Method to access all commands assigned to an animation for a specified time range.
        * @param animName Name of the animation that may have commands associated with it.
