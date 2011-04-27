@@ -30,8 +30,9 @@ namespace dtDirector
    /////////////////////////////////////////////////////////////////////////////
    SwitchAction::SwitchAction()
       : ActionNode()
-      , mCurrentIndex(1)
+      , mOutputCount(1)
       , mLooping(false)
+      , mCurrentIndex(1)
    {
       AddAuthor("Eric R. Heine");
    }
