@@ -450,7 +450,6 @@ namespace dtCore
    ////////////////////////////////////////////////////////////////////////////////
    void SystemImpl::SystemStepFixed(const double realDT)
    {
-      mRealClockTime += Timer_t(realDT * 1000000);
       const double simDT = realDT * mTimeScale;
 
       // simFrameTime is our fixed time step. Usually like 1/60 or something.
@@ -517,6 +516,9 @@ namespace dtCore
 
       const double realDT = mClock.DeltaSec(lastClockTime, mTickClockTime);
 
+      // update real time variable(s)
+      mRealClockTime += Timer_t(realDT * 1000000);
+
       if (mPaused)
       {
          mTotalFrameTime = 0.0;  // reset frame timer for stats
@@ -534,9 +536,6 @@ namespace dtCore
          {
             mTotalFrameTime = 0.0;  // reset frame timer for stats
             mWasPaused = false;
-
-            // update real time variable(s)
-            mRealClockTime  += Timer_t(realDT * 1000000);
 
             // update simulation time variable(s)
             const double simDT = realDT * mTimeScale;
