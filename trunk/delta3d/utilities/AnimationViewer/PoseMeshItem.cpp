@@ -80,7 +80,7 @@ PoseMeshItem::PoseMeshItem(const dtAnim::PoseMesh& poseMesh,
   , mAreErrorSamplesDisplayed(false)
   , mAreEdgesDisplayed(true)
   , mErrorMinimum(0.0f)
-  , mErrorMaximum(7.5f)
+  , mErrorMaximum(5.5f)
   , mScaleHoriz(1.0f)
   , mScaleVert(1.0f)
   , mShouldRecomputeError(false)
@@ -94,10 +94,10 @@ PoseMeshItem::PoseMeshItem(const dtAnim::PoseMesh& poseMesh,
    setFlag(ItemIsSelectable, true);
 
    // Make sure this gets drawn on top of the background
-   setZValue(1);  
+   setZValue(1);
 
    setAcceptsHoverEvents(true);
-   setToolTip(poseMesh.GetName().c_str());     
+   setToolTip(poseMesh.GetName().c_str());
 
    mSampleCollection.mInitialized = false;
 
@@ -105,9 +105,9 @@ PoseMeshItem::PoseMeshItem(const dtAnim::PoseMesh& poseMesh,
 
    UpdateItemBoundingRect();
 
-   // Get a unique set of edges and the 
+   // Get a unique set of edges and the
    // triangle they belong to
-   ExtractEdgesFromMesh(*mPoseMesh);   
+   ExtractEdgesFromMesh(*mPoseMesh);
 
    // Testing
    AssertZeroErrorAtVertices();
@@ -123,13 +123,13 @@ PoseMeshItem::~PoseMeshItem()
 ////////////////////////////////////////////////////////////////////////////////
 const std::string& PoseMeshItem::GetPoseMeshName()
 {
-   return mPoseMesh->GetName(); 
+   return mPoseMesh->GetName();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void PoseMeshItem::SetEnabled(bool isEnabled)
 {
-   setEnabled(isEnabled);  
+   setEnabled(isEnabled);
    Clear();
 }
 
@@ -149,14 +149,14 @@ void PoseMeshItem::SetDisplayError(bool shouldDisplay)
       ExtractErrorFromMesh(*mPoseMesh);
    }
 
-   mAreErrorSamplesDisplayed = shouldDisplay;   
-   update();   
+   mAreErrorSamplesDisplayed = shouldDisplay;
+   update();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void PoseMeshItem::Clear()
 {
-   // Remove any of this item's pose blends from the model   
+   // Remove any of this item's pose blends from the model
    mMeshUtil->ClearPoses(mPoseMesh, mModel->GetCal3DWrapper(), 0.0f);
 
    mLastBlendPos.setX(FLT_MAX);
@@ -165,7 +165,7 @@ void PoseMeshItem::Clear()
 
    // TODO - fix bone line rendering
    // Remove the line segments from the character view
-   //RemoveBoneLinesFromScene();  
+   //RemoveBoneLinesFromScene();
 
    // Remove highlighting and target ellipse from scene
    update(boundingRect());
@@ -198,16 +198,16 @@ float PoseMeshItem::GetMaximumErrorValue()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void PoseMeshItem::SetVerticalScale(float newScale)   
-{ 
+void PoseMeshItem::SetVerticalScale(float newScale)
+{
    mScaleVert = newScale;
-   UpdateItemBoundingRect();   
+   UpdateItemBoundingRect();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void PoseMeshItem::SetHorizontalScale(float newScale) 
-{ 
-   mScaleHoriz = newScale;       
+void PoseMeshItem::SetHorizontalScale(float newScale)
+{
+   mScaleHoriz = newScale;
    UpdateItemBoundingRect();
 }
 
@@ -227,7 +227,7 @@ void PoseMeshItem::RemoveBoneLinesFromScene()
 
 ////////////////////////////////////////////////////////////////////////////////
 void PoseMeshItem::AddBoneLinesToScene(const dtAnim::PoseMesh::TargetTriangle& targetTri)
-{  
+{
    // TODO - fix bone line rendering
    //osg::Geode *charGeode = dynamic_cast<osg::Geode*>(mModel->GetNode());
    //assert(charGeode);
@@ -252,15 +252,15 @@ void PoseMeshItem::AddBoneLinesToScene(const dtAnim::PoseMesh::TargetTriangle& t
    //dtAnim::GetCelestialCoordinates(blendDirection, baseForward, blendAzimuth, blendElevation);
 
    ////dtAnim::GetCelestialCoordinates(blendDirection, -osg::Y_AXIS, blendAzimuth, blendElevation);
-  
+
    ///* std::ostringstream oss;
    //oss << "true value (" << trueDirection.x() << ", " << trueDirection.y() << ", " << trueDirection.z() << std::endl;
    //oss << "blend value (" << blendDirection.x() << ", " << blendDirection.y() << ", " << blendDirection.z() << std::endl;
 
-   //std::cout << oss.str();*/  
+   //std::cout << oss.str();*/
 
    //QColor errorColor = GetErrorColor(trueDirection, blendDirection);
-   //osg::Vec4 osgColor(errorColor.redF(), errorColor.greenF(), errorColor.blueF(), 1.0f);  
+   //osg::Vec4 osgColor(errorColor.redF(), errorColor.greenF(), errorColor.blueF(), 1.0f);
 
    //mModel->GetCal3DWrapper()->Update(0.0f);
    //osg::Vec3 startPos = mModel->GetCal3DWrapper()->GetBoneAbsoluteTranslation(mPoseMesh->GetBoneID());
@@ -281,40 +281,40 @@ void PoseMeshItem::OnBlendUpdate()
    //{
    //   // Scale back into pose space and flip the y coord
    //   dtAnim::PoseMesh::TargetTriangle targetTri;
-   //   mPoseMesh->GetTargetTriangleData(mLastMousePos.x() / VERT_SCALE, 
+   //   mPoseMesh->GetTargetTriangleData(mLastMousePos.x() / VERT_SCALE,
    //                                    -mLastMousePos.y() / VERT_SCALE, targetTri);
 
    //   // Only update when inside the tri
    //   if (targetTri.mIsInside)
    //   {
    //      AddBoneLinesToScene(targetTri);
-   //   }      
+   //   }
    //}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 bool PoseMeshItem::sceneEvent(QEvent* event)
-{ 
+{
    return QGraphicsItem::sceneEvent(event);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void PoseMeshItem::mousePressEvent(QGraphicsSceneMouseEvent* event)
-{   
+{
    if (!IsItemMovable())
    {
       if (event->button() == Qt::LeftButton)
-      {     
+      {
          // Convert the position back to it's unscaled form
-         mLastMousePos = event->lastPos(); 
+         mLastMousePos = event->lastPos();
 
-         BlendPosesFromItemCoordinates(mLastMousePos.x(), mLastMousePos.y());            
-      }  
-   }   
-  
+         BlendPosesFromItemCoordinates(mLastMousePos.x(), mLastMousePos.y());
+      }
+   }
+
    // Allow Qt to handle the other buttons
    QGraphicsItem::mousePressEvent(event);
-   
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -331,14 +331,14 @@ void PoseMeshItem::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
       // Update our blend to the latest and greatest position
       mLastMousePos = event->pos();
       BlendPosesFromItemCoordinates(mLastMousePos.x(), mLastMousePos.y());
-   }  
+   }
 
    QGraphicsItem::mouseMoveEvent(event);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void PoseMeshItem::BlendPosesFromItemCoordinates(float xCoord, float yCoord)
-{   
+{
    float posemeshAzimuth   = xCoord / VERT_SCALE;
    float posemeshElevation = -yCoord / VERT_SCALE;
 
@@ -351,12 +351,12 @@ void PoseMeshItem::BlendPosesFromItemCoordinates(float xCoord, float yCoord)
 
    // Only update the blend and position if we're in the mesh
    if (targetTri.mIsInside)
-   { 
+   {
       dtAnim::Cal3DModelWrapper* modelWrapper = mModel->GetCal3DWrapper();
       mMeshUtil->BlendPoses(mPoseMesh, modelWrapper, targetTri, 0.0f);
 
       if (mAreErrorSamplesDisplayed)
-      {      
+      {
          // Make sure the skeleton is updated to the current
          // blend before we try to access it
          modelWrapper->Update(0.0f);
@@ -368,7 +368,7 @@ void PoseMeshItem::BlendPosesFromItemCoordinates(float xCoord, float yCoord)
       mLastBlendPos.setX(xCoord);
       mLastBlendPos.setY(yCoord);
       mLastTriangleID = targetTri.mTriangleID;
-   }   
+   }
 
    // Make sure to redraw the changed portion
    update(boundingRect());
@@ -378,7 +378,7 @@ void PoseMeshItem::BlendPosesFromItemCoordinates(float xCoord, float yCoord)
 
 ////////////////////////////////////////////////////////////////////////////////
 bool PoseMeshItem::IsActive()
-{   
+{
    return mIsActive;
 }
 
@@ -393,7 +393,7 @@ QRectF PoseMeshItem::boundingRect() const
 ////////////////////////////////////////////////////////////////////////////////
 QPainterPath PoseMeshItem::shape() const
 {
-   QPainterPath path;   
+   QPainterPath path;
    path.addRect(mBoundingRect);
    return path;
 }
@@ -417,11 +417,11 @@ void PoseMeshItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* opti
 
       PaintErrorSamples(painter);
    }
-   
+
    if (mAreEdgesDisplayed)
    {
       PaintEdges(painter);
-   }   
+   }
 
    const dtAnim::PoseMesh::VertexVector& verts = mPoseMesh->GetVertices();
 
@@ -431,17 +431,17 @@ void PoseMeshItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* opti
       vertPosition.x() *= mScaleHoriz;
       vertPosition.y() *= mScaleVert;
 
-      QRadialGradient gradient(-3, -3, 10);     
+      QRadialGradient gradient(-3, -3, 10);
       if (isEnabled())
       {
          gradient.setColorAt(0, Qt::yellow);
-         gradient.setColorAt(1, Qt::darkYellow);                  
-      }         
+         gradient.setColorAt(1, Qt::darkYellow);
+      }
       else
       {
          gradient.setColorAt(0, Qt::gray);
          gradient.setColorAt(1, Qt::darkGray);
-      }      
+      }
 
       painter->translate(vertPosition.x(), -vertPosition.y());
       painter->setBrush(gradient);
@@ -456,7 +456,7 @@ void PoseMeshItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* opti
       painter->setPen(boundPen);
       painter->setBrush(QBrush());
       painter->drawRect(mBoundingRect);
-      
+
       // Translating by FLT_MAX is no bueno
       if (mLastBlendPos.x() != FLT_MAX)
       {
@@ -469,8 +469,8 @@ void PoseMeshItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* opti
          painter->setBrush(QBrush(QColor(255, 255, 255), Qt::SolidPattern));
          painter->drawEllipse(-VERT_RADIUS_DIV2, -VERT_RADIUS_DIV2, VERT_RADIUS, VERT_RADIUS);
          painter->translate(-mLastBlendPos);
-      }      
-   }   
+      }
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -482,19 +482,19 @@ void PoseMeshItem::PaintErrorSamples(QPainter* painter)
       samplePos.rx() *= mScaleHoriz;
       samplePos.ry() *= mScaleVert;
 
-      painter->translate(samplePos);     
+      painter->translate(samplePos);
       //painter->setPen(QPen(mSampleCollection.mSamples[sampleIndex].mSampleColor, 0));
       painter->setPen(QPen(Qt::NoPen));
       painter->setBrush(mSampleCollection.mSamples[sampleIndex].mSampleColor);
       painter->drawRect(mSampleCollection.mSamples[sampleIndex].mSampleRect);
       painter->translate(-samplePos);
-   }   
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void PoseMeshItem::PaintEdges(QPainter* painter)
 {
-   QPen trianglePenDefault;  
+   QPen trianglePenDefault;
    trianglePenDefault.setWidth(2);
 
    // Gray out the edges when the item is disabled
@@ -516,7 +516,7 @@ void PoseMeshItem::PaintEdges(QPainter* painter)
    {
       if (mEdgeInfoList[edgeIndex].triangleIDs[0] == mLastTriangleID ||
          mEdgeInfoList[edgeIndex].triangleIDs[1] == mLastTriangleID)
-      {         
+      {
          painter->setPen(trianglePenSelected);
       }
       else
@@ -534,7 +534,7 @@ void PoseMeshItem::PaintEdges(QPainter* painter)
       second.ry() *= mScaleVert;
 
       painter->drawLine(first, second);
-   }   
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -546,7 +546,7 @@ void PoseMeshItem::ExtractEdgesFromMesh(const dtAnim::PoseMesh& mesh)
    EdgeTriMap edgeMap;
 
    const dtAnim::PoseMesh::TriangleVector& triList = mesh.GetTriangles();
-   const dtAnim::PoseMesh::VertexVector& vertList = mesh.GetVertices();  
+   const dtAnim::PoseMesh::VertexVector& vertList = mesh.GetVertices();
 
    std::vector<dtAnim::PoseMesh::MeshIndexPair> edgeSet;
 
@@ -561,7 +561,7 @@ void PoseMeshItem::ExtractEdgesFromMesh(const dtAnim::PoseMesh& mesh)
       // Swapped pairs are considered equivalent, don't duplicate them
       dtAnim::PoseMesh::MeshIndexPair swapped[3];
       for (size_t pairIndex = 0; pairIndex < 3; ++pairIndex)
-      {         
+      {
          swapped[pairIndex].first  = pair[pairIndex].second;
          swapped[pairIndex].second = pair[pairIndex].first;
       }
@@ -578,7 +578,7 @@ void PoseMeshItem::ExtractEdgesFromMesh(const dtAnim::PoseMesh& mesh)
          }
          else if (swapIter != edgeMap.end())
          {
-            edgeMap.insert(VertIndexTriPair(swapped[edgeIndex], triIndex));           
+            edgeMap.insert(VertIndexTriPair(swapped[edgeIndex], triIndex));
          }
          else
          {
@@ -598,7 +598,7 @@ void PoseMeshItem::ExtractEdgesFromMesh(const dtAnim::PoseMesh& mesh)
       dtAnim::PoseMesh::MeshIndexPair key = edgeSet[setIndex];
       EdgeTriMap::iterator rangeStart = edgeMap.find(key);
       EdgeTriMap::iterator rangeEnd   = edgeMap.upper_bound(key);
-      
+
       assert(rangeStart != edgeMap.end());
 
       dtAnim::PoseMesh::Vertex* vert0 = vertList[key.first];
@@ -606,9 +606,9 @@ void PoseMeshItem::ExtractEdgesFromMesh(const dtAnim::PoseMesh& mesh)
 
       EdgeInfo newInfo;
       newInfo.first.rx()  = vert0->mData.x() * VERT_SCALE;
-      newInfo.first.ry()  = vert0->mData.y() * -VERT_SCALE;  
+      newInfo.first.ry()  = vert0->mData.y() * -VERT_SCALE;
       newInfo.second.rx() = vert1->mData.x() * VERT_SCALE;
-      newInfo.second.ry() = vert1->mData.y() * -VERT_SCALE;  
+      newInfo.second.ry() = vert1->mData.y() * -VERT_SCALE;
 
       newInfo.triangleIDs[0] = rangeStart->second;
 
@@ -616,7 +616,7 @@ void PoseMeshItem::ExtractEdgesFromMesh(const dtAnim::PoseMesh& mesh)
       {
          newInfo.triangleIDs[1] = rangeStart->second;
          //assert(++rangeStart == rangeEnd);
-      }      
+      }
       else
       {
          newInfo.triangleIDs[1] = -1;
@@ -628,7 +628,7 @@ void PoseMeshItem::ExtractEdgesFromMesh(const dtAnim::PoseMesh& mesh)
 
 ////////////////////////////////////////////////////////////////////////////////
 void PoseMeshItem::ExtractErrorFromMesh(const dtAnim::PoseMesh& mesh)
-{ 
+{
    dtAnim::Cal3DModelWrapper* modelWrapper = mModel->GetCal3DWrapper();
    assert(modelWrapper);
 
@@ -644,13 +644,13 @@ void PoseMeshItem::ExtractErrorFromMesh(const dtAnim::PoseMesh& mesh)
    // Sample points along a grid for every triangle
    for (size_t triIndex = 0; triIndex < triangleList.size(); ++triIndex)
    {
-      dtAnim::PoseMesh::Triangle tri = triangleList[triIndex]; 
+      dtAnim::PoseMesh::Triangle tri = triangleList[triIndex];
 
       osg::Vec3 point1 = tri.mVertices[0]->mData * VERT_SCALE;
       osg::Vec3 point2 = tri.mVertices[1]->mData * VERT_SCALE;
-      osg::Vec3 point3 = tri.mVertices[2]->mData * VERT_SCALE;     
+      osg::Vec3 point3 = tri.mVertices[2]->mData * VERT_SCALE;
 
-      QLineF lines[3] = 
+      QLineF lines[3] =
       {
          QLineF(QPointF(point1.x(), point1.y()), QPointF(point2.x(), point2.y())),
          QLineF(QPointF(point2.x(), point2.y()), QPointF(point3.x(), point3.y())),
@@ -661,7 +661,7 @@ void PoseMeshItem::ExtractErrorFromMesh(const dtAnim::PoseMesh& mesh)
       GetTriangleBoundingRect(tri, triangleBounds);
 
       QPointF gridOrigin(triangleBounds.left(), triangleBounds.bottom());
-      gridOrigin.rx() -= 100.0f;   
+      gridOrigin.rx() -= 100.0f;
 
       const float dim = 3.0f;
       const float halfDim = dim * 0.5f;
@@ -689,24 +689,24 @@ void PoseMeshItem::ExtractErrorFromMesh(const dtAnim::PoseMesh& mesh)
                newSample.mSampleRect.setLeft(-halfDim);
                newSample.mSampleRect.setTop(-halfDim);
                newSample.mSampleRect.setWidth(dim);
-               newSample.mSampleRect.setHeight(dim);  
+               newSample.mSampleRect.setHeight(dim);
                newSample.mError = GetErrorSample(samplePos);
-               newSample.mSampleColor = GetErrorColor(newSample.mError);            
+               newSample.mSampleColor = GetErrorColor(newSample.mError);
 
-               mSampleCollection.mSamples.push_back(newSample);   
+               mSampleCollection.mSamples.push_back(newSample);
 
                sampleColumn += dim;
                verticalTranslation = dim;
-            }         
+            }
          }
 
-         horizGridLine.translate(0.0f, verticalTranslation);      
+         horizGridLine.translate(0.0f, verticalTranslation);
       }
 
       // Don't leave any leftover animations
       mMeshUtil->ClearPoses(mPoseMesh, modelWrapper, 0.0f);
    }
-   
+
    // Mark this operation as complete
    mSampleCollection.mInitialized = true;
 }
@@ -719,7 +719,7 @@ bool PoseMeshItem::IsItemMovable()
 
 ////////////////////////////////////////////////////////////////////////////////
 float PoseMeshItem::GetErrorSample(const QPointF& samplePoint)
-{  
+{
    dtAnim::Cal3DModelWrapper* modelWrapper = mModel->GetCal3DWrapper();
    assert(modelWrapper);
 
@@ -737,18 +737,19 @@ float PoseMeshItem::GetErrorSample(const QPointF& samplePoint)
    // Apply the blended pose for this sample
    modelWrapper->Update(0.0f);
 
-   osg::Quat boneRotation = modelWrapper->GetBoneAbsoluteRotation(mPoseMesh->GetEffectorID());
-   
+   osg::Quat effectorRotation = modelWrapper->GetBoneAbsoluteRotation(mPoseMesh->GetEffectorID());
+   osg::Quat rootRotation = modelWrapper->GetBoneAbsoluteRotation(mPoseMesh->GetRootID());
+
    // calculate a vector transformed by the rotation data.
-   osg::Vec3 blendDirection = boneRotation * mPoseMesh->GetEffectorForwardAxis();  
-   
-   const osg::Vec3& forwardDirection = mPoseMesh->GetRootForwardAxis();
+   osg::Vec3 blendDirection = effectorRotation * mPoseMesh->GetEffectorForwardAxis();
+
+   osg::Vec3 forwardDirection = rootRotation * mPoseMesh->GetRootForwardAxis();
    osg::Vec3 upDirection = osg::Z_AXIS;
 
    osg::Vec3 trueDirection;
-   dtAnim::GetCelestialDirection(meshSpaceTrueValue.x(), 
+   dtAnim::GetCelestialDirection(meshSpaceTrueValue.x(),
                                  meshSpaceTrueValue.y(),
-                                 forwardDirection, 
+                                 forwardDirection,
                                  upDirection,
                                  trueDirection);
 
@@ -759,7 +760,7 @@ float PoseMeshItem::GetErrorSample(const QPointF& samplePoint)
    dtUtil::Clamp(blendDotTrue, -1.0f, 1.0f);
 
    float radianAngle = acosf(blendDotTrue);
-   return osg::RadiansToDegrees(radianAngle);   
+   return osg::RadiansToDegrees(radianAngle);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -774,10 +775,10 @@ void PoseMeshItem::GetBoneDirections(const dtAnim::PoseMesh::TargetTriangle& tar
    const osg::Vec3& nativeBoneForward = mPoseMesh->GetEffectorForwardAxis();
 
    // calculate a vector transformed by the rotation data.
-   outBlendDirection = boneRotation * nativeBoneForward;   
+   outBlendDirection = boneRotation * nativeBoneForward;
 
    osg::Vec3 baseForward; // = -osg::Y_AXIS;
-   GetAnchorBoneDirection(targetTri, baseForward); 
+   GetAnchorBoneDirection(targetTri, baseForward);
 
    osg::Vec3 baseRight = osg::Z_AXIS ^ baseForward;
    osg::Vec3 baseUp = baseForward ^ baseRight;
@@ -785,16 +786,16 @@ void PoseMeshItem::GetBoneDirections(const dtAnim::PoseMesh::TargetTriangle& tar
    baseUp.normalize();
 
 
-   dtAnim::GetCelestialDirection(targetTri.mAzimuth, 
-                                 targetTri.mElevation, 
-                                 baseForward, 
+   dtAnim::GetCelestialDirection(targetTri.mAzimuth,
+                                 targetTri.mElevation,
+                                 baseForward,
                                  baseUp,
                                  outTrueDirection);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // Warning, this function is expensive! (and experimental)
-void PoseMeshItem::GetAnchorBoneDirection(const dtAnim::PoseMesh::TargetTriangle& currentTargetTri, 
+void PoseMeshItem::GetAnchorBoneDirection(const dtAnim::PoseMesh::TargetTriangle& currentTargetTri,
                                            osg::Vec3& outDirection)
 {
    dtAnim::Cal3DModelWrapper* modelWrapper = mModel->GetCal3DWrapper();
@@ -804,7 +805,7 @@ void PoseMeshItem::GetAnchorBoneDirection(const dtAnim::PoseMesh::TargetTriangle
    {
       osg::Quat boneRotation = modelWrapper->GetBoneAbsoluteRotation(3);
       osg::Quat test = modelWrapper->GetBoneRelativeRotation(3);
-      outDirection = boneRotation * osg::Y_AXIS; 
+      outDirection = boneRotation * osg::Y_AXIS;
 
       osg::Vec3 asdf = test * -osg::Y_AXIS;
       outDirection = asdf;
@@ -824,7 +825,7 @@ void PoseMeshItem::GetAnchorBoneDirection(const dtAnim::PoseMesh::TargetTriangle
    //   osg::Vec3 newX = effectorRotation * osg::X_AXIS;
    //   osg::Vec3 newY = effectorRotation * osg::Y_AXIS;
    //   osg::Vec3 newZ = effectorRotation * osg::Z_AXIS;
-   //   
+   //
    //   osg::Vec3 asdf = (effectorRotation / anchorRotation) * -osg::Y_AXIS;
    //   outDirection = asdf;
    //}
@@ -845,21 +846,21 @@ void PoseMeshItem::GetAnchorBoneDirection(const dtAnim::PoseMesh::TargetTriangle
       outDirection = boneRotation * nativeBoneForward;
 
       // Re-apply the previous animation
-      mMeshUtil->BlendPoses(mPoseMesh, mModel->GetCal3DWrapper(), currentTargetTri, 0.0f);  
+      mMeshUtil->BlendPoses(mPoseMesh, mModel->GetCal3DWrapper(), currentTargetTri, 0.0f);
       modelWrapper->Update(0.0f);
-   }   
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 QColor PoseMeshItem::GetErrorColor(float degreesOfError)
-{   
+{
    QColor errorColor;
 
    float percentError = (degreesOfError - mErrorMinimum) / mErrorMaximum;
    dtUtil::Clamp(percentError, 0.0f, 1.0f);
 
-   // In HSV color, red is at 0 and blue is at 240 degrees 
-   const float blue = 2.0f / 3.0f;   
+   // In HSV color, red is at 0 and blue is at 240 degrees
+   const float blue = 2.0f / 3.0f;
    errorColor.setHsvF(blue - percentError * blue, 1.0f, 1.0f);
 
    return errorColor;
@@ -887,7 +888,7 @@ void PoseMeshItem::UpdateItemBoundingRect()
    // Determine the bounding box for this item
    for (size_t vertIndex = 0; vertIndex < verts.size(); ++vertIndex)
    {
-      osg::Vec3 vertPosition = verts[vertIndex]->mData * VERT_SCALE;   
+      osg::Vec3 vertPosition = verts[vertIndex]->mData * VERT_SCALE;
       vertPosition.x() *= mScaleHoriz;
       vertPosition.y() *= mScaleVert;
 
@@ -909,8 +910,8 @@ void PoseMeshItem::UpdateItemBoundingRect()
       else if (-vertPosition.y() > mBoundingRect.bottom())
       {
          mBoundingRect.setBottom(-vertPosition.y());
-      }      
-   }   
+      }
+   }
 
    // Adjust the box to account for the vert radius
    mBoundingRect.adjust(-VERT_RADIUS_DIV2,
@@ -952,7 +953,7 @@ void PoseMeshItem::GetTriangleBoundingRect(const dtAnim::PoseMesh::Triangle& tri
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-bool PoseMeshItem::GetIntersectionBoundingPoints(const QLineF& intersector, 
+bool PoseMeshItem::GetIntersectionBoundingPoints(const QLineF& intersector,
                                                  const QLineF lines[3],
                                                  QPointF& outLeftMost,
                                                  QPointF& outRightMost)
@@ -977,7 +978,7 @@ bool PoseMeshItem::GetIntersectionBoundingPoints(const QLineF& intersector,
             outLeftMost = isectPoint;
             foundLeft = true;
          }
-         
+
          if (isectPoint.x() > outRightMost.x())
          {
             outRightMost = isectPoint;
@@ -1002,7 +1003,7 @@ void PoseMeshItem::AssertZeroErrorAtVertices()
    {
       dtAnim::PoseMesh::TargetTriangle trianglePick;
       mPoseMesh->GetTargetTriangleData(vertList[vertIndex]->mData.x(),
-                                       vertList[vertIndex]->mData.y(),                            
+                                       vertList[vertIndex]->mData.y(),
                                        trianglePick);
 
       osg::Vec3 debugDirection = vertList[vertIndex]->mDebugData;
@@ -1018,7 +1019,7 @@ void PoseMeshItem::AssertZeroErrorAtVertices()
       modelWrapper->Update(0.0f);
 
       // Apply the animation to test
-      mMeshUtil->BlendPoses(mPoseMesh, modelWrapper, trianglePick, 0.0f);  
+      mMeshUtil->BlendPoses(mPoseMesh, modelWrapper, trianglePick, 0.0f);
 
       // Apply new blend to skeleton
       modelWrapper->Update(0.0f);
@@ -1027,7 +1028,7 @@ void PoseMeshItem::AssertZeroErrorAtVertices()
       osg::Vec3 trueDirection;
 
       //GetBoneDirections(trianglePick, trueDirection, blendDirection);
-         
+
          osg::Quat boneRotation = modelWrapper->GetBoneAbsoluteRotation(mPoseMesh->GetEffectorID());
          //osg::Quat boneRotation = modelWrapper->GetBoneAbsoluteRotationForKeyFrame(animID, mPoseMesh->GetBoneID(), 30);
 
@@ -1035,10 +1036,10 @@ void PoseMeshItem::AssertZeroErrorAtVertices()
          const osg::Vec3 &nativeBoneForward = mPoseMesh->GetEffectorForwardAxis();
 
          // calculate a vector transformed by the rotation data.
-         blendDirection = boneRotation * nativeBoneForward;   
+         blendDirection = boneRotation * nativeBoneForward;
 
          osg::Vec3 baseForward = -osg::Y_AXIS;
-         //GetAnchorBoneDirection(targetTri, baseForward); 
+         //GetAnchorBoneDirection(targetTri, baseForward);
 
          osg::Vec3 baseRight = osg::Z_AXIS ^ baseForward;
          osg::Vec3 baseUp = baseForward ^ baseRight;
@@ -1046,9 +1047,9 @@ void PoseMeshItem::AssertZeroErrorAtVertices()
          baseUp.normalize();
 
          //outTrueDirection = baseForward;
-         dtAnim::GetCelestialDirection(trianglePick.mAzimuth, 
-                                       trianglePick.mElevation, 
-                                       baseForward, 
+         dtAnim::GetCelestialDirection(trianglePick.mAzimuth,
+                                       trianglePick.mElevation,
+                                       baseForward,
                                        baseUp,
                                        trueDirection);
 
@@ -1061,7 +1062,7 @@ void PoseMeshItem::AssertZeroErrorAtVertices()
       //float angle = acosf(blendDotTrue);
       //assert(angle == 0.0f);
    }
-   
+
    modelWrapper->ClearAll();
    modelWrapper->Update(0.0f);
 }
@@ -1090,15 +1091,15 @@ void PoseMeshItem::AssertAzElConversion()
       debugDirection.normalize();
 
       //outTrueDirection = baseForward;
-      dtAnim::GetCelestialDirection(azimuth, 
-                                    elevation, 
-                                    -osg::Y_AXIS, // pose mesh uses this 
+      dtAnim::GetCelestialDirection(azimuth,
+                                    elevation,
+                                    -osg::Y_AXIS, // pose mesh uses this
                                     osg::Z_AXIS,
                                     directionFromAzEl);
 
       float newAzimuth, newElevation;
-      dtAnim::GetCelestialCoordinates(directionFromAzEl, -osg::Y_AXIS, newAzimuth, newElevation);     
+      dtAnim::GetCelestialCoordinates(directionFromAzEl, -osg::Y_AXIS, newAzimuth, newElevation);
 
       directionFromAzEl = directionFromAzEl;
-   }  
+   }
 }

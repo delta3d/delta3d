@@ -23,12 +23,12 @@ const float kDefaultMinScale = 0.2f;
 
 ////////////////////////////////////////////////////////////////////////////////
 PoseMeshView::PoseMeshView(PoseMeshScene* scene, QWidget* parent)
-:QGraphicsView(scene, parent)
-, mScene(scene)
-, mDragItem(NULL)
-, mMinScale(kDefaultMinScale)
-, mMaxScale(kDefaultMaxScale)
-, mCurrentScale(1.0f)
+   : QGraphicsView(scene, parent)
+   , mScene(scene)
+   , mDragItem(NULL)
+   , mMinScale(kDefaultMinScale)
+   , mMaxScale(kDefaultMaxScale)
+   , mCurrentScale(1.0f)
 {
    centerOn(scene->sceneRect().center());
 
