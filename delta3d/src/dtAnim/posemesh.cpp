@@ -47,12 +47,13 @@ PoseMesh::PoseMesh(dtAnim::Cal3DModelWrapper* model,
    // We need to have valid bones here in order to continue
    if (mRootID == -1 || mEffectorID == -1)
    {
-      throw dtUtil::Exception("Unable to find bone '" + meshData.mEffectorName + 
+      throw dtUtil::Exception("Unable to find bone '" + meshData.mEffectorName +
          "--" + meshData.mRootName + "' for pose mesh", __FILE__, __LINE__);
    }
 
-   // Store off the effector axis for this mesh
+   // Store off the effector and root axis for this mesh
    mEffectorForward = meshData.mEffectorForward;
+   mRootForward = meshData.mRootForward;
 
    // Update the skeleton to initialize bone data
    model->ClearAll(0.0f);
@@ -60,7 +61,7 @@ PoseMesh::PoseMesh(dtAnim::Cal3DModelWrapper* model,
 
    // Calculate the forward direction
    osg::Quat rootRotation = model->GetBoneAbsoluteRotation(mRootID);
-   mRootForward = rootRotation * meshData.mRootForward;
+   osg::Vec3 currentRootForward = rootRotation * meshData.mRootForward;
 
    // Allocate space for osg to triangulate our verts
    std::vector<osg::Vec3> posePoints;
@@ -104,13 +105,13 @@ PoseMesh::PoseMesh(dtAnim::Cal3DModelWrapper* model,
       // calculate the local azimuth and elevation for the transformed vector
       float az = 0.f;
       float el = 0.f;
-      
-      dtAnim::GetCelestialCoordinates(transformed, mRootForward, az, el);
-     
+
+      dtAnim::GetCelestialCoordinates(transformed, currentRootForward, az, el);
+
       std::string debugName = model->GetCoreAnimationName(animID);
 
       osg::Vec3 debugDirection;
-      dtAnim::GetCelestialDirection(az, el, mRootForward, osg::Z_AXIS, debugDirection);
+      dtAnim::GetCelestialDirection(az, el, currentRootForward, osg::Z_AXIS, debugDirection);
 
       debugDirection.normalize();
       float debugDotTranformed = debugDirection * transformed;
