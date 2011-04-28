@@ -19,9 +19,9 @@
 #include <dtAudio/dtaudio.h>
 #include <dtCore/system.h>
 #include <dtCore/camera.h>
-#include <dtDAL/project.h>
 #include <dtUtil/stringutils.h>
 #include <dtUtil/datapathutils.h>
+#include <dtUtil/fileutils.h>
 
 #include <iostream>
 
@@ -548,13 +548,13 @@ ALint AudioManager::LoadFile(const std::string& file)
    }
 
    std::string filename;
-   if (dtUtil::FileUtils::GetInstance().IsAbsolutePath(file))
+   if (dtUtil::FileUtils::GetInstance().FileExists(file))
    {
       filename = file;
    }
    else
    {
-      filename = dtDAL::Project::GetInstance().GetResourcePath(file);
+      filename = dtUtil::FindFileInPathList(file);
    }
 
    if (filename.empty())
