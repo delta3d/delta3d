@@ -101,15 +101,15 @@ namespace dtDAL
          bool ParseMap(std::istream& str)
          {
             dtCore::RefPtr<MapParser> parser = Project::GetInstance().GetCurrentMapParser();
-            
+
             if(parser == NULL)
             {
                parser = new MapParser();
             }
-            
+
             parser->Parse(str, &mMapPtr);
             mMap = mMapPtr;
-            
+
 
             return mMap.valid();
          }
@@ -119,7 +119,7 @@ namespace dtDAL
             std::string mapName;
 
             dtCore::RefPtr<MapParser> parser = Project::GetInstance().GetCurrentMapParser();
-            
+
             if(parser == NULL)
             {
                parser = new MapParser();
@@ -165,7 +165,7 @@ namespace dtDAL
 
       const char* className() const
       {
-         return "Delta3D Map Reader/Writer"; 
+         return "Delta3D Map Reader/Writer";
       }
 
       osgDB::ReaderWriter::ReadResult readObject(const std::string& fileName, const osgDB::ReaderWriter::Options* options = NULL) const
@@ -206,7 +206,7 @@ namespace dtDAL
             return ReadResult::FILE_NOT_HANDLED;
          }
       }
-      
+
 
       osgDB::ReaderWriter::ReadResult readObject(std::istream& fin, const osgDB::ReaderWriter::Options* options = NULL) const
       {
@@ -281,7 +281,7 @@ namespace dtDAL
    {
       bool result = false;
       dtCore::RefPtr<MapReaderWriter::MapStream> mapStreamObject;
-     
+
       //if the map is an .xml file we must load it manually
       //temporarily here to support non .dtmap extensions
       bool isBackupExt = false;
@@ -310,7 +310,7 @@ namespace dtDAL
                mapStreamObject = dynamic_cast<MapReaderWriter::MapStream*>(readMapResult.getObject());
             }
          }
-         
+
       }
       else
       {
@@ -389,11 +389,11 @@ namespace dtDAL
       catch(const dtUtil::Exception&)
       {
          //Probably the icon has been found, the exception to stop parsing has
-         //been thrown, so there's nothing to do here.  
+         //been thrown, so there's nothing to do here.
       }
-      
+
       iconFileName = mMapHandler->GetPrefabIconFileName();
-   
+
       mMapHandler->ClearMap();
       SetParsing(false);
 
@@ -472,7 +472,7 @@ namespace dtDAL
       }
    }
 
-   
+
    /////////////////////////////////////////////////////////////////
    const std::string MapParser::ParseMapName(const std::string& path)
    {
@@ -522,7 +522,7 @@ namespace dtDAL
       else
       {
          mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__, "Error during parsing! %ls :\n", "Unable to parse map name.");
-         throw dtDAL::MapParsingException( "Error while parsing map file. See log for more information.", __FILE__, __LINE__);      
+         throw dtDAL::MapParsingException( "Error while parsing map file. See log for more information.", __FILE__, __LINE__);
       }
 
    }
@@ -643,7 +643,7 @@ namespace dtDAL
          EndElement(); // End Editor Version Element.
          BeginElement(MapXMLConstants::SCHEMA_VERSION_ELEMENT);
          AddCharacters(std::string(MapXMLConstants::SCHEMA_VERSION));
-         EndElement(); // End Scema Version Element.         
+         EndElement(); // End Scema Version Element.
          EndElement(); // End Header Element.
 
          BeginElement(MapXMLConstants::LIBRARIES_ELEMENT);
@@ -1064,6 +1064,11 @@ namespace dtDAL
                   "Found Proxy Named: %s", proxy->GetName().c_str());
             }
             EndElement(); // End Actor Name Element.
+
+            // Initialize the serializer to write out prefab properties
+            mPropSerializer->Reset();
+            mPropSerializer->SetCurrentPropertyContainer(proxy);
+
             std::vector<const ActorProperty*> propList;
             proxy->GetPropertyList(propList);
             //int x = 0;
