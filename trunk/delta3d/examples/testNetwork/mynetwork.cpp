@@ -7,13 +7,14 @@
 using namespace dtUtil;
 using namespace dtCore;
 
-MyNetwork::MyNetwork( dtCore::Scene* scene )
+////////////////////////////////////////////////////////////////////////////////
+MyNetwork::MyNetwork(dtCore::Scene* scene)
    : mScene(scene)
 {
 }
 
-///One or more GNE::Packets was received, let's do something with them
-void MyNetwork::OnReceive( GNE::Connection &conn )
+////////////////////////////////////////////////////////////////////////////////
+void MyNetwork::OnReceive(GNE::Connection& conn)
 {
    mMutex.acquire();
 
@@ -91,7 +92,7 @@ void MyNetwork::OnReceive( GNE::Connection &conn )
    mMutex.release();
 }
 
-///Create a new player to represent the remote guy
+////////////////////////////////////////////////////////////////////////////////
 void MyNetwork::MakePlayer(const std::string& ownerID)
 {
    mMutex.acquire();
@@ -113,17 +114,20 @@ void MyNetwork::MakePlayer(const std::string& ownerID)
    mMutex.release();
 }
 
+////////////////////////////////////////////////////////////////////////////////
 void MyNetwork::OnExit(GNE::Connection& conn)
 {
    // do the default NetMgr behavior too
    NetMgr::OnExit(conn);
 }
 
+////////////////////////////////////////////////////////////////////////////////
 void MyNetwork::OnDisconnect(GNE::Connection& conn)
 {
    RemoveConnection(&conn);
 }
 
+////////////////////////////////////////////////////////////////////////////////
 void MyNetwork::PreFrame(const double deltaFrameTime)
 {
    // Process the Objects we wish to add to the scene

@@ -8,17 +8,25 @@ using namespace dtCore;
 using namespace dtABC;
 using namespace dtNet;
 
+////////////////////////////////////////////////////////////////////////////////
 TestNetwork::TestNetwork(const std::string& hostName,
                          const std::string& configFilename)
    : Application(configFilename)
    , mHostName(hostName)
+   , mQuitRequested(false)
 {
    mNet = new MyNetwork(GetScene());
 
    std::string logFilename;
 
-   if (mHostName.empty()) { logFilename = std::string("server.log"); }
-   else { logFilename = std::string("client.log"); }
+   if (mHostName.empty())
+   {
+      logFilename = std::string("server.log");
+   }
+   else
+   {
+      logFilename = std::string("client.log");
+   }
 
    // initialize the game name, version number, and a networking log file
    mNet->InitializeGame("TestNetwork", 1, logFilename);
@@ -43,6 +51,7 @@ TestNetwork::TestNetwork(const std::string& hostName,
    CreateHelpLabel();
 }
 
+////////////////////////////////////////////////////////////////////////////////
 void TestNetwork::Config()
 {
    mMotion = new FlyMotionModel(GetKeyboard(), GetMouse());
@@ -59,6 +68,7 @@ void TestNetwork::Config()
    Application::Config();
 }
 
+////////////////////////////////////////////////////////////////////////////////
 bool TestNetwork::KeyPressed(const dtCore::Keyboard* keyboard, int key)
 {
    bool verdict(false);
@@ -66,7 +76,7 @@ bool TestNetwork::KeyPressed(const dtCore::Keyboard* keyboard, int key)
    {
    case osgGA::GUIEventAdapter::KEY_Escape:
       {
-         Quit();
+         mQuitRequested = true;
          verdict = true;
       } break;
 
@@ -92,18 +102,32 @@ bool TestNetwork::KeyPressed(const dtCore::Keyboard* keyboard, int key)
    return verdict;
 }
 
-void TestNetwork::PreFrame( const double deltaFrameTime )
+////////////////////////////////////////////////////////////////////////////////
+void TestNetwork::PreFrame(const double deltaFrameTime)
 {
-   mNet->PreFrame( deltaFrameTime );
+   mNet->PreFrame(deltaFrameTime);
 }
 
-void TestNetwork::Frame( const double deltaFrameTime )
+////////////////////////////////////////////////////////////////////////////////
+void TestNetwork::Frame(const double deltaFrameTime)
 {
    // send a packet to tell the network where we're at
    Application::Frame(deltaFrameTime);
    SendPosition();
 }
 
+////////////////////////////////////////////////////////////////////////////////
+void TestNetwork::PostFrame(const double deltaFrameTime)
+{
+   // Since the system will continue through its stage cycle after
+   // shutdown, we do this at the last stage
+   if (mQuitRequested)
+   {
+      Quit();
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void TestNetwork::Quit()
 {
    // notify everyone else we are quitting
@@ -116,7 +140,7 @@ void TestNetwork::Quit()
    Application::Quit();
 }
 
-// send our position out to all connections
+////////////////////////////////////////////////////////////////////////////////
 void TestNetwork::SendPosition()
 {
    // get our new position
@@ -131,6 +155,7 @@ void TestNetwork::SendPosition()
    mNet->SendPacket("all", packet);
 }
 
+////////////////////////////////////////////////////////////////////////////////
 void TestNetwork::CreateHelpLabel()
 {
    mLabel = new dtABC::LabelActor();
@@ -148,6 +173,7 @@ void TestNetwork::CreateHelpLabel()
    AddDrawable(GetCamera());
 }
 
+////////////////////////////////////////////////////////////////////////////////
 std::string TestNetwork::CreateHelpLabelText()
 {
    std::string testString("");

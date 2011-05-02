@@ -37,21 +37,24 @@ public:
    MyNetwork(dtCore::Scene* scene);
    virtual ~MyNetwork() {}
 
+   ///One or more GNE::Packets was received, let's do something with them
    virtual void OnReceive(GNE::Connection& conn);
+
    virtual void OnExit(GNE::Connection& conn);
    virtual void OnDisconnect(GNE::Connection& conn);
 
    void PreFrame(const double deltaFrameTime);
 
 private:
-   dtCore::RefPtr< dtCore::Scene >              mScene;
-   std::queue< dtCore::RefPtr<dtCore::Object> > mObjectsToAdd;
-   std::queue< std::string >                    mIDsToRemove;
+   dtCore::RefPtr<dtCore::Scene >              mScene;
+   std::queue<dtCore::RefPtr<dtCore::Object> > mObjectsToAdd;
+   std::queue<std::string >                    mIDsToRemove;
 
    ///a map of player ID strings and their corresponding Object
    typedef std::map<std::string, dtCore::RefPtr<dtCore::Object> > StringObjectMap;
    StringObjectMap mOtherPlayerMap;
 
+   ///Create a new player to represent the remote guy
    void MakePlayer(const std::string& ownerID);
    GNE::Mutex mMutex;
 };

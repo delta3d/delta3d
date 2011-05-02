@@ -10,6 +10,7 @@
 using namespace dtNet;
 using namespace dtUtil;
 
+////////////////////////////////////////////////////////////////////////////////
 NetMgr::NetMgr()
    : mInitialized(false)
    , mIsServer(true)
@@ -17,6 +18,7 @@ NetMgr::NetMgr()
    SetName("NetMgr");
 }
 
+////////////////////////////////////////////////////////////////////////////////
 NetMgr::~NetMgr()
 {
    LOG_DEBUG("Shutting down network...");
@@ -27,16 +29,7 @@ NetMgr::~NetMgr()
    GNE::Thread::requestAllShutdown( GNE::Thread::USER );
 }
 
-
-/** Initialize the network and setup the game parameters.  This method must be
- *  called before any other NetMgr methods.
- *  The supplied  game name and game version are used to during the connection process to
- *  verify if the client/server match.
- *
- * @param gameName : the name of the network game
- * @param gameVersion : the version number of the game
- * @param logFile : a filename to log networking debug information
- */
+////////////////////////////////////////////////////////////////////////////////
 void NetMgr::InitializeGame(const std::string& gameName, int gameVersion, const std::string& logFile)
 {
    if (GNE::initGNE(NL_IP, atexit))
@@ -61,12 +54,8 @@ void NetMgr::InitializeGame(const std::string& gameName, int gameVersion, const 
    mInitialized = true;
 }
 
-/** Create a client and try to connect to the supplied host name.
- * @param host : the name of the host to connect to
- * @param portNum : the socket port number to use
- * @return true if successful, false otherwise
- */
-bool NetMgr::SetupClient(const std::string &host, int portNum)
+////////////////////////////////////////////////////////////////////////////////
+bool NetMgr::SetupClient(const std::string& host, int portNum)
 {
    if (!mInitialized)
    {
@@ -80,46 +69,47 @@ bool NetMgr::SetupClient(const std::string &host, int portNum)
    GNE::Address address(host);
    address.setPort(portNum);
 
-   if (!address.isValid())
+   if (address.isValid())
    {
-      LOG_ERROR("Address invalid");
-      ret = false;
-   }
+      LOG_INFO("Connecting to server at:" + address.toString());
 
-   LOG_INFO("Connecting to server at:" + address.toString());
+      GNE::ConnectionParams params(ConnectionListener::create(this));
+      params.setUnrel(true);
+      params.setInRate(0);
+      params.setOutRate(0);
 
-   GNE::ConnectionParams params(ConnectionListener::create(this));
-   params.setUnrel(true);
-   params.setInRate(0);
-   params.setOutRate(0);
+      GNE::ClientConnection::sptr mClient = GNE::ClientConnection::create();
+      if (mClient->open(address, params))
+      {
+         LOG_ERROR("Can not open socket");
+         ret = false;
+      }
+      else // successfully opened socket
+      {
+         mClient->connect();
+         mClient->waitForConnect();
 
-   GNE::ClientConnection::sptr mClient = GNE::ClientConnection::create();
-   if (mClient->open(address, params))
-   {
-      LOG_ERROR("Can not open socket");
-      ret = false;
-   }
-
-   mClient->connect();
-   mClient->waitForConnect();
-
-   if (mClient->isConnected())
-   {
-      LOG_INFO("Client is connected");
+         if (mClient->isConnected())
+         {
+            LOG_INFO("Client is connected");
+         }
+         else
+         {
+            LOG_ERROR("Client connection failed.");
+            ret = false;
+         }
+      }
    }
    else
    {
-      LOG_ERROR("Client connection failed.");
+      LOG_ERROR("Address invalid");
       ret = false;
    }
 
    return ret;
 }
 
-/** Create and start the server network.
- * @param portNum : the socket port number to listen to
- * @return true if successful, false otherwise
- */
+////////////////////////////////////////////////////////////////////////////////
 bool NetMgr::SetupServer(int portNum)
 {
    if (!mInitialized)
@@ -155,9 +145,7 @@ bool NetMgr::SetupServer(int portNum)
    return ret;
 }
 
-/** Perform a graceful shutdown of the network.  This will attempt to disconnect
- *  all currently active connections.
- */
+////////////////////////////////////////////////////////////////////////////////
 void NetMgr::Shutdown()
 {
    if (mIsServer)
@@ -178,10 +166,7 @@ void NetMgr::Shutdown()
    }
 }
 
-/** Internal method used to store the connection in a map.  Typically gets called
- * from OnConnect() and OnNewConn() to save the connection for later use.
- * @param connection : the connection to add to the list
- */
+////////////////////////////////////////////////////////////////////////////////
 void NetMgr::AddConnection(GNE::Connection* connection)
 {
    mMutex.acquire();
@@ -192,10 +177,7 @@ void NetMgr::AddConnection(GNE::Connection* connection)
    mMutex.release();
 }
 
-/** Internal method used to remove an existing connection from the list.  If
- * the supplied connection is not in the list, it won't be removed.
- * @param connection : the connection to remove from the list
- */
+////////////////////////////////////////////////////////////////////////////////
 void NetMgr::RemoveConnection(GNE::Connection* connection)
 {
    mMutex.acquire();
@@ -211,14 +193,7 @@ void NetMgr::RemoveConnection(GNE::Connection* connection)
    mMutex.release();
 }
 
-/** Sends the supplied packet to all connections in the list.  If this is
- * a server, it will send the packet to all existing connections.  If this is
- * a client, typically there will be only one connection: to the server.
- *
- * @param address : the string representation of the address to send to or "all"
- * @param packet : the GNE::Packet to send to the world
- * @see AddConnection()
- */
+////////////////////////////////////////////////////////////////////////////////
 void NetMgr::SendPacket(const std::string& address, GNE::Packet& packet)
 {
    mMutex.acquire();
@@ -240,44 +215,32 @@ void NetMgr::SendPacket(const std::string& address, GNE::Packet& packet)
    mMutex.release();
 }
 
-
+////////////////////////////////////////////////////////////////////////////////
 void NetMgr::OnListenSuccess()
 {
    LOG_INFO("On Listen success");
 }
 
-/**
- * @param error : The GNE:Error describing the failure
- * @param from : The GNE::Address of the problem
- * @param listener The GNE::ConnectionListen who triggered this failure
- */
+////////////////////////////////////////////////////////////////////////////////
 void NetMgr::OnListenFailure(const GNE::Error& error, const GNE::Address& from, const GNE::ConnectionListener::sptr& listener)
 {
    LOG_ERROR("onListenFailure")
 }
 
-/**
- * @param conn : the GNE::Connection that was just disconnected
- */
+////////////////////////////////////////////////////////////////////////////////
 void NetMgr::OnDisconnect(GNE::Connection& conn)
 {
    LOG_DEBUG("onDisconnect");
 }
 
-/**
- * @param conn : the GNE::Connetion that just exited
- */
+////////////////////////////////////////////////////////////////////////////////
 void NetMgr::OnExit(GNE::Connection& conn)
 {
    RemoveConnection(&conn);
    LOG_DEBUG("onExit");
 }
 
-/**
- * Typically, this new connection gets stored in a list for future reference.
- * @param conn : the new connection
- * @see AddConnection()
- */
+////////////////////////////////////////////////////////////////////////////////
 void NetMgr::OnNewConn(GNE::SyncConnection& conn)
 {
    GNE::Connection& connection = *conn.getConnection();
@@ -287,11 +250,7 @@ void NetMgr::OnNewConn(GNE::SyncConnection& conn)
    LOG_DEBUG("A new connection was received");
 }
 
-/**
-* Typically, this connection gets stored in a list for future reference.
-* @param conn : the new connection
-* @see AddConnection()
-*/
+////////////////////////////////////////////////////////////////////////////////
 void NetMgr::OnConnect(GNE::SyncConnection& conn)
 {
    LOG_DEBUG("Connection to server was successfull");
@@ -300,9 +259,7 @@ void NetMgr::OnConnect(GNE::SyncConnection& conn)
    AddConnection(&connection);
 }
 
-/**
- * @param : conn : the GNE::Connection which contains the GNE::Packets to be read
- */
+////////////////////////////////////////////////////////////////////////////////
 void NetMgr::OnReceive(GNE::Connection& conn)
 {
    LOG_DEBUG("Received packet");
@@ -332,28 +289,19 @@ void NetMgr::OnReceive(GNE::Connection& conn)
    }
 }
 
-/**
- * @param conn: The GNE::Connection that caused the failure
- * @param error : The error describing the failure
- */
+////////////////////////////////////////////////////////////////////////////////
 void NetMgr::OnFailure(GNE::Connection& conn, const GNE::Error& error)
 {
    LOG_DEBUG("onFailure");
 }
 
-/**
-* @param conn: The GNE::Connection that caused the failure
-* @param error : The error describing the failure
-*/
+////////////////////////////////////////////////////////////////////////////////
 void NetMgr::OnError(GNE::Connection& conn, const GNE::Error& error)
 {
    LOG_DEBUG("onError");
 }
 
-/**
-* @param conn: The GNE::Connection that caused the failure
-* @param error : The error describing the failure
-*/
+////////////////////////////////////////////////////////////////////////////////
 void NetMgr::OnConnectFailure(GNE::Connection& conn, const GNE::Error& error)
 {
    LOG_DEBUG(error.toString() + "from " + conn.getRemoteAddress(true).toString());
