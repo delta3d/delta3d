@@ -69,6 +69,12 @@ namespace dtEditQt
        */
       void setPosition(const osg::Vec3& pos);
 
+      /** 
+       * Set the orientation of the camera to the supplied rotation.
+       * @param rot The rotation to orient the camera
+       */
+      void setRotation(const osg::Quat& rot);
+
       /**
        * Moves the camera relative to its orientation.
        * @param relPos A vector containing the relative position from the current one.

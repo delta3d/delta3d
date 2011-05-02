@@ -40,6 +40,7 @@ class QContextMenuEvent;
 class QBoxLayout;
 class QFrame;
 class QLineEdit;
+class QAbstractButton;
 
 namespace dtEditQt
 {
@@ -152,6 +153,8 @@ namespace dtEditQt
 
       void OnNewPositionEntered();
 
+      void OnMoveActorOrCameraTriggered(QAction* action);
+
    protected:
       ///Creates the toolbar action objects.
       void createActions();
@@ -201,6 +204,7 @@ namespace dtEditQt
       QAction* mCameraSpeedFastest;
 
       void SetupPositionWidgets(QBoxLayout* layout);
+      QAbstractButton* CreateActorCameraAlignButton(QFrame* parent) const;
    };
 
 } // namespace dtEditQt

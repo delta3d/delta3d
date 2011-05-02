@@ -268,6 +268,12 @@ namespace dtEditQt
       // STAGE Document Browser.
       dtQt::DocBrowser* mDocBrowser;
 
+      ///Align the Camera to the selected actor action
+      QAction* mAlignCameraToActorAction;
+
+      ///Align the selected actor(s) to the camera action
+      QAction* mAlignActorToCameraAction;
+
    public slots:
 
       /**

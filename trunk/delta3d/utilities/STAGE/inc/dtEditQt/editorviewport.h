@@ -173,6 +173,13 @@ namespace dtEditQt {
       */
       void onGotoPosition(double x, double y, double z);
 
+      /** Move the selected Actor(s) to the Camera, or the Camera to the selected
+       *  Actor, based on the supplied QAction.
+       *  @param action Either mAlignActorToCameraAction or mAlignCameraToActorAction
+       *  @see EditorActions
+       */
+      void slotMoveActorOrCamera(QAction* action);
+
       /**
       * Toggles the gizmos into local or world space.
       *

@@ -63,6 +63,16 @@ namespace dtEditQt
       emit PositionMoved(pos.x(), pos.y(), pos.z());
    }
 
+
+   //////////////////////////////////////////////////////////////////////////
+   void StageCamera::setRotation(const osg::Quat& rot)
+   {
+      dtCore::Transform xform;
+      mDeltaCamera->GetTransform(xform);
+      xform.SetRotation(rot);
+      mDeltaCamera->SetTransform(xform);
+   }
+
    ///////////////////////////////////////////////////////////////////////////////
    void StageCamera::move(const osg::Vec3& relPos)
    {
