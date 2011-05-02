@@ -32,6 +32,7 @@
 #include <dtActors/prefabactorproxy.h>
 
 #include <dtCore/deltadrawable.h>
+#include <dtCore/transform.h>
 
 #include <dtEditQt/editoractions.h>
 #include <dtEditQt/editordata.h>
@@ -967,6 +968,73 @@ namespace dtEditQt
 
       // Make sure we refresh the camera motion model with the updated camera.
       mCameraMotionModel->SetCamera(getCamera());
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void EditorViewport::slotMoveActorOrCamera(QAction* action)
+   {
+      std::vector<dtDAL::BaseActorObject*> selected;
+      EditorData::GetInstance().GetSelectedActors(selected);
+      
+      if (selected.empty()) {return;}
+
+      //align the selected actors to the camera's position/rotation
+      if (action == EditorActions::GetInstance().mAlignActorToCameraAction)
+      {
+
+         dtCore::Transform camXform;
+         camXform.Set(getCamera()->getPosition(), getCamera()->getOrientation());
+
+         saveSelectedActorOrigValues(dtDAL::TransformableActorProxy::PROPERTY_TRANSLATION);
+         saveSelectedActorOrigValues(dtDAL::TransformableActorProxy::PROPERTY_ROTATION);
+
+         std::vector<dtDAL::BaseActorObject*>::iterator itr = selected.begin();
+         while (itr != selected.end())
+         {
+            if ((*itr)->IsPlaceable())
+            {
+               dtDAL::TransformableActorProxy* transProxy =
+                  dynamic_cast<dtDAL::TransformableActorProxy*>(*itr);
+
+               if (transProxy)
+               {
+                  dtCore::Transformable *t = static_cast<dtCore::Transformable*>(transProxy->GetActor());
+                  t->SetTransform(camXform);
+               }
+            }
+            ++itr;
+         }
+
+         EditorEvents::GetInstance().emitBeginChangeTransaction();
+         EditorData::GetInstance().getUndoManager().beginMultipleUndo();
+         updateActorSelectionProperty(dtDAL::TransformableActorProxy::PROPERTY_TRANSLATION);
+         updateActorSelectionProperty(dtDAL::TransformableActorProxy::PROPERTY_ROTATION);
+         EditorData::GetInstance().getUndoManager().endMultipleUndo();
+         EditorEvents::GetInstance().emitEndChangeTransaction();
+      }
+      
+      //align the camera to the selected Actor
+      else if (action == EditorActions::GetInstance().mAlignCameraToActorAction)
+      {
+         EditorEvents::GetInstance().emitBeginChangeTransaction();
+         const dtDAL::BaseActorObject* firstProxy = (*selected.begin());
+
+         const dtDAL::TransformableActorProxy* transProxy =
+            dynamic_cast<const dtDAL::TransformableActorProxy*>(firstProxy);
+
+         if (transProxy)
+         {
+            const dtCore::Transformable *t = static_cast<const dtCore::Transformable*>(transProxy->GetActor());
+            dtCore::Transform xform;
+            t->GetTransform(xform);
+            getCamera()->setPosition(xform.GetTranslation());
+            osg::Quat rot;
+            xform.GetRotation(rot);
+            getCamera()->setRotation(rot);
+            getCameraMotionModel()->SetCamera(getCamera());//to reset the camera        
+         }
+         EditorEvents::GetInstance().emitEndChangeTransaction();
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////

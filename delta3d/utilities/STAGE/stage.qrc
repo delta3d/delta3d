@@ -54,6 +54,8 @@
       <file>icons/terrain_resource.png</file>
       <file>icons/terrain_tab.png</file>
       <file>icons/texturelightingmode_tiny.png</file>
+      <file>icons/alignCameraToActor.png</file>
+      <file>icons/alignActorToCamera.png</file>
       <file>icons/texturemode_tiny.png</file>
       <file>icons/texture_resource.png</file>
       <file>icons/texture_tab.png</file>

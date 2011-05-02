@@ -38,8 +38,10 @@
 #include <QtGui/QFrame>
 #include <QtGui/QLineEdit>
 #include <QtGui/QDoubleValidator>
+#include <dtEditQt/editoractions.h>
 #include <dtEditQt/viewportcontainer.h>
 #include <dtEditQt/viewportmanager.h>
+#include <dtEditQt/editorviewport.h>
 #include <dtEditQt/uiresources.h>
 
 namespace dtEditQt
@@ -61,6 +63,11 @@ namespace dtEditQt
       if (vp != NULL)
       {
          setViewport(vp);
+
+         if (vp->getType() == ViewportManager::ViewportType::PERSPECTIVE)
+         {
+            mButtonLayout->addWidget(CreateActorCameraAlignButton(mToolBar));
+         }
       }
       else
       {
@@ -397,6 +404,40 @@ namespace dtEditQt
       connect(editX, SIGNAL(editingFinished()), this, SLOT(OnNewPositionEntered()));
       connect(editY, SIGNAL(editingFinished()), this, SLOT(OnNewPositionEntered()));
       connect(editZ, SIGNAL(editingFinished()), this, SLOT(OnNewPositionEntered()));
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void ViewportContainer::OnMoveActorOrCameraTriggered(QAction* action)
+   {
+      QToolButton *widget = qobject_cast<QToolButton*>(sender());
+      if (widget == NULL || action == NULL)
+      {
+         return;
+      }
+
+      widget->setDefaultAction(action);
+
+      EditorViewport* editorViewport = dynamic_cast<EditorViewport*>(mViewPort);
+      if (editorViewport)
+      {
+         editorViewport->slotMoveActorOrCamera(action);
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   QAbstractButton* ViewportContainer::CreateActorCameraAlignButton(QFrame* parent) const
+   {
+      //A QToolButton that has two Actions added to it. These actions pop up like a menu
+      QToolButton* button = new QToolButton(parent);
+      button->setDefaultAction(EditorActions::GetInstance().mAlignCameraToActorAction);
+      connect(button, SIGNAL(triggered(QAction*)), this, SLOT(OnMoveActorOrCameraTriggered(QAction*)));
+
+      QMenu* menu = new QMenu("CameraActorMenu");
+      menu->addAction(EditorActions::GetInstance().mAlignCameraToActorAction);
+      menu->addAction(EditorActions::GetInstance().mAlignActorToCameraAction);
+      button->setMenu(menu);
+
+      return button;
    }
 
 } // namespace dtEditQt

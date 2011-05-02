@@ -404,6 +404,9 @@ namespace dtEditQt
       mActionHideShowTriggers->setStatusTip(tr("Show/Hide Triggers"));
       connect(mActionHideShowTriggers, SIGNAL(triggered()), this, SLOT(slotShowHideTriggers()));
 
+      mAlignCameraToActorAction = new QAction(QIcon(":/icons/alignCameraToActor.png"), "Align Camera to the selected Actor", this);
+      mAlignActorToCameraAction = new QAction(QIcon(":/icons/alignActorToCamera.png"), "Align the selected Actor(s) to the Camera", this);
+
       mExternalToolArgParsers.push_back(new CurrentContextArgParser());
       mExternalToolArgParsers.push_back(new CurrentMapFilenameArgParser());
       mExternalToolArgParsers.push_back(new CurrentMapNameArgParser());
@@ -2148,5 +2151,4 @@ namespace dtEditQt
          QMessageBox::warning(EditorData::GetInstance().getMainWindow(), tr("Missing ActorTypes"), errors, tr("OK"));
       }
    }
-
 } // namespace dtEditQt
