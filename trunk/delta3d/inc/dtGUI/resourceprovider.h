@@ -1,6 +1,7 @@
 #ifndef RESOURCEPROVIDER_INCLUDED
 #define RESOURCEPROVIDER_INCLUDED
 
+#include <dtUtil/refstring.h>
 #include <dtGUI/export.h>
 #include <CEGUI/CEGUIDefaultResourceProvider.h>
 

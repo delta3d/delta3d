@@ -29,6 +29,14 @@
 
 #include <dtUtil/export.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+#include <string.h>
+#ifdef __cplusplus
+}
+#endif
+
 #include <string>
 #include <map>                          // for return argument
 #include <xercesc/util/XercesDefs.hpp>  // for xerces namespace macros
