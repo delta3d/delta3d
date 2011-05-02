@@ -44,26 +44,51 @@ namespace dtNet
     *  \code   GNE::PacketParser::defaultRegisterPacket<MyCustomPacket>(); \endcode
     *
     */
-   class  NetMgr :  public dtCore::Base
+   class NetMgr : public dtCore::Base
    {
    public:
       NetMgr();
    protected:
       virtual ~NetMgr();
    public:
-      ///Initialize the networking and game environment
+
+      /** Initialize the network and setup the game parameters.  This method must be
+        * called before any other NetMgr methods. The supplied  game name and game
+        * version are used to during the connection process to verify if the
+        * client/server match.
+        *
+        * @param gameName : the name of the network game
+        * @param gameVersion : the version number of the game
+        * @param logFile : a filename to log networking debug information
+        */
       void InitializeGame(const std::string& gameName, int gameVersion, const std::string& logFile);
 
-      ///Setup and create a server
+      /** Create and start the server network.
+       * @param portNum : the socket port number to listen to
+       * @return true if successful, false otherwise
+       */
       bool SetupServer(int portNum);
 
-      ///Setup and create a client to connect to the server
-      bool SetupClient(const std::string& host, int portNum );
+      /** Create a client and try to connect to the supplied host name.
+       * @param host : the name of the host to connect to
+       * @param portNum : the socket port number to use
+       * @return true if successful, false otherwise
+       */
+      bool SetupClient(const std::string& host, int portNum);
 
-      ///Shutdown the networking
+      /** Perform a graceful shutdown of the network.  This will attempt to disconnect
+       *  all currently active connections.
+       */
       void Shutdown();
 
-      ///Send a packet to the given address
+      /** Sends the supplied packet to all connections in the list.  If this is
+       * a server, it will send the packet to all existing connections.  If this is
+       * a client, typically there will be only one connection: to the server.
+       *
+       * @param address : the string representation of the address to send to or "all"
+       * @param packet : the GNE::Packet to send to the world
+       * @see AddConnection()
+       */
       void SendPacket(const std::string& address, GNE::Packet& packet);
 
       ///Get the number of connections to the network
@@ -79,40 +104,50 @@ namespace dtNet
       ///callback to signal a connection is successful
       virtual void OnListenSuccess();
 
-      ///callback to signal the connection to the socket failed
-      virtual void OnListenFailure(const GNE::Error& error, const GNE::Address& from, const GNE::ConnectionListener::sptr &listener);
+      /**
+       * @param error : The GNE:Error describing the failure
+       * @param from : The GNE::Address of the problem
+       * @param listener The GNE::ConnectionListen who triggered this failure
+       */
+      virtual void OnListenFailure(const GNE::Error& error, const GNE::Address& from, const GNE::ConnectionListener::sptr& listener);
 
       ///The GNE::Connection has been disconnected
-      virtual void OnDisconnect( GNE::Connection &conn);
+      virtual void OnDisconnect(GNE::Connection& conn);
 
       ///called when the remote has gracefully closed the connection
-      virtual void OnExit( GNE::Connection &conn);
+      virtual void OnExit(GNE::Connection& conn);
 
       ///called when the server receives a new connection
-      virtual void OnNewConn( GNE::SyncConnection &conn);
+      virtual void OnNewConn(GNE::SyncConnection& conn);
 
       ///called when the client is connected to the server
-      virtual void OnConnect( GNE::SyncConnection &conn);
+      virtual void OnConnect(GNE::SyncConnection& conn);
 
       ///one or more GNE::Packets have been received
-      virtual void OnReceive( GNE::Connection &conn);
+      virtual void OnReceive(GNE::Connection& conn);
 
       ///A fatal error has occurred in the connection
-      virtual void OnFailure( GNE::Connection &conn, const GNE::Error &error );
+      virtual void OnFailure(GNE::Connection& conn, const GNE::Error& error);
 
       ///A non-fatal error has occurred in the connection
-      virtual void OnError( GNE::Connection &conn, const GNE::Error &error);
+      virtual void OnError(GNE::Connection& conn, const GNE::Error& error);
 
       ///A connection failed before or during the onConnect event
-      virtual void OnConnectFailure( GNE::Connection &conn, const GNE::Error &error);
+      virtual void OnConnectFailure(GNE::Connection& conn, const GNE::Error& error);
 
    protected:
 
-      ///Add a new GNE::Connection to the list of existing connections
-      void AddConnection( GNE::Connection *connection);
+      /** Internal method used to store the connection in a map.  Typically gets called
+       * from OnConnect() and OnNewConn() to save the connection for later use.
+       * @param connection : the connection to add to the list
+       */
+      void AddConnection(GNE::Connection* connection);
 
-      ///Remove an existing GNE::Connection from the list of connections
-      void RemoveConnection(GNE::Connection *connection);
+      /** Internal method used to remove an existing connection from the list.  If
+       * the supplied connection is not in the list, it won't be removed.
+       * @param connection : the connection to remove from the list
+       */
+      void RemoveConnection(GNE::Connection* connection);
 
       bool mInitialized; ///<has the network been inititialed yet?
       bool mIsServer; ///<are we a server?

@@ -28,13 +28,14 @@
 #include <dtCore/refptr.h>
 #include <dtCore/flymotionmodel.h>
 
+#include "mynetwork.h"
+
 namespace dtCore
 {
    class Object;
 }
 
-#include "mynetwork.h"
-
+////////////////////////////////////////////////////////////////////////////////
 class TestNetwork : public dtABC::Application
 {
    public:
@@ -48,10 +49,14 @@ class TestNetwork : public dtABC::Application
 
       virtual void PreFrame(const double deltaFrameTime);
       virtual void Frame(const double deltaFrameTime);
+      virtual void PostFrame(const double deltaFrameTime);
       virtual void Quit();
 
    private:
+
+      /// send our position out to all connections
       void SendPosition();
+
       void CreateHelpLabel();
       std::string CreateHelpLabelText();
 
@@ -60,6 +65,8 @@ class TestNetwork : public dtABC::Application
       dtCore::RefPtr<dtCore::Object> mTerrain; ///<Ground
       dtCore::RefPtr<dtCore::FlyMotionModel> mMotion; ///<Motion model
       dtCore::RefPtr<dtABC::LabelActor> mLabel; ///<Help Label
+
+      bool mQuitRequested;
 };
 
 #endif // DELTA_TestNetwork
