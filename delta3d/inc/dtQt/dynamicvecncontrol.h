@@ -112,6 +112,11 @@ namespace dtQt
        */
       virtual bool isEditable();
 
+      /**
+       * @see DynamicAbstractControl#handleSubEditDestroy
+       */
+      virtual void handleSubEditDestroy(QWidget* widget, QAbstractItemDelegate::EndEditHint hint = QAbstractItemDelegate::NoHint);
+
    protected:
 
       DynamicVectorElementControl* CreateElementControl(PropertyType* prop, int index, const std::string& label,
@@ -288,6 +293,19 @@ namespace dtQt
    bool DynamicVecNControl<PropertyType>::isEditable()
    {
       return !mProperty->IsReadOnly();
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   template <typename PropertyType>
+   void DynamicVecNControl<PropertyType>::handleSubEditDestroy(QWidget* widget,
+      QAbstractItemDelegate::EndEditHint hint /*= QAbstractItemDelegate::NoHint*/)
+   {
+      if (widget == mWrapper)
+      {
+         mTemporaryEditControl = NULL;
+      }
+
+      DynamicAbstractParentControl::handleSubEditDestroy(widget, hint);
    }
 
 } // namespace dtEditQt

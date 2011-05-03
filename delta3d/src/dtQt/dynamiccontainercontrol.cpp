@@ -175,6 +175,18 @@ namespace dtQt
       return !mProperty->IsReadOnly();
    }
 
+   ///////////////////////////////////////////////////////////////////////////////
+   void DynamicContainerControl::handleSubEditDestroy(QWidget* widget,
+      QAbstractItemDelegate::EndEditHint hint /*= QAbstractItemDelegate::NoHint*/)
+   {
+      if (widget == mWrapper)
+      {
+         mTemporaryEditControl = NULL;
+      }
+
+      DynamicAbstractParentControl::handleSubEditDestroy(widget, hint);
+   }
+
    /////////////////////////////////////////////////////////////////////////////////
    // SLOTS
    /////////////////////////////////////////////////////////////////////////////////
