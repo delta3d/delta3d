@@ -92,8 +92,11 @@ namespace dtDirector
       static dtCore::RefPtr<dtDirector::NodeType> ACTOR_VALUE_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> ACTOR_ARRAY_VALUE_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> STATIC_MESH_VALUE_NODE_TYPE;
+      static dtCore::RefPtr<dtDirector::NodeType> VEC2_ARRAY_VALUE_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> VEC2_VALUE_NODE_TYPE;
+      static dtCore::RefPtr<dtDirector::NodeType> VEC3_ARRAY_VALUE_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> VEC3_VALUE_NODE_TYPE;
+      static dtCore::RefPtr<dtDirector::NodeType> VEC4_ARRAY_VALUE_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> VEC4_VALUE_NODE_TYPE;
 
       /// Misc

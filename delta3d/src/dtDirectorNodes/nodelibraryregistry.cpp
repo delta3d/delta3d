@@ -64,23 +64,26 @@
 #include <dtDirectorNodes/switchaction.h>
 
 // Values
-#include <dtDirectorNodes/externalvaluenode.h>
+#include <dtDirectorNodes/actorarrayvalue.h>
+#include <dtDirectorNodes/actorvalue.h>
 #include <dtDirectorNodes/booleanvalue.h>
-#include <dtDirectorNodes/intvalue.h>
+#include <dtDirectorNodes/doublevalue.h>
+#include <dtDirectorNodes/externalvaluenode.h>
 #include <dtDirectorNodes/floatvalue.h>
+#include <dtDirectorNodes/intvalue.h>
 #include <dtDirectorNodes/randomfloatvalue.h>
 #include <dtDirectorNodes/randomintvalue.h>
-#include <dtDirectorNodes/doublevalue.h>
-#include <dtDirectorNodes/stringvalue.h>
-#include <dtDirectorNodes/stringarrayvalue.h>
-#include <dtDirectorNodes/vec2value.h>
-#include <dtDirectorNodes/vec3value.h>
-#include <dtDirectorNodes/vec4value.h>
 #include <dtDirectorNodes/referencevalue.h>
-#include <dtDirectorNodes/actorvalue.h>
-#include <dtDirectorNodes/actorarrayvalue.h>
-#include <dtDirectorNodes/playervalue.h>
 #include <dtDirectorNodes/staticmeshvalue.h>
+#include <dtDirectorNodes/stringarrayvalue.h>
+#include <dtDirectorNodes/stringvalue.h>
+#include <dtDirectorNodes/vec2arrayvalue.h>
+#include <dtDirectorNodes/vec2value.h>
+#include <dtDirectorNodes/vec3arrayvalue.h>
+#include <dtDirectorNodes/vec3value.h>
+#include <dtDirectorNodes/vec4arrayvalue.h>
+#include <dtDirectorNodes/vec4value.h>
+#include <dtDirectorNodes/playervalue.h>
 
 // Misc
 #include <dtDirector/groupnode.h>
@@ -156,8 +159,11 @@ namespace dtDirector
    RefPtr<NodeType> NodeLibraryRegistry::DOUBLE_VALUE_NODE_TYPE(                 new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "Double",                    "General",     "Base",        "A double value.", NULL, Colors::ORANGE, dtDAL::DataType::DOUBLE));
    RefPtr<NodeType> NodeLibraryRegistry::STRING_VALUE_NODE_TYPE(                 new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "String",                    "General",     "Base",        "A string value.", NULL, Colors::CYAN, dtDAL::DataType::STRING));
    RefPtr<NodeType> NodeLibraryRegistry::STRING_ARRAY_VALUE_NODE_TYPE(           new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "String Array",              "General",     "Arrays",      "An array of string values.", NULL, Colors::CYAN, dtDAL::DataType::STRING));
+   RefPtr<NodeType> NodeLibraryRegistry::VEC2_ARRAY_VALUE_NODE_TYPE(             new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "Vec2 Array",                "General",     "Arrays",      "An array of vec2 values.", NULL, Colors::MANGENTA, dtDAL::DataType::VEC2));
    RefPtr<NodeType> NodeLibraryRegistry::VEC2_VALUE_NODE_TYPE(                   new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "Vec2",                      "General",     "Base",        "An x,y vector value.", NULL, Colors::MANGENTA, dtDAL::DataType::VEC2));
+   RefPtr<NodeType> NodeLibraryRegistry::VEC3_ARRAY_VALUE_NODE_TYPE(             new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "Vec3 Array",                "General",     "Arrays",      "An array of vec3 values.", NULL, Colors::MANGENTA, dtDAL::DataType::VEC3));
    RefPtr<NodeType> NodeLibraryRegistry::VEC3_VALUE_NODE_TYPE(                   new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "Vec3",                      "General",     "Base",        "An x,y,z vector value.", NULL, Colors::MANGENTA, dtDAL::DataType::VEC3));
+   RefPtr<NodeType> NodeLibraryRegistry::VEC4_ARRAY_VALUE_NODE_TYPE(             new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "Vec4 Array",                "General",     "Arrays",      "An array of vec4 values.", NULL, Colors::MANGENTA, dtDAL::DataType::VEC4));
    RefPtr<NodeType> NodeLibraryRegistry::VEC4_VALUE_NODE_TYPE(                   new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "Vec4",                      "General",     "Base",        "An x,y,z,w vector value.", NULL, Colors::MANGENTA, dtDAL::DataType::VEC4));
    RefPtr<NodeType> NodeLibraryRegistry::REFERENCE_VALUE_NODE_TYPE(              new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "Reference",                 "Core",        "Base",        "This will reference another value in the script.", NULL, Colors::VIOLET));
    RefPtr<NodeType> NodeLibraryRegistry::ACTOR_VALUE_NODE_TYPE(                  new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "Actor",                     "General",     "Actors",      "An actor value.", NULL, Colors::MANGENTA, dtDAL::DataType::ACTOR));
@@ -240,8 +246,11 @@ namespace dtDirector
       mNodeFactory->RegisterType<DoubleValue>(DOUBLE_VALUE_NODE_TYPE.get());
       mNodeFactory->RegisterType<StringValue>(STRING_VALUE_NODE_TYPE.get());
       mNodeFactory->RegisterType<StringArrayValue>(STRING_ARRAY_VALUE_NODE_TYPE.get());
+      mNodeFactory->RegisterType<Vec2ArrayValue>(VEC2_ARRAY_VALUE_NODE_TYPE.get());
       mNodeFactory->RegisterType<Vec2Value>(VEC2_VALUE_NODE_TYPE.get());
+      mNodeFactory->RegisterType<Vec3ArrayValue>(VEC3_ARRAY_VALUE_NODE_TYPE.get());
       mNodeFactory->RegisterType<Vec3Value>(VEC3_VALUE_NODE_TYPE.get());
+      mNodeFactory->RegisterType<Vec4ArrayValue>(VEC4_ARRAY_VALUE_NODE_TYPE.get());
       mNodeFactory->RegisterType<Vec4Value>(VEC4_VALUE_NODE_TYPE.get());
       mNodeFactory->RegisterType<ReferenceValue>(REFERENCE_VALUE_NODE_TYPE.get());
       mNodeFactory->RegisterType<ActorValue>(ACTOR_VALUE_NODE_TYPE.get());
