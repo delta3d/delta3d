@@ -44,20 +44,20 @@ namespace dtDirector
    GraphBrowser::GraphBrowser(QMainWindow* parent)
       : QDockWidget(parent)
    {
-      setWindowTitle("Graph Browser");
+      setWindowTitle("Macro Browser");
 
       QWidget* mainAreaWidget = new QWidget(this);
       QGridLayout* mainAreaLayout = new QGridLayout(mainAreaWidget);
       setWidget(mainAreaWidget);
 
-      mGroupBox = new QGroupBox("Director Graphs", mainAreaWidget);
+      mGroupBox = new QGroupBox("Macro Hierarchy", mainAreaWidget);
       mGroupBox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
       mainAreaLayout->addWidget(mGroupBox, 0, 0);
       QGridLayout* innerLayout = new QGridLayout(mGroupBox);
 
       mGraphTree = new QTreeWidget(mGroupBox);
       innerLayout->addWidget(mGraphTree);
-      mGraphTree->setHeaderLabel("");
+      mGraphTree->setHeaderHidden(true);
       mGraphTree->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
    }
 

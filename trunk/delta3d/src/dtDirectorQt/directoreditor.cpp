@@ -76,6 +76,8 @@ namespace dtDirector
       mUI.graphTab->SetDirectorEditor(this);
       mUI.propertyEditor->SetDirectorEditor(this);
       mUI.graphBrowser->SetDirectorEditor(this);
+      mUI.searchBrowser->SetDirectorEditor(this);
+      mUI.searchBrowser->hide();
       mUI.replayBrowser->SetDirectorEditor(this);
       mUI.replayBrowser->hide();
 
@@ -513,6 +515,58 @@ namespace dtDirector
       return NULL;
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::FocusNode(Node* node)
+   {
+      if (!node)
+      {
+         return;
+      }
+
+      OpenGraph(node->GetGraph());
+      EditorScene* scene = GetPropertyEditor()->GetScene();
+      if (scene)
+      {
+         scene->clearSelection();
+         NodeItem* item = scene->GetNodeItem(node->GetID(), true);
+         if (item)
+         {
+            item->setSelected(true);
+         }
+         scene->CenterSelection();
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::FocusGraph(DirectorGraph* graph)
+   {
+      if (!graph)
+      {
+         return;
+      }
+
+      DirectorGraph* parent = graph->GetParent();
+
+      // Can't focus on the root graph.
+      if (!parent)
+      {
+         return;
+      }
+
+      OpenGraph(parent);
+      EditorScene* scene = GetPropertyEditor()->GetScene();
+      if (scene)
+      {
+         scene->clearSelection();
+         MacroItem* item = scene->GetGraphItem(graph->GetID());
+         if (item)
+         {
+            item->setSelected(true);
+         }
+         scene->CenterSelection();
+      }
+   }
+
    //////////////////////////////////////////////////////////////////////////
    void DirectorEditor::on_propertyEditor_visibilityChanged(bool visible)
    {
@@ -523,6 +577,12 @@ namespace dtDirector
    void DirectorEditor::on_graphBrowser_visibilityChanged(bool visible)
    {
       mUI.action_Graph_Browser->setChecked(visible);
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::on_searchBrowser_visibilityChanged(bool visible)
+   {
+      mUI.action_Search_Browser->setChecked(visible);
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -937,6 +997,20 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::on_action_Search_Browser_triggered()
+   {
+      if (mUI.action_Search_Browser->isChecked())
+      {
+         mUI.searchBrowser->show();
+         mUI.searchBrowser->FocusSearch();
+      }
+      else
+      {
+         mUI.searchBrowser->hide();
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    void DirectorEditor::on_action_Replay_Browser_triggered()
    {
       if (mUI.action_Replay_Browser->isChecked())
@@ -1093,6 +1167,22 @@ namespace dtDirector
       if (e->key() == Qt::Key_Z && holdingControl && holdingShift)
       {
          on_action_Undo_triggered();
+      }
+
+      // Show Search Browser.
+      if (e->key() == Qt::Key_F && holdingControl)
+      {
+         if (mUI.searchBrowser->HasSearchFocus())
+         {
+            mUI.action_Search_Browser->toggle();
+            on_action_Search_Browser_triggered();
+         }
+         else
+         {
+            mUI.action_Search_Browser->setChecked(true);
+            mUI.searchBrowser->show();
+            mUI.searchBrowser->FocusSearch();
+         }
       }
    }
 
