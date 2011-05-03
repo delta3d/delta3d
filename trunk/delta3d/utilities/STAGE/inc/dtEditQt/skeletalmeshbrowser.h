@@ -28,6 +28,7 @@
 #define DELTA_SKELETAL_MESH_BROWSER
 
 #include <dtEditQt/resourceabstractbrowser.h>
+#include <dtAnim/chardrawable.h>
 
 class QAction;
 class QGroupBox;
@@ -40,7 +41,6 @@ class QCheckBox;
 namespace dtCore
 {
    class Scene;
-   class Object;
 }
 
 namespace dtEditQt
@@ -85,12 +85,6 @@ namespace dtEditQt
 
       /// Handles the event when the user creates a selected actor
       void createActor();
-
-      /// Handles the event when the user views an osg or ive scene graph
-      void viewSceneGraph();
-
-      /// Handles event to preview osg contents
-      void viewOSGContents();
 
    protected:
       /**
@@ -141,7 +135,7 @@ namespace dtEditQt
       PerspectiveViewport*           perspView;
       dtCore::RefPtr<dtCore::Scene>  meshScene;
       dtCore::RefPtr<StageCamera>    camera;
-      dtCore::RefPtr<dtCore::Object> previewObject;
+      dtCore::RefPtr<dtAnim::CharDrawable> previewObject;
 
       // Layout Objects
       QGridLayout* grid;
@@ -154,8 +148,6 @@ namespace dtEditQt
 
       // Actions
       QAction* setCreateAction;
-      QAction* setSGPreviewAction;
-      QAction* setOSGDump;
    };
 
 } // namespace dtEditQt
