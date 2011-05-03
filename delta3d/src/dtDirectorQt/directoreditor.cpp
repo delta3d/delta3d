@@ -141,7 +141,10 @@ namespace dtDirector
       EditorView* view = dynamic_cast<EditorView*>(mUI.graphTab->currentWidget());
       if (view && graph)
       {
-         view->GetScene()->SetGraph(graph);
+         if (view->GetScene()->GetGraph() != graph)
+         {
+            view->GetScene()->SetGraph(graph);
+         }
       }
 
       RefreshButtonStates();
