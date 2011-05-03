@@ -164,10 +164,11 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void ValueNode::OnValueChanged()
    {
-      int count = (int)mLinks.size();
+      std::vector<ValueLink*> links = mLinks;
+      int count = (int)links.size();
       for (int index = 0; index < count; index++)
       {
-         ValueLink* link = mLinks[index];
+         ValueLink* link = links[index];
          if (link) link->GetOwner()->OnLinkValueChanged(link->GetName());
       }
    }
@@ -203,10 +204,11 @@ namespace dtDirector
       // Notify any reference nodes that reference this value.
       if (!mLinks.empty())
       {
-         int count = (int)mLinks.size();
+         std::vector<ValueLink*> links = mLinks;
+         int count = (int)links.size();
          for (int index = 0; index < count; index++)
          {
-            ValueLink* link = mLinks[index];
+            ValueLink* link = links[index];
             if (link)
             {
                ValueNode* node = link->GetOwner()->AsValueNode();
