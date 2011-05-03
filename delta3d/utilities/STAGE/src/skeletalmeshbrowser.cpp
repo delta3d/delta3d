@@ -56,7 +56,8 @@
 #include <dtDAL/resourceactorproperty.h>
 
 #include <dtCore/scene.h>
-#include <dtCore/object.h>
+#include <dtAnim/chardrawable.h>
+#include <dtAnim/cal3ddatabase.h>
 
 #include <dtUtil/log.h>
 #include <dtUtil/nodeprintout.h>
@@ -77,8 +78,7 @@ namespace dtEditQt
 
       // create a new scene for the skeletal mesh viewport
       meshScene = new dtCore::Scene();
-      previewObject = new dtCore::Object();
-      meshScene->AddChild(previewObject.get());
+
       camera = new StageCamera();
       camera->makePerspective(60.0f,1.333f,0.1f,100000.0f);
 
@@ -222,15 +222,6 @@ namespace dtEditQt
       setCreateAction->setCheckable(false);
       connect(setCreateAction, SIGNAL(triggered()), this, SLOT(createActor()));
       setCreateAction->setEnabled(false);
-
-      // Allow the preview of the scene graph for an ive file
-      setSGPreviewAction = new QAction(tr("Preview Scene Graph"), getCurrentParent());
-      //setSGPreviewAction->setCheckable(false);
-      connect(setSGPreviewAction, SIGNAL(triggered()), this, SLOT(viewSceneGraph()));
-      //setSGPreviewAction->setEnabled(false);
-
-      setOSGDump = new QAction(tr("Preview File"), getCurrentParent());
-      connect(setOSGDump, SIGNAL(triggered()), this, SLOT(viewOSGContents()));
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -238,8 +229,6 @@ namespace dtEditQt
    {
       ResourceAbstractBrowser::createContextMenu();
       mContextMenu->addAction(setCreateAction);
-      mContextMenu->addAction(setSGPreviewAction);
-      mContextMenu->addAction(setOSGDump);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -258,7 +247,7 @@ namespace dtEditQt
          dtDAL::Project& project = dtDAL::Project::GetInstance();
 
          // Find the currently selected tree item
-         dtDAL::ResourceDescriptor resource = EditorData::GetInstance().getCurrentResource(dtDAL::DataType::STATIC_MESH);
+         dtDAL::ResourceDescriptor resource = EditorData::GetInstance().getCurrentResource(dtDAL::DataType::SKELETAL_MESH);
 
          try
          {
@@ -272,9 +261,6 @@ namespace dtEditQt
 
          if (file != NULL && validFile == true)
          {
-            context = QString(project.GetContext().c_str());
-            // The following is performed to comply with linux and windows file systems
-            file = context + "\\" + file;
             file.replace("\\", "/");
 
             if (meshScene->GetChildIndex(previewObject.get()) == (unsigned)meshScene->GetNumberOfAddedDrawable())
@@ -282,9 +268,28 @@ namespace dtEditQt
                meshScene->AddChild(previewObject.get());
             }
 
+            dtCore::RefPtr<dtAnim::Cal3DModelWrapper> animWrap = dtAnim::Cal3DDatabase::GetInstance().Load(file.toStdString());
+
+            if (animWrap.valid())
+            {
+               if (previewObject.valid())
+               {
+                  previewObject = new dtAnim::CharDrawable(animWrap);
+                  meshScene->AddChild(previewObject.get());
+               }
+               else
+               {
+                  previewObject->SetCal3DWrapper(animWrap);
+               }
+            }
+            else
+            {
+               if (previewObject.valid())
+               {
+                  previewObject->SetCal3DWrapper(NULL);
+               }
+            }
             // Load the new file.
-            previewObject->LoadFile(file.toStdString());
-            previewObject->RecenterGeometryUponLoad();
             perspView->refresh();
 
             SetCameraLookAt(*camera, *previewObject);
@@ -433,94 +438,5 @@ namespace dtEditQt
       }
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
-   void SkeletalMeshBrowser::viewSceneGraph()
-   {
-      QString resourceName;
-      // Make sure we have a valid resource
-      if (mSelection->isResource())
-      {
-         QDialog dlg(this);
-         dlg.setModal(true);
-         dlg.setWindowTitle(tr("Node Hierarchy"));
-         dlg.setMinimumSize(400, 400);
-         dlg.setSizeGripEnabled(true);
-
-         QVBoxLayout* vLayout = new QVBoxLayout(&dlg);
-         QTextEdit*   text    = new QTextEdit(&dlg);
-         QPushButton* close   = new QPushButton(tr("Close"), &dlg);
-
-         dtDAL::ResourceDescriptor& rd = mSelection->getResourceDescriptor();
-         const std::string fileName = dtDAL::Project::GetInstance().GetResourcePath(rd);
-
-         dtCore::RefPtr<dtCore::Object> obj = new dtCore::Object;
-         osg::Node* node = obj->LoadFile(fileName);
-
-         // If the file was successfully loaded, continue
-         if (node)
-         {
-            dtCore::RefPtr<dtUtil::NodePrintOut> nodepo = new dtUtil::NodePrintOut;
-
-            text->addScrollBarWidget(new QScrollBar(this), Qt::AlignRight);
-            text->setText(tr(nodepo->CollectNodeData(*node).c_str()));
-
-            obj = NULL;
-            nodepo = NULL;
-
-            vLayout->addWidget(text);
-            vLayout->addWidget(close);
-
-            connect(close, SIGNAL(clicked()), &dlg, SLOT(close()));
-            dlg.exec();
-         }
-      }
-   }
-
-   /////////////////////////////////////////////////////////////////////////////////
-   void SkeletalMeshBrowser::viewOSGContents()
-   {
-      QString resourceName;
-      // Make sure we have a valid resource
-      if (mSelection->isResource())
-      {
-         QDialog dlg(this);
-         dlg.setModal(true);
-         dlg.setWindowTitle(tr("OSG Hierarchy"));
-         dlg.setMinimumSize(400, 400);
-         dlg.setSizeGripEnabled(true);
-
-         QVBoxLayout* vLayout = new QVBoxLayout(&dlg);
-         QTextEdit*   text    = new QTextEdit(&dlg);
-         QPushButton* close   = new QPushButton(tr("Close"), &dlg);
-
-         text->addScrollBarWidget(new QScrollBar(this), Qt::AlignRight);
-
-         dtDAL::ResourceDescriptor& rd = mSelection->getResourceDescriptor();
-         const std::string fileName = dtDAL::Project::GetInstance().GetResourcePath(rd);
-
-         dtCore::RefPtr<dtCore::Object> obj = new dtCore::Object;
-         osg::Node* node = obj->LoadFile(fileName);
-
-         // If the file was successfully loaded, continue
-         if (node)
-         {
-            std::ostringstream oss;
-            dtCore::RefPtr<dtUtil::NodePrintOut> nodepo = new dtUtil::NodePrintOut;
-            nodepo->PrintNodeToOSGFile(*node, oss);
-
-            std::string osgOutput = oss.str();
-            text->setText(tr(oss.str().c_str()));
-
-            obj = NULL;
-            nodepo = NULL;
-
-            vLayout->addWidget(text);
-            vLayout->addWidget(close);
-
-            connect(close, SIGNAL(clicked()), &dlg, SLOT(close()));
-            dlg.exec();
-         }
-      }
-   }
 
 } // namespace dtEditQt

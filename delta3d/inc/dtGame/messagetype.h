@@ -79,8 +79,12 @@ namespace dtGame
          static const MessageType INFO_ACTOR_DELETED;
          static const MessageType INFO_ACTOR_UPDATED;
          static const MessageType INFO_CLIENT_CONNECTED;
-         static const MessageType INFO_MAP_LOADED;
-         static const MessageType INFO_MAP_UNLOADED;
+         static const MessageType INFO_MAP_CHANGE_LOAD_END;
+         static const MessageType INFO_MAP_CHANGE_UNLOAD_END;
+         // renamed to INFO_MAP_CHANGE_LOAD_END
+          static const MessageType& INFO_MAP_LOADED;
+         // renamed to INFO_MAP_CHANGE_UNLOAD_END
+         static const MessageType& INFO_MAP_UNLOADED;
 
          static const MessageType INFO_MAPS_OPENED;
          static const MessageType INFO_MAPS_CLOSED;
@@ -93,10 +97,16 @@ namespace dtGame
          static const MessageType INFO_GAME_EVENT;
          static const MessageType INFO_ENVIRONMENT_CHANGED;
 
-         static const MessageType INFO_MAP_LOAD_BEGIN;
-         static const MessageType INFO_MAP_UNLOAD_BEGIN;
+         static const MessageType INFO_MAP_CHANGE_LOAD_BEGIN;
+         static const MessageType INFO_MAP_CHANGE_UNLOAD_BEGIN;
+         // renamed to INFO_MAP_CHANGE_LOAD_BEGIN
+         static const MessageType& INFO_MAP_LOAD_BEGIN;
+         // renamed to INFO_MAP_CHANGE_UNLOAD_BEGIN
+         static const MessageType& INFO_MAP_UNLOAD_BEGIN;
          static const MessageType INFO_MAP_CHANGE_BEGIN;
-         static const MessageType INFO_MAP_CHANGED;
+         static const MessageType INFO_MAP_CHANGE_END;
+         // renamed to INFO_MAP_CHANGE_END
+         static const MessageType& INFO_MAP_CHANGED;
 
 
          ///Message sent when a player enters the world.  The Actor deleted message can be used when the player leaves.

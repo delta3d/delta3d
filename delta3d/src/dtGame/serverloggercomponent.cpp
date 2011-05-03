@@ -55,6 +55,11 @@ namespace dtGame
       mLogComponentMachineInfo->SetHostName("__Server Logger Component__");
       mLogComponentMachineInfo->SetIPAddress("0.0.0.0");
       mLogComponentMachineInfo->SetPing(1);
+
+      mIgnoredMessageTypeList.insert(&dtGame::MessageType::INFO_MAPS_OPENED);
+      mIgnoredMessageTypeList.insert(&dtGame::MessageType::INFO_MAPS_CLOSED);
+      mIgnoredMessageTypeList.insert(&dtGame::MessageType::INFO_MAP_UNLOAD_BEGIN);
+      mIgnoredMessageTypeList.insert(&dtGame::MessageType::INFO_MAP_UNLOADED);
    }
 
    //////////////////////////////////////////////////////////////////////////
