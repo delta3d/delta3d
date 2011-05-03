@@ -102,12 +102,6 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void EditorScene::SetGraph(dtDirector::DirectorGraph* graph)
    {
-      // If we are selecting the same graph, ignore.
-      if (graph == mGraph)
-      {
-         return;
-      }
-
       // First clear the current items.
       int count = (int)mNodes.size();
       for (int index = 0; index < count; index++)
