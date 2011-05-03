@@ -95,6 +95,10 @@ namespace dtQt
       */
       virtual bool isEditable();
 
+      /**
+       * @see DynamicAbstractControl#handleSubEditDestroy
+       */
+      virtual void handleSubEditDestroy(QWidget* widget, QAbstractItemDelegate::EndEditHint hint = QAbstractItemDelegate::NoHint);
 
    public slots:
 
