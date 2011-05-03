@@ -268,7 +268,21 @@ namespace dtDirector
        */
       CustomEditorTool* GetRegisteredTool(const std::string& name);
 
-   public slots:
+      /**
+       * Focuses the current view on the given node.
+       *
+       * @param[in]  node  The node to focus on.
+       */
+      void FocusNode(Node* node);
+
+      /**
+       * Focuses the current view on the given graph.
+       *
+       * @param[in]  graph  The graph to focus on.
+       */
+      void FocusGraph(DirectorGraph* graph);
+
+      public slots:
 
       /**
        * Event handler when the visibility of the property editor is changed.
@@ -283,6 +297,13 @@ namespace dtDirector
        * @param[in]  visible  True if the browser is visible.
        */
       void on_graphBrowser_visibilityChanged(bool visible);
+
+      /**
+       * Event handler when the visibility of the search browser is changed.
+       *
+       * @param[in]  visible  True if the browser is visible.
+       */
+      void on_searchBrowser_visibilityChanged(bool visible);
 
       /**
        * Event handler when the visibility of the replay browser is changed.
@@ -384,6 +405,11 @@ namespace dtDirector
        * Event handler when the show graph browser button is pressed.
        */
       void on_action_Graph_Browser_triggered();
+
+      /**
+       * Event handler when the show search browser button is pressed.
+       */
+      void on_action_Search_Browser_triggered();
 
       /**
        * Event handler when the show replay browser button is pressed.
