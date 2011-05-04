@@ -273,6 +273,53 @@ namespace dtDirector
                      mSnapTargetsX.push_back(x);
                   }
                }
+               // All non-value nodes will also snap along the inputs
+               // and outputs of each node.
+               else
+               {
+                  if (itemBounds.left() > nodeBounds.right())
+                  {
+                     int inputCount = (int)item->GetInputs().size();
+                     for (int inputIndex = 0; inputIndex < inputCount; ++inputIndex)
+                     {
+                        InputData& inData = item->GetInputs()[inputIndex];
+
+                        float offset = inData.linkGraphic->scenePos().y() - item->scenePos().y();
+
+                        int outputCount = (int)nodeItem->GetOutputs().size();
+                        for (int outputIndex = 0; outputIndex < outputCount; ++outputIndex)
+                        {
+                           OutputData& outData = nodeItem->GetOutputs()[outputIndex];
+
+                           float y = outData.linkGraphic->scenePos().y() - nodeItem->scenePos().y();
+                           y += nodeItem->GetPosition().y();
+                           y -= offset;
+                           mSnapTargetsY.push_back(y);
+                        }
+                     }
+                  }
+                  else if (itemBounds.right() < nodeBounds.left())
+                  {
+                     int outputCount = (int)item->GetOutputs().size();
+                     for (int outputIndex = 0; outputIndex < outputCount; ++outputIndex)
+                     {
+                        OutputData& outData = item->GetOutputs()[outputIndex];
+
+                        float offset = outData.linkGraphic->scenePos().y() - item->scenePos().y();
+
+                        int inputCount = (int)nodeItem->GetInputs().size();
+                        for (int inputIndex = 0; inputIndex < inputCount; ++inputIndex)
+                        {
+                           InputData& inData = nodeItem->GetInputs()[inputIndex];
+
+                           float y = inData.linkGraphic->scenePos().y() - nodeItem->scenePos().y();
+                           y += nodeItem->GetPosition().y();
+                           y -= offset;
+                           mSnapTargetsY.push_back(y);
+                        }
+                     }
+                  }
+               }
 
                // If the test node is a value node, snap align the moving
                // node's value links with this value.
@@ -295,7 +342,7 @@ namespace dtDirector
       }
 
       // Find the best snap position.
-      float nearest = 5.0f;
+      float nearest = 10.0f;
       osg::Vec2 newPos = position;
       count = (int)mSnapTargetsY.size();
       for (int index = 0; index < count; index++)
@@ -308,7 +355,7 @@ namespace dtDirector
          }
       }
 
-      nearest = 5.0f;
+      nearest = 10.0f;
       count = (int)mSnapTargetsX.size();
       for (int index = 0; index < count; index++)
       {
