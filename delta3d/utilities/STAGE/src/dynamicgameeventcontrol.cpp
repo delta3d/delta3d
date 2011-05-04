@@ -43,6 +43,7 @@ namespace dtEditQt
 {
 
    DynamicGameEventControl::DynamicGameEventControl()
+      : mTemporaryEditControl(NULL)
    {
    }
 
