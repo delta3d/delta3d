@@ -288,9 +288,28 @@ namespace dtDirector
       virtual bool Disconnect();
 
       /**
-       * Retrieves the total number of values linked to a property.
+       * Retrieves the total number of value nodes connected to a value link.
        *
-       * @param[in]  name  The name of the property.
+       * @param[in]  name  The name of the value link.
+       *
+       * @return     The count.
+       */
+      int GetValueNodeCount(const std::string& name = "Value");
+
+      /**
+       * Retrieves a connected value node.
+       *
+       * @param[in]  name   The name of the value link.
+       * @param[in]  index  The index.
+       *
+       * @return     NULL if no value node was found.
+       */
+      ValueNode* GetValueNode(const std::string& name, int index = 0);
+
+      /**
+       * Retrieves the total number of values linked to a value link.
+       *
+       * @param[in]  name  The name of the value link.
        *
        * @return     The count.
        */
@@ -340,12 +359,28 @@ namespace dtDirector
       void LogValueChanged(ValueNode* valueNode, dtDAL::ActorProperty* prop, const std::string& oldVal);
 
       /**
-       * This method is provided for ease of use, it will
-       * retrieve a property's value and convert it to the type of
-       * your choice.
+       * This method is provided for ease of use.  It will retrieve the
+       * value of a value node property converted into string format.
+       * This receives the direct property value of the node, so an array
+       * node will retrieve the entire array formatted into a single string.
+       * @see GetValueNodeCount() to retrieve the total number of index's
+       * available.
        *
-       * @param[in]  name   The name of the property.
-       * @param[in]  index  The property index, in case of multiple linking.
+       * @param[in]  name   The name of the value link.
+       * @param[in]  index  The value node index, in case of multiple linking.
+       *
+       * @return     String formatted representation of the value.
+       */
+      std::string GetValueNodeValue(const std::string& name = "Value", int index = 0);
+
+      /**
+       * This method is provided for ease of use.  It will retrieve a
+       * property's value and convert it to the type of your choice.
+       * Array properties will be treated as individual values that
+       * span multiple index's.
+       *
+       * @param[in]  name   The name of the value link.
+       * @param[in]  index  The value index, in case of multiple linking.
        *
        * @note  All properties used within nodes should be retrieved
        *         via these methods instead of directly to ensure that
@@ -388,7 +423,18 @@ namespace dtDirector
       dtDAL::GameEvent* GetGameEvent(const std::string& name = "Value", int index = 0);
 
       /**
-       * This method is provided for ease of use, it will
+       * This method is provided for ease of use.  It will allow you to
+       * set the formatted string value of a value node directly.
+       * 
+       * @param[in]  value  The new value to set.
+       * @param[in]  name   The name of the value link.
+       * @param[in]  index  The value node index, in case of multiple linking.
+       *                     Use -1 to set all linked value nodes.
+       */
+      void SetValueNodeValue(const std::string& value, const std::string& name = "Value", int index = -1);
+
+      /**
+       * This method is provided for ease of use.  It will
        * allow you to set the value of a property.
        *
        * @param[in]  value  The new value to set.

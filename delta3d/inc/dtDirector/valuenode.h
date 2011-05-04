@@ -106,6 +106,16 @@ namespace dtDirector
       virtual std::string GetValueLabel();
 
       /**
+       * Retrieves the string formatted representation for this value.
+       */
+      virtual std::string GetFormattedValue();
+
+      /**
+       * Sets the formatted string value.
+       */
+      virtual void SetFormattedValue(const std::string& value);
+
+      /**
        * Retrieves the property for this value.
        *
        * @param[in]   index    The property index, in case this is an array value.
@@ -117,9 +127,9 @@ namespace dtDirector
       virtual dtDAL::ActorProperty* GetProperty(int index, ValueNode** outNode = NULL);
 
       /**
-       * Retrieves the total number of values linked to a property.
+       * Retrieves the total number of values linked to a value link.
        *
-       * @param[in]  name  The name of the property.
+       * @param[in]  name  The name of the value link.
        *
        * @return     The count.
        */
