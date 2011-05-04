@@ -92,10 +92,29 @@ namespace dtDirector
       {
          std::string propName = GetString("PropertyName");
 
+         // First attempt to find the property based on property name,
+         // if this fails, then we attempt to find the property based
+         // on label name instead.
          dtDAL::ActorProperty* prop = actor->GetProperty(propName);
+         if (!prop)
+         {
+            std::vector<dtDAL::ActorProperty*> propList;
+            actor->GetPropertyList(propList);
+            int count = (int)propList.size();
+            for (int index = 0; index < count; ++index)
+            {
+               dtDAL::ActorProperty* testProp = propList[index];
+               if (testProp && testProp->GetLabel() == propName)
+               {
+                  prop = testProp;
+                  break;
+               }
+            }
+         }
+
          if (prop)
          {
-            SetString(prop->ToString(), "Result");
+            SetValueNodeValue(prop->ToString(), "Result");
 
             return ActionNode::Update(simDelta, delta, input, firstUpdate);
          }
