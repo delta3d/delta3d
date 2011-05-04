@@ -54,7 +54,7 @@ namespace dtDirector
          "Value", "Value",
          dtDAL::Vec3ActorProperty::SetFuncType(this, &Vec3ArrayValue::SetValue),
          dtDAL::Vec3ActorProperty::GetFuncType(this, &Vec3ArrayValue::GetValue),
-         "", "The value.");
+         "The value.");
 
       mArrayProperty = new dtDAL::ArrayActorProperty<osg::Vec3>(
          "ValueList", "Value List", "All values contained in this array.",
