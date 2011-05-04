@@ -122,6 +122,26 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   std::string ValueNode::GetFormattedValue()
+   {
+      if (mProperty)
+      {
+         return mProperty->ToString();
+      }
+
+      return "";
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void ValueNode::SetFormattedValue(const std::string& value)
+   {
+      if (mProperty)
+      {
+         mProperty->FromString(value);
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    dtDAL::ActorProperty* ValueNode::GetProperty(ValueNode** outNode)
    {
       return GetProperty(0, outNode);

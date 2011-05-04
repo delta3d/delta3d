@@ -350,6 +350,41 @@ namespace dtDirector
       return result;
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   int Node::GetValueNodeCount(const std::string& name)
+   {
+      for (int valueIndex = 0; valueIndex < (int)mValues.size(); valueIndex++)
+      {
+         dtDAL::ActorProperty* prop = mValues[valueIndex].GetDefaultProperty();
+         if (prop && prop->GetName() == name)
+         {
+            return (int)mValues[valueIndex].GetLinks().size();
+         }
+      }
+
+      return 0;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   ValueNode* Node::GetValueNode(const std::string& name, int index)
+   {
+      for (int valueIndex = 0; valueIndex < (int)mValues.size(); valueIndex++)
+      {
+         dtDAL::ActorProperty* prop = mValues[valueIndex].GetDefaultProperty();
+         if (prop && prop->GetName() == name)
+         {
+            if (index < (int)mValues[valueIndex].GetLinks().size())
+            {
+               return mValues[valueIndex].GetLinks()[index];
+            }
+
+            return NULL;
+         }
+      }
+
+      return NULL;
+   }
+
    //////////////////////////////////////////////////////////////////////////
    int Node::GetPropertyCount(const std::string& name)
    {
@@ -448,6 +483,17 @@ namespace dtDirector
             logger->LogMessage(dtUtil::Log::LOG_ALWAYS, __FUNCTION__, __LINE__, message);
          }
       }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   std::string Node::GetValueNodeValue(const std::string& name, int index)
+   {
+      ValueNode* valueNode = GetValueNode(name, index);
+      if (valueNode)
+      {
+         return valueNode->GetFormattedValue();
+      }
+      return "";
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -574,6 +620,31 @@ namespace dtDirector
       }
 
       return NULL;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void Node::SetValueNodeValue(const std::string& value, const std::string& name, int index)
+   {
+      if (index < 0)
+      {
+         int count = GetValueNodeCount(name);
+         for (index = 0; index < count; ++index)
+         {
+            ValueNode* valueNode = GetValueNode(name, index);
+            if (valueNode)
+            {
+               valueNode->SetFormattedValue(value);
+            }
+         }
+      }
+      else
+      {
+         ValueNode* valueNode = GetValueNode(name, index);
+         if (valueNode)
+         {
+            valueNode->SetFormattedValue(value);
+         }
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////

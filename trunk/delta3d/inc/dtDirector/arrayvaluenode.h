@@ -67,6 +67,16 @@ namespace dtDirector
       virtual std::string GetValueLabel();
 
       /**
+       * Retrieves the string formatted representation for this value.
+       */
+      virtual std::string GetFormattedValue();
+
+      /**
+       * Sets the formatted string value.
+       */
+      virtual void SetFormattedValue(const std::string& value);
+
+      /**
        * Retrieves the property for this value.
        *
        * @param[in]   index    The property index, in case this is an array value.

@@ -59,6 +59,26 @@ namespace dtDirector
       return label;
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   std::string ArrayValueNode::GetFormattedValue()
+   {
+      if (mArrayProperty.valid())
+      {
+         return mArrayProperty->ToString();
+      }
+
+      return "";
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void ArrayValueNode::SetFormattedValue(const std::string& value)
+   {
+      if (mArrayProperty.valid())
+      {
+         mArrayProperty->FromString(value);
+      }
+   }
+
    //////////////////////////////////////////////////////////////////////////
    dtDAL::ActorProperty* ArrayValueNode::GetProperty(int index, ValueNode **outNode)
    {
