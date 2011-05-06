@@ -82,6 +82,12 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
+   std::string ExternalValueNode::GetValueLabel()
+   {
+      return mValues[0].GetDisplayName();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    void ExternalValueNode::SetName(const std::string& name)
    {
       if( !name.empty() )
@@ -91,10 +97,32 @@ namespace dtDirector
       }
    }
 
-   //////////////////////////////////////////////////////////////////////////
-   std::string ExternalValueNode::GetValueLabel()
+   ///////////////////////////////////////////////////////////////////////////////
+   std::string ExternalValueNode::GetFormattedValue()
    {
-      return mValues[0].GetDisplayName();
+      if (!mValues.empty() && !mValues[0].GetLinks().empty())
+      {
+         ValueNode* valueNode = dynamic_cast<ValueNode*>(mValues[0].GetLinks()[0]);
+         if (valueNode)
+         {
+            return valueNode->GetFormattedValue();
+         }
+      }
+
+      return "";
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void ExternalValueNode::SetFormattedValue(const std::string& value)
+   {
+      if (!mValues.empty() && !mValues[0].GetLinks().empty())
+      {
+         ValueNode* valueNode = dynamic_cast<ValueNode*>(mValues[0].GetLinks()[0]);
+         if (valueNode)
+         {
+            valueNode->SetFormattedValue(value);
+         }
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////

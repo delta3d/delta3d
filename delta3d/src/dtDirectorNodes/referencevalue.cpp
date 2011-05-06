@@ -98,6 +98,34 @@ namespace dtDirector
       return "";
    }
 
+   ///////////////////////////////////////////////////////////////////////////////
+   std::string ReferenceValue::GetFormattedValue()
+   {
+      if (!mValues.empty() && !mValues[0].GetLinks().empty())
+      {
+         ValueNode* valueNode = dynamic_cast<ValueNode*>(mValues[0].GetLinks()[0]);
+         if (valueNode)
+         {
+            return valueNode->GetFormattedValue();
+         }
+      }
+
+      return "";
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void ReferenceValue::SetFormattedValue(const std::string& value)
+   {
+      if (!mValues.empty() && !mValues[0].GetLinks().empty())
+      {
+         ValueNode* valueNode = dynamic_cast<ValueNode*>(mValues[0].GetLinks()[0]);
+         if (valueNode)
+         {
+            valueNode->SetFormattedValue(value);
+         }
+      }
+   }
+
    //////////////////////////////////////////////////////////////////////////
    void ReferenceValue::OnConnectionChange()
    {
@@ -224,7 +252,7 @@ namespace dtDirector
    ValueNode* ReferenceValue::GetReferencedValue()
    {
       // Search for the referenced node anywhere in the current graph
-      // or any of its parents.      
+      // or any of its parents.
       ValueNode* node      = NULL;
       DirectorGraph* graph = GetGraph();
       while (graph)

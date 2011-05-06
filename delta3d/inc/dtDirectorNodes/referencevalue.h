@@ -91,6 +91,16 @@ namespace dtDirector
       virtual std::string GetValueLabel();
 
       /**
+       * Retrieves the string formatted representation for this value.
+       */
+      virtual std::string GetFormattedValue();
+
+      /**
+       * Sets the formatted string value.
+       */
+      virtual void SetFormattedValue(const std::string& value);
+
+      /**
        * Event handler when a connection has changed.
        */
       virtual void OnConnectionChange();
