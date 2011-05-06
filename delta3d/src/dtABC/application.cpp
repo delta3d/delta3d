@@ -245,6 +245,7 @@ void Application::Frame(const double deltaSimTime)
          mFirstFrame = false;
       }
 
+#ifndef MULTITHREAD_FIX_HACK_BREAKS_CEGUI
       dtCore::ObserverPtr<osgViewer::GraphicsWindow> gw;
       if (GetWindow() != NULL)
       {
@@ -255,6 +256,8 @@ void Application::Frame(const double deltaSimTime)
       {
          gw->releaseContext();
       }
+#endif
+
       // NOTE: The new version OSG (2.2) relies on absolute frame time
       // to update drawables; especially particle systems.
       // The time delta will be ignored here and the absolute simulation
@@ -263,11 +266,13 @@ void Application::Frame(const double deltaSimTime)
       mCompositeViewer->updateTraversal();
       mCompositeViewer->renderingTraversals();
 
+#ifndef MULTITHREAD_FIX_HACK_BREAKS_CEGUI
       // you must check gw->isRealized() again here and not cache it because the step could cause the window to close.
       if (gw.valid() && gw->isRealized())
       {
          gw->makeCurrent();
       }
+#endif
    }
 }
 

@@ -54,6 +54,9 @@ void TestMultiWin::Config()
    win2Traits.width = DEFAULT_WIN_WIDTH;
    win2Traits.height = DEFAULT_WIN_HEIGHT * 2;
 
+   //needed for some machines and not other (still investigating why):
+   win2Traits.realizeUponCreate = false;
+
    mWin2 = new DeltaWin(win2Traits);
 
    //set the first Camera position
