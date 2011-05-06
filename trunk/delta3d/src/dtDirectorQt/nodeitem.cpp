@@ -466,6 +466,11 @@ namespace dtDirector
    {
       if (!mTitleBG) return;
 
+      if (mTitle)
+      {
+         mTitle->setTextWidth(mNodeWidth);
+      }
+
       // Create the title background.
       QRectF bounds = mTitle->boundingRect();
       bounds.setWidth(mNodeWidth - 2);
