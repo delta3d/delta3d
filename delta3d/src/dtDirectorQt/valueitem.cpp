@@ -59,12 +59,16 @@ namespace dtDirector
       if (valueNode)
       {
          SetTitle(GetNodeTitle());
+         if (mNode->ValuesExposed()) SetupValues();
          SetValueText(valueNode->GetValueLabel());
+
          DrawTitle();
+         DrawValues();
 
          DrawPolygonTop();
          DrawPolygonRightFlat();
-         DrawPolygonBottomRound();
+         if (mNode->ValuesExposed()) DrawPolygonBottomFlat();
+         else                        DrawPolygonBottomRound();
          DrawPolygonLeftFlat();
 
          int size = mNodeWidth;
@@ -154,6 +158,7 @@ namespace dtDirector
       }
 
       mValueText->setHtml((std::string("<center>") + text + "</center>").c_str());
+      mValueText->setTextWidth(mNodeWidth);
 
       if (text.empty()) return;
 
@@ -166,6 +171,8 @@ namespace dtDirector
          mNodeHeight += int(mTitleHeight - y);
          y = mTitleHeight;
       }
+
+      mValueHeight += bounds.height() + 11;
 
       mValueText->setPos(0, y + 11);
    }
