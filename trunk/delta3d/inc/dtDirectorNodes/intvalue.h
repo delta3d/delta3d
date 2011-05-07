@@ -70,14 +70,6 @@ namespace dtDirector
        */
       virtual void BuildPropertyMap();
 
-      /**
-       * Retrieves whether the UI should expose the value links
-       * assigned to this node.
-       *
-       * @return  True to expose values.
-       */
-      virtual bool ValuesExposed() {return true;}
-
    private:
 
       /**
