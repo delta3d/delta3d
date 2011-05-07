@@ -124,6 +124,13 @@ namespace dtDirector
       void UnloadNodeRegistry(const std::string &libName);
 
       /**
+       * Retrieves whether the library is already in the registry.
+       *
+       * @return  True if the library is in the registry.
+       */
+      bool IsInRegistry( const std::string &libName ) const;
+
+      /**
        * Returns a list of all the node types the library manager knows how
        * to create.
        */
@@ -253,14 +260,6 @@ namespace dtDirector
        * Free resources used by the node manager.
        */
       virtual ~NodeManager();
-
-
-      /**
-       * Retrieves whether the library is already in the registry.
-       *
-       * @return  True if the library is in the registry.
-       */
-      bool IsInRegistry( const std::string &libName ) const;
 
 
       /**

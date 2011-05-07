@@ -96,7 +96,8 @@ namespace dtDirector
 
       try
       {
-         NodeManager::GetInstance().LoadNodeRegistry(libName);
+         //NodeManager::GetInstance().LoadNodeRegistry(libName);
+         mEditor->GetDirector()->AddLibrary(libName, "");
       }
       catch(const dtUtil::Exception& e)
       {
@@ -104,7 +105,6 @@ namespace dtDirector
          HandleFailure(ERROR_INVALID_LIB, e.What());
          return;
       }
-      mEditor->GetDirector()->AddLibrary(libName, "");
 
       RefreshLibraries();
       GetLibraryListWidget().setCurrentItem(GetLibraryListWidget().item(GetLibraryListWidget().count() - 1));
@@ -159,7 +159,7 @@ namespace dtDirector
                }
 
                mEditor->GetDirector()->RemoveLibrary(libToRemove);
-               NodeManager::GetInstance().UnloadNodeRegistry(libToRemove);
+               //NodeManager::GetInstance().UnloadNodeRegistry(libToRemove);
 
                RefreshLibraries();
 

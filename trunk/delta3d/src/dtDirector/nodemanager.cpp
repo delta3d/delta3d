@@ -44,7 +44,7 @@ namespace dtDirector
       mLogger = &dtUtil::Log::GetInstance("nodemanager.cpp");
       mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__, "Initializing node library manager.");
 
-      LoadNodeRegistry(NODE_LIBRARY);
+//      LoadNodeRegistry(NODE_LIBRARY);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
