@@ -39,7 +39,7 @@
 
 
 ////////////////////////////////////////////////////////////////////////////////
-static const float NODE_BUFFER = 25.0f;
+static const float NODE_BUFFER = 40.0f;
 
 namespace dtDirector
 {
