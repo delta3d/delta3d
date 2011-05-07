@@ -93,6 +93,11 @@ namespace dtDirector
       virtual void Init(dtGame::GameManager* gm = NULL, dtDAL::Map* map = NULL);
 
       /**
+       * Loads our default set of node libraries.
+       */
+      virtual void LoadDefaultLibraries();
+
+      /**
        * Clears all data in this Director script.
        */
       virtual void Clear();

@@ -109,7 +109,7 @@ namespace dtDirector
          {
             // Make sure the node we found is a type valid for this script.
             NodePluginRegistry* reg = NodeManager::GetInstance().GetRegistryForType(*node);
-            if (!reg || (reg->GetName() != "dtDirectorNodes" && !mpEditor->GetDirector()->HasLibrary(reg->GetName())))
+            if (!reg || !mpEditor->GetDirector()->HasLibrary(reg->GetName()))
             {
                continue;
             }

@@ -89,9 +89,17 @@ namespace dtDirector
 
       SetMap(map);
 
+      LoadDefaultLibraries();
+
       BuildPropertyMap();
 
       mGraph->BuildPropertyMap(true);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void Director::LoadDefaultLibraries()
+   {
+      AddLibrary("dtDirectorNodes", "");
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -109,6 +117,8 @@ namespace dtDirector
 
       mLibraries.clear();
       mLibraryVersionMap.clear();
+
+      LoadDefaultLibraries();
 
       mScriptName = "";
    }
@@ -672,6 +682,12 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void Director::InsertLibrary(unsigned pos, const std::string& name, const std::string& version)
    {
+      // First make sure the library exists in the node manager.
+      if (!NodeManager::GetInstance().IsInRegistry(name))
+      {
+         NodeManager::GetInstance().LoadNodeRegistry(name);
+      }
+
       std::map<std::string,std::string>::iterator old = mLibraryVersionMap.find(name);
 
       bool alreadyExists;
