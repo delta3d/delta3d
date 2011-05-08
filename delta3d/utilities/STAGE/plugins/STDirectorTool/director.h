@@ -29,19 +29,21 @@
 #include <dtDirector/director.h>
 #include <dtDirectorQt/directoreditor.h>
 
-#include <QtGui/QDockWidget>
+#include <QtGui/QWidget>
 
+#include <vector>
 
 using namespace dtEditQt;
 
 class QAction;
+class DirectorToolEditor;
 
 /**
  * The DirectorToolPlugin is a plugin that is used as a tool
- * to place a LinkedPointsActor into the world.
+ * to edit Director scripts.
  */
 class DT_DIRECTOR_TOOL_EXPORT DirectorToolPlugin
-   : public dtDirector::DirectorEditor
+   : public QWidget
    , public Plugin
 {
    Q_OBJECT
@@ -56,8 +58,34 @@ public:
 
    virtual void Destroy();
 
-   /** override close event to get notified when user closes the dock */
-   virtual void closeEvent(QCloseEvent* event);
+public slots:
+
+   /**
+    * User has pressed the tool button.
+    */
+   void OnToolButtonPressed();
+
+private:
+
+   MainWindow*    mMainWindow;
+
+   QAction*       mToolButton;
+};
+
+
+/**
+ * The STAGE Director Editor Implementation.
+ */
+class DT_DIRECTOR_TOOL_EXPORT DirectorToolEditor
+   : public dtDirector::DirectorEditor
+{
+   Q_OBJECT
+
+public:
+   
+   DirectorToolEditor();
+
+   ~DirectorToolEditor();
 
    /**
     * Retrieves the current actor selection from STAGE.
@@ -72,11 +100,6 @@ public slots:
     * Event handler when the map has changed.
     */
    void OnMapChanged();
-
-   /**
-   * User has pressed the tool button.
-   */
-   void OnToolButtonPressed();
 
    /**
    * Event handler when we want to center on an actor.
@@ -111,10 +134,6 @@ protected:
    virtual bool OnDoubleClickValueNode(dtCore::RefPtr<dtDirector::Node> node);
 
 private:
-
-   MainWindow*    mMainWindow;
-
-   QAction*       mToolButton;
 
    dtCore::RefPtr<dtDAL::BaseActorObject> mProxy;
    dtDirector::Node*  mNode;

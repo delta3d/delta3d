@@ -41,7 +41,7 @@ namespace dtEditQt
    GroupUIRegistry::~GroupUIRegistry() {}
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GroupUIRegistry::RegisterPlugin(GroupUIPlugin& plugin)
+   void GroupUIRegistry::RegisterPlugin(BaseUIPlugin& plugin)
    {
       LOG_DEBUG("Got a GroupUIPlugin with name \"" + plugin.GetName() + "\".");
       mPlugins.insert(std::make_pair(plugin.GetName(), &plugin));
@@ -50,7 +50,7 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void GroupUIRegistry::UnregisterPlugin(const std::string& pluginName)
    {
-      std::map<std::string, GroupUIPlugin*>::iterator i = mPlugins.find(pluginName);
+      std::map<std::string, BaseUIPlugin*>::iterator i = mPlugins.find(pluginName);
       if (i != mPlugins.end())
       {
          // The instances are held onto internally by QT, so we don't delete them.
@@ -59,9 +59,9 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   GroupUIPlugin* GroupUIRegistry::GetPlugin(const std::string& pluginName)
+   BaseUIPlugin* GroupUIRegistry::GetPlugin(const std::string& pluginName)
    {
-      std::map<std::string, GroupUIPlugin*>::iterator i = mPlugins.find(pluginName);
+      std::map<std::string, BaseUIPlugin*>::iterator i = mPlugins.find(pluginName);
       if (i != mPlugins.end())
       {
          return i->second;
@@ -70,9 +70,9 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   const GroupUIPlugin* GroupUIRegistry::GetPlugin(const std::string& pluginName) const
+   const BaseUIPlugin* GroupUIRegistry::GetPlugin(const std::string& pluginName) const
    {
-      std::map<std::string, GroupUIPlugin*>::const_iterator i = mPlugins.find(pluginName);
+      std::map<std::string, BaseUIPlugin*>::const_iterator i = mPlugins.find(pluginName);
       if (i != mPlugins.end())
       {
          return i->second;

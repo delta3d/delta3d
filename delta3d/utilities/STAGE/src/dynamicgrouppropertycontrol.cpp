@@ -179,7 +179,7 @@ namespace dtEditQt
       }
 
       //TODO rip this out of editor data.
-      return EditorData::GetInstance().GetGroupUIRegistry().GetPlugin(mGroupProperty->GetEditorType());
+      return dynamic_cast<GroupUIPlugin*>(EditorData::GetInstance().GetGroupUIRegistry().GetPlugin(mGroupProperty->GetEditorType()));
    }
 
    /////////////////////////////////////////////////////////////////////////////////

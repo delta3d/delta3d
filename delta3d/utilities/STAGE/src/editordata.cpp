@@ -31,7 +31,7 @@
 #include <dtEditQt/propertyeditor.h>
 #include <dtEditQt/editordata.h>
 #include <dtEditQt/groupuiregistry.h>
-#include <dtEditQt/groupuiplugin.h>
+#include <dtEditQt/baseuiplugin.h>
 #include <dtDAL/map.h>
 #include <dtDAL/datatype.h>
 #include <dtUtil/log.h>
@@ -65,7 +65,7 @@ namespace dtEditQt
       for (QObjectList::const_iterator i = staticPluginList.constBegin(); i != staticPluginList.constEnd(); ++i)
       {
          QObject* o = *i;
-         GroupUIPlugin* groupUI = qobject_cast<GroupUIPlugin*>(o);
+         BaseUIPlugin* groupUI = qobject_cast<BaseUIPlugin*>(o);
          if (groupUI != NULL)
          {
             mGroupUIRegistry->RegisterPlugin(*groupUI);

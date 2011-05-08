@@ -178,14 +178,14 @@ namespace dtQt
       std::string tooltip = mProperty->GetDescription() + " - Clears the current resource";
       mTemporaryClearBtn->setToolTip(QString(tr(tooltip.c_str())));
 
-      mGridLayout->addWidget(mTemporaryEditOnlyTextLabel, 0, 0, 1, 1);
-      mGridLayout->addWidget(mTemporaryUseCurrentBtn,     0, 1, 1, 1);
-      mGridLayout->addWidget(mTemporaryClearBtn,          0, 2, 1, 1);
-      mGridLayout->setColumnMinimumWidth(1, mTemporaryUseCurrentBtn->sizeHint().width());
-      mGridLayout->setColumnMinimumWidth(2, mTemporaryClearBtn->sizeHint().width());
-      mGridLayout->setColumnStretch(0, 2);
-      mGridLayout->setColumnStretch(1, 1);
+      mGridLayout->addWidget(mTemporaryEditOnlyTextLabel, 0, 1, 1, 1);
+      mGridLayout->addWidget(mTemporaryUseCurrentBtn,     0, 2, 1, 1);
+      mGridLayout->addWidget(mTemporaryClearBtn,          0, 3, 1, 1);
+      mGridLayout->setColumnMinimumWidth(2, mTemporaryUseCurrentBtn->sizeHint().width());
+      mGridLayout->setColumnMinimumWidth(3, mTemporaryClearBtn->sizeHint().width());
+      mGridLayout->setColumnStretch(1, 2);
       mGridLayout->setColumnStretch(2, 0);
+      mGridLayout->setColumnStretch(3, 0);
 
       wrapper->setFocusProxy(mTemporaryEditOnlyTextLabel);
       return wrapper;

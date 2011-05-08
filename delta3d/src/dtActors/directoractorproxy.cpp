@@ -276,14 +276,14 @@ namespace dtActors
          "Director"));
 
       dtDAL::ResourceActorProperty* scriptProp = new dtDAL::ResourceActorProperty(
-         dtDAL::DataType::DIRECTOR, "DirectorGraph", "Director Graph",
+         dtDAL::DataType::DIRECTOR, "DirectorGraph", "Director Script",
          dtDAL::ResourceActorProperty::SetDescFuncType(actor, &DirectorActor::SetDirectorResource),
          dtDAL::ResourceActorProperty::GetDescFuncType(actor, &DirectorActor::GetDirectorResource),
-         "A Director Graph Resource.", "Director");
+         "A Director Script Resource.", "Director");
 
       dtDAL::ArrayActorPropertyBase* scriptArrayProp =
          new dtDAL::ArrayActorProperty<dtDAL::ResourceDescriptor>(
-         "DirectorArray", "Director Graph List",
+         "DirectorArray", "Director Script List",
          "The Director Graphs loaded by this actor.",
          dtDAL::ArrayActorProperty<dtDAL::ResourceDescriptor>::SetIndexFuncType(actor, &DirectorActor::SetDirectorIndex),
          dtDAL::ArrayActorProperty<dtDAL::ResourceDescriptor>::GetDefaultFuncType(actor, &DirectorActor::GetDefaultDirector),
