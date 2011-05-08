@@ -20,6 +20,7 @@
  */
 
 #include "director.h"
+#include "directoruiplugin.h"
 
 #include <dtDAL/actoridactorproperty.h>
 #include <dtDAL/datatype.h>
@@ -33,6 +34,7 @@
 #include <dtEditQt/dynamicgrouppropertycontrol.h>
 #include <dtEditQt/dynamicresourcecontrol.h>
 #include <dtEditQt/pluginmanager.h>
+#include <dtEditQt/groupuiregistry.h>
 
 #include <QtGui/QAction>
 #include <QtGui/QMenu>
@@ -40,11 +42,65 @@
 
 const std::string DirectorToolPlugin::PLUGIN_NAME = "Director Tool";
 
-
 ////////////////////////////////////////////////////////////////////////////////
 DirectorToolPlugin::DirectorToolPlugin(MainWindow* mw)
+   : mMainWindow(mw)
+   , mToolButton(NULL)
+{
+   // Add a Director editor button in the tool bar.
+   mToolButton = new QAction(QIcon(":/icons/tool.png"), "Director Editor", this);
+
+   QToolBar* editToolBar = mMainWindow->GetEditToolbar();
+   if (editToolBar)
+   {
+      editToolBar->addAction(mToolButton);
+   }
+
+   connect(mToolButton, SIGNAL(triggered()), this, SLOT(OnToolButtonPressed()));
+
+   static DirectorUIPlugin plugin;
+   EditorData::GetInstance().GetGroupUIRegistry().RegisterPlugin(plugin);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+DirectorToolPlugin::~DirectorToolPlugin()
+{
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void DirectorToolPlugin::Destroy()
+{
+   QToolBar* editToolBar = mMainWindow->GetEditToolbar();
+   if (editToolBar)
+   {
+      editToolBar->removeAction(mToolButton);
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void DirectorToolPlugin::OnToolButtonPressed()
+{
+   dtDirector::Director* director = new dtDirector::Director();
+   if (director)
+   {
+      director->Init(NULL, dtEditQt::EditorData::GetInstance().getCurrentMap());
+
+      DirectorToolEditor* editor = new DirectorToolEditor();
+      if (editor)
+      {
+         editor->SetDirector(director);
+         editor->show();
+      }
+   }
+}
+
+//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////
+DirectorToolEditor::DirectorToolEditor()
    : dtDirector::DirectorEditor(NULL)
-   , mMainWindow(mw)
    , mProxy(NULL)
    , mNode(NULL)
 {
@@ -70,34 +126,17 @@ DirectorToolPlugin::DirectorToolPlugin(MainWindow* mw)
       dcfactory.RegisterControlForDataType<DynamicGroupPropertyControl>(dtDAL::DataType::GROUP);
    }
 
-   // Add a Director editor button in the tool bar.
-   mToolButton = new QAction(QIcon(":/icons/tool.png"), "Director Editor", this);
-   mToolButton->setCheckable(true);
-
-   QToolBar* editToolBar = mMainWindow->GetEditToolbar();
-   if (editToolBar)
-   {
-      editToolBar->addSeparator();
-      editToolBar->addAction(mToolButton);
-   }
-
-   connect(mToolButton, SIGNAL(changed()), this, SLOT(OnToolButtonPressed()));
    connect(&dtEditQt::EditorEvents::GetInstance(), SIGNAL(currentMapChanged()),
       this, SLOT(OnMapChanged()));
-
-   dtDirector::Director* director = new dtDirector::Director();
-   director->Init(NULL, dtEditQt::EditorData::GetInstance().getCurrentMap());
-
-   SetDirector(director);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-DirectorToolPlugin::~DirectorToolPlugin()
+DirectorToolEditor::~DirectorToolEditor()
 {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-std::vector<dtDAL::BaseActorObject*> DirectorToolPlugin::GetActorSelection()
+std::vector<dtDAL::BaseActorObject*> DirectorToolEditor::GetActorSelection()
 {
    std::vector<dtDAL::BaseActorObject*> selection;
    EditorData::GetInstance().GetSelectedActors(selection);
@@ -106,26 +145,13 @@ std::vector<dtDAL::BaseActorObject*> DirectorToolPlugin::GetActorSelection()
 }
 
 //////////////////////////////////////////////////////////////////////////
-void DirectorToolPlugin::OnMapChanged()
+void DirectorToolEditor::OnMapChanged()
 {
    GetDirector()->SetMap(dtEditQt::EditorData::GetInstance().getCurrentMap());
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void DirectorToolPlugin::OnToolButtonPressed()
-{
-   if (mToolButton->isChecked())
-   {
-      show();
-   }
-   else
-   {
-      hide();
-   }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void DirectorToolPlugin::OnGotoActor()
+void DirectorToolEditor::OnGotoActor()
 {
    if (mProxy.valid())
    {
@@ -138,7 +164,7 @@ void DirectorToolPlugin::OnGotoActor()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void DirectorToolPlugin::OnUseCurrentActor()
+void DirectorToolEditor::OnUseCurrentActor()
 {
    if (mNode && mNode->GetType().GetFullName() == "General.Actor")
    {
@@ -160,7 +186,7 @@ void DirectorToolPlugin::OnUseCurrentActor()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-bool DirectorToolPlugin::OnContextValueNode(dtCore::RefPtr<dtDirector::Node> node, QMenu& menu)
+bool DirectorToolEditor::OnContextValueNode(dtCore::RefPtr<dtDirector::Node> node, QMenu& menu)
 {
    mNode = node;
    if (node->GetType().GetFullName() == "General.Actor" || node->GetType().GetFullName() == "Core.Player")
@@ -189,7 +215,7 @@ bool DirectorToolPlugin::OnContextValueNode(dtCore::RefPtr<dtDirector::Node> nod
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-bool DirectorToolPlugin::OnDoubleClickValueNode(dtCore::RefPtr<dtDirector::Node> node)
+bool DirectorToolEditor::OnDoubleClickValueNode(dtCore::RefPtr<dtDirector::Node> node)
 {
    if (node->GetType().GetFullName() == "General.Actor" || node->GetType().GetFullName() == "Core.Player")
    {
@@ -205,18 +231,6 @@ bool DirectorToolPlugin::OnDoubleClickValueNode(dtCore::RefPtr<dtDirector::Node>
       }
    }
    return false;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void DirectorToolPlugin::Destroy()
-{
-   if (mToolButton) mToolButton->setChecked(false);
-}
-
-//////////////////////////////////////////////////////////////////////////
-void DirectorToolPlugin::closeEvent(QCloseEvent* event)
-{
-   if (mToolButton) mToolButton->setChecked(false);
 }
 
 

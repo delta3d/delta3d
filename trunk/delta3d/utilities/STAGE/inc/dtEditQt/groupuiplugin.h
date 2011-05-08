@@ -30,8 +30,7 @@
 #ifndef DELTA_GROUP_UI_PLUGIN
 #define DELTA_GROUP_UI_PLUGIN
 
-#include <string>
-#include <QtCore/QtPlugin>
+#include <dtEditQt/baseuiplugin.h>
 
 class QWidget;
 
@@ -42,7 +41,7 @@ namespace dtDAL
 
 namespace dtEditQt
 {
-   class GroupUIPlugin
+   class DT_EDITQT_EXPORT GroupUIPlugin: public BaseUIPlugin
    {
    public:
       virtual ~GroupUIPlugin() {}

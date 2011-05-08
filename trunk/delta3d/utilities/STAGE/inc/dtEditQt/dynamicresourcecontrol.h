@@ -32,6 +32,12 @@
 #include <dtEditQt/export.h>
 #include <dtQt/dynamicresourcecontrolbase.h>
 
+namespace dtQt
+{
+   class SubQLabel;
+   class SubQPushButton;
+}
+
 namespace dtDAL
 {
    class ResourceActorProperty;
@@ -42,9 +48,7 @@ class QLabel;
 
 namespace dtEditQt
 {
-
-   class SubQLabel;
-   class SubQPushButton;
+   class ResourceUIPlugin;
 
    /**
     * @class DynamicResourceControl
@@ -68,12 +72,35 @@ namespace dtEditQt
        */
       virtual ~DynamicResourceControl();
 
+      /**
+       * @see DynamicAbstractControl#createEditor
+       */
+      virtual QWidget* createEditor(QWidget* parent, const QStyleOptionViewItem& option,
+         const QModelIndex& index);
+
+   public slots:
+
+      /**
+       * The user pressed the "Edit" Button.
+       */
+      void editPressed();
+
+      /**
+       * @see DynamicAbstractControl#handleSubEditDestroy
+       */
+      virtual void handleSubEditDestroy(QWidget* widget, QAbstractItemDelegate::EndEditHint hint = QAbstractItemDelegate::NoHint);
+
    protected:
+
+      ResourceUIPlugin* GetPlugin();
+
       /**
        * Figure out which resource descriptor  to get from EditorData and get it.
        * @return the current resource descriptor for our type, else an empty one of if type is invalid.
        */
       virtual dtDAL::ResourceDescriptor getCurrentResource();
+
+      dtQt::SubQPushButton* mTemporaryEditBtn;
    };
 
 } // namespace dtEditQt

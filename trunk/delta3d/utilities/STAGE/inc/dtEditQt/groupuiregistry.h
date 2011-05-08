@@ -30,15 +30,17 @@
 #ifndef DELTA_GROUP_UI_REGISTRY
 #define DELTA_GROUP_UI_REGISTRY
 
+#include <dtEditQt/export.h>
+
 #include <map>
 #include <osg/Referenced>
 #include <dtCore/refptr.h>
 
 namespace dtEditQt
 {
-   class GroupUIPlugin;
+   class BaseUIPlugin;
 
-   class GroupUIRegistry : public osg::Referenced
+   class DT_EDITQT_EXPORT GroupUIRegistry : public osg::Referenced
    {
    public:
       GroupUIRegistry();
@@ -47,7 +49,7 @@ namespace dtEditQt
        * Registers a plugin.
        * @param plugin the plugin to register.
        */
-      void RegisterPlugin(GroupUIPlugin& plugin);
+      void RegisterPlugin(BaseUIPlugin& plugin);
 
       /**
        * Unregisters a plugin by name.
@@ -56,10 +58,10 @@ namespace dtEditQt
       void UnregisterPlugin(const std::string& pluginName);
 
       ///@return a pointer to the plugin with the give name or NULL if none exists.
-      GroupUIPlugin* GetPlugin(const std::string& pluginName);
+      BaseUIPlugin* GetPlugin(const std::string& pluginName);
 
       ///@return a const pointer to the plugin with the give name or NULL if none exists.
-      const GroupUIPlugin* GetPlugin(const std::string& pluginName) const;
+      const BaseUIPlugin* GetPlugin(const std::string& pluginName) const;
 
    private:
       ///private destructor since it's referenced.
@@ -68,7 +70,7 @@ namespace dtEditQt
       GroupUIRegistry(const GroupUIRegistry& toCopy);
       GroupUIRegistry& operator=(const GroupUIRegistry& toCopy);
 
-      std::map<std::string, GroupUIPlugin*> mPlugins;
+      std::map<std::string, BaseUIPlugin*> mPlugins;
    };
 
 } // namespace dtEditQt

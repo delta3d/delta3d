@@ -18,13 +18,25 @@ ResourceActorProperty::ResourceActorProperty(BaseActorObject& actor,
                                              const dtUtil::RefString& label,
                                              SetFuncType Set,
                                              const dtUtil::RefString& desc,
-                                             const dtUtil::RefString& groupName)
+                                             const dtUtil::RefString& groupName,
+                                             const std::string& editorType)
 : ActorProperty(type, name, label, desc, groupName)
 , mActor(&actor)
 , SetPropFunctor(Set)
 , mHasGetFunctor(false)
 , mUsingDescFunctors(false)
+, mEditorType(editorType)
 {
+   if (mEditorType.empty())
+   {
+      switch (type.GetTypeId())
+      {
+      case DataType::DIRECTOR_ID:
+         {
+            mEditorType = "DirectorEditor";
+         }
+      }
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -35,14 +47,26 @@ ResourceActorProperty::ResourceActorProperty(BaseActorObject& actor,
                                              SetFuncType Set,
                                              GetFuncType Get,
                                              const dtUtil::RefString& desc,
-                                             const dtUtil::RefString& groupName)
+                                             const dtUtil::RefString& groupName,
+                                             const std::string& editorType)
 : ActorProperty(type, name, label, desc, groupName)
 , mActor(&actor)
 , SetPropFunctor(Set)
 , mHasGetFunctor(true)
 , GetPropFunctor(Get)
 , mUsingDescFunctors(false)
+, mEditorType(editorType)
 {
+   if (mEditorType.empty())
+   {
+      switch (type.GetTypeId())
+      {
+      case DataType::DIRECTOR_ID:
+         {
+            mEditorType = "DirectorEditor";
+         }
+      }
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -52,14 +76,26 @@ ResourceActorProperty::ResourceActorProperty(DataType& type,
                                              SetDescFuncType Set,
                                              GetDescFuncType Get,
                                              const dtUtil::RefString& desc,
-                                             const dtUtil::RefString& groupName)
+                                             const dtUtil::RefString& groupName,
+                                             const std::string& editorType)
 : ActorProperty(type, name, label, desc, groupName)
 , mActor(NULL)
 , mHasGetFunctor(false)
 , mUsingDescFunctors(true)
 , SetDescPropFunctor(Set)
 , GetDescPropFunctor(Get)
+, mEditorType(editorType)
 {
+   if (mEditorType.empty())
+   {
+      switch (type.GetTypeId())
+      {
+      case DataType::DIRECTOR_ID:
+         {
+            mEditorType = "DirectorEditor";
+         }
+      }
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -238,3 +274,4 @@ std::string ResourceActorProperty::GetValueString() const
 
    return "None";
 }
+

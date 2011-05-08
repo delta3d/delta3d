@@ -81,6 +81,7 @@ namespace dtDAL
          * @param Set The Setter callback function that receives a string value.
          * @param desc The description of the property.
          * @param groupName The group that this property will fall under.
+         * @param editorType a string specifying what type of editor to use for property.
          */
          ResourceActorProperty(BaseActorObject& actorProxy,
                                DataType& type,
@@ -88,7 +89,8 @@ namespace dtDAL
                                const dtUtil::RefString& label,
                                SetFuncType Set,
                                const dtUtil::RefString& desc = "",
-                               const dtUtil::RefString& groupName = "");
+                               const dtUtil::RefString& groupName = "",
+                               const std::string& editorType = "");
 
          /**
          * Modified constructor that allows you to specify both Get and Set
@@ -102,6 +104,7 @@ namespace dtDAL
          * @param Get The Getter callback function that returns a string value.
          * @param desc The description of the property.
          * @param groupName The group that this property will fall under.
+         * @param editorType a string specifying what type of editor to use for property.
          */
          ResourceActorProperty(BaseActorObject& actorProxy,
                                DataType& type,
@@ -110,7 +113,8 @@ namespace dtDAL
                                SetFuncType Set,
                                GetFuncType Get,
                                const dtUtil::RefString& desc = "",
-                               const dtUtil::RefString& groupName = "");
+                               const dtUtil::RefString& groupName = "",
+                               const std::string& editorType = "");
 
          /**
          * Preferred constructor that allows you to specify both Get and Set
@@ -127,6 +131,7 @@ namespace dtDAL
          * @param Get The Getter callback function that returns a ResourceDescriptor.
          * @param desc The description of the property.
          * @param groupName The group that this property will fall under.
+         * @param editorType a string specifying what type of editor to use for property.
          */
          ResourceActorProperty(DataType& type,
                                const dtUtil::RefString& name,
@@ -134,7 +139,8 @@ namespace dtDAL
                                SetDescFuncType Set,
                                GetDescFuncType Get,
                                const dtUtil::RefString& desc = "",
-                               const dtUtil::RefString& groupName = "");
+                               const dtUtil::RefString& groupName = "",
+                               const std::string& editorType = "");
 
          /**
           * Copies a ResourceActorProperty value to this one from the property
@@ -180,6 +186,11 @@ namespace dtDAL
           */
          virtual std::string GetValueString() const;
          
+         /**
+          * Retrieves the editor type for this property.
+          */
+         const std::string& GetEditorType() const { return mEditorType; };
+
          ///Deprecated 12/11/09
          DEPRECATE_FUNC void SetValue(ResourceDescriptor* value);
 
@@ -194,6 +205,8 @@ namespace dtDAL
          bool              mUsingDescFunctors;
          SetDescFuncType   SetDescPropFunctor;
          GetDescFuncType   GetDescPropFunctor;
+
+         std::string mEditorType;
 
       protected:
          virtual ~ResourceActorProperty() { }

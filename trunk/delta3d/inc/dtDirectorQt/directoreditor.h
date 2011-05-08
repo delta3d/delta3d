@@ -282,7 +282,7 @@ namespace dtDirector
        */
       void FocusGraph(DirectorGraph* graph);
 
-      public slots:
+   public slots:
 
       /**
        * Event handler when the visibility of the property editor is changed.
@@ -464,6 +464,11 @@ namespace dtDirector
        * Event handler when the view is hidden.
        */
       void hideEvent(QHideEvent* event);
+
+      /**
+       * Event handler when the window is closed.
+       */
+      void closeEvent(QCloseEvent* event);
 
       /**
        * Clears the contents of the current script.

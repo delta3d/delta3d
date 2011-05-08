@@ -118,7 +118,7 @@ namespace dtDirector
       }
       else
       {
-         setWindowTitle("No Director Graph Loaded");
+         setWindowTitle("No Director Script Loaded");
       }
    }
 
@@ -653,7 +653,7 @@ namespace dtDirector
       if (mUndoManager->IsModified())
       {
          QMessageBox confirmationBox("Save Changes?",
-            "Would you like to save your current Director Graph first?",
+            "Would you like to save your current Director Script first?",
             QMessageBox::Question,
             QMessageBox::Yes,
             QMessageBox::No,
@@ -693,7 +693,7 @@ namespace dtDirector
       if (mUndoManager->IsModified())
       {
          QMessageBox confirmationBox("Save Changes?",
-            "Would you like to save your current Director Graph first?",
+            "Would you like to save your current Director Script first?",
             QMessageBox::Question,
             QMessageBox::Yes,
             QMessageBox::No,
@@ -721,7 +721,7 @@ namespace dtDirector
 
       QFileDialog dialog;
       QFileInfo filePath = dialog.getOpenFileName(
-         this, tr("Load a Director Graph Replay File"), tr(directorsDir.c_str()), tr("Director Graph Replays (*.dtdirreplay)"), &filter);
+         this, tr("Load a Director Script Replay File"), tr(directorsDir.c_str()), tr("Director Script Replays (*.dtdirreplay)"), &filter);
 
       if( !filePath.isFile() )
          return;
@@ -738,9 +738,9 @@ namespace dtDirector
       //std::string context = dtDAL::Project::GetInstance().GetContext();
 
       //QFileDialog dialog;
-      //QFileInfo filePath = dialog.getOpenFileName(this, tr("Load a Director Graph Replay File"),
+      //QFileInfo filePath = dialog.getOpenFileName(this, tr("Load a Director Script Replay File"),
       //   tr((context + "\\directors\\").c_str()),
-      //   tr("Director Graph Replay (*.dtdirreplay)"), &filter);
+      //   tr("Director Script Replay (*.dtdirreplay)"), &filter);
 
       //QString fileName = filePath.baseName();
 
@@ -1249,6 +1249,33 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::closeEvent(QCloseEvent* event)
+   {
+      // Check if the undo manager has some un-committed changes first.
+      if (mUndoManager->IsModified())
+      {
+         QMessageBox confirmationBox("Save Changes?",
+            "Would you like to save your current Director Script first?",
+            QMessageBox::Question,
+            QMessageBox::Yes,
+            QMessageBox::No,
+            QMessageBox::Cancel, this);
+
+         switch (confirmationBox.exec())
+         {
+         case QMessageBox::Yes:
+            if (SaveScript())
+            {
+               event->accept();
+               return;
+            }
+         case QMessageBox::Cancel:
+            event->ignore();
+         }
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    void DirectorEditor::ClearScript()
    {
       // Clear the script.
@@ -1282,7 +1309,7 @@ namespace dtDirector
 
          QFileDialog dialog;
          QFileInfo filePath = dialog.getSaveFileName(
-            this, tr("Save a Director Graph File"), tr(directorsDir.c_str()), tr("Director Scripts (*.dtdir)"), &filter);
+            this, tr("Save a Director Script File"), tr(directorsDir.c_str()), tr("Director Scripts (*.dtdir)"), &filter);
 
          if( filePath.fileName().isEmpty() )
             return false;
@@ -1328,7 +1355,7 @@ namespace dtDirector
 
       QFileDialog dialog;
       QFileInfo filePath = dialog.getOpenFileName(
-         this, tr("Load a Director Graph File"), tr(directorsDir.c_str()), tr("Director Scripts (*.dtdir)"), &filter);
+         this, tr("Load a Director Script File"), tr(directorsDir.c_str()), tr("Director Scripts (*.dtdir)"), &filter);
 
       if(!filePath.isFile())
       {

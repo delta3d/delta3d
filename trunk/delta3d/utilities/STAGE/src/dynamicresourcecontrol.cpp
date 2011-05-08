@@ -30,8 +30,18 @@
 
 #include <dtEditQt/dynamicresourcecontrol.h>
 #include <dtEditQt/editordata.h>
+#include <dtEditQt/groupuiregistry.h>
+#include <dtEditQt/resourceuiplugin.h>
+
+#include <dtQt/dynamicsubwidgets.h>
+#include <dtQt/propertyeditortreeview.h>
+
 #include <dtDAL/datatype.h>
 #include <dtDAL/resourceactorproperty.h>
+
+#include <QtGui/QMessageBox>
+#include <QtGui/QGridLayout>
+
 #include <dtUtil/log.h>
 
 namespace dtEditQt
@@ -49,9 +59,102 @@ namespace dtEditQt
    }
 
    /////////////////////////////////////////////////////////////////////////////////
+   QWidget *DynamicResourceControl::createEditor(QWidget* parent,
+      const QStyleOptionViewItem& option, const QModelIndex& index)
+   {
+      QWidget* wrapper = DynamicResourceControlBase::createEditor(parent, option, index);
+
+      if (!mInitialized)
+      {
+         LOG_ERROR("Tried to add itself to the parent widget before being initialized");
+         return wrapper;
+      }
+
+      // Edit button
+      ResourceUIPlugin* plugin = GetPlugin();
+      if (plugin)
+      {
+         mTemporaryEditBtn = new dtQt::SubQPushButton(tr("Edit"), wrapper, this);
+         mTemporaryEditBtn->setToolTip("Open the custom editor for this resource.");
+         connect(mTemporaryEditBtn, SIGNAL(clicked()), this, SLOT(editPressed()));
+
+         mGridLayout->addWidget(mTemporaryEditBtn, 0, 0, 1, 1);
+         mGridLayout->setColumnMinimumWidth(0, mTemporaryEditBtn->sizeHint().width());
+         mGridLayout->setColumnStretch(0, 0);
+      }
+
+      return wrapper;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void DynamicResourceControl::editPressed()
+   {
+      NotifyParentOfPreUpdate();
+
+      if (GetProperty().GetDataType() == dtDAL::DataType::UNKNOWN)
+      {
+         QMessageBox::critical(mPropertyTree,
+            tr("Error"),tr("No Resource Property is associated with this control.  An internal error has occurred."), QMessageBox::Ok, QMessageBox::Ok);
+         return;
+      }
+
+      ResourceUIPlugin* plugin = GetPlugin();
+      plugin->SetResource(GetProperty().GetValue());
+      QWidget* pluginWidget = plugin->CreateWidget(mPropertyTree);
+      if (pluginWidget == NULL)
+      {
+         QMessageBox::critical(mPropertyTree,
+            tr("Plugin Error"),tr("The plugin registered for this resource actor property returned a NULL editor window."),
+            QMessageBox::Ok, QMessageBox::Ok);
+         return;
+      }
+
+      connect(plugin, SIGNAL(ScriptChanged(const std::string&)), this, SLOT(onScriptChanged(const std::string&)));
+
+      //QDialog* dialog = dynamic_cast<QDialog*>(pluginWidget);
+      //if (dialog != NULL)
+      //{
+      //   dialog->setModal(true);
+      //   dialog->exec();
+      //   if (dialog->result() == QDialog::Accepted)
+      //   {
+      //      dtCore::RefPtr<dtDAL::NamedGroupParameter> param = new dtDAL::NamedGroupParameter(mGroupProperty->GetName());
+      //      plugin->UpdateModelFromWidget(*pluginWidget, *param);
+      //      // give undo manager the ability to create undo/redo events
+      //      emit PropertyAboutToChange(*mPropContainer, *mGroupProperty,
+      //         mGroupProperty->ToString(), param->ToString());
+      //      mGroupProperty->SetValue(*param);
+      //      // notify the world (mostly the viewports) that our property changed
+      //      emit PropertyChanged(*mPropContainer, *mGroupProperty);
+      //   }
+      //}
+      //else
+      //{
+      //   QMessageBox::critical(mPropertyTree,
+      //      tr("Plugin Error"),tr("Non-QDialog group property plugin widgets are not yet supported."), QMessageBox::Ok, QMessageBox::Ok);
+      //}
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////
+   void DynamicResourceControl::handleSubEditDestroy(QWidget* widget, QAbstractItemDelegate::EndEditHint hint)
+   {
+      if (widget == mWrapper)
+      {
+         mTemporaryEditBtn = NULL;
+      }
+
+      DynamicResourceControlBase::handleSubEditDestroy(widget, hint);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////
+   ResourceUIPlugin* DynamicResourceControl::GetPlugin()
+   {
+      return dynamic_cast<ResourceUIPlugin*>(EditorData::GetInstance().GetGroupUIRegistry().GetPlugin(GetProperty().GetEditorType()));
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////
    dtDAL::ResourceDescriptor DynamicResourceControl::getCurrentResource()
    {
-
       if (GetProperty().GetDataType() == dtDAL::DataType::UNKNOWN)
       {
          LOG_ERROR("Error setting current resource because DataType [" +
