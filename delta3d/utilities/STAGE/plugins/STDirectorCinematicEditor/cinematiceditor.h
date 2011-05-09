@@ -105,9 +105,10 @@ public:
     * @Note:  This method should be overloaded to perform any initial
     * operations when this tool is activated.
     *
-    * @param[in]  graph  The graph to open the tool for.
+    * @param[in]  editor  The editor that is using this tool.
+    * @param[in]  graph   The graph to open the tool for.
     */
-   virtual void Open(dtDirector::DirectorGraph* graph);
+   virtual void Open(dtDirector::DirectorEditor* editor, dtDirector::DirectorGraph* graph);
 
    /**
     * Event handler to close the tool.

@@ -54,11 +54,11 @@ namespace dtDirector
       const std::string& GetName() const {return mToolName;}
 
       /**
-       * Sets the main Director Editor.
+       * Retrieves whether this editor supports a script type.
        *
-       * @param[in]  editor  The editor.
+       * @param[in]  type  The script type.
        */
-      void SetEditor(DirectorEditor* editor);
+      virtual bool IsScriptTypeSupported(const std::string& type) const;
 
       /**
        * Retrieves the main Director Editor.
@@ -79,9 +79,10 @@ namespace dtDirector
        * @Note:  This method should be overloaded to perform any initial
        * operations when this tool is activated.
        *
-       * @param[in]  graph  The graph to open the tool for.
+       * @param[in]  editor  The editor that is using this tool.
+       * @param[in]  graph   The graph to open the tool for.
        */
-      virtual void Open(DirectorGraph* graph);
+      virtual void Open(DirectorEditor* editor, DirectorGraph* graph);
 
       /**
        * Event handler to close the tool.

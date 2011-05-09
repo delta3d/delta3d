@@ -991,7 +991,7 @@ namespace dtDirector
          connect(createMacroAction, SIGNAL(triggered()), this, SLOT(OnCreateMacro()));
 
          // Add custom macro editing tools
-         std::vector<std::string> toolList = mEditor->GetRegisteredToolList();
+         std::vector<std::string> toolList = mEditor->GetRegisteredToolList(mEditor->GetDirector()->GetScriptType());
          if (!toolList.empty())
          {
             QMenu* toolMenu = menu.addMenu("Custom Editor Macro's");
