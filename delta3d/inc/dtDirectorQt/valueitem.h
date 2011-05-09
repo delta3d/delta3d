@@ -58,6 +58,11 @@ namespace dtDirector
       virtual void SetTitle(std::string text);
 
       /**
+       * Draws the title of the node.
+       */
+      virtual void DrawTitle();
+
+      /**
        * Creates the value text.
        *
        * @param[in]  text  The value text.

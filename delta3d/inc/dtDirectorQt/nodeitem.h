@@ -249,7 +249,7 @@ namespace dtDirector
       /**
        * Draws the title of the node.
        */
-      void DrawTitle();
+      virtual void DrawTitle();
 
       /**
        * Draws the inputs of the node.
