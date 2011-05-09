@@ -27,6 +27,7 @@
  * Jeff P. Houde
  */
 
+#define QT_STATICPLUGIN
 
 #include "directoruiplugin.h"
 #include "director.h"

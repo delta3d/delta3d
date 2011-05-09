@@ -35,11 +35,6 @@
 
 class QWidget;
 
-namespace dtDAL
-{
-   class NamedGroupParameter;
-}
-
 namespace dtEditQt
 {
    class DT_EDITQT_EXPORT ResourceUIPlugin: public QObject, public BaseUIPlugin
