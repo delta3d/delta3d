@@ -42,6 +42,7 @@ namespace dtCore
 {
    class Scene;
    class DeltaDrawablePrivate;
+   class Transformable;
 
    /**
     * A renderable object. A Drawable is a virtual base class which cannot be
@@ -79,6 +80,9 @@ namespace dtCore
       ///Get a pointer to the Scene this Drawable has been added to
       Scene* GetSceneParent();
       const Scene* GetSceneParent() const;
+
+      ///Convert 'this' into a dtCore::Transformable if it is one, otherwise return NULL
+      virtual dtCore::Transformable* AsTransformable() { return NULL; }
 
       ///Add a child to this DeltaDrawable
       virtual bool AddChild(DeltaDrawable* child);
