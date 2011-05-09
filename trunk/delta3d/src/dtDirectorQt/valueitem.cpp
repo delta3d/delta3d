@@ -144,6 +144,17 @@ namespace dtDirector
       }
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   void ValueItem::DrawTitle()
+   {
+      if (mTitle)
+      {
+         mTitle->setTextWidth(mNodeWidth);
+      }
+
+      NodeItem::DrawTitle();
+   }
+
    //////////////////////////////////////////////////////////////////////////
    void ValueItem::SetValueText(const std::string& text)
    {
