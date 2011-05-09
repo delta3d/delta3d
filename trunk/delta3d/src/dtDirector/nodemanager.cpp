@@ -82,8 +82,27 @@ namespace dtDirector
       }
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   bool NodeManager::IsScriptTypeSupported(const std::string& libName, const std::string& scriptType) const
+   {
+      RegistryMapConstItor regItor = mRegistries.find(libName);
+
+      if (regItor == mRegistries.end())
+      {
+         mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__, 
+            "Attempted to find director node registry \"%s\" which was not loaded.", 
+            libName.c_str());
+         return false;
+      }
+
+      // First remove all the node types this registry supports.
+      RegistryEntry regEntry = regItor->second;
+
+      return regEntry.registry->IsScriptTypeSupported(scriptType);
+   }
+
    ///////////////////////////////////////////////////////////////////////////////
-   void NodeManager::LoadNodeRegistry(const std::string &libName)
+   bool NodeManager::LoadNodeRegistry(const std::string &libName, const std::string& scriptType)
    {
       // Used to format log messages.
       std::ostringstream msg;
@@ -98,7 +117,7 @@ namespace dtDirector
          msg << "Registry for library with name " << libName <<
             " already exists.  Library must already be loaded.";
          LOG_ERROR(msg.str());
-         return;
+         return false;
       }
 
       dtUtil::LibrarySharingManager& lsm = dtUtil::LibrarySharingManager::GetInstance();
@@ -156,6 +175,8 @@ namespace dtDirector
             "Possibly it might have been added already.";
          throw dtDAL::ProjectResourceErrorException( msg.str(), __FILE__, __LINE__);
       }
+
+      return IsScriptTypeSupported(libName, scriptType);
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -446,7 +467,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void NodeManager::LoadOptionalNodeRegistry(const std::string &libName)
+   bool NodeManager::LoadOptionalNodeRegistry(const std::string &libName, const std::string& scriptType)
    {
       const std::string actualLibName = GetPlatformSpecificLibraryName(libName);
       std::string fullLibraryName = osgDB::findLibraryFile(actualLibName);            
@@ -459,13 +480,13 @@ namespace dtDirector
 
       if (fullLibraryName.empty())
       {
-         LOG_INFO("The optional director node library '" + libName + "' wasn't found.");
-         return;
+         LOG_INFO("The optional director node library '" + libName + "' was not found.");
+         return false;
       }
 
       try
       {
-         LoadNodeRegistry(libName);
+         return LoadNodeRegistry(libName, scriptType);
       }
       catch (dtUtil::Exception)
       {
@@ -473,5 +494,7 @@ namespace dtDirector
          //try to handle this quietly since its not critical.
          LOG_WARNING("Failed loading optional library '" + libName + "'.  Some nodes may not be available.");
       }
+
+      return false;
    }
 }

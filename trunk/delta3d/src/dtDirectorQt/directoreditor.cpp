@@ -1378,7 +1378,26 @@ namespace dtDirector
          mUI.graphTab->clear();
          mUndoManager->Clear();
 
-         mDirector->LoadScript(fileName);
+         try
+         {
+            mDirector->LoadScript(fileName);
+
+            std::string contextDir = osgDB::convertFileNameToNativeStyle(dtDAL::Project::GetInstance().GetContext()+"/");
+            mFileName = dtUtil::FileUtils::GetInstance().RelativePath(contextDir, fileName);
+         }
+         catch (const dtUtil::Exception& e)
+         {
+            QString error = QString("Unable to parse ") + fileName.c_str() + " with error " + e.What().c_str();
+
+            QMessageBox messageBox("Load Failed!",
+               error, QMessageBox::Critical,
+               QMessageBox::Ok,
+               QMessageBox::NoButton, 
+               QMessageBox::NoButton,
+               this);
+
+            messageBox.exec();
+         }
 
          // Create a single tab with the default graph.
          OpenGraph(mDirector->GetGraphRoot());
@@ -1386,9 +1405,6 @@ namespace dtDirector
          mUI.graphBrowser->BuildGraphList(mDirector->GetGraphRoot());
 
          RefreshNodeScenes();
-
-         std::string contextDir = osgDB::convertFileNameToNativeStyle(dtDAL::Project::GetInstance().GetContext()+"/");
-         mFileName = dtUtil::FileUtils::GetInstance().RelativePath(contextDir, fileName);
          return true;
       }
 

@@ -604,6 +604,12 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   std::string Director::GetScriptType() const
+   {
+      return "Scenario";
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    void Director::SetPlayer(const dtCore::UniqueId& player)
    {
       mPlayer = player;
@@ -680,12 +686,19 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void Director::InsertLibrary(unsigned pos, const std::string& name, const std::string& version)
+   bool Director::InsertLibrary(unsigned pos, const std::string& name, const std::string& version)
    {
-      // First make sure the library exists in the node manager.
+      // Attempt to load the library.
       if (!NodeManager::GetInstance().IsInRegistry(name))
       {
-         NodeManager::GetInstance().LoadNodeRegistry(name);
+         if (!NodeManager::GetInstance().LoadNodeRegistry(name, GetScriptType()))
+         {
+            return false;
+         }
+      }
+      else if (!NodeManager::GetInstance().IsScriptTypeSupported(name, GetScriptType()))
+      {
+         return false;
       }
 
       std::map<std::string,std::string>::iterator old = mLibraryVersionMap.find(name);
@@ -717,12 +730,14 @@ namespace dtDirector
          mLibraries.push_back(name);
 
       mModified = true;
+
+      return true;
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void Director::AddLibrary(const std::string& name, const std::string& version)
+   bool Director::AddLibrary(const std::string& name, const std::string& version)
    {
-      InsertLibrary(mLibraries.size(), name, version);
+      return InsertLibrary(mLibraries.size(), name, version);
    }
 
    //////////////////////////////////////////////////////////////////////////

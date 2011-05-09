@@ -215,6 +215,13 @@ namespace dtDirector
                }
                EndElement(); // End Schema Version Element.
 
+               // Script Type.
+               BeginElement(dtDAL::MapXMLConstants::DIRECTOR_SCRIPT_TYPE);
+               {
+                  AddCharacters(director->GetScriptType());
+               }
+               EndElement();
+
                // Properties.
                std::vector<const dtDAL::ActorProperty*> propList;
                director->GetPropertyList(propList);
