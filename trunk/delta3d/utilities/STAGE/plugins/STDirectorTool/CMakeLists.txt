@@ -1,8 +1,18 @@
-
 SET(LIB_NAME     STDirectorTool)
 
-file(GLOB LIB_HEADERS "*.h")
-file(GLOB LIB_SOURCES "*.cpp")
+SET(SOURCE_PATH ${CMAKE_SOURCE_DIR}/utilities/STAGE/plugins/${LIB_NAME})
+SET(HEADER_PATH ${CMAKE_SOURCE_DIR}/utilities/STAGE/plugins/${LIB_NAME})
+
+SET(LIB_SOURCES
+    ${SOURCE_PATH}/director.cpp
+    ${SOURCE_PATH}/directoruiplugin.cpp
+)
+
+SET(LIB_HEADERS
+    ${HEADER_PATH}/director.h
+    ${HEADER_PATH}/directoruiplugin.h
+    ${HEADER_PATH}/export.h
+)
 
 INCLUDE_DIRECTORIES(  ${CMAKE_SOURCE_DIR}/utilities/STAGE/inc
             ${QT_INCLUDE_DIR}
