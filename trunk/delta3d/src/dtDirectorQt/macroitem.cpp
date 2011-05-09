@@ -367,10 +367,10 @@ namespace dtDirector
 
       if (!mGraph->GetEditor().empty())
       {
-         CustomEditorTool* tool = mScene->GetEditor()->GetRegisteredTool(mGraph->GetEditor());
+         CustomEditorTool* tool = DirectorEditor::GetRegisteredTool(mGraph->GetEditor());
          if (tool)
          {
-            tool->Open(mGraph.get());
+            tool->Open(mScene->GetEditor(), mGraph.get());
          }
       }
    }
@@ -385,7 +385,7 @@ namespace dtDirector
       // If this graph contains a custom editor, add an option to open it with that editor.
       if (!mGraph->GetEditor().empty())
       {
-         CustomEditorTool* tool = mScene->GetEditor()->GetRegisteredTool(mGraph->GetEditor());
+         CustomEditorTool* tool = DirectorEditor::GetRegisteredTool(mGraph->GetEditor());
          if (tool)
          {
             QAction* useCustomToolAction = menu.addAction(QString("Open with \'") + mGraph->GetEditor().c_str() + QString("\' Editor"));
@@ -456,10 +456,10 @@ namespace dtDirector
       // If this graph contains a custom editor, add an option to open it with that editor.
       if (!mGraph->GetEditor().empty())
       {
-         CustomEditorTool* tool = mScene->GetEditor()->GetRegisteredTool(mGraph->GetEditor());
+         CustomEditorTool* tool = DirectorEditor::GetRegisteredTool(mGraph->GetEditor());
          if (tool)
          {
-            OpenCustomTool();
+            tool->Open(mScene->GetEditor(), mGraph.get());
          }
       }
       else

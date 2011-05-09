@@ -56,6 +56,9 @@
 
 namespace dtDirector
 {
+   std::map<std::string, CustomEditorTool*> DirectorEditor::mCustomTools;
+   std::vector<DirectorEditor*> DirectorEditor::mEditorsOpen;
+
    //////////////////////////////////////////////////////////////////////////////
    DirectorEditor::DirectorEditor(QWidget* parent)
       : QMainWindow(parent, Qt::Window)
@@ -67,6 +70,8 @@ namespace dtDirector
       , mReplayOutput(NULL)
       , mClickSound(NULL)
    {
+      mEditorsOpen.push_back(this);
+
       mUI.setupUi(this);
 
       // Undo Manager.
@@ -92,6 +97,16 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    DirectorEditor::~DirectorEditor()
    {
+      int editorCount = (int)mEditorsOpen.size();
+      for (int editorIndex = 0; editorIndex < editorCount; ++editorIndex)
+      {
+         if (mEditorsOpen[editorIndex] == this)
+         {
+            mEditorsOpen.erase(mEditorsOpen.begin() + editorIndex);
+            break;
+         }
+      }
+
       delete mUndoManager;
    }
 
@@ -456,8 +471,16 @@ namespace dtDirector
 
       mCustomTools.insert(std::make_pair<std::string, CustomEditorTool*>(tool->GetName(), tool));
 
-      // Also add the custom editor to the node palette.
-      mUI.macroNodeTabWidget->AddCustomEditor(tool->GetName());
+      // Notify all open editors of this new tool.
+      int editorCount = (int)mEditorsOpen.size();
+      for (int editorIndex = 0; editorIndex < editorCount; ++editorIndex)
+      {
+         DirectorEditor* editor = mEditorsOpen[editorIndex];
+         if (editor)
+         {
+            editor->AddCustomEditor(tool->GetName());
+         }
+      }
 
       return true;
    }
@@ -488,22 +511,19 @@ namespace dtDirector
       }
 
       mCustomTools.erase(i);
-      return true;
-   }
 
-   ////////////////////////////////////////////////////////////////////////////////
-   std::vector<std::string> DirectorEditor::GetRegisteredToolList()
-   {
-      std::vector<std::string> toolList;
-
-      std::map<std::string, CustomEditorTool*>::iterator i = mCustomTools.begin();
-      while (i != mCustomTools.end())
+      // Notify all open editors of this removed tool.
+      int editorCount = (int)mEditorsOpen.size();
+      for (int editorIndex = 0; editorIndex < editorCount; ++editorIndex)
       {
-         toolList.push_back(i->first);
-         i++;
+         DirectorEditor* editor = mEditorsOpen[editorIndex];
+         if (editor)
+         {
+            editor->RefreshNodeScenes();
+         }
       }
 
-      return toolList;
+      return true;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -516,6 +536,31 @@ namespace dtDirector
       }
 
       return NULL;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   std::vector<std::string> DirectorEditor::GetRegisteredToolList(const std::string& scriptType)
+   {
+      std::vector<std::string> toolList;
+
+      std::map<std::string, CustomEditorTool*>::iterator i = mCustomTools.begin();
+      while (i != mCustomTools.end())
+      {
+         if (scriptType.empty() || i->second->IsScriptTypeSupported(scriptType))
+         {
+            toolList.push_back(i->first);
+         }
+
+         i++;
+      }
+
+      return toolList;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::AddCustomEditor(const std::string& name)
+   {
+      mUI.macroNodeTabWidget->AddCustomEditor(name);
    }
 
    ////////////////////////////////////////////////////////////////////////////////

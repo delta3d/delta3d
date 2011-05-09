@@ -69,15 +69,6 @@ DirectorCinematicEditorPlugin::DirectorCinematicEditorPlugin(MainWindow* mw)
 
    setWindowTitle("Director Cinematic Editor");
 
-   dtEditQt::PluginManager* pluginManager = mMainWindow->GetPluginManager();
-   if (!pluginManager) return;
-
-   dtEditQt::Plugin* plugin = pluginManager->GetPlugin("Director Tool");
-   if (!plugin) return;
-
-   dtDirector::DirectorEditor* directorEditor = dynamic_cast<dtDirector::DirectorEditor*>(plugin);
-   SetEditor(directorEditor);
-
    Initialize();
 }
 
@@ -329,9 +320,9 @@ void DirectorCinematicEditorPlugin::ResetUI()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void DirectorCinematicEditorPlugin::Open(dtDirector::DirectorGraph* graph)
+void DirectorCinematicEditorPlugin::Open(dtDirector::DirectorEditor* editor, dtDirector::DirectorGraph* graph)
 {
-   CustomEditorTool::Open(graph);
+   CustomEditorTool::Open(editor, graph);
 
    OnLoad();
 

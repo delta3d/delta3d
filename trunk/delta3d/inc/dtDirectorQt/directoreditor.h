@@ -239,7 +239,7 @@ namespace dtDirector
        *
        * @return     True if the tool was registered successfully.
        */
-      bool RegisterCustomEditorTool(CustomEditorTool* tool);
+      static bool RegisterCustomEditorTool(CustomEditorTool* tool);
 
       /**
        * UnRegisters a custom editor tool.
@@ -249,15 +249,8 @@ namespace dtDirector
        *
        * @return     True if the tool was found and un-registered successfully.
        */
-      bool UnRegisterCustomEditorTool(CustomEditorTool* tool);
-      bool UnRegisterCustomEditorTool(const std::string& toolName);
-
-      /**
-       * Retrieves a list of tools that have been registered.
-       *
-       * @return  A list of registered tool names.
-       */
-      std::vector<std::string> GetRegisteredToolList();
+      static bool UnRegisterCustomEditorTool(CustomEditorTool* tool);
+      static bool UnRegisterCustomEditorTool(const std::string& toolName);
 
       /**
        * Retrieves the tool of a given name.
@@ -266,7 +259,23 @@ namespace dtDirector
        *
        * @return     The tool, if found.
        */
-      CustomEditorTool* GetRegisteredTool(const std::string& name);
+      static CustomEditorTool* GetRegisteredTool(const std::string& name);
+
+      /**
+       * Retrieves a list of tools that have been registered.
+       *
+       * @param[in]  scriptType  The script type.
+       *
+       * @return  A list of registered tool names.
+       */
+      static std::vector<std::string> GetRegisteredToolList(const std::string& scriptType = "");
+
+      /**
+       * Adds a custom editor to the node scene.
+       *
+       * @param[in]  name  The custom editor name.
+       */
+      void AddCustomEditor(const std::string& name);
 
       /**
        * Focuses the current view on the given node.
@@ -547,7 +556,8 @@ namespace dtDirector
 
       Phonon::MediaObject *mClickSound;
 
-      std::map<std::string, CustomEditorTool*> mCustomTools;
+      static std::map<std::string, CustomEditorTool*> mCustomTools;
+      static std::vector<DirectorEditor*> mEditorsOpen;
    };
 
 } // namespace dtDirector

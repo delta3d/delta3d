@@ -36,34 +36,33 @@ namespace dtDirector
       , mRowHeight(0)
    {
       mToolName = name;
+
+      DirectorEditor::RegisterCustomEditorTool(this);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    CustomEditorTool::~CustomEditorTool()
    {
-      if (mEditor)
-      {
-         mEditor->UnRegisterCustomEditorTool(this);
-      }
-   }
-
-   //////////////////////////////////////////////////////////////////////////
-   void CustomEditorTool::SetEditor(DirectorEditor* editor)
-   {
-      mEditor = editor;
-
-      // Register this tool with the main editor.
-      if (mEditor)
-      {
-         mEditor->RegisterCustomEditorTool(this);
-      }
+      DirectorEditor::UnRegisterCustomEditorTool(this);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void CustomEditorTool::Open(DirectorGraph* graph)
+   bool CustomEditorTool::IsScriptTypeSupported(const std::string& type) const
+   {
+      if (type == "Scenario")
+      {
+         return true;
+      }
+
+      return false;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void CustomEditorTool::Open(DirectorEditor* editor, DirectorGraph* graph)
    {
       Close();
 
+      mEditor = editor;
       mGraph = graph;
       mIsOpen = true;
    }
@@ -71,6 +70,7 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void CustomEditorTool::Close()
    {
+      mEditor = NULL;
       mGraph = NULL;
       mIsOpen = false;
    }
@@ -78,7 +78,7 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    bool CustomEditorTool::BeginSave()
    {
-      if (!GetGraph())
+      if (!GetGraph() || !GetEditor())
       {
          return false;
       }
@@ -224,7 +224,7 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    bool CustomEditorTool::EndSave()
    {
-      if (!GetGraph())
+      if (!GetGraph() || !GetEditor())
       {
          return false;
       }
