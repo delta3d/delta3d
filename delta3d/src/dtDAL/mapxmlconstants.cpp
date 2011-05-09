@@ -58,6 +58,7 @@ namespace dtDAL
 
    XMLCh* MapXMLConstants::DIRECTOR_ELEMENT = NULL;
    XMLCh* MapXMLConstants::DIRECTOR_NAMESPACE = NULL;
+   XMLCh* MapXMLConstants::DIRECTOR_SCRIPT_TYPE = NULL;
 
    XMLCh* MapXMLConstants::HEADER_ELEMENT = NULL;
    XMLCh* MapXMLConstants::NAME_ELEMENT = NULL;
@@ -193,6 +194,7 @@ namespace dtDAL
 
       DIRECTOR_ELEMENT = xercesc::XMLString::transcode("director");
       DIRECTOR_NAMESPACE = xercesc::XMLString::transcode("xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"delta3dDirector\" xsi:schemaLocation=\"delta3dDirector director.xsd\"");
+      DIRECTOR_SCRIPT_TYPE = xercesc::XMLString::transcode("scriptType");
 
       HEADER_ELEMENT = xercesc::XMLString::transcode("header");
       NAME_ELEMENT = xercesc::XMLString::transcode("name");

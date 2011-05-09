@@ -57,6 +57,7 @@ namespace dtDAL
 
          static XMLCh* DIRECTOR_ELEMENT;
          static XMLCh* DIRECTOR_NAMESPACE;
+         static XMLCh* DIRECTOR_SCRIPT_TYPE;
 
          static XMLCh* HEADER_ELEMENT;
          static XMLCh* NAME_ELEMENT;

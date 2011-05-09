@@ -339,6 +339,14 @@ namespace dtDirector
             {
                mDirector->SetCreateDateTime(dtUtil::XMLStringConverter(chars).ToString());
             }
+            else if (topEl == dtDAL::MapXMLConstants::DIRECTOR_SCRIPT_TYPE)
+            {
+               // Check if the loaded script matches our current script type
+               if (mDirector->GetScriptType() != dtUtil::XMLStringConverter(chars).ToString())
+               {
+                  throw dtUtil::Exception("Attempted to load an invalid script type.", __FILE__, __LINE__);
+               }
+            }
          }
       }
       else if (mInLibraries)
@@ -408,9 +416,6 @@ namespace dtDirector
                         mLinkList[index].linkNodeID = mLinkNodeID;
                         mLinkList[index].valueLink = mValueLink;
                         mLinkNodeID.clear();
-
-                        //ValueNode* valueNode = dynamic_cast<ValueNode*>(mLinkNode.get());
-                        //mValueLink->Connect(valueNode);
                      }
                      else if (!mLinkToName.empty())
                      {
@@ -424,15 +429,11 @@ namespace dtDirector
                         if (mInputLink)
                         {
                            mLinkList[index].inputLink = mInputLink;
-                           //OutputLink* link = mLinkNode->GetOutputLink(mLinkToName);
-                           //if (link) link->Connect(mInputLink);
                         }
                         // Connect an output link to an input link.
                         else if (mOutputLink)
                         {
                            mLinkList[index].outputLink = mOutputLink;
-                           //InputLink* link = mLinkNode->GetInputLink(mLinkToName);
-                           //if (link) link->Connect(mOutputLink);
                         }
                      }
                   }
@@ -741,10 +742,6 @@ namespace dtDirector
 
       try
       {
-         if (NodeManager::GetInstance().GetRegistry(mLibName) == NULL)
-         {
-            NodeManager::GetInstance().LoadNodeRegistry(mLibName);
-         }
          mDirector->AddLibrary(mLibName, mLibVersion);
          ClearLibraryValues();
       }

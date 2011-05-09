@@ -83,6 +83,7 @@ namespace dtDirector
 
       typedef std::map<std::string, RegistryEntry> RegistryMap;
       typedef RegistryMap::iterator RegistryMapItor;
+      typedef RegistryMap::const_iterator RegistryMapConstItor;
 
       /**
        * Gets the singleton instance of the NodeManager.
@@ -96,12 +97,16 @@ namespace dtDirector
        * "CreatePluginRegistry" and "DestroyPluginRegistry".  See NodePluginRegistry
        * for more information.
        *
-       * @param[in]  libName  The name of the library to load.
+       * @param[in]  libName     The name of the library to load.
+       * @param[in]  scriptType  The type of script this library will be used for.
+       *
+       * @return     false if the library failed to load.
+       *
        * @throws     ProjectResourceError Throws an exception if the
        *              library cannot be found or the create and destroy
        *              functions are not found in the library.
        */
-      void LoadNodeRegistry(const std::string &libName);
+      bool LoadNodeRegistry(const std::string &libName, const std::string& scriptType);
 
       /**
        * Inserts the pair of parameters into the container.
@@ -126,9 +131,21 @@ namespace dtDirector
       /**
        * Retrieves whether the library is already in the registry.
        *
+       * @param[in]  libName  The name of the library.
+       *
        * @return  True if the library is in the registry.
        */
-      bool IsInRegistry( const std::string &libName ) const;
+      bool IsInRegistry(const std::string &libName) const;
+
+      /**
+       * Retrieves whether a library supports a given script type.
+       *
+       * @param[in]  libName     The name of the library.
+       * @param[in]  scriptType  The script type.
+       *
+       * @return  true if the script type is supported by the library.
+       */
+      bool IsScriptTypeSupported(const std::string& libName, const std::string& scriptType) const;
 
       /**
        * Returns a list of all the node types the library manager knows how
@@ -265,9 +282,12 @@ namespace dtDirector
       /**
        * Loads a library if it exists.
        *
-       * @param[in]  libName  The library to load.
+       * @param[in]  libName     The library to load.
+       * @param[in]  scriptType  The type of script this library will be used for.
+       *
+       * @return     false if the library failed to load.
        */
-      void LoadOptionalNodeRegistry(const std::string &libName);
+      bool LoadOptionalNodeRegistry(const std::string &libName, const std::string& scriptType);
 
       /// Singleton instance of the class.
       static dtCore::RefPtr<NodeManager> mInstance;

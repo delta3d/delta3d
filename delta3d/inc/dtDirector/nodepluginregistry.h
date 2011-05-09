@@ -150,6 +150,25 @@ namespace dtDirector
       bool IsNodeTypeSupported(dtCore::RefPtr<const NodeType> type);
 
       /**
+      * Checks to see if a script type is supported by this node registry.
+      * @Note: By default, only Scenario scripts are supported.  This
+      * method should be overloaded by custom node libraries to provide
+      * your own script type limitations.
+       *
+       * @param[in]  type  The script type.
+       *
+       * @return  True if supported, false otherwise.
+       */
+      virtual bool IsScriptTypeSupported(const std::string& type) const
+      {
+         if (type == "Scenario")
+         {
+            return true;
+         }
+         return false;
+      }
+
+      /**
        * Creates a new node based on the NodeType given.
        *
        * @param[in]  type   Type of node to create.

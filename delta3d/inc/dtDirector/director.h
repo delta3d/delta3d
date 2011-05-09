@@ -277,6 +277,11 @@ namespace dtDirector
       bool GetNodeLogging();
 
       /**
+       * Retrieves the script type.
+       */
+      virtual std::string GetScriptType() const;
+
+      /**
        * Sets the player.
        *
        * @param[in]  player  The player.
@@ -343,8 +348,10 @@ namespace dtDirector
        * @param[in]  pos      The position to place the library.
        * @param[in]  name     The name of the library
        * @param[in]  version  The version string of the library.
+       *
+       * @return     True if the library was inserted properly.
        */
-      void InsertLibrary(unsigned pos, const std::string& name, const std::string& version);
+      bool InsertLibrary(unsigned pos, const std::string& name, const std::string& version);
 
       /**
        * This will add the given library to list.  If a library by the
@@ -353,8 +360,10 @@ namespace dtDirector
        *
        * @param[in]  name     The name of the library.
        * @param[in]  version  The version string of the library.
+       *
+       * @return     True if the library was inserted properly.
        */
-      void AddLibrary(const std::string& name, const std::string& version);
+      bool AddLibrary(const std::string& name, const std::string& version);
 
       /**
        * Removes a library from the list.
