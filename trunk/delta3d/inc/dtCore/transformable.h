@@ -167,6 +167,9 @@ namespace dtCore
        */
       virtual void GetTransform(Transform& xform, CoordSysEnum cs = ABS_CS) const;
 
+      ///Convenience function for easy type conversion without needing a dynamic cast
+      virtual dtCore::Transformable* AsTransformable() { return this; }
+
       ///Convenience function to return back the internal matrix transform node
       TransformableNode* GetMatrixNode();
 
@@ -391,8 +394,8 @@ namespace dtCore
        *
        * @param enable If true, the scene will now render the collision
        * geometry.
-       * @param wireFrame Determines whether collision geometry is rendered as 
-       * wire frame or as solid transparent.       
+       * @param wireFrame Determines whether collision geometry is rendered as
+       * wire frame or as solid transparent.
        */
       void RenderCollisionGeometry(bool enable = true, bool wireFrame = false);
 
