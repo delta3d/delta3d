@@ -111,6 +111,29 @@ namespace dtDirector
        *  Registers all of the nodes to be exported.
        */
       void RegisterNodeTypes();
+
+      /**
+      * Checks to see if a script type is supported by this node registry.
+      * @Note: By default, only Scenario scripts are supported.  This
+      * method should be overloaded by custom node libraries to provide
+      * your own script type limitations.
+       *
+       * @param[in]  type  The script type.
+       *
+       * @return  True if supported, false otherwise.
+       */
+      virtual bool IsScriptTypeSupported(const std::string& type) const
+      {
+         if (type == "Scenario")
+         {
+            return true;
+         }
+         else if (type == "AIPlanner")
+         {
+            return true;
+         }
+         return false;
+      }
    };
 }
 
