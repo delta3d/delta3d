@@ -50,6 +50,7 @@ namespace dtDirector
       {
          EVENT_NODE,
          ACTION_NODE,
+         MUTATOR_NODE,
          VALUE_NODE,
          MACRO_NODE,
          LINK_NODE,

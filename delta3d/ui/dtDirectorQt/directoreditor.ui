@@ -93,6 +93,39 @@
          </item>
         </layout>
        </widget>
+       <widget class="QWidget" name="mutatorNodeTab">
+        <attribute name="title">
+         <string>Mutators</string>
+        </attribute>
+        <layout class="QGridLayout" name="gridLayout_8">
+         <property name="margin">
+          <number>0</number>
+         </property>
+         <item row="0" column="0">
+          <widget class="dtDirector::NodeTabs" name="mutatorNodeTabWidget">
+           <property name="currentIndex">
+            <number>0</number>
+           </property>
+           <property name="tabSpacing">
+            <number>0</number>
+           </property>
+           <widget class="QWidget" name="mutatorNodeTabWidgetPage1_2">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>251</width>
+              <height>454</height>
+             </rect>
+            </property>
+            <attribute name="label">
+             <string/>
+            </attribute>
+           </widget>
+          </widget>
+         </item>
+        </layout>
+       </widget>
        <widget class="QWidget" name="variableNodeTab">
         <attribute name="title">
          <string>Variables</string>

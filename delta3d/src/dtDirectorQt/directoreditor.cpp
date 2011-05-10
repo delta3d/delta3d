@@ -118,6 +118,7 @@ namespace dtDirector
       // Setup node scenes
       CreateNodeScene(mUI.eventNodeTabWidget);
       CreateNodeScene(mUI.actionNodeTabWidget);
+      CreateNodeScene(mUI.mutatorNodeTabWidget);
       CreateNodeScene(mUI.variableNodeTabWidget);
       CreateNodeScene(mUI.macroNodeTabWidget);
       CreateNodeScene(mUI.linkNodeTabWidget);
@@ -1518,6 +1519,7 @@ namespace dtDirector
    {
       RefreshNodeScene(mUI.eventNodeTabWidget, NodeType::EVENT_NODE);
       RefreshNodeScene(mUI.actionNodeTabWidget, NodeType::ACTION_NODE);
+      RefreshNodeScene(mUI.mutatorNodeTabWidget, NodeType::MUTATOR_NODE);
       RefreshNodeScene(mUI.variableNodeTabWidget, NodeType::VALUE_NODE);
       RefreshNodeScene(mUI.macroNodeTabWidget, NodeType::MACRO_NODE);
       RefreshNodeScene(mUI.linkNodeTabWidget, NodeType::LINK_NODE);
