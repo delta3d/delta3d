@@ -69,7 +69,8 @@ namespace dtDAL
 
       template <typename SetPtr, typename GetPtr>
       void RegisterResourceProperty(DataType& resourceType, SetPtr setter, GetPtr getter,
-               const dtUtil::RefString& name, const dtUtil::RefString& label, const dtUtil::RefString& desc)
+               const dtUtil::RefString& name, const dtUtil::RefString& label, const dtUtil::RefString& desc,
+               const dtUtil::RefString& editor)
       {
          typedef typename dtUtil::FunTraits<GetPtr>::ResultType ResType;
          typedef typename dtUtil::TypeTraits<ResType>::value_type PropType;
@@ -77,7 +78,7 @@ namespace dtDAL
          mPropCon.AddProperty(new dtDAL::ResourceActorProperty(resourceType, name, label,
             typename dtDAL::TypeToActorProperty<PropType>::SetFuncType(mFuncObj, setter),
             typename dtDAL::TypeToActorProperty<PropType>::GetFuncType(mFuncObj, getter),
-            desc, mGroup));
+            desc, mGroup, editor));
       }
 
       template <typename SetPtr, typename GetPtr>
@@ -132,14 +133,28 @@ PropertyStringName, PropertyLabel, DESC_ ## PropertyName);\
    RegHelperInstance.RegisterResourceProperty(DataType,\
    DT_CREATE_PROPERTY_SETTER_HELPER_MACRO(RegHelperType_, PropertyName), \
    DT_CREATE_PROPERTY_GETTER_HELPER_MACRO(RegHelperType_, PropertyName), \
-#PropertyName, PropertyLabel, DESC_ ## PropertyName);\
+#PropertyName, PropertyLabel, DESC_ ## PropertyName, "");\
 
 #define DT_REGISTER_RESOURCE_PROPERTY_WITH_NAME(DataType, PropertyName, PropertyStringName, PropertyLabel, PropertyDesc, RegHelperType_, RegHelperInstance) \
    static const dtUtil::RefString DESC_ ## PropertyName (PropertyDesc);\
    RegHelperInstance.RegisterResourceProperty(DataType,\
    DT_CREATE_PROPERTY_SETTER_HELPER_MACRO(RegHelperType_, PropertyName), \
    DT_CREATE_PROPERTY_GETTER_HELPER_MACRO(RegHelperType_, PropertyName), \
-PropertyStringName, PropertyLabel, DESC_ ## PropertyName);\
+PropertyStringName, PropertyLabel, DESC_ ## PropertyName, "");\
+
+#define DT_REGISTER_RESOURCE_PROPERTY_WITH_EDITOR(DataType, PropertyName, PropertyLabel, PropertyDesc, PropertyEditor, RegHelperType_, RegHelperInstance) \
+   static const dtUtil::RefString DESC_ ## PropertyName (PropertyDesc);\
+   RegHelperInstance.RegisterResourceProperty(DataType,\
+   DT_CREATE_PROPERTY_SETTER_HELPER_MACRO(RegHelperType_, PropertyName), \
+   DT_CREATE_PROPERTY_GETTER_HELPER_MACRO(RegHelperType_, PropertyName), \
+#PropertyName, PropertyLabel, DESC_ ## PropertyName, PropertyEditor);\
+
+#define DT_REGISTER_RESOURCE_PROPERTY_WITH_NAME_AND_EDITOR(DataType, PropertyName, PropertyStringName, PropertyLabel, PropertyDesc, PropertyEditor, RegHelperType_, RegHelperInstance) \
+   static const dtUtil::RefString DESC_ ## PropertyName (PropertyDesc);\
+   RegHelperInstance.RegisterResourceProperty(DataType,\
+   DT_CREATE_PROPERTY_SETTER_HELPER_MACRO(RegHelperType_, PropertyName), \
+   DT_CREATE_PROPERTY_GETTER_HELPER_MACRO(RegHelperType_, PropertyName), \
+   PropertyStringName, PropertyLabel, DESC_ ## PropertyName, PropertyEditor);\
 
 /**
 * Macro used to register a dtDAL::ActorIDActorProperty
