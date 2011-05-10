@@ -429,8 +429,8 @@ namespace dtGame
       else
       {
          // Added a slight randomize in all cases to help spread them out.
-         float smallRandomness = 0.05f * TIME_BETWEEN_UPDATES;
-         mTimeUntilNextFullUpdate += (dtUtil::RandFloat(-smallRandomness, smallRandomness)) ;
+         float smallRandomness = 0.1f * TIME_BETWEEN_UPDATES;
+         mTimeUntilNextFullUpdate += (dtUtil::RandFloat(0.0f, smallRandomness)) ;
       }
    }
 
