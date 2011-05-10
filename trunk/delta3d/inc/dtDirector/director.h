@@ -210,7 +210,7 @@ namespace dtDirector
        * @param[in]  simDelta  The simulation time step.
        * @param[in]  delta     The real time step.
        */
-      void Update(float simDelta, float delta);
+      virtual void Update(float simDelta, float delta);
 
       /**
        * Starts a new update thread.
