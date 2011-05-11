@@ -63,6 +63,12 @@
 #include <dtDirectorNodes/logaction.h>
 #include <dtDirectorNodes/switchaction.h>
 
+// Mutators
+#include <dtDirectorNodes/addmutator.h>
+#include <dtDirectorNodes/subtractmutator.h>
+#include <dtDirectorNodes/multiplymutator.h>
+#include <dtDirectorNodes/dividemutator.h>
+
 // Values
 #include <dtDirectorNodes/actorarrayvalue.h>
 #include <dtDirectorNodes/actorvalue.h>
@@ -149,6 +155,12 @@ namespace dtDirector
    RefPtr<NodeType> NodeLibraryRegistry::LOG_ACTION_NODE_TYPE(                   new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Log Message",               "General",     "Base",        "Writes out a message to the log.", NULL, Colors::BLUE));
    RefPtr<NodeType> NodeLibraryRegistry::SWITCH_ACTION_NODE_TYPE(                new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Switch",                    "General",     "Base",        "Fires outputs in sequence based on the number of inputs received.", NULL, Colors::BLUE));
 
+   // Mutators
+   RefPtr<NodeType> NodeLibraryRegistry::ADD_MUTATOR_NODE_TYPE(                  new dtDirector::NodeType(dtDirector::NodeType::MUTATOR_NODE, "Add",                      "Mutator",     "Operations",  "Performs an addition of two values.", NULL, Colors::BLUE3));
+   RefPtr<NodeType> NodeLibraryRegistry::SUBTRACT_MUTATOR_NODE_TYPE(             new dtDirector::NodeType(dtDirector::NodeType::MUTATOR_NODE, "Subtract",                 "Mutator",     "Operations",  "Performs a subtraction between two values.", NULL, Colors::BLUE3));
+   RefPtr<NodeType> NodeLibraryRegistry::MULTIPLY_MUTATOR_NODE_TYPE(             new dtDirector::NodeType(dtDirector::NodeType::MUTATOR_NODE, "Multiply",                 "Mutator",     "Operations",  "Performs a multiplication of two values.", NULL, Colors::BLUE3));
+   RefPtr<NodeType> NodeLibraryRegistry::DIVIDE_MUTATOR_NODE_TYPE(               new dtDirector::NodeType(dtDirector::NodeType::MUTATOR_NODE, "Divide",                   "Mutator",     "Operations",  "Performs a division between two values.", NULL, Colors::BLUE3));
+
    // Values
    RefPtr<NodeType> NodeLibraryRegistry::EXTERNAL_VALUE_NODE_TYPE(               new dtDirector::NodeType(dtDirector::NodeType::LINK_NODE,   "Value Link",                "Core",        "Base",        "This node creates a value link connector in its parent graph.", NULL, Colors::VIOLET));
    RefPtr<NodeType> NodeLibraryRegistry::BOOLEAN_VALUE_NODE_TYPE(                new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "Boolean",                   "General",     "Base",        "A boolean value.", NULL, Colors::RED, dtDAL::DataType::BOOLEAN));
@@ -168,7 +180,7 @@ namespace dtDirector
    RefPtr<NodeType> NodeLibraryRegistry::REFERENCE_VALUE_NODE_TYPE(              new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "Reference",                 "Core",        "Base",        "This will reference another value in the script.", NULL, Colors::VIOLET));
    RefPtr<NodeType> NodeLibraryRegistry::ACTOR_VALUE_NODE_TYPE(                  new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "Actor",                     "General",     "Actors",      "An actor value.", NULL, Colors::MANGENTA, dtDAL::DataType::ACTOR));
    RefPtr<NodeType> NodeLibraryRegistry::ACTOR_ARRAY_VALUE_NODE_TYPE(            new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "Actor Array",               "General",     "Arrays",      "An array of actor values.", NULL, Colors::MANGENTA, dtDAL::DataType::ACTOR));
-   RefPtr<NodeType> NodeLibraryRegistry::PLAYER_VALUE_NODE_TYPE(                 new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "Player",                    "Core",        "Actors",      "This player actor.", NULL, Colors::MANGENTA, dtDAL::DataType::ACTOR));
+   RefPtr<NodeType> NodeLibraryRegistry::PLAYER_VALUE_NODE_TYPE(                 new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "Player",                    "Core",        "Actors",      "This player actor.", NULL, Colors::WHITE, dtDAL::DataType::ACTOR));
    RefPtr<NodeType> NodeLibraryRegistry::STATIC_MESH_VALUE_NODE_TYPE(            new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "Static Mesh",               "General",     "Resources",   "A Static Mesh resource value.", NULL, Colors::MANGENTA2, dtDAL::DataType::STATIC_MESH));
 
    // Misc
@@ -235,6 +247,12 @@ namespace dtDirector
       mNodeFactory->RegisterType<SendEventMessageAction>(SEND_EVENT_MESSAGE_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<LogAction>(LOG_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<SwitchAction>(SWITCH_ACTION_NODE_TYPE.get());
+
+      // Mutators
+      mNodeFactory->RegisterType<AddMutator>(ADD_MUTATOR_NODE_TYPE.get());
+      mNodeFactory->RegisterType<SubtractMutator>(SUBTRACT_MUTATOR_NODE_TYPE.get());
+      mNodeFactory->RegisterType<MultiplyMutator>(MULTIPLY_MUTATOR_NODE_TYPE.get());
+      mNodeFactory->RegisterType<DivideMutator>(DIVIDE_MUTATOR_NODE_TYPE.get());
 
       // Values
       mNodeFactory->RegisterType<ExternalValueNode>(EXTERNAL_VALUE_NODE_TYPE.get());

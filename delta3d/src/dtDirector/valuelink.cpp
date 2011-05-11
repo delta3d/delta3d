@@ -406,8 +406,11 @@ namespace dtDirector
          }
       }
 
-      if (mProxyOwner.valid()) mProxyOwner->OnLinkValueChanged(GetName());
-      else mOwner->OnLinkValueChanged(GetName());
+      if (result)
+      {
+         if (mProxyOwner.valid()) mProxyOwner->OnLinkValueChanged(GetName());
+         else mOwner->OnLinkValueChanged(GetName());
+      }
 
       return result;
    }

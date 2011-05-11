@@ -68,6 +68,7 @@ namespace dtDirector
          node->SetPosition(osg::Vec2(NODE_BUFFER, mHeight));
          switch (nodeType)
          {
+         case NodeType::MUTATOR_NODE:
          case NodeType::VALUE_NODE:
             {
                item = new ValueItem(node, mpItem, NULL);
