@@ -77,6 +77,12 @@ namespace dtDirector
       static dtCore::RefPtr<dtDirector::NodeType> LOG_ACTION_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> SWITCH_ACTION_NODE_TYPE;
 
+      /// Mutators
+      static dtCore::RefPtr<dtDirector::NodeType> ADD_MUTATOR_NODE_TYPE;
+      static dtCore::RefPtr<dtDirector::NodeType> SUBTRACT_MUTATOR_NODE_TYPE;
+      static dtCore::RefPtr<dtDirector::NodeType> MULTIPLY_MUTATOR_NODE_TYPE;
+      static dtCore::RefPtr<dtDirector::NodeType> DIVIDE_MUTATOR_NODE_TYPE;
+
       /// Values
       static dtCore::RefPtr<dtDirector::NodeType> EXTERNAL_VALUE_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> REFERENCE_VALUE_NODE_TYPE;

@@ -7,7 +7,9 @@ SET(SOURCE_PATH ${DELTA3D_SOURCE_DIR}/src/${LIB_NAME})
 
 SET(LIB_PUBLIC_HEADERS ${HEADER_PATH}/actorarrayvalue.h
     ${HEADER_PATH}/actorvalue.h
+    ${HEADER_PATH}/addmutator.h
     ${HEADER_PATH}/animateactoraction.h
+    ${HEADER_PATH}/arithmeticmutator.h
     ${HEADER_PATH}/booleanvalue.h
     ${HEADER_PATH}/calculatedistanceaction.h
     ${HEADER_PATH}/callremoteeventaction.h
@@ -18,6 +20,7 @@ SET(LIB_PUBLIC_HEADERS ${HEADER_PATH}/actorarrayvalue.h
     ${HEADER_PATH}/comparevectoraction.h
     ${HEADER_PATH}/createvectoraction.h
     ${HEADER_PATH}/delayaction.h
+    ${HEADER_PATH}/dividemutator.h
     ${HEADER_PATH}/doublevalue.h
     ${HEADER_PATH}/externalvaluenode.h
     ${HEADER_PATH}/floatvalue.h
@@ -33,6 +36,7 @@ SET(LIB_PUBLIC_HEADERS ${HEADER_PATH}/actorarrayvalue.h
     ${HEADER_PATH}/lerpactorscaleaction.h
     ${HEADER_PATH}/lerpactortranslationaction.h
     ${HEADER_PATH}/logaction.h
+    ${HEADER_PATH}/multiplymutator.h
     ${HEADER_PATH}/nodelibraryexport.h
     ${HEADER_PATH}/nodelibraryregistry.h
     ${HEADER_PATH}/operationaction.h
@@ -54,6 +58,7 @@ SET(LIB_PUBLIC_HEADERS ${HEADER_PATH}/actorarrayvalue.h
     ${HEADER_PATH}/staticmeshvalue.h
     ${HEADER_PATH}/stringarrayvalue.h
     ${HEADER_PATH}/stringvalue.h
+    ${HEADER_PATH}/subtractmutator.h
     ${HEADER_PATH}/switchaction.h
     ${HEADER_PATH}/toggleaction.h
     ${HEADER_PATH}/triggervolumeevent.h
@@ -68,7 +73,9 @@ SET(LIB_PUBLIC_HEADERS ${HEADER_PATH}/actorarrayvalue.h
 
 SET(LIB_SOURCES ${SOURCE_PATH}/actorarrayvalue.cpp
     ${SOURCE_PATH}/actorvalue.cpp
+    ${SOURCE_PATH}/addmutator.cpp
     ${SOURCE_PATH}/animateactoraction.cpp
+    ${SOURCE_PATH}/arithmeticmutator.cpp
     ${SOURCE_PATH}/booleanvalue.cpp
     ${SOURCE_PATH}/calculatedistanceaction.cpp
     ${SOURCE_PATH}/callremoteeventaction.cpp
@@ -79,6 +86,7 @@ SET(LIB_SOURCES ${SOURCE_PATH}/actorarrayvalue.cpp
     ${SOURCE_PATH}/comparevectoraction.cpp
     ${SOURCE_PATH}/createvectoraction.cpp
     ${SOURCE_PATH}/delayaction.cpp
+    ${SOURCE_PATH}/dividemutator.cpp
     ${SOURCE_PATH}/doublevalue.cpp
     ${SOURCE_PATH}/externalvaluenode.cpp
     ${SOURCE_PATH}/floatvalue.cpp
@@ -94,6 +102,7 @@ SET(LIB_SOURCES ${SOURCE_PATH}/actorarrayvalue.cpp
     ${SOURCE_PATH}/lerpactorscaleaction.cpp
     ${SOURCE_PATH}/lerpactortranslationaction.cpp
     ${SOURCE_PATH}/logaction.cpp
+    ${SOURCE_PATH}/multiplymutator.cpp
     ${SOURCE_PATH}/nodelibraryregistry.cpp
     ${SOURCE_PATH}/operationaction.cpp
     ${SOURCE_PATH}/outputnode.cpp
@@ -114,6 +123,7 @@ SET(LIB_SOURCES ${SOURCE_PATH}/actorarrayvalue.cpp
     ${SOURCE_PATH}/staticmeshvalue.cpp
     ${SOURCE_PATH}/stringarrayvalue.cpp
     ${SOURCE_PATH}/stringvalue.cpp
+    ${SOURCE_PATH}/subtractmutator.cpp
     ${SOURCE_PATH}/switchaction.cpp
     ${SOURCE_PATH}/toggleaction.cpp
     ${SOURCE_PATH}/triggervolumeevent.cpp
