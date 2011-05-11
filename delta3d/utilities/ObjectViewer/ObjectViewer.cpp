@@ -390,11 +390,18 @@ void ObjectViewer::OnApplyShader(const std::string& groupName, const std::string
    dtCore::ShaderProgram* program = shaderManager.FindShaderPrototype(programName, groupName);
    assert(program);
 
-   dtCore::ShaderProgram* deltaProgram = shaderManager.AssignShaderFromPrototype(*program, *mShadedScene);
-   osg::Program* osgProgram = deltaProgram->GetShaderProgram();
+   try
+   {
+      dtCore::ShaderProgram* deltaProgram = shaderManager.AssignShaderFromPrototype(*program, *mShadedScene);
+      osg::Program* osgProgram = deltaProgram->GetShaderProgram();
 
-   // Bind the default location for tangents
-   osgProgram->addBindAttribLocation("tangentAttrib", 6);
+      // Bind the default location for tangents
+      osgProgram->addBindAttribLocation("tangentAttrib", 6);
+   }
+   catch (const dtUtil::Exception &e)
+   {
+      LOG_ALWAYS(e.ToString());
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////

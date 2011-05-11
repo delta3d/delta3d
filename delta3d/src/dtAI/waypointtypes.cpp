@@ -48,7 +48,7 @@ namespace dtAI
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   NamedWaypoint::NamedWaypoint( const osg::Vec3& pos )
+   NamedWaypoint::NamedWaypoint(const osg::Vec3& pos)
       : BaseClass(WaypointTypes::NAMED_WAYPOINT.get())
       , mPosition(pos)
    {
@@ -56,7 +56,7 @@ namespace dtAI
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   NamedWaypoint::NamedWaypoint( const dtUtil::RefString& name )
+   NamedWaypoint::NamedWaypoint(const dtUtil::RefString& name)
       : BaseClass(WaypointTypes::NAMED_WAYPOINT.get())
       , mName(name)
    {
@@ -64,7 +64,7 @@ namespace dtAI
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   NamedWaypoint::NamedWaypoint( const osg::Vec3& pos, const dtUtil::RefString& name )
+   NamedWaypoint::NamedWaypoint(const osg::Vec3& pos, const dtUtil::RefString& name)
       : BaseClass(WaypointTypes::NAMED_WAYPOINT.get())
       , mName(name)
       , mPosition(pos)
@@ -73,14 +73,14 @@ namespace dtAI
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   NamedWaypoint::NamedWaypoint( const dtDAL::ObjectType* ot )
+   NamedWaypoint::NamedWaypoint(const dtDAL::ObjectType* ot)
       : BaseClass(ot)
    {
 
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   NamedWaypoint::NamedWaypoint( const dtDAL::ObjectType* ot, const osg::Vec3& pos )
+   NamedWaypoint::NamedWaypoint(const dtDAL::ObjectType* ot, const osg::Vec3& pos)
       : BaseClass(ot)
       , mPosition(pos)
    {
@@ -88,7 +88,7 @@ namespace dtAI
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   NamedWaypoint::NamedWaypoint( const dtDAL::ObjectType* ot, const dtUtil::RefString& name )
+   NamedWaypoint::NamedWaypoint(const dtDAL::ObjectType* ot, const dtUtil::RefString& name)
      : BaseClass(ot)
      , mName(name)
    {
@@ -96,7 +96,7 @@ namespace dtAI
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   NamedWaypoint::NamedWaypoint( const dtDAL::ObjectType* ot, const osg::Vec3& pos, const dtUtil::RefString& name )
+   NamedWaypoint::NamedWaypoint(const dtDAL::ObjectType* ot, const osg::Vec3& pos, const dtUtil::RefString& name)
       : BaseClass(ot)
       , mName(name)
       , mPosition(pos)
@@ -109,44 +109,44 @@ namespace dtAI
    {
    }
 
-   //////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    std::string NamedWaypoint::ToString() const
    {
       return mName.Get();
    }
 
-   //////////////////////////////////////////////////////////////////////////
-   void NamedWaypoint::SetName( const std::string& name )
+   /////////////////////////////////////////////////////////////////////////////
+   void NamedWaypoint::SetName(const std::string& name)
    {
       mName = name;
    }
 
-   //////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    const std::string& NamedWaypoint::GetName() const
    {
       return mName.Get();
    }
 
-   //////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    std::string NamedWaypoint::GetNameCopy() const
    {
       return mName.Get();
    }
 
-   //////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    const osg::Vec3& NamedWaypoint::GetPosition() const
    {
       return mPosition;
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void NamedWaypoint::SetPosition( const osg::Vec3& pVec )
+   void NamedWaypoint::SetPosition(const osg::Vec3& pVec)
    {
       mPosition = pVec;
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void NamedWaypoint::CreateProperties(WaypointPropertyBase& container )
+   void NamedWaypoint::CreateProperties(WaypointPropertyBase& container)
    {
       BaseClass::CreateProperties(container);
 
@@ -154,109 +154,109 @@ namespace dtAI
       static const dtUtil::RefString Desc_WaypointName("Name of Waypoint");
       static const dtUtil::RefString WaypointGroup("NamedWaypoint");
 
-      container.CreateProperty<std::string>(Property_WaypointName, Property_WaypointName, 
+      container.CreateProperty<std::string>(Property_WaypointName, Property_WaypointName,
          &NamedWaypoint::GetNameCopy, &NamedWaypoint::SetName, Desc_WaypointName, WaypointGroup);
    }
 
 
-   //////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    //Tactical Waypoint
-   //////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    TacticalWaypoint::TacticalWaypoint()
       : BaseClass(WaypointTypes::TACTICAL_WAYPOINT.get())
    {
 
    }
 
-   //////////////////////////////////////////////////////////////////////////
-   TacticalWaypoint::TacticalWaypoint( const osg::Vec3& pos )
+   /////////////////////////////////////////////////////////////////////////////
+   TacticalWaypoint::TacticalWaypoint(const osg::Vec3& pos)
       : BaseClass(WaypointTypes::TACTICAL_WAYPOINT.get(), pos)
    {
 
    }
 
-   //////////////////////////////////////////////////////////////////////////
-   TacticalWaypoint::TacticalWaypoint( const dtUtil::RefString& name )
+   /////////////////////////////////////////////////////////////////////////////
+   TacticalWaypoint::TacticalWaypoint(const dtUtil::RefString& name)
       : BaseClass(WaypointTypes::TACTICAL_WAYPOINT.get(), name)
    {
 
    }
 
-   //////////////////////////////////////////////////////////////////////////
-   TacticalWaypoint::TacticalWaypoint( const osg::Vec3& pos, const dtUtil::RefString& name )
+   /////////////////////////////////////////////////////////////////////////////
+   TacticalWaypoint::TacticalWaypoint(const osg::Vec3& pos, const dtUtil::RefString& name)
       : BaseClass(WaypointTypes::TACTICAL_WAYPOINT.get(), pos, name)
    {
-      
+
    }
 
-   //////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    TacticalWaypoint::~TacticalWaypoint()
    {
 
    }
 
-   //////////////////////////////////////////////////////////////////////////
-   void TacticalWaypoint::SetCover( bool b )
+   /////////////////////////////////////////////////////////////////////////////
+   void TacticalWaypoint::SetCover(bool b)
    {
       mCover = b;
    }
 
-   //////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    bool TacticalWaypoint::GetCover() const
    {
       return mCover;
    }
 
-   //////////////////////////////////////////////////////////////////////////
-   void TacticalWaypoint::SetCoverAngle( const osg::Vec3& angle )
+   /////////////////////////////////////////////////////////////////////////////
+   void TacticalWaypoint::SetCoverAngle(const osg::Vec3& angle)
    {
       mCoverAngle = angle;
    }
 
-   //////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    const osg::Vec3& TacticalWaypoint::GetCoverAngle() const
    {
       return mCoverAngle;
    }
-   
-   //////////////////////////////////////////////////////////////////////////
+
+   /////////////////////////////////////////////////////////////////////////////
    osg::Vec3 TacticalWaypoint::GetCoverAngleCopy() const
    {
       return mCoverAngle;
    }
 
-   //////////////////////////////////////////////////////////////////////////
-   void TacticalWaypoint::SetSniper( bool b )
+   /////////////////////////////////////////////////////////////////////////////
+   void TacticalWaypoint::SetSniper(bool b)
    {
       mSniper = b;
    }
 
-   //////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    bool TacticalWaypoint::GetSniper() const
    {
       return mSniper;
    }
 
-   //////////////////////////////////////////////////////////////////////////
-   void TacticalWaypoint::SetSniperAngle( const osg::Vec3& angle )
+   /////////////////////////////////////////////////////////////////////////////
+   void TacticalWaypoint::SetSniperAngle(const osg::Vec3& angle)
    {
       mSniperAngle = angle;
    }
 
-   //////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    const osg::Vec3& TacticalWaypoint::GetSniperAngle() const
    {
       return mSniperAngle;
    }
 
-   //////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    osg::Vec3 TacticalWaypoint::GetSniperAngleCopy() const
    {
       return mSniperAngle;
    }
 
-   //////////////////////////////////////////////////////////////////////////
-   void TacticalWaypoint::CreateProperties( WaypointPropertyBase& container )
+   /////////////////////////////////////////////////////////////////////////////
+   void TacticalWaypoint::CreateProperties(WaypointPropertyBase& container)
    {
       BaseClass::CreateProperties(container);
 
@@ -268,16 +268,16 @@ namespace dtAI
 
       static const dtUtil::RefString WaypointGroup("TacticalWaypoint");
 
-      container.CreateProperty<bool>(Property_SniperPoint, Property_SniperPoint, 
+      container.CreateProperty<bool>(Property_SniperPoint, Property_SniperPoint,
          &TacticalWaypoint::GetSniper, &TacticalWaypoint::SetSniper, Property_SniperPoint, WaypointGroup);
 
-      container.CreateProperty<osg::Vec3>(Property_SniperAngle, Property_SniperAngle, 
+      container.CreateProperty<osg::Vec3>(Property_SniperAngle, Property_SniperAngle,
          &TacticalWaypoint::GetSniperAngleCopy, &TacticalWaypoint::SetSniperAngle, Property_SniperAngle, WaypointGroup);
 
-      container.CreateProperty<bool>(Property_CoverPoint, Property_CoverPoint, 
+      container.CreateProperty<bool>(Property_CoverPoint, Property_CoverPoint,
          &TacticalWaypoint::GetCover, &TacticalWaypoint::SetCover, Property_CoverPoint, WaypointGroup);
 
-      container.CreateProperty<osg::Vec3>(Property_CoverAngle, Property_CoverAngle, 
+      container.CreateProperty<osg::Vec3>(Property_CoverAngle, Property_CoverAngle,
          &TacticalWaypoint::GetCoverAngleCopy, &TacticalWaypoint::SetCoverAngle, Property_CoverAngle, WaypointGroup);
    }
 
