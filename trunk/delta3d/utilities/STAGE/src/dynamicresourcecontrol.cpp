@@ -49,7 +49,8 @@ namespace dtEditQt
 
    ///////////////////////////////////////////////////////////////////////////////
    DynamicResourceControl::DynamicResourceControl()
-   : dtQt::DynamicResourceControlBase()
+      : dtQt::DynamicResourceControlBase()
+      , mTemporaryEditBtn(NULL)
    {
    }
 

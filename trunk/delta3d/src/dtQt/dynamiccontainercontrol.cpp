@@ -47,6 +47,7 @@ namespace dtQt
 
    ///////////////////////////////////////////////////////////////////////////////
    DynamicContainerControl::DynamicContainerControl()
+      : mTemporaryEditControl(NULL)
    {
    }
 
