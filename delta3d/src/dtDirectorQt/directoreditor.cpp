@@ -942,7 +942,16 @@ namespace dtDirector
          }
       }
 
-      RefreshButtonStates();
+      // Make sure all open editors know there is something in the clipboard.
+      int editorCount = (int)mEditorsOpen.size();
+      for (int editorIndex = 0; editorIndex < editorCount; ++editorIndex)
+      {
+         DirectorEditor* editor = mEditorsOpen[editorIndex];
+         if (editor)
+         {
+            editor->RefreshButtonStates();
+         }
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////
