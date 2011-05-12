@@ -50,6 +50,7 @@ namespace dtInspectorQt
 
    protected slots:
       void OnFogToggled(int checked);
+      void OnUseSimTimeToggled(int checked);
       void OnVisibilityChanged(double newValue);
       void OnFogColorChanged(double newValue);
       void OnFogColorPickerClicked();

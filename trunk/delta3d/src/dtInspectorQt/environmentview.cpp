@@ -9,6 +9,7 @@ dtInspectorQt::EnvironmentView::EnvironmentView(Ui::InspectorWidget& ui)
    mFilterName = QString("dtCore::Environment");
 
    connect(mUI->envFogToggle, SIGNAL(stateChanged(int)), this, SLOT(OnFogToggled(int)));
+   connect(mUI->envUseSimTime, SIGNAL(stateChanged(int)), this, SLOT(OnUseSimTimeToggled(int)));
    connect(mUI->envFogVisibilityEdit, SIGNAL(valueChanged(double)), this, SLOT(OnVisibilityChanged(double)));
    connect(mUI->envFogRedEdit, SIGNAL(valueChanged(double)), this, SLOT(OnFogColorChanged(double)));
    connect(mUI->envFogGreenEdit, SIGNAL(valueChanged(double)), this, SLOT(OnFogColorChanged(double)));
@@ -54,6 +55,15 @@ void dtInspectorQt::EnvironmentView::OnFogToggled(int checked)
    if (mOperateOn.valid())
    {
       mOperateOn->SetFogEnable(checked ? true : false);
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void dtInspectorQt::EnvironmentView::OnUseSimTimeToggled(int checked)
+{
+   if (mOperateOn.valid())
+   {
+      mOperateOn->SetUseSimTime(checked ? true : false);
    }
 }
 
@@ -148,6 +158,7 @@ void dtInspectorQt::EnvironmentView::Update()
       mUI->envGroupBox->show();
 
       mUI->envFogToggle->setChecked(mOperateOn->GetFogEnable());
+      mUI->envUseSimTime->setChecked(mOperateOn->GetUseSimTime());
       mUI->envFogVisibilityEdit->setValue(mOperateOn->GetVisibility());
 
       osg::Vec3 fColor;
