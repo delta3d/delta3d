@@ -67,11 +67,11 @@ namespace dtEditQt
          if (mEditor)
          {
             mEditor->SetDirector(mDirector);
+            mEditor->show();
             if (!GetResource().IsEmpty())
             {
                mEditor->LoadScript(dtDAL::Project::GetInstance().GetResourcePath(GetResource()));
             }
-            mEditor->show();
 
             connect(mEditor, SIGNAL(ScriptChanged(const std::string&)), this, SIGNAL(ScriptChanged(const std::string&)));
 
