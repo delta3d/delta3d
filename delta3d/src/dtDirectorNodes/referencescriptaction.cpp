@@ -67,7 +67,7 @@ namespace dtDirector
          dtDAL::DataType::DIRECTOR, "DirectorGraph", "Director Graph",
          dtDAL::ResourceActorProperty::SetDescFuncType(this, &ReferenceScriptAction::SetDirectorResource),
          dtDAL::ResourceActorProperty::GetDescFuncType(this, &ReferenceScriptAction::GetDirectorResource),
-         "A Director Graph Resource.");
+         "A Director Graph Resource.", "", "DirectorEditor");
       AddProperty(scriptProp);
    }
 
