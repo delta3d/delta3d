@@ -82,6 +82,12 @@ namespace dtDirector
       static dtCore::RefPtr<dtDirector::NodeType> SUBTRACT_MUTATOR_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> MULTIPLY_MUTATOR_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> DIVIDE_MUTATOR_NODE_TYPE;
+      static dtCore::RefPtr<dtDirector::NodeType> COMPARE_EQUALITY_MUTATOR_NODE_TYPE;
+      static dtCore::RefPtr<dtDirector::NodeType> COMPARE_LESS_MUTATOR_NODE_TYPE;
+      static dtCore::RefPtr<dtDirector::NodeType> COMPARE_GREATER_MUTATOR_NODE_TYPE;
+      static dtCore::RefPtr<dtDirector::NodeType> IS_NOT_MUTATOR_NODE_TYPE;
+      static dtCore::RefPtr<dtDirector::NodeType> AND_MUTATOR_NODE_TYPE;
+      static dtCore::RefPtr<dtDirector::NodeType> OR_MUTATOR_NODE_TYPE;
 
       /// Values
       static dtCore::RefPtr<dtDirector::NodeType> EXTERNAL_VALUE_NODE_TYPE;
