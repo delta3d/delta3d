@@ -69,6 +69,7 @@ namespace dtAI
       }
 
       const StateVarMapping& GetStateVariables() const { return mStateVariables; }
+      StateVarMapping& GetStateVariables() { return mStateVariables; }
 
    private:
       void FreeMem();
