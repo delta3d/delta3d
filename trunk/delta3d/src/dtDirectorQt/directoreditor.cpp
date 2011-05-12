@@ -138,6 +138,49 @@ namespace dtDirector
       }
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   bool DirectorEditor::LoadScript(const std::string& fileName)
+   {
+      if (!fileName.empty())
+      {
+         // Clear the script.
+         mDirector->Clear();
+         mUI.graphTab->clear();
+         mUndoManager->Clear();
+
+         try
+         {
+            mDirector->LoadScript(fileName);
+
+            std::string contextDir = osgDB::convertFileNameToNativeStyle(dtDAL::Project::GetInstance().GetContext()+"/");
+            mFileName = dtUtil::FileUtils::GetInstance().RelativePath(contextDir, fileName);
+         }
+         catch (const dtUtil::Exception& e)
+         {
+            QString error = QString("Unable to parse ") + fileName.c_str() + " with error " + e.What().c_str();
+
+            QMessageBox messageBox("Load Failed!",
+               error, QMessageBox::Critical,
+               QMessageBox::Ok,
+               QMessageBox::NoButton, 
+               QMessageBox::NoButton,
+               this);
+
+            messageBox.exec();
+         }
+
+         // Create a single tab with the default graph.
+         OpenGraph(mDirector->GetGraphRoot());
+         mUI.replayBrowser->BuildThreadList();
+         mUI.graphBrowser->BuildGraphList(mDirector->GetGraphRoot());
+
+         RefreshNodeScenes();
+         return true;
+      }
+
+      return false;
+   }
+
    //////////////////////////////////////////////////////////////////////////
    void DirectorEditor::OpenGraph(dtDirector::DirectorGraph* graph, bool newTab)
    {
@@ -1412,49 +1455,6 @@ namespace dtDirector
          filePath.absolutePath().toStdString() + "/" + filePath.baseName().toStdString());
 
       return LoadScript(absFileName);
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   bool DirectorEditor::LoadScript(const std::string& fileName)
-   {
-      if (!fileName.empty())
-      {
-         // Clear the script.
-         mDirector->Clear();
-         mUI.graphTab->clear();
-         mUndoManager->Clear();
-
-         try
-         {
-            mDirector->LoadScript(fileName);
-
-            std::string contextDir = osgDB::convertFileNameToNativeStyle(dtDAL::Project::GetInstance().GetContext()+"/");
-            mFileName = dtUtil::FileUtils::GetInstance().RelativePath(contextDir, fileName);
-         }
-         catch (const dtUtil::Exception& e)
-         {
-            QString error = QString("Unable to parse ") + fileName.c_str() + " with error " + e.What().c_str();
-
-            QMessageBox messageBox("Load Failed!",
-               error, QMessageBox::Critical,
-               QMessageBox::Ok,
-               QMessageBox::NoButton, 
-               QMessageBox::NoButton,
-               this);
-
-            messageBox.exec();
-         }
-
-         // Create a single tab with the default graph.
-         OpenGraph(mDirector->GetGraphRoot());
-         mUI.replayBrowser->BuildThreadList();
-         mUI.graphBrowser->BuildGraphList(mDirector->GetGraphRoot());
-
-         RefreshNodeScenes();
-         return true;
-      }
-
-      return false;
    }
 
    //////////////////////////////////////////////////////////////////////////
