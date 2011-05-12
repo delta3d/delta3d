@@ -84,6 +84,15 @@ namespace dtDirector
       void SetDirector(Director* director);
 
       /**
+       * Loads an existing script.
+       *
+       * @param[in]  The file path to the script.
+       *
+       * @return     True if a script was loaded.
+       */
+      bool LoadScript(const std::string& fileName);
+
+      /**
        * Opens a Director graph.
        *
        * @param[in]  graph   The graph to open.
@@ -499,15 +508,6 @@ namespace dtDirector
        * @return  True if a script was loaded.
        */
       bool LoadScript();
-
-      /**
-       * Loads an existing script.
-       *
-       * @param[in]  The file path to the script.
-       *
-       * @return     True if a script was loaded.
-       */
-      bool LoadScript(const std::string& fileName);
 
    public:
 
