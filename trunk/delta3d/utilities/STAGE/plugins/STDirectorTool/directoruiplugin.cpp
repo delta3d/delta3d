@@ -62,15 +62,15 @@ namespace dtEditQt
       if (mDirector)
       {
          mDirector->Init(NULL, dtEditQt::EditorData::GetInstance().getCurrentMap());
-         if (!GetResource().IsEmpty())
-         {
-            mDirector->LoadScript(dtDAL::Project::GetInstance().GetResourcePath(GetResource()));
-         }
 
          mEditor = new DirectorToolEditor();
          if (mEditor)
          {
             mEditor->SetDirector(mDirector);
+            if (!GetResource().IsEmpty())
+            {
+               mEditor->LoadScript(dtDAL::Project::GetInstance().GetResourcePath(GetResource()));
+            }
             mEditor->show();
 
             connect(mEditor, SIGNAL(ScriptChanged(const std::string&)), this, SIGNAL(ScriptChanged(const std::string&)));
