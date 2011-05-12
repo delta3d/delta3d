@@ -68,6 +68,12 @@
 #include <dtDirectorNodes/subtractmutator.h>
 #include <dtDirectorNodes/multiplymutator.h>
 #include <dtDirectorNodes/dividemutator.h>
+#include <dtDirectorNodes/compareequalitymutator.h>
+#include <dtDirectorNodes/comparelessmutator.h>
+#include <dtDirectorNodes/comparegreatermutator.h>
+#include <dtDirectorNodes/isnotmutator.h>
+#include <dtDirectorNodes/andmutator.h>
+#include <dtDirectorNodes/ormutator.h>
 
 // Values
 #include <dtDirectorNodes/actorarrayvalue.h>
@@ -160,6 +166,12 @@ namespace dtDirector
    RefPtr<NodeType> NodeLibraryRegistry::SUBTRACT_MUTATOR_NODE_TYPE(             new dtDirector::NodeType(dtDirector::NodeType::MUTATOR_NODE, "Subtract",                 "Mutator",     "Operations",  "Performs a subtraction between two values.", NULL, Colors::BLUE3));
    RefPtr<NodeType> NodeLibraryRegistry::MULTIPLY_MUTATOR_NODE_TYPE(             new dtDirector::NodeType(dtDirector::NodeType::MUTATOR_NODE, "Multiply",                 "Mutator",     "Operations",  "Performs a multiplication of two values.", NULL, Colors::BLUE3));
    RefPtr<NodeType> NodeLibraryRegistry::DIVIDE_MUTATOR_NODE_TYPE(               new dtDirector::NodeType(dtDirector::NodeType::MUTATOR_NODE, "Divide",                   "Mutator",     "Operations",  "Performs a division between two values.", NULL, Colors::BLUE3));
+   RefPtr<NodeType> NodeLibraryRegistry::COMPARE_EQUALITY_MUTATOR_NODE_TYPE(     new dtDirector::NodeType(dtDirector::NodeType::MUTATOR_NODE, "Is Equal",                 "Mutator",     "Condition",   "Tests if two values are equal to each other.", NULL, Colors::BLUE3));
+   RefPtr<NodeType> NodeLibraryRegistry::COMPARE_LESS_MUTATOR_NODE_TYPE(         new dtDirector::NodeType(dtDirector::NodeType::MUTATOR_NODE, "Less Than",                "Mutator",     "Condition",   "Tests if A is less than B.", NULL, Colors::BLUE3));
+   RefPtr<NodeType> NodeLibraryRegistry::COMPARE_GREATER_MUTATOR_NODE_TYPE(      new dtDirector::NodeType(dtDirector::NodeType::MUTATOR_NODE, "Greater Than",             "Mutator",     "Condition",   "Tests if A is greater than B.", NULL, Colors::BLUE3));
+   RefPtr<NodeType> NodeLibraryRegistry::IS_NOT_MUTATOR_NODE_TYPE(               new dtDirector::NodeType(dtDirector::NodeType::MUTATOR_NODE, "Is Not",                   "Mutator",     "Condition",   "Flips the value received.", NULL, Colors::BLUE3));
+   RefPtr<NodeType> NodeLibraryRegistry::AND_MUTATOR_NODE_TYPE(                  new dtDirector::NodeType(dtDirector::NodeType::MUTATOR_NODE, "And",                      "Mutator",     "Condition",   "Tests if all received values are true.", NULL, Colors::BLUE3));
+   RefPtr<NodeType> NodeLibraryRegistry::OR_MUTATOR_NODE_TYPE(                   new dtDirector::NodeType(dtDirector::NodeType::MUTATOR_NODE, "Or",                       "Mutator",     "Condition",   "Tests if at least one received value is true.", NULL, Colors::BLUE3));
 
    // Values
    RefPtr<NodeType> NodeLibraryRegistry::EXTERNAL_VALUE_NODE_TYPE(               new dtDirector::NodeType(dtDirector::NodeType::LINK_NODE,   "Value Link",                "Core",        "Base",        "This node creates a value link connector in its parent graph.", NULL, Colors::VIOLET));
@@ -253,6 +265,12 @@ namespace dtDirector
       mNodeFactory->RegisterType<SubtractMutator>(SUBTRACT_MUTATOR_NODE_TYPE.get());
       mNodeFactory->RegisterType<MultiplyMutator>(MULTIPLY_MUTATOR_NODE_TYPE.get());
       mNodeFactory->RegisterType<DivideMutator>(DIVIDE_MUTATOR_NODE_TYPE.get());
+      mNodeFactory->RegisterType<CompareEqualityMutator>(COMPARE_EQUALITY_MUTATOR_NODE_TYPE.get());
+      mNodeFactory->RegisterType<CompareLessMutator>(COMPARE_LESS_MUTATOR_NODE_TYPE.get());
+      mNodeFactory->RegisterType<CompareGreaterMutator>(COMPARE_GREATER_MUTATOR_NODE_TYPE.get());
+      mNodeFactory->RegisterType<IsNotMutator>(IS_NOT_MUTATOR_NODE_TYPE.get());
+      mNodeFactory->RegisterType<AndMutator>(AND_MUTATOR_NODE_TYPE.get());
+      mNodeFactory->RegisterType<OrMutator>(OR_MUTATOR_NODE_TYPE.get());
 
       // Values
       mNodeFactory->RegisterType<ExternalValueNode>(EXTERNAL_VALUE_NODE_TYPE.get());

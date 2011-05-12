@@ -8,6 +8,7 @@ SET(SOURCE_PATH ${DELTA3D_SOURCE_DIR}/src/${LIB_NAME})
 SET(LIB_PUBLIC_HEADERS ${HEADER_PATH}/actorarrayvalue.h
     ${HEADER_PATH}/actorvalue.h
     ${HEADER_PATH}/addmutator.h
+    ${HEADER_PATH}/andmutator.h
     ${HEADER_PATH}/animateactoraction.h
     ${HEADER_PATH}/arithmeticmutator.h
     ${HEADER_PATH}/booleanvalue.h
@@ -16,6 +17,10 @@ SET(LIB_PUBLIC_HEADERS ${HEADER_PATH}/actorarrayvalue.h
     ${HEADER_PATH}/compareactoraction.h
     ${HEADER_PATH}/compareactorpropertyaction.h
     ${HEADER_PATH}/compareboolaction.h
+    ${HEADER_PATH}/compareequalitymutator.h
+    ${HEADER_PATH}/comparegreatermutator.h
+    ${HEADER_PATH}/comparelessmutator.h
+    ${HEADER_PATH}/comparemutator.h
     ${HEADER_PATH}/comparevalueaction.h
     ${HEADER_PATH}/comparevectoraction.h
     ${HEADER_PATH}/createvectoraction.h
@@ -32,6 +37,7 @@ SET(LIB_PUBLIC_HEADERS ${HEADER_PATH}/actorarrayvalue.h
     ${HEADER_PATH}/getvectorvaluesaction.h
     ${HEADER_PATH}/inputnode.h
     ${HEADER_PATH}/intvalue.h
+    ${HEADER_PATH}/isnotmutator.h
     ${HEADER_PATH}/lerpactorrotationaction.h
     ${HEADER_PATH}/lerpactorscaleaction.h
     ${HEADER_PATH}/lerpactortranslationaction.h
@@ -40,6 +46,7 @@ SET(LIB_PUBLIC_HEADERS ${HEADER_PATH}/actorarrayvalue.h
     ${HEADER_PATH}/nodelibraryexport.h
     ${HEADER_PATH}/nodelibraryregistry.h
     ${HEADER_PATH}/operationaction.h
+    ${HEADER_PATH}/ormutator.h
     ${HEADER_PATH}/outputnode.h
     ${HEADER_PATH}/playervalue.h
     ${HEADER_PATH}/randomfloatvalue.h
@@ -74,6 +81,7 @@ SET(LIB_PUBLIC_HEADERS ${HEADER_PATH}/actorarrayvalue.h
 SET(LIB_SOURCES ${SOURCE_PATH}/actorarrayvalue.cpp
     ${SOURCE_PATH}/actorvalue.cpp
     ${SOURCE_PATH}/addmutator.cpp
+    ${SOURCE_PATH}/andmutator.cpp
     ${SOURCE_PATH}/animateactoraction.cpp
     ${SOURCE_PATH}/arithmeticmutator.cpp
     ${SOURCE_PATH}/booleanvalue.cpp
@@ -82,6 +90,10 @@ SET(LIB_SOURCES ${SOURCE_PATH}/actorarrayvalue.cpp
     ${SOURCE_PATH}/compareactoraction.cpp
     ${SOURCE_PATH}/compareactorpropertyaction.cpp
     ${SOURCE_PATH}/compareboolaction.cpp
+    ${SOURCE_PATH}/compareequalitymutator.cpp
+    ${SOURCE_PATH}/comparegreatermutator.cpp
+    ${SOURCE_PATH}/comparelessmutator.cpp
+    ${SOURCE_PATH}/comparemutator.cpp
     ${SOURCE_PATH}/comparevalueaction.cpp
     ${SOURCE_PATH}/comparevectoraction.cpp
     ${SOURCE_PATH}/createvectoraction.cpp
@@ -98,6 +110,7 @@ SET(LIB_SOURCES ${SOURCE_PATH}/actorarrayvalue.cpp
     ${SOURCE_PATH}/getvectorvaluesaction.cpp
     ${SOURCE_PATH}/inputnode.cpp
     ${SOURCE_PATH}/intvalue.cpp
+    ${SOURCE_PATH}/isnotmutator.cpp
     ${SOURCE_PATH}/lerpactorrotationaction.cpp
     ${SOURCE_PATH}/lerpactorscaleaction.cpp
     ${SOURCE_PATH}/lerpactortranslationaction.cpp
@@ -105,6 +118,7 @@ SET(LIB_SOURCES ${SOURCE_PATH}/actorarrayvalue.cpp
     ${SOURCE_PATH}/multiplymutator.cpp
     ${SOURCE_PATH}/nodelibraryregistry.cpp
     ${SOURCE_PATH}/operationaction.cpp
+    ${SOURCE_PATH}/ormutator.cpp
     ${SOURCE_PATH}/outputnode.cpp
     ${SOURCE_PATH}/playervalue.cpp
     ${SOURCE_PATH}/randomfloatvalue.cpp

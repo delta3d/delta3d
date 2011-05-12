@@ -36,6 +36,10 @@ namespace dtDirector
       : MutatorNode()
       , mValueA(0.0f)
       , mValueB(0.0f)
+      , mResultBool(false)
+      , mResultInt(0)
+      , mResultFloat(0.0f)
+      , mResultDouble(0.0)
    {
       AddAuthor("Jeff P. Houde");
    }
