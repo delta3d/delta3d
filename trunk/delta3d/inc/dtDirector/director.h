@@ -116,11 +116,15 @@ namespace dtDirector
        */
       void ClearRecordingData(std::vector<RecordThreadData*>& threads);
 
-
       /**
        * Clears all running threads to stop all current nodes.
        */
       void ClearThreads();
+
+      /**
+       * Retrieves whether the script has started.
+       */
+      bool HasStarted() const {return mStarted;}
 
       /**
        * Retrieves the Director Proxy if it has one.
