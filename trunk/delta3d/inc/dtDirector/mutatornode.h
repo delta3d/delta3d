@@ -58,6 +58,15 @@ namespace dtDirector
       virtual std::string GetValueLabel();
 
       /**
+       * Retrieves the total number of values linked to a value link.
+       *
+       * @param[in]  name  The name of the value link.
+       *
+       * @return     The count.
+       */
+      virtual int GetPropertyCount(const std::string& name = "Value");
+
+      /**
        * Retrieves whether the UI should expose the value links
        * assigned to this node.
        *

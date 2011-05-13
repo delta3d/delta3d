@@ -45,6 +45,34 @@ namespace dtDirector
    {
       return "";
    }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   int MutatorNode::GetPropertyCount(const std::string& name)
+   {
+      int propertyCount = 0;
+
+      // First iterate through all value links to see if this property
+      // is redirected.
+      for (int valueIndex = 0; valueIndex < (int)mValues.size(); valueIndex++)
+      {
+         dtDAL::ActorProperty* prop = mValues[valueIndex].GetDefaultProperty();
+         if (prop && prop->GetName() == name)
+         {
+            propertyCount = mValues[valueIndex].GetPropertyCount();
+         }
+      }
+
+      // Did not find any overrides, so return the default.
+      if (propertyCount == 0)
+      {
+         if (name == "Value" || dtDAL::PropertyContainer::GetProperty(name))
+         {
+            return 1;
+         }
+      }
+
+      return propertyCount;
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
