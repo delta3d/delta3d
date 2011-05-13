@@ -212,19 +212,20 @@ namespace dtDAL
 
       SetReadOnly(config.GetReadOnly());
 
-      try
-      {
+
          for (unsigned i = 0; i < config.GetNumContextData(); ++i)
          {
-            AddContext(config.GetContextData(i).GetPath());
+            try
+            {
+               AddContext(config.GetContextData(i).GetPath());
+            }
+            catch (const dtUtil::Exception& ex)
+            {
+               std::ostringstream output;
+               output << "Creating project context '" << config.GetContextData(i).GetPath() << "' returned error '" << ex.ToString() << "'" << std::endl; 
+               LOG_ERROR(output.str());
+            }
          }
-      }
-      catch (const dtUtil::Exception& ex)
-      {
-         // Clear everything if any part of the config fails.
-         ClearAllContexts();
-         throw ex;
-      }
    }
 
    /////////////////////////////////////////////////////////////////////////////
