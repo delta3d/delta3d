@@ -1,0 +1,25 @@
+<RCC>
+	<qresource prefix="director/">
+		<file>contents.xml</file>
+
+		<file>tutorial.html</file>
+		<file>1.1_overview.html</file>
+		<file>1.2_nodes.html</file>
+		<file>1.3_chaining.html</file>
+
+		<file>images/Logo.png</file>
+		<file>images/splash.png</file>
+		<file>images/Background.gif</file>
+
+		<file>images/Figure1.1.1.png</file>
+		<file>images/Figure1.2.1.png</file>
+		<file>images/Figure1.2.2.png</file>
+		<file>images/Figure1.2.3.png</file>
+		<file>images/Figure1.2.4.png</file>
+		<file>images/Figure1.2.5.png</file>
+		<file>images/Figure1.2.6.png</file>
+		<file>images/Figure1.2.7.png</file>
+		<file>images/Figure1.3.1.png</file>
+		<file>images/Figure1.3.2.png</file>
+	</qresource>
+</RCC>
