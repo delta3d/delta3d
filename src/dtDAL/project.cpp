@@ -212,20 +212,26 @@ namespace dtDAL
 
       SetReadOnly(config.GetReadOnly());
 
-
-         for (unsigned i = 0; i < config.GetNumContextData(); ++i)
+      for (unsigned i = 0; i < config.GetNumContextData(); ++i)
+      {
+         try
          {
-            try
-            {
-               AddContext(config.GetContextData(i).GetPath());
-            }
-            catch (const dtUtil::Exception& ex)
-            {
-               std::ostringstream output;
-               output << "Creating project context '" << config.GetContextData(i).GetPath() << "' returned error '" << ex.ToString() << "'" << std::endl; 
-               LOG_ERROR(output.str());
-            }
+            AddContext(config.GetContextData(i).GetPath());
          }
+         catch (const dtUtil::Exception& ex)
+         {
+            std::ostringstream output;
+            output << "Creating project context '" << config.GetContextData(i).GetPath() << "' returned error '" << ex.ToString() << "'" << std::endl; 
+            LOG_ERROR(output.str());
+         }
+      }
+
+      //now make sure we have at least one valid context
+      if(!IsContextValid())
+      {
+         std::string s("Project must have at least one valid context.");
+         throw dtDAL::ProjectInvalidContextException(s, __FILE__, __LINE__);
+      }
    }
 
    /////////////////////////////////////////////////////////////////////////////
