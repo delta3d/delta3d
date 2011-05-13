@@ -563,50 +563,67 @@ void ResourceDock::OnShaderItemChanged(QTreeWidgetItem* item, int column)
          if (mCurrentShaderFile != fileName)
          {
             shaderManager.Clear();
-            shaderManager.LoadShaderDefinitions(fileName.toStdString());
-         }
 
-         std::string programString = item->text(0).toStdString();
-         std::string groupString =  item->parent()->text(0).toStdString();
-
-         dtCore::ShaderProgram *program =
-            shaderManager.FindShaderPrototype(programString, groupString);
-         if (program)
-         {
-            const std::vector<std::string>& vertShaderList = program->GetVertexShaders();
-            const std::vector<std::string>& geomShaderList = program->GetGeometryShaders();
-            const std::vector<std::string>& fragShaderList = program->GetFragmentShaders();
-
-            bool vertexEnabled = vertShaderList.size()? true: false;
-            bool geomEnabled = geomShaderList.size() ? true: false;
-            bool fragmentEnabled = fragShaderList.size()? true: false;
-
-            ToggleVertexShaderSources(vertexEnabled);
-            ToggleGeometryShaderSources(geomEnabled);
-            ToggleFragmentShaderSources(fragmentEnabled);
-
-            mShaderTreeWidget->SetShaderSourceEnabled(vertexEnabled, geomEnabled, fragmentEnabled);
-         }
-
-         // Store so we know where the source files can be found
-         mCurrentShaderFile    = fileName;
-         mCurrentShaderGroup   = groupName;
-         mCurrentShaderProgram = programName;
-
-         QTreeWidgetItemIterator treeIter(mShaderTreeWidget);
-
-         // Uncheck the previously checked item
-         while (*treeIter)
-         {
-            if ((*treeIter)->checkState(0) == Qt::Checked && (*treeIter) != item)
+            try
             {
-               (*treeIter)->setCheckState(0, Qt::Unchecked);
+               shaderManager.LoadShaderDefinitions(fileName.toStdString());
+
+               std::string programString = item->text(0).toStdString();
+               std::string groupString =  item->parent()->text(0).toStdString();
+
+               dtCore::ShaderProgram *program =
+                  shaderManager.FindShaderPrototype(programString, groupString);
+               if (program)
+               {
+                  const std::vector<std::string>& vertShaderList = program->GetVertexShaders();
+                  const std::vector<std::string>& geomShaderList = program->GetGeometryShaders();
+                  const std::vector<std::string>& fragShaderList = program->GetFragmentShaders();
+
+                  bool vertexEnabled = vertShaderList.size()? true: false;
+                  bool geomEnabled = geomShaderList.size() ? true: false;
+                  bool fragmentEnabled = fragShaderList.size()? true: false;
+
+                  ToggleVertexShaderSources(vertexEnabled);
+                  ToggleGeometryShaderSources(geomEnabled);
+                  ToggleFragmentShaderSources(fragmentEnabled);
+
+                  mShaderTreeWidget->SetShaderSourceEnabled(vertexEnabled, geomEnabled, fragmentEnabled);
+               }
+
+               // Store so we know where the source files can be found
+               mCurrentShaderFile    = fileName;
+               mCurrentShaderGroup   = groupName;
+               mCurrentShaderProgram = programName;
+
+               QTreeWidgetItemIterator treeIter(mShaderTreeWidget);
+
+               // Uncheck the previously checked item
+               while (*treeIter)
+               {
+                  if ((*treeIter)->checkState(0) == Qt::Checked && (*treeIter) != item)
+                  {
+                     (*treeIter)->setCheckState(0, Qt::Unchecked);
+                  }
+
+                  ++treeIter;
+               }
+
+               emit ApplyShader(groupName.toStdString(), programName.toStdString());
             }
+            catch (dtUtil::Exception& e)
+            {
+               QMessageBox::critical(NULL, "Error", e.ToString().c_str());
 
-            ++treeIter;
+               // We don't want this signal emitted when we're unchecking
+               disconnect(mShaderTreeWidget, SIGNAL(itemChanged(QTreeWidgetItem*, int)),
+                  this, SLOT(OnShaderItemChanged(QTreeWidgetItem*, int)));
+
+               item->setCheckState(0, Qt::Unchecked);
+
+               connect(mShaderTreeWidget, SIGNAL(itemChanged(QTreeWidgetItem*, int)),
+                  this, SLOT(OnShaderItemChanged(QTreeWidgetItem*, int)));
+            }
          }
-
-         emit ApplyShader(groupName.toStdString(), programName.toStdString());
       }
       else if (item->checkState(0) == Qt::Unchecked)
       {
@@ -657,23 +674,31 @@ void ResourceDock::OnReloadShaderFiles()
    {
       dtCore::ShaderManager& shaderManager = dtCore::ShaderManager::GetInstance();
       shaderManager.Clear();
-      shaderManager.LoadShaderDefinitions(fileNames.at(fileIndex).toStdString());
 
-      std::vector<dtCore::RefPtr<dtCore::ShaderGroup> > shaderGroupList;
-      shaderManager.GetAllShaderGroupPrototypes(shaderGroupList);
-
-      // Emit all shader groups and their individual shaders
-      for (size_t groupIndex = 0; groupIndex < shaderGroupList.size(); ++groupIndex)
+      try
       {
-         std::vector<dtCore::RefPtr<dtCore::ShaderProgram> > programList;
-         shaderGroupList[groupIndex]->GetAllShaders(programList);
+         shaderManager.LoadShaderDefinitions(fileNames.at(fileIndex).toStdString());
 
-         const std::string& groupName = shaderGroupList[groupIndex]->GetName();
+         std::vector<dtCore::RefPtr<dtCore::ShaderGroup> > shaderGroupList;
+         shaderManager.GetAllShaderGroupPrototypes(shaderGroupList);
 
-         for (size_t programIndex = 0; programIndex < programList.size(); ++programIndex)
+         // Emit all shader groups and their individual shaders
+         for (size_t groupIndex = 0; groupIndex < shaderGroupList.size(); ++groupIndex)
          {
-            OnNewShader(fileNames.at(fileIndex).toStdString(), groupName, programList[programIndex]->GetName());
+            std::vector<dtCore::RefPtr<dtCore::ShaderProgram> > programList;
+            shaderGroupList[groupIndex]->GetAllShaders(programList);
+
+            const std::string& groupName = shaderGroupList[groupIndex]->GetName();
+
+            for (size_t programIndex = 0; programIndex < programList.size(); ++programIndex)
+            {
+               OnNewShader(fileNames.at(fileIndex).toStdString(), groupName, programList[programIndex]->GetName());
+            }
          }
+      }
+      catch (dtUtil::Exception& e)
+      {
+         QMessageBox::critical(NULL, "Error", e.ToString().c_str());
       }
    }
 

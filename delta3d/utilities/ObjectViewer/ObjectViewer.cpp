@@ -166,7 +166,7 @@ void ObjectViewer::OnLoadMapFile(const std::string& filename)
       dtCore::RefPtr<dtCore::Scene> dummy = new dtCore::Scene;
       map = &dtDAL::Project::GetInstance().LoadMapIntoScene(filename, *dummy);
    }
-   catch (dtUtil::Exception &e)
+   catch (dtUtil::Exception& e)
    {
       QApplication::restoreOverrideCursor();
       QString error = "An error occured while opening the map. ";
@@ -400,7 +400,7 @@ void ObjectViewer::OnApplyShader(const std::string& groupName, const std::string
    }
    catch (const dtUtil::Exception &e)
    {
-      LOG_ALWAYS(e.ToString());
+      QMessageBox::critical(NULL, "Error", e.ToString().c_str());
    }
 }
 
