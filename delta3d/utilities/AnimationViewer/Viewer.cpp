@@ -71,11 +71,11 @@ using namespace dtCore;
 using namespace dtAnim;
 
 ////////////////////////////////////////////////////////////////////////////////
-Viewer::Viewer() : 
- dtABC::Application()
+Viewer::Viewer()
+ : dtABC::Application()
  , mCalDatabase(&Cal3DDatabase::GetInstance())
  , mPoseMeshes(NULL)
-   , mAttachmentObject(NULL)
+ , mAttachmentObject(NULL)
 {
    dtUtil::Log::GetInstance().SetLogLevel(dtUtil::Log::LOG_DEBUG);
 }
@@ -97,7 +97,7 @@ osg::Geode* MakePlane()
    material->setAlpha(osg::Material::FRONT, 0.5f);
 
    osg::StateSet* ss = geode->getOrCreateStateSet();
-   ss->setAttributeAndModes(material, osg::StateAttribute::ON); 
+   ss->setAttributeAndModes(material, osg::StateAttribute::ON);
    ss->setMode(GL_BLEND, osg::StateAttribute::ON);
 
    geode->addDrawable(shapeDrawable);
@@ -248,24 +248,31 @@ void Viewer::OnLoadCharFile(const QString& filename)
    //get all data for the meshes and emit
    for (int meshID = 0; meshID < wrapper->GetCoreMeshCount(); ++meshID)
    {
-      QString nameToSend = QString::fromStdString(wrapper->GetCoreMeshName(meshID));
-      
-      emit MeshLoaded(meshID, nameToSend, bones);
+      CalCoreMesh* currentMesh = wrapper->GetCalModel()->getCoreModel()->getCoreMesh(meshID);
 
-      const std::vector<CalCoreSubmesh *> subMeshVec = wrapper->GetCalModel()->getCoreModel()->getCoreMesh(meshID)->getVectorCoreSubmesh();
-      for (size_t subMeshID = 0; subMeshID < subMeshVec.size(); ++subMeshID)
+      // If the mesh is currently loaded
+      if (currentMesh)
       {
-         const std::vector<CalCoreSubMorphTarget *> morphVec = subMeshVec[subMeshID]->getVectorCoreSubMorphTarget();
-         for (size_t morphID = 0; morphID < morphVec.size(); ++morphID)
+         QString nameToSend = QString::fromStdString(currentMesh->getName());
+
+         emit MeshLoaded(meshID, nameToSend, bones);
+
+         const std::vector<CalCoreSubmesh *> subMeshVec = currentMesh->getVectorCoreSubmesh();
+         for (size_t subMeshID = 0; subMeshID < subMeshVec.size(); ++subMeshID)
          {
+            const std::vector<CalCoreSubMorphTarget *> morphVec = subMeshVec[subMeshID]->getVectorCoreSubMorphTarget();
+            for (size_t morphID = 0; morphID < morphVec.size(); ++morphID)
+            {
 #if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300
-            QString nameToSend = QString::fromStdString(morphVec[morphID]->name());
+               QString nameToSend = QString::fromStdString(morphVec[morphID]->name());
 #else
-            QString nameToSend = QString::number(morphID);
+               QString nameToSend = QString::number(morphID);
 #endif
-            emit SubMorphTargetLoaded(meshID, subMeshID, morphID, nameToSend);           
+               emit SubMorphTargetLoaded(meshID, subMeshID, morphID, nameToSend);
+            }
          }
       }
+
    }
 
    //get all material data and emit
@@ -308,7 +315,7 @@ void Viewer::OnUnloadAttachmentFile()
 void Viewer::OnLoadAttachmentFile(const QString& filename)
 {
    OnUnloadAttachmentFile();
-   
+
    mAttachmentObject = new dtCore::Object;
    mAttachmentObject->LoadFile(filename.toStdString());
    GetScene()->AddChild(mAttachmentObject.get());

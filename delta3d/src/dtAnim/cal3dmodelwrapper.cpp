@@ -78,8 +78,12 @@ namespace dtAnim
          {
             for (int meshId = 0; meshId < coreModel->getCoreMeshCount(); ++meshId)
             {
-               AttachMesh(meshId);
-               ShowMesh(meshId);
+               // If the mesh is currently loaded
+               if (coreModel->getCoreMesh(meshId))
+               {
+                  AttachMesh(meshId);
+                  ShowMesh(meshId);
+               }
             }
          }
       }
@@ -457,7 +461,7 @@ namespace dtAnim
    {
       return mCalModel->getCoreModel()->getCoreMaterialCount();
    }
-   
+
    /////////////////////////////////////////////////////////////////////////////
    CalCoreMaterial* Cal3DModelWrapper::GetCoreMaterial(int matID)
    {
@@ -558,7 +562,7 @@ namespace dtAnim
    CalHardwareModel* Cal3DModelWrapper::GetOrCreateCalHardwareModel()
    {
       //deprecated 10/20/2009
-      DEPRECATE("Cal3DModelWrapper::GetOrCreateCalHardwareModel", 
+      DEPRECATE("Cal3DModelWrapper::GetOrCreateCalHardwareModel",
          "Cal3DModelData::GetOrCreateCalHardwareModel");
 
       if (!mHardwareModel)
@@ -574,7 +578,7 @@ namespace dtAnim
    {
       mCalModel->setMaterialSet(materialSetID);
    }
-   
+
    /////////////////////////////////////////////////////////////////////////////
    void Cal3DModelWrapper::SetLODLevel(float level)
    {
@@ -616,7 +620,7 @@ namespace dtAnim
    {
       return mRenderer->beginRendering();
    }
-   
+
    /////////////////////////////////////////////////////////////////////////////
    void Cal3DModelWrapper::EndRenderingQuery()
    {
@@ -634,25 +638,25 @@ namespace dtAnim
    {
       return mRenderer->getVertexCount();
    }
-   
+
    /////////////////////////////////////////////////////////////////////////////
    int Cal3DModelWrapper::GetFaceCount()
    {
       return mRenderer->getFaceCount();
    }
-   
+
    /////////////////////////////////////////////////////////////////////////////
    int Cal3DModelWrapper::GetMapCount()
    {
       return mRenderer->getMapCount();
    }
-   
+
    /////////////////////////////////////////////////////////////////////////////
    int Cal3DModelWrapper::GetMeshCount() const
    {
       return mRenderer->getMeshCount();
    }
-   
+
    /////////////////////////////////////////////////////////////////////////////
    int Cal3DModelWrapper::GetSubmeshCount(int submeshID)
    {
@@ -670,19 +674,19 @@ namespace dtAnim
    {
       return mRenderer->getFaces((CalIndex*)faces);
    }
-   
+
    /////////////////////////////////////////////////////////////////////////////
    int Cal3DModelWrapper::GetNormals(float* normals, int stride)
    {
       return mRenderer->getNormals(normals, stride);
    }
-   
+
    /////////////////////////////////////////////////////////////////////////////
-   int Cal3DModelWrapper::GetTextureCoords(int mapID, float* coords, int stride) 
+   int Cal3DModelWrapper::GetTextureCoords(int mapID, float* coords, int stride)
    {
       return mRenderer->getTextureCoordinates(mapID, coords, stride);
    }
-   
+
    /////////////////////////////////////////////////////////////////////////////
    int Cal3DModelWrapper::GetVertices(float* vertBuffer, int stride)
    {
@@ -694,25 +698,25 @@ namespace dtAnim
    {
       mRenderer->getAmbientColor(colorBuffer);
    }
-   
+
    /////////////////////////////////////////////////////////////////////////////
    void Cal3DModelWrapper::GetDiffuseColor(unsigned char* colorBuffer)
    {
       mRenderer->getDiffuseColor(colorBuffer);
    }
-   
+
    /////////////////////////////////////////////////////////////////////////////
    void Cal3DModelWrapper::GetSpecularColor(unsigned char* colorBuffer)
    {
       mRenderer->getSpecularColor(colorBuffer);
    }
-   
+
    /////////////////////////////////////////////////////////////////////////////
    float Cal3DModelWrapper::GetShininess()
    {
       return mRenderer->getShininess();
    }
-   
+
    /////////////////////////////////////////////////////////////////////////////
    void* Cal3DModelWrapper::GetMapUserData(int mapID)
    {
