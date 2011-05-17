@@ -81,6 +81,8 @@ namespace dtAnim
       void InvertTextureCoordinates(CalHardwareModel* hardwareModel, const size_t stride,
          float* vboVertexAttr, Cal3DModelData* modelData, CalIndex*& indexArray);
 
+      unsigned int GetMaxBoneID(CalCoreMesh& mesh);
+
       typedef std::map<std::string, osg::ref_ptr<osg::Texture2D> > TextureMap;
       typedef TextureMap::allocator_type::value_type TextureMapping;
       TextureMap mTextures;

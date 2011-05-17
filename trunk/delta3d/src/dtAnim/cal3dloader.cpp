@@ -80,48 +80,6 @@ namespace dtAnim
             LOG_ERROR("Can't find the skeleton file named:'" + path + handler.mSkeletonFilename + "'.");
          }
 
-         //load animations
-         std::vector<CharacterFileHandler::AnimationStruct>::iterator animItr = handler.mAnimations.begin();
-         while (animItr != handler.mAnimations.end())
-         {
-            std::string filename = dtUtil::FindFileInPathList(path + (*animItr).mFileName);
-
-            if (!filename.empty())
-            {
-               if (coreModel->loadCoreAnimation(filename, (*animItr).mName) < 0)
-               {
-                  LOG_ERROR("Can't load animation '" + filename +"':" + CalError::getLastErrorDescription());
-               }                             
-            }
-            else
-            {
-               LOG_ERROR("Can't find animation file named:'" + path + (*animItr).mFileName + "'.");
-            }
-            ++animItr;
-         }
-
-#if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300
-         // load morph animations
-         std::vector<CharacterFileHandler::MorphAnimationStruct>::iterator morphAnimItr = handler.mMorphAnimations.begin();
-         while (morphAnimItr != handler.mMorphAnimations.end())
-         {
-            std::string filename = dtUtil::FindFileInPathList(path + (*morphAnimItr).mFileName);
-
-            if (!filename.empty())
-            {
-               if (coreModel->loadCoreAnimatedMorph(filename) < 0)
-               {
-                  LOG_ERROR("Can't load animated morph '" + filename +"':" + CalError::getLastErrorDescription());
-               }               
-            }
-            else
-            {
-               LOG_ERROR("Can't find morph animation file named:'" + path + (*morphAnimItr).mFileName + "'.");
-            }
-            ++morphAnimItr;
-         }
-#endif
-
          // load meshes
          std::vector<CharacterFileHandler::MeshStruct>::iterator meshItr = handler.mMeshes.begin();
          while (meshItr != handler.mMeshes.end())
@@ -129,10 +87,28 @@ namespace dtAnim
             std::string filename = dtUtil::FindFileInPathList(path + (*meshItr).mFileName);
             if (!filename.empty())
             {
-               if (coreModel->loadCoreMesh(filename, (*meshItr).mName) < 0)
+               // Load the mesh and get its id for further error checking
+               int id = coreModel->loadCoreMesh(filename, (*meshItr).mName);
+
+               if (id < 0)
                {
                   LOG_ERROR("Can't load mesh '" + filename +"':" + CalError::getLastErrorDescription());
-               }              
+               }
+               else
+               {
+                  CalCoreMesh* mesh = coreModel->getCoreMesh(id);
+
+                  // Make sure this mesh doesn't reference bones we don't have
+                  if (GetMaxBoneID(*mesh) > coreModel->getCoreSkeleton()->getNumCoreBones())
+                  {
+                     LOG_ERROR("The bones specified in the cal mesh(" + mesh->getName() +
+                        ") do not match the skeleton: (" + coreModel->getCoreSkeleton()->getName() + ")");
+
+                     // Attempting to draw this mesh without valid bones will cause a crash so we remove it
+                     delete coreModel;
+                     coreModel = NULL;
+                  }
+               }
             }
             else
             {
@@ -141,27 +117,74 @@ namespace dtAnim
             ++meshItr;
          }
 
-         // load materials
-         for (std::vector<CharacterFileHandler::MaterialStruct>::iterator matItr = handler.mMaterials.begin();
-              matItr != handler.mMaterials.end();
-              ++matItr)
+         // If the model is still valid, continue loading
+         if (coreModel)
          {
-            std::string filename = dtUtil::FindFileInPathList(path + (*matItr).mFileName);
+            //load animations
+            std::vector<CharacterFileHandler::AnimationStruct>::iterator animItr = handler.mAnimations.begin();
+            while (animItr != handler.mAnimations.end())
+            {
+               std::string filename = dtUtil::FindFileInPathList(path + (*animItr).mFileName);
 
-            if (filename.empty())
-            {
-               LOG_ERROR("Can't find material file named:'" + path + (*matItr).mFileName + "'.");
-            }
-            else
-            {
-               int matID = coreModel->loadCoreMaterial(filename, (*matItr).mName);
-               if (matID < 0)
+               if (!filename.empty())
                {
-                  LOG_ERROR("Material file failed to load:'" + path + (*matItr).mFileName + "'." + CalError::getLastErrorDescription());
+                  if (coreModel->loadCoreAnimation(filename, (*animItr).mName) < 0)
+                  {
+                     LOG_ERROR("Can't load animation '" + filename +"':" + CalError::getLastErrorDescription());
+                  }
+               }
+               else
+               {
+                  LOG_ERROR("Can't find animation file named:'" + path + (*animItr).mFileName + "'.");
+               }
+               ++animItr;
+            }
+
+#if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300
+            // load morph animations
+            std::vector<CharacterFileHandler::MorphAnimationStruct>::iterator morphAnimItr = handler.mMorphAnimations.begin();
+            while (morphAnimItr != handler.mMorphAnimations.end())
+            {
+               std::string filename = dtUtil::FindFileInPathList(path + (*morphAnimItr).mFileName);
+
+               if (!filename.empty())
+               {
+                  if (coreModel->loadCoreAnimatedMorph(filename) < 0)
+                  {
+                     LOG_ERROR("Can't load animated morph '" + filename +"':" + CalError::getLastErrorDescription());
+                  }
+               }
+               else
+               {
+                  LOG_ERROR("Can't find morph animation file named:'" + path + (*morphAnimItr).mFileName + "'.");
+               }
+               ++morphAnimItr;
+            }
+#endif
+
+            // load materials
+            for (std::vector<CharacterFileHandler::MaterialStruct>::iterator matItr = handler.mMaterials.begin();
+               matItr != handler.mMaterials.end();
+               ++matItr)
+            {
+               std::string filename = dtUtil::FindFileInPathList(path + (*matItr).mFileName);
+
+               if (filename.empty())
+               {
+                  LOG_ERROR("Can't find material file named:'" + path + (*matItr).mFileName + "'.");
+               }
+               else
+               {
+                  int matID = coreModel->loadCoreMaterial(filename, (*matItr).mName);
+                  if (matID < 0)
+                  {
+                     LOG_ERROR("Material file failed to load:'" + path + (*matItr).mFileName + "'." + CalError::getLastErrorDescription());
+                  }
                }
             }
          }
       }
+
 
       return coreModel;
    }
@@ -221,7 +244,7 @@ namespace dtAnim
 
       // todo remove this if hardware isn't being used
       LoadHardwareData(data_in);
-      
+
       return true;
    }
 
@@ -322,7 +345,7 @@ namespace dtAnim
    float ResolveCrossFade(OverrideStruct& previous, OverrideStruct& current)
    {
       const float crossFade = current.mCrossFade;
-      
+
       // Check for cross fade.
       if (crossFade != 0.0f)
       {
@@ -727,7 +750,7 @@ namespace dtAnim
 
    ////////////////////////////////////////////////////////////////////////////////
    void Cal3DLoader::LoadHardwareData(Cal3DModelData* modelData)
-   { 
+   {
       CalHardwareModel* hardwareModel = modelData->GetOrCreateCalHardwareModel();
       if (!hardwareModel->getVectorHardwareMesh().empty())
       {
@@ -736,7 +759,7 @@ namespace dtAnim
          //CAL3D bug?  Perhaps.  We'll empty it just the same cause it'll double-up
          //all meshes if we don't.
          hardwareModel->getVectorHardwareMesh().clear();
-      }    
+      }
 
       int numVerts = 0;
       int numIndices = 0;
@@ -749,55 +772,63 @@ namespace dtAnim
          for (int meshId = 0; meshId < meshCount; meshId++)
          {
             CalCoreMesh* calMesh = model->getCoreMesh(meshId);
-            int submeshCount = calMesh->getCoreSubmeshCount();
 
-            for (int submeshId = 0; submeshId < submeshCount; submeshId++)
+            if (calMesh)
             {
-               CalCoreSubmesh* subMesh = calMesh->getCoreSubmesh(submeshId);
-               numVerts += subMesh->getVertexCount();
-               numIndices += 3 * subMesh->getFaceCount();
+               int submeshCount = calMesh->getCoreSubmeshCount();
+
+               for (int submeshId = 0; submeshId < submeshCount; submeshId++)
+               {
+                  CalCoreSubmesh* subMesh = calMesh->getCoreSubmesh(submeshId);
+                  numVerts += subMesh->getVertexCount();
+                  numIndices += 3 * subMesh->getFaceCount();
+               }
             }
          }
       }
 
-      const size_t stride = 18;
-      const size_t strideBytes = stride * sizeof(float);
-
-      // Allocate data arrays for the hardware model to populate
-      modelData->CreateSourceArrays(numVerts, numIndices, stride);
-
-      float* tempVertexArray = new float[stride * numVerts];
-
-      // Get the pointer and fill in the data
-      osg::FloatArray* vertexArray = modelData->GetSourceVertexArray();
-      CalIndex* indexArray = modelData->GetSourceIndexArray();
-
-      hardwareModel->setIndexBuffer(indexArray);
-
-      hardwareModel->setVertexBuffer(reinterpret_cast<char*>(tempVertexArray), strideBytes);
-      hardwareModel->setNormalBuffer(reinterpret_cast<char*>(tempVertexArray + 3), strideBytes);
-
-      hardwareModel->setTextureCoordNum(2);
-      hardwareModel->setTextureCoordBuffer(0, reinterpret_cast<char*>(tempVertexArray + 6), strideBytes);
-      hardwareModel->setTextureCoordBuffer(1, reinterpret_cast<char*>(tempVertexArray + 8), strideBytes);
-
-      hardwareModel->setWeightBuffer(reinterpret_cast<char*>(tempVertexArray + 10), strideBytes);
-      hardwareModel->setMatrixIndexBuffer(reinterpret_cast<char*>(tempVertexArray + 14), strideBytes);
-
-      // Load the data into our arrays
-      if (!hardwareModel->load(0, 0, modelData->GetShaderMaxBones()))
+      // If verts and indices were already successfully loaded, we can allocate resources
+      if (numVerts && numIndices)
       {
-         LOG_ERROR("Unable to create a hardware mesh:" + CalError::getLastErrorDescription());
+         const size_t stride = 18;
+         const size_t strideBytes = stride * sizeof(float);
+
+         // Allocate data arrays for the hardware model to populate
+         modelData->CreateSourceArrays(numVerts, numIndices, stride);
+
+         float* tempVertexArray = new float[stride * numVerts];
+
+         // Get the pointer and fill in the data
+         osg::FloatArray* vertexArray = modelData->GetSourceVertexArray();
+         CalIndex* indexArray = modelData->GetSourceIndexArray();
+
+         hardwareModel->setIndexBuffer(indexArray);
+
+         hardwareModel->setVertexBuffer(reinterpret_cast<char*>(tempVertexArray), strideBytes);
+         hardwareModel->setNormalBuffer(reinterpret_cast<char*>(tempVertexArray + 3), strideBytes);
+
+         hardwareModel->setTextureCoordNum(2);
+         hardwareModel->setTextureCoordBuffer(0, reinterpret_cast<char*>(tempVertexArray + 6), strideBytes);
+         hardwareModel->setTextureCoordBuffer(1, reinterpret_cast<char*>(tempVertexArray + 8), strideBytes);
+
+         hardwareModel->setWeightBuffer(reinterpret_cast<char*>(tempVertexArray + 10), strideBytes);
+         hardwareModel->setMatrixIndexBuffer(reinterpret_cast<char*>(tempVertexArray + 14), strideBytes);
+
+         // Load the data into our arrays
+         if (!hardwareModel->load(0, 0, modelData->GetShaderMaxBones()))
+         {
+            LOG_ERROR("Unable to create a hardware mesh:" + CalError::getLastErrorDescription());
+         }
+
+         InvertTextureCoordinates(hardwareModel, stride, tempVertexArray, modelData, indexArray);
+
+         // Move the data into the osg structure
+         vertexArray->assign(tempVertexArray, tempVertexArray + numVerts * stride);
+
+         delete[] tempVertexArray;
       }
-
-      InvertTextureCoordinates(hardwareModel, stride, tempVertexArray, modelData, indexArray);
-
-      // Move the data into the osg structure
-      vertexArray->assign(tempVertexArray, tempVertexArray + numVerts * stride);
-
-      delete[] tempVertexArray;
    }
-   
+
    ////////////////////////////////////////////////////////////////////////////////
    void Cal3DLoader::InvertTextureCoordinates(CalHardwareModel* hardwareModel, const size_t stride,
       float* vboVertexAttr, Cal3DModelData* modelData, CalIndex*& indexArray)
@@ -830,6 +861,33 @@ namespace dtAnim
             }
          }
       }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   unsigned int Cal3DLoader::GetMaxBoneID(CalCoreMesh& mesh)
+   {
+      int maxBoneID = 0;
+
+      // Go through every vertex and find the highest bone id
+      for (int subIndex = 0; subIndex < mesh.getCoreSubmeshCount(); ++subIndex)
+      {
+         CalCoreSubmesh* subMesh = mesh.getCoreSubmesh(subIndex);
+         const std::vector<CalCoreSubmesh::Vertex>& vertList = subMesh->getVectorVertex();
+
+         for (size_t vertIndex = 0; vertIndex < vertList.size(); ++vertIndex)
+         {
+            std::vector<CalCoreSubmesh::Influence> influenceList = vertList[vertIndex].vectorInfluence;
+            for (size_t influenceIndex = 0; influenceIndex < influenceList.size(); ++influenceIndex)
+            {
+               if (influenceList[influenceIndex].boneId > maxBoneID)
+               {
+                  maxBoneID = influenceList[influenceIndex].boneId;
+               }
+            }
+         }
+      }
+
+      return maxBoneID;
    }
 
 } // namespace dtAnim
