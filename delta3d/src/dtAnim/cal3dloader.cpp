@@ -99,10 +99,10 @@ namespace dtAnim
                   CalCoreMesh* mesh = coreModel->getCoreMesh(id);
 
                   // Make sure this mesh doesn't reference bones we don't have
-                  if (GetMaxBoneID(*mesh) > coreModel->getCoreSkeleton()->getNumCoreBones())
+                  if (GetMaxBoneID(*mesh) > coreModel->getCoreSkeleton()->getVectorCoreBone().size())
                   {
                      LOG_ERROR("The bones specified in the cal mesh(" + mesh->getName() +
-                        ") do not match the skeleton: (" + coreModel->getCoreSkeleton()->getName() + ")");
+                        ") do not match the skeleton: (" + handler.mSkeletonFilename + ")");
 
                      // Attempting to draw this mesh without valid bones will cause a crash so we remove it
                      delete coreModel;
