@@ -92,6 +92,7 @@ SET(LIB_PUBLIC_HEADERS
     ${HEADER_PATH}/resourcetreenode.h
     ${HEADER_PATH}/serializeable.h
     ${HEADER_PATH}/stringactorproperty.h
+    ${HEADER_PATH}/stringselectoractorproperty.h
     ${HEADER_PATH}/transformableactorproxy.h
     ${HEADER_PATH}/typetoactorproperty.h
 	${HEADER_PATH}/vectoractorproperties.h
@@ -168,6 +169,7 @@ SET(LIB_SOURCES
     ${SOURCE_PATH}/resourcedescriptor.cpp
     ${SOURCE_PATH}/resourcehelper.cpp
     ${SOURCE_PATH}/stringactorproperty.cpp
+    ${SOURCE_PATH}/stringselectoractorproperty.cpp
     ${SOURCE_PATH}/transformableactorproxy.cpp
 	${SOURCE_PATH}/vectoractorproperties.cpp
 )
