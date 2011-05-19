@@ -29,8 +29,8 @@ namespace dtDAL
    ////////////////////////////////////////////////////////////////////////////////
    StringSelectorActorProperty::StringSelectorActorProperty(const dtUtil::RefString& name,
       const dtUtil::RefString& label, SetFuncType set, GetFuncType get,
-      GetListFuncType getList, bool editable,
-      const dtUtil::RefString& desc /*= ""*/, const dtUtil::RefString& groupName /*= ""*/)
+      GetListFuncType getList,
+      const dtUtil::RefString& desc /*= ""*/, const dtUtil::RefString& groupName /*= ""*/, bool editable)
       : BaseClass(name, label, set, get, desc, groupName)
       , mEditable(editable)
       , mGetListFunc(getList)

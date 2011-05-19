@@ -42,9 +42,9 @@ namespace dtDAL
 
          StringSelectorActorProperty(const dtUtil::RefString& name, const dtUtil::RefString& label,
                            SetFuncType set, GetFuncType get,
-                           GetListFuncType getList, bool editable = true,
+                           GetListFuncType getList,
                            const dtUtil::RefString& desc = "",
-                           const dtUtil::RefString& groupName = "");
+                           const dtUtil::RefString& groupName = "", bool editable = false);
 
          /**
           * Returns the available strings to select from.
