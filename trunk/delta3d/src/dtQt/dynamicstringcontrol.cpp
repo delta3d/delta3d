@@ -32,6 +32,7 @@
 #include <dtDAL/actorproxy.h>
 #include <dtDAL/datatype.h>
 #include <dtDAL/stringactorproperty.h>
+#include <dtDAL/stringselectoractorproperty.h>
 
 #include <dtQt/dynamicsubwidgets.h>
 
@@ -48,7 +49,9 @@ namespace dtQt
    ///////////////////////////////////////////////////////////////////////////////
    DynamicStringControl::DynamicStringControl()
       : mProperty(NULL)
+      , mSelectorProperty(NULL)
       , mTemporaryEditControl(NULL)
+      , mTemporaryComboControl(NULL)
    {
    }
 
@@ -67,6 +70,7 @@ namespace dtQt
       if (newProperty != NULL && newProperty->GetDataType() == dtDAL::DataType::STRING)
       {
          mProperty = static_cast<dtDAL::StringActorProperty*>(newProperty);
+         mSelectorProperty = dynamic_cast<dtDAL::StringSelectorActorProperty*>(newProperty);
          DynamicAbstractControl::InitializeData(newParent, newModel, newPC, newProperty);
       }
       else
@@ -80,11 +84,19 @@ namespace dtQt
    /////////////////////////////////////////////////////////////////////////////////
    void DynamicStringControl::updateEditorFromModel(QWidget* widget)
    {
-      if (widget == mWrapper && mTemporaryEditControl)
+      if (widget == mWrapper)
       {
-         // set the current value from our property
-         mTemporaryEditControl->setText(tr(mProperty->GetValue().c_str()));
-         mTemporaryEditControl->selectAll();
+         if (mTemporaryEditControl)
+         {
+            // set the current value from our property
+            mTemporaryEditControl->setText(tr(mProperty->GetValue().c_str()));
+            mTemporaryEditControl->selectAll();
+         }
+
+         if (mTemporaryComboControl)
+         {
+            mTemporaryComboControl->setEditText(tr(mProperty->GetValue().c_str()));
+         }
       }
 
       DynamicAbstractControl::updateEditorFromModel(widget);
@@ -97,10 +109,23 @@ namespace dtQt
 
       bool dataChanged = false;
 
-      if (widget == mWrapper && mTemporaryEditControl)
+      if (widget == mWrapper)
       {
+         std::string result;
+
          // get the data from our control
-         std::string result = mTemporaryEditControl->text().toStdString();
+         if (mTemporaryEditControl)
+         {
+            result = mTemporaryEditControl->text().toStdString();
+
+            // reselect all the text when we commit.
+            // Gives the user visual feedback that something happened.
+            mTemporaryEditControl->selectAll();
+         }
+         else if (mTemporaryComboControl)
+         {
+            result = mTemporaryComboControl->currentText().toStdString();
+         }
 
          // set our value to our object
          if (result != mProperty->GetValue())
@@ -112,10 +137,6 @@ namespace dtQt
             mProperty->SetValue(result);
             dataChanged = true;
          }
-
-         // reselect all the text when we commit.
-         // Gives the user visual feedback that something happened.
-         mTemporaryEditControl->selectAll();
       }
 
       // notify the world (mostly the viewports) that our property changed
@@ -140,21 +161,48 @@ namespace dtQt
          return wrapper;
       }
 
-      // create and init the edit box
-      mTemporaryEditControl = new SubQLineEdit(wrapper, this);
-      mTemporaryEditControl->setToolTip(getDescription());
-      if (mProperty->GetMaxLength() > 0)
+      if (!mSelectorProperty)
       {
-         mTemporaryEditControl->setMaxLength(mProperty->GetMaxLength());
+         // create and init the edit box
+         mTemporaryEditControl = new SubQLineEdit(wrapper, this);
+         mTemporaryEditControl->setToolTip(getDescription());
+         if (mProperty->GetMaxLength() > 0)
+         {
+            mTemporaryEditControl->setMaxLength(mProperty->GetMaxLength());
+         }
+
+         updateEditorFromModel(mWrapper);
+
+         mGridLayout->addWidget(mTemporaryEditControl, 0, 0, 1, 1);
+         mGridLayout->setColumnMinimumWidth(0, mTemporaryEditControl->sizeHint().width() / 2);
+         mGridLayout->setColumnStretch(0, 1);
+
+         wrapper->setFocusProxy(mTemporaryEditControl);
+      }
+      else
+      {
+         mTemporaryComboControl = new SubQComboBox(wrapper, this);
+         mTemporaryComboControl->setToolTip(getDescription());
+         std::vector<std::string> stringList = mSelectorProperty->GetList();
+         int count = (int)stringList.size();
+         for (int index = 0; index < count; ++index)
+         {
+            mTemporaryComboControl->addItem(stringList[index].c_str());
+         }
+
+         mTemporaryComboControl->setEditable(mSelectorProperty->IsEditable());
+
+         updateEditorFromModel(mWrapper);
+
+         mGridLayout->addWidget(mTemporaryComboControl, 0, 0, 1, 1);
+         mGridLayout->setColumnMinimumWidth(0, mTemporaryComboControl->sizeHint().width() / 2);
+         mGridLayout->setColumnStretch(0, 1);
+
+         connect(mTemporaryComboControl, SIGNAL(activated(int)), this, SLOT(itemSelected(int)));
+
+         wrapper->setFocusProxy(mTemporaryComboControl);
       }
 
-      updateEditorFromModel(mWrapper);
-
-      mGridLayout->addWidget(mTemporaryEditControl, 0, 0, 1, 1);
-      mGridLayout->setColumnMinimumWidth(0, mTemporaryEditControl->sizeHint().width() / 2);
-      mGridLayout->setColumnStretch(0, 1);
-
-      wrapper->setFocusProxy(mTemporaryEditControl);
       return wrapper;
    }
 
@@ -199,12 +247,22 @@ namespace dtQt
       return updateModelFromEditor(widget);
    }
 
+   /////////////////////////////////////////////////////////////////////////////////
+   void DynamicStringControl::itemSelected(int index)
+   {
+      if (mTemporaryComboControl != NULL)
+      {
+         updateModelFromEditor(mWrapper);
+      }
+   }
+
    ////////////////////////////////////////////////////////////////////////////////
    void DynamicStringControl::handleSubEditDestroy(QWidget* widget, QAbstractItemDelegate::EndEditHint hint)
    {
       if (widget == mWrapper)
       {
          mTemporaryEditControl = NULL;
+         mTemporaryComboControl = NULL;
       }
       DynamicAbstractControl::handleSubEditDestroy(widget, hint);
    }

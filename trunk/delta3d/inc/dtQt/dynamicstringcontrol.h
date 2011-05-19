@@ -36,6 +36,7 @@
 namespace dtDAL
 {
    class StringActorProperty;
+   class StringSelectorActorProperty;
 }
 
 namespace dtQt
@@ -109,6 +110,11 @@ namespace dtQt
       virtual bool updateData(QWidget* widget);
 
       /**
+       * Called when the user selects an item in the combo box
+       */
+      void itemSelected(int index);
+
+      /**
        * @see DynamicAbstractControl#handleSubEditDestroy
        */
       void handleSubEditDestroy(QWidget* widget, QAbstractItemDelegate::EndEditHint hint = QAbstractItemDelegate::NoHint);
@@ -117,12 +123,14 @@ namespace dtQt
 
    private:
       dtDAL::StringActorProperty* mProperty;
+      dtDAL::StringSelectorActorProperty* mSelectorProperty;
 
       // This pointer is not really in our control.  It is constructed in the createEditor()
       // method and destroyed whenever QT feels like it (mostly when the control looses focus).
       // We work around this by trapping the destruction of this object, it should
       // call our handleSubEditDestroy() method so we know to not hold this anymore
       SubQLineEdit* mTemporaryEditControl;
+      SubQComboBox* mTemporaryComboControl;
    };
 
 } // namespace dtQt
