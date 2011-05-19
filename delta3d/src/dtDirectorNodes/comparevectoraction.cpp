@@ -21,6 +21,7 @@
 
 #include <dtDirectorNodes/comparevectoraction.h>
 
+#include <dtDAL/floatactorproperty.h>
 #include <dtDAL/vectoractorproperties.h>
 
 #include <dtDirector/director.h>
@@ -32,6 +33,7 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    CompareVectorAction::CompareVectorAction()
       : ActionNode()
+      , mEpsilon(FLT_EPSILON)
    {
       AddAuthor("Eric R. Heine");
    }
@@ -71,8 +73,15 @@ namespace dtDirector
          dtDAL::Vec4ActorProperty::GetFuncType(this, &CompareVectorAction::GetB),
          "Value B.");
 
+      dtDAL::FloatActorProperty* epsilonProp = new dtDAL::FloatActorProperty(
+         "Epsilon", "Epsilon",
+         dtDAL::FloatActorProperty::SetFuncType(this, &CompareVectorAction::SetEpsilon),
+         dtDAL::FloatActorProperty::GetFuncType(this, &CompareVectorAction::GetEpsilon),
+         "Epsilon for equivalency check.");
+
       AddProperty(leftProp);
       AddProperty(rightProp);
+      AddProperty(epsilonProp);
 
       // This will expose the properties in the editor and allow
       // them to be connected to ValueNodes.
@@ -144,7 +153,7 @@ namespace dtDirector
       }
 
       // Check equivalency
-      if (dtUtil::Equivalent(valueA, valueB))
+      if (dtUtil::Equivalent(valueA, valueB, mEpsilon))
       {
          OutputLink* link = GetOutputLink("A equivalent to B");
          link->Activate();
@@ -163,9 +172,16 @@ namespace dtDirector
    {
       if (Node::CanConnectValue(link, value))
       {
-         if (value->CanBeType(dtDAL::DataType::VEC2) ||
-            value->CanBeType(dtDAL::DataType::VEC3) ||
-            value->CanBeType(dtDAL::DataType::VEC4))
+         if (link == GetValueLink("A") || link == GetValueLink("B"))
+         {
+            if (value->CanBeType(dtDAL::DataType::VEC2) ||
+               value->CanBeType(dtDAL::DataType::VEC3) ||
+               value->CanBeType(dtDAL::DataType::VEC4))
+            {
+               return true;
+            }
+         }
+         else
          {
             return true;
          }
@@ -196,6 +212,18 @@ namespace dtDirector
    osg::Vec4 CompareVectorAction::GetB()
    {
       return mValueB;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void CompareVectorAction::SetEpsilon(float value)
+   {
+      mEpsilon = value;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   float CompareVectorAction::GetEpsilon()
+   {
+      return mEpsilon;
    }
 }
 

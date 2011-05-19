@@ -94,6 +94,8 @@ namespace dtDirector
       void SetB(osg::Vec4 value);
       osg::Vec4 GetB();
 
+      void SetEpsilon(float value);
+      float GetEpsilon();
 
    protected:
 
@@ -106,6 +108,7 @@ namespace dtDirector
 
       osg::Vec4 mValueA;
       osg::Vec4 mValueB;
+      float mEpsilon;
    };
 }
 
