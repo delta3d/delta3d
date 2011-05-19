@@ -273,11 +273,11 @@ namespace dtDirector
       /**
        * Retrieves a list of tools that have been registered.
        *
-       * @param[in]  scriptType  The script type.
+       * @param[in]  director  The director.
        *
        * @return  A list of registered tool names.
        */
-      static std::vector<std::string> GetRegisteredToolList(const std::string& scriptType = "");
+      static std::vector<std::string> GetRegisteredToolList(Director* director);
 
       /**
        * Adds a custom editor to the node scene.

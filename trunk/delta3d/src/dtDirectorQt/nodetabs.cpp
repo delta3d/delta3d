@@ -95,7 +95,7 @@ namespace dtDirector
             // Add our default empty macro.
             scene->CreateMacro("");
 
-            std::vector<std::string> tools = mpEditor->GetRegisteredToolList(mpEditor->GetDirector()->GetScriptType());
+            std::vector<std::string> tools = mpEditor->GetRegisteredToolList(mpEditor->GetDirector());
             int count = (int)tools.size();
             for (int index = 0; index < count; ++index)
             {

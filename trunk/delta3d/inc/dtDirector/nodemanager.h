@@ -106,7 +106,7 @@ namespace dtDirector
        *              library cannot be found or the create and destroy
        *              functions are not found in the library.
        */
-      bool LoadNodeRegistry(const std::string &libName, const std::string& scriptType);
+      bool LoadNodeRegistry(const std::string &libName);
 
       /**
        * Inserts the pair of parameters into the container.
@@ -138,14 +138,14 @@ namespace dtDirector
       bool IsInRegistry(const std::string &libName) const;
 
       /**
-       * Retrieves whether a library supports a given script type.
+       * Retrieves the libraries node type (retrieved from the
+       * GetNodeLibraryType method called from the library).
        *
        * @param[in]  libName     The name of the library.
-       * @param[in]  scriptType  The script type.
        *
-       * @return  true if the script type is supported by the library.
+       * @return     The type of nodes in the library.
        */
-      bool IsScriptTypeSupported(const std::string& libName, const std::string& scriptType) const;
+      std::string GetNodeLibraryType(const std::string& libName) const;
 
       /**
        * Returns a list of all the node types the library manager knows how
@@ -278,7 +278,6 @@ namespace dtDirector
        */
       virtual ~NodeManager();
 
-
       /**
        * Loads a library if it exists.
        *
@@ -287,7 +286,7 @@ namespace dtDirector
        *
        * @return     false if the library failed to load.
        */
-      bool LoadOptionalNodeRegistry(const std::string &libName, const std::string& scriptType);
+      bool LoadOptionalNodeRegistry(const std::string &libName);
 
       /// Singleton instance of the class.
       static dtCore::RefPtr<NodeManager> mInstance;

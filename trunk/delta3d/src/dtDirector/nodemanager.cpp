@@ -83,26 +83,20 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   bool NodeManager::IsScriptTypeSupported(const std::string& libName, const std::string& scriptType) const
+   std::string NodeManager::GetNodeLibraryType(const std::string& libName) const
    {
-      RegistryMapConstItor regItor = mRegistries.find(libName);
-
-      if (regItor == mRegistries.end())
+      std::string type = "";
+      RegistryMap::const_iterator regItor = mRegistries.find(libName);
+      if (regItor != mRegistries.end())
       {
-         mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__, 
-            "Attempted to find director node registry \"%s\" which was not loaded.", 
-            libName.c_str());
-         return false;
+         type = regItor->second.registry->GetNodeLibraryType();
       }
 
-      // First remove all the node types this registry supports.
-      RegistryEntry regEntry = regItor->second;
-
-      return regEntry.registry->IsScriptTypeSupported(scriptType);
+      return type;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   bool NodeManager::LoadNodeRegistry(const std::string &libName, const std::string& scriptType)
+   bool NodeManager::LoadNodeRegistry(const std::string &libName)
    {
       // Used to format log messages.
       std::ostringstream msg;
@@ -176,7 +170,7 @@ namespace dtDirector
          throw dtDAL::ProjectResourceErrorException( msg.str(), __FILE__, __LINE__);
       }
 
-      return IsScriptTypeSupported(libName, scriptType);
+      return true;
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -467,7 +461,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   bool NodeManager::LoadOptionalNodeRegistry(const std::string &libName, const std::string& scriptType)
+   bool NodeManager::LoadOptionalNodeRegistry(const std::string &libName)
    {
       const std::string actualLibName = GetPlatformSpecificLibraryName(libName);
       std::string fullLibraryName = osgDB::findLibraryFile(actualLibName);            
@@ -486,7 +480,7 @@ namespace dtDirector
 
       try
       {
-         return LoadNodeRegistry(libName, scriptType);
+         return LoadNodeRegistry(libName);
       }
       catch (dtUtil::Exception)
       {

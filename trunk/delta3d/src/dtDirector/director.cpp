@@ -610,6 +610,17 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   bool Director::IsLibraryTypeSupported(const std::string& libraryType) const
+   {
+      if (libraryType == "Core")
+      {
+         return true;
+      }
+
+      return false;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    void Director::SetPlayer(const dtCore::UniqueId& player)
    {
       mPlayer = player;
@@ -691,12 +702,14 @@ namespace dtDirector
       // Attempt to load the library.
       if (!NodeManager::GetInstance().IsInRegistry(name))
       {
-         if (!NodeManager::GetInstance().LoadNodeRegistry(name, GetScriptType()))
+         if (!NodeManager::GetInstance().LoadNodeRegistry(name))
          {
             return false;
          }
       }
-      else if (!NodeManager::GetInstance().IsScriptTypeSupported(name, GetScriptType()))
+      
+      std::string libraryType = NodeManager::GetInstance().GetNodeLibraryType(name);
+      if (!IsLibraryTypeSupported(libraryType))
       {
          return false;
       }

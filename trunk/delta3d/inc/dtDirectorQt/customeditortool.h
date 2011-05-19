@@ -54,11 +54,12 @@ namespace dtDirector
       const std::string& GetName() const {return mToolName;}
 
       /**
-       * Retrieves whether this editor supports a script type.
+       * Retrieves whether this tool can be used with the given
+       * director script.
        *
-       * @param[in]  type  The script type.
+       * @param[in]  director  The director script.
        */
-      virtual bool IsScriptTypeSupported(const std::string& type) const;
+      virtual bool IsDirectorSupported(Director* director) const;
 
       /**
        * Retrieves the main Director Editor.
