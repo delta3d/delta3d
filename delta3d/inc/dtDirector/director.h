@@ -286,6 +286,15 @@ namespace dtDirector
       virtual std::string GetScriptType() const;
 
       /**
+       * Checks whether a given library type is supported by this script.
+       *
+       * @param[in]  libraryType  The libraries type.
+       *
+       * @return     True if the library type is supported.
+       */
+      virtual bool IsLibraryTypeSupported(const std::string& libraryType) const;
+
+      /**
        * Sets the player.
        *
        * @param[in]  player  The player.

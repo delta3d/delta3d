@@ -583,14 +583,14 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   std::vector<std::string> DirectorEditor::GetRegisteredToolList(const std::string& scriptType)
+   std::vector<std::string> DirectorEditor::GetRegisteredToolList(Director* director)
    {
       std::vector<std::string> toolList;
 
       std::map<std::string, CustomEditorTool*>::iterator i = mCustomTools.begin();
       while (i != mCustomTools.end())
       {
-         if (scriptType.empty() || i->second->IsScriptTypeSupported(scriptType))
+         if (!director || i->second->IsDirectorSupported(director))
          {
             toolList.push_back(i->first);
          }

@@ -125,26 +125,13 @@ namespace dtDirector
       void RegisterNodeTypes();
 
       /**
-      * Checks to see if a script type is supported by this node registry.
-      * @Note: By default, only Scenario scripts are supported.  This
-      * method should be overloaded by custom node libraries to provide
-      * your own script type limitations.
-       *
-       * @param[in]  type  The script type.
-       *
-       * @return  True if supported, false otherwise.
+       * Retrieves the type of node library this is.
+       * @Note: This should be overloaded if the nodes that belong
+       * to the library are of a specific type.
        */
-      virtual bool IsScriptTypeSupported(const std::string& type) const
+      virtual std::string GetNodeLibraryType() const
       {
-         if (type == "Scenario")
-         {
-            return true;
-         }
-         else if (type == "AIPlanner")
-         {
-            return true;
-         }
-         return false;
+         return "Core";
       }
    };
 }

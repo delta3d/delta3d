@@ -47,9 +47,9 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   bool CustomEditorTool::IsScriptTypeSupported(const std::string& type) const
+   bool CustomEditorTool::IsDirectorSupported(Director* director) const
    {
-      if (type == "Scenario")
+      if (director->IsLibraryTypeSupported("Core"))
       {
          return true;
       }
