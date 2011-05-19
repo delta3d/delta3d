@@ -167,8 +167,6 @@ namespace dtDAL
 
       dtUtil::FileInfo GetMapsDirectory(bool createIfNeeded);
 
-      bool mIsInSTAGE;
-
       // for the get context method.
       static const std::string EMPTY_STRING;
 
