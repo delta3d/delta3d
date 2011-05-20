@@ -156,12 +156,14 @@ namespace dtDAL
       case DataType::DOUBLE_ID:
       case DataType::INT_ID:
       case DataType::LONGINT_ID:
-      case DataType::STRING_ID:
       case DataType::BOOLEAN_ID:
       case DataType::ACTOR_ID:
       case DataType::GAMEEVENT_ID:
       case DataType::ENUMERATION_ID:
          WriteSimple(property);
+         break;
+      case DataType::STRING_ID:
+         WriteString(property.ToString());
          break;
       case DataType::VEC2_ID:
          WriteVec(static_cast<const Vec2ActorProperty&>(property).GetValue(), numberConversionBuffer, bufferMax);
@@ -782,9 +784,6 @@ namespace dtDAL
             break;
          case DataType::LONGINT_ID:
             mWriter->BeginElement(MapXMLConstants::ACTOR_PROPERTY_LONG_ELEMENT);
-            break;
-         case DataType::STRING_ID:
-            mWriter->BeginElement(MapXMLConstants::ACTOR_PROPERTY_STRING_ELEMENT);
             break;
          case DataType::BOOLEAN_ID:
             mWriter->BeginElement(MapXMLConstants::ACTOR_PROPERTY_BOOLEAN_ELEMENT);
@@ -1901,6 +1900,14 @@ namespace dtDAL
          }
          aap->SetValue(valueProxy);
       }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void ActorPropertySerializer::WriteString(const std::string& str) const
+   {
+      mWriter->BeginElement(MapXMLConstants::ACTOR_PROPERTY_STRING_ELEMENT);
+      mWriter->AddCharacters("<![CDATA[" + str + "]]>");
+      mWriter->EndElement();
    }
 }
 
