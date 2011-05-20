@@ -16,7 +16,7 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * Erik Johnson
+ * Erik Johnson, Curtiss Murphy
  */
 #include <prefix/dtutilprefix.h>
 #include <dtUtil/logobserverconsole.h>
@@ -36,19 +36,20 @@ dtUtil::LogObserverConsole::~LogObserverConsole()
 //////////////////////////////////////////////////////////////////////////
 void dtUtil::LogObserverConsole::LogMessage(const LogData& logData)
 {
-   std::cout << Log::GetLogLevelString(logData.type) << " " 
-      << std::setw(2) << std::setfill('0') << logData.time.tm_hour
-      << std::setw(2) << std::setfill('0') << logData.time.tm_min 
-      << std::setw(2) << std::setfill('0') << logData.time.tm_sec;
-     
+   // Print out the time, the message, the log level, then where it came from
+   std::cout << "[" << std::setw(2) << std::setfill('0') << logData.time.tm_hour << ":"
+      << std::setw(2) << std::setfill('0') << logData.time.tm_min << ":"
+      << std::setw(2) << std::setfill('0') << logData.time.tm_sec << "] [" 
+      << logData.msg << "] [" << Log::GetLogLevelString(logData.type) << "] [";
+
    if (!logData.logName.empty())
    {
-      std::cout << " '" << logData.logName << "'";
+      std::cout << "'" << logData.logName << "'";
    }
 
    if (!logData.file.empty())
    {
-      std::cout << " " << logData.file;
+      std::cout << logData.file;
    }
 
    if (!logData.method.empty())
@@ -60,7 +61,7 @@ void dtUtil::LogObserverConsole::LogMessage(const LogData& logData)
    {
       std:: cout << ":" << logData.line;
    }
-
-   std::cout << "-" <<  logData.msg << std::endl;
+   
+   std::cout << "]" << std::endl;
 }
 
