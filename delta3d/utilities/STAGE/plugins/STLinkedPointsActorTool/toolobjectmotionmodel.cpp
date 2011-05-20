@@ -106,7 +106,7 @@ void ToolObjectMotionModel::GetMouseLine(osg::Vec2 mousePos, osg::Vec3& start, o
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-osg::Vec2 ToolObjectMotionModel::GetObjectScreenCoordinates(osg::Vec3 objectPos)
+osg::Vec2 ToolObjectMotionModel::GetObjectScreenCoordinates(const osg::Vec3& objectPos)
 {
    return mObjectToScreenFunc(objectPos);
 }
@@ -124,7 +124,7 @@ osg::Vec2 ToolObjectMotionModel::DefaultGetObjectScreenCoordinates(osg::Vec3 obj
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ToolObjectMotionModel::OnTranslate(osg::Vec3 delta)
+void ToolObjectMotionModel::OnTranslate(const osg::Vec3& delta)
 {
    dtCore::Transformable* target = GetTarget();
 
@@ -138,7 +138,7 @@ void ToolObjectMotionModel::OnTranslate(osg::Vec3 delta)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ToolObjectMotionModel::OnRotate(float delta, osg::Vec3 axis)
+void ToolObjectMotionModel::OnRotate(float delta, const osg::Vec3& axis)
 {
    dtCore::Transformable* target = GetTarget();
 
