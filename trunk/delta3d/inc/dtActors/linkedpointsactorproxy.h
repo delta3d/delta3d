@@ -352,7 +352,7 @@ namespace dtActors
       * before any properties have been assigned.  Overwrite for custom
       * behavior.
       */
-      void OnMapLoadBegin();
+      virtual void OnMapLoadBegin();
 
       /**
       *  Called when this BaseActorObject has finished loading from a Map and

@@ -143,7 +143,7 @@ class ToolObjectMotionModel : public dtCore::ObjectMotionModel
       *
       * @return                The position of the object in screen coords.
       */
-      virtual osg::Vec2 GetObjectScreenCoordinates(osg::Vec3 objectPos);
+      virtual osg::Vec2 GetObjectScreenCoordinates(const osg::Vec3& objectPos);
 
    private:
 
@@ -172,7 +172,7 @@ class ToolObjectMotionModel : public dtCore::ObjectMotionModel
       *
       * @param[in]  delta  The amount of translation to be performed.
       */
-      virtual void OnTranslate(osg::Vec3 delta);
+      virtual void OnTranslate(const osg::Vec3& delta);
 
       /**
       * This callback handles the actual rotation of the target.
@@ -180,7 +180,7 @@ class ToolObjectMotionModel : public dtCore::ObjectMotionModel
       * @param[in]  delta  The amount of rotation to apply.
       * @param[in]  axis   The axis of rotation.
       */
-      virtual void OnRotate(float delta, osg::Vec3 axis);
+      virtual void OnRotate(float delta, const osg::Vec3& axis);
 
       GetMouseLineFunc mGetMouseLineFunc;
       ObjectToScreenFunc mObjectToScreenFunc;
