@@ -207,6 +207,13 @@ namespace dtDAL
        */
       void WriteParameter(const NamedParameter& param);
 
+      /** 
+       * Writes the supplied string into a StringActorProperty element.
+       * @param str The StringProperties string value. Will wrap into a CDATA
+       * struct to allow for reading/writing HTML strings.
+       */
+      void WriteString(const std::string& str) const;
+
       /**
        * Ends an actor property group element.
        */
