@@ -1158,74 +1158,70 @@ void MapTests::TestMapSaveAndLoadGroup()
       std::string mapName("Neato Map");
       std::string mapFileName("neatomap");
 
-      dtDAL::Map* map = &project.CreateMap(mapName, mapFileName);
-      map->AddLibrary(mExampleLibraryName, "1.0");
       dtDAL::LibraryManager::GetInstance().LoadActorRegistry(mExampleLibraryName);
 
       const dtDAL::ActorType* at = dtDAL::LibraryManager::GetInstance().FindActorType("dtcore.examples", "Test All Properties");
       CPPUNIT_ASSERT(at != NULL);
 
-      dtCore::RefPtr<dtDAL::BaseActorObject> proxy = dtDAL::LibraryManager::GetInstance().CreateActorProxy(*at);
-
-      dtDAL::GroupActorProperty* groupProp;
-      proxy->GetProperty("TestGroup", groupProp);
-
-      dtDAL::ResourceDescriptor rd("StaticMeshes:Chicken:Horse.ive", "StaticMeshes:Chicken:Horse.ive");
-
-      dtDAL::GameEvent* ge = new dtDAL::GameEvent("cow", "chicken");
-      map->GetEventManager().AddEvent(*ge);
-
       dtCore::RefPtr<dtDAL::NamedGroupParameter> expectedResult = new dtDAL::NamedGroupParameter("TestGroup");
-      expectedResult->AddValue("SillyInt", 24);
-      expectedResult->AddValue("SillyLong", 37L);
-      expectedResult->AddValue("SillyString", std::string("Jojo"));
-      static_cast<dtDAL::NamedResourceParameter&>(*expectedResult->AddParameter("SillyResource1", dtDAL::DataType::STATIC_MESH)).SetValue(rd);
-      static_cast<dtDAL::NamedResourceParameter&>(*expectedResult->AddParameter("SillyResource2", dtDAL::DataType::TEXTURE)).SetValue(dtDAL::ResourceDescriptor::NULL_RESOURCE);
-
-      dtDAL::NamedGroupParameter& internalGroup = static_cast<dtDAL::NamedGroupParameter&>(*expectedResult->AddParameter("SillyGroup", dtDAL::DataType::GROUP));
-      internalGroup.AddValue("CuteEnum", std::string("Just a string"));
-      static_cast<dtDAL::NamedGameEventParameter&>(*internalGroup.AddParameter("CuteEvent", dtDAL::DataType::GAME_EVENT)).SetValue(ge->GetUniqueId());
-      static_cast<dtDAL::NamedActorParameter&>(*internalGroup.AddParameter("CuteActor", dtDAL::DataType::ACTOR)).SetValue(proxy->GetId());
-      internalGroup.AddValue("CuteBool", true);
-
       dtCore::RefPtr<dtDAL::NamedGroupParameter> secondInternalGroup = static_cast<dtDAL::NamedGroupParameter*>(expectedResult->AddParameter("FloatGroup", dtDAL::DataType::GROUP));
-      static_cast<dtDAL::NamedVec2Parameter&>(*secondInternalGroup->AddParameter("CuteVec2", dtDAL::DataType::VEC2)).SetValue(osg::Vec2(1.0f, 1.3f));
-      //static_cast<dtDAL::NamedVec2fParameter&>(*secondInternalGroup->AddParameter("CuteVec2f", dtDAL::DataType::VEC2F)).SetValue(osg::Vec2f(1.0f, 1.3f));
-      //static_cast<dtDAL::NamedVec2dParameter&>(*secondInternalGroup->AddParameter("CuteVec2d", dtDAL::DataType::VEC2D)).SetValue(osg::Vec2f(1.0, 1.3));
-      static_cast<dtDAL::NamedVec3Parameter&>(*secondInternalGroup->AddParameter("CuteVec3", dtDAL::DataType::VEC3)).SetValue(osg::Vec3(1.0f, 1.3f, 34.7f));
-      //static_cast<dtDAL::NamedVec3fParameter&>(*secondInternalGroup->AddParameter("CuteVec3f", dtDAL::DataType::VEC3F)).SetValue(osg::Vec3f(1.0f, 1.3f, 34.7f));
-      //static_cast<dtDAL::NamedVec3dParameter&>(*secondInternalGroup->AddParameter("CuteVec3d", dtDAL::DataType::VEC3D)).SetValue(osg::Vec3d(1.0, 1.3, 34.7));
-      static_cast<dtDAL::NamedVec4Parameter&>(*secondInternalGroup->AddParameter("CuteVec4", dtDAL::DataType::VEC4)).SetValue(osg::Vec4(1.0f, 1.3f, 34.7f, 77.6f));
-      //static_cast<dtDAL::NamedVec4fParameter&>(*secondInternalGroup->AddParameter("CuteVec4f", dtDAL::DataType::VEC4F)).SetValue(osg::Vec4(1.0f, 1.3f, 34.7f, 77.6f));
-      //static_cast<dtDAL::NamedVec4dParameter&>(*secondInternalGroup->AddParameter("CuteVec4d", dtDAL::DataType::VEC4D)).SetValue(osg::Vec4(1.0, 1.3, 34.7, 77.6));
-      static_cast<dtDAL::NamedRGBAColorParameter&>(*secondInternalGroup->AddParameter("CuteColor", dtDAL::DataType::RGBACOLOR)).SetValue(osg::Vec4(1.0f, 0.6f, 0.3f, 0.11f));
-      static_cast<dtDAL::NamedFloatParameter&>(*secondInternalGroup->AddParameter("CuteFloat", dtDAL::DataType::FLOAT)).SetValue(3.8f);
-      static_cast<dtDAL::NamedDoubleParameter&>(*secondInternalGroup->AddParameter("CuteDouble", dtDAL::DataType::DOUBLE)).SetValue(3.8f);
+    
+      {
+         dtDAL::Map* map = &project.CreateMap(mapName, mapFileName);
+         map->AddLibrary(mExampleLibraryName, "1.0");
 
-      groupProp->SetValue(*expectedResult);
+         dtCore::RefPtr<dtDAL::BaseActorObject> proxy = dtDAL::LibraryManager::GetInstance().CreateActorProxy(*at);
+       
+         dtDAL::GroupActorProperty* groupProp;
+         proxy->GetProperty("TestGroup", groupProp);
 
-      //remove the floats so that they can compared separately using epsilons.
-      expectedResult->RemoveParameter(secondInternalGroup->GetName());
+         const dtDAL::ResourceDescriptor rd("StaticMeshes:Chicken:Horse.ive", "StaticMeshes:Chicken:Horse.ive");
 
-      map->AddProxy(*proxy);
+         dtDAL::GameEvent* ge = new dtDAL::GameEvent("cow", "chicken");
+         map->GetEventManager().AddEvent(*ge);
 
-      project.SaveMap(*map);
+         expectedResult->AddValue("SillyInt", 24);
+         expectedResult->AddValue("SillyLong", 37L);
+         expectedResult->AddValue("SillyString", std::string("Jojo"));
+         static_cast<dtDAL::NamedResourceParameter&>(*expectedResult->AddParameter("SillyResource1", dtDAL::DataType::STATIC_MESH)).SetValue(rd);
+         static_cast<dtDAL::NamedResourceParameter&>(*expectedResult->AddParameter("SillyResource2", dtDAL::DataType::TEXTURE)).SetValue(dtDAL::ResourceDescriptor::NULL_RESOURCE);
 
-      project.CloseMap(*map);
+         dtDAL::NamedGroupParameter& internalGroup = static_cast<dtDAL::NamedGroupParameter&>(*expectedResult->AddParameter("SillyGroup", dtDAL::DataType::GROUP));
+         internalGroup.AddValue("CuteString", std::string("Just a string"));
+         static_cast<dtDAL::NamedGameEventParameter&>(*internalGroup.AddParameter("CuteEvent", dtDAL::DataType::GAME_EVENT)).SetValue(ge->GetUniqueId());
+         static_cast<dtDAL::NamedActorParameter&>(*internalGroup.AddParameter("CuteActor", dtDAL::DataType::ACTOR)).SetValue(proxy->GetId());
+         internalGroup.AddValue("CuteBool", true);
 
-      map = &project.GetMap(mapName);
+         static_cast<dtDAL::NamedVec2Parameter&>(*secondInternalGroup->AddParameter("CuteVec2", dtDAL::DataType::VEC2)).SetValue(osg::Vec2(1.0f, 1.3f));
+         static_cast<dtDAL::NamedVec3Parameter&>(*secondInternalGroup->AddParameter("CuteVec3", dtDAL::DataType::VEC3)).SetValue(osg::Vec3(1.0f, 1.3f, 34.7f));
+         static_cast<dtDAL::NamedVec4Parameter&>(*secondInternalGroup->AddParameter("CuteVec4", dtDAL::DataType::VEC4)).SetValue(osg::Vec4(1.0f, 1.3f, 34.7f, 77.6f));
+         static_cast<dtDAL::NamedRGBAColorParameter&>(*secondInternalGroup->AddParameter("CuteColor", dtDAL::DataType::RGBACOLOR)).SetValue(osg::Vec4(1.0f, 0.6f, 0.3f, 0.11f));
+         static_cast<dtDAL::NamedFloatParameter&>(*secondInternalGroup->AddParameter("CuteFloat", dtDAL::DataType::FLOAT)).SetValue(3.8f);
+         static_cast<dtDAL::NamedDoubleParameter&>(*secondInternalGroup->AddParameter("CuteDouble", dtDAL::DataType::DOUBLE)).SetValue(3.8f);
+
+         groupProp->SetValue(*expectedResult);
+
+         //remove the floats so that they can compared separately using epsilons.
+         expectedResult->RemoveParameter(secondInternalGroup->GetName());
+
+         map->AddProxy(*proxy);
+
+         project.SaveMap(*map);
+         project.CloseMap(*map);
+      }
+
+      dtDAL::Map* map = &project.GetMap(mapName);
 
       std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> > toFill;
-
       map->GetAllProxies(toFill);
       CPPUNIT_ASSERT_EQUAL_MESSAGE("The map was saved with one proxy.  It should have one when loaded.", toFill.size(), size_t(1));
 
-      proxy = toFill[0];
-
+      dtCore::RefPtr<dtDAL::BaseActorObject> proxy = toFill[0];
+ 
+      dtDAL::GroupActorProperty* groupProp;
       proxy->GetProperty("TestGroup", groupProp);
 
       dtCore::RefPtr<dtDAL::NamedGroupParameter> actualResult = groupProp->GetValue();
-
       CPPUNIT_ASSERT(actualResult.valid());
 
       dtCore::RefPtr<dtDAL::NamedParameter> floatGroup = actualResult->RemoveParameter(secondInternalGroup->GetName());
@@ -1233,7 +1229,8 @@ void MapTests::TestMapSaveAndLoadGroup()
 
       CPPUNIT_ASSERT_MESSAGE("The loaded result parameter should have group filled with floats.", actualFloatGroup.valid());
 
-      CPPUNIT_ASSERT_MESSAGE("Actual : \n" + actualResult->ToString() + " \n\n " + expectedResult->ToString(), *expectedResult == *actualResult);
+      CPPUNIT_ASSERT_MESSAGE("The returned group parameter doesn't match the actual\n" + actualResult->ToString() + " \n\n " + expectedResult->ToString(),
+                              *expectedResult == *actualResult);
 
       std::vector<dtDAL::NamedParameter*> savedFloatParams;
       secondInternalGroup->GetParameters(savedFloatParams);
@@ -1251,40 +1248,16 @@ void MapTests::TestMapSaveAndLoadGroup()
          dtUtil::Equivalent(
             static_cast<dtDAL::NamedVec2Parameter*>(secondInternalGroup->GetParameter("CuteVec2"))->GetValue(),
             static_cast<dtDAL::NamedVec2Parameter*>(actualFloatGroup->GetParameter("CuteVec2"))->GetValue(), 1e-3f));
-//      CPPUNIT_ASSERT_MESSAGE("The loaded vec2f parameter should match the one saved: \n" + valueString,
-//         dtUtil::Equivalent(
-//            static_cast<dtDAL::NamedVec2fParameter*>(secondInternalGroup->GetParameter("CuteVec2f"))->GetValue(),
-//            static_cast<dtDAL::NamedVec2fParameter*>(actualFloatGroup->GetParameter("CuteVec2f"))->GetValue(), 2, 1e-3f));
-//      CPPUNIT_ASSERT_MESSAGE("The loaded vec2d parameter should match the one saved: \n" + valueString,
-//         dtUtil::Equivalent(
-//            static_cast<dtDAL::NamedVec2dParameter*>(secondInternalGroup->GetParameter("CuteVec2d"))->GetValue(),
-//            static_cast<dtDAL::NamedVec2dParameter*>(actualFloatGroup->GetParameter("CuteVec2d"))->GetValue(), 2, 1e-3));
 
       CPPUNIT_ASSERT_MESSAGE("The loaded vec3 parameter should match the one saved: \n" + valueString,
          dtUtil::Equivalent(
             static_cast<dtDAL::NamedVec3Parameter*>(secondInternalGroup->GetParameter("CuteVec3"))->GetValue(),
             static_cast<dtDAL::NamedVec3Parameter*>(actualFloatGroup->GetParameter("CuteVec3"))->GetValue(), 1e-3f));
-//      CPPUNIT_ASSERT_MESSAGE("The loaded vec3f parameter should match the one saved: \n" + valueString,
-//         dtUtil::Equivalent(
-//            static_cast<dtDAL::NamedVec3fParameter*>(secondInternalGroup->GetParameter("CuteVec3f"))->GetValue(),
-//            static_cast<dtDAL::NamedVec3fParameter*>(actualFloatGroup->GetParameter("CuteVec3f"))->GetValue(), 3, 1e-3f));
-//      CPPUNIT_ASSERT_MESSAGE("The loaded vec3d parameter should match the one saved: \n" + valueString,
-//         dtUtil::Equivalent(
-//            static_cast<dtDAL::NamedVec3dParameter*>(secondInternalGroup->GetParameter("CuteVec3d"))->GetValue(),
-//            static_cast<dtDAL::NamedVec3dParameter*>(actualFloatGroup->GetParameter("CuteVec3d"))->GetValue(), 3, 1e-3));
 
       CPPUNIT_ASSERT_MESSAGE("The loaded vec4 parameter should match the one saved: \n" + valueString,
          dtUtil::Equivalent(
             static_cast<dtDAL::NamedVec4Parameter*>(secondInternalGroup->GetParameter("CuteVec4"))->GetValue(),
             static_cast<dtDAL::NamedVec4Parameter*>(actualFloatGroup->GetParameter("CuteVec4"))->GetValue(), 1e-3f));
-//      CPPUNIT_ASSERT_MESSAGE("The loaded vec4f parameter should match the one saved: \n" + valueString,
-//         dtUtil::Equivalent(
-//            static_cast<dtDAL::NamedVec4fParameter*>(secondInternalGroup->GetParameter("CuteVec4f"))->GetValue(),
-//            static_cast<dtDAL::NamedVec4fParameter*>(actualFloatGroup->GetParameter("CuteVec4f"))->GetValue(), 4, 1e-3f));
-//      CPPUNIT_ASSERT_MESSAGE("The loaded vec4d parameter should match the one saved: \n" + valueString,
-//         dtUtil::Equivalent(
-//            static_cast<dtDAL::NamedVec4dParameter*>(secondInternalGroup->GetParameter("CuteVec4d"))->GetValue(),
-//            static_cast<dtDAL::NamedVec4dParameter*>(actualFloatGroup->GetParameter("CuteVec4d"))->GetValue(), 4, 1e-3));
 
       CPPUNIT_ASSERT_MESSAGE("The loaded color parameter should match the one saved: \n" + valueString,
          dtUtil::Equivalent(

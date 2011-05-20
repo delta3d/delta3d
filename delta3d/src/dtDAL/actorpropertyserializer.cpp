@@ -570,12 +570,14 @@ namespace dtDAL
          case DataType::DOUBLE_ID:
          case DataType::INT_ID:
          case DataType::LONGINT_ID:
-         case DataType::STRING_ID:
          case DataType::BOOLEAN_ID:
          case DataType::ACTOR_ID:
          case DataType::GAMEEVENT_ID:
          case DataType::ENUMERATION_ID:
             WriteSimple(parameter);
+            break;
+         case DataType::STRING_ID:
+            WriteString(parameter.ToString());
             break;
          case DataType::VEC2_ID:
             WriteVec(static_cast<const NamedVec2Parameter&>(parameter).GetValue(), numberConversionBuffer, bufferMax);
@@ -1738,7 +1740,7 @@ namespace dtDAL
       else if (errorIfNotFound)
       {
          mParser->mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__,
-            "Found property data element with name %s, but this does not map to a known type.\n",
+            "Found property data element with name '%s', but this does not map to a known type.\n",
             dtUtil::XMLStringConverter(localname).c_str());
       }
       return NULL;
