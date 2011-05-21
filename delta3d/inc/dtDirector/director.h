@@ -58,6 +58,7 @@ namespace dtDirector
    {
    private:
       struct ThreadData;
+      struct StackData;
 
    public:
       struct RecordThreadData;
@@ -495,12 +496,22 @@ namespace dtDirector
        * @param[in]  data       The thread data.
        * @param[in]  simDelta   The simulation time step.
        * @param[in]  delta      The real time step.
-       * @param[out] continued  Return parameter that tells whether this update
-       *                        should be called again immediately.
        *
        * @return     Returns false if the thread should stop.
        */
-      bool UpdateThread(ThreadData& data, float simDelta, float delta, bool& continued);
+      bool UpdateThread(ThreadData& data, float simDelta, float delta);
+
+      /**
+       * Cleans up empty threads.
+       */
+      void CleanThreads();
+
+      /**
+       * Recursively cleans up empty threads.
+       *
+       * @param[in]  data  The stack data to clean.
+       */
+      void CleanThread(StackData& data);
 
       /**
        * Processes an updated node.

@@ -331,29 +331,24 @@ namespace dtDirector
       mRecordTime += delta;
 
       // Update all threads.
-      int count = (int)mThreads.size();
-      for (mCurrentThread = 0; mCurrentThread < count; mCurrentThread++)
+      for (mCurrentThread = 0; mCurrentThread < (int)mThreads.size(); mCurrentThread++)
       {
-         float newSimDelta = simDelta;
-         float newDelta = delta;
-
          bool continued = true;
          while (continued)
          {
-            if (!UpdateThread(mThreads[mCurrentThread], newSimDelta, newDelta, continued))
-            {
-               // Pop the first callstack item from the thread.
-               mThreads.erase(mThreads.begin() + mCurrentThread);
-               mCurrentThread--;
-               count--;
-               continued = false;
-            }
+            continued = UpdateThread(mThreads[mCurrentThread], simDelta, delta);
+         }
 
-            // Only the first update should have a time elapsed value.
-            newSimDelta = 0.0f;
-            newDelta = 0.0f;
+         // If this thread has no more stacks in its thread, we can
+         // remove it.
+         if (mThreads[mCurrentThread].stack.empty())
+         {
+            mThreads.erase(mThreads.begin() + mCurrentThread);
+            mCurrentThread--;
          }
       }
+
+      CleanThreads();
 
       // We reset the current thread value so any new threads created outside
       // of the update will generate a brand new main thread.
@@ -451,14 +446,17 @@ namespace dtDirector
          bool continued = true;
          while (continued)
          {
-            if (!UpdateThread(mThreads[mCurrentThread], 0.0f, 0.0f, continued))
-            {
-               // Pop the first call stack item from the thread.
-               mThreads.erase(mThreads.begin() + mCurrentThread);
-               mCurrentThread--;
-               continued = false;
-            }
+            continued = UpdateThread(mThreads[mCurrentThread], 0.0f, 0.0f);
          }
+
+         // If this thread has no more stacks in its thread, we can
+         // remove it.
+         if (mThreads[mCurrentThread].stack.empty())
+         {
+            mThreads.erase(mThreads.begin() + mCurrentThread);
+         }
+
+         CleanThreads();
 
          mCurrentThread = -1;
       }
@@ -853,7 +851,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   bool Director::UpdateThread(ThreadData& data, float simDelta, float delta, bool& continued)
+   bool Director::UpdateThread(ThreadData& data, float simDelta, float delta)
    {
       // If there is no stack, this thread is finished.
       if (data.stack.empty()) return false;
@@ -864,32 +862,23 @@ namespace dtDirector
       StackData& stack = data.stack[stackIndex];
 
       // Update all the sub-threads in the stack.
-      int count = (int)stack.subThreads.size();
-      for (stack.currentThread = 0; stack.currentThread < count; stack.currentThread++)
+      for (stack.currentThread = 0; stack.currentThread < (int)stack.subThreads.size(); stack.currentThread++)
       {
-         float newSimDelta = simDelta;
-         float newDelta = delta;
-
-         continued = true;
-         while (continued)
+         bool finished = false;
+         while (!finished)
          {
-            if (!UpdateThread(stack.subThreads[stack.currentThread], newSimDelta, newDelta, continued))
-            {
-               stack.subThreads.erase(stack.subThreads.begin() + stack.currentThread);
-               stack.currentThread--;
-               count--;
-               continued = false;
-            }
+            finished = !UpdateThread(stack.subThreads[stack.currentThread], simDelta, delta);
+         }
 
-            // Only the first update should have a time elapsed value.
-            newSimDelta = 0.0f;
-            newDelta = 0.0f;
+         if (stack.subThreads[stack.currentThread].stack.empty())
+         {
+            stack.subThreads.erase(stack.subThreads.begin() + stack.currentThread);
+            stack.currentThread--;
          }
       }
       stack.currentThread = -1;
 
-      bool makeNewThread = false;
-      continued = false;
+      bool continued = false;
 
       // Threads always update the first item in the stack,
       // all other stack items are "sleeping".
@@ -904,18 +893,18 @@ namespace dtDirector
          // create a new thread on any new events.  Otherwise, our first
          // new thread will be a continuation of the current active thread.
          mQueueingThreads = true;
-         makeNewThread = currentNode->Update(simDelta, delta, input, first);
-         continued = !makeNewThread;
+         bool isLatentNode = currentNode->Update(simDelta, delta, input, first);
+         continued = !isLatentNode;
 
          // If we are just starting this action node and it is latent,
          // register this node for messages.
          if (!currentNode->AsEventNode())
          {
-            if (first && makeNewThread)
+            if (first && isLatentNode)
             {
                currentNode->RegisterMessages();
             }
-            else if (!first && !makeNewThread)
+            else if (!first && !isLatentNode)
             {
                currentNode->UnRegisterMessages();
             }
@@ -965,21 +954,7 @@ namespace dtDirector
                   if (inputIndex < inputCount)
                   {
                      // Create a new thread.
-                     if (makeNewThread)
-                     {
-                        BeginThread(input->GetOwner(), inputIndex);
-                     }
-                     // If we are continuing the current thread, continue it.
-                     else
-                     {
-                        StackData& stack = data.stack[stackIndex];
-                        stack.node = input->GetOwner();
-                        stack.index = inputIndex;
-                        stack.first = true;
-
-                        // From now on, all new active outputs create their own threads.
-                        makeNewThread = true;
-                     }
+                     BeginThread(input->GetOwner(), inputIndex);
                   }
                }
             }
@@ -989,7 +964,7 @@ namespace dtDirector
 
          // Process our queued threads.
          mQueueingThreads = false;
-         count = (int)mThreadQueue.size();
+         int count = (int)mThreadQueue.size();
          for (int index = 0; index < count; index++)
          {
             ThreadQueue& queue = mThreadQueue[index];
@@ -1005,16 +980,19 @@ namespace dtDirector
          }
          mThreadQueue.clear();
 
-         // If we did not continue this current thread, stop it.
-         if (!makeNewThread)
+         // If the current node is not latent, then
+         // we can clear the node referenced by this
+         // thread.
+         if (!isLatentNode)
          {
             data.stack[stackIndex].node = NULL;
          }
       }
-
+      
       // If we did not continue the current stack, and we don't have any more
       // sub-threads in this stack.
-      if (!makeNewThread && data.stack[stackIndex].subThreads.empty())
+      if (!data.stack[stackIndex].node &&
+         data.stack[stackIndex].subThreads.empty())
       {
          // Pop this stack from the list.
          data.stack.erase(data.stack.begin() + stackIndex);
@@ -1022,12 +1000,59 @@ namespace dtDirector
          // If we do not have any remaining stack items, we can remove this thread.
          if (data.stack.empty())
          {
-            continued = false;
             return false;
          }
       }
 
-      return true;
+      return continued;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void Director::CleanThreads()
+   {
+      for (int threadIndex = 0; threadIndex < (int)mThreads.size(); ++threadIndex)
+      {
+         if (mThreads[threadIndex].stack.size())
+         {
+            StackData& stack = mThreads[threadIndex].stack.back();
+            if (!stack.node)
+            {
+               mThreads.insert(mThreads.end(),
+                  stack.subThreads.begin(),
+                  stack.subThreads.end());
+
+               mThreads[threadIndex].stack.pop_back();
+            }
+            else
+            {
+               CleanThread(stack);
+            }
+         }
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void Director::CleanThread(StackData& data)
+   {
+      for (int threadIndex = 0; threadIndex < (int)data.subThreads.size(); ++threadIndex)
+      {
+         if (data.subThreads[threadIndex].stack.size())
+         {
+            StackData& stack = data.subThreads[threadIndex].stack.back();
+            if (!stack.node)
+            {
+               data.subThreads.insert(data.subThreads.end(),
+                  stack.subThreads.begin(),
+                  stack.subThreads.end());
+
+               data.subThreads[threadIndex].stack.pop_back();
+            }
+            else
+            {
+               CleanThread(stack);
+            }
+         }
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////
