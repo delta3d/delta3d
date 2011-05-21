@@ -25,6 +25,7 @@ SET(LIB_PUBLIC_HEADERS ${HEADER_PATH}/actionitem.h
     ${HEADER_PATH}/clipboard.h
     ${HEADER_PATH}/customeditortool.h
     ${HEADER_PATH}/directoreditor.h
+    ${HEADER_PATH}/editornotifier.h
     ${HEADER_PATH}/editorscene.h
     ${HEADER_PATH}/editorview.h
     ${HEADER_PATH}/export.h
@@ -57,6 +58,7 @@ SET(LIB_SOURCES ${SOURCE_PATH}/actionitem.cpp
     ${SOURCE_PATH}/clipboard.cpp
     ${SOURCE_PATH}/customeditortool.cpp
     ${SOURCE_PATH}/directoreditor.cpp
+    ${SOURCE_PATH}/editornotifier.cpp
     ${SOURCE_PATH}/editorscene.cpp
     ${SOURCE_PATH}/editorview.cpp
     ${SOURCE_PATH}/graphbrowser.cpp
