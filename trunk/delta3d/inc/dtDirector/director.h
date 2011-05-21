@@ -25,6 +25,7 @@
 #include <dtDirector/export.h>
 #include <dtDirector/directorgraph.h>
 #include <dtDirector/messagegmcomponent.h>
+#include <dtDirector/directornotifier.h>
 
 #include <dtDAL/map.h>
 
@@ -109,6 +110,12 @@ namespace dtDirector
        * provide a valid key based on the container type.
        */
       virtual std::string GetDefaultPropertyKey() const;
+
+      /**
+       * Accesses the Director Notifier.
+       */
+      void SetNotifier(DirectorNotifier* notifier);
+      DirectorNotifier* GetNotifier() const;
 
       /**
        * Clears all recording data.
@@ -647,6 +654,8 @@ namespace dtDirector
       dtCore::RefPtr<dtDirector::MessageGMComponent> mMessageGMComponent;
 
       dtCore::ObserverPtr<Director> mParent;
+
+      dtCore::RefPtr<DirectorNotifier> mNotifier;
 
       // Switch to enable/disable this director
       DT_DECLARE_ACCESSOR_INLINE(bool, Active)

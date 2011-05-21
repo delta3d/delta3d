@@ -10,6 +10,7 @@ SET(LIB_PUBLIC_HEADERS ${HEADER_PATH}/actionnode.h
     ${HEADER_PATH}/colors.h
     ${HEADER_PATH}/director.h
     ${HEADER_PATH}/directorgraph.h
+    ${HEADER_PATH}/directornotifier.h
     ${HEADER_PATH}/directorxml.h
     ${HEADER_PATH}/directorxmlhandler.h
     ${HEADER_PATH}/eventnode.h
@@ -32,6 +33,7 @@ SET (LIB_SOURCES ${SOURCE_PATH}/actionnode.cpp
      ${SOURCE_PATH}/colors.cpp
      ${SOURCE_PATH}/director.cpp
      ${SOURCE_PATH}/directorgraph.cpp
+     ${SOURCE_PATH}/directornotifier.cpp
      ${SOURCE_PATH}/directorxml.cpp
      ${SOURCE_PATH}/directorxmlhandler.cpp
      ${SOURCE_PATH}/eventnode.cpp

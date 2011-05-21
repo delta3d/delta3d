@@ -463,6 +463,11 @@ namespace dtDirector
             logger->LogMessage(dtUtil::Log::LOG_ALWAYS, __FUNCTION__, __LINE__, message);
          }
       }
+
+      if (valueNode)
+      {
+         valueNode->OnValueRetrieved();
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
