@@ -130,6 +130,18 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
+   void Director::SetNotifier(DirectorNotifier* notifier)
+   {
+      mNotifier = notifier;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   DirectorNotifier* Director::GetNotifier() const
+   {
+      return mNotifier;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    void Director::ClearThreads()
    {
       // Save out any currently recorded data if it exists.
@@ -1181,6 +1193,31 @@ namespace dtDirector
 
             mLogger->LogMessage(dtUtil::Log::LOG_ALWAYS, "dtDirector::Director::UpdateThread", 531, message);
          }
+      }
+
+      if (mNotifier.valid())
+      {
+         std::string inputName;
+         if (input < (int)node->GetInputLinks().size())
+         {
+            InputLink* link = &node->GetInputLinks()[input];
+            if (link)
+            {
+               inputName = link->GetName();
+            }
+         }
+
+         std::vector<std::string> outputNames;
+         for (int index = 0; index < (int)outputs.size(); ++index)
+         {
+            OutputLink* link = outputs[index];
+            if (link)
+            {
+               outputNames.push_back(link->GetName());
+            }
+         }
+
+         mNotifier->OnNodeExecution(node, inputName, outputNames);
       }
    }
 

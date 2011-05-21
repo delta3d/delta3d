@@ -21,6 +21,7 @@
 
 #include <dtDirector/valuenode.h>
 #include <dtDirector/colors.h>
+#include <dtDirector/director.h>
 
 #include <dtDAL/actorproperty.h>
 #include <dtDAL/stringactorproperty.h>
@@ -196,6 +197,10 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void ValueNode::OnValueRetrieved()
    {
+      if (GetDirector()->GetNotifier())
+      {
+         GetDirector()->GetNotifier()->OnValueRetrieved(this);
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////
