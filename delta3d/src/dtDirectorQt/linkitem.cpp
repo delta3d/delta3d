@@ -377,11 +377,13 @@ namespace dtDirector
          {
             QPointF start(data.linkGraphic->scenePos());
             QPointF end(mouseEvent->scenePos());
+            float height = mNodeItem->scenePos().y();
 
             // Modify the positions based on the translation of the background item.
             QPointF offset = mScene->GetTranslationItem()->scenePos();
             start += offset;
             end += offset;
+            height += offset.y();
 
             start.setX(start.x() + LINK_SIZE/2);
             start.setY(start.y() + LINK_SIZE/2);
@@ -405,7 +407,7 @@ namespace dtDirector
                }
             }
 
-            QPainterPath path = mNodeItem->CreateConnectionH(end, start);
+            QPainterPath path = mNodeItem->CreateConnectionH(end, start, height);
             mHighlight->setPath(path);
             mDrawing->setPath(path);
          }
@@ -740,11 +742,13 @@ namespace dtDirector
          {
             QPointF start(data.linkGraphic->scenePos());
             QPointF end(mouseEvent->scenePos());
+            float height = mNodeItem->scenePos().y();
 
             // Modify the positions based on the translation of the background item.
             QPointF offset = mScene->GetTranslationItem()->scenePos();
             start += offset;
             end += offset;
+            height += offset.y();
 
             start.setX(start.x() + LINK_LENGTH);
             start.setY(start.y() + LINK_SIZE/2);
@@ -768,7 +772,7 @@ namespace dtDirector
                }
             }
 
-            QPainterPath path = mNodeItem->CreateConnectionH(start, end, true);
+            QPainterPath path = mNodeItem->CreateConnectionH(start, end, height, true);
             mHighlight->setPath(path);
             mDrawing->setPath(path);
          }

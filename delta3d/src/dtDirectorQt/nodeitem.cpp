@@ -1024,12 +1024,13 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   QPainterPath NodeItem::CreateConnectionH(QPointF start, QPointF end, bool drawReverse)
+   QPainterPath NodeItem::CreateConnectionH(QPointF start, QPointF end, float height, bool drawReverse)
    {
       // Modify the positions based on the translation of the background item.
       QPointF offset = mScene->GetTranslationItem()->scenePos();
       start -= offset;
       end -= offset;
+      height -= offset.y();
 
       float halfX = (start.x() + end.x()) / 2.0f;
 
@@ -1059,20 +1060,51 @@ namespace dtDirector
             end = temp;
          }
 
-         float rightX = start.x() + (start.x() - end.x()) / 4;
-         float leftX = end.x() - (start.x() - end.x()) / 4;
-
          float halfY = (start.y() + end.y()) / 2.0f;
 
-         path.moveTo(start);
-         path.cubicTo(
-            rightX, start.y(),
-            rightX, halfY,
-            halfX, halfY);
-         path.cubicTo(
-            leftX, halfY,
-            leftX, end.y(),
-            end.x(), end.y());
+         //if (height + mNodeHeight < halfY)
+         //{
+         //   float rightX = start.x() + (start.x() - end.x()) / 4;
+         //   float leftX = end.x() - (start.x() - end.x()) / 4;
+
+         //   path.moveTo(start);
+         //   path.cubicTo(
+         //      rightX, start.y(),
+         //      rightX, halfY,
+         //      halfX, halfY);
+         //   path.cubicTo(
+         //      leftX, halfY,
+         //      leftX, end.y(),
+         //      end.x(), end.y());
+         //}
+         //else
+         {
+            float rightX = start.x() + (start.x() - end.x()) / 4;
+            float leftX = end.x() - (start.x() - end.x()) / 4;
+
+            float top = height;
+
+            if (start.y() < top)
+            {
+               top = start.y();
+            }
+            else if (end.y() < top)
+            {
+               top = end.y();
+            }
+
+            top -= fabs((start.x() - end.x()) / 4);
+
+            path.moveTo(start);
+            path.cubicTo(
+               rightX, start.y(),
+               rightX, top,
+               halfX, top);
+            path.cubicTo(
+               leftX, top,
+               leftX, end.y(),
+               end.x(), end.y());
+         }
       }
 
       return path;
@@ -1275,8 +1307,18 @@ namespace dtDirector
       start.setY(start.y() + LINK_SIZE/2);
       end.setX(end.x() + LINK_SIZE/2);
       end.setY(end.y() + LINK_SIZE/2);
+      float height = 0.0f;
 
-      QPainterPath path = CreateConnectionH(start, end);
+      if (output.node->scenePos().y() < input.node->scenePos().y())
+      {
+         height = output.node->scenePos().y();
+      }
+      else
+      {
+         height = input.node->scenePos().y();
+      }
+
+      QPainterPath path = CreateConnectionH(start, end, height);
       output.linkConnectors[index]->setPath(path);
 
       output.linkConnectors[index]->setPen(QPen(output.node->GetNodeColor(), 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
