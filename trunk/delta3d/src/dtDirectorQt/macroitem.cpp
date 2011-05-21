@@ -127,6 +127,7 @@ namespace dtDirector
             mInputs.push_back(InputData());
             InputData& data = mInputs.back();
 
+            data.node = this;
             data.link = &inputs[index]->GetInputLinks()[0];
             if (!data.link->GetVisible()) mHasHiddenLinks = true;
 
@@ -145,6 +146,7 @@ namespace dtDirector
             mOutputs.push_back(OutputData());
             OutputData& data = mOutputs.back();
 
+            data.node = this;
             data.link = &outputs[index]->GetOutputLinks()[0];
             if (!data.link->GetVisible()) mHasHiddenLinks = true;
 
@@ -163,6 +165,7 @@ namespace dtDirector
             mValues.push_back(ValueData());
             ValueData& data = mValues.back();
 
+            data.node = this;
             data.link = &values[index]->GetValueLinks()[0];
             if (!data.link->GetVisible()) mHasHiddenLinks = true;
 

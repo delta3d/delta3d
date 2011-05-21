@@ -415,6 +415,7 @@ namespace dtDirector
             mInputs.push_back(InputData());
             InputData& data = mInputs.back();
 
+            data.node = this;
             data.link = &mNode->GetInputLinks()[index];
             if (!data.link->GetVisible()) mHasHiddenLinks = true;
 
@@ -432,6 +433,7 @@ namespace dtDirector
             mOutputs.push_back(OutputData());
             OutputData& data = mOutputs.back();
 
+            data.node = this;
             data.link = &mNode->GetOutputLinks()[index];
             if (!data.link->GetVisible()) mHasHiddenLinks = true;
 
@@ -453,6 +455,7 @@ namespace dtDirector
             mValues.push_back(ValueData());
             ValueData& data = mValues.back();
 
+            data.node = this;
             data.link = link;
             data.linkGraphic = new ValueLinkItem(this, (int)mValues.size()-1, this, mScene);
             data.linkName = new GraphicsTextItem(data.linkGraphic, mScene);
@@ -1276,10 +1279,10 @@ namespace dtDirector
       QPainterPath path = CreateConnectionH(start, end);
       output.linkConnectors[index]->setPath(path);
 
+      output.linkConnectors[index]->setPen(QPen(output.node->GetNodeColor(), 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+
       if(isOutput)
       {
-         output.linkConnectors[index]->setPen(QPen(GetNodeColor(), 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-
          if(mScene->GetEditor()->GetReplayMode() &&
             mScene->GetEditor()->GetReplayOutput() == output.link &&
             mScene->GetEditor()->GetReplayInput() == input.link)

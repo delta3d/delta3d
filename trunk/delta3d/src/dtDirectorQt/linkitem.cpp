@@ -149,55 +149,9 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   //void InputLinkItem::InitHighlight()
-   //{
-   //   // Highlight all connected output links.
-   //   if (mLinkIndex >= 0 && mLinkIndex < (int)mNodeItem->GetInputs().size())
-   //   {
-   //      InputData& data = mNodeItem->GetInputs()[mLinkIndex];
-   //      if (data.link)
-   //      {
-   //         int linkCount = (int)data.link->GetLinks().size();
-   //         for (int linkIndex = 0; linkIndex < linkCount; linkIndex++)
-   //         {
-   //            OutputLink* output = data.link->GetLinks()[linkIndex];
-   //            if (!output) continue;
-
-   //            NodeItem* item = mScene->GetNodeItem(output->GetOwner()->GetID());
-   //            if (!item) continue;
-
-   //            int outputCount = (int)item->GetOutputs().size();
-   //            for (int outputIndex = 0; outputIndex < outputCount; outputIndex++)
-   //            {
-   //               if (item->GetOutputs()[outputIndex].link == output)
-   //               {
-   //                  item->GetOutputs()[outputIndex].linkGraphic->SetHighlight(false, data.link);
-
-   //                  if (item->GetOutputs()[outputIndex].linkGraphic->GetAlwaysHighlight())
-   //                  {
-   //                     if (mScene->GetEditor()->GetReplayInput() == data.link ||
-   //                        mNodeItem->HasID(mScene->GetEditor()->GetReplayNode().nodeID))
-   //                     {
-   //                        SetHighlight(true);
-   //                     }
-   //                  }
-   //                  break;
-   //               }
-   //            }
-   //         }
-   //      }
-   //   }
-   //}
-
-   //////////////////////////////////////////////////////////////////////////
    LinkItem* InputLinkItem::GetLinkGraphic()
    {
       return this;
-      //if( !mNodeItem || mLinkIndex > (int)mNodeItem->GetInputs().size()-1 )
-      //{
-      //   return NULL;
-      //}
-      //return mNodeItem->GetInputs()[mLinkIndex].linkGraphic;
    }
 
    //////////////////////////////////////////////////////////////////////////
