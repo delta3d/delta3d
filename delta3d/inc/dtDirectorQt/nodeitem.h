@@ -49,6 +49,7 @@ namespace dtDirector
    class OutputLinkItem;
    class ValueLinkItem;
    class ValueNodeLinkItem;
+   class NodeItem;
 
    /**
     * Inherited Graphics Text Item that ignores context menu events.
@@ -75,6 +76,7 @@ namespace dtDirector
       GraphicsTextItem*    linkName;
       InputLinkItem*       linkGraphic;
       InputLink*           link;
+      NodeItem*            node;
    };
 
    struct OutputData
@@ -89,6 +91,7 @@ namespace dtDirector
       OutputLinkItem*      linkGraphic;
       std::vector<QGraphicsPathItem*> linkConnectors;
       OutputLink*          link;
+      NodeItem*            node;
    };
 
    struct ValueData
@@ -103,6 +106,7 @@ namespace dtDirector
       ValueLinkItem*       linkGraphic;
       std::vector<QGraphicsPathItem*> linkConnectors;
       ValueLink*           link;
+      NodeItem*            node;
    };
 
    /**
