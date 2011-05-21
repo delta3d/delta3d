@@ -347,11 +347,12 @@ namespace dtDirector
        *
        * @param[in]  start        The starting position.
        * @param[in]  end          The ending position.
+       * @param[in]  height       The height of the node.
        * @param[in]  drawReverse  Draws the link in reverse.
        *
        * @return     The resulting painter path.
        */
-      QPainterPath CreateConnectionH(QPointF start, QPointF end, bool drawReverse = false);
+      QPainterPath CreateConnectionH(QPointF start, QPointF end, float height, bool drawReverse = false);
       QPainterPath CreateConnectionV(QPointF start, QPointF end, bool drawReverse = false);
 
       /**
