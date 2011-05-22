@@ -499,19 +499,20 @@ namespace dtDirector
          mCurrentThread = mThreads.size() - 1;
 
          bool continued = true;
-         while (continued)
+         do
          {
-            continued = UpdateThread(mThreads[mCurrentThread], 0.0f, 0.0f);
-         }
+            continued != UpdateThread(mThreads[mCurrentThread], 0.0f, 0.0f);
 
-         // If this thread has no more stacks in its thread, we can
-         // remove it.
-         if (mThreads[mCurrentThread].stack.empty())
-         {
-            mThreads.erase(mThreads.begin() + mCurrentThread);
-         }
+            // If this thread has no more stacks in its thread, we can
+            // remove it.
+            if (mThreads[mCurrentThread].stack.empty())
+            {
+               mThreads.erase(mThreads.begin() + mCurrentThread);
+            }
 
-         CleanThreads();
+            CleanThreads();
+         }
+         while (continued);
 
          mCurrentThread = -1;
       }
@@ -916,14 +917,12 @@ namespace dtDirector
 
       StackData& stack = data.stack[stackIndex];
 
+      bool continued = false;
+
       // Update all the sub-threads in the stack.
       for (stack.currentThread = 0; stack.currentThread < (int)stack.subThreads.size(); stack.currentThread++)
       {
-         bool finished = false;
-         while (!finished)
-         {
-            finished = !UpdateThread(stack.subThreads[stack.currentThread], simDelta, delta);
-         }
+         continued != UpdateThread(stack.subThreads[stack.currentThread], simDelta, delta);
 
          if (stack.subThreads[stack.currentThread].stack.empty())
          {
@@ -932,8 +931,6 @@ namespace dtDirector
          }
       }
       stack.currentThread = -1;
-
-      bool continued = false;
 
       // Threads always update the first item in the stack,
       // all other stack items are "sleeping".
