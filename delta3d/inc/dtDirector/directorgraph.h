@@ -140,6 +140,7 @@ namespace dtDirector
        * Setter for parent.
        */
       void SetParent(DirectorGraph* parent) {mParent = parent;}
+
       /**
        * Getter for parent.
        */

@@ -108,6 +108,8 @@ namespace dtDirector
          mValues.erase(mValues.begin() + mCoreValueIndex, mValues.end());
       }
 
+      mName = "";
+
       // Now load the Director Script if able.
       if (mScriptResource != dtDAL::ResourceDescriptor::NULL_RESOURCE)
       {
@@ -132,6 +134,8 @@ namespace dtDirector
             DirectorGraph* graph = mScript->GetGraphRoot();
             if (graph)
             {
+               graph->SetParent(GetGraph());
+
                mName = osgDB::getNameLessExtension(mScriptResource.GetResourceName());
 
                // Set up the links.
