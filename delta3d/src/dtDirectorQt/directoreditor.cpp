@@ -229,18 +229,6 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   osg::Vec2 DirectorEditor::GetSnapPosition(osg::Vec2 position)
-   {
-      if (mUI.action_Smart_Grid_snap->isChecked())
-      {
-         position.x() = float(int(position.x() / 10) * 10);
-         position.y() = float(int(position.y() / 10) * 10);
-      }
-
-      return position;
-   }
-
-   //////////////////////////////////////////////////////////////////////////
    void DirectorEditor::Refresh()
    {
       if (!mDirector.valid()) {return;}

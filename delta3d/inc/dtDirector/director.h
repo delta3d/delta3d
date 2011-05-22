@@ -31,6 +31,7 @@
 
 #include <dtGame/gamemanager.h>
 
+#include <dtCore/base.h>
 #include <dtCore/observerptr.h>
 #include <dtUtil/getsetmacros.h>
 
@@ -47,6 +48,29 @@ namespace dtUtil
  */
 namespace dtDirector
 {
+   class DT_DIRECTOR_EXPORT DirectorInstance: public dtCore::Base
+   {
+      DECLARE_MANAGEMENT_LAYER(DirectorInstance)
+
+   public:
+
+      /**
+       * Constructor.
+       *
+       * @param name the instance name
+       */
+      DirectorInstance(Director* director, const std::string& name = "Director Script");
+
+   protected:
+      /**
+       * Destructor.
+       */
+      virtual ~DirectorInstance();
+
+   public:
+      Director* mDirector;
+   };
+
    /**
     * This is the base class for all action nodes.
     *
@@ -146,7 +170,7 @@ namespace dtDirector
        *
        * @param[in]  proxy  The Director Proxy.
        */
-      void SetParent(Director* parent) {mParent = parent;}
+      void SetParent(Director* parent);
 
       /**
        * Retrieves the map.
@@ -656,6 +680,8 @@ namespace dtDirector
       dtCore::ObserverPtr<Director> mParent;
 
       dtCore::RefPtr<DirectorNotifier> mNotifier;
+
+      dtCore::RefPtr<DirectorInstance> mBaseInstance;
 
       // Switch to enable/disable this director
       DT_DECLARE_ACCESSOR_INLINE(bool, Active)

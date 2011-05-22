@@ -23,6 +23,7 @@
 #define EDITOR_NOTIFIER
 
 #include <dtDirectorQt/export.h>
+#include <dtDirectorQt/directoreditor.h>
 
 #include <dtDirector/directornotifier.h>
 
@@ -44,7 +45,7 @@ namespace dtDirector
       /**
        * Constructs the Notifier.
        */
-      EditorNotifier();
+      EditorNotifier(DirectorEditor* editor);
 
       /**
        * Event handler when a node has been executed.
@@ -68,6 +69,8 @@ namespace dtDirector
        *	Protected Destructor.  dtCore::RefPtr will handle its destruction.
        */
       virtual ~EditorNotifier();
+
+      DirectorEditor* mEditor;
    };
 }
 

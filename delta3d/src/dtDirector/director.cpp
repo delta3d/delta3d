@@ -34,6 +34,23 @@
 
 namespace dtDirector
 {
+   IMPLEMENT_MANAGEMENT_LAYER(DirectorInstance)
+
+   ////////////////////////////////////////////////////////////////////////////////
+   DirectorInstance::DirectorInstance(Director* director, const std::string& name)
+      : mDirector(director)
+   {
+      RegisterInstance(this);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   DirectorInstance::~DirectorInstance()
+   {
+      DeregisterInstance(this);
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   //////////////////////////////////////////////////////////////////////////
    //////////////////////////////////////////////////////////////////////////
    Director::Director()
       : mCurrentThread(-1)
@@ -53,6 +70,8 @@ namespace dtDirector
    {
       mPlayer = "";
       mLogger = &dtUtil::Log::GetInstance();
+
+      mBaseInstance = new DirectorInstance(this);
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -65,6 +84,8 @@ namespace dtDirector
       }
 
       Clear();
+
+      mBaseInstance = NULL;
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -121,6 +142,7 @@ namespace dtDirector
       LoadDefaultLibraries();
 
       mScriptName = "";
+      mBaseInstance->SetName("Director: None");
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -180,6 +202,21 @@ namespace dtDirector
       threads.clear();
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   void Director::SetParent(Director* parent)
+   {
+      if (parent)
+      {
+         mBaseInstance = NULL;
+      }
+      else if (!mBaseInstance)
+      {
+         mBaseInstance = new DirectorInstance(this,
+            std::string("Director: ") + osgDB::getStrippedName(mScriptName));
+      }
+
+      mParent = parent;
+   }
 
    ////////////////////////////////////////////////////////////////////////////////
    dtDAL::Map* Director::GetMap()
@@ -244,6 +281,8 @@ namespace dtDirector
          }
          mModified = parser->HasDeprecatedProperty();
          mScriptName = fileName;
+         mBaseInstance->SetName(std::string("Director: ") +
+            osgDB::getStrippedName(scriptFile));
 
          return true;
       }
@@ -342,29 +381,33 @@ namespace dtDirector
 
       mRecordTime += delta;
 
-      // Update all threads.
-      for (mCurrentThread = 0; mCurrentThread < (int)mThreads.size(); mCurrentThread++)
+      bool continued = false;
+
+      do
       {
-         bool continued = true;
-         while (continued)
+         continued = false;
+
+         // Update all threads.
+         for (mCurrentThread = 0; mCurrentThread < (int)mThreads.size(); mCurrentThread++)
          {
-            continued = UpdateThread(mThreads[mCurrentThread], simDelta, delta);
+            continued |= UpdateThread(mThreads[mCurrentThread], simDelta, delta);
+
+            // If this thread has no more stacks in its thread, we can
+            // remove it.
+            if (mThreads[mCurrentThread].stack.empty())
+            {
+               mThreads.erase(mThreads.begin() + mCurrentThread);
+               mCurrentThread--;
+            }
          }
 
-         // If this thread has no more stacks in its thread, we can
-         // remove it.
-         if (mThreads[mCurrentThread].stack.empty())
-         {
-            mThreads.erase(mThreads.begin() + mCurrentThread);
-            mCurrentThread--;
-         }
+         // We reset the current thread value so any new threads created outside
+         // of the update will generate a brand new main thread.
+         mCurrentThread = -1;
+
+         CleanThreads();
       }
-
-      CleanThreads();
-
-      // We reset the current thread value so any new threads created outside
-      // of the update will generate a brand new main thread.
-      mCurrentThread = -1;
+      while (continued);
    }
 
    //////////////////////////////////////////////////////////////////////////
