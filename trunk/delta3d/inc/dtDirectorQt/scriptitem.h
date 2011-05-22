@@ -52,6 +52,19 @@ namespace dtDirector
        */
       virtual void Draw();
 
+   protected:
+
+      /**
+       * Event handler when the context menu event has triggered.
+       */
+      void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
+
+      /**
+       * Re-implementations of functions that are ambiguous to both
+       * inherited classes.
+       */
+      void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);
+
    public slots:
 
    protected:

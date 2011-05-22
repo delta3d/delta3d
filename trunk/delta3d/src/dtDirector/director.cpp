@@ -142,7 +142,10 @@ namespace dtDirector
       LoadDefaultLibraries();
 
       mScriptName = "";
-      mBaseInstance->SetName("Director: None");
+      if (mBaseInstance.valid())
+      {
+         mBaseInstance->SetName("Director: None");
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -209,7 +212,7 @@ namespace dtDirector
       {
          mBaseInstance = NULL;
       }
-      else if (!mBaseInstance)
+      else if (!mBaseInstance.valid())
       {
          mBaseInstance = new DirectorInstance(this,
             std::string("Director: ") + osgDB::getStrippedName(mScriptName));
@@ -281,8 +284,12 @@ namespace dtDirector
          }
          mModified = parser->HasDeprecatedProperty();
          mScriptName = fileName;
-         mBaseInstance->SetName(std::string("Director: ") +
-            osgDB::getStrippedName(scriptFile));
+
+         if (mBaseInstance.valid())
+         {
+            mBaseInstance->SetName(std::string("Director: ") +
+               osgDB::getStrippedName(scriptFile));
+         }
 
          return true;
       }

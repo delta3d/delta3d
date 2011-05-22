@@ -29,6 +29,8 @@
 #include <dtDirector/director.h>
 #include <dtDirector/directorgraph.h>
 
+#include <dtDirectorNodes/referencescriptaction.h>
+
 #include <QtGui/QGraphicsScene>
 #include <QtGui/QMenu>
 
@@ -83,6 +85,87 @@ namespace dtDirector
       }
 
       mLoading = false;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void ScriptItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
+   {
+      setSelected(true);
+
+      QMenu menu;
+      QAction* stepInAction = NULL;
+
+      ReferenceScriptAction* refScriptNode =
+         dynamic_cast<ReferenceScriptAction*>(GetNode());
+
+      if (refScriptNode)
+      {
+         dtDirector::Director* script = refScriptNode->GetDirectorScript();
+
+         if (script && script->GetGraphRoot())
+         {
+            stepInAction = menu.addAction("Step Inside Macro");
+            connect(stepInAction, SIGNAL(triggered()), this, SLOT(OpenMacro()));
+            menu.setDefaultAction(stepInAction);
+         }
+      }
+      
+      menu.addAction(mScene->GetMacroSelectionAction());
+      if (!mScene->GetSelection().empty())
+      {
+         QAction* createGroupAction = menu.addAction("Create Group Around Selection");
+         connect(createGroupAction, SIGNAL(triggered()), mScene, SLOT(OnCreateGroupForSelection()));
+      }
+      menu.addSeparator();
+      menu.addAction(mScene->GetEditor()->GetCutAction());
+      menu.addAction(mScene->GetEditor()->GetCopyAction());
+      menu.addSeparator();
+
+      QMenu* exposeMenu = NULL;
+      std::vector<ValueLink> &values = mNode->GetValueLinks();
+      int count = (int)values.size();
+      for (int index = 0; index < count; index++)
+      {
+         ValueLink& link = values[index];
+         if (!link.GetExposed())
+         {
+            if (!exposeMenu)
+            {
+               exposeMenu = menu.addMenu("Expose Values");
+               connect(exposeMenu, SIGNAL(triggered(QAction*)), this, SLOT(ExposeValue(QAction*)));
+            }
+
+            exposeMenu->addAction(link.GetName().c_str());
+         }
+      }
+
+      menu.addAction(mScene->GetEditor()->GetShowLinkAction());
+      menu.addAction(mScene->GetEditor()->GetHideLinkAction());
+      menu.addSeparator();
+      menu.addAction(mScene->GetEditor()->GetDeleteAction());
+      menu.exec(event->screenPos());
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void ScriptItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
+   {
+      ActionItem::mouseDoubleClickEvent(event);
+
+      ReferenceScriptAction* refScriptNode =
+         dynamic_cast<ReferenceScriptAction*>(GetNode());
+
+      if (refScriptNode)
+      {
+         dtDirector::Director* script = refScriptNode->GetDirectorScript();
+
+         if (script && script->GetGraphRoot())
+         {
+            if (!mScene) return;
+
+            // Open the subgraph.
+            mScene->GetEditor()->OpenGraph(script->GetGraphRoot());
+         }
+      }
    }
 }
 
