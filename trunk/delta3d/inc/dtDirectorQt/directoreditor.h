@@ -170,15 +170,6 @@ namespace dtDirector
       QAction* GetRefreshAction()  { return mUI.action_Refresh; }
 
       /**
-       * Calculates a snapped position.
-       *
-       * @param[in]  position  The original position.
-       *
-       * Return      A snapped position, only if snap is enabled.
-       */
-      osg::Vec2 GetSnapPosition(osg::Vec2 position);
-
-      /**
        * Refreshes the entire view.
        */
       void Refresh();

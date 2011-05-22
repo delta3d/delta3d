@@ -8,6 +8,7 @@ SET(LIB_PUBLIC_HEADERS
     ${HEADER_PATH}/cameraview.h
     ${HEADER_PATH}/clouddomeview.h
     ${HEADER_PATH}/deltawinview.h
+    ${HEADER_PATH}/directorview.h
     ${HEADER_PATH}/drawableview.h
     ${HEADER_PATH}/environmentview.h
     ${HEADER_PATH}/export.h
@@ -34,6 +35,7 @@ SET(LIB_SOURCES
     clouddomeview.cpp
     CMakeLists.txt
     deltawinview.cpp
+    directorview.cpp
     drawableview.cpp
     dtinspectorqt.ui
     environmentview.cpp
@@ -56,7 +58,7 @@ SET(LIB_SOURCES
 INCLUDE_DIRECTORIES(${HEADER_PATH}
                     ${QT_INCLUDE_DIR}
                     ${CMAKE_CURRENT_BINARY_DIR} # for ui*.h files
-                   )
+                    ${DELTA3D_SOURCE_DIR}/ui/dtDirectorQt)
 
 QT4_WRAP_CPP(MOC_SOURCES ${LIB_PUBLIC_HEADERS})
 QT4_WRAP_UI(UI_SOURCES dtinspectorqt.ui)
@@ -64,7 +66,7 @@ QT4_WRAP_UI(UI_SOURCES dtinspectorqt.ui)
 #ADD_PRECOMPILED_HEADER(${LIB_NAME} prefix/dtcoreprefix.h prefix/dtcoreprefix.cpp LIB_SOURCES)
 
 ADD_LIBRARY(${LIB_NAME} SHARED
-    ${LIB_PUBLIC_HEADERS} 
+    ${LIB_PUBLIC_HEADERS}
     ${LIB_SOURCES}
     ${MOC_SOURCES}
     ${UI_SOURCES}
@@ -76,6 +78,8 @@ LINK_WITH_VARIABLES(${LIB_NAME}
                    )
 
 TARGET_LINK_LIBRARIES( ${LIB_NAME}
+            ${DTDIRECTOR_LIBRARY}
+			${DTDIRECTORQT_LIBRARY}
             ${DTCORE_LIBRARY}
             ${DTABC_LIBRARY}
             )

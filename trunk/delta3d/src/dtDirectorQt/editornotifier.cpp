@@ -25,7 +25,8 @@
 namespace dtDirector
 {
    ///////////////////////////////////////////////////////////////////////////////////////
-   EditorNotifier::EditorNotifier()
+   EditorNotifier::EditorNotifier(DirectorEditor* editor)
+      : mEditor(editor)
    {
    }
 

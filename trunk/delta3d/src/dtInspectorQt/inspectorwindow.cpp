@@ -3,6 +3,7 @@
 #include <dtInspectorQt/cameraview.h>
 #include <dtInspectorQt/clouddomeview.h>
 #include <dtInspectorQt/deltawinview.h>
+#include <dtInspectorQt/directorview.h>
 #include <dtInspectorQt/drawableview.h>
 #include <dtInspectorQt/environmentview.h>
 #include <dtInspectorQt/infiniteterrainview.h>
@@ -35,6 +36,7 @@ dtInspectorQt::InspectorWindow::InspectorWindow(QWidget* parent /* = NULL */)
    mViewContainer.push_back(new CameraView(*ui));
    mViewContainer.push_back(new CloudDomeView(*ui));
    mViewContainer.push_back(new DeltaWinView(*ui));
+   mViewContainer.push_back(new DirectorView(*ui));
    mViewContainer.push_back(new DrawableView(*ui));
    mViewContainer.push_back(new EnvironmentView(*ui));
    mViewContainer.push_back(new InfiniteTerrainView(*ui));
