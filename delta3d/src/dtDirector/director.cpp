@@ -383,7 +383,7 @@ namespace dtDirector
 
       bool continued = false;
 
-      do
+      //do
       {
          continued = false;
 
@@ -407,7 +407,7 @@ namespace dtDirector
 
          CleanThreads();
       }
-      while (continued);
+      //while (continued);
    }
 
    //////////////////////////////////////////////////////////////////////////
