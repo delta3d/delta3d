@@ -463,11 +463,6 @@ namespace dtDirector
             logger->LogMessage(dtUtil::Log::LOG_ALWAYS, __FUNCTION__, __LINE__, message);
          }
       }
-
-      if (valueNode)
-      {
-         valueNode->OnValueRetrieved();
-      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -487,6 +482,11 @@ namespace dtDirector
             message += "\' was changed from " + oldVal + " to " + prop->GetValueString();
             logger->LogMessage(dtUtil::Log::LOG_ALWAYS, __FUNCTION__, __LINE__, message);
          }
+      }
+
+      if (valueNode)
+      {
+         valueNode->OnValueChanged();
       }
    }
 

@@ -107,6 +107,8 @@ namespace dtDirector
 
          SetDefaultPen();
          SetBackgroundGradient(mNodeHeight);
+
+         DrawGlow();
       }
 
       mLoading = false;

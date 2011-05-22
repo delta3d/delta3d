@@ -96,6 +96,8 @@ namespace dtDirector
 
          SetDefaultPen();
          setBrush(GetNodeColor());
+
+         DrawGlow();
       }
 
       mLoading = false;

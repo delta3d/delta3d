@@ -78,10 +78,11 @@ namespace dtDirector
          setPolygon(mPolygon);
 
          SetComment(mNode->GetComment());
- 
       
          SetDefaultPen();
          SetBackgroundGradient(mNodeHeight);
+
+         DrawGlow();
       }
 
       mLoading = false;

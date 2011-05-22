@@ -28,6 +28,7 @@ namespace dtDirector
    EditorNotifier::EditorNotifier(DirectorEditor* editor)
       : mEditor(editor)
    {
+      mTime = dtCore::Timer::Instance()->Tick();
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
@@ -36,12 +37,164 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
+   void EditorNotifier::Update()
+   {
+      const float GLOW_SPEED = 1.0f;
+
+      float delta = dtCore::Timer::Instance()->DeltaSec(mTime, dtCore::Timer::Instance()->Tick());
+
+      if (delta >= 0.05f)
+      {
+         std::vector<Node*> removeList;
+         // Reduces the glow of each node over time.
+         std::map<Node*, GlowData>::iterator iter;
+         for (iter = mGlowMap.begin(); iter != mGlowMap.end(); ++iter)
+         {
+            GlowData& data = iter->second;
+
+            data.glow -= GLOW_SPEED * delta;
+
+            if (data.glow <= 0.0f)
+            {
+               removeList.push_back(iter->first);
+            }
+
+            for (int index = 0; index < (int)data.outputGlows.size(); ++index)
+            {
+               data.outputGlows[index] -= GLOW_SPEED * delta;
+
+               if (data.outputGlows[index] <= 0.0f)
+               {
+                  data.outputGlows[index] = 0.0f;
+               }
+            }
+
+            mEditor->RefreshNode(iter->first);
+         }
+
+         while (!removeList.empty())
+         {
+            iter = mGlowMap.find(removeList.back());
+            removeList.pop_back();
+            if (iter != mGlowMap.end())
+            {
+               mGlowMap.erase(iter);
+            }
+         }
+
+         mTime = dtCore::Timer::Instance()->Tick();
+      }
+   }
+
+#define GLOW_MIN 0.50f
+#define GLOW_INC 0.10f
+#define GLOW_MAX 0.50f
+
+   //////////////////////////////////////////////////////////////////////////
    void EditorNotifier::OnNodeExecution(Node* node, const std::string& input, const std::vector<std::string>& outputs)
    {
+      if (!node)
+      {
+         return;
+      }
+
+      std::map<Node*, GlowData>::iterator iter = mGlowMap.find(node);
+      if (iter == mGlowMap.end())
+      {
+         GlowData data;
+         data.glow = 0.0f;
+         data.nodeID = node->GetID();
+         mGlowMap[node] = data;
+      }
+
+      GlowData& data = mGlowMap[node];
+      if (data.glow < GLOW_MIN)
+      {
+         data.glow = GLOW_MIN;
+      }
+      else
+      {
+         data.glow += GLOW_INC;
+
+         if (data.glow > GLOW_MAX)
+         {
+            data.glow = GLOW_MAX;
+         }
+      }
+
+      for (int index = 0; index < (int)outputs.size(); ++index)
+      {
+         const std::string& name = outputs[index];
+
+         for (int subIndex = 0; subIndex < (int)node->GetOutputLinks().size(); ++subIndex)
+         {
+            OutputLink& link = node->GetOutputLinks()[subIndex];
+            if (link.GetName() == name)
+            {
+               while (subIndex >= (int)data.outputGlows.size())
+               {
+                  data.outputGlows.push_back(0.0f);
+               }
+
+               if (data.outputGlows[subIndex] < GLOW_MIN)
+               {
+                  data.outputGlows[subIndex] = GLOW_MIN;
+               }
+               else
+               {
+                  data.outputGlows[subIndex] += GLOW_INC;
+                  if (data.outputGlows[subIndex] > GLOW_MAX)
+                  {
+                     data.outputGlows[subIndex] = GLOW_MAX;
+                  }
+               }
+            }
+         }
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void EditorNotifier::OnValueRetrieved(Node* node)
+   void EditorNotifier::OnValueChanged(Node* node)
    {
+      //if (!node)
+      //{
+      //   return;
+      //}
+
+      //std::map<Node*, GlowData>::iterator iter = mGlowMap.find(node);
+      //if (iter == mGlowMap.end())
+      //{
+      //   GlowData data;
+      //   data.glow = GLOW_MIN;
+      //   data.nodeID = node->GetID();
+      //   mGlowMap[node] = data;
+      //}
+
+      //GlowData& data = mGlowMap[node];
+      //if (data.glow < GLOW_MIN)
+      //{
+      //   data.glow = GLOW_MIN;
+      //}
+      //else
+      //{
+      //   data.glow += GLOW_INC;
+
+      //   if (data.glow > GLOW_MAX)
+      //   {
+      //      data.glow = GLOW_MAX;
+      //   }
+      //}
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   EditorNotifier::GlowData* EditorNotifier::GetGlowData(Node* node)
+   {
+      std::map<Node*, GlowData>::iterator iter = mGlowMap.find(node);
+      if (iter != mGlowMap.end())
+      {
+         return &iter->second;
+      }
+
+      return NULL;
    }
 }

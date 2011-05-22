@@ -289,6 +289,21 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::RefreshNode(Node* node)
+   {
+      EditorView* view = dynamic_cast<EditorView*>(mUI.graphTab->currentWidget());
+      if (view && view->GetScene())
+      {
+         NodeItem* item = view->GetScene()->GetNodeItem(node);
+         if (item)
+         {
+            item->Draw();
+            item->ConnectLinks(true);
+         }
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    void DirectorEditor::RefreshButtonStates()
    {
       // Refresh the name of the window.
@@ -480,7 +495,7 @@ namespace dtDirector
             if (view && view->GetScene())
             {
                // We need to find the node item that belongs to the scene.
-               NodeItem* nodeItem = view->GetScene()->GetNodeItem(id, true);
+               NodeItem* nodeItem = view->GetScene()->GetNodeItem(node);
                if (nodeItem) view->GetScene()->DeleteNode(nodeItem);
             }
          }
@@ -608,7 +623,7 @@ namespace dtDirector
       if (scene)
       {
          scene->clearSelection();
-         NodeItem* item = scene->GetNodeItem(node->GetID(), true);
+         NodeItem* item = scene->GetNodeItem(node);
          if (item)
          {
             item->setSelected(true);
