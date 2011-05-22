@@ -51,6 +51,11 @@ namespace dtDirector
       DirectorNotifier();
 
       /**
+       * Update.
+       */
+      virtual void Update();
+
+      /**
        * Event handler when a node has been executed.
        *
        * @param[in]  node     The node that was executed.
@@ -60,11 +65,11 @@ namespace dtDirector
       virtual void OnNodeExecution(Node* node, const std::string& input, const std::vector<std::string>& outputs);
 
       /**
-       * Event handler when a value has been retrieved from a value node.
+       * Event handler when a value has been changed on a value node.
        * 
-       * @param[in]  node  The node that was retrieved.
+       * @param[in]  node  The node that was changed.
        */
-      virtual void OnValueRetrieved(Node* node);
+      virtual void OnValueChanged(Node* node);
 
    protected:
 

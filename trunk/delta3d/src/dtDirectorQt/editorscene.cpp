@@ -470,6 +470,22 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
+   NodeItem* EditorScene::GetNodeItem(Node* node)
+   {
+      int count = (int)mNodes.size();
+      for (int index = 0; index < count; index++)
+      {
+         NodeItem* item = mNodes[index];
+         if (item)
+         {
+            if (item->GetNode() == node) return item;
+         }
+      }
+
+      return NULL;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    MacroItem* EditorScene::GetGraphItem(const dtCore::UniqueId& id)
    {
       int count = (int)mNodes.size();

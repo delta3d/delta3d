@@ -41,6 +41,7 @@
 
 #define MAX_NODE_WIDTH  500
 
+class QGraphicsColorizeEffect;
 
 namespace dtDirector
 {
@@ -281,6 +282,11 @@ namespace dtDirector
       void DrawDividers();
 
       /**
+       * Draws a glow around the node.
+       */
+      void DrawGlow();
+
+      /**
        * Retrieves the color for a given property type.
        *
        * @param[in]  type  The type.
@@ -458,6 +464,8 @@ namespace dtDirector
       QGraphicsRectItem* mLinkDivider;
       QGraphicsRectItem* mValueDivider;
       QGraphicsRectItem* mTitleDivider;
+
+      QGraphicsColorizeEffect* mGlowEffect;
 
       int         mNodeWidth;
       int         mNodeHeight;

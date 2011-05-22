@@ -27,6 +27,11 @@
 
 #include <dtDirector/directornotifier.h>
 
+#include <dtCore/timer.h>
+#include <dtCore/uniqueid.h>
+
+#include <map>
+
 
 namespace dtDirector
 {
@@ -42,10 +47,23 @@ namespace dtDirector
    {
    public:
 
+      struct GlowData
+      {
+         dtCore::UniqueId  nodeID;
+         float             glow;
+
+         std::vector<float> outputGlows;
+      };
+
       /**
        * Constructs the Notifier.
        */
       EditorNotifier(DirectorEditor* editor);
+
+      /**
+       * Update.
+       */
+      virtual void Update();
 
       /**
        * Event handler when a node has been executed.
@@ -57,11 +75,13 @@ namespace dtDirector
       virtual void OnNodeExecution(Node* node, const std::string& input, const std::vector<std::string>& outputs);
 
       /**
-       * Event handler when a value has been retrieved from a value node.
+       * Event handler when a value has been changed on a value node.
        * 
-       * @param[in]  node  The node that was retrieved.
+       * @param[in]  node  The node that was changed.
        */
-      virtual void OnValueRetrieved(Node* node);
+      virtual void OnValueChanged(Node* node);
+
+      GlowData* GetGlowData(Node* node);
 
    protected:
 
@@ -71,6 +91,9 @@ namespace dtDirector
       virtual ~EditorNotifier();
 
       DirectorEditor* mEditor;
+      dtCore::Timer_t mTime;
+
+      std::map<Node*, GlowData> mGlowMap;
    };
 }
 

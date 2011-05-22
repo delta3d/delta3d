@@ -182,6 +182,13 @@ namespace dtDirector
       void RefreshGraph(DirectorGraph* graph);
 
       /**
+       * Refreshes a single node.
+       *
+       * @param[in]  node  The node to refresh.
+       */
+      void RefreshNode(Node* node);
+
+      /**
        * Refreshes the state of the UI buttons.
        */
       void RefreshButtonStates();

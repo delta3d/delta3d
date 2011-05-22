@@ -24,6 +24,7 @@
 #include <dtDirectorQt/editorscene.h>
 #include <dtDirectorQt/linkitem.h>
 #include <dtDirectorQt/groupitem.h>
+#include <dtDirectorQt/editornotifier.h>
 
 #include <dtDirectorQt/undomanager.h>
 #include <dtDirectorQt/undopropertyevent.h>
@@ -34,6 +35,7 @@
 #include <dtDirectorNodes/externalvaluenode.h>
 
 #include <QtGui/QGraphicsScene>
+#include <QtGui/QGraphicsColorizeEffect>
 #include <QtGui/QMenu>
 
 #include <dtDAL/datatype.h>
@@ -164,6 +166,7 @@ namespace dtDirector
        , mLinkDivider(NULL)
        , mValueDivider(NULL)
        , mTitleDivider(NULL)
+       , mGlowEffect(NULL)
        , mNodeWidth(MIN_NODE_WIDTH)
        , mNodeHeight(MIN_NODE_HEIGHT)
        , mTitleHeight(0.0f)
@@ -791,6 +794,41 @@ namespace dtDirector
       {
          delete mValueDivider;
          mValueDivider = NULL;
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void NodeItem::DrawGlow()
+   {
+      if (mScene && mNode.valid())
+      {
+         dtDirector::EditorNotifier* notifier = 
+            dynamic_cast<dtDirector::EditorNotifier*>(
+            mScene->GetEditor()->GetDirector()->GetNotifier());
+         if (notifier)
+         {
+            dtDirector::EditorNotifier::GlowData* glowData =
+               notifier->GetGlowData(mNode);
+            if (glowData)
+            {
+               if (!mGlowEffect)
+               {
+                  mGlowEffect = new QGraphicsColorizeEffect();
+                  mGlowEffect->setColor(Qt::white);
+                  mGlowEffect->setStrength(0.0f);
+                  QGraphicsPolygonItem::setGraphicsEffect(mGlowEffect);
+               }
+
+               mGlowEffect->setStrength(glowData->glow);
+            }
+            else
+            {
+               if (mGlowEffect)
+               {
+                  mGlowEffect->setStrength(0.0f);
+               }
+            }
+         }
       }
    }
 

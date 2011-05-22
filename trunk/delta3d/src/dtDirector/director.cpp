@@ -415,6 +415,11 @@ namespace dtDirector
          CleanThreads();
       }
       //while (continued);
+
+      if (mNotifier.valid())
+      {
+         mNotifier->Update();
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -501,14 +506,16 @@ namespace dtDirector
       data.stack.push_back(stack);
       threadList->push_back(data);
 
-      if (mStarted && immediate && mCurrentThread == -1 && mThreads.size() > 0)
-      {
-         mCurrentThread = mThreads.size() - 1;
+      bool continued = false;
 
-         bool continued = true;
-         do
+      do
+      {
+         continued = false;
+         if (mStarted && immediate && mCurrentThread == -1 && mThreads.size() > 0)
          {
-            continued != UpdateThread(mThreads[mCurrentThread], 0.0f, 0.0f);
+            mCurrentThread = mThreads.size() - 1;
+
+            continued |= UpdateThread(mThreads[mCurrentThread], 0.0f, 0.0f);
 
             // If this thread has no more stacks in its thread, we can
             // remove it.
@@ -518,11 +525,11 @@ namespace dtDirector
             }
 
             CleanThreads();
-         }
-         while (continued);
 
-         mCurrentThread = -1;
+            mCurrentThread = -1;
+         }
       }
+      while (continued);
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -929,7 +936,7 @@ namespace dtDirector
       // Update all the sub-threads in the stack.
       for (stack.currentThread = 0; stack.currentThread < (int)stack.subThreads.size(); stack.currentThread++)
       {
-         continued != UpdateThread(stack.subThreads[stack.currentThread], simDelta, delta);
+         continued |= UpdateThread(stack.subThreads[stack.currentThread], simDelta, delta);
 
          if (stack.subThreads[stack.currentThread].stack.empty())
          {

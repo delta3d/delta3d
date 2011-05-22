@@ -76,6 +76,8 @@ namespace dtDirector
 
          SetDefaultPen();
          SetBackgroundGradient(mNodeHeight);
+
+         DrawGlow();
       }
 
       mLoading = false;
@@ -126,7 +128,7 @@ namespace dtDirector
             // Center the view on the referenced node.
             EditorScene* scene = mScene;
             scene->SetGraph(jumpNode->GetGraph());
-            NodeItem* item = scene->GetNodeItem(jumpNode->GetID(), true);
+            NodeItem* item = scene->GetNodeItem(jumpNode);
             if (item)
             {
                scene->clearSelection();

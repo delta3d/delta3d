@@ -192,15 +192,22 @@ namespace dtDirector
          ValueLink* link = links[index];
          if (link) link->GetOwner()->OnLinkValueChanged(link->GetName());
       }
+
+      Director* director = GetDirector();
+      while (director && director->GetParent())
+      {
+         director = director->GetParent();
+      }
+
+      if (director && director->GetNotifier())
+      {
+         director->GetNotifier()->OnValueChanged(this);
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////
    void ValueNode::OnValueRetrieved()
    {
-      if (GetDirector()->GetNotifier())
-      {
-         GetDirector()->GetNotifier()->OnValueRetrieved(this);
-      }
    }
 
    //////////////////////////////////////////////////////////////////////////

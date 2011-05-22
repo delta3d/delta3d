@@ -35,12 +35,17 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
+   void DirectorNotifier::Update()
+   {
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    void DirectorNotifier::OnNodeExecution(Node* node, const std::string& input, const std::vector<std::string>& outputs)
    {
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void DirectorNotifier::OnValueRetrieved(Node* node)
+   void DirectorNotifier::OnValueChanged(Node* node)
    {
    }
 }
