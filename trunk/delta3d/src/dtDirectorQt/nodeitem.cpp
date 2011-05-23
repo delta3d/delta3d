@@ -1340,6 +1340,21 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   void NodeItem::OnEventTriggered(QAction* action)
+   {
+      if (action && mNode && mNode->AsEventNode())
+      {
+         OutputLink* link = mNode->GetOutputLink(action->text().toStdString());
+         if (link)
+         {
+            link->Activate();
+
+            mScene->GetEditor()->GetDirector()->BeginThread(mNode, 0);
+         }
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    void NodeItem::OnToggleBreakPoint()
    {
       dtDirector::EditorNotifier* notifier =
@@ -1458,6 +1473,21 @@ namespace dtDirector
 
       if (mScene->GetEditor()->GetDirector()->GetNotifier())
       {
+         if (mNode && mNode->AsEventNode())
+         {
+            menu.addSeparator();
+
+            QMenu* triggerMenu = menu.addMenu("Trigger Event");
+            connect(triggerMenu, SIGNAL(triggered(QAction*)), this, SLOT(OnEventTriggered(QAction*)));
+
+            int count = (int)mNode->GetOutputLinks().size();
+            for (int index = 0; index < count; ++index)
+            {
+               dtDirector::OutputLink& link = mNode->GetOutputLinks()[index];
+               triggerMenu->addAction(link.GetName().c_str());
+            }
+         }
+
          menu.addSeparator();
          QAction* breakPointAction = NULL;
          if (!mScene->GetEditor()->GetDirector()->GetNotifier()->ShouldBreak(mNode))

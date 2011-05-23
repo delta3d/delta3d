@@ -264,6 +264,8 @@ namespace dtDirector
             if (testNode == node) return true;
          }
       }
+
+      return false;
    }
 
    //////////////////////////////////////////////////////////////////////////

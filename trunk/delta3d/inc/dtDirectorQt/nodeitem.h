@@ -402,6 +402,11 @@ namespace dtDirector
       void ExposeValue(QAction* action);
 
       /**
+       * Event handler when the trigger event has been clicked.
+       */
+      void OnEventTriggered(QAction* action);
+
+      /**
        * Event handler when the toggle breakpoint has been clicked.
        */
       void OnToggleBreakPoint();
