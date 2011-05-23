@@ -284,7 +284,7 @@ namespace dtDirector
       /**
        * Draws a glow around the node.
        */
-      void DrawGlow();
+      virtual void DrawGlow();
 
       /**
        * Retrieves the color for a given property type.
@@ -302,6 +302,15 @@ namespace dtDirector
        * @return  The node.
        */
       Node* GetNode() {return mNode.get();}
+
+      /**
+       * Retrieves whether the node is contained.
+       *
+       * @param[in]  node  The node.
+       *
+       * @return true if the node is contained.
+       */
+      virtual bool HasNode(Node* node);
 
       /**
        * Retrieves the position of the node.

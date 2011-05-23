@@ -26,11 +26,13 @@
 #include <dtDirectorQt/undomanager.h>
 #include <dtDirectorQt/undopropertyevent.h>
 #include <dtDirectorQt/customeditortool.h>
+#include <dtDirectorQt/editornotifier.h>
 
 #include <dtDirector/director.h>
 
 #include <QtGui/QGraphicsScene>
 #include <QtGui/QMenu>
+#include <QtGui/QGraphicsColorizeEffect>
 
 #include <osg/Vec2>
 
@@ -110,6 +112,57 @@ namespace dtDirector
       }
 
       mLoading = false;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void MacroItem::DrawGlow()
+   {
+      if (!mScene)
+      {
+         return;
+      }
+
+      float maxGlow = 0.0f;
+      dtDirector::EditorNotifier* notifier = 
+         dynamic_cast<dtDirector::EditorNotifier*>(
+         mScene->GetEditor()->GetDirector()->GetNotifier());
+
+      // Update the glow of this item only if a node inside it is glowing.
+      DirectorGraph* graph = mGraph;
+      if (notifier && graph)
+      {
+         std::vector<Node*> nodes;
+         graph->GetAllNodes(nodes);
+
+         int count = (int)nodes.size();
+         for (int index = 0; index < count; ++index)
+         {
+            Node* node = nodes[index];
+            if (node)
+            {
+               dtDirector::EditorNotifier::GlowData* glowData =
+                  notifier->GetGlowData(node);
+
+               if (glowData && glowData->glow > maxGlow)
+               {
+                  maxGlow = glowData->glow;
+               }
+            }
+         }
+
+         if (!mGlowEffect && maxGlow > 0.0f)
+         {
+            mGlowEffect = new QGraphicsColorizeEffect();
+            mGlowEffect->setColor(Qt::white);
+            mGlowEffect->setStrength(0.0f);
+            QGraphicsPolygonItem::setGraphicsEffect(mGlowEffect);
+         }
+
+         if (mGlowEffect)
+         {
+            mGlowEffect->setStrength(maxGlow);
+         }
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -193,6 +246,24 @@ namespace dtDirector
       }
 
       return NodeItem::GetID();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool MacroItem::HasNode(Node* node)
+   {
+      if (mGraph)
+      {
+         std::vector<Node*> nodes;
+         mGraph->GetAllNodes(nodes, false);
+
+         int count = (int)nodes.size();
+         for (int index = 0; index < count; index++)
+         {
+            Node* testNode = nodes[index];
+
+            if (testNode == node) return true;
+         }
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////

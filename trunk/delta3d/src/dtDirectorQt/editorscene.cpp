@@ -470,7 +470,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   NodeItem* EditorScene::GetNodeItem(Node* node)
+   NodeItem* EditorScene::GetNodeItem(Node* node, bool exactMatch)
    {
       int count = (int)mNodes.size();
       for (int index = 0; index < count; index++)
@@ -478,7 +478,14 @@ namespace dtDirector
          NodeItem* item = mNodes[index];
          if (item)
          {
-            if (item->GetNode() == node) return item;
+            if (!exactMatch)
+            {
+               if (item->HasNode(node)) return item;
+            }
+            else
+            {
+               if (item->GetNode() == node) return item;
+            }
          }
       }
 
