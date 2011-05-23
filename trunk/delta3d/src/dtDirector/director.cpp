@@ -77,13 +77,17 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    Director::~Director()
    {
+      Clear();
+
       if (mMessageGMComponent.valid() && mGameManager)
       {
-         mGameManager->RemoveComponent(*mMessageGMComponent);
+         // If we're the last director running, remove the Message component from the GM
+         if (mMessageGMComponent->referenceCount() == 1)
+         {
+            mGameManager->RemoveComponent(*mMessageGMComponent);
+         }
          mMessageGMComponent = NULL;
       }
-
-      Clear();
 
       mBaseInstance = NULL;
    }
@@ -783,7 +787,7 @@ namespace dtDirector
             return false;
          }
       }
-      
+
       std::string libraryType = NodeManager::GetInstance().GetNodeLibraryType(name);
       if (!IsLibraryTypeSupported(libraryType))
       {
@@ -1062,7 +1066,7 @@ namespace dtDirector
             data.stack[stackIndex].node = NULL;
          }
       }
-      
+
       // If we did not continue the current stack, and we don't have any more
       // sub-threads in this stack.
       if (!data.stack[stackIndex].node &&

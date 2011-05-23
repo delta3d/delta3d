@@ -43,6 +43,7 @@ namespace dtDirector
    ///////////////////////////////////////////////////////////////////////////////////////
    GameEventMessageEvent::~GameEventMessageEvent()
    {
+      UnRegisterMessages();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -94,7 +95,7 @@ namespace dtDirector
    {
       return true;
    }
-   
+
    ////////////////////////////////////////////////////////////////////////////////
    void GameEventMessageEvent::RegisterMessages()
    {
@@ -136,7 +137,7 @@ namespace dtDirector
    void GameEventMessageEvent::UpdateName()
    {
       dtDAL::GameEvent* gameEvent = GetGameEvent("Event");
-      
+
       mName = gameEvent ? gameEvent->GetName() : "";
    }
 }
