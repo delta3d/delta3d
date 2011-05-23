@@ -117,7 +117,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   std::vector<dtDAL::PropertyContainer*> Clipboard::PasteObjects(DirectorGraph* parent, UndoManager* undoManager, const osg::Vec2& position, bool createLinks)
+   std::vector<dtDAL::PropertyContainer*> Clipboard::PasteObjects(DirectorGraph* parent, UndoManager* undoManager, const osg::Vec2& position, bool createLinks, bool linkExternal)
    {
       std::vector<dtDAL::PropertyContainer*> result;
 
@@ -138,7 +138,7 @@ namespace dtDirector
       count = (int)mPasted.size();
       for (int index = 0; index < count; index++)
       {
-         LinkNode(mPasted[index], parent, undoManager, result, createLinks);
+         LinkNode(mPasted[index], parent, undoManager, result, createLinks, linkExternal);
       }
 
       // Now add all created nodes to the undo manager.
@@ -267,7 +267,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void Clipboard::LinkNode(Node* node, DirectorGraph* parent, UndoManager* undoManager, std::vector<dtDAL::PropertyContainer*>& linkNodes, bool createLinks)
+   void Clipboard::LinkNode(Node* node, DirectorGraph* parent, UndoManager* undoManager, std::vector<dtDAL::PropertyContainer*>& linkNodes, bool createLinks, bool linkExternal)
    {
       if (!node || !parent) return;
 
@@ -282,7 +282,7 @@ namespace dtDirector
          InputLink* link = &node->GetInputLinks()[index];
 
          link->SetVisible(fromLink->GetVisible());
-         LinkInputs(link, fromLink, parent, undoManager, linkNodes, createLinks);
+         LinkInputs(link, fromLink, parent, undoManager, linkNodes, createLinks, linkExternal);
       }
 
       // Link outputs to inputs.
@@ -293,7 +293,7 @@ namespace dtDirector
          OutputLink* link = &node->GetOutputLinks()[index];
 
          link->SetVisible(fromLink->GetVisible());
-         LinkOutputs(link, fromLink, parent, undoManager, linkNodes, createLinks);
+         LinkOutputs(link, fromLink, parent, undoManager, linkNodes, createLinks, linkExternal);
       }
 
       // Link values.
@@ -305,7 +305,7 @@ namespace dtDirector
 
          link->SetVisible(fromLink->GetVisible());
          link->SetExposed(fromLink->GetExposed());
-         LinkValues(link, fromLink, parent, undoManager, linkNodes, createLinks);
+         LinkValues(link, fromLink, parent, undoManager, linkNodes, createLinks, linkExternal);
       }
 
       // Link value nodes.
@@ -313,14 +313,14 @@ namespace dtDirector
       if (valueNode)
       {
          LinkValueNode(node->AsValueNode(),
-            valueNode, parent, undoManager, linkNodes, createLinks);
+            valueNode, parent, undoManager, linkNodes, createLinks, linkExternal);
       }
 
       return;
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void Clipboard::LinkInputs(InputLink* link, InputLink* fromLink, DirectorGraph* parent, UndoManager* undoManager, std::vector<dtDAL::PropertyContainer*>& linkNodes, bool createLinks)
+   void Clipboard::LinkInputs(InputLink* link, InputLink* fromLink, DirectorGraph* parent, UndoManager* undoManager, std::vector<dtDAL::PropertyContainer*>& linkNodes, bool createLinks, bool linkExternal)
    {
       if (!link || !fromLink || !parent) return;
 
@@ -331,7 +331,7 @@ namespace dtDirector
          if (owner)
          {
             Node* newOwner = NULL;
-            if (mIDOldToNew.find(owner->GetID()) == mIDOldToNew.end())
+            if ((linkExternal || createLinks) && mIDOldToNew.find(owner->GetID()) == mIDOldToNew.end())
             {
                DirectorGraph* myNodeGraph = link->GetOwner()->GetGraph();
                DirectorGraph* otherNodeGraph = owner->GetGraph();
@@ -414,7 +414,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void Clipboard::LinkOutputs(OutputLink* link, OutputLink* fromLink, DirectorGraph* parent, UndoManager* undoManager, std::vector<dtDAL::PropertyContainer*>& linkNodes, bool createLinks)
+   void Clipboard::LinkOutputs(OutputLink* link, OutputLink* fromLink, DirectorGraph* parent, UndoManager* undoManager, std::vector<dtDAL::PropertyContainer*>& linkNodes, bool createLinks, bool linkExternal)
    {
       if (!link || !fromLink || !parent) return;
 
@@ -425,7 +425,7 @@ namespace dtDirector
          if (owner)
          {
             Node* newOwner = NULL;
-            if (mIDOldToNew.find(owner->GetID()) == mIDOldToNew.end())
+            if ((linkExternal || createLinks) && mIDOldToNew.find(owner->GetID()) == mIDOldToNew.end())
             {
                DirectorGraph* myNodeGraph = link->GetOwner()->GetGraph();
                DirectorGraph* otherNodeGraph = owner->GetGraph();
@@ -508,7 +508,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void Clipboard::LinkValues(ValueLink* link, ValueLink* fromLink, DirectorGraph* parent, UndoManager* undoManager, std::vector<dtDAL::PropertyContainer*>& linkNodes, bool createLinks)
+   void Clipboard::LinkValues(ValueLink* link, ValueLink* fromLink, DirectorGraph* parent, UndoManager* undoManager, std::vector<dtDAL::PropertyContainer*>& linkNodes, bool createLinks, bool linkExternal)
    {
       if (!link || !fromLink || !parent) return;
 
@@ -519,7 +519,7 @@ namespace dtDirector
          if (owner)
          {
             ValueNode* newOwner = NULL;
-            if (mIDOldToNew.find(owner->GetID()) == mIDOldToNew.end())
+            if ((linkExternal || createLinks) && mIDOldToNew.find(owner->GetID()) == mIDOldToNew.end())
             {
                DirectorGraph* myNodeGraph = link->GetOwner()->GetGraph();
                DirectorGraph* otherNodeGraph = owner->GetGraph();
@@ -592,7 +592,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void Clipboard::LinkValueNode(ValueNode* node, ValueNode* fromNode, DirectorGraph* parent, UndoManager* undoManager, std::vector<dtDAL::PropertyContainer*>& linkNodes, bool createLinks)
+   void Clipboard::LinkValueNode(ValueNode* node, ValueNode* fromNode, DirectorGraph* parent, UndoManager* undoManager, std::vector<dtDAL::PropertyContainer*>& linkNodes, bool createLinks, bool linkExternal)
    {
       if (!node || !fromNode || !parent) return;
 
@@ -602,7 +602,7 @@ namespace dtDirector
          if (valueLink)
          {
             Node* newOwner = NULL;
-            if (mIDOldToNew.find(valueLink->GetOwner()->GetID()) == mIDOldToNew.end())
+            if ((linkExternal || createLinks) && mIDOldToNew.find(valueLink->GetOwner()->GetID()) == mIDOldToNew.end())
             {
                DirectorGraph* myNodeGraph = node->GetGraph();
                DirectorGraph* otherNodeGraph = valueLink->GetOwner()->GetGraph();

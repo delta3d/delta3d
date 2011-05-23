@@ -423,6 +423,10 @@ namespace dtDirector
          }
       }
 
+      // Save button.
+      mUI.action_Save->setEnabled(mUndoManager->IsModified());
+      mUI.action_Save_as->setEnabled(mUndoManager->IsModified());
+
       // Parent button.
       mUI.action_Step_Out_Of_Graph->setEnabled(bHasParent);
 
@@ -438,6 +442,7 @@ namespace dtDirector
 
       // Paste button.
       mUI.action_Paste->setEnabled(Clipboard::GetInstance().CanPaste());
+      mUI.actionPaste_with_Links->setEnabled(Clipboard::GetInstance().CanPaste());
 
       // Delete button.
       mUI.action_Delete->setEnabled(bCanDelete);
@@ -449,6 +454,9 @@ namespace dtDirector
       // Debugging
       if (mDirector->GetNotifier())
       {
+         mUI.action_New->setEnabled(false);
+         mUI.action_Load->setEnabled(false);
+
          mUI.menuDebug->setEnabled(true);
          mUI.actionPause->setEnabled(!mDirector->IsDebugging());
          mUI.actionContinue->setEnabled(mDirector->IsDebugging());
@@ -979,6 +987,12 @@ namespace dtDirector
       PasteNodes();
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::on_actionPaste_with_Links_triggered()
+   {
+      PasteNodes(false, true);
+   }
+
    //////////////////////////////////////////////////////////////////////////
    void DirectorEditor::on_action_Delete_triggered()
    {
@@ -1506,7 +1520,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void DirectorEditor::PasteNodes(bool createLinks)
+   void DirectorEditor::PasteNodes(bool createLinks, bool externalLinks)
    {
       Clipboard& clipboard = Clipboard::GetInstance();
 
@@ -1523,7 +1537,7 @@ namespace dtDirector
          pos -= scene->GetTranslationItem()->scenePos();
 
          std::vector<dtDAL::PropertyContainer*> newSelection;
-         newSelection = clipboard.PasteObjects(scene->GetGraph(), mUndoManager, osg::Vec2(pos.x(), pos.y()), createLinks);
+         newSelection = clipboard.PasteObjects(scene->GetGraph(), mUndoManager, osg::Vec2(pos.x(), pos.y()), createLinks, externalLinks);
 
          scene->clearSelection();
 

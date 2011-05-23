@@ -311,6 +311,7 @@
     <addaction name="action_Cut"/>
     <addaction name="action_Copy"/>
     <addaction name="action_Paste"/>
+    <addaction name="actionPaste_with_Links"/>
     <addaction name="separator"/>
     <addaction name="action_Delete"/>
     <addaction name="separator"/>
@@ -789,6 +790,18 @@
    </property>
    <property name="shortcut">
     <string>F10</string>
+   </property>
+  </action>
+  <action name="actionPaste_with_Links">
+   <property name="icon">
+    <iconset resource="../../src/dtDirectorQt/directorqt.qrc">
+     <normaloff>:/icons/paste.png</normaloff>:/icons/paste.png</iconset>
+   </property>
+   <property name="text">
+    <string>Paste with Links</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+V</string>
    </property>
   </action>
  </widget>
