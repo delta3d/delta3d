@@ -423,7 +423,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void Director::BeginThread(Node* node, int index, bool immediate)
+   void Director::BeginThread(Node* node, int index, bool immediate, bool reverseQueue)
    {
       // Always create threads on the proxy if able.
       if (GetParent())
@@ -440,7 +440,15 @@ namespace dtDirector
          queue.node = node;
          queue.input = index;
          queue.isStack = false;
-         mThreadQueue.push_back(queue);
+
+         if (reverseQueue)
+         {
+            mThreadQueue.insert(mThreadQueue.begin(), queue);
+         }
+         else
+         {
+            mThreadQueue.push_back(queue);
+         }
          return;
       }
 
@@ -1020,7 +1028,7 @@ namespace dtDirector
                   if (inputIndex < inputCount)
                   {
                      // Create a new thread.
-                     BeginThread(input->GetOwner(), inputIndex);
+                     BeginThread(input->GetOwner(), inputIndex, false, true);
                   }
                }
             }
@@ -1081,7 +1089,7 @@ namespace dtDirector
          if (mThreads[threadIndex].stack.size())
          {
             StackData& stack = mThreads[threadIndex].stack.back();
-            if (!stack.node)
+            if (mThreads[threadIndex].stack.size() == 1 && !stack.node)
             {
                mThreads.insert(mThreads.end(),
                   stack.subThreads.begin(),
@@ -1105,7 +1113,7 @@ namespace dtDirector
          if (data.subThreads[threadIndex].stack.size())
          {
             StackData& stack = data.subThreads[threadIndex].stack.back();
-            if (!stack.node)
+            if (data.subThreads[threadIndex].stack.size() == 1 && !stack.node)
             {
                data.subThreads.insert(data.subThreads.end(),
                   stack.subThreads.begin(),
