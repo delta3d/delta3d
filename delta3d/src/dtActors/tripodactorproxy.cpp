@@ -63,10 +63,10 @@ void TripodActorProxy::BuildPropertyMap()
 
    //Tripod* tripod = static_cast<Tripod*>(GetActor());
 
-   AddProperty(new ActorActorProperty(*this, "Camera", "Camera",
-      ActorActorProperty::SetFuncType(this,&TripodActorProxy::SetCamera),
-      ActorActorProperty::GetFuncType(this,&TripodActorProxy::GetCamera),
-      "dtCore::Camera", "Sets the camera which this tripod will offset."));
+   AddProperty(new ActorActorProperty(*this, "Child", "Child",
+      ActorActorProperty::SetFuncType(this,&TripodActorProxy::SetChild),
+      ActorActorProperty::GetFuncType(this,&TripodActorProxy::GetChild),
+      "dtCore::Transformable", "Sets the child which this tripod will offset."));
 
    AddProperty(new ActorActorProperty(*this, "Parent", "Parent",
       ActorActorProperty::SetFuncType(this,&TripodActorProxy::SetAttachToTransformable),
@@ -109,21 +109,33 @@ void TripodActorProxy::BuildPropertyMap()
 ///////////////////////////////////////////////////////////////////////////////////
 void TripodActorProxy::SetCamera(BaseActorObject* cameraProxy)
 {
-   SetLinkedActor("Camera", cameraProxy);
-
-   Tripod* tripod = static_cast<Tripod*>(GetActor());
-   Camera* camera(0);
-
-   if (cameraProxy != 0)
-   {
-      camera = dynamic_cast<Camera*>(cameraProxy->GetActor());
-   }
-
-   tripod->SetCamera(camera);
+   SetChild(cameraProxy);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////
 DeltaDrawable* TripodActorProxy::GetCamera()
+{
+   return GetChild();
+}
+
+///////////////////////////////////////////////////////////////////////////////////
+void TripodActorProxy::SetChild(BaseActorObject* childProxy)
+{
+   SetLinkedActor("Child", childProxy);
+
+   Tripod* tripod = static_cast<Tripod*>(GetActor());
+   Transformable* child = NULL;
+
+   if (childProxy != NULL)
+   {
+      child = dynamic_cast<Transformable*>(childProxy->GetActor());
+   }
+
+   tripod->SetChild(child);
+}
+
+///////////////////////////////////////////////////////////////////////////////////
+DeltaDrawable* TripodActorProxy::GetChild()
 {
    Tripod* tripod = static_cast<Tripod*>(GetActor());
 
@@ -331,4 +343,18 @@ TripodActorProxy::TetherModeEnum& TripodActorProxy::GetTetherMode() const
    {
       return TetherModeEnum::TETHER_WORLD_REL;
    }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+dtCore::RefPtr<dtDAL::ActorProperty> TripodActorProxy::GetDeprecatedProperty(const std::string& name)
+{
+   dtCore::RefPtr<dtDAL::ActorProperty> result;
+   if (name == "Camera")
+   {
+      result = new ActorActorProperty(*this, "Camera", "Camera",
+         ActorActorProperty::SetFuncType(this, &TripodActorProxy::SetCamera),
+         ActorActorProperty::GetFuncType(this, &TripodActorProxy::GetCamera),
+         "dtCore::Camera", "DEPRECATED - USE Child INSTEAD.");
+   }
+   return result;
 }

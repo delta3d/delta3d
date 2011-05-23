@@ -25,6 +25,7 @@
 #include <osg/Vec3>
 #include <dtDAL/actorproxy.h>
 #include <dtDAL/plugin_export.h>
+#include <dtUtil/deprecationmgr.h>
 
 namespace dtActors
 {
@@ -75,13 +76,25 @@ namespace dtActors
       * Sets the camera which this tripod will move
       * @param cameraProxy the camera to move
       */
-      void SetCamera( dtDAL::BaseActorObject* cameraProxy );
+      DEPRECATE_FUNC void SetCamera( dtDAL::BaseActorObject* cameraProxy );
 
       /**
       * Gets the camera which this tripod is moving
       * @return the camera which the tripod is moving
       */
-      dtCore::DeltaDrawable* GetCamera();
+      DEPRECATE_FUNC dtCore::DeltaDrawable* GetCamera();
+
+      /**
+      * Sets the transformable which this tripod will move
+      * @param transformableProxy the transformable to move
+      */
+      void SetChild(dtDAL::BaseActorObject* cameraProxy);
+
+      /**
+      * Gets the transformable which this tripod is moving
+      * @return the transformable which the tripod is moving
+      */
+      dtCore::DeltaDrawable* GetChild();
 
       /**
       * Sets the transformable (i.e. parent) which this tripod will
@@ -168,6 +181,9 @@ namespace dtActors
       * @return The current tether mode for the actor
       */
       TetherModeEnum& GetTetherMode() const;
+
+      /// Supports the following deprecated properties: 'Camera' 
+      virtual dtCore::RefPtr<dtDAL::ActorProperty> GetDeprecatedProperty(const std::string& name);
 
    protected:
 

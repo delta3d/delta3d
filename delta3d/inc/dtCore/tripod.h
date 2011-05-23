@@ -22,6 +22,8 @@
 #define DELTA_TRIPOD
 
 #include <dtCore/deltadrawable.h>
+#include <dtUtil/deprecationmgr.h>
+
 #include <osg/Vec3>
 
 namespace dtCore
@@ -53,23 +55,32 @@ namespace dtCore
 
       DECLARE_MANAGEMENT_LAYER(Tripod)
       
-      ///Contructor which takes in a optional Camera and Transformable
-      Tripod(Camera* cam = 0, Transformable* parent = 0);
-      
+      ///Constructor which takes in optional child and parentTransformables
+      Tripod(Transformable* child = NULL, Transformable* parent = NULL);
+
    protected:
 
       virtual ~Tripod();
 
    public:
 
-      ///Supply a Camera to connect to this Tripod
-      void SetCamera(Camera* cam);
+      ///This has been deprecated: use the SetChild method instead.
+      DEPRECATE_FUNC void SetCamera(Camera* cam);
 
-      ///set camera by name
-      void SetCamera(const std::string& camName);
+      ///This has been deprecated: use the SetChild method instead.
+      DEPRECATE_FUNC void SetCamera(const std::string& camName);
 
-      ///Get a non-const pointer to the currently connected Camera
-      Camera* GetCamera();
+      ///This has been deprecated: use the GetChild method instead.
+      DEPRECATE_FUNC Camera* GetCamera();
+
+      ///Supply a Transformable to connect to this Tripod
+      void SetChild(Transformable* child);
+
+      ///set child by name
+      void SetChild(const std::string& childName);
+
+      ///Get a non-const pointer to the currently connected Child
+      Transformable* GetChild();
 
       ///Attach this Tripod to a Transformable
       void SetAttachToTransformable(Transformable* parent);
@@ -128,7 +139,7 @@ namespace dtCore
       ///Override to implement your own method
       virtual void Update(double deltaFrameTime);
 
-      RefPtr<Camera> mCamera; ///<pointer to the Camera to control
+      RefPtr<Transformable> mChild; ///<pointer to the Transformable to control
       RefPtr<Transformable> mParentTrans; ///<pointer to the parent Transformable
       osg::Vec3 mPosition; ///<The position
       osg::Vec3 mHPR;///<Heading, Pitch, and Roll

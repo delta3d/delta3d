@@ -13,13 +13,13 @@ using namespace dtUtil;
 
 IMPLEMENT_MANAGEMENT_LAYER(Tripod)
 
-Tripod::Tripod(Camera *cam, Transformable *parent):
-mTetherMode(TETHER_PARENT_REL)
+Tripod::Tripod(Transformable* child, Transformable* parent)
+: mTetherMode(TETHER_PARENT_REL)
 {
    RegisterInstance(this);
-   
+
    AddSender(&System::GetInstance());
-   if (cam != NULL) SetCamera(cam);
+   SetChild(child);
    SetAttachToTransformable(parent);
 
    mPosition.set(0.0f, -10.0f, 2.0f);
@@ -31,31 +31,61 @@ mTetherMode(TETHER_PARENT_REL)
 Tripod::~Tripod(void)
 {
    DeregisterInstance(this);
-   RemoveSender( &System::GetInstance() );    
+   RemoveSender( &System::GetInstance() );
 }
 
-void Tripod::SetCamera(Camera *cam)
+void Tripod::SetCamera(Camera* cam)
 {
-   mCamera = cam;
+   SetChild(cam);
 }
 
-void Tripod::SetCamera( const std::string& camName )
+void Tripod::SetCamera(const std::string& camName)
 {
-   if (camName.size()>0)
+   if (camName.size() > 0)
    {
-      Camera *cam = Camera::GetInstance(camName);
-      if (cam!=NULL)
+      Camera* cam = Camera::GetInstance(camName);
+      if (cam != NULL)
       {
-         SetCamera(cam);
+         SetChild(cam);
       }
-      else Log::GetInstance().LogMessage(Log::LOG_WARNING, __FILE__, 
+      else
+      {
+         Log::GetInstance().LogMessage(Log::LOG_WARNING, __FILE__,
          "Tripod: Can't find Camera %s", camName.c_str());
+      }
    }
 }
 
 Camera* Tripod::GetCamera()
 {
-   return mCamera.get();
+   return dynamic_cast<Camera*>(GetChild());
+}
+
+void Tripod::SetChild(Transformable* child)
+{
+   mChild = child;
+}
+
+void Tripod::SetChild(const std::string& childName)
+{
+   if (childName.size() > 0)
+   {
+      Transformable *child = Transformable::GetInstance(childName);
+      if (child != NULL)
+      {
+         SetChild(child);
+      }
+      else
+      {
+         Log::GetInstance().LogMessage(Log::LOG_WARNING, __FILE__,
+         "Tripod: Can't find Transformable %s", childName.c_str());
+      }
+   }
+}
+
+Transformable* Tripod::GetChild()
+{
+   return mChild.get();
 }
 
 /** The supplied Transformable will be used as the basis for where the Tripod
@@ -76,7 +106,7 @@ void Tripod::SetAttachToTransformable( const std::string& parentName )
       {
          SetAttachToTransformable(trans);
       }
-      else Log::GetInstance().LogMessage(Log::LOG_WARNING, __FILE__, 
+      else Log::GetInstance().LogMessage(Log::LOG_WARNING, __FILE__,
          "Tripod: Can't find Transformable %s", parentName.c_str());
    }
 }
@@ -108,7 +138,7 @@ void Tripod::OnMessage(MessageData *data)
 void Tripod::Update(double deltaFrameTime) //virtual
 {
    //get parent's matrix
-   if (!mParentTrans.valid() || !mCamera.valid()) return;
+   if (!mParentTrans.valid() || !mChild.valid()) return;
 
    Transform parentXform;
    mParentTrans->GetTransform(parentXform);
@@ -116,7 +146,7 @@ void Tripod::Update(double deltaFrameTime) //virtual
    parentXform.Get(parentMat);
 
    Transform currXform;
-   mCamera->GetTransform(currXform);
+   mChild->GetTransform(currXform);
    osg::Matrix currMat;
    currXform.Get(currMat);
 
@@ -124,7 +154,7 @@ void Tripod::Update(double deltaFrameTime) //virtual
    Transform trans;
    trans.Set(mPosition, mHPR);
    trans.Get(offsetMat);
-      
+
    switch(mTetherMode)
    {
    case TETHER_PARENT_REL:
@@ -188,11 +218,11 @@ void Tripod::Update(double deltaFrameTime) //virtual
       newMat(0,2) = currMat(0,2) + mHPRScale[2] * (newMat(0,2) - currMat(0,2));
       newMat(1,2) = currMat(1,2) + mHPRScale[2] * (newMat(1,2) - currMat(1,2));
       newMat(2,2) = currMat(2,2) + mHPRScale[2] * (newMat(2,2) - currMat(2,2));
-         
+
    }
 
    parentXform.Set(newMat);
-   mCamera->SetTransform(parentXform);
+   mChild->SetTransform(parentXform);
 }
 
 /** The Camera will always point toward the look-at target if one is supplied.
