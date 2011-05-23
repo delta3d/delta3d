@@ -1297,8 +1297,8 @@ namespace dtDirector
          // Toggle debugging mode on a break point.
          else if (mNotifier->ShouldBreak(node))
          {
-            mNotifier->BreakNode(node, true);
             mDebugging = true;
+            mNotifier->BreakNode(node, true);
          }
       }
    }
