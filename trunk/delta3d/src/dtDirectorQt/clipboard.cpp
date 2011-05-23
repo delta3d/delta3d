@@ -583,7 +583,11 @@ namespace dtDirector
             }
             else
             {
-               newOwner = mIDOldToNew[owner->GetID()]->AsValueNode();
+               Node* node = mIDOldToNew[owner->GetID()];
+               if (node)
+               {
+                  newOwner = node->AsValueNode();
+               }
             }
 
             if (newOwner) link->Connect(newOwner);
