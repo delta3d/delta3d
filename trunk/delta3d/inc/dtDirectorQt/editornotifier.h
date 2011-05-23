@@ -51,6 +51,8 @@ namespace dtDirector
       {
          dtCore::UniqueId  nodeID;
          float             glow;
+         bool              hasBreakPoint;
+         bool              isPaused;
 
          std::vector<float> outputGlows;
       };
@@ -62,8 +64,10 @@ namespace dtDirector
 
       /**
        * Update.
+       *
+       * @param[in]  unpause  True if we should unpause all flash positions.
        */
-      virtual void Update();
+      virtual void Update(bool unpause);
 
       /**
        * Event handler when a node has been executed.
@@ -80,6 +84,15 @@ namespace dtDirector
        * @param[in]  node  The node that was changed.
        */
       virtual void OnValueChanged(Node* node);
+
+      /**
+       * Retrieves whether there is a break point for the given node.
+       *
+       * @param[in]  node  The node.
+       */
+      virtual bool ShouldBreak(Node* node);
+      virtual void BreakNode(Node* node, bool shouldFocus = false);
+      void ToggleBreakPoint(Node* node);
 
       GlowData* GetGlowData(Node* node);
 

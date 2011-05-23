@@ -453,6 +453,21 @@ namespace dtDirector
       void on_actionDirector_Help_triggered();
 
       /**
+       * Event handler for when the debug pause button is pressed.
+       */
+      void on_actionPause_triggered();
+
+      /**
+       * Event handler for when the debug continue button is pressed.
+       */
+      void on_actionContinue_triggered();
+
+      /**
+       * Event handler for when the debug step button is pressed.
+       */
+      void on_actionStep_Next_triggered();
+
+      /**
        * Event handler when a node creation menu item is triggered.
        */
       void OnCreateNodeEvent(const QString& name, const QString& category);
