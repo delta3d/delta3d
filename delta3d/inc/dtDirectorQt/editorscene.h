@@ -154,7 +154,7 @@ namespace dtDirector
        *             or NULL if not found.
        */
       NodeItem* GetNodeItem(const dtCore::UniqueId& id, bool exactMatch = false);
-      NodeItem* GetNodeItem(Node* node);
+      NodeItem* GetNodeItem(Node* node, bool exactMatch = false);
 
       /**
        * Retrieves a graph item for a graph.

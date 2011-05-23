@@ -22,6 +22,7 @@
 #include <dtDirectorQt/scriptitem.h>
 #include <dtDirectorQt/directoreditor.h>
 #include <dtDirectorQt/editorscene.h>
+#include <dtDirectorQt/editornotifier.h>
 #include <dtDirectorQt/linkitem.h>
 #include <dtDirectorQt/undomanager.h>
 #include <dtDirectorQt/undopropertyevent.h>
@@ -33,6 +34,7 @@
 
 #include <QtGui/QGraphicsScene>
 #include <QtGui/QMenu>
+#include <QtGui/QGraphicsColorizeEffect>
 
 #include <osg/Vec2>
 
@@ -86,6 +88,70 @@ namespace dtDirector
       }
 
       mLoading = false;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void ScriptItem::DrawGlow()
+   {
+      if (!mScene)
+      {
+         return;
+      }
+
+      float maxGlow = 0.0f;
+      dtDirector::EditorNotifier* notifier = 
+         dynamic_cast<dtDirector::EditorNotifier*>(
+         mScene->GetEditor()->GetDirector()->GetNotifier());
+
+      // Update the glow of this item only if a node inside it is glowing.
+      DirectorGraph* graph = NULL;
+      ReferenceScriptAction* refScriptNode =
+         dynamic_cast<ReferenceScriptAction*>(GetNode());
+
+      if (refScriptNode)
+      {
+         dtDirector::Director* script = refScriptNode->GetDirectorScript();
+
+         if (script && script->GetGraphRoot())
+         {
+            graph = script->GetGraphRoot();
+         }
+      }
+
+      if (notifier && graph)
+      {
+         std::vector<Node*> nodes;
+         graph->GetAllNodes(nodes);
+
+         int count = (int)nodes.size();
+         for (int index = 0; index < count; ++index)
+         {
+            Node* node = nodes[index];
+            if (node)
+            {
+               dtDirector::EditorNotifier::GlowData* glowData =
+                  notifier->GetGlowData(node);
+
+               if (glowData && glowData->glow > maxGlow)
+               {
+                  maxGlow = glowData->glow;
+               }
+            }
+         }
+
+         if (!mGlowEffect && maxGlow > 0.0f)
+         {
+            mGlowEffect = new QGraphicsColorizeEffect();
+            mGlowEffect->setColor(Qt::white);
+            mGlowEffect->setStrength(0.0f);
+            QGraphicsPolygonItem::setGraphicsEffect(mGlowEffect);
+         }
+
+         if (mGlowEffect)
+         {
+            mGlowEffect->setStrength(maxGlow);
+         }
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -147,11 +213,45 @@ namespace dtDirector
       menu.exec(event->screenPos());
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   bool ScriptItem::HasNode(Node* node)
+   {
+      ReferenceScriptAction* refScriptNode =
+         dynamic_cast<ReferenceScriptAction*>(GetNode());
+
+      if (refScriptNode)
+      {
+         dtDirector::Director* script = refScriptNode->GetDirectorScript();
+
+         if (script && script->GetGraphRoot())
+         {
+            std::vector<Node*> nodes;
+            script->GetGraphRoot()->GetAllNodes(nodes, false);
+
+            int count = (int)nodes.size();
+            for (int index = 0; index < count; index++)
+            {
+               Node* testNode = nodes[index];
+
+               if (testNode == node) return true;
+            }
+         }
+      }
+
+      return false;
+   }
+
    //////////////////////////////////////////////////////////////////////////
    void ScriptItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
    {
       ActionItem::mouseDoubleClickEvent(event);
 
+      OpenMacro();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void ScriptItem::OpenMacro()
+   {
       ReferenceScriptAction* refScriptNode =
          dynamic_cast<ReferenceScriptAction*>(GetNode());
 

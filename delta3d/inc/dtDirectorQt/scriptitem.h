@@ -52,6 +52,20 @@ namespace dtDirector
        */
       virtual void Draw();
 
+      /**
+       * Draws a glow around the node.
+       */
+      virtual void DrawGlow();
+
+      /**
+       * Retrieves whether the node is contained.
+       *
+       * @param[in]  node  The node.
+       *
+       * @return true if the node is contained.
+       */
+      virtual bool HasNode(Node* node);
+
    protected:
 
       /**
@@ -66,6 +80,11 @@ namespace dtDirector
       void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);
 
    public slots:
+
+      /**
+       * Opens the macro.
+       */
+      void OpenMacro();
 
    protected:
    };
