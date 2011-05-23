@@ -401,6 +401,7 @@ namespace dtDirector
        * Event handler when the paste button is pressed.
        */
       void on_action_Paste_triggered();
+      void on_actionPaste_with_Links_triggered();
 
       /**
        * Event handler when the delete button is pressed.
@@ -527,7 +528,7 @@ namespace dtDirector
       /**
        * Pastes the contents of the clipboard to the current scene.
        */
-      void PasteNodes(bool createLinks = false);
+      void PasteNodes(bool createLinks = false, bool externalLinks = false);
 
    private slots:
 
