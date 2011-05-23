@@ -202,6 +202,26 @@ namespace dtDirector
       menu.addAction(mScene->GetEditor()->GetHideLinkAction());
       menu.addSeparator();
       menu.addAction(mScene->GetEditor()->GetDeleteAction());
+
+      if (mScene->GetEditor()->GetDirector()->GetNotifier())
+      {
+         menu.addSeparator();
+         QAction* breakPointAction = NULL;
+         if (!mScene->GetEditor()->GetDirector()->GetNotifier()->ShouldBreak(mNode))
+         {
+            breakPointAction = menu.addAction("Set Break Point");
+         }
+         else
+         {
+            breakPointAction = menu.addAction("Remove Break Point");
+         }
+
+         if (breakPointAction)
+         {
+            connect(breakPointAction, SIGNAL(triggered()), this, SLOT(OnToggleBreakPoint()));
+         }
+      }
+
       menu.exec(event->screenPos());
    }
 

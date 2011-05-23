@@ -60,6 +60,8 @@ namespace dtDirector
       , mMap(NULL)
       , mModified(false)
       , mStarted(false)
+      , mDebugging(false)
+      , mShouldStep(false)
       , mGraph(NULL)
       , mLogNodes(false)
       , mLogger(NULL)
@@ -392,6 +394,11 @@ namespace dtDirector
 
       mRecordTime += delta;
 
+      if (mNotifier.valid())
+      {
+         mNotifier->Update(!(mDebugging && !mShouldStep));
+      }
+
       bool continued = false;
 
       //do
@@ -420,10 +427,7 @@ namespace dtDirector
       }
       //while (continued);
 
-      if (mNotifier.valid())
-      {
-         mNotifier->Update();
-      }
+      mShouldStep = false;
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -960,7 +964,7 @@ namespace dtDirector
 
       // Threads always update the first item in the stack,
       // all other stack items are "sleeping".
-      if (stack.node)
+      if ((!mDebugging || mShouldStep) && stack.node)
       {
          Node* currentNode = stack.node;
          int   input       = stack.index;
@@ -1284,6 +1288,18 @@ namespace dtDirector
          }
 
          mNotifier->OnNodeExecution(node, inputName, outputNames);
+
+         // If we are debugging, then we need to pause every new node.
+         if (mDebugging)
+         {
+            mNotifier->BreakNode(node);
+         }
+         // Toggle debugging mode on a break point.
+         else if (mNotifier->ShouldBreak(node))
+         {
+            mNotifier->BreakNode(node, true);
+            mDebugging = true;
+         }
       }
    }
 

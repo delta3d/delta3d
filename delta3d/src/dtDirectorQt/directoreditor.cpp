@@ -445,6 +445,22 @@ namespace dtDirector
       // Show Links
       mUI.action_Show_Links->setEnabled(bCanShowLinks);
       mUI.action_Hide_Links->setEnabled(bCanHideLinks);
+
+      // Debugging
+      if (mDirector->GetNotifier())
+      {
+         mUI.menuDebug->setEnabled(true);
+         mUI.actionPause->setEnabled(!mDirector->IsDebugging());
+         mUI.actionContinue->setEnabled(mDirector->IsDebugging());
+         mUI.actionStep_Next->setEnabled(mDirector->IsDebugging());
+      }
+      else
+      {
+         mUI.menuDebug->setEnabled(false);
+         mUI.actionPause->setEnabled(false);
+         mUI.actionContinue->setEnabled(false);
+         mUI.actionStep_Next->setEnabled(false);
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -1232,6 +1248,26 @@ namespace dtDirector
 
       mDocBrowser->show();
       mDocBrowser->raise();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::on_actionPause_triggered()
+   {
+      mDirector->ToggleDebugEnabled(true);
+      RefreshButtonStates();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::on_actionContinue_triggered()
+   {
+      mDirector->ToggleDebugEnabled(false);
+      RefreshButtonStates();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::on_actionStep_Next_triggered()
+   {
+      mDirector->StepDebugger();
    }
 
    ///////////////////////////////////////////////////////////////////////////////

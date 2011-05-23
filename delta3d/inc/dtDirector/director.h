@@ -515,6 +515,14 @@ namespace dtDirector
        */
       bool DeleteNode(const dtCore::UniqueId& id);
 
+      /**
+       * Toggles the debug mode.
+       */
+      void ToggleDebugEnabled(bool enabled) {mDebugging = enabled;}
+      bool IsDebugging() const {return mDebugging;}
+
+      void StepDebugger() {mShouldStep = true;}
+
    protected:
 
       /**
@@ -666,6 +674,9 @@ namespace dtDirector
       dtCore::RefPtr<dtDAL::Map> mMap;
       bool        mModified;
       bool        mStarted;
+
+      bool        mDebugging;
+      bool        mShouldStep;
 
       std::vector<std::string> mLibraries;
       std::map<std::string, std::string> mLibraryVersionMap;

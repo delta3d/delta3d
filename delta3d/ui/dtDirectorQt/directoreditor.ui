@@ -336,9 +336,21 @@
     </property>
     <addaction name="actionDirector_Help"/>
    </widget>
+   <widget class="QMenu" name="menuDebug">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="title">
+     <string>Debug</string>
+    </property>
+    <addaction name="actionPause"/>
+    <addaction name="actionContinue"/>
+    <addaction name="actionStep_Next"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menu_Edit"/>
    <addaction name="menu_View"/>
+   <addaction name="menuDebug"/>
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
@@ -383,6 +395,10 @@
    <addaction name="action_Hide_Links"/>
    <addaction name="separator"/>
    <addaction name="action_Refresh"/>
+   <addaction name="separator"/>
+   <addaction name="actionPause"/>
+   <addaction name="actionContinue"/>
+   <addaction name="actionStep_Next"/>
   </widget>
   <widget class="dtDirector::PropertyEditor" name="propertyEditor">
    <attribute name="dockWidgetArea">
@@ -731,6 +747,48 @@
    </property>
    <property name="shortcutContext">
     <enum>Qt::WidgetShortcut</enum>
+   </property>
+  </action>
+  <action name="actionPause">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../src/dtDirectorQt/directorqt.qrc">
+     <normaloff>:/icons/debug_pause.png</normaloff>:/icons/debug_pause.png</iconset>
+   </property>
+   <property name="text">
+    <string>Pause</string>
+   </property>
+  </action>
+  <action name="actionContinue">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../src/dtDirectorQt/directorqt.qrc">
+     <normaloff>:/icons/debug_continue.png</normaloff>:/icons/debug_continue.png</iconset>
+   </property>
+   <property name="text">
+    <string>Continue</string>
+   </property>
+   <property name="shortcut">
+    <string>F5</string>
+   </property>
+  </action>
+  <action name="actionStep_Next">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../src/dtDirectorQt/directorqt.qrc">
+     <normaloff>:/icons/debug_step.png</normaloff>:/icons/debug_step.png</iconset>
+   </property>
+   <property name="text">
+    <string>Step Next</string>
+   </property>
+   <property name="shortcut">
+    <string>F10</string>
    </property>
   </action>
  </widget>

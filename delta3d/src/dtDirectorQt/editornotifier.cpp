@@ -24,20 +24,20 @@
 
 namespace dtDirector
 {
-   ///////////////////////////////////////////////////////////////////////////////////////
+   ////////////////////////////////////////////////////////////////////////////////
    EditorNotifier::EditorNotifier(DirectorEditor* editor)
       : mEditor(editor)
    {
       mTime = dtCore::Timer::Instance()->Tick();
    }
 
-   ///////////////////////////////////////////////////////////////////////////////////////
+   ////////////////////////////////////////////////////////////////////////////////
    EditorNotifier::~EditorNotifier()
    {
    }
 
-   //////////////////////////////////////////////////////////////////////////
-   void EditorNotifier::Update()
+   ////////////////////////////////////////////////////////////////////////////////
+   void EditorNotifier::Update(bool unpause)
    {
       const float GLOW_SPEED = 1.0f;
 
@@ -52,11 +52,24 @@ namespace dtDirector
          {
             GlowData& data = iter->second;
 
+            // Only update the glow on nodes that are not paused, or we
+            // should unpause.
+            if (data.isPaused && !unpause)
+            {
+               continue;
+            }
+
+            data.isPaused = false;
             data.glow -= GLOW_SPEED * delta;
 
             if (data.glow <= 0.0f)
             {
-               removeList.push_back(iter->first);
+               data.glow = 0.0f;
+
+               if (!data.hasBreakPoint)
+               {
+                  removeList.push_back(iter->first);
+               }
             }
 
             for (int index = 0; index < (int)data.outputGlows.size(); ++index)
@@ -90,7 +103,7 @@ namespace dtDirector
 #define GLOW_INC 0.10f
 #define GLOW_MAX 0.50f
 
-   //////////////////////////////////////////////////////////////////////////
+   ////////////////////////////////////////////////////////////////////////////////
    void EditorNotifier::OnNodeExecution(Node* node, const std::string& input, const std::vector<std::string>& outputs)
    {
       if (!node)
@@ -102,6 +115,8 @@ namespace dtDirector
       if (iter == mGlowMap.end())
       {
          GlowData data;
+         data.hasBreakPoint = false;
+         data.isPaused = false;
          data.glow = 0.0f;
          data.nodeID = node->GetID();
          mGlowMap[node] = data;
@@ -153,7 +168,7 @@ namespace dtDirector
       }
    }
 
-   //////////////////////////////////////////////////////////////////////////
+   ////////////////////////////////////////////////////////////////////////////////
    void EditorNotifier::OnValueChanged(Node* node)
    {
       //if (!node)
@@ -165,7 +180,9 @@ namespace dtDirector
       //if (iter == mGlowMap.end())
       //{
       //   GlowData data;
-      //   data.glow = GLOW_MIN;
+      //   data.hasBreakPoint = false;
+      //   data.isPaused = false;
+      //   data.glow = 0.0f;
       //   data.nodeID = node->GetID();
       //   mGlowMap[node] = data;
       //}
@@ -186,7 +203,74 @@ namespace dtDirector
       //}
    }
 
-   //////////////////////////////////////////////////////////////////////////
+   ////////////////////////////////////////////////////////////////////////////////
+   bool EditorNotifier::ShouldBreak(Node* node)
+   {
+      GlowData* data = GetGlowData(node);
+      if (data)
+      {
+         return data->hasBreakPoint;
+      }
+
+      return false;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void EditorNotifier::BreakNode(Node* node, bool shouldFocus)
+   {
+      if (!node)
+      {
+         return;
+      }
+
+      std::map<Node*, GlowData>::iterator iter = mGlowMap.find(node);
+      if (iter == mGlowMap.end())
+      {
+         GlowData data;
+         data.hasBreakPoint = false;
+         data.isPaused = false;
+         data.glow = GLOW_MIN;
+         data.nodeID = node->GetID();
+         mGlowMap[node] = data;
+      }
+
+      GlowData& data = mGlowMap[node];
+      data.isPaused = true;
+
+      if (shouldFocus)
+      {
+         mEditor->FocusNode(node);
+         mEditor->RefreshButtonStates();
+      }
+
+      mEditor->RefreshNode(node);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void EditorNotifier::ToggleBreakPoint(Node* node)
+   {
+      if (!node)
+      {
+         return;
+      }
+
+      std::map<Node*, GlowData>::iterator iter = mGlowMap.find(node);
+      if (iter == mGlowMap.end())
+      {
+         GlowData data;
+         data.hasBreakPoint = true;
+         data.isPaused = false;
+         data.glow = 0.0f;
+         data.nodeID = node->GetID();
+         mGlowMap[node] = data;
+         return;
+      }
+
+      GlowData& data = mGlowMap[node];
+      data.hasBreakPoint = !data.hasBreakPoint;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    EditorNotifier::GlowData* EditorNotifier::GetGlowData(Node* node)
    {
       std::map<Node*, GlowData>::iterator iter = mGlowMap.find(node);
