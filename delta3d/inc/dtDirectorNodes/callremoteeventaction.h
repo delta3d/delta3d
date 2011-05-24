@@ -79,6 +79,7 @@ namespace dtDirector
        */
       void SetEventName(const std::string& value);
       const std::string& GetEventName();
+      std::vector<std::string> GetEventList();
 
       /**
        * Accessors for the local event property flag.
