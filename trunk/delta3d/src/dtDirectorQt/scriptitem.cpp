@@ -234,7 +234,7 @@ namespace dtDirector
          if (script && script->GetGraphRoot())
          {
             std::vector<Node*> nodes;
-            script->GetGraphRoot()->GetAllNodes(nodes, false);
+            script->GetGraphRoot()->GetAllNodes(nodes);
 
             int count = (int)nodes.size();
             for (int index = 0; index < count; index++)
