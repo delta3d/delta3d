@@ -27,6 +27,13 @@
 #include <dtDirector/actionnode.h>
 #include <dtDirectorAudioNodes/nodelibraryexport.h>
 
+#include <dtDAL/resourcedescriptor.h>
+
+namespace dtAudio
+{
+   class Sound;
+}
+
 namespace dtDirector
 {
    ////////////////////////////////////////////////////////////////////////////////
@@ -86,6 +93,21 @@ namespace dtDirector
       void SetSoundActor(const dtCore::UniqueId& value);
       dtCore::UniqueId GetSoundActor();
 
+      void SetSoundResource(const dtDAL::ResourceDescriptor& value);
+      dtDAL::ResourceDescriptor GetSoundResource();
+
+      void SetGain(float value);
+      float GetGain();
+
+      void SetPitch(float value);
+      float GetPitch();
+
+      void SetListenerRelative(bool value);
+      bool GetListenerRelative();
+
+      void SetLooping(bool value);
+      bool GetLooping();
+
    protected:
 
       /**
@@ -96,10 +118,19 @@ namespace dtDirector
    private:
 
       dtCore::UniqueId mSoundActor;
+      dtDAL::ResourceDescriptor mSoundResourceResource;
+      float mGain;
+      float mPitch;
+      bool mListenerRelative;
+      bool mLooping;
+      dtAudio::Sound* mpSound;
 
       void PlaySoundsOnActors();
+      void PlaySoundResource();
       void StopSoundsOnActors();
+      void StopSoundResource();
       void PauseSoundsOnActors();
+      void PauseSoundResource();
 
       bool AreAnySoundsOnActorsStillPlaying();
    };

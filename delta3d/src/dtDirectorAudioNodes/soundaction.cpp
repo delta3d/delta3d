@@ -21,6 +21,7 @@
 
 #include <dtDirectorAudioNodes/soundaction.h>
 
+#include <dtAudio/audiomanager.h>
 #include <dtAudio/sound.h>
 #include <dtAudio/soundactorproxy.h>
 
@@ -28,6 +29,10 @@
 #include <dtCore/transformable.h>
 
 #include <dtDAL/actoridactorproperty.h>
+#include <dtDAL/booleanactorproperty.h>
+#include <dtDAL/floatactorproperty.h>
+#include <dtDAL/project.h>
+#include <dtDAL/resourceactorproperty.h>
 
 #include <dtDirector/director.h>
 
@@ -36,10 +41,16 @@ namespace dtDirector
    /////////////////////////////////////////////////////////////////////////////
    SoundAction::SoundAction()
       : ActionNode()
+      , mpSound(NULL)
+      , mSoundResourceResource(dtDAL::ResourceDescriptor::NULL_RESOURCE)
+      , mSoundActor("")
+      , mPitch(1.0f)
+      , mGain(1.0f)
+      , mListenerRelative(false)
+      , mLooping(false)
    {
-      mSoundActor = "";
-
       AddAuthor("Michael Guerrero");
+      AddAuthor("Eric R. Heine");
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -75,6 +86,36 @@ namespace dtDirector
          "dtAudio::Sound", "The sound actor.");
       AddProperty(actorProp);
 
+      AddProperty(new dtDAL::ResourceActorProperty(
+         dtDAL::DataType::SOUND, "Sound", "Sound",
+         dtDAL::ResourceActorProperty::SetDescFuncType(this, &SoundAction::SetSoundResource),
+         dtDAL::ResourceActorProperty::GetDescFuncType(this, &SoundAction::GetSoundResource),
+         "A sound resource to play from this action."));
+
+      AddProperty(new dtDAL::FloatActorProperty(
+         "Gain", "Gain",
+         dtDAL::FloatActorProperty::SetFuncType(this, &SoundAction::SetGain),
+         dtDAL::FloatActorProperty::GetFuncType(this, &SoundAction::GetGain),
+         "The resource sound's pitch."));
+
+      AddProperty(new dtDAL::FloatActorProperty(
+         "Pitch", "Pitch",
+         dtDAL::FloatActorProperty::SetFuncType(this, &SoundAction::SetPitch),
+         dtDAL::FloatActorProperty::GetFuncType(this, &SoundAction::GetPitch),
+         "The resource sound's pitch."));
+
+      AddProperty(new dtDAL::BooleanActorProperty(
+         "ListenerRelative", "Listener Relative",
+         dtDAL::BooleanActorProperty::SetFuncType(this, &SoundAction::SetListenerRelative),
+         dtDAL::BooleanActorProperty::GetFuncType(this, &SoundAction::GetListenerRelative),
+         "Whether the resource sound is listener relative or not."));
+
+      AddProperty(new dtDAL::BooleanActorProperty(
+         "Looping", "Looping",
+         dtDAL::BooleanActorProperty::SetFuncType(this, &SoundAction::SetLooping),
+         dtDAL::BooleanActorProperty::GetFuncType(this, &SoundAction::GetLooping),
+         "Whether the resource sound is looping or not."));
+
       // This will expose the properties in the editor and allow
       // them to be connected to ValueNodes.
       mValues.push_back(ValueLink(this, actorProp, true, true, true));
@@ -91,6 +132,7 @@ namespace dtDirector
          {
             if (firstUpdate)
             {
+               PlaySoundResource();
                PlaySoundsOnActors();
 
                // Fire the "Out" link
@@ -100,6 +142,9 @@ namespace dtDirector
             {
                if (!AreAnySoundsOnActorsStillPlaying())
                {
+                  dtAudio::AudioManager::GetInstance().FreeSound(mpSound);
+                  mpSound = NULL;
+
                   OutputLink* link = GetOutputLink("Finished");
                   if (link)
                   {
@@ -114,19 +159,21 @@ namespace dtDirector
          break;
       case INPUT_STOP:
          {
+            StopSoundResource();
             StopSoundsOnActors();
             shouldContinueUpdating = false;
          }
          break;
 
       case INPUT_PAUSE:
-         {           
+         {
+            PauseSoundResource();
             PauseSoundsOnActors();
             shouldContinueUpdating = false;
          }
          break;
       }
-    
+
       return shouldContinueUpdating;
    }
 
@@ -142,6 +189,66 @@ namespace dtDirector
       return mSoundActor;
    }
 
+   /////////////////////////////////////////////////////////////////////////////
+   void SoundAction::SetSoundResource(const dtDAL::ResourceDescriptor& value)
+   {
+      mSoundResourceResource = value;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   dtDAL::ResourceDescriptor SoundAction::GetSoundResource()
+   {
+      return mSoundResourceResource;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void SoundAction::SetGain(float value)
+   {
+      mGain = value;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   float SoundAction::GetGain()
+   {
+      return mGain;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void SoundAction::SetPitch(float value)
+   {
+      mPitch = value;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   float SoundAction::GetPitch()
+   {
+      return mPitch;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void SoundAction::SetListenerRelative(bool value)
+   {
+      mListenerRelative = value;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   bool SoundAction::GetListenerRelative()
+   {
+      return mListenerRelative;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void SoundAction::SetLooping(bool value)
+   {
+      mLooping = value;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   bool SoundAction::GetLooping()
+   {
+      return mLooping;
+   }
+
    ////////////////////////////////////////////////////////////////////////////////
    void SoundAction::PlaySoundsOnActors()
    {
@@ -149,7 +256,7 @@ namespace dtDirector
 
       for (int index = 0; index < count; index++)
       {
-         dtAudio::SoundActorProxy* proxy = 
+         dtAudio::SoundActorProxy* proxy =
             dynamic_cast<dtAudio::SoundActorProxy*>(GetActor("Actor", index));
 
          if (proxy)
@@ -164,6 +271,25 @@ namespace dtDirector
       }
    }
 
+   ///////////////////////////////////////////////////////////////////////////////
+   void SoundAction::PlaySoundResource()
+   {
+      if (mpSound == NULL && mSoundResourceResource != dtDAL::ResourceDescriptor::NULL_RESOURCE)
+      {
+         mpSound = dtAudio::AudioManager::GetInstance().NewSound();
+         mpSound->LoadFile(dtDAL::Project::GetInstance().GetResourcePath(mSoundResourceResource).c_str());
+         mpSound->SetGain(GetGain());
+         mpSound->SetPitch(GetPitch());
+         mpSound->SetListenerRelative(GetListenerRelative());
+         mpSound->SetLooping(GetLooping());
+      }
+
+      if (mpSound != NULL)
+      {
+         mpSound->Play();
+      }
+   }
+
    ////////////////////////////////////////////////////////////////////////////////
    void SoundAction::StopSoundsOnActors()
    {
@@ -171,7 +297,7 @@ namespace dtDirector
 
       for (int index = 0; index < count; index++)
       {
-         dtAudio::SoundActorProxy* proxy = 
+         dtAudio::SoundActorProxy* proxy =
             dynamic_cast<dtAudio::SoundActorProxy*>(GetActor("Actor", index));
 
          if (proxy)
@@ -186,6 +312,17 @@ namespace dtDirector
       }
    }
 
+   ///////////////////////////////////////////////////////////////////////////////
+   void SoundAction::StopSoundResource()
+   {
+      if (mpSound != NULL)
+      {
+         mpSound->Stop();
+         dtAudio::AudioManager::GetInstance().FreeSound(mpSound);
+         mpSound = NULL;
+      }
+   }
+
    ////////////////////////////////////////////////////////////////////////////////
    void SoundAction::PauseSoundsOnActors()
    {
@@ -193,7 +330,7 @@ namespace dtDirector
 
       for (int index = 0; index < count; index++)
       {
-         dtAudio::SoundActorProxy* proxy = 
+         dtAudio::SoundActorProxy* proxy =
             dynamic_cast<dtAudio::SoundActorProxy*>(GetActor("Actor", index));
 
          if (proxy)
@@ -208,16 +345,33 @@ namespace dtDirector
       }
    }
 
+   ///////////////////////////////////////////////////////////////////////////////
+   void SoundAction::PauseSoundResource()
+   {
+      if (mpSound != NULL)
+      {
+         mpSound->Pause();
+      }
+   }
+
    ////////////////////////////////////////////////////////////////////////////////
    bool SoundAction::AreAnySoundsOnActorsStillPlaying()
    {
       bool stillPlaying = false;
 
+      if (mpSound != NULL)
+      {
+         if (mpSound->IsPlaying())
+         {
+            stillPlaying = true;
+         }
+      }
+
       int count = GetPropertyCount("Actor");
 
       for (int index = 0; index < count; index++)
       {
-         dtAudio::SoundActorProxy* proxy = 
+         dtAudio::SoundActorProxy* proxy =
             dynamic_cast<dtAudio::SoundActorProxy*>(GetActor("Actor", index));
 
          if (proxy)
