@@ -95,8 +95,8 @@ namespace dtQt
 
          if (mTemporaryComboControl)
          {
-            mTemporaryComboControl->setEditText(tr(mProperty->GetValue().c_str()));
             mTemporaryComboControl->setCurrentIndex(mTemporaryComboControl->findText(tr(mProperty->GetValue().c_str())));
+            mTemporaryComboControl->setEditText(tr(mProperty->GetValue().c_str()));
          }
       }
 
