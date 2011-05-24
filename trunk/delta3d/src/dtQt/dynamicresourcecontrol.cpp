@@ -132,7 +132,7 @@ namespace dtQt
       // update our label
       if (widget == mWrapper && mTemporaryComboBox)
       {
-         mTemporaryComboBox->setCurrentIndex(mTemporaryComboBox->findText(getValueAsString()));
+         mTemporaryComboBox->setCurrentIndex(mTemporaryComboBox->findText(getValueAsString(), Qt::MatchExactly));
       }
 
       DynamicAbstractControl::updateEditorFromModel(widget);
@@ -184,6 +184,7 @@ namespace dtQt
       dtUtil::tree<dtDAL::ResourceTreeNode> tree;
       dtDAL::Project::GetInstance().GetResourcesOfType(mProperty->GetDataType(), tree);
 
+      mTemporaryComboBox->addItem("<None>");
       setupList(tree);
 
       mTemporaryComboBox->setEditable(false);
@@ -201,15 +202,21 @@ namespace dtQt
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void DynamicResourceControl::setupList(const dtUtil::tree<dtDAL::ResourceTreeNode>& tree)
+   void DynamicResourceControl::setupList(const dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator& iter)
    {
-      mTemporaryComboBox->addItem("<None>");
-
-      dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator& iter = tree.begin();
-      for (iter = tree.begin(); iter != tree.end(); ++iter)
+      for (dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator i = iter.tree_ref().in();
+         i != iter.tree_ref().end();
+         ++i)
       {
-         mTemporaryComboBox->addItem(iter->getResource().GetDisplayName().c_str(),
-            QVariant(iter->getResource().GetResourceIdentifier().c_str()));
+         if (i->isCategory())
+         {
+            setupList(i);
+         }
+         else
+         {
+            mTemporaryComboBox->addItem(i->getResource().GetDisplayName().c_str(),
+               QVariant(i->getResource().GetResourceIdentifier().c_str()));
+         }
       }
    }
 

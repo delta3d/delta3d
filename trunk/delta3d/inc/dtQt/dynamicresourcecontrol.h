@@ -134,7 +134,7 @@ namespace dtQt
    protected:
 
    private:
-      void setupList(const dtUtil::tree<dtDAL::ResourceTreeNode>& tree);
+      void setupList(const dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator& iter);
 
       dtDAL::ResourceActorProperty* mProperty;
 

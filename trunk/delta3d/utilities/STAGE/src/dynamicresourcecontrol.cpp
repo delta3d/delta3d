@@ -82,9 +82,9 @@ namespace dtEditQt
          mTemporaryEditBtn->setToolTip("Open the custom editor for this resource.");
          connect(mTemporaryEditBtn, SIGNAL(clicked()), this, SLOT(editPressed()));
 
-         mGridLayout->addWidget(mTemporaryEditBtn, 0, 0, 1, 1);
-         mGridLayout->setColumnMinimumWidth(0, mTemporaryEditBtn->sizeHint().width());
-         mGridLayout->setColumnStretch(0, 0);
+         mGridLayout->addWidget(mTemporaryEditBtn, 0, 1, 1, 1);
+         mGridLayout->setColumnMinimumWidth(1, mTemporaryEditBtn->sizeHint().width());
+         mGridLayout->setColumnStretch(1, 0);
       }
 
       return wrapper;
