@@ -560,8 +560,8 @@ namespace dtDirector
 
       UndoManager*             mUndoManager;
 
-      dtCore::ObserverPtr<Director> mDirector;
-      std::string                   mFileName;
+      dtCore::RefPtr<Director> mDirector;
+      std::string              mFileName;
 
       bool                     mReplayMode;
       Director::RecordNodeData mReplayNode;
