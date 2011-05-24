@@ -196,6 +196,8 @@ namespace dtDAL
        */
       Map& GetMap(const std::string& name);
 
+      std::vector<Map*> GetOpenMaps();
+
       /**
        * returns the last backup save of the map with the given name.
        * @note if no backup is found, this call will NOT open the saved map, it will throw a file not

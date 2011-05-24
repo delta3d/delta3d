@@ -44,270 +44,50 @@
 namespace dtEditQt
 {
 
-   DynamicActorControl::DynamicActorControl()
-      : mProperty(NULL)
-      , mIdProperty(NULL)
-      , mTemporaryEditControl(NULL)
+   STAGEDynamicActorControl::STAGEDynamicActorControl()
+      : dtQt::DynamicActorControl()
       , mTemporaryGotoButton(NULL)
    {
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   DynamicActorControl::~DynamicActorControl()
+   STAGEDynamicActorControl::~STAGEDynamicActorControl()
    {
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   void DynamicActorControl::InitializeData(dtQt::DynamicAbstractControl* newParent,
-      dtQt::PropertyEditorModel* newModel, dtDAL::PropertyContainer* newPC, dtDAL::ActorProperty* newProperty)
+   QWidget* STAGEDynamicActorControl::createEditor(QWidget* parent, const QStyleOptionViewItem& option, const QModelIndex& index)
    {
-      // Note - Unlike the other properties, we can't static or reinterpret cast this object.
-      // We need to dynamic cast it...
-      if (newProperty != NULL && newProperty->GetDataType() == dtDAL::DataType::ACTOR)
-      {
-         mProperty = dynamic_cast<dtDAL::ActorActorProperty*>(newProperty);
-         mIdProperty = dynamic_cast<dtDAL::ActorIDActorProperty*>(newProperty);
-         dtQt::DynamicAbstractControl::InitializeData(newParent, newModel, newPC, newProperty);
-      }
-      else
-      {
-         std::string propertyName = (newProperty != NULL) ? newProperty->GetName() : "NULL";
-         LOG_ERROR("Cannot create dynamic control because property [" +
-            propertyName + "] is not the correct type.");
-      }
-   }
-
-   /////////////////////////////////////////////////////////////////////////////////
-   void DynamicActorControl::updateEditorFromModel(QWidget* widget)
-   {
-      if (widget == mWrapper && mTemporaryEditControl)
-      {
-         // set the current value from our property
-         dtDAL::BaseActorObject* proxy = getActorProxy();
-         if (proxy)
-         {
-            mTemporaryEditControl->setCurrentIndex(mTemporaryEditControl->findText(proxy->GetName().c_str()));
-         }
-         else
-         {
-            mTemporaryEditControl->setCurrentIndex(mTemporaryEditControl->findText("<None>"));
-         }
-      }
-
-      DynamicAbstractControl::updateEditorFromModel(widget);
-   }
-
-   /////////////////////////////////////////////////////////////////////////////////
-   bool DynamicActorControl::updateModelFromEditor(QWidget* widget)
-   {
-      DynamicAbstractControl::updateModelFromEditor(widget);
-
-      bool dataChanged = false;
-
-      if (widget == mWrapper && mTemporaryEditControl)
-      {
-         // Get the current selected string and the previously set string value
-         std::string currentActorID = mTemporaryEditControl->itemData(mTemporaryEditControl->currentIndex()).toString().toStdString();
-
-         dtDAL::BaseActorObject* currentProxy = getActorProxy();
-         std::string previousActorID = currentProxy ? currentProxy->GetId().ToString() : "";
-
-         // set our value to our object
-         if (currentActorID != previousActorID)
-         {
-            // give undo manager the ability to create undo/redo events
-            emit PropertyAboutToChange(*mPropContainer, *getActorProperty(), previousActorID, currentActorID);
-
-            mBaseProperty->FromString(currentActorID);
-
-            dataChanged = true;
-         }
-      }
-
-      // notify the world (mostly the viewports) that our property changed
-      if (dataChanged)
-      {
-         emit PropertyChanged(*mPropContainer, *getActorProperty());
-      }
-
-      return dataChanged;
-   }
-
-
-   /////////////////////////////////////////////////////////////////////////////////
-   QWidget* DynamicActorControl::createEditor(QWidget* parent, const QStyleOptionViewItem& option, const QModelIndex& index)
-   {
-      QWidget* wrapper = DynamicAbstractControl::createEditor(parent, option, index);
-
-      if (!mInitialized)
-      {
-         LOG_ERROR("Tried to add itself to the parent widget before being initialized");
-         return wrapper;
-      }
-
-      mTemporaryEditControl = new dtQt::SubQComboBox(wrapper, this);
-
-      std::vector< dtCore::RefPtr<dtDAL::BaseActorObject> > names;
-      std::string proxyClass;
-      if (mProperty)
-      {
-         proxyClass = mProperty->GetDesiredActorClass();
-      }
-      else if (mIdProperty)
-      {
-         proxyClass = mIdProperty->GetDesiredActorClass();
-      }
-      GetActorProxies(names, proxyClass);
-
-      QStringList sortedNames;
-      for (unsigned int i = 0; i < names.size(); ++i)
-      {
-         sortedNames.append(QString(names[i]->GetName().c_str()));
-      }
-      sortedNames.sort();
-
-      mTemporaryEditControl->addItem("<None>");
-
-      for (unsigned int i = 0; i < sortedNames.size(); ++i)
-      {
-         QString name = sortedNames[i];
-
-         // Find the actor that matches this name.
-         for (unsigned int n = 0; n < names.size(); ++n)
-         {
-            if (name == names[n]->GetName().c_str())
-            {
-               mTemporaryEditControl->addItem(name, QVariant(names[n]->GetId().ToString().c_str()));
-
-               names.erase(names.begin() + n);
-               break;
-            }
-         }
-      }
-      mTemporaryEditControl->setToolTip(getDescription());
+      QWidget* wrapper = dtQt::DynamicActorControl::createEditor(parent, option, index);
 
       mTemporaryGotoButton = new dtQt::SubQPushButton(tr("Goto"), wrapper, this);
 
-      connect(mTemporaryEditControl, SIGNAL(activated(int)), this, SLOT(itemSelected(int)));
       connect(mTemporaryGotoButton, SIGNAL(clicked()), this, SLOT(onGotoClicked()));
 
-      updateEditorFromModel(mWrapper);
-
-      mGridLayout->addWidget(mTemporaryEditControl, 0, 0, 1, 1);
       mGridLayout->addWidget(mTemporaryGotoButton,  0, 1, 1, 1);
       mGridLayout->setColumnMinimumWidth(1, mTemporaryGotoButton->sizeHint().width() / 2);
       mGridLayout->setColumnStretch(0, 2);
 
-      wrapper->setFocusProxy(mTemporaryEditControl);
       return wrapper;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   dtDAL::BaseActorObject* DynamicActorControl::getActorProxy()
-   {
-      if (mProperty)
-      {
-         return mProperty->GetValue();
-      }
-
-      if (mIdProperty)
-      {
-         return mIdProperty->GetActorProxy();
-      }
-
-      return NULL;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   dtDAL::ActorProperty* DynamicActorControl::getActorProperty()
-   {
-      if (mProperty)
-      {
-         return mProperty;
-      }
-
-      return mIdProperty;
-   }
-
-   /////////////////////////////////////////////////////////////////////////////////
-   const QString DynamicActorControl::getDisplayName()
-   {
-      return tr(getActorProperty()->GetLabel().c_str());
-   }
-
-   /////////////////////////////////////////////////////////////////////////////////
-   const QString DynamicActorControl::getDescription()
-   {
-      std::string tooltip = getActorProperty()->GetDescription() + "  [Type: " + getActorProperty()->GetDataType().GetName() + "]";
-      return tr(tooltip.c_str());
-   }
-
-   /////////////////////////////////////////////////////////////////////////////////
-   const QString DynamicActorControl::getValueAsString()
-   {
-      DynamicAbstractControl::getValueAsString();
-
-      dtDAL::BaseActorObject* proxy = getActorProxy();
-      return proxy != NULL ? QString(proxy->GetName().c_str()) : QString("<None>");
-   }
-
-   /////////////////////////////////////////////////////////////////////////////////
-   bool DynamicActorControl::isEditable()
-   {
-      return true;
    }
 
    /////////////////////////////////////////////////////////////////////////////////
    // SLOTS
    /////////////////////////////////////////////////////////////////////////////////
 
-   /////////////////////////////////////////////////////////////////////////////////
-   void DynamicActorControl::itemSelected(int index)
-   {
-      if (mTemporaryEditControl != NULL)
-      {
-         updateModelFromEditor(mWrapper);
-      }
-   }
-
-   /////////////////////////////////////////////////////////////////////////////////
-   bool DynamicActorControl::updateData(QWidget* widget)
-   {
-      if (mInitialized || widget == NULL)
-      {
-         LOG_ERROR("Tried to updateData before being initialized");
-         return false;
-      }
-
-      return updateModelFromEditor(widget);
-   }
-
-   /////////////////////////////////////////////////////////////////////////////////
-   void DynamicActorControl::actorPropertyChanged(dtDAL::PropertyContainer& propCon,
-      dtDAL::ActorProperty& property)
-   {
-      DynamicAbstractControl::actorPropertyChanged(propCon, property);
-
-      if (mTemporaryEditControl != NULL && &propCon == mPropContainer && &property == getActorProperty())
-      {
-         updateEditorFromModel(mWrapper);
-      }
-   }
-
    ////////////////////////////////////////////////////////////////////////////////
-   void DynamicActorControl::handleSubEditDestroy(QWidget* widget, QAbstractItemDelegate::EndEditHint hint)
+   void STAGEDynamicActorControl::handleSubEditDestroy(QWidget* widget, QAbstractItemDelegate::EndEditHint hint)
    {
       if (widget == mWrapper)
       {
-         mTemporaryEditControl = NULL;
-         mTemporaryGotoButton  = NULL;
+         mTemporaryGotoButton = NULL;
       }
 
       DynamicAbstractControl::handleSubEditDestroy(widget, hint);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   void DynamicActorControl::onGotoClicked()
+   void STAGEDynamicActorControl::onGotoClicked()
    {
       NotifyParentOfPreUpdate();
       dtDAL::BaseActorObject* proxy = getActorProxy();
@@ -322,22 +102,6 @@ namespace dtEditQt
 
          EditorEvents::GetInstance().emitActorsSelected(vec);
       }
-   }
-
-   /////////////////////////////////////////////////////////////////////////////////
-   void DynamicActorControl::GetActorProxies(std::vector< dtCore::RefPtr<dtDAL::BaseActorObject> >& toFill, const std::string& className)
-   {
-      toFill.clear();
-
-      dtCore::RefPtr<dtDAL::Map> curMap = EditorData::GetInstance().getCurrentMap();
-
-      if (!curMap.valid())
-      {
-         throw dtDAL::MapException(
-         "There is no map open, there shouldn't be any controls", __FILE__, __LINE__);
-      }
-
-      curMap->FindProxies(toFill, "", "", "", className);
    }
 
 } // namespace dtEditQt

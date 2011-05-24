@@ -30,7 +30,6 @@
 #include <dtEditQt/editordata.h>
 #include <dtEditQt/editorevents.h>
 #include <dtEditQt/dynamicactorcontrol.h>
-#include <dtEditQt/dynamicgameeventcontrol.h>
 #include <dtEditQt/dynamicgrouppropertycontrol.h>
 #include <dtEditQt/dynamicresourcecontrol.h>
 #include <dtEditQt/pluginmanager.h>
@@ -117,13 +116,12 @@ DirectorToolEditor::DirectorToolEditor()
          dtDAL::DataType* dt = dtDAL::DataType::EnumerateType()[i];
          if (dt->IsResource())
          {
-            dcfactory.RegisterControlForDataType<DynamicResourceControl>(*dt);
+            dcfactory.RegisterControlForDataType<STAGEDynamicResourceControl>(*dt);
          }
       }
 
-      dcfactory.RegisterControlForDataType<DynamicActorControl>(dtDAL::DataType::ACTOR);
-      dcfactory.RegisterControlForDataType<DynamicGameEventControl>(dtDAL::DataType::GAME_EVENT);
-      dcfactory.RegisterControlForDataType<DynamicGroupPropertyControl>(dtDAL::DataType::GROUP);
+      dcfactory.RegisterControlForDataType<STAGEDynamicActorControl>(dtDAL::DataType::ACTOR);
+      dcfactory.RegisterControlForDataType<STAGEDynamicGroupPropertyControl>(dtDAL::DataType::GROUP);
    }
 
    connect(&dtEditQt::EditorEvents::GetInstance(), SIGNAL(currentMapChanged()),

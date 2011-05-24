@@ -33,7 +33,6 @@
 #include <dtCore/deltadrawable.h>
 
 #include <dtEditQt/dynamicactorcontrol.h>
-#include <dtEditQt/dynamicgameeventcontrol.h>
 #include <dtEditQt/dynamicgrouppropertycontrol.h>
 #include <dtEditQt/dynamicnamecontrol.h>
 #include <dtEditQt/dynamicresourcecontrol.h>
@@ -91,13 +90,12 @@ namespace dtEditQt
          dtDAL::DataType* dt = dtDAL::DataType::EnumerateType()[i];
          if (dt->IsResource())
          {
-            dcfactory.RegisterControlForDataType<DynamicResourceControl>(*dt);
+            dcfactory.RegisterControlForDataType<STAGEDynamicResourceControl>(*dt);
          }
       }
 
-      dcfactory.RegisterControlForDataType<DynamicActorControl>(dtDAL::DataType::ACTOR);
-      dcfactory.RegisterControlForDataType<DynamicGameEventControl>(dtDAL::DataType::GAME_EVENT);
-      dcfactory.RegisterControlForDataType<DynamicGroupPropertyControl>(dtDAL::DataType::GROUP);
+      dcfactory.RegisterControlForDataType<STAGEDynamicActorControl>(dtDAL::DataType::ACTOR);
+      dcfactory.RegisterControlForDataType<STAGEDynamicGroupPropertyControl>(dtDAL::DataType::GROUP);
    }
 
    /////////////////////////////////////////////////////////////////////////////////

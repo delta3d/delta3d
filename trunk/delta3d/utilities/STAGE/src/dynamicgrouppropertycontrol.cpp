@@ -53,18 +53,18 @@ namespace dtEditQt
 {
 
    ///////////////////////////////////////////////////////////////////////////////
-   DynamicGroupPropertyControl::DynamicGroupPropertyControl()
+   STAGEDynamicGroupPropertyControl::STAGEDynamicGroupPropertyControl()
       : mGroupProperty(NULL)
    {
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   DynamicGroupPropertyControl::~DynamicGroupPropertyControl()
+   STAGEDynamicGroupPropertyControl::~STAGEDynamicGroupPropertyControl()
    {
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   void DynamicGroupPropertyControl::addChildControl(dtQt::DynamicAbstractControl* child, dtQt::PropertyEditorModel* model)
+   void STAGEDynamicGroupPropertyControl::addChildControl(dtQt::DynamicAbstractControl* child, dtQt::PropertyEditorModel* model)
    {
       // Note - if you change the propertyeditor so that it adds and removes rows instead of destroying
       // the property editor, you need to work with the begin/endinsertrows methods of model.
@@ -75,7 +75,7 @@ namespace dtEditQt
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   QWidget* DynamicGroupPropertyControl::createEditor(QWidget* parent,
+   QWidget* STAGEDynamicGroupPropertyControl::createEditor(QWidget* parent,
       const QStyleOptionViewItem& option, const QModelIndex& index)
    {
       QWidget* wrapper = new QWidget(parent);
@@ -104,7 +104,7 @@ namespace dtEditQt
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   void DynamicGroupPropertyControl::InitializeData(dtQt::DynamicAbstractControl* newParent,
+   void STAGEDynamicGroupPropertyControl::InitializeData(dtQt::DynamicAbstractControl* newParent,
       dtQt::PropertyEditorModel* newModel, dtDAL::PropertyContainer* propCon, dtDAL::ActorProperty* newProperty)
    {
       // Note - We used to have dynamic_cast in here, but it was failing to properly cast in
@@ -123,7 +123,7 @@ namespace dtEditQt
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   const QString DynamicGroupPropertyControl::getDisplayName()
+   const QString STAGEDynamicGroupPropertyControl::getDisplayName()
    {
       if (mGroupProperty == NULL)
       {
@@ -133,7 +133,7 @@ namespace dtEditQt
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   const QString DynamicGroupPropertyControl::getDescription()
+   const QString STAGEDynamicGroupPropertyControl::getDescription()
    {
       if (mGroupProperty == NULL)
       {
@@ -146,7 +146,7 @@ namespace dtEditQt
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   const QString DynamicGroupPropertyControl::getValueAsString()
+   const QString STAGEDynamicGroupPropertyControl::getValueAsString()
    {
       if (mGroupProperty == NULL)
       {
@@ -158,7 +158,7 @@ namespace dtEditQt
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   bool DynamicGroupPropertyControl::isEditable()
+   bool STAGEDynamicGroupPropertyControl::isEditable()
    {
       if (mGroupProperty == NULL)
       {
@@ -171,7 +171,7 @@ namespace dtEditQt
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   GroupUIPlugin* DynamicGroupPropertyControl::GetPlugin()
+   GroupUIPlugin* STAGEDynamicGroupPropertyControl::GetPlugin()
    {
       if (mGroupProperty == NULL)
       {
@@ -187,13 +187,13 @@ namespace dtEditQt
    /////////////////////////////////////////////////////////////////////////////////
 
    /////////////////////////////////////////////////////////////////////////////////
-   bool DynamicGroupPropertyControl::updateData(QWidget* widget)
+   bool STAGEDynamicGroupPropertyControl::updateData(QWidget* widget)
    {
       return true;
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   void DynamicGroupPropertyControl::EditClicked()
+   void STAGEDynamicGroupPropertyControl::EditClicked()
    {
       if (mGroupProperty == NULL)
       {

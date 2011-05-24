@@ -26,8 +26,8 @@
  *
  * David Guthrie
  */
-#ifndef DELTA_DYNAMICGROUPPROPERTYCONTROL
-#define DELTA_DYNAMICGROUPPROPERTYCONTROL
+#ifndef STAGE_DYNAMICGROUPPROPERTYCONTROL
+#define STAGE_DYNAMICGROUPPROPERTYCONTROL
 
 #include <dtEditQt/export.h>
 #include <dtQt/dynamicabstractparentcontrol.h>
@@ -50,19 +50,19 @@ namespace dtEditQt
     * The primary purpose of the group control is to provide a visual grouping of property types
     * so that they aren't all laid out together.
     */
-   class DT_EDITQT_EXPORT DynamicGroupPropertyControl : public dtQt::DynamicAbstractParentControl
+   class DT_EDITQT_EXPORT STAGEDynamicGroupPropertyControl : public dtQt::DynamicAbstractParentControl
    {
          Q_OBJECT
       public:
          /**
           * Constructor
           */
-         DynamicGroupPropertyControl();
+         STAGEDynamicGroupPropertyControl();
 
          /**
           * Destructor
           */
-         virtual ~DynamicGroupPropertyControl();
+         virtual ~STAGEDynamicGroupPropertyControl();
 
          /**
           * Groups can have children.  This is how you add children to the group. Note that you can't
@@ -132,4 +132,4 @@ namespace dtEditQt
 
 } // namespace dtEditQt
 
-#endif // DELTA_DYNAMICGROUPPROPERTYCONTROL
+#endif // STAGE_DYNAMICGROUPPROPERTYCONTROL
