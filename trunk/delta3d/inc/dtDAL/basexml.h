@@ -88,6 +88,9 @@ namespace dtDAL
       void SetHandler(BaseXMLHandler* handler);
       BaseXMLHandler* GetHandler();
 
+      void SetSchemaFile(const std::string& schemaFile);
+      const std::string& GetSchemaFile() const;
+
    protected:
 
       void SetParsing(bool parsing);
@@ -103,6 +106,7 @@ namespace dtDAL
       BaseXMLParser& operator=(const BaseXMLParser& assignParser);
 
       bool mParsing;
+      std::string mSchemaFile;
       dtCore::RefPtr<BaseXMLHandler> mHandler;
 
    protected:

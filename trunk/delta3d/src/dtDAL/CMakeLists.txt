@@ -22,6 +22,7 @@ SET(LIB_PUBLIC_HEADERS
     ${HEADER_PATH}/baseactorobject.h
     ${HEADER_PATH}/basexml.h
     ${HEADER_PATH}/basexmlhandler.h
+    ${HEADER_PATH}/basexmlreaderwriter.h
     ${HEADER_PATH}/booleanactorproperty.h
     ${HEADER_PATH}/colorrgbaactorproperty.h
     ${HEADER_PATH}/containeractorproperty.h
@@ -112,6 +113,7 @@ SET(LIB_SOURCES
     ${SOURCE_PATH}/baseactorobject.cpp
     ${SOURCE_PATH}/basexml.cpp
     ${SOURCE_PATH}/basexmlhandler.cpp
+    ${SOURCE_PATH}/basexmlreaderwriter.cpp
     ${SOURCE_PATH}/booleanactorproperty.cpp
     ${SOURCE_PATH}/colorrgbaactorproperty.cpp
     ${SOURCE_PATH}/containeractorproperty.cpp

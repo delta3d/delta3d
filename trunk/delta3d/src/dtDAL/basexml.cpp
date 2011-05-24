@@ -153,6 +153,47 @@ namespace dtDAL
    }
 
    /////////////////////////////////////////////////////////////////
+   void BaseXMLParser::SetSchemaFile(const std::string& schemaFile)
+   {
+      mSchemaFile = schemaFile;
+
+      // NOTE: The folling implementation was copied from dtUtil::XercesParser.
+
+      if (!schemaFile.empty())
+      {
+         std::string schema = osgDB::findDataFile(schemaFile);
+
+         if (schema.empty())
+         {
+            LOG_WARNING("Scheme file, " + schemaFile + ", not found, check your DELTA_DATA environment variable, schema checking disabled.")
+         }
+         else // turn on schema checking
+         {
+            // In some cases, schema will contain a url that is
+            // relative to the current working directory which
+            // may cause problems with xerces correctly finding it
+            schema = osgDB::getRealPath(schema);
+
+            mXercesParser->setFeature(XMLUni::fgXercesSchema, true);                  // enables schema checking.
+            mXercesParser->setFeature(XMLUni::fgSAX2CoreValidation, true);            // posts validation errors.
+            mXercesParser->setFeature(XMLUni::fgXercesValidationErrorAsFatal, true);  // does not allow parsing if schema is not fulfilled.
+            mXercesParser->loadGrammar(schema.c_str(), Grammar::SchemaGrammarType);
+            XMLCh* SCHEMA = XMLString::transcode(schema.c_str());
+            mXercesParser->setFeature(XMLUni::fgXercesSchema, true);
+            mXercesParser->setProperty(XMLUni::fgXercesSchemaExternalNoNameSpaceSchemaLocation, SCHEMA);
+            XMLString::release(&SCHEMA);
+         }
+      }
+   }
+
+   /////////////////////////////////////////////////////////////////
+   const std::string& BaseXMLParser::GetSchemaFile() const
+   {
+      return mSchemaFile;
+   }
+
+
+   /////////////////////////////////////////////////////////////////
    void BaseXMLParser::SetParsing(bool parsing)
    {
       mParsing = parsing;
