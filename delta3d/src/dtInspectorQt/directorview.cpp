@@ -53,11 +53,6 @@ bool dtInspectorQt::DirectorView::IsOfType(QString name, dtCore::Base* object)
 //////////////////////////////////////////////////////////////////////////
 void dtInspectorQt::DirectorView::OnViewButtonClicked()
 {
-   if (mOperateOn->mDirector->GetNotifier())
-   {
-      return;
-   }
-
    dtDirector::DirectorEditor* editor =
       new dtDirector::DirectorEditor();
 
@@ -66,7 +61,15 @@ void dtInspectorQt::DirectorView::OnViewButtonClicked()
       editor->SetDirector(mOperateOn->mDirector);
 
       dtCore::RefPtr<dtDirector::EditorNotifier> notifier =
-         new dtDirector::EditorNotifier(editor);
+         dynamic_cast<dtDirector::EditorNotifier*>(
+         mOperateOn->mDirector->GetNotifier());
+
+      if (!notifier)
+      {
+         notifier = new dtDirector::EditorNotifier();
+      }
+
+      notifier->AddEditor(editor);
 
       mOperateOn->mDirector->SetNotifier(notifier);
 
