@@ -70,7 +70,7 @@ osg::Geometry* MakeLine(const osg::Vec3& beginPoint,
 PoseMeshItem::PoseMeshItem(const dtAnim::PoseMesh& poseMesh,
                            dtAnim::CharDrawable* model,
                            QGraphicsItem* parent)
-  : QGraphicsItem(parent)
+  : QGraphicsObject(parent)
   , mPoseMesh(&poseMesh)
   , mModel(model)
   , mBoundingRect()

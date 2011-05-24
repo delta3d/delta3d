@@ -27,8 +27,16 @@ namespace dtCore
    class DT_CORE_EXPORT Loadable
    {
    public:
-      ///Load a file from disk
-      virtual osg::Node* LoadFile( const std::string& filename, bool useCache = true );
+
+      /*!
+      * Load a geometry from a file using any supplied data file paths set in
+      * dtCore::SetDataFilePathList().  Additional calls to this method will just combine
+      * the loaded files together.
+      *
+      * @param filename : The name of the file to be loaded
+      * @param useCache : If true, use OSG's object cache
+      */
+      virtual osg::Node* LoadFile(const std::string& filename, bool useCache = true);
 
       ///Get the filename of the last loaded file
       const std::string& GetFilename() const { return mFilename; }

@@ -12,8 +12,6 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 
-class QGraphicsItem;
-class QGraphicsScene;
 class QCursor;
 class QAction;
 
@@ -40,18 +38,18 @@ struct TriangleSampleSpace
 
 ///////////////////////////////////////////////////////////////////////////////
 
-class PoseMeshItem: public QObject, public QGraphicsItem
-{   
+class PoseMeshItem: public QGraphicsObject
+{
    Q_OBJECT
-public:   
+public:
 
    PoseMeshItem(const dtAnim::PoseMesh& poseMesh,
                 dtAnim::CharDrawable* model,
                 QGraphicsItem* parent = NULL);
 
-   ~PoseMeshItem(); 
+   ~PoseMeshItem();
 
-   const std::string& GetPoseMeshName(); 
+   const std::string& GetPoseMeshName();
 
    void SetEnabled(bool isEnabled);
    void SetDisplayEdges(bool shouldDisplay);
@@ -60,7 +58,7 @@ public:
 
    void OnBlendUpdate();
 
-   void Clear();  
+   void Clear();
 
    void  SetMinimumErrorValue(float minError);
    float GetMinimumErrorValue();
@@ -68,26 +66,26 @@ public:
    void  SetMaximumErrorValue(float maxError);
    float GetMaximumErrorValue();
 
-   void SetVerticalScale(float newScale);   
-   void SetHorizontalScale(float newScale); 
-  
+   void SetVerticalScale(float newScale);
+   void SetHorizontalScale(float newScale);
+
    // Qt overrides
-   virtual bool sceneEvent(QEvent* event);  
+   virtual bool sceneEvent(QEvent* event);
    virtual void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
    virtual void mousePressEvent(QGraphicsSceneMouseEvent* event);
    virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent* event);
-      
+
    virtual QRectF boundingRect() const;
    virtual QPainterPath shape() const;
-   virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget); 
+   virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget);
 
 signals:
    void NewItemBlend(const dtAnim::PoseMesh* posemesh, float itemAzimth, float itemElevation);
 
-private: 
+private:
 
    const dtAnim::PoseMesh* mPoseMesh;
-   dtAnim::CharDrawable* mModel;   
+   dtAnim::CharDrawable* mModel;
    dtCore::RefPtr<dtAnim::PoseMeshUtility> mMeshUtil;
 
    // TODO - fix bone line rendering
@@ -106,11 +104,11 @@ private:
    std::vector<EdgeInfo> mEdgeInfoList;
 
    QPixmap *mPixmap;
-   QRectF mBoundingRect;  
+   QRectF mBoundingRect;
 
    QPointF mLastMousePos;
    QPointF mLastBlendPos;
-   int     mLastTriangleID;  
+   int     mLastTriangleID;
 
    bool    mIsActive;
    bool    mAreErrorSamplesDisplayed;
@@ -136,13 +134,13 @@ private:
 
    void GetAnchorBoneDirection(const dtAnim::PoseMesh::TargetTriangle& currentTargetTri, osg::Vec3& outDirection);
 
-   void AddBoneLinesToScene(const dtAnim::PoseMesh::TargetTriangle& targetTri);   
+   void AddBoneLinesToScene(const dtAnim::PoseMesh::TargetTriangle& targetTri);
    void RemoveBoneLinesFromScene();
 
    bool IsItemMovable();
 
    // Render functions
-   void PaintErrorSamples(QPainter* painter);  
+   void PaintErrorSamples(QPainter* painter);
    void PaintEdges(QPainter* painter);
 
    float GetErrorSample(const QPointF& samplePoint);
@@ -154,7 +152,7 @@ private:
 
    void GetTriangleBoundingRect(const dtAnim::PoseMesh::Triangle& tri, QRectF& outRect);
 
-   bool GetIntersectionBoundingPoints(const QLineF& intersector, 
+   bool GetIntersectionBoundingPoints(const QLineF& intersector,
                                       const QLineF lines[3],
                                       QPointF& outLeftMost,
                                       QPointF& outRightMost);
