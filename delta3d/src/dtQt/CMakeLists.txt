@@ -16,6 +16,7 @@ docbrowserxmlreader.cpp
 dialoglistselection.cpp
 dynamicabstractcontrol.cpp
 dynamicabstractparentcontrol.cpp
+dynamicactorcontrol.cpp
 dynamicarraycontrol.cpp
 dynamicarrayelementcontrol.cpp
 dynamicboolcontrol.cpp
@@ -25,12 +26,13 @@ dynamiccontainercontrol.cpp
 dynamicdoublecontrol.cpp
 dynamicenumcontrol.cpp
 dynamicfloatcontrol.cpp
+dynamicgameeventcontrol.cpp
 dynamicgroupcontrol.cpp
 dynamicintcontrol.cpp
 dynamiclabelcontrol.cpp
 dynamiclongcontrol.cpp
 dynamicpropertycontainercontrol.cpp
-dynamicresourcecontrolbase.cpp
+dynamicresourcecontrol.cpp
 dynamicstringcontrol.cpp
 dynamicvectorelementcontrol.cpp
 librarypathseditor.cpp

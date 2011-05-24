@@ -26,127 +26,49 @@
  *
  * William E. Johnson II
  */
-#ifndef DELTA_DYNAMIC_ACTOR_CONTROL
-#define DELTA_DYNAMIC_ACTOR_CONTROL
+#ifndef STAGE_DYNAMIC_ACTOR_CONTROL
+#define STAGE_DYNAMIC_ACTOR_CONTROL
 
 #include <dtEditQt/export.h>
-#include <dtQt/dynamicabstractcontrol.h>
+#include <dtQt/dynamicactorcontrol.h>
 #include <dtQt/dynamicsubwidgets.h>
-
-// Forward References
-namespace dtDAL
-{
-   class ActorActorProperty;
-   class ActorIDActorProperty;
-}
 
 namespace dtEditQt
 {
-   class PropertyEditorModel;
-
-   class DT_EDITQT_EXPORT DynamicActorControl : public dtQt::DynamicAbstractControl
+   class DT_EDITQT_EXPORT STAGEDynamicActorControl : public dtQt::DynamicActorControl
    {
       Q_OBJECT
 
       public:
          /// Constructor
-         DynamicActorControl();
+         STAGEDynamicActorControl();
 
          /// Destructor
-         virtual ~DynamicActorControl();
-
-         /**
-          * @see DynamicAbstractControl#InitializeData
-          */
-         void InitializeData(dtQt::DynamicAbstractControl* newParent, dtQt::PropertyEditorModel* newModel,
-                             dtDAL::PropertyContainer* newPC, dtDAL::ActorProperty* newProperty);
-
-         /**
-          * @see DynamicAbstractControl#updateEditorFromModel
-          */
-         virtual void updateEditorFromModel(QWidget* widget);
-
-         /**
-          * @see DynamicAbstractControl#updateModelFromEditor
-          */
-         virtual bool updateModelFromEditor(QWidget* widget);
+         virtual ~STAGEDynamicActorControl();
 
          /**
           * @see DynamicAbstractControl#createEditor
           */
          virtual QWidget* createEditor(QWidget* parent, const QStyleOptionViewItem& option, const QModelIndex& index);
 
-         /**
-          * Retrieves the Actor from the ID.
-          */
-         dtDAL::BaseActorObject* getActorProxy();
-
-         /**
-          * Retrieves the current actor property.
-          */
-         dtDAL::ActorProperty* getActorProperty();
-
-         /**
-          * @see DynamicAbstractControl#getDisplayName
-          */
-         virtual const QString getDisplayName();
-
-         /**
-          * @see DynamicAbstractControl#getDescription
-          */
-         virtual const QString getDescription();
-
-         /**
-          * @see DynamicAbstractControl#getValueAsString
-          */
-         virtual const QString getValueAsString();
-
-         /**
-          * @see DynamicAbstractControl#isEditable
-          */
-         virtual bool isEditable();
-
       public slots:
-         /**
-          * @see DynamicAbstractControl#updateData
-          */
-         virtual bool updateData(QWidget* widget);
-
-         void actorPropertyChanged(dtDAL::PropertyContainer& propCon,
-                  dtDAL::ActorProperty& property);
 
          /**
           * @see DynamicAbstractControl#handleSubEditDestroy
           */
          void handleSubEditDestroy(QWidget* widget, QAbstractItemDelegate::EndEditHint hint = QAbstractItemDelegate::NoHint);
 
-         /**
-          * Called when the user selects an item in the combo box
-          */
-         void itemSelected(int index);
-
          void onGotoClicked();
 
       private:
-         /**
-          * Finds actors in the current map that match the provided class name
-          * and fills a vector with their names
-          * @param className The class name to search for
-          * @return A vector with the name and proxy pointer mapped
-          */
-         void GetActorProxies(std::vector< dtCore::RefPtr<dtDAL::BaseActorObject> >& toFill, const std::string& className);
-
-         dtDAL::ActorActorProperty*   mProperty;
-         dtDAL::ActorIDActorProperty* mIdProperty;
 
          // This pointer is not really in our control.  It is constructed in the createEditor()
          // method and destroyed whenever QT feels like it (mostly when the control looses focus).
          // We work around this by trapping the destruction of this object, it should
          // call our handleSubEditDestroy() method so we know to not hold this anymore
-         dtQt::SubQComboBox*   mTemporaryEditControl;
          dtQt::SubQPushButton* mTemporaryGotoButton;
    };
 
 } // namespace dtEditQt
 
-#endif // DELTA_DYNAMIC_ACTOR_CONTROL
+#endif // STAGE_DYNAMIC_ACTOR_CONTROL

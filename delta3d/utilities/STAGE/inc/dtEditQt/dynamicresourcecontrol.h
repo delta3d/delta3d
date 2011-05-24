@@ -26,11 +26,11 @@
  *
  * Curtiss Murphy
  */
-#ifndef DELTA_DYNAMICRESOURCECONTROL
-#define DELTA_DYNAMICRESOURCECONTROL
+#ifndef STAGE_DYNAMIC_RESOURCE_CONTROL
+#define STAGE_DYNAMIC_RESOURCE_CONTROL
 
 #include <dtEditQt/export.h>
-#include <dtQt/dynamicresourcecontrolbase.h>
+#include <dtQt/dynamicresourcecontrol.h>
 
 namespace dtQt
 {
@@ -57,7 +57,7 @@ namespace dtEditQt
     * This control is not editable, but has several child controls and some of them
     * are editable.
     */
-   class DT_EDITQT_EXPORT DynamicResourceControl : public dtQt::DynamicResourceControlBase
+   class DT_EDITQT_EXPORT STAGEDynamicResourceControl : public dtQt::DynamicResourceControl
    {
       Q_OBJECT
 
@@ -65,12 +65,12 @@ namespace dtEditQt
       /**
        * Constructor
        */
-      DynamicResourceControl();
+      STAGEDynamicResourceControl();
 
       /**
        * Destructor
        */
-      virtual ~DynamicResourceControl();
+      virtual ~STAGEDynamicResourceControl();
 
       /**
        * @see DynamicAbstractControl#createEditor
@@ -94,15 +94,9 @@ namespace dtEditQt
 
       ResourceUIPlugin* GetPlugin();
 
-      /**
-       * Figure out which resource descriptor  to get from EditorData and get it.
-       * @return the current resource descriptor for our type, else an empty one of if type is invalid.
-       */
-      virtual dtDAL::ResourceDescriptor getCurrentResource();
-
       dtQt::SubQPushButton* mTemporaryEditBtn;
    };
 
 } // namespace dtEditQt
 
-#endif // DELTA_DYNAMICRESOURCECONTROL
+#endif // STAGE_DYNAMIC_RESOURCE_CONTROL

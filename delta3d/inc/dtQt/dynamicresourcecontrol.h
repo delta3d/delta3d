@@ -34,6 +34,10 @@
 #include <dtQt/dynamicsubwidgets.h>
 #include <dtQt/dynamiclabelcontrol.h>
 
+#include <dtDAL/resourcetreenode.h>
+
+#include <dtUtil/tree.h>
+
 namespace dtDAL
 {
    class ResourceActorProperty;
@@ -49,13 +53,13 @@ namespace dtQt
    class SubQPushButton;
 
    /**
-    * @class DynamicResourceControlBase
+    * @class DynamicResourceControl
     * @brief This is the resource actor property.  It knows how to work with the various
     * resource data types (Terrain, Character, Mesh, Texture, sound, ...) from DataTypes.h
     * This control is not editable, but has several child controls and some of them
     * are editable.
     */
-   class DT_QT_EXPORT DynamicResourceControlBase : public DynamicAbstractParentControl
+   class DT_QT_EXPORT DynamicResourceControl : public DynamicAbstractParentControl
    {
       Q_OBJECT
 
@@ -63,12 +67,12 @@ namespace dtQt
       /**
        * Constructor
        */
-      DynamicResourceControlBase();
+      DynamicResourceControl();
 
       /**
        * Destructor
        */
-      virtual ~DynamicResourceControlBase();
+      virtual ~DynamicResourceControl();
 
       /**
        * @see DynamicAbstractControl#InitializeData
@@ -112,25 +116,15 @@ namespace dtQt
        */
       virtual bool isEditable();
 
-      /**
-       * @see DynamicAbstractControl#installEventFilterOnControl
-       */
-      virtual void installEventFilterOnControl(QObject* filterObj);
-
       dtDAL::ResourceActorProperty& GetProperty();
 
    public slots:
       virtual bool updateData(QWidget* widget);
 
       /**
-       * The user pressed the 'Use Current' Button.  Grab the current resource.
+       * Called when the user selects an item in the combo box
        */
-      void useCurrentPressed();
-
-      /**
-       * The user pressed the 'Clear' Button.  Clear out the resource.
-       */
-      void clearPressed();
+      void itemSelected(int index);
 
       /**
        * @see DynamicAbstractControl#handleSubEditDestroy
@@ -138,23 +132,17 @@ namespace dtQt
       virtual void handleSubEditDestroy(QWidget* widget, QAbstractItemDelegate::EndEditHint hint = QAbstractItemDelegate::NoHint);
 
    protected:
-      /**
-       * Figure out which resource descriptor  to get from EditorData and get it.
-       * @return the current resource descriptor for our type, else an empty one of if type is invalid.
-       */
-      virtual dtDAL::ResourceDescriptor getCurrentResource() = 0;
 
    private:
+      void setupList(const dtUtil::tree<dtDAL::ResourceTreeNode>& tree);
+
       dtDAL::ResourceActorProperty* mProperty;
 
       // This pointer is not really in our control.  It is constructed in the createEditor()
       // method and destroyed whenever QT feels like it (mostly when the control looses focus).
       // We work around this by trapping the destruction of this object, it should
       // call our handleSubEditDestroy() method so we know to not hold this anymore
-      SubQLabel*      mTemporaryEditOnlyTextLabel;
-      SubQPushButton* mTemporaryUseCurrentBtn;
-      SubQPushButton* mTemporaryClearBtn;
-
+      SubQComboBox* mTemporaryComboBox;
    };
 
 } // namespace dtQt

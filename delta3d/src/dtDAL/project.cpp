@@ -760,6 +760,18 @@ namespace dtDAL
       return map;
    }
 
+   //////////////////////////////////////////////////////////////////////////
+   std::vector<Map*> Project::GetOpenMaps()
+   {
+      std::vector<Map*> maps;
+      std::map<std::string, dtCore::RefPtr<Map> >::iterator iter;
+      for (iter = mImpl->mOpenMaps.begin(); iter != mImpl->mOpenMaps.end(); ++iter)
+      {
+         maps.push_back(iter->second);
+      }
+      return maps;
+   }
+
    /////////////////////////////////////////////////////////////////////////////
    Map& Project::OpenMapBackup(const std::string& name)
    {

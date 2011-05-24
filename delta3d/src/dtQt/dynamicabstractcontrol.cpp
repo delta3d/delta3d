@@ -49,6 +49,9 @@
 #include <dtQt/dynamicvecncontrol.h>
 #include <dtQt/propertyeditortreeview.h>
 #include <dtQt/dynamicsubwidgets.h>
+#include <dtQt/dynamicactorcontrol.h>
+#include <dtQt/dynamicresourcecontrol.h>
+#include <dtQt/dynamicgameeventcontrol.h>
 
 #include <QtCore/QSize>
 
@@ -87,6 +90,19 @@ namespace dtQt
       RegisterControlForDataType<DynamicArrayControl>(dtDAL::DataType::ARRAY);
       RegisterControlForDataType<DynamicContainerControl>(dtDAL::DataType::CONTAINER);
       RegisterControlForDataType<DynamicPropertyContainerControl>(dtDAL::DataType::PROPERTY_CONTAINER);
+      RegisterControlForDataType<DynamicActorControl>(dtDAL::DataType::ACTOR);
+      RegisterControlForDataType<DynamicGameEventControl>(dtDAL::DataType::GAME_EVENT);
+
+      size_t datatypeCount = dtDAL::DataType::EnumerateType().size();
+
+      for (size_t i = 0; i < datatypeCount; ++i)
+      {
+         dtDAL::DataType* dt = dtDAL::DataType::EnumerateType()[i];
+         if (dt->IsResource())
+         {
+            RegisterControlForDataType<DynamicResourceControl>(*dt);
+         }
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
