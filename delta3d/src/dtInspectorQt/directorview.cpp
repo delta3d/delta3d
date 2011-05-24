@@ -40,7 +40,9 @@ void dtInspectorQt::DirectorView::OperateOn(dtCore::Base* b)
 //////////////////////////////////////////////////////////////////////////
 bool dtInspectorQt::DirectorView::IsOfType(QString name, dtCore::Base* object)
 {
-   if (name == mFilterName && dynamic_cast<dtDirector::DirectorInstance*>(object) != NULL)
+   dtDirector::DirectorInstance* director =
+      dynamic_cast<dtDirector::DirectorInstance*>(object);
+   if (name == mFilterName && director && !director->mDirector->GetParent())
    {
       return true;
    }
