@@ -51,6 +51,10 @@
 #include <QtGui/QMessageBox>
 
 #include <dtDAL/project.h>
+#include <dtDAL/datatype.h>
+#include <dtDAL/actorproperty.h>
+#include <dtDAL/resourceactorproperty.h>
+
 #include <osgDB/FileNameUtils>
 #include <phonon/MediaObject> //for sounds
 
@@ -127,10 +131,11 @@ namespace dtDirector
 
       mUI.graphTab->clear();
 
-      if (mDirector)
+      if (mDirector.valid())
       {
          setWindowTitle(mDirector->GetName().c_str());
          mUI.graphBrowser->BuildGraphList(mDirector->GetGraphRoot());
+         mFileName = mDirector->GetScriptName();
       }
       else
       {
@@ -248,7 +253,18 @@ namespace dtDirector
             {
                mUI.graphTab->setTabText(index, graph->GetName().c_str());
             }
+            else
+            {
+               mUI.graphTab->removeTab(index);
+               index--;
+               count--;
+            }
          }
+      }
+
+      if (!mUI.graphTab->count() && mDirector.valid())
+      {
+         OpenGraph(mDirector->GetGraphRoot(), true);
       }
 
       // Refresh the Scene.
@@ -1490,6 +1506,73 @@ namespace dtDirector
          }
 
          settings.setValue("recentFileList", files);
+
+         // If we are dealing with a resourced script, make sure we go through
+         // every other script that is referencing this resource and reload
+         // them.
+         if (mDirector->GetResource() != dtDAL::ResourceDescriptor::NULL_RESOURCE)
+         {
+            for (int i = 0; i < dtCore::Base::GetInstanceCount(); i++)
+            {
+               dtCore::Base *o = dtCore::Base::GetInstance(i);
+               dtDirector::DirectorInstance* director = 
+                  dynamic_cast<dtDirector::DirectorInstance*>(o);
+
+               if (director)
+               {
+                  std::vector<Node*> nodes;
+                  director->mDirector->GetAllNodes(nodes);
+
+                  int nodeCount = (int)nodes.size();
+                  for (int nodeIndex = 0; nodeIndex < nodeCount; ++nodeIndex)
+                  {
+                     Node* node = nodes[nodeIndex];
+                     if (!node)
+                     {
+                        continue;
+                     }
+
+                     std::vector<dtDAL::ActorProperty*> propList;
+                     node->GetPropertyList(propList);
+                     int propCount = (int)propList.size();
+                     for (int propIndex = 0; propIndex < propCount; ++propIndex)
+                     {
+                        dtDAL::ActorProperty* prop = propList[propIndex];
+                        if (!prop)
+                        {
+                           continue;
+                        }
+
+                        if (prop->GetDataType() == dtDAL::DataType::DIRECTOR)
+                        {
+                           dtDAL::ResourceActorProperty* resourceProp =
+                              dynamic_cast<dtDAL::ResourceActorProperty*>(prop);
+                           if (!resourceProp)
+                           {
+                              continue;
+                           }
+
+                           if (resourceProp->GetValue() == mDirector->GetResource())
+                           {
+                              resourceProp->SetValue(mDirector->GetResource());
+                           }
+                        }
+                     }
+                  }
+               }
+            }
+
+            // Refresh all open editors.
+            int editorCount = (int)mEditorsOpen.size();
+            for (int editorIndex = 0; editorIndex < editorCount; ++editorIndex)
+            {
+               DirectorEditor* editor = mEditorsOpen[editorIndex];
+               if (editor)
+               {
+                  editor->Refresh();
+               }
+            }
+         }
 
          return true;
       }

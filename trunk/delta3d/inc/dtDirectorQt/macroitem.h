@@ -134,7 +134,7 @@ namespace dtDirector
        */
       void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);
 
-      dtCore::RefPtr<DirectorGraph> mGraph;
+      dtCore::ObserverPtr<DirectorGraph> mGraph;
    };
 }
 

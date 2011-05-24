@@ -808,7 +808,7 @@ namespace dtDirector
          if (notifier)
          {
             dtDirector::EditorNotifier::GlowData* glowData =
-               notifier->GetGlowData(mNode);
+               notifier->GetGlowData(mNode.get());
             if (glowData)
             {
                if (!mGlowEffect)
@@ -941,13 +941,13 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    bool NodeItem::HasNode(Node* node)
    {
-      return node == mNode;
+      return node == mNode.get();
    }
 
    //////////////////////////////////////////////////////////////////////////
    osg::Vec2 NodeItem::GetPosition()
    {
-      return mNode ? mNode->GetPosition() : osg::Vec2(0,0);
+      return mNode.valid() ? mNode->GetPosition() : osg::Vec2(0,0);
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -1211,6 +1211,11 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void NodeItem::BeginMoveEvent()
    {
+      if (!mNode.valid())
+      {
+         return;
+      }
+
       dtDAL::ActorProperty* prop = mNode->GetProperty("Position");
       if (prop) mOldPosition = prop->ToString();
 
@@ -1265,6 +1270,11 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void NodeItem::EndMoveEvent()
    {
+      if (!mNode.valid())
+      {
+         return;
+      }
+
       dtDAL::ActorProperty* prop = mNode->GetProperty("Position");
       if (prop)
       {
@@ -1329,6 +1339,11 @@ namespace dtDirector
    void NodeItem::ExposeValue(QAction* action)
    {
       if (!action) return;
+      if (!mNode.valid())
+      {
+         return;
+      }
+
 
       ValueLink* link = mNode->GetValueLink(action->text().toStdString());
       if (link)
@@ -1342,14 +1357,14 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void NodeItem::OnEventTriggered(QAction* action)
    {
-      if (action && mNode && mNode->AsEventNode())
+      if (action && mNode.valid() && mNode->AsEventNode())
       {
          OutputLink* link = mNode->GetOutputLink(action->text().toStdString());
          if (link)
          {
             link->Activate();
 
-            mScene->GetEditor()->GetDirector()->BeginThread(mNode, 0);
+            mScene->GetEditor()->GetDirector()->BeginThread(mNode.get(), 0);
          }
       }
    }
@@ -1362,7 +1377,7 @@ namespace dtDirector
          mScene->GetEditor()->GetDirector()->GetNotifier());
       if (notifier)
       {
-         notifier->ToggleBreakPoint(mNode);
+         notifier->ToggleBreakPoint(mNode.get());
       }
    }
 
@@ -1473,7 +1488,7 @@ namespace dtDirector
 
       if (mScene->GetEditor()->GetDirector()->GetNotifier())
       {
-         if (mNode && mNode->AsEventNode())
+         if (mNode.valid() && mNode->AsEventNode())
          {
             menu.addSeparator();
 
@@ -1490,7 +1505,7 @@ namespace dtDirector
 
          menu.addSeparator();
          QAction* breakPointAction = NULL;
-         if (!mScene->GetEditor()->GetDirector()->GetNotifier()->ShouldBreak(mNode))
+         if (!mScene->GetEditor()->GetDirector()->GetNotifier()->ShouldBreak(mNode.get()))
          {
             breakPointAction = menu.addAction("Set Break Point");
          }
@@ -1546,7 +1561,7 @@ namespace dtDirector
    {
       QColor color;
 
-      if (mNode)
+      if (mNode.valid())
       {
          osg::Vec4 rgba = mNode->GetColor();
          color.setRgbF(rgba.r(), rgba.g(), rgba.b(), rgba.a());
@@ -1583,7 +1598,7 @@ namespace dtDirector
       if (type)
       {
          color = QColor(type->GetColor()[0], type->GetColor()[1], type->GetColor()[2], 225);
-         if(mNode && !mNode->IsEnabled())
+         if(mNode.valid() && !mNode->IsEnabled())
          {
             color.setAlphaF(0.25f);
          }
@@ -1620,7 +1635,7 @@ namespace dtDirector
       }
 
       if (mScene && mScene->GetEditor()->GetDirector()->GetNotifier() &&
-         mScene->GetEditor()->GetDirector()->GetNotifier()->ShouldBreak(mNode))
+         mScene->GetEditor()->GetDirector()->GetNotifier()->ShouldBreak(mNode.get()))
       {
          setPen(QPen(Qt::red, 2, Qt::DotLine, Qt::RoundCap, Qt::RoundJoin));
       }

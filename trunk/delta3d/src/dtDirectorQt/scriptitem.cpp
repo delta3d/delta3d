@@ -50,6 +50,14 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void ScriptItem::Draw()
    {
+      // Refresh the links just in case.
+      ReferenceScriptAction* refScriptNode =
+         dynamic_cast<ReferenceScriptAction*>(GetNode());
+      if (refScriptNode)
+      {
+         refScriptNode->RefreshLinks();
+      }
+
       NodeItem::Draw();
 
       mLoading = true;
@@ -160,7 +168,7 @@ namespace dtDirector
       setSelected(true);
 
       QMenu menu;
-      QAction* stepInAction = NULL;
+      QAction* editScriptAction = NULL;
 
       ReferenceScriptAction* refScriptNode =
          dynamic_cast<ReferenceScriptAction*>(GetNode());
@@ -171,9 +179,9 @@ namespace dtDirector
 
          if (script && script->GetGraphRoot())
          {
-            stepInAction = menu.addAction("Step Inside Macro");
-            connect(stepInAction, SIGNAL(triggered()), this, SLOT(OpenMacro()));
-            menu.setDefaultAction(stepInAction);
+            editScriptAction = menu.addAction("Edit Script");
+            connect(editScriptAction, SIGNAL(triggered()), this, SLOT(EditScript()));
+            menu.setDefaultAction(editScriptAction);
          }
       }
       
@@ -246,11 +254,11 @@ namespace dtDirector
    {
       ActionItem::mouseDoubleClickEvent(event);
 
-      OpenMacro();
+      EditScript();
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void ScriptItem::OpenMacro()
+   void ScriptItem::EditScript()
    {
       ReferenceScriptAction* refScriptNode =
          dynamic_cast<ReferenceScriptAction*>(GetNode());
@@ -259,12 +267,14 @@ namespace dtDirector
       {
          dtDirector::Director* script = refScriptNode->GetDirectorScript();
 
-         if (script && script->GetGraphRoot())
+         if (script)
          {
-            if (!mScene) return;
-
-            // Open the subgraph.
-            mScene->GetEditor()->OpenGraph(script->GetGraphRoot());
+            dtDirector::DirectorEditor* editor = new dtDirector::DirectorEditor();
+            if (editor)
+            {
+               editor->SetDirector(script);
+               editor->show();
+            }
          }
       }
    }

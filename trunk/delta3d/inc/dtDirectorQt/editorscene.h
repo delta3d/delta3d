@@ -86,7 +86,7 @@ namespace dtDirector
        *
        * @return  The current graph.
        */
-      DirectorGraph* GetGraph() {return mGraph;}
+      DirectorGraph* GetGraph() {return mGraph.get();}
 
       /**
        * Retrieves the background item.
@@ -310,7 +310,7 @@ namespace dtDirector
       PropertyEditor*            mPropertyEditor;
       GraphTabs*                 mGraphTabs;
 
-      dtDirector::DirectorGraph* mGraph;
+      dtCore::ObserverPtr<dtDirector::DirectorGraph> mGraph;
 
       std::vector<NodeItem*>     mNodes;
 

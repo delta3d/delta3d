@@ -53,7 +53,7 @@ namespace dtDirector
 
       mLoading = true;
 
-      if (mGraph)
+      if (mGraph.valid())
       {
          std::string title = "<i>";
          if (!mGraph->GetEditor().empty())
@@ -128,7 +128,7 @@ namespace dtDirector
          mScene->GetEditor()->GetDirector()->GetNotifier());
 
       // Update the glow of this item only if a node inside it is glowing.
-      DirectorGraph* graph = mGraph;
+      DirectorGraph* graph = mGraph.get();
       if (notifier && graph)
       {
          std::vector<Node*> nodes;
@@ -251,7 +251,7 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    bool MacroItem::HasNode(Node* node)
    {
-      if (mGraph)
+      if (mGraph.valid())
       {
          std::vector<Node*> nodes;
          mGraph->GetAllNodes(nodes, false);
@@ -303,7 +303,7 @@ namespace dtDirector
    {
       QColor color;
 
-      if (mGraph)
+      if (mGraph.valid())
       {
          osg::Vec4 rgba = mGraph->GetColor();
          color.setRgbF(rgba.r(), rgba.g(), rgba.b(), rgba.a());
@@ -435,7 +435,7 @@ namespace dtDirector
       if (!mScene) return;
 
       // Open the subgraph.
-      mScene->GetEditor()->OpenGraph(mGraph);
+      mScene->GetEditor()->OpenGraph(mGraph.get());
    }
 
    ////////////////////////////////////////////////////////////////////////////////

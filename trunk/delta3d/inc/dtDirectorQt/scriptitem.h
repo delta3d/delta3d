@@ -82,9 +82,9 @@ namespace dtDirector
    public slots:
 
       /**
-       * Opens the macro.
+       * Opens a new editor window to edit this script.
        */
-      void OpenMacro();
+      void EditScript();
 
    protected:
    };

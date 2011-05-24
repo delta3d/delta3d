@@ -573,7 +573,7 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    Node* EditorScene::CreateNode(const std::string& name, const std::string& category, float x, float y)
    {
-      dtCore::RefPtr<Node> node = NodeManager::GetInstance().CreateNode(name, category, mGraph);
+      dtCore::RefPtr<Node> node = NodeManager::GetInstance().CreateNode(name, category, mGraph.get());
       if (node.valid())
       {
          node->SetPosition(osg::Vec2(x, y));
@@ -585,11 +585,11 @@ namespace dtDirector
             EditorView* view = dynamic_cast<EditorView*>(mEditor->GetGraphTabs()->widget(index));
             if (view && view->GetScene())
             {
-               if (view->GetScene()->GetGraph() == mGraph)
+               if (view->GetScene()->GetGraph() == mGraph.get())
                {
                   // First remember the position of the translation node.
                   QPointF trans = view->GetScene()->GetTranslationItem()->pos();
-                  view->GetScene()->SetGraph(mGraph);
+                  view->GetScene()->SetGraph(mGraph.get());
                   view->GetScene()->GetTranslationItem()->setPos(trans);
                }
             }
@@ -629,7 +629,7 @@ namespace dtDirector
          }
          mEditor->GetUndoManager()->EndMultipleEvents();
 
-         mEditor->RefreshGraph(mGraph);
+         mEditor->RefreshGraph(mGraph.get());
          mEditor->Refresh();
       }
       else
@@ -714,7 +714,7 @@ namespace dtDirector
          }
       }
 
-      DirectorGraph* parent = mGraph;
+      DirectorGraph* parent = mGraph.get();
 
       mEditor->GetUndoManager()->BeginMultipleEvents();
       DirectorGraph* graph = CreateMacro();
@@ -754,7 +754,7 @@ namespace dtDirector
 
       mEditor->GetUndoManager()->EndMultipleEvents();
 
-      mEditor->RefreshGraph(mGraph);
+      mEditor->RefreshGraph(mGraph.get());
       mEditor->Refresh();
    }
 

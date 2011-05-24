@@ -53,6 +53,11 @@ namespace dtDirector
    {
       NodeItem::Draw();
 
+      if (!mNode.valid())
+      {
+         return;
+      }
+
       mLoading = true;
 
       ValueNode *valueNode = mNode->AsValueNode();
@@ -367,7 +372,7 @@ namespace dtDirector
    {
       setSelected(true);
       QMenu menu;
-      bool hasDefault = mScene->GetEditor()->OnContextValueNode(mNode, menu);
+      bool hasDefault = mScene->GetEditor()->OnContextValueNode(mNode.get(), menu);
 
       if (mNode->GetType().GetFullName() == "Core.Reference")
       {
@@ -409,7 +414,7 @@ namespace dtDirector
       NodeItem::mouseDoubleClickEvent(event);
 
       // Check the double click event handler first.
-      if (!mScene->GetEditor()->OnDoubleClickValueNode(mNode))
+      if (!mScene->GetEditor()->OnDoubleClickValueNode(mNode.get()))
       {
          // If this value is a reference node, jump to its' referenced value.
          if (mNode->GetType().GetFullName() == "Core.Reference")

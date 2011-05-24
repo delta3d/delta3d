@@ -34,6 +34,7 @@
 #include <dtCore/base.h>
 #include <dtCore/observerptr.h>
 #include <dtUtil/getsetmacros.h>
+#include <dtDAL/resourcedescriptor.h>
 
 #include <cstdio>
 
@@ -164,6 +165,7 @@ namespace dtDirector
        * @return  The Director Proxy.
        */
       Director* GetParent() {return mParent.get();}
+      const Director* GetParent() const {return mParent.get();}
 
       /**
        * Sets the Director Proxy.
@@ -209,6 +211,12 @@ namespace dtDirector
       * Retrieves the currently loaded script.
       */
       const std::string& GetScriptName() {return mScriptName;}
+
+      /**
+       * Access to the script resource descriptor.
+       */
+      void SetResource(const dtDAL::ResourceDescriptor& resource) {mResource = resource;}
+      dtDAL::ResourceDescriptor GetResource() const {return mResource;}
 
       /**
        * Loads a Director script.
@@ -633,7 +641,7 @@ namespace dtDirector
       // Thread stacks.
       struct StackData
       {
-         Node* node;
+         dtCore::ObserverPtr<Node> node;
          int   index;
          bool  first;
 
@@ -670,6 +678,8 @@ namespace dtDirector
       std::string mAuthor;
       std::string mCopyright;
       std::string mCreationTime;
+
+      dtDAL::ResourceDescriptor mResource;
 
       dtCore::RefPtr<dtDAL::Map> mMap;
       bool        mModified;
