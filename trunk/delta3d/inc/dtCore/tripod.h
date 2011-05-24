@@ -31,7 +31,7 @@ namespace dtCore
    class Camera;
    class Transformable;
 
-   ///A Tripod is used to attach a Camera to a Transformable
+   ///A Tripod is used to attach a child Transformable to a parent Transformable
 
    /** The Tripod is useful for attaching a Camera to another
     *  Transformable.  The Tripod has a built-in offset which allows the Camera
@@ -63,15 +63,6 @@ namespace dtCore
       virtual ~Tripod();
 
    public:
-
-      ///This has been deprecated: use the SetChild method instead.
-      DEPRECATE_FUNC void SetCamera(Camera* cam);
-
-      ///This has been deprecated: use the SetChild method instead.
-      DEPRECATE_FUNC void SetCamera(const std::string& camName);
-
-      ///This has been deprecated: use the GetChild method instead.
-      DEPRECATE_FUNC Camera* GetCamera();
 
       ///Supply a Transformable to connect to this Tripod
       void SetChild(Transformable* child);
@@ -130,6 +121,15 @@ namespace dtCore
       ///required by DeltaDrawable
       osg::Node* GetOSGNode(){return mNode.get();}
       const osg::Node* GetOSGNode() const{return mNode.get();}
+
+      ///Deprecated 5/22/11
+      DEPRECATE_FUNC void SetCamera(Camera* cam);
+
+      ///Deprecated 5/22/11
+      DEPRECATE_FUNC void SetCamera(const std::string& camName);
+
+      ///Deprecated 5/22/11
+      DEPRECATE_FUNC Camera* GetCamera();
 
    protected:
 
