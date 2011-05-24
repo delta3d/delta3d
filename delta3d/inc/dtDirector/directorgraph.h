@@ -263,6 +263,9 @@ namespace dtDirector
       std::vector<dtCore::RefPtr<DirectorGraph> >& GetSubGraphs() {return mSubGraphs;}
 
    protected:
+
+      ~DirectorGraph();
+
       dtCore::UniqueId mID;
 
       Director*      mDirector;

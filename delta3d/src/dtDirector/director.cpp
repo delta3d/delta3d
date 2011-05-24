@@ -73,6 +73,8 @@ namespace dtDirector
       mPlayer = "";
       mLogger = &dtUtil::Log::GetInstance();
 
+      mResource = dtDAL::ResourceDescriptor::NULL_RESOURCE;
+
       mBaseInstance = new DirectorInstance(this);
    }
 
@@ -142,6 +144,8 @@ namespace dtDirector
       SetAuthor("");
       SetCopyright("");
 
+      mResource = dtDAL::ResourceDescriptor::NULL_RESOURCE;
+
       mLibraries.clear();
       mLibraryVersionMap.clear();
 
@@ -163,12 +167,23 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void Director::SetNotifier(DirectorNotifier* notifier)
    {
+      if (GetParent())
+      {
+         GetParent()->SetNotifier(notifier);
+         return;
+      }
+
       mNotifier = notifier;
    }
 
    //////////////////////////////////////////////////////////////////////////
    DirectorNotifier* Director::GetNotifier() const
    {
+      if (GetParent())
+      {
+         return GetParent()->GetNotifier();
+      }
+
       return mNotifier;
    }
 
@@ -214,16 +229,6 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void Director::SetParent(Director* parent)
    {
-      if (parent)
-      {
-         mBaseInstance = NULL;
-      }
-      else if (!mBaseInstance.valid())
-      {
-         mBaseInstance = new DirectorInstance(this,
-            std::string("Director: ") + osgDB::getStrippedName(mScriptName));
-      }
-
       mParent = parent;
    }
 
@@ -964,9 +969,9 @@ namespace dtDirector
 
       // Threads always update the first item in the stack,
       // all other stack items are "sleeping".
-      if ((!mDebugging || mShouldStep) && stack.node)
+      if ((!mDebugging || mShouldStep) && stack.node.valid())
       {
-         Node* currentNode = stack.node;
+         Node* currentNode = stack.node.get();
          int   input       = stack.index;
          bool  first       = stack.first;
          stack.first = false;

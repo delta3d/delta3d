@@ -474,7 +474,7 @@ namespace dtDirector
 
       GraphicsTextItem* mComment;
 
-      dtCore::RefPtr<Node> mNode;
+      dtCore::ObserverPtr<Node> mNode;
 
       std::vector<InputData>  mInputs;
       std::vector<OutputData> mOutputs;

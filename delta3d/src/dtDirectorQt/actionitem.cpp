@@ -205,7 +205,7 @@ namespace dtDirector
 
       if (mScene->GetEditor()->GetDirector()->GetNotifier())
       {
-         if (mNode && mNode->AsEventNode())
+         if (mNode.valid() && mNode->AsEventNode())
          {
             menu.addSeparator();
 
@@ -222,7 +222,7 @@ namespace dtDirector
 
          menu.addSeparator();
          QAction* breakPointAction = NULL;
-         if (!mScene->GetEditor()->GetDirector()->GetNotifier()->ShouldBreak(mNode))
+         if (!mScene->GetEditor()->GetDirector()->GetNotifier()->ShouldBreak(mNode.get()))
          {
             breakPointAction = menu.addAction("Set Break Point");
          }

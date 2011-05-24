@@ -103,7 +103,7 @@ namespace dtDirector
       /**
        * Accessor for the Director.
        */
-      Director* GetDirector() {return mDirector;}
+      Director* GetDirector() {return mDirector.get();}
 
       /**
        * Accessor for the graph tab widget.
@@ -560,8 +560,8 @@ namespace dtDirector
 
       UndoManager*             mUndoManager;
 
-      dtCore::RefPtr<Director> mDirector;
-      std::string              mFileName;
+      dtCore::ObserverPtr<Director> mDirector;
+      std::string                   mFileName;
 
       bool                     mReplayMode;
       Director::RecordNodeData mReplayNode;

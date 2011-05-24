@@ -92,6 +92,8 @@ namespace dtDirector
        */
       dtDirector::Director* GetDirectorScript();
 
+      void RefreshLinks();
+
    protected:
 
       /**
@@ -104,7 +106,7 @@ namespace dtDirector
       /**
       * Updates the links associated with this node.
       */
-      void UpdateLinks();
+      void LoadScript();
 
       dtDAL::ResourceDescriptor mScriptResource;
       dtCore::RefPtr<dtDirector::Director> mScript;

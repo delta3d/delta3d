@@ -81,7 +81,7 @@ namespace dtDirector
    void ReferenceScriptAction::SetDirectorResource(const dtDAL::ResourceDescriptor& value)
    {
       mScriptResource = value;
-      UpdateLinks();
+      LoadScript();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -97,17 +97,127 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void ReferenceScriptAction::UpdateLinks()
+   void ReferenceScriptAction::RefreshLinks()
    {
-      // Clear all links.
+      std::vector<InputLink>  oldInputs = mInputs;
+      std::vector<OutputLink> oldOutputs = mOutputs;
+      std::vector<ValueLink>  oldValues = mValues;
+
       mInputs.clear();
       mOutputs.clear();
-      
+
       if ((int)mValues.size() > mCoreValueIndex)
       {
          mValues.erase(mValues.begin() + mCoreValueIndex, mValues.end());
       }
 
+      if (!mScript)
+      {
+         return;
+      }
+
+      DirectorGraph* graph = mScript->GetGraphRoot();
+      if (graph)
+      {
+         // Set up the links.
+         std::vector<dtCore::RefPtr<EventNode> > inputs = graph->GetInputNodes();
+         int count = (int)inputs.size();
+         for (int index = 0; index < count; index++)
+         {
+            if (inputs[index]->IsEnabled())
+            {
+               InputLink* link = &inputs[index]->GetInputLinks()[0];
+
+               bool found = false;
+               int testCount = (int)oldInputs.size();
+               for (int testIndex = 0; testIndex < testCount; ++testIndex)
+               {
+                  if (oldInputs[testIndex].GetName() == link->GetName())
+                  {
+                     oldInputs[testIndex].RedirectLink(link);
+                     mInputs.push_back(oldInputs[testIndex]);
+                     found = true;
+                     break;
+                  }
+               }
+
+               if (!found)
+               {
+                  InputLink newLink = InputLink(this, link->GetName());
+                  newLink.RedirectLink(link);
+                  mInputs.push_back(newLink);
+               }
+            }
+         }
+
+         std::vector<dtCore::RefPtr<ActionNode> > outputs = graph->GetOutputNodes();
+         count = (int)outputs.size();
+         mOutputs.reserve(count);
+         for (int index = 0; index < count; index++)
+         {
+            if (outputs[index]->IsEnabled())
+            {
+               OutputLink* link = &outputs[index]->GetOutputLinks()[0];
+
+               bool found = false;
+               int testCount = (int)oldOutputs.size();
+               for (int testIndex = 0; testIndex < testCount; ++testIndex)
+               {
+                  if (oldOutputs[testIndex].GetName() == link->GetName())
+                  {
+                     mOutputs.push_back(oldOutputs[testIndex]);
+                     link->RedirectLink(&mOutputs.back());
+                     found = true;
+                     break;
+                  }
+               }
+
+               if (!found)
+               {
+                  OutputLink newLink = OutputLink(this, link->GetName());
+                  mOutputs.push_back(newLink);
+                  link->RedirectLink(&mOutputs.back());
+               }
+            }
+         }
+
+         std::vector<dtCore::RefPtr<ValueNode> > values = graph->GetExternalValueNodes();
+         count = (int)values.size();
+         mValues.reserve(count + mCoreValueIndex);
+         for (int index = 0; index < count; index++)
+         {
+            if (values[index]->IsEnabled())
+            {
+               ValueLink* link = &values[index]->GetValueLinks()[0];
+
+               bool found = false;
+               int testCount = (int)oldValues.size();
+               for (int testIndex = 0; testIndex < testCount; ++testIndex)
+               {
+                  if (oldValues[testIndex].GetName() == link->GetName())
+                  {
+                     mValues.push_back(oldValues[testIndex]);
+                     link->RedirectLink(&mValues.back());
+                     found = true;
+                     break;
+                  }
+               }
+
+               if (!found)
+               {
+                  ValueLink newLink = ValueLink(this, NULL, link->IsOutLink(), link->AllowMultiple(), link->IsTypeChecking(), true);
+                  newLink.SetName(link->GetName());
+                  mValues.push_back(newLink);
+                  link->RedirectLink(&mValues.back());
+               }
+            }
+         }
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void ReferenceScriptAction::LoadScript()
+   {
       mName = "";
 
       // Now load the Director Script if able.
@@ -130,66 +240,17 @@ namespace dtDirector
          {
             // If we successfully load the script, create our links for this node.
             mScript->LoadScript(dtDAL::Project::GetInstance().GetResourcePath(mScriptResource));
+            mScript->SetResource(mScriptResource);
 
-            DirectorGraph* graph = mScript->GetGraphRoot();
-            if (graph)
-            {
-               graph->SetParent(GetGraph());
-
-               mName = osgDB::getNameLessExtension(mScriptResource.GetResourceName());
-
-               // Set up the links.
-               std::vector<dtCore::RefPtr<EventNode> > inputs = graph->GetInputNodes();
-               int count = (int)inputs.size();
-               for (int index = 0; index < count; index++)
-               {
-                  if (inputs[index]->IsEnabled())
-                  {
-                     InputLink* link = &inputs[index]->GetInputLinks()[0];
-
-                     InputLink newLink = InputLink(this, link->GetName());
-                     newLink.RedirectLink(link);
-                     mInputs.push_back(newLink);
-                  }
-               }
-
-               std::vector<dtCore::RefPtr<ActionNode> > outputs = graph->GetOutputNodes();
-               count = (int)outputs.size();
-               mOutputs.reserve(count);
-               for (int index = 0; index < count; index++)
-               {
-                  if (outputs[index]->IsEnabled())
-                  {
-                     OutputLink* link = &outputs[index]->GetOutputLinks()[0];
-
-                     OutputLink newLink = OutputLink(this, link->GetName());
-                     mOutputs.push_back(newLink);
-                     link->RedirectLink(&mOutputs.back());
-                  }
-               }
-
-               std::vector<dtCore::RefPtr<ValueNode> > values = graph->GetExternalValueNodes();
-               count = (int)values.size();
-               mValues.reserve(count + mCoreValueIndex);
-               for (int index = 0; index < count; index++)
-               {
-                  if (values[index]->IsEnabled())
-                  {
-                     ValueLink* link = &values[index]->GetValueLinks()[0];
-
-                     ValueLink newLink = ValueLink(this, NULL, link->IsOutLink(), link->AllowMultiple(), link->IsTypeChecking(), true);
-                     newLink.SetName(link->GetName());
-                     mValues.push_back(newLink);
-                     link->RedirectLink(&mValues.back());
-                  }
-               }
-            }
+            mName = osgDB::getNameLessExtension(mScriptResource.GetResourceName());
          }
       }
-      else
+      else if (mScript)
       {
-         mScript = NULL;
+         mScript->Clear();
       }
+
+      RefreshLinks();
    }
 }
 

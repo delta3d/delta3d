@@ -43,6 +43,54 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   DirectorGraph::~DirectorGraph()
+   {
+      int count = (int)mSubGraphs.size();
+      for (int index = 0; index < count; ++index)
+      {
+         DirectorGraph* subGraph = mSubGraphs[index];
+         if (subGraph)
+         {
+            subGraph->SetParent(NULL);
+         }
+      }
+      mSubGraphs.clear();
+
+      count = (int)mEventNodes.size();
+      for (int index = 0; index < count; ++index)
+      {
+         Node* node = mEventNodes[index];
+         if (node)
+         {
+            node->SetGraph(NULL);
+         }
+      }
+      mEventNodes.clear();
+
+      count = (int)mActionNodes.size();
+      for (int index = 0; index < count; ++index)
+      {
+         Node* node = mActionNodes[index];
+         if (node)
+         {
+            node->SetGraph(NULL);
+         }
+      }
+      mActionNodes.clear();
+
+      count = (int)mValueNodes.size();
+      for (int index = 0; index < count; ++index)
+      {
+         Node* node = mValueNodes[index];
+         if (node)
+         {
+            node->SetGraph(NULL);
+         }
+      }
+      mValueNodes.clear();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    std::string DirectorGraph::GetDefaultPropertyKey() const
    {
       return "Director Graph";

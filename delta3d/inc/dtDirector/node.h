@@ -279,6 +279,7 @@ namespace dtDirector
        * @return  The graph.
        */
       DirectorGraph* GetGraph() {return mGraph;}
+      void SetGraph(DirectorGraph* graph) {mGraph = graph;}
 
       /**
        * Disconnects all links from this node.
