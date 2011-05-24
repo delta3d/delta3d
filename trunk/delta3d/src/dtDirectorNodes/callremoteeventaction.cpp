@@ -21,7 +21,7 @@
 
 #include <dtDirectorNodes/callremoteeventaction.h>
 
-#include <dtDAL/stringactorproperty.h>
+#include <dtDAL/stringselectoractorproperty.h>
 #include <dtDAL/booleanactorproperty.h>
 
 #include <dtDirector/director.h>
@@ -63,11 +63,12 @@ namespace dtDirector
       ActionNode::BuildPropertyMap();
 
       // Create our value links.
-      dtDAL::StringActorProperty* eventNameProp = new dtDAL::StringActorProperty(
+      dtDAL::StringSelectorActorProperty* eventNameProp = new dtDAL::StringSelectorActorProperty(
          "EventName", "Remote Event Name",
-         dtDAL::StringActorProperty::SetFuncType(this, &CallRemoteEventAction::SetEventName),
-         dtDAL::StringActorProperty::GetFuncType(this, &CallRemoteEventAction::GetEventName),
-         "The name of the remote event to call.");
+         dtDAL::StringSelectorActorProperty::SetFuncType(this, &CallRemoteEventAction::SetEventName),
+         dtDAL::StringSelectorActorProperty::GetFuncType(this, &CallRemoteEventAction::GetEventName),
+         dtDAL::StringSelectorActorProperty::GetListFuncType(this, &CallRemoteEventAction::GetEventList),
+         "The name of the remote event to call.", "", true);
       AddProperty(eventNameProp);
 
       dtDAL::BooleanActorProperty* localProp = new dtDAL::BooleanActorProperty(
@@ -140,6 +141,32 @@ namespace dtDirector
    const std::string& CallRemoteEventAction::GetEventName()
    {
       return mEventName;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   std::vector<std::string> CallRemoteEventAction::GetEventList()
+   {
+      std::vector<std::string> stringList;
+      std::vector<Node*> nodes;
+      if (!GetBoolean("Local Event"))
+      {
+         GetDirector()->GetNodes("Remote Event", "Core", nodes);
+      }
+      else
+      {
+         GetGraph()->GetNodes("Remote Event", "Core", nodes);
+      }
+
+      int count = (int)nodes.size();
+      for (int index = 0; index < count; index++)
+      {
+         EventNode* event = nodes[index]->AsEventNode();
+         if (!event) continue;
+
+         stringList.push_back(event->GetString("EventName"));
+      }
+
+      return stringList;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
