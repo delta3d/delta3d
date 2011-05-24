@@ -36,11 +36,17 @@ Tripod::~Tripod(void)
 
 void Tripod::SetCamera(Camera* cam)
 {
+   DEPRECATE("void SetCamera(Camera*)",
+             "void SetChild(Transformable*)");
+
    SetChild(cam);
 }
 
 void Tripod::SetCamera(const std::string& camName)
 {
+   DEPRECATE("void SetCamera(const std::string&)",
+             "void SetChild(const std::string&)");
+
    if (camName.size() > 0)
    {
       Camera* cam = Camera::GetInstance(camName);
@@ -58,6 +64,9 @@ void Tripod::SetCamera(const std::string& camName)
 
 Camera* Tripod::GetCamera()
 {
+   DEPRECATE("Camera* GetCamera()",
+             "Transformable* GetChild()");
+
    return dynamic_cast<Camera*>(GetChild());
 }
 
