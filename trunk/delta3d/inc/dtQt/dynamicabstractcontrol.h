@@ -380,6 +380,7 @@ namespace dtQt
       template <typename DynControlType>
       void RegisterControlForDataType(dtDAL::DataType& dataType)
       {
+         mControlFactory->RemoveType(&dataType);
          mControlFactory->RegisterType<DynControlType>(&dataType);
       }
 
