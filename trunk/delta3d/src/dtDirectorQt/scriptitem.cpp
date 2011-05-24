@@ -272,6 +272,13 @@ namespace dtDirector
             dtDirector::DirectorEditor* editor = new dtDirector::DirectorEditor();
             if (editor)
             {
+               dtDirector::EditorNotifier* notifier = 
+                  dynamic_cast<dtDirector::EditorNotifier*>(script->GetNotifier());
+               if (notifier)
+               {
+                  notifier->AddEditor(editor);
+               }
+
                editor->SetDirector(script);
                editor->show();
             }

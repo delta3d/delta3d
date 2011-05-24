@@ -32,6 +32,7 @@
 #include <dtDirectorQt/undomanager.h>
 #include <dtDirectorQt/undodeleteevent.h>
 #include <dtDirectorQt/undocreateevent.h>
+#include <dtDirectorQt/editornotifier.h>
 
 #include <dtDirectorQt/actionitem.h>
 #include <dtDirectorQt/valueitem.h>
@@ -1430,14 +1431,32 @@ namespace dtDirector
 
          switch (confirmationBox.exec())
          {
+         case QMessageBox::Cancel:
+            event->ignore();
+            return;
          case QMessageBox::Yes:
             if (SaveScript())
             {
                event->accept();
-               return;
             }
-         case QMessageBox::Cancel:
-            event->ignore();
+         }
+      }
+
+      // If we get down to here, it means we are closing the editor.
+      if (mDirector)
+      {
+         EditorNotifier* notifier = 
+            dynamic_cast<EditorNotifier*>(mDirector->GetNotifier());
+         if (notifier)
+         {
+            notifier->RemoveEditor(this);
+
+            // If no editors are currently viewing this script, we can
+            // remove the notifier.
+            if (notifier->GetEditors().empty())
+            {
+               mDirector->SetNotifier(NULL);
+            }
          }
       }
    }

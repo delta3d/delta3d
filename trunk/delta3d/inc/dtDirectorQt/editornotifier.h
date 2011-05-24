@@ -60,7 +60,14 @@ namespace dtDirector
       /**
        * Constructs the Notifier.
        */
-      EditorNotifier(DirectorEditor* editor);
+      EditorNotifier();
+
+      /**
+       * Adds an editor for this to notify.
+       */
+      void AddEditor(DirectorEditor* editor);
+      void RemoveEditor(DirectorEditor* editor);
+      const std::vector<DirectorEditor*>& GetEditors() const;
 
       /**
        * Update.
@@ -103,7 +110,7 @@ namespace dtDirector
        */
       virtual ~EditorNotifier();
 
-      DirectorEditor* mEditor;
+      std::vector<DirectorEditor*> mEditorList;
       dtCore::Timer_t mTime;
 
       std::map<Node*, GlowData> mGlowMap;
