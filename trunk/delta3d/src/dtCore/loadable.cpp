@@ -11,28 +11,24 @@
 using namespace dtCore;
 using namespace dtUtil;
 
+////////////////////////////////////////////////////////////////////////////////
 Loadable::Loadable(void)
 {
 }
 
+////////////////////////////////////////////////////////////////////////////////
 Loadable::~Loadable(void)
 {
 }
 
+////////////////////////////////////////////////////////////////////////////////
 void Loadable::FlushObjectCache()
 {
    osgDB::Registry::instance()->releaseGLObjects();
    osgDB::Registry::instance()->clearObjectCache();
 }
 
-/*!
-* Load a geometry from a file using any supplied data file paths set in
-* dtCore::SetDataFilePathList().  Additional calls to this method will just combine
-* the loaded files together.
-*
-* @param filename : The name of the file to be loaded
-* @param useCache : If true, use OSG's object cache
-*/
+////////////////////////////////////////////////////////////////////////////////
 osg::Node* Loadable::LoadFile(const std::string& filename, bool useCache)
 {
    mFilename = filename;
@@ -73,5 +69,4 @@ osg::Node* Loadable::LoadFile(const std::string& filename, bool useCache)
                "Can't load '%s'", mFilename.c_str() );
       return NULL;
    }
-
 }
