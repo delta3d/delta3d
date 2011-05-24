@@ -25,8 +25,7 @@
 namespace dtDirector
 {
    ////////////////////////////////////////////////////////////////////////////////
-   EditorNotifier::EditorNotifier(DirectorEditor* editor)
-      : mEditor(editor)
+   EditorNotifier::EditorNotifier()
    {
       mTime = dtCore::Timer::Instance()->Tick();
    }
@@ -34,6 +33,32 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    EditorNotifier::~EditorNotifier()
    {
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void EditorNotifier::AddEditor(DirectorEditor* editor)
+   {
+      mEditorList.push_back(editor);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void EditorNotifier::RemoveEditor(DirectorEditor* editor)
+   {
+      int count = (int)mEditorList.size();
+      for (int index = 0; index < count; ++index)
+      {
+         if (mEditorList[index] == editor)
+         {
+            mEditorList.erase(mEditorList.begin() + index);
+            break;
+         }
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   const std::vector<DirectorEditor*>& EditorNotifier::GetEditors() const
+   {
+      return mEditorList;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -82,7 +107,11 @@ namespace dtDirector
                }
             }
 
-            mEditor->RefreshNode(iter->first);
+            int editorCount = (int)mEditorList.size();
+            for (int editorIndex = 0; editorIndex < editorCount; ++editorIndex)
+            {
+               mEditorList[editorIndex]->RefreshNode(iter->first);
+            }
          }
 
          while (!removeList.empty())
@@ -237,13 +266,21 @@ namespace dtDirector
       GlowData& data = mGlowMap[node];
       data.isPaused = true;
 
-      if (shouldFocus)
+      int editorCount = (int)mEditorList.size();
+      for (int editorIndex = 0; editorIndex < editorCount; ++editorIndex)
       {
-         mEditor->FocusNode(node);
-         mEditor->RefreshButtonStates();
-      }
+         DirectorEditor* editor = mEditorList[editorIndex];
+         if (editor)
+         {
+            if (shouldFocus)
+            {
+               editor->FocusNode(node);
+               editor->RefreshButtonStates();
+            }
 
-      mEditor->RefreshNode(node);
+            editor->RefreshNode(node);
+         }
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
