@@ -1291,6 +1291,7 @@ namespace dtDirector
    void DirectorEditor::on_actionPause_triggered()
    {
       mDirector->ToggleDebugEnabled(true);
+      mDirector->StepDebugger();
       RefreshButtonStates();
    }
 

@@ -49,12 +49,17 @@ namespace dtDirector
 
       struct GlowData
       {
-         dtCore::UniqueId  nodeID;
+         dtCore::ObserverPtr<Node> node;
          float             glow;
+         float             goal;
          bool              hasBreakPoint;
-         bool              isPaused;
+
+         int               input;
+         float             inputGlow;
+         float             inputGoal;
 
          std::vector<float> outputGlows;
+         std::vector<float> outputGoals;
       };
 
       /**

@@ -74,6 +74,8 @@ namespace dtDirector
 
       void Remove();
 
+      void DrawGlow(float glow);
+
       GraphicsTextItem*    linkName;
       InputLinkItem*       linkGraphic;
       InputLink*           link;
@@ -87,6 +89,8 @@ namespace dtDirector
       void ResizeLinks(int count, EditorScene* scene);
 
       void Remove(EditorScene* scene);
+
+      void DrawGlow(float glow);
 
       GraphicsTextItem*    linkName;
       OutputLinkItem*      linkGraphic;
@@ -285,16 +289,6 @@ namespace dtDirector
        * Draws a glow around the node.
        */
       virtual void DrawGlow();
-
-      /**
-       * Retrieves the color for a given property type.
-       *
-       * @param[in]  type  The type.
-       *
-       * @return     A color.
-       */
-      //QColor GetColorForType(unsigned char type);
-      //QColor GetDarkColorForType(unsigned char type);
 
       /**
        * Retrieves the node.
