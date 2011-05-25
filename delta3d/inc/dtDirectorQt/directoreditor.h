@@ -189,6 +189,13 @@ namespace dtDirector
       void RefreshNode(Node* node);
 
       /**
+       * Refreshes the glow for a single node.
+       *
+       * @param[in]  node  The node to refresh.
+       */
+      void RefreshGlow(Node* node);
+
+      /**
        * Refreshes the state of the UI buttons.
        */
       void RefreshButtonStates();

@@ -178,7 +178,6 @@ namespace dtDirector
        , mLinkDivider(NULL)
        , mValueDivider(NULL)
        , mTitleDivider(NULL)
-       , mGlowEffect(NULL)
        , mNodeWidth(MIN_NODE_WIDTH)
        , mNodeHeight(MIN_NODE_HEIGHT)
        , mTitleHeight(0.0f)
@@ -825,15 +824,15 @@ namespace dtDirector
                notifier->GetGlowData(mNode.get());
             if (glowData)
             {
-               if (!mGlowEffect)
+               mNodePen = pen();
+               if (glowData->glow > 0.5f)
                {
-                  mGlowEffect = new QGraphicsColorizeEffect();
-                  mGlowEffect->setColor(Qt::white);
-                  mGlowEffect->setStrength(0.0f);
-                  QGraphicsPolygonItem::setGraphicsEffect(mGlowEffect);
+                  SetHighlight(1.0f);
                }
-
-               mGlowEffect->setStrength(glowData->glow * 0.5f);
+               else
+               {
+                  SetHighlight(glowData->glow * 2.0f);
+               }
 
                if (glowData->input > -1 && glowData->input < (int)mInputs.size())
                {
@@ -852,10 +851,6 @@ namespace dtDirector
                   OutputData& data = mOutputs[outputIndex];
                   data.DrawGlow(glowData->outputGlows[outputIndex]);
                }
-            }
-            else if (mGlowEffect)
-            {
-               mGlowEffect->setStrength(0.0f);
             }
          }
       }
@@ -1552,9 +1547,11 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void NodeItem::SetDefaultPen()
    {
-      setPen(QPen(LINE_COLOR, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+      setPen(QPen(LINE_COLOR, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
       if(!mNode || !mNode->IsEnabled())
       {
+         mNodePen = pen();
+         mPenColor = mNodePen.color();
          return;
       }
 
@@ -1579,6 +1576,23 @@ namespace dtDirector
             setPen(QPen(Qt::yellow, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
          }
       }
+      mNodePen = pen();
+      mPenColor = mNodePen.color();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void NodeItem::SetHighlight(float alpha)
+   {
+      QColor baseColor = mPenColor;
+      QColor newColor = Qt::yellow;
+
+      newColor.setRedF((newColor.redF() * alpha) + (baseColor.redF() * (1.0f - alpha)));
+      newColor.setGreenF((newColor.greenF() * alpha) + (baseColor.greenF() * (1.0f - alpha)));
+      newColor.setBlueF((newColor.blueF() * alpha) + (baseColor.blueF() * (1.0f - alpha)));
+      newColor.setAlphaF((newColor.alphaF() * alpha) + (baseColor.alphaF() * (1.0f - alpha)));
+
+      mNodePen.setColor(newColor);
+      setPen(mNodePen);
    }
 }
 

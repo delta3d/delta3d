@@ -147,17 +147,13 @@ namespace dtDirector
             }
          }
 
-         if (!mGlowEffect && maxGlow > 0.0f)
+         if (maxGlow > 0.5f)
          {
-            mGlowEffect = new QGraphicsColorizeEffect();
-            mGlowEffect->setColor(Qt::white);
-            mGlowEffect->setStrength(0.0f);
-            QGraphicsPolygonItem::setGraphicsEffect(mGlowEffect);
+            SetHighlight(1.0f);
          }
-
-         if (mGlowEffect)
+         else
          {
-            mGlowEffect->setStrength(maxGlow * 0.5f);
+            SetHighlight(maxGlow * 2.0f);
          }
 
          std::vector<dtCore::RefPtr<EventNode> > inputs = graph->GetInputNodes();

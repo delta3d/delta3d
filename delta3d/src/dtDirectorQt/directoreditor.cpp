@@ -321,6 +321,20 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::RefreshGlow(Node* node)
+   {
+      EditorView* view = dynamic_cast<EditorView*>(mUI.graphTab->currentWidget());
+      if (view && view->GetScene())
+      {
+         NodeItem* item = view->GetScene()->GetNodeItem(node);
+         if (item)
+         {
+            item->DrawGlow();
+         }
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    void DirectorEditor::RefreshButtonStates()
    {
       // Refresh the name of the window.
