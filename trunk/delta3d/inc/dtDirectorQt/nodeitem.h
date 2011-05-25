@@ -26,6 +26,7 @@
 #include <QtGui/QGraphicsTextItem>
 #include <QtGui/QWidget>
 #include <QtGui/QGraphicsSceneContextMenuEvent>
+#include <QtGui/QPen>
 
 #include <dtDirector/node.h>
 
@@ -454,6 +455,11 @@ namespace dtDirector
        */
       void SetDefaultPen();
 
+      /**
+       * Sets the amount of highlight applied to the current nodes pen.
+       */
+      void SetHighlight(float alpha);
+
    protected:
 
       EditorScene* mScene;
@@ -478,7 +484,8 @@ namespace dtDirector
       QGraphicsRectItem* mValueDivider;
       QGraphicsRectItem* mTitleDivider;
 
-      QGraphicsColorizeEffect* mGlowEffect;
+      QPen        mNodePen;
+      QColor      mPenColor;
 
       int         mNodeWidth;
       int         mNodeHeight;

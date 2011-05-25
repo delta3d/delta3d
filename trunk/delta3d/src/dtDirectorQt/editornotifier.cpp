@@ -97,20 +97,19 @@ namespace dtDirector
                   }
                }
 
-               data.glow -= GLOW_SPEED * delta;
-
-               if (data.glow <= data.goal)
+               if (data.glow > 0.0f)
                {
-                  data.glow = data.goal;
+                  shouldRemove = false;
+                  data.glow -= GLOW_SPEED * delta;
 
-                  if (data.glow > 0.0f)
+                  if (data.glow <= data.goal)
                   {
-                     shouldRemove = false;
+                     data.glow = data.goal;
                   }
                }
                else
                {
-                  shouldRemove = false;
+                  data.glow = 0.0f;
                }
 
                if (data.inputGlow > 0.0f)
@@ -149,7 +148,7 @@ namespace dtDirector
                int editorCount = (int)mEditorList.size();
                for (int editorIndex = 0; editorIndex < editorCount; ++editorIndex)
                {
-                  mEditorList[editorIndex]->RefreshNode(iter->first);
+                  mEditorList[editorIndex]->RefreshGlow(iter->first);
                }
             }
 
@@ -337,7 +336,7 @@ namespace dtDirector
                editor->RefreshButtonStates();
             }
 
-            editor->RefreshNode(node);
+            editor->RefreshGlow(node);
          }
       }
    }
