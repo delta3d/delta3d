@@ -526,10 +526,10 @@ namespace dtDirector
       /**
        * Toggles the debug mode.
        */
-      void ToggleDebugEnabled(bool enabled) {mDebugging = enabled;}
-      bool IsDebugging() const {return mDebugging;}
+      void ToggleDebugEnabled(bool enabled);
+      bool IsDebugging() const;
 
-      void StepDebugger() {mShouldStep = true;}
+      void StepDebugger();
 
    protected:
 

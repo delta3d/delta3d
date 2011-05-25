@@ -941,6 +941,39 @@ namespace dtDirector
       return mGraph->DeleteNode(id);
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   void Director::ToggleDebugEnabled(bool enabled)
+   {
+      if (GetParent())
+      {
+         GetParent()->ToggleDebugEnabled(enabled);
+      }
+
+      mDebugging = enabled;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool Director::IsDebugging() const
+   {
+      if (GetParent())
+      {
+         return GetParent()->IsDebugging();
+      }
+
+      return mDebugging;
+   }
+   
+   ////////////////////////////////////////////////////////////////////////////////
+   void Director::StepDebugger()
+   {
+      if (GetParent())
+      {
+         GetParent()->StepDebugger();
+      }
+
+      mShouldStep = true;
+   }
+
    //////////////////////////////////////////////////////////////////////////
    bool Director::UpdateThread(ThreadData& data, float simDelta, float delta)
    {
