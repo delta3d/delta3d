@@ -104,6 +104,19 @@ private:
 	osg::ref_ptr<osg::State> state;
 };
 
+struct ImageData : public osg::Referenced
+{
+   ImageData()
+      : mTranslucent(false)
+   {}
+
+   bool mTranslucent;
+   osg::ref_ptr<osg::Image> mImage;
+
+protected:
+   virtual ~ImageData() {}
+};
+
 
 class MtlKeeper {
 public:
@@ -145,8 +158,8 @@ private:
 	osg::ref_ptr<osg::Texture2D>		createTexture2D(Mtl* maxMtl, Texmap* tmap, osg::StateSet* stateset, Options* options, TimeValue t);
 	osg::ref_ptr<osg::Texture2D>		createTexture2D(Mtl* maxMtl, Bitmap* bmap, std::string name, osg::StateSet* stateset, Options* options, TimeValue t);
 	osg::ref_ptr<osg::TextureCubeMap>	createTextureCubeMap(Mtl* maxMtl, Texmap* tmap, Options* options, TimeValue t);
-	osg::ref_ptr<osg::Image>			createImage(Mtl* maxMtl, BitmapTex* bmt, Options* options, TimeValue t);
-	osg::ref_ptr<osg::Image>			createImage(Mtl* maxMtl, Bitmap* bmap, std::string name, Options* options, TimeValue t);
+	ImageData* createImage(Mtl* maxMtl, BitmapTex* bmt, Options* options, TimeValue t);
+	ImageData* createImage(Mtl* maxMtl, Bitmap* bmap, std::string name, Options* options, TimeValue t);
 
 	// Reading and writing bitmaps.
 	void								printError(int error);
@@ -175,7 +188,7 @@ private:
 	MtlList								_mtlList;
 
 	// A container to map image names to their respective osg::Images and data arrays.
-    typedef std::map<std::string, osg::ref_ptr<osg::Image> >  ImgList;
+    typedef std::map<std::string, osg::ref_ptr<ImageData> >  ImgList;
 	ImgList								_imgList;
 
 	// A container to map texture units to their repective mapping channels in MAX.
