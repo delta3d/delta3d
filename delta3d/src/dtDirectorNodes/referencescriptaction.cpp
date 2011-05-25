@@ -241,11 +241,22 @@ namespace dtDirector
 
          if (mScript.valid())
          {
-            // If we successfully load the script, create our links for this node.
-            mScript->LoadScript(dtDAL::Project::GetInstance().GetResourcePath(mScriptResource));
-            mScript->SetResource(mScriptResource);
+            try
+            {
+               // If we successfully load the script, create our links for this node.
+               mScript->LoadScript(dtDAL::Project::GetInstance().GetResourcePath(mScriptResource));
 
-            mName = osgDB::getNameLessExtension(mScriptResource.GetResourceName());
+               mScript->SetResource(mScriptResource);
+
+               mName = osgDB::getNameLessExtension(mScriptResource.GetResourceName());
+            }
+            catch (const dtUtil::Exception& e)
+            {
+               std::string error = std::string("Unable to parse ") + mScriptResource.GetDisplayName().c_str() + " with error " + e.What().c_str();
+               LOG_ERROR(error.c_str());
+
+               mName = "<i>Invalid Script!</i>";
+            }
          }
       }
       else if (mScript)
