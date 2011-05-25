@@ -770,15 +770,15 @@ osg::ref_ptr<osg::Texture2D> MtlKeeper::createTexture2D(Mtl* maxMtl, Bitmap* bma
 	osgTex->setWrap(osg::Texture::WRAP_R, osg::Texture::CLAMP_TO_EDGE);
     osgTex->setInternalFormatMode(internalFormat);
 
-	// If this bitmap has an alpha channel then add an alpha blend function to stateset.
-    if(options->getAutoAlphaTextures() && bmap->HasAlpha()){
-		addAlphaBlendFunc(stateset);
-	}
-
 	// Create image and set it to the texture.
-	osg::ref_ptr<osg::Image> osgImage = createImage(maxMtl, bmap, name, options, t);
-	if(osgImage.valid()) {
-		osgTex->setImage(osgImage.get());
+	ImageData* imageData = createImage(maxMtl, bmap, name, options, t);
+	if(imageData != NULL) {
+      osgTex->setImage(imageData->mImage.get());
+
+      // If this bitmap has an alpha channel then add an alpha blend function to stateset.
+      if(options->getAutoAlphaTextures() && bmap->HasAlpha() && imageData->mTranslucent){
+         addAlphaBlendFunc(stateset);
+      }
 
 		// Compress texture immediately to free up memory usage
 		if(internalFormat != osg::Texture::USE_IMAGE_DATA_FORMAT) {
@@ -788,7 +788,7 @@ osg::ref_ptr<osg::Texture2D> MtlKeeper::createTexture2D(Mtl* maxMtl, Bitmap* bma
 					_compressor = new TextureCompressor;
 				_compressor->compress(osgTex.get());
 			}
-		}
+      }
 	}
 
 	return osgTex;
@@ -850,7 +850,7 @@ osg::ref_ptr<osg::TextureCubeMap> MtlKeeper::createTextureCubeMap(Mtl* maxMtl, T
 				// Create a name for the bitmap.
 				std::string name = createMapName(filenames[j], options);
 				// Create an osg::Image.
-				images[j] = createImage(maxMtl, bmap, name, options, t);
+				images[j] = createImage(maxMtl, bmap, name, options, t)->mImage;
 			}
 
 			// Assign the six images to the texture object.
@@ -877,7 +877,7 @@ osg::ref_ptr<osg::TextureCubeMap> MtlKeeper::createTextureCubeMap(Mtl* maxMtl, T
  * Create an image from a bitmap texture. Extract the original 
  * name from the bitmap texture and create a new name.
  */
-osg::ref_ptr<osg::Image> MtlKeeper::createImage(Mtl* maxMtl, BitmapTex* bmt, Options* options, TimeValue t){
+ImageData* MtlKeeper::createImage(Mtl* maxMtl, BitmapTex* bmt, Options* options, TimeValue t){
 
 	// Create a name for this bitmap.
 	std::string oldname = std::string(bmt->GetMapName());
@@ -896,7 +896,7 @@ osg::ref_ptr<osg::Image> MtlKeeper::createImage(Mtl* maxMtl, BitmapTex* bmt, Opt
  * options. An image list is used to assert that we are not creating 
  * an image with the same name several times.
  */
-osg::ref_ptr<osg::Image> MtlKeeper::createImage(Mtl* maxMtl, Bitmap* bmap, std::string name, Options* options, TimeValue t){
+ImageData* MtlKeeper::createImage(Mtl* maxMtl, Bitmap* bmap, std::string name, Options* options, TimeValue t){
 
 	// See if image is allready in list.
 	MtlKeeper::ImgList::iterator itr = _imgList.find(name);
@@ -905,7 +905,9 @@ osg::ref_ptr<osg::Image> MtlKeeper::createImage(Mtl* maxMtl, Bitmap* bmap, std::
 	}
 
 	// Create image and set the name.
-	osg::ref_ptr<osg::Image> image = new osg::Image();
+   osg::ref_ptr<ImageData> imgData = new ImageData;
+   imgData->mImage = new osg::Image();
+	osg::Image* image = imgData->mImage.get();
 	image->setFileName(name);
 
    // The file being output may be either an OSG or IVE.
@@ -926,17 +928,28 @@ osg::ref_ptr<osg::Image> MtlKeeper::createImage(Mtl* maxMtl, Bitmap* bmap, std::
 			printError(status);
 	}
 
-	unsigned char* data = NULL;
-	if(options->getQuickView() || getEmbedImageData(options)){
+   bool dataToOSGImage = options->getQuickView() || getEmbedImageData(options);
+   BOOL hasAlpha = bmap->HasAlpha();
+   unsigned char* data = NULL;
+   osg::ref_ptr<osg::Image> tmpImg;
+	if(dataToOSGImage || hasAlpha)
+   {
+      // Create a temporary image if it is only needed for determining transparency.
+      if( ! dataToOSGImage && hasAlpha)
+      {
+         tmpImg = new osg::Image();
+      }
 
-		// Retreive image properties.
+      // Determine if the actual image instance should be used, or the temporary image.
+      osg::Image* theImage = dataToOSGImage ? image : tmpImg.get();
+
+		// Retrieve image properties.
 		int width = bmap->Width();
 	    int height = bmap->Height();
 		int r = 1; // we're not a 3d texture...
 	    unsigned int dataType = GL_UNSIGNED_BYTE;
-		BOOL hasAlpha = bmap->HasAlpha();
 		unsigned int internalFormat = hasAlpha ? 4 : 3;
-		unsigned int pixelFormat = hasAlpha ? GL_RGBA  : GL_RGB;
+		unsigned int pixelFormat = hasAlpha ? GL_RGBA : GL_RGB;
 
       data = new (std::nothrow) unsigned char[width*height*internalFormat];
 
@@ -956,7 +969,9 @@ osg::ref_ptr<osg::Image> MtlKeeper::createImage(Mtl* maxMtl, Bitmap* bmap, std::
 				}
 			}
 			delete [] in;
-			image->setImage(width, height, r, internalFormat, pixelFormat, dataType, data, osg::Image::USE_NEW_DELETE);
+
+         // Set the data on the image.
+			theImage->setImage(width, height, r, internalFormat, pixelFormat, dataType, data, osg::Image::USE_NEW_DELETE);
 		}
 		else if(options->getShowErrMsg() && !_hasShownMemErr){
 			char buf[500];
@@ -967,10 +982,16 @@ osg::ref_ptr<osg::Image> MtlKeeper::createImage(Mtl* maxMtl, Bitmap* bmap, std::
 		}
 	}
 
-	// Add image to list.
-	_imgList[name] = image;
+   // Determine if the image is truly translucent even though it has an alpha channel.
+   if(hasAlpha)
+   {
+      imgData->mTranslucent = tmpImg.valid() ? tmpImg->isImageTranslucent() : image->isImageTranslucent();
+   }
 
-	return image;
+	// Add image to list.
+	_imgList[name] = imgData.get();
+
+	return imgData.get();
 }
 
 /**
