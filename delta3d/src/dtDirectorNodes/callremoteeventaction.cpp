@@ -87,48 +87,53 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    bool CallRemoteEventAction::Update(float simDelta, float delta, int input, bool firstUpdate)
    {
-      // No matter what, call the finished event.  This will work because
-      // this thread will be pushed lower on the stack if a remote event
-      // was called, essentially pausing the execution of this thread.
-      OutputLink* link = GetOutputLink("Event Finished");
-      if (link) link->Activate();
-
-      std::string eventName = GetString("EventName");
-      if (eventName.empty()) return false;
-
-      // Find the remote event that we want to trigger.
-      std::vector<Node*> nodes;
-      if (!GetBoolean("Local Event"))
+      if (firstUpdate)
       {
-         GetDirector()->GetNodes("Remote Event", "Core", "EventName", eventName, nodes);
-      }
-      else
-      {
-         GetGraph()->GetNodes("Remote Event", "Core", "EventName", eventName, nodes);
-      }
+         std::string eventName = GetString("EventName");
+         if (eventName.empty()) return false;
 
-      bool madeStack = false;
-      int count = (int)nodes.size();
-      for (int index = 0; index < count; index++)
-      {
-         EventNode* event = nodes[index]->AsEventNode();
-         if (!event) continue;
-
-         // If we have not created a new call stack yet, create it.
-         if (!madeStack)
+         // Find the remote event that we want to trigger.
+         std::vector<Node*> nodes;
+         if (!GetBoolean("Local Event"))
          {
-            // I use a NULL node here, because when I trigger the
-            // event later, it will cause the event to be in
-            // two separate threads.
-            GetDirector()->PushStack(NULL, 0);
-            madeStack = true;
+            GetDirector()->GetNodes("Remote Event", "Core", "EventName", eventName, nodes);
+         }
+         else
+         {
+            GetGraph()->GetNodes("Remote Event", "Core", "EventName", eventName, nodes);
          }
 
-         // Now trigger the event.
-         event->Trigger();
-      }
+         bool madeStack = false;
+         int count = (int)nodes.size();
+         for (int index = 0; index < count; index++)
+         {
+            EventNode* event = nodes[index]->AsEventNode();
+            if (!event) continue;
 
-      return ActionNode::Update(simDelta, delta, input, firstUpdate);
+            // If we have not created a new call stack yet, create it.
+            if (!madeStack)
+            {
+               // I use a NULL node here, because when I trigger the
+               // event later, it will cause the event to be in
+               // two separate threads.
+               GetDirector()->PushStack(NULL, 0);
+               madeStack = true;
+            }
+
+            // Now trigger the event.
+            event->Trigger();
+         }
+
+         return true;
+      }
+      // Once we get back here again, it means we have finished calling
+      // our remote event and can trigger our output now.
+      else
+      {
+         OutputLink* link = GetOutputLink("Event Finished");
+         if (link) link->Activate();
+         return false;
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////
