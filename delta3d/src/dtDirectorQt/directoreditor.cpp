@@ -143,7 +143,7 @@ namespace dtDirector
          }
          else
          {
-            setWindowTitle(osgDB::getSimpleFileName(mFileName).c_str());
+            setWindowTitle(std::string(osgDB::getStrippedName(mFileName) + ".dtdir").c_str());
          }
          mUI.graphBrowser->BuildGraphList(mDirector->GetGraphRoot());
       }
@@ -347,7 +347,16 @@ namespace dtDirector
    void DirectorEditor::RefreshButtonStates()
    {
       // Refresh the name of the window.
-      QString title = osgDB::getSimpleFileName(mFileName).c_str();
+      QString title;
+      if (mFileName.empty())
+      {
+         title = "Untitled";
+      }
+      else
+      {
+         title = osgDB::getStrippedName(mFileName).c_str();
+         title += ".dtdir";
+      }
       if (mUndoManager->IsModified()) title += "*";
       setWindowTitle(title);
 
