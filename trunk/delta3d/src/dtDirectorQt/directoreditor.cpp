@@ -136,9 +136,16 @@ namespace dtDirector
 
       if (mDirector.valid())
       {
-         setWindowTitle(mDirector->GetName().c_str());
-         mUI.graphBrowser->BuildGraphList(mDirector->GetGraphRoot());
          mFileName = mDirector->GetScriptName();
+         if (mFileName.empty())
+         {
+            setWindowTitle("Untitled");
+         }
+         else
+         {
+            setWindowTitle(osgDB::getSimpleFileName(mFileName).c_str());
+         }
+         mUI.graphBrowser->BuildGraphList(mDirector->GetGraphRoot());
       }
       else
       {
@@ -340,7 +347,7 @@ namespace dtDirector
    void DirectorEditor::RefreshButtonStates()
    {
       // Refresh the name of the window.
-      QString title = mDirector->GetName().c_str();
+      QString title = osgDB::getSimpleFileName(mFileName).c_str();
       if (mUndoManager->IsModified()) title += "*";
       setWindowTitle(title);
 
