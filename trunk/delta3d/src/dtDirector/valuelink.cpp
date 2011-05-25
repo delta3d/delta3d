@@ -59,11 +59,11 @@ namespace dtDirector
    ValueLink::ValueLink(const ValueLink& src)
    {
       mOwner = src.mOwner;
-      mProxyOwner = NULL;
+      mProxyOwner = src.mProxyOwner;
       mName = src.mName;
       mVisible = src.mVisible;
       mExposed = src.mExposed;
-      mRedirector = NULL;
+      mRedirector = src.mRedirector;
 
       mDefaultProperty = src.mDefaultProperty;
       mIsOut = src.mIsOut;
