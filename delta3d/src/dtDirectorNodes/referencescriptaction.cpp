@@ -255,6 +255,7 @@ namespace dtDirector
                std::string error = std::string("Unable to parse ") + mScriptResource.GetDisplayName().c_str() + " with error " + e.What().c_str();
                LOG_ERROR(error.c_str());
 
+               mScript->SetResource(dtDAL::ResourceDescriptor::NULL_RESOURCE);
                mName = "<i>Invalid Script!</i>";
             }
          }
