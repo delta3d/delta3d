@@ -90,6 +90,8 @@ namespace dtDirector
       mUI.searchBrowser->hide();
       mUI.replayBrowser->SetDirectorEditor(this);
       mUI.replayBrowser->hide();
+      mUI.threadBrowser->SetDirectorEditor(this);
+      mUI.threadBrowser->hide();
 
       // Graph tabs.
       mUI.propertyEditor->SetGraphTabs(mUI.graphTab);
@@ -1196,6 +1198,19 @@ namespace dtDirector
       else
       {
          mUI.replayBrowser->hide();
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::on_action_Thread_Browser_triggered()
+   {
+      if (mUI.action_Thread_Browser->isChecked())
+      {
+         mUI.threadBrowser->show();
+      }
+      else
+      {
+         mUI.threadBrowser->hide();
       }
    }
 

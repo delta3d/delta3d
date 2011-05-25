@@ -441,6 +441,11 @@ namespace dtDirector
       void on_action_Replay_Browser_triggered();
 
       /**
+       * Event handler when the show thread browser button is pressed.
+       */
+      void on_action_Thread_Browser_triggered();
+
+      /**
        * Event handler when the show links button is pressed.
        */
       void on_action_Show_Links_triggered();

@@ -324,6 +324,7 @@
     <addaction name="action_Property_Editor"/>
     <addaction name="action_Graph_Browser"/>
     <addaction name="action_Replay_Browser"/>
+    <addaction name="action_Thread_Browser"/>
     <addaction name="action_Search_Browser"/>
     <addaction name="separator"/>
     <addaction name="action_Show_Links"/>
@@ -417,6 +418,11 @@
    </attribute>
   </widget>
   <widget class="dtDirector::SearchBrowser" name="searchBrowser">
+   <attribute name="dockWidgetArea">
+    <number>2</number>
+   </attribute>
+  </widget>
+  <widget class="dtDirector::ThreadBrowser" name="threadBrowser">
    <attribute name="dockWidgetArea">
     <number>2</number>
    </attribute>
@@ -804,6 +810,17 @@
     <string>Ctrl+Shift+V</string>
    </property>
   </action>
+  <action name="action_Thread_Browser">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Thread Browser</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -840,6 +857,12 @@
    <class>dtDirector::SearchBrowser</class>
    <extends>QDockWidget</extends>
    <header location="global">dtDirectorQt/searchbrowser.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>dtDirector::ThreadBrowser</class>
+   <extends>QDockWidget</extends>
+   <header location="global">dtDirectorQt/threadbrowser.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
