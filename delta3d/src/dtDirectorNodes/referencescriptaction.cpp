@@ -127,6 +127,7 @@ namespace dtDirector
             if (inputs[index]->IsEnabled())
             {
                InputLink* link = &inputs[index]->GetInputLinks()[0];
+               link->RedirectLink(NULL);
 
                bool found = false;
                int testCount = (int)oldInputs.size();
@@ -158,6 +159,7 @@ namespace dtDirector
             if (outputs[index]->IsEnabled())
             {
                OutputLink* link = &outputs[index]->GetOutputLinks()[0];
+               link->RedirectLink(NULL);
 
                bool found = false;
                int testCount = (int)oldOutputs.size();
@@ -189,6 +191,7 @@ namespace dtDirector
             if (values[index]->IsEnabled())
             {
                ValueLink* link = &values[index]->GetValueLinks()[0];
+               link->RedirectLink(NULL);
 
                bool found = false;
                int testCount = (int)oldValues.size();
