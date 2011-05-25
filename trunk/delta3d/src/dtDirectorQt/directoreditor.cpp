@@ -481,10 +481,16 @@ namespace dtDirector
       }
       else
       {
-         mUI.menuDebug->setEnabled(false);
-         mUI.actionPause->setEnabled(false);
-         mUI.actionContinue->setEnabled(false);
-         mUI.actionStep_Next->setEnabled(false);
+         if (mDirector->GetResource() != dtDAL::ResourceDescriptor::NULL_RESOURCE)
+         {
+            mUI.action_New->setEnabled(false);
+            mUI.action_Load->setEnabled(false);
+         }
+
+         mUI.menuDebug->setVisible(false);
+         mUI.actionPause->setVisible(false);
+         mUI.actionContinue->setVisible(false);
+         mUI.actionStep_Next->setVisible(false);
       }
    }
 
