@@ -679,17 +679,22 @@ namespace dtDirector
          return;
       }
 
-      OpenGraph(node->GetGraph());
-      EditorScene* scene = GetPropertyEditor()->GetScene();
-      if (scene)
+      // First find out if the node exists in the current script.
+      Node* testNode = mDirector->GetNode(node->GetID());
+      if (testNode == node)
       {
-         scene->clearSelection();
-         NodeItem* item = scene->GetNodeItem(node);
-         if (item)
+         OpenGraph(node->GetGraph());
+         EditorScene* scene = GetPropertyEditor()->GetScene();
+         if (scene)
          {
-            item->setSelected(true);
+            scene->clearSelection();
+            NodeItem* item = scene->GetNodeItem(node);
+            if (item)
+            {
+               item->setSelected(true);
+            }
+            scene->CenterSelection();
          }
-         scene->CenterSelection();
       }
    }
 
