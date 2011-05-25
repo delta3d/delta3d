@@ -160,7 +160,45 @@ namespace dtDirector
 
          if (mGlowEffect)
          {
-            mGlowEffect->setStrength(maxGlow);
+            mGlowEffect->setStrength(maxGlow * 0.5f);
+         }
+
+         std::vector<dtCore::RefPtr<EventNode> > inputs = mGraph->GetInputNodes();
+         count = (int)inputs.size();
+         int inputIndex = 0;
+         for (int index = 0; index < count; index++)
+         {
+            if (inputs[index]->IsEnabled())
+            {
+               dtDirector::EditorNotifier::GlowData* glowData =
+                  notifier->GetGlowData(inputs[inputIndex]);
+               if (glowData && glowData->input > -1)
+               {
+                  InputData& data = mInputs[index];
+                  data.DrawGlow(glowData->inputGlow);
+               }
+
+               inputIndex++;
+            }
+         }
+
+         std::vector<dtCore::RefPtr<ActionNode> > outputs = mGraph->GetOutputNodes();
+         count = (int)outputs.size();
+         int outputIndex = 0;
+         for (int index = 0; index < count; index++)
+         {
+            if (outputs[index]->IsEnabled())
+            {
+               dtDirector::EditorNotifier::GlowData* glowData =
+                  notifier->GetGlowData(outputs[index]);
+               if (glowData && !glowData->outputGlows.empty())
+               {
+                  OutputData& data = mOutputs[outputIndex];
+                  data.DrawGlow(glowData->outputGlows[0]);
+               }
+
+               outputIndex++;
+            }
          }
       }
    }

@@ -61,10 +61,14 @@ namespace dtDirector
          void SetAlwaysHighlight(bool enabled);
 
          /**
+          * Sets the highlight pen color alpha.
+          */
+         void SetHighlightAlpha(float alpha);
+
+         /**
           * Retrieves whether this link should always highlight.
           */
          bool GetAlwaysHighlight() {return mAlwaysHighlight;}
-
 
          void SetHighlightConnector(bool enable, QGraphicsPathItem* connector);
 
@@ -84,8 +88,6 @@ namespace dtDirector
          void mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent);
 
          virtual LinkItem* GetLinkGraphic() = 0;
-
-         std::map<QGraphicsPathItem*, QPen> mConnectorPens;
 
          QGraphicsPathItem* mDrawing;
          QGraphicsPathItem* mHighlight;
@@ -120,6 +122,11 @@ namespace dtDirector
        * @param[in]  scene      The scene.
        */
       InputLinkItem(NodeItem* nodeItem, int linkIndex, QGraphicsItem* parent, EditorScene* scene);
+
+      /**
+       * Draws the glow effect on this link.
+       */
+      void DrawGlow(float glow);
 
       /**
        * Sets the default highlight on the link.
@@ -201,6 +208,11 @@ namespace dtDirector
        * @param[in]  scene      The scene.
        */
       OutputLinkItem(NodeItem* nodeItem, int linkIndex, QGraphicsItem* parent, EditorScene* scene);
+
+      /**
+       * Draws the glow effect on this link.
+       */
+      void DrawGlow(float glow);
 
       /**
        * Highlights the link.

@@ -62,7 +62,7 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void LinkItem::SetPenColor(const QColor& color)
    {
-      mLinkGraphicPen = QPen(color, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+      mLinkGraphicPen = QPen(color, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -89,30 +89,31 @@ namespace dtDirector
    void LinkItem::SetAlwaysHighlight(bool enabled)
    {
       mAlwaysHighlight = enabled;
-
-      if (enabled)
-      {
-         SetHighlight(enabled);
-      }
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   void LinkItem::SetHighlightAlpha(float alpha)
+   {
+      QColor baseColor = mLinkGraphicPen.color();
+      QColor newColor = Qt::yellow;
+
+      newColor.setRedF((newColor.redF() * alpha) + (baseColor.redF() * (1.0f - alpha)));
+      newColor.setGreenF((newColor.greenF() * alpha) + (baseColor.greenF() * (1.0f - alpha)));
+      newColor.setBlueF((newColor.blueF() * alpha) + (baseColor.blueF() * (1.0f - alpha)));
+
+      mHighlightPen.setColor(newColor);
+   }
 
    //////////////////////////////////////////////////////////////////////////
    void LinkItem::SetHighlightConnector(bool enable, QGraphicsPathItem* connector)
    {
       if( enable )
       {
-         mConnectorPens.insert(std::pair<QGraphicsPathItem*, QPen>(connector, connector->pen()));
          connector->setPen(mHighlightPen);
       }
       else
       {
-         std::map<QGraphicsPathItem*, QPen>::iterator found = mConnectorPens.find(connector);
-         if( found != mConnectorPens.end() )
-         {
-            connector->setPen(found->second);
-            mConnectorPens.erase(found);
-         }
+         connector->setPen(mLinkGraphicPen);
       }
       connector->setZValue(connector->zValue() + (enable ? 10 : -10));
    }
@@ -152,6 +153,26 @@ namespace dtDirector
    LinkItem* InputLinkItem::GetLinkGraphic()
    {
       return this;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void InputLinkItem::DrawGlow(float glow)
+   {
+      if (glow > 0.5f)
+      {
+         SetAlwaysHighlight(true);
+         SetHighlightAlpha(1.0f);
+      }
+      else if (glow > 0.0f)
+      {
+         SetAlwaysHighlight(true);
+         SetHighlightAlpha(glow * 2.0f);
+      }
+      else if (glow == 0.0f)
+      {
+         SetAlwaysHighlight(false);
+         SetHighlightAlpha(1.0f);
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -471,6 +492,62 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
+   void OutputLinkItem::DrawGlow(float glow)
+   {
+      float highlightAlpha = 1.0f;
+      if (glow > 0.5f)
+      {
+         SetAlwaysHighlight(true);
+         SetHighlightAlpha(1.0f);
+         highlightAlpha = 1.0f;
+      }
+      else if (glow > 0.0f)
+      {
+         SetAlwaysHighlight(true);
+         SetHighlightAlpha(glow * 2.0f);
+         highlightAlpha = glow * 2.0f;
+      }
+      else if (glow == 0.0f)
+      {
+         SetAlwaysHighlight(false);
+         SetHighlightAlpha(1.0f);
+      }
+      else
+      {
+         return;
+      }
+
+      SetHighlight(mAlwaysHighlight);
+      if (mLinkIndex >= 0 && mLinkIndex < (int)mNodeItem->GetOutputs().size())
+      {
+         OutputData& data = mNodeItem->GetOutputs()[mLinkIndex];
+         if (data.link)
+         {
+            int linkCount = (int)data.link->GetLinks().size();
+            for (int linkIndex = 0; linkIndex < linkCount; linkIndex++)
+            {
+               InputLink* link = data.link->GetLinks()[linkIndex];
+               if (!link) continue;
+
+               NodeItem* item = mScene->GetNodeItem(link->GetOwner()->GetID());
+               if (!item) continue;
+
+               int inputCount = (int)item->GetInputs().size();
+               for (int inputIndex = 0; inputIndex < inputCount; inputIndex++)
+               {
+                  if (item->GetInputs()[inputIndex].link == link)
+                  {
+                     item->GetInputs()[inputIndex].linkGraphic->SetAlwaysHighlight(mAlwaysHighlight);
+                     item->GetInputs()[inputIndex].linkGraphic->SetHighlight(false);
+                     break;
+                  }
+               }
+            }
+         }
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    void OutputLinkItem::SetHighlight(bool enable, InputLink* inputLink)
    {
       LinkItem::SetHighlight(enable);
@@ -487,9 +564,9 @@ namespace dtDirector
                QGraphicsPathItem* connector = (i < data.linkConnectors.size()) ? data.linkConnectors[i] : NULL;
                if (connector)
                {
-                  bool forceHighlight = 
-                     mScene->GetEditor()->GetReplayMode() &&
-                     data.link->GetLinks()[i] == mScene->GetEditor()->GetReplayInput();
+                  bool forceHighlight = mAlwaysHighlight ||
+                     (mScene->GetEditor()->GetReplayMode() &&
+                     data.link->GetLinks()[i] == mScene->GetEditor()->GetReplayInput());
 
                   SetHighlightConnector(forceHighlight || enable, connector);
                }
@@ -507,10 +584,10 @@ namespace dtDirector
                QGraphicsPathItem* connector = (i < data.linkConnectors.size()) ? data.linkConnectors[i] : NULL;
                if (connector)
                {
-                  bool forceHighlight = 
-                     mScene->GetEditor()->GetReplayMode() && 
+                  bool forceHighlight = mAlwaysHighlight ||
+                     (mScene->GetEditor()->GetReplayMode() && 
                      mScene->GetEditor()->GetReplayInput() == inputLink &&
-                     mScene->GetEditor()->GetReplayOutput() == data.link;
+                     mScene->GetEditor()->GetReplayOutput() == data.link);
 
                   SetHighlightConnector(forceHighlight || enable, connector);
                }

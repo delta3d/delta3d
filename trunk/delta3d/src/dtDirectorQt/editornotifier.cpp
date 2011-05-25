@@ -64,53 +64,98 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void EditorNotifier::Update(bool unpause)
    {
-      const float GLOW_SPEED = 1.0f;
+      const float GLOW_SPEED = 2.0f;
 
       float delta = dtCore::Timer::Instance()->DeltaSec(mTime, dtCore::Timer::Instance()->Tick());
 
       if (delta >= 0.05f)
       {
          std::vector<Node*> removeList;
+
          // Reduces the glow of each node over time.
          std::map<Node*, GlowData>::iterator iter;
          for (iter = mGlowMap.begin(); iter != mGlowMap.end(); ++iter)
          {
             GlowData& data = iter->second;
 
-            // Only update the glow on nodes that are not paused, or we
-            // should unpause.
-            if (data.isPaused && !unpause)
+            bool shouldRemove = true;
+            if (data.node.valid())
             {
-               continue;
-            }
-
-            data.isPaused = false;
-            data.glow -= GLOW_SPEED * delta;
-
-            if (data.glow <= 0.0f)
-            {
-               data.glow = 0.0f;
-
-               if (!data.hasBreakPoint)
+               if (data.hasBreakPoint)
                {
-                  removeList.push_back(iter->first);
+                  shouldRemove = false;
+               }
+
+               if (unpause)
+               {
+                  data.goal = 0.0f;
+                  data.inputGoal = 0.0f;
+
+                  for (int index = 0; index < (int)data.outputGoals.size(); ++index)
+                  {
+                     data.outputGoals[index] = 0.0f;
+                  }
+               }
+
+               data.glow -= GLOW_SPEED * delta;
+
+               if (data.glow <= data.goal)
+               {
+                  data.glow = data.goal;
+
+                  if (data.glow > 0.0f)
+                  {
+                     shouldRemove = false;
+                  }
+               }
+               else
+               {
+                  shouldRemove = false;
+               }
+
+               if (data.inputGlow > 0.0f)
+               {
+                  shouldRemove = false;
+                  data.inputGlow -= GLOW_SPEED * delta;
+
+                  if (data.inputGlow <= data.inputGoal)
+                  {
+                     data.inputGlow = data.inputGoal;
+                  }
+               }
+               else
+               {
+                  data.inputGlow = -1.0f;
+               }
+
+               for (int index = 0; index < (int)data.outputGlows.size(); ++index)
+               {
+                  if (data.outputGlows[index] > 0.0f)
+                  {
+                     shouldRemove = false;
+                     data.outputGlows[index] -= GLOW_SPEED * delta;
+
+                     if (data.outputGlows[index] <= data.outputGoals[index])
+                     {
+                        data.outputGlows[index] = data.outputGoals[index];
+                     }
+                  }
+                  else
+                  {
+                     data.outputGlows[index] = -1.0f;
+                  }
+               }
+
+               int editorCount = (int)mEditorList.size();
+               for (int editorIndex = 0; editorIndex < editorCount; ++editorIndex)
+               {
+                  mEditorList[editorIndex]->RefreshNode(iter->first);
                }
             }
 
-            for (int index = 0; index < (int)data.outputGlows.size(); ++index)
+            if (shouldRemove)
             {
-               data.outputGlows[index] -= GLOW_SPEED * delta;
-
-               if (data.outputGlows[index] <= 0.0f)
-               {
-                  data.outputGlows[index] = 0.0f;
-               }
-            }
-
-            int editorCount = (int)mEditorList.size();
-            for (int editorIndex = 0; editorIndex < editorCount; ++editorIndex)
-            {
-               mEditorList[editorIndex]->RefreshNode(iter->first);
+               removeList.push_back(iter->first);
             }
          }
 
@@ -128,9 +173,9 @@ namespace dtDirector
       }
    }
 
-#define GLOW_MIN 0.50f
-#define GLOW_INC 0.10f
-#define GLOW_MAX 0.50f
+#define GLOW_START 1.0f
+#define GLOW_INC   0.5f
+#define GLOW_MAX   1.0f
 
    ////////////////////////////////////////////////////////////////////////////////
    void EditorNotifier::OnNodeExecution(Node* node, const std::string& input, const std::vector<std::string>& outputs)
@@ -145,16 +190,19 @@ namespace dtDirector
       {
          GlowData data;
          data.hasBreakPoint = false;
-         data.isPaused = false;
          data.glow = 0.0f;
-         data.nodeID = node->GetID();
+         data.goal = 0.0f;
+         data.input = -1;
+         data.inputGlow = 0.0f;
+         data.inputGoal = 0.0f;
+         data.node = node;
          mGlowMap[node] = data;
       }
 
       GlowData& data = mGlowMap[node];
-      if (data.glow < GLOW_MIN)
+      if (data.glow < GLOW_START)
       {
-         data.glow = GLOW_MIN;
+         data.glow = GLOW_START;
       }
       else
       {
@@ -163,6 +211,30 @@ namespace dtDirector
          if (data.glow > GLOW_MAX)
          {
             data.glow = GLOW_MAX;
+         }
+      }
+
+      for (int index = 0; index < (int)node->GetInputLinks().size(); ++index)
+      {
+         InputLink& link = node->GetInputLinks()[index];
+         if (link.GetName() == input)
+         {
+            data.input = index;
+            break;
+         }
+      }
+
+      if (data.inputGlow < GLOW_START)
+      {
+         data.inputGlow = GLOW_START;
+      }
+      else
+      {
+         data.inputGlow += GLOW_INC;
+
+         if (data.inputGlow > GLOW_MAX)
+         {
+            data.inputGlow = GLOW_MAX;
          }
       }
 
@@ -177,12 +249,13 @@ namespace dtDirector
             {
                while (subIndex >= (int)data.outputGlows.size())
                {
-                  data.outputGlows.push_back(0.0f);
+                  data.outputGlows.push_back(-1.0f);
+                  data.outputGoals.push_back(0.0f);
                }
 
-               if (data.outputGlows[subIndex] < GLOW_MIN)
+               if (data.outputGlows[subIndex] < GLOW_START)
                {
-                  data.outputGlows[subIndex] = GLOW_MIN;
+                  data.outputGlows[subIndex] = GLOW_START;
                }
                else
                {
@@ -200,36 +273,6 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void EditorNotifier::OnValueChanged(Node* node)
    {
-      //if (!node)
-      //{
-      //   return;
-      //}
-
-      //std::map<Node*, GlowData>::iterator iter = mGlowMap.find(node);
-      //if (iter == mGlowMap.end())
-      //{
-      //   GlowData data;
-      //   data.hasBreakPoint = false;
-      //   data.isPaused = false;
-      //   data.glow = 0.0f;
-      //   data.nodeID = node->GetID();
-      //   mGlowMap[node] = data;
-      //}
-
-      //GlowData& data = mGlowMap[node];
-      //if (data.glow < GLOW_MIN)
-      //{
-      //   data.glow = GLOW_MIN;
-      //}
-      //else
-      //{
-      //   data.glow += GLOW_INC;
-
-      //   if (data.glow > GLOW_MAX)
-      //   {
-      //      data.glow = GLOW_MAX;
-      //   }
-      //}
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -257,14 +300,30 @@ namespace dtDirector
       {
          GlowData data;
          data.hasBreakPoint = false;
-         data.isPaused = false;
-         data.glow = GLOW_MIN;
-         data.nodeID = node->GetID();
+         data.glow = 0.0f;
+         data.goal = 0.0f;
+         data.input = -1;
+         data.inputGlow = 0.0f;
+         data.inputGoal = 0.0f;
+         data.node = node;
          mGlowMap[node] = data;
       }
 
       GlowData& data = mGlowMap[node];
-      data.isPaused = true;
+      data.goal = GLOW_START;
+      data.inputGoal = GLOW_START;
+
+      for (int index = 0; index < (int)data.outputGlows.size(); ++index)
+      {
+         if (data.outputGlows[index] >= GLOW_START)
+         {
+            data.outputGoals[index] = GLOW_START;
+         }
+         else
+         {
+            data.outputGoals[index] = 0.0f;
+         }
+      }
 
       int editorCount = (int)mEditorList.size();
       for (int editorIndex = 0; editorIndex < editorCount; ++editorIndex)
@@ -296,9 +355,12 @@ namespace dtDirector
       {
          GlowData data;
          data.hasBreakPoint = true;
-         data.isPaused = false;
          data.glow = 0.0f;
-         data.nodeID = node->GetID();
+         data.goal = 0.0f;
+         data.input = -1;
+         data.inputGlow = 0.0f;
+         data.inputGoal = 0.0f;
+         data.node = node;
          mGlowMap[node] = data;
          return;
       }
