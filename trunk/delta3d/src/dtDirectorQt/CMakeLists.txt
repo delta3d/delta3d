@@ -44,6 +44,7 @@ SET(LIB_PUBLIC_HEADERS ${HEADER_PATH}/actionitem.h
     ${HEADER_PATH}/resizeitem.h
     ${HEADER_PATH}/scriptitem.h
     ${HEADER_PATH}/searchbrowser.h
+    ${HEADER_PATH}/threadbrowser.h
     ${HEADER_PATH}/undocreateevent.h
     ${HEADER_PATH}/undodeleteevent.h
     ${HEADER_PATH}/undoevent.h
@@ -76,6 +77,7 @@ SET(LIB_SOURCES ${SOURCE_PATH}/actionitem.cpp
     ${SOURCE_PATH}/resizeitem.cpp
     ${SOURCE_PATH}/scriptitem.cpp
     ${SOURCE_PATH}/searchbrowser.cpp
+    ${SOURCE_PATH}/threadbrowser.cpp
     ${SOURCE_PATH}/undocreateevent.cpp
     ${SOURCE_PATH}/undodeleteevent.cpp
     ${SOURCE_PATH}/undoevent.cpp
