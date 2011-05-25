@@ -57,6 +57,7 @@ namespace dtDirector
       static dtCore::RefPtr<dtDirector::NodeType> REMOVE_ARRAY_VALUE_ACTION_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> SET_VECTOR_ACTION_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> GET_VECTOR_VALUES_ACTION_NODE_TYPE;
+      static dtCore::RefPtr<dtDirector::NodeType> NORMALIZE_VECTOR_ACTION_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> GET_ACTOR_PROPERTY_ACTION_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> SET_ACTOR_PROPERTY_ACTION_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> OPERATION_ACTION_NODE_TYPE;

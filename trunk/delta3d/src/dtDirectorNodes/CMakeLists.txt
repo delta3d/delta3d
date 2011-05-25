@@ -45,6 +45,7 @@ SET(LIB_PUBLIC_HEADERS ${HEADER_PATH}/actorarrayvalue.h
     ${HEADER_PATH}/multiplymutator.h
     ${HEADER_PATH}/nodelibraryexport.h
     ${HEADER_PATH}/nodelibraryregistry.h
+    ${HEADER_PATH}/normalizevectoraction.h
     ${HEADER_PATH}/operationaction.h
     ${HEADER_PATH}/ormutator.h
     ${HEADER_PATH}/outputnode.h
@@ -117,6 +118,7 @@ SET(LIB_SOURCES ${SOURCE_PATH}/actorarrayvalue.cpp
     ${SOURCE_PATH}/logaction.cpp
     ${SOURCE_PATH}/multiplymutator.cpp
     ${SOURCE_PATH}/nodelibraryregistry.cpp
+    ${SOURCE_PATH}/normalizevectoraction.cpp
     ${SOURCE_PATH}/operationaction.cpp
     ${SOURCE_PATH}/ormutator.cpp
     ${SOURCE_PATH}/outputnode.cpp
