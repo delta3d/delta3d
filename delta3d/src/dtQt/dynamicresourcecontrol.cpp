@@ -44,7 +44,6 @@
 #include <QtCore/QRect>
 #include <QtCore/QSize>
 
-
 #include <QtGui/QColor>
 #include <QtGui/QFocusFrame>
 #include <QtGui/QGridLayout>
@@ -53,13 +52,16 @@
 #include <QtGui/QPalette>
 #include <QtGui/QPushButton>
 #include <QtGui/QWidget>
+#include <QtGui/QMenu>
+#include <QtGui/QAction>
+
 
 namespace dtQt
 {
 
    ///////////////////////////////////////////////////////////////////////////////
    DynamicResourceControl::DynamicResourceControl()
-      : mTemporaryComboBox(NULL)
+      : mTemporaryButton(NULL)
    {
    }
 
@@ -130,9 +132,9 @@ namespace dtQt
    void DynamicResourceControl::updateEditorFromModel(QWidget* widget)
    {
       // update our label
-      if (widget == mWrapper && mTemporaryComboBox)
+      if (widget == mWrapper && mTemporaryButton)
       {
-         mTemporaryComboBox->setCurrentIndex(mTemporaryComboBox->findText(getValueAsString(), Qt::MatchExactly));
+         mTemporaryButton->setText(getValueAsString());
       }
 
       DynamicAbstractControl::updateEditorFromModel(widget);
@@ -143,25 +145,24 @@ namespace dtQt
    {
       DynamicAbstractControl::updateModelFromEditor(widget);
 
-      if (widget == mWrapper && mTemporaryComboBox)
-      {
-         std::string result = mTemporaryComboBox->itemData(
-            mTemporaryComboBox->currentIndex()).toString().toStdString();
+      //if (widget == mWrapper && mTemporaryButton)
+      //{
+      //   std::string result = mTemporaryButton->itemData().toString().toStdString();
 
-         // set our value to our object
-         if (result != mProperty->GetValue().GetResourceIdentifier())
-         {
-            // give undo manager the ability to create undo/redo events
-            emit PropertyAboutToChange(*mPropContainer, *mProperty,
-               mProperty->ToString(), result);
+      //   // set our value to our object
+      //   if (result != mProperty->GetValue().GetResourceIdentifier())
+      //   {
+      //      // give undo manager the ability to create undo/redo events
+      //      emit PropertyAboutToChange(*mPropContainer, *mProperty,
+      //         mProperty->ToString(), result);
 
-            mProperty->FromString(result);
+      //      mProperty->FromString(result);
 
-            emit PropertyChanged(*mPropContainer, *mProperty);
+      //      emit PropertyChanged(*mPropContainer, *mProperty);
 
-            return true;
-         }
-      }
+      //      return true;
+      //   }
+      //}
 
       return false;
    }
@@ -178,31 +179,30 @@ namespace dtQt
          return wrapper;
       }
 
-      mTemporaryComboBox = new SubQComboBox(wrapper, this);
-      mTemporaryComboBox->setToolTip(getDescription());
+      mTemporaryButton = new SubQPushButton("<None>", wrapper, this);
+      mTemporaryButton->setToolTip(getDescription());
 
       dtUtil::tree<dtDAL::ResourceTreeNode> tree;
       dtDAL::Project::GetInstance().GetResourcesOfType(mProperty->GetDataType(), tree);
 
-      mTemporaryComboBox->addItem("<None>");
-      setupList(tree);
-
-      mTemporaryComboBox->setEditable(false);
+      QMenu* menu = new QMenu("Resources");
+      connect(menu, SIGNAL(triggered(QAction*)), this, SLOT(itemSelected(QAction*)));
+      menu->addAction("<None>");
+      setupList(tree, menu);
+      mTemporaryButton->setMenu(menu);
 
       updateEditorFromModel(mWrapper);
 
-      mGridLayout->addWidget(mTemporaryComboBox, 0, 0, 1, 1);
-      mGridLayout->setColumnMinimumWidth(0, mTemporaryComboBox->sizeHint().width() / 2);
+      mGridLayout->addWidget(mTemporaryButton, 0, 0, 1, 1);
+      mGridLayout->setColumnMinimumWidth(0, mTemporaryButton->sizeHint().width() / 2);
       mGridLayout->setColumnStretch(0, 1);
 
-      connect(mTemporaryComboBox, SIGNAL(activated(int)), this, SLOT(itemSelected(int)));
-
-      wrapper->setFocusProxy(mTemporaryComboBox);
+      wrapper->setFocusProxy(mTemporaryButton);
       return wrapper;
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void DynamicResourceControl::setupList(const dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator& iter)
+   void DynamicResourceControl::setupList(const dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator& iter, QMenu* menu)
    {
       for (dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator i = iter.tree_ref().in();
          i != iter.tree_ref().end();
@@ -210,12 +210,17 @@ namespace dtQt
       {
          if (i->isCategory())
          {
-            setupList(i);
+            QMenu* subMenu = menu->addMenu(i->getNodeText().c_str());
+
+            setupList(i, subMenu);
          }
          else
          {
-            mTemporaryComboBox->addItem(i->getResource().GetDisplayName().c_str(),
-               QVariant(i->getResource().GetResourceIdentifier().c_str()));
+            QAction* action = menu->addAction(i->getResource().GetResourceName().c_str());
+            if (action)
+            {
+               action->setData(QVariant(i->getResource().GetResourceIdentifier().c_str()));
+            }
          }
       }
    }
@@ -244,11 +249,22 @@ namespace dtQt
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   void DynamicResourceControl::itemSelected(int index)
+   void DynamicResourceControl::itemSelected(QAction* action)
    {
-      if (mTemporaryComboBox != NULL)
+      if (action)
       {
-         updateModelFromEditor(mWrapper);
+         std::string result = action->data().toString().toStdString();
+
+         if (result != mProperty->GetValue().GetResourceIdentifier())
+         {
+            // give undo manager the ability to create undo/redo events
+            emit PropertyAboutToChange(*mPropContainer, *mProperty,
+               mProperty->ToString(), result);
+
+            mProperty->FromString(result);
+
+            emit PropertyChanged(*mPropContainer, *mProperty);
+         }
       }
    }
 
@@ -257,7 +273,7 @@ namespace dtQt
    {
       if (widget == mWrapper)
       {
-         mTemporaryComboBox = NULL;
+         mTemporaryButton = NULL;
       }
 
       DynamicAbstractControl::handleSubEditDestroy(widget, hint);

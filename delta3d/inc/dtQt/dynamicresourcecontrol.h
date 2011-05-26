@@ -45,10 +45,11 @@ namespace dtDAL
 }
 
 class QLabel;
+class QMenu;
+class QAction;
 
 namespace dtQt
 {
-
    class SubQLabel;
    class SubQPushButton;
 
@@ -124,7 +125,7 @@ namespace dtQt
       /**
        * Called when the user selects an item in the combo box
        */
-      void itemSelected(int index);
+      void itemSelected(QAction* action);
 
       /**
        * @see DynamicAbstractControl#handleSubEditDestroy
@@ -134,7 +135,7 @@ namespace dtQt
    protected:
 
    private:
-      void setupList(const dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator& iter);
+      void setupList(const dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator& iter, QMenu* menu);
 
       dtDAL::ResourceActorProperty* mProperty;
 
@@ -142,7 +143,7 @@ namespace dtQt
       // method and destroyed whenever QT feels like it (mostly when the control looses focus).
       // We work around this by trapping the destruction of this object, it should
       // call our handleSubEditDestroy() method so we know to not hold this anymore
-      SubQComboBox* mTemporaryComboBox;
+      SubQPushButton* mTemporaryButton;
    };
 
 } // namespace dtQt
