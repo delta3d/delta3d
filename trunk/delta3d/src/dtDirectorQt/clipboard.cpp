@@ -23,6 +23,7 @@
 
 #include <dtDAL/vectoractorproperties.h>
 
+#include <dtDirector/director.h>
 #include <dtDirector/directorgraph.h>
 #include <dtDirector/nodemanager.h>
 
@@ -117,11 +118,11 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   std::vector<dtDAL::PropertyContainer*> Clipboard::PasteObjects(DirectorGraph* parent, UndoManager* undoManager, const osg::Vec2& position, bool createLinks, bool linkExternal)
+   std::vector<dtDAL::PropertyContainer*> Clipboard::PasteObjects(DirectorGraph* graph, UndoManager* undoManager, const osg::Vec2& position, bool createLinks, bool linkExternal)
    {
       std::vector<dtDAL::PropertyContainer*> result;
 
-      if (!parent) return result;
+      if (!graph) return result;
 
       int count = (int)mCopied.size();
       for (int index = 0; index < count; index++)
@@ -129,7 +130,7 @@ namespace dtDirector
          dtDAL::PropertyContainer* object = mCopied[index].get();
          if (object)
          {
-            dtDAL::PropertyContainer* newObject = CopyObject(object, parent, position);
+            dtDAL::PropertyContainer* newObject = CopyObject(object, graph, position);
             if (newObject) result.push_back(newObject);
          }
       }
@@ -138,7 +139,7 @@ namespace dtDirector
       count = (int)mPasted.size();
       for (int index = 0; index < count; index++)
       {
-         LinkNode(mPasted[index], parent, undoManager, result, createLinks, linkExternal);
+         LinkNode(mPasted[index], graph, undoManager, result, createLinks, linkExternal);
       }
 
       // Now add all created nodes to the undo manager.
@@ -160,11 +161,11 @@ namespace dtDirector
          count = mPastedGraphs.size();
          for (int index = 0; index < count; index++)
          {
-            DirectorGraph* graph = mPastedGraphs[index];
-            if (graph)
+            DirectorGraph* subGraph = mPastedGraphs[index];
+            if (subGraph)
             {
                dtCore::RefPtr<UndoCreateEvent> event = new UndoCreateEvent(
-                  undoManager->GetEditor(), graph->GetID(), graph->GetParent()->GetID());
+                  undoManager->GetEditor(), subGraph->GetID(), subGraph->GetParent()->GetID());
                undoManager->AddEvent(event);
             }
          }
@@ -191,6 +192,13 @@ namespace dtDirector
       Node* node = dynamic_cast<Node*>(object);
       if (node)
       {
+         // Make sure the node we found is a type valid for this script.
+         NodePluginRegistry* reg = NodeManager::GetInstance().GetRegistryForType(node->GetType());
+         if (!reg || !parent->GetDirector()->HasLibrary(reg->GetName()))
+         {
+            return NULL;
+         }
+
          dtCore::RefPtr<Node> newNode = nodeManager.CreateNode(node->GetType(), parent);
          newNode->CopyPropertiesFrom(*node);
 
