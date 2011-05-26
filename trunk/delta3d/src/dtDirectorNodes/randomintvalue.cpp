@@ -90,8 +90,11 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void RandomIntValue::SetMinValue(int value)
    {
-      mMinValue = value;
-      ValueNode::OnValueChanged();
+      if (mMinValue != value)
+      {
+         mMinValue = value;
+         ValueNode::OnValueChanged();
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -104,8 +107,11 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void RandomIntValue::SetMaxValue(int value)
    {
-      mMaxValue = value;
-      ValueNode::OnValueChanged();
+      if (mMaxValue != value)
+      {
+         mMaxValue = value;
+         ValueNode::OnValueChanged();
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////

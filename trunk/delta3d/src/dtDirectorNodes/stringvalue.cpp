@@ -62,8 +62,11 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void StringValue::SetValue(const std::string& value)
    {
-      mValue = value;
-      ValueNode::OnValueChanged();
+      if (mValue != value)
+      {
+         mValue = value;
+         ValueNode::OnValueChanged();
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////

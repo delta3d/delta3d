@@ -84,9 +84,12 @@ namespace dtDirector
 
       bool value = GetBoolean("Value");
 
-      SetBoolean(!value, "Result");
+      if (GetBoolean("Result") != !value)
+      {
+         SetBoolean(!value, "Result");
 
-      OnValueChanged();
+         OnValueChanged();
+      }
    }
 }
 
