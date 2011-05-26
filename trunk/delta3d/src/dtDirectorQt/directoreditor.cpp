@@ -813,6 +813,12 @@ namespace dtDirector
       mUI.action_Thread_Browser->setChecked(visible);
    }
 
+   //////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::on_nodePalette_visibilityChanged(bool visible)
+   {
+      mUI.action_Node_Palette->setChecked(visible);
+   }
+
    ////////////////////////////////////////////////////////////////////////////////
    void DirectorEditor::on_graphTab_currentChanged(int index)
    {
@@ -1198,6 +1204,19 @@ namespace dtDirector
       libEdit.exec();
 
       RefreshNodeScenes();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::on_action_Node_Palette_triggered()
+   {
+      if (mUI.action_Node_Palette->isChecked())
+      {
+         mUI.nodePalette->show();
+      }
+      else
+      {
+         mUI.nodePalette->hide();
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////

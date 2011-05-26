@@ -351,6 +351,13 @@ namespace dtDirector
       void on_threadBrowser_visibilityChanged(bool visible);
 
       /**
+       * Event handler when the visibility of the node palette is changed.
+       *
+       * @param[in]  visible  True if the browser is visible.
+       */
+      void on_nodePalette_visibilityChanged(bool visible);
+
+      /**
       * Event handler when the current document tab has changed.
       *
       * @param[in]  index  The index of the new tab.
@@ -434,6 +441,11 @@ namespace dtDirector
        * Event handler when the manager libraries button is pressed.
        */
       void on_action_Manage_Libraries_triggered();
+
+      /**
+       * Event handler when the show node palette button is pressed.
+       */
+      void on_action_Node_Palette_triggered();
 
       /**
        * Event handler when the show property editor button is pressed.
