@@ -73,7 +73,7 @@ namespace dtDirector
        * Pastes the contents of the clipboard to a Director graph
        * at a given position.
        *
-       * @param[in]  parent       The parent Director Graph to copy to.
+       * @param[in]  graph        The parent Director Graph to copy to.
        * @param[in]  undoManager  The undo manager.
        * @param[in]  position     The top/left most position to paste nodes.
        * @param[in]  createLinks  If True, will create link nodes to bridge link
