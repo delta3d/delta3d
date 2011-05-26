@@ -194,7 +194,7 @@ namespace dtDirector
          return result;
       }
 
-      // First recurse through each child graph.
+      // Recurse through each child graph.
       int count = (int)graph->GetSubGraphs().size();
       for (int index = 0; index < count; ++index)
       {
@@ -263,9 +263,15 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    bool SearchBrowser::TestItem(dtDAL::PropertyContainer* container, const QString& searchText, QString& outDesc)
    {
-      if (!container || searchText.isEmpty())
+      if (!container)
       {
          return false;
+      }
+
+      // An empty search will retrieve all nodes.
+      if (searchText.isEmpty())
+      {
+         return true;
       }
 
       std::vector<dtDAL::ActorProperty*> propList;
