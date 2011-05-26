@@ -272,6 +272,15 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void EditorNotifier::OnValueChanged(Node* node)
    {
+      int editorCount = (int)mEditorList.size();
+      for (int editorIndex = 0; editorIndex < editorCount; ++editorIndex)
+      {
+         DirectorEditor* editor = mEditorList[editorIndex];
+         if (editor)
+         {
+            editor->RefreshNode(node);
+         }
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////
