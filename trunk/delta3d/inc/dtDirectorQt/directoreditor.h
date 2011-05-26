@@ -305,6 +305,14 @@ namespace dtDirector
        */
       void FocusGraph(DirectorGraph* graph);
 
+      /**
+       * Event handlers for debugging.
+       */
+      void OnBeginDebug();
+      void OnEndDebug();
+
+      void OnStepDebug();
+
    public slots:
 
       /**
@@ -334,6 +342,13 @@ namespace dtDirector
        * @param[in]  visible  True if the browser is visible.
        */
       void on_replayBrowser_visibilityChanged(bool visible);
+
+      /**
+       * Event handler when the visibility of the thread browser is changed.
+       *
+       * @param[in]  visible  True if the browser is visible.
+       */
+      void on_threadBrowser_visibilityChanged(bool visible);
 
       /**
       * Event handler when the current document tab has changed.

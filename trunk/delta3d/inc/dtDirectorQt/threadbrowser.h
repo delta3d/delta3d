@@ -39,10 +39,34 @@ namespace dtDirector
 {
    class DirectorEditor;
 
+   class DT_DIRECTOR_QT_EXPORT ThreadItem : public QListWidgetItem
+   {
+   public:
+
+      /**
+       * Constructor.
+       *
+       * @param[in]  editor  The editor.
+       * @param[in]  node    The node.
+       * @param[in]  parent  The parent.
+       */
+      ThreadItem(Node* node, QListWidget* parent);
+
+      /**
+       * Retrieves the active node.
+       */
+      Node* GetNode() {return mNode.get();}
+
+   private:
+
+      dtCore::ObserverPtr<Node>   mNode;
+   };
+
    /**
     * @class ThreadBrowser
     *
-    * @brief Browser tree for viewing Director Graphs.
+    * @brief Browser tree for viewing currently active threads
+    *        while debugging.
     */
    class DT_DIRECTOR_QT_EXPORT ThreadBrowser : public QDockWidget
    {

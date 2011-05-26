@@ -321,11 +321,11 @@
     <property name="title">
      <string>&amp;View</string>
     </property>
+    <addaction name="action_Search_Browser"/>
     <addaction name="action_Property_Editor"/>
     <addaction name="action_Graph_Browser"/>
     <addaction name="action_Replay_Browser"/>
     <addaction name="action_Thread_Browser"/>
-    <addaction name="action_Search_Browser"/>
     <addaction name="separator"/>
     <addaction name="action_Show_Links"/>
     <addaction name="action_Hide_Links"/>
@@ -747,7 +747,10 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Search Browser</string>
+    <string>&amp;Search Browser</string>
+   </property>
+   <property name="toolTip">
+    <string>Shows the Search Browser (Ctrl+F).</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+F</string>
@@ -818,7 +821,13 @@
     <bool>false</bool>
    </property>
    <property name="text">
-    <string>Thread Browser</string>
+    <string>&amp;Thread Browser</string>
+   </property>
+   <property name="toolTip">
+    <string>Shows the Thread Browser (Ctrl+T).</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+T</string>
    </property>
   </action>
  </widget>

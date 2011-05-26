@@ -74,6 +74,21 @@ namespace dtDirector
       virtual void OnValueChanged(Node* node);
 
       /**
+       * Event handler when debugging mode has begun.
+       */
+      virtual void OnBeginDebugging();
+
+      /**
+       * Event handler when a debugging step has begun.
+       */
+      virtual void OnEndDebugging();
+
+      /**
+       * Event handler when a debugging step has begun.
+       */
+      virtual void OnStepDebugging();
+
+      /**
        * Retrieves whether there is a break point for the given node.
        *
        * @param[in]  node  The node.
