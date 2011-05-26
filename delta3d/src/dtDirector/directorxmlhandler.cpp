@@ -322,13 +322,9 @@ namespace dtDirector
    }
 
    /////////////////////////////////////////////////////////////////
-#if XERCES_VERSION_MAJOR < 3
-   void DirectorXMLHandler::characters(const XMLCh* const chars, const unsigned int length)
-#else
-   void DirectorXMLHandler::characters(const XMLCh* const chars, const XMLSize_t length)
-#endif
+   void DirectorXMLHandler::CombinedCharacters(const XMLCh* const chars, size_t length)
    {
-      dtDAL::BaseXMLHandler::characters(chars, length);
+      dtDAL::BaseXMLHandler::CombinedCharacters(chars, length);
 
       xmlCharString& topEl = mElements.top();
       if (mInHeaders)

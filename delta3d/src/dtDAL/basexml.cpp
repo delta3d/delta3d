@@ -308,7 +308,9 @@ namespace dtDAL
    void BaseXMLWriter::AddCharacters(const xmlCharString& string)
    {
       mLastCharWasLF = false;
+      mFormatter.setEscapeFlags(XMLFormatter::StdEscapes);
       mFormatter << string.c_str();
+      mFormatter.setEscapeFlags(XMLFormatter::NoEscapes);
    }
 
    /////////////////////////////////////////////////////////////////
@@ -316,7 +318,9 @@ namespace dtDAL
    {
       mLastCharWasLF = false;
       XMLCh * stringX = XMLString::transcode(string.c_str());
+      mFormatter.setEscapeFlags(XMLFormatter::StdEscapes);
       mFormatter << stringX;
+      mFormatter.setEscapeFlags(XMLFormatter::NoEscapes);
       XMLString::release(&stringX);
    }
 

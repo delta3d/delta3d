@@ -91,9 +91,9 @@ public:
       mCurElement = dtUtil::XMLStringConverter(localname).ToString();
    }
 
-   virtual void characters(const XMLCh* const chars, const XMLSize_t length)
+   virtual void CombinedCharacters(const XMLCh* const chars, size_t length)
    {
-      BaseClass::characters(chars, length);
+      BaseClass::CombinedCharacters(chars, length);
 
       std::string text = dtUtil::XMLStringConverter(chars).ToString();
       dtUtil::Trim(text);

@@ -83,15 +83,10 @@ namespace dtDAL
          virtual void ElementEnded(const XMLCh* const uri, const XMLCh* const localname, const XMLCh* const qname);
 
          /**
-          * @see DocumentHandler#characters
+          * @see BaseXMLHandler::CombinedCharacters
           */
-#if XERCES_VERSION_MAJOR < 3
-         virtual void characters(const XMLCh* const chars, const unsigned int length);
-         virtual void ignorableWhitespace(const XMLCh* const, const unsigned int) {}
-#else
-         virtual void characters(const XMLCh* const chars, const XMLSize_t length);
-         virtual void ignorableWhitespace(const XMLCh* const, const XMLSize_t) {}
-#endif
+         virtual void CombinedCharacters(const XMLCh* const chars, size_t length);
+
          /**
           * Retrieves a list of missing libraries.
           */

@@ -427,7 +427,7 @@ namespace dtDAL
    {
       if (mData.empty())
       {
-         LOG_ERROR("Data stack is empty, can't end and element.");
+         LOG_ERROR("Data stack is empty, can't end an element.");
          return false;
       }
 
@@ -1908,7 +1908,8 @@ namespace dtDAL
    void ActorPropertySerializer::WriteString(const std::string& str) const
    {
       mWriter->BeginElement(MapXMLConstants::ACTOR_PROPERTY_STRING_ELEMENT);
-      mWriter->AddCharacters("<![CDATA[" + str + "]]>");
+      //mWriter->AddCharacters("<![CDATA[" + str + "]]>");
+      mWriter->AddCharacters(str);
       mWriter->EndElement();
    }
 }
