@@ -99,8 +99,14 @@ namespace dtDAL
       virtual void ignorableWhitespace(const XMLCh* const, const unsigned int) {}
 #else
       virtual void characters(const XMLCh* const chars, const XMLSize_t length);
-      virtual void ignorableWhitespace(const XMLCh* const, const XMLSize_t) {}
+      virtual void ignorableWhitespace(const XMLCh* const, const XMLSize_t);
 #endif
+
+      /**
+       * Because the sax parser may give a contiguous set of characters in multiple calls to characters, one should
+       * override this function instead of "characters" get all the data
+       */
+      virtual void CombinedCharacters(const XMLCh* const chars, size_t length) {}
 
       /**
        * @see DocumentHandler#processingInstruction
@@ -184,6 +190,8 @@ namespace dtDAL
       virtual std::string MakeErrorString(const xercesc::SAXParseException &exc);
 
       std::stack<xmlCharString> mElements;
+
+      xmlCharString mCombinedCharacters;
 
       int mErrorCount;
       int mFatalErrorCount;

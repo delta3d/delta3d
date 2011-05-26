@@ -377,13 +377,9 @@ namespace  dtDAL
    }
 
    /////////////////////////////////////////////////////////////////
-#if XERCES_VERSION_MAJOR < 3
-   void MapContentHandler::characters(const XMLCh* const chars, const unsigned int length)
-#else
-   void MapContentHandler::characters(const XMLCh* const chars, const XMLSize_t length)
-#endif
+   void MapContentHandler::CombinedCharacters(const XMLCh* const chars, size_t length)
    {
-      BaseXMLHandler::characters(chars, length);
+      BaseXMLHandler::CombinedCharacters(chars, length);
 
       xmlCharString& topEl = mElements.top();
       if (mInMap || mInPrefab)

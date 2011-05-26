@@ -140,6 +140,12 @@ namespace  dtDAL
             "Found element %s", dtUtil::XMLStringConverter(localname).c_str());
       }
 
+      if (!mCombinedCharacters.empty())
+      {
+         CombinedCharacters(mCombinedCharacters.c_str(), mCombinedCharacters.size());
+         mCombinedCharacters.clear();
+      }
+
       ElementStarted(uri, localname, qname, attrs);
 
       mElements.push(xmlCharString(localname));
@@ -185,6 +191,12 @@ namespace  dtDAL
             dtUtil::XMLStringConverter(lname).c_str(), dtUtil::XMLStringConverter(localname).c_str());
       }
 
+      if (!mCombinedCharacters.empty())
+      {
+         CombinedCharacters(mCombinedCharacters.c_str(), mCombinedCharacters.size());
+         mCombinedCharacters.clear();
+      }
+
       ElementEnded(uri, localname, qname);
 
       mElements.pop();
@@ -195,6 +207,19 @@ namespace  dtDAL
       const XMLCh* const localname,
       const XMLCh* const qname)
    {
+      mCombinedCharacters.clear();
+   }
+
+
+   /////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////
+#if XERCES_VERSION_MAJOR < 3
+   void BaseXMLHandler::ignorableWhitespace(const XMLCh* const chars, const unsigned int length)
+#else
+   void BaseXMLHandler::ignorableWhitespace(const XMLCh* const chars, const XMLSize_t length)
+#endif
+   {
+      characters(chars, length);
    }
 
    /////////////////////////////////////////////////////////////////
@@ -203,8 +228,11 @@ namespace  dtDAL
 #else
    void BaseXMLHandler::characters(const XMLCh* const chars, const XMLSize_t length)
 #endif
-{
+   {
+
       xmlCharString& topEl = mElements.top();
+
+      mCombinedCharacters.append(chars, length);
 
       if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
       {

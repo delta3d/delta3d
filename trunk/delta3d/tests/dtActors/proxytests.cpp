@@ -321,10 +321,11 @@ void ProxyTest::testProp(dtDAL::BaseActorObject& proxy, dtDAL::ActorProperty* pr
          proxy.GetProperty(prop->GetName(), prop1);
       }
 
-      prop1->SetValue("cache");
+      const std::string testVal("cache <No>");
+      prop1->SetValue(testVal);
       CPPUNIT_ASSERT_MESSAGE(name + " property on " + proxyTypeName
-                             + " should have value \"cache\", but it is: " + prop1->ToString(),
-                             prop1->GetValue() == "cache");
+                             + " should have value \"" + testVal +  "\", but it is: " + prop1->ToString(),
+                             prop1->GetValue() == testVal);
    }
    else if (prop->GetDataType() == DataType::BOOLEAN)
    {

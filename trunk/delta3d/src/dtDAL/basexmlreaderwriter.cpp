@@ -26,7 +26,7 @@
 #include <osgDB/FileNameUtils>
 #include <dtDAL/basexml.h>
 #include <dtDAL/basexmlhandler.h>
-#include <dtDAL/BaseXMLReaderWriter.h>
+#include <dtDAL/basexmlreaderwriter.h>
 #include <dtUtil/fileutils.h>
 
 

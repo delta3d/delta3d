@@ -905,7 +905,7 @@ void MapTests::TestMapSaveAndLoad()
 
    //dtDAL::ActorProperty* prop(NULL);
 
-   const std::string TEST_STRING("test123  !@#");
+   const std::string TEST_STRING("test123  !@# < hello > ");
    const bool TEST_BOOL(true);
    const float TEST_FLOAT(12345.12345f);
    const double TEST_DOUBLE(12345.54321);
