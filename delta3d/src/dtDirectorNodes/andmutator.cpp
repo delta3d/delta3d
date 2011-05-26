@@ -93,9 +93,12 @@ namespace dtDirector
          }
       }
 
-      SetBoolean(result, "Result");
+      if (GetBoolean("Result") != result)
+      {
+         SetBoolean(result, "Result");
 
-      OnValueChanged();
+         OnValueChanged();
+      }
    }
 }
 

@@ -70,10 +70,13 @@ namespace dtDirector
    {
       if (mPropertyIndex < (int)mValues.size())
       {
-         mValues[mPropertyIndex] = value;
-      }
+         if (mValues[mPropertyIndex] != value)
+         {
+            mValues[mPropertyIndex] = value;
 
-      ArrayValueNode::OnValueChanged();
+            ArrayValueNode::OnValueChanged();
+         }
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////

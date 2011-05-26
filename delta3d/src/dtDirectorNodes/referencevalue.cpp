@@ -84,8 +84,6 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    std::string ReferenceValue::GetValueLabel()
    {
-      UpdateReference();
-
       if (!mValues.empty() && !mValues[0].GetLinks().empty())
       {
          ValueNode* valueNode = dynamic_cast<ValueNode*>(mValues[0].GetLinks()[0]);
@@ -160,8 +158,6 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    dtDAL::ActorProperty* ReferenceValue::GetProperty(int index, ValueNode** outNode)
    {
-      //UpdateReference();
-
       if (!mValues.empty() && !mValues[0].GetLinks().empty())
       {
          return mValues[0].GetLinks()[0]->GetProperty(index, outNode);
@@ -235,10 +231,13 @@ namespace dtDirector
    {
       if (value != GetID().ToString())
       {
-         mReference = value;
+         if (mReference != value)
+         {
+            mReference = value;
 
-         // Now attempt to find the actual value and link with it.
-         UpdateReference();
+            // Now attempt to find the actual value and link with it.
+            UpdateReference();
+         }
       }
    }
 

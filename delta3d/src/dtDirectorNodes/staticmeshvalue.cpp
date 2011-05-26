@@ -60,8 +60,11 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void StaticMeshValue::SetValue(const dtDAL::ResourceDescriptor& value)
    {
-      mValue = value;
-      ValueNode::OnValueChanged();
+      if (mValue != value)
+      {
+         mValue = value;
+         ValueNode::OnValueChanged();
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////

@@ -62,8 +62,11 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void FloatValue::SetValue(float value)
    {
-      mValue = value;
-      ValueNode::OnValueChanged();
+      if (mValue != value)
+      {
+         mValue = value;
+         ValueNode::OnValueChanged();
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////

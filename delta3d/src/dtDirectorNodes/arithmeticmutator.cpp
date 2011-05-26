@@ -229,23 +229,41 @@ namespace dtDirector
       case dtDAL::DataType::INT_ID:
       case dtDAL::DataType::FLOAT_ID:
       case dtDAL::DataType::DOUBLE_ID:
-         SetDouble(result.x(), "Result");
+         if (GetDouble("Result") != result.x())
+         {
+            SetDouble(result.x(), "Result");
+
+            OnValueChanged();
+         }
          break;
 
       case dtDAL::DataType::VEC2F_ID:
-         SetVec2(osg::Vec2(result.x(), result.y()), "Result");
+         if (GetVec2("Result") != osg::Vec2(result.x(), result.y()))
+         {
+            SetVec2(osg::Vec2(result.x(), result.y()), "Result");
+
+            OnValueChanged();
+         }
          break;
 
       case dtDAL::DataType::VEC3F_ID:
-         SetVec3(osg::Vec3(result.x(), result.y(), result.z()), "Result");
+         if (GetVec3("Result") != osg::Vec3(result.x(), result.y(), result.z()))
+         {
+            SetVec3(osg::Vec3(result.x(), result.y(), result.z()), "Result");
+
+            OnValueChanged();
+         }
          break;
 
       case dtDAL::DataType::VEC4F_ID:
-         SetVec4(result, "Result");
+         if (GetVec4("Result") != result)
+         {
+            SetVec4(result, "Result");
+
+            OnValueChanged();
+         }
          break;
       }
-
-      OnValueChanged();
    }
 
    //////////////////////////////////////////////////////////////////////////

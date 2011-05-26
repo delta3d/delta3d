@@ -63,8 +63,11 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void DoubleValue::SetValue(double value)
    {
-      mValue = value;
-      ValueNode::OnValueChanged();
+      if (mValue != value)
+      {
+         mValue = value;
+         ValueNode::OnValueChanged();
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////

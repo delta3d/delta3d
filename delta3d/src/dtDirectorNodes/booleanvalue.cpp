@@ -63,8 +63,11 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void BooleanValue::SetValue(bool value)
    {
-      mValue = value;
-      ValueNode::OnValueChanged();
+      if (mValue != value)
+      {
+         mValue = value;
+         ValueNode::OnValueChanged();
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////

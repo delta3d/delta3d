@@ -103,8 +103,11 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void RandomFloatValue::SetMinValue(float value)
    {
-      mMinValue = value;
-      ValueNode::OnValueChanged();
+      if (mMinValue != value)
+      {
+         mMinValue = value;
+         ValueNode::OnValueChanged();
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -117,8 +120,11 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void RandomFloatValue::SetMaxValue(float value)
    {
-      mMaxValue = value;
-      ValueNode::OnValueChanged();
+      if (mMaxValue != value)
+      {
+         mMaxValue = value;
+         ValueNode::OnValueChanged();
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////

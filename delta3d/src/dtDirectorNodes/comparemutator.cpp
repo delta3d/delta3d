@@ -94,9 +94,12 @@ namespace dtDirector
       {
          bool result = Compare(GetString("A"), GetString("B"));
 
-         SetBoolean(result, "Result");
+         if (GetBoolean("Result") != result)
+         {
+            SetBoolean(result, "Result");
 
-         OnValueChanged();
+            OnValueChanged();
+         }
          return;
       }
 
@@ -174,9 +177,12 @@ namespace dtDirector
          result = Compare(left, right);
       }
 
-      SetBoolean(result, "Result");
+      if (GetBoolean("Result") != result)
+      {
+         SetBoolean(result, "Result");
 
-      OnValueChanged();
+         OnValueChanged();
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////

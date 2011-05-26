@@ -194,11 +194,6 @@ namespace dtDirector
       }
 
       Director* director = GetDirector();
-      while (director && director->GetParent())
-      {
-         director = director->GetParent();
-      }
-
       if (director && director->GetNotifier())
       {
          director->GetNotifier()->OnValueChanged(this);
