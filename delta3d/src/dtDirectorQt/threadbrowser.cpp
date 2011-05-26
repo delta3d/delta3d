@@ -24,6 +24,7 @@
 #include <dtDirectorQt/editorscene.h>
 #include <dtDirectorQt/propertyeditor.h>
 #include <dtDirectorQt/nodeitem.h>
+#include <dtDirectorQt/editornotifier.h>
 
 #include <dtUtil/stringutils.h>
 
@@ -37,6 +38,33 @@
 namespace dtDirector
 {
    //////////////////////////////////////////////////////////////////////////
+   ThreadItem::ThreadItem(Node* node, QListWidget* parent)
+      : QListWidgetItem(parent)
+      , mNode(node)
+   {
+      std::string text = mNode->GetTypeName();
+
+      if (!mNode->GetName().empty())
+      {
+         text += "::";
+         text += mNode->GetName();
+      }
+
+      if (!mNode->GetComment().empty())
+      {
+         text += " (";
+         text += mNode->GetComment();
+         text += ")";
+      }
+
+      setText(text.c_str());
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   //////////////////////////////////////////////////////////////////////////
+   //////////////////////////////////////////////////////////////////////////
+
+   //////////////////////////////////////////////////////////////////////////
    ThreadBrowser::ThreadBrowser(QMainWindow* parent)
       : QDockWidget(parent)
       , mGroupBox(NULL)
@@ -48,7 +76,7 @@ namespace dtDirector
       QGridLayout* mainAreaLayout = new QGridLayout(mainAreaWidget);
       setWidget(mainAreaWidget);
 
-      mGroupBox = new QGroupBox("Replay Threads", mainAreaWidget);
+      mGroupBox = new QGroupBox("Active Nodes", mainAreaWidget);
       mGroupBox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
       mainAreaLayout->addWidget(mGroupBox, 0, 0);
       QGridLayout* innerLayout = new QGridLayout(mGroupBox);
@@ -72,14 +100,23 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void ThreadBrowser::BuildThreadList()
    {
+      mThreadList->clear();
+
       if (!mEditor)
       {
          return;
       }
 
-      mThreadList->blockSignals(true);
+      dtDirector::EditorNotifier* notifier =
+         dynamic_cast<dtDirector::EditorNotifier*>(
+         mEditor->GetDirector()->GetNotifier());
 
-      mThreadList->clear();
+      if (!notifier)
+      {
+         return;
+      }
+
+      mThreadList->blockSignals(true);
 
       Director* director = mEditor->GetDirector();
       if (!director) return;
@@ -90,20 +127,23 @@ namespace dtDirector
          topDirector = director->GetParent();
       }
 
-      //int threadCount = (int)threads.size();
-      //for (int threadIndex = 0; threadIndex < threadCount; threadIndex++)
-      //{
-      //   Director::RecordThreadData* thread = threads[threadIndex];
+      const std::map<Node*, dtDirector::EditorNotifier::GlowData>& threads =
+         notifier->GetGlowData();
 
-      //   TestThreadGraph(mEditor->GetPropertyEditor()->GetScene()->GetGraph(), thread);
-      //}
-
-      //// If there are any threads to return back to, add the back option.
-      //if (mNodePath.size() > 1)
-      //{
-      //   new ReplayThreadItem(mEditor, NULL, NULL, NULL, 0, mThreadList);
-      //   new ReplayThreadItem(NULL, NULL, NULL, NULL, 0, mThreadList);
-      //}
+      std::map<Node*, dtDirector::EditorNotifier::GlowData>::const_iterator iter;
+      for (iter = threads.begin(); iter != threads.end(); ++iter)
+      {
+         const dtDirector::EditorNotifier::GlowData& data = iter->second;
+         if (data.node.valid() && data.glow >= 1.0f)
+         {
+            // First find out if the node exists in the current script.
+            Node* testNode = mEditor->GetDirector()->GetNode(data.node->GetID());
+            if (testNode == data.node.get())
+            {
+               new ThreadItem(data.node.get(), mThreadList);
+            }
+         }
+      }
 
       mThreadList->blockSignals(false);
    }
@@ -111,84 +151,20 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void ThreadBrowser::OnItemChanged(QListWidgetItem* current, QListWidgetItem* previous)
    {
-      //ReplayThreadItem* item = dynamic_cast<ReplayThreadItem*>(current);
-      //if (item && item->IsValid())
-      //{
-      //   InputLink* input = NULL;
-      //   Node* node = mEditor->GetDirector()->GetNode(item->GetNode()->nodeID);
-      //   if (node)
-      //   {
-      //      input = node->GetInputLink(item->GetNode()->input);
-      //   }
-
-      //   mEditor->SetReplayNode(item->GetNode(), input, item->GetOutput());
-      //}
-      //else if (item && item->IsBackOption() && mNodePath.size() > 1)
-      //{
-      //   ThreadPathData curNode = mNodePath.top();
-      //   mNodePath.pop();
-
-      //   Node* node = mEditor->GetDirector()->GetNode(curNode.node->nodeID);
-      //   if (node)
-      //   {
-      //      InputLink* input = node->GetInputLink(curNode.node->input);
-      //      OutputLink* output = curNode.output;
-
-      //      mEditor->SetReplayNode(mNodePath.top().node, input, output);
-      //   }
-
-      //   mNodePath.push(curNode);
-      //}
-      //else
-      //{
-      //   mEditor->SetReplayNode();
-      //}
-      //mEditor->GetPropertyEditor()->GetScene()->Refresh();
    }
 
    //////////////////////////////////////////////////////////////////////////
    void ThreadBrowser::OnItemDoubleClicked(QListWidgetItem* current)
    {
-      //ReplayThreadItem* item = dynamic_cast<ReplayThreadItem*>(current);
-      //if (item)
-      //{
-      //   if (item->IsValid() || item->IsBackOption())
-      //   {
-      //      mEditor->SetReplayNode();
-
-      //      mCurrentNode.node = NULL;
-      //      if (item->IsValid())
-      //      {
-      //         mCurrentNode.node   = item->GetNode();
-      //         mCurrentNode.output = item->GetOutput();
-
-      //         mNodePath.push(mCurrentNode);
-      //      }
-      //      else if (mNodePath.size() > 1)
-      //      {
-      //         mNodePath.pop();
-
-      //         mCurrentNode = mNodePath.top();
-      //      }
-
-      //      if (mCurrentNode.node)
-      //      {
-      //         Node* node = mEditor->GetDirector()->GetNode(mCurrentNode.node->nodeID);
-      //         if (node)
-      //         {
-      //            mEditor->GetPropertyEditor()->GetScene()->SetGraph(node->GetGraph());
-      //            NodeItem* nodeItem = mEditor->GetPropertyEditor()->GetScene()->GetNodeItem(node->GetID(), true);
-      //            if (nodeItem)
-      //            {
-      //               nodeItem->setSelected(true);
-      //               mEditor->GetPropertyEditor()->GetScene()->CenterSelection();
-      //            }
-      //         }
-      //      }
-
-      //      mCurrentNode.node = NULL;
-      //   }
-      //}
+      ThreadItem* item = dynamic_cast<ThreadItem*>(current);
+      if (item)
+      {
+         Node* node = item->GetNode();
+         if (node)
+         {
+            mEditor->FocusNode(node);
+         }
+      }
    }
 }
 

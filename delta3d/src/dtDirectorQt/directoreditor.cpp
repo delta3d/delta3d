@@ -506,6 +506,14 @@ namespace dtDirector
          mUI.action_New->setEnabled(false);
          mUI.action_Load->setEnabled(false);
 
+         // If we have just entered debug mode, make sure
+         // we show the thread browser.
+         if (mDirector->IsDebugging() &&
+            mUI.actionPause->isEnabled())
+         {
+            mUI.threadBrowser->show();
+         }
+
          mUI.menuDebug->setEnabled(true);
          mUI.actionPause->setEnabled(!mDirector->IsDebugging());
          mUI.actionContinue->setEnabled(mDirector->IsDebugging());
@@ -747,6 +755,28 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::OnBeginDebug()
+   {
+      mUI.action_Thread_Browser->setEnabled(true);
+
+      mUI.threadBrowser->show();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::OnEndDebug()
+   {
+      mUI.action_Thread_Browser->setEnabled(false);
+
+      mUI.threadBrowser->hide();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::OnStepDebug()
+   {
+      mUI.threadBrowser->BuildThreadList();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    void DirectorEditor::on_propertyEditor_visibilityChanged(bool visible)
    {
       mUI.action_Property_Editor->setChecked(visible);
@@ -775,6 +805,12 @@ namespace dtDirector
 
       // Always refresh all the scenes.
       Refresh();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::on_threadBrowser_visibilityChanged(bool visible)
+   {
+      mUI.action_Thread_Browser->setChecked(visible);
    }
 
    ////////////////////////////////////////////////////////////////////////////////

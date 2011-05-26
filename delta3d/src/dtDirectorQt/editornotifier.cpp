@@ -274,6 +274,48 @@ namespace dtDirector
    {
    }
 
+   //////////////////////////////////////////////////////////////////////////
+   void EditorNotifier::OnBeginDebugging()
+   {
+      int editorCount = (int)mEditorList.size();
+      for (int editorIndex = 0; editorIndex < editorCount; ++editorIndex)
+      {
+         DirectorEditor* editor = mEditorList[editorIndex];
+         if (editor)
+         {
+            editor->OnBeginDebug();
+         }
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void EditorNotifier::OnEndDebugging()
+   {
+      int editorCount = (int)mEditorList.size();
+      for (int editorIndex = 0; editorIndex < editorCount; ++editorIndex)
+      {
+         DirectorEditor* editor = mEditorList[editorIndex];
+         if (editor)
+         {
+            editor->OnEndDebug();
+         }
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void EditorNotifier::OnStepDebugging()
+   {
+      int editorCount = (int)mEditorList.size();
+      for (int editorIndex = 0; editorIndex < editorCount; ++editorIndex)
+      {
+         DirectorEditor* editor = mEditorList[editorIndex];
+         if (editor)
+         {
+            editor->OnStepDebug();
+         }
+      }
+   }
+
    ////////////////////////////////////////////////////////////////////////////////
    bool EditorNotifier::ShouldBreak(Node* node)
    {
