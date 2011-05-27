@@ -122,7 +122,7 @@ namespace dtDirector
       if (!director) return;
 
       Director* topDirector = director;
-      while (director->GetParent())
+      while (topDirector->GetParent())
       {
          topDirector = director->GetParent();
       }
