@@ -1305,6 +1305,7 @@ namespace dtDirector
       if (notifier)
       {
          notifier->ToggleBreakPoint(mNode.get());
+         mScene->GetEditor()->RefreshNode(mNode.get());
       }
    }
 
