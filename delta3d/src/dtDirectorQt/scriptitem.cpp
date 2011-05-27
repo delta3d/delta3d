@@ -258,6 +258,11 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    bool ScriptItem::HasNode(Node* node)
    {
+      if (node == GetNode())
+      {
+         return true;
+      }
+
       ReferenceScriptAction* refScriptNode =
          dynamic_cast<ReferenceScriptAction*>(GetNode());
 
