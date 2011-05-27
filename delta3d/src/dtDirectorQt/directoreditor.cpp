@@ -760,6 +760,7 @@ namespace dtDirector
       mUI.action_Thread_Browser->setEnabled(true);
 
       mUI.threadBrowser->show();
+      mUI.threadBrowser->BuildThreadList();
    }
 
    //////////////////////////////////////////////////////////////////////////
