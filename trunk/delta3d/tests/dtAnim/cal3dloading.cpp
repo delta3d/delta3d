@@ -443,7 +443,7 @@ void CAL3DLoadingTests::CorrectMorphAnimationData()
                         11.3333, morph->getDuration(), 0.0001f);
 
    CPPUNIT_ASSERT_EQUAL_MESSAGE("CalCoreAnimatedMorph didn't have the correct number of tracks.",
-      unsigned (9), morph->getListCoreTrack().size());
+      size_t(9), morph->getListCoreTrack().size());
 
    const CalCoreMorphTrack* track = morph->getCoreTrack("aah_Head.Exclusive");
    CPPUNIT_ASSERT_MESSAGE("CalCoreAnimatedMorph didn't return back the correct CalCoreMorphTrack.",
