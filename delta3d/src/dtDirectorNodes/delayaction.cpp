@@ -33,7 +33,6 @@ namespace dtDirector
       : ActionNode()
       , mDelay(1.0f)
       , mElapsedTime(0.0f)
-      , mGoalTime(0.0f)
       , mIsActive(false)
    {
       AddAuthor("Jeff P. Houde");
@@ -71,6 +70,12 @@ namespace dtDirector
          "The time delay (in seconds).");
       AddProperty(delayProp);
 
+      dtDAL::FloatActorProperty* elapsedTimeProp = new dtDAL::FloatActorProperty(
+         "Elapsed Time", "Elapsed Time",
+         dtDAL::FloatActorProperty::SetFuncType(this, &DelayAction::SetElapsedTime),
+         dtDAL::FloatActorProperty::GetFuncType(this, &DelayAction::GetElapsedTime),
+         "The elapsed time (in seconds).");
+
       dtDAL::BooleanActorProperty* simTimeProp = new dtDAL::BooleanActorProperty(
          "UseSimTime", "Use Sim Time",
          dtDAL::BooleanActorProperty::SetFuncType(this, &DelayAction::SetUseSimTime),
@@ -81,60 +86,70 @@ namespace dtDirector
       // This will expose the properties in the editor and allow
       // them to be connected to ValueNodes.
       mValues.push_back(ValueLink(this, delayProp, false, false, false));
+      mValues.push_back(ValueLink(this, elapsedTimeProp, true, false, true, false));
       mValues.push_back(ValueLink(this, simTimeProp, false, false, true, false));
    }
 
    //////////////////////////////////////////////////////////////////////////
    bool DelayAction::Update(float simDelta, float delta, int input, bool firstUpdate)
    {
-      float elapsedTime = simDelta;
-      if (!mUseSimTime) elapsedTime = delta;
+      float deltaTime = simDelta;
+      if (!mUseSimTime) deltaTime = delta;
 
       switch (input)
       {
       case INPUT_START:
-         // Start this node only once to avoid time-stepping to be multiplied!
-         if (mIsActive && firstUpdate)
          {
-            return false;
-         }
-
-         // We need to check the current active status because this node
-         // will be updated multiple times using this same index until
-         // the desired time has elapsed.  And we only want to trigger
-         // the "Out" output once at the beginning.
-         if (!mIsActive)
-         {
-            if (firstUpdate)
-            {
-               mIsActive = true;
-               mGoalTime = GetFloat("Delay");
-
-               // Call the parent so the default "Out" link is triggered.
-               ActionNode::Update(simDelta, delta, input, firstUpdate);
-            }
-            // If this is not the first update for this node, then
-            // we must be paused or stopped, so we want to stop this update.
-            else
+            // Start this node only once to avoid time-stepping to be multiplied!
+            if (mIsActive && firstUpdate)
             {
                return false;
             }
+
+            // We need to check the current active status because this node
+            // will be updated multiple times using this same index until
+            // the desired time has elapsed.  And we only want to trigger
+            // the "Out" output once at the beginning.
+            if (!mIsActive)
+            {
+               if (firstUpdate)
+               {
+                  mIsActive = true;
+                  SetFloat(0.0f, "Elapsed Time");
+
+                  // Call the parent so the default "Out" link is triggered.
+                  ActionNode::Update(simDelta, delta, input, firstUpdate);
+               }
+               // If this is not the first update for this node, then
+               // we must be paused or stopped, so we want to stop this update.
+               else
+               {
+                  return false;
+               }
+            }
+
+            float elapsedTime = GetFloat("Elapsed Time");
+            float goalTime = GetFloat("Delay");
+
+            // Test if the desired time has elapsed.
+            if (elapsedTime >= goalTime)
+            {
+               // Reset the time and trigger the "Time Elapsed" output.
+               SetFloat(0.0f, "Elapsed Time");
+               OutputLink* link = GetOutputLink("Time Elapsed");
+               if (link) link->Activate();
+
+               mIsActive = false;
+            }
+            else
+            {
+               // Continue the timer (force at least one update before this node
+               // can be completed to ensure that it will break any chain).
+               elapsedTime += deltaTime;
+
+               SetFloat(elapsedTime, "Elapsed Time");
+            }
          }
-
-         // Test if the desired time has elapsed.
-         if (mElapsedTime >= mGoalTime)
-         {
-            // Reset the time and trigger the "Time Elapsed" output.
-            mElapsedTime = 0.0f;
-            OutputLink* link = GetOutputLink("Time Elapsed");
-            if (link) link->Activate();
-
-            mIsActive = false;
-         }
-
-         // Continue the timer (force at least one update before this node
-         // can be completed to ensure that it will break any chain).
-         mElapsedTime += elapsedTime;
 
          // return true to keep this node active in the current thread.
          return mIsActive;
@@ -143,7 +158,7 @@ namespace dtDirector
          // Reset the elapsed time and deactivate it.
          if (mIsActive)
          {
-            mElapsedTime = 0.0f;
+            SetFloat(0.0f, "Elapsed Time");
             mIsActive = false;
          }
          return false;
@@ -194,6 +209,18 @@ namespace dtDirector
    float DelayAction::GetDelay()
    {
       return mDelay;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void DelayAction::SetElapsedTime(float value)
+   {
+      mElapsedTime = value;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   float DelayAction::GetElapsedTime()
+   {
+      return mElapsedTime;
    }
 
    //////////////////////////////////////////////////////////////////////////

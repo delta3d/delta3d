@@ -97,6 +97,9 @@ namespace dtDirector
       void SetDelay(float value);
       float GetDelay();
 
+      void SetElapsedTime(float value);
+      float GetElapsedTime();
+
       void SetUseSimTime(bool value);
       bool GetUseSimTime();
 
@@ -111,7 +114,6 @@ namespace dtDirector
 
       float mDelay;
       float mElapsedTime;
-      float mGoalTime;
       bool  mUseSimTime;
 
       bool  mIsActive;
