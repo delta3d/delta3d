@@ -26,6 +26,8 @@
 #include <dtDirectorQt/nodeitem.h>
 #include <dtDirectorQt/editornotifier.h>
 
+#include <dtDirectorNodes/referencescriptaction.h>
+
 #include <dtUtil/stringutils.h>
 
 #include <QtGui/QWidget>
@@ -34,6 +36,7 @@
 #include <QtGui/QListWidget>
 #include <QtGui/QGraphicsItem>
 
+#include <vector>
 
 namespace dtDirector
 {
@@ -121,14 +124,10 @@ namespace dtDirector
       Director* director = mEditor->GetDirector();
       if (!director) return;
 
-      Director* topDirector = director;
-      while (topDirector->GetParent())
-      {
-         topDirector = director->GetParent();
-      }
-
       const std::map<Node*, dtDirector::EditorNotifier::GlowData>& threads =
          notifier->GetGlowData();
+
+      std::map<Node*, bool> addedNodeMap;
 
       std::map<Node*, dtDirector::EditorNotifier::GlowData>::const_iterator iter;
       for (iter = threads.begin(); iter != threads.end(); ++iter)
@@ -138,9 +137,43 @@ namespace dtDirector
          {
             // First find out if the node exists in the current script.
             Node* testNode = mEditor->GetDirector()->GetNode(data.node->GetID());
+
             if (testNode == data.node.get())
             {
-               new ThreadItem(data.node.get(), mThreadList);
+               if (addedNodeMap.find(testNode) == addedNodeMap.end())
+               {
+                  addedNodeMap[testNode] = true;
+                  new ThreadItem(testNode, mThreadList);
+               }
+            }
+            // If the node does not directly exists within this script,
+            // try looking at reference scripts.
+            else
+            {
+               std::vector<Node*> nodes;
+               mEditor->GetDirector()->GetNodes("Reference Script", "Core", nodes);
+               int count = (int)nodes.size();
+               for (int index = 0; index < count; ++index)
+               {
+                  ReferenceScriptAction* refAction =
+                     dynamic_cast<ReferenceScriptAction*>(nodes[index]);
+                  if (refAction)
+                  {
+                     Director* script = refAction->GetDirectorScript();
+                     if (script)
+                     {
+                        testNode = script->GetNode(data.node->GetID());
+                        if (testNode == data.node.get())
+                        {
+                           if (addedNodeMap.find(refAction) == addedNodeMap.end())
+                           {
+                              addedNodeMap[refAction] = true;
+                              new ThreadItem(refAction, mThreadList);
+                           }
+                        }
+                     }
+                  }
+               }
             }
          }
       }
