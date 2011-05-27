@@ -37,6 +37,7 @@
 #include <QtCore/QObject>
 #include <QtGui/QPalette>
 #include <QtGui/QPushButton>
+#include <QtGui/QToolButton>
 #include <QtGui/QSpinBox>
 #include <QtGui/QWidget>
 #include <vector>
@@ -202,12 +203,43 @@ namespace dtQt
          : QPushButton(name, parent)
          , mControl(newControl)
       {
+         setFlat(true);
       }
 
       /**
        * Destructor
        */
       virtual ~SubQPushButton()
+      {
+      }
+
+   private:
+      DynamicAbstractControl* mControl;
+   };
+
+   /**
+    * Subclass of QToolButton. Destructor calls the handleSubEditDestroy().
+    * If you use this callback to clear out any handles to this control, then
+    * it will be safe to hold onto a control created in the createEditor() method.
+    */
+   class DT_QT_EXPORT SubQToolButton : public QToolButton
+   {
+      Q_OBJECT
+
+   public:
+      /**
+       * Constructor
+       */
+      SubQToolButton(QWidget* parent, DynamicAbstractControl* newControl)
+         : QToolButton(parent)
+         , mControl(newControl)
+      {
+      }
+
+      /**
+       * Destructor
+       */
+      virtual ~SubQToolButton()
       {
       }
 
