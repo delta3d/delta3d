@@ -114,7 +114,7 @@ namespace dtCore
    {
       osg::Matrix rotation;
       dtUtil::MatrixUtil::HprToMatrix(rotation, hpr);
-      SetRotation( rotation );
+      SetRotation(rotation);
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -122,7 +122,7 @@ namespace dtCore
    {
       osg::Vec3d trans;
       trans = mTransform.getTrans();
-      mTransform.set( rotation );
+      mTransform.set(rotation);
       mTransform.setTrans(trans);
    }
 
@@ -130,11 +130,11 @@ namespace dtCore
    void Transform::Get(float& tx, float& ty, float& tz, float& h, float& p, float& r) const
    {
       GetTranslation(tx, ty, tz);
-      GetRotation(h, p, r );
+      GetRotation(h, p, r);
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void Transform::Get( osg::Vec3& xyz, osg::Matrix& rotation) const
+   void Transform::Get(osg::Vec3& xyz, osg::Matrix& rotation) const
    {
       GetTranslation(xyz);
       GetRotation(rotation);
@@ -350,7 +350,7 @@ namespace dtCore
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   Transform & Transform::operator=(const Transform & rhs)
+   Transform& Transform::operator=(const Transform& rhs)
    {
       if (this == &rhs) return *this;
 
@@ -360,7 +360,7 @@ namespace dtCore
    }
 
    /////////////////////////////////////////////////////////////////////////////////////////////
-   bool Transform::operator==(const Transform & rhs)
+   bool Transform::operator==(const Transform& rhs)
    {
       if (this == &rhs) return true;
 
