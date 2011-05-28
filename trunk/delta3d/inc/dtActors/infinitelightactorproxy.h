@@ -28,12 +28,12 @@
 
 #include <osg/Vec3>
 
-namespace dtActors 
+namespace dtActors
 {
     /**
      * This proxy wraps the Infinite light Delta3D object.
      */
-    class DT_PLUGIN_EXPORT InfiniteLightActorProxy : public BaseLightActorProxy 
+    class DT_PLUGIN_EXPORT InfiniteLightActorProxy : public BaseLightActorProxy
     {
     public:
 

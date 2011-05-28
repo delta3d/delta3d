@@ -804,6 +804,12 @@ Light* dtCore::Environment::GetSkyLight() const
    return mSkyLight.get();
 }
 
+////////////////////////////////////////////////////////////////////////////////
+void dtCore::Environment::SetSkyLight(Light* newSkyLight)
+{
+   mSkyLight = newSkyLight;
+}
+
 //////////////////////////////////////////////////////////////////////////
 EnvEffect* dtCore::Environment::GetEffect(int idx) const
 {
@@ -942,4 +948,7 @@ const osg::Node* dtCore::Environment::GetOSGNode() const
 {
    return mNode.get();
 }
+
+
+
 ////////////////////////////////////////////////////////////////////////////////

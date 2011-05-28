@@ -207,6 +207,8 @@ namespace dtCore
         */
       Light* GetSkyLight() const;
 
+      void SetSkyLight(Light* newSkyLight);
+
       //Signal fired when the wind changes
       sigslot::signal2<const osg::Vec3&, float> WindChangedSignal;
 
