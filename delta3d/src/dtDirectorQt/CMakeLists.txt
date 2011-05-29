@@ -107,6 +107,8 @@ SOURCE_GROUP("Auto-Generated" FILES ${UI_SOURCES})
 SOURCE_GROUP("UI Files" FILES ${QT_UI_SOURCES})
 ##########################################################
 
+ADD_PRECOMPILED_HEADER(${LIB_NAME} prefix/dtdirectorqtprefix.h prefix/dtdirectorqtprefix.cpp LIB_SOURCES)
+
 ADD_LIBRARY(${LIB_NAME} SHARED
     ${LIB_PUBLIC_HEADERS}
     ${LIB_SOURCES}

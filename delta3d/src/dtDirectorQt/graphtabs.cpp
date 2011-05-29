@@ -18,7 +18,7 @@
  *
  * Author: Jeff P. Houde
  */
-
+#include <prefix/dtdirectorqtprefix.h>
 #include <dtDirectorQt/graphtabs.h>
 #include <dtDirectorQt/directoreditor.h>
 #include <dtDirectorQt/undomanager.h>

@@ -18,7 +18,7 @@
  *
  * Author: Jeff P. Houde
  */
-
+#include <prefix/dtdirectorqtprefix.h>
 #include <dtDirectorQt/libraryeditor.h>
 #include <dtDirectorQt/directoreditor.h>
 

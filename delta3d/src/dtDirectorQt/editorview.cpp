@@ -18,7 +18,7 @@
  *
  * Author: Jeff P. Houde
  */
-
+#include <prefix/dtdirectorqtprefix.h>
 #include <dtDirectorQt/editorview.h>
 #include <dtDirectorQt/editorscene.h>
 

@@ -18,7 +18,7 @@
  *
  * Author: Jeff P. Houde
  */
-
+#include <prefix/dtdirectorqtprefix.h>
 #include <dtDirectorQt/undomultipleevent.h>
 
 namespace dtDirector

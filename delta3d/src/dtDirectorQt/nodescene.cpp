@@ -18,7 +18,7 @@
  *
  * Author: Eric R. Heine
  */
-
+#include <prefix/dtdirectorqtprefix.h>
 #include <dtDirectorQt/nodescene.h>
 
 #include <dtDirector/directorgraph.h>
