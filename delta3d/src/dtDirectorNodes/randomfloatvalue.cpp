@@ -18,7 +18,7 @@
  *
  * Author: Jeff P. Houde
  */
-
+#include <prefix/dtdirectornodesprefix.h>
 #include <dtDirectorNodes/randomfloatvalue.h>
 
 #include <dtDAL/floatactorproperty.h>

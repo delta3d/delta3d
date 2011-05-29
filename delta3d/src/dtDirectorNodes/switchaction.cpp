@@ -18,7 +18,7 @@
  *
  * Author: Eric R. Heine
  */
-
+#include <prefix/dtdirectornodesprefix.h>
 #include <dtDirectorNodes/switchaction.h>
 
 #include <dtDAL/booleanactorproperty.h>

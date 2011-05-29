@@ -18,7 +18,7 @@
  *
  * Author: Jeff P. Houde
  */
-
+#include <prefix/dtdirectornodesprefix.h>
 #include <dtDirectorNodes/vec2arrayvalue.h>
 
 #include <dtDAL/vectoractorproperties.h>

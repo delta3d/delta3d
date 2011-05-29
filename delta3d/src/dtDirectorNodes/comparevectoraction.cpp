@@ -18,7 +18,7 @@
  *
  * Author: Jeff P. Houde
  */
-
+#include <prefix/dtdirectornodesprefix.h>
 #include <dtDirectorNodes/comparevectoraction.h>
 
 #include <dtDAL/floatactorproperty.h>

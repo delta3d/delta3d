@@ -18,7 +18,7 @@
  *
  * Author: Jeff P. Houde
  */
-
+#include <prefix/dtdirectornodesprefix.h>
 #include <dtDirectorNodes/getactorpropertyaction.h>
 
 #include <dtDAL/actoridactorproperty.h>

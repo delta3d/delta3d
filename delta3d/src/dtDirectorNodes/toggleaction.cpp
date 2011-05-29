@@ -18,7 +18,7 @@
  *
  * Author: MG
  */
-
+#include <prefix/dtdirectornodesprefix.h>
 #include <dtDirectorNodes/toggleaction.h>
 
 #include <dtCore/transform.h>
