@@ -18,7 +18,7 @@
  *
  * Author: Jeff P. Houde
  */
-
+#include <prefix/dtdirectornodesprefix.h>
 #include <dtDirectorNodes/lerpactorscaleaction.h>
 
 #include <dtCore/object.h>

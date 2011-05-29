@@ -18,7 +18,7 @@
  *
  * Author: Jeff P. Houde
  */
-
+#include <prefix/dtdirectornodesprefix.h>
 #include <dtDirector/colors.h>
 #include <dtDirectorNodes/booleanvalue.h>
 

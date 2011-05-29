@@ -153,6 +153,8 @@ SET(LIB_SOURCES ${SOURCE_PATH}/actorarrayvalue.cpp
 
 INCLUDE_DIRECTORIES(${CAL3D_INCLUDE_DIR})
 
+ADD_PRECOMPILED_HEADER(${LIB_NAME} prefix/dtdirectornodesprefix.h prefix/dtdirectornodesprefix.cpp LIB_SOURCES)
+
 ADD_LIBRARY(${LIB_NAME} SHARED
             ${LIB_PUBLIC_HEADERS}
             ${LIB_SOURCES}

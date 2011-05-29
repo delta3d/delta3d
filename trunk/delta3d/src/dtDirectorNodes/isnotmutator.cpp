@@ -18,7 +18,7 @@
  *
  * Author: Jeff P. Houde
  */
-
+#include <prefix/dtdirectornodesprefix.h>
 #include <dtDirectorNodes/isnotmutator.h>
 
 #include <dtDAL/booleanactorproperty.h>

@@ -18,7 +18,7 @@
  *
  * Author: Eric R. Heine
  */
-
+#include <prefix/dtdirectornodesprefix.h>
 #include <dtDirectorNodes/getvectorvaluesaction.h>
 
 #include <dtDAL/stringactorproperty.h>

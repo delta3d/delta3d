@@ -18,7 +18,7 @@
  *
  * Author: Eric R. Heine
  */
-
+#include <prefix/dtdirectornodesprefix.h>
 #include <dtDirectorNodes/compareactorpropertyaction.h>
 
 #include <dtDAL/actoridactorproperty.h>
