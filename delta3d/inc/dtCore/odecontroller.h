@@ -30,6 +30,7 @@
 #include <dtCore/odespacewrap.h>
 #include <dtCore/odeworldwrap.h>
 #include <dtCore/base.h>
+#include <dtCore/transformable.h>
 #include <dtUtil/refstring.h>
 #include <vector>
 #include <ode/common.h>

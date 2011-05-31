@@ -52,11 +52,14 @@ namespace dtCore
       , mMaxStepUpDistance(k)
       , mLastVelocity(0.0f, 0.0f, 0.0f)
       , mSlideVelocity(0.0f, 0.0f, 0.0f)
-      , mGravity()
       , mCollisionSpace()
+      , mPhysicsController(pScene->GetPhysicsController())
    {
-      pScene->GetGravity(mGravity);
-      mCollisionSpace = pScene->GetSpaceID();
+      if (mPhysicsController.valid())
+      {
+         mCollisionSpace = mPhysicsController->GetSpaceID();
+      }
+      
       mSpaceID = dSimpleSpaceCreate(0);
       SetDimensions(pHeight, pRadius, k, theta);
    }
@@ -84,7 +87,6 @@ namespace dtCore
       , mMaxStepUpDistance(k)
       , mLastVelocity(0.0f, 0.0f, 0.0f)
       , mSlideVelocity(0.0f, 0.0f, 0.0f)
-      , mGravity(pGravity)
       , mCollisionSpace(pSpaceToCollideWith)
    {
       mSpaceID = dSimpleSpaceCreate(0);
@@ -507,7 +509,8 @@ namespace dtCore
       {
       case FALLING:
          {
-            mFallSpeed = mLastVelocity[2] + mGravity[2] * deltaFrameTime;
+            const float zGravity = mPhysicsController.valid() ? mPhysicsController->GetGravity()[2] : -1.f;
+            mFallSpeed = mLastVelocity[2] + zGravity * deltaFrameTime;
             if (mFallSpeed < mTerminalSpeed) 
             {
                mFallSpeed = mTerminalSpeed;
