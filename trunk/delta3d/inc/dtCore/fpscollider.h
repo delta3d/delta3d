@@ -23,6 +23,9 @@
 #define DELTA_FPSCOLLIDER
 
 #include <dtCore/export.h>
+#include <dtCore/refptr.h>
+#include <dtCore/odecontroller.h>
+
 #include <osg/Vec3>
 #include <osg/Matrix>
 
@@ -205,10 +208,9 @@ namespace dtCore
 
          osg::Vec3 mLastVelocity;
          osg::Vec3 mSlideVelocity;
-         osg::Vec3 mGravity;
 
          dSpaceID mCollisionSpace;
-   
+         dtCore::RefPtr<ODEController> mPhysicsController;
    };
 }//namespace dtCore
 
