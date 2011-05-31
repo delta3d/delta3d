@@ -59,6 +59,10 @@ Sound::FrameData::~FrameData()
 ALint IsSource(ALuint source)
 {
    CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
+   if (source == AL_NONE)
+   {
+      return 0;
+   }
    ALint result = alIsSource(source);
    // clear any errors from the alIsSource not liking the value passed in.
    // The call to alIsSource just needs to return true if it's valid.
@@ -347,6 +351,8 @@ bool Sound::ReleaseSource()
 
       alDeleteSources(1, &mSource);
       retVal &= !CheckForError("Attempted to delete source.", __FUNCTION__, __LINE__);
+
+      mSource = 0;
 
       SetSource(AL_NONE);
    }
