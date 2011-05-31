@@ -160,7 +160,14 @@ namespace dtCore
       const dtUtil::DateTime& GetDateTime() const;
       dtUtil::DateTime& GetDateTime();
 
-      ///Set whether we use sim time for the environment or our internal timer
+      /** 
+        * Set whether we use the System's simulation time for the environment
+        * or a static value.
+        * @param useSimTime If true, the Environment's time will be kept in sync with the 
+        * dtCore::System Simulation time. False will keep a static time.
+        * @see dtCore::System::GetSimulationClockTime()
+        * @see SetDateTime()
+        */
       void SetUseSimTime(bool useSimTime);
 
       ///True if we use sim time to update the environment or not

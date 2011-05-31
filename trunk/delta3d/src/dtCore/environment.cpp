@@ -532,19 +532,20 @@ bool dtCore::Environment::GetUseSimTime() const
 ////////////////////////////////////////////////////////////////////////////////
 void dtCore::Environment::Update(const double deltaFrameTime)
 {
+   if (mUseSimTime)
+   {
+      //update our local stored time with the Simulation time
+      DateTime simTime = dtCore::System::GetInstance().GetSimulationClockTime() / 1000000;
+      simTime.SetGMTOffset(mRefLatLong.x(), mRefLatLong.y(), false);
+      SetDateTime(simTime);
+   }
+
    mLastUpdate += deltaFrameTime;
 
    if (mLastUpdate > 1.0)
    {
       mLastUpdate = 0.0;
-      time_t time = mCurrTime.GetGMTTime();
-      if (mUseSimTime)
-      {
-         DateTime simTime = dtCore::System::GetInstance().GetSimulationClockTime() / 1000000;
-         simTime.SetGMTOffset(mRefLatLong.x(), mRefLatLong.y(), false);
-         time = simTime.GetGMTTime();
-      }
-      GetSunPos(time, mRefLatLong[0], mRefLatLong[1], 1.0, &mSunAltitude, &mSunAzimuth);
+      GetSunPos(mCurrTime.GetGMTTime(), mRefLatLong[0], mRefLatLong[1], 1.0, &mSunAltitude, &mSunAzimuth);
       UpdateSkyLight();
       UpdateSunColor();
       UpdateEnvColors();
