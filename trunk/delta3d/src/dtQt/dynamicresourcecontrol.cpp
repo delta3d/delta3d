@@ -187,8 +187,7 @@ namespace dtQt
 
       QMenu* menu = new QMenu("Resources");
       connect(menu, SIGNAL(triggered(QAction*)), this, SLOT(itemSelected(QAction*)));
-      menu->addAction("<None>");
-      setupList(tree, menu);
+      setupMenu(tree, menu);
       mTemporaryButton->setMenu(menu);
 
       updateEditorFromModel(mWrapper);
@@ -201,8 +200,15 @@ namespace dtQt
       return wrapper;
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   void DynamicResourceControl::setupMenu(const dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator& iter, QMenu* menu)
+   {
+      menu->addAction("<None>");
+      recursivelySetupMenu(iter, menu);
+   }
+
    //////////////////////////////////////////////////////////////////////////
-   void DynamicResourceControl::setupList(const dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator& iter, QMenu* menu)
+   void DynamicResourceControl::recursivelySetupMenu(const dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator& iter, QMenu* menu)
    {
       for (dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator i = iter.tree_ref().in();
          i != iter.tree_ref().end();
@@ -212,7 +218,7 @@ namespace dtQt
          {
             QMenu* subMenu = menu->addMenu(i->getNodeText().c_str());
 
-            setupList(i, subMenu);
+            recursivelySetupMenu(i, subMenu);
          }
          else
          {

@@ -81,6 +81,11 @@ namespace dtEditQt
    public slots:
 
       /**
+       * Called when the user selects an item in the combo box
+       */
+      virtual void itemSelected(QAction* action);
+
+      /**
        * The user pressed the "Edit" Button.
        */
       void editPressed();
@@ -91,9 +96,11 @@ namespace dtEditQt
       virtual void handleSubEditDestroy(QWidget* widget, QAbstractItemDelegate::EndEditHint hint = QAbstractItemDelegate::NoHint);
 
    protected:
+      virtual void setupMenu(const dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator& iter, QMenu* menu);
 
       ResourceUIPlugin* GetPlugin();
 
+   private:
       dtQt::SubQPushButton* mTemporaryEditBtn;
    };
 

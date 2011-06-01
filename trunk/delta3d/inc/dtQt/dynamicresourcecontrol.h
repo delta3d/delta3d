@@ -125,7 +125,7 @@ namespace dtQt
       /**
        * Called when the user selects an item in the combo box
        */
-      void itemSelected(QAction* action);
+      virtual void itemSelected(QAction* action);
 
       /**
        * @see DynamicAbstractControl#handleSubEditDestroy
@@ -134,9 +134,10 @@ namespace dtQt
 
    protected:
 
-   private:
-      void setupList(const dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator& iter, QMenu* menu);
+      virtual void setupMenu(const dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator& iter, QMenu* menu);
+      virtual void recursivelySetupMenu(const dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator& iter, QMenu* menu);
 
+   private:
       dtDAL::ResourceActorProperty* mProperty;
 
       // This pointer is not really in our control.  It is constructed in the createEditor()
