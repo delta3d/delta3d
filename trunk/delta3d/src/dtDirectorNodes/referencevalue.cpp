@@ -127,6 +127,7 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void ReferenceValue::OnConnectionChange()
    {
+      UpdateReference();
       UpdateLinkType();
       ValueNode::OnConnectionChange();
    }

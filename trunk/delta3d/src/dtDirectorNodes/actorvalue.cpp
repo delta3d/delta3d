@@ -34,6 +34,7 @@ namespace dtDirector
        : ValueNode()
    {
       mValue = "";
+      mInitialValue = "";
       AddAuthor("Jeff P. Houde");
       SetColorRGB(Colors::MANGENTA);
    }
@@ -60,6 +61,13 @@ namespace dtDirector
          dtDAL::ActorIDActorProperty::GetFuncType(this, &ActorValue::GetValue),
          "", "The value.");
       AddProperty(mProperty);
+
+      mInitialProperty = new dtDAL::ActorIDActorProperty(
+         "Initial Value", "Initial Value",
+         dtDAL::ActorIDActorProperty::SetFuncType(this, &ActorValue::SetInitialValue),
+         dtDAL::ActorIDActorProperty::GetFuncType(this, &ActorValue::GetInitialValue),
+         "", "The initial value.");
+      AddProperty(mInitialProperty);
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -77,5 +85,22 @@ namespace dtDirector
    {
       ValueNode::OnValueRetrieved();
       return mValue;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void ActorValue::SetInitialValue(const dtCore::UniqueId& value)
+   {
+      if (mInitialValue != value)
+      {
+         std::string oldValue = mInitialProperty->ToString();
+         mInitialValue = value;
+         OnInitialValueChanged(oldValue);
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   const dtCore::UniqueId& ActorValue::GetInitialValue()
+   {
+      return mInitialValue;
    }
 }

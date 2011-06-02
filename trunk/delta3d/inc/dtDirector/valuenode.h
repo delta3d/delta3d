@@ -65,6 +65,11 @@ namespace dtDirector
       virtual ValueNode* AsValueNode();
 
       /**
+       * Event handler called when a script has finished loading.
+       */
+      virtual void OnFinishedLoading();
+
+      /**
        * This method is called in init, which instructs the node
        * to create its properties.  Methods implementing this should
        * be sure to call their parent class's buildPropertyMap method to
@@ -75,6 +80,22 @@ namespace dtDirector
        *       to be removed.
        */
       virtual void BuildPropertyMap();
+
+      /**
+       * Checks if a given property is already set to its default value.
+       *
+       * @param[in]  prop  The property.
+       *
+       * @return     True if the given property is already set to default.
+       */
+      virtual bool IsPropertyDefault(const dtDAL::ActorProperty& prop) const;
+
+      /**
+       * Resets the value of the given property to its default value.
+       *
+       * @param[in]   prop  The property to reset.
+       */
+      virtual void ResetProperty(dtDAL::ActorProperty& prop);
 
       /**
        * Connects this node to a specified value link.
@@ -167,6 +188,11 @@ namespace dtDirector
       void OnValueChanged();
 
       /**
+       * Event handler when the initial value property has changed.
+       */
+      virtual void OnInitialValueChanged(const std::string& oldValue);
+
+      /**
        * Event handler when the value has been retrieved.
        */
       void OnValueRetrieved();
@@ -196,6 +222,11 @@ namespace dtDirector
       virtual bool ValuesExposed();
 
       /**
+       * Exposes the initial value property for this value.
+       */
+      virtual void ExposeInitialValue();
+
+      /**
        * Accessors for the name of the input node.
        */
       virtual void SetName(const std::string& name);
@@ -210,6 +241,9 @@ namespace dtDirector
       virtual ~ValueNode();
 
       dtCore::RefPtr<dtDAL::ActorProperty> mProperty;
+      dtCore::RefPtr<dtDAL::ActorProperty> mInitialProperty;
+
+      bool mHasInitialValue;
 
       std::vector<ValueLink*> mLinks;
    };

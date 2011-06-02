@@ -31,6 +31,7 @@ namespace dtDirector
    BooleanValue::BooleanValue()
        : ValueNode()
        , mValue(false)
+       , mInitialValue(false)
    {
       AddAuthor("Jeff P. Houde");
       SetColorRGB(Colors::RED);
@@ -58,6 +59,13 @@ namespace dtDirector
          dtDAL::BooleanActorProperty::GetFuncType(this, &BooleanValue::GetValue),
          "The value.");
       AddProperty(mProperty);
+
+      mInitialProperty = new dtDAL::BooleanActorProperty(
+         "Initial Value", "Initial Value",
+         dtDAL::BooleanActorProperty::SetFuncType(this, &BooleanValue::SetInitialValue),
+         dtDAL::BooleanActorProperty::GetFuncType(this, &BooleanValue::GetInitialValue),
+         "The initial value.");
+      AddProperty(mInitialProperty);
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -75,5 +83,22 @@ namespace dtDirector
    {
       ValueNode::OnValueRetrieved();
       return mValue;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void BooleanValue::SetInitialValue(bool value)
+   {
+      if (mInitialValue != value)
+      {
+         std::string oldValue = mInitialProperty->ToString();
+         mInitialValue = value;
+         OnInitialValueChanged(oldValue);
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   bool BooleanValue::GetInitialValue()
+   {
+      return mInitialValue;
    }
 }

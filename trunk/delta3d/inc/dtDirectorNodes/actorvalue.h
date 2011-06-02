@@ -86,7 +86,22 @@ namespace dtDirector
        */
       const dtCore::UniqueId& GetValue();
 
+      /**
+       * Sets the value.
+       *
+       * @param[in]  value  The value.
+       */
+      void SetInitialValue(const dtCore::UniqueId& value);
+
+      /**
+       * Retrieves the value.
+       *
+       * @return  The value.
+       */
+      const dtCore::UniqueId& GetInitialValue();
+
       dtCore::UniqueId mValue;
+      dtCore::UniqueId mInitialValue;
    };
 }
 

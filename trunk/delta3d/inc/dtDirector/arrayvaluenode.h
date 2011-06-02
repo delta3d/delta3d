@@ -62,6 +62,27 @@ namespace dtDirector
       virtual void Init(const NodeType& nodeType, DirectorGraph* graph);
 
       /**
+       * Event handler called when a script has finished loading.
+       */
+      virtual void OnFinishedLoading();
+
+      /**
+       * Checks if a given property is already set to its default value.
+       *
+       * @param[in]  prop  The property.
+       *
+       * @return     True if the given property is already set to default.
+       */
+      virtual bool IsPropertyDefault(const dtDAL::ActorProperty& prop) const;
+
+      /**
+       * Resets the value of the given property to its default value.
+       *
+       * @param[in]   prop  The property to reset.
+       */
+      virtual void ResetProperty(dtDAL::ActorProperty& prop);
+
+      /**
        * Accessors for the name of the node.
        */
       virtual std::string GetValueLabel();
@@ -96,6 +117,16 @@ namespace dtDirector
       virtual int GetPropertyCount(const std::string& name = "Value");
 
       /**
+       * Event handler when the initial value property has changed.
+       */
+      virtual void OnInitialValueChanged(const std::string& oldValue);
+
+      /**
+       * Exposes the initial value property for this value.
+       */
+      virtual void ExposeInitialValue();
+
+      /**
        * Sets the current property index.
        *
        * @param[in]  index  The index.
@@ -103,11 +134,25 @@ namespace dtDirector
       void SetPropertyIndex(int index);
 
       /**
+       * Sets the current property index.
+       *
+       * @param[in]  index  The index.
+       */
+      void SetInitialPropertyIndex(int index);
+
+      /**
        * Accessor to the array property.
        *
        * @return  The array property.
        */
       dtDAL::ArrayActorPropertyBase* GetArrayProperty();
+
+      /**
+       * Accessor to the array property.
+       *
+       * @return  The array property.
+       */
+      dtDAL::ArrayActorPropertyBase* GetInitialArrayProperty();
 
    protected:
 
@@ -118,7 +163,9 @@ namespace dtDirector
       virtual ~ArrayValueNode();
 
       int   mPropertyIndex;
+      int   mInitialPropertyIndex;
       dtCore::RefPtr<dtDAL::ArrayActorPropertyBase> mArrayProperty;
+      dtCore::RefPtr<dtDAL::ArrayActorPropertyBase> mInitialArrayProperty;
    };
 }
 

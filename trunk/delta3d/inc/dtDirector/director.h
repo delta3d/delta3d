@@ -160,6 +160,11 @@ namespace dtDirector
       bool HasStarted() const {return mStarted;}
 
       /**
+       * Retrieves whether the script is currently being loaded.
+       */
+      bool IsLoading() const {return mLoading;}
+
+      /**
        * Retrieves the Director Proxy if it has one.
        *
        * @return  The Director Proxy.
@@ -684,6 +689,7 @@ namespace dtDirector
       dtCore::RefPtr<dtDAL::Map> mMap;
       bool        mModified;
       bool        mStarted;
+      bool        mLoading;
 
       bool        mDebugging;
       bool        mShouldStep;

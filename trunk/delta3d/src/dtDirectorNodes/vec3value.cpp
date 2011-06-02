@@ -56,6 +56,13 @@ namespace dtDirector
          dtDAL::Vec3ActorProperty::GetFuncType(this, &Vec3Value::GetValue),
          "The value.");
       AddProperty(mProperty);
+
+      mInitialProperty = new dtDAL::Vec3ActorProperty(
+         "Initial Value", "Initial Value",
+         dtDAL::Vec3ActorProperty::SetFuncType(this, &Vec3Value::SetInitialValue),
+         dtDAL::Vec3ActorProperty::GetFuncType(this, &Vec3Value::GetInitialValue),
+         "The initial value.");
+      AddProperty(mInitialProperty);
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -73,5 +80,22 @@ namespace dtDirector
    {
       ValueNode::OnValueRetrieved();
       return mValue;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void Vec3Value::SetInitialValue(const osg::Vec3& value)
+   {
+      if (mInitialValue != value)
+      {
+         std::string oldValue = mInitialProperty->ToString();
+         mInitialValue = value;
+         ValueNode::OnInitialValueChanged(oldValue);
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   const osg::Vec3& Vec3Value::GetInitialValue()
+   {
+      return mInitialValue;
    }
 }

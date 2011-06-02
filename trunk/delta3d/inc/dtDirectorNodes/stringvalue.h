@@ -87,7 +87,22 @@ namespace dtDirector
        */
       const std::string& GetValue();
 
+      /**
+       * Sets the value.
+       *
+       * @param[in]  value  The value.
+       */
+      void SetInitialValue(const std::string& value);
+
+      /**
+       * Retrieves the value.
+       *
+       * @return  The value.
+       */
+      const std::string& GetInitialValue();
+
       std::string mValue;
+      std::string mInitialValue;
    };
 }
 

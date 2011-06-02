@@ -56,6 +56,12 @@ namespace dtDirector
          dtDAL::Vec2ActorProperty::GetFuncType(this, &Vec2ArrayValue::GetValue),
          "", "The value.");
 
+      mInitialProperty = new dtDAL::Vec2ActorProperty(
+         "Value", "Value",
+         dtDAL::Vec2ActorProperty::SetFuncType(this, &Vec2ArrayValue::SetInitialValue),
+         dtDAL::Vec2ActorProperty::GetFuncType(this, &Vec2ArrayValue::GetInitialValue),
+         "", "The initial value.");
+
       mArrayProperty = new dtDAL::ArrayActorProperty<osg::Vec2>(
          "ValueList", "Value List", "All values contained in this array.",
          dtDAL::ArrayActorProperty<osg::Vec2>::SetIndexFuncType(this, &ArrayValueNode::SetPropertyIndex),
@@ -64,6 +70,15 @@ namespace dtDirector
          dtDAL::ArrayActorProperty<osg::Vec2>::SetArrayFuncType(this, &Vec2ArrayValue::SetArray),
          mProperty, "");
       AddProperty(mArrayProperty);
+
+      mInitialArrayProperty = new dtDAL::ArrayActorProperty<osg::Vec2>(
+         "InitialValueList", "Initial Value List", "All initial values contained in this array.",
+         dtDAL::ArrayActorProperty<osg::Vec2>::SetIndexFuncType(this, &ArrayValueNode::SetInitialPropertyIndex),
+         dtDAL::ArrayActorProperty<osg::Vec2>::GetDefaultFuncType(this, &Vec2ArrayValue::GetDefaultValue),
+         dtDAL::ArrayActorProperty<osg::Vec2>::GetArrayFuncType(this, &Vec2ArrayValue::GetInitialArray),
+         dtDAL::ArrayActorProperty<osg::Vec2>::SetArrayFuncType(this, &Vec2ArrayValue::SetInitialArray),
+         mInitialProperty, "");
+      AddProperty(mInitialArrayProperty);
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -109,5 +124,49 @@ namespace dtDirector
    void Vec2ArrayValue::SetArray(const std::vector<osg::Vec2>& value)
    {
       mValues = value;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void Vec2ArrayValue::SetInitialValue(const osg::Vec2& value)
+   {
+      if (mInitialPropertyIndex < (int)mInitialValues.size())
+      {
+         if (mInitialValues[mInitialPropertyIndex] != value)
+         {
+            std::string oldValue = mInitialArrayProperty->ToString();
+
+            mInitialValues[mInitialPropertyIndex] = value;
+
+            ArrayValueNode::OnInitialValueChanged(oldValue);
+         }
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   osg::Vec2 Vec2ArrayValue::GetInitialValue()
+   {
+      if (mInitialPropertyIndex < (int)mValues.size())
+      {
+         return mValues[mInitialPropertyIndex];
+      }
+
+      return GetDefaultValue();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   std::vector<osg::Vec2> Vec2ArrayValue::GetInitialArray()
+   {
+      return mInitialValues;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void Vec2ArrayValue::SetInitialArray(const std::vector<osg::Vec2>& value)
+   {
+      if (mInitialValues != value)
+      {
+         std::string oldValue = mInitialArrayProperty->ToString();
+         mInitialValues = value;
+         ArrayValueNode::OnInitialValueChanged(oldValue);
+      }
    }
 }

@@ -55,6 +55,13 @@ namespace dtDirector
          dtDAL::ResourceActorProperty::GetDescFuncType(this, &StaticMeshValue::GetValue),
          "The resource.");
       AddProperty(mProperty);
+
+      mInitialProperty = new dtDAL::ResourceActorProperty(
+         dtDAL::DataType::STATIC_MESH, "Initial Resource", "Initial Resource",
+         dtDAL::ResourceActorProperty::SetDescFuncType(this, &StaticMeshValue::SetInitialValue),
+         dtDAL::ResourceActorProperty::GetDescFuncType(this, &StaticMeshValue::GetInitialValue),
+         "The initial resource.");
+      AddProperty(mInitialProperty);
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -72,5 +79,22 @@ namespace dtDirector
    {
       ValueNode::OnValueRetrieved();
       return mValue;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void StaticMeshValue::SetInitialValue(const dtDAL::ResourceDescriptor& value)
+   {
+      if (mInitialValue != value)
+      {
+         std::string oldValue = mInitialProperty->ToString();
+         mInitialValue = value;
+         ValueNode::OnInitialValueChanged(oldValue);
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   dtDAL::ResourceDescriptor StaticMeshValue::GetInitialValue()
+   {
+      return mInitialValue;
    }
 }

@@ -87,7 +87,22 @@ namespace dtDirector
        */
       dtDAL::ResourceDescriptor GetValue();
 
+      /**
+       * Sets the value.
+       *
+       * @param[in]  value  The value.
+       */
+      void SetInitialValue(const dtDAL::ResourceDescriptor& value);
+
+      /**
+       * Retrieves the value.
+       *
+       * @return  The value.
+       */
+      dtDAL::ResourceDescriptor GetInitialValue();
+
       dtDAL::ResourceDescriptor mValue;
+      dtDAL::ResourceDescriptor mInitialValue;
    };
 }
 
