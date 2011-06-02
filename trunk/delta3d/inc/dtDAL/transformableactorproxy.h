@@ -27,6 +27,7 @@
 
 #include <dtDAL/actorproxy.h>
 #include <dtDAL/export.h>
+#include <dtDAL/resourcedescriptor.h>
 #include <dtCore/transformable.h>
 
 #include <dtUtil/getsetmacros.h>
@@ -185,6 +186,14 @@ namespace dtDAL
           */
          DT_DECLARE_ACCESSOR(bool, HideDTCorePhysicsProps);
 
+         /** 
+          * An optional StaticMesh Resource which can be used for collision detection
+          * geometry. If this is set, this mesh will be used instead of the Node
+          * returned by GetOSGNode(). This mesh will not be rendered; only used
+          * for collision detection shapes.
+          */
+         DT_DECLARE_ACCESSOR(dtDAL::ResourceDescriptor, AltCollisionMesh);
+
       protected:
 
          /**
@@ -206,6 +215,7 @@ namespace dtDAL
 
          ///Sets mesh collision geometry.
          void SetMeshCollision();
+
 
       private:
       

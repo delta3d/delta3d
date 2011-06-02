@@ -25,13 +25,14 @@
 #include <dtCore/transform.h>
 #include <dtCore/transformable.h>
 
+#include <dtDAL/propertymacros.h>
 #include <dtDAL/actorproxyicon.h>
 #include <dtDAL/booleanactorproperty.h>
 #include <dtDAL/enumactorproperty.h>
 
 #include <dtDAL/floatactorproperty.h>
 #include <dtDAL/vectoractorproperties.h>
-
+#include <dtDAL/project.h> //<To resolve ResourceDescriptor paths
 #include <dtUtil/matrixutil.h>
 
 namespace dtDAL
@@ -46,9 +47,47 @@ namespace dtDAL
    const dtUtil::RefString TransformableActorProxy::PROPERTY_COLLISION_LENGTH("Collision Length");
    const dtUtil::RefString TransformableActorProxy::PROPERTY_COLLISION_BOX("Collision Box");
 
+   //////////////////////////////////////////////////////////////////////////
+   osg::Node* LoadAltCollisionMesh(const dtDAL::ResourceDescriptor& resource)
+   {
+      osg::Node* node = NULL;
+
+      if (dtDAL::Project::GetInstance().IsContextValid())
+      {
+         const std::string resourcePath = dtDAL::Project::GetInstance().GetResourcePath(resource);
+         if (!resourcePath.empty())
+         {
+            node = dtUtil::FileUtils::GetInstance().ReadNode(resourcePath);
+            if (node == NULL)
+            {
+               LOG_ERROR("Can't load the alternate collision mesh: " + resource.GetDisplayName());
+            }
+         }
+      }
+      else
+      {
+         LOG_WARNING("No ProjectContext is set. Cannot resolve the alternate collision mesh ResourceDescriptor");
+      }
+
+      return node;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   bool IsAltCollisionMeshSet(const dtDAL::ResourceDescriptor& resource)
+   {
+      if (resource == dtDAL::ResourceDescriptor::NULL_RESOURCE ||
+          resource.IsEmpty())
+      {
+         return false;
+      }
+
+      return true;
+   }
+
    //////////////////////////////////////////////////////
    TransformableActorProxy::TransformableActorProxy()
    : mHideDTCorePhysicsProps(false)
+   , mAltCollisionMesh(dtDAL::ResourceDescriptor::NULL_RESOURCE)
    {
       SetClassName("dtCore::Transformable");
       mCollisionType = &dtCore::Transformable::CollisionGeomType::NONE;
@@ -63,6 +102,9 @@ namespace dtDAL
 
       static const dtUtil::RefString GROUPNAME = "Transformable";
       static const dtUtil::RefString COLLISION_GROUP = "ODE Collision";
+
+      typedef dtDAL::PropertyRegHelper<TransformableActorProxy&, TransformableActorProxy> PropRegHelperType;
+      PropRegHelperType propRegHelper(*this, this, COLLISION_GROUP);
 
       dtCore::Transformable* trans = NULL;
       GetActor(trans);
@@ -135,6 +177,11 @@ namespace dtDAL
                   BooleanActorProperty::GetFuncType(trans, &dtCore::Transformable::GetCollisionDetection),
                   "Enables collision detection on this actor (using ODE).",
                   COLLISION_GROUP));
+
+         DT_REGISTER_RESOURCE_PROPERTY_WITH_NAME(DataType::STATIC_MESH, AltCollisionMesh, "AltCollisionMesh", "Alternate Collision Mesh",
+                                                "An alternate mesh to use for collision detection shapes",
+                                                 PropRegHelperType, propRegHelper);
+         
       }
 
       static const dtUtil::RefString RENDER_PROXY_NODE_DESC("Enables the rendering of the proxy node for this Transformable");
@@ -345,18 +392,27 @@ namespace dtDAL
       if (mCollisionType != &dtCore::Transformable::CollisionGeomType::CUBE)
          return;
 
-      dtCore::Transformable *phys = static_cast<dtCore::Transformable*>(GetActor());
+      dtCore::Transformable *trans = static_cast<dtCore::Transformable*>(GetActor());
 
-      phys->ClearCollisionGeometry();
-      if (mCollisionBoxDims.x() == 0.0f || mCollisionBoxDims.y() == 0.0f ||
-               mCollisionBoxDims.z() == 0.0f)
+      trans->ClearCollisionGeometry();
+      
+      if (mCollisionBoxDims.x() == 0.0f ||
+          mCollisionBoxDims.y() == 0.0f ||
+          mCollisionBoxDims.z() == 0.0f)
       {
-         phys->SetCollisionBox(NULL);
+         osg::Node* node = NULL;
+         if (IsAltCollisionMeshSet(GetAltCollisionMesh()))
+         {
+            node = LoadAltCollisionMesh(GetAltCollisionMesh());
+         }
+
+         trans->SetCollisionBox(node);
       }
       else
       {
-         phys->SetCollisionBox(mCollisionBoxDims.x(),mCollisionBoxDims.y(),
-                  mCollisionBoxDims.z());
+         trans->SetCollisionBox(mCollisionBoxDims.x(),
+                               mCollisionBoxDims.y(),
+                               mCollisionBoxDims.z());
       }
    }
 
@@ -366,13 +422,23 @@ namespace dtDAL
       if (mCollisionType != &dtCore::Transformable::CollisionGeomType::SPHERE)
          return;
 
-      dtCore::Transformable *phys = static_cast<dtCore::Transformable*>(GetActor());
+      dtCore::Transformable *trans = static_cast<dtCore::Transformable*>(GetActor());
 
-      phys->ClearCollisionGeometry();
+      trans->ClearCollisionGeometry();
       if (mCollisionRadius == 0.0f)
-         phys->SetCollisionSphere((osg::Node *)NULL);
+      {
+         osg::Node* node = NULL;
+         if (IsAltCollisionMeshSet(GetAltCollisionMesh()))
+         {
+            node = LoadAltCollisionMesh(GetAltCollisionMesh());
+         }
+
+         trans->SetCollisionSphere(node);
+      }
       else
-         phys->SetCollisionSphere(mCollisionRadius);
+      {
+         trans->SetCollisionSphere(mCollisionRadius);
+      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -381,13 +447,24 @@ namespace dtDAL
       if (mCollisionType != &dtCore::Transformable::CollisionGeomType::CYLINDER)
          return;
 
-      dtCore::Transformable *phys = static_cast<dtCore::Transformable*>(GetActor());
+      dtCore::Transformable *trans = static_cast<dtCore::Transformable*>(GetActor());
 
-      phys->ClearCollisionGeometry();
+      trans->ClearCollisionGeometry();
       if (mCollisionRadius == 0.0f || mCollisionLength == 0.0f)
-         phys->SetCollisionCappedCylinder(NULL);
+      {
+         osg::Node* node = NULL;
+
+         if (IsAltCollisionMeshSet(GetAltCollisionMesh()))
+         {
+            node = LoadAltCollisionMesh(GetAltCollisionMesh());
+         }
+
+         trans->SetCollisionCappedCylinder(node);         
+      }
       else
-         phys->SetCollisionCappedCylinder(mCollisionRadius,mCollisionLength);
+      {
+         trans->SetCollisionCappedCylinder(mCollisionRadius,mCollisionLength);
+      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -408,10 +485,31 @@ namespace dtDAL
       if (mCollisionType != &dtCore::Transformable::CollisionGeomType::MESH)
          return;
 
-      dtCore::Transformable *phys = static_cast<dtCore::Transformable*>(GetActor());
+      dtCore::Transformable *trans = static_cast<dtCore::Transformable*>(GetActor());
 
-      phys->ClearCollisionGeometry();
-      phys->SetCollisionMesh(NULL);
+      trans->ClearCollisionGeometry();
+      
+      osg::Node* node = NULL;
+
+      if (IsAltCollisionMeshSet(GetAltCollisionMesh()))
+      {
+         node = LoadAltCollisionMesh(GetAltCollisionMesh());
+      }
+      
+      trans->SetCollisionMesh(node);
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void TransformableActorProxy::SetAltCollisionMesh(const dtDAL::ResourceDescriptor& value)
+   {
+      mAltCollisionMesh = value;
+      SetCollisionType(*mCollisionType);
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   const dtDAL::ResourceDescriptor& TransformableActorProxy::GetAltCollisionMesh() const
+   {
+      return mAltCollisionMesh;
    }
 
    DT_IMPLEMENT_ACCESSOR(TransformableActorProxy, bool, HideDTCorePhysicsProps);
