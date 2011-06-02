@@ -572,12 +572,11 @@ namespace dtDirector
          if (tool)
          {
             tool->Open(mScene->GetEditor(), mGraph.get());
+            return;
          }
       }
-      else
-      {
-         OpenMacro();
-      }
+
+      OpenMacro();
    }
 }
 
