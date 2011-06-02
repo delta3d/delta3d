@@ -16,73 +16,47 @@
 # But for now, we have to look around.
 # Other (Unix) systems should be able to utilize the non-framework paths.
 FIND_PATH(OPENAL_INCLUDE_DIR al.h
+  PATH_SUFFIXES
+     include
+     inc
+     include/AL
+     inc/AL
+     inc/OpenAL
+     include/OpenAL
   HINTS
-  $ENV{OPENALDIR}/include/AL
-  $ENV{OPENALDIR}/include/OpenAL
-  ${DELTA3D_EXT_DIR}/inc
-  ${DELTA3D_EXT_DIR}/inc/AL
-  ${DELTA3D_EXT_DIR}/inc/OpenAL
-  $ENV{DELTA_ROOT}/ext/inc
-  $ENV{DELTA_ROOT}/ext/inc/AL
-  $ENV{DELTA_ROOT}/ext/inc/OpenAL
+  $ENV{OPENALDIR}
+  $ENV{OPENALDIR}
+  ${DELTA3D_EXT_DIR}
+  $ENV{DELTA_ROOT}/ext
   PATHS
   ~/Library/Frameworks/OpenAL.framework/Headers
   /Library/Frameworks/OpenAL.framework/Headers
   /System/Library/Frameworks/OpenAL.framework/Headers # Tiger
-  /usr/local/include/AL
-  /usr/local/include/OpenAL
-  /usr/local/include
-  /usr/include/AL
-  /usr/include/OpenAL
-  /usr/include
-  /sw/include/AL # Fink
-  /sw/include/OpenAL 
-  /sw/include
-  /opt/local/include/AL # DarwinPorts
-  /opt/local/include/OpenAL
-  /opt/local/include
-  /opt/csw/include/AL # Blastwave
-  /opt/csw/include/OpenAL
-  /opt/csw/include
-  /opt/include/AL
-  /opt/include/OpenAL
-  /opt/include
-  NO_DEFAULT_PATH #Added so it won't find the system one before the delta3d/ext one.
+  /usr/local
+  /usr
   )
 
 FIND_PATH(ALUT_INCLUDE_DIR alut.h
-  $ENV{OPENALDIR}/include/AL
-  $ENV{OPENALDIR}/include/OpenAL
-  ${DELTA3D_EXT_DIR}/inc/AL
-  ${DELTA3D_EXT_DIR}/inc/OpenAL
-  $ENV{DELTA_ROOT}/ext/inc
-  $ENV{DELTA_ROOT}/ext/inc/AL
-  $ENV{DELTA_ROOT}/ext/inc/OpenAL
+  PATH_SUFFIXES
+     include
+     inc
+     include/AL
+     inc/AL
+     inc/OpenAL
+     include/OpenAL
+  HINTS
+  $ENV{OPENALDIR}
+  $ENV{OPENALDIR}
+  ${DELTA3D_EXT_DIR}
+  $ENV{DELTA_ROOT}/ext
+  PATHS
   ~/Library/Frameworks/OpenAL.framework/Headers
   /Library/Frameworks/OpenAL.framework/Headers
   /System/Library/Frameworks/OpenAL.framework/Headers # Tiger
-  ~/Library/Frameworks/ALUT.framework/Headers
-  /Library/Frameworks/ALUT.framework/Headers
-  /usr/local/include/AL
-  /usr/local/include/OpenAL
-  /usr/local/include
-  /usr/include/AL
-  /usr/include/OpenAL
-  /usr/include
-  /sw/include/AL # Fink
-  /sw/include/OpenAL 
-  /sw/include
-  /opt/local/include/AL # DarwinPorts
-  /opt/local/include/OpenAL
-  /opt/local/include
-  /opt/csw/include/AL # Blastwave
-  /opt/csw/include/OpenAL
-  /opt/csw/include
-  /opt/include/AL
-  /opt/include/OpenAL
-  /opt/include
-  NO_DEFAULT_PATH
+  /usr/local
+  /usr
   )
+
   
 # I'm not sure if I should do a special casing for Apple. It is 
 # unlikely that other Unix systems will find the framework path.
