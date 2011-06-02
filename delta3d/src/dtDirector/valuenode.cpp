@@ -34,6 +34,8 @@ namespace dtDirector
    ValueNode::ValueNode()
        : Node()
        , mProperty(NULL)
+       , mInitialProperty(NULL)
+       , mHasInitialValue(false)
    {
    }
 
@@ -47,12 +49,38 @@ namespace dtDirector
    void ValueNode::Init(const NodeType& nodeType, DirectorGraph* graph)
    {
       Node::Init(nodeType, graph);
+
+      // If this node was created within the editor, but we are not
+      // debugging, then we need to remove the initial property from
+      // the node.
+      if (mInitialProperty.valid() && !GetDirector()->IsLoading() && !GetDirector()->GetNotifier())
+      {
+         dtDAL::PropertyContainer::RemoveProperty(mInitialProperty->GetName());
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    ValueNode* ValueNode::AsValueNode()
    {
       return this;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void ValueNode::OnFinishedLoading()
+   {
+      // If we do not have an initial value yet, then copy the contents
+      // of our current value into the initial.
+      if (mInitialProperty.valid())
+      {
+         if (!mHasInitialValue)
+         {
+            mInitialProperty->FromString(mProperty->ToString());
+         }
+
+         // As soon as we finish loading the script, remove the initial
+         // property from the node.
+         dtDAL::PropertyContainer::RemoveProperty(mInitialProperty->GetName());
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -65,6 +93,39 @@ namespace dtDirector
          dtDAL::StringActorProperty::SetFuncType(this, &ValueNode::SetName),
          dtDAL::StringActorProperty::GetFuncType(this, &ValueNode::GetName),
          "The variables name."));
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool ValueNode::IsPropertyDefault(const dtDAL::ActorProperty& prop) const
+   {
+      if (GetDirector()->GetNotifier())
+      {
+         if (mInitialProperty && &prop == mProperty)
+         {
+            if (mProperty->ToString() == mInitialProperty->ToString())
+            {
+               return true;
+            }
+            return false;
+         }
+      }
+
+      return Node::IsPropertyDefault(prop);
+   }
+   
+   ////////////////////////////////////////////////////////////////////////////////
+   void ValueNode::ResetProperty(dtDAL::ActorProperty& prop)
+   {
+      if (GetDirector()->GetNotifier())
+      {
+         if (mInitialProperty && &prop == mProperty)
+         {
+            mProperty->FromString(mInitialProperty->ToString());
+            return;
+         }
+      }
+
+      Node::ResetProperty(prop);
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -193,10 +254,25 @@ namespace dtDirector
          if (link) link->GetOwner()->OnLinkValueChanged(link->GetName());
       }
 
-      Director* director = GetDirector();
-      if (director && director->GetNotifier())
+      if (GetDirector()->GetNotifier())
       {
-         director->GetNotifier()->OnValueChanged(this);
+         GetDirector()->GetNotifier()->OnValueChanged(this);
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void ValueNode::OnInitialValueChanged(const std::string& oldValue)
+   {
+      mHasInitialValue = true;
+
+      // If we have not started to run the script or our current value
+      // is equal to the initial value before it was just changed,
+      // copy the contents of the initial value to the current.
+      if (mProperty.valid() &&
+         (!GetDirector()->HasStarted() ||
+         mProperty->ToString() == oldValue))
+      {
+         mProperty->FromString(mInitialProperty->ToString());
       }
    }
 
@@ -221,6 +297,22 @@ namespace dtDirector
    bool ValueNode::ValuesExposed()
    {
       return false;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void ValueNode::ExposeInitialValue()
+   {
+      if (!mInitialProperty)
+      {
+         return;
+      }
+
+      if (dtDAL::PropertyContainer::GetProperty(mInitialProperty->GetName()))
+      {
+         return;
+      }
+
+      AddProperty(mInitialProperty);
    }
 
    ////////////////////////////////////////////////////////////////////////////////

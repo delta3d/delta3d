@@ -108,7 +108,36 @@ namespace dtDirector
        */
       void SetArray(const std::vector<osg::Vec3>& value);
 
+      /**
+       * Sets the value.
+       *
+       * @param[in]  value  The value.
+       */
+      void SetInitialValue(const osg::Vec3& value);
+
+      /**
+       * Retrieves the value.
+       *
+       * @return  The value.
+       */
+      osg::Vec3 GetInitialValue();
+
+      /**
+       * Retrieves the value array.
+       *
+       * @return  The array.
+       */
+      std::vector<osg::Vec3> GetInitialArray();
+
+      /**
+       * Sets the current value array.
+       *
+       * @param[in]  value  The new value.
+       */
+      void SetInitialArray(const std::vector<osg::Vec3>& value);
+
       std::vector<osg::Vec3> mValues;
+      std::vector<osg::Vec3> mInitialValues;
    };
 }
 

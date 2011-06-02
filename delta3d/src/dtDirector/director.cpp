@@ -274,6 +274,7 @@ namespace dtDirector
       dtCore::RefPtr<DirectorParser> parser = new DirectorParser();
       if (parser)
       {
+         mLoading = true;
          try
          {
             parser->Parse(this, mMap.get(), fileName);
@@ -286,6 +287,7 @@ namespace dtDirector
             {
                fileUtils.PopDirectory();
             }
+            mLoading = false;
             throw e;
          }
 
@@ -300,6 +302,15 @@ namespace dtDirector
          {
             mBaseInstance->SetName(std::string("Director: ") +
                osgDB::getStrippedName(scriptFile));
+         }
+
+         mLoading = false;
+         std::vector<Node*> nodes;
+         GetAllNodes(nodes);
+         int count = (int)nodes.size();
+         for (int index = 0; index < count; ++index)
+         {
+            nodes[index]->OnFinishedLoading();
          }
 
          return true;
@@ -399,16 +410,16 @@ namespace dtDirector
 
       mRecordTime += delta;
 
-      if (mNotifier.valid())
-      {
-         mNotifier->Update(!(mDebugging && !mShouldStep));
-      }
-
       bool continued = false;
 
       //do
       {
          continued = false;
+
+         if (mNotifier.valid())
+         {
+            mNotifier->Update(!(mDebugging && !mShouldStep));
+         }
 
          // Update all threads.
          for (mCurrentThread = 0; mCurrentThread < (int)mThreads.size(); mCurrentThread++)
@@ -429,18 +440,15 @@ namespace dtDirector
          mCurrentThread = -1;
 
          CleanThreads();
-      }
-      //while (continued);
 
-      if (mNotifier.valid())
-      {
-         if (mShouldStep)
+         if (mNotifier.valid() && mShouldStep)
          {
             mNotifier->OnStepDebugging();
          }
-      }
 
-      mShouldStep = false;
+         mShouldStep = false;
+      }
+      //while (continued);
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -474,24 +482,24 @@ namespace dtDirector
       }
 
       std::vector<ThreadData>* threadList = &mThreads;
-      int curThread = mCurrentThread;
+      int* curThread = &mCurrentThread;
 
       RecordThreadData* recordThread = NULL;
 
-      while (curThread > -1)
+      while (*curThread > -1)
       {
-         ThreadData& t = (*threadList)[curThread];
+         ThreadData& t = (*threadList)[*curThread];
          if (!t.stack.empty())
          {
             StackData& s = t.stack[t.stack.size()-1];
-            curThread = s.currentThread;
+            curThread = &s.currentThread;
             threadList = &s.subThreads;
             recordThread = t.recordThread;
 
             // If this is the current running stack item, and it does
             // not have an active running node, use this instead
             // of creating a new sub-thread.
-            if (curThread == -1 && !s.node && node)
+            if (*curThread == -1 && !s.node && node)
             {
                s.node = node;
                s.index = index;
@@ -535,30 +543,45 @@ namespace dtDirector
       data.stack.push_back(stack);
       threadList->push_back(data);
 
-      bool continued = false;
-
-      do
+      if (mStarted && immediate && *curThread == -1)
       {
-         continued = false;
-         if (mStarted && immediate && mCurrentThread == -1 && mThreads.size() > 0)
-         {
-            mCurrentThread = mThreads.size() - 1;
+         *curThread = threadList->size() - 1;
 
-            continued |= UpdateThread(mThreads[mCurrentThread], 0.0f, 0.0f);
+         bool continued = false;
+
+         do
+         {
+            continued = false;
+
+            if (mNotifier.valid())
+            {
+               mNotifier->Update(!(mDebugging && !mShouldStep));
+            }
+
+            continued |= UpdateThread((*threadList)[*curThread], 0.0f, 0.0f);
 
             // If this thread has no more stacks in its thread, we can
             // remove it.
-            if (mThreads[mCurrentThread].stack.empty())
+            if (!(*threadList)[*curThread].stack.empty())
             {
-               mThreads.erase(mThreads.begin() + mCurrentThread);
+               CleanThread((*threadList)[*curThread].stack.back());
+            }
+            else
+            {
+               threadList->erase(threadList->begin() + *curThread);
             }
 
-            CleanThreads();
+            if (mNotifier.valid() && mShouldStep)
+            {
+               mNotifier->OnStepDebugging();
+            }
 
-            mCurrentThread = -1;
+            mShouldStep = false;
          }
+         while (continued);
+
+         *curThread = -1;
       }
-      while (continued);
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -1126,6 +1149,25 @@ namespace dtDirector
          if (!isLatentNode)
          {
             data.stack[stackIndex].node = NULL;
+         }
+      }
+
+      if (mNotifier.valid())
+      {
+         // Go through all other stack items and make sure our notifier
+         // keeps these nodes glowing.
+         for (int index = 0; index < stackIndex; ++index)
+         {
+            if (data.stack[index].node.valid())
+            {
+               mNotifier->OnNodeExecution(data.stack[index].node.get(),
+                  "", std::vector<std::string>());
+
+               if (IsDebugging())
+               {
+                  mNotifier->BreakNode(data.stack[index].node.get());
+               }
+            }
          }
       }
 

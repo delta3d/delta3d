@@ -87,7 +87,22 @@ namespace dtDirector
        */
       float GetValue();
 
+      /**
+       * Sets the value.
+       *
+       * @param[in]  value  The value.
+       */
+      void SetInitialValue(float value);
+
+      /**
+       * Retrieves the value.
+       *
+       * @return  The value.
+       */
+      float GetInitialValue();
+
       float mValue;
+      float mInitialValue;
    };
 }
 

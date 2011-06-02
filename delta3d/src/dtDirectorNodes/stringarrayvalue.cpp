@@ -55,6 +55,12 @@ namespace dtDirector
          dtDAL::StringActorProperty::GetFuncType(this, &StringArrayValue::GetValue),
          "The value.");
 
+      mInitialProperty = new dtDAL::StringActorProperty(
+         "Value", "Value",
+         dtDAL::StringActorProperty::SetFuncType(this, &StringArrayValue::SetInitialValue),
+         dtDAL::StringActorProperty::GetFuncType(this, &StringArrayValue::GetInitialValue),
+         "The initial value.");
+
       mArrayProperty = new dtDAL::ArrayActorProperty<std::string>(
          "ValueList", "Value List", "All values contained in this array.",
          dtDAL::ArrayActorProperty<std::string>::SetIndexFuncType(this, &ArrayValueNode::SetPropertyIndex),
@@ -63,6 +69,15 @@ namespace dtDirector
          dtDAL::ArrayActorProperty<std::string>::SetArrayFuncType(this, &StringArrayValue::SetArray),
          mProperty, "");
       AddProperty(mArrayProperty);
+
+      mInitialArrayProperty = new dtDAL::ArrayActorProperty<std::string>(
+         "InitialValueList", "Initial Value List", "All initial values contained in this array.",
+         dtDAL::ArrayActorProperty<std::string>::SetIndexFuncType(this, &ArrayValueNode::SetInitialPropertyIndex),
+         dtDAL::ArrayActorProperty<std::string>::GetDefaultFuncType(this, &StringArrayValue::GetDefaultValue),
+         dtDAL::ArrayActorProperty<std::string>::GetArrayFuncType(this, &StringArrayValue::GetInitialArray),
+         dtDAL::ArrayActorProperty<std::string>::SetArrayFuncType(this, &StringArrayValue::SetInitialArray),
+         mInitialProperty, "");
+      AddProperty(mInitialArrayProperty);
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -107,5 +122,43 @@ namespace dtDirector
    void StringArrayValue::SetArray(const std::vector<std::string>& value)
    {
       mValues = value;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void StringArrayValue::SetInitialValue(const std::string& value)
+   {
+      if (mInitialPropertyIndex < (int)mInitialValues.size())
+      {
+         if (mInitialValues[mInitialPropertyIndex] != value)
+         {
+            std::string oldValue = mInitialArrayProperty->ToString();
+
+            mInitialValues[mInitialPropertyIndex] = value;
+
+            ArrayValueNode::OnInitialValueChanged(oldValue);
+         }
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   std::string StringArrayValue::GetInitialValue()
+   {
+      if (mInitialPropertyIndex < (int)mInitialValues.size())
+      {
+         return mInitialValues[mInitialPropertyIndex];
+      }
+      return "";
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   std::vector<std::string> StringArrayValue::GetInitialArray()
+   {
+      return mInitialValues;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void StringArrayValue::SetInitialArray(const std::vector<std::string>& value)
+   {
+      mInitialValues = value;
    }
 }

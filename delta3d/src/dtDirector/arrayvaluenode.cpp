@@ -20,6 +20,7 @@
  */
 
 #include <dtDirector/arrayvaluenode.h>
+#include <dtDirector/director.h>
 
 #include <dtDAL/actorproperty.h>
 
@@ -31,7 +32,9 @@ namespace dtDirector
    ArrayValueNode::ArrayValueNode()
        : ValueNode()
        , mPropertyIndex(0)
+       , mInitialPropertyIndex(0)
        , mArrayProperty(NULL)
+       , mInitialArrayProperty(NULL)
    {
    }
 
@@ -44,7 +47,60 @@ namespace dtDirector
    ///////////////////////////////////////////////////////////////////////////////////////
    void ArrayValueNode::Init(const NodeType& nodeType, DirectorGraph* graph)
    {
-      ValueNode::Init(nodeType, graph);
+      Node::Init(nodeType, graph);
+
+      // If this node was created within the editor, but we are not
+      // debugging, then we need to remove the initial property from
+      // the node.
+      if (mInitialArrayProperty.valid() && !GetDirector()->IsLoading() && !GetDirector()->GetNotifier())
+      {
+         dtDAL::PropertyContainer::RemoveProperty(mInitialArrayProperty->GetName());
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void ArrayValueNode::OnFinishedLoading()
+   {
+      // If we do not have an initial value yet, then copy the contents
+      // of our current value into the initial.
+      if (mInitialArrayProperty.valid())
+      {
+         if (!mHasInitialValue)
+         {
+            mInitialArrayProperty->FromString(mArrayProperty->ToString());
+         }
+
+         // As soon as we finish loading the script, remove the initial
+         // property from the node.
+         dtDAL::PropertyContainer::RemoveProperty(mInitialArrayProperty->GetName());
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool ArrayValueNode::IsPropertyDefault(const dtDAL::ActorProperty& prop) const
+   {
+      if (mInitialArrayProperty && &prop == mArrayProperty)
+      {
+         if (mArrayProperty->ToString() == mInitialArrayProperty->ToString())
+         {
+            return true;
+         }
+         return false;
+      }
+
+      return Node::IsPropertyDefault(prop);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void ArrayValueNode::ResetProperty(dtDAL::ActorProperty& prop)
+   {
+      if (mInitialArrayProperty && &prop == mArrayProperty)
+      {
+         mArrayProperty->FromString(mInitialArrayProperty->ToString());
+         return;
+      }
+
+      Node::ResetProperty(prop);
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -98,14 +154,58 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   void ArrayValueNode::OnInitialValueChanged(const std::string& oldValue)
+   {
+      mHasInitialValue = true;
+
+      // If we have not started to run the script or our current value
+      // is equal to the initial value before it was just changed,
+      // copy the contents of the initial value to the current.
+      if (mInitialArrayProperty.valid() &&
+         (!GetDirector()->HasStarted() ||
+         mArrayProperty->ToString() == oldValue))
+      {
+         mArrayProperty->FromString(mInitialArrayProperty->ToString());
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void ArrayValueNode::ExposeInitialValue()
+   {
+      if (!mInitialArrayProperty)
+      {
+         return;
+      }
+
+      if (dtDAL::PropertyContainer::GetProperty(mInitialArrayProperty->GetName()))
+      {
+         return;
+      }
+
+      AddProperty(mInitialArrayProperty);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    void ArrayValueNode::SetPropertyIndex(int index)
    {
       mPropertyIndex = index;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   void ArrayValueNode::SetInitialPropertyIndex(int index)
+   {
+      mInitialPropertyIndex = index;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    dtDAL::ArrayActorPropertyBase* ArrayValueNode::GetArrayProperty()
    {
       return mArrayProperty.get();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   dtDAL::ArrayActorPropertyBase* ArrayValueNode::GetInitialArrayProperty()
+   {
+      return mInitialArrayProperty.get();
    }
 }

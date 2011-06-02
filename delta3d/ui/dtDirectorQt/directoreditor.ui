@@ -13,6 +13,12 @@
   <property name="windowTitle">
    <string>No Director Graph Loaded</string>
   </property>
+  <property name="dockNestingEnabled">
+   <bool>false</bool>
+  </property>
+  <property name="dockOptions">
+   <set>QMainWindow::AllowTabbedDocks|QMainWindow::AnimatedDocks</set>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout_9">
     <item row="0" column="0">
@@ -103,7 +109,7 @@
    </widget>
    <widget class="QMenu" name="menuDebug">
     <property name="enabled">
-     <bool>false</bool>
+     <bool>true</bool>
     </property>
     <property name="title">
      <string>Debug</string>
@@ -111,6 +117,8 @@
     <addaction name="actionPause"/>
     <addaction name="actionContinue"/>
     <addaction name="actionStep_Next"/>
+    <addaction name="separator"/>
+    <addaction name="actionToggle_Break_Point"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menu_Edit"/>
@@ -164,6 +172,7 @@
    <addaction name="actionPause"/>
    <addaction name="actionContinue"/>
    <addaction name="actionStep_Next"/>
+   <addaction name="actionToggle_Break_Point"/>
   </widget>
   <widget class="dtDirector::PropertyEditor" name="propertyEditor">
    <attribute name="dockWidgetArea">
@@ -191,6 +200,9 @@
    </attribute>
   </widget>
   <widget class="QDockWidget" name="nodePalette">
+   <property name="features">
+    <set>QDockWidget::AllDockWidgetFeatures</set>
+   </property>
    <property name="windowTitle">
     <string>Node Palette</string>
    </property>
@@ -200,242 +212,243 @@
    <widget class="QWidget" name="dockWidgetContents">
     <layout class="QGridLayout" name="gridLayout">
      <item row="0" column="0">
-      <widget class="QSplitter" name="splitter">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
+      <widget class="QTabWidget" name="nodeTabs">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
        </property>
-       <widget class="QTabWidget" name="nodeTabs">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="tabPosition">
-         <enum>QTabWidget::West</enum>
-        </property>
-        <property name="currentIndex">
-         <number>0</number>
-        </property>
-        <widget class="QWidget" name="eventNodeTab">
-         <attribute name="title">
-          <string>Events</string>
-         </attribute>
-         <layout class="QGridLayout" name="gridLayout_2">
-          <property name="margin">
-           <number>0</number>
-          </property>
-          <item row="0" column="0">
-           <widget class="dtDirector::NodeTabs" name="eventNodeTabWidget">
-            <property name="tabSpacing">
-             <number>0</number>
+       <property name="autoFillBackground">
+        <bool>false</bool>
+       </property>
+       <property name="tabPosition">
+        <enum>QTabWidget::West</enum>
+       </property>
+       <property name="currentIndex">
+        <number>0</number>
+       </property>
+       <property name="movable">
+        <bool>false</bool>
+       </property>
+       <widget class="QWidget" name="eventNodeTab">
+        <attribute name="title">
+         <string>Events</string>
+        </attribute>
+        <layout class="QGridLayout" name="gridLayout_2">
+         <property name="margin">
+          <number>0</number>
+         </property>
+         <item row="0" column="0">
+          <widget class="dtDirector::NodeTabs" name="eventNodeTabWidget">
+           <property name="tabSpacing">
+            <number>0</number>
+           </property>
+           <widget class="QWidget" name="eventNodeTabWidgetPage1_2">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>151</width>
+              <height>432</height>
+             </rect>
             </property>
-            <widget class="QWidget" name="eventNodeTabWidgetPage1_2">
-             <property name="geometry">
-              <rect>
-               <x>0</x>
-               <y>0</y>
-               <width>251</width>
-               <height>432</height>
-              </rect>
-             </property>
-             <attribute name="label">
-              <string/>
-             </attribute>
-            </widget>
+            <attribute name="label">
+             <string/>
+            </attribute>
            </widget>
-          </item>
-         </layout>
-        </widget>
-        <widget class="QWidget" name="actionNodeTab">
-         <attribute name="title">
-          <string>Actions</string>
-         </attribute>
-         <layout class="QGridLayout" name="gridLayout_3">
-          <property name="margin">
-           <number>0</number>
-          </property>
-          <item row="0" column="0">
-           <widget class="dtDirector::NodeTabs" name="actionNodeTabWidget">
-            <property name="tabSpacing">
-             <number>0</number>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="actionNodeTab">
+        <attribute name="title">
+         <string>Actions</string>
+        </attribute>
+        <layout class="QGridLayout" name="gridLayout_3">
+         <property name="margin">
+          <number>0</number>
+         </property>
+         <item row="0" column="0">
+          <widget class="dtDirector::NodeTabs" name="actionNodeTabWidget">
+           <property name="tabSpacing">
+            <number>0</number>
+           </property>
+           <widget class="QWidget" name="actionNodeTabWidgetPage1_2">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>151</width>
+              <height>432</height>
+             </rect>
             </property>
-            <widget class="QWidget" name="actionNodeTabWidgetPage1_2">
-             <property name="geometry">
-              <rect>
-               <x>0</x>
-               <y>0</y>
-               <width>251</width>
-               <height>432</height>
-              </rect>
-             </property>
-             <attribute name="label">
-              <string/>
-             </attribute>
-            </widget>
+            <attribute name="label">
+             <string/>
+            </attribute>
            </widget>
-          </item>
-         </layout>
-        </widget>
-        <widget class="QWidget" name="mutatorNodeTab">
-         <attribute name="title">
-          <string>Mutators</string>
-         </attribute>
-         <layout class="QGridLayout" name="gridLayout_8">
-          <property name="margin">
-           <number>0</number>
-          </property>
-          <item row="0" column="0">
-           <widget class="dtDirector::NodeTabs" name="mutatorNodeTabWidget">
-            <property name="currentIndex">
-             <number>0</number>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="mutatorNodeTab">
+        <attribute name="title">
+         <string>Mutators</string>
+        </attribute>
+        <layout class="QGridLayout" name="gridLayout_8">
+         <property name="margin">
+          <number>0</number>
+         </property>
+         <item row="0" column="0">
+          <widget class="dtDirector::NodeTabs" name="mutatorNodeTabWidget">
+           <property name="currentIndex">
+            <number>0</number>
+           </property>
+           <property name="tabSpacing">
+            <number>0</number>
+           </property>
+           <widget class="QWidget" name="mutatorNodeTabWidgetPage1_2">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>151</width>
+              <height>432</height>
+             </rect>
             </property>
-            <property name="tabSpacing">
-             <number>0</number>
-            </property>
-            <widget class="QWidget" name="mutatorNodeTabWidgetPage1_2">
-             <property name="geometry">
-              <rect>
-               <x>0</x>
-               <y>0</y>
-               <width>251</width>
-               <height>432</height>
-              </rect>
-             </property>
-             <attribute name="label">
-              <string/>
-             </attribute>
-            </widget>
+            <attribute name="label">
+             <string/>
+            </attribute>
            </widget>
-          </item>
-         </layout>
-        </widget>
-        <widget class="QWidget" name="variableNodeTab">
-         <attribute name="title">
-          <string>Variables</string>
-         </attribute>
-         <layout class="QGridLayout" name="gridLayout_4">
-          <property name="margin">
-           <number>0</number>
-          </property>
-          <item row="0" column="0">
-           <widget class="dtDirector::NodeTabs" name="variableNodeTabWidget">
-            <property name="tabSpacing">
-             <number>0</number>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="variableNodeTab">
+        <attribute name="title">
+         <string>Variables</string>
+        </attribute>
+        <layout class="QGridLayout" name="gridLayout_4">
+         <property name="margin">
+          <number>0</number>
+         </property>
+         <item row="0" column="0">
+          <widget class="dtDirector::NodeTabs" name="variableNodeTabWidget">
+           <property name="tabSpacing">
+            <number>0</number>
+           </property>
+           <widget class="QWidget" name="variableNodeTabWidgetPage1_2">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>151</width>
+              <height>432</height>
+             </rect>
             </property>
-            <widget class="QWidget" name="variableNodeTabWidgetPage1_2">
-             <property name="geometry">
-              <rect>
-               <x>0</x>
-               <y>0</y>
-               <width>251</width>
-               <height>432</height>
-              </rect>
-             </property>
-             <attribute name="label">
-              <string/>
-             </attribute>
-            </widget>
+            <attribute name="label">
+             <string/>
+            </attribute>
            </widget>
-          </item>
-         </layout>
-        </widget>
-        <widget class="QWidget" name="macroNodeTab">
-         <attribute name="title">
-          <string>Macros</string>
-         </attribute>
-         <layout class="QGridLayout" name="gridLayout_5">
-          <property name="margin">
-           <number>0</number>
-          </property>
-          <item row="0" column="0">
-           <widget class="dtDirector::NodeTabs" name="macroNodeTabWidget">
-            <property name="tabSpacing">
-             <number>0</number>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="macroNodeTab">
+        <attribute name="title">
+         <string>Macros</string>
+        </attribute>
+        <layout class="QGridLayout" name="gridLayout_5">
+         <property name="margin">
+          <number>0</number>
+         </property>
+         <item row="0" column="0">
+          <widget class="dtDirector::NodeTabs" name="macroNodeTabWidget">
+           <property name="tabSpacing">
+            <number>0</number>
+           </property>
+           <widget class="QWidget" name="macroNodeTabWidgetPage1_2">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>151</width>
+              <height>432</height>
+             </rect>
             </property>
-            <widget class="QWidget" name="macroNodeTabWidgetPage1_2">
-             <property name="geometry">
-              <rect>
-               <x>0</x>
-               <y>0</y>
-               <width>251</width>
-               <height>432</height>
-              </rect>
-             </property>
-             <attribute name="label">
-              <string/>
-             </attribute>
-            </widget>
+            <attribute name="label">
+             <string/>
+            </attribute>
            </widget>
-          </item>
-         </layout>
-        </widget>
-        <widget class="QWidget" name="linkNodeTab">
-         <attribute name="title">
-          <string>Links</string>
-         </attribute>
-         <layout class="QGridLayout" name="gridLayout_6">
-          <property name="margin">
-           <number>0</number>
-          </property>
-          <item row="0" column="0">
-           <widget class="dtDirector::NodeTabs" name="linkNodeTabWidget">
-            <property name="tabSpacing">
-             <number>0</number>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="linkNodeTab">
+        <attribute name="title">
+         <string>Links</string>
+        </attribute>
+        <layout class="QGridLayout" name="gridLayout_6">
+         <property name="margin">
+          <number>0</number>
+         </property>
+         <item row="0" column="0">
+          <widget class="dtDirector::NodeTabs" name="linkNodeTabWidget">
+           <property name="tabSpacing">
+            <number>0</number>
+           </property>
+           <widget class="QWidget" name="linkNodeTabWidgetPage1_2">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>151</width>
+              <height>432</height>
+             </rect>
             </property>
-            <widget class="QWidget" name="linkNodeTabWidgetPage1_2">
-             <property name="geometry">
-              <rect>
-               <x>0</x>
-               <y>0</y>
-               <width>251</width>
-               <height>432</height>
-              </rect>
-             </property>
-             <attribute name="label">
-              <string/>
-             </attribute>
-            </widget>
+            <attribute name="label">
+             <string/>
+            </attribute>
            </widget>
-          </item>
-         </layout>
-        </widget>
-        <widget class="QWidget" name="miscNodeTab">
-         <attribute name="title">
-          <string>Misc</string>
-         </attribute>
-         <layout class="QGridLayout" name="gridLayout_7">
-          <property name="margin">
-           <number>0</number>
-          </property>
-          <item row="0" column="0">
-           <widget class="dtDirector::NodeTabs" name="miscNodeTabWidget">
-            <property name="minimumSize">
-             <size>
-              <width>250</width>
-              <height>0</height>
-             </size>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="miscNodeTab">
+        <attribute name="title">
+         <string>Misc</string>
+        </attribute>
+        <layout class="QGridLayout" name="gridLayout_7">
+         <property name="margin">
+          <number>0</number>
+         </property>
+         <item row="0" column="0">
+          <widget class="dtDirector::NodeTabs" name="miscNodeTabWidget">
+           <property name="minimumSize">
+            <size>
+             <width>150</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="tabSpacing">
+            <number>0</number>
+           </property>
+           <widget class="QWidget" name="miscNodeTabWidgetPage1_2">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>151</width>
+              <height>432</height>
+             </rect>
             </property>
-            <property name="tabSpacing">
-             <number>0</number>
-            </property>
-            <widget class="QWidget" name="miscNodeTabWidgetPage1_2">
-             <property name="geometry">
-              <rect>
-               <x>0</x>
-               <y>0</y>
-               <width>98</width>
-               <height>28</height>
-              </rect>
-             </property>
-             <attribute name="label">
-              <string/>
-             </attribute>
-            </widget>
+            <attribute name="label">
+             <string/>
+            </attribute>
            </widget>
-          </item>
-         </layout>
-        </widget>
+          </widget>
+         </item>
+        </layout>
        </widget>
       </widget>
      </item>
@@ -776,7 +789,7 @@
   </action>
   <action name="actionPause">
    <property name="enabled">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="icon">
     <iconset resource="../../src/dtDirectorQt/directorqt.qrc">
@@ -788,7 +801,7 @@
   </action>
   <action name="actionContinue">
    <property name="enabled">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="icon">
     <iconset resource="../../src/dtDirectorQt/directorqt.qrc">
@@ -803,7 +816,7 @@
   </action>
   <action name="actionStep_Next">
    <property name="enabled">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="icon">
     <iconset resource="../../src/dtDirectorQt/directorqt.qrc">
@@ -854,6 +867,17 @@
    </property>
    <property name="text">
     <string>Node Palette</string>
+   </property>
+  </action>
+  <action name="actionToggle_Break_Point">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Toggle Break Point</string>
+   </property>
+   <property name="shortcut">
+    <string>F9</string>
    </property>
   </action>
  </widget>

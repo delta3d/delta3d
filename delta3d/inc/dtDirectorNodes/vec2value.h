@@ -87,7 +87,22 @@ namespace dtDirector
        */
       const osg::Vec2& GetValue();
 
+      /**
+       * Sets the value.
+       *
+       * @param[in]  value  The value.
+       */
+      void SetInitialValue(const osg::Vec2& value);
+
+      /**
+       * Retrieves the value.
+       *
+       * @return  The value.
+       */
+      const osg::Vec2& GetInitialValue();
+
       osg::Vec2 mValue;
+      osg::Vec2 mInitialValue;
    };
 }
 

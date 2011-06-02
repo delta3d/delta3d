@@ -108,7 +108,36 @@ namespace dtDirector
        */
       void SetArray(const std::vector<std::string>& value);
 
+      /**
+       * Sets the value.
+       *
+       * @param[in]  value  The value.
+       */
+      void SetInitialValue(const std::string& value);
+
+      /**
+       * Retrieves the value.
+       *
+       * @return  The value.
+       */
+      std::string GetInitialValue();
+
+      /**
+       * Retrieves the value array.
+       *
+       * @return  The array.
+       */
+      std::vector<std::string> GetInitialArray();
+
+      /**
+       * Sets the current value array.
+       *
+       * @param[in]  value  The new value.
+       */
+      void SetInitialArray(const std::vector<std::string>& value);
+
       std::vector<std::string> mValues;
+      std::vector<std::string> mInitialValues;
    };
 }
 

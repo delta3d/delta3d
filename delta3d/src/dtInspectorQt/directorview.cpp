@@ -58,8 +58,6 @@ void dtInspectorQt::DirectorView::OnViewButtonClicked()
 
    if (editor)
    {
-      editor->SetDirector(mOperateOn->mDirector);
-
       dtCore::RefPtr<dtDirector::EditorNotifier> notifier =
          dynamic_cast<dtDirector::EditorNotifier*>(
          mOperateOn->mDirector->GetNotifier());
@@ -73,6 +71,7 @@ void dtInspectorQt::DirectorView::OnViewButtonClicked()
 
       mOperateOn->mDirector->SetNotifier(notifier);
 
+      editor->SetDirector(mOperateOn->mDirector);
       editor->show();
    }
 }

@@ -30,6 +30,7 @@ namespace dtDirector
    StringValue::StringValue()
        : ValueNode()
        , mValue("")
+       , mInitialValue("")
    {
       AddAuthor("Jeff P. Houde");
       //SetColorRGB(Colors::RED); 
@@ -57,6 +58,13 @@ namespace dtDirector
          dtDAL::StringActorProperty::GetFuncType(this, &StringValue::GetValue),
          "The value.");
       AddProperty(mProperty);
+
+      mInitialProperty = new dtDAL::StringActorProperty(
+         "Initial Value", "Initial Value",
+         dtDAL::StringActorProperty::SetFuncType(this, &StringValue::SetInitialValue),
+         dtDAL::StringActorProperty::GetFuncType(this, &StringValue::GetInitialValue),
+         "The initial value.");
+      AddProperty(mInitialProperty);
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -74,5 +82,22 @@ namespace dtDirector
    {
       ValueNode::OnValueRetrieved();
       return mValue;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void StringValue::SetInitialValue(const std::string& value)
+   {
+      if (mInitialValue != value)
+      {
+         std::string oldValue = mInitialProperty->ToString();
+         mInitialValue = value;
+         ValueNode::OnInitialValueChanged(oldValue);
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   const std::string& StringValue::GetInitialValue()
+   {
+      return mInitialValue;
    }
 }

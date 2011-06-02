@@ -56,6 +56,12 @@ namespace dtDirector
          dtDAL::Vec3ActorProperty::GetFuncType(this, &Vec3ArrayValue::GetValue),
          "The value.");
 
+      mInitialProperty = new dtDAL::Vec3ActorProperty(
+         "Value", "Value",
+         dtDAL::Vec3ActorProperty::SetFuncType(this, &Vec3ArrayValue::SetValue),
+         dtDAL::Vec3ActorProperty::GetFuncType(this, &Vec3ArrayValue::GetValue),
+         "The value.");
+
       mArrayProperty = new dtDAL::ArrayActorProperty<osg::Vec3>(
          "ValueList", "Value List", "All values contained in this array.",
          dtDAL::ArrayActorProperty<osg::Vec3>::SetIndexFuncType(this, &ArrayValueNode::SetPropertyIndex),
@@ -64,6 +70,15 @@ namespace dtDirector
          dtDAL::ArrayActorProperty<osg::Vec3>::SetArrayFuncType(this, &Vec3ArrayValue::SetArray),
          mProperty, "");
       AddProperty(mArrayProperty);
+
+      mInitialArrayProperty = new dtDAL::ArrayActorProperty<osg::Vec3>(
+         "InitialValueList", "Initial Value List", "All initial values contained in this array.",
+         dtDAL::ArrayActorProperty<osg::Vec3>::SetIndexFuncType(this, &ArrayValueNode::SetInitialPropertyIndex),
+         dtDAL::ArrayActorProperty<osg::Vec3>::GetDefaultFuncType(this, &Vec3ArrayValue::GetDefaultValue),
+         dtDAL::ArrayActorProperty<osg::Vec3>::GetArrayFuncType(this, &Vec3ArrayValue::GetInitialArray),
+         dtDAL::ArrayActorProperty<osg::Vec3>::SetArrayFuncType(this, &Vec3ArrayValue::SetInitialArray),
+         mInitialProperty, "");
+      AddProperty(mInitialArrayProperty);
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -109,5 +124,49 @@ namespace dtDirector
    void Vec3ArrayValue::SetArray(const std::vector<osg::Vec3>& value)
    {
       mValues = value;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void Vec3ArrayValue::SetInitialValue(const osg::Vec3& value)
+   {
+      if (mInitialPropertyIndex < (int)mInitialValues.size())
+      {
+         if (mInitialValues[mInitialPropertyIndex] != value)
+         {
+            std::string oldValue = mInitialArrayProperty->ToString();
+
+            mInitialValues[mInitialPropertyIndex] = value;
+
+            ArrayValueNode::OnInitialValueChanged(oldValue);
+         }
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   osg::Vec3 Vec3ArrayValue::GetInitialValue()
+   {
+      if (mInitialPropertyIndex < (int)mInitialValues.size())
+      {
+         return mInitialValues[mInitialPropertyIndex];
+      }
+
+      return GetDefaultValue();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   std::vector<osg::Vec3> Vec3ArrayValue::GetInitialArray()
+   {
+      return mInitialValues;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void Vec3ArrayValue::SetInitialArray(const std::vector<osg::Vec3>& value)
+   {
+      if (mInitialValues != value)
+      {
+         std::string oldValue = mInitialProperty->ToString();
+         mInitialValues = value;
+         ArrayValueNode::OnInitialValueChanged(oldValue);
+      }
    }
 }

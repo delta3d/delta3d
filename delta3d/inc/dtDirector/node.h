@@ -88,6 +88,11 @@ namespace dtDirector
       virtual void OnStart() {}
 
       /**
+       * Event handler called when a script has finished loading.
+       */
+      virtual void OnFinishedLoading() {}
+
+      /**
        * Creates a copy of this node and returns it.  The method uses the
        * node manager to create the clone and then iterates though the
        * current state of this node's property set and copies their values
@@ -271,7 +276,7 @@ namespace dtDirector
        *
        * @return  The director.
        */
-      Director* GetDirector() {return mDirector;}
+      Director* GetDirector() const {return mDirector;}
 
       /**
        * Retrieves the graph.

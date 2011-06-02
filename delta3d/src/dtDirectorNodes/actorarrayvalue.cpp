@@ -56,6 +56,12 @@ namespace dtDirector
          dtDAL::ActorIDActorProperty::GetFuncType(this, &ActorArrayValue::GetValue),
          "", "The value.");
 
+      mInitialProperty = new dtDAL::ActorIDActorProperty(
+         "Value", "Value",
+         dtDAL::ActorIDActorProperty::SetFuncType(this, &ActorArrayValue::SetInitialValue),
+         dtDAL::ActorIDActorProperty::GetFuncType(this, &ActorArrayValue::GetInitialValue),
+         "", "The initial value.");
+
       mArrayProperty = new dtDAL::ArrayActorProperty<dtCore::UniqueId>(
          "ValueList", "Value List", "All values contained in this array.",
          dtDAL::ArrayActorProperty<dtCore::UniqueId>::SetIndexFuncType(this, &ArrayValueNode::SetPropertyIndex),
@@ -64,6 +70,15 @@ namespace dtDirector
          dtDAL::ArrayActorProperty<dtCore::UniqueId>::SetArrayFuncType(this, &ActorArrayValue::SetArray),
          mProperty, "");
       AddProperty(mArrayProperty);
+
+      mInitialArrayProperty = new dtDAL::ArrayActorProperty<dtCore::UniqueId>(
+         "InitialValueList", "Initial Value List", "All initial values contained in this array.",
+         dtDAL::ArrayActorProperty<dtCore::UniqueId>::SetIndexFuncType(this, &ArrayValueNode::SetInitialPropertyIndex),
+         dtDAL::ArrayActorProperty<dtCore::UniqueId>::GetDefaultFuncType(this, &ActorArrayValue::GetDefaultValue),
+         dtDAL::ArrayActorProperty<dtCore::UniqueId>::GetArrayFuncType(this, &ActorArrayValue::GetInitialArray),
+         dtDAL::ArrayActorProperty<dtCore::UniqueId>::SetArrayFuncType(this, &ActorArrayValue::SetInitialArray),
+         mInitialProperty, "");
+      AddProperty(mInitialArrayProperty);
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -111,5 +126,49 @@ namespace dtDirector
    void ActorArrayValue::SetArray(const std::vector<dtCore::UniqueId>& value)
    {
       mValues = value;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void ActorArrayValue::SetInitialValue(const dtCore::UniqueId& value)
+   {
+      if (mInitialPropertyIndex < (int)mInitialValues.size())
+      {
+         if (mInitialValues[mInitialPropertyIndex] != value)
+         {
+            std::string oldValue = mInitialArrayProperty->ToString();
+
+            mInitialValues[mInitialPropertyIndex] = value;
+
+            OnInitialValueChanged(oldValue);
+         }
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   dtCore::UniqueId ActorArrayValue::GetInitialValue()
+   {
+      if (mInitialPropertyIndex < (int)mInitialValues.size())
+      {
+         return mInitialValues[mInitialPropertyIndex];
+      }
+
+      return GetDefaultValue();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   std::vector<dtCore::UniqueId> ActorArrayValue::GetInitialArray()
+   {
+      return mInitialValues;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void ActorArrayValue::SetInitialArray(const std::vector<dtCore::UniqueId>& value)
+   {
+      if (mInitialValues != value)
+      {
+         std::string oldValue = mInitialProperty->ToString();
+         mInitialValues = value;
+         OnInitialValueChanged(oldValue);
+      }
    }
 }

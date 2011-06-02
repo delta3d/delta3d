@@ -30,6 +30,7 @@ namespace dtDirector
    FloatValue::FloatValue()
        : ValueNode()
        , mValue(0.0f)
+       , mInitialValue(0.0f)
    {
       AddAuthor("Jeff P. Houde");
       //SetColorRGB(Colors::RED); 
@@ -57,6 +58,13 @@ namespace dtDirector
          dtDAL::FloatActorProperty::GetFuncType(this, &FloatValue::GetValue),
          "The value.");
       AddProperty(mProperty);
+
+      mInitialProperty = new dtDAL::FloatActorProperty(
+         "Initial Value", "Initial Value",
+         dtDAL::FloatActorProperty::SetFuncType(this, &FloatValue::SetInitialValue),
+         dtDAL::FloatActorProperty::GetFuncType(this, &FloatValue::GetInitialValue),
+         "The initial value.");
+      AddProperty(mInitialProperty);
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -74,5 +82,22 @@ namespace dtDirector
    {
       ValueNode::OnValueRetrieved();
       return mValue;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void FloatValue::SetInitialValue(float value)
+   {
+      if (mInitialValue != value)
+      {
+         std::string oldValue = mInitialProperty->ToString();
+         mInitialValue = value;
+         ValueNode::OnInitialValueChanged(oldValue);
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   float FloatValue::GetInitialValue()
+   {
+      return mInitialValue;
    }
 }
