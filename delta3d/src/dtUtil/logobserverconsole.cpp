@@ -39,29 +39,31 @@ void dtUtil::LogObserverConsole::LogMessage(const LogData& logData)
    // Print out the time, the message, the log level, then where it came from
    std::cout << "[" << std::setw(2) << std::setfill('0') << logData.time.tm_hour << ":"
       << std::setw(2) << std::setfill('0') << logData.time.tm_min << ":"
-      << std::setw(2) << std::setfill('0') << logData.time.tm_sec << "] [" 
-      << logData.msg << "] [" << Log::GetLogLevelString(logData.type) << "] [";
+      << std::setw(2) << std::setfill('0') << logData.time.tm_sec 
+      << " " << Log::GetLogLevelString(logData.type) << "] ";
+
+   std::cout << logData.msg << " [";
 
    if (!logData.logName.empty())
    {
-      std::cout << "'" << logData.logName << "'";
-   }
-
-   if (!logData.file.empty())
-   {
-      std::cout << logData.file;
+      std::cout << "'" << logData.logName << "' ";
    }
 
    if (!logData.method.empty())
    {
-      std::cout << ":" << logData.method;
+      std::cout << logData.method << "()";
    }
 
-   if (logData.line > 0)
+   if (!logData.file.empty())
    {
-      std:: cout << ":" << logData.line;
+      std::cout << " " << logData.file;
+
+      if (logData.line > 0)
+      {
+         std:: cout << "(" << logData.line << ")";
+      }
    }
-   
+
    std::cout << "]" << std::endl;
 }
 
