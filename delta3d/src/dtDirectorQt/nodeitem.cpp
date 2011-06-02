@@ -1548,7 +1548,7 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void NodeItem::SetDefaultPen()
    {
-      setPen(QPen(LINE_COLOR, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+      setPen(QPen(LINE_COLOR, 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
       if(!mNode || !mNode->IsEnabled())
       {
          mNodePen = pen();
@@ -1558,13 +1558,13 @@ namespace dtDirector
 
       if (mNode->GetNodeLogging())
       {
-         setPen(QPen(Qt::white, 2, Qt::DotLine, Qt::RoundCap, Qt::RoundJoin));
+         setPen(QPen(Qt::white, 3, Qt::DotLine, Qt::RoundCap, Qt::RoundJoin));
       }
 
       if (mScene && mScene->GetEditor()->GetDirector()->GetNotifier() &&
          mScene->GetEditor()->GetDirector()->GetNotifier()->ShouldBreak(mNode.get()))
       {
-         setPen(QPen(Qt::red, 2, Qt::DotLine, Qt::RoundCap, Qt::RoundJoin));
+         setPen(QPen(Qt::red, 3, Qt::DotLine, Qt::RoundCap, Qt::RoundJoin));
       }
 
       if(mScene != NULL && mScene->GetEditor()->GetReplayMode())
@@ -1574,7 +1574,7 @@ namespace dtDirector
 
          if (highlight || mScene->GetEditor()->GetReplayNode().nodeID == mNode->GetID())
          {
-            setPen(QPen(Qt::yellow, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+            setPen(QPen(Qt::yellow, 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
          }
       }
       mNodePen = pen();
