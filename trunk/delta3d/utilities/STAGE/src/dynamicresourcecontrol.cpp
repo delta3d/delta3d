@@ -40,10 +40,13 @@
 #include <dtDAL/project.h>
 #include <dtDAL/datatype.h>
 #include <dtDAL/resourceactorproperty.h>
+#include <dtDAL/resourcedescriptor.h>
 #include <dtDAL/map.h>
 
 #include <QtGui/QMessageBox>
 #include <QtGui/QGridLayout>
+#include <QtGui/QMenu>
+#include <QtGui/QAction>
 
 #include <dtUtil/log.h>
 
@@ -88,6 +91,28 @@ namespace dtEditQt
       }
 
       return wrapper;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void STAGEDynamicResourceControl::setupMenu(const dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator& iter, QMenu* menu)
+   {
+      menu->addAction("<None>");
+      menu->addAction("<Use Current>");
+      DynamicResourceControl::recursivelySetupMenu(iter, menu);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////
+   void STAGEDynamicResourceControl::itemSelected(QAction* action)
+   {
+      // If we are using the currently selected resource from STAGE,
+      // Set the data of the action to the current resource.
+      if (action && action->text() == "<Use Current>")
+      {
+         dtDAL::ResourceDescriptor current = EditorData::GetInstance().getCurrentResource(GetProperty().GetDataType());
+         action->setData(QVariant(current.GetResourceIdentifier().c_str()));
+      }
+
+      DynamicResourceControl::itemSelected(action);
    }
 
    //////////////////////////////////////////////////////////////////////////
