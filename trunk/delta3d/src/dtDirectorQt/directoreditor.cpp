@@ -146,6 +146,24 @@ namespace dtDirector
             setWindowTitle(std::string(osgDB::getStrippedName(mFileName) + ".dtdir").c_str());
          }
          mUI.graphBrowser->BuildGraphList(mDirector->GetGraphRoot());
+
+         // If we have a valid notifier, make sure all value nodes
+         // expose their initial value property.
+         EditorNotifier* notifier = dynamic_cast<EditorNotifier*>(mDirector->GetNotifier());
+         if (notifier)
+         {
+            std::vector<Node*> nodes;
+            mDirector->GetAllNodes(nodes);
+            int count = (int)nodes.size();
+            for (int index = 0; index < count; ++index)
+            {
+               ValueNode* valueNode = nodes[index]->AsValueNode();
+               if (valueNode)
+               {
+                  valueNode->ExposeInitialValue();
+               }
+            }
+         }
       }
       else
       {
@@ -320,7 +338,7 @@ namespace dtDirector
       EditorView* view = dynamic_cast<EditorView*>(mUI.graphTab->currentWidget());
       if (view && view->GetScene())
       {
-         NodeItem* item = view->GetScene()->GetNodeItem(node);
+         NodeItem* item = view->GetScene()->GetNodeItem(node, true);
          if (item)
          {
             item->Draw();
@@ -367,6 +385,11 @@ namespace dtDirector
       bool bCanShowLinks = false;
       bool bCanHideLinks = false;
 
+      bool bCanToggleBreakPoint = false;
+      bool bBreakPointChecked = true;
+
+      EditorNotifier* notifier = dynamic_cast<EditorNotifier*>(mDirector->GetNotifier());
+
       int tabIndex = mUI.graphTab->currentIndex();
       if (tabIndex >= 0 && tabIndex < mUI.graphTab->count())
       {
@@ -398,6 +421,18 @@ namespace dtDirector
                NodeItem* node = dynamic_cast<NodeItem*>(selection[index]);
                if (node)
                {
+                  if (notifier && node->GetNode())
+                  {
+                     bCanToggleBreakPoint = true;
+
+                     EditorNotifier::GlowData* glowData = notifier->GetGlowData(node->GetNode());
+
+                     if (!glowData || !glowData->hasBreakPoint)
+                     {
+                        bBreakPointChecked = false;
+                     }
+                  }
+
                   bool inputsExposed = true;
                   bool outputsExposed = true;
                   bool valuesExposed = true;
@@ -501,7 +536,7 @@ namespace dtDirector
       mUI.action_Hide_Links->setEnabled(bCanHideLinks);
 
       // Debugging
-      if (mDirector->GetNotifier())
+      if (notifier)
       {
          mUI.action_New->setEnabled(false);
          mUI.action_Load->setEnabled(false);
@@ -518,6 +553,8 @@ namespace dtDirector
          mUI.actionPause->setEnabled(!mDirector->IsDebugging());
          mUI.actionContinue->setEnabled(mDirector->IsDebugging());
          mUI.actionStep_Next->setEnabled(mDirector->IsDebugging());
+         mUI.actionToggle_Break_Point->setEnabled(bCanToggleBreakPoint);
+         mUI.actionToggle_Break_Point->setChecked(bBreakPointChecked);
       }
       else
       {
@@ -531,6 +568,7 @@ namespace dtDirector
          mUI.actionPause->setVisible(false);
          mUI.actionContinue->setVisible(false);
          mUI.actionStep_Next->setVisible(false);
+         mUI.actionToggle_Break_Point->setVisible(false);
       }
    }
 
@@ -1414,6 +1452,48 @@ namespace dtDirector
       mDirector->StepDebugger();
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::on_actionToggle_Break_Point_triggered()
+   {
+      EditorNotifier* notifier =
+         dynamic_cast<EditorNotifier*>(mDirector->GetNotifier());
+
+      if (!notifier)
+      {
+         return;
+      }
+
+      bool toggle = mUI.actionToggle_Break_Point->isChecked();
+
+      int tabIndex = mUI.graphTab->currentIndex();
+      if (tabIndex >= 0 && tabIndex < mUI.graphTab->count())
+      {
+         EditorView* view = dynamic_cast<EditorView*>(mUI.graphTab->widget(tabIndex));
+         if (view && view->GetScene() && view->GetScene()->GetGraph())
+         {
+            EditorScene* scene = view->GetScene();
+
+            QList<QGraphicsItem*> selection = scene->selectedItems();
+            int count = (int)selection.size();
+            for (int index = 0; index < count; index++)
+            {
+               NodeItem* node = dynamic_cast<NodeItem*>(selection[index]);
+               if (node && node->GetNode())
+               {
+                  EditorNotifier::GlowData* glowData = 
+                     notifier->GetGlowData(node->GetNode());
+
+                  if ((toggle && (!glowData || !glowData->hasBreakPoint)) ||
+                     (!toggle && glowData && glowData->hasBreakPoint))
+                  {
+                     node->OnToggleBreakPoint();
+                  }
+               }
+            }
+         }
+      }
+   }
+
    ///////////////////////////////////////////////////////////////////////////////
    void DirectorEditor::OnCreateNodeEvent(const QString& name, const QString& category)
    {
@@ -1475,40 +1555,32 @@ namespace dtDirector
    {
       QMainWindow::showEvent(event);
 
+      // Retrieve the last loaded script.
+      QSettings settings("MOVES", "Director Editor");
+
+      settings.beginGroup("MainWindow");
+      resize(settings.value("Size", QSize(800, 600)).toSize());
+      move(settings.value("Pos", QPoint(100, 100)).toPoint());
+
+      // When restoring the window state, first see if the key exists.
+      if (settings.contains("State"))
+      {
+         QByteArray state = settings.value("State").toByteArray();
+         restoreState(state);
+      }
+
+      // When restoring the window state, first see if the key exists.
+      if (settings.contains("Geom"))
+      {
+         QByteArray state = settings.value("Geom").toByteArray();
+         restoreGeometry(state);
+      }
+      settings.endGroup();
+
+      mUI.threadBrowser->hide();
+
       if (mDirector.valid() && mUI.graphTab->count() == 0)
       {
-         // Retrieve the last loaded script.
-         QSettings settings("MOVES", "Director Editor");
-         //QStringList files = settings.value("recentFileList").toStringList();
-
-         //if (!files.empty())
-         //{
-         //   QString lastScript = files.first();
-
-         //   LoadScript(lastScript.toStdString());
-         //}
-
-         settings.beginGroup("MainWindow");
-         resize(settings.value("Size", QSize(800, 600)).toSize());
-         move(settings.value("Pos", QPoint(100, 100)).toPoint());
-
-         // When restoring the window state, first see if the key exists.
-         if (settings.contains("State"))
-         {
-            QByteArray state = settings.value("State").toByteArray();
-            restoreState(state);
-         }
-
-         // When restoring the window state, first see if the key exists.
-         if (settings.contains("Geom"))
-         {
-            QByteArray state = settings.value("Geom").toByteArray();
-            restoreGeometry(state);
-         }
-         settings.endGroup();
-
-         // TODO: Restore property and graph tree windows.
-
          OpenGraph(mDirector->GetGraphRoot());
       }
    }
@@ -1644,7 +1716,22 @@ namespace dtDirector
          // them.
          if (mDirector->GetResource() != dtDAL::ResourceDescriptor::NULL_RESOURCE)
          {
-            for (int i = 0; i < dtCore::Base::GetInstanceCount(); i++)
+            // First find all editors that are editing this particular
+            // script resource and clear their tabs.
+            int editorCount = (int)mEditorsOpen.size();
+            for (int editorIndex = 0; editorIndex < editorCount; ++editorIndex)
+            {
+               DirectorEditor* editor = mEditorsOpen[editorIndex];
+               if (editor && editor->GetDirector())
+               {
+                  if (editor->GetDirector()->GetResource() == mDirector->GetResource())
+                  {
+                     editor->mUI.graphTab->clear();
+                  }
+               }
+            }
+
+            for (int i = 0; i < dtCore::Base::GetInstanceCount(); ++i)
             {
                dtCore::Base *o = dtCore::Base::GetInstance(i);
                dtDirector::DirectorInstance* director = 
@@ -1694,14 +1781,16 @@ namespace dtDirector
                }
             }
 
-            // Refresh all open editors.
-            int editorCount = (int)mEditorsOpen.size();
+            editorCount = (int)mEditorsOpen.size();
             for (int editorIndex = 0; editorIndex < editorCount; ++editorIndex)
             {
                DirectorEditor* editor = mEditorsOpen[editorIndex];
-               if (editor)
+               if (editor && editor->GetDirector())
                {
-                  editor->Refresh();
+                  if (editor->GetDirector()->GetResource() == mDirector->GetResource())
+                  {
+                     editor->OpenGraph(editor->GetDirector()->GetGraphRoot());
+                  }
                }
             }
          }
