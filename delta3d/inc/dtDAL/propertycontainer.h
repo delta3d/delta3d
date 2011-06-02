@@ -132,7 +132,7 @@ namespace dtDAL
        *
        * @return     True if a default value exists for the given property.
        */
-      bool DoesDefaultExist(const dtDAL::ActorProperty& prop) const;
+      virtual bool DoesDefaultExist(const dtDAL::ActorProperty& prop) const;
 
       /**
        * Checks if a given property is already set to its default value.
@@ -141,14 +141,14 @@ namespace dtDAL
        *
        * @return     True if the given property is already set to default.
        */
-      bool IsPropertyDefault(const dtDAL::ActorProperty& prop) const;
+      virtual bool IsPropertyDefault(const dtDAL::ActorProperty& prop) const;
 
       /**
        * Resets the value of the given property to its default value.
        *
        * @param[in]   prop  The property to reset.
        */
-      void ResetProperty(dtDAL::ActorProperty& prop);
+      virtual void ResetProperty(dtDAL::ActorProperty& prop);
 
       /**
        * Copies the property values from the passed in property container to it's own properties
