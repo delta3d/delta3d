@@ -508,6 +508,11 @@ namespace dtDirector
       void on_actionStep_Next_triggered();
 
       /**
+       * Event handler for when the toggle break point button is toggled.
+       */
+      void on_actionToggle_Break_Point_triggered();
+
+      /**
        * Event handler when a node creation menu item is triggered.
        */
       void OnCreateNodeEvent(const QString& name, const QString& category);
