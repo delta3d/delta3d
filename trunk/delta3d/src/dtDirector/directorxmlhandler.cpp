@@ -438,24 +438,47 @@ namespace dtDirector
                {
                   if (mInInputLink)
                   {
-                     mInputLink = mNode->GetInputLink(dtUtil::XMLStringConverter(chars).ToString());
+                     std::string linkName = dtUtil::XMLStringConverter(chars).ToString();
+                     mInputLink = mNode->GetInputLink(linkName);
+
+                     if (!mInputLink)
+                     {
+                        if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_ERROR))
+                        {
+                           std::string error = "Input link \"" + linkName + "\" was not found on node type \"" + mNode->GetType().GetFullName() + "\".";
+
+                           mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__, error);
+                        }
+                     }
                   }
                   else if (mInOutputLink)
                   {
-                     mOutputLink = mNode->GetOutputLink(dtUtil::XMLStringConverter(chars).ToString());
+                     std::string linkName = dtUtil::XMLStringConverter(chars).ToString();
+                     mOutputLink = mNode->GetOutputLink(linkName);
+
+                     if (!mOutputLink)
+                     {
+                        if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_ERROR))
+                        {
+                           std::string error = "Output link \"" + linkName + "\" was not found on node type \"" + mNode->GetType().GetFullName() + "\".";
+
+                           mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__, error);
+                        }
+                     }
                   }
                   else if (mInValueLink)
                   {
-                     mValueLink = mNode->GetValueLink(dtUtil::XMLStringConverter(chars).ToString());
+                     std::string linkName = dtUtil::XMLStringConverter(chars).ToString();
+                     mValueLink = mNode->GetValueLink(linkName);
 
                      // If the value link wasn't already in the node, create one instead.
                      if (!mValueLink)
                      {
-                        dtDAL::ActorProperty* prop = mNode->GetProperty(dtUtil::XMLStringConverter(chars).ToString());
-                        if (prop)
+                        if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_ERROR))
                         {
-                           mNode->GetValueLinks().push_back(ValueLink(mNode.get(), prop));
-                           mValueLink = mNode->GetValueLink(dtUtil::XMLStringConverter(chars).ToString());
+                           std::string error = "Value link \"" + linkName + "\" was not found on node type \"" + mNode->GetType().GetFullName() + "\".";
+
+                           mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__, error);
                         }
                      }
                   }
@@ -464,42 +487,34 @@ namespace dtDirector
                {
                   if (mInInputLink)
                   {
-                     if (!mInputLink)
+                     if (mInputLink)
                      {
-                        if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_ERROR))
-                           mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__, "Attempted to set value on input link when the link was not loaded.");
+                        mInputLink->SetVisible(dtUtil::XMLStringConverter(chars).ToString() == "true");
                      }
-                     else mInputLink->SetVisible(dtUtil::XMLStringConverter(chars).ToString() == "true");
                   }
                   else if (mInOutputLink)
                   {
-                     if (!mOutputLink)
+                     if (mOutputLink)
                      {
-                        if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_ERROR))
-                           mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__, "Attempted to set value on output link when the link was not loaded.");
+                        mOutputLink->SetVisible(dtUtil::XMLStringConverter(chars).ToString() == "true");
                      }
-                     else mOutputLink->SetVisible(dtUtil::XMLStringConverter(chars).ToString() == "true");
                   }
                   else if (mInValueLink)
                   {
-                     if (!mValueLink)
+                     if (mValueLink)
                      {
-                        if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_ERROR))
-                           mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__, "Attempted to set value on value link when the link was not loaded.");
+                        mValueLink->SetVisible(dtUtil::XMLStringConverter(chars).ToString() == "true");
                      }
-                     else mValueLink->SetVisible(dtUtil::XMLStringConverter(chars).ToString() == "true");
                   }
                }
                else if (topEl == dtDAL::MapXMLConstants::DIRECTOR_LINK_EXPOSED_ELEMENT)
                {
                   if (mInValueLink)
                   {
-                     if (!mValueLink)
+                     if (mValueLink)
                      {
-                        if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_ERROR))
-                           mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, "Attempted to set value on value link when the link was not loaded.");
+                        mValueLink->SetExposed(dtUtil::XMLStringConverter(chars).ToString() == "true");
                      }
-                     else mValueLink->SetExposed(dtUtil::XMLStringConverter(chars).ToString() == "true");
                   }
                }
                else if (mValueLink && topEl == dtDAL::MapXMLConstants::DIRECTOR_LINK_VALUE_IS_OUT_ELEMENT)
