@@ -23,6 +23,7 @@ dynamicbitmaskcontrol.cpp
 dynamicboolcontrol.cpp
 dynamicbyteelementcontrol.cpp
 dynamiccolorrgbacontrol.cpp
+dynamiccolorelementcontrol.cpp
 dynamiccontainercontrol.cpp
 dynamicdoublecontrol.cpp
 dynamicenumcontrol.cpp
