@@ -75,6 +75,7 @@
 #include <dtDAL/resourceactorproperty.h>
 #include <dtDAL/stringactorproperty.h>
 #include <dtDAL/vectoractorproperties.h>
+#include <dtDAL/bitmaskactorproperty.h>
 
 #include <dtUtil/datapathutils.h>
 #include <dtUtil/exception.h>
@@ -918,6 +919,7 @@ void MapTests::TestMapSaveAndLoad()
    const osg::Vec4 TEST_RGBA(255.f, 245.f, 235.f, 1235.f);
    const dtCore::UniqueId TEST_ACTORID;
    const dtDAL::ResourceDescriptor TEST_RESOURCE("test", "somethingelse");
+   const unsigned int TEST_BIT(0xFF00FF00);
 
    //string
    {
@@ -997,6 +999,12 @@ void MapTests::TestMapSaveAndLoad()
    {
       dtDAL::ResourceActorProperty* prop = GetActorProperty<dtDAL::ResourceActorProperty>(*proxy, dtDAL::DataType::SOUND);
       prop->SetValue(TEST_RESOURCE);
+   }
+
+   //bit mask
+   {
+      dtDAL::BitMaskActorProperty* prop = GetActorProperty<dtDAL::BitMaskActorProperty>(*proxy, dtDAL::DataType::BIT_MASK);
+      prop->SetValue(TEST_BIT);
    }
 
    //save map
@@ -1088,6 +1096,12 @@ void MapTests::TestMapSaveAndLoad()
    {
       dtDAL::ResourceActorProperty* prop = GetActorProperty<dtDAL::ResourceActorProperty>(*proxy, dtDAL::DataType::SOUND);
       CPPUNIT_ASSERT_EQUAL_MESSAGE(kAssertMsg, TEST_RESOURCE.GetResourceIdentifier(), prop->GetValue().GetResourceIdentifier());
+   }
+
+   //Bit Mask
+   {
+      dtDAL::BitMaskActorProperty* prop = GetActorProperty<dtDAL::BitMaskActorProperty>(*proxy, dtDAL::DataType::BIT_MASK);
+      CPPUNIT_ASSERT_EQUAL_MESSAGE(kAssertMsg, TEST_BIT, prop->GetValue());
    }
 
    dtDAL::Project::GetInstance().DeleteMap(*map, true);

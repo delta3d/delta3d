@@ -121,6 +121,7 @@
           <xsd:element name="gameevent" type="xsd:string"/>
           <xsd:element name="array" type="ArrayType"/>
           <xsd:element name="container" type="ContainerType"/>
+          <xsd:element name="bitMask" type="xsd:unsignedInt"/>
         </xsd:choice>
     </xsd:sequence>
   </xsd:complexType>

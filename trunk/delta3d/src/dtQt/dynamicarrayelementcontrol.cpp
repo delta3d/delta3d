@@ -135,10 +135,15 @@ namespace dtQt
       mTextLabel = new SubQLabel(getValueAsString(), wrapper, this);
       SetBackgroundColor(mTextLabel, PropertyEditorTreeView::ROW_COLOR_ODD);
 
-      mShiftUpButton   = new SubQPushButton(tr("Up"),     wrapper, this);
-      mShiftDownButton = new SubQPushButton(tr("Down"),   wrapper, this);
-      mCopyButton      = new SubQPushButton(tr("Copy"),   wrapper, this);
-      mDeleteButton    = new SubQPushButton(tr("Delete"), wrapper, this);
+      mShiftUpButton   = new SubQToolButton(wrapper, this);
+      mShiftDownButton = new SubQToolButton(wrapper, this);
+      mCopyButton      = new SubQToolButton(wrapper, this);
+      mDeleteButton    = new SubQToolButton(wrapper, this);
+
+      mShiftUpButton->setText("Up");
+      mShiftDownButton->setText("Down");
+      mCopyButton->setText("Copy");
+      mDeleteButton->setText("Delete");
 
       UpdateButtonStates();
 

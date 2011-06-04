@@ -52,6 +52,7 @@
 #include <dtQt/dynamicactorcontrol.h>
 #include <dtQt/dynamicresourcecontrol.h>
 #include <dtQt/dynamicgameeventcontrol.h>
+#include <dtQt/dynamicbitmaskcontrol.h>
 
 #include <QtCore/QSize>
 
@@ -92,6 +93,7 @@ namespace dtQt
       RegisterControlForDataType<DynamicPropertyContainerControl>(dtDAL::DataType::PROPERTY_CONTAINER);
       RegisterControlForDataType<DynamicActorControl>(dtDAL::DataType::ACTOR);
       RegisterControlForDataType<DynamicGameEventControl>(dtDAL::DataType::GAME_EVENT);
+      RegisterControlForDataType<DynamicBitMaskControl>(dtDAL::DataType::BIT_MASK);
 
       size_t datatypeCount = dtDAL::DataType::EnumerateType().size();
 
@@ -204,7 +206,8 @@ namespace dtQt
 
       if (mPropContainer->DoesDefaultExist(*mBaseProperty))
       {
-         mDefaultResetButton = new SubQPushButton(tr("Reset"), parent, this);
+         mDefaultResetButton = new SubQToolButton(parent, this);
+         mDefaultResetButton->setText("Reset");
          mDefaultResetButton->setToolTip("Reset the property to its default value.");
 
          connect(mDefaultResetButton, SIGNAL(clicked()), this, SLOT(onResetClicked()));

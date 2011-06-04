@@ -165,7 +165,8 @@ namespace dtQt
       SetBackgroundColor(mTemporaryEditOnlyTextLabel, PropertyEditorTreeView::ROW_COLOR_ODD);
 
       // button
-      mTemporaryColorPicker = new SubQPushButton(tr("Pick ..."), wrapper, this);
+      mTemporaryColorPicker = new SubQToolButton(wrapper, this);
+      mTemporaryColorPicker->setText("Pick ...");
       mTemporaryColorPicker->setToolTip(getDescription());
       //temporaryColorPicker->setMaximumHeight(18);
 

@@ -81,7 +81,8 @@ namespace dtEditQt
       ResourceUIPlugin* plugin = GetPlugin();
       if (plugin)
       {
-         mTemporaryEditBtn = new dtQt::SubQPushButton(tr("Edit"), wrapper, this);
+         mTemporaryEditBtn = new dtQt::SubQToolButton(wrapper, this);
+         mTemporaryEditBtn->setText("Edit");
          mTemporaryEditBtn->setToolTip("Open the custom editor for this resource.");
          connect(mTemporaryEditBtn, SIGNAL(clicked()), this, SLOT(editPressed()));
 

@@ -35,7 +35,7 @@
 namespace dtQt
 {
    class SubQLabel;
-   class SubQPushButton;
+   class SubQToolButton;
 }
 
 namespace dtDAL
@@ -101,7 +101,7 @@ namespace dtEditQt
       ResourceUIPlugin* GetPlugin();
 
    private:
-      dtQt::SubQPushButton* mTemporaryEditBtn;
+      dtQt::SubQToolButton* mTemporaryEditBtn;
    };
 
 } // namespace dtEditQt

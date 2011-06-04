@@ -127,6 +127,7 @@ namespace dtDAL
    XMLCh* MapXMLConstants::ACTOR_PROPERTY_COLOR_RGB_ELEMENT = NULL;
    XMLCh* MapXMLConstants::ACTOR_PROPERTY_COLOR_RGBA_ELEMENT = NULL;
    XMLCh* MapXMLConstants::ACTOR_PROPERTY_RESOURCE_TYPE_ELEMENT = NULL;
+   XMLCh* MapXMLConstants::ACTOR_PROPERTY_BIT_MASK_ELEMENT = NULL;
    XMLCh* MapXMLConstants::ACTOR_PROPERTY_RESOURCE_DISPLAY_ELEMENT = NULL;
    XMLCh* MapXMLConstants::ACTOR_PROPERTY_RESOURCE_IDENTIFIER_ELEMENT = NULL;
    XMLCh* MapXMLConstants::ACTOR_PROPERTY_ACTOR_ID_ELEMENT = NULL;
@@ -264,6 +265,7 @@ namespace dtDAL
       ACTOR_PROPERTY_COLOR_RGB_ELEMENT = xercesc::XMLString::transcode("colorRGB");
       ACTOR_PROPERTY_COLOR_RGBA_ELEMENT = xercesc::XMLString::transcode("colorRGBA");
       ACTOR_PROPERTY_RESOURCE_TYPE_ELEMENT = xercesc::XMLString::transcode("resourceType");
+      ACTOR_PROPERTY_BIT_MASK_ELEMENT = xercesc::XMLString::transcode("bitMask");
       ACTOR_PROPERTY_RESOURCE_DISPLAY_ELEMENT = xercesc::XMLString::transcode("resourceDisplayName");
       ACTOR_PROPERTY_RESOURCE_IDENTIFIER_ELEMENT = xercesc::XMLString::transcode("resource");
       ACTOR_PROPERTY_ACTOR_ID_ELEMENT = xercesc::XMLString::transcode("actorId");
@@ -386,6 +388,7 @@ namespace dtDAL
       xercesc::XMLString::release(&ACTOR_PROPERTY_COLOR_RGB_ELEMENT);
       xercesc::XMLString::release(&ACTOR_PROPERTY_COLOR_RGBA_ELEMENT);
       xercesc::XMLString::release(&ACTOR_PROPERTY_RESOURCE_TYPE_ELEMENT);
+      xercesc::XMLString::release(&ACTOR_PROPERTY_BIT_MASK_ELEMENT);
       xercesc::XMLString::release(&ACTOR_PROPERTY_RESOURCE_DISPLAY_ELEMENT);
       xercesc::XMLString::release(&ACTOR_PROPERTY_RESOURCE_IDENTIFIER_ELEMENT);
       xercesc::XMLString::release(&ACTOR_PROPERTY_ACTOR_ID_ELEMENT);

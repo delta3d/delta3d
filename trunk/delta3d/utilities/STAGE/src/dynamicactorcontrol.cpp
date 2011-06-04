@@ -60,7 +60,8 @@ namespace dtEditQt
    {
       QWidget* wrapper = dtQt::DynamicActorControl::createEditor(parent, option, index);
 
-      mTemporaryGotoButton = new dtQt::SubQPushButton(tr("Goto"), wrapper, this);
+      mTemporaryGotoButton = new dtQt::SubQToolButton(wrapper, this);
+      mTemporaryGotoButton->setText("Goto");
 
       connect(mTemporaryGotoButton, SIGNAL(clicked()), this, SLOT(onGotoClicked()));
 
