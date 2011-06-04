@@ -24,11 +24,13 @@
 #include <dtCore/scene.h>
 #include <dtCore/transform.h>
 #include <dtCore/transformable.h>
+#include <dtCore/collisioncategorydefaults.h>
 
 #include <dtDAL/propertymacros.h>
 #include <dtDAL/actorproxyicon.h>
 #include <dtDAL/booleanactorproperty.h>
 #include <dtDAL/enumactorproperty.h>
+#include <dtDAL/bitmaskactorproperty.h>
 
 #include <dtDAL/floatactorproperty.h>
 #include <dtDAL/vectoractorproperties.h>
@@ -46,6 +48,8 @@ namespace dtDAL
    const dtUtil::RefString TransformableActorProxy::PROPERTY_COLLISION_RADIUS("Collision Radius");
    const dtUtil::RefString TransformableActorProxy::PROPERTY_COLLISION_LENGTH("Collision Length");
    const dtUtil::RefString TransformableActorProxy::PROPERTY_COLLISION_BOX("Collision Box");
+   const dtUtil::RefString TransformableActorProxy::PROPERTY_COLLISION_CATEGORY_MASK("Collision Category Mask");
+   const dtUtil::RefString TransformableActorProxy::PROPERTY_COLLISION_COLLIDE_MASK("Collision Collide Mask");
 
    //////////////////////////////////////////////////////////////////////////
    osg::Node* LoadAltCollisionMesh(const dtDAL::ResourceDescriptor& resource)
@@ -176,6 +180,20 @@ namespace dtDAL
                   BooleanActorProperty::SetFuncType(trans, &dtCore::Transformable::SetCollisionDetection),
                   BooleanActorProperty::GetFuncType(trans, &dtCore::Transformable::GetCollisionDetection),
                   "Enables collision detection on this actor (using ODE).",
+                  COLLISION_GROUP));
+
+         AddProperty(new BitMaskActorProperty(PROPERTY_COLLISION_CATEGORY_MASK, "ODE Collision Category Bits",
+                  BitMaskActorProperty::SetFuncType(this, &TransformableActorProxy::SetCollisionCategoryMask),
+                  BitMaskActorProperty::GetFuncType(this, &TransformableActorProxy::GetCollisionCategoryMask),
+                  BitMaskActorProperty::GetMaskListFuncType(this, &TransformableActorProxy::GetCollisionMaskList),
+                  "Sets the collision mask that defines this actor (using ODE).",
+                  COLLISION_GROUP));
+
+         AddProperty(new BitMaskActorProperty(PROPERTY_COLLISION_COLLIDE_MASK, "ODE Collision Collide Bits",
+                  BitMaskActorProperty::SetFuncType(this, &TransformableActorProxy::SetCollisionCollideMask),
+                  BitMaskActorProperty::GetFuncType(this, &TransformableActorProxy::GetCollisionCollideMask),
+                  BitMaskActorProperty::GetMaskListFuncType(this, &TransformableActorProxy::GetCollisionMaskList),
+                  "Sets the collision mask that defines what this actor collides with (using ODE).",
                   COLLISION_GROUP));
 
          DT_REGISTER_RESOURCE_PROPERTY_WITH_NAME(DataType::STATIC_MESH, AltCollisionMesh, "AltCollisionMesh", "Alternate Collision Mesh",
@@ -384,6 +402,96 @@ namespace dtDAL
    float TransformableActorProxy::GetCollisionLength() const
    {
       return mCollisionLength;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void TransformableActorProxy::SetCollisionCategoryMask(unsigned int mask)
+   {
+      dtCore::Transformable *trans = static_cast<dtCore::Transformable*>(GetActor());
+
+      trans->SetCollisionCategoryBits((unsigned long)mask);
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   unsigned int TransformableActorProxy::GetCollisionCategoryMask() const
+   {
+      const dtCore::Transformable *trans = static_cast<const dtCore::Transformable*>(GetActor());
+
+      return (unsigned int)trans->GetCollisionCategoryBits();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void TransformableActorProxy::SetCollisionCollideMask(unsigned int mask)
+   {
+      dtCore::Transformable *trans = static_cast<dtCore::Transformable*>(GetActor());
+
+      trans->SetCollisionCollideBits((unsigned long)mask);
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   unsigned int TransformableActorProxy::GetCollisionCollideMask() const
+   {
+      const dtCore::Transformable *trans = static_cast<const dtCore::Transformable*>(GetActor());
+
+      return (unsigned int)trans->GetCollisionCollideBits();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void TransformableActorProxy::GetCollisionMaskList(std::vector<std::string>& names, std::vector<unsigned int>& values) const
+   {
+      names.push_back("Proximity Trigger");
+      values.push_back(COLLISION_CATEGORY_MASK_PROXIMITYTRIGGER);
+
+      names.push_back("Camera");
+      values.push_back(COLLISION_CATEGORY_MASK_CAMERA);
+
+      names.push_back("Compass");
+      values.push_back(COLLISION_CATEGORY_MASK_COMPASS);
+
+      names.push_back("Infinite Terrain");
+      values.push_back(COLLISION_CATEGORY_MASK_INFINITETERRAIN);
+
+      names.push_back("ISector");
+      values.push_back(COLLISION_CATEGORY_MASK_ISECTOR);
+      
+      names.push_back("Object");
+      values.push_back(COLLISION_CATEGORY_MASK_OBJECT);
+
+      names.push_back("Particle System");
+      values.push_back(COLLISION_CATEGORY_MASK_PARTICLESYSTEM);
+
+      names.push_back("Physical");
+      values.push_back(COLLISION_CATEGORY_MASK_PHYSICAL);
+
+      names.push_back("Point Axis");
+      values.push_back(COLLISION_CATEGORY_MASK_POINTAXIS);
+
+      names.push_back("Positional Light");
+      values.push_back(COLLISION_CATEGORY_MASK_POSITIONALLIGHT);
+
+      names.push_back("Spot Light");
+      values.push_back(COLLISION_CATEGORY_MASK_SPOTLIGHT);
+
+      names.push_back("Transformable");
+      values.push_back(COLLISION_CATEGORY_MASK_TRANSFORMABLE);
+
+      names.push_back("Listener");
+      values.push_back(COLLISION_CATEGORY_MASK_LISTENER);
+
+      names.push_back("Sound");
+      values.push_back(COLLISION_CATEGORY_MASK_SOUND);
+
+      names.push_back("Entity");
+      values.push_back(COLLISION_CATEGORY_MASK_ENTITY);
+
+      names.push_back("Terrain");
+      values.push_back(COLLISION_CATEGORY_MASK_TERRAIN);
+
+      names.push_back("Defaults");
+      values.push_back(COLLISION_CATEGORY_MASK_ALLDEFAULTS);
+
+      names.push_back("All");
+      values.push_back(COLLISION_CATEGORY_MASK_ALL);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
