@@ -50,6 +50,8 @@ namespace dtDAL
          static const dtUtil::RefString PROPERTY_COLLISION_RADIUS;
          static const dtUtil::RefString PROPERTY_COLLISION_LENGTH;
          static const dtUtil::RefString PROPERTY_COLLISION_BOX;
+         static const dtUtil::RefString PROPERTY_COLLISION_CATEGORY_MASK;
+         static const dtUtil::RefString PROPERTY_COLLISION_COLLIDE_MASK;
 
          /**
           * Constructor
@@ -179,6 +181,37 @@ namespace dtDAL
           * @return The collision length.
           */
          float GetCollisionLength() const;
+
+         /**
+          * Sets the collision category bit mask.
+          * @param mask The mask.
+          */
+         void SetCollisionCategoryMask(unsigned int mask);
+
+         /**
+          * Get the collision category bit mask.
+          * @return The mask.
+          */
+         unsigned int GetCollisionCategoryMask() const;
+
+         /**
+          * Sets the collision collide bit mask.
+          * @param mask The mask.
+          */
+         void SetCollisionCollideMask(unsigned int mask);
+
+         /**
+          * Get the collision collide bit mask.
+          * @return The mask.
+          */
+         unsigned int GetCollisionCollideMask() const;
+
+         /**
+          * Get the collision bit mask list.
+          * @param The mask names.
+          * @param The mask values.
+          */
+         void GetCollisionMaskList(std::vector<std::string>& names, std::vector<unsigned int>& values) const;
 
          /**
           * Set this to true if your actors don't use the dt core physics.
