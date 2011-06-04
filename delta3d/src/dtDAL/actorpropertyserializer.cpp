@@ -160,6 +160,7 @@ namespace dtDAL
       case DataType::ACTOR_ID:
       case DataType::GAMEEVENT_ID:
       case DataType::ENUMERATION_ID:
+      case DataType::BIT_MASK_ID:
          WriteSimple(property);
          break;
       case DataType::STRING_ID:
@@ -574,6 +575,7 @@ namespace dtDAL
          case DataType::ACTOR_ID:
          case DataType::GAMEEVENT_ID:
          case DataType::ENUMERATION_ID:
+         case DataType::BIT_MASK_ID:
             WriteSimple(parameter);
             break;
          case DataType::STRING_ID:
@@ -799,6 +801,9 @@ namespace dtDAL
          case DataType::ENUMERATION_ID:
             mWriter->BeginElement(MapXMLConstants::ACTOR_PROPERTY_ENUM_ELEMENT);
             break;
+         case DataType::BIT_MASK_ID:
+            mWriter->BeginElement(MapXMLConstants::ACTOR_PROPERTY_BIT_MASK_ELEMENT);
+            break;
          default:
             //LOG ERROR
             return;
@@ -981,6 +986,7 @@ namespace dtDAL
       case DataType::STRING_ID:
       case DataType::BOOLEAN_ID:
       case DataType::ENUMERATION_ID:
+      case DataType::BIT_MASK_ID:
          {
             if (!actorProperty->FromString(dataValue))
             {
@@ -1239,6 +1245,7 @@ namespace dtDAL
       case DataType::STRING_ID:
       case DataType::BOOLEAN_ID:
       case DataType::ENUMERATION_ID:
+      case DataType::BIT_MASK_ID:
          {
             if (!np.FromString(dataValue))
             {
@@ -1736,6 +1743,11 @@ namespace dtDAL
       {
          //Need the character contents to know the type, so this will be
          //handled later.
+      }
+      else if (XMLString::compareString(localname,
+         MapXMLConstants::ACTOR_PROPERTY_BIT_MASK_ELEMENT) == 0)
+      {
+         return &DataType::BIT_MASK;
       }
       else if (errorIfNotFound)
       {

@@ -44,7 +44,7 @@ namespace dtQt
 {
    class DynamicColorElementControl;
    class SubQLabel;
-   class SubQPushButton;
+   class SubQToolButton;
 
    /**
      * @class DynamicColorRGBAControl
@@ -153,7 +153,7 @@ namespace dtQt
       dtDAL::ColorRgbaActorProperty* mProperty;
 
       SubQLabel *mTemporaryEditOnlyTextLabel;
-      SubQPushButton *mTemporaryColorPicker;
+      SubQToolButton *mTemporaryColorPicker;
 
       QColorDialog *colorDialog;
    };

@@ -156,10 +156,10 @@ namespace dtQt
       int             mIndex;
 
       SubQLabel*      mTextLabel;
-      SubQPushButton* mShiftUpButton;
-      SubQPushButton* mShiftDownButton;
-      SubQPushButton* mCopyButton;
-      SubQPushButton* mDeleteButton;
+      SubQToolButton* mShiftUpButton;
+      SubQToolButton* mShiftDownButton;
+      SubQToolButton* mCopyButton;
+      SubQToolButton* mDeleteButton;
    };
 
 } // namespace dtQt

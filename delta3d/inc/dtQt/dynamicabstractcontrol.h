@@ -65,7 +65,7 @@ namespace dtQt
    class PropertyEditorTreeView;
 
    class DynamicControlFactory;
-   class SubQPushButton;
+   class SubQToolButton;
 
    /**
    * @class DynamicAbstractControl
@@ -358,7 +358,7 @@ namespace dtQt
       PropertyEditorTreeView *mPropertyTree;
 
       // Reset to default button.
-      SubQPushButton* mDefaultResetButton;
+      SubQToolButton* mDefaultResetButton;
 
       // Grid layout for editor widget.
       QGridLayout* mGridLayout;

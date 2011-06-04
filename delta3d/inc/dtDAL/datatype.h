@@ -45,7 +45,7 @@ namespace dtDAL
             RGBCOLOR_ID, RGBACOLOR_ID, GROUP_ID, ACTOR_ID, ENUMERATION_ID, GAMEEVENT_ID,
             STATICMESH_ID, TEXTURE_ID, TERRAIN_ID, SOUND_ID, PARTICLESYSTEM_ID,
             SKELETAL_MESH_ID, ARRAY_ID, CONTAINER_ID, PROPERTY_CONTAINER_ID, PREFAB_ID,
-            SHADER_ID, DIRECTOR_ID
+            SHADER_ID, DIRECTOR_ID, BIT_MASK_ID
          };
 
          /**
@@ -251,6 +251,11 @@ namespace dtDAL
          * A Director Graph resource.
          */
          static DataType DIRECTOR;
+
+         /**
+          * A bit mask
+          */
+         static DataType BIT_MASK;
 
          /**
           * @return true if this datatype represents a resource

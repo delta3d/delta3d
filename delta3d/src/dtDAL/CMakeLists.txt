@@ -23,6 +23,7 @@ SET(LIB_PUBLIC_HEADERS
     ${HEADER_PATH}/basexml.h
     ${HEADER_PATH}/basexmlhandler.h
     ${HEADER_PATH}/basexmlreaderwriter.h
+    ${HEADER_PATH}/bitmaskactorproperty.h
     ${HEADER_PATH}/booleanactorproperty.h
     ${HEADER_PATH}/colorrgbaactorproperty.h
     ${HEADER_PATH}/containeractorproperty.h
@@ -52,6 +53,7 @@ SET(LIB_PUBLIC_HEADERS
     ${HEADER_PATH}/mapxmlconstants.h
     ${HEADER_PATH}/namedactorparameter.h
     ${HEADER_PATH}/namedarrayparameter.h
+    ${HEADER_PATH}/namedbitmaskparameter.h
     ${HEADER_PATH}/namedbooleanparameter.h
     ${HEADER_PATH}/namedcontainerparameter.h
     ${HEADER_PATH}/nameddoubleparameter.h
@@ -114,6 +116,7 @@ SET(LIB_SOURCES
     ${SOURCE_PATH}/basexml.cpp
     ${SOURCE_PATH}/basexmlhandler.cpp
     ${SOURCE_PATH}/basexmlreaderwriter.cpp
+    ${SOURCE_PATH}/bitmaskactorproperty.cpp
     ${SOURCE_PATH}/booleanactorproperty.cpp
     ${SOURCE_PATH}/colorrgbaactorproperty.cpp
     ${SOURCE_PATH}/containeractorproperty.cpp
@@ -138,6 +141,7 @@ SET(LIB_SOURCES
     ${SOURCE_PATH}/mapxmlconstants.cpp
     ${SOURCE_PATH}/namedactorparameter.cpp
     ${SOURCE_PATH}/namedarrayparameter.cpp
+    ${SOURCE_PATH}/namedbitmaskparameter.cpp
     ${SOURCE_PATH}/namedbooleanparameter.cpp
     ${SOURCE_PATH}/namedcontainerparameter.cpp
     ${SOURCE_PATH}/nameddoubleparameter.cpp

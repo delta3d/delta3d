@@ -105,8 +105,10 @@ namespace dtQt
       mTextLabel = new SubQLabel(getValueAsString(), wrapper, this);
       SetBackgroundColor(mTextLabel, PropertyEditorTreeView::ROW_COLOR_ODD);
 
-      mAddButton   = new SubQPushButton(tr("Add"),   wrapper, this);
-      mClearButton = new SubQPushButton(tr("Clear"), wrapper, this);
+      mAddButton   = new SubQToolButton(wrapper, this);
+      mClearButton = new SubQToolButton(wrapper, this);
+      mAddButton->setText("Add");
+      mClearButton->setText("Clear");
 
       UpdateButtonStates();
 

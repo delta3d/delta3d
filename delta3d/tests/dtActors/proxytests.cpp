@@ -55,6 +55,7 @@
 #include <dtDAL/project.h>
 #include <dtDAL/stringactorproperty.h>
 #include <dtDAL/vectoractorproperties.h>
+#include <dtDAL/bitmaskactorproperty.h>
 #include <dtDAL/defaultpropertymanager.h>
 
 #include <dtActors/engineactorregistry.h>
@@ -1036,6 +1037,25 @@ void ProxyTest::testProp(dtDAL::BaseActorObject& proxy, dtDAL::ActorProperty* pr
 
       SimpleStringToFromDataStreamCheck(ds, *prop);
    }
+   else if (prop->GetDataType() == DataType::BIT_MASK)
+   {
+      SimpleStringToFromDataStreamCheck(ds, *prop);
+      dtDAL::BitMaskActorProperty* prop1 = NULL;
+      if (isElement)
+      {
+         prop1 = dynamic_cast<dtDAL::BitMaskActorProperty*>(prop);
+      }
+      else
+      {
+         /// Call the GetProperty method so that we can test every type with the templated getter.
+         proxy.GetProperty(prop->GetName(), prop1);
+      }
+
+      prop1->SetValue(0xFF00FF00);
+      CPPUNIT_ASSERT_MESSAGE(name + " property on " + proxyTypeName
+         + " should have value 0xFF00FF00, but it is: " + prop1->ToString(),
+         prop1->GetValue() == 0xFF00FF00);
+   }
 
    // Now reset the property back to its default value and check if it worked propertly.
    if (defaultExists)
@@ -1310,6 +1330,12 @@ void ProxyTest::compareProperties(dtDAL::ActorProperty* prop1, dtDAL::ActorPrope
       {
          compareProperties(cProp1.GetProperty(index), cProp2.GetProperty(index));
       }
+   }
+   else if(prop1->GetDataType() == DataType::BIT_MASK)
+   {
+      CPPUNIT_ASSERT(((dtDAL::BitMaskActorProperty*)prop1)->GetValue() ==
+         ((dtDAL::BitMaskActorProperty*)prop2)->GetValue());
+      CPPUNIT_ASSERT(prop1->ToString() == prop2->ToString());
    }
 }
 

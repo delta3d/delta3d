@@ -94,7 +94,8 @@ namespace dtEditQt
       grid->setSpacing(1);
 
       // Edit button
-      dtQt::SubQPushButton* temporaryEditBtn = new dtQt::SubQPushButton(tr("Edit"), wrapper, this);
+      dtQt::SubQToolButton* temporaryEditBtn = new dtQt::SubQToolButton(wrapper, this);
+      temporaryEditBtn->setText("Edit");
       connect(temporaryEditBtn, SIGNAL(clicked()), this, SLOT(EditClicked()));
       temporaryEditBtn->setToolTip(QString(tr("Edits this property with the configured editor plugin.")));
 

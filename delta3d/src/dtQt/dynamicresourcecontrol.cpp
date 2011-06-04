@@ -179,8 +179,13 @@ namespace dtQt
          return wrapper;
       }
 
-      mTemporaryButton = new SubQPushButton("<None>", wrapper, this);
+      mTemporaryButton = new SubQToolButton(wrapper, this);
+      mTemporaryButton->setToolButtonStyle(Qt::ToolButtonStyle::ToolButtonTextBesideIcon);
+      mTemporaryButton->setIcon(QIcon(QPixmap(1, 1)));
+      mTemporaryButton->setText("<None>");
       mTemporaryButton->setToolTip(getDescription());
+      mTemporaryButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+      mTemporaryButton->setPopupMode(QToolButton::InstantPopup);
 
       dtUtil::tree<dtDAL::ResourceTreeNode> tree;
       dtDAL::Project::GetInstance().GetResourcesOfType(mProperty->GetDataType(), tree);
@@ -257,6 +262,7 @@ namespace dtQt
    /////////////////////////////////////////////////////////////////////////////////
    void DynamicResourceControl::itemSelected(QAction* action)
    {
+      NotifyParentOfPreUpdate();
       if (action)
       {
          std::string result = action->data().toString().toStdString();

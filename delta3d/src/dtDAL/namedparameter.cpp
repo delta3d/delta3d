@@ -50,6 +50,7 @@
 #include <dtDAL/namedgroupparameter.h>
 #include <dtDAL/namedpropertycontainerparameter.h>
 #include <dtDAL/namedvectorparameters.h>
+#include <dtDAL/namedbitmaskparameter.h>
 
 #include <sstream>
 
@@ -242,6 +243,9 @@ namespace dtDAL
       case dtDAL::DataType::SHADER_ID:
       case dtDAL::DataType::DIRECTOR_ID:
          param = new NamedResourceParameter(type,name,isList);
+         break;
+      case dtDAL::DataType::BIT_MASK_ID:
+         param = new NamedBitMaskParameter(name,0,isList);
          break;
       default:
          throw dtDAL::InvalidParameterException( "Type " + type.GetName() + " is not supported by the MessageParameter class.", __FILE__, __LINE__);

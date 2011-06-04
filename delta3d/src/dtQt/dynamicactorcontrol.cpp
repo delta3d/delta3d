@@ -165,7 +165,7 @@ namespace dtQt
 
       mTemporaryEditControl->addItem("<None>");
 
-      for (unsigned int i = 0; i < sortedNames.size(); ++i)
+      for (unsigned int i = 0; i < (unsigned int)sortedNames.size(); ++i)
       {
          QString name = sortedNames[i];
 

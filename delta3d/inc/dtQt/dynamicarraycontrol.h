@@ -146,8 +146,8 @@ namespace dtQt
       dtCore::RefPtr<dtDAL::ArrayActorPropertyBase> mProperty;
 
       SubQLabel*      mTextLabel;
-      SubQPushButton* mAddButton;
-      SubQPushButton* mClearButton;
+      SubQToolButton* mAddButton;
+      SubQToolButton* mClearButton;
    };
 
 } // namespace dtEditQt

@@ -97,4 +97,6 @@ namespace dtDAL
    DataType DataType::PREFAB("Prefabs", "Prefab", true, PREFAB_ID);
    DataType DataType::SHADER("Shaders", "Shader", true, SHADER_ID);
    DataType DataType::DIRECTOR("Directors", "Director", true, DIRECTOR_ID);
+
+   DataType DataType::BIT_MASK("BIT_MASK", "Bit Mask", false, BIT_MASK_ID);
 }
