@@ -861,6 +861,19 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
+   bool Node::TriggerOutput(const std::string& name)
+   {
+      OutputLink* link = GetOutputLink(name);
+      if (link)
+      {
+         link->Activate();
+         return true;
+      }
+
+      return false;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    bool Node::InputsExposed()
    {
       return true;

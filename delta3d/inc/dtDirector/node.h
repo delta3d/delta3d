@@ -522,6 +522,11 @@ namespace dtDirector
       ValueLink* GetValueLink(const std::string& name);
 
       /**
+       * Triggers an output on this node.
+       */
+      bool TriggerOutput(const std::string& name);
+
+      /**
        * Retrieves whether the UI should expose input links
        * assigned to this node.
        *
