@@ -96,10 +96,13 @@ void DirectorComponent::OnMapLoaded()
    dtABC::Application& app = gm->GetApplication();
    dtCore::Camera* camera  = gm->GetApplication().GetCamera();
 
-   // Make sure collision detection is performed on the camera and with the trigger
-   camera->SetCollisionSphere(1.0f);
-   camera->SetCollisionCollideBits(COLLISION_CATEGORY_MASK_PROXIMITYTRIGGER);
-   app.GetScene()->AddChild(camera);
+   // Get the player start position
+   dtDAL::BaseActorObject* playerProxy = NULL;
+   gm->FindActorByType(*dtActors::EngineActorRegistry::CAMERA_ACTOR_TYPE, playerProxy);
+
+   dtCore::Transformable* player =
+      dynamic_cast<dtCore::Transformable*>(playerProxy->GetActor());
+   player->AddChild(camera);
 
    // Allow the player to walk around the level and collide with objects
    dtCore::CollisionMotionModel* motionModel =
@@ -110,25 +113,14 @@ void DirectorComponent::OnMapLoaded()
    motionModel->GetFPSCollider().SetCollisionBitsForTorso(COLLISION_CATEGORY_MASK_OBJECT);
 
    motionModel->SetScene(&gm->GetScene());
-   motionModel->SetTarget(camera);
+   motionModel->SetTarget(player);
 
-   mMotionModel = motionModel;
+   //mMotionModel = motionModel;
 
-   app.GetWindow()->ShowCursor(false);
+   app.GetWindow()->ShowCursor(true);
 
    std::vector<dtDAL::BaseActorObject*> proxyList;
    gm->FindActorsByType(*dtActors::EngineActorRegistry::STATIC_MESH_ACTOR_TYPE, proxyList);
-
-   // Try to eliminate interpenetration overhead (ODE is the bottleneck here)
-   for (size_t proxyIndex = 0; proxyIndex < proxyList.size(); ++proxyIndex)
-   {
-      dtCore::Transformable* actor =
-         dynamic_cast<dtCore::Transformable*>(proxyList[proxyIndex]->GetActor());
-
-      actor->SetCollisionCategoryBits(COLLISION_CATEGORY_MASK_OBJECT);
-      actor->SetCollisionCollideBits(COLLISION_CATEGORY_MASK_CAMERA);
-      //actor->RenderCollisionGeometry(true);
-   }
 
    // Get the player start position
    dtDAL::BaseActorObject* playerStartProxy = NULL;
@@ -139,7 +131,7 @@ void DirectorComponent::OnMapLoaded()
 
    dtCore::Transform startTransform;
    playerStart->GetTransform(startTransform);
-   camera->SetTransform(startTransform);
+   player->SetTransform(startTransform);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
