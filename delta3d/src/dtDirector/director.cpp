@@ -60,6 +60,7 @@ namespace dtDirector
       , mMap(NULL)
       , mModified(false)
       , mStarted(false)
+      , mLoading(false)
       , mDebugging(false)
       , mShouldStep(false)
       , mGraph(NULL)
