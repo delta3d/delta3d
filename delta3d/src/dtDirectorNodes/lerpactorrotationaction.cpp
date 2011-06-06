@@ -100,17 +100,17 @@ namespace dtDirector
          dtDAL::FloatActorProperty::GetFuncType(this, &LerpActorRotationAction::GetTime),
          "The current time.");
 
-      dtDAL::Vec4ActorProperty* startRotProp = new dtDAL::Vec4ActorProperty(
+      dtDAL::Vec3ActorProperty* startRotProp = new dtDAL::Vec3ActorProperty(
          "StartRotation", "Start Rotation",
-         dtDAL::Vec4ActorProperty::SetFuncType(this, &LerpActorRotationAction::SetStartRot),
-         dtDAL::Vec4ActorProperty::GetFuncType(this, &LerpActorRotationAction::GetStartRot),
+         dtDAL::Vec3ActorProperty::SetFuncType(this, &LerpActorRotationAction::SetStartRot),
+         dtDAL::Vec3ActorProperty::GetFuncType(this, &LerpActorRotationAction::GetStartRot),
          "The starting rotation of the actor.");
       AddProperty(startRotProp);
 
-      dtDAL::Vec4ActorProperty* endRotProp = new dtDAL::Vec4ActorProperty(
+      dtDAL::Vec3ActorProperty* endRotProp = new dtDAL::Vec3ActorProperty(
          "EndRotation", "End Rotation",
-         dtDAL::Vec4ActorProperty::SetFuncType(this, &LerpActorRotationAction::SetEndRot),
-         dtDAL::Vec4ActorProperty::GetFuncType(this, &LerpActorRotationAction::GetEndRot),
+         dtDAL::Vec3ActorProperty::SetFuncType(this, &LerpActorRotationAction::SetEndRot),
+         dtDAL::Vec3ActorProperty::GetFuncType(this, &LerpActorRotationAction::GetEndRot),
          "The ending rotation of the actor.");
       AddProperty(endRotProp);
 
@@ -202,8 +202,8 @@ namespace dtDirector
             }
             float alpha = (curTime - startTime) * timeScalar;
 
-            osg::Quat startRot(GetVec4("StartRotation"));
-            osg::Quat endRot(GetVec4("EndRotation"));
+            osg::Quat startRot(osg::Vec4(GetVec3("StartRotation"), 0.0f));
+            osg::Quat endRot(osg::Vec4(GetVec3("EndRotation"), 0.0f));
 
             osg::Quat newRot;
             newRot.slerp(alpha, startRot, endRot);
@@ -312,25 +312,25 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void LerpActorRotationAction::SetStartRot(const osg::Vec4& value)
+   void LerpActorRotationAction::SetStartRot(const osg::Vec3& value)
    {
       mStartRot = value;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   osg::Vec4 LerpActorRotationAction::GetStartRot()
+   osg::Vec3 LerpActorRotationAction::GetStartRot()
    {
       return mStartRot;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void LerpActorRotationAction::SetEndRot(const osg::Vec4& value)
+   void LerpActorRotationAction::SetEndRot(const osg::Vec3& value)
    {
       mEndRot = value;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   osg::Vec4 LerpActorRotationAction::GetEndRot()
+   osg::Vec3 LerpActorRotationAction::GetEndRot()
    {
       return mEndRot;
    }
