@@ -94,11 +94,11 @@ namespace dtDirector
       void SetTime(float value);
       float GetTime();
 
-      void SetStartRot(const osg::Vec4& value);
-      osg::Vec4 GetStartRot();
+      void SetStartRot(const osg::Vec3& value);
+      osg::Vec3 GetStartRot();
 
-      void SetEndRot(const osg::Vec4& value);
-      osg::Vec4 GetEndRot();
+      void SetEndRot(const osg::Vec3& value);
+      osg::Vec3 GetEndRot();
 
    protected:
 
@@ -114,8 +114,8 @@ namespace dtDirector
       float            mStartTime;
       float            mEndTime;
       float            mTime;
-      osg::Vec4        mStartRot;
-      osg::Vec4        mEndRot;
+      osg::Vec3        mStartRot;
+      osg::Vec3        mEndRot;
 
       bool             mWaitingForStart;
 

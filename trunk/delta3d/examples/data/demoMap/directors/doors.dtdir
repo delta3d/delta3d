@@ -2,7 +2,7 @@
 <director xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dDirector" xsi:schemaLocation="delta3dDirector director.xsd">
     <header>
         <createTimestamp>2009-12-22T14:26:31-08:00</createTimestamp>
-        <lastUpdateTimestamp>2011-06-06T14:49:30-08:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2011-06-06T16:37:53-08:00</lastUpdateTimestamp>
         <editorVersion>2.7.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
         <scriptType>Scenario</scriptType>
@@ -300,7 +300,7 @@
                     <name>Enter</name>
                     <visible>true</visible>
                     <link>
-                        <id>d01d1853-ce26-4c00-96a8-f3b81b822a0e</id>
+                        <id>60aaa47d-f456-4fce-a3bd-9e5c91b8d24e</id>
                         <name>Play</name>
                     </link>
                 </outputlink>
@@ -308,7 +308,7 @@
                     <name>Leave</name>
                     <visible>true</visible>
                     <link>
-                        <id>a47dca4b-8d33-4d48-b169-2532c11622af</id>
+                        <id>62d9d6af-86c9-4e2b-b930-f5db29336c10</id>
                         <name>Reverse</name>
                     </link>
                 </outputlink>
@@ -904,7 +904,7 @@
                     <string>Actor</string>
                 </property>
                 <property>
-                    <name>Initial Value</name>
+                    <name>Value</name>
                     <actorId>9301e09d-1f7d-47c0-9d08-7f665102c7d2</actorId>
                 </property>
                 <valuelink>
@@ -948,7 +948,7 @@
                     </vec2>
                 </property>
                 <property>
-                    <name>Initial Value</name>
+                    <name>Value</name>
                     <actorId>b4db756c-83ea-4e40-ad17-ef7c65247303</actorId>
                 </property>
                 <valuelink>
@@ -1130,7 +1130,7 @@
                         <name>Out</name>
                         <visible>true</visible>
                         <link>
-                            <id>57aad2e3-82cd-4448-8989-1d838d1b0fb2</id>
+                            <id>2385c792-5a3e-41a3-b811-47940571097f</id>
                             <name>Play</name>
                         </link>
                     </outputlink>
@@ -1178,7 +1178,7 @@
                         <name>Out</name>
                         <visible>true</visible>
                         <link>
-                            <id>107c2ecd-1744-49e9-b2f7-64b656b1aabd</id>
+                            <id>1cd981da-5b66-48c4-9501-e8e9f928dc43</id>
                             <name>Play</name>
                         </link>
                     </outputlink>
@@ -1226,7 +1226,7 @@
                         <name>Out</name>
                         <visible>true</visible>
                         <link>
-                            <id>27fdc45b-f518-42bc-9ee6-ed102c4c5f9d</id>
+                            <id>8ba45d0b-e60c-4ce5-9f60-be6b25e58978</id>
                             <name>Reverse</name>
                         </link>
                     </outputlink>
@@ -1274,7 +1274,7 @@
                         <name>Out</name>
                         <visible>true</visible>
                         <link>
-                            <id>186f12e0-e5db-4c3b-b099-268e35914bc1</id>
+                            <id>faa19860-b0b1-4f3a-8894-fa845b8bc584</id>
                             <name>Reverse</name>
                         </link>
                     </outputlink>
@@ -2952,14 +2952,7 @@
                     <node>
                         <name>Input Link</name>
                         <category>Core</category>
-                        <id>57aad2e3-82cd-4448-8989-1d838d1b0fb2</id>
-                        <property>
-                            <name>Position</name>
-                            <vec2>
-                                <value1>-200.000000</value1>
-                                <value2>0.000000</value2>
-                            </vec2>
-                        </property>
+                        <id>2385c792-5a3e-41a3-b811-47940571097f</id>
                         <property>
                             <name>Name</name>
                             <string>Play</string>
@@ -2976,7 +2969,7 @@
                             <name>Out</name>
                             <visible>true</visible>
                             <link>
-                                <id>f7991b3a-f6ef-42b9-877d-e58ac4bf97dc</id>
+                                <id>80a58362-f88f-468b-8210-d9ba5868c243</id>
                                 <name>Play</name>
                             </link>
                         </outputlink>
@@ -3000,12 +2993,12 @@
                     <node>
                         <name>Input Link</name>
                         <category>Core</category>
-                        <id>186f12e0-e5db-4c3b-b099-268e35914bc1</id>
+                        <id>faa19860-b0b1-4f3a-8894-fa845b8bc584</id>
                         <property>
                             <name>Position</name>
                             <vec2>
-                                <value1>-200.000000</value1>
-                                <value2>50.000000</value2>
+                                <value1>0.000000</value1>
+                                <value2>80.000000</value2>
                             </vec2>
                         </property>
                         <property>
@@ -3024,7 +3017,7 @@
                             <name>Out</name>
                             <visible>true</visible>
                             <link>
-                                <id>f7991b3a-f6ef-42b9-877d-e58ac4bf97dc</id>
+                                <id>80a58362-f88f-468b-8210-d9ba5868c243</id>
                                 <name>Reverse</name>
                             </link>
                         </outputlink>
@@ -3048,12 +3041,12 @@
                     <node>
                         <name>Input Link</name>
                         <category>Core</category>
-                        <id>6c68ffa8-d234-4f5b-9030-4e8b1432a61e</id>
+                        <id>1ea0fde0-33a8-4265-8c2b-b51c3cef9dc5</id>
                         <property>
                             <name>Position</name>
                             <vec2>
-                                <value1>-200.000000</value1>
-                                <value2>100.000000</value2>
+                                <value1>0.000000</value1>
+                                <value2>160.000000</value2>
                             </vec2>
                         </property>
                         <property>
@@ -3068,7 +3061,7 @@
                             <name>Out</name>
                             <visible>true</visible>
                             <link>
-                                <id>f7991b3a-f6ef-42b9-877d-e58ac4bf97dc</id>
+                                <id>80a58362-f88f-468b-8210-d9ba5868c243</id>
                                 <name>Stop</name>
                             </link>
                         </outputlink>
@@ -3092,12 +3085,12 @@
                     <node>
                         <name>Input Link</name>
                         <category>Core</category>
-                        <id>295f38b1-a760-46f6-854a-523f95052cf1</id>
+                        <id>ed804e41-627f-4f90-bcfc-b5b9d4291c1f</id>
                         <property>
                             <name>Position</name>
                             <vec2>
-                                <value1>-200.000000</value1>
-                                <value2>150.000000</value2>
+                                <value1>0.000000</value1>
+                                <value2>240.000000</value2>
                             </vec2>
                         </property>
                         <property>
@@ -3112,7 +3105,7 @@
                             <name>Out</name>
                             <visible>true</visible>
                             <link>
-                                <id>f7991b3a-f6ef-42b9-877d-e58ac4bf97dc</id>
+                                <id>80a58362-f88f-468b-8210-d9ba5868c243</id>
                                 <name>Pause</name>
                             </link>
                         </outputlink>
@@ -3136,12 +3129,12 @@
                     <node>
                         <name>Remote Event</name>
                         <category>Core</category>
-                        <id>fd407e94-638d-4112-a089-23953272b51b</id>
+                        <id>a03e064c-6b6d-42d8-8a66-99d1d05490ab</id>
                         <property>
                             <name>Position</name>
                             <vec2>
                                 <value1>0.000000</value1>
-                                <value2>300.000000</value2>
+                                <value2>640.000000</value2>
                             </vec2>
                         </property>
                         <property>
@@ -3152,7 +3145,7 @@
                             <name>Out</name>
                             <visible>true</visible>
                             <link>
-                                <id>29f4d315-b125-424f-8731-32482144b1a0</id>
+                                <id>e70d710f-1f3e-4b59-b3be-9fd3dc60f3c8</id>
                                 <name>Start</name>
                             </link>
                         </outputlink>
@@ -3184,12 +3177,12 @@
                     <node>
                         <name>Remote Event</name>
                         <category>Core</category>
-                        <id>72e5b04c-61c9-41e5-b5b6-5ba96b33ac66</id>
+                        <id>876fef2d-1d42-4573-b506-f9e2db91e561</id>
                         <property>
                             <name>Position</name>
                             <vec2>
-                                <value1>6.000000</value1>
-                                <value2>400.000000</value2>
+                                <value1>0.000000</value1>
+                                <value2>720.000000</value2>
                             </vec2>
                         </property>
                         <property>
@@ -3200,7 +3193,7 @@
                             <name>Out</name>
                             <visible>true</visible>
                             <link>
-                                <id>29f4d315-b125-424f-8731-32482144b1a0</id>
+                                <id>e70d710f-1f3e-4b59-b3be-9fd3dc60f3c8</id>
                                 <name>Stop</name>
                             </link>
                         </outputlink>
@@ -3234,7 +3227,14 @@
                     <node>
                         <name>Scheduler</name>
                         <category>Cinematic</category>
-                        <id>f7991b3a-f6ef-42b9-877d-e58ac4bf97dc</id>
+                        <id>80a58362-f88f-468b-8210-d9ba5868c243</id>
+                        <property>
+                            <name>Position</name>
+                            <vec2>
+                                <value1>400.000000</value1>
+                                <value2>0.000000</value2>
+                            </vec2>
+                        </property>
                         <property>
                             <name>TotalTime</name>
                             <float>1</float>
@@ -3243,7 +3243,7 @@
                             <name>Play</name>
                             <visible>true</visible>
                             <link>
-                                <id>57aad2e3-82cd-4448-8989-1d838d1b0fb2</id>
+                                <id>2385c792-5a3e-41a3-b811-47940571097f</id>
                                 <name>Out</name>
                             </link>
                         </inputlink>
@@ -3251,7 +3251,7 @@
                             <name>Reverse</name>
                             <visible>true</visible>
                             <link>
-                                <id>186f12e0-e5db-4c3b-b099-268e35914bc1</id>
+                                <id>faa19860-b0b1-4f3a-8894-fa845b8bc584</id>
                                 <name>Out</name>
                             </link>
                         </inputlink>
@@ -3259,7 +3259,7 @@
                             <name>Stop</name>
                             <visible>true</visible>
                             <link>
-                                <id>6c68ffa8-d234-4f5b-9030-4e8b1432a61e</id>
+                                <id>1ea0fde0-33a8-4265-8c2b-b51c3cef9dc5</id>
                                 <name>Out</name>
                             </link>
                         </inputlink>
@@ -3267,7 +3267,7 @@
                             <name>Pause</name>
                             <visible>true</visible>
                             <link>
-                                <id>295f38b1-a760-46f6-854a-523f95052cf1</id>
+                                <id>ed804e41-627f-4f90-bcfc-b5b9d4291c1f</id>
                                 <name>Out</name>
                             </link>
                         </inputlink>
@@ -3275,11 +3275,11 @@
                             <name>Started</name>
                             <visible>true</visible>
                             <link>
-                                <id>adf45327-3040-4b8b-84e5-51872f5c6246</id>
+                                <id>4763c629-5b1d-41f6-9518-44849ddef8e6</id>
                                 <name>Call Event</name>
                             </link>
                             <link>
-                                <id>6b943767-85f7-4de0-b774-2f24f7d407dd</id>
+                                <id>91feb23a-1c9f-4b20-be0b-9ca00d671b3c</id>
                                 <name>In</name>
                             </link>
                         </outputlink>
@@ -3287,17 +3287,21 @@
                             <name>Ended</name>
                             <visible>true</visible>
                             <link>
-                                <id>83036d94-9186-473b-b18c-ab96b0efdbb9</id>
+                                <id>ffc77890-c93f-4111-a867-680a7b2e8362</id>
                                 <name>In</name>
                             </link>
                             <link>
-                                <id>7df80bed-206a-4e82-9bdb-81ecb8ab3f88</id>
+                                <id>c305f463-effb-4971-8cff-af20ca95b05a</id>
                                 <name>Call Event</name>
                             </link>
                         </outputlink>
                         <outputlink>
                             <name>Stopped</name>
                             <visible>true</visible>
+                            <link>
+                                <id>c305f463-effb-4971-8cff-af20ca95b05a</id>
+                                <name>Call Event</name>
+                            </link>
                         </outputlink>
                         <valuelink>
                             <name>Enabled</name>
@@ -3315,7 +3319,7 @@
                             <allowmultiple>true</allowmultiple>
                             <typecheck>true</typecheck>
                             <link>
-                                <id>63d63a4d-7602-44ae-bfe2-1dbc3ece0e19</id>
+                                <id>f01b069d-56de-4f12-be06-63c343dd7b4b</id>
                             </link>
                         </valuelink>
                         <valuelink>
@@ -3338,11 +3342,11 @@
                     <node>
                         <name>Call Remote Event</name>
                         <category>Core</category>
-                        <id>adf45327-3040-4b8b-84e5-51872f5c6246</id>
+                        <id>4763c629-5b1d-41f6-9518-44849ddef8e6</id>
                         <property>
                             <name>Position</name>
                             <vec2>
-                                <value1>400.000000</value1>
+                                <value1>800.000000</value1>
                                 <value2>0.000000</value2>
                             </vec2>
                         </property>
@@ -3358,7 +3362,7 @@
                             <name>Call Event</name>
                             <visible>true</visible>
                             <link>
-                                <id>f7991b3a-f6ef-42b9-877d-e58ac4bf97dc</id>
+                                <id>80a58362-f88f-468b-8210-d9ba5868c243</id>
                                 <name>Started</name>
                             </link>
                         </inputlink>
@@ -3394,12 +3398,12 @@
                     <node>
                         <name>Output Link</name>
                         <category>Core</category>
-                        <id>6b943767-85f7-4de0-b774-2f24f7d407dd</id>
+                        <id>91feb23a-1c9f-4b20-be0b-9ca00d671b3c</id>
                         <property>
                             <name>Position</name>
                             <vec2>
-                                <value1>400.000000</value1>
-                                <value2>50.000000</value2>
+                                <value1>800.000000</value1>
+                                <value2>80.000000</value2>
                             </vec2>
                         </property>
                         <property>
@@ -3410,7 +3414,7 @@
                             <name>In</name>
                             <visible>true</visible>
                             <link>
-                                <id>f7991b3a-f6ef-42b9-877d-e58ac4bf97dc</id>
+                                <id>80a58362-f88f-468b-8210-d9ba5868c243</id>
                                 <name>Started</name>
                             </link>
                         </inputlink>
@@ -3430,12 +3434,12 @@
                     <node>
                         <name>Output Link</name>
                         <category>Core</category>
-                        <id>83036d94-9186-473b-b18c-ab96b0efdbb9</id>
+                        <id>ffc77890-c93f-4111-a867-680a7b2e8362</id>
                         <property>
                             <name>Position</name>
                             <vec2>
-                                <value1>400.000000</value1>
-                                <value2>100.000000</value2>
+                                <value1>800.000000</value1>
+                                <value2>160.000000</value2>
                             </vec2>
                         </property>
                         <property>
@@ -3446,7 +3450,7 @@
                             <name>In</name>
                             <visible>true</visible>
                             <link>
-                                <id>f7991b3a-f6ef-42b9-877d-e58ac4bf97dc</id>
+                                <id>80a58362-f88f-468b-8210-d9ba5868c243</id>
                                 <name>Ended</name>
                             </link>
                         </inputlink>
@@ -3466,12 +3470,12 @@
                     <node>
                         <name>Call Remote Event</name>
                         <category>Core</category>
-                        <id>7df80bed-206a-4e82-9bdb-81ecb8ab3f88</id>
+                        <id>c305f463-effb-4971-8cff-af20ca95b05a</id>
                         <property>
                             <name>Position</name>
                             <vec2>
-                                <value1>400.000000</value1>
-                                <value2>150.000000</value2>
+                                <value1>800.000000</value1>
+                                <value2>240.000000</value2>
                             </vec2>
                         </property>
                         <property>
@@ -3486,8 +3490,12 @@
                             <name>Call Event</name>
                             <visible>true</visible>
                             <link>
-                                <id>f7991b3a-f6ef-42b9-877d-e58ac4bf97dc</id>
+                                <id>80a58362-f88f-468b-8210-d9ba5868c243</id>
                                 <name>Ended</name>
+                            </link>
+                            <link>
+                                <id>80a58362-f88f-468b-8210-d9ba5868c243</id>
+                                <name>Stopped</name>
                             </link>
                         </inputlink>
                         <outputlink>
@@ -3520,30 +3528,37 @@
                         </valuelink>
                     </node>
                     <node>
-                        <name>Lerp Actor Rotation</name>
+                        <name>Lerp Actor Translation</name>
                         <category>Cinematic</category>
-                        <id>29f4d315-b125-424f-8731-32482144b1a0</id>
+                        <id>e70d710f-1f3e-4b59-b3be-9fd3dc60f3c8</id>
                         <property>
                             <name>Position</name>
                             <vec2>
-                                <value1>200.000000</value1>
-                                <value2>300.000000</value2>
+                                <value1>400.000000</value1>
+                                <value2>640.000000</value2>
                             </vec2>
                         </property>
                         <property>
-                            <name>EndRotation</name>
-                            <vec4>
-                                <value1>0.000000</value1>
-                                <value2>0.000000</value2>
-                                <value3>90.000008</value3>
-                                <value4>0.000000</value4>
-                            </vec4>
+                            <name>StartPosition</name>
+                            <vec3>
+                                <value1>15.561790</value1>
+                                <value2>14.973146</value2>
+                                <value3>0.001683</value3>
+                            </vec3>
+                        </property>
+                        <property>
+                            <name>EndPosition</name>
+                            <vec3>
+                                <value1>15.561790</value1>
+                                <value2>14.973146</value2>
+                                <value3>0.001683</value3>
+                            </vec3>
                         </property>
                         <inputlink>
                             <name>Start</name>
                             <visible>true</visible>
                             <link>
-                                <id>fd407e94-638d-4112-a089-23953272b51b</id>
+                                <id>a03e064c-6b6d-42d8-8a66-99d1d05490ab</id>
                                 <name>Out</name>
                             </link>
                         </inputlink>
@@ -3551,8 +3566,252 @@
                             <name>Stop</name>
                             <visible>true</visible>
                             <link>
-                                <id>72e5b04c-61c9-41e5-b5b6-5ba96b33ac66</id>
+                                <id>876fef2d-1d42-4573-b506-f9e2db91e561</id>
                                 <name>Out</name>
+                            </link>
+                        </inputlink>
+                        <outputlink>
+                            <name>Started</name>
+                            <visible>true</visible>
+                            <link>
+                                <id>4a26e281-9dd4-4ed6-a1bb-4acb1e2e4ba5</id>
+                                <name>Start</name>
+                            </link>
+                        </outputlink>
+                        <outputlink>
+                            <name>Stopped</name>
+                            <visible>true</visible>
+                            <link>
+                                <id>4a26e281-9dd4-4ed6-a1bb-4acb1e2e4ba5</id>
+                                <name>Stop</name>
+                            </link>
+                        </outputlink>
+                        <outputlink>
+                            <name>Finished</name>
+                            <visible>true</visible>
+                        </outputlink>
+                        <valuelink>
+                            <name>Enabled</name>
+                            <visible>true</visible>
+                            <exposed>false</exposed>
+                            <isout>false</isout>
+                            <allowmultiple>false</allowmultiple>
+                            <typecheck>true</typecheck>
+                        </valuelink>
+                        <valuelink>
+                            <name>Actor</name>
+                            <visible>true</visible>
+                            <exposed>true</exposed>
+                            <isout>true</isout>
+                            <allowmultiple>true</allowmultiple>
+                            <typecheck>true</typecheck>
+                            <link>
+                                <id>89538fc8-144f-43bf-8cbe-66d1849b1033</id>
+                            </link>
+                        </valuelink>
+                        <valuelink>
+                            <name>StartTime</name>
+                            <visible>true</visible>
+                            <exposed>false</exposed>
+                            <isout>false</isout>
+                            <allowmultiple>false</allowmultiple>
+                            <typecheck>true</typecheck>
+                        </valuelink>
+                        <valuelink>
+                            <name>EndTime</name>
+                            <visible>true</visible>
+                            <exposed>false</exposed>
+                            <isout>false</isout>
+                            <allowmultiple>false</allowmultiple>
+                            <typecheck>true</typecheck>
+                        </valuelink>
+                        <valuelink>
+                            <name>Time</name>
+                            <visible>true</visible>
+                            <exposed>true</exposed>
+                            <isout>false</isout>
+                            <allowmultiple>false</allowmultiple>
+                            <typecheck>true</typecheck>
+                            <link>
+                                <id>890c8959-3a79-4572-bc07-ee13980c0c9e</id>
+                            </link>
+                        </valuelink>
+                        <valuelink>
+                            <name>StartPosition</name>
+                            <visible>true</visible>
+                            <exposed>false</exposed>
+                            <isout>false</isout>
+                            <allowmultiple>false</allowmultiple>
+                            <typecheck>true</typecheck>
+                        </valuelink>
+                        <valuelink>
+                            <name>EndPosition</name>
+                            <visible>true</visible>
+                            <exposed>false</exposed>
+                            <isout>false</isout>
+                            <allowmultiple>false</allowmultiple>
+                            <typecheck>true</typecheck>
+                        </valuelink>
+                    </node>
+                    <node>
+                        <name>Lerp Actor Rotation</name>
+                        <category>Cinematic</category>
+                        <id>4a26e281-9dd4-4ed6-a1bb-4acb1e2e4ba5</id>
+                        <property>
+                            <name>Position</name>
+                            <vec2>
+                                <value1>800.000000</value1>
+                                <value2>640.000000</value2>
+                            </vec2>
+                        </property>
+                        <property>
+                            <name>EndRotation</name>
+                            <vec3>
+                                <value1>0.000000</value1>
+                                <value2>0.000000</value2>
+                                <value3>93.718498</value3>
+                            </vec3>
+                        </property>
+                        <inputlink>
+                            <name>Start</name>
+                            <visible>true</visible>
+                            <link>
+                                <id>e70d710f-1f3e-4b59-b3be-9fd3dc60f3c8</id>
+                                <name>Started</name>
+                            </link>
+                        </inputlink>
+                        <inputlink>
+                            <name>Stop</name>
+                            <visible>true</visible>
+                            <link>
+                                <id>e70d710f-1f3e-4b59-b3be-9fd3dc60f3c8</id>
+                                <name>Stopped</name>
+                            </link>
+                        </inputlink>
+                        <outputlink>
+                            <name>Started</name>
+                            <visible>true</visible>
+                            <link>
+                                <id>e755dcea-8aed-4ff8-a436-e1bb56586b73</id>
+                                <name>Start</name>
+                            </link>
+                        </outputlink>
+                        <outputlink>
+                            <name>Stopped</name>
+                            <visible>true</visible>
+                            <link>
+                                <id>e755dcea-8aed-4ff8-a436-e1bb56586b73</id>
+                                <name>Stop</name>
+                            </link>
+                        </outputlink>
+                        <outputlink>
+                            <name>Finished</name>
+                            <visible>true</visible>
+                        </outputlink>
+                        <valuelink>
+                            <name>Enabled</name>
+                            <visible>true</visible>
+                            <exposed>false</exposed>
+                            <isout>false</isout>
+                            <allowmultiple>false</allowmultiple>
+                            <typecheck>true</typecheck>
+                        </valuelink>
+                        <valuelink>
+                            <name>Actor</name>
+                            <visible>true</visible>
+                            <exposed>true</exposed>
+                            <isout>true</isout>
+                            <allowmultiple>true</allowmultiple>
+                            <typecheck>true</typecheck>
+                            <link>
+                                <id>8c1eac68-4349-47a4-bec6-a2bf21e32126</id>
+                            </link>
+                        </valuelink>
+                        <valuelink>
+                            <name>StartTime</name>
+                            <visible>true</visible>
+                            <exposed>false</exposed>
+                            <isout>false</isout>
+                            <allowmultiple>false</allowmultiple>
+                            <typecheck>true</typecheck>
+                        </valuelink>
+                        <valuelink>
+                            <name>EndTime</name>
+                            <visible>true</visible>
+                            <exposed>false</exposed>
+                            <isout>false</isout>
+                            <allowmultiple>false</allowmultiple>
+                            <typecheck>true</typecheck>
+                        </valuelink>
+                        <valuelink>
+                            <name>Time</name>
+                            <visible>true</visible>
+                            <exposed>true</exposed>
+                            <isout>false</isout>
+                            <allowmultiple>false</allowmultiple>
+                            <typecheck>true</typecheck>
+                            <link>
+                                <id>9a043fb3-f436-4b72-a0ed-179e64f55a10</id>
+                            </link>
+                        </valuelink>
+                        <valuelink>
+                            <name>StartRotation</name>
+                            <visible>true</visible>
+                            <exposed>false</exposed>
+                            <isout>false</isout>
+                            <allowmultiple>false</allowmultiple>
+                            <typecheck>true</typecheck>
+                        </valuelink>
+                        <valuelink>
+                            <name>EndRotation</name>
+                            <visible>true</visible>
+                            <exposed>false</exposed>
+                            <isout>false</isout>
+                            <allowmultiple>false</allowmultiple>
+                            <typecheck>true</typecheck>
+                        </valuelink>
+                    </node>
+                    <node>
+                        <name>Lerp Actor Scale</name>
+                        <category>Cinematic</category>
+                        <id>e755dcea-8aed-4ff8-a436-e1bb56586b73</id>
+                        <property>
+                            <name>Position</name>
+                            <vec2>
+                                <value1>1200.000000</value1>
+                                <value2>640.000000</value2>
+                            </vec2>
+                        </property>
+                        <property>
+                            <name>StartScale</name>
+                            <vec3>
+                                <value1>1.000000</value1>
+                                <value2>1.000000</value2>
+                                <value3>1.000000</value3>
+                            </vec3>
+                        </property>
+                        <property>
+                            <name>EndScale</name>
+                            <vec3>
+                                <value1>1.000000</value1>
+                                <value2>1.000000</value2>
+                                <value3>1.000000</value3>
+                            </vec3>
+                        </property>
+                        <inputlink>
+                            <name>Start</name>
+                            <visible>true</visible>
+                            <link>
+                                <id>4a26e281-9dd4-4ed6-a1bb-4acb1e2e4ba5</id>
+                                <name>Started</name>
+                            </link>
+                        </inputlink>
+                        <inputlink>
+                            <name>Stop</name>
+                            <visible>true</visible>
+                            <link>
+                                <id>4a26e281-9dd4-4ed6-a1bb-4acb1e2e4ba5</id>
+                                <name>Stopped</name>
                             </link>
                         </inputlink>
                         <outputlink>
@@ -3583,7 +3842,7 @@
                             <allowmultiple>true</allowmultiple>
                             <typecheck>true</typecheck>
                             <link>
-                                <id>ab3496aa-7caa-47d3-a8b1-ccb2b60a7d98</id>
+                                <id>ba4ab9b9-d54e-4802-837a-6d682c893aa1</id>
                             </link>
                         </valuelink>
                         <valuelink>
@@ -3610,11 +3869,11 @@
                             <allowmultiple>false</allowmultiple>
                             <typecheck>true</typecheck>
                             <link>
-                                <id>ce900a9e-c843-48d1-a1ea-b1c4c70ddc39</id>
+                                <id>f485abf9-6ad4-4e1c-a344-0d370d060822</id>
                             </link>
                         </valuelink>
                         <valuelink>
-                            <name>StartRotation</name>
+                            <name>StartScale</name>
                             <visible>true</visible>
                             <exposed>false</exposed>
                             <isout>false</isout>
@@ -3622,7 +3881,7 @@
                             <typecheck>true</typecheck>
                         </valuelink>
                         <valuelink>
-                            <name>EndRotation</name>
+                            <name>EndScale</name>
                             <visible>true</visible>
                             <exposed>false</exposed>
                             <isout>false</isout>
@@ -3635,11 +3894,11 @@
                     <node>
                         <name>Float</name>
                         <category>General</category>
-                        <id>63d63a4d-7602-44ae-bfe2-1dbc3ece0e19</id>
+                        <id>f01b069d-56de-4f12-be06-63c343dd7b4b</id>
                         <property>
                             <name>Position</name>
                             <vec2>
-                                <value1>0.000000</value1>
+                                <value1>400.000000</value1>
                                 <value2>200.000000</value2>
                             </vec2>
                         </property>
@@ -3659,20 +3918,16 @@
                     <node>
                         <name>Actor</name>
                         <category>General</category>
-                        <id>ab3496aa-7caa-47d3-a8b1-ccb2b60a7d98</id>
+                        <id>89538fc8-144f-43bf-8cbe-66d1849b1033</id>
                         <property>
                             <name>Position</name>
                             <vec2>
-                                <value1>200.000000</value1>
-                                <value2>500.000000</value2>
+                                <value1>400.000000</value1>
+                                <value2>840.000000</value2>
                             </vec2>
                         </property>
                         <property>
-                            <name>Name</name>
-                            <string>Actor</string>
-                        </property>
-                        <property>
-                            <name>Initial Value</name>
+                            <name>Value</name>
                             <actorId>f2588a57-5422-48da-9bdc-09ab214081e4</actorId>
                         </property>
                         <valuelink>
@@ -3687,17 +3942,13 @@
                     <node>
                         <name>Reference</name>
                         <category>Core</category>
-                        <id>ce900a9e-c843-48d1-a1ea-b1c4c70ddc39</id>
+                        <id>890c8959-3a79-4572-bc07-ee13980c0c9e</id>
                         <property>
                             <name>Position</name>
                             <vec2>
-                                <value1>252.000000</value1>
-                                <value2>500.000000</value2>
+                                <value1>465.000000</value1>
+                                <value2>840.000000</value2>
                             </vec2>
-                        </property>
-                        <property>
-                            <name>Name</name>
-                            <string>Ref</string>
                         </property>
                         <property>
                             <name>Reference</name>
@@ -3711,7 +3962,109 @@
                             <allowmultiple>false</allowmultiple>
                             <typecheck>true</typecheck>
                             <link>
-                                <id>63d63a4d-7602-44ae-bfe2-1dbc3ece0e19</id>
+                                <id>f01b069d-56de-4f12-be06-63c343dd7b4b</id>
+                            </link>
+                        </valuelink>
+                    </node>
+                    <node>
+                        <name>Actor</name>
+                        <category>General</category>
+                        <id>8c1eac68-4349-47a4-bec6-a2bf21e32126</id>
+                        <property>
+                            <name>Position</name>
+                            <vec2>
+                                <value1>800.000000</value1>
+                                <value2>840.000000</value2>
+                            </vec2>
+                        </property>
+                        <property>
+                            <name>Value</name>
+                            <actorId>f2588a57-5422-48da-9bdc-09ab214081e4</actorId>
+                        </property>
+                        <valuelink>
+                            <name>Enabled</name>
+                            <visible>true</visible>
+                            <exposed>false</exposed>
+                            <isout>false</isout>
+                            <allowmultiple>false</allowmultiple>
+                            <typecheck>true</typecheck>
+                        </valuelink>
+                    </node>
+                    <node>
+                        <name>Reference</name>
+                        <category>Core</category>
+                        <id>9a043fb3-f436-4b72-a0ed-179e64f55a10</id>
+                        <property>
+                            <name>Position</name>
+                            <vec2>
+                                <value1>865.000000</value1>
+                                <value2>840.000000</value2>
+                            </vec2>
+                        </property>
+                        <property>
+                            <name>Reference</name>
+                            <string>Current Time</string>
+                        </property>
+                        <valuelink>
+                            <name>Value</name>
+                            <visible>true</visible>
+                            <exposed>false</exposed>
+                            <isout>false</isout>
+                            <allowmultiple>false</allowmultiple>
+                            <typecheck>true</typecheck>
+                            <link>
+                                <id>f01b069d-56de-4f12-be06-63c343dd7b4b</id>
+                            </link>
+                        </valuelink>
+                    </node>
+                    <node>
+                        <name>Actor</name>
+                        <category>General</category>
+                        <id>ba4ab9b9-d54e-4802-837a-6d682c893aa1</id>
+                        <property>
+                            <name>Position</name>
+                            <vec2>
+                                <value1>1200.000000</value1>
+                                <value2>840.000000</value2>
+                            </vec2>
+                        </property>
+                        <property>
+                            <name>Value</name>
+                            <actorId>f2588a57-5422-48da-9bdc-09ab214081e4</actorId>
+                        </property>
+                        <valuelink>
+                            <name>Enabled</name>
+                            <visible>true</visible>
+                            <exposed>false</exposed>
+                            <isout>false</isout>
+                            <allowmultiple>false</allowmultiple>
+                            <typecheck>true</typecheck>
+                        </valuelink>
+                    </node>
+                    <node>
+                        <name>Reference</name>
+                        <category>Core</category>
+                        <id>f485abf9-6ad4-4e1c-a344-0d370d060822</id>
+                        <property>
+                            <name>Position</name>
+                            <vec2>
+                                <value1>1265.000000</value1>
+                                <value2>840.000000</value2>
+                            </vec2>
+                        </property>
+                        <property>
+                            <name>Reference</name>
+                            <string>Current Time</string>
+                        </property>
+                        <valuelink>
+                            <name>Value</name>
+                            <visible>true</visible>
+                            <exposed>false</exposed>
+                            <isout>false</isout>
+                            <allowmultiple>false</allowmultiple>
+                            <typecheck>true</typecheck>
+                            <link>
+                                <id>f01b069d-56de-4f12-be06-63c343dd7b4b</id>
                             </link>
                         </valuelink>
                     </node>
@@ -3754,14 +4107,7 @@
                     <node>
                         <name>Input Link</name>
                         <category>Core</category>
-                        <id>107c2ecd-1744-49e9-b2f7-64b656b1aabd</id>
-                        <property>
-                            <name>Position</name>
-                            <vec2>
-                                <value1>-200.000000</value1>
-                                <value2>0.000000</value2>
-                            </vec2>
-                        </property>
+                        <id>1cd981da-5b66-48c4-9501-e8e9f928dc43</id>
                         <property>
                             <name>Name</name>
                             <string>Play</string>
@@ -3778,7 +4124,7 @@
                             <name>Out</name>
                             <visible>true</visible>
                             <link>
-                                <id>a2bb95a0-e207-46c2-900c-97db560359bd</id>
+                                <id>46bcdafc-38e7-4f65-94da-19c4df26b1a9</id>
                                 <name>Play</name>
                             </link>
                         </outputlink>
@@ -3802,12 +4148,12 @@
                     <node>
                         <name>Input Link</name>
                         <category>Core</category>
-                        <id>27fdc45b-f518-42bc-9ee6-ed102c4c5f9d</id>
+                        <id>8ba45d0b-e60c-4ce5-9f60-be6b25e58978</id>
                         <property>
                             <name>Position</name>
                             <vec2>
-                                <value1>-200.000000</value1>
-                                <value2>50.000000</value2>
+                                <value1>0.000000</value1>
+                                <value2>80.000000</value2>
                             </vec2>
                         </property>
                         <property>
@@ -3826,7 +4172,7 @@
                             <name>Out</name>
                             <visible>true</visible>
                             <link>
-                                <id>a2bb95a0-e207-46c2-900c-97db560359bd</id>
+                                <id>46bcdafc-38e7-4f65-94da-19c4df26b1a9</id>
                                 <name>Reverse</name>
                             </link>
                         </outputlink>
@@ -3850,12 +4196,12 @@
                     <node>
                         <name>Input Link</name>
                         <category>Core</category>
-                        <id>7c311a8b-ed97-4b91-9468-cb3871e1b16b</id>
+                        <id>6946c87a-db0c-40e9-8d01-a6ae9e30b794</id>
                         <property>
                             <name>Position</name>
                             <vec2>
-                                <value1>-200.000000</value1>
-                                <value2>100.000000</value2>
+                                <value1>0.000000</value1>
+                                <value2>160.000000</value2>
                             </vec2>
                         </property>
                         <property>
@@ -3870,7 +4216,7 @@
                             <name>Out</name>
                             <visible>true</visible>
                             <link>
-                                <id>a2bb95a0-e207-46c2-900c-97db560359bd</id>
+                                <id>46bcdafc-38e7-4f65-94da-19c4df26b1a9</id>
                                 <name>Stop</name>
                             </link>
                         </outputlink>
@@ -3894,12 +4240,12 @@
                     <node>
                         <name>Input Link</name>
                         <category>Core</category>
-                        <id>259f362f-3d95-427b-b6bc-3acd2b54cc92</id>
+                        <id>26902f4f-d005-428f-a934-59a57450ab14</id>
                         <property>
                             <name>Position</name>
                             <vec2>
-                                <value1>-200.000000</value1>
-                                <value2>150.000000</value2>
+                                <value1>0.000000</value1>
+                                <value2>240.000000</value2>
                             </vec2>
                         </property>
                         <property>
@@ -3914,7 +4260,7 @@
                             <name>Out</name>
                             <visible>true</visible>
                             <link>
-                                <id>a2bb95a0-e207-46c2-900c-97db560359bd</id>
+                                <id>46bcdafc-38e7-4f65-94da-19c4df26b1a9</id>
                                 <name>Pause</name>
                             </link>
                         </outputlink>
@@ -3938,12 +4284,12 @@
                     <node>
                         <name>Remote Event</name>
                         <category>Core</category>
-                        <id>24a9bc9c-a945-4b44-82b4-168db8fb50f3</id>
+                        <id>069b7dfe-eec1-440d-9e9c-6de066a00858</id>
                         <property>
                             <name>Position</name>
                             <vec2>
                                 <value1>0.000000</value1>
-                                <value2>300.000000</value2>
+                                <value2>640.000000</value2>
                             </vec2>
                         </property>
                         <property>
@@ -3954,7 +4300,7 @@
                             <name>Out</name>
                             <visible>true</visible>
                             <link>
-                                <id>fd9b1c40-ef84-4b35-b3c8-dd7039c84a79</id>
+                                <id>39222589-9058-4c69-8a89-96e330401406</id>
                                 <name>Start</name>
                             </link>
                         </outputlink>
@@ -3986,12 +4332,12 @@
                     <node>
                         <name>Remote Event</name>
                         <category>Core</category>
-                        <id>31dcf2cd-1a4d-4231-8863-854f4e60e498</id>
+                        <id>c98d9d1b-f443-4882-80f0-8dc9f0576c08</id>
                         <property>
                             <name>Position</name>
                             <vec2>
-                                <value1>6.000000</value1>
-                                <value2>400.000000</value2>
+                                <value1>0.000000</value1>
+                                <value2>720.000000</value2>
                             </vec2>
                         </property>
                         <property>
@@ -4002,7 +4348,7 @@
                             <name>Out</name>
                             <visible>true</visible>
                             <link>
-                                <id>fd9b1c40-ef84-4b35-b3c8-dd7039c84a79</id>
+                                <id>39222589-9058-4c69-8a89-96e330401406</id>
                                 <name>Stop</name>
                             </link>
                         </outputlink>
@@ -4036,7 +4382,14 @@
                     <node>
                         <name>Scheduler</name>
                         <category>Cinematic</category>
-                        <id>a2bb95a0-e207-46c2-900c-97db560359bd</id>
+                        <id>46bcdafc-38e7-4f65-94da-19c4df26b1a9</id>
+                        <property>
+                            <name>Position</name>
+                            <vec2>
+                                <value1>400.000000</value1>
+                                <value2>0.000000</value2>
+                            </vec2>
+                        </property>
                         <property>
                             <name>TotalTime</name>
                             <float>1</float>
@@ -4045,7 +4398,7 @@
                             <name>Play</name>
                             <visible>true</visible>
                             <link>
-                                <id>107c2ecd-1744-49e9-b2f7-64b656b1aabd</id>
+                                <id>1cd981da-5b66-48c4-9501-e8e9f928dc43</id>
                                 <name>Out</name>
                             </link>
                         </inputlink>
@@ -4053,7 +4406,7 @@
                             <name>Reverse</name>
                             <visible>true</visible>
                             <link>
-                                <id>27fdc45b-f518-42bc-9ee6-ed102c4c5f9d</id>
+                                <id>8ba45d0b-e60c-4ce5-9f60-be6b25e58978</id>
                                 <name>Out</name>
                             </link>
                         </inputlink>
@@ -4061,7 +4414,7 @@
                             <name>Stop</name>
                             <visible>true</visible>
                             <link>
-                                <id>7c311a8b-ed97-4b91-9468-cb3871e1b16b</id>
+                                <id>6946c87a-db0c-40e9-8d01-a6ae9e30b794</id>
                                 <name>Out</name>
                             </link>
                         </inputlink>
@@ -4069,7 +4422,7 @@
                             <name>Pause</name>
                             <visible>true</visible>
                             <link>
-                                <id>259f362f-3d95-427b-b6bc-3acd2b54cc92</id>
+                                <id>26902f4f-d005-428f-a934-59a57450ab14</id>
                                 <name>Out</name>
                             </link>
                         </inputlink>
@@ -4077,11 +4430,11 @@
                             <name>Started</name>
                             <visible>true</visible>
                             <link>
-                                <id>1a487f86-90ad-4e80-a228-5da67ced6d9e</id>
+                                <id>af7b3a91-097a-4409-8c71-9bbbd19da9b6</id>
                                 <name>Call Event</name>
                             </link>
                             <link>
-                                <id>6e9b01dc-4e8c-475d-8fdb-cd8d850c6b0e</id>
+                                <id>72835f9b-1541-4f6d-8d27-2dbe7dbfc036</id>
                                 <name>In</name>
                             </link>
                         </outputlink>
@@ -4089,17 +4442,21 @@
                             <name>Ended</name>
                             <visible>true</visible>
                             <link>
-                                <id>a60a6d80-87d2-48bf-81f0-3111b9ae2c3c</id>
+                                <id>0617b38f-47cf-420c-945b-1114164c91a0</id>
                                 <name>In</name>
                             </link>
                             <link>
-                                <id>0fa45ad8-ec3f-4be7-86c6-a255d5ed5977</id>
+                                <id>27e166f9-ef53-4de9-94c0-de858d83d8db</id>
                                 <name>Call Event</name>
                             </link>
                         </outputlink>
                         <outputlink>
                             <name>Stopped</name>
                             <visible>true</visible>
+                            <link>
+                                <id>27e166f9-ef53-4de9-94c0-de858d83d8db</id>
+                                <name>Call Event</name>
+                            </link>
                         </outputlink>
                         <valuelink>
                             <name>Enabled</name>
@@ -4117,7 +4474,7 @@
                             <allowmultiple>true</allowmultiple>
                             <typecheck>true</typecheck>
                             <link>
-                                <id>35b96406-5f10-4035-b27c-33f2d5c331e5</id>
+                                <id>8549d52e-b653-4f5a-a3a4-1232f5bdba88</id>
                             </link>
                         </valuelink>
                         <valuelink>
@@ -4140,11 +4497,11 @@
                     <node>
                         <name>Call Remote Event</name>
                         <category>Core</category>
-                        <id>1a487f86-90ad-4e80-a228-5da67ced6d9e</id>
+                        <id>af7b3a91-097a-4409-8c71-9bbbd19da9b6</id>
                         <property>
                             <name>Position</name>
                             <vec2>
-                                <value1>400.000000</value1>
+                                <value1>800.000000</value1>
                                 <value2>0.000000</value2>
                             </vec2>
                         </property>
@@ -4160,7 +4517,7 @@
                             <name>Call Event</name>
                             <visible>true</visible>
                             <link>
-                                <id>a2bb95a0-e207-46c2-900c-97db560359bd</id>
+                                <id>46bcdafc-38e7-4f65-94da-19c4df26b1a9</id>
                                 <name>Started</name>
                             </link>
                         </inputlink>
@@ -4196,12 +4553,12 @@
                     <node>
                         <name>Output Link</name>
                         <category>Core</category>
-                        <id>6e9b01dc-4e8c-475d-8fdb-cd8d850c6b0e</id>
+                        <id>72835f9b-1541-4f6d-8d27-2dbe7dbfc036</id>
                         <property>
                             <name>Position</name>
                             <vec2>
-                                <value1>400.000000</value1>
-                                <value2>50.000000</value2>
+                                <value1>800.000000</value1>
+                                <value2>80.000000</value2>
                             </vec2>
                         </property>
                         <property>
@@ -4212,7 +4569,7 @@
                             <name>In</name>
                             <visible>true</visible>
                             <link>
-                                <id>a2bb95a0-e207-46c2-900c-97db560359bd</id>
+                                <id>46bcdafc-38e7-4f65-94da-19c4df26b1a9</id>
                                 <name>Started</name>
                             </link>
                         </inputlink>
@@ -4232,12 +4589,12 @@
                     <node>
                         <name>Output Link</name>
                         <category>Core</category>
-                        <id>a60a6d80-87d2-48bf-81f0-3111b9ae2c3c</id>
+                        <id>0617b38f-47cf-420c-945b-1114164c91a0</id>
                         <property>
                             <name>Position</name>
                             <vec2>
-                                <value1>400.000000</value1>
-                                <value2>100.000000</value2>
+                                <value1>800.000000</value1>
+                                <value2>160.000000</value2>
                             </vec2>
                         </property>
                         <property>
@@ -4248,7 +4605,7 @@
                             <name>In</name>
                             <visible>true</visible>
                             <link>
-                                <id>a2bb95a0-e207-46c2-900c-97db560359bd</id>
+                                <id>46bcdafc-38e7-4f65-94da-19c4df26b1a9</id>
                                 <name>Ended</name>
                             </link>
                         </inputlink>
@@ -4268,12 +4625,12 @@
                     <node>
                         <name>Call Remote Event</name>
                         <category>Core</category>
-                        <id>0fa45ad8-ec3f-4be7-86c6-a255d5ed5977</id>
+                        <id>27e166f9-ef53-4de9-94c0-de858d83d8db</id>
                         <property>
                             <name>Position</name>
                             <vec2>
-                                <value1>400.000000</value1>
-                                <value2>150.000000</value2>
+                                <value1>800.000000</value1>
+                                <value2>240.000000</value2>
                             </vec2>
                         </property>
                         <property>
@@ -4288,8 +4645,12 @@
                             <name>Call Event</name>
                             <visible>true</visible>
                             <link>
-                                <id>a2bb95a0-e207-46c2-900c-97db560359bd</id>
+                                <id>46bcdafc-38e7-4f65-94da-19c4df26b1a9</id>
                                 <name>Ended</name>
+                            </link>
+                            <link>
+                                <id>46bcdafc-38e7-4f65-94da-19c4df26b1a9</id>
+                                <name>Stopped</name>
                             </link>
                         </inputlink>
                         <outputlink>
@@ -4322,30 +4683,37 @@
                         </valuelink>
                     </node>
                     <node>
-                        <name>Lerp Actor Rotation</name>
+                        <name>Lerp Actor Translation</name>
                         <category>Cinematic</category>
-                        <id>fd9b1c40-ef84-4b35-b3c8-dd7039c84a79</id>
+                        <id>39222589-9058-4c69-8a89-96e330401406</id>
                         <property>
                             <name>Position</name>
                             <vec2>
-                                <value1>200.000000</value1>
-                                <value2>300.000000</value2>
+                                <value1>400.000000</value1>
+                                <value2>640.000000</value2>
                             </vec2>
                         </property>
                         <property>
-                            <name>EndRotation</name>
-                            <vec4>
-                                <value1>0.000000</value1>
-                                <value2>0.000000</value2>
-                                <value3>-90.000000</value3>
-                                <value4>0.000000</value4>
-                            </vec4>
+                            <name>StartPosition</name>
+                            <vec3>
+                                <value1>15.561790</value1>
+                                <value2>14.973146</value2>
+                                <value3>0.001683</value3>
+                            </vec3>
+                        </property>
+                        <property>
+                            <name>EndPosition</name>
+                            <vec3>
+                                <value1>15.561790</value1>
+                                <value2>14.973146</value2>
+                                <value3>0.001683</value3>
+                            </vec3>
                         </property>
                         <inputlink>
                             <name>Start</name>
                             <visible>true</visible>
                             <link>
-                                <id>24a9bc9c-a945-4b44-82b4-168db8fb50f3</id>
+                                <id>069b7dfe-eec1-440d-9e9c-6de066a00858</id>
                                 <name>Out</name>
                             </link>
                         </inputlink>
@@ -4353,8 +4721,252 @@
                             <name>Stop</name>
                             <visible>true</visible>
                             <link>
-                                <id>31dcf2cd-1a4d-4231-8863-854f4e60e498</id>
+                                <id>c98d9d1b-f443-4882-80f0-8dc9f0576c08</id>
                                 <name>Out</name>
+                            </link>
+                        </inputlink>
+                        <outputlink>
+                            <name>Started</name>
+                            <visible>true</visible>
+                            <link>
+                                <id>3c8f0b53-c712-4818-b251-8384b1726461</id>
+                                <name>Start</name>
+                            </link>
+                        </outputlink>
+                        <outputlink>
+                            <name>Stopped</name>
+                            <visible>true</visible>
+                            <link>
+                                <id>3c8f0b53-c712-4818-b251-8384b1726461</id>
+                                <name>Stop</name>
+                            </link>
+                        </outputlink>
+                        <outputlink>
+                            <name>Finished</name>
+                            <visible>true</visible>
+                        </outputlink>
+                        <valuelink>
+                            <name>Enabled</name>
+                            <visible>true</visible>
+                            <exposed>false</exposed>
+                            <isout>false</isout>
+                            <allowmultiple>false</allowmultiple>
+                            <typecheck>true</typecheck>
+                        </valuelink>
+                        <valuelink>
+                            <name>Actor</name>
+                            <visible>true</visible>
+                            <exposed>true</exposed>
+                            <isout>true</isout>
+                            <allowmultiple>true</allowmultiple>
+                            <typecheck>true</typecheck>
+                            <link>
+                                <id>ddf1da3a-40fb-4263-a3c2-5966a9a994fd</id>
+                            </link>
+                        </valuelink>
+                        <valuelink>
+                            <name>StartTime</name>
+                            <visible>true</visible>
+                            <exposed>false</exposed>
+                            <isout>false</isout>
+                            <allowmultiple>false</allowmultiple>
+                            <typecheck>true</typecheck>
+                        </valuelink>
+                        <valuelink>
+                            <name>EndTime</name>
+                            <visible>true</visible>
+                            <exposed>false</exposed>
+                            <isout>false</isout>
+                            <allowmultiple>false</allowmultiple>
+                            <typecheck>true</typecheck>
+                        </valuelink>
+                        <valuelink>
+                            <name>Time</name>
+                            <visible>true</visible>
+                            <exposed>true</exposed>
+                            <isout>false</isout>
+                            <allowmultiple>false</allowmultiple>
+                            <typecheck>true</typecheck>
+                            <link>
+                                <id>c0241c70-c357-4393-b59f-d4d1916ca88b</id>
+                            </link>
+                        </valuelink>
+                        <valuelink>
+                            <name>StartPosition</name>
+                            <visible>true</visible>
+                            <exposed>false</exposed>
+                            <isout>false</isout>
+                            <allowmultiple>false</allowmultiple>
+                            <typecheck>true</typecheck>
+                        </valuelink>
+                        <valuelink>
+                            <name>EndPosition</name>
+                            <visible>true</visible>
+                            <exposed>false</exposed>
+                            <isout>false</isout>
+                            <allowmultiple>false</allowmultiple>
+                            <typecheck>true</typecheck>
+                        </valuelink>
+                    </node>
+                    <node>
+                        <name>Lerp Actor Rotation</name>
+                        <category>Cinematic</category>
+                        <id>3c8f0b53-c712-4818-b251-8384b1726461</id>
+                        <property>
+                            <name>Position</name>
+                            <vec2>
+                                <value1>800.000000</value1>
+                                <value2>640.000000</value2>
+                            </vec2>
+                        </property>
+                        <property>
+                            <name>EndRotation</name>
+                            <vec3>
+                                <value1>0.000000</value1>
+                                <value2>0.000000</value2>
+                                <value3>-117.338326</value3>
+                            </vec3>
+                        </property>
+                        <inputlink>
+                            <name>Start</name>
+                            <visible>true</visible>
+                            <link>
+                                <id>39222589-9058-4c69-8a89-96e330401406</id>
+                                <name>Started</name>
+                            </link>
+                        </inputlink>
+                        <inputlink>
+                            <name>Stop</name>
+                            <visible>true</visible>
+                            <link>
+                                <id>39222589-9058-4c69-8a89-96e330401406</id>
+                                <name>Stopped</name>
+                            </link>
+                        </inputlink>
+                        <outputlink>
+                            <name>Started</name>
+                            <visible>true</visible>
+                            <link>
+                                <id>5bbd3b29-5e99-4b4f-a049-fc82a2b60880</id>
+                                <name>Start</name>
+                            </link>
+                        </outputlink>
+                        <outputlink>
+                            <name>Stopped</name>
+                            <visible>true</visible>
+                            <link>
+                                <id>5bbd3b29-5e99-4b4f-a049-fc82a2b60880</id>
+                                <name>Stop</name>
+                            </link>
+                        </outputlink>
+                        <outputlink>
+                            <name>Finished</name>
+                            <visible>true</visible>
+                        </outputlink>
+                        <valuelink>
+                            <name>Enabled</name>
+                            <visible>true</visible>
+                            <exposed>false</exposed>
+                            <isout>false</isout>
+                            <allowmultiple>false</allowmultiple>
+                            <typecheck>true</typecheck>
+                        </valuelink>
+                        <valuelink>
+                            <name>Actor</name>
+                            <visible>true</visible>
+                            <exposed>true</exposed>
+                            <isout>true</isout>
+                            <allowmultiple>true</allowmultiple>
+                            <typecheck>true</typecheck>
+                            <link>
+                                <id>95dd325b-5bf2-467e-846a-e1121cde2060</id>
+                            </link>
+                        </valuelink>
+                        <valuelink>
+                            <name>StartTime</name>
+                            <visible>true</visible>
+                            <exposed>false</exposed>
+                            <isout>false</isout>
+                            <allowmultiple>false</allowmultiple>
+                            <typecheck>true</typecheck>
+                        </valuelink>
+                        <valuelink>
+                            <name>EndTime</name>
+                            <visible>true</visible>
+                            <exposed>false</exposed>
+                            <isout>false</isout>
+                            <allowmultiple>false</allowmultiple>
+                            <typecheck>true</typecheck>
+                        </valuelink>
+                        <valuelink>
+                            <name>Time</name>
+                            <visible>true</visible>
+                            <exposed>true</exposed>
+                            <isout>false</isout>
+                            <allowmultiple>false</allowmultiple>
+                            <typecheck>true</typecheck>
+                            <link>
+                                <id>d789cb53-83c5-4f35-83f0-e95f94e336c3</id>
+                            </link>
+                        </valuelink>
+                        <valuelink>
+                            <name>StartRotation</name>
+                            <visible>true</visible>
+                            <exposed>false</exposed>
+                            <isout>false</isout>
+                            <allowmultiple>false</allowmultiple>
+                            <typecheck>true</typecheck>
+                        </valuelink>
+                        <valuelink>
+                            <name>EndRotation</name>
+                            <visible>true</visible>
+                            <exposed>false</exposed>
+                            <isout>false</isout>
+                            <allowmultiple>false</allowmultiple>
+                            <typecheck>true</typecheck>
+                        </valuelink>
+                    </node>
+                    <node>
+                        <name>Lerp Actor Scale</name>
+                        <category>Cinematic</category>
+                        <id>5bbd3b29-5e99-4b4f-a049-fc82a2b60880</id>
+                        <property>
+                            <name>Position</name>
+                            <vec2>
+                                <value1>1200.000000</value1>
+                                <value2>640.000000</value2>
+                            </vec2>
+                        </property>
+                        <property>
+                            <name>StartScale</name>
+                            <vec3>
+                                <value1>1.000000</value1>
+                                <value2>1.000000</value2>
+                                <value3>1.000000</value3>
+                            </vec3>
+                        </property>
+                        <property>
+                            <name>EndScale</name>
+                            <vec3>
+                                <value1>1.000000</value1>
+                                <value2>1.000000</value2>
+                                <value3>1.000000</value3>
+                            </vec3>
+                        </property>
+                        <inputlink>
+                            <name>Start</name>
+                            <visible>true</visible>
+                            <link>
+                                <id>3c8f0b53-c712-4818-b251-8384b1726461</id>
+                                <name>Started</name>
+                            </link>
+                        </inputlink>
+                        <inputlink>
+                            <name>Stop</name>
+                            <visible>true</visible>
+                            <link>
+                                <id>3c8f0b53-c712-4818-b251-8384b1726461</id>
+                                <name>Stopped</name>
                             </link>
                         </inputlink>
                         <outputlink>
@@ -4385,7 +4997,7 @@
                             <allowmultiple>true</allowmultiple>
                             <typecheck>true</typecheck>
                             <link>
-                                <id>ae2c0f15-4e76-4e2c-8815-1a888707e193</id>
+                                <id>60be3484-060c-45c1-b75b-5ff21b4e7380</id>
                             </link>
                         </valuelink>
                         <valuelink>
@@ -4412,11 +5024,11 @@
                             <allowmultiple>false</allowmultiple>
                             <typecheck>true</typecheck>
                             <link>
-                                <id>ba865bf9-5dc8-4aef-8b1d-04346856fa15</id>
+                                <id>be76d009-d6f9-4288-aea0-5e0fd3c5d2e0</id>
                             </link>
                         </valuelink>
                         <valuelink>
-                            <name>StartRotation</name>
+                            <name>StartScale</name>
                             <visible>true</visible>
                             <exposed>false</exposed>
                             <isout>false</isout>
@@ -4424,7 +5036,7 @@
                             <typecheck>true</typecheck>
                         </valuelink>
                         <valuelink>
-                            <name>EndRotation</name>
+                            <name>EndScale</name>
                             <visible>true</visible>
                             <exposed>false</exposed>
                             <isout>false</isout>
@@ -4437,11 +5049,11 @@
                     <node>
                         <name>Float</name>
                         <category>General</category>
-                        <id>35b96406-5f10-4035-b27c-33f2d5c331e5</id>
+                        <id>8549d52e-b653-4f5a-a3a4-1232f5bdba88</id>
                         <property>
                             <name>Position</name>
                             <vec2>
-                                <value1>0.000000</value1>
+                                <value1>400.000000</value1>
                                 <value2>200.000000</value2>
                             </vec2>
                         </property>
@@ -4461,20 +5073,16 @@
                     <node>
                         <name>Actor</name>
                         <category>General</category>
-                        <id>ae2c0f15-4e76-4e2c-8815-1a888707e193</id>
+                        <id>ddf1da3a-40fb-4263-a3c2-5966a9a994fd</id>
                         <property>
                             <name>Position</name>
                             <vec2>
-                                <value1>200.000000</value1>
-                                <value2>500.000000</value2>
+                                <value1>400.000000</value1>
+                                <value2>840.000000</value2>
                             </vec2>
                         </property>
                         <property>
-                            <name>Name</name>
-                            <string>Actor</string>
-                        </property>
-                        <property>
-                            <name>Initial Value</name>
+                            <name>Value</name>
                             <actorId>f2588a57-5422-48da-9bdc-09ab214081e4</actorId>
                         </property>
                         <valuelink>
@@ -4489,17 +5097,13 @@
                     <node>
                         <name>Reference</name>
                         <category>Core</category>
-                        <id>ba865bf9-5dc8-4aef-8b1d-04346856fa15</id>
+                        <id>c0241c70-c357-4393-b59f-d4d1916ca88b</id>
                         <property>
                             <name>Position</name>
                             <vec2>
-                                <value1>252.000000</value1>
-                                <value2>500.000000</value2>
+                                <value1>465.000000</value1>
+                                <value2>840.000000</value2>
                             </vec2>
-                        </property>
-                        <property>
-                            <name>Name</name>
-                            <string>Ref</string>
                         </property>
                         <property>
                             <name>Reference</name>
@@ -4513,7 +5117,109 @@
                             <allowmultiple>false</allowmultiple>
                             <typecheck>true</typecheck>
                             <link>
-                                <id>35b96406-5f10-4035-b27c-33f2d5c331e5</id>
+                                <id>8549d52e-b653-4f5a-a3a4-1232f5bdba88</id>
+                            </link>
+                        </valuelink>
+                    </node>
+                    <node>
+                        <name>Actor</name>
+                        <category>General</category>
+                        <id>95dd325b-5bf2-467e-846a-e1121cde2060</id>
+                        <property>
+                            <name>Position</name>
+                            <vec2>
+                                <value1>800.000000</value1>
+                                <value2>840.000000</value2>
+                            </vec2>
+                        </property>
+                        <property>
+                            <name>Value</name>
+                            <actorId>f2588a57-5422-48da-9bdc-09ab214081e4</actorId>
+                        </property>
+                        <valuelink>
+                            <name>Enabled</name>
+                            <visible>true</visible>
+                            <exposed>false</exposed>
+                            <isout>false</isout>
+                            <allowmultiple>false</allowmultiple>
+                            <typecheck>true</typecheck>
+                        </valuelink>
+                    </node>
+                    <node>
+                        <name>Reference</name>
+                        <category>Core</category>
+                        <id>d789cb53-83c5-4f35-83f0-e95f94e336c3</id>
+                        <property>
+                            <name>Position</name>
+                            <vec2>
+                                <value1>865.000000</value1>
+                                <value2>840.000000</value2>
+                            </vec2>
+                        </property>
+                        <property>
+                            <name>Reference</name>
+                            <string>Current Time</string>
+                        </property>
+                        <valuelink>
+                            <name>Value</name>
+                            <visible>true</visible>
+                            <exposed>false</exposed>
+                            <isout>false</isout>
+                            <allowmultiple>false</allowmultiple>
+                            <typecheck>true</typecheck>
+                            <link>
+                                <id>8549d52e-b653-4f5a-a3a4-1232f5bdba88</id>
+                            </link>
+                        </valuelink>
+                    </node>
+                    <node>
+                        <name>Actor</name>
+                        <category>General</category>
+                        <id>60be3484-060c-45c1-b75b-5ff21b4e7380</id>
+                        <property>
+                            <name>Position</name>
+                            <vec2>
+                                <value1>1200.000000</value1>
+                                <value2>840.000000</value2>
+                            </vec2>
+                        </property>
+                        <property>
+                            <name>Value</name>
+                            <actorId>f2588a57-5422-48da-9bdc-09ab214081e4</actorId>
+                        </property>
+                        <valuelink>
+                            <name>Enabled</name>
+                            <visible>true</visible>
+                            <exposed>false</exposed>
+                            <isout>false</isout>
+                            <allowmultiple>false</allowmultiple>
+                            <typecheck>true</typecheck>
+                        </valuelink>
+                    </node>
+                    <node>
+                        <name>Reference</name>
+                        <category>Core</category>
+                        <id>be76d009-d6f9-4288-aea0-5e0fd3c5d2e0</id>
+                        <property>
+                            <name>Position</name>
+                            <vec2>
+                                <value1>1265.000000</value1>
+                                <value2>840.000000</value2>
+                            </vec2>
+                        </property>
+                        <property>
+                            <name>Reference</name>
+                            <string>Current Time</string>
+                        </property>
+                        <valuelink>
+                            <name>Value</name>
+                            <visible>true</visible>
+                            <exposed>false</exposed>
+                            <isout>false</isout>
+                            <allowmultiple>false</allowmultiple>
+                            <typecheck>true</typecheck>
+                            <link>
+                                <id>8549d52e-b653-4f5a-a3a4-1232f5bdba88</id>
                             </link>
                         </valuelink>
                     </node>
@@ -5560,7 +6266,7 @@
                         <string>Actor</string>
                     </property>
                     <property>
-                        <name>Initial Value</name>
+                        <name>Value</name>
                         <actorId>b636db5e-420e-4eb1-959f-c90907f243cf</actorId>
                     </property>
                     <valuelink>
@@ -5619,7 +6325,7 @@
                         <string>Actor</string>
                     </property>
                     <property>
-                        <name>Initial Value</name>
+                        <name>Value</name>
                         <actorId>b636db5e-420e-4eb1-959f-c90907f243cf</actorId>
                     </property>
                     <valuelink>
@@ -5678,7 +6384,7 @@
                         <string>Actor</string>
                     </property>
                     <property>
-                        <name>Initial Value</name>
+                        <name>Value</name>
                         <actorId>b636db5e-420e-4eb1-959f-c90907f243cf</actorId>
                     </property>
                     <valuelink>
@@ -5760,14 +6466,7 @@
                 <node>
                     <name>Input Link</name>
                     <category>Core</category>
-                    <id>d01d1853-ce26-4c00-96a8-f3b81b822a0e</id>
-                    <property>
-                        <name>Position</name>
-                        <vec2>
-                            <value1>-200.000000</value1>
-                            <value2>0.000000</value2>
-                        </vec2>
-                    </property>
+                    <id>60aaa47d-f456-4fce-a3bd-9e5c91b8d24e</id>
                     <property>
                         <name>Name</name>
                         <string>Play</string>
@@ -5784,7 +6483,7 @@
                         <name>Out</name>
                         <visible>true</visible>
                         <link>
-                            <id>bfde08bc-e32a-4715-8296-c18580199dea</id>
+                            <id>906f048f-55e8-47b7-a016-4221df50366b</id>
                             <name>Play</name>
                         </link>
                     </outputlink>
@@ -5808,12 +6507,12 @@
                 <node>
                     <name>Input Link</name>
                     <category>Core</category>
-                    <id>a47dca4b-8d33-4d48-b169-2532c11622af</id>
+                    <id>62d9d6af-86c9-4e2b-b930-f5db29336c10</id>
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>-200.000000</value1>
-                            <value2>50.000000</value2>
+                            <value1>0.000000</value1>
+                            <value2>80.000000</value2>
                         </vec2>
                     </property>
                     <property>
@@ -5832,7 +6531,7 @@
                         <name>Out</name>
                         <visible>true</visible>
                         <link>
-                            <id>bfde08bc-e32a-4715-8296-c18580199dea</id>
+                            <id>906f048f-55e8-47b7-a016-4221df50366b</id>
                             <name>Reverse</name>
                         </link>
                     </outputlink>
@@ -5856,12 +6555,12 @@
                 <node>
                     <name>Input Link</name>
                     <category>Core</category>
-                    <id>638b68b3-2580-431a-a9fd-25785d92cc65</id>
+                    <id>61f1822e-abda-4e0b-b069-f9a9385fde0e</id>
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>-200.000000</value1>
-                            <value2>100.000000</value2>
+                            <value1>0.000000</value1>
+                            <value2>160.000000</value2>
                         </vec2>
                     </property>
                     <property>
@@ -5876,7 +6575,7 @@
                         <name>Out</name>
                         <visible>true</visible>
                         <link>
-                            <id>bfde08bc-e32a-4715-8296-c18580199dea</id>
+                            <id>906f048f-55e8-47b7-a016-4221df50366b</id>
                             <name>Stop</name>
                         </link>
                     </outputlink>
@@ -5900,12 +6599,12 @@
                 <node>
                     <name>Input Link</name>
                     <category>Core</category>
-                    <id>272d807e-15c2-4ed3-af99-641e9be64d51</id>
+                    <id>b567b048-c2e2-4af3-9721-d4a796954230</id>
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>-200.000000</value1>
-                            <value2>150.000000</value2>
+                            <value1>0.000000</value1>
+                            <value2>240.000000</value2>
                         </vec2>
                     </property>
                     <property>
@@ -5920,7 +6619,7 @@
                         <name>Out</name>
                         <visible>true</visible>
                         <link>
-                            <id>bfde08bc-e32a-4715-8296-c18580199dea</id>
+                            <id>906f048f-55e8-47b7-a016-4221df50366b</id>
                             <name>Pause</name>
                         </link>
                     </outputlink>
@@ -5944,12 +6643,12 @@
                 <node>
                     <name>Remote Event</name>
                     <category>Core</category>
-                    <id>54356977-f8b0-4339-b421-395f29a27a9b</id>
+                    <id>f2d150f4-e146-4c38-bafd-2819c1d91249</id>
                     <property>
                         <name>Position</name>
                         <vec2>
                             <value1>0.000000</value1>
-                            <value2>300.000000</value2>
+                            <value2>640.000000</value2>
                         </vec2>
                     </property>
                     <property>
@@ -5960,7 +6659,7 @@
                         <name>Out</name>
                         <visible>true</visible>
                         <link>
-                            <id>8290a008-fe4e-469f-bf97-1363e33941c8</id>
+                            <id>dc0f05e1-d9df-4fe7-89af-eb95f6d99f72</id>
                             <name>Start</name>
                         </link>
                     </outputlink>
@@ -5992,12 +6691,12 @@
                 <node>
                     <name>Remote Event</name>
                     <category>Core</category>
-                    <id>71e22631-c311-4b48-851d-7600aa40a31e</id>
+                    <id>787e05b0-e43d-4708-b443-39a6f635378d</id>
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>6.000000</value1>
-                            <value2>400.000000</value2>
+                            <value1>0.000000</value1>
+                            <value2>720.000000</value2>
                         </vec2>
                     </property>
                     <property>
@@ -6008,7 +6707,7 @@
                         <name>Out</name>
                         <visible>true</visible>
                         <link>
-                            <id>8290a008-fe4e-469f-bf97-1363e33941c8</id>
+                            <id>dc0f05e1-d9df-4fe7-89af-eb95f6d99f72</id>
                             <name>Stop</name>
                         </link>
                     </outputlink>
@@ -6042,20 +6741,23 @@
                 <node>
                     <name>Scheduler</name>
                     <category>Cinematic</category>
-                    <id>bfde08bc-e32a-4715-8296-c18580199dea</id>
+                    <id>906f048f-55e8-47b7-a016-4221df50366b</id>
+                    <property>
+                        <name>Position</name>
+                        <vec2>
+                            <value1>400.000000</value1>
+                            <value2>0.000000</value2>
+                        </vec2>
+                    </property>
                     <property>
                         <name>TotalTime</name>
                         <float>1</float>
-                    </property>
-                    <property>
-                        <name>UseSimTime</name>
-                        <boolean>true</boolean>
                     </property>
                     <inputlink>
                         <name>Play</name>
                         <visible>true</visible>
                         <link>
-                            <id>d01d1853-ce26-4c00-96a8-f3b81b822a0e</id>
+                            <id>60aaa47d-f456-4fce-a3bd-9e5c91b8d24e</id>
                             <name>Out</name>
                         </link>
                     </inputlink>
@@ -6063,7 +6765,7 @@
                         <name>Reverse</name>
                         <visible>true</visible>
                         <link>
-                            <id>a47dca4b-8d33-4d48-b169-2532c11622af</id>
+                            <id>62d9d6af-86c9-4e2b-b930-f5db29336c10</id>
                             <name>Out</name>
                         </link>
                     </inputlink>
@@ -6071,7 +6773,7 @@
                         <name>Stop</name>
                         <visible>true</visible>
                         <link>
-                            <id>638b68b3-2580-431a-a9fd-25785d92cc65</id>
+                            <id>61f1822e-abda-4e0b-b069-f9a9385fde0e</id>
                             <name>Out</name>
                         </link>
                     </inputlink>
@@ -6079,7 +6781,7 @@
                         <name>Pause</name>
                         <visible>true</visible>
                         <link>
-                            <id>272d807e-15c2-4ed3-af99-641e9be64d51</id>
+                            <id>b567b048-c2e2-4af3-9721-d4a796954230</id>
                             <name>Out</name>
                         </link>
                     </inputlink>
@@ -6087,11 +6789,11 @@
                         <name>Started</name>
                         <visible>true</visible>
                         <link>
-                            <id>03b713b4-783e-47a5-99c1-9ce0f2199581</id>
+                            <id>58ce50d0-52f4-4c37-adf1-1c9f13bed666</id>
                             <name>Call Event</name>
                         </link>
                         <link>
-                            <id>5a38471d-09aa-4592-ae9c-921d18056794</id>
+                            <id>4d4328f7-9ff8-4aec-baa7-90796bec67f0</id>
                             <name>In</name>
                         </link>
                     </outputlink>
@@ -6099,17 +6801,21 @@
                         <name>Ended</name>
                         <visible>true</visible>
                         <link>
-                            <id>e2fcf9fc-e3f5-4a8a-a532-c3f6ed184a87</id>
+                            <id>6bebe6de-7f01-49ce-bdeb-e1dc7a61eb7f</id>
                             <name>In</name>
                         </link>
                         <link>
-                            <id>796cdf8c-fb04-4655-8ee9-ff048d8046e7</id>
+                            <id>c1fc70b8-ecc5-4227-9d16-6b5a273c914f</id>
                             <name>Call Event</name>
                         </link>
                     </outputlink>
                     <outputlink>
                         <name>Stopped</name>
                         <visible>true</visible>
+                        <link>
+                            <id>c1fc70b8-ecc5-4227-9d16-6b5a273c914f</id>
+                            <name>Call Event</name>
+                        </link>
                     </outputlink>
                     <valuelink>
                         <name>Enabled</name>
@@ -6127,7 +6833,7 @@
                         <allowmultiple>true</allowmultiple>
                         <typecheck>true</typecheck>
                         <link>
-                            <id>69670c34-6c3e-4e52-9d2a-d2319dcf405b</id>
+                            <id>ef4507c6-8667-497d-b1a3-fb3a70cffb52</id>
                         </link>
                     </valuelink>
                     <valuelink>
@@ -6150,11 +6856,11 @@
                 <node>
                     <name>Call Remote Event</name>
                     <category>Core</category>
-                    <id>03b713b4-783e-47a5-99c1-9ce0f2199581</id>
+                    <id>58ce50d0-52f4-4c37-adf1-1c9f13bed666</id>
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>400.000000</value1>
+                            <value1>800.000000</value1>
                             <value2>0.000000</value2>
                         </vec2>
                     </property>
@@ -6170,7 +6876,7 @@
                         <name>Call Event</name>
                         <visible>true</visible>
                         <link>
-                            <id>bfde08bc-e32a-4715-8296-c18580199dea</id>
+                            <id>906f048f-55e8-47b7-a016-4221df50366b</id>
                             <name>Started</name>
                         </link>
                     </inputlink>
@@ -6206,12 +6912,12 @@
                 <node>
                     <name>Output Link</name>
                     <category>Core</category>
-                    <id>5a38471d-09aa-4592-ae9c-921d18056794</id>
+                    <id>4d4328f7-9ff8-4aec-baa7-90796bec67f0</id>
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>400.000000</value1>
-                            <value2>50.000000</value2>
+                            <value1>800.000000</value1>
+                            <value2>80.000000</value2>
                         </vec2>
                     </property>
                     <property>
@@ -6222,7 +6928,7 @@
                         <name>In</name>
                         <visible>true</visible>
                         <link>
-                            <id>bfde08bc-e32a-4715-8296-c18580199dea</id>
+                            <id>906f048f-55e8-47b7-a016-4221df50366b</id>
                             <name>Started</name>
                         </link>
                     </inputlink>
@@ -6242,12 +6948,12 @@
                 <node>
                     <name>Output Link</name>
                     <category>Core</category>
-                    <id>e2fcf9fc-e3f5-4a8a-a532-c3f6ed184a87</id>
+                    <id>6bebe6de-7f01-49ce-bdeb-e1dc7a61eb7f</id>
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>400.000000</value1>
-                            <value2>100.000000</value2>
+                            <value1>800.000000</value1>
+                            <value2>160.000000</value2>
                         </vec2>
                     </property>
                     <property>
@@ -6258,7 +6964,7 @@
                         <name>In</name>
                         <visible>true</visible>
                         <link>
-                            <id>bfde08bc-e32a-4715-8296-c18580199dea</id>
+                            <id>906f048f-55e8-47b7-a016-4221df50366b</id>
                             <name>Ended</name>
                         </link>
                     </inputlink>
@@ -6278,12 +6984,12 @@
                 <node>
                     <name>Call Remote Event</name>
                     <category>Core</category>
-                    <id>796cdf8c-fb04-4655-8ee9-ff048d8046e7</id>
+                    <id>c1fc70b8-ecc5-4227-9d16-6b5a273c914f</id>
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>400.000000</value1>
-                            <value2>150.000000</value2>
+                            <value1>800.000000</value1>
+                            <value2>240.000000</value2>
                         </vec2>
                     </property>
                     <property>
@@ -6298,8 +7004,12 @@
                         <name>Call Event</name>
                         <visible>true</visible>
                         <link>
-                            <id>bfde08bc-e32a-4715-8296-c18580199dea</id>
+                            <id>906f048f-55e8-47b7-a016-4221df50366b</id>
                             <name>Ended</name>
+                        </link>
+                        <link>
+                            <id>906f048f-55e8-47b7-a016-4221df50366b</id>
+                            <name>Stopped</name>
                         </link>
                     </inputlink>
                     <outputlink>
@@ -6332,30 +7042,37 @@
                     </valuelink>
                 </node>
                 <node>
-                    <name>Lerp Actor Rotation</name>
+                    <name>Lerp Actor Translation</name>
                     <category>Cinematic</category>
-                    <id>8290a008-fe4e-469f-bf97-1363e33941c8</id>
+                    <id>dc0f05e1-d9df-4fe7-89af-eb95f6d99f72</id>
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>200.000000</value1>
-                            <value2>300.000000</value2>
+                            <value1>400.000000</value1>
+                            <value2>640.000000</value2>
                         </vec2>
                     </property>
                     <property>
-                        <name>EndRotation</name>
-                        <vec4>
-                            <value1>0.000000</value1>
-                            <value2>0.000000</value2>
-                            <value3>90.000008</value3>
-                            <value4>0.000000</value4>
-                        </vec4>
+                        <name>StartPosition</name>
+                        <vec3>
+                            <value1>23.584461</value1>
+                            <value2>14.973146</value2>
+                            <value3>0.001683</value3>
+                        </vec3>
+                    </property>
+                    <property>
+                        <name>EndPosition</name>
+                        <vec3>
+                            <value1>23.584461</value1>
+                            <value2>14.973146</value2>
+                            <value3>0.001683</value3>
+                        </vec3>
                     </property>
                     <inputlink>
                         <name>Start</name>
                         <visible>true</visible>
                         <link>
-                            <id>54356977-f8b0-4339-b421-395f29a27a9b</id>
+                            <id>f2d150f4-e146-4c38-bafd-2819c1d91249</id>
                             <name>Out</name>
                         </link>
                     </inputlink>
@@ -6363,8 +7080,252 @@
                         <name>Stop</name>
                         <visible>true</visible>
                         <link>
-                            <id>71e22631-c311-4b48-851d-7600aa40a31e</id>
+                            <id>787e05b0-e43d-4708-b443-39a6f635378d</id>
                             <name>Out</name>
+                        </link>
+                    </inputlink>
+                    <outputlink>
+                        <name>Started</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>10d417ed-5c95-45c2-a15a-71a7d50f5db3</id>
+                            <name>Start</name>
+                        </link>
+                    </outputlink>
+                    <outputlink>
+                        <name>Stopped</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>10d417ed-5c95-45c2-a15a-71a7d50f5db3</id>
+                            <name>Stop</name>
+                        </link>
+                    </outputlink>
+                    <outputlink>
+                        <name>Finished</name>
+                        <visible>true</visible>
+                    </outputlink>
+                    <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>Actor</name>
+                        <visible>true</visible>
+                        <exposed>true</exposed>
+                        <isout>true</isout>
+                        <allowmultiple>true</allowmultiple>
+                        <typecheck>true</typecheck>
+                        <link>
+                            <id>f0567c61-314c-4d01-93d8-cfc913cf8d65</id>
+                        </link>
+                    </valuelink>
+                    <valuelink>
+                        <name>StartTime</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>EndTime</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>Time</name>
+                        <visible>true</visible>
+                        <exposed>true</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                        <link>
+                            <id>7daf412a-c376-41a4-bcb7-e419d541719a</id>
+                        </link>
+                    </valuelink>
+                    <valuelink>
+                        <name>StartPosition</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>EndPosition</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                </node>
+                <node>
+                    <name>Lerp Actor Rotation</name>
+                    <category>Cinematic</category>
+                    <id>10d417ed-5c95-45c2-a15a-71a7d50f5db3</id>
+                    <property>
+                        <name>Position</name>
+                        <vec2>
+                            <value1>800.000000</value1>
+                            <value2>640.000000</value2>
+                        </vec2>
+                    </property>
+                    <property>
+                        <name>EndRotation</name>
+                        <vec3>
+                            <value1>0.000000</value1>
+                            <value2>0.000000</value2>
+                            <value3>108.521385</value3>
+                        </vec3>
+                    </property>
+                    <inputlink>
+                        <name>Start</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>dc0f05e1-d9df-4fe7-89af-eb95f6d99f72</id>
+                            <name>Started</name>
+                        </link>
+                    </inputlink>
+                    <inputlink>
+                        <name>Stop</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>dc0f05e1-d9df-4fe7-89af-eb95f6d99f72</id>
+                            <name>Stopped</name>
+                        </link>
+                    </inputlink>
+                    <outputlink>
+                        <name>Started</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>5ab8d39d-7625-4349-b32a-2df328a19e80</id>
+                            <name>Start</name>
+                        </link>
+                    </outputlink>
+                    <outputlink>
+                        <name>Stopped</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>5ab8d39d-7625-4349-b32a-2df328a19e80</id>
+                            <name>Stop</name>
+                        </link>
+                    </outputlink>
+                    <outputlink>
+                        <name>Finished</name>
+                        <visible>true</visible>
+                    </outputlink>
+                    <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>Actor</name>
+                        <visible>true</visible>
+                        <exposed>true</exposed>
+                        <isout>true</isout>
+                        <allowmultiple>true</allowmultiple>
+                        <typecheck>true</typecheck>
+                        <link>
+                            <id>f992627c-f0b3-48c2-a1f5-e63ccb9418a4</id>
+                        </link>
+                    </valuelink>
+                    <valuelink>
+                        <name>StartTime</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>EndTime</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>Time</name>
+                        <visible>true</visible>
+                        <exposed>true</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                        <link>
+                            <id>0960a7ee-d25e-4513-8301-2819ea51ecf6</id>
+                        </link>
+                    </valuelink>
+                    <valuelink>
+                        <name>StartRotation</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>EndRotation</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                </node>
+                <node>
+                    <name>Lerp Actor Scale</name>
+                    <category>Cinematic</category>
+                    <id>5ab8d39d-7625-4349-b32a-2df328a19e80</id>
+                    <property>
+                        <name>Position</name>
+                        <vec2>
+                            <value1>1200.000000</value1>
+                            <value2>640.000000</value2>
+                        </vec2>
+                    </property>
+                    <property>
+                        <name>StartScale</name>
+                        <vec3>
+                            <value1>1.000000</value1>
+                            <value2>1.000000</value2>
+                            <value3>1.000000</value3>
+                        </vec3>
+                    </property>
+                    <property>
+                        <name>EndScale</name>
+                        <vec3>
+                            <value1>1.000000</value1>
+                            <value2>1.000000</value2>
+                            <value3>1.000000</value3>
+                        </vec3>
+                    </property>
+                    <inputlink>
+                        <name>Start</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>10d417ed-5c95-45c2-a15a-71a7d50f5db3</id>
+                            <name>Started</name>
+                        </link>
+                    </inputlink>
+                    <inputlink>
+                        <name>Stop</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>10d417ed-5c95-45c2-a15a-71a7d50f5db3</id>
+                            <name>Stopped</name>
                         </link>
                     </inputlink>
                     <outputlink>
@@ -6395,7 +7356,7 @@
                         <allowmultiple>true</allowmultiple>
                         <typecheck>true</typecheck>
                         <link>
-                            <id>6c4493dc-4549-45cb-ac47-37d78c745e1e</id>
+                            <id>b0d8e4df-205f-4c59-9fb8-e02fa46b4b99</id>
                         </link>
                     </valuelink>
                     <valuelink>
@@ -6422,11 +7383,11 @@
                         <allowmultiple>false</allowmultiple>
                         <typecheck>true</typecheck>
                         <link>
-                            <id>860b70b9-baaa-4057-9f95-2df23f0c04b4</id>
+                            <id>777bbfcf-076e-4f61-9a67-12ebbb0f97ee</id>
                         </link>
                     </valuelink>
                     <valuelink>
-                        <name>StartRotation</name>
+                        <name>StartScale</name>
                         <visible>true</visible>
                         <exposed>false</exposed>
                         <isout>false</isout>
@@ -6434,7 +7395,7 @@
                         <typecheck>true</typecheck>
                     </valuelink>
                     <valuelink>
-                        <name>EndRotation</name>
+                        <name>EndScale</name>
                         <visible>true</visible>
                         <exposed>false</exposed>
                         <isout>false</isout>
@@ -6447,11 +7408,11 @@
                 <node>
                     <name>Float</name>
                     <category>General</category>
-                    <id>69670c34-6c3e-4e52-9d2a-d2319dcf405b</id>
+                    <id>ef4507c6-8667-497d-b1a3-fb3a70cffb52</id>
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>0.000000</value1>
+                            <value1>400.000000</value1>
                             <value2>200.000000</value2>
                         </vec2>
                     </property>
@@ -6471,20 +7432,16 @@
                 <node>
                     <name>Actor</name>
                     <category>General</category>
-                    <id>6c4493dc-4549-45cb-ac47-37d78c745e1e</id>
+                    <id>f0567c61-314c-4d01-93d8-cfc913cf8d65</id>
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>200.000000</value1>
-                            <value2>500.000000</value2>
+                            <value1>400.000000</value1>
+                            <value2>840.000000</value2>
                         </vec2>
                     </property>
                     <property>
-                        <name>Name</name>
-                        <string>Actor</string>
-                    </property>
-                    <property>
-                        <name>Initial Value</name>
+                        <name>Value</name>
                         <actorId>7e4d26e9-c882-4178-9e28-9f420e48b5f5</actorId>
                     </property>
                     <valuelink>
@@ -6499,17 +7456,13 @@
                 <node>
                     <name>Reference</name>
                     <category>Core</category>
-                    <id>860b70b9-baaa-4057-9f95-2df23f0c04b4</id>
+                    <id>7daf412a-c376-41a4-bcb7-e419d541719a</id>
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>252.000000</value1>
-                            <value2>500.000000</value2>
+                            <value1>465.000000</value1>
+                            <value2>840.000000</value2>
                         </vec2>
-                    </property>
-                    <property>
-                        <name>Name</name>
-                        <string>Ref</string>
                     </property>
                     <property>
                         <name>Reference</name>
@@ -6523,7 +7476,109 @@
                         <allowmultiple>false</allowmultiple>
                         <typecheck>true</typecheck>
                         <link>
-                            <id>69670c34-6c3e-4e52-9d2a-d2319dcf405b</id>
+                            <id>ef4507c6-8667-497d-b1a3-fb3a70cffb52</id>
+                        </link>
+                    </valuelink>
+                </node>
+                <node>
+                    <name>Actor</name>
+                    <category>General</category>
+                    <id>f992627c-f0b3-48c2-a1f5-e63ccb9418a4</id>
+                    <property>
+                        <name>Position</name>
+                        <vec2>
+                            <value1>800.000000</value1>
+                            <value2>840.000000</value2>
+                        </vec2>
+                    </property>
+                    <property>
+                        <name>Value</name>
+                        <actorId>7e4d26e9-c882-4178-9e28-9f420e48b5f5</actorId>
+                    </property>
+                    <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                </node>
+                <node>
+                    <name>Reference</name>
+                    <category>Core</category>
+                    <id>0960a7ee-d25e-4513-8301-2819ea51ecf6</id>
+                    <property>
+                        <name>Position</name>
+                        <vec2>
+                            <value1>865.000000</value1>
+                            <value2>840.000000</value2>
+                        </vec2>
+                    </property>
+                    <property>
+                        <name>Reference</name>
+                        <string>Current Time</string>
+                    </property>
+                    <valuelink>
+                        <name>Value</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                        <link>
+                            <id>ef4507c6-8667-497d-b1a3-fb3a70cffb52</id>
+                        </link>
+                    </valuelink>
+                </node>
+                <node>
+                    <name>Actor</name>
+                    <category>General</category>
+                    <id>b0d8e4df-205f-4c59-9fb8-e02fa46b4b99</id>
+                    <property>
+                        <name>Position</name>
+                        <vec2>
+                            <value1>1200.000000</value1>
+                            <value2>840.000000</value2>
+                        </vec2>
+                    </property>
+                    <property>
+                        <name>Value</name>
+                        <actorId>7e4d26e9-c882-4178-9e28-9f420e48b5f5</actorId>
+                    </property>
+                    <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                </node>
+                <node>
+                    <name>Reference</name>
+                    <category>Core</category>
+                    <id>777bbfcf-076e-4f61-9a67-12ebbb0f97ee</id>
+                    <property>
+                        <name>Position</name>
+                        <vec2>
+                            <value1>1265.000000</value1>
+                            <value2>840.000000</value2>
+                        </vec2>
+                    </property>
+                    <property>
+                        <name>Reference</name>
+                        <string>Current Time</string>
+                    </property>
+                    <valuelink>
+                        <name>Value</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                        <link>
+                            <id>ef4507c6-8667-497d-b1a3-fb3a70cffb52</id>
                         </link>
                     </valuelink>
                 </node>
@@ -7427,7 +8482,7 @@
                         <string>Actor</string>
                     </property>
                     <property>
-                        <name>Initial Value</name>
+                        <name>Value</name>
                         <actorId>82ce6904-557d-40de-b861-13b93be82aa7</actorId>
                     </property>
                     <valuelink>
@@ -7486,7 +8541,7 @@
                         <string>Actor</string>
                     </property>
                     <property>
-                        <name>Initial Value</name>
+                        <name>Value</name>
                         <actorId>82ce6904-557d-40de-b861-13b93be82aa7</actorId>
                     </property>
                     <valuelink>
@@ -8270,10 +9325,6 @@
                     </property>
                     <property>
                         <name>Value</name>
-                        <float>1.4012901</float>
-                    </property>
-                    <property>
-                        <name>Initial Value</name>
                         <float>1.96</float>
                     </property>
                     <valuelink>
@@ -8301,7 +9352,7 @@
                         <string>Actor</string>
                     </property>
                     <property>
-                        <name>Initial Value</name>
+                        <name>Value</name>
                         <actorId>11378b3a-3352-421f-b43b-0792580d9e78</actorId>
                     </property>
                     <valuelink>
@@ -9437,24 +10488,6 @@
                         <name>EndTime</name>
                         <float>0.222</float>
                     </property>
-                    <property>
-                        <name>StartRotation</name>
-                        <vec4>
-                            <value1>0.000000</value1>
-                            <value2>-0.000000</value2>
-                            <value3>-90.000000</value3>
-                            <value4>0.000000</value4>
-                        </vec4>
-                    </property>
-                    <property>
-                        <name>EndRotation</name>
-                        <vec4>
-                            <value1>0.000000</value1>
-                            <value2>-0.000000</value2>
-                            <value3>-90.000000</value3>
-                            <value4>0.000000</value4>
-                        </vec4>
-                    </property>
                     <inputlink>
                         <name>Start</name>
                         <visible>true</visible>
@@ -9990,7 +11023,7 @@
                         <string>Actor</string>
                     </property>
                     <property>
-                        <name>Initial Value</name>
+                        <name>Value</name>
                         <actorId>11378b3a-3352-421f-b43b-0792580d9e78</actorId>
                     </property>
                     <valuelink>
@@ -10049,7 +11082,7 @@
                         <string>Actor</string>
                     </property>
                     <property>
-                        <name>Initial Value</name>
+                        <name>Value</name>
                         <actorId>11378b3a-3352-421f-b43b-0792580d9e78</actorId>
                     </property>
                     <valuelink>
@@ -10108,7 +11141,7 @@
                         <string>Actor</string>
                     </property>
                     <property>
-                        <name>Initial Value</name>
+                        <name>Value</name>
                         <actorId>11378b3a-3352-421f-b43b-0792580d9e78</actorId>
                     </property>
                     <valuelink>
@@ -10167,7 +11200,7 @@
                         <string>Actor</string>
                     </property>
                     <property>
-                        <name>Initial Value</name>
+                        <name>Value</name>
                         <actorId>11378b3a-3352-421f-b43b-0792580d9e78</actorId>
                     </property>
                     <valuelink>
@@ -10226,7 +11259,7 @@
                         <string>Actor</string>
                     </property>
                     <property>
-                        <name>Initial Value</name>
+                        <name>Value</name>
                         <actorId>11378b3a-3352-421f-b43b-0792580d9e78</actorId>
                     </property>
                     <valuelink>
@@ -10285,7 +11318,7 @@
                         <string>Actor</string>
                     </property>
                     <property>
-                        <name>Initial Value</name>
+                        <name>Value</name>
                         <actorId>11378b3a-3352-421f-b43b-0792580d9e78</actorId>
                     </property>
                     <valuelink>
@@ -10445,12 +11478,12 @@
                         <name>Time Elapsed</name>
                         <visible>true</visible>
                         <link>
-                            <id>5d5a65ed-5501-4dc9-bb0f-172323e82ae4</id>
-                            <name>In</name>
-                        </link>
-                        <link>
                             <id>7d05b48f-e74a-4c71-a2cf-4d44645ed9ab</id>
                             <name>Start</name>
+                        </link>
+                        <link>
+                            <id>5d5a65ed-5501-4dc9-bb0f-172323e82ae4</id>
+                            <name>In</name>
                         </link>
                     </outputlink>
                     <valuelink>
@@ -11549,7 +12582,7 @@
                         </vec2>
                     </property>
                     <property>
-                        <name>Initial Value</name>
+                        <name>Value</name>
                         <actorId>b2acefd8-12a5-47a1-8035-b6537de811d7</actorId>
                     </property>
                     <valuelink>
@@ -11647,7 +12680,7 @@
                         </vec2>
                     </property>
                     <property>
-                        <name>Initial Value</name>
+                        <name>Value</name>
                         <actorId>1af6ec4e-1270-44b3-b30b-20ebbfac269d</actorId>
                     </property>
                     <valuelink>

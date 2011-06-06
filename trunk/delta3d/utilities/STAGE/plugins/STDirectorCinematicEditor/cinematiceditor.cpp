@@ -2114,8 +2114,8 @@ void DirectorCinematicEditorPlugin::OnSave()
                      lerpNode->SetFloat(nextData.mTime * 0.001f, "EndTime");
                      osg::Vec3 prevRot = prevData.mTransform.GetRotation();
                      osg::Vec3 nextRot = nextData.mTransform.GetRotation();
-                     lerpNode->SetVec4(osg::Vec4(prevRot.y(), prevRot.z(), prevRot.x(), 0.0f), "StartRotation");
-                     lerpNode->SetVec4(osg::Vec4(nextRot.y(), nextRot.z(), nextRot.x(), 0.0f), "EndRotation");
+                     lerpNode->SetVec3(osg::Vec3(prevRot.y(), prevRot.z(), prevRot.x()), "StartRotation");
+                     lerpNode->SetVec3(osg::Vec3(nextRot.y(), nextRot.z(), nextRot.x()), "EndRotation");
 
                      // Create an actor value node to store the animated actor.
                      dtDirector::Node* actorValue = CreateNode("Actor", "General");
