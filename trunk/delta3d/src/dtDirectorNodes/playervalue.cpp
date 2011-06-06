@@ -67,7 +67,8 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void PlayerValue::SetValue(const dtCore::UniqueId& value)
    {
-//      ValueNode::OnValueChanged();
+      GetDirector()->SetPlayer(value);
+      ValueNode::OnValueChanged();
    }
 
    //////////////////////////////////////////////////////////////////////////
