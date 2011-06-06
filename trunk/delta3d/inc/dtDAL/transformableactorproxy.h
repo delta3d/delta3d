@@ -69,6 +69,13 @@ namespace dtDAL
          virtual bool IsPlaceable() const { return true; }
 
          /**
+          *  Called when this BaseActorObject has finished loading from a Map and
+          *  all Property values have been assigned.  Overwrite for custom
+          *  behavior.
+          */
+         virtual void OnMapLoadEnd();
+
+         /**
          * Determines if the translation should be shown in the actor properties.
          */
          virtual bool IsTranslationPropertyShown() const { return true; }
