@@ -51,6 +51,8 @@
 #include <QtGui/QScrollArea>
 #include <QtGui/QLabel>
 #include <QtGui/QIcon>
+#include <QtGui/QMessageBox>
+#include <QtGui/QImageReader>
 
 #include <dtEditQt/resourcetreewidget.h>
 #include <dtEditQt/resourceimportdialog.h>
@@ -211,7 +213,22 @@ namespace dtEditQt
             //Load the new file.
             delete mPreview;
             QPixmap image;
-            image.load(file);
+            bool loaded = image.load(file);
+            if (!loaded)
+            {
+               QStringList supportedFormats;
+
+               foreach (QString fmt, QImageReader::supportedImageFormats())
+               {
+                  supportedFormats << fmt;
+               }
+
+               QMessageBox::information(this, "Texture Previewer",
+                  "The requested image file didn't load correctly.\n"  
+                  "Perhaps the file type not supported by the Texture Previewer: \n" + 
+                  supportedFormats.join(","));
+            }
+
             mPreview = new QLabel(mPixmapWrapper);
             mPreview->setPixmap(image);
             mPreview->setShown(true);
