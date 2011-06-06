@@ -160,6 +160,8 @@ private:
    QTreeWidgetItem* CreateRotationItem(QTreeWidgetItem* parent);
    QTreeWidgetItem* CreateColorItem(const std::string& name, QTreeWidgetItem* parent);
 
+   bool ToggleShaderSources(const std::string& name, const std::string& group);
+
    void SetPositionItem(QTreeWidgetItem* item, const osg::Vec3& position);
    void SetColorItem(QTreeWidgetItem* item, const osg::Vec4& color);
 

@@ -356,7 +356,7 @@ namespace dtCore
           * @param drawable The DeltaDrawable that was previously used with AssignShaderFromPrototype()
           * @return The unique shader instance for this DeltaDrawable. NULL if none found.
           */
-         dtCore::ShaderProgram* GetShaderInstanceForDrawable(const dtCore::DeltaDrawable &drawable);
+         dtCore::ShaderProgram* GetShaderInstanceForDrawable(const dtCore::DeltaDrawable& drawable);
 
       protected:
 
@@ -384,7 +384,7 @@ namespace dtCore
           * @param groupName Name of the group containing the shader.  If this is empty
           *    the first shader with the specified name is returned.
           */
-         const ShaderProgram *InternalFindShader(const std::string& shaderName, const std::string& groupName) const;
+         const ShaderProgram* InternalFindShader(const std::string& shaderName, const std::string& groupName) const;
 
          /**
           * Finds and removes any entries in the active shader list that are assigned to this node. 
