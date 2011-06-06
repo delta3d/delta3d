@@ -559,8 +559,10 @@ void ResourceDock::OnShaderItemChanged(QTreeWidgetItem* item, int column)
          // from the workspace which shader to load into the text editor
          item->setSelected(true);
 
+         bool isShaderLoaded = (mCurrentShaderFile == fileName);
+
          // Now load the shader file if it isn't already loaded.
-         if (mCurrentShaderFile != fileName)
+         if (!isShaderLoaded)
          {
             shaderManager.Clear();
 
@@ -571,24 +573,7 @@ void ResourceDock::OnShaderItemChanged(QTreeWidgetItem* item, int column)
                std::string programString = item->text(0).toStdString();
                std::string groupString =  item->parent()->text(0).toStdString();
 
-               dtCore::ShaderProgram *program =
-                  shaderManager.FindShaderPrototype(programString, groupString);
-               if (program)
-               {
-                  const std::vector<std::string>& vertShaderList = program->GetVertexShaders();
-                  const std::vector<std::string>& geomShaderList = program->GetGeometryShaders();
-                  const std::vector<std::string>& fragShaderList = program->GetFragmentShaders();
-
-                  bool vertexEnabled = vertShaderList.size()? true: false;
-                  bool geomEnabled = geomShaderList.size() ? true: false;
-                  bool fragmentEnabled = fragShaderList.size()? true: false;
-
-                  ToggleVertexShaderSources(vertexEnabled);
-                  ToggleGeometryShaderSources(geomEnabled);
-                  ToggleFragmentShaderSources(fragmentEnabled);
-
-                  mShaderTreeWidget->SetShaderSourceEnabled(vertexEnabled, geomEnabled, fragmentEnabled);
-               }
+               isShaderLoaded = ToggleShaderSources(programString, groupString);
 
                // Store so we know where the source files can be found
                mCurrentShaderFile    = fileName;
@@ -607,8 +592,6 @@ void ResourceDock::OnShaderItemChanged(QTreeWidgetItem* item, int column)
 
                   ++treeIter;
                }
-
-               emit ApplyShader(groupName.toStdString(), programName.toStdString());
             }
             catch (dtUtil::Exception& e)
             {
@@ -623,6 +606,11 @@ void ResourceDock::OnShaderItemChanged(QTreeWidgetItem* item, int column)
                connect(mShaderTreeWidget, SIGNAL(itemChanged(QTreeWidgetItem*, int)),
                   this, SLOT(OnShaderItemChanged(QTreeWidgetItem*, int)));
             }
+         }
+
+         if (isShaderLoaded)
+         {
+            emit ApplyShader(groupName.toStdString(), programName.toStdString());
          }
       }
       else if (item->checkState(0) == Qt::Unchecked)
@@ -1335,6 +1323,37 @@ QTreeWidgetItem* ResourceDock::CreateColorItem(const std::string& name, QTreeWid
    colorItem->setIcon(1, colorPicker);
 
    return colorItem;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+bool ResourceDock::ToggleShaderSources(const std::string& name, const std::string& group)
+{
+   bool result = false;
+
+   dtCore::ShaderProgram *program =
+      dtCore::ShaderManager::GetInstance().FindShaderPrototype(name, group);
+
+   if (program)
+   {
+      const std::vector<std::string>& vertShaderList = program->GetVertexShaders();
+      const std::vector<std::string>& geomShaderList = program->GetGeometryShaders();
+      const std::vector<std::string>& fragShaderList = program->GetFragmentShaders();
+
+      bool vertexEnabled = vertShaderList.size()? true: false;
+      bool geomEnabled = geomShaderList.size() ? true: false;
+      bool fragmentEnabled = fragShaderList.size()? true: false;
+
+      ToggleVertexShaderSources(vertexEnabled);
+      ToggleGeometryShaderSources(geomEnabled);
+      ToggleFragmentShaderSources(fragmentEnabled);
+
+      mShaderTreeWidget->SetShaderSourceEnabled(vertexEnabled, geomEnabled, fragmentEnabled);
+
+      // Should have successfully loaded
+      result = true;
+   }
+
+   return result;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

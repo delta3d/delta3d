@@ -44,7 +44,8 @@ namespace dtCore
 
 
    /////////////////////////////////////////////////////////////////////////////
-   ShaderManager::ShaderManager() : dtCore::Base("ShaderManager")
+   ShaderManager::ShaderManager()
+      : dtCore::Base("ShaderManager")
    {
       Clear();
       AddSender(&dtCore::System::GetInstance());
@@ -273,7 +274,7 @@ namespace dtCore
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   dtCore::ShaderProgram *ShaderManager::GetShaderInstanceForNode(const osg::Node *node)
+   dtCore::ShaderProgram *ShaderManager::GetShaderInstanceForNode(const osg::Node* node)
    {
       // Try to find the node in the active node list.
       for (int i = mActiveNodeList.size() - 1; i >= 0 && node != NULL; i--)
@@ -290,7 +291,7 @@ namespace dtCore
 
 
    ////////////////////////////////////////////////////////////////////////////////
-   dtCore::ShaderProgram* ShaderManager::GetShaderInstanceForDrawable(const dtCore::DeltaDrawable &drawable)
+   dtCore::ShaderProgram* ShaderManager::GetShaderInstanceForDrawable(const dtCore::DeltaDrawable& drawable)
    {
       return GetShaderInstanceForNode(drawable.GetOSGNode());
    }
@@ -393,7 +394,7 @@ namespace dtCore
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void ShaderManager::ResolveShaderPrograms(ShaderProgram &shader, const std::string &groupName)
+   void ShaderManager::ResolveShaderPrograms(ShaderProgram& shader, const std::string& groupName)
    {
       //Shader cache entries are keyed by a combination of the source to the
       //geometry shader, the source to the vertex shader and the source to the fragment shader.
