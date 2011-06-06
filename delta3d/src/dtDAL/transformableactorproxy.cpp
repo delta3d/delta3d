@@ -211,6 +211,13 @@ namespace dtDAL
 
    }
 
+   //////////////////////////////////////////////////////////////////////////
+   void TransformableActorProxy::OnMapLoadEnd()
+   {
+      SetCollisionCategoryMask(GetCollisionCategoryMask());
+      SetCollisionCollideMask(GetCollisionCollideMask());
+   }
+
    //////////////////////////////////////////////////////
    void TransformableActorProxy::SetRotation(const osg::Vec3 &rotation)
    {
