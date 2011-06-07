@@ -43,22 +43,26 @@
 #include <dtEditQt/viewportmanager.h>
 #include <dtEditQt/editorviewport.h>
 #include <dtEditQt/uiresources.h>
+#include <QtGui/QSlider>
+#include <dtUtil/mathdefines.h>
 
 namespace dtEditQt
 {
+   //Camera speed scale values
+   const float MINCAMSPEED = 0.2f;
+   const float MAXCAMSPEED = 5.f;
+
    ///////////////////////////////////////////////////////////////////////////////
    ViewportContainer::ViewportContainer(Viewport* vp, QWidget* parent)
       : QWidget(parent)
       , mLayout(new QVBoxLayout(this))
-      , mCameraMovementMenu(NULL)
-      , mCameraSpeedGroup(NULL)
+      , mCameraSpeedSlider(NULL)
    {
       mLayout->setMargin(0);
       mLayout->setSpacing(0);
 
       createActions();
       createToolBar();
-      createContextMenu();
 
       if (vp != NULL)
       {
@@ -85,23 +89,6 @@ namespace dtEditQt
       connect(mViewPort,SIGNAL(renderStyleChanged()),
               this, SLOT(onViewportRenderStyleChanged()));
 
-      //if (mViewPort->getType() == ViewportManager::ViewportType::PERSPECTIVE)
-      //{
-         addCameraControlWidget();
-      //}
-      //else
-      //{
-      //   if (mCameraMovementMenu != NULL)
-      //   {
-      //      delete mCameraMovementMenu;
-      //      mCameraMovementMenu = NULL;
-      //   }
-      //   if (mCameraSpeedGroup)
-      //   {
-      //      delete mCameraSpeedGroup;
-      //      mCameraSpeedGroup = NULL;
-      //   }
-      //}
 
       // Manually call the slot the first time the viewport is set so the state
       // of the actions are set properly.
@@ -117,20 +104,6 @@ namespace dtEditQt
                     viewPort->getCamera()->getPosition().z());
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
-   void ViewportContainer::contextMenuEvent(QContextMenuEvent* e)
-   {
-      // Only allow the right-click menu to be invoked when right-clicking the
-      // toolbar.
-      if (mToolBar->underMouse())
-      {
-         mContextMenu->exec(e->globalPos());
-      }
-      else
-      {
-         e->ignore();
-      }
-   }
 
    ///////////////////////////////////////////////////////////////////////////////
    void ViewportContainer::createActions()
@@ -201,6 +174,15 @@ namespace dtEditQt
 
       SetupPositionWidgets(layout);
 
+      //camera speed widget
+      mCameraSpeedSlider = new QSlider(Qt::Horizontal, this);
+      mCameraSpeedSlider->setToolTip(tr("Camera motion speed"));
+      mCameraSpeedSlider->setRange(1, 5);
+      mCameraSpeedSlider->setMinimumWidth(30);
+      connect(mCameraSpeedSlider, SIGNAL(valueChanged(int)), this, SLOT(SetCameraSpeed(int)));
+
+      layout->addWidget(mCameraSpeedSlider);
+
       layout->addStretch(1);
       layout->addLayout(mButtonLayout);
 
@@ -231,107 +213,31 @@ namespace dtEditQt
       mLayout->addWidget(mToolBar);
    }
 
-   void ViewportContainer::createContextMenu()
-   {
-      mContextMenu = new QMenu(this);
-
-      QMenu* styles = new QMenu(tr("Render Styles"), mContextMenu);
-      styles->addAction(mSetWireFrameAction);
-      styles->addAction(mSetTexturesOnlyAction);
-      styles->addAction(mSetLightingOnlyAction);
-      styles->addAction(mSetTexturesAndLightingAction);
-      mContextMenu->addMenu(styles);
-   }
-
    ///////////////////////////////////////////////////////////////////////////////
-   void ViewportContainer::addCameraControlWidget()
+   void ViewportContainer::SetCameraSpeed(int value)
    {
-      if (mCameraSpeedGroup != NULL)
+      //if someone else called this, then we'll update the widget to match
+      if (sender() != mCameraSpeedSlider)
       {
-         return;
+         mCameraSpeedSlider->setValue(value);
       }
 
-      mCameraSpeedGroup = new QActionGroup(this);
-
-      mCameraSpeedSlowest = new QAction(tr("&Slowest"), mCameraSpeedGroup);
-      mCameraSpeedSlowest->setCheckable(true);
-      connect(mCameraSpeedSlowest, SIGNAL(triggered()), this, SLOT(setCameraSpeedSlowest()));
-
-      mCameraSpeedSlow = new QAction(tr("S&low"), mCameraSpeedGroup);
-      mCameraSpeedSlow->setCheckable(true);
-      connect(mCameraSpeedSlow,SIGNAL(triggered()), this, SLOT(setCameraSpeedSlow()));
-
-      mCameraSpeedNormal = new QAction(tr("&Normal"), mCameraSpeedGroup);
-      mCameraSpeedNormal->setCheckable(true);
-      connect(mCameraSpeedNormal,SIGNAL(triggered()), this, SLOT(setCameraSpeedNormal()));
-
-      mCameraSpeedFast = new QAction(tr("&Fast"), mCameraSpeedGroup);
-      mCameraSpeedFast->setCheckable(true);
-      connect(mCameraSpeedFast,SIGNAL(triggered()), this, SLOT(setCameraSpeedFast()));
-
-      mCameraSpeedFastest = new QAction(tr("F&astest"), mCameraSpeedGroup);
-      mCameraSpeedFastest->setCheckable(true);
-      connect(mCameraSpeedFastest,SIGNAL(triggered()), this, SLOT(setCameraSpeedFastest()));
-
-      mCameraMovementMenu = new QMenu(tr("Camera Speed"), mContextMenu);
-      mCameraMovementMenu->addAction(mCameraSpeedSlowest);
-      mCameraMovementMenu->addAction(mCameraSpeedSlow);
-      mCameraMovementMenu->addAction(mCameraSpeedNormal);
-      mCameraMovementMenu->addAction(mCameraSpeedFast);
-      mCameraMovementMenu->addAction(mCameraSpeedFastest);
-      mContextMenu->addMenu(mCameraMovementMenu);
-
-      setCameraSpeedNormal();
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
-   void ViewportContainer::setCameraSpeedSlowest()
-   {
       if (mViewPort != NULL)
       {
-         mViewPort->setMouseSensitivity(0.2f);
-         mCameraSpeedSlowest->setChecked(true);
+         //assume the supplied value is in the range of the widget
+         const float uiMin = mCameraSpeedSlider->minimum();
+         const float uiMax = mCameraSpeedSlider->maximum();
+
+         const float speed = dtUtil::MapRangeValue(float(value), uiMin, uiMax,
+                                                   MINCAMSPEED, MAXCAMSPEED);
+         mViewPort->setMouseSensitivity(speed);
       }
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
-   void ViewportContainer::setCameraSpeedSlow()
+   //////////////////////////////////////////////////////////////////////////
+   int ViewportContainer::GetCameraSpeed() const
    {
-      if (mViewPort != NULL)
-      {
-         mViewPort->setMouseSensitivity(0.5f);
-         mCameraSpeedSlow->setChecked(true);
-      }
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
-   void ViewportContainer::setCameraSpeedNormal()
-   {
-      if (mViewPort != NULL)
-      {
-         mViewPort->setMouseSensitivity(1.0f);
-         mCameraSpeedNormal->setChecked(true);
-      }
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
-   void ViewportContainer::setCameraSpeedFast()
-   {
-      if (mViewPort != NULL)
-      {
-         mViewPort->setMouseSensitivity(2.0f);
-         mCameraSpeedFast->setChecked(true);
-      }
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
-   void ViewportContainer::setCameraSpeedFastest()
-   {
-      if (mViewPort != NULL)
-      {
-         mViewPort->setMouseSensitivity(5.0f);
-         mCameraSpeedFastest->setChecked(true);
-      }
+      return mCameraSpeedSlider->value();
    }
 
    ///////////////////////////////////////////////////////////////////////////////

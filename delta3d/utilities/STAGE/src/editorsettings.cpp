@@ -72,6 +72,8 @@ namespace dtEditQt
    const QString EditorSettings::RIGID_CAMERA("Rigid_Camera_Movement");
    const QString EditorSettings::ACTOR_CREATION_OFFSET("Actor_Creation_Offset");
 
+   const QString EditorSettings::CAMERA_SPEED_GROUP("Camera_Speed");
+
    const QString EditorSettings::SNAP_GROUP("Snap_Group");
 
    const QString EditorSettings::SNAP_TRANSLATION_ENABLED("Snap_Translation_Enabled");

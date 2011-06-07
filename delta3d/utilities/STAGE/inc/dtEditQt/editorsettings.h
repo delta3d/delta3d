@@ -88,6 +88,8 @@ namespace dtEditQt
       static const QString RIGID_CAMERA;
       static const QString ACTOR_CREATION_OFFSET;
 
+      static const QString CAMERA_SPEED_GROUP;
+
       // Snap settings
       static const QString SNAP_GROUP;
 

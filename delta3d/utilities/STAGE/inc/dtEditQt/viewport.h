@@ -349,7 +349,7 @@ namespace dtEditQt
        * Sets the mouse sensitivity for this viewport.  All mouse input into
        * this viewport is them scaled by the sensitivity factor.  A higher value
        * implies that mouse movement will have less impact on the viewport.
-       * The default is 10.
+       * The default is 1.f.
        * @param value
        */
       void setMouseSensitivity(float value) { mMouseSensitivity = value; }
