@@ -31,7 +31,7 @@ namespace dtCore
    FPSCollider::FPSCollider(float pHeight, float pRadius, float k, float theta, dtCore::Scene* pScene)
       : mBBFeet(0)
       , mBBTorso(0)
-      , mSpaceID(0)
+      , mLocalSpaceID(0)
       , mBBFeetOffset()
       , mBBTorsoOffset()
       , mBBFeetLengths()
@@ -60,7 +60,7 @@ namespace dtCore
          mCollisionSpace = mPhysicsController->GetSpaceID();
       }
       
-      mSpaceID = dSimpleSpaceCreate(0);
+      mLocalSpaceID = dSimpleSpaceCreate(0);
       SetDimensions(pHeight, pRadius, k, theta);
    }
 
@@ -68,7 +68,7 @@ namespace dtCore
    FPSCollider::FPSCollider(float pHeight, float pRadius, float k, float theta, dSpaceID pSpaceToCollideWith, const osg::Vec3& pGravity)
       : mBBFeet(0)
       , mBBTorso(0)
-      , mSpaceID(0)
+      , mLocalSpaceID(0)
       , mBBFeetOffset()
       , mBBTorsoOffset()
       , mBBFeetLengths()
@@ -89,7 +89,7 @@ namespace dtCore
       , mSlideVelocity(0.0f, 0.0f, 0.0f)
       , mCollisionSpace(pSpaceToCollideWith)
    {
-      mSpaceID = dSimpleSpaceCreate(0);
+      mLocalSpaceID = dSimpleSpaceCreate(0);
       SetDimensions(pHeight, pRadius, k, theta);
    }
 
@@ -98,13 +98,13 @@ namespace dtCore
    {
       if (mBBFeet) dGeomDestroy(mBBFeet);
       if (mBBTorso) dGeomDestroy(mBBTorso);
-      if (mSpaceID) dSpaceDestroy(mSpaceID);
+      if (mLocalSpaceID) dSpaceDestroy(mLocalSpaceID);
    }
 
    ////////////////////////////////////////////////////////////////////////////
    dSpaceID FPSCollider::GetSpaceID() const
    {
-      return mSpaceID;
+      return mLocalSpaceID;
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -216,12 +216,12 @@ namespace dtCore
    ////////////////////////////////////////////////////////////////////////////
    void FPSCollider::InitBoundingVolumes()
    {
-      CreateCollisionCylinder((dWorldID)mCollisionSpace, mSpaceID, mBBFeet, mBBFeetLengths);
-      CreateCollisionCylinder((dWorldID)mCollisionSpace, mSpaceID, mBBTorso, mBBTorsoLengths);
+      CreateCollisionCylinder(mLocalSpaceID, mBBFeet, mBBFeetLengths);
+      CreateCollisionCylinder(mLocalSpaceID, mBBTorso, mBBTorsoLengths);
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void FPSCollider::CreateCollisionCylinder(dWorldID pWorldId, dSpaceID pSpaceId, dGeomID& pId, const osg::Vec3& pLengths)
+   void FPSCollider::CreateCollisionCylinder(dSpaceID pSpaceId, dGeomID& pId, const osg::Vec3& pLengths)
    {
       pId = dCreateGeomTransform(0);
 
@@ -298,7 +298,7 @@ namespace dtCore
       mNormals.clear();
       mNumTorsoContactPoints = 0;
 
-      dSpaceCollide2((dGeomID)mCollisionSpace, (dGeomID)mSpaceID, this, NearCallbackTorso);
+      dSpaceCollide2((dGeomID)mCollisionSpace, (dGeomID)mLocalSpaceID, this, NearCallbackTorso);
 
       return mNumTorsoContactPoints > 0;
    }
@@ -310,7 +310,7 @@ namespace dtCore
       mNumFeetContactPoints = 0;
       mStartCollideFeet = true;
 
-      dSpaceCollide2((dGeomID)mCollisionSpace, (dGeomID)mSpaceID, this, NearCallbackFeet);
+      dSpaceCollide2((dGeomID)mCollisionSpace, (dGeomID)mLocalSpaceID, this, NearCallbackFeet);
 
       mStartCollideFeet = false;
       return mNumFeetContactPoints > 0;
