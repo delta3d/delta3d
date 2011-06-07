@@ -92,7 +92,7 @@ namespace  dtDAL
    {
       mLogger = &dtUtil::Log::GetInstance ( "BaseXMLHandler.cpp" );
       //mLogger->SetLogLevel(dtUtil::Log::LOG_DEBUG);
-      mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__,  __LINE__, "Creating Map Content Handler.\n");
+      mLogger->LogMessage(DT_LOG_SOURCE, "Creating Map Content Handler.", dtUtil::Log::LOG_INFO);
    }
 
    /////////////////////////////////////////////////////////////////
@@ -108,8 +108,7 @@ namespace  dtDAL
    void BaseXMLHandler::startDocument()
    {
       if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-         mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__,
-         "Parsing Map Document Started.");
+         mLogger->LogMessage(DT_LOG_SOURCE, "Parsing Map Document Started.", dtUtil::Log::LOG_DEBUG);
 
       Reset();
    }
@@ -117,8 +116,7 @@ namespace  dtDAL
    /////////////////////////////////////////////////////////////////
    void BaseXMLHandler::endDocument()
    {
-      mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__,
-         "Parsing Map Document Ended.\n");
+      mLogger->LogMessage(DT_LOG_SOURCE, "Parsing Map Document Ended.", dtUtil::Log::LOG_DEBUG);
    }
 
    /////////////////////////////////////////////////////////////////
@@ -136,8 +134,8 @@ namespace  dtDAL
    {
       if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
       {
-         mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-            "Found element %s", dtUtil::XMLStringConverter(localname).c_str());
+         mLogger->LogMessage(DT_LOG_SOURCE, "Found element " + dtUtil::XMLStringConverter(localname).ToString(),
+                             dtUtil::Log::LOG_DEBUG);
       }
 
       if (!mCombinedCharacters.empty())
@@ -168,10 +166,11 @@ namespace  dtDAL
    {
       if (mElements.empty())
       {
-         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+         mLogger->LogMessage(DT_LOG_SOURCE,
             "Attempting to pop elements off of stack and the stack is empty."
-            "it should at least contain element %s.",
-            dtUtil::XMLStringConverter(localname).c_str());
+            "it should at least contain element " +
+             dtUtil::XMLStringConverter(localname).ToString() + ".",
+             dtUtil::Log::LOG_ERROR);
          return;
       }
 
@@ -179,16 +178,17 @@ namespace  dtDAL
 
       if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
       {
-         mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__,
-            "Ending element: \"%s\"", dtUtil::XMLStringConverter(lname).c_str());
+         mLogger->LogMessage(DT_LOG_SOURCE,
+            "Ending element: \"" + dtUtil::XMLStringConverter(lname).ToString() + "\"",
+            dtUtil::Log::LOG_DEBUG);
       }
 
       if (XMLString::compareString(lname, localname) != 0)
       {
-         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+         mLogger->LogMessage(DT_LOG_SOURCE,
             "Attempting to pop mElements off of stack and the element "
-            "at the top (%s) is not the same as the element ending (%s).",
-            dtUtil::XMLStringConverter(lname).c_str(), dtUtil::XMLStringConverter(localname).c_str());
+            "at the top (" + dtUtil::XMLStringConverter(lname).ToString() + ") is not the same as the element ending (" +
+            dtUtil::XMLStringConverter(localname).ToString() + ").", dtUtil::Log::LOG_ERROR);
       }
 
       if (!mCombinedCharacters.empty())
@@ -236,8 +236,10 @@ namespace  dtDAL
 
       if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
       {
-         mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__,
-            "Found characters for element \"%s\" \"%s\"", dtUtil::XMLStringConverter(topEl.c_str()).c_str(), dtUtil::XMLStringConverter(chars).c_str());
+         mLogger->LogMessage(DT_LOG_SOURCE,
+            "Found characters for element '" +
+            dtUtil::XMLStringConverter(topEl.c_str()).ToString() + "' '" + dtUtil::XMLStringConverter(chars).ToString() + "'",
+            dtUtil::Log::LOG_DEBUG);
       }
    }
 
@@ -265,20 +267,20 @@ namespace  dtDAL
    /////////////////////////////////////////////////////////////////
    void BaseXMLHandler::error(const xercesc::SAXParseException& exc)
    {
-      mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__, "ERROR: " + MakeErrorString(exc));
+      mLogger->LogMessage(DT_LOG_SOURCE, "ERROR: " + MakeErrorString(exc), dtUtil::Log::LOG_ERROR);
       throw exc;
    }
    /////////////////////////////////////////////////////////////////
    void BaseXMLHandler::fatalError(const xercesc::SAXParseException& exc)
    {
-      mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__, "FATAL ERROR: " + MakeErrorString(exc));
+      mLogger->LogMessage(DT_LOG_SOURCE, "FATAL ERROR: " + MakeErrorString(exc), dtUtil::Log::LOG_ERROR);
       throw exc;
    }
 
    /////////////////////////////////////////////////////////////////
    void BaseXMLHandler::warning(const xercesc::SAXParseException& exc)
    {
-      mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__,  __LINE__, "WARNING: " + MakeErrorString(exc));
+      mLogger->LogMessage(DT_LOG_SOURCE, "WARNING: " + MakeErrorString(exc), dtUtil::Log::LOG_WARNING);
    }
 
    /////////////////////////////////////////////////////////////////
