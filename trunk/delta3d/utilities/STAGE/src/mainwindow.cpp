@@ -450,6 +450,11 @@ namespace dtEditQt
       ViewportContainer* sideContainer = new ViewportContainer(mSideView, vSplit2);
       ViewportContainer* perspContainer = new ViewportContainer(mPerspView, vSplit2);
 
+      mViewportContainers[QString(mTopView->getName().c_str())] = topContainer;
+      mViewportContainers[QString(mFrontView->getName().c_str())] = frontContainer;
+      mViewportContainers[QString(mSideView->getName().c_str())] = sideContainer;
+      mViewportContainers[QString(mPerspView->getName().c_str())] = perspContainer;
+
       bool bTopHidden = false;
       if (ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT, CONF_MGR_SHOW_TOP_VIEW) == "false")
       {
@@ -781,6 +786,18 @@ namespace dtEditQt
       settings.setValue(EditorSettings::ACTOR_CREATION_OFFSET, editorData.GetActorCreationOffset());
       settings.setValue(EditorSettings::SAVE_MILLISECONDS, EditorActions::GetInstance().mSaveMilliSeconds);
       settings.setValue(EditorSettings::SELECTION_COLOR, editorData.getSelectionColor());
+      settings.endGroup();
+      
+      //camera speed settings
+      settings.beginGroup(EditorSettings::CAMERA_SPEED_GROUP);
+      QString perspName(mPerspView->getName().c_str());
+      QString topName(mTopView->getName().c_str());
+      QString frontName(mFrontView->getName().c_str());
+      QString sideName(mSideView->getName().c_str());
+      settings.setValue(perspName, mViewportContainers.value(perspName)->GetCameraSpeed());
+      settings.setValue(topName, mViewportContainers.value(topName)->GetCameraSpeed());
+      settings.setValue(frontName, mViewportContainers.value(frontName)->GetCameraSpeed());
+      settings.setValue(sideName, mViewportContainers.value(sideName)->GetCameraSpeed());
       settings.endGroup();
 
       // Save our current snap settings.
@@ -1284,6 +1301,14 @@ namespace dtEditQt
       }
       settings.endGroup();
 
+      //Camera speed settings
+      settings.beginGroup(EditorSettings::CAMERA_SPEED_GROUP);
+      ReadCameraSpeed(settings, QString::fromStdString(mPerspView->getName()));
+      ReadCameraSpeed(settings, QString::fromStdString(mTopView->getName()));
+      ReadCameraSpeed(settings, QString::fromStdString(mFrontView->getName()));
+      ReadCameraSpeed(settings, QString::fromStdString(mSideView->getName()));
+      settings.endGroup();
+
       // Snap settings.
       settings.beginGroup(EditorSettings::SNAP_GROUP);
 
@@ -1631,4 +1656,18 @@ namespace dtEditQt
          EditorData::GetInstance().addRecentProject(itr.previous().toStdString());
       }
    }
+
+   //////////////////////////////////////////////////////////////////////////
+   void MainWindow::ReadCameraSpeed(const EditorSettings &settings, const QString& viewName) const
+   {
+      if (settings.contains(viewName))
+      {
+         int value = settings.value(viewName).toInt();
+         if (mViewportContainers.contains(viewName))
+         {
+            mViewportContainers.value(viewName)->SetCameraSpeed(value);
+         }
+      }
+   }
+
 } // namespace dtEditQt

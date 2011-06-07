@@ -32,6 +32,7 @@
 
 #include <dtEditQt/export.h>
 #include <QtGui/QMainWindow>
+#include <QtCore/QMap>
 #include <dtDAL/actorproxy.h>
 #include <dtQt/typedefs.h>
 
@@ -54,6 +55,8 @@ namespace dtEditQt
    class ResourceBrowser;
    class PluginManager;
    class EditorViewportContainer;
+   class ViewportContainer;
+   class EditorSettings;
 
    /**
     * This class is the main window of the application.  It contains the menu bar,
@@ -328,6 +331,9 @@ namespace dtEditQt
       QWidget*          mMainViewportParent;
       QList<QSplitter*> mSplitters;
 
+      ///A map of Viewport names to their ViewportContainers
+      QMap<QString, ViewportContainer*> mViewportContainers;
+
       /**
        * Connects the signals and slots the main window needs.
        */
@@ -386,6 +392,8 @@ namespace dtEditQt
         * the EditorData about them.
         */
       void SetupRecentProjects() const;
+
+      void ReadCameraSpeed(const EditorSettings &settings, const QString& viewName) const;
 
       friend class EditorActions;
    };

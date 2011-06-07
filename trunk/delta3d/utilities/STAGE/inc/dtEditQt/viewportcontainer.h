@@ -36,11 +36,11 @@ class QAction;
 class QActionGroup;
 class QLabel;
 class QMenu;
-class QContextMenuEvent;
 class QBoxLayout;
 class QFrame;
 class QLineEdit;
 class QAbstractButton;
+class QSlider;
 
 namespace dtEditQt
 {
@@ -73,6 +73,13 @@ namespace dtEditQt
        * @param viewPort The viewport to put inside this container.
        */
       void setViewport(Viewport* viewPort);
+
+      /** 
+       * Get the current setting for the camera speed associated with this
+       * ViewportContainer.
+       * @return the current value of the camera speed widget
+       */
+      int GetCameraSpeed() const;
 
    public slots:
       /**
@@ -134,20 +141,10 @@ namespace dtEditQt
        */
       void onViewportRenderStyleChanged();
 
-      ///Sets the camera speed to the slowest setting.
-      void setCameraSpeedSlowest();
-
-      ///Sets the camera speed to a slow setting.
-      void setCameraSpeedSlow();
-
-      ///Sets the camera speed to the default.
-      void setCameraSpeedNormal();
-
-      ///Sets the camera speed to a fast setting.
-      void setCameraSpeedFast();
-
-      ///Sets the camera speed to the fastest setting.
-      void setCameraSpeedFastest();
+      /** Set the speed of the Camera in this ViewportContainer. 
+       *  @param value The value of the camera speed UI widget (not the actual camera speed)
+       */
+      void SetCameraSpeed(int value);
 
       void OnCameraMoved(double x, double y, double z);
 
@@ -162,15 +159,6 @@ namespace dtEditQt
       ///Adds the action objects to this containers toolbar.
       void createToolBar();
 
-      ///Creates a right-click menu for the toolbar of this container.
-      void createContextMenu();
-
-      /**
-       * Overridden to ensure the right-click menu only appears when right clicking
-       * on the toolbar and not on the viewport widget.
-       */
-      void contextMenuEvent(QContextMenuEvent* e);
-
       /**
        * Creates a widget for controlling the camera speed on this viewport.
        * @note Only gets called if the viewport in this container is a perspective viewport.
@@ -183,25 +171,17 @@ namespace dtEditQt
       QBoxLayout*       mLayout;
       QBoxLayout*       mButtonLayout;
       QLabel*           mViewportTitle;
-      QMenu*            mContextMenu;
-      QMenu*            mCameraMovementMenu;
       QFrame*           mToolBar;
       QList<QLineEdit*> mPositionEditWidgets;
+      QSlider*          mCameraSpeedSlider;
 
       QActionGroup* mRenderStyleActionGroup;
-      QActionGroup* mCameraSpeedGroup;
 
       // Action objects.
       QAction* mSetWireFrameAction;
       QAction* mSetTexturesOnlyAction;
       QAction* mSetLightingOnlyAction;
       QAction* mSetTexturesAndLightingAction;
-
-      QAction* mCameraSpeedSlowest;
-      QAction* mCameraSpeedSlow;
-      QAction* mCameraSpeedNormal;
-      QAction* mCameraSpeedFast;
-      QAction* mCameraSpeedFastest;
 
       void SetupPositionWidgets(QBoxLayout* layout);
       QAbstractButton* CreateActorCameraAlignButton(QFrame* parent) const;
