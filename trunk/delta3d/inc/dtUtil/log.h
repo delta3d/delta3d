@@ -56,35 +56,37 @@ namespace dtUtil
     * Helps making logging a little easier.  However, if printf style
     *   logging is desired, you cannot use this macro.
     */
+   #define DT_LOG_SOURCE __FILE__, __FUNCTION__, __LINE__
+
    #define LOG_DEBUG(msg)\
-      dtUtil::Log::GetInstance().LogMessage(__FILE__, __FUNCTION__, __LINE__, msg, dtUtil::Log::LOG_DEBUG);
+      dtUtil::Log::GetInstance().LogMessage(DT_LOG_SOURCE, msg, dtUtil::Log::LOG_DEBUG);
 
    #define LOG_INFO(msg)\
-      dtUtil::Log::GetInstance().LogMessage(__FILE__, __FUNCTION__, __LINE__, msg, dtUtil::Log::LOG_INFO);
+      dtUtil::Log::GetInstance().LogMessage(DT_LOG_SOURCE, msg, dtUtil::Log::LOG_INFO);
 
    #define LOG_WARNING(msg)\
-      dtUtil::Log::GetInstance().LogMessage(__FILE__, __FUNCTION__, __LINE__, msg, dtUtil::Log::LOG_WARNING);
+      dtUtil::Log::GetInstance().LogMessage(DT_LOG_SOURCE, msg, dtUtil::Log::LOG_WARNING);
 
    #define LOG_ERROR(msg)\
-      dtUtil::Log::GetInstance().LogMessage(__FILE__, __FUNCTION__, __LINE__, msg, dtUtil::Log::LOG_ERROR);
+      dtUtil::Log::GetInstance().LogMessage(DT_LOG_SOURCE, msg, dtUtil::Log::LOG_ERROR);
 
    #define LOG_ALWAYS(msg)\
-      dtUtil::Log::GetInstance().LogMessage(__FILE__, __FUNCTION__, __LINE__, msg, dtUtil::Log::LOG_ALWAYS);
+      dtUtil::Log::GetInstance().LogMessage(DT_LOG_SOURCE, msg, dtUtil::Log::LOG_ALWAYS);
 
    #define LOGN_DEBUG(name, msg)\
-      dtUtil::Log::GetInstance(name).LogMessage(__FILE__, __FUNCTION__, __LINE__, msg, dtUtil::Log::LOG_DEBUG);
+      dtUtil::Log::GetInstance(name).LogMessage(DT_LOG_SOURCE, msg, dtUtil::Log::LOG_DEBUG);
 
    #define LOGN_INFO(name, msg)\
-      dtUtil::Log::GetInstance(name).LogMessage(__FILE__, __FUNCTION__, __LINE__, msg, dtUtil::Log::LOG_INFO);
+      dtUtil::Log::GetInstance(name).LogMessage(DT_LOG_SOURCE, msg, dtUtil::Log::LOG_INFO);
 
    #define LOGN_WARNING(name, msg)\
-      dtUtil::Log::GetInstance(name).LogMessage(__FILE__, __FUNCTION__, __LINE__, msg, dtUtil::Log::LOG_WARNING);
+      dtUtil::Log::GetInstance(name).LogMessage(DT_LOG_SOURCE, msg, dtUtil::Log::LOG_WARNING);
 
    #define LOGN_ERROR(name, msg)\
-      dtUtil::Log::GetInstance(name).LogMessage(__FILE__, __FUNCTION__, __LINE__, msg, dtUtil::Log::LOG_ERROR);
+      dtUtil::Log::GetInstance(name).LogMessage(DT_LOG_SOURCE, msg, dtUtil::Log::LOG_ERROR);
 
    #define LOGN_ALWAYS(name, msg)\
-      dtUtil::Log::GetInstance(name).LogMessage(__FILE__, __FUNCTION__, __LINE__, msg, dtUtil::Log::LOG_ALWAYS);
+      dtUtil::Log::GetInstance(name).LogMessage(DT_LOG_SOURCE, msg, dtUtil::Log::LOG_ALWAYS);
 
    struct LogImpl;
 
