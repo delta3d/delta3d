@@ -462,21 +462,11 @@ float FPSMotionModel::GetFallingHeight() const
 ////////////////////////////////////////////////////////////////////////////////
 void FPSMotionModel::OnMessage(MessageData* data)
 {
-   //if (IsCurrentlyActive() && data->message == dtCore::System::MESSAGE_EVENT_TRAVERSAL)
-   //if (IsCurrentlyActive() && mShouldResetMouse)
-   //{
-   //   if (GetTurnLeftRightAxis())
-   //   {
-   //      GetTurnLeftRightAxis()->SetState(0.0f);
-   //   }
-   //   if (GetLookUpDownAxis())
-   //   {
-   //      GetLookUpDownAxis()->SetState(0.0f);
-   //   }
-   //   mShouldResetMouse = false;
-   //}
-   if (IsCurrentlyActive() && data->message == dtCore::System::MESSAGE_POST_EVENT_TRAVERSAL)
+
+   if (data->message == dtCore::System::MESSAGE_POST_EVENT_TRAVERSAL)
    {
+      if (!IsCurrentlyActive()) {return;}
+
       // use the simulated change in time, not the real time change
       // see dtCore::System for the difference.
       // The ideal solution would be to use options, like FlyMotionModel
@@ -505,11 +495,7 @@ bool FPSMotionModel::IsCurrentlyActive()
    result = GetTarget() != NULL && IsEnabled() &&
       (mOperateWhenUnfocused || mMouse->GetHasFocus());
 
-   //// Flag the mouse to be reset if the motion model is not currently active.
-   //if (!result)
-   //{
-   //   mShouldResetMouse = true;
-   //}
+
 
    return result;
 }
