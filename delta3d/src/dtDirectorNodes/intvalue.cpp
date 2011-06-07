@@ -68,6 +68,19 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
+   bool IntValue::CanBeType(dtDAL::DataType& type)
+   {
+      if (type == dtDAL::DataType::INT ||
+         type == dtDAL::DataType::UINT ||
+         type == dtDAL::DataType::BIT_MASK)
+      {
+         return true;
+      }
+
+      return false;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    void IntValue::SetValue(int value)
    {
       if (mValue != value)
