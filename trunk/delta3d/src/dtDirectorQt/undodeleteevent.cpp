@@ -158,6 +158,7 @@ namespace dtDirector
       DirectorGraph* parent = mEditor->GetDirector()->GetGraph(mParentID);
 
       dtCore::RefPtr<dtDAL::PropertyContainer> container = NULL;
+      dtCore::RefPtr<Node> node = NULL;
 
       // An empty name means the node is a graph.
       if (mName.empty())
@@ -180,7 +181,7 @@ namespace dtDirector
       else
       {
          // Create the node.
-         dtCore::RefPtr<Node> node = NodeManager::GetInstance().CreateNode(mName, mCategory, parent);
+         node = NodeManager::GetInstance().CreateNode(mName, mCategory, parent);
          container = node.get();
 
          if (node.valid() && parent)
@@ -204,6 +205,15 @@ namespace dtDirector
 
       // Restore all links.
       RestoreLinks();
+
+      if (node.valid())
+      {
+         node->OnFinishedLoading();
+         if (parent->GetDirector() && parent->GetDirector()->HasStarted())
+         {
+            node->OnStart();
+         }
+      }
 
       // Now execute all sub events.
       int count = (int)mSubEvents.size();

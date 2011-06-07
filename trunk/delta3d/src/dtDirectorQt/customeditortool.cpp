@@ -338,6 +338,12 @@ namespace dtDirector
 
       if (newNode)
       {
+         newNode->OnFinishedLoading();
+         if (GetGraph()->GetDirector() && GetGraph()->GetDirector()->HasStarted())
+         {
+            newNode->OnStart();
+         }
+
          // Value nodes are ignored.
          if (newNode->GetType().GetNodeType() != dtDirector::NodeType::VALUE_NODE &&
             newNode->GetType().GetFullName() != "Core.Value Link")
