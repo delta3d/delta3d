@@ -185,7 +185,7 @@ namespace dtQt
       }
 
       mTemporaryButton = new SubQToolButton(wrapper, this);
-      mTemporaryButton->setToolButtonStyle(Qt::ToolButtonStyle::ToolButtonTextBesideIcon);
+      mTemporaryButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
       mTemporaryButton->setIcon(QIcon(QPixmap(1, 1)));
       mTemporaryButton->setText("<None>");
       mTemporaryButton->setToolTip(getDescription());

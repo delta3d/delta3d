@@ -158,7 +158,7 @@ namespace dtQt
 
       // create and init the edit box
       mTemporaryEditControl = new SubQToolButton(wrapper, this);
-      mTemporaryEditControl->setToolButtonStyle(Qt::ToolButtonStyle::ToolButtonTextBesideIcon);
+      mTemporaryEditControl->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
       mTemporaryEditControl->setIcon(QIcon(QPixmap(1, 1)));
       mTemporaryEditControl->setToolTip(getDescription());
       mTemporaryEditControl->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
