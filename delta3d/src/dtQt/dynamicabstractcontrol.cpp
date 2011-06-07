@@ -428,7 +428,7 @@ namespace dtQt
             oldValue, arrayProp->ToString());
          emit PropertyChanged(*mPropContainer, *arrayProp);
 
-         mPropertyTree->closeEditor(mWrapper, QAbstractItemDelegate::SubmitModelCache);
+         mPropertyTree->closeEditor(mWrapper, QAbstractItemDelegate::NoHint);
          parent->resizeChildren(true, true);
       }
    }
@@ -460,7 +460,7 @@ namespace dtQt
             oldValue, arrayProp->ToString());
          emit PropertyChanged(*mPropContainer, *arrayProp);
 
-         mPropertyTree->closeEditor(mWrapper, QAbstractItemDelegate::SubmitModelCache);
+         mPropertyTree->closeEditor(mWrapper, QAbstractItemDelegate::NoHint);
          parent->resizeChildren(true, true);
       }
    }
@@ -495,7 +495,7 @@ namespace dtQt
             oldValue, arrayProp->ToString());
          emit PropertyChanged(*mPropContainer, *arrayProp);
 
-         mPropertyTree->closeEditor(mWrapper, QAbstractItemDelegate::SubmitModelCache);
+         mPropertyTree->closeEditor(mWrapper, QAbstractItemDelegate::NoHint);
          parent->resizeChildren(false, true);
       }
    }
@@ -529,7 +529,7 @@ namespace dtQt
             oldValue, arrayProp->ToString());
          emit PropertyChanged(*mPropContainer, *arrayProp);
 
-         mPropertyTree->closeEditor(mWrapper, QAbstractItemDelegate::SubmitModelCache);
+         mPropertyTree->closeEditor(mWrapper, QAbstractItemDelegate::NoHint);
          parent->resizeChildren(false, true);
       }
    }
@@ -657,11 +657,25 @@ namespace dtQt
    }
 
    //////////////////////////////////////////////////////////////////////////
-   bool DynamicAbstractControl::IsPropertyDefault() const
+   bool DynamicAbstractControl::IsPropertyDefault()
    {
       if (!mInitialized || !mPropContainer.valid() || mBaseProperty == NULL)
       {
          return true;
+      }
+
+      if (mArrayIndex > -1)
+      {
+         // Get our parent.
+         const DynamicArrayControl* parent = static_cast<DynamicArrayControl*>(getParent());
+         if (parent)
+         {
+            const dtDAL::ArrayActorPropertyBase* arrayProp = parent->GetProperty();
+            if (arrayProp)
+            {
+               arrayProp->SetIndex(mArrayIndex);
+            }
+         }
       }
 
       if (!mPropContainer->DoesDefaultExist(*mBaseProperty) ||

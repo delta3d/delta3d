@@ -107,7 +107,7 @@ namespace dtQt
    }
 
    //////////////////////////////////////////////////////////////////////////
-   bool DynamicGroupControl::IsPropertyDefault() const
+   bool DynamicGroupControl::IsPropertyDefault()
    {
       std::vector<DynamicAbstractControl*>::const_iterator itr = mChildren.begin();
 
