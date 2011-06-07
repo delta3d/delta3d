@@ -43,6 +43,8 @@ namespace dtDirector
       static dtCore::RefPtr<dtDirector::NodeType> TRIGGER_VOLUME_EVENT_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> GAME_MESSAGE_EVENT_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> GAME_EVENT_MESSAGE_EVENT_NODE_TYPE;
+      static dtCore::RefPtr<dtDirector::NodeType> KEY_PRESS_EVENT_NODE_TYPE;
+      static dtCore::RefPtr<dtDirector::NodeType> MOUSE_PRESS_EVENT_NODE_TYPE;
 
       /// Actions
       static dtCore::RefPtr<dtDirector::NodeType> OUTPUT_NODE_TYPE;
@@ -68,6 +70,7 @@ namespace dtDirector
       static dtCore::RefPtr<dtDirector::NodeType> COMPARE_VALUE_ACTION_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> COMPARE_VECTOR_ACTION_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> COMPARE_ACTOR_PROPERTY_ACTION_NODE_TYPE;
+      static dtCore::RefPtr<dtDirector::NodeType> COMPARE_ACTOR_FACING_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> SCHEDULER_ACTION_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> LERP_ACTOR_ROTATION_ACTION_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> LERP_ACTOR_SCALE_ACTION_NODE_TYPE;
