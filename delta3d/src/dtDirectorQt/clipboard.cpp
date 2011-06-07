@@ -209,6 +209,13 @@ namespace dtDirector
 
          // Offset the position of the new node based on our offset and position.
          newNode->SetPosition(newNode->GetPosition() - mOffset + position);
+
+         newNode->OnFinishedLoading();
+         if (parent->GetDirector() && parent->GetDirector()->HasStarted())
+         {
+            newNode->OnStart();
+         }
+
          return newNode.get();
       }
       else
@@ -372,6 +379,12 @@ namespace dtDirector
                   dtCore::RefPtr<Node> rampNode = NodeManager::GetInstance().CreateNode("Input Link", "Core", parent);
                   if (rampNode.valid())
                   {
+                     rampNode->OnFinishedLoading();
+                     if (parent->GetDirector() && parent->GetDirector()->HasStarted())
+                     {
+                        rampNode->OnStart();
+                     }
+
                      // Link them together.
                      OutputLink* output = owner->GetOutputLink(fromLink->GetLinks()[index]->GetName());
                      rampNode->GetInputLink("In")->Connect(output);
@@ -466,6 +479,12 @@ namespace dtDirector
                   dtCore::RefPtr<Node> rampNode = NodeManager::GetInstance().CreateNode("Output Link", "Core", parent);
                   if (rampNode.valid())
                   {
+                     rampNode->OnFinishedLoading();
+                     if (parent->GetDirector() && parent->GetDirector()->HasStarted())
+                     {
+                        rampNode->OnStart();
+                     }
+
                      // Link them together.
                      InputLink* input = owner->GetInputLink(fromLink->GetLinks()[index]->GetName());
                      rampNode->GetOutputLink("Out")->Connect(input);
@@ -555,6 +574,12 @@ namespace dtDirector
                   dtCore::RefPtr<ValueNode> rampNode = dynamic_cast<ValueNode*>(NodeManager::GetInstance().CreateNode("Value Link", "Core", parent).get());
                   if (rampNode.valid())
                   {
+                     rampNode->OnFinishedLoading();
+                     if (parent->GetDirector() && parent->GetDirector()->HasStarted())
+                     {
+                        rampNode->OnStart();
+                     }
+
                      // Link them together.
                      ValueNode* ownerValue = owner->AsValueNode();
                      rampNode->GetValueLinks()[0].Connect(ownerValue);

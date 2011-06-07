@@ -576,6 +576,12 @@ namespace dtDirector
       dtCore::RefPtr<Node> node = NodeManager::GetInstance().CreateNode(name, category, mGraph.get());
       if (node.valid())
       {
+         node->OnFinishedLoading();
+         if (mGraph->GetDirector() && mGraph->GetDirector()->HasStarted())
+         {
+            node->OnStart();
+         }
+
          node->SetPosition(osg::Vec2(x, y));
 
          // Now refresh the all editors that view the same graph.
