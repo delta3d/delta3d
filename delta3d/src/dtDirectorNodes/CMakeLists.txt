@@ -15,6 +15,7 @@ SET(LIB_PUBLIC_HEADERS ${HEADER_PATH}/actorarrayvalue.h
     ${HEADER_PATH}/calculatedistanceaction.h
     ${HEADER_PATH}/callremoteeventaction.h
     ${HEADER_PATH}/compareactoraction.h
+    ${HEADER_PATH}/compareactorfacingaction.h
     ${HEADER_PATH}/compareactorpropertyaction.h
     ${HEADER_PATH}/compareboolaction.h
     ${HEADER_PATH}/compareequalitymutator.h
@@ -38,10 +39,12 @@ SET(LIB_PUBLIC_HEADERS ${HEADER_PATH}/actorarrayvalue.h
     ${HEADER_PATH}/inputnode.h
     ${HEADER_PATH}/intvalue.h
     ${HEADER_PATH}/isnotmutator.h
+    ${HEADER_PATH}/keypressevent.h
     ${HEADER_PATH}/lerpactorrotationaction.h
     ${HEADER_PATH}/lerpactorscaleaction.h
     ${HEADER_PATH}/lerpactortranslationaction.h
     ${HEADER_PATH}/logaction.h
+    ${HEADER_PATH}/mousepressevent.h
     ${HEADER_PATH}/multiplymutator.h
     ${HEADER_PATH}/nodelibraryexport.h
     ${HEADER_PATH}/nodelibraryregistry.h
@@ -89,6 +92,7 @@ SET(LIB_SOURCES ${SOURCE_PATH}/actorarrayvalue.cpp
     ${SOURCE_PATH}/calculatedistanceaction.cpp
     ${SOURCE_PATH}/callremoteeventaction.cpp
     ${SOURCE_PATH}/compareactoraction.cpp
+    ${SOURCE_PATH}/compareactorfacingaction.cpp
     ${SOURCE_PATH}/compareactorpropertyaction.cpp
     ${SOURCE_PATH}/compareboolaction.cpp
     ${SOURCE_PATH}/compareequalitymutator.cpp
@@ -112,10 +116,12 @@ SET(LIB_SOURCES ${SOURCE_PATH}/actorarrayvalue.cpp
     ${SOURCE_PATH}/inputnode.cpp
     ${SOURCE_PATH}/intvalue.cpp
     ${SOURCE_PATH}/isnotmutator.cpp
+    ${SOURCE_PATH}/keypressevent.cpp
     ${SOURCE_PATH}/lerpactorrotationaction.cpp
     ${SOURCE_PATH}/lerpactorscaleaction.cpp
     ${SOURCE_PATH}/lerpactortranslationaction.cpp
     ${SOURCE_PATH}/logaction.cpp
+    ${SOURCE_PATH}/mousepressevent.cpp
     ${SOURCE_PATH}/multiplymutator.cpp
     ${SOURCE_PATH}/nodelibraryregistry.cpp
     ${SOURCE_PATH}/normalizevectoraction.cpp

@@ -30,6 +30,8 @@
 #include <dtDirectorNodes/triggervolumeevent.h>
 #include <dtDirectorNodes/gamemessageevent.h>
 #include <dtDirectorNodes/gameeventmessageevent.h>
+#include <dtDirectorNodes/keypressevent.h>
+#include <dtDirectorNodes/mousepressevent.h>
 
 // Actions
 #include <dtDirectorNodes/outputnode.h>
@@ -52,6 +54,7 @@
 #include <dtDirectorNodes/comparevalueaction.h>
 #include <dtDirectorNodes/comparevectoraction.h>
 #include <dtDirectorNodes/compareactorpropertyaction.h>
+#include <dtDirectorNodes/compareactorfacingaction.h>
 #include <dtDirectorNodes/delayaction.h>
 #include <dtDirectorNodes/toggleaction.h>
 #include <dtDirectorNodes/scheduleraction.h>
@@ -129,6 +132,8 @@ namespace dtDirector
    RefPtr<NodeType> NodeLibraryRegistry::TRIGGER_VOLUME_EVENT_NODE_TYPE(         new dtDirector::NodeType(dtDirector::NodeType::EVENT_NODE,  "Trigger Volume Event",      "General",     "Base",        "A trigger volume event.", NULL, Colors::BEIGE));
    RefPtr<NodeType> NodeLibraryRegistry::GAME_MESSAGE_EVENT_NODE_TYPE(           new dtDirector::NodeType(dtDirector::NodeType::EVENT_NODE,  "Game Message Event",        "Messages",    "Messages",    "An event that responds to game messages.", NULL, Colors::BEIGE));
    RefPtr<NodeType> NodeLibraryRegistry::GAME_EVENT_MESSAGE_EVENT_NODE_TYPE(     new dtDirector::NodeType(dtDirector::NodeType::EVENT_NODE,  "Game Event Message Event",  "Messages",    "Messages",    "An event that responds to game event messages.", NULL, Colors::BEIGE));
+   RefPtr<NodeType> NodeLibraryRegistry::KEY_PRESS_EVENT_NODE_TYPE(              new dtDirector::NodeType(dtDirector::NodeType::EVENT_NODE,  "Key Press Event",           "Input",       "Input",       "An event that responds to keyboard input.", NULL, Colors::BEIGE));
+   RefPtr<NodeType> NodeLibraryRegistry::MOUSE_PRESS_EVENT_NODE_TYPE(            new dtDirector::NodeType(dtDirector::NodeType::EVENT_NODE,  "Mouse Press Event",         "Input",       "Input",       "An event that responds to mouse input.", NULL, Colors::BEIGE));
 
    // Actions
    RefPtr<NodeType> NodeLibraryRegistry::OUTPUT_NODE_TYPE(                       new dtDirector::NodeType(dtDirector::NodeType::LINK_NODE,   "Output Link",               "Core",        "Base",        "This node creates an output link connector in its parent graph.", NULL, Colors::BLUE));
@@ -153,6 +158,7 @@ namespace dtDirector
    RefPtr<NodeType> NodeLibraryRegistry::COMPARE_VALUE_ACTION_NODE_TYPE(         new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Compare Value",             "General",     "Condition",   "Compares two numerical values A and B.", NULL, Colors::BLUE));
    RefPtr<NodeType> NodeLibraryRegistry::COMPARE_VECTOR_ACTION_NODE_TYPE(        new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Compare Vector",            "General",     "Condition",   "Compares two vectors A and B.", NULL, Colors::BLUE));
    RefPtr<NodeType> NodeLibraryRegistry::COMPARE_ACTOR_PROPERTY_ACTION_NODE_TYPE(new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Compare Actor Property",    "General",     "Condition",   "Compares an actor property with a value.", NULL, Colors::BLUE));
+   RefPtr<NodeType> NodeLibraryRegistry::COMPARE_ACTOR_FACING_NODE_TYPE(         new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Compare Actor Facing",      "General",     "Condition",   "Compares an actor facing direction in relation to a target.", NULL, Colors::BLUE));
    RefPtr<NodeType> NodeLibraryRegistry::SCHEDULER_ACTION_NODE_TYPE(             new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Scheduler",                 "Cinematic",   "Cinematic",   "Schedules a sequence of timed events.", NULL, Colors::BLUE));
    RefPtr<NodeType> NodeLibraryRegistry::LERP_ACTOR_ROTATION_ACTION_NODE_TYPE(   new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Lerp Actor Rotation",       "Cinematic",   "Cinematic",   "Linearly interpolates the rotation of an actor.", NULL, Colors::BLUE));
    RefPtr<NodeType> NodeLibraryRegistry::LERP_ACTOR_SCALE_ACTION_NODE_TYPE(      new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Lerp Actor Scale",          "Cinematic",   "Cinematic",   "Linearly interpolates the scale of an actor.", NULL, Colors::BLUE));
@@ -229,6 +235,8 @@ namespace dtDirector
       mNodeFactory->RegisterType<TriggerVolumeEvent>(TRIGGER_VOLUME_EVENT_NODE_TYPE.get());
       mNodeFactory->RegisterType<GameMessageEvent>(GAME_MESSAGE_EVENT_NODE_TYPE.get());
       mNodeFactory->RegisterType<GameEventMessageEvent>(GAME_EVENT_MESSAGE_EVENT_NODE_TYPE.get());
+      mNodeFactory->RegisterType<KeyPressEvent>(KEY_PRESS_EVENT_NODE_TYPE.get());
+      mNodeFactory->RegisterType<MousePressEvent>(MOUSE_PRESS_EVENT_NODE_TYPE.get());
 
       // Actions
       mNodeFactory->RegisterType<OutputNode>(OUTPUT_NODE_TYPE.get());
@@ -253,6 +261,7 @@ namespace dtDirector
       mNodeFactory->RegisterType<CompareValueAction>(COMPARE_VALUE_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<CompareVectorAction>(COMPARE_VECTOR_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<CompareActorPropertyAction>(COMPARE_ACTOR_PROPERTY_ACTION_NODE_TYPE.get());
+      mNodeFactory->RegisterType<CompareActorFacingAction>(COMPARE_ACTOR_FACING_NODE_TYPE.get());
       mNodeFactory->RegisterType<SchedulerAction>(SCHEDULER_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<LerpActorRotationAction>(LERP_ACTOR_ROTATION_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<LerpActorScaleAction>(LERP_ACTOR_SCALE_ACTION_NODE_TYPE.get());
