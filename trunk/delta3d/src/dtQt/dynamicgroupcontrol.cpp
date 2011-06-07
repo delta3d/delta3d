@@ -84,6 +84,11 @@ namespace dtQt
    /////////////////////////////////////////////////////////////////////////////////
    const QString DynamicGroupControl::getDisplayName()
    {
+      QString name = DynamicAbstractControl::getDisplayName();
+      if (!name.isEmpty())
+      {
+         return name;
+      }
       return mName;
    }
 

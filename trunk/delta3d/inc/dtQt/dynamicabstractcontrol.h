@@ -266,22 +266,9 @@ namespace dtQt
       virtual void InstallEventFilterOnControl(QObject* filterObj);
 
       /**
-       * Updates the status of the reset button.
-       */
-      void UpdateResetButtonStatus();
-
-      /**
       * This will notify the parent that the child is about to be updated.
       */
-      virtual void NotifyParentOfPreUpdate()
-      {
-         // Notify the parent that a change is about to occur.
-         DynamicAbstractControl* parent = getParent();
-         if (parent)
-         {
-            parent->OnChildPreUpdate(this);
-         }
-      }
+      virtual void NotifyParentOfPreUpdate();
 
       /**
        * Is the value this Control is displaying the default for the ActorProperty?
@@ -289,6 +276,18 @@ namespace dtQt
        * @return true if the ActorProperty is set to it's default value, false otherwise
        */
       virtual bool IsPropertyDefault() const;
+
+      /**
+       * Sets the array index for this property control if it
+       * belongs to an array property.
+       */
+      void SetArrayIndex(int index) {mArrayIndex = index;}
+
+      /**
+       * Retrieves the array index for this property control.
+       * Returns -1 if this property does not belong to an array.
+       */
+      int GetArrayIndex () const {return mArrayIndex;}
 
       /**
       * When a property changes, we have to update our editor.  It is likely that
@@ -342,10 +341,36 @@ namespace dtQt
        */
       virtual void onResetClicked();
 
+      /**
+       * Signal when the Shift Up button has been clicked.
+       */
+      void onShiftUpClicked();
+
+      /**
+       * Signal when the Shift Down button has been clicked.
+       */
+      void onShiftDownClicked();
+
+      /**
+       * Signal when the Copy button has been clicked.
+       */
+      void onCopyClicked();
+
+      /**
+       * Signal when the Delete button has been clicked.
+       */
+      void onDeleteClicked();
+
    protected:
+
+      /**
+       * Updates the enabled status of the control buttons after an update.
+       */
+      void UpdateButtonStates();
 
       // indicates whether the object has been initialized
       bool mInitialized;
+      int  mArrayIndex;
 
       dtCore::RefPtr<dtDAL::PropertyContainer> mPropContainer;
       dtDAL::ActorProperty*                    mBaseProperty;
@@ -359,6 +384,10 @@ namespace dtQt
 
       // Reset to default button.
       SubQToolButton* mDefaultResetButton;
+      SubQToolButton* mShiftUpButton;
+      SubQToolButton* mShiftDownButton;
+      SubQToolButton* mCopyButton;
+      SubQToolButton* mDeleteButton;
 
       // Grid layout for editor widget.
       QGridLayout* mGridLayout;

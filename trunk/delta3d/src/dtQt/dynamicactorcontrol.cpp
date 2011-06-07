@@ -224,6 +224,12 @@ namespace dtQt
    /////////////////////////////////////////////////////////////////////////////////
    const QString DynamicActorControl::getDisplayName()
    {
+      QString name = DynamicAbstractControl::getDisplayName();
+      if (!name.isEmpty())
+      {
+         return name;
+      }
+
       return tr(getActorProperty()->GetLabel().c_str());
    }
 

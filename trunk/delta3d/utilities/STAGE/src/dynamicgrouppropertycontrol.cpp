@@ -126,6 +126,12 @@ namespace dtEditQt
    /////////////////////////////////////////////////////////////////////////////////
    const QString STAGEDynamicGroupPropertyControl::getDisplayName()
    {
+      QString name = DynamicAbstractControl::getDisplayName();
+      if (!name.isEmpty())
+      {
+         return name;
+      }
+
       if (mGroupProperty == NULL)
       {
          return tr("");

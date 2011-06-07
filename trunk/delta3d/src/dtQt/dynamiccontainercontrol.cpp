@@ -138,6 +138,12 @@ namespace dtQt
    /////////////////////////////////////////////////////////////////////////////////
    const QString DynamicContainerControl::getDisplayName()
    {
+      QString name = DynamicAbstractParentControl::getDisplayName();
+      if (!name.isEmpty())
+      {
+         return name;
+      }
+
       if (mProperty.valid())
       {
          return QString(tr(mProperty->GetLabel().c_str()));

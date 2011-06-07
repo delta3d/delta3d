@@ -169,6 +169,11 @@ namespace dtQt
    /////////////////////////////////////////////////////////////////////////////////
    const QString DynamicEnumControl::getDisplayName()
    {
+      QString name = DynamicAbstractControl::getDisplayName();
+      if (!name.isEmpty())
+      {
+         return name;
+      }
       return QString(tr(mProperty->AsActorProperty()->GetLabel().c_str()));
    }
 

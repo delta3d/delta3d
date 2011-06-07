@@ -199,6 +199,12 @@ namespace dtQt
    //////////////////////////////////////////////////////////////////////////
    const QString DynamicBitMaskControl::getDisplayName()
    {
+      QString name = DynamicAbstractControl::getDisplayName();
+      if (!name.isEmpty())
+      {
+         return name;
+      }
+
       return tr(mProperty->GetLabel().c_str());
    }
 
