@@ -34,7 +34,6 @@
 #include <QtGui/QLineEdit>
 #include <QtGui/QDoubleValidator>
 #include <dtQt/dynamicarraycontrol.h>
-#include <dtQt/dynamicarrayelementcontrol.h>
 #include <dtQt/propertyeditormodel.h>
 #include <dtQt/propertyeditortreeview.h>
 
@@ -146,6 +145,12 @@ namespace dtQt
    /////////////////////////////////////////////////////////////////////////////
    const QString DynamicArrayControl::getDisplayName()
    {
+      QString name = DynamicAbstractControl::getDisplayName();
+      if (!name.isEmpty())
+      {
+         return name;
+      }
+
       if (mProperty.valid())
       {
          return QString(tr(mProperty->GetLabel().c_str()));
@@ -236,18 +241,23 @@ namespace dtQt
             {
                mProperty->SetIndex(childCount + childIndex);
 
-               DynamicArrayElementControl* element = new DynamicArrayElementControl(childCount + childIndex);
-               element->SetTreeView(mPropertyTree);
-               element->SetDynamicControlFactory(GetDynamicControlFactory());
-               element->InitializeData(this, GetModel(), mPropContainer.get(), mProperty.get());
-               connect(element, SIGNAL(PropertyAboutToChange(dtDAL::PropertyContainer&, dtDAL::ActorProperty&,
-                                 const std::string&, const std::string&)),
-                        this, SLOT(PropertyAboutToChangePassThrough(dtDAL::PropertyContainer&, dtDAL::ActorProperty&,
-                                 const std::string&, const std::string&)));
+               dtDAL::ActorProperty* propType = mProperty->GetArrayProperty();
+               if (propType)
+               {
+                  DynamicAbstractControl* element = GetDynamicControlFactory()->CreateDynamicControl(*propType);
+                  element->SetTreeView(mPropertyTree);
+                  element->SetDynamicControlFactory(GetDynamicControlFactory());
+                  element->SetArrayIndex(childCount + childIndex);
+                  element->InitializeData(this, GetModel(), mPropContainer.get(), propType);
+                  connect(element, SIGNAL(PropertyAboutToChange(dtDAL::PropertyContainer&, dtDAL::ActorProperty&,
+                     const std::string&, const std::string&)),
+                     this, SLOT(PropertyAboutToChangePassThrough(dtDAL::PropertyContainer&, dtDAL::ActorProperty&,
+                     const std::string&, const std::string&)));
 
-               connect(element, SIGNAL(PropertyChanged(dtDAL::PropertyContainer&, dtDAL::ActorProperty&)),
-                        this, SLOT(PropertyChangedPassThrough(dtDAL::PropertyContainer&, dtDAL::ActorProperty&)));
-               mChildren.push_back(element);
+                  connect(element, SIGNAL(PropertyChanged(dtDAL::PropertyContainer&, dtDAL::ActorProperty&)),
+                     this, SLOT(PropertyChangedPassThrough(dtDAL::PropertyContainer&, dtDAL::ActorProperty&)));
+                  mChildren.push_back(element);
+               }
             }
 
             model->insertRows(childCount, addCount, model->IndexOf(this));

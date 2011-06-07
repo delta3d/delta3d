@@ -40,8 +40,6 @@ namespace dtDAL
 
 namespace dtQt
 {
-   class DynamicArrayElementControl;
-
    /**
     * @class DynamicArrayControl
     * @brief This is the dynamic control for the float data type - used in the property editor
@@ -115,6 +113,11 @@ namespace dtQt
        * @param[in]  initializing  True if we are initializing the list.
        */
       void resizeChildren(bool forceRefresh = false, bool isChild = false, bool initializing = false);
+
+      /**
+       * Retrieves the array property.
+       */
+      dtDAL::ArrayActorPropertyBase* GetProperty() const {return mProperty;}
 
    public slots:
       /**

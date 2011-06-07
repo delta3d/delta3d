@@ -79,6 +79,11 @@ namespace dtQt
    /////////////////////////////////////////////////////////////////////////////////
    const QString DynamicLabelControl::getDisplayName()
    {
+      QString name = DynamicAbstractControl::getDisplayName();
+      if (!name.isEmpty())
+      {
+         return name;
+      }
       return mName;
       //return QString(tr(myProperty->getLabel().c_str()));
    }

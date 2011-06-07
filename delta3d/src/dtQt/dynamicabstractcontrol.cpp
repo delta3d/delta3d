@@ -32,6 +32,7 @@
 #include <dtDAL/actorproxy.h>
 #include <dtDAL/datatype.h>
 #include <dtDAL/vectoractorproperties.h>
+#include <dtDAL/arrayactorproperty.h>
 
 #include <dtQt/dynamicabstractparentcontrol.h>
 #include <dtQt/dynamicpropertycontainercontrol.h>
@@ -68,7 +69,7 @@ namespace dtQt
 
    ///////////////////////////////////////////////////////////////////////////////
    DynamicControlFactory::DynamicControlFactory()
-   : mControlFactory(new dtUtil::ObjectFactory<dtDAL::DataType*, DynamicAbstractControl>)
+      : mControlFactory(new dtUtil::ObjectFactory<dtDAL::DataType*, DynamicAbstractControl>)
    {
       // register all the data types with the dynamic control factory
       RegisterControlForDataType<DynamicStringControl>(dtDAL::DataType::STRING);
@@ -122,10 +123,15 @@ namespace dtQt
    ///////////////////////////////////////////////////////////////////////////////
    DynamicAbstractControl::DynamicAbstractControl()
       : mInitialized(false)
+      , mArrayIndex(-1)
       , mParent(NULL)
       , mModel(NULL)
       , mPropertyTree(NULL)
       , mDefaultResetButton(NULL)
+      , mShiftUpButton(NULL)
+      , mShiftDownButton(NULL)
+      , mCopyButton(NULL)
+      , mDeleteButton(NULL)
       , mGridLayout(NULL)
       , mWrapper(NULL)
       //, mNewCommitEmitter(NULL)
@@ -154,7 +160,7 @@ namespace dtQt
    {
       if (widget == mWrapper)
       {
-         UpdateResetButtonStatus();
+         UpdateButtonStates();
       }
    }
 
@@ -173,7 +179,6 @@ namespace dtQt
    void DynamicAbstractControl::InitializeData(DynamicAbstractControl* newParent,
       PropertyEditorModel* newModel, dtDAL::PropertyContainer* newPC, dtDAL::ActorProperty* newProperty)
    {
-
       mParent = newParent;
       mPropContainer = newPC;
       mBaseProperty = newProperty;
@@ -216,6 +221,39 @@ namespace dtQt
 
          mGridLayout->addWidget(mDefaultResetButton, 0, 10, 1, 1);
          mGridLayout->setColumnStretch(10, 0);
+      }
+
+      if (mArrayIndex > -1)
+      {
+         mShiftUpButton   = new SubQToolButton(wrapper, this);
+         mShiftDownButton = new SubQToolButton(wrapper, this);
+         mCopyButton      = new SubQToolButton(wrapper, this);
+         mDeleteButton    = new SubQToolButton(wrapper, this);
+
+         mShiftUpButton->setText("Up");
+         mShiftDownButton->setText("Down");
+         mCopyButton->setText("Copy");
+         mDeleteButton->setText("Delete");
+
+         UpdateButtonStates();
+
+         connect(mShiftUpButton,   SIGNAL(clicked()), this, SLOT(onShiftUpClicked()));
+         connect(mShiftDownButton, SIGNAL(clicked()), this, SLOT(onShiftDownClicked()));
+         connect(mCopyButton,      SIGNAL(clicked()), this, SLOT(onCopyClicked()));
+         connect(mDeleteButton,    SIGNAL(clicked()), this, SLOT(onDeleteClicked()));
+
+         mGridLayout->addWidget(mShiftUpButton,   0, 11, 1, 1);
+         mGridLayout->addWidget(mShiftDownButton, 0, 12, 1, 1);
+         mGridLayout->addWidget(mCopyButton,      0, 13, 1, 1);
+         mGridLayout->addWidget(mDeleteButton,    0, 14, 1, 1);
+         mGridLayout->setColumnMinimumWidth(11, mShiftUpButton->sizeHint().width() / 2);
+         mGridLayout->setColumnMinimumWidth(12, mShiftDownButton->sizeHint().width() / 2);
+         mGridLayout->setColumnMinimumWidth(13, mCopyButton->sizeHint().width() / 2);
+         mGridLayout->setColumnMinimumWidth(14, mDeleteButton->sizeHint().width() / 2);
+         mGridLayout->setColumnStretch(11, 0);
+         mGridLayout->setColumnStretch(12, 0);
+         mGridLayout->setColumnStretch(13, 0);
+         mGridLayout->setColumnStretch(14, 0);
       }
 
       mWrapper = wrapper;
@@ -274,6 +312,11 @@ namespace dtQt
    /////////////////////////////////////////////////////////////////////////////////
    const QString DynamicAbstractControl::getDisplayName()
    {
+      if (mArrayIndex > -1)
+      {
+         return QString("[") + QString::number(mArrayIndex) + QString("]");
+      }
+
       return QString("");
    }
 
@@ -328,6 +371,10 @@ namespace dtQt
       {
          mWrapper = NULL;
          mDefaultResetButton = NULL;
+         mShiftUpButton      = NULL;
+         mShiftDownButton    = NULL;
+         mCopyButton         = NULL;
+         mDeleteButton       = NULL;
       }
    }
 
@@ -348,6 +395,214 @@ namespace dtQt
       emit PropertyAboutToChange(*mPropContainer, *mBaseProperty,
          oldValue, mBaseProperty->ToString());
       emit PropertyChanged(*mPropContainer, *mBaseProperty);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void DynamicAbstractControl::onShiftUpClicked()
+   {
+      if (mArrayIndex <= 0)
+      {
+         return;
+      }
+
+      DynamicArrayControl* parent = static_cast<DynamicArrayControl*>(getParent());
+      if (!parent)
+      {
+         return;
+      }
+
+      dtDAL::ArrayActorPropertyBase* arrayProp = parent->GetProperty();
+      if (arrayProp)
+      {
+         if (!arrayProp->CanReorder())
+         {
+            return;
+         }
+
+         NotifyParentOfPreUpdate();
+
+         std::string oldValue = arrayProp->ToString();
+         arrayProp->Swap(mArrayIndex, mArrayIndex - 1);
+
+         emit PropertyAboutToChange(*mPropContainer, *arrayProp,
+            oldValue, arrayProp->ToString());
+         emit PropertyChanged(*mPropContainer, *arrayProp);
+
+         mPropertyTree->closeEditor(mWrapper, QAbstractItemDelegate::SubmitModelCache);
+         parent->resizeChildren(true, true);
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void DynamicAbstractControl::onShiftDownClicked()
+   {
+      // Get our parent.
+      DynamicArrayControl* parent = static_cast<DynamicArrayControl*>(getParent());
+      if (!parent)
+      {
+         return;
+      }
+
+      dtDAL::ArrayActorPropertyBase* arrayProp = parent->GetProperty();
+      if (arrayProp)
+      {
+         if (!arrayProp->CanReorder() || mArrayIndex + 1 >= arrayProp->GetArraySize())
+         {
+            return;
+         }
+
+         NotifyParentOfPreUpdate();
+
+         std::string oldValue = arrayProp->ToString();
+         arrayProp->Swap(mArrayIndex, mArrayIndex + 1);
+
+         emit PropertyAboutToChange(*mPropContainer, *arrayProp,
+            oldValue, arrayProp->ToString());
+         emit PropertyChanged(*mPropContainer, *arrayProp);
+
+         mPropertyTree->closeEditor(mWrapper, QAbstractItemDelegate::SubmitModelCache);
+         parent->resizeChildren(true, true);
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void DynamicAbstractControl::onCopyClicked()
+   {
+      // Get our parent.
+      DynamicArrayControl* parent = static_cast<DynamicArrayControl*>(getParent());
+      if (!parent)
+      {
+         return;
+      }
+
+      dtDAL::ArrayActorPropertyBase* arrayProp = parent->GetProperty();
+      if (arrayProp)
+      {
+         int curSize = arrayProp->GetArraySize();
+         int maxSize = arrayProp->GetMaxArraySize();
+         if (maxSize > -1 && curSize >= maxSize)
+         {
+            return;
+         }
+
+         NotifyParentOfPreUpdate();
+
+         std::string oldValue = arrayProp->ToString();
+         arrayProp->Insert(mArrayIndex);
+         arrayProp->Copy(mArrayIndex + 1, mArrayIndex);
+
+         emit PropertyAboutToChange(*mPropContainer, *arrayProp,
+            oldValue, arrayProp->ToString());
+         emit PropertyChanged(*mPropContainer, *arrayProp);
+
+         mPropertyTree->closeEditor(mWrapper, QAbstractItemDelegate::SubmitModelCache);
+         parent->resizeChildren(false, true);
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void DynamicAbstractControl::onDeleteClicked()
+   {
+      // Get our parent.
+      DynamicArrayControl* parent = static_cast<DynamicArrayControl*>(getParent());
+      if (!parent)
+      {
+         return;
+      }
+
+      dtDAL::ArrayActorPropertyBase* arrayProp = parent->GetProperty();
+      if (arrayProp)
+      {
+         int curSize = arrayProp->GetArraySize();
+         int minSize = arrayProp->GetMinArraySize();
+         if (minSize > -1 && curSize <= minSize)
+         {
+            return;
+         }
+
+         NotifyParentOfPreUpdate();
+
+         std::string oldValue = arrayProp->ToString();
+         arrayProp->Remove(mArrayIndex);
+
+         emit PropertyAboutToChange(*mPropContainer, *arrayProp,
+            oldValue, arrayProp->ToString());
+         emit PropertyChanged(*mPropContainer, *arrayProp);
+
+         mPropertyTree->closeEditor(mWrapper, QAbstractItemDelegate::SubmitModelCache);
+         parent->resizeChildren(false, true);
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void DynamicAbstractControl::UpdateButtonStates()
+   {
+      if (mDefaultResetButton)
+      {
+         if (IsPropertyDefault())
+         {
+            mDefaultResetButton->setEnabled(false);
+         }
+         else
+         {
+            mDefaultResetButton->setEnabled(true);
+         }
+      }
+
+      // Don't do anything if we have no buttons.
+      if (!mShiftUpButton || !mShiftDownButton ||
+         !mCopyButton || !mDeleteButton)
+      {
+         return;
+      }
+
+      bool canShiftUp   = true;
+      bool canShiftDown = true;
+      bool canCopy      = true;
+      bool canDelete    = true;
+
+      // Get our parent.
+      DynamicArrayControl* parent = static_cast<DynamicArrayControl*>(getParent());
+      if (!parent)
+      {
+         return;
+      }
+
+      dtDAL::ArrayActorPropertyBase* arrayProp = parent->GetProperty();
+      if (arrayProp)
+      {
+         // Check if this element can be shifted up.
+         if (!arrayProp->CanReorder() || mArrayIndex <= 0)
+         {
+            canShiftUp = false;
+         }
+
+         // Check if this element can be shifted down.
+         if (!arrayProp->CanReorder() || mArrayIndex + 1 >= arrayProp->GetArraySize())
+         {
+            canShiftDown = false;
+         }
+
+         // Check if we are at our max array size.
+         int curSize = arrayProp->GetArraySize();
+         int maxSize = arrayProp->GetMaxArraySize();
+         if (maxSize > -1 && curSize >= maxSize)
+         {
+            canCopy = false;
+         }
+
+         // Check if we are at our min array size.
+         int minSize = arrayProp->GetMinArraySize();
+         if (minSize > -1 && curSize <= minSize)
+         {
+            canDelete = false;
+         }
+      }
+
+      mShiftUpButton->setDisabled(!canShiftUp);
+      mShiftDownButton->setDisabled(!canShiftDown);
+      mCopyButton->setDisabled(!canCopy);
+      mDeleteButton->setDisabled(!canDelete);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -374,19 +629,30 @@ namespace dtQt
       QObject::installEventFilter(filterObj);
    }
 
-   ////////////////////////////////////////////////////////////////////////////////
-   void DynamicAbstractControl::UpdateResetButtonStatus()
+   //////////////////////////////////////////////////////////////////////////
+   void DynamicAbstractControl::NotifyParentOfPreUpdate()
    {
-      if (mDefaultResetButton)
+      if (mArrayIndex > -1)
       {
-         if (IsPropertyDefault())
+         // Get our parent.
+         DynamicArrayControl* parent = static_cast<DynamicArrayControl*>(getParent());
+         if (!parent)
          {
-            mDefaultResetButton->setEnabled(false);
+            return;
          }
-         else
+
+         dtDAL::ArrayActorPropertyBase* arrayProp = parent->GetProperty();
+         if (arrayProp)
          {
-            mDefaultResetButton->setEnabled(true);
+            arrayProp->SetIndex(mArrayIndex);
          }
+      }
+
+      // Notify the parent that a change is about to occur.
+      DynamicAbstractControl* parent = getParent();
+      if (parent)
+      {
+         parent->OnChildPreUpdate(this);
       }
    }
 
@@ -412,7 +678,6 @@ namespace dtQt
    ////////////////////////////////////////////////////////////////////////////////
    void DynamicAbstractControl::actorPropertyChanged(dtDAL::PropertyContainer& propCon, dtDAL::ActorProperty& property)
    {
-      UpdateResetButtonStatus();
       NotifyParentOfPreUpdate();
       updateEditorFromModel(mWrapper);
    }

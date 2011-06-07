@@ -93,11 +93,11 @@ namespace dtQt
 
    public slots:
       virtual void reset();
+      virtual void closeEditor(QWidget* editor, QAbstractItemDelegate::EndEditHint hint);
 
    protected slots:
       virtual void currentChanged(const QModelIndex& current, const QModelIndex& previous);
       virtual void selectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
-      virtual void closeEditor(QWidget* editor, QAbstractItemDelegate::EndEditHint hint);
 
    private:
       PropertyEditorModel*    propertyModel;

@@ -99,6 +99,11 @@ namespace dtQt
    /////////////////////////////////////////////////////////////////////////////////
    const QString DynamicColorRGBAControl::getDisplayName()
    {
+      QString name = DynamicAbstractParentControl::getDisplayName();
+      if (!name.isEmpty())
+      {
+         return name;
+      }
       return QString(tr(mProperty->GetLabel().c_str()));
    }
 

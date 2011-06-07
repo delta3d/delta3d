@@ -18,7 +18,6 @@ dynamicabstractcontrol.cpp
 dynamicabstractparentcontrol.cpp
 dynamicactorcontrol.cpp
 dynamicarraycontrol.cpp
-dynamicarrayelementcontrol.cpp
 dynamicbitmaskcontrol.cpp
 dynamicboolcontrol.cpp
 dynamicbyteelementcontrol.cpp

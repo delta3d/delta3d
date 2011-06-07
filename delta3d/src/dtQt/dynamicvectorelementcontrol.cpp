@@ -294,6 +294,11 @@ namespace dtQt
    /////////////////////////////////////////////////////////////////////////////////
    const QString DynamicVectorElementControl::getDisplayName()
    {
+      QString name = DynamicAbstractControl::getDisplayName();
+      if (!name.isEmpty())
+      {
+         return name;
+      }
       return QString(tr(mLabel.c_str()));
    }
 
