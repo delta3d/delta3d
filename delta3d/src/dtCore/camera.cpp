@@ -215,11 +215,6 @@ namespace dtCore
    /////////////////////////////////////////////////////////////////////////////
    void Camera::UpdateViewMatrixFromTransform()
    {
-      //Get our Camera's position, up vector, and look-at vector and pass them
-      //to the Producer Camera
-      osg::Matrix mat = GetMatrixNode()->getMatrix();
-      Transform absXform;
-
       // Get the absolute matrix but make sure to use the CameraNode in
       // computing it.
       osg::Matrix absMat;
