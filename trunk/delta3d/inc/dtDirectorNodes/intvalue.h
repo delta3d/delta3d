@@ -70,6 +70,15 @@ namespace dtDirector
        */
       virtual void BuildPropertyMap();
 
+      /**
+       * Retrieves whether the value can be a specified type.
+       *
+       * @param[in]  type  The type to check.
+       *
+       * @return  True if this value is the proper type.
+       */
+      virtual bool CanBeType(dtDAL::DataType& type);
+
    private:
 
       /**
