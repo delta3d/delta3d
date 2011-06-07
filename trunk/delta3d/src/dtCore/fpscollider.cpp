@@ -373,8 +373,8 @@ namespace dtCore
          dGeomTriMeshSetArrayCallback(pID, dTriArrayCallback);
       }
 
-      dContactGeom contactGeoms[8];
-      int contactPoints = dCollide(pFeet, pObject, 8, contactGeoms, sizeof(dContactGeom));
+      dContactGeom contactGeoms[3];
+      int contactPoints = dCollide(pFeet, pObject, 3, contactGeoms, sizeof(dContactGeom));
 
       //find the contact point with the highest z value
       if (contactPoints)
@@ -426,7 +426,7 @@ namespace dtCore
       {
          cmm->HandleCollideFeet(o1, o2);
       }
-      else if (cmm->GetFeetGeom())
+      else if (o2 == cmm->GetFeetGeom())
       {
          cmm->HandleCollideFeet(o2, o1);
       }
