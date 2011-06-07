@@ -92,7 +92,7 @@ namespace dtQt
        * Overwritten to also check if all child Properties are Default.
        * @return True if all child ActorProperties are default, false otherwise
        */
-      virtual bool IsPropertyDefault() const;
+      virtual bool IsPropertyDefault();
 
       /**
        * When a property changes, we have to update our editor.  It is likely that

@@ -275,7 +275,7 @@ namespace dtQt
        *
        * @return true if the ActorProperty is set to it's default value, false otherwise
        */
-      virtual bool IsPropertyDefault() const;
+      virtual bool IsPropertyDefault();
 
       /**
        * Sets the array index for this property control if it
