@@ -235,9 +235,9 @@ namespace dtCore
 
          if (!nodePathList.empty())
          {
-            osg::NodePath nodePath = nodePathList[0];
+            const osg::NodePath& nodePath = nodePathList[0];
 
-            // Find the transform in World coorindates, but leave
+            // Find the transform in World coordinates, but leave
             // on the osg::CameraNode.
             absMat.set(osg::computeLocalToWorld(nodePath));
          }

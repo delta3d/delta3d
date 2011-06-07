@@ -204,11 +204,11 @@ bool Transformable::GetAbsoluteMatrix(const osg::Node* node, osg::Matrix& wcMatr
    {
       dtCore::CollectParentPaths cpp(NULL);
       const_cast<osg::Node*>(node)->accept(cpp);
-      osg::NodePathList nodePathList = cpp._nodePaths;
+      const osg::NodePathList& nodePathList = cpp._nodePaths;
 
       if(!nodePathList.empty())
       {
-         osg::NodePath& nodePath = nodePathList[0];
+         const osg::NodePath& nodePath = nodePathList[0];
 
          #if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR == 1 && OSG_VERSION_MINOR == 0
          // Luckily, this behavior is redundant with OSG 1.1
