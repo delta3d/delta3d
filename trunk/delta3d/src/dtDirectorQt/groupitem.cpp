@@ -22,8 +22,6 @@
 #include <dtDirectorQt/groupitem.h>
 #include <dtDirectorQt/directoreditor.h>
 #include <dtDirectorQt/editorscene.h>
-#include <dtDirectorQt/resizeitem.h>
-#include <dtDirectorQt/lockitem.h>
 
 #include <dtDirectorQt/undomanager.h>
 #include <dtDirectorQt/undopropertyevent.h>
@@ -37,16 +35,36 @@
 
 #include <osg/Vec2>
 
+#define AUTO_BORDER_SIZE 40
 
 namespace dtDirector
 {
    //////////////////////////////////////////////////////////////////////////
-   GroupItem::GroupItem(Node* node, QGraphicsItem* parent, EditorScene* scene, bool canResize /*= true*/)
+   GroupItem::GroupItem(Node* node, QGraphicsItem* parent, EditorScene* scene)
        : NodeItem(node, parent, scene)
-       , mLocker(NULL)
-       , mResizer(NULL)
-       , mCanResize(canResize)
+       , mInnerRect(NULL)
    {
+      for (int index = 0; index < ResizeItem::RESIZE_COUNT; ++index)
+      {
+         mResizer[index] = new ResizeItem(this, parent, mScene, (ResizeItem::ResizeType)index);
+         mResizer[index]->Init();
+      }
+
+      setFlag(QGraphicsItem::ItemIsMovable, true);
+      setFlag(QGraphicsItem::ItemIsSelectable, true);
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   GroupItem::~GroupItem()
+   {
+      for (int index = 0; index < ResizeItem::RESIZE_COUNT; ++index)
+      {
+         if (mResizer[index])
+         {
+            delete mResizer[index];
+            mResizer[index] = NULL;
+         }
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -61,46 +79,57 @@ namespace dtDirector
       {
          mNodeWidth = groupNode->GetSize().x();
          mNodeHeight = groupNode->GetSize().y();
-         SetTitle(GetNodeTitle());
+         //SetTitle(GetNodeTitle());
 
          DrawPolygonTop();
          DrawPolygonRightFlat();
          DrawPolygonBottomFlat();
          DrawPolygonLeftFlat();
-         DrawTitle();
+         mPolygon << QPointF(15, 15);
+         mPolygon << QPointF(15, mNodeHeight - 15);
+         mPolygon << QPointF(mNodeWidth - 15, mNodeHeight - 15);
+         mPolygon << QPointF(mNodeWidth - 15, 15);
+         mPolygon << QPointF(15, 15);
+         mPolygon << QPointF(0, 0);
+         //DrawTitle();
 
          setPolygon(mPolygon);
 
-         // Draw the locker.
-         if (!mLocker)
-         {
-            mLocker = new LockItem(this, this, mScene);
-            mLocker->Init();
-         }
-
-         mLocker->setPos(mNodeWidth, 0);
-
-         if (mCanResize)
-         {
-            // Draw the resizer.
-            if (!mResizer)
-            {
-               mResizer = new ResizeItem(this, this, mScene);
-               mResizer->Init();
-            }
-
-            mResizer->setPos(mNodeWidth, mNodeHeight);
-         }
+         DrawInnerRect();
+         DrawResizers();
 
          SetComment(mNode->GetComment());
 
          SetDefaultPen();
          setBrush(GetNodeColor());
-
-         DrawGlow();
       }
 
       mLoading = false;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void GroupItem::DrawInnerRect()
+   {
+      if (!mInnerRect)
+      {
+         mInnerRect = new GroupInnerRectItem(this, mScene);
+      }
+
+      mInnerRect->setRect(15, 15, mNodeWidth - 30, mNodeHeight - 30);
+      mInnerRect->setPen(QColor(0,0,0,0));
+      mInnerRect->setBrush(GetNodeColor());
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void GroupItem::DrawResizers()
+   {
+      for (int index = 0; index < ResizeItem::RESIZE_COUNT; ++index)
+      {
+         if (mResizer[index])
+         {
+            mResizer[index]->setPos(mResizer[index]->GetFramePosition());
+         }
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -110,16 +139,13 @@ namespace dtDirector
 
       UpdateGroupedItems();
 
-      if (mLocker->IsLocked())
+      mScene->BeginBatchSelection();
+      for (int i = 0; i < mGroupedItems.size(); i++)
       {
-         mScene->BeginBatchSelection();
-         for (int i = 0; i < mGroupedItems.size(); i++)
-         {
-            mGroupedItems[i]->setSelected(true);
-            mGroupedItems[i]->BeginMoveEvent();
-         }
-         mScene->EndBatchSelection();
+         mGroupedItems[i]->setSelected(true);
+         mGroupedItems[i]->BeginMoveEvent();
       }
+      mScene->EndBatchSelection();
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -134,7 +160,7 @@ namespace dtDirector
       }
       mScene->EndBatchSelection();
 
-      //mScene->Refresh();
+      mScene->Refresh();
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -156,39 +182,75 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void GroupItem::childItemChange(QGraphicsItem* changedItem, GraphicsItemChange change, const QVariant &value)
    {
-      if (mLoading) return;
-
-      // Moving the resize widget will resize the group frame.
-      if (changedItem && changedItem == mResizer)
+      if (change == QGraphicsItem::ItemPositionChange)
       {
-         if (change == QGraphicsItem::ItemPositionChange)
+         // Moving the resize widget will resize the group frame.
+         ResizeItem* resizer = dynamic_cast<ResizeItem*>(changedItem);
+         dtDirector::GroupNode* groupNode = dynamic_cast<dtDirector::GroupNode*>(mNode.get());
+         if (resizer && groupNode)
          {
-            QPointF newPos = value.toPointF();
+            ResizeItem::ResizeType type = resizer->GetType();
 
-            //bool clamped = false;
-            if (newPos.x() < MIN_NODE_WIDTH)
+            QPointF newMin   = QPointF(GetPosition().x(), GetPosition().y());
+            QPointF newMax   = newMin + QPointF(groupNode->GetSize().x(), groupNode->GetSize().y());
+            QPointF sizerPos = value.toPointF();
+
+            // Top
+            if (type == ResizeItem::RESIZE_TOP_LEFT ||
+               type == ResizeItem::RESIZE_TOP ||
+               type == ResizeItem::RESIZE_TOP_RIGHT)
             {
-               newPos.setX(MIN_NODE_WIDTH);
-               //clamped = true;
-            }
-            if (newPos.y() < MIN_NODE_HEIGHT)
-            {
-               newPos.setY(MIN_NODE_HEIGHT);
-               //clamped = true;
+               newMin.setY(sizerPos.y());
+
+               if (newMax.y() - newMin.y() < MIN_NODE_HEIGHT)
+               {
+                  newMin.setY(newMax.y() - MIN_NODE_HEIGHT);
+               }
             }
 
-            //if (clamped)
-            //{
-            //   mResizer->setPos(newPos);
-            //   return;
-            //}
-
-            dtCore::RefPtr<dtDirector::GroupNode> groupNode = dynamic_cast<dtDirector::GroupNode*>(mNode.get());
-            if (groupNode.valid())
+            // Bottom
+            if (type == ResizeItem::RESIZE_BOT_LEFT ||
+               type == ResizeItem::RESIZE_BOT ||
+               type == ResizeItem::RESIZE_BOT_RIGHT)
             {
-               groupNode->SetSize(osg::Vec2(newPos.x(), newPos.y()));
-               Draw();
+               newMax.setY(sizerPos.y());
+
+               if (newMax.y() - newMin.y() < MIN_NODE_HEIGHT)
+               {
+                  newMax.setY(newMin.y() + MIN_NODE_HEIGHT);
+               }
             }
+
+            // Left
+            if (type == ResizeItem::RESIZE_TOP_LEFT ||
+               type == ResizeItem::RESIZE_LEFT ||
+               type == ResizeItem::RESIZE_BOT_LEFT)
+            {
+               newMin.setX(sizerPos.x());
+
+               if (newMax.x() - newMin.x() < MIN_NODE_WIDTH)
+               {
+                  newMin.setX(newMax.x() - MIN_NODE_WIDTH);
+               }
+            }
+
+            // Right
+            if (type == ResizeItem::RESIZE_TOP_RIGHT ||
+                type == ResizeItem::RESIZE_RIGHT ||
+                type == ResizeItem::RESIZE_BOT_RIGHT)
+            {
+               newMax.setX(sizerPos.x());
+               
+               if (newMax.x() - newMin.x() < MIN_NODE_WIDTH)
+               {
+                  newMax.setX(newMin.x() + MIN_NODE_WIDTH);
+               }
+            }
+
+            setPos(newMin);
+            groupNode->SetSize(osg::Vec2(newMax.x() - newMin.x(), newMax.y() - newMin.y()));
+
+            Draw();
          }
       }
    }
@@ -276,28 +338,85 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
+   void GroupItem::OnPreSizing()
+   {
+      dtDAL::ActorProperty* prop = mNode->GetProperty("Position");
+      if (prop)
+      {
+         mOldPos = prop->ToString();
+      }
+
+      prop = mNode->GetProperty("Size");
+      if (prop)
+      {
+         mOldSize = prop->ToString();
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void GroupItem::OnPostSizing()
+   {
+      mScene->GetEditor()->GetUndoManager()->BeginMultipleEvents();
+      dtDAL::ActorProperty* prop = mNode->GetProperty("Position");
+      if (prop)
+      {
+         std::string value = prop->ToString();
+
+         // Ignore the property if the node did not move.
+         if (value != mOldPos)
+         {
+            // Notify the undo manager of the property changes.
+            dtCore::RefPtr<UndoPropertyEvent> event = new UndoPropertyEvent(mScene->GetEditor(), GetID(), prop->GetName(), mOldPos, value);
+            mScene->GetEditor()->GetUndoManager()->AddEvent(event.get());
+         }
+      }
+
+      prop = mNode->GetProperty("Size");
+      if (prop)
+      {
+         std::string value = prop->ToString();
+
+         // Ignore the property if the node did not move.
+         if (value != mOldSize)
+         {
+            // Notify the undo manager of the property changes.
+            dtCore::RefPtr<UndoPropertyEvent> event = new UndoPropertyEvent(mScene->GetEditor(), GetID(), prop->GetName(), mOldSize, value);
+            mScene->GetEditor()->GetUndoManager()->AddEvent(event.get());
+         }
+      }
+      mScene->GetEditor()->GetUndoManager()->EndMultipleEvents();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   bool GroupItem::IsPointInInnerRect(const QPointF& point) const
+   {
+      if (mInnerRect)
+      {
+         QRectF rect = mInnerRect->rect();
+         rect.setRect(mInnerRect->scenePos().x(), mInnerRect->scenePos().y(), rect.width(), rect.height());
+         return rect.contains(point);
+      }
+      return false;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    void GroupItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
    {
-      if (isSelected())
-      {
-         QMenu menu;
+      setSelected(true);
 
-         QAction* sizeToFitAction = menu.addAction("Size to Fit Contents");
-         connect(sizeToFitAction, SIGNAL(triggered()), this, SLOT(SizeToFit()));
+      QMenu menu;
 
-         menu.addSeparator();
-         menu.addAction(mScene->GetMacroSelectionAction());
-         menu.addSeparator();
-         menu.addAction(mScene->GetEditor()->GetCutAction());
-         menu.addAction(mScene->GetEditor()->GetCopyAction());
-         menu.addSeparator();
-         menu.addAction(mScene->GetEditor()->GetDeleteAction());
-         menu.exec(event->screenPos());
-      }
-      else
-      {
-         event->ignore();
-      }
+      QAction* sizeToFitAction = menu.addAction("Size to Fit Contents");
+      connect(sizeToFitAction, SIGNAL(triggered()), this, SLOT(SizeToFit()));
+
+      menu.addSeparator();
+      menu.addAction(mScene->GetMacroSelectionAction());
+      menu.addSeparator();
+      menu.addAction(mScene->GetEditor()->GetCutAction());
+      menu.addAction(mScene->GetEditor()->GetCopyAction());
+      menu.addSeparator();
+      menu.addAction(mScene->GetEditor()->GetDeleteAction());
+      menu.exec(event->screenPos());
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -314,6 +433,8 @@ namespace dtDirector
          if (!mLoading)
          {
             ConnectLinks(true);
+
+            Draw();
          }
       }
       else if (change == QGraphicsItem::ItemSelectedHasChanged)
@@ -331,6 +452,14 @@ namespace dtDirector
       }
 
       return value;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   QColor GroupItem::GetNodeColor() const
+   {
+      QColor color = NodeItem::GetNodeColor();
+      color.setAlphaF(0.15f);
+      return color;
    }
 }
 

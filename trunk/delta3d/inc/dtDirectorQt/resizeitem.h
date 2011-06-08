@@ -31,6 +31,7 @@
 namespace dtDirector
 {
    class EditorScene;
+   class GroupItem;
 
    /**
     * Handles an input link in the UI.
@@ -40,14 +41,28 @@ namespace dtDirector
    {
    public:
 
+      enum ResizeType
+      {
+         RESIZE_TOP_LEFT,
+         RESIZE_TOP_RIGHT,
+         RESIZE_BOT_LEFT,
+         RESIZE_BOT_RIGHT,
+         RESIZE_TOP,
+         RESIZE_BOT,
+         RESIZE_LEFT,
+         RESIZE_RIGHT,
+         RESIZE_COUNT,
+      };
+
       /**
        * Constructor.
        *
        * @param[in]  nodeItem   The node item.
        * @param[in]  parent     The parent item.
        * @param[in]  scene      The scene.
+       * @param[in]  type       The resizer type.
        */
-      ResizeItem(NodeItem* nodeItem, QGraphicsItem* parent, EditorScene* scene);
+      ResizeItem(GroupItem* nodeItem, QGraphicsItem* parent, EditorScene* scene, ResizeType type);
 
       /**
        * Initializes the item.
@@ -55,11 +70,21 @@ namespace dtDirector
       void Init();
 
       /**
+       * Retrieves the desired position for this sizer.
+       */
+      QPointF GetFramePosition();
+
+      /**
        * Highlights the link.
        *
        * @param[in]  enable  True to highlight.
        */
       void SetHighlight(bool enable);
+
+      /**
+       * Retrieves the resize items type.
+       */
+      ResizeType GetType() const {return mType;}
 
    protected:
 
@@ -98,9 +123,9 @@ namespace dtDirector
 
 
       EditorScene*   mScene;
-      NodeItem*      mNodeItem;
+      GroupItem*     mNodeItem;
 
-      std::string    mOldSize;
+      ResizeType     mType;
    };
 }
 
