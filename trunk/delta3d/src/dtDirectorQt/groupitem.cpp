@@ -36,13 +36,15 @@
 #include <osg/Vec2>
 
 #define AUTO_BORDER_SIZE 40
+#define BORDER_THICKNESS 15
 
 namespace dtDirector
 {
    //////////////////////////////////////////////////////////////////////////
-   GroupItem::GroupItem(Node* node, QGraphicsItem* parent, EditorScene* scene)
+   GroupItem::GroupItem(Node* node, QGraphicsItem* parent, EditorScene* scene, bool inPalette)
        : NodeItem(node, parent, scene)
        , mInnerRect(NULL)
+       , mInPalette(inPalette)
    {
       for (int index = 0; index < ResizeItem::RESIZE_COUNT; ++index)
       {
@@ -79,23 +81,34 @@ namespace dtDirector
       {
          mNodeWidth = groupNode->GetSize().x();
          mNodeHeight = groupNode->GetSize().y();
-         //SetTitle(GetNodeTitle());
 
          DrawPolygonTop();
          DrawPolygonRightFlat();
          DrawPolygonBottomFlat();
          DrawPolygonLeftFlat();
-         mPolygon << QPointF(15, 15);
-         mPolygon << QPointF(15, mNodeHeight - 15);
-         mPolygon << QPointF(mNodeWidth - 15, mNodeHeight - 15);
-         mPolygon << QPointF(mNodeWidth - 15, 15);
-         mPolygon << QPointF(15, 15);
-         mPolygon << QPointF(0, 0);
-         //DrawTitle();
+
+         if (mInPalette)
+         {
+            mPolygon << QPointF(BORDER_THICKNESS, BORDER_THICKNESS);
+            mPolygon << QPointF(mNodeWidth - BORDER_THICKNESS, BORDER_THICKNESS);
+            mPolygon << QPointF(mNodeWidth - BORDER_THICKNESS, mNodeHeight - BORDER_THICKNESS);
+            mPolygon << QPointF(BORDER_THICKNESS, mNodeHeight - BORDER_THICKNESS);
+            mPolygon << QPointF(BORDER_THICKNESS, BORDER_THICKNESS);
+            mPolygon << QPointF(0, 0);
+         }
+         else
+         {
+            mPolygon << QPointF(BORDER_THICKNESS, BORDER_THICKNESS);
+            mPolygon << QPointF(BORDER_THICKNESS, mNodeHeight - BORDER_THICKNESS);
+            mPolygon << QPointF(mNodeWidth - BORDER_THICKNESS, mNodeHeight - BORDER_THICKNESS);
+            mPolygon << QPointF(mNodeWidth - BORDER_THICKNESS, BORDER_THICKNESS);
+            mPolygon << QPointF(BORDER_THICKNESS, BORDER_THICKNESS);
+            mPolygon << QPointF(0, 0);
+            DrawInnerRect();
+         }
 
          setPolygon(mPolygon);
 
-         DrawInnerRect();
          DrawResizers();
 
          SetComment(mNode->GetComment());
@@ -115,9 +128,12 @@ namespace dtDirector
          mInnerRect = new GroupInnerRectItem(this, mScene);
       }
 
-      mInnerRect->setRect(15, 15, mNodeWidth - 30, mNodeHeight - 30);
+      mInnerRect->setRect(BORDER_THICKNESS, BORDER_THICKNESS, mNodeWidth - BORDER_THICKNESS * 2, mNodeHeight - BORDER_THICKNESS * 2);
       mInnerRect->setPen(QColor(0,0,0,0));
-      mInnerRect->setBrush(GetNodeColor());
+
+      QColor innerColor = GetNodeColor();
+      innerColor.setAlphaF(0.15f);
+      mInnerRect->setBrush(innerColor);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -458,7 +474,7 @@ namespace dtDirector
    QColor GroupItem::GetNodeColor() const
    {
       QColor color = NodeItem::GetNodeColor();
-      color.setAlphaF(0.15f);
+      color.setAlphaF(0.35f);
       return color;
    }
 }
