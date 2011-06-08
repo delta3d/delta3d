@@ -844,14 +844,34 @@ namespace dtDirector
          QList<QGraphicsItem*> itemList = items(event->scenePos());
          bool canDrag = true;
          int count = itemList.count();
-         for (int index = 0; index < count; index++)
+
+         if (count > 0)
          {
-            // Ignore all path items because they are connection links.
-            QGraphicsPathItem* pathItem = dynamic_cast<QGraphicsPathItem*>(itemList[index]);
-            if (!pathItem)
+            for (int index = 0; index < count; ++index)
             {
-               canDrag = false;
-               break;
+               QGraphicsItem* item = itemList[index];
+               GroupInnerRectItem* innerItem = dynamic_cast<GroupInnerRectItem*>(item);
+
+               if (innerItem)
+               {
+                  canDrag = true;
+                  break;
+               }
+
+               LinkItem* linkItem = dynamic_cast<LinkItem*>(item);
+               ResizeItem* sizeItem = dynamic_cast<ResizeItem*>(item);
+               NodeItem* nodeItem = dynamic_cast<NodeItem*>(item);
+               if (linkItem || sizeItem || nodeItem)
+               {
+                  canDrag = false;
+                  break;
+               }
+
+               //QGraphicsPathItem* pathItem = dynamic_cast<QGraphicsPathItem*>(item);
+               //if (!pathItem)
+               //{
+               //   canDrag = false;
+               //}
             }
          }
 

@@ -23,13 +23,31 @@
 #define DIRECTORQT_GROUP_ITEM
 
 #include <dtDirectorQt/nodeitem.h>
-
-#define AUTO_BORDER_SIZE 20
+#include <dtDirectorQt/resizeitem.h>
 
 namespace dtDirector
 {
    class LockItem;
-   class ResizeItem;
+
+   class GroupInnerRectItem: public QGraphicsRectItem
+   {
+   public:
+
+      /**
+       * Constructor.
+       *
+       * @param[in]  parent  The parent item.
+       * @param[in]  scene   The scene.
+       */
+      GroupInnerRectItem(QGraphicsItem* parent = 0, QGraphicsScene* scene = 0)
+         : QGraphicsRectItem(parent, scene)
+      {
+         setFlag(QGraphicsItem::ItemIsMovable, false);
+         setFlag(QGraphicsItem::ItemIsSelectable, false);
+         setFlag(QGraphicsItem::ItemIgnoresParentOpacity, true);
+         setFlag(QGraphicsItem::ItemIsPanel, true);
+      }
+   };
 
    /**
     * Draws a node in the graphics view.
@@ -46,14 +64,28 @@ namespace dtDirector
        * @param[in]  node       The Director Node.
        * @param[in]  parent     The parent item.
        * @param[in]  scene      The scene.
-       * @param[in]  canResize  Whether the group box can be resized or not.
        */
-      GroupItem(Node* node, QGraphicsItem* parent = 0, EditorScene* scene = 0, bool canResize = true);
+      GroupItem(Node* node, QGraphicsItem* parent = 0, EditorScene* scene = 0);
+
+      /**
+       * Destructor.
+       */
+      virtual ~GroupItem();
 
       /**
        * Draws the node.
        */
       virtual void Draw();
+
+      /**
+       * Draws the inner rectangle.
+       */
+      void DrawInnerRect();
+
+      /**
+       * Draws the resizers around the border.
+       */
+      void DrawResizers();
 
       /**
        * Event handlers when the user is moving this node.
@@ -72,6 +104,19 @@ namespace dtDirector
        * @param[in]  nodeItems  The node items to size to.
        */
       void SizeToFit(const QList<NodeItem*>& nodeItems);
+
+      /**
+       * Event handler to be called before and after resizing the item.
+       */
+      void OnPreSizing();
+      void OnPostSizing();
+
+      /**
+       * Retrieves whether the node is currently loading geometry.
+       */
+      bool IsLoading() const {return mLoading;}
+
+      bool IsPointInInnerRect(const QPointF& point) const;
 
    public slots:
 
@@ -97,11 +142,19 @@ namespace dtDirector
        */
       QVariant itemChange(GraphicsItemChange change, const QVariant &value);
 
-      LockItem*   mLocker;
-      ResizeItem* mResizer;
+      /**
+       *	get qt-color value from node color-property
+       */
+      virtual QColor GetNodeColor() const;
+
+      ResizeItem* mResizer[ResizeItem::RESIZE_COUNT];
 
       QList<NodeItem*> mGroupedItems;
-      bool mCanResize;
+
+      QGraphicsRectItem* mInnerRect;
+
+      std::string mOldPos;
+      std::string mOldSize;
    };
 }
 

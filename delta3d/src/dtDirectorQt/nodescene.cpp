@@ -91,7 +91,7 @@ namespace dtDirector
             {
                if (IS_A(node.get(), GroupNode*))
                {
-                  item = new GroupItem(node, mpItem, NULL, false);
+                  item = new GroupItem(node, mpItem, NULL);
                   break;
                }
             }

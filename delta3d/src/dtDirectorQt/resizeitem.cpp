@@ -20,6 +20,7 @@
  */
 #include <prefix/dtdirectorqtprefix.h>
 #include <dtDirectorQt/resizeitem.h>
+#include <dtDirectorQt/groupitem.h>
 #include <dtDirectorQt/directoreditor.h>
 #include <dtDirectorQt/editorscene.h>
 
@@ -37,11 +38,13 @@
 namespace dtDirector
 {
    //////////////////////////////////////////////////////////////////////////
-   ResizeItem::ResizeItem(NodeItem* nodeItem, QGraphicsItem* parent, EditorScene* scene)
+   ResizeItem::ResizeItem(GroupItem* nodeItem, QGraphicsItem* parent, EditorScene* scene, ResizeType type)
       : QGraphicsPolygonItem(parent, scene)
       , mScene(scene)
       , mNodeItem(nodeItem)
+      , mType(type)
    {
+      setZValue(100.0f);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -57,14 +60,84 @@ namespace dtDirector
 
       setAcceptHoverEvents(true);
 
-      const float size = 15;
+      const float size = 5.0f;
+      float x = 0;
+      float y = 0;
+
+      if (mType == RESIZE_TOP_LEFT ||
+         mType == RESIZE_TOP ||
+         mType == RESIZE_TOP_RIGHT)
+      {
+         y -= size;
+      }
+
+      if (mType == RESIZE_BOT_LEFT ||
+         mType == RESIZE_BOT_RIGHT ||
+         mType == RESIZE_BOT)
+      {
+         y += size;
+      }
+
+      if (mType == RESIZE_TOP_LEFT ||
+         mType == RESIZE_LEFT ||
+         mType == RESIZE_BOT_LEFT)
+      {
+         x -= size;
+      }
+
+      if (mType == RESIZE_TOP_RIGHT ||
+         mType == RESIZE_BOT_RIGHT ||
+         mType == RESIZE_RIGHT)
+      {
+         x += size;
+      }
+
       QPolygonF poly;
-      poly << QPointF(0, -size)
-         << QPointF(0, 0)
-         << QPointF(-size, 0);
+      poly << QPointF(x - size, y - size)
+           << QPointF(x + size, y - size)
+           << QPointF(x + size, y + size)
+           << QPointF(x - size, y + size);
       setPolygon(poly);
 
       SetHighlight(false);
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   QPointF ResizeItem::GetFramePosition()
+   {
+      float x = mNodeItem->GetPosition().x();
+      float y = mNodeItem->GetPosition().y();
+
+      float w = mNodeItem->GetNodeWidth();
+      float h = mNodeItem->GetNodeHeight();
+
+      if (mType == RESIZE_TOP ||
+         mType == RESIZE_BOT)
+      {
+         x += w * 0.5f;
+      }
+
+      if (mType == RESIZE_LEFT ||
+         mType == RESIZE_RIGHT)
+      {
+         y += h * 0.5f;
+      }
+
+      if (mType == RESIZE_BOT_LEFT ||
+         mType == RESIZE_BOT_RIGHT ||
+         mType == RESIZE_BOT)
+      {
+         y += h;
+      }
+
+      if (mType == RESIZE_TOP_RIGHT ||
+         mType == RESIZE_BOT_RIGHT ||
+         mType == RESIZE_RIGHT)
+      {
+         x += w;
+      }
+
+      return QPointF(x, y);
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -98,8 +171,10 @@ namespace dtDirector
          mScene->clearSelection();
       }
 
-      dtDAL::ActorProperty* prop = mNodeItem->GetNode()->GetProperty("Size");
-      if (prop) mOldSize = prop->ToString();
+      if (mNodeItem)
+      {
+         mNodeItem->OnPreSizing();
+      }
 
       mouseEvent->accept();
    }
@@ -111,26 +186,11 @@ namespace dtDirector
 
       if (!mouseEvent) return;
 
-      //if (mNodeItem)
-      //{
-      //   mNodeItem->setSelected(true);
-      //}
-
-      dtDAL::ActorProperty* prop = mNodeItem->GetNode()->GetProperty("Size");
-      if (prop)
+      if (mNodeItem)
       {
-         std::string value = prop->ToString();
-
-         // Ignore the property if the node did not move.
-         if (value != mOldSize)
-         {
-            // Notify the undo manager of the property changes.
-            dtCore::RefPtr<UndoPropertyEvent> event = new UndoPropertyEvent(mScene->GetEditor(), mNodeItem->GetID(), prop->GetName(), mOldSize, value);
-            mScene->GetEditor()->GetUndoManager()->AddEvent(event.get());
-         }
+         mNodeItem->OnPostSizing();
       }
 
-      //QPointF mousePos = mouseEvent->scenePos();
       mouseEvent->accept();
    }
 
@@ -147,9 +207,14 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    QVariant ResizeItem::itemChange(GraphicsItemChange change, const QVariant &value)
    {
-      if (mNodeItem)
+      if (change == QGraphicsItem::ItemPositionChange && mNodeItem)
       {
-         mNodeItem->childItemChange(this, change, value);
+         if (!mNodeItem->IsLoading())
+         {
+            mNodeItem->childItemChange(this, change, value);
+
+            return GetFramePosition();
+         }
       }
 
       return value;
