@@ -162,7 +162,7 @@ namespace dtCore
 
          static void dTriArrayCallback(dGeomID TriMesh, dGeomID RefObject, const int* TriIndices, int TriCount);
 
-         void CreateCollisionCylinder(dWorldID pWorldId, dSpaceID pSpaceId, dGeomID& pId, const osg::Vec3& pLengths);
+         void CreateCollisionCylinder(dSpaceID pSpaceId, dGeomID& pId, const osg::Vec3& pLengths);
 
          void InitBoundingVolumes();
          void InitDrawable();
@@ -178,7 +178,8 @@ namespace dtCore
          dGeomID mBBFeet;
          dGeomID mBBTorso;
 
-         dSpaceID mSpaceID;
+         ///The local collision space that holds our collision geometry
+         dSpaceID mLocalSpaceID;
 
          osg::Vec3 mBBFeetOffset;
          osg::Vec3 mBBTorsoOffset;
@@ -209,6 +210,7 @@ namespace dtCore
          osg::Vec3 mLastVelocity;
          osg::Vec3 mSlideVelocity;
 
+         ///The Delta3D collision space that holds all other collision geometry
          dSpaceID mCollisionSpace;
          dtCore::RefPtr<ODEController> mPhysicsController;
    };
