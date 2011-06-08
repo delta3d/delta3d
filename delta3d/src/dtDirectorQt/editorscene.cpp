@@ -240,12 +240,14 @@ namespace dtDirector
             QRectF itemBounds = QRectF(item->GetPosition().x(), item->GetPosition().y(), item->GetNodeWidth(), item->GetNodeHeight());
             QRectF nodeBounds = QRectF(nodeItem->GetPosition().x(), nodeItem->GetPosition().y(), nodeItem->GetNodeWidth(), nodeItem->GetNodeHeight());
 
+            bool inBounds = false;
             // Only align with nodes that are within range of the current item.
             if (itemBounds.left() - snapRange <= nodeBounds.right() &&
                itemBounds.right() + snapRange >= nodeBounds.left() &&
                itemBounds.top() - snapRange <= nodeBounds.bottom() &&
                itemBounds.bottom() + snapRange >= nodeBounds.top())
             {
+               inBounds = true;
                // Snap align with the top of this node.
                mSnapTargetsY.push_back(nodeItem->GetPosition().y());
 
@@ -257,85 +259,188 @@ namespace dtDirector
 
                // Snap align with the right side of this node.
                mSnapTargetsX.push_back(nodeItem->GetPosition().x() + nodeItem->GetNodeWidth() - item->GetNodeWidth());
+            }
 
-               // If the snapping node is a value, snap this node to all
-               // value link positions as well.
-               if (isValue)
+            // If the nodes are not near each-other, then check if they are
+            // directly connected by links.
+            if (!inBounds)
+            {
+               int valueCount = (int)item->GetValues().size();
+               for (int valueIndex = 0; valueIndex < valueCount; valueIndex++)
+               {
+                  ValueData& data = item->GetValues()[valueIndex];
+
+                  int testCount = (int)data.link->GetLinks().size();
+                  for (int testIndex = 0; testIndex < testCount; ++testIndex)
+                  {
+                     if (nodeItem->HasNode(data.link->GetLinks()[testIndex]))
+                     {
+                        inBounds = true;
+                        break;
+                     }
+                  }
+
+                  if (inBounds)
+                  {
+                     break;
+                  }
+               }
+
+               if (!inBounds)
                {
                   int valueCount = (int)nodeItem->GetValues().size();
                   for (int valueIndex = 0; valueIndex < valueCount; valueIndex++)
                   {
                      ValueData& data = nodeItem->GetValues()[valueIndex];
 
-                     float x = data.linkGraphic->scenePos().x();
-                     x -= mTranslationItem->pos().x();
-                     x -= item->GetNodeWidth()/2;
-                     mSnapTargetsX.push_back(x);
-                  }
-               }
-               // All non-value nodes will also snap along the inputs
-               // and outputs of each node.
-               else
-               {
-                  if (itemBounds.left() > nodeBounds.right())
-                  {
-                     int inputCount = (int)item->GetInputs().size();
-                     for (int inputIndex = 0; inputIndex < inputCount; ++inputIndex)
+                     int testCount = (int)data.link->GetLinks().size();
+                     for (int testIndex = 0; testIndex < testCount; ++testIndex)
                      {
-                        InputData& inData = item->GetInputs()[inputIndex];
-
-                        float offset = inData.linkGraphic->scenePos().y() - item->scenePos().y();
-
-                        int outputCount = (int)nodeItem->GetOutputs().size();
-                        for (int outputIndex = 0; outputIndex < outputCount; ++outputIndex)
+                        if (item->HasNode(data.link->GetLinks()[testIndex]))
                         {
-                           OutputData& outData = nodeItem->GetOutputs()[outputIndex];
-
-                           float y = outData.linkGraphic->scenePos().y() - nodeItem->scenePos().y();
-                           y += nodeItem->GetPosition().y();
-                           y -= offset;
-                           mSnapTargetsY.push_back(y);
+                           inBounds = true;
+                           break;
                         }
                      }
+
+                     if (inBounds)
+                     {
+                        break;
+                     }
                   }
-                  else if (itemBounds.right() < nodeBounds.left())
+               }
+
+               if (!inBounds)
+               {
+                  int inputCount = (int)item->GetInputs().size();
+                  for (int inputIndex = 0; inputIndex < inputCount; ++inputIndex)
                   {
-                     int outputCount = (int)item->GetOutputs().size();
+                     InputData& inData = item->GetInputs()[inputIndex];
+
+                     int testCount = (int)inData.link->GetLinks().size();
+                     for (int testIndex = 0; testIndex < testCount; ++testIndex)
+                     {
+                        if (nodeItem->HasNode(inData.link->GetLinks()[testIndex]->GetOwner()))
+                        {
+                           inBounds = true;
+                           break;
+                        }
+                     }
+
+                     if (inBounds)
+                     {
+                        break;
+                     }
+                  }
+               }
+
+               if (!inBounds)
+               {
+                  int outputCount = (int)item->GetOutputs().size();
+                  for (int outputIndex = 0; outputIndex < outputCount; ++outputIndex)
+                  {
+                     OutputData& outData = item->GetOutputs()[outputIndex];
+
+                     int testCount = (int)outData.link->GetLinks().size();
+                     for (int testIndex = 0; testIndex < testCount; ++testIndex)
+                     {
+                        if (nodeItem->HasNode(outData.link->GetLinks()[testIndex]->GetOwner()))
+                        {
+                           inBounds = true;
+                           break;
+                        }
+                     }
+
+                     if (inBounds)
+                     {
+                        break;
+                     }
+                  }
+               }
+            }
+
+            if (!inBounds)
+            {
+               continue;
+            }
+
+            // If the snapping node is a value, snap this node to all
+            // value link positions as well.
+            if (isValue)
+            {
+               int valueCount = (int)nodeItem->GetValues().size();
+               for (int valueIndex = 0; valueIndex < valueCount; valueIndex++)
+               {
+                  ValueData& data = nodeItem->GetValues()[valueIndex];
+
+                  float x = data.linkGraphic->scenePos().x();
+                  x -= mTranslationItem->pos().x();
+                  x -= item->GetNodeWidth()/2;
+                  mSnapTargetsX.push_back(x);
+               }
+            }
+            // All non-value nodes will also snap along the inputs
+            // and outputs of each node.
+            else
+            {
+               if (itemBounds.left() > nodeBounds.right())
+               {
+                  int inputCount = (int)item->GetInputs().size();
+                  for (int inputIndex = 0; inputIndex < inputCount; ++inputIndex)
+                  {
+                     InputData& inData = item->GetInputs()[inputIndex];
+
+                     float offset = inData.linkGraphic->scenePos().y() - item->scenePos().y();
+
+                     int outputCount = (int)nodeItem->GetOutputs().size();
                      for (int outputIndex = 0; outputIndex < outputCount; ++outputIndex)
                      {
-                        OutputData& outData = item->GetOutputs()[outputIndex];
+                        OutputData& outData = nodeItem->GetOutputs()[outputIndex];
 
-                        float offset = outData.linkGraphic->scenePos().y() - item->scenePos().y();
-
-                        int inputCount = (int)nodeItem->GetInputs().size();
-                        for (int inputIndex = 0; inputIndex < inputCount; ++inputIndex)
-                        {
-                           InputData& inData = nodeItem->GetInputs()[inputIndex];
-
-                           float y = inData.linkGraphic->scenePos().y() - nodeItem->scenePos().y();
-                           y += nodeItem->GetPosition().y();
-                           y -= offset;
-                           mSnapTargetsY.push_back(y);
-                        }
+                        float y = outData.linkGraphic->scenePos().y() - nodeItem->scenePos().y();
+                        y += nodeItem->GetPosition().y();
+                        y -= offset;
+                        mSnapTargetsY.push_back(y);
                      }
                   }
                }
-
-               // If the test node is a value node, snap align the moving
-               // node's value links with this value.
-               if (dynamic_cast<ValueItem*>(nodeItem))
+               else if (itemBounds.right() < nodeBounds.left())
                {
-                  int valueCount = (int)item->GetValues().size();
-                  for (int valueIndex = 0; valueIndex < valueCount; valueIndex++)
+                  int outputCount = (int)item->GetOutputs().size();
+                  for (int outputIndex = 0; outputIndex < outputCount; ++outputIndex)
                   {
-                     ValueData& data = item->GetValues()[valueIndex];
+                     OutputData& outData = item->GetOutputs()[outputIndex];
 
-                     float offset = data.linkGraphic->scenePos().x() - item->scenePos().x();
+                     float offset = outData.linkGraphic->scenePos().y() - item->scenePos().y();
 
-                     float x = nodeItem->GetNodeWidth()/2 + nodeItem->GetPosition().x();
-                     x -= offset;
-                     mSnapTargetsX.push_back(x);
+                     int inputCount = (int)nodeItem->GetInputs().size();
+                     for (int inputIndex = 0; inputIndex < inputCount; ++inputIndex)
+                     {
+                        InputData& inData = nodeItem->GetInputs()[inputIndex];
+
+                        float y = inData.linkGraphic->scenePos().y() - nodeItem->scenePos().y();
+                        y += nodeItem->GetPosition().y();
+                        y -= offset;
+                        mSnapTargetsY.push_back(y);
+                     }
                   }
+               }
+            }
+
+            // If the test node is a value node, snap align the moving
+            // node's value links with this value.
+            if (dynamic_cast<ValueItem*>(nodeItem))
+            {
+               int valueCount = (int)item->GetValues().size();
+               for (int valueIndex = 0; valueIndex < valueCount; valueIndex++)
+               {
+                  ValueData& data = item->GetValues()[valueIndex];
+
+                  float offset = data.linkGraphic->scenePos().x() - item->scenePos().x();
+
+                  float x = nodeItem->GetNodeWidth()/2 + nodeItem->GetPosition().x();
+                  x -= offset;
+                  mSnapTargetsX.push_back(x);
                }
             }
          }
