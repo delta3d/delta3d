@@ -221,7 +221,7 @@ namespace dtQt
    {
       DynamicAbstractParentControl::getValueAsString();
       unsigned int propVal = mProperty->GetValue();
-      unsigned int maskVal = 0;
+      unsigned int maskVal = propVal;
 
       QString result;
 
@@ -230,22 +230,41 @@ namespace dtQt
       mProperty->GetMaskList(names, values);
 
       assert(names.size() == values.size());
+
+      unsigned int highVal = 0xFFFFFFFF;
       int count = (int)names.size();
       for (int index = 0; index < count; ++index)
       {
-         std::string  name  = names[index];
-         unsigned int value = values[index];
+         std::string  name  = "";
+         unsigned int value = 0;
+         for (int maskIndex = 0; maskIndex < count; ++maskIndex)
+         {
+            unsigned int testVal = values[maskIndex];
+            if (testVal <= highVal &&
+               testVal >= value)
+            {
+               value = testVal;
+               name = names[maskIndex];
+            }
+         }
 
-         if ((propVal & value) == value)
+         if (value > 0)
+         {
+            highVal = value - 1;
+         }
+
+         if ((maskVal & value) == value)
          {
             if (!result.isEmpty())
             {
-               result += "|";
+               result = QString(name.c_str()) + "|" + result;
+            }
+            else
+            {
+               result = name.c_str();
             }
 
-            result += name.c_str();
-
-            maskVal |= value;
+            maskVal &= (~value);
          }
       }
 
