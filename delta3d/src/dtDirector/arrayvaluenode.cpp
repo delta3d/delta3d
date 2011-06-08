@@ -48,14 +48,6 @@ namespace dtDirector
    void ArrayValueNode::Init(const NodeType& nodeType, DirectorGraph* graph)
    {
       Node::Init(nodeType, graph);
-
-      // If this node was created within the editor, but we are not
-      // debugging, then we need to remove the initial property from
-      // the node.
-      if (mInitialArrayProperty.valid() && !GetDirector()->IsLoading() && !GetDirector()->GetNotifier())
-      {
-         dtDAL::PropertyContainer::RemoveProperty(mInitialArrayProperty->GetName());
-      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -70,9 +62,12 @@ namespace dtDirector
             mInitialArrayProperty->FromString(mArrayProperty->ToString());
          }
 
-         // As soon as we finish loading the script, remove the initial
-         // property from the node.
-         dtDAL::PropertyContainer::RemoveProperty(mInitialArrayProperty->GetName());
+         if (!GetDirector()->GetNotifier())
+         {
+            // As soon as we finish loading the script, remove the initial
+            // property from the node.
+            dtDAL::PropertyContainer::RemoveProperty(mInitialArrayProperty->GetName());
+         }
       }
    }
 

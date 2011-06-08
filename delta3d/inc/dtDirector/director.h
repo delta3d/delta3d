@@ -160,6 +160,11 @@ namespace dtDirector
       bool HasStarted() const {return mStarted;}
 
       /**
+       * Retrieves whether the script is currently being saved.
+       */
+      bool IsSaving() const {return mSaving;}
+
+      /**
        * Retrieves whether the script is currently being loaded.
        */
       bool IsLoading() const {return mLoading;}
@@ -690,6 +695,7 @@ namespace dtDirector
       bool        mModified;
       bool        mStarted;
       bool        mLoading;
+      bool        mSaving;
 
       bool        mDebugging;
       bool        mShouldStep;

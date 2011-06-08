@@ -87,12 +87,9 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void FloatValue::SetInitialValue(float value)
    {
-      if (mInitialValue != value)
-      {
-         std::string oldValue = mInitialProperty->ToString();
-         mInitialValue = value;
-         ValueNode::OnInitialValueChanged(oldValue);
-      }
+      std::string oldValue = mInitialProperty->ToString();
+      mInitialValue = value;
+      ValueNode::OnInitialValueChanged(oldValue);
    }
 
    //////////////////////////////////////////////////////////////////////////

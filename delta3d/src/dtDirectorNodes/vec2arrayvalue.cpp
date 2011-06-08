@@ -131,14 +131,11 @@ namespace dtDirector
    {
       if (mInitialPropertyIndex < (int)mInitialValues.size())
       {
-         if (mInitialValues[mInitialPropertyIndex] != value)
-         {
-            std::string oldValue = mInitialArrayProperty->ToString();
+         std::string oldValue = mInitialArrayProperty->ToString();
 
-            mInitialValues[mInitialPropertyIndex] = value;
+         mInitialValues[mInitialPropertyIndex] = value;
 
-            ArrayValueNode::OnInitialValueChanged(oldValue);
-         }
+         ArrayValueNode::OnInitialValueChanged(oldValue);
       }
    }
 
@@ -162,11 +159,8 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void Vec2ArrayValue::SetInitialArray(const std::vector<osg::Vec2>& value)
    {
-      if (mInitialValues != value)
-      {
-         std::string oldValue = mInitialArrayProperty->ToString();
-         mInitialValues = value;
-         ArrayValueNode::OnInitialValueChanged(oldValue);
-      }
+      std::string oldValue = mInitialArrayProperty->ToString();
+      mInitialValues = value;
+      ArrayValueNode::OnInitialValueChanged(oldValue);
    }
 }
