@@ -65,7 +65,7 @@ namespace dtDirector
        * @param[in]  parent     The parent item.
        * @param[in]  scene      The scene.
        */
-      GroupItem(Node* node, QGraphicsItem* parent = 0, EditorScene* scene = 0);
+      GroupItem(Node* node, QGraphicsItem* parent = 0, EditorScene* scene = 0, bool inPalette = false);
 
       /**
        * Destructor.
@@ -155,6 +155,8 @@ namespace dtDirector
 
       std::string mOldPos;
       std::string mOldSize;
+
+      bool        mInPalette;
    };
 }
 
