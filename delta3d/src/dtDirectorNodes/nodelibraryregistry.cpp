@@ -204,7 +204,7 @@ namespace dtDirector
    RefPtr<NodeType> NodeLibraryRegistry::STATIC_MESH_VALUE_NODE_TYPE(            new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "Static Mesh",               "General",     "Resources",   "A Static Mesh resource value.", NULL, Colors::MANGENTA2, dtDAL::DataType::STATIC_MESH));
 
    // Misc
-   RefPtr<NodeType> NodeLibraryRegistry::GROUP_BOX_NODE_TYPE(                    new dtDirector::NodeType(dtDirector::NodeType::MISC_NODE,   "Group Box",                 "Core",        "Base",        "A group frame to help organize nodes together.", NULL, Colors::GRAY2));
+   RefPtr<NodeType> NodeLibraryRegistry::GROUP_BOX_NODE_TYPE(                    new dtDirector::NodeType(dtDirector::NodeType::MISC_NODE,   "Group Box",                 "Core",        "Base",        "A group frame to help organize nodes together.", NULL, Colors::GRAY3));
 
 
    //////////////////////////////////////////////////////////////////////////
