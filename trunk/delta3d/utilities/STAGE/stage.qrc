@@ -59,6 +59,7 @@
       <file>icons/texturemode_tiny.png</file>
       <file>icons/texture_resource.png</file>
       <file>icons/texture_tab.png</file>
+      <file>icons/trashcan.png</file>
       <file>icons/trash_large.png</file>
       <file>icons/trash_small.png</file>
       <file>icons/undo.png</file>
@@ -70,6 +71,7 @@
       <file>icons/whiteWindows.png</file>
       <file>icons/whiteX.png</file>
       <file>icons/wireframemode_tiny.png</file>
+      <file>icons/resetproperty.png</file>
       <file>license.txt</file>
     </qresource>
 </RCC>

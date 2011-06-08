@@ -214,6 +214,7 @@ namespace dtQt
          mDefaultResetButton = new SubQToolButton(parent, this);
          mDefaultResetButton->setText("Reset");
          mDefaultResetButton->setToolTip("Reset the property to its default value.");
+         mDefaultResetButton->setIcon(QIcon(":icons/resetproperty.png"));
 
          connect(mDefaultResetButton, SIGNAL(clicked()), this, SLOT(onResetClicked()));
 
@@ -231,9 +232,20 @@ namespace dtQt
          mDeleteButton    = new SubQToolButton(wrapper, this);
 
          mShiftUpButton->setText("Up");
+         mShiftUpButton->setIcon(QIcon(":icons/blackUpArrow.png"));
+         mShiftUpButton->setToolTip(tr("Move the element up a position"));
+
          mShiftDownButton->setText("Down");
+         mShiftDownButton->setIcon(QIcon(":icons/blackDownArrow.png"));
+         mShiftDownButton->setToolTip(tr("Move the element down a position"));
+
          mCopyButton->setText("Copy");
+         mCopyButton->setIcon(QIcon(":icons/duplicate_small.png"));
+         mCopyButton->setToolTip(tr("Duplicate the element"));
+
          mDeleteButton->setText("Delete");
+         mDeleteButton->setIcon(QIcon(":icons/trash_small.png"));
+         mDeleteButton->setToolTip(tr("Delete the element"));
 
          UpdateButtonStates();
 
