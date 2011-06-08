@@ -95,10 +95,12 @@ namespace dtDirector
                bool shiftL    = keyboard->GetButton(osgGA::GUIEventAdapter::KEY_Shift_L)->GetState();
                bool shiftR    = keyboard->GetButton(osgGA::GUIEventAdapter::KEY_Shift_R)->GetState();
 
-               if ((mods & MOD_CONTROL) == MOD_CONTROL &&
-                  (!controlL && !controlR))
+               if ((mods & MOD_CONTROL) == MOD_CONTROL)
                {
-                  return false;
+                  if (!controlL && !controlR)
+                  {
+                     return false;
+                  }
                }
                else if ((mods & MOD_LEFT_CONTROL && !controlL) ||
                   (mods & MOD_RIGHT_CONTROL && !controlR))
@@ -106,10 +108,12 @@ namespace dtDirector
                   return false;
                }
 
-               if ((mods & MOD_ALT) == MOD_ALT &&
-                  (!altL && !altR))
+               if ((mods & MOD_ALT) == MOD_ALT)
                {
-                  return false;
+                  if (!altL && !altR)
+                  {
+                     return false;
+                  }
                }
                else if ((mods & MOD_LEFT_ALT && !altL) ||
                   (mods & MOD_RIGHT_ALT && !altR))
@@ -117,10 +121,12 @@ namespace dtDirector
                   return false;
                }
 
-               if ((mods & MOD_SHIFT) == MOD_SHIFT &&
-                  (!shiftL && !shiftR))
+               if ((mods & MOD_SHIFT) == MOD_SHIFT)
                {
-                  return false;
+                  if (!shiftL && !shiftR)
+                  {
+                     return false;
+                  }
                }
                else if ((mods & MOD_LEFT_SHIFT && !shiftL) ||
                   (mods & MOD_RIGHT_SHIFT && !shiftR))
@@ -350,10 +356,10 @@ namespace dtDirector
          return keyList;
       }
 
-      int count = keyboard->GetButtonCount();
-      for (int index = 0; index < count; ++index)
+      dtCore::InputDevice::ButtonMap::const_iterator iter;
+      for (iter = keyboard->GetButtons().begin(); iter != keyboard->GetButtons().end(); ++iter)
       {
-         dtCore::Button* button = keyboard->GetButton(index);
+         dtCore::Button* button = iter->second;
          if (button)
          {
             keyList.push_back(button->GetDescription());
