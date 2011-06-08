@@ -61,6 +61,7 @@ namespace dtDirector
       , mModified(false)
       , mStarted(false)
       , mLoading(false)
+      , mSaving(false)
       , mDebugging(false)
       , mShouldStep(false)
       , mGraph(NULL)
@@ -337,6 +338,7 @@ namespace dtDirector
 
          try
          {
+            mSaving = true;
             writer->Save(this, fileName);
          }
          catch (const dtUtil::Exception& e)
@@ -347,6 +349,7 @@ namespace dtDirector
             throw e;
          }
 
+         mSaving = false;
          fileUtils.PopDirectory();
 
          mModified = false;

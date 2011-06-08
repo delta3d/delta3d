@@ -129,14 +129,11 @@ namespace dtDirector
    {
       if (mInitialPropertyIndex < (int)mInitialValues.size())
       {
-         if (mInitialValues[mInitialPropertyIndex] != value)
-         {
-            std::string oldValue = mInitialArrayProperty->ToString();
+         std::string oldValue = mInitialArrayProperty->ToString();
 
-            mInitialValues[mInitialPropertyIndex] = value;
+         mInitialValues[mInitialPropertyIndex] = value;
 
-            ArrayValueNode::OnInitialValueChanged(oldValue);
-         }
+         ArrayValueNode::OnInitialValueChanged(oldValue);
       }
    }
 

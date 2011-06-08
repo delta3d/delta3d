@@ -84,12 +84,9 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void StaticMeshValue::SetInitialValue(const dtDAL::ResourceDescriptor& value)
    {
-      if (mInitialValue != value)
-      {
-         std::string oldValue = mInitialProperty->ToString();
-         mInitialValue = value;
-         ValueNode::OnInitialValueChanged(oldValue);
-      }
+      std::string oldValue = mInitialProperty->ToString();
+      mInitialValue = value;
+      ValueNode::OnInitialValueChanged(oldValue);
    }
 
    //////////////////////////////////////////////////////////////////////////

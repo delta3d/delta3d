@@ -88,12 +88,9 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void BooleanValue::SetInitialValue(bool value)
    {
-      if (mInitialValue != value)
-      {
-         std::string oldValue = mInitialProperty->ToString();
-         mInitialValue = value;
-         OnInitialValueChanged(oldValue);
-      }
+      std::string oldValue = mInitialProperty->ToString();
+      mInitialValue = value;
+      OnInitialValueChanged(oldValue);
    }
 
    //////////////////////////////////////////////////////////////////////////

@@ -85,12 +85,9 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void Vec2Value::SetInitialValue(const osg::Vec2& value)
    {
-      if (mInitialValue != value)
-      {
-         std::string oldValue = mInitialProperty->ToString();
-         mInitialValue = value;
-         ValueNode::OnInitialValueChanged(oldValue);
-      }
+      std::string oldValue = mInitialProperty->ToString();
+      mInitialValue = value;
+      ValueNode::OnInitialValueChanged(oldValue);
    }
 
    //////////////////////////////////////////////////////////////////////////

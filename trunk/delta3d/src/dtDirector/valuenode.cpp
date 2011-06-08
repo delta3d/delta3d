@@ -49,14 +49,6 @@ namespace dtDirector
    void ValueNode::Init(const NodeType& nodeType, DirectorGraph* graph)
    {
       Node::Init(nodeType, graph);
-
-      // If this node was created within the editor, but we are not
-      // debugging, then we need to remove the initial property from
-      // the node.
-      if (mInitialProperty.valid() && !GetDirector()->IsLoading() && !GetDirector()->GetNotifier())
-      {
-         dtDAL::PropertyContainer::RemoveProperty(mInitialProperty->GetName());
-      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -77,9 +69,12 @@ namespace dtDirector
             mInitialProperty->FromString(mProperty->ToString());
          }
 
-         // As soon as we finish loading the script, remove the initial
-         // property from the node.
-         dtDAL::PropertyContainer::RemoveProperty(mInitialProperty->GetName());
+         if (!GetDirector()->GetNotifier())
+         {
+            // As soon as we finish loading the script, remove the initial
+            // property from the node.
+            dtDAL::PropertyContainer::RemoveProperty(mInitialProperty->GetName());
+         }
       }
    }
 
@@ -106,6 +101,13 @@ namespace dtDirector
             {
                return true;
             }
+            return false;
+         }
+
+         // Initial properties get saved out regardless of whether
+         // they are set to their defaults.
+         if (GetDirector()->IsSaving() && &prop == mInitialProperty)
+         {
             return false;
          }
       }
