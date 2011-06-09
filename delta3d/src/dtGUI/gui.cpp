@@ -439,6 +439,11 @@ CEGUI::Window* GUI::LoadLayout(Widget* parent, const std::string& fileName,
    CEGUI::Window* layout = CEGUI::WindowManager::getSingleton().loadWindowLayout(fileName, prefix, resourceGroup);
    
    parent->addChildWindow(layout);
+
+   if (layout)
+   {
+      mLayoutMap[fileName] = layout;
+   }
    
    return layout;
 }
