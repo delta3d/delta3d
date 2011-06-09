@@ -117,10 +117,7 @@ void DirectorComponent::OnMapLoaded()
 
    //mMotionModel = motionModel;
 
-   app.GetWindow()->ShowCursor(true);
-
-   std::vector<dtDAL::BaseActorObject*> proxyList;
-   gm->FindActorsByType(*dtActors::EngineActorRegistry::STATIC_MESH_ACTOR_TYPE, proxyList);
+   app.GetWindow()->ShowCursor(false);
 
    // Get the player start position
    dtDAL::BaseActorObject* playerStartProxy = NULL;
