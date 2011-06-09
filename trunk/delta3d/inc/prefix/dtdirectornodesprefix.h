@@ -11,6 +11,6 @@
       #include <dtDirector/director.h>
    #endif //_MSC_VER
 
-#endif DT_USE_PCH
+#endif //DT_USE_PCH
 
 #endif // DTDIRECTORNODESPREFIX_h__
