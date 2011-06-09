@@ -83,14 +83,14 @@ void dtInspectorQt::DirectorView::Update()
    {
       mUI->directorScriptGroupBox->show();
 
-      dtCore::UniqueId playerID = mOperateOn->mDirector->GetPlayer();
-      dtDAL::Map* map = dtDAL::Project::GetInstance().GetMapForActorProxy(playerID);
+      dtCore::UniqueId ownerID = mOperateOn->mDirector->GetScriptOwner();
+      dtDAL::Map* map = dtDAL::Project::GetInstance().GetMapForActorProxy(ownerID);
       if (map)
       {
-         dtDAL::BaseActorObject* player = map->GetProxyById(playerID);
-         if (player)
+         dtDAL::BaseActorObject* owner = map->GetProxyById(ownerID);
+         if (owner)
          {
-            mUI->directorScriptPlayerEdit->setText(player->GetName().c_str());
+            mUI->directorScriptPlayerEdit->setText(owner->GetName().c_str());
          }
       }
    }

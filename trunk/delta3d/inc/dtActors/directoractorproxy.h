@@ -66,34 +66,6 @@ namespace dtActors
       void LoadDirectors();
 
       /**
-      * Sets the Player Actor.
-      *
-      * @param[in]  value  The player actor.
-      */
-      void SetPlayerActor(const dtCore::UniqueId& value);
-
-      /**
-      * Retrieves the Player Actor.
-      *
-      * @return  The Player Actor.
-      */
-      const dtCore::UniqueId& GetPlayerActor();
-
-      /**
-      * Sets the Camera Actor.
-      *
-      * @param[in]  value  The camera actor.
-      */
-      void SetCameraActor(const dtCore::UniqueId& value);
-
-      /**
-      * Retrieves the Camera Actor.
-      *
-      * @return  The Camera Actor.
-      */
-      const dtCore::UniqueId& GetCameraActor();
-
-      /**
       * Sets node logging.
       *
       * @param[in]  value  True to log nodes.
@@ -176,9 +148,6 @@ namespace dtActors
       virtual ~DirectorActor();
 
    private:
-
-      dtCore::UniqueId mPlayerActor;
-      dtCore::UniqueId mCameraActor;
 
       bool mNodeLogging;
       bool mRecording;

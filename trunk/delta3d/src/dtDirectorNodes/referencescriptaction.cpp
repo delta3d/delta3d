@@ -230,8 +230,7 @@ namespace dtDirector
          {
             mScript = new Director();
             mScript->Init(GetDirector()->GetGameManager(), GetDirector()->GetMap());
-            mScript->SetPlayer(GetDirector()->GetPlayer());
-            //mScript->SetCamera(GetDirector()->GetCamera());
+            mScript->SetScriptOwner(GetDirector()->GetScriptOwner());
             mScript->SetNodeLogging(GetDirector()->GetNodeLogging());
             // TODO: Record.
 
