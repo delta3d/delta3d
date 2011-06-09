@@ -65,6 +65,7 @@ namespace dtGUI
          * @param subscriberSlot function to be called when the CEGUI::Event is activated.
          */
          bool AddCallback(const std::string& callbackName, CEGUI::SubscriberSlot subscriberSlot);
+         bool RemoveCallback(const std::string& callbackName);
 
          typedef std::map<std::string,CEGUI::SubscriberSlot> CallbackRegistry;
          

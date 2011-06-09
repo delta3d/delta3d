@@ -302,6 +302,11 @@ namespace dtGUI
       static BaseScriptModule* GetScriptModule();
 
       /**
+       * Get the mapping of all layouts loaded into the GUI.
+       */
+      const std::map<std::string, CEGUI::Window*>& GetLayoutMap() const {return mLayoutMap;}
+
+      /**
        * Get the internal root node to change any stateset attributes, add layers
        * to the UI or to perform extra tweaking not anticipated by this class.
        * @param The root node that's in the scene graph
@@ -410,6 +415,7 @@ namespace dtGUI
       dtCore::RefPtr<dtCore::Keyboard>      mKeyboard; ///observed keyboard
       dtCore::RefPtr<dtCore::Mouse>         mMouse; ///observed mouse
 
+      std::map<std::string, CEGUI::Window*> mLayoutMap;
    };
 }
 #endif // GUI_h__

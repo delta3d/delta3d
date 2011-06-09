@@ -54,6 +54,21 @@ bool ScriptModule::AddCallback(const std::string& callbackName, CEGUI::Subscribe
    return mCallbacks.insert(std::pair<std::string, CEGUI::SubscriberSlot>(callbackName.c_str(), subscriberSlot)).second; 
 }
 
+//////////////////////////////////////////////////////////////////////////
+bool ScriptModule::RemoveCallback(const std::string& callbackName)
+{
+   const std::map<std::string, CEGUI::SubscriberSlot>::iterator iter = mCallbacks.find(callbackName.c_str());
+
+   if (iter == mCallbacks.end())
+   {
+      LOG_WARNING(std::string(callbackName.c_str() ) + "is no valid callback.");
+      return false;
+   }
+
+   mCallbacks.erase(iter);
+   return true;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 CEGUI::Event::Connection dtGUI::ScriptModule::subscribeEvent(CEGUI::EventSet* window,
                                                              const CEGUI::String& eventName,
