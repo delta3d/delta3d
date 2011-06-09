@@ -652,6 +652,13 @@ namespace dtQt
    //////////////////////////////////////////////////////////////////////////
    void DynamicAbstractControl::NotifyParentOfPreUpdate()
    {
+      // Notify the parent that a change is about to occur.
+      DynamicAbstractControl* parent = getParent();
+      if (parent)
+      {
+         parent->OnChildPreUpdate(this);
+      }
+
       if (mArrayIndex > -1)
       {
          // Get our parent.
@@ -666,13 +673,6 @@ namespace dtQt
          {
             arrayProp->SetIndex(mArrayIndex);
          }
-      }
-
-      // Notify the parent that a change is about to occur.
-      DynamicAbstractControl* parent = getParent();
-      if (parent)
-      {
-         parent->OnChildPreUpdate(this);
       }
    }
 
