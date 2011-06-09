@@ -67,7 +67,13 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void PlayerValue::SetValue(const dtCore::UniqueId& value)
    {
-      GetDirector()->SetPlayer(value);
+      dtGame::GameManager* gm = GetDirector()->GetGameManager();
+      if (gm)
+      {
+         dtDAL::BaseActorObject* proxy = gm->FindActorById(value);
+         gm->SetPlayer(proxy);
+      }
+
       ValueNode::OnValueChanged();
    }
 
@@ -75,6 +81,19 @@ namespace dtDirector
    dtCore::UniqueId PlayerValue::GetValue()
    {
       ValueNode::OnValueRetrieved();
-      return GetDirector()->GetPlayer();
+
+      dtGame::GameManager* gm = GetDirector()->GetGameManager();
+      if (gm)
+      {
+         dtDAL::BaseActorObject* proxy = gm->GetPlayer();
+         if (proxy)
+         {
+            return proxy->GetId();
+         }
+      }
+
+      dtCore::UniqueId id;
+      id = "";
+      return id;
    }
 }
