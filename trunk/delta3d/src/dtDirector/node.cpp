@@ -33,6 +33,7 @@
 #include <dtDAL/gameeventactorproperty.h>
 #include <dtDAL/stringactorproperty.h>
 #include <dtDAL/vectoractorproperties.h>
+#include <dtDAL/resourceactorproperty.h>
 
 #include <dtDirector/director.h>
 #include <dtDirector/nodemanager.h>
@@ -166,9 +167,7 @@ namespace dtDirector
    bool Node::Update(float simDelta, float delta, int input, bool firstUpdate)
    {
       // Trigger the default out link.
-      OutputLink* link = GetOutputLink("Out");
-      if (link) link->Activate();
-
+      ActivateOutput();
       return false;
    }
 
@@ -513,6 +512,12 @@ namespace dtDirector
       return GetPropertyValue<int>(name, index);
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   unsigned int Node::GetUInt(const std::string& name, int index)
+   {
+      return GetPropertyValue<unsigned int>(name, index);
+   }
+
    //////////////////////////////////////////////////////////////////////////
    float Node::GetFloat(const std::string& name, int index)
    {
@@ -628,6 +633,27 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   dtDAL::ResourceDescriptor Node::GetResource(const std::string& name, int index)
+   {
+      dtDAL::ActorProperty* prop = GetProperty(name, index);
+      if (!prop) return dtDAL::ResourceDescriptor::NULL_RESOURCE;
+
+      dtDAL::ResourceActorProperty* resourceProp = dynamic_cast<dtDAL::ResourceActorProperty*>(prop);
+      if (resourceProp)
+      {
+         return resourceProp->GetValue();
+      }
+
+      std::string resourceIdentifier = prop->ToString();
+      if (!resourceIdentifier.empty())
+      {
+         return dtDAL::ResourceDescriptor(resourceIdentifier);
+      }
+
+      return dtDAL::ResourceDescriptor::NULL_RESOURCE;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    void Node::SetValueNodeValue(const std::string& value, const std::string& name, int index)
    {
       if (index < 0)
@@ -662,6 +688,12 @@ namespace dtDirector
    void Node::SetInt(int value, const std::string& name, int index)
    {
       SetPropertyValue<int>(value, name, index);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void Node::SetUInt(unsigned int value, const std::string& name, int index)
+   {
+      SetPropertyValue<unsigned int>(value, name, index);
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -815,6 +847,12 @@ namespace dtDirector
       }
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   void Node::SetResource(const dtDAL::ResourceDescriptor& value, const std::string& name, int index)
+   {
+      SetString(value.GetResourceIdentifier(), name, index);
+   }
+
    //////////////////////////////////////////////////////////////////////////
    InputLink* Node::GetInputLink(const std::string& name)
    {
@@ -861,7 +899,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   bool Node::TriggerOutput(const std::string& name)
+   bool Node::ActivateOutput(const std::string& name)
    {
       OutputLink* link = GetOutputLink(name);
       if (link)
