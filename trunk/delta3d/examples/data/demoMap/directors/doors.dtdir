@@ -2,7 +2,7 @@
 <director xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dDirector" xsi:schemaLocation="delta3dDirector director.xsd">
     <header>
         <createTimestamp>2009-12-22T14:26:31-08:00</createTimestamp>
-        <lastUpdateTimestamp>2011-06-06T16:37:53-08:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2011-06-08T23:09:36-08:00</lastUpdateTimestamp>
         <editorVersion>2.7.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
         <scriptType>Scenario</scriptType>
@@ -46,8 +46,8 @@
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>-218.032516</value1>
-                        <value2>991.640320</value2>
+                        <value1>829.640808</value1>
+                        <value2>246.201111</value2>
                     </vec2>
                 </property>
                 <outputlink>
@@ -58,7 +58,7 @@
                         <name>Call Event</name>
                     </link>
                     <link>
-                        <id>b780c619-807e-40bf-95fe-635f0613ad06</id>
+                        <id>ca90f548-862c-40e5-bde5-3e75953ac8e2</id>
                         <name>Play</name>
                     </link>
                 </outputlink>
@@ -70,7 +70,7 @@
                         <name>Call Event</name>
                     </link>
                     <link>
-                        <id>b2714af3-dcd0-400d-86b2-5cec6a398e5c</id>
+                        <id>a9250a5f-555e-42b0-bc87-b21142bc3f9a</id>
                         <name>Reverse</name>
                     </link>
                 </outputlink>
@@ -92,7 +92,7 @@
                 </valuelink>
                 <valuelink>
                     <name>Instigator</name>
-                    <visible>true</visible>
+                    <visible>false</visible>
                     <exposed>true</exposed>
                     <isout>false</isout>
                     <allowmultiple>true</allowmultiple>
@@ -128,8 +128,8 @@
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>-208.721420</value1>
-                        <value2>689.589478</value2>
+                        <value1>819.472168</value1>
+                        <value2>-16.603584</value2>
                     </vec2>
                 </property>
                 <outputlink>
@@ -158,7 +158,7 @@
                 </valuelink>
                 <valuelink>
                     <name>Instigator</name>
-                    <visible>true</visible>
+                    <visible>false</visible>
                     <exposed>true</exposed>
                     <isout>true</isout>
                     <allowmultiple>true</allowmultiple>
@@ -166,7 +166,7 @@
                 </valuelink>
                 <valuelink>
                     <name>ActorFilters</name>
-                    <visible>true</visible>
+                    <visible>false</visible>
                     <exposed>true</exposed>
                     <isout>false</isout>
                     <allowmultiple>true</allowmultiple>
@@ -188,8 +188,8 @@
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>-228.200851</value1>
-                        <value2>831.669556</value2>
+                        <value1>819.472168</value1>
+                        <value2>86.230347</value2>
                     </vec2>
                 </property>
                 <property>
@@ -236,8 +236,8 @@
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>-228.200851</value1>
-                        <value2>900.467468</value2>
+                        <value1>819.472168</value1>
+                        <value2>155.028259</value2>
                     </vec2>
                 </property>
                 <property>
@@ -282,14 +282,10 @@
                 <category>General</category>
                 <id>9c448f3d-4ea4-4c1b-9b1e-056d18d9e53f</id>
                 <property>
-                    <name>Comment</name>
-                    <string>Basic swinging door.</string>
-                </property>
-                <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>-148.191696</value1>
-                        <value2>-28.000000</value2>
+                        <value1>358.777100</value1>
+                        <value2>-109.528046</value2>
                     </vec2>
                 </property>
                 <property>
@@ -361,14 +357,10 @@
                 <category>General</category>
                 <id>f41eaec2-ff15-46b1-ade6-100f045dc137</id>
                 <property>
-                    <name>Comment</name>
-                    <string>This door slides back and then opens.</string>
-                </property>
-                <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>351.393158</value1>
-                        <value2>-36.897446</value2>
+                        <value1>-140.538757</value1>
+                        <value2>336.884796</value2>
                     </vec2>
                 </property>
                 <property>
@@ -440,14 +432,10 @@
                 <category>General</category>
                 <id>7ab55cd7-3469-4918-8818-ab48c89c7d09</id>
                 <property>
-                    <name>Comment</name>
-                    <string>Scaling door.</string>
-                </property>
-                <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>319.021301</value1>
-                        <value2>261.898834</value2>
+                        <value1>350.018036</value1>
+                        <value2>342.490387</value2>
                     </vec2>
                 </property>
                 <property>
@@ -519,14 +507,10 @@
                 <category>General</category>
                 <id>e41d046f-fd71-4de2-a01b-4ca36053c98a</id>
                 <property>
-                    <name>Comment</name>
-                    <string>Initialize the player actor.</string>
-                </property>
-                <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>-172.942017</value1>
-                        <value2>-291.923340</value2>
+                        <value1>-119.972382</value1>
+                        <value2>-36.203789</value2>
                     </vec2>
                 </property>
                 <outputlink>
@@ -563,8 +547,8 @@
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>108.642273</value1>
-                        <value2>831.669556</value2>
+                        <value1>1156.315308</value1>
+                        <value2>86.230347</value2>
                     </vec2>
                 </property>
                 <property>
@@ -615,8 +599,8 @@
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>28.924576</value1>
-                        <value2>689.589478</value2>
+                        <value1>1010.833801</value1>
+                        <value2>-16.603584</value2>
                     </vec2>
                 </property>
                 <property>
@@ -667,8 +651,8 @@
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>108.642273</value1>
-                        <value2>991.640320</value2>
+                        <value1>1060.851685</value1>
+                        <value2>233.201111</value2>
                     </vec2>
                 </property>
                 <property>
@@ -723,8 +707,8 @@
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>300.984009</value1>
-                        <value2>1060.133179</value2>
+                        <value1>1221.372314</value1>
+                        <value2>326.929596</value2>
                     </vec2>
                 </property>
                 <property>
@@ -735,11 +719,11 @@
                     <name>Call Event</name>
                     <visible>true</visible>
                     <link>
-                        <id>a7b85920-d32a-408d-ae0d-917eb27bb115</id>
+                        <id>cd7dbfec-cb46-4886-982d-6f2b2a7f7bb6</id>
                         <name>Idle In</name>
                     </link>
                     <link>
-                        <id>1e5ea137-149a-4678-b7d0-dd1b4c44d4ce</id>
+                        <id>76670cf1-68d2-4291-95da-319d436eebd3</id>
                         <name>Idle Out</name>
                     </link>
                 </inputlink>
@@ -779,8 +763,8 @@
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>-40.942017</value1>
-                        <value2>-291.923340</value2>
+                        <value1>14.540501</value1>
+                        <value2>-36.203789</value2>
                     </vec2>
                 </property>
                 <inputlink>
@@ -826,6 +810,157 @@
                     </link>
                 </valuelink>
             </node>
+            <node>
+                <name>Group Box</name>
+                <category>Core</category>
+                <id>5f9d5b68-abd7-4b3e-9154-8519762f09ea</id>
+                <property>
+                    <name>Comment</name>
+                    <string>Initialize</string>
+                </property>
+                <property>
+                    <name>Position</name>
+                    <vec2>
+                        <value1>-182.023712</value1>
+                        <value2>-77.814911</value2>
+                    </vec2>
+                </property>
+                <property>
+                    <name>Size</name>
+                    <vec2>
+                        <value1>369.000000</value1>
+                        <value2>297.111115</value2>
+                    </vec2>
+                </property>
+            </node>
+            <node>
+                <name>Group Box</name>
+                <category>Core</category>
+                <id>1bdbed33-f49f-4c51-82e9-1d131b1d2514</id>
+                <property>
+                    <name>Comment</name>
+                    <string>Swinging Door</string>
+                </property>
+                <property>
+                    <name>Position</name>
+                    <vec2>
+                        <value1>257.518036</value1>
+                        <value2>-164.028046</value2>
+                    </vec2>
+                </property>
+                <property>
+                    <name>Size</name>
+                    <vec2>
+                        <value1>438.770294</value1>
+                        <value2>411.446838</value2>
+                    </vec2>
+                </property>
+                <property>
+                    <name>Color</name>
+                    <colorRGBA>
+                        <valueR>0.000000</valueR>
+                        <valueG>0.666667</valueG>
+                        <valueB>0.000000</valueB>
+                        <valueA>0.882353</valueA>
+                    </colorRGBA>
+                </property>
+            </node>
+            <node>
+                <name>Group Box</name>
+                <category>Core</category>
+                <id>d8d0f684-5e98-4b3c-93bd-c784b8e72326</id>
+                <property>
+                    <name>Comment</name>
+                    <string>Sliding Door</string>
+                </property>
+                <property>
+                    <name>Position</name>
+                    <vec2>
+                        <value1>-232.023712</value1>
+                        <value2>286.213867</value2>
+                    </vec2>
+                </property>
+                <property>
+                    <name>Size</name>
+                    <vec2>
+                        <value1>419.079132</value1>
+                        <value2>316.579407</value2>
+                    </vec2>
+                </property>
+                <property>
+                    <name>Color</name>
+                    <colorRGBA>
+                        <valueR>0.000000</valueR>
+                        <valueG>0.666667</valueG>
+                        <valueB>0.000000</valueB>
+                        <valueA>0.882353</valueA>
+                    </colorRGBA>
+                </property>
+            </node>
+            <node>
+                <name>Group Box</name>
+                <category>Core</category>
+                <id>a2ca504e-b9ad-4fb0-9984-a940df6fb95d</id>
+                <property>
+                    <name>Comment</name>
+                    <string>Scaling Door</string>
+                </property>
+                <property>
+                    <name>Position</name>
+                    <vec2>
+                        <value1>257.518036</value1>
+                        <value2>288.213867</value2>
+                    </vec2>
+                </property>
+                <property>
+                    <name>Size</name>
+                    <vec2>
+                        <value1>438.752899</value1>
+                        <value2>314.191772</value2>
+                    </vec2>
+                </property>
+                <property>
+                    <name>Color</name>
+                    <colorRGBA>
+                        <valueR>0.000000</valueR>
+                        <valueG>0.666667</valueG>
+                        <valueB>0.000000</valueB>
+                        <valueA>0.882353</valueA>
+                    </colorRGBA>
+                </property>
+            </node>
+            <node>
+                <name>Group Box</name>
+                <category>Core</category>
+                <id>7447c268-ef4e-4f72-91e4-b95239cededf</id>
+                <property>
+                    <name>Comment</name>
+                    <string>Marine Animations</string>
+                </property>
+                <property>
+                    <name>Position</name>
+                    <vec2>
+                        <value1>737.140808</value1>
+                        <value2>-58.198883</value2>
+                    </vec2>
+                </property>
+                <property>
+                    <name>Size</name>
+                    <vec2>
+                        <value1>659.731506</value1>
+                        <value2>596.865356</value2>
+                    </vec2>
+                </property>
+                <property>
+                    <name>Color</name>
+                    <colorRGBA>
+                        <valueR>1.000000</valueR>
+                        <valueG>0.000000</valueG>
+                        <valueB>0.000000</valueB>
+                        <valueA>0.882353</valueA>
+                    </colorRGBA>
+                </property>
+            </node>
         </actionnodes>
         <valuenodes>
             <node>
@@ -835,8 +970,8 @@
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>-121.191917</value1>
-                        <value2>110.205109</value2>
+                        <value1>385.777344</value1>
+                        <value2>28.574507</value2>
                     </vec2>
                 </property>
                 <valuelink>
@@ -855,8 +990,8 @@
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>378.393036</value1>
-                        <value2>104.126999</value2>
+                        <value1>-113.538750</value1>
+                        <value2>477.909241</value2>
                     </vec2>
                 </property>
                 <valuelink>
@@ -875,8 +1010,8 @@
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>346.021454</value1>
-                        <value2>400.314087</value2>
+                        <value1>377.018188</value1>
+                        <value2>480.905640</value2>
                     </vec2>
                 </property>
                 <valuelink>
@@ -895,8 +1030,8 @@
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>-55.532715</value1>
-                        <value2>1133.605713</value2>
+                        <value1>915.140808</value1>
+                        <value2>388.166504</value2>
                     </vec2>
                 </property>
                 <property>
@@ -923,8 +1058,8 @@
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>-132.532730</value1>
-                        <value2>1133.605713</value2>
+                        <value1>838.140808</value1>
+                        <value2>388.166504</value2>
                     </vec2>
                 </property>
                 <valuelink>
@@ -943,8 +1078,8 @@
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>-43.942017</value1>
-                        <value2>-160.923340</value2>
+                        <value1>11.540512</value1>
+                        <value2>94.796211</value2>
                     </vec2>
                 </property>
                 <property>
@@ -967,8 +1102,8 @@
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>28.057983</value1>
-                        <value2>-160.923340</value2>
+                        <value1>84.540497</value1>
+                        <value2>94.796211</value2>
                     </vec2>
                 </property>
                 <valuelink>
@@ -1001,8 +1136,8 @@
             <property>
                 <name>Position</name>
                 <vec2>
-                    <value1>-183.506866</value1>
-                    <value2>268.054871</value2>
+                    <value1>323.018036</value1>
+                    <value2>155.918823</value2>
                 </vec2>
             </property>
             <property>
@@ -1022,8 +1157,8 @@
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>1183.739868</value1>
-                            <value2>-32.903278</value2>
+                            <value1>882.074829</value1>
+                            <value2>-349.651550</value2>
                         </vec2>
                     </property>
                     <property>
@@ -1070,8 +1205,8 @@
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>1181.739868</value1>
-                            <value2>271.096741</value2>
+                            <value1>880.074829</value1>
+                            <value2>-45.651543</value2>
                         </vec2>
                     </property>
                     <property>
@@ -1118,8 +1253,8 @@
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>559.082825</value1>
-                            <value2>-141.177002</value2>
+                            <value1>263.882050</value1>
+                            <value2>-261.843018</value2>
                         </vec2>
                     </property>
                     <property>
@@ -1166,8 +1301,8 @@
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>558.082825</value1>
-                            <value2>105.320000</value2>
+                            <value1>262.882050</value1>
+                            <value2>-15.346013</value2>
                         </vec2>
                     </property>
                     <property>
@@ -1214,8 +1349,8 @@
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>558.082825</value1>
-                            <value2>161.670105</value2>
+                            <value1>262.882050</value1>
+                            <value2>41.004093</value2>
                         </vec2>
                     </property>
                     <property>
@@ -1262,8 +1397,8 @@
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>559.082825</value1>
-                            <value2>-86.177002</value2>
+                            <value1>263.882050</value1>
+                            <value2>-206.843018</value2>
                         </vec2>
                     </property>
                     <property>
@@ -1314,8 +1449,8 @@
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>-659.408813</value1>
-                            <value2>-455.394592</value2>
+                            <value1>-659.408691</value1>
+                            <value2>-454.249481</value2>
                         </vec2>
                     </property>
                     <property>
@@ -1389,8 +1524,8 @@
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>-668.675476</value1>
-                            <value2>-117.360527</value2>
+                            <value1>-659.408691</value1>
+                            <value2>-110.489799</value2>
                         </vec2>
                     </property>
                     <property>
@@ -1464,8 +1599,8 @@
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>-653.345276</value1>
-                            <value2>225.024384</value2>
+                            <value1>-659.070862</value1>
+                            <value2>268.539032</value2>
                         </vec2>
                     </property>
                     <property>
@@ -1538,7 +1673,7 @@
                         <name>Position</name>
                         <vec2>
                             <value1>-129.793427</value1>
-                            <value2>-464.394592</value2>
+                            <value2>-467.249481</value2>
                         </vec2>
                     </property>
                     <property>
@@ -1589,8 +1724,8 @@
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>-116.162788</value1>
-                            <value2>-122.360527</value2>
+                            <value1>-107.001808</value1>
+                            <value2>-121.921829</value2>
                         </vec2>
                     </property>
                     <property>
@@ -1641,8 +1776,8 @@
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>78.179260</value1>
-                            <value2>256.608826</value2>
+                            <value1>72.453651</value1>
+                            <value2>300.123474</value2>
                         </vec2>
                     </property>
                     <property>
@@ -1698,7 +1833,7 @@
                         <name>Position</name>
                         <vec2>
                             <value1>-129.793427</value1>
-                            <value2>-394.961090</value2>
+                            <value2>-393.815979</value2>
                         </vec2>
                     </property>
                     <property>
@@ -1749,8 +1884,8 @@
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>-116.162788</value1>
-                            <value2>-47.120636</value2>
+                            <value1>-107.001808</value1>
+                            <value2>-40.249901</value2>
                         </vec2>
                     </property>
                     <property>
@@ -1801,8 +1936,8 @@
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>-144.874512</value1>
-                            <value2>281.063446</value2>
+                            <value1>-150.600128</value1>
+                            <value2>324.578094</value2>
                         </vec2>
                     </property>
                     <property>
@@ -1857,8 +1992,8 @@
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>-144.874512</value1>
-                            <value2>212.875244</value2>
+                            <value1>-150.600128</value1>
+                            <value2>256.389893</value2>
                         </vec2>
                     </property>
                     <property>
@@ -1917,15 +2052,15 @@
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>512.082825</value1>
-                            <value2>-216.754089</value2>
+                            <value1>191.382050</value1>
+                            <value2>-303.438293</value2>
                         </vec2>
                     </property>
                     <property>
                         <name>Size</name>
                         <vec2>
-                            <value1>501.500000</value1>
-                            <value2>515.074097</value2>
+                            <value1>534.707153</value1>
+                            <value2>445.942383</value2>
                         </vec2>
                     </property>
                     <property>
@@ -1933,8 +2068,8 @@
                         <colorRGBA>
                             <valueR>1.000000</valueR>
                             <valueG>1.000000</valueG>
-                            <valueB>1.000000</valueB>
-                            <valueA>0.250000</valueA>
+                            <valueB>0.000000</valueB>
+                            <valueA>0.250980</valueA>
                         </colorRGBA>
                     </property>
                 </node>
@@ -1949,24 +2084,24 @@
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>-718.308289</value1>
-                            <value2>-476.394592</value2>
+                            <value1>-740.884460</value1>
+                            <value2>-504.749481</value2>
                         </vec2>
                     </property>
                     <property>
                         <name>Size</name>
                         <vec2>
-                            <value1>783.000000</value1>
-                            <value2>292.000000</value2>
+                            <value1>819.591064</value1>
+                            <value2>325.205109</value2>
                         </vec2>
                     </property>
                     <property>
                         <name>Color</name>
                         <colorRGBA>
-                            <valueR>1.000000</valueR>
-                            <valueG>1.000000</valueG>
-                            <valueB>1.000000</valueB>
-                            <valueA>0.250000</valueA>
+                            <valueR>0.000000</valueR>
+                            <valueG>0.333333</valueG>
+                            <valueB>0.000000</valueB>
+                            <valueA>0.250980</valueA>
                         </colorRGBA>
                     </property>
                 </node>
@@ -1981,24 +2116,24 @@
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>-718.308289</value1>
-                            <value2>-138.360535</value2>
+                            <value1>-740.884460</value1>
+                            <value2>-156.989792</value2>
                         </vec2>
                     </property>
                     <property>
                         <name>Size</name>
                         <vec2>
-                            <value1>822.596375</value1>
-                            <value2>294.405670</value2>
+                            <value1>842.488342</value1>
+                            <value2>347.205139</value2>
                         </vec2>
                     </property>
                     <property>
                         <name>Color</name>
                         <colorRGBA>
-                            <valueR>1.000000</valueR>
-                            <valueG>1.000000</valueG>
-                            <valueB>1.000000</valueB>
-                            <valueA>0.250000</valueA>
+                            <valueR>0.000000</valueR>
+                            <valueG>0.333333</valueG>
+                            <valueB>0.000000</valueB>
+                            <valueA>0.250980</valueA>
                         </colorRGBA>
                     </property>
                 </node>
@@ -2013,24 +2148,24 @@
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>-710.641968</value1>
-                            <value2>202.789764</value2>
+                            <value1>-740.884460</value1>
+                            <value2>214.889893</value2>
                         </vec2>
                     </property>
                     <property>
                         <name>Size</name>
                         <vec2>
-                            <value1>985.000000</value1>
-                            <value2>312.000000</value2>
+                            <value1>1029.500244</value1>
+                            <value2>372.533264</value2>
                         </vec2>
                     </property>
                     <property>
                         <name>Color</name>
                         <colorRGBA>
                             <valueR>1.000000</valueR>
-                            <valueG>1.000000</valueG>
-                            <valueB>1.000000</valueB>
-                            <valueA>0.250000</valueA>
+                            <valueG>0.000000</valueG>
+                            <valueB>0.000000</valueB>
+                            <valueA>0.250980</valueA>
                         </colorRGBA>
                     </property>
                 </node>
@@ -2045,24 +2180,24 @@
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>1139.418457</value1>
-                            <value2>-59.714901</value2>
+                            <value1>808.574829</value1>
+                            <value2>-391.246857</value2>
                         </vec2>
                     </property>
                     <property>
                         <name>Size</name>
                         <vec2>
-                            <value1>404.803375</value1>
-                            <value2>643.213562</value2>
+                            <value1>427.593384</value1>
+                            <value2>664.682129</value2>
                         </vec2>
                     </property>
                     <property>
                         <name>Color</name>
                         <colorRGBA>
-                            <valueR>1.000000</valueR>
+                            <valueR>0.333333</valueR>
                             <valueG>1.000000</valueG>
                             <valueB>1.000000</valueB>
-                            <valueA>0.250000</valueA>
+                            <valueA>0.250980</valueA>
                         </colorRGBA>
                     </property>
                 </node>
@@ -2077,8 +2212,8 @@
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>-493.793335</value1>
-                            <value2>-455.394592</value2>
+                            <value1>-493.793488</value1>
+                            <value2>-454.249481</value2>
                         </vec2>
                     </property>
                     <inputlink>
@@ -2141,7 +2276,7 @@
                         <name>Position</name>
                         <vec2>
                             <value1>-256.052307</value1>
-                            <value2>-455.328827</value2>
+                            <value2>-454.249481</value2>
                         </vec2>
                     </property>
                     <inputlink>
@@ -2219,8 +2354,8 @@
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>-516.107727</value1>
-                            <value2>-117.360527</value2>
+                            <value1>-503.793488</value1>
+                            <value2>-110.489799</value2>
                         </vec2>
                     </property>
                     <inputlink>
@@ -2282,8 +2417,8 @@
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>-256.421936</value1>
-                            <value2>-115.792557</value2>
+                            <value1>-246.891525</value1>
+                            <value2>-108.921829</value2>
                         </vec2>
                     </property>
                     <inputlink>
@@ -2361,8 +2496,8 @@
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>-495.607666</value1>
-                            <value2>226.024384</value2>
+                            <value1>-505.607666</value1>
+                            <value2>269.539032</value2>
                         </vec2>
                     </property>
                     <property>
@@ -2428,8 +2563,8 @@
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>-301.442749</value1>
-                            <value2>226.024384</value2>
+                            <value1>-307.168365</value1>
+                            <value2>269.539032</value2>
                         </vec2>
                     </property>
                     <inputlink>
@@ -2491,8 +2626,8 @@
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>1416.333252</value1>
-                            <value2>-19.332989</value2>
+                            <value1>1114.668213</value1>
+                            <value2>-336.081268</value2>
                         </vec2>
                     </property>
                     <inputlink>
@@ -2558,8 +2693,8 @@
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>1416.333130</value1>
-                            <value2>284.667389</value2>
+                            <value1>1114.668091</value1>
+                            <value2>-32.080894</value2>
                         </vec2>
                     </property>
                     <inputlink>
@@ -2627,8 +2762,8 @@
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>-626.345215</value1>
-                            <value2>365.235931</value2>
+                            <value1>-632.070801</value1>
+                            <value2>408.750580</value2>
                         </vec2>
                     </property>
                     <valuelink>
@@ -2648,7 +2783,7 @@
                         <name>Position</name>
                         <vec2>
                             <value1>-246.052307</value1>
-                            <value2>-331.189484</value2>
+                            <value2>-330.044373</value2>
                         </vec2>
                     </property>
                     <property>
@@ -2671,8 +2806,8 @@
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>-632.408752</value1>
-                            <value2>-335.282135</value2>
+                            <value1>-632.408691</value1>
+                            <value2>-334.137024</value2>
                         </vec2>
                     </property>
                     <valuelink>
@@ -2691,8 +2826,8 @@
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>-291.442596</value1>
-                            <value2>367.408508</value2>
+                            <value1>-297.168213</value1>
+                            <value2>410.923157</value2>
                         </vec2>
                     </property>
                     <property>
@@ -2723,12 +2858,16 @@
                         <name>Position</name>
                         <vec2>
                             <value1>-483.793488</value1>
-                            <value2>-335.282135</value2>
+                            <value2>-334.137024</value2>
                         </vec2>
                     </property>
                     <property>
                         <name>Name</name>
                         <string>DoorOpened</string>
+                    </property>
+                    <property>
+                        <name>Value</name>
+                        <boolean>true</boolean>
                     </property>
                     <valuelink>
                         <name>Enabled</name>
@@ -2746,8 +2885,8 @@
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>1426.333130</value1>
-                            <value2>115.055748</value2>
+                            <value1>1124.668091</value1>
+                            <value2>-201.692535</value2>
                         </vec2>
                     </property>
                     <property>
@@ -2777,8 +2916,8 @@
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>1426.333130</value1>
-                            <value2>413.683533</value2>
+                            <value1>1124.668091</value1>
+                            <value2>96.935249</value2>
                         </vec2>
                     </property>
                     <property>
@@ -2808,8 +2947,8 @@
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>-246.421936</value1>
-                            <value2>6.844582</value2>
+                            <value1>-236.891525</value1>
+                            <value2>13.715317</value2>
                         </vec2>
                     </property>
                     <property>
@@ -2839,8 +2978,8 @@
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>-506.107666</value1>
-                            <value2>-0.216276</value2>
+                            <value1>-495.607666</value1>
+                            <value2>6.654459</value2>
                         </vec2>
                     </property>
                     <property>
@@ -2870,8 +3009,8 @@
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>-485.607666</value1>
-                            <value2>365.235931</value2>
+                            <value1>-491.333282</value1>
+                            <value2>408.750580</value2>
                         </vec2>
                     </property>
                     <property>
@@ -2901,8 +3040,8 @@
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>-641.675354</value1>
-                            <value2>-0.216276</value2>
+                            <value1>-626.345154</value1>
+                            <value2>6.654459</value2>
                         </vec2>
                     </property>
                     <valuelink>
@@ -2935,8 +3074,8 @@
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>836.789978</value1>
-                        <value2>-141.177002</value2>
+                        <value1>541.589172</value1>
+                        <value2>-261.843018</value2>
                     </vec2>
                 </property>
                 <property>
@@ -3238,6 +3377,10 @@
                         <property>
                             <name>TotalTime</name>
                             <float>1</float>
+                        </property>
+                        <property>
+                            <name>UseSimTime</name>
+                            <boolean>true</boolean>
                         </property>
                         <inputlink>
                             <name>Play</name>
@@ -3906,6 +4049,10 @@
                             <name>Name</name>
                             <string>Current Time</string>
                         </property>
+                        <property>
+                            <name>Value</name>
+                            <float>1</float>
+                        </property>
                         <valuelink>
                             <name>Enabled</name>
                             <visible>true</visible>
@@ -4090,8 +4237,8 @@
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>830.789978</value1>
-                        <value2>105.320000</value2>
+                        <value1>535.589172</value1>
+                        <value2>-15.346013</value2>
                     </vec2>
                 </property>
                 <property>
@@ -4393,6 +4540,10 @@
                         <property>
                             <name>TotalTime</name>
                             <float>1</float>
+                        </property>
+                        <property>
+                            <name>UseSimTime</name>
+                            <boolean>true</boolean>
                         </property>
                         <inputlink>
                             <name>Play</name>
@@ -5246,8 +5397,8 @@
             <property>
                 <name>Position</name>
                 <vec2>
-                    <value1>506.472290</value1>
-                    <value2>-49.452396</value2>
+                    <value1>14.540501</value1>
+                    <value2>323.884796</value2>
                 </vec2>
             </property>
             <property>
@@ -6449,8 +6600,8 @@
             <property>
                 <name>Position</name>
                 <vec2>
-                    <value1>10.246582</value1>
-                    <value2>-40.897446</value2>
+                    <value1>517.215576</value1>
+                    <value2>-122.528046</value2>
                 </vec2>
             </property>
             <property>
@@ -6752,6 +6903,10 @@
                     <property>
                         <name>TotalTime</name>
                         <float>1</float>
+                    </property>
+                    <property>
+                        <name>UseSimTime</name>
+                        <boolean>true</boolean>
                     </property>
                     <inputlink>
                         <name>Play</name>
@@ -7420,6 +7575,10 @@
                         <name>Name</name>
                         <string>Current Time</string>
                     </property>
+                    <property>
+                        <name>Value</name>
+                        <float>1</float>
+                    </property>
                     <valuelink>
                         <name>Enabled</name>
                         <visible>true</visible>
@@ -7604,8 +7763,8 @@
             <property>
                 <name>Position</name>
                 <vec2>
-                    <value1>490.774170</value1>
-                    <value2>249.122314</value2>
+                    <value1>521.770935</value1>
+                    <value2>329.713867</value2>
                 </vec2>
             </property>
             <property>
@@ -7907,6 +8066,10 @@
                     <property>
                         <name>TotalTime</name>
                         <float>1</float>
+                    </property>
+                    <property>
+                        <name>UseSimTime</name>
+                        <boolean>true</boolean>
                     </property>
                     <inputlink>
                         <name>Play</name>
@@ -8606,8 +8769,8 @@
             <property>
                 <name>Position</name>
                 <vec2>
-                    <value1>-19.866007</value1>
-                    <value2>831.669556</value2>
+                    <value1>993.864319</value1>
+                    <value2>86.230347</value2>
                 </vec2>
             </property>
             <property>
@@ -8909,6 +9072,10 @@
                     <property>
                         <name>TotalTime</name>
                         <float>1.96</float>
+                    </property>
+                    <property>
+                        <name>UseSimTime</name>
+                        <boolean>true</boolean>
                     </property>
                     <inputlink>
                         <name>Play</name>
@@ -9417,8 +9584,8 @@
             <property>
                 <name>Position</name>
                 <vec2>
-                    <value1>108.642273</value1>
-                    <value2>1060.133179</value2>
+                    <value1>1060.851685</value1>
+                    <value2>305.929596</value2>
                 </vec2>
             </property>
             <property>
@@ -9434,14 +9601,7 @@
                 <node>
                     <name>Input Link</name>
                     <category>Core</category>
-                    <id>b780c619-807e-40bf-95fe-635f0613ad06</id>
-                    <property>
-                        <name>Position</name>
-                        <vec2>
-                            <value1>-200.000000</value1>
-                            <value2>0.000000</value2>
-                        </vec2>
-                    </property>
+                    <id>ca90f548-862c-40e5-bde5-3e75953ac8e2</id>
                     <property>
                         <name>Name</name>
                         <string>Play</string>
@@ -9458,7 +9618,7 @@
                         <name>Out</name>
                         <visible>true</visible>
                         <link>
-                            <id>b46f52b7-4bfa-4c86-987a-44ebaff11730</id>
+                            <id>88426d4d-cb55-4fdf-9617-78f6fd2dc0a6</id>
                             <name>Play</name>
                         </link>
                     </outputlink>
@@ -9482,12 +9642,12 @@
                 <node>
                     <name>Input Link</name>
                     <category>Core</category>
-                    <id>b2714af3-dcd0-400d-86b2-5cec6a398e5c</id>
+                    <id>a9250a5f-555e-42b0-bc87-b21142bc3f9a</id>
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>-200.000000</value1>
-                            <value2>50.000000</value2>
+                            <value1>0.000000</value1>
+                            <value2>80.000000</value2>
                         </vec2>
                     </property>
                     <property>
@@ -9506,7 +9666,7 @@
                         <name>Out</name>
                         <visible>true</visible>
                         <link>
-                            <id>b46f52b7-4bfa-4c86-987a-44ebaff11730</id>
+                            <id>88426d4d-cb55-4fdf-9617-78f6fd2dc0a6</id>
                             <name>Reverse</name>
                         </link>
                     </outputlink>
@@ -9530,12 +9690,12 @@
                 <node>
                     <name>Input Link</name>
                     <category>Core</category>
-                    <id>20a293e1-1658-4e98-8e8c-181faf4e22ce</id>
+                    <id>7276805d-de36-45cd-b2a4-9717cca0acf1</id>
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>-200.000000</value1>
-                            <value2>100.000000</value2>
+                            <value1>0.000000</value1>
+                            <value2>160.000000</value2>
                         </vec2>
                     </property>
                     <property>
@@ -9550,7 +9710,7 @@
                         <name>Out</name>
                         <visible>true</visible>
                         <link>
-                            <id>b46f52b7-4bfa-4c86-987a-44ebaff11730</id>
+                            <id>88426d4d-cb55-4fdf-9617-78f6fd2dc0a6</id>
                             <name>Stop</name>
                         </link>
                     </outputlink>
@@ -9574,12 +9734,12 @@
                 <node>
                     <name>Input Link</name>
                     <category>Core</category>
-                    <id>e8e1d494-dcff-4a6a-abd0-4f85e7c85e90</id>
+                    <id>7af081b9-fa0b-4674-aa38-f0e14d6b91aa</id>
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>-200.000000</value1>
-                            <value2>150.000000</value2>
+                            <value1>0.000000</value1>
+                            <value2>240.000000</value2>
                         </vec2>
                     </property>
                     <property>
@@ -9594,7 +9754,7 @@
                         <name>Out</name>
                         <visible>true</visible>
                         <link>
-                            <id>b46f52b7-4bfa-4c86-987a-44ebaff11730</id>
+                            <id>88426d4d-cb55-4fdf-9617-78f6fd2dc0a6</id>
                             <name>Pause</name>
                         </link>
                     </outputlink>
@@ -9618,12 +9778,12 @@
                 <node>
                     <name>Remote Event</name>
                     <category>Core</category>
-                    <id>4e3d227a-8aed-4050-b7ee-8105dfe83cbc</id>
+                    <id>686afbab-1bc4-4e8d-b4f9-f3289e442ec0</id>
                     <property>
                         <name>Position</name>
                         <vec2>
                             <value1>0.000000</value1>
-                            <value2>400.000000</value2>
+                            <value2>800.000000</value2>
                         </vec2>
                     </property>
                     <property>
@@ -9634,7 +9794,7 @@
                         <name>Out</name>
                         <visible>true</visible>
                         <link>
-                            <id>6b8c2a20-a77c-4c4e-a6e9-b38cc24cfc78</id>
+                            <id>c2668b8d-e11b-42d0-b417-8a9474e40419</id>
                             <name>Start</name>
                         </link>
                     </outputlink>
@@ -9666,12 +9826,12 @@
                 <node>
                     <name>Remote Event</name>
                     <category>Core</category>
-                    <id>2103a928-860c-4fe0-8560-d612a9a438e7</id>
+                    <id>bc003f92-093a-474c-bb97-f7ce758ffcd2</id>
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>6.000000</value1>
-                            <value2>500.000000</value2>
+                            <value1>0.000000</value1>
+                            <value2>880.000000</value2>
                         </vec2>
                     </property>
                     <property>
@@ -9682,7 +9842,7 @@
                         <name>Out</name>
                         <visible>true</visible>
                         <link>
-                            <id>6b8c2a20-a77c-4c4e-a6e9-b38cc24cfc78</id>
+                            <id>c2668b8d-e11b-42d0-b417-8a9474e40419</id>
                             <name>Stop</name>
                         </link>
                     </outputlink>
@@ -9716,10 +9876,17 @@
                 <node>
                     <name>Scheduler</name>
                     <category>Cinematic</category>
-                    <id>b46f52b7-4bfa-4c86-987a-44ebaff11730</id>
+                    <id>88426d4d-cb55-4fdf-9617-78f6fd2dc0a6</id>
+                    <property>
+                        <name>Position</name>
+                        <vec2>
+                            <value1>400.000000</value1>
+                            <value2>0.000000</value2>
+                        </vec2>
+                    </property>
                     <property>
                         <name>TotalTime</name>
-                        <float>1.97</float>
+                        <float>1736</float>
                     </property>
                     <property>
                         <name>UseSimTime</name>
@@ -9740,7 +9907,7 @@
                                         </property>
                                         <property>
                                             <name>EventTime</name>
-                                            <float>0.23800001</float>
+                                            <float>238</float>
                                         </property>
                                         <property>
                                             <name>TriggerNormal</name>
@@ -9760,7 +9927,7 @@
                                         </property>
                                         <property>
                                             <name>EventTime</name>
-                                            <float>1.7360001</float>
+                                            <float>1736</float>
                                         </property>
                                         <property>
                                             <name>TriggerReverse</name>
@@ -9775,7 +9942,7 @@
                         <name>Play</name>
                         <visible>true</visible>
                         <link>
-                            <id>b780c619-807e-40bf-95fe-635f0613ad06</id>
+                            <id>ca90f548-862c-40e5-bde5-3e75953ac8e2</id>
                             <name>Out</name>
                         </link>
                     </inputlink>
@@ -9783,7 +9950,7 @@
                         <name>Reverse</name>
                         <visible>true</visible>
                         <link>
-                            <id>b2714af3-dcd0-400d-86b2-5cec6a398e5c</id>
+                            <id>a9250a5f-555e-42b0-bc87-b21142bc3f9a</id>
                             <name>Out</name>
                         </link>
                     </inputlink>
@@ -9791,7 +9958,7 @@
                         <name>Stop</name>
                         <visible>true</visible>
                         <link>
-                            <id>20a293e1-1658-4e98-8e8c-181faf4e22ce</id>
+                            <id>7276805d-de36-45cd-b2a4-9717cca0acf1</id>
                             <name>Out</name>
                         </link>
                     </inputlink>
@@ -9799,7 +9966,7 @@
                         <name>Pause</name>
                         <visible>true</visible>
                         <link>
-                            <id>e8e1d494-dcff-4a6a-abd0-4f85e7c85e90</id>
+                            <id>7af081b9-fa0b-4674-aa38-f0e14d6b91aa</id>
                             <name>Out</name>
                         </link>
                     </inputlink>
@@ -9807,11 +9974,11 @@
                         <name>Started</name>
                         <visible>true</visible>
                         <link>
-                            <id>703518d7-7d08-45e1-8f2b-669a993d394e</id>
+                            <id>8ae65e1e-253a-43d1-9058-f56554799da0</id>
                             <name>Call Event</name>
                         </link>
                         <link>
-                            <id>93c93aef-33d3-4945-96df-0d0713557ff3</id>
+                            <id>3ae6d6e1-01a4-4e75-8d76-74ddfdcc7435</id>
                             <name>In</name>
                         </link>
                     </outputlink>
@@ -9819,7 +9986,7 @@
                         <name>Idle In</name>
                         <visible>true</visible>
                         <link>
-                            <id>a7b85920-d32a-408d-ae0d-917eb27bb115</id>
+                            <id>cd7dbfec-cb46-4886-982d-6f2b2a7f7bb6</id>
                             <name>In</name>
                         </link>
                     </outputlink>
@@ -9827,7 +9994,7 @@
                         <name>Idle Out</name>
                         <visible>true</visible>
                         <link>
-                            <id>1e5ea137-149a-4678-b7d0-dd1b4c44d4ce</id>
+                            <id>76670cf1-68d2-4291-95da-319d436eebd3</id>
                             <name>In</name>
                         </link>
                     </outputlink>
@@ -9835,11 +10002,11 @@
                         <name>Ended</name>
                         <visible>true</visible>
                         <link>
-                            <id>409b0b4e-9876-4a9d-ae95-b11bd8c6b2fc</id>
+                            <id>2e32c156-9097-4bac-98ed-b930f65dc2f8</id>
                             <name>In</name>
                         </link>
                         <link>
-                            <id>cdf56d4e-e0f0-4bf9-abab-84e027a0b787</id>
+                            <id>83510127-3fe5-4fa2-8a42-834d5e22ad4c</id>
                             <name>Call Event</name>
                         </link>
                     </outputlink>
@@ -9847,7 +10014,7 @@
                         <name>Stopped</name>
                         <visible>true</visible>
                         <link>
-                            <id>cdf56d4e-e0f0-4bf9-abab-84e027a0b787</id>
+                            <id>83510127-3fe5-4fa2-8a42-834d5e22ad4c</id>
                             <name>Call Event</name>
                         </link>
                     </outputlink>
@@ -9867,7 +10034,7 @@
                         <allowmultiple>true</allowmultiple>
                         <typecheck>true</typecheck>
                         <link>
-                            <id>d40dacc8-667b-4ff9-b78e-300e34b35cc8</id>
+                            <id>72b80b29-524b-4e9c-b8b9-ce8e7532ba49</id>
                         </link>
                     </valuelink>
                     <valuelink>
@@ -9890,11 +10057,11 @@
                 <node>
                     <name>Call Remote Event</name>
                     <category>Core</category>
-                    <id>703518d7-7d08-45e1-8f2b-669a993d394e</id>
+                    <id>8ae65e1e-253a-43d1-9058-f56554799da0</id>
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>400.000000</value1>
+                            <value1>800.000000</value1>
                             <value2>0.000000</value2>
                         </vec2>
                     </property>
@@ -9910,7 +10077,7 @@
                         <name>Call Event</name>
                         <visible>true</visible>
                         <link>
-                            <id>b46f52b7-4bfa-4c86-987a-44ebaff11730</id>
+                            <id>88426d4d-cb55-4fdf-9617-78f6fd2dc0a6</id>
                             <name>Started</name>
                         </link>
                     </inputlink>
@@ -9946,12 +10113,12 @@
                 <node>
                     <name>Output Link</name>
                     <category>Core</category>
-                    <id>93c93aef-33d3-4945-96df-0d0713557ff3</id>
+                    <id>3ae6d6e1-01a4-4e75-8d76-74ddfdcc7435</id>
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>400.000000</value1>
-                            <value2>50.000000</value2>
+                            <value1>800.000000</value1>
+                            <value2>80.000000</value2>
                         </vec2>
                     </property>
                     <property>
@@ -9962,7 +10129,7 @@
                         <name>In</name>
                         <visible>true</visible>
                         <link>
-                            <id>b46f52b7-4bfa-4c86-987a-44ebaff11730</id>
+                            <id>88426d4d-cb55-4fdf-9617-78f6fd2dc0a6</id>
                             <name>Started</name>
                         </link>
                     </inputlink>
@@ -9982,12 +10149,12 @@
                 <node>
                     <name>Output Link</name>
                     <category>Core</category>
-                    <id>a7b85920-d32a-408d-ae0d-917eb27bb115</id>
+                    <id>cd7dbfec-cb46-4886-982d-6f2b2a7f7bb6</id>
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>400.000000</value1>
-                            <value2>100.000000</value2>
+                            <value1>800.000000</value1>
+                            <value2>160.000000</value2>
                         </vec2>
                     </property>
                     <property>
@@ -9998,7 +10165,7 @@
                         <name>In</name>
                         <visible>true</visible>
                         <link>
-                            <id>b46f52b7-4bfa-4c86-987a-44ebaff11730</id>
+                            <id>88426d4d-cb55-4fdf-9617-78f6fd2dc0a6</id>
                             <name>Idle In</name>
                         </link>
                     </inputlink>
@@ -10022,12 +10189,12 @@
                 <node>
                     <name>Output Link</name>
                     <category>Core</category>
-                    <id>1e5ea137-149a-4678-b7d0-dd1b4c44d4ce</id>
+                    <id>76670cf1-68d2-4291-95da-319d436eebd3</id>
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>400.000000</value1>
-                            <value2>150.000000</value2>
+                            <value1>800.000000</value1>
+                            <value2>240.000000</value2>
                         </vec2>
                     </property>
                     <property>
@@ -10038,7 +10205,7 @@
                         <name>In</name>
                         <visible>true</visible>
                         <link>
-                            <id>b46f52b7-4bfa-4c86-987a-44ebaff11730</id>
+                            <id>88426d4d-cb55-4fdf-9617-78f6fd2dc0a6</id>
                             <name>Idle Out</name>
                         </link>
                     </inputlink>
@@ -10062,12 +10229,12 @@
                 <node>
                     <name>Output Link</name>
                     <category>Core</category>
-                    <id>409b0b4e-9876-4a9d-ae95-b11bd8c6b2fc</id>
+                    <id>2e32c156-9097-4bac-98ed-b930f65dc2f8</id>
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>400.000000</value1>
-                            <value2>200.000000</value2>
+                            <value1>800.000000</value1>
+                            <value2>320.000000</value2>
                         </vec2>
                     </property>
                     <property>
@@ -10078,7 +10245,7 @@
                         <name>In</name>
                         <visible>true</visible>
                         <link>
-                            <id>b46f52b7-4bfa-4c86-987a-44ebaff11730</id>
+                            <id>88426d4d-cb55-4fdf-9617-78f6fd2dc0a6</id>
                             <name>Ended</name>
                         </link>
                     </inputlink>
@@ -10098,12 +10265,12 @@
                 <node>
                     <name>Call Remote Event</name>
                     <category>Core</category>
-                    <id>cdf56d4e-e0f0-4bf9-abab-84e027a0b787</id>
+                    <id>83510127-3fe5-4fa2-8a42-834d5e22ad4c</id>
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>400.000000</value1>
-                            <value2>250.000000</value2>
+                            <value1>800.000000</value1>
+                            <value2>400.000000</value2>
                         </vec2>
                     </property>
                     <property>
@@ -10118,11 +10285,11 @@
                         <name>Call Event</name>
                         <visible>true</visible>
                         <link>
-                            <id>b46f52b7-4bfa-4c86-987a-44ebaff11730</id>
+                            <id>88426d4d-cb55-4fdf-9617-78f6fd2dc0a6</id>
                             <name>Ended</name>
                         </link>
                         <link>
-                            <id>b46f52b7-4bfa-4c86-987a-44ebaff11730</id>
+                            <id>88426d4d-cb55-4fdf-9617-78f6fd2dc0a6</id>
                             <name>Stopped</name>
                         </link>
                     </inputlink>
@@ -10158,12 +10325,12 @@
                 <node>
                     <name>Animate Actor</name>
                     <category>Cinematic</category>
-                    <id>6b8c2a20-a77c-4c4e-a6e9-b38cc24cfc78</id>
+                    <id>c2668b8d-e11b-42d0-b417-8a9474e40419</id>
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>200.000000</value1>
-                            <value2>400.000000</value2>
+                            <value1>400.000000</value1>
+                            <value2>800.000000</value2>
                         </vec2>
                     </property>
                     <property>
@@ -10280,7 +10447,7 @@
                         <name>Start</name>
                         <visible>true</visible>
                         <link>
-                            <id>4e3d227a-8aed-4050-b7ee-8105dfe83cbc</id>
+                            <id>686afbab-1bc4-4e8d-b4f9-f3289e442ec0</id>
                             <name>Out</name>
                         </link>
                     </inputlink>
@@ -10288,7 +10455,7 @@
                         <name>Stop</name>
                         <visible>true</visible>
                         <link>
-                            <id>2103a928-860c-4fe0-8560-d612a9a438e7</id>
+                            <id>bc003f92-093a-474c-bb97-f7ce758ffcd2</id>
                             <name>Out</name>
                         </link>
                     </inputlink>
@@ -10296,7 +10463,7 @@
                         <name>Started</name>
                         <visible>true</visible>
                         <link>
-                            <id>bff169ab-ff1a-4aab-ac27-9f835a5fd468</id>
+                            <id>076b5e50-a22b-4d6f-974c-64d77f4eabe0</id>
                             <name>Start</name>
                         </link>
                     </outputlink>
@@ -10304,7 +10471,7 @@
                         <name>Stopped</name>
                         <visible>true</visible>
                         <link>
-                            <id>bff169ab-ff1a-4aab-ac27-9f835a5fd468</id>
+                            <id>076b5e50-a22b-4d6f-974c-64d77f4eabe0</id>
                             <name>Stop</name>
                         </link>
                     </outputlink>
@@ -10328,7 +10495,7 @@
                         <allowmultiple>true</allowmultiple>
                         <typecheck>true</typecheck>
                         <link>
-                            <id>f8ce98ab-0243-418a-aa99-438d7deda81f</id>
+                            <id>42c2d50c-75c1-45b8-88a4-2380ce00fb23</id>
                         </link>
                     </valuelink>
                     <valuelink>
@@ -10339,19 +10506,19 @@
                         <allowmultiple>false</allowmultiple>
                         <typecheck>true</typecheck>
                         <link>
-                            <id>d513e3f4-ef7c-4281-8673-51cf1cf1edd0</id>
+                            <id>d3268836-270d-4f85-90a6-07068e1ba648</id>
                         </link>
                     </valuelink>
                 </node>
                 <node>
                     <name>Lerp Actor Translation</name>
                     <category>Cinematic</category>
-                    <id>bff169ab-ff1a-4aab-ac27-9f835a5fd468</id>
+                    <id>076b5e50-a22b-4d6f-974c-64d77f4eabe0</id>
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>400.000000</value1>
-                            <value2>400.000000</value2>
+                            <value1>800.000000</value1>
+                            <value2>800.000000</value2>
                         </vec2>
                     </property>
                     <property>
@@ -10378,7 +10545,7 @@
                         <name>Start</name>
                         <visible>true</visible>
                         <link>
-                            <id>6b8c2a20-a77c-4c4e-a6e9-b38cc24cfc78</id>
+                            <id>c2668b8d-e11b-42d0-b417-8a9474e40419</id>
                             <name>Started</name>
                         </link>
                     </inputlink>
@@ -10386,7 +10553,7 @@
                         <name>Stop</name>
                         <visible>true</visible>
                         <link>
-                            <id>6b8c2a20-a77c-4c4e-a6e9-b38cc24cfc78</id>
+                            <id>c2668b8d-e11b-42d0-b417-8a9474e40419</id>
                             <name>Stopped</name>
                         </link>
                     </inputlink>
@@ -10394,7 +10561,7 @@
                         <name>Started</name>
                         <visible>true</visible>
                         <link>
-                            <id>04d2da7b-a937-485e-a276-210056db9550</id>
+                            <id>7c110c85-3720-4a0e-9a28-c358d97ba717</id>
                             <name>Start</name>
                         </link>
                     </outputlink>
@@ -10402,7 +10569,7 @@
                         <name>Stopped</name>
                         <visible>true</visible>
                         <link>
-                            <id>04d2da7b-a937-485e-a276-210056db9550</id>
+                            <id>7c110c85-3720-4a0e-9a28-c358d97ba717</id>
                             <name>Stop</name>
                         </link>
                     </outputlink>
@@ -10426,7 +10593,7 @@
                         <allowmultiple>true</allowmultiple>
                         <typecheck>true</typecheck>
                         <link>
-                            <id>018d8ca1-6a65-45d4-b9f5-fd104c1f5b4b</id>
+                            <id>bf957c91-0271-4298-941b-5cc52cd98788</id>
                         </link>
                     </valuelink>
                     <valuelink>
@@ -10453,7 +10620,7 @@
                         <allowmultiple>false</allowmultiple>
                         <typecheck>true</typecheck>
                         <link>
-                            <id>bd377e55-6e1e-4fa2-b9c8-85971e088756</id>
+                            <id>8116000f-5ee6-4ebe-8833-e28bd829eaac</id>
                         </link>
                     </valuelink>
                     <valuelink>
@@ -10476,23 +10643,39 @@
                 <node>
                     <name>Lerp Actor Rotation</name>
                     <category>Cinematic</category>
-                    <id>04d2da7b-a937-485e-a276-210056db9550</id>
+                    <id>7c110c85-3720-4a0e-9a28-c358d97ba717</id>
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>600.000000</value1>
-                            <value2>400.000000</value2>
+                            <value1>1200.000000</value1>
+                            <value2>800.000000</value2>
                         </vec2>
                     </property>
                     <property>
                         <name>EndTime</name>
                         <float>0.222</float>
                     </property>
+                    <property>
+                        <name>StartRotation</name>
+                        <vec3>
+                            <value1>0.000000</value1>
+                            <value2>-0.000000</value2>
+                            <value3>-89.999969</value3>
+                        </vec3>
+                    </property>
+                    <property>
+                        <name>EndRotation</name>
+                        <vec3>
+                            <value1>0.000000</value1>
+                            <value2>-0.000000</value2>
+                            <value3>-90.000000</value3>
+                        </vec3>
+                    </property>
                     <inputlink>
                         <name>Start</name>
                         <visible>true</visible>
                         <link>
-                            <id>bff169ab-ff1a-4aab-ac27-9f835a5fd468</id>
+                            <id>076b5e50-a22b-4d6f-974c-64d77f4eabe0</id>
                             <name>Started</name>
                         </link>
                     </inputlink>
@@ -10500,7 +10683,7 @@
                         <name>Stop</name>
                         <visible>true</visible>
                         <link>
-                            <id>bff169ab-ff1a-4aab-ac27-9f835a5fd468</id>
+                            <id>076b5e50-a22b-4d6f-974c-64d77f4eabe0</id>
                             <name>Stopped</name>
                         </link>
                     </inputlink>
@@ -10508,7 +10691,7 @@
                         <name>Started</name>
                         <visible>true</visible>
                         <link>
-                            <id>d01b4a67-db7d-4243-a361-eb26ba8c1cf4</id>
+                            <id>1ed341ef-dd93-4d53-a221-a9ab4a334398</id>
                             <name>Start</name>
                         </link>
                     </outputlink>
@@ -10516,7 +10699,7 @@
                         <name>Stopped</name>
                         <visible>true</visible>
                         <link>
-                            <id>d01b4a67-db7d-4243-a361-eb26ba8c1cf4</id>
+                            <id>1ed341ef-dd93-4d53-a221-a9ab4a334398</id>
                             <name>Stop</name>
                         </link>
                     </outputlink>
@@ -10540,7 +10723,7 @@
                         <allowmultiple>true</allowmultiple>
                         <typecheck>true</typecheck>
                         <link>
-                            <id>44b2bfbc-88ca-438f-910e-77867bc31dd4</id>
+                            <id>867b091e-bd64-4b76-965b-fe840b47e8a9</id>
                         </link>
                     </valuelink>
                     <valuelink>
@@ -10567,7 +10750,7 @@
                         <allowmultiple>false</allowmultiple>
                         <typecheck>true</typecheck>
                         <link>
-                            <id>76051608-a39d-45a7-9f88-cbbe34514a98</id>
+                            <id>dfa4b8a4-1d19-4fd7-9398-5f3335aa598b</id>
                         </link>
                     </valuelink>
                     <valuelink>
@@ -10590,12 +10773,12 @@
                 <node>
                     <name>Lerp Actor Translation</name>
                     <category>Cinematic</category>
-                    <id>d01b4a67-db7d-4243-a361-eb26ba8c1cf4</id>
+                    <id>1ed341ef-dd93-4d53-a221-a9ab4a334398</id>
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>800.000000</value1>
-                            <value2>400.000000</value2>
+                            <value1>1600.000000</value1>
+                            <value2>800.000000</value2>
                         </vec2>
                     </property>
                     <property>
@@ -10626,7 +10809,7 @@
                         <name>Start</name>
                         <visible>true</visible>
                         <link>
-                            <id>04d2da7b-a937-485e-a276-210056db9550</id>
+                            <id>7c110c85-3720-4a0e-9a28-c358d97ba717</id>
                             <name>Started</name>
                         </link>
                     </inputlink>
@@ -10634,7 +10817,7 @@
                         <name>Stop</name>
                         <visible>true</visible>
                         <link>
-                            <id>04d2da7b-a937-485e-a276-210056db9550</id>
+                            <id>7c110c85-3720-4a0e-9a28-c358d97ba717</id>
                             <name>Stopped</name>
                         </link>
                     </inputlink>
@@ -10642,7 +10825,7 @@
                         <name>Started</name>
                         <visible>true</visible>
                         <link>
-                            <id>bdc92db6-57a4-4fc5-9b38-16a2c0eb16a5</id>
+                            <id>258ac010-63f1-47ea-a4de-9adce3a543ef</id>
                             <name>Start</name>
                         </link>
                     </outputlink>
@@ -10650,7 +10833,7 @@
                         <name>Stopped</name>
                         <visible>true</visible>
                         <link>
-                            <id>bdc92db6-57a4-4fc5-9b38-16a2c0eb16a5</id>
+                            <id>258ac010-63f1-47ea-a4de-9adce3a543ef</id>
                             <name>Stop</name>
                         </link>
                     </outputlink>
@@ -10674,7 +10857,7 @@
                         <allowmultiple>true</allowmultiple>
                         <typecheck>true</typecheck>
                         <link>
-                            <id>624b44a4-9db3-44a1-b569-3b6e5ce58598</id>
+                            <id>6514c83f-cb0e-46e4-99a3-94d0e8af4ad3</id>
                         </link>
                     </valuelink>
                     <valuelink>
@@ -10701,7 +10884,7 @@
                         <allowmultiple>false</allowmultiple>
                         <typecheck>true</typecheck>
                         <link>
-                            <id>2384a9ae-413c-4767-a5d3-304539f6a4e9</id>
+                            <id>dcdbcca1-3344-4df4-8bde-31b3c779ca10</id>
                         </link>
                     </valuelink>
                     <valuelink>
@@ -10722,14 +10905,148 @@
                     </valuelink>
                 </node>
                 <node>
-                    <name>Lerp Actor Translation</name>
+                    <name>Lerp Actor Rotation</name>
                     <category>Cinematic</category>
-                    <id>bdc92db6-57a4-4fc5-9b38-16a2c0eb16a5</id>
+                    <id>258ac010-63f1-47ea-a4de-9adce3a543ef</id>
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>1000.000000</value1>
-                            <value2>400.000000</value2>
+                            <value1>2000.000000</value1>
+                            <value2>800.000000</value2>
+                        </vec2>
+                    </property>
+                    <property>
+                        <name>StartTime</name>
+                        <float>0.222</float>
+                    </property>
+                    <property>
+                        <name>EndTime</name>
+                        <float>1.526</float>
+                    </property>
+                    <property>
+                        <name>StartRotation</name>
+                        <vec3>
+                            <value1>0.000000</value1>
+                            <value2>-0.000000</value2>
+                            <value3>-90.000000</value3>
+                        </vec3>
+                    </property>
+                    <property>
+                        <name>EndRotation</name>
+                        <vec3>
+                            <value1>0.000000</value1>
+                            <value2>-0.000000</value2>
+                            <value3>-89.999969</value3>
+                        </vec3>
+                    </property>
+                    <inputlink>
+                        <name>Start</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>1ed341ef-dd93-4d53-a221-a9ab4a334398</id>
+                            <name>Started</name>
+                        </link>
+                    </inputlink>
+                    <inputlink>
+                        <name>Stop</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>1ed341ef-dd93-4d53-a221-a9ab4a334398</id>
+                            <name>Stopped</name>
+                        </link>
+                    </inputlink>
+                    <outputlink>
+                        <name>Started</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>6b230de9-c80b-4f27-8a31-a21ab9396a47</id>
+                            <name>Start</name>
+                        </link>
+                    </outputlink>
+                    <outputlink>
+                        <name>Stopped</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>6b230de9-c80b-4f27-8a31-a21ab9396a47</id>
+                            <name>Stop</name>
+                        </link>
+                    </outputlink>
+                    <outputlink>
+                        <name>Finished</name>
+                        <visible>true</visible>
+                    </outputlink>
+                    <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>Actor</name>
+                        <visible>true</visible>
+                        <exposed>true</exposed>
+                        <isout>true</isout>
+                        <allowmultiple>true</allowmultiple>
+                        <typecheck>true</typecheck>
+                        <link>
+                            <id>99066567-469c-472f-91fd-0b58d0c38a10</id>
+                        </link>
+                    </valuelink>
+                    <valuelink>
+                        <name>StartTime</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>EndTime</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>Time</name>
+                        <visible>true</visible>
+                        <exposed>true</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                        <link>
+                            <id>b7f4893a-820e-42b2-b99e-db0d0eb49329</id>
+                        </link>
+                    </valuelink>
+                    <valuelink>
+                        <name>StartRotation</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>EndRotation</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                </node>
+                <node>
+                    <name>Lerp Actor Translation</name>
+                    <category>Cinematic</category>
+                    <id>6b230de9-c80b-4f27-8a31-a21ab9396a47</id>
+                    <property>
+                        <name>Position</name>
+                        <vec2>
+                            <value1>2400.000000</value1>
+                            <value2>800.000000</value2>
                         </vec2>
                     </property>
                     <property>
@@ -10760,7 +11077,7 @@
                         <name>Start</name>
                         <visible>true</visible>
                         <link>
-                            <id>d01b4a67-db7d-4243-a361-eb26ba8c1cf4</id>
+                            <id>258ac010-63f1-47ea-a4de-9adce3a543ef</id>
                             <name>Started</name>
                         </link>
                     </inputlink>
@@ -10768,7 +11085,7 @@
                         <name>Stop</name>
                         <visible>true</visible>
                         <link>
-                            <id>d01b4a67-db7d-4243-a361-eb26ba8c1cf4</id>
+                            <id>258ac010-63f1-47ea-a4de-9adce3a543ef</id>
                             <name>Stopped</name>
                         </link>
                     </inputlink>
@@ -10776,7 +11093,7 @@
                         <name>Started</name>
                         <visible>true</visible>
                         <link>
-                            <id>41a8ae0e-76c3-44ec-86d2-b905a9906766</id>
+                            <id>05492fb3-d1bb-43c4-a0f7-9f839ae6095f</id>
                             <name>Start</name>
                         </link>
                     </outputlink>
@@ -10784,7 +11101,7 @@
                         <name>Stopped</name>
                         <visible>true</visible>
                         <link>
-                            <id>41a8ae0e-76c3-44ec-86d2-b905a9906766</id>
+                            <id>05492fb3-d1bb-43c4-a0f7-9f839ae6095f</id>
                             <name>Stop</name>
                         </link>
                     </outputlink>
@@ -10808,7 +11125,7 @@
                         <allowmultiple>true</allowmultiple>
                         <typecheck>true</typecheck>
                         <link>
-                            <id>18a0ad18-4a32-409e-a1d9-2921c4312eb5</id>
+                            <id>a26f786a-963c-428f-b4b5-b4931d8a41b9</id>
                         </link>
                     </valuelink>
                     <valuelink>
@@ -10835,7 +11152,7 @@
                         <allowmultiple>false</allowmultiple>
                         <typecheck>true</typecheck>
                         <link>
-                            <id>10f752b2-feb8-4767-885e-6d6c4b8a0440</id>
+                            <id>6a8d1774-8ce7-4749-a24b-ce7e28c75003</id>
                         </link>
                     </valuelink>
                     <valuelink>
@@ -10858,12 +11175,12 @@
                 <node>
                     <name>Lerp Actor Translation</name>
                     <category>Cinematic</category>
-                    <id>41a8ae0e-76c3-44ec-86d2-b905a9906766</id>
+                    <id>05492fb3-d1bb-43c4-a0f7-9f839ae6095f</id>
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>1200.000000</value1>
-                            <value2>400.000000</value2>
+                            <value1>2800.000000</value1>
+                            <value2>800.000000</value2>
                         </vec2>
                     </property>
                     <property>
@@ -10894,7 +11211,7 @@
                         <name>Start</name>
                         <visible>true</visible>
                         <link>
-                            <id>bdc92db6-57a4-4fc5-9b38-16a2c0eb16a5</id>
+                            <id>6b230de9-c80b-4f27-8a31-a21ab9396a47</id>
                             <name>Started</name>
                         </link>
                     </inputlink>
@@ -10902,7 +11219,7 @@
                         <name>Stop</name>
                         <visible>true</visible>
                         <link>
-                            <id>bdc92db6-57a4-4fc5-9b38-16a2c0eb16a5</id>
+                            <id>6b230de9-c80b-4f27-8a31-a21ab9396a47</id>
                             <name>Stopped</name>
                         </link>
                     </inputlink>
@@ -10934,7 +11251,7 @@
                         <allowmultiple>true</allowmultiple>
                         <typecheck>true</typecheck>
                         <link>
-                            <id>2e7e4868-19bf-44dc-839d-9251afa9a959</id>
+                            <id>c41dea0d-903f-4bec-90d4-68eb745077cf</id>
                         </link>
                     </valuelink>
                     <valuelink>
@@ -10961,7 +11278,7 @@
                         <allowmultiple>false</allowmultiple>
                         <typecheck>true</typecheck>
                         <link>
-                            <id>c81e0f6e-81aa-4377-b138-b01927c4f3d5</id>
+                            <id>80b096b8-9b32-4472-9a60-7771dc740753</id>
                         </link>
                     </valuelink>
                     <valuelink>
@@ -10986,12 +11303,12 @@
                 <node>
                     <name>Float</name>
                     <category>General</category>
-                    <id>d40dacc8-667b-4ff9-b78e-300e34b35cc8</id>
+                    <id>72b80b29-524b-4e9c-b8b9-ce8e7532ba49</id>
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>0.000000</value1>
-                            <value2>300.000000</value2>
+                            <value1>400.000000</value1>
+                            <value2>200.000000</value2>
                         </vec2>
                     </property>
                     <property>
@@ -11010,17 +11327,13 @@
                 <node>
                     <name>Actor</name>
                     <category>General</category>
-                    <id>f8ce98ab-0243-418a-aa99-438d7deda81f</id>
+                    <id>42c2d50c-75c1-45b8-88a4-2380ce00fb23</id>
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>195.000000</value1>
-                            <value2>600.000000</value2>
+                            <value1>400.000000</value1>
+                            <value2>1000.000000</value2>
                         </vec2>
-                    </property>
-                    <property>
-                        <name>Name</name>
-                        <string>Actor</string>
                     </property>
                     <property>
                         <name>Value</name>
@@ -11038,17 +11351,13 @@
                 <node>
                     <name>Reference</name>
                     <category>Core</category>
-                    <id>d513e3f4-ef7c-4281-8673-51cf1cf1edd0</id>
+                    <id>d3268836-270d-4f85-90a6-07068e1ba648</id>
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>246.000000</value1>
-                            <value2>600.000000</value2>
+                            <value1>465.000000</value1>
+                            <value2>1000.000000</value2>
                         </vec2>
-                    </property>
-                    <property>
-                        <name>Name</name>
-                        <string>Ref</string>
                     </property>
                     <property>
                         <name>Reference</name>
@@ -11062,24 +11371,20 @@
                         <allowmultiple>false</allowmultiple>
                         <typecheck>true</typecheck>
                         <link>
-                            <id>d40dacc8-667b-4ff9-b78e-300e34b35cc8</id>
+                            <id>72b80b29-524b-4e9c-b8b9-ce8e7532ba49</id>
                         </link>
                     </valuelink>
                 </node>
                 <node>
                     <name>Actor</name>
                     <category>General</category>
-                    <id>018d8ca1-6a65-45d4-b9f5-fd104c1f5b4b</id>
+                    <id>bf957c91-0271-4298-941b-5cc52cd98788</id>
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>403.000000</value1>
-                            <value2>600.000000</value2>
+                            <value1>800.000000</value1>
+                            <value2>1000.000000</value2>
                         </vec2>
-                    </property>
-                    <property>
-                        <name>Name</name>
-                        <string>Actor</string>
                     </property>
                     <property>
                         <name>Value</name>
@@ -11097,17 +11402,13 @@
                 <node>
                     <name>Reference</name>
                     <category>Core</category>
-                    <id>bd377e55-6e1e-4fa2-b9c8-85971e088756</id>
+                    <id>8116000f-5ee6-4ebe-8833-e28bd829eaac</id>
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>459.000000</value1>
-                            <value2>600.000000</value2>
+                            <value1>865.000000</value1>
+                            <value2>1000.000000</value2>
                         </vec2>
-                    </property>
-                    <property>
-                        <name>Name</name>
-                        <string>Ref</string>
                     </property>
                     <property>
                         <name>Reference</name>
@@ -11121,24 +11422,20 @@
                         <allowmultiple>false</allowmultiple>
                         <typecheck>true</typecheck>
                         <link>
-                            <id>d40dacc8-667b-4ff9-b78e-300e34b35cc8</id>
+                            <id>72b80b29-524b-4e9c-b8b9-ce8e7532ba49</id>
                         </link>
                     </valuelink>
                 </node>
                 <node>
                     <name>Actor</name>
                     <category>General</category>
-                    <id>44b2bfbc-88ca-438f-910e-77867bc31dd4</id>
+                    <id>867b091e-bd64-4b76-965b-fe840b47e8a9</id>
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>600.000000</value1>
-                            <value2>600.000000</value2>
+                            <value1>1200.000000</value1>
+                            <value2>1000.000000</value2>
                         </vec2>
-                    </property>
-                    <property>
-                        <name>Name</name>
-                        <string>Actor</string>
                     </property>
                     <property>
                         <name>Value</name>
@@ -11156,17 +11453,13 @@
                 <node>
                     <name>Reference</name>
                     <category>Core</category>
-                    <id>76051608-a39d-45a7-9f88-cbbe34514a98</id>
+                    <id>dfa4b8a4-1d19-4fd7-9398-5f3335aa598b</id>
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>652.000000</value1>
-                            <value2>600.000000</value2>
+                            <value1>1265.000000</value1>
+                            <value2>1000.000000</value2>
                         </vec2>
-                    </property>
-                    <property>
-                        <name>Name</name>
-                        <string>Ref</string>
                     </property>
                     <property>
                         <name>Reference</name>
@@ -11180,24 +11473,20 @@
                         <allowmultiple>false</allowmultiple>
                         <typecheck>true</typecheck>
                         <link>
-                            <id>d40dacc8-667b-4ff9-b78e-300e34b35cc8</id>
+                            <id>72b80b29-524b-4e9c-b8b9-ce8e7532ba49</id>
                         </link>
                     </valuelink>
                 </node>
                 <node>
                     <name>Actor</name>
                     <category>General</category>
-                    <id>624b44a4-9db3-44a1-b569-3b6e5ce58598</id>
+                    <id>6514c83f-cb0e-46e4-99a3-94d0e8af4ad3</id>
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>803.000000</value1>
-                            <value2>600.000000</value2>
+                            <value1>1600.000000</value1>
+                            <value2>1000.000000</value2>
                         </vec2>
-                    </property>
-                    <property>
-                        <name>Name</name>
-                        <string>Actor</string>
                     </property>
                     <property>
                         <name>Value</name>
@@ -11215,17 +11504,13 @@
                 <node>
                     <name>Reference</name>
                     <category>Core</category>
-                    <id>2384a9ae-413c-4767-a5d3-304539f6a4e9</id>
+                    <id>dcdbcca1-3344-4df4-8bde-31b3c779ca10</id>
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>859.000000</value1>
-                            <value2>600.000000</value2>
+                            <value1>1665.000000</value1>
+                            <value2>1000.000000</value2>
                         </vec2>
-                    </property>
-                    <property>
-                        <name>Name</name>
-                        <string>Ref</string>
                     </property>
                     <property>
                         <name>Reference</name>
@@ -11239,24 +11524,20 @@
                         <allowmultiple>false</allowmultiple>
                         <typecheck>true</typecheck>
                         <link>
-                            <id>d40dacc8-667b-4ff9-b78e-300e34b35cc8</id>
+                            <id>72b80b29-524b-4e9c-b8b9-ce8e7532ba49</id>
                         </link>
                     </valuelink>
                 </node>
                 <node>
                     <name>Actor</name>
                     <category>General</category>
-                    <id>18a0ad18-4a32-409e-a1d9-2921c4312eb5</id>
+                    <id>99066567-469c-472f-91fd-0b58d0c38a10</id>
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>1003.000000</value1>
-                            <value2>600.000000</value2>
+                            <value1>2000.000000</value1>
+                            <value2>1000.000000</value2>
                         </vec2>
-                    </property>
-                    <property>
-                        <name>Name</name>
-                        <string>Actor</string>
                     </property>
                     <property>
                         <name>Value</name>
@@ -11274,17 +11555,13 @@
                 <node>
                     <name>Reference</name>
                     <category>Core</category>
-                    <id>10f752b2-feb8-4767-885e-6d6c4b8a0440</id>
+                    <id>b7f4893a-820e-42b2-b99e-db0d0eb49329</id>
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>1059.000000</value1>
-                            <value2>600.000000</value2>
+                            <value1>2065.000000</value1>
+                            <value2>1000.000000</value2>
                         </vec2>
-                    </property>
-                    <property>
-                        <name>Name</name>
-                        <string>Ref</string>
                     </property>
                     <property>
                         <name>Reference</name>
@@ -11298,24 +11575,20 @@
                         <allowmultiple>false</allowmultiple>
                         <typecheck>true</typecheck>
                         <link>
-                            <id>d40dacc8-667b-4ff9-b78e-300e34b35cc8</id>
+                            <id>72b80b29-524b-4e9c-b8b9-ce8e7532ba49</id>
                         </link>
                     </valuelink>
                 </node>
                 <node>
                     <name>Actor</name>
                     <category>General</category>
-                    <id>2e7e4868-19bf-44dc-839d-9251afa9a959</id>
+                    <id>a26f786a-963c-428f-b4b5-b4931d8a41b9</id>
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>1203.000000</value1>
-                            <value2>600.000000</value2>
+                            <value1>2400.000000</value1>
+                            <value2>1000.000000</value2>
                         </vec2>
-                    </property>
-                    <property>
-                        <name>Name</name>
-                        <string>Actor</string>
                     </property>
                     <property>
                         <name>Value</name>
@@ -11333,17 +11606,13 @@
                 <node>
                     <name>Reference</name>
                     <category>Core</category>
-                    <id>c81e0f6e-81aa-4377-b138-b01927c4f3d5</id>
+                    <id>6a8d1774-8ce7-4749-a24b-ce7e28c75003</id>
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>1259.000000</value1>
-                            <value2>600.000000</value2>
+                            <value1>2465.000000</value1>
+                            <value2>1000.000000</value2>
                         </vec2>
-                    </property>
-                    <property>
-                        <name>Name</name>
-                        <string>Ref</string>
                     </property>
                     <property>
                         <name>Reference</name>
@@ -11357,1233 +11626,24 @@
                         <allowmultiple>false</allowmultiple>
                         <typecheck>true</typecheck>
                         <link>
-                            <id>d40dacc8-667b-4ff9-b78e-300e34b35cc8</id>
-                        </link>
-                    </valuelink>
-                </node>
-            </valuenodes>
-        </graph>
-        <graph>
-            <property>
-                <name>Enabled</name>
-                <boolean>true</boolean>
-            </property>
-            <property>
-                <name>Comment</name>
-                <string></string>
-            </property>
-            <property>
-                <name>Name</name>
-                <string>Fall Catcher</string>
-            </property>
-            <property>
-                <name>Custom Editor</name>
-                <string></string>
-            </property>
-            <property>
-                <name>Position</name>
-                <vec2>
-                    <value1>330.699951</value1>
-                    <value2>579.051941</value2>
-                </vec2>
-            </property>
-            <property>
-                <name>Color</name>
-                <colorRGBA>
-                    <valueR>0.462745</valueR>
-                    <valueG>0.596078</valueG>
-                    <valueB>0.290196</valueB>
-                    <valueA>0.882353</valueA>
-                </colorRGBA>
-            </property>
-            <eventnodes>
-                <node>
-                    <name>Start Event</name>
-                    <category>General</category>
-                    <id>1b911f1b-6f83-4094-90c8-d5b8a4187316</id>
-                    <property>
-                        <name>Position</name>
-                        <vec2>
-                            <value1>-1075.719360</value1>
-                            <value2>-144.305893</value2>
-                        </vec2>
-                    </property>
-                    <outputlink>
-                        <name>Out</name>
-                        <visible>true</visible>
-                        <link>
-                            <id>3f1937ab-8f88-4364-8e34-1c05e0e75eee</id>
-                            <name>In</name>
-                        </link>
-                    </outputlink>
-                    <valuelink>
-                        <name>Enabled</name>
-                        <visible>true</visible>
-                        <exposed>false</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>true</typecheck>
-                    </valuelink>
-                    <valuelink>
-                        <name>TriggerCount</name>
-                        <visible>true</visible>
-                        <exposed>false</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>true</typecheck>
-                    </valuelink>
-                </node>
-            </eventnodes>
-            <actionnodes>
-                <node>
-                    <name>Delay</name>
-                    <category>General</category>
-                    <id>7d05b48f-e74a-4c71-a2cf-4d44645ed9ab</id>
-                    <property>
-                        <name>Comment</name>
-                        <string>Update Tick.</string>
-                    </property>
-                    <property>
-                        <name>Position</name>
-                        <vec2>
-                            <value1>-286.009827</value1>
-                            <value2>-144.305893</value2>
-                        </vec2>
-                    </property>
-                    <inputlink>
-                        <name>Start</name>
-                        <visible>true</visible>
-                        <link>
-                            <id>c97039be-c6c6-4b82-b421-1b9fead7f4d2</id>
-                            <name>Out</name>
-                        </link>
-                        <link>
-                            <id>7d05b48f-e74a-4c71-a2cf-4d44645ed9ab</id>
-                            <name>Time Elapsed</name>
-                        </link>
-                    </inputlink>
-                    <inputlink>
-                        <name>Stop</name>
-                        <visible>false</visible>
-                    </inputlink>
-                    <inputlink>
-                        <name>Pause</name>
-                        <visible>false</visible>
-                    </inputlink>
-                    <outputlink>
-                        <name>Out</name>
-                        <visible>false</visible>
-                    </outputlink>
-                    <outputlink>
-                        <name>Time Elapsed</name>
-                        <visible>true</visible>
-                        <link>
-                            <id>7d05b48f-e74a-4c71-a2cf-4d44645ed9ab</id>
-                            <name>Start</name>
-                        </link>
-                        <link>
-                            <id>5d5a65ed-5501-4dc9-bb0f-172323e82ae4</id>
-                            <name>In</name>
-                        </link>
-                    </outputlink>
-                    <valuelink>
-                        <name>Enabled</name>
-                        <visible>true</visible>
-                        <exposed>false</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>true</typecheck>
-                    </valuelink>
-                    <valuelink>
-                        <name>Delay</name>
-                        <visible>true</visible>
-                        <exposed>true</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>false</typecheck>
-                    </valuelink>
-                    <valuelink>
-                        <name>Elapsed Time</name>
-                        <visible>true</visible>
-                        <exposed>false</exposed>
-                        <isout>true</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>true</typecheck>
-                    </valuelink>
-                    <valuelink>
-                        <name>UseSimTime</name>
-                        <visible>true</visible>
-                        <exposed>false</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>true</typecheck>
-                    </valuelink>
-                </node>
-                <node>
-                    <name>Get Actor Property</name>
-                    <category>General</category>
-                    <id>5d5a65ed-5501-4dc9-bb0f-172323e82ae4</id>
-                    <property>
-                        <name>Comment</name>
-                        <string>Retrieve the current player height.</string>
-                    </property>
-                    <property>
-                        <name>Position</name>
-                        <vec2>
-                            <value1>-119.707169</value1>
-                            <value2>-157.305893</value2>
-                        </vec2>
-                    </property>
-                    <property>
-                        <name>PropertyName</name>
-                        <string>Translation</string>
-                    </property>
-                    <inputlink>
-                        <name>In</name>
-                        <visible>true</visible>
-                        <link>
-                            <id>7d05b48f-e74a-4c71-a2cf-4d44645ed9ab</id>
-                            <name>Time Elapsed</name>
-                        </link>
-                    </inputlink>
-                    <outputlink>
-                        <name>Out</name>
-                        <visible>true</visible>
-                        <link>
-                            <id>ac454429-562b-430c-9f0d-385075c57451</id>
-                            <name>In</name>
-                        </link>
-                    </outputlink>
-                    <outputlink>
-                        <name>Failed</name>
-                        <visible>true</visible>
-                    </outputlink>
-                    <valuelink>
-                        <name>Enabled</name>
-                        <visible>true</visible>
-                        <exposed>false</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>true</typecheck>
-                    </valuelink>
-                    <valuelink>
-                        <name>Actor</name>
-                        <visible>true</visible>
-                        <exposed>true</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>true</typecheck>
-                        <link>
-                            <id>40175b75-f15a-4b8c-8bd6-9d76e2b08499</id>
-                        </link>
-                    </valuelink>
-                    <valuelink>
-                        <name>Result</name>
-                        <visible>true</visible>
-                        <exposed>true</exposed>
-                        <isout>true</isout>
-                        <allowmultiple>true</allowmultiple>
-                        <typecheck>false</typecheck>
-                        <link>
-                            <id>9c11db52-eb27-4499-b926-23459a6418b7</id>
-                        </link>
-                    </valuelink>
-                    <valuelink>
-                        <name>PropertyName</name>
-                        <visible>true</visible>
-                        <exposed>false</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>true</typecheck>
-                    </valuelink>
-                </node>
-                <node>
-                    <name>Get Actor Property</name>
-                    <category>General</category>
-                    <id>3f1937ab-8f88-4364-8e34-1c05e0e75eee</id>
-                    <property>
-                        <name>Comment</name>
-                        <string>Initialize by storing the position of the terrain.</string>
-                    </property>
-                    <property>
-                        <name>Position</name>
-                        <vec2>
-                            <value1>-963.008545</value1>
-                            <value2>-157.305893</value2>
-                        </vec2>
-                    </property>
-                    <property>
-                        <name>PropertyName</name>
-                        <string>Translation</string>
-                    </property>
-                    <inputlink>
-                        <name>In</name>
-                        <visible>true</visible>
-                        <link>
-                            <id>1b911f1b-6f83-4094-90c8-d5b8a4187316</id>
-                            <name>Out</name>
-                        </link>
-                    </inputlink>
-                    <outputlink>
-                        <name>Out</name>
-                        <visible>true</visible>
-                        <link>
-                            <id>e4c0961c-d0f7-43ba-8356-22fdd6fcf86e</id>
-                            <name>In</name>
-                        </link>
-                    </outputlink>
-                    <outputlink>
-                        <name>Failed</name>
-                        <visible>false</visible>
-                    </outputlink>
-                    <valuelink>
-                        <name>Enabled</name>
-                        <visible>true</visible>
-                        <exposed>false</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>true</typecheck>
-                    </valuelink>
-                    <valuelink>
-                        <name>Actor</name>
-                        <visible>true</visible>
-                        <exposed>true</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>true</typecheck>
-                        <link>
-                            <id>7adc4f44-6501-4d1c-b2d1-586c1a1d27d9</id>
-                        </link>
-                    </valuelink>
-                    <valuelink>
-                        <name>Result</name>
-                        <visible>true</visible>
-                        <exposed>true</exposed>
-                        <isout>true</isout>
-                        <allowmultiple>true</allowmultiple>
-                        <typecheck>false</typecheck>
-                        <link>
-                            <id>99e6aaac-2efe-4141-9180-846d9d7ebc6e</id>
-                        </link>
-                    </valuelink>
-                    <valuelink>
-                        <name>PropertyName</name>
-                        <visible>true</visible>
-                        <exposed>false</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>true</typecheck>
-                    </valuelink>
-                </node>
-                <node>
-                    <name>Get Vector Values</name>
-                    <category>General</category>
-                    <id>e4c0961c-d0f7-43ba-8356-22fdd6fcf86e</id>
-                    <property>
-                        <name>Position</name>
-                        <vec2>
-                            <value1>-811.288330</value1>
-                            <value2>-144.305893</value2>
-                        </vec2>
-                    </property>
-                    <inputlink>
-                        <name>In</name>
-                        <visible>true</visible>
-                        <link>
-                            <id>3f1937ab-8f88-4364-8e34-1c05e0e75eee</id>
-                            <name>Out</name>
-                        </link>
-                    </inputlink>
-                    <outputlink>
-                        <name>Out</name>
-                        <visible>true</visible>
-                        <link>
-                            <id>8e7aa804-0a97-41da-a5c7-971c37a8133e</id>
-                            <name>In</name>
-                        </link>
-                    </outputlink>
-                    <valuelink>
-                        <name>Enabled</name>
-                        <visible>true</visible>
-                        <exposed>false</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>true</typecheck>
-                    </valuelink>
-                    <valuelink>
-                        <name>Vector</name>
-                        <visible>true</visible>
-                        <exposed>true</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>false</typecheck>
-                        <link>
-                            <id>99e6aaac-2efe-4141-9180-846d9d7ebc6e</id>
-                        </link>
-                    </valuelink>
-                    <valuelink>
-                        <name>X</name>
-                        <visible>false</visible>
-                        <exposed>true</exposed>
-                        <isout>true</isout>
-                        <allowmultiple>true</allowmultiple>
-                        <typecheck>false</typecheck>
-                    </valuelink>
-                    <valuelink>
-                        <name>Y</name>
-                        <visible>false</visible>
-                        <exposed>true</exposed>
-                        <isout>true</isout>
-                        <allowmultiple>true</allowmultiple>
-                        <typecheck>false</typecheck>
-                    </valuelink>
-                    <valuelink>
-                        <name>Z</name>
-                        <visible>true</visible>
-                        <exposed>true</exposed>
-                        <isout>true</isout>
-                        <allowmultiple>true</allowmultiple>
-                        <typecheck>false</typecheck>
-                        <link>
-                            <id>24c8ec4a-202a-4748-a376-9c604d0e9952</id>
-                        </link>
-                    </valuelink>
-                    <valuelink>
-                        <name>W</name>
-                        <visible>false</visible>
-                        <exposed>true</exposed>
-                        <isout>true</isout>
-                        <allowmultiple>true</allowmultiple>
-                        <typecheck>false</typecheck>
-                    </valuelink>
-                </node>
-                <node>
-                    <name>Get Vector Values</name>
-                    <category>General</category>
-                    <id>ac454429-562b-430c-9f0d-385075c57451</id>
-                    <property>
-                        <name>Position</name>
-                        <vec2>
-                            <value1>40.302002</value1>
-                            <value2>-144.305893</value2>
-                        </vec2>
-                    </property>
-                    <inputlink>
-                        <name>In</name>
-                        <visible>true</visible>
-                        <link>
-                            <id>5d5a65ed-5501-4dc9-bb0f-172323e82ae4</id>
-                            <name>Out</name>
-                        </link>
-                    </inputlink>
-                    <outputlink>
-                        <name>Out</name>
-                        <visible>true</visible>
-                        <link>
-                            <id>cd7fce30-fe7c-4504-85bc-d250c2894ddb</id>
-                            <name>In</name>
-                        </link>
-                    </outputlink>
-                    <valuelink>
-                        <name>Enabled</name>
-                        <visible>true</visible>
-                        <exposed>false</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>true</typecheck>
-                    </valuelink>
-                    <valuelink>
-                        <name>Vector</name>
-                        <visible>true</visible>
-                        <exposed>true</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>false</typecheck>
-                        <link>
-                            <id>9c11db52-eb27-4499-b926-23459a6418b7</id>
-                        </link>
-                    </valuelink>
-                    <valuelink>
-                        <name>X</name>
-                        <visible>false</visible>
-                        <exposed>true</exposed>
-                        <isout>true</isout>
-                        <allowmultiple>true</allowmultiple>
-                        <typecheck>false</typecheck>
-                    </valuelink>
-                    <valuelink>
-                        <name>Y</name>
-                        <visible>false</visible>
-                        <exposed>true</exposed>
-                        <isout>true</isout>
-                        <allowmultiple>true</allowmultiple>
-                        <typecheck>false</typecheck>
-                    </valuelink>
-                    <valuelink>
-                        <name>Z</name>
-                        <visible>true</visible>
-                        <exposed>true</exposed>
-                        <isout>true</isout>
-                        <allowmultiple>true</allowmultiple>
-                        <typecheck>false</typecheck>
-                        <link>
-                            <id>feb98318-7dd5-4c22-bb56-33e413a55374</id>
-                        </link>
-                    </valuelink>
-                    <valuelink>
-                        <name>W</name>
-                        <visible>false</visible>
-                        <exposed>true</exposed>
-                        <isout>true</isout>
-                        <allowmultiple>true</allowmultiple>
-                        <typecheck>false</typecheck>
-                    </valuelink>
-                </node>
-                <node>
-                    <name>Compare Value</name>
-                    <category>General</category>
-                    <id>cd7fce30-fe7c-4504-85bc-d250c2894ddb</id>
-                    <property>
-                        <name>Comment</name>
-                        <string>Check if the player has fallen beneath the terrain.</string>
-                    </property>
-                    <property>
-                        <name>Position</name>
-                        <vec2>
-                            <value1>244.940170</value1>
-                            <value2>-144.305893</value2>
-                        </vec2>
-                    </property>
-                    <inputlink>
-                        <name>In</name>
-                        <visible>true</visible>
-                        <link>
-                            <id>ac454429-562b-430c-9f0d-385075c57451</id>
-                            <name>Out</name>
-                        </link>
-                    </inputlink>
-                    <outputlink>
-                        <name>A &gt; B</name>
-                        <visible>false</visible>
-                    </outputlink>
-                    <outputlink>
-                        <name>A = B</name>
-                        <visible>false</visible>
-                    </outputlink>
-                    <outputlink>
-                        <name>A != B</name>
-                        <visible>false</visible>
-                    </outputlink>
-                    <outputlink>
-                        <name>B &gt; A</name>
-                        <visible>true</visible>
-                        <link>
-                            <id>8e7260e9-b86c-47dc-ab07-4d54d2a13915</id>
-                            <name>In</name>
-                        </link>
-                    </outputlink>
-                    <valuelink>
-                        <name>Enabled</name>
-                        <visible>true</visible>
-                        <exposed>false</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>true</typecheck>
-                    </valuelink>
-                    <valuelink>
-                        <name>A</name>
-                        <visible>true</visible>
-                        <exposed>true</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>false</typecheck>
-                        <link>
-                            <id>ad64c607-b7b4-4fc5-b7cf-be97fa0624dc</id>
-                        </link>
-                    </valuelink>
-                    <valuelink>
-                        <name>B</name>
-                        <visible>true</visible>
-                        <exposed>true</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>false</typecheck>
-                        <link>
-                            <id>37f7f9f6-0162-4fc6-a85f-d68758b4425d</id>
-                        </link>
-                    </valuelink>
-                </node>
-                <node>
-                    <name>Set Vector</name>
-                    <category>General</category>
-                    <id>8e7260e9-b86c-47dc-ab07-4d54d2a13915</id>
-                    <property>
-                        <name>Position</name>
-                        <vec2>
-                            <value1>465.303894</value1>
-                            <value2>-144.305893</value2>
-                        </vec2>
-                    </property>
-                    <inputlink>
-                        <name>In</name>
-                        <visible>true</visible>
-                        <link>
-                            <id>cd7fce30-fe7c-4504-85bc-d250c2894ddb</id>
-                            <name>B &gt; A</name>
-                        </link>
-                    </inputlink>
-                    <outputlink>
-                        <name>Out</name>
-                        <visible>true</visible>
-                        <link>
-                            <id>c44519b8-8c7d-47ef-aa43-c5ede0f6f585</id>
-                            <name>In</name>
-                        </link>
-                    </outputlink>
-                    <valuelink>
-                        <name>Enabled</name>
-                        <visible>true</visible>
-                        <exposed>false</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>true</typecheck>
-                    </valuelink>
-                    <valuelink>
-                        <name>X</name>
-                        <visible>true</visible>
-                        <exposed>true</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>false</typecheck>
-                        <link>
-                            <id>8270d4eb-2da2-4fc0-b8ef-db6a3a43df23</id>
-                        </link>
-                    </valuelink>
-                    <valuelink>
-                        <name>Y</name>
-                        <visible>true</visible>
-                        <exposed>true</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>false</typecheck>
-                        <link>
-                            <id>6cd63ac7-3e74-4d43-81a4-1c1ac541be79</id>
-                        </link>
-                    </valuelink>
-                    <valuelink>
-                        <name>Z</name>
-                        <visible>true</visible>
-                        <exposed>true</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>false</typecheck>
-                        <link>
-                            <id>3b4d3907-c912-49a6-8b7c-59501f2855bc</id>
-                        </link>
-                    </valuelink>
-                    <valuelink>
-                        <name>W</name>
-                        <visible>false</visible>
-                        <exposed>true</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>false</typecheck>
-                    </valuelink>
-                    <valuelink>
-                        <name>Vector</name>
-                        <visible>true</visible>
-                        <exposed>true</exposed>
-                        <isout>true</isout>
-                        <allowmultiple>true</allowmultiple>
-                        <typecheck>false</typecheck>
-                        <link>
-                            <id>5c3bcd55-0a6d-4e0a-b128-531816b56932</id>
-                        </link>
-                    </valuelink>
-                </node>
-                <node>
-                    <name>Set Actor Property</name>
-                    <category>General</category>
-                    <id>c44519b8-8c7d-47ef-aa43-c5ede0f6f585</id>
-                    <property>
-                        <name>Position</name>
-                        <vec2>
-                            <value1>717.786377</value1>
-                            <value2>-157.305893</value2>
-                        </vec2>
-                    </property>
-                    <property>
-                        <name>PropertyName</name>
-                        <string>Translation</string>
-                    </property>
-                    <inputlink>
-                        <name>In</name>
-                        <visible>true</visible>
-                        <link>
-                            <id>8e7260e9-b86c-47dc-ab07-4d54d2a13915</id>
-                            <name>Out</name>
-                        </link>
-                    </inputlink>
-                    <outputlink>
-                        <name>Out</name>
-                        <visible>false</visible>
-                    </outputlink>
-                    <outputlink>
-                        <name>Failed</name>
-                        <visible>false</visible>
-                    </outputlink>
-                    <valuelink>
-                        <name>Enabled</name>
-                        <visible>true</visible>
-                        <exposed>false</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>true</typecheck>
-                    </valuelink>
-                    <valuelink>
-                        <name>Actor</name>
-                        <visible>true</visible>
-                        <exposed>true</exposed>
-                        <isout>true</isout>
-                        <allowmultiple>true</allowmultiple>
-                        <typecheck>true</typecheck>
-                        <link>
-                            <id>c8fbd7ec-6a99-4ac0-9541-f71a4b0152d2</id>
-                        </link>
-                    </valuelink>
-                    <valuelink>
-                        <name>NewValue</name>
-                        <visible>true</visible>
-                        <exposed>true</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>false</typecheck>
-                        <link>
-                            <id>d4dda1bd-8660-48ad-bd2f-9dd8b2b98514</id>
-                        </link>
-                    </valuelink>
-                    <valuelink>
-                        <name>PropertyName</name>
-                        <visible>true</visible>
-                        <exposed>false</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>true</typecheck>
-                    </valuelink>
-                </node>
-                <node>
-                    <name>Get Actor Property</name>
-                    <category>General</category>
-                    <id>8e7aa804-0a97-41da-a5c7-971c37a8133e</id>
-                    <property>
-                        <name>Position</name>
-                        <vec2>
-                            <value1>-662.973877</value1>
-                            <value2>-157.305893</value2>
-                        </vec2>
-                    </property>
-                    <property>
-                        <name>PropertyName</name>
-                        <string>Translation</string>
-                    </property>
-                    <inputlink>
-                        <name>In</name>
-                        <visible>true</visible>
-                        <link>
-                            <id>e4c0961c-d0f7-43ba-8356-22fdd6fcf86e</id>
-                            <name>Out</name>
-                        </link>
-                    </inputlink>
-                    <outputlink>
-                        <name>Out</name>
-                        <visible>true</visible>
-                        <link>
-                            <id>c97039be-c6c6-4b82-b421-1b9fead7f4d2</id>
-                            <name>In</name>
-                        </link>
-                    </outputlink>
-                    <outputlink>
-                        <name>Failed</name>
-                        <visible>true</visible>
-                    </outputlink>
-                    <valuelink>
-                        <name>Enabled</name>
-                        <visible>true</visible>
-                        <exposed>false</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>true</typecheck>
-                    </valuelink>
-                    <valuelink>
-                        <name>Actor</name>
-                        <visible>true</visible>
-                        <exposed>true</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>true</typecheck>
-                        <link>
-                            <id>47900330-125f-47bb-98fc-bb3ba2a51823</id>
-                        </link>
-                    </valuelink>
-                    <valuelink>
-                        <name>Result</name>
-                        <visible>true</visible>
-                        <exposed>true</exposed>
-                        <isout>true</isout>
-                        <allowmultiple>true</allowmultiple>
-                        <typecheck>false</typecheck>
-                        <link>
-                            <id>a9e4b4b8-1b06-49cd-b719-77699251d4af</id>
-                        </link>
-                    </valuelink>
-                    <valuelink>
-                        <name>PropertyName</name>
-                        <visible>true</visible>
-                        <exposed>false</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>true</typecheck>
-                    </valuelink>
-                </node>
-                <node>
-                    <name>Get Vector Values</name>
-                    <category>General</category>
-                    <id>c97039be-c6c6-4b82-b421-1b9fead7f4d2</id>
-                    <property>
-                        <name>Position</name>
-                        <vec2>
-                            <value1>-517.473877</value1>
-                            <value2>-144.305893</value2>
-                        </vec2>
-                    </property>
-                    <inputlink>
-                        <name>In</name>
-                        <visible>true</visible>
-                        <link>
-                            <id>8e7aa804-0a97-41da-a5c7-971c37a8133e</id>
-                            <name>Out</name>
-                        </link>
-                    </inputlink>
-                    <outputlink>
-                        <name>Out</name>
-                        <visible>true</visible>
-                        <link>
-                            <id>7d05b48f-e74a-4c71-a2cf-4d44645ed9ab</id>
-                            <name>Start</name>
-                        </link>
-                    </outputlink>
-                    <valuelink>
-                        <name>Enabled</name>
-                        <visible>true</visible>
-                        <exposed>false</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>true</typecheck>
-                    </valuelink>
-                    <valuelink>
-                        <name>Vector</name>
-                        <visible>true</visible>
-                        <exposed>true</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>false</typecheck>
-                        <link>
-                            <id>a9e4b4b8-1b06-49cd-b719-77699251d4af</id>
-                        </link>
-                    </valuelink>
-                    <valuelink>
-                        <name>X</name>
-                        <visible>true</visible>
-                        <exposed>true</exposed>
-                        <isout>true</isout>
-                        <allowmultiple>true</allowmultiple>
-                        <typecheck>false</typecheck>
-                        <link>
-                            <id>a2b42b3d-c374-4456-bc85-a91a2341cfac</id>
-                        </link>
-                    </valuelink>
-                    <valuelink>
-                        <name>Y</name>
-                        <visible>true</visible>
-                        <exposed>true</exposed>
-                        <isout>true</isout>
-                        <allowmultiple>true</allowmultiple>
-                        <typecheck>false</typecheck>
-                        <link>
-                            <id>e7e65a70-b2e0-4aca-8030-ffecc60b6f34</id>
-                        </link>
-                    </valuelink>
-                    <valuelink>
-                        <name>Z</name>
-                        <visible>true</visible>
-                        <exposed>true</exposed>
-                        <isout>true</isout>
-                        <allowmultiple>true</allowmultiple>
-                        <typecheck>false</typecheck>
-                        <link>
-                            <id>7569094f-ddfc-4be0-8787-2583cc6def65</id>
-                        </link>
-                    </valuelink>
-                    <valuelink>
-                        <name>W</name>
-                        <visible>true</visible>
-                        <exposed>true</exposed>
-                        <isout>true</isout>
-                        <allowmultiple>true</allowmultiple>
-                        <typecheck>false</typecheck>
-                    </valuelink>
-                </node>
-            </actionnodes>
-            <valuenodes>
-                <node>
-                    <name>Vec3</name>
-                    <category>General</category>
-                    <id>99e6aaac-2efe-4141-9180-846d9d7ebc6e</id>
-                    <property>
-                        <name>Position</name>
-                        <vec2>
-                            <value1>-919.508545</value1>
-                            <value2>29.234116</value2>
-                        </vec2>
-                    </property>
-                    <valuelink>
-                        <name>Enabled</name>
-                        <visible>true</visible>
-                        <exposed>false</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>true</typecheck>
-                    </valuelink>
-                </node>
-                <node>
-                    <name>Float</name>
-                    <category>General</category>
-                    <id>24c8ec4a-202a-4748-a376-9c604d0e9952</id>
-                    <property>
-                        <name>Position</name>
-                        <vec2>
-                            <value1>-769.288330</value1>
-                            <value2>29.234116</value2>
-                        </vec2>
-                    </property>
-                    <property>
-                        <name>Name</name>
-                        <string>Desired Height</string>
-                    </property>
-                    <valuelink>
-                        <name>Enabled</name>
-                        <visible>true</visible>
-                        <exposed>false</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>true</typecheck>
-                    </valuelink>
-                </node>
-                <node>
-                    <name>Player</name>
-                    <category>Core</category>
-                    <id>40175b75-f15a-4b8c-8bd6-9d76e2b08499</id>
-                    <property>
-                        <name>Position</name>
-                        <vec2>
-                            <value1>-125.207169</value1>
-                            <value2>31.624962</value2>
-                        </vec2>
-                    </property>
-                    <valuelink>
-                        <name>Enabled</name>
-                        <visible>true</visible>
-                        <exposed>false</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>true</typecheck>
-                    </valuelink>
-                </node>
-                <node>
-                    <name>Vec3</name>
-                    <category>General</category>
-                    <id>9c11db52-eb27-4499-b926-23459a6418b7</id>
-                    <property>
-                        <name>Position</name>
-                        <vec2>
-                            <value1>-31.003599</value1>
-                            <value2>31.624962</value2>
-                        </vec2>
-                    </property>
-                    <property>
-                        <name>Name</name>
-                        <string>Player Pos</string>
-                    </property>
-                    <property>
-                        <name>Value</name>
-                        <vec3>
-                            <value1>0.163820</value1>
-                            <value2>9.844140</value2>
-                            <value3>1.563328</value3>
-                        </vec3>
-                    </property>
-                    <valuelink>
-                        <name>Enabled</name>
-                        <visible>true</visible>
-                        <exposed>false</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>true</typecheck>
-                    </valuelink>
-                </node>
-                <node>
-                    <name>Float</name>
-                    <category>General</category>
-                    <id>feb98318-7dd5-4c22-bb56-33e413a55374</id>
-                    <property>
-                        <name>Position</name>
-                        <vec2>
-                            <value1>82.301971</value1>
-                            <value2>31.624962</value2>
-                        </vec2>
-                    </property>
-                    <property>
-                        <name>Name</name>
-                        <string>Player Height</string>
-                    </property>
-                    <property>
-                        <name>Value</name>
-                        <float>1.5633301</float>
-                    </property>
-                    <valuelink>
-                        <name>Enabled</name>
-                        <visible>true</visible>
-                        <exposed>false</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>true</typecheck>
-                    </valuelink>
-                </node>
-                <node>
-                    <name>Reference</name>
-                    <category>Core</category>
-                    <id>ad64c607-b7b4-4fc5-b7cf-be97fa0624dc</id>
-                    <property>
-                        <name>Position</name>
-                        <vec2>
-                            <value1>235.940155</value1>
-                            <value2>31.624962</value2>
-                        </vec2>
-                    </property>
-                    <property>
-                        <name>Reference</name>
-                        <string>Player Height</string>
-                    </property>
-                    <valuelink>
-                        <name>Value</name>
-                        <visible>true</visible>
-                        <exposed>false</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>false</typecheck>
-                        <link>
-                            <id>feb98318-7dd5-4c22-bb56-33e413a55374</id>
-                        </link>
-                    </valuelink>
-                </node>
-                <node>
-                    <name>Reference</name>
-                    <category>Core</category>
-                    <id>37f7f9f6-0162-4fc6-a85f-d68758b4425d</id>
-                    <property>
-                        <name>Position</name>
-                        <vec2>
-                            <value1>303.615997</value1>
-                            <value2>31.624962</value2>
-                        </vec2>
-                    </property>
-                    <property>
-                        <name>Reference</name>
-                        <string>Desired Height</string>
-                    </property>
-                    <valuelink>
-                        <name>Value</name>
-                        <visible>true</visible>
-                        <exposed>false</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>false</typecheck>
-                        <link>
-                            <id>24c8ec4a-202a-4748-a376-9c604d0e9952</id>
-                        </link>
-                    </valuelink>
-                </node>
-                <node>
-                    <name>Float</name>
-                    <category>General</category>
-                    <id>a2b42b3d-c374-4456-bc85-a91a2341cfac</id>
-                    <property>
-                        <name>Position</name>
-                        <vec2>
-                            <value1>-490.473907</value1>
-                            <value2>29.234116</value2>
-                        </vec2>
-                    </property>
-                    <property>
-                        <name>Name</name>
-                        <string>Spawn X</string>
-                    </property>
-                    <property>
-                        <name>Value</name>
-                        <float>0.16382</float>
-                    </property>
-                    <valuelink>
-                        <name>Enabled</name>
-                        <visible>true</visible>
-                        <exposed>false</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>true</typecheck>
-                    </valuelink>
-                </node>
-                <node>
-                    <name>Float</name>
-                    <category>General</category>
-                    <id>e7e65a70-b2e0-4aca-8030-ffecc60b6f34</id>
-                    <property>
-                        <name>Position</name>
-                        <vec2>
-                            <value1>-414.473907</value1>
-                            <value2>29.234116</value2>
-                        </vec2>
-                    </property>
-                    <property>
-                        <name>Name</name>
-                        <string>Spawn Y</string>
-                    </property>
-                    <property>
-                        <name>Value</name>
-                        <float>9.8441401</float>
-                    </property>
-                    <valuelink>
-                        <name>Enabled</name>
-                        <visible>true</visible>
-                        <exposed>false</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>true</typecheck>
-                    </valuelink>
-                </node>
-                <node>
-                    <name>Reference</name>
-                    <category>Core</category>
-                    <id>5c3bcd55-0a6d-4e0a-b128-531816b56932</id>
-                    <property>
-                        <name>Position</name>
-                        <vec2>
-                            <value1>635.364075</value1>
-                            <value2>32.624962</value2>
-                        </vec2>
-                    </property>
-                    <property>
-                        <name>Reference</name>
-                        <string>Player Pos</string>
-                    </property>
-                    <valuelink>
-                        <name>Value</name>
-                        <visible>true</visible>
-                        <exposed>false</exposed>
-                        <isout>true</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>false</typecheck>
-                        <link>
-                            <id>9c11db52-eb27-4499-b926-23459a6418b7</id>
-                        </link>
-                    </valuelink>
-                </node>
-                <node>
-                    <name>Reference</name>
-                    <category>Core</category>
-                    <id>3b4d3907-c912-49a6-8b7c-59501f2855bc</id>
-                    <property>
-                        <name>Position</name>
-                        <vec2>
-                            <value1>568.303955</value1>
-                            <value2>32.624962</value2>
-                        </vec2>
-                    </property>
-                    <property>
-                        <name>Reference</name>
-                        <string>Spawn Z</string>
-                    </property>
-                    <valuelink>
-                        <name>Value</name>
-                        <visible>true</visible>
-                        <exposed>false</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>false</typecheck>
-                        <link>
-                            <id>7569094f-ddfc-4be0-8787-2583cc6def65</id>
-                        </link>
-                    </valuelink>
-                </node>
-                <node>
-                    <name>Player</name>
-                    <category>Core</category>
-                    <id>c8fbd7ec-6a99-4ac0-9541-f71a4b0152d2</id>
-                    <property>
-                        <name>Position</name>
-                        <vec2>
-                            <value1>716.286377</value1>
-                            <value2>32.624962</value2>
-                        </vec2>
-                    </property>
-                    <valuelink>
-                        <name>Enabled</name>
-                        <visible>true</visible>
-                        <exposed>false</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>true</typecheck>
-                    </valuelink>
-                </node>
-                <node>
-                    <name>Reference</name>
-                    <category>Core</category>
-                    <id>d4dda1bd-8660-48ad-bd2f-9dd8b2b98514</id>
-                    <property>
-                        <name>Position</name>
-                        <vec2>
-                            <value1>787.771545</value1>
-                            <value2>32.624962</value2>
-                        </vec2>
-                    </property>
-                    <property>
-                        <name>Reference</name>
-                        <string>Player Pos</string>
-                    </property>
-                    <valuelink>
-                        <name>Value</name>
-                        <visible>true</visible>
-                        <exposed>false</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>false</typecheck>
-                        <link>
-                            <id>9c11db52-eb27-4499-b926-23459a6418b7</id>
+                            <id>72b80b29-524b-4e9c-b8b9-ce8e7532ba49</id>
                         </link>
                     </valuelink>
                 </node>
                 <node>
                     <name>Actor</name>
                     <category>General</category>
-                    <id>7adc4f44-6501-4d1c-b2d1-586c1a1d27d9</id>
+                    <id>c41dea0d-903f-4bec-90d4-68eb745077cf</id>
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>-994.473877</value1>
-                            <value2>29.234116</value2>
+                            <value1>2800.000000</value1>
+                            <value2>1000.000000</value2>
                         </vec2>
                     </property>
                     <property>
                         <name>Value</name>
-                        <actorId>b2acefd8-12a5-47a1-8035-b6537de811d7</actorId>
+                        <actorId>11378b3a-3352-421f-b43b-0792580d9e78</actorId>
                     </property>
                     <valuelink>
                         <name>Enabled</name>
@@ -12597,17 +11657,17 @@
                 <node>
                     <name>Reference</name>
                     <category>Core</category>
-                    <id>8270d4eb-2da2-4fc0-b8ef-db6a3a43df23</id>
+                    <id>80b096b8-9b32-4472-9a60-7771dc740753</id>
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>422.815247</value1>
-                            <value2>31.624962</value2>
+                            <value1>2865.000000</value1>
+                            <value2>1000.000000</value2>
                         </vec2>
                     </property>
                     <property>
                         <name>Reference</name>
-                        <string>Spawn X</string>
+                        <string>Current Time</string>
                     </property>
                     <valuelink>
                         <name>Value</name>
@@ -12615,105 +11675,10 @@
                         <exposed>false</exposed>
                         <isout>false</isout>
                         <allowmultiple>false</allowmultiple>
-                        <typecheck>false</typecheck>
+                        <typecheck>true</typecheck>
                         <link>
-                            <id>a2b42b3d-c374-4456-bc85-a91a2341cfac</id>
+                            <id>72b80b29-524b-4e9c-b8b9-ce8e7532ba49</id>
                         </link>
-                    </valuelink>
-                </node>
-                <node>
-                    <name>Reference</name>
-                    <category>Core</category>
-                    <id>6cd63ac7-3e74-4d43-81a4-1c1ac541be79</id>
-                    <property>
-                        <name>Position</name>
-                        <vec2>
-                            <value1>492.303955</value1>
-                            <value2>31.624962</value2>
-                        </vec2>
-                    </property>
-                    <property>
-                        <name>Reference</name>
-                        <string>Spawn Y</string>
-                    </property>
-                    <valuelink>
-                        <name>Value</name>
-                        <visible>true</visible>
-                        <exposed>false</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>false</typecheck>
-                        <link>
-                            <id>e7e65a70-b2e0-4aca-8030-ffecc60b6f34</id>
-                        </link>
-                    </valuelink>
-                </node>
-                <node>
-                    <name>Vec3</name>
-                    <category>General</category>
-                    <id>a9e4b4b8-1b06-49cd-b719-77699251d4af</id>
-                    <property>
-                        <name>Position</name>
-                        <vec2>
-                            <value1>-595.473877</value1>
-                            <value2>29.234116</value2>
-                        </vec2>
-                    </property>
-                    <valuelink>
-                        <name>Enabled</name>
-                        <visible>true</visible>
-                        <exposed>false</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>true</typecheck>
-                    </valuelink>
-                </node>
-                <node>
-                    <name>Actor</name>
-                    <category>General</category>
-                    <id>47900330-125f-47bb-98fc-bb3ba2a51823</id>
-                    <property>
-                        <name>Position</name>
-                        <vec2>
-                            <value1>-668.473877</value1>
-                            <value2>29.234116</value2>
-                        </vec2>
-                    </property>
-                    <property>
-                        <name>Value</name>
-                        <actorId>1af6ec4e-1270-44b3-b30b-20ebbfac269d</actorId>
-                    </property>
-                    <valuelink>
-                        <name>Enabled</name>
-                        <visible>true</visible>
-                        <exposed>false</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>true</typecheck>
-                    </valuelink>
-                </node>
-                <node>
-                    <name>Float</name>
-                    <category>General</category>
-                    <id>7569094f-ddfc-4be0-8787-2583cc6def65</id>
-                    <property>
-                        <name>Position</name>
-                        <vec2>
-                            <value1>-348.473907</value1>
-                            <value2>29.234116</value2>
-                        </vec2>
-                    </property>
-                    <property>
-                        <name>Name</name>
-                        <string>Spawn Z</string>
-                    </property>
-                    <valuelink>
-                        <name>Enabled</name>
-                        <visible>true</visible>
-                        <exposed>false</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>true</typecheck>
                     </valuelink>
                 </node>
             </valuenodes>
