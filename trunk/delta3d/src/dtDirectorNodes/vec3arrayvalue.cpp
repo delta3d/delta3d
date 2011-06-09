@@ -58,8 +58,8 @@ namespace dtDirector
 
       mInitialProperty = new dtDAL::Vec3ActorProperty(
          "Value", "Value",
-         dtDAL::Vec3ActorProperty::SetFuncType(this, &Vec3ArrayValue::SetValue),
-         dtDAL::Vec3ActorProperty::GetFuncType(this, &Vec3ArrayValue::GetValue),
+         dtDAL::Vec3ActorProperty::SetFuncType(this, &Vec3ArrayValue::SetInitialValue),
+         dtDAL::Vec3ActorProperty::GetFuncType(this, &Vec3ArrayValue::GetInitialValue),
          "The value.");
 
       mArrayProperty = new dtDAL::ArrayActorProperty<osg::Vec3>(
@@ -131,7 +131,9 @@ namespace dtDirector
    {
       if (mInitialPropertyIndex < (int)mInitialValues.size())
       {
+         int index = mInitialPropertyIndex;
          std::string oldValue = mInitialArrayProperty->ToString();
+         mInitialPropertyIndex = index;
 
          mInitialValues[mInitialPropertyIndex] = value;
 

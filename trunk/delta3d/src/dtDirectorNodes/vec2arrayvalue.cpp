@@ -131,7 +131,9 @@ namespace dtDirector
    {
       if (mInitialPropertyIndex < (int)mInitialValues.size())
       {
+         int index = mInitialPropertyIndex;
          std::string oldValue = mInitialArrayProperty->ToString();
+         mInitialPropertyIndex = index;
 
          mInitialValues[mInitialPropertyIndex] = value;
 
@@ -144,7 +146,7 @@ namespace dtDirector
    {
       if (mInitialPropertyIndex < (int)mValues.size())
       {
-         return mValues[mInitialPropertyIndex];
+         return mInitialValues[mInitialPropertyIndex];
       }
 
       return GetDefaultValue();
