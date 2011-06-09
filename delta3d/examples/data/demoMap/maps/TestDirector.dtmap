@@ -7,7 +7,7 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2009-12-21T16:14:44-08:00</createTimestamp>
-        <lastUpdateTimestamp>2011-06-06T15:28:11-08:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2011-06-08T23:13:44-08:00</lastUpdateTimestamp>
         <editorVersion>2.7.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
@@ -68,14 +68,14 @@
                 <name>Rotation</name>
                 <vec3>
                     <value1>0.000000</value1>
-                    <value2>0.000000</value2>
-                    <value3>-90.000000</value3>
+                    <value2>-0.000000</value2>
+                    <value3>-89.999977</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>14.061634</value1>
+                    <value1>14.056686</value1>
                     <value2>8.538706</value2>
                     <value3>0.073650</value3>
                 </vec3>
@@ -137,9 +137,9 @@
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-2.365583</value1>
-                    <value2>9.898514</value2>
-                    <value3>1.801777</value3>
+                    <value1>-0.578832</value1>
+                    <value2>8.567699</value2>
+                    <value3>3.096251</value3>
                 </vec3>
             </property>
         </actor>
@@ -323,6 +323,10 @@
                     <value3>5.000000</value3>
                 </vec3>
             </property>
+            <property>
+                <name>Collision Collide Mask</name>
+                <bitMask>2</bitMask>
+            </property>
         </actor>
         <actor>
             <type>dtcore.Static Mesh</type>
@@ -413,6 +417,10 @@
                     <value2>5.000000</value2>
                     <value3>5.000000</value3>
                 </vec3>
+            </property>
+            <property>
+                <name>Collision Collide Mask</name>
+                <bitMask>2</bitMask>
             </property>
         </actor>
         <actor>
@@ -560,7 +568,7 @@
         <actor>
             <type>dtActors.Trigger Volume Actor</type>
             <id>52ef136e-479b-4548-8040-4dd48444bce0</id>
-            <name>particleTrigger</name>
+            <name>Trigger_Fire</name>
             <property>
                 <name>Translation</name>
                 <vec3>
@@ -660,6 +668,37 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes::Door_Pivot_Room.IVE</resourceDisplayName>
                 <resource>StaticMeshes::Door_Pivot_Room.IVE</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Static Mesh</type>
+            <id>601dce08-3f58-4f75-8512-f6f7458c9bc5</id>
+            <name>door_09</name>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>31.596153</value1>
+                    <value2>14.973146</value2>
+                    <value3>0.001683</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>CUBE</enumerated>
+            </property>
+            <property>
+                <name>Enable Collision</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Collision Collide Mask</name>
+                <bitMask>2</bitMask>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::Door_Pivot.IVE</resourceDisplayName>
+                <resource>StaticMeshes::Door_Pivot.IVE</resource>
             </property>
         </actor>
         <actor>
@@ -1075,6 +1114,10 @@
                     <value3>5.000000</value3>
                 </vec3>
             </property>
+            <property>
+                <name>Collision Collide Mask</name>
+                <bitMask>2</bitMask>
+            </property>
         </actor>
         <actor>
             <type>dtcore.Label</type>
@@ -1120,7 +1163,7 @@
         <actor>
             <type>dtcore.Environment.Sound Actor</type>
             <id>9b275918-e1ba-4352-acf1-34c88f488eb0</id>
-            <name>fireSound</name>
+            <name>Sound_Fire</name>
             <property>
                 <name>Translation</name>
                 <vec3>
@@ -1465,6 +1508,10 @@
                     <value3>5.000000</value3>
                 </vec3>
             </property>
+            <property>
+                <name>Collision Collide Mask</name>
+                <bitMask>2</bitMask>
+            </property>
         </actor>
         <actor>
             <type>dtcore.Label</type>
@@ -1562,11 +1609,15 @@
                     <value3>5.000000</value3>
                 </vec3>
             </property>
+            <property>
+                <name>Collision Collide Mask</name>
+                <bitMask>2</bitMask>
+            </property>
         </actor>
         <actor>
             <type>dtcore.Particle System</type>
             <id>cb9a3920-0a56-497c-92b5-6f1446366bdc</id>
-            <name>ParticleSystem_01</name>
+            <name>Particle_Fire</name>
             <property>
                 <name>IsActive</name>
                 <boolean>false</boolean>
@@ -1609,6 +1660,10 @@
                     <value2>3.000000</value2>
                     <value3>5.000000</value3>
                 </vec3>
+            </property>
+            <property>
+                <name>Collision Collide Mask</name>
+                <bitMask>2</bitMask>
             </property>
         </actor>
         <actor>
@@ -1659,7 +1714,7 @@
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>23.584461</value1>
+                    <value1>23.602694</value1>
                     <value2>7.079894</value2>
                     <value3>0.001683</value3>
                 </vec3>
@@ -1712,6 +1767,37 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes::Door_Pivot_Room.IVE</resourceDisplayName>
                 <resource>StaticMeshes::Door_Pivot_Room.IVE</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Static Mesh</type>
+            <id>dcb940c3-0b75-4a28-9366-aedd649a8050</id>
+            <name>door_10</name>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>31.595467</value1>
+                    <value2>7.079894</value2>
+                    <value3>0.001683</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>CUBE</enumerated>
+            </property>
+            <property>
+                <name>Enable Collision</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Collision Collide Mask</name>
+                <bitMask>2</bitMask>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::Door_Pivot.IVE</resourceDisplayName>
+                <resource>StaticMeshes::Door_Pivot.IVE</resource>
             </property>
         </actor>
         <actor>
@@ -1778,6 +1864,10 @@
                     <value2>8.000000</value2>
                     <value3>8.000000</value3>
                 </vec3>
+            </property>
+            <property>
+                <name>Collision Collide Mask</name>
+                <bitMask>2</bitMask>
             </property>
         </actor>
         <actor>
@@ -1993,7 +2083,7 @@
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>22.048107</value1>
+                    <value1>30.904129</value1>
                     <value2>18.963406</value2>
                     <value3>1.297837</value3>
                 </vec3>
@@ -2207,6 +2297,36 @@
                 <positionX>0.000000</positionX>
                 <positionY>0.000000</positionY>
                 <positionZ>0.000000</positionZ>
+                <zoom>1.000000</zoom>
+            </frontView>
+        </presetCamera>
+        <presetCamera>
+            <index>6</index>
+            <perspectiveView>
+                <positionX>27.529316</positionX>
+                <positionY>10.612139</positionY>
+                <positionZ>4.867239</positionZ>
+                <rotationX>-0.228877</rotationX>
+                <rotationY>0.225703</rotationY>
+                <rotationZ>-0.664888</rotationZ>
+                <rotationW>0.674238</rotationW>
+            </perspectiveView>
+            <topView>
+                <positionX>34.212406</positionX>
+                <positionY>10.702178</positionY>
+                <positionZ>-0.000001</positionZ>
+                <zoom>1.000000</zoom>
+            </topView>
+            <sideView>
+                <positionX>34.212406</positionX>
+                <positionY>10.702178</positionY>
+                <positionZ>-0.000001</positionZ>
+                <zoom>1.000000</zoom>
+            </sideView>
+            <frontView>
+                <positionX>34.212406</positionX>
+                <positionY>10.702178</positionY>
+                <positionZ>-0.000001</positionZ>
                 <zoom>1.000000</zoom>
             </frontView>
         </presetCamera>
