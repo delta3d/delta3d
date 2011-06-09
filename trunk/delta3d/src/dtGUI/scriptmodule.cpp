@@ -54,20 +54,36 @@ bool ScriptModule::AddCallback(const std::string& callbackName, CEGUI::Subscribe
    return mCallbacks.insert(std::pair<std::string, CEGUI::SubscriberSlot>(callbackName.c_str(), subscriberSlot)).second; 
 }
 
-//////////////////////////////////////////////////////////////////////////
-bool ScriptModule::RemoveCallback(const std::string& callbackName)
-{
-   const std::map<std::string, CEGUI::SubscriberSlot>::iterator iter = mCallbacks.find(callbackName.c_str());
-
-   if (iter == mCallbacks.end())
-   {
-      LOG_WARNING(std::string(callbackName.c_str() ) + "is no valid callback.");
-      return false;
-   }
-
-   mCallbacks.erase(iter);
-   return true;
-}
+////////////////////////////////////////////////////////////////////////////
+//bool ScriptModule::RemoveCallback(const std::string& callbackName)
+//{
+//   const std::map<std::string, CEGUI::SubscriberSlot>::iterator iter = mCallbacks.find(callbackName.c_str());
+//
+//   if (iter == mCallbacks.end())
+//   {
+//      LOG_WARNING(std::string(callbackName.c_str() ) + "is no valid callback.");
+//      return false;
+//   }
+//
+//   CEGUI::SubscriberSlot slot = iter->second;
+//   slot.cleanup();
+//
+//   mCallbacks.erase(iter);
+//
+//   int count = (int)mConnections.size();
+//   for (int index = 0; index < count; ++index)
+//   {
+//      CEGUI::Event::Connection c = mConnections[index];
+//      if (!c.isValid())
+//      {
+//         mConnections.erase(mConnections.begin() + index);
+//         index--;
+//         count--;
+//      }
+//   }
+//
+//   return true;
+//}
 
 ////////////////////////////////////////////////////////////////////////////////
 CEGUI::Event::Connection dtGUI::ScriptModule::subscribeEvent(CEGUI::EventSet* window,
