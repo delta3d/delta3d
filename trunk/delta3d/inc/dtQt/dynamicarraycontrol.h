@@ -115,6 +115,11 @@ namespace dtQt
       void resizeChildren(bool forceRefresh = false, bool isChild = false, bool initializing = false);
 
       /**
+       * Sets the focus on a particular property index.
+       */
+      void SetIndexFocus(int index);
+
+      /**
        * Retrieves the array property.
        */
       dtDAL::ArrayActorPropertyBase* GetProperty() const {return mProperty;}

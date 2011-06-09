@@ -440,8 +440,10 @@ namespace dtQt
             oldValue, arrayProp->ToString());
          emit PropertyChanged(*mPropContainer, *arrayProp);
 
+         int nextIndex = mArrayIndex - 1;
          mPropertyTree->closeEditor(mWrapper, QAbstractItemDelegate::NoHint);
          parent->resizeChildren(true, true);
+         parent->SetIndexFocus(nextIndex);
       }
    }
 
@@ -472,8 +474,10 @@ namespace dtQt
             oldValue, arrayProp->ToString());
          emit PropertyChanged(*mPropContainer, *arrayProp);
 
+         int nextIndex = mArrayIndex + 1;
          mPropertyTree->closeEditor(mWrapper, QAbstractItemDelegate::NoHint);
          parent->resizeChildren(true, true);
+         parent->SetIndexFocus(nextIndex);
       }
    }
 
@@ -507,8 +511,10 @@ namespace dtQt
             oldValue, arrayProp->ToString());
          emit PropertyChanged(*mPropContainer, *arrayProp);
 
+         int nextIndex = mArrayIndex;
          mPropertyTree->closeEditor(mWrapper, QAbstractItemDelegate::NoHint);
          parent->resizeChildren(false, true);
+         parent->SetIndexFocus(nextIndex);
       }
    }
 
@@ -541,8 +547,10 @@ namespace dtQt
             oldValue, arrayProp->ToString());
          emit PropertyChanged(*mPropContainer, *arrayProp);
 
+         int nextIndex = mArrayIndex;
          mPropertyTree->closeEditor(mWrapper, QAbstractItemDelegate::NoHint);
          parent->resizeChildren(false, true);
+         parent->SetIndexFocus(nextIndex);
       }
    }
 
