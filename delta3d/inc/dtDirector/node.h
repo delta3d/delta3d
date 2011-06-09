@@ -40,6 +40,7 @@
 #include <dtUtil/mswinmacros.h>
 
 #include <dtDAL/propertycontainer.h>
+#include <dtDAL/resourcedescriptor.h>
 
 #include <osg/Vec2>
 
@@ -418,6 +419,7 @@ namespace dtDirector
 
       bool GetBoolean(const std::string& name = "Value", int index = 0);
       int GetInt(const std::string& name = "Value", int index = 0);
+      unsigned int GetUInt(const std::string& name = "Value", int index = 0);
       float GetFloat(const std::string& name = "Value", int index = 0);
       double GetDouble(const std::string& name = "Value", int index = 0);
       std::string GetString(const std::string& name = "Value", int index = 0);
@@ -427,6 +429,7 @@ namespace dtDirector
       dtCore::UniqueId GetActorID(const std::string& name = "Value", int index = 0);
       dtDAL::BaseActorObject* GetActor(const std::string& name = "Value", int index = 0);
       dtDAL::GameEvent* GetGameEvent(const std::string& name = "Value", int index = 0);
+      dtDAL::ResourceDescriptor GetResource(const std::string& name = "Value", int index = 0);
 
       /**
        * This method is provided for ease of use.  It will allow you to
@@ -486,6 +489,7 @@ namespace dtDirector
 
       void SetBoolean(bool value, const std::string& name = "Value", int index = -1);
       void SetInt(int value, const std::string& name = "Value", int index = -1);
+      void SetUInt(unsigned int value, const std::string& name = "Value", int index = -1);
       void SetFloat(float value, const std::string& name = "Value", int index = -1);
       void SetDouble(double value, const std::string& name = "Value", int index = -1);
       void SetVec2(osg::Vec2 value, const std::string& name = "Value", int index = -1);
@@ -494,6 +498,7 @@ namespace dtDirector
       void SetString(const std::string& value, const std::string& name = "Value", int index = -1);
       void SetActorID(const dtCore::UniqueId& value, const std::string& name = "Value", int index = -1);
       void SetGameEvent(dtDAL::GameEvent* value, const std::string& name = "Value", int index = -1);
+      void SetResource(const dtDAL::ResourceDescriptor& value, const std::string& name = "Value", int index = -1);
 
       /**
        * Retrieves the input list.
@@ -524,7 +529,7 @@ namespace dtDirector
       /**
        * Triggers an output on this node.
        */
-      bool TriggerOutput(const std::string& name);
+      bool ActivateOutput(const std::string& name = "Out");
 
       /**
        * Retrieves whether the UI should expose input links
