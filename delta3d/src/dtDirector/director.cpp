@@ -72,7 +72,7 @@ namespace dtDirector
       , mParent(NULL)
       , mActive(true)
    {
-      mPlayer = "";
+      mScriptOwner = "";
       mLogger = &dtUtil::Log::GetInstance();
 
       mResource = dtDAL::ResourceDescriptor::NULL_RESOURCE;
@@ -154,6 +154,7 @@ namespace dtDirector
       LoadDefaultLibraries();
 
       mScriptName = "";
+      mStarted = false;
       if (mBaseInstance.valid())
       {
          mBaseInstance->SetName("Director: None");
@@ -745,15 +746,15 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void Director::SetPlayer(const dtCore::UniqueId& player)
+   void Director::SetScriptOwner(const dtCore::UniqueId& owner)
    {
-      mPlayer = player;
+      mScriptOwner = owner;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   dtCore::UniqueId Director::GetPlayer()
+   dtCore::UniqueId Director::GetScriptOwner()
    {
-      return mPlayer;
+      return mScriptOwner;
    }
    ////////////////////////////////////////////////////////////////////////////////
    void Director::StartRecording()

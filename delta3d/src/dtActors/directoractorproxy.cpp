@@ -39,6 +39,8 @@
 #include <dtGame/message.h>
 #include <dtGame/messagetype.h>
 
+#include <dtDirector/director.h>
+
 #include <dtUtil/exception.h>
 
 namespace dtActors
@@ -55,8 +57,6 @@ namespace dtActors
       , mResourceIndex(0)
    {
       SetName("Director_Graph_Actor");
-      mPlayerActor = "";
-      mCameraActor = "";
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -94,27 +94,7 @@ namespace dtActors
    {
       mDirectorList.clear();
 
-      dtCore::UniqueId playerID = GetPlayerActor();
-      dtCore::UniqueId cameraID = GetCameraActor();
-
       dtGame::GameManager* gm = GetGameActorProxy().GetGameManager();
-      if (gm)
-      {
-         dtCore::Camera* cam = gm->GetApplication().GetCamera();
-
-         if (cam)
-         {
-            if (playerID.ToString().empty())
-            {
-               playerID = cam->GetUniqueId();
-            }
-
-            if (cameraID.ToString().empty())
-            {
-               cameraID = cam->GetUniqueId();
-            }
-         }
-      }
 
       // Find the map that this actor belongs to.
       dtDAL::Map* map = dtDAL::Project::GetInstance().GetMapForActorProxy(GetUniqueId());
@@ -128,8 +108,6 @@ namespace dtActors
             dtDAL::ResourceDescriptor& descriptor = mResourceList[index];
 
             director->Init(gm, map);
-            director->SetPlayer(playerID);
-            //director->SetCamera(cameraID);
 
             director->SetNodeLogging(mNodeLogging);
             if (mRecording) director->StartRecording();
@@ -139,30 +117,6 @@ namespace dtActors
             mDirectorList.push_back(director);
          }
       }
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   void DirectorActor::SetPlayerActor(const dtCore::UniqueId& value)
-   {
-      mPlayerActor = value;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   const dtCore::UniqueId& DirectorActor::GetPlayerActor()
-   {
-      return mPlayerActor;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   void DirectorActor::SetCameraActor(const dtCore::UniqueId& value)
-   {
-      mCameraActor = value;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   const dtCore::UniqueId& DirectorActor::GetCameraActor()
-   {
-      return mCameraActor;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -259,20 +213,6 @@ namespace dtActors
          dtDAL::BooleanActorProperty::SetFuncType(actor, &DirectorActor::SetRecording),
          dtDAL::BooleanActorProperty::GetFuncType(actor, &DirectorActor::GetRecording),
          "Sets the Director Graphs to record a replay file.",
-         "Director"));
-
-      AddProperty(new dtDAL::ActorIDActorProperty(
-         "PlayerActor", "Player Actor",
-         dtDAL::ActorIDActorProperty::SetFuncType(actor, &DirectorActor::SetPlayerActor),
-         dtDAL::ActorIDActorProperty::GetFuncType(actor, &DirectorActor::GetPlayerActor),
-         "dtCore::Transformable", "The Player actor, if NULL it will use the Applications Camera by default.",
-         "Director"));
-
-      AddProperty(new dtDAL::ActorIDActorProperty(
-         "CameraActor", "Camera Actor",
-         dtDAL::ActorIDActorProperty::SetFuncType(actor, &DirectorActor::SetCameraActor),
-         dtDAL::ActorIDActorProperty::GetFuncType(actor, &DirectorActor::GetCameraActor),
-         "dtCore::Transformable", "The Camera actor, if NULL it will use the Applications Camera by default.",
          "Director"));
 
       dtDAL::ResourceActorProperty* scriptProp = new dtDAL::ResourceActorProperty(

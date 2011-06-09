@@ -346,16 +346,16 @@ namespace dtDirector
       virtual bool IsLibraryTypeSupported(const std::string& libraryType) const;
 
       /**
-       * Sets the player.
+       * Sets the owner of this script.
        *
        * @param[in]  player  The player.
        */
-      void SetPlayer(const dtCore::UniqueId& player);
+      void SetScriptOwner(const dtCore::UniqueId& owner);
 
       /**
-       * Retrieves the player.
+       * Retrieves the owner of this script.
        */
-      dtCore::UniqueId GetPlayer();
+      dtCore::UniqueId GetScriptOwner();
 
       /**
       * Begins recording of the Director graphs.
@@ -680,7 +680,7 @@ namespace dtDirector
       std::vector<RecordThreadData*> mRecordThreads;
 
       // Other Data.
-      dtCore::UniqueId mPlayer;
+      dtCore::UniqueId mScriptOwner;
 
       // Core Info.
       std::string mScriptName;

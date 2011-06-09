@@ -144,12 +144,12 @@ namespace dtDirector
 
          if ((targetPos - closestPoint).length() <= threshold)
          {
-            TriggerOutput("True");
+            ActivateOutput("True");
             return false;
          }
       }
 
-      TriggerOutput("False");
+      ActivateOutput("False");
       return false;
    }
 
