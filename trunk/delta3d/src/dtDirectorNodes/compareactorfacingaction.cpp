@@ -27,7 +27,8 @@
 #include <dtDAL/transformableactorproxy.h>
 #include <dtDAL/actoridactorproperty.h>
 #include <dtDAL/stringactorproperty.h>
-
+#include <dtDAL/floatactorproperty.h>
+#include <dtDAL/vectoractorproperties.h>
 #include <dtDirector/director.h>
 
 #include <dtUtil/mathdefines.h>
