@@ -105,12 +105,12 @@ namespace dtQt
       SetBackgroundColor(mTextLabel, PropertyEditorTreeView::ROW_COLOR_ODD);
 
       mAddButton   = new SubQToolButton(wrapper, this);
-      mAddButton->setIcon(QIcon(":icons/newmap_small.png"));
+      mAddButton->setIcon(QIcon(":dtQt/icons/add.png"));
       mAddButton->setToolTip(tr("Add a new element"));
       mAddButton->setText("Add");
 
       mClearButton = new SubQToolButton(wrapper, this);
-      mClearButton->setIcon(QIcon(":icons/trashcan.png"));
+      mClearButton->setIcon(QIcon(":dtQt/icons/trashcan.png"));
       mClearButton->setText("Clear");
       mClearButton->setToolTip(tr("Remove all elements"));
 
