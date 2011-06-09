@@ -11,6 +11,8 @@ SET(LIB_PUBLIC_HEADERS ${HEADER_PATH}/actorarrayvalue.h
     ${HEADER_PATH}/andmutator.h
     ${HEADER_PATH}/animateactoraction.h
     ${HEADER_PATH}/arithmeticmutator.h
+    ${HEADER_PATH}/attachcameraaction.h
+    ${HEADER_PATH}/attachmotionmodelaction.h
     ${HEADER_PATH}/booleanvalue.h
     ${HEADER_PATH}/calculatedistanceaction.h
     ${HEADER_PATH}/callremoteeventaction.h
@@ -24,6 +26,7 @@ SET(LIB_PUBLIC_HEADERS ${HEADER_PATH}/actorarrayvalue.h
     ${HEADER_PATH}/comparemutator.h
     ${HEADER_PATH}/comparevalueaction.h
     ${HEADER_PATH}/comparevectoraction.h
+    ${HEADER_PATH}/createfpsmotionmodelaction.h
     ${HEADER_PATH}/createvectoraction.h
     ${HEADER_PATH}/delayaction.h
     ${HEADER_PATH}/dividemutator.h
@@ -52,6 +55,7 @@ SET(LIB_PUBLIC_HEADERS ${HEADER_PATH}/actorarrayvalue.h
     ${HEADER_PATH}/operationaction.h
     ${HEADER_PATH}/ormutator.h
     ${HEADER_PATH}/outputnode.h
+    ${HEADER_PATH}/ownervalue.h
     ${HEADER_PATH}/playervalue.h
     ${HEADER_PATH}/randomfloatvalue.h
     ${HEADER_PATH}/randomintvalue.h
@@ -65,6 +69,7 @@ SET(LIB_PUBLIC_HEADERS ${HEADER_PATH}/actorarrayvalue.h
     ${HEADER_PATH}/setactorpropertyaction.h
     ${HEADER_PATH}/setarrayaction.h
     ${HEADER_PATH}/setvalueaction.h
+    ${HEADER_PATH}/spawnprefabaction.h
     ${HEADER_PATH}/startevent.h
     ${HEADER_PATH}/staticmeshvalue.h
     ${HEADER_PATH}/stringarrayvalue.h
@@ -72,6 +77,8 @@ SET(LIB_PUBLIC_HEADERS ${HEADER_PATH}/actorarrayvalue.h
     ${HEADER_PATH}/subtractmutator.h
     ${HEADER_PATH}/switchaction.h
     ${HEADER_PATH}/toggleaction.h
+    ${HEADER_PATH}/togglemotionmodelaction.h
+    ${HEADER_PATH}/togglemousecursoraction.h
     ${HEADER_PATH}/triggervolumeevent.h
     ${HEADER_PATH}/vec2arrayvalue.h
     ${HEADER_PATH}/vec2value.h
@@ -88,6 +95,8 @@ SET(LIB_SOURCES ${SOURCE_PATH}/actorarrayvalue.cpp
     ${SOURCE_PATH}/andmutator.cpp
     ${SOURCE_PATH}/animateactoraction.cpp
     ${SOURCE_PATH}/arithmeticmutator.cpp
+    ${SOURCE_PATH}/attachcameraaction.cpp
+    ${SOURCE_PATH}/attachmotionmodelaction.cpp
     ${SOURCE_PATH}/booleanvalue.cpp
     ${SOURCE_PATH}/calculatedistanceaction.cpp
     ${SOURCE_PATH}/callremoteeventaction.cpp
@@ -101,6 +110,7 @@ SET(LIB_SOURCES ${SOURCE_PATH}/actorarrayvalue.cpp
     ${SOURCE_PATH}/comparemutator.cpp
     ${SOURCE_PATH}/comparevalueaction.cpp
     ${SOURCE_PATH}/comparevectoraction.cpp
+    ${SOURCE_PATH}/createfpsmotionmodelaction.cpp
     ${SOURCE_PATH}/createvectoraction.cpp
     ${SOURCE_PATH}/delayaction.cpp
     ${SOURCE_PATH}/dividemutator.cpp
@@ -128,6 +138,7 @@ SET(LIB_SOURCES ${SOURCE_PATH}/actorarrayvalue.cpp
     ${SOURCE_PATH}/operationaction.cpp
     ${SOURCE_PATH}/ormutator.cpp
     ${SOURCE_PATH}/outputnode.cpp
+    ${SOURCE_PATH}/ownervalue.cpp
     ${SOURCE_PATH}/playervalue.cpp
     ${SOURCE_PATH}/randomfloatvalue.cpp
     ${SOURCE_PATH}/randomintvalue.cpp
@@ -141,6 +152,7 @@ SET(LIB_SOURCES ${SOURCE_PATH}/actorarrayvalue.cpp
     ${SOURCE_PATH}/setactorpropertyaction.cpp
     ${SOURCE_PATH}/setarrayaction.cpp
     ${SOURCE_PATH}/setvalueaction.cpp
+    ${SOURCE_PATH}/spawnprefabaction.cpp
     ${SOURCE_PATH}/startevent.cpp
     ${SOURCE_PATH}/staticmeshvalue.cpp
     ${SOURCE_PATH}/stringarrayvalue.cpp
@@ -148,6 +160,8 @@ SET(LIB_SOURCES ${SOURCE_PATH}/actorarrayvalue.cpp
     ${SOURCE_PATH}/subtractmutator.cpp
     ${SOURCE_PATH}/switchaction.cpp
     ${SOURCE_PATH}/toggleaction.cpp
+    ${SOURCE_PATH}/togglemotionmodelaction.cpp
+    ${SOURCE_PATH}/togglemousecursoraction.cpp
     ${SOURCE_PATH}/triggervolumeevent.cpp
     ${SOURCE_PATH}/vec2arrayvalue.cpp
     ${SOURCE_PATH}/vec2value.cpp
