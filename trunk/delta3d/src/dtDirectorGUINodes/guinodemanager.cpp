@@ -69,7 +69,12 @@ namespace dtDirector
          }
       }
 
-      return dtGUI::GUI::GetInstance(0);
+      if (dtGUI::GUI::GetInstanceCount() > 0)
+      {
+         return dtGUI::GUI::GetInstance(0);
+      }
+
+      return NULL;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
