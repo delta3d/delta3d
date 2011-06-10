@@ -276,7 +276,7 @@ namespace dtDirector
       }
       catch (dtUtil::Exception& ex)
       {
-         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+         dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
                              "Caught Exception \"%s\" while attempting to save Director script \"%s\".",
                              ex.What().c_str(), director->GetName().c_str());
          mFormatTarget.SetOutputStream(NULL);
@@ -284,7 +284,7 @@ namespace dtDirector
       }
       catch (...)
       {
-         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+         dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
                              "Unknown exception while attempting to save Director script \"%s\".",
                              director->GetName().c_str());
          mFormatTarget.SetOutputStream(NULL);

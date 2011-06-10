@@ -66,14 +66,12 @@ namespace dtDirector
       , mShouldStep(false)
       , mGraph(NULL)
       , mLogNodes(false)
-      , mLogger(NULL)
       , mGameManager(NULL)
       , mMessageGMComponent(NULL)
       , mParent(NULL)
       , mActive(true)
    {
       mScriptOwner = "";
-      mLogger = &dtUtil::Log::GetInstance();
 
       mResource = dtDAL::ResourceDescriptor::NULL_RESOURCE;
 
@@ -247,12 +245,6 @@ namespace dtDirector
       mMap = map;
    }
 
-   ////////////////////////////////////////////////////////////////////////////////
-   dtUtil::Log* Director::GetLogger()
-   {
-      return mLogger;
-   }
-
    //////////////////////////////////////////////////////////////////////////
    bool Director::LoadScript(const std::string& scriptFile)
    {
@@ -285,7 +277,7 @@ namespace dtDirector
          catch (const dtUtil::Exception& e)
          {
             std::string error = "Unable to parse " + scriptFile + " with error " + e.What();
-            mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__, error.c_str());
+            dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__, error.c_str());
             if (hasContext)
             {
                fileUtils.PopDirectory();
@@ -345,7 +337,7 @@ namespace dtDirector
          catch (const dtUtil::Exception& e)
          {
             std::string error = "Unable to parse " + scriptFile + " with error " + e.What();
-            mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__, error.c_str());
+            dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__, error.c_str());
             fileUtils.PopDirectory();
             throw e;
          }
@@ -746,16 +738,44 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   void Director::SetPlayer(const dtCore::UniqueId& player)
+   {
+      if (mGameManager)
+      {
+         dtDAL::BaseActorObject* proxy = mGameManager->FindActorById(player);
+         mGameManager->SetPlayer(proxy);
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   dtCore::UniqueId Director::GetPlayer() const
+   {
+      if (mGameManager)
+      {
+         dtDAL::BaseActorObject* proxy = mGameManager->GetPlayer();
+         if (proxy)
+         {
+            return proxy->GetId();
+         }
+      }
+
+      dtCore::UniqueId id;
+      id = "";
+      return id;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    void Director::SetScriptOwner(const dtCore::UniqueId& owner)
    {
       mScriptOwner = owner;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   dtCore::UniqueId Director::GetScriptOwner()
+   dtCore::UniqueId Director::GetScriptOwner() const
    {
       return mScriptOwner;
    }
+
    ////////////////////////////////////////////////////////////////////////////////
    void Director::StartRecording()
    {
@@ -1366,7 +1386,7 @@ namespace dtDirector
                message += ")";
             }
 
-            mLogger->LogMessage(dtUtil::Log::LOG_ALWAYS, "dtDirector::Director::UpdateThread", 531, message);
+            dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_ALWAYS, "dtDirector::Director::UpdateThread", 531, message);
          }
       }
 

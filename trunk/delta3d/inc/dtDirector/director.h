@@ -73,7 +73,7 @@ namespace dtDirector
    };
 
    /**
-    * This is the base class for all action nodes.
+    * This is the base class for all director scripts.
     *
     * @note
     *      Node objects must be created through the NodePluginRegistry or
@@ -213,11 +213,6 @@ namespace dtDirector
       dtGame::GameManager* GetGameManager() {return mGameManager;}
 
       /**
-       * Retrieves the logger.
-       */
-      dtUtil::Log* GetLogger();
-
-      /**
       * Retrieves the currently loaded script.
       */
       const std::string& GetScriptName() {return mScriptName;}
@@ -346,16 +341,28 @@ namespace dtDirector
       virtual bool IsLibraryTypeSupported(const std::string& libraryType) const;
 
       /**
-       * Sets the owner of this script.
+       * Sets the player actor.
        *
        * @param[in]  player  The player.
+       */
+      void SetPlayer(const dtCore::UniqueId& player);
+
+      /**
+       * Retrieves the player.
+       */
+      dtCore::UniqueId GetPlayer() const;
+
+      /**
+       * Sets the owner of this script.
+       *
+       * @param[in]  owner  The script owner.
        */
       void SetScriptOwner(const dtCore::UniqueId& owner);
 
       /**
        * Retrieves the owner of this script.
        */
-      dtCore::UniqueId GetScriptOwner();
+      dtCore::UniqueId GetScriptOwner() const;
 
       /**
       * Begins recording of the Director graphs.
@@ -706,7 +713,6 @@ namespace dtDirector
       dtCore::RefPtr<DirectorGraph> mGraph;
 
       bool           mLogNodes;
-      dtUtil::Log*   mLogger;
 
       dtGame::GameManager* mGameManager;
       dtCore::RefPtr<dtDirector::MessageGMComponent> mMessageGMComponent;

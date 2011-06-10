@@ -103,7 +103,7 @@ namespace dtDirector
       , mNode(NULL)
    {
       mPropSerializer = new dtDAL::ActorPropertySerializer(this);
-      //mLogger->SetLogLevel(dtUtil::Log::LOG_DEBUG);
+      //dtUtil::Log::GetInstance().SetLogLevel(dtUtil::Log::LOG_DEBUG);
    }
 
    /////////////////////////////////////////////////////////////////
@@ -177,24 +177,24 @@ namespace dtDirector
                {
                   if (XMLString::compareString(localname, dtDAL::MapXMLConstants::DIRECTOR_LINKS_INPUT_ELEMENT) == 0)
                   {
-                     if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-                        mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found Input Link");
+                     if (dtUtil::Log::GetInstance().IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+                        dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found Input Link");
 
                      mInLink = true;
                      mInInputLink = true;
                   }
                   else if (XMLString::compareString(localname, dtDAL::MapXMLConstants::DIRECTOR_LINKS_OUTPUT_ELEMENT) == 0)
                   {
-                     if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-                        mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found Output Link");
+                     if (dtUtil::Log::GetInstance().IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+                        dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found Output Link");
 
                      mInLink = true;
                      mInOutputLink = true;
                   }
                   else if (XMLString::compareString(localname, dtDAL::MapXMLConstants::DIRECTOR_LINKS_VALUE_ELEMENT) == 0)
                   {
-                     if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-                        mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found Value Link");
+                     if (dtUtil::Log::GetInstance().IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+                        dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found Value Link");
 
                      mInLink = true;
                      mInValueLink = true;
@@ -219,33 +219,33 @@ namespace dtDirector
                // Value node.
                if (XMLString::compareString(localname, dtDAL::MapXMLConstants::DIRECTOR_VALUE_NODES_ELEMENT) == 0)
                {
-                  if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-                     mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found Value Nodes");
+                  if (dtUtil::Log::GetInstance().IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+                     dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found Value Nodes");
                   mInValueNodes = true;
                   mInNodes = true;
                }
                // Event node.
                else if (XMLString::compareString(localname, dtDAL::MapXMLConstants::DIRECTOR_EVENT_NODES_ELEMENT) == 0)
                {
-                  if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-                     mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found Event Nodes");
+                  if (dtUtil::Log::GetInstance().IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+                     dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found Event Nodes");
                   mInEventNodes = true;
                   mInNodes = true;
                }
                // Action node.
                else if (XMLString::compareString(localname, dtDAL::MapXMLConstants::DIRECTOR_ACTION_NODES_ELEMENT) == 0)
                {
-                  if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-                     mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found Action Nodes");
+                  if (dtUtil::Log::GetInstance().IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+                     dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found Action Nodes");
                   mInActionNodes = true;
                   mInNodes = true;
                }
                // Graph.
                else if (XMLString::compareString(localname, dtDAL::MapXMLConstants::DIRECTOR_GRAPH_ELEMENT) == 0)
                {
-                  if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+                  if (dtUtil::Log::GetInstance().IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
                   {
-                     mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found a Graph");
+                     dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found a Graph");
                   }
 
                   mInGraph++;
@@ -264,24 +264,24 @@ namespace dtDirector
       // Header.
       else if (XMLString::compareString(localname, dtDAL::MapXMLConstants::HEADER_ELEMENT) == 0)
       {
-         if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+         if (dtUtil::Log::GetInstance().IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
          {
-            mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found Header");
+            dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found Header");
          }
          mInHeaders = true;
       }
       // Libraries.
       else if (XMLString::compareString(localname, dtDAL::MapXMLConstants::LIBRARIES_ELEMENT) == 0)
       {
-         if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-            mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found Libraries");
+         if (dtUtil::Log::GetInstance().IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+            dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found Libraries");
          mInLibraries = true;
       }
       // Graph.
       else if (XMLString::compareString(localname, dtDAL::MapXMLConstants::DIRECTOR_GRAPH_ELEMENT) == 0)
       {
-         if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-            mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found a Graph");
+         if (dtUtil::Log::GetInstance().IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+            dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found a Graph");
          mInGraph++;
 
          mGraphs.push(mDirector->GetGraphRoot());
@@ -443,11 +443,11 @@ namespace dtDirector
 
                      if (!mInputLink)
                      {
-                        if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_ERROR))
+                        if (dtUtil::Log::GetInstance().IsLevelEnabled(dtUtil::Log::LOG_ERROR))
                         {
                            std::string error = "Input link \"" + linkName + "\" was not found on node type \"" + mNode->GetType().GetFullName() + "\".";
 
-                           mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__, error);
+                           dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__, error);
                         }
                      }
                   }
@@ -458,11 +458,11 @@ namespace dtDirector
 
                      if (!mOutputLink)
                      {
-                        if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_ERROR))
+                        if (dtUtil::Log::GetInstance().IsLevelEnabled(dtUtil::Log::LOG_ERROR))
                         {
                            std::string error = "Output link \"" + linkName + "\" was not found on node type \"" + mNode->GetType().GetFullName() + "\".";
 
-                           mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__, error);
+                           dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__, error);
                         }
                      }
                   }
@@ -474,11 +474,11 @@ namespace dtDirector
                      // If the value link wasn't already in the node, create one instead.
                      if (!mValueLink)
                      {
-                        if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_ERROR))
+                        if (dtUtil::Log::GetInstance().IsLevelEnabled(dtUtil::Log::LOG_ERROR))
                         {
                            std::string error = "Value link \"" + linkName + "\" was not found on node type \"" + mNode->GetType().GetFullName() + "\".";
 
-                           mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__, error);
+                           dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__, error);
                         }
                      }
                   }
@@ -721,7 +721,7 @@ namespace dtDirector
 
       if (mInNode)
       {
-         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+         dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
                              "Found the closing nodes section tag, but the content handler thinks it's still parsing a node.");
          mInNode = false;
       }
@@ -743,9 +743,9 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void DirectorXMLHandler::EndLibraryElement()
    {
-      if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+      if (dtUtil::Log::GetInstance().IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
       {
-         mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,
+         dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,
             "Attempting to add library %s version %s to the library manager.",
             mLibName.c_str(),
             mLibVersion.c_str());
@@ -760,21 +760,21 @@ namespace dtDirector
       {
          mMissingLibraries.push_back(mLibName);
 
-         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+         dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
             "Error loading node library %s version %s in the director node manager.  Exception message to follow.",
             mLibName.c_str(), mLibVersion.c_str());
 
-         e.LogException(dtUtil::Log::LOG_ERROR, *mLogger);
+         e.LogException(dtUtil::Log::LOG_ERROR, dtUtil::Log::GetInstance());
       }
       catch (const dtUtil::Exception& e)
       {
          mMissingLibraries.push_back(mLibName);
 
-         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+         dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
             "Unknown exception loading node library %s version %s in the director node manager.  Exception message to follow.",
             mLibName.c_str(), mLibVersion.c_str());
 
-         e.LogException(dtUtil::Log::LOG_ERROR, *mLogger);
+         e.LogException(dtUtil::Log::LOG_ERROR, dtUtil::Log::GetInstance());
       }
    }
 

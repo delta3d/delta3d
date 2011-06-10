@@ -117,9 +117,7 @@ namespace dtDirector
    {
       if (mMultipleEventStack.empty())
       {
-         dtUtil::Log* logger = mEditor->GetDirector()->GetLogger();
-
-         logger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
+         dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
             "Attempted to end a multiple event stack when there is none started.");
 
          return;
