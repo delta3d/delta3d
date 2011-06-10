@@ -21,9 +21,15 @@
 #include <prefix/dtdirectornodesprefix.h>
 #include <dtDirectorNodes/spawnactoraction.h>
 
+#include <dtABC/application.h>
+
+#include <dtCore/scene.h>
+
 #include <dtDAL/actoridactorproperty.h>
-#include <dtDAL/stringactorproperty.h>
-#include <dtDAL/baseactorobject.h>
+#include <dtDAL/stringselectoractorproperty.h>
+#include <dtDAL/containeractorproperty.h>
+#include <dtDAL/actortype.h>
+#include <dtDAL/librarymanager.h>
 
 #include <dtDirector/director.h>
 
@@ -32,7 +38,8 @@ namespace dtDirector
    /////////////////////////////////////////////////////////////////////////////
    SpawnActorAction::SpawnActorAction()
       : ActionNode()
-      , mPrefab("")
+      , mActorType("")
+      , mTemplateActor(NULL)
    {
       AddAuthor("Jeff P. Houde");
    }
@@ -55,12 +62,13 @@ namespace dtDirector
    {
       ActionNode::BuildPropertyMap();
 
-      dtDAL::ResourceActorProperty* prefabProp = new dtDAL::ResourceActorProperty(
-         dtDAL::DataType::PREFAB, "Prefab", "Prefab",
-         dtDAL::ResourceActorProperty::SetDescFuncType(this, &SpawnActorAction::SetPrefab),
-         dtDAL::ResourceActorProperty::GetDescFuncType(this, &SpawnActorAction::GetPrefab),
-         "The prefab resource to spawn.");
-      AddProperty(prefabProp);
+      dtDAL::StringSelectorActorProperty* typeProp = new dtDAL::StringSelectorActorProperty(
+         "Actor Type", "Actor Type",
+         dtDAL::StringSelectorActorProperty::SetFuncType(this, &SpawnActorAction::SetActorType),
+         dtDAL::StringSelectorActorProperty::GetFuncType(this, &SpawnActorAction::GetActorType),
+         dtDAL::StringSelectorActorProperty::GetListFuncType(this, &SpawnActorAction::GetActorTypeList),
+         "The type of actor to spawn.");
+      AddProperty(typeProp);
 
       dtDAL::Vec3ActorProperty* spawnPosProp = new dtDAL::Vec3ActorProperty(
          "Spawn Location", "Spawn Location",
@@ -69,15 +77,20 @@ namespace dtDirector
          "The location to spawn the new actor.");
       AddProperty(spawnPosProp);
 
+      mContainerProp = new dtDAL::ContainerActorProperty(
+         "Actor Properties", "Actor Properties",
+         "The properties of the new actor to be spawned.", "");
+      AddProperty(mContainerProp);
+
       dtDAL::ActorIDActorProperty* actorProp = new dtDAL::ActorIDActorProperty(
-         "Spawned", "Spawned",
-         dtDAL::ActorIDActorProperty::SetFuncType(this, &SpawnActorAction::SetSpawned),
-         dtDAL::ActorIDActorProperty::GetFuncType(this, &SpawnActorAction::GetSpawned),
+         "Out Actor", "Out Actor",
+         dtDAL::ActorIDActorProperty::SetFuncType(this, &SpawnActorAction::SetOutActor),
+         dtDAL::ActorIDActorProperty::GetFuncType(this, &SpawnActorAction::GetOutActor),
          "", "The actor that was spawned.");
 
       // This will expose the properties in the editor and allow
       // them to be connected to ValueNodes.
-      mValues.push_back(ValueLink(this, prefabProp));
+      mValues.push_back(ValueLink(this, typeProp, false, false, true, false));
       mValues.push_back(ValueLink(this, spawnPosProp, false, false, false));
       mValues.push_back(ValueLink(this, actorProp, true, true));
    }
@@ -85,8 +98,6 @@ namespace dtDirector
    /////////////////////////////////////////////////////////////////////////////
    bool SpawnActorAction::Update(float simDelta, float delta, int input, bool firstUpdate)
    {
-      dtGame::GameManager* gm = GetDirector()->GetGameManager();
-      dtDAL::ResourceDescriptor prefab = GetResource("Prefab");
       osg::Vec3 spawnLocation = GetVec3("Spawn Location");
       osg::Vec3 spawnRotation;
       dtDAL::BaseActorObject* locationActor = GetActor("Spawn Location");
@@ -107,9 +118,10 @@ namespace dtDirector
          }
       }
 
-      if (gm && !prefab.IsEmpty())
+      if (mTemplateActor.valid())
       {
-         dtCore::RefPtr<dtDAL::BaseActorObject> proxy = gm->CreateActor("dtActors", "Prefab");
+         dtCore::RefPtr<dtDAL::BaseActorObject> proxy = mTemplateActor->Clone();
+
          if (proxy.valid())
          {
             dtDAL::Vec3ActorProperty* transProp =
@@ -126,18 +138,23 @@ namespace dtDirector
                rotProp->SetValue(spawnRotation);
             }
 
-            gm->AddActor(*proxy);
-
-            dtDAL::ResourceActorProperty* resourceProp = NULL;
-            resourceProp = dynamic_cast<dtDAL::ResourceActorProperty*>(proxy->GetProperty("PrefabResource"));
-            if (resourceProp)
+            dtGame::GameManager* gm = GetDirector()->GetGameManager();
+            if (gm)
             {
-               resourceProp->SetValue(prefab);
+               gm->AddActor(*proxy);
+            }
+            else
+            {
+               dtABC::Application* app = dtABC::Application::GetInstance(0);
+               if (app)
+               {
+                  app->GetScene()->AddDrawable(proxy->GetActor());
+               }
             }
 
-            SetActorID(proxy->GetId());
+            SetActorID(proxy->GetId(), "Out Actor");
             return ActionNode::Update(simDelta, delta, input, firstUpdate);
-         }
+         }         
       }
 
       ActivateOutput("Failed");
@@ -157,21 +174,118 @@ namespace dtDirector
                return true;
             }
          }
+         else
+         {
+            return true;
+         }
       }
 
       return false;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void SpawnActorAction::SetPrefab(const dtDAL::ResourceDescriptor& value)
+   void SpawnActorAction::OnLinkValueChanged(const std::string& linkName)
    {
-      mPrefab = value;
+      if (linkName == "Actor Type")
+      {
+         UpdateTemplate();
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   dtDAL::ResourceDescriptor SpawnActorAction::GetPrefab() const
+   void SpawnActorAction::SetActorType(const std::string& value)
    {
-      return mPrefab;
+      mActorType = value;
+
+      UpdateTemplate();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void SpawnActorAction::UpdateTemplate()
+   {
+      std::string actorType = GetString("Actor Type");
+      std::string templateType;
+
+      if (mTemplateActor.valid())
+      {
+         templateType = mTemplateActor->GetActorType().GetFullName();
+      }
+
+      if (!actorType.empty() && templateType != actorType)
+      {
+         std::string name;
+         std::string category;
+
+         std::string typeName = GetString("Actor Type");
+
+         std::vector<const dtDAL::ActorType*> types;
+         dtDAL::LibraryManager::GetInstance().GetActorTypes(types);
+         int count = (int)types.size();
+         for (int index = 0; index < count; ++index)
+         {
+            const dtDAL::ActorType* type = types[index];
+            if (type)
+            {
+               if (type->GetFullName() == typeName)
+               {
+                  name = type->GetName();
+                  category = type->GetCategory();
+                  break;
+               }
+            }
+         }
+
+         if (!name.empty() && !category.empty())
+         {
+            if (mTemplateActor.valid())
+            {
+               mContainerProp->ClearProperties();
+               mTemplateActor = NULL;
+            }
+
+            mTemplateActor = dtDAL::LibraryManager::GetInstance().CreateActor(category, name);
+            if (mTemplateActor.valid())
+            {
+               std::vector<dtDAL::ActorProperty*> propList;
+               mTemplateActor->GetPropertyList(propList);
+               int count = (int)propList.size();
+               for (int index = 0; index < count; ++index)
+               {
+                  dtDAL::ActorProperty* prop = propList[index];
+                  if (prop)
+                  {
+                     mContainerProp->AddProperty(prop);
+                  }
+               }
+            }
+         }
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   std::string SpawnActorAction::GetActorType() const
+   {
+      return mActorType;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   std::vector<std::string> SpawnActorAction::GetActorTypeList() const
+   {
+      std::vector<std::string> list;
+
+      std::vector<const dtDAL::ActorType*> types;
+      dtDAL::LibraryManager::GetInstance().GetActorTypes(types);
+      int count = (int)types.size();
+      for (int index = 0; index < count; ++index)
+      {
+         const dtDAL::ActorType* type = types[index];
+         if (type)
+         {
+            list.push_back(type->GetFullName());
+         }
+      }
+
+      return list;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -187,12 +301,12 @@ namespace dtDirector
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void SpawnActorAction::SetSpawned(const dtCore::UniqueId& value)
+   void SpawnActorAction::SetOutActor(const dtCore::UniqueId& value)
    {
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   dtCore::UniqueId SpawnActorAction::GetSpawned()
+   dtCore::UniqueId SpawnActorAction::GetOutActor()
    {
       dtCore::UniqueId id;
       id = "";
