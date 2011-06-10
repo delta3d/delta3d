@@ -2,7 +2,7 @@
 <director xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dDirector" xsi:schemaLocation="delta3dDirector director.xsd">
     <header>
         <createTimestamp>2009-12-23T15:09:12-08:00</createTimestamp>
-        <lastUpdateTimestamp>2011-06-09T00:03:33-08:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2011-06-09T23:01:51-08:00</lastUpdateTimestamp>
         <editorVersion>2.7.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
         <scriptType>Scenario</scriptType>
@@ -58,7 +58,7 @@
                     <name>Pressed</name>
                     <visible>true</visible>
                     <link>
-                        <id>cf62fb90-a91c-4e95-ad95-2d296fa94c96</id>
+                        <id>01972fa5-e06b-4b92-bd5d-64f38add5b2c</id>
                         <name>In</name>
                     </link>
                 </outputlink>
@@ -150,7 +150,7 @@
                     <name>Pressed</name>
                     <visible>true</visible>
                     <link>
-                        <id>cf62fb90-a91c-4e95-ad95-2d296fa94c96</id>
+                        <id>01972fa5-e06b-4b92-bd5d-64f38add5b2c</id>
                         <name>In</name>
                     </link>
                 </outputlink>
@@ -190,8 +190,8 @@
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>304.250000</value1>
-                        <value2>-145.167694</value2>
+                        <value1>-138.025421</value1>
+                        <value2>230.178055</value2>
                     </vec2>
                 </property>
                 <property>
@@ -212,15 +212,87 @@
                 </outputlink>
                 <outputlink>
                     <name>Double Clicked</name>
-                    <visible>true</visible>
+                    <visible>false</visible>
                 </outputlink>
                 <outputlink>
                     <name>Hover Enter</name>
-                    <visible>true</visible>
+                    <visible>false</visible>
                 </outputlink>
                 <outputlink>
                     <name>Hover Leave</name>
+                    <visible>false</visible>
+                </outputlink>
+                <valuelink>
+                    <name>Enabled</name>
                     <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+                <valuelink>
+                    <name>TriggerCount</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+                <valuelink>
+                    <name>Layout</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+                <valuelink>
+                    <name>Button</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+            </node>
+            <node>
+                <name>Button Event</name>
+                <category>GUI</category>
+                <id>a434152f-13db-41c7-9387-d4ffeb807067</id>
+                <property>
+                    <name>Position</name>
+                    <vec2>
+                        <value1>-289.025421</value1>
+                        <value2>299.866455</value2>
+                    </vec2>
+                </property>
+                <property>
+                    <name>Layout</name>
+                    <string>gui.layout</string>
+                </property>
+                <property>
+                    <name>Button</name>
+                    <string>Framewindow__auto_closebutton__</string>
+                </property>
+                <outputlink>
+                    <name>Clicked</name>
+                    <visible>true</visible>
+                    <link>
+                        <id>e852a2a5-cc13-45e5-96bb-90506f4a721c</id>
+                        <name>Hide</name>
+                    </link>
+                </outputlink>
+                <outputlink>
+                    <name>Double Clicked</name>
+                    <visible>false</visible>
+                </outputlink>
+                <outputlink>
+                    <name>Hover Enter</name>
+                    <visible>false</visible>
+                </outputlink>
+                <outputlink>
+                    <name>Hover Leave</name>
+                    <visible>false</visible>
                 </outputlink>
                 <valuelink>
                     <name>Enabled</name>
@@ -258,96 +330,13 @@
         </eventnodes>
         <actionnodes>
             <node>
-                <name>Switch</name>
-                <category>General</category>
-                <id>cf62fb90-a91c-4e95-ad95-2d296fa94c96</id>
-                <property>
-                    <name>Position</name>
-                    <vec2>
-                        <value1>-136.798340</value1>
-                        <value2>-132.000000</value2>
-                    </vec2>
-                </property>
-                <property>
-                    <name>OutputCount</name>
-                    <integer>2</integer>
-                </property>
-                <property>
-                    <name>Looping</name>
-                    <boolean>true</boolean>
-                </property>
-                <inputlink>
-                    <name>In</name>
-                    <visible>true</visible>
-                    <link>
-                        <id>f3de2ca0-c33b-4712-bad6-cfdc3bdf1184</id>
-                        <name>Pressed</name>
-                    </link>
-                    <link>
-                        <id>f6eaca27-d245-431d-94a2-7c5e0d4396bd</id>
-                        <name>Pressed</name>
-                    </link>
-                </inputlink>
-                <outputlink>
-                    <name>Out 1</name>
-                    <visible>true</visible>
-                    <link>
-                        <id>fabc3e50-f1d5-40a2-81f1-672cff4f68a2</id>
-                        <name>Show</name>
-                    </link>
-                </outputlink>
-                <outputlink>
-                    <name>Out 2</name>
-                    <visible>true</visible>
-                    <link>
-                        <id>fabc3e50-f1d5-40a2-81f1-672cff4f68a2</id>
-                        <name>Hide</name>
-                    </link>
-                </outputlink>
-                <valuelink>
-                    <name>Enabled</name>
-                    <visible>true</visible>
-                    <exposed>false</exposed>
-                    <isout>false</isout>
-                    <allowmultiple>false</allowmultiple>
-                    <typecheck>true</typecheck>
-                </valuelink>
-                <valuelink>
-                    <name>OutputCount</name>
-                    <visible>true</visible>
-                    <exposed>false</exposed>
-                    <isout>false</isout>
-                    <allowmultiple>false</allowmultiple>
-                    <typecheck>true</typecheck>
-                </valuelink>
-                <valuelink>
-                    <name>CurrentIndex</name>
-                    <visible>true</visible>
-                    <exposed>true</exposed>
-                    <isout>false</isout>
-                    <allowmultiple>false</allowmultiple>
-                    <typecheck>false</typecheck>
-                    <link>
-                        <id>f33d29b6-50e4-4f96-a3b6-12f22d536902</id>
-                    </link>
-                </valuelink>
-                <valuelink>
-                    <name>Looping</name>
-                    <visible>true</visible>
-                    <exposed>false</exposed>
-                    <isout>false</isout>
-                    <allowmultiple>false</allowmultiple>
-                    <typecheck>true</typecheck>
-                </valuelink>
-            </node>
-            <node>
                 <name>Set Layout Visibility</name>
                 <category>GUI</category>
                 <id>fabc3e50-f1d5-40a2-81f1-672cff4f68a2</id>
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>10.250000</value1>
+                        <value1>156.416672</value1>
                         <value2>-145.000000</value2>
                     </vec2>
                 </property>
@@ -359,25 +348,25 @@
                     <name>Show</name>
                     <visible>true</visible>
                     <link>
-                        <id>cf62fb90-a91c-4e95-ad95-2d296fa94c96</id>
-                        <name>Out 1</name>
+                        <id>51b9a70d-0370-4fcc-87b2-8999f63f7b44</id>
+                        <name>Out</name>
                     </link>
                 </inputlink>
                 <inputlink>
                     <name>Hide</name>
-                    <visible>true</visible>
-                    <link>
-                        <id>cf62fb90-a91c-4e95-ad95-2d296fa94c96</id>
-                        <name>Out 2</name>
-                    </link>
+                    <visible>false</visible>
                 </inputlink>
                 <outputlink>
                     <name>Out</name>
                     <visible>true</visible>
+                    <link>
+                        <id>4c56bc33-27cc-4bad-8364-d3d6cf0e62ee</id>
+                        <name>Show</name>
+                    </link>
                 </outputlink>
                 <outputlink>
                     <name>Failed</name>
-                    <visible>true</visible>
+                    <visible>false</visible>
                 </outputlink>
                 <valuelink>
                     <name>Enabled</name>
@@ -530,15 +519,15 @@
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>-362.250000</value1>
-                        <value2>-186.595306</value2>
+                        <value1>-361.500000</value1>
+                        <value2>-186.595291</value2>
                     </vec2>
                 </property>
                 <property>
                     <name>Size</name>
                     <vec2>
-                        <value1>522.250000</value1>
-                        <value2>345.205048</value2>
+                        <value1>1002.875000</value1>
+                        <value2>351.833313</value2>
                     </vec2>
                 </property>
                 <property>
@@ -558,8 +547,8 @@
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>487.250000</value1>
-                        <value2>-145.167694</value2>
+                        <value1>59.068802</value1>
+                        <value2>230.178055</value2>
                     </vec2>
                 </property>
                 <property>
@@ -577,10 +566,18 @@
                         <id>933cf928-6a20-4cf7-8223-d985ef3b51c2</id>
                         <name>Clicked</name>
                     </link>
+                    <link>
+                        <id>a434152f-13db-41c7-9387-d4ffeb807067</id>
+                        <name>Clicked</name>
+                    </link>
                 </inputlink>
                 <outputlink>
                     <name>Out</name>
-                    <visible>false</visible>
+                    <visible>true</visible>
+                    <link>
+                        <id>e50bcf56-9d67-4f0a-b10b-019b1c0fd26d</id>
+                        <name>TurnOff</name>
+                    </link>
                 </outputlink>
                 <outputlink>
                     <name>Failed</name>
@@ -614,15 +611,15 @@
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>201.759277</value1>
-                        <value2>-186.595306</value2>
+                        <value1>-361.500000</value1>
+                        <value2>188.582764</value2>
                     </vec2>
                 </property>
                 <property>
                     <name>Size</name>
                     <vec2>
-                        <value1>441.990723</value1>
-                        <value2>206.000000</value2>
+                        <value1>1083.900391</value1>
+                        <value2>347.655273</value2>
                     </vec2>
                 </property>
                 <property>
@@ -635,22 +632,423 @@
                     </colorRGBA>
                 </property>
             </node>
-        </actionnodes>
-        <valuenodes>
             <node>
-                <name>Int</name>
+                <name>Compare Bool</name>
                 <category>General</category>
-                <id>f33d29b6-50e4-4f96-a3b6-12f22d536902</id>
+                <id>01972fa5-e06b-4b92-bd5d-64f38add5b2c</id>
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>-128.798340</value1>
-                        <value2>34.109741</value2>
+                        <value1>-113.431107</value1>
+                        <value2>-132.000000</value2>
+                    </vec2>
+                </property>
+                <inputlink>
+                    <name>In</name>
+                    <visible>true</visible>
+                    <link>
+                        <id>f3de2ca0-c33b-4712-bad6-cfdc3bdf1184</id>
+                        <name>Pressed</name>
+                    </link>
+                    <link>
+                        <id>f6eaca27-d245-431d-94a2-7c5e0d4396bd</id>
+                        <name>Pressed</name>
+                    </link>
+                </inputlink>
+                <outputlink>
+                    <name>A == B</name>
+                    <visible>true</visible>
+                    <link>
+                        <id>51b9a70d-0370-4fcc-87b2-8999f63f7b44</id>
+                        <name>TurnOn</name>
+                    </link>
+                </outputlink>
+                <outputlink>
+                    <name>A != B</name>
+                    <visible>false</visible>
+                </outputlink>
+                <valuelink>
+                    <name>Enabled</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+                <valuelink>
+                    <name>A</name>
+                    <visible>true</visible>
+                    <exposed>true</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                    <link>
+                        <id>9ce646a4-3dc2-43c5-a80e-f0a2a40b4720</id>
+                    </link>
+                </valuelink>
+                <valuelink>
+                    <name>B</name>
+                    <visible>false</visible>
+                    <exposed>true</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+            </node>
+            <node>
+                <name>Toggle</name>
+                <category>General</category>
+                <id>51b9a70d-0370-4fcc-87b2-8999f63f7b44</id>
+                <property>
+                    <name>Position</name>
+                    <vec2>
+                        <value1>19.235527</value1>
+                        <value2>-132.000000</value2>
+                    </vec2>
+                </property>
+                <inputlink>
+                    <name>TurnOn</name>
+                    <visible>true</visible>
+                    <link>
+                        <id>01972fa5-e06b-4b92-bd5d-64f38add5b2c</id>
+                        <name>A == B</name>
+                    </link>
+                </inputlink>
+                <inputlink>
+                    <name>TurnOff</name>
+                    <visible>false</visible>
+                </inputlink>
+                <inputlink>
+                    <name>Toggle</name>
+                    <visible>false</visible>
+                </inputlink>
+                <outputlink>
+                    <name>Out</name>
+                    <visible>true</visible>
+                    <link>
+                        <id>fabc3e50-f1d5-40a2-81f1-672cff4f68a2</id>
+                        <name>Show</name>
+                    </link>
+                </outputlink>
+                <valuelink>
+                    <name>Enabled</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+                <valuelink>
+                    <name>Actor</name>
+                    <visible>false</visible>
+                    <exposed>true</exposed>
+                    <isout>true</isout>
+                    <allowmultiple>true</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+                <valuelink>
+                    <name>TogglePropertyName</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+                <valuelink>
+                    <name>ToggleBoolean</name>
+                    <visible>true</visible>
+                    <exposed>true</exposed>
+                    <isout>true</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                    <link>
+                        <id>9ce646a4-3dc2-43c5-a80e-f0a2a40b4720</id>
+                    </link>
+                </valuelink>
+            </node>
+            <node>
+                <name>Toggle Mouse Cursor</name>
+                <category>GUI</category>
+                <id>4c56bc33-27cc-4bad-8364-d3d6cf0e62ee</id>
+                <property>
+                    <name>Position</name>
+                    <vec2>
+                        <value1>322.875000</value1>
+                        <value2>-132.000000</value2>
+                    </vec2>
+                </property>
+                <inputlink>
+                    <name>Show</name>
+                    <visible>true</visible>
+                    <link>
+                        <id>fabc3e50-f1d5-40a2-81f1-672cff4f68a2</id>
+                        <name>Out</name>
+                    </link>
+                </inputlink>
+                <inputlink>
+                    <name>Hide</name>
+                    <visible>false</visible>
+                </inputlink>
+                <outputlink>
+                    <name>Out</name>
+                    <visible>true</visible>
+                    <link>
+                        <id>9a16aa2a-4576-4cdc-bfb6-035f291528a2</id>
+                        <name>TurnOff</name>
+                    </link>
+                </outputlink>
+                <valuelink>
+                    <name>Enabled</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+            </node>
+            <node>
+                <name>Toggle Motion Model</name>
+                <category>Scene</category>
+                <id>9a16aa2a-4576-4cdc-bfb6-035f291528a2</id>
+                <property>
+                    <name>Position</name>
+                    <vec2>
+                        <value1>494.875000</value1>
+                        <value2>-145.000000</value2>
                     </vec2>
                 </property>
                 <property>
+                    <name>Motion Model</name>
+                    <string>Player Motion</string>
+                </property>
+                <inputlink>
+                    <name>TurnOn</name>
+                    <visible>false</visible>
+                </inputlink>
+                <inputlink>
+                    <name>TurnOff</name>
+                    <visible>true</visible>
+                    <link>
+                        <id>4c56bc33-27cc-4bad-8364-d3d6cf0e62ee</id>
+                        <name>Out</name>
+                    </link>
+                </inputlink>
+                <inputlink>
+                    <name>Toggle</name>
+                    <visible>false</visible>
+                </inputlink>
+                <outputlink>
+                    <name>Out</name>
+                    <visible>false</visible>
+                </outputlink>
+                <outputlink>
+                    <name>Failed</name>
+                    <visible>false</visible>
+                </outputlink>
+                <valuelink>
+                    <name>Enabled</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+                <valuelink>
+                    <name>Motion Model</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>true</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+            </node>
+            <node>
+                <name>Toggle</name>
+                <category>General</category>
+                <id>e50bcf56-9d67-4f0a-b10b-019b1c0fd26d</id>
+                <property>
+                    <name>Position</name>
+                    <vec2>
+                        <value1>238.068848</value1>
+                        <value2>243.178040</value2>
+                    </vec2>
+                </property>
+                <inputlink>
+                    <name>TurnOn</name>
+                    <visible>false</visible>
+                </inputlink>
+                <inputlink>
+                    <name>TurnOff</name>
+                    <visible>true</visible>
+                    <link>
+                        <id>e852a2a5-cc13-45e5-96bb-90506f4a721c</id>
+                        <name>Out</name>
+                    </link>
+                </inputlink>
+                <inputlink>
+                    <name>Toggle</name>
+                    <visible>false</visible>
+                </inputlink>
+                <outputlink>
+                    <name>Out</name>
+                    <visible>true</visible>
+                    <link>
+                        <id>5727c648-c0d1-4151-9f71-c302d35ab1df</id>
+                        <name>Hide</name>
+                    </link>
+                </outputlink>
+                <valuelink>
+                    <name>Enabled</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+                <valuelink>
+                    <name>Actor</name>
+                    <visible>false</visible>
+                    <exposed>true</exposed>
+                    <isout>true</isout>
+                    <allowmultiple>true</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+                <valuelink>
+                    <name>TogglePropertyName</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+                <valuelink>
+                    <name>ToggleBoolean</name>
+                    <visible>true</visible>
+                    <exposed>true</exposed>
+                    <isout>true</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                    <link>
+                        <id>b6301aef-d560-477b-a7a4-23b99cabbe9d</id>
+                    </link>
+                </valuelink>
+            </node>
+            <node>
+                <name>Toggle Motion Model</name>
+                <category>Scene</category>
+                <id>2df278a3-0bc4-4c3a-aa70-115d9447315f</id>
+                <property>
+                    <name>Position</name>
+                    <vec2>
+                        <value1>576.875000</value1>
+                        <value2>230.178040</value2>
+                    </vec2>
+                </property>
+                <property>
+                    <name>Motion Model</name>
+                    <string>Player Motion</string>
+                </property>
+                <inputlink>
+                    <name>TurnOn</name>
+                    <visible>true</visible>
+                    <link>
+                        <id>5727c648-c0d1-4151-9f71-c302d35ab1df</id>
+                        <name>Out</name>
+                    </link>
+                </inputlink>
+                <inputlink>
+                    <name>TurnOff</name>
+                    <visible>false</visible>
+                </inputlink>
+                <inputlink>
+                    <name>Toggle</name>
+                    <visible>false</visible>
+                </inputlink>
+                <outputlink>
+                    <name>Out</name>
+                    <visible>false</visible>
+                </outputlink>
+                <outputlink>
+                    <name>Failed</name>
+                    <visible>false</visible>
+                </outputlink>
+                <valuelink>
+                    <name>Enabled</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+                <valuelink>
+                    <name>Motion Model</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>true</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+            </node>
+            <node>
+                <name>Toggle Mouse Cursor</name>
+                <category>GUI</category>
+                <id>5727c648-c0d1-4151-9f71-c302d35ab1df</id>
+                <property>
+                    <name>Position</name>
+                    <vec2>
+                        <value1>391.875000</value1>
+                        <value2>243.178040</value2>
+                    </vec2>
+                </property>
+                <inputlink>
+                    <name>Show</name>
+                    <visible>false</visible>
+                </inputlink>
+                <inputlink>
+                    <name>Hide</name>
+                    <visible>true</visible>
+                    <link>
+                        <id>e50bcf56-9d67-4f0a-b10b-019b1c0fd26d</id>
+                        <name>Out</name>
+                    </link>
+                </inputlink>
+                <outputlink>
+                    <name>Out</name>
+                    <visible>true</visible>
+                    <link>
+                        <id>2df278a3-0bc4-4c3a-aa70-115d9447315f</id>
+                        <name>TurnOn</name>
+                    </link>
+                </outputlink>
+                <valuelink>
+                    <name>Enabled</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+            </node>
+        </actionnodes>
+        <valuenodes>
+            <node>
+                <name>Boolean</name>
+                <category>General</category>
+                <id>9ce646a4-3dc2-43c5-a80e-f0a2a40b4720</id>
+                <property>
+                    <name>Position</name>
+                    <vec2>
+                        <value1>-37.931198</value1>
+                        <value2>14.738031</value2>
+                    </vec2>
+                </property>
+                <property>
+                    <name>Name</name>
+                    <string>GUI Visible</string>
+                </property>
+                <property>
                     <name>Initial Value</name>
-                    <integer>1</integer>
+                    <boolean>false</boolean>
                 </property>
                 <valuelink>
                     <name>Enabled</name>
@@ -659,6 +1057,33 @@
                     <isout>false</isout>
                     <allowmultiple>false</allowmultiple>
                     <typecheck>true</typecheck>
+                </valuelink>
+            </node>
+            <node>
+                <name>Reference</name>
+                <category>Core</category>
+                <id>b6301aef-d560-477b-a7a4-23b99cabbe9d</id>
+                <property>
+                    <name>Position</name>
+                    <vec2>
+                        <value1>248.068848</value1>
+                        <value2>372.738037</value2>
+                    </vec2>
+                </property>
+                <property>
+                    <name>Reference</name>
+                    <string>GUI Visible</string>
+                </property>
+                <valuelink>
+                    <name>Value</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>true</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                    <link>
+                        <id>9ce646a4-3dc2-43c5-a80e-f0a2a40b4720</id>
+                    </link>
                 </valuelink>
             </node>
         </valuenodes>

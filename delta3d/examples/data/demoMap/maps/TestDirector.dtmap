@@ -7,11 +7,16 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2009-12-21T16:14:44-08:00</createTimestamp>
-        <lastUpdateTimestamp>2011-06-08T23:13:44-08:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2011-06-09T22:48:59-08:00</lastUpdateTimestamp>
         <editorVersion>2.7.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
-    <libraries></libraries>
+    <libraries>
+        <library>
+            <name>dtActors</name>
+            <version></version>
+        </library>
+    </libraries>
     <events>
         <event>
             <id>15348d9e-07a2-4a73-a695-4c11f0223d90</id>
@@ -61,6 +66,35 @@
             </property>
         </actor>
         <actor>
+            <type>dtcore.Camera</type>
+            <id>058ecafd-afdc-4748-85c5-151ffbbe75d4</id>
+            <name>Player</name>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>6.773384</value1>
+                    <value2>12.515337</value2>
+                    <value3>0.868271</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>SPHERE</enumerated>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>1</float>
+            </property>
+            <property>
+                <name>Enable Collision</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Collision Collide Mask</name>
+                <bitMask>1</bitMask>
+            </property>
+        </actor>
+        <actor>
             <type>dtanim.AnimationGameActor</type>
             <id>11378b3a-3352-421f-b43b-0792580d9e78</id>
             <name>Marine</name>
@@ -68,8 +102,8 @@
                 <name>Rotation</name>
                 <vec3>
                     <value1>0.000000</value1>
-                    <value2>-0.000000</value2>
-                    <value3>-89.999977</value3>
+                    <value2>0.000000</value2>
+                    <value3>-89.999969</value3>
                 </vec3>
             </property>
             <property>
@@ -323,10 +357,6 @@
                     <value3>5.000000</value3>
                 </vec3>
             </property>
-            <property>
-                <name>Collision Collide Mask</name>
-                <bitMask>2</bitMask>
-            </property>
         </actor>
         <actor>
             <type>dtcore.Static Mesh</type>
@@ -417,10 +447,6 @@
                     <value2>5.000000</value2>
                     <value3>5.000000</value3>
                 </vec3>
-            </property>
-            <property>
-                <name>Collision Collide Mask</name>
-                <bitMask>2</bitMask>
             </property>
         </actor>
         <actor>
@@ -1114,10 +1140,6 @@
                     <value3>5.000000</value3>
                 </vec3>
             </property>
-            <property>
-                <name>Collision Collide Mask</name>
-                <bitMask>2</bitMask>
-            </property>
         </actor>
         <actor>
             <type>dtcore.Label</type>
@@ -1394,35 +1416,6 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Camera</type>
-            <id>b4db756c-83ea-4e40-ad17-ef7c65247303</id>
-            <name>Player</name>
-            <property>
-                <name>Translation</name>
-                <vec3>
-                    <value1>6.592894</value1>
-                    <value2>12.416654</value2>
-                    <value3>1.584949</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>Collision Type</name>
-                <enumerated>SPHERE</enumerated>
-            </property>
-            <property>
-                <name>Collision Radius</name>
-                <float>1</float>
-            </property>
-            <property>
-                <name>Enable Collision</name>
-                <boolean>true</boolean>
-            </property>
-            <property>
-                <name>Collision Collide Mask</name>
-                <bitMask>1</bitMask>
-            </property>
-        </actor>
-        <actor>
             <type>dtcore.Static Mesh</type>
             <id>b636db5e-420e-4eb1-959f-c90907f243cf</id>
             <name>door_05</name>
@@ -1507,10 +1500,6 @@
                     <value2>5.000000</value2>
                     <value3>5.000000</value3>
                 </vec3>
-            </property>
-            <property>
-                <name>Collision Collide Mask</name>
-                <bitMask>2</bitMask>
             </property>
         </actor>
         <actor>
@@ -1609,10 +1598,6 @@
                     <value3>5.000000</value3>
                 </vec3>
             </property>
-            <property>
-                <name>Collision Collide Mask</name>
-                <bitMask>2</bitMask>
-            </property>
         </actor>
         <actor>
             <type>dtcore.Particle System</type>
@@ -1660,10 +1645,6 @@
                     <value2>3.000000</value2>
                     <value3>5.000000</value3>
                 </vec3>
-            </property>
-            <property>
-                <name>Collision Collide Mask</name>
-                <bitMask>2</bitMask>
             </property>
         </actor>
         <actor>
@@ -1864,10 +1845,6 @@
                     <value2>8.000000</value2>
                     <value3>8.000000</value3>
                 </vec3>
-            </property>
-            <property>
-                <name>Collision Collide Mask</name>
-                <bitMask>2</bitMask>
             </property>
         </actor>
         <actor>
@@ -2079,7 +2056,7 @@
         <actor>
             <type>dtActors.Trigger Volume Actor</type>
             <id>f34a318a-801d-4859-8715-2b30614cec6b</id>
-            <name>PhysicsTrigger</name>
+            <name>Trigger_Physics</name>
             <property>
                 <name>Translation</name>
                 <vec3>
@@ -2099,10 +2076,6 @@
                     <value2>7.000000</value2>
                     <value3>3.000000</value3>
                 </vec3>
-            </property>
-            <property>
-                <name>Collision Collide Mask</name>
-                <bitMask>2</bitMask>
             </property>
         </actor>
         <actor>
@@ -2147,7 +2120,11 @@
             </property>
         </actor>
     </actors>
-    <groups></groups>
+    <groups>
+        <group>
+            <actor>058ecafd-afdc-4748-85c5-151ffbbe75d4</actor>
+        </group>
+    </groups>
     <drawablehierarchy></drawablehierarchy>
     <presetCameras>
         <presetCamera>
