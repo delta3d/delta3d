@@ -422,7 +422,15 @@ void GUI::LoadScheme(const std::string& fileName, const std::string& resourceGro
 void GUI::SetMouseCursor(const std::string& imagesetName, const std::string& imageName)
 {
    _SetupSystemAndRenderer();
-   CEGUI::System::getSingletonPtr()->setDefaultMouseCursor(imagesetName, imageName);
+
+   if (!imagesetName.empty() && !imageName.empty())
+   {
+      CEGUI::System::getSingletonPtr()->setDefaultMouseCursor(imagesetName, imageName);
+   }
+   else
+   {
+      CEGUI::System::getSingletonPtr()->setDefaultMouseCursor(CEGUI::BlankMouseCursor);
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
