@@ -654,7 +654,7 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void NodeItem::SetupValues()
    {
-      float maxWidth = 0;
+      float maxWidth = MIN_VALUE_NAME_SIZE;
 
       int visibleCount = 0;
       int count = (int)mValues.size();
