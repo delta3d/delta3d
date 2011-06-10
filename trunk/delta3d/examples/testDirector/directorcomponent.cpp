@@ -37,7 +37,6 @@ const std::string& DirectorComponent::NAME = "DirectorComponent";
 
 DirectorComponent::DirectorComponent(const std::string& name)
    : dtGame::BaseInputComponent(name)
-   , mMotionModel(NULL)
 {
 }
 
@@ -87,48 +86,11 @@ bool DirectorComponent::HandleKeyPressed(const dtCore::Keyboard* keyBoard, int k
 ////////////////////////////////////////////////////////////////////////////////
 void DirectorComponent::OnMapLoaded()
 {
-   // Here we are setting up our camera motion model so it is an FPS style
-   // game.  Note that we do nothing specific for Director.  That is because
-   // the map itself contains a Director Actor inside it, this actor handles
-   // the execution of a Director Script while the map is loaded.
-
-   dtGame::GameManager* gm = GetGameManager();
-   dtABC::Application& app = gm->GetApplication();
-   dtCore::Camera* camera  = gm->GetApplication().GetCamera();
-
-   // Get the player start position
-   dtDAL::BaseActorObject* playerProxy = NULL;
-   gm->FindActorByType(*dtActors::EngineActorRegistry::CAMERA_ACTOR_TYPE, playerProxy);
-
-   dtCore::Transformable* player =
-      dynamic_cast<dtCore::Transformable*>(playerProxy->GetActor());
-   player->AddChild(camera);
-
-   // Allow the player to walk around the level and collide with objects
-   dtCore::CollisionMotionModel* motionModel =
-      new dtCore::CollisionMotionModel(1.5f, 0.2f, 0.1f, 0.05f, app.GetScene(), app.GetKeyboard(), app.GetMouse());
-
-   // Prevent the motion model from colliding with the camera
-   motionModel->GetFPSCollider().SetCollisionBitsForFeet(COLLISION_CATEGORY_MASK_OBJECT);
-   motionModel->GetFPSCollider().SetCollisionBitsForTorso(COLLISION_CATEGORY_MASK_OBJECT);
-
-   motionModel->SetScene(&gm->GetScene());
-   motionModel->SetTarget(player);
-
-   //mMotionModel = motionModel;
-
-   app.GetWindow()->ShowCursor(false);
-
-   // Get the player start position
-   dtDAL::BaseActorObject* playerStartProxy = NULL;
-   gm->FindActorByType(*dtActors::EngineActorRegistry::PLAYER_START_ACTOR_TYPE, playerStartProxy);
-
-   dtCore::Transformable* playerStart =
-      dynamic_cast<dtCore::Transformable*>(playerStartProxy->GetActor());
-
-   dtCore::Transform startTransform;
-   playerStart->GetTransform(startTransform);
-   player->SetTransform(startTransform);
+   dtABC::Application* app = dtABC::Application::GetInstance(0);
+   if (app)
+   {
+      app->GetWindow()->ShowCursor(false);
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////

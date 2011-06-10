@@ -62,8 +62,6 @@ protected:
 
 private:   
    
-   dtCore::RefPtr<dtCore::MotionModel> mMotionModel;
-
    void OnMapLoaded();
 };
 
