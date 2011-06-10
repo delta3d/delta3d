@@ -82,6 +82,11 @@ namespace dtDirector
          dtCore::DeltaDrawable* actor = proxy->GetActor();
          if (camera && actor)
          {
+            dtCore::DeltaDrawable* parent = camera->GetParent();
+            if (parent)
+            {
+               parent->RemoveChild(camera);
+            }
             actor->AddChild(camera);
             return ActionNode::Update(simDelta, delta, input, firstUpdate);
          }
