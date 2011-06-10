@@ -19,7 +19,7 @@
  * Author: Jeff P. Houde
  */
 #include <prefix/dtdirectornodesprefix.h>
-#include <dtDirectorNodes/spawnprefabaction.h>
+#include <dtDirectorNodes/spawnactoraction.h>
 
 #include <dtDAL/actoridactorproperty.h>
 #include <dtDAL/stringactorproperty.h>
@@ -30,7 +30,7 @@
 namespace dtDirector
 {
    /////////////////////////////////////////////////////////////////////////////
-   SpawnPrefabAction::SpawnPrefabAction()
+   SpawnActorAction::SpawnActorAction()
       : ActionNode()
       , mPrefab("")
    {
@@ -38,12 +38,12 @@ namespace dtDirector
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   SpawnPrefabAction::~SpawnPrefabAction()
+   SpawnActorAction::~SpawnActorAction()
    {
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void SpawnPrefabAction::Init(const NodeType& nodeType, DirectorGraph* graph)
+   void SpawnActorAction::Init(const NodeType& nodeType, DirectorGraph* graph)
    {
       ActionNode::Init(nodeType, graph);
 
@@ -51,39 +51,39 @@ namespace dtDirector
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void SpawnPrefabAction::BuildPropertyMap()
+   void SpawnActorAction::BuildPropertyMap()
    {
       ActionNode::BuildPropertyMap();
 
       dtDAL::ResourceActorProperty* prefabProp = new dtDAL::ResourceActorProperty(
          dtDAL::DataType::PREFAB, "Prefab", "Prefab",
-         dtDAL::ResourceActorProperty::SetDescFuncType(this, &SpawnPrefabAction::SetPrefab),
-         dtDAL::ResourceActorProperty::GetDescFuncType(this, &SpawnPrefabAction::GetPrefab),
+         dtDAL::ResourceActorProperty::SetDescFuncType(this, &SpawnActorAction::SetPrefab),
+         dtDAL::ResourceActorProperty::GetDescFuncType(this, &SpawnActorAction::GetPrefab),
          "The prefab resource to spawn.");
       AddProperty(prefabProp);
 
       dtDAL::Vec3ActorProperty* spawnPosProp = new dtDAL::Vec3ActorProperty(
          "Spawn Location", "Spawn Location",
-         dtDAL::Vec3ActorProperty::SetFuncType(this, &SpawnPrefabAction::SetSpawnLocation),
-         dtDAL::Vec3ActorProperty::GetFuncType(this, &SpawnPrefabAction::GetSpawnLocation),
+         dtDAL::Vec3ActorProperty::SetFuncType(this, &SpawnActorAction::SetSpawnLocation),
+         dtDAL::Vec3ActorProperty::GetFuncType(this, &SpawnActorAction::GetSpawnLocation),
          "The location to spawn the new actor.");
       AddProperty(spawnPosProp);
 
       dtDAL::ActorIDActorProperty* actorProp = new dtDAL::ActorIDActorProperty(
-         "Out Actor", "Out Actor",
-         dtDAL::ActorIDActorProperty::SetFuncType(this, &SpawnPrefabAction::SetNewActor),
-         dtDAL::ActorIDActorProperty::GetFuncType(this, &SpawnPrefabAction::GetNewActor),
+         "Spawned", "Spawned",
+         dtDAL::ActorIDActorProperty::SetFuncType(this, &SpawnActorAction::SetSpawned),
+         dtDAL::ActorIDActorProperty::GetFuncType(this, &SpawnActorAction::GetSpawned),
          "", "The actor that was spawned.");
 
       // This will expose the properties in the editor and allow
       // them to be connected to ValueNodes.
-      mValues.push_back(ValueLink(this, prefabProp, false, false, true, false));
+      mValues.push_back(ValueLink(this, prefabProp));
       mValues.push_back(ValueLink(this, spawnPosProp, false, false, false));
       mValues.push_back(ValueLink(this, actorProp, true, true));
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   bool SpawnPrefabAction::Update(float simDelta, float delta, int input, bool firstUpdate)
+   bool SpawnActorAction::Update(float simDelta, float delta, int input, bool firstUpdate)
    {
       dtGame::GameManager* gm = GetDirector()->GetGameManager();
       dtDAL::ResourceDescriptor prefab = GetResource("Prefab");
@@ -135,7 +135,7 @@ namespace dtDirector
                resourceProp->SetValue(prefab);
             }
 
-            SetActorID(proxy->GetId(), "Out Actor");
+            SetActorID(proxy->GetId());
             return ActionNode::Update(simDelta, delta, input, firstUpdate);
          }
       }
@@ -145,7 +145,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   bool SpawnPrefabAction::CanConnectValue(ValueLink* link, ValueNode* value)
+   bool SpawnActorAction::CanConnectValue(ValueLink* link, ValueNode* value)
    {
       if (Node::CanConnectValue(link, value))
       {
@@ -157,46 +157,42 @@ namespace dtDirector
                return true;
             }
          }
-         else
-         {
-            return true;
-         }
       }
 
       return false;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void SpawnPrefabAction::SetPrefab(const dtDAL::ResourceDescriptor& value)
+   void SpawnActorAction::SetPrefab(const dtDAL::ResourceDescriptor& value)
    {
       mPrefab = value;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   dtDAL::ResourceDescriptor SpawnPrefabAction::GetPrefab() const
+   dtDAL::ResourceDescriptor SpawnActorAction::GetPrefab() const
    {
       return mPrefab;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void SpawnPrefabAction::SetSpawnLocation(const osg::Vec3& value)
+   void SpawnActorAction::SetSpawnLocation(const osg::Vec3& value)
    {
       mSpawnLocation = value;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   osg::Vec3 SpawnPrefabAction::GetSpawnLocation() const
+   osg::Vec3 SpawnActorAction::GetSpawnLocation() const
    {
       return mSpawnLocation;
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void SpawnPrefabAction::SetNewActor(const dtCore::UniqueId& value)
+   void SpawnActorAction::SetSpawned(const dtCore::UniqueId& value)
    {
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   dtCore::UniqueId SpawnPrefabAction::GetNewActor()
+   dtCore::UniqueId SpawnActorAction::GetSpawned()
    {
       dtCore::UniqueId id;
       id = "";

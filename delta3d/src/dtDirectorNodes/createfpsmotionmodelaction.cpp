@@ -233,6 +233,8 @@ namespace dtDirector
                   proxy->GetActor(actor);
                   model->SetTarget(actor);
                }
+
+               return ActionNode::Update(simDelta, delta, input, firstUpdate);
             }
          }
       }
@@ -257,6 +259,7 @@ namespace dtDirector
    void CreateFPSMotionModelAction::SetModelName(const std::string& value)
    {
       mModelName = value;
+      mName = mModelName;
    }
 
    ////////////////////////////////////////////////////////////////////////////////

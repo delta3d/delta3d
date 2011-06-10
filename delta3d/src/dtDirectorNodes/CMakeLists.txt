@@ -69,6 +69,7 @@ SET(LIB_PUBLIC_HEADERS ${HEADER_PATH}/actorarrayvalue.h
     ${HEADER_PATH}/setactorpropertyaction.h
     ${HEADER_PATH}/setarrayaction.h
     ${HEADER_PATH}/setvalueaction.h
+    ${HEADER_PATH}/spawnactoraction.h
     ${HEADER_PATH}/spawnprefabaction.h
     ${HEADER_PATH}/startevent.h
     ${HEADER_PATH}/staticmeshvalue.h
@@ -152,6 +153,7 @@ SET(LIB_SOURCES ${SOURCE_PATH}/actorarrayvalue.cpp
     ${SOURCE_PATH}/setactorpropertyaction.cpp
     ${SOURCE_PATH}/setarrayaction.cpp
     ${SOURCE_PATH}/setvalueaction.cpp
+    ${SOURCE_PATH}/spawnactoraction.cpp
     ${SOURCE_PATH}/spawnprefabaction.cpp
     ${SOURCE_PATH}/startevent.cpp
     ${SOURCE_PATH}/staticmeshvalue.cpp
