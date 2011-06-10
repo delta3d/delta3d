@@ -655,6 +655,13 @@ namespace dtDirector
    void NodeItem::SetupValues()
    {
       float maxWidth = MIN_VALUE_NAME_SIZE;
+      
+      // Mutator nodes do not have a minimum width.
+      if (mNode.valid() && 
+         mNode->GetType().GetNodeType() == dtDirector::NodeType::MUTATOR_NODE)
+      {
+         maxWidth = 0.0f;
+      }
 
       int visibleCount = 0;
       int count = (int)mValues.size();
