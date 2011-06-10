@@ -220,8 +220,8 @@ namespace dtQt
 
          mDefaultResetButton->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
 
-         mGridLayout->addWidget(mDefaultResetButton, 0, 10, 1, 1);
-         mGridLayout->setColumnStretch(10, 0);
+         mGridLayout->addWidget(mDefaultResetButton, 0, 14, 1, 1);
+         mGridLayout->setColumnStretch(14, 0);
       }
 
       if (mArrayIndex > -1)
@@ -254,18 +254,18 @@ namespace dtQt
          connect(mCopyButton,      SIGNAL(clicked()), this, SLOT(onCopyClicked()));
          connect(mDeleteButton,    SIGNAL(clicked()), this, SLOT(onDeleteClicked()));
 
-         mGridLayout->addWidget(mShiftUpButton,   0, 11, 1, 1);
-         mGridLayout->addWidget(mShiftDownButton, 0, 12, 1, 1);
-         mGridLayout->addWidget(mCopyButton,      0, 13, 1, 1);
-         mGridLayout->addWidget(mDeleteButton,    0, 14, 1, 1);
-         mGridLayout->setColumnMinimumWidth(11, mShiftUpButton->sizeHint().width() / 2);
-         mGridLayout->setColumnMinimumWidth(12, mShiftDownButton->sizeHint().width() / 2);
-         mGridLayout->setColumnMinimumWidth(13, mCopyButton->sizeHint().width() / 2);
-         mGridLayout->setColumnMinimumWidth(14, mDeleteButton->sizeHint().width() / 2);
+         mGridLayout->addWidget(mShiftUpButton,   0, 10, 1, 1);
+         mGridLayout->addWidget(mShiftDownButton, 0, 11, 1, 1);
+         mGridLayout->addWidget(mCopyButton,      0, 12, 1, 1);
+         mGridLayout->addWidget(mDeleteButton,    0, 13, 1, 1);
+         mGridLayout->setColumnMinimumWidth(10, mShiftUpButton->sizeHint().width() / 2);
+         mGridLayout->setColumnMinimumWidth(11, mShiftDownButton->sizeHint().width() / 2);
+         mGridLayout->setColumnMinimumWidth(12, mCopyButton->sizeHint().width() / 2);
+         mGridLayout->setColumnMinimumWidth(13, mDeleteButton->sizeHint().width() / 2);
+         mGridLayout->setColumnStretch(10, 0);
          mGridLayout->setColumnStretch(11, 0);
          mGridLayout->setColumnStretch(12, 0);
          mGridLayout->setColumnStretch(13, 0);
-         mGridLayout->setColumnStretch(14, 0);
       }
 
       mWrapper = wrapper;
