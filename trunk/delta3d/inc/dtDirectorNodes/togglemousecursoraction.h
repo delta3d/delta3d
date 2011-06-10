@@ -19,8 +19,8 @@
  * Author: Jeff P. Houde
  */
 
-#ifndef TOGGLE_MOTION_MODEL_ACTION
-#define TOGGLE_MOTION_MODEL_ACTION
+#ifndef TOGGLE_MOUSE_CURSOR_ACTION
+#define TOGGLE_MOUSE_CURSOR_ACTION
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -94,4 +94,4 @@ namespace dtDirector
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#endif // TOGGLE_ACTION_NODE
+#endif // TOGGLE_MOUSE_CURSOR_ACTION

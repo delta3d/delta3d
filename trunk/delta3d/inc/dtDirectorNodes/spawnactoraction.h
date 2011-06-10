@@ -19,8 +19,8 @@
  * Author: Jeff P. Houde
  */
 
-#ifndef SPAWN_PREFAB_ACTION_NODE
-#define SPAWN_PREFAB_ACTION_NODE
+#ifndef SPAWN_ACTOR_ACTION_NODE
+#define SPAWN_ACTOR_ACTION_NODE
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -30,14 +30,14 @@
 namespace dtDirector
 {
    ////////////////////////////////////////////////////////////////////////////////
-   class NODE_LIBRARY_EXPORT SpawnPrefabAction: public ActionNode
+   class NODE_LIBRARY_EXPORT SpawnActorAction: public ActionNode
    {
    public:
 
       /**
        * Constructor.
        */
-      SpawnPrefabAction();
+      SpawnActorAction();
 
       /**
        * Initializes the Node.
@@ -93,15 +93,15 @@ namespace dtDirector
       void SetSpawnLocation(const osg::Vec3& value);
       osg::Vec3 GetSpawnLocation() const;
 
-      void SetNewActor(const dtCore::UniqueId& value);
-      dtCore::UniqueId GetNewActor();
+      void SetSpawned(const dtCore::UniqueId& value);
+      dtCore::UniqueId GetSpawned();
 
    protected:
 
       /**
        * Destructor.
        */
-      ~SpawnPrefabAction();
+      ~SpawnActorAction();
 
    private:
 
@@ -112,4 +112,4 @@ namespace dtDirector
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#endif // SPAWN_PREFAB_ACTION_NODE
+#endif // SPAWN_ACTOR_ACTION_NODE

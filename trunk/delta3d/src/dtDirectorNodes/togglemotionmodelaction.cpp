@@ -81,7 +81,7 @@ namespace dtDirector
       bool onOrOff = false;
       bool shouldToggle = false;
 
-      int count = GetPropertyCount("Model Name");
+      int count = GetPropertyCount("Motion Model");
 
       switch (input)
       {
@@ -128,6 +128,7 @@ namespace dtDirector
    void ToggleMotionModelAction::SetModelName(const std::string& value)
    {
       mModelName = value;
+      mName = mModelName;
    }
 
    ////////////////////////////////////////////////////////////////////////////////

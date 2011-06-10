@@ -73,6 +73,7 @@ namespace dtDirector
          case INPUT_HIDE:
             {
                app->GetWindow()->ShowCursor(false);
+               break;
             }
          }
       }

@@ -37,7 +37,6 @@ namespace dtDirector
    public:
 
       /// Events
-      static dtCore::RefPtr<dtDirector::NodeType> INPUT_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> START_EVENT_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> REMOTE_EVENT_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> TRIGGER_VOLUME_EVENT_NODE_TYPE;
@@ -47,45 +46,58 @@ namespace dtDirector
       static dtCore::RefPtr<dtDirector::NodeType> MOUSE_PRESS_EVENT_NODE_TYPE;
 
       /// Actions
-      static dtCore::RefPtr<dtDirector::NodeType> OUTPUT_NODE_TYPE;
+      static dtCore::RefPtr<dtDirector::NodeType> LOG_ACTION_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> CALL_REMOTE_EVENT_ACTION_NODE_TYPE;
-      static dtCore::RefPtr<dtDirector::NodeType> REFERENCE_SCRIPT_ACTION_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> DELAY_ACTION_NODE_TYPE;
-      static dtCore::RefPtr<dtDirector::NodeType> SOUND_ACTION_NODE_TYPE;
-      static dtCore::RefPtr<dtDirector::NodeType> SET_VALUE_ACTION_NODE_TYPE;
-      static dtCore::RefPtr<dtDirector::NodeType> SET_ARRAY_VALUE_ACTION_NODE_TYPE;
+      static dtCore::RefPtr<dtDirector::NodeType> SWITCH_ACTION_NODE_TYPE;
+
+      static dtCore::RefPtr<dtDirector::NodeType> GET_ACTOR_PROPERTY_ACTION_NODE_TYPE;
+      static dtCore::RefPtr<dtDirector::NodeType> GET_VECTOR_VALUES_ACTION_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> GET_ARRAY_VALUE_ACTION_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> GET_ARRAY_SIZE_ACTION_NODE_TYPE;
-      static dtCore::RefPtr<dtDirector::NodeType> REMOVE_ARRAY_VALUE_ACTION_NODE_TYPE;
-      static dtCore::RefPtr<dtDirector::NodeType> SET_VECTOR_ACTION_NODE_TYPE;
-      static dtCore::RefPtr<dtDirector::NodeType> GET_VECTOR_VALUES_ACTION_NODE_TYPE;
-      static dtCore::RefPtr<dtDirector::NodeType> NORMALIZE_VECTOR_ACTION_NODE_TYPE;
-      static dtCore::RefPtr<dtDirector::NodeType> GET_ACTOR_PROPERTY_ACTION_NODE_TYPE;
-      static dtCore::RefPtr<dtDirector::NodeType> SET_ACTOR_PROPERTY_ACTION_NODE_TYPE;
+
       static dtCore::RefPtr<dtDirector::NodeType> OPERATION_ACTION_NODE_TYPE;
-      static dtCore::RefPtr<dtDirector::NodeType> CALCULATE_DISTANCE_ACTION_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> TOGGLE_ACTION_NODE_TYPE;
-      static dtCore::RefPtr<dtDirector::NodeType> COMPARE_ACTOR_ACTION_NODE_TYPE;
+      static dtCore::RefPtr<dtDirector::NodeType> TOGGLE_MOTION_MODEL_ACTION_NODE_TYPE;
+      static dtCore::RefPtr<dtDirector::NodeType> SET_VALUE_ACTION_NODE_TYPE;
+      static dtCore::RefPtr<dtDirector::NodeType> SET_VECTOR_ACTION_NODE_TYPE;
+      static dtCore::RefPtr<dtDirector::NodeType> SET_ACTOR_PROPERTY_ACTION_NODE_TYPE;
+      static dtCore::RefPtr<dtDirector::NodeType> SET_ARRAY_VALUE_ACTION_NODE_TYPE;
+      static dtCore::RefPtr<dtDirector::NodeType> REMOVE_ARRAY_VALUE_ACTION_NODE_TYPE;
+      static dtCore::RefPtr<dtDirector::NodeType> NORMALIZE_VECTOR_ACTION_NODE_TYPE;
+      static dtCore::RefPtr<dtDirector::NodeType> CALCULATE_DISTANCE_ACTION_NODE_TYPE;
+      static dtCore::RefPtr<dtDirector::NodeType> SPAWN_ACTOR_ACTION_NODE_TYPE;
+      static dtCore::RefPtr<dtDirector::NodeType> SPAWN_PREFAB_ACTION_NODE_TYPE;
+      static dtCore::RefPtr<dtDirector::NodeType> CREATE_FPS_MOTION_MODEL_ACTION_NODE_TYPE;
+      static dtCore::RefPtr<dtDirector::NodeType> ATTACH_CAMERA_ACTION_NODE_TYPE;
+      static dtCore::RefPtr<dtDirector::NodeType> ATTACH_MOTION_MODEL_ACTION_NODE_TYPE;
+
       static dtCore::RefPtr<dtDirector::NodeType> COMPARE_BOOL_ACTION_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> COMPARE_VALUE_ACTION_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> COMPARE_VECTOR_ACTION_NODE_TYPE;
+      static dtCore::RefPtr<dtDirector::NodeType> COMPARE_ACTOR_ACTION_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> COMPARE_ACTOR_PROPERTY_ACTION_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> COMPARE_ACTOR_FACING_NODE_TYPE;
+
       static dtCore::RefPtr<dtDirector::NodeType> SCHEDULER_ACTION_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> LERP_ACTOR_ROTATION_ACTION_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> LERP_ACTOR_SCALE_ACTION_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> LERP_ACTOR_TRANSLATION_ACTION_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> ANIMATE_ACTOR_ACTION_NODE_TYPE;
+
       static dtCore::RefPtr<dtDirector::NodeType> SEND_MESSAGE_ACTION_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> SEND_EVENT_MESSAGE_ACTION_NODE_TYPE;
-      static dtCore::RefPtr<dtDirector::NodeType> LOG_ACTION_NODE_TYPE;
-      static dtCore::RefPtr<dtDirector::NodeType> SWITCH_ACTION_NODE_TYPE;
+
+      static dtCore::RefPtr<dtDirector::NodeType> TOGGLE_MOUSE_CURSOR_ACTION_NODE_TYPE;
+
+      static dtCore::RefPtr<dtDirector::NodeType> REFERENCE_SCRIPT_ACTION_NODE_TYPE;
 
       /// Mutators
       static dtCore::RefPtr<dtDirector::NodeType> ADD_MUTATOR_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> SUBTRACT_MUTATOR_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> MULTIPLY_MUTATOR_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> DIVIDE_MUTATOR_NODE_TYPE;
+
       static dtCore::RefPtr<dtDirector::NodeType> COMPARE_EQUALITY_MUTATOR_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> COMPARE_LESS_MUTATOR_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> COMPARE_GREATER_MUTATOR_NODE_TYPE;
@@ -94,26 +106,33 @@ namespace dtDirector
       static dtCore::RefPtr<dtDirector::NodeType> OR_MUTATOR_NODE_TYPE;
 
       /// Values
-      static dtCore::RefPtr<dtDirector::NodeType> EXTERNAL_VALUE_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> REFERENCE_VALUE_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> PLAYER_VALUE_NODE_TYPE;
+      static dtCore::RefPtr<dtDirector::NodeType> OWNER_VALUE_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> BOOLEAN_VALUE_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> INT_VALUE_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> FLOAT_VALUE_NODE_TYPE;
-      static dtCore::RefPtr<dtDirector::NodeType> RANDOM_FLOAT_VALUE_NODE_TYPE;
-      static dtCore::RefPtr<dtDirector::NodeType> RANDOM_INT_VALUE_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> DOUBLE_VALUE_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> STRING_VALUE_NODE_TYPE;
-      static dtCore::RefPtr<dtDirector::NodeType> STRING_ARRAY_VALUE_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> ACTOR_VALUE_NODE_TYPE;
-      static dtCore::RefPtr<dtDirector::NodeType> ACTOR_ARRAY_VALUE_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> STATIC_MESH_VALUE_NODE_TYPE;
-      static dtCore::RefPtr<dtDirector::NodeType> VEC2_ARRAY_VALUE_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> VEC2_VALUE_NODE_TYPE;
-      static dtCore::RefPtr<dtDirector::NodeType> VEC3_ARRAY_VALUE_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> VEC3_VALUE_NODE_TYPE;
-      static dtCore::RefPtr<dtDirector::NodeType> VEC4_ARRAY_VALUE_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> VEC4_VALUE_NODE_TYPE;
+
+      static dtCore::RefPtr<dtDirector::NodeType> STRING_ARRAY_VALUE_NODE_TYPE;
+      static dtCore::RefPtr<dtDirector::NodeType> ACTOR_ARRAY_VALUE_NODE_TYPE;
+      static dtCore::RefPtr<dtDirector::NodeType> VEC2_ARRAY_VALUE_NODE_TYPE;
+      static dtCore::RefPtr<dtDirector::NodeType> VEC3_ARRAY_VALUE_NODE_TYPE;
+      static dtCore::RefPtr<dtDirector::NodeType> VEC4_ARRAY_VALUE_NODE_TYPE;
+
+      static dtCore::RefPtr<dtDirector::NodeType> RANDOM_INT_VALUE_NODE_TYPE;
+      static dtCore::RefPtr<dtDirector::NodeType> RANDOM_FLOAT_VALUE_NODE_TYPE;
+
+      /// Links
+      static dtCore::RefPtr<dtDirector::NodeType> INPUT_NODE_TYPE;
+      static dtCore::RefPtr<dtDirector::NodeType> OUTPUT_NODE_TYPE;
+      static dtCore::RefPtr<dtDirector::NodeType> EXTERNAL_VALUE_NODE_TYPE;
 
       /// Misc
       static dtCore::RefPtr<dtDirector::NodeType> GROUP_BOX_NODE_TYPE;
