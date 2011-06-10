@@ -1914,7 +1914,7 @@ void DirectorCinematicEditorPlugin::OnSave()
          dtDirector::SchedulerAction::OutputEventData newData;
 
          newData.name = data.mName;
-         newData.time = data.mTime;
+         newData.time = data.mTime * 0.001f;
          newData.triggerNormal = data.mTriggerPlay;
          newData.triggerReverse = data.mTriggerReverse;
          eventList.push_back(newData);
