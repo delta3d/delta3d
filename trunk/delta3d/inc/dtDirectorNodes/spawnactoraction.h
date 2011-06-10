@@ -26,6 +26,7 @@
 
 #include <dtDirector/actionnode.h>
 #include <dtDirectorNodes/nodelibraryexport.h>
+#include <dtDAL/baseactorobject.h>
 
 namespace dtDirector
 {
@@ -85,16 +86,31 @@ namespace dtDirector
       virtual bool CanConnectValue(ValueLink* link, ValueNode* value);
 
       /**
+       * This event is called by value nodes that are linked via
+       * value links when that value has changed.
+       *
+       * @param[in]  linkName  The name of the value link that is changing.
+       */
+      virtual void OnLinkValueChanged(const std::string& linkName);
+
+      /**
+       * Updates the template proxy and the properties visible
+       * in the current node.
+       */
+      void UpdateTemplate();
+
+      /**
        * Accessors for property values.
        */
-      void SetPrefab(const dtDAL::ResourceDescriptor& value);
-      dtDAL::ResourceDescriptor GetPrefab() const;
+      void SetActorType(const std::string& value);
+      std::string GetActorType() const;
+      std::vector<std::string> GetActorTypeList() const;
 
       void SetSpawnLocation(const osg::Vec3& value);
       osg::Vec3 GetSpawnLocation() const;
 
-      void SetSpawned(const dtCore::UniqueId& value);
-      dtCore::UniqueId GetSpawned();
+      void SetOutActor(const dtCore::UniqueId& value);
+      dtCore::UniqueId GetOutActor();
 
    protected:
 
@@ -105,8 +121,11 @@ namespace dtDirector
 
    private:
 
-      dtDAL::ResourceDescriptor mPrefab;
-      osg::Vec3                 mSpawnLocation;
+      std::string mActorType;
+      osg::Vec3   mSpawnLocation;
+
+      dtCore::RefPtr<dtDAL::BaseActorObject> mTemplateActor;
+      dtDAL::ContainerActorProperty*         mContainerProp;
    };
 }
 
