@@ -100,7 +100,7 @@ namespace dtDirector
          }
       }
 
-      TriggerOutput("Failed");
+      ActivateOutput("Failed");
       return false;
    }
 

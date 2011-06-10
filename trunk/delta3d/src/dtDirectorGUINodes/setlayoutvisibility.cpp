@@ -87,7 +87,7 @@ namespace dtDirector
       CEGUI::Window* layout = GUINodeManager::GetLayout(GetString("Layout"));
       if (!layout)
       {
-         TriggerOutput("Failed");
+         ActivateOutput("Failed");
          return false;
       }
 
