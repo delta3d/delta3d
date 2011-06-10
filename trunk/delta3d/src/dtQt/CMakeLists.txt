@@ -48,8 +48,7 @@ viewwindow.cpp
 
 )
 
-INCLUDE_DIRECTORIES(${SOURCE_PATH}/inc 
-                    ${QT_INCLUDE_DIR}
+INCLUDE_DIRECTORIES(${QT_INCLUDE_DIR}
                    )
 
 QT4_WRAP_CPP(MOC_SOURCES ${LIB_PUBLIC_HEADERS})

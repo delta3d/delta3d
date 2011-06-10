@@ -107,7 +107,14 @@ SOURCE_GROUP("Auto-Generated" FILES ${UI_SOURCES})
 SOURCE_GROUP("UI Files" FILES ${QT_UI_SOURCES})
 ##########################################################
 
+INCLUDE_DIRECTORIES(
+                    ${QT_INCLUDE_DIR}
+                    ${UI_PATH}
+                   )
+
 ADD_PRECOMPILED_HEADER(${LIB_NAME} prefix/dtdirectorqtprefix.h prefix/dtdirectorqtprefix.cpp LIB_SOURCES)
+
+
 
 ADD_LIBRARY(${LIB_NAME} SHARED
     ${LIB_PUBLIC_HEADERS}
@@ -117,10 +124,7 @@ ADD_LIBRARY(${LIB_NAME} SHARED
     ${UI_SOURCES}
 )
 
-INCLUDE_DIRECTORIES(${SOURCE_PATH}/inc
-                    ${QT_INCLUDE_DIR}
-                    ${UI_PATH}
-                   )
+
 
 LINK_WITH_VARIABLES(${LIB_NAME}
                     QT_QTCORE_LIBRARY
