@@ -131,6 +131,12 @@ namespace dtDAL
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   void ContainerActorProperty::ClearProperties()
+   {
+      mProperties.clear();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    ActorProperty* ContainerActorProperty::GetProperty(int index)
    {
       if (index < 0 || index >= (int)mProperties.size())

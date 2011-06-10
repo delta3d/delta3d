@@ -94,6 +94,11 @@ namespace dtDAL
       void AddProperty(ActorProperty* property);
 
       /**
+       * Clears all properties from the container.
+       */
+      void ClearProperties();
+
+      /**
       * Retrieves a property in the container.
       *
       * @param[in]  index  The index to the property to retrieve.
