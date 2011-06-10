@@ -2,7 +2,7 @@
 <director xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dDirector" xsi:schemaLocation="delta3dDirector director.xsd">
     <header>
         <createTimestamp>2009-12-23T15:09:12-08:00</createTimestamp>
-        <lastUpdateTimestamp>2011-06-09T23:01:51-08:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2011-06-10T10:51:15-08:00</lastUpdateTimestamp>
         <editorVersion>2.7.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
         <scriptType>Scenario</scriptType>
@@ -145,6 +145,10 @@
                         <value1>-290.000000</value1>
                         <value2>-75.167694</value2>
                     </vec2>
+                </property>
+                <property>
+                    <name>Button</name>
+                    <string>Right Button</string>
                 </property>
                 <outputlink>
                     <name>Pressed</name>
@@ -360,8 +364,8 @@
                     <name>Out</name>
                     <visible>true</visible>
                     <link>
-                        <id>4c56bc33-27cc-4bad-8364-d3d6cf0e62ee</id>
-                        <name>Show</name>
+                        <id>162683e7-ed68-447e-ada6-877d90aca77c</id>
+                        <name>In</name>
                     </link>
                 </outputlink>
                 <outputlink>
@@ -407,10 +411,6 @@
                 <outputlink>
                     <name>Out</name>
                     <visible>true</visible>
-                    <link>
-                        <id>162683e7-ed68-447e-ada6-877d90aca77c</id>
-                        <name>In</name>
-                    </link>
                 </outputlink>
                 <outputlink>
                     <name>Failed</name>
@@ -440,21 +440,29 @@
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>79.250000</value1>
-                        <value2>-335.445129</value2>
+                        <value1>321.250000</value1>
+                        <value2>-145.000000</value2>
                     </vec2>
                 </property>
                 <inputlink>
                     <name>In</name>
                     <visible>true</visible>
                     <link>
-                        <id>7408b7e8-8c39-40b5-9118-a73fd6d188d9</id>
+                        <id>fabc3e50-f1d5-40a2-81f1-672cff4f68a2</id>
                         <name>Out</name>
                     </link>
                 </inputlink>
                 <outputlink>
                     <name>Out</name>
                     <visible>true</visible>
+                    <link>
+                        <id>9a16aa2a-4576-4cdc-bfb6-035f291528a2</id>
+                        <name>TurnOff</name>
+                    </link>
+                    <link>
+                        <id>c8fc83f1-a4eb-41b2-9057-e5da38248c3b</id>
+                        <name>Hide</name>
+                    </link>
                 </outputlink>
                 <outputlink>
                     <name>Failed</name>
@@ -526,7 +534,7 @@
                 <property>
                     <name>Size</name>
                     <vec2>
-                        <value1>1002.875000</value1>
+                        <value1>1052.000000</value1>
                         <value2>351.833313</value2>
                     </vec2>
                 </property>
@@ -618,7 +626,7 @@
                 <property>
                     <name>Size</name>
                     <vec2>
-                        <value1>1083.900391</value1>
+                        <value1>1097.000000</value1>
                         <value2>347.655273</value2>
                     </vec2>
                 </property>
@@ -767,53 +775,13 @@
                 </valuelink>
             </node>
             <node>
-                <name>Toggle Mouse Cursor</name>
-                <category>GUI</category>
-                <id>4c56bc33-27cc-4bad-8364-d3d6cf0e62ee</id>
-                <property>
-                    <name>Position</name>
-                    <vec2>
-                        <value1>322.875000</value1>
-                        <value2>-132.000000</value2>
-                    </vec2>
-                </property>
-                <inputlink>
-                    <name>Show</name>
-                    <visible>true</visible>
-                    <link>
-                        <id>fabc3e50-f1d5-40a2-81f1-672cff4f68a2</id>
-                        <name>Out</name>
-                    </link>
-                </inputlink>
-                <inputlink>
-                    <name>Hide</name>
-                    <visible>false</visible>
-                </inputlink>
-                <outputlink>
-                    <name>Out</name>
-                    <visible>true</visible>
-                    <link>
-                        <id>9a16aa2a-4576-4cdc-bfb6-035f291528a2</id>
-                        <name>TurnOff</name>
-                    </link>
-                </outputlink>
-                <valuelink>
-                    <name>Enabled</name>
-                    <visible>true</visible>
-                    <exposed>false</exposed>
-                    <isout>false</isout>
-                    <allowmultiple>false</allowmultiple>
-                    <typecheck>true</typecheck>
-                </valuelink>
-            </node>
-            <node>
                 <name>Toggle Motion Model</name>
                 <category>Scene</category>
                 <id>9a16aa2a-4576-4cdc-bfb6-035f291528a2</id>
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>494.875000</value1>
+                        <value1>535.500000</value1>
                         <value2>-145.000000</value2>
                     </vec2>
                 </property>
@@ -829,7 +797,7 @@
                     <name>TurnOff</name>
                     <visible>true</visible>
                     <link>
-                        <id>4c56bc33-27cc-4bad-8364-d3d6cf0e62ee</id>
+                        <id>162683e7-ed68-447e-ada6-877d90aca77c</id>
                         <name>Out</name>
                     </link>
                 </inputlink>
@@ -893,8 +861,8 @@
                     <name>Out</name>
                     <visible>true</visible>
                     <link>
-                        <id>5727c648-c0d1-4151-9f71-c302d35ab1df</id>
-                        <name>Hide</name>
+                        <id>2d97a5b8-ca7e-4655-97ea-ea5a05ffd5bf</id>
+                        <name>In</name>
                     </link>
                 </outputlink>
                 <valuelink>
@@ -940,7 +908,7 @@
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>576.875000</value1>
+                        <value1>503.500000</value1>
                         <value2>230.178040</value2>
                     </vec2>
                 </property>
@@ -952,7 +920,7 @@
                     <name>TurnOn</name>
                     <visible>true</visible>
                     <link>
-                        <id>5727c648-c0d1-4151-9f71-c302d35ab1df</id>
+                        <id>2d97a5b8-ca7e-4655-97ea-ea5a05ffd5bf</id>
                         <name>Out</name>
                     </link>
                 </inputlink>
@@ -990,22 +958,26 @@
                 </valuelink>
             </node>
             <node>
-                <name>Toggle Mouse Cursor</name>
+                <name>Set Cursor</name>
                 <category>GUI</category>
-                <id>5727c648-c0d1-4151-9f71-c302d35ab1df</id>
+                <id>2d97a5b8-ca7e-4655-97ea-ea5a05ffd5bf</id>
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>391.875000</value1>
+                        <value1>377.375000</value1>
                         <value2>243.178040</value2>
                     </vec2>
                 </property>
+                <property>
+                    <name>Image Set</name>
+                    <string></string>
+                </property>
+                <property>
+                    <name>Image</name>
+                    <string></string>
+                </property>
                 <inputlink>
-                    <name>Show</name>
-                    <visible>false</visible>
-                </inputlink>
-                <inputlink>
-                    <name>Hide</name>
+                    <name>In</name>
                     <visible>true</visible>
                     <link>
                         <id>e50bcf56-9d67-4f0a-b10b-019b1c0fd26d</id>
@@ -1019,6 +991,102 @@
                         <id>2df278a3-0bc4-4c3a-aa70-115d9447315f</id>
                         <name>TurnOn</name>
                     </link>
+                    <link>
+                        <id>4dc2a53d-ad25-4007-8511-549ef38b83d4</id>
+                        <name>Hide</name>
+                    </link>
+                </outputlink>
+                <outputlink>
+                    <name>Failed</name>
+                    <visible>true</visible>
+                </outputlink>
+                <valuelink>
+                    <name>Enabled</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+                <valuelink>
+                    <name>Image Set</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>true</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+                <valuelink>
+                    <name>Image</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>true</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+            </node>
+            <node>
+                <name>Toggle Mouse Cursor</name>
+                <category>GUI</category>
+                <id>4dc2a53d-ad25-4007-8511-549ef38b83d4</id>
+                <property>
+                    <name>Position</name>
+                    <vec2>
+                        <value1>503.500000</value1>
+                        <value2>298.318817</value2>
+                    </vec2>
+                </property>
+                <inputlink>
+                    <name>Show</name>
+                    <visible>false</visible>
+                </inputlink>
+                <inputlink>
+                    <name>Hide</name>
+                    <visible>true</visible>
+                    <link>
+                        <id>2d97a5b8-ca7e-4655-97ea-ea5a05ffd5bf</id>
+                        <name>Out</name>
+                    </link>
+                </inputlink>
+                <outputlink>
+                    <name>Out</name>
+                    <visible>false</visible>
+                </outputlink>
+                <valuelink>
+                    <name>Enabled</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+            </node>
+            <node>
+                <name>Toggle Mouse Cursor</name>
+                <category>GUI</category>
+                <id>c8fc83f1-a4eb-41b2-9057-e5da38248c3b</id>
+                <property>
+                    <name>Position</name>
+                    <vec2>
+                        <value1>535.500000</value1>
+                        <value2>-66.681183</value2>
+                    </vec2>
+                </property>
+                <inputlink>
+                    <name>Show</name>
+                    <visible>false</visible>
+                </inputlink>
+                <inputlink>
+                    <name>Hide</name>
+                    <visible>true</visible>
+                    <link>
+                        <id>162683e7-ed68-447e-ada6-877d90aca77c</id>
+                        <name>Out</name>
+                    </link>
+                </inputlink>
+                <outputlink>
+                    <name>Out</name>
+                    <visible>false</visible>
                 </outputlink>
                 <valuelink>
                     <name>Enabled</name>
@@ -1039,7 +1107,7 @@
                     <name>Position</name>
                     <vec2>
                         <value1>-37.931198</value1>
-                        <value2>14.738031</value2>
+                        <value2>16.738031</value2>
                     </vec2>
                 </property>
                 <property>
