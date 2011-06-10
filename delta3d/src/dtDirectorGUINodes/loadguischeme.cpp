@@ -54,6 +54,16 @@ namespace dtDirector
    /////////////////////////////////////////////////////////////////////////////
    void LoadGUIScheme::OnFinishedLoading()
    {
+      std::string schema = GetString("Scheme");
+      if (!schema.empty())
+      {
+         dtGUI::GUI* gui = GUINodeManager::GetGUI();
+         if (gui)
+         {
+            gui->LoadScheme(schema);
+         }
+      }
+
       UpdateName();
    }
 
@@ -78,19 +88,19 @@ namespace dtDirector
    /////////////////////////////////////////////////////////////////////////////
    bool LoadGUIScheme::Update(float simDelta, float delta, int input, bool firstUpdate)
    {
-      std::string schema = GetString("Scheme");
-      if (!schema.empty())
-      {
-         dtGUI::GUI* gui = GUINodeManager::GetGUI();
-         if (gui)
-         {
-            gui->LoadScheme(schema);
+      //std::string schema = GetString("Scheme");
+      //if (!schema.empty())
+      //{
+      //   dtGUI::GUI* gui = GUINodeManager::GetGUI();
+      //   if (gui)
+      //   {
+      //      gui->LoadScheme(schema);
             return ActionNode::Update(simDelta, delta, input, firstUpdate);
-         }
-      }
+      //   }
+      //}
 
-      ActivateOutput("Failed");
-      return false;
+      //ActivateOutput("Failed");
+      //return false;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
