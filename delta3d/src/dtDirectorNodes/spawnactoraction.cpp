@@ -30,6 +30,7 @@
 #include <dtDAL/containeractorproperty.h>
 #include <dtDAL/actortype.h>
 #include <dtDAL/librarymanager.h>
+#include <dtDAL/vectoractorproperties.h>
 
 #include <dtDirector/director.h>
 

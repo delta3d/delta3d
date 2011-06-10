@@ -27,6 +27,7 @@
 #include <dtDirector/actionnode.h>
 #include <dtDirectorNodes/nodelibraryexport.h>
 #include <dtDAL/baseactorobject.h>
+#include <dtDAL/containeractorproperty.h>
 
 namespace dtDirector
 {

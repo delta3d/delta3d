@@ -25,6 +25,9 @@
 #include <dtDAL/stringactorproperty.h>
 #include <dtDAL/baseactorobject.h>
 
+#include <dtDAL/resourceactorproperty.h>
+#include <dtDAL/vectoractorproperties.h>
+
 #include <dtDirector/director.h>
 
 namespace dtDirector
