@@ -7,7 +7,7 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2009-12-21T16:14:44-08:00</createTimestamp>
-        <lastUpdateTimestamp>2011-06-09T22:48:59-08:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2011-06-10T00:43:26-08:00</lastUpdateTimestamp>
         <editorVersion>2.7.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
@@ -63,35 +63,6 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes::physics_crate.ive</resourceDisplayName>
                 <resource>StaticMeshes::physics_crate.ive</resource>
-            </property>
-        </actor>
-        <actor>
-            <type>dtcore.Camera</type>
-            <id>058ecafd-afdc-4748-85c5-151ffbbe75d4</id>
-            <name>Player</name>
-            <property>
-                <name>Translation</name>
-                <vec3>
-                    <value1>6.773384</value1>
-                    <value2>12.515337</value2>
-                    <value3>0.868271</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>Collision Type</name>
-                <enumerated>SPHERE</enumerated>
-            </property>
-            <property>
-                <name>Collision Radius</name>
-                <float>1</float>
-            </property>
-            <property>
-                <name>Enable Collision</name>
-                <boolean>true</boolean>
-            </property>
-            <property>
-                <name>Collision Collide Mask</name>
-                <bitMask>1</bitMask>
             </property>
         </actor>
         <actor>
@@ -2120,11 +2091,7 @@
             </property>
         </actor>
     </actors>
-    <groups>
-        <group>
-            <actor>058ecafd-afdc-4748-85c5-151ffbbe75d4</actor>
-        </group>
-    </groups>
+    <groups></groups>
     <drawablehierarchy></drawablehierarchy>
     <presetCameras>
         <presetCamera>

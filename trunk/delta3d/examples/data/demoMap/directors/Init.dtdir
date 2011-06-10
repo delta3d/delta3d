@@ -2,7 +2,7 @@
 <director xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dDirector" xsi:schemaLocation="delta3dDirector director.xsd">
     <header>
         <createTimestamp>2009-12-22T14:26:31-08:00</createTimestamp>
-        <lastUpdateTimestamp>2011-06-09T22:50:44-08:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2011-06-10T00:41:23-08:00</lastUpdateTimestamp>
         <editorVersion>2.7.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
         <scriptType>Scenario</scriptType>
@@ -283,7 +283,7 @@
                     <name>Out</name>
                     <visible>true</visible>
                     <link>
-                        <id>17b204e7-ae9a-4a42-a0c1-3b1623f98a89</id>
+                        <id>df9275e2-76a7-48a1-9654-0b81e73d972f</id>
                         <name>In</name>
                     </link>
                 </outputlink>
@@ -315,7 +315,7 @@
                     <name>In</name>
                     <visible>true</visible>
                     <link>
-                        <id>17b204e7-ae9a-4a42-a0c1-3b1623f98a89</id>
+                        <id>df9275e2-76a7-48a1-9654-0b81e73d972f</id>
                         <name>Out</name>
                     </link>
                 </inputlink>
@@ -503,15 +503,111 @@
                 </valuelink>
             </node>
             <node>
-                <name>Set Value</name>
-                <category>General</category>
-                <id>17b204e7-ae9a-4a42-a0c1-3b1623f98a89</id>
+                <name>Spawn Actor</name>
+                <category>Scene</category>
+                <id>df9275e2-76a7-48a1-9654-0b81e73d972f</id>
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>51.296143</value1>
+                        <value1>49.796143</value1>
                         <value2>-268.177643</value2>
                     </vec2>
+                </property>
+                <property>
+                    <name>Actor Type</name>
+                    <string>dtcore.Camera</string>
+                </property>
+                <property>
+                    <name>Actor Properties</name>
+                    <container>
+                        <property>
+                            <name>Description</name>
+                            <string></string>
+                        </property>
+                        <property>
+                            <name>IsActive</name>
+                            <boolean>true</boolean>
+                        </property>
+                        <property>
+                            <name>Rotation</name>
+                            <vec3>
+                                <value1>0.000000</value1>
+                                <value2>0.000000</value2>
+                                <value3>0.000000</value3>
+                            </vec3>
+                        </property>
+                        <property>
+                            <name>Translation</name>
+                            <vec3>
+                                <value1>0.000000</value1>
+                                <value2>0.000000</value2>
+                                <value3>0.000000</value3>
+                            </vec3>
+                        </property>
+                        <property>
+                            <name>Normal Rescaling</name>
+                            <boolean>true</boolean>
+                        </property>
+                        <property>
+                            <name>Show Collision Geometry</name>
+                            <boolean>false</boolean>
+                        </property>
+                        <property>
+                            <name>Collision Type</name>
+                            <enumerated>SPHERE</enumerated>
+                        </property>
+                        <property>
+                            <name>Collision Radius</name>
+                            <float>1</float>
+                        </property>
+                        <property>
+                            <name>Collision Length</name>
+                            <float>0</float>
+                        </property>
+                        <property>
+                            <name>Collision Box</name>
+                            <vec3>
+                                <value1>0.000000</value1>
+                                <value2>0.000000</value2>
+                                <value3>0.000000</value3>
+                            </vec3>
+                        </property>
+                        <property>
+                            <name>Enable Collision</name>
+                            <boolean>true</boolean>
+                        </property>
+                        <property>
+                            <name>Collision Category Mask</name>
+                            <bitMask>2</bitMask>
+                        </property>
+                        <property>
+                            <name>Collision Collide Mask</name>
+                            <bitMask>1</bitMask>
+                        </property>
+                        <property>
+                            <name>AltCollisionMesh</name>
+                            <resourceType>StaticMeshes</resourceType>
+                            <resourceDisplayName></resourceDisplayName>
+                            <resource></resource>
+                        </property>
+                        <property>
+                            <name>Render Proxy Node</name>
+                            <boolean>false</boolean>
+                        </property>
+                        <property>
+                            <name>Enable</name>
+                            <boolean>false</boolean>
+                        </property>
+                        <property>
+                            <name>Clear Color</name>
+                            <colorRGBA>
+                                <valueR>0.200000</valueR>
+                                <valueG>0.200000</valueG>
+                                <valueB>0.600000</valueB>
+                                <valueA>1.000000</valueA>
+                            </colorRGBA>
+                        </property>
+                    </container>
                 </property>
                 <inputlink>
                     <name>In</name>
@@ -529,6 +625,10 @@
                         <name>In</name>
                     </link>
                 </outputlink>
+                <outputlink>
+                    <name>Failed</name>
+                    <visible>true</visible>
+                </outputlink>
                 <valuelink>
                     <name>Enabled</name>
                     <visible>true</visible>
@@ -538,23 +638,31 @@
                     <typecheck>true</typecheck>
                 </valuelink>
                 <valuelink>
-                    <name>Source</name>
+                    <name>Actor Type</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+                <valuelink>
+                    <name>Spawn Location</name>
                     <visible>true</visible>
                     <exposed>true</exposed>
                     <isout>false</isout>
                     <allowmultiple>false</allowmultiple>
                     <typecheck>false</typecheck>
                     <link>
-                        <id>b4e496d1-ad48-49c3-9dfb-9568c0cefe0b</id>
+                        <id>fa255c10-6d8e-4ae1-b7d5-fec264d22c30</id>
                     </link>
                 </valuelink>
                 <valuelink>
-                    <name>Destination</name>
+                    <name>Out Actor</name>
                     <visible>true</visible>
                     <exposed>true</exposed>
                     <isout>true</isout>
                     <allowmultiple>true</allowmultiple>
-                    <typecheck>false</typecheck>
+                    <typecheck>true</typecheck>
                     <link>
                         <id>2111153a-5ea3-45e7-a453-3ceba76c0a28</id>
                     </link>
@@ -569,7 +677,7 @@
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>141.296143</value1>
+                        <value1>144.296143</value1>
                         <value2>-114.505310</value2>
                     </vec2>
                 </property>
@@ -685,30 +793,6 @@
                 </valuelink>
             </node>
             <node>
-                <name>Actor</name>
-                <category>General</category>
-                <id>b4e496d1-ad48-49c3-9dfb-9568c0cefe0b</id>
-                <property>
-                    <name>Position</name>
-                    <vec2>
-                        <value1>61.296143</value1>
-                        <value2>-114.505310</value2>
-                    </vec2>
-                </property>
-                <property>
-                    <name>Value</name>
-                    <actorId>058ecafd-afdc-4748-85c5-151ffbbe75d4</actorId>
-                </property>
-                <valuelink>
-                    <name>Enabled</name>
-                    <visible>true</visible>
-                    <exposed>false</exposed>
-                    <isout>false</isout>
-                    <allowmultiple>false</allowmultiple>
-                    <typecheck>true</typecheck>
-                </valuelink>
-            </node>
-            <node>
                 <name>Player</name>
                 <category>Core</category>
                 <id>fb215cb8-76c0-4a73-b931-9dac225dc03b</id>
@@ -738,6 +822,30 @@
                         <value1>492.799683</value1>
                         <value2>-114.505310</value2>
                     </vec2>
+                </property>
+                <valuelink>
+                    <name>Enabled</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+            </node>
+            <node>
+                <name>Actor</name>
+                <category>General</category>
+                <id>fa255c10-6d8e-4ae1-b7d5-fec264d22c30</id>
+                <property>
+                    <name>Position</name>
+                    <vec2>
+                        <value1>61.296143</value1>
+                        <value2>-114.505310</value2>
+                    </vec2>
+                </property>
+                <property>
+                    <name>Value</name>
+                    <actorId>1af6ec4e-1270-44b3-b30b-20ebbfac269d</actorId>
                 </property>
                 <valuelink>
                     <name>Enabled</name>

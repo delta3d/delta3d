@@ -86,11 +86,6 @@ bool DirectorComponent::HandleKeyPressed(const dtCore::Keyboard* keyBoard, int k
 ////////////////////////////////////////////////////////////////////////////////
 void DirectorComponent::OnMapLoaded()
 {
-   dtABC::Application* app = dtABC::Application::GetInstance(0);
-   if (app)
-   {
-      app->GetWindow()->ShowCursor(false);
-   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
