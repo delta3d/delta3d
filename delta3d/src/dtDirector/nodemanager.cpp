@@ -41,8 +41,7 @@ namespace dtDirector
    ///////////////////////////////////////////////////////////////////////////////
    NodeManager::NodeManager()
    {
-      mLogger = &dtUtil::Log::GetInstance("nodemanager.cpp");
-      mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__, "Initializing node library manager.");
+      dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__, "Initializing node library manager.");
 
 //      LoadNodeRegistry(NODE_LIBRARY);
    }
@@ -291,9 +290,9 @@ namespace dtDirector
    {
       NodePluginRegistry* apr = GetRegistryForType(nodeType); 
 
-      if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+      if (dtUtil::Log::GetInstance().IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
       {
-         mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, 
+         dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, 
             "Creating node of type \"%s\".", 
             nodeType.GetFullName().c_str());
       }
@@ -310,7 +309,7 @@ namespace dtDirector
       dtCore::RefPtr<const NodeType> type = FindNodeType(name, category);
       if(!type.valid())
       {
-         mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__, 
+         dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__, 
             "No node exists of the specified name \"%s\" and category \"%s\".", 
             name.c_str(), category.c_str());
          return NULL;
@@ -322,11 +321,11 @@ namespace dtDirector
    ///////////////////////////////////////////////////////////////////////////////
    NodePluginRegistry *NodeManager::GetRegistry(const std::string &name)
    {
-      if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+      if (dtUtil::Log::GetInstance().IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
       {
          for (RegistryMapItor i = mRegistries.begin(); i != mRegistries.end(); ++i)
          {
-            mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+            dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                               "Node manager has loaded registry library \"%s\"", 
                               i->first.c_str());
          }          
@@ -383,7 +382,7 @@ namespace dtDirector
    {
       if (libName == NODE_LIBRARY)
       {
-         mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, 
+         dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, 
             "Unloading the default director node library \"%s\".", NODE_LIBRARY.c_str());
       }
 
@@ -391,7 +390,7 @@ namespace dtDirector
 
       if (regItor == mRegistries.end())
       {
-         mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__, 
+         dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__, 
             "Attempted to unload director node registry \"%s\" which was not loaded.", 
             libName.c_str());
          return;
@@ -434,8 +433,8 @@ namespace dtDirector
       // manually free it in the plugin.
       NodePluginRegistry *reg = regEntry.registry;
 
-      if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-         mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Unloading director node plugin registry: \"%s\"", reg->GetName().c_str());
+      if (dtUtil::Log::GetInstance().IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+         dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Unloading director node plugin registry: \"%s\"", reg->GetName().c_str());
 
       regEntry.destroyFn(reg);
    }

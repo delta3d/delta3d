@@ -298,8 +298,6 @@ namespace dtDirector
 
       /// List of the currently loaded actor registries.
       RegistryMap mRegistries;
-
-      dtUtil::Log* mLogger;
    };
 }
 

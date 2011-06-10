@@ -450,17 +450,13 @@ namespace dtDirector
       // Log the comment for this value.
       if (GetDirector()->GetNodeLogging() && valueNode && valueNode->GetNodeLogging())
       {
-         dtUtil::Log* logger = valueNode->GetDirector()->GetLogger();
-         if (logger)
+         std::string message = "Value Node \'" + valueNode->GetName();
+         if (!valueNode->GetComment().empty())
          {
-            std::string message = "Value Node \'" + valueNode->GetName();
-            if (!valueNode->GetComment().empty())
-            {
-               message += " - " + valueNode->GetComment();
-            }
-            message += "\' retrieved " + prop->GetValueString();
-            logger->LogMessage(dtUtil::Log::LOG_ALWAYS, __FUNCTION__, __LINE__, message);
+            message += " - " + valueNode->GetComment();
          }
+         message += "\' retrieved " + prop->GetValueString();
+         dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_ALWAYS, __FUNCTION__, __LINE__, message);
       }
    }
 
@@ -470,17 +466,13 @@ namespace dtDirector
       // Log the comment for this value.
       if (GetDirector()->GetNodeLogging() && valueNode && valueNode->GetNodeLogging())
       {
-         dtUtil::Log* logger = valueNode->GetDirector()->GetLogger();
-         if (logger)
+         std::string message = "Value Node \'" + valueNode->GetName();
+         if (!valueNode->GetComment().empty())
          {
-            std::string message = "Value Node \'" + valueNode->GetName();
-            if (!valueNode->GetComment().empty())
-            {
-               message += " - " + valueNode->GetComment();
-            }
-            message += "\' was changed from " + oldVal + " to " + prop->GetValueString();
-            logger->LogMessage(dtUtil::Log::LOG_ALWAYS, __FUNCTION__, __LINE__, message);
+            message += " - " + valueNode->GetComment();
          }
+         message += "\' was changed from " + oldVal + " to " + prop->GetValueString();
+         dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_ALWAYS, __FUNCTION__, __LINE__, message);
       }
 
       if (valueNode)
