@@ -35,6 +35,7 @@ SET(LIB_PUBLIC_HEADERS ${HEADER_PATH}/actorarrayvalue.h
     ${HEADER_PATH}/floatvalue.h
     ${HEADER_PATH}/gameeventmessageevent.h
     ${HEADER_PATH}/gamemessageevent.h
+    ${HEADER_PATH}/getactororientationaction.h
     ${HEADER_PATH}/getactorpropertyaction.h
     ${HEADER_PATH}/getarrayaction.h
     ${HEADER_PATH}/getarraysizeaction.h
@@ -120,6 +121,7 @@ SET(LIB_SOURCES ${SOURCE_PATH}/actorarrayvalue.cpp
     ${SOURCE_PATH}/floatvalue.cpp
     ${SOURCE_PATH}/gameeventmessageevent.cpp
     ${SOURCE_PATH}/gamemessageevent.cpp
+    ${SOURCE_PATH}/getactororientationaction.cpp
     ${SOURCE_PATH}/getactorpropertyaction.cpp
     ${SOURCE_PATH}/getarrayaction.cpp
     ${SOURCE_PATH}/getarraysizeaction.cpp
