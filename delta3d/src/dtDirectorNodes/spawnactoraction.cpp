@@ -103,7 +103,7 @@ namespace dtDirector
       dtDAL::BaseActorObject* locationActor = GetActor("Spawn Location");
       if (locationActor)
       {
-         dtDAL::Vec3ActorProperty* transProp = 
+         dtDAL::Vec3ActorProperty* transProp =
             dynamic_cast<dtDAL::Vec3ActorProperty*>(locationActor->GetProperty("Translation"));
          dtDAL::Vec3ActorProperty* rotProp =
             dynamic_cast<dtDAL::Vec3ActorProperty*>(locationActor->GetProperty("Rotation"));
@@ -141,7 +141,19 @@ namespace dtDirector
             dtGame::GameManager* gm = GetDirector()->GetGameManager();
             if (gm)
             {
-               gm->AddActor(*proxy);
+               dtGame::GameActorProxy* gameProxy =
+                  dynamic_cast<dtGame::GameActorProxy*>(proxy.get());
+
+               // If this is a game actor, make sure to add it to the GM as
+               // one in order to make sure OnEnteredWorld gets invoked
+               if (gameProxy)
+               {
+                  gm->AddActor(*gameProxy, false, false);
+               }
+               else
+               {
+                  gm->AddActor(*proxy);
+               }
             }
             else
             {
@@ -154,7 +166,7 @@ namespace dtDirector
 
             SetActorID(proxy->GetId(), "Out Actor");
             return ActionNode::Update(simDelta, delta, input, firstUpdate);
-         }         
+         }
       }
 
       ActivateOutput("Failed");
