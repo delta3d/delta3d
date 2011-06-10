@@ -7,7 +7,7 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2009-12-21T16:14:44-08:00</createTimestamp>
-        <lastUpdateTimestamp>2011-06-10T00:43:26-08:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2011-06-10T14:20:09-08:00</lastUpdateTimestamp>
         <editorVersion>2.7.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
@@ -185,6 +185,33 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes::Door_Pivot_Room.IVE</resourceDisplayName>
                 <resource>StaticMeshes::Door_Pivot_Room.IVE</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <id>2452c521-1e93-44a6-932d-5872d39d06ed</id>
+            <name>Billboard</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000067</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>32.943245</value1>
+                    <value2>10.667544</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:VidBox.IVE</resourceDisplayName>
+                <resource>StaticMeshes:VidBox.IVE</resource>
             </property>
         </actor>
         <actor>
@@ -1106,7 +1133,7 @@
             <property>
                 <name>Collision Box</name>
                 <vec3>
-                    <value1>5.000000</value1>
+                    <value1>15.000000</value1>
                     <value2>10.000000</value2>
                     <value3>5.000000</value3>
                 </vec3>
@@ -2271,6 +2298,36 @@
                 <positionX>34.212406</positionX>
                 <positionY>10.702178</positionY>
                 <positionZ>-0.000001</positionZ>
+                <zoom>1.000000</zoom>
+            </frontView>
+        </presetCamera>
+        <presetCamera>
+            <index>9</index>
+            <perspectiveView>
+                <positionX>27.855417</positionX>
+                <positionY>18.210648</positionY>
+                <positionZ>5.131255</positionZ>
+                <rotationX>-0.232815</rotationX>
+                <rotationY>0.105121</rotationY>
+                <rotationZ>-0.397863</rotationZ>
+                <rotationW>0.881165</rotationW>
+            </perspectiveView>
+            <topView>
+                <positionX>0.000000</positionX>
+                <positionY>0.000000</positionY>
+                <positionZ>0.000000</positionZ>
+                <zoom>1.000000</zoom>
+            </topView>
+            <sideView>
+                <positionX>0.000000</positionX>
+                <positionY>0.000000</positionY>
+                <positionZ>0.000000</positionZ>
+                <zoom>1.000000</zoom>
+            </sideView>
+            <frontView>
+                <positionX>0.000000</positionX>
+                <positionY>0.000000</positionY>
+                <positionZ>0.000000</positionZ>
                 <zoom>1.000000</zoom>
             </frontView>
         </presetCamera>

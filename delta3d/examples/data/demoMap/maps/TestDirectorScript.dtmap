@@ -7,7 +7,7 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2010-04-09T10:46:32-08:00</createTimestamp>
-        <lastUpdateTimestamp>2011-06-09T21:17:15-08:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2011-06-10T12:40:26-08:00</lastUpdateTimestamp>
         <editorVersion>2.7.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
@@ -28,7 +28,7 @@
             <property>
                 <name>DirectorArray</name>
                 <array>
-                    <size>5</size>
+                    <size>6</size>
                     <element>
                         <index>0</index>
                         <property>
@@ -72,6 +72,15 @@
                             <resourceType>Directors</resourceType>
                             <resourceDisplayName>Directors:gui.dtdir</resourceDisplayName>
                             <resource>Directors:gui.dtdir</resource>
+                        </property>
+                    </element>
+                    <element>
+                        <index>5</index>
+                        <property>
+                            <name>DirectorGraph</name>
+                            <resourceType>Directors</resourceType>
+                            <resourceDisplayName>Directors:video.dtdir</resourceDisplayName>
+                            <resource>Directors:video.dtdir</resource>
                         </property>
                     </element>
                 </array>
