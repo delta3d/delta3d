@@ -90,14 +90,11 @@ namespace dtDirector
    {
       std::string imageSet = GetString("Image Set");
       std::string image = GetString("Image");
-      if (!imageSet.empty() && !image.empty())
+      dtGUI::GUI* gui = GUINodeManager::GetGUI();
+      if (gui)
       {
-         dtGUI::GUI* gui = GUINodeManager::GetGUI();
-         if (gui)
-         {
-            gui->SetMouseCursor(imageSet, image);
-            return ActionNode::Update(simDelta, delta, input, firstUpdate);
-         }
+         gui->SetMouseCursor(imageSet, image);
+         return ActionNode::Update(simDelta, delta, input, firstUpdate);
       }
 
       ActivateOutput("Failed");
@@ -125,6 +122,11 @@ namespace dtDirector
       if (!image.empty())
       {
          mName += image;
+      }
+
+      if (mName.empty())
+      {
+         mName = "<None>";
       }
    }
 
