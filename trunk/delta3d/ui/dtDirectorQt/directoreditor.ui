@@ -7,20 +7,32 @@
     <x>0</x>
     <y>0</y>
     <width>899</width>
-    <height>600</height>
+    <height>709</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>No Director Graph Loaded</string>
   </property>
+  <property name="animated">
+   <bool>true</bool>
+  </property>
+  <property name="documentMode">
+   <bool>false</bool>
+  </property>
   <property name="dockNestingEnabled">
    <bool>false</bool>
   </property>
   <property name="dockOptions">
-   <set>QMainWindow::AllowTabbedDocks|QMainWindow::AnimatedDocks</set>
+   <set>QMainWindow::AllowTabbedDocks|QMainWindow::AnimatedDocks|QMainWindow::VerticalTabs</set>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout_9">
+    <property name="margin">
+     <number>0</number>
+    </property>
+    <property name="spacing">
+     <number>0</number>
+    </property>
     <item row="0" column="0">
      <widget class="dtDirector::GraphTabs" name="graphTab">
       <property name="sizePolicy">
@@ -175,11 +187,32 @@
    <addaction name="actionToggle_Break_Point"/>
   </widget>
   <widget class="dtDirector::PropertyEditor" name="propertyEditor">
+   <property name="minimumSize">
+    <size>
+     <width>80</width>
+     <height>150</height>
+    </size>
+   </property>
+   <property name="features">
+    <set>QDockWidget::AllDockWidgetFeatures</set>
+   </property>
+   <property name="allowedAreas">
+    <set>Qt::AllDockWidgetAreas</set>
+   </property>
    <attribute name="dockWidgetArea">
     <number>8</number>
    </attribute>
   </widget>
   <widget class="dtDirector::GraphBrowser" name="graphBrowser">
+   <property name="minimumSize">
+    <size>
+     <width>80</width>
+     <height>150</height>
+    </size>
+   </property>
+   <property name="features">
+    <set>QDockWidget::AllDockWidgetFeatures</set>
+   </property>
    <attribute name="dockWidgetArea">
     <number>8</number>
    </attribute>
@@ -200,6 +233,12 @@
    </attribute>
   </widget>
   <widget class="QDockWidget" name="nodePalette">
+   <property name="minimumSize">
+    <size>
+     <width>114</width>
+     <height>466</height>
+    </size>
+   </property>
    <property name="features">
     <set>QDockWidget::AllDockWidgetFeatures</set>
    </property>
@@ -211,13 +250,26 @@
    </attribute>
    <widget class="QWidget" name="dockWidgetContents">
     <layout class="QGridLayout" name="gridLayout">
-     <item row="0" column="0">
+     <item row="0" column="0" colspan="2">
+      <widget class="QLineEdit" name="nodeSearchEdit">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0" colspan="2">
       <widget class="QTabWidget" name="nodeTabs">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>400</height>
+        </size>
        </property>
        <property name="autoFillBackground">
         <bool>false</bool>
@@ -241,17 +293,26 @@
          </property>
          <item row="0" column="0">
           <widget class="dtDirector::NodeTabs" name="eventNodeTabWidget">
+           <property name="autoFillBackground">
+            <bool>false</bool>
+           </property>
            <property name="tabSpacing">
             <number>0</number>
            </property>
-           <widget class="QWidget" name="eventNodeTabWidgetPage1_2">
+           <widget class="QWidget" name="eventNodeTabWidgetPage1">
             <property name="geometry">
              <rect>
               <x>0</x>
-              <y>0</y>
-              <width>151</width>
-              <height>432</height>
+              <y>-27</y>
+              <width>157</width>
+              <height>400</height>
              </rect>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>400</height>
+             </size>
             </property>
             <attribute name="label">
              <string/>
@@ -274,14 +335,20 @@
            <property name="tabSpacing">
             <number>0</number>
            </property>
-           <widget class="QWidget" name="actionNodeTabWidgetPage1_2">
+           <widget class="QWidget" name="actionNodeTabWidgetPage1">
             <property name="geometry">
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>151</width>
-              <height>432</height>
+              <width>157</width>
+              <height>400</height>
              </rect>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>400</height>
+             </size>
             </property>
             <attribute name="label">
              <string/>
@@ -307,14 +374,20 @@
            <property name="tabSpacing">
             <number>0</number>
            </property>
-           <widget class="QWidget" name="mutatorNodeTabWidgetPage1_2">
+           <widget class="QWidget" name="mutatorNodeTabWidgetPage1">
             <property name="geometry">
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>151</width>
-              <height>432</height>
+              <width>157</width>
+              <height>400</height>
              </rect>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>400</height>
+             </size>
             </property>
             <attribute name="label">
              <string/>
@@ -337,14 +410,20 @@
            <property name="tabSpacing">
             <number>0</number>
            </property>
-           <widget class="QWidget" name="variableNodeTabWidgetPage1_2">
+           <widget class="QWidget" name="variableNodeTabWidgetPage1">
             <property name="geometry">
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>151</width>
-              <height>432</height>
+              <width>157</width>
+              <height>400</height>
              </rect>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>400</height>
+             </size>
             </property>
             <attribute name="label">
              <string/>
@@ -367,14 +446,20 @@
            <property name="tabSpacing">
             <number>0</number>
            </property>
-           <widget class="QWidget" name="macroNodeTabWidgetPage1_2">
+           <widget class="QWidget" name="macroNodeTabWidgetPage1">
             <property name="geometry">
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>151</width>
-              <height>432</height>
+              <width>157</width>
+              <height>400</height>
              </rect>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>400</height>
+             </size>
             </property>
             <attribute name="label">
              <string/>
@@ -397,14 +482,20 @@
            <property name="tabSpacing">
             <number>0</number>
            </property>
-           <widget class="QWidget" name="linkNodeTabWidgetPage1_2">
+           <widget class="QWidget" name="linkNodeTabWidgetPage1">
             <property name="geometry">
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>151</width>
-              <height>432</height>
+              <width>157</width>
+              <height>400</height>
              </rect>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>400</height>
+             </size>
             </property>
             <attribute name="label">
              <string/>
@@ -424,23 +515,68 @@
          </property>
          <item row="0" column="0">
           <widget class="dtDirector::NodeTabs" name="miscNodeTabWidget">
-           <property name="minimumSize">
-            <size>
-             <width>150</width>
-             <height>0</height>
-            </size>
-           </property>
            <property name="tabSpacing">
             <number>0</number>
            </property>
-           <widget class="QWidget" name="miscNodeTabWidgetPage1_2">
+           <widget class="QWidget" name="miscNodeTabWidgetPage1">
             <property name="geometry">
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>151</width>
-              <height>432</height>
+              <width>157</width>
+              <height>400</height>
              </rect>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>400</height>
+             </size>
+            </property>
+            <attribute name="label">
+             <string/>
+            </attribute>
+           </widget>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="searchNodeTab">
+        <attribute name="title">
+         <string>Search</string>
+        </attribute>
+        <layout class="QGridLayout" name="gridLayout_10">
+         <property name="margin">
+          <number>0</number>
+         </property>
+         <item row="0" column="0">
+          <widget class="dtDirector::NodeTabs" name="searchNodeTabWidget">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="tabSpacing">
+            <number>0</number>
+           </property>
+           <widget class="QWidget" name="searchNodeTabWidgetPage1">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>157</width>
+              <height>400</height>
+             </rect>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>400</height>
+             </size>
             </property>
             <attribute name="label">
              <string/>

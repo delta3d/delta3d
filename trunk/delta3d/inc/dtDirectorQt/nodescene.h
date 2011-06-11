@@ -74,6 +74,18 @@ namespace dtDirector
        */
       void CreateMacro(const std::string& editor);
 
+      /**
+       * Centers all nodes in the scene.
+       *
+       * @param[in]  The parent view.
+       */
+      void CenterNodes(QGraphicsView* view);
+
+      /**
+       * Clears the nodes within the current.
+       */
+      void Clear();
+
    signals:
       void CreateNode(const QString& name, const QString& category);
 
