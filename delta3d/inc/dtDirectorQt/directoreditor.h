@@ -513,6 +513,11 @@ namespace dtDirector
       void on_actionToggle_Break_Point_triggered();
 
       /**
+       * Event handler for when the node search text has been edited.
+       */
+      void on_nodeSearchEdit_editingFinished();
+
+      /**
        * Event handler when a node creation menu item is triggered.
        */
       void OnCreateNodeEvent(const QString& name, const QString& category);
@@ -593,8 +598,8 @@ namespace dtDirector
       /**
        * Refreshes one given node scene to display newly loaded nodes
        *
-       * @param widget   The widget containing the scene to update
-       * @param nodeType The type of nodes to display in the scene
+       * @param widget     The widget containing the scene to update
+       * @param nodeType   The type of nodes to display in the scene
        */
       void RefreshNodeScene(NodeTabs* nodeTabs, NodeType::NodeTypeEnum nodeType);
 

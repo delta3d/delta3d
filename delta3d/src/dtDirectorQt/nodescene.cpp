@@ -37,6 +37,8 @@
 #include <QtGui/QPainter>
 #include <QtGui/QImage>
 
+#include <QtGui/QGraphicsView>
+
 
 ////////////////////////////////////////////////////////////////////////////////
 static const float NODE_BUFFER = 40.0f;
@@ -171,6 +173,71 @@ namespace dtDirector
             mHeight += NODE_BUFFER;
          }
       }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void NodeScene::CenterNodes(QGraphicsView* view)
+   {
+      if (!view)
+      {
+         return;
+      }
+
+      QRect boundRect = view->frameRect();
+
+      if (boundRect.width() < mWidth)
+      {
+         boundRect.setWidth(mWidth);
+      }
+
+      boundRect.setHeight(mHeight + NODE_BUFFER + NODE_BUFFER);
+
+      setSceneRect(boundRect);
+
+      float center = boundRect.width() * 0.5f;
+      view->centerOn(center, 0);
+
+      QList<QGraphicsItem*> itemList = mpItem->childItems();
+      int count = itemList.count();
+      for (int index = 0; index < count; ++index)
+      {
+         NodeItem* nodeItem = dynamic_cast<NodeItem*>(itemList[index]);
+         if (nodeItem)
+         {
+            QPointF pos = nodeItem->scenePos();
+            float width = nodeItem->GetNodeWidth();
+
+            osg::Vec2 newPos = osg::Vec2(center - (width * 0.5f), pos.y() + NODE_BUFFER);
+
+            Node* node = nodeItem->GetNode();
+            if (node)
+            {
+               node->SetPosition(newPos);
+            }
+            else
+            {
+               MacroItem* macroItem = dynamic_cast<MacroItem*>(nodeItem);
+               if (macroItem && macroItem->GetGraph())
+               {
+                  macroItem->GetGraph()->SetPosition(newPos);
+               }
+            }
+
+            nodeItem->Draw();
+         }
+      }
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void NodeScene::Clear()
+   {
+      removeItem(mpItem);
+
+      delete mpItem;
+
+      mpItem = new QGraphicsRectItem(NULL, this);
+
+      mHeight = 0;
    }
 
    ///////////////////////////////////////////////////////////////////////////////

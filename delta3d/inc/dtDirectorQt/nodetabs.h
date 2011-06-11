@@ -56,9 +56,16 @@ namespace dtDirector
       /**
        * Refresh the scene to display newly loaded nodes
        *
-       * @param nodeType The type of nodes to display in the scene
+       * @param nodeType    The type of nodes to display in the scene
        */
       void RefreshNodes(NodeType::NodeTypeEnum nodeType);
+
+      /**
+       * Refresh the scene with nodes found with a search string.
+       *
+       * @param searchText  The nodes to search for.
+       */
+      void SearchNodes(const QString& searchText);
 
       /**
        * Adds a custom editor macro to the node selection.

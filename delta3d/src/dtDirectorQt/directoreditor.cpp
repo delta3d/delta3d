@@ -130,6 +130,7 @@ namespace dtDirector
       CreateNodeScene(mUI.macroNodeTabWidget);
       CreateNodeScene(mUI.linkNodeTabWidget);
       CreateNodeScene(mUI.miscNodeTabWidget);
+      CreateNodeScene(mUI.searchNodeTabWidget);
       RefreshNodeScenes();
 
       mUI.graphTab->clear();
@@ -1495,6 +1496,15 @@ namespace dtDirector
    }
 
    ///////////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::on_nodeSearchEdit_editingFinished()
+   {
+      QString text = mUI.nodeSearchEdit->text();
+
+      mUI.nodeTabs->setCurrentWidget(mUI.searchNodeTab);
+      mUI.searchNodeTabWidget->SearchNodes(text);
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
    void DirectorEditor::OnCreateNodeEvent(const QString& name, const QString& category)
    {
       EditorView* view = dynamic_cast<EditorView*>(mUI.graphTab->currentWidget());
@@ -1890,6 +1900,7 @@ namespace dtDirector
       RefreshNodeScene(mUI.macroNodeTabWidget, NodeType::MACRO_NODE);
       RefreshNodeScene(mUI.linkNodeTabWidget, NodeType::LINK_NODE);
       RefreshNodeScene(mUI.miscNodeTabWidget, NodeType::MISC_NODE);
+      mUI.searchNodeTabWidget->SearchNodes(mUI.nodeSearchEdit->text());
    }
 
    ///////////////////////////////////////////////////////////////////////////////

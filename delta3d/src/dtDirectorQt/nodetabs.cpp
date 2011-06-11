@@ -167,6 +167,92 @@ namespace dtDirector
          }
       }
 
+      NodeScene* scene = NULL;
+      int tabCount = count();
+      for (int tabIndex = 0; tabIndex < tabCount; ++tabIndex)
+      {
+         QGraphicsView* view = dynamic_cast<QGraphicsView*>(widget(tabIndex));
+         if (view)
+         {
+            scene = dynamic_cast<NodeScene*>(view->scene());
+            if (scene)
+            {
+               scene->CenterNodes(view);
+            }
+         }
+      }
+
+      layout()->setSpacing(0);
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void NodeTabs::SearchNodes(const QString& searchText)
+   {
+      NodeScene* scene = NULL;
+      QGraphicsView* view = dynamic_cast<QGraphicsView*>(widget(0));
+      if (!view)
+      {
+         QWidget* item = widget(0);
+         if (item)
+         {
+            removeItem(0);
+            delete item;
+         }
+
+         scene = new NodeScene(mpEditor, mpGraph);
+         view = new QGraphicsView(scene);
+         connect(scene, SIGNAL(CreateNode(const QString&, const QString&)),
+            this, SIGNAL(CreateNode(const QString&, const QString&)));
+         view->setScene(scene);
+
+         insertItem(0, view, "Search");
+         setCurrentIndex(0);
+      }
+
+      if (view)
+      {
+         scene = dynamic_cast<NodeScene*>(view->scene());
+      }
+
+      if (!scene)
+      {
+         return;
+      }
+
+      scene->Clear();
+
+      if (searchText.isEmpty())
+      {
+         return;
+      }
+
+      std::vector<const NodeType*> nodes;
+      NodeManager::GetInstance().GetNodeTypes(nodes);
+
+      int nodeCount = (int)nodes.size();
+      for (int index = 0; index < nodeCount; index++)
+      {
+         const NodeType* node = nodes[index];
+
+         if (node)
+         {
+            // Make sure the node we found is a type valid for this script.
+            NodePluginRegistry* reg = NodeManager::GetInstance().GetRegistryForType(*node);
+            if (!reg || !mpEditor->GetDirector()->HasLibrary(reg->GetName()))
+            {
+               continue;
+            }
+
+            QString nodeTypeName = node->GetFullName().c_str();
+            if (nodeTypeName.contains(searchText, Qt::CaseInsensitive))
+            {
+               scene->CreateNode(node->GetNodeType(), node->GetName(), node->GetCategory());
+            }
+         }
+      }
+
+      scene->CenterNodes(view);
+
       layout()->setSpacing(0);
    }
 
