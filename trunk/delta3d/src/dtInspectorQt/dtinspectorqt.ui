@@ -62,9 +62,9 @@
        <property name="geometry">
         <rect>
          <x>0</x>
-         <y>-3303</y>
+         <y>0</y>
          <width>367</width>
-         <height>3940</height>
+         <height>3966</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -3024,7 +3024,7 @@
            <string>DirectorScript</string>
           </property>
           <layout class="QGridLayout" name="gridLayout_13">
-           <item row="1" column="0" colspan="2">
+           <item row="2" column="0" colspan="3">
             <widget class="QPushButton" name="directorScriptViewButton">
              <property name="text">
               <string>View Script</string>
@@ -3038,8 +3038,22 @@
              </property>
             </widget>
            </item>
-           <item row="0" column="1">
+           <item row="0" column="2">
             <widget class="QLineEdit" name="directorScriptPlayerEdit">
+             <property name="readOnly">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="label_124">
+             <property name="text">
+              <string>Owner:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="2">
+            <widget class="QLineEdit" name="directorScriptOwnerEdit">
              <property name="readOnly">
               <bool>true</bool>
              </property>
