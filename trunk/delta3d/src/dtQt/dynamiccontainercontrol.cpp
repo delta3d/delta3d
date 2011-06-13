@@ -66,31 +66,7 @@ namespace dtQt
       {
          mProperty = static_cast<dtDAL::ContainerActorProperty*>(newProperty);
          DynamicAbstractControl::InitializeData(newParent, newModel, newPC, newProperty);
-
-         int size = mProperty->GetPropertyCount();
-         for (int index = 0; index < size; index++)
-         {
-            dtDAL::ActorProperty* propType = mProperty->GetProperty(index);
-            if (propType)
-            {
-               DynamicAbstractControl* propertyControl = GetDynamicControlFactory()->CreateDynamicControl(*propType);
-               if (propertyControl != NULL)
-               {
-                  propertyControl->SetTreeView(mPropertyTree);
-                  propertyControl->SetDynamicControlFactory(GetDynamicControlFactory());
-                  propertyControl->InitializeData(this, newModel, newPC, propType);
-
-                  connect(propertyControl, SIGNAL(PropertyAboutToChange(dtDAL::PropertyContainer&, dtDAL::ActorProperty&,
-                                    const std::string&, const std::string&)),
-                           this, SLOT(PropertyAboutToChangePassThrough(dtDAL::PropertyContainer&, dtDAL::ActorProperty&,
-                                    const std::string&, const std::string&)));
-
-                  connect(propertyControl, SIGNAL(PropertyChanged(dtDAL::PropertyContainer&, dtDAL::ActorProperty&)),
-                           this, SLOT(PropertyChangedPassThrough(dtDAL::PropertyContainer&, dtDAL::ActorProperty&)));
-                  mChildren.push_back(propertyControl);
-               }
-            }
-         }
+         resizeChildren();
       }
       else
       {
@@ -138,6 +114,8 @@ namespace dtQt
    /////////////////////////////////////////////////////////////////////////////////
    const QString DynamicContainerControl::getDisplayName()
    {
+      resizeChildren();
+
       QString name = DynamicAbstractParentControl::getDisplayName();
       if (!name.isEmpty())
       {
@@ -177,6 +155,7 @@ namespace dtQt
       return getDescription();
    }
 
+   ///////////////////////////////////////////////////////////////////////////////
    bool DynamicContainerControl::isEditable()
    {
       return !mProperty->IsReadOnly();
@@ -200,8 +179,57 @@ namespace dtQt
 
    bool DynamicContainerControl::updateData(QWidget* widget)
    {
-      // this guy doesn't have any editors.  All the data is edited in child controls
       return false;
    }
 
+   /////////////////////////////////////////////////////////////////////////////////
+   bool DynamicContainerControl::resizeChildren()
+   {
+      PropertyEditorModel* model = GetModel();
+      if (!model)
+      {
+         return false;
+      }
+
+      int size = mProperty->GetPropertyCount();
+
+      if (size != (int)mChildren.size())
+      {
+         if (!mChildren.empty())
+         {
+            model->removeRows(0, (int)mChildren.size(), model->IndexOf(this));
+
+            removeAllChildren(model);
+         }
+
+         for (int index = 0; index < size; index++)
+         {
+            dtDAL::ActorProperty* propType = mProperty->GetProperty(index);
+            if (propType)
+            {
+               DynamicAbstractControl* propertyControl = GetDynamicControlFactory()->CreateDynamicControl(*propType);
+               if (propertyControl != NULL)
+               {
+                  propertyControl->SetTreeView(mPropertyTree);
+                  propertyControl->SetDynamicControlFactory(GetDynamicControlFactory());
+                  propertyControl->InitializeData(this, model, mPropContainer, propType);
+
+                  connect(propertyControl, SIGNAL(PropertyAboutToChange(dtDAL::PropertyContainer&, dtDAL::ActorProperty&,
+                     const std::string&, const std::string&)),
+                     this, SLOT(PropertyAboutToChangePassThrough(dtDAL::PropertyContainer&, dtDAL::ActorProperty&,
+                     const std::string&, const std::string&)));
+
+                  connect(propertyControl, SIGNAL(PropertyChanged(dtDAL::PropertyContainer&, dtDAL::ActorProperty&)),
+                     this, SLOT(PropertyChangedPassThrough(dtDAL::PropertyContainer&, dtDAL::ActorProperty&)));
+                  mChildren.push_back(propertyControl);
+               }
+            }
+         }
+
+         model->insertRows(0, size, model->IndexOf(this));
+         return true;
+      }
+
+      return false;
+   }
 } // namespace dtQt

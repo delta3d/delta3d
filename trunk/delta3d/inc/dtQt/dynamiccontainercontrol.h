@@ -110,6 +110,8 @@ namespace dtQt
 
    private:
 
+      bool resizeChildren();
+
       dtCore::RefPtr<dtDAL::ContainerActorProperty> mProperty;
 
       SubQLabel* mTemporaryEditControl;
