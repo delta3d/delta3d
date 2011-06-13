@@ -18,7 +18,9 @@
  */
 
 #include <dtAnim/cal3dloader.h>
+#include <osgDB/FileNameUtils>
 #include <osgDB/ReadFile>
+#include <osgDB/Registry>
 #include <osg/Texture2D>
 #include <cal3d/error.h>
 #include <cal3d/model.h>
@@ -27,14 +29,472 @@
 #include <dtAnim/animationwrapper.h>
 #include <dtAnim/animationchannel.h>
 #include <dtAnim/animationsequence.h>
+#include <dtDAL/basexmlhandler.h>
+#include <dtDAL/basexmlreaderwriter.h>
 #include <dtUtil/datapathutils.h>
+#include <dtUtil/fileutils.h>
 #include <dtUtil/xercesparser.h>
 #include <dtUtil/log.h>
 #include <dtUtil/threadpool.h>
 
 namespace dtAnim
 {
+   /////////////////////////////////////////////////////////////////////////////
+   // CONSTANTS
+   /////////////////////////////////////////////////////////////////////////////
+   static const dtUtil::RefString CAL_PLUGIN_DATA("CalPluginData");
 
+
+
+   /////////////////////////////////////////////////////////////////////////////
+   // CLASS CODE
+   /////////////////////////////////////////////////////////////////////////////
+   class CalOptions : public osg::Object
+   {
+   public:
+      typedef osg::Object BaseClass;
+
+      CalOptions(CalCoreModel& coreModel)
+         : mCoreModel(&coreModel)
+      {}
+
+      CalOptions(CalCoreModel& coreModel, const std::string objectName)
+         : mCoreModel(&coreModel)
+         , mObjectName(objectName)
+      {
+      }
+
+      void SetObjectName(const std::string& name)
+      {
+         mObjectName = name;
+      }
+
+      const std::string& GetObjectName()
+      {
+         return mObjectName;
+      }
+
+      CalCoreModel& GetCoreModel()
+      {
+         return *mCoreModel;
+      }
+
+      static dtCore::RefPtr<osgDB::ReaderWriter::Options>
+         CreateOSGOptions(CalOptions& optionData)
+      {
+         dtCore::RefPtr<osgDB::ReaderWriter::Options> newOptions;
+         const osgDB::ReaderWriter::Options* globalOptions = osgDB::Registry::instance()->getOptions();
+
+         if (globalOptions != NULL)
+         {
+            newOptions = static_cast<osgDB::ReaderWriter::Options*>(globalOptions->clone(0));
+         }
+         else
+         {
+            newOptions = new osgDB::ReaderWriter::Options;
+         }
+
+         newOptions->setPluginData(CAL_PLUGIN_DATA, &optionData);
+
+         return newOptions; 
+      }
+
+      META_Object("dtAnim", CalOptions);
+
+   private:
+      CalCoreModel* mCoreModel;
+      std::string mObjectName;
+
+      CalOptions()
+         : mCoreModel(NULL)
+      {}
+
+      CalOptions(const osg::Object& obj,const osg::CopyOp& copyop=osg::CopyOp::SHALLOW_COPY)
+         : BaseClass(obj, copyop)
+         , mCoreModel(NULL)
+      {}
+   };
+
+
+
+   /////////////////////////////////////////////////////////////////////////////
+   // PLUGIN CLASS CODE
+   /////////////////////////////////////////////////////////////////////////////
+   class CalReaderWriter : public osgDB::ReaderWriter
+   {
+   public:
+      //////////////////////////////////////////////////////////////////////////
+      // INTERNAL CLASS CODE
+      //////////////////////////////////////////////////////////////////////////
+      class MemBuffer : public osg::Referenced
+      {
+      public:
+         MemBuffer(std::istream& fin)
+            : mBuffer(NULL)
+            , mBufferLength(0)
+         {
+            if (!fin.fail())
+            {
+               fin.seekg(0,std::ios_base::end);
+               mBufferLength = fin.tellg();
+               fin.seekg(0,std::ios_base::beg);
+
+               mBuffer = new (std::nothrow) char [mBufferLength+1];
+               mBuffer[mBufferLength] = '\0';
+               fin.read(mBuffer, mBufferLength);
+            }
+         }
+
+         void* GetBufferData() const
+         {
+            return mBuffer;
+         }
+
+         unsigned int GetBufferLength() const
+         {
+            return mBufferLength;
+         }
+
+      protected:
+         virtual ~MemBuffer()
+         {
+            if (mBuffer != NULL)
+            {
+               delete [] mBuffer;
+               mBuffer = NULL;
+            }
+         }
+
+      private:
+         char* mBuffer;
+         unsigned int mBufferLength;
+      };
+
+      //////////////////////////////////////////////////////////////////////////
+      CalReaderWriter()
+      {}
+
+      //////////////////////////////////////////////////////////////////////////
+      CalOptions* GetCalOptions(const osgDB::ReaderWriter::Options& options) const
+      {
+         const CalOptions* calOptionsConst
+            = static_cast<const CalOptions*>(options.getPluginData(CAL_PLUGIN_DATA));
+         return const_cast<CalOptions*>(calOptionsConst);
+      }
+
+      //////////////////////////////////////////////////////////////////////////
+      osgDB::ReaderWriter::ReadResult readObject(const std::string& fileName, const osgDB::ReaderWriter::Options* options = NULL) const
+      {
+         std::string ext = osgDB::getLowerCaseFileExtension(fileName);
+
+         if (!acceptsExtension(ext)) return ReadResult::FILE_NOT_HANDLED;
+
+         if (!dtUtil::FileUtils::GetInstance().FileExists(fileName))
+         {
+            return osgDB::ReaderWriter::ReadResult(osgDB::ReaderWriter::ReadResult::FILE_NOT_FOUND);
+         }
+
+#if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300
+         std::ifstream confStream(fileName.c_str(), std::ios_base::binary);
+
+         if (!confStream.is_open())
+         {
+            return osgDB::ReaderWriter::ReadResult(osgDB::ReaderWriter::ReadResult::ERROR_IN_READING_FILE);
+         }
+
+         return readObject(confStream, options);
+#else
+         // Get the Cal3d Options object that is holding onto the Core Model.
+         // The Core Model is along for the ride in order to capture the loaded
+         // data through its specific interface.
+         CalOptions* calOptions = GetCalOptions(*options);
+
+         if (LoadFile(fileName, *calOptions))
+         {
+            // Return the CalOptions as the success object. This is so that
+            // callers of the ReadObjectFile method will be returned a non-NULL
+            // object pointer as a flag that the file loading has succeeded.
+            return osgDB::ReaderWriter::ReadResult(calOptions, ReaderWriter::ReadResult::FILE_LOADED);
+         }
+
+         return osgDB::ReaderWriter::ReadResult::ERROR_IN_READING_FILE;
+#endif
+      }
+
+#if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300
+      //////////////////////////////////////////////////////////////////////////
+      virtual osgDB::ReaderWriter::ReadResult readObject(std::istream& fin, const osgDB::ReaderWriter::Options* options = NULL) const
+      {
+         // Get the Cal3d Options object that is holding onto the Core Model.
+         // The Core Model is along for the ride in order to capture the loaded
+         // data through its specific interface.
+         CalOptions* calOptions = GetCalOptions(*options);
+
+         // Capture a generic, NULL-terminated memory buffer from the input stream.
+         dtCore::RefPtr<MemBuffer> buffer = new MemBuffer(fin);
+
+         if (LoadFile(*buffer, *calOptions))
+         {
+            // Return the CalOptions as the success object. This is so that
+            // callers of the ReadObjectFile method will be returned a non-NULL
+            // object pointer as a flag that the file loading has succeeded.
+            return osgDB::ReaderWriter::ReadResult(calOptions, ReaderWriter::ReadResult::FILE_LOADED);
+         }
+
+         return osgDB::ReaderWriter::ReadResult::ERROR_IN_READING_FILE;
+      }
+
+      //////////////////////////////////////////////////////////////////////////
+      virtual bool LoadFile(const MemBuffer& buffer, CalOptions& options) const = 0;
+#else
+      //////////////////////////////////////////////////////////////////////////
+      virtual bool LoadFile(const std::string& file, CalOptions& options) const = 0;
+#endif
+   };
+
+
+
+   ////////////////////////////////////////////////////////////////////////////////
+   // PLUGIN CLASS CODE
+   ////////////////////////////////////////////////////////////////////////////////
+   class CalSkeletonReaderWriter : public CalReaderWriter
+   {
+   public:
+
+      typedef CalReaderWriter BaseClass;
+
+      CalSkeletonReaderWriter()
+      {
+         supportsExtension("xsf","Cal3D Skeleton File (XML)");
+         supportsExtension("csf","Cal3D Skeleton File (Binary)");
+      }
+
+      const char* className() const
+      {
+         return "Cal3D Skeleton Reader/Writer"; 
+      }
+
+#if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300
+      virtual bool LoadFile(const MemBuffer& buffer, CalOptions& options) const
+      {
+         CalCoreModel& coreModel = options.GetCoreModel();
+         coreModel.loadCoreSkeleton(buffer.GetBufferData());
+         coreModel.getCoreSkeleton()->setName(options.GetObjectName());
+         return true;
+      }
+#else
+      virtual bool LoadFile(const std::string& file, CalOptions& options) const
+      {
+         CalCoreModel& coreModel = options.GetCoreModel();
+         coreModel.loadCoreSkeleton(file);
+         return true;
+      }
+#endif
+   };
+
+   REGISTER_OSGPLUGIN(csf, CalSkeletonReaderWriter)
+
+
+
+   ////////////////////////////////////////////////////////////////////////////////
+   // PLUGIN CLASS CODE
+   ////////////////////////////////////////////////////////////////////////////////
+   class CalMaterialReaderWriter : public CalReaderWriter
+   {
+   public:
+
+      typedef CalReaderWriter BaseClass;
+
+      CalMaterialReaderWriter()
+      {
+         supportsExtension("xrf","Cal3D Material File (XML)");
+         supportsExtension("crf","Cal3D Material File (Binary)");
+      }
+
+      const char* className() const
+      {
+         return "Cal3D Material Reader/Writer"; 
+      }
+
+#if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300
+      virtual bool LoadFile(const MemBuffer& buffer, CalOptions& options) const
+      {
+         return 0 <= options.GetCoreModel().loadCoreMaterial(buffer.GetBufferData(), options.GetObjectName());
+      }
+#else
+      virtual bool LoadFile(const std::string& file, CalOptions& options) const
+      {
+         return 0 <= options.GetCoreModel().loadCoreMaterial(file, options.GetObjectName());
+      }
+#endif
+   };
+
+   REGISTER_OSGPLUGIN(crf, CalMaterialReaderWriter)
+
+
+
+   ////////////////////////////////////////////////////////////////////////////////
+   // PLUGIN CLASS CODE
+   ////////////////////////////////////////////////////////////////////////////////
+   class CalMeshReaderWriter : public CalReaderWriter
+   {
+   public:
+
+      typedef CalReaderWriter BaseClass;
+
+      CalMeshReaderWriter()
+      {
+         supportsExtension("xmf","Cal3D Mesh File (XML)");
+         supportsExtension("cmf","Cal3D Mesh File (Binary)");
+      }
+
+      const char* className() const
+      {
+         return "Cal3D Mesh Reader/Writer"; 
+      }
+
+#if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300
+      virtual bool LoadFile(const MemBuffer& buffer, CalOptions& options) const
+      {
+         return 0 <= options.GetCoreModel().loadCoreMesh(buffer.GetBufferData(), options.GetObjectName());
+      }
+#else
+      virtual bool LoadFile(const std::string& file, CalOptions& options) const
+      {
+         return 0 <= options.GetCoreModel().loadCoreMesh(file, options.GetObjectName());
+      }
+#endif
+   };
+
+   REGISTER_OSGPLUGIN(cmf, CalMeshReaderWriter)
+
+
+
+   ////////////////////////////////////////////////////////////////////////////////
+   // PLUGIN CLASS CODE
+   ////////////////////////////////////////////////////////////////////////////////
+   class CalAnimReaderWriter : public CalReaderWriter
+   {
+   public:
+
+      typedef CalReaderWriter BaseClass;
+
+      CalAnimReaderWriter()
+      {
+         supportsExtension("xaf","Cal3D Animation File (XML)");
+         supportsExtension("caf","Cal3D Animation File (Binary)");
+      }
+
+      const char* className() const
+      {
+         return "Cal3D Animation Reader/Writer"; 
+      }
+
+#if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300
+      virtual bool LoadFile(const MemBuffer& buffer, CalOptions& options) const
+      {
+         return 0 <= options.GetCoreModel().loadCoreAnimation(buffer.GetBufferData(), options.GetObjectName());
+      }
+#else
+      virtual bool LoadFile(const std::string& file, CalOptions& options) const
+      {
+         return 0 <= options.GetCoreModel().loadCoreAnimation(file, options.GetObjectName());
+      }
+#endif
+   };
+
+   REGISTER_OSGPLUGIN(caf, CalAnimReaderWriter)
+
+
+
+   /////////////////////////////////////////////////////////////////////////////
+   // OSG Object for holding sound buffer data loaded from the following
+   // OSG plugin. This will allow the Audio Manager to access buffer information
+   // supplied from alut, after the file has been loaded from memory but before
+   // the buffer is registered with OpenAL; this is to allow the Audio Manager
+   // to have veto power over the loaded file, before its buffer is
+   // officially registered.
+   /////////////////////////////////////////////////////////////////////////////
+   class WrapperOSGCharFileObject : public osg::Object
+   {
+   public:
+      typedef osg::Object BaseClass;
+
+      WrapperOSGCharFileObject()
+         : BaseClass()
+      {}
+
+      explicit WrapperOSGCharFileObject(bool threadSafeRefUnref)
+         : BaseClass(threadSafeRefUnref)
+      {}
+
+      WrapperOSGCharFileObject(const osg::Object& obj,const osg::CopyOp& copyop=osg::CopyOp::SHALLOW_COPY)
+         : BaseClass(obj, copyop)
+      {}
+
+      dtCore::RefPtr<CharacterFileHandler> mHandler;
+
+      META_Object("dtAnim", WrapperOSGCharFileObject);
+   };
+
+
+
+   ////////////////////////////////////////////////////////////////////////////////
+   // PLUGIN CLASS CODE
+   ////////////////////////////////////////////////////////////////////////////////
+   class CharacterXMLReaderWriter : public dtDAL::BaseXMLReaderWriter
+   {
+   public:
+
+      typedef dtDAL::BaseXMLReaderWriter BaseClass;
+
+      CharacterXMLReaderWriter()
+      {
+         supportsExtension("dtchar","Delta3D Character File (XML)");
+
+         SetSchemaFile("animationdefinition.xsd");
+      }
+
+      const char* className() const
+      {
+         return "Delta3D Character File Reader/Writer"; 
+      }
+
+      virtual dtCore::RefPtr<dtDAL::BaseXMLHandler> CreateHandler() const
+      {
+         return new CharacterFileHandler;
+      }
+
+      virtual osgDB::ReaderWriter::ReadResult BuildResult(
+         const osgDB::ReaderWriter::ReadResult& result, dtDAL::BaseXMLHandler& handler) const
+      {
+         using namespace osgDB;
+
+         ReaderWriter::ReadResult newResult(result);
+
+         if (result.status() == ReaderWriter::ReadResult::FILE_LOADED)
+         {
+            // Create the wrapper object that will carry the file
+            // handler object out of this plug-in.
+            dtCore::RefPtr<WrapperOSGCharFileObject> obj = new WrapperOSGCharFileObject;
+            obj->mHandler = dynamic_cast<CharacterFileHandler*>(&handler);
+
+            // Pass the object on the result so that code external
+            // to this plug-in can access the data acquired by the
+            // contained handler.
+            newResult = ReaderWriter::ReadResult(obj.get(), ReaderWriter::ReadResult::FILE_LOADED);
+         }
+
+         return newResult;
+      }
+   };
+
+   REGISTER_OSGPLUGIN(dtchar, CharacterXMLReaderWriter)
+
+
+
+   /////////////////////////////////////////////////////////////////////////////
+   // CLASS CODE
    /////////////////////////////////////////////////////////////////////////////
    Cal3DLoader::Cal3DLoader()
       : mTextures()
@@ -48,61 +508,116 @@ namespace dtAnim
    }
 
    /////////////////////////////////////////////////////////////////////////////
+   // HELPER FUNCTION
+   std::string GetAbsolutePath(const std::string& filePath)
+   {
+      return dtUtil::FileUtils::GetInstance().IsAbsolutePath(filePath)
+         ? filePath
+         : dtUtil::FindFileInPathList(filePath);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
    /**
     * @return Could return NULL if the file didn't load.
     * @throw SAXParseException if the file didn't parse correctly
     * @note Relies on the the "animationdefinition.xsd" schema file
     */
-   CalCoreModel* Cal3DLoader::GetCoreModel(CharacterFileHandler& handler, const std::string& filename, const std::string& path)
+   CalCoreModel* Cal3DLoader::GetCoreModel(dtCore::RefPtr<CharacterFileHandler>& handler, const std::string& filename, const std::string& path)
    {
       using namespace dtCore;
+
+      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
+
+      osgDB::Registry* osgRegistry = osgDB::Registry::instance();
 
       CalCoreModel* coreModel = NULL;
 
       //gotta parse the file and create/store a new CalCoreModel
       dtUtil::XercesParser parser;
 
-      if (parser.Parse(filename, handler, "animationdefinition.xsd"))
-      {
-         coreModel = new CalCoreModel(handler.mName);
+      // Parse the character file, subsequently from the associated OSG plug-in...
+      dtCore::RefPtr<WrapperOSGCharFileObject> resultObj;
+      osgDB::Registry* osgReg = osgDB::Registry::instance();
+      const osgDB::ReaderWriter::Options* globalOptions = osgReg->getOptions();
 
-         //load skeleton
-         std::string skelFile = dtUtil::FindFileInPathList(path + handler.mSkeletonFilename);
-         if (!skelFile.empty())
+      // ...if it is the older character format...
+      if (osgDB::getLowerCaseFileExtension(filename) == "xml")
+      {
+         // ...get the plug-in directly...
+         dtDAL::BaseXMLReaderWriter* charPlugin = dynamic_cast<dtDAL::BaseXMLReaderWriter*>
+            (osgReg->getReaderWriterForExtension("dtchar"));
+
+         // Open the file as a stream.
+         std::ifstream fstream(filename.c_str(), std::ios_base::binary);
+         if (fstream.is_open())
          {
-            coreModel->loadCoreSkeleton(dtUtil::FindFileInPathList(path + handler.mSkeletonFilename));
-#if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300
-            coreModel->getCoreSkeleton()->setName(handler.mSkeletonFilename);
-#endif
+            // Call the input stream overload of "readObject".
+            // This will allow the file to load without failing by the
+            // file extension (which is not acceptable to the plug-in).
+            resultObj = static_cast<WrapperOSGCharFileObject*>
+               (charPlugin->readObject(fstream, globalOptions).getObject());
          }
          else
          {
-            LOG_ERROR("Can't find the skeleton file named:'" + path + handler.mSkeletonFilename + "'.");
+            std::ostringstream oss;
+            oss << "Could not open stream for file \"" << filename << "\"." << std::endl;
+            LOG_ERROR(oss.str());
+         }
+      }
+      else
+      {
+         // ...otherwise the file can be opened as normal,
+         // by finding the appropriate plug-in automatically.
+         resultObj = static_cast<WrapperOSGCharFileObject*>
+            (osgDB::readRefObjectFile(filename, globalOptions).get());
+      }
+      
+      if (resultObj.valid())
+      {
+         // Acquire the handler that was involved with the parsing.
+         handler = resultObj->mHandler.get();
+      }
+
+      if (handler.valid())
+      {
+         coreModel = new CalCoreModel(handler->mName);
+
+         //load skeleton
+         std::string skelFile(GetAbsolutePath(path + handler->mSkeletonFilename));
+         if (!skelFile.empty())
+         {
+            dtCore::RefPtr<CalOptions> calOptions = new CalOptions(*coreModel, handler->mSkeletonFilename);
+            dtCore::RefPtr<osgDB::ReaderWriter::Options> options = CalOptions::CreateOSGOptions(*calOptions);
+            fileUtils.ReadObject(skelFile, options.get());
+         }
+         else
+         {
+            LOG_ERROR("Can't find the skeleton file named:'" + skelFile + "'.");
          }
 
          // load meshes
-         std::vector<CharacterFileHandler::MeshStruct>::iterator meshItr = handler.mMeshes.begin();
-         while (meshItr != handler.mMeshes.end())
+         std::vector<CharacterFileHandler::MeshStruct>::iterator meshItr = handler->mMeshes.begin();
+         while (meshItr != handler->mMeshes.end())
          {
-            std::string filename = dtUtil::FindFileInPathList(path + (*meshItr).mFileName);
+            std::string filename(GetAbsolutePath(path + (*meshItr).mFileName));
             if (!filename.empty())
             {
                // Load the mesh and get its id for further error checking
-               int id = coreModel->loadCoreMesh(filename, (*meshItr).mName);
-
-               if (id < 0)
+               dtCore::RefPtr<CalOptions> calOptions = new CalOptions(*coreModel, (*meshItr).mName);
+               dtCore::RefPtr<osgDB::ReaderWriter::Options> options = CalOptions::CreateOSGOptions(*calOptions);
+               if (fileUtils.ReadObject(filename, options.get()) == NULL)
                {
                   LOG_ERROR("Can't load mesh '" + filename +"':" + CalError::getLastErrorDescription());
                }
                else
                {
-                  CalCoreMesh* mesh = coreModel->getCoreMesh(id);
+                  CalCoreMesh* mesh = coreModel->getCoreMesh(coreModel->getCoreMeshId((*meshItr).mName));
 
                   // Make sure this mesh doesn't reference bones we don't have
                   if (GetMaxBoneID(*mesh) > coreModel->getCoreSkeleton()->getVectorCoreBone().size())
                   {
                      LOG_ERROR("The bones specified in the cal mesh(" + mesh->getName() +
-                        ") do not match the skeleton: (" + handler.mSkeletonFilename + ")");
+                        ") do not match the skeleton: (" + handler->mSkeletonFilename + ")");
 
                      // Attempting to draw this mesh without valid bones will cause a crash so we remove it
                      delete coreModel;
@@ -121,14 +636,16 @@ namespace dtAnim
          if (coreModel)
          {
             //load animations
-            std::vector<CharacterFileHandler::AnimationStruct>::iterator animItr = handler.mAnimations.begin();
-            while (animItr != handler.mAnimations.end())
+            std::vector<CharacterFileHandler::AnimationStruct>::iterator animItr = handler->mAnimations.begin();
+            while (animItr != handler->mAnimations.end())
             {
-               std::string filename = dtUtil::FindFileInPathList(path + (*animItr).mFileName);
+               std::string filename(GetAbsolutePath(path + (*animItr).mFileName));
 
                if (!filename.empty())
                {
-                  if (coreModel->loadCoreAnimation(filename, (*animItr).mName) < 0)
+                  dtCore::RefPtr<CalOptions> calOptions = new CalOptions(*coreModel, (*animItr).mName);
+                  dtCore::RefPtr<osgDB::ReaderWriter::Options> options = CalOptions::CreateOSGOptions(*calOptions);
+                  if (fileUtils.ReadObject(filename, options.get()) == NULL)
                   {
                      LOG_ERROR("Can't load animation '" + filename +"':" + CalError::getLastErrorDescription());
                   }
@@ -142,8 +659,8 @@ namespace dtAnim
 
 #if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300
             // load morph animations
-            std::vector<CharacterFileHandler::MorphAnimationStruct>::iterator morphAnimItr = handler.mMorphAnimations.begin();
-            while (morphAnimItr != handler.mMorphAnimations.end())
+            std::vector<CharacterFileHandler::MorphAnimationStruct>::iterator morphAnimItr = handler->mMorphAnimations.begin();
+            while (morphAnimItr != handler->mMorphAnimations.end())
             {
                std::string filename = dtUtil::FindFileInPathList(path + (*morphAnimItr).mFileName);
 
@@ -163,11 +680,11 @@ namespace dtAnim
 #endif
 
             // load materials
-            for (std::vector<CharacterFileHandler::MaterialStruct>::iterator matItr = handler.mMaterials.begin();
-               matItr != handler.mMaterials.end();
+            for (std::vector<CharacterFileHandler::MaterialStruct>::iterator matItr = handler->mMaterials.begin();
+               matItr != handler->mMaterials.end();
                ++matItr)
             {
-               std::string filename = dtUtil::FindFileInPathList(path + (*matItr).mFileName);
+               std::string filename(GetAbsolutePath(path + (*matItr).mFileName));
 
                if (filename.empty())
                {
@@ -175,10 +692,11 @@ namespace dtAnim
                }
                else
                {
-                  int matID = coreModel->loadCoreMaterial(filename, (*matItr).mName);
-                  if (matID < 0)
+                  dtCore::RefPtr<CalOptions> calOptions = new CalOptions(*coreModel, (*matItr).mName);
+                  dtCore::RefPtr<osgDB::ReaderWriter::Options> options = CalOptions::CreateOSGOptions(*calOptions);
+                  if (fileUtils.ReadObject(filename, options.get()) == NULL)
                   {
-                     LOG_ERROR("Material file failed to load:'" + path + (*matItr).mFileName + "'." + CalError::getLastErrorDescription());
+                     LOG_ERROR("Material file failed to load:'" + filename + "'." + CalError::getLastErrorDescription());
                   }
                }
             }
@@ -220,20 +738,18 @@ namespace dtAnim
          path = filename.substr(0, stringIndex + 1);
       }
 
-      CalCoreModel* coreModel = NULL;
-
-      CharacterFileHandler handler;
-      coreModel = GetCoreModel(handler, filename, path);
-      if (coreModel != NULL)
+      dtCore::RefPtr<CharacterFileHandler> handler;
+      CalCoreModel* coreModel = GetCoreModel(handler, filename, path);
+      if (coreModel != NULL && handler.valid())
       {
          data_in = new Cal3DModelData(coreModel, filename);
-         LoadModelData(handler, *coreModel, *data_in);
+         LoadModelData(*handler, *coreModel, *data_in);
          LoadAllTextures(*coreModel, path); //this should be a user-level process.
 
          // Store the filename containing IK data if it exists
-         if (!handler.mPoseMeshFilename.empty())
+         if (!handler->mPoseMeshFilename.empty())
          {
-            data_in->SetPoseMeshFilename(path + handler.mPoseMeshFilename);
+            data_in->SetPoseMeshFilename(path + handler->mPoseMeshFilename);
          }
       }
       else
