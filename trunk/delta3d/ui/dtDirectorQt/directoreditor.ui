@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>899</width>
-    <height>709</height>
+    <width>800</width>
+    <height>600</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -61,7 +61,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>899</width>
+     <width>800</width>
      <height>21</height>
     </rect>
    </property>
@@ -233,12 +233,6 @@
    </attribute>
   </widget>
   <widget class="QDockWidget" name="nodePalette">
-   <property name="minimumSize">
-    <size>
-     <width>114</width>
-     <height>466</height>
-    </size>
-   </property>
    <property name="features">
     <set>QDockWidget::AllDockWidgetFeatures</set>
    </property>
@@ -264,12 +258,6 @@
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>0</width>
-         <height>400</height>
-        </size>
        </property>
        <property name="autoFillBackground">
         <bool>false</bool>
@@ -303,16 +291,10 @@
             <property name="geometry">
              <rect>
               <x>0</x>
-              <y>-27</y>
-              <width>157</width>
-              <height>400</height>
+              <y>0</y>
+              <width>175</width>
+              <height>278</height>
              </rect>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>400</height>
-             </size>
             </property>
             <attribute name="label">
              <string/>
@@ -340,15 +322,9 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>157</width>
-              <height>400</height>
+              <width>175</width>
+              <height>278</height>
              </rect>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>400</height>
-             </size>
             </property>
             <attribute name="label">
              <string/>
@@ -379,15 +355,9 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>157</width>
-              <height>400</height>
+              <width>175</width>
+              <height>278</height>
              </rect>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>400</height>
-             </size>
             </property>
             <attribute name="label">
              <string/>
@@ -415,15 +385,9 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>157</width>
-              <height>400</height>
+              <width>175</width>
+              <height>278</height>
              </rect>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>400</height>
-             </size>
             </property>
             <attribute name="label">
              <string/>
@@ -451,15 +415,9 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>157</width>
-              <height>400</height>
+              <width>175</width>
+              <height>278</height>
              </rect>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>400</height>
-             </size>
             </property>
             <attribute name="label">
              <string/>
@@ -487,15 +445,9 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>157</width>
-              <height>400</height>
+              <width>175</width>
+              <height>278</height>
              </rect>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>400</height>
-             </size>
             </property>
             <attribute name="label">
              <string/>
@@ -523,15 +475,9 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>157</width>
-              <height>400</height>
+              <width>175</width>
+              <height>278</height>
              </rect>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>400</height>
-             </size>
             </property>
             <attribute name="label">
              <string/>
@@ -568,15 +514,9 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>157</width>
-              <height>400</height>
+              <width>175</width>
+              <height>278</height>
              </rect>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>400</height>
-             </size>
             </property>
             <attribute name="label">
              <string/>
