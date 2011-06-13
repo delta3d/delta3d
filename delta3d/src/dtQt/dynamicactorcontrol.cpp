@@ -308,19 +308,18 @@ namespace dtQt
    {
       toFill.clear();
 
-      std::vector<dtDAL::Map*> maps = dtDAL::Project::GetInstance().GetOpenMaps();
-      for (int index = 0; index < (int)maps.size(); ++index)
+      int count = dtDAL::BaseActorObject::GetInstanceCount();
+      for (int index = 0; index < count; ++index)
       {
-         dtDAL::Map* map = maps[index];
-         if (map)
+         dtDAL::BaseActorObject* object = dtDAL::BaseActorObject::GetInstance(index);
+         if (object)
          {
-            std::vector< dtCore::RefPtr<dtDAL::BaseActorObject> > list;
-            map->FindProxies(list, "", "", "", className);
-
-            int listCount = (int)list.size();
-            for (int listIndex = 0; listIndex < listCount; ++listIndex)
+            dtDAL::ActorProperty* prototypeProp = object->GetProperty("Initial Ownership");
+            dtDAL::ActorProperty* ghostProp = object->GetProperty("Is Ghost");
+            if ((!prototypeProp || prototypeProp->ToString() != "PROTOTYPE") &&
+               (!ghostProp || ghostProp->ToString() == "false"))
             {
-               toFill.push_back(list[listIndex]);
+               toFill.push_back(object);
             }
          }
       }
