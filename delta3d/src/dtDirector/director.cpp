@@ -752,6 +752,16 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   dtDAL::BaseActorObject* Director::GetPlayerActor() const
+   {
+      if (mGameManager)
+      {
+         return mGameManager->FindActorById(mPlayer);
+      }
+      return NULL;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    void Director::SetScriptOwner(const dtCore::UniqueId& owner)
    {
       mScriptOwner = owner;
@@ -761,6 +771,16 @@ namespace dtDirector
    dtCore::UniqueId Director::GetScriptOwner() const
    {
       return mScriptOwner;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   dtDAL::BaseActorObject* Director::GetScriptOwnerActor() const
+   {
+      if (mGameManager)
+      {
+         return mGameManager->FindActorById(mScriptOwner);
+      }
+      return NULL;
    }
 
    ////////////////////////////////////////////////////////////////////////////////

@@ -351,6 +351,7 @@ namespace dtDirector
        * Retrieves the player.
        */
       dtCore::UniqueId GetPlayer() const;
+      dtDAL::BaseActorObject* GetPlayerActor() const;
 
       /**
        * Sets the owner of this script.
@@ -363,6 +364,7 @@ namespace dtDirector
        * Retrieves the owner of this script.
        */
       dtCore::UniqueId GetScriptOwner() const;
+      dtDAL::BaseActorObject* GetScriptOwnerActor() const;
 
       /**
       * Begins recording of the Director graphs.
