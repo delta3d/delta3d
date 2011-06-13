@@ -78,6 +78,12 @@ namespace dtDirector
          dtDAL::StringSelectorActorProperty::GetFuncType(this, &SpawnActorAction::GetActorName),
          "Actor name.");
 
+      mGhostProp = new dtDAL::BooleanActorProperty(
+         "Is Ghost", "Is Ghost",
+         dtDAL::BooleanActorProperty::SetFuncType(this, &SpawnActorAction::SetGhost),
+         dtDAL::BooleanActorProperty::GetFuncType(this, &SpawnActorAction::GetGhost),
+         "Is this proxy a ghost.");
+
       dtDAL::Vec3ActorProperty* spawnPosProp = new dtDAL::Vec3ActorProperty(
          "Spawn Location", "Spawn Location",
          dtDAL::Vec3ActorProperty::SetFuncType(this, &SpawnActorAction::SetSpawnLocation),
@@ -271,6 +277,7 @@ namespace dtDirector
                   }
                }
 
+               mTemplateActor->AddProperty(mGhostProp);
                mName = mTemplateActor->GetActorType().GetFullName();
             }
          }
@@ -336,6 +343,17 @@ namespace dtDirector
       }
 
       return "";
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void SpawnActorAction::SetGhost(bool value)
+   {
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool SpawnActorAction::GetGhost() const
+   {
+      return true;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
