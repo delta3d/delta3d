@@ -32,6 +32,7 @@
 #include <dtDirectorQt/undomanager.h>
 #include <dtDirectorQt/undodeleteevent.h>
 #include <dtDirectorQt/undocreateevent.h>
+#include <dtDirectorQt/undopropertyevent.h>
 #include <dtDirectorQt/editornotifier.h>
 
 #include <dtDirectorQt/actionitem.h>
@@ -131,6 +132,7 @@ namespace dtDirector
       CreateNodeScene(mUI.linkNodeTabWidget);
       CreateNodeScene(mUI.miscNodeTabWidget);
       CreateNodeScene(mUI.searchNodeTabWidget);
+      CreateNodeScene(mUI.referenceNodeTabWidget);
       RefreshNodeScenes();
 
       mUI.graphTab->clear();
@@ -571,6 +573,8 @@ namespace dtDirector
          mUI.actionStep_Next->setVisible(false);
          mUI.actionToggle_Break_Point->setVisible(false);
       }
+
+      RefreshReferenceScene();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -1501,11 +1505,18 @@ namespace dtDirector
       QString text = mUI.nodeSearchEdit->text();
 
       mUI.nodeTabs->setCurrentWidget(mUI.searchNodeTab);
-      mUI.searchNodeTabWidget->SearchNodes(text);
+
+      EditorView* view = dynamic_cast<EditorView*>(mUI.graphTab->currentWidget());
+      DirectorGraph* graph = NULL;
+      if (view && view->GetScene())
+      {
+         graph = view->GetScene()->GetGraph();
+      }
+      mUI.searchNodeTabWidget->SearchNodes(text, graph);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void DirectorEditor::OnCreateNodeEvent(const QString& name, const QString& category)
+   void DirectorEditor::OnCreateNodeEvent(const QString& name, const QString& category, const QString& refName)
    {
       EditorView* view = dynamic_cast<EditorView*>(mUI.graphTab->currentWidget());
       if (!view) return;
@@ -1516,7 +1527,17 @@ namespace dtDirector
       QPointF pos = view->mapToScene(view->width()/2, view->height()/2);
       pos -= scene->GetTranslationItem()->scenePos();
 
-      scene->CreateNodeItem(name.toStdString(), category.toStdString(), pos.x(), pos.y());
+      GetUndoManager()->BeginMultipleEvents();
+      Node* item = scene->CreateNodeItem(name.toStdString(), category.toStdString(), pos.x(), pos.y());
+      if (!refName.isEmpty() && item)
+      {
+         item->SetString(refName.toStdString(), "Reference");
+         dtCore::RefPtr<UndoPropertyEvent> event =
+            new UndoPropertyEvent(this, scene->GetGraph()->GetID(), "Reference", "", refName.toStdString());
+         GetUndoManager()->AddEvent(event.get());
+         RefreshNode(item);
+      }
+      GetUndoManager()->EndMultipleEvents();
 
       // Refresh the graph to create all the newly created node items.
       RefreshGraph(scene->GetGraph());
@@ -1945,8 +1966,8 @@ namespace dtDirector
    {
       nodeTabs->SetEditor(this);
 
-      connect(nodeTabs, SIGNAL(CreateNode(const QString&, const QString&)),
-         this, SLOT(OnCreateNodeEvent(const QString&, const QString&)));
+      connect(nodeTabs, SIGNAL(CreateNode(const QString&, const QString&, const QString&)),
+         this, SLOT(OnCreateNodeEvent(const QString&, const QString&, const QString&)));
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -1959,13 +1980,32 @@ namespace dtDirector
       RefreshNodeScene(mUI.macroNodeTabWidget, NodeType::MACRO_NODE);
       RefreshNodeScene(mUI.linkNodeTabWidget, NodeType::LINK_NODE);
       RefreshNodeScene(mUI.miscNodeTabWidget, NodeType::MISC_NODE);
-      mUI.searchNodeTabWidget->SearchNodes(mUI.nodeSearchEdit->text());
+
+      EditorView* view = dynamic_cast<EditorView*>(mUI.graphTab->currentWidget());
+      DirectorGraph* graph = NULL;
+      if (view && view->GetScene())
+      {
+         graph = view->GetScene()->GetGraph();
+      }
+      mUI.searchNodeTabWidget->SearchNodes(mUI.nodeSearchEdit->text(), graph);
+
+      RefreshReferenceScene();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void DirectorEditor::RefreshNodeScene(NodeTabs* nodeTabs, NodeType::NodeTypeEnum nodeType)
    {
       nodeTabs->RefreshNodes(nodeType);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::RefreshReferenceScene()
+   {
+      EditorView* view = dynamic_cast<EditorView*>(mUI.graphTab->currentWidget());
+      if (view && view->GetScene())
+      {
+         mUI.referenceNodeTabWidget->SearchReferenceNodes(view->GetScene()->GetGraph());
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////

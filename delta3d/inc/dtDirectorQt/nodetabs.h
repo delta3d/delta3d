@@ -65,7 +65,14 @@ namespace dtDirector
        *
        * @param searchText  The nodes to search for.
        */
-      void SearchNodes(const QString& searchText);
+      void SearchNodes(const QString& searchText, DirectorGraph* graph);
+
+      /**
+       * Refresh the scene with all reference values from a given graph.
+       *
+       * @param[in]  graph  The graph to find references for.
+       */
+      void SearchReferenceNodes(DirectorGraph* graph);
 
       /**
        * Adds a custom editor macro to the node selection.

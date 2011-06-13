@@ -520,7 +520,7 @@ namespace dtDirector
       /**
        * Event handler when a node creation menu item is triggered.
        */
-      void OnCreateNodeEvent(const QString& name, const QString& category);
+      void OnCreateNodeEvent(const QString& name, const QString& category, const QString& refName);
 
       /**
        *  Play a "click" sound.  Used when connecting Links together.
@@ -602,6 +602,11 @@ namespace dtDirector
        * @param nodeType   The type of nodes to display in the scene
        */
       void RefreshNodeScene(NodeTabs* nodeTabs, NodeType::NodeTypeEnum nodeType);
+
+      /**
+       * Refreshes the reference node scene.
+       */
+      void RefreshReferenceScene();
 
       Ui::DirectorEditor       mUI;
 

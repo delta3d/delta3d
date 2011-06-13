@@ -716,7 +716,7 @@ namespace dtDirector
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void EditorScene::CreateNodeItem(const std::string& name, const std::string& category, float x, float y)
+   Node* EditorScene::CreateNodeItem(const std::string& name, const std::string& category, float x, float y)
    {
       // If the node name is empty, it means we are creating a macro.
       if (name.empty())
@@ -751,7 +751,11 @@ namespace dtDirector
             dtCore::RefPtr<UndoCreateEvent> event = new UndoCreateEvent(mEditor, node->GetID(), mGraph->GetID());
             mEditor->GetUndoManager()->AddEvent(event);
          }
+
+         return node;
       }
+
+      return NULL;
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -1107,13 +1111,24 @@ namespace dtDirector
 
       QString name; //name of the Node type
       QString category; //category of the Node
+      QString refName; //referenced value name.
       QPoint hotspot; //the dragging hotspot position (distance from the left corner)
 
-      dataStream >> name >> category >> hotspot;
+      dataStream >> name >> category >> refName >> hotspot;
 
       QPointF pos = event->scenePos() - mTranslationItem->scenePos() - hotspot;
 
-      CreateNodeItem(name.toStdString(), category.toStdString(), pos.x(), pos.y());
+      mEditor->GetUndoManager()->BeginMultipleEvents();
+      Node* item = CreateNodeItem(name.toStdString(), category.toStdString(), pos.x(), pos.y());
+      if (!refName.isEmpty() && item)
+      {
+         item->SetString(refName.toStdString(), "Reference");
+         dtCore::RefPtr<UndoPropertyEvent> event =
+            new UndoPropertyEvent(mEditor, mGraph->GetID(), "Reference", "", refName.toStdString());
+         mEditor->GetUndoManager()->AddEvent(event.get());
+         mEditor->RefreshNode(item);
+      }
+      mEditor->GetUndoManager()->EndMultipleEvents();
    }
 
    //////////////////////////////////////////////////////////////////////////

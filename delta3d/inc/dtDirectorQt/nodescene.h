@@ -63,8 +63,10 @@ namespace dtDirector
        * @param[in]     nodeType  The type of node.
        * @param[in]     name      The name of the node.
        * @param[in]     category  The category of the node.
+       *
+       * @return        The new node that was created.
        */
-      void CreateNode(NodeType::NodeTypeEnum nodeType, const std::string& name,
+       NodeItem* CreateNode(NodeType::NodeTypeEnum nodeType, const std::string& name,
          const std::string& category);
 
       /**
@@ -72,7 +74,7 @@ namespace dtDirector
        *
        * @param[in]  editor  The custom editor for this macro.
        */
-      void CreateMacro(const std::string& editor);
+      NodeItem* CreateMacro(const std::string& editor);
 
       /**
        * Centers all nodes in the scene.
@@ -87,7 +89,7 @@ namespace dtDirector
       void Clear();
 
    signals:
-      void CreateNode(const QString& name, const QString& category);
+      void CreateNode(const QString& name, const QString& category, const QString& refName);
 
    protected:
       virtual void dragMoveEvent(QGraphicsSceneDragDropEvent* event);
