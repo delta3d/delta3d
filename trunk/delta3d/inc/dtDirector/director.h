@@ -687,6 +687,7 @@ namespace dtDirector
       std::vector<RecordThreadData*> mRecordThreads;
 
       // Other Data.
+      static dtCore::UniqueId mPlayer;
       dtCore::UniqueId mScriptOwner;
 
       // Core Info.
@@ -695,6 +696,7 @@ namespace dtDirector
       std::string mAuthor;
       std::string mCopyright;
       std::string mCreationTime;
+
 
       dtDAL::ResourceDescriptor mResource;
 

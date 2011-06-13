@@ -115,7 +115,6 @@ namespace dtGame
       GMStatistics mGMStatistics;
       dtCore::RefPtr<MachineInfo> mMachineInfo;
       dtCore::RefPtr<IEnvGameActorProxy>  mEnvironment;
-      dtCore::RefPtr<dtDAL::BaseActorObject> mPlayer;
       GameActorMap mGameActorProxyMap;
       GameActorMap mPrototypeActors;
       ActorMap  mBaseActorObjectMap;
