@@ -41,6 +41,7 @@ namespace dtDirector
       : ActionNode()
       , mActorType("")
       , mTemplateActor(NULL)
+      , mContainerProp(NULL)
    {
       AddAuthor("Jeff P. Houde");
    }
@@ -68,8 +69,14 @@ namespace dtDirector
          dtDAL::StringSelectorActorProperty::SetFuncType(this, &SpawnActorAction::SetActorType),
          dtDAL::StringSelectorActorProperty::GetFuncType(this, &SpawnActorAction::GetActorType),
          dtDAL::StringSelectorActorProperty::GetListFuncType(this, &SpawnActorAction::GetActorTypeList),
-         "The type of actor to spawn.");
+         "The type of the actor to spawn.");
       AddProperty(typeProp);
+
+      mNameProp = new dtDAL::StringActorProperty(
+         "Name", "Name",
+         dtDAL::StringSelectorActorProperty::SetFuncType(this, &SpawnActorAction::SetActorName),
+         dtDAL::StringSelectorActorProperty::GetFuncType(this, &SpawnActorAction::GetActorName),
+         "Actor name.");
 
       dtDAL::Vec3ActorProperty* spawnPosProp = new dtDAL::Vec3ActorProperty(
          "Spawn Location", "Spawn Location",
@@ -206,14 +213,6 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void SpawnActorAction::SetActorType(const std::string& value)
-   {
-      mActorType = value;
-
-      UpdateTemplate();
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
    void SpawnActorAction::UpdateTemplate()
    {
       std::string actorType = GetString("Actor Type");
@@ -229,8 +228,6 @@ namespace dtDirector
          std::string name;
          std::string category;
 
-         std::string typeName = GetString("Actor Type");
-
          std::vector<const dtDAL::ActorType*> types;
          dtDAL::LibraryManager::GetInstance().GetActorTypes(types);
          int count = (int)types.size();
@@ -239,7 +236,7 @@ namespace dtDirector
             const dtDAL::ActorType* type = types[index];
             if (type)
             {
-               if (type->GetFullName() == typeName)
+               if (type->GetFullName() == actorType)
                {
                   name = type->GetName();
                   category = type->GetCategory();
@@ -254,11 +251,14 @@ namespace dtDirector
             {
                mContainerProp->ClearProperties();
                mTemplateActor = NULL;
+               mName = "";
             }
 
             mTemplateActor = dtDAL::LibraryManager::GetInstance().CreateActor(category, name);
             if (mTemplateActor.valid())
             {
+               mContainerProp->AddProperty(mNameProp);
+
                std::vector<dtDAL::ActorProperty*> propList;
                mTemplateActor->GetPropertyList(propList);
                int count = (int)propList.size();
@@ -270,9 +270,19 @@ namespace dtDirector
                      mContainerProp->AddProperty(prop);
                   }
                }
+
+               mName = mTemplateActor->GetActorType().GetFullName();
             }
          }
       }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void SpawnActorAction::SetActorType(const std::string& value)
+   {
+      mActorType = value;
+
+      UpdateTemplate();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -284,7 +294,7 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    std::vector<std::string> SpawnActorAction::GetActorTypeList() const
    {
-      std::vector<std::string> list;
+      std::map<std::string, std::string> listMap;
 
       std::vector<const dtDAL::ActorType*> types;
       dtDAL::LibraryManager::GetInstance().GetActorTypes(types);
@@ -294,11 +304,38 @@ namespace dtDirector
          const dtDAL::ActorType* type = types[index];
          if (type)
          {
-            list.push_back(type->GetFullName());
+            listMap[type->GetFullName()] = "x";
          }
       }
 
+      std::vector<std::string> list;
+      std::map<std::string, std::string>::iterator iter;
+      for (iter = listMap.begin(); iter != listMap.end(); ++iter)
+      {
+         list.push_back(iter->first);
+      }
+
       return list;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void SpawnActorAction::SetActorName(const std::string& value)
+   {
+      if (mTemplateActor.valid())
+      {
+         mTemplateActor->SetName(value);
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   std::string SpawnActorAction::GetActorName() const
+   {
+      if (mTemplateActor.valid())
+      {
+         return mTemplateActor->GetName();
+      }
+
+      return "";
    }
 
    ////////////////////////////////////////////////////////////////////////////////

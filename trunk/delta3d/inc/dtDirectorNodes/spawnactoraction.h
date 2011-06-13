@@ -107,6 +107,9 @@ namespace dtDirector
       std::string GetActorType() const;
       std::vector<std::string> GetActorTypeList() const;
 
+      void SetActorName(const std::string& value);
+      std::string GetActorName() const;
+
       void SetSpawnLocation(const osg::Vec3& value);
       osg::Vec3 GetSpawnLocation() const;
 
@@ -125,8 +128,9 @@ namespace dtDirector
       std::string mActorType;
       osg::Vec3   mSpawnLocation;
 
-      dtCore::RefPtr<dtDAL::BaseActorObject> mTemplateActor;
-      dtDAL::ContainerActorProperty*         mContainerProp;
+      dtCore::RefPtr<dtDAL::BaseActorObject>     mTemplateActor;
+      dtDAL::ContainerActorProperty*             mContainerProp;
+      dtCore::RefPtr<dtDAL::StringActorProperty> mNameProp;
    };
 }
 
