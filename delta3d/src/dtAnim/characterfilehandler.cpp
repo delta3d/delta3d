@@ -56,6 +56,7 @@ const std::string CharacterFileHandler::MAX_DURATION_ELEMENT("maxDuration");
 const std::string CharacterFileHandler::IS_LOOPING_ELEMENT("isLooping");
 const std::string CharacterFileHandler::IS_ACTION_ELEMENT("isAction");
 const std::string CharacterFileHandler::CHILD_ELEMENT("child");
+const std::string CHILDREN_ELEMENT("children");
 
 const std::string CharacterFileHandler::SKINNING_SHADER_ELEMENT("skinningShader");
 const std::string CharacterFileHandler::SHADER_GROUP_ELEMENT("shaderGroup");
@@ -600,9 +601,11 @@ void CharacterFileHandler::LODCharacters(const XMLCh* const chars)
 ////////////////////////////////////////////////////////////////////////////////
 void CharacterFileHandler::ScaleCharacters(const XMLCh* const chars)
 {
-   mScale = dtUtil::ToType<float>(dtUtil::XMLStringConverter(chars).ToString());
    std::string& topEl = mElements.top();
-   assert (topEl == SCALE_FACTOR_ELEMENT);
+   if (topEl == SCALE_FACTOR_ELEMENT)
+   {
+      mScale = dtUtil::ToType<float>(dtUtil::XMLStringConverter(chars).ToString());
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -676,7 +679,7 @@ void CharacterFileHandler::AnimChannelCharacters(const XMLCh* const chars)
          std::string is_action = dtUtil::XMLStringConverter(chars).ToString();
          pChannel.mIsAction = dtUtil::ToType<bool>(is_action);
       }
-      else if (topEl != CHANNEL_ELEMENT)
+      else if (topEl != CHANNEL_ELEMENT && topEl != CHILDREN_ELEMENT)
       {
          mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__,
                               "Found characters for unknown element \"%s\" \"%s\"",
@@ -708,7 +711,7 @@ void CharacterFileHandler::AnimSequenceCharacters(const XMLCh* const chars)
 
    if (!AnimatableCharacters(chars, pSequence))
    {
-      if (topEl != SEQUENCE_ELEMENT)
+      if (topEl != SEQUENCE_ELEMENT && topEl != CHILDREN_ELEMENT)
       {
          mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__,
                               "Found characters for unknown element \"%s\" \"%s\"",
