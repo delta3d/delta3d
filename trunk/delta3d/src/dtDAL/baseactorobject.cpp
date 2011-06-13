@@ -40,6 +40,8 @@
 
 namespace dtDAL
 {
+   IMPLEMENT_MANAGEMENT_LAYER(BaseActorObject)
+
    ///////////////////////////////////////////////////////////////////////////////////////
    IMPLEMENT_ENUM(BaseActorObject::RenderMode);
    const BaseActorObject::RenderMode BaseActorObject::RenderMode::DRAW_ACTOR("DRAW_ACTOR");
@@ -53,16 +55,20 @@ namespace dtDAL
    BaseActorObject::BaseActorObject()
    {
       SetClassName("dtCore::DeltaDrawable");
+
+      RegisterInstance(this);
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
    BaseActorObject::BaseActorObject(const BaseActorObject& rhs)
    {
+      RegisterInstance(this);
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
    BaseActorObject::~BaseActorObject()
    {
+      DeregisterInstance(this);
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
