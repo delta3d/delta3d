@@ -60,7 +60,7 @@ namespace dtDirector
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void NodeScene::CreateNode(NodeType::NodeTypeEnum nodeType, const std::string& name,
+   NodeItem* NodeScene::CreateNode(NodeType::NodeTypeEnum nodeType, const std::string& name,
       const std::string& category)
    {
       dtCore::RefPtr<Node> node = NodeManager::GetInstance().CreateNode(name, category, mpGraph);
@@ -84,8 +84,7 @@ namespace dtDirector
                }
                else
                {
-                  CreateMacro("");
-                  return;
+                  return CreateMacro("");
                }
                break;
             }
@@ -134,11 +133,15 @@ namespace dtDirector
 
             mHeight += NODE_BUFFER;
          }
+
+         return item;
       }
+
+      return NULL;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void NodeScene::CreateMacro(const std::string& editor)
+   NodeItem* NodeScene::CreateMacro(const std::string& editor)
    {
       dtCore::RefPtr<DirectorGraph> graph = mpGraph->AddGraph();
       if (graph.valid())
@@ -172,7 +175,11 @@ namespace dtDirector
 
             mHeight += NODE_BUFFER;
          }
+
+         return item;
       }
+
+      return NULL;
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -190,12 +197,8 @@ namespace dtDirector
          boundRect.setWidth(mWidth);
       }
 
-      boundRect.setHeight(mHeight + NODE_BUFFER + NODE_BUFFER);
-
-      setSceneRect(boundRect);
-
+      mHeight = NODE_BUFFER;
       float center = boundRect.width() * 0.5f;
-      view->centerOn(center, 0);
 
       QList<QGraphicsItem*> itemList = mpItem->childItems();
       int count = itemList.count();
@@ -207,7 +210,7 @@ namespace dtDirector
             QPointF pos = nodeItem->scenePos();
             float width = nodeItem->GetNodeWidth();
 
-            osg::Vec2 newPos = osg::Vec2(center - (width * 0.5f), pos.y() + NODE_BUFFER);
+            osg::Vec2 newPos = osg::Vec2(center - (width * 0.5f), mHeight);
 
             Node* node = nodeItem->GetNode();
             if (node)
@@ -224,9 +227,16 @@ namespace dtDirector
             }
 
             nodeItem->Draw();
+            mHeight += nodeItem->boundingRect().height() + NODE_BUFFER;
          }
       }
-   }
+
+      boundRect.setHeight(mHeight + NODE_BUFFER + NODE_BUFFER);
+
+      setSceneRect(boundRect);
+
+      view->centerOn(center, 0);
+  }
 
    ///////////////////////////////////////////////////////////////////////////////
    void NodeScene::Clear()
@@ -255,7 +265,8 @@ namespace dtDirector
       {
          QString name = selectedItem->QGraphicsItem::data(Qt::UserRole).toString();
          QString category = selectedItem->QGraphicsItem::data(Qt::UserRole + 1).toString();
-         emit CreateNode(name, category);
+         QString refName = selectedItem->QGraphicsItem::data(Qt::UserRole + 2).toString();
+         emit CreateNode(name, category, refName);
       }
    }
 
@@ -303,10 +314,11 @@ namespace dtDirector
 
       QVariant name = mpDraggedItem->QGraphicsItem::data(Qt::UserRole);
       QVariant category = mpDraggedItem->QGraphicsItem::data(Qt::UserRole + 1);
+      QVariant refName = mpDraggedItem->QGraphicsItem::data(Qt::UserRole + 2);
 
       QByteArray itemData;
       QDataStream dataStream(&itemData, QIODevice::WriteOnly);
-      dataStream <<  name.toString() << category.toString() << QPoint(hotspot);
+      dataStream <<  name.toString() << category.toString() << refName.toString() << QPoint(hotspot);
 
       //store the name, category, and hotspot data for the upcoming drop event
       mime->setData("data", itemData);

@@ -20,6 +20,7 @@
  */
 #include <prefix/dtdirectorqtprefix.h>
 #include <dtDirectorQt/nodetabs.h>
+#include <dtDirectorQt/nodeitem.h>
 
 #include <dtDirector/directorgraph.h>
 #include <dtDirector/nodemanager.h>
@@ -186,7 +187,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void NodeTabs::SearchNodes(const QString& searchText)
+   void NodeTabs::SearchNodes(const QString& searchText, DirectorGraph* graph)
    {
       NodeScene* scene = NULL;
       QGraphicsView* view = dynamic_cast<QGraphicsView*>(widget(0));
@@ -248,6 +249,123 @@ namespace dtDirector
             {
                scene->CreateNode(node->GetNodeType(), node->GetName(), node->GetCategory());
             }
+         }
+      }
+
+      // Also search for reference values.
+      std::map<std::string, dtDirector::ValueNode*> refMap;
+      DirectorGraph* searchGraph = graph;
+      while (searchGraph)
+      {
+         std::vector<dtCore::RefPtr<ValueNode> >& values = searchGraph->GetValueNodes();
+         int count = (int)values.size();
+         for (int index = 0; index < count; ++index)
+         {
+            ValueNode* node = values[index];
+            QString valueName = node->GetName().c_str();
+            if (node && !valueName.isEmpty() && valueName.contains(searchText, Qt::CaseInsensitive))
+            {
+               std::map<std::string, dtDirector::ValueNode*>::iterator iter = refMap.find(node->GetName());
+               if (iter == refMap.end())
+               {
+                  refMap[node->GetName()] = node;
+               }
+            }
+         }
+
+         searchGraph = searchGraph->GetParent();
+      }
+
+      std::map<std::string, dtDirector::ValueNode*>::iterator iter;
+      for (iter = refMap.begin(); iter != refMap.end(); ++iter)
+      {
+         std::string refName = iter->first;
+         ValueNode* node = iter->second;
+         NodeItem* refItem = scene->CreateNode(dtDirector::NodeType::VALUE_NODE, node->GetType().GetName(), node->GetType().GetCategory());
+         if (refItem && refItem->GetNode())
+         {
+            refItem->setData(Qt::UserRole + 0, QString::fromStdString("Reference"));
+            refItem->setData(Qt::UserRole + 1, QString::fromStdString("Core"));
+            refItem->setData(Qt::UserRole + 2, QString::fromStdString(refName));
+            refItem->GetNode()->SetName(refName);
+         }
+      }
+
+      scene->CenterNodes(view);
+
+      layout()->setSpacing(0);
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void NodeTabs::SearchReferenceNodes(DirectorGraph* graph)
+   {
+      NodeScene* scene = NULL;
+      QGraphicsView* view = dynamic_cast<QGraphicsView*>(widget(0));
+      if (!view)
+      {
+         QWidget* item = widget(0);
+         if (item)
+         {
+            removeItem(0);
+            delete item;
+         }
+
+         scene = new NodeScene(mpEditor, mpGraph);
+         view = new QGraphicsView(scene);
+         connect(scene, SIGNAL(CreateNode(const QString&, const QString&)),
+            this, SIGNAL(CreateNode(const QString&, const QString&)));
+         view->setScene(scene);
+
+         insertItem(0, view, "Search");
+         setCurrentIndex(0);
+      }
+
+      if (view)
+      {
+         scene = dynamic_cast<NodeScene*>(view->scene());
+      }
+
+      if (!scene)
+      {
+         return;
+      }
+
+      scene->Clear();
+
+      std::map<std::string, dtDirector::ValueNode*> refMap;
+      DirectorGraph* searchGraph = graph;
+      while (searchGraph)
+      {
+         std::vector<dtCore::RefPtr<ValueNode> >& values = searchGraph->GetValueNodes();
+         int count = (int)values.size();
+         for (int index = 0; index < count; ++index)
+         {
+            ValueNode* node = values[index];
+            if (node && !node->GetName().empty())
+            {
+               std::map<std::string, dtDirector::ValueNode*>::iterator iter = refMap.find(node->GetName());
+               if (iter == refMap.end())
+               {
+                  refMap[node->GetName()] = node;
+               }
+            }
+         }
+
+         searchGraph = searchGraph->GetParent();
+      }
+
+      std::map<std::string, dtDirector::ValueNode*>::iterator iter;
+      for (iter = refMap.begin(); iter != refMap.end(); ++iter)
+      {
+         std::string refName = iter->first;
+         ValueNode* node = iter->second;
+         NodeItem* refItem = scene->CreateNode(dtDirector::NodeType::VALUE_NODE, node->GetType().GetName(), node->GetType().GetCategory());
+         if (refItem && refItem->GetNode())
+         {
+            refItem->setData(Qt::UserRole + 0, QString::fromStdString("Reference"));
+            refItem->setData(Qt::UserRole + 1, QString::fromStdString("Core"));
+            refItem->setData(Qt::UserRole + 2, QString::fromStdString(refName));
+            refItem->GetNode()->SetName(refName);
          }
       }
 

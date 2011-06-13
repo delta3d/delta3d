@@ -207,7 +207,7 @@ namespace dtDirector
        * @param[in]  category  The category of the node or custom editor for a macro.
        * @param[in[  x, y      Starting UI coordinates to spawn the node.
        */
-      void CreateNodeItem(const std::string& name, const std::string& category, float x, float y);
+      Node* CreateNodeItem(const std::string& name, const std::string& category, float x, float y);
 
       /**
        * Deletes a node from the list.
