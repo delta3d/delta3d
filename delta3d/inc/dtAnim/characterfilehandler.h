@@ -28,7 +28,7 @@
 #include <dtUtil/mswinmacros.h>
 #include <dtUtil/xercesutils.h>
 #include <dtCore/refptr.h>
-#include <xercesc/sax2/ContentHandler.hpp>  // for a base class
+#include <dtDAL/basexmlhandler.h>
 #include <vector>
 #include <string>
 #include <stack>
@@ -77,7 +77,7 @@ namespace dtAnim
      *   </character>
      * @endcode
      */
-   class DT_ANIM_EXPORT CharacterFileHandler : public XERCES_CPP_NAMESPACE_QUALIFIER ContentHandler
+   class DT_ANIM_EXPORT CharacterFileHandler : public dtDAL::BaseXMLHandler
    {
    public:
 
@@ -127,14 +127,10 @@ namespace dtAnim
 
 #if XERCES_VERSION_MAJOR < 3
       virtual void characters(const XMLCh* const chars, const unsigned int length);
-      virtual void ignorableWhitespace(const XMLCh* const /*chars*/, const unsigned int/*length*/) {};
 #else
       virtual void characters(const XMLCh* const chars, const XMLSize_t length);
-      virtual void ignorableWhitespace(const XMLCh* const /*chars*/, const XMLSize_t /*length*/) {};
 #endif
       virtual void endDocument();
-      virtual void processingInstruction(const XMLCh* const /*target*/, const XMLCh* const /*data*/) {};
-      virtual void setDocumentLocator(const XERCES_CPP_NAMESPACE_QUALIFIER Locator* const /*locator*/) {};
       virtual void startDocument();
 
       virtual void startElement(const XMLCh* const uri,const XMLCh* const localname,
@@ -143,10 +139,6 @@ namespace dtAnim
       virtual void endElement(const XMLCh* const uri,
                               const XMLCh* const localname,
                               const XMLCh* const qname);
-
-      virtual void startPrefixMapping(const XMLCh* const /*prefix*/, const XMLCh* const /*uri*/) {};
-      virtual void endPrefixMapping(const XMLCh* const /*prefix*/) {};
-      virtual void skippedEntity(const XMLCh* const /*name*/) {};
 
 
 #ifdef DELTA_WIN32
