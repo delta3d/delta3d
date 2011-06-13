@@ -1782,13 +1782,13 @@ void DirectorCinematicEditorPlugin::OnLoad()
                }
                {
                   int time = node->GetFloat("StartTime") * 1000;
-                  osg::Vec4 rot = node->GetVec4("StartRotation");
+                  osg::Vec3 rot = node->GetVec3("StartRotation");
                   TransformData* data = GetOrCreateTransformData(time, lastTransform, lastScale, canScale);
                   if (data) data->mTransform.SetRotation(rot.z(), rot.x(), rot.y());
                }
                {
                   int time = node->GetFloat("EndTime") * 1000;
-                  osg::Vec4 rot = node->GetVec4("EndRotation");
+                  osg::Vec3 rot = node->GetVec3("EndRotation");
                   TransformData* data = GetOrCreateTransformData(time, lastTransform, lastScale, canScale);
                   if (data) data->mTransform.SetRotation(rot.z(), rot.x(), rot.y());
                   lastTransform.SetRotation(rot.z(), rot.x(), rot.y());
