@@ -34,6 +34,8 @@
 
 namespace dtDirector
 {
+   dtCore::UniqueId Director::mPlayer = dtCore::UniqueId("");
+
    IMPLEMENT_MANAGEMENT_LAYER(DirectorInstance)
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -740,28 +742,13 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void Director::SetPlayer(const dtCore::UniqueId& player)
    {
-      if (mGameManager)
-      {
-         dtDAL::BaseActorObject* proxy = mGameManager->FindActorById(player);
-         mGameManager->SetPlayer(proxy);
-      }
+      mPlayer = player;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    dtCore::UniqueId Director::GetPlayer() const
    {
-      if (mGameManager)
-      {
-         dtDAL::BaseActorObject* proxy = mGameManager->GetPlayer();
-         if (proxy)
-         {
-            return proxy->GetId();
-         }
-      }
-
-      dtCore::UniqueId id;
-      id = "";
-      return id;
+      return mPlayer;
    }
 
    ////////////////////////////////////////////////////////////////////////////////

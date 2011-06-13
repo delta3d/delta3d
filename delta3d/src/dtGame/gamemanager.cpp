@@ -1364,18 +1364,6 @@ namespace dtGame
       }
    }
 
-   ////////////////////////////////////////////////////////////////////////////////
-   void GameManager::SetPlayer(dtDAL::BaseActorObject* player)
-   {
-      mGMImpl->mPlayer = player;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   dtDAL::BaseActorObject* GameManager::GetPlayer() const
-   {
-      return mGMImpl->mPlayer;
-   }
-
    //////////////////////////////////////////////////////////////////////////
    IEnvGameActorProxy* GameManager::GetEnvironmentActor()
    {

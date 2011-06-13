@@ -375,18 +375,6 @@ namespace dtGame
       IEnvGameActorProxy* GetEnvironmentActor();
 
       /**
-       * Sets the player actor on the game manager
-       * @param player  The player actor to set
-       */
-      void SetPlayer(dtDAL::BaseActorObject* player);
-
-      /**
-       * Gets the player actor on the game manager
-       * @return The player actor or NULL if none is set.
-       */
-      dtDAL::BaseActorObject* GetPlayer() const;
-
-      /**
        * Creates a game actor based on the actor type but sets the isRemote status to true (== remote).
        * @param The actor type to create.
        * @throws dtDAL::ExceptionEnum::ObjectFactoryUnknownType
