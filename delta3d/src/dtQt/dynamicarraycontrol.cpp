@@ -301,6 +301,10 @@ namespace dtQt
       {
          mPropertyTree->setCurrentIndex(mModel->IndexOf(mChildren[index]));
       }
+      else
+      {
+         mPropertyTree->setCurrentIndex(mModel->IndexOf(this));
+      }
    }
 
    /////////////////////////////////////////////////////////////////////////////////
