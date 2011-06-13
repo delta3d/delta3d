@@ -76,19 +76,7 @@ namespace dtDirector
       std::string label = "";
       if (mProperty)
       {
-         std::string actorName = mProperty->GetValueString();
-
-         dtGame::GameManager* gm = GetDirector()->GetGameManager();
-         if (gm)
-         {
-            dtDAL::BaseActorObject* actor = gm->FindActorById(dtCore::UniqueId(mProperty->ToString().c_str()));
-            if (actor)
-            {
-               actorName = actor->GetName();
-            }
-         }
-
-         label = "(" + actorName + ")";
+         label = "(" + mProperty->GetValueString() + ")";
       }
       return label;
    }

@@ -36,6 +36,7 @@
 #include <dtCore/refptr.h>
 #include <dtDAL/export.h>
 #include <dtDAL/propertycontainer.h>
+#include <dtUtil/macros.h>
 
 
 namespace dtCore
@@ -65,6 +66,8 @@ namespace dtDAL
     */
    class DT_DAL_EXPORT BaseActorObject : public PropertyContainer
    {
+      DECLARE_MANAGEMENT_LAYER(BaseActorObject)
+
    public:
       static const dtUtil::RefString DESCRIPTION_PROPERTY;
 

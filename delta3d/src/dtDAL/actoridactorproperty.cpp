@@ -128,27 +128,27 @@ namespace dtDAL
 
       try
       {
-         // TODO: Retrieve the actor proxy from the game manager, or global
-         // actor manager, instead of one that is loaded from a map file.
          dtDAL::Map* map = Project::GetInstance().GetMapForActorProxy(idValue);
-         if (map == NULL)
+         if (map)
          {
-            dtUtil::Log::GetInstance("enginepropertytypes.cpp").LogMessage(dtUtil::Log::LOG_INFO,
-               __FUNCTION__, __LINE__, "Map not found.  Setting property %s with string value failed.",
-               GetName().c_str());
-            return false;
+            BaseActorObject* proxyValue = map->GetProxyById(idValue);
+            if (proxyValue)
+            {
+               return proxyValue;
+            }
          }
 
-         BaseActorObject* proxyValue = map->GetProxyById(idValue);
-         if (proxyValue == NULL)
+         // If we haven't found the actor as part of a loaded map, search
+         // the hard way through all actor base instances instead.
+         int count = BaseActorObject::GetInstanceCount();
+         for (int index = 0; index < count; ++index)
          {
-            dtUtil::Log::GetInstance("enginepropertytypes.cpp").LogMessage(dtUtil::Log::LOG_INFO,
-               __FUNCTION__, __LINE__, "Actor with ID %s not found.  Setting property %s with string value failed.",
-               idValue.ToString().c_str(), GetName().c_str());
-            return false;
+            BaseActorObject* proxyValue = BaseActorObject::GetInstance(index);
+            if (proxyValue && proxyValue->GetId() == idValue)
+            {
+               return proxyValue;
+            }
          }
-
-         return proxyValue;
       }
       catch (const dtDAL::ProjectInvalidContextException& ex)
       {
@@ -174,27 +174,25 @@ namespace dtDAL
 
       try
       {
-         // TODO: Retrieve the actor proxy from the game manager, or global
-         // actor manager, instead of one that is loaded from a map file.
          dtDAL::Map* map = Project::GetInstance().GetMapForActorProxy(idValue);
-         if (map == NULL)
+         if (map)
          {
-            dtUtil::Log::GetInstance("enginepropertytypes.cpp").LogMessage(dtUtil::Log::LOG_INFO,
-               __FUNCTION__, __LINE__, "Map not found.  Setting property %s with string value failed.",
-               GetName().c_str());
-            return false;
+            BaseActorObject* proxyValue = map->GetProxyById(idValue);
+            if (proxyValue)
+            {
+               return proxyValue;
+            }
          }
 
-         BaseActorObject* proxyValue = map->GetProxyById(idValue);
-         if (proxyValue == NULL)
+         int count = BaseActorObject::GetInstanceCount();
+         for (int index = 0; index < count; ++index)
          {
-            dtUtil::Log::GetInstance("enginepropertytypes.cpp").LogMessage(dtUtil::Log::LOG_INFO,
-               __FUNCTION__, __LINE__, "Actor with ID %s not found.  Setting property %s with string value failed.",
-               idValue.ToString().c_str(), GetName().c_str());
-            return false;
+            BaseActorObject* proxyValue = BaseActorObject::GetInstance(index);
+            if (proxyValue && proxyValue->GetId() == idValue)
+            {
+               return proxyValue;
+            }
          }
-
-         return proxyValue;
       }
       catch (const dtDAL::ProjectInvalidContextException& ex)
       {
@@ -241,10 +239,10 @@ namespace dtDAL
    //////////////////////////////////////////////////////////////////////////
    std::string ActorIDActorProperty::GetValueString() const
    {
-      const dtCore::DeltaDrawable* drawable = GetRealActor();
-      if (drawable)
+      const BaseActorObject* proxy = GetActorProxy();
+      if (proxy)
       {
-         return drawable->GetName();
+         return proxy->GetName();
       }
 
       return "None";
