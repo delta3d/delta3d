@@ -1587,6 +1587,36 @@ namespace dtDirector
       }
       settings.endGroup();
 
+      settings.beginGroup("PaletteWindow");
+      mUI.nodePalette->resize(settings.value("Size", QSize(219, 371)).toSize());
+      mUI.nodePalette->move(settings.value("Pos", QPoint(0, 55)).toPoint());
+      settings.endGroup();
+
+      settings.beginGroup("PropertyWindow");
+      mUI.propertyEditor->resize(settings.value("Size", QSize(400, 150)).toSize());
+      mUI.propertyEditor->move(settings.value("Pos", QPoint(0, 430)).toPoint());
+      settings.endGroup();
+
+      settings.beginGroup("GraphWindow");
+      mUI.graphBrowser->resize(settings.value("Size", QSize(396, 150)).toSize());
+      mUI.graphBrowser->move(settings.value("Pos", QPoint(404, 430)).toPoint());
+      settings.endGroup();
+
+      settings.beginGroup("ReplayWindow");
+      mUI.replayBrowser->resize(settings.value("Size", QSize(195, 121)).toSize());
+      mUI.replayBrowser->move(settings.value("Pos", QPoint(605, 55)).toPoint());
+      settings.endGroup();
+
+      settings.beginGroup("SearchWindow");
+      mUI.searchBrowser->resize(settings.value("Size", QSize(195, 121)).toSize());
+      mUI.searchBrowser->move(settings.value("Pos", QPoint(605, 180)).toPoint());
+      settings.endGroup();
+
+      settings.beginGroup("ThreadWindow");
+      mUI.threadBrowser->resize(settings.value("Size", QSize(195, 121)).toSize());
+      mUI.threadBrowser->move(settings.value("Pos", QPoint(605, 305)).toPoint());
+      settings.endGroup();
+
       mUI.threadBrowser->hide();
 
       if (mDirector.valid() && mUI.graphTab->count() == 0)
@@ -1599,7 +1629,12 @@ namespace dtDirector
    void DirectorEditor::hideEvent(QHideEvent* event)
    {
       QMainWindow::hideEvent(event);
+   }
 
+   //////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::closeEvent(QCloseEvent* event)
+   {
+      // Save window settings.
       QSettings settings("MOVES", "Director Editor");
       settings.beginGroup("MainWindow");
       settings.setValue("Pos", pos());
@@ -1608,12 +1643,36 @@ namespace dtDirector
       settings.setValue("Geom", saveGeometry());
       settings.endGroup();
 
-      // TODO: Also save and close the property/graph tree windows.
-   }
+      settings.beginGroup("PaletteWindow");
+      settings.setValue("Pos", mUI.nodePalette->pos());
+      settings.setValue("Size", mUI.nodePalette->size());
+      settings.endGroup();
 
-   //////////////////////////////////////////////////////////////////////////
-   void DirectorEditor::closeEvent(QCloseEvent* event)
-   {
+      settings.beginGroup("PropertyWindow");
+      settings.setValue("Pos", mUI.propertyEditor->pos());
+      settings.setValue("Size", mUI.propertyEditor->size());
+      settings.endGroup();
+
+      settings.beginGroup("GraphWindow");
+      settings.setValue("Pos", mUI.graphBrowser->pos());
+      settings.setValue("Size", mUI.graphBrowser->size());
+      settings.endGroup();
+
+      settings.beginGroup("ReplayWindow");
+      settings.setValue("Pos", mUI.replayBrowser->pos());
+      settings.setValue("Size", mUI.replayBrowser->size());
+      settings.endGroup();
+
+      settings.beginGroup("SearchWindow");
+      settings.setValue("Pos", mUI.searchBrowser->pos());
+      settings.setValue("Size", mUI.searchBrowser->size());
+      settings.endGroup();
+
+      settings.beginGroup("ThreadWindow");
+      settings.setValue("Pos", mUI.threadBrowser->pos());
+      settings.setValue("Size", mUI.threadBrowser->size());
+      settings.endGroup();
+
       // Check if the undo manager has some un-committed changes first.
       if (mUndoManager->IsModified())
       {
