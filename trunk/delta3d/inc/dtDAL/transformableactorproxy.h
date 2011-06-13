@@ -248,7 +248,7 @@ namespace dtDAL
          void SetSphereCollision();
 
          ///Sets cylinder collision geometry.
-         void SetCylinderCollision();
+         void SetCapsuleCollision();
 
          ///Sets ray collision geometry.
          void SetRayCollision();
