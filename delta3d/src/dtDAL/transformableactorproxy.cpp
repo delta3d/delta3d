@@ -341,17 +341,30 @@ namespace dtDAL
 
       mCollisionType = &type;
       if (mCollisionType == &dtCore::Transformable::CollisionGeomType::NONE)
+      {
          phys->ClearCollisionGeometry();
+      }
       else if (mCollisionType == &dtCore::Transformable::CollisionGeomType::CUBE)
+      {
          SetBoxCollision();
+      }
       else if (mCollisionType == &dtCore::Transformable::CollisionGeomType::SPHERE)
+      {
          SetSphereCollision();
-      else if (mCollisionType == &dtCore::Transformable::CollisionGeomType::CYLINDER)
-         SetCylinderCollision();
+      }
+      else if (mCollisionType == &dtCore::Transformable::CollisionGeomType::CYLINDER ||
+               mCollisionType == &dtCore::Transformable::CollisionGeomType::CCYLINDER)
+      {
+         SetCapsuleCollision();
+      }
       else if (mCollisionType == &dtCore::Transformable::CollisionGeomType::RAY)
+      {
          SetRayCollision();
+      }
       else if (mCollisionType == &dtCore::Transformable::CollisionGeomType::MESH)
+      {
          SetMeshCollision();
+      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -366,10 +379,15 @@ namespace dtDAL
       //dtCore::Transformable *phys = static_cast<dtCore::Transformable*>(GetActor());
 
       mCollisionRadius = radius;
-      if (mCollisionType == &dtCore::Transformable::CollisionGeomType::CYLINDER)
-         SetCylinderCollision();
+      if (mCollisionType == &dtCore::Transformable::CollisionGeomType::CYLINDER ||
+          mCollisionType == &dtCore::Transformable::CollisionGeomType::CCYLINDER)
+      {
+         SetCapsuleCollision();
+      }
       else if (mCollisionType == &dtCore::Transformable::CollisionGeomType::SPHERE)
+      {
          SetSphereCollision();
+      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -399,10 +417,15 @@ namespace dtDAL
       //dtCore::Transformable *phys = static_cast<dtCore::Transformable*>(GetActor());
 
       mCollisionLength = length;
-      if (mCollisionType == &dtCore::Transformable::CollisionGeomType::CYLINDER)
-         SetCylinderCollision();
+      if (mCollisionType == &dtCore::Transformable::CollisionGeomType::CYLINDER ||
+          mCollisionType == &dtCore::Transformable::CollisionGeomType::CCYLINDER)
+      {
+         SetCapsuleCollision();
+      }
       else if (mCollisionType == &dtCore::Transformable::CollisionGeomType::RAY)
+      {
          SetRayCollision();
+      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -557,10 +580,13 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void TransformableActorProxy::SetCylinderCollision()
+   void TransformableActorProxy::SetCapsuleCollision()
    {
-      if (mCollisionType != &dtCore::Transformable::CollisionGeomType::CYLINDER)
+      if (mCollisionType != &dtCore::Transformable::CollisionGeomType::CYLINDER ||
+          mCollisionType != &dtCore::Transformable::CollisionGeomType::CCYLINDER)
+      {
          return;
+      }
 
       dtCore::Transformable *trans = static_cast<dtCore::Transformable*>(GetActor());
 
