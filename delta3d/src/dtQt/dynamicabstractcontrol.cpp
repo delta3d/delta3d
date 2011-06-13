@@ -548,6 +548,10 @@ namespace dtQt
          emit PropertyChanged(*mPropContainer, *arrayProp);
 
          int nextIndex = mArrayIndex;
+         if (arrayProp->GetArraySize() <= nextIndex)
+         {
+            nextIndex = arrayProp->GetArraySize() - 1;
+         }
          mPropertyTree->closeEditor(mWrapper, QAbstractItemDelegate::NoHint);
          parent->resizeChildren(false, true);
          parent->SetIndexFocus(nextIndex);
