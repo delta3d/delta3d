@@ -23,6 +23,9 @@
 #include <dtDirectorGUINodes/guinodemanager.h>
 
 #include <dtDAL/stringselectoractorproperty.h>
+#include <dtDAL/floatactorproperty.h>
+
+#include <dtUtil/mathdefines.h>
 
 #include <dtGUI/gui.h>
 #include <CEGUI/CEGUIWindow.h>
@@ -34,6 +37,8 @@ namespace dtDirector
    /////////////////////////////////////////////////////////////////////////////
    SetLayoutVisibility::SetLayoutVisibility()
       : ActionNode()
+      , mElapsedTime(0.0f)
+      , mFadeTime(0.0f)
    {
       AddAuthor("Jeff P. Houde");
    }
@@ -67,18 +72,25 @@ namespace dtDirector
    {
       ActionNode::BuildPropertyMap();
 
-      dtDAL::StringSelectorActorProperty* layoutProp =
-         new dtDAL::StringSelectorActorProperty(
+      dtDAL::StringSelectorActorProperty* layoutProp = new dtDAL::StringSelectorActorProperty(
          "Layout", "Layout",
          dtDAL::StringSelectorActorProperty::SetFuncType(this, &SetLayoutVisibility::SetLayout),
          dtDAL::StringSelectorActorProperty::GetFuncType(this, &SetLayoutVisibility::GetLayout),
          dtDAL::StringSelectorActorProperty::GetListFuncType(this, &SetLayoutVisibility::GetLayoutList),
          "The Layout.", "", true);
       AddProperty(layoutProp);
+
+      dtDAL::FloatActorProperty* fadeProp = new dtDAL::FloatActorProperty(
+         "Fade Time", "Fade Time",
+         dtDAL::FloatActorProperty::SetFuncType(this, &SetLayoutVisibility::SetFadeTime),
+         dtDAL::FloatActorProperty::GetFuncType(this, &SetLayoutVisibility::GetFadeTime),
+         "The amount of time to fade the layout in or out of view.");
+      AddProperty(fadeProp);
       
       // This will expose the properties in the editor and allow
       // them to be connected to ValueNodes.
       mValues.push_back(ValueLink(this, layoutProp, false, false, true, false));
+      mValues.push_back(ValueLink(this, fadeProp, false, false, true, false));
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -91,22 +103,60 @@ namespace dtDirector
          return false;
       }
 
+      float fadeTime = GetFloat("Fade Time");
+
+      if (firstUpdate)
+      {
+         mElapsedTime = 0.0f;
+
+         switch (input)
+         {
+         case INPUT_SHOW:
+            {
+               layout->show();
+               layout->setAlpha(0.0f);
+            }
+            break;
+         case INPUT_HIDE:
+            {
+               layout->setAlpha(1.0f);
+            }
+            break;
+         }
+
+         ActionNode::Update(simDelta, delta, input, firstUpdate);
+      }
+
+      mElapsedTime = dtUtil::Min(mElapsedTime + delta, fadeTime);
+
       switch (input)
       {
       case INPUT_SHOW:
          {
-            layout->show();
+            float alpha = mElapsedTime / fadeTime;
+            layout->setAlpha(alpha);
+
+            if (alpha >= 1.0f)
+            {
+               return false;
+            }
          }
          break;
       case INPUT_HIDE:
          {
-            layout->hide();
+            float alpha = 1.0f - (mElapsedTime / fadeTime);
+            layout->setAlpha(alpha);
+
+            if (alpha <= 0.0f)
+            {
+               layout->hide();
+               return false;
+            }
          }
          break;
       }
 
-      // Fire the "Out" link
-      return ActionNode::Update(simDelta, delta, input, firstUpdate);
+      return true;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -153,7 +203,7 @@ namespace dtDirector
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   std::string SetLayoutVisibility::GetLayout()
+   std::string SetLayoutVisibility::GetLayout() const
    {
       return mLayout;
    }
@@ -162,6 +212,18 @@ namespace dtDirector
    std::vector<std::string> SetLayoutVisibility::GetLayoutList()
    {
       return GUINodeManager::GetLayoutList();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void SetLayoutVisibility::SetFadeTime(float value)
+   {
+      mFadeTime = value;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   float SetLayoutVisibility::GetFadeTime() const
+   {
+      return mFadeTime;
    }
 }
 
