@@ -30,6 +30,7 @@
 #include <dtDirectorGUINodes/loadguischeme.h>
 #include <dtDirectorGUINodes/setguicursor.h>
 #include <dtDirectorGUINodes/setlayoutvisibility.h>
+#include <dtDirectorGUINodes/setwidgettext.h>
 
 // Values
 
@@ -61,6 +62,7 @@ namespace dtDirector
    RefPtr<NodeType> NodeLibraryRegistry::LOAD_GUI_SCHEME_NODE_TYPE(      new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Load Scheme",           "GUI", "GUI", "Load a GUI Scheme.",         NULL, Colors::BLUE2));
    RefPtr<NodeType> NodeLibraryRegistry::SET_GUI_CURSOR_NODE_TYPE(       new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Set Cursor",            "GUI", "GUI", "Set GUI Cursor.",            NULL, Colors::BLUE2));
    RefPtr<NodeType> NodeLibraryRegistry::SET_LAYOUT_VISIBILITY_NODE_TYPE(new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Set Layout Visibility", "GUI", "GUI", "Show or Hide a GUI Layout.", NULL, Colors::BLUE2));
+   RefPtr<NodeType> NodeLibraryRegistry::SET_WIDGET_TEXT_NODE_TYPE(      new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Set Widget Text",       "GUI", "GUI", "Sets the text on a widget.", NULL, Colors::BLUE2));
 
    // Values
 
@@ -92,6 +94,7 @@ namespace dtDirector
       mNodeFactory->RegisterType<LoadGUIScheme>(LOAD_GUI_SCHEME_NODE_TYPE.get());
       mNodeFactory->RegisterType<SetGUICursor>(SET_GUI_CURSOR_NODE_TYPE.get());
       mNodeFactory->RegisterType<SetLayoutVisibility>(SET_LAYOUT_VISIBILITY_NODE_TYPE.get());
+      mNodeFactory->RegisterType<SetWidgetText>(SET_WIDGET_TEXT_NODE_TYPE.get());
 
       // Values
    }
