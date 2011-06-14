@@ -76,6 +76,7 @@ SET(LIB_PUBLIC_HEADERS ${HEADER_PATH}/actorarrayvalue.h
     ${HEADER_PATH}/startevent.h
     ${HEADER_PATH}/staticmeshvalue.h
     ${HEADER_PATH}/stringarrayvalue.h
+    ${HEADER_PATH}/stringmanipulatoraction.h
     ${HEADER_PATH}/stringvalue.h
     ${HEADER_PATH}/subtractmutator.h
     ${HEADER_PATH}/switchaction.h
@@ -162,6 +163,7 @@ SET(LIB_SOURCES ${SOURCE_PATH}/actorarrayvalue.cpp
     ${SOURCE_PATH}/startevent.cpp
     ${SOURCE_PATH}/staticmeshvalue.cpp
     ${SOURCE_PATH}/stringarrayvalue.cpp
+    ${SOURCE_PATH}/stringmanipulatoraction.cpp
     ${SOURCE_PATH}/stringvalue.cpp
     ${SOURCE_PATH}/subtractmutator.cpp
     ${SOURCE_PATH}/switchaction.cpp
