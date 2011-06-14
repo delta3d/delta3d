@@ -70,6 +70,7 @@ namespace dtDAL
 
    public:
       static const dtUtil::RefString DESCRIPTION_PROPERTY;
+      static const dtUtil::RefString ACTIVE_PROPERTY;
 
       /**
        * This enumeration defines the different ways an actor proxy can
@@ -405,14 +406,14 @@ namespace dtDAL
       friend class ActorPluginRegistry;
 
       bool operator == (const BaseActorObject& rhs) const
-                  {
+      {
          return GetId() == rhs.GetId();
-                  }
+      }
 
       bool operator != (const BaseActorObject& rhs) const
-                  {
+      {
          return !(*this == rhs);
-                  }
+      }
 
       protected:
 
