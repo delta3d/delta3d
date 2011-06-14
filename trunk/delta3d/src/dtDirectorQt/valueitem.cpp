@@ -35,6 +35,8 @@
 
 #include <dtDAL/datatype.h>
 
+#include <dtUtil/mathdefines.h>
+
 #include <osg/Vec2>
 
 
@@ -206,11 +208,11 @@ namespace dtDirector
       }
 
       mComment->setPlainText(text.c_str());
+      mComment->setTextWidth(dtUtil::Max(100, mNodeWidth));
 
       // Create the title background.
       QRectF nodeBounds = boundingRect();
 
-      mComment->setTextWidth(nodeBounds.width() * 2.0f);
       mComment->setPos(nodeBounds.x(), nodeBounds.height());
    }
 

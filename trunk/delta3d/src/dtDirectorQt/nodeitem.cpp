@@ -40,6 +40,8 @@
 
 #include <dtDAL/datatype.h>
 
+#include <dtUtil/mathdefines.h>
+
 #include <osg/Vec2>
 
 
@@ -379,11 +381,11 @@ namespace dtDirector
       {
          mComment = new GraphicsTextItem(this, scene());
 
-         mComment->setDefaultTextColor(QColor(100,100,100));
+         mComment->setDefaultTextColor(Qt::darkGreen);
       }
 
       mComment->setPlainText(text.c_str());
-      mComment->setTextWidth(500);
+      mComment->setTextWidth(dtUtil::Max(100, mNodeWidth));
 
       // Create the title background.
       QRectF commentBounds = mComment->boundingRect();
