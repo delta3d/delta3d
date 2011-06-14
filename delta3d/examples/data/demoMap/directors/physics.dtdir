@@ -2,7 +2,7 @@
 <director xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dDirector" xsi:schemaLocation="delta3dDirector director.xsd">
     <header>
         <createTimestamp>2009-12-23T15:09:12-08:00</createTimestamp>
-        <lastUpdateTimestamp>2011-06-09T22:53:51-08:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2011-06-14T13:35:22-08:00</lastUpdateTimestamp>
         <editorVersion>2.7.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
         <scriptType>Scenario</scriptType>
@@ -58,8 +58,8 @@
                     <name>Enter</name>
                     <visible>true</visible>
                     <link>
-                        <id>26cbc3ff-6d04-4632-a59f-39c04f043ab3</id>
-                        <name>TurnOn</name>
+                        <id>6ef42766-3636-4246-864e-38cf3cbabad4</id>
+                        <name>In</name>
                     </link>
                 </outputlink>
                 <outputlink>
@@ -119,7 +119,7 @@
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>38.162220</value1>
+                        <value1>168.161987</value1>
                         <value2>-432.688293</value2>
                     </vec2>
                 </property>
@@ -131,8 +131,8 @@
                     <name>TurnOn</name>
                     <visible>true</visible>
                     <link>
-                        <id>04cdfeb2-bb02-425c-9a8b-c0b0bb869550</id>
-                        <name>Enter</name>
+                        <id>6ef42766-3636-4246-864e-38cf3cbabad4</id>
+                        <name>Each Actor</name>
                     </link>
                 </inputlink>
                 <inputlink>
@@ -163,7 +163,7 @@
                     <allowmultiple>true</allowmultiple>
                     <typecheck>true</typecheck>
                     <link>
-                        <id>beca92d8-f672-4899-82eb-938830cb6ca6</id>
+                        <id>bfebee2b-62af-4c32-aed2-3621dd857224</id>
                     </link>
                 </valuelink>
                 <valuelink>
@@ -195,14 +195,14 @@
                     <name>Position</name>
                     <vec2>
                         <value1>-224.224747</value1>
-                        <value2>-474.207001</value2>
+                        <value2>-487.188293</value2>
                     </vec2>
                 </property>
                 <property>
                     <name>Size</name>
                     <vec2>
-                        <value1>383.886963</value1>
-                        <value2>297.298676</value2>
+                        <value1>513.886963</value1>
+                        <value2>351.481293</value2>
                     </vec2>
                 </property>
                 <property>
@@ -214,6 +214,77 @@
                         <valueA>0.882353</valueA>
                     </colorRGBA>
                 </property>
+            </node>
+            <node>
+                <name>For Each Actor</name>
+                <category>General</category>
+                <id>6ef42766-3636-4246-864e-38cf3cbabad4</id>
+                <property>
+                    <name>Position</name>
+                    <vec2>
+                        <value1>33.137634</value1>
+                        <value2>-445.688293</value2>
+                    </vec2>
+                </property>
+                <property>
+                    <name>Name Filter</name>
+                    <string>Crate</string>
+                </property>
+                <inputlink>
+                    <name>In</name>
+                    <visible>true</visible>
+                    <link>
+                        <id>04cdfeb2-bb02-425c-9a8b-c0b0bb869550</id>
+                        <name>Enter</name>
+                    </link>
+                </inputlink>
+                <outputlink>
+                    <name>Each Actor</name>
+                    <visible>true</visible>
+                    <link>
+                        <id>26cbc3ff-6d04-4632-a59f-39c04f043ab3</id>
+                        <name>TurnOn</name>
+                    </link>
+                </outputlink>
+                <outputlink>
+                    <name>Finished</name>
+                    <visible>false</visible>
+                </outputlink>
+                <valuelink>
+                    <name>Enabled</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+                <valuelink>
+                    <name>Actor Type</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+                <valuelink>
+                    <name>Name Filter</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+                <valuelink>
+                    <name>Current Actor</name>
+                    <visible>true</visible>
+                    <exposed>true</exposed>
+                    <isout>true</isout>
+                    <allowmultiple>true</allowmultiple>
+                    <typecheck>true</typecheck>
+                    <link>
+                        <id>7b61bfa4-a2ea-485a-9100-f97d3f028168</id>
+                    </link>
+                </valuelink>
             </node>
         </actionnodes>
         <valuenodes>
@@ -238,155 +309,23 @@
                 </valuelink>
             </node>
             <node>
-                <name>Actor Array</name>
+                <name>Actor</name>
                 <category>General</category>
-                <id>beca92d8-f672-4899-82eb-938830cb6ca6</id>
-                <property>
-                    <name>LogNode</name>
-                    <boolean>true</boolean>
-                </property>
+                <id>7b61bfa4-a2ea-485a-9100-f97d3f028168</id>
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>48.162018</value1>
+                        <value1>43.137604</value1>
                         <value2>-298.408325</value2>
                     </vec2>
                 </property>
                 <property>
                     <name>Name</name>
-                    <string>Crates</string>
+                    <string>Current Actor</string>
                 </property>
                 <property>
-                    <name>InitialValueList</name>
-                    <array>
-                        <size>18</size>
-                        <element>
-                            <index>0</index>
-                            <property>
-                                <name>Value</name>
-                                <actorId>8f9ea7dd-16b9-4dc8-a193-c73bb2f19d3e</actorId>
-                            </property>
-                        </element>
-                        <element>
-                            <index>1</index>
-                            <property>
-                                <name>Value</name>
-                                <actorId>b16d667d-17dc-410c-b951-58853f8c364e</actorId>
-                            </property>
-                        </element>
-                        <element>
-                            <index>2</index>
-                            <property>
-                                <name>Value</name>
-                                <actorId>6835997d-7eef-4dd6-a1eb-c20a8bd267e2</actorId>
-                            </property>
-                        </element>
-                        <element>
-                            <index>3</index>
-                            <property>
-                                <name>Value</name>
-                                <actorId>e9de4159-a74c-4bf6-8099-1739e48d0802</actorId>
-                            </property>
-                        </element>
-                        <element>
-                            <index>4</index>
-                            <property>
-                                <name>Value</name>
-                                <actorId>7ca1f83a-4603-4988-9ec9-d6c3d3f09e29</actorId>
-                            </property>
-                        </element>
-                        <element>
-                            <index>5</index>
-                            <property>
-                                <name>Value</name>
-                                <actorId>1188a57f-1bc3-4e5b-b34e-2e25d3b22fd4</actorId>
-                            </property>
-                        </element>
-                        <element>
-                            <index>6</index>
-                            <property>
-                                <name>Value</name>
-                                <actorId>759d728e-9eb9-454e-a856-ff29cda45bb8</actorId>
-                            </property>
-                        </element>
-                        <element>
-                            <index>7</index>
-                            <property>
-                                <name>Value</name>
-                                <actorId>87826508-c043-4b98-a6e1-450c6c293c89</actorId>
-                            </property>
-                        </element>
-                        <element>
-                            <index>8</index>
-                            <property>
-                                <name>Value</name>
-                                <actorId>c9501e45-6ab6-417f-844b-7192faca8596</actorId>
-                            </property>
-                        </element>
-                        <element>
-                            <index>9</index>
-                            <property>
-                                <name>Value</name>
-                                <actorId>61af94f1-7222-4a65-9c05-811c7cae0416</actorId>
-                            </property>
-                        </element>
-                        <element>
-                            <index>10</index>
-                            <property>
-                                <name>Value</name>
-                                <actorId>42c2c7e1-555e-4f2b-a61d-57deb9fea7eb</actorId>
-                            </property>
-                        </element>
-                        <element>
-                            <index>11</index>
-                            <property>
-                                <name>Value</name>
-                                <actorId>ab5146f3-9ec4-4cca-86f5-32e6ffd478cf</actorId>
-                            </property>
-                        </element>
-                        <element>
-                            <index>12</index>
-                            <property>
-                                <name>Value</name>
-                                <actorId>2b0eeb54-0098-4e45-bcb8-15797a5cbe3d</actorId>
-                            </property>
-                        </element>
-                        <element>
-                            <index>13</index>
-                            <property>
-                                <name>Value</name>
-                                <actorId>e7cabc1e-542d-4156-8257-76ca75df8a9a</actorId>
-                            </property>
-                        </element>
-                        <element>
-                            <index>14</index>
-                            <property>
-                                <name>Value</name>
-                                <actorId>a3d98b66-869b-466c-acef-9ba7711d5246</actorId>
-                            </property>
-                        </element>
-                        <element>
-                            <index>15</index>
-                            <property>
-                                <name>Value</name>
-                                <actorId>ed981ba3-7458-4689-9b73-5f33a6a9b0d2</actorId>
-                            </property>
-                        </element>
-                        <element>
-                            <index>16</index>
-                            <property>
-                                <name>Value</name>
-                                <actorId>6a171766-1453-4517-ab5a-70e12cdf7dac</actorId>
-                            </property>
-                        </element>
-                        <element>
-                            <index>17</index>
-                            <property>
-                                <name>Value</name>
-                                <actorId>0464b171-2dcf-44ca-8c40-2276ced06bb4</actorId>
-                            </property>
-                        </element>
-                    </array>
+                    <name>Initial Value</name>
+                    <actorId></actorId>
                 </property>
                 <valuelink>
                     <name>Enabled</name>
@@ -395,6 +334,33 @@
                     <isout>false</isout>
                     <allowmultiple>false</allowmultiple>
                     <typecheck>true</typecheck>
+                </valuelink>
+            </node>
+            <node>
+                <name>Reference</name>
+                <category>Core</category>
+                <id>bfebee2b-62af-4c32-aed2-3621dd857224</id>
+                <property>
+                    <name>Position</name>
+                    <vec2>
+                        <value1>178.161987</value1>
+                        <value2>-299.207001</value2>
+                    </vec2>
+                </property>
+                <property>
+                    <name>Reference</name>
+                    <string>Current Actor</string>
+                </property>
+                <valuelink>
+                    <name>Value</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>true</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                    <link>
+                        <id>7b61bfa4-a2ea-485a-9100-f97d3f028168</id>
+                    </link>
                 </valuelink>
             </node>
         </valuenodes>
