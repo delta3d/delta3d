@@ -13,6 +13,7 @@ SET(LIB_PUBLIC_HEADERS ${HEADER_PATH}/nodelibraryexport.h
     ${HEADER_PATH}/buttonevent.h
     ${HEADER_PATH}/setguicursor.h
     ${HEADER_PATH}/setlayoutvisibility.h
+    ${HEADER_PATH}/setwidgettext.h
    )
 
 
@@ -22,6 +23,7 @@ SET(LIB_SOURCES ${SOURCE_PATH}/guinodemanager.cpp
     ${SOURCE_PATH}/buttonevent.cpp
     ${SOURCE_PATH}/setguicursor.cpp
     ${SOURCE_PATH}/setlayoutvisibility.cpp
+    ${SOURCE_PATH}/setwidgettext.cpp
    )
 
 
