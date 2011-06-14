@@ -314,6 +314,11 @@ namespace dtQt
          dtDAL::BaseActorObject* object = dtDAL::BaseActorObject::GetInstance(index);
          if (object)
          {
+            if (!className.empty() && object->GetClassName() != className)
+            {
+               continue;
+            }
+
             dtDAL::ActorProperty* prototypeProp = object->GetProperty("Initial Ownership");
             dtDAL::ActorProperty* ghostProp = object->GetProperty("Is Ghost");
             if ((!prototypeProp || prototypeProp->ToString() != "PROTOTYPE") &&
