@@ -33,6 +33,7 @@ SET(LIB_PUBLIC_HEADERS ${HEADER_PATH}/actorarrayvalue.h
     ${HEADER_PATH}/doublevalue.h
     ${HEADER_PATH}/externalvaluenode.h
     ${HEADER_PATH}/floatvalue.h
+    ${HEADER_PATH}/foreachactoraction.h
     ${HEADER_PATH}/gameeventmessageevent.h
     ${HEADER_PATH}/gamemessageevent.h
     ${HEADER_PATH}/getactororientationaction.h
@@ -119,6 +120,7 @@ SET(LIB_SOURCES ${SOURCE_PATH}/actorarrayvalue.cpp
     ${SOURCE_PATH}/doublevalue.cpp
     ${SOURCE_PATH}/externalvaluenode.cpp
     ${SOURCE_PATH}/floatvalue.cpp
+    ${SOURCE_PATH}/foreachactoraction.cpp
     ${SOURCE_PATH}/gameeventmessageevent.cpp
     ${SOURCE_PATH}/gamemessageevent.cpp
     ${SOURCE_PATH}/getactororientationaction.cpp
