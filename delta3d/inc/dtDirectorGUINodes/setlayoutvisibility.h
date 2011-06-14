@@ -101,8 +101,11 @@ namespace dtDirector
        * Accessors for property values.
        */
       void SetLayout(const std::string& value);
-      std::string GetLayout();
+      std::string GetLayout() const;
       std::vector<std::string> GetLayoutList();
+
+      void SetFadeTime(float value);
+      float GetFadeTime() const;
 
    protected:
 
@@ -114,6 +117,8 @@ namespace dtDirector
    private:
 
       std::string mLayout;
+      float       mElapsedTime;
+      float       mFadeTime;
    };
 }
 
