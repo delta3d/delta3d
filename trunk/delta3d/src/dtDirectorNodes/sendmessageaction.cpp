@@ -50,8 +50,8 @@ namespace dtDirector
 
       UpdateName();
 
-      mOutputs.push_back(OutputLink(this, "Success"));
-      mOutputs.push_back(OutputLink(this, "Failed"));
+      mOutputs.push_back(OutputLink(this, "Success", "Activated when the message was successfully sent."));
+      mOutputs.push_back(OutputLink(this, "Failed", "Activated when the message has failed to send."));
    }
 
    ////////////////////////////////////////////////////////////////////////////////

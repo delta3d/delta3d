@@ -46,8 +46,8 @@ namespace dtDirector
       EventNode::Init(nodeType, graph);
 
       mOutputs.clear();
-      mOutputs.push_back(OutputLink(this, "Enter"));
-      mOutputs.push_back(OutputLink(this, "Leave"));
+      mOutputs.push_back(OutputLink(this, "Enter", "Activates when an actor has entered the volume."));
+      mOutputs.push_back(OutputLink(this, "Leave", "Activates when an actor has left the volume."));
    }
 
    ////////////////////////////////////////////////////////////////////////////////

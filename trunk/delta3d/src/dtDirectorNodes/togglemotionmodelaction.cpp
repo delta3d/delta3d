@@ -51,11 +51,11 @@ namespace dtDirector
 
       // Create multiple inputs for different operations.
       mInputs.clear();
-      mInputs.push_back(InputLink(this, "TurnOn"));
-      mInputs.push_back(InputLink(this, "TurnOff"));
-      mInputs.push_back(InputLink(this, "Toggle"));
+      mInputs.push_back(InputLink(this, "TurnOn", "Turns the motion model on."));
+      mInputs.push_back(InputLink(this, "TurnOff", "Turns the motion model off."));
+      mInputs.push_back(InputLink(this, "Toggle", "Toggles the motion model."));
 
-      mOutputs.push_back(OutputLink(this, "Failed"));
+      mOutputs.push_back(OutputLink(this, "Failed", "Activates when the motion model could not be found."));
    }
 
    /////////////////////////////////////////////////////////////////////////////

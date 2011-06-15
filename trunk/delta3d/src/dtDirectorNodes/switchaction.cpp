@@ -118,7 +118,8 @@ namespace dtDirector
       // If we don't have enough, add some
       while (currentOutCount < mOutputCount)
       {
-         mOutputs.push_back(OutputLink(this, "Out " + dtUtil::ToString(++currentOutCount)));
+         mOutputs.push_back(OutputLink(this, "Out " + dtUtil::ToString(currentOutCount), "Activated when the switch has been executed " + dtUtil::ToString(currentOutCount) + " time(s)."));
+         currentOutCount++;
       }
    }
 

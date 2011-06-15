@@ -144,7 +144,7 @@ namespace dtDirector
 
                if (!found)
                {
-                  InputLink newLink = InputLink(this, link->GetName());
+                  InputLink newLink = InputLink(this, link->GetName(), inputs[index]->GetComment());
                   newLink.RedirectLink(link);
                   mInputs.push_back(newLink);
                }
@@ -176,7 +176,7 @@ namespace dtDirector
 
                if (!found)
                {
-                  OutputLink newLink = OutputLink(this, link->GetName());
+                  OutputLink newLink = OutputLink(this, link->GetName(), outputs[index]->GetComment());
                   mOutputs.push_back(newLink);
                   link->RedirectLink(&mOutputs.back());
                }
@@ -209,6 +209,7 @@ namespace dtDirector
                if (!found)
                {
                   ValueLink newLink = ValueLink(this, NULL, link->IsOutLink(), link->AllowMultiple(), link->IsTypeChecking(), true);
+                  newLink.SetComment(values[index]->GetComment());
                   newLink.SetName(link->GetName());
                   mValues.push_back(newLink);
                   link->RedirectLink(&mValues.back());

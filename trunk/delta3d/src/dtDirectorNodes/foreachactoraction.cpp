@@ -50,8 +50,8 @@ namespace dtDirector
       ActionNode::Init(nodeType, graph);
 
       mOutputs.clear();
-      mOutputs.push_back(OutputLink(this, "Each Actor"));
-      mOutputs.push_back(OutputLink(this, "Finished"));
+      mOutputs.push_back(OutputLink(this, "Each Actor", "Activates once for each actor found."));
+      mOutputs.push_back(OutputLink(this, "Finished", "Activates after all actors have been iterated through."));
    }
 
    ////////////////////////////////////////////////////////////////////////////////

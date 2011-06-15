@@ -57,8 +57,8 @@ namespace dtDirector
       ActionNode::Init(nodeType, graph);
 
       mOutputs.clear();
-      mOutputs.push_back(OutputLink(this, "True"));
-      mOutputs.push_back(OutputLink(this, "False"));
+      mOutputs.push_back(OutputLink(this, "True", "Activates if the Actor is facing towards the Target."));
+      mOutputs.push_back(OutputLink(this, "False", "Activates if the Actor is not facing towards the Target."));
    }
 
    /////////////////////////////////////////////////////////////////////////////

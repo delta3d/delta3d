@@ -53,8 +53,8 @@ namespace dtDirector
 
       // Create multiple inputs for different operations.
       mInputs.clear();
-      mInputs.push_back(InputLink(this, "Set"));
-      mInputs.push_back(InputLink(this, "Insert"));
+      mInputs.push_back(InputLink(this, "Set", "Sets the contents of an array."));
+      mInputs.push_back(InputLink(this, "Insert", "Inserts more values into an array."));
    }
 
    /////////////////////////////////////////////////////////////////////////////

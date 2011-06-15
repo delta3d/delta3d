@@ -51,8 +51,8 @@ namespace dtDirector
 
       UpdateLabel();
 
-      mOutputs.push_back(OutputLink(this, "Success"));
-      mOutputs.push_back(OutputLink(this, "Failed"));
+      mOutputs.push_back(OutputLink(this, "Success", "Activated when the event message was successfully sent."));
+      mOutputs.push_back(OutputLink(this, "Failed", "Activated when the event message has failed to send."));
    }
 
    ////////////////////////////////////////////////////////////////////////////////

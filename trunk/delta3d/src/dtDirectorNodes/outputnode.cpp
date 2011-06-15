@@ -46,12 +46,12 @@ namespace dtDirector
       ActionNode::Init(nodeType, graph);
 
       mInputs.clear();
-      mInputs.push_back(InputLink(this, "In"));
+      mInputs.push_back(InputLink(this, "In", "Activate this node."));
 
       // This node has an output node, but it is not visible inside the tier
       // because nothing should be connected to it within that tier.
       mOutputs.clear();
-      mOutputs.push_back(OutputLink(this, "Out"));
+      mOutputs.push_back(OutputLink(this, "Out", "Activated when this node is activated."));
    }
 
    ////////////////////////////////////////////////////////////////////////////////

@@ -56,9 +56,9 @@ namespace dtDirector
 
       // Create multiple inputs for different operations.
       mInputs.clear();
-      mInputs.push_back(InputLink(this, "TurnOn"));
-      mInputs.push_back(InputLink(this, "TurnOff"));
-      mInputs.push_back(InputLink(this, "Toggle"));
+      mInputs.push_back(InputLink(this, "TurnOn", "Turns an actor or boolean value on."));
+      mInputs.push_back(InputLink(this, "TurnOff", "Turns an actor or boolean value off."));
+      mInputs.push_back(InputLink(this, "Toggle", "Toggles the status of an actors property or a boolean value."));
    }
 
    /////////////////////////////////////////////////////////////////////////////

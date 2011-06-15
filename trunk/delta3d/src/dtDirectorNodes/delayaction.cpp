@@ -50,11 +50,11 @@ namespace dtDirector
 
       // Create multiple inputs for different operations.
       mInputs.clear();
-      mInputs.push_back(InputLink(this, "Start"));
-      mInputs.push_back(InputLink(this, "Stop"));
-      mInputs.push_back(InputLink(this, "Pause"));
+      mInputs.push_back(InputLink(this, "Start", "Starts or resumes the delay."));
+      mInputs.push_back(InputLink(this, "Stop", "Stops and resets the delay."));
+      mInputs.push_back(InputLink(this, "Pause", "Interrupts the delay so it can be resumed later."));
 
-      mOutputs.push_back(OutputLink(this, "Time Elapsed"));
+      mOutputs.push_back(OutputLink(this, "Time Elapsed", "Activated when the delay time has elapsed."));
    }
 
    ////////////////////////////////////////////////////////////////////////////////

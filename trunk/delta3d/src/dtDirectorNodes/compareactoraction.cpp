@@ -47,8 +47,8 @@ namespace dtDirector
       ActionNode::Init(nodeType, graph);
 
       mOutputs.clear();
-      mOutputs.push_back(OutputLink(this, "A == B"));
-      mOutputs.push_back(OutputLink(this, "A != B"));
+      mOutputs.push_back(OutputLink(this, "A == B", "Activates when both actors are equal."));
+      mOutputs.push_back(OutputLink(this, "A != B", "Activates when both actors are not equal."));
    }
 
    ////////////////////////////////////////////////////////////////////////////////

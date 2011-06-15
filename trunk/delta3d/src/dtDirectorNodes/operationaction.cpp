@@ -50,13 +50,10 @@ namespace dtDirector
 
       // Create multiple inputs for different operations.
       mInputs.clear();
-      //mInputs.push_back(InputLink(this, "Some Really Long Input Name for Testing"));
-      mInputs.push_back(InputLink(this, "Add"));
-      mInputs.push_back(InputLink(this, "Subtract"));
-      mInputs.push_back(InputLink(this, "Multiply"));
-      mInputs.push_back(InputLink(this, "Divide"));
-
-      //mOutputs.push_back(OutputLink(this, "Some Really Long Output Name for Testing"));
+      mInputs.push_back(InputLink(this, "Add", "Performs an add operation between values A and B."));
+      mInputs.push_back(InputLink(this, "Subtract", "Performs a subtraction operation between values A and B."));
+      mInputs.push_back(InputLink(this, "Multiply", "Performs a multiply operation between values A and B."));
+      mInputs.push_back(InputLink(this, "Divide", "Performs a divide operation between values A and B."));
    }
 
    ////////////////////////////////////////////////////////////////////////////////
