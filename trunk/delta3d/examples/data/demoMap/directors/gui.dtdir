@@ -2,7 +2,7 @@
 <director xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dDirector" xsi:schemaLocation="delta3dDirector director.xsd">
     <header>
         <createTimestamp>2009-12-23T15:09:12-08:00</createTimestamp>
-        <lastUpdateTimestamp>2011-06-10T10:51:15-08:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2011-06-14T14:04:36-08:00</lastUpdateTimestamp>
         <editorVersion>2.7.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
         <scriptType>Scenario</scriptType>
@@ -194,8 +194,8 @@
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>-138.025421</value1>
-                        <value2>230.178055</value2>
+                        <value1>-290.025421</value1>
+                        <value2>228.178055</value2>
                     </vec2>
                 </property>
                 <property>
@@ -205,78 +205,6 @@
                 <property>
                     <name>Button</name>
                     <string>MyButton</string>
-                </property>
-                <outputlink>
-                    <name>Clicked</name>
-                    <visible>true</visible>
-                    <link>
-                        <id>e852a2a5-cc13-45e5-96bb-90506f4a721c</id>
-                        <name>Hide</name>
-                    </link>
-                </outputlink>
-                <outputlink>
-                    <name>Double Clicked</name>
-                    <visible>false</visible>
-                </outputlink>
-                <outputlink>
-                    <name>Hover Enter</name>
-                    <visible>false</visible>
-                </outputlink>
-                <outputlink>
-                    <name>Hover Leave</name>
-                    <visible>false</visible>
-                </outputlink>
-                <valuelink>
-                    <name>Enabled</name>
-                    <visible>true</visible>
-                    <exposed>false</exposed>
-                    <isout>false</isout>
-                    <allowmultiple>false</allowmultiple>
-                    <typecheck>true</typecheck>
-                </valuelink>
-                <valuelink>
-                    <name>TriggerCount</name>
-                    <visible>true</visible>
-                    <exposed>false</exposed>
-                    <isout>false</isout>
-                    <allowmultiple>false</allowmultiple>
-                    <typecheck>true</typecheck>
-                </valuelink>
-                <valuelink>
-                    <name>Layout</name>
-                    <visible>true</visible>
-                    <exposed>false</exposed>
-                    <isout>false</isout>
-                    <allowmultiple>false</allowmultiple>
-                    <typecheck>true</typecheck>
-                </valuelink>
-                <valuelink>
-                    <name>Button</name>
-                    <visible>true</visible>
-                    <exposed>false</exposed>
-                    <isout>false</isout>
-                    <allowmultiple>false</allowmultiple>
-                    <typecheck>true</typecheck>
-                </valuelink>
-            </node>
-            <node>
-                <name>Button Event</name>
-                <category>GUI</category>
-                <id>a434152f-13db-41c7-9387-d4ffeb807067</id>
-                <property>
-                    <name>Position</name>
-                    <vec2>
-                        <value1>-289.025421</value1>
-                        <value2>299.866455</value2>
-                    </vec2>
-                </property>
-                <property>
-                    <name>Layout</name>
-                    <string>gui.layout</string>
-                </property>
-                <property>
-                    <name>Button</name>
-                    <string>Framewindow__auto_closebutton__</string>
                 </property>
                 <outputlink>
                     <name>Clicked</name>
@@ -555,8 +483,8 @@
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>59.068802</value1>
-                        <value2>230.178055</value2>
+                        <value1>-92.931198</value1>
+                        <value2>228.178055</value2>
                     </vec2>
                 </property>
                 <property>
@@ -572,10 +500,6 @@
                     <visible>true</visible>
                     <link>
                         <id>933cf928-6a20-4cf7-8223-d985ef3b51c2</id>
-                        <name>Clicked</name>
-                    </link>
-                    <link>
-                        <id>a434152f-13db-41c7-9387-d4ffeb807067</id>
                         <name>Clicked</name>
                     </link>
                 </inputlink>
@@ -619,14 +543,14 @@
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>-361.500000</value1>
-                        <value2>188.582764</value2>
+                        <value1>-361.525421</value1>
+                        <value2>186.582764</value2>
                     </vec2>
                 </property>
                 <property>
                     <name>Size</name>
                     <vec2>
-                        <value1>1097.000000</value1>
+                        <value1>868.525391</value1>
                         <value2>347.655273</value2>
                     </vec2>
                 </property>
@@ -837,8 +761,8 @@
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>238.068848</value1>
-                        <value2>243.178040</value2>
+                        <value1>86.068848</value1>
+                        <value2>241.178040</value2>
                     </vec2>
                 </property>
                 <inputlink>
@@ -908,8 +832,8 @@
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>503.500000</value1>
-                        <value2>230.178040</value2>
+                        <value1>351.500000</value1>
+                        <value2>228.178040</value2>
                     </vec2>
                 </property>
                 <property>
@@ -964,8 +888,8 @@
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>377.375000</value1>
-                        <value2>243.178040</value2>
+                        <value1>225.375000</value1>
+                        <value2>241.178040</value2>
                     </vec2>
                 </property>
                 <property>
@@ -1032,8 +956,8 @@
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>503.500000</value1>
-                        <value2>298.318817</value2>
+                        <value1>351.500000</value1>
+                        <value2>296.318817</value2>
                     </vec2>
                 </property>
                 <inputlink>
@@ -1134,8 +1058,8 @@
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>248.068848</value1>
-                        <value2>372.738037</value2>
+                        <value1>96.068848</value1>
+                        <value2>370.738037</value2>
                     </vec2>
                 </property>
                 <property>
