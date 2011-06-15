@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <map xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dMap" xsi:schemaLocation="delta3dMap map.xsd">
     <header>
         <name>TestDirectorScript</name>
@@ -7,7 +8,7 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2010-04-09T10:46:32-08:00</createTimestamp>
-        <lastUpdateTimestamp>2011-06-10T12:40:26-08:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2011-06-15T15:06:41-08:00</lastUpdateTimestamp>
         <editorVersion>2.7.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
@@ -28,7 +29,7 @@
             <property>
                 <name>DirectorArray</name>
                 <array>
-                    <size>6</size>
+                    <size>5</size>
                     <element>
                         <index>0</index>
                         <property>
@@ -72,15 +73,6 @@
                             <resourceType>Directors</resourceType>
                             <resourceDisplayName>Directors:gui.dtdir</resourceDisplayName>
                             <resource>Directors:gui.dtdir</resource>
-                        </property>
-                    </element>
-                    <element>
-                        <index>5</index>
-                        <property>
-                            <name>DirectorGraph</name>
-                            <resourceType>Directors</resourceType>
-                            <resourceDisplayName>Directors:video.dtdir</resourceDisplayName>
-                            <resource>Directors:video.dtdir</resource>
                         </property>
                     </element>
                 </array>

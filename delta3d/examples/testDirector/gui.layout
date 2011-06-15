@@ -2,24 +2,26 @@
 
 <GUILayout >
     <Window Type="DefaultWindow" Name="Root" >
-        <Property Name="InheritsAlpha" Value="True" />
         <Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
         <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{1,0},{1,0}}" />
         <Property Name="MousePassThroughEnabled" Value="True" />
         <Window Type="WindowsLook/FrameWindow" Name="Framewindow" >
+            <Property Name="Text" Value="Popup Window" />
             <Property Name="TitlebarFont" Value="DejaVuSans-10" />
             <Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
             <Property Name="TitlebarEnabled" Value="True" />
-            <Property Name="UnifiedAreaRect" Value="{{0.506614,0},{0.356753,0},{0.972197,0},{0.867717,0}}" />
-            <Window Type="WindowsLook/StaticImage" Name="camera1target" >
-                <Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
-                <Property Name="UnifiedAreaRect" Value="{{0.0680095,0},{0.118035,0},{0.939226,0},{0.80926,0}}" />
-            </Window>
+            <Property Name="UnifiedAreaRect" Value="{{0.276927,0},{0.233836,0},{0.742509,0},{0.7448,0}}" />
             <Window Type="WindowsLook/Button" Name="MyButton" >
+                <Property Name="Text" Value="Exit" />
                 <Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
                 <Property Name="UnifiedAreaRect" Value="{{0.2,0},{0.834887,0},{0.791582,0},{0.966374,0}}" />
-                <Property Name="Text" Value="Exit"/>
-                <Event Name="Clicked" Function="quitHandler" />
+            </Window>
+            <Window Type="WindowsLook/StaticText" Name="WindowText" >
+                <Property Name="Font" Value="DejaVuSans-10" />
+                <Property Name="Text" Value="Sample Window Text!" />
+                <Property Name="HorzFormatting" Value="WordWrapCentred" />
+                <Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
+                <Property Name="UnifiedAreaRect" Value="{{0.210068,0},{0.195923,0},{0.782245,0},{0.751717,0}}" />
             </Window>
         </Window>
     </Window>
