@@ -55,10 +55,10 @@ namespace dtDirector
 
       // Create multiple inputs for different operations.
       mInputs.clear();
-      mInputs.push_back(InputLink(this, "Show", "Shows the GUI Layout."));
-      mInputs.push_back(InputLink(this, "Hide", "Hides the GUI Layout."));
+      mInputs.push_back(InputLink(this, "Show"));
+      mInputs.push_back(InputLink(this, "Hide"));
 
-      mOutputs.push_back(OutputLink(this, "Failed", "Activates if the layout could not be loaded."));
+      mOutputs.push_back(OutputLink(this, "Failed"));
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -86,7 +86,7 @@ namespace dtDirector
          dtDAL::FloatActorProperty::GetFuncType(this, &SetLayoutVisibility::GetFadeTime),
          "The amount of time to fade the layout in or out of view.");
       AddProperty(fadeProp);
-
+      
       // This will expose the properties in the editor and allow
       // them to be connected to ValueNodes.
       mValues.push_back(ValueLink(this, layoutProp, false, false, true, false));
@@ -114,22 +114,12 @@ namespace dtDirector
          case INPUT_SHOW:
             {
                layout->show();
-               if (fadeTime > 0.0f)
-               {
-                  layout->setAlpha(0.0f);
-               }
+               layout->setAlpha(0.0f);
             }
             break;
          case INPUT_HIDE:
             {
-               if (fadeTime > 0.0f)
-               {
-                  layout->setAlpha(1.0f);
-               }
-               else
-               {
-                  layout->hide();
-               }
+               layout->setAlpha(1.0f);
             }
             break;
          }
@@ -137,41 +127,44 @@ namespace dtDirector
          ActionNode::Update(simDelta, delta, input, firstUpdate);
       }
 
-      if (fadeTime > 0.0f)
+      mElapsedTime = dtUtil::Min(mElapsedTime + delta, fadeTime);
+
+      switch (input)
       {
-         mElapsedTime = dtUtil::Min(mElapsedTime + delta, fadeTime);
-
-         switch (input)
+      case INPUT_SHOW:
          {
-         case INPUT_SHOW:
+            float alpha = 1.0f;
+            if (fadeTime > 0.0f)
             {
-               float alpha = mElapsedTime / fadeTime;
-               layout->setAlpha(alpha);
-
-               if (alpha >= 1.0f)
-               {
-                  return false;
-               }
+               alpha = mElapsedTime / fadeTime;
             }
-            break;
-         case INPUT_HIDE:
+            layout->setAlpha(alpha);
+
+            if (alpha >= 1.0f)
             {
-               float alpha = 1.0f - (mElapsedTime / fadeTime);
-               layout->setAlpha(alpha);
-
-               if (alpha <= 0.0f)
-               {
-                  layout->hide();
-                  return false;
-               }
+               return false;
             }
-            break;
          }
+         break;
+      case INPUT_HIDE:
+         {
+            float alpha = 0.0f;
+            if (fadeTime > 0.0f)
+            {
+               alpha = 1.0f - (mElapsedTime / fadeTime);
+            }
+            layout->setAlpha(alpha);
 
-         return true;
+            if (alpha <= 0.0f)
+            {
+               layout->hide();
+               return false;
+            }
+         }
+         break;
       }
 
-      return false;
+      return true;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
