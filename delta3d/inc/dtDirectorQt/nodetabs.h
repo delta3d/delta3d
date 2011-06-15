@@ -82,7 +82,7 @@ namespace dtDirector
       void AddCustomEditor(const std::string& editor);
 
    signals:
-      void CreateNode(const QString& name, const QString& category);
+      void CreateNode(const QString& name, const QString& category, const QString& refName);
 
    private:
 
