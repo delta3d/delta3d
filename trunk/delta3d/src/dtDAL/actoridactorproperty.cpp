@@ -245,6 +245,11 @@ namespace dtDAL
          return proxy->GetName();
       }
 
+      if (!GetValue().ToString().empty())
+      {
+         return "Unknown";
+      }
+
       return "None";
    }
 
