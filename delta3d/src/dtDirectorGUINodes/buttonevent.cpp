@@ -51,10 +51,10 @@ namespace dtDirector
       EventNode::Init(nodeType, graph);
 
       mOutputs.clear();
-      mOutputs.push_back(OutputLink(this, "Clicked"));
-      mOutputs.push_back(OutputLink(this, "Double Clicked"));
-      mOutputs.push_back(OutputLink(this, "Hover Enter"));
-      mOutputs.push_back(OutputLink(this, "Hover Leave"));
+      mOutputs.push_back(OutputLink(this, "Clicked", "Activated when the GUI button has been clicked."));
+      mOutputs.push_back(OutputLink(this, "Double Clicked", "Activated when the GUI button has been double clicked."));
+      mOutputs.push_back(OutputLink(this, "Hover Enter", "Activated when the mouse has entered the bounds of the GUI button."));
+      mOutputs.push_back(OutputLink(this, "Hover Leave", "Activated when the mouse has left the bounds of the GUI button."));
    }
 
    /////////////////////////////////////////////////////////////////////////////
