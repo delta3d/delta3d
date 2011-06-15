@@ -25,6 +25,7 @@
 
 #include <dtCore/camera.h>
 #include <dtCore/deltadrawable.h>
+#include <dtCore/transform.h>
 
 #include <dtDAL/actoridactorproperty.h>
 
@@ -82,6 +83,11 @@ namespace dtDirector
          dtCore::DeltaDrawable* actor = proxy->GetActor();
          if (camera && actor)
          {
+            dtCore::Transform transform;
+            camera->GetTransform(transform);
+            transform.SetRotation(osg::Vec3(0.0f, 0.0f, 0.0f));
+            camera->SetTransform(transform);
+
             dtCore::DeltaDrawable* parent = camera->GetParent();
             if (parent)
             {
