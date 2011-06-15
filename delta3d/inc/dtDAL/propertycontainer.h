@@ -151,6 +151,15 @@ namespace dtDAL
       virtual void ResetProperty(dtDAL::ActorProperty& prop);
 
       /**
+       * Checks if a given property should be saved out to file data.
+       *
+       * @param[in]  prop  The property.
+       *
+       * @return     True if the given property should be saved.
+       */
+      virtual bool ShouldPropertySave(const dtDAL::ActorProperty& prop) const;
+
+      /**
        * Copies the property values from the passed in property container to it's own properties
        */
       void CopyPropertiesFrom(const PropertyContainer& copyFrom);

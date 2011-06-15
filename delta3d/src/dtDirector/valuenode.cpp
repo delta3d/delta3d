@@ -103,18 +103,11 @@ namespace dtDirector
             }
             return false;
          }
-
-         // Initial properties get saved out regardless of whether
-         // they are set to their defaults.
-         if (GetDirector()->IsSaving() && &prop == mInitialProperty)
-         {
-            return false;
-         }
       }
 
       return Node::IsPropertyDefault(prop);
    }
-   
+
    ////////////////////////////////////////////////////////////////////////////////
    void ValueNode::ResetProperty(dtDAL::ActorProperty& prop)
    {
@@ -128,6 +121,22 @@ namespace dtDirector
       }
 
       Node::ResetProperty(prop);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool ValueNode::ShouldPropertySave(const dtDAL::ActorProperty& prop) const
+   {
+      if (GetDirector()->GetNotifier())
+      {
+         // Initial properties get saved out regardless of whether
+         // they are set to their defaults.
+         if (&prop == mInitialProperty)
+         {
+            return true;
+         }
+      }
+
+      return Node::ShouldPropertySave(prop);
    }
 
    //////////////////////////////////////////////////////////////////////////

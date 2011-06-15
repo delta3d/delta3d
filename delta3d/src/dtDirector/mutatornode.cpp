@@ -41,6 +41,17 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   bool MutatorNode::ShouldPropertySave(const dtDAL::ActorProperty& prop) const
+   {
+      if (prop.GetName() == "Result")
+      {
+         return false;
+      }
+
+      return ValueNode::ShouldPropertySave(prop);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    std::string MutatorNode::GetValueLabel()
    {
       return "";

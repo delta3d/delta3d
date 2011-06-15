@@ -256,6 +256,12 @@ namespace dtDAL
       }
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   bool PropertyContainer::ShouldPropertySave(const dtDAL::ActorProperty& prop) const
+   {
+      return !IsPropertyDefault(prop);
+   }
+
    ///////////////////////////////////////////////////////////////////////////////////////
    void PropertyContainer::CopyPropertiesFrom(const PropertyContainer& copyFrom)
    {
