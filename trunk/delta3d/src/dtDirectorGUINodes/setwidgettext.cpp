@@ -49,7 +49,7 @@ namespace dtDirector
    {
       ActionNode::Init(nodeType, graph);
 
-      mOutputs.push_back(OutputLink(this, "Failed"));
+      mOutputs.push_back(OutputLink(this, "Failed", "Activates if Widget could not be found."));
    }
 
    /////////////////////////////////////////////////////////////////////////////

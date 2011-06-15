@@ -48,7 +48,7 @@ namespace dtDirector
    {
       ActionNode::Init(nodeType, graph);
 
-      mOutputs.push_back(OutputLink(this, "Failed"));
+      mOutputs.push_back(OutputLink(this, "Failed", "Activates if the GUI scheme could not be loaded."));
    }
 
    /////////////////////////////////////////////////////////////////////////////
