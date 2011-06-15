@@ -39,7 +39,7 @@ namespace dtDirector
 {
    const unsigned int LinkItem::LINE_WIDTH = 2;
 
-   LinkItem::LinkItem(NodeItem* nodeItem, int linkIndex, QGraphicsItem* parent, EditorScene* scene): QGraphicsPolygonItem(parent, scene)
+   LinkItem::LinkItem(NodeItem* nodeItem, int linkIndex, QGraphicsItem* parent, EditorScene* scene, const std::string& comment): QGraphicsPolygonItem(parent, scene)
       , mDrawing(NULL)
       , mHighlight(NULL)
       , mScene(scene)
@@ -50,6 +50,9 @@ namespace dtDirector
    {
       mHighlightPen  = QPen(Qt::yellow, LINE_WIDTH, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
       mLinkGraphicPen = Qt::NoPen;
+
+      QWidget::setToolTip(comment.c_str());
+      QGraphicsPolygonItem::setToolTip(comment.c_str());
 
       setAcceptHoverEvents(true);
 
@@ -142,10 +145,13 @@ namespace dtDirector
       mDrawing->setPen(QPen(Qt::black, LINE_WIDTH, Qt::DotLine, Qt::RoundCap, Qt::RoundJoin));
    }
 
+   //////////////////////////////////////////////////////////////////////////
+   //////////////////////////////////////////////////////////////////////////
+   //////////////////////////////////////////////////////////////////////////
 
    //////////////////////////////////////////////////////////////////////////
-   InputLinkItem::InputLinkItem(NodeItem* nodeItem, int linkIndex, QGraphicsItem* parent, EditorScene* scene)
-      : LinkItem(nodeItem, linkIndex, parent, scene)
+   InputLinkItem::InputLinkItem(NodeItem* nodeItem, int linkIndex, QGraphicsItem* parent, EditorScene* scene, const std::string& comment)
+      : LinkItem(nodeItem, linkIndex, parent, scene, comment)
    {
    }
 
@@ -321,8 +327,6 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-
-   //////////////////////////////////////////////////////////////////////////
    void InputLinkItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
    {
       if (mHighlight)
@@ -475,8 +479,8 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
 
    //////////////////////////////////////////////////////////////////////////
-   OutputLinkItem::OutputLinkItem(NodeItem* nodeItem, int linkIndex, QGraphicsItem* parent, EditorScene* scene)
-      : LinkItem(nodeItem, linkIndex, parent, scene)
+   OutputLinkItem::OutputLinkItem(NodeItem* nodeItem, int linkIndex, QGraphicsItem* parent, EditorScene* scene, const std::string& comment)
+      : LinkItem(nodeItem, linkIndex, parent, scene, comment)
    {
    }
 
@@ -741,8 +745,6 @@ namespace dtDirector
       }
    }
 
-
-
    //////////////////////////////////////////////////////////////////////////
    void OutputLinkItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
    {
@@ -896,16 +898,10 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
 
    //////////////////////////////////////////////////////////////////////////
-   ValueLinkItem::ValueLinkItem(NodeItem* nodeItem, int linkIndex, QGraphicsItem* parent, EditorScene* scene)
-      : LinkItem(nodeItem, linkIndex, parent, scene)
+   ValueLinkItem::ValueLinkItem(NodeItem* nodeItem, int linkIndex, QGraphicsItem* parent, EditorScene* scene, const std::string& comment)
+      : LinkItem(nodeItem, linkIndex, parent, scene, comment)
       , mType(dtDAL::DataType::UNKNOWN_ID)
    {
-      //ValueData& data = nodeItem->GetValues()[linkIndex];
-      //if (data.link->AllowMultiple())
-      //{
-      //   mLinkGraphicPen = QPen(Qt::black, LINE_WIDTH, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
-      //}
-      //SetHighlight(false);
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -1285,7 +1281,7 @@ namespace dtDirector
 
    //////////////////////////////////////////////////////////////////////////
    ValueNodeLinkItem::ValueNodeLinkItem(ValueItem* valueItem, QGraphicsItem* parent, EditorScene* scene)
-      : LinkItem(valueItem, 0, parent, scene)
+      : LinkItem(valueItem, 0, parent, scene, "")
       , mType(dtDAL::DataType::UNKNOWN_ID)
    {
    }

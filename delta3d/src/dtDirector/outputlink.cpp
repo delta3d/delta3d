@@ -28,8 +28,9 @@
 namespace dtDirector
 {
    ///////////////////////////////////////////////////////////////////////////////////////
-   OutputLink::OutputLink(Node* owner, const std::string& name)
+   OutputLink::OutputLink(Node* owner, const std::string& name, const std::string& comment)
       : mName(name)
+      , mComment(comment)
       , mVisible(true)
       , mActiveCount(0)
       , mOwner(owner)
@@ -48,6 +49,7 @@ namespace dtDirector
    OutputLink::OutputLink(const OutputLink& src)
    {
       mName = src.mName;
+      mComment = src.mComment;
       mVisible = src.mVisible;
       mActiveCount = src.mActiveCount;
       mOwner = src.mOwner;
@@ -63,6 +65,7 @@ namespace dtDirector
       Disconnect();
 
       mName = src.mName;
+      mComment = src.mComment;
       mVisible = src.mVisible;
       mActiveCount = src.mActiveCount;
       mOwner = src.mOwner;
@@ -88,6 +91,18 @@ namespace dtDirector
    const std::string& OutputLink::GetName() const
    {
       return mName;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void OutputLink::SetComment(const std::string& text)
+   {
+      mComment = text;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   const std::string& OutputLink::GetComment() const
+   {
+      return mComment;
    }
 
    //////////////////////////////////////////////////////////////////////////

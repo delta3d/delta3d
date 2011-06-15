@@ -161,6 +161,20 @@ namespace dtDirector
       void SetName(const std::string& name);
 
       /**
+       * Sets the comment for the link.
+       *
+       * @param[in]  text  The comment text.
+       */
+      void SetComment(const std::string& text);
+
+      /**
+       * Retrieves the comment of the link.
+       *
+       * @return  The comment.
+       */
+      const std::string& GetComment() const;
+
+      /**
        * Retrieves the display name of the link.
        */
       std::string GetDisplayName();
@@ -249,6 +263,7 @@ namespace dtDirector
       Node* mOwner;
       dtCore::ObserverPtr<Node> mProxyOwner;
       std::string mName;
+      std::string mComment;
       bool mVisible;
       bool mExposed;
 

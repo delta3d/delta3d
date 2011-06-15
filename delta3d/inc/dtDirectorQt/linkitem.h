@@ -78,7 +78,7 @@ namespace dtDirector
          void LinkConnected();
 
       protected:
-         LinkItem(NodeItem* nodeItem, int linkIndex, QGraphicsItem* parent, EditorScene* scene);
+         LinkItem(NodeItem* nodeItem, int linkIndex, QGraphicsItem* parent, EditorScene* scene, const std::string& comment);
 
          /**
           * Event handlers when the user presses a mouse button.
@@ -120,8 +120,9 @@ namespace dtDirector
        * @param[in]  linkIndex  The input link index.
        * @param[in]  parent     The parent item.
        * @param[in]  scene      The scene.
+       * @param[in]  comment    The comment.
        */
-      InputLinkItem(NodeItem* nodeItem, int linkIndex, QGraphicsItem* parent, EditorScene* scene);
+      InputLinkItem(NodeItem* nodeItem, int linkIndex, QGraphicsItem* parent, EditorScene* scene, const std::string& comment);
 
       /**
        * Draws the glow effect on this link.
@@ -206,8 +207,9 @@ namespace dtDirector
        * @param[in]  linkIndex  The output link index.
        * @param[in]  parent     The parent item.
        * @param[in]  scene      The scene.
+       * @param[in]  comment    The comment.
        */
-      OutputLinkItem(NodeItem* nodeItem, int linkIndex, QGraphicsItem* parent, EditorScene* scene);
+      OutputLinkItem(NodeItem* nodeItem, int linkIndex, QGraphicsItem* parent, EditorScene* scene, const std::string& comment);
 
       /**
        * Draws the glow effect on this link.
@@ -295,8 +297,9 @@ namespace dtDirector
        * @param[in]  linkIndex  The value link index.
        * @param[in]  parent     The parent item.
        * @param[in]  scene      The scene.
+       * @param[in]  comment    The comment.
        */
-      ValueLinkItem(NodeItem* nodeItem, int linkIndex, QGraphicsItem* parent, EditorScene* scene);
+      ValueLinkItem(NodeItem* nodeItem, int linkIndex, QGraphicsItem* parent, EditorScene* scene, const std::string& comment);
 
       /**
        * Sets the type of the link property.

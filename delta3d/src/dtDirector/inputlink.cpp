@@ -28,8 +28,9 @@
 namespace dtDirector
 {
    ///////////////////////////////////////////////////////////////////////////////////////
-   InputLink::InputLink(Node* owner, const std::string& name)
+   InputLink::InputLink(Node* owner, const std::string& name, const std::string& comment)
       : mName(name)
+      , mComment(comment)
       , mVisible(true)
       , mOwner(owner)
       , mRedirector(NULL)
@@ -48,6 +49,7 @@ namespace dtDirector
    InputLink::InputLink(const InputLink& src)
    {
       mName = src.mName;
+      mComment = src.mComment;
       mVisible = src.mVisible;
       mOwner = src.mOwner;
       mRedirector = src.mRedirector;
@@ -62,6 +64,7 @@ namespace dtDirector
       Disconnect();
 
       mName = src.mName;
+      mComment = src.mComment;
       mVisible = src.mVisible;
       mOwner = src.mOwner;
       mRedirector = src.mRedirector;
@@ -86,6 +89,18 @@ namespace dtDirector
    const std::string& InputLink::GetName() const
    {
       return mName;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void InputLink::SetComment(const std::string& text)
+   {
+      mComment = text;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   const std::string& InputLink::GetComment() const
+   {
+      return mComment;
    }
 
    //////////////////////////////////////////////////////////////////////////
