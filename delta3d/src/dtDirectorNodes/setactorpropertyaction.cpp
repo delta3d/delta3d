@@ -48,7 +48,7 @@ namespace dtDirector
    {
       ActionNode::Init(nodeType, graph);
 
-      mOutputs.push_back(OutputLink(this, "Failed"));
+      mOutputs.push_back(OutputLink(this, "Failed", "Activated when the actor property could not be found."));
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -132,8 +132,7 @@ namespace dtDirector
       }
       else
       {
-         OutputLink* link = GetOutputLink("Failed");
-         if (link) link->Activate();
+         ActivateOutput("Failed");
       }
 
       return false;

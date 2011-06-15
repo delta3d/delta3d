@@ -51,10 +51,10 @@ namespace dtDirector
 
       // Create multiple inputs for different operations.
       mInputs.clear();
-      mInputs.push_back(InputLink(this, "Insert"));
-      mInputs.push_back(InputLink(this, "Append"));
-      mInputs.push_back(InputLink(this, "Remove"));
-      mInputs.push_back(InputLink(this, "Replace"));
+      mInputs.push_back(InputLink(this, "Insert", "Insert text B within a character index of text A."));
+      mInputs.push_back(InputLink(this, "Append", "Appends text B to the end of text A."));
+      mInputs.push_back(InputLink(this, "Remove", "Removes all instances of text B from text A."));
+      mInputs.push_back(InputLink(this, "Replace", "Replaces all instances of text B from text A and replaces it with a replacement text."));
    }
 
    ////////////////////////////////////////////////////////////////////////////////

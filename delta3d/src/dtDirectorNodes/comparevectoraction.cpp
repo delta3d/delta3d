@@ -49,10 +49,10 @@ namespace dtDirector
       ActionNode::Init(nodeType, graph);
 
       mOutputs.clear();
-      mOutputs.push_back(OutputLink(this, "A == B"));
-      mOutputs.push_back(OutputLink(this, "A != B"));
-      mOutputs.push_back(OutputLink(this, "A equivalent to B"));
-      mOutputs.push_back(OutputLink(this, "A not equivalent to B"));
+      mOutputs.push_back(OutputLink(this, "A == B", "Activated when value A and value B are exactly equal."));
+      mOutputs.push_back(OutputLink(this, "A != B", "Activated when value A and value B are not exactly equal."));
+      mOutputs.push_back(OutputLink(this, "A equivalent to B", "Activated when value A and value B are nearly equal."));
+      mOutputs.push_back(OutputLink(this, "A not equivalent to B", "Activated when value A and value B are not nearly equal."));
    }
 
    ////////////////////////////////////////////////////////////////////////////////

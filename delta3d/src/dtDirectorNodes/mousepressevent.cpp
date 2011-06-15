@@ -152,8 +152,8 @@ namespace dtDirector
       EventNode::Init(nodeType, graph);
 
       mOutputs.clear();
-      mOutputs.push_back(OutputLink(this, "Pressed"));
-      mOutputs.push_back(OutputLink(this, "Released"));
+      mOutputs.push_back(OutputLink(this, "Pressed", "Activates when the mouse button has been pressed down."));
+      mOutputs.push_back(OutputLink(this, "Released", "Activates when the mouse button has been released."));
 
       UpdateName();
    }

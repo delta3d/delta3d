@@ -49,11 +49,11 @@ namespace dtDirector
 
       // The input node is a special event node that contains an input.
       mInputs.clear();
-      mInputs.push_back(InputLink(this, "In"));
+      mInputs.push_back(InputLink(this, "In", "Activate this node."));
 
       // Create our default output.
       mOutputs.clear();
-      mOutputs.push_back(OutputLink(this, "Out"));
+      mOutputs.push_back(OutputLink(this, "Out", "Activated when this node is activated."));
    }
 
    ////////////////////////////////////////////////////////////////////////////////

@@ -49,10 +49,10 @@ namespace dtDirector
 
       // Create multiple inputs for different operations.
       mInputs.clear();
-      mInputs.push_back(InputLink(this, "Call Event"));
+      mInputs.push_back(InputLink(this, "Call Event", "Executes the remote event."));
 
       mOutputs.clear();
-      mOutputs.push_back(OutputLink(this, "Event Finished"));
+      mOutputs.push_back(OutputLink(this, "Event Finished", "Activates after the entire chain connected to the remote event has finished."));
 
       SetEventName("");
    }

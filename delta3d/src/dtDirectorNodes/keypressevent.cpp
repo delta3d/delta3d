@@ -181,8 +181,8 @@ namespace dtDirector
       EventNode::Init(nodeType, graph);
 
       mOutputs.clear();
-      mOutputs.push_back(OutputLink(this, "Pressed"));
-      mOutputs.push_back(OutputLink(this, "Released"));
+      mOutputs.push_back(OutputLink(this, "Pressed", "Activated when the designated key is pushed down."));
+      mOutputs.push_back(OutputLink(this, "Released", "Activated when the designated key has been released."));
 
       UpdateName();
    }

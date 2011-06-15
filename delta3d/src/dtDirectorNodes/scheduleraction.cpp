@@ -54,15 +54,15 @@ namespace dtDirector
 
       // Create multiple inputs for different operations.
       mInputs.clear();
-      mInputs.push_back(InputLink(this, "Play"));
-      mInputs.push_back(InputLink(this, "Reverse"));
-      mInputs.push_back(InputLink(this, "Stop"));
-      mInputs.push_back(InputLink(this, "Pause"));
+      mInputs.push_back(InputLink(this, "Play", "Begins or resumes the scheduler."));
+      mInputs.push_back(InputLink(this, "Reverse", "Plays or resumes the scheduler in reverse."));
+      mInputs.push_back(InputLink(this, "Stop", "Stops and resets the scheduler."));
+      mInputs.push_back(InputLink(this, "Pause", "Pauses the scheduler so it can be resumed later."));
 
       mOutputs.clear();
-      mOutputs.push_back(OutputLink(this, "Started"));
-      mOutputs.push_back(OutputLink(this, "Ended"));
-      mOutputs.push_back(OutputLink(this, "Stopped"));
+      mOutputs.push_back(OutputLink(this, "Started", "Activated when the scheduler has started in either normal or reverse."));
+      mOutputs.push_back(OutputLink(this, "Ended", "Activated when the scheduler has finished in either normal or reverse."));
+      mOutputs.push_back(OutputLink(this, "Stopped", "Activated when the scheduler has been forcibly stopped."));
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -453,9 +453,10 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void SchedulerAction::UpdateOutputs()
    {
-      OutputLink startOutput(this, "Started");
-      OutputLink endOutput(this, "Ended");
-      OutputLink stopOutput(this, "Stopped");
+      OutputLink startOutput(this, "Started", "Activated when the scheduler has started in either normal or reverse.");
+      OutputLink endOutput(this, "Ended", "Activated when the scheduler has finished in either normal or reverse.");
+      OutputLink stopOutput(this, "Stopped", "Activated when the scheduler has been forcibly stopped.");
+
       OutputLink* link = GetOutputLink("Started");
       if (link) startOutput = *link;
       link = GetOutputLink("Ended");
@@ -489,7 +490,7 @@ namespace dtDirector
                }
             }
 
-            if (!found) mOutputs.push_back(OutputLink(this, data.name));
+            if (!found) mOutputs.push_back(OutputLink(this, data.name, "Activated when the custom event time has been reached."));
          }
 
          // Update the total time

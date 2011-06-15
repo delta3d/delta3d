@@ -58,13 +58,13 @@ namespace dtDirector
 
       // Create multiple inputs for different operations.
       mInputs.clear();
-      mInputs.push_back(InputLink(this, "Start"));
-      mInputs.push_back(InputLink(this, "Stop"));
+      mInputs.push_back(InputLink(this, "Start", "Begins the rotation."));
+      mInputs.push_back(InputLink(this, "Stop", "Ends the rotation."));
 
       mOutputs.clear();
-      mOutputs.push_back(OutputLink(this, "Started"));
-      mOutputs.push_back(OutputLink(this, "Stopped"));
-      mOutputs.push_back(OutputLink(this, "Finished"));
+      mOutputs.push_back(OutputLink(this, "Started", "Activates when the rotation has started."));
+      mOutputs.push_back(OutputLink(this, "Stopped", "Activated when the rotation was forcibly stopped."));
+      mOutputs.push_back(OutputLink(this, "Finished", "Activated when the rotation has finished."));
    }
 
    ////////////////////////////////////////////////////////////////////////////////

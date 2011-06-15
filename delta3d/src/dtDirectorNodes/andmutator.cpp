@@ -54,7 +54,7 @@ namespace dtDirector
          "Values", "Values",
          dtDAL::BooleanActorProperty::SetFuncType(this, &AndMutator::SetValue),
          dtDAL::BooleanActorProperty::GetFuncType(this, &AndMutator::GetValue),
-         "The values to test.");
+         "Results in true if all values are also true.");
       AddProperty(valuesProp);
 
       mProperty = new dtDAL::BooleanActorProperty(
@@ -66,7 +66,7 @@ namespace dtDirector
 
       // This will expose the properties in the editor and allow
       // them to be connected to ValueNodes.
-      mValues.push_back(ValueLink(this, valuesProp, false, true, true));
+      mValues.push_back(ValueLink(this, valuesProp, false, true));
 
       OnLinkValueChanged("Values");
    }

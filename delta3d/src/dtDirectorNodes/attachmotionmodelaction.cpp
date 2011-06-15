@@ -51,7 +51,7 @@ namespace dtDirector
    {
       ActionNode::Init(nodeType, graph);
 
-      mOutputs.push_back(OutputLink(this, "Failed"));
+      mOutputs.push_back(OutputLink(this, "Failed", "Activated if the motion model could not be found."));
    }
 
    /////////////////////////////////////////////////////////////////////////////

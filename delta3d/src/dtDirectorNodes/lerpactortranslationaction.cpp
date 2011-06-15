@@ -58,13 +58,13 @@ namespace dtDirector
 
       // Create multiple inputs for different operations.
       mInputs.clear();
-      mInputs.push_back(InputLink(this, "Start"));
-      mInputs.push_back(InputLink(this, "Stop"));
+      mInputs.push_back(InputLink(this, "Start", "Begins the translation."));
+      mInputs.push_back(InputLink(this, "Stop", "Ends the translation."));
 
       mOutputs.clear();
-      mOutputs.push_back(OutputLink(this, "Started"));
-      mOutputs.push_back(OutputLink(this, "Stopped"));
-      mOutputs.push_back(OutputLink(this, "Finished"));
+      mOutputs.push_back(OutputLink(this, "Started", "Activates when the translation has started."));
+      mOutputs.push_back(OutputLink(this, "Stopped", "Activates when the translation was forcibly stopped."));
+      mOutputs.push_back(OutputLink(this, "Finished", "Activates when the translation has finished."));
    }
 
    ////////////////////////////////////////////////////////////////////////////////
