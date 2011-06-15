@@ -83,8 +83,8 @@ namespace dtDirector
          {
             scene = new NodeScene(mpEditor, mpGraph);
             QGraphicsView* view = new QGraphicsView(scene);
-            connect(scene, SIGNAL(CreateNode(const QString&, const QString&)),
-               this, SIGNAL(CreateNode(const QString&, const QString&)));
+            connect(scene, SIGNAL(CreateNode(const QString&, const QString&, const QString&)),
+               this, SIGNAL(CreateNode(const QString&, const QString&, const QString&)));
             view->setScene(scene);
 
             insertItem(0, view, "Base");
@@ -145,8 +145,8 @@ namespace dtDirector
                {
                   scene = new NodeScene(mpEditor, mpGraph);
                   QGraphicsView* view = new QGraphicsView(scene);
-                  connect(scene, SIGNAL(CreateNode(const QString&, const QString&)),
-                     this, SIGNAL(CreateNode(const QString&, const QString&)));
+                  connect(scene, SIGNAL(CreateNode(const QString&, const QString&, const QString&)),
+                     this, SIGNAL(CreateNode(const QString&, const QString&, const QString&)));
                   view->setScene(scene);
 
                   if (node->GetFolder() == "Base")
@@ -202,8 +202,8 @@ namespace dtDirector
 
          scene = new NodeScene(mpEditor, mpGraph);
          view = new QGraphicsView(scene);
-         connect(scene, SIGNAL(CreateNode(const QString&, const QString&)),
-            this, SIGNAL(CreateNode(const QString&, const QString&)));
+         connect(scene, SIGNAL(CreateNode(const QString&, const QString&, const QString&)),
+            this, SIGNAL(CreateNode(const QString&, const QString&, const QString&)));
          view->setScene(scene);
 
          insertItem(0, view, "Search");
@@ -312,8 +312,8 @@ namespace dtDirector
 
          scene = new NodeScene(mpEditor, mpGraph);
          view = new QGraphicsView(scene);
-         connect(scene, SIGNAL(CreateNode(const QString&, const QString&)),
-            this, SIGNAL(CreateNode(const QString&, const QString&)));
+         connect(scene, SIGNAL(CreateNode(const QString&, const QString&, const QString&)),
+            this, SIGNAL(CreateNode(const QString&, const QString&, const QString&)));
          view->setScene(scene);
 
          insertItem(0, view, "Search");
@@ -397,8 +397,8 @@ namespace dtDirector
       {
          scene = new NodeScene(mpEditor, mpGraph);
          QGraphicsView* view = new QGraphicsView(scene);
-         connect(scene, SIGNAL(CreateNode(const QString&, const QString&)),
-            this, SIGNAL(CreateNode(const QString&, const QString&)));
+         connect(scene, SIGNAL(CreateNode(const QString&, const QString&, const QString&)),
+            this, SIGNAL(CreateNode(const QString&, const QString&, const QString&)));
          view->setScene(scene);
 
          insertItem(0, view, "Base");
