@@ -106,7 +106,7 @@ void dtInspectorQt::InspectorWindow::RefreshCurrentItem()
    QListWidgetItem* currentItem = ui->itemList->currentItem();
    if (currentItem == NULL) { return; }
 
-   dtCore::Base* b = dtCore::Base::GetInstance(currentItem->text().toStdString());
+   dtCore::Base* b = dtCore::Base::GetInstance(currentItem->data(100).toInt());
 
    for (int i = 0; i < mViewContainer.size(); ++i)
    {
@@ -135,6 +135,7 @@ void dtInspectorQt::InspectorWindow::UpdateInstances()
          {
             QListWidgetItem* item = new QListWidgetItem();
             item->setText(QString::fromStdString(o->GetName()));
+            item->setData(100, QVariant(i));
 
             ui->itemList->addItem(item);
             break;
