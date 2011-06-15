@@ -169,6 +169,8 @@ namespace dtDirector
          ActivateOutput("Each Actor");
          return false;
       }
+
+      return false;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
