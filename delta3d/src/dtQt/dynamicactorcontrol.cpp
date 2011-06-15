@@ -79,16 +79,8 @@ namespace dtQt
    {
       if (widget == mWrapper && mTemporaryEditControl)
       {
-         // set the current value from our property
-         dtDAL::BaseActorObject* proxy = getActorProxy();
-         if (proxy)
-         {
-            mTemporaryEditControl->setCurrentIndex(mTemporaryEditControl->findText(proxy->GetName().c_str()));
-         }
-         else
-         {
-            mTemporaryEditControl->setCurrentIndex(mTemporaryEditControl->findText("<None>"));
-         }
+         int index = mTemporaryEditControl->findText(getValueAsString());
+         mTemporaryEditControl->setCurrentIndex(index);
       }
 
       DynamicAbstractControl::updateEditorFromModel(widget);
@@ -103,21 +95,22 @@ namespace dtQt
 
       if (widget == mWrapper && mTemporaryEditControl)
       {
-         // Get the current selected string and the previously set string value
-         std::string currentActorID = mTemporaryEditControl->itemData(mTemporaryEditControl->currentIndex()).toString().toStdString();
-
-         dtDAL::BaseActorObject* currentProxy = getActorProxy();
-         std::string previousActorID = currentProxy ? currentProxy->GetId().ToString() : "";
-
-         // set our value to our object
-         if (currentActorID != previousActorID)
+         if (mTemporaryEditControl->currentIndex() > -1)
          {
-            // give undo manager the ability to create undo/redo events
-            emit PropertyAboutToChange(*mPropContainer, *getActorProperty(), previousActorID, currentActorID);
+            // Get the current selected string and the previously set string value
+            std::string currentActorID = mTemporaryEditControl->itemData(mTemporaryEditControl->currentIndex()).toString().toStdString();
+            std::string previousActorID = getActorProperty()->ToString();
 
-            mBaseProperty->FromString(currentActorID);
+            // set our value to our object
+            if (currentActorID != previousActorID)
+            {
+               // give undo manager the ability to create undo/redo events
+               emit PropertyAboutToChange(*mPropContainer, *getActorProperty(), previousActorID, currentActorID);
 
-            dataChanged = true;
+               mBaseProperty->FromString(currentActorID);
+
+               dataChanged = true;
+            }
          }
       }
 
@@ -246,7 +239,18 @@ namespace dtQt
       DynamicAbstractControl::getValueAsString();
 
       dtDAL::BaseActorObject* proxy = getActorProxy();
-      return proxy != NULL ? QString(proxy->GetName().c_str()) : QString("<None>");
+      if (!proxy)
+      {
+         dtDAL::ActorProperty* prop = getActorProperty();
+         if (prop && !prop->ToString().empty())
+         {
+            return "<Unknown>";
+         }
+
+         return "<None>";
+      }
+
+      return proxy->GetName().c_str();
    }
 
    /////////////////////////////////////////////////////////////////////////////////
