@@ -65,9 +65,9 @@ namespace dtDirector
 
       // Create multiple inputs for different operations.
       mInputs.clear();
-      mInputs.push_back(InputLink(this, "Play"));
-      mInputs.push_back(InputLink(this, "Stop"));
-      mInputs.push_back(InputLink(this, "Pause"));
+      mInputs.push_back(InputLink(this, "Play", "Plays or resumes the sound effect."));
+      mInputs.push_back(InputLink(this, "Stop", "Stops and resets the sound effect."));
+      mInputs.push_back(InputLink(this, "Pause", "Pauses the sound effect so it can be resumed later."));
 
       // We don't clear the outputs in order to keep the "Out" link
       mOutputs.push_back(OutputLink(this, "Finished"));
