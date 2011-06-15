@@ -46,6 +46,10 @@ namespace dtDirector
       , mTypeCheck(typeCheck)
       , mGettingType(false)
    {
+      if (prop)
+      {
+         SetComment(prop->GetDescription());
+      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
@@ -61,6 +65,7 @@ namespace dtDirector
       mOwner = src.mOwner;
       mProxyOwner = src.mProxyOwner;
       mName = src.mName;
+      mComment = src.mComment;
       mVisible = src.mVisible;
       mExposed = src.mExposed;
       mRedirector = src.mRedirector;
@@ -88,6 +93,7 @@ namespace dtDirector
       mOwner = src.mOwner;
       mProxyOwner = NULL;
       mName = src.mName;
+      mComment = src.mComment;
       mVisible = src.mVisible;
       mExposed = src.mExposed;
       mRedirector = NULL;
@@ -307,6 +313,18 @@ namespace dtDirector
       }
 
       mName = name;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void ValueLink::SetComment(const std::string& text)
+   {
+      mComment = text;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   const std::string& ValueLink::GetComment() const
+   {
+      return mComment;
    }
 
    //////////////////////////////////////////////////////////////////////////

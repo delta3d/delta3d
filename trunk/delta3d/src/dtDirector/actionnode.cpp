@@ -44,10 +44,10 @@ namespace dtDirector
 
       // By default, Action nodes have one input and one output.
       mInputs.clear();
-      mInputs.push_back(InputLink(this, "In"));
+      mInputs.push_back(InputLink(this, "In", "Activate this node."));
 
       mOutputs.clear();
-      mOutputs.push_back(OutputLink(this, "Out"));
+      mOutputs.push_back(OutputLink(this, "Out", "Activated when this node is activated."));
    }
 
    ////////////////////////////////////////////////////////////////////////////////

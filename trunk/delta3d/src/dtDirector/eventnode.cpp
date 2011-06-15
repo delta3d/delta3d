@@ -54,7 +54,7 @@ namespace dtDirector
 
       // Create our default output.
       mOutputs.clear();
-      mOutputs.push_back(OutputLink(this, "Out"));
+      mOutputs.push_back(OutputLink(this, "Out", "Activated when this node is activated."));
    }
 
    ////////////////////////////////////////////////////////////////////////////////

@@ -435,7 +435,7 @@ namespace dtDirector
             data.link = &mNode->GetInputLinks()[index];
             if (!data.link->GetVisible()) mHasHiddenLinks = true;
 
-            data.linkGraphic = new InputLinkItem(this, (int)mInputs.size()-1, this, mScene);
+            data.linkGraphic = new InputLinkItem(this, (int)mInputs.size()-1, this, mScene, data.link->GetComment());
             data.linkName = new GraphicsTextItem(data.linkGraphic, mScene);
             data.linkName->setAcceptHoverEvents(false);
          }
@@ -453,7 +453,7 @@ namespace dtDirector
             data.link = &mNode->GetOutputLinks()[index];
             if (!data.link->GetVisible()) mHasHiddenLinks = true;
 
-            data.linkGraphic = new OutputLinkItem(this, (int)mOutputs.size()-1, this, mScene);
+            data.linkGraphic = new OutputLinkItem(this, (int)mOutputs.size()-1, this, mScene, data.link->GetComment());
             data.linkName = new GraphicsTextItem(data.linkGraphic, mScene);
             data.linkName->setAcceptHoverEvents(false);
          }
@@ -473,7 +473,7 @@ namespace dtDirector
 
             data.node = this;
             data.link = link;
-            data.linkGraphic = new ValueLinkItem(this, (int)mValues.size()-1, this, mScene);
+            data.linkGraphic = new ValueLinkItem(this, (int)mValues.size()-1, this, mScene, data.link->GetComment());
             data.linkName = new GraphicsTextItem(data.linkGraphic, mScene);
             data.linkName->setAcceptHoverEvents(false);
          }

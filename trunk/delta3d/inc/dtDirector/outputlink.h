@@ -49,7 +49,7 @@ namespace dtDirector
       /**
        * Constructs the link.
        */
-      OutputLink(Node* owner, const std::string& name = "Out");
+      OutputLink(Node* owner, const std::string& name = "Out", const std::string& comment = "");
 
       /**
        * Destructor.
@@ -104,6 +104,20 @@ namespace dtDirector
       const std::string& GetName() const;
 
       /**
+       * Sets the comment for the link.
+       *
+       * @param[in]  text  The comment text.
+       */
+      void SetComment(const std::string& text);
+
+      /**
+       * Retrieves the comment of the link.
+       *
+       * @return  The comment.
+       */
+      const std::string& GetComment() const;
+
+      /**
        * Accessors for the visible status of the link.
        */
       void SetVisible(bool visible) {mVisible = visible;}
@@ -145,6 +159,7 @@ namespace dtDirector
    private:
 
       std::string  mName;
+      std::string  mComment;
       bool         mVisible;
 
       int          mActiveCount;
