@@ -1846,7 +1846,7 @@ namespace dtDAL
          }
 
          mParser->mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
-            "Parameter/Property %s was saved as type %s, but is now of type %s. Data will be ignored",
+            "Parameter/Property '%s' was saved as type %s, but is now of type %s. Data will be ignored",
             actorProperty->GetName().c_str(),
             (dataType)->GetName().c_str(), actorProperty->GetDataType().GetName().c_str());
       }
