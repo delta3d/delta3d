@@ -128,9 +128,9 @@ namespace dtDAL
          return;
       }
 
-      // Skip properties that have not been changed from their default values.
+      // Only save properties that should be saved.
       dtDAL::SerializerRuntimeData& data = Top();
-      if (data.mPropertyContainer && data.mPropertyContainer->IsPropertyDefault(property))
+      if (!data.mPropertyContainer || !data.mPropertyContainer->ShouldPropertySave(property))
       {
          return;
       }
