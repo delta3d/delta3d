@@ -1,11 +1,13 @@
 #include <dtInspectorQt/cameraview.h>
 #include "ui_dtinspectorqt.h"
 
+#include <dtABC/application.h>
+
 //////////////////////////////////////////////////////////////////////////
 dtInspectorQt::CameraView::CameraView(Ui::InspectorWidget& ui)
 :mUI(&ui)
 {
-   mFilterName = QString("dtCore::Camera");
+   mFilterName = QString("Camera");
 
    connect(mUI->cameraEnabledToggle, SIGNAL(stateChanged(int)), this, SLOT(OnEnabled(int)));
    connect(mUI->cameraVertEdit, SIGNAL(valueChanged(double)), this, SLOT(OnPerspectiveChanged(double)));
@@ -25,23 +27,49 @@ dtInspectorQt::CameraView::~CameraView()
 }
 
 //////////////////////////////////////////////////////////////////////////
-void dtInspectorQt::CameraView::OperateOn(dtCore::Base* b)
+void dtInspectorQt::CameraView::Build(QList<EntryData> &itemList)
 {
-   dtCore::Camera *camera = dynamic_cast<dtCore::Camera*>(b);
+   if (dtABC::Application::GetInstanceCount() == 0)
+   {
+      return;
+   }
 
-   mOperateOn = camera;
-   Update();
+   dtABC::Application* app = dtABC::Application::GetInstance(0);
+   if (app)
+   {
+      dtCore::Camera* camera = app->GetCamera();
+      if (camera)
+      {
+         EntryData data;
+         data.name = camera->GetName().c_str();
+         data.type = "Application Camera";
+         data.itemData = QVariant(camera->GetUniqueId().ToString().c_str());
+         itemList.push_back(data);
+      }
+   }
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool dtInspectorQt::CameraView::IsOfType(QString name, dtCore::Base* object)
+void dtInspectorQt::CameraView::OperateOn(const QVariant& itemData)
 {
-   if (name == mFilterName && dynamic_cast<dtCore::Camera*>(object) != NULL)
+   if (dtABC::Application::GetInstanceCount() == 0)
    {
-      return true;
+      return;
    }
 
-   return false;
+   mOperateOn = NULL;
+
+   dtABC::Application* app = dtABC::Application::GetInstance(0);
+   if (app)
+   {
+      dtCore::Camera* camera = app->GetCamera();
+      if (camera && camera->GetUniqueId().ToString() == itemData.toString().toStdString())
+      {
+         mOperateOn = camera;
+      }
+   }
+
+   Update();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -49,8 +77,11 @@ void dtInspectorQt::CameraView::Update()
 {
    if (mOperateOn.valid())
    {
-      mUI->cameraGroupBox->show();
+      mUI->baseGroupBox->show();
+      mUI->baseNameText->setText(QString::fromStdString(mOperateOn->GetName()));
+      mUI->baseRefCountLabel->setText(QString::number(mOperateOn->referenceCount()));
 
+      mUI->cameraGroupBox->show();
       mUI->cameraEnabledToggle->setChecked(mOperateOn->GetEnabled());
 
       double vfov, ar, nearClip, farClip;

@@ -3080,13 +3080,23 @@
      </widget>
     </item>
     <item row="1" column="0" colspan="2">
-     <widget class="QListWidget" name="itemList">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
+     <widget class="QTreeWidget" name="itemList">
+      <attribute name="headerDefaultSectionSize">
+       <number>200</number>
+      </attribute>
+      <attribute name="headerDefaultSectionSize">
+       <number>200</number>
+      </attribute>
+      <column>
+       <property name="text">
+        <string>Name</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Type</string>
+       </property>
+      </column>
      </widget>
     </item>
    </layout>
@@ -3118,6 +3128,11 @@
    <addaction name="menuView"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
+  <widget class="PropertyEditor" name="propertyEditor">
+   <attribute name="dockWidgetArea">
+    <number>8</number>
+   </attribute>
+  </widget>
   <action name="actionRefresh_Item">
    <property name="text">
     <string>&amp;Refresh Item</string>
@@ -3154,9 +3169,16 @@
    </property>
   </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>PropertyEditor</class>
+   <extends>QDockWidget</extends>
+   <header location="global">dtInspectorQt/propertyeditor.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <tabstops>
   <tabstop>baseNameText</tabstop>
-  <tabstop>itemList</tabstop>
   <tabstop>scrollArea</tabstop>
  </tabstops>
  <resources/>

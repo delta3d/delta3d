@@ -3,7 +3,7 @@
 
 //////////////////////////////////////////////////////////////////////////
 dtInspectorQt::BaseView::BaseView(Ui::InspectorWidget& ui)
-: mUI(&ui)
+   : mUI(&ui)
 {
    mFilterName = QString("dtCore::Base");
    connect(ui.baseNameText, SIGNAL(textEdited(const QString&)), this, SLOT(OnNameChange(const QString&)));

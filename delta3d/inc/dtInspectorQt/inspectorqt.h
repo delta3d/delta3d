@@ -6,6 +6,11 @@
 
 class QApplication;
 
+namespace dtGame
+{
+   class GameManager;
+}
+
 /** A dynamic library that allows developers to interact with Delta3D class instances
   * at runtime, via a Qt UI.
   */
@@ -38,6 +43,7 @@ namespace dtInspectorQt
       void Show();
       void Hide();
       void SetVisible(bool isVisible);
+      void SetGameManager(dtGame::GameManager* gm);
 
    protected:
       virtual ~InspectorQt();

@@ -44,12 +44,15 @@ namespace dtInspectorQt
       DirectorView(Ui::InspectorWidget &ui);
       virtual ~DirectorView();
 
-      virtual void OperateOn(dtCore::Base* b);
-      bool IsOfType(QString name, dtCore::Base* object);
+      virtual void Build(QList<EntryData>& itemList);
+      virtual void OperateOn(const QVariant& itemData);
 
    protected slots:
-
+      void OnNameChange(const QString& text);
       void OnViewButtonClicked();
+
+   signals:
+      void NameChanged(const QString& text);
 
    private:
       Ui::InspectorWidget* mUI;

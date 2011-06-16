@@ -3,7 +3,7 @@
 
 #include <dtInspectorQt/export.h>
 #include <QtGui/QMainWindow>
-#include <QtGui/QListWidgetItem>
+#include <QtGui/QTreeWidgetItem>
 #include <QtCore/QList>
 
 namespace dtCore
@@ -15,6 +15,10 @@ namespace dtCore
 namespace Ui
 {
    class InspectorWidget;
+}
+namespace dtGame
+{
+   class GameManager;
 }
 /// @endcond
 
@@ -34,9 +38,10 @@ namespace dtInspectorQt
 
       QWidget* GetPropertyContainerWidget();
       void AddCustomView(IView* customView);
+      void SetGameManager(dtGame::GameManager* gm);
 
    public slots:
-      void OnSelection(QListWidgetItem* current, QListWidgetItem* prev);
+      void OnSelection(QTreeWidgetItem* current, QTreeWidgetItem* prev);
       void RefreshCurrentItem();
       void OnNameChanged(const QString& text);
       void UpdateInstances();
@@ -46,10 +51,11 @@ namespace dtInspectorQt
 
    private:
       Ui::InspectorWidget* ui;
+      dtGame::GameManager* mGameManager;
 
       QList<IView*> mViewContainer;
 
-      QString mFilterName;
+      int mFilterIndex;
    };
 }
 #endif // inspectorwindow_h__
