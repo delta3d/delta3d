@@ -4,6 +4,7 @@ SET(LIB_NAME     dtInspectorQt)
 SET(HEADER_PATH ${DELTA3D_SOURCE_DIR}/inc/${LIB_NAME})
 
 SET(LIB_PUBLIC_HEADERS
+    ${HEADER_PATH}/actorview.h
     ${HEADER_PATH}/baseview.h
     ${HEADER_PATH}/cameraview.h
     ${HEADER_PATH}/clouddomeview.h
@@ -21,6 +22,7 @@ SET(LIB_PUBLIC_HEADERS
     ${HEADER_PATH}/objectview.h
     ${HEADER_PATH}/particlesystemview.h
     ${HEADER_PATH}/physicalview.h
+    ${HEADER_PATH}/propertyeditor.h
     ${HEADER_PATH}/sceneview.h
     ${HEADER_PATH}/skydomeview.h
     ${HEADER_PATH}/systemview.h
@@ -30,6 +32,7 @@ SET(LIB_PUBLIC_HEADERS
 )
 
 SET(LIB_SOURCES 
+    actorview.cpp
     baseview.cpp
     cameraview.cpp
     clouddomeview.cpp
@@ -47,6 +50,7 @@ SET(LIB_SOURCES
     objectview.cpp
     particlesystemview.cpp
     physicalview.cpp
+	propertyeditor.cpp
     sceneview.cpp
     skydomeview.cpp
     systemview.cpp
@@ -82,6 +86,7 @@ TARGET_LINK_LIBRARIES( ${LIB_NAME}
 			${DTDIRECTORQT_LIBRARY}
             ${DTCORE_LIBRARY}
             ${DTABC_LIBRARY}
+			${DTQT_LIBRARY}
             )
 
 if (X11_FOUND)

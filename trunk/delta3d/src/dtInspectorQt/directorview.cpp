@@ -1,7 +1,7 @@
 #include <dtInspectorQt/directorview.h>
 #include "ui_dtinspectorqt.h"
 
-#include <dtDirectorQt/directoreditor.h>
+#include <dtInspectorQt/propertyeditor.h>
 #include <dtDirectorQt/editornotifier.h>
 
 #include <dtCore/uniqueid.h>
@@ -13,11 +13,12 @@
 
 //////////////////////////////////////////////////////////////////////////
 dtInspectorQt::DirectorView::DirectorView(Ui::InspectorWidget& ui)
-:mUI(&ui)
+   :mUI(&ui)
 {
-   mFilterName = QString("dtDirector::Director");
+   mFilterName = QString("Director");
 
    connect(mUI->directorScriptViewButton, SIGNAL(clicked()), this, SLOT(OnViewButtonClicked()));
+   connect(ui.baseNameText, SIGNAL(textEdited(const QString&)), this, SLOT(OnNameChange(const QString&)));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -27,27 +28,91 @@ dtInspectorQt::DirectorView::~DirectorView()
 }
 
 //////////////////////////////////////////////////////////////////////////
-void dtInspectorQt::DirectorView::OperateOn(dtCore::Base* b)
+void dtInspectorQt::DirectorView::Build(QList<EntryData>& itemList)
 {
-   dtDirector::DirectorInstance* director =
-      dynamic_cast<dtDirector::DirectorInstance*>(b);
+   int count = dtDirector::DirectorInstance::GetInstanceCount();
+   for (int index = 0; index < count; ++index)
+   {
+      dtDirector::DirectorInstance* item = dtDirector::DirectorInstance::GetInstance(index);
+      if (item && !item->mDirector->GetParent())
+      {
+         EntryData data;
+         data.name = item->GetName().c_str();
+         data.type = "Director Script";
+         data.itemData = QVariant(item->GetUniqueId().ToString().c_str());
+         itemList.push_back(data);
+      }
+   }
+}
 
-   mOperateOn = director;
+//////////////////////////////////////////////////////////////////////////
+void dtInspectorQt::DirectorView::OperateOn(const QVariant& itemData)
+{
+   mOperateOn = NULL;
+
+   int count = dtDirector::DirectorInstance::GetInstanceCount();
+   for (int index = 0; index < count; ++index)
+   {
+      dtDirector::DirectorInstance* item = dtDirector::DirectorInstance::GetInstance(index);
+      if (item && itemData.toString().toStdString() == item->GetUniqueId().ToString())
+      {
+         mOperateOn = item;
+         break;
+      }
+   }
 
    Update();
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool dtInspectorQt::DirectorView::IsOfType(QString name, dtCore::Base* object)
+void dtInspectorQt::DirectorView::Update()
 {
-   dtDirector::DirectorInstance* director =
-      dynamic_cast<dtDirector::DirectorInstance*>(object);
-   if (name == mFilterName && director && !director->mDirector->GetParent())
+   if (mOperateOn.valid())
    {
-      return true;
-   }
+      mUI->baseGroupBox->show();
+      mUI->baseNameText->setText(QString::fromStdString(mOperateOn->GetName()));
+      mUI->baseRefCountLabel->setText(QString::number(mOperateOn->referenceCount()));
 
-   return false;
+      mUI->directorScriptGroupBox->show();
+
+      dtDAL::BaseActorObject* player = mOperateOn->mDirector->GetPlayerActor();
+      if (player)
+      {
+         mUI->directorScriptPlayerEdit->setText(player->GetName().c_str());
+      }
+      else
+      {
+         mUI->directorScriptPlayerEdit->setText("<None>");
+      }
+
+      dtDAL::BaseActorObject* owner = mOperateOn->mDirector->GetScriptOwnerActor();
+      if (owner)
+      {
+         mUI->directorScriptOwnerEdit->setText(owner->GetName().c_str());
+      }
+      else
+      {
+         mUI->directorScriptOwnerEdit->setText("<None>");
+      }
+
+      std::vector<dtCore::RefPtr<dtDAL::PropertyContainer> > actorList;
+      actorList.push_back(mOperateOn->mDirector);
+      mUI->propertyEditor->HandlePropertyContainersSelected(actorList);
+   }
+   else
+   {
+      mUI->directorScriptGroupBox->hide();
+   }
+}
+
+//////////////////////////////////////////////////////////////////////////
+void dtInspectorQt::DirectorView::OnNameChange(const QString& text)
+{
+   if (mOperateOn.valid())
+   {
+      mOperateOn->SetName(text.toStdString());
+      emit NameChanged(text);
+   }
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -76,36 +141,4 @@ void dtInspectorQt::DirectorView::OnViewButtonClicked()
    }
 }
 
-//////////////////////////////////////////////////////////////////////////
-void dtInspectorQt::DirectorView::Update()
-{
-   if (mOperateOn.valid())
-   {
-      mUI->directorScriptGroupBox->show();
-
-      dtDAL::BaseActorObject* player = mOperateOn->mDirector->GetPlayerActor();
-      if (player)
-      {
-         mUI->directorScriptPlayerEdit->setText(player->GetName().c_str());
-      }
-      else
-      {
-         mUI->directorScriptPlayerEdit->setText("<None>");
-      }
-
-      dtDAL::BaseActorObject* owner = mOperateOn->mDirector->GetScriptOwnerActor();
-      if (owner)
-      {
-         mUI->directorScriptOwnerEdit->setText(owner->GetName().c_str());
-      }
-      else
-      {
-         mUI->directorScriptOwnerEdit->setText("<None>");
-      }
-   }
-   else
-   {
-      mUI->directorScriptGroupBox->hide();
-   }
-}
-
+////////////////////////////////////////////////////////////////////////////////

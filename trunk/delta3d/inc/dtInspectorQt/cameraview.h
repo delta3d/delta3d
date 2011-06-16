@@ -44,8 +44,8 @@ namespace dtInspectorQt
       CameraView(Ui::InspectorWidget &ui);
       virtual ~CameraView();
 
-      virtual void OperateOn(dtCore::Base* b);
-      bool IsOfType(QString name, dtCore::Base* object);
+      virtual void Build(QList<EntryData>& itemList);
+      virtual void OperateOn(const QVariant& itemData);
 
    protected slots:
       void OnEnabled(int state);
