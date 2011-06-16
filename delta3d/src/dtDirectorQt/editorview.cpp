@@ -66,24 +66,19 @@ namespace dtDirector
          inc = mMinScale / mCurrentScale;
       }
 
+      QPointF mousePos = event->pos();
+      mousePos = mapToScene(mousePos.x(), mousePos.y());
+
       mCurrentScale *= inc;
       scale(inc, inc);
 
       // Translate the view towards the mouse cursor.
-      if (numberOfSteps > 0.0f)
-      {
-         QPointF centerPos(width()/2, height()/2);
-         QPointF mousePos = event->pos();
+      QPointF newMousePos = event->pos();
+      newMousePos = mapToScene(newMousePos.x(), newMousePos.y());
 
-         centerPos = mapToScene(centerPos.x(), centerPos.y());
-         mousePos = mapToScene(mousePos.x(), mousePos.y());
-
-         QPointF translation = mousePos - centerPos;
-         translation *= (inc - 1.0f) * 2.0f;
-
-         mScene->GetTranslationItem()->setPos(
-            mScene->GetTranslationItem()->pos() - translation);
-      }
+      QPointF translation = mousePos - newMousePos;
+      mScene->GetTranslationItem()->setPos(
+         mScene->GetTranslationItem()->pos() - translation);
    }
 } // namespace dtDirector
 
