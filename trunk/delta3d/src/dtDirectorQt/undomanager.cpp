@@ -60,6 +60,23 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
+   void UndoManager::Revert()
+   {
+      if (IsModified())
+      {
+         while (mModifyIndex < (int)mUndoEvents.size())
+         {
+            Undo();
+         }
+
+         while (mModifyIndex > (int)mUndoEvents.size())
+         {
+            Redo();
+         }
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    void UndoManager::Clear()
    {
       while (!mUndoEvents.empty()) mUndoEvents.pop();
