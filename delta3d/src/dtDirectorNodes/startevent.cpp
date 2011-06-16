@@ -51,7 +51,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   bool StartEvent::UsesInstigator()
+   bool StartEvent::UsesActorFilters()
    {
       return false;
    }

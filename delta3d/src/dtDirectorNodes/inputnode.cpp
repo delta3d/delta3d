@@ -90,7 +90,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   bool InputNode::UsesInstigator()
+   bool InputNode::UsesActorFilters()
    {
       return false;
    }

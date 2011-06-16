@@ -73,7 +73,7 @@ namespace dtDirector
       /**
        * Retrieves whether this Event uses an instigator.
        */
-      virtual bool UsesInstigator();
+      virtual bool UsesActorFilters();
 
       /**
        * This event is called by value nodes that are linked via

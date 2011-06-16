@@ -63,7 +63,7 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   bool RemoteEvent::UsesInstigator()
+   bool RemoteEvent::UsesActorFilters()
    {
       return false;
    }

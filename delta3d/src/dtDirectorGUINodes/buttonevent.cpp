@@ -99,7 +99,7 @@ namespace dtDirector
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   bool ButtonEvent::UsesInstigator()
+   bool ButtonEvent::UsesActorFilters()
    {
       return false;
    }

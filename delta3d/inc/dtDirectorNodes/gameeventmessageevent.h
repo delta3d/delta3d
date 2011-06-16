@@ -68,7 +68,7 @@ namespace dtDirector
       /**
        * Retrieves whether this Event uses an instigator.
        */
-      virtual bool UsesInstigator();
+      virtual bool UsesActorFilters();
 
       /**
        * Determines whether a value link on this node can connect

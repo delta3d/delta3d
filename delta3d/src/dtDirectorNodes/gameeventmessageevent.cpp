@@ -62,7 +62,7 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   bool GameEventMessageEvent::UsesInstigator()
+   bool GameEventMessageEvent::UsesActorFilters()
    {
       return false;
    }

@@ -99,7 +99,7 @@ namespace dtDirector
       /**
        * Retrieves whether this Event uses an instigator.
        */
-      virtual bool UsesInstigator();
+      virtual bool UsesActorFilters();
 
       /**
        * Updates the display name.
