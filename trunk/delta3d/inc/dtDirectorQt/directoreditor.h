@@ -579,6 +579,11 @@ namespace dtDirector
        */
       void PasteNodes(bool createLinks = false, bool externalLinks = false);
 
+      /**
+       * Refreshes the node scenes with newly loaded node libraries
+       */
+      void RefreshNodeScenes();
+
    private slots:
 
       ///Used for managing the sound states
@@ -589,11 +594,6 @@ namespace dtDirector
        * Creates the node scenes
        */
       void CreateNodeScene(NodeTabs* nodeTabs);
-
-      /**
-       * Refreshes the node scenes with newly loaded node libraries
-       */
-      void RefreshNodeScenes();
 
       /**
        * Refreshes one given node scene to display newly loaded nodes

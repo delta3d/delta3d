@@ -21,6 +21,9 @@
 #include <prefix/dtdirectorqtprefix.h>
 #include <dtDirectorQt/libraryeditor.h>
 #include <dtDirectorQt/directoreditor.h>
+#include <dtDirectorQt/undomanager.h>
+#include <dtDirectorQt/undoaddlibraryevent.h>
+#include <dtDirectorQt/undoremovelibraryevent.h>
 
 #include <dtDirector/director.h>
 #include <dtDirector/nodepluginregistry.h>
@@ -73,21 +76,15 @@ namespace dtDirector
          return;
       }
 
-      //if (libName == "dtDirectorNodes" || libName == "dtDirectorNodesd")
-      //{
-      //   QMessageBox::information(this, tr("Library already loaded"),
-      //      tr("This is the base Delta3D Director library and is loaded by default"),
-      //      tr("&OK"));
-      //   return;
-      //}
-
       // If the map already contains this library, no point in continuing
       std::vector<std::string> curLibs = mEditor->GetDirector()->GetAllLibraries();
-      for (unsigned int i = 0; i < curLibs.size(); ++i)
+      int foundIndex = (int)curLibs.size();
+      for (int i = 0; i < (int)curLibs.size(); ++i)
       {
          if (curLibs[i] == libName)
          {
-            return;
+            foundIndex = i;
+            break;
          }
       }
 
@@ -96,8 +93,23 @@ namespace dtDirector
 
       try
       {
-         //NodeManager::GetInstance().LoadNodeRegistry(libName);
          mEditor->GetDirector()->AddLibrary(libName, "");
+
+         // If the library was already in the list, but was re-ordered.
+         if (foundIndex < (int)curLibs.size())
+         {
+            mEditor->GetUndoManager()->BeginMultipleEvents();
+            UndoRemoveLibraryEvent* event = new UndoRemoveLibraryEvent(mEditor, libName, foundIndex);
+            mEditor->GetUndoManager()->AddEvent(event);
+         }
+
+         UndoAddLibraryEvent* event = new UndoAddLibraryEvent(mEditor, libName, (int)curLibs.size());
+         mEditor->GetUndoManager()->AddEvent(event);
+
+         if (foundIndex < (int)curLibs.size())
+         {
+            mEditor->GetUndoManager()->EndMultipleEvents();
+         }
       }
       catch(const dtUtil::Exception& e)
       {
@@ -126,7 +138,7 @@ namespace dtDirector
 
          std::string libToRemove = GetLibraryListWidget().currentItem()->text().toStdString();
          // Does the map have this library?
-         for (unsigned int i = 0; i < loadedLibs.size(); ++i)
+         for (int i = 0; i < (int)loadedLibs.size(); ++i)
          {
             if (loadedLibs[i] == libToRemove)
             {
@@ -159,7 +171,9 @@ namespace dtDirector
                }
 
                mEditor->GetDirector()->RemoveLibrary(libToRemove);
-               //NodeManager::GetInstance().UnloadNodeRegistry(libToRemove);
+
+               UndoRemoveLibraryEvent* event = new UndoRemoveLibraryEvent(mEditor, libToRemove, i);
+               mEditor->GetUndoManager()->AddEvent(event);
 
                RefreshLibraries();
 
@@ -175,21 +189,47 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void LibraryEditor::ShiftLibraryUp()
    {
-      if (GetLibraryListWidget().currentItem() != NULL && GetLibraryListWidget().currentRow() > 0)
+      int row = GetLibraryListWidget().currentRow();
+      if (GetLibraryListWidget().currentItem() != NULL && row > 0)
       {
-         int row = GetLibraryListWidget().currentRow();
-         mEditor->GetDirector()->InsertLibrary(row - 1, GetLibraryListWidget().currentItem()->text().toStdString(), "");
-         dtQt::BaseLibraryListEditor::ShiftLibraryUp();
+         std::string libName = GetLibraryListWidget().currentItem()->text().toStdString();
+         mEditor->GetDirector()->InsertLibrary(row - 1, libName, "");
+
+         mEditor->GetUndoManager()->BeginMultipleEvents();
+         {
+            UndoRemoveLibraryEvent* event = new UndoRemoveLibraryEvent(mEditor, libName, row);
+            mEditor->GetUndoManager()->AddEvent(event);
+         }
+         {
+            UndoAddLibraryEvent* event = new UndoAddLibraryEvent(mEditor, libName, row - 1);
+            mEditor->GetUndoManager()->AddEvent(event);
+         }
+         mEditor->GetUndoManager()->EndMultipleEvents();
+
+         dtQt::BaseLibraryListEditor::ShiftLibraryDown();
       }
    }
 
    //////////////////////////////////////////////////////////////////////////
    void LibraryEditor::ShiftLibraryDown()
    {
-      if (GetLibraryListWidget().currentItem() != NULL && GetLibraryListWidget().currentRow() < (GetLibraryListWidget().count() - 1))
+      int row = GetLibraryListWidget().currentRow();
+      if (GetLibraryListWidget().currentItem() != NULL && row < (GetLibraryListWidget().count() - 1))
       {
-         int row = GetLibraryListWidget().currentRow();
-         mEditor->GetDirector()->InsertLibrary(row + 1, GetLibraryListWidget().currentItem()->text().toStdString(), "");
+         std::string libName = GetLibraryListWidget().currentItem()->text().toStdString();
+         mEditor->GetDirector()->InsertLibrary(row + 1, libName, "");
+
+         mEditor->GetUndoManager()->BeginMultipleEvents();
+         {
+            UndoRemoveLibraryEvent* event = new UndoRemoveLibraryEvent(mEditor, libName, row);
+            mEditor->GetUndoManager()->AddEvent(event);
+         }
+         {
+            UndoAddLibraryEvent* event = new UndoAddLibraryEvent(mEditor, libName, row + 1);
+            mEditor->GetUndoManager()->AddEvent(event);
+         }
+         mEditor->GetUndoManager()->EndMultipleEvents();
+
          dtQt::BaseLibraryListEditor::ShiftLibraryDown();
       }
    }

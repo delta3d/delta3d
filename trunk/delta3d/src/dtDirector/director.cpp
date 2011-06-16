@@ -869,23 +869,22 @@ namespace dtDirector
 
       std::map<std::string,std::string>::iterator old = mLibraryVersionMap.find(name);
 
-      bool alreadyExists;
       if (old != mLibraryVersionMap.end())
       {
          old->second = version;
-         alreadyExists = true;
       }
       else
       {
          mLibraryVersionMap.insert(make_pair(name, version));
-         alreadyExists = false;
       }
 
+      bool alreadyExists = false;
       for (std::vector<std::string>::iterator i = mLibraries.begin(); i != mLibraries.end(); ++i)
       {
          if (*i == name)
          {
             mLibraries.erase(i);
+            alreadyExists = true;
             break;
          }
       }
@@ -895,9 +894,12 @@ namespace dtDirector
       else
          mLibraries.push_back(name);
 
-      mModified = true;
+      if (!alreadyExists)
+      {
+         mModified = true;
+      }
 
-      return true;
+      return !alreadyExists;
    }
 
    //////////////////////////////////////////////////////////////////////////
