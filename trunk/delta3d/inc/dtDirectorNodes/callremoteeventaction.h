@@ -87,6 +87,12 @@ namespace dtDirector
       void SetLocalEvent(bool value);
       bool IsLocalEvent() const;
 
+      /**
+       * Accessors for the instigator property.
+       */
+      void SetInstigator(const dtCore::UniqueId& value);
+      const dtCore::UniqueId& GetInstigator() const;
+
    protected:
       /**
        * Destructor.
@@ -95,8 +101,9 @@ namespace dtDirector
 
    private:
 
-      std::string mEventName;
-      bool        mIsLocalEvent;
+      std::string      mEventName;
+      bool             mIsLocalEvent;
+      dtCore::UniqueId mInstigator;
    };
 }
 

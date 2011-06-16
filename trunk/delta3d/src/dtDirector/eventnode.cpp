@@ -76,21 +76,22 @@ namespace dtDirector
       AddProperty(triggerCountProp);
       mValues.push_back(ValueLink(this, triggerCountProp, false, false, true, false));
 
-      // Create the instigator property.
-      if (UsesInstigator())
+      mInstigatorProp = new dtDAL::ActorIDActorProperty(
+         "Instigator", "Instigator",
+         dtDAL::ActorIDActorProperty::SetFuncType(this, &EventNode::SetInstigator),
+         dtDAL::ActorIDActorProperty::GetFuncType(this, &EventNode::GetInstigator),
+         "", "The Instigator that can trigger this event.");
+      mValues.push_back(ValueLink(this, mInstigatorProp.get(), true, true, true, false));
+
+      // Create the actor filters property.
+      if (UsesActorFilters())
       {
-         mInstigatorProp =
-            new dtDAL::ActorIDActorProperty("Instigator", "Instigator",
-            dtDAL::ActorIDActorProperty::SetFuncType(this, &EventNode::SetInstigator),
-            dtDAL::ActorIDActorProperty::GetFuncType(this, &EventNode::GetInstigator),
-            "", "The Instigator that can trigger this event.");
-         dtDAL::ActorIDActorProperty* filterProp =
-            new dtDAL::ActorIDActorProperty("ActorFilters", "Actor Filters",
+         dtDAL::ActorIDActorProperty* filterProp = new dtDAL::ActorIDActorProperty(
+            "ActorFilters", "Actor Filters",
             dtDAL::ActorIDActorProperty::SetFuncType(this, &EventNode::SetActorFilters),
             dtDAL::ActorIDActorProperty::GetFuncType(this, &EventNode::GetActorFilters),
             "", "The actors that need to cause this event to fire the output.");
 
-         mValues.push_back(ValueLink(this, mInstigatorProp.get(), true, true, true));
          mValues.push_back(ValueLink(this, filterProp, false, true, true));
       }
    }
@@ -107,8 +108,7 @@ namespace dtDirector
       }
       if (Test(outputName, instigator, countTrigger))
       {
-         OutputLink* link = GetOutputLink(outputName);
-         if (link) link->Activate();
+         ActivateOutput(outputName);
 
          // Begin a new thread.
          GetDirector()->BeginThread(this, 0, immediate);
@@ -138,7 +138,7 @@ namespace dtDirector
       if (link)
       {
          // Check the instigator.
-         if (UsesInstigator())
+         if (UsesActorFilters())
          {
             int count = GetPropertyCount("ActorFilters");
 
@@ -187,7 +187,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   bool EventNode::UsesInstigator()
+   bool EventNode::UsesActorFilters()
    {
       return true;
    }

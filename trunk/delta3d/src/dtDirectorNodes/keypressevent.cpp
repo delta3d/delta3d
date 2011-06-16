@@ -232,7 +232,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   bool KeyPressEvent::UsesInstigator()
+   bool KeyPressEvent::UsesActorFilters()
    {
       return false;
    }

@@ -194,7 +194,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   bool MousePressEvent::UsesInstigator()
+   bool MousePressEvent::UsesActorFilters()
    {
       return false;
    }

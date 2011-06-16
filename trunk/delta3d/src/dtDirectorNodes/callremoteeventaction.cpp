@@ -23,6 +23,7 @@
 
 #include <dtDAL/stringselectoractorproperty.h>
 #include <dtDAL/booleanactorproperty.h>
+#include <dtDAL/actoridactorproperty.h>
 
 #include <dtDirector/director.h>
 #include <dtDirectorNodes/remoteevent.h>
@@ -78,10 +79,18 @@ namespace dtDirector
          "False to search the entire Director script for these events.  True to only search the current graph and sub-graphs.");
       AddProperty(localProp);
 
+      dtDAL::ActorIDActorProperty* instigatorProp = new dtDAL::ActorIDActorProperty(
+         "Instigator", "Instigator", 
+         dtDAL::ActorIDActorProperty::SetFuncType(this, &CallRemoteEventAction::SetInstigator),
+         dtDAL::ActorIDActorProperty::GetFuncType(this, &CallRemoteEventAction::GetInstigator),
+         "", "An instigator for this event.");
+      AddProperty(instigatorProp);
+
       // This will expose the properties in the editor and allow
       // them to be connected to ValueNodes.
       mValues.push_back(ValueLink(this, eventNameProp, false, false, true, false));
       mValues.push_back(ValueLink(this, localProp, false, false, true, false));
+      mValues.push_back(ValueLink(this, instigatorProp, false, false, true, true));
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -91,6 +100,8 @@ namespace dtDirector
       {
          std::string eventName = GetString("EventName");
          if (eventName.empty()) return false;
+
+         dtCore::UniqueId instigator = GetActorID("Instigator");
 
          // Find the remote event that we want to trigger.
          std::vector<Node*> nodes;
@@ -121,7 +132,7 @@ namespace dtDirector
             }
 
             // Now trigger the event.
-            event->Trigger();
+            event->Trigger("Out", &instigator, true, false);
          }
 
          return true;
@@ -184,6 +195,18 @@ namespace dtDirector
    bool CallRemoteEventAction::IsLocalEvent() const
    {
       return mIsLocalEvent;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void CallRemoteEventAction::SetInstigator(const dtCore::UniqueId& value)
+   {
+      mInstigator = value;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   const dtCore::UniqueId& CallRemoteEventAction::GetInstigator() const
+   {
+      return mInstigator;
    }
 }
 
