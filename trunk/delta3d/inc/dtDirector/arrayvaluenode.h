@@ -98,6 +98,16 @@ namespace dtDirector
       virtual void SetFormattedValue(const std::string& value);
 
       /**
+       * Retrieves the string formatted representation for the initial value.
+       */
+      virtual std::string GetFormattedInitialValue();
+
+      /**
+       * Sets the formatted string initial value.
+       */
+      virtual void SetFormattedInitialValue(const std::string& value);
+
+      /**
        * Retrieves the property for this value.
        *
        * @param[in]   index    The property index, in case this is an array value.

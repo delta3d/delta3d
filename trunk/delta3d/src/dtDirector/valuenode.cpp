@@ -24,6 +24,7 @@
 #include <dtDirector/director.h>
 
 #include <dtDAL/actorproperty.h>
+#include <dtDAL/booleanactorproperty.h>
 #include <dtDAL/stringactorproperty.h>
 
 #include <dtDirector/valuelink.h>
@@ -36,12 +37,17 @@ namespace dtDirector
        , mProperty(NULL)
        , mInitialProperty(NULL)
        , mHasInitialValue(false)
+       , mIsGlobal(false)
    {
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
    ValueNode::~ValueNode()
    {
+      if (mIsGlobal)
+      {
+         GetDirector()->UnRegisterGlobalValue(this);
+      }
       Disconnect();
    }
 
@@ -88,6 +94,13 @@ namespace dtDirector
          dtDAL::StringActorProperty::SetFuncType(this, &ValueNode::SetName),
          dtDAL::StringActorProperty::GetFuncType(this, &ValueNode::GetName),
          "The variables name."));
+
+      AddProperty(new dtDAL::BooleanActorProperty(
+         "Global", "Global",
+         dtDAL::BooleanActorProperty::SetFuncType(this, &ValueNode::SetGlobal),
+         dtDAL::BooleanActorProperty::GetFuncType(this, &ValueNode::GetGlobal),
+         "True if this value node should share it's value with other value \
+         nodes from all scripts of the same name and type."));
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -215,6 +228,26 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   std::string ValueNode::GetFormattedInitialValue()
+   {
+      if (mInitialProperty)
+      {
+         return mInitialProperty->ToString();
+      }
+
+      return "";
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void ValueNode::SetFormattedInitialValue(const std::string& value)
+   {
+      if (mInitialProperty)
+      {
+         mInitialProperty->FromString(value);
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    dtDAL::ActorProperty* ValueNode::GetProperty(ValueNode** outNode)
    {
       return GetProperty(0, outNode);
@@ -265,16 +298,15 @@ namespace dtDirector
          if (link) link->GetOwner()->OnLinkValueChanged(link->GetName());
       }
 
-      if (GetDirector()->GetNotifier())
-      {
-         GetDirector()->GetNotifier()->OnValueChanged(this);
-      }
+      GetDirector()->OnValueChanged(this);
    }
 
-   ////////////////////////////////////////////////////////////////////////////////
+   //////////////////////////////////////////////////////////////////////////
    void ValueNode::OnInitialValueChanged(const std::string& oldValue)
    {
       mHasInitialValue = true;
+
+      GetDirector()->OnInitialValueChanged(this);
 
       // If we have not started to run the script or our current value
       // is equal to the initial value before it was just changed,
@@ -329,7 +361,17 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void ValueNode::SetName(const std::string& name)
    {
+      if (mIsGlobal)
+      {
+         GetDirector()->UnRegisterGlobalValue(this);
+      }
+
       Node::SetName(name);
+
+      if (mIsGlobal)
+      {
+         GetDirector()->RegisterGlobalValue(this);
+      }
 
       // Notify any reference nodes that reference this value.
       if (!mLinks.empty())
@@ -349,5 +391,27 @@ namespace dtDirector
             }
          }
       }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void ValueNode::SetGlobal(bool value)
+   {
+      if (mIsGlobal)
+      {
+         GetDirector()->UnRegisterGlobalValue(this);
+      }
+
+      mIsGlobal = value;
+
+      if (mIsGlobal)
+      {
+         GetDirector()->RegisterGlobalValue(this);
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool ValueNode::GetGlobal() const
+   {
+      return mIsGlobal;
    }
 }

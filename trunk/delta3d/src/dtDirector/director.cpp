@@ -35,6 +35,8 @@
 namespace dtDirector
 {
    dtCore::UniqueId Director::mPlayer = dtCore::UniqueId("");
+   std::map<std::string, std::vector<ValueNode*> > Director::mGlobalValues;
+   bool Director::mApplyingGlobalValue = false;
 
    IMPLEMENT_MANAGEMENT_LAYER(DirectorInstance)
 
@@ -157,7 +159,7 @@ namespace dtDirector
       mStarted = false;
       if (mBaseInstance.valid())
       {
-         mBaseInstance->SetName("Director: None");
+         mBaseInstance->SetName("None");
       }
    }
 
@@ -297,8 +299,7 @@ namespace dtDirector
 
          if (mBaseInstance.valid())
          {
-            mBaseInstance->SetName(std::string("Director: ") +
-               osgDB::getStrippedName(scriptFile));
+            mBaseInstance->SetName(osgDB::getStrippedName(scriptFile));
          }
 
          mLoading = false;
@@ -1601,6 +1602,178 @@ namespace dtDirector
       }
 
       return true;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   std::string Director::GetValueKey(ValueNode* value)
+   {
+      if (!value || !value->GetProperty())
+      {
+         return "";
+      }
+
+      std::string keyName = value->GetName() + " [";
+      keyName += value->GetType().GetFullName() + "]";
+      return keyName;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool Director::RegisterGlobalValue(ValueNode* value)
+   {
+      if (!value || !value->GetProperty())
+      {
+         return false;
+      }
+
+      std::string keyName = GetValueKey(value);
+      std::map<std::string, std::vector<ValueNode*> >::iterator iter = mGlobalValues.find(keyName);
+      if (iter == mGlobalValues.end())
+      {
+         std::vector<ValueNode*> nodes;
+         nodes.push_back(value);
+         mGlobalValues[keyName] = nodes;
+         return true;
+      }
+      else
+      {
+         std::vector<ValueNode*>& nodes = mGlobalValues[keyName];
+
+         int count = (int)nodes.size();
+         if (count > 0)
+         {
+            // If we are registering a value node to a global value that
+            // already exists, make sure it is immediately updated with
+            // the current global value.
+            ValueNode* first = nodes[0];
+            if (first)
+            {
+               mApplyingGlobalValue = true;
+               value->SetFormattedValue(first->GetFormattedValue());
+               value->SetFormattedInitialValue(first->GetFormattedInitialValue());
+               mApplyingGlobalValue = false;
+            }
+
+            for (int index = 0; index < count; ++index)
+            {
+               if (value == nodes[index])
+               {
+                  return false;
+               }
+            }
+         }
+
+         nodes.push_back(value);
+      }
+    
+      return false;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool Director::UnRegisterGlobalValue(ValueNode* value)
+   {
+      if (!value || !value->GetProperty())
+      {
+         return false;
+      }
+
+      std::string keyName = GetValueKey(value);
+      std::map<std::string, std::vector<ValueNode*> >::iterator iter = mGlobalValues.find(keyName);
+      if (iter == mGlobalValues.end())
+      {
+         return false;
+      }
+      else
+      {
+         std::vector<ValueNode*>& nodes = mGlobalValues[keyName];
+         int count = (int)nodes.size();
+         for (int index = 0; index < count; ++index)
+         {
+            if (value == nodes[index])
+            {
+               nodes.erase(nodes.begin() + index);
+               return true;
+            }
+         }
+      }
+
+      return false;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void Director::OnValueChanged(ValueNode* value)
+   {
+      if (!value)
+      {
+         return;
+      }
+
+      if (mNotifier)
+      {
+         mNotifier->OnValueChanged(value);
+      }
+
+      // If this value is global, apply the new value to all other global
+      // value nodes that reference the same global value.
+      if (value->GetGlobal() && value->GetProperty() && !mApplyingGlobalValue)
+      {
+         mApplyingGlobalValue = true;
+
+         std::string newVal = value->GetFormattedValue();
+
+         std::string keyName = GetValueKey(value);
+         std::map<std::string, std::vector<ValueNode*> >::iterator iter = mGlobalValues.find(keyName);
+         if (iter != mGlobalValues.end())
+         {
+            std::vector<ValueNode*>& nodes = mGlobalValues[keyName];
+            int count = (int)nodes.size();
+            for (int index = 0; index < count; ++index)
+            {
+               ValueNode* node = nodes[index];
+               if (node && node != value)
+               {
+                  node->SetFormattedValue(newVal);
+               }
+            }
+         }
+
+         mApplyingGlobalValue = false;
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void Director::OnInitialValueChanged(ValueNode* value)
+   {
+      if (!value)
+      {
+         return;
+      }
+
+      // If this value is global, apply the new value to all other global
+      // value nodes that reference the same global value.
+      if (value->GetGlobal() && value->GetProperty() && !mApplyingGlobalValue)
+      {
+         mApplyingGlobalValue = true;
+
+         std::string newVal = value->GetFormattedInitialValue();
+
+         std::string keyName = GetValueKey(value);
+         std::map<std::string, std::vector<ValueNode*> >::iterator iter = mGlobalValues.find(keyName);
+         if (iter != mGlobalValues.end())
+         {
+            std::vector<ValueNode*>& nodes = mGlobalValues[keyName];
+            int count = (int)nodes.size();
+            for (int index = 0; index < count; ++index)
+            {
+               ValueNode* node = nodes[index];
+               if (node && node != value)
+               {
+                  node->SetFormattedInitialValue(newVal);
+               }
+            }
+         }
+
+         mApplyingGlobalValue = false;
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
