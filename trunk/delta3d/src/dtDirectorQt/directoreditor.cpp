@@ -182,7 +182,7 @@ namespace dtDirector
          // Clear the script.
          mDirector->Clear();
          mUI.graphTab->clear();
-         mUndoManager->Clear();
+         GetUndoManager()->Clear();
 
          try
          {
@@ -378,7 +378,7 @@ namespace dtDirector
          title = osgDB::getStrippedName(mFileName).c_str();
          title += ".dtdir";
       }
-      if (mUndoManager->IsModified()) title += "*";
+      if (GetUndoManager()->IsModified()) title += "*";
       setWindowTitle(title);
 
       bool bHasParent = false;
@@ -511,17 +511,17 @@ namespace dtDirector
       }
 
       // Save button.
-      mUI.action_Save->setEnabled(mUndoManager->IsModified());
-      mUI.action_Save_as->setEnabled(mUndoManager->IsModified());
+      mUI.action_Save->setEnabled(GetUndoManager()->IsModified());
+      mUI.action_Save_as->setEnabled(GetUndoManager()->IsModified());
 
       // Parent button.
       mUI.action_Step_Out_Of_Graph->setEnabled(bHasParent);
 
       // Undo button.
-      mUI.action_Undo->setEnabled(mUndoManager->CanUndo());
+      mUI.action_Undo->setEnabled(GetUndoManager()->CanUndo());
 
       // Redo button.
-      mUI.action_Redo->setEnabled(mUndoManager->CanRedo());
+      mUI.action_Redo->setEnabled(GetUndoManager()->CanRedo());
 
       // Copy and Cut buttons.
       mUI.action_Cut->setEnabled(bCanCopy);
@@ -583,7 +583,7 @@ namespace dtDirector
       if (node)
       {
          dtCore::RefPtr<UndoCreateEvent> event = new UndoCreateEvent(this, node->GetID(), node->GetGraph()->GetID());
-         mUndoManager->AddEvent(event);
+         GetUndoManager()->AddEvent(event);
 
          // Now refresh the all editors that view the same graph.
          int count = mUI.graphTab->count();
@@ -612,7 +612,7 @@ namespace dtDirector
       {
          // Create an undo event.
          dtCore::RefPtr<UndoDeleteEvent> event = new UndoDeleteEvent(this, id, node->GetGraph()->GetID());
-         mUndoManager->AddEvent(event);
+         GetUndoManager()->AddEvent(event);
 
          // Delete the node.
          mDirector->DeleteNode(id);
@@ -912,7 +912,7 @@ namespace dtDirector
    void DirectorEditor::on_action_Load_triggered()
    {
       // Check if the undo manager has some un-committed changes first.
-      if (mUndoManager->IsModified())
+      if (GetUndoManager()->IsModified())
       {
          QMessageBox confirmationBox("Save Changes?",
             "Would you like to save your current Director Script first?",
@@ -952,7 +952,7 @@ namespace dtDirector
    void DirectorEditor::on_action_New_triggered()
    {
       // Check if the undo manager has some un-committed changes first.
-      if (mUndoManager->IsModified())
+      if (GetUndoManager()->IsModified())
       {
          QMessageBox confirmationBox("Save Changes?",
             "Would you like to save your current Director Script first?",
@@ -1075,13 +1075,13 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void DirectorEditor::on_action_Undo_triggered()
    {
-      mUndoManager->Undo();
+      GetUndoManager()->Undo();
    }
 
    //////////////////////////////////////////////////////////////////////////
    void DirectorEditor::on_action_Redo_triggered()
    {
-      mUndoManager->Redo();
+      GetUndoManager()->Redo();
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -1148,7 +1148,7 @@ namespace dtDirector
 
       bool graphsDeleted = false;
 
-      mUndoManager->BeginMultipleEvents();
+      GetUndoManager()->BeginMultipleEvents();
 
       QList<QGraphicsItem*> selection = scene->selectedItems();
       int count = (int)selection.size();
@@ -1186,7 +1186,7 @@ namespace dtDirector
 
             // Create an undo event.
             dtCore::RefPtr<UndoDeleteEvent> event = new UndoDeleteEvent(this, id, parentID);
-            mUndoManager->AddEvent(event);
+            GetUndoManager()->AddEvent(event);
 
             // Delete the node or graph.
             mDirector->DeleteNode(id);
@@ -1221,7 +1221,7 @@ namespace dtDirector
          }
       }
 
-      mUndoManager->EndMultipleEvents();
+      GetUndoManager()->EndMultipleEvents();
 
       // Refresh the current view.
       Refresh();
@@ -1695,7 +1695,7 @@ namespace dtDirector
       settings.endGroup();
 
       // Check if the undo manager has some un-committed changes first.
-      if (mUndoManager->IsModified())
+      if (GetUndoManager()->IsModified())
       {
          QMessageBox confirmationBox("Save Changes?",
             "Would you like to save your current Director Script first?",
@@ -1724,6 +1724,10 @@ namespace dtDirector
             dynamic_cast<EditorNotifier*>(mDirector->GetNotifier());
          if (notifier)
          {
+            // If we have some unsaved changes left, make sure we undo
+            // everything first.
+            GetUndoManager()->Revert();
+
             notifier->RemoveEditor(this);
 
             // If no editors are currently viewing this script, we can
@@ -1742,7 +1746,7 @@ namespace dtDirector
       // Clear the script.
       mUI.graphTab->clear();
       mDirector->Clear();
-      mUndoManager->Clear();
+      GetUndoManager()->Clear();
       mFileName.clear();
 
       // Create a single tab with the default graph.
@@ -1784,7 +1788,7 @@ namespace dtDirector
       {
          mDirector->SaveScript(mFileName);
 
-         mUndoManager->OnSaved();
+         GetUndoManager()->OnSaved();
 
          RefreshButtonStates();
 
@@ -1931,7 +1935,7 @@ namespace dtDirector
          pos -= scene->GetTranslationItem()->scenePos();
 
          std::vector<dtDAL::PropertyContainer*> newSelection;
-         newSelection = clipboard.PasteObjects(scene->GetGraph(), mUndoManager, osg::Vec2(pos.x(), pos.y()), createLinks, externalLinks);
+         newSelection = clipboard.PasteObjects(scene->GetGraph(), GetUndoManager(), osg::Vec2(pos.x(), pos.y()), createLinks, externalLinks);
 
          scene->clearSelection();
 
