@@ -318,7 +318,9 @@ namespace dtQt
          dtDAL::BaseActorObject* object = dtDAL::BaseActorObject::GetInstance(index);
          if (object)
          {
-            if (!className.empty() && object->GetClassName() != className)
+            
+
+            if (!className.empty() && !object->IsInstanceOf(className))
             {
                continue;
             }
