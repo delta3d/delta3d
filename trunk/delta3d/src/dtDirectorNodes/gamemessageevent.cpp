@@ -93,16 +93,20 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void GameMessageEvent::RegisterMessages()
    {
-      UnRegisterMessages();
-      mLastMessageType = GetString("Message Type");
-
-      mName = mLastMessageType;
-
-      dtDirector::MessageGMComponent* component = GetDirector()->GetMessageGMComponent();
-      if (component)
+      std::string newMessageType = GetString("Message Type");
+      if (mLastMessageType != newMessageType)
       {
-         component->RegisterMessage(mLastMessageType, this,
-            dtDirector::MessageGMComponent::MsgFunc(this, &dtDirector::GameMessageEvent::OnMessage));
+         UnRegisterMessages();
+         mLastMessageType = newMessageType;
+
+         mName = mLastMessageType;
+
+         dtDirector::MessageGMComponent* component = GetDirector()->GetMessageGMComponent();
+         if (component)
+         {
+            component->RegisterMessage(mLastMessageType, this,
+               dtDirector::MessageGMComponent::MsgFunc(this, &dtDirector::GameMessageEvent::OnMessage));
+         }
       }
    }
 
