@@ -45,6 +45,7 @@
 #include <dtDirectorNodes/createvectoraction.h>
 #include <dtDirectorNodes/getvectorvaluesaction.h>
 #include <dtDirectorNodes/normalizevectoraction.h>
+#include <dtDirectorNodes/getapplicationconfigpropertyaction.h>
 #include <dtDirectorNodes/getactorpropertyaction.h>
 #include <dtDirectorNodes/setactorpropertyaction.h>
 #include <dtDirectorNodes/operationaction.h>
@@ -151,12 +152,13 @@ namespace dtDirector
    RefPtr<NodeType> NodeLibraryRegistry::DELAY_ACTION_NODE_TYPE(                 new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Delay",                     "General",     "Base",        "Performs a time delay.", NULL, Colors::BLUE));
    RefPtr<NodeType> NodeLibraryRegistry::SWITCH_ACTION_NODE_TYPE(                new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Switch",                    "General",     "Base",        "Fires outputs in sequence based on the number of inputs received.", NULL, Colors::BLUE));
 
-   RefPtr<NodeType> NodeLibraryRegistry::GET_ACTOR_PROPERTY_ACTION_NODE_TYPE(    new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Get Actor Property",        "General",     "Access",      "Retrieves the value of a property from an actor.", NULL, Colors::BLUE));
-   RefPtr<NodeType> NodeLibraryRegistry::GET_ACTOR_ORIENTATION_ACTION(           new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Get Actor Orientation",     "General",     "Access",      "Retrieves the orientation vectors of an actor.", NULL, Colors::BLUE));
-   RefPtr<NodeType> NodeLibraryRegistry::GET_VECTOR_VALUES_ACTION_NODE_TYPE(     new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Get Vector Values",         "General",     "Access",      "Extracts the values in a vector to individual parts.", NULL, Colors::BLUE));
-   RefPtr<NodeType> NodeLibraryRegistry::GET_ARRAY_VALUE_ACTION_NODE_TYPE(       new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Get Array Value",           "General",     "Access",      "Retrieves the value of an array index.", NULL, Colors::BLUE));
-   RefPtr<NodeType> NodeLibraryRegistry::GET_ARRAY_SIZE_ACTION_NODE_TYPE(        new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Get Array Size",            "General",     "Access",      "Retrieves the total size of an array.", NULL, Colors::BLUE));
-   RefPtr<NodeType> NodeLibraryRegistry::FOR_EACH_ACTOR_ACTION_NODE_TYPE(        new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "For Each Actor",            "General",     "Access",      "Retrieves all actors with option class and name filters and iterates through them individually via the \"Each Actor\" output link.", NULL, Colors::BLUE));
+   RefPtr<NodeType> NodeLibraryRegistry::GET_APP_CONFIG_PROPERTY_ACTION_NODE_TYPE(new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Get Application Config Property", "General", "Access", "Retrieves a config property value from an application's config file.", NULL, Colors::BLUE));
+   RefPtr<NodeType> NodeLibraryRegistry::GET_ACTOR_PROPERTY_ACTION_NODE_TYPE(     new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Get Actor Property",              "General", "Access", "Retrieves the value of a property from an actor.", NULL, Colors::BLUE));
+   RefPtr<NodeType> NodeLibraryRegistry::GET_ACTOR_ORIENTATION_ACTION(            new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Get Actor Orientation",           "General", "Access", "Retrieves the orientation vectors of an actor.", NULL, Colors::BLUE));
+   RefPtr<NodeType> NodeLibraryRegistry::GET_VECTOR_VALUES_ACTION_NODE_TYPE(      new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Get Vector Values",               "General", "Access", "Extracts the values in a vector to individual parts.", NULL, Colors::BLUE));
+   RefPtr<NodeType> NodeLibraryRegistry::GET_ARRAY_VALUE_ACTION_NODE_TYPE(        new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Get Array Value",                 "General", "Access", "Retrieves the value of an array index.", NULL, Colors::BLUE));
+   RefPtr<NodeType> NodeLibraryRegistry::GET_ARRAY_SIZE_ACTION_NODE_TYPE(         new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Get Array Size",                  "General", "Access", "Retrieves the total size of an array.", NULL, Colors::BLUE));
+   RefPtr<NodeType> NodeLibraryRegistry::FOR_EACH_ACTOR_ACTION_NODE_TYPE(         new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "For Each Actor",                  "General", "Access", "Retrieves all actors with option class and name filters and iterates through them individually via the \"Each Actor\" output link.", NULL, Colors::BLUE));
 
    RefPtr<NodeType> NodeLibraryRegistry::OPERATION_ACTION_NODE_TYPE(             new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Arithmetic Operation",      "General",     "Operations",  "Performs a simple operation between two values A and B and outputs to Result.", NULL, Colors::BLUE));
    RefPtr<NodeType> NodeLibraryRegistry::STRING_MANIPULATOR_ACTION_NODE_TYPE(    new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "String Manipulator",        "General",     "Operations",  "Performs a string operation.", NULL, Colors::BLUE));
@@ -222,13 +224,13 @@ namespace dtDirector
    RefPtr<NodeType> NodeLibraryRegistry::VEC2_VALUE_NODE_TYPE(                   new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "Vec2",                      "General",     "Base",        "An x,y vector value.", NULL, Colors::MANGENTA, dtDAL::DataType::VEC2));
    RefPtr<NodeType> NodeLibraryRegistry::VEC3_VALUE_NODE_TYPE(                   new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "Vec3",                      "General",     "Base",        "An x,y,z vector value.", NULL, Colors::MANGENTA, dtDAL::DataType::VEC3));
    RefPtr<NodeType> NodeLibraryRegistry::VEC4_VALUE_NODE_TYPE(                   new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "Vec4",                      "General",     "Base",        "An x,y,z,w vector value.", NULL, Colors::MANGENTA, dtDAL::DataType::VEC4));
-   
+
    RefPtr<NodeType> NodeLibraryRegistry::STRING_ARRAY_VALUE_NODE_TYPE(           new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "String Array",              "General",     "Arrays",      "An array of string values.", NULL, Colors::CYAN, dtDAL::DataType::STRING));
    RefPtr<NodeType> NodeLibraryRegistry::ACTOR_ARRAY_VALUE_NODE_TYPE(            new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "Actor Array",               "General",     "Arrays",      "An array of actor values.", NULL, Colors::MANGENTA, dtDAL::DataType::ACTOR));
    RefPtr<NodeType> NodeLibraryRegistry::VEC2_ARRAY_VALUE_NODE_TYPE(             new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "Vec2 Array",                "General",     "Arrays",      "An array of vec2 values.", NULL, Colors::MANGENTA, dtDAL::DataType::VEC2));
    RefPtr<NodeType> NodeLibraryRegistry::VEC3_ARRAY_VALUE_NODE_TYPE(             new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "Vec3 Array",                "General",     "Arrays",      "An array of vec3 values.", NULL, Colors::MANGENTA, dtDAL::DataType::VEC3));
    RefPtr<NodeType> NodeLibraryRegistry::VEC4_ARRAY_VALUE_NODE_TYPE(             new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "Vec4 Array",                "General",     "Arrays",      "An array of vec4 values.", NULL, Colors::MANGENTA, dtDAL::DataType::VEC4));
-   
+
    RefPtr<NodeType> NodeLibraryRegistry::RANDOM_INT_VALUE_NODE_TYPE(             new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "Random Int",                "General",     "Random",      "A random int value.", NULL, Colors::BLUE, dtDAL::DataType::INT));
    RefPtr<NodeType> NodeLibraryRegistry::RANDOM_FLOAT_VALUE_NODE_TYPE(           new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "Random Float",              "General",     "Random",      "A random float value.", NULL, Colors::YELLOW, dtDAL::DataType::FLOAT));
 
@@ -277,6 +279,7 @@ namespace dtDirector
       mNodeFactory->RegisterType<DelayAction>(DELAY_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<SwitchAction>(SWITCH_ACTION_NODE_TYPE.get());
 
+      mNodeFactory->RegisterType<GetApplicationConfigPropertyAction>(GET_APP_CONFIG_PROPERTY_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<GetActorPropertyAction>(GET_ACTOR_PROPERTY_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<GetActorOrientationAction>(GET_ACTOR_ORIENTATION_ACTION.get());
       mNodeFactory->RegisterType<GetVectorValuesAction>(GET_VECTOR_VALUES_ACTION_NODE_TYPE.get());
@@ -326,7 +329,7 @@ namespace dtDirector
       mNodeFactory->RegisterType<SubtractMutator>(SUBTRACT_MUTATOR_NODE_TYPE.get());
       mNodeFactory->RegisterType<MultiplyMutator>(MULTIPLY_MUTATOR_NODE_TYPE.get());
       mNodeFactory->RegisterType<DivideMutator>(DIVIDE_MUTATOR_NODE_TYPE.get());
-      
+
       mNodeFactory->RegisterType<CompareEqualityMutator>(COMPARE_EQUALITY_MUTATOR_NODE_TYPE.get());
       mNodeFactory->RegisterType<CompareLessMutator>(COMPARE_LESS_MUTATOR_NODE_TYPE.get());
       mNodeFactory->RegisterType<CompareGreaterMutator>(COMPARE_GREATER_MUTATOR_NODE_TYPE.get());
