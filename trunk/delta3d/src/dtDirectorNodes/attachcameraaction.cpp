@@ -83,10 +83,7 @@ namespace dtDirector
          dtCore::DeltaDrawable* actor = proxy->GetActor();
          if (camera && actor)
          {
-            dtCore::Transform transform;
-            camera->GetTransform(transform);
-            transform.SetRotation(osg::Vec3(0.0f, 0.0f, 0.0f));
-            camera->SetTransform(transform);
+            camera->SetTransform(dtCore::Transform(), dtCore::Transformable::REL_CS);
 
             dtCore::DeltaDrawable* parent = camera->GetParent();
             if (parent)
