@@ -23,6 +23,7 @@
 #include <dtDirectorQt/editorscene.h>
 
 #include <QtGui/QMouseEvent>
+#include <QtGui/QGraphicsRectItem>
 
 namespace dtDirector
 {
@@ -69,20 +70,20 @@ namespace dtDirector
       scale(inc, inc);
 
       // Translate the view towards the mouse cursor.
-      //if (numberOfSteps > 0.0f)
-      //{
-      //   QPointF centerPos(width()/2, height()/2);
-      //   QPointF mousePos = event->pos();
+      if (numberOfSteps > 0.0f)
+      {
+         QPointF centerPos(width()/2, height()/2);
+         QPointF mousePos = event->pos();
 
-      //   QPointF translation = mousePos - centerPos;
-      //   centerPos = mapToScene(centerPos.x(), centerPos.y());
-      //   centerOn(centerPos);
+         centerPos = mapToScene(centerPos.x(), centerPos.y());
+         mousePos = mapToScene(mousePos.x(), mousePos.y());
 
-      //   translation = mapToScene(translation.x(), translation.y());
-      //   //translation *= 0.2f;
-      //   mScene->GetTranslationItem()->setPos(
-      //      mScene->GetTranslationItem()->pos() - translation);
-      //}
+         QPointF translation = mousePos - centerPos;
+         translation *= (inc - 1.0f) * 2.0f;
+
+         mScene->GetTranslationItem()->setPos(
+            mScene->GetTranslationItem()->pos() - translation);
+      }
    }
 } // namespace dtDirector
 
