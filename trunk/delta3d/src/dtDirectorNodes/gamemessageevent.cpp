@@ -66,7 +66,7 @@ namespace dtDirector
    {
       mMessageType = typeName;
 
-      //RegisterMessages();
+      RegisterMessages();
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -80,7 +80,7 @@ namespace dtDirector
    {
       if (linkName == "Message Type")
       {
-         //RegisterMessages();
+         RegisterMessages();
       }
    }
 

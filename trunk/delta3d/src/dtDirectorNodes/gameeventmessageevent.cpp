@@ -128,7 +128,7 @@ namespace dtDirector
          dtDAL::GameEvent* gameEvent = GetGameEvent("Event");
          if (eventMsg.GetGameEvent() == gameEvent)
          {
-            Trigger();
+            Trigger("Out", NULL, true, false);
          }
       }
    }
