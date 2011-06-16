@@ -45,6 +45,7 @@ SET(LIB_PUBLIC_HEADERS ${HEADER_PATH}/actionitem.h
     ${HEADER_PATH}/scriptitem.h
     ${HEADER_PATH}/searchbrowser.h
     ${HEADER_PATH}/threadbrowser.h
+    ${HEADER_PATH}/undoaddlibraryevent.h
     ${HEADER_PATH}/undocreateevent.h
     ${HEADER_PATH}/undodeleteevent.h
     ${HEADER_PATH}/undoevent.h
@@ -52,6 +53,7 @@ SET(LIB_PUBLIC_HEADERS ${HEADER_PATH}/actionitem.h
     ${HEADER_PATH}/undomanager.h
     ${HEADER_PATH}/undomultipleevent.h
     ${HEADER_PATH}/undopropertyevent.h
+    ${HEADER_PATH}/undoremovelibraryevent.h
     ${HEADER_PATH}/valueitem.h
 )
 
@@ -78,6 +80,7 @@ SET(LIB_SOURCES ${SOURCE_PATH}/actionitem.cpp
     ${SOURCE_PATH}/scriptitem.cpp
     ${SOURCE_PATH}/searchbrowser.cpp
     ${SOURCE_PATH}/threadbrowser.cpp
+    ${SOURCE_PATH}/undoaddlibraryevent.cpp
     ${SOURCE_PATH}/undocreateevent.cpp
     ${SOURCE_PATH}/undodeleteevent.cpp
     ${SOURCE_PATH}/undoevent.cpp
@@ -85,6 +88,7 @@ SET(LIB_SOURCES ${SOURCE_PATH}/actionitem.cpp
     ${SOURCE_PATH}/undomanager.cpp
     ${SOURCE_PATH}/undomultipleevent.cpp
     ${SOURCE_PATH}/undopropertyevent.cpp
+    ${SOURCE_PATH}/undoremovelibraryevent.cpp
     ${SOURCE_PATH}/valueitem.cpp
 )
 
