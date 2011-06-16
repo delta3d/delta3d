@@ -1576,6 +1576,12 @@ namespace dtDirector
          setPen(QPen(Qt::red, 3, Qt::DotLine, Qt::RoundCap, Qt::RoundJoin));
       }
 
+      ValueNode* valueNode = mNode->AsValueNode();
+      if (valueNode && valueNode->GetGlobal())
+      {
+         setPen(QPen(Qt::darkGreen, 3, Qt::SolidLine, Qt::SquareCap, Qt::RoundJoin));
+      }
+
       if(mScene != NULL && mScene->GetEditor()->GetReplayMode())
       {
          const OutputLink* output = mScene->GetEditor()->GetReplayOutput();

@@ -647,6 +647,25 @@ namespace dtDirector
       */
       bool ReadString(FILE* file, std::string& str);
 
+      /**
+       * Retrieves the global value key name.
+       */
+      std::string GetValueKey(ValueNode* value);
+
+      /**
+       * Handles the registration of a value node to be global.
+       *
+       * @return  False if the value node could not be registered.
+       */
+      bool RegisterGlobalValue(ValueNode* value);
+      bool UnRegisterGlobalValue(ValueNode* value);
+
+      /**
+       * Event handler when a value has changed.
+       */
+      void OnValueChanged(ValueNode* value);
+      void OnInitialValueChanged(ValueNode* value);
+
    private:
 
       // Thread Queue.
@@ -692,6 +711,9 @@ namespace dtDirector
       static dtCore::UniqueId mPlayer;
       dtCore::UniqueId mScriptOwner;
 
+      static std::map<std::string, std::vector<ValueNode*> > mGlobalValues;
+      static bool mApplyingGlobalValue;
+
       // Core Info.
       std::string mScriptName;
       std::string mDescription;
@@ -726,6 +748,8 @@ namespace dtDirector
       dtCore::RefPtr<DirectorNotifier> mNotifier;
 
       dtCore::RefPtr<DirectorInstance> mBaseInstance;
+
+      friend class ValueNode;
 
       // Switch to enable/disable this director
       DT_DECLARE_ACCESSOR_INLINE(bool, Active)

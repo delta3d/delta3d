@@ -130,6 +130,26 @@ namespace dtDirector
       }
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   std::string ArrayValueNode::GetFormattedInitialValue()
+   {
+      if (mInitialArrayProperty)
+      {
+         return mInitialArrayProperty->ToString();
+      }
+
+      return "";
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void ArrayValueNode::SetFormattedInitialValue(const std::string& value)
+   {
+      if (mInitialArrayProperty)
+      {
+         mInitialArrayProperty->FromString(value);
+      }
+   }
+
    //////////////////////////////////////////////////////////////////////////
    dtDAL::ActorProperty* ArrayValueNode::GetProperty(int index, ValueNode **outNode)
    {

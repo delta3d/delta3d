@@ -52,6 +52,7 @@ namespace dtDirector
    void ReferenceValue::BuildPropertyMap()
    {
       ValueNode::BuildPropertyMap();
+      RemoveProperty("Global");
 
       dtDAL::StringActorProperty* refProp = new dtDAL::StringActorProperty(
          "Reference", "Referenced Value",

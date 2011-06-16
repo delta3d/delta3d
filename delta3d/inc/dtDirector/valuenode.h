@@ -146,6 +146,16 @@ namespace dtDirector
       virtual void SetFormattedValue(const std::string& value);
 
       /**
+       * Retrieves the string formatted representation for the initial value.
+       */
+      virtual std::string GetFormattedInitialValue();
+
+      /**
+       * Sets the formatted string initial value.
+       */
+      virtual void SetFormattedInitialValue(const std::string& value);
+
+      /**
        * Retrieves the property for this value.
        *
        * @param[in]   index    The property index, in case this is an array value.
@@ -240,6 +250,12 @@ namespace dtDirector
        */
       virtual void SetName(const std::string& name);
 
+      /**
+       * Accessors for the global flag.
+       */
+      void SetGlobal(bool value);
+      bool GetGlobal() const;
+
       friend class ValueLink;
 
    protected:
@@ -253,6 +269,7 @@ namespace dtDirector
       dtCore::RefPtr<dtDAL::ActorProperty> mInitialProperty;
 
       bool mHasInitialValue;
+      bool mIsGlobal;
 
       std::vector<ValueLink*> mLinks;
    };
