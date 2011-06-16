@@ -67,6 +67,11 @@ namespace dtDirector
       void OnSaved();
 
       /**
+       * Reverts all changes since the last unchanged state.
+       */
+      void Revert();
+
+      /**
        * Clears all undo/redo events.
        */
       void Clear();
