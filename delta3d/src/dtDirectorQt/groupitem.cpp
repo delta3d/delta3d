@@ -280,8 +280,10 @@ namespace dtDirector
       dtCore::RefPtr<dtDirector::GroupNode> groupNode = dynamic_cast<dtDirector::GroupNode*>(mNode.get());
       if (!groupNode.valid()) return;
 
-      osg::Vec2 minPos = GetPosition() + groupNode->GetSize();
-      osg::Vec2 maxPos = GetPosition();
+      osg::Vec2 firstPos = nodeItems[0]->GetPosition();
+
+      osg::Vec2 minPos = firstPos;
+      osg::Vec2 maxPos = firstPos;
 
       int count = (int)nodeItems.size();
       for (int index = 0; index < count; index++)
