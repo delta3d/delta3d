@@ -402,7 +402,7 @@ namespace dtDirector
       /**
        * Event handler when a value link is being exposed.
        */
-      void ExposeValue(QAction* action);
+      void ExposeLink(QAction* action);
 
       /**
        * Event handler when the trigger event has been clicked.
@@ -415,11 +415,6 @@ namespace dtDirector
       void OnToggleBreakPoint();
 
    protected:
-
-      /**
-       * Event handler when the context menu event has triggered.
-       */
-      void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
 
       /**
        * Event handler when this item changes.
@@ -467,6 +462,18 @@ namespace dtDirector
        * Sets the amount of highlight applied to the current nodes pen.
        */
       void SetHighlight(float alpha);
+
+      /**
+       * Retrieves a menu for exposing links.
+       */
+      QMenu* GetExposeLinkMenu();
+
+      /**
+       * Retrieves a menu for changing the visibility of links.
+       */
+      QMenu* GetShowInputMenu();
+      QMenu* GetShowOutputMenu();
+      QMenu* GetShowValueMenu();
 
    protected:
 

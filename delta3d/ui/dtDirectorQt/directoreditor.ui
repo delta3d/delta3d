@@ -322,8 +322,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>107</width>
-              <height>278</height>
+              <width>98</width>
+              <height>28</height>
              </rect>
             </property>
             <attribute name="label">
@@ -355,8 +355,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>107</width>
-              <height>278</height>
+              <width>98</width>
+              <height>28</height>
              </rect>
             </property>
             <attribute name="label">
@@ -385,8 +385,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>107</width>
-              <height>278</height>
+              <width>98</width>
+              <height>28</height>
              </rect>
             </property>
             <attribute name="label">
@@ -415,8 +415,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>107</width>
-              <height>278</height>
+              <width>98</width>
+              <height>28</height>
              </rect>
             </property>
             <attribute name="label">
@@ -445,8 +445,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>107</width>
-              <height>278</height>
+              <width>98</width>
+              <height>28</height>
              </rect>
             </property>
             <attribute name="label">
@@ -475,8 +475,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>107</width>
-              <height>278</height>
+              <width>98</width>
+              <height>28</height>
              </rect>
             </property>
             <attribute name="label">
@@ -511,8 +511,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>107</width>
-              <height>278</height>
+              <width>98</width>
+              <height>28</height>
              </rect>
             </property>
             <attribute name="label">
@@ -550,8 +550,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>107</width>
-              <height>278</height>
+              <width>98</width>
+              <height>28</height>
              </rect>
             </property>
             <attribute name="label">
@@ -824,7 +824,7 @@
      <normaloff>:/icons/showlinks.png</normaloff>:/icons/showlinks.png</iconset>
    </property>
    <property name="text">
-    <string>&amp;Show Links</string>
+    <string>&amp;Show All Links</string>
    </property>
    <property name="toolTip">
     <string>Shows all hidden links on selected nodes (Ctrl+U).</string>
@@ -839,7 +839,7 @@
      <normaloff>:/icons/hidelinks.png</normaloff>:/icons/hidelinks.png</iconset>
    </property>
    <property name="text">
-    <string>&amp;Hide Links</string>
+    <string>&amp;Hide All Links</string>
    </property>
    <property name="toolTip">
     <string>Hides all unused links on selected nodes (Ctrl+H).</string>

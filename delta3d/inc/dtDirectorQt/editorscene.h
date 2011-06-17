@@ -144,6 +144,11 @@ namespace dtDirector
       QAction* GetMacroSelectionAction() {return mMacroSelectionAction;}
 
       /**
+       * Retrieves the Create Group Around Selection Action.
+       */
+      QAction* GetGroupSelectionAction() {return mGroupSelectionAction;}
+
+      /**
        * Retrieves a node item given the nodes ID.
        *
        * @param[in]  id          The ID of the node.
@@ -324,6 +329,7 @@ namespace dtDirector
       bool     mHoldingShift;
 
       QAction* mMacroSelectionAction;
+      QAction* mGroupSelectionAction;
 
       QPointF            mMenuPos;
       QGraphicsRectItem* mTranslationItem;
