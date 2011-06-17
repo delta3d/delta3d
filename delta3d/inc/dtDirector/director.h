@@ -26,6 +26,7 @@
 #include <dtDirector/directorgraph.h>
 #include <dtDirector/messagegmcomponent.h>
 #include <dtDirector/directornotifier.h>
+#include <dtDirector/directorxml.h>
 
 #include <dtDAL/map.h>
 
@@ -240,6 +241,21 @@ namespace dtDirector
        * @return     True if the script was saved successfully.
        */
       bool SaveScript(const std::string& scriptFile);
+
+      /**
+       * Retrieves all missing node types.
+       */
+      const std::set<std::string>& GetMissingNodeTypes();
+
+      /**
+       * Retrieves all missing libraries.
+       */
+      const std::vector<std::string>& GetMissingLibraries();
+
+      /**
+       * Retrieves whether any loaded properties were deprecated.
+       */
+      bool HasDeprecatedProperty() const;
 
       /**
        * This method is called in init, which instructs the director
@@ -721,7 +737,6 @@ namespace dtDirector
       std::string mCopyright;
       std::string mCreationTime;
 
-
       dtDAL::ResourceDescriptor mResource;
 
       dtCore::RefPtr<dtDAL::Map> mMap;
@@ -748,6 +763,7 @@ namespace dtDirector
       dtCore::RefPtr<DirectorNotifier> mNotifier;
 
       dtCore::RefPtr<DirectorInstance> mBaseInstance;
+      dtCore::RefPtr<DirectorParser> mParser;
 
       friend class ValueNode;
 

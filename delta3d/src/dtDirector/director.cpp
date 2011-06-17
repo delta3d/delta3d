@@ -25,7 +25,6 @@
 #include <dtDAL/project.h>
 #include <dtDAL/stringactorproperty.h>
 
-#include <dtDirector/directorxml.h>
 #include <dtDirector/nodemanager.h>
 
 #include <dtUtil/datapathutils.h>
@@ -270,13 +269,17 @@ namespace dtDirector
          fileName = dtUtil::FindFileInPathList(fileName);
       }
 
-      dtCore::RefPtr<DirectorParser> parser = new DirectorParser();
-      if (parser)
+      if (!mParser.valid())
+      {
+         mParser = new DirectorParser();
+      }
+
+      if (mParser.valid())
       {
          mLoading = true;
          try
          {
-            parser->Parse(this, mMap.get(), fileName);
+            mParser->Parse(this, mMap.get(), fileName);
          }
          catch (const dtUtil::Exception& e)
          {
@@ -294,7 +297,7 @@ namespace dtDirector
          {
             fileUtils.PopDirectory();
          }
-         mModified = parser->HasDeprecatedProperty();
+         mModified = mParser->HasDeprecatedProperty();
          mScriptName = fileName;
 
          if (mBaseInstance.valid())
@@ -353,6 +356,24 @@ namespace dtDirector
       }
 
       return false;
+   }
+
+   /////////////////////////////////////////////////////////////////
+   const std::set<std::string>& Director::GetMissingNodeTypes()
+   {
+      return mParser->GetMissingNodeTypes();
+   }
+
+   /////////////////////////////////////////////////////////////////
+   const std::vector<std::string>& Director::GetMissingLibraries()
+   {
+      return mParser->GetMissingLibraries();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool Director::HasDeprecatedProperty() const
+   {
+      return mParser->HasDeprecatedProperty();
    }
 
    //////////////////////////////////////////////////////////////////////////

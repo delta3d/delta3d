@@ -28,7 +28,6 @@
 
 #include <dtDirector/export.h>
 
-#include <dtDirector/director.h>
 #include <dtDirector/directorxmlhandler.h>
 
 #include <dtDAL/basexml.h>
@@ -42,6 +41,8 @@ namespace dtDAL
 
 namespace dtDirector
 {
+   class Director;
+
    /**
     * @class DirectorParser
     *
