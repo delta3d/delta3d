@@ -35,6 +35,7 @@ namespace dtDirector
       : ActionNode()
       , mIsLocalEvent(false)
    {
+      mInstigator = "";
       AddAuthor("Jeff P. Houde");
    }
 
@@ -90,7 +91,7 @@ namespace dtDirector
       // them to be connected to ValueNodes.
       mValues.push_back(ValueLink(this, eventNameProp, false, false, true, false));
       mValues.push_back(ValueLink(this, localProp, false, false, true, false));
-      mValues.push_back(ValueLink(this, instigatorProp, false, false, true, true));
+      mValues.push_back(ValueLink(this, instigatorProp, false, false, true, false));
    }
 
    //////////////////////////////////////////////////////////////////////////
