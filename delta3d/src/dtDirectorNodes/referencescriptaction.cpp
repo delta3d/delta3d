@@ -56,6 +56,26 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   void ReferenceScriptAction::OnStart()
+   {
+      if (mScript.valid())
+      {
+         std::vector<Node*> nodes;
+         mScript->GetAllNodes(nodes);
+
+         int count = (int)nodes.size();
+         for (int index = 0; index < count; ++index)
+         {
+            Node* node = nodes[index];
+            if (node)
+            {
+               node->OnStart();
+            }
+         }
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    void ReferenceScriptAction::BuildPropertyMap()
    {
       ActionNode::BuildPropertyMap();
@@ -247,6 +267,11 @@ namespace dtDirector
                mScript->LoadScript(dtDAL::Project::GetInstance().GetResourcePath(mScriptResource));
 
                mScript->SetResource(mScriptResource);
+
+               if (GetDirector()->HasStarted())
+               {
+                  OnStart();
+               }
 
                mName = osgDB::getNameLessExtension(mScriptResource.GetResourceName());
             }
