@@ -890,25 +890,42 @@ namespace dtDirector
          int count = (int)selection.size();
          for (int index = 0; index < count; index++)
          {
+            dtCore::UniqueId id("");
             Node* node = dynamic_cast<Node*>(selection[index].get());
             if (node)
             {
-               NodeItem* item = mPropertyEditor->GetScene()->GetNodeItem(node->GetID(), true);
+               id = node->GetID();
+            }
+            else
+            {
+               DirectorGraph* macro = dynamic_cast<DirectorGraph*>(selection[index].get());
+               if (macro)
+               {
+                  id = macro->GetID();
+               }
+            }
+
+            if (!id.ToString().empty())
+            {
+               NodeItem* item = GetNodeItem(id, true);
                if (item) nodeItems.push_back(item);
             }
          }
 
+         mEditor->GetUndoManager()->BeginMultipleEvents("Creation of a new Group Box.");
+
          // Retrieve the group item that was created for this node.
-         GroupItem* groupItem = dynamic_cast<GroupItem*>(mPropertyEditor->GetScene()->GetNodeItem(groupNode->GetID(), true));
+         GroupItem* groupItem = dynamic_cast<GroupItem*>(GetNodeItem(groupNode->GetID(), true));
          if (groupItem)
          {
             groupItem->SizeToFit(nodeItems);
          }
-      }
 
-      dtCore::RefPtr<UndoCreateEvent> event = new UndoCreateEvent(mEditor, groupNode->GetID(), mGraph->GetID());
-      event->SetDescription("Creation of a new Group Box.");
-      mEditor->GetUndoManager()->AddEvent(event);
+         dtCore::RefPtr<UndoCreateEvent> event = new UndoCreateEvent(mEditor, groupNode->GetID(), mGraph->GetID());
+         mEditor->GetUndoManager()->AddEvent(event);
+
+         mEditor->GetUndoManager()->EndMultipleEvents();
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
