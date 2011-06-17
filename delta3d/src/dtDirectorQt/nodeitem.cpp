@@ -28,6 +28,7 @@
 
 #include <dtDirectorQt/undomanager.h>
 #include <dtDirectorQt/undopropertyevent.h>
+#include <dtDirectorQt/undolinkvisibilityevent.h>
 
 #include <dtDirector/valuenode.h>
 #include <dtDirector/groupnode.h>
@@ -1281,13 +1282,20 @@ namespace dtDirector
          return;
       }
 
-
       ValueLink* link = mNode->GetValueLink(action->text().toStdString());
       if (link)
       {
-         link->SetExposed(true);
-         link->SetVisible(true);
-         mScene->Refresh();
+         if (!link->GetExposed())
+         {
+            link->SetExposed(true);
+            link->SetVisible(true);
+
+            dtCore::RefPtr<UndoLinkVisibilityEvent> event = new UndoLinkVisibilityEvent(mScene->GetEditor(), GetID(), 2, link->GetName(), true, true);
+            event->SetDescription("Creation of value link \'" + link->GetName() + "\' for Node \'" + mNode->GetTypeName() + "\'.");
+            mScene->GetEditor()->GetUndoManager()->AddEvent(event);
+
+            mScene->Refresh();
+         }
       }
    }
 

@@ -50,6 +50,7 @@ SET(LIB_PUBLIC_HEADERS ${HEADER_PATH}/actionitem.h
     ${HEADER_PATH}/undodeleteevent.h
     ${HEADER_PATH}/undoevent.h
     ${HEADER_PATH}/undolinkevent.h
+    ${HEADER_PATH}/undolinkvisibilityevent.h
     ${HEADER_PATH}/undomanager.h
     ${HEADER_PATH}/undomultipleevent.h
     ${HEADER_PATH}/undopropertyevent.h
@@ -85,6 +86,7 @@ SET(LIB_SOURCES ${SOURCE_PATH}/actionitem.cpp
     ${SOURCE_PATH}/undodeleteevent.cpp
     ${SOURCE_PATH}/undoevent.cpp
     ${SOURCE_PATH}/undolinkevent.cpp
+    ${SOURCE_PATH}/undolinkvisibilityevent.cpp
     ${SOURCE_PATH}/undomanager.cpp
     ${SOURCE_PATH}/undomultipleevent.cpp
     ${SOURCE_PATH}/undopropertyevent.cpp
