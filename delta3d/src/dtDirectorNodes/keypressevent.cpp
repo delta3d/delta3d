@@ -344,27 +344,117 @@ namespace dtDirector
    {
       std::vector<std::string> keyList;
 
-      dtABC::Application* app = dtABC::Application::GetInstance(0);
-      if (!app)
-      {
-         return keyList;
-      }
+      keyList.push_back("Space");
+      keyList.push_back("Enter");
+      keyList.push_back("Tab");
+      keyList.push_back("Backspace");
+      keyList.push_back("Esc");
 
-      dtCore::Keyboard* keyboard = app->GetKeyboard();
-      if (!keyboard)
-      {
-         return keyList;
-      }
+      keyList.push_back("A");
+      keyList.push_back("B");
+      keyList.push_back("C");
+      keyList.push_back("D");
+      keyList.push_back("E");
+      keyList.push_back("F");
+      keyList.push_back("G");
+      keyList.push_back("H");
+      keyList.push_back("I");
+      keyList.push_back("J");
+      keyList.push_back("K");
+      keyList.push_back("L");
+      keyList.push_back("M");
+      keyList.push_back("N");
+      keyList.push_back("O");
+      keyList.push_back("P");
+      keyList.push_back("Q");
+      keyList.push_back("R");
+      keyList.push_back("S");
+      keyList.push_back("T");
+      keyList.push_back("U");
+      keyList.push_back("V");
+      keyList.push_back("W");
+      keyList.push_back("X");
+      keyList.push_back("Y");
+      keyList.push_back("Z");
 
-      dtCore::InputDevice::ButtonMap::const_iterator iter;
-      for (iter = keyboard->GetButtons().begin(); iter != keyboard->GetButtons().end(); ++iter)
-      {
-         dtCore::Button* button = iter->second;
-         if (button)
-         {
-            keyList.push_back(button->GetDescription());
-         }
-      }
+      keyList.push_back("F1");
+      keyList.push_back("F2");
+      keyList.push_back("F3");
+      keyList.push_back("F4");
+      keyList.push_back("F5");
+      keyList.push_back("F6");
+      keyList.push_back("F7");
+      keyList.push_back("F8");
+      keyList.push_back("F9");
+      keyList.push_back("F10");
+      keyList.push_back("F12");
+
+      keyList.push_back("`");
+      keyList.push_back("1");
+      keyList.push_back("2");
+      keyList.push_back("3");
+      keyList.push_back("4");
+      keyList.push_back("5");
+      keyList.push_back("6");
+      keyList.push_back("7");
+      keyList.push_back("8");
+      keyList.push_back("9");
+      keyList.push_back("0");
+      keyList.push_back("-");
+      keyList.push_back("=");
+
+      keyList.push_back("[");
+      keyList.push_back("]");
+      keyList.push_back("\\");
+      keyList.push_back(";");
+      keyList.push_back("\'");
+      keyList.push_back(",");
+      keyList.push_back(".");
+      keyList.push_back("/");
+
+      keyList.push_back("Left Shift");
+      keyList.push_back("Right Shift");
+      keyList.push_back("Left Ctrl");
+      keyList.push_back("Right Ctrl");
+      keyList.push_back("Left Alt");
+      keyList.push_back("Right Alt");
+      keyList.push_back("Left Super");
+      keyList.push_back("Right Super");
+
+      keyList.push_back("Pause");
+      keyList.push_back("Home");
+      keyList.push_back("End");
+      keyList.push_back("Delete");
+      keyList.push_back("Insert");
+      keyList.push_back("Page Up");
+      keyList.push_back("Page Down");
+
+      keyList.push_back("Left");
+      keyList.push_back("Up");
+      keyList.push_back("Right");
+      keyList.push_back("Down");
+
+      keyList.push_back("Keypad 1");
+      keyList.push_back("Keypad 2");
+      keyList.push_back("Keypad 3");
+      keyList.push_back("Keypad 4");
+      keyList.push_back("Keypad 5");
+      keyList.push_back("Keypad 6");
+      keyList.push_back("Keypad 7");
+      keyList.push_back("Keypad 8");
+      keyList.push_back("Keypad 9");
+      keyList.push_back("Keypad 0");
+      keyList.push_back("Keypad +");
+      keyList.push_back("Keypad -");
+      keyList.push_back("Keypad *");
+      keyList.push_back("Keypad /");
+      keyList.push_back("Keypad .");
+
+      keyList.push_back("Num Lock");
+      keyList.push_back("Caps Lock");
+      keyList.push_back("Print Screen");
+      keyList.push_back("Scroll Lock");
+      keyList.push_back("Menu");
 
       return keyList;
    }
