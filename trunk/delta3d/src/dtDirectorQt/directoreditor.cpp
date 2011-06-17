@@ -205,6 +205,63 @@ namespace dtDirector
             messageBox.exec();
          }
 
+         // Display a warning message if there were libraries that could not be loaded.
+         const std::vector<std::string>& missingLibraries = mDirector->GetMissingLibraries();
+         if (!missingLibraries.empty())
+         {
+            QString warning = "The following Node Libraries could not be included:\n";
+
+            int count = (int)missingLibraries.size();
+            for (int index = 0; index < count; ++index)
+            {
+               QString libraryName = missingLibraries[index].c_str();
+               warning += "\t" + libraryName + "\n";
+            }
+
+            warning += "\nThis could happen either because the libraries were not found ";
+            warning += "in any of this applications valid search paths or the binary files ";
+            warning += "for these libraries were out of date and could not be linked ";
+            warning += "properly with this application.\n\n";
+            warning += "Saving this script will cause these libraries to be removed.";
+
+            QMessageBox messageBox("Libraries were not loaded!",
+               warning, QMessageBox::Warning,
+               QMessageBox::Ok,
+               QMessageBox::NoButton, 
+               QMessageBox::NoButton,
+               this);
+
+            messageBox.exec();
+         }
+
+         // Display a warning message if there were nodes that could not be loaded.
+         const std::set<std::string>& missingNodes = mDirector->GetMissingNodeTypes();
+         if (!missingNodes.empty())
+         {
+            QString warning = "The following node types could not be created:\n";
+
+            std::set<std::string>::const_iterator iter;
+            for (iter = missingNodes.begin(); iter != missingNodes.end(); ++iter)
+            {
+               QString nodeName = (*iter).c_str();
+               warning += "\t" + nodeName + "\n";
+            }
+
+            warning += "\nThis could happen either because the nodes have been removed ";
+            warning += "from their libraries or the libraries that contained them could ";
+            warning += "not be loaded themselves.\n\n";
+            warning += "Saving this script will cause these nodes to be removed.";
+
+            QMessageBox messageBox("Nodes were not loaded!",
+               warning, QMessageBox::Warning,
+               QMessageBox::Ok,
+               QMessageBox::NoButton, 
+               QMessageBox::NoButton,
+               this);
+
+            messageBox.exec();
+         }
+
          // Create a single tab with the default graph.
          OpenGraph(mDirector->GetGraphRoot());
          mUI.replayBrowser->BuildThreadList();

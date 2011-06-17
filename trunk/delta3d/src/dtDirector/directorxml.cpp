@@ -48,6 +48,7 @@
 #include <dtCore/transformable.h>
 #include <dtCore/transform.h>
 
+#include <dtDirector/director.h>
 #include <dtDirector/directorxml.h>
 #include <dtDirector/node.h>
 #include <dtDirector/nodetype.h>

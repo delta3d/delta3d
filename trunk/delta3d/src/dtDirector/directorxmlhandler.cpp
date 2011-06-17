@@ -380,6 +380,15 @@ namespace dtDirector
                {
                   dtDirector::NodeManager& nodeManager = dtDirector::NodeManager::GetInstance();
                   mNode = nodeManager.CreateNode(mNodeName, mNodeCategory, graph).get();
+                  if (!mNode.valid())
+                  {
+                     std::string nodeType = mNodeCategory + "." + mNodeName;
+                     if (mMissingNodeTypes.find(nodeType) == mMissingNodeTypes.end())
+                     {
+                        mMissingNodeTypes.insert(mMissingNodeTypes.end(), nodeType);
+                     }
+                  }
+
                   mNodeName = "";
                   mNodeCategory = "";
                   mPropSerializer->SetCurrentPropertyContainer(mNode);
@@ -537,7 +546,6 @@ namespace dtDirector
                {
                   mNode->SetID(dtCore::UniqueId(dtUtil::XMLStringConverter(chars).ToString()));
                }
-
             }
          }
          else if (!mPropSerializer->Characters(topEl, chars))
@@ -576,6 +584,7 @@ namespace dtDirector
       mValueLink = NULL;
 
       mPropSerializer->Reset();
+      mLinkList.clear();
 
       ClearLibraryValues();
       ClearNodeValues();
