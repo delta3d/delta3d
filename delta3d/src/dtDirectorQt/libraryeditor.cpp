@@ -99,11 +99,11 @@ namespace dtDirector
          {
             // If the library was already in the list, but was re-ordered.
             mEditor->GetUndoManager()->BeginMultipleEvents("Reordering of Node Library \'" + libName + "\'.");
-            UndoRemoveLibraryEvent* event = new UndoRemoveLibraryEvent(mEditor, libName, foundIndex);
+            dtCore::RefPtr<UndoRemoveLibraryEvent> event = new UndoRemoveLibraryEvent(mEditor, libName, foundIndex);
             mEditor->GetUndoManager()->AddEvent(event);
          }
 
-         UndoAddLibraryEvent* event = new UndoAddLibraryEvent(mEditor, libName, (int)curLibs.size());
+         dtCore::RefPtr<UndoAddLibraryEvent> event = new UndoAddLibraryEvent(mEditor, libName, (int)curLibs.size());
          event->SetDescription("Addition of \'" + libName + "\' Node Library.");
          mEditor->GetUndoManager()->AddEvent(event);
 
@@ -173,7 +173,7 @@ namespace dtDirector
 
                mEditor->GetDirector()->RemoveLibrary(libToRemove);
 
-               UndoRemoveLibraryEvent* event = new UndoRemoveLibraryEvent(mEditor, libToRemove, i);
+               dtCore::RefPtr<UndoRemoveLibraryEvent> event = new UndoRemoveLibraryEvent(mEditor, libToRemove, i);
                event->SetDescription("Removal of Node Library \'" + libToRemove + "\'.");
                mEditor->GetUndoManager()->AddEvent(event);
 
@@ -199,11 +199,11 @@ namespace dtDirector
 
          mEditor->GetUndoManager()->BeginMultipleEvents("Reordering of Node Library \'" + libName + "\'.");
          {
-            UndoRemoveLibraryEvent* event = new UndoRemoveLibraryEvent(mEditor, libName, row);
+            dtCore::RefPtr<UndoRemoveLibraryEvent> event = new UndoRemoveLibraryEvent(mEditor, libName, row);
             mEditor->GetUndoManager()->AddEvent(event);
          }
          {
-            UndoAddLibraryEvent* event = new UndoAddLibraryEvent(mEditor, libName, row - 1);
+            dtCore::RefPtr<UndoAddLibraryEvent> event = new UndoAddLibraryEvent(mEditor, libName, row - 1);
             mEditor->GetUndoManager()->AddEvent(event);
          }
          mEditor->GetUndoManager()->EndMultipleEvents();
@@ -223,11 +223,11 @@ namespace dtDirector
 
          mEditor->GetUndoManager()->BeginMultipleEvents("Reordering of Node Library \'" + libName + "\'.");
          {
-            UndoRemoveLibraryEvent* event = new UndoRemoveLibraryEvent(mEditor, libName, row);
+            dtCore::RefPtr<UndoRemoveLibraryEvent> event = new UndoRemoveLibraryEvent(mEditor, libName, row);
             mEditor->GetUndoManager()->AddEvent(event);
          }
          {
-            UndoAddLibraryEvent* event = new UndoAddLibraryEvent(mEditor, libName, row + 1);
+            dtCore::RefPtr<UndoAddLibraryEvent> event = new UndoAddLibraryEvent(mEditor, libName, row + 1);
             mEditor->GetUndoManager()->AddEvent(event);
          }
          mEditor->GetUndoManager()->EndMultipleEvents();
