@@ -1221,6 +1221,7 @@ namespace dtDirector
 
          // Notify the undo manager of the property changes.
          dtCore::RefPtr<UndoPropertyEvent> event = new UndoPropertyEvent(mScene->GetEditor(), mNode->GetID(), prop->GetName(), mOldPosition, value);
+         event->SetDescription("Movement of Node \'" + mNode->GetTypeName() + "\'.");
          mScene->GetEditor()->GetUndoManager()->AddEvent(event.get());
       }
 

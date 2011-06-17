@@ -301,7 +301,7 @@ namespace dtDirector
       /**
        * Creates a new macro node.
        */
-      DirectorGraph* CreateMacro();
+      DirectorGraph* CreateMacro(const std::string& editorName);
 
    private:
       DirectorEditor*            mEditor;

@@ -145,7 +145,36 @@ namespace dtDirector
       // Now add all created nodes to the undo manager.
       if (undoManager && (!mPasted.empty() || !mPastedGraphs.empty()))
       {
-         undoManager->BeginMultipleEvents();
+         std::string undoDescription = "Paste operation of ";
+         if (mPasted.size() == 1)
+         {
+            Node* node = mPasted[0];
+            if (node)
+            {
+               undoDescription += "Node \'" + node->GetTypeName() + "\'.";
+            }
+         }
+         else if (mPastedGraphs.size() == 1)
+         {
+            DirectorGraph* graph = mPastedGraphs[0];
+            if (graph)
+            {
+               if (graph->GetEditor().empty())
+               {
+                  undoDescription += "Macro Node \'" + graph->GetName() + "\'.";
+               }
+               else
+               {
+                  undoDescription += "\'" + graph->GetEditor() + "\' Macro Node \'" +
+                     graph->GetName() + "\'.";
+               }
+            }
+         }
+         else
+         {
+            undoDescription += "multiple Nodes.";
+         }
+         undoManager->BeginMultipleEvents(undoDescription);
 
          for (int index = 0; index < count; index++)
          {

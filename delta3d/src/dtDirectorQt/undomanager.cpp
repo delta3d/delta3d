@@ -120,11 +120,34 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void UndoManager::BeginMultipleEvents()
+   std::string UndoManager::GetUndoDescription() const
+   {
+      if (!mUndoEvents.empty())
+      {
+         return mUndoEvents.top()->GetDescription();
+      }
+
+      return "";
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   std::string UndoManager::GetRedoDescription() const
+   {
+      if (!mRedoEvents.empty())
+      {
+         return mRedoEvents.top()->GetDescription();
+      }
+
+      return "";
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void UndoManager::BeginMultipleEvents(const std::string& description)
    {
       dtCore::RefPtr<UndoMultipleEvent> event = new UndoMultipleEvent(mEditor);
       if (event.valid())
       {
+         event->SetDescription(description);
          mMultipleEventStack.push(event.get());
       }
    }

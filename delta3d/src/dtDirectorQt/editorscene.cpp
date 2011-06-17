@@ -604,12 +604,10 @@ namespace dtDirector
       for (int index = 0; index < count; index++)
       {
          NodeItem* item = mNodes[index];
-
-         MacroItem* macro = dynamic_cast<MacroItem*>(item);
-         if (macro && macro->GetGraph() &&
-            macro->GetGraph()->GetID() == id)
+         if (item && item->GetMacro() &&
+            item->GetMacro()->GetID() == id)
          {
-            return macro;
+            return dynamic_cast<MacroItem*>(item);
          }
       }
 
@@ -721,24 +719,9 @@ namespace dtDirector
       // If the node name is empty, it means we are creating a macro.
       if (name.empty())
       {
-         mEditor->GetUndoManager()->BeginMultipleEvents();
          mMenuPos.setX(x);
          mMenuPos.setY(y);
-         DirectorGraph* graph = CreateMacro();
-         if (graph)
-         {
-            dtCore::RefPtr<UndoPropertyEvent> event = new UndoPropertyEvent(mEditor, graph->GetID(), "Name", "Macro", graph->GetName());
-            mEditor->GetUndoManager()->AddEvent(event.get());
-
-            if (!category.empty())
-            {
-               graph->SetEditor(category);
-
-               event = new UndoPropertyEvent(mEditor, graph->GetID(), "Custom Editor", "", category);
-               mEditor->GetUndoManager()->AddEvent(event.get());
-            }
-         }
-         mEditor->GetUndoManager()->EndMultipleEvents();
+         DirectorGraph* graph = CreateMacro(category);
 
          mEditor->RefreshGraph(mGraph.get());
          mEditor->Refresh();
@@ -749,6 +732,7 @@ namespace dtDirector
          if (node)
          {
             dtCore::RefPtr<UndoCreateEvent> event = new UndoCreateEvent(mEditor, node->GetID(), mGraph->GetID());
+            event->SetDescription("Creation of Node \'" + name + "\'.");
             mEditor->GetUndoManager()->AddEvent(event);
          }
 
@@ -801,6 +785,7 @@ namespace dtDirector
       if (node)
       {
          dtCore::RefPtr<UndoCreateEvent> event = new UndoCreateEvent(mEditor, node->GetID(), mGraph->GetID());
+         event->SetDescription("Creation of Node \'" + name + "\'.");
          mEditor->GetUndoManager()->AddEvent(event);
       }
    }
@@ -827,24 +812,30 @@ namespace dtDirector
                mMenuPos.setY(selection[index]->pos().y());
             }
          }
+
+         mEditor->GetUndoManager()->BeginMultipleEvents("Creation of Macro Node with Selection.");
       }
 
       DirectorGraph* parent = mGraph.get();
-
-      mEditor->GetUndoManager()->BeginMultipleEvents();
-      DirectorGraph* graph = CreateMacro();
+      DirectorGraph* graph = CreateMacro("");
       if (graph)
       {
-         // If there are any nodes selected, cut them.
-         mEditor->on_action_Cut_triggered();
+         if (!selection.empty())
+         {
+            // If there are any nodes selected, cut them.
+            mEditor->on_action_Cut_triggered();
+         }
 
          // Switch the current graph to the new macro.
          SetGraph(graph);
 
-         // If there are nodes selected, move them into the macro.
-         mEditor->PasteNodes(true);
+         if (!selection.empty())
+         {
+            // If there are nodes selected, move them into the macro.
+            mEditor->PasteNodes(true);
+            mEditor->GetUndoManager()->EndMultipleEvents();
+         }
       }
-      mEditor->GetUndoManager()->EndMultipleEvents();
 
       mEditor->RefreshGraph(parent);
       mEditor->Refresh();
@@ -853,21 +844,7 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void EditorScene::OnCreateCustomEditedMacro(QAction* action)
    {
-      mEditor->GetUndoManager()->BeginMultipleEvents();
-      DirectorGraph* graph = CreateMacro();
-      if (graph)
-      {
-         // Assign the editor to the graph.
-         graph->SetEditor(action->statusTip().toStdString());
-
-         dtCore::RefPtr<UndoPropertyEvent> event = new UndoPropertyEvent(mEditor, graph->GetID(), "Custom Editor", "", action->statusTip().toStdString());
-         mEditor->GetUndoManager()->AddEvent(event.get());
-
-         event = new UndoPropertyEvent(mEditor, graph->GetID(), "Name", "Macro", graph->GetName());
-         mEditor->GetUndoManager()->AddEvent(event.get());
-      }
-
-      mEditor->GetUndoManager()->EndMultipleEvents();
+      DirectorGraph* graph = CreateMacro(action->statusTip().toStdString());
 
       mEditor->RefreshGraph(mGraph.get());
       mEditor->Refresh();
@@ -928,6 +905,7 @@ namespace dtDirector
       }
 
       dtCore::RefPtr<UndoCreateEvent> event = new UndoCreateEvent(mEditor, groupNode->GetID(), mGraph->GetID());
+      event->SetDescription("Creation of a new Group Box.");
       mEditor->GetUndoManager()->AddEvent(event);
    }
 
@@ -937,9 +915,9 @@ namespace dtDirector
       mDragging = false;
       mHasDragged = false;
       mBandSelecting = false;
-      mHoldingAlt = (event->modifiers() == Qt::AltModifier);
-      mHoldingControl = (event->modifiers() == Qt::ControlModifier);
-      mHoldingShift = (event->modifiers() == Qt::ShiftModifier);
+      mHoldingAlt = (event->modifiers() & Qt::AltModifier);
+      mHoldingControl = (event->modifiers() & Qt::ControlModifier);
+      mHoldingShift = (event->modifiers() & Qt::ShiftModifier);
 
       if (event->modifiers() == Qt::ShiftModifier ||
          event->button() == Qt::RightButton)
@@ -1041,7 +1019,35 @@ namespace dtDirector
 
          if (count > 0)
          {
-            mEditor->GetUndoManager()->BeginMultipleEvents();
+            std::string undoDescription = "Movement of a Node.";
+            if (count == 1)
+            {
+               NodeItem* item = dynamic_cast<NodeItem*>(itemList[0]);
+               if (item && item->GetNode())
+               {
+                  undoDescription = "Movement of Node \'" +
+                     item->GetNode()->GetTypeName() + "\'";
+               }
+               else if (item && item->GetMacro())
+               {
+                  if (item->GetMacro()->GetEditor().empty())
+                  {
+                     undoDescription = "Movement of Macro Node \'" +
+                        item->GetMacro()->GetName() + "\'";
+                  }
+                  else
+                  {
+                     undoDescription = "Movement of \'" +
+                        item->GetMacro()->GetEditor() + "\' Macro Node \'" +
+                        item->GetMacro()->GetName() + "\'";
+                  }
+               }
+            }
+            else
+            {
+               undoDescription = "Movement of multiple Nodes.";
+            }
+            mEditor->GetUndoManager()->BeginMultipleEvents(undoDescription);
 
             for (int index = 0; index < count; index++)
             {
@@ -1118,17 +1124,26 @@ namespace dtDirector
 
       QPointF pos = event->scenePos() - mTranslationItem->scenePos() - hotspot;
 
-      mEditor->GetUndoManager()->BeginMultipleEvents();
-      Node* item = CreateNodeItem(name.toStdString(), category.toStdString(), pos.x(), pos.y());
-      if (!refName.isEmpty() && item)
+      if (!name.isEmpty() && !refName.isEmpty())
       {
-         item->SetString(refName.toStdString(), "Reference");
-         dtCore::RefPtr<UndoPropertyEvent> event =
-            new UndoPropertyEvent(mEditor, mGraph->GetID(), "Reference", "", refName.toStdString());
-         mEditor->GetUndoManager()->AddEvent(event.get());
-         mEditor->RefreshNode(item);
+         mEditor->GetUndoManager()->BeginMultipleEvents("Creation of Node \'" + name.toStdString() + "\'.");
       }
-      mEditor->GetUndoManager()->EndMultipleEvents();
+
+      Node* item = CreateNodeItem(name.toStdString(), category.toStdString(), pos.x(), pos.y());
+
+      if (!refName.isEmpty())
+      {
+         if (item)
+         {
+            item->SetString(refName.toStdString(), "Reference");
+            dtCore::RefPtr<UndoPropertyEvent> event =
+               new UndoPropertyEvent(mEditor, mGraph->GetID(), "Reference", "", refName.toStdString());
+            mEditor->GetUndoManager()->AddEvent(event.get());
+            mEditor->RefreshNode(item);
+         }
+
+         mEditor->GetUndoManager()->EndMultipleEvents();
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -1205,7 +1220,7 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   DirectorGraph* EditorScene::CreateMacro()
+   DirectorGraph* EditorScene::CreateMacro(const std::string& editorName)
    {
       QString macroName = QInputDialog::getText(NULL, "Name Macro", "Enter the name of the new macro:");
       if (!macroName.isEmpty())
@@ -1215,8 +1230,17 @@ namespace dtDirector
          {
             graph->SetName(macroName.toStdString());
             graph->SetPosition(osg::Vec2(mMenuPos.x(), mMenuPos.y()));
+            graph->SetEditor(editorName);
 
             dtCore::RefPtr<UndoCreateEvent> event = new UndoCreateEvent(mEditor, graph->GetID(), mGraph->GetID());
+            if (editorName.empty())
+            {
+               event->SetDescription("Creation of Macro Node \'" + graph->GetName() + "\'.");
+            }
+            else
+            {
+               event->SetDescription("Creation of \'" + editorName + "\' Macro Node \'" + graph->GetName() + "\'.");
+            }
             mEditor->GetUndoManager()->AddEvent(event);
          }
          return graph;

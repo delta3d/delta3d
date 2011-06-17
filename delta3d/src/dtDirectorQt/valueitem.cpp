@@ -330,7 +330,7 @@ namespace dtDirector
          QString valueName = QInputDialog::getText(NULL, "Name Value", "Please enter a unique name for the value to be referenced:");
          if (!valueName.isEmpty())
          {
-            undoManager->BeginMultipleEvents();
+            undoManager->BeginMultipleEvents("Creation of Reference Value Node.");
             multipleEvents = true;
 
             dtCore::RefPtr<UndoPropertyEvent> event = new UndoPropertyEvent(undoManager->GetEditor(), mNode->GetID(), "Name", "", valueName.toStdString());
@@ -359,6 +359,7 @@ namespace dtDirector
          if (undoManager)
          {
             dtCore::RefPtr<UndoCreateEvent> event = new UndoCreateEvent(undoManager->GetEditor(), node->GetID(), scene->GetGraph()->GetID());
+            event->SetDescription("Creation of Reference Value Node.");
             undoManager->AddEvent(event);
          }
       }

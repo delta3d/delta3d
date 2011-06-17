@@ -23,6 +23,7 @@
 #define DIRECTORQT_UNDO_EVENT
 
 #include <osg/Referenced>
+#include <vector>
 
 namespace dtDirector
 {
@@ -43,6 +44,18 @@ namespace dtDirector
       UndoEvent(DirectorEditor* editor);
 
       /**
+       * Set the description of the event.
+       *
+       * @param[in]  description  The description of the undo action.
+       */
+      void SetDescription(const std::string& description);
+
+      /**
+       * Retrieves the description of the event.
+       */
+      const std::string& GetDescription() const;
+
+      /**
        * Perform undo.
        */
       virtual void Undo() = 0;
@@ -60,6 +73,7 @@ namespace dtDirector
       virtual ~UndoEvent() = 0;
 
       DirectorEditor*   mEditor;
+      std::string       mDescription;
    };
 }
 
