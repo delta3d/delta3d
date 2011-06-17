@@ -21,6 +21,7 @@
 #include <prefix/dtdirectornodesprefix.h>
 #include <dtDirectorNodes/sendmessageaction.h>
 
+#include <dtDAL/actoridactorproperty.h>
 #include <dtDAL/stringactorproperty.h>
 
 #include <dtDirector/director.h>
@@ -32,6 +33,7 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    SendMessageAction::SendMessageAction()
       : ActionNode()
+      , mAboutActorID(dtCore::UniqueId(""))
    {
       AddAuthor("Jeff P. Houde");
 
@@ -67,7 +69,15 @@ namespace dtDirector
          "The name of the message type.");
       AddProperty(messageTypeProp);
 
-      mValues.push_back(ValueLink(this, messageTypeProp, false, false, true, true));
+      dtDAL::ActorIDActorProperty* aboutActorProp = new dtDAL::ActorIDActorProperty(
+         "AboutActorID", "AboutActorID",
+         dtDAL::ActorIDActorProperty::SetFuncType(this, &SendMessageAction::SetAboutActorID),
+         dtDAL::ActorIDActorProperty::GetFuncType(this, &SendMessageAction::GetAboutActorID),
+         "", "The actor this message is about.");
+      AddProperty(aboutActorProp);
+
+      mValues.push_back(ValueLink(this, messageTypeProp));
+      mValues.push_back(ValueLink(this, aboutActorProp));
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -87,6 +97,7 @@ namespace dtDirector
 
             if (message.valid())
             {
+               message->SetAboutActorId(GetActorID("AboutActorID"));
                gm->SendMessage(*message);
                OutputLink* output = GetOutputLink("Success");
                if (output) output->Activate();
@@ -121,6 +132,18 @@ namespace dtDirector
    const std::string& SendMessageAction::GetMessageType() const
    {
       return mMessageType;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void SendMessageAction::SetAboutActorID(const dtCore::UniqueId& value)
+   {
+      mAboutActorID = value;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   dtCore::UniqueId SendMessageAction::GetAboutActorID()
+   {
+      return mAboutActorID;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
