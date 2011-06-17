@@ -116,10 +116,21 @@ namespace dtDirector
    {
       dtCore::UniqueId id = dtCore::UniqueId("");
 
+      dtCore::RefPtr<UndoPropertyEvent> event = new UndoPropertyEvent(mDirectorEditor, id, prop.GetName(), oldValue, newValue);
+      
       // Check if the container is for a graph.
       DirectorGraph* graph = dynamic_cast<DirectorGraph*>(&propCon);
       if (graph)
       {
+         if (graph->GetEditor().empty())
+         {
+            event->SetDescription("Property modification for Macro Node \'" + graph->GetName() + "\'.");
+         }
+         else
+         {
+            event->SetDescription("Property modification for \'" + 
+               graph->GetEditor() + "\' Macro Node \'" + graph->GetName() + "\'.");
+         }
          id = graph->GetID();
       }
       else
@@ -128,12 +139,16 @@ namespace dtDirector
          Node* node = dynamic_cast<Node*>(&propCon);
          if (node)
          {
+            event->SetDescription("Property modification for Node \'" + node->GetTypeName() + "\'.");
             id = node->GetID();
          }
          // If it is not a graph or a node, then it is the director.
+         else
+         {
+            event->SetDescription("Property modification for Script.");
+         }
       }
 
-      dtCore::RefPtr<UndoPropertyEvent> event = new UndoPropertyEvent(mDirectorEditor, id, prop.GetName(), oldValue, newValue);
       mDirectorEditor->GetUndoManager()->AddEvent(event.get());
    }
 

@@ -91,9 +91,11 @@ namespace dtDirector
       virtual bool HasID(const dtCore::UniqueId& id);
 
       /**
-       * Retrieves the graph.
+       * Retrieves the macro (if available).
+       *
+       * @return  The macro.
        */
-      DirectorGraph* GetGraph() {return mGraph.get();}
+      virtual DirectorGraph* GetMacro() const {return mGraph.get();}
 
       /**
        * Event handlers when the user is moving this node.

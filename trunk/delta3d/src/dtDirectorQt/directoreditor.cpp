@@ -519,9 +519,27 @@ namespace dtDirector
 
       // Undo button.
       mUI.action_Undo->setEnabled(GetUndoManager()->CanUndo());
+      std::string undoDescription = GetUndoManager()->GetUndoDescription();
+      if (!undoDescription.empty())
+      {
+         mUI.action_Undo->setToolTip(QString("Reverts to your last action (Ctrl+Z).\n") + undoDescription.c_str());
+      }
+      else
+      {
+         mUI.action_Undo->setToolTip("Reverts to your last action (Ctrl+Z).");
+      }
 
       // Redo button.
       mUI.action_Redo->setEnabled(GetUndoManager()->CanRedo());
+      std::string redoDescription = GetUndoManager()->GetRedoDescription();
+      if (!redoDescription.empty())
+      {
+         mUI.action_Redo->setToolTip(QString("Reverts your last undo action (Ctrl+Y).\n") + redoDescription.c_str());
+      }
+      else
+      {
+         mUI.action_Redo->setToolTip("Reverts your last undo action (Ctrl+Y).");
+      }
 
       // Copy and Cut buttons.
       mUI.action_Cut->setEnabled(bCanCopy);
@@ -583,6 +601,7 @@ namespace dtDirector
       if (node)
       {
          dtCore::RefPtr<UndoCreateEvent> event = new UndoCreateEvent(this, node->GetID(), node->GetGraph()->GetID());
+         event->SetDescription("Creation of Node \'" + node->GetTypeName() + "\'");
          GetUndoManager()->AddEvent(event);
 
          // Now refresh the all editors that view the same graph.
@@ -612,6 +631,7 @@ namespace dtDirector
       {
          // Create an undo event.
          dtCore::RefPtr<UndoDeleteEvent> event = new UndoDeleteEvent(this, id, node->GetGraph()->GetID());
+         event->SetDescription("Deletion of Node \'" + node->GetTypeName() + "\'");
          GetUndoManager()->AddEvent(event);
 
          // Delete the node.
@@ -990,24 +1010,6 @@ namespace dtDirector
 
       std::string fileName  = osgDB::convertFileNameToNativeStyle(
          filePath.absolutePath().toStdString() + "/" + filePath.baseName().toStdString());
-      //mFileName = dtUtil::FileUtils::GetInstance().RelativePath( contextDir, absFileName );
-
-
-
-
-
-      //QString filter = tr(".dtdirreplay");
-      //std::string context = dtDAL::Project::GetInstance().GetContext();
-
-      //QFileDialog dialog;
-      //QFileInfo filePath = dialog.getOpenFileName(this, tr("Load a Director Script Replay File"),
-      //   tr((context + "\\directors\\").c_str()),
-      //   tr("Director Script Replay (*.dtdirreplay)"), &filter);
-
-      //QString fileName = filePath.baseName();
-
-
-
 
       if (!fileName.empty())
       {
@@ -1060,7 +1062,7 @@ namespace dtDirector
                for (int index = 0; index < count; index++)
                {
                   MacroItem* macro = dynamic_cast<MacroItem*>(nodes[index]);
-                  if (macro && macro->GetGraph() == graph)
+                  if (macro && macro->GetMacro() == graph)
                   {
                      macro->setSelected(true);
                      view->GetScene()->CenterSelection();
@@ -1087,9 +1089,53 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void DirectorEditor::on_action_Cut_triggered()
    {
+      // Get the current selection.
+      EditorScene* scene = NULL;
+      EditorView* view = dynamic_cast<EditorView*>(mUI.graphTab->currentWidget());
+      if (view)
+      {
+         scene = view->GetScene();
+      }
+      if (!scene) return;
+
+      QList<QGraphicsItem*> selection = scene->selectedItems();
+      int count = (int)selection.size();
+
+      std::string undoDescription = "Cut operation of Node.";
+      if (count == 1)
+      {
+         NodeItem* item = dynamic_cast<NodeItem*>(selection[0]);
+         if (item && item->GetNode())
+         {
+            undoDescription = "Cut operation of Node \'" +
+               item->GetNode()->GetTypeName() + "\'.";
+         }
+         else if (item && item->GetMacro())
+         {
+            if (item->GetMacro()->GetEditor().empty())
+            {
+               undoDescription = "Cut operation of Macro Node \'" +
+                  item->GetMacro()->GetName() + "\'.";
+            }
+            else
+            {
+               undoDescription = "Cut operation of \'" +
+                  item->GetMacro()->GetEditor() + "\' Macro Node \'" +
+                  item->GetMacro()->GetName() + "\'.";
+            }
+         }
+      }
+      else
+      {
+         undoDescription = "Cut operation of multiple Nodes.";
+      }
+      GetUndoManager()->BeginMultipleEvents(undoDescription);
+
       // First copy the contents.
       on_action_Copy_triggered();
       on_action_Delete_triggered();
+
+      GetUndoManager()->EndMultipleEvents();
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -1142,16 +1188,50 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void DirectorEditor::on_action_Delete_triggered()
    {
-      // Get the current selection.
-      EditorScene* scene = mUI.propertyEditor->GetScene();
-      if (!scene) return;
-
       bool graphsDeleted = false;
 
-      GetUndoManager()->BeginMultipleEvents();
+      // Get the current selection.
+      EditorScene* scene = NULL;
+      EditorView* view = dynamic_cast<EditorView*>(mUI.graphTab->currentWidget());
+      if (view)
+      {
+         scene = view->GetScene();
+      }
+      if (!scene) return;
 
       QList<QGraphicsItem*> selection = scene->selectedItems();
       int count = (int)selection.size();
+
+      std::string undoDescription = "Deletion of Node.";
+      if (count == 1)
+      {
+         NodeItem* item = dynamic_cast<NodeItem*>(selection[0]);
+         if (item && item->GetNode())
+         {
+            undoDescription = "Deletion of Node \'" +
+               item->GetNode()->GetTypeName() + "\'.";
+         }
+         else if (item && item->GetMacro())
+         {
+            if (item->GetMacro()->GetEditor().empty())
+            {
+               undoDescription = "Deletion of Macro Node \'" +
+                  item->GetMacro()->GetName() + "\'.";
+            }
+            else
+            {
+               undoDescription = "Deletion of \'" +
+                  item->GetMacro()->GetEditor() + "\' Macro Node \'" +
+                  item->GetMacro()->GetName() + "\'.";
+            }
+         }
+      }
+      else
+      {
+         undoDescription = "Deletion of multiple Nodes.";
+      }
+      GetUndoManager()->BeginMultipleEvents(undoDescription);
+
       for (int index = 0; index < count; index++)
       {
          NodeItem* item = dynamic_cast<NodeItem*>(selection[index]);
@@ -1169,11 +1249,10 @@ namespace dtDirector
             else
             {
                // Check if the item is a graph.
-               MacroItem* macro = dynamic_cast<MacroItem*>(item);
-               if (macro && macro->GetGraph())
+               if (item && item->GetMacro())
                {
-                  id = macro->GetGraph()->GetID();
-                  parentID = macro->GetGraph()->GetParent()->GetID();
+                  id = item->GetMacro()->GetID();
+                  parentID = item->GetMacro()->GetParent()->GetID();
                   graphsDeleted = true;
                }
                else
@@ -1527,7 +1606,7 @@ namespace dtDirector
       QPointF pos = view->mapToScene(view->width()/2, view->height()/2);
       pos -= scene->GetTranslationItem()->scenePos();
 
-      GetUndoManager()->BeginMultipleEvents();
+      GetUndoManager()->BeginMultipleEvents("Creation of Node \'" + name.toStdString() + "\'.");
       Node* item = scene->CreateNodeItem(name.toStdString(), category.toStdString(), pos.x(), pos.y());
       if (!refName.isEmpty() && item)
       {

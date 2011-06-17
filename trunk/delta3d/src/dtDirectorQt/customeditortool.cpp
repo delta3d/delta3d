@@ -90,7 +90,7 @@ namespace dtDirector
       mRowHeight = 0;
 
       // Prepare the undo manager for multiple events.
-      GetEditor()->GetUndoManager()->BeginMultipleEvents();
+      GetEditor()->GetUndoManager()->BeginMultipleEvents("\'" + mToolName + "\' editor tool application.");
 
       std::vector<dtDirector::Node*> nodes;
       GetGraph()->GetAllNodes(nodes);

@@ -413,6 +413,15 @@ namespace dtDirector
 
          // Notify the undo manager of the property changes.
          dtCore::RefPtr<UndoPropertyEvent> event = new UndoPropertyEvent(mScene->GetEditor(), mGraph->GetID(), prop->GetName(), mOldPosition, value);
+         if (mGraph->GetEditor().empty())
+         {
+            event->SetDescription("Movement of Macro Node \'" + mGraph->GetName() + "\'.");
+         }
+         else
+         {
+            event->SetDescription("Movement of \'" + mGraph->GetEditor() + 
+               "\' Macro Node \'" + mGraph->GetName() + "\'.");
+         }
          mScene->GetEditor()->GetUndoManager()->AddEvent(event.get());
       }
 

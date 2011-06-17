@@ -297,7 +297,14 @@ namespace dtDirector
        *
        * @return  The node.
        */
-      Node* GetNode() {return mNode.get();}
+      Node* GetNode() const {return mNode.get();}
+
+      /**
+       * Retrieves the macro (if available).
+       *
+       * @return  The macro.
+       */
+      virtual DirectorGraph* GetMacro() const {return NULL;}
 
       /**
        * Retrieves whether the node is contained.

@@ -308,7 +308,7 @@ namespace dtDirector
       maxPos.x() += AUTO_BORDER_SIZE;
       maxPos.y() += AUTO_BORDER_SIZE;
 
-      mScene->GetEditor()->GetUndoManager()->BeginMultipleEvents();
+      mScene->GetEditor()->GetUndoManager()->BeginMultipleEvents("Resizing of Node \'Group Box\'.");
       dtDAL::ActorProperty* prop = groupNode->GetProperty("Position");
       if (prop)
       {
@@ -372,7 +372,7 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void GroupItem::OnPostSizing()
    {
-      mScene->GetEditor()->GetUndoManager()->BeginMultipleEvents();
+      mScene->GetEditor()->GetUndoManager()->BeginMultipleEvents("Resizing of Node \'Group Box\'.");
       dtDAL::ActorProperty* prop = mNode->GetProperty("Position");
       if (prop)
       {

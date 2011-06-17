@@ -187,11 +187,21 @@ namespace dtDirector
       InputLink* input = mNodeItem->GetInputs()[mLinkIndex].link;
       if (!input) return;
 
+      std::string undoDescription = "Disconnection of input link(s) for ";
+      if (mNodeItem->GetNode())
+      {
+         undoDescription += "Node \'" + mNodeItem->GetNode()->GetTypeName() + "\'.";
+      }
+      else if (mNodeItem->GetMacro())
+      {
+         undoDescription += "Macro Node \'" + mNodeItem->GetMacro()->GetName() + "\'.";
+      }
+
       if (!output)
       {
          if (input->GetLinks().size())
          {
-            mScene->GetEditor()->GetUndoManager()->BeginMultipleEvents();
+            mScene->GetEditor()->GetUndoManager()->BeginMultipleEvents(undoDescription);
 
             while (!input->GetLinks().empty())
             {
@@ -214,6 +224,7 @@ namespace dtDirector
                input->GetName(),
                output->GetName(),
                false);
+            event->SetDescription(undoDescription);
             mScene->GetEditor()->GetUndoManager()->AddEvent(event);
          }
       }
@@ -369,6 +380,25 @@ namespace dtDirector
                   // Create a new connection between these two links.
                   if (input->Connect(output))
                   {
+                     std::string undoDescription = "Connection of link between ";
+                     if (mNodeItem->GetNode())
+                     {
+                        undoDescription += "Node \'" + mNodeItem->GetNode()->GetTypeName() + "\' and ";
+                     }
+                     else if (mNodeItem->GetMacro())
+                     {
+                        undoDescription += "Macro Node \'" + mNodeItem->GetMacro()->GetName() + "\' and ";
+                     }
+
+                     if (item->mNodeItem->GetNode())
+                     {
+                        undoDescription += "Node \'" + item->mNodeItem->GetNode()->GetTypeName() + "\'.";
+                     }
+                     else if (item->mNodeItem->GetMacro())
+                     {
+                        undoDescription += "Macro Node \'" + item->mNodeItem->GetMacro()->GetName() + "\'.";
+                     }
+
                      dtCore::RefPtr<UndoLinkEvent> event = new UndoLinkEvent(
                         mScene->GetEditor(),
                         UndoLinkEvent::INPUT_LINK,
@@ -377,6 +407,7 @@ namespace dtDirector
                         input->GetName(),
                         output->GetName(),
                         true);
+                     event->SetDescription(undoDescription);
                      mScene->GetEditor()->GetUndoManager()->AddEvent(event);
                   }
                   mNodeItem->ConnectLinks(true);
@@ -606,11 +637,21 @@ namespace dtDirector
       OutputLink* output = mNodeItem->GetOutputs()[mLinkIndex].link;
       if (!output) return;
 
+      std::string undoDescription = "Disconnection of output link(s) for ";
+      if (mNodeItem->GetNode())
+      {
+         undoDescription += "Node \'" + mNodeItem->GetNode()->GetTypeName() + "\'.";
+      }
+      else if (mNodeItem->GetMacro())
+      {
+         undoDescription += "Macro Node \'" + mNodeItem->GetMacro()->GetName() + "\'.";
+      }
+
       if (!input)
       {
          if (output->GetLinks().size())
          {
-            mScene->GetEditor()->GetUndoManager()->BeginMultipleEvents();
+            mScene->GetEditor()->GetUndoManager()->BeginMultipleEvents(undoDescription);
 
             while (!output->GetLinks().empty())
             {
@@ -633,6 +674,7 @@ namespace dtDirector
                input->GetName(),
                output->GetName(),
                false);
+            event->SetDescription(undoDescription);
             mScene->GetEditor()->GetUndoManager()->AddEvent(event);
          }
       }
@@ -788,6 +830,25 @@ namespace dtDirector
                   // Create a new connection between these two links.
                   if (input->Connect(output))
                   {
+                     std::string undoDescription = "Connection of link between ";
+                     if (mNodeItem->GetNode())
+                     {
+                        undoDescription += "Node \'" + mNodeItem->GetNode()->GetTypeName() + "\' and ";
+                     }
+                     else if (mNodeItem->GetMacro())
+                     {
+                        undoDescription += "Macro Node \'" + mNodeItem->GetMacro()->GetName() + "\' and ";
+                     }
+
+                     if (item->mNodeItem->GetNode())
+                     {
+                        undoDescription += "Node \'" + item->mNodeItem->GetNode()->GetTypeName() + "\'.";
+                     }
+                     else if (item->mNodeItem->GetMacro())
+                     {
+                        undoDescription += "Macro Node \'" + item->mNodeItem->GetMacro()->GetName() + "\'.";
+                     }
+
                      dtCore::RefPtr<UndoLinkEvent> event = new UndoLinkEvent(
                         mScene->GetEditor(),
                         UndoLinkEvent::INPUT_LINK,
@@ -796,6 +857,7 @@ namespace dtDirector
                         input->GetName(),
                         output->GetName(),
                         true);
+                     event->SetDescription(undoDescription);
                      mScene->GetEditor()->GetUndoManager()->AddEvent(event);
                   }
                   mNodeItem->ConnectLinks(true);
@@ -963,11 +1025,21 @@ namespace dtDirector
       ValueLink* input = mNodeItem->GetValues()[mLinkIndex].link;
       if (!input) return;
 
+      std::string undoDescription = "Disconnection of value link(s) for ";
+      if (mNodeItem->GetNode())
+      {
+         undoDescription += "Node \'" + mNodeItem->GetNode()->GetTypeName() + "\'.";
+      }
+      else if (mNodeItem->GetMacro())
+      {
+         undoDescription += "Macro Node \'" + mNodeItem->GetMacro()->GetName() + "\'.";
+      }
+
       if (!output)
       {
          if (input->GetLinks().size())
          {
-            mScene->GetEditor()->GetUndoManager()->BeginMultipleEvents();
+            mScene->GetEditor()->GetUndoManager()->BeginMultipleEvents(undoDescription);
 
             while (!input->GetLinks().empty())
             {
@@ -990,6 +1062,7 @@ namespace dtDirector
                input->GetName(),
                output->GetName(),
                false);
+            event->SetDescription(undoDescription);
             mScene->GetEditor()->GetUndoManager()->AddEvent(event);
          }
       }
@@ -1146,11 +1219,23 @@ namespace dtDirector
                   ValueLink* input = mNodeItem->GetValues()[mLinkIndex].link;
                   ValueNode* output = item->mNodeItem->GetNode()->AsValueNode();
 
+                  std::string undoDescription = "Connection of value link between ";
+                  if (mNodeItem->GetNode())
+                  {
+                     undoDescription += "Node \'" + mNodeItem->GetNode()->GetTypeName() + "\' and ";
+                  }
+                  else if (mNodeItem->GetMacro())
+                  {
+                     undoDescription += "Macro Node \'" + mNodeItem->GetMacro()->GetName() + "\' and ";
+                  }
+
+                  undoDescription += "Value Node \'" + item->mNodeItem->GetNode()->GetTypeName() + "\'.";
+
                   // If this link does not allow multiple connections, then
                   // make sure we disconnect the link from any values first.
                   if (!input->AllowMultiple())
                   {
-                     mScene->GetEditor()->GetUndoManager()->BeginMultipleEvents();
+                     mScene->GetEditor()->GetUndoManager()->BeginMultipleEvents(undoDescription);
                      Disconnect();
                   }
 
@@ -1165,6 +1250,7 @@ namespace dtDirector
                         input->GetName(),
                         output->GetName(),
                         true);
+                     event->SetDescription(undoDescription);
                      mScene->GetEditor()->GetUndoManager()->AddEvent(event);
                      emit LinkConnected();
                   }
@@ -1292,11 +1378,14 @@ namespace dtDirector
       ValueNode* output = mNodeItem->GetNode()->AsValueNode();
       if (!output) return;
 
+      std::string undoDescription = "Disconnection of value link(s) for Value Node \'" +
+         mNodeItem->GetNode()->GetName() + "\'.";
+
       if (!input)
       {
          if (output->GetLinks().size())
          {
-            mScene->GetEditor()->GetUndoManager()->BeginMultipleEvents();
+            mScene->GetEditor()->GetUndoManager()->BeginMultipleEvents(undoDescription);
 
             while (!output->GetLinks().empty())
             {
@@ -1319,6 +1408,7 @@ namespace dtDirector
                input->GetName(),
                output->GetName(),
                false);
+            event->SetDescription(undoDescription);
             mScene->GetEditor()->GetUndoManager()->AddEvent(event);
          }
       }
@@ -1477,11 +1567,23 @@ namespace dtDirector
                   ValueLink* input = item->mNodeItem->GetValues()[item->mLinkIndex].link;
                   ValueNode* output = mNodeItem->GetNode()->AsValueNode();
 
+                  std::string undoDescription = "Connection of value link between Value Node \'" +
+                     mNodeItem->GetNode()->GetTypeName() + "\' and ";
+                  
+                  if (item->mNodeItem->GetNode())
+                  {
+                     undoDescription += "Node \'" + item->mNodeItem->GetNode()->GetTypeName() + "\'.";
+                  }
+                  else if (item->mNodeItem->GetMacro())
+                  {
+                     undoDescription += "Macro Node \'" + item->mNodeItem->GetMacro()->GetName() + "\'.";
+                  }
+
                   // If this link does not allow multiple connections, then
                   // make sure we disconnect the link from any values first.
                   if (!input->AllowMultiple())
                   {
-                     mScene->GetEditor()->GetUndoManager()->BeginMultipleEvents();
+                     mScene->GetEditor()->GetUndoManager()->BeginMultipleEvents(undoDescription);
                      item->mNodeItem->GetValues()[item->mLinkIndex].linkGraphic->Disconnect();
                   }
 
@@ -1496,6 +1598,7 @@ namespace dtDirector
                         input->GetName(),
                         output->GetName(),
                         true);
+                     event->SetDescription(undoDescription);
                      mScene->GetEditor()->GetUndoManager()->AddEvent(event);
                      emit LinkConnected();
                   }

@@ -89,12 +89,18 @@ namespace dtDirector
       /**
        * Retrieves whether there are any undo events to perform.
        */
-      bool CanUndo() {return !mUndoEvents.empty();}
+      bool CanUndo() const {return !mUndoEvents.empty();}
 
       /**
        * Retrieves whether there are any redo events to perform.
        */
-      bool CanRedo() {return !mRedoEvents.empty();}
+      bool CanRedo() const {return !mRedoEvents.empty();}
+
+      /**
+       * Retrieves the undo or redo description.
+       */
+      std::string GetUndoDescription() const;
+      std::string GetRedoDescription() const;
 
       /**
        * Retrieves the editor.
@@ -104,7 +110,7 @@ namespace dtDirector
       /**
        * Begins and ends a group of multiple transaction events.
        */
-      void BeginMultipleEvents();
+      void BeginMultipleEvents(const std::string& description);
       void EndMultipleEvents();
 
       /**

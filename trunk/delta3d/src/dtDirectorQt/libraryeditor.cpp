@@ -95,15 +95,16 @@ namespace dtDirector
       {
          mEditor->GetDirector()->AddLibrary(libName, "");
 
-         // If the library was already in the list, but was re-ordered.
          if (foundIndex < (int)curLibs.size())
          {
-            mEditor->GetUndoManager()->BeginMultipleEvents();
+            // If the library was already in the list, but was re-ordered.
+            mEditor->GetUndoManager()->BeginMultipleEvents("Reordering of Node Library \'" + libName + "\'.");
             UndoRemoveLibraryEvent* event = new UndoRemoveLibraryEvent(mEditor, libName, foundIndex);
             mEditor->GetUndoManager()->AddEvent(event);
          }
 
          UndoAddLibraryEvent* event = new UndoAddLibraryEvent(mEditor, libName, (int)curLibs.size());
+         event->SetDescription("Addition of \'" + libName + "\' Node Library.");
          mEditor->GetUndoManager()->AddEvent(event);
 
          if (foundIndex < (int)curLibs.size())
@@ -173,6 +174,7 @@ namespace dtDirector
                mEditor->GetDirector()->RemoveLibrary(libToRemove);
 
                UndoRemoveLibraryEvent* event = new UndoRemoveLibraryEvent(mEditor, libToRemove, i);
+               event->SetDescription("Removal of Node Library \'" + libToRemove + "\'.");
                mEditor->GetUndoManager()->AddEvent(event);
 
                RefreshLibraries();
@@ -195,7 +197,7 @@ namespace dtDirector
          std::string libName = GetLibraryListWidget().currentItem()->text().toStdString();
          mEditor->GetDirector()->InsertLibrary(row - 1, libName, "");
 
-         mEditor->GetUndoManager()->BeginMultipleEvents();
+         mEditor->GetUndoManager()->BeginMultipleEvents("Reordering of Node Library \'" + libName + "\'.");
          {
             UndoRemoveLibraryEvent* event = new UndoRemoveLibraryEvent(mEditor, libName, row);
             mEditor->GetUndoManager()->AddEvent(event);
@@ -219,7 +221,7 @@ namespace dtDirector
          std::string libName = GetLibraryListWidget().currentItem()->text().toStdString();
          mEditor->GetDirector()->InsertLibrary(row + 1, libName, "");
 
-         mEditor->GetUndoManager()->BeginMultipleEvents();
+         mEditor->GetUndoManager()->BeginMultipleEvents("Reordering of Node Library \'" + libName + "\'.");
          {
             UndoRemoveLibraryEvent* event = new UndoRemoveLibraryEvent(mEditor, libName, row);
             mEditor->GetUndoManager()->AddEvent(event);

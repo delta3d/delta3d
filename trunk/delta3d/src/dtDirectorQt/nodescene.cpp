@@ -217,12 +217,11 @@ namespace dtDirector
             {
                node->SetPosition(newPos);
             }
-            else
+            else if (nodeItem->GetMacro())
             {
-               MacroItem* macroItem = dynamic_cast<MacroItem*>(nodeItem);
-               if (macroItem && macroItem->GetGraph())
+               if (nodeItem->GetMacro())
                {
-                  macroItem->GetGraph()->SetPosition(newPos);
+                  nodeItem->GetMacro()->SetPosition(newPos);
                }
             }
 
