@@ -24,6 +24,7 @@
 #include <dtDirectorQt/editorscene.h>
 #include <dtDirectorQt/undomanager.h>
 #include <dtDirectorQt/undolinkevent.h>
+#include <dtDirectorQt/undolinkvisibilityevent.h>
 
 #include <dtDirector/outputlink.h>
 
@@ -264,8 +265,26 @@ namespace dtDirector
       // Hide this link.
       input->SetVisible(false);
 
+      std::string undoDescription = "Hiding of input link \'" + input->GetName() + "\' for ";
+      if (mNodeItem->GetNode())
+      {
+         undoDescription += "Node \'" + mNodeItem->GetNode()->GetTypeName() + "\'.";
+      }
+      else if (mNodeItem->GetMacro())
+      {
+         undoDescription += "Macro Node \'" + mNodeItem->GetMacro()->GetName() + "\'.";
+      }
+
+      mScene->GetEditor()->GetUndoManager()->BeginMultipleEvents(undoDescription);
+
+      dtCore::RefPtr<UndoLinkVisibilityEvent> event = new UndoLinkVisibilityEvent(mScene->GetEditor(), mNodeItem->GetID(), 0, input->GetName(), false);
+      mScene->GetEditor()->GetUndoManager()->AddEvent(event);
+
       // Disconnect all links.
       Disconnect();
+
+      mScene->GetEditor()->GetUndoManager()->EndMultipleEvents();
+
       mScene->Refresh();
    }
 
@@ -714,8 +733,26 @@ namespace dtDirector
       // Hide this link.
       output->SetVisible(false);
 
+      std::string undoDescription = "Hiding of output link \'" + output->GetName() + "\' for ";
+      if (mNodeItem->GetNode())
+      {
+         undoDescription += "Node \'" + mNodeItem->GetNode()->GetTypeName() + "\'.";
+      }
+      else if (mNodeItem->GetMacro())
+      {
+         undoDescription += "Macro Node \'" + mNodeItem->GetMacro()->GetName() + "\'.";
+      }
+
+      mScene->GetEditor()->GetUndoManager()->BeginMultipleEvents(undoDescription);
+
+      dtCore::RefPtr<UndoLinkVisibilityEvent> event = new UndoLinkVisibilityEvent(mScene->GetEditor(), mNodeItem->GetID(), 1, output->GetName(), false);
+      mScene->GetEditor()->GetUndoManager()->AddEvent(event);
+
       // Disconnect all links.
       Disconnect();
+
+      mScene->GetEditor()->GetUndoManager()->EndMultipleEvents();
+
       mScene->Refresh();
    }
 
@@ -1102,8 +1139,26 @@ namespace dtDirector
       // Hide this link.
       input->SetVisible(false);
 
+      std::string undoDescription = "Hiding of value link \'" + input->GetName() + "\' for ";
+      if (mNodeItem->GetNode())
+      {
+         undoDescription += "Node \'" + mNodeItem->GetNode()->GetTypeName() + "\'.";
+      }
+      else if (mNodeItem->GetMacro())
+      {
+         undoDescription += "Macro Node \'" + mNodeItem->GetMacro()->GetName() + "\'.";
+      }
+
+      mScene->GetEditor()->GetUndoManager()->BeginMultipleEvents(undoDescription);
+
+      dtCore::RefPtr<UndoLinkVisibilityEvent> event = new UndoLinkVisibilityEvent(mScene->GetEditor(), mNodeItem->GetID(), 2, input->GetName(), false);
+      mScene->GetEditor()->GetUndoManager()->AddEvent(event);
+
       // Disconnect all links.
       Disconnect();
+
+      mScene->GetEditor()->GetUndoManager()->EndMultipleEvents();
+
       mScene->Refresh();
    }
 
@@ -1116,8 +1171,25 @@ namespace dtDirector
       // Unexpose this link.
       input->SetExposed(false);
 
+      std::string undoDescription = "Removal of value link \'" + input->GetName() + "\' for ";
+      if (mNodeItem->GetNode())
+      {
+         undoDescription += "Node \'" + mNodeItem->GetNode()->GetTypeName() + "\'.";
+      }
+      else if (mNodeItem->GetMacro())
+      {
+         undoDescription += "Macro Node \'" + mNodeItem->GetMacro()->GetName() + "\'.";
+      }
+
+      mScene->GetEditor()->GetUndoManager()->BeginMultipleEvents(undoDescription);
+
+      dtCore::RefPtr<UndoLinkVisibilityEvent> event = new UndoLinkVisibilityEvent(mScene->GetEditor(), mNodeItem->GetID(), 2, input->GetName(), false, true);
+      mScene->GetEditor()->GetUndoManager()->AddEvent(event);
+
       // Disconnect all links.
       Disconnect();
+
+      mScene->GetEditor()->GetUndoManager()->EndMultipleEvents();
       mScene->Refresh();
    }
 

@@ -33,6 +33,7 @@
 #include <dtDirectorQt/undodeleteevent.h>
 #include <dtDirectorQt/undocreateevent.h>
 #include <dtDirectorQt/undopropertyevent.h>
+#include <dtDirectorQt/undolinkvisibilityevent.h>
 #include <dtDirectorQt/editornotifier.h>
 
 #include <dtDirectorQt/actionitem.h>
@@ -1474,6 +1475,27 @@ namespace dtDirector
 
       QList<QGraphicsItem*> selection = scene->selectedItems();
       int count = (int)selection.size();
+
+      std::string undoDescription = "Show all links for ";
+      if (count == 1)
+      {
+         NodeItem* item = dynamic_cast<NodeItem*>(selection[0]);
+         if (item && item->GetNode())
+         {
+            undoDescription += "Node \'" + item->GetNode()->GetTypeName() + "\'.";
+         }
+         else if (item && item->GetMacro())
+         {
+            undoDescription += "Macro Node \'" + item->GetMacro()->GetName() + "\'.";
+         }
+      }
+      else
+      {
+         undoDescription += "multiple Nodes.";
+      }
+
+      GetUndoManager()->BeginMultipleEvents(undoDescription);
+
       for (int index = 0; index < count; index++)
       {
          NodeItem* node = dynamic_cast<NodeItem*>(selection[index]);
@@ -1483,24 +1505,44 @@ namespace dtDirector
             for (int linkIndex = 0; linkIndex < linkCount; linkIndex++)
             {
                InputLink* link = node->GetInputs()[linkIndex].link;
-               if (link) link->SetVisible(true);
+               if (link && !link->GetVisible())
+               {
+                  link->SetVisible(true);
+
+                  dtCore::RefPtr<UndoLinkVisibilityEvent> event = new UndoLinkVisibilityEvent(this, node->GetID(), 0, link->GetName(), true);
+                  GetUndoManager()->AddEvent(event);
+               }
             }
 
             linkCount = node->GetOutputs().size();
             for (int linkIndex = 0; linkIndex < linkCount; linkIndex++)
             {
                OutputLink* link = node->GetOutputs()[linkIndex].link;
-               if (link) link->SetVisible(true);
+               if (link && !link->GetVisible())
+               {
+                  link->SetVisible(true);
+
+                  dtCore::RefPtr<UndoLinkVisibilityEvent> event = new UndoLinkVisibilityEvent(this, node->GetID(), 1, link->GetName(), true);
+                  GetUndoManager()->AddEvent(event);
+               }
             }
 
             linkCount = node->GetValues().size();
             for (int linkIndex = 0; linkIndex < linkCount; linkIndex++)
             {
                ValueLink* link = node->GetValues()[linkIndex].link;
-               if (link) link->SetVisible(true);
+               if (link && !link->GetVisible())
+               {
+                  link->SetVisible(true);
+
+                  dtCore::RefPtr<UndoLinkVisibilityEvent> event = new UndoLinkVisibilityEvent(this, node->GetID(), 2, link->GetName(), true);
+                  GetUndoManager()->AddEvent(event);
+               }
             }
          }
       }
+
+      GetUndoManager()->EndMultipleEvents();
 
       Refresh();
    }
@@ -1514,6 +1556,27 @@ namespace dtDirector
 
       QList<QGraphicsItem*> selection = scene->selectedItems();
       int count = (int)selection.size();
+
+      std::string undoDescription = "Hide all links for ";
+      if (count == 1)
+      {
+         NodeItem* item = dynamic_cast<NodeItem*>(selection[0]);
+         if (item && item->GetNode())
+         {
+            undoDescription += "Node \'" + item->GetNode()->GetTypeName() + "\'.";
+         }
+         else if (item && item->GetMacro())
+         {
+            undoDescription += "Macro Node \'" + item->GetMacro()->GetName() + "\'.";
+         }
+      }
+      else
+      {
+         undoDescription += "multiple Nodes.";
+      }
+
+      GetUndoManager()->BeginMultipleEvents(undoDescription);
+
       for (int index = 0; index < count; index++)
       {
          NodeItem* node = dynamic_cast<NodeItem*>(selection[index]);
@@ -1523,9 +1586,12 @@ namespace dtDirector
             for (int linkIndex = 0; linkIndex < linkCount; linkIndex++)
             {
                InputLink* link = node->GetInputs()[linkIndex].link;
-               if (link && link->GetLinks().empty())
+               if (link && link->GetVisible() && link->GetLinks().empty())
                {
                   link->SetVisible(false);
+
+                  dtCore::RefPtr<UndoLinkVisibilityEvent> event = new UndoLinkVisibilityEvent(this, node->GetID(), 0, link->GetName(), false);
+                  GetUndoManager()->AddEvent(event);
                }
             }
 
@@ -1533,9 +1599,12 @@ namespace dtDirector
             for (int linkIndex = 0; linkIndex < linkCount; linkIndex++)
             {
                OutputLink* link = node->GetOutputs()[linkIndex].link;
-               if (link && link->GetLinks().empty())
+               if (link && link->GetVisible() && link->GetLinks().empty())
                {
                   link->SetVisible(false);
+
+                  dtCore::RefPtr<UndoLinkVisibilityEvent> event = new UndoLinkVisibilityEvent(this, node->GetID(), 1, link->GetName(), false);
+                  GetUndoManager()->AddEvent(event);
                }
             }
 
@@ -1543,13 +1612,18 @@ namespace dtDirector
             for (int linkIndex = 0; linkIndex < linkCount; linkIndex++)
             {
                ValueLink* link = node->GetValues()[linkIndex].link;
-               if (link && link->GetLinks().empty())
+               if (link && link->GetVisible() && link->GetLinks().empty())
                {
                   link->SetVisible(false);
+
+                  dtCore::RefPtr<UndoLinkVisibilityEvent> event = new UndoLinkVisibilityEvent(this, node->GetID(), 2, link->GetName(), false);
+                  GetUndoManager()->AddEvent(event);
                }
             }
          }
       }
+
+      GetUndoManager()->EndMultipleEvents();
 
       Refresh();
    }
