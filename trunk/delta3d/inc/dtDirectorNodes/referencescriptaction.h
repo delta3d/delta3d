@@ -56,6 +56,11 @@ namespace dtDirector
       virtual void Init(const NodeType& nodeType, DirectorGraph* graph);
 
       /**
+       * Event handler called after the entire script has been loaded.
+       */
+      virtual void OnStart();
+
+      /**
        * This method is called in init, which instructs the node
        * to create its properties.  Methods implementing this should
        * be sure to call their parent class's buildPropertyMap method to
