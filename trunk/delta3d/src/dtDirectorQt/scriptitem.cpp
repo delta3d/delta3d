@@ -220,36 +220,18 @@ namespace dtDirector
       }
       
       menu.addAction(mScene->GetMacroSelectionAction());
-      if (!mScene->GetSelection().empty())
-      {
-         QAction* createGroupAction = menu.addAction("Create Group Around Selection");
-         connect(createGroupAction, SIGNAL(triggered()), mScene, SLOT(OnCreateGroupForSelection()));
-      }
+      menu.addAction(mScene->GetGroupSelectionAction());
       menu.addSeparator();
       menu.addAction(mScene->GetEditor()->GetCutAction());
       menu.addAction(mScene->GetEditor()->GetCopyAction());
       menu.addSeparator();
-
-      QMenu* exposeMenu = NULL;
-      std::vector<ValueLink> &values = mNode->GetValueLinks();
-      int count = (int)values.size();
-      for (int index = 0; index < count; index++)
-      {
-         ValueLink& link = values[index];
-         if (!link.GetExposed())
-         {
-            if (!exposeMenu)
-            {
-               exposeMenu = menu.addMenu("Expose Values");
-               connect(exposeMenu, SIGNAL(triggered(QAction*)), this, SLOT(ExposeValue(QAction*)));
-            }
-
-            exposeMenu->addAction(link.GetName().c_str());
-         }
-      }
-
+      menu.addMenu(GetShowInputMenu());
+      menu.addMenu(GetShowOutputMenu());
+      menu.addMenu(GetShowValueMenu());
       menu.addAction(mScene->GetEditor()->GetShowLinkAction());
       menu.addAction(mScene->GetEditor()->GetHideLinkAction());
+      menu.addSeparator();
+      menu.addMenu(GetExposeLinkMenu());
       menu.addSeparator();
       menu.addAction(mScene->GetEditor()->GetDeleteAction());
       menu.exec(event->screenPos());

@@ -64,6 +64,7 @@ namespace dtDirector
       , mHoldingControl(false)
       , mHoldingShift(false)
       , mMacroSelectionAction(NULL)
+      , mGroupSelectionAction(NULL)
       , mTranslationItem(NULL)
    {
       mPropertyEditor->SetScene(this);
@@ -73,9 +74,10 @@ namespace dtDirector
       setSceneRect(0, 0, 10000, 10000);
 
       mMacroSelectionAction = new QAction("Create Macro with Selection", this);
+      mGroupSelectionAction = new QAction("Create Group Around Selection", this);
 
-      connect(mMacroSelectionAction, SIGNAL(triggered()),
-         this, SLOT(OnCreateMacro()));
+      connect(mMacroSelectionAction, SIGNAL(triggered()), this, SLOT(OnCreateMacro()));
+      connect(mGroupSelectionAction, SIGNAL(triggered()), this, SLOT(OnCreateGroupForSelection()));
    }
 
    //////////////////////////////////////////////////////////////////////////

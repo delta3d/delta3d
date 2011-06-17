@@ -157,6 +157,7 @@ namespace dtDirector
        * Event handler when a link is hidden.
        */
       void HideLink();
+      void ShowLink();
 
    protected:
       virtual LinkItem* GetLinkGraphic();
@@ -248,6 +249,7 @@ namespace dtDirector
        * Event handler when a link is hidden.
        */
       void HideLink();
+      void ShowLink();
 
    protected:
       virtual LinkItem* GetLinkGraphic();
@@ -341,6 +343,7 @@ namespace dtDirector
        * Event handler when a link is hidden.
        */
       void HideLink();
+      void ShowLink();
 
       /**
        * Event handler when a link is removed.

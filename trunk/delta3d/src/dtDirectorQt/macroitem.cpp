@@ -519,17 +519,17 @@ namespace dtDirector
       QAction* stepInAction = menu.addAction("Step Inside Macro");
       connect(stepInAction, SIGNAL(triggered()), this, SLOT(OpenMacro()));
       if (!hasDefault) menu.setDefaultAction(stepInAction);
+
       menu.addSeparator();
       menu.addAction(mScene->GetMacroSelectionAction());
-      if (!mScene->GetSelection().empty())
-      {
-         QAction* createGroupAction = menu.addAction("Create Group Around Selection");
-         connect(createGroupAction, SIGNAL(triggered()), mScene, SLOT(OnCreateGroupForSelection()));
-      }
+      menu.addAction(mScene->GetGroupSelectionAction());
       menu.addSeparator();
       menu.addAction(mScene->GetEditor()->GetCutAction());
       menu.addAction(mScene->GetEditor()->GetCopyAction());
       menu.addSeparator();
+      menu.addMenu(GetShowInputMenu());
+      menu.addMenu(GetShowOutputMenu());
+      menu.addMenu(GetShowValueMenu());
       menu.addAction(mScene->GetEditor()->GetShowLinkAction());
       menu.addAction(mScene->GetEditor()->GetHideLinkAction());
       menu.addSeparator();

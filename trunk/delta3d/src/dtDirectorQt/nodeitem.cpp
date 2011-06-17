@@ -1274,10 +1274,9 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void NodeItem::ExposeValue(QAction* action)
+   void NodeItem::ExposeLink(QAction* action)
    {
-      if (!action) return;
-      if (!mNode.valid())
+      if (!action || !mNode.valid())
       {
          return;
       }
@@ -1291,7 +1290,7 @@ namespace dtDirector
             link->SetVisible(true);
 
             dtCore::RefPtr<UndoLinkVisibilityEvent> event = new UndoLinkVisibilityEvent(mScene->GetEditor(), GetID(), 2, link->GetName(), true, true);
-            event->SetDescription("Creation of value link \'" + link->GetName() + "\' for Node \'" + mNode->GetTypeName() + "\'.");
+            event->SetDescription("Exposing of value link \'" + link->GetName() + "\' for Node \'" + mNode->GetTypeName() + "\'.");
             mScene->GetEditor()->GetUndoManager()->AddEvent(event);
 
             mScene->Refresh();
@@ -1388,82 +1387,6 @@ namespace dtDirector
 
       QPainterPath path = CreateConnectionV(start, end);
       output.linkConnectors[index]->setPath(path);
-   }
-
-   //////////////////////////////////////////////////////////////////////////
-   void NodeItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
-   {
-      setSelected(true);
-      QMenu menu;
-      menu.addAction(mScene->GetMacroSelectionAction());
-      if (!mScene->GetSelection().empty())
-      {
-         QAction* createGroupAction = menu.addAction("Create Group Around Selection");
-         connect(createGroupAction, SIGNAL(triggered()), mScene, SLOT(OnCreateGroupForSelection()));
-      }
-      menu.addSeparator();
-      menu.addAction(mScene->GetEditor()->GetCutAction());
-      menu.addAction(mScene->GetEditor()->GetCopyAction());
-      menu.addSeparator();
-
-      QMenu* exposeMenu = NULL;
-      std::vector<ValueLink> &values = mNode->GetValueLinks();
-      int count = (int)values.size();
-      for (int index = 0; index < count; index++)
-      {
-         ValueLink& link = values[index];
-         if (!link.GetExposed())
-         {
-            if (!exposeMenu)
-            {
-               exposeMenu = menu.addMenu("Expose Values");
-               connect(exposeMenu, SIGNAL(triggered(QAction*)), this, SLOT(ExposeValue(QAction*)));
-            }
-
-            exposeMenu->addAction(link.GetName().c_str());
-         }
-      }
-
-      menu.addAction(mScene->GetEditor()->GetShowLinkAction());
-      menu.addAction(mScene->GetEditor()->GetHideLinkAction());
-      menu.addSeparator();
-      menu.addAction(mScene->GetEditor()->GetDeleteAction());
-
-      if (mScene->GetEditor()->GetDirector()->GetNotifier())
-      {
-         if (mNode.valid() && mNode->AsEventNode())
-         {
-            menu.addSeparator();
-
-            QMenu* triggerMenu = menu.addMenu("Trigger Event");
-            connect(triggerMenu, SIGNAL(triggered(QAction*)), this, SLOT(OnEventTriggered(QAction*)));
-
-            int count = (int)mNode->GetOutputLinks().size();
-            for (int index = 0; index < count; ++index)
-            {
-               dtDirector::OutputLink& link = mNode->GetOutputLinks()[index];
-               triggerMenu->addAction(link.GetName().c_str());
-            }
-         }
-
-         menu.addSeparator();
-         QAction* breakPointAction = NULL;
-         if (!mScene->GetEditor()->GetDirector()->GetNotifier()->ShouldBreak(mNode.get()))
-         {
-            breakPointAction = menu.addAction("Set Break Point");
-         }
-         else
-         {
-            breakPointAction = menu.addAction("Remove Break Point");
-         }
-
-         if (breakPointAction)
-         {
-            connect(breakPointAction, SIGNAL(triggered()), this, SLOT(OnToggleBreakPoint()));
-         }
-      }
-
-      menu.exec(event->screenPos());
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -1618,6 +1541,105 @@ namespace dtDirector
 
       mNodePen.setColor(newColor);
       setPen(mNodePen);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   QMenu* NodeItem::GetExposeLinkMenu()
+   {
+      if (!mNode.valid())
+      {
+         return NULL;
+      }
+
+      QMenu* menu = new QMenu("Expose Value");
+      menu->setDisabled(true);
+      connect(menu, SIGNAL(triggered(QAction*)), this, SLOT(ExposeLink(QAction*)));
+
+      std::vector<ValueLink> &values = mNode->GetValueLinks();
+      int count = (int)values.size();
+      for (int index = 0; index < count; index++)
+      {
+         ValueLink& link = values[index];
+         if (!link.GetExposed())
+         {
+            menu->addAction(link.GetName().c_str());
+            menu->setEnabled(true);
+         }
+      }
+
+      return menu;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   QMenu* NodeItem::GetShowInputMenu()
+   {
+      QMenu* menu = new QMenu("Show Input Link");
+      menu->setDisabled(true);
+
+      int count = (int)mInputs.size();
+      for (int index = 0; index < count; ++index)
+      {
+         InputData& data = mInputs[index];
+         if (!data.link->GetVisible())
+         {
+            QAction* action = menu->addAction(data.link->GetName().c_str());
+            if (action)
+            {
+               connect(action, SIGNAL(triggered()), data.linkGraphic, SLOT(ShowLink()));
+               menu->setEnabled(true);
+            }
+         }
+      }
+
+      return menu;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   QMenu* NodeItem::GetShowOutputMenu()
+   {
+      QMenu* menu = new QMenu("Show Output Link");
+      menu->setDisabled(true);
+
+      int count = (int)mOutputs.size();
+      for (int index = 0; index < count; ++index)
+      {
+         OutputData& data = mOutputs[index];
+         if (!data.link->GetVisible())
+         {
+            QAction* action = menu->addAction(data.link->GetName().c_str());
+            if (action)
+            {
+               connect(action, SIGNAL(triggered()), data.linkGraphic, SLOT(ShowLink()));
+               menu->setEnabled(true);
+            }
+         }
+      }
+
+      return menu;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   QMenu* NodeItem::GetShowValueMenu()
+   {
+      QMenu* menu = new QMenu("Show Value Link");
+      menu->setDisabled(true);
+
+      int count = (int)mValues.size();
+      for (int index = 0; index < count; ++index)
+      {
+         ValueData& data = mValues[index];
+         if (!data.link->GetVisible())
+         {
+            QAction* action = menu->addAction(data.link->GetName().c_str());
+            if (action)
+            {
+               connect(action, SIGNAL(triggered()), data.linkGraphic, SLOT(ShowLink()));
+               menu->setEnabled(true);
+            }
+         }
+      }
+
+      return menu;
    }
 }
 
