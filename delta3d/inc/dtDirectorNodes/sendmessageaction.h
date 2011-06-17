@@ -88,6 +88,9 @@ namespace dtDirector
       void SetMessageType(const std::string& typeName);
       const std::string& GetMessageType() const;
 
+      void SetAboutActorID(const dtCore::UniqueId& value);
+      dtCore::UniqueId GetAboutActorID();
+
       /**
        * Updates the Label.
        */
@@ -102,6 +105,7 @@ namespace dtDirector
 
    private:
       std::string mMessageType;
+      dtCore::UniqueId mAboutActorID;
    };
 }
 
