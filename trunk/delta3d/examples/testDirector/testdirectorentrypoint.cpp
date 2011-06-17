@@ -32,10 +32,6 @@
 #include <dtAudio/audiomanager.h>
 #include <dtDirector/director.h>
 
-#if defined(USE_INSPECTOR)
-   #include <dtInspectorQt/inspectorqt.h>
-#endif
-
 extern "C" TEST_DIRECTOR_EXPORT dtGame::GameEntryPoint* CreateGameEntryPoint()
 {
    return new TestDirector;
@@ -51,11 +47,6 @@ extern "C" TEST_DIRECTOR_EXPORT void DestroyGameEntryPoint(dtGame::GameEntryPoin
 TestDirector::TestDirector()
    : dtGame::GameEntryPoint() 
 {
-#if defined(USE_INSPECTOR)
-   int argc = 0;
-   mInspector = new dtInspectorQt::InspectorQt(argc, NULL);
-   mInspector->SetVisible(true);
-#endif
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -103,6 +94,7 @@ void TestDirector::OnStartup(dtGame::GameApplication& app)
 
       app.GetGameManager()->ChangeMapSet(mapNames);
       //app.GetGameManager()->ChangeMap("TestDirector");
+
    }
    catch (const dtUtil::Exception& e)
    {
