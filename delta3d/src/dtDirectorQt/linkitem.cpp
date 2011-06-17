@@ -1270,7 +1270,7 @@ namespace dtDirector
       ValueLink* input = mNodeItem->GetValues()[mLinkIndex].link;
       if (!input) return;
 
-      // Unexpose this link.
+      // Remove this link.
       input->SetExposed(false);
 
       std::string undoDescription = "Removal of value link \'" + input->GetName() + "\' for ";
