@@ -26,11 +26,6 @@
 #include <dtCore/refptr.h>
 #include <dtCore/observerptr.h>
 
-namespace dtInspectorQt
-{
-   class InspectorQt;
-}
-
 #include "testdirectorexport.h"
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -56,8 +51,6 @@ public:
     * opportunity to create components, load maps, create unique actors, etc...
     */
    virtual void OnStartup(dtGame::GameApplication& app);
-
-   dtInspectorQt::InspectorQt* mInspector;
 };
 
 #endif // TEST_DIRECTOR_ENTRY_POINT

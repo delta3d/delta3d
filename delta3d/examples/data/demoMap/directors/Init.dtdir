@@ -2,7 +2,7 @@
 <director xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dDirector" xsi:schemaLocation="delta3dDirector director.xsd">
     <header>
         <createTimestamp>2009-12-22T14:26:31-08:00</createTimestamp>
-        <lastUpdateTimestamp>2011-06-14T13:37:08-08:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2011-06-17T13:00:14-08:00</lastUpdateTimestamp>
         <editorVersion>2.7.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
         <scriptType>Scenario</scriptType>
@@ -70,6 +70,14 @@
                     <allowmultiple>false</allowmultiple>
                     <typecheck>true</typecheck>
                 </valuelink>
+                <valuelink>
+                    <name>Instigator</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>true</isout>
+                    <allowmultiple>true</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
             </node>
             <node>
                 <name>Start Event</name>
@@ -106,6 +114,14 @@
                     <allowmultiple>false</allowmultiple>
                     <typecheck>true</typecheck>
                 </valuelink>
+                <valuelink>
+                    <name>Instigator</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>true</isout>
+                    <allowmultiple>true</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
             </node>
             <node>
                 <name>Key Press Event</name>
@@ -114,8 +130,8 @@
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>390.134033</value1>
-                        <value2>217.679474</value2>
+                        <value1>318.134033</value1>
+                        <value2>150.679474</value2>
                     </vec2>
                 </property>
                 <property>
@@ -151,6 +167,14 @@
                     <typecheck>true</typecheck>
                 </valuelink>
                 <valuelink>
+                    <name>Instigator</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>true</isout>
+                    <allowmultiple>true</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+                <valuelink>
                     <name>Modifiers</name>
                     <visible>true</visible>
                     <exposed>false</exposed>
@@ -160,38 +184,6 @@
                 </valuelink>
                 <valuelink>
                     <name>Key</name>
-                    <visible>true</visible>
-                    <exposed>false</exposed>
-                    <isout>false</isout>
-                    <allowmultiple>false</allowmultiple>
-                    <typecheck>true</typecheck>
-                </valuelink>
-            </node>
-            <node>
-                <name>Start Event</name>
-                <category>General</category>
-                <id>ad2df9fa-921a-4c5e-92f1-c7f300f198e1</id>
-                <property>
-                    <name>Position</name>
-                    <vec2>
-                        <value1>412.134033</value1>
-                        <value2>160.910461</value2>
-                    </vec2>
-                </property>
-                <outputlink>
-                    <name>Out</name>
-                    <visible>true</visible>
-                </outputlink>
-                <valuelink>
-                    <name>Enabled</name>
-                    <visible>true</visible>
-                    <exposed>false</exposed>
-                    <isout>false</isout>
-                    <allowmultiple>false</allowmultiple>
-                    <typecheck>true</typecheck>
-                </valuelink>
-                <valuelink>
-                    <name>TriggerCount</name>
                     <visible>true</visible>
                     <exposed>false</exposed>
                     <isout>false</isout>
@@ -222,38 +214,6 @@
                         <value1>903.531616</value1>
                         <value2>345.672333</value2>
                     </vec2>
-                </property>
-            </node>
-            <node>
-                <name>Group Box</name>
-                <category>Core</category>
-                <id>89ffa2a6-4f35-4aaa-8b68-38c797913ec3</id>
-                <property>
-                    <name>Comment</name>
-                    <string>Fall Catcher</string>
-                </property>
-                <property>
-                    <name>Position</name>
-                    <vec2>
-                        <value1>-298.400696</value1>
-                        <value2>44.751038</value2>
-                    </vec2>
-                </property>
-                <property>
-                    <name>Size</name>
-                    <vec2>
-                        <value1>1028.000000</value1>
-                        <value2>351.126129</value2>
-                    </vec2>
-                </property>
-                <property>
-                    <name>Color</name>
-                    <colorRGBA>
-                        <valueR>0.000000</valueR>
-                        <valueG>0.000000</valueG>
-                        <valueB>1.000000</valueB>
-                        <valueA>0.882353</valueA>
-                    </colorRGBA>
                 </property>
             </node>
             <node>
@@ -474,7 +434,7 @@
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>482.299652</value1>
+                        <value1>479.799683</value1>
                         <value2>-268.177643</value2>
                     </vec2>
                 </property>
@@ -488,11 +448,11 @@
                 </inputlink>
                 <outputlink>
                     <name>Out</name>
-                    <visible>true</visible>
+                    <visible>false</visible>
                 </outputlink>
                 <outputlink>
                     <name>Failed</name>
-                    <visible>true</visible>
+                    <visible>false</visible>
                 </outputlink>
                 <valuelink>
                     <name>Enabled</name>
@@ -684,6 +644,38 @@
                     </link>
                 </valuelink>
             </node>
+            <node>
+                <name>Group Box</name>
+                <category>Core</category>
+                <id>89ffa2a6-4f35-4aaa-8b68-38c797913ec3</id>
+                <property>
+                    <name>Comment</name>
+                    <string>Fall Catcher</string>
+                </property>
+                <property>
+                    <name>Position</name>
+                    <vec2>
+                        <value1>-298.400696</value1>
+                        <value2>44.410454</value2>
+                    </vec2>
+                </property>
+                <property>
+                    <name>Size</name>
+                    <vec2>
+                        <value1>901.768250</value1>
+                        <value2>352.126099</value2>
+                    </vec2>
+                </property>
+                <property>
+                    <name>Color</name>
+                    <colorRGBA>
+                        <valueR>0.000000</valueR>
+                        <valueG>0.000000</valueG>
+                        <valueB>1.000000</valueB>
+                        <valueA>0.882353</valueA>
+                    </colorRGBA>
+                </property>
+            </node>
         </actionnodes>
         <valuenodes>
             <node>
@@ -720,22 +712,6 @@
                 <property>
                     <name>Name</name>
                     <string>Start Pos</string>
-                </property>
-                <property>
-                    <name>Value</name>
-                    <vec3>
-                        <value1>-0.578832</value1>
-                        <value2>8.567699</value2>
-                        <value3>3.096251</value3>
-                    </vec3>
-                </property>
-                <property>
-                    <name>Initial Value</name>
-                    <vec3>
-                        <value1>0.000000</value1>
-                        <value2>0.000000</value2>
-                        <value3>0.000000</value3>
-                    </vec3>
                 </property>
                 <valuelink>
                     <name>Enabled</name>
@@ -788,10 +764,6 @@
                     <name>Name</name>
                     <string>Desired Height</string>
                 </property>
-                <property>
-                    <name>Initial Value</name>
-                    <float>0</float>
-                </property>
                 <valuelink>
                     <name>Enabled</name>
                     <visible>true</visible>
@@ -808,7 +780,7 @@
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>560.891968</value1>
+                        <value1>451.891968</value1>
                         <value2>233.036575</value2>
                     </vec2>
                 </property>
@@ -880,7 +852,7 @@
                     </vec2>
                 </property>
                 <property>
-                    <name>Initial Value</name>
+                    <name>Value</name>
                     <actorId>1af6ec4e-1270-44b3-b30b-20ebbfac269d</actorId>
                 </property>
                 <valuelink>
@@ -968,6 +940,14 @@
                         <exposed>false</exposed>
                         <isout>false</isout>
                         <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>Instigator</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>true</isout>
+                        <allowmultiple>true</allowmultiple>
                         <typecheck>true</typecheck>
                     </valuelink>
                 </node>
@@ -1257,7 +1237,7 @@
                         </vec2>
                     </property>
                     <property>
-                        <name>Initial Value</name>
+                        <name>Value</name>
                         <actorId>1af6ec4e-1270-44b3-b30b-20ebbfac269d</actorId>
                     </property>
                     <valuelink>
@@ -1281,7 +1261,7 @@
                         </vec2>
                     </property>
                     <property>
-                        <name>Initial Value</name>
+                        <name>Value</name>
                         <actorId>b2acefd8-12a5-47a1-8035-b6537de811d7</actorId>
                     </property>
                     <valuelink>
@@ -1307,22 +1287,6 @@
                     <property>
                         <name>Name</name>
                         <string>Start Pos</string>
-                    </property>
-                    <property>
-                        <name>Value</name>
-                        <vec3>
-                            <value1>8.017442</value1>
-                            <value2>14.970718</value2>
-                            <value3>0.000000</value3>
-                        </vec3>
-                    </property>
-                    <property>
-                        <name>Initial Value</name>
-                        <vec3>
-                            <value1>0.000000</value1>
-                            <value2>0.000000</value2>
-                            <value3>0.000000</value3>
-                        </vec3>
                     </property>
                     <valuelink>
                         <name>Enabled</name>
@@ -1499,6 +1463,14 @@
                         <exposed>false</exposed>
                         <isout>false</isout>
                         <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>Instigator</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>true</isout>
+                        <allowmultiple>true</allowmultiple>
                         <typecheck>true</typecheck>
                     </valuelink>
                 </node>
@@ -1928,10 +1900,6 @@
                     </property>
                     <property>
                         <name>Value</name>
-                        <float>1.5</float>
-                    </property>
-                    <property>
-                        <name>Initial Value</name>
                         <float>1.5633301</float>
                     </property>
                     <valuelink>
@@ -1988,22 +1956,6 @@
                     <property>
                         <name>Name</name>
                         <string>Player Pos</string>
-                    </property>
-                    <property>
-                        <name>Value</name>
-                        <vec3>
-                            <value1>18.226706</value1>
-                            <value2>18.204674</value2>
-                            <value3>1.500000</value3>
-                        </vec3>
-                    </property>
-                    <property>
-                        <name>Initial Value</name>
-                        <vec3>
-                            <value1>0.000000</value1>
-                            <value2>0.000000</value2>
-                            <value3>0.000000</value3>
-                        </vec3>
                     </property>
                     <valuelink>
                         <name>Enabled</name>
@@ -2063,7 +2015,7 @@
             <property>
                 <name>Position</name>
                 <vec2>
-                    <value1>550.891907</value1>
+                    <value1>441.891907</value1>
                     <value2>85.910454</value2>
                 </vec2>
             </property>
@@ -2122,6 +2074,14 @@
                         <exposed>false</exposed>
                         <isout>false</isout>
                         <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>Instigator</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>true</isout>
+                        <allowmultiple>true</allowmultiple>
                         <typecheck>true</typecheck>
                     </valuelink>
                 </node>
@@ -2271,22 +2231,6 @@
                     <property>
                         <name>Name</name>
                         <string>Player Pos</string>
-                    </property>
-                    <property>
-                        <name>Value</name>
-                        <vec3>
-                            <value1>-0.578832</value1>
-                            <value2>8.567699</value2>
-                            <value3>3.096251</value3>
-                        </vec3>
-                    </property>
-                    <property>
-                        <name>Initial Value</name>
-                        <vec3>
-                            <value1>0.000000</value1>
-                            <value2>0.000000</value2>
-                            <value3>0.000000</value3>
-                        </vec3>
                     </property>
                     <valuelink>
                         <name>Enabled</name>

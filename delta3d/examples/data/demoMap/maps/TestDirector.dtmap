@@ -7,7 +7,7 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2009-12-21T16:14:44-08:00</createTimestamp>
-        <lastUpdateTimestamp>2011-06-10T14:20:09-08:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2011-06-17T12:59:26-08:00</lastUpdateTimestamp>
         <editorVersion>2.7.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
@@ -185,33 +185,6 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes::Door_Pivot_Room.IVE</resourceDisplayName>
                 <resource>StaticMeshes::Door_Pivot_Room.IVE</resource>
-            </property>
-        </actor>
-        <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
-            <id>2452c521-1e93-44a6-932d-5872d39d06ed</id>
-            <name>Billboard</name>
-            <property>
-                <name>Rotation</name>
-                <vec3>
-                    <value1>0.000000</value1>
-                    <value2>0.000000</value2>
-                    <value3>0.000067</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>Translation</name>
-                <vec3>
-                    <value1>32.943245</value1>
-                    <value2>10.667544</value2>
-                    <value3>0.000000</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>static mesh</name>
-                <resourceType>StaticMeshes</resourceType>
-                <resourceDisplayName>StaticMeshes:VidBox.IVE</resourceDisplayName>
-                <resource>StaticMeshes:VidBox.IVE</resource>
             </property>
         </actor>
         <actor>

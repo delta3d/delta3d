@@ -2,7 +2,7 @@
 <director xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dDirector" xsi:schemaLocation="delta3dDirector director.xsd">
     <header>
         <createTimestamp>2009-12-22T14:26:31-08:00</createTimestamp>
-        <lastUpdateTimestamp>2011-06-10T01:12:06-08:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2011-06-17T13:02:59-08:00</lastUpdateTimestamp>
         <editorVersion>2.7.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
         <scriptType>Scenario</scriptType>
@@ -221,6 +221,14 @@
                     <typecheck>true</typecheck>
                 </valuelink>
                 <valuelink>
+                    <name>Instigator</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>true</isout>
+                    <allowmultiple>true</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+                <valuelink>
                     <name>EventName</name>
                     <visible>true</visible>
                     <exposed>false</exposed>
@@ -266,6 +274,14 @@
                     <exposed>false</exposed>
                     <isout>false</isout>
                     <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+                <valuelink>
+                    <name>Instigator</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>true</isout>
+                    <allowmultiple>true</allowmultiple>
                     <typecheck>true</typecheck>
                 </valuelink>
                 <valuelink>
@@ -511,7 +527,7 @@
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>1110.019043</value1>
+                        <value1>1256.019043</value1>
                         <value2>78.514297</value2>
                     </vec2>
                 </property>
@@ -523,13 +539,13 @@
                     <name>Call Event</name>
                     <visible>true</visible>
                     <link>
-                        <id>a1dbedaf-04a1-442e-bedc-e573085a4685</id>
-                        <name>Ended</name>
+                        <id>0895a0d0-df24-4e3a-af3c-6c1c476aa535</id>
+                        <name>Time Elapsed</name>
                     </link>
                 </inputlink>
                 <outputlink>
                     <name>Event Finished</name>
-                    <visible>true</visible>
+                    <visible>false</visible>
                 </outputlink>
                 <valuelink>
                     <name>Enabled</name>
@@ -555,6 +571,14 @@
                     <allowmultiple>false</allowmultiple>
                     <typecheck>true</typecheck>
                 </valuelink>
+                <valuelink>
+                    <name>Instigator</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
             </node>
             <node>
                 <name>Call Remote Event</name>
@@ -563,7 +587,7 @@
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>964.537476</value1>
+                        <value1>947.567993</value1>
                         <value2>-24.319633</value2>
                     </vec2>
                 </property>
@@ -581,7 +605,7 @@
                 </inputlink>
                 <outputlink>
                     <name>Event Finished</name>
-                    <visible>true</visible>
+                    <visible>false</visible>
                 </outputlink>
                 <valuelink>
                     <name>Enabled</name>
@@ -607,6 +631,14 @@
                     <allowmultiple>false</allowmultiple>
                     <typecheck>true</typecheck>
                 </valuelink>
+                <valuelink>
+                    <name>Instigator</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
             </node>
             <node>
                 <name>Call Remote Event</name>
@@ -616,7 +648,7 @@
                     <name>Position</name>
                     <vec2>
                         <value1>1014.555359</value1>
-                        <value2>225.485062</value2>
+                        <value2>225.485046</value2>
                     </vec2>
                 </property>
                 <property>
@@ -637,7 +669,7 @@
                 </inputlink>
                 <outputlink>
                     <name>Event Finished</name>
-                    <visible>true</visible>
+                    <visible>false</visible>
                 </outputlink>
                 <valuelink>
                     <name>Enabled</name>
@@ -657,6 +689,14 @@
                 </valuelink>
                 <valuelink>
                     <name>Local Event</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+                <valuelink>
+                    <name>Instigator</name>
                     <visible>true</visible>
                     <exposed>false</exposed>
                     <isout>false</isout>
@@ -693,7 +733,7 @@
                 </inputlink>
                 <outputlink>
                     <name>Event Finished</name>
-                    <visible>true</visible>
+                    <visible>false</visible>
                 </outputlink>
                 <valuelink>
                     <name>Enabled</name>
@@ -713,6 +753,14 @@
                 </valuelink>
                 <valuelink>
                     <name>Local Event</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+                <valuelink>
+                    <name>Instigator</name>
                     <visible>true</visible>
                     <exposed>false</exposed>
                     <isout>false</isout>
@@ -834,7 +882,7 @@
                 <property>
                     <name>Size</name>
                     <vec2>
-                        <value1>659.731506</value1>
+                        <value1>959.000000</value1>
                         <value2>596.865356</value2>
                     </vec2>
                 </property>
@@ -847,6 +895,82 @@
                         <valueA>0.882353</valueA>
                     </colorRGBA>
                 </property>
+            </node>
+            <node>
+                <name>Delay</name>
+                <category>General</category>
+                <id>0895a0d0-df24-4e3a-af3c-6c1c476aa535</id>
+                <property>
+                    <name>Position</name>
+                    <vec2>
+                        <value1>1090.067993</value1>
+                        <value2>91.514297</value2>
+                    </vec2>
+                </property>
+                <property>
+                    <name>Delay</name>
+                    <float>0</float>
+                </property>
+                <inputlink>
+                    <name>Start</name>
+                    <visible>true</visible>
+                    <link>
+                        <id>a1dbedaf-04a1-442e-bedc-e573085a4685</id>
+                        <name>Ended</name>
+                    </link>
+                </inputlink>
+                <inputlink>
+                    <name>Stop</name>
+                    <visible>false</visible>
+                </inputlink>
+                <inputlink>
+                    <name>Pause</name>
+                    <visible>false</visible>
+                </inputlink>
+                <outputlink>
+                    <name>Out</name>
+                    <visible>false</visible>
+                </outputlink>
+                <outputlink>
+                    <name>Time Elapsed</name>
+                    <visible>true</visible>
+                    <link>
+                        <id>912e74eb-754c-4d16-a53d-318a0bf69b2d</id>
+                        <name>Call Event</name>
+                    </link>
+                </outputlink>
+                <valuelink>
+                    <name>Enabled</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+                <valuelink>
+                    <name>Delay</name>
+                    <visible>false</visible>
+                    <exposed>true</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>false</typecheck>
+                </valuelink>
+                <valuelink>
+                    <name>Elapsed Time</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>true</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+                <valuelink>
+                    <name>UseSimTime</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
             </node>
         </actionnodes>
         <valuenodes>
@@ -1033,6 +1157,14 @@
                         <typecheck>true</typecheck>
                     </valuelink>
                     <valuelink>
+                        <name>Instigator</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>true</isout>
+                        <allowmultiple>true</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
                         <name>EventName</name>
                         <visible>true</visible>
                         <exposed>false</exposed>
@@ -1078,6 +1210,14 @@
                         <exposed>false</exposed>
                         <isout>false</isout>
                         <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>Instigator</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>true</isout>
+                        <allowmultiple>true</allowmultiple>
                         <typecheck>true</typecheck>
                     </valuelink>
                     <valuelink>
@@ -1129,6 +1269,14 @@
                         <typecheck>true</typecheck>
                     </valuelink>
                     <valuelink>
+                        <name>Instigator</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>true</isout>
+                        <allowmultiple>true</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
                         <name>EventName</name>
                         <visible>true</visible>
                         <exposed>false</exposed>
@@ -1174,6 +1322,14 @@
                         <exposed>false</exposed>
                         <isout>false</isout>
                         <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>Instigator</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>true</isout>
+                        <allowmultiple>true</allowmultiple>
                         <typecheck>true</typecheck>
                     </valuelink>
                     <valuelink>
@@ -1225,6 +1381,14 @@
                         <typecheck>true</typecheck>
                     </valuelink>
                     <valuelink>
+                        <name>Instigator</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>true</isout>
+                        <allowmultiple>true</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
                         <name>EventName</name>
                         <visible>true</visible>
                         <exposed>false</exposed>
@@ -1270,6 +1434,14 @@
                         <exposed>false</exposed>
                         <isout>false</isout>
                         <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>Instigator</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>true</isout>
+                        <allowmultiple>true</allowmultiple>
                         <typecheck>true</typecheck>
                     </valuelink>
                     <valuelink>
@@ -1559,6 +1731,14 @@
                         <allowmultiple>false</allowmultiple>
                         <typecheck>true</typecheck>
                     </valuelink>
+                    <valuelink>
+                        <name>Instigator</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
                 </node>
                 <node>
                     <name>Call Remote Event</name>
@@ -1605,6 +1785,14 @@
                     </valuelink>
                     <valuelink>
                         <name>Local Event</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>Instigator</name>
                         <visible>true</visible>
                         <exposed>false</exposed>
                         <isout>false</isout>
@@ -1667,6 +1855,14 @@
                         <allowmultiple>false</allowmultiple>
                         <typecheck>true</typecheck>
                     </valuelink>
+                    <valuelink>
+                        <name>Instigator</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
                 </node>
                 <node>
                     <name>Call Remote Event</name>
@@ -1719,6 +1915,14 @@
                         <allowmultiple>false</allowmultiple>
                         <typecheck>true</typecheck>
                     </valuelink>
+                    <valuelink>
+                        <name>Instigator</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
                 </node>
                 <node>
                     <name>Call Remote Event</name>
@@ -1765,6 +1969,14 @@
                     </valuelink>
                     <valuelink>
                         <name>Local Event</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>Instigator</name>
                         <visible>true</visible>
                         <exposed>false</exposed>
                         <isout>false</isout>
@@ -1827,6 +2039,14 @@
                         <allowmultiple>false</allowmultiple>
                         <typecheck>true</typecheck>
                     </valuelink>
+                    <valuelink>
+                        <name>Instigator</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
                 </node>
                 <node>
                     <name>Call Remote Event</name>
@@ -1877,6 +2097,14 @@
                     </valuelink>
                     <valuelink>
                         <name>Local Event</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>Instigator</name>
                         <visible>true</visible>
                         <exposed>false</exposed>
                         <isout>false</isout>
@@ -2967,6 +3195,14 @@
                             <allowmultiple>false</allowmultiple>
                             <typecheck>true</typecheck>
                         </valuelink>
+                        <valuelink>
+                            <name>Instigator</name>
+                            <visible>true</visible>
+                            <exposed>false</exposed>
+                            <isout>true</isout>
+                            <allowmultiple>true</allowmultiple>
+                            <typecheck>true</typecheck>
+                        </valuelink>
                     </node>
                     <node>
                         <name>Input Link</name>
@@ -3015,6 +3251,14 @@
                             <allowmultiple>false</allowmultiple>
                             <typecheck>true</typecheck>
                         </valuelink>
+                        <valuelink>
+                            <name>Instigator</name>
+                            <visible>true</visible>
+                            <exposed>false</exposed>
+                            <isout>true</isout>
+                            <allowmultiple>true</allowmultiple>
+                            <typecheck>true</typecheck>
+                        </valuelink>
                     </node>
                     <node>
                         <name>Input Link</name>
@@ -3057,6 +3301,14 @@
                             <exposed>false</exposed>
                             <isout>false</isout>
                             <allowmultiple>false</allowmultiple>
+                            <typecheck>true</typecheck>
+                        </valuelink>
+                        <valuelink>
+                            <name>Instigator</name>
+                            <visible>true</visible>
+                            <exposed>false</exposed>
+                            <isout>true</isout>
+                            <allowmultiple>true</allowmultiple>
                             <typecheck>true</typecheck>
                         </valuelink>
                     </node>
@@ -3103,6 +3355,14 @@
                             <allowmultiple>false</allowmultiple>
                             <typecheck>true</typecheck>
                         </valuelink>
+                        <valuelink>
+                            <name>Instigator</name>
+                            <visible>true</visible>
+                            <exposed>false</exposed>
+                            <isout>true</isout>
+                            <allowmultiple>true</allowmultiple>
+                            <typecheck>true</typecheck>
+                        </valuelink>
                     </node>
                     <node>
                         <name>Remote Event</name>
@@ -3141,6 +3401,14 @@
                             <exposed>false</exposed>
                             <isout>false</isout>
                             <allowmultiple>false</allowmultiple>
+                            <typecheck>true</typecheck>
+                        </valuelink>
+                        <valuelink>
+                            <name>Instigator</name>
+                            <visible>true</visible>
+                            <exposed>false</exposed>
+                            <isout>true</isout>
+                            <allowmultiple>true</allowmultiple>
                             <typecheck>true</typecheck>
                         </valuelink>
                         <valuelink>
@@ -3189,6 +3457,14 @@
                             <exposed>false</exposed>
                             <isout>false</isout>
                             <allowmultiple>false</allowmultiple>
+                            <typecheck>true</typecheck>
+                        </valuelink>
+                        <valuelink>
+                            <name>Instigator</name>
+                            <visible>true</visible>
+                            <exposed>false</exposed>
+                            <isout>true</isout>
+                            <allowmultiple>true</allowmultiple>
                             <typecheck>true</typecheck>
                         </valuelink>
                         <valuelink>
@@ -3376,6 +3652,14 @@
                             <allowmultiple>false</allowmultiple>
                             <typecheck>true</typecheck>
                         </valuelink>
+                        <valuelink>
+                            <name>Instigator</name>
+                            <visible>true</visible>
+                            <exposed>false</exposed>
+                            <isout>false</isout>
+                            <allowmultiple>false</allowmultiple>
+                            <typecheck>true</typecheck>
+                        </valuelink>
                     </node>
                     <node>
                         <name>Output Link</name>
@@ -3502,6 +3786,14 @@
                         </valuelink>
                         <valuelink>
                             <name>Local Event</name>
+                            <visible>true</visible>
+                            <exposed>false</exposed>
+                            <isout>false</isout>
+                            <allowmultiple>false</allowmultiple>
+                            <typecheck>true</typecheck>
+                        </valuelink>
+                        <valuelink>
+                            <name>Instigator</name>
                             <visible>true</visible>
                             <exposed>false</exposed>
                             <isout>false</isout>
@@ -4130,6 +4422,14 @@
                             <allowmultiple>false</allowmultiple>
                             <typecheck>true</typecheck>
                         </valuelink>
+                        <valuelink>
+                            <name>Instigator</name>
+                            <visible>true</visible>
+                            <exposed>false</exposed>
+                            <isout>true</isout>
+                            <allowmultiple>true</allowmultiple>
+                            <typecheck>true</typecheck>
+                        </valuelink>
                     </node>
                     <node>
                         <name>Input Link</name>
@@ -4178,6 +4478,14 @@
                             <allowmultiple>false</allowmultiple>
                             <typecheck>true</typecheck>
                         </valuelink>
+                        <valuelink>
+                            <name>Instigator</name>
+                            <visible>true</visible>
+                            <exposed>false</exposed>
+                            <isout>true</isout>
+                            <allowmultiple>true</allowmultiple>
+                            <typecheck>true</typecheck>
+                        </valuelink>
                     </node>
                     <node>
                         <name>Input Link</name>
@@ -4220,6 +4528,14 @@
                             <exposed>false</exposed>
                             <isout>false</isout>
                             <allowmultiple>false</allowmultiple>
+                            <typecheck>true</typecheck>
+                        </valuelink>
+                        <valuelink>
+                            <name>Instigator</name>
+                            <visible>true</visible>
+                            <exposed>false</exposed>
+                            <isout>true</isout>
+                            <allowmultiple>true</allowmultiple>
                             <typecheck>true</typecheck>
                         </valuelink>
                     </node>
@@ -4266,6 +4582,14 @@
                             <allowmultiple>false</allowmultiple>
                             <typecheck>true</typecheck>
                         </valuelink>
+                        <valuelink>
+                            <name>Instigator</name>
+                            <visible>true</visible>
+                            <exposed>false</exposed>
+                            <isout>true</isout>
+                            <allowmultiple>true</allowmultiple>
+                            <typecheck>true</typecheck>
+                        </valuelink>
                     </node>
                     <node>
                         <name>Remote Event</name>
@@ -4304,6 +4628,14 @@
                             <exposed>false</exposed>
                             <isout>false</isout>
                             <allowmultiple>false</allowmultiple>
+                            <typecheck>true</typecheck>
+                        </valuelink>
+                        <valuelink>
+                            <name>Instigator</name>
+                            <visible>true</visible>
+                            <exposed>false</exposed>
+                            <isout>true</isout>
+                            <allowmultiple>true</allowmultiple>
                             <typecheck>true</typecheck>
                         </valuelink>
                         <valuelink>
@@ -4352,6 +4684,14 @@
                             <exposed>false</exposed>
                             <isout>false</isout>
                             <allowmultiple>false</allowmultiple>
+                            <typecheck>true</typecheck>
+                        </valuelink>
+                        <valuelink>
+                            <name>Instigator</name>
+                            <visible>true</visible>
+                            <exposed>false</exposed>
+                            <isout>true</isout>
+                            <allowmultiple>true</allowmultiple>
                             <typecheck>true</typecheck>
                         </valuelink>
                         <valuelink>
@@ -4539,6 +4879,14 @@
                             <allowmultiple>false</allowmultiple>
                             <typecheck>true</typecheck>
                         </valuelink>
+                        <valuelink>
+                            <name>Instigator</name>
+                            <visible>true</visible>
+                            <exposed>false</exposed>
+                            <isout>false</isout>
+                            <allowmultiple>false</allowmultiple>
+                            <typecheck>true</typecheck>
+                        </valuelink>
                     </node>
                     <node>
                         <name>Output Link</name>
@@ -4665,6 +5013,14 @@
                         </valuelink>
                         <valuelink>
                             <name>Local Event</name>
+                            <visible>true</visible>
+                            <exposed>false</exposed>
+                            <isout>false</isout>
+                            <allowmultiple>false</allowmultiple>
+                            <typecheck>true</typecheck>
+                        </valuelink>
+                        <valuelink>
+                            <name>Instigator</name>
                             <visible>true</visible>
                             <exposed>false</exposed>
                             <isout>false</isout>
@@ -5297,6 +5653,14 @@
                         <allowmultiple>false</allowmultiple>
                         <typecheck>true</typecheck>
                     </valuelink>
+                    <valuelink>
+                        <name>Instigator</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>true</isout>
+                        <allowmultiple>true</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
                 </node>
                 <node>
                     <name>Input Link</name>
@@ -5345,6 +5709,14 @@
                         <allowmultiple>false</allowmultiple>
                         <typecheck>true</typecheck>
                     </valuelink>
+                    <valuelink>
+                        <name>Instigator</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>true</isout>
+                        <allowmultiple>true</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
                 </node>
                 <node>
                     <name>Input Link</name>
@@ -5387,6 +5759,14 @@
                         <exposed>false</exposed>
                         <isout>false</isout>
                         <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>Instigator</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>true</isout>
+                        <allowmultiple>true</allowmultiple>
                         <typecheck>true</typecheck>
                     </valuelink>
                 </node>
@@ -5433,6 +5813,14 @@
                         <allowmultiple>false</allowmultiple>
                         <typecheck>true</typecheck>
                     </valuelink>
+                    <valuelink>
+                        <name>Instigator</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>true</isout>
+                        <allowmultiple>true</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
                 </node>
                 <node>
                     <name>Remote Event</name>
@@ -5471,6 +5859,14 @@
                         <exposed>false</exposed>
                         <isout>false</isout>
                         <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>Instigator</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>true</isout>
+                        <allowmultiple>true</allowmultiple>
                         <typecheck>true</typecheck>
                     </valuelink>
                     <valuelink>
@@ -5519,6 +5915,14 @@
                         <exposed>false</exposed>
                         <isout>false</isout>
                         <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>Instigator</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>true</isout>
+                        <allowmultiple>true</allowmultiple>
                         <typecheck>true</typecheck>
                     </valuelink>
                     <valuelink>
@@ -5695,6 +6099,14 @@
                         <allowmultiple>false</allowmultiple>
                         <typecheck>true</typecheck>
                     </valuelink>
+                    <valuelink>
+                        <name>Instigator</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
                 </node>
                 <node>
                     <name>Output Link</name>
@@ -5817,6 +6229,14 @@
                     </valuelink>
                     <valuelink>
                         <name>Local Event</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>Instigator</name>
                         <visible>true</visible>
                         <exposed>false</exposed>
                         <isout>false</isout>
@@ -6493,6 +6913,14 @@
                         <allowmultiple>false</allowmultiple>
                         <typecheck>true</typecheck>
                     </valuelink>
+                    <valuelink>
+                        <name>Instigator</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>true</isout>
+                        <allowmultiple>true</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
                 </node>
                 <node>
                     <name>Input Link</name>
@@ -6541,6 +6969,14 @@
                         <allowmultiple>false</allowmultiple>
                         <typecheck>true</typecheck>
                     </valuelink>
+                    <valuelink>
+                        <name>Instigator</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>true</isout>
+                        <allowmultiple>true</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
                 </node>
                 <node>
                     <name>Input Link</name>
@@ -6583,6 +7019,14 @@
                         <exposed>false</exposed>
                         <isout>false</isout>
                         <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>Instigator</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>true</isout>
+                        <allowmultiple>true</allowmultiple>
                         <typecheck>true</typecheck>
                     </valuelink>
                 </node>
@@ -6629,6 +7073,14 @@
                         <allowmultiple>false</allowmultiple>
                         <typecheck>true</typecheck>
                     </valuelink>
+                    <valuelink>
+                        <name>Instigator</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>true</isout>
+                        <allowmultiple>true</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
                 </node>
                 <node>
                     <name>Remote Event</name>
@@ -6667,6 +7119,14 @@
                         <exposed>false</exposed>
                         <isout>false</isout>
                         <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>Instigator</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>true</isout>
+                        <allowmultiple>true</allowmultiple>
                         <typecheck>true</typecheck>
                     </valuelink>
                     <valuelink>
@@ -6715,6 +7175,14 @@
                         <exposed>false</exposed>
                         <isout>false</isout>
                         <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>Instigator</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>true</isout>
+                        <allowmultiple>true</allowmultiple>
                         <typecheck>true</typecheck>
                     </valuelink>
                     <valuelink>
@@ -6902,6 +7370,14 @@
                         <allowmultiple>false</allowmultiple>
                         <typecheck>true</typecheck>
                     </valuelink>
+                    <valuelink>
+                        <name>Instigator</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
                 </node>
                 <node>
                     <name>Output Link</name>
@@ -7028,6 +7504,14 @@
                     </valuelink>
                     <valuelink>
                         <name>Local Event</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>Instigator</name>
                         <visible>true</visible>
                         <exposed>false</exposed>
                         <isout>false</isout>
@@ -7663,6 +8147,14 @@
                         <allowmultiple>false</allowmultiple>
                         <typecheck>true</typecheck>
                     </valuelink>
+                    <valuelink>
+                        <name>Instigator</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>true</isout>
+                        <allowmultiple>true</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
                 </node>
                 <node>
                     <name>Input Link</name>
@@ -7711,6 +8203,14 @@
                         <allowmultiple>false</allowmultiple>
                         <typecheck>true</typecheck>
                     </valuelink>
+                    <valuelink>
+                        <name>Instigator</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>true</isout>
+                        <allowmultiple>true</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
                 </node>
                 <node>
                     <name>Input Link</name>
@@ -7753,6 +8253,14 @@
                         <exposed>false</exposed>
                         <isout>false</isout>
                         <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>Instigator</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>true</isout>
+                        <allowmultiple>true</allowmultiple>
                         <typecheck>true</typecheck>
                     </valuelink>
                 </node>
@@ -7799,6 +8307,14 @@
                         <allowmultiple>false</allowmultiple>
                         <typecheck>true</typecheck>
                     </valuelink>
+                    <valuelink>
+                        <name>Instigator</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>true</isout>
+                        <allowmultiple>true</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
                 </node>
                 <node>
                     <name>Remote Event</name>
@@ -7837,6 +8353,14 @@
                         <exposed>false</exposed>
                         <isout>false</isout>
                         <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>Instigator</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>true</isout>
+                        <allowmultiple>true</allowmultiple>
                         <typecheck>true</typecheck>
                     </valuelink>
                     <valuelink>
@@ -7885,6 +8409,14 @@
                         <exposed>false</exposed>
                         <isout>false</isout>
                         <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>Instigator</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>true</isout>
+                        <allowmultiple>true</allowmultiple>
                         <typecheck>true</typecheck>
                     </valuelink>
                     <valuelink>
@@ -8061,6 +8593,14 @@
                         <allowmultiple>false</allowmultiple>
                         <typecheck>true</typecheck>
                     </valuelink>
+                    <valuelink>
+                        <name>Instigator</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
                 </node>
                 <node>
                     <name>Output Link</name>
@@ -8183,6 +8723,14 @@
                     </valuelink>
                     <valuelink>
                         <name>Local Event</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>Instigator</name>
                         <visible>true</visible>
                         <exposed>false</exposed>
                         <isout>false</isout>
@@ -8669,6 +9217,14 @@
                         <allowmultiple>false</allowmultiple>
                         <typecheck>true</typecheck>
                     </valuelink>
+                    <valuelink>
+                        <name>Instigator</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>true</isout>
+                        <allowmultiple>true</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
                 </node>
                 <node>
                     <name>Input Link</name>
@@ -8711,6 +9267,14 @@
                         <exposed>false</exposed>
                         <isout>false</isout>
                         <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>Instigator</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>true</isout>
+                        <allowmultiple>true</allowmultiple>
                         <typecheck>true</typecheck>
                     </valuelink>
                 </node>
@@ -8761,6 +9325,14 @@
                         <allowmultiple>false</allowmultiple>
                         <typecheck>true</typecheck>
                     </valuelink>
+                    <valuelink>
+                        <name>Instigator</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>true</isout>
+                        <allowmultiple>true</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
                 </node>
                 <node>
                     <name>Input Link</name>
@@ -8805,6 +9377,14 @@
                         <allowmultiple>false</allowmultiple>
                         <typecheck>true</typecheck>
                     </valuelink>
+                    <valuelink>
+                        <name>Instigator</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>true</isout>
+                        <allowmultiple>true</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
                 </node>
                 <node>
                     <name>Remote Event</name>
@@ -8843,6 +9423,14 @@
                         <exposed>false</exposed>
                         <isout>false</isout>
                         <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>Instigator</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>true</isout>
+                        <allowmultiple>true</allowmultiple>
                         <typecheck>true</typecheck>
                     </valuelink>
                     <valuelink>
@@ -8891,6 +9479,14 @@
                         <exposed>false</exposed>
                         <isout>false</isout>
                         <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>Instigator</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>true</isout>
+                        <allowmultiple>true</allowmultiple>
                         <typecheck>true</typecheck>
                     </valuelink>
                     <valuelink>
@@ -9071,6 +9667,14 @@
                         <allowmultiple>false</allowmultiple>
                         <typecheck>true</typecheck>
                     </valuelink>
+                    <valuelink>
+                        <name>Instigator</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
                 </node>
                 <node>
                     <name>Output Link</name>
@@ -9135,8 +9739,8 @@
                         <name>Ended</name>
                         <visible>true</visible>
                         <link>
-                            <id>912e74eb-754c-4d16-a53d-318a0bf69b2d</id>
-                            <name>Call Event</name>
+                            <id>0895a0d0-df24-4e3a-af3c-6c1c476aa535</id>
+                            <name>Start</name>
                         </link>
                     </outputlink>
                     <valuelink>
@@ -9201,6 +9805,14 @@
                     </valuelink>
                     <valuelink>
                         <name>Local Event</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>Instigator</name>
                         <visible>true</visible>
                         <exposed>false</exposed>
                         <isout>false</isout>
@@ -9477,6 +10089,14 @@
                         <allowmultiple>false</allowmultiple>
                         <typecheck>true</typecheck>
                     </valuelink>
+                    <valuelink>
+                        <name>Instigator</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>true</isout>
+                        <allowmultiple>true</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
                 </node>
                 <node>
                     <name>Input Link</name>
@@ -9525,6 +10145,14 @@
                         <allowmultiple>false</allowmultiple>
                         <typecheck>true</typecheck>
                     </valuelink>
+                    <valuelink>
+                        <name>Instigator</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>true</isout>
+                        <allowmultiple>true</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
                 </node>
                 <node>
                     <name>Input Link</name>
@@ -9567,6 +10195,14 @@
                         <exposed>false</exposed>
                         <isout>false</isout>
                         <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>Instigator</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>true</isout>
+                        <allowmultiple>true</allowmultiple>
                         <typecheck>true</typecheck>
                     </valuelink>
                 </node>
@@ -9613,6 +10249,14 @@
                         <allowmultiple>false</allowmultiple>
                         <typecheck>true</typecheck>
                     </valuelink>
+                    <valuelink>
+                        <name>Instigator</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>true</isout>
+                        <allowmultiple>true</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
                 </node>
                 <node>
                     <name>Remote Event</name>
@@ -9651,6 +10295,14 @@
                         <exposed>false</exposed>
                         <isout>false</isout>
                         <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>Instigator</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>true</isout>
+                        <allowmultiple>true</allowmultiple>
                         <typecheck>true</typecheck>
                     </valuelink>
                     <valuelink>
@@ -9699,6 +10351,14 @@
                         <exposed>false</exposed>
                         <isout>false</isout>
                         <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>Instigator</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>true</isout>
+                        <allowmultiple>true</allowmultiple>
                         <typecheck>true</typecheck>
                     </valuelink>
                     <valuelink>
@@ -9944,6 +10604,14 @@
                         <allowmultiple>false</allowmultiple>
                         <typecheck>true</typecheck>
                     </valuelink>
+                    <valuelink>
+                        <name>Instigator</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
                 </node>
                 <node>
                     <name>Output Link</name>
@@ -10150,6 +10818,14 @@
                     </valuelink>
                     <valuelink>
                         <name>Local Event</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>Instigator</name>
                         <visible>true</visible>
                         <exposed>false</exposed>
                         <isout>false</isout>

@@ -31,6 +31,10 @@
 #include <dtActors/engineactorregistry.h>
 #include <dtDirector/director.h>
 
+#if defined(USE_INSPECTOR)
+   #include <dtInspectorQt/inspectorqt.h>
+#endif
+
 const std::string& DirectorComponent::NAME = "DirectorComponent";
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -86,6 +90,12 @@ bool DirectorComponent::HandleKeyPressed(const dtCore::Keyboard* keyBoard, int k
 ////////////////////////////////////////////////////////////////////////////////
 void DirectorComponent::OnMapLoaded()
 {
+#if defined(USE_INSPECTOR)
+   int argc = 0;
+   mInspector = new dtInspectorQt::InspectorQt(argc, NULL);
+   mInspector->SetVisible(true);
+   mInspector->SetGameManager(GetGameManager());
+#endif
 }
 
 ////////////////////////////////////////////////////////////////////////////////
