@@ -63,18 +63,16 @@ namespace dtDirector
       virtual void DrawTitle();
 
       /**
+       * Draws the comment.
+       */
+      virtual void DrawComment();
+
+      /**
        * Creates the value text.
        *
        * @param[in]  text  The value text.
        */
       virtual void SetValueText(const std::string& text);
-
-      /**
-       * Creates the comment.
-       *
-       * @param[in]  text  The new comment text.
-       */
-      virtual void SetComment(const std::string& text);
 
       /**
        * Connects all links on this node.

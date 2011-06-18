@@ -248,9 +248,9 @@ namespace dtDirector
       /**
        * Creates the comment.
        *
-       * @param[in]  text  The new comment text.
+       * @param[in]  text   The new comment text.
        */
-      virtual void SetComment(const std::string& text);
+      void SetComment(const std::string& text);
 
       /**
        * Finds all of the links.
@@ -286,6 +286,11 @@ namespace dtDirector
        * Draws the dividers.
        */
       void DrawDividers();
+
+      /**
+       * Draws the comment.
+       */
+      virtual void DrawComment();
 
       /**
        * Draws a glow around the node.

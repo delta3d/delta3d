@@ -26,6 +26,7 @@
 #include <dtDirectorQt/undomanager.h>
 #include <dtDirectorQt/undopropertyevent.h>
 #include <dtDirectorQt/undocreateevent.h>
+#include <dtDirectorQt/editorview.h>
 
 #include <dtDirector/valuenode.h>
 
@@ -165,6 +166,25 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
+   void ValueItem::DrawComment()
+   {
+      float scale = 1.0f;
+      if (mScene)
+      {
+         scale = 1.0f / mScene->GetView()->GetZoomScale();
+      }
+      scale = scale * 1.5;
+
+      mComment->setScale(scale);
+      mComment->setTextWidth(dtUtil::Max(100, mNodeWidth));
+
+      // Create the title background.
+      QRectF nodeBounds = boundingRect();
+
+      mComment->setPos(nodeBounds.x(), nodeBounds.height());
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    void ValueItem::SetValueText(const std::string& text)
    {
       if (!mValueText)
@@ -195,25 +215,6 @@ namespace dtDirector
       mValueHeight += bounds.height() + 11;
 
       mValueText->setPos(0, y + 11);
-   }
-
-   //////////////////////////////////////////////////////////////////////////
-   void ValueItem::SetComment(const std::string& text)
-   {
-      if (!mComment)
-      {
-         mComment = new GraphicsTextItem(this, scene());
-
-         mComment->setDefaultTextColor(Qt::darkGreen);
-      }
-
-      mComment->setPlainText(text.c_str());
-      mComment->setTextWidth(dtUtil::Max(100, mNodeWidth));
-
-      // Create the title background.
-      QRectF nodeBounds = boundingRect();
-
-      mComment->setPos(nodeBounds.x(), nodeBounds.height());
    }
 
    //////////////////////////////////////////////////////////////////////////

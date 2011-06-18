@@ -56,6 +56,11 @@ namespace dtDirector
        */
       EditorScene* GetScene() {return mScene;}
 
+      /**
+       * Retrieves the current zoom scale.
+       */
+      float GetZoomScale() const {return mCurrentScale;}
+
    protected:
 
       /**
