@@ -21,6 +21,7 @@
 #include <prefix/dtdirectorqtprefix.h>
 #include <dtDirectorQt/editorview.h>
 #include <dtDirectorQt/editorscene.h>
+#include <dtDirectorQt/groupitem.h>
 
 #include <QtGui/QMouseEvent>
 #include <QtGui/QGraphicsRectItem>
@@ -79,6 +80,18 @@ namespace dtDirector
       QPointF translation = mousePos - newMousePos;
       mScene->GetTranslationItem()->setPos(
          mScene->GetTranslationItem()->pos() - translation);
+
+      // Refresh all group box items.
+      QList<QGraphicsItem*> itemList = mScene->GetTranslationItem()->childItems();
+      int count = itemList.size();
+      for (int index = 0; index < count; ++index)
+      {
+         NodeItem* item = dynamic_cast<NodeItem*>(itemList[index]);
+         if (item)
+         {
+            item->DrawComment();
+         }
+      }
    }
 } // namespace dtDirector
 

@@ -67,6 +67,7 @@ namespace dtDirector
        * Sets the current view.
        */
       void SetView(EditorView* view);
+      EditorView* GetView() const;
 
       /**
        * Accessors to the editor.

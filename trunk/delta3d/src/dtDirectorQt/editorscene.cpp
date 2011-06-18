@@ -87,6 +87,12 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
+   EditorView* EditorScene::GetView() const
+   {
+      return mView;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    void EditorScene::SetEditor(DirectorEditor* editor)
    {
       mEditor = editor;
