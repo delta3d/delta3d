@@ -23,7 +23,9 @@ SET(LIB_SOURCES
   ${SOURCE_PATH}/cal3dloader.cpp
   ${SOURCE_PATH}/cal3dmodeldata.cpp
   ${SOURCE_PATH}/cal3dmodelwrapper.cpp
+  ${SOURCE_PATH}/characterfileelements.cpp
   ${SOURCE_PATH}/characterfilehandler.cpp
+  ${SOURCE_PATH}/characterfilewriter.cpp
   ${SOURCE_PATH}/characterwrapper.cpp
   ${SOURCE_PATH}/chardrawable.cpp
   ${SOURCE_PATH}/hardwaresubmesh.cpp
@@ -62,7 +64,9 @@ SET(LIB_PUBLIC_HEADERS
   ${HEADER_PATH}/cal3dloader.h
   ${HEADER_PATH}/cal3dmodeldata.h
   ${HEADER_PATH}/cal3dmodelwrapper.h
+  ${HEADER_PATH}/characterfileelements.h
   ${HEADER_PATH}/characterfilehandler.h
+  ${HEADER_PATH}/characterfilewriter.h
   ${HEADER_PATH}/characterwrapper.h
   ${HEADER_PATH}/chardrawable.h
   ${HEADER_PATH}/dtanim.h
