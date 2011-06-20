@@ -156,11 +156,25 @@ namespace dtUtil
 
       ~AttributeSearch();
 
+      ResultMap& GetAttributes();
+      const ResultMap& GetAttributes() const;
+
+      void SetValue(const std::string& attrName, const std::string& value);
+      std::string GetValue(const std::string& attrName) const;
+
+      bool AttributeSearch::HasAttribute(const std::string& attrName) const;
+
+      std::string ToString() const;
+
       /** Process the Attributes and make an easier structure to use.
         * @return produces an associative container indexed on the attribute names.
         */
-      ResultMap operator ()(const XERCES_CPP_NAMESPACE_QUALIFIER Attributes& attrs);
+      ResultMap& operator ()(const XERCES_CPP_NAMESPACE_QUALIFIER Attributes& attrs);
+
+   private:
+      ResultMap mAttrs;
    };
+
 }
 
 #if _MSC_VER

@@ -267,6 +267,30 @@ namespace dtDAL
    }
 
    /////////////////////////////////////////////////////////////////
+   void BaseXMLWriter::BeginElement(const std::string& name,
+      const dtDAL::AttributeMap& attrs, bool closeImmediately)
+   {
+      std::string attrsStr(attrs.ToString());
+      BeginElement(name, attrsStr, closeImmediately);
+   }
+
+   /////////////////////////////////////////////////////////////////
+   void BaseXMLWriter::BeginElement(const std::string& name,
+      const std::string& attributes, bool closeImmediately)
+   {
+      XMLCh* attrsX = attributes.empty() ? NULL : XMLString::transcode(attributes.c_str());
+      XMLCh* nameX = XMLString::transcode(name.c_str());
+      
+      BeginElement(nameX, attrsX, closeImmediately);
+
+      XMLString::release(&nameX);
+      if (attrsX != NULL)
+      {
+         XMLString::release(&attrsX);
+      }
+   }
+
+   /////////////////////////////////////////////////////////////////
    void BaseXMLWriter::BeginElement(const XMLCh* name, const XMLCh* attributes, bool closeImmediately)
    {
       xmlCharString s(name);

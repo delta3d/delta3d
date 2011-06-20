@@ -43,6 +43,7 @@
 
 namespace dtUtil
 {
+   class AttributeSearch;
    class Log;
 }
 
@@ -59,6 +60,8 @@ namespace dtDAL
 
       std::istream& mStream;
    };
+
+   typedef dtUtil::AttributeSearch AttributeMap;
 
    /**
     * @class BaseXMLParser
@@ -178,6 +181,8 @@ namespace dtDAL
       virtual void WriteHeader();
 
       ///writes out the open tags for a new element including indentation or the complete self-closing element if closeImmediatly is true.
+      virtual void BeginElement(const std::string& name, const AttributeMap& attrs, bool closeImmediately = false);
+      virtual void BeginElement(const std::string& name, const std::string& attributes = "", bool closeImmediately = false);
       virtual void BeginElement(const XMLCh* const name, const XMLCh* const attributes = NULL, bool closeImmediately = false);
       ///writes out the end element tag including indentation if necessary.
       virtual void EndElement();

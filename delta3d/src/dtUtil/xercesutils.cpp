@@ -3,6 +3,7 @@
 #include <dtUtil/log.h>
 
 #include <algorithm>
+#include <sstream>
 
 #include <xercesc/dom/DOMDocument.hpp>   // for xerces DOMDocument, DOMNode
 #include <xercesc/dom/DOMNodeFilter.hpp> // for xerces parameters
@@ -61,9 +62,58 @@ AttributeSearch::~AttributeSearch()
 {
 }
 
-AttributeSearch::ResultMap AttributeSearch::operator ()(const XERCES_CPP_NAMESPACE_QUALIFIER Attributes& attrs)
+AttributeSearch::ResultMap& AttributeSearch::GetAttributes()
 {
-   ResultMap rmap;
+   return mAttrs;
+}
+
+const AttributeSearch::ResultMap& AttributeSearch::GetAttributes() const
+{
+   return mAttrs;
+}
+
+void AttributeSearch::SetValue(const std::string& attrName, const std::string& value)
+{
+   mAttrs[attrName] = value;
+}
+
+std::string AttributeSearch::GetValue(const std::string& attrName) const
+{
+   ResultMap::const_iterator foundIter = mAttrs.find(attrName);
+   return foundIter == mAttrs.end() ? "" : foundIter->second;
+}
+
+bool AttributeSearch::HasAttribute(const std::string& attrName) const
+{
+   ResultMap::const_iterator foundIter = mAttrs.find(attrName);
+   return foundIter != mAttrs.end();
+}
+
+std::string AttributeSearch::ToString() const
+{
+   std::ostringstream oss;
+   ResultMap::const_iterator curIter = mAttrs.begin();
+   ResultMap::const_iterator endIter = mAttrs.end();
+   for (; curIter != endIter;)
+   {
+      // Add the attribute name and value such as name="value"
+      oss << curIter->first << "=\"" << curIter->second << "\"";
+
+      // Check if there is a next attribute to write.
+      ++curIter;
+      if(curIter != endIter)
+      {
+         // ...then add a space before the next one.
+         oss << " ";
+      }
+   }
+
+   return oss.str();
+}
+
+AttributeSearch::ResultMap& AttributeSearch::operator ()(const XERCES_CPP_NAMESPACE_QUALIFIER Attributes& attrs)
+{
+   mAttrs.clear();
 
    unsigned int n = attrs.getLength();
    for (unsigned int i = 0; i < n; ++i)
@@ -71,11 +121,11 @@ AttributeSearch::ResultMap AttributeSearch::operator ()(const XERCES_CPP_NAMESPA
       char* aname = XMLString::transcode(attrs.getLocalName(i));
       char* aval = XMLString::transcode(attrs.getValue(i));
 
-      rmap.insert( ResultMap::value_type(aname, aval));
+      mAttrs.insert( ResultMap::value_type(aname, aval));
 
       XMLString::release(&aval);
       XMLString::release(&aname);
    }
 
-   return rmap;
+   return mAttrs;
 }
