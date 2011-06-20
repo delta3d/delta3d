@@ -61,6 +61,31 @@ const dtUtil::RefString ELEMENT_TAG2("tag2");
 
 
 ////////////////////////////////////////////////////////////////////////////////
+// CUSTOM XML WRITER CLASS CODE
+////////////////////////////////////////////////////////////////////////////////
+class CustomXMLWriter : public dtDAL::BaseXMLWriter
+{
+public:
+   typedef dtDAL::BaseXMLWriter BaseClass;
+
+   CustomXMLWriter()
+   {
+   }
+
+   bool Write(const osg::Object& obj, std::ostream& fout)
+   {
+      // TODO:
+
+      return true;
+   }
+
+protected:
+   virtual ~CustomXMLWriter() {}
+};
+
+
+
+////////////////////////////////////////////////////////////////////////////////
 // CUSTOM XML HANDLER CLASS CODE
 ////////////////////////////////////////////////////////////////////////////////
 class CustomXMLHandler : public dtDAL::BaseXMLHandler
@@ -151,10 +176,11 @@ public:
 ////////////////////////////////////////////////////////////////////////////////
 static const dtUtil::RefString TEST_EXTENSION("xmltest");
 
-class CustomXMLReaderWriter : public dtDAL::BaseXMLReaderWriter
+class CustomXMLReaderWriter
+   : public dtDAL::BaseXMLReaderWriter<osg::Object, CustomXMLHandler, CustomXMLWriter>
 {
 public:
-   typedef dtDAL::BaseXMLReaderWriter BaseClass;
+   typedef dtDAL::BaseXMLReaderWriter<osg::Object, CustomXMLHandler, CustomXMLWriter> BaseClass;
 
    CustomXMLReaderWriter()
       : mCalledInitParser(false)
@@ -171,12 +197,7 @@ public:
       return "Custom XML Reader/Writer"; 
    }
 
-   virtual dtCore::RefPtr<dtDAL::BaseXMLHandler> CreateHandler() const
-   {
-      return new CustomXMLHandler;
-   }
-
-   virtual void InitParser(dtDAL::BaseXMLParser& parser, dtDAL::BaseXMLHandler& handler) const
+   virtual void InitParser(dtDAL::BaseXMLParser& parser, CustomXMLHandler& handler) const
    {
       BaseClass::InitParser(parser, handler);
 
@@ -184,7 +205,7 @@ public:
    }
 
    virtual osgDB::ReaderWriter::ReadResult BuildResult(
-      const osgDB::ReaderWriter::ReadResult& result, dtDAL::BaseXMLHandler& handler) const
+      const osgDB::ReaderWriter::ReadResult& result, CustomXMLHandler& handler) const
    {
       mCalledBuildResult = true;
 
