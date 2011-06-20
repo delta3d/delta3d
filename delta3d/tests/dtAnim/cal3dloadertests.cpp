@@ -59,6 +59,7 @@ namespace dtAnim
          CPPUNIT_TEST(TestLoadFile);
          CPPUNIT_TEST(TestLODOptions);
          CPPUNIT_TEST(TestModelData);
+         CPPUNIT_TEST(TestModelDataFileRegistration);
       CPPUNIT_TEST_SUITE_END();
 
       public:
@@ -219,6 +220,148 @@ namespace dtAnim
                   71U, modelData->GetShaderMaxBones());
             modelData->SetShaderMaxBones(72);
             CPPUNIT_ASSERT_EQUAL(72U, modelData->GetShaderMaxBones());
+         }
+
+         // Helper Method
+         bool VectorHasValue(const dtAnim::Cal3DModelData::StrArray& v, const std::string& value) const
+         {
+            bool success = false;
+            dtAnim::Cal3DModelData::StrArray::const_iterator curIter = v.begin();
+            dtAnim::Cal3DModelData::StrArray::const_iterator endIter = v.end();
+            for (; curIter != endIter; ++curIter)
+            {
+               if(*curIter == value)
+               {
+                  success = true;
+                  break;
+               }
+            }
+
+            return success;
+         }
+
+         void TestModelDataFileRegistration()
+         {
+            std::string modelPath = dtUtil::FindFileInPathList("SkeletalMeshes/marine_test.xml");
+            CPPUNIT_ASSERT(!modelPath.empty());
+
+            dtAnim::Cal3DDatabase& database = dtAnim::Cal3DDatabase::GetInstance();
+            mHelper->LoadModel(modelPath);
+
+            dtAnim::Cal3DModelWrapper* wrapper = mHelper->GetModelWrapper();
+            CPPUNIT_ASSERT(wrapper != NULL);
+            Cal3DModelData* modelData = database.GetModelData(*wrapper);
+            CPPUNIT_ASSERT(modelData != NULL);
+
+            // Test file extension classification.
+            CPPUNIT_ASSERT(modelData->GetFileType("test.caf") == Cal3DModelData::ANIM_FILE);
+            CPPUNIT_ASSERT(modelData->GetFileType("test.xaf") == Cal3DModelData::ANIM_FILE);
+            CPPUNIT_ASSERT(modelData->GetFileType("test.crf") == Cal3DModelData::MAT_FILE);
+            CPPUNIT_ASSERT(modelData->GetFileType("test.xrf") == Cal3DModelData::MAT_FILE);
+            CPPUNIT_ASSERT(modelData->GetFileType("test.cmf") == Cal3DModelData::MESH_FILE);
+            CPPUNIT_ASSERT(modelData->GetFileType("test.xmf") == Cal3DModelData::MESH_FILE);
+            CPPUNIT_ASSERT(modelData->GetFileType("test.csf") == Cal3DModelData::SKEL_FILE);
+            CPPUNIT_ASSERT(modelData->GetFileType("test.xsf") == Cal3DModelData::SKEL_FILE);
+            CPPUNIT_ASSERT(modelData->GetFileType("test.zzz") == Cal3DModelData::NO_FILE);
+
+            // Ensure that the actual files that were loaded are in the file mapping.
+            dtAnim::Cal3DModelData::StrArray fileList;
+            CPPUNIT_ASSERT(modelData->GetFileListForFileType(Cal3DModelData::SKEL_FILE, fileList) == 1);
+            CPPUNIT_ASSERT(VectorHasValue(fileList, "Skeleton.csf"));
+            fileList.clear();
+            CPPUNIT_ASSERT(modelData->GetFileListForFileType(Cal3DModelData::ANIM_FILE, fileList) == 5);
+            CPPUNIT_ASSERT(VectorHasValue(fileList, "LowWalk.caf"));
+            CPPUNIT_ASSERT(VectorHasValue(fileList, "LowWalk_Wpn.caf"));
+            CPPUNIT_ASSERT(VectorHasValue(fileList, "Breath.caf"));
+            CPPUNIT_ASSERT(VectorHasValue(fileList, "Run.caf"));
+            CPPUNIT_ASSERT(VectorHasValue(fileList, "Walk.caf"));
+            fileList.clear();
+            CPPUNIT_ASSERT(modelData->GetFileListForFileType(Cal3DModelData::MESH_FILE, fileList) == 4);
+            CPPUNIT_ASSERT(VectorHasValue(fileList, "HEAD.cmf"));
+            CPPUNIT_ASSERT(VectorHasValue(fileList, "BODY.cmf"));
+            CPPUNIT_ASSERT(VectorHasValue(fileList, "Helmet.cmf"));
+            CPPUNIT_ASSERT(VectorHasValue(fileList, "M16m80.cmf"));
+            fileList.clear();
+            CPPUNIT_ASSERT(modelData->GetFileListForFileType(Cal3DModelData::MAT_FILE, fileList) == 4);
+            CPPUNIT_ASSERT(VectorHasValue(fileList, "HEAD.crf"));
+            CPPUNIT_ASSERT(VectorHasValue(fileList, "BODY.crf"));
+            CPPUNIT_ASSERT(VectorHasValue(fileList, "Helmet.crf"));
+            CPPUNIT_ASSERT(VectorHasValue(fileList, "M16m80.crf"));
+            fileList.clear();
+
+            // Test name list by file type
+            dtAnim::Cal3DModelData::StrArray nameList;
+            CPPUNIT_ASSERT(modelData->GetObjectNameListForFileType(Cal3DModelData::SKEL_FILE, nameList) == 1);
+            CPPUNIT_ASSERT(VectorHasValue(nameList, "skeleton"));
+            nameList.clear();
+            CPPUNIT_ASSERT(modelData->GetObjectNameListForFileType(Cal3DModelData::ANIM_FILE, nameList) == 5);
+            CPPUNIT_ASSERT(VectorHasValue(nameList, "LowWalk"));
+            CPPUNIT_ASSERT(VectorHasValue(nameList, "LowWalk with weapon"));
+            CPPUNIT_ASSERT(VectorHasValue(nameList, "Idle"));
+            CPPUNIT_ASSERT(VectorHasValue(nameList, "Run"));
+            CPPUNIT_ASSERT(VectorHasValue(nameList, "Walk"));
+            nameList.clear();
+            CPPUNIT_ASSERT(modelData->GetObjectNameListForFileType(Cal3DModelData::MESH_FILE, nameList) == 4);
+            CPPUNIT_ASSERT(VectorHasValue(nameList, "Head"));
+            CPPUNIT_ASSERT(VectorHasValue(nameList, "Body"));
+            CPPUNIT_ASSERT(VectorHasValue(nameList, "Helmet"));
+            CPPUNIT_ASSERT(VectorHasValue(nameList, "M16"));
+            nameList.clear();
+            CPPUNIT_ASSERT(modelData->GetObjectNameListForFileType(Cal3DModelData::MAT_FILE, nameList) == 4);
+            CPPUNIT_ASSERT(VectorHasValue(nameList, "Head Material"));
+            CPPUNIT_ASSERT(VectorHasValue(nameList, "Body Material"));
+            CPPUNIT_ASSERT(VectorHasValue(nameList, "Helmet Material"));
+            CPPUNIT_ASSERT(VectorHasValue(nameList, "M16 Material"));
+            nameList.clear();
+
+            // Test access to a file name via an object name and file type.
+            CPPUNIT_ASSERT(modelData->GetFileForObjectName(Cal3DModelData::SKEL_FILE, "skeleton") == "Skeleton.csf");
+            CPPUNIT_ASSERT(modelData->GetFileForObjectName(Cal3DModelData::MAT_FILE, "Helmet Material") == "Helmet.crf");
+            CPPUNIT_ASSERT(modelData->GetFileForObjectName(Cal3DModelData::MESH_FILE, "Head") == "HEAD.cmf");
+            CPPUNIT_ASSERT(modelData->GetFileForObjectName(Cal3DModelData::ANIM_FILE, "LowWalk with weapon") == "LowWalk_Wpn.caf");
+
+
+            // Test mapping multiple object names to a single file.
+            std::string testFile("test.xaf");
+            modelData->RegisterFile(testFile, "A");
+            modelData->RegisterFile(testFile, "B");
+            modelData->RegisterFile(testFile, "C");
+            modelData->RegisterFile(testFile, "D");
+
+            CPPUNIT_ASSERT(modelData->GetObjectNameListForFile(testFile, nameList) == 4);
+            CPPUNIT_ASSERT(VectorHasValue(nameList, "A"));
+            CPPUNIT_ASSERT(VectorHasValue(nameList, "B"));
+            CPPUNIT_ASSERT(VectorHasValue(nameList, "C"));
+            CPPUNIT_ASSERT(VectorHasValue(nameList, "D"));
+            nameList.clear();
+
+
+            // Test Un-registering.
+            // --- Test removal by incorrect type (nothing should happen).
+            CPPUNIT_ASSERT(modelData->UnregisterObjectName("C", ".cmf", &fileList) == 0);
+            CPPUNIT_ASSERT( ! VectorHasValue(fileList, testFile));
+            CPPUNIT_ASSERT(fileList.empty());
+            // --- Now actually remove it.
+            CPPUNIT_ASSERT(modelData->UnregisterObjectName("C", ".caf", &fileList) == 1);
+            CPPUNIT_ASSERT(VectorHasValue(fileList, testFile));
+            fileList.clear();
+            // --- Ensure it cannot be done again.
+            CPPUNIT_ASSERT(modelData->UnregisterObjectName("C", ".caf", &fileList) == 0);
+            CPPUNIT_ASSERT( ! VectorHasValue(fileList, testFile));
+            CPPUNIT_ASSERT(fileList.empty());
+
+
+            CPPUNIT_ASSERT(modelData->UnregisterFile(testFile, &nameList) == 3);
+            CPPUNIT_ASSERT(VectorHasValue(nameList, "A"));
+            CPPUNIT_ASSERT(VectorHasValue(nameList, "B"));
+            CPPUNIT_ASSERT(VectorHasValue(nameList, "D"));
+            nameList.clear();
+            // --- Ensure it cannot be done again.
+            CPPUNIT_ASSERT(modelData->UnregisterFile(testFile, &nameList) == 0);
+            CPPUNIT_ASSERT( ! VectorHasValue(nameList, "A"));
+            CPPUNIT_ASSERT( ! VectorHasValue(nameList, "B"));
+            CPPUNIT_ASSERT( ! VectorHasValue(nameList, "D"));
+            CPPUNIT_ASSERT(nameList.empty());
          }
 
       private:

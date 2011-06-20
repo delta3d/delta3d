@@ -69,12 +69,12 @@ namespace dtAnim
       virtual ~Cal3DLoader();
 
    private:
-      CalCoreModel* GetCoreModel(dtCore::RefPtr<CharacterFileHandler>& outHandler, const std::string &filename, const std::string& path);
+      dtCore::RefPtr<Cal3DModelData> GetCoreModelData(dtCore::RefPtr<CharacterFileHandler>& outHandler, const std::string &filename, const std::string& path);
 
       // this is an unpleasant place to load texture files.  Needs to be handled some other way
       void LoadAllTextures(CalCoreModel& model, const std::string& path);
 
-      void LoadModelData(CharacterFileHandler& handler, CalCoreModel& model, Cal3DModelData& modelData);
+      void LoadModelData(CharacterFileHandler& handler, Cal3DModelData& modelData);
 
       void LoadHardwareData(Cal3DModelData* modelData);
 
