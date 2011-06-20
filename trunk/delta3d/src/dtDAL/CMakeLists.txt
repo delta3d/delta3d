@@ -115,7 +115,6 @@ SET(LIB_SOURCES
     ${SOURCE_PATH}/baseactorobject.cpp
     ${SOURCE_PATH}/basexml.cpp
     ${SOURCE_PATH}/basexmlhandler.cpp
-    ${SOURCE_PATH}/basexmlreaderwriter.cpp
     ${SOURCE_PATH}/bitmaskactorproperty.cpp
     ${SOURCE_PATH}/booleanactorproperty.cpp
     ${SOURCE_PATH}/colorrgbaactorproperty.cpp
