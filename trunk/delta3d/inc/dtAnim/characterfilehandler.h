@@ -84,43 +84,6 @@ namespace dtAnim
       //Logger
       static const std::string CHARACTER_XML_LOGGER;
 
-      //parsing constants
-      static const std::string CHARACTER_ELEMENT;
-      static const std::string ANIMATION_ELEMENT;
-      static const std::string MORPH_ANIMATION_ELEMENT;
-      static const std::string SKELETON_ELEMENT;
-      static const std::string MESH_ELEMENT;
-      static const std::string MATERIAL_ELEMENT;
-      static const std::string CHANNEL_ELEMENT;
-      static const std::string SEQUENCE_ELEMENT;
-      static const std::string POSEMESH_ELEMENT;
-      static const std::string NAME_ELEMENT;
-      static const std::string FILENAME_ELEMENT;
-      static const std::string ANIMATION_NAME_ELEMENT;
-      static const std::string START_DELAY_ELEMENT;
-      static const std::string FADE_IN_ELEMENT;
-      static const std::string FADE_OUT_ELEMENT;
-      static const std::string SPEED_ELEMENT;
-      static const std::string BASE_WEIGHT_ELEMENT;
-      static const std::string MAX_DURATION_ELEMENT;
-      static const std::string IS_LOOPING_ELEMENT;
-      static const std::string IS_ACTION_ELEMENT;
-      static const std::string CHILD_ELEMENT;
-
-      static const std::string SKINNING_SHADER_ELEMENT;
-      static const std::string SHADER_GROUP_ELEMENT;
-      static const std::string SHADER_NAME_ELEMENT;
-      static const std::string SHADER_MAX_BONES_ELEMENT;
-
-      static const std::string LOD_ELEMENT;
-      static const std::string LOD_START_DISTANCE_ELEMENT;
-      static const std::string LOD_END_DISTANCE_ELEMENT;
-      static const std::string MAX_VISIBLE_DISTANCE_ELEMENT;
-
-      static const std::string SCALE_ELEMENT;
-      static const std::string SCALE_FACTOR_ELEMENT;
-
-
    public:
       CharacterFileHandler();
       ~CharacterFileHandler();
