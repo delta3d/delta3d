@@ -47,8 +47,8 @@ namespace dtDirector
 
       // Create multiple inputs for different operations.
       mInputs.clear();
-      mInputs.push_back(InputLink(this, "Show", "Shows the applications mouse cursor."));
-      mInputs.push_back(InputLink(this, "Hide", "Hides the applications mouse cursor."));
+      mInputs.push_back(InputLink(this, "Show", "Shows the application's mouse cursor."));
+      mInputs.push_back(InputLink(this, "Hide", "Hides the application's mouse cursor."));
    }
 
    /////////////////////////////////////////////////////////////////////////////

@@ -32,6 +32,7 @@
 #include <dtDirectorGUINodes/setlayoutvisibility.h>
 #include <dtDirectorGUINodes/setwidgetproperty.h>
 #include <dtDirectorGUINodes/setwidgettext.h>
+#include <dtDirectorGUINodes/toggleguicursor.h>
 
 // Values
 
@@ -65,6 +66,7 @@ namespace dtDirector
    RefPtr<NodeType> NodeLibraryRegistry::SET_LAYOUT_VISIBILITY_NODE_TYPE(new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Set Layout Visibility", "GUI", "GUI", "Show or Hide a GUI Layout.",           NULL, Colors::BLUE2));
    RefPtr<NodeType> NodeLibraryRegistry::SET_WIDGET_PROPERTY_NODE_TYPE(  new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Set Widget Property",   "GUI", "GUI", "Sets a property's value on a widget.", NULL, Colors::BLUE2));
    RefPtr<NodeType> NodeLibraryRegistry::SET_WIDGET_TEXT_NODE_TYPE(      new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Set Widget Text",       "GUI", "GUI", "Sets the text on a widget.",           NULL, Colors::BLUE2));
+   RefPtr<NodeType> NodeLibraryRegistry::TOGGLE_GUI_CURSOR(              new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Toggle GUI Cursor",     "GUI", "GUI", "Shows/hides the GUI cursor.",          NULL, Colors::BLUE2));
 
    // Values
 
@@ -98,6 +100,7 @@ namespace dtDirector
       mNodeFactory->RegisterType<SetLayoutVisibility>(SET_LAYOUT_VISIBILITY_NODE_TYPE.get());
       mNodeFactory->RegisterType<SetWidgetProperty>(SET_WIDGET_PROPERTY_NODE_TYPE.get());
       mNodeFactory->RegisterType<SetWidgetText>(SET_WIDGET_TEXT_NODE_TYPE.get());
+      mNodeFactory->RegisterType<ToggleGUICursor>(TOGGLE_GUI_CURSOR.get());
 
       // Values
    }

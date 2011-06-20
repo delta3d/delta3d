@@ -22,6 +22,7 @@
 #include <dtDirectorGUINodes/buttonevent.h>
 #include <dtDirectorGUINodes/guinodemanager.h>
 
+#include <dtDAL/intactorproperty.h>
 #include <dtDAL/stringselectoractorproperty.h>
 
 #include <dtGUI/gui.h>
@@ -36,6 +37,7 @@ namespace dtDirector
    ///////////////////////////////////////////////////////////////////////////////////////
    ButtonEvent::ButtonEvent()
        : EventNode()
+       , mClickCount(1)
    {
       AddAuthor("Jeff P. Houde");
    }
@@ -91,6 +93,14 @@ namespace dtDirector
          dtDAL::StringSelectorActorProperty::GetListFuncType(this, &ButtonEvent::GetButtonList),
          "The Button.", "", true);
       AddProperty(buttonProp);
+
+      dtDAL::IntActorProperty* clickCountProp = new dtDAL::IntActorProperty(
+         "ClickCount", "Click Count",
+         dtDAL::IntActorProperty::SetFuncType(this, &ButtonEvent::SetClickCount),
+         dtDAL::IntActorProperty::GetFuncType(this, &ButtonEvent::GetClickCount),
+         "The number of clicks required for a Click output trigger.");
+      AddProperty(clickCountProp);
+
 
       // This will expose the properties in the editor and allow
       // them to be connected to ValueNodes.
@@ -274,10 +284,26 @@ namespace dtDirector
       }
    }
 
+   ///////////////////////////////////////////////////////////////////////////////
+   void ButtonEvent::SetClickCount(int value)
+   {
+      mClickCount = value;
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   int ButtonEvent::GetClickCount() const
+   {
+      return mClickCount;
+   }
+
    ////////////////////////////////////////////////////////////////////////////////
    bool ButtonEvent::OnClicked(const CEGUI::EventArgs& e)
    {
-      Trigger("Clicked", NULL, true, false);
+      const CEGUI::MouseEventArgs& mouseArgs = static_cast<const CEGUI::MouseEventArgs&>(e);
+      if (mouseArgs.clickCount == GetInt("ClickCount"))
+      {
+         Trigger("Clicked", NULL, true, false);
+      }
       return true;
    }
 
