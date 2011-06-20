@@ -343,7 +343,7 @@
 
 #if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300
    ////////////////////////////////////////////////////////////////////////////////
-   bool Cal3DModelData::LoadCoreSkeleton(void* buffer, const std::string& file, const std::string& objectName)
+   bool Cal3DModelData::LoadCoreSkeletonBuffer(void* buffer, const std::string& file, const std::string& objectName)
    {
       bool success = mCoreModel->loadCoreSkeleton(buffer);
       if (success)
@@ -358,18 +358,21 @@
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   int Cal3DModelData::LoadCoreMorph(void* buffer, const std::string& file, const std::string& objectName)
+   int Cal3DModelData::LoadCoreMorphBuffer(void* buffer, const std::string& file, const std::string& objectName)
    {
-      int result = mCoreModel->loadCoreAnimatedMorph(buffer, objectName);
+      /*int result = mCoreModel->loadCoreAnimatedMorph(buffer, objectName);
       if (result > -1 && !file.empty())
       {
          RegisterFile(file, objectName);
       }
-      return result;
+      return result;*/
+
+      // Currently, the buffer overload for loading morphs does not exist.
+      return LoadCoreMorph(file, objectName);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   int Cal3DModelData::LoadCoreMaterial(void* buffer, const std::string& file, const std::string& objectName)
+   int Cal3DModelData::LoadCoreMaterialBuffer(void* buffer, const std::string& file, const std::string& objectName)
    {
       int result = mCoreModel->loadCoreMaterial(buffer, objectName);
       if (result > -1 && !file.empty())
@@ -380,7 +383,7 @@
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   int Cal3DModelData::LoadCoreMesh(void* buffer, const std::string& file, const std::string& objectName)
+   int Cal3DModelData::LoadCoreMeshBuffer(void* buffer, const std::string& file, const std::string& objectName)
    {
       int result = mCoreModel->loadCoreMesh(buffer, objectName);
       if (result > -1 && !file.empty())
@@ -391,7 +394,7 @@
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   int Cal3DModelData::LoadCoreAnimation(void* buffer, const std::string& file, const std::string& objectName)
+   int Cal3DModelData::LoadCoreAnimationBuffer(void* buffer, const std::string& file, const std::string& objectName)
    {
       int result = mCoreModel->loadCoreAnimation(buffer, objectName);
       if (result > -1 && !file.empty())
@@ -404,12 +407,16 @@
    ////////////////////////////////////////////////////////////////////////////////
    int Cal3DModelData::LoadCoreMorph(const std::string& file, const std::string& objectName)
    {
-      int result = mCoreModel->loadCoreAnimatedMorph(file, objectName);
+      /*int result = mCoreModel->loadCoreAnimatedMorph(file, objectName);
       if (result > -1 && !file.empty())
       {
          RegisterFile(file, objectName);
       }
-      return result;
+      return result;*/
+
+      // Currently, the overload for loading morphs with an object name does not exist.
+      RegisterFile(file, objectName);
+      return mCoreModel->loadCoreAnimatedMorph(file);
    }
 
    ////////////////////////////////////////////////////////////////////////////////

@@ -75,6 +75,16 @@ namespace dtAnim
          return mObjectName;
       }
 
+      void SetFile(const std::string& file)
+      {
+         mFile = file;
+      }
+
+      const std::string& GetFile()
+      {
+         return mFile;
+      }
+
       Cal3DModelData& GetCoreModelData()
       {
          return *mCoreModelData;
@@ -105,6 +115,7 @@ namespace dtAnim
    private:
       Cal3DModelData* mCoreModelData;
       std::string mObjectName;
+      std::string mFile;
 
       CalOptions()
          : mCoreModelData(NULL)
@@ -203,6 +214,12 @@ namespace dtAnim
             return osgDB::ReaderWriter::ReadResult(osgDB::ReaderWriter::ReadResult::ERROR_IN_READING_FILE);
          }
 
+         // Get the Cal3d Options object that is holding onto the Core Model.
+         // The Core Model is along for the ride in order to capture the loaded
+         // data through its specific interface.
+         CalOptions* calOptions = GetCalOptions(*options);
+         calOptions->SetFile(fileName);
+
          return readObject(confStream, options);
 #else
          // Get the Cal3d Options object that is holding onto the Core Model.
@@ -278,10 +295,8 @@ namespace dtAnim
 #if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300
       virtual bool LoadFile(const MemBuffer& buffer, CalOptions& options) const
       {
-         CalCoreModelData& coreModelData = options.GetCoreModelData();
-         coreModelData.LoadCoreSkeleton(buffer.GetBufferData());
-         coreModelData.GetCoreModel()->getCoreSkeleton()->setName(options.GetObjectName());
-         return true;
+         return options.GetCoreModelData().LoadCoreSkeletonBuffer(
+            buffer.GetBufferData(), options.GetFile(), options.GetObjectName());
       }
 #else
       virtual bool LoadFile(const std::string& file, CalOptions& options) const
@@ -319,7 +334,8 @@ namespace dtAnim
 #if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300
       virtual bool LoadFile(const MemBuffer& buffer, CalOptions& options) const
       {
-         return 0 <= options.GetCoreModelData().LoadCoreMaterial(buffer.GetBufferData(), options.GetObjectName());
+         return 0 <= options.GetCoreModelData().LoadCoreMaterialBuffer(
+            buffer.GetBufferData(), options.GetFile(), options.GetObjectName());
       }
 #else
       virtual bool LoadFile(const std::string& file, CalOptions& options) const
@@ -356,7 +372,8 @@ namespace dtAnim
 #if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300
       virtual bool LoadFile(const MemBuffer& buffer, CalOptions& options) const
       {
-         return 0 <= options.GetCoreModelData().LoadCoreMesh(buffer.GetBufferData(), options.GetObjectName());
+         return 0 <= options.GetCoreModelData().LoadCoreMeshBuffer(
+            buffer.GetBufferData(), options.GetFile(), options.GetObjectName());
       }
 #else
       virtual bool LoadFile(const std::string& file, CalOptions& options) const
@@ -393,7 +410,8 @@ namespace dtAnim
 #if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300
       virtual bool LoadFile(const MemBuffer& buffer, CalOptions& options) const
       {
-         return 0 <= options.GetCoreModelData().LoadCoreAnimation(buffer.GetBufferData(), options.GetObjectName());
+         return 0 <= options.GetCoreModelData().LoadCoreAnimationBuffer(
+            buffer.GetBufferData(), options.GetFile(), options.GetObjectName());
       }
 #else
       virtual bool LoadFile(const std::string& file, CalOptions& options) const
@@ -720,22 +738,6 @@ namespace dtAnim
 
       std::string path(osgDB::getFilePath(filename));
       path += '/';
-      /*std::string::size_type stringIndex = filename.find_last_of("\\");
-      std::string::size_type lastIndex = filename.find_last_of("/");
-
-      // lets take the bigger of the two that isnt equal to npos
-      if (lastIndex != std::string::npos)
-      {
-         if (stringIndex != std::string::npos) stringIndex = (stringIndex > lastIndex) ? stringIndex : lastIndex;
-         else stringIndex = lastIndex;
-      }
-
-
-      if (stringIndex != std::string::npos)
-      {
-         // The index is the position of the first backslash, so add 1
-         path = filename.substr(0, stringIndex + 1);
-      }*/
 
       dtCore::RefPtr<CharacterFileHandler> handler;
       outCoreModelData = GetCoreModelData(handler, filename, path);

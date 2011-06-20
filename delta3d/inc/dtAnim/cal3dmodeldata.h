@@ -193,11 +193,11 @@ namespace dtAnim
       const LODOptions& GetLODOptions() const { return mLODOptions; }
 
 #if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300
-      bool LoadCoreSkeleton(void* buffer, const std::string& file, const std::string& objectName);
-      int LoadCoreMorph(void* buffer, const std::string& file, const std::string& objectName);
-      int LoadCoreMaterial(void* buffer, const std::string& file, const std::string& objectName);
-      int LoadCoreMesh(void* buffer, const std::string& file, const std::string& objectName);
-      int LoadCoreAnimation(void* buffer, const std::string& file, const std::string& objectName);
+      bool LoadCoreSkeletonBuffer(void* buffer, const std::string& file, const std::string& objectName);
+      int LoadCoreMorphBuffer(void* buffer, const std::string& file, const std::string& objectName);
+      int LoadCoreMaterialBuffer(void* buffer, const std::string& file, const std::string& objectName);
+      int LoadCoreMeshBuffer(void* buffer, const std::string& file, const std::string& objectName);
+      int LoadCoreAnimationBuffer(void* buffer, const std::string& file, const std::string& objectName);
 
       int LoadCoreMorph(const std::string& file, const std::string& objectName);
       bool LoadCoreSkeleton(const std::string& file, const std::string& objectName);
