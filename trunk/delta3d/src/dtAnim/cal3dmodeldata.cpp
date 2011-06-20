@@ -18,12 +18,18 @@
  *
  * Bradley Anderegg 07/17/2007
  */
+
+////////////////////////////////////////////////////////////////////////////////
+// INCLUDE DIRECTIVES
+////////////////////////////////////////////////////////////////////////////////
 #include <dtAnim/cal3dmodeldata.h>
 #include <dtAnim/animatable.h>
 #include <dtAnim/animationwrapper.h>
+#include <dtUtil/fileutils.h>
 #include <dtUtil/log.h>
 
 #include <osg/BufferObject>
+#include <osgDB/FileNameUtils>
 
 #include <cal3d/coremodel.h>
 #include <cal3d/hardwaremodel.h>
@@ -86,6 +92,18 @@
    const std::string& Cal3DModelData::GetFilename() const
    {
       return mFilename;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void Cal3DModelData::SetModelName(const std::string& name)
+   {
+      mModelName = name;
+   }
+   
+   ////////////////////////////////////////////////////////////////////////////////
+   const std::string& Cal3DModelData::GetModelName() const
+   {
+      return mModelName;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -322,6 +340,426 @@
    {
       mShaderMaxBones = maxBones;
    }
+
+#if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300
+   ////////////////////////////////////////////////////////////////////////////////
+   bool Cal3DModelData::LoadCoreSkeleton(void* buffer, const std::string& file, const std::string& objectName)
+   {
+      bool success = mCoreModel->loadCoreSkeleton(buffer);
+      if (success)
+      {
+         mCoreModel->getCoreSkeleton()->setName(objectName);
+         if (!file.empty())
+         {
+            RegisterFile(file, objectName);
+         }
+      }
+      return success;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   int Cal3DModelData::LoadCoreMorph(void* buffer, const std::string& file, const std::string& objectName)
+   {
+      int result = mCoreModel->loadCoreAnimatedMorph(buffer, objectName);
+      if (result > -1 && !file.empty())
+      {
+         RegisterFile(file, objectName);
+      }
+      return result;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   int Cal3DModelData::LoadCoreMaterial(void* buffer, const std::string& file, const std::string& objectName)
+   {
+      int result = mCoreModel->loadCoreMaterial(buffer, objectName);
+      if (result > -1 && !file.empty())
+      {
+         RegisterFile(file, objectName);
+      }
+      return result;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   int Cal3DModelData::LoadCoreMesh(void* buffer, const std::string& file, const std::string& objectName)
+   {
+      int result = mCoreModel->loadCoreMesh(buffer, objectName);
+      if (result > -1 && !file.empty())
+      {
+         RegisterFile(file, objectName);
+      }
+      return result;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   int Cal3DModelData::LoadCoreAnimation(void* buffer, const std::string& file, const std::string& objectName)
+   {
+      int result = mCoreModel->loadCoreAnimation(buffer, objectName);
+      if (result > -1 && !file.empty())
+      {
+         RegisterFile(file, objectName);
+      }
+      return result;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   int Cal3DModelData::LoadCoreMorph(const std::string& file, const std::string& objectName)
+   {
+      int result = mCoreModel->loadCoreAnimatedMorph(file, objectName);
+      if (result > -1 && !file.empty())
+      {
+         RegisterFile(file, objectName);
+      }
+      return result;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool Cal3DModelData::LoadCoreSkeleton(const std::string& file, const std::string& objectName)
+   {
+      bool success = mCoreModel->loadCoreSkeleton(file);
+      if (success)
+      {
+         mCoreModel->getCoreSkeleton()->setName(objectName);
+         if (!file.empty())
+         {
+            RegisterFile(file, objectName);
+         }
+      }
+      return success;
+   }
+#else
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool Cal3DModelData::LoadCoreSkeleton(const std::string& file)
+   {
+      bool success = mCoreModel->loadCoreSkeleton(file);
+      if (success)
+      {
+         RegisterFile(file, "skeleton");
+      }
+      return success;
+   }
+#endif
+
+   ////////////////////////////////////////////////////////////////////////////////
+   int Cal3DModelData::LoadCoreMaterial(const std::string& file, const std::string& objectName)
+   {
+      int result = mCoreModel->loadCoreMaterial(file, objectName);
+      if (result > -1 && !file.empty())
+      {
+         RegisterFile(file, objectName);
+      }
+      return result;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   int Cal3DModelData::LoadCoreMesh(const std::string& file, const std::string& objectName)
+   {
+      int result = mCoreModel->loadCoreMesh(file, objectName);
+      if (result > -1 && !file.empty())
+      {
+         RegisterFile(file, objectName);
+      }
+      return result;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   int Cal3DModelData::LoadCoreAnimation(const std::string& file, const std::string& objectName)
+   {
+      int result = mCoreModel->loadCoreAnimation(file, objectName);
+      if (result > -1 && !file.empty())
+      {
+         RegisterFile(file, objectName);
+      }
+      return result;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   Cal3DModelData::CalFileType Cal3DModelData::GetFileType(const std::string& file) const
+   {
+      CalFileType fileType = NO_FILE;
+
+      if (file.length() >= 4)
+      {
+         std::string ext = osgDB::getLowerCaseFileExtension(file);
+
+         // Determine the file type from the extension on the file.
+         if (ext == "csf" || ext == "xsf")
+         {
+            fileType = SKEL_FILE;
+         }
+         else if (ext == "crf" || ext == "xrf")
+         {
+            fileType = MAT_FILE;
+         }
+         else if (ext == "cmf" || ext == "xmf")
+         {
+            fileType = MESH_FILE;
+         }
+         else if (ext == "caf" || ext == "xaf")
+         {
+            fileType = ANIM_FILE;
+         }
+         // TODO: Following extensions currently unknown for the morph file type.
+         /*else if (ext == "???" || ext == "???")
+         {
+            fileType = MORPH_FILE;
+         }*/
+      }
+
+      return fileType;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   unsigned Cal3DModelData::GetFileListForFileType(CalFileType fileType, StrArray& outFiles) const
+   {
+      const ObjectNameAndFileType* curItem = NULL;
+      FileToObjectMap::const_iterator curIter = mFileObjectMap.begin();
+      FileToObjectMap::const_iterator endIter = mFileObjectMap.end();
+      for ( ; curIter != endIter; ++curIter)
+      {
+         curItem = curIter->second.get();
+
+         if (curItem->mType == fileType)
+         {
+            outFiles.push_back(curIter->first);
+         }
+      }
+
+      return unsigned(outFiles.size());
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   unsigned Cal3DModelData::GetObjectNameListForFileType(CalFileType fileType, StrArray& outNames) const
+   {
+      const ObjectNameAndFileType* curItem = NULL;
+      FileToObjectMap::const_iterator curIter = mFileObjectMap.begin();
+      FileToObjectMap::const_iterator endIter = mFileObjectMap.end();
+      for ( ; curIter != endIter; ++curIter)
+      {
+         curItem = curIter->second.get();
+
+         if (curItem->mType == fileType)
+         {
+            outNames.push_back(curItem->mName);
+         }
+      }
+
+      return unsigned(outNames.size());
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   // Helper Set
+   typedef std::map<int, std::string> CalIdNameMap;
+
+   ////////////////////////////////////////////////////////////////////////////////
+   unsigned Cal3DModelData::GetObjectNameListForFileTypeSorted(CalFileType fileType, StrArray& outNames) const
+   {
+      CalIdNameMap sortedMap;
+
+      const ObjectNameAndFileType* curItem = NULL;
+      FileToObjectMap::const_iterator curIter = mFileObjectMap.begin();
+      FileToObjectMap::const_iterator endIter = mFileObjectMap.end();
+      for ( ; curIter != endIter; ++curIter)
+      {
+         curItem = curIter->second.get();
+
+         // If mapped object name matched the file type...
+         if (curItem->mType == fileType)
+         {
+            // ...acquire the current object name...
+            const std::string& name = curItem->mName;
+
+            // ...determine the id...
+            int id = -1;
+            switch (fileType)
+            {
+            case MAT_FILE:
+               id = mCoreModel->getCoreMaterialId(name);
+               break;
+            case MESH_FILE:
+               id = mCoreModel->getCoreMeshId(name);
+               break;
+            case ANIM_FILE:
+               id = mCoreModel->getCoreAnimationId(name);
+               break;
+            case SKEL_FILE:
+               ++id; // order irrelevant.
+               break;
+            case MORPH_FILE:
+               ++id; // order irrelevant (currently).
+               break;
+            default: break;
+            }
+
+            sortedMap[id] = name;
+         }
+      }
+
+      // Transfer the names.
+      CalIdNameMap::iterator curIterMap = sortedMap.begin();
+      CalIdNameMap::iterator endIterMap = sortedMap.end();
+      for (; curIterMap != endIterMap; ++curIterMap)
+      {
+         outNames.push_back(curIterMap->second);
+      }
+
+      return unsigned(outNames.size());
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   std::string Cal3DModelData::GetFileForObjectName(CalFileType fileType, const std::string& objectName) const
+   {
+      std::string file;
+
+      const ObjectNameAndFileType* curItem = NULL;
+      FileToObjectMap::const_iterator curIter = mFileObjectMap.begin();
+      FileToObjectMap::const_iterator endIter = mFileObjectMap.end();
+      for ( ; curIter != endIter; ++curIter)
+      {
+         curItem = curIter->second.get();
+
+         if (curItem->mType == fileType && curItem->mName == objectName)
+         {
+            file = curIter->first;
+            break;
+         }
+      }
+
+      return file;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   unsigned Cal3DModelData::GetObjectNameListForFile(const std::string& file, StrArray& outObjectNames) const
+   {
+      const ObjectNameAndFileType* curItem = NULL;
+      FileToObjectMap::const_iterator curIter = mFileObjectMap.lower_bound(file);
+      FileToObjectMap::const_iterator endIter = mFileObjectMap.upper_bound(file);
+      for ( ; curIter != endIter; ++curIter)
+      {
+         curItem = curIter->second.get();
+         outObjectNames.push_back(curItem->mName);
+      }
+
+      return unsigned(outObjectNames.size());
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void Cal3DModelData::RegisterFile(const std::string& file, const std::string& objectName)
+   {
+      CalFileType fileType = GetFileType(file);
+
+      if (fileType != NO_FILE)
+      {
+         // Convert the file to a relative path.
+         std::string relativeFile(file);
+         dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
+         fileUtils.CleanupFileString(relativeFile);
+
+         // Get the location of the model file.
+         std::string modelContext(osgDB::getFilePath(mFilename));
+         if (!modelContext.empty())
+         {
+            modelContext += '/';
+         }
+
+         // Get the file path relative to the model file's location.
+         std::string relativePath(fileUtils.RelativePath(modelContext, file));
+         if (!relativePath.empty())
+         {
+            relativeFile = relativePath;
+         }
+
+         // Map the relative file path.
+         mFileObjectMap.insert(std::make_pair(relativeFile, new ObjectNameAndFileType(objectName, fileType)));
+      }
+      else
+      {
+         LOG_WARNING("Cannot register a file without an extension for object \"" + objectName +"\"\n");
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   unsigned Cal3DModelData::UnregisterFile(const std::string& file, StrArray* outObjectNames)
+   {
+      unsigned numNames = 0;
+      
+      if (outObjectNames != NULL)
+      {
+         numNames = GetObjectNameListForFile(file, *outObjectNames);
+      }
+
+      mFileObjectMap.erase(file);
+
+      return numNames;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   unsigned Cal3DModelData::UnregisterObjectName(const std::string& objectName,
+      const std::string& file, StrArray* outFileNames)
+   {
+      unsigned numNames = 0;
+
+      CalFileType fileType = NO_FILE;
+      FileToObjectMap::iterator curIter = mFileObjectMap.end();
+      FileToObjectMap::iterator endIter = mFileObjectMap.end();
+
+      // Determine the range of entries to scan.
+      if (mFileObjectMap.find(file) != mFileObjectMap.end())
+      {
+         curIter = mFileObjectMap.lower_bound(file);
+         endIter = mFileObjectMap.upper_bound(file);
+      }
+      else if (file.length() <= 4)
+      {
+         if (!file.empty())
+         {
+            fileType = GetFileType(file);
+         }
+         curIter = mFileObjectMap.begin();
+      }
+
+      // Collect all matches
+      const ObjectNameAndFileType* curMapping = NULL;
+      for (; curIter != endIter; ++curIter)
+      {
+         curMapping = curIter->second.get();
+         if (curMapping->mName == objectName
+            && (fileType == NO_FILE || curMapping->mType == fileType))
+         {
+            ++numNames;
+
+            // If the caller has specified a list to capture the associate file name...
+            if (outFileNames != NULL)
+            {
+               // ...add the file name to the capture list before cleanup happens.
+               outFileNames->push_back(curIter->first);
+            }
+
+            // Mark this match for delete.
+            curIter->second = NULL;
+         }
+      }
+
+      // Cleanup the nullified mappings.
+      FileToObjectMap::iterator curEraseIter = mFileObjectMap.begin();
+      for (; curEraseIter != mFileObjectMap.end();)
+      {
+         if (curEraseIter->second.get() == NULL)
+         {
+            FileToObjectMap::iterator tmp = curEraseIter;
+            mFileObjectMap.erase(tmp);
+            curEraseIter = mFileObjectMap.begin();
+         }
+         else
+         {
+            ++curEraseIter;
+         }
+      }
+
+      return numNames;
+   }
+
+
 
    LODOptions::LODOptions():
       mStartDistance(10.0), mEndDistance(500.0), mMaxVisibleDistance(1000.0)

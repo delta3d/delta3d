@@ -80,6 +80,16 @@ namespace dtAnim
       // we will hold a vector of animatables for each CalCoreModel
       typedef std::vector<dtCore::RefPtr<dtAnim::Animatable> > AnimatableArray;
 
+      enum CalFileType
+      {
+         NO_FILE,
+         SKEL_FILE, // Skeleton
+         MAT_FILE,  // Material
+         MESH_FILE, // Mesh
+         ANIM_FILE, // Animation
+         MORPH_FILE // Morph Animation
+      };
+
    public:
       Cal3DModelData(CalCoreModel* coreModel, const std::string& filename);
 
@@ -90,6 +100,9 @@ namespace dtAnim
       void Remove(Animatable*);
 
       const std::string& GetFilename() const;
+
+      void SetModelName(const std::string& name);
+      const std::string& GetModelName() const;
 
       CalCoreModel* GetCoreModel();
       const CalCoreModel* GetCoreModel() const;
@@ -179,6 +192,95 @@ namespace dtAnim
       LODOptions& GetLODOptions() { return mLODOptions; }
       const LODOptions& GetLODOptions() const { return mLODOptions; }
 
+#if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300
+      bool LoadCoreSkeleton(void* buffer, const std::string& file, const std::string& objectName);
+      int LoadCoreMorph(void* buffer, const std::string& file, const std::string& objectName);
+      int LoadCoreMaterial(void* buffer, const std::string& file, const std::string& objectName);
+      int LoadCoreMesh(void* buffer, const std::string& file, const std::string& objectName);
+      int LoadCoreAnimation(void* buffer, const std::string& file, const std::string& objectName);
+
+      int LoadCoreMorph(const std::string& file, const std::string& objectName);
+      bool LoadCoreSkeleton(const std::string& file, const std::string& objectName);
+#else
+      bool LoadCoreSkeleton(const std::string& file);
+#endif
+      int LoadCoreMaterial(const std::string& file, const std::string& objectName);
+      int LoadCoreMesh(const std::string& file, const std::string& objectName);
+      int LoadCoreAnimation(const std::string& file, const std::string& objectName);
+
+      /**
+       * Convenience method for determining the file type from the specified file.
+       */
+      CalFileType GetFileType(const std::string& file) const;
+
+      /**
+       * Method for obtaining all associated files of a specified type.
+       * @param fileType The type of files to search for.
+       * @param outFiles List to capture all files matching the specified file type.
+       * @return Number of results.
+       */
+      typedef std::vector<std::string> StrArray;
+      unsigned GetFileListForFileType(CalFileType fileType, StrArray& outFiles) const;
+
+      /**
+       * Convenience method for obtaining all object names for the specified file type.
+       * @param fileType The type of files to search for.
+       * @param outNames List to capture all object names mapped to the specified file type.
+       * @return Number of results.
+       */
+      unsigned GetObjectNameListForFileType(CalFileType fileType, StrArray& outNames) const;
+
+      /**
+       * Convenience method for returning object names in the order that they were registered on load.
+       * This method is important for writing model data to file.
+       * @param fileType The type of files the names relate to.
+       * @param outNames List to capture all object names mapped to the specified file type.
+       * @return Number of results.
+       */
+      unsigned GetObjectNameListForFileTypeSorted(CalFileType fileType, StrArray& outNames) const;
+
+      /**
+       * Method for determining the file that an object name is mapped to.
+       * @param fileType The type of files the name relates to.
+       * @param objectName Name that may be mapped to a file.
+       * @return File under which the object name is mapped; empty string otherwise.
+       */
+      std::string GetFileForObjectName(CalFileType fileType, const std::string& objectName) const;
+
+      /**
+       * Method for obtaining all object names referencing the specified file.
+       * @param file The file that may be mapped to multiple object names.
+       * @param outObjectNames List to capture names found for the specified file.
+       * @return Number of results.
+       */
+      unsigned GetObjectNameListForFile(const std::string& file, StrArray& outObjectNames) const;
+
+      /**
+       * Register a file a file with an object name. A file may be registered with multiple names.
+       * @param file The file to be registered to an object name.
+       * @param objectName Name of an object that may represent the file, such as an animation, mesh, etc.
+       */
+      void RegisterFile(const std::string& file, const std::string& objectName);
+
+      /**
+       * Method for removing file-to-object-name mappings by a specific file name.
+       * @param file File mapping to be removed.
+       * @param outObjectNames List to capture of all object names that were mapped to the specified file.
+       * @return Number of matches that were removed.
+       */
+      unsigned UnregisterFile(const std::string& file, StrArray* outObjectNames);
+
+      /**
+       * Method for removing file-to-object-name mappings by a specific object name.
+       * @param objectName The name to be removed from the mapping
+       * @param file Name of the file to match (exact), file type extension (search within certain type),
+       *        or empty string (search all).
+       * @param outFileNames List to capture of all files that the object name was mapped to.
+       * @return Number of matches that were removed.
+       */
+      unsigned UnregisterObjectName(const std::string& objectName, const std::string& file = "",
+         StrArray* outFileNames = NULL);
+
    protected:
       virtual ~Cal3DModelData();
 
@@ -186,9 +288,12 @@ namespace dtAnim
       Cal3DModelData& operator=(const Cal3DModelData&); //not implemented
 
    private:
+
       std::string mFilename;
-      std::string mShaderName, mShaderGroupName;
+      std::string mShaderName;
+      std::string mShaderGroupName;
       std::string mPoseMeshFilename;
+      std::string mModelName;
 
       // Buffer data
       int mStride;
@@ -205,6 +310,26 @@ namespace dtAnim
       unsigned mShaderMaxBones;
 
       LODOptions mLODOptions;
+
+      // File Mapping
+      class ObjectNameAndFileType : public osg::Referenced
+      {
+      public:
+         ObjectNameAndFileType(const std::string& objectName = "", CalFileType fileType = NO_FILE)
+            : mType(fileType)
+            , mName(objectName)
+         {}
+
+         CalFileType mType; // For quick reference to avoid several string compares.
+         std::string mName;
+
+      protected:
+         virtual ~ObjectNameAndFileType() {}
+      };
+
+      // A file can be mapped to multiple named objects, such as multiple animation channels
+      typedef std::multimap<std::string, dtCore::RefPtr<ObjectNameAndFileType> > FileToObjectMap;
+      FileToObjectMap mFileObjectMap;
    };
 
 } // namespace dtAnim

@@ -29,6 +29,7 @@
 #include <dtAnim/animationwrapper.h>
 #include <dtAnim/animationchannel.h>
 #include <dtAnim/animationsequence.h>
+#include <dtAnim/characterfilewriter.h>
 #include <dtDAL/basexmlhandler.h>
 #include <dtDAL/basexmlreaderwriter.h>
 #include <dtUtil/datapathutils.h>
@@ -54,12 +55,12 @@ namespace dtAnim
    public:
       typedef osg::Object BaseClass;
 
-      CalOptions(CalCoreModel& coreModel)
-         : mCoreModel(&coreModel)
+      CalOptions(Cal3DModelData& coreModelData)
+         : mCoreModelData(&coreModelData)
       {}
 
-      CalOptions(CalCoreModel& coreModel, const std::string objectName)
-         : mCoreModel(&coreModel)
+      CalOptions(Cal3DModelData& coreModelData, const std::string objectName)
+         : mCoreModelData(&coreModelData)
          , mObjectName(objectName)
       {
       }
@@ -74,9 +75,9 @@ namespace dtAnim
          return mObjectName;
       }
 
-      CalCoreModel& GetCoreModel()
+      Cal3DModelData& GetCoreModelData()
       {
-         return *mCoreModel;
+         return *mCoreModelData;
       }
 
       static dtCore::RefPtr<osgDB::ReaderWriter::Options>
@@ -102,16 +103,16 @@ namespace dtAnim
       META_Object("dtAnim", CalOptions);
 
    private:
-      CalCoreModel* mCoreModel;
+      Cal3DModelData* mCoreModelData;
       std::string mObjectName;
 
       CalOptions()
-         : mCoreModel(NULL)
+         : mCoreModelData(NULL)
       {}
 
       CalOptions(const osg::Object& obj,const osg::CopyOp& copyop=osg::CopyOp::SHALLOW_COPY)
          : BaseClass(obj, copyop)
-         , mCoreModel(NULL)
+         , mCoreModelData(NULL)
       {}
    };
 
@@ -277,16 +278,15 @@ namespace dtAnim
 #if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300
       virtual bool LoadFile(const MemBuffer& buffer, CalOptions& options) const
       {
-         CalCoreModel& coreModel = options.GetCoreModel();
-         coreModel.loadCoreSkeleton(buffer.GetBufferData());
-         coreModel.getCoreSkeleton()->setName(options.GetObjectName());
+         CalCoreModelData& coreModelData = options.GetCoreModelData();
+         coreModelData.LoadCoreSkeleton(buffer.GetBufferData());
+         coreModelData.GetCoreModel()->getCoreSkeleton()->setName(options.GetObjectName());
          return true;
       }
 #else
       virtual bool LoadFile(const std::string& file, CalOptions& options) const
       {
-         CalCoreModel& coreModel = options.GetCoreModel();
-         coreModel.loadCoreSkeleton(file);
+         options.GetCoreModelData().LoadCoreSkeleton(file);
          return true;
       }
 #endif
@@ -319,12 +319,12 @@ namespace dtAnim
 #if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300
       virtual bool LoadFile(const MemBuffer& buffer, CalOptions& options) const
       {
-         return 0 <= options.GetCoreModel().loadCoreMaterial(buffer.GetBufferData(), options.GetObjectName());
+         return 0 <= options.GetCoreModelData().LoadCoreMaterial(buffer.GetBufferData(), options.GetObjectName());
       }
 #else
       virtual bool LoadFile(const std::string& file, CalOptions& options) const
       {
-         return 0 <= options.GetCoreModel().loadCoreMaterial(file, options.GetObjectName());
+         return 0 <= options.GetCoreModelData().LoadCoreMaterial(file, options.GetObjectName());
       }
 #endif
    };
@@ -356,12 +356,12 @@ namespace dtAnim
 #if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300
       virtual bool LoadFile(const MemBuffer& buffer, CalOptions& options) const
       {
-         return 0 <= options.GetCoreModel().loadCoreMesh(buffer.GetBufferData(), options.GetObjectName());
+         return 0 <= options.GetCoreModelData().LoadCoreMesh(buffer.GetBufferData(), options.GetObjectName());
       }
 #else
       virtual bool LoadFile(const std::string& file, CalOptions& options) const
       {
-         return 0 <= options.GetCoreModel().loadCoreMesh(file, options.GetObjectName());
+         return 0 <= options.GetCoreModelData().LoadCoreMesh(file, options.GetObjectName());
       }
 #endif
    };
@@ -393,12 +393,12 @@ namespace dtAnim
 #if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300
       virtual bool LoadFile(const MemBuffer& buffer, CalOptions& options) const
       {
-         return 0 <= options.GetCoreModel().loadCoreAnimation(buffer.GetBufferData(), options.GetObjectName());
+         return 0 <= options.GetCoreModelData().LoadCoreAnimation(buffer.GetBufferData(), options.GetObjectName());
       }
 #else
       virtual bool LoadFile(const std::string& file, CalOptions& options) const
       {
-         return 0 <= options.GetCoreModel().loadCoreAnimation(file, options.GetObjectName());
+         return 0 <= options.GetCoreModelData().LoadCoreAnimation(file, options.GetObjectName());
       }
 #endif
    };
@@ -442,11 +442,11 @@ namespace dtAnim
    ////////////////////////////////////////////////////////////////////////////////
    // PLUGIN CLASS CODE
    ////////////////////////////////////////////////////////////////////////////////
-   class CharacterXMLReaderWriter : public dtDAL::BaseXMLReaderWriter
+   class CharacterXMLReaderWriter : public dtDAL::BaseXMLReaderWriter<Cal3DModelData, CharacterFileHandler, CharacterFileWriter>
    {
    public:
 
-      typedef dtDAL::BaseXMLReaderWriter BaseClass;
+      typedef dtDAL::BaseXMLReaderWriter<CalCoreModel, CharacterFileHandler, CharacterFileWriter> BaseClass;
 
       CharacterXMLReaderWriter()
       {
@@ -460,13 +460,8 @@ namespace dtAnim
          return "Delta3D Character File Reader/Writer"; 
       }
 
-      virtual dtCore::RefPtr<dtDAL::BaseXMLHandler> CreateHandler() const
-      {
-         return new CharacterFileHandler;
-      }
-
       virtual osgDB::ReaderWriter::ReadResult BuildResult(
-         const osgDB::ReaderWriter::ReadResult& result, dtDAL::BaseXMLHandler& handler) const
+         const osgDB::ReaderWriter::ReadResult& result, CharacterFileHandler& handler) const
       {
          using namespace osgDB;
 
@@ -522,7 +517,7 @@ namespace dtAnim
     * @throw SAXParseException if the file didn't parse correctly
     * @note Relies on the the "animationdefinition.xsd" schema file
     */
-   CalCoreModel* Cal3DLoader::GetCoreModel(dtCore::RefPtr<CharacterFileHandler>& handler, const std::string& filename, const std::string& path)
+   dtCore::RefPtr<Cal3DModelData> Cal3DLoader::GetCoreModelData(dtCore::RefPtr<CharacterFileHandler>& handler, const std::string& filename, const std::string& path)
    {
       using namespace dtCore;
 
@@ -530,7 +525,7 @@ namespace dtAnim
 
       osgDB::Registry* osgRegistry = osgDB::Registry::instance();
 
-      CalCoreModel* coreModel = NULL;
+      dtCore::RefPtr<Cal3DModelData> coreModelData;
 
       //gotta parse the file and create/store a new CalCoreModel
       dtUtil::XercesParser parser;
@@ -544,7 +539,7 @@ namespace dtAnim
       if (osgDB::getLowerCaseFileExtension(filename) == "xml")
       {
          // ...get the plug-in directly...
-         dtDAL::BaseXMLReaderWriter* charPlugin = dynamic_cast<dtDAL::BaseXMLReaderWriter*>
+         CharacterXMLReaderWriter* charPlugin = dynamic_cast<CharacterXMLReaderWriter*>
             (osgReg->getReaderWriterForExtension("dtchar"));
 
          // Open the file as a stream.
@@ -580,13 +575,14 @@ namespace dtAnim
 
       if (handler.valid())
       {
-         coreModel = new CalCoreModel(handler->mName);
+         CalCoreModel* coreModel = new CalCoreModel(handler->mName);
+         coreModelData = new Cal3DModelData(coreModel, filename);
 
          //load skeleton
          std::string skelFile(GetAbsolutePath(path + handler->mSkeletonFilename));
          if (!skelFile.empty())
          {
-            dtCore::RefPtr<CalOptions> calOptions = new CalOptions(*coreModel, handler->mSkeletonFilename);
+            dtCore::RefPtr<CalOptions> calOptions = new CalOptions(*coreModelData, handler->mSkeletonFilename);
             dtCore::RefPtr<osgDB::ReaderWriter::Options> options = CalOptions::CreateOSGOptions(*calOptions);
             fileUtils.ReadObject(skelFile, options.get());
          }
@@ -603,7 +599,7 @@ namespace dtAnim
             if (!filename.empty())
             {
                // Load the mesh and get its id for further error checking
-               dtCore::RefPtr<CalOptions> calOptions = new CalOptions(*coreModel, (*meshItr).mName);
+               dtCore::RefPtr<CalOptions> calOptions = new CalOptions(*coreModelData, (*meshItr).mName);
                dtCore::RefPtr<osgDB::ReaderWriter::Options> options = CalOptions::CreateOSGOptions(*calOptions);
                if (fileUtils.ReadObject(filename, options.get()) == NULL)
                {
@@ -643,7 +639,7 @@ namespace dtAnim
 
                if (!filename.empty())
                {
-                  dtCore::RefPtr<CalOptions> calOptions = new CalOptions(*coreModel, (*animItr).mName);
+                  dtCore::RefPtr<CalOptions> calOptions = new CalOptions(*coreModelData, (*animItr).mName);
                   dtCore::RefPtr<osgDB::ReaderWriter::Options> options = CalOptions::CreateOSGOptions(*calOptions);
                   if (fileUtils.ReadObject(filename, options.get()) == NULL)
                   {
@@ -692,7 +688,7 @@ namespace dtAnim
                }
                else
                {
-                  dtCore::RefPtr<CalOptions> calOptions = new CalOptions(*coreModel, (*matItr).mName);
+                  dtCore::RefPtr<CalOptions> calOptions = new CalOptions(*coreModelData, (*matItr).mName);
                   dtCore::RefPtr<osgDB::ReaderWriter::Options> options = CalOptions::CreateOSGOptions(*calOptions);
                   if (fileUtils.ReadObject(filename, options.get()) == NULL)
                   {
@@ -704,7 +700,7 @@ namespace dtAnim
       }
 
 
-      return coreModel;
+      return coreModelData;
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -718,10 +714,13 @@ namespace dtAnim
     * @see SetDataFilePathList()
     * @throw SAXParseException If the file wasn't formatted correctly
     */
-   bool Cal3DLoader::Load(const std::string& filename, dtCore::RefPtr<Cal3DModelData>& data_in)
+   bool Cal3DLoader::Load(const std::string& file, dtCore::RefPtr<Cal3DModelData>& outCoreModelData)
    {
-      std::string path;
-      std::string::size_type stringIndex = filename.find_last_of("\\");
+      std::string filename(file);
+
+      std::string path(osgDB::getFilePath(filename));
+      path += '/';
+      /*std::string::size_type stringIndex = filename.find_last_of("\\");
       std::string::size_type lastIndex = filename.find_last_of("/");
 
       // lets take the bigger of the two that isnt equal to npos
@@ -736,20 +735,19 @@ namespace dtAnim
       {
          // The index is the position of the first backslash, so add 1
          path = filename.substr(0, stringIndex + 1);
-      }
+      }*/
 
       dtCore::RefPtr<CharacterFileHandler> handler;
-      CalCoreModel* coreModel = GetCoreModel(handler, filename, path);
-      if (coreModel != NULL && handler.valid())
+      outCoreModelData = GetCoreModelData(handler, filename, path);
+      if (outCoreModelData.valid())
       {
-         data_in = new Cal3DModelData(coreModel, filename);
-         LoadModelData(*handler, *coreModel, *data_in);
-         LoadAllTextures(*coreModel, path); //this should be a user-level process.
+         LoadModelData(*handler, *outCoreModelData);
+         LoadAllTextures(*outCoreModelData->GetCoreModel(), path); //this should be a user-level process.
 
          // Store the filename containing IK data if it exists
          if (!handler->mPoseMeshFilename.empty())
          {
-            data_in->SetPoseMeshFilename(path + handler->mPoseMeshFilename);
+            outCoreModelData->SetPoseMeshFilename(path + handler->mPoseMeshFilename);
          }
       }
       else
@@ -759,7 +757,7 @@ namespace dtAnim
       }
 
       // todo remove this if hardware isn't being used
-      LoadHardwareData(data_in);
+      LoadHardwareData(outCoreModelData);
 
       return true;
    }
@@ -1030,13 +1028,17 @@ namespace dtAnim
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void Cal3DLoader::LoadModelData(dtAnim::CharacterFileHandler& handler, CalCoreModel& model, Cal3DModelData& modelData)
+   void Cal3DLoader::LoadModelData(dtAnim::CharacterFileHandler& handler, Cal3DModelData& modelData)
    {
+      CalCoreModel& model = *modelData.GetCoreModel();
+
       // Redefine some types so that they are easier to read.
       typedef CharacterFileHandler::AnimationChannelStruct ChannelStruct;
       typedef CharacterFileHandler::ChannelStructArray ChannelStructArray;
       typedef CharacterFileHandler::AnimationSequenceStruct SequenceStruct;
       typedef CharacterFileHandler::SequenceStructArray SequenceStructArray;
+
+      modelData.SetModelName(handler.mName);
 
       // create animation wrappers
       int numAnims = model.getCoreAnimationCount();
