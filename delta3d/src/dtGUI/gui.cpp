@@ -102,7 +102,7 @@ namespace dtGUI
 };
 
 //////////////////////////////////////////////////////////////////////////
-//CEGUI Logger 
+//CEGUI Logger
 //////////////////////////////////////////////////////////////////////////
 class CEGUILogger : public CEGUI::Logger
 {
@@ -213,7 +213,7 @@ void GUI::_SetupInternalGraph()
    osg::Camera* camera = new osg::Camera();
 
    //don't clear the color buffer (allows the UI to be superimposed on the scene)
-   camera->setClearMask(GL_DEPTH_BUFFER_BIT); 
+   camera->setClearMask(GL_DEPTH_BUFFER_BIT);
    camera->setRenderOrder(osg::Camera::POST_RENDER);
 
    // we don't want the camera to grab event focus from the viewers main camera(s).
@@ -433,6 +433,20 @@ void GUI::SetMouseCursor(const std::string& imagesetName, const std::string& ima
    }
 }
 
+///////////////////////////////////////////////////////////////////////////////
+void GUI::ShowCursor()
+{
+   _SetupSystemAndRenderer();
+   CEGUI::MouseCursor::getSingleton().show();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void GUI::HideCursor()
+{
+   _SetupSystemAndRenderer();
+   CEGUI::MouseCursor::getSingleton().hide();
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 CEGUI::Window* GUI::LoadLayout(const std::string& fileName, const std::string& prefix, const std::string& resourceGroup)
 {
@@ -445,31 +459,31 @@ CEGUI::Window* GUI::LoadLayout(Widget* parent, const std::string& fileName,
                                const std::string& resourceGroup)
 {
    CEGUI::Window* layout = CEGUI::WindowManager::getSingleton().loadWindowLayout(fileName, prefix, resourceGroup);
-   
+
    parent->addChildWindow(layout);
 
    if (layout)
    {
       mLayoutMap[fileName] = layout;
    }
-   
+
    return layout;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-Widget* dtGUI::GUI::CreateWidget(Widget* parent, const std::string& typeName,
+Widget* GUI::CreateWidget(Widget* parent, const std::string& typeName,
                                  const std::string& name)
 {
    Widget* newWidget = CreateWidget(typeName, name);
    if (parent)
-   { 
-      parent->addChildWindow(newWidget); 
+   {
+      parent->addChildWindow(newWidget);
    }
    return newWidget;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void dtGUI::GUI::DestroyWidget(Widget* widget)
+void GUI::DestroyWidget(Widget* widget)
 {
    if(widget->getParent() != NULL)
    {
@@ -479,12 +493,12 @@ void dtGUI::GUI::DestroyWidget(Widget* widget)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-Widget* dtGUI::GUI::CreateWidget(const std::string& typeName, const std::string& name)
+Widget* GUI::CreateWidget(const std::string& typeName, const std::string& name)
 {
    CEGUI::Window* window = CEGUI::WindowManager::getSingleton().createWindow(typeName, name);
 
    mRootSheet->addChildWindow(window);
-   
+
    return window;
 }
 
@@ -515,7 +529,7 @@ void GUI::SetResourceGroupDirectory(const std::string& resourceType, const std::
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-std::string dtGUI::GUI::SetResourceGroupFromResource(const std::string& resourceGroup,
+std::string GUI::SetResourceGroupFromResource(const std::string& resourceGroup,
                                                      const std::string& resourceToFind)
 {
    //using data file search paths, find the resource and set the resourceGroup to that path
@@ -534,7 +548,7 @@ std::string dtGUI::GUI::SetResourceGroupFromResource(const std::string& resource
 
 
 ////////////////////////////////////////////////////////////////////////////////
-Widget* dtGUI::GUI::GetWidget(const std::string& name)
+Widget* GUI::GetWidget(const std::string& name)
 {
    if (!CEGUI::WindowManager::getSingleton().isWindowPresent(name))
    {
@@ -547,7 +561,7 @@ Widget* dtGUI::GUI::GetWidget(const std::string& name)
 
 
 ////////////////////////////////////////////////////////////////////////////////
-void dtGUI::GUI::FindWidgets(const std::string& subName, std::vector<Widget*>& toFill)
+void GUI::FindWidgets(const std::string& subName, std::vector<Widget*>& toFill)
 {
    for (CEGUI::WindowManager::WindowIterator iter = CEGUI::WindowManager::getSingleton().getIterator(); !iter.isAtEnd(); ++iter)
    {
@@ -569,7 +583,7 @@ void dtGUI::GUI::FindWidgets(const std::string& subName, std::vector<Widget*>& t
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-Widget* dtGUI::GUI::FindWidget(const std::string& subName)
+Widget* GUI::FindWidget(const std::string& subName)
 {
    std::vector<Widget*> toFill;
    FindWidgets(subName, toFill);
@@ -579,24 +593,24 @@ Widget* dtGUI::GUI::FindWidget(const std::string& subName)
       return toFill.front();
    }
 
-   LOG_ERROR(subName + " is not available in gui \"" + this->GetName() + "\"\n"); 
+   LOG_ERROR(subName + " is not available in gui \"" + this->GetName() + "\"\n");
    return NULL;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-Widget* dtGUI::GUI::GetRootSheet()
+Widget* GUI::GetRootSheet()
 {
    return mRootSheet;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-const Widget* dtGUI::GUI::GetRootSheet() const
+const Widget* GUI::GetRootSheet() const
 {
    return mRootSheet;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void dtGUI::GUI::SetScriptModule(BaseScriptModule* scriptModule)
+void GUI::SetScriptModule(BaseScriptModule* scriptModule)
 {
    if (CEGUI::System::getSingletonPtr())
    {
@@ -605,7 +619,7 @@ void dtGUI::GUI::SetScriptModule(BaseScriptModule* scriptModule)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-BaseScriptModule* dtGUI::GUI::GetScriptModule()
+BaseScriptModule* GUI::GetScriptModule()
 {
    if (CEGUI::System::getSingletonPtr())
    {
@@ -616,13 +630,13 @@ BaseScriptModule* dtGUI::GUI::GetScriptModule()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-osg::Group& dtGUI::GUI::GetRootNode()
+osg::Group& GUI::GetRootNode()
 {
    return *mInternalGraph;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-const osg::Group& dtGUI::GUI::GetRootNode() const
+const osg::Group& GUI::GetRootNode() const
 {
    return *mInternalGraph;
 }
@@ -633,7 +647,7 @@ bool GUI::SetDefaultParser(const std::string& parserName)
    _SetupSystemAndRenderer();
    CEGUI::System& sys = CEGUI::System::getSingleton();
    const CEGUI::String currentParserName = sys.getDefaultXMLParserName();
-   
+
    bool success = false;
    try
    {
@@ -669,15 +683,15 @@ bool GUI::SetDefaultParser(const std::string& parserName)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-CEGUI::Event::Connection GUI::SubscribeEvent(const std::string& widgetName, 
+CEGUI::Event::Connection GUI::SubscribeEvent(const std::string& widgetName,
                                              const std::string& event,
                                              GUI::Subscriber subscriber)
 {
    CEGUI::Window* window = GetWidget(widgetName);
-   
+
    if (window)
       return SubscribeEvent(*window, event, subscriber);
-   
+
    LOG_ERROR("Could not find widget for event subscription: " + widgetName);
    return CEGUI::Event::Connection();
 }
@@ -705,7 +719,7 @@ bool GUI::IsImagesetPresent(const std::string& imagesetName)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void GUI::CreateImageset(const std::string& imagesetName, 
+void GUI::CreateImageset(const std::string& imagesetName,
                                 const std::string& fileName,
                                 const std::string& resourceGroup)
 {
@@ -724,7 +738,7 @@ void GUI::DestroyImageset(const std::string& imagesetName)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void dtGUI::GUI::AutoScaleImageset(const std::string& imagesetName, bool autoScale)
+void GUI::AutoScaleImageset(const std::string& imagesetName, bool autoScale)
 {
    _SetupSystemAndRenderer();
    if (IsImagesetPresent(imagesetName))
@@ -734,7 +748,7 @@ void dtGUI::GUI::AutoScaleImageset(const std::string& imagesetName, bool autoSca
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void dtGUI::GUI::DefineImage(const std::string& imagesetName, const std::string& image,
+void GUI::DefineImage(const std::string& imagesetName, const std::string& image,
    osg::Vec2 position, osg::Vec2 size, osg::Vec2 offset)
 {
    _SetupSystemAndRenderer();
@@ -748,13 +762,13 @@ void dtGUI::GUI::DefineImage(const std::string& imagesetName, const std::string&
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-dtCore::RefPtr<osg::Texture2D> dtGUI::GUI::CreateRenderTargetTexture(Widget& widget,
+dtCore::RefPtr<osg::Texture2D> GUI::CreateRenderTargetTexture(Widget& widget,
                                                                      const osg::Vec2* dimensions,
                                                                      const std::string& newImagesetName,
                                                                      const std::string& propertyName,
                                                                      const std::string& newImageName)
 {
-   
+
    if (!widget.isPropertyPresent(propertyName))
    {
       std::ostringstream oss;
@@ -805,7 +819,7 @@ dtCore::RefPtr<osg::Texture2D> dtGUI::GUI::CreateRenderTargetTexture(Widget& wid
    return rttTexture;
 }
 
-dtCore::RefPtr<dtCore::Camera> dtGUI::GUI::CreateCameraForRenderTargetTexture(osg::Texture2D& renderTargetTexture,
+dtCore::RefPtr<dtCore::Camera> GUI::CreateCameraForRenderTargetTexture(osg::Texture2D& renderTargetTexture,
                                                                               const osg::Vec2& viewDimensions)
 {
    // Create a Camera to render the specified target texture.
@@ -825,27 +839,27 @@ dtCore::RefPtr<dtCore::Camera> dtGUI::GUI::CreateCameraForRenderTargetTexture(os
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-bool dtGUI::GUI::AddSearchSuffix(const std::string& resourceGroup,
+bool GUI::AddSearchSuffix(const std::string& resourceGroup,
                                        const std::string& searchSuffix)
 {
    return mResProvider.AddSearchSuffix(resourceGroup, searchSuffix);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-bool dtGUI::GUI::RemoveSearchSuffix(const std::string& resourceGroup,
+bool GUI::RemoveSearchSuffix(const std::string& resourceGroup,
                                           const std::string& searchSuffix)
 {
    return mResProvider.RemoveSearchSuffix(resourceGroup, searchSuffix);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-unsigned dtGUI::GUI::RemoveSearchSuffixes(const std::string& resourceGroup)
+unsigned GUI::RemoveSearchSuffixes(const std::string& resourceGroup)
 {
    return mResProvider.RemoveSearchSuffixes(resourceGroup);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-unsigned dtGUI::GUI::ClearSearchSuffixes()
+unsigned GUI::ClearSearchSuffixes()
 {
    return mResProvider.ClearSearchSuffixes();
 }

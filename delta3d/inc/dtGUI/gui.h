@@ -289,6 +289,16 @@ namespace dtGUI
       static void SetMouseCursor(const std::string& imagesetName, const std::string& imageName);
 
       /**
+       * Show the CEGUI cursor
+       */
+      static void ShowCursor();
+
+      /**
+       * Hide the CEGUI cursor
+       */
+      static void HideCursor();
+
+      /**
        * Set the ScriptModule to use with CEGUI.  This is typically used to 
        * map callbacks to CEGUI Events when loading from a .layout file.
        * @param scriptModule : The script module to set on the CEGUI::System

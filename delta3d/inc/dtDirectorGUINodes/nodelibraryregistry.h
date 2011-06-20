@@ -44,6 +44,7 @@ namespace dtDirector
       static dtCore::RefPtr<dtDirector::NodeType> SET_LAYOUT_VISIBILITY_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> SET_WIDGET_PROPERTY_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> SET_WIDGET_TEXT_NODE_TYPE;
+      static dtCore::RefPtr<dtDirector::NodeType> TOGGLE_GUI_CURSOR;
 
       /// Values
 

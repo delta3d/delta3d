@@ -105,6 +105,9 @@ namespace dtDirector
       std::vector<std::string> GetButtonList();
       void RecurseButtonList(std::vector<std::string>& buttonList, CEGUI::Window* parent);
 
+      void SetClickCount(int value);
+      int GetClickCount() const;
+
       /**
        * Callback event handlers.
        */
@@ -124,6 +127,7 @@ namespace dtDirector
 
       std::string mLayout;
       std::string mButton;
+      int mClickCount;
 
       CEGUI::Event::Connection mClickedConnection;
       CEGUI::Event::Connection mDoubleClickedConnection;
