@@ -15,5 +15,10 @@
       <file>images/boneBasis.png</file>
       <file>images/verticalFlip.png</file>
       <file>images/horizontalFlip.png</file>
+      <file>images/fileIconSkel.png</file>
+      <file>images/fileIconAnim.png</file>
+      <file>images/fileIconMesh.png</file>
+      <file>images/fileIconMat.png</file>
+      <file>images/fileIconMorph.png</file>
    </qresource>
 </RCC>
