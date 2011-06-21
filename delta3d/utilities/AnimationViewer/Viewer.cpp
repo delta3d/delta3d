@@ -25,6 +25,8 @@
 #include <dtAnim/posemesh.h>
 #include <dtAnim/characterwrapper.h>
 
+#include <dtDAL/basexmlreaderwriter.h>
+
 #include <dtUtil/datapathutils.h>
 #include <dtUtil/xercesparser.h>
 #include <dtUtil/stringutils.h>
@@ -41,6 +43,8 @@
 #include <osg/PolygonOffset>
 #include <osg/Material>
 #include <osg/MatrixTransform>
+
+#include <osgDB/WriteFile>
 
 #include <osgViewer/GraphicsWindow>
 #include <osgViewer/CompositeViewer>
@@ -161,6 +165,14 @@ void Viewer::Config()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void Viewer::OnNewCharFile()
+{
+   OnUnloadCharFile();
+
+   // TODO:
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void Viewer::OnLoadCharFile(const QString& filename)
 {
    LOG_DEBUG("Loading file: " + filename.toStdString());
@@ -172,6 +184,8 @@ void Viewer::OnLoadCharFile(const QString& filename)
                        dir.path().toStdString() + ";");
 
    OnUnloadCharFile();
+
+   dtAnim::Cal3DModelData* modelData = NULL;
 
    //create an instance from the character definition file
    try
@@ -188,7 +202,7 @@ void Viewer::OnLoadCharFile(const QString& filename)
       mAttachmentController = new dtAnim::AttachmentController;
 
       // Retrieve the data to check for the inclusion of an IK pose mesh file
-      dtAnim::Cal3DModelData* modelData = mCalDatabase->GetModelData(*wrapper.get());
+      modelData = mCalDatabase->GetModelData(*wrapper.get());
 
       if (!modelData->GetPoseMeshFilename().empty())
       {
@@ -296,9 +310,32 @@ void Viewer::OnLoadCharFile(const QString& filename)
 
    CreateBoneBasisDisplay();
 
+   emit CharacterDataLoaded(modelData);
+
    LOG_DEBUG("Done loading file: " + filename.toStdString());
 }
 
+////////////////////////////////////////////////////////////////////////////////
+void Viewer::OnSaveCharFile(const QString& filename)
+{
+   if(mCharacter.valid())
+   {
+      // Acquire the model data associated with this character.
+      const Cal3DModelWrapper* wrapper = mCharacter->GetCal3DWrapper();
+      Cal3DModelData* data = mCalDatabase->GetModelData(*wrapper);
+
+      if(data != NULL)
+      {
+         // Finalize the data from current changes in the model.
+         data->SetScale(wrapper->GetScale());
+
+         // Wrap and write the data.
+         dtCore::RefPtr<dtDAL::WriteWrapperOSGObject<Cal3DModelData> > obj
+            = new dtDAL::WriteWrapperOSGObject<Cal3DModelData>(*data);
+         osgDB::writeObjectFile(*obj, filename.toStdString());
+      }
+   }
+}
 
 
 //////////////////////////////////////////////////////////////////////////

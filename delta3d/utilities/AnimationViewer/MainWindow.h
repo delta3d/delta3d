@@ -7,6 +7,7 @@ class QAction;
 class QTableWidgetItem;
 class QToolBar;
 class AnimationTableWidget;
+class QLabel;
 class QListWidget;
 class QListWidgetItem;
 class QTableWidget;
@@ -22,11 +23,14 @@ class PoseMeshProperties;
 class QDoubleSpinBox;
 class QComboBox;
 class QHBoxLayout;
+class QTreeWidget;
+class QTreeWidgetItem;
 
 
 namespace dtAnim
 {
    class PoseMesh;
+   class Cal3DModelData;
    class CharDrawable;
 }
 
@@ -41,6 +45,7 @@ public:
    ~MainWindow();
 
    void LoadCharFile(const QString& filename);
+   void SaveCharFile(const QString& filename);
    void SetViewer(Viewer* viewer);
 
    void LoadAttachment(const QString& filename);
@@ -50,7 +55,9 @@ protected:
    virtual void dropEvent(QDropEvent* event);
 
 signals:
+   void NewFile();
    void FileToLoad(const QString&);
+   void FileToSave(const QString&);
    void UnloadFile();
    void StartAnimation(unsigned int, float, float);
    void StopAnimation(unsigned int, float);
@@ -94,6 +101,8 @@ public slots:
                       const QColor& diff, const QColor& amb, const QColor& spec,
                       float shininess);
 
+   void OnCharacterDataLoaded(dtAnim::Cal3DModelData* modelData);
+
    void OnBlendUpdate(const std::vector<float>& animWeightList, const std::vector<float>& morphWeightList);
 
    void OnAnimationClicked(QTableWidgetItem* item);
@@ -118,6 +127,9 @@ private:
    void CreateActions();
    void CreateToolbars();
    void CreateDockWidgets();
+   void CreateDockWidget_Properties();
+   void CreateDockWidget_Tools();
+   void CreateDockWidget_Resources();
    void DestroyPoseResources();
    void UpdateRecentFileActions();
    void SetCurrentFile(const QString& filename);
@@ -133,7 +145,9 @@ private:
    QString MakeColorString(const QColor& color) const;
 
    QAction* mExitAct;
+   QAction* mNewCharAct;
    QAction* mLoadCharAct;
+   QAction* mSaveCharAct;
    QAction* mCloseCharAction;
    QAction* mRecentFilesAct[5];
    QAction* mWireframeAction;
@@ -144,6 +158,9 @@ private:
    QAction* mPointLightAction;
    QAction* mHardwareSkinningAction;
    QAction* mBoneLabelAction;
+   QAction* mToggleDockProperties;
+   QAction* mToggleDockResources;
+   QAction* mToggleDockTools;
 
    QToolBar* mShadingToolbar;
    QToolBar* mLightingToolbar;
@@ -173,13 +190,24 @@ private:
    PoseMeshView*       mPoseMeshViewer;
    PoseMeshScene*      mPoseMeshScene;
    PoseMeshProperties* mPoseMeshProperties;
+   
+   QLabel*             mFileLabel;
+   QTreeWidget*        mFileTree;
+   QTreeWidgetItem*    mFileGroupSkel;
+   QTreeWidgetItem*    mFileGroupAnim;
+   QTreeWidgetItem*    mFileGroupMesh;
+   QTreeWidgetItem*    mFileGroupMat;
+   QTreeWidgetItem*    mFileGroupMorph;
 
    Viewer*             mViewer;
    QHBoxLayout*        mCentralLayout;
 
 private slots:
+   void OnNewCharFile();
    void OnOpenCharFile();
    void OpenRecentFile();
+
+   void OnSaveCharFile();
       
    void OnCloseCharFile();
 

@@ -34,8 +34,9 @@ namespace osg
 
 namespace dtAnim
 {
-   class CharDrawable;
    class Cal3DDatabase;
+   class Cal3DModelData;
+   class CharDrawable;
    class PoseMeshDatabase;
 }
 
@@ -51,7 +52,9 @@ public:
 
 public slots:
 
+   void OnNewCharFile();
    void OnLoadCharFile        (const QString& filename);
+   void OnSaveCharFile        (const QString& filename);
    void OnUnloadCharFile();
    void OnLoadPoseMeshFile    (const std::string& filename);
    void OnStartAnimation      (unsigned int id, float weight, float delay);
@@ -103,6 +106,8 @@ signals:
    void MaterialLoaded(int materialID, const QString& name,
                        const QColor& diffuse, const QColor& ambient, const QColor& specular,
                        float shininess);
+   
+   void CharacterDataLoaded(dtAnim::Cal3DModelData* modelData);
 
    void ErrorOccured(const QString& msg);
 

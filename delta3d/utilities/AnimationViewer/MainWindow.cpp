@@ -48,10 +48,55 @@
 #include <cassert>
 
 ////////////////////////////////////////////////////////////////////////////////
+// Helper Function
+void ClearTreeWidgetItem(QTreeWidgetItem& item)
+{
+   while (item.childCount() > 0)
+   {
+      QTreeWidgetItem* childItem = item.child(0);
+      item.removeChild(childItem);
+      delete childItem;
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Helper Function
+void AddItemsToTreeWidgetItem(QTreeWidgetItem& item,
+   const dtAnim::Cal3DModelData& modelData, dtAnim::Cal3DModelData::CalFileType fileType)
+{
+   dtAnim::Cal3DModelData::StrArray nameList;
+   modelData.GetObjectNameListForFileTypeSorted(fileType, nameList);
+
+   std::string curName;
+   std::string curFile;
+   QTreeWidgetItem* curItem = NULL;
+   dtAnim::Cal3DModelData::StrArray::const_iterator curIter = nameList.begin();
+   dtAnim::Cal3DModelData::StrArray::const_iterator endIter = nameList.end();
+   for (; curIter != endIter; ++curIter)
+   {
+      curName = *curIter;
+      curFile = modelData.GetFileForObjectName(fileType, curName);
+
+      QString labelName(curName.c_str());
+      QString labelFile(curFile.c_str());
+      curItem = new QTreeWidgetItem();
+      curItem->setText(0, labelName);
+      curItem->setText(1, labelFile);
+      item.addChild(curItem);
+   }
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
 MainWindow::MainWindow()
   : mExitAct(NULL)
+  , mNewCharAct(NULL)
   , mLoadCharAct(NULL)
+  , mSaveCharAct(NULL)
   , mCloseCharAction(NULL)
+  , mToggleDockProperties(NULL)
+  , mToggleDockResources(NULL)
+  , mToggleDockTools(NULL)
   , mScaleFactorSpinner(NULL)
   , mAttachmentOffsetXSpinner(NULL)
   , mAttachmentOffsetYSpinner(NULL)
@@ -70,9 +115,15 @@ MainWindow::MainWindow()
   , mPoseMeshViewer(NULL)
   , mPoseMeshScene(NULL)
   , mPoseMeshProperties(NULL)
-
+  , mFileLabel(NULL)
+  , mFileTree(NULL)
+  , mFileGroupSkel(NULL)
+  , mFileGroupAnim(NULL)
+  , mFileGroupMesh(NULL)
+  , mFileGroupMat(NULL)
+  , mFileGroupMorph(NULL)
 {
-   resize(800, 800);
+   resize(1024, 800);
 
    mAnimListWidget = new AnimationTableWidget(this);
    mAnimListWidget->setColumnCount(6);
@@ -162,8 +213,14 @@ void MainWindow::CreateMenus()
 
    viewMenu->addAction(mHardwareSkinningAction);
    viewMenu->addAction(mBoneLabelAction);
+   viewMenu->addSeparator();
+   viewMenu->addAction(mToggleDockProperties);
+   viewMenu->addAction(mToggleDockResources);
+   viewMenu->addAction(mToggleDockTools);
 
+   windowMenu->addAction(mNewCharAct);
    windowMenu->addAction(mLoadCharAct);
+   windowMenu->addAction(mSaveCharAct);
    windowMenu->addSeparator();
    windowMenu->addAction(mCloseCharAction);
    windowMenu->addSeparator();
@@ -195,10 +252,20 @@ void MainWindow::CreateActions()
    mExitAct->setStatusTip(tr("Exit the application"));
    connect(mExitAct, SIGNAL(triggered()), this, SLOT(close()));
 
+   mNewCharAct = new QAction(tr("&New"), this);
+   mNewCharAct->setShortcut(tr("Ctrl+N"));
+   mNewCharAct->setStatusTip(tr("Create a new character file."));
+   connect(mNewCharAct, SIGNAL(triggered()), this, SLOT(OnNewCharFile()));
+
    mLoadCharAct = new QAction(tr("&Open..."), this);
    mLoadCharAct->setShortcut(tr("Ctrl+O"));
    mLoadCharAct->setStatusTip(tr("Open an existing character file."));
    connect(mLoadCharAct, SIGNAL(triggered()), this, SLOT(OnOpenCharFile()));
+
+   mSaveCharAct = new QAction(tr("&Save..."), this);
+   mSaveCharAct->setShortcut(tr("Ctrl+S"));
+   mSaveCharAct->setStatusTip(tr("Save to an existing or new character file."));
+   connect(mSaveCharAct, SIGNAL(triggered()), this, SLOT(OnSaveCharFile()));
 
    for (int actionIndex = 0; actionIndex < 5; actionIndex++)
    {
@@ -241,6 +308,18 @@ void MainWindow::CreateActions()
    mBoneLabelAction = new QAction(tr("Use Bone Labeling"), this);
    mBoneLabelAction->setCheckable(true);
    mBoneLabelAction->setChecked(true);
+
+   mToggleDockProperties = new QAction(tr("Properties"), this);
+   mToggleDockProperties->setCheckable(true);
+   mToggleDockProperties->setChecked(true);
+
+   mToggleDockResources = new QAction(tr("Resources"), this);
+   mToggleDockResources->setCheckable(true);
+   mToggleDockResources->setChecked(true);
+
+   mToggleDockTools = new QAction(tr("Tools"), this);
+   mToggleDockTools->setCheckable(true);
+   mToggleDockTools->setChecked(true);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -272,14 +351,39 @@ void MainWindow::DestroyPoseResources()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void MainWindow::OnNewCharFile()
+{
+   OnClearCharacterData();
+
+   QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+
+   emit NewFile();
+
+   QApplication::restoreOverrideCursor();
+   statusBar()->showMessage(tr("New file created"), 2000);
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void MainWindow::OnOpenCharFile()
 {
    QString filename = QFileDialog::getOpenFileName(this,
-      tr("Load Character File"), ".", tr("Characters (*.xml)") );
+      tr("Load Character File"), ".", tr("Characters (*.xml; *.dtchar)") );
 
    if (!filename.isEmpty())
    {
       LoadCharFile(filename);
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void MainWindow::OnSaveCharFile()
+{
+   QString filename = QFileDialog::getSaveFileName(this,
+      tr("Save Character File"), ".", tr("Characters (*.xml; *.dtchar)"));
+
+   if (!filename.isEmpty())
+   {
+      SaveCharFile(filename);
    }
 }
 
@@ -303,6 +407,20 @@ void MainWindow::LoadCharFile(const QString& filename)
    {
       QString errorString = QString("File not found: %1").arg(filename);
       QMessageBox::warning(this, "Warning", errorString, "&Ok");
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void MainWindow::SaveCharFile(const QString& filename)
+{
+   if (dtUtil::FileUtils::GetInstance().FileExists(filename.toStdString()))
+   {
+      QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+
+      emit FileToSave(filename);
+
+      QApplication::restoreOverrideCursor();
+      statusBar()->showMessage(tr("File saved"), 2000);
    }
 }
 
@@ -635,6 +753,20 @@ void MainWindow::OnNewMaterial(int matID, const QString& name,
 
    //resize the columns to fit the data width
    mMaterialView->resizeColumnsToContents();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void MainWindow::OnCharacterDataLoaded(dtAnim::Cal3DModelData* modelData)
+{
+   using namespace dtAnim;
+
+   // Update the resource tree widget.
+   mFileLabel->setText(modelData->GetModelName().c_str());
+   AddItemsToTreeWidgetItem(*mFileGroupSkel, *modelData, Cal3DModelData::SKEL_FILE);
+   AddItemsToTreeWidgetItem(*mFileGroupAnim, *modelData, Cal3DModelData::ANIM_FILE);
+   AddItemsToTreeWidgetItem(*mFileGroupMesh, *modelData, Cal3DModelData::MESH_FILE);
+   AddItemsToTreeWidgetItem(*mFileGroupMat, *modelData, Cal3DModelData::MAT_FILE);
+   AddItemsToTreeWidgetItem(*mFileGroupMorph, *modelData, Cal3DModelData::MORPH_FILE);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1107,7 +1239,8 @@ void MainWindow::dragEnterEvent(QDragEnterEvent* event)
    if (event->mimeData()->hasUrls())
    {
       QList<QUrl> urls = event->mimeData()->urls();
-      if (urls[0].toLocalFile().toLower().endsWith(".xml"))
+      QString fileName(urls[0].toLocalFile().toLower());
+      if (fileName.endsWith(".xml") || fileName.endsWith(".dtchar"))
       {
          event->acceptProposedAction();
       }
@@ -1204,6 +1337,13 @@ void MainWindow::OnClearCharacterData()
    // reset the scale spinbox
    mScaleFactorSpinner->setValue(1.0f);
 
+   // Clear resource information.
+   mFileLabel->setText("");
+   ClearTreeWidgetItem(*mFileGroupSkel);
+   ClearTreeWidgetItem(*mFileGroupAnim);
+   ClearTreeWidgetItem(*mFileGroupMesh);
+   ClearTreeWidgetItem(*mFileGroupMat);
+   ClearTreeWidgetItem(*mFileGroupMorph);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1260,7 +1400,9 @@ void MainWindow::SetViewer(Viewer* viewer)
 ////////////////////////////////////////////////////////////////////////////////
 void MainWindow::SetupConnectionsWithViewer()
 {
+   connect(this, SIGNAL(NewFile()), mViewer, SLOT(OnNewCharFile()));
    connect(this, SIGNAL(FileToLoad(const QString&)), mViewer, SLOT(OnLoadCharFile(const QString&)));
+   connect(this, SIGNAL(FileToSave(const QString&)), mViewer, SLOT(OnSaveCharFile(const QString&)));
    connect(this, SIGNAL(AttachmentToLoad(const QString&)), mViewer, SLOT(OnLoadAttachmentFile(const QString&)));
    connect(this, SIGNAL(AttachmentSettingsChanged(const std::string&, float, float, float, float, float, float)),
            mViewer, SLOT(OnAttachmentSettingsChanged(const std::string&, float, float, float, float, float, float)));
@@ -1282,6 +1424,9 @@ void MainWindow::SetupConnectionsWithViewer()
 
    connect(mViewer, SIGNAL(MaterialLoaded(int,const QString&,const QColor&,const QColor&,const QColor&,float)),
       this, SLOT(OnNewMaterial(int,const QString&,const QColor&,const QColor&,const QColor&,float)));
+
+   connect(mViewer, SIGNAL(CharacterDataLoaded(dtAnim::Cal3DModelData*)),
+      this, SLOT(OnCharacterDataLoaded(dtAnim::Cal3DModelData*)));
 
    connect(this, SIGNAL(ShowMesh(int)), mViewer, SLOT(OnShowMesh(int)));
    connect(this, SIGNAL(HideMesh(int)), mViewer, SLOT(OnHideMesh(int)));
@@ -1312,7 +1457,7 @@ void MainWindow::SetupConnectionsWithViewer()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void MainWindow::CreateDockWidgets()
+void MainWindow::CreateDockWidget_Properties()
 {
    mTabs = new QTabWidget(this);
    mTabs->addTab(mAnimListWidget, tr("Animations"));
@@ -1326,10 +1471,20 @@ void MainWindow::CreateDockWidgets()
 
    addDockWidget(Qt::BottomDockWidgetArea, tabsDockWidget);
 
+   connect(mToggleDockProperties, SIGNAL(toggled(bool)), tabsDockWidget, SLOT(setVisible(bool)));
+   connect(tabsDockWidget, SIGNAL(visibilityChanged(bool)), mToggleDockProperties, SLOT(setChecked(bool)));
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void MainWindow::CreateDockWidget_Tools()
+{
    QDockWidget* toolsDockWidget = new QDockWidget(tr("Tools"), this);
    addDockWidget(Qt::LeftDockWidgetArea, toolsDockWidget);
    QWidget* toolWidget = new QWidget();
    toolsDockWidget->setWidget(toolWidget);
+
+   connect(mToggleDockTools, SIGNAL(toggled(bool)), toolsDockWidget, SLOT(setVisible(bool)));
+   connect(toolsDockWidget, SIGNAL(visibilityChanged(bool)), mToggleDockTools, SLOT(setChecked(bool)));
 
    QVBoxLayout* toolVLayout = new QVBoxLayout(toolWidget);
 
@@ -1467,4 +1622,71 @@ void MainWindow::CreateDockWidgets()
       layout->addWidget(mAttachmentRotZSpinner, 7, 1);
       connect(mAttachmentRotZSpinner, SIGNAL(valueChanged(double)), this, SLOT(OnChangeAttachmentSettings()));
    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void MainWindow::CreateDockWidget_Resources()
+{
+   QDockWidget* resDockWidget = new QDockWidget(tr("Resources"), this);
+   addDockWidget(Qt::RightDockWidgetArea, resDockWidget);
+   QWidget* resWidget = new QWidget();
+   resDockWidget->setWidget(resWidget);
+
+   connect(mToggleDockResources, SIGNAL(toggled(bool)), resDockWidget, SLOT(setVisible(bool)));
+   connect(resDockWidget, SIGNAL(visibilityChanged(bool)), mToggleDockResources, SLOT(setChecked(bool)));
+
+   QVBoxLayout* resVLayout = new QVBoxLayout(resWidget);
+
+   QGridLayout* resGridLayout = new QGridLayout();
+   resVLayout->addLayout(resGridLayout);
+
+   mFileLabel = new QLabel("");
+   resGridLayout->addWidget(mFileLabel, 0, 0);
+
+   mFileTree = new QTreeWidget();
+   QStringList labels;
+   labels << "Object Name" << "File";
+   mFileTree->setHeaderLabels(labels);
+   resGridLayout->addWidget(mFileTree, 1, 0);
+
+   QColor bgColor(200, 200, 200);
+
+   mFileGroupSkel = new QTreeWidgetItem();
+   mFileGroupSkel->setText(0, "Skeleton");
+   mFileGroupSkel->setBackgroundColor(0, bgColor);
+   mFileGroupSkel->setBackgroundColor(1, bgColor);
+
+   mFileGroupAnim = new QTreeWidgetItem();
+   mFileGroupAnim->setText(0, "Animations");
+   mFileGroupAnim->setBackgroundColor(0, bgColor);
+   mFileGroupAnim->setBackgroundColor(1, bgColor);
+
+   mFileGroupMesh = new QTreeWidgetItem();
+   mFileGroupMesh->setText(0, "Meshes");
+   mFileGroupMesh->setBackgroundColor(0, bgColor);
+   mFileGroupMesh->setBackgroundColor(1, bgColor);
+
+   mFileGroupMat = new QTreeWidgetItem();
+   mFileGroupMat->setText(0, "Materials");
+   mFileGroupMat->setBackgroundColor(0, bgColor);
+   mFileGroupMat->setBackgroundColor(1, bgColor);
+
+   mFileGroupMorph = new QTreeWidgetItem();
+   mFileGroupMorph->setText(0, "Morph Targets");
+   mFileGroupMorph->setBackgroundColor(0, bgColor);
+   mFileGroupMorph->setBackgroundColor(1, bgColor);
+
+   mFileTree->addTopLevelItem(mFileGroupSkel);
+   mFileTree->addTopLevelItem(mFileGroupAnim);
+   mFileTree->addTopLevelItem(mFileGroupMesh);
+   mFileTree->addTopLevelItem(mFileGroupMat);
+   mFileTree->addTopLevelItem(mFileGroupMorph);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void MainWindow::CreateDockWidgets()
+{
+   CreateDockWidget_Properties();
+   CreateDockWidget_Tools();
+   CreateDockWidget_Resources();
 }
