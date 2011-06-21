@@ -29,6 +29,8 @@
 #include <dtDirectorQt/libraryeditor.h>
 #include <dtDirectorQt/nodetabs.h>
 #include <dtDirectorQt/replaybrowser.h>
+#include <dtDirectorQt/plugindialog.h>
+#include <dtDirectorQt/pluginmanager.h>
 #include <dtDirectorQt/undomanager.h>
 #include <dtDirectorQt/undodeleteevent.h>
 #include <dtDirectorQt/undocreateevent.h>
@@ -43,6 +45,8 @@
 #include <dtQt/docbrowser.h>
 
 #include <dtUtil/mathdefines.h>
+#include <dtUtil/fileutils.h>
+#include <dtUtil/datapathutils.h>
 
 #include <QtCore/QSettings>
 
@@ -70,6 +74,7 @@ namespace dtDirector
    DirectorEditor::DirectorEditor(QWidget* parent)
       : QMainWindow(parent, Qt::Window)
       , mDocBrowser(NULL)
+      , mPluginManager(NULL)
       , mUndoManager(NULL)
       , mDirector(NULL)
       , mReplayMode(false)
@@ -80,6 +85,10 @@ namespace dtDirector
       mEditorsOpen.push_back(this);
 
       mUI.setupUi(this);
+
+      // Plugin Manager.
+      mPluginManager = new PluginManager(this);
+      SetupPlugins();
 
       // Undo Manager.
       mUndoManager = new UndoManager(this);
@@ -117,6 +126,44 @@ namespace dtDirector
       }
 
       delete mUndoManager;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::SetupPlugins()
+   {
+      std::string pluginPath;
+      if (dtUtil::IsEnvironment("DIRECTOR_PLUGIN_PATH"))
+      {
+         pluginPath = dtUtil::GetEnvironment("DIRECTOR_PLUGIN_PATH");;
+      }
+
+      if (pluginPath.empty())
+      {
+         pluginPath = QCoreApplication::applicationDirPath().toStdString() + "/directorplugins";
+      }
+
+#ifdef DELTA_WIN32
+#ifdef _DEBUG
+      pluginPath += "/Debug";
+      //#else
+      //  pluginPath += "/Release";
+#endif
+#endif
+
+      if (!dtUtil::FileUtils::GetInstance().DirExists(pluginPath))
+      {
+         //no plugin path found...lets not try to load any plugins
+         LOG_INFO("No plugin path was found. No plugins will be loaded.");
+         return;
+      }
+
+      LOG_INFO("Trying to load plugins from directory " + pluginPath);
+
+      // instantiate all plugin factories and immediately start system plugins
+      mPluginManager->LoadPluginsInDir(pluginPath);
+
+      // start plugins that were set in config file
+      mPluginManager->StartPluginsInConfigFile();
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -1370,9 +1417,16 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::on_action_Manage_Plugins_triggered()
+   {
+      PluginDialog dlg(this);
+      dlg.OnOpenDialog();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    void DirectorEditor::on_action_Manage_Libraries_triggered()
    {
-      // We need a director to manager libraries.
+      // We need a director to manage libraries.
       if (!GetDirector())
       {
          QMessageBox::critical(NULL, tr("Failure"),
@@ -1903,6 +1957,9 @@ namespace dtDirector
       settings.setValue("Pos", mUI.threadBrowser->pos());
       settings.setValue("Size", mUI.threadBrowser->size());
       settings.endGroup();
+
+      //Save the Plugin state
+      mPluginManager->StoreActivePluginsToConfigFile();      
 
       // Check if the undo manager has some un-committed changes first.
       if (GetUndoManager()->IsModified())

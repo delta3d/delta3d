@@ -95,6 +95,7 @@
     <addaction name="separator"/>
     <addaction name="action_Delete"/>
     <addaction name="separator"/>
+    <addaction name="action_Manage_Plugins"/>
     <addaction name="action_Manage_Libraries"/>
    </widget>
    <widget class="QMenu" name="menu_View">
@@ -990,6 +991,14 @@
    </property>
    <property name="shortcut">
     <string>F9</string>
+   </property>
+  </action>
+  <action name="action_Manage_Plugins">
+   <property name="text">
+    <string>Manage Plugins...</string>
+   </property>
+   <property name="toolTip">
+    <string>Manage the Plugins for the script.</string>
    </property>
   </action>
  </widget>
