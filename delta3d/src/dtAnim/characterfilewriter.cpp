@@ -214,8 +214,7 @@ namespace dtAnim
       BeginElement(CFE::SCALE_ELEMENT);
       {
          BeginElement(CFE::SCALE_FACTOR_ELEMENT);
-         // MISSING: Write(model->getScale());
-         Write(1.0f);
+         Write(modelData.GetScale());
          EndElement();
       }
       EndElement();
