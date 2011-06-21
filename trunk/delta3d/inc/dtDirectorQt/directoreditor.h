@@ -54,6 +54,7 @@ namespace dtDirector
    class NodeTabs;
    class PropertyEditor;
    class ReplayBrowser;
+   class PluginManager;
    class UndoManager;
 
    /**
@@ -77,6 +78,11 @@ namespace dtDirector
        * Destructor
        */
       virtual ~DirectorEditor();
+
+      /**
+       * Setup for the plugin manager.
+       */
+      void SetupPlugins();
 
       /**
        * Sets the Director.
@@ -114,6 +120,11 @@ namespace dtDirector
        * Accessor for the Property Editor.
        */
       PropertyEditor* GetPropertyEditor() {return mUI.propertyEditor;}
+
+      /**
+       * Accessor for the Plugin Manager.
+       */
+      PluginManager* GetPluginManager() {return mPluginManager;}
 
       /**
        * Accessor for the undo manager.
@@ -438,7 +449,12 @@ namespace dtDirector
       void on_action_Delete_triggered();
 
       /**
-       * Event handler when the manager libraries button is pressed.
+       * Event handler when the manage plugins button is pressed.
+       */
+      void on_action_Manage_Plugins_triggered();
+
+      /**
+       * Event handler when the manage libraries button is pressed.
        */
       void on_action_Manage_Libraries_triggered();
 
@@ -611,6 +627,7 @@ namespace dtDirector
       Ui::DirectorEditor       mUI;
 
       dtQt::DocBrowser*        mDocBrowser;
+      PluginManager*           mPluginManager;
 
       UndoManager*             mUndoManager;
 
