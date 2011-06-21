@@ -1650,28 +1650,38 @@ void MainWindow::CreateDockWidget_Resources()
    resGridLayout->addWidget(mFileTree, 1, 0);
 
    QColor bgColor(200, 200, 200);
+   QIcon iconSkel(":/images/fileIconSkel.png");
+   QIcon iconAnim(":/images/fileIconAnim.png");
+   QIcon iconMesh(":/images/fileIconMesh.png");
+   QIcon iconMat(":/images/fileIconMat.png");
+   QIcon iconMorph(":/images/fileIconMorph.png");
 
    mFileGroupSkel = new QTreeWidgetItem();
+   mFileGroupSkel->setIcon(0, iconSkel);
    mFileGroupSkel->setText(0, "Skeleton");
    mFileGroupSkel->setBackgroundColor(0, bgColor);
    mFileGroupSkel->setBackgroundColor(1, bgColor);
 
    mFileGroupAnim = new QTreeWidgetItem();
+   mFileGroupAnim->setIcon(0, iconAnim);
    mFileGroupAnim->setText(0, "Animations");
    mFileGroupAnim->setBackgroundColor(0, bgColor);
    mFileGroupAnim->setBackgroundColor(1, bgColor);
 
    mFileGroupMesh = new QTreeWidgetItem();
+   mFileGroupMesh->setIcon(0, iconMesh);
    mFileGroupMesh->setText(0, "Meshes");
    mFileGroupMesh->setBackgroundColor(0, bgColor);
    mFileGroupMesh->setBackgroundColor(1, bgColor);
 
    mFileGroupMat = new QTreeWidgetItem();
+   mFileGroupMat->setIcon(0, iconMat);
    mFileGroupMat->setText(0, "Materials");
    mFileGroupMat->setBackgroundColor(0, bgColor);
    mFileGroupMat->setBackgroundColor(1, bgColor);
 
    mFileGroupMorph = new QTreeWidgetItem();
+   mFileGroupMorph->setIcon(0, iconMorph);
    mFileGroupMorph->setText(0, "Morph Targets");
    mFileGroupMorph->setBackgroundColor(0, bgColor);
    mFileGroupMorph->setBackgroundColor(1, bgColor);
