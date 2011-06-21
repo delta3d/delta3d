@@ -190,6 +190,7 @@ namespace dtDirector
       mUI.macroNodeTabWidget->SetEditor(this);
       mUI.linkNodeTabWidget->SetEditor(this);
       mUI.miscNodeTabWidget->SetEditor(this);
+      mUI.referenceNodeTabWidget->SetEditor(this);
       RefreshNodeScenes();
 
       mUI.graphTab->clear();
@@ -255,7 +256,7 @@ namespace dtDirector
             QMessageBox messageBox("Load Failed!",
                error, QMessageBox::Critical,
                QMessageBox::Ok,
-               QMessageBox::NoButton, 
+               QMessageBox::NoButton,
                QMessageBox::NoButton,
                this);
 
@@ -284,7 +285,7 @@ namespace dtDirector
             QMessageBox messageBox("Libraries were not loaded!",
                warning, QMessageBox::Warning,
                QMessageBox::Ok,
-               QMessageBox::NoButton, 
+               QMessageBox::NoButton,
                QMessageBox::NoButton,
                this);
 
@@ -312,7 +313,7 @@ namespace dtDirector
             QMessageBox messageBox("Nodes were not loaded!",
                warning, QMessageBox::Warning,
                QMessageBox::Ok,
-               QMessageBox::NoButton, 
+               QMessageBox::NoButton,
                QMessageBox::NoButton,
                this);
 
@@ -1758,7 +1759,7 @@ namespace dtDirector
                NodeItem* node = dynamic_cast<NodeItem*>(selection[index]);
                if (node && node->GetNode())
                {
-                  EditorNotifier::GlowData* glowData = 
+                  EditorNotifier::GlowData* glowData =
                      notifier->GetGlowData(node->GetNode());
 
                   if ((toggle && (!glowData || !glowData->hasBreakPoint)) ||
@@ -1968,7 +1969,7 @@ namespace dtDirector
       settings.endGroup();
 
       //Save the Plugin state
-      mPluginManager->StoreActivePluginsToConfigFile();      
+      mPluginManager->StoreActivePluginsToConfigFile();
 
       // Check if the undo manager has some un-committed changes first.
       if (GetUndoManager()->IsModified())
@@ -1996,7 +1997,7 @@ namespace dtDirector
       // If we get down to here, it means we are closing the editor.
       if (mDirector)
       {
-         EditorNotifier* notifier = 
+         EditorNotifier* notifier =
             dynamic_cast<EditorNotifier*>(mDirector->GetNotifier());
          if (notifier)
          {
@@ -2104,7 +2105,7 @@ namespace dtDirector
             for (int i = 0; i < dtCore::Base::GetInstanceCount(); ++i)
             {
                dtCore::Base *o = dtCore::Base::GetInstance(i);
-               dtDirector::DirectorInstance* director = 
+               dtDirector::DirectorInstance* director =
                   dynamic_cast<dtDirector::DirectorInstance*>(o);
 
                if (director)
