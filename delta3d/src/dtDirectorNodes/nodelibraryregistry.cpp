@@ -62,6 +62,7 @@
 #include <dtDirectorNodes/lerpactorrotationaction.h>
 #include <dtDirectorNodes/lerpactorscaleaction.h>
 #include <dtDirectorNodes/lerpactortranslationaction.h>
+#include <dtDirectorNodes/loopaction.h>
 #include <dtDirectorNodes/animateactoraction.h>
 #include <dtDirectorNodes/sendmessageaction.h>
 #include <dtDirectorNodes/sendeventmessageaction.h>
@@ -150,6 +151,7 @@ namespace dtDirector
    RefPtr<NodeType> NodeLibraryRegistry::LOG_ACTION_NODE_TYPE(                   new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Log Message",               "General",     "Base",        "Writes out a message to the log.", NULL, Colors::BLUE));
    RefPtr<NodeType> NodeLibraryRegistry::CALL_REMOTE_EVENT_ACTION_NODE_TYPE(     new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Call Remote Event",         "Core",        "Base",        "Calls all remote event nodes with a given name in parallel, and waits until their entire chains are finished before continuing.", NULL, Colors::BLUE));
    RefPtr<NodeType> NodeLibraryRegistry::DELAY_ACTION_NODE_TYPE(                 new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Delay",                     "General",     "Base",        "Performs a time delay.", NULL, Colors::BLUE));
+   RefPtr<NodeType> NodeLibraryRegistry::LOOP_ACTION_NODE_TYPE(                  new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Loop",                      "General",     "Base",        "Continually fires its 'Cycle' output after a given time period while active.", NULL, Colors::BLUE2));
    RefPtr<NodeType> NodeLibraryRegistry::SWITCH_ACTION_NODE_TYPE(                new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Switch",                    "General",     "Base",        "Fires outputs in sequence based on the number of inputs received.", NULL, Colors::BLUE));
 
    RefPtr<NodeType> NodeLibraryRegistry::GET_APP_CONFIG_PROPERTY_ACTION_NODE_TYPE(new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Get Application Config Property", "General", "Access", "Retrieves a config property value from an application's config file.", NULL, Colors::BLUE));
@@ -277,6 +279,7 @@ namespace dtDirector
       mNodeFactory->RegisterType<LogAction>(LOG_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<CallRemoteEventAction>(CALL_REMOTE_EVENT_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<DelayAction>(DELAY_ACTION_NODE_TYPE.get());
+      mNodeFactory->RegisterType<LoopAction>(LOOP_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<SwitchAction>(SWITCH_ACTION_NODE_TYPE.get());
 
       mNodeFactory->RegisterType<GetApplicationConfigPropertyAction>(GET_APP_CONFIG_PROPERTY_ACTION_NODE_TYPE.get());
