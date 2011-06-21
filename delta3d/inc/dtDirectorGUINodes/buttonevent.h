@@ -115,6 +115,8 @@ namespace dtDirector
       bool OnDoubleClicked(const CEGUI::EventArgs& e);
       bool OnHoverEnter(const CEGUI::EventArgs& e);
       bool OnHoverLeave(const CEGUI::EventArgs& e);
+      bool OnDown(const CEGUI::EventArgs& e);
+      bool OnUp(const CEGUI::EventArgs& e);
 
    protected:
 
@@ -133,6 +135,10 @@ namespace dtDirector
       CEGUI::Event::Connection mDoubleClickedConnection;
       CEGUI::Event::Connection mEnterConnection;
       CEGUI::Event::Connection mLeaveConnection;
+      CEGUI::Event::Connection mDownConnection;
+      CEGUI::Event::Connection mUpConnection;
+
+      void DestroyConnection(CEGUI::Event::Connection& connection);
    };
 }
 
