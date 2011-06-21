@@ -88,7 +88,6 @@ namespace dtDirector
 
       // Plugin Manager.
       mPluginManager = new PluginManager(this);
-      SetupPlugins();
 
       // Undo Manager.
       mUndoManager = new UndoManager(this);
@@ -106,6 +105,18 @@ namespace dtDirector
 
       // Graph tabs.
       mUI.propertyEditor->SetGraphTabs(mUI.graphTab);
+
+      CreateNodeScene(mUI.eventNodeTabWidget);
+      CreateNodeScene(mUI.actionNodeTabWidget);
+      CreateNodeScene(mUI.mutatorNodeTabWidget);
+      CreateNodeScene(mUI.variableNodeTabWidget);
+      CreateNodeScene(mUI.macroNodeTabWidget);
+      CreateNodeScene(mUI.linkNodeTabWidget);
+      CreateNodeScene(mUI.miscNodeTabWidget);
+      CreateNodeScene(mUI.searchNodeTabWidget);
+      CreateNodeScene(mUI.referenceNodeTabWidget);
+
+      SetupPlugins();
 
       mClickSound = Phonon::createPlayer(Phonon::MusicCategory,
                                          Phonon::MediaSource(":/sounds/click.wav"));
@@ -172,15 +183,13 @@ namespace dtDirector
       mDirector = director;
 
       // Setup node scenes
-      CreateNodeScene(mUI.eventNodeTabWidget);
-      CreateNodeScene(mUI.actionNodeTabWidget);
-      CreateNodeScene(mUI.mutatorNodeTabWidget);
-      CreateNodeScene(mUI.variableNodeTabWidget);
-      CreateNodeScene(mUI.macroNodeTabWidget);
-      CreateNodeScene(mUI.linkNodeTabWidget);
-      CreateNodeScene(mUI.miscNodeTabWidget);
-      CreateNodeScene(mUI.searchNodeTabWidget);
-      CreateNodeScene(mUI.referenceNodeTabWidget);
+      mUI.eventNodeTabWidget->SetEditor(this);
+      mUI.actionNodeTabWidget->SetEditor(this);
+      mUI.mutatorNodeTabWidget->SetEditor(this);
+      mUI.variableNodeTabWidget->SetEditor(this);
+      mUI.macroNodeTabWidget->SetEditor(this);
+      mUI.linkNodeTabWidget->SetEditor(this);
+      mUI.miscNodeTabWidget->SetEditor(this);
       RefreshNodeScenes();
 
       mUI.graphTab->clear();
