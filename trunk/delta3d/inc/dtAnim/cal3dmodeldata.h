@@ -107,6 +107,9 @@ namespace dtAnim
       CalCoreModel* GetCoreModel();
       const CalCoreModel* GetCoreModel() const;
 
+      void SetScale(float scale);
+      float GetScale() const;
+
       AnimationWrapper* GetAnimationWrapperByName(const std::string& name);
       const AnimationWrapper* GetAnimationWrapperByName(const std::string& name) const;
 
@@ -288,7 +291,7 @@ namespace dtAnim
       Cal3DModelData& operator=(const Cal3DModelData&); //not implemented
 
    private:
-
+      float mScale;
       std::string mFilename;
       std::string mShaderName;
       std::string mShaderGroupName;

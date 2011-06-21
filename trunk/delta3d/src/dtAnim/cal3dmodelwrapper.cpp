@@ -59,7 +59,8 @@ namespace dtAnim
    // CLASS CODE
    /////////////////////////////////////////////////////////////////////////////
    Cal3DModelWrapper::Cal3DModelWrapper(CalModel* model)
-      : mCalModel(model)
+      : mScale(1.0f)
+      , mCalModel(model)
       , mRenderer(NULL)
       , mMixer(NULL)
       , mHardwareModel(NULL)
@@ -541,9 +542,37 @@ namespace dtAnim
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void Cal3DModelWrapper::ApplyCoreModelScaleFactor(float scaleFactor) const
+   void Cal3DModelWrapper::SetScale(float scale)
    {
-      mCalModel->getCoreModel()->scale(scaleFactor);
+      // Ensure scale never goes to 0, to prevent the NAN plague.
+      if(scale == 0.0f)
+      {
+         scale = 0.001f;
+      }
+
+      float prevScale = mScale;
+      mScale = scale;
+
+      // If the previous scale was not 1...
+      if(prevScale != 1.0f)
+      {
+         // ...reverse its effect by 1/prevScale and then apply the new scale.
+         scale = 1.0f/prevScale * scale;
+      }
+
+      mCalModel->getCoreModel()->scale(scale);
+   }
+   
+   /////////////////////////////////////////////////////////////////////////////
+   float Cal3DModelWrapper::GetScale() const
+   {
+      return mScale;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void Cal3DModelWrapper::ApplyCoreModelScaleFactor(float scaleFactor)
+   {
+      SetScale(mScale * scaleFactor);
    }
 
    /////////////////////////////////////////////////////////////////////////////

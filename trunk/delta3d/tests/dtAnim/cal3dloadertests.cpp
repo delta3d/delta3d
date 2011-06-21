@@ -220,6 +220,16 @@ namespace dtAnim
                   71U, modelData->GetShaderMaxBones());
             modelData->SetShaderMaxBones(72);
             CPPUNIT_ASSERT_EQUAL(72U, modelData->GetShaderMaxBones());
+
+            float errorTolerance = 0.001f;
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(1.0f, modelData->GetScale(), errorTolerance);
+            modelData->SetScale(0.5f);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(0.5f, modelData->GetScale(), errorTolerance);
+            modelData->SetScale(2.5f);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(2.5f, modelData->GetScale(), errorTolerance);
+            // --- Ensure setting 0 does not exactly result in 0, but rather a close-to-0 scale.
+            modelData->SetScale(0.0f);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(0.001f, modelData->GetScale(), errorTolerance);
          }
 
          // Helper Method

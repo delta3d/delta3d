@@ -600,7 +600,7 @@ namespace dtAnim
          std::string skelFile(GetAbsolutePath(path + handler->mSkeletonFilename));
          if (!skelFile.empty())
          {
-            dtCore::RefPtr<CalOptions> calOptions = new CalOptions(*coreModelData, handler->mSkeletonFilename);
+            dtCore::RefPtr<CalOptions> calOptions = new CalOptions(*coreModelData, "skeleton");
             dtCore::RefPtr<osgDB::ReaderWriter::Options> options = CalOptions::CreateOSGOptions(*calOptions);
             fileUtils.ReadObject(skelFile, options.get());
          }
@@ -1077,7 +1077,7 @@ namespace dtAnim
 
       if (handler.mFoundScale && modelData.GetCoreModel() != NULL)
       {
-         modelData.GetCoreModel()->scale(handler.mScale);
+         modelData.SetScale(handler.mScale);
       }
 
       // register animations

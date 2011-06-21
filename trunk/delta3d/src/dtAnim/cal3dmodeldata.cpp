@@ -40,7 +40,8 @@
  {
    ////////////////////////////////////////////////////////////////////////////////
    Cal3DModelData::Cal3DModelData(CalCoreModel* coreModel, const std::string& filename)
-      : mFilename(filename)
+      : mScale(1.0f)
+      , mFilename(filename)
       , mStride(-1)
       , mIndexArray(NULL)
       , mVertexArray(NULL)
@@ -116,6 +117,35 @@
    const CalCoreModel* Cal3DModelData::GetCoreModel() const
    {
       return mCoreModel;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void Cal3DModelData::SetScale(float scale)
+   {
+      // Ensure scale never goes to 0, to prevent the NAN plague.
+      if(scale == 0.0f)
+      {
+         scale = 0.001f;
+      }
+
+      float prevScale = mScale;
+      mScale = scale;
+
+      // If the previous scale was not 1...
+      if(prevScale != 1.0f)
+      {
+         // ...reverse its effect by 1/prevScale and then apply the new scale.
+         scale = 1.0f/prevScale * scale;
+      }
+
+      // Apply the final scale effect.
+      mCoreModel->scale(scale);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   float Cal3DModelData::GetScale() const
+   {
+      return mScale;  
    }
 
    ////////////////////////////////////////////////////////////////////////////////

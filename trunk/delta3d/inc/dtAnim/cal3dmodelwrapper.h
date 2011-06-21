@@ -242,11 +242,24 @@ namespace dtAnim
       osg::BoundingBox GetBoundingBox();
 
       /**
+       * Set the absolute scale relative to the underlying model's original scale.
+       * Setting a scale of 1 should have the effect of resetting the original model scale.
+       */
+      void SetScale(float scale);
+      float GetScale() const;
+
+      /**
        * Apply a scaling factor to the core model.  May need to rebuild
        * any local geometry after calling this.
-       * @param scaleFactor : amount to scale the character (2.0 = double the size)
+       * Subsequent calls to this method has a compounding effect, such that
+       * the scale for the current call is relative to the previous scale effect.
+       * For example, a previous scale of 2.0 followed by an applied scale of 0.5
+       * will result close to 1.0 of the original model scale. Due to float
+       * imprecision, multiple calls to this method will eventually make the final
+       * anticipated absolute scale have a greater margin of error.
+       * @param scaleFactor : amount to scale the character (2.0 = double the current size)
        */
-      void ApplyCoreModelScaleFactor(float scaleFactor) const;
+      void ApplyCoreModelScaleFactor(float scaleFactor);
 
       /************************************************************************/
       int GetFaces(CalIndex* faces);
@@ -341,6 +354,7 @@ namespace dtAnim
       virtual ~Cal3DModelWrapper();
 
    private:
+      float mScale;
       CalModel*    mCalModel;
       CalRenderer* mRenderer;
       CalMixer*    mMixer;
