@@ -53,6 +53,8 @@ namespace dtDirector
       EventNode::Init(nodeType, graph);
 
       mOutputs.clear();
+      mOutputs.push_back(OutputLink(this, "Down", "Activated when a button has been pushed down."));
+      mOutputs.push_back(OutputLink(this, "Up", "Activated when a button has been released."));
       mOutputs.push_back(OutputLink(this, "Clicked", "Activated when the GUI button has been clicked."));
       mOutputs.push_back(OutputLink(this, "Double Clicked", "Activated when the GUI button has been double clicked."));
       mOutputs.push_back(OutputLink(this, "Hover Enter", "Activated when the mouse has entered the bounds of the GUI button."));
@@ -159,29 +161,13 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void ButtonEvent::RefreshConnections()
    {
-      if (mClickedConnection.isValid())
-      {
-         mClickedConnection->disconnect();
-         mClickedConnection = NULL;
-      }
-
-      if (mDoubleClickedConnection.isValid())
-      {
-         mDoubleClickedConnection->disconnect();
-         mDoubleClickedConnection = NULL;
-      }
-
-      if (mEnterConnection.isValid())
-      {
-         mEnterConnection->disconnect();
-         mEnterConnection = NULL;
-      }
-
-      if (mLeaveConnection.isValid())
-      {
-         mLeaveConnection->disconnect();
-         mLeaveConnection = NULL;
-      }
+      DestroyConnection(mClickedConnection);
+      DestroyConnection(mDoubleClickedConnection);
+      DestroyConnection(mEnterConnection);
+      DestroyConnection(mLeaveConnection);
+      DestroyConnection(mClickedConnection);
+      DestroyConnection(mDownConnection);
+      DestroyConnection(mUpConnection);
 
       dtGUI::GUI* gui = GUINodeManager::GetGUI();
       if (gui)
@@ -202,6 +188,12 @@ namespace dtDirector
             mLeaveConnection = gui->SubscribeEvent(buttonName,
                CEGUI::Window::EventMouseLeaves.c_str(),
                dtGUI::GUI::Subscriber(&ButtonEvent::OnHoverLeave, this));
+            mDownConnection = gui->SubscribeEvent(buttonName,
+               CEGUI::Window::EventMouseButtonDown.c_str(),
+               dtGUI::GUI::Subscriber(&ButtonEvent::OnDown, this));
+            mUpConnection = gui->SubscribeEvent(buttonName,
+               CEGUI::Window::EventMouseButtonUp.c_str(),
+               dtGUI::GUI::Subscriber(&ButtonEvent::OnUp, this));
          }
       }
    }
@@ -326,5 +318,29 @@ namespace dtDirector
    {
       Trigger("Hover Leave", NULL, true, false);
       return true;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool ButtonEvent::OnDown(const CEGUI::EventArgs& e)
+   {
+      Trigger("Down", NULL, true, false);
+      return true;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool ButtonEvent::OnUp(const CEGUI::EventArgs& e)
+   {
+      Trigger("Up", NULL, true, false);
+      return true;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void ButtonEvent::DestroyConnection(CEGUI::Event::Connection& connection)
+   {
+      if (connection.isValid())
+      {
+         connection->disconnect();
+         connection = NULL;
+      }
    }
 }
