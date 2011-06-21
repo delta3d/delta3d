@@ -50,6 +50,7 @@ SET(LIB_PUBLIC_HEADERS ${HEADER_PATH}/actorarrayvalue.h
     ${HEADER_PATH}/lerpactorscaleaction.h
     ${HEADER_PATH}/lerpactortranslationaction.h
     ${HEADER_PATH}/logaction.h
+    ${HEADER_PATH}/loopaction.h
     ${HEADER_PATH}/mousepressevent.h
     ${HEADER_PATH}/multiplymutator.h
     ${HEADER_PATH}/nodelibraryexport.h
@@ -139,6 +140,7 @@ SET(LIB_SOURCES ${SOURCE_PATH}/actorarrayvalue.cpp
     ${SOURCE_PATH}/lerpactorscaleaction.cpp
     ${SOURCE_PATH}/lerpactortranslationaction.cpp
     ${SOURCE_PATH}/logaction.cpp
+    ${SOURCE_PATH}/loopaction.cpp
     ${SOURCE_PATH}/mousepressevent.cpp
     ${SOURCE_PATH}/multiplymutator.cpp
     ${SOURCE_PATH}/nodelibraryregistry.cpp
