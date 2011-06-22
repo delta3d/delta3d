@@ -379,12 +379,14 @@ namespace dtDirector
    {
       // Make sure the category tab exists.
       NodeScene* scene = NULL;
+      QGraphicsView* view = NULL;
+
       int tabCount = count();
       for (int tabIndex = 0; tabIndex < tabCount; ++tabIndex)
       {
          if (itemText(tabIndex).toStdString() == "Base")
          {
-            QGraphicsView* view = dynamic_cast<QGraphicsView*>(widget(tabIndex));
+            view = dynamic_cast<QGraphicsView*>(widget(tabIndex));
             if (view)
             {
                scene = dynamic_cast<NodeScene*>(view->scene());
@@ -396,7 +398,7 @@ namespace dtDirector
       if (!scene)
       {
          scene = new NodeScene(mpEditor, mpGraph);
-         QGraphicsView* view = new QGraphicsView(scene);
+         view = new QGraphicsView(scene);
          connect(scene, SIGNAL(CreateNode(const QString&, const QString&, const QString&)),
             this, SIGNAL(CreateNode(const QString&, const QString&, const QString&)));
          view->setScene(scene);
@@ -409,6 +411,8 @@ namespace dtDirector
       {
          scene->CreateMacro(editor);
       }
+
+      scene->CenterNodes(view);
 
       layout()->setSpacing(0);
    }

@@ -160,7 +160,7 @@ namespace dtDirector
        *
        * @return  The type of this node.
        */
-      const NodeType& GetType();
+      const NodeType& GetType() const;
 
       /**
        * Retrieves the ID of the node.
@@ -193,7 +193,7 @@ namespace dtDirector
        *
        * @return  The description of the node.
        */
-      const std::string& GetTypeName();
+      const std::string& GetTypeName() const;
 
       /**
        * Retrieves the description for the node.
