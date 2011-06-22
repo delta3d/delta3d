@@ -101,8 +101,9 @@ namespace dtDirector
          }
          catch(CEGUI::Exception& e)
          {
-            dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__,
-               "CEGUI::%s", e.getMessage().c_str() );
+            dtUtil::Log::GetInstance().LogMessage(DT_LOG_SOURCE, 
+               "CEGUI::" + std::string(e.getMessage().c_str()),
+               dtUtil::Log::LOG_WARNING);
          }
       }
 
