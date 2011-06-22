@@ -69,21 +69,33 @@ namespace dtDirector
        *
        * @return     True if the current node should remain active.
        */
-      virtual bool Update(float simDelta, float delta, int input, bool firstUpdate);     
+      virtual bool Update(float simDelta, float delta, int input, bool firstUpdate);
 
+      /**
+       * Gets the number of seconds per cycle
+       * @return Number of seconds.
+       */
       float GetLoopPeriod() const;
 
+      /**
+       * Sets the number of seconds per cycle
+       * @param[in]  secondsPerCycle  Number of seconds.
+       */
       void SetLoopPeriod(float secondsPerCycle);
 
    protected:
 
       ~LoopAction();
 
+      float GetDeltaTime() const;
+      void SetDeltaTime(float delta);
+
    private:
 
       bool mIsLooping;
       float mLoopPeriod;
       float mLoopTimeElapsed;
+      float mDeltaTime;
 
    };
 }

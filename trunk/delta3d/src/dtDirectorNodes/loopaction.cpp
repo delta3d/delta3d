@@ -39,6 +39,7 @@ namespace dtDirector
       , mIsLooping(false)
       , mLoopPeriod(0.0f)
       , mLoopTimeElapsed(0.0f)
+      , mDeltaTime(0.0f)
    {
       AddAuthor("MG");
    }
@@ -73,10 +74,18 @@ namespace dtDirector
          "Sets the number of seconds per cycle", "");
       AddProperty(periodProp);
 
+      dtDAL::FloatActorProperty* deltaProp = new dtDAL::FloatActorProperty(
+         "DeltaTime", "Time Delta",
+         dtDAL::FloatActorProperty::SetFuncType(this, &LoopAction::SetDeltaTime),
+         dtDAL::FloatActorProperty::GetFuncType(this, &LoopAction::GetDeltaTime),
+         "Time in seconds since last update.", "");
+      AddProperty(deltaProp);
+
 
       // This will expose the properties in the editor and allow
       // them to be connected to ValueNodes.
       mValues.push_back(ValueLink(this, periodProp, false, false, true, false));
+      mValues.push_back(ValueLink(this, deltaProp, true, false, true, false));
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -89,6 +98,7 @@ namespace dtDirector
             mIsLooping = true;
             mLoopTimeElapsed = 0.0f;
 
+            SetFloat(simDelta, "DeltaTime");
             ActivateOutput("Cycle");
          }
          else // input == INPUT_STOP
@@ -105,6 +115,8 @@ namespace dtDirector
             if (mLoopTimeElapsed > mLoopPeriod)
             {
                mLoopTimeElapsed -= mLoopPeriod;
+
+               SetFloat(simDelta, "DeltaTime");
                ActivateOutput("Cycle");
             }
          }
@@ -125,6 +137,20 @@ namespace dtDirector
    {
       mLoopPeriod = secondsPerCycle;
    }
+
+
+   ////////////////////////////////////////////////////////////////////////////////
+   float LoopAction::GetDeltaTime() const
+   {
+      return mDeltaTime;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void LoopAction::SetDeltaTime(float delta)
+   {
+      mDeltaTime = delta;
+   }
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////
