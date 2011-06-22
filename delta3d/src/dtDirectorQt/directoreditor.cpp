@@ -191,6 +191,7 @@ namespace dtDirector
       mUI.linkNodeTabWidget->SetEditor(this);
       mUI.miscNodeTabWidget->SetEditor(this);
       mUI.referenceNodeTabWidget->SetEditor(this);
+      mUI.searchNodeTabWidget->SetEditor(this);
       RefreshNodeScenes();
 
       mUI.graphTab->clear();

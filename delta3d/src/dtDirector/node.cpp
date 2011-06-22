@@ -211,7 +211,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   const NodeType& Node::GetType()
+   const NodeType& Node::GetType() const
    {
       return *mType;
    }
@@ -235,7 +235,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   const std::string& Node::GetTypeName()
+   const std::string& Node::GetTypeName() const
    {
       return GetType().GetName();
    }
