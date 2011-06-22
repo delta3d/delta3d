@@ -46,6 +46,7 @@
 #include <dtDirectorNodes/getvectorvaluesaction.h>
 #include <dtDirectorNodes/normalizevectoraction.h>
 #include <dtDirectorNodes/getapplicationconfigpropertyaction.h>
+#include <dtDirectorNodes/getactoraction.h>
 #include <dtDirectorNodes/getactorpropertyaction.h>
 #include <dtDirectorNodes/setactorpropertyaction.h>
 #include <dtDirectorNodes/operationaction.h>
@@ -155,6 +156,7 @@ namespace dtDirector
    RefPtr<NodeType> NodeLibraryRegistry::SWITCH_ACTION_NODE_TYPE(                new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Switch",                    "General",     "Base",        "Fires outputs in sequence based on the number of inputs received.", NULL, Colors::BLUE));
 
    RefPtr<NodeType> NodeLibraryRegistry::GET_APP_CONFIG_PROPERTY_ACTION_NODE_TYPE(new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Get Application Config Property", "General", "Access", "Retrieves a config property value from an application's config file.", NULL, Colors::BLUE));
+   RefPtr<NodeType> NodeLibraryRegistry::GET_ACTOR_ACTION_NODE_TYPE(              new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Get Actor",                       "General", "Access", "Retrieves the actor with the given name from the GameManager.", NULL, Colors::BLUE));
    RefPtr<NodeType> NodeLibraryRegistry::GET_ACTOR_PROPERTY_ACTION_NODE_TYPE(     new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Get Actor Property",              "General", "Access", "Retrieves the value of a property from an actor.", NULL, Colors::BLUE));
    RefPtr<NodeType> NodeLibraryRegistry::GET_ACTOR_ORIENTATION_ACTION(            new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Get Actor Orientation",           "General", "Access", "Retrieves the orientation vectors of an actor.", NULL, Colors::BLUE));
    RefPtr<NodeType> NodeLibraryRegistry::GET_VECTOR_VALUES_ACTION_NODE_TYPE(      new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Get Vector Values",               "General", "Access", "Extracts the values in a vector to individual parts.", NULL, Colors::BLUE));
@@ -283,6 +285,7 @@ namespace dtDirector
       mNodeFactory->RegisterType<SwitchAction>(SWITCH_ACTION_NODE_TYPE.get());
 
       mNodeFactory->RegisterType<GetApplicationConfigPropertyAction>(GET_APP_CONFIG_PROPERTY_ACTION_NODE_TYPE.get());
+      mNodeFactory->RegisterType<GetActorAction>(GET_ACTOR_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<GetActorPropertyAction>(GET_ACTOR_PROPERTY_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<GetActorOrientationAction>(GET_ACTOR_ORIENTATION_ACTION.get());
       mNodeFactory->RegisterType<GetVectorValuesAction>(GET_VECTOR_VALUES_ACTION_NODE_TYPE.get());

@@ -53,6 +53,7 @@ namespace dtDirector
       static dtCore::RefPtr<dtDirector::NodeType> SWITCH_ACTION_NODE_TYPE;
 
       static dtCore::RefPtr<dtDirector::NodeType> GET_APP_CONFIG_PROPERTY_ACTION_NODE_TYPE;
+      static dtCore::RefPtr<dtDirector::NodeType> GET_ACTOR_ACTION_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> GET_ACTOR_PROPERTY_ACTION_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> GET_ACTOR_ORIENTATION_ACTION;
       static dtCore::RefPtr<dtDirector::NodeType> GET_VECTOR_VALUES_ACTION_NODE_TYPE;
