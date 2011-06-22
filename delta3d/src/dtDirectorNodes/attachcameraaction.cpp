@@ -33,9 +33,12 @@
 
 namespace dtDirector
 {
+   DT_IMPLEMENT_ACCESSOR(AttachCameraAction, osg::Vec3, Offset);
+
    /////////////////////////////////////////////////////////////////////////////
    AttachCameraAction::AttachCameraAction()
       : ActionNode()
+      , mOffset(0.f, 0.f, 0.f)
    {
       mActor = "";
 
@@ -70,6 +73,21 @@ namespace dtDirector
       // This will expose the properties in the editor and allow
       // them to be connected to ValueNodes.
       mValues.push_back(ValueLink(this, actorProp));
+
+      {
+         dtDAL::Vec3ActorProperty* offsetProp = new dtDAL::Vec3ActorProperty(
+            "Offset", "Parent Offset",
+            dtDAL::Vec3ActorProperty::SetFuncType(this, &AttachCameraAction::SetOffset),
+            dtDAL::Vec3ActorProperty::GetFuncType(this, &AttachCameraAction::GetOffset),
+            "Translational offset from the parent actor.", "");
+         AddProperty(offsetProp);
+
+         ValueLink link(this, offsetProp);
+         link.SetComment("Supply a translational offset value from the parent actor to the camera");
+
+         mValues.push_back(link);
+      }
+
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -91,6 +109,11 @@ namespace dtDirector
                parent->RemoveChild(camera);
             }
             actor->AddChild(camera);
+            
+            dtCore::Transform offset;
+
+            offset.SetTranslation(GetVec3("Offset"));
+            camera->SetTransform(offset, dtCore::Transformable::REL_CS);
             return ActionNode::Update(simDelta, delta, input, firstUpdate);
          }
       }
