@@ -20,12 +20,13 @@
  */
 
 #include <prefix/dtdalprefix.h>
-
+#include <dtDAL/datatype.h>
 #include <dtDAL/namedarrayparameter.h>
-
+#include <dtDAL/exceptionenum.h>
 #include <dtDAL/arrayactorproperty.h>
 #include <dtUtil/mathdefines.h>
-
+#include <dtUtil/datastream.h>
+#include <dtUtil/stringutils.h>
 namespace dtDAL
 {
    ///////////////////////////////////////////////////////////////////////////////
