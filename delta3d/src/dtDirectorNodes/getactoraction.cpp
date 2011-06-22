@@ -80,7 +80,8 @@ namespace dtDirector
 
       if (base)
       {
-         SetActor(base->GetId());
+         // Call director's set actor which will give precedence to links
+         SetActorID(base->GetId(), "Actor");
 
          // Fire the "out"
          ActionNode::Update(simDelta, delta, input, firstUpdate);
