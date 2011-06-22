@@ -26,6 +26,7 @@
 
 #include <dtDirector/actionnode.h>
 #include <dtDirectorNodes/nodelibraryexport.h>
+#include <dtUtil/getsetmacros.h>
 
 namespace dtDirector
 {
@@ -78,6 +79,11 @@ namespace dtDirector
        */
       void SetCurrentActor(const dtCore::UniqueId& value);
       dtCore::UniqueId GetCurrentActor();
+
+      /** Get or set the translational offset from the parent actor to the 
+        * attached camera.
+        */
+      DT_DECLARE_ACCESSOR(osg::Vec3, Offset);
 
    protected:
 
