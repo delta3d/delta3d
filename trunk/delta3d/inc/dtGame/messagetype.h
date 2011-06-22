@@ -25,7 +25,6 @@
 #include <string>
 #include <dtUtil/enumeration.h>
 #include <dtUtil/typetraits.h>
-#include <dtDAL/typetoactorproperty.h>
 #include <dtGame/export.h>
 #include <dtGame/messagefactory.h>
 

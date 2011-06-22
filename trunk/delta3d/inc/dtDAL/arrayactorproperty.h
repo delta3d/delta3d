@@ -27,8 +27,6 @@
 #include <dtUtil/functor.h>
 #include <dtUtil/log.h>
 
-#include <dtDAL/typetoactorproperty.h>
-
 #include <string>
 #include <vector>
 
