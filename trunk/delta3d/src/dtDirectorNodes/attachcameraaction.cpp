@@ -28,7 +28,7 @@
 #include <dtCore/transform.h>
 
 #include <dtDAL/actoridactorproperty.h>
-
+#include <dtDAL/vectoractorproperties.h>
 #include <dtDirector/director.h>
 
 namespace dtDirector

@@ -21,9 +21,9 @@
 #include <prefix/dtdirectornodesprefix.h>
 #include <dtDirectorNodes/loopaction.h>
 
-
 #include <dtDirector/director.h>
 
+#include <dtDAL/floatactorproperty.h>
 
 namespace dtDirector
 {
