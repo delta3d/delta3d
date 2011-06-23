@@ -1071,6 +1071,7 @@ namespace dtDirector
 
          connect(dcMenu, SIGNAL(triggered(QAction*)), this, SLOT(Disconnect(QAction*)));
 
+         menu.addSeparator();
          QAction* toggleImmediate = NULL;
          if (output->GetImmediate())
          {
