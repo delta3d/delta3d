@@ -60,7 +60,7 @@ namespace dtDirector
       mInputs.push_back(InputLink(this, "Stop", "Make the Cycle stop firing."));
 
       mOutputs.clear();
-      mOutputs.push_back(OutputLink(this, "Cycle", "Activates when the time elapsed is greater than the period."));
+      mOutputs.push_back(OutputLink(this, "Cycle", "Activates when the time elapsed is greater than the period.", true));
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -101,9 +101,11 @@ namespace dtDirector
 
             SetFloat(simDelta, "DeltaTime");
 
+            bool immediate = GetOutputLink("Cycle")->GetImmediate();
+
             // Put this on the stack so it will finish
             // execution of its chain before we continue
-            GetDirector()->PushStack(this, INPUT_FIRE_CYCLE);
+            GetDirector()->PushStack(this, INPUT_FIRE_CYCLE, immediate);
          }
          else if (input == INPUT_STOP)
          {
