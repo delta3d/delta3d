@@ -48,8 +48,14 @@ namespace dtDirector
 
       /**
        * Constructs the link.
+       *
+       * @param[in]  owner      The owner of the link.
+       * @param[in]  name       The name of the link.
+       * @param[in]  comment    The optional link comment.
+       * @param[in]  immediate  If true, this link will execute the rest of
+       *                        the chain immediately in a single update.
        */
-      OutputLink(Node* owner, const std::string& name = "Out", const std::string& comment = "");
+      OutputLink(Node* owner, const std::string& name = "Out", const std::string& comment = "", bool immediate = false);
 
       /**
        * Destructor.
@@ -118,6 +124,20 @@ namespace dtDirector
       const std::string& GetComment() const;
 
       /**
+       * Sets this output to execute immediately.
+       *
+       * @param[in]  enabled  True to enable immediate mode.
+       */
+      void SetImmediate(bool enabled);
+
+      /**
+       * Retrieves whether this output should execute immediately.
+       *
+       * @return  True if this link is immediate.
+       */
+      bool GetImmediate() const;
+
+      /**
        * Accessors for the visible status of the link.
        */
       void SetVisible(bool visible) {mVisible = visible;}
@@ -160,6 +180,7 @@ namespace dtDirector
 
       std::string  mName;
       std::string  mComment;
+      bool         mImmediate;
       bool         mVisible;
 
       int          mActiveCount;

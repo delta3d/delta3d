@@ -824,6 +824,24 @@ namespace dtDirector
       mScene->Refresh();
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   void OutputLinkItem::ToggleImmediateMode()
+   {
+      OutputLink* output = mNodeItem->GetOutputs()[mLinkIndex].link;
+      if (!output) return;
+
+      output->SetImmediate(!output->GetImmediate());
+
+      if (output->GetImmediate())
+      {
+         setBrush(Qt::red);
+      }
+      else
+      {
+         setBrush(mLinkGraphicPen.color());
+      }
+   }
+
    //////////////////////////////////////////////////////////////////////////
    void OutputLinkItem::hoverEnterEvent(QGraphicsSceneHoverEvent* event)
    {
@@ -1052,6 +1070,17 @@ namespace dtDirector
          }
 
          connect(dcMenu, SIGNAL(triggered(QAction*)), this, SLOT(Disconnect(QAction*)));
+
+         QAction* toggleImmediate = NULL;
+         if (output->GetImmediate())
+         {
+            toggleImmediate = menu.addAction("Immediate Mode Off");
+         }
+         else
+         {
+            toggleImmediate = menu.addAction("Immediate Mode On");
+         }
+         connect(toggleImmediate, SIGNAL(triggered()), this, SLOT(ToggleImmediateMode()));
 
          menu.exec(event->screenPos());
          return;

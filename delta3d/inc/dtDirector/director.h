@@ -290,10 +290,11 @@ namespace dtDirector
       /**
        * Pushes a new item to the thread stack.
        *
-       * @param[in]  node   The new stacks starting node.
-       * @param[in]  index  The new stacks started input.
+       * @param[in]  node       The new stacks starting node.
+       * @param[in]  index      The new stacks started input.
+       * @param[in]  immediate  True to execute the full chain immediately.
        */
-      void PushStack(Node* node, int index);
+      void PushStack(Node* node, int index, bool immediate = false);
 
       /**
        * Retrieves whether there are any active threads running.
@@ -690,6 +691,7 @@ namespace dtDirector
          Node* node;
          int   input;
          bool  isStack;
+         bool  immediate;
       };
 
       // Thread stacks.
@@ -698,6 +700,8 @@ namespace dtDirector
          dtCore::ObserverPtr<Node> node;
          int   index;
          bool  first;
+         bool  finished;
+         bool  immediate;
 
          std::vector<ThreadData> subThreads;
          int currentThread;
@@ -712,6 +716,8 @@ namespace dtDirector
       };
 
       // Thread Data.
+      bool mImmediateMode;
+
       std::vector<ThreadData> mThreads;
       int mCurrentThread;
 

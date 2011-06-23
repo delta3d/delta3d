@@ -28,9 +28,10 @@
 namespace dtDirector
 {
    ///////////////////////////////////////////////////////////////////////////////////////
-   OutputLink::OutputLink(Node* owner, const std::string& name, const std::string& comment)
+   OutputLink::OutputLink(Node* owner, const std::string& name, const std::string& comment, bool immediate)
       : mName(name)
       , mComment(comment)
+      , mImmediate(immediate)
       , mVisible(true)
       , mActiveCount(0)
       , mOwner(owner)
@@ -50,6 +51,7 @@ namespace dtDirector
    {
       mName = src.mName;
       mComment = src.mComment;
+      mImmediate = src.mImmediate;
       mVisible = src.mVisible;
       mActiveCount = src.mActiveCount;
       mOwner = src.mOwner;
@@ -66,6 +68,7 @@ namespace dtDirector
 
       mName = src.mName;
       mComment = src.mComment;
+      mImmediate = src.mImmediate;
       mVisible = src.mVisible;
       mActiveCount = src.mActiveCount;
       mOwner = src.mOwner;
@@ -103,6 +106,18 @@ namespace dtDirector
    const std::string& OutputLink::GetComment() const
    {
       return mComment;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void OutputLink::SetImmediate(bool enabled)
+   {
+      mImmediate = enabled;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool OutputLink::GetImmediate() const
+   {
+      return mImmediate;
    }
 
    //////////////////////////////////////////////////////////////////////////

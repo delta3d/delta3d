@@ -567,7 +567,14 @@ namespace dtDirector
          // Create the link graphic.
          data.linkGraphic->setPolygon(poly);
          data.linkGraphic->setPen(GetNodeColor());
-         data.linkGraphic->setBrush(GetNodeColor());
+         if (!data.link->GetImmediate())
+         {
+            data.linkGraphic->setBrush(GetNodeColor());
+         }
+         else
+         {
+            data.linkGraphic->setBrush(Qt::red);
+         }
          data.linkGraphic->SetPenColor(GetNodeColor());
 
 
