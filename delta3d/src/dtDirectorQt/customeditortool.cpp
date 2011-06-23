@@ -60,7 +60,10 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void CustomEditorTool::Open(DirectorEditor* editor, DirectorGraph* graph)
    {
-      Close();
+      if (mIsOpen)
+      {
+         Close();
+      }
 
       mEditor = editor;
       mGraph = graph;
@@ -381,9 +384,9 @@ namespace dtDirector
                }
 
                // Update the max row height if needed.
-               if (offset > mRowHeight)
+               if (chainedPos.y() + offset > mRowHeight)
                {
-                  mRowHeight = offset;
+                  mRowHeight = chainedPos.y() + offset;
                }
             }
          }
@@ -426,6 +429,12 @@ namespace dtDirector
          return false;
       }
 
+      if (!valueLink->GetVisible() || !valueLink->GetExposed())
+      {
+         valueLink->SetExposed(true);
+         valueLink->SetVisible(true);
+      }
+
       bool result = valueLink->Connect(dynamic_cast<dtDirector::ValueNode*>(valueNode));
 
       // Find out if this chained node is already mapped.
@@ -444,12 +453,18 @@ namespace dtDirector
 
       // Position the value node beneath the node.
       osg::Vec2 pos = node->GetPosition();
-      valueNode->SetPosition(pos + osg::Vec2(offset, 200));
+      valueNode->SetPosition(pos + osg::Vec2(offset + 10, 200));
 
-      offset += 65;
+      offset += 80;
       if (iter != mChainedNodeMap.end())
       {
          iter->second.x() = offset;
+      }
+
+      // Update the max row height if needed.
+      if (pos.y() + 350 > mRowHeight)
+      {
+         mRowHeight = pos.y() + 350;
       }
 
       return result;
