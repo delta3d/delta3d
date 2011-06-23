@@ -19,7 +19,7 @@
     <xsd:sequence>
       <xsd:element name="header"      type="HeaderType"/>
       <xsd:element name="libraries"   type="LibrariesType"/>
-	    <xsd:element name="graph"       type="GraphType"/>
+      <xsd:element name="graph"       type="GraphType"/>
     </xsd:sequence>
   </xsd:complexType>
 
@@ -54,45 +54,46 @@
       <xsd:element name="eventnodes"  type="NodeType"/>
       <xsd:element name="actionnodes" type="NodeType"/>
       <xsd:element name="valuenodes"  type="NodeType"/>      
-	    <xsd:element name="graph"       minOccurs="0" maxOccurs="unbounded" type="GraphType"/>
+      <xsd:element name="graph"       minOccurs="0" maxOccurs="unbounded" type="GraphType"/>
     </xsd:sequence>
   </xsd:complexType>
 
   <xsd:complexType name="NodeType">
     <xsd:sequence>
-	    <xsd:element name="node" minOccurs="0" maxOccurs="unbounded">
-       <xsd:complexType>
-		    <xsd:sequence>
-		      <xsd:element name="name"      type="xsd:string"/>
-			    <xsd:element name="category"  type="xsd:string"/>
-			    <xsd:element name="id"        type="xsd:string"/>
-          <xsd:element name="property"   minOccurs="0" maxOccurs="unbounded" type="PropertyType"/>
-			    <xsd:element name="inputlink"  minOccurs="0" maxOccurs="unbounded" type="LinkType"/>
-			    <xsd:element name="outputlink" minOccurs="0" maxOccurs="unbounded" type="LinkType"/>
-			    <xsd:element name="valuelink"  minOccurs="0" maxOccurs="unbounded" type="LinkType"/>
-		    </xsd:sequence>
-		   </xsd:complexType>
-	    </xsd:element>
-	  </xsd:sequence>
+      <xsd:element name="node" minOccurs="0" maxOccurs="unbounded">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="name"      type="xsd:string"/>
+            <xsd:element name="category"  type="xsd:string"/>
+            <xsd:element name="id"        type="xsd:string"/>
+            <xsd:element name="property"   minOccurs="0" maxOccurs="unbounded" type="PropertyType"/>
+            <xsd:element name="inputlink"  minOccurs="0" maxOccurs="unbounded" type="LinkType"/>
+            <xsd:element name="outputlink" minOccurs="0" maxOccurs="unbounded" type="LinkType"/>
+            <xsd:element name="valuelink"  minOccurs="0" maxOccurs="unbounded" type="LinkType"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:sequence>
   </xsd:complexType>
   
   <xsd:complexType name="LinkType">
     <xsd:sequence>
-	    <xsd:element name="name"          type="xsd:string"/>
-      <xsd:element name="visible"       type="xsd:boolean"/>
+      <xsd:element name="name"          type="xsd:string"/>
+      <xsd:element name="immediate"     minOccurs="0" maxOccurs="1" type="xsd:boolean"/>
+      <xsd:element name="visible"       minOccurs="0" maxOccurs="1" type="xsd:boolean"/>
       <xsd:element name="exposed"       minOccurs="0" maxOccurs="1" type="xsd:boolean"/>
       <xsd:element name="isout"         minOccurs="0" maxOccurs="1" type="xsd:boolean"/>
-	    <xsd:element name="allowmultiple" minOccurs="0" maxOccurs="1" type="xsd:boolean"/>
-	    <xsd:element name="typecheck"     minOccurs="0" maxOccurs="1" type="xsd:boolean"/>
-	    <xsd:element name="link"          minOccurs="0" maxOccurs="unbounded">
-	      <xsd:complexType>
-	        <xsd:sequence>
+      <xsd:element name="allowmultiple" minOccurs="0" maxOccurs="1" type="xsd:boolean"/>
+      <xsd:element name="typecheck"     minOccurs="0" maxOccurs="1" type="xsd:boolean"/>
+      <xsd:element name="link"          minOccurs="0" maxOccurs="unbounded">
+        <xsd:complexType>
+          <xsd:sequence>
             <xsd:element name="id"   type="xsd:string"/>
-		        <xsd:element name="name" minOccurs="0" maxOccurs="1" type="xsd:string"/>
-		      </xsd:sequence>
-	      </xsd:complexType>
-	    </xsd:element>
-	  </xsd:sequence>
+            <xsd:element name="name" minOccurs="0" maxOccurs="1" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:sequence>
   </xsd:complexType>
   
   <xsd:complexType name="PropertyType">
@@ -149,11 +150,11 @@
     </xsd:sequence>
   </xsd:complexType>
 
-   <xsd:complexType name="ContainerType">
-      <xsd:sequence>
-         <xsd:element name="property" minOccurs="0" maxOccurs="unbounded" type="PropertyType"/>
-      </xsd:sequence>
-   </xsd:complexType>
+  <xsd:complexType name="ContainerType">
+     <xsd:sequence>
+        <xsd:element name="property" minOccurs="0" maxOccurs="unbounded" type="PropertyType"/>
+     </xsd:sequence>
+  </xsd:complexType>
 
   <xsd:complexType name="GroupType">
     <xsd:sequence>

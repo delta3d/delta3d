@@ -95,6 +95,7 @@ namespace dtDAL
          static XMLCh* DIRECTOR_LINKS_VALUE_ELEMENT;
          static XMLCh* DIRECTOR_LINK_ELEMENT;
          
+         static XMLCh* DIRECTOR_LINK_IMMEDIATE_ELEMENT;
          static XMLCh* DIRECTOR_LINK_VISIBLE_ELEMENT;
          static XMLCh* DIRECTOR_LINK_EXPOSED_ELEMENT;
          static XMLCh* DIRECTOR_LINK_VALUE_IS_OUT_ELEMENT;

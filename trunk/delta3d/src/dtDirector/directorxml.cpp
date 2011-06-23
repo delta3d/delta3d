@@ -472,6 +472,13 @@ namespace dtDirector
                }
                EndElement(); // End Link Name.
 
+               // Immediate
+               BeginElement(dtDAL::MapXMLConstants::DIRECTOR_LINK_IMMEDIATE_ELEMENT);
+               {
+                  AddCharacters(output.GetImmediate()? "true": "false");
+               }
+               EndElement(); // End Immediate.
+
                // Visibility
                BeginElement(dtDAL::MapXMLConstants::DIRECTOR_LINK_VISIBLE_ELEMENT);
                {
