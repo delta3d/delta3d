@@ -108,7 +108,6 @@ namespace dtDirector
       dtCore::RefPtr<dtDAL::ActorIDActorProperty> mActorProp;
 
       std::vector<dtCore::UniqueId> mFoundActors;
-      int                           mCurrentIndex;
    };
 }
 
