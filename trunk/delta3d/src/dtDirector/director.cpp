@@ -56,7 +56,8 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    //////////////////////////////////////////////////////////////////////////
    Director::Director()
-      : mCurrentThread(-1)
+      : mImmediateMode(false)
+      , mCurrentThread(-1)
       , mQueueingThreads(false)
       , mRecording(false)
       , mRecordTime(0.0f)
@@ -490,6 +491,7 @@ namespace dtDirector
          queue.node = node;
          queue.input = index;
          queue.isStack = false;
+         queue.immediate = immediate;
 
          if (reverseQueue)
          {
@@ -524,6 +526,8 @@ namespace dtDirector
             {
                s.node = node;
                s.index = index;
+               s.first = true;
+               s.finished = false;
                return;
             }
          }
@@ -537,6 +541,8 @@ namespace dtDirector
       stack.node = node;
       stack.index = index;
       stack.first = true;
+      stack.finished = false;
+      stack.immediate = immediate;
       stack.currentThread = -1;
 
       data.recordThread = NULL;
@@ -564,8 +570,9 @@ namespace dtDirector
       data.stack.push_back(stack);
       threadList->push_back(data);
 
-      if (mStarted && immediate && *curThread == -1)
+      if (mStarted && immediate && !mImmediateMode && *curThread == -1)
       {
+         mImmediateMode = true;
          *curThread = threadList->size() - 1;
 
          bool continued = false;
@@ -602,11 +609,13 @@ namespace dtDirector
          while (continued);
 
          *curThread = -1;
+
+         mImmediateMode = false;
       }
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void Director::PushStack(Node* node, int index)
+   void Director::PushStack(Node* node, int index, bool immediate)
    {
       // Always push stacks on the proxy director if able.
       if (GetParent())
@@ -623,6 +632,7 @@ namespace dtDirector
          queue.node = node;
          queue.input = index;
          queue.isStack = true;
+         queue.immediate = immediate;
          mThreadQueue.push_back(queue);
          return;
       }
@@ -631,6 +641,8 @@ namespace dtDirector
       stack.node = node;
       stack.index = index;
       stack.first = true;
+      stack.finished = false;
+      stack.immediate = immediate;
       stack.currentThread = -1;
 
       std::vector<ThreadData>* threadList = &mThreads;
@@ -642,15 +654,54 @@ namespace dtDirector
          if (t.stack[t.stack.size()-1].currentThread == -1)
          {
             t.stack.push_back(stack);
-            return;
+
+            break;
          }
-         else if (!t.stack.empty())
+         else
          {
             StackData& s = t.stack[t.stack.size()-1];
             curThread = s.currentThread;
             threadList = &s.subThreads;
          }
-         else break;
+      }
+
+      if (curThread > -1 && mStarted && immediate && !mImmediateMode)
+      {
+         mImmediateMode = true;
+         bool continued = false;
+
+         do
+         {
+            continued = false;
+
+            if (mNotifier.valid())
+            {
+               mNotifier->Update(!(mDebugging && !mShouldStep));
+            }
+
+            continued |= UpdateThread((*threadList)[curThread], 0.0f, 0.0f);
+
+            // If this thread has no more stacks in its thread, we can
+            // remove it.
+            if (!(*threadList)[curThread].stack.empty())
+            {
+               CleanThread((*threadList)[curThread].stack.back());
+            }
+            else
+            {
+               threadList->erase(threadList->begin() + curThread);
+            }
+
+            if (mNotifier.valid() && mShouldStep)
+            {
+               mNotifier->OnStepDebugging();
+            }
+
+            mShouldStep = false;
+         }
+         while (continued);
+
+         mImmediateMode = false;
       }
    }
 
@@ -1101,7 +1152,7 @@ namespace dtDirector
 
       // Threads always update the first item in the stack,
       // all other stack items are "sleeping".
-      if ((!IsDebugging() || mShouldStep) && stack.node.valid())
+      if ((!IsDebugging() || mShouldStep) && stack.node.valid() && !stack.finished)
       {
          Node* currentNode = stack.node.get();
          int   input       = stack.index;
@@ -1113,7 +1164,7 @@ namespace dtDirector
          // new thread will be a continuation of the current active thread.
          mQueueingThreads = true;
          bool isLatentNode = currentNode->Update(simDelta, delta, input, first);
-         continued = !isLatentNode;
+         stack.finished = continued = !isLatentNode;
 
          // If we are just starting this action node and it is latent,
          // register this node for messages.
@@ -1173,7 +1224,7 @@ namespace dtDirector
                   if (inputIndex < inputCount)
                   {
                      // Create a new thread.
-                     BeginThread(input->GetOwner(), inputIndex, false, true);
+                     BeginThread(input->GetOwner(), inputIndex, output->GetImmediate(), true);
                   }
                }
             }
@@ -1183,26 +1234,34 @@ namespace dtDirector
 
          // Process our queued threads.
          mQueueingThreads = false;
-         int count = (int)mThreadQueue.size();
+
+         // We need to store a temporary copy of the current thread queue
+         // and clear the global copy because during the execution of 
+         // the queue there is a chance that other threads created during
+         // this process will cause other queues to happen, and we don't
+         // want these separate queues to conflict with each other.
+         std::vector<ThreadQueue> threadQueue = mThreadQueue;
+         mThreadQueue.clear();
+
+         int count = (int)threadQueue.size();
          for (int index = 0; index < count; index++)
          {
-            ThreadQueue& queue = mThreadQueue[index];
+            ThreadQueue& queue = threadQueue[index];
 
             if (queue.isStack)
             {
-               PushStack(queue.node, queue.input);
+               PushStack(queue.node, queue.input, queue.immediate);
             }
             else
             {
-               BeginThread(queue.node, queue.input);
+               BeginThread(queue.node, queue.input, queue.immediate);
             }
          }
-         mThreadQueue.clear();
 
          // If the current node is not latent, then
          // we can clear the node referenced by this
          // thread.
-         if (!isLatentNode)
+         if (data.stack[stackIndex].finished)
          {
             data.stack[stackIndex].node = NULL;
          }
