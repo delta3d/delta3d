@@ -340,7 +340,12 @@ namespace dtDirector
       dtDAL::ActorProperty* prop = GetDefaultProperty();
       if (prop)
       {
-         std::string name = prop->GetLabel() + "<br>(" + prop->GetValueString() + ")";
+         std::string name = prop->GetLabel();
+
+         if (mLinks.empty())
+         {
+            name += "<br>(" + prop->GetValueString() + ")";
+         }
          SetName(name);
       }
 
