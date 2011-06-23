@@ -1,0 +1,148 @@
+/*
+ * Delta3D Open Source Game and Simulation Engine
+ * Copyright (C) 2009 MOVES Institute
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ *
+ * Author: Jeff P. Houde
+ */
+
+#include <dtDirectorGUINodes/loadguischeme.h>
+#include <dtDirectorGUINodes/guinodemanager.h>
+
+#include <dtDAL/stringactorproperty.h>
+
+#include <dtGUI/gui.h>
+
+#include <dtDirector/director.h>
+
+namespace dtDirector
+{
+   /////////////////////////////////////////////////////////////////////////////
+   LoadGUIScheme::LoadGUIScheme()
+      : ActionNode()
+      , mScheme("WindowsLook.scheme")
+   {
+      AddAuthor("Jeff P. Houde");
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   LoadGUIScheme::~LoadGUIScheme()
+   {
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void LoadGUIScheme::Init(const NodeType& nodeType, DirectorGraph* graph)
+   {
+      ActionNode::Init(nodeType, graph);
+
+      mOutputs.push_back(OutputLink(this, "Failed", "Activates if the GUI scheme could not be loaded."));
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void LoadGUIScheme::OnFinishedLoading()
+   {
+      std::string schema = GetString("Scheme");
+      if (!schema.empty())
+      {
+         dtGUI::GUI* gui = GUINodeManager::GetGUI();
+         if (gui)
+         {
+            gui->LoadScheme(schema);
+         }
+      }
+
+      UpdateName();
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void LoadGUIScheme::BuildPropertyMap()
+   {
+      ActionNode::BuildPropertyMap();
+
+      dtDAL::StringActorProperty* schemeProp =
+         new dtDAL::StringActorProperty(
+         "Scheme", "Scheme",
+         dtDAL::StringActorProperty::SetFuncType(this, &LoadGUIScheme::SetScheme),
+         dtDAL::StringActorProperty::GetFuncType(this, &LoadGUIScheme::GetScheme),
+         "The Scheme.");
+      AddProperty(schemeProp);
+      
+      // This will expose the properties in the editor and allow
+      // them to be connected to ValueNodes.
+      mValues.push_back(ValueLink(this, schemeProp, false, true, true, false));
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   bool LoadGUIScheme::Update(float simDelta, float delta, int input, bool firstUpdate)
+   {
+      //std::string schema = GetString("Scheme");
+      //if (!schema.empty())
+      //{
+      //   dtGUI::GUI* gui = GUINodeManager::GetGUI();
+      //   if (gui)
+      //   {
+      //      gui->LoadScheme(schema);
+            return ActionNode::Update(simDelta, delta, input, firstUpdate);
+      //   }
+      //}
+
+      //ActivateOutput("Failed");
+      //return false;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void LoadGUIScheme::UpdateName()
+   {
+      std::string scheme = GetString("Scheme");
+
+      if (scheme.empty())
+      {
+         mName.clear();
+      }
+      else
+      {
+         mName = "Scheme: " + scheme;
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void LoadGUIScheme::OnLinkValueChanged(const std::string& linkName)
+   {
+      if (!GetDirector()->IsLoading())
+      {
+         if (linkName == "Scheme")
+         {
+            UpdateName();
+         }
+      }
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void LoadGUIScheme::SetScheme(const std::string& value)
+   {
+      mScheme = value;
+
+      UpdateName();
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   std::string LoadGUIScheme::GetScheme()
+   {
+      return mScheme;
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
