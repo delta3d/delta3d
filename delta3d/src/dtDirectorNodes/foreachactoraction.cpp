@@ -34,7 +34,6 @@ namespace dtDirector
    ForEachActorAction::ForEachActorAction()
       : ActionNode()
       , mClassType("<None>")
-      , mCurrentIndex(-1)
    {
       AddAuthor("Jeff P. Houde");
    }
@@ -50,7 +49,7 @@ namespace dtDirector
       ActionNode::Init(nodeType, graph);
 
       mOutputs.clear();
-      mOutputs.push_back(OutputLink(this, "Each Actor", "Activates once for each actor found."));
+      mOutputs.push_back(OutputLink(this, "Each Actor", "Activates once for each actor found.", true));
       mOutputs.push_back(OutputLink(this, "Finished", "Activates after all actors have been iterated through."));
    }
 
@@ -96,7 +95,6 @@ namespace dtDirector
          if (firstUpdate)
          {
             mFoundActors.clear();
-            mCurrentIndex = 0;
 
             std::string classType = GetString("Actor Type");
             std::string nameFilter = GetString("Name Filter");
@@ -146,27 +144,35 @@ namespace dtDirector
          }
 
          // Iterate through each found actor.
-         if (mCurrentIndex < (int)mFoundActors.size())
+         bool immediate = GetOutputLink("Each Actor")->GetImmediate();
+         GetDirector()->PushStack(this, 11, immediate);
+
+         for (int index = 0; index < (int)mFoundActors.size(); ++index)
          {
-            dtCore::UniqueId currentActor = mFoundActors[mCurrentIndex];
-
-            SetActorID(currentActor, "Current Actor");
-
             // We push a stack so that we can execute the entire "For Each"
             // output chain before we return back to this node.
-            GetDirector()->PushStack(this, 10);
-
-            mCurrentIndex++;
-            return true;
+            GetDirector()->PushStack(this, 10, immediate);
          }
 
-         ActivateOutput("Finished");
          return false;
       }
       // If the input is 10, it means we are iterating through an actor.
       else if (input == 10)
       {
-         ActivateOutput("Each Actor");
+         if (mFoundActors.size())
+         {
+            dtCore::UniqueId currentActor = mFoundActors.back();
+            mFoundActors.pop_back();
+
+            SetActorID(currentActor, "Current Actor");
+
+            ActivateOutput("Each Actor");
+         }
+         return false;
+      }
+      else if (input == 11)
+      {
+         ActivateOutput("Finished");
          return false;
       }
 
