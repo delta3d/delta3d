@@ -504,16 +504,19 @@ namespace dtDirector
        * Retrieves the input list.
        */
       std::vector<InputLink>& GetInputLinks() {return mInputs;}
+      const std::vector<InputLink>& GetInputLinks() const {return mInputs;}
 
       /**
        * Retrieves the output list.
        */
       std::vector<OutputLink>& GetOutputLinks() {return mOutputs;}
+      const std::vector<OutputLink>& GetOutputLinks() const {return mOutputs;}
 
       /**
        * Retrieves the value list.
        */
       std::vector<ValueLink>& GetValueLinks() {return mValues;}
+      const std::vector<ValueLink>& GetValueLinks() const {return mValues;}
 
       /**
        * Retrieves a link of a given name.
