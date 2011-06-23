@@ -9,6 +9,7 @@ dtInspectorQt::CameraView::CameraView(Ui::InspectorWidget& ui)
 {
    mFilterName = QString("Camera");
 
+   connect(mUI->baseNameText, SIGNAL(textEdited(const QString&)), this, SLOT(OnNameChange(const QString&)));
    connect(mUI->cameraEnabledToggle, SIGNAL(stateChanged(int)), this, SLOT(OnEnabled(int)));
    connect(mUI->cameraVertEdit, SIGNAL(valueChanged(double)), this, SLOT(OnPerspectiveChanged(double)));
    connect(mUI->cameraAspectEdit, SIGNAL(valueChanged(double)), this, SLOT(OnPerspectiveChanged(double)));
@@ -101,6 +102,16 @@ void dtInspectorQt::CameraView::Update()
    else
    {
       mUI->cameraGroupBox->hide();
+   }
+}
+
+//////////////////////////////////////////////////////////////////////////
+void dtInspectorQt::CameraView::OnNameChange(const QString& text)
+{
+   if (mOperateOn.valid())
+   {
+      mOperateOn->SetName(text.toStdString());
+      emit NameChanged(text);
    }
 }
 

@@ -29,7 +29,7 @@ namespace dtInspectorQt
       virtual void OperateOn(const QVariant& itemData);
 
    protected slots:
-         void OnNameChange(const QString& text);
+      void OnNameChange(const QString& text);
 
    signals:
          void NameChanged(const QString& text);

@@ -48,9 +48,13 @@ namespace dtInspectorQt
       virtual void OperateOn(const QVariant& itemData);
 
    protected slots:
+      void OnNameChange(const QString& text);
       void OnEnabled(int state);
       void OnPerspectiveChanged(double value);
       void OnClearColorChanged(double value);
+
+signals:
+      void NameChanged(const QString& text);
 
    private:
       Ui::InspectorWidget* mUI;
