@@ -30,7 +30,8 @@ namespace dtDirector
    enum
    {
       INPUT_START = 0,
-      INPUT_STOP
+      INPUT_STOP,
+      INPUT_FIRE_CYCLE
    };
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -99,11 +100,20 @@ namespace dtDirector
             mLoopTimeElapsed = 0.0f;
 
             SetFloat(simDelta, "DeltaTime");
-            ActivateOutput("Cycle");
+
+            // Put this on the stack so it will finish
+            // execution of its chain before we continue
+            GetDirector()->PushStack(this, INPUT_FIRE_CYCLE);
          }
-         else // input == INPUT_STOP
+         else if (input == INPUT_STOP)
          {
             mIsLooping = false;
+         }
+         else //if (input == INPUT_FIRE_CYCLE)
+         {
+            // If we're here, we're on the stack, fire and bail out
+            ActivateOutput("Cycle");
+            return false;
          }
       }
       else
@@ -117,7 +127,10 @@ namespace dtDirector
                mLoopTimeElapsed -= mLoopPeriod;
 
                SetFloat(simDelta, "DeltaTime");
-               ActivateOutput("Cycle");
+
+               // Put this on the stack so it will finish
+               // execution of its chain before we continue
+               GetDirector()->PushStack(this, INPUT_FIRE_CYCLE);
             }
          }
       }
