@@ -820,9 +820,9 @@ namespace dtDirector
                mMenuPos.setY(selection[index]->pos().y());
             }
          }
-
-         mEditor->GetUndoManager()->BeginMultipleEvents("Creation of Macro Node with Selection.");
       }
+
+      mEditor->GetUndoManager()->BeginMultipleEvents("Creation of Macro Node with Selection.");
 
       DirectorGraph* parent = mGraph.get();
       DirectorGraph* graph = CreateMacro("");
@@ -841,10 +841,10 @@ namespace dtDirector
          {
             // If there are nodes selected, move them into the macro.
             mEditor->PasteNodes(true);
-            mEditor->GetUndoManager()->EndMultipleEvents();
          }
       }
 
+      mEditor->GetUndoManager()->EndMultipleEvents();
       mEditor->RefreshGraph(parent);
       mEditor->Refresh();
    }
