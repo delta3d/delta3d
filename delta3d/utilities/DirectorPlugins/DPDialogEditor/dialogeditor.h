@@ -123,7 +123,7 @@ public:
     * @param[in]  refLine  The reference line.
     * @param[in]  refName  The reference name.
     */
-   void RegisterReference(DialogRefLineType* refLine, const QString& refName);
+   void RegisterReference(DialogLineItem* refLine, const QString& refName);
 
 public slots:
 
@@ -165,7 +165,7 @@ private:
 
    std::map<QString, dtCore::UniqueId> mRefMap;
 
-   std::map<QString, std::vector<DialogRefLineType*> > mRefRegister;
+   std::map<QString, std::vector<DialogLineItem*> > mRefRegister;
 };
 
 #endif // DIRECTOR_DIALOG_EDITOR_PLUGIN

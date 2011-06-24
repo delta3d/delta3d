@@ -183,13 +183,13 @@ void DirectorDialogEditorPlugin::MapReference(const QString& refName, const dtCo
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void DirectorDialogEditorPlugin::RegisterReference(DialogRefLineType* refLine, const QString& refName)
+void DirectorDialogEditorPlugin::RegisterReference(DialogLineItem* refLine, const QString& refName)
 {
-   std::map<QString, std::vector<DialogRefLineType*> >::iterator iter = mRefRegister.find(refName);
+   std::map<QString, std::vector<DialogLineItem*> >::iterator iter = mRefRegister.find(refName);
    
    if (iter == mRefRegister.end())
    {
-      std::vector<DialogRefLineType*> refLines;
+      std::vector<DialogLineItem*> refLines;
       refLines.push_back(refLine);
       mRefRegister[refName] = refLines;
    }
@@ -295,9 +295,11 @@ void DirectorDialogEditorPlugin::OnLoad()
       }
    }
 
+   GetTree()->UpdateLabels();
+
    // Now go through all our registered reference lines and connect them to
    // their property references.
-   std::map<QString, std::vector<DialogRefLineType*> >::iterator iter;
+   std::map<QString, std::vector<DialogLineItem*> >::iterator iter;
    for (iter = mRefRegister.begin(); iter != mRefRegister.end(); ++iter)
    {
       QString refName = iter->first;
@@ -306,21 +308,21 @@ void DirectorDialogEditorPlugin::OnLoad()
       {
          dtCore::UniqueId& id = mapIter->second;
 
-         std::vector<DialogRefLineType*>& refLines = iter->second;
+         std::vector<DialogLineItem*>& refLines = iter->second;
 
          int count = (int)refLines.size();
          for (int index = 0; index < count; ++index)
          {
-            DialogRefLineType* refLine = refLines[index];
-            if (refLine)
+            DialogLineItem* refLine = refLines[index];
+            DialogRefLineType* refType = dynamic_cast<DialogRefLineType*>(refLine->GetType());
+            if (refType)
             {
-               refLine->SetReference(id);
+               refType->SetReference(id);
+               refLine->UpdateLabel();
             }
          }
       }
    }
-
-   GetTree()->UpdateLabels();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -329,6 +331,7 @@ void DirectorDialogEditorPlugin::OnSave()
    BeginSave();
 
    dtDirector::Node* newInputNode = CreateNode("Input Link", "Core", NULL, 80);
+   newInputNode->SetString("Play", "Name");
 
    dtDirector::Node* newCallStartEventNode = CreateNode("Call Remote Event", "Core", newInputNode);
    newCallStartEventNode->SetString("Started", "EventName");
