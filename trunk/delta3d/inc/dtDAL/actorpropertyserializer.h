@@ -51,6 +51,7 @@ namespace dtDAL
       dtCore::RefPtr<PropertyContainer> mPropertyContainer;
       dtCore::RefPtr<ActorProperty> mActorProperty;
       DataType* mActorPropertyType;
+      DataType* mNestedPropertyType;
       DataType* mParameterTypeToCreate;
 
       std::string mParameterNameToCreate;
@@ -59,14 +60,17 @@ namespace dtDAL
       bool mHasDeprecatedProperty;
       bool mInActorProperty;
       bool mInGroupProperty;
-      int  mInArrayProperty;     // Since arrays can be nested, we need to keep track of how deep we are.
-      int  mInContainerProperty; // Since containers can be nested, we need to keep track of how deep we are.
+
+      // To handle the nesting of arrays and containers, each nested
+      // type is pushed into an array.
+      std::vector<int> mNestedTypes;
 
       std::stack<dtCore::RefPtr<NamedParameter> > mParameterStack;
 
       void Reset()
       {
          mInActorProperty = false;
+         mNestedTypes.clear();
 
          mActorProperty = NULL;
          mActorPropertyType = NULL;
@@ -77,8 +81,6 @@ namespace dtDAL
       void ClearParameterValues()
       {
          mInGroupProperty = false;
-         mInArrayProperty = 0;
-         mInContainerProperty = 0;
          while (!mParameterStack.empty())
          {
             mParameterStack.pop();
@@ -255,6 +257,9 @@ namespace dtDAL
 
       //returns true if a property in the actor is the same as the XML expects and adjusts the value.
       bool IsPropertyCorrectType(dtDAL::DataType*& dataType, dtDAL::ActorProperty* actorProperty);
+
+      dtDAL::ActorProperty* GetNestedProperty();
+      dtDAL::DataType*& GetNestedType();
 
       dtCore::RefPtr<Map> mMap;
 

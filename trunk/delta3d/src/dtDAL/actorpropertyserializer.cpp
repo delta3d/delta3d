@@ -61,6 +61,9 @@
 
 XERCES_CPP_NAMESPACE_USE
 
+#define NEST_ARRAY 0
+#define NEST_CONTAINER 1
+
 namespace dtDAL
 {
    static const std::string logName("actorpropertyserializer.cpp");
@@ -68,6 +71,7 @@ namespace dtDAL
    //////////////////////////////////////////////////////////////////////////
    SerializerRuntimeData::SerializerRuntimeData()
    : mActorPropertyType(NULL)
+   , mNestedPropertyType(NULL)
    , mParameterTypeToCreate(NULL)
    , mHasDeprecatedProperty(false)
    , mInActorProperty(false)
@@ -305,12 +309,12 @@ namespace dtDAL
             else if (XMLString::compareString(localname,
                MapXMLConstants::ACTOR_PROPERTY_ARRAY_ELEMENT) == 0)
             {
-               data.mInArrayProperty++;
+               data.mNestedTypes.push_back(NEST_ARRAY);
             }
             else if (XMLString::compareString(localname,
                MapXMLConstants::ACTOR_PROPERTY_CONTAINER_ELEMENT) == 0)
             {
-               data.mInContainerProperty++;
+               data.mNestedTypes.push_back(NEST_CONTAINER);
             }
             else if (XMLString::compareString(localname,
                MapXMLConstants::ACTOR_PROPERTY_PROPERTY_CONTAINER_ELEMENT) == 0)
@@ -342,23 +346,46 @@ namespace dtDAL
 
       SerializerRuntimeData& data = Top();
 
-      if (data.mInArrayProperty == 0 && data.mInContainerProperty == 0 && XMLString::compareString(localname, MapXMLConstants::ACTOR_PROPERTY_ELEMENT) == 0)
+      if (data.mNestedTypes.empty() && XMLString::compareString(localname, MapXMLConstants::ACTOR_PROPERTY_ELEMENT) == 0)
       {
          EndActorPropertyElement();
          return true;
       }
       else if (XMLString::compareString(localname, MapXMLConstants::ACTOR_PROPERTY_ARRAY_ELEMENT) == 0)
       {
-         data.mInArrayProperty--;
-         if (data.mInArrayProperty < 0) data.mInArrayProperty = 0;
+         if (!data.mNestedTypes.empty())
+         {
+            if (data.mNestedTypes.back() == NEST_ARRAY)
+            {
+               data.mNestedTypes.pop_back();
+            }
+            else
+            {
+               LOG_ERROR("Attempted to end an Array element when the current nested type is not an array.");
+            }
+         }
+         else
+         {
+            LOG_ERROR("Attempted to end an Array element when there are no nested types.");
+         }
          return true;
       }
       else if (XMLString::compareString(localname, MapXMLConstants::ACTOR_PROPERTY_CONTAINER_ELEMENT) == 0)
       {
-         data.mInContainerProperty--;
-         if (data.mInContainerProperty < 0)
+         if (!data.mNestedTypes.empty())
          {
-            data.mInContainerProperty = 0;
+            if (data.mNestedTypes.back() == NEST_CONTAINER)
+            {
+               data.mNestedTypes.pop_back();
+            }
+            else
+            {
+               LOG_ERROR("Attempted to end a Container element when the current nested type is not a container.");
+            }
+         }
+         else
+         {
+            LOG_ERROR("Attempted to end a Container element when there are no nested types.");
          }
          return true;
       }
@@ -400,22 +427,19 @@ namespace dtDAL
       }
       else if (data.mInActorProperty)
       {
-         if (data.mActorProperty != NULL)
+         if (data.mActorProperty != NULL && data.mActorPropertyType != NULL && data.mNestedTypes.empty())
          {
-            if (data.mActorPropertyType != NULL && data.mInArrayProperty == 0 && data.mInContainerProperty == 0)
+            // parse the end element into a data type to see if it's an end property element.
+            dtDAL::DataType* d = ParsePropertyType(localname, false);
+            // The property has ended, so in case the property type has not
+            // been unset, it is now.
+            if (d != NULL)
             {
-               // parse the end element into a data type to see if it's an end property element.
-               dtDAL::DataType* d = ParsePropertyType(localname, false);
-               // The property has ended, so in case the property type has not
-               // been unset, it is now.
-               if (d != NULL)
-               {
-                  //This works here because the actor types referenced here all set
-                  // their property type to NULL when the value is set.
-                  NonEmptyDefaultWorkaround();
-                  data.mActorPropertyType = NULL;
-                  return true;
-               }
+               //This works here because the actor types referenced here all set
+               // their property type to NULL when the value is set.
+               NonEmptyDefaultWorkaround();
+               data.mActorPropertyType = NULL;
+               return true;
             }
          }
       }
@@ -443,7 +467,7 @@ namespace dtDAL
          else
          {
             // Make sure we don't try and change the current property if we are loading properties from an array.
-            if (data.mInArrayProperty == 0 && data.mInContainerProperty == 0 && topEl == MapXMLConstants::ACTOR_PROPERTY_NAME_ELEMENT)
+            if (data.mNestedTypes.empty() && topEl == MapXMLConstants::ACTOR_PROPERTY_NAME_ELEMENT)
             {
                std::string propName = dtUtil::XMLStringConverter(chars).ToString();
                data.mActorProperty = data.mPropertyContainer->GetProperty(propName);
@@ -461,10 +485,10 @@ namespace dtDAL
             else if (data.mActorProperty != NULL)
             {
                // Make sure we don't try and change the current property if we are loading properties from an array.
-               if (data.mInArrayProperty == 0 && data.mInContainerProperty == 0 && topEl == MapXMLConstants::ACTOR_PROPERTY_RESOURCE_TYPE_ELEMENT)
+               if (data.mNestedTypes.empty() && topEl == MapXMLConstants::ACTOR_PROPERTY_RESOURCE_TYPE_ELEMENT)
                {
                   std::string resourceTypeString = dtUtil::XMLStringConverter(chars).ToString();
-                  data.mActorPropertyType = static_cast<DataType*>(DataType::GetValueForName(resourceTypeString));
+                  data.mActorPropertyType = DataType::GetValueForName(resourceTypeString);
 
                   if (data.mActorPropertyType == NULL)
                   {
@@ -473,7 +497,7 @@ namespace dtDAL
                         resourceTypeString.c_str());
                   }
                }
-               else if (data.mActorPropertyType != NULL)
+               else if (GetNestedType() != NULL)
                {
                   std::string dataValue = dtUtil::XMLStringConverter(chars).ToString();
 
@@ -481,14 +505,14 @@ namespace dtDAL
                   {
                      mParser->mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                         "Setting value of property %s, property type %s, datatype %s, value %s, element name %s.",
-                        data.mActorProperty->GetName().c_str(),
-                        data.mActorProperty->GetDataType().GetName().c_str(),
-                        data.mActorPropertyType->GetName().c_str(),
+                        GetNestedProperty()->GetName().c_str(),
+                        GetNestedProperty()->GetDataType().GetName().c_str(),
+                        GetNestedType()->GetName().c_str(),
                         dataValue.c_str(), dtUtil::XMLStringConverter(topEl.c_str()).c_str());
                   }
 
                   //we now have the property, the type, and the data.
-                  ParsePropertyData(topEl, dataValue, data.mActorPropertyType, data.mActorProperty.get());
+                  ParsePropertyData(topEl, dataValue, GetNestedType(), GetNestedProperty());
                }
             }
          }
@@ -1160,8 +1184,8 @@ namespace dtDAL
          }
       case DataType::CONTAINER_ID:
          {
-            ContainerActorProperty& arrayProp = static_cast<ContainerActorProperty&>(*actorProperty);
-            ParseContainer(topEl, dataValue, &arrayProp);
+            ContainerActorProperty* containerProp = static_cast<ContainerActorProperty*>(actorProperty);
+            ParseContainer(topEl, dataValue, containerProp);
             break;
          }
       default:
@@ -1466,23 +1490,7 @@ namespace dtDAL
    {
       SerializerRuntimeData& data = Top();
 
-      dtDAL::ActorProperty* actorProperty = data.mActorProperty;
-      if (data.mInArrayProperty > 0)
-      {
-         ArrayActorPropertyBase* arrayActorProp = dynamic_cast<ArrayActorPropertyBase*>(actorProperty);
-         if (arrayActorProp != NULL)
-         {
-            actorProperty = arrayActorProp->GetArrayProperty();
-         }
-      }
-      else if (data.mInContainerProperty > 0)
-      {
-         ContainerActorProperty* contActorProp = dynamic_cast<ContainerActorProperty*>(actorProperty);
-         if (contActorProp != NULL)
-         {
-            actorProperty = contActorProp->GetCurrentProperty();
-         }
-      }
+      dtDAL::ActorProperty* actorProperty = GetNestedProperty();
       mData.push(dtDAL::SerializerRuntimeData());
       mData.top().Reset();
       BasePropertyContainerActorProperty* pcProp = dynamic_cast<BasePropertyContainerActorProperty*>(actorProperty);
@@ -1512,16 +1520,11 @@ namespace dtDAL
 
       SerializerRuntimeData& data = Top();
 
-      // Find the property we want to edit based on how deep the array is nested.
-      for (int nestIndex = 1; nestIndex < data.mInArrayProperty; nestIndex++)
-      {
-         arrayProp = dynamic_cast<ArrayActorPropertyBase*>(arrayProp->GetArrayProperty());
-
-         if (arrayProp == NULL)
-         {
-            return;
-         }
-      }
+      //arrayProp = dynamic_cast<ArrayActorPropertyBase*>(GetNestedProperty());
+      //if (!arrayProp)
+      //{
+      //   return;
+      //}
 
       // Array Size
       if (topEl == MapXMLConstants::ACTOR_ARRAY_SIZE_ELEMENT)
@@ -1586,7 +1589,7 @@ namespace dtDAL
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void ActorPropertySerializer::ParseContainer(BaseXMLHandler::xmlCharString& topEl, std::string& dataValue, ContainerActorProperty* arrayProp)
+   void ActorPropertySerializer::ParseContainer(BaseXMLHandler::xmlCharString& topEl, std::string& dataValue, ContainerActorProperty* containerProp)
    {
       if (mData.empty())
       {
@@ -1597,16 +1600,11 @@ namespace dtDAL
       SerializerRuntimeData& data = Top();
 
       // Find the property we want to edit based on how deep the container is nested.
-      for (int nestIndex = 1; nestIndex < data.mInContainerProperty; nestIndex++)
-      {
-         int index = arrayProp->GetCurrentPropertyIndex();
-         arrayProp = static_cast<ContainerActorProperty*>(arrayProp->GetProperty(index));
-      }
-
-      if (arrayProp == NULL)
-      {
-         return;
-      }
+      //containerProp = dynamic_cast<ContainerActorProperty*>(GetNestedProperty());
+      //if (!containerProp)
+      //{
+      //   return;
+      //}
 
       // Skipped elements.
       if (topEl == MapXMLConstants::ACTOR_ARRAY_ELEMENT ||
@@ -1617,16 +1615,15 @@ namespace dtDAL
       }
       else if (topEl == MapXMLConstants::ACTOR_PROPERTY_NAME_ELEMENT)
       {
-         arrayProp->SetCurrentPropertyIndex(-1);
          // Find the property in the container with the given name.
-         for (int index = 0; index < arrayProp->GetPropertyCount(); index++)
+         for (int index = 0; index < containerProp->GetPropertyCount(); index++)
          {
-            ActorProperty* prop = arrayProp->GetProperty(index);
+            ActorProperty* prop = containerProp->GetProperty(index);
             if (prop)
             {
                if (prop->GetName() == dataValue)
                {
-                  arrayProp->SetCurrentPropertyIndex(index);
+                  containerProp->SetCurrentPropertyIndex(index);
                   break;
                }
             }
@@ -1635,8 +1632,8 @@ namespace dtDAL
       // Unrecognized elements are checked with the array's property type
       else
       {
-         int index = arrayProp->GetCurrentPropertyIndex();
-         ActorProperty* prop = arrayProp->GetProperty(index);
+         int index = containerProp->GetCurrentPropertyIndex();
+         ActorProperty* prop = containerProp->GetProperty(index);
          if (prop)
          {
             DataType* propType = &prop->GetDataType();
@@ -1851,6 +1848,59 @@ namespace dtDAL
             (dataType)->GetName().c_str(), actorProperty->GetDataType().GetName().c_str());
       }
       return result;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   dtDAL::ActorProperty* ActorPropertySerializer::GetNestedProperty()
+   {
+      SerializerRuntimeData& data = Top();
+
+      dtDAL::ActorProperty* prop = data.mActorProperty;
+      int count = (int)data.mNestedTypes.size()-1;
+      for (int index = 0; index < count; ++index)
+      {
+         int type = data.mNestedTypes[index];
+
+         switch (type)
+         {
+         case NEST_ARRAY:
+            {
+               ArrayActorPropertyBase* arrayActorProp = dynamic_cast<ArrayActorPropertyBase*>(prop);
+               if (arrayActorProp)
+               {
+                  prop = arrayActorProp->GetArrayProperty();
+               }
+            }
+            break;
+
+         case NEST_CONTAINER:
+            {
+               ContainerActorProperty* contActorProp = dynamic_cast<ContainerActorProperty*>(prop);
+               if (contActorProp)
+               {
+                  prop = contActorProp->GetCurrentProperty();
+               }
+            }
+            break;
+         }
+      }
+
+      return prop;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   dtDAL::DataType*& ActorPropertySerializer::GetNestedType()
+   {
+      SerializerRuntimeData& data = Top();
+
+      dtDAL::ActorProperty* prop = GetNestedProperty();
+      if (prop && prop != data.mActorProperty)
+      {
+         data.mNestedPropertyType = DataType::GetValueForName(prop->GetDataType().GetName());
+         return data.mNestedPropertyType;
+      }
+
+      return data.mActorPropertyType;
    }
 
    /////////////////////////////////////////////////////////////////
