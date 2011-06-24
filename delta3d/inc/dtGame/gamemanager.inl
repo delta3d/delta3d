@@ -31,7 +31,7 @@ namespace dtGame
    class BindActor
    {
    public:
-      BindActor(UnaryFunctor func)
+      BindActor(UnaryFunctor& func)
       : mFunc(func)
       {}
 
@@ -40,14 +40,14 @@ namespace dtGame
          mFunc(*thePair.second);
       }
    private:
-      UnaryFunctor mFunc;
+      UnaryFunctor& mFunc;
    };
 
    template <typename FindFunctor>
    class FindFuncWrapper
    {
    public:
-      FindFuncWrapper(FindFunctor ifFunc, std::vector<dtDAL::BaseActorObject*>& selectedActors)
+      FindFuncWrapper(FindFunctor& ifFunc, std::vector<dtDAL::BaseActorObject*>& selectedActors)
       : mFunc(ifFunc)
       , mSelectedActors(selectedActors)
       {}
@@ -61,28 +61,31 @@ namespace dtGame
       }
 
    private:
-      FindFunctor mFunc;
+      FindFunctor& mFunc;
       std::vector<dtDAL::BaseActorObject*>& mSelectedActors;
    };
 
    template <typename UnaryFunctor>
-   inline void GameManager::ForEachActor(UnaryFunctor func) const
+   inline void GameManager::ForEachActor(UnaryFunctor& func, bool applyOnlyToGameActors /*= false*/) const
    {
-      BindActor<UnaryFunctor, GMImpl::ActorMap::value_type> actorMapBindFunc(func);
-      std::for_each(mGMImpl->mBaseActorObjectMap.begin(), mGMImpl->mBaseActorObjectMap.end(), actorMapBindFunc);
+      if (!applyOnlyToGameActors)
+      {
+         BindActor<UnaryFunctor, GMImpl::ActorMap::value_type> actorMapBindFunc(func);
+         std::for_each(mGMImpl->mBaseActorObjectMap.begin(), mGMImpl->mBaseActorObjectMap.end(), actorMapBindFunc);
+      }
       BindActor<UnaryFunctor, GMImpl::GameActorMap::value_type> gameActorMapBindFunc(func);
       std::for_each(mGMImpl->mGameActorProxyMap.begin(), mGMImpl->mGameActorProxyMap.end(), gameActorMapBindFunc);
    }
 
    template <typename UnaryFunctor>
-   inline void GameManager::ForEachPrototype(UnaryFunctor func) const
+   inline void GameManager::ForEachPrototype(UnaryFunctor& func) const
    {
       BindActor<UnaryFunctor, GMImpl::GameActorMap::value_type> gameActorMapBindFunc(func);
       std::for_each(mGMImpl->mPrototypeActors.begin(), mGMImpl->mPrototypeActors.end(), gameActorMapBindFunc);
    }
 
    template <typename FindFunctor>
-   inline void GameManager::FindActorsIf(FindFunctor ifFunc, std::vector<dtDAL::BaseActorObject*>& toFill) const
+   inline void GameManager::FindActorsIf(FindFunctor& ifFunc, std::vector<dtDAL::BaseActorObject*>& toFill) const
    {
       toFill.clear();
       FindFuncWrapper<FindFunctor> findWrapper(ifFunc, toFill);
@@ -90,7 +93,7 @@ namespace dtGame
    }
 
    template <typename FindFunctor>
-   inline void GameManager::FindPrototypesIf(FindFunctor ifFunc, std::vector<dtDAL::BaseActorObject*>& toFill) const
+   inline void GameManager::FindPrototypesIf(FindFunctor& ifFunc, std::vector<dtDAL::BaseActorObject*>& toFill) const
    {
       toFill.clear();
       FindFuncWrapper<FindFunctor> findWrapper(ifFunc, toFill);

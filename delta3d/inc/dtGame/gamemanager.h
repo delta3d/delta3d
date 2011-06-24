@@ -16,7 +16,7 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * David Guthrie, Curtiss Murphy, Matthew W. Campbell, William E. Johnson II, 
+ * David Guthrie, Curtiss Murphy, Matthew W. Campbell, William E. Johnson II,
  */
 
 #ifndef DELTA_GAMEMANANGER
@@ -297,12 +297,12 @@ namespace dtGame
       void SendMessage(const Message& message);
 
       /**
-	   * Adds a component to the list of components the game mananger
-	   * will communicate with
-	   * @param The component to add
-	   * @param priority the priority of the component.  This translates into the order of message delivery.
-	   * @throw dtGame::ExceptionEnum::INVALID_PARAMETER if the component lacks a unique name
-	   */
+       * Adds a component to the list of components the game mananger
+       * will communicate with
+       * @param The component to add
+       * @param priority the priority of the component.  This translates into the order of message delivery.
+       * @throw dtGame::ExceptionEnum::INVALID_PARAMETER if the component lacks a unique name
+       */
       void AddComponent(GMComponent& component, const ComponentPriority& priority = ComponentPriority::NORMAL);
 
       /**
@@ -543,7 +543,7 @@ namespace dtGame
        * @note you must include dtGame/gamemanager.inl to use the method.
        */
       template <typename UnaryFunctor>
-      void ForEachActor(UnaryFunctor func) const;
+      void ForEachActor(UnaryFunctor& func, bool applyOnlyToGameActors = false) const;
 
       /**
        * Allows performing an operation on each prototype actor in the game manager.
@@ -551,7 +551,7 @@ namespace dtGame
        * @note you must include dtGame/gamemanager.inl to use the method.
        */
       template <typename UnaryFunctor>
-      void ForEachPrototype(UnaryFunctor func) const;
+      void ForEachPrototype(UnaryFunctor& func) const;
 
       /**
        * Allows custom searching on each non-prototype actor in the game manager.
@@ -561,7 +561,7 @@ namespace dtGame
        * @note you must include dtGame/gamemanager.inl to use the method.
        */
       template <typename FindFunctor>
-      void FindActorsIf(FindFunctor ifFunc, std::vector<dtDAL::BaseActorObject*>& toFill) const;
+      void FindActorsIf(FindFunctor& ifFunc, std::vector<dtDAL::BaseActorObject*>& toFill) const;
 
       /**
        * Allows custom searching on each prototype actor in the game manager.
@@ -571,7 +571,7 @@ namespace dtGame
        * @note you must include dtGame/gamemanager.inl to use the method.
        */
       template <typename FindFunctor>
-      void FindPrototypesIf(FindFunctor ifFunc, std::vector<dtDAL::BaseActorObject*>& toFill) const;
+      void FindPrototypesIf(FindFunctor& ifFunc, std::vector<dtDAL::BaseActorObject*>& toFill) const;
 
       /**
        * Fills a vector with the game proxys whose names match the name parameter
@@ -745,7 +745,7 @@ namespace dtGame
       /// Load a set of maps.
       /**
        This method adds a set of map to what is currently loaded in the scene.
-       For every added actor, and INFO_ACTOR_CREATE message is fired, 
+       For every added actor, and INFO_ACTOR_CREATE message is fired,
        and the end of the sequence is marked by the INFO_MAPS_OPENED message.
        The whole process is done in a single frame.
        \param: mapNames the set of map names to be loaded.
@@ -758,12 +758,12 @@ namespace dtGame
       /// Unload a set of maps.
       /**
        This method unload a set of maps from the GameManager.
-       Actors belonging to the maps to be unloaded are deleted from the scene and a 
+       Actors belonging to the maps to be unloaded are deleted from the scene and a
        INFO_ACTOR_DELETE message is fired for each actor.
        At the end of the sequence, and INFO_MAPS_CLOSED message is fired.
        \note: The function ONLY removes actors belonging to maps currently loaded in the GameManager,
               and leaves other actors in the scene. For a complete map change, check ChangeMapSet().
-       \param: mapNames the set of map names to be loaded.       
+       \param: mapNames the set of map names to be loaded.
        \see: ChangeMapSet
        */
       void CloseAdditionalMapSet(const NameVector& mapNames);
