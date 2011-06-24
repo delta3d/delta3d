@@ -88,6 +88,11 @@ namespace dtDirector
       void DrawResizers();
 
       /**
+       * Draws the comment.
+       */
+      void DrawComment();
+
+      /**
        * Event handlers when the user is moving this node.
        */
       virtual void BeginMoveEvent();

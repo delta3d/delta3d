@@ -22,6 +22,7 @@
 #include <dtDirectorQt/groupitem.h>
 #include <dtDirectorQt/directoreditor.h>
 #include <dtDirectorQt/editorscene.h>
+#include <dtDirectorQt/editorview.h>
 
 #include <dtDirectorQt/undomanager.h>
 #include <dtDirectorQt/undopropertyevent.h>
@@ -32,6 +33,8 @@
 #include <QtGui/QGraphicsScene>
 #include <QtGui/QMenu>
 #include <QtGui/QGraphicsSceneContextMenuEvent>
+
+#include <dtUtil/mathdefines.h>
 
 #include <osg/Vec2>
 
@@ -146,6 +149,26 @@ namespace dtDirector
             mResizer[index]->setPos(mResizer[index]->GetFramePosition());
          }
       }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void GroupItem::DrawComment()
+   {
+      float scale = 1.0f;
+      if (mScene)
+      {
+         scale = 1.0f / mScene->GetView()->GetZoomScale();
+      }
+      scale = scale * 1.5;
+
+      mComment->setScale(scale);
+      mComment->setTextWidth(dtUtil::Max(100, mNodeWidth));
+
+      // Create the title background.
+      QRectF commentBounds = mComment->boundingRect();
+      QRectF nodeBounds = boundingRect();
+
+      mComment->setPos(nodeBounds.x(), commentBounds.height() * -scale);
    }
 
    //////////////////////////////////////////////////////////////////////////
