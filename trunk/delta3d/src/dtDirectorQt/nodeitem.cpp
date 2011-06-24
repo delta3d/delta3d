@@ -25,7 +25,6 @@
 #include <dtDirectorQt/linkitem.h>
 #include <dtDirectorQt/groupitem.h>
 #include <dtDirectorQt/editornotifier.h>
-#include <dtDirectorQt/editorview.h>
 
 #include <dtDirectorQt/undomanager.h>
 #include <dtDirectorQt/undopropertyevent.h>
@@ -825,21 +824,13 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void NodeItem::DrawComment()
    {
-      float scale = 1.0f;
-      if (mScene)
-      {
-         scale = 1.0f / mScene->GetView()->GetZoomScale();
-      }
-      scale = scale * 1.5;
-
-      mComment->setScale(scale);
       mComment->setTextWidth(dtUtil::Max(100, mNodeWidth));
 
       // Create the title background.
       QRectF commentBounds = mComment->boundingRect();
       QRectF nodeBounds = boundingRect();
 
-      mComment->setPos(nodeBounds.x(), commentBounds.height() * -scale);
+      mComment->setPos(nodeBounds.x(), -commentBounds.height());
    }
 
    //////////////////////////////////////////////////////////////////////////
