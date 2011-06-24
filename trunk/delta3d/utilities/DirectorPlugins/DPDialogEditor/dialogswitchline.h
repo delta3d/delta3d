@@ -20,10 +20,12 @@ public:
    /**
     * The lines type name.
     */
-   virtual QString GetName() const
-   {
-      return "Switch";
-   }
+   virtual QString GetName() const;
+
+   /**
+    * The lines display color.
+    */
+   virtual QColor GetColor() const;
 
    /**
     * Creates a new instance of this class.

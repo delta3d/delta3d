@@ -35,6 +35,11 @@ public:
    virtual QString GetName() const = 0;
 
    /**
+    * The lines display color.
+    */
+   virtual QColor GetColor() const;
+
+   /**
     * Creates a new instance of this class.
     */
    virtual DialogLineType* Create() const = 0;

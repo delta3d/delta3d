@@ -30,6 +30,7 @@
 #include <QtGui/QLineEdit>
 
 
+
 ////////////////////////////////////////////////////////////////////////////////
 DialogTreeWidget::DialogTreeWidget(QWidget* parent)
    : QTreeWidget(parent)
@@ -64,23 +65,73 @@ void DialogTreeWidget::UpdateLabels() const
    }
 }
 
+////////////////////////////////////////////////////////////////////////////////
+void DialogTreeWidget::startDrag(Qt::DropActions supportedActions)
+{
+   QTreeWidgetItem* movingItem = currentItem();
+   RecurseStartDrag(topLevelItem(0), movingItem);
+
+   QTreeWidget::startDrag(supportedActions);
+}
+
 //////////////////////////////////////////////////////////////////////////////////
 //void DialogTreeWidget::dragMoveEvent(QDragMoveEvent* event)
 //{
 //   event->ignore();
 //
-//   QModelIndex index = indexAt(event->pos());
+//   QTreeWidgetItem* source = currentItem();
+//   QTreeWidgetItem* dest = dynamic_cast<QTreeWidgetItem*>(itemAt(event->pos()));
 //
-//   event->dropAction()
-//   //QTreeWidget::dragMoveEvent(event);
+//   if (source && dest && source != dest)
+//   {
+//      DialogLineItem* sourceLine = dynamic_cast<DialogLineItem*>(source);
+//      DialogLineItem* destLine = dynamic_cast<DialogLineItem*>(dest);
 //
+//      DialogChoiceItem* sourceChoice = dynamic_cast<DialogChoiceItem*>(source);
+//      DialogChoiceItem* destChoice = dynamic_cast<DialogChoiceItem*>(dest);
 //
-//   //const QMimeData* data = event->mimeData();
-//   //if (data)
-//   //{
-//   //}
+//      // If you are moving a line item.
+//      if (sourceLine)
+//      {
+//         // Lines can only be moved to items with no children.
+//         if (dest->childCount() > 0)
+//         {
+//            return;
+//         }
+//
+//         // Lines can only be moved to other lines that are not choice lines.
+//         if (destLine && (!destLine->CanHaveSubLine() || destLine->IsChoice()))
+//         {
+//            return;
+//         }
+//      }
+//      // If you are moving a choice item.
+//      else if (sourceChoice)
+//      {
+//         // Choice items can not be moved to other choice items.
+//         if (destChoice)
+//         {
+//            return;
+//         }
+//
+//         // Choice items can only be moved to choice line nodes.
+//         if (destLine && !destLine->IsChoice())
+//         {
+//            return;
+//         }
+//
+//         // Choice items can only be moved to a choice line that isn't at it's choice limit.
+//         if (destLine && destLine->GetChoiceLimit() > -1 &&
+//            destLine->childCount() >= destLine->GetChoiceLimit())
+//         {
+//            return;
+//         }
+//      }
+//   }
+//
+//   event->accept();
 //}
-//
+
 //////////////////////////////////////////////////////////////////////////////////
 //void DialogTreeWidget::dropEvent(QDropEvent* event)
 //{
@@ -192,6 +243,73 @@ void DialogTreeWidget::contextMenuEvent(QContextMenuEvent* event)
    }
 
    menu.exec(event->globalPos());
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void DialogTreeWidget::RecurseStartDrag(QTreeWidgetItem* item, QTreeWidgetItem* moving)
+{
+   int count = item->childCount();
+   for (int index = 0; index < count; ++index)
+   {
+      bool allowDrag = true;
+
+      QTreeWidgetItem* child = item->child(index);
+
+      DialogLineItem* sourceLine = dynamic_cast<DialogLineItem*>(moving);
+      DialogLineItem* destLine = dynamic_cast<DialogLineItem*>(child);
+
+      DialogChoiceItem* sourceChoice = dynamic_cast<DialogChoiceItem*>(moving);
+      DialogChoiceItem* destChoice = dynamic_cast<DialogChoiceItem*>(child);
+
+      // If you are moving a line item.
+      if (sourceLine)
+      {
+         // Lines can only be moved to items with no children.
+         if (child->childCount() > 0)
+         {
+            allowDrag = false;
+         }
+
+         // Lines can only be moved to other lines that are not choice lines.
+         if (destLine && (!destLine->CanHaveSubLine() || destLine->IsChoice()))
+         {
+            allowDrag = false;
+         }
+      }
+      // If you are moving a choice item.
+      else if (sourceChoice)
+      {
+         // Choice items can not be moved to other choice items.
+         if (destChoice)
+         {
+            allowDrag = false;
+         }
+
+         // Choice items can only be moved to choice line nodes.
+         if (destLine && !destLine->IsChoice())
+         {
+            allowDrag = false;
+         }
+
+         // Choice items can only be moved to a choice line that isn't at it's choice limit.
+         if (destLine && destLine->GetChoiceLimit() > -1 &&
+            destLine->childCount() >= destLine->GetChoiceLimit())
+         {
+            allowDrag = false;
+         }
+      }
+
+      if (allowDrag)
+      {
+         child->setFlags(Qt::ItemIsEditable | Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled);
+      }
+      else
+      {
+         child->setFlags(Qt::ItemIsEditable | Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsDragEnabled);
+      }
+
+      RecurseStartDrag(child, moving);
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -400,6 +518,9 @@ DialogLineItem::DialogLineItem(const QString& name, const DialogLineType* type, 
    if (type)
    {
       mType = type->Create();
+
+      QColor color = type->GetColor();
+      setBackgroundColor(0, color);
    }
 
    setFlags(Qt::ItemIsEditable | Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled);
@@ -420,7 +541,7 @@ void DialogLineItem::UpdateLabel()
 {
    if (mType)
    {
-      setText(0, QString("Line: ") + QString::number(mIndex) + " [" + mTypeName + "] " +
+      setText(0, QString("[") + QString::number(mIndex) + ":" + mTypeName + "] " +
          mType->GetDisplayName(mTree));
    }
 }
@@ -489,6 +610,10 @@ DialogChoiceItem* DialogLineItem::GetChildChoice(int index) const
 DialogChoiceItem::DialogChoiceItem(int index)
    : mIndex(index)
 {
+   QColor color = Qt::yellow;
+   color.setAlphaF(0.25f);
+   setBackgroundColor(0, color);
+
    setFlags(Qt::ItemIsEditable | Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled);
    UpdateLabel();
 }
@@ -501,7 +626,7 @@ DialogChoiceItem::~DialogChoiceItem()
 ////////////////////////////////////////////////////////////////////////////////
 void DialogChoiceItem::UpdateLabel()
 {
-   setText(0, QString("Line: ") + QString::number(mIndex) + " [Choice] " + mLabel);
+   setText(0, QString("[") + QString::number(mIndex) + ":Choice] " + mLabel);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -537,6 +662,10 @@ DialogRootItem::DialogRootItem(const QString& name, const DialogLineType* type, 
    : DialogLineItem(name, type, 0, NULL)
    , mAllowChildren(allowChildren)
 {
+   QColor color = Qt::red;
+   color.setAlphaF(0.15f);
+   setBackgroundColor(0, color);
+
    // Root items can never move.
    setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 

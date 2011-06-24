@@ -19,6 +19,20 @@ DialogLogLineType::~DialogLogLineType()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+QString DialogLogLineType::GetName() const
+{
+   return "Log Message";
+}
+
+////////////////////////////////////////////////////////////////////////////////
+QColor DialogLogLineType::GetColor() const
+{
+   QColor color = Qt::green;
+   color.setAlphaF(0.25f);
+   return color;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 DialogLineType* DialogLogLineType::Create() const
 {
    return new DialogLogLineType();

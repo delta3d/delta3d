@@ -20,6 +20,14 @@ DialogLineType::~DialogLineType()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+QColor DialogLineType::GetColor() const
+{
+   QColor color = Qt::cyan;
+   color.setAlphaF(0.15f);
+   return color;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void DialogLineType::GenerateNodeForChild(DialogLineItem* childLine, dtDirector::Node* prevNode, const std::string& output, DirectorDialogEditorPlugin* editor)
 {
    if (!childLine || !childLine->GetType())
@@ -48,7 +56,7 @@ void DialogLineType::GenerateNodeForReferences(DialogLineItem* line, dtDirector:
          if (recurseFindRef(line->GetID(), item))
          {
             dtDirector::Node* refEvent = editor->CreateNode("Remote Event", "Core", node, 0);
-            refEvent->SetString(std::string("Line ") + QString::number(line->GetIndex()).toStdString(), "EventName");
+            refEvent->SetString(std::string("Ref ") + QString::number(line->GetIndex()).toStdString(), "EventName");
             refEvent->SetPosition(refEvent->GetPosition() - osg::Vec2(600, 0));
             editor->Connect(refEvent, node, "Out", input);
             break;
@@ -153,7 +161,7 @@ void DialogLineType::CheckForReferencing(DialogLineItem* line, dtDirector::Node*
       if (prevNode && prevNode->GetTypeName() == "Remote Event")
       {
          QString eventName = prevNode->GetString("EventName").c_str();
-         if (eventName.contains("Line"))
+         if (eventName.contains("Ref"))
          {
             editor->MapReference(eventName, line->GetID());
             return;
