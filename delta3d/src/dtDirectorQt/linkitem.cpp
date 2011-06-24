@@ -25,6 +25,7 @@
 #include <dtDirectorQt/undomanager.h>
 #include <dtDirectorQt/undolinkevent.h>
 #include <dtDirectorQt/undolinkvisibilityevent.h>
+#include <dtDirectorQt/undoimmediatelink.h>
 
 #include <dtDirector/outputlink.h>
 
@@ -832,14 +833,37 @@ namespace dtDirector
 
       output->SetImmediate(!output->GetImmediate());
 
+      std::string undoDescription;
       if (output->GetImmediate())
       {
+         undoDescription += "Enabling ";
          setBrush(Qt::red);
       }
       else
       {
+         undoDescription += "Disabling ";
          setBrush(mLinkGraphicPen.color());
       }
+
+      undoDescription += " Immediate mode of output link \'" + output->GetName() + "\' for ";
+      if (mNodeItem->GetNode())
+      {
+         undoDescription += "Node \'" + mNodeItem->GetNode()->GetTypeName() + "\'.";
+      }
+      else if (mNodeItem->GetMacro())
+      {
+         if (!mNodeItem->GetMacro()->GetEditor().empty())
+         {
+            undoDescription += "\'" + mNodeItem->GetMacro()->GetEditor() + "\' ";
+         }
+         undoDescription += "Macro Node \'" + mNodeItem->GetMacro()->GetName() + "\'.";
+      }
+
+      dtCore::RefPtr<UndoImmediateLinkEvent> event = new UndoImmediateLinkEvent(mScene->GetEditor(), mNodeItem->GetID(), 1, output->GetName(), output->GetImmediate());
+      event->SetDescription(undoDescription);
+      mScene->GetEditor()->GetUndoManager()->AddEvent(event);
+
+      mScene->Refresh();
    }
 
    //////////////////////////////////////////////////////////////////////////
