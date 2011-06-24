@@ -80,7 +80,7 @@ bool DialogRefLineType::ShouldOperateOn(const dtDirector::Node* node) const
 void DialogRefLineType::OperateOn(DialogLineItem* line, dtDirector::Node* node, DirectorDialogEditorPlugin* editor)
 {
    std::string refName = node->GetString("EventName");
-   editor->RegisterReference(this, refName.c_str());
+   editor->RegisterReference(line, refName.c_str());
 }
 
 ////////////////////////////////////////////////////////////////////////////////
