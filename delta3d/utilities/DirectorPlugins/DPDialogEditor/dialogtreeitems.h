@@ -64,7 +64,7 @@ public:
 
 protected:
 
-   //void startDrag(Qt::DropActions supportedActions);
+   void startDrag(Qt::DropActions supportedActions);
 
    //void dragMoveEvent(QDragMoveEvent* event);
    //void dropEvent(QDropEvent* event);
@@ -72,6 +72,8 @@ protected:
    void contextMenuEvent(QContextMenuEvent* event);
 
 public slots:
+
+   void RecurseStartDrag(QTreeWidgetItem* item, QTreeWidgetItem* moving);
 
    void OnAddNewLine(QAction* action);
    void OnAddNewChoice();

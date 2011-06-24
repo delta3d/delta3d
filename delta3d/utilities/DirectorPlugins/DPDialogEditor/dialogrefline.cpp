@@ -20,6 +20,20 @@ DialogRefLineType::~DialogRefLineType()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+QString DialogRefLineType::GetName() const
+{
+   return "Reference";
+}
+
+////////////////////////////////////////////////////////////////////////////////
+QColor DialogRefLineType::GetColor() const
+{
+   QColor color = Qt::blue;
+   color.setAlphaF(0.15f);
+   return color;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 DialogLineType* DialogRefLineType::Create() const
 {
    return new DialogRefLineType();
@@ -47,7 +61,7 @@ void DialogRefLineType::GenerateNode(DialogLineItem* line, dtDirector::Node* pre
    }
 
    dtDirector::Node* callNode = editor->CreateNode("Call Remote Event", "Core", prevNode, 80);
-   callNode->SetString(std::string("Line ") + QString::number(refLine->GetIndex()).toStdString(), "EventName");
+   callNode->SetString(std::string("Ref ") + QString::number(refLine->GetIndex()).toStdString(), "EventName");
    editor->Connect(prevNode, callNode, output, "Call Event");
 }
 

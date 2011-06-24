@@ -18,6 +18,20 @@ DialogSwitchLineType::~DialogSwitchLineType()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+QString DialogSwitchLineType::GetName() const
+{
+   return "Switch";
+}
+
+////////////////////////////////////////////////////////////////////////////////
+QColor DialogSwitchLineType::GetColor() const
+{
+   QColor color = Qt::yellow;
+   color.setAlphaF(0.25f);
+   return color;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 DialogLineType* DialogSwitchLineType::Create() const
 {
    return new DialogSwitchLineType();

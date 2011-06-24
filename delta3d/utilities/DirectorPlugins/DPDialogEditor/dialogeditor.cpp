@@ -75,15 +75,11 @@ void DirectorDialogEditorPlugin::Initialize()
    settings.beginGroup("MainWindow");
    resize(settings.value("Size", QSize(800, 600)).toSize());
    move(settings.value("Pos", QPoint(100, 100)).toPoint());
-
-   // When restoring the window state, first see if the key exists.
    if (settings.contains("State"))
    {
       QByteArray state = settings.value("State").toByteArray();
       restoreState(state);
    }
-
-   // When restoring the window state, first see if the key exists.
    if (settings.contains("Geom"))
    {
       QByteArray state = settings.value("Geom").toByteArray();
@@ -91,14 +87,17 @@ void DirectorDialogEditorPlugin::Initialize()
    }
    settings.endGroup();
 
-   settings.beginGroup("Dialog Tree");
-   mUI.mDialogTree->resize(settings.value("Size", QSize(195, 121)).toSize());
-   mUI.mDialogTree->move(settings.value("Pos", QPoint(605, 180)).toPoint());
-   settings.endGroup();
-
-   settings.beginGroup("Property Editor");
-   mUI.mPropertyScrollArea->resize(settings.value("Size", QSize(195, 121)).toSize());
-   mUI.mPropertyScrollArea->move(settings.value("Pos", QPoint(605, 180)).toPoint());
+   settings.beginGroup("Splitter");
+   if (settings.contains("State"))
+   {
+      QByteArray state = settings.value("State").toByteArray();
+      mUI.mMainSplitter->restoreState(state);
+   }
+   if (settings.contains("Geom"))
+   {
+      QByteArray state = settings.value("Geom").toByteArray();
+      mUI.mMainSplitter->restoreGeometry(state);
+   }
    settings.endGroup();
 }
 
@@ -126,14 +125,9 @@ void DirectorDialogEditorPlugin::Close()
    settings.setValue("Geom", saveGeometry());
    settings.endGroup();
 
-   settings.beginGroup("Dialog Tree");
-   settings.setValue("Pos", mUI.mDialogTree->pos());
-   settings.setValue("Size", mUI.mDialogTree->size());
-   settings.endGroup();
-
-   settings.beginGroup("Property Editor");
-   settings.setValue("Pos", mUI.mPropertyScrollArea->pos());
-   settings.setValue("Size", mUI.mPropertyScrollArea->size());
+   settings.beginGroup("Splitter");
+   settings.setValue("State", mUI.mMainSplitter->saveState());
+   settings.setValue("Geom", mUI.mMainSplitter->saveGeometry());
    settings.endGroup();
 
    if (mRoot)

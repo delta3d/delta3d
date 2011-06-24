@@ -17,6 +17,12 @@ DialogDelayLineType::~DialogDelayLineType()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+QString DialogDelayLineType::GetName() const
+{
+   return "Delay";
+}
+
+////////////////////////////////////////////////////////////////////////////////
 DialogLineType* DialogDelayLineType::Create() const
 {
    return new DialogDelayLineType();

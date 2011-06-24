@@ -14,10 +14,7 @@ public:
    /**
     * The lines type name.
     */
-   virtual QString GetName() const
-   {
-      return "Delay";
-   }
+   virtual QString GetName() const;
 
    /**
     * Creates a new instance of this class.
