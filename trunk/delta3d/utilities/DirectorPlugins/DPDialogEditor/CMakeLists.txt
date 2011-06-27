@@ -5,6 +5,7 @@ SET(SOURCE_PATH ${CMAKE_SOURCE_DIR}/utilities/DirectorPlugins/${LIB_NAME})
 SET(HEADER_PATH ${CMAKE_SOURCE_DIR}/utilities/DirectorPlugins/${LIB_NAME})
 
 SET(LIB_SOURCES
+    ${SOURCE_PATH}/dialogconditionline.cpp
     ${SOURCE_PATH}/dialogdelayline.cpp
     ${SOURCE_PATH}/dialogeditor.cpp
     ${SOURCE_PATH}/dialoglineregistry.cpp
@@ -16,6 +17,7 @@ SET(LIB_SOURCES
 )
 
 SET(LIB_HEADERS
+    ${HEADER_PATH}/dialogconditionline.h
     ${HEADER_PATH}/dialogdelayline.h
     ${HEADER_PATH}/dialogeditor.h
     ${HEADER_PATH}/dialoglineregistry.h
