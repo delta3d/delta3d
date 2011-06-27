@@ -318,19 +318,19 @@ namespace dtGame
        */
       void HandleClearIgnoreListMessage();
 
-      /** 
+      /**
        *  Add a MessageType to the list of Messages to not record.
        *  @param message a LogIgnoreMessageTypeMessage containing the MessageType to ignore
        */
       void HandleAddIgnoredMessageTypeMessage(const Message& message);
 
-      /** 
+      /**
        *  Remove a MessageType to the list of Messages to not record.
        *  @param message a LogIgnoreMessageTypeMessage containing the MessageType to stop ignoring
        */
       void HandleRemoveIgnoredMessageTypeMessage(const Message& message);
 
-      /** 
+      /**
        *  Stop ignoring all previously ignored MessageTypes
        */
       void HandleClearIgnoredMessageTypeMessage();
@@ -357,7 +357,7 @@ namespace dtGame
        */
       int RequestDeletePlaybackActors();
 
-      /** 
+      /**
        * Check if the supplied Message is okay to record.
        * @return true if message should be written, false otherwise
        */

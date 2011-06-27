@@ -94,12 +94,12 @@ namespace dtDAL
 
 
    ///////////////////////////////////////////////////////////////////////////////
-   bool ObjectType::InstanceOf(const ObjectType &rhs) const
+   bool ObjectType::InstanceOf(const ObjectType& rhs) const
    {
       if (rhs == *this)
          return true;
 
-      const ObjectType *parent = GetParentType();
+      const ObjectType* parent = GetParentType();
       while (parent != NULL)
       {
          if (*parent == rhs)
