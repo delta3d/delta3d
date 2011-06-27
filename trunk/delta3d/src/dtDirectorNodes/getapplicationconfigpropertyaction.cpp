@@ -19,7 +19,7 @@
  * Author: Eric R. Heine
  */
 #include <prefix/dtdirectornodesprefix.h>
-#include <dtDirectorNodes/GetApplicationConfigPropertyAction.h>
+#include <dtDirectorNodes/getapplicationconfigpropertyaction.h>
 
 #include <dtABC/application.h>
 #include <dtDAL/stringactorproperty.h>
