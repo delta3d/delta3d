@@ -146,7 +146,7 @@ namespace dtDirector
             // Toggle our attached boolean
             if (shouldToggle)
             {
-               onOrOff = !mToggleBool;
+               onOrOff = !GetBoolean("ToggleBoolean");
             }
             SetBoolean(onOrOff, "ToggleBoolean");
          }
