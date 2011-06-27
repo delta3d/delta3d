@@ -252,7 +252,6 @@ void GUI::SetCamera(dtCore::Camera* camera)
    {
       mCamera->GetOSGCamera()->addChild(mInternalGraph.get());
    }
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -94,7 +94,8 @@ namespace dtDirector
    {
       if (firstUpdate)
       {
-         if (input == INPUT_START)
+         // If the loop has not already been added to the stack(mIsLooping), add it
+         if (input == INPUT_START && !mIsLooping)
          {
             mIsLooping = true;
             mLoopTimeElapsed = 0.0f;

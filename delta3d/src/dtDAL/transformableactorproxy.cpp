@@ -199,7 +199,7 @@ namespace dtDAL
          DT_REGISTER_RESOURCE_PROPERTY_WITH_NAME(DataType::STATIC_MESH, AltCollisionMesh, "AltCollisionMesh", "Alternate Collision Mesh",
                                                 "An alternate mesh to use for collision detection shapes",
                                                  PropRegHelperType, propRegHelper);
-         
+
       }
 
       static const dtUtil::RefString RENDER_PROXY_NODE_DESC("Enables the rendering of the proxy node for this Transformable");
@@ -483,7 +483,7 @@ namespace dtDAL
 
       names.push_back("ISector");
       values.push_back(COLLISION_CATEGORY_MASK_ISECTOR);
-      
+
       names.push_back("Object");
       values.push_back(COLLISION_CATEGORY_MASK_OBJECT);
 
@@ -533,7 +533,7 @@ namespace dtDAL
       dtCore::Transformable *trans = static_cast<dtCore::Transformable*>(GetActor());
 
       trans->ClearCollisionGeometry();
-      
+
       if (mCollisionBoxDims.x() == 0.0f ||
           mCollisionBoxDims.y() == 0.0f ||
           mCollisionBoxDims.z() == 0.0f)
@@ -600,7 +600,7 @@ namespace dtDAL
             node = LoadAltCollisionMesh(GetAltCollisionMesh());
          }
 
-         trans->SetCollisionCappedCylinder(node);         
+         trans->SetCollisionCappedCylinder(node);
       }
       else
       {
@@ -629,14 +629,14 @@ namespace dtDAL
       dtCore::Transformable *trans = static_cast<dtCore::Transformable*>(GetActor());
 
       trans->ClearCollisionGeometry();
-      
+
       osg::Node* node = NULL;
 
       if (IsAltCollisionMeshSet(GetAltCollisionMesh()))
       {
          node = LoadAltCollisionMesh(GetAltCollisionMesh());
       }
-      
+
       trans->SetCollisionMesh(node);
    }
 
