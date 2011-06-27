@@ -361,18 +361,28 @@ namespace dtDirector
             else
             {
                // Find out if this chained node is already mapped.
-               std::map<dtDirector::Node*, osg::Vec2>::iterator iter = mChainedNodeMap.find(chainedNode);
+               std::map<dtDirector::Node*, ChainData>::iterator iter = mChainedNodeMap.find(chainedNode);
 
                float offset = 0;
                if (iter == mChainedNodeMap.end())
                {
-                  mChainedNodeMap[chainedNode] = osg::Vec2();
+                  ChainData chainData;
+                  chainData.node = chainedNode;
+                  chainData.parent = NULL;
+                  chainData.offset = osg::Vec2();
+                  mChainedNodeMap[chainedNode] = chainData;
                   iter = mChainedNodeMap.find(chainedNode);
                }
                else
                {
-                  offset = iter->second.y();
+                  offset = iter->second.offset.y();
                }
+
+               ChainData chainData;
+               chainData.node = newNode;
+               chainData.parent = chainedNode;
+               chainData.offset = osg::Vec2();
+               mChainedNodeMap[newNode] = chainData;
 
                osg::Vec2 chainedPos = chainedNode->GetPosition();
                newNode->SetPosition(chainedPos + osg::Vec2(400, offset));
@@ -380,7 +390,19 @@ namespace dtDirector
                offset += nodeHeight;
                if (iter != mChainedNodeMap.end())
                {
-                  iter->second.y() = offset;
+                  iter->second.offset.y() = offset;
+                  dtDirector::Node* parent = iter->second.parent;
+
+                  while (parent)
+                  {
+                     ChainData& chainData = mChainedNodeMap[parent];
+                     if (chainData.node->GetPosition().y() + chainData.offset.y() < newNode->GetPosition().y() + offset)
+                     {
+                        chainData.offset.y() = newNode->GetPosition().y() + offset - chainData.node->GetPosition().y();
+                     }
+
+                     parent = chainData.parent;
+                  }
                }
 
                // Update the max row height if needed.
@@ -438,17 +460,30 @@ namespace dtDirector
       bool result = valueLink->Connect(dynamic_cast<dtDirector::ValueNode*>(valueNode));
 
       // Find out if this chained node is already mapped.
-      std::map<dtDirector::Node*, osg::Vec2>::iterator iter = mChainedNodeMap.find(node);
+      std::map<dtDirector::Node*, ChainData>::iterator iter = mChainedNodeMap.find(node);
 
       float offset = 0;
       if (iter == mChainedNodeMap.end())
       {
-         mChainedNodeMap[node] = osg::Vec2();
+         ChainData chainData;
+         chainData.node = node;
+         chainData.parent = NULL;
+         chainData.offset = osg::Vec2();
+         mChainedNodeMap[node] = chainData;
          iter = mChainedNodeMap.find(node);
       }
       else
       {
-         offset = iter->second.x();
+         offset = iter->second.offset.x();
+      }
+
+      if (mChainedNodeMap.find(valueNode) == mChainedNodeMap.end())
+      {
+         ChainData chainData;
+         chainData.node = valueNode;
+         chainData.parent = node;
+         chainData.offset = osg::Vec2();
+         mChainedNodeMap[valueNode] = chainData;
       }
 
       // Position the value node beneath the node.
@@ -458,7 +493,19 @@ namespace dtDirector
       offset += 80;
       if (iter != mChainedNodeMap.end())
       {
-         iter->second.x() = offset;
+         iter->second.offset.x() = offset;
+
+         dtDirector::Node* parent = iter->second.parent;
+         while (parent)
+         {
+            ChainData& chainData = mChainedNodeMap[parent];
+            if (chainData.node->GetPosition().y() + chainData.offset.y() < node->GetPosition().y() + 350)
+            {
+               chainData.offset.y() = node->GetPosition().y() + 350 - chainData.node->GetPosition().y();
+            }
+
+            parent = chainData.parent;
+         }
       }
 
       // Update the max row height if needed.
