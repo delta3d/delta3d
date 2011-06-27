@@ -69,10 +69,18 @@
     <property name="title">
      <string>&amp;File</string>
     </property>
+    <widget class="QMenu" name="menuRecent_Files">
+     <property name="title">
+      <string>Recent Files</string>
+     </property>
+     <addaction name="actionNone"/>
+    </widget>
     <addaction name="action_New"/>
     <addaction name="action_Load"/>
     <addaction name="action_Save"/>
     <addaction name="action_Save_as"/>
+    <addaction name="separator"/>
+    <addaction name="menuRecent_Files"/>
     <addaction name="separator"/>
     <addaction name="action_Load_Recording"/>
     <addaction name="action_Exit"/>
@@ -999,6 +1007,11 @@
    </property>
    <property name="toolTip">
     <string>Manage the Plugins for the script.</string>
+   </property>
+  </action>
+  <action name="actionNone">
+   <property name="text">
+    <string>&lt;None&gt;</string>
    </property>
   </action>
  </widget>

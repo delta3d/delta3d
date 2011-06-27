@@ -121,6 +121,10 @@ namespace dtDirector
       mClickSound = Phonon::createPlayer(Phonon::MusicCategory,
                                          Phonon::MediaSource(":/sounds/click.wav"));
       connect(mClickSound, SIGNAL(stateChanged(Phonon::State, Phonon::State)), this, SLOT(OnStateChanged(Phonon::State, Phonon::State)));
+
+      connect(mUI.menuRecent_Files, SIGNAL(triggered(QAction*)), this, SLOT(OnRecentFile(QAction*)));
+
+      RefreshRecentFiles();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -243,12 +247,94 @@ namespace dtDirector
          mUI.graphTab->clear();
          GetUndoManager()->Clear();
 
+         mFileName.clear();
+
          try
          {
             mDirector->LoadScript(fileName);
 
             std::string contextDir = osgDB::convertFileNameToNativeStyle(dtDAL::Project::GetInstance().GetContext()+"/");
             mFileName = dtUtil::FileUtils::GetInstance().RelativePath(contextDir, fileName);
+
+            // Display a warning message if there were libraries that could not be loaded.
+            const std::vector<std::string>& missingLibraries = mDirector->GetMissingLibraries();
+            if (!missingLibraries.empty())
+            {
+               QString warning = "The following Node Libraries could not be included:\n";
+
+               int count = (int)missingLibraries.size();
+               for (int index = 0; index < count; ++index)
+               {
+                  QString libraryName = missingLibraries[index].c_str();
+                  warning += "\t" + libraryName + "\n";
+               }
+
+               warning += "\nThis could happen either because the libraries were not found ";
+               warning += "in any of this applications valid search paths or the binary files ";
+               warning += "for these libraries were out of date and could not be linked ";
+               warning += "properly with this application.\n\n";
+               warning += "Saving this script will cause these libraries to be removed.";
+
+               QMessageBox messageBox("Libraries were not loaded!",
+                  warning, QMessageBox::Warning,
+                  QMessageBox::Ok,
+                  QMessageBox::NoButton,
+                  QMessageBox::NoButton,
+                  this);
+
+               messageBox.exec();
+            }
+
+            // Display a warning message if there were nodes that could not be loaded.
+            const std::set<std::string>& missingNodes = mDirector->GetMissingNodeTypes();
+            if (!missingNodes.empty())
+            {
+               QString warning = "The following node types could not be created:\n";
+
+               std::set<std::string>::const_iterator iter;
+               for (iter = missingNodes.begin(); iter != missingNodes.end(); ++iter)
+               {
+                  QString nodeName = (*iter).c_str();
+                  warning += "\t" + nodeName + "\n";
+               }
+
+               warning += "\nThis could happen either because the nodes have been removed ";
+               warning += "from their libraries or the libraries that contained them could ";
+               warning += "not be loaded themselves.\n\n";
+               warning += "Saving this script will cause these nodes to be removed.";
+
+               QMessageBox messageBox("Nodes were not loaded!",
+                  warning, QMessageBox::Warning,
+                  QMessageBox::Ok,
+                  QMessageBox::NoButton,
+                  QMessageBox::NoButton,
+                  this);
+
+               messageBox.exec();
+            }
+
+            // Update the recent file listing to have the currently loaded item
+            // inserted or moved to the front.
+            QSettings settings("MOVES", "Director Editor");
+            QStringList files = settings.value("recentFileList").toStringList();
+            files.removeAll(mFileName.c_str());
+            files.prepend(mFileName.c_str());
+
+            while (files.size() > 5)
+            {
+               files.removeLast();
+            }
+
+            settings.setValue("recentFileList", files);
+            RefreshRecentFiles();
+
+            // Create a single tab with the default graph.
+            OpenGraph(mDirector->GetGraphRoot());
+            mUI.replayBrowser->BuildThreadList();
+            mUI.graphBrowser->BuildGraphList(mDirector->GetGraphRoot());
+
+            RefreshNodeScenes();
+            return true;
          }
          catch (const dtUtil::Exception& e)
          {
@@ -263,73 +349,21 @@ namespace dtDirector
 
             messageBox.exec();
          }
-
-         // Display a warning message if there were libraries that could not be loaded.
-         const std::vector<std::string>& missingLibraries = mDirector->GetMissingLibraries();
-         if (!missingLibraries.empty())
-         {
-            QString warning = "The following Node Libraries could not be included:\n";
-
-            int count = (int)missingLibraries.size();
-            for (int index = 0; index < count; ++index)
-            {
-               QString libraryName = missingLibraries[index].c_str();
-               warning += "\t" + libraryName + "\n";
-            }
-
-            warning += "\nThis could happen either because the libraries were not found ";
-            warning += "in any of this applications valid search paths or the binary files ";
-            warning += "for these libraries were out of date and could not be linked ";
-            warning += "properly with this application.\n\n";
-            warning += "Saving this script will cause these libraries to be removed.";
-
-            QMessageBox messageBox("Libraries were not loaded!",
-               warning, QMessageBox::Warning,
-               QMessageBox::Ok,
-               QMessageBox::NoButton,
-               QMessageBox::NoButton,
-               this);
-
-            messageBox.exec();
-         }
-
-         // Display a warning message if there were nodes that could not be loaded.
-         const std::set<std::string>& missingNodes = mDirector->GetMissingNodeTypes();
-         if (!missingNodes.empty())
-         {
-            QString warning = "The following node types could not be created:\n";
-
-            std::set<std::string>::const_iterator iter;
-            for (iter = missingNodes.begin(); iter != missingNodes.end(); ++iter)
-            {
-               QString nodeName = (*iter).c_str();
-               warning += "\t" + nodeName + "\n";
-            }
-
-            warning += "\nThis could happen either because the nodes have been removed ";
-            warning += "from their libraries or the libraries that contained them could ";
-            warning += "not be loaded themselves.\n\n";
-            warning += "Saving this script will cause these nodes to be removed.";
-
-            QMessageBox messageBox("Nodes were not loaded!",
-               warning, QMessageBox::Warning,
-               QMessageBox::Ok,
-               QMessageBox::NoButton,
-               QMessageBox::NoButton,
-               this);
-
-            messageBox.exec();
-         }
-
-         // Create a single tab with the default graph.
-         OpenGraph(mDirector->GetGraphRoot());
-         mUI.replayBrowser->BuildThreadList();
-         mUI.graphBrowser->BuildGraphList(mDirector->GetGraphRoot());
-
-         RefreshNodeScenes();
-         return true;
       }
 
+      // If this file fails to load, remove it from the recent file listing.
+      QSettings settings("MOVES", "Director Editor");
+      QStringList files = settings.value("recentFileList").toStringList();
+      files.removeAll(fileName.c_str());
+      settings.setValue("recentFileList", files);
+      RefreshRecentFiles();
+
+      // Create a single tab with the default graph.
+      OpenGraph(mDirector->GetGraphRoot());
+      mUI.replayBrowser->BuildThreadList();
+      mUI.graphBrowser->BuildGraphList(mDirector->GetGraphRoot());
+
+      RefreshNodeScenes();
       return false;
    }
 
@@ -378,6 +412,22 @@ namespace dtDirector
 
       mReplayInput = input;
       mReplayOutput = output;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::RefreshRecentFiles()
+   {
+      QSettings settings("MOVES", "Director Editor");
+      QStringList files = settings.value("recentFileList").toStringList();
+
+      mUI.menuRecent_Files->clear();
+
+      int count = files.count();
+      for (int index = 0; index < count; ++index)
+      {
+         QString fileName = files[index];
+         mUI.menuRecent_Files->addAction(fileName);
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -1067,21 +1117,7 @@ namespace dtDirector
          }
       }
 
-      if (LoadScript())
-      {
-         // Retrieve the last loaded script.
-         QSettings settings("MOVES", "Director Editor");
-         QStringList files = settings.value("recentFileList").toStringList();
-         files.removeAll(mFileName.c_str());
-         files.prepend(mFileName.c_str());
-
-         while (files.size() > 5)
-         {
-            files.removeLast();
-         }
-
-         settings.setValue("recentFileList", files);
-      }
+      LoadScript();
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -1790,6 +1826,36 @@ namespace dtDirector
       mUI.searchNodeTabWidget->SearchNodes(text, graph);
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::OnRecentFile(QAction* action)
+   {
+      if (action)
+      {
+         // Check if the undo manager has some un-committed changes first.
+         if (GetUndoManager()->IsModified())
+         {
+            QMessageBox confirmationBox("Save Changes?",
+               "Would you like to save your current Director Script first?",
+               QMessageBox::Question,
+               QMessageBox::Yes,
+               QMessageBox::No,
+               QMessageBox::Cancel, this);
+
+            switch (confirmationBox.exec())
+            {
+            case QMessageBox::Yes:
+               if (!SaveScript()) return;
+               break;
+            case QMessageBox::Cancel:
+               return;
+            }
+         }
+
+         QString fileName = action->text();
+         LoadScript(fileName.toStdString());
+      }
+   }
+
    ///////////////////////////////////////////////////////////////////////////////
    void DirectorEditor::OnCreateNodeEvent(const QString& name, const QString& category, const QString& refName)
    {
@@ -2082,6 +2148,7 @@ namespace dtDirector
          }
 
          settings.setValue("recentFileList", files);
+         RefreshRecentFiles();
 
          // If we are dealing with a resourced script, make sure we go through
          // every other script that is referencing this resource and reload
