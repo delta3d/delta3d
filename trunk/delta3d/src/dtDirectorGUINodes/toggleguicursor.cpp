@@ -19,7 +19,7 @@
  * Author: Eric R. Heine
  */
 
-#include <dtDirectorGUINodes/ToggleGUICursor.h>
+#include <dtDirectorGUINodes/toggleguicursor.h>
 #include <dtDirectorGUINodes/guinodemanager.h>
 
 #include <dtGUI/gui.h>
