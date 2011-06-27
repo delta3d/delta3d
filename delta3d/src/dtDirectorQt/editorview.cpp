@@ -47,7 +47,7 @@ namespace dtDirector
       setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
       mTimer.setParent(this);
-      mTimer.setInterval(10);
+      mTimer.setInterval(1);
       connect(&mTimer, SIGNAL(timeout()), this, SLOT(TimerTick()));
 
       mTimer.start();
@@ -99,11 +99,14 @@ namespace dtDirector
 
          scale(inc, inc);
 
-         QPointF newFocus = mapToScene(mFocusPos.x(), mFocusPos.y());
+         if (inc > 1.0f)
+         {
+            QPointF newFocus = mapToScene(mFocusPos.x(), mFocusPos.y());
 
-         QPointF translation = oldFocus - newFocus;
-         mScene->GetTranslationItem()->setPos(
-            mScene->GetTranslationItem()->pos() - translation);
+            QPointF translation = oldFocus - newFocus;
+            mScene->GetTranslationItem()->setPos(
+               mScene->GetTranslationItem()->pos() - translation);
+         }
 
          // Refresh all group box items.
          QList<QGraphicsItem*> itemList = mScene->GetTranslationItem()->childItems();
