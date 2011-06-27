@@ -90,7 +90,7 @@ bool DialogRefLineType::CanHaveSubLine() const
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-QString DialogRefLineType::GetDisplayName(const DialogTreeWidget* tree) const
+QString DialogRefLineType::GetDisplayName(const DirectorDialogEditorPlugin* editor) const
 {
    QString result = "<Unknown>";
 
@@ -100,10 +100,10 @@ QString DialogRefLineType::GetDisplayName(const DialogTreeWidget* tree) const
    }
    else
    {
-      int count = tree->topLevelItemCount();
+      int count = editor->GetTree()->topLevelItemCount();
       for (int index = 0; index < count; ++index)
       {
-         QTreeWidgetItem* item = tree->topLevelItem(index);
+         QTreeWidgetItem* item = editor->GetTree()->topLevelItem(index);
          if (recurseFindRef(item, result))
          {
             break;
@@ -144,14 +144,14 @@ DialogLineItem* DialogRefLineType::recurseFindRef(QTreeWidgetItem* item, QString
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-QWidget* DialogRefLineType::CreateInlineEditor(QWidget* parent, DialogTreeWidget* tree) const
+QWidget* DialogRefLineType::CreateInlineEditor(QWidget* parent, DirectorDialogEditorPlugin* editor) const
 {
    QComboBox* control = new QComboBox(parent);
-   int count = tree->topLevelItemCount();
+   int count = editor->GetTree()->topLevelItemCount();
    control->addItem("<None>");
    for (int index = 0; index < count; ++index)
    {
-      QTreeWidgetItem* item = tree->topLevelItem(index);
+      QTreeWidgetItem* item = editor->GetTree()->topLevelItem(index);
       recurseItemTree(item, control);
    }
    return control;

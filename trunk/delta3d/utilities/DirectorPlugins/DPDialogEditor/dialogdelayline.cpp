@@ -62,13 +62,13 @@ void DialogDelayLineType::OperateOn(DialogLineItem* line, dtDirector::Node* node
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-QString DialogDelayLineType::GetDisplayName(const DialogTreeWidget* tree) const
+QString DialogDelayLineType::GetDisplayName(const DirectorDialogEditorPlugin* editor) const
 {
    return QString::number(mDelayTime) + " Seconds";
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-QWidget* DialogDelayLineType::CreateInlineEditor(QWidget* parent, DialogTreeWidget* tree) const
+QWidget* DialogDelayLineType::CreateInlineEditor(QWidget* parent, DirectorDialogEditorPlugin* editor) const
 {
    return new QDoubleSpinBox(parent);
 }

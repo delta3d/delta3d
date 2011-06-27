@@ -72,7 +72,7 @@ void DialogLogLineType::OperateOn(DialogLineItem* line, dtDirector::Node* node, 
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-QString DialogLogLineType::GetDisplayName(const DialogTreeWidget* tree) const
+QString DialogLogLineType::GetDisplayName(const DirectorDialogEditorPlugin* editor) const
 {
    if (mLog.isEmpty())
    {
@@ -83,7 +83,7 @@ QString DialogLogLineType::GetDisplayName(const DialogTreeWidget* tree) const
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-QWidget* DialogLogLineType::CreateInlineEditor(QWidget* parent, DialogTreeWidget* tree) const
+QWidget* DialogLogLineType::CreateInlineEditor(QWidget* parent, DirectorDialogEditorPlugin* editor) const
 {
    return new QLineEdit(parent);
 }

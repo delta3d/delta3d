@@ -46,6 +46,7 @@ DirectorDialogEditorPlugin::DirectorDialogEditorPlugin()
    
    setWindowTitle("Dialog Editor");
 
+   mUI.mDialogTree->SetEditor(this);
    connect(mUI.mDialogTree, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)),
       this, SLOT(OnCurrentTreeItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)));
 
@@ -273,8 +274,9 @@ void DirectorDialogEditorPlugin::OnLoad()
          const DialogLineType* type = DialogLineRegistry::GetInstance().GetLineTypeForNode(lineNode);
          if (type)
          {
-            DialogLineItem* newLine = new DialogLineItem(type->GetName(), type, GetTree()->CreateIndex(), GetTree());
+            DialogLineItem* newLine = new DialogLineItem(type->GetName(), type, GetTree()->CreateIndex(), this);
             mRoot->addChild(newLine);
+            newLine->GetType()->Init(newLine, this);
             mRoot->setExpanded(true);
 
             newLine->GetType()->OperateOn(newLine, lineNode, this);
