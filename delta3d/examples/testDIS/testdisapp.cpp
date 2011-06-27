@@ -112,7 +112,8 @@ public:
 ////////////////////////////////////////////////////////////////////////////////
 void TestDISApp::FindActorsAndAddComponents()
 {
-   mGameManager->FindActorsIf(FindDISActor(), mActorsToPublish);
+   FindDISActor findDisActor;
+   mGameManager->FindActorsIf(findDisActor, mActorsToPublish);
    std::vector<dtDAL::BaseActorObject*>::iterator itr = mActorsToPublish.begin();
    while (itr != mActorsToPublish.end())
    {
