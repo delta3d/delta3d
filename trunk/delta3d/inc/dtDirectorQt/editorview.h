@@ -28,6 +28,8 @@
 
 #include <QtGui/QGraphicsView>
 
+#include <QtCore/QTimer>
+
 class QWheelEvent;
 
 namespace dtDirector
@@ -70,6 +72,13 @@ namespace dtDirector
        */
       void wheelEvent(QWheelEvent* event);
 
+   public slots:
+
+      /**
+       * Timer interval callback.
+       */
+      void TimerTick();
+
    private:
 
       EditorScene* mScene;
@@ -77,6 +86,10 @@ namespace dtDirector
       float mMinScale;
       float mMaxScale;
       float mCurrentScale;
+      float mGoalScale;
+
+      QTimer  mTimer;
+      QPointF mFocusPos;
    };
 } // namespace dtDirector
 
