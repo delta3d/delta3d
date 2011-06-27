@@ -162,7 +162,7 @@ namespace dtUtil
       void SetValue(const std::string& attrName, const std::string& value);
       std::string GetValue(const std::string& attrName) const;
 
-      bool AttributeSearch::HasAttribute(const std::string& attrName) const;
+      bool HasAttribute(const std::string& attrName) const;
 
       std::string ToString() const;
 
