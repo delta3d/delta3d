@@ -23,6 +23,7 @@
 #define DIRECTORQT_UNDO_REMOVE_LIBRARY_EVENT
 
 #include <dtDirectorQt/undoevent.h>
+#include <string>
 
 namespace dtDirector
 {

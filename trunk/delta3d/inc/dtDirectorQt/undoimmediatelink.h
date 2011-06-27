@@ -23,6 +23,7 @@
 #define DIRECTORQT_UNDO_IMMEDIATE_LINK_EVENT
 
 #include <dtDirectorQt/undoevent.h>
+#include <dtCore/uniqueid.h>
 
 namespace dtDirector
 {
