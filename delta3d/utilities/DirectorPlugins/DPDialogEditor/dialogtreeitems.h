@@ -33,6 +33,7 @@
 class DialogLineType;
 class DialogChoiceItem;
 class DialogTreeDelegate;
+class DirectorDialogEditorPlugin;
 
 /**
  * Dialog tree.
@@ -44,6 +45,9 @@ public:
 
    DialogTreeWidget(QWidget* parent = NULL);
    ~DialogTreeWidget();
+
+   void SetEditor(DirectorDialogEditorPlugin* editor);
+   DirectorDialogEditorPlugin* GetEditor() const;
 
    void Reset()
    {
@@ -84,6 +88,7 @@ protected slots:
 
 private:
 
+   DirectorDialogEditorPlugin* mEditor;
    DialogTreeDelegate* mDelegate;
    int mIndex;
 };
@@ -118,7 +123,7 @@ class DT_DIRECTOR_DIALOG_EDITOR_EXPORT DialogLineItem: public QTreeWidgetItem
 {
 public:
 
-   DialogLineItem(const QString& name, const DialogLineType* type, int index, DialogTreeWidget* tree = NULL);
+   DialogLineItem(const QString& name, const DialogLineType* type, int index, DirectorDialogEditorPlugin* editor);
    ~DialogLineItem();
 
    DialogLineType*         GetType()     const {return mType;}
@@ -157,8 +162,11 @@ class DT_DIRECTOR_DIALOG_EDITOR_EXPORT DialogChoiceItem: public QTreeWidgetItem
 {
 public:
 
-   DialogChoiceItem(int index);
+   DialogChoiceItem(int index, const QString& label, bool moveable, bool nameable);
    ~DialogChoiceItem();
+
+   bool IsMoveable() const {return mMoveable;}
+   bool IsNameable() const {return mNameable;}
 
    void UpdateLabel();
 
@@ -173,6 +181,8 @@ private:
 
    QString  mLabel;
    int      mIndex;
+   bool     mMoveable;
+   bool     mNameable;
 };
 
 

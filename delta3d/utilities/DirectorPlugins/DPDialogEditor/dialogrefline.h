@@ -74,7 +74,7 @@ public:
     *
     * @param[in]  tree  The dialog tree.
     */
-   virtual QString GetDisplayName(const DialogTreeWidget* tree) const;
+   virtual QString GetDisplayName(const DirectorDialogEditorPlugin* editor) const;
    DialogLineItem* recurseFindRef(QTreeWidgetItem* item, QString& outValue) const;
 
    /**
@@ -85,7 +85,7 @@ public:
     *
     * @return             A newly created editor widget.
     */
-   virtual QWidget* CreateInlineEditor(QWidget* parent, DialogTreeWidget* tree) const;
+   virtual QWidget* CreateInlineEditor(QWidget* parent, DirectorDialogEditorPlugin* editor) const;
    void recurseItemTree(QTreeWidgetItem* item, QComboBox* control) const;
 
    /**

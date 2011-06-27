@@ -59,7 +59,7 @@ public:
     *
     * @param[in]  tree  The dialog tree.
     */
-   virtual QString GetDisplayName(const DialogTreeWidget* tree) const;
+   virtual QString GetDisplayName(const DirectorDialogEditorPlugin* editor) const;
 
    /**
     * Create an editor widget for editing this line within the tree widget.
@@ -69,7 +69,7 @@ public:
     *
     * @return             A newly created editor widget.
     */
-   virtual QWidget* CreateInlineEditor(QWidget* parent, DialogTreeWidget* tree) const;
+   virtual QWidget* CreateInlineEditor(QWidget* parent, DirectorDialogEditorPlugin* editor) const;
 
    /**
     * Refreshes the inline editor widget with the current status of the lines data.

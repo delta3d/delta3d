@@ -45,6 +45,14 @@ public:
    virtual DialogLineType* Create() const = 0;
 
    /**
+    * Initializes this line type.
+    *
+    * @param[in]  line    The current line.
+    * @param[in]  editor  The editor.
+    */
+   virtual void Init(DialogLineItem* line, DirectorDialogEditorPlugin* editor);
+
+   /**
     * Generates the Director script node(s) for this dialog line.
     * Any node(s) created must continue the chain using the provided
     * output link.  This method should then handle the generation of
@@ -116,10 +124,12 @@ public:
     * @param[in]  line        The current line.
     * @param[in]  choiceName  The name of the choice.
     * @param[in]  editor      The editor.
+    * @param[in]  moveable    True if this choice is moveable by the user.
+    * @param[in]  nameable    True if this choice is nameable by the user.
     *
     * @return     The newly created choice item.
     */
-   QTreeWidgetItem* CreateChoice(DialogLineItem* line, const std::string& choiceName, DirectorDialogEditorPlugin* editor);
+   QTreeWidgetItem* CreateChoice(DialogLineItem* line, const std::string& choiceName, DirectorDialogEditorPlugin* editor, bool moveable = true, bool nameable = true);
 
    /**
     * Checks whether the operated node is being referenced and stores
@@ -153,7 +163,7 @@ public:
     *
     * @param[in]  tree  The dialog tree.
     */
-   virtual QString GetDisplayName(const DialogTreeWidget* tree) const = 0;
+   virtual QString GetDisplayName(const DirectorDialogEditorPlugin* editor) const = 0;
 
    /**
     * Create an editor widget for editing this line within the tree widget.
@@ -163,7 +173,7 @@ public:
     *
     * @return             A newly created editor widget.
     */
-   virtual QWidget* CreateInlineEditor(QWidget* parent, DialogTreeWidget* tree) const;
+   virtual QWidget* CreateInlineEditor(QWidget* parent, DirectorDialogEditorPlugin* editor) const;
 
    /**
     * Refreshes the inline editor widget with the current status of the lines data.

@@ -28,6 +28,11 @@ QColor DialogLineType::GetColor() const
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void DialogLineType::Init(DialogLineItem* line, DirectorDialogEditorPlugin* editor)
+{
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void DialogLineType::GenerateNodeForChild(DialogLineItem* childLine, dtDirector::Node* prevNode, const std::string& output, DirectorDialogEditorPlugin* editor)
 {
    if (!childLine || !childLine->GetType())
@@ -111,8 +116,9 @@ void DialogLineType::OperateOnChild(QTreeWidgetItem* item, dtDirector::Node* nod
          const DialogLineType* type = DialogLineRegistry::GetInstance().GetLineTypeForNode(childNode);
          if (type)
          {
-            DialogLineItem* newLine = new DialogLineItem(type->GetName(), type, editor->GetTree()->CreateIndex(), editor->GetTree());
+            DialogLineItem* newLine = new DialogLineItem(type->GetName(), type, editor->GetTree()->CreateIndex(), editor);
             item->addChild(newLine);
+            newLine->GetType()->Init(newLine, editor);
             item->setExpanded(true);
 
             newLine->GetType()->OperateOn(newLine, childNode, editor);
@@ -135,12 +141,11 @@ void DialogLineType::OperateOnChild(QTreeWidgetItem* item, dtDirector::Node* nod
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-QTreeWidgetItem* DialogLineType::CreateChoice(DialogLineItem* line, const std::string& choiceName, DirectorDialogEditorPlugin* editor)
+QTreeWidgetItem* DialogLineType::CreateChoice(DialogLineItem* line, const std::string& choiceName, DirectorDialogEditorPlugin* editor, bool moveable, bool nameable)
 {
-   DialogChoiceItem* newChoice = new DialogChoiceItem(editor->GetTree()->CreateIndex());
+   DialogChoiceItem* newChoice = new DialogChoiceItem(editor->GetTree()->CreateIndex(), choiceName.c_str(), moveable, nameable);
    if (newChoice)
    {
-      newChoice->SetLabel(choiceName.c_str());
       line->addChild(newChoice);
       line->setExpanded(true);
    }
@@ -189,7 +194,7 @@ int DialogLineType::GetChoiceLimit() const
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-QWidget* DialogLineType::CreateInlineEditor(QWidget* parent, DialogTreeWidget* tree) const
+QWidget* DialogLineType::CreateInlineEditor(QWidget* parent, DirectorDialogEditorPlugin* editor) const
 {
    return NULL;
 }

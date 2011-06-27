@@ -20,6 +20,7 @@
  */
 
 #include <dialogtreeitems.h>
+#include <dialogeditor.h>
 
 #include <dialoglineregistry.h>
 #include <dialoglinetype.h>
@@ -34,6 +35,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 DialogTreeWidget::DialogTreeWidget(QWidget* parent)
    : QTreeWidget(parent)
+   , mEditor(NULL)
    , mDelegate(NULL)
    , mIndex(1)
 {
@@ -54,6 +56,18 @@ DialogTreeWidget::~DialogTreeWidget()
       delete mDelegate;
       mDelegate = NULL;
    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void DialogTreeWidget::SetEditor(DirectorDialogEditorPlugin* editor)
+{
+   mEditor = editor;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+DirectorDialogEditorPlugin* DialogTreeWidget::GetEditor() const
+{
+   return mEditor;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -251,6 +265,7 @@ void DialogTreeWidget::RecurseStartDrag(QTreeWidgetItem* item, QTreeWidgetItem* 
    int count = item->childCount();
    for (int index = 0; index < count; ++index)
    {
+      bool allowTarget = true;
       bool allowDrag = true;
 
       QTreeWidgetItem* child = item->child(index);
@@ -267,13 +282,13 @@ void DialogTreeWidget::RecurseStartDrag(QTreeWidgetItem* item, QTreeWidgetItem* 
          // Lines can only be moved to items with no children.
          if (child->childCount() > 0)
          {
-            allowDrag = false;
+            allowTarget = false;
          }
 
          // Lines can only be moved to other lines that are not choice lines.
          if (destLine && (!destLine->CanHaveSubLine() || destLine->IsChoice()))
          {
-            allowDrag = false;
+            allowTarget = false;
          }
       }
       // If you are moving a choice item.
@@ -282,31 +297,42 @@ void DialogTreeWidget::RecurseStartDrag(QTreeWidgetItem* item, QTreeWidgetItem* 
          // Choice items can not be moved to other choice items.
          if (destChoice)
          {
-            allowDrag = false;
+            allowTarget = false;
          }
 
          // Choice items can only be moved to choice line nodes.
          if (destLine && !destLine->IsChoice())
          {
-            allowDrag = false;
+            allowTarget = false;
          }
 
          // Choice items can only be moved to a choice line that isn't at it's choice limit.
          if (destLine && destLine->GetChoiceLimit() > -1 &&
             destLine->childCount() >= destLine->GetChoiceLimit())
          {
-            allowDrag = false;
+            allowTarget = false;
          }
+      }
+
+      // Make sure non-moveable choices stay non-moveable.
+      if (destChoice && !destChoice->IsMoveable())
+      {
+         allowDrag = false;
+      }
+
+      Qt::ItemFlags flags = Qt::ItemIsEditable | Qt::ItemIsSelectable | Qt::ItemIsEnabled;
+
+      if (allowTarget)
+      {
+         flags |= Qt::ItemIsDropEnabled;
       }
 
       if (allowDrag)
       {
-         child->setFlags(Qt::ItemIsEditable | Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled);
+         flags |= Qt::ItemIsDragEnabled;
       }
-      else
-      {
-         child->setFlags(Qt::ItemIsEditable | Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsDragEnabled);
-      }
+
+      child->setFlags(flags);
 
       RecurseStartDrag(child, moving);
    }
@@ -328,8 +354,9 @@ void DialogTreeWidget::OnAddNewLine(QAction* action)
       QTreeWidgetItem* cur = currentItem();
       if (cur)
       {
-         DialogLineItem* newLine = new DialogLineItem(lineType->GetName(), lineType, CreateIndex(), this);
+         DialogLineItem* newLine = new DialogLineItem(lineType->GetName(), lineType, CreateIndex(), mEditor);
          cur->addChild(newLine);
+         newLine->GetType()->Init(newLine, mEditor);
          cur->setExpanded(true);
       }
    }
@@ -341,7 +368,7 @@ void DialogTreeWidget::OnAddNewChoice()
    QTreeWidgetItem* cur = currentItem();
    if (cur)
    {
-      DialogChoiceItem* newChoice = new DialogChoiceItem(CreateIndex());
+      DialogChoiceItem* newChoice = new DialogChoiceItem(CreateIndex(), "", true, true);
       cur->addChild(newChoice);
       cur->setExpanded(true);
    }
@@ -387,7 +414,15 @@ QWidget* DialogTreeDelegate::createEditor(QWidget *parent, const QStyleOptionVie
          DialogLineType* lineType = lineItem->GetType();
          if (lineType)
          {
-            return lineType->CreateInlineEditor(parent, mTree);
+            return lineType->CreateInlineEditor(parent, mTree->GetEditor());
+         }
+      }
+      else
+      {
+         DialogChoiceItem* choiceItem = dynamic_cast<DialogChoiceItem*>(item);
+         if (choiceItem && !choiceItem->IsNameable())
+         {
+            return NULL;
          }
       }
    }
@@ -509,12 +544,19 @@ void DialogTreeDelegate::RecurseUpdateLabels(QTreeWidgetItem* item) const
 ////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
-DialogLineItem::DialogLineItem(const QString& name, const DialogLineType* type, int index, DialogTreeWidget* tree)
+DialogLineItem::DialogLineItem(const QString& name, const DialogLineType* type, int index, DirectorDialogEditorPlugin* editor)
    : mType(NULL)
    , mTypeName(name)
-   , mTree(tree)
+   , mTree(NULL)
    , mIndex(index)
 {
+   setFlags(Qt::ItemIsEditable | Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled);
+
+   if (editor)
+   {
+      mTree = editor->GetTree();
+   }
+
    if (type)
    {
       mType = type->Create();
@@ -523,7 +565,6 @@ DialogLineItem::DialogLineItem(const QString& name, const DialogLineType* type, 
       setBackgroundColor(0, color);
    }
 
-   setFlags(Qt::ItemIsEditable | Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled);
    UpdateLabel();
 }
 
@@ -542,7 +583,7 @@ void DialogLineItem::UpdateLabel()
    if (mType)
    {
       setText(0, QString("[") + QString::number(mIndex) + ":" + mTypeName + "] " +
-         mType->GetDisplayName(mTree));
+         mType->GetDisplayName(mTree->GetEditor()));
    }
 }
 
@@ -607,14 +648,23 @@ DialogChoiceItem* DialogLineItem::GetChildChoice(int index) const
 ////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
-DialogChoiceItem::DialogChoiceItem(int index)
-   : mIndex(index)
+DialogChoiceItem::DialogChoiceItem(int index, const QString& label, bool moveable, bool nameable)
+   : mLabel(label)
+   , mIndex(index)
+   , mMoveable(moveable)
+   , mNameable(nameable)
 {
    QColor color = Qt::yellow;
    color.setAlphaF(0.25f);
    setBackgroundColor(0, color);
 
-   setFlags(Qt::ItemIsEditable | Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled);
+   Qt::ItemFlags flags = Qt::ItemIsEditable | Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsDropEnabled;
+   if (moveable)
+   {
+      flags |= Qt::ItemIsDragEnabled;
+   }
+
+   setFlags(flags);
    UpdateLabel();
 }
 

@@ -105,7 +105,7 @@ void DialogSwitchLineType::OperateOn(DialogLineItem* line, dtDirector::Node* nod
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-QString DialogSwitchLineType::GetDisplayName(const DialogTreeWidget* tree) const
+QString DialogSwitchLineType::GetDisplayName(const DirectorDialogEditorPlugin* editor) const
 {
    switch (mSwitchType)
    {
@@ -120,7 +120,7 @@ QString DialogSwitchLineType::GetDisplayName(const DialogTreeWidget* tree) const
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-QWidget* DialogSwitchLineType::CreateInlineEditor(QWidget* parent, DialogTreeWidget* tree) const
+QWidget* DialogSwitchLineType::CreateInlineEditor(QWidget* parent, DirectorDialogEditorPlugin* editor) const
 {
    QComboBox* control = new QComboBox(parent);
    control->addItem("Sequential Choice");
