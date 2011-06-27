@@ -181,6 +181,11 @@ namespace dtDirector
       QAction* GetRefreshAction()  { return mUI.action_Refresh; }
 
       /**
+       * Refreshes the recent file listing.
+       */
+      void RefreshRecentFiles();
+
+      /**
        * Refreshes the entire view.
        */
       void Refresh();
@@ -532,6 +537,11 @@ namespace dtDirector
        * Event handler for when the node search text has been edited.
        */
       void on_nodeSearchEdit_editingFinished();
+
+      /**
+       * Event handler for when a recent file has been selected.
+       */
+      void OnRecentFile(QAction* action);
 
       /**
        * Event handler when a node creation menu item is triggered.
