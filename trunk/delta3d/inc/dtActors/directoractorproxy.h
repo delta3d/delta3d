@@ -147,6 +147,8 @@ namespace dtActors
       */
       virtual ~DirectorActor();
 
+      std::vector<dtCore::RefPtr<dtDirector::Director> > mDirectorList;
+
    private:
 
       bool mNodeLogging;
@@ -154,8 +156,6 @@ namespace dtActors
 
       std::vector<dtDAL::ResourceDescriptor> mResourceList;
       int mResourceIndex;
-
-      std::vector<dtCore::RefPtr<dtDirector::Director> > mDirectorList;
    };
 
    /////////////////////////////////////////////////////////////////////////////
