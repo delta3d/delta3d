@@ -24,6 +24,7 @@
 #include <dialogdelayline.h>
 #include <dialoglogline.h>
 #include <dialogswitchline.h>
+#include <dialogconditionline.h>
 #include <dialogrefline.h>
 
 #include <dtDirector/node.h>
@@ -170,6 +171,7 @@ DialogLineRegistry::DialogLineRegistry()
    RegisterLineType(new DialogDelayLineType());
    RegisterLineType(new DialogLogLineType());
    RegisterLineType(new DialogSwitchLineType());
+   RegisterLineType(new DialogConditionLineType());
    RegisterLineType(new DialogRefLineType());
 }
 
