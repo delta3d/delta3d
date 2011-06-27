@@ -24,6 +24,7 @@
 
 #include <osg/Referenced>
 #include <vector>
+#include <string>
 
 namespace dtDirector
 {

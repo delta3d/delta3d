@@ -1054,7 +1054,7 @@ namespace dtDirector
             end = temp;
          }
 
-         float halfY = (start.y() + end.y()) / 2.0f;
+         //float halfY = (start.y() + end.y()) / 2.0f;
 
          //if (height + mNodeHeight < halfY)
          //{
