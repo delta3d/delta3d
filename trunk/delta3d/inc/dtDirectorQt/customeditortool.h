@@ -192,6 +192,13 @@ namespace dtDirector
 
    private:
 
+      struct ChainData
+      {
+         dtDirector::Node* node;
+         dtDirector::Node* parent;
+         osg::Vec2         offset;
+      };
+
       struct ConnectionData
       {
          bool visible;
@@ -212,7 +219,7 @@ namespace dtDirector
       std::vector<ConnectionData> mOutputConnections;
       std::vector<ConnectionData> mValueConnections;
 
-      std::map<dtDirector::Node*, osg::Vec2> mChainedNodeMap;
+      std::map<dtDirector::Node*, ChainData> mChainedNodeMap;
       int mRowHeight;
    };
 
