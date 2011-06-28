@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <director xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dDirector" xsi:schemaLocation="delta3dDirector director.xsd">
     <header>
         <createTimestamp>2009-12-23T15:09:12-08:00</createTimestamp>
-        <lastUpdateTimestamp>2011-06-14T14:04:36-08:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2011-06-27T16:45:39-08:00</lastUpdateTimestamp>
         <editorVersion>2.7.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
         <scriptType>Scenario</scriptType>
@@ -56,6 +57,7 @@
                 </property>
                 <outputlink>
                     <name>Pressed</name>
+                    <immediate>false</immediate>
                     <visible>true</visible>
                     <link>
                         <id>01972fa5-e06b-4b92-bd5d-64f38add5b2c</id>
@@ -64,6 +66,7 @@
                 </outputlink>
                 <outputlink>
                     <name>Released</name>
+                    <immediate>false</immediate>
                     <visible>false</visible>
                 </outputlink>
                 <valuelink>
@@ -80,6 +83,14 @@
                     <exposed>false</exposed>
                     <isout>false</isout>
                     <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+                <valuelink>
+                    <name>Instigator</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>true</isout>
+                    <allowmultiple>true</allowmultiple>
                     <typecheck>true</typecheck>
                 </valuelink>
                 <valuelink>
@@ -112,6 +123,7 @@
                 </property>
                 <outputlink>
                     <name>Out</name>
+                    <immediate>false</immediate>
                     <visible>true</visible>
                     <link>
                         <id>7408b7e8-8c39-40b5-9118-a73fd6d188d9</id>
@@ -134,6 +146,14 @@
                     <allowmultiple>false</allowmultiple>
                     <typecheck>true</typecheck>
                 </valuelink>
+                <valuelink>
+                    <name>Instigator</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>true</isout>
+                    <allowmultiple>true</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
             </node>
             <node>
                 <name>Mouse Press Event</name>
@@ -152,6 +172,7 @@
                 </property>
                 <outputlink>
                     <name>Pressed</name>
+                    <immediate>false</immediate>
                     <visible>true</visible>
                     <link>
                         <id>01972fa5-e06b-4b92-bd5d-64f38add5b2c</id>
@@ -160,6 +181,7 @@
                 </outputlink>
                 <outputlink>
                     <name>Released</name>
+                    <immediate>false</immediate>
                     <visible>false</visible>
                 </outputlink>
                 <valuelink>
@@ -176,6 +198,14 @@
                     <exposed>false</exposed>
                     <isout>false</isout>
                     <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+                <valuelink>
+                    <name>Instigator</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>true</isout>
+                    <allowmultiple>true</allowmultiple>
                     <typecheck>true</typecheck>
                 </valuelink>
                 <valuelink>
@@ -207,23 +237,37 @@
                     <string>MyButton</string>
                 </property>
                 <outputlink>
+                    <name>Down</name>
+                    <immediate>false</immediate>
+                    <visible>false</visible>
+                </outputlink>
+                <outputlink>
+                    <name>Up</name>
+                    <immediate>false</immediate>
+                    <visible>false</visible>
+                </outputlink>
+                <outputlink>
                     <name>Clicked</name>
+                    <immediate>false</immediate>
                     <visible>true</visible>
                     <link>
-                        <id>e852a2a5-cc13-45e5-96bb-90506f4a721c</id>
-                        <name>Hide</name>
+                        <id>86bf85dd-5f8a-4c8c-b9ff-9862239537e0</id>
+                        <name>Play</name>
                     </link>
                 </outputlink>
                 <outputlink>
                     <name>Double Clicked</name>
+                    <immediate>false</immediate>
                     <visible>false</visible>
                 </outputlink>
                 <outputlink>
                     <name>Hover Enter</name>
+                    <immediate>false</immediate>
                     <visible>false</visible>
                 </outputlink>
                 <outputlink>
                     <name>Hover Leave</name>
+                    <immediate>false</immediate>
                     <visible>false</visible>
                 </outputlink>
                 <valuelink>
@@ -240,6 +284,14 @@
                     <exposed>false</exposed>
                     <isout>false</isout>
                     <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+                <valuelink>
+                    <name>Instigator</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>true</isout>
+                    <allowmultiple>true</allowmultiple>
                     <typecheck>true</typecheck>
                 </valuelink>
                 <valuelink>
@@ -290,6 +342,7 @@
                 </inputlink>
                 <outputlink>
                     <name>Out</name>
+                    <immediate>false</immediate>
                     <visible>true</visible>
                     <link>
                         <id>162683e7-ed68-447e-ada6-877d90aca77c</id>
@@ -298,6 +351,7 @@
                 </outputlink>
                 <outputlink>
                     <name>Failed</name>
+                    <immediate>false</immediate>
                     <visible>false</visible>
                 </outputlink>
                 <valuelink>
@@ -310,6 +364,14 @@
                 </valuelink>
                 <valuelink>
                     <name>Layout</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+                <valuelink>
+                    <name>Fade Time</name>
                     <visible>true</visible>
                     <exposed>false</exposed>
                     <isout>false</isout>
@@ -338,10 +400,12 @@
                 </inputlink>
                 <outputlink>
                     <name>Out</name>
+                    <immediate>false</immediate>
                     <visible>true</visible>
                 </outputlink>
                 <outputlink>
                     <name>Failed</name>
+                    <immediate>false</immediate>
                     <visible>true</visible>
                 </outputlink>
                 <valuelink>
@@ -382,6 +446,7 @@
                 </inputlink>
                 <outputlink>
                     <name>Out</name>
+                    <immediate>false</immediate>
                     <visible>true</visible>
                     <link>
                         <id>9a16aa2a-4576-4cdc-bfb6-035f291528a2</id>
@@ -394,6 +459,7 @@
                 </outputlink>
                 <outputlink>
                     <name>Failed</name>
+                    <immediate>false</immediate>
                     <visible>true</visible>
                 </outputlink>
                 <valuelink>
@@ -483,8 +549,8 @@
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>-92.931198</value1>
-                        <value2>228.178055</value2>
+                        <value1>209.068787</value1>
+                        <value2>228.178040</value2>
                     </vec2>
                 </property>
                 <property>
@@ -499,12 +565,13 @@
                     <name>Hide</name>
                     <visible>true</visible>
                     <link>
-                        <id>933cf928-6a20-4cf7-8223-d985ef3b51c2</id>
-                        <name>Clicked</name>
+                        <id>62966b1d-be60-4397-9fff-cae931f987f0</id>
+                        <name>Out</name>
                     </link>
                 </inputlink>
                 <outputlink>
                     <name>Out</name>
+                    <immediate>false</immediate>
                     <visible>true</visible>
                     <link>
                         <id>e50bcf56-9d67-4f0a-b10b-019b1c0fd26d</id>
@@ -513,6 +580,7 @@
                 </outputlink>
                 <outputlink>
                     <name>Failed</name>
+                    <immediate>false</immediate>
                     <visible>false</visible>
                 </outputlink>
                 <valuelink>
@@ -525,6 +593,14 @@
                 </valuelink>
                 <valuelink>
                     <name>Layout</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+                <valuelink>
+                    <name>Fade Time</name>
                     <visible>true</visible>
                     <exposed>false</exposed>
                     <isout>false</isout>
@@ -550,7 +626,7 @@
                 <property>
                     <name>Size</name>
                     <vec2>
-                        <value1>868.525391</value1>
+                        <value1>1172.000000</value1>
                         <value2>347.655273</value2>
                     </vec2>
                 </property>
@@ -589,6 +665,7 @@
                 </inputlink>
                 <outputlink>
                     <name>A == B</name>
+                    <immediate>false</immediate>
                     <visible>true</visible>
                     <link>
                         <id>51b9a70d-0370-4fcc-87b2-8999f63f7b44</id>
@@ -597,6 +674,7 @@
                 </outputlink>
                 <outputlink>
                     <name>A != B</name>
+                    <immediate>false</immediate>
                     <visible>false</visible>
                 </outputlink>
                 <valuelink>
@@ -656,6 +734,7 @@
                 </inputlink>
                 <outputlink>
                     <name>Out</name>
+                    <immediate>false</immediate>
                     <visible>true</visible>
                     <link>
                         <id>fabc3e50-f1d5-40a2-81f1-672cff4f68a2</id>
@@ -731,10 +810,12 @@
                 </inputlink>
                 <outputlink>
                     <name>Out</name>
+                    <immediate>false</immediate>
                     <visible>false</visible>
                 </outputlink>
                 <outputlink>
                     <name>Failed</name>
+                    <immediate>false</immediate>
                     <visible>false</visible>
                 </outputlink>
                 <valuelink>
@@ -761,7 +842,7 @@
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>86.068848</value1>
+                        <value1>388.068848</value1>
                         <value2>241.178040</value2>
                     </vec2>
                 </property>
@@ -783,6 +864,7 @@
                 </inputlink>
                 <outputlink>
                     <name>Out</name>
+                    <immediate>false</immediate>
                     <visible>true</visible>
                     <link>
                         <id>2d97a5b8-ca7e-4655-97ea-ea5a05ffd5bf</id>
@@ -832,7 +914,7 @@
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>351.500000</value1>
+                        <value1>653.500000</value1>
                         <value2>228.178040</value2>
                     </vec2>
                 </property>
@@ -858,10 +940,12 @@
                 </inputlink>
                 <outputlink>
                     <name>Out</name>
+                    <immediate>false</immediate>
                     <visible>false</visible>
                 </outputlink>
                 <outputlink>
                     <name>Failed</name>
+                    <immediate>false</immediate>
                     <visible>false</visible>
                 </outputlink>
                 <valuelink>
@@ -888,8 +972,8 @@
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>225.375000</value1>
-                        <value2>241.178040</value2>
+                        <value1>535.375000</value1>
+                        <value2>228.178040</value2>
                     </vec2>
                 </property>
                 <property>
@@ -910,6 +994,7 @@
                 </inputlink>
                 <outputlink>
                     <name>Out</name>
+                    <immediate>false</immediate>
                     <visible>true</visible>
                     <link>
                         <id>2df278a3-0bc4-4c3a-aa70-115d9447315f</id>
@@ -922,6 +1007,7 @@
                 </outputlink>
                 <outputlink>
                     <name>Failed</name>
+                    <immediate>false</immediate>
                     <visible>true</visible>
                 </outputlink>
                 <valuelink>
@@ -956,8 +1042,8 @@
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>351.500000</value1>
-                        <value2>296.318817</value2>
+                        <value1>653.500000</value1>
+                        <value2>301.178040</value2>
                     </vec2>
                 </property>
                 <inputlink>
@@ -974,6 +1060,7 @@
                 </inputlink>
                 <outputlink>
                     <name>Out</name>
+                    <immediate>false</immediate>
                     <visible>false</visible>
                 </outputlink>
                 <valuelink>
@@ -1010,6 +1097,7 @@
                 </inputlink>
                 <outputlink>
                     <name>Out</name>
+                    <immediate>false</immediate>
                     <visible>false</visible>
                 </outputlink>
                 <valuelink>
@@ -1019,6 +1107,78 @@
                     <isout>false</isout>
                     <allowmultiple>false</allowmultiple>
                     <typecheck>true</typecheck>
+                </valuelink>
+            </node>
+            <node>
+                <name>Toggle</name>
+                <category>General</category>
+                <id>62966b1d-be60-4397-9fff-cae931f987f0</id>
+                <property>
+                    <name>Position</name>
+                    <vec2>
+                        <value1>63.125000</value1>
+                        <value2>241.178040</value2>
+                    </vec2>
+                </property>
+                <inputlink>
+                    <name>TurnOn</name>
+                    <visible>false</visible>
+                </inputlink>
+                <inputlink>
+                    <name>TurnOff</name>
+                    <visible>false</visible>
+                </inputlink>
+                <inputlink>
+                    <name>Toggle</name>
+                    <visible>true</visible>
+                    <link>
+                        <id>7f9fa27b-a00c-403c-b451-cfa14d7f3b09</id>
+                        <name>Finished</name>
+                    </link>
+                </inputlink>
+                <outputlink>
+                    <name>Out</name>
+                    <immediate>false</immediate>
+                    <visible>true</visible>
+                    <link>
+                        <id>e852a2a5-cc13-45e5-96bb-90506f4a721c</id>
+                        <name>Hide</name>
+                    </link>
+                </outputlink>
+                <valuelink>
+                    <name>Enabled</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+                <valuelink>
+                    <name>Actor</name>
+                    <visible>false</visible>
+                    <exposed>true</exposed>
+                    <isout>true</isout>
+                    <allowmultiple>true</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+                <valuelink>
+                    <name>TogglePropertyName</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+                <valuelink>
+                    <name>ToggleBoolean</name>
+                    <visible>true</visible>
+                    <exposed>true</exposed>
+                    <isout>true</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                    <link>
+                        <id>0f995b4b-02ec-4a79-b941-e56c26d03d6d</id>
+                    </link>
                 </valuelink>
             </node>
         </actionnodes>
@@ -1058,8 +1218,8 @@
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>96.068848</value1>
-                        <value2>370.738037</value2>
+                        <value1>398.068848</value1>
+                        <value2>368.738037</value2>
                     </vec2>
                 </property>
                 <property>
@@ -1078,6 +1238,1057 @@
                     </link>
                 </valuelink>
             </node>
+            <node>
+                <name>Boolean</name>
+                <category>General</category>
+                <id>0f995b4b-02ec-4a79-b941-e56c26d03d6d</id>
+                <property>
+                    <name>Position</name>
+                    <vec2>
+                        <value1>73.125000</value1>
+                        <value2>376.318817</value2>
+                    </vec2>
+                </property>
+                <property>
+                    <name>Name</name>
+                    <string>Dialog Flag</string>
+                </property>
+                <property>
+                    <name>Initial Value</name>
+                    <boolean>false</boolean>
+                </property>
+                <valuelink>
+                    <name>Enabled</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+            </node>
         </valuenodes>
+        <graph>
+            <property>
+                <name>Enabled</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Comment</name>
+                <string></string>
+            </property>
+            <property>
+                <name>Name</name>
+                <string>Test Dialog</string>
+            </property>
+            <property>
+                <name>Custom Editor</name>
+                <string>Dialog</string>
+            </property>
+            <property>
+                <name>Position</name>
+                <vec2>
+                    <value1>-86.875000</value1>
+                    <value2>228.178040</value2>
+                </vec2>
+            </property>
+            <property>
+                <name>Color</name>
+                <colorRGBA>
+                    <valueR>0.462745</valueR>
+                    <valueG>0.596078</valueG>
+                    <valueB>0.290196</valueB>
+                    <valueA>0.882353</valueA>
+                </colorRGBA>
+            </property>
+            <eventnodes>
+                <node>
+                    <name>Input Link</name>
+                    <category>Core</category>
+                    <id>86bf85dd-5f8a-4c8c-b9ff-9862239537e0</id>
+                    <property>
+                        <name>Name</name>
+                        <string>Play</string>
+                    </property>
+                    <inputlink>
+                        <name>Play</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>933cf928-6a20-4cf7-8223-d985ef3b51c2</id>
+                            <name>Clicked</name>
+                        </link>
+                    </inputlink>
+                    <outputlink>
+                        <name>Out</name>
+                        <immediate>false</immediate>
+                        <visible>true</visible>
+                        <link>
+                            <id>02aa544b-47c4-4eee-bd16-de848c783b4f</id>
+                            <name>Call Event</name>
+                        </link>
+                    </outputlink>
+                    <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>TriggerCount</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>Instigator</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>true</isout>
+                        <allowmultiple>true</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                </node>
+                <node>
+                    <name>Remote Event</name>
+                    <category>Core</category>
+                    <id>e59afe21-83d9-4d5d-b303-b4ab6501000c</id>
+                    <property>
+                        <name>Position</name>
+                        <vec2>
+                            <value1>0.000000</value1>
+                            <value2>400.000000</value2>
+                        </vec2>
+                    </property>
+                    <property>
+                        <name>EventName</name>
+                        <string>Started</string>
+                    </property>
+                    <outputlink>
+                        <name>Out</name>
+                        <immediate>false</immediate>
+                        <visible>true</visible>
+                        <link>
+                            <id>6de9fc40-f729-4bfd-9d58-05e5574e730f</id>
+                            <name>In</name>
+                        </link>
+                    </outputlink>
+                    <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>TriggerCount</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>Instigator</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>true</isout>
+                        <allowmultiple>true</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>EventName</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                </node>
+                <node>
+                    <name>Remote Event</name>
+                    <category>Core</category>
+                    <id>f84dd993-3748-4438-88fa-d3c79bafe524</id>
+                    <property>
+                        <name>Position</name>
+                        <vec2>
+                            <value1>1400.000000</value1>
+                            <value2>700.000000</value2>
+                        </vec2>
+                    </property>
+                    <property>
+                        <name>EventName</name>
+                        <string>Ref 9</string>
+                    </property>
+                    <outputlink>
+                        <name>Out</name>
+                        <immediate>false</immediate>
+                        <visible>true</visible>
+                        <link>
+                            <id>cb883587-86f5-43f2-b6ef-5ced30b97b18</id>
+                            <name>In</name>
+                        </link>
+                    </outputlink>
+                    <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>TriggerCount</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>Instigator</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>true</isout>
+                        <allowmultiple>true</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>EventName</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                </node>
+                <node>
+                    <name>Remote Event</name>
+                    <category>Core</category>
+                    <id>bad23ff0-550d-4b7a-ba5f-89393a24c724</id>
+                    <property>
+                        <name>Position</name>
+                        <vec2>
+                            <value1>0.000000</value1>
+                            <value2>1100.000000</value2>
+                        </vec2>
+                    </property>
+                    <property>
+                        <name>EventName</name>
+                        <string>Ended</string>
+                    </property>
+                    <outputlink>
+                        <name>Out</name>
+                        <immediate>false</immediate>
+                        <visible>true</visible>
+                    </outputlink>
+                    <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>TriggerCount</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>Instigator</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>true</isout>
+                        <allowmultiple>true</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>EventName</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                </node>
+            </eventnodes>
+            <actionnodes>
+                <node>
+                    <name>Call Remote Event</name>
+                    <category>Core</category>
+                    <id>02aa544b-47c4-4eee-bd16-de848c783b4f</id>
+                    <property>
+                        <name>Position</name>
+                        <vec2>
+                            <value1>400.000000</value1>
+                            <value2>0.000000</value2>
+                        </vec2>
+                    </property>
+                    <property>
+                        <name>EventName</name>
+                        <string>Started</string>
+                    </property>
+                    <inputlink>
+                        <name>Call Event</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>86bf85dd-5f8a-4c8c-b9ff-9862239537e0</id>
+                            <name>Out</name>
+                        </link>
+                    </inputlink>
+                    <outputlink>
+                        <name>Event Finished</name>
+                        <immediate>false</immediate>
+                        <visible>true</visible>
+                        <link>
+                            <id>e5ca5174-e816-4e38-a12e-8e6359c3f156</id>
+                            <name>Call Event</name>
+                        </link>
+                    </outputlink>
+                    <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>EventName</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>Local Event</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>Instigator</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                </node>
+                <node>
+                    <name>Call Remote Event</name>
+                    <category>Core</category>
+                    <id>e5ca5174-e816-4e38-a12e-8e6359c3f156</id>
+                    <property>
+                        <name>Position</name>
+                        <vec2>
+                            <value1>800.000000</value1>
+                            <value2>0.000000</value2>
+                        </vec2>
+                    </property>
+                    <property>
+                        <name>EventName</name>
+                        <string>Ended</string>
+                    </property>
+                    <inputlink>
+                        <name>Call Event</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>02aa544b-47c4-4eee-bd16-de848c783b4f</id>
+                            <name>Event Finished</name>
+                        </link>
+                    </inputlink>
+                    <outputlink>
+                        <name>Event Finished</name>
+                        <immediate>false</immediate>
+                        <visible>true</visible>
+                        <link>
+                            <id>7f9fa27b-a00c-403c-b451-cfa14d7f3b09</id>
+                            <name>In</name>
+                        </link>
+                    </outputlink>
+                    <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>EventName</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>Local Event</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>Instigator</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                </node>
+                <node>
+                    <name>Output Link</name>
+                    <category>Core</category>
+                    <id>7f9fa27b-a00c-403c-b451-cfa14d7f3b09</id>
+                    <property>
+                        <name>Position</name>
+                        <vec2>
+                            <value1>1200.000000</value1>
+                            <value2>0.000000</value2>
+                        </vec2>
+                    </property>
+                    <property>
+                        <name>Name</name>
+                        <string>Finished</string>
+                    </property>
+                    <inputlink>
+                        <name>In</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>e5ca5174-e816-4e38-a12e-8e6359c3f156</id>
+                            <name>Event Finished</name>
+                        </link>
+                    </inputlink>
+                    <outputlink>
+                        <name>Finished</name>
+                        <immediate>false</immediate>
+                        <visible>true</visible>
+                        <link>
+                            <id>62966b1d-be60-4397-9fff-cae931f987f0</id>
+                            <name>Toggle</name>
+                        </link>
+                    </outputlink>
+                    <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                </node>
+                <node>
+                    <name>Log Message</name>
+                    <category>General</category>
+                    <id>6de9fc40-f729-4bfd-9d58-05e5574e730f</id>
+                    <property>
+                        <name>Position</name>
+                        <vec2>
+                            <value1>400.000000</value1>
+                            <value2>400.000000</value2>
+                        </vec2>
+                    </property>
+                    <property>
+                        <name>Message</name>
+                        <string>Starting Dialog!</string>
+                    </property>
+                    <inputlink>
+                        <name>In</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>e59afe21-83d9-4d5d-b303-b4ab6501000c</id>
+                            <name>Out</name>
+                        </link>
+                    </inputlink>
+                    <outputlink>
+                        <name>Out</name>
+                        <immediate>false</immediate>
+                        <visible>true</visible>
+                        <link>
+                            <id>ee14f319-82b1-4cec-95a1-70f66089e512</id>
+                            <name>In</name>
+                        </link>
+                    </outputlink>
+                    <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>Value</name>
+                        <visible>true</visible>
+                        <exposed>true</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>true</allowmultiple>
+                        <typecheck>false</typecheck>
+                    </valuelink>
+                </node>
+                <node>
+                    <name>Switch</name>
+                    <category>General</category>
+                    <id>ee14f319-82b1-4cec-95a1-70f66089e512</id>
+                    <property>
+                        <name>Position</name>
+                        <vec2>
+                            <value1>800.000000</value1>
+                            <value2>400.000000</value2>
+                        </vec2>
+                    </property>
+                    <property>
+                        <name>OutputCount</name>
+                        <integer>3</integer>
+                    </property>
+                    <property>
+                        <name>Looping</name>
+                        <boolean>true</boolean>
+                    </property>
+                    <inputlink>
+                        <name>In</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>6de9fc40-f729-4bfd-9d58-05e5574e730f</id>
+                            <name>Out</name>
+                        </link>
+                    </inputlink>
+                    <outputlink>
+                        <name>Out 1</name>
+                        <immediate>false</immediate>
+                        <visible>true</visible>
+                        <link>
+                            <id>589b1ce4-6a80-4cd1-8822-aac06509d504</id>
+                            <name>In</name>
+                        </link>
+                    </outputlink>
+                    <outputlink>
+                        <name>Out 2</name>
+                        <immediate>false</immediate>
+                        <visible>true</visible>
+                        <link>
+                            <id>9163fc2f-8767-4f59-831e-47757680fc56</id>
+                            <name>In</name>
+                        </link>
+                    </outputlink>
+                    <outputlink>
+                        <name>Out 3</name>
+                        <immediate>false</immediate>
+                        <visible>true</visible>
+                        <link>
+                            <id>2541741d-041d-41e7-8f86-4b41930b4953</id>
+                            <name>In</name>
+                        </link>
+                    </outputlink>
+                    <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>OutputCount</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>CurrentIndex</name>
+                        <visible>true</visible>
+                        <exposed>true</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>false</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>Looping</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                </node>
+                <node>
+                    <name>Log Message</name>
+                    <category>General</category>
+                    <id>589b1ce4-6a80-4cd1-8822-aac06509d504</id>
+                    <property>
+                        <name>Position</name>
+                        <vec2>
+                            <value1>1200.000000</value1>
+                            <value2>400.000000</value2>
+                        </vec2>
+                    </property>
+                    <property>
+                        <name>Message</name>
+                        <string>Option 1!</string>
+                    </property>
+                    <inputlink>
+                        <name>In</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>ee14f319-82b1-4cec-95a1-70f66089e512</id>
+                            <name>Out 1</name>
+                        </link>
+                    </inputlink>
+                    <outputlink>
+                        <name>Out</name>
+                        <immediate>false</immediate>
+                        <visible>true</visible>
+                        <link>
+                            <id>8f5efabf-bdeb-4d61-8605-6b63adcd6620</id>
+                            <name>Call Event</name>
+                        </link>
+                    </outputlink>
+                    <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>Value</name>
+                        <visible>true</visible>
+                        <exposed>true</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>true</allowmultiple>
+                        <typecheck>false</typecheck>
+                    </valuelink>
+                </node>
+                <node>
+                    <name>Call Remote Event</name>
+                    <category>Core</category>
+                    <id>8f5efabf-bdeb-4d61-8605-6b63adcd6620</id>
+                    <property>
+                        <name>Position</name>
+                        <vec2>
+                            <value1>1600.000000</value1>
+                            <value2>400.000000</value2>
+                        </vec2>
+                    </property>
+                    <property>
+                        <name>EventName</name>
+                        <string>Ref 9</string>
+                    </property>
+                    <inputlink>
+                        <name>Call Event</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>589b1ce4-6a80-4cd1-8822-aac06509d504</id>
+                            <name>Out</name>
+                        </link>
+                    </inputlink>
+                    <outputlink>
+                        <name>Event Finished</name>
+                        <immediate>false</immediate>
+                        <visible>true</visible>
+                    </outputlink>
+                    <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>EventName</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>Local Event</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>Instigator</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                </node>
+                <node>
+                    <name>Log Message</name>
+                    <category>General</category>
+                    <id>9163fc2f-8767-4f59-831e-47757680fc56</id>
+                    <property>
+                        <name>Position</name>
+                        <vec2>
+                            <value1>1200.000000</value1>
+                            <value2>550.000000</value2>
+                        </vec2>
+                    </property>
+                    <property>
+                        <name>Message</name>
+                        <string>Option 2!</string>
+                    </property>
+                    <inputlink>
+                        <name>In</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>ee14f319-82b1-4cec-95a1-70f66089e512</id>
+                            <name>Out 2</name>
+                        </link>
+                    </inputlink>
+                    <outputlink>
+                        <name>Out</name>
+                        <immediate>false</immediate>
+                        <visible>true</visible>
+                        <link>
+                            <id>505aeee4-f306-4a32-a409-13bc9f1a0856</id>
+                            <name>Call Event</name>
+                        </link>
+                    </outputlink>
+                    <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>Value</name>
+                        <visible>true</visible>
+                        <exposed>true</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>true</allowmultiple>
+                        <typecheck>false</typecheck>
+                    </valuelink>
+                </node>
+                <node>
+                    <name>Call Remote Event</name>
+                    <category>Core</category>
+                    <id>505aeee4-f306-4a32-a409-13bc9f1a0856</id>
+                    <property>
+                        <name>Position</name>
+                        <vec2>
+                            <value1>1600.000000</value1>
+                            <value2>550.000000</value2>
+                        </vec2>
+                    </property>
+                    <property>
+                        <name>EventName</name>
+                        <string>Ref 9</string>
+                    </property>
+                    <inputlink>
+                        <name>Call Event</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>9163fc2f-8767-4f59-831e-47757680fc56</id>
+                            <name>Out</name>
+                        </link>
+                    </inputlink>
+                    <outputlink>
+                        <name>Event Finished</name>
+                        <immediate>false</immediate>
+                        <visible>true</visible>
+                    </outputlink>
+                    <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>EventName</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>Local Event</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>Instigator</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                </node>
+                <node>
+                    <name>Log Message</name>
+                    <category>General</category>
+                    <id>2541741d-041d-41e7-8f86-4b41930b4953</id>
+                    <property>
+                        <name>Position</name>
+                        <vec2>
+                            <value1>1200.000000</value1>
+                            <value2>700.000000</value2>
+                        </vec2>
+                    </property>
+                    <property>
+                        <name>Message</name>
+                        <string>Option 3!</string>
+                    </property>
+                    <inputlink>
+                        <name>In</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>ee14f319-82b1-4cec-95a1-70f66089e512</id>
+                            <name>Out 3</name>
+                        </link>
+                    </inputlink>
+                    <outputlink>
+                        <name>Out</name>
+                        <immediate>false</immediate>
+                        <visible>true</visible>
+                        <link>
+                            <id>cb883587-86f5-43f2-b6ef-5ced30b97b18</id>
+                            <name>In</name>
+                        </link>
+                    </outputlink>
+                    <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>Value</name>
+                        <visible>true</visible>
+                        <exposed>true</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>true</allowmultiple>
+                        <typecheck>false</typecheck>
+                    </valuelink>
+                </node>
+                <node>
+                    <name>Compare Bool</name>
+                    <category>General</category>
+                    <id>cb883587-86f5-43f2-b6ef-5ced30b97b18</id>
+                    <property>
+                        <name>Position</name>
+                        <vec2>
+                            <value1>1600.000000</value1>
+                            <value2>700.000000</value2>
+                        </vec2>
+                    </property>
+                    <property>
+                        <name>B</name>
+                        <boolean>true</boolean>
+                    </property>
+                    <inputlink>
+                        <name>In</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>2541741d-041d-41e7-8f86-4b41930b4953</id>
+                            <name>Out</name>
+                        </link>
+                        <link>
+                            <id>f84dd993-3748-4438-88fa-d3c79bafe524</id>
+                            <name>Out</name>
+                        </link>
+                    </inputlink>
+                    <outputlink>
+                        <name>A == B</name>
+                        <immediate>false</immediate>
+                        <visible>true</visible>
+                        <link>
+                            <id>5f08534c-fb3d-479a-b20e-f630ef46c63e</id>
+                            <name>In</name>
+                        </link>
+                    </outputlink>
+                    <outputlink>
+                        <name>A != B</name>
+                        <immediate>false</immediate>
+                        <visible>true</visible>
+                        <link>
+                            <id>a51135de-918e-498d-bcad-36b3b0384cbb</id>
+                            <name>In</name>
+                        </link>
+                    </outputlink>
+                    <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>A</name>
+                        <visible>true</visible>
+                        <exposed>true</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                        <link>
+                            <id>25fcb94e-eab4-401e-83c4-54f266eeb6fd</id>
+                        </link>
+                    </valuelink>
+                    <valuelink>
+                        <name>B</name>
+                        <visible>true</visible>
+                        <exposed>true</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                </node>
+                <node>
+                    <name>Log Message</name>
+                    <category>General</category>
+                    <id>5f08534c-fb3d-479a-b20e-f630ef46c63e</id>
+                    <property>
+                        <name>Position</name>
+                        <vec2>
+                            <value1>2000.000000</value1>
+                            <value2>700.000000</value2>
+                        </vec2>
+                    </property>
+                    <property>
+                        <name>Message</name>
+                        <string>Dialog Flag is True!</string>
+                    </property>
+                    <inputlink>
+                        <name>In</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>cb883587-86f5-43f2-b6ef-5ced30b97b18</id>
+                            <name>A == B</name>
+                        </link>
+                    </inputlink>
+                    <outputlink>
+                        <name>Out</name>
+                        <immediate>false</immediate>
+                        <visible>true</visible>
+                    </outputlink>
+                    <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>Value</name>
+                        <visible>true</visible>
+                        <exposed>true</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>true</allowmultiple>
+                        <typecheck>false</typecheck>
+                    </valuelink>
+                </node>
+                <node>
+                    <name>Log Message</name>
+                    <category>General</category>
+                    <id>a51135de-918e-498d-bcad-36b3b0384cbb</id>
+                    <property>
+                        <name>Position</name>
+                        <vec2>
+                            <value1>2000.000000</value1>
+                            <value2>850.000000</value2>
+                        </vec2>
+                    </property>
+                    <property>
+                        <name>Message</name>
+                        <string>Dialog Flag is False!</string>
+                    </property>
+                    <inputlink>
+                        <name>In</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>cb883587-86f5-43f2-b6ef-5ced30b97b18</id>
+                            <name>A != B</name>
+                        </link>
+                    </inputlink>
+                    <outputlink>
+                        <name>Out</name>
+                        <immediate>false</immediate>
+                        <visible>true</visible>
+                    </outputlink>
+                    <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>Value</name>
+                        <visible>true</visible>
+                        <exposed>true</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>true</allowmultiple>
+                        <typecheck>false</typecheck>
+                    </valuelink>
+                </node>
+            </actionnodes>
+            <valuenodes>
+                <node>
+                    <name>Reference</name>
+                    <category>Core</category>
+                    <id>25fcb94e-eab4-401e-83c4-54f266eeb6fd</id>
+                    <property>
+                        <name>Position</name>
+                        <vec2>
+                            <value1>1610.000000</value1>
+                            <value2>900.000000</value2>
+                        </vec2>
+                    </property>
+                    <property>
+                        <name>Reference</name>
+                        <string>Dialog Flag</string>
+                    </property>
+                    <valuelink>
+                        <name>Value</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                        <link>
+                            <id>0f995b4b-02ec-4a79-b941-e56c26d03d6d</id>
+                        </link>
+                    </valuelink>
+                </node>
+            </valuenodes>
+        </graph>
     </graph>
 </director>
