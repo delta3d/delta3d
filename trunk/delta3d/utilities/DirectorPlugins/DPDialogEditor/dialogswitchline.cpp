@@ -20,7 +20,7 @@ DialogSwitchLineType::~DialogSwitchLineType()
 ////////////////////////////////////////////////////////////////////////////////
 QString DialogSwitchLineType::GetName() const
 {
-   return "Switch";
+   return "Alternating";
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -110,10 +110,10 @@ QString DialogSwitchLineType::GetDisplayName(const DirectorDialogEditorPlugin* e
    switch (mSwitchType)
    {
    case SWITCH_SEQUENTIAL:
-      return "Sequential Choice";
+      return "Sequentially";
       
    case SWITCH_RANDOM:
-      return "Random Choice";
+      return "Randomly";
    }
 
    return "";
@@ -123,8 +123,8 @@ QString DialogSwitchLineType::GetDisplayName(const DirectorDialogEditorPlugin* e
 QWidget* DialogSwitchLineType::CreateInlineEditor(QWidget* parent, DirectorDialogEditorPlugin* editor) const
 {
    QComboBox* control = new QComboBox(parent);
-   control->addItem("Sequential Choice");
-   control->addItem("Random Choice");
+   control->addItem("Sequentially");
+   control->addItem("Randomly");
    return control;
 }
 
