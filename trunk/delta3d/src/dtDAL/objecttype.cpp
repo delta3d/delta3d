@@ -117,6 +117,32 @@ namespace dtDAL
       return InstanceOf(*typeToCheck);
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   bool ObjectType::InstanceOf(const std::string& fullName) const
+   {
+      bool isInstance = false;
+
+      if (GetFullName() == fullName)
+      {
+         isInstance = true;
+      }
+      else
+      {
+         const ObjectType* parent = GetParentType();
+         while (parent != NULL)
+         {
+            if (parent->GetFullName() == fullName)
+            {
+               isInstance = true;
+               break;
+            }
+            parent = parent->GetParentType();
+         }
+      }
+
+      return isInstance;
+   }
+
    ///////////////////////////////////////////////////////////////////////////
    bool ObjectType::operator<(const ObjectType& rhs) const
    {

@@ -54,10 +54,10 @@ namespace dtDAL
       /**
        * Constructs a new actor type object.
        */
-      ActorType(const std::string& name,
-               const std::string& category="nocategory",
-               const std::string& desc="",
-               const ActorType* parentType = NULL);
+      explicit ActorType(const std::string& name,
+                         const std::string& category="nocategory",
+                         const std::string& desc="",
+                         const ActorType* parentType = NULL);
 
 
       /**

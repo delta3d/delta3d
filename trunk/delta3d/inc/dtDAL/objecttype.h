@@ -35,10 +35,10 @@ namespace dtDAL
    class DT_DAL_EXPORT ObjectType: public osg::Referenced
    {
    public:
-      ObjectType(const std::string& name,
-                 const std::string& category="nocategory",
-                 const std::string& desc="",
-                 const ObjectType* parentType = NULL);
+      explicit ObjectType(const std::string& name,
+                          const std::string& category="nocategory",
+                          const std::string& desc="",
+                          const ObjectType* parentType = NULL);
 
       /**
        * Simple less than comparison function for the ObjectFactory.
@@ -113,6 +113,14 @@ namespace dtDAL
        * @see InstanceOf(const ActorType &rhs)
        */
       bool InstanceOf(const std::string& category, const std::string& name) const;
+
+      /**
+       * Determines whether this type is an instance based on the full name
+       * @param fullName The combined category.name
+       * @return True if a descendent or equal, false otherwise.
+       * @see InstanceOf(const ActorType &rhs)
+       */
+      bool InstanceOf(const std::string& fullName) const;
 
       /**
        * Less-than comparison of the actor type's uniqueId strings.
