@@ -37,7 +37,6 @@
 #include <osg/Texture2D>
 #include <osg/GLExtensions>
 #include <osg/ShapeDrawable>
-#include <osg/Version>
 
 #include <cal3d/hardwaremodel.h>
 
@@ -339,39 +338,19 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pWr
 
       std::string boneTransformUniform = BONE_TRANSFORM_UNIFORM;
 
-#if OSG_VERSION_GREATER_OR_EQUAL(2,8,5)
-      const osg::Program::ActiveUniformMap& uniformMap = prog->getActiveUniforms(0);
-      unsigned int id = osg::Uniform::getNameID(boneTransformUniform);
-      if (uniformMap.find(id) == uniformMap.end())
+      if (prog->getPCP(0) != NULL && prog->getPCP(0)->getUniformLocation(boneTransformUniform) == -1)
       {
-         id = osg::Uniform::getNameID(boneTransformUniform + "[0]");
-         if (uniformMap.find(id) == uniformMap.end())
+         if (prog->getPCP(0) != NULL && prog->getPCP(0)->getUniformLocation(boneTransformUniform + "[0]") == -1)
          {
             LOG_ERROR("Can't find uniform named \"" + boneTransformUniform
-               + "\" which is required for skinning.");
+                      + "\" which is required for skinning.");
          }
          else
          {
             boneTransformUniform.append("[0]");
          }
       }
-#else
-      const osg::Program::ActiveVarInfoMap& uniformMap = prog->getActiveUniforms(0);
-      if (uniformMap.find(boneTransformUniform) == uniformMap.end())
-      {
-         if (uniformMap.find(boneTransformUniform + "[0]") == uniformMap.end())
-         {
-            LOG_ERROR("Can't find uniform named \"" + boneTransformUniform
-               + "\" which is required for skinning.");
-         }
-         else
-         {
-            boneTransformUniform.append("[0]");
-         }
-      }
-#endif
-       //End check.
-
+      //End check.
 
       // Compute this only once
       osg::BoundingBox boundingBox = pWrapper->GetBoundingBox();
