@@ -76,6 +76,9 @@ namespace dtDirector
       void SetActorName(const std::string& name);
       std::string GetActorName() const;
 
+      void SetClassType(const std::string& value);
+      const std::string& GetClassType() const;
+
       virtual const std::string& GetName();
 
    protected:
@@ -84,6 +87,7 @@ namespace dtDirector
 
    private:
 
+      std::string mClassType;
       std::string mActorName;
       dtCore::UniqueId mActor;
    };
