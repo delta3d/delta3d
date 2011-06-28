@@ -8,7 +8,7 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 DialogConditionLineType::DialogConditionLineType()
-   : mValueName("Flag Name")
+   : mValueName("Boolean Name")
 {
 }
 
@@ -57,11 +57,8 @@ void DialogConditionLineType::GenerateNode(DialogLineItem* line, dtDirector::Nod
    valNode->SetString(mValueName.toStdString(), "Reference");
    editor->Connect(compareNode, valNode, "A");
 
-   if (line->childCount() >= 2)
-   {
-      GenerateNodeForChild(line->GetChildChoice(0)->GetChildLine(), compareNode, "A == B", editor);
-      GenerateNodeForChild(line->GetChildChoice(1)->GetChildLine(), compareNode, "A != B", editor);
-   }
+   GenerateNodeForChild(line->GetChildChoice(0)->GetChildLine(), compareNode, "A == B", editor);
+   GenerateNodeForChild(line->GetChildChoice(1)->GetChildLine(), compareNode, "A != B", editor);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
