@@ -214,16 +214,43 @@ namespace dtDAL
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void LibraryManager::GetActorTypes(std::vector<const ActorType*>& actorTypes)
+   void LibraryManager::GetActorTypes(std::vector<const ActorType*>& actorTypes) const
    {
       actorTypes.clear();
       actorTypes.reserve(mActors.size());
-      ActorTypeMapItor itor = mActors.begin();
+      ConstActorTypeMapItor itor = mActors.begin();
       while (itor != mActors.end())
       {
          actorTypes.push_back(itor->first.get());
          ++itor;
       }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   std::vector<std::string> LibraryManager::GetClassTypes() const
+   {
+      struct SortFunctor
+      {
+         bool operator()(const dtDAL::ActorType* a, const dtDAL::ActorType* b)
+         {
+            return a->GetFullName() < b->GetFullName();
+         }
+      };
+
+      std::vector<const dtDAL::ActorType*> types;
+      GetActorTypes(types);
+
+      std::sort(types.begin(), types.end(), SortFunctor());
+
+      std::vector<std::string> list;
+      list.push_back("<None>");
+
+      for (size_t index = 0; index < types.size(); ++index)
+      {
+         list.push_back(types[index]->GetFullName());
+      }
+
+      return list;
    }
 
    /////////////////////////////////////////////////////////////////////////////
