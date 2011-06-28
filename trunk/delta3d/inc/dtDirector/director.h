@@ -453,7 +453,7 @@ namespace dtDirector
        *
        * @return     True if the library was inserted properly.
        */
-      bool AddLibrary(const std::string& name, const std::string& version);
+      bool AddLibrary(const std::string& name, const std::string& version = "");
 
       /**
        * Removes a library from the list.

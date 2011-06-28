@@ -93,7 +93,7 @@ namespace dtDirector
 
       try
       {
-         mEditor->GetDirector()->AddLibrary(libName, "");
+         mEditor->GetDirector()->AddLibrary(libName);
 
          if (foundIndex < (int)curLibs.size())
          {
