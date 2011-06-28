@@ -22,6 +22,7 @@
 #ifndef DIRECTORQT_PLUGIN_INTERFACE
 #define DIRECTORQT_PLUGIN_INTERFACE
 
+#include <dtDirectorQt/export.h>
 #include <list>
 #include <string>
 
@@ -30,25 +31,25 @@ namespace dtDirector
    /**
       Abstract interface class for Director plugins
     */
-   class Plugin
+   class DT_DIRECTOR_QT_EXPORT Plugin
    {
       public:
 
-      virtual ~Plugin() {}   
+      virtual ~Plugin() {}
 
       /** Is called after instantiation */
       virtual void Create() {}
 
       /** Is called before destruction */
       virtual void Destroy() {}
-    
+
    };
 
-   /** 
+   /**
      A plugin factory is used by the plugin manager to identify available
      plugins and instantiate them.
    */
-   class PluginFactory
+   class DT_DIRECTOR_QT_EXPORT PluginFactory
    {
    public:
 
@@ -61,29 +62,29 @@ namespace dtDirector
 
       /** delete the plugin */
       virtual void Destroy() = 0;
-      
+
       /** get the name of the plugin */
       virtual std::string GetName() = 0;
 
       /** get a description of the plugin */
       virtual std::string GetDescription() = 0;
 
-      /** 
+      /**
         fill list with names of all plugins this plugin depends on.
         WARNING: circular dependencies are not handled and
         will cause a crash!
       */
       virtual void GetDependencies(std::list<std::string>&) {};
 
-      /** 
-         get the version of Director that the plugin is compiled against 
+      /**
+         get the version of Director that the plugin is compiled against
          Only plugins compiled against the current version of Director
          are started
       */
-      virtual std::string GetExpectedDirectorVersion() 
-      { 
+      virtual std::string GetExpectedDirectorVersion()
+      {
          // should be replaced by SVN to give version number
-         return "$Revision$"; 
+         return "$Revision$";
       }
 
       /** Should plugin be started autmatically? */
