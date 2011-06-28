@@ -168,7 +168,7 @@ const DialogLineType* DialogLineRegistry::GetLineTypeForName(const QString& name
 ////////////////////////////////////////////////////////////////////////////////
 DialogLineRegistry::DialogLineRegistry()
 {
-   RegisterLineType(new DialogDelayLineType());
+   //RegisterLineType(new DialogDelayLineType());
    RegisterLineType(new DialogLogLineType());
    RegisterLineType(new DialogSwitchLineType());
    RegisterLineType(new DialogConditionLineType());
