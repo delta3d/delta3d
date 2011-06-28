@@ -10,21 +10,24 @@
 
 #include <QtCore/QString>
 
+#include <QtGui/QWidget>
+
 
 namespace dtDirector
 {
    class Node;
 }
 
-class QWidget;
+class QGridLayout;
 class DialogTreeWidget;
 
 /**
  * Base class for a dialog line type.  This class should be inherited
  * to provide your own types of dialog lines.
  */
-class DT_DIRECTOR_DIALOG_EDITOR_EXPORT DialogLineType: public osg::Referenced
+class DT_DIRECTOR_DIALOG_EDITOR_EXPORT DialogLineType: public QWidget, public osg::Referenced
 {
+   Q_OBJECT
 public:
    DialogLineType();
    virtual ~DialogLineType(void);
@@ -68,29 +71,6 @@ public:
    virtual void GenerateNode(DialogLineItem* line, dtDirector::Node* prevNode, const std::string& output, DirectorDialogEditorPlugin* editor) = 0;
 
    /**
-    * Generates the Director script node(s) for the given child line.
-    *
-    * @param[in]  childLine  The child line.
-    * @param[in]  prevNode   The previous node item.
-    * @param[in]  output     The output of the previous item.
-    * @param[in]  editor     The editor.
-    */
-   void GenerateNodeForChild(DialogLineItem* childLine, dtDirector::Node* prevNode, const std::string& output, DirectorDialogEditorPlugin* editor);
-
-   /**
-    * Generates a remote event link to this line if a reference line requires it.
-    * This should be called directly after the first node is generated during the
-    * GenerateNode method.
-    *
-    * @param[in]  line    The current line.
-    * @param[in]  node    The first node for this line.
-    * @param[in]  input   The input to attach the event.
-    * @param[in]  editor  The editor.
-    */
-   void GenerateNodeForReferences(DialogLineItem* line, dtDirector::Node* node, const std::string& input, DirectorDialogEditorPlugin* editor);
-   bool recurseFindRef(const dtCore::UniqueId& id, QTreeWidgetItem* item) const;
-
-   /**
     * Retrieves whether this line type operates on a given node.
     *
     * @param[in]  node  The node.
@@ -107,40 +87,6 @@ public:
     * @param[in]  editor  The editor.
     */
    virtual void OperateOn(DialogLineItem* line, dtDirector::Node* node, DirectorDialogEditorPlugin* editor) = 0;
-
-   /**
-    * Operates on a given child of the current node.
-    *
-    * @param[in]  item    the parent item.
-    * @param[in]  node    The node to operate on.
-    * @param[in]  output  The output of the node to find children.
-    * @param[in]  editor  The editor.
-    */
-   void OperateOnChild(QTreeWidgetItem* item, dtDirector::Node* node, const std::string& output, DirectorDialogEditorPlugin* editor);
-
-   /**
-    * Creates a new choice item for this line.
-    *
-    * @param[in]  line        The current line.
-    * @param[in]  choiceName  The name of the choice.
-    * @param[in]  editor      The editor.
-    * @param[in]  moveable    True if this choice is moveable by the user.
-    * @param[in]  nameable    True if this choice is nameable by the user.
-    *
-    * @return     The newly created choice item.
-    */
-   QTreeWidgetItem* CreateChoice(DialogLineItem* line, const std::string& choiceName, DirectorDialogEditorPlugin* editor, bool moveable = true, bool nameable = true);
-
-   /**
-    * Checks whether the operated node is being referenced and stores
-    * relevant data in the reference mapping.
-    *
-    * @param[in]  line    The current line.
-    * @param[in]  node    The operated node.
-    * @param[in]  input   The input link of the operated node.
-    * @param[in]  editor  The editor.
-    */
-   void CheckForReferencing(DialogLineItem* line, dtDirector::Node* node, const std::string& input, DirectorDialogEditorPlugin* editor);
 
    /**
     * Retrieves whether this line can contain sub-lines.
@@ -196,9 +142,148 @@ public:
     *
     * @return           A newly created editor widget.
     */
-   virtual QWidget* CreatePropertyEditor(DialogTreeWidget* tree) const;
+   virtual QWidget* CreatePropertyEditor(DialogTreeWidget* tree);
+
+   /**
+    * Closes the editor widget used for editing.
+    *
+    * @param[in]  tree  The editor tree.
+    */
+   virtual void ClosePropertyEditor(DialogTreeWidget* tree);
 
 protected:
+
+   friend class DirectorDialogEditorPlugin;
+
+   /**
+    * Handles the generation of the pre and during event output nodes.
+    * This is called automatically before the execution of the
+    * GenerateNode method. Once this method is executed, the previous
+    * node and output parameters will be modified to reflect the new
+    * previous node and output values.
+    *
+    * @param[in]  prevNode  The previous node item.
+    * @param[in]  output    The output of the previous item.
+    * @param[in]  editor    The editor.
+    */
+   void GeneratePreEventNode(dtDirector::Node*& prevNode, std::string& output, DirectorDialogEditorPlugin* editor);
+
+   /**
+    * Handles the generation of the post event output node.
+    * This is called automatically during the execution of the
+    * GenerateNodeForChild method. Once this method is executed, the previous
+    * node and output parameters will be modified to reflect the new
+    * previous node and output values.
+    *
+    * @param[in]  prevNode  The previous node item.
+    * @param[in]  output    The output of the previous item.
+    * @param[in]  editor    The editor.
+    */
+   void GeneratePostEventNode(dtDirector::Node*& prevNode, std::string& output, DirectorDialogEditorPlugin* editor);
+
+   /**
+    * Generates the Director script node(s) for the given child line.
+    * This also generates the post event output nodes for the given
+    * output link.
+    *
+    * @param[in]  childLine  The child line.
+    * @param[in]  prevNode   The previous node item.
+    * @param[in]  output     The output of the previous item.
+    * @param[in]  editor     The editor.
+    */
+   void GenerateNodeForChild(DialogLineItem* childLine, dtDirector::Node* prevNode, const std::string& output, DirectorDialogEditorPlugin* editor);
+
+   /**
+    * Generates a remote event link to this line if a reference line requires it.
+    * This should be called directly after the first node is generated during the
+    * GenerateNode method.
+    *
+    * @param[in]  line    The current line.
+    * @param[in]  node    The first node for this line.
+    * @param[in]  input   The input to attach the event.
+    * @param[in]  editor  The editor.
+    */
+   void GenerateNodeForReferences(DialogLineItem* line, dtDirector::Node* node, const std::string& input, DirectorDialogEditorPlugin* editor);
+   bool recurseFindRef(const dtCore::UniqueId& id, QTreeWidgetItem* item) const;
+
+   /**
+    * Operates on a given child of the current node.
+    *
+    * @param[in]  item    the parent item.
+    * @param[in]  node    The node to operate on.
+    * @param[in]  output  The output of the node to find children.
+    * @param[in]  editor  The editor.
+    */
+   void OperateOnChild(QTreeWidgetItem* item, dtDirector::Node* node, const std::string& output, DirectorDialogEditorPlugin* editor);
+
+   /**
+    * Operates on a given node and determines if it is an event.
+    *
+    * @param[in]   node       The node to operate on.
+    * @param[out]  eventName  The name of the event.
+    *
+    * @return     True if the given node is a event.
+    */
+   static bool OperateOnPreEvent(dtDirector::Node* node, QString& eventName);
+   static bool OperateOnDuringEvent(dtDirector::Node* node, QString& eventName);
+   static bool OperateOnPostEvent(dtDirector::Node* node, QString& eventName);
+
+   /**
+    * Creates a new choice item for this line.
+    *
+    * @param[in]  line        The current line.
+    * @param[in]  choiceName  The name of the choice.
+    * @param[in]  editor      The editor.
+    * @param[in]  moveable    True if this choice is moveable by the user.
+    * @param[in]  nameable    True if this choice is nameable by the user.
+    *
+    * @return     The newly created choice item.
+    */
+   QTreeWidgetItem* CreateChoice(DialogLineItem* line, const std::string& choiceName, DirectorDialogEditorPlugin* editor, bool moveable = true, bool nameable = true);
+
+   /**
+    * Checks whether the operated node is being referenced and stores
+    * relevant data in the reference mapping.
+    *
+    * @param[in]  line    The current line.
+    * @param[in]  node    The operated node.
+    * @param[in]  input   The input link of the operated node.
+    * @param[in]  editor  The editor.
+    */
+   void CheckForReferencing(DialogLineItem* line, dtDirector::Node* node, const std::string& input, DirectorDialogEditorPlugin* editor);
+
+public slots:
+
+   /**
+    * Event handlers for when the event check boxes are toggled.
+    */
+   void OnPreEventCheckBoxChanged(int state);
+   void OnDuringEventCheckBoxChanged(int state);
+   void OnPostEventCheckBoxChanged(int state);
+
+   /**
+    * Event handlers for when the event text edits are changed.
+    */
+   void OnPreEventTextEdited(const QString& text);
+   void OnDuringEventTextEdited(const QString& text);
+   void OnPostEventTextEdited(const QString& text);
+
+protected:
+
+   QWidget*     mWrapper;
+   QGridLayout* mGridLayout;
+
+   QLineEdit*   mPreEventEdit;
+   QLineEdit*   mDuringEventEdit;
+   QLineEdit*   mPostEventEdit;
+
+   bool         mHasPreEvent;
+   bool         mHasDuringEvent;
+   bool         mHasPostEvent;
+
+   QString      mPreEventName;
+   QString      mDuringEventName;
+   QString      mPostEventName;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
