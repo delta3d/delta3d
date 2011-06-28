@@ -54,6 +54,13 @@ class DT_DIRECTOR_DIALOG_EDITOR_EXPORT DirectorDialogEditorPlugin
 
 public:
 
+   enum EVENT_TYPE
+   {
+      PRE_EVENT = 1,
+      DURING_EVENT = 2,
+      POST_EVENT = 4,
+   };
+
    const static std::string PLUGIN_NAME;
 
    /**
@@ -125,6 +132,14 @@ public:
     */
    void RegisterReference(DialogLineItem* refLine, const QString& refName);
 
+   /**
+    * Registers an event.
+    * This is used when saving a dialog line that contains an event.
+    *
+    * @param[in]  name  The name of the event.
+    */
+   void RegisterEvent(const QString& name, int eventType);
+
 public slots:
 
    /**
@@ -164,8 +179,9 @@ private:
    QWidget*        mEditWidget;
 
    std::map<QString, dtCore::UniqueId> mRefMap;
-
    std::map<QString, std::vector<DialogLineItem*> > mRefRegister;
+
+   std::map<QString, int> mEventRegister;
 };
 
 #endif // DIRECTOR_DIALOG_EDITOR_PLUGIN

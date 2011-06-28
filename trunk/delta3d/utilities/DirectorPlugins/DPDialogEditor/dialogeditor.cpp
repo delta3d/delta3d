@@ -201,17 +201,30 @@ void DirectorDialogEditorPlugin::RegisterReference(DialogLineItem* refLine, cons
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void DirectorDialogEditorPlugin::RegisterEvent(const QString& name, int eventType)
+{
+   mEventRegister[name] |= eventType;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void DirectorDialogEditorPlugin::OnCurrentTreeItemChanged(QTreeWidgetItem* current, QTreeWidgetItem* previous)
 {
    QLayout* layout = mUI.mLinePropertyWidget->layout();
    if (layout)
    {
       // Remove any current widgets provided by the previous item.
-      if (mEditWidget)
+      DialogLineItem* prevLine = dynamic_cast<DialogLineItem*>(previous);
+      if (mEditWidget && prevLine)
       {
-         layout->removeWidget(mEditWidget);
-         delete mEditWidget;
-         mEditWidget = NULL;
+         DialogLineType* type = prevLine->GetType();
+         if (type)
+         {
+            layout->removeWidget(mEditWidget);
+            type->ClosePropertyEditor(mUI.mDialogTree);
+
+            delete mEditWidget;
+            mEditWidget = NULL;
+         }
       }
 
       DialogLineItem* line = dynamic_cast<DialogLineItem*>(current);
@@ -262,11 +275,73 @@ void DirectorDialogEditorPlugin::OnLoad()
       mRefMap.clear();
       mRefRegister.clear();
 
+      // First attempt to load any pre or during event data.
+      QString preEventName;
+      if (DialogLineType::OperateOnPreEvent(lineNode, preEventName))
+      {
+         links.clear();
+         if (GetNext(lineNode, "Event Finished", links))
+         {
+            lineNode = links[0]->GetOwner();
+         }
+         else
+         {
+            QString error = QString("Attempted to load a Pre-Event when there is no line present!");
+
+            QMessageBox messageBox("Load Failed!",
+               error, QMessageBox::Critical,
+               QMessageBox::Ok,
+               QMessageBox::NoButton,
+               QMessageBox::NoButton,
+               this);
+
+            messageBox.exec();
+            return;
+         }
+      }
+
+      QString durEventName;
+      if (DialogLineType::OperateOnDuringEvent(lineNode, durEventName))
+      {
+         lineNode = NULL;
+         if (links.size() > 1)
+         {
+            lineNode = links[1]->GetOwner();
+         }
+
+         if (!lineNode)
+         {
+            QString error = QString("Attempted to load a During-Event when there is no line present!");
+
+            QMessageBox messageBox("Load Failed!",
+               error, QMessageBox::Critical,
+               QMessageBox::Ok,
+               QMessageBox::NoButton,
+               QMessageBox::NoButton,
+               this);
+
+            messageBox.exec();
+            return;
+         }
+      }
+
       if (mRoot->GetType())
       {
          if (mRoot->GetType()->ShouldOperateOn(lineNode))
          {
             mRoot->GetType()->OperateOn(mRoot, lineNode, this);
+
+            if (!preEventName.isEmpty())
+            {
+               mRoot->GetType()->mHasPreEvent = true;
+               mRoot->GetType()->mPreEventName = preEventName;
+            }
+
+            if (!durEventName.isEmpty())
+            {
+               mRoot->GetType()->mHasDuringEvent = true;
+               mRoot->GetType()->mDuringEventName = durEventName;
+            }
          }
       }
       else
@@ -276,8 +351,20 @@ void DirectorDialogEditorPlugin::OnLoad()
          {
             DialogLineItem* newLine = new DialogLineItem(type->GetName(), type, GetTree()->CreateIndex(), this);
             mRoot->addChild(newLine);
-            newLine->GetType()->Init(newLine, this);
             mRoot->setExpanded(true);
+
+            newLine->GetType()->Init(newLine, this);
+            if (!preEventName.isEmpty())
+            {
+               newLine->GetType()->mHasPreEvent = true;
+               newLine->GetType()->mPreEventName = preEventName;
+            }
+
+            if (!durEventName.isEmpty())
+            {
+               newLine->GetType()->mHasDuringEvent = true;
+               newLine->GetType()->mDuringEventName = durEventName;
+            }
 
             newLine->GetType()->OperateOn(newLine, lineNode, this);
          }
@@ -332,6 +419,8 @@ void DirectorDialogEditorPlugin::OnSave()
 {
    BeginSave();
 
+   mEventRegister.clear();
+
    dtDirector::Node* newInputNode = CreateNode("Input Link", "Core", NULL, 80);
    newInputNode->SetString("Play", "Name");
 
@@ -352,14 +441,22 @@ void DirectorDialogEditorPlugin::OnSave()
 
    if (mRoot->GetType())
    {
-      mRoot->GetType()->GenerateNode(mRoot, newStartedEventNode, "Out", this);
+      dtDirector::Node* prevNode = newStartedEventNode;
+      std::string outputName = "Out";
+
+      mRoot->GetType()->GeneratePreEventNode(prevNode, outputName, this);
+      mRoot->GetType()->GenerateNode(mRoot, prevNode, outputName, this);
    }
    else if (mRoot->childCount() > 0)
    {
       DialogLineItem* line = dynamic_cast<DialogLineItem*>(mRoot->child(0));
       if (line)
       {
-         line->GetType()->GenerateNode(line, newStartedEventNode, "Out", this);
+         dtDirector::Node* prevNode = newStartedEventNode;
+         std::string outputName = "Out";
+
+         line->GetType()->GeneratePreEventNode(prevNode, outputName, this);
+         line->GetType()->GenerateNode(line, prevNode, outputName, this);
       }
    }
 
@@ -368,7 +465,51 @@ void DirectorDialogEditorPlugin::OnSave()
 
    if (mEndDialog->GetType())
    {
-      mEndDialog->GetType()->GenerateNode(mEndDialog, newEndedEventNode, "Out", this);
+      dtDirector::Node* prevNode = newEndedEventNode;
+      std::string outputName = "Out";
+
+      mEndDialog->GetType()->GeneratePreEventNode(prevNode, outputName, this);
+      mEndDialog->GetType()->GenerateNode(mEndDialog, prevNode, outputName, this);
+   }
+
+   // Generate our events.
+   std::map<QString, int>::iterator iter;
+   for (iter = mEventRegister.begin(); iter != mEventRegister.end(); ++iter)
+   {
+      QString eventName  = iter->first;
+      int     eventTypes = iter->second;
+
+      dtDirector::Node* topNode = NULL;
+      dtDirector::Node* preNode = NULL;
+      dtDirector::Node* durNode = NULL;
+      dtDirector::Node* postNode = NULL;
+
+      if (eventTypes & PRE_EVENT)
+      {
+         preNode = CreateNode("Remote Event", "Core", NULL, 80);
+         preNode->SetString(std::string("Pre Event ") + eventName.toStdString(), "EventName");
+         if (!topNode) topNode = preNode;
+      }
+
+      if (eventTypes & DURING_EVENT)
+      {
+         durNode = CreateNode("Remote Event", "Core", NULL, 80);
+         durNode->SetString(std::string("During Event ") + eventName.toStdString(), "EventName");
+         if (!topNode) topNode = durNode;
+      }
+
+      if (eventTypes & POST_EVENT)
+      {
+         postNode = CreateNode("Remote Event", "Core", NULL, 80);
+         postNode->SetString(std::string("Post Event ") + eventName.toStdString(), "EventName");
+         if (!topNode) topNode = postNode;
+      }
+
+      dtDirector::Node* outputNode = CreateNode("Output Link", "Core", topNode, 80);
+      outputNode->SetString(eventName.toStdString(), "Name");
+      Connect(preNode, outputNode, "Out", "In");
+      Connect(durNode, outputNode, "Out", "In");
+      Connect(postNode, outputNode, "Out", "In");
    }
 
    EndSave();
