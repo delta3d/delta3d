@@ -132,7 +132,7 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void Director::LoadDefaultLibraries()
    {
-      AddLibrary("dtDirectorNodes", "");
+      AddLibrary("dtDirectorNodes");
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -975,7 +975,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   bool Director::AddLibrary(const std::string& name, const std::string& version)
+   bool Director::AddLibrary(const std::string& name, const std::string& version /*= ""*/)
    {
       return InsertLibrary(mLibraries.size(), name, version);
    }
