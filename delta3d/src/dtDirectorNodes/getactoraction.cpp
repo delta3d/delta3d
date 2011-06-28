@@ -22,7 +22,10 @@
 #include <dtDirectorNodes/getactoraction.h>
 
 #include <dtDAL/actoridactorproperty.h>
+#include <dtDAL/actortype.h>
+#include <dtDAL/librarymanager.h>
 #include <dtDAL/stringactorproperty.h>
+#include <dtDAL/stringselectoractorproperty.h>
 #include <dtDirector/director.h>
 
 namespace dtDirector
@@ -58,6 +61,15 @@ namespace dtDirector
          "Actor name to get.");
       AddProperty(nameProp);
 
+      dtDAL::StringSelectorActorProperty* classProp = new dtDAL::StringSelectorActorProperty(
+         "Actor Type", "Actor Type",
+         dtDAL::StringSelectorActorProperty::SetFuncType(this, &GetActorAction::SetClassType),
+         dtDAL::StringSelectorActorProperty::GetFuncType(this, &GetActorAction::GetClassType),
+         dtDAL::StringSelectorActorProperty::GetListFuncType(&dtDAL::LibraryManager::GetInstance(),
+         &dtDAL::LibraryManager::GetClassTypes),
+         "The type of the actor to get(optional).", "", false);
+      AddProperty(classProp);
+
       dtDAL::ActorIDActorProperty* actorProp = new dtDAL::ActorIDActorProperty(
          "Actor", "Actor",
          dtDAL::ActorIDActorProperty::SetFuncType(this, &GetActorAction::SetActor),
@@ -75,13 +87,56 @@ namespace dtDirector
    {
       dtGame::GameManager* gm = GetDirector()->GetGameManager();
 
-      dtDAL::BaseActorObject* base = NULL;
-      gm->FindActorByName(mActorName, base);
+      dtDAL::BaseActorObject* actorToGet = NULL;
 
-      if (base)
+      // If an actual actor instance was specified, use it
+      if (!mActor.ToString().empty())
+      {
+         actorToGet = gm->FindActorById(mActor);
+      }
+      else if (!mActorName.empty())
+      {
+         // If we have a name, filter by it first
+         std::vector<dtDAL::BaseActorObject*> baseList;
+         gm->FindActorsByName(mActorName, baseList);
+
+         // If we have a type, filter by it second
+         if (!mClassType.empty())
+         {
+            for (size_t actorIndex = 0; actorIndex < baseList.size(); ++actorIndex)
+            {
+               if (baseList[actorIndex]->GetActorType().GetFullName() == mClassType)
+               {
+                  actorToGet = baseList[actorIndex];
+               }
+            }
+         }
+         else if (!baseList.empty())
+         {
+            // If we only have a name, return the first found
+            actorToGet = baseList[0];
+         }
+      }
+      else if (!mClassType.empty())
+      {
+         std::vector<dtDAL::BaseActorObject*> baseList;
+         gm->GetAllActors(baseList);
+
+         // Find the first actor of the given type
+         for (size_t actorIndex = 0; actorIndex < baseList.size(); ++actorIndex)
+         {
+            if (baseList[actorIndex]->GetActorType().GetFullName() == mClassType)
+            {
+               actorToGet = baseList[actorIndex];
+               break;
+            }
+         }
+      }
+
+      if (actorToGet)
       {
          // Call director's set actor which will give precedence to links
-         SetActorID(base->GetId(), "Actor");
+         SetActorID(actorToGet->GetId(), "Actor");
 
          // Fire the "out"
          ActionNode::Update(simDelta, delta, input, firstUpdate);
@@ -118,10 +173,22 @@ namespace dtDirector
       return mActorName;
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   void GetActorAction::SetClassType(const std::string& value)
+   {
+      mClassType = value;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   const std::string& GetActorAction::GetClassType() const
+   {
+      return mClassType;
+   }
+
    ///////////////////////////////////////////////////////////////////////////////
    const std::string& GetActorAction::GetName()
    {
-      return mActorName;
+      return (mActorName.empty() ? mClassType: mActorName);
    }
 }
 
