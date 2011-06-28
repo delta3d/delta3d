@@ -74,6 +74,7 @@ namespace dtDAL
 
          typedef std::map<dtCore::RefPtr<const ActorType>, ActorPluginRegistry*, ActorType::RefPtrComp> ActorTypeMap;
          typedef ActorTypeMap::iterator ActorTypeMapItor;
+         typedef ActorTypeMap::const_iterator ConstActorTypeMapItor;
 
          typedef std::map<std::string, RegistryEntry> RegistryMap;
          typedef RegistryMap::iterator RegistryMapItor;
@@ -120,7 +121,13 @@ namespace dtDAL
           * Returns a list of all the actor types the library manager knows how
           * to create.
           */
-         void GetActorTypes(std::vector<const ActorType*>& actorTypes);
+         void GetActorTypes(std::vector<const ActorType*>& actorTypes) const;
+
+         /**
+          * Returns a list of all the class types the library manager knows how
+          * to create by value so that it can be used with property functors.
+          */
+         std::vector<std::string> GetClassTypes() const;
 
          /**
           * Gets a single actor type that matches the name and category specified.
@@ -131,7 +138,6 @@ namespace dtDAL
           */
          const ActorType* FindActorType(const std::string& category,
                                         const std::string& name);
-
 
          /**
           *  Given the supplied ActorType full name, see if an ActorType
