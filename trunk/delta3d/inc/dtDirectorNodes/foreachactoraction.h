@@ -86,7 +86,6 @@ namespace dtDirector
        */
       void SetClassType(const std::string& value);
       const std::string& GetClassType() const;
-      std::vector<std::string> GetClassTypeList();
 
       void SetNameFilter(const std::string& value);
       const std::string& GetNameFilter() const;
