@@ -62,7 +62,8 @@ namespace dtDirector
          "Actor Type", "Actor Type",
          dtDAL::StringSelectorActorProperty::SetFuncType(this, &ForEachActorAction::SetClassType),
          dtDAL::StringSelectorActorProperty::GetFuncType(this, &ForEachActorAction::GetClassType),
-         dtDAL::StringSelectorActorProperty::GetListFuncType(this, &ForEachActorAction::GetClassTypeList),
+         dtDAL::StringSelectorActorProperty::GetListFuncType(&dtDAL::LibraryManager::GetInstance(),
+         &dtDAL::LibraryManager::GetClassTypes),
          "The type of actor to iterate through (optional).", "", false);
       AddProperty(classProp);
 
@@ -105,28 +106,21 @@ namespace dtDirector
                dtDAL::BaseActorObject* object = dtDAL::BaseActorObject::GetInstance(index);
                if (object)
                {
-                  if (!classType.empty() && classType != "<None>" && object->GetActorType().GetFullName() != classType)
+                  if (!classType.empty() && classType != "<None>" &&
+                      !object->GetActorType().InstanceOf(classType))
                   {
                      continue;
                   }
 
                   if (!nameFilter.empty())
                   {
-                     for (std::string::iterator iter = nameFilter.begin();
-                        iter != nameFilter.end(); ++iter)
-                     {
-                        *iter = tolower(*iter);
-                     }
-
                      std::string name = object->GetName();
-                     for (std::string::iterator iter = name.begin();
-                        iter != name.end(); ++iter)
-                     {
-                        *iter = tolower(*iter);
-                     }
 
-                     size_t found = name.find(nameFilter.c_str());
-                     if (found == std::string::npos)
+                     // Make both strings lower case
+                     std::transform(nameFilter.begin(), nameFilter.end(), nameFilter.begin(), ::tolower);
+                     std::transform(name.begin(), name.end(), name.begin(), ::tolower);
+
+                     if (name.find(nameFilter.c_str()) == std::string::npos)
                      {
                         continue;
                      }
@@ -214,34 +208,6 @@ namespace dtDirector
    const std::string& ForEachActorAction::GetClassType() const
    {
       return mClassType;
-   }
-
-   //////////////////////////////////////////////////////////////////////////
-   std::vector<std::string> ForEachActorAction::GetClassTypeList()
-   {
-      std::map<std::string, std::string> listMap;
-
-      std::vector<const dtDAL::ActorType*> types;
-      dtDAL::LibraryManager::GetInstance().GetActorTypes(types);
-      int count = (int)types.size();
-      for (int index = 0; index < count; ++index)
-      {
-         const dtDAL::ActorType* type = types[index];
-         if (type)
-         {
-            listMap[type->GetFullName()] = "x";
-         }
-      }
-
-      std::vector<std::string> list;
-      list.push_back("<None>");
-      std::map<std::string, std::string>::iterator iter;
-      for (iter = listMap.begin(); iter != listMap.end(); ++iter)
-      {
-         list.push_back(iter->first);
-      }
-
-      return list;
    }
 
    //////////////////////////////////////////////////////////////////////////
