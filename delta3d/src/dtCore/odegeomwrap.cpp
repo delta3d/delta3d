@@ -91,7 +91,7 @@ dtCore::CollisionGeomType* dtCore::ODEGeomWrap::GetCollisionGeomType() const
       return &CollisionGeomType::CUBE;
    case dCylinderClass:
       return &CollisionGeomType::CYLINDER;
-   case dCCylinderClass:
+   case dCapsuleClass:
       return &CollisionGeomType::CCYLINDER;
    case dRayClass:
       return &CollisionGeomType::RAY;
@@ -153,10 +153,10 @@ void dtCore::ODEGeomWrap::GetCollisionGeomDimensions(std::vector<float>& dimensi
          dimensions.push_back(float(length));
          break;
       }
-   case dCCylinderClass:
+   case dCapsuleClass:
       {
          dReal radius, length;
-         dGeomCCylinderGetParams(id, &radius, &length);
+         dGeomCapsuleGetParams(id, &radius, &length);
 
          dimensions.push_back(float(radius));
          dimensions.push_back(float(length));
@@ -542,10 +542,10 @@ void dtCore::ODEGeomWrap::SetCollisionCylinder(osg::Node* node)
 //////////////////////////////////////////////////////////////////////////
 void dtCore::ODEGeomWrap::SetCollisionCappedCylinder(float radius, float length)
 {
-   mOriginalGeomID = dCreateCCylinder(0, radius, length);
+   mOriginalGeomID = dCreateCapsule(0, radius, length);
    dGeomDisable(mOriginalGeomID);
 
-   dGeomTransformSetGeom(mGeomID, dCreateCCylinder(0, radius, length));
+   dGeomTransformSetGeom(mGeomID, dCreateCapsule(0, radius, length));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -566,10 +566,10 @@ void dtCore::ODEGeomWrap::SetCollisionCappedCylinder(osg::Node* node)
 
          dGeomTransformSetCleanup(subTransformID, 1);
 
-         mOriginalGeomID = dCreateCCylinder(0, cv.mFunctor.mRadius, cv.mFunctor.mMaxZ - cv.mFunctor.mMinZ);
+         mOriginalGeomID = dCreateCapsule(0, cv.mFunctor.mRadius, cv.mFunctor.mMaxZ - cv.mFunctor.mMinZ);
          dGeomDisable(mOriginalGeomID);
 
-         dGeomTransformSetGeom(subTransformID, dCreateCCylinder(0, cv.mFunctor.mRadius, cv.mFunctor.mMaxZ - cv.mFunctor.mMinZ));
+         dGeomTransformSetGeom(subTransformID, dCreateCapsule(0, cv.mFunctor.mRadius, cv.mFunctor.mMaxZ - cv.mFunctor.mMinZ));
 
          dGeomTransformSetGeom(mGeomID, subTransformID);
 
@@ -828,10 +828,10 @@ dtCore::RefPtr<osg::Geode> dtCore::ODEGeomWrap::CreateRenderedCollisionGeometry(
             radius, length), hints));
       }
       break;
-   case dCCylinderClass:
+   case dCapsuleClass:
       {
          dReal radius, length;
-         dGeomCCylinderGetParams(GetOriginalGeomID(), &radius, &length);
+         dGeomCapsuleGetParams(GetOriginalGeomID(), &radius, &length);
          geode.get()->addDrawable(
             new osg::ShapeDrawable(
             new osg::Capsule(osg::Vec3(absMatrix(3,0), absMatrix(3,1), absMatrix(3,2)),
@@ -987,12 +987,12 @@ void dtCore::ODEGeomWrap::UpdateGeomTransform(const dtCore::Transform& newTransf
                dGeomSphereSetRadius(id, originalRadius);
             }
             break;
-         case dCCylinderClass:
+         case dCapsuleClass:
             {
                dReal originalRadius, originalLength;
-               dGeomCCylinderGetParams(GetOriginalGeomID(), &originalRadius, &originalLength);
+               dGeomCapsuleGetParams(GetOriginalGeomID(), &originalRadius, &originalLength);
 
-               dGeomCCylinderSetParams(id, originalRadius, originalLength);
+               dGeomCapsuleSetParams(id, originalRadius, originalLength);
             }
             break;
          case dRayClass:

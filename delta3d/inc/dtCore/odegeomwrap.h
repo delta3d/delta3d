@@ -31,13 +31,13 @@ namespace dtCore
    {
       DECLARE_ENUM(CollisionGeomType);
    public:
-      static CollisionGeomType NONE;
-      static CollisionGeomType SPHERE;
-      static CollisionGeomType CYLINDER;
-      static CollisionGeomType CCYLINDER;
-      static CollisionGeomType CUBE;
-      static CollisionGeomType RAY;
-      static CollisionGeomType MESH;
+      static CollisionGeomType NONE;     ///<No shape
+      static CollisionGeomType SPHERE;   ///<Sphere
+      static CollisionGeomType CYLINDER; ///<Flat ended cylinder
+      static CollisionGeomType CCYLINDER;///<A capsule
+      static CollisionGeomType CUBE;     ///<Cube
+      static CollisionGeomType RAY;      ///<Ray
+      static CollisionGeomType MESH;     ///<triangle mesh
 
    private:
       CollisionGeomType(const std::string& name) : dtUtil::Enumeration(name)
@@ -174,7 +174,7 @@ namespace dtCore
       void SetCollisionCylinder(osg::Node* node = NULL);
 
       /**
-       * Sets this object's collision geometry to a capped cylinder
+       * Sets this object's collision geometry to a capsule shape
        * (oriented along the z axis) with the specified radius and length.
        *
        * @param radius the radius of the cylinder
@@ -183,7 +183,7 @@ namespace dtCore
       void SetCollisionCappedCylinder(float radius, float length);
 
       /**
-       * Sets this object's collision geometry to a capped cylinder with
+       * Sets this object's collision geometry to a capsule shape with
        * parameters derived from the given OpenSceneGraph node.
        *
        * @param node the node from which to obtain the cylinder parameters
