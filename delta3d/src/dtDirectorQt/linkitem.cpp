@@ -53,10 +53,18 @@ namespace dtDirector
       mHighlightPen  = QPen(Qt::yellow, LINE_WIDTH, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
       mLinkGraphicPen = Qt::NoPen;
 
-      QWidget::setToolTip(comment.c_str());
-      QGraphicsPolygonItem::setToolTip(comment.c_str());
+      if (nodeItem && nodeItem->flags() & QGraphicsItem::ItemIsSelectable)
+      {
+         setAcceptHoverEvents(true);
 
-      setAcceptHoverEvents(true);
+         QWidget::setToolTip(comment.c_str());
+         QGraphicsPolygonItem::setToolTip(comment.c_str());
+      }
+      else
+      {
+         setAcceptHoverEvents(false);
+         setAcceptedMouseButtons(Qt::NoButton);
+      }
 
       if ((mScene) && mScene->GetEditor())
       {
