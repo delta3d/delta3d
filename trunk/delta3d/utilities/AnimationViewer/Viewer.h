@@ -36,6 +36,7 @@ namespace dtAnim
 {
    class Cal3DDatabase;
    class Cal3DModelData;
+   class Cal3DModelWrapper;
    class CharDrawable;
    class PoseMeshDatabase;
 }
@@ -55,6 +56,7 @@ public slots:
    void OnNewCharFile();
    void OnLoadCharFile        (const QString& filename);
    void OnSaveCharFile        (const QString& filename);
+   void OnReloadCharFile();
    void OnUnloadCharFile();
    void OnLoadPoseMeshFile    (const std::string& filename);
    void OnStartAnimation      (unsigned int id, float weight, float delay);
@@ -85,6 +87,8 @@ public slots:
    void OnPlayMorphAnimation(int morphAnimID, float weight, float delayIn, float delayOut, bool looping);
    void OnStopMorphAnimation(int morphAnimID, float delay);
 
+   void OnClearTempFile();
+
 signals:
    void AnimationLoaded(unsigned int, const QString&, unsigned int trackCount,
                         unsigned int keyframes, float duration);
@@ -107,7 +111,7 @@ signals:
                        const QColor& diffuse, const QColor& ambient, const QColor& specular,
                        float shininess);
    
-   void CharacterDataLoaded(dtAnim::Cal3DModelData* modelData);
+   void CharacterDataLoaded(dtAnim::Cal3DModelData* modelData, dtAnim::Cal3DModelWrapper* wrapper);
 
    void ErrorOccured(const QString& msg);
 
@@ -143,6 +147,8 @@ private:
    void CreateBoneBasisDisplay();
 
    dtCore::RefPtr<dtCore::Object> mAttachmentObject;
+
+   std::string mTempFile;
 };
 
 #endif // Viewer_h__
