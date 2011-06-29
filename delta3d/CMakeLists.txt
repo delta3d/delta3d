@@ -194,6 +194,7 @@ INCLUDE(UtilityMacros)
 INCLUDE(BuildExample)
 INCLUDE(BuildBinding)
 INCLUDE(PCHMacros)
+include(delta3d_common)
 
 if (BUILD_WITH_PCH)
    ADD_DEFINITIONS(-DDT_USE_PCH)
