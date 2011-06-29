@@ -107,7 +107,7 @@ namespace dtAnim
 
          newOptions->setPluginData(CAL_PLUGIN_DATA, &optionData);
 
-         return newOptions; 
+         return newOptions;
       }
 
       META_Object("dtAnim", CalOptions);
@@ -289,7 +289,7 @@ namespace dtAnim
 
       const char* className() const
       {
-         return "Cal3D Skeleton Reader/Writer"; 
+         return "Cal3D Skeleton Reader/Writer";
       }
 
 #if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300
@@ -328,7 +328,7 @@ namespace dtAnim
 
       const char* className() const
       {
-         return "Cal3D Material Reader/Writer"; 
+         return "Cal3D Material Reader/Writer";
       }
 
 #if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300
@@ -366,7 +366,7 @@ namespace dtAnim
 
       const char* className() const
       {
-         return "Cal3D Mesh Reader/Writer"; 
+         return "Cal3D Mesh Reader/Writer";
       }
 
 #if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300
@@ -404,7 +404,7 @@ namespace dtAnim
 
       const char* className() const
       {
-         return "Cal3D Animation Reader/Writer"; 
+         return "Cal3D Animation Reader/Writer";
       }
 
 #if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300
@@ -475,7 +475,7 @@ namespace dtAnim
 
       const char* className() const
       {
-         return "Delta3D Character File Reader/Writer"; 
+         return "Delta3D Character File Reader/Writer";
       }
 
       virtual osgDB::ReaderWriter::ReadResult BuildResult(
@@ -584,7 +584,7 @@ namespace dtAnim
          resultObj = static_cast<WrapperOSGCharFileObject*>
             (osgDB::readRefObjectFile(filename, globalOptions).get());
       }
-      
+
       if (resultObj.valid())
       {
          // Acquire the handler that was involved with the parsing.
@@ -1120,7 +1120,8 @@ namespace dtAnim
             }
             else
             {
-               LOG_ERROR("Unable to find animation '" + pStruct.mAnimationName + "' within the CalCoreModel.");
+               LOG_ERROR("Unable to find animation '" + pStruct.mAnimationName +
+                  "' within the CalCoreModel. (" + modelData.GetFilename() + ")");
             }
 
          }
