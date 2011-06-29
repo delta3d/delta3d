@@ -155,6 +155,32 @@ void DialogLineType::ClosePropertyEditor(DialogTreeWidget* tree)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+QWidget* DialogLineType::CreatePropertyEditorForChild(DialogTreeWidget* tree, DialogChoiceItem* choice)
+{
+   return NULL;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void DialogLineType::ClosePropertyEditorForChild(DialogTreeWidget* tree, DialogChoiceItem* choice)
+{
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void DialogLineType::OnChildChoiceRemoved(DialogChoiceItem* choice, int index)
+{
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void DialogLineType::OnChildChoiceAdded(DialogChoiceItem* choice, int index)
+{
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void DialogLineType::OnChildChoiceMoved(DialogChoiceItem* choice, int oldIndex, int newIndex)
+{
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void DialogLineType::GeneratePreEventNode(dtDirector::Node*& prevNode, std::string& output, DirectorDialogEditorPlugin* editor)
 {
    if (mHasPreEvent && !mPreEventName.isEmpty())

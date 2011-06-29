@@ -70,8 +70,7 @@ protected:
 
    void startDrag(Qt::DropActions supportedActions);
 
-   //void dragMoveEvent(QDragMoveEvent* event);
-   //void dropEvent(QDropEvent* event);
+   void dropEvent(QDropEvent* event);
 
    void contextMenuEvent(QContextMenuEvent* event);
 
