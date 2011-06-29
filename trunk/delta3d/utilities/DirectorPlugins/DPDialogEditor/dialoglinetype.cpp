@@ -15,7 +15,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 DialogLineType::DialogLineType()
    : mWrapper(NULL)
-   , mGridLayout(NULL)
    , mPreEventEdit(NULL)
    , mDuringEventEdit(NULL)
    , mPostEventEdit(NULL)
@@ -78,13 +77,9 @@ void DialogLineType::RefreshInlineData(QWidget* editor)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-QWidget* DialogLineType::CreatePropertyEditor(DialogTreeWidget* tree)
+QLayout* DialogLineType::CreatePropertyEditor(DialogTreeWidget* tree)
 {
-   mWrapper = new QWidget();
-   mGridLayout = new QGridLayout(mWrapper);
-
-   QSpacerItem* spacer = new QSpacerItem(1, 1, QSizePolicy::Minimum, QSizePolicy::Expanding);
-   mGridLayout->addItem(spacer, 100, 0);
+   mWrapper = new QGridLayout();
 
    // Pre event.
    QGroupBox* preEventBox = new QGroupBox();
@@ -128,9 +123,9 @@ QWidget* DialogLineType::CreatePropertyEditor(DialogTreeWidget* tree)
    connect(postCheckBox, SIGNAL(stateChanged(int)), this, SLOT(OnPostEventCheckBoxChanged(int)));
    connect(mPostEventEdit, SIGNAL(textEdited(const QString&)), this, SLOT(OnPostEventTextEdited(const QString&)));
 
-   mGridLayout->addWidget(preEventBox, 0, 0);
-   mGridLayout->addWidget(durEventBox, 1, 0);
-   mGridLayout->addWidget(postEventBox, 2, 0);
+   mWrapper->layout()->addWidget(preEventBox);
+   mWrapper->layout()->addWidget(durEventBox);
+   mWrapper->layout()->addWidget(postEventBox);
 
    // Setup initial values.
    preCheckBox->setChecked(mHasPreEvent);
@@ -148,14 +143,13 @@ QWidget* DialogLineType::CreatePropertyEditor(DialogTreeWidget* tree)
 void DialogLineType::ClosePropertyEditor(DialogTreeWidget* tree)
 {
    mWrapper = NULL;
-   mGridLayout = NULL;
    mPreEventEdit = NULL;
    mDuringEventEdit = NULL;
    mPostEventEdit = NULL;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-QWidget* DialogLineType::CreatePropertyEditorForChild(DialogTreeWidget* tree, DialogChoiceItem* choice)
+QLayout* DialogLineType::CreatePropertyEditorForChild(DialogTreeWidget* tree, DialogChoiceItem* choice)
 {
    return NULL;
 }
