@@ -44,6 +44,11 @@ int AnimationWrapper::GetID() const
    return mAnimationID;
 }
 
+void AnimationWrapper::SetID(int id)
+{
+   mAnimationID = id;
+}
+
 float AnimationWrapper::GetDuration() const
 {
    return mDuration;

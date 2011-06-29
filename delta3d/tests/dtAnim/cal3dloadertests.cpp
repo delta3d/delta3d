@@ -192,6 +192,8 @@ namespace dtAnim
             Cal3DModelData* modelData = database.GetModelData(*wrapper);
             CPPUNIT_ASSERT(modelData != NULL);
 
+            dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
+            fileUtils.CleanupFileString(modelPath);
             CPPUNIT_ASSERT_EQUAL(modelData->GetFilename(), modelPath);
 
             CPPUNIT_ASSERT(modelData->GetVertexBufferObject() == NULL);
@@ -302,9 +304,11 @@ namespace dtAnim
             // Test name list by file type
             dtAnim::Cal3DModelData::StrArray nameList;
             CPPUNIT_ASSERT(modelData->GetObjectNameListForFileType(Cal3DModelData::SKEL_FILE, nameList) == 1);
+            CPPUNIT_ASSERT(modelData->GetFileCount(Cal3DModelData::SKEL_FILE) == 1);
             CPPUNIT_ASSERT(VectorHasValue(nameList, "skeleton"));
             nameList.clear();
             CPPUNIT_ASSERT(modelData->GetObjectNameListForFileType(Cal3DModelData::ANIM_FILE, nameList) == 5);
+            CPPUNIT_ASSERT(modelData->GetFileCount(Cal3DModelData::ANIM_FILE) == 5);
             CPPUNIT_ASSERT(VectorHasValue(nameList, "LowWalk"));
             CPPUNIT_ASSERT(VectorHasValue(nameList, "LowWalk with weapon"));
             CPPUNIT_ASSERT(VectorHasValue(nameList, "Idle"));
@@ -312,12 +316,14 @@ namespace dtAnim
             CPPUNIT_ASSERT(VectorHasValue(nameList, "Walk"));
             nameList.clear();
             CPPUNIT_ASSERT(modelData->GetObjectNameListForFileType(Cal3DModelData::MESH_FILE, nameList) == 4);
+            CPPUNIT_ASSERT(modelData->GetFileCount(Cal3DModelData::MESH_FILE) == 4);
             CPPUNIT_ASSERT(VectorHasValue(nameList, "Head"));
             CPPUNIT_ASSERT(VectorHasValue(nameList, "Body"));
             CPPUNIT_ASSERT(VectorHasValue(nameList, "Helmet"));
             CPPUNIT_ASSERT(VectorHasValue(nameList, "M16"));
             nameList.clear();
             CPPUNIT_ASSERT(modelData->GetObjectNameListForFileType(Cal3DModelData::MAT_FILE, nameList) == 4);
+            CPPUNIT_ASSERT(modelData->GetFileCount(Cal3DModelData::MAT_FILE) == 4);
             CPPUNIT_ASSERT(VectorHasValue(nameList, "Head Material"));
             CPPUNIT_ASSERT(VectorHasValue(nameList, "Body Material"));
             CPPUNIT_ASSERT(VectorHasValue(nameList, "Helmet Material"));
@@ -333,10 +339,10 @@ namespace dtAnim
 
             // Test mapping multiple object names to a single file.
             std::string testFile("test.xaf");
-            modelData->RegisterFile(testFile, "A");
-            modelData->RegisterFile(testFile, "B");
-            modelData->RegisterFile(testFile, "C");
-            modelData->RegisterFile(testFile, "D");
+            CPPUNIT_ASSERT(modelData->RegisterFile(testFile, "A"));
+            CPPUNIT_ASSERT(modelData->RegisterFile(testFile, "B"));
+            CPPUNIT_ASSERT(modelData->RegisterFile(testFile, "C"));
+            CPPUNIT_ASSERT(modelData->RegisterFile(testFile, "D"));
 
             CPPUNIT_ASSERT(modelData->GetObjectNameListForFile(testFile, nameList) == 4);
             CPPUNIT_ASSERT(VectorHasValue(nameList, "A"));
@@ -372,6 +378,40 @@ namespace dtAnim
             CPPUNIT_ASSERT( ! VectorHasValue(nameList, "B"));
             CPPUNIT_ASSERT( ! VectorHasValue(nameList, "D"));
             CPPUNIT_ASSERT(nameList.empty());
+
+
+            // Re-register for more tests.
+            CPPUNIT_ASSERT(modelData->RegisterFile(testFile, "A"));
+            CPPUNIT_ASSERT(modelData->RegisterFile(testFile, "B"));
+            CPPUNIT_ASSERT(modelData->RegisterFile(testFile, "D"));
+
+            // Test changing an object name.
+            dtAnim::Cal3DModelData::CalFileType fileType = dtAnim::Cal3DModelData::ANIM_FILE;
+            CPPUNIT_ASSERT( ! modelData->ReplaceObjectName(fileType, "A", "B"));
+            CPPUNIT_ASSERT(modelData->ReplaceObjectName(fileType, "A", "C"));
+            CPPUNIT_ASSERT(modelData->GetFileForObjectName(fileType, "C") == testFile);
+            CPPUNIT_ASSERT(modelData->GetFileForObjectName(fileType, "A").empty());
+
+            CPPUNIT_ASSERT(modelData->GetObjectNameListForFile(testFile, nameList) == 3);
+            CPPUNIT_ASSERT( ! VectorHasValue(nameList, "A"));
+            CPPUNIT_ASSERT(VectorHasValue(nameList, "B"));
+            CPPUNIT_ASSERT(VectorHasValue(nameList, "C"));
+            CPPUNIT_ASSERT(VectorHasValue(nameList, "D"));
+            nameList.clear();
+
+            // Test changing a file that an object name is mapped to.
+            std::string newTestFile("newTestFile.caf");
+            CPPUNIT_ASSERT( ! modelData->SetFileForObjectName(fileType, "D", testFile));
+            CPPUNIT_ASSERT(modelData->SetFileForObjectName(fileType, "D", newTestFile));
+            CPPUNIT_ASSERT(modelData->GetFileForObjectName(fileType, "D") != testFile);
+            CPPUNIT_ASSERT(modelData->GetFileForObjectName(fileType, "D") == newTestFile);
+
+            CPPUNIT_ASSERT(modelData->GetObjectNameListForFile(testFile, nameList) == 2);
+            CPPUNIT_ASSERT( ! VectorHasValue(nameList, "A"));
+            CPPUNIT_ASSERT(VectorHasValue(nameList, "B"));
+            CPPUNIT_ASSERT(VectorHasValue(nameList, "C"));
+            CPPUNIT_ASSERT( ! VectorHasValue(nameList, "D"));
+            nameList.clear();
          }
 
       private:

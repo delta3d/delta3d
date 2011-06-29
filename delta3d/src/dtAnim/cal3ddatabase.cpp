@@ -22,6 +22,7 @@
 #include <dtAnim/cal3ddatabase.h>
 #include <dtAnim/cal3dmodelwrapper.h>
 #include <dtAnim/animnodebuilder.h>
+#include <dtUtil/fileutils.h>
 #include <dtUtil/log.h>
 #include <dtUtil/xerceswriter.h>
 #include <dtUtil/xercesparser.h>
@@ -153,6 +154,9 @@ namespace dtAnim
    dtCore::RefPtr<Cal3DModelWrapper> Cal3DDatabase::Load(const std::string& file)
    {
       std::string filename = osgDB::convertFileNameToNativeStyle(file);
+
+      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
+      fileUtils.CleanupFileString(filename);
 
       dtCore::RefPtr<Cal3DModelData> data;
 
