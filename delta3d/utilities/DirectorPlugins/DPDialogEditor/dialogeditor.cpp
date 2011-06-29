@@ -145,6 +145,7 @@ void DirectorDialogEditorPlugin::Close()
 
    if (mEditWidget)
    {
+      mUI.mLinePropertyLayout->removeWidget(mEditWidget);
       delete mEditWidget;
       mEditWidget = NULL;
    }
@@ -209,12 +210,11 @@ void DirectorDialogEditorPlugin::RegisterEvent(const QString& name, int eventTyp
 ////////////////////////////////////////////////////////////////////////////////
 void DirectorDialogEditorPlugin::OnCurrentTreeItemChanged(QTreeWidgetItem* current, QTreeWidgetItem* previous)
 {
-   QLayout* layout = mUI.mLinePropertyWidget->layout();
-   if (layout)
+   if (mUI.mLinePropertyLayout)
    {
       if (mEditWidget)
       {
-         layout->removeWidget(mEditWidget);
+         mUI.mLinePropertyLayout->removeWidget(mEditWidget);
 
          // Remove any current widgets provided by the previous item.
          DialogLineItem* prevLine = dynamic_cast<DialogLineItem*>(previous);
@@ -242,12 +242,13 @@ void DirectorDialogEditorPlugin::OnCurrentTreeItemChanged(QTreeWidgetItem* curre
          mEditWidget = NULL;
       }
 
+      QLayout* layout = NULL;
       DialogLineItem* line = dynamic_cast<DialogLineItem*>(current);
       if (line)
       {
          if (line->GetType())
          {
-            mEditWidget = line->GetType()->CreatePropertyEditor(GetTree());
+            layout = line->GetType()->CreatePropertyEditor(GetTree());
          }
       }
       else
@@ -258,14 +259,17 @@ void DirectorDialogEditorPlugin::OnCurrentTreeItemChanged(QTreeWidgetItem* curre
             DialogLineItem* parentLine = dynamic_cast<DialogLineItem*>(choice->parent());
             if (parentLine && parentLine->GetType())
             {
-               mEditWidget = parentLine->GetType()->CreatePropertyEditorForChild(GetTree(), choice);
+               layout = parentLine->GetType()->CreatePropertyEditorForChild(GetTree(), choice);
             }
          }
       }
 
-      if (mEditWidget)
+      if (layout)
       {
-         layout->addWidget(mEditWidget);
+         mEditWidget = new QWidget();
+         QGridLayout* grid = new QGridLayout(mEditWidget);
+         grid->addLayout(layout, 0, 0);
+         mUI.mLinePropertyLayout->insertWidget(0, mEditWidget);
       }
    }
 }

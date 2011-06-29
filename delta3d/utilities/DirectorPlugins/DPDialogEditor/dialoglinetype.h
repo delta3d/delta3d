@@ -10,7 +10,7 @@
 
 #include <QtCore/QString>
 
-#include <QtGui/QWidget>
+#include <QtGui/QLayout>
 
 
 namespace dtDirector
@@ -140,9 +140,9 @@ public:
     *
     * @param[in]  tree  The editor tree.
     *
-    * @return           A newly created editor widget.
+    * @return     A newly created layout.
     */
-   virtual QWidget* CreatePropertyEditor(DialogTreeWidget* tree);
+   virtual QLayout* CreatePropertyEditor(DialogTreeWidget* tree);
 
    /**
     * Closes the editor widget used for editing.
@@ -157,8 +157,10 @@ public:
     *
     * @param[in]  tree    The editor tree.
     * @param[in]  choice  The child choice being edited.
+    *
+    * @return     A newly created layout.
     */
-   virtual QWidget* CreatePropertyEditorForChild(DialogTreeWidget* tree, DialogChoiceItem* choice);
+   virtual QLayout* CreatePropertyEditorForChild(DialogTreeWidget* tree, DialogChoiceItem* choice);
 
    /**
     * Closes the editor widget used for editing a choice child.
@@ -314,8 +316,7 @@ public slots:
 
 protected:
 
-   QWidget*     mWrapper;
-   QGridLayout* mGridLayout;
+   QLayout*     mWrapper;
 
    QLineEdit*   mPreEventEdit;
    QLineEdit*   mDuringEventEdit;
