@@ -1,21 +1,19 @@
-# Locate dtQt
-# Note: This Find does not include finding Qt, which dtQt depends on
+# Locate DPDialogEditor
 
 INCLUDE(delta3d_common)
   
 #variable names of the individual Delta3D libraries.  Can be used in application cmakelist.txt files.
-FIND_DELTA3D_LIBRARY(DP_DIALOG_EDITOR_LIBRARY         DPDialogEditor)
-FIND_DELTA3D_LIBRARY(DP_DIALOG_EDITOR_DEBUG_LIBRARY   DPDialogEditord)
-
+FIND_DELTA3D_LIBRARY(DP_DIALOG_EDITOR_LIBRARY       DPDialogEditor)
+FIND_DELTA3D_LIBRARY(DP_DIALOG_EDITOR_DEBUG_LIBRARY DPDialogEditord)
 
 IF (NOT DP_DIALOG_EDITOR_DEBUG_LIBRARY)
-  SET(DP_DIALOG_EDITOR_DEBUG_LIBRARY DP_DIALOG_EDITOR_LIBRARY)
+  SET(DP_DIALOG_EDITOR_DEBUG_LIBRARY ${DP_DIALOG_EDITOR_LIBRARY})
   MESSAGE(STATUS "No debug library was found for DP_DIALOG_EDITOR_DEBUG_LIBRARY")
 ENDIF()
 
-#convienent list of libraries to link with when using dtQt
+#convienent list of libraries to link with when using DPDialogEditor
 SET(DP_DIALOG_EDITOR_LIBRARIES
-    optimized ${DP_DIALOG_EDITOR_LIBRARY}  debug ${DP_DIALOG_EDITOR_DEBUG_LIBRARY}
+    optimized ${DP_DIALOG_EDITOR_LIBRARY} debug ${DP_DIALOG_EDITOR_DEBUG_LIBRARY}
     )
     
 SET(DP_DIALOG_EDITOR_INCLUDE_DIRECTORIES ${DELTA3D_ROOT}/utilities/DirectorPlugins/DPDialogEditor
