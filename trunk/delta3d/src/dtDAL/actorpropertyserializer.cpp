@@ -1491,6 +1491,21 @@ namespace dtDAL
       SerializerRuntimeData& data = Top();
 
       dtDAL::ActorProperty* actorProperty = GetNestedProperty();
+
+      dtDAL::ArrayActorPropertyBase* arrayProp = dynamic_cast<dtDAL::ArrayActorPropertyBase*>(actorProperty);
+      if (arrayProp)
+      {
+         actorProperty = arrayProp->GetArrayProperty();
+      }
+      else
+      {
+         dtDAL::ContainerActorProperty* containerProp = dynamic_cast<dtDAL::ContainerActorProperty*>(actorProperty);
+         if (containerProp)
+         {
+            actorProperty = containerProp->GetCurrentProperty();
+         }
+      }
+
       mData.push(dtDAL::SerializerRuntimeData());
       mData.top().Reset();
       BasePropertyContainerActorProperty* pcProp = dynamic_cast<BasePropertyContainerActorProperty*>(actorProperty);
