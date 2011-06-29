@@ -99,6 +99,7 @@ namespace dtAnim
       void Remove(AnimationWrapper*);
       void Remove(Animatable*);
 
+      void SetFilename(const std::string& file);
       const std::string& GetFilename() const;
 
       void SetModelName(const std::string& name);
@@ -217,6 +218,11 @@ namespace dtAnim
       CalFileType GetFileType(const std::string& file) const;
 
       /**
+       * Determine the number of files registered under the specified type.
+       */
+      unsigned GetFileCount(CalFileType fileType) const;
+
+      /**
        * Method for obtaining all associated files of a specified type.
        * @param fileType The type of files to search for.
        * @param outFiles List to capture all files matching the specified file type.
@@ -243,6 +249,26 @@ namespace dtAnim
       unsigned GetObjectNameListForFileTypeSorted(CalFileType fileType, StrArray& outNames) const;
 
       /**
+       * Method for changing an object name.
+       * @param fileType The type of files the name relates to.
+       * @param oldObjectName Name that may be mapped to a file.
+       * @param newObjectName Name that is to replace the old name.
+       * @return TRUE if the old object name was found and the new name set.
+       */
+      bool ReplaceObjectName(CalFileType fileType, const std::string& oldObjectName,
+         const std::string& newObjectName);
+
+      /**
+       * Method for changing the file that an object name is mapped to.
+       * @param fileType The type of files the name relates to.
+       * @param objectName Name that may be mapped to a file.
+       * @param file File to register for the specified object name.
+       * @return TRUE if the object name was found and the file name set.
+       */
+      bool SetFileForObjectName(CalFileType fileType, const std::string& objectName,
+         const std::string& file);
+
+      /**
        * Method for determining the file that an object name is mapped to.
        * @param fileType The type of files the name relates to.
        * @param objectName Name that may be mapped to a file.
@@ -262,8 +288,9 @@ namespace dtAnim
        * Register a file a file with an object name. A file may be registered with multiple names.
        * @param file The file to be registered to an object name.
        * @param objectName Name of an object that may represent the file, such as an animation, mesh, etc.
+       * @return TRUE if the file and object name were successfully registered.
        */
-      void RegisterFile(const std::string& file, const std::string& objectName);
+      bool RegisterFile(const std::string& file, const std::string& objectName);
 
       /**
        * Method for removing file-to-object-name mappings by a specific file name.

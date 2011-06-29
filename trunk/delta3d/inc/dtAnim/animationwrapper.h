@@ -48,6 +48,14 @@ public:
    int GetID() const;
 
    /**
+    * Set the ID of the animation that this wrapper refers to.
+    * NOTE: This does not change the id of the referenced animation.
+    *    and should only be set if the Cal3D animation ID has changed
+    *    outside the control of this object.
+    */
+   void SetID(int id);
+
+   /**
     * The duration of an animation is defined to be the amount of time
     * it takes to play through a single cycle
     */

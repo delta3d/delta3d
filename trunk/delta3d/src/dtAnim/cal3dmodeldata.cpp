@@ -90,6 +90,12 @@
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   void Cal3DModelData::SetFilename(const std::string& file)
+   {
+      mFilename = file;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    const std::string& Cal3DModelData::GetFilename() const
    {
       return mFilename;
@@ -536,14 +542,31 @@
          {
             fileType = ANIM_FILE;
          }
-         // TODO: Following extensions currently unknown for the morph file type.
-         /*else if (ext == "???" || ext == "???")
+         else if (ext == "cpf" || ext == "xpf")
          {
             fileType = MORPH_FILE;
-         }*/
+         }
       }
 
       return fileType;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   unsigned Cal3DModelData::GetFileCount(CalFileType fileType) const
+   {
+      unsigned num = 0;
+
+      FileToObjectMap::const_iterator curIter = mFileObjectMap.begin();
+      FileToObjectMap::const_iterator endIter = mFileObjectMap.end();
+      for ( ; curIter != endIter; ++curIter)
+      {
+         if (curIter->second->mType == fileType)
+         {
+            ++num;
+         }
+      }
+
+      return num;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -644,6 +667,60 @@
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   bool Cal3DModelData::ReplaceObjectName(CalFileType fileType, const std::string& oldObjectName,
+      const std::string& newObjectName)
+   {
+      bool success = false;
+
+      // Only set the new name if the object name does not already exist for the
+      // current file type.
+      if (GetFileForObjectName(fileType, newObjectName).empty())
+      {
+         ObjectNameAndFileType* curItem = NULL;
+         FileToObjectMap::iterator curIter = mFileObjectMap.begin();
+         FileToObjectMap::iterator endIter = mFileObjectMap.end();
+         for ( ; curIter != endIter; ++curIter)
+         {
+            curItem = curIter->second.get();
+
+            if (curItem->mType == fileType && curItem->mName == oldObjectName)
+            {
+               curItem->mName = newObjectName;
+               success = true;
+               break;
+            }
+         }
+      }
+
+      return success;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool Cal3DModelData::SetFileForObjectName(CalFileType fileType, const std::string& objectName,
+      const std::string& file)
+   {
+      bool success = false;
+
+      std::string oldFile(GetFileForObjectName(fileType, objectName));
+      if (!oldFile.empty() && oldFile != file)
+      {
+         unsigned numRemoved = UnregisterObjectName(objectName, oldFile, NULL);
+         if (numRemoved == 0)
+         {
+            LOG_WARNING("Could not unregister object name \"" + objectName + "\"");
+         }
+         else if (numRemoved > 1)
+         {
+            LOG_WARNING("More than one items were unregistered for object name \"" + objectName + "\"");
+         }
+
+         success = RegisterFile(file, objectName);
+      }
+
+      return success;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    std::string Cal3DModelData::GetFileForObjectName(CalFileType fileType, const std::string& objectName) const
    {
       std::string file;
@@ -681,8 +758,10 @@
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void Cal3DModelData::RegisterFile(const std::string& file, const std::string& objectName)
+   bool Cal3DModelData::RegisterFile(const std::string& file, const std::string& objectName)
    {
+      bool success = false;
+
       CalFileType fileType = GetFileType(file);
 
       if (fileType != NO_FILE)
@@ -707,12 +786,17 @@
          }
 
          // Map the relative file path.
+         size_t prevSize = mFileObjectMap.size();
          mFileObjectMap.insert(std::make_pair(relativeFile, new ObjectNameAndFileType(objectName, fileType)));
+
+         success = mFileObjectMap.size() > prevSize;
       }
       else
       {
          LOG_WARNING("Cannot register a file without an extension for object \"" + objectName +"\"\n");
       }
+
+      return success;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
