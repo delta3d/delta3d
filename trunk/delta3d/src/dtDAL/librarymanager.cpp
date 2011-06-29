@@ -226,17 +226,17 @@ namespace dtDAL
       }
    }
 
+   struct SortFunctor
+   {
+      bool operator()(const dtDAL::ActorType* a, const dtDAL::ActorType* b)
+      {
+         return a->GetFullName() < b->GetFullName();
+      }
+   };
+
    ////////////////////////////////////////////////////////////////////////////////
    std::vector<std::string> LibraryManager::GetClassTypes() const
    {
-      struct SortFunctor
-      {
-         bool operator()(const dtDAL::ActorType* a, const dtDAL::ActorType* b)
-         {
-            return a->GetFullName() < b->GetFullName();
-         }
-      };
-
       std::vector<const dtDAL::ActorType*> types;
       GetActorTypes(types);
 
