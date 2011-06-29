@@ -6,6 +6,11 @@
 # This folder contains some functions which helps find the indidivual parts of Delta3D
 # and is typically included by other .cmake files.
 
+
+if (NOT DT_COMMON_RUN)
+
+set(DT_COMMON_RUN "true")
+
 #where to find the root Delta3D folder
 FIND_PATH(DELTA3D_ROOT src
           HINTS
@@ -156,3 +161,5 @@ function(DELTA3D_FIND_LIBRARY module library)
       )
    endif()
 endfunction(DELTA3D_FIND_LIBRARY module library)
+
+endif()
