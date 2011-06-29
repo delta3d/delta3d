@@ -247,7 +247,12 @@ void DialogTreeWidget::contextMenuEvent(QContextMenuEvent* event)
       }
    }
 
-   menu.exec(event->globalPos());
+   event->ignore();
+   if (!menu.actions().empty())
+   {
+      menu.exec(event->globalPos());
+      event->accept();
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
