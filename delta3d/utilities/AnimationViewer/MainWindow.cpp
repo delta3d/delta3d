@@ -5,11 +5,13 @@
 #include "PoseMeshProperties.h"
 #include "PoseMeshItem.h"
 #include "Viewer.h"
+#include "ResourceDelegates.h"
 #include <dtQt/osggraphicswindowqt.h>
 
 #include <osg/Geode> ///needed for the node builder
 #include <dtAnim/cal3ddatabase.h>
 #include <dtAnim/animnodebuilder.h>
+#include <dtAnim/animationwrapper.h>
 #include <dtAnim/chardrawable.h>
 #include <dtCore/deltawin.h>
 #include <dtUtil/fileutils.h>
@@ -38,6 +40,8 @@
 #include <QtGui/QHBoxLayout>
 #include <QtGui/QProgressBar>
 #include <QtGui/QTreeWidgetItem>
+#include <QtGui/QItemDelegate>
+#include <QtGui/QTextEdit>
 #include <QtCore/QUrl>
 #include <QtOpenGL/QGLWidget>
 
@@ -82,11 +86,15 @@ void AddItemsToTreeWidgetItem(QTreeWidgetItem& item,
       curItem = new QTreeWidgetItem();
       curItem->setText(0, labelName);
       curItem->setText(1, labelFile);
+      curItem->setFlags(curItem->flags() | Qt::ItemIsEditable);
       item.addChild(curItem);
    }
 }
 
 
+
+////////////////////////////////////////////////////////////////////////////////
+// MAIN WINDOW CODE
 ////////////////////////////////////////////////////////////////////////////////
 MainWindow::MainWindow()
   : mExitAct(NULL)
@@ -122,6 +130,8 @@ MainWindow::MainWindow()
   , mFileGroupMesh(NULL)
   , mFileGroupMat(NULL)
   , mFileGroupMorph(NULL)
+  , mFileDelegate(NULL)
+  , mObjectNameDelegate(NULL)
 {
    resize(1024, 800);
 
@@ -422,6 +432,22 @@ void MainWindow::SaveCharFile(const QString& filename)
       QApplication::restoreOverrideCursor();
       statusBar()->showMessage(tr("File saved"), 2000);
    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void MainWindow::ReloadCharFile()
+{
+   // Keep track of the current file since the
+   // current variable may change during reload.
+   std::string curFile(mCurrentFile);
+
+   mFileTree->setUpdatesEnabled(false);
+   emit ReloadFile();
+   mFileTree->setUpdatesEnabled(true);
+   emit ClearTempFile();
+
+   // Reset the current file.
+   mCurrentFile = curFile;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -756,11 +782,16 @@ void MainWindow::OnNewMaterial(int matID, const QString& name,
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void MainWindow::OnCharacterDataLoaded(dtAnim::Cal3DModelData* modelData)
+void MainWindow::OnCharacterDataLoaded(dtAnim::Cal3DModelData* modelData,
+                                       dtAnim::Cal3DModelWrapper* modelWrapper)
 {
    using namespace dtAnim;
 
    // Update the resource tree widget.
+   mFileDelegate->SetCharModelData(modelData);
+   mFileDelegate->SetCharModelWrapper(modelWrapper);
+   mObjectNameDelegate->SetCharModelData(modelData);
+   mObjectNameDelegate->SetCharModelWrapper(modelWrapper);
    mFileLabel->setText(modelData->GetModelName().c_str());
    AddItemsToTreeWidgetItem(*mFileGroupSkel, *modelData, Cal3DModelData::SKEL_FILE);
    AddItemsToTreeWidgetItem(*mFileGroupAnim, *modelData, Cal3DModelData::ANIM_FILE);
@@ -986,6 +1017,8 @@ void MainWindow::SetCurrentFile(const QString& filename)
       mCloseCharAction->setEnabled(false);
       return;
    }
+
+   mCurrentFile = filename.toStdString();
 
    setWindowTitle(tr("%1 - %2").arg(QFileInfo(filename).fileName()).arg(tr("Animation Viewer")));
    mCloseCharAction->setEnabled(true);
@@ -1338,12 +1371,16 @@ void MainWindow::OnClearCharacterData()
    mScaleFactorSpinner->setValue(1.0f);
 
    // Clear resource information.
+   mFileDelegate->SetCharModelData(NULL);
+   mObjectNameDelegate->SetCharModelData(NULL);
    mFileLabel->setText("");
    ClearTreeWidgetItem(*mFileGroupSkel);
    ClearTreeWidgetItem(*mFileGroupAnim);
    ClearTreeWidgetItem(*mFileGroupMesh);
    ClearTreeWidgetItem(*mFileGroupMat);
    ClearTreeWidgetItem(*mFileGroupMorph);
+
+   mCurrentFile = "";
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1370,6 +1407,127 @@ void MainWindow::OnChangeAttachmentSettings()
    float ry = mAttachmentRotYSpinner->value();
    float rz = mAttachmentRotZSpinner->value();
    emit AttachmentSettingsChanged(boneName, x, y, z, rx, ry, rz);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void MainWindow::OnResourceEditStart(int fileType, const std::string& objectName)
+{
+   using namespace dtAnim;
+
+   // Time to update character and UI states prior to an object resource change.
+
+   Cal3DModelData::CalFileType calFileType = Cal3DModelData::CalFileType(fileType);
+   switch (calFileType)
+   {
+   case Cal3DModelData::SKEL_FILE:
+      // TODO:
+      break;
+
+   case Cal3DModelData::ANIM_FILE:
+      // TODO:
+      break;
+
+   case Cal3DModelData::MESH_FILE:
+      // TODO:
+      break;
+
+   case Cal3DModelData::MAT_FILE:
+      // TODO:
+      break;
+
+   case Cal3DModelData::MORPH_FILE:
+      // TODO:
+      break;
+
+   default:
+      break;
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void MainWindow::OnResourceEditEnd(int fileType, const std::string& objectName)
+{
+   using namespace dtAnim;
+
+   bool reload = false;
+
+   Cal3DModelData::CalFileType calFileType = Cal3DModelData::CalFileType(fileType);
+   switch (calFileType)
+   {
+   case Cal3DModelData::SKEL_FILE:
+      reload = true;
+      break;
+
+   case Cal3DModelData::ANIM_FILE:
+      // Reload not necessary since animations are hot-swappable.
+      break;
+
+   case Cal3DModelData::MESH_FILE:
+      reload = true;
+      break;
+
+   case Cal3DModelData::MAT_FILE:
+      reload = true;
+      break;
+
+   case Cal3DModelData::MORPH_FILE:
+      reload = true;
+      break;
+
+   default:
+      break;
+   }
+
+   if (reload)
+   {
+      ReloadCharFile();
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void MainWindow::OnResourceNameChanged(int fileType,
+   const std::string& oldName, const std::string& newName) const
+{
+   using namespace dtAnim;
+
+   Cal3DModelData::CalFileType calFileType = Cal3DModelData::CalFileType(fileType);
+   switch (calFileType)
+   {
+   case Cal3DModelData::SKEL_FILE:
+      break;
+
+   case Cal3DModelData::ANIM_FILE:
+      {
+         dtAnim::Cal3DModelData* modelData = mObjectNameDelegate->GetCharModelData();
+         const AnimationWrapper* wrapper = modelData->GetAnimationWrapperByName(newName);
+         if (wrapper != NULL)
+         {
+            int animId = wrapper->GetID();
+            if (animId >= 0)
+            {
+               QTableWidgetItem* item = mAnimListWidget->item(animId, 0);
+               QString qName(newName.c_str());
+               item->setText(qName);
+            }
+         }
+      }
+      break;
+
+   case Cal3DModelData::MESH_FILE:
+      // TODO:
+      break;
+
+   case Cal3DModelData::MAT_FILE:
+      // TODO:
+      break;
+
+   case Cal3DModelData::MORPH_FILE:
+      // TODO:
+      break;
+
+   default:
+      break;
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1401,8 +1559,10 @@ void MainWindow::SetViewer(Viewer* viewer)
 void MainWindow::SetupConnectionsWithViewer()
 {
    connect(this, SIGNAL(NewFile()), mViewer, SLOT(OnNewCharFile()));
+   connect(this, SIGNAL(ReloadFile()), mViewer, SLOT(OnReloadCharFile()));
    connect(this, SIGNAL(FileToLoad(const QString&)), mViewer, SLOT(OnLoadCharFile(const QString&)));
    connect(this, SIGNAL(FileToSave(const QString&)), mViewer, SLOT(OnSaveCharFile(const QString&)));
+   connect(this, SIGNAL(ClearTempFile()), mViewer, SLOT(OnClearTempFile()));
    connect(this, SIGNAL(AttachmentToLoad(const QString&)), mViewer, SLOT(OnLoadAttachmentFile(const QString&)));
    connect(this, SIGNAL(AttachmentSettingsChanged(const std::string&, float, float, float, float, float, float)),
            mViewer, SLOT(OnAttachmentSettingsChanged(const std::string&, float, float, float, float, float, float)));
@@ -1425,8 +1585,8 @@ void MainWindow::SetupConnectionsWithViewer()
    connect(mViewer, SIGNAL(MaterialLoaded(int,const QString&,const QColor&,const QColor&,const QColor&,float)),
       this, SLOT(OnNewMaterial(int,const QString&,const QColor&,const QColor&,const QColor&,float)));
 
-   connect(mViewer, SIGNAL(CharacterDataLoaded(dtAnim::Cal3DModelData*)),
-      this, SLOT(OnCharacterDataLoaded(dtAnim::Cal3DModelData*)));
+   connect(mViewer, SIGNAL(CharacterDataLoaded(dtAnim::Cal3DModelData*, dtAnim::Cal3DModelWrapper*)),
+      this, SLOT(OnCharacterDataLoaded(dtAnim::Cal3DModelData*, dtAnim::Cal3DModelWrapper*)));
 
    connect(this, SIGNAL(ShowMesh(int)), mViewer, SLOT(OnShowMesh(int)));
    connect(this, SIGNAL(HideMesh(int)), mViewer, SLOT(OnHideMesh(int)));
@@ -1649,6 +1809,11 @@ void MainWindow::CreateDockWidget_Resources()
    mFileTree->setHeaderLabels(labels);
    resGridLayout->addWidget(mFileTree, 1, 0);
 
+   mObjectNameDelegate = new ObjectNameItemDelegate(mFileTree);
+   mFileTree->setItemDelegateForColumn(0, mObjectNameDelegate);
+   mFileDelegate = new FileItemDelegate(mFileTree);
+   mFileTree->setItemDelegateForColumn(1, mFileDelegate);
+
    QColor bgColor(200, 200, 200);
    QIcon iconSkel(":/images/fileIconSkel.png");
    QIcon iconAnim(":/images/fileIconAnim.png");
@@ -1691,6 +1856,12 @@ void MainWindow::CreateDockWidget_Resources()
    mFileTree->addTopLevelItem(mFileGroupMesh);
    mFileTree->addTopLevelItem(mFileGroupMat);
    mFileTree->addTopLevelItem(mFileGroupMorph);
+
+   // Connect the delegates.
+   connect(mFileDelegate, SIGNAL(SignalResourceEditStart(int, const std::string&)), this, SLOT(OnResourceEditStart(int, const std::string&)));
+   connect(mFileDelegate, SIGNAL(SignalResourceEditEnd(int, const std::string&)), this, SLOT(OnResourceEditEnd(int, const std::string&)));
+   connect(mObjectNameDelegate, SIGNAL(SignalResourceNameChanged(int, const std::string&, const std::string&)),
+      this, SLOT(OnResourceNameChanged(int, const std::string&, const std::string&)));
 }
 
 ////////////////////////////////////////////////////////////////////////////////

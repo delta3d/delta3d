@@ -13,6 +13,7 @@ SET(PROG_HEADERS ${SOURCE_PATH}/AnimationTableWidget.h
                  ${SOURCE_PATH}/PoseMeshProperties.h
                  ${SOURCE_PATH}/PoseMeshScene.h
                  ${SOURCE_PATH}/PoseMeshView.h
+                 ${SOURCE_PATH}/ResourceDelegates.h
                  ${SOURCE_PATH}/Viewer.h  )
                  
 SET(PROG_SOURCES ${SOURCE_PATH}/AnimationTableWidget.cpp
@@ -22,6 +23,7 @@ SET(PROG_SOURCES ${SOURCE_PATH}/AnimationTableWidget.cpp
                  ${SOURCE_PATH}/PoseMeshProperties.cpp
                  ${SOURCE_PATH}/PoseMeshScene.cpp
                  ${SOURCE_PATH}/PoseMeshView.cpp
+                 ${SOURCE_PATH}/ResourceDelegates.cpp
                  ${SOURCE_PATH}/Viewer.cpp
                  ${SOURCE_PATH}/AnimationViewer.rc )
 

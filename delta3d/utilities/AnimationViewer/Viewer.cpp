@@ -208,6 +208,13 @@ void Viewer::OnLoadCharFile(const QString& filename)
       {
          OnLoadPoseMeshFile(modelData->GetPoseMeshFilename());
       }
+
+      // Determine where a temp file should be for the current character.
+      mTempFile = osgDB::getFilePath(modelData->GetFilename());
+      if (!mTempFile.empty())
+      {
+         mTempFile += "/_Temp.dtchar";
+      }
    }
    catch (const XERCES_CPP_NAMESPACE_QUALIFIER SAXParseException& e)
    {
@@ -310,7 +317,7 @@ void Viewer::OnLoadCharFile(const QString& filename)
 
    CreateBoneBasisDisplay();
 
-   emit CharacterDataLoaded(modelData);
+   emit CharacterDataLoaded(modelData, wrapper);
 
    LOG_DEBUG("Done loading file: " + filename.toStdString());
 }
@@ -334,6 +341,25 @@ void Viewer::OnSaveCharFile(const QString& filename)
             = new dtDAL::WriteWrapperOSGObject<Cal3DModelData>(*data);
          osgDB::writeObjectFile(*obj, filename.toStdString());
       }
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void Viewer::OnReloadCharFile()
+{
+   if(mCharacter.valid())
+   {
+      dtAnim::Cal3DModelWrapper* wrapper = mCharacter->GetCal3DWrapper();
+      dtAnim::Cal3DModelData* modelData = mCalDatabase->GetModelData(*wrapper);
+      std::string currentFilePath(modelData->GetFilename());
+
+      QString qTempFile(mTempFile.c_str());
+      OnSaveCharFile(qTempFile);
+      OnLoadCharFile(qTempFile);
+
+      wrapper = mCharacter->GetCal3DWrapper();
+      modelData = mCalDatabase->GetModelData(*wrapper);
+      modelData->SetFilename(currentFilePath);
    }
 }
 
@@ -751,6 +777,19 @@ void Viewer::OnStopMorphAnimation(int morphAnimID, float delay)
       mixer->clear(morphAnimID, delay);
    }
 #endif
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void Viewer::OnClearTempFile()
+{
+   if (!mTempFile.empty())
+   {
+      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
+      if (fileUtils.FileExists(mTempFile))
+      {
+         fileUtils.FileDelete(mTempFile);
+      }
+   }
 }
 
 

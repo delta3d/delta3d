@@ -26,15 +26,18 @@ class QHBoxLayout;
 class QTreeWidget;
 class QTreeWidgetItem;
 
-
 namespace dtAnim
 {
    class PoseMesh;
    class Cal3DModelData;
+   class Cal3DModelWrapper;
    class CharDrawable;
 }
 
+// Application Level Classes
 class Viewer; ///<The animation viewer application
+class FileItemDelegate;
+class ObjectNameItemDelegate;
 
 class MainWindow : public QMainWindow
 {
@@ -46,6 +49,7 @@ public:
 
    void LoadCharFile(const QString& filename);
    void SaveCharFile(const QString& filename);
+   void ReloadCharFile();
    void SetViewer(Viewer* viewer);
 
    void LoadAttachment(const QString& filename);
@@ -56,9 +60,11 @@ protected:
 
 signals:
    void NewFile();
+   void ReloadFile();
    void FileToLoad(const QString&);
    void FileToSave(const QString&);
    void UnloadFile();
+   void ClearTempFile();
    void StartAnimation(unsigned int, float, float);
    void StopAnimation(unsigned int, float);
    void StartAction(unsigned int, float, float);
@@ -101,7 +107,7 @@ public slots:
                       const QColor& diff, const QColor& amb, const QColor& spec,
                       float shininess);
 
-   void OnCharacterDataLoaded(dtAnim::Cal3DModelData* modelData);
+   void OnCharacterDataLoaded(dtAnim::Cal3DModelData* modelData, dtAnim::Cal3DModelWrapper* wrapper);
 
    void OnBlendUpdate(const std::vector<float>& animWeightList, const std::vector<float>& morphWeightList);
 
@@ -121,6 +127,10 @@ public slots:
 
    void OnLoadAttachment();
    void OnChangeAttachmentSettings();
+
+   void OnResourceEditStart(int fileType, const std::string& objectName);
+   void OnResourceEditEnd(int fileType, const std::string& objectName);
+   void OnResourceNameChanged(int fileType, const std::string& oldName, const std::string& newName) const;
 
 private:
    void CreateMenus();
@@ -201,6 +211,11 @@ private:
 
    Viewer*             mViewer;
    QHBoxLayout*        mCentralLayout;
+
+   FileItemDelegate*   mFileDelegate;
+   ObjectNameItemDelegate* mObjectNameDelegate;
+
+   std::string mCurrentFile;
 
 private slots:
    void OnNewCharFile();
