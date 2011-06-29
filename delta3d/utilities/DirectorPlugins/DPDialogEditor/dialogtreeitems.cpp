@@ -88,69 +88,60 @@ void DialogTreeWidget::startDrag(Qt::DropActions supportedActions)
    QTreeWidget::startDrag(supportedActions);
 }
 
-//////////////////////////////////////////////////////////////////////////////////
-//void DialogTreeWidget::dragMoveEvent(QDragMoveEvent* event)
-//{
-//   event->ignore();
-//
-//   QTreeWidgetItem* source = currentItem();
-//   QTreeWidgetItem* dest = dynamic_cast<QTreeWidgetItem*>(itemAt(event->pos()));
-//
-//   if (source && dest && source != dest)
-//   {
-//      DialogLineItem* sourceLine = dynamic_cast<DialogLineItem*>(source);
-//      DialogLineItem* destLine = dynamic_cast<DialogLineItem*>(dest);
-//
-//      DialogChoiceItem* sourceChoice = dynamic_cast<DialogChoiceItem*>(source);
-//      DialogChoiceItem* destChoice = dynamic_cast<DialogChoiceItem*>(dest);
-//
-//      // If you are moving a line item.
-//      if (sourceLine)
-//      {
-//         // Lines can only be moved to items with no children.
-//         if (dest->childCount() > 0)
-//         {
-//            return;
-//         }
-//
-//         // Lines can only be moved to other lines that are not choice lines.
-//         if (destLine && (!destLine->CanHaveSubLine() || destLine->IsChoice()))
-//         {
-//            return;
-//         }
-//      }
-//      // If you are moving a choice item.
-//      else if (sourceChoice)
-//      {
-//         // Choice items can not be moved to other choice items.
-//         if (destChoice)
-//         {
-//            return;
-//         }
-//
-//         // Choice items can only be moved to choice line nodes.
-//         if (destLine && !destLine->IsChoice())
-//         {
-//            return;
-//         }
-//
-//         // Choice items can only be moved to a choice line that isn't at it's choice limit.
-//         if (destLine && destLine->GetChoiceLimit() > -1 &&
-//            destLine->childCount() >= destLine->GetChoiceLimit())
-//         {
-//            return;
-//         }
-//      }
-//   }
-//
-//   event->accept();
-//}
+////////////////////////////////////////////////////////////////////////////////
+void DialogTreeWidget::dropEvent(QDropEvent* event)
+{
+   DialogChoiceItem* item = dynamic_cast<DialogChoiceItem*>(currentItem());
 
-//////////////////////////////////////////////////////////////////////////////////
-//void DialogTreeWidget::dropEvent(QDropEvent* event)
-//{
-//   QTreeWidget::dropEvent(event);
-//}
+   // Remember the old position of the item.
+   DialogLineItem* oldParent = NULL;
+   int             oldIndex = -1;
+
+   if (item)
+   {
+      oldParent = dynamic_cast<DialogLineItem*>(item->parent());
+      if (oldParent)
+      {
+         oldIndex = oldParent->indexOfChild(item);
+      }
+   }
+   
+   // Perform the drop event.
+   QTreeWidget::dropEvent(event);
+
+   // Retrieve the new position of the item.
+   DialogLineItem* newParent = NULL;
+   int             newIndex = -1;
+
+   if (item)
+   {
+      newParent = dynamic_cast<DialogLineItem*>(item->parent());
+      if (newParent)
+      {
+         newIndex = newParent->indexOfChild(item);
+      }
+   }
+   
+   // Notify both the old and new parents that the child item has moved.
+   if (oldParent != newParent)
+   {
+      if (oldParent && oldParent->GetType())
+      {
+         oldParent->GetType()->OnChildChoiceRemoved(item, oldIndex);
+      }
+
+      if (newParent && newParent->GetType())
+      {
+         newParent->GetType()->OnChildChoiceAdded(item, newIndex);
+      }
+   }
+   else if (newParent && newParent->GetType() &&
+      oldIndex > -1 && newIndex > -1 &&
+      oldIndex != newIndex)
+   {
+      newParent->GetType()->OnChildChoiceMoved(item, oldIndex, newIndex);
+   }
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 void DialogTreeWidget::contextMenuEvent(QContextMenuEvent* event)
@@ -371,6 +362,12 @@ void DialogTreeWidget::OnAddNewChoice()
       DialogChoiceItem* newChoice = new DialogChoiceItem(CreateIndex(), "", true, true);
       cur->addChild(newChoice);
       cur->setExpanded(true);
+
+      DialogLineItem* curLine = dynamic_cast<DialogLineItem*>(cur);
+      if (curLine && curLine->GetType())
+      {
+         curLine->GetType()->OnChildChoiceAdded(newChoice, cur->childCount()-1);
+      }
    }
 }
 
@@ -383,7 +380,17 @@ void DialogTreeWidget::OnRemoveLine()
       QTreeWidgetItem* parent = cur->parent();
       if (parent)
       {
+         int index = parent->indexOfChild(cur);
          parent->removeChild(cur);
+
+         DialogLineItem* parentLine  = dynamic_cast<DialogLineItem*>(parent);
+         DialogChoiceItem* curChoice = dynamic_cast<DialogChoiceItem*>(cur);
+
+         if (parentLine && curChoice && parentLine->GetType())
+         {
+            parentLine->GetType()->OnChildChoiceRemoved(curChoice, index);
+         }
+
          delete cur;
 
          UpdateLabels();

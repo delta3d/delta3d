@@ -151,6 +151,50 @@ public:
     */
    virtual void ClosePropertyEditor(DialogTreeWidget* tree);
 
+   /**
+    * Create an editor widget for editing the properties of a choice child
+    * owned by this line.
+    *
+    * @param[in]  tree    The editor tree.
+    * @param[in]  choice  The child choice being edited.
+    */
+   virtual QWidget* CreatePropertyEditorForChild(DialogTreeWidget* tree, DialogChoiceItem* choice);
+
+   /**
+    * Closes the editor widget used for editing a choice child.
+    *
+    * @param[in]  tree    The editor tree.
+    * @param[in]  choice  The child choice being edited.
+    */
+   virtual void ClosePropertyEditorForChild(DialogTreeWidget* tree, DialogChoiceItem* choice);
+
+   /**
+    * Event handler for when a child choice item has been removed from
+    * this line.
+    *
+    * @param[in]  choice  The choice being removed.
+    * @param[in]  index   The index of the item before it was removed.
+    */
+   virtual void OnChildChoiceRemoved(DialogChoiceItem* choice, int index);
+
+   /**
+    * Event handler for when a child choice item has been added to
+    * this line.
+    *
+    * @param[in]  choice  The choice being added.
+    * @param[in]  index   The index position of this child.
+    */
+   virtual void OnChildChoiceAdded(DialogChoiceItem* choice, int index);
+
+   /**
+    * Event handler for when a child choice has changed index position.
+    *
+    * @param[in]  choice    The choice being moved.
+    * @param[in]  oldIndex  The old index position of the choice.
+    * @param[in]  newIndex  The new index position of the choice.
+    */
+   virtual void OnChildChoiceMoved(DialogChoiceItem* choice, int oldIndex, int newIndex);
+
 protected:
 
    friend class DirectorDialogEditorPlugin;

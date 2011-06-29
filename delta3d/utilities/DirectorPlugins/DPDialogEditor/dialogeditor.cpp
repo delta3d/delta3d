@@ -212,33 +212,60 @@ void DirectorDialogEditorPlugin::OnCurrentTreeItemChanged(QTreeWidgetItem* curre
    QLayout* layout = mUI.mLinePropertyWidget->layout();
    if (layout)
    {
-      // Remove any current widgets provided by the previous item.
-      DialogLineItem* prevLine = dynamic_cast<DialogLineItem*>(previous);
-      if (mEditWidget && prevLine)
+      if (mEditWidget)
       {
-         DialogLineType* type = prevLine->GetType();
-         if (type)
-         {
-            layout->removeWidget(mEditWidget);
-            type->ClosePropertyEditor(mUI.mDialogTree);
+         layout->removeWidget(mEditWidget);
 
-            delete mEditWidget;
-            mEditWidget = NULL;
+         // Remove any current widgets provided by the previous item.
+         DialogLineItem* prevLine = dynamic_cast<DialogLineItem*>(previous);
+         if (prevLine)
+         {
+            if (prevLine->GetType())
+            {
+               prevLine->GetType()->ClosePropertyEditor(GetTree());
+            }
          }
+         else
+         {
+            DialogChoiceItem* prevChoice = dynamic_cast<DialogChoiceItem*>(previous);
+            if (prevChoice)
+            {
+               DialogLineItem* parentLine = dynamic_cast<DialogLineItem*>(prevChoice->parent());
+               if (parentLine && parentLine->GetType())
+               {
+                  parentLine->GetType()->ClosePropertyEditorForChild(GetTree(), prevChoice);
+               }
+            }
+         }
+
+         delete mEditWidget;
+         mEditWidget = NULL;
       }
 
       DialogLineItem* line = dynamic_cast<DialogLineItem*>(current);
       if (line)
       {
-         DialogLineType* type = line->GetType();
-         if (type)
+         if (line->GetType())
          {
-            mEditWidget = type->CreatePropertyEditor(mUI.mDialogTree);
-            if (mEditWidget)
+            mEditWidget = line->GetType()->CreatePropertyEditor(GetTree());
+         }
+      }
+      else
+      {
+         DialogChoiceItem* choice = dynamic_cast<DialogChoiceItem*>(current);
+         if (choice)
+         {
+            DialogLineItem* parentLine = dynamic_cast<DialogLineItem*>(choice->parent());
+            if (parentLine && parentLine->GetType())
             {
-               layout->addWidget(mEditWidget);
+               mEditWidget = parentLine->GetType()->CreatePropertyEditorForChild(GetTree(), choice);
             }
          }
+      }
+
+      if (mEditWidget)
+      {
+         layout->addWidget(mEditWidget);
       }
    }
 }
