@@ -82,7 +82,7 @@ namespace dtDAL
             throw dtDAL::ProjectFileNotFoundException(
                    std::string("No such file:\"") + srcPath + "\".", __FILE__, __LINE__);
          }
-         
+
          std::string extension = osgDB::getFileExtension(srcPath);
          std::string resourceFileName = newName + '.' + extension;
 
@@ -214,6 +214,11 @@ namespace dtDAL
                extFilter.insert(std::make_pair("xml","Extensible Markup Language."));
                handler = new DefaultResourceTypeHandler(d, "Extensible Markup Language.", extFilter);
                extMap.insert(std::make_pair("xml", dtCore::RefPtr<ResourceTypeHandler>(handler)));
+
+               extFilter.clear();
+               extFilter.insert(std::make_pair("dtchar","Delta Character."));
+               handler = new DefaultResourceTypeHandler(d, "Delta Character.", extFilter);
+               extMap.insert(std::make_pair("dtchar", dtCore::RefPtr<ResourceTypeHandler>(handler)));
 
                extFilter.clear();
                extFilter.insert(std::make_pair("zip","Wrapping another file in a zip."));
@@ -848,7 +853,7 @@ namespace dtDAL
                currentCategory += ResourceDescriptor::DESCRIPTOR_SEPARATOR + *i;
             }
          }
-         
+
          // The ref slot on the ResourceTreeNode isn't used in searching.
          dtUtil::tree<ResourceTreeNode>::iterator temp = ti.tree_ref().find(ResourceTreeNode(*i, currentCategory, NULL, 0));
 
