@@ -176,6 +176,7 @@ namespace dtDirector
        , mLoading(true)
        , mTitle(NULL)
        , mTitleBG(NULL)
+       , mLatentIcon(NULL)
        , mComment(NULL)
        , mNode(node)
        , mLinkDivider(NULL)
@@ -486,6 +487,20 @@ namespace dtDirector
 
       mTitleBG->setRect(bounds);
       mTitleBG->setPos(1.0f, 1.0f);
+
+      if (mNode.valid() && mNode->AsLatentNode())
+      {
+         if (!mLatentIcon)
+         {
+            mLatentIcon = new QGraphicsPixmapItem(mTitleBG, scene());
+            mLatentIcon->setPixmap(QPixmap(":icons/timer_icon.png"));
+            mLatentIcon->setOpacity(0.25f);
+            mLatentIcon->setScale(0.4f);
+         }
+
+         mLatentIcon->setPos(bounds.width() - 
+            mLatentIcon->boundingRect().width() * mLatentIcon->scale(), 0);
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -572,7 +587,12 @@ namespace dtDirector
          }
          else
          {
-            data.linkGraphic->setBrush(Qt::red);
+            QColor immediateColor = Qt::red;
+            if (mNode.valid() && !mNode->IsEnabled())
+            {
+               immediateColor.setAlphaF(0.25f);
+            }
+            data.linkGraphic->setBrush(immediateColor);
          }
          data.linkGraphic->SetPenColor(GetNodeColor());
 
@@ -693,6 +713,11 @@ namespace dtDirector
          }
 
          QColor color = GetValueLinkColor(data.link);
+
+         if (mNode.valid() && !mNode->IsEnabled())
+         {
+            color.setAlphaF(0.25f);
+         }
 
          data.linkGraphic->setPolygon(poly);
          //if (data.link->AllowMultiple())
@@ -1296,7 +1321,7 @@ namespace dtDirector
          {
             link->Activate();
 
-            mScene->GetEditor()->GetDirector()->BeginThread(mNode.get(), 0);
+            mScene->GetEditor()->GetDirector()->BeginThread(mNode.get(), 0, link->GetImmediate());
          }
       }
    }

@@ -24,6 +24,7 @@
 
 #include <QtGui/QGraphicsPolygonItem>
 #include <QtGui/QGraphicsTextItem>
+#include <QtGui/QGraphicsPixmapItem>
 #include <QtGui/QWidget>
 #include <QtGui/QGraphicsSceneContextMenuEvent>
 #include <QtGui/QPen>
@@ -491,6 +492,7 @@ namespace dtDirector
 
       GraphicsTextItem* mTitle;
       QGraphicsRectItem* mTitleBG;
+      QGraphicsPixmapItem* mLatentIcon;
 
       GraphicsTextItem* mComment;
 
