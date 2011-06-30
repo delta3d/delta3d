@@ -115,6 +115,21 @@ public:
    DialogTreeWidget* GetTree() const;
 
    /**
+    * Retrieves the list of speakers defined by the user.
+    */
+   QStringList GetSpeakerList() const;
+
+   /**
+    * Creates a reference value node to a specified speaker value.
+    *
+    * @param[in]  speaker   The speaker.
+    * @param[in]  node      The node to connect the speaker to.
+    * @param[in]  linkName  The value link on the given node to connect
+    *                       the speaker to.
+    */
+   void ConnectSpeaker(const std::string& speaker, dtDirector::Node* node, const std::string& linkName);
+
+   /**
     * Maps a reference event name with the given line ID.
     * This is used when loading the dialog tree.
     *

@@ -91,7 +91,7 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>704</width>
+          <width>360</width>
           <height>531</height>
          </rect>
         </property>
@@ -144,7 +144,7 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>69</width>
+          <width>413</width>
           <height>531</height>
          </rect>
         </property>
@@ -154,10 +154,35 @@
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
-        <layout class="QVBoxLayout" name="mLinePropertyLayout" stretch="0">
-         <property name="margin">
-          <number>0</number>
-         </property>
+        <layout class="QVBoxLayout" name="mLinePropertyLayout" stretch="0,1">
+         <item>
+          <widget class="QGroupBox" name="mSpeakerGroupBox">
+           <property name="title">
+            <string>Speaker List:</string>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_3">
+            <item row="0" column="0">
+             <widget class="DialogSpeakerList" name="mSpeakerListWidget">
+              <property name="tabKeyNavigation">
+               <bool>true</bool>
+              </property>
+              <property name="dragEnabled">
+               <bool>true</bool>
+              </property>
+              <property name="dragDropMode">
+               <enum>QAbstractItemView::InternalMove</enum>
+              </property>
+              <property name="selectionBehavior">
+               <enum>QAbstractItemView::SelectRows</enum>
+              </property>
+              <property name="movement">
+               <enum>QListView::Free</enum>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
          <item>
           <spacer name="verticalSpacer">
            <property name="orientation">
@@ -193,6 +218,11 @@
   <customwidget>
    <class>DialogTreeWidget</class>
    <extends>QTreeWidget</extends>
+   <header location="global">dialogtreeitems.h</header>
+  </customwidget>
+  <customwidget>
+   <class>DialogSpeakerList</class>
+   <extends>QListWidget</extends>
    <header location="global">dialogtreeitems.h</header>
   </customwidget>
  </customwidgets>

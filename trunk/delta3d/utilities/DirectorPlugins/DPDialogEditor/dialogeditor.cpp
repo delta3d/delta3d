@@ -28,6 +28,8 @@
 
 #include <QtGui/QWidget>
 #include <QtGui/QLayout>
+#include <QtGui/QListWidget>
+#include <QtGui/QGroupBox>
 #include <QtGui/QMessageBox>
 
 #include <QtCore/QSettings>
@@ -174,6 +176,26 @@ DialogTreeWidget* DirectorDialogEditorPlugin::GetTree() const
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+QStringList DirectorDialogEditorPlugin::GetSpeakerList() const
+{
+   return mUI.mSpeakerListWidget->GetSpeakerList();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void DirectorDialogEditorPlugin::ConnectSpeaker(const std::string& speaker, dtDirector::Node* node, const std::string& linkName)
+{
+   dtDirector::Node* speakerNode = CreateNode("Reference", "Core");
+   if (!speakerNode)
+   {
+      return;
+   }
+
+   speakerNode->SetString(std::string("Speaker ") + speaker, "Reference");
+
+   Connect(node, speakerNode, linkName);
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void DirectorDialogEditorPlugin::MapReference(const QString& refName, const dtCore::UniqueId& id)
 {
    std::map<QString, dtCore::UniqueId>::iterator iter = mRefMap.find(refName);
@@ -264,11 +286,22 @@ void DirectorDialogEditorPlugin::OnCurrentTreeItemChanged(QTreeWidgetItem* curre
          }
       }
 
+      if (current == mRoot)
+      {
+         mUI.mSpeakerGroupBox->show();
+      }
+      else
+      {
+         mUI.mSpeakerGroupBox->hide();
+      }
+
       if (layout)
       {
          mEditWidget = new QWidget();
          QGridLayout* grid = new QGridLayout(mEditWidget);
+         grid->setMargin(0);
          grid->addLayout(layout, 0, 0);
+
          mUI.mLinePropertyLayout->insertWidget(0, mEditWidget);
       }
    }
@@ -443,6 +476,23 @@ void DirectorDialogEditorPlugin::OnLoad()
          }
       }
    }
+
+   // Find all speakers.
+   mUI.mSpeakerGroupBox->hide();
+   mUI.mSpeakerListWidget->Reset();
+
+   GetGraph()->GetNodes("Value Link", "Core", nodes);
+   int count = (int)nodes.size();
+   for (int index = 0; index < count; ++index)
+   {
+      dtDirector::Node* node = nodes[index];
+      QString valName = node->GetString("Name").c_str();
+      if (valName.startsWith("Speaker "))
+      {
+         valName = valName.mid(8);
+         mUI.mSpeakerListWidget->AddSpeaker(valName);
+      }
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -452,22 +502,42 @@ void DirectorDialogEditorPlugin::OnSave()
 
    mEventRegister.clear();
 
-   dtDirector::Node* newInputNode = CreateNode("Input Link", "Core", NULL, 80);
+   dtDirector::Node* newInputNode = CreateNode("Input Link", "Core", NULL, 100);
    newInputNode->SetString("Play", "Name");
 
-   dtDirector::Node* newCallStartEventNode = CreateNode("Call Remote Event", "Core", newInputNode);
+   dtDirector::Node* newCallStartEventNode = CreateNode("Call Remote Event", "Core", newInputNode, 100);
    newCallStartEventNode->SetString("Started", "EventName");
    Connect(newInputNode, newCallStartEventNode, "Out", "Call Event");
 
-   dtDirector::Node* newCallEndEventNode = CreateNode("Call Remote Event", "Core", newCallStartEventNode);
+   dtDirector::Node* newCallEndEventNode = CreateNode("Call Remote Event", "Core", newCallStartEventNode, 100);
    newCallEndEventNode->SetString("Ended", "EventName");
    Connect(newCallStartEventNode, newCallEndEventNode, "Event Finished", "Call Event");
 
-   dtDirector::Node* newOutputNode = CreateNode("Output Link", "Core", newCallEndEventNode, 80);
+   dtDirector::Node* newOutputNode = CreateNode("Output Link", "Core", newCallEndEventNode, 100);
    newOutputNode->SetString("Finished", "Name");
    Connect(newCallEndEventNode, newOutputNode, "Event Finished", "In");
 
-   dtDirector::Node* newStartedEventNode = CreateNode("Remote Event", "Core", NULL, 80);
+   // Generate our speaker value links.
+   dtDirector::Node* prevNode = NULL;
+   QStringList speakerList = GetSpeakerList();
+   int count = speakerList.count();
+   for (int index = 0; index < count; ++index)
+   {
+      QString& speaker = speakerList[index];
+      if (!speaker.isEmpty())
+      {
+         dtDirector::Node* linkNode = CreateNode("Value Link", "Core");
+
+         if (linkNode)
+         {
+            linkNode->SetName(std::string("Speaker ") + speaker.toStdString());
+            AutoPositionNode(linkNode, prevNode, 150);
+            prevNode = linkNode;
+         }
+      }
+   }
+
+   dtDirector::Node* newStartedEventNode = CreateNode("Remote Event", "Core", NULL, 100);
    newStartedEventNode->SetString("Started", "EventName");
 
    if (mRoot->GetType())
@@ -491,7 +561,7 @@ void DirectorDialogEditorPlugin::OnSave()
       }
    }
 
-   dtDirector::Node* newEndedEventNode = CreateNode("Remote Event", "Core", NULL, 80);
+   dtDirector::Node* newEndedEventNode = CreateNode("Remote Event", "Core", NULL, 100);
    newEndedEventNode->SetString("Ended", "EventName");
 
    if (mEndDialog->GetType())
@@ -517,26 +587,26 @@ void DirectorDialogEditorPlugin::OnSave()
 
       if (eventTypes & PRE_EVENT)
       {
-         preNode = CreateNode("Remote Event", "Core", NULL, 80);
+         preNode = CreateNode("Remote Event", "Core", NULL, 100);
          preNode->SetString(std::string("Pre Event ") + eventName.toStdString(), "EventName");
          if (!topNode) topNode = preNode;
       }
 
       if (eventTypes & DURING_EVENT)
       {
-         durNode = CreateNode("Remote Event", "Core", NULL, 80);
+         durNode = CreateNode("Remote Event", "Core", NULL, 100);
          durNode->SetString(std::string("During Event ") + eventName.toStdString(), "EventName");
          if (!topNode) topNode = durNode;
       }
 
       if (eventTypes & POST_EVENT)
       {
-         postNode = CreateNode("Remote Event", "Core", NULL, 80);
+         postNode = CreateNode("Remote Event", "Core", NULL, 100);
          postNode->SetString(std::string("Post Event ") + eventName.toStdString(), "EventName");
          if (!topNode) topNode = postNode;
       }
 
-      dtDirector::Node* outputNode = CreateNode("Output Link", "Core", topNode, 80);
+      dtDirector::Node* outputNode = CreateNode("Output Link", "Core", topNode, 100);
       outputNode->SetString(eventName.toStdString(), "Name");
       Connect(preNode, outputNode, "Out", "In");
       Connect(durNode, outputNode, "Out", "In");
