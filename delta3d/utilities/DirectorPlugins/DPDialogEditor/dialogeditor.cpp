@@ -531,7 +531,7 @@ void DirectorDialogEditorPlugin::OnSave()
          if (linkNode)
          {
             linkNode->SetName(std::string("Speaker ") + speaker.toStdString());
-            AutoPositionNode(linkNode, prevNode, 150);
+            AutoPositionNode(linkNode, prevNode, 150, 90);
             prevNode = linkNode;
          }
       }
