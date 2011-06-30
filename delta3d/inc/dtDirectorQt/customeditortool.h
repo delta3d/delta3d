@@ -134,10 +134,11 @@ namespace dtDirector
        * @param[in]  category     Category name of the node to create.
        * @param[in]  chainedNode  The node to chain with.
        * @param[in]  nodeHeight   The estimated height of the node being created.
+       * @param[in]  nodeWidth    The estimated width of the node being created.
        *
        * @return     A pointer to the newly created node.
        */
-      dtDirector::Node* CreateNode(const std::string& name, const std::string& category, dtDirector::Node* chainedNode = NULL, int nodeHeight = 400);
+      dtDirector::Node* CreateNode(const std::string& name, const std::string& category, dtDirector::Node* chainedNode = NULL, int nodeHeight = 400, int nodeWidth = 400);
 
       /**
        * Connects an output on a node to the input of another node.
@@ -172,8 +173,9 @@ namespace dtDirector
        * @param[in]  node         The node to position.
        * @param[in]  chainedNode  The node to chain with.
        * @param[in]  nodeHeight   The estimated height of the node being positioned.
+       * @param[in]  nodeWidth    The estimated width of the node being positioned.
        */
-      void AutoPositionNode(dtDirector::Node* node, dtDirector::Node* chainedNode, int nodeHeight);
+      void AutoPositionNode(dtDirector::Node* node, dtDirector::Node* chainedNode, int nodeHeight, int nodeWidth = 400);
 
       /**
        * Retrieves a list of all input links connected to a given nodes
