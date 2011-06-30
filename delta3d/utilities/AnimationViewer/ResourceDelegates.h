@@ -10,7 +10,7 @@
 #include <dtCore/observerptr.h>
 #include <dtAnim/cal3dmodeldata.h>
 #include <dtAnim/cal3dmodelwrapper.h>
-
+#include <osg/Texture2D>
 
 
 ////////////////////////////////////////////////////////////////////////////////
