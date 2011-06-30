@@ -1026,12 +1026,12 @@ namespace dtDirector
       end -= offset;
       height -= offset.y();
 
-      float halfX = (start.x() + end.x()) / 2.0f;
-
       QPainterPath path;
 
       if (start.x() < end.x())
       {
+         float halfX = (start.x() + end.x()) / 2.0f;
+
          if (drawReverse)
          {
             QPointF temp = start;
@@ -1047,58 +1047,33 @@ namespace dtDirector
       }
       else
       {
-         if (drawReverse)
+         float top = height;
+         float yOffset = abs(start.y() - end.y()) / 4.0f + 25;
+         if (start.y() < top)
          {
-            QPointF temp = start;
-            start = end;
-            end = temp;
+            top = start.y();
+         }
+         else if (end.y() < top)
+         {
+            top = end.y();
+         }
+         top -= yOffset;
+
+         float len = abs(start.x() - end.x());
+
+         float higherPoint = dtUtil::Min<float>(start.y(), end.y());
+         if (len < higherPoint - top)
+         {
+            top = higherPoint - len;
          }
 
-         //float halfY = (start.y() + end.y()) / 2.0f;
+         float ctrlXStart = start.x() + dtUtil::Min<float>((start.y() - top) * 0.5f, len);
+         float ctrlXEnd = end.x() - dtUtil::Min<float>((end.y() - top) * 0.5f, len);
 
-         //if (height + mNodeHeight < halfY)
-         //{
-         //   float rightX = start.x() + (start.x() - end.x()) / 4;
-         //   float leftX = end.x() - (start.x() - end.x()) / 4;
-
-         //   path.moveTo(start);
-         //   path.cubicTo(
-         //      rightX, start.y(),
-         //      rightX, halfY,
-         //      halfX, halfY);
-         //   path.cubicTo(
-         //      leftX, halfY,
-         //      leftX, end.y(),
-         //      end.x(), end.y());
-         //}
-         //else
-         {
-            float rightX = start.x() + (start.x() - end.x()) / 4;
-            float leftX = end.x() - (start.x() - end.x()) / 4;
-
-            float top = height;
-
-            if (start.y() < top)
-            {
-               top = start.y();
-            }
-            else if (end.y() < top)
-            {
-               top = end.y();
-            }
-
-            top -= fabs((start.x() - end.x()) / 4);
-
-            path.moveTo(start);
-            path.cubicTo(
-               rightX, start.y(),
-               rightX, top,
-               halfX, top);
-            path.cubicTo(
-               leftX, top,
-               leftX, end.y(),
-               end.x(), end.y());
-         }
+         path.moveTo(start);
+         path.cubicTo(ctrlXStart, start.y(), ctrlXStart, top, start.x(), top);
+         path.lineTo(end.x(), top);
+         path.cubicTo(ctrlXEnd, top, ctrlXEnd, end.y(), end.x(), end.y());
       }
 
       return path;
