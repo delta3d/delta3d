@@ -334,7 +334,7 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   dtDirector::Node* CustomEditorTool::CreateNode(const std::string& name, const std::string& category, dtDirector::Node* chainedNode, int nodeHeight)
+   dtDirector::Node* CustomEditorTool::CreateNode(const std::string& name, const std::string& category, dtDirector::Node* chainedNode, int nodeHeight, int nodeWidth)
    {
       // Create our new node.
       dtDirector::Node* newNode = dtDirector::NodeManager::GetInstance().CreateNode(name, category, GetGraph());
@@ -350,7 +350,7 @@ namespace dtDirector
          if (newNode->GetType().GetNodeType() != dtDirector::NodeType::VALUE_NODE &&
             newNode->GetType().GetFullName() != "Core.Value Link")
          {
-            AutoPositionNode(newNode, chainedNode, nodeHeight);
+            AutoPositionNode(newNode, chainedNode, nodeHeight, nodeWidth);
          }
       }
 
@@ -468,11 +468,20 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void CustomEditorTool::AutoPositionNode(dtDirector::Node* node, dtDirector::Node* chainedNode, int nodeHeight)
+   void CustomEditorTool::AutoPositionNode(dtDirector::Node* node, dtDirector::Node* chainedNode, int nodeHeight, int nodeWidth)
    {
       if (!node)
       {
          return;
+      }
+
+      if (mChainedNodeMap.find(node) == mChainedNodeMap.end())
+      {
+         ChainData chainData;
+         chainData.node = node;
+         chainData.parent = chainedNode;
+         chainData.offset = osg::Vec2(nodeWidth, 0);
+         mChainedNodeMap[node] = chainData;
       }
 
       // Position the node in it's own empty row.
@@ -487,42 +496,36 @@ namespace dtDirector
          // Find out if this chained node is already mapped.
          std::map<dtDirector::Node*, ChainData>::iterator iter = mChainedNodeMap.find(chainedNode);
 
-         float offset = 0;
+         osg::Vec2 offset;
          if (iter == mChainedNodeMap.end())
          {
             ChainData chainData;
             chainData.node = chainedNode;
             chainData.parent = NULL;
-            chainData.offset = osg::Vec2();
+            chainData.offset = osg::Vec2(nodeWidth, 0);
             mChainedNodeMap[chainedNode] = chainData;
             iter = mChainedNodeMap.find(chainedNode);
          }
          else
          {
-            offset = iter->second.offset.y();
+            offset = iter->second.offset;
          }
 
-         ChainData chainData;
-         chainData.node = node;
-         chainData.parent = chainedNode;
-         chainData.offset = osg::Vec2();
-         mChainedNodeMap[node] = chainData;
-
          osg::Vec2 chainedPos = chainedNode->GetPosition();
-         node->SetPosition(chainedPos + osg::Vec2(400, offset));
+         node->SetPosition(chainedPos + offset);
 
-         offset += nodeHeight;
+         offset.y() += nodeHeight;
          if (iter != mChainedNodeMap.end())
          {
-            iter->second.offset.y() = offset;
+            iter->second.offset = offset;
             dtDirector::Node* parent = iter->second.parent;
 
             while (parent)
             {
                ChainData& chainData = mChainedNodeMap[parent];
-               if (chainData.node->GetPosition().y() + chainData.offset.y() < node->GetPosition().y() + offset)
+               if (chainData.node->GetPosition().y() + chainData.offset.y() < node->GetPosition().y() + offset.y())
                {
-                  chainData.offset.y() = node->GetPosition().y() + offset - chainData.node->GetPosition().y();
+                  chainData.offset.y() = node->GetPosition().y() + offset.y() - chainData.node->GetPosition().y();
                }
 
                parent = chainData.parent;
@@ -530,9 +533,9 @@ namespace dtDirector
          }
 
          // Update the max row height if needed.
-         if (chainedPos.y() + offset > mRowHeight)
+         if (chainedPos.y() + offset.y() > mRowHeight)
          {
-            mRowHeight = chainedPos.y() + offset;
+            mRowHeight = chainedPos.y() + offset.y();
          }
       }
    }
