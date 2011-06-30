@@ -71,6 +71,35 @@ DirectorDialogEditorPlugin* DialogTreeWidget::GetEditor() const
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void DialogTreeWidget::Reset()
+{
+   mIndex = 1;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+QTreeWidgetItem* DialogTreeWidget::GetItem(const QModelIndex& index) const
+{
+   return itemFromIndex(index);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+QStringList DialogTreeWidget::GetSpeakerList() const
+{
+   if (mEditor)
+   {
+      return mEditor->GetSpeakerList();
+   }
+
+   return QStringList();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+int DialogTreeWidget::CreateIndex()
+{
+   return mIndex++;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void DialogTreeWidget::UpdateLabels() const
 {
    if (mDelegate)
@@ -749,6 +778,143 @@ void DialogRootItem::UpdateLabel()
 bool DialogRootItem::CanHaveSubLine() const
 {
    return mAllowChildren;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+static const QString ADD_SPEAKER_TEXT("<Add Speaker...>");
+
+////////////////////////////////////////////////////////////////////////////////
+DialogSpeakerList::DialogSpeakerList(QWidget* parent)
+   : QListWidget(parent)
+{
+   connect(this, SIGNAL(itemChanged(QListWidgetItem*)), this, SLOT(OnItemChanged(QListWidgetItem*)));
+}
+
+////////////////////////////////////////////////////////////////////////////////
+DialogSpeakerList::~DialogSpeakerList()
+{
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void DialogSpeakerList::Reset()
+{
+   clear();
+
+   QListWidgetItem* newItem = new QListWidgetItem();
+   if (newItem)
+   {
+      newItem->setText(ADD_SPEAKER_TEXT);
+      newItem->setFlags(newItem->flags() | Qt::ItemIsEditable);
+      addItem(newItem);
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+QStringList DialogSpeakerList::GetSpeakerList() const
+{
+   QStringList speakerList;
+
+   for (int index = 0; index < count() - 1; ++index)
+   {
+      QListWidgetItem* speakerItem = item(index);
+      if (speakerItem)
+      {
+         speakerList.append(speakerItem->text());
+      }
+   }
+
+   return speakerList;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void DialogSpeakerList::AddSpeaker(const QString& speaker)
+{
+   QListWidgetItem* speakerItem = new QListWidgetItem();
+   if (speakerItem)
+   {
+      speakerItem->setText(speaker);
+      speakerItem->setFlags(speakerItem->flags() | Qt::ItemIsEditable);
+      insertItem(count() - 1, speakerItem);
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void DialogSpeakerList::contextMenuEvent(QContextMenuEvent* event)
+{
+   event->ignore();
+
+   QMenu menu;
+
+   QListWidgetItem* speakerItem = itemAt(event->pos());
+   if (speakerItem && speakerItem != item(count() - 1))
+   {
+      QAction* removeAction = menu.addAction("Remove Speaker");
+      connect(removeAction, SIGNAL(triggered()), this, SLOT(OnRemoveSpeaker()));
+   }
+
+   if (!menu.actions().empty())
+   {
+      menu.exec(event->globalPos());
+      event->accept();
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void DialogSpeakerList::mouseDoubleClickEvent(QMouseEvent *event)
+{
+   event->ignore();
+
+   QListWidgetItem* speakerItem = itemAt(event->pos());
+   if (!speakerItem)
+   {
+      speakerItem = item(count() - 1);
+      if (speakerItem)
+      {
+         clearSelection();
+         speakerItem->setSelected(true);
+         editItem(speakerItem);
+      }
+
+      event->accept();
+   }
+   else
+   {
+      QListWidget::mouseDoubleClickEvent(event);
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void DialogSpeakerList::OnItemChanged(QListWidgetItem* changedItem)
+{
+   if (count() > 0)
+   {
+      QListWidgetItem* lastItem = item(count() - 1);
+      if (lastItem == changedItem)
+      {
+         QListWidgetItem* newItem = new QListWidgetItem();
+         if (newItem)
+         {
+            newItem->setText(ADD_SPEAKER_TEXT);
+            newItem->setFlags(newItem->flags() | Qt::ItemIsEditable);
+            addItem(newItem);
+         }
+      }
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void DialogSpeakerList::OnRemoveSpeaker()
+{
+   QListWidgetItem* item = currentItem();
+   if (item)
+   {
+      removeItemWidget(item);
+      delete item;
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////

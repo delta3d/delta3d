@@ -25,7 +25,9 @@
 #include <export.h>
 
 #include <QtGui/QTreeWidget>
+#include <QtGui/QListWidget>
 #include <QtGui/QTreeWidgetItem>
+#include <QtGui/QListWidgetItem>
 #include <QtGui/QItemDelegate>
 
 #include <dtCore/uniqueid.h>
@@ -49,20 +51,13 @@ public:
    void SetEditor(DirectorDialogEditorPlugin* editor);
    DirectorDialogEditorPlugin* GetEditor() const;
 
-   void Reset()
-   {
-      mIndex = 1;
-   }
+   void Reset();
 
-   QTreeWidgetItem* GetItem(const QModelIndex& index) const
-   {
-      return itemFromIndex(index);
-   }
+   QTreeWidgetItem* GetItem(const QModelIndex& index) const;
 
-   int CreateIndex()
-   {
-      return mIndex++;
-   }
+   QStringList GetSpeakerList() const;
+
+   int CreateIndex();
 
    void UpdateLabels() const;
 
@@ -203,6 +198,35 @@ protected:
 private:
 
    bool mAllowChildren;
+};
+
+/**
+ * The speaker list widget.
+ */
+class DT_DIRECTOR_DIALOG_EDITOR_EXPORT DialogSpeakerList: public QListWidget
+{
+   Q_OBJECT
+public:
+
+   DialogSpeakerList(QWidget* parent = NULL);
+   ~DialogSpeakerList();
+
+   void Reset();
+
+   QStringList GetSpeakerList() const;
+   void AddSpeaker(const QString& speaker);
+
+protected:
+
+   void contextMenuEvent(QContextMenuEvent* event);
+   void mouseDoubleClickEvent(QMouseEvent *event);
+
+public slots:
+
+   void OnItemChanged(QListWidgetItem* changedItem);
+   void OnRemoveSpeaker();
+
+private:
 };
 
 #endif // DIRECTOR_DIALOG_TREE_ITEMS
