@@ -397,8 +397,6 @@ namespace dtDirector
          valueLink->SetVisible(true);
       }
 
-      bool result = valueLink->Connect(dynamic_cast<dtDirector::ValueNode*>(valueNode));
-
       // Find out if this chained node is already mapped.
       std::map<dtDirector::Node*, ChainData>::iterator iter = mChainedNodeMap.find(node);
 
@@ -423,12 +421,18 @@ namespace dtDirector
 
       // Find the estimated offset of the link.
       float offset = 10;
+      float cascadeOffset = 0;
       int count = (int)node->GetValueLinks().size();
       for (int index = 0; index < count; ++index)
       {
          dtDirector::ValueLink& link = node->GetValueLinks()[index];
          if (link.GetName() == linkName)
          {
+            // Cascade the position based on the number of values
+            // already connected.
+            int linkCount = (int)link.GetLinks().size();
+            cascadeOffset = linkCount * 10;
+
             break;
          }
 
@@ -440,7 +444,7 @@ namespace dtDirector
 
       // Position the value node beneath the node.
       osg::Vec2 pos = node->GetPosition();
-      valueNode->SetPosition(pos + osg::Vec2(offset, 200));
+      valueNode->SetPosition(pos + osg::Vec2(offset + cascadeOffset, 200 + cascadeOffset));
 
       offset += 80;
       if (iter != mChainedNodeMap.end())
@@ -464,6 +468,7 @@ namespace dtDirector
          mRowHeight = pos.y() + 350;
       }
 
+      bool result = valueLink->Connect(dynamic_cast<dtDirector::ValueNode*>(valueNode));
       return result;
    }
 
