@@ -175,6 +175,16 @@ void DialogLineType::OnChildChoiceMoved(DialogChoiceItem* choice, int oldIndex, 
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void DialogLineType::OnSpeakerRemoved(const QString& speaker)
+{
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void DialogLineType::OnSpeakerRenamed(const QString& oldName, const QString& newName)
+{
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void DialogLineType::GeneratePreEventNode(dtDirector::Node*& prevNode, std::string& output, DirectorDialogEditorPlugin* editor)
 {
    if (mHasPreEvent && !mPreEventName.isEmpty())

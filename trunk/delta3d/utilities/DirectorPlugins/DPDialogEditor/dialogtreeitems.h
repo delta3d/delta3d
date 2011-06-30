@@ -35,6 +35,7 @@
 class DialogLineType;
 class DialogChoiceItem;
 class DialogTreeDelegate;
+class DialogSpeakerList;
 class DirectorDialogEditorPlugin;
 
 /**
@@ -61,6 +62,9 @@ public:
 
    void UpdateLabels() const;
 
+   void OnSpeakerRemoved(const QString& speaker);
+   void OnSpeakerRenamed(const QString& oldName, const QString& newName);
+
 protected:
 
    void startDrag(Qt::DropActions supportedActions);
@@ -79,9 +83,12 @@ public slots:
 
    void OnRemoveLine();
 
-protected slots:
+   friend class DialogSpeakerList;
 
 private:
+
+   void RecurseSpeakerRemoved(QTreeWidgetItem* item, const QString& speaker);
+   void RecurseSpeakerRenamed(QTreeWidgetItem* item, const QString& oldName, const QString& newName);
 
    DirectorDialogEditorPlugin* mEditor;
    DialogTreeDelegate* mDelegate;
@@ -214,21 +221,31 @@ public:
 
    void Reset();
 
+   void SetTree(DialogTreeWidget* tree);
+
    QStringList GetSpeakerList() const;
    void AddSpeaker(const QString& speaker);
 
 protected:
 
-   void mouseDoubleClickEvent(QMouseEvent *event);
+   void startDrag(Qt::DropActions supportedActions);
+   void dropEvent(QDropEvent* event);
+   void dragEnterEvent(QDragEnterEvent* event);
+   void dragLeaveEvent(QDragLeaveEvent* event);
 
+   void mouseDoubleClickEvent(QMouseEvent *event);
    void contextMenuEvent(QContextMenuEvent* event);
 
 public slots:
 
+   void OnSelectionChanged(QListWidgetItem* current, QListWidgetItem* previous);
    void OnItemChanged(QListWidgetItem* changedItem);
    void OnRemoveSpeaker();
 
 private:
+
+   QString mOldName;
+   DialogTreeWidget* mTree;
 };
 
 #endif // DIRECTOR_DIALOG_TREE_ITEMS
