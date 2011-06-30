@@ -286,7 +286,7 @@ void DirectorDialogEditorPlugin::OnCurrentTreeItemChanged(QTreeWidgetItem* curre
          }
       }
 
-      if (current == mRoot)
+      if (!current)
       {
          mUI.mSpeakerGroupBox->show();
       }
