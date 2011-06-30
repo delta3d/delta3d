@@ -24,13 +24,13 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#include <dtDirector/actionnode.h>
+#include <dtDirector/latentactionnode.h>
 #include <dtDirectorNodes/nodelibraryexport.h>
 
 namespace dtDirector
 {
    ////////////////////////////////////////////////////////////////////////////////
-   class NODE_LIBRARY_EXPORT LerpActorTranslationAction: public ActionNode
+   class NODE_LIBRARY_EXPORT LerpActorTranslationAction: public LatentActionNode
    {
    public:
 

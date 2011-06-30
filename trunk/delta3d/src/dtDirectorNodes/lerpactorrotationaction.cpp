@@ -34,7 +34,7 @@ namespace dtDirector
 {
    ////////////////////////////////////////////////////////////////////////////////
    LerpActorRotationAction::LerpActorRotationAction()
-      : ActionNode()
+      : LatentActionNode()
       , mStartTime(0.0f)
       , mEndTime(1.0f)
       , mTime(0.0f)
@@ -54,7 +54,7 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void LerpActorRotationAction::Init(const NodeType& nodeType, DirectorGraph* graph)
    {
-      ActionNode::Init(nodeType, graph);
+      LatentActionNode::Init(nodeType, graph);
 
       // Create multiple inputs for different operations.
       mInputs.clear();
@@ -70,7 +70,7 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void LerpActorRotationAction::BuildPropertyMap()
    {
-      ActionNode::BuildPropertyMap();
+      LatentActionNode::BuildPropertyMap();
 
       // Create our value links.
       dtDAL::ActorIDActorProperty* actorProp = new dtDAL::ActorIDActorProperty(
@@ -161,7 +161,7 @@ namespace dtDirector
                   mIsActive = true;
 
                   // Activate the "Out" output link.
-                  ActionNode::Update(simDelta, delta, input, firstUpdate);
+                  LatentActionNode::Update(simDelta, delta, input, firstUpdate);
                }
                else // We shouldn't be updating anymore
                {

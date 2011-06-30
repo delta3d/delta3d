@@ -24,13 +24,13 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#include <dtDirector/actionnode.h>
+#include <dtDirector/latentactionnode.h>
 #include <dtDirectorGUINodes/nodelibraryexport.h>
 
 namespace dtDirector
 {
    ////////////////////////////////////////////////////////////////////////////////
-   class GUI_NODE_LIBRARY_EXPORT SetLayoutVisibility: public ActionNode
+   class GUI_NODE_LIBRARY_EXPORT SetLayoutVisibility: public LatentActionNode
    {
    public:
 

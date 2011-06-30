@@ -56,6 +56,7 @@ namespace dtDirector
    class DirectorGraph;
    class EventNode;
    class ActionNode;
+   class LatentActionNode;
    class ValueNode;
 
    /**
@@ -561,9 +562,10 @@ namespace dtDirector
       /**
        * Retrieves the node as a given type, if valid.
        */
-      virtual EventNode* AsEventNode();
-      virtual ActionNode* AsActionNode();
-      virtual ValueNode* AsValueNode();
+      virtual EventNode*        AsEventNode();
+      virtual ActionNode*       AsActionNode();
+      virtual LatentActionNode* AsLatentNode();
+      virtual ValueNode*        AsValueNode();
 
       /**
        * Registration function for registering message types this

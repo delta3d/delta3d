@@ -40,7 +40,7 @@ namespace dtDirector
 {
    /////////////////////////////////////////////////////////////////////////////
    SoundAction::SoundAction()
-      : ActionNode()
+      : LatentActionNode()
       , mpSound(NULL)
       , mSoundResourceResource(dtDAL::ResourceDescriptor::NULL_RESOURCE)
       , mSoundActor("")
@@ -61,7 +61,7 @@ namespace dtDirector
    /////////////////////////////////////////////////////////////////////////////
    void SoundAction::Init(const NodeType& nodeType, DirectorGraph* graph)
    {
-      ActionNode::Init(nodeType, graph);
+      LatentActionNode::Init(nodeType, graph);
 
       // Create multiple inputs for different operations.
       mInputs.clear();
@@ -76,7 +76,7 @@ namespace dtDirector
    /////////////////////////////////////////////////////////////////////////////
    void SoundAction::BuildPropertyMap()
    {
-      ActionNode::BuildPropertyMap();
+      LatentActionNode::BuildPropertyMap();
 
       // Create our value links.
       dtDAL::ActorIDActorProperty* actorProp = new dtDAL::ActorIDActorProperty(
@@ -136,7 +136,7 @@ namespace dtDirector
                PlaySoundsOnActors();
 
                // Fire the "Out" link
-               ActionNode::Update(simDelta, delta, input, firstUpdate);
+               LatentActionNode::Update(simDelta, delta, input, firstUpdate);
             }
             else
             {

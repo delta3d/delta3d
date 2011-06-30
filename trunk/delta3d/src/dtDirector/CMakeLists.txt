@@ -17,6 +17,7 @@ SET(LIB_PUBLIC_HEADERS ${HEADER_PATH}/actionnode.h
     ${HEADER_PATH}/export.h
     ${HEADER_PATH}/groupnode.h
     ${HEADER_PATH}/inputlink.h
+    ${HEADER_PATH}/latentactionnode.h
     ${HEADER_PATH}/messagegmcomponent.h
     ${HEADER_PATH}/mutatornode.h
     ${HEADER_PATH}/node.h
@@ -39,6 +40,7 @@ SET (LIB_SOURCES ${SOURCE_PATH}/actionnode.cpp
      ${SOURCE_PATH}/eventnode.cpp
      ${SOURCE_PATH}/groupnode.cpp
      ${SOURCE_PATH}/inputlink.cpp
+     ${SOURCE_PATH}/latentactionnode.cpp
      ${SOURCE_PATH}/messagegmcomponent.cpp
      ${SOURCE_PATH}/mutatornode.cpp
      ${SOURCE_PATH}/node.cpp

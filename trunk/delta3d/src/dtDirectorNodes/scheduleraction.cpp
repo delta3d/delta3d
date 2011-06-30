@@ -33,7 +33,7 @@ namespace dtDirector
 {
    ////////////////////////////////////////////////////////////////////////////////
    SchedulerAction::SchedulerAction()
-      : ActionNode()
+      : LatentActionNode()
       , mElapsedTime(0.0f)
       , mTotalTime(0.0f)
       , mIsActive(false)
@@ -50,7 +50,7 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void SchedulerAction::Init(const NodeType& nodeType, DirectorGraph* graph)
    {
-      ActionNode::Init(nodeType, graph);
+      LatentActionNode::Init(nodeType, graph);
 
       // Create multiple inputs for different operations.
       mInputs.clear();
@@ -68,7 +68,7 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void SchedulerAction::BuildPropertyMap()
    {
-      ActionNode::BuildPropertyMap();
+      LatentActionNode::BuildPropertyMap();
 
       // Create our value links.
       dtDAL::FloatActorProperty* timeProp = new dtDAL::FloatActorProperty(

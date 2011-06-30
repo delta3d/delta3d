@@ -43,7 +43,7 @@ namespace dtDirector
 {
    ////////////////////////////////////////////////////////////////////////////////
    AnimateActorAction::AnimateActorAction()
-   : ActionNode()
+   : LatentActionNode()
    , mTime(0.0f)
    , mIsActive(false)
    , mAnimIndex(0)
@@ -61,7 +61,7 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void AnimateActorAction::Init(const NodeType& nodeType, DirectorGraph* graph)
    {
-      ActionNode::Init(nodeType, graph);
+      LatentActionNode::Init(nodeType, graph);
 
       // Create multiple inputs for different operations.
       mInputs.clear();
@@ -77,7 +77,7 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void AnimateActorAction::BuildPropertyMap()
    {
-      ActionNode::BuildPropertyMap();
+      LatentActionNode::BuildPropertyMap();
 
       // Create our value links.
       dtDAL::ActorIDActorProperty* actorProp = new dtDAL::ActorIDActorProperty(
@@ -191,7 +191,7 @@ namespace dtDirector
                   mIsActive = true;
 
                   // Activate the "Out" output link.
-                  ActionNode::Update(simDelta, delta, input, firstUpdate);
+                  LatentActionNode::Update(simDelta, delta, input, firstUpdate);
                }
                else
                {

@@ -24,7 +24,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#include <dtDirector/actionnode.h>
+#include <dtDirector/latentactionnode.h>
 #include <dtDirectorNodes/nodelibraryexport.h>
 
 #include <cal3d/global.h>
@@ -37,7 +37,7 @@
 namespace dtDirector
 {
    ////////////////////////////////////////////////////////////////////////////////
-   class NODE_LIBRARY_EXPORT AnimateActorAction: public ActionNode
+   class NODE_LIBRARY_EXPORT AnimateActorAction: public LatentActionNode
    {
    public:
 
