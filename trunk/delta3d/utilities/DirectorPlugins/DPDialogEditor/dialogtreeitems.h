@@ -64,8 +64,9 @@ public:
 protected:
 
    void startDrag(Qt::DropActions supportedActions);
-
    void dropEvent(QDropEvent* event);
+
+   void mousePressEvent(QMouseEvent* event);
 
    void contextMenuEvent(QContextMenuEvent* event);
 
@@ -218,8 +219,9 @@ public:
 
 protected:
 
-   void contextMenuEvent(QContextMenuEvent* event);
    void mouseDoubleClickEvent(QMouseEvent *event);
+
+   void contextMenuEvent(QContextMenuEvent* event);
 
 public slots:
 

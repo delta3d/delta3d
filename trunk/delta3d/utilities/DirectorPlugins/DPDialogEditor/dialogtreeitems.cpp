@@ -173,6 +173,23 @@ void DialogTreeWidget::dropEvent(QDropEvent* event)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void DialogTreeWidget::mousePressEvent(QMouseEvent* event)
+{
+   QTreeWidgetItem* clickedItem = itemAt(event->pos());
+   if (clickedItem)
+   {
+      QTreeWidget::mousePressEvent(event);
+   }
+   else
+   {
+      QTreeWidgetItem* current = currentItem();
+      clearSelection();
+      mEditor->OnCurrentTreeItemChanged(NULL, current);
+      event->accept();
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void DialogTreeWidget::contextMenuEvent(QContextMenuEvent* event)
 {
    QTreeWidgetItem* item = itemAt(event->pos());
@@ -843,27 +860,6 @@ void DialogSpeakerList::AddSpeaker(const QString& speaker)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void DialogSpeakerList::contextMenuEvent(QContextMenuEvent* event)
-{
-   event->ignore();
-
-   QMenu menu;
-
-   QListWidgetItem* speakerItem = itemAt(event->pos());
-   if (speakerItem && speakerItem != item(count() - 1))
-   {
-      QAction* removeAction = menu.addAction("Remove Speaker");
-      connect(removeAction, SIGNAL(triggered()), this, SLOT(OnRemoveSpeaker()));
-   }
-
-   if (!menu.actions().empty())
-   {
-      menu.exec(event->globalPos());
-      event->accept();
-   }
-}
-
-////////////////////////////////////////////////////////////////////////////////
 void DialogSpeakerList::mouseDoubleClickEvent(QMouseEvent *event)
 {
    event->ignore();
@@ -884,6 +880,27 @@ void DialogSpeakerList::mouseDoubleClickEvent(QMouseEvent *event)
    else
    {
       QListWidget::mouseDoubleClickEvent(event);
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void DialogSpeakerList::contextMenuEvent(QContextMenuEvent* event)
+{
+   event->ignore();
+
+   QMenu menu;
+
+   QListWidgetItem* speakerItem = itemAt(event->pos());
+   if (speakerItem && speakerItem != item(count() - 1))
+   {
+      QAction* removeAction = menu.addAction("Remove Speaker");
+      connect(removeAction, SIGNAL(triggered()), this, SLOT(OnRemoveSpeaker()));
+   }
+
+   if (!menu.actions().empty())
+   {
+      menu.exec(event->globalPos());
+      event->accept();
    }
 }
 
