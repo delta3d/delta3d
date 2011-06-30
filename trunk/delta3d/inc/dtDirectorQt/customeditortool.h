@@ -163,6 +163,19 @@ namespace dtDirector
       bool Connect(dtDirector::Node* node, dtDirector::Node* valueNode, const std::string& linkName);
 
       /**
+       * Auto positions a node to the right of a given chained now.
+       * If no chained node is provided, the node will be auto positioned
+       * in its own empty row.
+       * Note: The CreateNode and Connect to value node methods are
+       * already designed to automatically position the node.
+       *
+       * @param[in]  node         The node to position.
+       * @param[in]  chainedNode  The node to chain with.
+       * @param[in]  nodeHeight   The estimated height of the node being positioned.
+       */
+      void AutoPositionNode(dtDirector::Node* node, dtDirector::Node* chainedNode, int nodeHeight);
+
+      /**
        * Retrieves a list of all input links connected to a given nodes
        * output link.
        * the outNodes value is not cleared before this operation.

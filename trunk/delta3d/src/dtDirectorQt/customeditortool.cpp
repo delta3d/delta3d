@@ -347,70 +347,10 @@ namespace dtDirector
             newNode->OnStart();
          }
 
-         // Value nodes are ignored.
          if (newNode->GetType().GetNodeType() != dtDirector::NodeType::VALUE_NODE &&
             newNode->GetType().GetFullName() != "Core.Value Link")
          {
-            // Position the new node in it's own empty row.
-            if (!chainedNode)
-            {
-               newNode->SetPosition(osg::Vec2(0, mRowHeight));
-               mRowHeight += nodeHeight;
-            }
-            // Position the new node relative to the chained node.
-            else
-            {
-               // Find out if this chained node is already mapped.
-               std::map<dtDirector::Node*, ChainData>::iterator iter = mChainedNodeMap.find(chainedNode);
-
-               float offset = 0;
-               if (iter == mChainedNodeMap.end())
-               {
-                  ChainData chainData;
-                  chainData.node = chainedNode;
-                  chainData.parent = NULL;
-                  chainData.offset = osg::Vec2();
-                  mChainedNodeMap[chainedNode] = chainData;
-                  iter = mChainedNodeMap.find(chainedNode);
-               }
-               else
-               {
-                  offset = iter->second.offset.y();
-               }
-
-               ChainData chainData;
-               chainData.node = newNode;
-               chainData.parent = chainedNode;
-               chainData.offset = osg::Vec2();
-               mChainedNodeMap[newNode] = chainData;
-
-               osg::Vec2 chainedPos = chainedNode->GetPosition();
-               newNode->SetPosition(chainedPos + osg::Vec2(400, offset));
-
-               offset += nodeHeight;
-               if (iter != mChainedNodeMap.end())
-               {
-                  iter->second.offset.y() = offset;
-                  dtDirector::Node* parent = iter->second.parent;
-
-                  while (parent)
-                  {
-                     ChainData& chainData = mChainedNodeMap[parent];
-                     if (chainData.node->GetPosition().y() + chainData.offset.y() < newNode->GetPosition().y() + offset)
-                     {
-                        chainData.offset.y() = newNode->GetPosition().y() + offset - chainData.node->GetPosition().y();
-                     }
-
-                     parent = chainData.parent;
-                  }
-               }
-
-               // Update the max row height if needed.
-               if (chainedPos.y() + offset > mRowHeight)
-               {
-                  mRowHeight = chainedPos.y() + offset;
-               }
-            }
+            AutoPositionNode(newNode, chainedNode, nodeHeight);
          }
       }
 
@@ -462,7 +402,6 @@ namespace dtDirector
       // Find out if this chained node is already mapped.
       std::map<dtDirector::Node*, ChainData>::iterator iter = mChainedNodeMap.find(node);
 
-      float offset = 0;
       if (iter == mChainedNodeMap.end())
       {
          ChainData chainData;
@@ -471,10 +410,6 @@ namespace dtDirector
          chainData.offset = osg::Vec2();
          mChainedNodeMap[node] = chainData;
          iter = mChainedNodeMap.find(node);
-      }
-      else
-      {
-         offset = iter->second.offset.x();
       }
 
       if (mChainedNodeMap.find(valueNode) == mChainedNodeMap.end())
@@ -486,15 +421,30 @@ namespace dtDirector
          mChainedNodeMap[valueNode] = chainData;
       }
 
+      // Find the estimated offset of the link.
+      float offset = 10;
+      int count = (int)node->GetValueLinks().size();
+      for (int index = 0; index < count; ++index)
+      {
+         dtDirector::ValueLink& link = node->GetValueLinks()[index];
+         if (link.GetName() == linkName)
+         {
+            break;
+         }
+
+         if (link.GetVisible() && link.GetExposed())
+         {
+            offset += 80;
+         }
+      }
+
       // Position the value node beneath the node.
       osg::Vec2 pos = node->GetPosition();
-      valueNode->SetPosition(pos + osg::Vec2(offset + 10, 200));
+      valueNode->SetPosition(pos + osg::Vec2(offset, 200));
 
       offset += 80;
       if (iter != mChainedNodeMap.end())
       {
-         iter->second.offset.x() = offset;
-
          dtDirector::Node* parent = iter->second.parent;
          while (parent)
          {
@@ -515,6 +465,76 @@ namespace dtDirector
       }
 
       return result;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void CustomEditorTool::AutoPositionNode(dtDirector::Node* node, dtDirector::Node* chainedNode, int nodeHeight)
+   {
+      if (!node)
+      {
+         return;
+      }
+
+      // Position the node in it's own empty row.
+      if (!chainedNode)
+      {
+         node->SetPosition(osg::Vec2(0, mRowHeight));
+         mRowHeight += nodeHeight;
+      }
+      // Position the node relative to the chained node.
+      else
+      {
+         // Find out if this chained node is already mapped.
+         std::map<dtDirector::Node*, ChainData>::iterator iter = mChainedNodeMap.find(chainedNode);
+
+         float offset = 0;
+         if (iter == mChainedNodeMap.end())
+         {
+            ChainData chainData;
+            chainData.node = chainedNode;
+            chainData.parent = NULL;
+            chainData.offset = osg::Vec2();
+            mChainedNodeMap[chainedNode] = chainData;
+            iter = mChainedNodeMap.find(chainedNode);
+         }
+         else
+         {
+            offset = iter->second.offset.y();
+         }
+
+         ChainData chainData;
+         chainData.node = node;
+         chainData.parent = chainedNode;
+         chainData.offset = osg::Vec2();
+         mChainedNodeMap[node] = chainData;
+
+         osg::Vec2 chainedPos = chainedNode->GetPosition();
+         node->SetPosition(chainedPos + osg::Vec2(400, offset));
+
+         offset += nodeHeight;
+         if (iter != mChainedNodeMap.end())
+         {
+            iter->second.offset.y() = offset;
+            dtDirector::Node* parent = iter->second.parent;
+
+            while (parent)
+            {
+               ChainData& chainData = mChainedNodeMap[parent];
+               if (chainData.node->GetPosition().y() + chainData.offset.y() < node->GetPosition().y() + offset)
+               {
+                  chainData.offset.y() = node->GetPosition().y() + offset - chainData.node->GetPosition().y();
+               }
+
+               parent = chainData.parent;
+            }
+         }
+
+         // Update the max row height if needed.
+         if (chainedPos.y() + offset > mRowHeight)
+         {
+            mRowHeight = chainedPos.y() + offset;
+         }
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
