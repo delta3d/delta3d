@@ -24,13 +24,13 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#include <dtDirector/actionnode.h>
+#include <dtDirector/latentactionnode.h>
 #include <dtDirectorNodes/nodelibraryexport.h>
 
 namespace dtDirector
 {
    ////////////////////////////////////////////////////////////////////////////////
-   class NODE_LIBRARY_EXPORT DelayAction: public ActionNode
+   class NODE_LIBRARY_EXPORT DelayAction: public LatentActionNode
    {
    public:
 

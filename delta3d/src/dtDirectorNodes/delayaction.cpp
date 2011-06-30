@@ -30,7 +30,7 @@ namespace dtDirector
 {
    ////////////////////////////////////////////////////////////////////////////////
    DelayAction::DelayAction()
-      : ActionNode()
+      : LatentActionNode()
       , mDelay(1.0f)
       , mElapsedTime(0.0f)
       , mIsActive(false)
@@ -46,7 +46,7 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void DelayAction::Init(const NodeType& nodeType, DirectorGraph* graph)
    {
-      ActionNode::Init(nodeType, graph);
+      LatentActionNode::Init(nodeType, graph);
 
       // Create multiple inputs for different operations.
       mInputs.clear();
@@ -60,7 +60,7 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void DelayAction::BuildPropertyMap()
    {
-      ActionNode::BuildPropertyMap();
+      LatentActionNode::BuildPropertyMap();
 
       // Create our value links.
       dtDAL::FloatActorProperty* delayProp = new dtDAL::FloatActorProperty(
@@ -118,7 +118,7 @@ namespace dtDirector
                   SetFloat(0.0f, "Elapsed Time");
 
                   // Call the parent so the default "Out" link is triggered.
-                  ActionNode::Update(simDelta, delta, input, firstUpdate);
+                  LatentActionNode::Update(simDelta, delta, input, firstUpdate);
                }
                // If this is not the first update for this node, then
                // we must be paused or stopped, so we want to stop this update.
@@ -169,7 +169,7 @@ namespace dtDirector
          return false;
       }
 
-      return ActionNode::Update(simDelta, delta, input, firstUpdate);
+      return LatentActionNode::Update(simDelta, delta, input, firstUpdate);
    }
 
    //////////////////////////////////////////////////////////////////////////

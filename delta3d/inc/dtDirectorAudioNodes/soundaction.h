@@ -24,7 +24,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#include <dtDirector/actionnode.h>
+#include <dtDirector/latentactionnode.h>
 #include <dtDirectorAudioNodes/nodelibraryexport.h>
 
 #include <dtDAL/resourcedescriptor.h>
@@ -37,7 +37,7 @@ namespace dtAudio
 namespace dtDirector
 {
    ////////////////////////////////////////////////////////////////////////////////
-   class AUDIO_NODE_LIBRARY_EXPORT SoundAction: public ActionNode
+   class AUDIO_NODE_LIBRARY_EXPORT SoundAction: public LatentActionNode
    {
    public:
 

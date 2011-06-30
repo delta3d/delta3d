@@ -36,7 +36,7 @@ namespace dtDirector
 
    ////////////////////////////////////////////////////////////////////////////////
    LoopAction::LoopAction()
-      : ActionNode()
+      : LatentActionNode()
       , mIsLooping(false)
       , mLoopPeriod(0.0f)
       , mLoopTimeElapsed(0.0f)
@@ -53,7 +53,7 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void LoopAction::Init(const NodeType& nodeType, DirectorGraph* graph)
    {
-      ActionNode::Init(nodeType, graph);
+      LatentActionNode::Init(nodeType, graph);
 
       mInputs.clear();
       mInputs.push_back(InputLink(this, "Start", "Make the Cycle output fire after the LoopPeriod has elapsed."));
@@ -66,7 +66,7 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void LoopAction::BuildPropertyMap()
    {
-      ActionNode::BuildPropertyMap();
+      LatentActionNode::BuildPropertyMap();
 
       dtDAL::FloatActorProperty* periodProp = new dtDAL::FloatActorProperty(
          "LoopPeriod", "Loop Period",

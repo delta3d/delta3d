@@ -36,7 +36,7 @@ namespace dtDirector
 {
    /////////////////////////////////////////////////////////////////////////////
    SetLayoutVisibility::SetLayoutVisibility()
-      : ActionNode()
+      : LatentActionNode()
       , mElapsedTime(0.0f)
       , mFadeTime(0.0f)
    {
@@ -51,7 +51,7 @@ namespace dtDirector
    /////////////////////////////////////////////////////////////////////////////
    void SetLayoutVisibility::Init(const NodeType& nodeType, DirectorGraph* graph)
    {
-      ActionNode::Init(nodeType, graph);
+      LatentActionNode::Init(nodeType, graph);
 
       // Create multiple inputs for different operations.
       mInputs.clear();
@@ -70,7 +70,7 @@ namespace dtDirector
    /////////////////////////////////////////////////////////////////////////////
    void SetLayoutVisibility::BuildPropertyMap()
    {
-      ActionNode::BuildPropertyMap();
+      LatentActionNode::BuildPropertyMap();
 
       dtDAL::StringSelectorActorProperty* layoutProp = new dtDAL::StringSelectorActorProperty(
          "Layout", "Layout",
@@ -124,7 +124,7 @@ namespace dtDirector
             break;
          }
 
-         ActionNode::Update(simDelta, delta, input, firstUpdate);
+         LatentActionNode::Update(simDelta, delta, input, firstUpdate);
       }
 
       mElapsedTime = dtUtil::Min(mElapsedTime + delta, fadeTime);

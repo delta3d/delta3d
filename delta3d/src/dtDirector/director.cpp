@@ -454,6 +454,7 @@ namespace dtDirector
             {
                mThreads.erase(mThreads.begin() + mCurrentThread);
                mCurrentThread--;
+               continued = false;
             }
          }
 
@@ -597,6 +598,7 @@ namespace dtDirector
             else
             {
                threadList->erase(threadList->begin() + *curThread);
+               continued = false;
             }
 
             if (mNotifier.valid() && mShouldStep)
@@ -1163,18 +1165,25 @@ namespace dtDirector
          // create a new thread on any new events.  Otherwise, our first
          // new thread will be a continuation of the current active thread.
          mQueueingThreads = true;
-         bool isLatentNode = currentNode->Update(simDelta, delta, input, first);
-         stack.finished = continued = !isLatentNode;
+         bool notFinished = currentNode->Update(simDelta, delta, input, first);
+         stack.finished = !notFinished;
+
+         // Only continue updating if our current node is not a latent one
+         // or if the latent node has finished running.
+         if (!currentNode->AsLatentNode() || stack.finished)
+         {
+            continued = true;
+         }
 
          // If we are just starting this action node and it is latent,
          // register this node for messages.
          if (!currentNode->AsEventNode())
          {
-            if (first && isLatentNode)
+            if (first && notFinished)
             {
                currentNode->RegisterMessages();
             }
-            else if (!first && !isLatentNode)
+            else if (!first && !notFinished)
             {
                currentNode->UnRegisterMessages();
             }
@@ -1244,6 +1253,13 @@ namespace dtDirector
          mThreadQueue.clear();
 
          int count = (int)threadQueue.size();
+
+         // Continue immediate mode if we have more items queued up.
+         if (count > 0)
+         {
+            continued |= mImmediateMode;
+         }
+
          for (int index = 0; index < count; index++)
          {
             ThreadQueue& queue = threadQueue[index];
@@ -1293,12 +1309,6 @@ namespace dtDirector
       {
          // Pop this stack from the list.
          data.stack.erase(data.stack.begin() + stackIndex);
-
-         // If we do not have any remaining stack items, we can remove this thread.
-         if (data.stack.empty())
-         {
-            return false;
-         }
       }
 
       return continued;

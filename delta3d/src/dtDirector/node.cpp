@@ -22,6 +22,7 @@
 #include <dtDirector/node.h>
 #include <dtDirector/eventnode.h>
 #include <dtDirector/actionnode.h>
+#include <dtDirector/latentactionnode.h>
 #include <dtDirector/valuenode.h>
 #include <dtDirector/colors.h>
 
@@ -929,6 +930,12 @@ namespace dtDirector
 
    ////////////////////////////////////////////////////////////////////////////////
    ActionNode* Node::AsActionNode()
+   {
+      return NULL;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   LatentActionNode* Node::AsLatentNode()
    {
       return NULL;
    }
