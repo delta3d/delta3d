@@ -52,6 +52,8 @@ DirectorDialogEditorPlugin::DirectorDialogEditorPlugin()
    connect(mUI.mDialogTree, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)),
       this, SLOT(OnCurrentTreeItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)));
 
+   mUI.mSpeakerListWidget->SetTree(GetTree());
+
    // Save and close buttons
    connect(mUI.mSaveButton, SIGNAL(clicked()), this, SLOT(OnSave()));
    connect(mUI.mSaveAndCloseButton, SIGNAL(clicked()), this, SLOT(OnSaveAndClose()));
@@ -478,7 +480,7 @@ void DirectorDialogEditorPlugin::OnLoad()
    }
 
    // Find all speakers.
-   mUI.mSpeakerGroupBox->hide();
+   mUI.mSpeakerGroupBox->show();
    mUI.mSpeakerListWidget->Reset();
 
    GetGraph()->GetNodes("Value Link", "Core", nodes);

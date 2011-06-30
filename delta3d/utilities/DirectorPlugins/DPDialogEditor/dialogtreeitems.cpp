@@ -109,6 +109,28 @@ void DialogTreeWidget::UpdateLabels() const
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void DialogTreeWidget::OnSpeakerRemoved(const QString& speaker)
+{
+   int count = topLevelItemCount();
+   for (int index = 0; index < count; ++index)
+   {
+      QTreeWidgetItem* item = topLevelItem(index);
+      RecurseSpeakerRemoved(item, speaker);
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void DialogTreeWidget::OnSpeakerRenamed(const QString& oldName, const QString& newName)
+{
+   int count = topLevelItemCount();
+   for (int index = 0; index < count; ++index)
+   {
+      QTreeWidgetItem* item = topLevelItem(index);
+      RecurseSpeakerRenamed(item, oldName, newName);
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void DialogTreeWidget::startDrag(Qt::DropActions supportedActions)
 {
    QTreeWidgetItem* movingItem = currentItem();
@@ -446,6 +468,50 @@ void DialogTreeWidget::OnRemoveLine()
 
          UpdateLabels();
       }
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void DialogTreeWidget::RecurseSpeakerRemoved(QTreeWidgetItem* item, const QString& speaker)
+{
+   if (!item)
+   {
+      return;
+   }
+
+   DialogLineItem* lineItem = dynamic_cast<DialogLineItem*>(item);
+   if (lineItem && lineItem->GetType())
+   {
+      lineItem->GetType()->OnSpeakerRemoved(speaker);
+   }
+
+   int count = item->childCount();
+   for (int index = 0; index < count; ++index)
+   {
+      QTreeWidgetItem* child = item->child(index);
+      RecurseSpeakerRemoved(child, speaker);
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void DialogTreeWidget::RecurseSpeakerRenamed(QTreeWidgetItem* item, const QString& oldName, const QString& newName)
+{
+   if (!item)
+   {
+      return;
+   }
+
+   DialogLineItem* lineItem = dynamic_cast<DialogLineItem*>(item);
+   if (lineItem && lineItem->GetType())
+   {
+      lineItem->GetType()->OnSpeakerRenamed(oldName, newName);
+   }
+
+   int count = item->childCount();
+   for (int index = 0; index < count; ++index)
+   {
+      QTreeWidgetItem* child = item->child(index);
+      RecurseSpeakerRenamed(child, oldName, newName);
    }
 }
 
@@ -807,7 +873,9 @@ static const QString ADD_SPEAKER_TEXT("<Add Speaker...>");
 ////////////////////////////////////////////////////////////////////////////////
 DialogSpeakerList::DialogSpeakerList(QWidget* parent)
    : QListWidget(parent)
+   , mTree(NULL)
 {
+   connect(this, SIGNAL(currentItemChanged(QListWidgetItem*, QListWidgetItem*)), this, SLOT(OnSelectionChanged(QListWidgetItem*, QListWidgetItem*)));
    connect(this, SIGNAL(itemChanged(QListWidgetItem*)), this, SLOT(OnItemChanged(QListWidgetItem*)));
 }
 
@@ -825,9 +893,15 @@ void DialogSpeakerList::Reset()
    if (newItem)
    {
       newItem->setText(ADD_SPEAKER_TEXT);
-      newItem->setFlags(newItem->flags() | Qt::ItemIsEditable);
+      newItem->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsEditable);
       addItem(newItem);
    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void DialogSpeakerList::SetTree(DialogTreeWidget* tree)
+{
+   mTree = tree;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -857,6 +931,61 @@ void DialogSpeakerList::AddSpeaker(const QString& speaker)
       speakerItem->setFlags(speakerItem->flags() | Qt::ItemIsEditable);
       insertItem(count() - 1, speakerItem);
    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void DialogSpeakerList::startDrag(Qt::DropActions supportedActions)
+{
+   QListWidget::startDrag(supportedActions);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void DialogSpeakerList::dropEvent(QDropEvent* event)
+{
+   QListWidget::dropEvent(event);
+
+   for (int index = 0; index < count() - 1; ++index)
+   {
+      QListWidgetItem* current = item(index);
+      if (current)
+      {
+         current->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsEditable | Qt::ItemIsDragEnabled);
+      }
+   }
+
+   QListWidgetItem* newItem = new QListWidgetItem();
+   if (newItem)
+   {
+      newItem->setText(ADD_SPEAKER_TEXT);
+      newItem->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsEditable);
+      addItem(newItem);
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void DialogSpeakerList::dragEnterEvent(QDragEnterEvent* event)
+{
+   QListWidgetItem* lastItem = item(count() - 1);
+   if (lastItem)
+   {
+      delete lastItem;
+   }
+
+   QListWidget::dragEnterEvent(event);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void DialogSpeakerList::dragLeaveEvent(QDragLeaveEvent* event)
+{
+   QListWidgetItem* newItem = new QListWidgetItem();
+   if (newItem)
+   {
+      newItem->setText(ADD_SPEAKER_TEXT);
+      newItem->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsEditable);
+      addItem(newItem);
+   }
+
+   QListWidget::dragLeaveEvent(event);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -905,9 +1034,24 @@ void DialogSpeakerList::contextMenuEvent(QContextMenuEvent* event)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void DialogSpeakerList::OnSelectionChanged(QListWidgetItem* current, QListWidgetItem* previous)
+{
+   if (current)
+   {
+      mOldName = current->text();
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void DialogSpeakerList::OnItemChanged(QListWidgetItem* changedItem)
 {
-   if (count() > 0)
+   if (!changedItem)
+   {
+      return;
+   }
+
+   QString newName = changedItem->text();
+   if (newName != mOldName && count() > 0)
    {
       QListWidgetItem* lastItem = item(count() - 1);
       if (lastItem == changedItem)
@@ -916,10 +1060,17 @@ void DialogSpeakerList::OnItemChanged(QListWidgetItem* changedItem)
          if (newItem)
          {
             newItem->setText(ADD_SPEAKER_TEXT);
-            newItem->setFlags(newItem->flags() | Qt::ItemIsEditable);
+            newItem->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsEditable);
             addItem(newItem);
          }
       }
+      else
+      {
+         mTree->OnSpeakerRenamed(mOldName, newName);
+         mOldName = newName;
+      }
+
+      changedItem->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsEditable | Qt::ItemIsDragEnabled);
    }
 }
 
@@ -929,7 +1080,7 @@ void DialogSpeakerList::OnRemoveSpeaker()
    QListWidgetItem* item = currentItem();
    if (item)
    {
-      removeItemWidget(item);
+      mTree->OnSpeakerRemoved(mOldName);
       delete item;
    }
 }

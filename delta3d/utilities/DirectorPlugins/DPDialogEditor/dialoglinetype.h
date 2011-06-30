@@ -173,6 +173,8 @@ public:
    /**
     * Event handler for when a child choice item has been removed from
     * this line.
+    * Note: This should be overloaded to provide custom implementation
+    * for this event.
     *
     * @param[in]  choice  The choice being removed.
     * @param[in]  index   The index of the item before it was removed.
@@ -182,6 +184,8 @@ public:
    /**
     * Event handler for when a child choice item has been added to
     * this line.
+    * Note: This should be overloaded to provide custom implementation
+    * for this event.
     *
     * @param[in]  choice  The choice being added.
     * @param[in]  index   The index position of this child.
@@ -190,12 +194,33 @@ public:
 
    /**
     * Event handler for when a child choice has changed index position.
+    * Note: This should be overloaded to provide custom implementation
+    * for this event.
     *
     * @param[in]  choice    The choice being moved.
     * @param[in]  oldIndex  The old index position of the choice.
     * @param[in]  newIndex  The new index position of the choice.
     */
    virtual void OnChildChoiceMoved(DialogChoiceItem* choice, int oldIndex, int newIndex);
+
+   /**
+    * Event handler for when a speaker has been removed from the speaker listing.
+    * Note: This should be overloaded to provide custom implementation
+    * for this event.
+    *
+    * @param[in]  speaker  The speaker that was removed.
+    */
+   virtual void OnSpeakerRemoved(const QString& speaker);
+
+   /**
+    * Event handler for when a speaker has been renamed.
+    * Note: This should be overloaded to provide custom implementation
+    * for this event.
+    *
+    * @param[in]  oldName  The speakers old name.
+    * @param[in]  newName  The speakers new name.
+    */
+   virtual void OnSpeakerRenamed(const QString& oldName, const QString& newName);
 
 protected:
 
