@@ -149,13 +149,13 @@ void DialogLineType::ClosePropertyEditor(DialogTreeWidget* tree)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-QLayout* DialogLineType::CreatePropertyEditorForChild(DialogTreeWidget* tree, DialogChoiceItem* choice)
+QLayout* DialogLineType::CreatePropertyEditorForChild(DialogTreeWidget* tree, DialogChoiceItem* choice, int index)
 {
    return NULL;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void DialogLineType::ClosePropertyEditorForChild(DialogTreeWidget* tree, DialogChoiceItem* choice)
+void DialogLineType::ClosePropertyEditorForChild(DialogTreeWidget* tree, DialogChoiceItem* choice, int index)
 {
 }
 

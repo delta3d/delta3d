@@ -157,18 +157,20 @@ public:
     *
     * @param[in]  tree    The editor tree.
     * @param[in]  choice  The child choice being edited.
+    * @param[in]  index   The index of the choice being edited.
     *
     * @return     A newly created layout.
     */
-   virtual QLayout* CreatePropertyEditorForChild(DialogTreeWidget* tree, DialogChoiceItem* choice);
+   virtual QLayout* CreatePropertyEditorForChild(DialogTreeWidget* tree, DialogChoiceItem* choice, int index);
 
    /**
     * Closes the editor widget used for editing a choice child.
     *
     * @param[in]  tree    The editor tree.
     * @param[in]  choice  The child choice being edited.
+    * @param[in]  index   The index of the choice being edited.
     */
-   virtual void ClosePropertyEditorForChild(DialogTreeWidget* tree, DialogChoiceItem* choice);
+   virtual void ClosePropertyEditorForChild(DialogTreeWidget* tree, DialogChoiceItem* choice, int index);
 
    /**
     * Event handler for when a child choice item has been removed from

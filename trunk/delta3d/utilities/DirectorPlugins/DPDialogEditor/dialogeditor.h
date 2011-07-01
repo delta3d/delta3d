@@ -130,6 +130,16 @@ public:
    void ConnectSpeaker(const std::string& speaker, dtDirector::Node* node, const std::string& linkName);
 
    /**
+    * Gets the speaker name(s) from speaker reference node(s)
+    *
+    * @param[in]  node      The node the speaker reference is connected to.
+    * @param[in]  linkName  The value link on the given node connected to the
+    *                       speaker reference.
+    * @return               The speaker being referenced.
+    */
+   QStringList GetConnectedSpeakers(dtDirector::Node* node, const std::string& linkName);
+
+   /**
     * Maps a reference event name with the given line ID.
     * This is used when loading the dialog tree.
     *
