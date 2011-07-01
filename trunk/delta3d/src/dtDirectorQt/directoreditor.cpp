@@ -159,9 +159,7 @@ namespace dtDirector
 
 #ifdef DELTA_WIN32
 #ifdef _DEBUG
-      pluginPath += "/Debug";
-      //#else
-      //  pluginPath += "/Release";
+      pluginPath += "\\Debug";
 #endif
 #endif
 
@@ -202,7 +200,9 @@ namespace dtDirector
 
       if (mDirector.valid())
       {
-         mFileName = mDirector->GetScriptName();
+         std::string fileName = mDirector->GetScriptName();
+         std::string contextDir = osgDB::convertFileNameToNativeStyle(dtDAL::Project::GetInstance().GetContext()+"/");
+         mFileName = dtUtil::FileUtils::GetInstance().RelativePath(contextDir, fileName);
          if (mFileName.empty())
          {
             setWindowTitle("Untitled");
@@ -352,9 +352,12 @@ namespace dtDirector
       }
 
       // If this file fails to load, remove it from the recent file listing.
+      std::string contextDir = osgDB::convertFileNameToNativeStyle(dtDAL::Project::GetInstance().GetContext()+"/");
+      std::string relPath = dtUtil::FileUtils::GetInstance().RelativePath(contextDir, fileName);
+
       QSettings settings("MOVES", "Director Editor");
       QStringList files = settings.value("recentFileList").toStringList();
-      files.removeAll(fileName.c_str());
+      files.removeAll(relPath.c_str());
       settings.setValue("recentFileList", files);
       RefreshRecentFiles();
 
@@ -727,6 +730,7 @@ namespace dtDirector
       {
          mUI.action_New->setEnabled(false);
          mUI.action_Load->setEnabled(false);
+         mUI.menuRecent_Files->setEnabled(false);
 
          // If we have just entered debug mode, make sure
          // we show the thread browser.
@@ -749,6 +753,7 @@ namespace dtDirector
          {
             mUI.action_New->setEnabled(false);
             mUI.action_Load->setEnabled(false);
+            mUI.menuRecent_Files->setEnabled(false);
          }
 
          mUI.menuDebug->setVisible(false);
