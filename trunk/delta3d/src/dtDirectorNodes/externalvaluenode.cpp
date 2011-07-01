@@ -191,7 +191,12 @@ namespace dtDirector
          {
             ValueLink* link = mLinks[index];
             Node* owner = link->GetOwner();
-            if (owner != NULL && !IS_A(owner, ReferenceValue*) && link->GetPropertyType() != dtDAL::DataType::UNKNOWN)
+            ReferenceValue* refNode = dynamic_cast<ReferenceValue*>(owner);
+            if (refNode != NULL)
+            {
+               return refNode->GetNonReferencedPropertyType();
+            }
+            else if (owner != NULL && link->GetPropertyType() != dtDAL::DataType::UNKNOWN)
             {
                return mLinks[index]->GetPropertyType();
             }

@@ -189,6 +189,12 @@ namespace dtDirector
          }
       }
 
+      return GetNonReferencedPropertyType();
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   dtDAL::DataType& ReferenceValue::GetNonReferencedPropertyType()
+   {
       // If we are linked to a value link, use the type of that link.
       if (!mLinks.empty())
       {

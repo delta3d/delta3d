@@ -157,6 +157,14 @@ namespace dtDirector
       virtual dtDAL::DataType& GetPropertyType();
 
       /**
+       * Retrieves the type of this value from the action or event node it
+       * is connected to.
+       *
+       * @return  The type.
+       */
+      dtDAL::DataType& GetNonReferencedPropertyType();
+
+      /**
        *	Returns the referenced value node.
        */
       ValueNode* GetReferencedValue();
