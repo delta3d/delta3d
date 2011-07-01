@@ -45,7 +45,7 @@ DirectorDialogEditorPlugin::DirectorDialogEditorPlugin()
    , mEditWidget(NULL)
 {
    mUI.setupUi(this);
-   
+
    setWindowTitle("Dialog Editor");
 
    mUI.mDialogTree->SetEditor(this);
@@ -197,6 +197,28 @@ void DirectorDialogEditorPlugin::ConnectSpeaker(const std::string& speaker, dtDi
    Connect(node, speakerNode, linkName);
 }
 
+///////////////////////////////////////////////////////////////////////////////
+QStringList DirectorDialogEditorPlugin::GetConnectedSpeakers(dtDirector::Node* node, const std::string& linkName)
+{
+   QStringList speakers;
+   int count = node->GetValueNodeCount(linkName);
+   for (int refNodeIndex = 0; refNodeIndex < count; ++refNodeIndex)
+   {
+      dtDirector::ValueNode* referenceNode = node->GetValueNode(linkName, refNodeIndex);
+      if (referenceNode != NULL && referenceNode->GetType().GetFullName() == "Core.Reference")
+      {
+         QString name = QString::fromStdString(referenceNode->GetString("Reference"));
+         if (name.startsWith("Speaker "))
+         {
+            // Cut off "Speaker " from name
+            name = name.mid(8);
+            speakers.push_back(name);
+         }
+      }
+   }
+   return speakers;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 void DirectorDialogEditorPlugin::MapReference(const QString& refName, const dtCore::UniqueId& id)
 {
@@ -212,7 +234,7 @@ void DirectorDialogEditorPlugin::MapReference(const QString& refName, const dtCo
 void DirectorDialogEditorPlugin::RegisterReference(DialogLineItem* refLine, const QString& refName)
 {
    std::map<QString, std::vector<DialogLineItem*> >::iterator iter = mRefRegister.find(refName);
-   
+
    if (iter == mRefRegister.end())
    {
       std::vector<DialogLineItem*> refLines;
@@ -257,7 +279,8 @@ void DirectorDialogEditorPlugin::OnCurrentTreeItemChanged(QTreeWidgetItem* curre
                DialogLineItem* parentLine = dynamic_cast<DialogLineItem*>(prevChoice->parent());
                if (parentLine && parentLine->GetType())
                {
-                  parentLine->GetType()->ClosePropertyEditorForChild(GetTree(), prevChoice);
+                  parentLine->GetType()->ClosePropertyEditorForChild(GetTree(),
+                     prevChoice, parentLine->indexOfChild(prevChoice));
                }
             }
          }
@@ -283,7 +306,8 @@ void DirectorDialogEditorPlugin::OnCurrentTreeItemChanged(QTreeWidgetItem* curre
             DialogLineItem* parentLine = dynamic_cast<DialogLineItem*>(choice->parent());
             if (parentLine && parentLine->GetType())
             {
-               layout = parentLine->GetType()->CreatePropertyEditorForChild(GetTree(), choice);
+               layout = parentLine->GetType()->CreatePropertyEditorForChild(GetTree(),
+                  choice, parentLine->indexOfChild(choice));
             }
          }
       }
