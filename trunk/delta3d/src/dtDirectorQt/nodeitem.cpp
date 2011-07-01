@@ -1072,6 +1072,15 @@ namespace dtDirector
       }
       else
       {
+         float reverseMul = 1.0f;
+         if (drawReverse)
+         {
+            QPointF temp = start;
+            start = end;
+            end = temp;
+            reverseMul = -1.0f;
+         }
+
          float top = height;
          float yOffset = abs(start.y() - end.y()) / 4.0f + 25;
          if (start.y() < top)
@@ -1092,8 +1101,8 @@ namespace dtDirector
             top = higherPoint - len;
          }
 
-         float ctrlXStart = start.x() + dtUtil::Min<float>((start.y() - top) * 0.5f, len);
-         float ctrlXEnd = end.x() - dtUtil::Min<float>((end.y() - top) * 0.5f, len);
+         float ctrlXStart = start.x() + dtUtil::Min<float>((start.y() - top) * 0.5f, len) * reverseMul;
+         float ctrlXEnd = end.x() - dtUtil::Min<float>((end.y() - top) * 0.5f, len) * reverseMul;
 
          path.moveTo(start);
          path.cubicTo(ctrlXStart, start.y(), ctrlXStart, top, start.x(), top);
