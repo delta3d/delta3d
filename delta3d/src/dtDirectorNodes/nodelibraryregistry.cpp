@@ -77,6 +77,7 @@
 #include <dtDirectorNodes/togglemotionmodelaction.h>
 #include <dtDirectorNodes/togglemousecursoraction.h>
 #include <dtDirectorNodes/getactororientationaction.h>
+#include <dtDirectorNodes/foreachaction.h>
 #include <dtDirectorNodes/foreachactoraction.h>
 #include <dtDirectorNodes/stringmanipulatoraction.h>
 
@@ -162,7 +163,8 @@ namespace dtDirector
    RefPtr<NodeType> NodeLibraryRegistry::GET_VECTOR_VALUES_ACTION_NODE_TYPE(      new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Get Vector Values",               "General", "Access", "Extracts the values in a vector to individual parts.", NULL, Colors::BLUE));
    RefPtr<NodeType> NodeLibraryRegistry::GET_ARRAY_VALUE_ACTION_NODE_TYPE(        new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Get Array Value",                 "General", "Access", "Retrieves the value of an array index.", NULL, Colors::BLUE));
    RefPtr<NodeType> NodeLibraryRegistry::GET_ARRAY_SIZE_ACTION_NODE_TYPE(         new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Get Array Size",                  "General", "Access", "Retrieves the total size of an array.", NULL, Colors::BLUE));
-   RefPtr<NodeType> NodeLibraryRegistry::FOR_EACH_ACTOR_ACTION_NODE_TYPE(         new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "For Each Actor",                  "General", "Access", "Retrieves all actors with option class and name filters and iterates through them individually via the \"Each Actor\" output link.", NULL, Colors::BLUE));
+   RefPtr<NodeType> NodeLibraryRegistry::FOR_EACH_ACTION_NODE_TYPE(               new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "For Each",                        "General", "Access", "Iterates through a list of given items and triggers the \"Each Item\" output link for each item found.", NULL, Colors::BLUE));
+   RefPtr<NodeType> NodeLibraryRegistry::FOR_EACH_ACTOR_ACTION_NODE_TYPE(         new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "For Each Actor",                  "General", "Access", "Retrieves all actors with optional class and name filters and iterates through them individually via the \"Each Actor\" output link.", NULL, Colors::BLUE));
 
    RefPtr<NodeType> NodeLibraryRegistry::OPERATION_ACTION_NODE_TYPE(             new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Arithmetic Operation",      "General",     "Operations",  "Performs a simple operation between two values A and B and outputs to Result.", NULL, Colors::BLUE));
    RefPtr<NodeType> NodeLibraryRegistry::STRING_MANIPULATOR_ACTION_NODE_TYPE(    new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "String Manipulator",        "General",     "Operations",  "Performs a string operation.", NULL, Colors::BLUE));
@@ -291,6 +293,7 @@ namespace dtDirector
       mNodeFactory->RegisterType<GetVectorValuesAction>(GET_VECTOR_VALUES_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<GetArrayAction>(GET_ARRAY_VALUE_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<GetArraySizeAction>(GET_ARRAY_SIZE_ACTION_NODE_TYPE.get());
+      mNodeFactory->RegisterType<ForEachAction>(FOR_EACH_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<ForEachActorAction>(FOR_EACH_ACTOR_ACTION_NODE_TYPE.get());
 
       mNodeFactory->RegisterType<OperationAction>(OPERATION_ACTION_NODE_TYPE.get());
