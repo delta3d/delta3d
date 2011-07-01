@@ -337,6 +337,7 @@ namespace dtDirector
          OutputLink* link = &node->GetOutputLinks()[index];
 
          link->SetVisible(fromLink->GetVisible());
+         link->SetImmediate(fromLink->GetImmediate());
          LinkOutputs(link, fromLink, parent, undoManager, linkNodes, createLinks, linkExternal);
       }
 
