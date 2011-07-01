@@ -772,6 +772,7 @@ namespace dtDirector
       dtCore::RefPtr<DirectorParser> mParser;
 
       friend class ValueNode;
+      friend class ArrayValueNode;
 
       // Switch to enable/disable this director
       DT_DECLARE_ACCESSOR_INLINE(bool, Active)

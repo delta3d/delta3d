@@ -61,6 +61,10 @@ namespace dtDirector
          {
             mInitialArrayProperty->FromString(mArrayProperty->ToString());
          }
+         else
+         {
+            mArrayProperty->FromString(mInitialArrayProperty->ToString());
+         }
 
          if (!GetDirector()->GetNotifier())
          {
@@ -74,13 +78,16 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    bool ArrayValueNode::IsPropertyDefault(const dtDAL::ActorProperty& prop) const
    {
-      if (mInitialArrayProperty && &prop == mArrayProperty)
+      if (GetDirector()->GetNotifier())
       {
-         if (mArrayProperty->ToString() == mInitialArrayProperty->ToString())
+         if (mInitialArrayProperty && &prop == mArrayProperty)
          {
-            return true;
+            if (mArrayProperty->ToString() == mInitialArrayProperty->ToString())
+            {
+               return true;
+            }
+            return false;
          }
-         return false;
       }
 
       return Node::IsPropertyDefault(prop);
@@ -89,13 +96,32 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void ArrayValueNode::ResetProperty(dtDAL::ActorProperty& prop)
    {
-      if (mInitialArrayProperty && &prop == mArrayProperty)
+      if (GetDirector()->GetNotifier())
       {
-         mArrayProperty->FromString(mInitialArrayProperty->ToString());
-         return;
+         if (mInitialArrayProperty && &prop == mArrayProperty)
+         {
+            mArrayProperty->FromString(mInitialArrayProperty->ToString());
+            return;
+         }
       }
 
       Node::ResetProperty(prop);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool ArrayValueNode::ShouldPropertySave(const dtDAL::ActorProperty& prop) const
+   {
+      if (GetDirector()->GetNotifier())
+      {
+         // Initial properties get saved out regardless of whether
+         // they are set to their defaults.
+         if (&prop == mInitialArrayProperty)
+         {
+            return true;
+         }
+      }
+
+      return Node::ShouldPropertySave(prop);
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -172,6 +198,8 @@ namespace dtDirector
    void ArrayValueNode::OnInitialValueChanged(const std::string& oldValue)
    {
       mHasInitialValue = true;
+
+      GetDirector()->OnInitialValueChanged(this);
 
       // If we have not started to run the script or our current value
       // is equal to the initial value before it was just changed,

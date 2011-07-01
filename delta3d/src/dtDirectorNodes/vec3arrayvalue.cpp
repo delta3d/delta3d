@@ -133,11 +133,11 @@ namespace dtDirector
       {
          int index = mInitialPropertyIndex;
          std::string oldValue = mInitialArrayProperty->ToString();
-         mInitialPropertyIndex = index;
 
-         mInitialValues[mInitialPropertyIndex] = value;
+         mInitialValues[index] = value;
 
          ArrayValueNode::OnInitialValueChanged(oldValue);
+         mInitialPropertyIndex = index;
       }
    }
 
@@ -161,8 +161,11 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void Vec3ArrayValue::SetInitialArray(const std::vector<osg::Vec3>& value)
    {
+      int index = mInitialPropertyIndex;
       std::string oldValue = mInitialProperty->ToString();
+
       mInitialValues = value;
-      ArrayValueNode::OnInitialValueChanged(oldValue);
+      OnInitialValueChanged(oldValue);
+      mInitialPropertyIndex = index;
    }
 }

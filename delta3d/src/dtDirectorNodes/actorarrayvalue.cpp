@@ -135,11 +135,11 @@ namespace dtDirector
       {
          int index = mInitialPropertyIndex;
          std::string oldValue = mInitialArrayProperty->ToString();
-         mInitialPropertyIndex = index;
 
-         mInitialValues[mInitialPropertyIndex] = value;
+         mInitialValues[index] = value;
 
          OnInitialValueChanged(oldValue);
+         mInitialPropertyIndex = index;
       }
    }
 
@@ -163,8 +163,11 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void ActorArrayValue::SetInitialArray(const std::vector<dtCore::UniqueId>& value)
    {
+      int index = mInitialPropertyIndex;
       std::string oldValue = mInitialProperty->ToString();
+
       mInitialValues = value;
       OnInitialValueChanged(oldValue);
+      mInitialPropertyIndex = index;
    }
 }

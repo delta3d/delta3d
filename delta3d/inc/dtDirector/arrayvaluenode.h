@@ -83,6 +83,15 @@ namespace dtDirector
       virtual void ResetProperty(dtDAL::ActorProperty& prop);
 
       /**
+       * Checks if a given property should be saved out to file data.
+       *
+       * @param[in]  prop  The property.
+       *
+       * @return     True if the given property should be saved.
+       */
+      virtual bool ShouldPropertySave(const dtDAL::ActorProperty& prop) const;
+
+      /**
        * Accessors for the name of the node.
        */
       virtual std::string GetValueLabel();
