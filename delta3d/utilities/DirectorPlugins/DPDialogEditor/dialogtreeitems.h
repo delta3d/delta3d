@@ -195,7 +195,7 @@ class DT_DIRECTOR_DIALOG_EDITOR_EXPORT DialogRootItem: public DialogLineItem
 {
 public:
 
-   DialogRootItem(const QString& name, const DialogLineType* type, bool allowChildren);
+   DialogRootItem(const QString& name, const DialogLineType* type, bool allowChildren, DirectorDialogEditorPlugin* editor);
    ~DialogRootItem();
 
    virtual void UpdateLabel();
