@@ -69,8 +69,8 @@ DirectorDialogEditorPlugin::~DirectorDialogEditorPlugin()
 void DirectorDialogEditorPlugin::Initialize()
 {
    // Create our root node.
-   mRoot = new DialogRootItem("Root", DialogLineRegistry::GetInstance().GetStartedLineType(), true);
-   mEndDialog = new DialogRootItem("End Dialog", DialogLineRegistry::GetInstance().GetEndedLineType(), false);
+   mRoot = new DialogRootItem("Root", DialogLineRegistry::GetInstance().GetStartedLineType(), true, this);
+   mEndDialog = new DialogRootItem("End Dialog", DialogLineRegistry::GetInstance().GetEndedLineType(), false, this);
 
    mUI.mDialogTree->addTopLevelItem(mRoot);
    mUI.mDialogTree->addTopLevelItem(mEndDialog);

@@ -156,7 +156,7 @@ void DialogTreeWidget::dropEvent(QDropEvent* event)
          oldIndex = oldParent->indexOfChild(item);
       }
    }
-   
+
    // Perform the drop event.
    QTreeWidget::dropEvent(event);
 
@@ -172,7 +172,7 @@ void DialogTreeWidget::dropEvent(QDropEvent* event)
          newIndex = newParent->indexOfChild(item);
       }
    }
-   
+
    // Notify both the old and new parents that the child item has moved.
    if (oldParent != newParent)
    {
@@ -222,7 +222,7 @@ void DialogTreeWidget::contextMenuEvent(QContextMenuEvent* event)
    bool removeChoice = false;
 
    QMenu menu;
-   
+
    DialogLineItem* lineItem = dynamic_cast<DialogLineItem*>(item);
    if (lineItem)
    {
@@ -287,7 +287,7 @@ void DialogTreeWidget::contextMenuEvent(QContextMenuEvent* event)
          }
       }
    }
-   
+
    if (addNewChoice)
    {
       QAction* choiceAction = menu.addAction("Add New Choice");
@@ -704,7 +704,7 @@ DialogLineItem::~DialogLineItem()
 ////////////////////////////////////////////////////////////////////////////////
 void DialogLineItem::UpdateLabel()
 {
-   if (mType)
+   if (mType && mTree)
    {
       setText(0, QString("[") + QString::number(mIndex) + ":" + mTypeName + "] " +
          mType->GetDisplayName(mTree->GetEditor()));
@@ -832,8 +832,8 @@ DialogLineItem* DialogChoiceItem::GetChildLine() const
 ////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
-DialogRootItem::DialogRootItem(const QString& name, const DialogLineType* type, bool allowChildren)
-   : DialogLineItem(name, type, 0, NULL)
+DialogRootItem::DialogRootItem(const QString& name, const DialogLineType* type, bool allowChildren, DirectorDialogEditorPlugin* editor)
+   : DialogLineItem(name, type, 0, editor)
    , mAllowChildren(allowChildren)
 {
    QColor color = Qt::red;
@@ -841,7 +841,12 @@ DialogRootItem::DialogRootItem(const QString& name, const DialogLineType* type, 
    setBackgroundColor(0, color);
 
    // Root items can never move.
-   setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+   Qt::ItemFlags flags = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
+   if (type != NULL)
+   {
+      flags |= Qt::ItemIsEditable;
+   }
+   setFlags(flags);
 
    UpdateLabel();
 }
@@ -854,7 +859,15 @@ DialogRootItem::~DialogRootItem()
 ////////////////////////////////////////////////////////////////////////////////
 void DialogRootItem::UpdateLabel()
 {
-   setText(0, GetTypeName());
+   if (GetType() != NULL && GetTree() != NULL)
+   {
+      setText(0, QString("[") + GetTypeName() + "] " +
+         GetType()->GetDisplayName(GetTree()->GetEditor()));
+   }
+   else
+   {
+      setText(0, GetTypeName());
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
