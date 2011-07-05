@@ -11,10 +11,11 @@
 # Created by David Guthrie. 
 
 FIND_PATH(DELTA_DIR inc/dtCore/dt.h
-    PATHS
+    HINTS
     ${CMAKE_SOURCE_DIR}/../delta3d
     $ENV{DELTA_ROOT}
     $ENV{DELTA_INC}
+    PATHS
     ~/Library/Frameworks
     /Library/Frameworks
     /usr/local
@@ -28,7 +29,7 @@ FIND_PATH(DELTA_DIR inc/dtCore/dt.h
 )
 
 FIND_PATH(DELTA3D_INCLUDE_DIR NAMES dtCore/dt.h
-    PATHS
+    HINTS
        ${DELTA_DIR}
     PATH_SUFFIXES
        inc
@@ -36,19 +37,23 @@ FIND_PATH(DELTA3D_INCLUDE_DIR NAMES dtCore/dt.h
 )
 
 FIND_PATH( DELTA3D_LIB_DIR NAMES libdtCore.so libdtCore.dylib dtCore.dll .
-    PATHS
+    HINTS
        ${DELTA_DIR}
     PATH_SUFFIXES
        Build/lib
        Debug/lib
        Release/lib
        lib
-    NO_DEFAULT_PATH
 )
 
 FIND_PATH( DELTA3D_EXT_DIR inc
+   HINTS
     ${DELTA_DIR}/ext
 )
+
+if (DELTA3D_EXT_DIR)
+  set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${DELTA3D_EXT_DIR})
+endif(DELTA3D_EXT_DIR)
 
 SET(DTUTIL_LIBRARY dtUtil)
 SET(DTCORE_LIBRARY dtCore)
