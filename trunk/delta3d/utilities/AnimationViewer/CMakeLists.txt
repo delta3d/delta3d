@@ -13,6 +13,7 @@ SET(PROG_HEADERS ${SOURCE_PATH}/AnimationTableWidget.h
                  ${SOURCE_PATH}/PoseMeshProperties.h
                  ${SOURCE_PATH}/PoseMeshScene.h
                  ${SOURCE_PATH}/PoseMeshView.h
+                 ${SOURCE_PATH}/ResourceDialogs.h
                  ${SOURCE_PATH}/ResourceDelegates.h
                  ${SOURCE_PATH}/Viewer.h  )
                  
@@ -23,6 +24,7 @@ SET(PROG_SOURCES ${SOURCE_PATH}/AnimationTableWidget.cpp
                  ${SOURCE_PATH}/PoseMeshProperties.cpp
                  ${SOURCE_PATH}/PoseMeshScene.cpp
                  ${SOURCE_PATH}/PoseMeshView.cpp
+                 ${SOURCE_PATH}/ResourceDialogs.cpp
                  ${SOURCE_PATH}/ResourceDelegates.cpp
                  ${SOURCE_PATH}/Viewer.cpp
                  ${SOURCE_PATH}/AnimationViewer.rc )
@@ -30,7 +32,8 @@ SET(PROG_SOURCES ${SOURCE_PATH}/AnimationTableWidget.cpp
 
 QT4_ADD_RESOURCES(RCC_SOURCES AnimationViewerResources.qrc)
 qt4_wrap_cpp(MOC_SOURCES ${PROG_HEADERS})
-qt4_wrap_ui(UI_SOURCES PoseMeshProperties.ui)
+qt4_wrap_ui(UI_SOURCES PoseMeshProperties.ui
+                       ResourceAddDialog.ui)
 
 ADD_EXECUTABLE(${APP_NAME}
     ${PROG_HEADERS}
