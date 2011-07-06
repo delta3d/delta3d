@@ -71,6 +71,12 @@ namespace dtDirector
 
       // We don't clear the outputs in order to keep the "Out" link
       mOutputs.push_back(OutputLink(this, "Finished"));
+
+      //make sure AudioManager has been initialized
+      if(!dtAudio::AudioManager::GetInstance().IsInitialized())
+      {
+         dtAudio::AudioManager::Instantiate();
+      }
    }
 
    /////////////////////////////////////////////////////////////////////////////
