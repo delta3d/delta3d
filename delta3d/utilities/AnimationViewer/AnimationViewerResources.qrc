@@ -20,5 +20,7 @@
       <file>images/fileIconMesh.png</file>
       <file>images/fileIconMat.png</file>
       <file>images/fileIconMorph.png</file>
+      <file>images/add.png</file>
+      <file>images/remove.png</file>
    </qresource>
 </RCC>
