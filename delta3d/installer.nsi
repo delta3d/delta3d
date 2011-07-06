@@ -82,8 +82,8 @@ InstallDirRegKey HKLM "${PRODUCT_DIR_REGKEY}" ""
 ShowInstDetails show
 ShowUnInstDetails show
 
-
-
+;Fixes a problem with not uninstalling shortcuts on Vista and newer
+RequestExecutionLevel user 
 
 Section "!Delta3D" Delta3DSection
   SetOutPath "$INSTDIR"
