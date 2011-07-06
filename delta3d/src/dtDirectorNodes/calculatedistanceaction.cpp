@@ -119,28 +119,25 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    bool CalculateDistanceAction::CanConnectValue(ValueLink* link, ValueNode* value)
    {
-      // Result checks its own type
-      if (link->GetName() == "Result")
-      {
-         return Node::CanConnectValue(link, value);
-      }
+      bool canConnect = false;
 
       if (Node::CanConnectValue(link, value))
       {
-         dtDAL::DataType& type = value->GetPropertyType();
-         switch (type.GetTypeId())
+         // Result checks its own type
+         if (link->GetName() == "Result" ||
+             link->GetName() == "Enabled")
          {
-         case dtDAL::DataType::VEC2F_ID:
-         case dtDAL::DataType::VEC3F_ID:
-         case dtDAL::DataType::VEC4F_ID:
-            return true;
-
-         default:
-            return false;
+            canConnect = true;
+         }
+         else if (value->CanBeType(dtDAL::DataType::VEC4) ||
+                  value->CanBeType(dtDAL::DataType::VEC3) ||
+                  value->CanBeType(dtDAL::DataType::VEC2))
+         {
+            canConnect = true;
          }
       }
 
-      return false;
+      return canConnect;
    }
 
    //////////////////////////////////////////////////////////////////////////
