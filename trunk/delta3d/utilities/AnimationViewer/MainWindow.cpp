@@ -6,6 +6,7 @@
 #include "PoseMeshItem.h"
 #include "Viewer.h"
 #include "ResourceDelegates.h"
+#include "ResourceDialogs.h"
 #include <dtQt/osggraphicswindowqt.h>
 
 #include <osg/Geode> ///needed for the node builder
@@ -50,6 +51,26 @@
 
 #include <QtGui/QGraphicsEllipseItem>
 #include <cassert>
+
+////////////////////////////////////////////////////////////////////////////////
+// Helper Function
+void ClearTableWidget(QTableWidget& widget)
+{
+   while (widget.rowCount()>0)
+   {
+      widget.removeRow(0);
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Helper Function
+void ClearStandardItemModel(QStandardItemModel& widget)
+{
+   while (widget.rowCount()>0)
+   {
+      widget.removeRow(0);
+   }
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 // Helper Function
@@ -124,6 +145,7 @@ MainWindow::MainWindow()
   , mPoseMeshScene(NULL)
   , mPoseMeshProperties(NULL)
   , mFileLabel(NULL)
+  , mFileAdd(NULL)
   , mFileTree(NULL)
   , mFileGroupSkel(NULL)
   , mFileGroupAnim(NULL)
@@ -423,15 +445,12 @@ void MainWindow::LoadCharFile(const QString& filename)
 ////////////////////////////////////////////////////////////////////////////////
 void MainWindow::SaveCharFile(const QString& filename)
 {
-   if (dtUtil::FileUtils::GetInstance().FileExists(filename.toStdString()))
-   {
-      QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+   QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
 
-      emit FileToSave(filename);
+   emit FileToSave(filename);
 
-      QApplication::restoreOverrideCursor();
-      statusBar()->showMessage(tr("File saved"), 2000);
-   }
+   QApplication::restoreOverrideCursor();
+   statusBar()->showMessage(tr("File saved"), 2000);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1347,25 +1366,10 @@ void MainWindow::OnClearCharacterData()
    // Make sure we start fresh
    DestroyPoseResources();
 
-   while (mAnimListWidget->rowCount()>0)
-   {
-      mAnimListWidget->removeRow(0);
-   }
-
-   while (mSubMorphTargetListWidget->rowCount()>0)
-   {
-      mSubMorphTargetListWidget->removeRow(0);
-   }
-
-   while (mSubMorphAnimationListWidget->rowCount()>0)
-   {
-      mSubMorphAnimationListWidget->removeRow(0);
-   }
-
-   while (mMaterialModel->rowCount() > 0)
-   {
-      mMaterialModel->removeRow(0);
-   }
+   ClearTableWidget(*mAnimListWidget);
+   ClearTableWidget(*mSubMorphTargetListWidget);
+   ClearTableWidget(*mSubMorphAnimationListWidget);
+   ClearStandardItemModel(*mMaterialModel);
 
    // reset the scale spinbox
    mScaleFactorSpinner->setValue(1.0f);
@@ -1531,6 +1535,87 @@ void MainWindow::OnResourceNameChanged(int fileType,
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void MainWindow::OnResourceAdd()
+{
+   ResAddDialog* dialog = new ResAddDialog(this);
+   dialog->SetModelData(mFileDelegate->GetCharModelData());
+
+   int retCode = dialog->exec();
+
+   // If OK...
+   bool reload = false;
+   if (retCode == QDialog::Accepted && dialog->IsDataChanged())
+   {
+      reload = true;
+   }
+
+   delete dialog;
+
+   if (reload)
+   {
+      emit ReloadFile();
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void MainWindow::OnResourceRemoved(int fileType, const std::string& objectName)
+{
+   using namespace dtAnim;
+
+   QTreeWidgetItem* item = NULL;
+
+   // Get the resource file group widget that is affected by the change.
+   Cal3DModelData::CalFileType calFileType = Cal3DModelData::CalFileType(fileType);
+   switch (calFileType)
+   {
+   case Cal3DModelData::SKEL_FILE:
+      item = mFileGroupSkel;
+      break;
+
+   case Cal3DModelData::ANIM_FILE:
+      item = mFileGroupAnim;
+      break;
+
+   case Cal3DModelData::MESH_FILE:
+      item = mFileGroupMesh;
+      break;
+
+   case Cal3DModelData::MAT_FILE:
+      item = mFileGroupMat;
+      break;
+
+   case Cal3DModelData::MORPH_FILE:
+      item = mFileGroupMorph;
+      break;
+
+   default:
+      break;
+   }
+
+   Cal3DModelData* modelData = mFileDelegate->GetCharModelData();
+   if (modelData != NULL && item != NULL)
+   {
+      ClearTreeWidgetItem(*item);
+      AddItemsToTreeWidgetItem(*item, *modelData, calFileType);
+   }
+
+   // TODO: Update other affected UIs.
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void MainWindow::OnError(const std::string& title, const std::string& message)
+{
+   QString qTitle(title.c_str());
+   QString qMessage(message.c_str());
+   QMessageBox msgBox;
+   msgBox.setText(qTitle);
+   msgBox.setInformativeText(qMessage);
+   msgBox.setStandardButtons(QMessageBox::Ok);
+   msgBox.setDefaultButton(QMessageBox::Ok);
+   msgBox.exec();
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void MainWindow::SetViewer(Viewer* viewer)
 {
    mViewer = viewer;
@@ -1613,7 +1698,9 @@ void MainWindow::SetupConnectionsWithViewer()
    connect(this, SIGNAL(SubMorphTargetChanged(int,int,int,float)), mViewer, SLOT(OnMorphChanged(int,int,int,float)));
    connect(this, SIGNAL(PlayMorphAnimation(int, float, float, float, bool)), mViewer, SLOT(OnPlayMorphAnimation(int, float, float, float, bool)));
    connect(this, SIGNAL(StopMorphAnimation(int, float)), mViewer, SLOT(OnStopMorphAnimation(int, float)));
-
+   
+   connect(mViewer, SIGNAL(SignalError(const std::string&, const std::string&)),
+      this, SLOT(OnError(const std::string&, const std::string&)));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1800,26 +1887,31 @@ void MainWindow::CreateDockWidget_Resources()
    QGridLayout* resGridLayout = new QGridLayout();
    resVLayout->addLayout(resGridLayout);
 
-   mFileLabel = new QLabel("");
-   resGridLayout->addWidget(mFileLabel, 0, 0);
-
-   mFileTree = new QTreeWidget();
-   QStringList labels;
-   labels << "Object Name" << "File";
-   mFileTree->setHeaderLabels(labels);
-   resGridLayout->addWidget(mFileTree, 1, 0);
-
-   mObjectNameDelegate = new ObjectNameItemDelegate(mFileTree);
-   mFileTree->setItemDelegateForColumn(0, mObjectNameDelegate);
-   mFileDelegate = new FileItemDelegate(mFileTree);
-   mFileTree->setItemDelegateForColumn(1, mFileDelegate);
-
    QColor bgColor(200, 200, 200);
    QIcon iconSkel(":/images/fileIconSkel.png");
    QIcon iconAnim(":/images/fileIconAnim.png");
    QIcon iconMesh(":/images/fileIconMesh.png");
    QIcon iconMat(":/images/fileIconMat.png");
    QIcon iconMorph(":/images/fileIconMorph.png");
+   QIcon iconAdd(":/images/add.png");
+
+   mFileLabel = new QLabel("");
+   resGridLayout->addWidget(mFileLabel, 0, 0);
+
+   mFileAdd = new QPushButton(resDockWidget);
+   mFileAdd->setIcon(iconAdd);
+   resGridLayout->addWidget(mFileAdd, 0, 1);
+
+   mFileTree = new QTreeWidget();
+   QStringList labels;
+   labels << "Object Name" << "File";
+   mFileTree->setHeaderLabels(labels);
+   resGridLayout->addWidget(mFileTree, 1, 0, 1, 2);
+
+   mObjectNameDelegate = new ObjectNameItemDelegate(mFileTree);
+   mFileTree->setItemDelegateForColumn(0, mObjectNameDelegate);
+   mFileDelegate = new FileItemDelegate(mFileTree);
+   mFileTree->setItemDelegateForColumn(1, mFileDelegate);
 
    mFileGroupSkel = new QTreeWidgetItem();
    mFileGroupSkel->setIcon(0, iconSkel);
@@ -1862,6 +1954,9 @@ void MainWindow::CreateDockWidget_Resources()
    connect(mFileDelegate, SIGNAL(SignalResourceEditEnd(int, const std::string&)), this, SLOT(OnResourceEditEnd(int, const std::string&)));
    connect(mObjectNameDelegate, SIGNAL(SignalResourceNameChanged(int, const std::string&, const std::string&)),
       this, SLOT(OnResourceNameChanged(int, const std::string&, const std::string&)));
+   connect(mFileAdd, SIGNAL(clicked(bool)), this, SLOT(OnResourceAdd()));
+   connect(mFileDelegate, SIGNAL(SignalResourceRemoved(int, const std::string&)),
+      this, SLOT(OnResourceRemoved(int, const std::string&)));
 }
 
 ////////////////////////////////////////////////////////////////////////////////

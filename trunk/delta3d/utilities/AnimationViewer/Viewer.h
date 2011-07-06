@@ -117,6 +117,8 @@ signals:
 
    void BlendUpdate(const std::vector<float>& animWeightList, const std::vector<float>& morphWeightList);
 
+   void SignalError(const std::string& title, const std::string& message);
+
 protected:
    virtual ~Viewer();
 
