@@ -1,4 +1,5 @@
 #include <prefix/dtutilprefix.h>
+#include <dtUtil/log.h>
 #include <dtUtil/stringutils.h>
 #include <dtUtil/mswinmacros.h>
 
@@ -253,11 +254,18 @@ namespace dtUtil
    ///////////////////////////////////////////////////////////////////////////////
    void FindAndReplace(std::string& modifiedString, const std::string& findWhat, const std::string& replaceWith)
    {
-      size_t pos = 0;
-      while((pos = modifiedString.find(findWhat, pos)) != std::string::npos)
+      if (!findWhat.empty())
       {
-         modifiedString.replace(pos, findWhat.length(), replaceWith);
-         pos += replaceWith.length();
+         size_t pos = 0;
+         while((pos = modifiedString.find(findWhat, pos)) != std::string::npos)
+         {
+            modifiedString.replace(pos, findWhat.length(), replaceWith);
+            pos += replaceWith.length();
+         }
+      }
+      else
+      {
+         LOG_ERROR("Trying to find an empty string within a string.");
       }
    }
 } // namespace dtUtil
