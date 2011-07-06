@@ -94,7 +94,9 @@ namespace dtQt
    ///////////////////////// SLOTS ////////////////////////////////////
    void ProjectContextDialog::spawnFileBrowser()
    {
-      QString dir = QFileDialog::getExistingDirectory(this, tr("Select a project context"));
+      const std::string currentContext = dtDAL::Project::GetInstance().GetContext();
+
+      QString dir = QFileDialog::getExistingDirectory(this, tr("Select a project context"), QString::fromStdString(currentContext));
 
       if (dir.isEmpty())
       {
