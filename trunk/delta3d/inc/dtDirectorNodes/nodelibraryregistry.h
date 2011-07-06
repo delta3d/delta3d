@@ -64,6 +64,7 @@ namespace dtDirector
 
       static dtCore::RefPtr<dtDirector::NodeType> OPERATION_ACTION_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> STRING_MANIPULATOR_ACTION_NODE_TYPE;
+      static dtCore::RefPtr<dtDirector::NodeType> STRING_COMPOSER_ACTION_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> TOGGLE_ACTION_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> TOGGLE_MOTION_MODEL_ACTION_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> SET_VALUE_ACTION_NODE_TYPE;
