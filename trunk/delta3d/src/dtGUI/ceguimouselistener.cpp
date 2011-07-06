@@ -89,8 +89,8 @@ bool CEGUIMouseListener::HandleMouseMoved(const dtCore::Mouse* mouse, float x, f
    mMouseY = y;
 
    ///\todo document these magic constants from the CEUIDrawable-days.
-   return verifyHandled(CEGUI::System::getSingleton().injectMouseMove(xDelta * mHalfWidth, yDelta * -mHalfHeight));
-   //return verifyHandled(CEGUI::System::getSingleton().injectMousePosition( ((x+1)*0.5f)*mWidth, ((-y+1)*0.5f)*mHeight));
+   //return verifyHandled(CEGUI::System::getSingleton().injectMouseMove(xDelta * mHalfWidth, yDelta * -mHalfHeight));
+   return verifyHandled(CEGUI::System::getSingleton().injectMousePosition( ((x+1)*0.5f)*mWidth, ((-y+1)*0.5f)*mHeight));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
