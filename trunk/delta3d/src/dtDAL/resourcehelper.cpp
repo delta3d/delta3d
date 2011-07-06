@@ -288,6 +288,11 @@ namespace dtDAL
                extFilter.insert(std::make_pair("rgba","Red Green Blue Alpha Format."));
                handler = new DefaultResourceTypeHandler(d, "Red Green Blue Alpha Format.", extFilter);
                extMap.insert(std::make_pair("rgba", dtCore::RefPtr<ResourceTypeHandler>(handler)));
+
+               extFilter.clear();
+               extFilter.insert(std::make_pair("dds","GPU compatible compressed textures."));
+               handler = new DefaultResourceTypeHandler(d, "GPU compatible compressed textures.", extFilter);
+               extMap.insert(std::make_pair("dds", dtCore::RefPtr<ResourceTypeHandler>(handler)));
             }
             else if (d == DataType::PARTICLE_SYSTEM)
             {
