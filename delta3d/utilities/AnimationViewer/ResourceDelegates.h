@@ -13,6 +13,7 @@
 #include <osg/Texture2D>
 
 
+
 ////////////////////////////////////////////////////////////////////////////////
 // FORWARD DECLARATIONS
 ////////////////////////////////////////////////////////////////////////////////
@@ -22,6 +23,32 @@ namespace osg
 {
    class Texture2D;
 }
+
+
+
+/////////////////////////////////////////////////////////////////////////////////
+// FILE BUTTONS EDITOR CODE
+/////////////////////////////////////////////////////////////////////////////////
+class FileButtonsEditor : public QWidget
+{
+   Q_OBJECT
+public:
+   typedef QWidget BaseClass;
+
+   FileButtonsEditor(QWidget* parent = 0);
+
+signals:
+   void SignalClickedFile();
+   void SignalClickedRemove();
+
+public slots:
+   void OnClickedFile();
+   void OnClickedRemove();
+
+public:
+   QPushButton* mButtonFile;
+   QPushButton* mButtonRemove;
+};
 
 
 
@@ -48,6 +75,8 @@ public:
 
    bool IsDataValid(const QString& data) const;
 
+   bool IsFileRemovalAllowed(const std::string& file) const;
+
    QWidget* createEditor(QWidget* parent, const QStyleOptionViewItem& option,
       const QModelIndex& index) const;
 
@@ -61,12 +90,16 @@ public:
 
    bool ApplyData(const QString& data) const;
 
+   bool AskUser(const std::string& promptTitle, const std::string& question) const;
+
 signals:
    void SignalResourceEditStart(int fileType, const std::string& objectName) const;
    void SignalResourceEditEnd(int fileType, const std::string& objectName) const;
+   void SignalResourceRemoved(int fileType, const std::string& objectName) const;
 
 public slots:
    void OnOpenFile() const;
+   void OnRemoveFile() const;
 
 private:
    bool ReplaceFile(dtAnim::Cal3DModelData& modelData, dtAnim::Cal3DModelWrapper& modelWrapper,
