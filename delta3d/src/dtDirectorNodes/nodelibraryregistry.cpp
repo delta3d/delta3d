@@ -80,6 +80,7 @@
 #include <dtDirectorNodes/foreachaction.h>
 #include <dtDirectorNodes/foreachactoraction.h>
 #include <dtDirectorNodes/stringmanipulatoraction.h>
+#include <dtDirectorNodes/stringcomposeraction.h>
 
 // Mutators
 #include <dtDirectorNodes/addmutator.h>
@@ -168,6 +169,7 @@ namespace dtDirector
 
    RefPtr<NodeType> NodeLibraryRegistry::OPERATION_ACTION_NODE_TYPE(             new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Arithmetic Operation",      "General",     "Operations",  "Performs a simple operation between two values A and B and outputs to Result.", NULL, Colors::BLUE));
    RefPtr<NodeType> NodeLibraryRegistry::STRING_MANIPULATOR_ACTION_NODE_TYPE(    new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "String Manipulator",        "General",     "Operations",  "Performs a string operation.", NULL, Colors::BLUE));
+   RefPtr<NodeType> NodeLibraryRegistry::STRING_COMPOSER_ACTION_NODE_TYPE(       new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "String Composer",           "General",     "Operations",  "Allows string to be composed by filling in '%%' character sequences with values from attached value nodes.", NULL, Colors::BLUE));
    RefPtr<NodeType> NodeLibraryRegistry::TOGGLE_ACTION_NODE_TYPE(                new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Toggle",                    "General",     "Operations",  "Sets a boolean value.", NULL, Colors::BLUE));
    RefPtr<NodeType> NodeLibraryRegistry::TOGGLE_MOTION_MODEL_ACTION_NODE_TYPE(   new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Toggle Motion Model",       "Scene",       "Operations",  "Toggle the enabled status of a motion model.", NULL, Colors::BLUE));
    RefPtr<NodeType> NodeLibraryRegistry::SET_VALUE_ACTION_NODE_TYPE(             new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Set Value",                 "General",     "Operations",  "Copies the value of the Source value into the Destination value.", NULL, Colors::BLUE));
@@ -298,6 +300,7 @@ namespace dtDirector
 
       mNodeFactory->RegisterType<OperationAction>(OPERATION_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<StringManipulatorAction>(STRING_MANIPULATOR_ACTION_NODE_TYPE.get());
+      mNodeFactory->RegisterType<StringComposerAction>(STRING_COMPOSER_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<ToggleAction>(TOGGLE_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<ToggleMotionModelAction>(TOGGLE_MOTION_MODEL_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<SetValueAction>(SET_VALUE_ACTION_NODE_TYPE.get());
