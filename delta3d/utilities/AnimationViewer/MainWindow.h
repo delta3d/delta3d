@@ -25,6 +25,7 @@ class QComboBox;
 class QHBoxLayout;
 class QTreeWidget;
 class QTreeWidgetItem;
+class QPushButton;
 
 namespace dtAnim
 {
@@ -131,6 +132,10 @@ public slots:
    void OnResourceEditStart(int fileType, const std::string& objectName);
    void OnResourceEditEnd(int fileType, const std::string& objectName);
    void OnResourceNameChanged(int fileType, const std::string& oldName, const std::string& newName) const;
+   void OnResourceAdd();
+   void OnResourceRemoved(int fileType, const std::string& objectName);
+
+   void OnError(const std::string& title, const std::string& message);
 
 private:
    void CreateMenus();
@@ -202,6 +207,7 @@ private:
    PoseMeshProperties* mPoseMeshProperties;
    
    QLabel*             mFileLabel;
+   QPushButton*        mFileAdd;
    QTreeWidget*        mFileTree;
    QTreeWidgetItem*    mFileGroupSkel;
    QTreeWidgetItem*    mFileGroupAnim;

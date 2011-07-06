@@ -336,10 +336,30 @@ void Viewer::OnSaveCharFile(const QString& filename)
          // Finalize the data from current changes in the model.
          data->SetScale(wrapper->GetScale());
 
-         // Wrap and write the data.
-         dtCore::RefPtr<dtDAL::WriteWrapperOSGObject<Cal3DModelData> > obj
-            = new dtDAL::WriteWrapperOSGObject<Cal3DModelData>(*data);
-         osgDB::writeObjectFile(*obj, filename.toStdString());
+         try
+         {
+            // Wrap and write the data.
+            dtCore::RefPtr<dtDAL::WriteWrapperOSGObject<Cal3DModelData> > obj
+               = new dtDAL::WriteWrapperOSGObject<Cal3DModelData>(*data);
+            osgDB::writeObjectFile(*obj, filename.toStdString());
+         }
+         catch(std::exception& e)
+         {
+            std::string title("Error saving.");
+            std::ostringstream oss;
+            oss << "Exception saving file \""
+               << filename.toStdString().c_str()
+               << "\": " << e.what() << std::endl;
+            emit SignalError(title, oss.str());
+         }
+         catch(...)
+         {
+            std::string title("Error saving.");
+            std::ostringstream oss;
+            oss << "Unknown exception saving file \""
+               << filename.toStdString().c_str() << std::endl;
+            emit SignalError(title, oss.str());
+         }
       }
    }
 }
