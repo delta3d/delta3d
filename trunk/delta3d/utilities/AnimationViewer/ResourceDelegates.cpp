@@ -3,9 +3,12 @@
 // INCLUDE DIRECTIVES
 /////////////////////////////////////////////////////////////////////////////////
 #include "ResourceDelegates.h"
+#include "ResourceDialogs.h"
 // Qt
 #include <QtGui/QFileDialog>
+#include <QtGui/QHBoxLayout>
 #include <QtGui/QLineEdit>
+#include <QtGui/QMessageBox>
 #include <QtGui/QPushButton>
 // OSG
 #include <osg/Texture2D>
@@ -30,6 +33,53 @@
 /////////////////////////////////////////////////////////////////////////////////
 static const int COLUMN_NAME = 0;
 static const int COLUMN_FILE = 1;
+
+
+
+/////////////////////////////////////////////////////////////////////////////////
+// FILE BUTTONS EDITOR CODE
+/////////////////////////////////////////////////////////////////////////////////
+FileButtonsEditor::FileButtonsEditor(QWidget* parent)
+   : BaseClass(parent)
+{
+   QSizePolicy sizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+   setSizePolicy(sizePolicy);
+
+   QHBoxLayout* layout = new QHBoxLayout(this);
+   layout->setSizeConstraint(QLayout::SetMinimumSize);
+   layout->setSpacing(0);
+   layout->setContentsMargins(0, 0, 0, 0);
+
+   mButtonFile = new QPushButton(this);
+
+   QSize qsize(16, 16);
+   mButtonRemove = new QPushButton(this);
+   mButtonRemove->setMinimumSize(qsize);
+
+   layout->addWidget(mButtonFile);
+   layout->addWidget(mButtonRemove);
+   setLayout(layout);
+
+   mButtonFile->setSizePolicy(sizePolicy);
+
+   QIcon icon(":/images/remove.png");
+   mButtonRemove->setIcon(icon);
+
+   connect(mButtonFile, SIGNAL(clicked(bool)), this, SLOT(OnClickedFile()));
+   connect(mButtonRemove, SIGNAL(clicked(bool)), this, SLOT(OnClickedRemove()));
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void FileButtonsEditor::OnClickedFile()
+{
+   emit SignalClickedFile();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void FileButtonsEditor::OnClickedRemove()
+{
+   emit SignalClickedRemove();
+}
 
 
 
@@ -111,27 +161,7 @@ void FileItemDelegate::OnOpenFile() const
    mFileType = mCharData->GetFileType(file);
 
    // Determine the filter by file type.
-   QString filter;
-   switch(mFileType)
-   {
-   case Cal3DModelData::SKEL_FILE:
-      filter = tr("Skeletons (*.csf *.xsf)");
-      break;
-   case Cal3DModelData::ANIM_FILE:
-      filter = tr("Animations (*.caf *.xaf)");
-      break;
-   case Cal3DModelData::MESH_FILE:
-      filter = tr("Meshes (*.cmf *.xmf)");
-      break;
-   case Cal3DModelData::MAT_FILE:
-      filter = tr("Materials (*.crf *.xrf)");
-      break;
-   case Cal3DModelData::MORPH_FILE:
-      filter = tr("Morphs (*.cpf *.xpf)");
-      break;
-   default:
-      break;
-   }
+   QString filter = Cal3DResourceFilters::GetFilterForFileType(mFileType);
 
    if (mFileType != Cal3DModelData::NO_FILE) // This case should not be possible.
    {
@@ -159,12 +189,71 @@ void FileItemDelegate::OnOpenFile() const
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void FileItemDelegate::OnRemoveFile() const
+{
+   using namespace dtAnim;
+
+   std::string file(mPrevValue.toStdString());
+   if (mCharData.valid() && IsFileRemovalAllowed(file))
+   {
+      std::string oldFile(mPrevValue.toStdString());
+      mFileType = mCharData->GetFileType(oldFile);
+
+      // Notify the application that a resource is about to change.
+      emit SignalResourceEditStart(mFileType, mObjectName);
+
+      // Replace the old file with nothing.
+      ReplaceFile(*mCharData, *mCharWrapper, mObjectName, oldFile, "");
+
+      emit SignalResourceRemoved(mFileType, mObjectName);
+
+      // Notify the application that the resource change is complete.
+      emit SignalResourceEditEnd(mFileType, mObjectName);
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+bool FileItemDelegate::IsFileRemovalAllowed(const std::string& file) const
+{
+   using namespace dtAnim;
+   bool allowed = true;
+
+   Cal3DModelData::CalFileType fileType = mCharData->GetFileType(file);
+   switch (fileType)
+   {
+   case Cal3DModelData::SKEL_FILE:
+      allowed = AskUser("Remove Skeleton?", "The character will not be visible without a skeleton. Are you sure you want to remove it?");
+      break;
+
+   case Cal3DModelData::MESH_FILE:
+      if (mCharData->GetFileCount(fileType) == 1)
+      {
+         allowed = AskUser("Remove Mesh?", "The character needs at least one mesh to render. Are you sure you want to remove it?");
+      }
+      break;
+
+   case Cal3DModelData::MAT_FILE:
+      if (mCharData->GetFileCount(fileType) == 1)
+      {
+         allowed = AskUser("Remove Material?", "The character needs at least one material to render. Are you sure you want to remove it?");
+      }
+      break;
+
+   default:
+      break;
+   }
+
+   return allowed;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 QWidget* FileItemDelegate::createEditor(QWidget* parent, const QStyleOptionViewItem& option,
                                         const QModelIndex& index) const
 {
-   QPushButton* button = new QPushButton(parent);
-   connect(button, SIGNAL(clicked(bool)), this, SLOT(OnOpenFile()));
-   return button;
+   FileButtonsEditor* editor = new FileButtonsEditor(parent);
+   connect(editor, SIGNAL(SignalClickedFile()), this, SLOT(OnOpenFile()));
+   connect(editor, SIGNAL(SignalClickedRemove()), this, SLOT(OnRemoveFile()));
+   return editor;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -172,7 +261,7 @@ void FileItemDelegate::setEditorData(QWidget* editor, const QModelIndex& index) 
 {
    QString value = index.model()->data(index, Qt::EditRole).toString();
 
-   mButton = static_cast<QPushButton*>(editor);
+   mButton = static_cast<FileButtonsEditor*>(editor)->mButtonFile;
    mButton->setText(value);
 
    mPrevValue = value;
@@ -189,7 +278,7 @@ void FileItemDelegate::setEditorData(QWidget* editor, const QModelIndex& index) 
 void FileItemDelegate::setModelData(QWidget* editor, QAbstractItemModel* model,
    const QModelIndex& index) const
 {
-   QPushButton* button = static_cast<QPushButton*>(editor);
+   QPushButton* button = static_cast<FileButtonsEditor*>(editor)->mButtonFile;
    model->setData(index, button->text(), Qt::EditRole);
 }
 
@@ -197,7 +286,14 @@ void FileItemDelegate::setModelData(QWidget* editor, QAbstractItemModel* model,
 void FileItemDelegate::updateEditorGeometry(QWidget* editor,
    const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
-   editor->setGeometry(option.rect);
+   FileButtonsEditor* fbe = static_cast<FileButtonsEditor*>(editor);
+   fbe->setGeometry(option.rect);
+
+   int height = option.rect.height();
+   fbe->mButtonRemove->setMaximumWidth(height);
+   fbe->mButtonRemove->setMaximumHeight(height);
+   fbe->mButtonFile->setMaximumWidth(option.rect.width() - height);
+   fbe->mButtonFile->setMaximumHeight(height);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -221,6 +317,29 @@ bool FileItemDelegate::ApplyData(const QString& data) const
 }
 
 /////////////////////////////////////////////////////////////////////////////////
+bool FileItemDelegate::AskUser(const std::string& promptTitle, const std::string& question) const
+{
+   bool ansewer = false;
+
+   QString qTitle(promptTitle.c_str());
+   QString qMessage(question.c_str());
+   QMessageBox msgBox;
+   msgBox.setText(qTitle);
+   msgBox.setInformativeText(qMessage);
+   msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+   msgBox.setDefaultButton(QMessageBox::Ok);
+   int retCode = msgBox.exec();
+
+   // If OK...
+   if (retCode == QMessageBox::Ok)
+   {
+      ansewer = true;
+   }
+
+   return ansewer;
+}
+
+/////////////////////////////////////////////////////////////////////////////////
 bool FileItemDelegate::ReplaceFile(dtAnim::Cal3DModelData& modelData, dtAnim::Cal3DModelWrapper& modelWrapper,
                  const std::string& objectName, const std::string& oldFile, const std::string& newFile) const
 {
@@ -229,7 +348,7 @@ bool FileItemDelegate::ReplaceFile(dtAnim::Cal3DModelData& modelData, dtAnim::Ca
    bool success = false;
 
    CalCoreModel* model = modelData.GetCoreModel();
-   Cal3DModelData::CalFileType calFileType = modelData.GetFileType(newFile);
+   Cal3DModelData::CalFileType calFileType = modelData.GetFileType(oldFile);
 
    modelData.UnregisterObjectName(objectName, oldFile);
 
@@ -237,9 +356,9 @@ bool FileItemDelegate::ReplaceFile(dtAnim::Cal3DModelData& modelData, dtAnim::Ca
    {
    case Cal3DModelData::SKEL_FILE:
 #if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300
-      success = modelData.LoadCoreSkeleton(newFile, objectName);
+      success = !newFile.empty() && modelData.LoadCoreSkeleton(newFile, objectName);
 #else
-      success = modelData.LoadCoreSkeleton(newFile);
+      success = !newFile.empty() && modelData.LoadCoreSkeleton(newFile);
 #endif
       break;
 
@@ -264,23 +383,29 @@ bool FileItemDelegate::ReplaceFile(dtAnim::Cal3DModelData& modelData, dtAnim::Ca
          // Remove the animation resource from the central model data.
          if (-1 < model->unloadCoreAnimation(animId))
          {
-            animId = modelData.LoadCoreAnimation(newFile, objectName);
-            success = -1 < animId;
+            if (!newFile.empty())
+            {
+               animId = modelData.LoadCoreAnimation(newFile, objectName);
+               success = -1 < animId;
+            }
          }
 
-         AnimationWrapper* wrapper = modelData.GetAnimationWrapperByName(objectName);
-         if (wrapper != NULL)
+         if (success)
          {
-            wrapper->SetID(animId);
-         }
+            AnimationWrapper* wrapper = modelData.GetAnimationWrapperByName(objectName);
+            if (wrapper != NULL)
+            {
+               wrapper->SetID(animId);
+            }
 
-         if (wasCycle)
-         {
-            modelWrapper.BlendCycle(animId, 1.0f, 0.0f);
-         }
-         else if (wasAction)
-         {
-            modelWrapper.ExecuteAction(animId, 0.0f, 0.0f);
+            if (wasCycle)
+            {
+               modelWrapper.BlendCycle(animId, 1.0f, 0.0f);
+            }
+            else if (wasAction)
+            {
+               modelWrapper.ExecuteAction(animId, 0.0f, 0.0f);
+            }
          }
       }
       break;
@@ -288,14 +413,14 @@ bool FileItemDelegate::ReplaceFile(dtAnim::Cal3DModelData& modelData, dtAnim::Ca
    case Cal3DModelData::MESH_FILE:
       if (-1 < model->unloadCoreMesh(model->getCoreMeshId(objectName)))
       {
-         success = -1 < modelData.LoadCoreMesh(newFile, objectName);
+         success = !newFile.empty() && -1 < modelData.LoadCoreMesh(newFile, objectName);
       }
       break;
 
    case Cal3DModelData::MAT_FILE:
       if (-1 < model->unloadCoreMaterial(model->getCoreMaterialId(objectName)))
       {
-         int id = modelData.LoadCoreMaterial(newFile, objectName);
+         int id = newFile.empty() ? -1 : modelData.LoadCoreMaterial(newFile, objectName);
          success = -1 < id;
          if (success)
          {
@@ -308,7 +433,7 @@ bool FileItemDelegate::ReplaceFile(dtAnim::Cal3DModelData& modelData, dtAnim::Ca
 #if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300
       /*if (-1 < model->unloadCoreAnimatedMorph(model->getCoreAnimatedMorphId(objectName)))
       {
-         success = -1 < modelData.LoadCoreMorph(newFile, objectName);
+         success = !newFile.empty() && -1 < modelData.LoadCoreMorph(newFile, objectName);
       }*/
 #endif
       break;
