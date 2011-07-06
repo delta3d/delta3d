@@ -1891,6 +1891,7 @@ void DirectorCinematicEditorPlugin::OnSave()
       if (startedCallNode)
       {
          startedCallNode->SetString("Started", "EventName");
+         startedCallNode->SetString("true", "Local Event");
          startedCallNode->SetBoolean(true, "Local Event");
 
          Connect(schedulerNode, startedCallNode, "Started", "Call Event");
@@ -1949,6 +1950,7 @@ void DirectorCinematicEditorPlugin::OnSave()
       if (endedCallNode)
       {
          endedCallNode->SetString("Ended", "EventName");
+         endedCallNode->SetString("true", "Local Event");
          endedCallNode->SetBoolean(true, "Local Event");
 
          Connect(schedulerNode, endedCallNode, "Ended", "Call Event");
@@ -1995,7 +1997,7 @@ void DirectorCinematicEditorPlugin::OnSave()
          // Create our animation action.
          if (actorData.mAnimationData.size())
          {
-            dtDirector::AnimateActorAction* animNode = 
+            dtDirector::AnimateActorAction* animNode =
                dynamic_cast<dtDirector::AnimateActorAction*>(
                CreateNode("Animate Actor", "Cinematic", startNode));
             if (animNode)
