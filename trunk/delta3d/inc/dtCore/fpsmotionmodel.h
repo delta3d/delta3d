@@ -367,6 +367,26 @@ namespace dtCore
       bool GetRecenterMouse() { return mShouldRecenterMouse; }
 
       /**
+       * @return whether the WASD keys are used for movement.
+       */
+      bool GetUseWASD() const {return mUseWASD;}
+
+      /**
+       * Sets whether the WASD keys are used for movement.
+       */
+      void SetUseWASD(bool enable) {mUseWASD = enable;}
+
+      /**
+       * @return whether the Arrow keys are used for movement.
+       */
+      bool GetUseArrowKeys() const {return mUseArrowKeys;}
+
+      /**
+       * Sets whether the Arrow keys are used for movement.
+       */
+      void SetUseArrowKeys(bool enable) {mUseArrowKeys = enable;}
+
+      /**
        * Sets whether this motion model should operate even when unfocused.
        * Defaults to false (no).
        * @param operate True if motion model should operate even when unfocused

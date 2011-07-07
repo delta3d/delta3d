@@ -17,6 +17,7 @@
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
  * Bradley Anderegg and Chris Darken 08/21/2006
+ * Erik Johnson and Jeff Houde 07/05/2011
  */
 
 #include <prefix/dtcoreprefix.h>
@@ -95,39 +96,30 @@ FPSCollider& CollisionMotionModel::GetFPSCollider()
 void CollisionMotionModel::PerformTranslation(const double deltaTime)
 {
    Transform transform;
-   osg::Vec3 xyz, hpr, newXYZ;
+   osg::Vec3 currentXYZ, hpr;
 
    // query initial status (to change from)
    GetTarget()->GetTransform(transform);
-   transform.GetTranslation(xyz);
+   transform.GetTranslation(currentXYZ);
    transform.GetRotation(hpr);
 
    // calculate x/y delta
-   osg::Vec3 translation(0.0f, 0.0f, 0.0f);
-   translation[0] = GetSidestepFactor()    * GetMaximumSidestepSpeed();
-   translation[1] = GetForwardBackFactor() * GetMaximumWalkSpeed();
+   osg::Vec3 velocity(0.0f, 0.0f, 0.0f);
+   velocity[0] = GetSidestepFactor()    * GetMaximumSidestepSpeed();
+   //velocity[0] = 0.25f * GetMaximumSidestepSpeed();
+   velocity[1] = GetForwardBackFactor() * GetMaximumWalkSpeed();
 
    // transform our x/y delta by our new heading
    osg::Matrix mat;
    const float heading = hpr[0];
    mat.makeRotate(osg::DegreesToRadians(heading), osg::Vec3(0.0f, 0.0f, 1.0f));
-   translation = translation * mat;
-
-   // limit maximum lateral speed to be the maximum walk speed
-   /*
-   if (translation.length() > GetMaximumWalkSpeed())
-   {
-      translation.normalize();
-      translation.set(translation[0] * GetMaximumWalkSpeed(), translation[1] * GetMaximumWalkSpeed(), 0.0f);
-   }
-   //*/
+   velocity = velocity * mat;
 
    // perform integration step, physically constraining translation path to environment
-   newXYZ = mCollider.Update(xyz, translation, deltaTime, mCanJump ? GetKeyboard()->GetKeyState(' ') : false);
-   //newXYZ = xyz + translation * deltaTime;
+   currentXYZ = mCollider.Update(currentXYZ, velocity, deltaTime, mCanJump ? GetKeyboard()->GetKeyState(' ') : false);
 
    // apply changes (new position)
-   transform.SetTranslation(newXYZ);
+   transform.SetTranslation(currentXYZ);
    GetTarget()->SetTransform(transform);
 }
 
