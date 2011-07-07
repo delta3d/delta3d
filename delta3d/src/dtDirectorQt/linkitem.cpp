@@ -1623,10 +1623,19 @@ namespace dtDirector
          {
             mScene->GetEditor()->GetUndoManager()->BeginMultipleEvents(undoDescription);
 
-            while (!output->GetLinks().empty())
+            int count = 0;
+            while (count < (int)output->GetLinks().size())
             {
-               ValueLink* input = output->GetLinks()[0];
-               Disconnect(input);
+               ValueLink* input = output->GetLinks()[count];
+               if (input)
+               {
+                  if (input->GetOwner()->AsValueNode())
+                  {
+                     count++;
+                     continue;
+                  }
+                  Disconnect(input);
+               }
             }
 
             mScene->GetEditor()->GetUndoManager()->EndMultipleEvents();
@@ -1915,16 +1924,24 @@ namespace dtDirector
          dcMenu->addAction("Disconnect All");
          dcMenu->addSeparator();
 
+         int finalCount = 0;
          int count = (int)output->GetLinks().size();
-         dcMenu->setEnabled(count > 0);
          for (int index = 0; index < count; index++)
          {
+            // Ignore all connected value nodes.
+            if (output->GetLinks()[index]->GetOwner()->AsValueNode())
+            {
+               continue;
+            }
+
             QString nodeName = output->GetLinks()[index]->GetOwner()->GetName().c_str();
             QString linkName = output->GetLinks()[index]->GetName().c_str();
             QAction* dcAction = dcMenu->addAction(QString("Disconnect from \'") +
                linkName + "\' on node \'" + nodeName + "\'");
             dcAction->setStatusTip(linkName);
+            finalCount++;
          }
+         dcMenu->setEnabled(finalCount > 0);
 
          connect(dcMenu, SIGNAL(triggered(QAction*)), this, SLOT(Disconnect(QAction*)));
 
