@@ -91,9 +91,6 @@ namespace dtDirector
       void SetStepUpHeight(float value);
       float GetStepUpHeight() const;
 
-      void SetTheta(float value);
-      float GetTheta() const;
-
       void SetWalkSpeed(float value);
       float GetWalkSpeed() const;
 
@@ -102,6 +99,15 @@ namespace dtDirector
 
       void SetTurnSpeed(float value);
       float GetTurnSpeed() const;
+
+      void SetJumpSpeed(float value);
+      float GetJumpSpeed() const;
+
+      void SetSlideSpeed(float value);
+      float GetSlideSpeed() const;
+
+      void SetSlideThreshold(float value);
+      float GetSlideThreshold() const;
 
       void SetUseWASD(bool value);
       bool GetUseWASD() const;
@@ -133,10 +139,12 @@ namespace dtDirector
       float mHeight;
       float mRadius;
       float mStepUpHeight;
-      float mTheta;
       float mWalkSpeed;
       float mSidestepSpeed;
       float mTurnSpeed;
+      float mJumpSpeed;
+      float mSlideSpeed;
+      float mSlideThreshold;
       bool  mUseWASD;
       bool  mUseArrows;
       bool  mAllowJump;
