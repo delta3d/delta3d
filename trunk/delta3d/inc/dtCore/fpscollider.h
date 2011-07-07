@@ -211,6 +211,8 @@ namespace dtCore
          float mHeightAboveTerrain;
          float mMaxStepUpDistance;
 
+         bool mJumping;
+
          osg::Vec3 mLastVelocity;
          osg::Vec3 mStartPosition;
          osg::Vec3 mEndPosition;

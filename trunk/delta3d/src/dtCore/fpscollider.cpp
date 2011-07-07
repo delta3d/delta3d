@@ -59,6 +59,7 @@ namespace dtCore
       , mTerminalSpeed(-50.0f)
       , mHeightAboveTerrain(pHeight)
       , mMaxStepUpDistance(k)
+      , mJumping(false)
       , mLastVelocity(0.0f, 0.0f, 0.0f)
       , mCollisionSpace()
       , mPhysicsController(pScene->GetPhysicsController())
@@ -102,6 +103,7 @@ namespace dtCore
       , mJumpSpeed(5.0f)
       , mHeightAboveTerrain(pHeight)
       , mMaxStepUpDistance(k)
+      , mJumping(false)
       , mLastVelocity(0.0f, 0.0f, 0.0f)
       , mCollisionSpace(pSpaceToCollideWith)
    {
@@ -431,6 +433,8 @@ namespace dtCore
             osg::Vec3 normal(mLastFeetContact.normal[0],
                              mLastFeetContact.normal[1],
                              mLastFeetContact.normal[2]);
+
+            mJumping = false;
 
             if (normal.z() < 1.0f - mSlideThreshold)
             {
@@ -802,10 +806,16 @@ namespace dtCore
    //////////////////////////////////////////////////////////////////////////
    osg::Vec3 FPSCollider::Step(const osg::Vec3& targetPosition, const double deltaFrameTime, bool pJump)
    {
-      // Only jump if we are walking.
+      // Only allow jumping if we are walking.
       if (mCurrentMode == WALKING && pJump)
       {
          mLastVelocity += mGroundNormal * mJumpSpeed;
+         mJumping = true;
+      }
+      else if (mJumping)
+      {
+         mLastVelocity[0] += mGroundNormal[0] * mJumpSpeed;
+         mLastVelocity[1] += mGroundNormal[1] * mJumpSpeed;
       }
 
       // Check if the target has moved away significantly.
