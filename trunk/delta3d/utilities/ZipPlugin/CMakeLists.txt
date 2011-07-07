@@ -27,11 +27,9 @@ LINK_WITH_VARIABLES(${LIB_NAME}
 
 INCLUDE(ModuleInstall OPTIONAL)
 
-IF (UNIX)
-  ADD_DEFINITIONS(-DZIP_STD)
-  # OSG doesn't want the "lib" on the front
-  SET(CMAKE_SHARED_MODULE_PREFIX "")
-ENDIF (UNIX)
+ADD_DEFINITIONS(-DZIP_STD)
+# OSG doesn't want the "lib" on the front
+SET(CMAKE_SHARED_MODULE_PREFIX "")
 
 #little hack to get the .dll into /bin and .lib into /lib
 IF (MSVC_IDE)
