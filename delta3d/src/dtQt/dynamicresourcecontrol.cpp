@@ -168,11 +168,8 @@ namespace dtQt
 
       mTemporaryButton = new ResourceSelectorWidget(wrapper);
       mTemporaryButton->SetResourceType(mNonResourceOptions, mProperty->GetDataType());
-      mTemporaryButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-      mTemporaryButton->setIcon(QIcon(QPixmap(1, 1)));
       mTemporaryButton->setToolTip(getDescription());
       mTemporaryButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-      mTemporaryButton->setPopupMode(QToolButton::InstantPopup);
       connect(mTemporaryButton, SIGNAL(ResourceSelected(QAction*)), this, SLOT(itemSelected(QAction*)));
 
       updateEditorFromModel(mWrapper);
