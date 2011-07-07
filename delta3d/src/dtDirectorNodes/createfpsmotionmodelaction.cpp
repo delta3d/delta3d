@@ -44,11 +44,13 @@ namespace dtDirector
       mModelName     = "FPS Motion Model";
       mHeight        = 1.5f;
       mRadius        = 0.2f;
-      mStepUpHeight  = 0.1f;
-      mTheta         = 0.05f;
+      mStepUpHeight  = 0.3f;
       mWalkSpeed     = 5.0f;
       mSidestepSpeed = 5.0f;
       mTurnSpeed     = 1.5f;
+      mJumpSpeed     = 5.0f;
+      mSlideSpeed    = 5.0f;
+      mSlideThreshold= 0.1f;
       mUseWASD       = true;
       mUseArrows     = true;
       mAllowJump     = true;
@@ -111,13 +113,6 @@ namespace dtDirector
          "The step up height of the motion model.");
       AddProperty(stepProp);
 
-      dtDAL::FloatActorProperty* thetaProp = new dtDAL::FloatActorProperty(
-         "Theta", "Theta",
-         dtDAL::FloatActorProperty::SetFuncType(this, &CreateFPSMotionModelAction::SetTheta),
-         dtDAL::FloatActorProperty::GetFuncType(this, &CreateFPSMotionModelAction::GetTheta),
-         "The theta of the motion model.");
-      AddProperty(thetaProp);
-
       dtDAL::FloatActorProperty* walkProp = new dtDAL::FloatActorProperty(
          "Walk Speed", "Walk Speed",
          dtDAL::FloatActorProperty::SetFuncType(this, &CreateFPSMotionModelAction::SetWalkSpeed),
@@ -138,6 +133,27 @@ namespace dtDirector
          dtDAL::FloatActorProperty::GetFuncType(this, &CreateFPSMotionModelAction::GetTurnSpeed),
          "The turn speed of the motion model.");
       AddProperty(turnProp);
+
+      dtDAL::FloatActorProperty* jumpSpeedProp = new dtDAL::FloatActorProperty(
+         "Jump Speed", "Jump Speed",
+         dtDAL::FloatActorProperty::SetFuncType(this, &CreateFPSMotionModelAction::SetJumpSpeed),
+         dtDAL::FloatActorProperty::GetFuncType(this, &CreateFPSMotionModelAction::GetJumpSpeed),
+         "The jump speed.");
+      AddProperty(jumpSpeedProp);
+
+      dtDAL::FloatActorProperty* slideSpeedProp = new dtDAL::FloatActorProperty(
+         "Slide Speed", "Slide Speed",
+         dtDAL::FloatActorProperty::SetFuncType(this, &CreateFPSMotionModelAction::SetSlideSpeed),
+         dtDAL::FloatActorProperty::GetFuncType(this, &CreateFPSMotionModelAction::GetSlideSpeed),
+         "The speed in which the target will slide down a sloped surface.");
+      AddProperty(slideSpeedProp);
+
+      dtDAL::FloatActorProperty* slideThresholdProp = new dtDAL::FloatActorProperty(
+         "Slide Threshold", "Slide Threshold",
+         dtDAL::FloatActorProperty::SetFuncType(this, &CreateFPSMotionModelAction::SetSlideThreshold),
+         dtDAL::FloatActorProperty::GetFuncType(this, &CreateFPSMotionModelAction::GetSlideThreshold),
+         "The threshold in which the target will slide down a sloped surface.");
+      AddProperty(slideThresholdProp);
 
       dtDAL::BooleanActorProperty* useWasdProp = new dtDAL::BooleanActorProperty(
          "Use WASD Keys", "Use WASD Keys",
@@ -183,10 +199,12 @@ namespace dtDirector
       mValues.push_back(ValueLink(this, heightProp, false, false, true, false));
       mValues.push_back(ValueLink(this, radiusProp, false, false, true, false));
       mValues.push_back(ValueLink(this, stepProp, false, false, true, false));
-      mValues.push_back(ValueLink(this, thetaProp, false, false, true, false));
       mValues.push_back(ValueLink(this, walkProp, false, false, true, false));
       mValues.push_back(ValueLink(this, sideProp, false, false, true, false));
       mValues.push_back(ValueLink(this, turnProp, false, false, true, false));
+      mValues.push_back(ValueLink(this, jumpSpeedProp, false, false, true, false));
+      mValues.push_back(ValueLink(this, slideSpeedProp, false, false, true, false));
+      mValues.push_back(ValueLink(this, slideThresholdProp, false, false, true, false));
       mValues.push_back(ValueLink(this, useWasdProp, false, false, true, false));
       mValues.push_back(ValueLink(this, useArrowsProp, false, false, true, false));
       mValues.push_back(ValueLink(this, jumpProp, false, false, true, false));
@@ -208,7 +226,7 @@ namespace dtDirector
                GetFloat("Height"),
                GetFloat("Radius"),
                GetFloat("Step Height"),
-               GetFloat("Theta"),
+               0.0f,
                app->GetScene(),
                app->GetKeyboard(),
                app->GetMouse(),
@@ -217,25 +235,34 @@ namespace dtDirector
                GetFloat("Sidestep Speed"),
                GetBoolean("Use WASD Keys"),
                GetBoolean("Use Arrow Keys"));
+         }
 
-            if (model)
+         if (model)
+         {
+            model->SetName(modelName);
+            model->SetCanJump(GetBoolean("Allow Jump"));
+            model->SetMaximumWalkSpeed(GetFloat("Walk Speed"));
+            model->SetMaximumTurnSpeed(GetFloat("Turn Speed"));
+            model->SetMaximumSidestepSpeed(GetFloat("Sidestep Speed"));
+            model->SetUseWASD(GetBoolean("Use WASD Keys"));
+            model->SetUseArrowKeys(GetBoolean("Use Arrow Keys"));
+            model->GetFPSCollider().SetDimensions(GetFloat("Height"), GetFloat("Radius"), GetFloat("Step Height"));
+            model->GetFPSCollider().SetJumpSpeed(GetFloat("Jump Speed"));
+            model->GetFPSCollider().SetSlideSpeed(GetFloat("Slide Speed"));
+            model->GetFPSCollider().SetSlideThreshold(GetFloat("Slide Threshold"));
+            model->GetFPSCollider().SetCollisionBitsForTorso(GetUInt("Torso Collision"));
+            model->GetFPSCollider().SetCollisionBitsForFeet(GetUInt("Feet Collision"));
+            model->SetScene(app->GetScene());
+
+            dtDAL::ActorProxy* proxy = GetActor("Actor");
+            if (proxy)
             {
-               model->SetName(modelName);
-               model->SetCanJump(GetBoolean("Allow Jump"));
-               model->GetFPSCollider().SetCollisionBitsForTorso(GetUInt("Torso Collision"));
-               model->GetFPSCollider().SetCollisionBitsForFeet(GetUInt("Feet Collision"));
-               model->SetScene(app->GetScene());
-
-               dtDAL::ActorProxy* proxy = GetActor("Actor");
-               if (proxy)
-               {
-                  dtCore::Transformable* actor = NULL;
-                  proxy->GetActor(actor);
-                  model->SetTarget(actor);
-               }
-
-               return ActionNode::Update(simDelta, delta, input, firstUpdate);
+               dtCore::Transformable* actor = NULL;
+               proxy->GetActor(actor);
+               model->SetTarget(actor);
             }
+
+            return ActionNode::Update(simDelta, delta, input, firstUpdate);
          }
       }
 
@@ -305,18 +332,6 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void CreateFPSMotionModelAction::SetTheta(float value)
-   {
-      mTheta = value;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   float CreateFPSMotionModelAction::GetTheta() const
-   {
-      return mTheta;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
    void CreateFPSMotionModelAction::SetWalkSpeed(float value)
    {
       mWalkSpeed = value;
@@ -350,6 +365,42 @@ namespace dtDirector
    float CreateFPSMotionModelAction::GetTurnSpeed() const
    {
       return mTurnSpeed;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void CreateFPSMotionModelAction::SetJumpSpeed(float value)
+   {
+      mJumpSpeed = value;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   float CreateFPSMotionModelAction::GetJumpSpeed() const
+   {
+      return mJumpSpeed;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void CreateFPSMotionModelAction::SetSlideSpeed(float value)
+   {
+      mSlideSpeed = value;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   float CreateFPSMotionModelAction::GetSlideSpeed() const
+   {
+      return mSlideSpeed;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void CreateFPSMotionModelAction::SetSlideThreshold(float value)
+   {
+      mSlideThreshold = value;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   float CreateFPSMotionModelAction::GetSlideThreshold() const
+   {
+      return mSlideThreshold;
    }
 
    ////////////////////////////////////////////////////////////////////////////////

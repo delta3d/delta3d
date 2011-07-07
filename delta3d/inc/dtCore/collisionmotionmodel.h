@@ -17,6 +17,7 @@
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
  * Bradley Anderegg and Chris Darken 08/21/2006
+ * Erik Johnson and Jeff Houde 07/05/2011
  */
 
 #ifndef __DELTA_collisionmotionmodel_H__

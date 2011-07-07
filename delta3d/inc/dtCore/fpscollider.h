@@ -17,6 +17,7 @@
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
  * Bradley Anderegg and Chris Darken 09/21/2006
+ * Erik Johnson and Jeff Houde 07/05/2011
  */
 
 #ifndef DELTA_FPSCOLLIDER
@@ -25,8 +26,10 @@
 #include <dtCore/export.h>
 #include <dtCore/refptr.h>
 #include <dtCore/odecontroller.h>
+#include <dtCore/odegeomwrap.h>
 
 #include <osg/Vec3>
+#include <osg/Vec2>
 #include <osg/Matrix>
 
 #include <ode/contact.h>
@@ -53,7 +56,7 @@ namespace dtCore
    class DT_CORE_EXPORT FPSCollider
    {
       public:
-         enum eMode{WALKING = 0, FALLING, SLIDING};
+         enum eMode{WALKING = 0, IN_AIR};
 
       public:
          /**
@@ -61,11 +64,9 @@ namespace dtCore
          * @param height, the height of the character and camera, in meters      
          * @param radius, the width of our character  
          * @param k the distance from the bottom of the knees to the ground, this represents the maximum step up height
-         * @param theta the collision amount to maintain below the ground (note: this should be less then half of k,
-         *        something small like 0.1 is recommended)
+         * @param theta (No longer used)
          * @param Scene is used to get the gravity and the ode space
          */
-   
          FPSCollider(float pHeight, float pRadius, float k, float theta, dtCore::Scene* pScene);
          FPSCollider(float pHeight, float pRadius, float k, float theta, dSpaceID pSpaceToCollideWith, const osg::Vec3& pGravity);
          virtual ~FPSCollider();
@@ -80,7 +81,7 @@ namespace dtCore
          * @param pJump specifies whether or not we want to jump
          * @return our new position in world coordinates, whatever this is controlling should be set to this pos
          */
-         osg::Vec3 Update(const osg::Vec3& p0, const osg::Vec3& v0, float deltaFrameTime, bool pJump);
+         osg::Vec3 Update(const osg::Vec3& initialTargetPosition, const osg::Vec3& v0, float deltaFrameTime, bool pJump);
 
          /**
          * @return returns the space id used for the FPSCollider
@@ -101,13 +102,14 @@ namespace dtCore
          */
          float GetSlideThreshold() const;
          void SetSlideThreshold(float pSlide);
-         
-         /**
-         * @return the slide speed is the speed we will travel perpendicular to the normal
-         */
-         float GetSlideSpeed() const;
-         void SetSlideSpeed(float pSpeed);
 
+         /**
+          * @return the slide speed used to determine how fast you slide down
+          * a sloped surface.
+          */
+         float GetSlideSpeed() const;
+         void SetSlideSpeed(float speed);
+         
          /**
          * Jump speed is the force we apply to our body when jumping in meters per second
          */
@@ -123,9 +125,8 @@ namespace dtCore
          * @param pHeight is the height of our camera and the top of our bv
          * @param pRadius is the width of our character 
          * @param k is the max distance we can step up and the size of our feet bv
-         * @param theta is the distance we maintain below the surface (should be less then half of k)
          */
-         void SetDimensions(float pHeight, float pRadius, float k, float theta);
+         void SetDimensions(float targetHeightAboveTerrain, float pRadius, float stepUpHeight);
 
          /**
          * @return the bits used to determine what the feet can collide with
@@ -151,8 +152,6 @@ namespace dtCore
 
       private:
 
-         void UpdateBoundingVolumes(const osg::Vec3& xyz);
-
          dGeomID GetFeetGeom();
          dGeomID GetTorsoGeom();
 
@@ -161,8 +160,6 @@ namespace dtCore
          static void NearCallbackTorso(void *data, dGeomID o1, dGeomID o2);
 
          static void dTriArrayCallback(dGeomID TriMesh, dGeomID RefObject, const int* TriIndices, int TriCount);
-
-         void CreateCollisionCylinder(dSpaceID pSpaceId, dGeomID& pId, const osg::Vec3& pLengths);
 
          void InitBoundingVolumes();
          void InitDrawable();
@@ -173,19 +170,27 @@ namespace dtCore
          bool CollideTorso();
          bool CollideFeet();
 
-         bool TestPosition(osg::Vec3& newPos, float dt);
+         ///@return true if torso collided with anything
+         osg::Vec3 AdjustPosition(const osg::Vec3& newPos, float dt);
+         bool ApplyMovementVector(const osg::Vec3& vec, float length, const osg::Vec3& oldPos, const osg::Vec3& offset, osg::Vec3& newPos, osg::Vec3& colPos, float& depth);
 
+         void SetCurrentMode(eMode newMode);
+         osg::Vec3 Step( const osg::Vec3& p0, const double deltaFrameTime, bool pJump );
          dGeomID mBBFeet;
+         dtCore::RefPtr<dtCore::ODEGeomWrap> mFeetGeom;
+         dtCore::RefPtr<dtCore::Transformable> mFeetTransformable;
+
          dGeomID mBBTorso;
+         dtCore::RefPtr<dtCore::ODEGeomWrap> mTorsoGeom;
+         dtCore::RefPtr<dtCore::Transformable> mTorsoTransformable;
 
          ///The local collision space that holds our collision geometry
          dSpaceID mLocalSpaceID;
 
-         osg::Vec3 mBBFeetOffset;
-         osg::Vec3 mBBTorsoOffset;
+         ///From feet collision shape to MotionModel target
+         float mTorsoOffset;
 
-         osg::Vec3 mBBFeetLengths;
-         osg::Vec3 mBBTorsoLengths;
+         osg::Vec2 mTorsoLengths;///<radius, length
 
          std::vector<osg::Vec3> mNormals;
 
@@ -193,22 +198,20 @@ namespace dtCore
          int mNumTorsoContactPoints;
 
          bool mStartCollideFeet;
+         bool mStartCollideTorso;
          dContactGeom mLastFeetContact;
-
-         bool mJumped;
+         dContactGeom mLastTorsoContact;
 
          eMode mCurrentMode;
 
-         float mSlideThreshold;
          float mSlideSpeed;
+         float mSlideThreshold;
          float mJumpSpeed;
-         float mFallSpeed;
          float mTerminalSpeed;
          float mHeightAboveTerrain;
          float mMaxStepUpDistance;
 
          osg::Vec3 mLastVelocity;
-         osg::Vec3 mSlideVelocity;
 
          ///The Delta3D collision space that holds all other collision geometry
          dSpaceID mCollisionSpace;
