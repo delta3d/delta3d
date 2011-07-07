@@ -109,6 +109,15 @@ void CollisionMotionModel::PerformTranslation(const double deltaTime)
    //velocity[0] = 0.25f * GetMaximumSidestepSpeed();
    velocity[1] = GetForwardBackFactor() * GetMaximumWalkSpeed();
 
+   // Clamp the velocity so you cannot go beyond our maximum speed.
+   float maxSpeed = dtUtil::Max<float>(GetMaximumSidestepSpeed(), GetMaximumWalkSpeed());
+   float curSpeed = velocity.length();
+   if (curSpeed > maxSpeed && maxSpeed > 0.0f)
+   {
+      float mul = maxSpeed / curSpeed;
+      velocity *= mul;
+   }
+
    // transform our x/y delta by our new heading
    osg::Matrix mat;
    const float heading = hpr[0];

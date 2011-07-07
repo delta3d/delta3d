@@ -806,6 +806,15 @@ namespace dtCore
    //////////////////////////////////////////////////////////////////////////
    osg::Vec3 FPSCollider::Step(const osg::Vec3& targetPosition, const double deltaFrameTime, bool pJump)
    {
+      // Check if the target has moved away significantly.
+      // This happens if the target was moved independantly of this collider.
+      if ((targetPosition - mStartPosition).length2() > 0.1f)
+      {
+         mStartPosition = targetPosition;
+         mEndPosition = targetPosition;
+         mLastVelocity[2] = 0.0f;
+      }
+
       // Only allow jumping if we are walking.
       if (mCurrentMode == WALKING && pJump)
       {
@@ -816,13 +825,6 @@ namespace dtCore
       {
          mLastVelocity[0] += mGroundNormal[0] * mJumpSpeed;
          mLastVelocity[1] += mGroundNormal[1] * mJumpSpeed;
-      }
-
-      // Check if the target has moved away significantly.
-      if ((targetPosition - mStartPosition).length2() > 0.1f)
-      {
-         mStartPosition = targetPosition;
-         mEndPosition = targetPosition;
       }
 
       // Apply Gravity.
