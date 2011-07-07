@@ -56,12 +56,14 @@ namespace dtQt
       /**
        * Constructor
        */
-      ResourceSelectorWidget(const dtDAL::DataType& dataType, QStringList prependedActions, QWidget* parent = NULL);
+      ResourceSelectorWidget(QWidget* parent = NULL);
 
       /**
        * Destructor
        */
       virtual ~ResourceSelectorWidget();
+
+      void SetResourceType(QStringList prependedActions, const dtDAL::DataType& dataType);
 
       void SetResource(const QString& value);
 

@@ -36,9 +36,18 @@
 namespace dtQt
 {
    ///////////////////////////////////////////////////////////////////////////////
-   ResourceSelectorWidget::ResourceSelectorWidget(const dtDAL::DataType& dataType,
-      QStringList prependedActions, QWidget* parent /*= NULL*/)
+   ResourceSelectorWidget::ResourceSelectorWidget(QWidget* parent /*= NULL*/)
    : QToolButton(parent)
+   {
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////
+   ResourceSelectorWidget::~ResourceSelectorWidget()
+   {
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void ResourceSelectorWidget::SetResourceType(QStringList prependedActions, const dtDAL::DataType& dataType)
    {
       dtUtil::tree<dtDAL::ResourceTreeNode> tree;
       dtDAL::Project::GetInstance().GetResourcesOfType(dataType, tree);
@@ -59,11 +68,6 @@ namespace dtQt
       {
          setText(menu->actions()[0]->text());
       }
-   }
-
-   /////////////////////////////////////////////////////////////////////////////////
-   ResourceSelectorWidget::~ResourceSelectorWidget()
-   {
    }
 
    ///////////////////////////////////////////////////////////////////////////////

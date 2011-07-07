@@ -166,7 +166,8 @@ namespace dtQt
          return wrapper;
       }
 
-      mTemporaryButton = new ResourceSelectorWidget(mProperty->GetDataType(), mNonResourceOptions, wrapper);
+      mTemporaryButton = new ResourceSelectorWidget(wrapper);
+      mTemporaryButton->SetResourceType(mNonResourceOptions, mProperty->GetDataType());
       mTemporaryButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
       mTemporaryButton->setIcon(QIcon(QPixmap(1, 1)));
       mTemporaryButton->setToolTip(getDescription());
