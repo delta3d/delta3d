@@ -59,7 +59,11 @@ namespace dtDirector
       int GetNumberOfArgumentSequences(const std::string& sourceText);
       std::string GetComposedString();
 
-      std::string mText;
+      void SetResultText(const std::string& newText);
+      std::string GetResultText() const;
+
+      std::string mSourceText;
+      std::string mResultText;
       dtCore::RefPtr<dtDAL::StringActorProperty> mTextProperty;
    };
 }
