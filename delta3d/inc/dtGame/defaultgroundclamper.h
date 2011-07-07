@@ -243,8 +243,6 @@ namespace dtGame
           */
          virtual void FinishUp();
 
-      protected:
-         
          /**
           * Modify the specified transform to be oriented to the specified
           * surface points.
@@ -253,7 +251,7 @@ namespace dtGame
           * @param location Position in the world.
           * @param points Surface points used to calculate the oriention.
           */
-         void OrientTransformToSurfacePoints(dtCore::Transform& xform,
+         static void OrientTransformToSurfacePoints(dtCore::Transform& xform,
             osg::Matrix& rotation, const osg::Vec3& location,
             const osg::Vec3 points[3]);
 
@@ -265,9 +263,11 @@ namespace dtGame
           * @param location Position in the world.
           * @param normal Surface normal used to set the final orientation.
           */
-         void OrientTransform(dtCore::Transform& xform,
+         static void OrientTransform(dtCore::Transform& xform,
             osg::Matrix& rotation, const osg::Vec3& location,
             const osg::Vec3& normal);
+
+      protected:
 
          /**
           * Method to handle any surface point modification after the surface points have been
