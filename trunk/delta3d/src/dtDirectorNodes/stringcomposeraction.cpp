@@ -36,9 +36,9 @@ namespace dtDirector
 {
    static const std::string ARGUMENT_SEQUENCE("%%");
 
-   // There are hidden value nodes in the first two slots,
-   // manually accounting for it here for now
-   static const int DEFAULT_VALUE_LINK_COUNT = 2;
+   // There are hidden value nodes in the first two slots and a result value,
+   // manually accounting for it here for now.
+   static const int DEFAULT_VALUE_LINK_COUNT = 3;
 
    /////////////////////////////////////////////////////////////////////////////
    StringComposerAction::StringComposerAction()
@@ -55,7 +55,7 @@ namespace dtDirector
    /////////////////////////////////////////////////////////////////////////////
    const std::string& StringComposerAction::GetName()
    {
-      return mText;
+      return mSourceText;
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -75,7 +75,15 @@ namespace dtDirector
          "The text that is used to compose the final string");
       AddProperty(textProp);
 
+      // The value link will store this in a ref ptr
+      dtDAL::StringActorProperty* resultProp = new dtDAL::StringActorProperty("Result", "Result",
+         dtDAL::StringActorProperty::SetFuncType(this, &StringComposerAction::SetResultText),
+         dtDAL::StringActorProperty::GetFuncType(this, &StringComposerAction::GetResultText),
+         "The text that is used to compose the final string");
+      AddProperty(resultProp);
+
       mValues.push_back(ValueLink(this, textProp, false, false, true, false));
+      mValues.push_back(ValueLink(this, resultProp, true, false, true, true));
 
       // Set the default text as an example of how to use this node
       SetText("Default text with 2 args in parenthesis (%%, %%)");
@@ -86,7 +94,7 @@ namespace dtDirector
    {
       if (firstUpdate)
       {
-         SetString("Text", GetComposedString());
+         SetString(GetComposedString(), "Result");
 
          OutputLink* link = GetOutputLink("Out");
          if (link)
@@ -106,7 +114,7 @@ namespace dtDirector
       // If we have too many, remove some
       while (mValues.size() > (size_t)numberOfArguments + DEFAULT_VALUE_LINK_COUNT)
       {
-         mValues.pop_back();
+         mValues.erase(mValues.begin());
       }
 
       // If we don't have enough, add some
@@ -121,16 +129,16 @@ namespace dtDirector
             dtDAL::StringActorProperty::GetFuncType(this, &StringComposerAction::GetArgument),
             "Sets an argument used to compose the text.");
 
-         mValues.push_back(ValueLink(this, argProperty, false, false, false));
+         mValues.insert(mValues.begin(), ValueLink(this, argProperty, false, false, false));
       }
 
-      mText = newText;
+      mSourceText = newText;
    }
 
    /////////////////////////////////////////////////////////////////////////////
    std::string StringComposerAction::GetText() const
    {
-      return mText;
+      return mSourceText;
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -165,20 +173,20 @@ namespace dtDirector
       size_t startPosition = 0;
       size_t argumentIndex = DEFAULT_VALUE_LINK_COUNT;
 
-      mText = GetString("Text");
+      mSourceText = GetString("Text");
 
       // Make sure any \n become proper newline characters
-      dtUtil::FindAndReplace(mText, "\\n", "\n");
+      dtUtil::FindAndReplace(mSourceText, "\\n", "\n");
 
       while (1)
       {
          // Find the position of the next argument sequence %%
-         size_t delimPosition = mText.find(ARGUMENT_SEQUENCE, startPosition);
+         size_t delimPosition = mSourceText.find(ARGUMENT_SEQUENCE, startPosition);
 
          if (delimPosition != std::string::npos)
          {
-            std::string::const_iterator startIter = mText.begin() + startPosition;
-            std::string::const_iterator endIter = mText.begin() + delimPosition;
+            std::string::const_iterator startIter = mSourceText.begin() + startPosition;
+            std::string::const_iterator endIter = mSourceText.begin() + delimPosition;
 
             if (startIter != endIter)
             {
@@ -189,7 +197,9 @@ namespace dtDirector
             // If a value exists for this argument, insert it
             if (mValues.size() > argumentIndex)
             {
-               composedString.append(mValues[argumentIndex++].GetProperty()->GetValueString());
+               size_t valueIndex = argumentIndex - DEFAULT_VALUE_LINK_COUNT;
+               composedString.append(mValues[valueIndex].GetProperty()->GetValueString());
+               ++argumentIndex;
             }
 
             // Increment to the position past the delimiter
@@ -198,15 +208,28 @@ namespace dtDirector
          else
          {
             // Grab text remaining after the last delimiter
-            if (startPosition < mText.length())
+            if (startPosition < mSourceText.length())
             {
-               composedString.append(std::string(mText.begin() + startPosition, mText.end()));
+               composedString.append(std::string(mSourceText.begin() + startPosition, mSourceText.end()));
             }
             break;
          }
       }
 
       return composedString;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void StringComposerAction::SetResultText(const std::string& newText)
+   {
+      mResultText = newText;
+   }
+
+
+   /////////////////////////////////////////////////////////////////////////////
+   std::string StringComposerAction::GetResultText() const
+   {
+      return mResultText;
    }
 }
 
