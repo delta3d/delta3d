@@ -170,21 +170,19 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    bool CompareVectorAction::CanConnectValue(ValueLink* link, ValueNode* value)
    {
-      if (Node::CanConnectValue(link, value))
+      if (ActionNode::CanConnectValue(link, value))
       {
-         if (link == GetValueLink("A") || link == GetValueLink("B"))
+         if (link->GetName() == "A" || link->GetName() == "B")
          {
             if (value->CanBeType(dtDAL::DataType::VEC2) ||
-               value->CanBeType(dtDAL::DataType::VEC3) ||
-               value->CanBeType(dtDAL::DataType::VEC4))
+                value->CanBeType(dtDAL::DataType::VEC3) ||
+                value->CanBeType(dtDAL::DataType::VEC4))
             {
                return true;
             }
+            return false;
          }
-         else
-         {
-            return true;
-         }
+         return true;
       }
 
       return false;

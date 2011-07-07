@@ -190,22 +190,19 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    bool SpawnActorAction::CanConnectValue(ValueLink* link, ValueNode* value)
    {
-      if (Node::CanConnectValue(link, value))
+      if (ActionNode::CanConnectValue(link, value))
       {
          if (link->GetName() == "Spawn Location")
          {
             if (value->CanBeType(dtDAL::DataType::ACTOR) ||
-               value->CanBeType(dtDAL::DataType::VEC3))
+                value->CanBeType(dtDAL::DataType::VEC3))
             {
                return true;
             }
+            return false;
          }
-         else
-         {
-            return true;
-         }
+         return true;
       }
-
       return false;
    }
 

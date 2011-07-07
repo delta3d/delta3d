@@ -101,13 +101,18 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    bool CompareActorAction::CanConnectValue(ValueLink* link, ValueNode* value)
    {
-      if (Node::CanConnectValue(link, value))
+      if (ActionNode::CanConnectValue(link, value))
       {
-         if (value->CanBeType(dtDAL::DataType::ACTOR) ||
-            value->CanBeType(dtDAL::DataType::STRING))
+         if (link->GetName() == "A" || link->GetName() == "B")
          {
-            return true;
+            if (value->CanBeType(dtDAL::DataType::ACTOR) ||
+                value->CanBeType(dtDAL::DataType::STRING))
+            {
+               return true;
+            }
+            return false;
          }
+         return true;
       }
 
       return false;

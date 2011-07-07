@@ -87,7 +87,11 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    bool GameMessageEvent::CanConnectValue(dtDirector::ValueLink* link, dtDirector::ValueNode* value)
    {
-      return true;
+      if (EventNode::CanConnectValue(link, value))
+      {
+         return true;
+      }
+      return false;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
