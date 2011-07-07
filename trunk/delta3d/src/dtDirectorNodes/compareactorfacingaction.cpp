@@ -161,24 +161,23 @@ namespace dtDirector
          if (link->GetName() == "Target")
          {
             if (value->CanBeType(dtDAL::DataType::ACTOR) ||
-               value->CanBeType(dtDAL::DataType::VEC3))
+                value->CanBeType(dtDAL::DataType::VEC3))
             {
                return true;
             }
+            return false;
          }
          else if (link->GetName() == "Size")
          {
-            if (value->CanBeType(dtDAL::DataType::INT) ||
-               value->CanBeType(dtDAL::DataType::FLOAT) ||
-               value->CanBeType(dtDAL::DataType::DOUBLE))
+            if (value->CanBeType(dtDAL::DataType::INT)   ||
+                value->CanBeType(dtDAL::DataType::FLOAT) ||
+                value->CanBeType(dtDAL::DataType::DOUBLE))
             {
                return true;
             }
+            return false;
          }
-         else
-         {
-            return true;
-         }
+         return true;
       }
 
       return false;

@@ -190,25 +190,23 @@ namespace dtDirector
    {
       if (MutatorNode::CanConnectValue(link, value))
       {
-         dtDAL::DataType& type = value->GetPropertyType();
-         switch (type.GetTypeId())
+         if (link->GetName() == "A" || link->GetName() == "B")
          {
-         case dtDAL::DataType::STRING_ID:
-         case dtDAL::DataType::BOOLEAN_ID:
-         case dtDAL::DataType::INT_ID:
-         case dtDAL::DataType::FLOAT_ID:
-         case dtDAL::DataType::DOUBLE_ID:
-         case dtDAL::DataType::VEC2F_ID:
-         case dtDAL::DataType::VEC3F_ID:
-         case dtDAL::DataType::VEC4F_ID:
-         case dtDAL::DataType::UNKNOWN_ID:
-            return true;
-
-         default:
+            if (value->CanBeType(dtDAL::DataType::STRING)  ||
+                value->CanBeType(dtDAL::DataType::BOOLEAN) ||
+                value->CanBeType(dtDAL::DataType::INT)     ||
+                value->CanBeType(dtDAL::DataType::FLOAT)   ||
+                value->CanBeType(dtDAL::DataType::DOUBLE)  ||
+                value->CanBeType(dtDAL::DataType::VEC2F)   ||
+                value->CanBeType(dtDAL::DataType::VEC3F)   ||
+                value->CanBeType(dtDAL::DataType::VEC4F))
+            {
+               return true;
+            }
             return false;
          }
+         return true;
       }
-
       return false;
    }
 }

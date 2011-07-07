@@ -271,26 +271,20 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    bool SchedulerAction::CanConnectValue(ValueLink* link, ValueNode* value)
    {
-      if (Node::CanConnectValue(link, value))
+      if (LatentActionNode::CanConnectValue(link, value))
       {
          // Delay link can only connect to basic types.
-         if (link == GetValueLink("Time"))
+         if (link->GetName() == "Time")
          {
-            dtDAL::DataType& type = value->GetPropertyType();
-            switch (type.GetTypeId())
+            if (value->CanBeType(dtDAL::DataType::FLOAT) ||
+                value->CanBeType(dtDAL::DataType::DOUBLE))
             {
-            case dtDAL::DataType::FLOAT_ID:
-            case dtDAL::DataType::DOUBLE_ID:
                return true;
-
-            default:
-               return false;
             }
+            return false;
          }
-
          return true;
       }
-
       return false;
    }
 

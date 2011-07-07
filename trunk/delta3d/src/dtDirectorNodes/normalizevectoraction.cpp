@@ -91,21 +91,20 @@ namespace dtDirector
    ///////////////////////////////////////////////////////////////////////////////
    bool NormalizeVectorAction::CanConnectValue(ValueLink* link, ValueNode* value)
    {
-      if (Node::CanConnectValue(link, value))
+      if (ActionNode::CanConnectValue(link, value))
       {
-         dtDAL::DataType& type = value->GetPropertyType();
-         switch (type.GetTypeId())
+         if (link->GetName() == "Vector")
          {
-         case dtDAL::DataType::VEC2F_ID:
-         case dtDAL::DataType::VEC3F_ID:
-         case dtDAL::DataType::VEC4F_ID:
-            return true;
-
-         default:
+            if (value->CanBeType(dtDAL::DataType::VEC2F) ||
+                value->CanBeType(dtDAL::DataType::VEC3F) ||
+                value->CanBeType(dtDAL::DataType::VEC4F))
+            {
+               return true;
+            }
             return false;
          }
+         return true;
       }
-
       return false;
    }
 

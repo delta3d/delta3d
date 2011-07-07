@@ -70,24 +70,17 @@ namespace dtDirector
          "", "The actor to attach the camera to.");
       AddProperty(actorProp);
 
+      dtDAL::Vec3ActorProperty* offsetProp = new dtDAL::Vec3ActorProperty(
+         "Offset", "Parent Offset",
+         dtDAL::Vec3ActorProperty::SetFuncType(this, &AttachCameraAction::SetOffset),
+         dtDAL::Vec3ActorProperty::GetFuncType(this, &AttachCameraAction::GetOffset),
+         "Translational offset from the parent actor.", "");
+      AddProperty(offsetProp);
+
       // This will expose the properties in the editor and allow
       // them to be connected to ValueNodes.
       mValues.push_back(ValueLink(this, actorProp));
-
-      {
-         dtDAL::Vec3ActorProperty* offsetProp = new dtDAL::Vec3ActorProperty(
-            "Offset", "Parent Offset",
-            dtDAL::Vec3ActorProperty::SetFuncType(this, &AttachCameraAction::SetOffset),
-            dtDAL::Vec3ActorProperty::GetFuncType(this, &AttachCameraAction::GetOffset),
-            "Translational offset from the parent actor.", "");
-         AddProperty(offsetProp);
-
-         ValueLink link(this, offsetProp);
-         link.SetComment("Supply a translational offset value from the parent actor to the camera");
-
-         mValues.push_back(link);
-      }
-
+      mValues.push_back(ValueLink(this, offsetProp, false, false, true, false));
    }
 
    /////////////////////////////////////////////////////////////////////////////

@@ -122,39 +122,32 @@ namespace dtDirector
    ///////////////////////////////////////////////////////////////////////////////
    bool CreateVectorAction::CanConnectValue(ValueLink* link, ValueNode* value)
    {
-      if (Node::CanConnectValue(link, value))
+      if (ActionNode::CanConnectValue(link, value))
       {
          // Result checks its own type
          if (link->GetName() == "Vector")
          {
-            dtDAL::DataType& type = value->GetPropertyType();
-            switch (type.GetTypeId())
+            if (value->CanBeType(dtDAL::DataType::VEC2F) ||
+                value->CanBeType(dtDAL::DataType::VEC3F) ||
+                value->CanBeType(dtDAL::DataType::VEC4F))
             {
-            case dtDAL::DataType::VEC2F_ID:
-            case dtDAL::DataType::VEC3F_ID:
-            case dtDAL::DataType::VEC4F_ID:
                return true;
-
-            default:
-               return false;
             }
+            return false;
          }
-         else
+         else if (link->GetName() == "X" || link->GetName() == "Y" ||
+                  link->GetName() == "Z" || link->GetName() == "W")
          {
-            dtDAL::DataType& type = value->GetPropertyType();
-            switch (type.GetTypeId())
+            if (value->CanBeType(dtDAL::DataType::INT)   ||
+                value->CanBeType(dtDAL::DataType::FLOAT) ||
+                value->CanBeType(dtDAL::DataType::DOUBLE))
             {
-            case dtDAL::DataType::INT_ID:
-            case dtDAL::DataType::FLOAT_ID:
-            case dtDAL::DataType::DOUBLE_ID:
                return true;
-
-            default:
-               return false;
             }
+            return false;
          }
+         return true;
       }
-
       return false;
    }
 

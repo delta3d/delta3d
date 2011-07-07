@@ -101,15 +101,20 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    bool CompareValueAction::CanConnectValue(ValueLink* link, ValueNode* value)
    {
-      if (Node::CanConnectValue(link, value))
+      if (ActionNode::CanConnectValue(link, value))
       {
-         if (value->CanBeType(dtDAL::DataType::INT) ||
-             value->CanBeType(dtDAL::DataType::FLOAT) ||
-             value->CanBeType(dtDAL::DataType::DOUBLE) ||
-             value->CanBeType(dtDAL::DataType::STRING))
+         if (link->GetName() == "A" || link->GetName() == "B")
          {
-            return true;
+            if (value->CanBeType(dtDAL::DataType::STRING)  ||
+                value->CanBeType(dtDAL::DataType::INT)     ||
+                value->CanBeType(dtDAL::DataType::FLOAT)   ||
+                value->CanBeType(dtDAL::DataType::DOUBLE))
+            {
+               return true;
+            }
+            return false;
          }
+         return true;
       }
 
       return false;

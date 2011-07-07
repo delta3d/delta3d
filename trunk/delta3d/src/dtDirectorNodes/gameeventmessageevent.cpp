@@ -58,7 +58,7 @@ namespace dtDirector
          "The Game Event.  Entries are set in the map properties.");
       AddProperty(eventProp);
 
-      mValues.push_back(ValueLink(this, eventProp, false, false, true, false));
+      mValues.push_back(ValueLink(this, eventProp, false, false, false, false));
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -93,7 +93,19 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    bool GameEventMessageEvent::CanConnectValue(dtDirector::ValueLink* link, dtDirector::ValueNode* value)
    {
-      return true;
+      if (EventNode::CanConnectValue(link, value))
+      {
+         if (link->GetName() == "Event")
+         {
+            if (value->CanBeType(dtDAL::DataType::STRING))
+            {
+               return true;
+            }
+            return false;
+         }
+         return true;
+      }
+      return false;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
