@@ -25,7 +25,6 @@ void initFPSColliderBindings()
 
   enum_<FPSCollider::eMode>("eMode")
      .value("WALKING", FPSCollider::WALKING)
-     .value("FALLING", FPSCollider::FALLING)
-     .value("SLIDING", FPSCollider::SLIDING)
+     .value("IN_AIR", FPSCollider::IN_AIR)     
      .export_values();
 }
