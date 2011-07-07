@@ -36,8 +36,8 @@
 #include <dtDAL/resourceactorproperty.h>
 
 #include <dtQt/dynamiclabelcontrol.h>
-#include <dtQt/dynamicsubwidgets.h>
 #include <dtQt/propertyeditortreeview.h>
+#include <dtQt/resourceselectorwidget.h>
 
 #include <dtUtil/log.h>
 
@@ -63,6 +63,7 @@ namespace dtQt
    DynamicResourceControl::DynamicResourceControl()
       : mTemporaryButton(NULL)
    {
+      mNonResourceOptions.push_back("<None>");
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -139,7 +140,7 @@ namespace dtQt
       // update our label
       if (widget == mWrapper && mTemporaryButton)
       {
-         mTemporaryButton->setText(getValueAsString());
+         mTemporaryButton->SetResource(getValueAsString());
       }
 
       DynamicAbstractControl::updateEditorFromModel(widget);
@@ -149,25 +150,6 @@ namespace dtQt
    bool DynamicResourceControl::updateModelFromEditor(QWidget* widget)
    {
       DynamicAbstractControl::updateModelFromEditor(widget);
-
-      //if (widget == mWrapper && mTemporaryButton)
-      //{
-      //   std::string result = mTemporaryButton->itemData().toString().toStdString();
-
-      //   // set our value to our object
-      //   if (result != mProperty->GetValue().GetResourceIdentifier())
-      //   {
-      //      // give undo manager the ability to create undo/redo events
-      //      emit PropertyAboutToChange(*mPropContainer, *mProperty,
-      //         mProperty->ToString(), result);
-
-      //      mProperty->FromString(result);
-
-      //      emit PropertyChanged(*mPropContainer, *mProperty);
-
-      //      return true;
-      //   }
-      //}
 
       return false;
    }
@@ -184,21 +166,13 @@ namespace dtQt
          return wrapper;
       }
 
-      mTemporaryButton = new SubQToolButton(wrapper, this);
+      mTemporaryButton = new ResourceSelectorWidget(mProperty->GetDataType(), mNonResourceOptions, wrapper);
       mTemporaryButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
       mTemporaryButton->setIcon(QIcon(QPixmap(1, 1)));
-      mTemporaryButton->setText("<None>");
       mTemporaryButton->setToolTip(getDescription());
       mTemporaryButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
       mTemporaryButton->setPopupMode(QToolButton::InstantPopup);
-
-      dtUtil::tree<dtDAL::ResourceTreeNode> tree;
-      dtDAL::Project::GetInstance().GetResourcesOfType(mProperty->GetDataType(), tree);
-
-      QMenu* menu = new QMenu("Resources");
-      connect(menu, SIGNAL(triggered(QAction*)), this, SLOT(itemSelected(QAction*)));
-      setupMenu(tree, menu);
-      mTemporaryButton->setMenu(menu);
+      connect(mTemporaryButton, SIGNAL(ResourceSelected(QAction*)), this, SLOT(itemSelected(QAction*)));
 
       updateEditorFromModel(mWrapper);
 
@@ -208,37 +182,6 @@ namespace dtQt
 
       wrapper->setFocusProxy(mTemporaryButton);
       return wrapper;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   void DynamicResourceControl::setupMenu(const dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator& iter, QMenu* menu)
-   {
-      menu->addAction("<None>");
-      recursivelySetupMenu(iter, menu);
-   }
-
-   //////////////////////////////////////////////////////////////////////////
-   void DynamicResourceControl::recursivelySetupMenu(const dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator& iter, QMenu* menu)
-   {
-      for (dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator i = iter.tree_ref().in();
-         i != iter.tree_ref().end();
-         ++i)
-      {
-         if (i->isCategory())
-         {
-            QMenu* subMenu = menu->addMenu(i->getNodeText().c_str());
-
-            recursivelySetupMenu(i, subMenu);
-         }
-         else
-         {
-            QAction* action = menu->addAction(i->getResource().GetResourceName().c_str());
-            if (action)
-            {
-               action->setData(QVariant(i->getResource().GetResourceIdentifier().c_str()));
-            }
-         }
-      }
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -270,7 +213,8 @@ namespace dtQt
       NotifyParentOfPreUpdate();
       if (action)
       {
-         std::string result = action->data().toString().toStdString();
+         QString qResult = action->data().toString();
+         std::string result = qResult.toStdString();
 
          if (result != mProperty->GetValue().GetResourceIdentifier())
          {
@@ -282,6 +226,13 @@ namespace dtQt
 
             emit PropertyChanged(*mPropContainer, *mProperty);
          }
+
+         // Tell our resource selector what resource was selected
+         if (qResult.isEmpty())
+         {
+            qResult = "<None>";
+         }
+         mTemporaryButton->SetResource(qResult);
       }
    }
 
