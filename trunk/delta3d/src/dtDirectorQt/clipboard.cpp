@@ -369,6 +369,8 @@ namespace dtDirector
    {
       if (!link || !fromLink || !parent) return;
 
+      dtCore::RefPtr<Node> rampNode = NULL;
+
       int count = (int)fromLink->GetLinks().size();
       for (int index = 0; index < count; index++)
       {
@@ -406,47 +408,47 @@ namespace dtDirector
                if (createLinks && !newOwner &&
                   otherNodeGraph == parent->GetParent())
                {
-                  dtCore::RefPtr<Node> rampNode = NodeManager::GetInstance().CreateNode("Input Link", "Core", parent);
+                  if (!rampNode.valid())
+                  {
+                     rampNode = NodeManager::GetInstance().CreateNode("Input Link", "Core", parent);
+
+                     if (rampNode.valid())
+                     {
+                        rampNode->OnFinishedLoading();
+                        if (parent->GetDirector() && parent->GetDirector()->HasStarted())
+                        {
+                           rampNode->OnStart();
+                        }
+
+                        OutputLink* output = rampNode->GetOutputLink("Out");
+                        if (output) link->Connect(output);
+
+                        // Position the new node to the left of the current.
+                        osg::Vec2 position = link->GetOwner()->GetPosition();
+                        position.x() -= 300.0f;
+
+                        int linkCount = (int)link->GetOwner()->GetInputLinks().size();
+                        for (int linkIndex = 0; linkIndex < linkCount; linkIndex++)
+                        {
+                           if (link == &link->GetOwner()->GetInputLinks()[linkIndex])
+                           {
+                              position.y() += (55 * linkIndex);
+                           }
+                        }
+
+                        rampNode->SetPosition(position);
+
+                        // Copy the name of the input to the input node.
+                        dtDAL::ActorProperty* prop = rampNode->GetProperty("Name");
+                        if (prop) prop->FromString(link->GetName());
+                     }
+                  }
+
                   if (rampNode.valid())
                   {
-                     rampNode->OnFinishedLoading();
-                     if (parent->GetDirector() && parent->GetDirector()->HasStarted())
-                     {
-                        rampNode->OnStart();
-                     }
-
                      // Link them together.
                      OutputLink* output = owner->GetOutputLink(fromLink->GetLinks()[index]->GetName());
                      rampNode->GetInputLink("In")->Connect(output);
-                     
-                     output = rampNode->GetOutputLink("Out");
-                     if (output) link->Connect(output);
-
-                     // Position the new node to the left of the current.
-                     osg::Vec2 position = link->GetOwner()->GetPosition();
-                     position.x() -= 300.0f;
-
-                     int linkCount = (int)link->GetOwner()->GetInputLinks().size();
-                     for (int linkIndex = 0; linkIndex < linkCount; linkIndex++)
-                     {
-                        if (link == &link->GetOwner()->GetInputLinks()[linkIndex])
-                        {
-                           position.y() += (55 * linkIndex);
-                        }
-                     }
-
-                     rampNode->SetPosition(position);
-
-                     // Copy the name of the input to the input node.
-                     dtDAL::ActorProperty* prop = rampNode->GetProperty("Name");
-                     if (prop) prop->FromString(link->GetName());
-
-                     // Create an undo event for this creation event.
-                     if (undoManager)
-                     {
-                        dtCore::RefPtr<UndoCreateEvent> event = new UndoCreateEvent(undoManager->GetEditor(), rampNode->GetID(), parent->GetID());
-                        undoManager->AddEvent(event);
-                     }
                   }
                }
             }
@@ -462,12 +464,21 @@ namespace dtDirector
             }
          }
       }
+
+      // Create an undo event for the creation of the input link node.
+      if (rampNode.valid() && undoManager)
+      {
+         dtCore::RefPtr<UndoCreateEvent> event = new UndoCreateEvent(undoManager->GetEditor(), rampNode->GetID(), parent->GetID());
+         undoManager->AddEvent(event);
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////
    void Clipboard::LinkOutputs(OutputLink* link, OutputLink* fromLink, DirectorGraph* parent, UndoManager* undoManager, std::vector<dtDAL::PropertyContainer*>& linkNodes, bool createLinks, bool linkExternal)
    {
       if (!link || !fromLink || !parent) return;
+
+      dtCore::RefPtr<Node> rampNode = NULL;
 
       int count = (int)fromLink->GetLinks().size();
       for (int index = 0; index < count; index++)
@@ -506,47 +517,47 @@ namespace dtDirector
                if (createLinks && !newOwner &&
                   otherNodeGraph == parent->GetParent())
                {
-                  dtCore::RefPtr<Node> rampNode = NodeManager::GetInstance().CreateNode("Output Link", "Core", parent);
+                  if (!rampNode.valid())
+                  {
+                     rampNode = NodeManager::GetInstance().CreateNode("Output Link", "Core", parent);
+
+                     if (rampNode.valid())
+                     {
+                        rampNode->OnFinishedLoading();
+                        if (parent->GetDirector() && parent->GetDirector()->HasStarted())
+                        {
+                           rampNode->OnStart();
+                        }
+
+                        InputLink* input = rampNode->GetInputLink("In");
+                        if (input) link->Connect(input);
+
+                        // Position the new node to the right of the current.
+                        osg::Vec2 position = link->GetOwner()->GetPosition();
+                        position.x() += 500.0f;
+
+                        int linkCount = (int)link->GetOwner()->GetOutputLinks().size();
+                        for (int linkIndex = 0; linkIndex < linkCount; linkIndex++)
+                        {
+                           if (link == &link->GetOwner()->GetOutputLinks()[linkIndex])
+                           {
+                              position.y() += (55 * linkIndex);
+                           }
+                        }
+
+                        rampNode->SetPosition(position);
+
+                        // Copy the name of the output to the output node.
+                        dtDAL::ActorProperty* prop = rampNode->GetProperty("Name");
+                        if (prop) prop->FromString(link->GetName());
+                     }
+                  }
+
                   if (rampNode.valid())
                   {
-                     rampNode->OnFinishedLoading();
-                     if (parent->GetDirector() && parent->GetDirector()->HasStarted())
-                     {
-                        rampNode->OnStart();
-                     }
-
                      // Link them together.
                      InputLink* input = owner->GetInputLink(fromLink->GetLinks()[index]->GetName());
                      rampNode->GetOutputLink("Out")->Connect(input);
-
-                     input = rampNode->GetInputLink("In");
-                     if (input) link->Connect(input);
-
-                     // Position the new node to the right of the current.
-                     osg::Vec2 position = link->GetOwner()->GetPosition();
-                     position.x() += 500.0f;
-
-                     int linkCount = (int)link->GetOwner()->GetOutputLinks().size();
-                     for (int linkIndex = 0; linkIndex < linkCount; linkIndex++)
-                     {
-                        if (link == &link->GetOwner()->GetOutputLinks()[linkIndex])
-                        {
-                           position.y() += (55 * linkIndex);
-                        }
-                     }
-
-                     rampNode->SetPosition(position);
-
-                     // Copy the name of the output to the output node.
-                     dtDAL::ActorProperty* prop = rampNode->GetProperty("Name");
-                     if (prop) prop->FromString(link->GetName());
-
-                     // Create an undo event for this creation event.
-                     if (undoManager)
-                     {
-                        dtCore::RefPtr<UndoCreateEvent> event = new UndoCreateEvent(undoManager->GetEditor(), rampNode->GetID(), parent->GetID());
-                        undoManager->AddEvent(event);
-                     }
                   }
                }
             }
@@ -562,12 +573,21 @@ namespace dtDirector
             }
          }
       }
+
+      // Create an undo event for the creation of the output link node.
+      if (rampNode.valid() && undoManager)
+      {
+         dtCore::RefPtr<UndoCreateEvent> event = new UndoCreateEvent(undoManager->GetEditor(), rampNode->GetID(), parent->GetID());
+         undoManager->AddEvent(event);
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////
    void Clipboard::LinkValues(ValueLink* link, ValueLink* fromLink, DirectorGraph* parent, UndoManager* undoManager, std::vector<dtDAL::PropertyContainer*>& linkNodes, bool createLinks, bool linkExternal)
    {
       if (!link || !fromLink || !parent) return;
+
+      dtCore::RefPtr<ValueNode> rampNode = NULL;
 
       int count = (int)fromLink->GetLinks().size();
       for (int index = 0; index < count; index++)
@@ -601,46 +621,46 @@ namespace dtDirector
                   otherNodeGraph == parent->GetParent() &&
                   !link->GetOwner()->AsValueNode())
                {
-                  dtCore::RefPtr<ValueNode> rampNode = dynamic_cast<ValueNode*>(NodeManager::GetInstance().CreateNode("Value Link", "Core", parent).get());
+                  if (!rampNode.valid())
+                  {
+                     rampNode = dynamic_cast<ValueNode*>(NodeManager::GetInstance().CreateNode("Value Link", "Core", parent).get());
+
+                     if (rampNode.valid())
+                     {
+                        rampNode->OnFinishedLoading();
+                        if (parent->GetDirector() && parent->GetDirector()->HasStarted())
+                        {
+                           rampNode->OnStart();
+                        }
+
+                        link->Connect(rampNode);
+
+                        // Position the new node to the bottom of the current.
+                        osg::Vec2 position = link->GetOwner()->GetPosition();
+                        position.y() += 300.0f;
+
+                        int linkCount = (int)link->GetOwner()->GetValueLinks().size();
+                        for (int linkIndex = 0; linkIndex < linkCount; linkIndex++)
+                        {
+                           if (link == &link->GetOwner()->GetValueLinks()[linkIndex])
+                           {
+                              position.x() += (55 * linkIndex);
+                           }
+                        }
+
+                        rampNode->SetPosition(position);
+
+                        // Copy the name of the value link to the value node.
+                        dtDAL::ActorProperty* prop = ((Node*)rampNode)->GetProperty("Name");
+                        if (prop) prop->FromString(link->GetName());
+                     }
+                  }
+
                   if (rampNode.valid())
                   {
-                     rampNode->OnFinishedLoading();
-                     if (parent->GetDirector() && parent->GetDirector()->HasStarted())
-                     {
-                        rampNode->OnStart();
-                     }
-
                      // Link them together.
                      ValueNode* ownerValue = owner->AsValueNode();
                      rampNode->GetValueLinks()[0].Connect(ownerValue);
-
-                     link->Connect(rampNode);
-
-                     // Position the new node to the bottom of the current.
-                     osg::Vec2 position = link->GetOwner()->GetPosition();
-                     position.y() += 300.0f;
-
-                     int linkCount = (int)link->GetOwner()->GetValueLinks().size();
-                     for (int linkIndex = 0; linkIndex < linkCount; linkIndex++)
-                     {
-                        if (link == &link->GetOwner()->GetValueLinks()[linkIndex])
-                        {
-                           position.x() += (55 * linkIndex);
-                        }
-                     }
-
-                     rampNode->SetPosition(position);
-
-                     // Copy the name of the value link to the value node.
-                     dtDAL::ActorProperty* prop = ((Node*)rampNode)->GetProperty("Name");
-                     if (prop) prop->FromString(link->GetName());
-
-                     // Create an undo event for this creation event.
-                     if (undoManager)
-                     {
-                        dtCore::RefPtr<UndoCreateEvent> event = new UndoCreateEvent(undoManager->GetEditor(), rampNode->GetID(), parent->GetID());
-                        undoManager->AddEvent(event);
-                     }
                   }
                }
             }
@@ -655,6 +675,13 @@ namespace dtDirector
 
             if (newOwner) link->Connect(newOwner);
          }
+      }
+
+      // Create an undo event for this creation event.
+      if (rampNode.valid() && undoManager)
+      {
+         dtCore::RefPtr<UndoCreateEvent> event = new UndoCreateEvent(undoManager->GetEditor(), rampNode->GetID(), parent->GetID());
+         undoManager->AddEvent(event);
       }
    }
 
