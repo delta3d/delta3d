@@ -43,6 +43,7 @@ projectcontextdialog.cpp
 propertyeditordelegate.cpp
 propertyeditormodel.cpp
 propertyeditortreeview.cpp
+resourceselectorwidget.cpp
 qtguiwindowsystemwrapper.cpp
 viewwindow.cpp
 

@@ -58,6 +58,7 @@ namespace dtEditQt
       : dtQt::DynamicResourceControl()
       , mTemporaryEditBtn(NULL)
    {
+      mNonResourceOptions.push_back("<Use Current>");
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -92,14 +93,6 @@ namespace dtEditQt
       }
 
       return wrapper;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   void STAGEDynamicResourceControl::setupMenu(const dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator& iter, QMenu* menu)
-   {
-      menu->addAction("<None>");
-      menu->addAction("<Use Current>");
-      DynamicResourceControl::recursivelySetupMenu(iter, menu);
    }
 
    /////////////////////////////////////////////////////////////////////////////////

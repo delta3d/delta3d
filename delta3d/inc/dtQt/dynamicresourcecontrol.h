@@ -51,7 +51,7 @@ class QAction;
 namespace dtQt
 {
    class SubQLabel;
-   class SubQToolButton;
+   class ResourceSelectorWidget;
 
    /**
     * @class DynamicResourceControl
@@ -133,9 +133,8 @@ namespace dtQt
       virtual void handleSubEditDestroy(QWidget* widget, QAbstractItemDelegate::EndEditHint hint = QAbstractItemDelegate::NoHint);
 
    protected:
-
-      virtual void setupMenu(const dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator& iter, QMenu* menu);
-      virtual void recursivelySetupMenu(const dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator& iter, QMenu* menu);
+      // List of actions to add to the resource selector before any resources
+      QStringList mNonResourceOptions;
 
    private:
       dtDAL::ResourceActorProperty* mProperty;
@@ -144,7 +143,7 @@ namespace dtQt
       // method and destroyed whenever QT feels like it (mostly when the control looses focus).
       // We work around this by trapping the destruction of this object, it should
       // call our handleSubEditDestroy() method so we know to not hold this anymore
-      SubQToolButton* mTemporaryButton;
+      ResourceSelectorWidget* mTemporaryButton;
    };
 
 } // namespace dtQt
