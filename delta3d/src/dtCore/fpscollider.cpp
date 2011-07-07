@@ -231,6 +231,9 @@ namespace dtCore
    void FPSCollider::Reset()
    {
       mLastVelocity = osg::Vec3();
+      mStartPosition = osg::Vec3();
+      mEndPosition = osg::Vec3();
+      mGroundNormal = osg::Vec3(0.0f, 0.0f, 1.0f);
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -434,6 +437,11 @@ namespace dtCore
                newFeetPos[0] += normal[0] * dt * mSlideSpeed;
                newFeetPos[1] += normal[1] * dt * mSlideSpeed;
                newFeetPos[2] -= normal[2] * dt * mSlideSpeed;
+               mGroundNormal = normal;
+            }
+            else
+            {
+               mGroundNormal = osg::Vec3(0.0f, 0.0f, 1.0f);
             }
 
             SetCurrentMode(WALKING);
@@ -474,7 +482,13 @@ namespace dtCore
          newFeetPos += normal * depth;
       }
 
-      osg::Vec3 targetP1(newFeetPos[0], newFeetPos[1], newFeetPos[2] + mHeightAboveTerrain);
+      mEndPosition = osg::Vec3(newFeetPos[0], newFeetPos[1], newFeetPos[2] + mHeightAboveTerrain);
+
+      const float LERP_SPEED = 20.0f;
+
+      // Lerp the target from its current position to its end position
+      // over time and then return the lerp position for a smooth translation.
+      osg::Vec3 targetP1 = mStartPosition + (mEndPosition - mStartPosition) * dt * LERP_SPEED;
 
       return targetP1;
    }
@@ -791,7 +805,14 @@ namespace dtCore
       // Only jump if we are walking.
       if (mCurrentMode == WALKING && pJump)
       {
-         mLastVelocity[2] = mJumpSpeed;
+         mLastVelocity += mGroundNormal * mJumpSpeed;
+      }
+
+      // Check if the target has moved away significantly.
+      if ((targetPosition - mStartPosition).length2() > 0.1f)
+      {
+         mStartPosition = targetPosition;
+         mEndPosition = targetPosition;
       }
 
       // Apply Gravity.
@@ -799,9 +820,9 @@ namespace dtCore
       mLastVelocity[2] += zGravity * deltaFrameTime;
       dtUtil::ClampMin(mLastVelocity[2], mTerminalSpeed);
 
-      osg::Vec3 newTargetPosition = AdjustPosition(targetPosition, deltaFrameTime);
+      mStartPosition = AdjustPosition(mEndPosition, deltaFrameTime);
 
-      return newTargetPosition;
+      return mStartPosition;
    }
 
 }//namespace dtCore

@@ -212,6 +212,9 @@ namespace dtCore
          float mMaxStepUpDistance;
 
          osg::Vec3 mLastVelocity;
+         osg::Vec3 mStartPosition;
+         osg::Vec3 mEndPosition;
+         osg::Vec3 mGroundNormal;
 
          ///The Delta3D collision space that holds all other collision geometry
          dSpaceID mCollisionSpace;
