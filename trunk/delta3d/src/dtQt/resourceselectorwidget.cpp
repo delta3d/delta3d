@@ -39,6 +39,9 @@ namespace dtQt
    ResourceSelectorWidget::ResourceSelectorWidget(QWidget* parent /*= NULL*/)
    : QToolButton(parent)
    {
+      setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+      setIcon(QIcon(QPixmap(1, 1)));
+      setPopupMode(QToolButton::InstantPopup);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
