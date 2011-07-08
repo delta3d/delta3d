@@ -56,7 +56,7 @@ namespace dtCore
    class DT_CORE_EXPORT FPSCollider
    {
       public:
-         enum eMode{WALKING = 0, IN_AIR};
+         enum eMode{WALKING = 0, IN_AIR, SLIDING};
 
       public:
          /**
@@ -70,7 +70,6 @@ namespace dtCore
          FPSCollider(float pHeight, float pRadius, float k, float theta, dtCore::Scene* pScene);
          FPSCollider(float pHeight, float pRadius, float k, float theta, dSpaceID pSpaceToCollideWith, const osg::Vec3& pGravity);
          virtual ~FPSCollider();
-
 
          /**
          * @param p0 is the current position of the camera which is our position plus our height above the ground
@@ -117,6 +116,13 @@ namespace dtCore
          void SetJumpSpeed(float pSpeed);
 
          /**
+          * Smoothing speed is the speed in which the motion will smooth
+          * the translation of the target.
+          */
+         float GetSmoothingSpeed() const;
+         void SetSmoothingSpeed(float speed);
+
+         /**
          * @return height above the terrain is the camera height and the top of our bv
          */
          float GetHeightAboveTerrain() const;
@@ -159,10 +165,9 @@ namespace dtCore
          static void NearCallbackFeet(void *data, dGeomID o1, dGeomID o2);
          static void NearCallbackTorso(void *data, dGeomID o1, dGeomID o2);
 
-         static void dTriArrayCallback(dGeomID TriMesh, dGeomID RefObject, const int* TriIndices, int TriCount);
+         //static void dTriArrayCallback(dGeomID TriMesh, dGeomID RefObject, const int* TriIndices, int TriCount);
 
          void InitBoundingVolumes();
-         void InitDrawable();
 
          void HandleCollideFeet(dGeomID pFeet, dGeomID pObject);
          void HandleCollideTorso(dGeomID pTorso, dGeomID pObject);
@@ -172,17 +177,14 @@ namespace dtCore
 
          ///@return true if torso collided with anything
          osg::Vec3 AdjustPosition(const osg::Vec3& newPos, float dt);
-         bool ApplyMovementVector(const osg::Vec3& vec, float length, const osg::Vec3& oldPos, const osg::Vec3& offset, osg::Vec3& newPos, osg::Vec3& colPos, float& depth);
 
          void SetCurrentMode(eMode newMode);
-         osg::Vec3 Step( const osg::Vec3& p0, const double deltaFrameTime, bool pJump );
+
          dGeomID mBBFeet;
          dtCore::RefPtr<dtCore::ODEGeomWrap> mFeetGeom;
-         dtCore::RefPtr<dtCore::Transformable> mFeetTransformable;
 
          dGeomID mBBTorso;
          dtCore::RefPtr<dtCore::ODEGeomWrap> mTorsoGeom;
-         dtCore::RefPtr<dtCore::Transformable> mTorsoTransformable;
 
          ///The local collision space that holds our collision geometry
          dSpaceID mLocalSpaceID;
@@ -192,13 +194,9 @@ namespace dtCore
 
          osg::Vec2 mTorsoLengths;///<radius, length
 
-         std::vector<osg::Vec3> mNormals;
-
          int mNumFeetContactPoints;
          int mNumTorsoContactPoints;
 
-         bool mStartCollideFeet;
-         bool mStartCollideTorso;
          dContactGeom mLastFeetContact;
          dContactGeom mLastTorsoContact;
 
@@ -217,6 +215,8 @@ namespace dtCore
          osg::Vec3 mStartPosition;
          osg::Vec3 mEndPosition;
          osg::Vec3 mGroundNormal;
+
+         float mSmoothingSpeed;
 
          ///The Delta3D collision space that holds all other collision geometry
          dSpaceID mCollisionSpace;

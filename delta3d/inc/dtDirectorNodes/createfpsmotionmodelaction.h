@@ -106,6 +106,9 @@ namespace dtDirector
       void SetSlideSpeed(float value);
       float GetSlideSpeed() const;
 
+      void SetSmoothingSpeed(float value);
+      float GetSmoothingSpeed() const;
+
       void SetSlideThreshold(float value);
       float GetSlideThreshold() const;
 
@@ -145,6 +148,7 @@ namespace dtDirector
       float mJumpSpeed;
       float mSlideSpeed;
       float mSlideThreshold;
+      float mSmoothingSpeed;
       bool  mUseWASD;
       bool  mUseArrows;
       bool  mAllowJump;
