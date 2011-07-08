@@ -50,10 +50,11 @@
 
   <xsd:complexType name="GraphType">
     <xsd:sequence>
+	  <xsd:element name="id"          minOccurs="0" maxOccurs="1" type="xsd:string"/>
       <xsd:element name="property"    minOccurs="0" maxOccurs="unbounded" type="PropertyType"/>
       <xsd:element name="eventnodes"  type="NodeType"/>
       <xsd:element name="actionnodes" type="NodeType"/>
-      <xsd:element name="valuenodes"  type="NodeType"/>      
+      <xsd:element name="valuenodes"  type="NodeType"/>
       <xsd:element name="graph"       minOccurs="0" maxOccurs="unbounded" type="GraphType"/>
     </xsd:sequence>
   </xsd:complexType>
