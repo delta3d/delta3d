@@ -56,7 +56,7 @@ namespace dtCore
    class DT_CORE_EXPORT FPSCollider
    {
       public:
-         enum eMode{WALKING = 0, IN_AIR, SLIDING};
+         enum eMode{IDLE, WALKING, SLIDING, JUMPING, FALLING};
 
       public:
          /**
@@ -208,8 +208,6 @@ namespace dtCore
          float mTerminalSpeed;
          float mHeightAboveTerrain;
          float mMaxStepUpDistance;
-
-         bool mJumping;
 
          osg::Vec3 mLastVelocity;
          osg::Vec3 mStartPosition;
