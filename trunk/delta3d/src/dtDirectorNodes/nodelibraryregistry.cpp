@@ -81,6 +81,7 @@
 #include <dtDirectorNodes/foreachactoraction.h>
 #include <dtDirectorNodes/stringmanipulatoraction.h>
 #include <dtDirectorNodes/stringcomposeraction.h>
+#include <dtDirectorNodes/fpsmotionmodellisteneraction.h>
 
 // Mutators
 #include <dtDirectorNodes/addmutator.h>
@@ -156,6 +157,7 @@ namespace dtDirector
    RefPtr<NodeType> NodeLibraryRegistry::DELAY_ACTION_NODE_TYPE(                 new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Delay",                     "General",     "Base",        "Performs a time delay.", NULL, Colors::BLUE));
    RefPtr<NodeType> NodeLibraryRegistry::LOOP_ACTION_NODE_TYPE(                  new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Loop",                      "General",     "Base",        "Continually fires its 'Cycle' output after a given time period while active.", NULL, Colors::BLUE2));
    RefPtr<NodeType> NodeLibraryRegistry::SWITCH_ACTION_NODE_TYPE(                new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Switch",                    "General",     "Base",        "Fires outputs in sequence based on the number of inputs received.", NULL, Colors::BLUE));
+   RefPtr<NodeType> NodeLibraryRegistry::FPS_MOTION_MODEL_LISTENER_NODE_TYPE(    new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "FPS Motion Model Listener", "Scene",       "Base",        "Listens for state changes on an FPS motion model.", NULL, Colors::BLUE));
 
    RefPtr<NodeType> NodeLibraryRegistry::GET_APP_CONFIG_PROPERTY_ACTION_NODE_TYPE(new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Get Application Config Property", "General", "Access", "Retrieves a config property value from an application's config file.", NULL, Colors::BLUE));
    RefPtr<NodeType> NodeLibraryRegistry::GET_ACTOR_ACTION_NODE_TYPE(              new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Get Actor",                       "General", "Access", "Retrieves the actor with the given name from the GameManager.", NULL, Colors::BLUE));
@@ -287,6 +289,7 @@ namespace dtDirector
       mNodeFactory->RegisterType<DelayAction>(DELAY_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<LoopAction>(LOOP_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<SwitchAction>(SWITCH_ACTION_NODE_TYPE.get());
+      mNodeFactory->RegisterType<FPSMotionModelListenerAction>(FPS_MOTION_MODEL_LISTENER_NODE_TYPE.get());
 
       mNodeFactory->RegisterType<GetApplicationConfigPropertyAction>(GET_APP_CONFIG_PROPERTY_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<GetActorAction>(GET_ACTOR_ACTION_NODE_TYPE.get());
