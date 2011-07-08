@@ -560,10 +560,10 @@ namespace dtDirector
          }
          else if (!mPropSerializer->Characters(topEl, chars))
          {
-            //else if (topEl == dtDAL::MapXMLConstants::NAME_ELEMENT)
-            //{
-            //   graph->mName = dtUtil::XMLStringConverter(chars).ToString();
-            //}
+            if (topEl == dtDAL::MapXMLConstants::ID_ELEMENT)
+            {
+               graph->SetID(dtCore::UniqueId(dtUtil::XMLStringConverter(chars).ToString()));
+            }
          }
       }
    }

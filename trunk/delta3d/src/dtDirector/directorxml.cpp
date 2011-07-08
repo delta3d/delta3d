@@ -301,6 +301,13 @@ namespace dtDirector
       // Graph.
       BeginElement(dtDAL::MapXMLConstants::DIRECTOR_GRAPH_ELEMENT);
       {
+         // Graph ID.
+         BeginElement(dtDAL::MapXMLConstants::ID_ELEMENT);
+         {
+            AddCharacters(graph->GetID().ToString());
+         }
+         EndElement(); // End Node ID Elements.
+
          // Properties.
          std::vector<const dtDAL::ActorProperty*> propList;
          graph->GetPropertyList(propList);
@@ -314,13 +321,6 @@ namespace dtDirector
 
             mPropSerializer->WriteProperty(property);
          }
-
-         //// Name Element.
-         //BeginElement(dtDAL::MapXMLConstants::NAME_ELEMENT);
-         //{
-         //   AddCharacters(graph->GetName());
-         //}
-         //EndElement(); // End Name Element.
 
          // Event Nodes.
          BeginElement(dtDAL::MapXMLConstants::DIRECTOR_EVENT_NODES_ELEMENT);
