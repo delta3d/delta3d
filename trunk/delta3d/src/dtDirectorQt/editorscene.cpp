@@ -1074,25 +1074,35 @@ namespace dtDirector
             }
             mEditor->GetUndoManager()->BeginMultipleEvents(undoDescription);
 
-            NodeItem* primaryItem = dynamic_cast<NodeItem*>(itemAt(event->scenePos()));
-            if (primaryItem)
+            osg::Vec2 offset;
+
+            for (int index = 0; index < count; index++)
             {
-               osg::Vec2 oldPos = primaryItem->GetPosition();
-               osg::Vec2 newPos = GetSmartSnapPosition(primaryItem);
-               primaryItem->setPos(newPos.x(), newPos.y());
-               primaryItem->EndMoveEvent();
-
-               osg::Vec2 offset = newPos - oldPos;
-
-               for (int index = 0; index < count; index++)
+               NodeItem* item = dynamic_cast<NodeItem*>(itemList[index]);
+               if (item)
                {
-                  NodeItem* item = dynamic_cast<NodeItem*>(itemList[index]);
-                  if (item && item != primaryItem)
+                  osg::Vec2 oldPos = item->GetPosition();
+                  osg::Vec2 newPos = GetSmartSnapPosition(item);
+
+                  osg::Vec2 testOffset = newPos - oldPos;
+
+                  if (testOffset.length2() > 0.0f &&
+                     (offset.length2() == 0.0f ||
+                      testOffset.length2() < offset.length2()))
                   {
-                     osg::Vec2 position = item->GetPosition() + offset;
-                     item->setPos(position.x(), position.y());
-                     item->EndMoveEvent();
+                     offset = testOffset;
                   }
+               }
+            }
+
+            for (int index = 0; index < count; index++)
+            {
+               NodeItem* item = dynamic_cast<NodeItem*>(itemList[index]);
+               if (item)
+               {
+                  osg::Vec2 position = item->GetPosition() + offset;
+                  item->setPos(position.x(), position.y());
+                  item->EndMoveEvent();
                }
             }
 
