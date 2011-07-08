@@ -46,13 +46,10 @@ namespace dtCore
       , mLocalSpaceID(0)
       , mTorsoOffset(0.f)
       , mTorsoLengths()
-      , mNormals()
       , mNumFeetContactPoints(0)
       , mNumTorsoContactPoints(0)
-      , mStartCollideFeet(false)
-      , mStartCollideTorso(false)
       , mLastFeetContact()
-      , mCurrentMode(WALKING)
+      , mCurrentMode(IN_AIR)
       , mSlideSpeed(5.0f)
       , mSlideThreshold(0.1f)
       , mJumpSpeed(5.0f)
@@ -60,7 +57,8 @@ namespace dtCore
       , mHeightAboveTerrain(pHeight)
       , mMaxStepUpDistance(k)
       , mJumping(false)
-      , mLastVelocity(0.0f, 0.0f, 0.0f)
+      , mGroundNormal(0.0f, 0.0f, 1.0f)
+      , mSmoothingSpeed(20.0f)
       , mCollisionSpace()
       , mPhysicsController(pScene->GetPhysicsController())
    {
@@ -72,14 +70,6 @@ namespace dtCore
       mLocalSpaceID = dSimpleSpaceCreate(0);
       InitBoundingVolumes();
       SetDimensions(mHeightAboveTerrain, pRadius, k);
-
-      mFeetTransformable = new dtCore::Transformable("feet");
-      mFeetTransformable->GetOSGNode()->asGroup()->addChild(mFeetGeom->CreateRenderedCollisionGeometry());
-      pScene->AddChild(mFeetTransformable.get());
-
-      mTorsoTransformable = new dtCore::Transformable("torso");
-      mTorsoTransformable->GetOSGNode()->asGroup()->addChild(mTorsoGeom->CreateRenderedCollisionGeometry());
-      pScene->AddChild(mTorsoTransformable.get());
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -91,20 +81,18 @@ namespace dtCore
       , mLocalSpaceID(0)
       , mTorsoOffset(0.f)
       , mTorsoLengths()
-      , mNormals()
       , mNumFeetContactPoints(0)
       , mNumTorsoContactPoints(0)
-      , mStartCollideFeet(false)
-      , mStartCollideTorso(false)
       , mLastFeetContact()
-      , mCurrentMode(WALKING)
+      , mCurrentMode(IN_AIR)
       , mSlideSpeed(5.0f)
       , mSlideThreshold(0.1f)
       , mJumpSpeed(5.0f)
       , mHeightAboveTerrain(pHeight)
       , mMaxStepUpDistance(k)
       , mJumping(false)
-      , mLastVelocity(0.0f, 0.0f, 0.0f)
+      , mGroundNormal(0.0f, 0.0f, 1.0f)
+      , mSmoothingSpeed(20.0f)
       , mCollisionSpace(pSpaceToCollideWith)
    {
       mLocalSpaceID = dSimpleSpaceCreate(0);
@@ -115,16 +103,6 @@ namespace dtCore
    ////////////////////////////////////////////////////////////////////////////
    FPSCollider::~FPSCollider()
    {
-      if (mFeetTransformable->GetOSGNode()->asGroup()->getNumChildren() > 0)
-      {
-         mFeetTransformable->GetOSGNode()->asGroup()->removeChild(mFeetTransformable->GetOSGNode()->asGroup()->getChild(0));
-      }
-
-      if (mTorsoTransformable->GetOSGNode()->asGroup()->getNumChildren() > 0)
-      {
-         mTorsoTransformable->GetOSGNode()->asGroup()->removeChild(mTorsoTransformable->GetOSGNode()->asGroup()->getChild(0));
-      }
-
       mFeetGeom->ClearCollisionGeometry();
       mTorsoGeom->ClearCollisionGeometry();
 
@@ -180,6 +158,18 @@ namespace dtCore
    void FPSCollider::SetJumpSpeed(float pSpeed)
    {
       mJumpSpeed = pSpeed;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   float FPSCollider::GetSmoothingSpeed() const
+   {
+      return mSmoothingSpeed;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void FPSCollider::SetSmoothingSpeed(float speed)
+   {
+      mSmoothingSpeed = speed;
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -254,7 +244,7 @@ namespace dtCore
    void FPSCollider::InitBoundingVolumes()
    {
       mFeetGeom = new dtCore::ODEGeomWrap();
-      mFeetGeom->SetCollisionRay(0.1f);
+      mFeetGeom->SetCollisionRay(1.0f);
       mFeetGeom->SetCollisionCategoryBits(0);
       mFeetGeom->SetCollisionCollideBits(0xFFFFFFFF);
       mFeetGeom->SetCollisionDetection(true);
@@ -263,7 +253,7 @@ namespace dtCore
       dGeomSetData(mBBFeet, this);
 
       mTorsoGeom = new dtCore::ODEGeomWrap();
-      mTorsoGeom->SetCollisionCylinder(mTorsoLengths[0], mTorsoLengths[1]);
+      mTorsoGeom->SetCollisionCylinder(1.0f, 1.0f);
       mTorsoGeom->SetCollisionCategoryBits(0);
       mTorsoGeom->SetCollisionCollideBits(0xFFFFFFFF);
       mTorsoGeom->SetCollisionDetection(true);
@@ -339,71 +329,9 @@ namespace dtCore
          }
       }
 
-      //{
-      //   osg::Vec3 colPos = newFeetPos;
-      //   osg::Vec3 vec = newFeetPos - oldFeetPos;
-      //   float length = vec.length();
-
-      //   if (length > 0.0f)
-      //   {
-      //      osg::Vec3 rightVec = vec ^ osg::Vec3(0.0f, 0.0f, 1.0f);
-      //      rightVec.normalize();
-      //      rightVec *= mTorsoLengths[0];
-      //      float rightLength = rightVec.length();
-
-      //      osg::Vec3 upVec = osg::Vec3(0.0f, 0.0f, 0.0f);
-      //      float depth = 10000.0f;
-
-      //      //if (mFeetTransformable->GetOSGNode()->asGroup()->getNumChildren() > 0)
-      //      //{
-      //      //   dtCore::RefPtr<osg::Node> node = mFeetTransformable->GetOSGNode()->asGroup()->getChild(0);
-      //      //   if (node.valid())
-      //      //   {
-      //      //      mFeetTransformable->GetOSGNode()->asGroup()->removeChild(node);
-      //      //   }
-      //      //}
-
-      //      while (upVec.z() <= mHeightAboveTerrain - mMaxStepUpDistance)
-      //      {
-      //         ApplyMovementVector(vec, length, oldFeetPos, upVec, newFeetPos, colPos, depth);
-      //         ApplyMovementVector(vec, length, oldFeetPos, upVec + rightVec, newFeetPos, colPos, depth);
-      //         ApplyMovementVector(vec, length, oldFeetPos, upVec - rightVec, newFeetPos, colPos, depth);
-
-      //         upVec.z() += 0.05f;
-      //      }
-
-      //      if (upVec.z() != mHeightAboveTerrain - mMaxStepUpDistance)
-      //      {
-      //         upVec.z() = mHeightAboveTerrain - mMaxStepUpDistance;
-      //         
-      //         ApplyMovementVector(vec, length, oldFeetPos, upVec, newFeetPos, colPos, depth);
-      //         ApplyMovementVector(vec, length, oldFeetPos, upVec + rightVec, newFeetPos, colPos, depth);
-      //         ApplyMovementVector(vec, length, oldFeetPos, upVec - rightVec, newFeetPos, colPos, depth);
-      //      }
-
-      //      vec = newFeetPos - colPos;
-      //      vec.z() = colPos.z();
-      //      length = vec.length();
-      //      if (length > 0.0f)
-      //      {
-      //         depth = 10000.0f;
-      //         osg::Vec3 outColPos;
-
-      //         if (ApplyMovementVector(vec, length, colPos, osg::Vec3(), outColPos, outColPos, depth))
-      //         {
-      //            newFeetPos = oldFeetPos;
-      //         }
-      //      }
-      //   }
-      //}
-
       // now perform gravity/jump collision
       {
-         //osg::Vec3 vec = newFeetPos - oldFeetPos;
-         //vec.normalize();
-
-
-         oldFeetPos = newFeetPos;// + (vec * mTorsoLengths[0]);
+         oldFeetPos = newFeetPos;
          oldFeetPos[2] += mMaxStepUpDistance;
 
          newFeetPos = oldFeetPos;
@@ -442,128 +370,57 @@ namespace dtCore
                newFeetPos[1] += normal[1] * dt * mSlideSpeed;
                newFeetPos[2] -= normal[2] * dt * mSlideSpeed;
                mGroundNormal = normal;
+             
+               SetCurrentMode(SLIDING);
             }
             else
             {
                mGroundNormal = osg::Vec3(0.0f, 0.0f, 1.0f);
-            }
 
-            SetCurrentMode(WALKING);
+               SetCurrentMode(WALKING);
+            }
          }
          else
          {
             SetCurrentMode(IN_AIR);
          }
-
-         //newFeetPos -= vec * mTorsoLengths[0];
       }
 
-      // Now apply the ambient torso collision.
-      {
-         dtCore::Transform xform;
-         xform.SetTranslation(newFeetPos[0], newFeetPos[1], newFeetPos[2] + mTorsoOffset);
-         mTorsoGeom->SetCollisionCylinder(mTorsoLengths[0], mTorsoLengths[1]);
-         mTorsoGeom->SetCollisionDetection(true);
-         mTorsoGeom->UpdateGeomTransform(xform);
+      //// Now apply the ambient torso collision.
+      //{
+      //   dtCore::Transform xform;
+      //   xform.SetTranslation(newFeetPos[0], newFeetPos[1], newFeetPos[2] + mTorsoOffset);
+      //   mTorsoGeom->SetCollisionCylinder(mTorsoLengths[0], mTorsoLengths[1]);
+      //   mTorsoGeom->SetCollisionDetection(true);
+      //   mTorsoGeom->UpdateGeomTransform(xform);
+      //}
 
-         //if (mTorsoTransformable->GetOSGNode()->asGroup()->getNumChildren() > 0)
-         //{
-         //   mTorsoTransformable->GetOSGNode()->asGroup()->removeChild(mTorsoTransformable->GetOSGNode()->asGroup()->getChild(0));
-         //}
+      //if (CollideTorso())
+      //{
+      //   osg::Vec3 normal(mLastTorsoContact.normal[0],
+      //                    mLastTorsoContact.normal[1],
+      //                    mLastTorsoContact.normal[2]);
+      //   float depth = mLastTorsoContact.depth;
 
-         //mTorsoTransformable->GetOSGNode()->asGroup()->addChild(mTorsoGeom->CreateRenderedCollisionGeometry(true));
-         //xform.SetTranslation(xform.GetTranslation() + osg::Vec3(0.0f, 0.0f, mTorsoLengths[0]));
-         //mTorsoTransformable->SetTransform(xform);
-      }
-
-      if (CollideTorso())
-      {
-         osg::Vec3 normal(mLastTorsoContact.normal[0],
-                          mLastTorsoContact.normal[1],
-                          mLastTorsoContact.normal[2]);
-         float depth = mLastTorsoContact.depth;
-
-         newFeetPos += normal * depth;
-      }
+      //   newFeetPos += normal * depth;
+      //}
 
       mEndPosition = osg::Vec3(newFeetPos[0], newFeetPos[1], newFeetPos[2] + mHeightAboveTerrain);
 
-      const float LERP_SPEED = 20.0f;
-
       // Lerp the target from its current position to its end position
       // over time and then return the lerp position for a smooth translation.
-      osg::Vec3 targetP1 = mStartPosition + (mEndPosition - mStartPosition) * dt * LERP_SPEED;
+      osg::Vec3 targetP1 = mStartPosition + (mEndPosition - mStartPosition) * dt * mSmoothingSpeed;
 
       return targetP1;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   bool FPSCollider::ApplyMovementVector(const osg::Vec3& vec, float length, const osg::Vec3& oldPos, const osg::Vec3& offset, osg::Vec3& newPos, osg::Vec3& colPos, float& depth)
-   {
-      dtCore::Transform xform;
-      xform.Set(osg::Matrix::rotate(osg::Vec3(0.f, 0.f, 1.f), vec));
-      xform.SetTranslation(oldPos + offset);
-      mTorsoGeom->UpdateGeomTransform(xform);
-      mTorsoGeom->SetCollisionRay(length);
-      mTorsoGeom->SetCollisionDetection(true);
-
-      //dtCore::RefPtr<osg::Cylinder> line = new osg::Cylinder(vec * 0.5f, 0.01f, length);
-      //dtCore::RefPtr<osg::ShapeDrawable> drawable = new osg::ShapeDrawable(line);
-      //dtCore::RefPtr<osg::Geode> geode = new osg::Geode();
-      //geode->addDrawable(drawable);
-      //dtCore::RefPtr<dtCore::Transformable> transformable = new dtCore::Transformable();
-      //transformable->GetOSGNode()->asGroup()->addChild(geode);
-
-      //transformable->SetTransform(xform);
-      //mFeetTransformable->GetOSGNode()->asGroup()->addChild(transformable->GetOSGNode());
-
-      if (CollideTorso())
-      {
-         osg::Vec3 testColPos(mLastTorsoContact.pos[0],
-                              mLastTorsoContact.pos[1],
-                              mLastTorsoContact.pos[2]);
-         osg::Vec3 vec = testColPos - (oldPos + offset);
-         float colDepth = vec.length();
-         vec.normalize();
-         float dot = vec * osg::Vec3(mLastTorsoContact.normal[0],
-                                     mLastTorsoContact.normal[1],
-                                     mLastTorsoContact.normal[2]);
-
-         if (depth > colDepth && dot < 0.0f)
-         {
-            colPos = testColPos;
-            newPos.set(mLastTorsoContact.pos[0],
-                       mLastTorsoContact.pos[1],
-                       mLastTorsoContact.pos[2]);
-
-            osg::Vec3 normal(mLastTorsoContact.normal[0],
-                             mLastTorsoContact.normal[1],
-                             mLastTorsoContact.normal[2]);
-
-            newPos[0] += normal[0] * mTorsoLengths[0];
-            newPos[1] += normal[1] * mTorsoLengths[0];
-
-            newPos[0] -= offset[0] * (1.0f - abs(normal[0]));
-            newPos[1] -= offset[1] * (1.0f - abs(normal[1]));
-            newPos[2] -= offset[2];
-
-            depth = colDepth;
-            return true;
-         }
-      }
-
-      return false;
    }
 
    ////////////////////////////////////////////////////////////////////////////
    bool FPSCollider::CollideTorso()
    {
-      mNormals.clear();
       mNumTorsoContactPoints = 0;
 
-      mStartCollideTorso = true;
+      mLastTorsoContact.depth = -1.0f;
       dSpaceCollide2((dGeomID)mCollisionSpace, (dGeomID)mLocalSpaceID, this, NearCallbackTorso);
-      mStartCollideTorso = false;
 
       return mNumTorsoContactPoints > 0;
    }
@@ -571,12 +428,10 @@ namespace dtCore
    ////////////////////////////////////////////////////////////////////////////
    bool FPSCollider::CollideFeet()
    {
-      mNormals.clear();
       mNumFeetContactPoints = 0;
 
-      mStartCollideFeet = true;
+      mLastFeetContact.depth = -1.0f;
       dSpaceCollide2((dGeomID)mCollisionSpace, (dGeomID)mLocalSpaceID, this, NearCallbackFeet);
-      mStartCollideFeet = false;
 
       return mNumFeetContactPoints > 0;
    }
@@ -586,24 +441,6 @@ namespace dtCore
    {
       if (pObject == GetFeetGeom()) return;
 
-      bool set = false;
-      void* data = NULL;
-      dGeomID pID = pObject;
-
-      while (dGeomGetClass(pID) == dGeomTransformClass)
-      {
-         if (!pID) return;
-         pID = dGeomTransformGetGeom(pID);
-      }
-
-      if (dGeomGetClass(pID) == dTriMeshClass)
-      {
-         set = true;
-         data = dGeomGetData(pID);
-         dGeomSetData(pID, this);
-         dGeomTriMeshSetArrayCallback(pID, dTriArrayCallback);
-      }
-
       dContactGeom contactGeoms[10];
       int contactPoints = dCollide(pTorso, pObject, 10, contactGeoms, sizeof(dContactGeom));
 
@@ -612,29 +449,13 @@ namespace dtCore
       {
          for (int index = 0; index < contactPoints; ++index)
          {
-            if (mStartCollideTorso)
+            if (contactGeoms[index].depth > mLastTorsoContact.depth)
             {
                mLastTorsoContact = contactGeoms[index];
-               mStartCollideTorso = false;
 
                mNumTorsoContactPoints = contactPoints;
             }
-            else
-            {
-               if (contactGeoms[index].depth > mLastTorsoContact.depth)
-               {
-                  mLastTorsoContact = contactGeoms[index];
-
-                  mNumTorsoContactPoints = contactPoints;
-               }
-            }
          }
-      }
-
-      if (set)
-      {
-         dGeomSetData(pID, data);
-         dGeomTriMeshSetArrayCallback(pID, 0);
       }
    }
 
@@ -643,51 +464,17 @@ namespace dtCore
    {
       if (pObject == GetTorsoGeom()) return;
 
-      bool set = false;
-      void* data = NULL;
-      dGeomID pID = pObject;
-
-      while (dGeomGetClass(pID) == dGeomTransformClass)
-      {
-         if (!pID) return;
-         pID = dGeomTransformGetGeom(pID);
-      }
-
-      if (dGeomGetClass(pID) == dTriMeshClass)
-      {
-         set = true;
-         data = dGeomGetData(pID);
-         dGeomSetData(pID, this);
-         dGeomTriMeshSetArrayCallback(pID, dTriArrayCallback);
-      }
-
       dContactGeom contactGeoms[1];
       int contactPoints = dCollide(pFeet, pObject, 1, contactGeoms, sizeof(dContactGeom));
 
       if (contactPoints)
       {
-         if (mStartCollideFeet)
+         if (contactGeoms[0].depth > mLastFeetContact.depth)
          {
             mLastFeetContact = contactGeoms[0];
-            mStartCollideFeet = false;
 
             mNumFeetContactPoints = contactPoints;
          }
-         else
-         {
-            if (contactGeoms[0].depth > mLastFeetContact.depth)
-            {
-               mLastFeetContact = contactGeoms[0];
-
-               mNumFeetContactPoints = contactPoints;
-            }
-         }
-      }
-
-      if (set)
-      {
-         dGeomSetData(pID, data);
-         dGeomTriMeshSetArrayCallback(pID, 0);
       }
    }
 
@@ -732,34 +519,6 @@ namespace dtCore
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void FPSCollider::dTriArrayCallback(dGeomID TriMesh, dGeomID RefObject, const int* TriIndices, int TriCount)
-   {
-      FPSCollider* cmm = static_cast<FPSCollider*>(dGeomGetData(TriMesh));
-
-      for (int i = 0; i < TriCount; ++i)
-      {
-         dVector3 v1, v2, v3;
-
-         dGeomTriMeshGetTriangle(TriMesh, TriIndices[i], &v1, &v2, &v3);
-
-         osg::Vec3 middle(v2[0], v2[1], v2[2]);
-
-         osg::Vec3 side1(v1[0], v1[1], v1[2]);
-         osg::Vec3 side2(v3[0], v3[1], v3[2]);
-         osg::Vec3 normal;
-
-         side1 -= middle;
-         side2 = middle - side2;
-
-         normal.set(side1 ^ side2);
-         normal.normalize();
-
-         cmm->mNormals.push_back(normal);
-      }
-
-   }
-
-   ////////////////////////////////////////////////////////////////////////////
    osg::Vec3 FPSCollider::Update(const osg::Vec3& initialTargetPosition, 
                                  const osg::Vec3& initialVelocity,
                                  float deltaFrameTime, bool pJump)
@@ -767,56 +526,17 @@ namespace dtCore
       mLastVelocity[0] = initialVelocity[0];
       mLastVelocity[1] = initialVelocity[1];
  
-      osg::Vec3 targetPosition = initialTargetPosition;
-
-      //double timeToGo = deltaFrameTime;
-      //const double kTimeStep = 1.0/30.0;
-
-      return Step(targetPosition, deltaFrameTime, pJump);
-
-      //while (timeToGo > kTimeStep)
-      //{
-      //   targetPosition = Step(targetPosition, kTimeStep, pJump);
-
-      //   timeToGo -= kTimeStep;
-      //}
-
-      //if (timeToGo > 0.0)
-      //{
-      //   targetPosition = Step(targetPosition, timeToGo, pJump);
-      //}
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   osg::Vec3 FPSCollider::GetLastVelocity() const
-   {
-      return mLastVelocity;
-   }
-
-   //////////////////////////////////////////////////////////////////////////
-   void FPSCollider::SetCurrentMode(eMode newMode)
-   {
-      if (newMode != mCurrentMode)
-      {
-         mCurrentMode = newMode;
-         //LOGN_DEBUG("FPSCollider", "Am now: " + dtUtil::ToString(mCurrentMode));
-      }
-   }
-
-   //////////////////////////////////////////////////////////////////////////
-   osg::Vec3 FPSCollider::Step(const osg::Vec3& targetPosition, const double deltaFrameTime, bool pJump)
-   {
       // Check if the target has moved away significantly.
-      // This happens if the target was moved independantly of this collider.
-      if ((targetPosition - mStartPosition).length2() > 0.1f)
+      // This happens if the target was moved independently of this collider.
+      if ((initialTargetPosition - mStartPosition).length2() > 0.1f)
       {
-         mStartPosition = targetPosition;
-         mEndPosition = targetPosition;
+         mStartPosition = initialTargetPosition;
+         mEndPosition = initialTargetPosition;
          mLastVelocity[2] = 0.0f;
       }
 
-      // Only allow jumping if we are walking.
-      if (mCurrentMode == WALKING && pJump)
+      // Only allow jumping if we are not in the air.
+      if (mCurrentMode != IN_AIR && pJump)
       {
          mLastVelocity += mGroundNormal * mJumpSpeed;
          mJumping = true;
@@ -837,4 +557,15 @@ namespace dtCore
       return mStartPosition;
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   osg::Vec3 FPSCollider::GetLastVelocity() const
+   {
+      return mLastVelocity;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void FPSCollider::SetCurrentMode(eMode newMode)
+   {
+      mCurrentMode = newMode;
+   }
 }//namespace dtCore
