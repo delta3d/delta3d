@@ -50,6 +50,7 @@ namespace dtGUI
       {
          this->setSupportsDisplayList(false);
          this->setUseDisplayList(false);
+         setDataVariance(osg::Object::DYNAMIC);
       }
 
       ///constructs an GUIdrawable-object and assign an HUD-object
@@ -57,6 +58,7 @@ namespace dtGUI
       {
          this->setSupportsDisplayList(false);
          this->setUseDisplayList(false);
+         setDataVariance(osg::Object::DYNAMIC);
       }
 
       ///implementation of osg::Object
