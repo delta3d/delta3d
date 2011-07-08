@@ -133,7 +133,7 @@ namespace dtDirector
             }
 
             // Now trigger the event.
-            event->Trigger("Out", &instigator, true, false);
+            event->Trigger("Out", &instigator);
          }
 
          return true;

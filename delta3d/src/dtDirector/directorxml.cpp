@@ -422,11 +422,14 @@ namespace dtDirector
                EndElement(); // End Link Name.
 
                // Visibility
-               BeginElement(dtDAL::MapXMLConstants::DIRECTOR_LINK_VISIBLE_ELEMENT);
+               if (!input.GetVisible())
                {
-                  AddCharacters(input.GetVisible()? "true": "false");
+                  BeginElement(dtDAL::MapXMLConstants::DIRECTOR_LINK_VISIBLE_ELEMENT);
+                  {
+                     AddCharacters("false");
+                  }
+                  EndElement(); // End Visibility.
                }
-               EndElement(); // End Visibility.
 
                // Links.
                std::vector<OutputLink*>& links = input.GetLinks();
@@ -473,18 +476,24 @@ namespace dtDirector
                EndElement(); // End Link Name.
 
                // Immediate
-               BeginElement(dtDAL::MapXMLConstants::DIRECTOR_LINK_IMMEDIATE_ELEMENT);
+               if (!output.GetImmediate())
                {
-                  AddCharacters(output.GetImmediate()? "true": "false");
+                  BeginElement(dtDAL::MapXMLConstants::DIRECTOR_LINK_IMMEDIATE_ELEMENT);
+                  {
+                     AddCharacters("false");
+                  }
+                  EndElement(); // End Immediate.
                }
-               EndElement(); // End Immediate.
 
                // Visibility
-               BeginElement(dtDAL::MapXMLConstants::DIRECTOR_LINK_VISIBLE_ELEMENT);
+               if (!output.GetVisible())
                {
-                  AddCharacters(output.GetVisible()? "true": "false");
+                  BeginElement(dtDAL::MapXMLConstants::DIRECTOR_LINK_VISIBLE_ELEMENT);
+                  {
+                     AddCharacters("false");
+                  }
+                  EndElement(); // End Visibility.
                }
-               EndElement(); // End Visibility.
 
                // Links.
                std::vector<InputLink*>& links = output.GetLinks();
@@ -531,11 +540,14 @@ namespace dtDirector
                EndElement(); // End Link Name.
 
                // Visibility
-               BeginElement(dtDAL::MapXMLConstants::DIRECTOR_LINK_VISIBLE_ELEMENT);
+               if (value.GetVisible() == false)
                {
-                  AddCharacters(value.GetVisible()? "true": "false");
+                  BeginElement(dtDAL::MapXMLConstants::DIRECTOR_LINK_VISIBLE_ELEMENT);
+                  {
+                     AddCharacters("false");
+                  }
+                  EndElement(); // End Visibility.
                }
-               EndElement(); // End Visibility.
 
                // Exposed.
                BeginElement(dtDAL::MapXMLConstants::DIRECTOR_LINK_EXPOSED_ELEMENT);
@@ -545,25 +557,34 @@ namespace dtDirector
                EndElement(); // End Exposed.
 
                // Is Out Value.
-               BeginElement(dtDAL::MapXMLConstants::DIRECTOR_LINK_VALUE_IS_OUT_ELEMENT);
+               if (value.IsOutLink())
                {
-                  AddCharacters(value.IsOutLink()? "true": "false");
+                  BeginElement(dtDAL::MapXMLConstants::DIRECTOR_LINK_VALUE_IS_OUT_ELEMENT);
+                  {
+                     AddCharacters("true");
+                  }
+                  EndElement(); // End Is Out Value.
                }
-               EndElement(); // End Is Out Value.
 
                // Allow Multiple values.
-               BeginElement(dtDAL::MapXMLConstants::DIRECTOR_LINK_VALUE_ALLOW_MULTIPLE_ELEMENT);
+               if (value.AllowMultiple())
                {
-                  AddCharacters(value.AllowMultiple()? "true": "false");
+                  BeginElement(dtDAL::MapXMLConstants::DIRECTOR_LINK_VALUE_ALLOW_MULTIPLE_ELEMENT);
+                  {
+                     AddCharacters("true");
+                  }
+                  EndElement(); // End Allow Multiple values.
                }
-               EndElement(); // End Allow Multiple values.
 
                // Type Checking.
-               BeginElement(dtDAL::MapXMLConstants::DIRECTOR_LINK_VALUE_TYPE_CHECK_ELEMENT);
+               if (!value.IsTypeChecking())
                {
-                  AddCharacters(value.IsTypeChecking()? "true": "false");
+                  BeginElement(dtDAL::MapXMLConstants::DIRECTOR_LINK_VALUE_TYPE_CHECK_ELEMENT);
+                  {
+                     AddCharacters("false");
+                  }
+                  EndElement(); // End Type Checking.
                }
-               EndElement(); // End Type Checking.
 
                // Links.
                std::vector<ValueNode*>& links = value.GetLinks();

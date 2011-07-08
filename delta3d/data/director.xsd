@@ -80,6 +80,7 @@
     <xsd:sequence>
       <xsd:element name="name"          type="xsd:string"/>
       <xsd:element name="immediate"     minOccurs="0" maxOccurs="1" type="xsd:boolean"/>
+      <xsd:element name="immediateMode" minOccurs="0" maxOccurs="1" type="xsd:boolean"/>
       <xsd:element name="visible"       minOccurs="0" maxOccurs="1" type="xsd:boolean"/>
       <xsd:element name="exposed"       minOccurs="0" maxOccurs="1" type="xsd:boolean"/>
       <xsd:element name="isout"         minOccurs="0" maxOccurs="1" type="xsd:boolean"/>
