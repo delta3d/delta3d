@@ -845,12 +845,12 @@ namespace dtDirector
       if (output->GetImmediate())
       {
          undoDescription += "Enabling ";
-         setBrush(Qt::red);
+         setBrush(mLinkGraphicPen.color());
       }
       else
       {
          undoDescription += "Disabling ";
-         setBrush(mLinkGraphicPen.color());
+         setBrush(Qt::red);
       }
 
       undoDescription += " Immediate mode of output link \'" + output->GetName() + "\' for ";

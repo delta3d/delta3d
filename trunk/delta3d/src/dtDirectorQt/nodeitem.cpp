@@ -583,16 +583,16 @@ namespace dtDirector
          data.linkGraphic->setPen(GetNodeColor());
          if (!data.link->GetImmediate())
          {
-            data.linkGraphic->setBrush(GetNodeColor());
-         }
-         else
-         {
             QColor immediateColor = Qt::red;
             if (mNode.valid() && !mNode->IsEnabled())
             {
                immediateColor.setAlphaF(0.25f);
             }
             data.linkGraphic->setBrush(immediateColor);
+         }
+         else
+         {
+            data.linkGraphic->setBrush(GetNodeColor());
          }
          data.linkGraphic->SetPenColor(GetNodeColor());
 
