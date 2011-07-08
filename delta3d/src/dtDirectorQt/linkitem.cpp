@@ -551,7 +551,7 @@ namespace dtDirector
          dcMenu->setEnabled(count > 0);
          for (int index = 0; index < count; index++)
          {
-            QString nodeName = input->GetLinks()[index]->GetOwner()->GetName().c_str();
+            QString nodeName = input->GetLinks()[index]->GetOwner()->GetTypeName().c_str();
             QString linkName = input->GetLinks()[index]->GetName().c_str();
             QAction* dcAction = dcMenu->addAction(QString("Disconnect from \'") +
                linkName + "\' on node \'" + nodeName + "\'");
@@ -1094,7 +1094,7 @@ namespace dtDirector
          dcMenu->setEnabled(count > 0);
          for (int index = 0; index < count; index++)
          {
-            QString nodeName = output->GetLinks()[index]->GetOwner()->GetName().c_str();
+            QString nodeName = output->GetLinks()[index]->GetOwner()->GetTypeName().c_str();
             QString linkName = output->GetLinks()[index]->GetName().c_str();
             QAction* dcAction = dcMenu->addAction(QString("Disconnect from \'") +
                linkName + "\' on node \'" + nodeName + "\'");
@@ -1582,7 +1582,7 @@ namespace dtDirector
          dcMenu->setEnabled(count > 0);
          for (int index = 0; index < count; index++)
          {
-            QString linkName = input->GetLinks()[index]->GetName().c_str();
+            QString linkName = input->GetLinks()[index]->GetTypeName().c_str();
             QAction* dcAction = dcMenu->addAction(QString("Disconnect from \'") +
                linkName + "\'");
             dcAction->setStatusTip(linkName);
@@ -1937,7 +1937,7 @@ namespace dtDirector
                continue;
             }
 
-            QString nodeName = output->GetLinks()[index]->GetOwner()->GetName().c_str();
+            QString nodeName = output->GetLinks()[index]->GetOwner()->GetTypeName().c_str();
             QString linkName = output->GetLinks()[index]->GetName().c_str();
             QAction* dcAction = dcMenu->addAction(QString("Disconnect from \'") +
                linkName + "\' on node \'" + nodeName + "\'");
