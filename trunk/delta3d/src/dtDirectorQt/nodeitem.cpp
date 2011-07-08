@@ -365,6 +365,20 @@ namespace dtDirector
 
       if (mNodeHeight < int(mTitleHeight)) mNodeHeight = int(mTitleHeight);
 
+      // Create our latent node icon and make room for it.
+      if (mNode.valid() && mNode->AsLatentNode())
+      {
+         if (!mLatentIcon)
+         {
+            mLatentIcon = new QGraphicsPixmapItem(mTitleBG, scene());
+            mLatentIcon->setPixmap(QPixmap(":icons/timer_icon.png"));
+            mLatentIcon->setOpacity(0.25f);
+            mLatentIcon->setScale(0.4f);
+         }
+
+         bounds.setWidth(bounds.width() + mLatentIcon->boundingRect().width() * mLatentIcon->scale());
+      }
+
       // Clamp the bounds to our min and max.
       if (bounds.width() > MAX_NODE_WIDTH - 2) bounds.setWidth(MAX_NODE_WIDTH - 2);
       if (bounds.width() < MIN_NODE_WIDTH - 2) bounds.setWidth(MIN_NODE_WIDTH - 2);
@@ -488,16 +502,8 @@ namespace dtDirector
       mTitleBG->setRect(bounds);
       mTitleBG->setPos(1.0f, 1.0f);
 
-      if (mNode.valid() && mNode->AsLatentNode())
+      if (mLatentIcon)
       {
-         if (!mLatentIcon)
-         {
-            mLatentIcon = new QGraphicsPixmapItem(mTitleBG, scene());
-            mLatentIcon->setPixmap(QPixmap(":icons/timer_icon.png"));
-            mLatentIcon->setOpacity(0.25f);
-            mLatentIcon->setScale(0.4f);
-         }
-
          mLatentIcon->setPos(bounds.width() - 
             mLatentIcon->boundingRect().width() * mLatentIcon->scale(), 0);
       }
