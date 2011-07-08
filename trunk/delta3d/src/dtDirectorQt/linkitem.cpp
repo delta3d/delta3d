@@ -1629,7 +1629,9 @@ namespace dtDirector
                ValueLink* input = output->GetLinks()[count];
                if (input)
                {
-                  if (input->GetOwner()->AsValueNode())
+                  // Ignore all connected reference value nodes.
+                  if (input->GetOwner()->AsValueNode() &&
+                      input->GetOwner()->GetType().GetFullName() == "Core.Reference")
                   {
                      count++;
                      continue;
@@ -1928,8 +1930,9 @@ namespace dtDirector
          int count = (int)output->GetLinks().size();
          for (int index = 0; index < count; index++)
          {
-            // Ignore all connected value nodes.
-            if (output->GetLinks()[index]->GetOwner()->AsValueNode())
+            // Ignore all connected reference value nodes.
+            if (output->GetLinks()[index]->GetOwner()->AsValueNode() &&
+                output->GetLinks()[index]->GetOwner()->GetType().GetFullName() == "Core.Reference")
             {
                continue;
             }
