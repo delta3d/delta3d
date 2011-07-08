@@ -386,24 +386,24 @@ namespace dtCore
          }
       }
 
-      //// Now apply the ambient torso collision.
-      //{
-      //   dtCore::Transform xform;
-      //   xform.SetTranslation(newFeetPos[0], newFeetPos[1], newFeetPos[2] + mTorsoOffset);
-      //   mTorsoGeom->SetCollisionCylinder(mTorsoLengths[0], mTorsoLengths[1]);
-      //   mTorsoGeom->SetCollisionDetection(true);
-      //   mTorsoGeom->UpdateGeomTransform(xform);
-      //}
+      // Now apply the ambient torso collision.
+      {
+         dtCore::Transform xform;
+         xform.SetTranslation(newFeetPos[0], newFeetPos[1], newFeetPos[2] + mTorsoOffset);
+         mTorsoGeom->SetCollisionCylinder(mTorsoLengths[0], mTorsoLengths[1]);
+         mTorsoGeom->SetCollisionDetection(true);
+         mTorsoGeom->UpdateGeomTransform(xform);
+      }
 
-      //if (CollideTorso())
-      //{
-      //   osg::Vec3 normal(mLastTorsoContact.normal[0],
-      //                    mLastTorsoContact.normal[1],
-      //                    mLastTorsoContact.normal[2]);
-      //   float depth = mLastTorsoContact.depth;
+      if (CollideTorso())
+      {
+         osg::Vec3 normal(mLastTorsoContact.normal[0],
+                          mLastTorsoContact.normal[1],
+                          mLastTorsoContact.normal[2]);
+         float depth = mLastTorsoContact.depth;
 
-      //   newFeetPos += normal * depth;
-      //}
+         newFeetPos += normal * depth;
+      }
 
       mEndPosition = osg::Vec3(newFeetPos[0], newFeetPos[1], newFeetPos[2] + mHeightAboveTerrain);
 
