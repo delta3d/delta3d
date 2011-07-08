@@ -55,7 +55,7 @@ namespace dtDirector
        * @param[in]  immediate  If true, this link will execute the rest of
        *                        the chain immediately in a single update.
        */
-      OutputLink(Node* owner, const std::string& name = "Out", const std::string& comment = "", bool immediate = false);
+      OutputLink(Node* owner, const std::string& name = "Out", const std::string& comment = "", bool immediate = true);
 
       /**
        * Destructor.

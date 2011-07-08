@@ -234,7 +234,7 @@ namespace dtDAL
       DIRECTOR_LINKS_VALUE_ELEMENT = xercesc::XMLString::transcode("valuelink");
       DIRECTOR_LINK_ELEMENT = xercesc::XMLString::transcode("link");
 
-      DIRECTOR_LINK_IMMEDIATE_ELEMENT = xercesc::XMLString::transcode("immediate");
+      DIRECTOR_LINK_IMMEDIATE_ELEMENT = xercesc::XMLString::transcode("immediateMode");
       DIRECTOR_LINK_VISIBLE_ELEMENT = xercesc::XMLString::transcode("visible");
       DIRECTOR_LINK_EXPOSED_ELEMENT = xercesc::XMLString::transcode("exposed");
       DIRECTOR_LINK_VALUE_IS_OUT_ELEMENT = xercesc::XMLString::transcode("isout");

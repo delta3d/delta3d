@@ -48,7 +48,7 @@ namespace dtDirector
       if (!mIsActive && Check(keyboard, keyCode))
       {
          mIsActive = true;
-         mEvent->Trigger("Pressed", 0, true, false);
+         mEvent->Trigger("Pressed");
       }
 
       return false;
@@ -60,7 +60,7 @@ namespace dtDirector
       if (mIsActive && Check(keyboard, keyCode, false))
       {
          mIsActive = false;
-         mEvent->Trigger("Released", 0, true, false);
+         mEvent->Trigger("Released");
       }
 
       return false;
