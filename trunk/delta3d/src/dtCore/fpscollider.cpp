@@ -49,14 +49,13 @@ namespace dtCore
       , mNumFeetContactPoints(0)
       , mNumTorsoContactPoints(0)
       , mLastFeetContact()
-      , mCurrentMode(IN_AIR)
+      , mCurrentMode(IDLE)
       , mSlideSpeed(5.0f)
       , mSlideThreshold(0.1f)
       , mJumpSpeed(5.0f)
       , mTerminalSpeed(-50.0f)
       , mHeightAboveTerrain(pHeight)
       , mMaxStepUpDistance(k)
-      , mJumping(false)
       , mGroundNormal(0.0f, 0.0f, 1.0f)
       , mSmoothingSpeed(20.0f)
       , mCollisionSpace()
@@ -84,13 +83,12 @@ namespace dtCore
       , mNumFeetContactPoints(0)
       , mNumTorsoContactPoints(0)
       , mLastFeetContact()
-      , mCurrentMode(IN_AIR)
+      , mCurrentMode(IDLE)
       , mSlideSpeed(5.0f)
       , mSlideThreshold(0.1f)
       , mJumpSpeed(5.0f)
       , mHeightAboveTerrain(pHeight)
       , mMaxStepUpDistance(k)
-      , mJumping(false)
       , mGroundNormal(0.0f, 0.0f, 1.0f)
       , mSmoothingSpeed(20.0f)
       , mCollisionSpace(pSpaceToCollideWith)
@@ -362,8 +360,6 @@ namespace dtCore
                              mLastFeetContact.normal[1],
                              mLastFeetContact.normal[2]);
 
-            mJumping = false;
-
             if (normal.z() < 1.0f - mSlideThreshold)
             {
                newFeetPos[0] += normal[0] * dt * mSlideSpeed;
@@ -371,18 +367,43 @@ namespace dtCore
                newFeetPos[2] -= normal[2] * dt * mSlideSpeed;
                mGroundNormal = normal;
              
-               SetCurrentMode(SLIDING);
+               // If we are not actively walking, then we are sliding.
+               if (mLastVelocity[0] == 0.0f && mLastVelocity[1] == 0.0f)
+               {
+                  SetCurrentMode(SLIDING);
+               }
+               else
+               {
+                  SetCurrentMode(WALKING);
+               }
             }
             else
             {
                mGroundNormal = osg::Vec3(0.0f, 0.0f, 1.0f);
 
-               SetCurrentMode(WALKING);
+               // If we are not actively walking, then we are idle.
+               if (mLastVelocity[0] == 0.0f && mLastVelocity[1] == 0.0f)
+               {
+                  SetCurrentMode(IDLE);
+               }
+               else
+               {
+                  SetCurrentMode(WALKING);
+               }
             }
          }
          else
          {
-            SetCurrentMode(IN_AIR);
+            // If we are in the air, then we are jumping or falling based
+            // on our upward velocity.
+            if (mLastVelocity[2] > 0.0f)
+            {
+               SetCurrentMode(JUMPING);
+            }
+            else
+            {
+               SetCurrentMode(FALLING);
+            }
          }
       }
 
@@ -535,16 +556,23 @@ namespace dtCore
          mLastVelocity[2] = 0.0f;
       }
 
-      // Only allow jumping if we are not in the air.
-      if (mCurrentMode != IN_AIR && pJump)
+      // Handle jumping.
+      switch (mCurrentMode)
       {
-         mLastVelocity += mGroundNormal * mJumpSpeed;
-         mJumping = true;
-      }
-      else if (mJumping)
-      {
+      case IDLE:
+      case WALKING:
+      case SLIDING:
+         if (pJump)
+         {
+            mLastVelocity += mGroundNormal * mJumpSpeed;
+         }
+         break;
+
+      case JUMPING:
+      case FALLING:
          mLastVelocity[0] += mGroundNormal[0] * mJumpSpeed;
          mLastVelocity[1] += mGroundNormal[1] * mJumpSpeed;
+         break;
       }
 
       // Apply Gravity.
