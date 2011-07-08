@@ -51,6 +51,7 @@ namespace dtDirector
       static dtCore::RefPtr<dtDirector::NodeType> DELAY_ACTION_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> LOOP_ACTION_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> SWITCH_ACTION_NODE_TYPE;
+      static dtCore::RefPtr<dtDirector::NodeType> FPS_MOTION_MODEL_LISTENER_NODE_TYPE;
 
       static dtCore::RefPtr<dtDirector::NodeType> GET_APP_CONFIG_PROPERTY_ACTION_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> GET_ACTOR_ACTION_NODE_TYPE;

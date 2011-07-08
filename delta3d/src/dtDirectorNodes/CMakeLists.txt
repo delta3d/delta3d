@@ -35,6 +35,7 @@ SET(LIB_PUBLIC_HEADERS ${HEADER_PATH}/actorarrayvalue.h
     ${HEADER_PATH}/floatvalue.h
     ${HEADER_PATH}/foreachaction.h
     ${HEADER_PATH}/foreachactoraction.h
+    ${HEADER_PATH}/fpsmotionmodellisteneraction.h
     ${HEADER_PATH}/gameeventmessageevent.h
     ${HEADER_PATH}/gamemessageevent.h
     ${HEADER_PATH}/getactoraction.h
@@ -128,6 +129,7 @@ SET(LIB_SOURCES ${SOURCE_PATH}/actorarrayvalue.cpp
     ${SOURCE_PATH}/floatvalue.cpp
     ${SOURCE_PATH}/foreachaction.cpp
     ${SOURCE_PATH}/foreachactoraction.cpp
+    ${SOURCE_PATH}/fpsmotionmodellisteneraction.cpp
     ${SOURCE_PATH}/gameeventmessageevent.cpp
     ${SOURCE_PATH}/gamemessageevent.cpp
     ${SOURCE_PATH}/getactororientationaction.cpp
