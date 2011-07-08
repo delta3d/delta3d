@@ -1074,14 +1074,25 @@ namespace dtDirector
             }
             mEditor->GetUndoManager()->BeginMultipleEvents(undoDescription);
 
-            for (int index = 0; index < count; index++)
+            NodeItem* primaryItem = dynamic_cast<NodeItem*>(itemAt(event->scenePos()));
+            if (primaryItem)
             {
-               NodeItem* item = dynamic_cast<NodeItem*>(itemList[index]);
-               if (item)
+               osg::Vec2 oldPos = primaryItem->GetPosition();
+               osg::Vec2 newPos = GetSmartSnapPosition(primaryItem);
+               primaryItem->setPos(newPos.x(), newPos.y());
+               primaryItem->EndMoveEvent();
+
+               osg::Vec2 offset = newPos - oldPos;
+
+               for (int index = 0; index < count; index++)
                {
-                  osg::Vec2 position = GetSmartSnapPosition(item);
-                  item->setPos(position.x(), position.y());
-                  item->EndMoveEvent();
+                  NodeItem* item = dynamic_cast<NodeItem*>(itemList[index]);
+                  if (item && item != primaryItem)
+                  {
+                     osg::Vec2 position = item->GetPosition() + offset;
+                     item->setPos(position.x(), position.y());
+                     item->EndMoveEvent();
+                  }
                }
             }
 
