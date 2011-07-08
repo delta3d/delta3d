@@ -82,35 +82,42 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    bool FPSMotionModelListenerAction::Update(float simDelta, float delta, int input, bool firstUpdate)
    {
-      if (!mMotionModel)
+      if (input == INPUT_LISTEN)
       {
-         std::string modelName = GetString("Motion Model");
-         if (!modelName.empty())
+         if (!mMotionModel && firstUpdate)
          {
-            mMotionModel = dtCore::CollisionMotionModel::GetInstance(modelName);
-         }
-      }
-
-      if (mMotionModel)
-      {
-         int currentMode = mMotionModel->GetFPSCollider().GetMode();
-         if (currentMode != mCurrentMode)
-         {
-            mCurrentMode = currentMode;
-
-            switch (mCurrentMode)
+            std::string modelName = GetString("Motion Model");
+            if (!modelName.empty())
             {
-            case dtCore::FPSCollider::IDLE:    ActivateOutput("Idle");    break;
-            case dtCore::FPSCollider::WALKING: ActivateOutput("Walking"); break;
-            case dtCore::FPSCollider::SLIDING: ActivateOutput("Sliding"); break;
-            case dtCore::FPSCollider::JUMPING: ActivateOutput("Jumping"); break;
-            case dtCore::FPSCollider::FALLING: ActivateOutput("Falling"); break;
+               mMotionModel = dtCore::CollisionMotionModel::GetInstance(modelName);
+            }
+         }
+
+         if (mMotionModel)
+         {
+            int currentMode = mMotionModel->GetFPSCollider().GetMode();
+            if (currentMode != mCurrentMode)
+            {
+               mCurrentMode = currentMode;
+
+               switch (mCurrentMode)
+               {
+               case dtCore::FPSCollider::IDLE:    ActivateOutput("Idle");    break;
+               case dtCore::FPSCollider::WALKING: ActivateOutput("Walking"); break;
+               case dtCore::FPSCollider::SLIDING: ActivateOutput("Sliding"); break;
+               case dtCore::FPSCollider::JUMPING: ActivateOutput("Jumping"); break;
+               case dtCore::FPSCollider::FALLING: ActivateOutput("Falling"); break;
+               }
+
+               ActivateOutput("Changed");
             }
 
-            ActivateOutput("Changed");
+            return true;
          }
-
-         return true;
+      }
+      else if (input == INPUT_STOP)
+      {
+         mMotionModel = NULL;
       }
 
       return false;
