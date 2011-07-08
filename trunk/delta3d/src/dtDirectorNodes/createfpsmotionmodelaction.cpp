@@ -50,6 +50,7 @@ namespace dtDirector
       mTurnSpeed     = 1.5f;
       mJumpSpeed     = 5.0f;
       mSlideSpeed    = 5.0f;
+      mSmoothingSpeed= 20.0f;
       mSlideThreshold= 0.1f;
       mUseWASD       = true;
       mUseArrows     = true;
@@ -155,6 +156,13 @@ namespace dtDirector
          "The threshold in which the target will slide down a sloped surface.");
       AddProperty(slideThresholdProp);
 
+      dtDAL::FloatActorProperty* smoothingProp = new dtDAL::FloatActorProperty(
+         "Smoothing Speed", "Smoothing Speed",
+         dtDAL::FloatActorProperty::SetFuncType(this, &CreateFPSMotionModelAction::SetSmoothingSpeed),
+         dtDAL::FloatActorProperty::GetFuncType(this, &CreateFPSMotionModelAction::GetSmoothingSpeed),
+         "The speed in which the target will smoothly lerp its position.");
+      AddProperty(smoothingProp);
+
       dtDAL::BooleanActorProperty* useWasdProp = new dtDAL::BooleanActorProperty(
          "Use WASD Keys", "Use WASD Keys",
          dtDAL::BooleanActorProperty::SetFuncType(this, &CreateFPSMotionModelAction::SetUseWASD),
@@ -205,6 +213,7 @@ namespace dtDirector
       mValues.push_back(ValueLink(this, jumpSpeedProp, false, false, true, false));
       mValues.push_back(ValueLink(this, slideSpeedProp, false, false, true, false));
       mValues.push_back(ValueLink(this, slideThresholdProp, false, false, true, false));
+      mValues.push_back(ValueLink(this, smoothingProp, false, false, true, false));
       mValues.push_back(ValueLink(this, useWasdProp, false, false, true, false));
       mValues.push_back(ValueLink(this, useArrowsProp, false, false, true, false));
       mValues.push_back(ValueLink(this, jumpProp, false, false, true, false));
@@ -250,6 +259,7 @@ namespace dtDirector
             model->GetFPSCollider().SetJumpSpeed(GetFloat("Jump Speed"));
             model->GetFPSCollider().SetSlideSpeed(GetFloat("Slide Speed"));
             model->GetFPSCollider().SetSlideThreshold(GetFloat("Slide Threshold"));
+            model->GetFPSCollider().SetSmoothingSpeed(GetFloat("Smoothing Speed"));
             model->GetFPSCollider().SetCollisionBitsForTorso(GetUInt("Torso Collision"));
             model->GetFPSCollider().SetCollisionBitsForFeet(GetUInt("Feet Collision"));
             model->SetScene(app->GetScene());
@@ -389,6 +399,18 @@ namespace dtDirector
    float CreateFPSMotionModelAction::GetSlideSpeed() const
    {
       return mSlideSpeed;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void CreateFPSMotionModelAction::SetSmoothingSpeed(float value)
+   {
+      mSmoothingSpeed = value;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   float CreateFPSMotionModelAction::GetSmoothingSpeed() const
+   {
+      return mSmoothingSpeed;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
