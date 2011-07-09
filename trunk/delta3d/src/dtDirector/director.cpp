@@ -1921,9 +1921,9 @@ namespace dtDirector
          return;
       }
 
-      if (mNotifier)
+      if (GetNotifier())
       {
-         mNotifier->OnValueChanged(value);
+         GetNotifier()->OnValueChanged(value);
       }
 
       // If this value is global, apply the new value to all other global
