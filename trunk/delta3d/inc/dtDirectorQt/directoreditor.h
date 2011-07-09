@@ -99,6 +99,16 @@ namespace dtDirector
       bool LoadScript(const std::string& fileName);
 
       /**
+       * Saves the current state of the graph tabs.
+       */
+      void SaveTabStates();
+
+      /**
+       * Restores the state of the graph tabs.
+       */
+      void RestoreTabStates();
+
+      /**
        * Opens a Director graph.
        *
        * @param[in]  graph   The graph to open.
@@ -649,7 +659,15 @@ namespace dtDirector
       InputLink*               mReplayInput;
       OutputLink*              mReplayOutput;
 
-      Phonon::MediaObject *mClickSound;
+      struct TabStateData
+      {
+         dtCore::UniqueId id;
+         QPointF          pos;
+      };
+      std::vector<TabStateData>mTabStates;
+      int                      mSavedTabIndex;
+
+      Phonon::MediaObject*     mClickSound;
 
       static std::map<std::string, CustomEditorTool*> mCustomTools;
       static std::vector<DirectorEditor*> mEditorsOpen;
