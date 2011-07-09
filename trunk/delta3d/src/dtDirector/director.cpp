@@ -234,7 +234,63 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void Director::SetParent(Director* parent)
    {
+      if (parent == this)
+      {
+         return;
+      }
+
+      if (mParent.valid())
+      {
+         mParent->RemoveChild(this);
+      }
+
       mParent = parent;
+
+      if (mParent.valid())
+      {
+         mParent->AddChild(this);
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void Director::AddChild(Director* child)
+   {
+      if (!child || child == this)
+      {
+         return;
+      }
+
+      int count = (int)mChildren.size();
+      for (int index = 0; index < count; ++index)
+      {
+         if (mChildren[index].get() == child)
+         {
+            return;
+         }
+      }
+
+      mChildren.push_back(child);
+      child->mParent = this;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void Director::RemoveChild(Director* child)
+   {
+      if (!child || child == this)
+      {
+         return;
+      }
+
+      int count = (int)mChildren.size();
+      for (int index = 0; index < count; ++index)
+      {
+         if (mChildren[index].get() == child)
+         {
+            child->mParent = NULL;
+            mChildren.erase(mChildren.begin() + index);
+            return;
+         }
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -377,7 +433,56 @@ namespace dtDirector
       return mParser->HasDeprecatedProperty();
    }
 
-   //////////////////////////////////////////////////////////////////////////
+   ////////////////////////////////////////////////////////////////////////////////
+   Director::StateData Director::GetState() const
+   {
+      StateData data;
+
+      int count = (int)mThreads.size();
+      for (int index = 0; index < count; ++index)
+      {
+         GetThreadState(data.threads, mThreads[index]);
+      }
+
+      GetValueState(data.values, GetGraphRoot());
+
+      count = (int)mChildren.size();
+      for (int index = 0; index < count; ++index)
+      {
+         GetValueState(data.values, mChildren[index].get());
+      }
+
+      return data;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void Director::RestoreState(const StateData& state)
+   {
+      mThreads.clear();
+
+      int count = (int)state.threads.size();
+      for (int index = 0; index < count; ++index)
+      {
+         RestoreThreadState(state.threads[index], mThreads);
+      }
+
+      count = (int)state.values.size();
+      for (int index = 0; index < count; ++index)
+      {
+         const StateValueData& data = state.values[index];
+         Node* node = RecurseFindNode(data.id, this);
+         if (node)
+         {
+            ValueNode* valueNode = node->AsValueNode();
+            if (valueNode)
+            {
+               valueNode->SetFormattedValue(data.value);
+            }
+         }
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    void Director::BuildPropertyMap()
    {
       AddProperty(new dtDAL::StringActorProperty(
@@ -492,7 +597,7 @@ namespace dtDirector
          queue.node = node;
          queue.input = index;
          queue.isStack = false;
-         queue.immediate = immediate;
+         queue.immediate = mImmediateMode && immediate;
 
          if (reverseQueue)
          {
@@ -634,7 +739,7 @@ namespace dtDirector
          queue.node = node;
          queue.input = index;
          queue.isStack = true;
-         queue.immediate = immediate;
+         queue.immediate = mImmediateMode && immediate;
          mThreadQueue.push_back(queue);
          return;
       }
@@ -1033,6 +1138,12 @@ namespace dtDirector
       return mGraph.get();
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   const DirectorGraph* Director::GetGraphRoot() const
+   {
+      return mGraph.get();
+   }
+
    //////////////////////////////////////////////////////////////////////////
    DirectorGraph* Director::GetGraph(const dtCore::UniqueId& id)
    {
@@ -1041,6 +1152,12 @@ namespace dtDirector
 
    //////////////////////////////////////////////////////////////////////////
    Node* Director::GetNode(const dtCore::UniqueId& id)
+   {
+      return mGraph->GetNode(id);
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   const Node* Director::GetNode(const dtCore::UniqueId& id) const
    {
       return mGraph->GetNode(id);
    }
@@ -1136,6 +1253,11 @@ namespace dtDirector
       if (stackIndex < 0) return false;
 
       StackData& stack = data.stack[stackIndex];
+
+      if (mImmediateMode && !stack.immediate)
+      {
+         return false;
+      }
 
       bool continued = false;
 
@@ -1872,5 +1994,149 @@ namespace dtDirector
    std::vector<Director::RecordThreadData*> Director::GetRecordingData()
    {
       return mRecordThreads;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void Director::GetThreadState(std::vector<Director::StateThreadData>& threads, const ThreadData& thread) const
+   {
+      StateThreadData data;
+
+      int count = (int)thread.stack.size();
+      for (int index = 0; index < count; ++index)
+      {
+         const StackData& stack = thread.stack[index];
+
+         StateStackData stackData;
+         if (stack.node.valid())
+         {
+            stackData.id = stack.node->GetID();
+         }
+         else
+         {
+            stackData.id = "";
+         }
+         stackData.index = stack.index;
+         stackData.finished = stack.finished;
+         stackData.immediate = stack.immediate;
+
+         int subCount = (int)stack.subThreads.size();
+         for (int subIndex = 0; subIndex < subCount; ++subIndex)
+         {
+            GetThreadState(stackData.subThreads, stack.subThreads[subIndex]);
+         }
+
+         data.stack.push_back(stackData);
+      }
+
+      threads.push_back(data);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void Director::GetValueState(std::vector<StateValueData>& values, const Director* child) const
+   {
+      if (!child || !child->GetGraphRoot())
+      {
+         return;
+      }
+
+      GetValueState(values, child->GetGraphRoot());
+
+      int count = (int)child->mChildren.size();
+      for (int index = 0; index < count; ++index)
+      {
+         Director* subChild = child->mChildren[index].get();
+         if (subChild)
+         {
+            GetValueState(values, subChild);
+         }
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void Director::GetValueState(std::vector<StateValueData>& values, const DirectorGraph* graph) const
+   {
+      const std::vector<dtCore::RefPtr<ValueNode> >& valueNodes = graph->GetValueNodes();
+      int count = (int)valueNodes.size();
+      for (int index = 0; index < count; ++index)
+      {
+         ValueNode* node = valueNodes[index];
+         if (node)
+         {
+            StateValueData data;
+            data.id = node->GetID();
+            data.value = node->GetFormattedValue();
+            values.push_back(data);
+         }
+      }
+
+      count = (int)graph->GetSubGraphs().size();
+      for (int index = 0; index < count; ++index)
+      {
+         const DirectorGraph* subGraph = graph->GetSubGraphs()[index];
+         if (subGraph)
+         {
+            GetValueState(values, subGraph);
+         }
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void Director::RestoreThreadState(const StateThreadData& threadState, std::vector<ThreadData>& threads)
+   {
+      ThreadData thread;
+
+      int count = (int)threadState.stack.size();
+      for (int index = 0; index < count; ++index)
+      {
+         const StateStackData& stackData = threadState.stack[index];
+
+         StackData stack;
+         stack.node = RecurseFindNode(stackData.id, this);
+         stack.index = stackData.index;
+         stack.first = true;
+         stack.finished = stackData.finished;
+         stack.immediate = stackData.immediate;
+         stack.currentThread = -1;
+         int stackCount = (int)stackData.subThreads.size();
+         for (int stackIndex = 0; stackIndex < stackCount; ++stackIndex)
+         {
+            RestoreThreadState(stackData.subThreads[stackIndex], stack.subThreads);
+         }
+
+         thread.stack.push_back(stack);
+      }
+      
+      threads.push_back(thread);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   Node* Director::RecurseFindNode(const dtCore::UniqueId& id, Director* script)
+   {
+      if (!script || id.ToString().empty())
+      {
+         return NULL;
+      }
+
+      Node* node = script->GetNode(id);
+      if (node)
+      {
+         return node;
+      }
+
+      int count = (int)script->mChildren.size();
+      for (int index = 0; index < count; ++index)
+      {
+         Director* child = script->mChildren[index].get();
+         if (child)
+         {
+            node = RecurseFindNode(id, child);
+            if (node)
+            {
+               return node;
+            }
+         }
+      }
+
+      return NULL;
    }
 }

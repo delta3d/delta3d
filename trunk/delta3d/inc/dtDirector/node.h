@@ -175,7 +175,7 @@ namespace dtDirector
        *
        * @param[in]  id  The ID.
        */
-      const void SetID(const dtCore::UniqueId& id) {mID = id;}
+      void SetID(const dtCore::UniqueId& id) {mID = id;}
 
       /**
        * Retrieves the display name for the node.
