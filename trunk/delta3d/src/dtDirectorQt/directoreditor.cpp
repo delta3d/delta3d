@@ -2175,6 +2175,8 @@ namespace dtDirector
                }
             }
 
+            std::map<Director*, Director::StateData> stateMap;
+
             for (int i = 0; i < dtCore::Base::GetInstanceCount(); ++i)
             {
                dtCore::Base *o = dtCore::Base::GetInstance(i);
@@ -2217,11 +2219,33 @@ namespace dtDirector
 
                            if (resourceProp->GetValue() == mDirector->GetResource())
                            {
+                              // Make sure we save the state of the top most script.
+                              Director* parent = director->mDirector;
+                              while (parent->GetParent())
+                              {
+                                 parent = parent->GetParent();
+                              }
+
+                              if (stateMap.find(parent) == stateMap.end())
+                              {
+                                 stateMap[parent] = parent->GetState();
+                              }
+
                               resourceProp->SetValue(mDirector->GetResource());
                            }
                         }
                      }
                   }
+               }
+            }
+
+            // Restore all our states.
+            std::map<Director*, Director::StateData>::iterator iter;
+            for (iter = stateMap.begin(); iter != stateMap.end(); ++iter)
+            {
+               if (iter->first)
+               {
+                  iter->first->RestoreState(iter->second);
                }
             }
 
