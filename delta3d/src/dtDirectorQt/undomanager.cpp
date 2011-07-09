@@ -62,7 +62,7 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void UndoManager::Revert()
    {
-      if (IsModified())
+      if (IsModified() && mModifyIndex > -1)
       {
          while (mModifyIndex < (int)mUndoEvents.size())
          {
