@@ -98,6 +98,8 @@ namespace dtDirector
             int currentMode = mMotionModel->GetFPSCollider().GetMode();
             if (currentMode != mCurrentMode)
             {
+               GetDirector()->PushStack(this, INPUT_CHANGED_EVENT, true);
+
                mCurrentMode = currentMode;
 
                switch (mCurrentMode)
@@ -108,8 +110,6 @@ namespace dtDirector
                case dtCore::FPSCollider::JUMPING: ActivateOutput("Jumping"); break;
                case dtCore::FPSCollider::FALLING: ActivateOutput("Falling"); break;
                }
-
-               ActivateOutput("Changed");
             }
 
             return true;
@@ -118,6 +118,10 @@ namespace dtDirector
       else if (input == INPUT_STOP)
       {
          mMotionModel = NULL;
+      }
+      else if (input == INPUT_CHANGED_EVENT)
+      {
+         ActivateOutput("Changed");
       }
 
       return false;

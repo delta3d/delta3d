@@ -40,6 +40,7 @@ namespace dtDirector
       {
          INPUT_LISTEN = 0,
          INPUT_STOP,
+         INPUT_CHANGED_EVENT,
       };
 
       /**
