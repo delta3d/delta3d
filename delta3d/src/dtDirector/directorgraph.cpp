@@ -200,6 +200,50 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
+   const Node* DirectorGraph::GetNode(const dtCore::UniqueId& id) const
+   {
+      int count = (int)mEventNodes.size();
+      for (int index = 0; index < count; index++)
+      {
+         if (mEventNodes[index]->GetID() == id)
+         {
+            return mEventNodes[index];
+         }
+      }
+
+      count = (int)mActionNodes.size();
+      for (int index = 0; index < count; index++)
+      {
+         if (mActionNodes[index]->GetID() == id)
+         {
+            return mActionNodes[index];
+         }
+      }
+
+      count = (int)mValueNodes.size();
+      for (int index = 0; index < count; index++)
+      {
+         if (mValueNodes[index]->GetID() == id)
+         {
+            return mValueNodes[index];
+         }
+      }
+
+      count = (int)mSubGraphs.size();
+      for (int index = 0; index < count; index++)
+      {
+         DirectorGraph* graph = mSubGraphs[index];
+         if (graph)
+         {
+            Node* node = graph->GetNode(id);
+            if (node) return node;
+         }
+      }
+
+      return NULL;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    void DirectorGraph::GetNodes(const std::string& name, const std::string& category, std::vector<Node*>& outNodes, bool searchSubGraphs)
    {
       int count = (int)mEventNodes.size();

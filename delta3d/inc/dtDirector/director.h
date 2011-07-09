@@ -86,7 +86,8 @@ namespace dtDirector
    private:
       struct ThreadData;
       struct StackData;
-
+      struct StateThreadData;
+      struct StateValueData;
    public:
       struct RecordThreadData;
 
@@ -104,6 +105,12 @@ namespace dtDirector
       struct RecordThreadData
       {
          std::vector<RecordNodeData> nodes;
+      };
+
+      struct StateData
+      {
+         std::vector<StateThreadData> threads;
+         std::vector<StateValueData>  values;
       };
 
    public:
@@ -186,6 +193,20 @@ namespace dtDirector
       void SetParent(Director* parent);
 
       /**
+       * Adds a child director script.
+       *
+       * @param[in]  child  The child to add.
+       */
+      void AddChild(Director* child);
+
+      /**
+       * Removes a child director script.
+       *
+       * @param[in]  child  The child to remove.
+       */
+      void RemoveChild(Director* child);
+
+      /**
        * Retrieves the map.
        *
        * @return  The map.
@@ -256,6 +277,16 @@ namespace dtDirector
        * Retrieves whether any loaded properties were deprecated.
        */
       bool HasDeprecatedProperty() const;
+
+      /**
+       * Retrieves the current state of the script.
+       */
+      StateData GetState() const;
+
+      /**
+       * Restores the state of the script.
+       */
+      void RestoreState(const StateData& state);
 
       /**
        * This method is called in init, which instructs the director
@@ -483,6 +514,7 @@ namespace dtDirector
        * Retrieves the graph data.
        */
       DirectorGraph* GetGraphRoot();
+      const DirectorGraph* GetGraphRoot() const;
 
       /**
        * Retrieves a graph of the given id.
@@ -501,6 +533,7 @@ namespace dtDirector
        * @return     A pointer to the node or NULL if not found.
        */
       Node* GetNode(const dtCore::UniqueId& id);
+      const Node* GetNode(const dtCore::UniqueId& id) const;
 
       /**
        * Retrieves a list of nodes that are of a certain type.
@@ -685,6 +718,36 @@ namespace dtDirector
 
    private:
 
+      void GetThreadState(std::vector<StateThreadData>& threads, const ThreadData& thread) const;
+      void GetValueState(std::vector<StateValueData>& values, const Director* child) const;
+      void GetValueState(std::vector<StateValueData>& values, const DirectorGraph* graph) const;
+
+      void RestoreThreadState(const StateThreadData& threadState, std::vector<ThreadData>& threads);
+      Node* RecurseFindNode(const dtCore::UniqueId& id, Director* script);
+
+      // State Stack Data.
+      struct StateStackData
+      {
+         dtCore::UniqueId id;
+         int   index;
+         bool  finished;
+         bool  immediate;
+
+         std::vector<StateThreadData> subThreads;
+      };
+
+      // State Thread Data.
+      struct StateThreadData
+      {
+         std::vector<StateStackData> stack;
+      };
+
+      struct StateValueData
+      {
+         dtCore::UniqueId id;
+         std::string      value;
+      };
+
       // Thread Queue.
       struct ThreadQueue
       {
@@ -765,6 +828,7 @@ namespace dtDirector
       dtCore::RefPtr<dtDirector::MessageGMComponent> mMessageGMComponent;
 
       dtCore::ObserverPtr<Director> mParent;
+      std::vector<dtCore::ObserverPtr<Director> > mChildren;
 
       dtCore::RefPtr<DirectorNotifier> mNotifier;
 

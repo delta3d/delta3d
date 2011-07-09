@@ -92,6 +92,7 @@ namespace dtDirector
        *             if not found.
        */
       Node* GetNode(const dtCore::UniqueId& id);
+      const Node* GetNode(const dtCore::UniqueId& id) const;
 
       /**
        * Retrieves a list of nodes that are of a certain type.
@@ -248,6 +249,9 @@ namespace dtDirector
       std::vector<dtCore::RefPtr<EventNode> >& GetEventNodes() {return mEventNodes;}
       std::vector<dtCore::RefPtr<ActionNode> >& GetActionNodes() {return mActionNodes;}
       std::vector<dtCore::RefPtr<ValueNode> >& GetValueNodes() {return mValueNodes;}
+      const std::vector<dtCore::RefPtr<EventNode> >& GetEventNodes() const {return mEventNodes;}
+      const std::vector<dtCore::RefPtr<ActionNode> >& GetActionNodes() const {return mActionNodes;}
+      const std::vector<dtCore::RefPtr<ValueNode> >& GetValueNodes() const {return mValueNodes;}
 
       /**
        * Retrieves a list of all external input, output, or value
@@ -261,6 +265,7 @@ namespace dtDirector
        * Accessor for sub graphs.
        */
       std::vector<dtCore::RefPtr<DirectorGraph> >& GetSubGraphs() {return mSubGraphs;}
+      const std::vector<dtCore::RefPtr<DirectorGraph> >& GetSubGraphs() const {return mSubGraphs;}
 
    protected:
 
