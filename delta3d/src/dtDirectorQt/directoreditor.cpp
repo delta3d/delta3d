@@ -80,6 +80,7 @@ namespace dtDirector
       , mReplayMode(false)
       , mReplayInput(NULL)
       , mReplayOutput(NULL)
+      , mSavedTabIndex(-1)
       , mClickSound(NULL)
    {
       mEditorsOpen.push_back(this);
@@ -368,6 +369,55 @@ namespace dtDirector
 
       RefreshNodeScenes();
       return false;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::SaveTabStates()
+   {
+      mTabStates.clear();
+      int count = mUI.graphTab->count();
+      for (int index = 0; index < count; ++index)
+      {
+         EditorView* view = dynamic_cast<EditorView*>(mUI.graphTab->widget(index));
+         if (view && view->GetScene() && view->GetScene()->GetGraph())
+         {
+            TabStateData data;
+            data.id = view->GetScene()->GetGraph()->GetID();
+            data.pos = view->GetScene()->GetTranslationItem()->pos();
+            mTabStates.push_back(data);
+         }
+      }
+
+      mSavedTabIndex = mUI.graphTab->currentIndex();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::RestoreTabStates()
+   {
+      mUI.graphTab->clear();
+
+      int count = (int)mTabStates.size();
+      for (int index = 0; index < count; ++index)
+      {
+         TabStateData& data = mTabStates[index];
+
+         // Search for the proper graph.
+         dtDirector::DirectorGraph* graph = mDirector->GetGraph(data.id);
+         if (graph)
+         {
+            OpenGraph(graph, true);
+            EditorView* view = dynamic_cast<EditorView*>(mUI.graphTab->currentWidget());
+            if (view && view->GetScene())
+            {
+               view->GetScene()->GetTranslationItem()->setPos(data.pos);
+            }
+         }
+      }
+
+      if (mSavedTabIndex > -1 && mSavedTabIndex < count)
+      {
+         mUI.graphTab->setCurrentIndex(mSavedTabIndex);
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -2170,7 +2220,7 @@ namespace dtDirector
                {
                   if (editor->GetDirector()->GetResource() == mDirector->GetResource())
                   {
-                     editor->mUI.graphTab->clear();
+                     editor->SaveTabStates();
                   }
                }
             }
@@ -2257,7 +2307,7 @@ namespace dtDirector
                {
                   if (editor->GetDirector()->GetResource() == mDirector->GetResource())
                   {
-                     editor->OpenGraph(editor->GetDirector()->GetGraphRoot());
+                     editor->RestoreTabStates();
                   }
                }
             }
