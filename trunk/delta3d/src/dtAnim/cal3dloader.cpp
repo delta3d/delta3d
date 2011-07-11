@@ -220,7 +220,12 @@ namespace dtAnim
          CalOptions* calOptions = GetCalOptions(*options);
          calOptions->SetFile(fileName);
 
-         return readObject(confStream, options);
+         osgDB::ReaderWriter::ReadResult result = readObject(confStream, options);
+         if (confStream.is_open())
+         {
+            confStream.close();
+         }
+         return result;
 #else
          // Get the Cal3d Options object that is holding onto the Core Model.
          // The Core Model is along for the ride in order to capture the loaded
