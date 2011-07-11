@@ -142,27 +142,34 @@ namespace dtDirector
          {
             int count = GetPropertyCount("ActorFilters");
 
-            // If our count is 0 then we are connected to an empty array,
-            // If our count is greater than 0 then we are connected to multiple
-            // values.  Either case, the instigator will be valid.
-            if (GetValueLink("ActorFilters")->GetLinks().size() == 0)
+            if (count != 0)
             {
-               success = true;
-            }
-            if (instigator != NULL && !instigator->ToString().empty())
-            {
-               for (int index = 0; index < count; index++)
+               // If our count is 0 then we are connected to an empty array,
+               // If our count is greater than 0 then we are connected to multiple
+               // values.  Either case, the instigator will be valid.
+               if (GetValueLink("ActorFilters")->GetLinks().size() == 0)
                {
-                  dtCore::UniqueId id = GetActorID("ActorFilters", index);
-                  if (id.ToString() != "")
+                  success = true;
+               }
+               if (instigator != NULL && !instigator->ToString().empty())
+               {
+                  for (int index = 0; index < count; index++)
                   {
-                     if (*instigator == id)
+                     dtCore::UniqueId id = GetActorID("ActorFilters", index);
+                     if (id.ToString() != "")
                      {
-                        success = true;
-                        break;
+                        if (*instigator == id)
+                        {
+                           success = true;
+                           break;
+                        }
                      }
                   }
                }
+            }
+            else
+            {
+               LOG_ERROR("Node: " + GetName() + " has UsesActorFilters set but the link does not exist.");
             }
          }
          else
