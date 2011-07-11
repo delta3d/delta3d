@@ -250,7 +250,7 @@ void GUI::SetCamera(dtCore::Camera* camera)
    mCamera = camera;
 
    // that'll force the camera to draw this gui via the HUDDrawable-object
-   if (mCamera)
+   if (mCamera.valid())
    {
       mCamera->GetOSGCamera()->addChild(mInternalGraph.get());
    }
