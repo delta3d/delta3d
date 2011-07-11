@@ -236,27 +236,30 @@ void Application::Frame(const double deltaSimTime)
    if(!mCompositeViewer->done())
    {
       bool singleThreaded = mCompositeViewer->getThreadingModel() == osgViewer::ViewerBase::SingleThreaded;
-      //NOTE: The OSG frame() advances the clock and does three traversals, event, update, and render.
+
+            //NOTE: The OSG frame() advances the clock and does three traversals, event, update, and render.
       //We are moving the event traversal to be its own message so we can reliably accept input during the
       //typical Delta3D update of PreFrame().  The only exception to this is that we need
       if(mFirstFrame)
       {
+
+#ifndef MULTITHREAD_FIX_HACK_BREAKS_CEGUI
+         dtCore::ObserverPtr<osgViewer::GraphicsWindow> gw;
+         if (GetWindow() != NULL)
+         {
+            gw = GetWindow()->GetOsgViewerGraphicsWindow();
+         }
+
+         if (!singleThreaded && gw.valid() && gw->isRealized())
+         {
+            gw->releaseContext();
+         }
+#endif
+
+         mCompositeViewer->setUpThreading();
          mCompositeViewer->frame(dtCore::System::GetInstance().GetSimTimeSinceStartup());
          mFirstFrame = false;
       }
-
-#ifndef MULTITHREAD_FIX_HACK_BREAKS_CEGUI
-      dtCore::ObserverPtr<osgViewer::GraphicsWindow> gw;
-      if (GetWindow() != NULL)
-      {
-         gw = GetWindow()->GetOsgViewerGraphicsWindow();
-      }
-
-      if (!singleThreaded && gw.valid() && gw->isRealized())
-      {
-         gw->releaseContext();
-      }
-#endif
 
       // NOTE: The new version OSG (2.2) relies on absolute frame time
       // to update drawables; especially particle systems.
@@ -266,13 +269,14 @@ void Application::Frame(const double deltaSimTime)
       mCompositeViewer->updateTraversal();
       mCompositeViewer->renderingTraversals();
 
-#ifndef MULTITHREAD_FIX_HACK_BREAKS_CEGUI
-      // you must check gw->isRealized() again here and not cache it because the step could cause the window to close.
-      if (gw.valid() && gw->isRealized())
-      {
-         gw->makeCurrent();
-      }
-#endif
+// Don't need this anymore.
+//#ifndef MULTITHREAD_FIX_HACK_BREAKS_CEGUI
+//      // you must check gw->isRealized() again here and not cache it because the step could cause the window to close.
+//      if (gw.valid() && gw->isRealized())
+//      {
+//         gw->makeCurrent();
+//      }
+//#endif
    }
 }
 
@@ -706,7 +710,7 @@ bool AppXMLApplicator::operator ()(const ApplicationConfigData& data, dtABC::App
    return valid;
 }
 ////////////////////////////////////////////////////////
-void Application::AddView(dtCore::View &view)
+void Application::AddView(dtCore::View& view)
 {
    if (mCompositeViewer.valid() == false)
    {
