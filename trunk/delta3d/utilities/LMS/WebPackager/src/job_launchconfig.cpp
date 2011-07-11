@@ -32,7 +32,7 @@ JobLaunchConfig::JobLaunchConfig() : JobXML()
 }
 
 JobLaunchConfig::~JobLaunchConfig()
-{ 
+{
 }
 
 void JobLaunchConfig::Execute( PackageProfile *profile )
@@ -42,8 +42,8 @@ void JobLaunchConfig::Execute( PackageProfile *profile )
 
    // locals
    std::string app    = profile->GetApplicationName();
-   std::string config = profile->GetJavaLaunchConfig();      
-   
+   std::string config = profile->GetJavaLaunchConfig();
+
    // used for searching
    std::vector<std::string> files;
    std::vector<Options>     options;
@@ -55,7 +55,7 @@ void JobLaunchConfig::Execute( PackageProfile *profile )
    //AddComment( curr, " Debug logging level. " );
    //AddComment( curr, " Options: ALL, CONFIG, FINE, FINER, FINEST, INFO, OFF, SEVERE, WARNING " );
 
-   // data information   
+   // data information
    AddElement( root, "dataDirectory", "data" );
    curr = AddElement( root, "dataOverwrite" );
    SetContent( curr, "NEWER" );
@@ -78,29 +78,37 @@ void JobLaunchConfig::Execute( PackageProfile *profile )
    if ( profile->IncludePlatform(PackageProfile::TP_WINDOWS) )
    {
       profile->GetEntryPointLibrary( PackageProfile::LIB_LAUNCHER, libname, libopts, PackageProfile::TP_WINDOWS );
-      curr = AddElement( root, "launcherLibrary", libname );
-      SetAttribute( curr, "platform", libopts.Get( "platform" ) );
+      if (!libname.empty())
+      {
+         curr = AddElement( root, "launcherLibrary", libname );
+         SetAttribute( curr, "platform", libopts.Get( "platform" ) );
+      }
    }
 
    // get linux launcher library
    if ( profile->IncludePlatform(PackageProfile::TP_LINUX) )
    {
       profile->GetEntryPointLibrary( PackageProfile::LIB_LAUNCHER, libname, libopts, PackageProfile::TP_LINUX );
-      curr = AddElement( root, "launcherLibrary", libname );
-      SetAttribute( curr, "platform", libopts.Get( "platform" ) );
+      if (!libname.empty())
+      {
+         curr = AddElement( root, "launcherLibrary", libname );
+         SetAttribute( curr, "platform", libopts.Get( "platform" ) );
+      }
    }
 
    // get windows game library
    if ( profile->IncludePlatform(PackageProfile::TP_WINDOWS) )
    {
       profile->GetEntryPointLibrary( PackageProfile::LIB_GAME, libname, libopts, PackageProfile::TP_WINDOWS );
+      if (!libname.empty())
+      {
+         if ( libopts.Get( "removeDebugChar" ).compare( "true" ) == 0 )
+            libname = removeDebugCharFromFilename( libname );
 
-      if ( libopts.Get( "removeDebugChar" ).compare( "true" ) == 0 )
-         libname = removeDebugCharFromFilename( libname );
-
-      libname = removeLibAndExtension( libname );
-      curr = AddElement( root, "gameLibrary", libname );
-      SetAttribute( curr, "platform", libopts.Get( "platform" ) );
+         libname = removeLibAndExtension( libname );
+         curr = AddElement( root, "gameLibrary", libname );
+         SetAttribute( curr, "platform", libopts.Get( "platform" ) );
+      }
    }
 
    // get linux game library
@@ -210,7 +218,7 @@ std::string JobLaunchConfig::removeDebugCharFromFilename( const std::string &fil
       temp += ".";
       temp += ext;
   }
-  
+
   return temp;
 }
 
@@ -222,13 +230,13 @@ std::string JobLaunchConfig::removeDebugCharFromFilename( const std::string &fil
 std::string JobLaunchConfig::removeLibAndExtension( const std::string &filename )
 {
   std::string temp = filename;
-  
+
   //remove the 'lib' prefix from the filename if it exists
   if (ToUpperCase(temp.substr(0, 3)) == "LIB")
     {
       temp = temp.substr(3, temp.length() - 3);
     }
-  
+
    //remove the '.dll' extension if it exists
    if (ToUpperCase(temp.substr(temp.length() - 4, 4)) == ".DLL")
    {

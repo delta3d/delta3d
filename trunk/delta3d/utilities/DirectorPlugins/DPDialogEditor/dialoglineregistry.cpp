@@ -70,7 +70,7 @@ bool DialogLineRegistry::RegisterLineType(DialogLineType* line)
 
    std::map<QString, dtCore::RefPtr<DialogLineType> >::iterator iter;
    iter = mLineTypes.find(name);
-   
+
    if (iter != mLineTypes.end())
    {
       return false;
