@@ -308,7 +308,12 @@ namespace dtDAL
          return ReadResult::ERROR_IN_READING_FILE;
       }
 
-      return readObject(stream, options);
+      ReadResult result = readObject(stream, options);
+      if (stream.is_open())
+      {
+         stream.close();
+      }
+      return result;
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -346,7 +351,12 @@ namespace dtDAL
          return WriteResult::ERROR_IN_WRITING_FILE;
       }
 
-      return writeObject(obj, stream, options); 
+      WriteResult result = writeObject(obj, stream, options);
+      if (stream.is_open())
+      {
+         stream.close();
+      }
+      return result;
    }
 
    /////////////////////////////////////////////////////////////////////////////
