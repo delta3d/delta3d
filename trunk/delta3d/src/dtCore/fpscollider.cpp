@@ -428,9 +428,12 @@ namespace dtCore
 
       mEndPosition = osg::Vec3(newFeetPos[0], newFeetPos[1], newFeetPos[2] + mHeightAboveTerrain);
 
+      // Clamp the motion so it does not go beyond the end position.
+      float delta = dtUtil::Min(dt * mSmoothingSpeed, 1.0f);
+
       // Lerp the target from its current position to its end position
       // over time and then return the lerp position for a smooth translation.
-      osg::Vec3 targetP1 = mStartPosition + (mEndPosition - mStartPosition) * dt * mSmoothingSpeed;
+      osg::Vec3 targetP1 = mStartPosition + (mEndPosition - mStartPosition) * delta;
 
       return targetP1;
    }
