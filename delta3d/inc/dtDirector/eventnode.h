@@ -78,10 +78,8 @@ namespace dtDirector
        * @param[in]  outputName    The output to trigger.
        * @param[in]  instigator    The instigating actor ID.
        * @param[in]  countTrigger  True if you want this trigger to count towards the max trigger count.
-       * @param[in]  immediate     True if you want this events chain to be executed immediately (this only
-       *                            works for events triggering their own thread and not a branch of another thread).
        */
-      void Trigger(const std::string& outputName = "Out", const dtCore::UniqueId* instigator = NULL, bool countTrigger = true, bool immediate = true);
+      void Trigger(const std::string& outputName = "Out", const dtCore::UniqueId* instigator = NULL, bool countTrigger = true);
 
       /**
        * Tests whether the event should trigger.

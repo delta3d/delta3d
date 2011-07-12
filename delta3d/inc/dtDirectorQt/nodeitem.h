@@ -408,7 +408,7 @@ namespace dtDirector
       /**
        * Event handler when a value link is being exposed.
        */
-      void ExposeLink(QAction* action);
+      virtual void ExposeLink(QAction* action);
 
       /**
        * Event handler when the trigger event has been clicked.
@@ -472,7 +472,7 @@ namespace dtDirector
       /**
        * Retrieves a menu for exposing links.
        */
-      QMenu* GetExposeLinkMenu();
+      virtual QMenu* GetExposeLinkMenu();
 
       /**
        * Retrieves a menu for changing the visibility of links.

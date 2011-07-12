@@ -313,19 +313,17 @@ namespace dtDirector
        *
        * @param[in]  node          The starting node to update.
        * @param[in]  index         The index of the input being activated.
-       * @param[in]  immediate     True to immediately execute the new thread.
        * @param[in]  reverseQueue  If true, will push the new thread to the front of the queue.
        */
-      void BeginThread(Node* node, int index, bool immediate = false, bool reverseQueue = false);
+      void BeginThread(Node* node, int index, bool reverseQueue = false);
 
       /**
        * Pushes a new item to the thread stack.
        *
-       * @param[in]  node       The new stacks starting node.
-       * @param[in]  index      The new stacks started input.
-       * @param[in]  immediate  True to execute the full chain immediately.
+       * @param[in]  node   The new stacks starting node.
+       * @param[in]  index  The new stacks started input.
        */
-      void PushStack(Node* node, int index, bool immediate = false);
+      void PushStack(Node* node, int index);
 
       /**
        * Retrieves whether there are any active threads running.
@@ -731,7 +729,6 @@ namespace dtDirector
          dtCore::UniqueId id;
          int   index;
          bool  finished;
-         bool  immediate;
 
          std::vector<StateThreadData> subThreads;
       };
@@ -754,7 +751,6 @@ namespace dtDirector
          Node* node;
          int   input;
          bool  isStack;
-         bool  immediate;
       };
 
       // Thread stacks.
@@ -764,7 +760,6 @@ namespace dtDirector
          int   index;
          bool  first;
          bool  finished;
-         bool  immediate;
 
          std::vector<ThreadData> subThreads;
          int currentThread;

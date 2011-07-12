@@ -587,21 +587,8 @@ namespace dtDirector
          // Create the link graphic.
          data.linkGraphic->setPolygon(poly);
          data.linkGraphic->setPen(GetNodeColor());
-         if (!data.link->GetImmediate())
-         {
-            QColor immediateColor = Qt::red;
-            if (mNode.valid() && !mNode->IsEnabled())
-            {
-               immediateColor.setAlphaF(0.25f);
-            }
-            data.linkGraphic->setBrush(immediateColor);
-         }
-         else
-         {
-            data.linkGraphic->setBrush(GetNodeColor());
-         }
+         data.linkGraphic->setBrush(GetNodeColor());
          data.linkGraphic->SetPenColor(GetNodeColor());
-
 
          //bool alwaysHighlight = false;
          //data.linkGraphic->SetAlwaysHighlight(false);
@@ -1336,7 +1323,7 @@ namespace dtDirector
          {
             link->Activate();
 
-            mScene->GetEditor()->GetDirector()->BeginThread(mNode.get(), 0, link->GetImmediate());
+            mScene->GetEditor()->GetDirector()->BeginThread(mNode.get(), 0);
          }
       }
    }
