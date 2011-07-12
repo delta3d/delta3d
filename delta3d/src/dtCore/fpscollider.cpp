@@ -65,7 +65,7 @@ namespace dtCore
       {
          mCollisionSpace = mPhysicsController->GetSpaceID();
       }
-      
+
       mLocalSpaceID = dSimpleSpaceCreate(0);
       InitBoundingVolumes();
       SetDimensions(mHeightAboveTerrain, pRadius, k);
@@ -103,10 +103,6 @@ namespace dtCore
    {
       mFeetGeom->ClearCollisionGeometry();
       mTorsoGeom->ClearCollisionGeometry();
-
-      if (mBBFeet) dGeomDestroy(mBBFeet);
-      if (mBBTorso) dGeomDestroy(mBBTorso);
-      if (mLocalSpaceID) dSpaceDestroy(mLocalSpaceID);
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -267,7 +263,7 @@ namespace dtCore
       osg::Vec3 oldFeetPos(targetP0[0],
                            targetP0[1],
                            targetP0[2] - mHeightAboveTerrain);
-      
+
       // update new feet position based on velocity
       osg::Vec3 newFeetPos = oldFeetPos;
       newFeetPos[0] += mLastVelocity[0] * dt;
@@ -366,7 +362,7 @@ namespace dtCore
                newFeetPos[1] += normal[1] * dt * mSlideSpeed;
                newFeetPos[2] -= normal[2] * dt * mSlideSpeed;
                mGroundNormal = normal;
-             
+
                // If we are not actively walking, then we are sliding.
                if (mLastVelocity[0] == 0.0f && mLastVelocity[1] == 0.0f)
                {
@@ -543,13 +539,13 @@ namespace dtCore
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   osg::Vec3 FPSCollider::Update(const osg::Vec3& initialTargetPosition, 
+   osg::Vec3 FPSCollider::Update(const osg::Vec3& initialTargetPosition,
                                  const osg::Vec3& initialVelocity,
                                  float deltaFrameTime, bool pJump)
    {
       mLastVelocity[0] = initialVelocity[0];
       mLastVelocity[1] = initialVelocity[1];
- 
+
       // Check if the target has moved away significantly.
       // This happens if the target was moved independently of this collider.
       if ((initialTargetPosition - mStartPosition).length2() > 0.1f)
