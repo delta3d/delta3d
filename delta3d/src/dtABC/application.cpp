@@ -237,7 +237,6 @@ void Application::Frame(const double deltaSimTime)
    {
       bool singleThreaded = mCompositeViewer->getThreadingModel() == osgViewer::ViewerBase::SingleThreaded;
 
-      dtCore::ObserverPtr<osgViewer::GraphicsWindow> gw;
 
       //NOTE: The OSG frame() advances the clock and does three traversals, event, update, and render.
       //We are moving the event traversal to be its own message so we can reliably accept input during the
@@ -246,6 +245,7 @@ void Application::Frame(const double deltaSimTime)
       {
 
 #ifndef MULTITHREAD_FIX_HACK_BREAKS_CEGUI
+         dtCore::ObserverPtr<osgViewer::GraphicsWindow> gw;
          if (GetWindow() != NULL)
          {
             gw = GetWindow()->GetOsgViewerGraphicsWindow();
@@ -257,6 +257,7 @@ void Application::Frame(const double deltaSimTime)
          }
 #endif
 
+         if (singleThreaded) { GetCompositeViewer()->setReleaseContextAtEndOfFrameHint(false); }
          mCompositeViewer->setUpThreading();
          mCompositeViewer->frame(dtCore::System::GetInstance().GetSimTimeSinceStartup());
          mFirstFrame = false;
@@ -270,13 +271,6 @@ void Application::Frame(const double deltaSimTime)
       mCompositeViewer->updateTraversal();
       mCompositeViewer->renderingTraversals();
 
-#ifndef MULTITHREAD_FIX_HACK_BREAKS_CEGUI
-      // you must check gw->isRealized() again here and not cache it because the step could cause the window to close.
-      if (singleThreaded && gw.valid() && gw->isRealized())
-      {
-         gw->makeCurrent();
-      }
-#endif
    }
 }
 
