@@ -127,140 +127,135 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    bool LerpActorRotationAction::Update(float simDelta, float delta, int input, bool firstUpdate)
    {
-      switch (input)
+      if (input == INPUT_START)
       {
-      case INPUT_START:
+         // Activate the "Started" output link.
+         if (firstUpdate)
          {
-            // Activate the "Started" output link.
-            if (firstUpdate)
-            {
-               OutputLink* link = GetOutputLink("Started");
-               if (link) link->Activate();
+            OutputLink* link = GetOutputLink("Started");
+            if (link) link->Activate();
 
-               // If we have our own internal clock, restart it since someone
-               // fired Start again
-               if (IsTimeInternal())
-               {
-                  SetFloat(GetFloat("StartTime"), "Time");
-               }
-
-               // If this is a first update and we already started, then kill the
-               // new thread since we're running on another thread
-               if (mIsActive)
-               {
-                  return false;
-               }
-            }
-
-            // On the first activation, initialize.
-            if (!mIsActive)
-            {
-               if (firstUpdate)
-               {
-                  mWaitingForStart = true;
-                  mIsActive = true;
-
-                  // Activate the "Out" output link.
-                  LatentActionNode::Update(simDelta, delta, input, firstUpdate);
-               }
-               else // We shouldn't be updating anymore
-               {
-                  return false;
-               }
-            }
-
-            // Now check if we are within our start and end times.
-            float startTime = GetFloat("StartTime");
-            float endTime = GetFloat("EndTime");
-            float curTime = GetFloat("Time");
-
-            if (mWaitingForStart)
-            {
-               if (curTime < startTime || curTime > endTime)
-               {
-                  return true;
-               }
-
-               mWaitingForStart = false;
-            }
-
-            if (curTime < startTime)
-            {
-               curTime = startTime;
-               mIsActive = false;
-            }
-            else if (curTime > endTime)
-            {
-               curTime = endTime;
-               mIsActive = false;
-            }
-            float timeScalar = 1.0f;
-            float delta = endTime - startTime;
-            if (delta != 0.0f)
-            {
-               timeScalar = 1.0f / delta;
-            }
-            float alpha = (curTime - startTime) * timeScalar;
-
-            osg::Quat startRot(osg::Vec4(GetVec3("StartRotation"), 0.0f));
-            osg::Quat endRot(osg::Vec4(GetVec3("EndRotation"), 0.0f));
-
-            osg::Quat newRot;
-            newRot.slerp(alpha, startRot, endRot);
-
-            osg::Vec3 rotation = newRot.asVec3();
-
-            int count = GetPropertyCount("Actor");
-            for (int index = 0; index < count; index++)
-            {
-               dtDAL::BaseActorObject* proxy = GetActor("Actor", index);
-               if (proxy)
-               {
-                  dtCore::Transformable* actor = NULL;
-                  proxy->GetActor(actor);
-                  if (actor)
-                  {
-                     dtCore::Transform transform;
-                     actor->GetTransform(transform);
-                     transform.SetRotation(rotation.z(), rotation.x(), rotation.y());
-                     actor->SetTransform(transform);
-                  }
-               }
-            }
-
-            // If we aren't active anymore, then we are finished
-            if (!mIsActive)
-            {
-               OutputLink* link = GetOutputLink("Finished");
-               if (link) link->Activate();
-               return false;
-            }
-
-            // Update the current time if we're internally tracking it
+            // If we have our own internal clock, restart it since someone
+            // fired Start again
             if (IsTimeInternal())
             {
-               SetFloat(curTime + simDelta, "Time");
+               SetFloat(GetFloat("StartTime"), "Time");
             }
 
-            return true;
+            // If this is a first update and we already started, then kill the
+            // new thread since we're running on another thread
+            if (mIsActive)
+            {
+               return false;
+            }
          }
-         break;
 
-      case INPUT_STOP:
+         // On the first activation, initialize.
+         if (!mIsActive)
          {
-            mIsActive = false;
-
-            // Activate the "Stopped" output link.
             if (firstUpdate)
             {
-               OutputLink* link = GetOutputLink("Stopped");
-               if (link) link->Activate();
+               mWaitingForStart = true;
+               mIsActive = true;
+
+               // Activate the "Out" output link.
+               LatentActionNode::Update(simDelta, delta, input, firstUpdate);
+            }
+            else // We shouldn't be updating anymore
+            {
+               return false;
             }
          }
-         break;
       }
 
-      return false;
+      // Now check if we are within our start and end times.
+      float startTime = GetFloat("StartTime");
+      float endTime = GetFloat("EndTime");
+      float curTime = GetFloat("Time");
+
+      if (mWaitingForStart)
+      {
+         if (curTime < startTime || curTime > endTime)
+         {
+            return true;
+         }
+
+         mWaitingForStart = false;
+      }
+
+      if (curTime < startTime)
+      {
+         curTime = startTime;
+         mIsActive = false;
+      }
+      else if (curTime > endTime)
+      {
+         curTime = endTime;
+         mIsActive = false;
+      }
+
+      if (mIsActive)
+      {
+         float timeScalar = 1.0f;
+         float lerpDelta = endTime - startTime;
+         if (lerpDelta != 0.0f)
+         {
+            timeScalar = 1.0f / lerpDelta;
+         }
+         float alpha = (curTime - startTime) * timeScalar;
+
+         osg::Quat startRot(osg::Vec4(GetVec3("StartRotation"), 0.0f));
+         osg::Quat endRot(osg::Vec4(GetVec3("EndRotation"), 0.0f));
+
+         osg::Quat newRot;
+         newRot.slerp(alpha, startRot, endRot);
+
+         osg::Vec3 rotation = newRot.asVec3();
+
+         int count = GetPropertyCount("Actor");
+         for (int index = 0; index < count; index++)
+         {
+            dtDAL::BaseActorObject* proxy = GetActor("Actor", index);
+            if (proxy)
+            {
+               dtCore::Transformable* actor = NULL;
+               proxy->GetActor(actor);
+               if (actor)
+               {
+                  dtCore::Transform transform;
+                  actor->GetTransform(transform);
+                  transform.SetRotation(rotation.z(), rotation.x(), rotation.y());
+                  actor->SetTransform(transform);
+               }
+            }
+         }
+      }
+      // If we aren't active anymore, then we are finished
+      else
+      {
+         OutputLink* link = GetOutputLink("Finished");
+         if (link) link->Activate();
+         return false;
+      }
+
+      // Update the current time if we're internally tracking it
+      if (IsTimeInternal())
+      {
+         SetFloat(curTime + simDelta, "Time");
+      }
+
+      if (input == INPUT_STOP)
+      {
+         mIsActive = false;
+
+         // Activate the "Stopped" output link.
+         OutputLink* link = GetOutputLink("Stopped");
+         if (link) link->Activate();
+
+         return false;
+      }
+
+      return true;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
