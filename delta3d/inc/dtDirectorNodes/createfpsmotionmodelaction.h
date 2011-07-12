@@ -26,7 +26,8 @@
 
 #include <dtDirector/actionnode.h>
 #include <dtDirectorNodes/nodelibraryexport.h>
-
+#include <dtCore/refptr.h>
+#include <dtCore/collisionmotionmodel.h>
 namespace dtDirector
 {
    ////////////////////////////////////////////////////////////////////////////////
@@ -154,6 +155,7 @@ namespace dtDirector
       bool  mAllowJump;
       unsigned int mTorsoMask;
       unsigned int mFeetMask;
+      dtCore::RefPtr<dtCore::CollisionMotionModel> mCreatedMotionModel;
    };
 }
 
