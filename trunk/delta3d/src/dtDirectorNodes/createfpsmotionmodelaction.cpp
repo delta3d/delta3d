@@ -64,6 +64,7 @@ namespace dtDirector
    /////////////////////////////////////////////////////////////////////////////
    CreateFPSMotionModelAction::~CreateFPSMotionModelAction()
    {
+      mCreatedMotionModel = NULL;
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -229,9 +230,9 @@ namespace dtDirector
       if (app && !modelName.empty())
       {
          dtCore::CollisionMotionModel* model = dtCore::CollisionMotionModel::GetInstance(modelName);
-         if (!model)
+         if (model == NULL)
          {
-            model = new dtCore::CollisionMotionModel(
+            mCreatedMotionModel = new dtCore::CollisionMotionModel(
                GetFloat("Height"),
                GetFloat("Radius"),
                GetFloat("Step Height"),
@@ -244,6 +245,8 @@ namespace dtDirector
                GetFloat("Sidestep Speed"),
                GetBoolean("Use WASD Keys"),
                GetBoolean("Use Arrow Keys"));
+
+            model = mCreatedMotionModel.get();
          }
 
          if (model)
