@@ -29,7 +29,7 @@ public:
       }
       else
       {
-         LOG_ALWAYS("Initializing X11 threads succeeded!");
+         LOG_INFO("Initializing X11 threads succeeded!");
       }
    }
 };
