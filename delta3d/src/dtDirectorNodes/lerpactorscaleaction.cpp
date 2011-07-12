@@ -126,148 +126,143 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    bool LerpActorScaleAction::Update(float simDelta, float delta, int input, bool firstUpdate)
    {
-      switch (input)
+      if (input == INPUT_START)
       {
-      case INPUT_START:
+         // Activate the "Started" output link.
+         if (firstUpdate)
          {
-            // Activate the "Started" output link.
-            if (firstUpdate)
-            {
-               OutputLink* link = GetOutputLink("Started");
-               if (link) link->Activate();
+            OutputLink* link = GetOutputLink("Started");
+            if (link) link->Activate();
 
-               // If we have our own internal clock, restart it since someone
-               // fired Start again
-               if (IsTimeInternal())
-               {
-                  SetFloat(GetFloat("StartTime"), "Time");
-               }
-
-               // If this is a first update and we already started, then kill the
-               // new thread since we're running on another thread
-               if (mIsActive)
-               {
-                  return false;
-               }
-            }
-
-            // On the first activation, initialize.
-            if (!mIsActive)
-            {
-               if (firstUpdate)
-               {
-                  mWaitingForStart = true;
-                  mIsActive = true;
-
-                  // Activate the "Out" output link.
-                  LatentActionNode::Update(simDelta, delta, input, firstUpdate);
-               }
-               else // We shouldn't be updating anymore
-               {
-                  return false;
-               }
-            }
-
-            // Now check if we are within our start and end times.
-            float startTime = GetFloat("StartTime");
-            float endTime = GetFloat("EndTime");
-            float curTime = GetFloat("Time");
-
-            if (mWaitingForStart)
-            {
-               if (curTime < startTime || curTime > endTime)
-               {
-                  return true;
-               }
-
-               mWaitingForStart = false;
-            }
-
-            if (GetNodeLogging())
-            {
-               LOG_ALWAYS(dtUtil::ToString(curTime));
-            }
-
-            if (curTime < startTime)
-            {
-               if (GetNodeLogging())
-               {
-                  LOG_ALWAYS(dtUtil::ToString(startTime));
-               }
-               curTime = startTime;
-               mIsActive = false;
-            }
-            else if (curTime > endTime)
-            {
-               if (GetNodeLogging())
-               {
-                  LOG_ALWAYS(dtUtil::ToString(endTime));
-               }
-               curTime = endTime;
-               mIsActive = false;
-            }
-            float timeScalar = 1.0f;
-            float delta = endTime - startTime;
-            if (delta != 0.0f)
-            {
-               timeScalar = 1.0f / delta;
-            }
-            float alpha = (curTime - startTime) * timeScalar;
-
-            osg::Vec3 startScale = GetVec3("StartScale");
-            osg::Vec3 endScale = GetVec3("EndScale");
-            osg::Vec3 track = endScale - startScale;
-
-            osg::Vec3 newScale = startScale + (track * alpha);
-
-            int count = GetPropertyCount("Actor");
-            for (int index = 0; index < count; index++)
-            {
-               dtDAL::BaseActorObject* proxy = GetActor("Actor", index);
-               if (proxy)
-               {
-                  dtCore::Object* actor = NULL;
-                  proxy->GetActor(actor);
-                  if (actor)
-                  {
-                     actor->SetScale(osg::Vec3(newScale.x(), newScale.y(), newScale.z()));
-                  }
-               }
-            }
-
-            // If we aren't active anymore, then we are finished
-            if (!mIsActive)
-            {
-               OutputLink* link = GetOutputLink("Finished");
-               if (link) link->Activate();
-               return false;
-            }
-
-            // Update the current time if we're internally tracking it
+            // If we have our own internal clock, restart it since someone
+            // fired Start again
             if (IsTimeInternal())
             {
-               SetFloat(curTime + simDelta, "Time");
+               SetFloat(GetFloat("StartTime"), "Time");
             }
 
-            return true;
+            // If this is a first update and we already started, then kill the
+            // new thread since we're running on another thread
+            if (mIsActive)
+            {
+               return false;
+            }
          }
-         break;
 
-      case INPUT_STOP:
+         // On the first activation, initialize.
+         if (!mIsActive)
          {
-            mIsActive = false;
-
-            // Activate the "Stopped" output link.
             if (firstUpdate)
             {
-               OutputLink* link = GetOutputLink("Stopped");
-               if (link) link->Activate();
+               mWaitingForStart = true;
+               mIsActive = true;
+
+               // Activate the "Out" output link.
+               LatentActionNode::Update(simDelta, delta, input, firstUpdate);
+            }
+            else // We shouldn't be updating anymore
+            {
+               return false;
             }
          }
-         break;
       }
 
-      return false;
+      // Now check if we are within our start and end times.
+      float startTime = GetFloat("StartTime");
+      float endTime = GetFloat("EndTime");
+      float curTime = GetFloat("Time");
+
+      if (mWaitingForStart)
+      {
+         if (curTime < startTime || curTime > endTime)
+         {
+            return true;
+         }
+
+         mWaitingForStart = false;
+      }
+
+      if (GetNodeLogging())
+      {
+         LOG_ALWAYS(dtUtil::ToString(curTime));
+      }
+
+      if (curTime < startTime)
+      {
+         if (GetNodeLogging())
+         {
+            LOG_ALWAYS(dtUtil::ToString(startTime));
+         }
+         curTime = startTime;
+         mIsActive = false;
+      }
+      else if (curTime > endTime)
+      {
+         if (GetNodeLogging())
+         {
+            LOG_ALWAYS(dtUtil::ToString(endTime));
+         }
+         curTime = endTime;
+         mIsActive = false;
+      }
+
+      if (mIsActive)
+      {
+         float timeScalar = 1.0f;
+         float lerpDelta = endTime - startTime;
+         if (lerpDelta != 0.0f)
+         {
+            timeScalar = 1.0f / lerpDelta;
+         }
+         float alpha = (curTime - startTime) * timeScalar;
+
+         osg::Vec3 startScale = GetVec3("StartScale");
+         osg::Vec3 endScale = GetVec3("EndScale");
+         osg::Vec3 track = endScale - startScale;
+
+         osg::Vec3 newScale = startScale + (track * alpha);
+
+         int count = GetPropertyCount("Actor");
+         for (int index = 0; index < count; index++)
+         {
+            dtDAL::BaseActorObject* proxy = GetActor("Actor", index);
+            if (proxy)
+            {
+               dtCore::Object* actor = NULL;
+               proxy->GetActor(actor);
+               if (actor)
+               {
+                  actor->SetScale(osg::Vec3(newScale.x(), newScale.y(), newScale.z()));
+               }
+            }
+         }
+      }
+      // If we aren't active anymore, then we are finished
+      else
+      {
+         OutputLink* link = GetOutputLink("Finished");
+         if (link) link->Activate();
+         return false;
+      }
+
+      // Update the current time if we're internally tracking it
+      if (IsTimeInternal())
+      {
+         SetFloat(curTime + simDelta, "Time");
+      }
+
+      if (input == INPUT_STOP)
+      {
+         mIsActive = false;
+
+         // Activate the "Stopped" output link.
+         OutputLink* link = GetOutputLink("Stopped");
+         if (link) link->Activate();
+
+         return false;
+      }
+
+      return true;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
