@@ -18,6 +18,24 @@
 using namespace dtCore;
 using namespace std;
 
+class DOXInitThreads
+{
+public:
+   DOXInitThreads()
+   {
+      if (XInitThreads() == 0)
+      {
+         LOG_ERROR("Initializing X11 threads failed!  Will continue anyway.");
+      }
+      else
+      {
+         LOG_ALWAYS("Initializing X11 threads succeeded!");
+      }
+   }
+};
+
+static DOXInitThreads threadiniter;
+
 void DeltaWin::KillGLWindow()
 {
 }
