@@ -251,11 +251,6 @@ namespace dtDirector
       void HideLink();
       void ShowLink();
 
-      /**
-       * Toggle immediate mode.
-       */
-      void ToggleImmediateMode();
-
    protected:
       virtual LinkItem* GetLinkGraphic();
 

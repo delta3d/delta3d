@@ -294,7 +294,7 @@ namespace dtDirector
       const CEGUI::MouseEventArgs& mouseArgs = static_cast<const CEGUI::MouseEventArgs&>(e);
       if (mouseArgs.clickCount == GetInt("ClickCount"))
       {
-         Trigger("Clicked", NULL, true, false);
+         Trigger("Clicked");
       }
       return true;
    }
@@ -302,35 +302,35 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    bool ButtonEvent::OnDoubleClicked(const CEGUI::EventArgs& e)
    {
-      Trigger("Double Clicked", NULL, true, false);
+      Trigger("Double Clicked");
       return true;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    bool ButtonEvent::OnHoverEnter(const CEGUI::EventArgs& e)
    {
-      Trigger("Hover Enter", NULL, true, false);
+      Trigger("Hover Enter");
       return true;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    bool ButtonEvent::OnHoverLeave(const CEGUI::EventArgs& e)
    {
-      Trigger("Hover Leave", NULL, true, false);
+      Trigger("Hover Leave");
       return true;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    bool ButtonEvent::OnDown(const CEGUI::EventArgs& e)
    {
-      Trigger("Down", NULL, true, false);
+      Trigger("Down");
       return true;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    bool ButtonEvent::OnUp(const CEGUI::EventArgs& e)
    {
-      Trigger("Up", NULL, true, false);
+      Trigger("Up");
       return true;
    }
 

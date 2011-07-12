@@ -36,7 +36,6 @@ namespace dtDirector
    DirectorGraph::DirectorGraph(Director* director)
       : mDirector(director)
       , mParent(NULL)
-      , mEnabled(true)
       , mComment("")
    {
       SetColorRGB(Colors::GREEN);
@@ -99,12 +98,6 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void DirectorGraph::BuildPropertyMap(bool isParent)
    {
-      AddProperty(new dtDAL::BooleanActorProperty(
-         "Enabled", "Enabled",
-         dtDAL::BooleanActorProperty::SetFuncType(this, &DirectorGraph::SetEnabled),
-         dtDAL::BooleanActorProperty::GetFuncType(this, &DirectorGraph::GetEnabled),
-         "Enabled status of the graph."));
-
       AddProperty(new dtDAL::StringActorProperty(
          "Comment", "Comment",
          dtDAL::StringActorProperty::SetFuncType(this, &DirectorGraph::SetComment),

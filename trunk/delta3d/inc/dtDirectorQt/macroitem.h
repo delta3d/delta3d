@@ -105,6 +105,11 @@ namespace dtDirector
 
       virtual QColor GetNodeColor() const;
 
+      /**
+       * Retrieves a menu for exposing links.
+       */
+      virtual QMenu* GetExposeLinkMenu();
+
    public slots:
 
       /**
@@ -116,6 +121,11 @@ namespace dtDirector
        * Opens the macro using the assigned custom tool.
        */
       void OpenCustomTool();
+
+      /**
+       * Event handler when a value link is being exposed.
+       */
+      virtual void ExposeLink(QAction* action);
 
    protected:
 

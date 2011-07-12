@@ -25,6 +25,7 @@
 #include <dtDirectorQt/linkitem.h>
 #include <dtDirectorQt/undomanager.h>
 #include <dtDirectorQt/undopropertyevent.h>
+#include <dtDirectorQt/undolinkvisibilityevent.h>
 #include <dtDirectorQt/customeditortool.h>
 #include <dtDirectorQt/editornotifier.h>
 
@@ -249,7 +250,7 @@ namespace dtDirector
       count = (int)values.size();
       for (int index = 0; index < count; index++)
       {
-         if (values[index]->IsEnabled())
+         if (values[index]->IsEnabled() && values[index]->GetValueLinks()[0].GetExposed())
          {
             mValues.push_back(ValueData());
             ValueData& data = mValues.back();
@@ -496,6 +497,36 @@ namespace dtDirector
       }
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   void MacroItem::ExposeLink(QAction* action)
+   {
+      if (!action || !mGraph.valid())
+      {
+         return;
+      }
+
+      std::vector<dtCore::RefPtr<ValueNode> > values = mGraph->GetExternalValueNodes();
+      int count = (int)values.size();
+      for (int index = 0; index < count; ++index)
+      {
+         ValueNode* valueNode = values[index];
+         if (valueNode && !valueNode->GetValueLinks()[0].GetExposed() &&
+            valueNode->GetValueLinks()[0].GetName() == action->text().toStdString())
+         {
+            ValueLink& link = valueNode->GetValueLinks()[0];
+
+            link.SetExposed(true);
+            link.SetVisible(true);
+
+            dtCore::RefPtr<UndoLinkVisibilityEvent> event = new UndoLinkVisibilityEvent(mScene->GetEditor(), GetID(), 2, link.GetName(), true, true);
+            event->SetDescription("Exposing of value link \'" + link.GetName() + "\' for Macro Node \'" + mGraph->GetName() + "\'.");
+            mScene->GetEditor()->GetUndoManager()->AddEvent(event);
+
+            mScene->Refresh();
+         }
+      }
+   }
+
    //////////////////////////////////////////////////////////////////////////
    void MacroItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
    {
@@ -532,6 +563,8 @@ namespace dtDirector
       menu.addMenu(GetShowValueMenu());
       menu.addAction(mScene->GetEditor()->GetShowLinkAction());
       menu.addAction(mScene->GetEditor()->GetHideLinkAction());
+      menu.addSeparator();
+      menu.addMenu(GetExposeLinkMenu());
       menu.addSeparator();
       menu.addAction(mScene->GetEditor()->GetDeleteAction());
       menu.exec(event->screenPos());
@@ -586,6 +619,34 @@ namespace dtDirector
       }
 
       OpenMacro();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   QMenu* MacroItem::GetExposeLinkMenu()
+   {
+      if (!mGraph.valid())
+      {
+         return NULL;
+      }
+
+      QMenu* menu = new QMenu("Expose Value");
+      menu->setDisabled(true);
+      connect(menu, SIGNAL(triggered(QAction*)), this, SLOT(ExposeLink(QAction*)));
+
+      std::vector<dtCore::RefPtr<ValueNode> > values = mGraph->GetExternalValueNodes();
+      int count = (int)values.size();
+      for (int index = 0; index < count; ++index)
+      {
+         ValueNode* valueNode = values[index];
+         if (valueNode && valueNode->IsEnabled() &&
+            !valueNode->GetValueLinks()[0].GetExposed())
+         {
+            menu->addAction(valueNode->GetValueLinks()[0].GetName().c_str());
+            menu->setEnabled(true);
+         }
+      }
+
+      return menu;
    }
 }
 

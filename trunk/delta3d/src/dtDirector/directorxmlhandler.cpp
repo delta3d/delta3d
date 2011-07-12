@@ -492,16 +492,6 @@ namespace dtDirector
                      }
                   }
                }
-               else if (topEl == dtDAL::MapXMLConstants::DIRECTOR_LINK_IMMEDIATE_ELEMENT)
-               {
-                  if (mInOutputLink)
-                  {
-                     if (mOutputLink)
-                     {
-                        mOutputLink->SetImmediate(dtUtil::XMLStringConverter(chars).ToString() == "true");
-                     }
-                  }
-               }
                else if (topEl == dtDAL::MapXMLConstants::DIRECTOR_LINK_VISIBLE_ELEMENT)
                {
                   if (mInInputLink)

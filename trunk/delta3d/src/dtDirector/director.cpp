@@ -537,55 +537,46 @@ namespace dtDirector
 
       mRecordTime += delta;
 
-      bool continued = false;
-
-      //do
+      if (mNotifier.valid())
       {
-         continued = false;
-
-         if (mNotifier.valid())
-         {
-            mNotifier->Update(!(mDebugging && !mShouldStep));
-         }
-
-         // Update all threads.
-         for (mCurrentThread = 0; mCurrentThread < (int)mThreads.size(); mCurrentThread++)
-         {
-            continued |= UpdateThread(mThreads[mCurrentThread], simDelta, delta);
-
-            // If this thread has no more stacks in its thread, we can
-            // remove it.
-            if (mThreads[mCurrentThread].stack.empty())
-            {
-               mThreads.erase(mThreads.begin() + mCurrentThread);
-               mCurrentThread--;
-               continued = false;
-            }
-         }
-
-         // We reset the current thread value so any new threads created outside
-         // of the update will generate a brand new main thread.
-         mCurrentThread = -1;
-
-         CleanThreads();
-
-         if (mNotifier.valid() && mShouldStep)
-         {
-            mNotifier->OnStepDebugging();
-         }
-
-         mShouldStep = false;
+         mNotifier->Update(!(mDebugging && !mShouldStep));
       }
-      //while (continued);
+
+      // Update all threads.
+      for (mCurrentThread = 0; mCurrentThread < (int)mThreads.size(); mCurrentThread++)
+      {
+         UpdateThread(mThreads[mCurrentThread], simDelta, delta);
+
+         // If this thread has no more stacks in its thread, we can
+         // remove it.
+         if (mThreads[mCurrentThread].stack.empty())
+         {
+            mThreads.erase(mThreads.begin() + mCurrentThread);
+            mCurrentThread--;
+         }
+      }
+
+      // We reset the current thread value so any new threads created outside
+      // of the update will generate a brand new main thread.
+      mCurrentThread = -1;
+
+      CleanThreads();
+
+      if (mNotifier.valid() && mShouldStep)
+      {
+         mNotifier->OnStepDebugging();
+      }
+
+      mShouldStep = false;
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void Director::BeginThread(Node* node, int index, bool immediate, bool reverseQueue)
+   void Director::BeginThread(Node* node, int index, bool reverseQueue)
    {
       // Always create threads on the proxy if able.
       if (GetParent())
       {
-         GetParent()->BeginThread(node, index, immediate);
+         GetParent()->BeginThread(node, index);
          return;
       }
 
@@ -597,7 +588,6 @@ namespace dtDirector
          queue.node = node;
          queue.input = index;
          queue.isStack = false;
-         queue.immediate = mImmediateMode && immediate;
 
          if (reverseQueue)
          {
@@ -648,7 +638,6 @@ namespace dtDirector
       stack.index = index;
       stack.first = true;
       stack.finished = false;
-      stack.immediate = immediate;
       stack.currentThread = -1;
 
       data.recordThread = NULL;
@@ -676,7 +665,7 @@ namespace dtDirector
       data.stack.push_back(stack);
       threadList->push_back(data);
 
-      if (mStarted && immediate && !mImmediateMode && *curThread == -1)
+      if (mStarted && !mImmediateMode && *curThread == -1)
       {
          mImmediateMode = true;
          *curThread = threadList->size() - 1;
@@ -722,7 +711,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void Director::PushStack(Node* node, int index, bool immediate)
+   void Director::PushStack(Node* node, int index)
    {
       // Always push stacks on the proxy director if able.
       if (GetParent())
@@ -739,7 +728,6 @@ namespace dtDirector
          queue.node = node;
          queue.input = index;
          queue.isStack = true;
-         queue.immediate = mImmediateMode && immediate;
          mThreadQueue.push_back(queue);
          return;
       }
@@ -749,7 +737,6 @@ namespace dtDirector
       stack.index = index;
       stack.first = true;
       stack.finished = false;
-      stack.immediate = immediate;
       stack.currentThread = -1;
 
       std::vector<ThreadData>* threadList = &mThreads;
@@ -772,7 +759,7 @@ namespace dtDirector
          }
       }
 
-      if (curThread > -1 && mStarted && immediate && !mImmediateMode)
+      if (curThread > -1 && mStarted && !mImmediateMode)
       {
          mImmediateMode = true;
          bool continued = false;
@@ -1254,11 +1241,6 @@ namespace dtDirector
 
       StackData& stack = data.stack[stackIndex];
 
-      if (mImmediateMode && !stack.immediate)
-      {
-         return false;
-      }
-
       bool continued = false;
 
       // Update all the sub-threads in the stack.
@@ -1355,7 +1337,7 @@ namespace dtDirector
                   if (inputIndex < inputCount)
                   {
                      // Create a new thread.
-                     BeginThread(input->GetOwner(), inputIndex, output->GetImmediate(), true);
+                     BeginThread(input->GetOwner(), inputIndex, true);
                   }
                }
             }
@@ -1388,11 +1370,11 @@ namespace dtDirector
 
             if (queue.isStack)
             {
-               PushStack(queue.node, queue.input, queue.immediate);
+               PushStack(queue.node, queue.input);
             }
             else
             {
-               BeginThread(queue.node, queue.input, queue.immediate);
+               BeginThread(queue.node, queue.input);
             }
          }
 
@@ -2017,7 +1999,6 @@ namespace dtDirector
          }
          stackData.index = stack.index;
          stackData.finished = stack.finished;
-         stackData.immediate = stack.immediate;
 
          int subCount = (int)stack.subThreads.size();
          for (int subIndex = 0; subIndex < subCount; ++subIndex)
@@ -2095,7 +2076,6 @@ namespace dtDirector
          stack.index = stackData.index;
          stack.first = true;
          stack.finished = stackData.finished;
-         stack.immediate = stackData.immediate;
          stack.currentThread = -1;
          int stackCount = (int)stackData.subThreads.size();
          for (int stackIndex = 0; stackIndex < stackCount; ++stackIndex)

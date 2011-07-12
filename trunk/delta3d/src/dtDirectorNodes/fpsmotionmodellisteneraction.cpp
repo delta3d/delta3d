@@ -98,7 +98,7 @@ namespace dtDirector
             int currentMode = mMotionModel->GetFPSCollider().GetMode();
             if (currentMode != mCurrentMode)
             {
-               GetDirector()->PushStack(this, INPUT_CHANGED_EVENT, true);
+               GetDirector()->PushStack(this, INPUT_CHANGED_EVENT);
 
                mCurrentMode = currentMode;
 

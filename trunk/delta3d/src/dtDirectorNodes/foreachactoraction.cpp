@@ -49,7 +49,7 @@ namespace dtDirector
       ActionNode::Init(nodeType, graph);
 
       mOutputs.clear();
-      mOutputs.push_back(OutputLink(this, "Each Actor", "Activates once for each actor found.", true));
+      mOutputs.push_back(OutputLink(this, "Each Actor", "Activates once for each actor found."));
       mOutputs.push_back(OutputLink(this, "Finished", "Activates after all actors have been iterated through."));
    }
 
@@ -138,14 +138,13 @@ namespace dtDirector
          }
 
          // Iterate through each found actor.
-         bool immediate = GetOutputLink("Each Actor")->GetImmediate();
-         GetDirector()->PushStack(this, 11, immediate);
+         GetDirector()->PushStack(this, 11);
 
          for (int index = 0; index < (int)mFoundActors.size(); ++index)
          {
             // We push a stack so that we can execute the entire "For Each"
             // output chain before we return back to this node.
-            GetDirector()->PushStack(this, 10, immediate);
+            GetDirector()->PushStack(this, 10);
          }
 
          return false;

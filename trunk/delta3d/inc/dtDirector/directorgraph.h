@@ -180,12 +180,6 @@ namespace dtDirector
       Director* GetDirector() {return mDirector;}
 
       /**
-       * Accessors for the enabled flag.
-       */
-      void SetEnabled(bool enabled) {mEnabled = enabled;}
-      bool GetEnabled() {return mEnabled;}
-
-      /**
        * Retrieves the UI color of the node.
        *
        * @return  The Color.
@@ -275,8 +269,6 @@ namespace dtDirector
 
       Director*      mDirector;
       DirectorGraph* mParent;
-
-      bool        mEnabled;
 
       std::string mName;
       std::string mComment;
