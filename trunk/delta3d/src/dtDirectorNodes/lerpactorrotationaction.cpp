@@ -173,69 +173,61 @@ namespace dtDirector
       float endTime = GetFloat("EndTime");
       float curTime = GetFloat("Time");
 
-      if (mWaitingForStart)
+      if (mWaitingForStart &&
+         curTime >= startTime && curTime <= endTime)
       {
-         if (curTime < startTime || curTime > endTime)
-         {
-            return true;
-         }
-
          mWaitingForStart = false;
       }
 
-      if (curTime < startTime)
+      if (!mWaitingForStart)
       {
-         curTime = startTime;
-         mIsActive = false;
-      }
-      else if (curTime > endTime)
-      {
-         curTime = endTime;
-         mIsActive = false;
-      }
-
-      if (mIsActive)
-      {
-         float timeScalar = 1.0f;
-         float lerpDelta = endTime - startTime;
-         if (lerpDelta != 0.0f)
+         if (curTime < startTime)
          {
-            timeScalar = 1.0f / lerpDelta;
+            curTime = startTime;
+            mIsActive = false;
          }
-         float alpha = (curTime - startTime) * timeScalar;
-
-         osg::Quat startRot(osg::Vec4(GetVec3("StartRotation"), 0.0f));
-         osg::Quat endRot(osg::Vec4(GetVec3("EndRotation"), 0.0f));
-
-         osg::Quat newRot;
-         newRot.slerp(alpha, startRot, endRot);
-
-         osg::Vec3 rotation = newRot.asVec3();
-
-         int count = GetPropertyCount("Actor");
-         for (int index = 0; index < count; index++)
+         else if (curTime > endTime)
          {
-            dtDAL::BaseActorObject* proxy = GetActor("Actor", index);
-            if (proxy)
+            curTime = endTime;
+            mIsActive = false;
+         }
+
+         if (mIsActive)
+         {
+            float timeScalar = 1.0f;
+            float lerpDelta = endTime - startTime;
+            if (lerpDelta != 0.0f)
             {
-               dtCore::Transformable* actor = NULL;
-               proxy->GetActor(actor);
-               if (actor)
+               timeScalar = 1.0f / lerpDelta;
+            }
+            float alpha = (curTime - startTime) * timeScalar;
+
+            osg::Quat startRot(osg::Vec4(GetVec3("StartRotation"), 0.0f));
+            osg::Quat endRot(osg::Vec4(GetVec3("EndRotation"), 0.0f));
+
+            osg::Quat newRot;
+            newRot.slerp(alpha, startRot, endRot);
+
+            osg::Vec3 rotation = newRot.asVec3();
+
+            int count = GetPropertyCount("Actor");
+            for (int index = 0; index < count; index++)
+            {
+               dtDAL::BaseActorObject* proxy = GetActor("Actor", index);
+               if (proxy)
                {
-                  dtCore::Transform transform;
-                  actor->GetTransform(transform);
-                  transform.SetRotation(rotation.z(), rotation.x(), rotation.y());
-                  actor->SetTransform(transform);
+                  dtCore::Transformable* actor = NULL;
+                  proxy->GetActor(actor);
+                  if (actor)
+                  {
+                     dtCore::Transform transform;
+                     actor->GetTransform(transform);
+                     transform.SetRotation(rotation.z(), rotation.x(), rotation.y());
+                     actor->SetTransform(transform);
+                  }
                }
             }
          }
-      }
-      // If we aren't active anymore, then we are finished
-      else
-      {
-         OutputLink* link = GetOutputLink("Finished");
-         if (link) link->Activate();
-         return false;
       }
 
       // Update the current time if we're internally tracking it
@@ -244,18 +236,26 @@ namespace dtDirector
          SetFloat(curTime + simDelta, "Time");
       }
 
+      bool result = true;
+
+      // If we aren't active anymore, then we are finished
+      if (!mIsActive)
+      {
+         OutputLink* link = GetOutputLink("Finished");
+         if (link) link->Activate();
+         result = false;
+      }
+
       if (input == INPUT_STOP)
       {
          mIsActive = false;
-
          // Activate the "Stopped" output link.
          OutputLink* link = GetOutputLink("Stopped");
          if (link) link->Activate();
-
-         return false;
+         result = false;
       }
 
-      return true;
+      return result;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
