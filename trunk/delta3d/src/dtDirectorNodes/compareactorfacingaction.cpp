@@ -103,7 +103,7 @@ namespace dtDirector
       dtCore::Transform transform;
       osg::Vec3 targetPos;
 
-      dtDAL::TransformableActorProxy* actor = 
+      dtDAL::TransformableActorProxy* actor =
          dynamic_cast<dtDAL::TransformableActorProxy*>(GetActor("Actor"));
       if (actor)
       {
@@ -115,7 +115,7 @@ namespace dtDirector
          }
       }
 
-      actor = 
+      actor =
          dynamic_cast<dtDAL::TransformableActorProxy*>(GetActor("Target"));
       if (!actor)
       {
@@ -123,7 +123,7 @@ namespace dtDirector
       }
       else
       {
-         dtDAL::Vec3ActorProperty* vecProp = 
+         dtDAL::Vec3ActorProperty* vecProp =
             dynamic_cast<dtDAL::Vec3ActorProperty*>(actor->GetProperty("Translation"));
          if (vecProp)
          {
