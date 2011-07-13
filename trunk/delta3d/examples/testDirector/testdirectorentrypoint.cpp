@@ -62,7 +62,22 @@ TestDirector::~TestDirector()
 ////////////////////////////////////////////////////////////////////////////////
 void TestDirector::Initialize(dtGame::GameApplication& app, int argc, char** argv)
 {
+   std::string context = dtUtil::GetDeltaRootPath() + "/examples/data/demoMap";
+   dtDAL::Project::GetInstance().SetContext(context, true);
 
+   std::vector<std::string> mapNames;
+
+   // Attempt to retrieve the map name through the command arguments.
+   if (argc >= 2)
+   {
+      mapNames.push_back(argv[1]);
+   }
+   else
+   {
+      mapNames.push_back("TestDirector");
+   }
+
+   app.GetGameManager()->ChangeMapSet(mapNames);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -84,17 +99,6 @@ void TestDirector::OnStartup(dtGame::GameApplication& app)
       app.GetWindow()->GetPosition(x, y, width, height);
       app.GetWindow()->SetPosition(x, y, 1024, 768);
       app.GetWindow()->SetWindowTitle("TestDirector");
-
-      std::string context = dtUtil::GetDeltaRootPath() + "/examples/data/demoMap";
-      dtDAL::Project::GetInstance().SetContext(context, true);
-    
-      std::vector<std::string> mapNames;
-      mapNames.push_back("TestDirector");
-      mapNames.push_back("TestDirectorScript");
-
-      app.GetGameManager()->ChangeMapSet(mapNames);
-      //app.GetGameManager()->ChangeMap("TestDirector");
-
    }
    catch (const dtUtil::Exception& e)
    {
