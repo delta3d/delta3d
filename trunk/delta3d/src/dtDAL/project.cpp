@@ -155,6 +155,8 @@ namespace dtDAL
       void GetBackupMapFilesList(dtUtil::DirectoryContents& toFill) const;
       void ListMapsForContextDir(Project::ContextSlot slot);
 
+      void GenerateMapList();
+
       //searches the resource tree for a category node and returns
       //an iterator to it or resources.end() if not found.
       dtUtil::tree<ResourceTreeNode>::iterator FindTreeNodeFromCategory(
@@ -569,18 +571,44 @@ namespace dtDAL
 
       if (mImpl->mMapList.empty())
       {
-         mImpl->mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-                             "The list of map names is empty, so the project is preparing to load the list.");
-
-         for (Project::ContextSlot i = 0; i < mImpl->mContexts.size(); ++i)
-         {
-            mImpl->ListMapsForContextDir(i);
-         }
-
-         mImpl->ReloadMapNames();
+         mImpl->GenerateMapList();
       }
 
       return mImpl->mMapNames;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   MapHeaderData Project::GetMapHeader(const std::string& mapName)
+   {
+      if (!IsContextValid())
+      {
+         throw dtDAL::ProjectInvalidContextException(
+            std::string("The context is not valid."), __FILE__, __LINE__);
+      }
+
+      if (mImpl->mMapList.empty())
+      {
+         mImpl->GenerateMapList();
+      }
+
+      ProjectImpl::MapListType::iterator iter = mImpl->mMapList.find(mapName);
+
+      MapHeaderData headerData;
+
+      if (iter != mImpl->mMapList.end())
+      {
+         dtCore::RefPtr<MapParser> parser = new MapParser();
+
+         Project::ContextSlot slotID = mImpl->mMapList[mapName].mSlotId;
+
+         std::string& fileName = mImpl->mMapList[mapName].mFileName;
+         std::string fullPath = mImpl->mContexts[slotID] + dtUtil::FileUtils::PATH_SEPARATOR +
+            Project::MAP_DIRECTORY + dtUtil::FileUtils::PATH_SEPARATOR + fileName;
+
+         headerData = parser->ParseMapHeaderData(fullPath);
+      }
+
+      return headerData;
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -646,6 +674,20 @@ namespace dtDAL
          throw ex;
       }
       fileUtils.PopDirectory();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void ProjectImpl::GenerateMapList()
+   {
+      mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+         "The project is preparing to load the map list.");
+
+      for (Project::ContextSlot i = 0; i < mContexts.size(); ++i)
+      {
+         ListMapsForContextDir(i);
+      }
+
+      ReloadMapNames();
    }
 
    /////////////////////////////////////////////////////////////////////////////

@@ -31,6 +31,7 @@
 
 #include <dtCore/uniqueid.h>
 #include <dtUtil/tree.h>
+#include <dtDAL/mapheaderdata.h>
 #include <dtDAL/resourcetreenode.h>
 #include <dtDAL/resourcehelper.h>
 #include <dtDAL/export.h>
@@ -138,7 +139,7 @@ namespace dtDAL
        * the project directory.  This parameter essentially now will override the project global setting.
        * @throw ExceptionEnum::ProjectInvalidContext if the path specified is invalid.
        */
-      void SetContext(const std::string& path, bool openReadOnly=false);
+      void SetContext(const std::string& path, bool openReadOnly = false);
 
       /**
        * Adds an additional context directory to the project.  If it is not opened read only, the code will att
@@ -185,6 +186,8 @@ namespace dtDAL
        * @throws ExceptionEnum::ProjectInvalidContext if the context is not set.
        */
       const std::set<std::string>& GetMapNames();
+
+      MapHeaderData GetMapHeader(const std::string& mapName);
 
       /**
        * returns the map with the given name.
@@ -597,9 +600,7 @@ namespace dtDAL
 
    protected:
       virtual ~Project();
-
    };
-
 }
 
 #endif

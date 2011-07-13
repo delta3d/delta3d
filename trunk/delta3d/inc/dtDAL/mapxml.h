@@ -24,7 +24,7 @@
 
 #include <dtDAL/export.h>
 #include <dtDAL/basexml.h>
-
+#include <dtDAL/mapheaderdata.h>
 
 namespace dtDAL
 {
@@ -32,8 +32,8 @@ namespace dtDAL
    class MapContentHandler;
    class BaseActorObject;
    class ActorPropertySerializer;
-   class ActorHierarchyNode;   
-   
+   class ActorHierarchyNode;
+
    /**
     * @class MapParser
     * @brief front end class for converting an XML map into a map instance.
@@ -70,7 +70,7 @@ namespace dtDAL
 
          /**
          * Parses only the header of a prefab's xml file and extracts the icon
-         * file name.  Returns "" if no icon element is found in the header.        
+         * file name.  Returns "" if no icon element is found in the header.
          */
          const std::string GetPrefabIconFileName(const std::string& path);
 
@@ -83,18 +83,26 @@ namespace dtDAL
          const std::string ParseMapName(const std::string& path);
          const std::string ParseMapName(std::istream& stream);
 
+         /**
+          * Reads the supplied filename as a Map xml file and extracts the Map
+          * file's header data. Will not create a Map nor anything contained in the Map.
+          * @param mapFilename The Map file to parse
+          * @return The parsed MapHeaderData
+          * @throws dtDAL::MapParsingException if file can't be found, or any parsing errors
+          */
+         dtDAL::MapHeaderData ParseMapHeaderData(const std::string& mapFilename) const;
 
          /**
-          * This method exists to allow actors being parsed to access their map.  It's to help 
+          * This method exists to allow actors being parsed to access their map.  It's to help
           * with certain features of the loading process.  Using the meth
           * @return the map instance that the parser is currently populating.
           */
          Map* GetMapBeingParsed();
-         
+
          ///@see #GetMapBeingParsed
          const Map* GetMapBeingParsed() const;
 
-         const std::set<std::string>& GetMissingActorTypes(); 
+         const std::set<std::string>& GetMissingActorTypes();
          const std::vector<std::string>& GetMissingLibraries();
 
          bool HasDeprecatedProperty() const;
@@ -149,12 +157,12 @@ namespace dtDAL
       void SavePrefab(std::vector<dtCore::RefPtr<BaseActorObject> > actorList,
                       const std::string& filePath, const std::string& description,
                       const std::string& iconFile = "");
-         
+
    protected:
       virtual ~MapWriter(); ///Protected destructor so that this could be subclassed.
 
    private:
-         
+
       //disable copy constructor
       MapWriter(const MapWriter& toCopy): BaseXMLWriter(toCopy) {}
       //disable operator =
@@ -164,7 +172,6 @@ namespace dtDAL
 
       ActorPropertySerializer* mPropSerializer;
    };
-
 }
 
 #endif
