@@ -172,77 +172,69 @@ namespace dtDirector
       float endTime = GetFloat("EndTime");
       float curTime = GetFloat("Time");
 
-      if (mWaitingForStart)
+      if (mWaitingForStart &&
+         curTime >= startTime && curTime <= endTime)
       {
-         if (curTime < startTime || curTime > endTime)
-         {
-            return true;
-         }
-
          mWaitingForStart = false;
       }
 
-      if (GetNodeLogging())
-      {
-         LOG_ALWAYS(dtUtil::ToString(curTime));
-      }
-
-      if (curTime < startTime)
+      if (!mWaitingForStart)
       {
          if (GetNodeLogging())
          {
-            LOG_ALWAYS(dtUtil::ToString(startTime));
+            LOG_ALWAYS(dtUtil::ToString(curTime));
          }
-         curTime = startTime;
-         mIsActive = false;
-      }
-      else if (curTime > endTime)
-      {
-         if (GetNodeLogging())
+
+         if (curTime < startTime)
          {
-            LOG_ALWAYS(dtUtil::ToString(endTime));
-         }
-         curTime = endTime;
-         mIsActive = false;
-      }
-
-      if (mIsActive)
-      {
-         float timeScalar = 1.0f;
-         float lerpDelta = endTime - startTime;
-         if (lerpDelta != 0.0f)
-         {
-            timeScalar = 1.0f / lerpDelta;
-         }
-         float alpha = (curTime - startTime) * timeScalar;
-
-         osg::Vec3 startScale = GetVec3("StartScale");
-         osg::Vec3 endScale = GetVec3("EndScale");
-         osg::Vec3 track = endScale - startScale;
-
-         osg::Vec3 newScale = startScale + (track * alpha);
-
-         int count = GetPropertyCount("Actor");
-         for (int index = 0; index < count; index++)
-         {
-            dtDAL::BaseActorObject* proxy = GetActor("Actor", index);
-            if (proxy)
+            if (GetNodeLogging())
             {
-               dtCore::Object* actor = NULL;
-               proxy->GetActor(actor);
-               if (actor)
+               LOG_ALWAYS(dtUtil::ToString(startTime));
+            }
+            curTime = startTime;
+            mIsActive = false;
+         }
+         else if (curTime > endTime)
+         {
+            if (GetNodeLogging())
+            {
+               LOG_ALWAYS(dtUtil::ToString(endTime));
+            }
+            curTime = endTime;
+            mIsActive = false;
+         }
+
+         if (mIsActive)
+         {
+            float timeScalar = 1.0f;
+            float lerpDelta = endTime - startTime;
+            if (lerpDelta != 0.0f)
+            {
+               timeScalar = 1.0f / lerpDelta;
+            }
+            float alpha = (curTime - startTime) * timeScalar;
+
+            osg::Vec3 startScale = GetVec3("StartScale");
+            osg::Vec3 endScale = GetVec3("EndScale");
+            osg::Vec3 track = endScale - startScale;
+
+            osg::Vec3 newScale = startScale + (track * alpha);
+
+            int count = GetPropertyCount("Actor");
+            for (int index = 0; index < count; index++)
+            {
+               dtDAL::BaseActorObject* proxy = GetActor("Actor", index);
+               if (proxy)
                {
-                  actor->SetScale(osg::Vec3(newScale.x(), newScale.y(), newScale.z()));
+                  dtCore::Object* actor = NULL;
+                  proxy->GetActor(actor);
+                  if (actor)
+                  {
+                     actor->SetScale(osg::Vec3(newScale.x(), newScale.y(), newScale.z()));
+                  }
                }
             }
          }
-      }
-      // If we aren't active anymore, then we are finished
-      else
-      {
-         OutputLink* link = GetOutputLink("Finished");
-         if (link) link->Activate();
-         return false;
       }
 
       // Update the current time if we're internally tracking it
@@ -251,18 +243,26 @@ namespace dtDirector
          SetFloat(curTime + simDelta, "Time");
       }
 
+      bool result = true;
+
+      // If we aren't active anymore, then we are finished
+      if (!mIsActive)
+      {
+         OutputLink* link = GetOutputLink("Finished");
+         if (link) link->Activate();
+         result = false;
+      }
+
       if (input == INPUT_STOP)
       {
          mIsActive = false;
-
          // Activate the "Stopped" output link.
          OutputLink* link = GetOutputLink("Stopped");
          if (link) link->Activate();
-
-         return false;
+         result = false;
       }
 
-      return true;
+      return result;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
