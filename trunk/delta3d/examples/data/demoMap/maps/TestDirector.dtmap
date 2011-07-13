@@ -7,7 +7,7 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2009-12-21T16:14:44-08:00</createTimestamp>
-        <lastUpdateTimestamp>2011-07-13T13:57:54-08:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2011-07-13T15:55:32-08:00</lastUpdateTimestamp>
         <editorVersion>2.7.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
@@ -590,6 +590,19 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes::Door_Pivot_Room.IVE</resourceDisplayName>
                 <resource>StaticMeshes::Door_Pivot_Room.IVE</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Camera</type>
+            <id>1b916b8e-69d2-4a6c-a539-e9192aaaaebb</id>
+            <name>Video_Interaction_Actor</name>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>3.838950</value1>
+                    <value2>7.162930</value2>
+                    <value3>1.466454</value3>
+                </vec3>
             </property>
         </actor>
         <actor>
@@ -1737,7 +1750,7 @@
                 <vec3>
                     <value1>3.850530</value1>
                     <value2>7.169437</value2>
-                    <value3>0.000000</value3>
+                    <value3>0.088118</value3>
                 </vec3>
             </property>
             <property>
