@@ -82,7 +82,16 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    std::string ExternalValueNode::GetValueLabel()
    {
-      return mValues[0].GetDisplayName();
+      if (!mValues.empty() && !mValues[0].GetLinks().empty())
+      {
+         ValueNode* valueNode = dynamic_cast<ValueNode*>(mValues[0].GetLinks()[0]);
+         if (valueNode)
+         {
+            return "<i>"+ valueNode->GetTypeName() + "<br><b>" + valueNode->GetName() + "</b><br>" + valueNode->GetValueLabel() +"</i>";
+         }
+      }
+
+      return "";
    }
 
    //////////////////////////////////////////////////////////////////////////
