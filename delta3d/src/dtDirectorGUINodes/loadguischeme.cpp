@@ -25,6 +25,7 @@
 #include <dtDAL/stringactorproperty.h>
 
 #include <dtGUI/gui.h>
+#include <CEGUI/CEGUIExceptions.h>
 
 #include <dtDirector/director.h>
 
@@ -60,7 +61,13 @@ namespace dtDirector
          dtGUI::GUI* gui = GUINodeManager::GetGUI();
          if (gui)
          {
-            gui->LoadScheme(schema);
+            try
+            {
+               gui->LoadScheme(schema);
+            }
+            catch(CEGUI::Exception& e)
+            {
+            }
          }
       }
 
