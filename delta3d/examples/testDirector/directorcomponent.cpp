@@ -42,6 +42,11 @@ const std::string& DirectorComponent::NAME = "DirectorComponent";
 DirectorComponent::DirectorComponent(const std::string& name)
    : dtGame::BaseInputComponent(name)
 {
+#if defined(USE_INSPECTOR)
+   int argc = 0;
+   mInspector = new dtInspectorQt::InspectorQt(argc, NULL);
+   mInspector->SetVisible(false);
+#endif
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -75,6 +80,11 @@ bool DirectorComponent::HandleKeyPressed(const dtCore::Keyboard* keyBoard, int k
          GetGameManager()->GetApplication().SetNextStatisticsType();
          return true;
       }
+   case '`':
+      {
+         mInspector->SetVisible(true);
+         return true;
+      }
    default:
       break;
    };
@@ -91,9 +101,6 @@ bool DirectorComponent::HandleKeyPressed(const dtCore::Keyboard* keyBoard, int k
 void DirectorComponent::OnMapLoaded()
 {
 #if defined(USE_INSPECTOR)
-   int argc = 0;
-   mInspector = new dtInspectorQt::InspectorQt(argc, NULL);
-   mInspector->SetVisible(true);
    mInspector->SetGameManager(GetGameManager());
 #endif
 }
