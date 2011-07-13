@@ -56,6 +56,7 @@
 #include <dtDAL/gameeventmanager.h>
 #include <dtDAL/mapxmlconstants.h>
 #include <dtDAL/mapcontenthandler.h>
+#include <dtDAL/mapheaderhandler.h>
 #include <dtDAL/transformableactorproxy.h>
 #include <dtDAL/librarymanager.h>
 #include <dtDAL/actorpropertyserializer.h>
@@ -80,8 +81,6 @@ XERCES_CPP_NAMESPACE_USE
 
 namespace dtDAL
 {
-
-
    /////////////////////////////////////////////////////////////////
    //this class is used as a wrapper to read the map files through osgdb
    //which will support loading through archives such as .zip files
@@ -240,7 +239,7 @@ namespace dtDAL
 
    static const std::string logName("mapxml.cpp");
 
-   /////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    MapParser::MapParser()
    : BaseXMLParser()
    , mMapHandler(new MapContentHandler())
@@ -271,12 +270,12 @@ namespace dtDAL
       XMLString::release(&value);
    }
 
-   /////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    MapParser::~MapParser()
    {
    }
 
-   /////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    bool MapParser::Parse(const std::string& path, Map** map)
    {
       bool result = false;
@@ -333,7 +332,7 @@ namespace dtDAL
       return result;
    }
 
-   /////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    bool MapParser::Parse(std::istream& stream, Map** map)
    {
       mMapHandler->SetMapMode();
@@ -354,7 +353,7 @@ namespace dtDAL
       return false;
    }
 
-   /////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    bool MapParser::ParsePrefab(const std::string& path, std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> >& proxyList, dtDAL::Map* map)
    {
       mMapHandler->SetPrefabMode(proxyList, dtDAL::MapContentHandler::PREFAB_READ_ALL, map);
@@ -369,7 +368,7 @@ namespace dtDAL
       return false;
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    const std::string MapParser::GetPrefabIconFileName(const std::string& path)
    {
       std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> > proxyList; //just an empty list
@@ -400,8 +399,8 @@ namespace dtDAL
       return iconFileName;
    }
 
-   /////////////////////////////////////////////////////////////////
-   const std::string MapParser::ParseMapName( std::istream& stream )
+   /////////////////////////////////////////////////////////////////////////////
+   const std::string MapParser::ParseMapName(std::istream& stream)
    {
       bool parserNeedsReset = false;
       XMLPScanToken token;
@@ -448,7 +447,9 @@ namespace dtDAL
       catch (const OutOfMemoryException&)
       {
          if (parserNeedsReset)
+         {
             mXercesParser->parseReset(token);
+         }
 
          mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__, "Ran out of memory parsing!");
          throw dtDAL::MapParsingException( "Ran out of memory parsing save file.", __FILE__, __LINE__);
@@ -465,15 +466,16 @@ namespace dtDAL
       catch (const SAXParseException&)
       {
          if (parserNeedsReset)
+         {
             mXercesParser->parseReset(token);
+         }
 
          //this will already by logged by the content handler
          throw dtDAL::MapParsingException( "Error while parsing map file. See log for more information.", __FILE__, __LINE__);
       }
    }
 
-
-   /////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    const std::string MapParser::ParseMapName(const std::string& path)
    {
       osgDB::Registry* reg = osgDB::Registry::instance();
@@ -503,7 +505,6 @@ namespace dtDAL
                mapStreamObject = dynamic_cast<MapReaderWriter::MapStream*>(readMapResult.getObject());
             }
          }
-
       }
       else
       {
@@ -521,13 +522,56 @@ namespace dtDAL
       }
       else
       {
-         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__, "Error during parsing! %ls :\n", "Unable to parse map name.");
+         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__, "Error during parsing! Unable to parse map name.");
          throw dtDAL::MapParsingException( "Error while parsing map file. See log for more information.", __FILE__, __LINE__);
       }
 
    }
 
-   /////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
+   dtDAL::MapHeaderData MapParser::ParseMapHeaderData(const std::string& mapFilename) const
+   {
+      if (dtUtil::FileUtils::GetInstance().FileExists(mapFilename) == false)
+      {
+         throw dtDAL::MapParsingException("Map file not found: "+mapFilename, __FILE__, __LINE__);
+      }
+
+      dtCore::RefPtr<MapHeaderHandler> handler = new MapHeaderHandler();
+
+      mXercesParser->setContentHandler(handler.get());
+      mXercesParser->setErrorHandler(handler.get());
+
+      XMLPScanToken token;
+      std::ifstream fileStream(mapFilename.c_str());
+      InputSourcefStream xerStream(fileStream);
+
+      if (!mXercesParser->parseFirst(xerStream, token))
+      {
+         //error
+         throw dtDAL::MapParsingException( "Could not parse the Map's header data.", __FILE__, __LINE__);
+      }
+
+      while (mXercesParser->parseNext(token))
+      {
+         if (handler->HeaderParsed())
+         {
+            //finished parsing the header data
+            break;
+         }
+      }
+
+      if (handler->HeaderParsed() == false)
+      {
+         //error
+         throw dtDAL::MapParsingException( "Could not parse all the Map's header data.", __FILE__, __LINE__);
+      }
+
+      mXercesParser->parseReset(token);
+
+      return handler->GetHeaderData();
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
    Map* MapParser::GetMapBeingParsed()
    {
       if (!IsParsing())
@@ -538,7 +582,7 @@ namespace dtDAL
       return mMapHandler->GetMap();
    }
 
-   /////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    const Map* MapParser::GetMapBeingParsed() const
    {
       if (!IsParsing())
@@ -549,30 +593,30 @@ namespace dtDAL
       return mMapHandler->GetMap();
    }
 
-   /////////////////////////////////////////////////////////////////
-
+   /////////////////////////////////////////////////////////////////////////////
    const std::set<std::string>& MapParser::GetMissingActorTypes()
    {
       return mMapHandler->GetMissingActorTypes();
    }
 
-   /////////////////////////////////////////////////////////////////
-
+   /////////////////////////////////////////////////////////////////////////////
    const std::vector<std::string>& MapParser::GetMissingLibraries()
    {
       return mMapHandler->GetMissingLibraries();
    }
 
-   ////////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    bool MapParser::HasDeprecatedProperty() const
    {
       return mMapHandler->HasDeprecatedProperty();
    }
 
+
    //////////////////////////////////////////////////////////////////////////
    //////////////////////////////////////////////////////////////////////////
 
-   //////////////////////////////////////////////////////////////////////////
+
+   /////////////////////////////////////////////////////////////////////////////
    MapWriter::MapWriter()
       : BaseXMLWriter()
       , mPropSerializer(NULL)
@@ -580,13 +624,13 @@ namespace dtDAL
       mPropSerializer = new ActorPropertySerializer(this);
    }
 
-   //////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    MapWriter::~MapWriter()
    {
       delete mPropSerializer; mPropSerializer = NULL;
    }
 
-   /////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    void MapWriter::Save(Map& map, const std::string& filePath)
    {
       std::ofstream stream(filePath.c_str(), std::ios_base::trunc|std::ios_base::binary);
@@ -597,15 +641,15 @@ namespace dtDAL
       Save(map, stream);
    }
 
-   /////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    void MapWriter::Save(Map& map, std::ostream& stream)
    {
       mFormatTarget.SetOutputStream(&stream);
       mPropSerializer->Reset();
       mPropSerializer->SetMap(&map);
 
-      try {
-
+      try
+      {
          mFormatter << MapXMLConstants::BEGIN_XML_DECL << mFormatter.getEncodingName() << MapXMLConstants::END_XML_DECL << chLF;
 
          const std::string& utcTime = dtUtil::DateTime::ToString(dtUtil::DateTime(dtUtil::DateTime::TimeOrigin::LOCAL_TIME),
@@ -932,10 +976,9 @@ namespace dtDAL
          mPropSerializer->SetMap(NULL);
          throw dtDAL::MapSaveException( std::string("Unknown exception saving map \"") + map.GetName() + ("\"."), __FILE__, __LINE__);
       }
-
    }
 
-   ////////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    void MapWriter::WriteHierarchyBranch(dtDAL::ActorHierarchyNode* hierNode)
    {
       std::string idAtt = "actorID='";
@@ -953,7 +996,7 @@ namespace dtDAL
       EndElement(); //end HIERARCHY_ELEMENT_NODE
    }
 
-   ////////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    void MapWriter::SavePrefab(const std::vector<dtCore::RefPtr<BaseActorObject> > proxyList,
                               const std::string& filePath, const std::string& description,
                               const std::string& iconFile /* = "" */)
@@ -1116,11 +1159,8 @@ namespace dtDAL
          throw dtDAL::MapSaveException( std::string("Unknown exception saving map \"") + filePath + ("\"."), __FILE__, __LINE__);
       }
    }
-
-
 }
 
 
-
-//////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
 

@@ -82,8 +82,11 @@
 #include <dtUtil/fileutils.h>
 #include <dtUtil/log.h>
 #include <dtUtil/mathdefines.h>
+#include <dtUtil/xercesutils.h>
 
 #include <cppunit/extensions/HelperMacros.h>
+
+#include <xercesc/sax/SAXParseException.hpp>
 
 #include <osg/io_utils>
 #include <osg/Math>
@@ -119,6 +122,7 @@ class MapTests : public CPPUNIT_NS::TestFixture
       CPPUNIT_TEST(TestActorProxyRemoveProperties);
       CPPUNIT_TEST(TestCreateMapsMultiContext);
       CPPUNIT_TEST(TestSaveAsMultiContext);
+      CPPUNIT_TEST(TestParsingMapHeaderData);
    CPPUNIT_TEST_SUITE_END();
 
    public:
@@ -144,6 +148,7 @@ class MapTests : public CPPUNIT_NS::TestFixture
       void TestActorProxyRemoveProperties();
       void TestCreateMapsMultiContext();
       void TestSaveAsMultiContext();
+      void TestParsingMapHeaderData();
 
       static const std::string TEST_PROJECT_DIR;
       static const std::string TEST_PROJECT_DIR_2;
@@ -1860,4 +1865,66 @@ void MapTests::TestSaveAsMultiContext()
    //    {
    //        CPPUNIT_FAIL(ex.what());
    //    }
+}
+
+//////////////////////////////////////////////////////////////////////////
+void MapTests::TestParsingMapHeaderData()
+{
+   //Create a new Map, set its header data and save it. Then parse the map file
+   //for its header data and validate.
+
+   const std::string mapName("MyCoolMap");
+   const std::string mapFileName("MyCoolMap.dtMap");
+
+   //remove any leftovers, in case this test failed last time it ran
+   if (dtUtil::FileUtils::GetInstance().FileExists(TESTS_DIR + "/data/ProjectContext/maps/" + mapFileName))
+   {
+      dtUtil::FileUtils::GetInstance().FileDelete(TESTS_DIR + "/data/ProjectContext/maps/" + mapFileName);
+   }
+
+   dtDAL::Project::GetInstance().SetContext(TESTS_DIR + "/data/ProjectContext");
+
+   //create Map
+   dtDAL::Map& map = dtDAL::Project::GetInstance().CreateMap(mapName, mapFileName);   
+
+   const std::string description("{d1ae0308-cf13-4d08-81d0-18bbb7f6f724}");
+   const std::string author("{0e849f31-b1ff-4555-939a-dd83d7c0259d}");
+   const std::string comment("{fe451321-99f8-41c3-8cc9-616f228b6596}");
+   const std::string copyright("{1e653a73-0065-41d6-8e63-75871c9c88ad}");
+
+   //set header data
+   map.SetDescription(description);
+   map.SetAuthor(author);
+   map.SetComment(comment);
+   map.SetCopyright(copyright);
+   
+   //save/close Map
+   dtDAL::Project::GetInstance().SaveMap(mapName);
+   dtDAL::Project::GetInstance().CloseAllMaps(true);
+
+   //Parse Map file's header data
+   dtCore::RefPtr<dtDAL::MapParser> parser = new dtDAL::MapParser();
+   dtDAL::MapHeaderData header;
+
+   try
+   {
+      header = parser->ParseMapHeaderData(TESTS_DIR + "/data/ProjectContext/maps/" + mapFileName);
+   }
+   catch (const dtDAL::MapParsingException& e)
+   {
+   	CPPUNIT_FAIL(e.ToString());
+   }
+   catch (const XERCES_CPP_NAMESPACE_QUALIFIER SAXParseException& e)
+   {
+      CPPUNIT_FAIL(dtUtil::XMLStringConverter(e.getMessage()).ToString());
+   }
+
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("Map header description didn't get parsed correctly", description, header.mDescription);
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("Map header author didn't get parsed correctly", author, header.mAuthor);
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("Map header comment didn't get parsed correctly", comment, header.mComment);
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("Map header copyright didn't get parsed correctly", copyright, header.mCopyright);
+   
+   //delete the temp map file
+   dtDAL::Project::GetInstance().DeleteMap(mapName, true);
+   dtDAL::Project::GetInstance().ClearAllContexts();
 }

@@ -49,6 +49,8 @@ SET(LIB_PUBLIC_HEADERS
     ${HEADER_PATH}/longactorproperty.h
     ${HEADER_PATH}/map.h
     ${HEADER_PATH}/mapcontenthandler.h
+    ${HEADER_PATH}/mapheaderdata.h
+    ${HEADER_PATH}/mapheaderhandler.h
     ${HEADER_PATH}/mapxml.h
     ${HEADER_PATH}/mapxmlconstants.h
     ${HEADER_PATH}/namedactorparameter.h
@@ -136,6 +138,7 @@ SET(LIB_SOURCES
     ${SOURCE_PATH}/longactorproperty.cpp
     ${SOURCE_PATH}/map.cpp
     ${SOURCE_PATH}/mapcontenthandler.cpp
+    ${SOURCE_PATH}/mapheaderhandler.cpp
     ${SOURCE_PATH}/mapxml.cpp
     ${SOURCE_PATH}/mapxmlconstants.cpp
     ${SOURCE_PATH}/namedactorparameter.cpp

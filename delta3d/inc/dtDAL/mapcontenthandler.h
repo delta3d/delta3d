@@ -40,7 +40,7 @@ namespace dtDAL
    class NamedGroupParameter;
    class ArrayActorPropertyBase;
    class ContainerActorProperty;
-   class DataType;   
+   class DataType;
 
    /**
     * @class MapContentHandler
@@ -52,7 +52,7 @@ namespace dtDAL
 
          enum PrefabReadMode {
             PREFAB_READ_ALL,
-            PREFAB_ICON_ONLY            
+            PREFAB_ICON_ONLY
          };
 
          ///Constructor
@@ -72,10 +72,10 @@ namespace dtDAL
          /**
           * @see DocumentHandler#startElement
           */
-         virtual void ElementStarted( const XMLCh*  const  uri,
-                                    const XMLCh*  const  localname,
-                                    const XMLCh*  const  qname,
-                                    const xercesc::Attributes& attrs );
+         virtual void ElementStarted(const XMLCh* const uri,
+                                     const XMLCh* const localname,
+                                     const XMLCh* const qname,
+                                     const xercesc::Attributes& attrs);
 
          /**
           * @see DocumentHandler#endElement
