@@ -1,6 +1,7 @@
 <?xml version="1.0" ?>
 <GUIScheme Name="WindowsLookSkin">
 	<Imageset Filename="WindowsLook.imageset" />
+	<Imageset Name = "Reticle" Filename = "reticle.imageset" />
 	<LookNFeel Filename="WindowsLook.looknfeel" />
 	<WindowRendererSet Filename="CEGUIFalagardWRBase" />
 	<Font Name="DejaVuSans-10" Filename="DejaVuSans-10.font" />
