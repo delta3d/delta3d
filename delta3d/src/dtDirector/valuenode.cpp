@@ -147,6 +147,11 @@ namespace dtDirector
          {
             return true;
          }
+
+         if (&prop == mProperty)
+         {
+            return false;
+         }
       }
 
       return Node::ShouldPropertySave(prop);

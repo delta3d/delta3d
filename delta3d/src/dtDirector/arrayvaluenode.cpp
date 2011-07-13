@@ -119,6 +119,11 @@ namespace dtDirector
          {
             return true;
          }
+
+         if (&prop == mArrayProperty)
+         {
+            return false;
+         }
       }
 
       return Node::ShouldPropertySave(prop);
