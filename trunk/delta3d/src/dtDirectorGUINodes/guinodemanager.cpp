@@ -52,6 +52,7 @@ namespace dtDirector
             dtCore::Camera* camera = NULL;
             dtCore::Keyboard* keyboard = NULL;
             dtCore::Mouse* mouse = NULL;
+
             dtABC::Application* app = dtABC::Application::GetInstance(0);
             if (app)
             {
