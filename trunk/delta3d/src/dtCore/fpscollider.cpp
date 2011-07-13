@@ -331,7 +331,7 @@ namespace dtCore
          newFeetPos = oldFeetPos;
          newFeetPos[2] += (mLastVelocity[2] * dt) - mMaxStepUpDistance;
 
-         float length = abs(oldFeetPos.z() - newFeetPos.z());
+         float length = dtUtil::Abs(oldFeetPos.z() - newFeetPos.z());
 
          dtCore::Transform xform;
          xform.Set(osg::Matrix::rotate(osg::Vec3(0.f, 0.f, 1.f), osg::Vec3(0.0f, 0.0f, -1.0f)));
@@ -344,7 +344,7 @@ namespace dtCore
          {
             // If the ground clamping is colliding, then the upward velocity
             // will always be reset.
-            mLastVelocity[2] *= 1.0f - abs(mLastFeetContact.normal[2]);
+            mLastVelocity[2] *= 1.0f - dtUtil::Abs(mLastFeetContact.normal[2]);
 
             //set our new height
             newFeetPos.set(mLastFeetContact.pos[0],
