@@ -7,7 +7,7 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2009-12-21T16:14:44-08:00</createTimestamp>
-        <lastUpdateTimestamp>2011-07-13T17:25:57-08:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2011-07-13T18:09:37-08:00</lastUpdateTimestamp>
         <editorVersion>2.7.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
@@ -71,6 +71,14 @@
             <type>dtcore.Game.Actors.Game Mesh Actor</type>
             <id>0189e6bc-5332-4a3e-87f9-3445486600b6</id>
             <name>Crate_13</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>-0.306966</value1>
+                    <value2>3.674645</value2>
+                    <value3>-4.769402</value3>
+                </vec3>
+            </property>
             <property>
                 <name>Translation</name>
                 <vec3>
@@ -139,6 +147,14 @@
             <type>dtcore.Game.Actors.Game Mesh Actor</type>
             <id>02a8c7cf-0019-40a7-8c0e-1682ab192fb5</id>
             <name>Crate_06</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>-6.799252</value1>
+                    <value2>-5.637355</value2>
+                    <value3>0.000010</value3>
+                </vec3>
+            </property>
             <property>
                 <name>Translation</name>
                 <vec3>
@@ -264,6 +280,14 @@
             <id>07c03e47-e148-4685-bf89-d5a4f6194fcc</id>
             <name>Crate_09</name>
             <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>3.989040</value1>
+                    <value2>0.735487</value2>
+                    <value3>-10.455316</value3>
+                </vec3>
+            </property>
+            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>32.131702</value1>
@@ -350,6 +374,14 @@
             <type>dtcore.Game.Actors.Game Mesh Actor</type>
             <id>0cb4ab4a-42c8-4e14-bc7e-9a21c72ec381</id>
             <name>Crate_01</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>-6.186830</value1>
+                    <value2>0.000010</value2>
+                    <value3>6.465177</value3>
+                </vec3>
+            </property>
             <property>
                 <name>Translation</name>
                 <vec3>
@@ -668,6 +700,14 @@
             <id>1d95e562-ec3d-43b7-b09a-6849f1b7a59d</id>
             <name>Crate_05</name>
             <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>6.046252</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>32.067413</value1>
@@ -874,6 +914,14 @@
             <id>2e14ff02-a2be-4cf5-bd8c-791f263249d2</id>
             <name>Crate_21</name>
             <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.666511</value1>
+                    <value2>5.873337</value2>
+                    <value3>6.451630</value3>
+                </vec3>
+            </property>
+            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>33.605583</value1>
@@ -1014,6 +1062,14 @@
             <id>36d1340e-3956-4834-b0ab-235c7b604f50</id>
             <name>Crate_16</name>
             <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>-10.505423</value1>
+                    <value2>0.629838</value2>
+                    <value3>3.177359</value3>
+                </vec3>
+            </property>
+            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>33.541294</value1>
@@ -1076,11 +1132,19 @@
             <id>3840e55f-b00d-4123-ba70-379e9810350e</id>
             <name>Crate_26</name>
             <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>-5.225932</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>33.541294</value1>
-                    <value2>16.550228</value2>
-                    <value3>6.235940</value3>
+                    <value2>16.553099</value2>
+                    <value3>6.212490</value3>
                 </vec3>
             </property>
             <property>
@@ -1290,6 +1354,14 @@
             <id>47c2339b-8879-4505-a61d-5abc4f1cb8b7</id>
             <name>Crate_12</name>
             <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>3.099205</value1>
+                    <value2>-5.914005</value2>
+                    <value3>4.485304</value3>
+                </vec3>
+            </property>
+            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>32.067413</value1>
@@ -1317,9 +1389,38 @@
             </property>
         </actor>
         <actor>
+            <type>dtcore.Camera</type>
+            <id>4a2682b1-c611-4728-b015-9382eb488a61</id>
+            <name>Door_06_Interaction_01</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-180.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>16.030802</value1>
+                    <value2>14.942877</value2>
+                    <value3>1.359276</value3>
+                </vec3>
+            </property>
+        </actor>
+        <actor>
             <type>dtcore.Game.Actors.Game Mesh Actor</type>
             <id>4abcdf3c-05fd-4628-a911-9f68d48e7643</id>
             <name>Crate_11</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>-5.582386</value1>
+                    <value2>0.458560</value2>
+                    <value3>4.703428</value3>
+                </vec3>
+            </property>
             <property>
                 <name>Translation</name>
                 <vec3>
@@ -1418,6 +1519,14 @@
             <id>4ddabba4-fa7a-47f7-99fc-c208e7ec62a9</id>
             <name>Crate_02</name>
             <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.776569</value1>
+                    <value2>9.137197</value2>
+                    <value3>4.816681</value3>
+                </vec3>
+            </property>
+            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>32.067413</value1>
@@ -1448,6 +1557,14 @@
             <type>dtcore.Game.Actors.Game Mesh Actor</type>
             <id>52d2e59e-f617-4689-bc70-e329f4414be1</id>
             <name>Crate_04</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>-3.364241</value1>
+                    <value2>0.705246</value2>
+                    <value3>-6.166257</value3>
+                </vec3>
+            </property>
             <property>
                 <name>Translation</name>
                 <vec3>
@@ -1549,6 +1666,14 @@
             <type>dtcore.Game.Actors.Game Mesh Actor</type>
             <id>5f336647-b5e3-4d1c-bcf9-d93cdd1a906a</id>
             <name>Crate_10</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.375519</value1>
+                    <value2>-3.937976</value2>
+                    <value3>-5.434389</value3>
+                </vec3>
+            </property>
             <property>
                 <name>Translation</name>
                 <vec3>
@@ -1679,6 +1804,14 @@
             <type>dtcore.Game.Actors.Game Mesh Actor</type>
             <id>6cb61b77-e5ac-445f-afd1-1b35828d75fc</id>
             <name>Crate_07</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-5.107196</value3>
+                </vec3>
+            </property>
             <property>
                 <name>Translation</name>
                 <vec3>
@@ -1827,6 +1960,14 @@
             <id>7ab22140-6818-453c-841d-a1e0d9545ba1</id>
             <name>Crate_23</name>
             <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>7.275671</value1>
+                    <value2>0.000010</value2>
+                    <value3>-7.014239</value3>
+                </vec3>
+            </property>
+            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>33.605583</value1>
@@ -1851,6 +1992,19 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:physics_crate.ive</resourceDisplayName>
                 <resource>StaticMeshes:physics_crate.ive</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Camera</type>
+            <id>7de724f7-1912-4255-973c-349f6648e906</id>
+            <name>Door_06_Interaction_02</name>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>16.030802</value1>
+                    <value2>14.942877</value2>
+                    <value3>1.359276</value3>
+                </vec3>
             </property>
         </actor>
         <actor>
@@ -2008,6 +2162,14 @@
             <type>dtcore.Game.Actors.Game Mesh Actor</type>
             <id>88976c13-1616-4f0a-9384-8b9624be5bf8</id>
             <name>Crate_08</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>-16.778130</value1>
+                    <value2>4.111011</value2>
+                    <value3>13.981529</value3>
+                </vec3>
+            </property>
             <property>
                 <name>Translation</name>
                 <vec3>
@@ -2229,6 +2391,14 @@
             <id>95a324e6-537f-4e3d-aeb3-5817b729c970</id>
             <name>Crate_24</name>
             <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>-3.841179</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>33.605583</value1>
@@ -2292,6 +2462,14 @@
             <type>dtcore.Game.Actors.Game Mesh Actor</type>
             <id>997d60b4-4b64-4d02-b1e4-b0ea490fbea2</id>
             <name>Crate_22</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-6.744611</value3>
+                </vec3>
+            </property>
             <property>
                 <name>Translation</name>
                 <vec3>
@@ -2402,7 +2580,7 @@
             <property>
                 <name>Collision Box</name>
                 <vec3>
-                    <value1>15.000000</value1>
+                    <value1>20.000000</value1>
                     <value2>7.500000</value2>
                     <value3>5.000000</value3>
                 </vec3>
@@ -2412,6 +2590,14 @@
             <type>dtcore.Game.Actors.Game Mesh Actor</type>
             <id>a37f7b69-99c2-47e5-b3ce-bf832f6f4b76</id>
             <name>Crate_14</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>6.394254</value1>
+                    <value2>4.453060</value2>
+                    <value3>-10.618393</value3>
+                </vec3>
+            </property>
             <property>
                 <name>Translation</name>
                 <vec3>
@@ -2825,6 +3011,14 @@
             <id>b7d2dcb7-f894-44fb-8554-72fbfff9c3de</id>
             <name>Crate_27</name>
             <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>3.890074</value1>
+                    <value2>7.993371</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>33.541294</value1>
@@ -2886,6 +3080,14 @@
             <type>dtcore.Game.Actors.Game Mesh Actor</type>
             <id>bc988f15-adf0-4c4f-8e41-681c01bc5dbc</id>
             <name>Crate_15</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>-5.759014</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
             <property>
                 <name>Translation</name>
                 <vec3>
@@ -3018,6 +3220,14 @@
             <type>dtcore.Game.Actors.Game Mesh Actor</type>
             <id>c7b1f211-4cae-4865-bd82-92cda65f2430</id>
             <name>Crate_18</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>1.658467</value1>
+                    <value2>-0.825896</value2>
+                    <value3>4.348611</value3>
+                </vec3>
+            </property>
             <property>
                 <name>Translation</name>
                 <vec3>
@@ -3195,6 +3405,14 @@
             <type>dtcore.Game.Actors.Game Mesh Actor</type>
             <id>d672aa28-5cac-4969-a9cf-28d4e80f61c1</id>
             <name>Crate_20</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>4.468463</value1>
+                    <value2>5.815420</value2>
+                    <value3>-2.638410</value3>
+                </vec3>
+            </property>
             <property>
                 <name>Translation</name>
                 <vec3>
@@ -3429,6 +3647,14 @@
             <id>e27de9bc-ef3e-47d7-b177-e730fe4cdd24</id>
             <name>Crate_17</name>
             <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>-9.541218</value1>
+                    <value2>2.292527</value2>
+                    <value3>-9.079852</value3>
+                </vec3>
+            </property>
+            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>33.541294</value1>
@@ -3555,6 +3781,14 @@
             <id>ebf5479d-16ad-4e94-b721-8928261c2006</id>
             <name>Crate_19</name>
             <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>-4.942014</value1>
+                    <value2>-0.463705</value2>
+                    <value3>-5.367726</value3>
+                </vec3>
+            </property>
+            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>33.541294</value1>
@@ -3662,6 +3896,14 @@
             <id>eec398a0-8d7a-467b-bd6c-552606fd12c9</id>
             <name>Crate_03</name>
             <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>3.158937</value1>
+                    <value2>-2.442548</value2>
+                    <value3>0.134684</value3>
+                </vec3>
+            </property>
+            <property>
                 <name>Translation</name>
                 <vec3>
                     <value1>32.067413</value1>
@@ -3761,11 +4003,19 @@
             <id>f219df15-c89a-43ec-9cc6-371f59c52779</id>
             <name>Crate_25</name>
             <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>2.432070</value1>
+                    <value2>6.384967</value2>
+                    <value3>-9.111162</value3>
+                </vec3>
+            </property>
+            <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>33.605583</value1>
-                    <value2>21.369242</value2>
-                    <value3>4.932168</value3>
+                    <value1>33.616081</value1>
+                    <value2>21.434690</value2>
+                    <value3>4.934983</value3>
                 </vec3>
             </property>
             <property>
@@ -3939,6 +4189,14 @@
             <type>dtcore.Game.Actors.Game Mesh Actor</type>
             <id>f7e9559b-a32c-449e-9013-9e1d0150a3e4</id>
             <name>Crate_28</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000010</value1>
+                    <value2>5.111008</value2>
+                    <value3>5.860214</value3>
+                </vec3>
+            </property>
             <property>
                 <name>Translation</name>
                 <vec3>
