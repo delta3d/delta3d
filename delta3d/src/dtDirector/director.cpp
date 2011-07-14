@@ -25,11 +25,15 @@
 #include <dtDAL/project.h>
 #include <dtDAL/stringactorproperty.h>
 
+#include <dtCore/timer.h>
+
 #include <dtDirector/nodemanager.h>
 
 #include <dtUtil/datapathutils.h>
 
 #include <osgDB/FileNameUtils>
+
+#define SAFETY_TIMER 0.1f
 
 namespace dtDirector
 {
@@ -670,6 +674,8 @@ namespace dtDirector
 
       if (mStarted && !mImmediateMode && *curThread == -1 && !mDebugging)
       {
+         dtCore::Timer_t time = dtCore::Timer::Instance()->Tick();
+
          mImmediateMode = true;
          *curThread = threadList->size() - 1;
 
@@ -699,6 +705,12 @@ namespace dtDirector
             }
 
             mShouldStep = false;
+
+            float delta = dtCore::Timer::Instance()->DeltaSec(time, dtCore::Timer::Instance()->Tick());
+            if (delta > SAFETY_TIMER)
+            {
+               break;
+            }
          }
          while (continued);
 
@@ -759,6 +771,8 @@ namespace dtDirector
 
       if (curThread > -1 && mStarted && !mImmediateMode && !mDebugging)
       {
+         dtCore::Timer_t time = dtCore::Timer::Instance()->Tick();
+
          mImmediateMode = true;
          bool continued = false;
 
@@ -785,6 +799,12 @@ namespace dtDirector
             }
 
             mShouldStep = false;
+
+            float delta = dtCore::Timer::Instance()->DeltaSec(time, dtCore::Timer::Instance()->Tick());
+            if (delta > SAFETY_TIMER)
+            {
+               break;
+            }
          }
          while (continued);
 
