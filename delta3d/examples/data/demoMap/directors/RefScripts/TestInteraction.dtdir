@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <director xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dDirector" xsi:schemaLocation="delta3dDirector director.xsd">
     <header>
         <createTimestamp>2011-07-12T10:00:25-08:00</createTimestamp>
-        <lastUpdateTimestamp>2011-07-13T15:35:17-08:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2011-07-13T17:21:54-08:00</lastUpdateTimestamp>
         <editorVersion>2.7.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
         <scriptType>Scenario</scriptType>
@@ -44,7 +43,7 @@
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>-539.864868</value1>
+                        <value1>-543.864868</value1>
                         <value2>-67.000000</value2>
                     </vec2>
                 </property>
@@ -131,7 +130,7 @@
                     <exposed>true</exposed>
                     <typecheck>false</typecheck>
                     <link>
-                        <id>919a9120-c743-4a4a-9db9-9ce1454d93b7</id>
+                        <id>6e5da98f-3dc9-46ec-8820-118f53d208e3</id>
                     </link>
                 </valuelink>
             </node>
@@ -159,7 +158,7 @@
                     <exposed>true</exposed>
                     <typecheck>false</typecheck>
                     <link>
-                        <id>c5a780b7-d968-483e-a298-1bf52e0f812e</id>
+                        <id>cc1ec4b2-6642-4728-bb1d-87c95bb8edf1</id>
                     </link>
                 </valuelink>
             </node>
@@ -211,7 +210,7 @@
                     <exposed>true</exposed>
                     <typecheck>false</typecheck>
                     <link>
-                        <id>ed9c6b5f-22b9-41d6-a3ba-1c98fdf38490</id>
+                        <id>55713e31-8a43-48a9-92f7-f8a1e7365a25</id>
                     </link>
                 </valuelink>
             </node>
@@ -237,6 +236,9 @@
                 <valuelink>
                     <name>Object</name>
                     <exposed>true</exposed>
+                    <link>
+                        <id>640ba393-7e13-4a98-b337-a0db22892feb</id>
+                    </link>
                 </valuelink>
             </node>
         </valuenodes>
@@ -543,14 +545,6 @@
                         <name>Name</name>
                         <string>Player Position</string>
                     </property>
-                    <property>
-                        <name>Initial Value</name>
-                        <vec3>
-                            <value1>0.000000</value1>
-                            <value2>0.000000</value2>
-                            <value3>0.000000</value3>
-                        </vec3>
-                    </property>
                     <valuelink>
                         <name>Enabled</name>
                         <exposed>false</exposed>
@@ -635,10 +629,6 @@
                         <name>Name</name>
                         <string>Distance</string>
                     </property>
-                    <property>
-                        <name>Initial Value</name>
-                        <double>0</double>
-                    </property>
                     <valuelink>
                         <name>Enabled</name>
                         <exposed>false</exposed>
@@ -682,6 +672,10 @@
                     <property>
                         <name>Name</name>
                         <string>Pos</string>
+                    </property>
+                    <property>
+                        <name>DefaultType</name>
+                        <enumerated>VEC3F</enumerated>
                     </property>
                     <valuelink>
                         <name>Pos</name>

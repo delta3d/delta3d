@@ -7,7 +7,7 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2009-12-21T16:14:44-08:00</createTimestamp>
-        <lastUpdateTimestamp>2011-07-13T15:55:32-08:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2011-07-13T17:25:57-08:00</lastUpdateTimestamp>
         <editorVersion>2.7.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
@@ -425,20 +425,16 @@
                 <vec3>
                     <value1>24.048241</value1>
                     <value2>18.951477</value2>
-                    <value3>1.584511</value3>
+                    <value3>2.000000</value3>
                 </vec3>
             </property>
             <property>
                 <name>Collision Type</name>
-                <enumerated>CUBE</enumerated>
+                <enumerated>SPHERE</enumerated>
             </property>
             <property>
-                <name>Collision Box</name>
-                <vec3>
-                    <value1>1.000000</value1>
-                    <value2>1.000000</value2>
-                    <value3>1.500000</value3>
-                </vec3>
+                <name>Collision Radius</name>
+                <float>0.69999999</float>
             </property>
         </actor>
         <actor>
