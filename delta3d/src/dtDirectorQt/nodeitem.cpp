@@ -1586,9 +1586,24 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   QMenu* NodeItem::GetLinkVisibilityMenu()
+   {
+      QMenu* menu = new QMenu("Link Visibility");
+
+      menu->addAction(mScene->GetEditor()->GetShowLinkAction());
+      menu->addAction(mScene->GetEditor()->GetHideLinkAction());
+      menu->addSeparator();
+      menu->addMenu(GetShowInputMenu());
+      menu->addMenu(GetShowOutputMenu());
+      menu->addMenu(GetShowValueMenu());
+
+      return menu;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    QMenu* NodeItem::GetShowInputMenu()
    {
-      QMenu* menu = new QMenu("Show Input Link");
+      QMenu* menu = new QMenu("Input Links");
       menu->setDisabled(true);
 
       int count = (int)mInputs.size();
@@ -1612,7 +1627,7 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    QMenu* NodeItem::GetShowOutputMenu()
    {
-      QMenu* menu = new QMenu("Show Output Link");
+      QMenu* menu = new QMenu("Output Links");
       menu->setDisabled(true);
 
       int count = (int)mOutputs.size();
@@ -1636,7 +1651,7 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    QMenu* NodeItem::GetShowValueMenu()
    {
-      QMenu* menu = new QMenu("Show Value Link");
+      QMenu* menu = new QMenu("Value Links");
       menu->setDisabled(true);
 
       int count = (int)mValues.size();
