@@ -329,14 +329,15 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    std::string NodeItem::GetNodeTitle()
    {
-      if( !mNode )
+      if (!mNode)
       {
          return "";
       }
 
       std::string title = "<i>"+ mNode->GetTypeName() +"</i>";
+      if (mHasHiddenLinks) title += "*";
       std::string name  = mNode->GetName();
-      if( !name.empty() && !IS_A(mNode.get(), ExternalValueNode*) )
+      if (!name.empty() && !IS_A(mNode.get(), ExternalValueNode*))
       {
          title += "<br><b>"+ name +"</b>";
       }
@@ -356,7 +357,6 @@ namespace dtDirector
          mTitleBG->setFlag(QGraphicsItem::ItemClipsChildrenToShape, true);
       }
 
-      if (mHasHiddenLinks) text += "*";
       mTitle->setHtml((std::string("<center>") + text + "</center>").c_str());
 
       // Create the title background.

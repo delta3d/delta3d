@@ -56,19 +56,7 @@ namespace dtDirector
 
       if (mGraph.valid())
       {
-         std::string title = "<i>";
-         if (!mGraph->GetEditor().empty())
-         {
-            title += mGraph->GetEditor() + " ";
-         }
-         title += "Macro</i>";
-
-         std::string name  = mGraph->GetName();
-         if( !name.empty() )
-         {
-            title += "<br><b>"+ name +"</b>";
-         }
-         SetTitle(title);
+         SetTitle(GetNodeTitle());
          DrawInputs();
          SetupValues();
          DrawOutputs();
@@ -198,6 +186,31 @@ namespace dtDirector
             }
          }
       }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   std::string MacroItem::GetNodeTitle()
+   {
+      if (!mGraph)
+      {
+         return "";
+      }
+
+      std::string title = "<i>";
+      if (!mGraph->GetEditor().empty())
+      {
+         title += mGraph->GetEditor() + " ";
+      }
+      title += "Macro</i>";
+      if (mHasHiddenLinks) title += "*";
+
+      std::string name  = mGraph->GetName();
+      if (!name.empty())
+      {
+         title += "<br><b>"+ name +"</b>";
+      }
+
+      return title;
    }
 
    //////////////////////////////////////////////////////////////////////////
