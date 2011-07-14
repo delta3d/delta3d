@@ -477,6 +477,7 @@ namespace dtDirector
       /**
        * Retrieves a menu for changing the visibility of links.
        */
+      QMenu* GetLinkVisibilityMenu();
       QMenu* GetShowInputMenu();
       QMenu* GetShowOutputMenu();
       QMenu* GetShowValueMenu();
