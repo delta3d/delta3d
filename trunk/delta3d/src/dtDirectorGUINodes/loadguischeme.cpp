@@ -67,6 +67,7 @@ namespace dtDirector
             }
             catch(CEGUI::Exception& e)
             {
+               e;
             }
          }
       }

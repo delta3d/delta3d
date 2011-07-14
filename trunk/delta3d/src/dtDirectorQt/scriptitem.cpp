@@ -225,11 +225,7 @@ namespace dtDirector
       menu.addAction(mScene->GetEditor()->GetCutAction());
       menu.addAction(mScene->GetEditor()->GetCopyAction());
       menu.addSeparator();
-      menu.addMenu(GetShowInputMenu());
-      menu.addMenu(GetShowOutputMenu());
-      menu.addMenu(GetShowValueMenu());
-      menu.addAction(mScene->GetEditor()->GetShowLinkAction());
-      menu.addAction(mScene->GetEditor()->GetHideLinkAction());
+      menu.addMenu(GetLinkVisibilityMenu());
       menu.addSeparator();
       menu.addMenu(GetExposeLinkMenu());
       menu.addSeparator();
