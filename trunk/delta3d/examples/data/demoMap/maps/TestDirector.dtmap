@@ -7,7 +7,7 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2009-12-21T16:14:44-08:00</createTimestamp>
-        <lastUpdateTimestamp>2011-07-13T18:09:37-08:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2011-07-13T18:53:23-08:00</lastUpdateTimestamp>
         <editorVersion>2.7.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
@@ -358,7 +358,7 @@
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>44.240986</value1>
+                    <value1>-12.265947</value1>
                     <value2>11.016783</value2>
                     <value3>-0.010767</value3>
                 </vec3>
@@ -554,6 +554,14 @@
                 <bitMask>2</bitMask>
             </property>
             <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>1.000000</value1>
+                    <value2>1.000000</value2>
+                    <value3>5.000000</value3>
+                </vec3>
+            </property>
+            <property>
                 <name>static mesh</name>
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes::Door_Pivot_Room.IVE</resourceDisplayName>
@@ -575,7 +583,7 @@
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-10.980394</value1>
+                    <value1>-10.868170</value1>
                     <value2>11.031294</value2>
                     <value3>1.500000</value3>
                 </vec3>
@@ -981,6 +989,14 @@
                 <bitMask>2</bitMask>
             </property>
             <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>1.000000</value1>
+                    <value2>1.000000</value2>
+                    <value3>5.000000</value3>
+                </vec3>
+            </property>
+            <property>
                 <name>static mesh</name>
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes::Door_Pivot_Room.IVE</resourceDisplayName>
@@ -995,7 +1011,7 @@
                 <name>Rotation</name>
                 <vec3>
                     <value1>0.000000</value1>
-                    <value2>0.000000</value2>
+                    <value2>-0.000000</value2>
                     <value3>90.000000</value3>
                 </vec3>
             </property>
@@ -1656,6 +1672,14 @@
                 <bitMask>2</bitMask>
             </property>
             <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>1.000000</value1>
+                    <value2>1.000000</value2>
+                    <value3>5.000000</value3>
+                </vec3>
+            </property>
+            <property>
                 <name>static mesh</name>
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes::Door_Pivot_Room.IVE</resourceDisplayName>
@@ -1764,6 +1788,53 @@
             </property>
         </actor>
         <actor>
+            <type>dtcore.Static Mesh</type>
+            <id>62ff4205-589c-4541-b495-871447fa22e6</id>
+            <name>TerrainMesh_37</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-90.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>44.528114</value1>
+                    <value2>11.031294</value2>
+                    <value3>-0.041602</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>MESH</enumerated>
+            </property>
+            <property>
+                <name>Enable Collision</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Collision Collide Mask</name>
+                <bitMask>2</bitMask>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>1.000000</value1>
+                    <value2>1.000000</value2>
+                    <value3>5.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::Door_Pivot_Room.IVE</resourceDisplayName>
+                <resource>StaticMeshes::Door_Pivot_Room.IVE</resource>
+            </property>
+        </actor>
+        <actor>
             <type>dtcore.Label</type>
             <id>6a5b7d18-0915-4ed1-896c-6cd33e7c7440</id>
             <name>LabelActor_06a</name>
@@ -1862,6 +1933,14 @@
             <property>
                 <name>Collision Collide Mask</name>
                 <bitMask>2</bitMask>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>1.000000</value1>
+                    <value2>1.000000</value2>
+                    <value3>5.000000</value3>
+                </vec3>
             </property>
             <property>
                 <name>static mesh</name>
@@ -2045,7 +2124,7 @@
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>42.097816</value1>
+                    <value1>-9.495893</value1>
                     <value2>11.031294</value2>
                     <value3>0.467493</value3>
                 </vec3>
@@ -2138,9 +2217,9 @@
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>43.855293</value1>
+                    <value1>-12.220284</value1>
                     <value2>11.010956</value2>
-                    <value3>-0.010767</value3>
+                    <value3>1.835056</value3>
                 </vec3>
             </property>
             <property>
@@ -2265,6 +2344,14 @@
             <property>
                 <name>Collision Collide Mask</name>
                 <bitMask>2</bitMask>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>1.000000</value1>
+                    <value2>1.000000</value2>
+                    <value3>5.000000</value3>
+                </vec3>
             </property>
             <property>
                 <name>static mesh</name>
@@ -2687,6 +2774,53 @@
             <property>
                 <name>Collision Collide Mask</name>
                 <bitMask>2</bitMask>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::Door_Pivot_Room.IVE</resourceDisplayName>
+                <resource>StaticMeshes::Door_Pivot_Room.IVE</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Static Mesh</type>
+            <id>aaac96a3-7f4d-4048-ab6a-b95924a21bf3</id>
+            <name>TerrainMesh_38</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-90.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>44.615788</value1>
+                    <value2>9.440107</value2>
+                    <value3>-0.134818</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>MESH</enumerated>
+            </property>
+            <property>
+                <name>Enable Collision</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Collision Collide Mask</name>
+                <bitMask>2</bitMask>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>1.000000</value1>
+                    <value2>1.000000</value2>
+                    <value3>5.000000</value3>
+                </vec3>
             </property>
             <property>
                 <name>static mesh</name>
@@ -3599,6 +3733,14 @@
                 <bitMask>2</bitMask>
             </property>
             <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>1.000000</value1>
+                    <value2>1.000000</value2>
+                    <value3>5.000000</value3>
+                </vec3>
+            </property>
+            <property>
                 <name>static mesh</name>
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes::Door_Pivot_Room.IVE</resourceDisplayName>
@@ -3770,6 +3912,14 @@
                 <bitMask>2</bitMask>
             </property>
             <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>1.000000</value1>
+                    <value2>1.000000</value2>
+                    <value3>5.000000</value3>
+                </vec3>
+            </property>
+            <property>
                 <name>static mesh</name>
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes::Door_Pivot_Room.IVE</resourceDisplayName>
@@ -3862,16 +4012,16 @@
                 <name>Rotation</name>
                 <vec3>
                     <value1>90.000000</value1>
-                    <value2>-89.999969</value2>
+                    <value2>90.000061</value2>
                     <value3>0.000000</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>43.852341</value1>
-                    <value2>11.036543</value2>
-                    <value3>2.564243</value3>
+                    <value1>-11.944897</value1>
+                    <value2>11.036513</value2>
+                    <value3>1.469474</value3>
                 </vec3>
             </property>
             <property>
@@ -4138,6 +4288,14 @@
             <property>
                 <name>Collision Collide Mask</name>
                 <bitMask>2</bitMask>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>1.000000</value1>
+                    <value2>1.000000</value2>
+                    <value3>5.000000</value3>
+                </vec3>
             </property>
             <property>
                 <name>static mesh</name>
