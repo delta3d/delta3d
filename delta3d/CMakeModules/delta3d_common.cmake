@@ -30,17 +30,13 @@ FIND_PATH(DELTA3D_INCLUDE_DIR dtCore/dt.h
 )
 
 #where to find the Delta3D "ext" folder.  Look for one of the headers that might be in there.
-FIND_PATH(DELTA3D_EXT_DIR NAMES al.h gnelib.h nl.h
-         PATH_SUFFIXES include inc
-         HINTS
-         ${DELTA3D_ROOT}/ext
-         $ENV{DELTA_ROOT}/ext
-         DOC "The root of the Delta3D external dependency folder"
-)
+SET(DELTA3D_EXT_DIR ${DELTA3D_ROOT}/ext CACHE PATH "The root of the Delta3D external dependency folder")
 
-if (DELTA3D_EXT_DIR)
-  set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${DELTA3D_EXT_DIR}) 
-endif(DELTA3D_EXT_DIR)
+IF(DELTA3D_EXT_DIR)
+  #for aiding FIND_FILE() and FIND_PATH() searches
+  SET(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${DELTA3D_EXT_DIR})
+  SET(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} ${DELTA3D_EXT_DIR}/inc)
+ENDIF(DELTA3D_EXT_DIR)
 
 #where to find the Delta3D lib dir
 SET(DELTA3D_LIB_SEARCH_PATH 
