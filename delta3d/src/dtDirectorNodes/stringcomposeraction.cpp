@@ -114,7 +114,7 @@ namespace dtDirector
       // If we have too many, remove some
       while (mValues.size() > (size_t)numberOfArguments + DEFAULT_VALUE_LINK_COUNT)
       {
-         mValues.erase(mValues.begin());
+         mValues.erase(mValues.end() - DEFAULT_VALUE_LINK_COUNT - 1);
       }
 
       // If we don't have enough, add some
@@ -129,7 +129,7 @@ namespace dtDirector
             dtDAL::StringActorProperty::GetFuncType(this, &StringComposerAction::GetArgument),
             "Sets an argument used to compose the text.");
 
-         mValues.insert(mValues.begin(), ValueLink(this, argProperty, false, false, false));
+         mValues.insert(mValues.end() - DEFAULT_VALUE_LINK_COUNT, ValueLink(this, argProperty, false, false, false));
       }
 
       mSourceText = newText;
@@ -171,7 +171,7 @@ namespace dtDirector
       std::string composedString;
 
       size_t startPosition = 0;
-      size_t argumentIndex = DEFAULT_VALUE_LINK_COUNT;
+      size_t argumentIndex = 0;
 
       mSourceText = GetString("Text");
 
@@ -195,9 +195,9 @@ namespace dtDirector
             }
 
             // If a value exists for this argument, insert it
-            if (mValues.size() > argumentIndex)
+            if (mValues.size() - DEFAULT_VALUE_LINK_COUNT > argumentIndex)
             {
-               size_t valueIndex = argumentIndex - DEFAULT_VALUE_LINK_COUNT;
+               size_t valueIndex = argumentIndex;
                composedString.append(mValues[valueIndex].GetProperty()->GetValueString());
                ++argumentIndex;
             }

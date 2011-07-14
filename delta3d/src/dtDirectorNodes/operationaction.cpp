@@ -54,6 +54,7 @@ namespace dtDirector
       mInputs.push_back(InputLink(this, "Subtract", "Performs a subtraction operation between values A and B."));
       mInputs.push_back(InputLink(this, "Multiply", "Performs a multiply operation between values A and B."));
       mInputs.push_back(InputLink(this, "Divide", "Performs a divide operation between values A and B."));
+      mInputs.push_back(InputLink(this, "Mod", "Performs a modulus operation between values A and B."));
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -174,6 +175,12 @@ namespace dtDirector
       case INPUT_DIV:
          if (right.x() != 0) result = left / right.x();
          break;
+      case INPUT_MOD:
+         result.x() = Mod(left.x(), right.x());
+         result.y() = Mod(left.y(), right.y());
+         result.z() = Mod(left.z(), right.z());
+         result.w() = Mod(left.w(), right.w());
+         break;
       }
 
       int count = GetPropertyCount("Result");
@@ -260,6 +267,12 @@ namespace dtDirector
    double OperationAction::GetResult()
    {
       return mResult;
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   int OperationAction::Mod(int left, int right)
+   {
+      return left % right;
    }
 }
 
