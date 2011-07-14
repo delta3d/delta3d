@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <director xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dDirector" xsi:schemaLocation="delta3dDirector director.xsd">
     <header>
         <createTimestamp>2009-12-22T14:26:31-08:00</createTimestamp>
-        <lastUpdateTimestamp>2011-07-13T17:22:04-08:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2011-07-13T22:19:38-08:00</lastUpdateTimestamp>
         <editorVersion>2.7.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
         <scriptType>Scenario</scriptType>
@@ -80,7 +81,7 @@
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>-237.619904</value1>
+                        <value1>-238.448380</value1>
                         <value2>106.533340</value2>
                     </vec2>
                 </property>
@@ -735,7 +736,7 @@
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>-112.092010</value1>
+                        <value1>-112.091988</value1>
                         <value2>239.659454</value2>
                     </vec2>
                 </property>
@@ -886,7 +887,7 @@
             <property>
                 <name>Position</name>
                 <vec2>
-                    <value1>-122.091812</value1>
+                    <value1>-122.092010</value1>
                     <value2>93.533340</value2>
                 </vec2>
             </property>
@@ -1455,7 +1456,7 @@
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>-135.409546</value1>
+                            <value1>-72.445755</value1>
                             <value2>0.000000</value2>
                         </vec2>
                     </property>
@@ -1473,7 +1474,7 @@
                     <outputlink>
                         <name>Out</name>
                         <link>
-                            <id>3ea5f358-bcab-41e4-bea6-d40464fc30cf</id>
+                            <id>0f181a71-ef9b-4230-9d84-a55e5a44ba7f</id>
                             <name>Start</name>
                         </link>
                     </outputlink>
@@ -1516,8 +1517,8 @@
                     <inputlink>
                         <name>In</name>
                         <link>
-                            <id>3ea5f358-bcab-41e4-bea6-d40464fc30cf</id>
-                            <name>Time Elapsed</name>
+                            <id>0f181a71-ef9b-4230-9d84-a55e5a44ba7f</id>
+                            <name>Cycle</name>
                         </link>
                     </inputlink>
                     <outputlink>
@@ -1553,78 +1554,6 @@
                     </valuelink>
                     <valuelink>
                         <name>PropertyName</name>
-                        <exposed>false</exposed>
-                    </valuelink>
-                </node>
-                <node>
-                    <name>Delay</name>
-                    <category>General</category>
-                    <id>3ea5f358-bcab-41e4-bea6-d40464fc30cf</id>
-                    <property>
-                        <name>Comment</name>
-                        <string>Update Tick.</string>
-                    </property>
-                    <property>
-                        <name>Position</name>
-                        <vec2>
-                            <value1>0.000000</value1>
-                            <value2>13.000000</value2>
-                        </vec2>
-                    </property>
-                    <property>
-                        <name>UseSimTime</name>
-                        <boolean>true</boolean>
-                    </property>
-                    <inputlink>
-                        <name>Start</name>
-                        <link>
-                            <id>7c8d1f98-8c73-4fbc-907a-3f15312b3af9</id>
-                            <name>Out</name>
-                        </link>
-                        <link>
-                            <id>3ea5f358-bcab-41e4-bea6-d40464fc30cf</id>
-                            <name>Time Elapsed</name>
-                        </link>
-                    </inputlink>
-                    <inputlink>
-                        <name>Stop</name>
-                        <visible>false</visible>
-                    </inputlink>
-                    <inputlink>
-                        <name>Pause</name>
-                        <visible>false</visible>
-                    </inputlink>
-                    <outputlink>
-                        <name>Out</name>
-                        <visible>false</visible>
-                    </outputlink>
-                    <outputlink>
-                        <name>Time Elapsed</name>
-                        <link>
-                            <id>e0d265e2-5b93-42ba-b0a8-f8f3429082dc</id>
-                            <name>In</name>
-                        </link>
-                        <link>
-                            <id>3ea5f358-bcab-41e4-bea6-d40464fc30cf</id>
-                            <name>Start</name>
-                        </link>
-                    </outputlink>
-                    <valuelink>
-                        <name>Enabled</name>
-                        <exposed>false</exposed>
-                    </valuelink>
-                    <valuelink>
-                        <name>Delay</name>
-                        <exposed>true</exposed>
-                        <typecheck>false</typecheck>
-                    </valuelink>
-                    <valuelink>
-                        <name>Elapsed Time</name>
-                        <exposed>false</exposed>
-                        <isout>true</isout>
-                    </valuelink>
-                    <valuelink>
-                        <name>UseSimTime</name>
                         <exposed>false</exposed>
                     </valuelink>
                 </node>
@@ -1724,15 +1653,12 @@
                     </inputlink>
                     <outputlink>
                         <name>A &gt; B</name>
-                        <visible>false</visible>
                     </outputlink>
                     <outputlink>
                         <name>A = B</name>
-                        <visible>false</visible>
                     </outputlink>
                     <outputlink>
                         <name>A != B</name>
-                        <visible>false</visible>
                     </outputlink>
                     <outputlink>
                         <name>B &gt; A</name>
@@ -1770,7 +1696,7 @@
                         <name>Position</name>
                         <vec2>
                             <value1>872.570435</value1>
-                            <value2>1.000000</value2>
+                            <value2>0.000000</value2>
                         </vec2>
                     </property>
                     <property>
@@ -1794,6 +1720,52 @@
                     <valuelink>
                         <name>Enabled</name>
                         <exposed>false</exposed>
+                    </valuelink>
+                </node>
+                <node>
+                    <name>Loop</name>
+                    <category>General</category>
+                    <id>0f181a71-ef9b-4230-9d84-a55e5a44ba7f</id>
+                    <property>
+                        <name>Position</name>
+                        <vec2>
+                            <value1>43.908958</value1>
+                            <value2>13.000000</value2>
+                        </vec2>
+                    </property>
+                    <property>
+                        <name>LoopPeriod</name>
+                        <float>1</float>
+                    </property>
+                    <inputlink>
+                        <name>Start</name>
+                        <link>
+                            <id>7c8d1f98-8c73-4fbc-907a-3f15312b3af9</id>
+                            <name>Out</name>
+                        </link>
+                    </inputlink>
+                    <inputlink>
+                        <name>Stop</name>
+                    </inputlink>
+                    <outputlink>
+                        <name>Cycle</name>
+                        <link>
+                            <id>e0d265e2-5b93-42ba-b0a8-f8f3429082dc</id>
+                            <name>In</name>
+                        </link>
+                    </outputlink>
+                    <valuelink>
+                        <name>Enabled</name>
+                        <exposed>false</exposed>
+                    </valuelink>
+                    <valuelink>
+                        <name>LoopPeriod</name>
+                        <exposed>false</exposed>
+                    </valuelink>
+                    <valuelink>
+                        <name>DeltaTime</name>
+                        <exposed>false</exposed>
+                        <isout>true</isout>
                     </valuelink>
                 </node>
             </actionnodes>
@@ -1869,7 +1841,7 @@
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>711.950073</value1>
+                            <value1>711.950195</value1>
                             <value2>188.930847</value2>
                         </vec2>
                     </property>
@@ -2300,6 +2272,10 @@
                         <name>LoopPeriod</name>
                         <float>0.0099999998</float>
                     </property>
+                    <property>
+                        <name>DeltaTime</name>
+                        <float>0.0244285</float>
+                    </property>
                     <inputlink>
                         <name>Start</name>
                         <link>
@@ -2329,132 +2305,6 @@
                         <name>DeltaTime</name>
                         <exposed>false</exposed>
                         <isout>true</isout>
-                    </valuelink>
-                </node>
-                <node>
-                    <name>Set Widget Property</name>
-                    <category>GUI</category>
-                    <id>0f7aa085-2b0b-4e78-a620-aee771f7b9c0</id>
-                    <property>
-                        <name>Position</name>
-                        <vec2>
-                            <value1>-74.214264</value1>
-                            <value2>-3.594086</value2>
-                        </vec2>
-                    </property>
-                    <property>
-                        <name>Layout</name>
-                        <string>Reticle.layout</string>
-                    </property>
-                    <property>
-                        <name>Widget</name>
-                        <string>Reticle</string>
-                    </property>
-                    <property>
-                        <name>Property</name>
-                        <string>ImageColours</string>
-                    </property>
-                    <property>
-                        <name>Value</name>
-                        <string>tl:ffffc000 tr:ffffc000 bl:ffffc000 br:ffffc000</string>
-                    </property>
-                    <inputlink>
-                        <name>In</name>
-                        <link>
-                            <id>71f637ea-78c4-4741-9e04-44ba71919a94</id>
-                            <name>True</name>
-                        </link>
-                    </inputlink>
-                    <outputlink>
-                        <name>Out</name>
-                        <visible>false</visible>
-                    </outputlink>
-                    <outputlink>
-                        <name>Failed</name>
-                        <visible>false</visible>
-                    </outputlink>
-                    <valuelink>
-                        <name>Enabled</name>
-                        <exposed>false</exposed>
-                    </valuelink>
-                    <valuelink>
-                        <name>Layout</name>
-                        <exposed>false</exposed>
-                    </valuelink>
-                    <valuelink>
-                        <name>Widget</name>
-                        <exposed>false</exposed>
-                    </valuelink>
-                    <valuelink>
-                        <name>Property</name>
-                        <exposed>false</exposed>
-                    </valuelink>
-                    <valuelink>
-                        <name>Value</name>
-                        <exposed>false</exposed>
-                    </valuelink>
-                </node>
-                <node>
-                    <name>Set Widget Property</name>
-                    <category>GUI</category>
-                    <id>96f7a6fc-0fc5-4595-be91-094371310294</id>
-                    <property>
-                        <name>Position</name>
-                        <vec2>
-                            <value1>-74.214264</value1>
-                            <value2>66.063477</value2>
-                        </vec2>
-                    </property>
-                    <property>
-                        <name>Layout</name>
-                        <string>Reticle.layout</string>
-                    </property>
-                    <property>
-                        <name>Widget</name>
-                        <string>Reticle</string>
-                    </property>
-                    <property>
-                        <name>Property</name>
-                        <string>ImageColours</string>
-                    </property>
-                    <property>
-                        <name>Value</name>
-                        <string>tl:88FFFFFF tr:88FFFFFF bl:88FFFFFF br:88FFFFFF</string>
-                    </property>
-                    <inputlink>
-                        <name>In</name>
-                        <link>
-                            <id>7e624af7-e7d1-49c8-b65c-c2276a272ca6</id>
-                            <name>False</name>
-                        </link>
-                    </inputlink>
-                    <outputlink>
-                        <name>Out</name>
-                        <visible>false</visible>
-                    </outputlink>
-                    <outputlink>
-                        <name>Failed</name>
-                        <visible>false</visible>
-                    </outputlink>
-                    <valuelink>
-                        <name>Enabled</name>
-                        <exposed>false</exposed>
-                    </valuelink>
-                    <valuelink>
-                        <name>Layout</name>
-                        <exposed>false</exposed>
-                    </valuelink>
-                    <valuelink>
-                        <name>Widget</name>
-                        <exposed>false</exposed>
-                    </valuelink>
-                    <valuelink>
-                        <name>Property</name>
-                        <exposed>false</exposed>
-                    </valuelink>
-                    <valuelink>
-                        <name>Value</name>
-                        <exposed>false</exposed>
                     </valuelink>
                 </node>
             </actionnodes>
@@ -2613,7 +2463,7 @@
                             <name>Position</name>
                             <vec2>
                                 <value1>-105.713242</value1>
-                                <value2>332.000000</value2>
+                                <value2>345.000000</value2>
                             </vec2>
                         </property>
                         <property>
@@ -2630,12 +2480,8 @@
                         <outputlink>
                             <name>True</name>
                             <link>
-                                <id>0f7aa085-2b0b-4e78-a620-aee771f7b9c0</id>
-                                <name>In</name>
-                            </link>
-                            <link>
                                 <id>fd433a21-a6d1-4ef7-977f-4e52b423bc3e</id>
-                                <name>In</name>
+                                <name>Enabled</name>
                             </link>
                         </outputlink>
                         <valuelink>
@@ -2668,8 +2514,8 @@
                         <outputlink>
                             <name>False</name>
                             <link>
-                                <id>96f7a6fc-0fc5-4595-be91-094371310294</id>
-                                <name>In</name>
+                                <id>969867e5-d784-4fcd-a7d6-f1b2b61087c4</id>
+                                <name>Disabled</name>
                             </link>
                         </outputlink>
                         <valuelink>
@@ -2772,8 +2618,8 @@
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>-74.214264</value1>
-                        <value2>-74.370422</value2>
+                        <value1>-104.214264</value1>
+                        <value2>-3.594086</value2>
                     </vec2>
                 </property>
                 <property>
@@ -2797,8 +2643,12 @@
                                 <value2>0.000000</value2>
                             </vec2>
                         </property>
+                        <property>
+                            <name>Name</name>
+                            <string>Enabled</string>
+                        </property>
                         <inputlink>
-                            <name>In</name>
+                            <name>Enabled</name>
                             <link>
                                 <id>71f637ea-78c4-4741-9e04-44ba71919a94</id>
                                 <name>True</name>
@@ -2808,6 +2658,50 @@
                             <name>Out</name>
                             <link>
                                 <id>cb605854-4558-4002-999c-7147bb907846</id>
+                                <name>In</name>
+                            </link>
+                        </outputlink>
+                        <valuelink>
+                            <name>Enabled</name>
+                            <exposed>false</exposed>
+                        </valuelink>
+                        <valuelink>
+                            <name>TriggerCount</name>
+                            <exposed>false</exposed>
+                        </valuelink>
+                        <valuelink>
+                            <name>Instigator</name>
+                            <exposed>false</exposed>
+                            <isout>true</isout>
+                            <allowmultiple>true</allowmultiple>
+                        </valuelink>
+                    </node>
+                    <node>
+                        <name>Input Link</name>
+                        <category>Core</category>
+                        <id>969867e5-d784-4fcd-a7d6-f1b2b61087c4</id>
+                        <property>
+                            <name>Position</name>
+                            <vec2>
+                                <value1>-127.185837</value1>
+                                <value2>410.750427</value2>
+                            </vec2>
+                        </property>
+                        <property>
+                            <name>Name</name>
+                            <string>Disabled</string>
+                        </property>
+                        <inputlink>
+                            <name>Disabled</name>
+                            <link>
+                                <id>7e624af7-e7d1-49c8-b65c-c2276a272ca6</id>
+                                <name>False</name>
+                            </link>
+                        </inputlink>
+                        <outputlink>
+                            <name>Out</name>
+                            <link>
+                                <id>559223eb-0c6e-420d-b96d-c14e9b4948a6</id>
                                 <name>In</name>
                             </link>
                         </outputlink>
@@ -2860,7 +2754,10 @@
                         </inputlink>
                         <outputlink>
                             <name>Out</name>
-                            <visible>false</visible>
+                            <link>
+                                <id>524bd461-d05e-4a01-aee0-bc2d7b4fbf93</id>
+                                <name>In</name>
+                            </link>
                         </outputlink>
                         <outputlink>
                             <name>Failed</name>
@@ -2993,6 +2890,300 @@
                             </link>
                         </valuelink>
                     </node>
+                    <node>
+                        <name>Set Widget Property</name>
+                        <category>GUI</category>
+                        <id>baf2bc01-5616-4985-8657-c673383fad23</id>
+                        <property>
+                            <name>Position</name>
+                            <vec2>
+                                <value1>435.702484</value1>
+                                <value2>410.750427</value2>
+                            </vec2>
+                        </property>
+                        <property>
+                            <name>Layout</name>
+                            <string>Reticle.layout</string>
+                        </property>
+                        <property>
+                            <name>Widget</name>
+                            <string>Reticle</string>
+                        </property>
+                        <property>
+                            <name>Property</name>
+                            <string>Rotation</string>
+                        </property>
+                        <inputlink>
+                            <name>In</name>
+                            <link>
+                                <id>c594536a-1c1d-47ae-9c8c-2a405680f21c</id>
+                                <name>Out</name>
+                            </link>
+                        </inputlink>
+                        <outputlink>
+                            <name>Out</name>
+                            <link>
+                                <id>e165bc3e-3adf-4290-9adc-3c5553a6f88c</id>
+                                <name>In</name>
+                            </link>
+                        </outputlink>
+                        <outputlink>
+                            <name>Failed</name>
+                            <visible>false</visible>
+                        </outputlink>
+                        <valuelink>
+                            <name>Enabled</name>
+                            <exposed>false</exposed>
+                        </valuelink>
+                        <valuelink>
+                            <name>Layout</name>
+                            <exposed>false</exposed>
+                        </valuelink>
+                        <valuelink>
+                            <name>Widget</name>
+                            <exposed>false</exposed>
+                        </valuelink>
+                        <valuelink>
+                            <name>Property</name>
+                            <exposed>true</exposed>
+                        </valuelink>
+                        <valuelink>
+                            <name>Value</name>
+                            <exposed>true</exposed>
+                            <link>
+                                <id>63f2b08e-b064-4b7d-98e6-30e3cadbdfad</id>
+                            </link>
+                        </valuelink>
+                    </node>
+                    <node>
+                        <name>Set Value</name>
+                        <category>General</category>
+                        <id>559223eb-0c6e-420d-b96d-c14e9b4948a6</id>
+                        <property>
+                            <name>Position</name>
+                            <vec2>
+                                <value1>0.000153</value1>
+                                <value2>423.750427</value2>
+                            </vec2>
+                        </property>
+                        <inputlink>
+                            <name>In</name>
+                            <link>
+                                <id>969867e5-d784-4fcd-a7d6-f1b2b61087c4</id>
+                                <name>Out</name>
+                            </link>
+                        </inputlink>
+                        <outputlink>
+                            <name>Out</name>
+                            <link>
+                                <id>c594536a-1c1d-47ae-9c8c-2a405680f21c</id>
+                                <name>In</name>
+                            </link>
+                        </outputlink>
+                        <valuelink>
+                            <name>Enabled</name>
+                            <exposed>false</exposed>
+                        </valuelink>
+                        <valuelink>
+                            <name>Source</name>
+                            <exposed>true</exposed>
+                            <typecheck>false</typecheck>
+                            <link>
+                                <id>03563b2c-cc91-4560-95b0-85d3aba07b4d</id>
+                            </link>
+                        </valuelink>
+                        <valuelink>
+                            <name>Destination</name>
+                            <exposed>true</exposed>
+                            <isout>true</isout>
+                            <allowmultiple>true</allowmultiple>
+                            <typecheck>false</typecheck>
+                            <link>
+                                <id>30ba8a9d-73f2-44e7-9ca4-74ee36cb8e4e</id>
+                            </link>
+                        </valuelink>
+                    </node>
+                    <node>
+                        <name>String Composer</name>
+                        <category>General</category>
+                        <id>c594536a-1c1d-47ae-9c8c-2a405680f21c</id>
+                        <property>
+                            <name>Position</name>
+                            <vec2>
+                                <value1>211.500305</value1>
+                                <value2>410.750427</value2>
+                            </vec2>
+                        </property>
+                        <property>
+                            <name>Text</name>
+                            <string>x:0 y:0 z:%%</string>
+                        </property>
+                        <inputlink>
+                            <name>In</name>
+                            <link>
+                                <id>559223eb-0c6e-420d-b96d-c14e9b4948a6</id>
+                                <name>Out</name>
+                            </link>
+                        </inputlink>
+                        <outputlink>
+                            <name>Out</name>
+                            <link>
+                                <id>baf2bc01-5616-4985-8657-c673383fad23</id>
+                                <name>In</name>
+                            </link>
+                        </outputlink>
+                        <valuelink>
+                            <name>Arg1</name>
+                            <exposed>true</exposed>
+                            <typecheck>false</typecheck>
+                            <link>
+                                <id>30ba8a9d-73f2-44e7-9ca4-74ee36cb8e4e</id>
+                            </link>
+                        </valuelink>
+                        <valuelink>
+                            <name>Enabled</name>
+                            <exposed>false</exposed>
+                        </valuelink>
+                        <valuelink>
+                            <name>Text</name>
+                            <visible>false</visible>
+                            <exposed>false</exposed>
+                        </valuelink>
+                        <valuelink>
+                            <name>Result</name>
+                            <exposed>true</exposed>
+                            <isout>true</isout>
+                            <link>
+                                <id>63f2b08e-b064-4b7d-98e6-30e3cadbdfad</id>
+                            </link>
+                        </valuelink>
+                    </node>
+                    <node>
+                        <name>Set Widget Property</name>
+                        <category>GUI</category>
+                        <id>e165bc3e-3adf-4290-9adc-3c5553a6f88c</id>
+                        <property>
+                            <name>Position</name>
+                            <vec2>
+                                <value1>727.758301</value1>
+                                <value2>410.750427</value2>
+                            </vec2>
+                        </property>
+                        <property>
+                            <name>Layout</name>
+                            <string>Reticle.layout</string>
+                        </property>
+                        <property>
+                            <name>Widget</name>
+                            <string>Reticle</string>
+                        </property>
+                        <property>
+                            <name>Property</name>
+                            <string>ImageColours</string>
+                        </property>
+                        <property>
+                            <name>Value</name>
+                            <string>tl:88FFFFFF tr:88FFFFFF bl:88FFFFFF br:88FFFFFF</string>
+                        </property>
+                        <inputlink>
+                            <name>In</name>
+                            <link>
+                                <id>baf2bc01-5616-4985-8657-c673383fad23</id>
+                                <name>Out</name>
+                            </link>
+                        </inputlink>
+                        <outputlink>
+                            <name>Out</name>
+                            <visible>false</visible>
+                        </outputlink>
+                        <outputlink>
+                            <name>Failed</name>
+                            <visible>false</visible>
+                        </outputlink>
+                        <valuelink>
+                            <name>Enabled</name>
+                            <exposed>false</exposed>
+                        </valuelink>
+                        <valuelink>
+                            <name>Layout</name>
+                            <exposed>false</exposed>
+                        </valuelink>
+                        <valuelink>
+                            <name>Widget</name>
+                            <exposed>false</exposed>
+                        </valuelink>
+                        <valuelink>
+                            <name>Property</name>
+                            <exposed>false</exposed>
+                        </valuelink>
+                        <valuelink>
+                            <name>Value</name>
+                            <exposed>false</exposed>
+                        </valuelink>
+                    </node>
+                    <node>
+                        <name>Set Widget Property</name>
+                        <category>GUI</category>
+                        <id>524bd461-d05e-4a01-aee0-bc2d7b4fbf93</id>
+                        <property>
+                            <name>Position</name>
+                            <vec2>
+                                <value1>729.758301</value1>
+                                <value2>0.000000</value2>
+                            </vec2>
+                        </property>
+                        <property>
+                            <name>Layout</name>
+                            <string>Reticle.layout</string>
+                        </property>
+                        <property>
+                            <name>Widget</name>
+                            <string>Reticle</string>
+                        </property>
+                        <property>
+                            <name>Property</name>
+                            <string>ImageColours</string>
+                        </property>
+                        <property>
+                            <name>Value</name>
+                            <string>tl:ffffc000 tr:ffffc000 bl:ffffc000 br:ffffc000</string>
+                        </property>
+                        <inputlink>
+                            <name>In</name>
+                            <link>
+                                <id>b2984568-dd88-4f83-9084-34ab2904a345</id>
+                                <name>Out</name>
+                            </link>
+                        </inputlink>
+                        <outputlink>
+                            <name>Out</name>
+                            <visible>false</visible>
+                        </outputlink>
+                        <outputlink>
+                            <name>Failed</name>
+                            <visible>false</visible>
+                        </outputlink>
+                        <valuelink>
+                            <name>Enabled</name>
+                            <exposed>false</exposed>
+                        </valuelink>
+                        <valuelink>
+                            <name>Layout</name>
+                            <exposed>false</exposed>
+                        </valuelink>
+                        <valuelink>
+                            <name>Widget</name>
+                            <exposed>false</exposed>
+                        </valuelink>
+                        <valuelink>
+                            <name>Property</name>
+                            <exposed>false</exposed>
+                        </valuelink>
+                        <valuelink>
+                            <name>Value</name>
+                            <exposed>false</exposed>
+                        </valuelink>
+                    </node>
                 </actionnodes>
                 <valuenodes>
                     <node>
@@ -3044,7 +3235,7 @@
                         </property>
                         <property>
                             <name>A</name>
-                            <double>4</double>
+                            <double>2</double>
                         </property>
                         <valuelink>
                             <name>Enabled</name>
@@ -3058,6 +3249,80 @@
                         <valuelink>
                             <name>B</name>
                             <exposed>true</exposed>
+                            <typecheck>false</typecheck>
+                            <link>
+                                <id>34d2fc94-083f-4d2b-a07d-a0197fca66f0</id>
+                            </link>
+                        </valuelink>
+                    </node>
+                    <node>
+                        <name>String</name>
+                        <category>General</category>
+                        <id>63f2b08e-b064-4b7d-98e6-30e3cadbdfad</id>
+                        <property>
+                            <name>Position</name>
+                            <vec2>
+                                <value1>301.500336</value1>
+                                <value2>636.365417</value2>
+                            </vec2>
+                        </property>
+                        <valuelink>
+                            <name>Enabled</name>
+                            <exposed>false</exposed>
+                        </valuelink>
+                    </node>
+                    <node>
+                        <name>Add</name>
+                        <category>Mutator</category>
+                        <id>03563b2c-cc91-4560-95b0-85d3aba07b4d</id>
+                        <property>
+                            <name>Position</name>
+                            <vec2>
+                                <value1>10.000153</value1>
+                                <value2>538.695374</value2>
+                            </vec2>
+                        </property>
+                        <property>
+                            <name>A</name>
+                            <double>1</double>
+                        </property>
+                        <valuelink>
+                            <name>Enabled</name>
+                            <exposed>false</exposed>
+                        </valuelink>
+                        <valuelink>
+                            <name>A</name>
+                            <exposed>true</exposed>
+                            <typecheck>false</typecheck>
+                        </valuelink>
+                        <valuelink>
+                            <name>B</name>
+                            <exposed>true</exposed>
+                            <typecheck>false</typecheck>
+                            <link>
+                                <id>30ba8a9d-73f2-44e7-9ca4-74ee36cb8e4e</id>
+                            </link>
+                        </valuelink>
+                    </node>
+                    <node>
+                        <name>Reference</name>
+                        <category>Core</category>
+                        <id>30ba8a9d-73f2-44e7-9ca4-74ee36cb8e4e</id>
+                        <property>
+                            <name>Position</name>
+                            <vec2>
+                                <value1>90.000099</value1>
+                                <value2>662.500854</value2>
+                            </vec2>
+                        </property>
+                        <property>
+                            <name>Reference</name>
+                            <string>Rotation Value</string>
+                        </property>
+                        <valuelink>
+                            <name>Value</name>
+                            <exposed>false</exposed>
+                            <isout>true</isout>
                             <typecheck>false</typecheck>
                             <link>
                                 <id>34d2fc94-083f-4d2b-a07d-a0197fca66f0</id>
@@ -3416,7 +3681,7 @@
                         </property>
                         <property>
                             <name>DeltaTime</name>
-                            <float>0.0202654</float>
+                            <float>0.0161321</float>
                         </property>
                         <inputlink>
                             <name>Start</name>
