@@ -2,7 +2,7 @@
 <director xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dDirector" xsi:schemaLocation="delta3dDirector director.xsd">
     <header>
         <createTimestamp>2011-07-12T10:00:25-08:00</createTimestamp>
-        <lastUpdateTimestamp>2011-07-13T18:07:24-08:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2011-07-14T10:48:11-08:00</lastUpdateTimestamp>
         <editorVersion>2.7.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
         <scriptType>Scenario</scriptType>
@@ -9529,7 +9529,7 @@
                         <name>Start</name>
                         <link>
                             <id>36dc4a6e-7ddd-4bfe-b981-f36611b98715</id>
-                            <name>Openned</name>
+                            <name>Opened</name>
                         </link>
                     </inputlink>
                     <inputlink>
@@ -13075,8 +13075,8 @@
                         <property>
                             <name>Position</name>
                             <vec2>
-                                <value1>400.000000</value1>
-                                <value2>0.000000</value2>
+                                <value1>392.000000</value1>
+                                <value2>-8.000000</value2>
                             </vec2>
                         </property>
                         <property>
@@ -13114,7 +13114,7 @@
                                         <container>
                                             <property>
                                                 <name>EventName</name>
-                                                <string>Openned</string>
+                                                <string>Opened</string>
                                             </property>
                                             <property>
                                                 <name>EventTime</name>
@@ -13176,7 +13176,7 @@
                             </link>
                         </outputlink>
                         <outputlink>
-                            <name>Openned</name>
+                            <name>Opened</name>
                             <link>
                                 <id>36dc4a6e-7ddd-4bfe-b981-f36611b98715</id>
                                 <name>In</name>
@@ -13344,17 +13344,17 @@
                         </property>
                         <property>
                             <name>Name</name>
-                            <string>Openned</string>
+                            <string>Opened</string>
                         </property>
                         <inputlink>
                             <name>In</name>
                             <link>
                                 <id>3de446b1-190c-463b-885a-6735f7738dcc</id>
-                                <name>Openned</name>
+                                <name>Opened</name>
                             </link>
                         </inputlink>
                         <outputlink>
-                            <name>Openned</name>
+                            <name>Opened</name>
                             <link>
                                 <id>148f1b69-5308-4f34-8613-10b512882cb0</id>
                                 <name>Start</name>
@@ -19614,8 +19614,8 @@
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>300.986755</value1>
-                            <value2>-104.324577</value2>
+                            <value1>297.986755</value1>
+                            <value2>-117.324577</value2>
                         </vec2>
                     </property>
                     <property>
@@ -19762,8 +19762,8 @@
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>310.986755</value1>
-                            <value2>43.512939</value2>
+                            <value1>347.486694</value1>
+                            <value2>33.512939</value2>
                         </vec2>
                     </property>
                     <property>
