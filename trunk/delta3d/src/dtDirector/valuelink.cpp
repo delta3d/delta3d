@@ -72,9 +72,14 @@ namespace dtDirector
 
       mDefaultProperty = src.mDefaultProperty;
       mIsOut = src.mIsOut;
-      mAllowMultiple = src.mAllowMultiple;
-      mTypeCheck = src.mTypeCheck;
       mGettingType = src.mGettingType;
+
+      // While we are copying the connected links, we temporarily want to
+      // allow multiple connections and disable type checking in order to
+      // prevent the source link from auto-disconnecting due to our new
+      // connections.
+      mAllowMultiple = true;
+      mTypeCheck = false;
 
       // Now connect this link to all output links connected to by the source.
       int count = (int)src.mLinks.size();
@@ -82,6 +87,9 @@ namespace dtDirector
       {
          Connect(src.mLinks[index]);
       }
+
+      mAllowMultiple = src.mAllowMultiple;
+      mTypeCheck = src.mTypeCheck;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
