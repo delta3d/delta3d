@@ -82,16 +82,18 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    std::string ExternalValueNode::GetValueLabel()
    {
+      std::string name = GetPropertyType().GetName() + "<br><b>" + GetName() + "</b>";
+
       if (!mValues.empty() && !mValues[0].GetLinks().empty())
       {
          ValueNode* valueNode = dynamic_cast<ValueNode*>(mValues[0].GetLinks()[0]);
          if (valueNode)
          {
-            return "<i>"+ valueNode->GetTypeName() + "<br><b>" + valueNode->GetName() + "</b><br>" + valueNode->GetValueLabel() +"</i>";
+            return name + "<br><i>" + valueNode->GetValueLabel() +"</i>";
          }
       }
 
-      return "";
+      return name;
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -201,13 +203,19 @@ namespace dtDirector
             ValueLink* link = mLinks[index];
             Node* owner = link->GetOwner();
             ReferenceValue* refNode = dynamic_cast<ReferenceValue*>(owner);
+            dtDAL::DataType* type = NULL;
             if (refNode != NULL)
             {
-               return refNode->GetNonReferencedPropertyType();
+               type = &refNode->GetNonReferencedPropertyType();
             }
             else if (owner != NULL && link->GetPropertyType() != dtDAL::DataType::UNKNOWN)
             {
-               return mLinks[index]->GetPropertyType();
+               type = &mLinks[index]->GetPropertyType();
+            }
+
+            if (type && *type != dtDAL::DataType::UNKNOWN)
+            {
+               return *type;
             }
          }
       }
@@ -215,7 +223,11 @@ namespace dtDirector
       // If we are linked to another value node, use that value's type.
       if (mValues.size() && mValues[0].GetLinks().size())
       {
-         return mValues[0].GetLinks()[0]->GetPropertyType();
+         dtDAL::DataType& type = mValues[0].GetLinks()[0]->GetPropertyType();
+         if (type != dtDAL::DataType::UNKNOWN)
+         {
+            return type;
+         }
       }
 
       // If we have no connections yet, the type is undefined.
