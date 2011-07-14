@@ -40,6 +40,7 @@ namespace dtDirector
          INPUT_SUB,
          INPUT_MUL,
          INPUT_DIV,
+         INPUT_MOD,
       };
 
       /**
@@ -113,6 +114,7 @@ namespace dtDirector
       ~OperationAction();
 
    private:
+      int Mod(int left, int right);
 
       double mValueA;
       double mValueB;
