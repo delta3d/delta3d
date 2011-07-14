@@ -53,9 +53,10 @@ namespace dtDirector
       /**
        * Update.
        *
-       * @param[in]  unpause  True if we should unpause all flash positions.
+       * @param[in]  pause  True if we should pause all flash positions.
+       * @param[in]  step   True if we are performing a step operation.
        */
-      virtual void Update(bool unpause);
+      virtual void Update(bool pause = false, bool step = false);
 
       /**
        * Event handler when a node has been executed.

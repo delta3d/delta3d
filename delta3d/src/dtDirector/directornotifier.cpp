@@ -35,7 +35,7 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void DirectorNotifier::Update(bool unpause)
+   void DirectorNotifier::Update(bool pause, bool step)
    {
    }
 

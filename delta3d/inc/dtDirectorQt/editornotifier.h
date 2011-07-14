@@ -77,9 +77,10 @@ namespace dtDirector
       /**
        * Update.
        *
-       * @param[in]  unpause  True if we should unpause all flash positions.
+       * @param[in]  pause  True if we should pause all flash positions.
+       * @param[in]  step   True if we are performing a step operation.
        */
-      virtual void Update(bool unpause);
+      virtual void Update(bool pause, bool step = false);
 
       /**
        * Event handler when a node has been executed.
@@ -136,6 +137,7 @@ namespace dtDirector
       dtCore::Timer_t mTime;
 
       std::map<Node*, GlowData> mGlowMap;
+      std::map<Node*, dtCore::ObserverPtr<Node> > mChangedValueMap;
    };
 }
 
