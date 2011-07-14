@@ -156,6 +156,25 @@ namespace dtDirector
       return ActionNode::Update(simDelta, delta, input, firstUpdate);
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   void ToggleAction::OnLinkValueChanged(const std::string& linkName)
+   {
+      if (linkName == "Actor")
+      {
+         std::string name;
+         if (!GetActorID("Actor").ToString().empty() || GetValueNodeCount("Actor") > 0)
+         {
+            std::string togglePropertyString = GetString("TogglePropertyName");
+
+            if (!togglePropertyString.empty())
+            {
+               name = "Property: " + togglePropertyString;
+            }
+         }
+         SetName(name);
+      }
+   }
+
    /////////////////////////////////////////////////////////////////////////////
    void ToggleAction::SetToggleActor(const dtCore::UniqueId& value)
    {
