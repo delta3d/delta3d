@@ -994,6 +994,10 @@
    <property name="checkable">
     <bool>true</bool>
    </property>
+   <property name="icon">
+    <iconset resource="../../src/dtDirectorQt/directorqt.qrc">
+     <normaloff>:/icons/debug_break.png</normaloff>:/icons/debug_break.png</iconset>
+   </property>
    <property name="text">
     <string>Toggle Break Point</string>
    </property>

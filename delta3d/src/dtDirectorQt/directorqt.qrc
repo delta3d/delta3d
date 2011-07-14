@@ -1,6 +1,7 @@
 <RCC>
     <qresource prefix="/">
 		<file>icons/cut.png</file>
+		<file>icons/debug_break.png</file>
 		<file>icons/debug_continue.png</file>
 		<file>icons/debug_pause.png</file>
 		<file>icons/debug_step.png</file>
