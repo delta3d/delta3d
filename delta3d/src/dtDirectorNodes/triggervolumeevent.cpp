@@ -38,6 +38,14 @@ namespace dtDirector
    ///////////////////////////////////////////////////////////////////////////////////////
    TriggerVolumeEvent::~TriggerVolumeEvent()
    {
+      // Un-register all old volumes.
+      int count = (int)mVolumes.size();
+      for (int index = 0; index < count; index++)
+      {
+         dtActors::TriggerVolumeActor* volume = mVolumes[index].get();
+         if (volume) volume->UnregisterListener(this);
+      }
+      mVolumes.clear();
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
