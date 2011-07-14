@@ -553,6 +553,10 @@ namespace dtDirector
       for (mCurrentThread = 0; mCurrentThread < (int)mThreads.size(); mCurrentThread++)
       {
          UpdateThread(mThreads[mCurrentThread], simDelta, delta);
+         if (mCurrentThread < 0 || mCurrentThread >= (int)mThreads.size())
+         {
+            continue;
+         }
 
          // If this thread has no more stacks in its thread, we can
          // remove it.
@@ -750,11 +754,11 @@ namespace dtDirector
       stack.currentThread = -1;
 
       std::vector<ThreadData>* threadList = &mThreads;
-      int curThread = mCurrentThread;
+      int* curThread = &mCurrentThread;
 
-      while (curThread > -1)
+      while (*curThread > -1)
       {
-         ThreadData& t = (*threadList)[curThread];
+         ThreadData& t = (*threadList)[*curThread];
          if (t.stack[t.stack.size()-1].currentThread == -1)
          {
             t.stack.push_back(stack);
@@ -764,12 +768,12 @@ namespace dtDirector
          else
          {
             StackData& s = t.stack[t.stack.size()-1];
-            curThread = s.currentThread;
+            curThread = &s.currentThread;
             threadList = &s.subThreads;
          }
       }
 
-      if (curThread > -1 && mStarted && !mImmediateMode && !mDebugging)
+      if (*curThread > -1 && mStarted && !mImmediateMode && !mDebugging)
       {
          dtCore::Timer_t time = dtCore::Timer::Instance()->Tick();
 
@@ -785,17 +789,19 @@ namespace dtDirector
                mNotifier->Update(mDebugging, mShouldStep);
             }
 
-            continued |= UpdateThread((*threadList)[curThread], 0.0f, 0.0f);
+            continued |= UpdateThread((*threadList)[*curThread], 0.0f, 0.0f);
 
             // If this thread has no more stacks in its thread, we can
             // remove it.
-            if (!(*threadList)[curThread].stack.empty())
+            if (!(*threadList)[*curThread].stack.empty())
             {
-               CleanThread((*threadList)[curThread].stack.back());
+               CleanThread((*threadList)[*curThread].stack.back());
             }
             else
             {
-               threadList->erase(threadList->begin() + curThread);
+               threadList->erase(threadList->begin() + *curThread);
+               *curThread--;
+               continued = false;
             }
 
             mShouldStep = false;
@@ -1395,7 +1401,8 @@ namespace dtDirector
          // If the current node is not latent, then
          // we can clear the node referenced by this
          // thread.
-         if (data.stack[stackIndex].finished)
+         if (stackIndex < (int)data.stack.size() &&
+             data.stack[stackIndex].finished)
          {
             data.stack[stackIndex].node = NULL;
          }
@@ -1405,7 +1412,7 @@ namespace dtDirector
       {
          // Go through all other stack items and make sure our notifier
          // keeps these nodes glowing.
-         for (int index = 0; index < stackIndex; ++index)
+         for (int index = 0; index < (int)data.stack.size(); ++index)
          {
             if (data.stack[index].node.valid())
             {
@@ -1422,7 +1429,8 @@ namespace dtDirector
 
       // If we did not continue the current stack, and we don't have any more
       // sub-threads in this stack.
-      if (!data.stack[stackIndex].node &&
+      if (stackIndex < (int)data.stack.size() &&
+         !data.stack[stackIndex].node &&
          data.stack[stackIndex].subThreads.empty())
       {
          // Pop this stack from the list.
