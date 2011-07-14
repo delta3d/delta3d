@@ -46,14 +46,14 @@ FIND_PATH( DELTA3D_LIB_DIR NAMES libdtCore.so libdtCore.dylib dtCore.dll .
        lib
 )
 
-FIND_PATH( DELTA3D_EXT_DIR inc
-   HINTS
-    ${DELTA_DIR}/ext
-)
+#where to find the Delta3D "ext" folder.  Look for one of the headers that might be in there.
+SET(DELTA3D_EXT_DIR ${DELTA3D_ROOT}/ext CACHE PATH "The root of the Delta3D external dependency folder")
 
-if (DELTA3D_EXT_DIR)
-  set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${DELTA3D_EXT_DIR})
-endif(DELTA3D_EXT_DIR)
+IF(DELTA3D_EXT_DIR)
+  #for aiding FIND_FILE() and FIND_PATH() searches
+  SET(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${DELTA3D_EXT_DIR})
+  SET(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} ${DELTA3D_EXT_DIR}/inc)
+ENDIF(DELTA3D_EXT_DIR)
 
 SET(DTUTIL_LIBRARY dtUtil)
 SET(DTCORE_LIBRARY dtCore)
