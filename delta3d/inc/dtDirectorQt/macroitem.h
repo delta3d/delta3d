@@ -58,6 +58,13 @@ namespace dtDirector
       virtual void DrawGlow();
 
       /**
+       * Create Title
+       *
+       * @param[in]  node  The node to get title from.
+       */
+      virtual std::string GetNodeTitle();
+
+      /**
        * Finds all of the links.
        */
       virtual void FindLinks();
