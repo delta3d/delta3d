@@ -62,13 +62,13 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void EditorNotifier::Update(bool unpause)
+   void EditorNotifier::Update(bool pause, bool step)
    {
       const float GLOW_SPEED = 2.0f;
 
       float delta = dtCore::Timer::Instance()->DeltaSec(mTime, dtCore::Timer::Instance()->Tick());
 
-      if (delta >= 0.05f)
+      if (delta >= 0.05f || step)
       {
          std::vector<Node*> removeList;
 
@@ -86,7 +86,7 @@ namespace dtDirector
                   shouldRemove = false;
                }
 
-               if (unpause)
+               if (!pause || step)
                {
                   data.goal = 0.0f;
                   data.inputGoal = 0.0f;
@@ -148,7 +148,7 @@ namespace dtDirector
                int editorCount = (int)mEditorList.size();
                for (int editorIndex = 0; editorIndex < editorCount; ++editorIndex)
                {
-                  mEditorList[editorIndex]->RefreshGlow(iter->first);
+                  mEditorList[editorIndex]->RefreshGlow(data.node.get());
                }
             }
 
@@ -167,6 +167,25 @@ namespace dtDirector
                mGlowMap.erase(iter);
             }
          }
+
+         std::map<Node*, dtCore::ObserverPtr<Node> >::iterator valIter;
+         for (valIter = mChangedValueMap.begin(); valIter != mChangedValueMap.end(); ++valIter)
+         {
+            Node* node = valIter->second.get();
+            if (node)
+            {
+               int editorCount = (int)mEditorList.size();
+               for (int editorIndex = 0; editorIndex < editorCount; ++editorIndex)
+               {
+                  DirectorEditor* editor = mEditorList[editorIndex];
+                  if (editor)
+                  {
+                     editor->RefreshNode(node);
+                  }
+               }
+            }
+         }
+         mChangedValueMap.clear();
 
          mTime = dtCore::Timer::Instance()->Tick();
       }
@@ -272,14 +291,10 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void EditorNotifier::OnValueChanged(Node* node)
    {
-      int editorCount = (int)mEditorList.size();
-      for (int editorIndex = 0; editorIndex < editorCount; ++editorIndex)
+      std::map<Node*, dtCore::ObserverPtr<Node> >::iterator iter = mChangedValueMap.find(node);
+      if (iter == mChangedValueMap.end())
       {
-         DirectorEditor* editor = mEditorList[editorIndex];
-         if (editor)
-         {
-            editor->RefreshNode(node);
-         }
+         mChangedValueMap[node] = node;
       }
    }
 

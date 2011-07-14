@@ -179,6 +179,9 @@ namespace dtDirector
       }
 
       mNotifier = notifier;
+
+      mDebugging = false;
+      mShouldStep = false;
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -539,7 +542,7 @@ namespace dtDirector
 
       if (mNotifier.valid())
       {
-         mNotifier->Update(!(mDebugging && !mShouldStep));
+         mNotifier->Update(mDebugging, mShouldStep);
       }
 
       // Update all threads.
@@ -665,7 +668,7 @@ namespace dtDirector
       data.stack.push_back(stack);
       threadList->push_back(data);
 
-      if (mStarted && !mImmediateMode && *curThread == -1)
+      if (mStarted && !mImmediateMode && *curThread == -1 && !mDebugging)
       {
          mImmediateMode = true;
          *curThread = threadList->size() - 1;
@@ -678,7 +681,7 @@ namespace dtDirector
 
             if (mNotifier.valid())
             {
-               mNotifier->Update(!(mDebugging && !mShouldStep));
+               mNotifier->Update(mDebugging, mShouldStep);
             }
 
             continued |= UpdateThread((*threadList)[*curThread], 0.0f, 0.0f);
@@ -693,11 +696,6 @@ namespace dtDirector
             {
                threadList->erase(threadList->begin() + *curThread);
                continued = false;
-            }
-
-            if (mNotifier.valid() && mShouldStep)
-            {
-               mNotifier->OnStepDebugging();
             }
 
             mShouldStep = false;
@@ -759,7 +757,7 @@ namespace dtDirector
          }
       }
 
-      if (curThread > -1 && mStarted && !mImmediateMode)
+      if (curThread > -1 && mStarted && !mImmediateMode && !mDebugging)
       {
          mImmediateMode = true;
          bool continued = false;
@@ -770,7 +768,7 @@ namespace dtDirector
 
             if (mNotifier.valid())
             {
-               mNotifier->Update(!(mDebugging && !mShouldStep));
+               mNotifier->Update(mDebugging, mShouldStep);
             }
 
             continued |= UpdateThread((*threadList)[curThread], 0.0f, 0.0f);
@@ -784,11 +782,6 @@ namespace dtDirector
             else
             {
                threadList->erase(threadList->begin() + curThread);
-            }
-
-            if (mNotifier.valid() && mShouldStep)
-            {
-               mNotifier->OnStepDebugging();
             }
 
             mShouldStep = false;
@@ -1198,6 +1191,7 @@ namespace dtDirector
          if (!mDebugging && enabled)
          {
             mNotifier->OnBeginDebugging();
+            mShouldStep = true;
          }
          else if (mDebugging && !enabled)
          {
