@@ -103,7 +103,7 @@ void DirectorTests::TestRunScript()
 
       try
       {
-         mDirector->LoadScript("directors/test");
+         mDirector->LoadScript("test");
       }
       catch (dtUtil::Exception& e)
       {
