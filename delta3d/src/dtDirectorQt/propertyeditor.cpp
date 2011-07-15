@@ -202,6 +202,8 @@ namespace dtDirector
                mGraphTabs->setTabText(index, graph->GetName().c_str());
             }
          }
+
+         mDirectorEditor->RefreshGraphBrowser();
          return;
       }
 
@@ -210,8 +212,6 @@ namespace dtDirector
       if (director)
       {
          UpdateTitle();
-
-         mDirectorEditor->setWindowTitle(director->GetGraphRoot()->GetName().c_str());
 
          // Update all tabs to make sure their names are correct.
          int count = mGraphTabs->count();

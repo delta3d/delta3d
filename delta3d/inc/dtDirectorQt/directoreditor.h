@@ -196,6 +196,11 @@ namespace dtDirector
        * @param[in]  node  The node to refresh.
        */
       void RefreshGlow(Node* node);
+      
+      /**
+       * Refreshes the graph browser.
+       */
+      void RefreshGraphBrowser();
 
       /**
        * Refreshes the state of the UI buttons.

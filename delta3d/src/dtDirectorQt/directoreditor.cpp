@@ -569,6 +569,16 @@ namespace dtDirector
          }
       }
    }
+   
+   ////////////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::RefreshGraphBrowser()
+   {
+      EditorView* view = dynamic_cast<EditorView*>(mUI.graphTab->currentWidget());
+      if (view && view->GetScene())
+      {
+         mUI.graphBrowser->BuildGraphList(view->GetScene()->GetGraph());
+      }
+   }
 
    //////////////////////////////////////////////////////////////////////////
    void DirectorEditor::RefreshButtonStates()
