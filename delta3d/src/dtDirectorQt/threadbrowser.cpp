@@ -110,9 +110,7 @@ namespace dtDirector
          return;
       }
 
-      dtDirector::EditorNotifier* notifier =
-         dynamic_cast<dtDirector::EditorNotifier*>(
-         mEditor->GetDirector()->GetNotifier());
+      EditorNotifier* notifier = mEditor->GetNotifier();
 
       if (!notifier)
       {
@@ -124,15 +122,15 @@ namespace dtDirector
       Director* director = mEditor->GetDirector();
       if (!director) return;
 
-      const std::map<Node*, dtDirector::EditorNotifier::GlowData>& threads =
+      const std::map<Node*, EditorNotifier::GlowData>& threads =
          notifier->GetGlowData();
 
       std::map<Node*, bool> addedNodeMap;
 
-      std::map<Node*, dtDirector::EditorNotifier::GlowData>::const_iterator iter;
+      std::map<Node*, EditorNotifier::GlowData>::const_iterator iter;
       for (iter = threads.begin(); iter != threads.end(); ++iter)
       {
-         const dtDirector::EditorNotifier::GlowData& data = iter->second;
+         const EditorNotifier::GlowData& data = iter->second;
          if (data.node.valid() && data.glow >= 1.0f)
          {
             // First find out if the node exists in the current script.

@@ -112,9 +112,7 @@ namespace dtDirector
       }
 
       float maxGlow = 0.0f;
-      dtDirector::EditorNotifier* notifier = 
-         dynamic_cast<dtDirector::EditorNotifier*>(
-         mScene->GetEditor()->GetDirector()->GetNotifier());
+      EditorNotifier* notifier = mScene->GetEditor()->GetNotifier();
 
       // Update the glow of this item only if a node inside it is glowing.
       DirectorGraph* graph = mGraph.get();
@@ -129,7 +127,7 @@ namespace dtDirector
             Node* node = nodes[index];
             if (node)
             {
-               dtDirector::EditorNotifier::GlowData* glowData =
+               EditorNotifier::GlowData* glowData =
                   notifier->GetGlowData(node);
 
                if (glowData && glowData->glow > maxGlow)
@@ -155,7 +153,7 @@ namespace dtDirector
          {
             if (inputs[index]->IsEnabled())
             {
-               dtDirector::EditorNotifier::GlowData* glowData =
+               EditorNotifier::GlowData* glowData =
                   notifier->GetGlowData(inputs[inputIndex]);
                if (glowData && glowData->input > -1)
                {
@@ -174,7 +172,7 @@ namespace dtDirector
          {
             if (outputs[index]->IsEnabled())
             {
-               dtDirector::EditorNotifier::GlowData* glowData =
+               EditorNotifier::GlowData* glowData =
                   notifier->GetGlowData(outputs[index]);
                if (glowData && !glowData->outputGlows.empty())
                {

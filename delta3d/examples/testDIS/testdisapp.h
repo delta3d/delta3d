@@ -18,7 +18,7 @@ namespace dtGame
 
 namespace dtCore
 {
-   class RTSMotionModel;
+   class FlyMotionModel;
 }
 
 namespace dtDAL
@@ -41,7 +41,7 @@ private:
    dtCore::RefPtr<dtGame::DefaultMessageProcessor> mMessageProc;
    dtCore::RefPtr<dtGame::DefaultNetworkPublishingComponent> mNetworkingRouter;
    dtCore::RefPtr<dtGame::GameManager> mGameManager;
-   dtCore::RefPtr<dtCore::RTSMotionModel> mMotion;
+   dtCore::RefPtr<dtCore::FlyMotionModel> mMotion;
    std::string mConnectionXml;
    std::string mActorTypeMapping;
    std::vector<dtDAL::BaseActorObject*> mActorsToPublish;

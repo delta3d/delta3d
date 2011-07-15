@@ -17,7 +17,7 @@
           <Category>dtcore.Game.Actors</Category>
         </ActorType>
         <Resource>
-          <Descriptor>StaticMeshes:physics_crate.ive</Descriptor>
+          <Descriptor>StaticMeshes:uh-1n.ive</Descriptor>
           <ActorProperty>dunno</ActorProperty>
         </Resource>
       </ActorData>
@@ -39,7 +39,7 @@
            <Category>dtcore.Game.Actors</Category>
          </ActorType>
          <Resource> 
-           <Descriptor>StaticMeshes:uh-1n.ive</Descriptor> 
+           <Descriptor>StaticMeshes:physics_crate.ive</Descriptor> 
            <ActorProperty>dunno</ActorProperty>
          </Resource>
       </ActorData>

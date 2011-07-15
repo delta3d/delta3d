@@ -32,6 +32,8 @@
 #include <dtUtil/coordinates.h>
 #include <dtDAL/project.h>
 #include <dtCore/rtsmotionmodel.h>
+#include <dtCore/flymotionmodel.h>
+#include <dtCore/transform.h>
 
 ////////////////////////////////////////////////////////////////////////////////
 TestDISApp::TestDISApp(const std::string& connectionXml,
@@ -57,8 +59,14 @@ void TestDISApp::Config()
 {
    dtABC::Application::Config();
 
-   mMotion = new dtCore::RTSMotionModel(GetKeyboard(), GetMouse());
+   //mMotion = new dtCore::RTSMotionModel(GetKeyboard(), GetMouse());
+   mMotion = new dtCore::FlyMotionModel(GetKeyboard(), GetMouse());
    mMotion->SetTarget(GetCamera());
+
+   dtCore::Transform transform;
+   GetCamera()->GetTransform(transform);
+   transform.SetTranslation(0, 0, 10);
+   GetCamera()->SetTransform(transform);
 
    dtDIS::SharedState* disConfig = NULL;
 
@@ -78,7 +86,7 @@ void TestDISApp::Config()
    mGameManager = new dtGame::GameManager(*this->GetScene());
 
    //need to set a ProjectContext so the ResouceActorProperty can find the StaticMesh resources
-   const std::string context = dtUtil::FindFileInPathList("demoMap");
+   const std::string context = dtUtil::FindFileInPathList("ProjectAssets");
    dtDAL::Project::GetInstance().SetContext(context);
    mGameManager->ChangeMap("MyCoolMap");  //just for something to see
 
@@ -119,7 +127,6 @@ void TestDISApp::FindActorsAndAddComponents()
    {
       EntityTypeActorComponent* entityTypeComp = new EntityTypeActorComponent(1,1,222,1,2,2);
       static_cast<dtGame::GameActorProxy*>((*itr))->GetGameActor().AddComponent(*entityTypeComp);
-
       ++itr;
    }    
 }
@@ -130,7 +137,7 @@ void TestDISApp::PostFrame(const double deltaSimTime)
    static double kTimeToSend = 0.0;
    kTimeToSend += deltaSimTime;
 
-   if (kTimeToSend > 2.0)
+   if (kTimeToSend > 0.10)
    {
       //find any published GameActors and add some new ActorComponents to them
       if (mActorsToPublish.empty()) { FindActorsAndAddComponents(); }
@@ -144,5 +151,16 @@ void TestDISApp::PostFrame(const double deltaSimTime)
       }
 
       kTimeToSend = 0.0;
+   }
+
+   // Lock the helicopter to the camera position.
+   std::vector<dtDAL::BaseActorObject*>::iterator itr = mActorsToPublish.begin();
+   while (itr != mActorsToPublish.end())
+   {
+      dtCore::Transform transform;
+      GetCamera()->GetTransform(transform);
+      static_cast<dtGame::GameActorProxy*>((*itr))->GetGameActor().SetTransform(transform);
+
+      ++itr;
    }
 }

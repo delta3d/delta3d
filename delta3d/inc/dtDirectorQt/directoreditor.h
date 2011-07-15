@@ -56,6 +56,7 @@ namespace dtDirector
    class ReplayBrowser;
    class PluginManager;
    class UndoManager;
+   class EditorNotifier;
 
    /**
     * @class DirectorEditor
@@ -90,6 +91,16 @@ namespace dtDirector
       void SetDirector(Director* director);
 
       /**
+       * Retrieves whether we are currently in debugging mode.
+       */
+      bool IsDebugging() const;
+      
+      /**
+       * Retrieves the editor notifier.
+       */
+      EditorNotifier* GetNotifier() const;
+
+      /**
        * Loads an existing script.
        *
        * @param[in]  The file path to the script.
@@ -119,7 +130,7 @@ namespace dtDirector
       /**
        * Accessor for the Director.
        */
-      Director* GetDirector() {return mDirector.get();}
+      Director* GetDirector() const {return mDirector.get();}
 
       /**
        * Accessor for the graph tab widget.
