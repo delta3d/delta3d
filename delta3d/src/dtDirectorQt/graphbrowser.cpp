@@ -104,15 +104,12 @@ namespace dtDirector
       GraphItem* rootItem = dynamic_cast<GraphItem*>(mGraphTree->topLevelItem(0));
       if (!rootItem) return;
 
-      disconnect(mGraphTree, SIGNAL(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)),
-         this, SLOT(OnItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)));
-
-      mGraphTree->clearSelection();
+      mGraphTree->blockSignals(true);
 
       // If we have already found our selected item, select it and finish.
       if (rootItem->GetGraph() == selected)
       {
-         rootItem->setSelected(true);
+         mGraphTree->setCurrentItem(rootItem);
          rootItem->setExpanded(true);
       }
       else
@@ -121,8 +118,7 @@ namespace dtDirector
          SelectGraph(rootItem, selected);
       }
 
-      connect(mGraphTree, SIGNAL(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)),
-         this, SLOT(OnItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)));
+      mGraphTree->blockSignals(false);
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -191,7 +187,7 @@ namespace dtDirector
          {
             if (item->GetGraph() == selected)
             {
-               item->setSelected(true);
+               mGraphTree->setCurrentItem(item);
                item->setExpanded(true);
                return true;
             }
