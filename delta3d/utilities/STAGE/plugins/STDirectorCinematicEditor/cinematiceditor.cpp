@@ -1460,8 +1460,8 @@ void DirectorCinematicEditorPlugin::OnTotalTimeChanged(double time)
    // If there is no duration, force at least one second.
    if (time <= 0.0)
    {
-      mUI.mTotalTimeEdit->setValue(0.1);
-      time = 0.1;
+      mUI.mTotalTimeEdit->setValue(0.01);
+      time = 0.01;
    }
 
    float oldTime = mTotalTime;
