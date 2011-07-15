@@ -43,9 +43,13 @@
 #include <dtQt/deltastepper.h>
 #include <dtEditQt/stageapplication.h>
 #include <dtEditQt/stageglwidgetfactory.h>
+#include <dtEditQt/MiniDumper.h>
 
 int main(int argc, char* argv[])
 {
+   // Create the crash dump object
+   MiniDumper crashDumper("\\STAGE_CrashData");
+
    dtAudio::AudioManager::Instantiate();
 
    dtUtil::SetDataFilePathList(".;" +

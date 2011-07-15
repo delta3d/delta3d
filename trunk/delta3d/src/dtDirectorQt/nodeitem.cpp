@@ -856,12 +856,10 @@ namespace dtDirector
    {
       if (mScene && mNode.valid())
       {
-         dtDirector::EditorNotifier* notifier = 
-            dynamic_cast<dtDirector::EditorNotifier*>(
-            mScene->GetEditor()->GetDirector()->GetNotifier());
+         EditorNotifier* notifier = mScene->GetEditor()->GetNotifier();
          if (notifier)
          {
-            dtDirector::EditorNotifier::GlowData* glowData =
+            EditorNotifier::GlowData* glowData =
                notifier->GetGlowData(mNode.get());
             if (glowData)
             {
@@ -1331,9 +1329,7 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void NodeItem::OnToggleBreakPoint()
    {
-      dtDirector::EditorNotifier* notifier =
-         dynamic_cast<dtDirector::EditorNotifier*>(
-         mScene->GetEditor()->GetDirector()->GetNotifier());
+      EditorNotifier* notifier = mScene->GetEditor()->GetNotifier();
       if (notifier)
       {
          notifier->ToggleBreakPoint(mNode.get());
@@ -1517,8 +1513,8 @@ namespace dtDirector
          setPen(QPen(Qt::white, 3, Qt::DotLine, Qt::RoundCap, Qt::RoundJoin));
       }
 
-      if (mScene && mScene->GetEditor()->GetDirector()->GetNotifier() &&
-         mScene->GetEditor()->GetDirector()->GetNotifier()->ShouldBreak(mNode.get()))
+      if (mScene && mScene->GetEditor()->GetNotifier() &&
+         mScene->GetEditor()->GetNotifier()->ShouldBreak(mNode.get()))
       {
          setPen(QPen(Qt::red, 3, Qt::DotLine, Qt::RoundCap, Qt::RoundJoin));
       }

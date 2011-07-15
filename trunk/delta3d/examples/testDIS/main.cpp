@@ -6,7 +6,7 @@ int main(int argc, char** argv)
 {
    std::string dataPath = dtUtil::GetDeltaDataPathList();
    dtUtil::SetDataFilePathList(dataPath + ";" +
-      dtUtil::GetDeltaRootPath() + "/examples/data/" + ";" +
+      dtUtil::GetDeltaRootPath() + "C:/Projects/SimCore/demos/" + ";" +
       dtUtil::GetDeltaRootPath() + "/examples/testDIS");
 
    std::string connectionConfigFile = dtUtil::FindFileInPathList("Connection.xml");

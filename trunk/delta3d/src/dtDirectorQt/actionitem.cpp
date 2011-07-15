@@ -22,6 +22,7 @@
 #include <dtDirectorQt/actionitem.h>
 #include <dtDirectorQt/directoreditor.h>
 #include <dtDirectorQt/editorscene.h>
+#include <dtDirectorQt/editornotifier.h>
 
 #include <dtDirector/director.h>
 
@@ -181,7 +182,7 @@ namespace dtDirector
       menu.addSeparator();
       menu.addAction(mScene->GetEditor()->GetDeleteAction());
 
-      if (mScene->GetEditor()->GetDirector()->GetNotifier())
+      if (mScene->GetEditor()->IsDebugging())
       {
          if (mNode.valid() && mNode->AsEventNode())
          {
@@ -200,7 +201,7 @@ namespace dtDirector
 
          menu.addSeparator();
          QAction* breakPointAction = NULL;
-         if (!mScene->GetEditor()->GetDirector()->GetNotifier()->ShouldBreak(mNode.get()))
+         if (!mScene->GetEditor()->GetNotifier()->ShouldBreak(mNode.get()))
          {
             breakPointAction = menu.addAction("Set Break Point");
          }

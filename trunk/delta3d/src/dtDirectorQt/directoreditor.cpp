@@ -203,6 +203,11 @@ namespace dtDirector
       {
          std::string fileName = mDirector->GetScriptName();
          std::string contextDir = osgDB::convertFileNameToNativeStyle(dtDAL::Project::GetInstance().GetContext()+"/directors/");
+         contextDir = osgDB::getRealPath(contextDir);
+         if (!fileName.empty())
+         {
+            fileName = osgDB::getRealPath(fileName);
+         }
          mFileName = dtUtil::FileUtils::GetInstance().RelativePath(contextDir, fileName);
          if (mFileName.empty())
          {
@@ -216,7 +221,7 @@ namespace dtDirector
 
          // If we have a valid notifier, make sure all value nodes
          // expose their initial value property.
-         EditorNotifier* notifier = dynamic_cast<EditorNotifier*>(mDirector->GetNotifier());
+         EditorNotifier* notifier = GetNotifier();
          if (notifier)
          {
             std::vector<Node*> nodes;
@@ -236,6 +241,28 @@ namespace dtDirector
       {
          setWindowTitle("No Director Script Loaded");
       }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool DirectorEditor::IsDebugging() const
+   {
+      if (GetNotifier())
+      {
+         return true;
+      }
+
+      return false;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   EditorNotifier* DirectorEditor::GetNotifier() const
+   {
+      if (GetDirector())
+      {
+         return dynamic_cast<EditorNotifier*>(GetDirector()->GetNotifier());
+      }
+
+      return NULL;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -259,6 +286,7 @@ namespace dtDirector
          try
          {
             std::string contextDir = osgDB::convertFileNameToNativeStyle(dtDAL::Project::GetInstance().GetContext()+"/directors/");
+            contextDir = osgDB::getRealPath(contextDir);
             mFileName = dtUtil::FileUtils::GetInstance().RelativePath(contextDir, fileName);
 
             mDirector->LoadScript(mFileName);
@@ -582,9 +610,7 @@ namespace dtDirector
       }
       else
       {
-         title = osgDB::getStrippedName(mFileName).c_str();
-         title += ".";
-         title += osgDB::getFileExtension(mFileName).c_str();
+         title = mFileName.c_str();
       }
       if (GetUndoManager()->IsModified()) title += "*";
       setWindowTitle(title);
@@ -599,7 +625,7 @@ namespace dtDirector
       bool bCanToggleBreakPoint = false;
       bool bBreakPointChecked = true;
 
-      EditorNotifier* notifier = dynamic_cast<EditorNotifier*>(mDirector->GetNotifier());
+      EditorNotifier* notifier = GetNotifier();
 
       int tabIndex = mUI.graphTab->currentIndex();
       if (tabIndex >= 0 && tabIndex < mUI.graphTab->count())
@@ -1196,6 +1222,7 @@ namespace dtDirector
       QString filter = tr(".dtdirreplay");
       std::string contextDir = osgDB::convertFileNameToNativeStyle(dtDAL::Project::GetInstance().GetContext()+"/");
       std::string directorsDir = contextDir + osgDB::convertFileNameToNativeStyle("directors/");
+      directorsDir = osgDB::getRealPath(directorsDir);
 
       QFileDialog dialog;
       QFileInfo filePath = dialog.getOpenFileName(
@@ -1815,8 +1842,7 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void DirectorEditor::on_actionToggle_Break_Point_triggered()
    {
-      EditorNotifier* notifier =
-         dynamic_cast<EditorNotifier*>(mDirector->GetNotifier());
+      EditorNotifier* notifier = GetNotifier();
 
       if (!notifier)
       {
@@ -2108,8 +2134,7 @@ namespace dtDirector
       // If we get down to here, it means we are closing the editor.
       if (mDirector)
       {
-         EditorNotifier* notifier =
-            dynamic_cast<EditorNotifier*>(mDirector->GetNotifier());
+         EditorNotifier* notifier = GetNotifier();
          if (notifier)
          {
             // If we have some unsaved changes left, make sure we undo
@@ -2154,10 +2179,14 @@ namespace dtDirector
          showFiles = true;
       }
 
+      std::string contextDir = osgDB::convertFileNameToNativeStyle(dtDAL::Project::GetInstance().GetContext()+"/directors/");
+      contextDir = osgDB::getRealPath(contextDir);
+
+      std::string fileName = mFileName;
+
       if (showFiles)
       {
          QString filter = tr(".dtdir");
-         std::string contextDir = osgDB::convertFileNameToNativeStyle(dtDAL::Project::GetInstance().GetContext()+"/directors/");
 
          QFileDialog dialog;
          QFileInfo filePath = dialog.getSaveFileName(
@@ -2168,29 +2197,35 @@ namespace dtDirector
             return false;
          }
 
-         std::string absFileName = osgDB::convertFileNameToNativeStyle(
+         fileName = osgDB::convertFileNameToNativeStyle(
             filePath.absolutePath().toStdString() + "/" + filePath.fileName().toStdString());
-         mFileName = dtUtil::FileUtils::GetInstance().RelativePath(contextDir, absFileName);
       }
 
-      if (!mFileName.empty())
+      fileName = dtUtil::FileUtils::GetInstance().RelativePath(contextDir, fileName);
+
+      if (!fileName.empty())
       {
          // Remove this file from the recent file listing.
          QSettings settings("MOVES", "Director Editor");
          QStringList files = settings.value("recentFileList").toStringList();
-         files.removeAll(mFileName.c_str());
+         files.removeAll(fileName.c_str());
 
-         mDirector->SaveScript(mFileName);
+         mDirector->SaveScript(fileName);
 
-         std::string contextDir = osgDB::convertFileNameToNativeStyle(dtDAL::Project::GetInstance().GetContext()+"/directors/");
-         mFileName = dtUtil::FileUtils::GetInstance().RelativePath(contextDir, mDirector->GetScriptName());
+         // We only set the current edited file and save the undo manager
+         // if we are not debugging.  If we are debugging, we should remain
+         // referenced on the original script.
+         if (!IsDebugging() || mFileName == fileName)
+         {
+            mFileName = fileName;
 
-         GetUndoManager()->OnSaved();
+            GetUndoManager()->OnSaved();
+         }
 
          RefreshButtonStates();
 
          // Input the new file to the recent file list.
-         files.prepend(mFileName.c_str());
+         files.prepend(fileName.c_str());
          while (files.size() > 5)
          {
             files.removeLast();
@@ -2198,6 +2233,25 @@ namespace dtDirector
 
          settings.setValue("recentFileList", files);
          RefreshRecentFiles();
+
+         dtDAL::ResourceDescriptor resource = mDirector->GetResource();
+
+         // If we are saving this script as a new file while debugging
+         // in game, then find out the resource type of the script
+         // that was saved and only refresh scripts using that resource.
+         if (mFileName != fileName)
+         {
+            std::string id = resource.GetResourceIdentifier();
+
+            size_t pos = 0;
+            while ((pos = fileName.find("\\", pos)) != std::string::npos)
+            {
+               fileName.replace(pos, 1, ":");
+               pos++;
+            }
+
+            resource = dtDAL::ResourceDescriptor(std::string("Directors:") + fileName);
+         }
 
          // If we are dealing with a resourced script, make sure we go through
          // every other script that is referencing this resource and reload
@@ -2212,7 +2266,7 @@ namespace dtDirector
                DirectorEditor* editor = mEditorsOpen[editorIndex];
                if (editor && editor->GetDirector())
                {
-                  if (editor->GetDirector()->GetResource() == mDirector->GetResource())
+                  if (editor->GetDirector()->GetResource() == resource)
                   {
                      editor->SaveTabStates();
                   }
@@ -2261,7 +2315,7 @@ namespace dtDirector
                               continue;
                            }
 
-                           if (resourceProp->GetValue() == mDirector->GetResource())
+                           if (resourceProp->GetValue() == resource)
                            {
                               // Make sure we save the state of the top most script.
                               Director* parent = director->mDirector;
@@ -2275,7 +2329,7 @@ namespace dtDirector
                                  stateMap[parent] = parent->GetState();
                               }
 
-                              resourceProp->SetValue(mDirector->GetResource());
+                              resourceProp->SetValue(resource);
                            }
                         }
                      }
@@ -2299,7 +2353,7 @@ namespace dtDirector
                DirectorEditor* editor = mEditorsOpen[editorIndex];
                if (editor && editor->GetDirector())
                {
-                  if (editor->GetDirector()->GetResource() == mDirector->GetResource())
+                  if (editor->GetDirector()->GetResource() == resource)
                   {
                      editor->RestoreTabStates();
                   }
@@ -2317,6 +2371,7 @@ namespace dtDirector
    bool DirectorEditor::LoadScript()
    {
       std::string contextDir = osgDB::convertFileNameToNativeStyle(dtDAL::Project::GetInstance().GetContext()+"/directors/");
+      contextDir = osgDB::getRealPath(contextDir);
 
       QFileDialog dialog;
       QFileInfo filePath = dialog.getOpenFileName(
