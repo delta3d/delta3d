@@ -80,18 +80,6 @@ namespace dtActors
       bool GetNodeLogging() {return mNodeLogging;}
 
       /**
-      * Sets recording on scripts.
-      *
-      * @param[in]  value  True to record.
-      */
-      void SetRecording(bool value) {mRecording = value;}
-
-      /**
-      * Retrieves whether the scripts are recording.
-      */
-      bool GetRecording() {return mRecording;}
-
-      /**
       * Sets the Director Resource value at the current array index.
       *
       * @param[in]  value  The resource value.
@@ -152,7 +140,6 @@ namespace dtActors
    private:
 
       bool mNodeLogging;
-      bool mRecording;
 
       std::vector<dtDAL::ResourceDescriptor> mResourceList;
       int mResourceIndex;

@@ -28,7 +28,6 @@
 #include <dtDirectorQt/graphtabs.h>
 #include <dtDirectorQt/libraryeditor.h>
 #include <dtDirectorQt/nodetabs.h>
-#include <dtDirectorQt/replaybrowser.h>
 #include <dtDirectorQt/plugindialog.h>
 #include <dtDirectorQt/pluginmanager.h>
 #include <dtDirectorQt/undomanager.h>
@@ -77,9 +76,6 @@ namespace dtDirector
       , mPluginManager(NULL)
       , mUndoManager(NULL)
       , mDirector(NULL)
-      , mReplayMode(false)
-      , mReplayInput(NULL)
-      , mReplayOutput(NULL)
       , mSavedTabIndex(-1)
       , mClickSound(NULL)
    {
@@ -99,8 +95,6 @@ namespace dtDirector
       mUI.graphBrowser->SetDirectorEditor(this);
       mUI.searchBrowser->SetDirectorEditor(this);
       mUI.searchBrowser->hide();
-      mUI.replayBrowser->SetDirectorEditor(this);
-      mUI.replayBrowser->hide();
       mUI.threadBrowser->SetDirectorEditor(this);
       mUI.threadBrowser->hide();
 
@@ -361,7 +355,6 @@ namespace dtDirector
 
             // Create a single tab with the default graph.
             OpenGraph(mDirector->GetGraphRoot());
-            mUI.replayBrowser->BuildThreadList();
             mUI.graphBrowser->BuildGraphList(mDirector->GetGraphRoot());
 
             RefreshNodeScenes();
@@ -464,25 +457,6 @@ namespace dtDirector
       RefreshButtonStates();
    }
 
-   //////////////////////////////////////////////////////////////////////////
-   void DirectorEditor::SetReplayNode(Director::RecordNodeData* replayNode, InputLink* input, OutputLink* output)
-   {
-      if (!replayNode)
-      {
-         mReplayNode.input = "";
-         mReplayNode.nodeID = "";
-         mReplayNode.outputs.clear();
-         mReplayNode.subThreads.clear();
-      }
-      else
-      {
-         mReplayNode = *replayNode;
-      }
-
-      mReplayInput = input;
-      mReplayOutput = output;
-   }
-
    ////////////////////////////////////////////////////////////////////////////////
    void DirectorEditor::RefreshRecentFiles()
    {
@@ -541,8 +515,6 @@ namespace dtDirector
 
       // Refresh the graph list.
       mUI.graphBrowser->SelectGraph(mUI.propertyEditor->GetScene()->GetGraph());
-
-      mUI.replayBrowser->BuildThreadList();
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -567,7 +539,6 @@ namespace dtDirector
 
       // Now make sure we re-build our graph list.
       mUI.graphBrowser->BuildGraphList(graph);
-      mUI.replayBrowser->BuildThreadList();
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -886,8 +857,6 @@ namespace dtDirector
             }
          }
       }
-
-      mUI.replayBrowser->BuildThreadList();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -1095,19 +1064,6 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void DirectorEditor::on_replayBrowser_visibilityChanged(bool visible)
-   {
-      mUI.action_Replay_Browser->setChecked(visible);
-      mReplayMode = visible;
-
-      // Refresh the replay browser.
-      mUI.replayBrowser->BuildThreadList();
-
-      // Always refresh all the scenes.
-      Refresh();
-   }
-
-   //////////////////////////////////////////////////////////////////////////
    void DirectorEditor::on_threadBrowser_visibilityChanged(bool visible)
    {
       mUI.action_Thread_Browser->setChecked(visible);
@@ -1131,7 +1087,6 @@ namespace dtDirector
             mUI.propertyEditor->SetScene(view->GetScene());
             view->GetScene()->Refresh();
             view->GetScene()->RefreshProperties();
-            mUI.replayBrowser->BuildThreadList();
             RefreshButtonStates();
          }
       }
@@ -1214,48 +1169,6 @@ namespace dtDirector
       }
 
       ClearScript();
-   }
-
-   //////////////////////////////////////////////////////////////////////////
-   void DirectorEditor::on_action_Load_Recording_triggered()
-   {
-      QString filter = tr(".dtdirreplay");
-      std::string contextDir = osgDB::convertFileNameToNativeStyle(dtDAL::Project::GetInstance().GetContext()+"/");
-      std::string directorsDir = contextDir + osgDB::convertFileNameToNativeStyle("directors/");
-      directorsDir = osgDB::getRealPath(directorsDir);
-
-      QFileDialog dialog;
-      QFileInfo filePath = dialog.getOpenFileName(
-         this, tr("Load a Director Script Replay File"), tr(directorsDir.c_str()), tr("Director Script Replays (*.dtdirreplay)"), &filter);
-
-      if( !filePath.isFile() )
-         return;
-
-      std::string fileName  = osgDB::convertFileNameToNativeStyle(
-         filePath.absolutePath().toStdString() + "/" + filePath.baseName().toStdString());
-
-      if (!fileName.empty())
-      {
-         if (!mDirector->LoadRecording(fileName))
-         {
-            QMessageBox okBox("Failed",
-               "The Replay file failed to load.  This could be because you are "
-               "loading a replay for a script that is not loaded, or has been modified.",
-               QMessageBox::Critical,
-               QMessageBox::Ok,
-               QMessageBox::NoButton,
-               QMessageBox::NoButton, this);
-
-            okBox.exec();
-         }
-         else
-         {
-            mUI.replayBrowser->show();
-
-            // Make sure we refresh all the views for replay mode.
-            Refresh();
-         }
-      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -1530,8 +1443,6 @@ namespace dtDirector
 
       // If we deleted any graphs, then we must re-build the graph browser.
       mUI.graphBrowser->BuildGraphList(scene->GetGraph());
-
-      mUI.replayBrowser->BuildThreadList();
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -1609,19 +1520,6 @@ namespace dtDirector
       else
       {
          mUI.searchBrowser->hide();
-      }
-   }
-
-   //////////////////////////////////////////////////////////////////////////
-   void DirectorEditor::on_action_Replay_Browser_triggered()
-   {
-      if (mUI.action_Replay_Browser->isChecked())
-      {
-         mUI.replayBrowser->show();
-      }
-      else
-      {
-         mUI.replayBrowser->hide();
       }
    }
 
@@ -2034,11 +1932,6 @@ namespace dtDirector
       mUI.graphBrowser->move(settings.value("Pos", QPoint(404, 430)).toPoint());
       settings.endGroup();
 
-      settings.beginGroup("ReplayWindow");
-      mUI.replayBrowser->resize(settings.value("Size", QSize(195, 121)).toSize());
-      mUI.replayBrowser->move(settings.value("Pos", QPoint(605, 55)).toPoint());
-      settings.endGroup();
-
       settings.beginGroup("SearchWindow");
       mUI.searchBrowser->resize(settings.value("Size", QSize(195, 121)).toSize());
       mUI.searchBrowser->move(settings.value("Pos", QPoint(605, 180)).toPoint());
@@ -2088,11 +1981,6 @@ namespace dtDirector
       settings.beginGroup("GraphWindow");
       settings.setValue("Pos", mUI.graphBrowser->pos());
       settings.setValue("Size", mUI.graphBrowser->size());
-      settings.endGroup();
-
-      settings.beginGroup("ReplayWindow");
-      settings.setValue("Pos", mUI.replayBrowser->pos());
-      settings.setValue("Size", mUI.replayBrowser->size());
       settings.endGroup();
 
       settings.beginGroup("SearchWindow");
@@ -2164,7 +2052,6 @@ namespace dtDirector
 
       // Create a single tab with the default graph.
       OpenGraph(mDirector->GetGraphRoot());
-      mUI.replayBrowser->BuildThreadList();
       mUI.graphBrowser->BuildGraphList(mDirector->GetGraphRoot());
    }
 

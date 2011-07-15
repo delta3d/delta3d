@@ -53,7 +53,6 @@ namespace dtActors
    DirectorActor::DirectorActor(dtGame::GameActorProxy& parent)
       : BaseClass(parent)
       , mNodeLogging(false)
-      , mRecording(false)
       , mResourceIndex(0)
    {
       SetName("Director_Graph_Actor");
@@ -110,7 +109,6 @@ namespace dtActors
             director->Init(gm, map);
 
             director->SetNodeLogging(mNodeLogging);
-            if (mRecording) director->StartRecording();
             LOG_INFO(dtDAL::Project::GetInstance().GetResourcePath(descriptor));
             director->LoadScript(dtDAL::Project::GetInstance().GetResourcePath(descriptor));
 
@@ -206,13 +204,6 @@ namespace dtActors
          dtDAL::BooleanActorProperty::SetFuncType(actor, &DirectorActor::SetNodeLogging),
          dtDAL::BooleanActorProperty::GetFuncType(actor, &DirectorActor::GetNodeLogging),
          "Sets the Director Graphs to log the execution of their nodes.",
-         "Director"));
-
-      AddProperty(new dtDAL::BooleanActorProperty(
-         "Recording", "Recording",
-         dtDAL::BooleanActorProperty::SetFuncType(actor, &DirectorActor::SetRecording),
-         dtDAL::BooleanActorProperty::GetFuncType(actor, &DirectorActor::GetRecording),
-         "Sets the Director Graphs to record a replay file.",
          "Director"));
 
       dtDAL::ResourceActorProperty* scriptProp = new dtDAL::ResourceActorProperty(

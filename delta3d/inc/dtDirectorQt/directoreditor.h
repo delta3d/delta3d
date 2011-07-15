@@ -53,7 +53,6 @@ namespace dtDirector
    class GraphTabs;
    class NodeTabs;
    class PropertyEditor;
-   class ReplayBrowser;
    class PluginManager;
    class UndoManager;
    class EditorNotifier;
@@ -151,40 +150,6 @@ namespace dtDirector
        * Accessor for the undo manager.
        */
       UndoManager* GetUndoManager() {return mUndoManager;}
-
-      /**
-       * Accessor for the replay browser.
-       */
-      ReplayBrowser* GetReplayBrowser() {return mUI.replayBrowser;}
-
-      /**
-       * Retrieves whether we are in replay mode.
-       */
-      bool GetReplayMode() {return mReplayMode;}
-
-      /**
-       * Retrieves the input that was triggered on the replay node.
-       */
-      const InputLink* GetReplayInput() {return mReplayInput;}
-
-      /**
-       * Retrieves the output that triggered the replay node.
-       */
-      const OutputLink* GetReplayOutput() {return mReplayOutput;}
-
-      /**
-       * Retrieves the current replay item.
-       */
-      const Director::RecordNodeData& GetReplayNode() {return mReplayNode;}
-
-      /**
-       * Sets the current replay node data.
-       *
-       * @param[in]  replayNode  The replay node.
-       * @param[in]  input       The name of the input that is being fired.
-       * @param[in]  output      The name of the output that is firing this node.
-       */
-      void SetReplayNode(Director::RecordNodeData* replayNode = NULL, InputLink* input = NULL, OutputLink* output = NULL);
 
       /**
        * Retrieves actions.
@@ -374,13 +339,6 @@ namespace dtDirector
       void on_searchBrowser_visibilityChanged(bool visible);
 
       /**
-       * Event handler when the visibility of the replay browser is changed.
-       *
-       * @param[in]  visible  True if the browser is visible.
-       */
-      void on_replayBrowser_visibilityChanged(bool visible);
-
-      /**
        * Event handler when the visibility of the thread browser is changed.
        *
        * @param[in]  visible  True if the browser is visible.
@@ -427,11 +385,6 @@ namespace dtDirector
        * Event handler when the new button is pressed.
        */
       void on_action_New_triggered();
-
-      /**
-       * Event handler when the load button is pressed.
-       */
-      void on_action_Load_Recording_triggered();
 
       /**
        * Event handler when the load button is pressed.
@@ -503,11 +456,6 @@ namespace dtDirector
        * Event handler when the show search browser button is pressed.
        */
       void on_action_Search_Browser_triggered();
-
-      /**
-       * Event handler when the show replay browser button is pressed.
-       */
-      void on_action_Replay_Browser_triggered();
 
       /**
        * Event handler when the show thread browser button is pressed.
@@ -664,11 +612,6 @@ namespace dtDirector
 
       dtCore::RefPtr<Director> mDirector;
       std::string              mFileName;
-
-      bool                     mReplayMode;
-      Director::RecordNodeData mReplayNode;
-      InputLink*               mReplayInput;
-      OutputLink*              mReplayOutput;
 
       struct TabStateData
       {

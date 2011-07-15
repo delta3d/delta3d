@@ -63,8 +63,6 @@ namespace dtDirector
       : mImmediateMode(false)
       , mCurrentThread(-1)
       , mQueueingThreads(false)
-      , mRecording(false)
-      , mRecordTime(0.0f)
       , mMap(NULL)
       , mModified(false)
       , mStarted(false)
@@ -202,40 +200,7 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void Director::ClearThreads()
    {
-      // Save out any currently recorded data if it exists.
-      if (mRecording && !mScriptName.empty())
-      {
-         SaveRecording(mScriptName);
-      }
       mThreads.clear();
-      ClearRecordingData(mRecordThreads);
-   }
-
-   //////////////////////////////////////////////////////////////////////////
-   void Director::ClearRecordingData(std::vector<RecordThreadData*>& threads)
-   {
-      // Iterate through each thread.
-      int threadCount = (int)threads.size();
-      for (int threadIndex = 0; threadIndex < threadCount; threadIndex++)
-      {
-         RecordThreadData* thread = threads[threadIndex];
-         if (thread)
-         {
-            // Iterate through all of the nodes in this thread.
-            int nodeCount = (int)thread->nodes.size();
-            for (int nodeIndex = 0; nodeIndex < nodeCount; nodeIndex++)
-            {
-               RecordNodeData& node = thread->nodes[nodeIndex];
-
-               // Recursively clear the sub threads first.
-               ClearRecordingData(node.subThreads);
-            }
-
-            // Now free our thread memory.
-            delete thread;
-         }
-      }
-      threads.clear();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -606,8 +571,6 @@ namespace dtDirector
          mStarted = true;
       }
 
-      mRecordTime += delta;
-
       if (mNotifier.valid())
       {
          mNotifier->Update(mDebugging, mShouldStep);
@@ -678,8 +641,6 @@ namespace dtDirector
       std::vector<ThreadData>* threadList = &mThreads;
       int* curThread = &mCurrentThread;
 
-      RecordThreadData* recordThread = NULL;
-
       while (*curThread > -1)
       {
          ThreadData& t = (*threadList)[*curThread];
@@ -688,7 +649,6 @@ namespace dtDirector
             StackData& s = t.stack[t.stack.size()-1];
             curThread = &s.currentThread;
             threadList = &s.subThreads;
-            recordThread = t.recordThread;
 
             // If this is the current running stack item, and it does
             // not have an active running node, use this instead
@@ -714,28 +674,6 @@ namespace dtDirector
       stack.first = true;
       stack.finished = false;
       stack.currentThread = -1;
-
-      data.recordThread = NULL;
-
-      // If we are recording, start recording this new thread.
-      if (mRecording)
-      {
-         RecordThreadData* newRecordThread = new RecordThreadData();
-         data.recordThread = newRecordThread;
-
-         if (recordThread)
-         {
-            if (!recordThread->nodes.empty())
-            {
-               RecordNodeData& recordNode = recordThread->nodes[recordThread->nodes.size()-1];
-               recordNode.subThreads.push_back(newRecordThread);
-            }
-         }
-         else
-         {
-            mRecordThreads.push_back(newRecordThread);
-         }
-      }
 
       data.stack.push_back(stack);
       threadList->push_back(data);
@@ -1031,71 +969,6 @@ namespace dtDirector
          return mGameManager->FindActorById(mScriptOwner);
       }
       return NULL;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   void Director::StartRecording()
-   {
-      mRecording = true;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   void Director::PauseRecording()
-   {
-      mRecording = false;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   void Director::StopRecording()
-   {
-      mRecording = false;
-
-      ClearRecordingData(mRecordThreads);
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   bool Director::IsRecording()
-   {
-      return mRecording;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   bool Director::SaveRecording(const std::string& filename)
-   {
-      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
-      fileUtils.PushDirectory(dtDAL::Project::GetInstance().GetContext());
-
-      bool result = false;
-      FILE* file = fopen((osgDB::getNameLessExtension(filename) + ".dtdirreplay").c_str(), "wb");
-      if (file)
-      {
-         result = WriteRecordThreads(file, mRecordThreads);
-         fclose(file);
-      }
-
-      fileUtils.PopDirectory();
-      return result;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   bool Director::LoadRecording(const std::string& filename)
-   {
-      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
-      fileUtils.PushDirectory(dtDAL::Project::GetInstance().GetContext());
-
-      bool result = false;
-      FILE* file = fopen((osgDB::getNameLessExtension(filename) + ".dtdirreplay").c_str(), "rb");
-      if (file)
-      {
-         // First clear all current recording data.
-         ClearRecordingData(mRecordThreads);
-
-         result = ReadRecordThreads(file, mRecordThreads);
-         fclose(file);
-      }
-
-      fileUtils.PopDirectory();
-      return result;
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -1555,64 +1428,6 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void Director::ProcessUpdatedNode(Node* node, bool first, bool continued, int input, std::vector<OutputLink*> outputs)
    {
-      // If we are recording, then record this node.
-      if (mRecording)
-      {
-         bool doRecord = false;
-
-         // If this is the first execution of this node, we always want to record this.
-         // otherwise, only record if this node is triggering any outputs.
-         if (first || outputs.size())
-         {
-            doRecord = true;
-         }
-
-         if (doRecord)
-         {
-            // Find the current thread recording.
-            std::vector<ThreadData>* threadList = &mThreads;
-            int curThread = mCurrentThread;
-
-            RecordThreadData* recordThread = NULL;
-
-            while (curThread > -1)
-            {
-               ThreadData& t = (*threadList)[curThread];
-               if (!t.stack.empty())
-               {
-                  StackData& s = t.stack[t.stack.size()-1];
-                  curThread = s.currentThread;
-                  threadList = &s.subThreads;
-                  recordThread = t.recordThread;
-               }
-               else break;
-            }
-
-            if (recordThread)
-            {
-               RecordNodeData nodeData;
-               nodeData.time = mRecordTime;
-               nodeData.nodeID = node->GetID();
-               nodeData.input = "";
-
-               if (input > -1 && input < (int)node->GetInputLinks().size())
-               {
-                  InputLink& link = node->GetInputLinks()[input];
-                  nodeData.input = link.GetName();
-               }
-
-               int count = (int)outputs.size();
-               for (int index = 0; index < count; index++)
-               {
-                  OutputLink* link = outputs[index];
-                  if (link) nodeData.outputs.push_back(link->GetName());
-               }
-
-               recordThread->nodes.push_back(nodeData);
-            }
-         }
-      }
-
       // If this node is flagged to log its comment, log it.
       if (GetNodeLogging() && node->GetNodeLogging())
       {
@@ -1716,143 +1531,6 @@ namespace dtDirector
             mNotifier->BreakNode(node, true);
          }
       }
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   bool Director::WriteRecordThreads(FILE* file, std::vector<RecordThreadData*>& threads)
-   {
-      if (!file) return false;
-
-      int count = (int)threads.size();
-      fwrite(&count, sizeof(int), 1, file);
-
-      for (int index = 0; index < count; index++)
-      {
-         std::vector<RecordNodeData>& nodes = threads[index]->nodes;
-         if (!WriteRecordNodes(file, nodes))
-         {
-            return false;
-         }
-      }
-
-      return true;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   bool Director::ReadRecordThreads(FILE* file, std::vector<RecordThreadData*>& threads)
-   {
-      if (!file) return false;
-
-      int count = 0;
-      fread(&count, sizeof(int), 1, file);
-
-      for (int index = 0; index < count; index++)
-      {
-         RecordThreadData* threadData = new RecordThreadData();
-         if (!ReadRecordNodes(file, threadData->nodes))
-         {
-            return false;
-         }
-
-         threads.push_back(threadData);
-      }
-
-      return true;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   bool Director::WriteRecordNodes(FILE* file, std::vector<RecordNodeData>& nodes)
-   {
-      if (!file) return false;
-
-      int count = (int)nodes.size();
-      fwrite(&count, sizeof(int), 1, file);
-
-      for (int index = 0; index < count; index++)
-      {
-         RecordNodeData& node = nodes[index];
-
-         fwrite(&node.time, sizeof(float), 1, file);
-
-         if (!WriteString(file, node.nodeID.ToString()))
-         {
-            return false;
-         }
-
-         if (!WriteString(file, node.input))
-         {
-            return false;
-         }
-
-         int outCount = (int)node.outputs.size();
-         fwrite(&outCount, sizeof(int), 1, file);
-
-         for (int outIndex = 0; outIndex < outCount; outIndex++)
-         {
-            if (!WriteString(file, node.outputs[outIndex]))
-            {
-               return false;
-            }
-         }
-
-         if (!WriteRecordThreads(file, node.subThreads))
-         {
-            return false;
-         }
-      }
-
-      return true;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   bool Director::ReadRecordNodes(FILE* file, std::vector<RecordNodeData>& nodes)
-   {
-      if (!file) return false;
-
-      int count = 0;
-      fread(&count, sizeof(int), 1, file);
-
-      for (int index = 0; index < count; index++)
-      {
-         RecordNodeData node;
-
-         fread(&node.time, sizeof(float), 1, file);
-
-         std::string token;
-         if (!ReadString(file, token))
-         {
-            return false;
-         }
-         node.nodeID = token;
-
-         if (!ReadString(file, node.input))
-         {
-            return false;
-         }
-
-         int outCount = 0;
-         fread(&outCount, sizeof(int), 1, file);
-
-         for (int outIndex = 0; outIndex < outCount; outIndex++)
-         {
-            std::string outName;
-            if (!ReadString(file, outName))
-            {
-               return false;
-            }
-
-            node.outputs.push_back(outName);
-         }
-
-         if (!ReadRecordThreads(file, node.subThreads))
-         {
-            return false;
-         }
-
-         nodes.push_back(node);
-      }
-
-      return true;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -2056,12 +1734,6 @@ namespace dtDirector
 
          mApplyingGlobalValue = false;
       }
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   std::vector<Director::RecordThreadData*> Director::GetRecordingData()
-   {
-      return mRecordThreads;
    }
 
    ////////////////////////////////////////////////////////////////////////////////

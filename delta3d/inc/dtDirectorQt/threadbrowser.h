@@ -82,7 +82,7 @@ namespace dtDirector
       ThreadBrowser(QMainWindow* parent);
 
       /**
-      * Sets the Replay Browser's DirectorEditor
+      * Sets the Thread Browser's DirectorEditor
       *
       * @param[in]  editor  The director editor that owns this widget.
       */

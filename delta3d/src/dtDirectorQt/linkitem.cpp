@@ -660,11 +660,7 @@ namespace dtDirector
                QGraphicsPathItem* connector = (i < data.linkConnectors.size()) ? data.linkConnectors[i] : NULL;
                if (connector)
                {
-                  bool forceHighlight = mAlwaysHighlight ||
-                     (mScene->GetEditor()->GetReplayMode() &&
-                     data.link->GetLinks()[i] == mScene->GetEditor()->GetReplayInput());
-
-                  SetHighlightConnector(forceHighlight || enable, connector);
+                  SetHighlightConnector(mAlwaysHighlight || enable, connector);
                }
             }
          }
@@ -680,12 +676,7 @@ namespace dtDirector
                QGraphicsPathItem* connector = (i < data.linkConnectors.size()) ? data.linkConnectors[i] : NULL;
                if (connector)
                {
-                  bool forceHighlight = mAlwaysHighlight ||
-                     (mScene->GetEditor()->GetReplayMode() && 
-                     mScene->GetEditor()->GetReplayInput() == inputLink &&
-                     mScene->GetEditor()->GetReplayOutput() == data.link);
-
-                  SetHighlightConnector(forceHighlight || enable, connector);
+                  SetHighlightConnector(mAlwaysHighlight || enable, connector);
                }
             }
          }
