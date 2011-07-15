@@ -80,11 +80,13 @@ bool DirectorComponent::HandleKeyPressed(const dtCore::Keyboard* keyBoard, int k
          GetGameManager()->GetApplication().SetNextStatisticsType();
          return true;
       }
+#if defined(USE_INSPECTOR)
    case '`':
       {
          mInspector->SetVisible(true);
          return true;
       }
+#endif
    default:
       break;
    };
