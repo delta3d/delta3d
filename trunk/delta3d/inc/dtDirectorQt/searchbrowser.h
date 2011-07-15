@@ -105,7 +105,7 @@ namespace dtDirector
       SearchBrowser(QMainWindow* parent);
 
       /**
-      * Sets the Replay Browser's DirectorEditor
+      * Sets the Search Browser's DirectorEditor
       *
       * @param[in]  editor  The director editor that owns this widget.
       */

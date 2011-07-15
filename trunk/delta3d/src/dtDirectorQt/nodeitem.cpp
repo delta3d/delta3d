@@ -590,43 +590,6 @@ namespace dtDirector
          data.linkGraphic->setBrush(GetNodeColor());
          data.linkGraphic->SetPenColor(GetNodeColor());
 
-         //bool alwaysHighlight = false;
-         //data.linkGraphic->SetAlwaysHighlight(false);
-         //if (mScene->GetEditor()->GetReplayMode() &&
-         //   mScene->GetEditor()->GetReplayOutput() &&
-         //   mScene->GetEditor()->GetReplayOutput() == data.link)
-         //{
-         //   int linkCount = (int)data.link->GetLinks().size();
-         //   for (int linkIndex = 0; linkIndex < linkCount; linkIndex++)
-         //   {
-         //      InputLink* link = data.link->GetLinks()[linkIndex];
-         //      if (link && link->GetOwner()->GetID() == mScene->GetEditor()->GetReplayNode().nodeID)
-         //      {
-         //         data.linkGraphic->SetAlwaysHighlight(true);
-         //         alwaysHighlight = true;
-         //         break;
-         //      }
-         //   }
-         //}
-
-         //if (!alwaysHighlight)
-         //{
-         //   int linkCount = (int)data.link->GetLinks().size();
-         //   for (int linkIndex = 0; linkIndex < linkCount; linkIndex++)
-         //   {
-         //      InputLink* link = data.link->GetLinks()[linkIndex];
-
-         //      if (mScene->GetEditor()->GetReplayMode() &&
-         //         mScene->GetEditor()->GetReplayInput() &&
-         //         mScene->GetEditor()->GetReplayInput() == link &&
-         //         mScene->GetEditor()->GetReplayOutput() == data.link)
-         //      {
-         //         data.linkGraphic->SetAlwaysHighlight(true);
-         //         break;
-         //      }
-         //   }
-         //}
-
          // Set the link text, and position it right aligned with the link graphic.
          data.linkName->setPlainText(data.link->GetName().c_str());
          QRectF nameBounds = data.linkName->boundingRect();
@@ -1362,18 +1325,6 @@ namespace dtDirector
 
       QPainterPath path = CreateConnectionH(start, end, height);
       output.linkConnectors[index]->setPath(path);
-
-      if(isOutput)
-      {
-         if(mScene->GetEditor()->GetReplayMode() &&
-            mScene->GetEditor()->GetReplayOutput() == output.link &&
-            mScene->GetEditor()->GetReplayInput() == input.link)
-         {
-            output.linkGraphic->SetAlwaysHighlight(true);
-            output.linkGraphic->SetHighlight(true,input.link);
-            input.linkGraphic->SetAlwaysHighlight(true);
-         }
-      }
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -1525,16 +1476,6 @@ namespace dtDirector
          setPen(QPen(Qt::darkGreen, 3, Qt::SolidLine, Qt::SquareCap, Qt::RoundJoin));
       }
 
-      if(mScene != NULL && mScene->GetEditor()->GetReplayMode())
-      {
-         const OutputLink* output = mScene->GetEditor()->GetReplayOutput();
-         bool highlight = output ? (mNode->GetOutputLink(output->GetName()) == output) : false;
-
-         if (highlight || mScene->GetEditor()->GetReplayNode().nodeID == mNode->GetID())
-         {
-            setPen(QPen(Qt::yellow, 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-         }
-      }
       mNodePen = pen();
       mPenColor = mNodePen.color();
    }

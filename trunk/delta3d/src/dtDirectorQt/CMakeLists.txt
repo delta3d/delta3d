@@ -43,7 +43,6 @@ SET(LIB_PUBLIC_HEADERS ${HEADER_PATH}/actionitem.h
     ${HEADER_PATH}/plugininterface.h
     ${HEADER_PATH}/pluginmanager.h
     ${HEADER_PATH}/propertyeditor.h
-    ${HEADER_PATH}/replaybrowser.h
     ${HEADER_PATH}/resizeitem.h
     ${HEADER_PATH}/scriptitem.h
     ${HEADER_PATH}/searchbrowser.h
@@ -81,7 +80,6 @@ SET(LIB_SOURCES ${SOURCE_PATH}/actionitem.cpp
     ${SOURCE_PATH}/plugindialog.cpp
     ${SOURCE_PATH}/pluginmanager.cpp
     ${SOURCE_PATH}/propertyeditor.cpp
-    ${SOURCE_PATH}/replaybrowser.cpp
     ${SOURCE_PATH}/resizeitem.cpp
     ${SOURCE_PATH}/scriptitem.cpp
     ${SOURCE_PATH}/searchbrowser.cpp

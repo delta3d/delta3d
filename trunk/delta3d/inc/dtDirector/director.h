@@ -88,23 +88,6 @@ namespace dtDirector
       struct StateThreadData;
       struct StateValueData;
    public:
-      struct RecordThreadData;
-
-      // Recording Data.
-      struct RecordNodeData
-      {
-         float time;
-         dtCore::UniqueId nodeID;
-         std::string input;
-         std::vector<std::string> outputs;
-
-         std::vector<RecordThreadData*> subThreads;
-      };
-
-      struct RecordThreadData
-      {
-         std::vector<RecordNodeData> nodes;
-      };
 
       struct StateData
       {
@@ -148,13 +131,6 @@ namespace dtDirector
        */
       void SetNotifier(DirectorNotifier* notifier);
       DirectorNotifier* GetNotifier() const;
-
-      /**
-       * Clears all recording data.
-       *
-       * @param[in]  threads  The recording threadlist to clear.
-       */
-      void ClearRecordingData(std::vector<RecordThreadData*>& threads);
 
       /**
        * Clears all running threads to stop all current nodes.
@@ -408,53 +384,6 @@ namespace dtDirector
       dtDAL::BaseActorObject* GetScriptOwnerActor() const;
 
       /**
-      * Begins recording of the Director graphs.
-      */
-      void StartRecording();
-
-      /**
-      * Pauses the recording of the Director graphs.
-      */
-      void PauseRecording();
-
-      /**
-      * Ends the recording of the Director graphs.
-      */
-      void StopRecording();
-
-      /**
-       * Retrieves whether this Director is recording.
-       *
-       * @return  True if we are recording.
-       */
-      bool IsRecording();
-
-      /**
-      * Saves any recorded data to a file.
-      *
-      * @param[in]  filename  The name of the file to save.
-      *
-      * @return     Returns true if the file was saved.
-      */
-      bool SaveRecording(const std::string& filename);
-
-      /**
-      * Loads any recorded data for this script.
-      * @note  All recorded nodes must match the current loaded script
-      *        or this will fail.
-      *
-      * @param[in]  filename  The name of the file to load.
-      *
-      * @return     Returns true if the file was loaded.
-      */
-      bool LoadRecording(const std::string& filename);
-
-      /**
-      * Retrieves the recording data.
-      */
-      std::vector<Director::RecordThreadData*> GetRecordingData();
-
-      /**
        * Inserts a node library with the given name at the given position.
        * If a library of the given name is already listed, the version
        * will be updated and the order adjusted to match the iterator.
@@ -635,59 +564,19 @@ namespace dtDirector
       void ProcessUpdatedNode(Node* node, bool first, bool continued, int input, std::vector<OutputLink*> outputs);
 
       /**
-      * Writes a list of recorded thread data.
-      *
-      * @param[in]  file     The file to save to.
-      * @param[in]  threads  The list of threads.
-      *
-      * @return     True if the file was saved successfully.
-      */
-      bool WriteRecordThreads(FILE* file, std::vector<RecordThreadData*>& threads);
-
-      /**
-      * Reads a list of recorded thread data.
-      *
-      * @param[in]  file     The file to load from.
-      * @param[in]  threads  The list of threads to output.
-      *
-      * @return     True if the file was loaded successfully.
-      */
-      bool ReadRecordThreads(FILE* file, std::vector<RecordThreadData*>& threads);
-
-      /**
-      * Writes a list of recorded node data.
-      *
-      * @param[in]  file   The file to save to.
-      * @param[in]  nodes  The list of nodes.
-      *
-      * @return     True if the file was saved successfully.
-      */
-      bool WriteRecordNodes(FILE* file, std::vector<RecordNodeData>& nodes);
-
-      /**
-      * Reads a list of recorded node data.
-      *
-      * @param[in]  file   The file to read from.
-      * @param[in]  nodes  The list of nodes to output.
-      *
-      * @return     True if the file was saved successfully.
-      */
-      bool ReadRecordNodes(FILE* file, std::vector<RecordNodeData>& nodes);
-
-      /**
-      * Writes a string to a file.
-      *
-      * @param[in]  file  The file.
-      * @param[in]  str   The string to write.
-      */
+       * Writes a string to a file.
+       *
+       * @param[in]  file  The file.
+       * @param[in]  str   The string to write.
+       */
       bool WriteString(FILE* file, const std::string& str);
 
       /**
-      * Reads a string from a file.
-      *
-      * @param[in]  file  The file.
-      * @param[in]  str   The string to read.
-      */
+       * Reads a string from a file.
+       *
+       * @param[in]  file  The file.
+       * @param[in]  str   The string to read.
+       */
       bool ReadString(FILE* file, std::string& str);
 
       /**
@@ -764,8 +653,6 @@ namespace dtDirector
       struct ThreadData
       {
          std::vector<StackData> stack;
-
-         RecordThreadData* recordThread;
       };
 
       // Thread Data.
@@ -776,11 +663,6 @@ namespace dtDirector
 
       std::vector<ThreadQueue> mThreadQueue;
       bool mQueueingThreads;
-
-      // Recording Data.
-      bool  mRecording;
-      float mRecordTime;
-      std::vector<RecordThreadData*> mRecordThreads;
 
       // Other Data.
       static dtCore::UniqueId mPlayer;
