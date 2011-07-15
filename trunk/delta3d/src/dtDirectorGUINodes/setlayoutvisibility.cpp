@@ -86,7 +86,7 @@ namespace dtDirector
          dtDAL::FloatActorProperty::GetFuncType(this, &SetLayoutVisibility::GetFadeTime),
          "The amount of time to fade the layout in or out of view.");
       AddProperty(fadeProp);
-      
+
       // This will expose the properties in the editor and allow
       // them to be connected to ValueNodes.
       mValues.push_back(ValueLink(this, layoutProp, false, false, true, false));
@@ -114,6 +114,7 @@ namespace dtDirector
          case INPUT_SHOW:
             {
                layout->show();
+               layout->activate();
                layout->setAlpha(0.0f);
             }
             break;
