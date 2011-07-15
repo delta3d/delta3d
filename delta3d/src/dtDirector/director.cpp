@@ -1351,7 +1351,9 @@ namespace dtDirector
          // keeps these nodes glowing.
          for (int index = 0; index < (int)data.stack.size(); ++index)
          {
-            if (data.stack[index].node.valid())
+            if (data.stack[index].node.valid() &&
+               !data.stack[index].finished &&
+               !data.stack[index].first)
             {
                mNotifier->OnNodeExecution(data.stack[index].node.get(),
                   "", std::vector<std::string>());
