@@ -59,6 +59,9 @@ namespace dtDirector
       innerLayout->addWidget(mGraphTree);
       mGraphTree->setHeaderHidden(true);
       mGraphTree->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+
+      connect(mGraphTree, SIGNAL(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)),
+         this, SLOT(OnItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)));
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -72,16 +75,15 @@ namespace dtDirector
    {
       if (!mEditor) return;
 
-      disconnect(mGraphTree, SIGNAL(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)),
-         this, SLOT(OnItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)));
-
-      mGraphTree->clear();
-
       Director* director = mEditor->GetDirector();
       if (!director) return;
 
       DirectorGraph* rootGraph = director->GetGraphRoot();
       if (!rootGraph) return;
+
+      mGraphTree->blockSignals(true);
+
+      mGraphTree->clear();
 
       GraphItem* rootItem = new GraphItem(rootGraph, NULL);
       mGraphTree->addTopLevelItem(rootItem);
@@ -91,11 +93,10 @@ namespace dtDirector
 
       if (rootGraph == selected)
       {
-         rootItem->setSelected(true);
+         mGraphTree->setCurrentItem(rootItem);
       }
 
-      connect(mGraphTree, SIGNAL(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)),
-         this, SLOT(OnItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)));
+      mGraphTree->blockSignals(false);
    }
 
    //////////////////////////////////////////////////////////////////////////
