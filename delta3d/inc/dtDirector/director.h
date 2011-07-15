@@ -26,7 +26,6 @@
 #include <dtDirector/directorgraph.h>
 #include <dtDirector/messagegmcomponent.h>
 #include <dtDirector/directornotifier.h>
-#include <dtDirector/directorxml.h>
 
 #include <dtDAL/map.h>
 
@@ -246,22 +245,18 @@ namespace dtDirector
       dtDAL::ResourceDescriptor GetResource() const {return mResource;}
 
       /**
-       * Loads a Director script.
+       * Loads a Director script.  An exception will occur on error.
        *
        * @param[in]  scriptFile  The name of the script file to load.
-       *
-       * @return     True if the script was found and loaded successfully.
        */
-      bool LoadScript(const std::string& scriptFile);
+      void LoadScript(const std::string& scriptFile);
 
       /**
-       * Saves a Director script.
+       * Saves a Director script.  An exception will occur on error.
        *
        * @param[in]  scriptFile  The name of the script file to save.
-       *
-       * @return     True if the script was saved successfully.
        */
-      bool SaveScript(const std::string& scriptFile);
+      void SaveScript(const std::string& scriptFile);
 
       /**
        * Retrieves all missing node types.
@@ -828,7 +823,10 @@ namespace dtDirector
       dtCore::RefPtr<DirectorNotifier> mNotifier;
 
       dtCore::RefPtr<DirectorInstance> mBaseInstance;
-      dtCore::RefPtr<DirectorParser> mParser;
+
+      std::set<std::string> mMissingNodeTypes;
+      std::vector<std::string> mMissingLibraries;
+      bool mHasDeprecatedProperty;
 
       friend class ValueNode;
       friend class ArrayValueNode;

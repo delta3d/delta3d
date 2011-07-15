@@ -19,19 +19,19 @@
  * Author: Jeff P. Houde
  */
 
-#include <dtDirector/director.h>
-
+#include <dtCore/timer.h>
 #include <dtDAL/actorproperty.h>
 #include <dtDAL/project.h>
 #include <dtDAL/stringactorproperty.h>
-
-#include <dtCore/timer.h>
-
+#include <dtDirector/director.h>
 #include <dtDirector/nodemanager.h>
-
+#include <dtDirector/directorxml.h>
+#include <dtDirector/directorbinary.h>
 #include <dtUtil/datapathutils.h>
 
 #include <osgDB/FileNameUtils>
+
+
 
 #define SAFETY_TIMER 0.1f
 
@@ -313,131 +313,195 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   bool Director::LoadScript(const std::string& scriptFile)
+   void Director::LoadScript(const std::string& scriptFile)
    {
       Clear();
 
-      if (scriptFile.empty()) return false;
+      if (scriptFile.empty())
+      {
+         return;
+      }
 
-      std::string fileName = osgDB::getNameLessExtension(scriptFile) + ".dtdir";
+      std::string ext = osgDB::getFileExtension(scriptFile);
+      if (ext.empty())
+      {
+         ext = "dtdir";
+      }
+
+      // Convert to lower case extension.
+      std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
+
+      bool binaryFormat = false;
+      if (ext.compare("dtdirb") == 0)
+      {
+         binaryFormat = true;
+      }
+
+      std::string fileName = osgDB::getNameLessExtension(scriptFile) + "." + ext;
 
       bool hasContext = dtDAL::Project::GetInstance().IsContextValid();
 
       dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
       if (hasContext)
       {
-         fileUtils.PushDirectory(dtDAL::Project::GetInstance().GetContext());
+         fileUtils.PushDirectory(dtDAL::Project::GetInstance().GetContext() + "\\directors");
       }
       else
       {
          fileName = dtUtil::FindFileInPathList(fileName);
       }
 
-      if (!mParser.valid())
-      {
-         mParser = new DirectorParser();
-      }
+      mModified = false;
+      mMissingNodeTypes.clear();
+      mMissingLibraries.clear();
+      mHasDeprecatedProperty = false;
 
-      if (mParser.valid())
+      mLoading = true;
+      try
       {
-         mLoading = true;
-         try
+         if (binaryFormat)
          {
-            mParser->Parse(this, mMap.get(), fileName);
-         }
-         catch (const dtUtil::Exception& e)
-         {
-            std::string error = "Unable to parse " + scriptFile + " with error " + e.What();
-            dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__, error.c_str());
-            if (hasContext)
+            dtCore::RefPtr<BinaryParser> parser = new BinaryParser();
+            if (parser.valid())
             {
-               fileUtils.PopDirectory();
+               parser->Parse(this, mMap.get(), fileName);
+               mMissingNodeTypes = parser->GetMissingNodeTypes();
+               mMissingLibraries = parser->GetMissingLibraries();
+               mHasDeprecatedProperty = parser->HasDeprecatedProperty();
             }
-            mLoading = false;
-            throw e;
          }
-
+         else
+         {
+            dtCore::RefPtr<DirectorParser> parser = new DirectorParser();
+            if (parser.valid())
+            {
+               parser->Parse(this, mMap.get(), fileName);
+               mMissingNodeTypes = parser->GetMissingNodeTypes();
+               mMissingLibraries = parser->GetMissingLibraries();
+               mHasDeprecatedProperty = parser->HasDeprecatedProperty();
+            }
+         }
+      }
+      catch (const dtUtil::Exception& e)
+      {
+         std::string error = "Unable to parse " + scriptFile + " with error " + e.What();
+         dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__, error.c_str());
          if (hasContext)
          {
             fileUtils.PopDirectory();
          }
-         mModified = mParser->HasDeprecatedProperty();
-         mScriptName = fileName;
-
-         if (mBaseInstance.valid())
-         {
-            mBaseInstance->SetName(osgDB::getStrippedName(scriptFile));
-         }
-
          mLoading = false;
-         std::vector<Node*> nodes;
-         GetAllNodes(nodes);
-         int count = (int)nodes.size();
-         for (int index = 0; index < count; ++index)
-         {
-            nodes[index]->OnFinishedLoading();
-         }
-
-         return true;
+         throw e;
       }
 
       if (hasContext)
       {
          fileUtils.PopDirectory();
       }
-      return false;
+
+      if (mMissingNodeTypes.size() > 0 ||
+          mMissingLibraries.size() > 0 ||
+          mHasDeprecatedProperty)
+      {
+         mModified = true;
+      }
+
+      mScriptName = fileName;
+
+      if (mBaseInstance.valid())
+      {
+         mBaseInstance->SetName(osgDB::getStrippedName(scriptFile));
+      }
+
+      mLoading = false;
+      std::vector<Node*> nodes;
+      GetAllNodes(nodes);
+      int count = (int)nodes.size();
+      for (int index = 0; index < count; ++index)
+      {
+         nodes[index]->OnFinishedLoading();
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////
-   bool Director::SaveScript(const std::string& scriptFile)
+   void Director::SaveScript(const std::string& scriptFile)
    {
-      DirectorWriter* writer = new DirectorWriter();
-      if (writer)
+      std::string ext = osgDB::getFileExtension(scriptFile);
+      if (ext.empty())
       {
-         std::string fileName = osgDB::getNameLessExtension(scriptFile) + ".dtdir";
-
-         dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
-         fileUtils.PushDirectory(dtDAL::Project::GetInstance().GetContext());
-
-         try
-         {
-            mSaving = true;
-            writer->Save(this, fileName);
-         }
-         catch (const dtUtil::Exception& e)
-         {
-            std::string error = "Unable to parse " + scriptFile + " with error " + e.What();
-            dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__, error.c_str());
-            fileUtils.PopDirectory();
-            throw e;
-         }
-
-         mSaving = false;
-         fileUtils.PopDirectory();
-
-         mModified = false;
-         return true;
+         ext = "dtdir";
       }
 
-      return false;
+      // Convert to lower case extension.
+      std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
+
+      bool binaryFormat = false;
+      if (ext.compare("dtdirb") == 0)
+      {
+         binaryFormat = true;
+      }
+
+      std::string fileName = osgDB::getNameLessExtension(scriptFile) + "." + ext;
+
+      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
+      fileUtils.PushDirectory(dtDAL::Project::GetInstance().GetContext() + "\\directors");
+
+      mSaving = true;
+
+      try
+      {
+         if (binaryFormat)
+         {
+            dtCore::RefPtr<BinaryWriter> writer = new BinaryWriter();
+            if (writer.valid())
+            {
+               writer->Save(this, fileName);
+            }
+         }
+         else
+         {
+            dtCore::RefPtr<DirectorWriter> writer = new DirectorWriter();
+            if (writer.valid())
+            {
+               writer->Save(this, fileName);
+            }
+         }
+      }
+      catch (const dtUtil::Exception& e)
+      {
+         std::string error = "Unable to parse " + scriptFile + " with error " + e.What();
+         dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__, error.c_str());
+         fileUtils.PopDirectory();
+         throw e;
+      }
+
+      mScriptName = fileName;
+
+      mModified = false;
+      mMissingNodeTypes.clear();
+      mMissingLibraries.clear();
+      mHasDeprecatedProperty = false;
+
+      mSaving = false;
+      fileUtils.PopDirectory();
    }
 
    /////////////////////////////////////////////////////////////////
    const std::set<std::string>& Director::GetMissingNodeTypes()
    {
-      return mParser->GetMissingNodeTypes();
+      return mMissingNodeTypes;
    }
 
    /////////////////////////////////////////////////////////////////
    const std::vector<std::string>& Director::GetMissingLibraries()
    {
-      return mParser->GetMissingLibraries();
+      return mMissingLibraries;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    bool Director::HasDeprecatedProperty() const
    {
-      return mParser->HasDeprecatedProperty();
+      return mHasDeprecatedProperty;
    }
 
    ////////////////////////////////////////////////////////////////////////////////

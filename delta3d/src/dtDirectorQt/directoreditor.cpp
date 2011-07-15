@@ -202,7 +202,7 @@ namespace dtDirector
       if (mDirector.valid())
       {
          std::string fileName = mDirector->GetScriptName();
-         std::string contextDir = osgDB::convertFileNameToNativeStyle(dtDAL::Project::GetInstance().GetContext()+"/");
+         std::string contextDir = osgDB::convertFileNameToNativeStyle(dtDAL::Project::GetInstance().GetContext()+"/directors/");
          mFileName = dtUtil::FileUtils::GetInstance().RelativePath(contextDir, fileName);
          if (mFileName.empty())
          {
@@ -210,7 +210,7 @@ namespace dtDirector
          }
          else
          {
-            setWindowTitle(std::string(osgDB::getStrippedName(mFileName) + ".dtdir").c_str());
+            setWindowTitle(mFileName.c_str());
          }
          mUI.graphBrowser->BuildGraphList(mDirector->GetGraphRoot());
 
@@ -250,12 +250,18 @@ namespace dtDirector
 
          mFileName.clear();
 
+         // Remove this entry from the recent file listing.
+         QSettings settings("MOVES", "Director Editor");
+         QStringList files = settings.value("recentFileList").toStringList();
+         files.removeAll(fileName.c_str());
+         settings.setValue("recentFileList", files);
+
          try
          {
-            mDirector->LoadScript(fileName);
-
-            std::string contextDir = osgDB::convertFileNameToNativeStyle(dtDAL::Project::GetInstance().GetContext()+"/");
+            std::string contextDir = osgDB::convertFileNameToNativeStyle(dtDAL::Project::GetInstance().GetContext()+"/directors/");
             mFileName = dtUtil::FileUtils::GetInstance().RelativePath(contextDir, fileName);
+
+            mDirector->LoadScript(mFileName);
 
             // Display a warning message if there were libraries that could not be loaded.
             const std::vector<std::string>& missingLibraries = mDirector->GetMissingLibraries();
@@ -314,13 +320,9 @@ namespace dtDirector
                messageBox.exec();
             }
 
-            // Update the recent file listing to have the currently loaded item
-            // inserted or moved to the front.
-            QSettings settings("MOVES", "Director Editor");
-            QStringList files = settings.value("recentFileList").toStringList();
-            files.removeAll(mFileName.c_str());
+            // Update the recent file listing to have the
+            // currently loaded item inserted to the front.
             files.prepend(mFileName.c_str());
-
             while (files.size() > 5)
             {
                files.removeLast();
@@ -339,6 +341,8 @@ namespace dtDirector
          }
          catch (const dtUtil::Exception& e)
          {
+            RefreshRecentFiles();
+
             QString error = QString("Unable to parse ") + fileName.c_str() + " with error " + e.What().c_str();
 
             QMessageBox messageBox("Load Failed!",
@@ -352,22 +356,6 @@ namespace dtDirector
          }
       }
 
-      // If this file fails to load, remove it from the recent file listing.
-      std::string contextDir = osgDB::convertFileNameToNativeStyle(dtDAL::Project::GetInstance().GetContext()+"/");
-      std::string relPath = dtUtil::FileUtils::GetInstance().RelativePath(contextDir, fileName);
-
-      QSettings settings("MOVES", "Director Editor");
-      QStringList files = settings.value("recentFileList").toStringList();
-      files.removeAll(relPath.c_str());
-      settings.setValue("recentFileList", files);
-      RefreshRecentFiles();
-
-      // Create a single tab with the default graph.
-      OpenGraph(mDirector->GetGraphRoot());
-      mUI.replayBrowser->BuildThreadList();
-      mUI.graphBrowser->BuildGraphList(mDirector->GetGraphRoot());
-
-      RefreshNodeScenes();
       return false;
    }
 
@@ -595,7 +583,8 @@ namespace dtDirector
       else
       {
          title = osgDB::getStrippedName(mFileName).c_str();
-         title += ".dtdir";
+         title += ".";
+         title += osgDB::getFileExtension(mFileName).c_str();
       }
       if (GetUndoManager()->IsModified()) title += "*";
       setWindowTitle(title);
@@ -731,7 +720,7 @@ namespace dtDirector
 
       // Save button.
       mUI.action_Save->setEnabled(GetUndoManager()->IsModified());
-      mUI.action_Save_as->setEnabled(GetUndoManager()->IsModified());
+      mUI.action_Save_as->setEnabled(true);
 
       // Parent button.
       mUI.action_Step_Out_Of_Graph->setEnabled(bHasParent);
@@ -2168,35 +2157,40 @@ namespace dtDirector
       if (showFiles)
       {
          QString filter = tr(".dtdir");
-         std::string contextDir = osgDB::convertFileNameToNativeStyle(dtDAL::Project::GetInstance().GetContext()+"/");
-         std::string directorsDir = contextDir + osgDB::convertFileNameToNativeStyle("directors/");
+         std::string contextDir = osgDB::convertFileNameToNativeStyle(dtDAL::Project::GetInstance().GetContext()+"/directors/");
 
          QFileDialog dialog;
          QFileInfo filePath = dialog.getSaveFileName(
-            this, tr("Save a Director Script File"), tr(directorsDir.c_str()), tr("Director Scripts (*.dtdir)"), &filter);
+            this, tr("Save a Director Script File"), tr(contextDir.c_str()), tr("XML Director Scripts (*.dtdir);;Binary Director Scripts (*.dtdirb)"), &filter);
 
-         if( filePath.fileName().isEmpty() )
+         if (filePath.fileName().isEmpty())
+         {
             return false;
+         }
 
          std::string absFileName = osgDB::convertFileNameToNativeStyle(
-            filePath.absolutePath().toStdString() + "/" + filePath.baseName().toStdString());
+            filePath.absolutePath().toStdString() + "/" + filePath.fileName().toStdString());
          mFileName = dtUtil::FileUtils::GetInstance().RelativePath(contextDir, absFileName);
       }
 
       if (!mFileName.empty())
       {
+         // Remove this file from the recent file listing.
+         QSettings settings("MOVES", "Director Editor");
+         QStringList files = settings.value("recentFileList").toStringList();
+         files.removeAll(mFileName.c_str());
+
          mDirector->SaveScript(mFileName);
+
+         std::string contextDir = osgDB::convertFileNameToNativeStyle(dtDAL::Project::GetInstance().GetContext()+"/directors/");
+         mFileName = dtUtil::FileUtils::GetInstance().RelativePath(contextDir, mDirector->GetScriptName());
 
          GetUndoManager()->OnSaved();
 
          RefreshButtonStates();
 
          // Input the new file to the recent file list.
-         QSettings settings("MOVES", "Director Editor");
-         QStringList files = settings.value("recentFileList").toStringList();
-         files.removeAll(mFileName.c_str());
          files.prepend(mFileName.c_str());
-
          while (files.size() > 5)
          {
             files.removeLast();
@@ -2322,23 +2316,22 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    bool DirectorEditor::LoadScript()
    {
-      QString filter = tr(".dtdir");
-      std::string contextDir = osgDB::convertFileNameToNativeStyle(dtDAL::Project::GetInstance().GetContext()+"/");
-      std::string directorsDir = contextDir + osgDB::convertFileNameToNativeStyle("directors/");
+      std::string contextDir = osgDB::convertFileNameToNativeStyle(dtDAL::Project::GetInstance().GetContext()+"/directors/");
 
       QFileDialog dialog;
       QFileInfo filePath = dialog.getOpenFileName(
-         this, tr("Load a Director Script File"), tr(directorsDir.c_str()), tr("Director Scripts (*.dtdir)"), &filter);
+         this, tr("Load a Director Script File"), tr(contextDir.c_str()), tr("Director Scripts (*.dtdir *.dtdirb)"));
 
       if(!filePath.isFile())
       {
          return false;
       }
 
-      std::string absFileName  = osgDB::convertFileNameToNativeStyle(
-         filePath.absolutePath().toStdString() + "/" + filePath.baseName().toStdString());
+      std::string fileName  = osgDB::convertFileNameToNativeStyle(
+         filePath.absolutePath().toStdString() + "/" + filePath.fileName().toStdString());
+      fileName = dtUtil::FileUtils::GetInstance().RelativePath(contextDir, fileName);
 
-      return LoadScript(absFileName);
+      return LoadScript(fileName);
    }
 
    //////////////////////////////////////////////////////////////////////////
