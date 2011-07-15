@@ -320,9 +320,14 @@ namespace dtDAL
             else if (d == DataType::DIRECTOR)
             {
                description = "Director Graphs";
-               extFilter.insert(std::make_pair("dtdir", "Director Graphs"));
-               handler = new DefaultResourceTypeHandler(d, "Director Graphs", extFilter);
+               extFilter.insert(std::make_pair("dtdir", "XML Director Scripts"));
+               handler = new DefaultResourceTypeHandler(d, "XML Director Scripts", extFilter);
                extMap.insert(std::make_pair("dtdir", dtCore::RefPtr<ResourceTypeHandler>(handler)));
+
+               extFilter.clear();
+               extFilter.insert(std::make_pair("dtdirb", "Binary Director Scripts"));
+               handler = new DefaultResourceTypeHandler(d, "Binary Director Scripts", extFilter);
+               extMap.insert(std::make_pair("dtdirb", dtCore::RefPtr<ResourceTypeHandler>(handler)));
             }
 
             mTypeHandlers.insert(std::make_pair(&d, extMap));

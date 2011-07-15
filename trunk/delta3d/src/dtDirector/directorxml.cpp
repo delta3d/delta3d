@@ -166,7 +166,7 @@ namespace dtDirector
       std::ofstream stream(filePath.c_str(), std::ios_base::trunc|std::ios_base::binary);
       if (!stream.is_open())
       {
-         throw dtDAL::MapSaveException( std::string("Unable to open map file \"") + filePath + "\" for writing.", __FILE__, __LINE__);
+         throw dtDAL::MapSaveException( std::string("Unable to open Director Script file \"") + filePath + "\" for writing.", __FILE__, __LINE__);
       }
 
       mFormatTarget.SetOutputStream(&stream);
