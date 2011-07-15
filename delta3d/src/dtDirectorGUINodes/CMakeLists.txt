@@ -6,11 +6,13 @@ SET(HEADER_PATH ${DELTA3D_SOURCE_DIR}/inc/${LIB_NAME})
 SET(SOURCE_PATH ${DELTA3D_SOURCE_DIR}/src/${LIB_NAME})
 
 
-SET(LIB_PUBLIC_HEADERS ${HEADER_PATH}/nodelibraryexport.h
+SET(LIB_PUBLIC_HEADERS
+    ${HEADER_PATH}/buttonevent.h
+    ${HEADER_PATH}/getwidgetproperty.h
     ${HEADER_PATH}/guinodemanager.h
     ${HEADER_PATH}/loadguischeme.h
+    ${HEADER_PATH}/nodelibraryexport.h
     ${HEADER_PATH}/nodelibraryregistry.h
-    ${HEADER_PATH}/buttonevent.h
     ${HEADER_PATH}/setguicursor.h
     ${HEADER_PATH}/setlayoutvisibility.h
     ${HEADER_PATH}/setwidgetproperty.h
@@ -19,10 +21,12 @@ SET(LIB_PUBLIC_HEADERS ${HEADER_PATH}/nodelibraryexport.h
    )
 
 
-SET(LIB_SOURCES ${SOURCE_PATH}/guinodemanager.cpp
+SET(LIB_SOURCES
+    ${SOURCE_PATH}/buttonevent.cpp
+    ${SOURCE_PATH}/getwidgetproperty.cpp
+    ${SOURCE_PATH}/guinodemanager.cpp
     ${SOURCE_PATH}/loadguischeme.cpp
     ${SOURCE_PATH}/nodelibraryregistry.cpp
-    ${SOURCE_PATH}/buttonevent.cpp
     ${SOURCE_PATH}/setguicursor.cpp
     ${SOURCE_PATH}/setlayoutvisibility.cpp
     ${SOURCE_PATH}/setwidgetproperty.cpp
