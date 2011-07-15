@@ -259,6 +259,8 @@ namespace dtDAL
    ////////////////////////////////////////////////////////////////////////////////
    bool PropertyContainer::ShouldPropertySave(const dtDAL::ActorProperty& prop) const
    {
+      if (prop.IsReadOnly()) return false;
+
       return !IsPropertyDefault(prop);
    }
 
