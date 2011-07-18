@@ -10,6 +10,8 @@
 #include <dtDAL/map.h>
 #include <dtDAL/baseactorobject.h>
 
+#include <osgDB/FileNameUtils>
+
 
 //////////////////////////////////////////////////////////////////////////
 dtInspectorQt::DirectorView::DirectorView(Ui::InspectorWidget& ui)
@@ -36,10 +38,20 @@ void dtInspectorQt::DirectorView::Build(QList<EntryData>& itemList)
       dtDirector::DirectorInstance* item = dtDirector::DirectorInstance::GetInstance(index);
       if (item && !item->mDirector->GetParent())
       {
+         std::string fileName = item->mDirector->GetScriptName();
+         std::string contextDir = osgDB::convertFileNameToNativeStyle(dtDAL::Project::GetInstance().GetContext()+"/directors/");
+         contextDir = osgDB::getRealPath(contextDir);
+         if (!fileName.empty())
+         {
+            fileName = osgDB::getRealPath(fileName);
+         }
+         fileName = dtUtil::FileUtils::GetInstance().RelativePath(contextDir, fileName);
+
          EntryData data;
-         data.name = item->GetName().c_str();
+         data.name = fileName.c_str();
          data.type = "Director Script";
          data.itemData = QVariant(item->GetUniqueId().ToString().c_str());
+         BuildChildren(item->mDirector, data.children);
          itemList.push_back(data);
       }
    }
@@ -62,6 +74,77 @@ void dtInspectorQt::DirectorView::OperateOn(const QVariant& itemData)
    }
 
    Update();
+}
+
+//////////////////////////////////////////////////////////////////////////
+void dtInspectorQt::DirectorView::OnNameChange(const QString& text)
+{
+   if (mOperateOn.valid())
+   {
+      mOperateOn->SetName(text.toStdString());
+      emit NameChanged(text);
+   }
+}
+
+//////////////////////////////////////////////////////////////////////////
+void dtInspectorQt::DirectorView::OnViewButtonClicked()
+{
+   dtDirector::DirectorEditor* editor =
+      new dtDirector::DirectorEditor();
+
+   if (editor)
+   {
+      dtCore::RefPtr<dtDirector::EditorNotifier> notifier =
+         dynamic_cast<dtDirector::EditorNotifier*>(
+         mOperateOn->mDirector->GetNotifier());
+
+      if (!notifier)
+      {
+         notifier = new dtDirector::EditorNotifier();
+      }
+
+      notifier->AddEditor(editor);
+
+      mOperateOn->mDirector->SetNotifier(notifier);
+
+      editor->SetDirector(mOperateOn->mDirector);
+      editor->show();
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void dtInspectorQt::DirectorView::BuildChildren(dtDirector::Director* parent, QList<EntryData>& childList)
+{
+   if (!parent)
+   {
+      return;
+   }
+
+   const std::vector<dtCore::ObserverPtr<dtDirector::Director> >& children = parent->GetChildren();
+
+   int count = (int)children.size();
+   for (int index = 0; index < count; ++index)
+   {
+      dtDirector::Director* child = children[index].get();
+      if (child)
+      {
+         std::string fileName = child->GetScriptName();
+         std::string contextDir = osgDB::convertFileNameToNativeStyle(dtDAL::Project::GetInstance().GetContext()+"/directors/");
+         contextDir = osgDB::getRealPath(contextDir);
+         if (!fileName.empty())
+         {
+            fileName = osgDB::getRealPath(fileName);
+         }
+         fileName = dtUtil::FileUtils::GetInstance().RelativePath(contextDir, fileName);
+
+         EntryData data;
+         data.name = fileName.c_str();
+         data.type = "Director Script";
+         data.itemData = QVariant(child->GetID().ToString().c_str());
+         BuildChildren(child, data.children);
+         childList.push_back(data);
+      }
+   }
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -102,42 +185,6 @@ void dtInspectorQt::DirectorView::Update()
    else
    {
       mUI->directorScriptGroupBox->hide();
-   }
-}
-
-//////////////////////////////////////////////////////////////////////////
-void dtInspectorQt::DirectorView::OnNameChange(const QString& text)
-{
-   if (mOperateOn.valid())
-   {
-      mOperateOn->SetName(text.toStdString());
-      emit NameChanged(text);
-   }
-}
-
-//////////////////////////////////////////////////////////////////////////
-void dtInspectorQt::DirectorView::OnViewButtonClicked()
-{
-   dtDirector::DirectorEditor* editor =
-      new dtDirector::DirectorEditor();
-
-   if (editor)
-   {
-      dtCore::RefPtr<dtDirector::EditorNotifier> notifier =
-         dynamic_cast<dtDirector::EditorNotifier*>(
-         mOperateOn->mDirector->GetNotifier());
-
-      if (!notifier)
-      {
-         notifier = new dtDirector::EditorNotifier();
-      }
-
-      notifier->AddEditor(editor);
-
-      mOperateOn->mDirector->SetNotifier(notifier);
-
-      editor->SetDirector(mOperateOn->mDirector);
-      editor->show();
    }
 }
 

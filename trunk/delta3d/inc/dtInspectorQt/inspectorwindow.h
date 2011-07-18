@@ -2,6 +2,7 @@
 #define inspectorwindow_h__
 
 #include <dtInspectorQt/export.h>
+#include <dtInspectorQt/iview.h>
 #include <QtGui/QMainWindow>
 #include <QtGui/QTreeWidgetItem>
 #include <QtCore/QList>
@@ -24,8 +25,6 @@ namespace dtGame
 
 namespace dtInspectorQt
 {
-   class IView;
-
    ///The rendered Qt window for InspectorQt.  Uses a .ui file to define the widgets.
    class DT_INSPECTORQT_EXPORT InspectorWindow : public QMainWindow
    {
@@ -50,6 +49,9 @@ namespace dtInspectorQt
       void FilterSelected(const QString& text);
 
    private:
+
+      void BuildItemTree(QTreeWidgetItem* parent, IView::EntryData& data);
+
       Ui::InspectorWidget* ui;
       dtGame::GameManager* mGameManager;
 

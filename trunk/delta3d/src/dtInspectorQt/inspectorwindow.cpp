@@ -211,13 +211,7 @@ void dtInspectorQt::InspectorWindow::UpdateInstances()
    for (int index = 0; index < count; ++index)
    {
       IView::EntryData& data = itemList[index];
-      QTreeWidgetItem* item = new QTreeWidgetItem(ui->itemList);
-      if (item)
-      {
-         item->setText(0, data.name);
-         item->setText(1, data.type);
-         item->setData(0, 100, data.itemData);
-      }
+      BuildItemTree(NULL, data);
    }
 
    ui->itemList->resizeColumnToContents(0);
@@ -259,6 +253,33 @@ void dtInspectorQt::InspectorWindow::FilterSelected(const QString& text)
    UpdateInstances();
    ui->itemList->setCurrentItem(ui->itemList->itemAt(0,0));
    RefreshCurrentItem();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void dtInspectorQt::InspectorWindow::BuildItemTree(QTreeWidgetItem* parent, IView::EntryData& data)
+{
+   QTreeWidgetItem* item = NULL;
+   if (!parent)
+   {
+      item = new QTreeWidgetItem(ui->itemList);
+   }
+   else
+   {
+      item = new QTreeWidgetItem(parent);
+   }
+
+   if (item)
+   {
+      item->setText(0, data.name);
+      item->setText(1, data.type);
+      item->setData(0, 100, data.itemData);
+
+      int count = data.children.count();
+      for (int index = 0; index < count; ++index)
+      {
+         BuildItemTree(item, data.children[index]);
+      }
+   }
 }
 
 //////////////////////////////////////////////////////////////////////////

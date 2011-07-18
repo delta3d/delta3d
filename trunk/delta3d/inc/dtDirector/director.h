@@ -182,6 +182,18 @@ namespace dtDirector
       void RemoveChild(Director* child);
 
       /**
+       * Retrieves the children list.
+       */
+      const std::vector<dtCore::ObserverPtr<Director> >& GetChildren() const;
+
+      /**
+       * Retrieves the script ID.
+       *
+       * @return  Script ID.
+       */
+      const dtCore::UniqueId& GetID() const;
+
+      /**
        * Retrieves the map.
        *
        * @return  The map.
@@ -672,6 +684,7 @@ namespace dtDirector
       static bool mApplyingGlobalValue;
 
       // Core Info.
+      dtCore::UniqueId mID;
       std::string mScriptName;
       std::string mDescription;
       std::string mAuthor;
