@@ -33,6 +33,7 @@ namespace dtDirector
       , mOutputCount(1)
       , mLooping(false)
       , mCurrentIndex(1)
+      , mAutoIncrement(true)
    {
       AddAuthor("Eric R. Heine");
    }
@@ -76,6 +77,12 @@ namespace dtDirector
          "Whether this switch should loop or not.");
       AddProperty(loopingProp);
 
+      AddProperty(new dtDAL::BooleanActorProperty(
+         "AutoIncrement", "Auto Increment",
+         dtDAL::BooleanActorProperty::SetFuncType(this, &SwitchAction::SetAutoIncrement),
+         dtDAL::BooleanActorProperty::GetFuncType(this, &SwitchAction::GetAutoIncrement),
+         "Whether this switch should auto increment the output-index after activation."));
+
       mValues.push_back(ValueLink(this, outputCountProp, false, false, true, false));
       mValues.push_back(ValueLink(this, currentCountProp, false, false, false));
       mValues.push_back(ValueLink(this, loopingProp, false, false, true, false));
@@ -88,8 +95,11 @@ namespace dtDirector
       if (currentIndex <= mOutputCount)
       {
          // Trigger the current output link
-         OutputLink* link = GetOutputLink("Out " + dtUtil::ToString(currentIndex++));
-         if (link) link->Activate();
+         ActivateOutput("Out " + dtUtil::ToString(currentIndex));
+         if (GetBoolean("AutoIncrement"))
+         {
+            currentIndex++;
+         }
       }
 
       if (mLooping && currentIndex > mOutputCount)
@@ -152,6 +162,18 @@ namespace dtDirector
    bool SwitchAction::GetLooping() const
    {
       return mLooping;
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void SwitchAction::SetAutoIncrement(bool value)
+   {
+      mAutoIncrement = value;
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   bool SwitchAction::GetAutoIncrement() const
+   {
+      return mAutoIncrement;
    }
 
    /////////////////////////////////////////////////////////////////////////////

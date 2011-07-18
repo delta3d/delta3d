@@ -82,6 +82,9 @@ namespace dtDirector
       void SetLooping(bool value);
       bool GetLooping() const;
 
+      void SetAutoIncrement(bool value);
+      bool GetAutoIncrement() const;
+
    protected:
 
       /**
@@ -92,6 +95,7 @@ namespace dtDirector
    private:
       int mOutputCount;
       bool mLooping;
+      bool mAutoIncrement;
 
       int mCurrentIndex;
    };
