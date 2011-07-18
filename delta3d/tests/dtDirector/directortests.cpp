@@ -107,7 +107,38 @@ void DirectorTests::TestRunScript()
       }
       catch (dtUtil::Exception& e)
       {
+         e;
          CPPUNIT_ASSERT_MESSAGE("dtDirector test script didn't load correctly", false);
+      }
+
+      try
+      {
+         mDirector->SaveScript("save test.dtdir");
+      }
+      catch (dtUtil::Exception& e)
+      {
+         e;
+         CPPUNIT_ASSERT_MESSAGE("dtDirector test script didn't save in XML correctly", false);
+      }
+
+      try
+      {
+         mDirector->SaveScript("save test.dtdirb");
+      }
+      catch (dtUtil::Exception& e)
+      {
+         e;
+         CPPUNIT_ASSERT_MESSAGE("dtDirector test script didn't save in binary correctly", false);
+      }
+
+      try
+      {
+         mDirector->LoadScript("save test.dtdirb");
+      }
+      catch (dtUtil::Exception& e)
+      {
+         e;
+         CPPUNIT_ASSERT_MESSAGE("dtDirector test script didn't load from binary correctly", false);
       }
 
       // A pre-defined script should be loaded.
