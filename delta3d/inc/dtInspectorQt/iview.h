@@ -23,6 +23,8 @@ namespace dtInspectorQt
          QString  name;
          QString  type;
          QVariant itemData;
+
+         QList<IView::EntryData> children;
       };
 
       dtGame::GameManager* mGameManager;

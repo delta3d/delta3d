@@ -48,6 +48,11 @@ namespace dtDirector
       : mDirector(director)
    {
       RegisterInstance(this);
+
+      if (director)
+      {
+         SetUniqueId(director->GetID());
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -263,6 +268,18 @@ namespace dtDirector
             return;
          }
       }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   const std::vector<dtCore::ObserverPtr<Director> >& Director::GetChildren() const
+   {
+      return mChildren;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   const dtCore::UniqueId& Director::GetID() const
+   {
+      return mID;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
