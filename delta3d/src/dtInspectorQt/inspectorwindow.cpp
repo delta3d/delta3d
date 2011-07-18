@@ -11,6 +11,7 @@
 #include <dtInspectorQt/labelactorview.h>
 #include <dtInspectorQt/lightview.h>
 #include <dtInspectorQt/objectview.h>
+#include <dtInspectorQt/osgview.h>
 #include <dtInspectorQt/particlesystemview.h>
 #include <dtInspectorQt/physicalview.h>
 #include <dtInspectorQt/sceneview.h>
@@ -25,11 +26,11 @@
 #include <dtCore/base.h>
 #include <dtCore/uniqueid.h>
 
-
+////////////////////////////////////////////////////////////////////////////////
 dtInspectorQt::InspectorWindow::InspectorWindow(QWidget* parent /* = NULL */)
-: QMainWindow(parent)
-, mGameManager(NULL)
-, mFilterIndex(0)
+   : QMainWindow(parent)
+   , mGameManager(NULL)
+   , mFilterIndex(0)
 {
    ui = new Ui::InspectorWidget();
    ui->setupUi(this);
@@ -37,9 +38,11 @@ dtInspectorQt::InspectorWindow::InspectorWindow(QWidget* parent /* = NULL */)
    ActorView* actorView = new ActorView(*ui);
    CameraView* cameraView = new CameraView(*ui);
    DirectorView* directorView = new DirectorView(*ui);
+   OSGView* osgView = new OSGView(*ui);
    mViewContainer.push_back(actorView);
    mViewContainer.push_back(cameraView);
    mViewContainer.push_back(directorView);
+   mViewContainer.push_back(osgView);
 
    //mViewContainer.push_back(baseMgr);
    //mViewContainer.push_back(new ActorView(*ui));
@@ -71,7 +74,7 @@ dtInspectorQt::InspectorWindow::InspectorWindow(QWidget* parent /* = NULL */)
    connect(actorView, SIGNAL(NameChanged(const QString&)), this, SLOT(OnNameChanged(const QString&)));
    connect(cameraView, SIGNAL(NameChanged(const QString&)), this, SLOT(OnNameChanged(const QString&)));
    connect(directorView, SIGNAL(NameChanged(const QString&)), this, SLOT(OnNameChanged(const QString&)));
-   
+
    connect(ui->itemList, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)), this, SLOT(OnSelection(QTreeWidgetItem*,QTreeWidgetItem*)));
    connect(ui->actionRefresh_Item, SIGNAL(triggered()), this, SLOT(RefreshCurrentItem()));
    connect(ui->actionClose, SIGNAL(triggered()), this, SLOT(close()));
@@ -80,7 +83,7 @@ dtInspectorQt::InspectorWindow::InspectorWindow(QWidget* parent /* = NULL */)
    connect(ui->filterBox, SIGNAL(currentIndexChanged(const QString&)), this, SLOT(FilterSelected(const QString&)));
 }
 
-//////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 dtInspectorQt::InspectorWindow::~InspectorWindow()
 {
    while (!mViewContainer.empty())
@@ -90,13 +93,13 @@ dtInspectorQt::InspectorWindow::~InspectorWindow()
    delete ui;
 }
 
-//////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 QWidget* dtInspectorQt::InspectorWindow::GetPropertyContainerWidget()
 {
    return ui->scrollAreaWidgetContents;
 }
 
-//////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void dtInspectorQt::InspectorWindow::AddCustomView(IView* customView)
 {
    mViewContainer.push_back(customView);
@@ -106,7 +109,7 @@ void dtInspectorQt::InspectorWindow::AddCustomView(IView* customView)
    RefreshCurrentItem();
 }
 
-//////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void dtInspectorQt::InspectorWindow::SetGameManager(dtGame::GameManager* gm)
 {
    mGameManager = gm;
@@ -126,13 +129,13 @@ void dtInspectorQt::InspectorWindow::SetGameManager(dtGame::GameManager* gm)
    RefreshCurrentItem();
 }
 
-//////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void dtInspectorQt::InspectorWindow::OnSelection(QTreeWidgetItem* current, QTreeWidgetItem* prev)
 {
    RefreshCurrentItem();
 }
 
-//////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void dtInspectorQt::InspectorWindow::RefreshCurrentItem()
 {
    ui->baseGroupBox->hide();
@@ -172,14 +175,15 @@ void dtInspectorQt::InspectorWindow::RefreshCurrentItem()
       }
    }
 }
-//////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////
 void dtInspectorQt::InspectorWindow::OnNameChanged(const QString& text)
 {
    QTreeWidgetItem* item = ui->itemList->currentItem();
    item->setText(0, text);
 }
 
-//////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void dtInspectorQt::InspectorWindow::UpdateInstances()
 {
    ui->itemList->clear(); //remove any previous entries
@@ -218,7 +222,7 @@ void dtInspectorQt::InspectorWindow::UpdateInstances()
    ui->itemList->resizeColumnToContents(1);
 }
 
-//////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void dtInspectorQt::InspectorWindow::SortList(bool sorted)
 {
    ui->itemList->setSortingEnabled(sorted);
@@ -233,7 +237,7 @@ void dtInspectorQt::InspectorWindow::SortList(bool sorted)
    RefreshCurrentItem();
 }
 
-//////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void dtInspectorQt::InspectorWindow::RefreshFilters()
 {
    ui->filterBox->clear();
@@ -246,7 +250,7 @@ void dtInspectorQt::InspectorWindow::RefreshFilters()
    }
 }
 
-//////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void dtInspectorQt::InspectorWindow::FilterSelected(const QString& text)
 {
    mFilterIndex = ui->filterBox->currentIndex() - 1;
