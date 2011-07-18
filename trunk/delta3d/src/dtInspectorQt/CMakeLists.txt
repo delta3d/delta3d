@@ -20,6 +20,7 @@ SET(LIB_PUBLIC_HEADERS
     ${HEADER_PATH}/labelactorview.h
     ${HEADER_PATH}/lightview.h
     ${HEADER_PATH}/objectview.h
+    ${HEADER_PATH}/osgview.h
     ${HEADER_PATH}/particlesystemview.h
     ${HEADER_PATH}/physicalview.h
     ${HEADER_PATH}/propertyeditor.h
@@ -48,9 +49,10 @@ SET(LIB_SOURCES
     labelactorview.cpp
     lightview.cpp
     objectview.cpp
+    osgview.cpp
     particlesystemview.cpp
     physicalview.cpp
-	propertyeditor.cpp
+	 propertyeditor.cpp
     sceneview.cpp
     skydomeview.cpp
     systemview.cpp

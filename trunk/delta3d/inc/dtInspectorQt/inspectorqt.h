@@ -35,7 +35,7 @@ namespace dtInspectorQt
    class DT_INSPECTORQT_EXPORT InspectorQt : public dtCore::Base
    {
    public:
-   	InspectorQt(int& argc, char **argv);
+   	InspectorQt(int& argc, char** argv);
 
       virtual void OnMessage(MessageData*);
 
@@ -49,8 +49,8 @@ namespace dtInspectorQt
       virtual ~InspectorQt();
    	
    private:
-      InspectorWindow *mInspector;
-      QApplication *mApp;
+      InspectorWindow* mInspector;
+      QApplication* mApp;
    };
 }
 #endif // inspectorqt_h__

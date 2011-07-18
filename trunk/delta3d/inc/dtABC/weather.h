@@ -64,7 +64,7 @@ namespace dtABC
 
       DECLARE_MANAGEMENT_LAYER(Weather)
 
-      Weather( const std::string& textureDirectory = "" );
+      Weather(const std::string& textureDirectory = "");
 
    protected:
 
@@ -139,7 +139,7 @@ namespace dtABC
       };
 
       ///Creates a set of clouds to represent the generic cloud description
-      void SetBasicCloudType( const CloudType type, const std::string &textureDirectory = "" );
+      void SetBasicCloudType(const CloudType type, const std::string& textureDirectory = "");
       CloudType GetBasicCloudType() const {return mCloudType;}
 
       ///Creates wind layers to represent the wind description
@@ -148,21 +148,21 @@ namespace dtABC
 
       ///Adjusts the wind direction of the wind layers
       void SetBasicWindDirection(const WindDirection windType);
-      WindDirection GetBasicWindDirection()const {return mWindDirection;}
+      WindDirection GetBasicWindDirection() const { return mWindDirection; }
 
       ///Convenience function for the Environment
-      void SetBasicVisibilityType( const VisibilityType visType);
-      VisibilityType GetBasicVisibilityType()const {return mVisType;}
+      void SetBasicVisibilityType(const VisibilityType visType);
+      VisibilityType GetBasicVisibilityType() const { return mVisType; }
 
       ///Preset weather themes which control clouds, winds, and visibility
-      void SetTheme(const WeatherTheme theme, const std::string &textureDirectory = "" );
+      void SetTheme(const WeatherTheme theme, const std::string& textureDirectory = "");
       WeatherTheme GetTheme() const {return mTheme;}
 
       ///Get a handle to the Weather's Environment instance
-      dtCore::Environment* GetEnvironment() {return mEnvironment.get();}
+      dtCore::Environment* GetEnvironment() { return mEnvironment.get(); }
 
       ///const version to get a handle to the Weather's Environment instance
-      const dtCore::Environment* GetEnvironment() const {return mEnvironment.get();}
+      const dtCore::Environment* GetEnvironment() const { return mEnvironment.get(); }
 
       ///Set the weather's rate of change (-1.0 to 1.0)
       void SetRateOfChange(const float rate);
@@ -173,16 +173,16 @@ namespace dtABC
       void GetTimePeriodAndSeason(TimePeriod *period, Season *season) const;
 
       ///Add a DeltaDrawable to be affected by this weather's lighting and fog
-      bool AddChild( dtCore::DeltaDrawable *child);
-      void RemoveChild( dtCore::DeltaDrawable *child);
+      bool AddChild(dtCore::DeltaDrawable* child);
+      void RemoveChild(dtCore::DeltaDrawable* child);
 
       ///Save all generated cloud textures to file
       ///@return The number of textures saved
-      int SaveCloudTextures( const std::string& textureDirectory = "" );
+      int SaveCloudTextures(const std::string& textureDirectory = "");
 
       ///Load all pre-generated cloud textures from file
       ///@return The number of textures loaded
-      int LoadCloudTextures( const std::string& textureDirectory = "" );
+      int LoadCloudTextures(const std::string& textureDirectory = "");
 
    private:
 
@@ -198,7 +198,6 @@ namespace dtABC
       TimePeriod mTimePeriod; ///<the rough time period
       Season mSeason; ///< the current season
    };
-
 }
 
 #endif // DELTA_WEATHER
