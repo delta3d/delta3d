@@ -99,7 +99,9 @@ namespace dtDirector
    /////////////////////////////////////////////////////////////////
    DirectorXMLHandler::DirectorXMLHandler()
       : dtDAL::BaseXMLHandler()
+      , mDirector(NULL)
       , mMap(NULL)
+      , mFoundScriptType(false)
       , mNode(NULL)
    {
       mPropSerializer = new dtDAL::ActorPropertySerializer(this);
@@ -333,12 +335,18 @@ namespace dtDirector
          {
             if (topEl == dtDAL::MapXMLConstants::CREATE_TIMESTAMP_ELEMENT)
             {
-               mDirector->SetCreateDateTime(dtUtil::XMLStringConverter(chars).ToString());
+               if (mDirector)
+               {
+                  mDirector->SetCreateDateTime(dtUtil::XMLStringConverter(chars).ToString());
+               }
             }
             else if (topEl == dtDAL::MapXMLConstants::DIRECTOR_SCRIPT_TYPE)
             {
+               mScriptType = dtUtil::XMLStringConverter(chars).ToString();
+               mFoundScriptType = true;
+
                // Check if the loaded script matches our current script type
-               if (mDirector->GetScriptType() != dtUtil::XMLStringConverter(chars).ToString())
+               if (mDirector && mDirector->GetScriptType() != mScriptType)
                {
                   throw dtUtil::Exception("Attempted to load an invalid script type.", __FILE__, __LINE__);
                }

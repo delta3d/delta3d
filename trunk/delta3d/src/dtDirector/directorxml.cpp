@@ -19,7 +19,6 @@
  * Jeff P. Houde
  */
 
-#include <prefix/dtdalprefix.h>
 #include <cstdio>
 #include <cstdlib>
 #include <string>
@@ -119,6 +118,101 @@ namespace dtDirector
       }
 
       return false;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   const std::string& DirectorParser::ParseScriptType(const std::string& filePath)
+   {
+      mDirectorHandler->SetDirector(NULL);
+      mDirectorHandler->SetMap(NULL);
+
+      bool parserNeedsReset = false;
+      XMLPScanToken token;
+
+      mXercesParser->setContentHandler(mDirectorHandler);
+      mXercesParser->setErrorHandler(mDirectorHandler);
+
+      try
+      {
+         std::ifstream fileStream;
+         fileStream.open(filePath.c_str());
+         if(fileStream.fail())
+         {
+            throw dtUtil::Exception("Failed to find Director script file \'" + filePath + "\'.", __FILE__, __LINE__);
+         }
+
+         dtDAL::InputSourcefStream xerStream(fileStream);
+
+         if (mXercesParser->parseFirst(xerStream, token))
+         {
+            parserNeedsReset = true;
+
+            bool cont = mXercesParser->parseNext(token);
+            while (cont && !mDirectorHandler->HasFoundScriptType())
+            {
+               cont = mXercesParser->parseNext(token);
+            }
+
+            parserNeedsReset = false;
+
+            //reset the parser and close the file handles.
+            mXercesParser->parseReset(token);
+
+            if (mDirectorHandler->HasFoundScriptType())
+            {
+               mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Parsing complete.");
+               return mDirectorHandler->GetScriptType();
+            }
+            else
+            {
+               throw dtUtil::Exception( "Parser stopped without finding the script type.", __FILE__, __LINE__);
+            }
+         }
+         else
+         {
+            throw dtUtil::Exception( "Parsing to find the script type did not begin.", __FILE__, __LINE__);
+         }
+      }
+      catch (const OutOfMemoryException&)
+      {
+         if (parserNeedsReset)
+         {
+            mXercesParser->parseReset(token);
+         }
+
+         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__, "Ran out of memory parsing!");
+         throw dtUtil::Exception( "Ran out of memory parsing save file.", __FILE__, __LINE__);
+      }
+      catch (const XMLException& toCatch)
+      {
+         if (parserNeedsReset)
+            mXercesParser->parseReset(token);
+
+         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__, "Error during parsing! %ls :\n",
+            toCatch.getMessage());
+         throw dtUtil::Exception( "Error while parsing Director script file. See log for more information.", __FILE__, __LINE__);
+      }
+      catch (const SAXParseException&)
+      {
+         if (parserNeedsReset)
+         {
+            mXercesParser->parseReset(token);
+         }
+
+         //this will already by logged by the content handler
+         throw dtUtil::Exception( "Error while parsing Director script file. See log for more information.", __FILE__, __LINE__);
+      }
+      catch (const dtUtil::Exception& e)
+      {
+         if (parserNeedsReset)
+         {
+            mXercesParser->parseReset(token);
+         }
+
+         throw e;
+      }
+
+      return mDirectorHandler->GetScriptType();
    }
    
    /////////////////////////////////////////////////////////////////

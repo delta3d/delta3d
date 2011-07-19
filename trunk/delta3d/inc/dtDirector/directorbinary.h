@@ -65,6 +65,17 @@ namespace dtDirector
       void Parse(Director* director, dtDAL::Map* map, const std::string& filePath);
       
       /**
+       * Parses the script type from the Director script file.
+       *
+       * @param[in]  filePath  The path to the director script file.
+       *
+       * @return     The script type.
+       *
+       * @throws dtUtil::Exception if a fatal error occurs in the parsing.
+       */
+      const std::string& ParseScriptType(const std::string& filePath);
+
+      /**
        * Retrieves all missing node types.
        */
       const std::set<std::string>& GetMissingNodeTypes();
@@ -162,6 +173,7 @@ namespace dtDirector
       std::vector<std::string> mMissingLibraries;
       std::set<std::string>    mMissingNodeTypes;
       bool                     mHasDeprecatedProperty;
+      std::string              mScriptType;
    };
 
 
