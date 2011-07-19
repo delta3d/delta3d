@@ -72,12 +72,14 @@ namespace dtDirector
          ParseGraph(version, director->GetGraphRoot(), file);
 
          LinkNodes(director);
+         fclose(file);
       }
       catch (dtUtil::Exception& ex)
       {
          dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
             "Caught Exception \"%s\" while attempting to load Director script \"%s\".",
             ex.What().c_str(), filePath.c_str());
+         fclose(file);
          throw ex;
       }
       catch (...)
@@ -85,10 +87,47 @@ namespace dtDirector
          dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
             "Unknown exception while attempting to load Director script \"%s\".",
             filePath.c_str());
-         throw dtDAL::MapSaveException( std::string("Unknown exception loading Director script \"") + filePath + ("\"."), __FILE__, __LINE__);
+         fclose(file);
+         throw dtUtil::Exception( std::string("Unknown exception loading Director script \"") + filePath + ("\"."), __FILE__, __LINE__);
       }
    }
    
+   /////////////////////////////////////////////////////////////////
+   const std::string& BinaryParser::ParseScriptType(const std::string& filePath)
+   {
+      FILE* file = fopen(filePath.c_str(), "rb");
+      if (!file)
+      {
+         throw dtUtil::Exception(std::string("Unable to open Director Script file \"") + filePath + "\" for reading.", __FILE__, __LINE__);
+      }
+
+      mScriptType = "Unknown";
+
+      try
+      {
+         float version = ParseHeader(NULL, file);
+         fclose(file);
+      }
+      catch (dtUtil::Exception& ex)
+      {
+         dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+            "Caught Exception \"%s\" while attempting to load Director script \"%s\".",
+            ex.What().c_str(), filePath.c_str());
+         fclose(file);
+         throw ex;
+      }
+      catch (...)
+      {
+         dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+            "Unknown exception while attempting to load Director script \"%s\".",
+            filePath.c_str());
+         fclose(file);
+         throw dtUtil::Exception( std::string("Unknown exception loading Director script \"") + filePath + ("\"."), __FILE__, __LINE__);
+      }
+
+      return mScriptType;
+   }
+
    /////////////////////////////////////////////////////////////////
    const std::set<std::string>& BinaryParser::GetMissingNodeTypes()
    {
@@ -110,7 +149,7 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    float BinaryParser::ParseHeader(Director* director, FILE* file)
    {
-      if (!director || !file)
+      if (!file)
       {
          throw dtUtil::Exception("Invalid data found.", __FILE__, __LINE__);
       }
@@ -127,14 +166,23 @@ namespace dtDirector
       }
 
       // Creation timestamp.
-      director->SetCreateDateTime(ParseString(file));
+      std::string utcTime = ParseString(file);
+      if (director)
+      {
+         director->SetCreateDateTime(utcTime);
+      }
 
       // Current timestamp.
-      std::string utcTime = ParseString(file);
+      utcTime = ParseString(file);
 
       // Script type.
-      std::string scriptType = ParseString(file);
-      if (director->GetScriptType() != scriptType)
+      mScriptType = ParseString(file);
+      if (!director)
+      {
+         return version;
+      }
+
+      if (director->GetScriptType() != mScriptType)
       {
          throw dtUtil::Exception("Attempted to load an invalid script type.", __FILE__, __LINE__);
       }

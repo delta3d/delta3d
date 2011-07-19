@@ -114,6 +114,12 @@ namespace dtDirector
        */
       bool HasDeprecatedProperty() const {return mPropSerializer->HasDeprecatedProperty();}
 
+      /**
+       * Returns whether or not the Director script type was parsed.
+       */
+      bool HasFoundScriptType() const {return mFoundScriptType;}
+      const std::string& GetScriptType() const {return mScriptType;}
+
    protected:
 
       virtual ~DirectorXMLHandler();
@@ -149,6 +155,8 @@ namespace dtDirector
 
       Director*   mDirector;
       dtCore::RefPtr<dtDAL::Map> mMap;
+      std::string mScriptType;
+      bool        mFoundScriptType;
 
       std::string mLibName;
       std::string mLibVersion;

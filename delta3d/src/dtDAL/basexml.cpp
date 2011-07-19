@@ -70,7 +70,7 @@ namespace dtDAL
    static const std::string logName("basexml.cpp");
 
    InputSourcefStream::InputSourcefStream(std::istream& stream)
-   : mStream(stream)
+      : mStream(stream)
    {
    }
 

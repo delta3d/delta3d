@@ -51,7 +51,7 @@ namespace dtDAL
 {
    class BaseXMLHandler;
 
-   class InputSourcefStream : public xercesc::InputSource
+   class DT_DAL_EXPORT InputSourcefStream : public xercesc::InputSource
    {
    public:
       InputSourcefStream(std::istream& stream);
