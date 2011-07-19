@@ -305,7 +305,7 @@ void SystemTests::tearDown()
    dtCore::System::GetInstance().SetUseFixedTimeStep(false);
    dtCore::System::GetInstance().Stop();
    dtCore::System::GetInstance().SetPause(false);
-   dtCore::System::GetInstance().SetFrameRate(1.0f/60.0f);
+   dtCore::System::GetInstance().SetFrameRate(60.0f);
 
    System::GetInstance().SetSystemStages(System::STAGES_DEFAULT);
 }
@@ -359,6 +359,9 @@ void SystemTests::TestStepping()
             0.0543 * 0.32, mDummyDrawable->m_TimeOne, 0.001);
 
    ourSystem.SetUseFixedTimeStep(false);
+   ourSystem.SetTimeScale(1.0);
+   ourSystem.SetFrameRate(60.0);
+   ourSystem.SetMaxTimeBetweenDraws(0.03);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -366,8 +369,8 @@ void SystemTests::TestProperties()
 {
    dtCore::System& ourSystem = dtCore::System::GetInstance();
 
-   CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("Frame Step deflault is wrong",
-      ourSystem.GetFrameRate(), 1.0/60.0 , 0.0001);
+   CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("Frame Step default is wrong",
+      ourSystem.GetFrameRate(), 60.0 , 0.0001);
 
    double aRandomFloat = dtUtil::RandFloat(10.0f, 50.0f);
    ourSystem.SetFrameRate(aRandomFloat);
