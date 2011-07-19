@@ -86,7 +86,36 @@ namespace dtDirector
 
       if (!mValues.empty() && !mValues[0].GetLinks().empty())
       {
-         ValueNode* valueNode = dynamic_cast<ValueNode*>(mValues[0].GetLinks()[0]);
+         ValueNode* valueNode = mValues[0].GetLinks()[0];
+         while (valueNode)
+         {
+            // If we are connected to a reference node, show the value
+            // begin referenced instead of the reference node.
+            if (valueNode->GetType().GetFullName() == "Core.Reference")
+            {
+               ReferenceValue* refNode = dynamic_cast<ReferenceValue*>(valueNode);
+               if (refNode)
+               {
+                  valueNode = refNode->GetReferencedValue();
+                  continue;
+               }
+            }
+            // If we are connected to another external value link node,
+            // show the node being externally connected to instead.
+            else if (valueNode->GetType().GetFullName() == "Core.Value Link")
+            {
+               ExternalValueNode* linkNode = dynamic_cast<ExternalValueNode*>(valueNode);
+               if (linkNode && !linkNode->GetValueLinks().empty() &&
+                  !linkNode->GetValueLinks()[0].GetLinks().empty())
+               {
+                  valueNode = linkNode->GetValueLinks()[0].GetLinks()[0];
+                  continue;
+               }
+            }
+
+            break;
+         }
+
          if (valueNode)
          {
             return name + "<br><i>" + valueNode->GetValueLabel() +"</i>";
