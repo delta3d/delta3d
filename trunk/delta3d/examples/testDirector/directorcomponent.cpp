@@ -26,10 +26,6 @@
 #include <dtGame/messagetype.h>
 #include <dtCore/deltawin.h>
 #include <dtCore/transform.h>
-#include <dtCore/collisionmotionmodel.h>
-#include <dtCore/collisioncategorydefaults.h>
-#include <dtActors/engineactorregistry.h>
-#include <dtDirector/director.h>
 
 #if defined(USE_INSPECTOR)
    #include <dtInspectorQt/inspectorqt.h>

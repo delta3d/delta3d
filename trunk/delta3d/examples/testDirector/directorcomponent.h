@@ -26,8 +26,6 @@
 
 #include <dtGame/baseinputcomponent.h>
 
-namespace dtDirector    { class Director;    }
-namespace dtCore        { class MotionModel; }
 namespace dtInspectorQt { class InspectorQt; }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -65,7 +63,9 @@ private:
    
    void OnMapLoaded();
 
+#if defined(USE_INSPECTOR)
    dtInspectorQt::InspectorQt* mInspector;
+#endif
 };
 
 ////////////////////////////////////////////////////////////////////////////////

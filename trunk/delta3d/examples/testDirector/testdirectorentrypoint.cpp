@@ -29,7 +29,6 @@
 #include <dtGame/gamemanager.h>
 #include <dtGame/gameapplication.h>
 #include <dtGame/exceptionenum.h>
-#include <dtAudio/audiomanager.h>
 #include <dtDirector/director.h>
 
 extern "C" TEST_DIRECTOR_EXPORT dtGame::GameEntryPoint* CreateGameEntryPoint()
@@ -52,11 +51,6 @@ TestDirector::TestDirector()
 ////////////////////////////////////////////////////////////////////////////////
 TestDirector::~TestDirector()
 {
-   if (dtAudio::AudioManager::GetInstance().IsInitialized())
-   {
-      dtAudio::AudioManager::Destroy();
-   }
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -97,7 +91,8 @@ void TestDirector::OnStartup(dtGame::GameApplication& app)
       // Get the screen size
       int x, y, width, height;
       app.GetWindow()->GetPosition(x, y, width, height);
-      app.GetWindow()->SetPosition(x, y, 1024, 768);
+      //app.GetWindow()->SetPosition(10, 10, 1024, 768);
+      app.GetWindow()->SetPosition(10, 10, 800, 600);
       app.GetWindow()->SetWindowTitle("TestDirector");
    }
    catch (const dtUtil::Exception& e)
