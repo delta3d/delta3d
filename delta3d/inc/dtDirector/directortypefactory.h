@@ -57,6 +57,11 @@ namespace dtDirector
          mFactory->RegisterType<ScriptClassType>(scriptType);
       }
 
+      void UnRegisterScriptType(const std::string& scriptType)
+      {
+         mFactory->RemoveType(scriptType);
+      }
+
       /**
        * Loads a Director script.  An exception will occur on error.
        *
