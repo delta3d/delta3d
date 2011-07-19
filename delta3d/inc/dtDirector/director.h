@@ -49,29 +49,6 @@ namespace dtUtil
  */
 namespace dtDirector
 {
-   class DT_DIRECTOR_EXPORT DirectorInstance: public dtCore::Base
-   {
-      DECLARE_MANAGEMENT_LAYER(DirectorInstance)
-
-   public:
-
-      /**
-       * Constructor.
-       *
-       * @param name the instance name
-       */
-      DirectorInstance(Director* director, const std::string& name = "Director Script");
-
-   protected:
-      /**
-       * Destructor.
-       */
-      virtual ~DirectorInstance();
-
-   public:
-      Director* mDirector;
-   };
-
    /**
     * This is the base class for all director scripts.
     *
@@ -141,11 +118,6 @@ namespace dtDirector
        * Retrieves whether the script has started.
        */
       bool HasStarted() const {return mStarted;}
-
-      /**
-       * Retrieves whether the script is currently being saved.
-       */
-      bool IsSaving() const {return mSaving;}
 
       /**
        * Retrieves whether the script is currently being loaded.
@@ -576,22 +548,6 @@ namespace dtDirector
       void ProcessUpdatedNode(Node* node, bool first, bool continued, int input, std::vector<OutputLink*> outputs);
 
       /**
-       * Writes a string to a file.
-       *
-       * @param[in]  file  The file.
-       * @param[in]  str   The string to write.
-       */
-      bool WriteString(FILE* file, const std::string& str);
-
-      /**
-       * Reads a string from a file.
-       *
-       * @param[in]  file  The file.
-       * @param[in]  str   The string to read.
-       */
-      bool ReadString(FILE* file, std::string& str);
-
-      /**
        * Retrieves the global value key name.
        */
       std::string GetValueKey(ValueNode* value);
@@ -697,7 +653,6 @@ namespace dtDirector
       bool        mModified;
       bool        mStarted;
       bool        mLoading;
-      bool        mSaving;
 
       bool        mDebugging;
       bool        mShouldStep;
@@ -717,14 +672,13 @@ namespace dtDirector
 
       dtCore::RefPtr<DirectorNotifier> mNotifier;
 
-      dtCore::RefPtr<DirectorInstance> mBaseInstance;
-
       std::set<std::string> mMissingNodeTypes;
       std::vector<std::string> mMissingLibraries;
       bool mHasDeprecatedProperty;
 
       friend class ValueNode;
       friend class ArrayValueNode;
+      friend class DirectorTypeFactory;
 
       // Switch to enable/disable this director
       DT_DECLARE_ACCESSOR_INLINE(bool, Active)

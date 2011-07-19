@@ -4,6 +4,8 @@
 #include <dtInspectorQt/propertyeditor.h>
 #include <dtDirectorQt/editornotifier.h>
 
+#include <dtDirector/directortypefactory.h>
+
 #include <dtCore/uniqueid.h>
 
 #include <dtDAL/project.h>
@@ -32,27 +34,33 @@ dtInspectorQt::DirectorView::~DirectorView()
 //////////////////////////////////////////////////////////////////////////
 void dtInspectorQt::DirectorView::Build(QList<EntryData>& itemList)
 {
-   int count = dtDirector::DirectorInstance::GetInstanceCount();
-   for (int index = 0; index < count; ++index)
+   dtDirector::DirectorTypeFactory* factory = dtDirector::DirectorTypeFactory::GetInstance();
+   if (factory)
    {
-      dtDirector::DirectorInstance* item = dtDirector::DirectorInstance::GetInstance(index);
-      if (item && !item->mDirector->GetParent())
-      {
-         std::string fileName = item->mDirector->GetScriptName();
-         std::string contextDir = osgDB::convertFileNameToNativeStyle(dtDAL::Project::GetInstance().GetContext()+"/directors/");
-         contextDir = osgDB::getRealPath(contextDir);
-         if (!fileName.empty())
-         {
-            fileName = osgDB::getRealPath(fileName);
-         }
-         fileName = dtUtil::FileUtils::GetInstance().RelativePath(contextDir, fileName);
+      const std::vector<dtDirector::Director*>& scriptList = factory->GetScriptInstances();
 
-         EntryData data;
-         data.name = fileName.c_str();
-         data.type = "Director Script";
-         data.itemData = QVariant(item->GetUniqueId().ToString().c_str());
-         BuildChildren(item->mDirector, data.children);
-         itemList.push_back(data);
+      int count = (int)scriptList.size();
+      for (int index = 0; index < count; ++index)
+      {
+         dtDirector::Director* director = scriptList[index];
+         if (director && !director->GetParent())
+         {
+            std::string fileName = director->GetScriptName();
+            std::string contextDir = osgDB::convertFileNameToNativeStyle(dtDAL::Project::GetInstance().GetContext()+"/directors/");
+            contextDir = osgDB::getRealPath(contextDir);
+            if (!fileName.empty())
+            {
+               fileName = osgDB::getRealPath(fileName);
+            }
+            fileName = dtUtil::FileUtils::GetInstance().RelativePath(contextDir, fileName);
+
+            EntryData data;
+            data.name = fileName.c_str();
+            data.type = "Director Script";
+            data.itemData = QVariant(director->GetID().ToString().c_str());
+            BuildChildren(director, data.children);
+            itemList.push_back(data);
+         }
       }
    }
 }
@@ -62,14 +70,20 @@ void dtInspectorQt::DirectorView::OperateOn(const QVariant& itemData)
 {
    mOperateOn = NULL;
 
-   int count = dtDirector::DirectorInstance::GetInstanceCount();
-   for (int index = 0; index < count; ++index)
+   dtDirector::DirectorTypeFactory* factory = dtDirector::DirectorTypeFactory::GetInstance();
+   if (factory)
    {
-      dtDirector::DirectorInstance* item = dtDirector::DirectorInstance::GetInstance(index);
-      if (item && itemData.toString().toStdString() == item->GetUniqueId().ToString())
+      const std::vector<dtDirector::Director*>& scriptList = factory->GetScriptInstances();
+
+      int count = (int)scriptList.size();
+      for (int index = 0; index < count; ++index)
       {
-         mOperateOn = item;
-         break;
+         dtDirector::Director* director = scriptList[index];
+         if (director && itemData.toString().toStdString() == director->GetID().ToString())
+         {
+            mOperateOn = director;
+            break;
+         }
       }
    }
 
@@ -81,8 +95,8 @@ void dtInspectorQt::DirectorView::OnNameChange(const QString& text)
 {
    if (mOperateOn.valid())
    {
-      mOperateOn->SetName(text.toStdString());
-      emit NameChanged(text);
+      //mOperateOn->SetName(text.toStdString());
+      //emit NameChanged(text);
    }
 }
 
@@ -96,7 +110,7 @@ void dtInspectorQt::DirectorView::OnViewButtonClicked()
    {
       dtCore::RefPtr<dtDirector::EditorNotifier> notifier =
          dynamic_cast<dtDirector::EditorNotifier*>(
-         mOperateOn->mDirector->GetNotifier());
+         mOperateOn->GetNotifier());
 
       if (!notifier)
       {
@@ -105,9 +119,9 @@ void dtInspectorQt::DirectorView::OnViewButtonClicked()
 
       notifier->AddEditor(editor);
 
-      mOperateOn->mDirector->SetNotifier(notifier);
+      mOperateOn->SetNotifier(notifier);
 
-      editor->SetDirector(mOperateOn->mDirector);
+      editor->SetDirector(mOperateOn.get());
       editor->show();
    }
 }
@@ -153,12 +167,12 @@ void dtInspectorQt::DirectorView::Update()
    if (mOperateOn.valid())
    {
       mUI->baseGroupBox->show();
-      mUI->baseNameText->setText(QString::fromStdString(mOperateOn->GetName()));
+      mUI->baseNameText->setText(QString::fromStdString(mOperateOn->GetScriptName()));
       mUI->baseRefCountLabel->setText(QString::number(mOperateOn->referenceCount()));
 
       mUI->directorScriptGroupBox->show();
 
-      dtDAL::BaseActorObject* player = mOperateOn->mDirector->GetPlayerActor();
+      dtDAL::BaseActorObject* player = mOperateOn->GetPlayerActor();
       if (player)
       {
          mUI->directorScriptPlayerEdit->setText(player->GetName().c_str());
@@ -168,7 +182,7 @@ void dtInspectorQt::DirectorView::Update()
          mUI->directorScriptPlayerEdit->setText("<None>");
       }
 
-      dtDAL::BaseActorObject* owner = mOperateOn->mDirector->GetScriptOwnerActor();
+      dtDAL::BaseActorObject* owner = mOperateOn->GetScriptOwnerActor();
       if (owner)
       {
          mUI->directorScriptOwnerEdit->setText(owner->GetName().c_str());
@@ -179,7 +193,7 @@ void dtInspectorQt::DirectorView::Update()
       }
 
       std::vector<dtCore::RefPtr<dtDAL::PropertyContainer> > actorList;
-      actorList.push_back(mOperateOn->mDirector);
+      actorList.push_back(mOperateOn.get());
       mUI->propertyEditor->HandlePropertyContainersSelected(actorList);
    }
    else
