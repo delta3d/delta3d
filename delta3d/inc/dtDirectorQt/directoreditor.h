@@ -119,6 +119,12 @@ namespace dtDirector
       void RestoreTabStates();
 
       /**
+       * Refeshes the "New" script button menu based on what script
+       * types are available.
+       */
+      void RefreshNewMenu();
+
+      /**
        * Opens a Director graph.
        *
        * @param[in]  graph   The graph to open.
@@ -390,6 +396,7 @@ namespace dtDirector
        * Event handler when the new button is pressed.
        */
       void on_action_New_triggered();
+      void OnNewScriptTypeTriggered(QAction* action);
 
       /**
        * Event handler when the load button is pressed.
@@ -554,7 +561,7 @@ namespace dtDirector
       /**
        * Clears the contents of the current script.
        */
-      void ClearScript();
+      void ClearScript(const std::string& scriptType = "");
 
       /**
        * Saves the current script.
