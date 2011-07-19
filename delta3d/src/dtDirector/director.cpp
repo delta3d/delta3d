@@ -1192,7 +1192,7 @@ namespace dtDirector
 
       return mDebugging;
    }
-   
+
    ////////////////////////////////////////////////////////////////////////////////
    void Director::StepDebugger()
    {
@@ -1221,8 +1221,8 @@ namespace dtDirector
       for (stack.currentThread = 0; stack.currentThread < (int)stack.subThreads.size(); stack.currentThread++)
       {
          continued |= UpdateThread(stack.subThreads[stack.currentThread], simDelta, delta);
-
-         if (stack.subThreads[stack.currentThread].stack.empty())
+         if (0 <= stack.currentThread && stack.currentThread < (int)stack.subThreads.size() &&
+             stack.subThreads[stack.currentThread].stack.empty())
          {
             stack.subThreads.erase(stack.subThreads.begin() + stack.currentThread);
             stack.currentThread--;
@@ -1323,7 +1323,7 @@ namespace dtDirector
          mQueueingThreads = false;
 
          // We need to store a temporary copy of the current thread queue
-         // and clear the global copy because during the execution of 
+         // and clear the global copy because during the execution of
          // the queue there is a chance that other threads created during
          // this process will cause other queues to happen, and we don't
          // want these separate queues to conflict with each other.
@@ -1643,7 +1643,7 @@ namespace dtDirector
 
          nodes.push_back(value);
       }
-    
+
       return false;
    }
 
@@ -1862,7 +1862,7 @@ namespace dtDirector
 
          thread.stack.push_back(stack);
       }
-      
+
       threads.push_back(thread);
    }
 
