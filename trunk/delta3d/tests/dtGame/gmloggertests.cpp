@@ -481,39 +481,33 @@ void GMLoggerTests::TestBinaryLogStreamReadWriteErrors()
    //read only log stream.
    try
    {
-      try
       {
          dtCore::RefPtr<dtGame::BinaryLogStream> errorStream =
             new dtGame::BinaryLogStream(msgFactory);
+
+         errorStream->Create(TESTS_DIR,LOGFILE);
 
          //First, open for read...
          errorStream->Open(TESTS_DIR,LOGFILE);
 
          //Now try writing to it.. this should throw an exception.
-         errorStream->WriteMessage(*tickMessage.get(),100.0);
-         CPPUNIT_FAIL("Should have caught a LOGGER_IO_EXCEPTION.");
-      }
-      catch (const dtUtil::Exception&)
-      {
+         CPPUNIT_ASSERT_THROW(errorStream->WriteMessage(*tickMessage.get(),100.0),
+                              dtGame::LogStreamIOException);
       }
 
-      //Now make sure the proper exceptions are thrown when reading from a
-      //write only log stream.
-      try
       {
+         //Now make sure the proper exceptions are thrown when reading from a
+         //write only log stream.
          dtCore::RefPtr<dtGame::BinaryLogStream> errorStream =
             new dtGame::BinaryLogStream(msgFactory);
 
-         //First, open for read...
+         //First, open for writing.
          errorStream->Create(TESTS_DIR,LOGFILE);
 
          //Now try reading from it.. this should throw an exception.
-         double timeStamp;
-         tickMessage = (dtGame::TickMessage*)(errorStream->ReadMessage(timeStamp)).get();
-         CPPUNIT_FAIL("Should have caught a LOGGER_IO_EXCEPTION.");
-      }
-      catch (const dtUtil::Exception&)
-      {
+         double timeStamp(100.0);
+         CPPUNIT_ASSERT_THROW(errorStream->ReadMessage(timeStamp),
+                              dtGame::LogStreamIOException);
       }
    }
    catch(const dtUtil::Exception& e)

@@ -170,7 +170,6 @@ namespace dtGame
    //////////////////////////////////////////////////////////////////////////
    void BinaryLogStream::Open(const std::string& logsPath, const std::string& logResourceName)
    {
-      std::cout << "BinaryLogStream::Open(\"" << logsPath << "\", \"" << logResourceName << "\");" << std::endl;
       // Make sure the stream is not already open.
       Close();
 
