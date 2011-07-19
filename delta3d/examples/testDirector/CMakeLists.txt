@@ -18,10 +18,7 @@ SET(LIBS_TO_LINK      ${LIB_NAME}
                       ${DTUTIL_LIBRARY}
                       ${DTCORE_LIBRARY}
                       ${DTABC_LIBRARY}
-                      ${DTAUDIO_LIBRARY}
                       ${DTGAME_LIBRARY}
-                      ${DTACTORS_LIBRARY}
-                      ${DTDAL_LIBRARY}
                       ${DTDIRECTOR_LIBRARY}
 )
 
