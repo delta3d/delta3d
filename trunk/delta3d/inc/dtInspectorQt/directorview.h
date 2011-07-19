@@ -58,7 +58,7 @@ namespace dtInspectorQt
       void BuildChildren(dtDirector::Director* parent, QList<EntryData>& childList);
 
       Ui::InspectorWidget* mUI;
-      dtCore::ObserverPtr<dtDirector::DirectorInstance> mOperateOn;
+      dtCore::ObserverPtr<dtDirector::Director> mOperateOn;
 
       void Update();
 

@@ -20,17 +20,14 @@
  */
 
 #include <dtCore/timer.h>
-#include <dtDAL/actorproperty.h>
+
 #include <dtDAL/project.h>
+#include <dtDAL/actorproperty.h>
 #include <dtDAL/stringactorproperty.h>
+
 #include <dtDirector/director.h>
 #include <dtDirector/nodemanager.h>
-#include <dtDirector/directorxml.h>
-#include <dtDirector/directorbinary.h>
-#include <dtUtil/datapathutils.h>
-
-#include <osgDB/FileNameUtils>
-
+#include <dtDirector/directortypefactory.h>
 
 
 #define SAFETY_TIMER 0.1f
@@ -40,26 +37,6 @@ namespace dtDirector
    dtCore::UniqueId Director::mPlayer = dtCore::UniqueId("");
    std::map<std::string, std::vector<ValueNode*> > Director::mGlobalValues;
    bool Director::mApplyingGlobalValue = false;
-
-   IMPLEMENT_MANAGEMENT_LAYER(DirectorInstance)
-
-   ////////////////////////////////////////////////////////////////////////////////
-   DirectorInstance::DirectorInstance(Director* director, const std::string& name)
-      : mDirector(director)
-   {
-      RegisterInstance(this);
-
-      if (director)
-      {
-         SetUniqueId(director->GetID());
-      }
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   DirectorInstance::~DirectorInstance()
-   {
-      DeregisterInstance(this);
-   }
 
    //////////////////////////////////////////////////////////////////////////
    //////////////////////////////////////////////////////////////////////////
@@ -71,8 +48,6 @@ namespace dtDirector
       , mMap(NULL)
       , mModified(false)
       , mStarted(false)
-      , mLoading(false)
-      , mSaving(false)
       , mDebugging(false)
       , mShouldStep(false)
       , mGraph(NULL)
@@ -85,8 +60,6 @@ namespace dtDirector
       mScriptOwner = "";
 
       mResource = dtDAL::ResourceDescriptor::NULL_RESOURCE;
-
-      mBaseInstance = new DirectorInstance(this);
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -103,8 +76,6 @@ namespace dtDirector
          }
          mMessageGMComponent = NULL;
       }
-
-      mBaseInstance = NULL;
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -160,14 +131,15 @@ namespace dtDirector
       mLibraries.clear();
       mLibraryVersionMap.clear();
 
+      mModified = false;
+      mMissingNodeTypes.clear();
+      mMissingLibraries.clear();
+      mHasDeprecatedProperty = false;
+
       LoadDefaultLibraries();
 
       mScriptName = "";
       mStarted = false;
-      if (mBaseInstance.valid())
-      {
-         mBaseInstance->SetName("None");
-      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -297,175 +269,21 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void Director::LoadScript(const std::string& scriptFile)
    {
-      Clear();
-
-      if (scriptFile.empty())
+      DirectorTypeFactory* factory = DirectorTypeFactory::GetInstance();
+      if (factory)
       {
-         return;
-      }
-
-      std::string ext = osgDB::getFileExtension(scriptFile);
-      if (ext.empty())
-      {
-         ext = "dtdir";
-      }
-
-      // Convert to lower case extension.
-      std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
-
-      bool binaryFormat = false;
-      if (ext.compare("dtdirb") == 0)
-      {
-         binaryFormat = true;
-      }
-
-      std::string fileName = osgDB::getNameLessExtension(scriptFile) + "." + ext;
-
-      bool hasContext = dtDAL::Project::GetInstance().IsContextValid();
-
-      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
-      if (hasContext)
-      {
-         fileUtils.PushDirectory(dtDAL::Project::GetInstance().GetContext() + "\\directors");
-      }
-      else
-      {
-         fileName = dtUtil::FindFileInPathList(fileName);
-      }
-
-      mModified = false;
-      mMissingNodeTypes.clear();
-      mMissingLibraries.clear();
-      mHasDeprecatedProperty = false;
-
-      mLoading = true;
-      try
-      {
-         if (binaryFormat)
-         {
-            dtCore::RefPtr<BinaryParser> parser = new BinaryParser();
-            if (parser.valid())
-            {
-               parser->Parse(this, mMap.get(), fileName);
-               mMissingNodeTypes = parser->GetMissingNodeTypes();
-               mMissingLibraries = parser->GetMissingLibraries();
-               mHasDeprecatedProperty = parser->HasDeprecatedProperty();
-            }
-         }
-         else
-         {
-            dtCore::RefPtr<DirectorParser> parser = new DirectorParser();
-            if (parser.valid())
-            {
-               parser->Parse(this, mMap.get(), fileName);
-               mMissingNodeTypes = parser->GetMissingNodeTypes();
-               mMissingLibraries = parser->GetMissingLibraries();
-               mHasDeprecatedProperty = parser->HasDeprecatedProperty();
-            }
-         }
-      }
-      catch (const dtUtil::Exception& e)
-      {
-         std::string error = "Unable to parse " + scriptFile + " with error " + e.What();
-         dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__, error.c_str());
-         if (hasContext)
-         {
-            fileUtils.PopDirectory();
-         }
-         mLoading = false;
-         throw e;
-      }
-
-      if (hasContext)
-      {
-         fileUtils.PopDirectory();
-      }
-
-      if (mMissingNodeTypes.size() > 0 ||
-          mMissingLibraries.size() > 0 ||
-          mHasDeprecatedProperty)
-      {
-         mModified = true;
-      }
-
-      mScriptName = fileName;
-
-      if (mBaseInstance.valid())
-      {
-         mBaseInstance->SetName(osgDB::getStrippedName(scriptFile));
-      }
-
-      mLoading = false;
-      std::vector<Node*> nodes;
-      GetAllNodes(nodes);
-      int count = (int)nodes.size();
-      for (int index = 0; index < count; ++index)
-      {
-         nodes[index]->OnFinishedLoading();
+         factory->LoadScript(this, scriptFile);
       }
    }
 
    //////////////////////////////////////////////////////////////////////////
    void Director::SaveScript(const std::string& scriptFile)
    {
-      std::string ext = osgDB::getFileExtension(scriptFile);
-      if (ext.empty())
+      DirectorTypeFactory* factory = DirectorTypeFactory::GetInstance();
+      if (factory)
       {
-         ext = "dtdir";
+         factory->SaveScript(this, scriptFile);
       }
-
-      // Convert to lower case extension.
-      std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
-
-      bool binaryFormat = false;
-      if (ext.compare("dtdirb") == 0)
-      {
-         binaryFormat = true;
-      }
-
-      std::string fileName = osgDB::getNameLessExtension(scriptFile) + "." + ext;
-
-      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
-      fileUtils.PushDirectory(dtDAL::Project::GetInstance().GetContext() + "\\directors");
-
-      mSaving = true;
-
-      try
-      {
-         if (binaryFormat)
-         {
-            dtCore::RefPtr<BinaryWriter> writer = new BinaryWriter();
-            if (writer.valid())
-            {
-               writer->Save(this, fileName);
-            }
-         }
-         else
-         {
-            dtCore::RefPtr<DirectorWriter> writer = new DirectorWriter();
-            if (writer.valid())
-            {
-               writer->Save(this, fileName);
-            }
-         }
-      }
-      catch (const dtUtil::Exception& e)
-      {
-         std::string error = "Unable to parse " + scriptFile + " with error " + e.What();
-         dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__, error.c_str());
-         fileUtils.PopDirectory();
-         throw e;
-      }
-
-      mScriptName = fileName;
-
-      mModified = false;
-      mMissingNodeTypes.clear();
-      mMissingLibraries.clear();
-      mHasDeprecatedProperty = false;
-
-      mSaving = false;
-      fileUtils.PopDirectory();
    }
 
    /////////////////////////////////////////////////////////////////
@@ -1550,37 +1368,6 @@ namespace dtDirector
             mNotifier->BreakNode(node, true);
          }
       }
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   bool Director::WriteString(FILE* file, const std::string& str)
-   {
-      if (!file) return false;
-
-      size_t len = str.length();
-      fwrite(&len, sizeof(size_t), 1, file);
-
-      if (len <= 0) return true;
-      fwrite(str.c_str(), sizeof(char), len, file);
-
-      return true;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   bool Director::ReadString(FILE* file, std::string& str)
-   {
-      if (!file) return false;
-
-      size_t len;
-      fread(&len, sizeof(size_t), 1, file);
-
-      if (len > 0)
-      {
-         str.resize(len);
-         fread(&str[0], sizeof(char), len, file);
-      }
-
-      return true;
    }
 
    ////////////////////////////////////////////////////////////////////////////////

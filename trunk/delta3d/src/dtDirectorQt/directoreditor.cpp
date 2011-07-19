@@ -41,6 +41,8 @@
 #include <dtDirectorQt/valueitem.h>
 #include <dtDirectorQt/macroitem.h>
 
+#include <dtDirector/directortypefactory.h>
+
 #include <dtQt/docbrowser.h>
 
 #include <dtUtil/mathdefines.h>
@@ -283,7 +285,19 @@ namespace dtDirector
             contextDir = osgDB::getRealPath(contextDir);
             mFileName = dtUtil::FileUtils::GetInstance().RelativePath(contextDir, fileName);
 
-            mDirector->LoadScript(mFileName);
+            DirectorTypeFactory* factory = DirectorTypeFactory::GetInstance();
+            if (factory)
+            {
+               // Determine if we need to change our Director object.
+               if (mDirector->GetResource() == dtDAL::ResourceDescriptor::NULL_RESOURCE)
+               {
+                  mDirector = factory->LoadScript(mFileName, mDirector->GetGameManager(), mDirector->GetMap());
+               }
+               else
+               {
+                  factory->LoadScript(mDirector, mFileName);
+               }
+            }
 
             // Display a warning message if there were libraries that could not be loaded.
             const std::vector<std::string>& missingLibraries = mDirector->GetMissingLibraries();
@@ -2172,61 +2186,63 @@ namespace dtDirector
 
             std::map<Director*, Director::StateData> stateMap;
 
-            for (int i = 0; i < dtCore::Base::GetInstanceCount(); ++i)
+            DirectorTypeFactory* factory = DirectorTypeFactory::GetInstance();
+            if (factory)
             {
-               dtCore::Base *o = dtCore::Base::GetInstance(i);
-               dtDirector::DirectorInstance* director =
-                  dynamic_cast<dtDirector::DirectorInstance*>(o);
-
-               if (director)
+               const std::vector<Director*>& scriptList = factory->GetScriptInstances();
+               for (int index = 0; index < (int)scriptList.size(); ++index)
                {
-                  std::vector<Node*> nodes;
-                  director->mDirector->GetAllNodes(nodes);
-
-                  int nodeCount = (int)nodes.size();
-                  for (int nodeIndex = 0; nodeIndex < nodeCount; ++nodeIndex)
+                  Director* director = scriptList[index];
+                  if (director)
                   {
-                     Node* node = nodes[nodeIndex];
-                     if (!node)
-                     {
-                        continue;
-                     }
+                     std::vector<Node*> nodes;
+                     director->GetAllNodes(nodes);
 
-                     std::vector<dtDAL::ActorProperty*> propList;
-                     node->GetPropertyList(propList);
-                     int propCount = (int)propList.size();
-                     for (int propIndex = 0; propIndex < propCount; ++propIndex)
+                     int nodeCount = (int)nodes.size();
+                     for (int nodeIndex = 0; nodeIndex < nodeCount; ++nodeIndex)
                      {
-                        dtDAL::ActorProperty* prop = propList[propIndex];
-                        if (!prop)
+                        Node* node = nodes[nodeIndex];
+                        if (!node)
                         {
                            continue;
                         }
 
-                        if (prop->GetDataType() == dtDAL::DataType::DIRECTOR)
+                        std::vector<dtDAL::ActorProperty*> propList;
+                        node->GetPropertyList(propList);
+                        int propCount = (int)propList.size();
+                        for (int propIndex = 0; propIndex < propCount; ++propIndex)
                         {
-                           dtDAL::ResourceActorProperty* resourceProp =
-                              dynamic_cast<dtDAL::ResourceActorProperty*>(prop);
-                           if (!resourceProp)
+                           dtDAL::ActorProperty* prop = propList[propIndex];
+                           if (!prop)
                            {
                               continue;
                            }
 
-                           if (resourceProp->GetValue() == resource)
+                           if (prop->GetDataType() == dtDAL::DataType::DIRECTOR)
                            {
-                              // Make sure we save the state of the top most script.
-                              Director* parent = director->mDirector;
-                              while (parent->GetParent())
+                              dtDAL::ResourceActorProperty* resourceProp =
+                                 dynamic_cast<dtDAL::ResourceActorProperty*>(prop);
+                              if (!resourceProp)
                               {
-                                 parent = parent->GetParent();
+                                 continue;
                               }
 
-                              if (stateMap.find(parent) == stateMap.end())
+                              if (resourceProp->GetValue() == resource)
                               {
-                                 stateMap[parent] = parent->GetState();
-                              }
+                                 // Make sure we save the state of the top most script.
+                                 Director* parent = director;
+                                 while (parent->GetParent())
+                                 {
+                                    parent = parent->GetParent();
+                                 }
 
-                              resourceProp->SetValue(resource);
+                                 if (stateMap.find(parent) == stateMap.end())
+                                 {
+                                    stateMap[parent] = parent->GetState();
+                                 }
+
+                                 resourceProp->SetValue(resource);
+                              }
                            }
                         }
                      }
