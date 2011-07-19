@@ -66,6 +66,18 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   void DirectorTypeFactory::UnRegisterScriptType(const std::string& scriptType)
+   {
+      mFactory->RemoveType(scriptType);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void DirectorTypeFactory::GetScriptTypes(std::vector<std::string>& scriptTypes)
+   {
+      mFactory->GetSupportedTypes(scriptTypes);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    dtCore::RefPtr<Director> DirectorTypeFactory::LoadScript(const std::string& scriptFile, dtGame::GameManager* gm, dtDAL::Map* map)
    {
       dtCore::RefPtr<Director> newDirector = NULL;

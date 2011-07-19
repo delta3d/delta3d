@@ -205,14 +205,7 @@ namespace dtDirector
             fileName = osgDB::getRealPath(fileName);
          }
          mFileName = dtUtil::FileUtils::GetInstance().RelativePath(contextDir, fileName);
-         if (mFileName.empty())
-         {
-            setWindowTitle("Untitled");
-         }
-         else
-         {
-            setWindowTitle(mFileName.c_str());
-         }
+
          mUI.graphBrowser->BuildGraphList(mDirector->GetGraphRoot());
 
          // If we have a valid notifier, make sure all value nodes
@@ -443,6 +436,37 @@ namespace dtDirector
       }
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::RefreshNewMenu()
+   {
+      // First determine if we have more than one script type to choose
+      // between.
+      std::vector<std::string> scriptTypes;
+      DirectorTypeFactory* factory = DirectorTypeFactory::GetInstance();
+      if (factory)
+      {
+         factory->GetScriptTypes(scriptTypes);
+      }
+
+      mUI.action_New->setMenu(NULL);
+
+      // If we have more than one script type to choose from, then
+      // prompt the user for the proper type to use.
+      if (scriptTypes.size() > 1)
+      {
+         QMenu* menu = new QMenu();
+         connect(menu, SIGNAL(triggered(QAction*)), this, SLOT(OnNewScriptTypeTriggered(QAction*)));
+         
+         int count = (int)scriptTypes.size();
+         for (int index = 0; index < count; ++index)
+         {
+            menu->addAction(scriptTypes[index].c_str());
+         }
+
+         mUI.action_New->setMenu(menu);
+      }
+   }
+
    //////////////////////////////////////////////////////////////////////////
    void DirectorEditor::OpenGraph(dtDirector::DirectorGraph* graph, bool newTab)
    {
@@ -607,7 +631,16 @@ namespace dtDirector
       {
          title = mFileName.c_str();
       }
+
       if (GetUndoManager()->IsModified()) title += "*";
+
+      if (GetDirector())
+      {
+         title += " (";
+         title += GetDirector()->GetScriptType().c_str();
+         title += ")";
+      }
+
       setWindowTitle(title);
 
       bool bHasParent = false;
@@ -823,6 +856,7 @@ namespace dtDirector
          mUI.actionToggle_Break_Point->setVisible(false);
       }
 
+      RefreshNewMenu();
       RefreshReferenceScene();
    }
 
@@ -1172,6 +1206,19 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void DirectorEditor::on_action_New_triggered()
    {
+      OnNewScriptTypeTriggered(NULL);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::OnNewScriptTypeTriggered(QAction* action)
+   {
+      std::string scriptType = "";
+
+      if (action)
+      {
+         scriptType = action->text().toStdString();
+      }
+
       // Check if the undo manager has some un-committed changes first.
       if (GetUndoManager()->IsModified())
       {
@@ -1192,7 +1239,7 @@ namespace dtDirector
          }
       }
 
-      ClearScript();
+      ClearScript(scriptType);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -1972,6 +2019,8 @@ namespace dtDirector
       {
          OpenGraph(mDirector->GetGraphRoot());
       }
+
+      RefreshNewMenu();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -2066,13 +2115,33 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void DirectorEditor::ClearScript()
+   void DirectorEditor::ClearScript(const std::string& scriptType)
    {
       // Clear the script.
       mUI.graphTab->clear();
       mDirector->Clear();
       GetUndoManager()->Clear();
       mFileName.clear();
+
+      if (!scriptType.empty() && scriptType != mDirector->GetScriptType())
+      {
+         dtGame::GameManager* gm = mDirector->GetGameManager();
+         dtDAL::Map* map = mDirector->GetMap();
+
+         DirectorTypeFactory* factory = DirectorTypeFactory::GetInstance();
+         if (factory)
+         {
+            SetDirector(factory->CreateDirector(scriptType));
+         }
+
+         if (!mDirector.valid())
+         {
+            mDirector = new Director();
+         }
+
+         mDirector->Init(gm, map);
+         RefreshNodeScenes();
+      }
 
       // Create a single tab with the default graph.
       OpenGraph(mDirector->GetGraphRoot());
