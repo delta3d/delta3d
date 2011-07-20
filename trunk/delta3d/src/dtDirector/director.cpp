@@ -60,11 +60,23 @@ namespace dtDirector
       mScriptOwner = "";
 
       mResource = dtDAL::ResourceDescriptor::NULL_RESOURCE;
+
+      DirectorTypeFactory* factory = DirectorTypeFactory::GetInstance();
+      if (factory)
+      {
+         factory->RegisterScriptInstance(this);
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////
    Director::~Director()
    {
+      DirectorTypeFactory* factory = DirectorTypeFactory::GetInstance();
+      if (factory)
+      {
+         factory->UnRegisterScriptInstance(this);
+      }
+
       Clear();
 
       if (mMessageGMComponent.valid() && mGameManager)
