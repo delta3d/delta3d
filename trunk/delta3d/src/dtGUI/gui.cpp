@@ -216,7 +216,7 @@ void GUI::_SetupInternalGraph()
 
    //don't clear the color buffer (allows the UI to be superimposed on the scene)
    camera->setClearMask(GL_DEPTH_BUFFER_BIT);
-   camera->setRenderOrder(osg::Camera::POST_RENDER);
+   camera->setRenderOrder(osg::Camera::POST_RENDER, 100);
 
    // we don't want the camera to grab event focus from the viewers main camera(s).
    camera->setAllowEventFocus(false);
@@ -227,10 +227,8 @@ void GUI::_SetupInternalGraph()
 
    //m_pInternalGraph->setName("internal_GUI_Geode");
    states->setMode(GL_DEPTH_TEST,osg::StateAttribute::OFF);
-   states->setRenderBinDetails(11, "RenderBin");
    states->setMode(GL_BLEND, osg::StateAttribute::ON);
    states->setTextureMode(0, GL_TEXTURE_2D, osg::StateAttribute::ON);
-   states->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
 
    osg::Geode* geode = new osg::Geode;
    geode->addDrawable(new HUDDrawable());
