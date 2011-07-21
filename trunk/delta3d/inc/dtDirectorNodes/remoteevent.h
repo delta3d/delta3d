@@ -25,6 +25,8 @@
 #include <dtDirector/eventnode.h>
 #include <dtDirectorNodes/nodelibraryexport.h>
 
+#include <dtDAL/stringactorproperty.h>
+
 namespace dtDirector
 {
    /**
@@ -37,7 +39,10 @@ namespace dtDirector
     */
    class NODE_LIBRARY_EXPORT RemoteEvent : public EventNode
    {
+      class ParamData;
+
    public:
+
       /**
        * Constructs the Node.
        */
@@ -69,6 +74,23 @@ namespace dtDirector
       void SetEventName(const std::string& eventName);
       const std::string& GetEventName() const;
 
+      /**
+       * Accessors for the parameter list property.
+       */
+      void SetParameterIndex(int index);
+      void SetParameter(const ParamData& value);
+      ParamData GetParameter() const;
+      ParamData GetDefaultParameter() const;
+
+      void SetParamName(const std::string& value);
+      std::string GetParamName() const;
+
+      void SetParamValue(const std::string& value);
+      std::string GetParamValue() const;
+
+      void SetParameterList(const std::vector<ParamData>& value);
+      std::vector<ParamData> GetParameterList() const;
+
    protected:
       /**
        *	Protected Destructor.  dtCore::RefPtr will handle its destruction.
@@ -76,7 +98,39 @@ namespace dtDirector
       virtual ~RemoteEvent();
 
    private:
+      class ParamData
+      {
+      public:
+         ParamData(int index)
+         {
+            name = "Param " + dtUtil::ToString<int>(index);
+
+            displayProp = NULL;
+         }
+         ~ParamData(){}
+
+         void SetValue(const std::string& inValue)
+         {
+            value = inValue;
+         }
+
+         const std::string& GetValue() const
+         {
+            return value;
+         }
+
+         dtCore::RefPtr<dtDAL::ActorProperty> displayProp;
+         std::string name;
+         std::string value;
+      };
+
+      void UpdateParameterLinks();
+
       std::string mEventName;
+
+      int mOrignalValueCount;
+      std::vector<ParamData> mParameterList;
+      int mParameterIndex;
    };
 }
 
