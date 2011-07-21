@@ -103,18 +103,6 @@ namespace dtDirector
 
       std::string fileName = osgDB::getNameLessExtension(scriptFile) + "." + ext;
 
-      bool hasContext = dtDAL::Project::GetInstance().IsContextValid();
-
-      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
-      if (hasContext)
-      {
-         fileUtils.PushDirectory(dtDAL::Project::GetInstance().GetContext() + "/directors");
-      }
-      else
-      {
-         fileName = dtUtil::FindFileInPathList(fileName);
-      }
-
       try
       {
          if (binaryFormat)
@@ -162,17 +150,7 @@ namespace dtDirector
       {
          std::string error = "Unable to parse " + scriptFile + " with error " + e.What();
          dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__, error.c_str());
-         if (hasContext)
-         {
-            fileUtils.PopDirectory();
-         }
-         newDirector->mLoading = false;
          throw e;
-      }
-
-      if (hasContext)
-      {
-         fileUtils.PopDirectory();
       }
 
       if (newDirector->mMissingNodeTypes.size() > 0 ||
@@ -225,18 +203,6 @@ namespace dtDirector
 
       std::string fileName = osgDB::getNameLessExtension(scriptFile) + "." + ext;
 
-      bool hasContext = dtDAL::Project::GetInstance().IsContextValid();
-
-      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
-      if (hasContext)
-      {
-         fileUtils.PushDirectory(dtDAL::Project::GetInstance().GetContext() + "/directors");
-      }
-      else
-      {
-         fileName = dtUtil::FindFileInPathList(fileName);
-      }
-
       try
       {
          director->mLoading = true;
@@ -268,17 +234,8 @@ namespace dtDirector
       {
          std::string error = "Unable to parse " + scriptFile + " with error " + e.What();
          dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__, error.c_str());
-         if (hasContext)
-         {
-            fileUtils.PopDirectory();
-         }
          director->mLoading = false;
          throw e;
-      }
-
-      if (hasContext)
-      {
-         fileUtils.PopDirectory();
       }
 
       if (director->mMissingNodeTypes.size() > 0 ||
@@ -308,14 +265,11 @@ namespace dtDirector
          throw dtUtil::Exception("Attempted to save a Director Script when no Director Script class was provided.", __FILE__, __LINE__);
       }
 
-      std::string ext = osgDB::getFileExtension(scriptFile);
+      std::string ext = osgDB::getLowerCaseFileExtension(scriptFile);
       if (ext.empty())
       {
          ext = "dtdir";
       }
-
-      // Convert to lower case extension.
-      std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
 
       bool binaryFormat = false;
       if (ext.compare("dtdirb") == 0)
@@ -324,18 +278,6 @@ namespace dtDirector
       }
 
       std::string fileName = osgDB::getNameLessExtension(scriptFile) + "." + ext;
-
-      bool hasContext = dtDAL::Project::GetInstance().IsContextValid();
-
-      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
-      if (hasContext)
-      {
-         fileUtils.PushDirectory(dtDAL::Project::GetInstance().GetContext() + "/directors");
-      }
-      else
-      {
-         fileName = dtUtil::FindFileInPathList(fileName);
-      }
 
       try
       {
@@ -360,10 +302,6 @@ namespace dtDirector
       {
          std::string error = "Unable to parse " + scriptFile + " with error " + e.What();
          dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__, error.c_str());
-         if (hasContext)
-         {
-            fileUtils.PopDirectory();
-         }
          throw e;
       }
 
@@ -373,11 +311,6 @@ namespace dtDirector
       director->mMissingNodeTypes.clear();
       director->mMissingLibraries.clear();
       director->mHasDeprecatedProperty = false;
-
-      if (hasContext)
-      {
-         fileUtils.PopDirectory();
-      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////

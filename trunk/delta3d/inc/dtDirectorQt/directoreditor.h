@@ -624,6 +624,7 @@ namespace dtDirector
 
       dtCore::RefPtr<Director> mDirector;
       std::string              mFileName;
+      std::string              mFullFileName;
 
       struct TabStateData
       {

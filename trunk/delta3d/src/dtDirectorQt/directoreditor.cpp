@@ -197,14 +197,14 @@ namespace dtDirector
 
       if (mDirector.valid())
       {
-         std::string fileName = mDirector->GetScriptName();
+         mFullFileName = mDirector->GetScriptName();
          std::string contextDir = osgDB::convertFileNameToNativeStyle(dtDAL::Project::GetInstance().GetContext()+"/directors/");
          contextDir = osgDB::getRealPath(contextDir);
-         if (!fileName.empty())
+         if (!mFullFileName.empty())
          {
-            fileName = osgDB::getRealPath(fileName);
+            mFullFileName = osgDB::getRealPath(mFullFileName);
          }
-         mFileName = dtUtil::FileUtils::GetInstance().RelativePath(contextDir, fileName);
+         mFileName = dtUtil::FileUtils::GetInstance().RelativePath(contextDir, mFullFileName);
 
          mUI.graphBrowser->BuildGraphList(mDirector->GetGraphRoot());
 
@@ -265,18 +265,20 @@ namespace dtDirector
          GetUndoManager()->Clear();
 
          mFileName.clear();
-
-         // Remove this entry from the recent file listing.
-         QSettings settings("MOVES", "Director Editor");
-         QStringList files = settings.value("recentFileList").toStringList();
-         files.removeAll(fileName.c_str());
-         settings.setValue("recentFileList", files);
+         mFullFileName.clear();
 
          try
          {
             std::string contextDir = osgDB::convertFileNameToNativeStyle(dtDAL::Project::GetInstance().GetContext()+"/directors/");
             contextDir = osgDB::getRealPath(contextDir);
+            mFullFileName = fileName;
             mFileName = dtUtil::FileUtils::GetInstance().RelativePath(contextDir, fileName);
+
+            // Remove this entry from the recent file listing.
+            QSettings settings("MOVES", "Director Editor");
+            QStringList files = settings.value("recentFileList").toStringList();
+            files.removeAll(mFileName.c_str());
+            settings.setValue("recentFileList", files);
 
             DirectorTypeFactory* factory = DirectorTypeFactory::GetInstance();
             if (factory)
@@ -284,11 +286,11 @@ namespace dtDirector
                // Determine if we need to change our Director object.
                if (mDirector->GetResource() == dtDAL::ResourceDescriptor::NULL_RESOURCE)
                {
-                  mDirector = factory->LoadScript(mFileName, mDirector->GetGameManager(), mDirector->GetMap());
+                  mDirector = factory->LoadScript(mFullFileName, mDirector->GetGameManager(), mDirector->GetMap());
                }
                else
                {
-                  factory->LoadScript(mDirector, mFileName);
+                  factory->LoadScript(mDirector, mFullFileName);
                }
             }
 
@@ -1890,8 +1892,12 @@ namespace dtDirector
             }
          }
 
-         QString fileName = action->text();
-         LoadScript(fileName.toStdString());
+         std::string contextDir = osgDB::convertFileNameToNativeStyle(dtDAL::Project::GetInstance().GetContext()+"/directors/");
+         contextDir = osgDB::getRealPath(contextDir);
+
+         std::string fileName = contextDir + action->text().toStdString();
+
+         LoadScript(fileName);
       }
    }
 
@@ -2121,7 +2127,9 @@ namespace dtDirector
       mUI.graphTab->clear();
       mDirector->Clear();
       GetUndoManager()->Clear();
+
       mFileName.clear();
+      mFullFileName.clear();
 
       if (!scriptType.empty() && scriptType != mDirector->GetScriptType())
       {
@@ -2154,7 +2162,7 @@ namespace dtDirector
       bool showFiles = saveAs;
 
       // We must show the file dialog if there is no Director loaded.
-      if (!showFiles && mFileName.empty())
+      if (!showFiles && mFullFileName.empty())
       {
          showFiles = true;
       }
@@ -2162,7 +2170,7 @@ namespace dtDirector
       std::string contextDir = osgDB::convertFileNameToNativeStyle(dtDAL::Project::GetInstance().GetContext()+"/directors/");
       contextDir = osgDB::getRealPath(contextDir);
 
-      std::string fileName = mFileName;
+      std::string fullFileName = mFullFileName;
 
       if (showFiles)
       {
@@ -2177,26 +2185,27 @@ namespace dtDirector
             return false;
          }
 
-         fileName = osgDB::convertFileNameToNativeStyle(
+         fullFileName = osgDB::convertFileNameToNativeStyle(
             filePath.absolutePath().toStdString() + "/" + filePath.fileName().toStdString());
       }
 
-      fileName = dtUtil::FileUtils::GetInstance().RelativePath(contextDir, fileName);
-
-      if (!fileName.empty())
+      if (!fullFileName.empty())
       {
+         std::string fileName = dtUtil::FileUtils::GetInstance().RelativePath(contextDir, fullFileName);
+
          // Remove this file from the recent file listing.
          QSettings settings("MOVES", "Director Editor");
          QStringList files = settings.value("recentFileList").toStringList();
          files.removeAll(fileName.c_str());
 
-         mDirector->SaveScript(fileName);
+         mDirector->SaveScript(fullFileName);
 
          // We only set the current edited file and save the undo manager
          // if we are not debugging.  If we are debugging, we should remain
          // referenced on the original script.
-         if (!IsDebugging() || mFileName == fileName)
+         if (!IsDebugging() || mFullFileName == fullFileName)
          {
+            mFullFileName = fullFileName;
             mFileName = fileName;
 
             GetUndoManager()->OnSaved();
@@ -2219,7 +2228,7 @@ namespace dtDirector
          // If we are saving this script as a new file while debugging
          // in game, then find out the resource type of the script
          // that was saved and only refresh scripts using that resource.
-         if (mFileName != fileName)
+         if (mFullFileName != fullFileName)
          {
             std::string id = resource.GetResourceIdentifier();
 
@@ -2364,11 +2373,10 @@ namespace dtDirector
          return false;
       }
 
-      std::string fileName  = osgDB::convertFileNameToNativeStyle(
+      std::string fullFileName  = osgDB::convertFileNameToNativeStyle(
          filePath.absolutePath().toStdString() + "/" + filePath.fileName().toStdString());
-      fileName = dtUtil::FileUtils::GetInstance().RelativePath(contextDir, fileName);
 
-      return LoadScript(fileName);
+      return LoadScript(fullFileName);
    }
 
    //////////////////////////////////////////////////////////////////////////
