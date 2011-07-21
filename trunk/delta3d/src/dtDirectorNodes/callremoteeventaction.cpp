@@ -27,13 +27,14 @@
 
 #include <dtDirector/director.h>
 #include <dtDirectorNodes/remoteevent.h>
+#include <dtDirector/directortypefactory.h>
 
 namespace dtDirector
 {
    ////////////////////////////////////////////////////////////////////////////////
    CallRemoteEventAction::CallRemoteEventAction()
-      : ActionNode()
-      , mIsLocalEvent(false)
+      : LatentActionNode()
+      , mEventScope(SCRIPT_SCOPE)
    {
       mInstigator = "";
       AddAuthor("Jeff P. Houde");
@@ -47,7 +48,7 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void CallRemoteEventAction::Init(const NodeType& nodeType, DirectorGraph* graph)
    {
-      ActionNode::Init(nodeType, graph);
+      LatentActionNode::Init(nodeType, graph);
 
       // Create multiple inputs for different operations.
       mInputs.clear();
@@ -62,7 +63,7 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void CallRemoteEventAction::BuildPropertyMap()
    {
-      ActionNode::BuildPropertyMap();
+      LatentActionNode::BuildPropertyMap();
 
       // Create our value links.
       dtDAL::StringSelectorActorProperty* eventNameProp = new dtDAL::StringSelectorActorProperty(
@@ -73,12 +74,13 @@ namespace dtDirector
          "The name of the remote event to call.", "", true);
       AddProperty(eventNameProp);
 
-      dtDAL::BooleanActorProperty* localProp = new dtDAL::BooleanActorProperty(
-         "Local Event", "Local Event",
-         dtDAL::BooleanActorProperty::SetFuncType(this, &CallRemoteEventAction::SetLocalEvent),
-         dtDAL::BooleanActorProperty::GetFuncType(this, &CallRemoteEventAction::IsLocalEvent),
-         "False to search the entire Director script for these events.  True to only search the current graph and sub-graphs.");
-      AddProperty(localProp);
+      dtDAL::StringSelectorActorProperty* typeProp = new dtDAL::StringSelectorActorProperty(
+         "Event Scope", "Event Scope",
+         dtDAL::StringSelectorActorProperty::SetFuncType(this, &CallRemoteEventAction::SetEventScope),
+         dtDAL::StringSelectorActorProperty::GetFuncType(this, &CallRemoteEventAction::GetEventScope),
+         dtDAL::StringSelectorActorProperty::GetListFuncType(this, &CallRemoteEventAction::GetEventScopeList),
+         "The scope in which this action will search for Remote Events.");
+      AddProperty(typeProp);
 
       dtDAL::ActorIDActorProperty* instigatorProp = new dtDAL::ActorIDActorProperty(
          "Instigator", "Instigator", 
@@ -90,12 +92,27 @@ namespace dtDirector
       // This will expose the properties in the editor and allow
       // them to be connected to ValueNodes.
       mValues.push_back(ValueLink(this, eventNameProp, false, false, true, false));
-      mValues.push_back(ValueLink(this, localProp, false, false, true, false));
       mValues.push_back(ValueLink(this, instigatorProp, false, false, true, false));
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   dtCore::RefPtr<dtDAL::ActorProperty> CallRemoteEventAction::GetDeprecatedProperty(const std::string& name)
+   {
+      if (name == "Local Event")
+      {
+         dtDAL::BooleanActorProperty* localProp = new dtDAL::BooleanActorProperty(
+            "Local Event", "Local Event",
+            dtDAL::BooleanActorProperty::SetFuncType(this, &CallRemoteEventAction::SetLocalEvent),
+            dtDAL::BooleanActorProperty::GetFuncType(this, &CallRemoteEventAction::IsLocalEvent),
+            "False to search the entire Director script for these events.  True to only search the current graph and sub-graphs.");
+         return localProp;
+      }
+
+      return NULL;
+   }
+
    //////////////////////////////////////////////////////////////////////////
-   bool CallRemoteEventAction::Update(float simDelta, float delta, int input, bool firstUpdate)
+   bool CallRemoteEventAction::Update(float simDelta, float delta, int input, bool firstUpdate, void*& data)
    {
       if (firstUpdate)
       {
@@ -106,14 +123,42 @@ namespace dtDirector
 
          // Find the remote event that we want to trigger.
          std::vector<Node*> nodes;
-         if (!GetBoolean("Local Event"))
+
+         switch (mEventScope)
          {
-            GetDirector()->GetNodes("Remote Event", "Core", "EventName", eventName, nodes);
+         case LOCAL_SCOPE:
+            {
+               GetGraph()->GetNodes("Remote Event", "Core", "EventName", eventName, nodes);
+            }
+            break;
+
+         case SCRIPT_SCOPE:
+            {
+               GetDirector()->GetNodes("Remote Event", "Core", "EventName", eventName, nodes);
+            }
+            break;
+
+         case GLOBAL_SCOPE:
+            {
+               DirectorTypeFactory* factory = DirectorTypeFactory::GetInstance();
+               if (factory)
+               {
+                  const std::vector<Director*>& scriptList = factory->GetScriptInstances();
+                  int count = (int)scriptList.size();
+                  for (int index = 0; index < count; ++index)
+                  {
+                     Director* script = scriptList[index];
+                     if (script)
+                     {
+                        script->GetNodes("Remote Event", "Core", "EventName", eventName, nodes);
+                     }
+                  }
+               }
+            }
+            break;
          }
-         else
-         {
-            GetGraph()->GetNodes("Remote Event", "Core", "EventName", eventName, nodes);
-         }
+
+         std::vector<TrackingData>* trackList = NULL;
 
          bool madeStack = false;
          int count = (int)nodes.size();
@@ -133,7 +178,23 @@ namespace dtDirector
             }
 
             // Now trigger the event.
-            event->Trigger("Out", &instigator);
+            TrackingData trackData;
+            trackData.script = event->GetTopDirector();
+            trackData.id = event->Trigger("Out", &instigator);
+
+            // Track this data if we are executing an event
+            // outside the scope of this script.
+            if (trackData.script != GetTopDirector() &&
+                trackData.id != -1)
+            {
+               if (!trackList)
+               {
+                  trackList = new std::vector<TrackingData>();
+                  data = trackList;
+               }
+
+               trackList->push_back(trackData);
+            }
          }
 
          return true;
@@ -142,16 +203,67 @@ namespace dtDirector
       // our remote event and can trigger our output now.
       else
       {
+         std::vector<TrackingData>* trackList = static_cast<std::vector<TrackingData>*>(data);
+         if (trackList)
+         {
+            // Test all threads being tracked to test if they are all finished.
+            int count = (int)trackList->size();
+            for (int index = 0; index < count; ++index)
+            {
+               TrackingData& trackData = (*trackList)[index];
+               if (!trackData.script.valid() ||
+                   !trackData.script->IsRunning(trackData.id))
+               {
+                  trackList->erase(trackList->begin() + index);
+                  index--;
+                  count--;
+               }
+            }
+
+            if (!trackList->empty())
+            {
+               return true;
+            }
+
+            delete trackList;
+            data = NULL;
+         }
+
          OutputLink* link = GetOutputLink("Event Finished");
          if (link) link->Activate();
          return false;
       }
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   void CallRemoteEventAction::OnLinkValueChanged(const std::string& linkName)
+   {
+      if (linkName == "EventName")
+      {
+         UpdateName();
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void CallRemoteEventAction::UpdateName()
+   {
+      mName = GetString("EventName");
+      switch (mEventScope)
+      {
+      case LOCAL_SCOPE:
+         mName += " (Local)";
+         break;
+      case GLOBAL_SCOPE:
+         mName += " (Global)";
+         break;
+      }
+   }
+
    //////////////////////////////////////////////////////////////////////////
    void CallRemoteEventAction::SetEventName(const std::string& value)
    {
-      mEventName = mName = value;
+      mEventName = value;
+      UpdateName();
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -164,14 +276,41 @@ namespace dtDirector
    std::vector<std::string> CallRemoteEventAction::GetEventList()
    {
       std::vector<std::string> stringList;
+      std::map<std::string, bool> stringMap;
       std::vector<Node*> nodes;
-      if (!GetBoolean("Local Event"))
+
+      switch (mEventScope)
       {
-         GetDirector()->GetNodes("Remote Event", "Core", nodes);
-      }
-      else
-      {
-         GetGraph()->GetNodes("Remote Event", "Core", nodes);
+      case LOCAL_SCOPE:
+         {
+            GetGraph()->GetNodes("Remote Event", "Core", nodes);
+         }
+         break;
+
+      case SCRIPT_SCOPE:
+         {
+            GetDirector()->GetNodes("Remote Event", "Core", nodes);
+         }
+         break;
+
+      case GLOBAL_SCOPE:
+         {
+            DirectorTypeFactory* factory = DirectorTypeFactory::GetInstance();
+            if (factory)
+            {
+               const std::vector<Director*>& scriptList = factory->GetScriptInstances();
+               int count = (int)scriptList.size();
+               for (int index = 0; index < count; ++index)
+               {
+                  Director* script = scriptList[index];
+                  if (script)
+                  {
+                     script->GetNodes("Remote Event", "Core", nodes);
+                  }
+               }
+            }
+         }
+         break;
       }
 
       int count = (int)nodes.size();
@@ -180,7 +319,13 @@ namespace dtDirector
          EventNode* event = nodes[index]->AsEventNode();
          if (!event) continue;
 
-         stringList.push_back(event->GetString("EventName"));
+         stringMap[event->GetString("EventName")] = true;
+      }
+
+      std::map<std::string, bool>::iterator iter;
+      for (iter = stringMap.begin(); iter != stringMap.end(); ++iter)
+      {
+         stringList.push_back(iter->first);
       }
 
       return stringList;
@@ -189,13 +334,67 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void CallRemoteEventAction::SetLocalEvent(bool value)
    {
-      mIsLocalEvent = value;
+      if (value)
+      {
+         mEventScope = LOCAL_SCOPE;
+      }
+      else
+      {
+         mEventScope = SCRIPT_SCOPE;
+      }
+      UpdateName();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    bool CallRemoteEventAction::IsLocalEvent() const
    {
-      return mIsLocalEvent;
+      return false;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void CallRemoteEventAction::SetEventScope(const std::string& value)
+   {
+      if (value == "Local Scope")
+      {
+         mEventScope = LOCAL_SCOPE;
+      }
+      else if (value == "Script Scope")
+      {
+         mEventScope = SCRIPT_SCOPE;
+      }
+      else if (value == "Global Scope")
+      {
+         mEventScope = GLOBAL_SCOPE;
+      }
+      UpdateName();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   std::string CallRemoteEventAction::GetEventScope() const
+   {
+      switch (mEventScope)
+      {
+      case LOCAL_SCOPE:
+         return "Local Scope";
+      case SCRIPT_SCOPE:
+         return "Script Scope";
+      case GLOBAL_SCOPE:
+         return "Global Scope";
+      }
+
+      return "Unknown";
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   std::vector<std::string> CallRemoteEventAction::GetEventScopeList()
+   {
+      std::vector<std::string> result;
+
+      result.push_back("Local Scope");
+      result.push_back("Script Scope");
+      result.push_back("Global Scope");
+
+      return result;
    }
 
    ////////////////////////////////////////////////////////////////////////////////

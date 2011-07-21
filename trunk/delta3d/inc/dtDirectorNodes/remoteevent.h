@@ -64,11 +64,6 @@ namespace dtDirector
       virtual void BuildPropertyMap();
 
       /**
-       * Retrieves whether this Event uses an instigator.
-       */
-      virtual bool UsesActorFilters();
-
-      /**
        * Accessors for the event name.
        */
       void SetEventName(const std::string& eventName);
