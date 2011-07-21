@@ -10,7 +10,7 @@
 
 #include <assert.h>
 #include <iostream>
-
+#include <iterator>
 using namespace dtActors;
 
 IMPLEMENT_MANAGEMENT_LAYER(TriggerVolumeActor)

@@ -21,6 +21,7 @@
 
 
 #include <dtAI/waypointgraphastar.h>
+#include <iterator>
 
 
 namespace dtAI
