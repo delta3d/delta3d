@@ -20,6 +20,7 @@
  */
 #include <prefix/dtdirectornodesprefix.h>
 #include <dtDirector/colors.h>
+#include <dtDirector/directortypefactory.h>
 #include <dtDirectorNodes/referencescriptaction.h>
 
 #include <dtDAL/project.h>
@@ -243,37 +244,32 @@ namespace dtDirector
    void ReferenceScriptAction::LoadScript()
    {
       mName = "";
+      mScript = NULL;
 
       // Now load the Director Script if able.
       if (mScriptResource != dtDAL::ResourceDescriptor::NULL_RESOURCE)
       {
-         if (!mScript.valid())
-         {
-            mScript = new Director();
-            mScript->Init(GetDirector()->GetGameManager(), GetDirector()->GetMap());
-            mScript->SetScriptOwner(GetDirector()->GetScriptOwner());
-            mScript->SetNodeLogging(GetDirector()->GetNodeLogging());
-            // TODO: Record.
-
-            // Make sure all new threads and stacks are created on the parent director.
-            mScript->SetParent(GetDirector());
-         }
-
-         if (mScript.valid())
+         DirectorTypeFactory* factory = DirectorTypeFactory::GetInstance();
+         if (factory)
          {
             try
             {
-               // If we successfully load the script, create our links for this node.
-               mScript->LoadScript(dtDAL::Project::GetInstance().GetResourcePath(mScriptResource));
+               mScript = factory->LoadScript(dtDAL::Project::GetInstance().GetResourcePath(mScriptResource), GetDirector()->GetGameManager(), GetDirector()->GetMap());
 
-               mScript->SetResource(mScriptResource);
-
-               if (GetDirector()->HasStarted())
+               if (mScript)
                {
-                  OnStart();
-               }
+                  mScript->SetParent(GetDirector());
+                  mScript->SetScriptOwner(GetDirector()->GetScriptOwner());
+                  mScript->SetNodeLogging(GetDirector()->GetNodeLogging());
+                  mScript->SetResource(mScriptResource);
 
-               mName = osgDB::getNameLessExtension(mScriptResource.GetResourceName());
+                  if (GetDirector()->HasStarted())
+                  {
+                     OnStart();
+                  }
+
+                  mName = osgDB::getNameLessExtension(mScriptResource.GetResourceName());
+               }
             }
             catch (const dtUtil::Exception& e)
             {
@@ -284,10 +280,6 @@ namespace dtDirector
                mName = "<i>Invalid Script!</i>";
             }
          }
-      }
-      else if (mScript)
-      {
-         mScript->Clear();
       }
 
       RefreshLinks();
