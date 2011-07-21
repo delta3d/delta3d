@@ -24,6 +24,7 @@
 #include <dtDAL/stringselectoractorproperty.h>
 #include <dtDAL/booleanactorproperty.h>
 #include <dtDAL/actoridactorproperty.h>
+#include <dtDAL/containeractorproperty.h>
 
 #include <dtDirector/director.h>
 #include <dtDirectorNodes/remoteevent.h>
@@ -35,6 +36,8 @@ namespace dtDirector
    CallRemoteEventAction::CallRemoteEventAction()
       : LatentActionNode()
       , mEventScope(SCRIPT_SCOPE)
+      , mOrignalValueCount(0)
+      , mParameterIndex(0)
    {
       mInstigator = "";
       AddAuthor("Jeff P. Houde");
@@ -89,10 +92,37 @@ namespace dtDirector
          "", "An instigator for this event.");
       AddProperty(instigatorProp);
 
+      dtDAL::StringActorProperty* paramNameProp = new dtDAL::StringActorProperty(
+         "Param Name", "Param Name",
+         dtDAL::StringActorProperty::SetFuncType(this, &CallRemoteEventAction::SetParamName),
+         dtDAL::StringActorProperty::GetFuncType(this, &CallRemoteEventAction::GetParamName),
+         "The name of this parameter.");
+
+      dtDAL::StringActorProperty* paramValueProp = new dtDAL::StringActorProperty(
+         "Param Value", "Param Value",
+         dtDAL::StringActorProperty::SetFuncType(this, &CallRemoteEventAction::SetParamValue),
+         dtDAL::StringActorProperty::GetFuncType(this, &CallRemoteEventAction::GetParamValue),
+         "The value of this parameter.");
+
+      dtDAL::ContainerActorProperty* paramProp = new dtDAL::ContainerActorProperty(
+         "Parameter", "Parameter", "Custom parameter", "");
+      paramProp->AddProperty(paramNameProp);
+      paramProp->AddProperty(paramValueProp);
+
+      dtDAL::ArrayActorPropertyBase* paramListProp = new dtDAL::ArrayActorProperty<ParamData>(
+         "Parameters", "Parameters", "Custom parameters to be sent and received from any corresponding Remote Events.",
+         dtDAL::ArrayActorProperty<ParamData>::SetIndexFuncType(this, &CallRemoteEventAction::SetParameterIndex),
+         dtDAL::ArrayActorProperty<ParamData>::GetDefaultFuncType(this, &CallRemoteEventAction::GetDefaultParameter),
+         dtDAL::ArrayActorProperty<ParamData>::GetArrayFuncType(this, &CallRemoteEventAction::GetParameterList),
+         dtDAL::ArrayActorProperty<ParamData>::SetArrayFuncType(this, &CallRemoteEventAction::SetParameterList),
+         paramProp, "");
+      AddProperty(paramListProp);
+
       // This will expose the properties in the editor and allow
       // them to be connected to ValueNodes.
       mValues.push_back(ValueLink(this, eventNameProp, false, false, true, false));
       mValues.push_back(ValueLink(this, instigatorProp, false, false, true, false));
+      mOrignalValueCount = mValues.size();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -180,12 +210,20 @@ namespace dtDirector
             // Now trigger the event.
             TrackingData trackData;
             trackData.script = event->GetTopDirector();
+            trackData.event = event;
+
+            // Set up any custom parameters.
+            int paramCount = (int)mValues.size();
+            for (int paramIndex = mOrignalValueCount; paramIndex < paramCount; ++paramIndex)
+            {
+               ValueLink& param = mValues[paramIndex];
+               event->SetString(GetString(param.GetName()), param.GetName());
+            }
+
             trackData.id = event->Trigger("Out", &instigator);
 
-            // Track this data if we are executing an event
-            // outside the scope of this script.
             if (trackData.script != GetTopDirector() &&
-                trackData.id != -1)
+               trackData.id != -1)
             {
                if (!trackList)
                {
@@ -407,6 +445,160 @@ namespace dtDirector
    const dtCore::UniqueId& CallRemoteEventAction::GetInstigator() const
    {
       return mInstigator;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void CallRemoteEventAction::SetParameterIndex(int index)
+   {
+      mParameterIndex = index;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void CallRemoteEventAction::SetParameter(const ParamData& value)
+   {
+      if (mParameterIndex > -1 && mParameterIndex < (int)mParameterList.size())
+      {
+         mParameterList[mParameterIndex] = value;
+         UpdateParameterLinks();
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   CallRemoteEventAction::ParamData CallRemoteEventAction::GetParameter() const
+   {
+      if (mParameterIndex > -1 && mParameterIndex < (int)mParameterList.size())
+      {
+         return mParameterList[mParameterIndex];
+      }
+
+      return ParamData(-1);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   CallRemoteEventAction::ParamData CallRemoteEventAction::GetDefaultParameter() const
+   {
+      int index = (int)mParameterList.size() + 1;
+      ParamData data(index);
+      return data;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void CallRemoteEventAction::SetParamName(const std::string& value)
+   {
+      if (mParameterIndex > -1 && mParameterIndex < (int)mParameterList.size())
+      {
+         mParameterList[mParameterIndex].name = value;
+         UpdateParameterLinks();
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   std::string CallRemoteEventAction::GetParamName() const
+   {
+      if (mParameterIndex > -1 && mParameterIndex < (int)mParameterList.size())
+      {
+         return mParameterList[mParameterIndex].name;
+      }
+
+      return "";
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void CallRemoteEventAction::SetParamValue(const std::string& value)
+   {
+      if (mParameterIndex > -1 && mParameterIndex < (int)mParameterList.size())
+      {
+         mParameterList[mParameterIndex].value = value;
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   std::string CallRemoteEventAction::GetParamValue() const
+   {
+      if (mParameterIndex > -1 && mParameterIndex < (int)mParameterList.size())
+      {
+         return mParameterList[mParameterIndex].value;
+      }
+
+      return "";
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void CallRemoteEventAction::SetParameterList(const std::vector<ParamData>& value)
+   {
+      mParameterList = value;
+      UpdateParameterLinks();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   std::vector<CallRemoteEventAction::ParamData> CallRemoteEventAction::GetParameterList() const
+   {
+      return mParameterList;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void CallRemoteEventAction::UpdateParameterLinks()
+   {
+      std::vector<ValueLink> oldValues = mValues;
+
+      if ((int)mValues.size() > mOrignalValueCount)
+      {
+         mValues.erase(mValues.begin() + mOrignalValueCount, mValues.end());
+      }
+
+      int count = (int)mParameterList.size();
+      mValues.reserve(count + mOrignalValueCount);
+      for (int index = 0; index < count; index++)
+      {
+         const std::string& name = mParameterList[index].name;
+         
+         // Make sure the name is not a core value link name.
+         bool isNameValid = true;
+         for (int testIndex = 0; testIndex < mOrignalValueCount; ++testIndex)
+         {
+            if (mValues[testIndex].GetName() == name)
+            {
+               isNameValid = false;
+               break;
+            }
+         }
+         if (name.empty())
+         {
+            isNameValid = false;
+         }
+
+         if (isNameValid)
+         {
+            mParameterList[index].displayProp = new dtDAL::StringActorProperty(
+               name, name,
+               dtDAL::StringActorProperty::SetFuncType(&mParameterList[index], &ParamData::SetValue),
+               dtDAL::StringActorProperty::GetFuncType(&mParameterList[index], &ParamData::GetValue),
+               "The value of this parameter.");
+
+            bool found = false;
+            int testCount = (int)oldValues.size();
+            for (int testIndex = mOrignalValueCount; testIndex < testCount; ++testIndex)
+            {
+               if (oldValues[testIndex].GetName() == mParameterList[index].name)
+               {
+                  ValueLink& link = oldValues[testIndex];
+                  link.SetDefaultProperty(mParameterList[index].displayProp);
+
+                  mValues.push_back(link);
+                  found = true;
+                  break;
+               }
+            }
+
+            if (!found)
+            {
+               ValueLink newLink = ValueLink(this,
+                  mParameterList[index].displayProp,
+                  false, false, false, true);
+               mValues.push_back(newLink);
+            }
+         }
+      }
    }
 }
 

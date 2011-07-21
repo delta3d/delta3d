@@ -27,12 +27,15 @@
 #include <dtDirector/latentactionnode.h>
 #include <dtDirectorNodes/nodelibraryexport.h>
 #include <dtDAL/actorproperty.h>
+#include <dtDAL/stringactorproperty.h>
 
 namespace dtDirector
 {
    ////////////////////////////////////////////////////////////////////////////////
    class NODE_LIBRARY_EXPORT CallRemoteEventAction: public LatentActionNode
    {
+      class ParamData;
+
    public:
       enum EventScopeType
       {
@@ -138,6 +141,23 @@ namespace dtDirector
       void SetInstigator(const dtCore::UniqueId& value);
       const dtCore::UniqueId& GetInstigator() const;
 
+      /**
+       * Accessors for the parameter list property.
+       */
+      void SetParameterIndex(int index);
+      void SetParameter(const ParamData& value);
+      ParamData GetParameter() const;
+      ParamData GetDefaultParameter() const;
+
+      void SetParamName(const std::string& value);
+      std::string GetParamName() const;
+
+      void SetParamValue(const std::string& value);
+      std::string GetParamValue() const;
+
+      void SetParameterList(const std::vector<ParamData>& value);
+      std::vector<ParamData> GetParameterList() const;
+
    protected:
       /**
        * Destructor.
@@ -149,12 +169,45 @@ namespace dtDirector
       struct TrackingData
       {
          dtCore::ObserverPtr<Director> script;
+         dtCore::ObserverPtr<EventNode> event;
          int id;
       };
+
+      class ParamData
+      {
+      public:
+         ParamData(int index)
+         {
+            name = "Param " + dtUtil::ToString<int>(index);
+
+            displayProp = NULL;
+         }
+         ~ParamData(){}
+
+         void SetValue(const std::string& inValue)
+         {
+            value = inValue;
+         }
+
+         const std::string& GetValue() const
+         {
+            return value;
+         }
+
+         dtCore::RefPtr<dtDAL::ActorProperty> displayProp;
+         std::string name;
+         std::string value;
+      };
+
+      void UpdateParameterLinks();
 
       std::string      mEventName;
       int              mEventScope;
       dtCore::UniqueId mInstigator;
+
+      int mOrignalValueCount;
+      std::vector<ParamData> mParameterList;
+      int mParameterIndex;
    };
 }
 

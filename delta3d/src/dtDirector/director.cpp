@@ -488,6 +488,12 @@ namespace dtDirector
       std::vector<ThreadData>* threadList = &mThreads;
       int* curThread = &mCurrentThread;
 
+      int threadID = -1;
+      if (mCurrentThread > -1)
+      {
+         threadID = mThreads[mCurrentThread].id;
+      }
+
       while (*curThread > -1)
       {
          ThreadData& t = (*threadList)[*curThread];
@@ -514,7 +520,6 @@ namespace dtDirector
 
       if (!threadList) return -1;
 
-      int threadID = -1;
       if (threadList == &mThreads)
       {
          threadID = mThreadID++;
