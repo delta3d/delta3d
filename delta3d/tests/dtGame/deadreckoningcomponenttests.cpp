@@ -875,14 +875,20 @@ namespace dtGame
             mDeadReckoningComponent->RegisterActor(*mTestGameActor, *helper);
             CPPUNIT_ASSERT(mDeadReckoningComponent->IsRegisteredActor(*mTestGameActor));
 
+            std::ostringstream ss;
+
             dtCore::Transform xform;
             mTestGameActor->GetGameActor().GetTransform(xform);
             osg::Vec3 vec;
             xform.GetTranslation(vec);
-            CPPUNIT_ASSERT_MESSAGE("The translation should be 0,0,0 because nothing has changed yet.",
+            ss.str("");
+            ss << "The translation should be 0,0,0 because nothing has changed yet.  It is: " << vec << std::endl;
+            CPPUNIT_ASSERT_MESSAGE(ss.str(),
                dtUtil::Equivalent(vec, osg::Vec3(0.0f,0.0f,0.0f), 1e-2f));
             xform.GetRotation(vec);
-            CPPUNIT_ASSERT_MESSAGE("The rotation should be 0,0,0 because nothing has changed yet.",
+            ss.str("");
+            ss << "The rotation should be 0,0,0 because nothing has changed yet.  It is: " << vec << std::endl;
+            CPPUNIT_ASSERT_MESSAGE(ss.str(),
                dtUtil::Equivalent(vec, osg::Vec3(0.0f,0.0f,0.0f), 1e-2f));
 
             osg::Vec3 setVec = osg::Vec3(1.0, 1.2, 1.3);
@@ -895,7 +901,6 @@ namespace dtGame
 
             dtCore::System::GetInstance().Step();
 
-            std::ostringstream ss;
             vec = helper->GetCurrentDeadReckonedTranslation();
             ss.str("");
             ss << "The position should be 0,0,0 but it is " << vec;
@@ -932,10 +937,15 @@ namespace dtGame
             else
             {
                xform.GetTranslation(vec);
-               CPPUNIT_ASSERT(dtUtil::Equivalent(vec, osg::Vec3(0.0f, 0.0f, 0.0f), 1e-2f));
-
+               ss.str("");
+               ss << "The translation should be 0,0,0 because updates are off.  It is: " << vec << std::endl;
+               CPPUNIT_ASSERT_MESSAGE(ss.str(),
+                  dtUtil::Equivalent(vec, osg::Vec3(0.0f,0.0f,0.0f), 1e-2f));
                xform.GetRotation(vec);
-               CPPUNIT_ASSERT(dtUtil::Equivalent(vec, osg::Vec3(0.0f, 0.0f, 0.0f), 1e-2f));
+               ss.str("");
+               ss << "The rotation should be 0,0,0 because updates are off.  It is: " << vec << std::endl;
+               CPPUNIT_ASSERT_MESSAGE(ss.str(),
+                  dtUtil::Equivalent(vec, osg::Vec3(0.0f,0.0f,0.0f), 1e-2f));
             }
 
             mDeadReckoningComponent->UnregisterActor(*mTestGameActor);
