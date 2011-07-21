@@ -38,7 +38,7 @@ namespace dtGame
    {
    public:
       /// Constructor
-      IEnvGameActor(GameActorProxy &proxy);
+      IEnvGameActor(GameActorProxy& proxy);
 
    protected:
       /// Destructor
