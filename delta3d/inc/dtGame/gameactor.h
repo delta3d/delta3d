@@ -50,7 +50,7 @@ namespace dtGame
    {
    public:
       /// Constructor
-      GameActor(GameActorProxy& proxy);
+      GameActor(GameActorProxy& proxy, const std::string& name = "GameActor");
 
       /**
        * Overloaded constructor will use the supplied node instead of
@@ -59,7 +59,7 @@ namespace dtGame
        * @param node : A node this class should use internally
        * @param name : The name of this instance
        */
-      GameActor(GameActorProxy& proxy, TransformableNode &node, const std::string &name = "GameActor");
+      GameActor(GameActorProxy& proxy, TransformableNode& node, const std::string& name = "GameActor");
 
       /**
        * @return the GameActorProxy for this game actor.

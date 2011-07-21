@@ -72,7 +72,7 @@ ALint IsSource(ALuint source)
 
 ////////////////////////////////////////////////////////////////////////////////
 Sound::Sound()
-   : Transformable()
+   : Transformable("Sound")
    , mFilename("")
    , mPlayCB(NULL)
    , mPlayCBData(NULL)
