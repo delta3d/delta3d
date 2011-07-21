@@ -570,15 +570,8 @@ void ResourceDock::OnShaderItemChanged(QTreeWidgetItem* item, int column)
             {
                shaderManager.LoadShaderDefinitions(fileName.toStdString());
 
-               std::string programString = item->text(0).toStdString();
-               std::string groupString =  item->parent()->text(0).toStdString();
-
-               isShaderLoaded = ToggleShaderSources(programString, groupString);
-
                // Store so we know where the source files can be found
-               mCurrentShaderFile    = fileName;
-               mCurrentShaderGroup   = groupName;
-               mCurrentShaderProgram = programName;
+               mCurrentShaderFile = fileName;
 
                QTreeWidgetItemIterator treeIter(mShaderTreeWidget);
 
@@ -608,9 +601,16 @@ void ResourceDock::OnShaderItemChanged(QTreeWidgetItem* item, int column)
             }
          }
 
-         if (isShaderLoaded)
+         std::string programString = item->text(0).toStdString();
+         std::string groupString =  item->parent()->text(0).toStdString();
+
+         if (ToggleShaderSources(programString, groupString))
          {
             emit ApplyShader(groupName.toStdString(), programName.toStdString());
+
+            // Store the now currently applied group and program
+            mCurrentShaderGroup = groupName;
+            mCurrentShaderProgram = programName;
          }
       }
       else if (item->checkState(0) == Qt::Unchecked)
