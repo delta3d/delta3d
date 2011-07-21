@@ -24,16 +24,22 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#include <dtDirector/actionnode.h>
+#include <dtDirector/latentactionnode.h>
 #include <dtDirectorNodes/nodelibraryexport.h>
 #include <dtDAL/actorproperty.h>
 
 namespace dtDirector
 {
    ////////////////////////////////////////////////////////////////////////////////
-   class NODE_LIBRARY_EXPORT CallRemoteEventAction: public ActionNode
+   class NODE_LIBRARY_EXPORT CallRemoteEventAction: public LatentActionNode
    {
    public:
+      enum EventScopeType
+      {
+         LOCAL_SCOPE,
+         SCRIPT_SCOPE,
+         GLOBAL_SCOPE,
+      };
 
       /**
        * Constructor.
@@ -61,6 +67,20 @@ namespace dtDirector
       virtual void BuildPropertyMap();
 
       /**
+       * This function queries the proxy with any properties not
+       * found in the property list. If a property was previously
+       * removed from the proxy, but is still important to load,
+       * then this function should return a temporary property of
+       * the appropriate type to be used when loading the map.
+       *
+       * @param[in]  name  The name of the property queried for.
+       *
+       * @return           A temporary property, or NULL if
+       *                   none is needed.
+       */
+      virtual dtCore::RefPtr<dtDAL::ActorProperty> GetDeprecatedProperty(const std::string& name);
+
+      /**
        * Updates the node.
        * @note  Parent implementation will auto activate any trigger
        *        with the "Out" label by default.
@@ -69,10 +89,28 @@ namespace dtDirector
        * @param[in]  delta        The real time step.
        * @param[in]  input        The index to the input that is active.
        * @param[in]  firstUpdate  True if this input was just activated,
+       * @param[in]  data         A reference to a custom data pointer for the
+       *                           currently active thread stack being executed.
+       *                           If this parameter is used, the memory allocated
+       *                           for this data should be released prior to
+       *                           returning a false result.
        *
        * @return     True if the current node should remain active.
        */
-      virtual bool Update(float simDelta, float delta, int input, bool firstUpdate);
+      virtual bool Update(float simDelta, float delta, int input, bool firstUpdate, void*& data);
+
+      /**
+       * This event is called by value nodes that are linked via
+       * value links when that value has changed.
+       *
+       * @param[in]  linkName  The name of the value link that is changing.
+       */
+      virtual void OnLinkValueChanged(const std::string& linkName);
+
+      /**
+       * Updates the name of the node.
+       */
+      void UpdateName();
 
       /**
        * Accessors for property values.
@@ -88,6 +126,13 @@ namespace dtDirector
       bool IsLocalEvent() const;
 
       /**
+       * Accessors for the event scope property.
+       */
+      void SetEventScope(const std::string& value);
+      std::string GetEventScope() const;
+      std::vector<std::string> GetEventScopeList();
+
+      /**
        * Accessors for the instigator property.
        */
       void SetInstigator(const dtCore::UniqueId& value);
@@ -101,8 +146,14 @@ namespace dtDirector
 
    private:
 
+      struct TrackingData
+      {
+         dtCore::ObserverPtr<Director> script;
+         int id;
+      };
+
       std::string      mEventName;
-      bool             mIsLocalEvent;
+      int              mEventScope;
       dtCore::UniqueId mInstigator;
    };
 }

@@ -60,12 +60,12 @@ namespace dtDirector
       AddProperty(nameProp);
 
       mValues.push_back(ValueLink(this, nameProp, false, false, true, false));
-   }
 
-   ////////////////////////////////////////////////////////////////////////////////
-   bool RemoteEvent::UsesActorFilters()
-   {
-      return false;
+      ValueLink* link = GetValueLink("ActorFilters");
+      if (link)
+      {
+         link->SetExposed(false);
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////
