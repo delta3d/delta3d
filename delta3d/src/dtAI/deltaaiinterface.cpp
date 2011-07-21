@@ -25,6 +25,7 @@
 #include <dtAI/aidebugdrawable.h>
 #include <dtAI/waypointreaderwriter.h>
 #include <dtUtil/templateutility.h>
+#include <iterator>
 
 namespace dtAI
 {
