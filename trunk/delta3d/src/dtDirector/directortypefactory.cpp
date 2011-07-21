@@ -108,7 +108,7 @@ namespace dtDirector
       dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
       if (hasContext)
       {
-         fileUtils.PushDirectory(dtDAL::Project::GetInstance().GetContext() + "\\directors");
+         fileUtils.PushDirectory(dtDAL::Project::GetInstance().GetContext() + "/directors");
       }
       else
       {
@@ -230,7 +230,7 @@ namespace dtDirector
       dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
       if (hasContext)
       {
-         fileUtils.PushDirectory(dtDAL::Project::GetInstance().GetContext() + "\\directors");
+         fileUtils.PushDirectory(dtDAL::Project::GetInstance().GetContext() + "/directors");
       }
       else
       {
@@ -330,7 +330,7 @@ namespace dtDirector
       dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
       if (hasContext)
       {
-         fileUtils.PushDirectory(dtDAL::Project::GetInstance().GetContext() + "\\directors");
+         fileUtils.PushDirectory(dtDAL::Project::GetInstance().GetContext() + "/directors");
       }
       else
       {
