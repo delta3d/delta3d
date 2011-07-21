@@ -125,10 +125,16 @@ namespace dtDirector
        * @param[in]  delta        The real time step.
        * @param[in]  input        The index to the input that is active.
        * @param[in]  firstUpdate  True if this input was just activated,
+       * @param[in]  data         A reference to a custom data pointer for the
+       *                           currently active thread stack being executed.
+       *                           If this parameter is used, the memory allocated
+       *                           for this data should be released prior to
+       *                           returning a false result.
        *
        * @return     True if the current node should remain active.
        */
       virtual bool Update(float simDelta, float delta, int input, bool firstUpdate);
+      virtual bool Update(float simDelta, float delta, int input, bool firstUpdate, void*& data);
 
       /**
        * Determines whether a value link on this node can connect
@@ -279,6 +285,7 @@ namespace dtDirector
        * @return  The director.
        */
       Director* GetDirector() const {return mDirector;}
+      Director* GetTopDirector() const;
 
       /**
        * Retrieves the graph.

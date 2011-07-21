@@ -44,6 +44,7 @@ namespace dtDirector
    Director::Director()
       : mImmediateMode(false)
       , mCurrentThread(-1)
+      , mThreadID(0)
       , mQueueingThreads(false)
       , mMap(NULL)
       , mModified(false)
@@ -456,13 +457,12 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void Director::BeginThread(Node* node, int index, bool reverseQueue)
+   int Director::BeginThread(Node* node, int index, bool reverseQueue)
    {
       // Always create threads on the proxy if able.
       if (GetParent())
       {
-         GetParent()->BeginThread(node, index);
-         return;
+         return GetParent()->BeginThread(node, index);
       }
 
       // If we are queuing threads now, add the new thread data to the queue
@@ -482,7 +482,7 @@ namespace dtDirector
          {
             mThreadQueue.push_back(queue);
          }
-         return;
+         return -1;
       }
 
       std::vector<ThreadData>* threadList = &mThreads;
@@ -506,20 +506,29 @@ namespace dtDirector
                s.index = index;
                s.first = true;
                s.finished = false;
-               return;
+               return t.id;
             }
          }
          else break;
       }
 
-      if (!threadList) return;
+      if (!threadList) return -1;
+
+      int threadID = -1;
+      if (threadList == &mThreads)
+      {
+         threadID = mThreadID++;
+      }
 
       ThreadData data;
+      data.id = threadID;
+
       StackData stack;
       stack.node = node;
       stack.index = index;
       stack.first = true;
       stack.finished = false;
+      stack.data = NULL;
       stack.currentThread = -1;
 
       data.stack.push_back(stack);
@@ -571,6 +580,8 @@ namespace dtDirector
 
          mImmediateMode = false;
       }
+
+      return threadID;
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -600,6 +611,7 @@ namespace dtDirector
       stack.index = index;
       stack.first = true;
       stack.finished = false;
+      stack.data = NULL;
       stack.currentThread = -1;
 
       std::vector<ThreadData>* threadList = &mThreads;
@@ -668,9 +680,25 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   bool Director::IsRunning()
+   bool Director::IsRunning(int id)
    {
-      return !mThreads.empty();
+      if (id == -1)
+      {
+         return !mThreads.empty();
+      }
+      else
+      {
+         int count = (int)mThreads.size();
+         for (int index = 0; index < count; ++index)
+         {
+            if (id == mThreads[index].id)
+            {
+               return true;
+            }
+         }
+      }
+
+      return false;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -1073,7 +1101,7 @@ namespace dtDirector
          // create a new thread on any new events.  Otherwise, our first
          // new thread will be a continuation of the current active thread.
          mQueueingThreads = true;
-         bool notFinished = currentNode->Update(simDelta, delta, input, first);
+         bool notFinished = currentNode->Update(simDelta, delta, input, first, stack.data);
          stack.finished = !notFinished;
 
          // Only continue updating if our current node is not a latent one
@@ -1188,6 +1216,19 @@ namespace dtDirector
          if (stackIndex < (int)data.stack.size() &&
              data.stack[stackIndex].finished)
          {
+            Node* node = data.stack[stackIndex].node.get();
+
+            if (data.stack[stackIndex].data)
+            {
+               std::string nodeName = node->GetTypeName();
+               if (!node->GetName().empty())
+               {
+                  nodeName += std::string(": ") + node->GetName();
+               }
+
+               LOG_ERROR("Director: Custom thread stack data pointer was not de-allocated after processing node " + nodeName);
+            }
+
             data.stack[stackIndex].node = NULL;
          }
       }

@@ -172,6 +172,12 @@ namespace dtDirector
       return false;
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   bool Node::Update(float simDelta, float delta, int input, bool firstUpdate, void*& data)
+   {
+      return Update(simDelta, delta, input, firstUpdate);
+   }
+
    //////////////////////////////////////////////////////////////////////////
    bool Node::CanConnectValue(ValueLink* link, ValueNode* value)
    {
@@ -319,6 +325,19 @@ namespace dtDirector
    bool Node::IsEnabled()
    {
       return GetBoolean("Enabled");
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   Director* Node::GetTopDirector() const
+   {
+      Director* result = mDirector;
+
+      while (result && result->GetParent())
+      {
+         result = result->GetParent();
+      }
+
+      return result;
    }
 
    //////////////////////////////////////////////////////////////////////////
