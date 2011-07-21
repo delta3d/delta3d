@@ -25,6 +25,8 @@
 #include <dtDAL/booleanactorproperty.h>
 #include <dtDAL/actoridactorproperty.h>
 #include <dtDAL/containeractorproperty.h>
+#include <dtDAL/arrayactorpropertybase.h>
+#include <dtDAL/arrayactorproperty.h>
 
 #include <dtDirector/director.h>
 #include <dtDirectorNodes/remoteevent.h>
