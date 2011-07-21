@@ -18,11 +18,6 @@
 #include <osg/StateSet>
 #include <osg/Version> // For #ifdef
 
-
-#if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR == 1 && OSG_VERSION_MINOR == 0
-#include <osg/CameraNode>
-#endif
-
 #include <cassert>
 
 using namespace dtCore;
@@ -198,7 +193,7 @@ const osg::Node* Transformable::GetOSGNode() const
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-bool Transformable::GetAbsoluteMatrix(const osg::Node* node, osg::Matrix& wcMatrix)
+bool GetAbsoluteMatrixOld(const osg::Node* node, osg::Matrix& wcMatrix)
 {
    if(node != NULL)
    {
@@ -210,14 +205,6 @@ bool Transformable::GetAbsoluteMatrix(const osg::Node* node, osg::Matrix& wcMatr
       {
          const osg::NodePath& nodePath = nodePathList[0];
 
-         #if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR == 1 && OSG_VERSION_MINOR == 0
-         // Luckily, this behavior is redundant with OSG 1.1
-         if (dynamic_cast<osg::CameraNode*>(nodePath[0]) != NULL)
-         {
-            nodePath = osg::NodePath( nodePath.begin()+1, nodePath.end() );
-         }
-         #endif // OSG 1.1
-
          wcMatrix.set(osg::computeLocalToWorld(nodePath));
          return true;
       }
@@ -225,6 +212,120 @@ bool Transformable::GetAbsoluteMatrix(const osg::Node* node, osg::Matrix& wcMatr
 
    return false;
 }
+
+// Debug class that lets you get statistics on exit for how many nodes you have in the tree.
+//class DepthStorage
+//{
+//public:
+//   std::vector<size_t> vectorSizes;
+//   ~DepthStorage()
+//   {
+//      for (unsigned i = 0; i < vectorSizes.size(); ++i)
+//      {
+//         printf("Number of objects with \"%u\" depth: %lu \n", i, vectorSizes[i]);
+//      }
+//   }
+//};
+//
+//static DepthStorage depthStorage;
+
+////////////////////////////////////////////////////////////////////////////////
+bool GetAbsoluteMatrixNew(const osg::Node* node, osg::Matrix& wcMatrix)
+{
+   if (node != NULL)
+   {
+      wcMatrix.makeIdentity();
+
+      std::vector<osg::Transform*>  nodePath;
+      // most things have very small depths, but allocating 15 didn't seem to be any slower
+      // than allocating 5, and it's just pointers, so I made it 15 to account for some pretty
+      // deep trees.
+      nodePath.reserve(15U);
+      nodePath.clear();
+
+      osg::Node* curNode = const_cast<osg::Node*>(node);
+      while (curNode != NULL)
+      {
+         osg::Transform* txNode = curNode->asTransform();
+         if (txNode != NULL)
+         {
+            osg::Camera* camera = dynamic_cast<osg::Camera*>(curNode);
+            // This depends on a submission to osg, but it's much faster than the
+            // dynamic cast above.
+            //osg::Camera* camera = txNode->asCamera();
+
+            if (camera != NULL && (camera->getReferenceFrame() != osg::Transform::RELATIVE_RF || camera->getNumParents() == 0))
+            {
+               curNode = NULL;
+            }
+            else
+            {
+               // only put transforms in the node path.
+               nodePath.push_back(txNode);
+            }
+         }
+
+         if (curNode != NULL && curNode->getNumParents() > 0U)
+         {
+            curNode = curNode->getParent(0);
+            // Stop when you get to a camera.
+         }
+         else
+         {
+            curNode = NULL;
+         }
+      }
+
+// This is debug code to get statistics on the depth of hierarchies.
+//      if (nodePath.size() > depthStorage.vectorSizes.size() + 1U)
+//      {
+//         depthStorage.vectorSizes.resize(nodePath.size() + 1, 0U);
+//         printf("New larger reserve size %lu\n", nodePath.size());
+//      }
+
+//      ++depthStorage.vectorSizes[nodePath.size()];
+
+      if (!nodePath.empty())
+      {
+         std::vector<osg::Transform*>::reverse_iterator i = nodePath.rbegin(), iend = nodePath.rend();
+         for (; i != iend; ++i)
+         {
+            osg::Transform* curTran = *i;
+            // Print out the transform hierarchy.
+            //printf("node: %s - ", curTran->getName().c_str());
+            if (curTran != NULL && !curTran->computeLocalToWorldMatrix(wcMatrix, NULL))
+            {
+               break;
+            }
+         }
+         // Print out the transform hierarchy.
+         //printf("\n");
+
+         return true;
+      }
+   }
+
+   return false;
+}
+
+namespace dtCore
+{
+   bool DT_CORE_EXPORT UseNewAbsoluteMatrixCode = true;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+bool Transformable::GetAbsoluteMatrix(const osg::Node* node, osg::Matrix& wcMatrix)
+{
+   if (UseNewAbsoluteMatrixCode)
+   {
+      return GetAbsoluteMatrixNew(node, wcMatrix);
+   }
+   else
+   {
+      return GetAbsoluteMatrixOld(node, wcMatrix);
+   }
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 void Transformable::SetTransform(const Transform& xform, CoordSysEnum cs)
@@ -613,12 +714,12 @@ void Transformable::SetCollisionBox(float lx, float ly, float lz)
 ////////////////////////////////////////////////////////////////////////////////
 void Transformable::SetCollisionBox(osg::Node* node)
 {
-   if(node == 0)
+   if(node == NULL)
    {
       node = GetOSGNode();
    }
 
-   if(node != 0)
+   if(node != NULL)
    {
       osg::Matrix oldMatrix = GetMatrixNode()->getMatrix();
       GetMatrixNode()->setMatrix(osg::Matrix::identity());
@@ -649,12 +750,12 @@ void Transformable::SetCollisionCylinder(float radius, float length)
 ////////////////////////////////////////////////////////////////////////////////
 void Transformable::SetCollisionCylinder(osg::Node* node)
 {
-   if(node == 0)
+   if(node == NULL)
    {
       node = this->GetOSGNode();
    }
 
-   if(node)
+   if(node != NULL)
    {
       osg::Matrix oldMatrix = GetMatrixNode()->getMatrix();
       GetMatrixNode()->setMatrix(osg::Matrix::identity());
@@ -687,12 +788,12 @@ void Transformable::SetCollisionCappedCylinder(float radius, float length)
 ////////////////////////////////////////////////////////////////////////////////
 void Transformable::SetCollisionCappedCylinder(osg::Node* node)
 {
-   if(node == 0)
+   if(node == NULL)
    {
       node = this->GetOSGNode();
    }
 
-   if(node)
+   if(node != NULL)
    {
       osg::Matrix oldMatrix = GetMatrixNode()->getMatrix();
       GetMatrixNode()->setMatrix(osg::Matrix::identity());
@@ -725,12 +826,12 @@ void Transformable::SetCollisionRay(float length)
 ////////////////////////////////////////////////////////////////////////////////
 void Transformable::SetCollisionMesh(osg::Node* node)
 {
-   if(node == 0)
+   if (node == NULL)
    {
       node = GetOSGNode();
    }
 
-   if(node)
+   if (node != NULL)
    {
       //the following is a workaround to temporarily bypass this Physical's Transform
       //At this point, we'll set it temporarily to the Identity so it doesn't affect
