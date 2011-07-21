@@ -97,10 +97,10 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void EventNode::Trigger(const std::string& outputName, const dtCore::UniqueId* instigator, bool countTrigger)
+   int EventNode::Trigger(const std::string& outputName, const dtCore::UniqueId* instigator, bool countTrigger)
    {
       // Can't trigger a disabled event.
-      if (!IsEnabled()) return;
+      if (!IsEnabled()) return -1;
 
       if (instigator != NULL)
       {
@@ -111,8 +111,10 @@ namespace dtDirector
          ActivateOutput(outputName);
 
          // Begin a new thread.
-         GetDirector()->BeginThread(this, 0);
+         return GetDirector()->BeginThread(this, 0);
       }
+
+      return -1;
    }
 
    //////////////////////////////////////////////////////////////////////////

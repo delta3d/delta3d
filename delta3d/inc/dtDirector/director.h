@@ -269,8 +269,10 @@ namespace dtDirector
        * @param[in]  node          The starting node to update.
        * @param[in]  index         The index of the input being activated.
        * @param[in]  reverseQueue  If true, will push the new thread to the front of the queue.
+       *
+       * @return     The ID if the new thread created.
        */
-      void BeginThread(Node* node, int index, bool reverseQueue = false);
+      int BeginThread(Node* node, int index, bool reverseQueue = false);
 
       /**
        * Pushes a new item to the thread stack.
@@ -282,8 +284,14 @@ namespace dtDirector
 
       /**
        * Retrieves whether there are any active threads running.
+       *
+       * @param[in]  id  The id of the thread (See Director::BeginThread
+       *                 and EventNode::Trigger methods to retrieve this
+       *                 id value) or -1 for any thread.
+       *
+       * @return     True if the thread or script is active.
        */
-      bool IsRunning();
+      bool IsRunning(int id = -1);
 
       /**
        * Accessors for the name of the script.
@@ -613,6 +621,8 @@ namespace dtDirector
          bool  first;
          bool  finished;
 
+         void* data;
+
          std::vector<ThreadData> subThreads;
          int currentThread;
       };
@@ -620,6 +630,7 @@ namespace dtDirector
       // Execution threads.
       struct ThreadData
       {
+         int                    id;
          std::vector<StackData> stack;
       };
 
@@ -628,6 +639,7 @@ namespace dtDirector
 
       std::vector<ThreadData> mThreads;
       int mCurrentThread;
+      int mThreadID;
 
       std::vector<ThreadQueue> mThreadQueue;
       bool mQueueingThreads;
