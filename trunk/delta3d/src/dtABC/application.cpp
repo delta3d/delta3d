@@ -424,8 +424,10 @@ void Application::CreateInstances(const ApplicationConfigData& data)
       {
          mCompositeViewer->setThreadingModel(osgViewer::CompositeViewer::CullThreadPerCameraDrawThreadPerContext);
       }
-
-      mCompositeViewer->setUpThreading();
+      else
+      {
+         mCompositeViewer->setUpThreading();
+      }
    }
 
    mCompositeViewer->addView(mViewList.front()->GetOsgViewerView());
