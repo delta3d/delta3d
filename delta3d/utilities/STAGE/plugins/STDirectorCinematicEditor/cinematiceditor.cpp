@@ -1891,8 +1891,7 @@ void DirectorCinematicEditorPlugin::OnSave()
       if (startedCallNode)
       {
          startedCallNode->SetString("Started", "EventName");
-         startedCallNode->SetString("true", "Local Event");
-         startedCallNode->SetBoolean(true, "Local Event");
+         startedCallNode->SetString("Local Scope", "Event Scope");
 
          Connect(schedulerNode, startedCallNode, "Started", "Call Event");
       }
@@ -1950,8 +1949,7 @@ void DirectorCinematicEditorPlugin::OnSave()
       if (endedCallNode)
       {
          endedCallNode->SetString("Ended", "EventName");
-         endedCallNode->SetString("true", "Local Event");
-         endedCallNode->SetBoolean(true, "Local Event");
+         endedCallNode->SetString("Local Scope", "Event Scope");
 
          Connect(schedulerNode, endedCallNode, "Ended", "Call Event");
          Connect(schedulerNode, endedCallNode, "Stopped", "Call Event");

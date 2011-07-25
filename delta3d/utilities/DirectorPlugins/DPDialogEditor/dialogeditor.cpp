@@ -533,12 +533,12 @@ void DirectorDialogEditorPlugin::OnSave()
 
    dtDirector::Node* newCallStartEventNode = CreateNode("Call Remote Event", "Core", newInputNode, 100);
    newCallStartEventNode->SetString("Started", "EventName");
-   newCallStartEventNode->SetString("true", "Local Event");
+   newCallStartEventNode->SetString("Local Scope", "Event Scope");
    Connect(newInputNode, newCallStartEventNode, "Out", "Call Event");
 
    dtDirector::Node* newCallEndEventNode = CreateNode("Call Remote Event", "Core", newCallStartEventNode, 100);
    newCallEndEventNode->SetString("Ended", "EventName");
-   newCallEndEventNode->SetString("true", "Local Event");
+   newCallEndEventNode->SetString("Local Scope", "Event Scope");
    Connect(newCallStartEventNode, newCallEndEventNode, "Event Finished", "Call Event");
 
    dtDirector::Node* newOutputNode = CreateNode("Output Link", "Core", newCallEndEventNode, 100);
