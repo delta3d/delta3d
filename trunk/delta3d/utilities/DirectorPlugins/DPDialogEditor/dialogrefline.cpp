@@ -62,7 +62,7 @@ void DialogRefLineType::GenerateNode(DialogLineItem* line, dtDirector::Node* pre
 
    dtDirector::Node* callNode = editor->CreateNode("Call Remote Event", "Core", prevNode, 80);
    callNode->SetString(std::string("Ref ") + QString::number(refLine->GetIndex()).toStdString(), "EventName");
-   callNode->SetString("true", "Local Event");
+   callNode->SetString("Local Scope", "Event Scope");
    editor->Connect(prevNode, callNode, output, "Call Event");
 
    GenerateNodeForChild(line->GetChildLine(), callNode, "Event Finished", editor);

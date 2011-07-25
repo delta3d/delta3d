@@ -191,7 +191,7 @@ void DialogLineType::GeneratePreEventNode(dtDirector::Node*& prevNode, std::stri
    {
       dtDirector::Node* preEventNode = editor->CreateNode("Call Remote Event", "Core", prevNode, 80);
       preEventNode->SetString(std::string("Pre Event ") + mPreEventName.toStdString(), "EventName");
-      preEventNode->SetString("true", "Local Event");
+      preEventNode->SetString("Local Scope", "Event Scope");
       editor->Connect(prevNode, preEventNode, output, "Call Event");
 
       editor->RegisterEvent(mPreEventName, DirectorDialogEditorPlugin::PRE_EVENT);
@@ -202,7 +202,7 @@ void DialogLineType::GeneratePreEventNode(dtDirector::Node*& prevNode, std::stri
    if (mHasDuringEvent && !mDuringEventName.isEmpty())
    {
       dtDirector::Node* durEventNode = editor->CreateNode("Call Remote Event", "Core", prevNode, 80);
-      durEventNode->SetString("true", "Local Event");
+      durEventNode->SetString("Local Scope", "Event Scope");
       durEventNode->SetString(std::string("During Event ") + mDuringEventName.toStdString(), "EventName");
       editor->Connect(prevNode, durEventNode, output, "Call Event");
 
@@ -216,7 +216,7 @@ void DialogLineType::GeneratePostEventNode(dtDirector::Node*& prevNode, std::str
    if (mHasPostEvent && !mPostEventName.isEmpty())
    {
       dtDirector::Node* postEventNode = editor->CreateNode("Call Remote Event", "Core", prevNode, 80);
-      postEventNode->SetString("true", "Local Event");
+      postEventNode->SetString("Local Scope", "Event Scope");
       postEventNode->SetString(std::string("Post Event ") + mPostEventName.toStdString(), "EventName");
       editor->Connect(prevNode, postEventNode, output, "Call Event");
 
