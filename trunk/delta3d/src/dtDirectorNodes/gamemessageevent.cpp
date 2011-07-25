@@ -36,8 +36,6 @@ namespace dtDirector
        : EventNode()
    {
       AddAuthor("Jeff P. Houde");
-
-      mMessageType = "Map Changed";
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
@@ -59,6 +57,8 @@ namespace dtDirector
       AddProperty(messageTypeProp);
 
       mValues.push_back(ValueLink(this, messageTypeProp, false, false, true, false));
+
+      SetMessageType("Map Changed");
    }
 
    //////////////////////////////////////////////////////////////////////////
