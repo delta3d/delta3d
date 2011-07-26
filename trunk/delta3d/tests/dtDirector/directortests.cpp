@@ -103,7 +103,9 @@ void DirectorTests::TestRunScript()
 
       try
       {
-         mDirector->LoadScript("test");
+         dtDAL::ResourceDescriptor resource("Directors:test.dtdir");
+         std::string path = dtDAL::Project::GetInstance().GetResourcePath(resource);
+         mDirector->LoadScript(path);
       }
       catch (dtUtil::Exception& e)
       {
@@ -112,7 +114,8 @@ void DirectorTests::TestRunScript()
 
       try
       {
-         mDirector->SaveScript("save test.dtdir");
+         std::string contextPath = dtDAL::Project::GetInstance().GetContext();
+         mDirector->SaveScript(contextPath + "/Directors/save test.dtdir");
       }
       catch (dtUtil::Exception& e)
       {
@@ -121,7 +124,8 @@ void DirectorTests::TestRunScript()
 
       try
       {
-         mDirector->SaveScript("save test.dtdirb");
+         std::string contextPath = dtDAL::Project::GetInstance().GetContext();
+         mDirector->SaveScript(contextPath + "/Directors/save test.dtdirb");
       }
       catch (dtUtil::Exception& e)
       {
@@ -130,7 +134,9 @@ void DirectorTests::TestRunScript()
 
       try
       {
-         mDirector->LoadScript("save test.dtdirb");
+         dtDAL::ResourceDescriptor resource("Directors:save test.dtdirb");
+         std::string path = dtDAL::Project::GetInstance().GetResourcePath(resource);
+         mDirector->LoadScript(path);
       }
       catch (dtUtil::Exception& e)
       {
