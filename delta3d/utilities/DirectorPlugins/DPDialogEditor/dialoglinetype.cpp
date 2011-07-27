@@ -469,9 +469,9 @@ bool DialogLineType::OperateOnPostEvent(dtDirector::Node* node, QString& eventNa
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-QTreeWidgetItem* DialogLineType::CreateChoice(DialogLineItem* line, const std::string& choiceName, DirectorDialogEditorPlugin* editor, bool moveable, bool nameable)
+QTreeWidgetItem* DialogLineType::CreateChoice(DialogLineItem* line, const QString& choiceName, DirectorDialogEditorPlugin* editor, bool moveable, bool nameable)
 {
-   DialogChoiceItem* newChoice = new DialogChoiceItem(editor->GetTree()->CreateIndex(), choiceName.c_str(), moveable, nameable);
+   DialogChoiceItem* newChoice = new DialogChoiceItem(editor->GetTree()->CreateIndex(), choiceName, moveable, nameable);
    if (newChoice)
    {
       line->addChild(newChoice);
