@@ -32,6 +32,7 @@
 #include <dtDAL/basexmlreaderwriter.h>
 #include <dtUtil/fileutils.h>
 
+#include <sstream>
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -210,54 +211,54 @@ namespace dtDAL
    };
 
 
-#define TEMP_BASEXMLREADERWRITER BaseXMLReaderWriter<TEMPLATE_PARAMS_BASE_XML_READERWRITER>
+#define TEMP_BASEXMLREADERWRITER  BaseXMLReaderWriter<T_Object, T_Handler, T_Writer>
 
    /////////////////////////////////////////////////////////////////////////////
    // IMPLEMENTATION CODE
    /////////////////////////////////////////////////////////////////////////////
    TEMPLATE_BASE_XML_READERWRITER
-   TEMP_BASEXMLREADERWRITER::BaseXMLReaderWriter()
+   inline TEMP_BASEXMLREADERWRITER::BaseXMLReaderWriter()
    {  
    }
 
    /////////////////////////////////////////////////////////////////
    TEMPLATE_BASE_XML_READERWRITER
-   dtCore::RefPtr<dtDAL::BaseXMLParser> TEMP_BASEXMLREADERWRITER::CreateParser() const
+   inline dtCore::RefPtr<dtDAL::BaseXMLParser> TEMP_BASEXMLREADERWRITER::CreateParser() const
    {
       return new dtDAL::BaseXMLParser();
    }
 
    /////////////////////////////////////////////////////////////////
    TEMPLATE_BASE_XML_READERWRITER
-   typename dtCore::RefPtr<T_Handler> TEMP_BASEXMLREADERWRITER::CreateHandler() const
+   inline typename dtCore::RefPtr<T_Handler> TEMP_BASEXMLREADERWRITER::CreateHandler() const
    {
       return new T_Handler();
    }
 
    /////////////////////////////////////////////////////////////////
    TEMPLATE_BASE_XML_READERWRITER
-   typename dtCore::RefPtr<T_Writer> TEMP_BASEXMLREADERWRITER::CreateWriter() const
+   inline typename dtCore::RefPtr<T_Writer> TEMP_BASEXMLREADERWRITER::CreateWriter() const
    {
       return new T_Writer();
    }
 
    /////////////////////////////////////////////////////////////////
    TEMPLATE_BASE_XML_READERWRITER
-   void TEMP_BASEXMLREADERWRITER::SetSchemaFile(const std::string& schemaFile)
+   inline void TEMP_BASEXMLREADERWRITER::SetSchemaFile(const std::string& schemaFile)
    {
       mSchemaFile = schemaFile;
    }
 
    /////////////////////////////////////////////////////////////////
    TEMPLATE_BASE_XML_READERWRITER
-   const std::string& TEMP_BASEXMLREADERWRITER::GetSchemaFile() const
+   inline const std::string& TEMP_BASEXMLREADERWRITER::GetSchemaFile() const
    {
       return mSchemaFile;
    }
 
    /////////////////////////////////////////////////////////////////////////////
    TEMPLATE_BASE_XML_READERWRITER
-   void TEMP_BASEXMLREADERWRITER::InitParser(dtDAL::BaseXMLParser& parser, T_Handler& handler) const
+   inline void TEMP_BASEXMLREADERWRITER::InitParser(dtDAL::BaseXMLParser& parser, T_Handler& handler) const
    {
       parser.SetSchemaFile(mSchemaFile);
       parser.SetHandler(&handler);
@@ -265,14 +266,14 @@ namespace dtDAL
 
    /////////////////////////////////////////////////////////////////////////////
    TEMPLATE_BASE_XML_READERWRITER
-   void TEMP_BASEXMLREADERWRITER::InitWriter(T_Writer& writer) const
+   inline void TEMP_BASEXMLREADERWRITER::InitWriter(T_Writer& writer) const
    {
       // OVERRIDE:
    }
 
    /////////////////////////////////////////////////////////////////////////////
    TEMPLATE_BASE_XML_READERWRITER
-   osgDB::ReaderWriter::ReadResult TEMP_BASEXMLREADERWRITER::BuildResult(
+   inline osgDB::ReaderWriter::ReadResult TEMP_BASEXMLREADERWRITER::BuildResult(
       const ReadResult& result, T_Handler& handler) const
    {
       return result;
@@ -280,7 +281,7 @@ namespace dtDAL
 
    /////////////////////////////////////////////////////////////////////////////
    TEMPLATE_BASE_XML_READERWRITER
-   osgDB::ReaderWriter::WriteResult TEMP_BASEXMLREADERWRITER::BuildResult(
+   inline osgDB::ReaderWriter::WriteResult TEMP_BASEXMLREADERWRITER::BuildResult(
       const WriteResult& result) const
    {
       return result;
@@ -288,7 +289,7 @@ namespace dtDAL
 
    /////////////////////////////////////////////////////////////////////////////
    TEMPLATE_BASE_XML_READERWRITER
-   osgDB::ReaderWriter::ReadResult TEMP_BASEXMLREADERWRITER::readObject(
+   inline osgDB::ReaderWriter::ReadResult TEMP_BASEXMLREADERWRITER::readObject(
       const std::string& fileName, const osgDB::ReaderWriter::Options* options) const
    {
       std::string ext = osgDB::getLowerCaseFileExtension(fileName);
@@ -307,12 +308,17 @@ namespace dtDAL
          return ReadResult::ERROR_IN_READING_FILE;
       }
 
-      return readObject(stream, options);
+      ReadResult result = readObject(stream, options);
+      if (stream.is_open())
+      {
+         stream.close();
+      }
+      return result;
    }
 
    /////////////////////////////////////////////////////////////////////////////
    TEMPLATE_BASE_XML_READERWRITER
-   osgDB::ReaderWriter::ReadResult TEMP_BASEXMLREADERWRITER::readObject(
+   inline osgDB::ReaderWriter::ReadResult TEMP_BASEXMLREADERWRITER::readObject(
       std::istream& fin, const osgDB::ReaderWriter::Options* options) const
    {
       dtCore::RefPtr<T_Handler> handler = CreateHandler();
@@ -331,7 +337,7 @@ namespace dtDAL
 
    /////////////////////////////////////////////////////////////////////////////
    TEMPLATE_BASE_XML_READERWRITER
-   osgDB::ReaderWriter::WriteResult TEMP_BASEXMLREADERWRITER::writeObject(
+   inline osgDB::ReaderWriter::WriteResult TEMP_BASEXMLREADERWRITER::writeObject(
       const osg::Object& obj, const std::string& fileName,
       const osgDB::ReaderWriter::Options* options) const
    {
@@ -345,12 +351,17 @@ namespace dtDAL
          return WriteResult::ERROR_IN_WRITING_FILE;
       }
 
-      return writeObject(obj, stream, options); 
+      WriteResult result = writeObject(obj, stream, options);
+      if (stream.is_open())
+      {
+         stream.close();
+      }
+      return result;
    }
 
    /////////////////////////////////////////////////////////////////////////////
    TEMPLATE_BASE_XML_READERWRITER
-   osgDB::ReaderWriter::WriteResult TEMP_BASEXMLREADERWRITER::writeObject(
+   inline osgDB::ReaderWriter::WriteResult TEMP_BASEXMLREADERWRITER::writeObject(
       const osg::Object& obj, std::ostream& fout, const Options*) const 
    {
       dtCore::RefPtr<T_Writer> writer = CreateWriter();
