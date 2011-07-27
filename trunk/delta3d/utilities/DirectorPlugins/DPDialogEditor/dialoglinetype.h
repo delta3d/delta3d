@@ -312,7 +312,7 @@ protected:
     *
     * @return     The newly created choice item.
     */
-   QTreeWidgetItem* CreateChoice(DialogLineItem* line, const std::string& choiceName, DirectorDialogEditorPlugin* editor, bool moveable = true, bool nameable = true);
+   QTreeWidgetItem* CreateChoice(DialogLineItem* line, const QString& choiceName, DirectorDialogEditorPlugin* editor, bool moveable = true, bool nameable = true);
 
    /**
     * Checks whether the operated node is being referenced and stores
