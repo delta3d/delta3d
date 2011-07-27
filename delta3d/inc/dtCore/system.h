@@ -307,22 +307,39 @@ namespace dtCore
        */
       void SetSimulationTime(double newTime);
 
-      /// this is the amount it should step by, only valid in mUseFixedTimeRate == true
+      /** Set the frame rate (frames per second) to try and achieve. Only used 
+       * when running with a fixed time step.
+       * @see SetUseFixedTimeStep()
+       * @see GetFrameRate()
+       */
       void SetFrameRate(double newRate);
 
-      /// your minimum number of frames you want it to draw, only valid in mUseFixedTimeRate == true
+      /** 
+       * The maximum time to wait between frames. Only used when running with
+       * a fixed time step. (Defaults to 0.03 seconds)
+       * @param newTime max time to wait between frames, in seconds
+       * @see SetUseFixedTimeStep()
+       * @see GetMaxTimeBetweenDraws()
+       */
       void SetMaxTimeBetweenDraws(double newTime);
 
       /// Set to make the system step by the fixed amount of time.
       void SetUseFixedTimeStep(bool value);
 
-      /// return the frame step, in case others need to use this.
+      /**
+       * Get the frame rate, used with Fixed time stepping.
+       * @return the targeted frame rate (frames per second)
+       */
       double GetFrameRate() const;
 
       /// return to see if we are using the fixed time stepping feature of the engine.
       bool GetUsesFixedTimeStep() const;
 
-      /// mostly for unit test, other places in code may need this though
+      /** 
+       * Get the maximum time to wait between frames.
+       * @return The max time to wait between frames, in seconds.
+       * @see SetMaxTimeBetweenDraws()
+       */
       double GetMaxTimeBetweenDraws() const;
 
       /// Turns on statistics - set from and used by stats to view Delta3D statistics.
