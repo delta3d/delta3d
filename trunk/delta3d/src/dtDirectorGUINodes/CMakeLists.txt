@@ -7,6 +7,7 @@ SET(SOURCE_PATH ${DELTA3D_SOURCE_DIR}/src/${LIB_NAME})
 
 
 SET(LIB_PUBLIC_HEADERS
+    ${HEADER_PATH}/activatewidget.h
     ${HEADER_PATH}/buttonevent.h
     ${HEADER_PATH}/getwidgetproperty.h
     ${HEADER_PATH}/guinodemanager.h
@@ -22,6 +23,7 @@ SET(LIB_PUBLIC_HEADERS
 
 
 SET(LIB_SOURCES
+    ${SOURCE_PATH}/activatewidget.cpp
     ${SOURCE_PATH}/buttonevent.cpp
     ${SOURCE_PATH}/getwidgetproperty.cpp
     ${SOURCE_PATH}/guinodemanager.cpp

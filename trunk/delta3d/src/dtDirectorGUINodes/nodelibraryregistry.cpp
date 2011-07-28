@@ -27,6 +27,7 @@
 #include <dtDirectorGUINodes/buttonevent.h>
 
 // Actions
+#include <dtDirectorGUINodes/activatewidget.h>
 #include <dtDirectorGUINodes/getwidgetproperty.h>
 #include <dtDirectorGUINodes/loadguischeme.h>
 #include <dtDirectorGUINodes/setguicursor.h>
@@ -69,6 +70,7 @@ namespace dtDirector
    RefPtr<NodeType> NodeLibraryRegistry::SET_WIDGET_PROPERTY_NODE_TYPE(  new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Set Widget Property",   "GUI", "GUI", "Sets a property's value on a widget.",   NULL, Colors::BLUE2));
    RefPtr<NodeType> NodeLibraryRegistry::SET_WIDGET_TEXT_NODE_TYPE(      new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Set Widget Text",       "GUI", "GUI", "Sets the text on a widget.",             NULL, Colors::BLUE2));
    RefPtr<NodeType> NodeLibraryRegistry::TOGGLE_GUI_CURSOR(              new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Toggle GUI Cursor",     "GUI", "GUI", "Shows/hides the GUI cursor.",            NULL, Colors::BLUE2));
+   RefPtr<NodeType> NodeLibraryRegistry::ACTIVATE_WIDGET_TYPE(           new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Activate Widget",       "GUI", "GUI", "Activates a particular widget.",         NULL, Colors::BLUE2));
 
    // Values
 
@@ -104,6 +106,7 @@ namespace dtDirector
       mNodeFactory->RegisterType<SetWidgetProperty>(SET_WIDGET_PROPERTY_NODE_TYPE.get());
       mNodeFactory->RegisterType<SetWidgetText>(SET_WIDGET_TEXT_NODE_TYPE.get());
       mNodeFactory->RegisterType<ToggleGUICursor>(TOGGLE_GUI_CURSOR.get());
+      mNodeFactory->RegisterType<ActivateWidget>(ACTIVATE_WIDGET_TYPE.get());
 
       // Values
    }
