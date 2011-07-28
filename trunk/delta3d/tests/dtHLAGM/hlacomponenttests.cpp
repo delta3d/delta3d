@@ -1221,13 +1221,16 @@ void HLAComponentTests::TestReflectAttributes()
       CPPUNIT_ASSERT_MESSAGE("The value should still be null because it didn't send the property the second time.",
          rap->GetValue().IsEmpty());
 
+      // Backup the id because removing the object handle will clear the id.
+      dtCore::UniqueId idBackup(*id);
+
       //now test deleting the object.
       mHLAComponent->removeObjectInstance(mObjectHandle1, "");
 
       dtCore::System::GetInstance().Step();
 
       //Check using the old id value to see if the actor is in the GM.
-      proxy = mGameManager->FindGameActorById(*id);
+      proxy = mGameManager->FindGameActorById(idBackup);
       CPPUNIT_ASSERT(!proxy.valid());
 
       //Check to see that the mappings were cleared.

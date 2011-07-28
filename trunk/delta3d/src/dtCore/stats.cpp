@@ -115,6 +115,7 @@ bool StatsHandler::SelectNextType()
 
          mCamera->setNodeMask(0x0); 
          mSwitch->setAllChildrenOff();
+         mInitialized = false;
          break;
       }
    case(FRAME_RATE):
@@ -1005,6 +1006,8 @@ osg::Geometry* StatsHandler::CreateTick(const osg::Vec3& pos, float height, cons
 void StatsHandler::SetUpScene(osgViewer::ViewerBase* viewer)
 {
    mSwitch = new osg::Switch;
+
+   mCamera->removeChildren(0, mCamera->getNumChildren());
 
    mCamera->addChild(mSwitch.get());
 

@@ -406,7 +406,17 @@ void MessageTests::TestBaseMessages()
       mapMsg->SetMapNames(mapNames);
       dtGame::GameManager::NameVector mapNamesGet;
       mapMsg->GetMapNames(mapNamesGet);
-      CPPUNIT_ASSERT_MESSAGE("Map message should be able to set/get the map names", mapNames == mapNamesGet);
+      ss.str("Map message should be able to set/get the map names");
+      for (unsigned i = 0; i < mapNames.size(); ++i)
+      {
+         ss << mapNames[i] << "\n";
+      }
+      ss << "\n\n";
+      for (unsigned i = 0; i < mapNamesGet.size(); ++i)
+      {
+         ss << mapNamesGet[i] << "\n";
+      }
+      CPPUNIT_ASSERT_MESSAGE(ss.str(), mapNames == mapNamesGet);
 
       CPPUNIT_ASSERT(netRejectMsg->GetDestination() == NULL);
       CPPUNIT_ASSERT(netRejectMsg->GetAboutActorId().ToString().empty());
