@@ -71,10 +71,10 @@ namespace dtGame
        */
       const GameActorProxy& GetGameActorProxy() const;
 
-      /** 
-        * Override this to add your own Actor Components. 
+      /**
+        * Override this to add your own Actor Components.
         * Note - actor components do the BuildPropertyMap during the AddComponent method, so set
-        * your default values after you that. 
+        * your default values after you that.
         */
       virtual void BuildActorComponents();
 

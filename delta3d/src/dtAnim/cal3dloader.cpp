@@ -633,7 +633,7 @@ namespace dtAnim
                   CalCoreMesh* mesh = coreModel->getCoreMesh(coreModel->getCoreMeshId((*meshItr).mName));
 
                   // Make sure this mesh doesn't reference bones we don't have
-                  if (GetMaxBoneID(*mesh) > coreModel->getCoreSkeleton()->getVectorCoreBone().size())
+                  if (GetMaxBoneID(*mesh) >= coreModel->getCoreSkeleton()->getVectorCoreBone().size())
                   {
                      LOG_ERROR("The bones specified in the cal mesh(" + mesh->getName() +
                         ") do not match the skeleton: (" + handler->mSkeletonFilename + ")");
