@@ -447,7 +447,7 @@ namespace dtDirector
                   {
                      // Link them together.
                      OutputLink* output = owner->GetOutputLink(fromLink->GetLinks()[index]->GetName());
-                     rampNode->GetInputLink("In")->Connect(output);
+                     rampNode->GetInputLinks()[0].Connect(output);
                   }
                }
             }
@@ -556,7 +556,7 @@ namespace dtDirector
                   {
                      // Link them together.
                      InputLink* input = owner->GetInputLink(fromLink->GetLinks()[index]->GetName());
-                     rampNode->GetOutputLink("Out")->Connect(input);
+                     rampNode->GetOutputLinks()[0].Connect(input);
                   }
                }
             }
