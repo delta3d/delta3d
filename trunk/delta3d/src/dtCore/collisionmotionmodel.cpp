@@ -40,14 +40,7 @@ namespace dtCore
 
 IMPLEMENT_MANAGEMENT_LAYER(CollisionMotionModel);
 
-/**
- * Constructor.
- *
- * @param keyboard the keyboard instance, or 0 to
- * avoid creating default input mappings
- * @param mouse the mouse instance, or 0 to avoid
- * creating default input mappings
- */
+////////////////////////////////////////////////////////////////////////////////
 CollisionMotionModel::CollisionMotionModel(float pHeight, float pRadius, float k, float theta,
                                            dtCore::Scene* pScene,
                                            Keyboard* keyboard,
@@ -79,9 +72,46 @@ CollisionMotionModel::CollisionMotionModel(float pHeight, float pRadius, float k
    RegisterInstance(this);
 }
 
-/**
-* Destructor.
-*/
+////////////////////////////////////////////////////////////////////////////////
+CollisionMotionModel::CollisionMotionModel(float pHeight,
+                                           float pRadius,
+                                           float stepUpHeight,
+                                           dtCore::Scene* pScene,
+                                           Keyboard* keyboard,
+                                           Mouse* mouse,
+                                           float maxWalkSpeed,
+                                           float maxTurnSpeed,
+                                           float maxSidestepSpeed,   
+                                           float jumpSpeed,
+                                           float slideSpeed,
+                                           float slideThreshold,
+                                           bool canJump,
+                                           bool useWASD,
+                                           bool useArrowKeys)
+   : FPSMotionModel(keyboard, mouse, maxWalkSpeed, maxTurnSpeed,
+                    maxSidestepSpeed, pHeight, stepUpHeight, useWASD, useArrowKeys)
+   , mCollider(pHeight, pRadius, stepUpHeight, 0.0f, pScene)
+   , mCanJump(canJump)
+{
+   // parent class FPSMotionModel has set name as "FPSMotionModel" in its constructor;
+   // so now manually reset name correctly here
+   SetName("CollisionMotionModel");
+
+   mCollider.SetSlideSpeed(slideSpeed);
+   mCollider.SetSlideThreshold(slideThreshold);
+   mCollider.SetJumpSpeed(jumpSpeed);
+
+   if (keyboard != NULL && mouse != NULL)
+   {
+      SetDefaultMappings(keyboard, mouse);
+   }
+
+   // sender adding is already handled in the base class
+   RegisterInstance(this);
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
 CollisionMotionModel::~CollisionMotionModel()
 {
    DeregisterInstance(this);

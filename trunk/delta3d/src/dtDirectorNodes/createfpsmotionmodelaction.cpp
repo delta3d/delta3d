@@ -236,17 +236,34 @@ namespace dtDirector
                GetFloat("Height"),
                GetFloat("Radius"),
                GetFloat("Step Height"),
-               0.0f,
                app->GetScene(),
                app->GetKeyboard(),
                app->GetMouse(),
                GetFloat("Walk Speed"),
                GetFloat("Turn Speed"),
                GetFloat("Sidestep Speed"),
+               GetFloat("Jump Speed"),
+               GetFloat("Slide Speed"),
+               GetFloat("Slide Threshold"),
+               GetBoolean("Allow Jump"),
                GetBoolean("Use WASD Keys"),
                GetBoolean("Use Arrow Keys"));
 
             model = mCreatedMotionModel.get();
+
+            model->SetName(modelName);
+            model->GetFPSCollider().SetCollisionBitsForTorso(GetUInt("Torso Collision"));
+            model->GetFPSCollider().SetCollisionBitsForFeet(GetUInt("Feet Collision"));
+
+            dtDAL::ActorProxy* proxy = GetActor("Actor");
+            if (proxy)
+            {
+               dtCore::Transformable* actor = NULL;
+               proxy->GetActor(actor);
+               model->SetTarget(actor);
+            }
+
+            return ActionNode::Update(simDelta, delta, input, firstUpdate);
          }
 
          if (model)

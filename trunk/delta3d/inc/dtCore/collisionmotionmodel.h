@@ -33,6 +33,8 @@
 
 #include <dtCore/fpsmotionmodel.h>
 
+#include <dtUtil/deprecationmgr.h>
+
 namespace dtCore
 {
    class Axis;
@@ -54,30 +56,48 @@ namespace dtCore
       DECLARE_MANAGEMENT_LAYER(CollisionMotionModel);
 
    public:
-      /**
-       * Constructor.
-       * @param height, the height of the character and camera, in meters
-       * @param radius, the width of our character
-       * @param k the distance from the bottom of the knees to the ground, this represents the maximum step up height
-       * @param theta the collision amount to maintain below the ground (note: this should be less then half of k,
-       *        something small like 0.1 is recommended)
-       * @param Scene is used to get the gravity and the ode space
-       * @param keyboard the keyboard instance, or 0 to
-       * avoid creating default input mappings
-       * @param mouse the mouse instance, or 0 to avoid
-       * creating default input mappings
-       * @param maxWalkSpeed the maximum walking speed
-       * @param maxTurnSpeed the maximum turning speed
-       * @param maxSidestepSpeed the maximum sidestep speed       
-       * @param maxStepUpDist the maximum distance we can step up to higher terrain
-       */
-      CollisionMotionModel(float pHeight, float pRadius, float k, float theta,
+      DEPRECATE_FUNC CollisionMotionModel(float pHeight, float pRadius, float k, float theta,
                            dtCore::Scene* pScene,
                            Keyboard* keyboard,
                            Mouse* mouse,
                            float maxWalkSpeed = 5.0f,
                            float maxTurnSpeed = 1.5f,
                            float maxSidestepSpeed = 5.0f,                           
+                           bool useWASD = true,
+                           bool useArrowKeys = true);
+
+      /**
+       * Constructor.
+       *
+       * @param[in]  pHeight           The height of the target.
+       * @param[in]  pRadius           The radius of the target.
+       * @param[in]  stepUpHeight      The height in which the target can step over an obsticle.
+       * @param[in]  pScene            The scene.
+       * @param[in]  keyboard          The applications Keyboard.
+       * @param[in]  mouse             The applications Mouse.
+       * @param[in]  maxWalkSpeed      The walk speed of the target.
+       * @param[in]  maxTurnSpeed      The turn speed of the target.
+       * @param[in]  maxSidestepSpeed  The sidestep speed of the target.
+       * @param[in]  jumpSpeed         The jump speed of the target.
+       * @param[in]  slideSpeed        The slide speed of the target.
+       * @param[in]  slideThreshold    The threshold in which the target will slide on a surface.
+       * @param[in]  canJump           True if the target can jump.
+       * @param[in]  useWASD           True if the target can be controlled using the W A S D keys.
+       * @param[in]  useArrowKeys      True if the target can be controlled using the arrow keys.
+       */
+      CollisionMotionModel(float pHeight,
+                           float pRadius,
+                           float stepUpHeight,
+                           dtCore::Scene* pScene,
+                           Keyboard* keyboard,
+                           Mouse* mouse,
+                           float maxWalkSpeed = 5.0f,
+                           float maxTurnSpeed = 1.5f,
+                           float maxSidestepSpeed = 5.0f,   
+                           float jumpSpeed = 5.0f,
+                           float slideSpeed = 5.0f,
+                           float slideThreshold = 0.1f,
+                           bool canJump = true,
                            bool useWASD = true,
                            bool useArrowKeys = true);
 
