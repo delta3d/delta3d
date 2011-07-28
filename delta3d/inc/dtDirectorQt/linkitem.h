@@ -42,6 +42,11 @@ namespace dtDirector
       public:
 
          /**
+          * Retrieves the owner node item.
+          */
+         NodeItem* GetNodeItem() {return mNodeItem;}
+
+         /**
           * Sets the pen color.
           */
          void SetPenColor(const QColor& color);

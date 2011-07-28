@@ -997,13 +997,64 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   QPainterPath NodeItem::CreateConnectionH(QPointF start, QPointF end, float height, bool drawReverse)
+   QPainterPath NodeItem::CreateConnectionH(QPointF start, QPointF end, NodeItem* ownerNode, NodeItem* targetNode, bool drawReverse, bool building)
    {
       // Modify the positions based on the translation of the background item.
-      QPointF offset = mScene->GetTranslationItem()->scenePos();
-      start -= offset;
-      end -= offset;
-      height -= offset.y();
+      QPointF offset;
+      offset = mScene->GetTranslationItem()->scenePos();
+
+      if (!building)
+      {
+         start -= offset;
+         end -= offset;
+      }
+
+      float height = 0.0f;
+      float topNodeBottom = 0.0f;
+      float bottomNodeTop = 0.0f;
+      if (!targetNode || ownerNode->scenePos().y() < targetNode->scenePos().y())
+      {
+         height = ownerNode->scenePos().y();
+         if (!building)
+         {
+            height -= offset.y();
+         }
+
+         topNodeBottom = height + ownerNode->GetNodeHeight();
+
+         if (targetNode)
+         {
+            bottomNodeTop = targetNode->scenePos().y();
+            if (!building)
+            {
+               bottomNodeTop -= offset.y();
+            }
+         }
+         else if (start.y() > end.y())
+         {
+            bottomNodeTop = start.y();
+         }
+         else
+         {
+            bottomNodeTop = end.y();
+         }
+      }
+      else
+      {
+         height = targetNode->scenePos().y();
+         if (!building)
+         {
+            height -= offset.y();
+         }
+
+         topNodeBottom = height + targetNode->GetNodeHeight();
+
+         bottomNodeTop = ownerNode->scenePos().y();
+         if (!building)
+         {
+            bottomNodeTop -= offset.y();
+         }
+      }
 
       QPainterPath path;
 
@@ -1035,33 +1086,61 @@ namespace dtDirector
             reverseMul = -1.0f;
          }
 
-         float top = height;
-         float yOffset = abs(start.y() - end.y()) / 4.0f + 25;
-         if (start.y() < top)
+         // If the links are far enough apart in height, draw an "S" connection.
+         if (bottomNodeTop - topNodeBottom > MIN_NODE_HEIGHT)
          {
-            top = start.y();
+            float halfX = (start.x() + end.x()) / 2.0f;
+            float halfY = (bottomNodeTop + topNodeBottom) / 2.0f;
+
+            float rightX = 0.0f;
+            float leftX = 0.0f;
+
+            if (start.y() > end.y())
+            {
+               rightX = start.x() + (start.y() - halfY) * reverseMul;
+               leftX = end.x() + (end.y() - halfY) * reverseMul;
+            }
+            else
+            {
+               rightX = start.x() - (start.y() - halfY) * reverseMul;
+               leftX = end.x() - (end.y() - halfY) * reverseMul;
+            }
+
+            path.moveTo(start);
+            path.cubicTo(rightX, start.y(), rightX, halfY, start.x(), halfY);
+            path.lineTo(end.x(), halfY);
+            path.cubicTo(leftX, halfY, leftX, end.y(), end.x(), end.y());
          }
-         else if (end.y() < top)
+         else
          {
-            top = end.y();
+            float top = height;
+            float yOffset = abs(start.y() - end.y()) / 4.0f + 25;
+            if (start.y() < top)
+            {
+               top = start.y();
+            }
+            else if (end.y() < top)
+            {
+               top = end.y();
+            }
+            top -= yOffset;
+
+            float len = abs(start.x() - end.x());
+
+            float higherPoint = dtUtil::Min<float>(start.y(), end.y());
+            if (len < higherPoint - top)
+            {
+               top = higherPoint - len;
+            }
+
+            float ctrlXStart = start.x() + dtUtil::Min<float>((start.y() - top) * 0.5f, len) * reverseMul;
+            float ctrlXEnd = end.x() - dtUtil::Min<float>((end.y() - top) * 0.5f, len) * reverseMul;
+
+            path.moveTo(start);
+            path.cubicTo(ctrlXStart, start.y(), ctrlXStart, top, start.x(), top);
+            path.lineTo(end.x(), top);
+            path.cubicTo(ctrlXEnd, top, ctrlXEnd, end.y(), end.x(), end.y());
          }
-         top -= yOffset;
-
-         float len = abs(start.x() - end.x());
-
-         float higherPoint = dtUtil::Min<float>(start.y(), end.y());
-         if (len < higherPoint - top)
-         {
-            top = higherPoint - len;
-         }
-
-         float ctrlXStart = start.x() + dtUtil::Min<float>((start.y() - top) * 0.5f, len) * reverseMul;
-         float ctrlXEnd = end.x() - dtUtil::Min<float>((end.y() - top) * 0.5f, len) * reverseMul;
-
-         path.moveTo(start);
-         path.cubicTo(ctrlXStart, start.y(), ctrlXStart, top, start.x(), top);
-         path.lineTo(end.x(), top);
-         path.cubicTo(ctrlXEnd, top, ctrlXEnd, end.y(), end.x(), end.y());
       }
 
       return path;
@@ -1312,18 +1391,8 @@ namespace dtDirector
       start.setY(start.y() + LINK_SIZE/2);
       end.setX(end.x() + LINK_SIZE/2);
       end.setY(end.y() + LINK_SIZE/2);
-      float height = 0.0f;
 
-      if (output.node->scenePos().y() < input.node->scenePos().y())
-      {
-         height = output.node->scenePos().y();
-      }
-      else
-      {
-         height = input.node->scenePos().y();
-      }
-
-      QPainterPath path = CreateConnectionH(start, end, height);
+      QPainterPath path = CreateConnectionH(start, end, output.node, input.node);
       output.linkConnectors[index]->setPath(path);
    }
 

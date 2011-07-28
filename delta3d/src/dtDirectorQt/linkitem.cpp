@@ -494,16 +494,18 @@ namespace dtDirector
          {
             QPointF start(data.linkGraphic->scenePos());
             QPointF end(mouseEvent->scenePos());
-            float height = mNodeItem->scenePos().y();
+            //float height = mNodeItem->scenePos().y();
 
             // Modify the positions based on the translation of the background item.
-            QPointF offset = mScene->GetTranslationItem()->scenePos();
-            start += offset;
-            end += offset;
-            height += offset.y();
+            //QPointF offset = mScene->GetTranslationItem()->scenePos();
+            //start += offset;
+            //end += offset;
+            //height += offset.y();
 
             start.setX(start.x() + LINK_SIZE/2);
             start.setY(start.y() + LINK_SIZE/2);
+
+            NodeItem* targetNode = NULL;
 
             // Find and highlight any output links being hovered over.
             QList<QGraphicsItem*> hoverList = mScene->items(mouseEvent->scenePos().x(), mouseEvent->scenePos().y(), 1, 1);
@@ -516,15 +518,17 @@ namespace dtDirector
                   if (item)
                   {
                      // Snap the end position to the output link.
-                     end = QPointF(item->scenePos()) + offset;
+                     end = QPointF(item->scenePos())/* + offset*/;
                      end.setX(end.x() + LINK_LENGTH);
                      end.setY(end.y() + LINK_SIZE/2);
+
+                     targetNode = item->GetNodeItem();
                      break;
                   }
                }
             }
 
-            QPainterPath path = mNodeItem->CreateConnectionH(end, start, height);
+            QPainterPath path = mNodeItem->CreateConnectionH(end, start, mNodeItem, targetNode, false, true);
             mHighlight->setPath(path);
             mDrawing->setPath(path);
          }
@@ -987,16 +991,18 @@ namespace dtDirector
          {
             QPointF start(data.linkGraphic->scenePos());
             QPointF end(mouseEvent->scenePos());
-            float height = mNodeItem->scenePos().y();
+            //float height = mNodeItem->scenePos().y();
 
             // Modify the positions based on the translation of the background item.
-            QPointF offset = mScene->GetTranslationItem()->scenePos();
-            start += offset;
-            end += offset;
-            height += offset.y();
+            //QPointF offset = mScene->GetTranslationItem()->scenePos();
+            //start += offset;
+            //end += offset;
+            //height += offset.y();
 
             start.setX(start.x() + LINK_LENGTH);
             start.setY(start.y() + LINK_SIZE/2);
+
+            NodeItem* targetNode = NULL;
 
             // Find and highlight any output links being hovered over.
             QList<QGraphicsItem*> hoverList = mScene->items(mouseEvent->scenePos().x(), mouseEvent->scenePos().y(), 1, 1);
@@ -1009,15 +1015,17 @@ namespace dtDirector
                   if (item)
                   {
                      // Snap the end position to the output link.
-                     end = QPointF(item->scenePos()) + offset;
+                     end = QPointF(item->scenePos())/* + offset*/;
                      end.setX(end.x() + LINK_SIZE/2);
                      end.setY(end.y() + LINK_SIZE/2);
+
+                     targetNode = item->GetNodeItem();
                      break;
                   }
                }
             }
 
-            QPainterPath path = mNodeItem->CreateConnectionH(start, end, height, true);
+            QPainterPath path = mNodeItem->CreateConnectionH(start, end, mNodeItem, targetNode, true, true);
             mHighlight->setPath(path);
             mDrawing->setPath(path);
          }
