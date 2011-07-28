@@ -58,6 +58,7 @@ namespace dtDirector
       mInputs.push_back(InputLink(this, "Show"));
       mInputs.push_back(InputLink(this, "Hide"));
 
+      mOutputs.push_back(OutputLink(this, "Finished"));
       mOutputs.push_back(OutputLink(this, "Failed"));
    }
 
@@ -143,6 +144,7 @@ namespace dtDirector
 
             if (alpha >= 1.0f)
             {
+               ActivateOutput("Finished");
                return false;
             }
          }
@@ -159,6 +161,7 @@ namespace dtDirector
             if (alpha <= 0.0f)
             {
                layout->hide();
+               ActivateOutput("Finished");
                return false;
             }
          }
