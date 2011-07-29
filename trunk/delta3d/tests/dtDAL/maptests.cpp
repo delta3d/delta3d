@@ -177,7 +177,6 @@ const std::string MapTests::TEST_PROJECT_DIR_2="WorkingMapProject2";
 const std::string DATA_DIR = dtUtil::GetDeltaRootPath() + dtUtil::FileUtils::PATH_SEPARATOR + "examples/data";
 const std::string TESTS_DIR = dtUtil::GetDeltaRootPath() + dtUtil::FileUtils::PATH_SEPARATOR + "tests";
 const std::string MAPPROJECTCONTEXT = TESTS_DIR + dtUtil::FileUtils::PATH_SEPARATOR + "dtCore" + dtUtil::FileUtils::PATH_SEPARATOR + MapTests::TEST_PROJECT_DIR;
-const std::string PROJECTCONTEXT = TESTS_DIR + dtUtil::FileUtils::PATH_SEPARATOR + "dtCore" + dtUtil::FileUtils::PATH_SEPARATOR + "WorkingProject";
 
 ///////////////////////////////////////////////////////////////////////////////////////
 void MapTests::setUp()
@@ -197,16 +196,6 @@ void MapTests::setUp()
             fileUtils.PushDirectory(projectDir);
         }
 
-        std::string rbodyToDelete("WorkingMapProject/Characters/marine/marine.rbody");
-
-        if (fileUtils.DirExists(rbodyToDelete))
-        {
-            fileUtils.DirDelete(rbodyToDelete, true);
-        }
-        else if (fileUtils.FileExists(rbodyToDelete))
-        {
-            fileUtils.FileDelete(rbodyToDelete);
-        }
 
         if (fileUtils.DirExists(TEST_PROJECT_DIR))
         {
@@ -266,26 +255,17 @@ void MapTests::tearDown()
          dtCore::Project::GetInstance().DeleteMap(*i);
       }
 
-      std::string rbodyToDelete("WorkingMapProject/Characters/marine/marine.rbody");
-
-      if (fileUtils.DirExists(rbodyToDelete))
-      {
-         fileUtils.DirDelete(rbodyToDelete, true);
-      }
-      else if (fileUtils.FileExists(rbodyToDelete))
-      {
-         fileUtils.FileDelete(rbodyToDelete);
-      }
 
       dtCore::Project::GetInstance().ClearAllContexts();
 
-      if (fileUtils.DirExists("WorkingProject"))
+      if (fileUtils.DirExists(TEST_PROJECT_DIR))
       {
-         fileUtils.DirDelete("WorkingProject", true);
+         fileUtils.DirDelete(TEST_PROJECT_DIR, true);
       }
-      if (fileUtils.DirExists("WorkingProject2"))
+
+      if (fileUtils.DirExists(TEST_PROJECT_DIR_2))
       {
-         fileUtils.DirDelete("WorkingProject2", true);
+         fileUtils.DirDelete(TEST_PROJECT_DIR_2, true);
       }
 
       if (dtCore::LibraryManager::GetInstance().GetRegistry(mExampleLibraryName) != NULL)
