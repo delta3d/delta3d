@@ -21,8 +21,8 @@
 #include <prefix/dtdirectornodesprefix.h>
 #include <dtDirectorNodes/sendmessageaction.h>
 
-#include <dtDAL/actoridactorproperty.h>
-#include <dtDAL/stringactorproperty.h>
+#include <dtCore/actoridactorproperty.h>
+#include <dtCore/stringactorproperty.h>
 
 #include <dtDirector/director.h>
 
@@ -62,17 +62,17 @@ namespace dtDirector
       ActionNode::BuildPropertyMap();
       RemoveProperty("Name");
 
-      dtDAL::StringActorProperty* messageTypeProp = new dtDAL::StringActorProperty(
+      dtCore::StringActorProperty* messageTypeProp = new dtCore::StringActorProperty(
          "Message Type", "Message Type",
-         dtDAL::StringActorProperty::SetFuncType(this, &SendMessageAction::SetMessageType),
-         dtDAL::StringActorProperty::GetFuncType(this, &SendMessageAction::GetMessageType),
+         dtCore::StringActorProperty::SetFuncType(this, &SendMessageAction::SetMessageType),
+         dtCore::StringActorProperty::GetFuncType(this, &SendMessageAction::GetMessageType),
          "The name of the message type.");
       AddProperty(messageTypeProp);
 
-      dtDAL::ActorIDActorProperty* aboutActorProp = new dtDAL::ActorIDActorProperty(
+      dtCore::ActorIDActorProperty* aboutActorProp = new dtCore::ActorIDActorProperty(
          "AboutActorID", "AboutActorID",
-         dtDAL::ActorIDActorProperty::SetFuncType(this, &SendMessageAction::SetAboutActorID),
-         dtDAL::ActorIDActorProperty::GetFuncType(this, &SendMessageAction::GetAboutActorID),
+         dtCore::ActorIDActorProperty::SetFuncType(this, &SendMessageAction::SetAboutActorID),
+         dtCore::ActorIDActorProperty::GetFuncType(this, &SendMessageAction::GetAboutActorID),
          "", "The actor this message is about.");
       AddProperty(aboutActorProp);
 

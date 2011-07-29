@@ -29,8 +29,8 @@
 #include <dtCore/deltawin.h>
 #include <dtCore/transform.h>
 
-#include <dtDAL/project.h>
-#include <dtDAL/map.h>
+#include <dtCore/project.h>
+#include <dtCore/map.h>
 
 #include <dtUtil/datapathutils.h>
 
@@ -150,12 +150,12 @@ void TestPreRender::CreateTextureScene()
 
    // Set the root directory where our art assets are to be found
    std::string contextName = dtUtil::GetDeltaRootPath() + "/examples/data/demoMap";
-   dtDAL::Project::GetInstance().SetContext(contextName, true);
+   dtCore::Project::GetInstance().SetContext(contextName, true);
 
    // Load the map into our custom scene
-   dtDAL::Map& map = dtDAL::Project::GetInstance().LoadMapIntoScene("MyCoolMap", *mTextureScene);
+   dtCore::Map& map = dtCore::Project::GetInstance().LoadMapIntoScene("MyCoolMap", *mTextureScene);
 
-   std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> > container;
+   std::vector<dtCore::RefPtr<dtCore::BaseActorObject> > container;
    map.FindProxies(container, "", "", "", "dtCore::SkyBox");
 
    // Add the skybox to the main scene as well
@@ -201,7 +201,7 @@ TestPreRender::~TestPreRender()
 {
    // This needs to be done in order to ensure that our
    // manually loaded map can properly deallocate resources
-   dtDAL::Project& project = dtDAL::Project::GetInstance();
+   dtCore::Project& project = dtCore::Project::GetInstance();
    project.CloseAllMaps(true);
 }
 

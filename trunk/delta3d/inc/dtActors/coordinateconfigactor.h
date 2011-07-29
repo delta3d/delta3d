@@ -23,8 +23,8 @@
 
 #include <osg/Vec2d>
 #include <osg/Vec3d>
-#include <dtDAL/plugin_export.h>
-#include <dtDAL/actorproxyicon.h>
+#include <dtCore/plugin_export.h>
+#include <dtCore/actorproxyicon.h>
 #include <dtUtil/coordinates.h>
 #include <dtGame/gameactor.h>
 
@@ -200,15 +200,15 @@ namespace dtActors
           * render mode is RenderMode::DRAW_BILLBOARD_ICON.
           * @return a pointer to the icon
           */
-         virtual dtDAL::ActorProxyIcon* GetBillBoardIcon();
+         virtual dtCore::ActorProxyIcon* GetBillBoardIcon();
 
          /**
           * Gets the current render mode for positional lights.
-          * @return dtDAL::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON.
+          * @return dtCore::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON.
           */
-         virtual const dtDAL::BaseActorObject::RenderMode& GetRenderMode()
+         virtual const dtCore::BaseActorObject::RenderMode& GetRenderMode()
          {
-            return dtDAL::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON;
+            return dtCore::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON;
          }
 
 

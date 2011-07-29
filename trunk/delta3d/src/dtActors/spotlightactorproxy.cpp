@@ -20,13 +20,13 @@
  */
 #include <dtActors/spotlightactorproxy.h>
 
-#include <dtDAL/actorproxyicon.h>
-#include <dtDAL/datatype.h>
-#include <dtDAL/floatactorproperty.h>
-#include <dtDAL/functor.h>
+#include <dtCore/actorproxyicon.h>
+#include <dtCore/datatype.h>
+#include <dtCore/floatactorproperty.h>
+#include <dtCore/functor.h>
 
 using namespace dtCore;
-using namespace dtDAL;
+using namespace dtCore;
 
 namespace dtActors
 {
@@ -46,9 +46,9 @@ namespace dtActors
       // This property manipulates the cutoff oa spotlight. It uses
       // a float type to represent the cutoff factor.
       // Default is 22.5f
-      AddProperty(new dtDAL::FloatActorProperty("Cutoff", "Cutoff",
-         dtDAL::FloatActorProperty::SetFuncType(sl, &dtCore::SpotLight::SetSpotCutoff),
-         dtDAL::FloatActorProperty::GetFuncType(sl, &dtCore::SpotLight::GetSpotCutoff),
+      AddProperty(new dtCore::FloatActorProperty("Cutoff", "Cutoff",
+         dtCore::FloatActorProperty::SetFuncType(sl, &dtCore::SpotLight::SetSpotCutoff),
+         dtCore::FloatActorProperty::GetFuncType(sl, &dtCore::SpotLight::GetSpotCutoff),
          "Sets the spotlight cutoff factor.", GROUPNAME));
 
       // This property manipulates the exponent of a spotlight. It uses
@@ -56,18 +56,18 @@ namespace dtActors
       // SpotExponent, the more concentrated the light will be in the
       // center of the cone.
       // Default is 1.0f
-      AddProperty(new dtDAL::FloatActorProperty("Spot Exponent", "Spot Exponent",
-         dtDAL::FloatActorProperty::SetFuncType(sl, &dtCore::SpotLight::SetSpotExponent),
-         dtDAL::FloatActorProperty::GetFuncType(sl, &dtCore::SpotLight::GetSpotExponent),
+      AddProperty(new dtCore::FloatActorProperty("Spot Exponent", "Spot Exponent",
+         dtCore::FloatActorProperty::SetFuncType(sl, &dtCore::SpotLight::SetSpotExponent),
+         dtCore::FloatActorProperty::GetFuncType(sl, &dtCore::SpotLight::GetSpotExponent),
          "Sets the concentration of the light in the center of its cone.", GROUPNAME));
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   dtDAL::ActorProxyIcon* SpotlightActorProxy::GetBillBoardIcon()
+   dtCore::ActorProxyIcon* SpotlightActorProxy::GetBillBoardIcon()
    {
       if (!mBillBoardIcon.valid())
       {
-         mBillBoardIcon = new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IMAGE_BILLBOARD_LIGHT);
+         mBillBoardIcon = new dtCore::ActorProxyIcon(dtCore::ActorProxyIcon::IMAGE_BILLBOARD_LIGHT);
       }
 
       return mBillBoardIcon.get();

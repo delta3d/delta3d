@@ -46,7 +46,7 @@ namespace dtCore
 }
 
 // Forward declarations
-namespace dtDAL
+namespace dtCore
 {
    class BaseActorObject;
    class ActorType;
@@ -144,7 +144,7 @@ namespace dtGame
        * to create.
        * @param actorTypes A vector to fill
        */
-      void GetActorTypes(std::vector<const dtDAL::ActorType*>& actorTypes);
+      void GetActorTypes(std::vector<const dtCore::ActorType*>& actorTypes);
 
       /**
        * Gets a single actor type that matches the name and category specified.
@@ -152,21 +152,21 @@ namespace dtGame
        * @param name Name of the actor type.
        * @return A pointer to the actor type if the actor type was found or NULL otherwise.
        */
-      const dtDAL::ActorType* FindActorType(const std::string& category, const std::string& name);
+      const dtCore::ActorType* FindActorType(const std::string& category, const std::string& name);
 
       /**
        * Fills a vector with the game proxys whose types match the name parameter
        * @param The name to search for
        * @param The vector to fill
        */
-      void FindPrototypesByActorType(const dtDAL::ActorType& type, std::vector<dtDAL::BaseActorObject*>& toFill) const;
+      void FindPrototypesByActorType(const dtCore::ActorType& type, std::vector<dtCore::BaseActorObject*>& toFill) const;
 
       /**
        * Fills a vector with the game proxys whose names match the name parameter
        * @param The name to search for
        * @param The vector to fill
        */
-      void FindPrototypesByName(const std::string& name, std::vector<dtDAL::BaseActorObject*>& toFill) const;
+      void FindPrototypesByName(const std::string& name, std::vector<dtCore::BaseActorObject*>& toFill) const;
 
       /**
        * Convenience method to return a single prototype
@@ -176,7 +176,7 @@ namespace dtGame
       template <class ProxyType>
       void FindPrototypeByName(const std::string& name, ProxyType*& proxy) const
       {
-         std::vector<dtDAL::BaseActorObject*> toFill;
+         std::vector<dtCore::BaseActorObject*> toFill;
          FindPrototypesByName(name, toFill);
          if (!toFill.empty())
          {
@@ -188,13 +188,13 @@ namespace dtGame
        * Fills a vector with all the templates.
        * @param The vector to fill
        */
-      void GetAllPrototypes(std::vector<dtDAL::BaseActorObject*>& toFill) const;
+      void GetAllPrototypes(std::vector<dtCore::BaseActorObject*>& toFill) const;
 
       /**
        * @param The uniqueID to look for or NULL for error
        * @return the actor proxy with that ID
        */
-      dtDAL::BaseActorObject* FindPrototypeByID(const dtCore::UniqueId& uniqueID);
+      dtCore::BaseActorObject* FindPrototypeByID(const dtCore::UniqueId& uniqueID);
 
       /**
        * @param The uniqueID to look for or NULL for error
@@ -203,7 +203,7 @@ namespace dtGame
       template <typename T>
       void FindPrototypeByID(const dtCore::UniqueId& uniqueID, dtCore::RefPtr<T>& proxy)
       {
-         dtDAL::BaseActorObject* tempProxy = FindPrototypeByID(uniqueID);
+         dtCore::BaseActorObject* tempProxy = FindPrototypeByID(uniqueID);
          proxy = dynamic_cast<T*>(tempProxy);
       }
 
@@ -214,13 +214,13 @@ namespace dtGame
       void DeletePrototype(const dtCore::UniqueId& uniqueId);
 
       /// Makes a new GameActorProxy, and returns it to the user
-      dtCore::RefPtr<dtDAL::BaseActorObject> CreateActorFromPrototype(const dtCore::UniqueId& uniqueID);
+      dtCore::RefPtr<dtCore::BaseActorObject> CreateActorFromPrototype(const dtCore::UniqueId& uniqueID);
 
       template <typename T>
       void CreateActorFromPrototype(const dtCore::UniqueId& uniqueID,
                dtCore::RefPtr<T>& proxy)
       {
-         dtCore::RefPtr<dtDAL::BaseActorObject> baseProxy = CreateActorFromPrototype(uniqueID);
+         dtCore::RefPtr<dtCore::BaseActorObject> baseProxy = CreateActorFromPrototype(uniqueID);
          proxy = dynamic_cast<T*>(baseProxy.get());
       }
 
@@ -228,16 +228,16 @@ namespace dtGame
        * Wraps up several methods used to lookup and create actors from prototypes.
        * It attempts to create a new actor from a prototype by using the name.  Assumes only 1 match.
        * @param prototypeName The unique name to look for.
-       * @param proxy Where the new actor proxy will go (with correct type) - ex dtCore::RefPtr<dtDAL::BaseActorObject> newProxy
+       * @param proxy Where the new actor proxy will go (with correct type) - ex dtCore::RefPtr<dtCore::BaseActorObject> newProxy
        */
       template <typename T>
       void CreateActorFromPrototype(const std::string& prototypeName, dtCore::RefPtr<T>& proxy)
       {
-         dtDAL::BaseActorObject* prototypeProxy = NULL;
+         dtCore::BaseActorObject* prototypeProxy = NULL;
          FindPrototypeByName(prototypeName, prototypeProxy);
          if (prototypeProxy != NULL)
          {
-            dtCore::RefPtr<dtDAL::BaseActorObject> newBaseActorObject =
+            dtCore::RefPtr<dtCore::BaseActorObject> newBaseActorObject =
                CreateActorFromPrototype(prototypeProxy->GetId());
             proxy = dynamic_cast<T*>(newBaseActorObject.get());
          }
@@ -249,12 +249,12 @@ namespace dtGame
        * system independent name.
        * @return A handle to the registry or NULL if it is not currently loaded.
        */
-      dtDAL::ActorPluginRegistry* GetRegistry(const std::string& name);
+      dtCore::ActorPluginRegistry* GetRegistry(const std::string& name);
 
       /**
        * @param actorType the actor type to get the registry for.
        */
-      dtDAL::ActorPluginRegistry* GetRegistryForType(dtDAL::ActorType& actorType);
+      dtCore::ActorPluginRegistry* GetRegistryForType(dtCore::ActorType& actorType);
 
       /**
        * Determines which platform we are running on and returns a
@@ -377,17 +377,17 @@ namespace dtGame
       /**
        * Creates a game actor based on the actor type but sets the isRemote status to true (== remote).
        * @param The actor type to create.
-       * @throws dtDAL::ExceptionEnum::ObjectFactoryUnknownType
+       * @throws dtCore::ExceptionEnum::ObjectFactoryUnknownType
        * @throws dtGame::ExceptionEnum::INVALID_PARAMETER if actortype is NOT a game actor
        */
-      dtCore::RefPtr<dtGame::GameActorProxy> CreateRemoteGameActor(const dtDAL::ActorType& actorType);
+      dtCore::RefPtr<dtGame::GameActorProxy> CreateRemoteGameActor(const dtCore::ActorType& actorType);
 
       /**
        * Creates an actor based on the actor type.
        * @param The actor type to create.
-       * @throws dtDAL::ExceptionEnum::ObjectFactoryUnknownType
+       * @throws dtCore::ExceptionEnum::ObjectFactoryUnknownType
        */
-      dtCore::RefPtr<dtDAL::BaseActorObject> CreateActor(const dtDAL::ActorType& actorType);
+      dtCore::RefPtr<dtCore::BaseActorObject> CreateActor(const dtCore::ActorType& actorType);
 
       /**
        * Creates an actor based on the actor type and store it in a ref pointer.
@@ -395,12 +395,12 @@ namespace dtGame
        * not BaseActorObject.  This is very handy with GameActorProxies since it is typical that uses will create those most often.
        * @param The actor type to create.
        * @param proxy a RefPtr to fill with the created actor.  If the actor is not type specified, the RefPtr will be NULL.
-       * @throws dtDAL::ExceptionEnum::ObjectFactoryUnknownType
+       * @throws dtCore::ExceptionEnum::ObjectFactoryUnknownType
        */
       template <typename ProxyType>
-      void CreateActor(const dtDAL::ActorType& actorType, dtCore::RefPtr<ProxyType>& proxy)
+      void CreateActor(const dtCore::ActorType& actorType, dtCore::RefPtr<ProxyType>& proxy)
       {
-         dtCore::RefPtr<dtDAL::BaseActorObject> tmpProxy = CreateActor(actorType);
+         dtCore::RefPtr<dtCore::BaseActorObject> tmpProxy = CreateActor(actorType);
          proxy = dynamic_cast<ProxyType*>(tmpProxy.get());
       }
 
@@ -408,9 +408,9 @@ namespace dtGame
        * Creates an actor based on the actor type
        * @param category The category corresponding to the actor type
        * @param name The name corresponding to the actor type
-       * @throws dtDAL::ExceptionEnum::ObjectFactoryUnknownType
+       * @throws dtCore::ExceptionEnum::ObjectFactoryUnknownType
        */
-      dtCore::RefPtr<dtDAL::BaseActorObject> CreateActor(const std::string& category, const std::string& name);
+      dtCore::RefPtr<dtCore::BaseActorObject> CreateActor(const std::string& category, const std::string& name);
 
       /**
        * Creates an actor based on the string version of the actor type and store it in a ref pointer.
@@ -418,12 +418,12 @@ namespace dtGame
        * not BaseActorObject.  This is very handy with GameActorProxies since it is typical that uses will create those most often.
        * @param The actor type to create.
        * @param proxy a RefPtr to fill with the created actor.  If the actor is not type specified, the RefPtr will be NULL.
-       * @throws dtDAL::ExceptionEnum::ObjectFactoryUnknownType
+       * @throws dtCore::ExceptionEnum::ObjectFactoryUnknownType
        */
       template <typename ProxyType>
       void CreateActor(const std::string& category, const std::string& name, dtCore::RefPtr<ProxyType>& proxy)
       {
-         dtCore::RefPtr<dtDAL::BaseActorObject> tmpProxy = CreateActor(category, name);
+         dtCore::RefPtr<dtCore::BaseActorObject> tmpProxy = CreateActor(category, name);
          proxy = dynamic_cast<ProxyType*>(tmpProxy.get());
       }
 
@@ -431,7 +431,7 @@ namespace dtGame
        * Adds an actor to the list of actors that the game manager knows about
        * @param actorProxy  The actor proxy to add
        */
-      void AddActor(dtDAL::BaseActorObject& actorProxy);
+      void AddActor(dtCore::BaseActorObject& actorProxy);
 
       /**
        * Adds a game actor to the list of actors that the game manager knows about
@@ -478,7 +478,7 @@ namespace dtGame
        * An INFO_ACTOR_DELETE message is only sent if it's a game actor and is local.
        * @param The actor to remove
        */
-      void DeleteActor(dtDAL::BaseActorObject& actorProxy);
+      void DeleteActor(dtCore::BaseActorObject& actorProxy);
 
       /**
        * Removes all game actors and actors from the game manager
@@ -497,7 +497,7 @@ namespace dtGame
        * game manager.  This call is slow.
        * @param The set to fill
        */
-      void GetUsedActorTypes(std::set<const dtDAL::ActorType*>& vec) const;
+      void GetUsedActorTypes(std::set<const dtCore::ActorType*>& vec) const;
 
       /**
        * Gets the number of game actors currently managed by this game
@@ -516,13 +516,13 @@ namespace dtGame
        * Retrieves all the non game actors added to the GM
        * @param toFill The vector to fill
        */
-      void GetAllNonGameActors(std::vector<dtDAL::BaseActorObject*>& toFill) const;
+      void GetAllNonGameActors(std::vector<dtCore::BaseActorObject*>& toFill) const;
 
       /**
        * Retrieves all the actors added to the GM
        * @param toFill The vector to fill
        */
-      void GetAllActors(std::vector<dtDAL::BaseActorObject*>& toFill) const;
+      void GetAllActors(std::vector<dtCore::BaseActorObject*>& toFill) const;
 
       /**
        * Get the number of all Actors currently managed.
@@ -539,7 +539,7 @@ namespace dtGame
 
       /**
        * Allows performing an operation on each actor, excluding prototypes, in the game manager.
-       * @param func a class with an operator() that takes an actor proxy by reference (dtDAL::BaseActorObject&)
+       * @param func a class with an operator() that takes an actor proxy by reference (dtCore::BaseActorObject&)
        * @note you must include dtGame/gamemanager.inl to use the method.
        */
       template <typename UnaryFunctor>
@@ -547,7 +547,7 @@ namespace dtGame
 
       /**
        * Allows performing an operation on each prototype actor in the game manager.
-       * @param func a class with an operator() that takes an actor proxy by reference (dtDAL::BaseActorObject&)
+       * @param func a class with an operator() that takes an actor proxy by reference (dtCore::BaseActorObject&)
        * @note you must include dtGame/gamemanager.inl to use the method.
        */
       template <typename UnaryFunctor>
@@ -555,30 +555,30 @@ namespace dtGame
 
       /**
        * Allows custom searching on each non-prototype actor in the game manager.
-       * @param ifFunc a class with an operator() that takes an actor proxy by reference (dtDAL::BaseActorObject&)
+       * @param ifFunc a class with an operator() that takes an actor proxy by reference (dtCore::BaseActorObject&)
        * and returns true if you want to add it the vector.
        * @param toFill the vector to fill with the results. It will be cleared before searching.
        * @note you must include dtGame/gamemanager.inl to use the method.
        */
       template <typename FindFunctor>
-      void FindActorsIf(FindFunctor& ifFunc, std::vector<dtDAL::BaseActorObject*>& toFill) const;
+      void FindActorsIf(FindFunctor& ifFunc, std::vector<dtCore::BaseActorObject*>& toFill) const;
 
       /**
        * Allows custom searching on each prototype actor in the game manager.
-       * @param ifFunc a class with an operator() that takes an actor proxy by reference (dtDAL::BaseActorObject&)
+       * @param ifFunc a class with an operator() that takes an actor proxy by reference (dtCore::BaseActorObject&)
        * and returns true if you want to add it the vector.
        * @param toFill the vector to fill with the results. It will be cleared before searching.
        * @note you must include dtGame/gamemanager.inl to use the method.
        */
       template <typename FindFunctor>
-      void FindPrototypesIf(FindFunctor& ifFunc, std::vector<dtDAL::BaseActorObject*>& toFill) const;
+      void FindPrototypesIf(FindFunctor& ifFunc, std::vector<dtCore::BaseActorObject*>& toFill) const;
 
       /**
        * Fills a vector with the game proxys whose names match the name parameter
        * @param The name to search for
        * @param The vector to fill
        */
-      void FindActorsByName(const std::string& name, std::vector<dtDAL::BaseActorObject*>& toFill) const;
+      void FindActorsByName(const std::string& name, std::vector<dtCore::BaseActorObject*>& toFill) const;
 
       /**
        * Convenience method to return an actor
@@ -589,12 +589,12 @@ namespace dtGame
       void FindActorByName(const std::string& name, ProxyType*& proxy) const
       {
          proxy = NULL;
-         std::vector<dtDAL::BaseActorObject*> toFill;
+         std::vector<dtCore::BaseActorObject*> toFill;
          FindActorsByName(name, toFill);
          if (!toFill.empty())
          {
             // Iterate until we find a proxy of the proper type.
-            for (std::vector<dtDAL::BaseActorObject*>::iterator i = toFill.begin();
+            for (std::vector<dtCore::BaseActorObject*>::iterator i = toFill.begin();
                i != toFill.end();
                ++i)
             {
@@ -613,7 +613,7 @@ namespace dtGame
        * @param The type to search for
        * @param The vector to fill
        */
-      void FindActorsByType(const dtDAL::ActorType& type, std::vector<dtDAL::BaseActorObject*>& toFill) const;
+      void FindActorsByType(const dtCore::ActorType& type, std::vector<dtCore::BaseActorObject*>& toFill) const;
 
       /**
        * Convenience method to return an actor
@@ -621,10 +621,10 @@ namespace dtGame
        * @param The proxy to cast
        */
       template <class ProxyType>
-      void FindActorByType(const dtDAL::ActorType& type, ProxyType*& proxy) const
+      void FindActorByType(const dtCore::ActorType& type, ProxyType*& proxy) const
       {
          proxy = NULL;
-         std::vector<dtDAL::BaseActorObject*> toFill;
+         std::vector<dtCore::BaseActorObject*> toFill;
          FindActorsByType(type, toFill);
          if (!toFill.empty())
          {
@@ -637,7 +637,7 @@ namespace dtGame
        * @param className the classname
        * @param toFill The vector to fill
        */
-      void FindActorsByClassName(const std::string& className, std::vector<dtDAL::BaseActorObject*>& toFill) const;
+      void FindActorsByClassName(const std::string& className, std::vector<dtCore::BaseActorObject*>& toFill) const;
 
 
       /**
@@ -663,7 +663,7 @@ namespace dtGame
        * @param id The id of the proxy to find
        * @return The proxy, or NULL if not found
        */
-      dtDAL::BaseActorObject* FindActorById(const dtCore::UniqueId& id) const;
+      dtCore::BaseActorObject* FindActorById(const dtCore::UniqueId& id) const;
 
       /**
        * Returns the actor proxy whose is matches the parameter. This will search both the game actors and the
@@ -1048,8 +1048,8 @@ namespace dtGame
       void RejectMessage(const Message& reasonMessage, const std::string& rejectDescription);
 
       /**
-       * Wrapper method to encapsulate SetContext on dtDAL::Project so an outside
-       * user does not have to know about dtDAL::Project at all when they are writing
+       * Wrapper method to encapsulate SetContext on dtCore::Project so an outside
+       * user does not have to know about dtCore::Project at all when they are writing
        * an application using GameStart
        * @param context A path to the context to use
        * @param readOnly True to open the context in read only mode

@@ -32,7 +32,7 @@
 #include <QtGui/QFileDialog>
 #include <QtGui/QLabel>
 
-#include <dtDAL/project.h>
+#include <dtCore/project.h>
 
 
 namespace dtQt
@@ -77,7 +77,7 @@ namespace dtQt
 
       applyButton->setEnabled(false);
       pathEdit->setDisabled(true);
-      pathEdit->setText(tr(dtDAL::Project::GetInstance().GetContext().c_str()));
+      pathEdit->setText(tr(dtCore::Project::GetInstance().GetContext().c_str()));
       setMinimumSize(530, 100);
    }
 
@@ -94,7 +94,7 @@ namespace dtQt
    ///////////////////////// SLOTS ////////////////////////////////////
    void ProjectContextDialog::spawnFileBrowser()
    {
-      const std::string currentContext = dtDAL::Project::GetInstance().GetContext();
+      const std::string currentContext = dtCore::Project::GetInstance().GetContext();
 
       QString dir = QFileDialog::getExistingDirectory(this, tr("Select a project context"), QString::fromStdString(currentContext));
 

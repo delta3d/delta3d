@@ -35,9 +35,9 @@
 #include <osg/Math>
 #include <dtUtil/librarysharingmanager.h>
 #include <dtUtil/datapathutils.h>
-#include <dtDAL/librarymanager.h>
-#include <dtDAL/actortype.h>
-#include <dtDAL/actorproperty.h>
+#include <dtCore/librarymanager.h>
+#include <dtCore/actortype.h>
+#include <dtCore/actorproperty.h>
 
 ///here we need to both link in and load dynamically the same library.
 #include <testActorLibrary/testactorlib.h>
@@ -64,7 +64,7 @@ public:
          //logger->SetLogLevel(dtUtil::Log::LOG_DEBUG);
            
          //ensure the example library is unloaded.
-         dtDAL::LibraryManager::GetInstance().UnloadActorRegistry(mExampleLibraryName);
+         dtCore::LibraryManager::GetInstance().UnloadActorRegistry(mExampleLibraryName);
    
       }
       catch (const dtUtil::Exception& e)
@@ -125,9 +125,9 @@ public:
    
    void TestLibrarySharing()
    {
-      dtDAL::LibraryManager& libMgr = dtDAL::LibraryManager::GetInstance();
-      std::vector<const dtDAL::ActorType*> actors;
-      std::vector<dtDAL::ActorProperty*> props;
+      dtCore::LibraryManager& libMgr = dtCore::LibraryManager::GetInstance();
+      std::vector<const dtCore::ActorType*> actors;
+      std::vector<dtCore::ActorProperty*> props;
    
       CPPUNIT_ASSERT(libMgr.GetRegistry(mActorLibraryName) != NULL);
       

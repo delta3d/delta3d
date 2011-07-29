@@ -34,11 +34,11 @@
 #include <dtCore/shadermanager.h>
 #include <dtCore/transform.h>
 
-#include <dtDAL/actorproxyicon.h>
-#include <dtDAL/colorrgbaactorproperty.h>
-#include <dtDAL/enumactorproperty.h>
-#include <dtDAL/functor.h>
-#include <dtDAL/stringactorproperty.h>
+#include <dtCore/actorproxyicon.h>
+#include <dtCore/colorrgbaactorproperty.h>
+#include <dtCore/enumactorproperty.h>
+#include <dtCore/functor.h>
+#include <dtCore/stringactorproperty.h>
 
 #include <dtGame/gamemanager.h>
 #include <dtGame/messagetype.h>
@@ -1234,26 +1234,26 @@ namespace dtActors
 
       WaterGridActor& actor = static_cast<WaterGridActor&>(GetGameActor());
 
-      AddProperty(new dtDAL::ColorRgbaActorProperty(PROPERTY_WATER_COLOR, PROPERTY_WATER_COLOR,
-         dtDAL::ColorRgbaActorProperty::SetFuncType(&actor, &WaterGridActor::SetWaterColor),
-         dtDAL::ColorRgbaActorProperty::GetFuncType(&actor,&WaterGridActor::GetWaterColor),
+      AddProperty(new dtCore::ColorRgbaActorProperty(PROPERTY_WATER_COLOR, PROPERTY_WATER_COLOR,
+         dtCore::ColorRgbaActorProperty::SetFuncType(&actor, &WaterGridActor::SetWaterColor),
+         dtCore::ColorRgbaActorProperty::GetFuncType(&actor,&WaterGridActor::GetWaterColor),
          "Sets the color of the water.", GROUPNAME));
 
-      AddProperty(new dtDAL::EnumActorProperty<WaterGridActor::ChoppinessSettings>(PROPERTY_CHOPPINESS, PROPERTY_CHOPPINESS,
-         dtDAL::EnumActorProperty<WaterGridActor::ChoppinessSettings>::SetFuncType(&actor, &WaterGridActor::SetChoppiness),
-         dtDAL::EnumActorProperty<WaterGridActor::ChoppinessSettings>::GetFuncType(&actor, &WaterGridActor::GetChoppiness),
+      AddProperty(new dtCore::EnumActorProperty<WaterGridActor::ChoppinessSettings>(PROPERTY_CHOPPINESS, PROPERTY_CHOPPINESS,
+         dtCore::EnumActorProperty<WaterGridActor::ChoppinessSettings>::SetFuncType(&actor, &WaterGridActor::SetChoppiness),
+         dtCore::EnumActorProperty<WaterGridActor::ChoppinessSettings>::GetFuncType(&actor, &WaterGridActor::GetChoppiness),
          "Sets the choppiness for the water.", GROUPNAME));
 
-      AddProperty(new dtDAL::StringActorProperty(PROPERTY_SCENE_CAMERA, PROPERTY_SCENE_CAMERA,
-         dtDAL::StringActorProperty::SetFuncType(this, &WaterGridActorProxy::SetSceneCamera),
-         dtDAL::StringActorProperty::GetFuncType(this, &WaterGridActorProxy::GetSceneCamera),
+      AddProperty(new dtCore::StringActorProperty(PROPERTY_SCENE_CAMERA, PROPERTY_SCENE_CAMERA,
+         dtCore::StringActorProperty::SetFuncType(this, &WaterGridActorProxy::SetSceneCamera),
+         dtCore::StringActorProperty::GetFuncType(this, &WaterGridActorProxy::GetSceneCamera),
          "Sets the name of the camera used to render the scene.", GROUPNAME));
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   const dtDAL::BaseActorObject::RenderMode& WaterGridActorProxy::GetRenderMode()
+   const dtCore::BaseActorObject::RenderMode& WaterGridActorProxy::GetRenderMode()
    {
-      return dtDAL::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON;
+      return dtCore::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -1270,16 +1270,16 @@ namespace dtActors
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   dtDAL::ActorProxyIcon* WaterGridActorProxy::GetBillBoardIcon()
+   dtCore::ActorProxyIcon* WaterGridActorProxy::GetBillBoardIcon()
    {
       if(!mBillBoardIcon.valid())
       {
-         dtDAL::ActorProxyIcon::ActorProxyIconConfig config;
+         dtCore::ActorProxyIcon::ActorProxyIconConfig config;
          config.mForwardVector = false;
          config.mUpVector = false;
          config.mScale = 1.0;
 
-         mBillBoardIcon = new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IMAGE_BILLBOARD_STATICMESH, config);
+         mBillBoardIcon = new dtCore::ActorProxyIcon(dtCore::ActorProxyIcon::IMAGE_BILLBOARD_STATICMESH, config);
       }
 
       return mBillBoardIcon.get();

@@ -23,8 +23,8 @@
 
 #include <dtUtil/enumeration.h>
 #include <dtCore/light.h>
-#include <dtDAL/plugin_export.h>
-#include <dtDAL/transformableactorproxy.h>
+#include <dtCore/plugin_export.h>
+#include <dtCore/transformableactorproxy.h>
 #include <osg/Vec4>
 
 namespace dtActors
@@ -37,7 +37,7 @@ namespace dtActors
      * light proxy object should derive from this one.  Assuming, however, that
      * the underlying Delta3D object is derived from dtCore::Light.
      */
-    class DT_PLUGIN_EXPORT BaseLightActorProxy : public dtDAL::TransformableActorProxy
+    class DT_PLUGIN_EXPORT BaseLightActorProxy : public dtCore::TransformableActorProxy
     {
     public:
 
@@ -62,16 +62,16 @@ namespace dtActors
          * @return Note, this returns RenderMode::DRAW_ACTOR by default.  Other
          *  types of lights such as positional lights have different render modes.
          */
-        virtual const dtDAL::BaseActorObject::RenderMode& GetRenderMode()
+        virtual const dtCore::BaseActorObject::RenderMode& GetRenderMode()
         {
-            return dtDAL::BaseActorObject::RenderMode::DRAW_ACTOR;
+            return dtCore::BaseActorObject::RenderMode::DRAW_ACTOR;
         }
 
         /**
          * Gets the billboard icon for lights.
          * @return The billboard icon common to all lights.
          */
-        virtual dtDAL::ActorProxyIcon* GetBillBoardIcon();
+        virtual dtCore::ActorProxyIcon* GetBillBoardIcon();
 
     public:
 

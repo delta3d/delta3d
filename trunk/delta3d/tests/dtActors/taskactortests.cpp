@@ -39,17 +39,17 @@
 #include <dtCore/system.h>
 #include <dtCore/scene.h>
 
-#include <dtDAL/actoridactorproperty.h>
-#include <dtDAL/arrayactorproperty.h>
-#include <dtDAL/doubleactorproperty.h>
-#include <dtDAL/floatactorproperty.h>
-#include <dtDAL/gameevent.h>
-#include <dtDAL/gameeventactorproperty.h>
-#include <dtDAL/gameeventmanager.h>
-#include <dtDAL/intactorproperty.h>
-#include <dtDAL/librarymanager.h>
-#include <dtDAL/namedarrayparameter.h>
-#include <dtDAL/stringactorproperty.h>
+#include <dtCore/actoridactorproperty.h>
+#include <dtCore/arrayactorproperty.h>
+#include <dtCore/doubleactorproperty.h>
+#include <dtCore/floatactorproperty.h>
+#include <dtCore/gameevent.h>
+#include <dtCore/gameeventactorproperty.h>
+#include <dtCore/gameeventmanager.h>
+#include <dtCore/intactorproperty.h>
+#include <dtCore/librarymanager.h>
+#include <dtCore/namedarrayparameter.h>
+#include <dtCore/stringactorproperty.h>
 
 #include <dtGame/gamemanager.h>
 #include <dtGame/defaultmessageprocessor.h>
@@ -90,7 +90,7 @@ class TaskActorTests : public CPPUNIT_NS::TestFixture
       void tearDown();
 
       // Helper Methods
-      int GetEventCount(const dtDAL::GameEvent& gameEvent);
+      int GetEventCount(const dtCore::GameEvent& gameEvent);
       bool SetNotifyEventsOnTask(dtActors::TaskActorProxy& taskProxy);
 
       // Test Methods
@@ -107,7 +107,7 @@ class TaskActorTests : public CPPUNIT_NS::TestFixture
 
    private:
       void CreateParentChildProxies();
-      dtDAL::GameEventManager* mEventMgr;
+      dtCore::GameEventManager* mEventMgr;
       dtCore::RefPtr<dtGame::GameManager> mGameManager;
       dtCore::RefPtr<TestComponent> mTestComp;
       static const std::string mTestGameActorLibrary;
@@ -116,8 +116,8 @@ class TaskActorTests : public CPPUNIT_NS::TestFixture
       dtCore::RefPtr<dtActors::TaskActorProxy> mChildProxy1;
       dtCore::RefPtr<dtActors::TaskActorProxy> mChildProxy2;
       dtCore::RefPtr<dtActors::TaskActorProxy> mChildProxy3;
-      dtCore::RefPtr<dtDAL::GameEvent> mNotifyCompletedEvent;
-      dtCore::RefPtr<dtDAL::GameEvent> mNotifyFailedEvent;
+      dtCore::RefPtr<dtCore::GameEvent> mNotifyCompletedEvent;
+      dtCore::RefPtr<dtCore::GameEvent> mNotifyFailedEvent;
 };
 
 // Registers the fixture into the 'registry'
@@ -132,7 +132,7 @@ void TaskActorTests::setUp()
    try
    {
       // Setup the managers.
-      mEventMgr = &dtDAL::GameEventManager::GetInstance();
+      mEventMgr = &dtCore::GameEventManager::GetInstance();
       dtCore::Scene* scene = new dtCore::Scene();
       mGameManager = new dtGame::GameManager(*scene);
       dtUtil::SetDataFilePathList(dtUtil::GetDeltaDataPathList());
@@ -147,9 +147,9 @@ void TaskActorTests::setUp()
       dtCore::System::GetInstance().Start();
 
       // Create some test events.
-      mNotifyCompletedEvent = new dtDAL::GameEvent("NotifyCompletedEvent");
+      mNotifyCompletedEvent = new dtCore::GameEvent("NotifyCompletedEvent");
       mEventMgr->AddEvent(*mNotifyCompletedEvent);
-      mNotifyFailedEvent = new dtDAL::GameEvent("NotifyFailedEvent");
+      mNotifyFailedEvent = new dtCore::GameEvent("NotifyFailedEvent");
       mEventMgr->AddEvent(*mNotifyFailedEvent);
    }
    catch (const dtUtil::Exception& e)
@@ -181,14 +181,14 @@ void TaskActorTests::tearDown()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-int TaskActorTests::GetEventCount(const dtDAL::GameEvent& gameEvent)
+int TaskActorTests::GetEventCount(const dtCore::GameEvent& gameEvent)
 {
    int total = 0;
 
    typedef std::vector<dtCore::RefPtr<const dtGame::Message> > MessageList;
    const MessageList& messageList = mTestComp->GetReceivedProcessMessages();
 
-   const dtDAL::GameEvent* curEvent = NULL;
+   const dtCore::GameEvent* curEvent = NULL;
    MessageList::const_iterator curMessage = messageList.begin();
    MessageList::const_iterator endMessageList = messageList.end();
    for (; curMessage != endMessageList; ++curMessage)
@@ -224,7 +224,7 @@ void TaskActorTests::TestTaskActorDefaultValues()
 {
    try
    {
-      dtCore::RefPtr<const dtDAL::ActorType> taskActorType =
+      dtCore::RefPtr<const dtCore::ActorType> taskActorType =
          mGameManager->FindActorType("dtcore.Tasks","Task Actor");
       CPPUNIT_ASSERT_MESSAGE("Could not find actor type.",taskActorType.valid());
 
@@ -247,26 +247,26 @@ void TaskActorTests::TestTaskActorDefaultValues()
          proxy->GetProperty("Weight") != NULL);
 
       // Check the default values of a newly created base task actor.
-      dtDAL::StringActorProperty* descProp =
-         static_cast<dtDAL::StringActorProperty*>(proxy->GetProperty("Description"));
+      dtCore::StringActorProperty* descProp =
+         static_cast<dtCore::StringActorProperty*>(proxy->GetProperty("Description"));
       CPPUNIT_ASSERT_MESSAGE("Task description should be empty.",descProp->GetValue().empty());
 
-      dtDAL::StringActorProperty* displayNameProp =
-         static_cast<dtDAL::StringActorProperty*>(proxy->GetProperty("DisplayName"));
+      dtCore::StringActorProperty* displayNameProp =
+         static_cast<dtCore::StringActorProperty*>(proxy->GetProperty("DisplayName"));
       CPPUNIT_ASSERT_MESSAGE("Task display name should be empty.",displayNameProp->GetValue().empty());
 
-      dtDAL::FloatActorProperty* valueProp =
-         static_cast<dtDAL::FloatActorProperty*>(proxy->GetProperty("PassingScore"));
+      dtCore::FloatActorProperty* valueProp =
+         static_cast<dtCore::FloatActorProperty*>(proxy->GetProperty("PassingScore"));
       CPPUNIT_ASSERT_MESSAGE("Task passing score should be 1.0.",valueProp->GetValue() == 1.0);
 
-      valueProp = static_cast<dtDAL::FloatActorProperty*>(proxy->GetProperty("Score"));
+      valueProp = static_cast<dtCore::FloatActorProperty*>(proxy->GetProperty("Score"));
       CPPUNIT_ASSERT_MESSAGE("Task score should be 0.0.",valueProp->GetValue() == 0.0f);
 
-      valueProp = static_cast<dtDAL::FloatActorProperty*>(proxy->GetProperty("Weight"));
+      valueProp = static_cast<dtCore::FloatActorProperty*>(proxy->GetProperty("Weight"));
       CPPUNIT_ASSERT_MESSAGE("Task weight should be 1.0.",valueProp->GetValue() == 1.0f);
 
       // Test Notify Completed Event Property
-      dtDAL::GameEventActorProperty* eventProp = static_cast<dtDAL::GameEventActorProperty*>
+      dtCore::GameEventActorProperty* eventProp = static_cast<dtCore::GameEventActorProperty*>
          (proxy->GetProperty(dtActors::TaskActorProxy::PROPERTY_EVENT_NOTIFY_COMPLETED));
       CPPUNIT_ASSERT_MESSAGE("Task Notify Completed Event should be NULL",
          eventProp->GetValue() == NULL);
@@ -274,7 +274,7 @@ void TaskActorTests::TestTaskActorDefaultValues()
       CPPUNIT_ASSERT(eventProp->GetValue() == mNotifyCompletedEvent.get());
 
       // Test Notify Failed Event Property
-      eventProp = static_cast<dtDAL::GameEventActorProperty*>
+      eventProp = static_cast<dtCore::GameEventActorProperty*>
          (proxy->GetProperty(dtActors::TaskActorProxy::PROPERTY_EVENT_NOTIFY_FAILED));
       CPPUNIT_ASSERT_MESSAGE("Task Notify Failed Event should be NULL",
          eventProp->GetValue() == NULL);
@@ -303,7 +303,7 @@ void TaskActorTests::TestTaskSubTasks()
 {
    try
    {
-      dtCore::RefPtr<const dtDAL::ActorType> taskActorType =
+      dtCore::RefPtr<const dtCore::ActorType> taskActorType =
          mGameManager->FindActorType("dtcore.Tasks","Task Actor");
       CPPUNIT_ASSERT_MESSAGE("Could not find actor type.", taskActorType.valid());
 
@@ -334,19 +334,19 @@ void TaskActorTests::TestTaskSubTasks()
       CPPUNIT_ASSERT_MESSAGE("Number of child tasks should have been 25, and the GetAllSubTasks method should clear before filling.",
          children.size() == 25);
 
-      dtDAL::ArrayActorProperty<dtCore::UniqueId>* subTaskArray = dynamic_cast<dtDAL::ArrayActorProperty<dtCore::UniqueId>*>(mParentProxy->GetProperty("SubTaskList"));
+      dtCore::ArrayActorProperty<dtCore::UniqueId>* subTaskArray = dynamic_cast<dtCore::ArrayActorProperty<dtCore::UniqueId>*>(mParentProxy->GetProperty("SubTaskList"));
       CPPUNIT_ASSERT(subTaskArray != NULL);
 
       std::vector<dtCore::UniqueId> subTasks = subTaskArray->GetValue();
 
-      dtCore::RefPtr<dtDAL::NamedArrayParameter> subTaskArrayParam = new dtDAL::NamedArrayParameter("TaskParam");
+      dtCore::RefPtr<dtCore::NamedArrayParameter> subTaskArrayParam = new dtCore::NamedArrayParameter("TaskParam");
       subTaskArrayParam->SetFromProperty(*subTaskArray);
       CPPUNIT_ASSERT(subTaskArrayParam.valid());
       subTaskArrayParam->ApplyValueToProperty(*subTaskArray);
 
       CPPUNIT_ASSERT_MESSAGE("Number of child tasks in the group property should be 25.", subTaskArray->GetArraySize() == 25);
 
-      dtDAL::ActorIDActorProperty* taskProp = dynamic_cast<dtDAL::ActorIDActorProperty*>(subTaskArray->GetArrayProperty());
+      dtCore::ActorIDActorProperty* taskProp = dynamic_cast<dtCore::ActorIDActorProperty*>(subTaskArray->GetArrayProperty());
       CPPUNIT_ASSERT_MESSAGE("The properties in the subtasks array prop should all be of type ActorIDActorProperty.",
          taskProp != NULL);
 
@@ -400,7 +400,7 @@ void TaskActorTests::TestTaskSubTasks()
       }
 
       subTasks2 = subTaskArray->GetValue();
-      dtCore::RefPtr<dtDAL::NamedArrayParameter> subTaskArrayParam2 = new dtDAL::NamedArrayParameter("TaskParam2");
+      dtCore::RefPtr<dtCore::NamedArrayParameter> subTaskArrayParam2 = new dtCore::NamedArrayParameter("TaskParam2");
       subTaskArrayParam2->SetFromProperty(*subTaskArray);
       CPPUNIT_ASSERT(subTaskArrayParam2.valid());
 
@@ -419,7 +419,7 @@ void TaskActorTests::TestTaskSubTasks()
 ///////////////////////////////////////////////////////////////////////////////
 void TaskActorTests::CreateParentChildProxies()
 {
-   dtCore::RefPtr<const dtDAL::ActorType> taskActorType =
+   dtCore::RefPtr<const dtCore::ActorType> taskActorType =
          mGameManager->FindActorType("dtcore.Tasks","Task Actor");
    CPPUNIT_ASSERT_MESSAGE("Could not find actor type.",taskActorType.valid());
 
@@ -487,22 +487,22 @@ void TaskActorTests::TestGroupPropertySubTasks()
    try
    {
       CreateParentChildProxies();
-      dtDAL::ActorProperty* subTasksProp = mParentProxy->GetProperty("SubTaskList");
+      dtCore::ActorProperty* subTasksProp = mParentProxy->GetProperty("SubTaskList");
       CPPUNIT_ASSERT(subTasksProp != NULL);
-      CPPUNIT_ASSERT(subTasksProp->GetDataType() == dtDAL::DataType::ARRAY);
+      CPPUNIT_ASSERT(subTasksProp->GetDataType() == dtCore::DataType::ARRAY);
 
       std::vector<dtCore::UniqueId> subTasks;
       subTasks.push_back(mChildProxy1->GetId());
       subTasks.push_back(mChildProxy2->GetId());
       subTasks.push_back(mChildProxy3->GetId());
 
-      dtDAL::ArrayActorProperty<dtCore::UniqueId>* ap = static_cast<dtDAL::ArrayActorProperty<dtCore::UniqueId>*>(subTasksProp);
+      dtCore::ArrayActorProperty<dtCore::UniqueId>* ap = static_cast<dtCore::ArrayActorProperty<dtCore::UniqueId>*>(subTasksProp);
       ap->SetValue(subTasks);
 
-      dtCore::RefPtr<dtDAL::NamedArrayParameter> expectedValue = new dtDAL::NamedArrayParameter("SubTaskList");
+      dtCore::RefPtr<dtCore::NamedArrayParameter> expectedValue = new dtCore::NamedArrayParameter("SubTaskList");
       expectedValue->SetFromProperty(*ap);
 
-      dtCore::RefPtr<dtDAL::NamedArrayParameter> actualValue = new dtDAL::NamedArrayParameter("SubTaskList2");
+      dtCore::RefPtr<dtCore::NamedArrayParameter> actualValue = new dtCore::NamedArrayParameter("SubTaskList2");
       actualValue = expectedValue.get();
 
       std::ostringstream ss;
@@ -547,7 +547,7 @@ void TaskActorTests::TestGameEventTaskActor()
    {
       mGameManager->AddComponent(*(new dtGame::DefaultMessageProcessor()),
                                    dtGame::GameManager::ComponentPriority::HIGHEST);
-      dtCore::RefPtr<const dtDAL::ActorType> actorType =
+      dtCore::RefPtr<const dtCore::ActorType> actorType =
             mGameManager->FindActorType("dtcore.Tasks","GameEvent Task Actor");
       CPPUNIT_ASSERT_MESSAGE("Could not find actor type.",actorType.valid());
 
@@ -558,23 +558,23 @@ void TaskActorTests::TestGameEventTaskActor()
 
       // Before we can listen for any game event messages, we have to register the event
       // with the event manager since other components rely on this behavior.
-      dtDAL::GameEvent* gameEvent = new dtDAL::GameEvent("TestGameEvent");
+      dtCore::GameEvent* gameEvent = new dtCore::GameEvent("TestGameEvent");
       mEventMgr->AddEvent(*gameEvent);
-      dtDAL::GameEvent* failEvent = new dtDAL::GameEvent("TestFailEvent");
+      dtCore::GameEvent* failEvent = new dtCore::GameEvent("TestFailEvent");
       mEventMgr->AddEvent(*failEvent);
 
       // Set the game event property on the task.
-      dtDAL::GameEventActorProperty* prop = static_cast<dtDAL::GameEventActorProperty*>
+      dtCore::GameEventActorProperty* prop = static_cast<dtCore::GameEventActorProperty*>
          (eventTaskProxy->GetProperty(dtActors::TaskActorGameEventProxy::PROPERTY_EVENT_COMPLETE.Get()));
       CPPUNIT_ASSERT_MESSAGE("Game event task actors should have a GameEvent property.",
          prop != NULL);
 
       prop->FromString(gameEvent->GetUniqueId().ToString());
-      dtDAL::GameEvent* resultEvent = prop->GetValue();
+      dtCore::GameEvent* resultEvent = prop->GetValue();
       CPPUNIT_ASSERT_MESSAGE("Game event in property was not correct.",resultEvent == gameEvent);
 
       // Set the fail game event property on the task.
-      prop = static_cast<dtDAL::GameEventActorProperty*>
+      prop = static_cast<dtCore::GameEventActorProperty*>
          (eventTaskProxy->GetProperty(dtActors::TaskActorGameEventProxy::PROPERTY_EVENT_FAIL.Get()));
       CPPUNIT_ASSERT_MESSAGE("Game event task actors should have a FailGameEvent property.",
          prop != NULL);
@@ -584,7 +584,7 @@ void TaskActorTests::TestGameEventTaskActor()
       CPPUNIT_ASSERT_MESSAGE("Game event in property was not correct.",resultEvent == failEvent);
 
       // Set the minimum number of times the event should be fired.
-      dtDAL::IntActorProperty* minProp = static_cast<dtDAL::IntActorProperty*>
+      dtCore::IntActorProperty* minProp = static_cast<dtCore::IntActorProperty*>
          (eventTaskProxy->GetProperty(dtActors::TaskActorGameEventProxy::PROPERTY_MIN_OCCURANCES.Get()));
       CPPUNIT_ASSERT_MESSAGE("Game event task actor should have a MinOccurances property.",
          minProp != NULL);
@@ -618,7 +618,7 @@ void TaskActorTests::TestGameEventTaskActor()
                              eventTaskProxy->GetProperty("Complete")->ToString() == "true");
 
       // Make sure the complete time got marked properly...
-      dtDAL::DoubleActorProperty* time = static_cast<dtDAL::DoubleActorProperty*>(eventTaskProxy->GetProperty("CompleteTime"));
+      dtCore::DoubleActorProperty* time = static_cast<dtCore::DoubleActorProperty*>(eventTaskProxy->GetProperty("CompleteTime"));
       CPPUNIT_ASSERT_MESSAGE("Task complete time stamp was not correct.",time->GetValue() == currSimTime);
 
       // Test failing by a fail event.
@@ -649,17 +649,17 @@ void TaskActorTests::TestRollupTaskActor()
 {
    try
    {
-      dtCore::RefPtr<dtDAL::GameEvent> eventList[5];
+      dtCore::RefPtr<dtCore::GameEvent> eventList[5];
       dtCore::RefPtr<dtActors::TaskActorGameEventProxy> eventProxyList[5];
       int i;
 
       mGameManager->AddComponent(*(new dtGame::DefaultMessageProcessor()),
                                    dtGame::GameManager::ComponentPriority::HIGHEST);
 
-      dtCore::RefPtr<const dtDAL::ActorType> gameEventType = mGameManager->FindActorType("dtcore.Tasks","GameEvent Task Actor");
+      dtCore::RefPtr<const dtCore::ActorType> gameEventType = mGameManager->FindActorType("dtcore.Tasks","GameEvent Task Actor");
       CPPUNIT_ASSERT_MESSAGE("Could not find actor type for game event task.",gameEventType.valid());
 
-      dtCore::RefPtr<const dtDAL::ActorType> rollupActorType = mGameManager->FindActorType("dtcore.Tasks","Rollup Task Actor");
+      dtCore::RefPtr<const dtCore::ActorType> rollupActorType = mGameManager->FindActorType("dtcore.Tasks","Rollup Task Actor");
       CPPUNIT_ASSERT_MESSAGE("Could not find actor type for rollup task.",rollupActorType.valid());
 
       // Create our test rollup task...
@@ -671,7 +671,7 @@ void TaskActorTests::TestRollupTaskActor()
       // Create some event tasks and add them as children to the rollup task.
       for (i = 0; i < 5; ++i)
       {
-         dtDAL::GameEvent* gameEvent = new dtDAL::GameEvent();
+         dtCore::GameEvent* gameEvent = new dtCore::GameEvent();
          mEventMgr->AddEvent(*gameEvent);
 
          dtCore::RefPtr<dtActors::TaskActorGameEventProxy> eventTaskProxy;
@@ -692,8 +692,8 @@ void TaskActorTests::TestRollupTaskActor()
       // Now we need to send a message for each of the 5 events.  This will cause each of the event tasks to be
       // completed which should inform the rollup task and have it calculate the correct score each time
       // one of its children has a score change.
-      dtDAL::FloatActorProperty* prop =
-            static_cast<dtDAL::FloatActorProperty*>(rollupTaskProxy->GetProperty("Score"));
+      dtCore::FloatActorProperty* prop =
+            static_cast<dtCore::FloatActorProperty*>(rollupTaskProxy->GetProperty("Score"));
       for (i = 0; i < 5; ++i)
       {
          dtCore::RefPtr<dtGame::GameEventMessage> eventMsg = static_cast<dtGame::GameEventMessage*>
@@ -749,8 +749,8 @@ void TaskActorTests::TestOrderedTaskActor()
 {
    try
    {
-      dtCore::RefPtr<dtDAL::GameEvent> eventList[5];
-      dtCore::RefPtr<dtDAL::GameEvent> primaryEvent;
+      dtCore::RefPtr<dtCore::GameEvent> eventList[5];
+      dtCore::RefPtr<dtCore::GameEvent> primaryEvent;
       dtCore::RefPtr<dtActors::TaskActorGameEventProxy> eventProxyList[5];
       dtCore::RefPtr<dtActors::TaskActorGameEventProxy> primaryEventProxy;
       dtCore::RefPtr<dtGame::GameEventMessage> eventMsg;
@@ -759,13 +759,13 @@ void TaskActorTests::TestOrderedTaskActor()
       mGameManager->AddComponent(*(new dtGame::DefaultMessageProcessor()),
                                    dtGame::GameManager::ComponentPriority::HIGHEST);
 
-      dtCore::RefPtr<const dtDAL::ActorType> gameEventType = mGameManager->FindActorType("dtcore.Tasks","GameEvent Task Actor");
+      dtCore::RefPtr<const dtCore::ActorType> gameEventType = mGameManager->FindActorType("dtcore.Tasks","GameEvent Task Actor");
       CPPUNIT_ASSERT_MESSAGE("Could not find actor type for game event task.",gameEventType.valid());
 
-      dtCore::RefPtr<const dtDAL::ActorType> rollupActorType = mGameManager->FindActorType("dtcore.Tasks","Rollup Task Actor");
+      dtCore::RefPtr<const dtCore::ActorType> rollupActorType = mGameManager->FindActorType("dtcore.Tasks","Rollup Task Actor");
       CPPUNIT_ASSERT_MESSAGE("Could not find actor type for rollup task.",rollupActorType.valid());
 
-      dtCore::RefPtr<const dtDAL::ActorType> orderedActorType = mGameManager->FindActorType("dtcore.Tasks","Ordered Task Actor");
+      dtCore::RefPtr<const dtCore::ActorType> orderedActorType = mGameManager->FindActorType("dtcore.Tasks","Ordered Task Actor");
       CPPUNIT_ASSERT_MESSAGE("Could not find actor type for ordered task.",orderedActorType.valid());
 
       // Create our test rollup task...
@@ -781,7 +781,7 @@ void TaskActorTests::TestOrderedTaskActor()
       mGameManager->AddActor(*orderedTaskProxy,false,false);
 
       // reate our test primary event task...
-      primaryEvent = new dtDAL::GameEvent("PrimaryEvent");
+      primaryEvent = new dtCore::GameEvent("PrimaryEvent");
       mEventMgr->AddEvent(*primaryEvent);
 
       mGameManager->CreateActor(*gameEventType, primaryEventProxy);
@@ -796,7 +796,7 @@ void TaskActorTests::TestOrderedTaskActor()
       // Create some event tasks and add them as children to the rollup task.
       for (i = 0; i < 5; ++i)
       {
-         dtDAL::GameEvent* gameEvent = new dtDAL::GameEvent();
+         dtCore::GameEvent* gameEvent = new dtCore::GameEvent();
          mEventMgr->AddEvent(*gameEvent);
 
          dtCore::RefPtr<dtActors::TaskActorGameEventProxy> eventTaskProxy;
@@ -817,8 +817,8 @@ void TaskActorTests::TestOrderedTaskActor()
       // Now we need to send a message for each of the 5 events.  This will attempt to mark each task
       // complete which should NOT occur until the primary event task has been completed first since that
       // is first in the ordered task's child task list.
-      dtDAL::FloatActorProperty* prop =
-            static_cast<dtDAL::FloatActorProperty*>(rollupTaskProxy->GetProperty("Score"));
+      dtCore::FloatActorProperty* prop =
+            static_cast<dtCore::FloatActorProperty*>(rollupTaskProxy->GetProperty("Score"));
       for (i = 0; i < 5; ++i)
       {
          eventMsg = static_cast<dtGame::GameEventMessage*>
@@ -881,11 +881,11 @@ void TaskActorTests::TestFailedAndComplete()
 {
    try
    {
-      dtCore::RefPtr<const dtDAL::ActorType> taskActorType =
+      dtCore::RefPtr<const dtCore::ActorType> taskActorType =
          mGameManager->FindActorType("dtcore.Tasks","Task Actor");
       CPPUNIT_ASSERT_MESSAGE("Could not find actor type.",taskActorType.valid());
 
-      dtCore::RefPtr<const dtDAL::ActorType> rollupActorType =
+      dtCore::RefPtr<const dtCore::ActorType> rollupActorType =
          mGameManager->FindActorType("dtcore.Tasks","Rollup Task Actor");
       CPPUNIT_ASSERT_MESSAGE("Could not find actor type for rollup task.",rollupActorType.valid());
 
@@ -1009,11 +1009,11 @@ void TaskActorTests::TestMutable()
 {
    try
    {
-      dtCore::RefPtr<const dtDAL::ActorType> taskActorType =
+      dtCore::RefPtr<const dtCore::ActorType> taskActorType =
          mGameManager->FindActorType("dtcore.Tasks","Task Actor");
       CPPUNIT_ASSERT_MESSAGE("Could not find actor type.",taskActorType.valid());
 
-      dtCore::RefPtr<const dtDAL::ActorType> orderedActorType = mGameManager->FindActorType("dtcore.Tasks","Ordered Task Actor");
+      dtCore::RefPtr<const dtCore::ActorType> orderedActorType = mGameManager->FindActorType("dtcore.Tasks","Ordered Task Actor");
       CPPUNIT_ASSERT_MESSAGE("Could not find actor type for ordered task.",orderedActorType.valid());
 
       // Create our test child task

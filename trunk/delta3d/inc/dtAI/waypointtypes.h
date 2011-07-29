@@ -31,11 +31,11 @@
 #include <dtAI/primitives.h>
 #include <dtAI/waypoint.h>
 
-#include <dtDAL/objecttype.h>
+#include <dtCore/objecttype.h>
 
 #include <dtCore/refptr.h>
 
-namespace dtDAL
+namespace dtCore
 {
    class PropertyContainer;
 }
@@ -47,10 +47,10 @@ namespace dtAI
    class DT_AI_EXPORT WaypointTypes
    {
    public:
-      static dtCore::RefPtr<dtDAL::ObjectType> DEFAULT_WAYPOINT;
-      static dtCore::RefPtr<dtDAL::ObjectType> NAMED_WAYPOINT;
-      static dtCore::RefPtr<dtDAL::ObjectType> TACTICAL_WAYPOINT;
-      static dtCore::RefPtr<dtDAL::ObjectType> WAYPOINT_COLLECTION;
+      static dtCore::RefPtr<dtCore::ObjectType> DEFAULT_WAYPOINT;
+      static dtCore::RefPtr<dtCore::ObjectType> NAMED_WAYPOINT;
+      static dtCore::RefPtr<dtCore::ObjectType> TACTICAL_WAYPOINT;
+      static dtCore::RefPtr<dtCore::ObjectType> WAYPOINT_COLLECTION;
    };
 
    class DT_AI_EXPORT NamedWaypoint : public osg::Referenced, public WaypointInterface
@@ -88,10 +88,10 @@ namespace dtAI
 
    protected:
       // these allow derivatives of named waypoint to pass in their derivated object type
-      NamedWaypoint(const dtDAL::ObjectType* ot);
-      NamedWaypoint(const dtDAL::ObjectType* ot, const osg::Vec3& pos);
-      NamedWaypoint(const dtDAL::ObjectType* ot, const dtUtil::RefString& name);
-      NamedWaypoint(const dtDAL::ObjectType* ot, const osg::Vec3& pos, const dtUtil::RefString& name);
+      NamedWaypoint(const dtCore::ObjectType* ot);
+      NamedWaypoint(const dtCore::ObjectType* ot, const osg::Vec3& pos);
+      NamedWaypoint(const dtCore::ObjectType* ot, const dtUtil::RefString& name);
+      NamedWaypoint(const dtCore::ObjectType* ot, const osg::Vec3& pos, const dtUtil::RefString& name);
 
    private:
       dtUtil::RefString mName;

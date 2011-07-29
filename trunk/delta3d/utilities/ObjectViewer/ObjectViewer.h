@@ -30,7 +30,7 @@
 #include <dtCore/compass.h>
 
 #include <dtABC/application.h>
-#include <dtDAL/actorproxy.h>
+#include <dtCore/actorproxy.h>
 
 #include <vector>
 
@@ -124,7 +124,7 @@ protected:
 
    void ClearLights();
 
-   void clearProxies( const std::map<dtCore::UniqueId, dtCore::RefPtr<dtDAL::BaseActorObject> >& proxies);
+   void clearProxies( const std::map<dtCore::UniqueId, dtCore::RefPtr<dtCore::BaseActorObject> >& proxies);
 
    virtual void PostFrame(const double deltaFrameTime);
 
@@ -132,7 +132,7 @@ protected:
 
 private:
 
-   dtCore::RefPtr<dtDAL::Map> mMap;
+   dtCore::RefPtr<dtCore::Map> mMap;
    dtCore::RefPtr<dtCore::Object> mObject;
    dtCore::RefPtr<dtAnim::CharDrawable> mCharacter;
    dtCore::RefPtr<dtCore::Compass> mCompass;

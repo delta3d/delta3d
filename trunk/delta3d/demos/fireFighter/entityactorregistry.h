@@ -21,26 +21,26 @@
 #ifndef DELTA_FIRE_FIGHTER_ENTITY_ACTOR_REGISTRY
 #define DELTA_FIRE_FIGHTER_ENTITY_ACTOR_REGISTRY
 
-#include <dtDAL/actorpluginregistry.h>
+#include <dtCore/actorpluginregistry.h>
 #include <fireFighter/export.h>
 
-class FIRE_FIGHTER_EXPORT EntityActorRegistry : public dtDAL::ActorPluginRegistry
+class FIRE_FIGHTER_EXPORT EntityActorRegistry : public dtCore::ActorPluginRegistry
 {
    public:
 
-      static dtCore::RefPtr<dtDAL::ActorType> TYPE_FLY_SEQUENCE;
-      static dtCore::RefPtr<dtDAL::ActorType> TYPE_FIRE_ACTOR;
-      static dtCore::RefPtr<dtDAL::ActorType> TYPE_DDG_ACTOR;
-      static dtCore::RefPtr<dtDAL::ActorType> TYPE_PLAYER_ACTOR;
-      static dtCore::RefPtr<dtDAL::ActorType> TYPE_GAME_LEVEL_ACTOR;
-      static dtCore::RefPtr<dtDAL::ActorType> TYPE_FIRE_HOSE_ACTOR;
-      static dtCore::RefPtr<dtDAL::ActorType> TYPE_FIRE_SUIT_ACTOR;
-      static dtCore::RefPtr<dtDAL::ActorType> TYPE_SCBA_ACTOR;
-      static dtCore::RefPtr<dtDAL::ActorType> TYPE_PRIMARY_HALON_ACTOR;
-      static dtCore::RefPtr<dtDAL::ActorType> TYPE_SECONDARY_HALON_ACTOR;
-      static dtCore::RefPtr<dtDAL::ActorType> TYPE_HATCH_ACTOR;
-      static dtCore::RefPtr<dtDAL::ActorType> TYPE_FUEL_VALVE_ACTOR;
-      static dtCore::RefPtr<dtDAL::ActorType> TYPE_COLLIDABLE_ACTOR;
+      static dtCore::RefPtr<dtCore::ActorType> TYPE_FLY_SEQUENCE;
+      static dtCore::RefPtr<dtCore::ActorType> TYPE_FIRE_ACTOR;
+      static dtCore::RefPtr<dtCore::ActorType> TYPE_DDG_ACTOR;
+      static dtCore::RefPtr<dtCore::ActorType> TYPE_PLAYER_ACTOR;
+      static dtCore::RefPtr<dtCore::ActorType> TYPE_GAME_LEVEL_ACTOR;
+      static dtCore::RefPtr<dtCore::ActorType> TYPE_FIRE_HOSE_ACTOR;
+      static dtCore::RefPtr<dtCore::ActorType> TYPE_FIRE_SUIT_ACTOR;
+      static dtCore::RefPtr<dtCore::ActorType> TYPE_SCBA_ACTOR;
+      static dtCore::RefPtr<dtCore::ActorType> TYPE_PRIMARY_HALON_ACTOR;
+      static dtCore::RefPtr<dtCore::ActorType> TYPE_SECONDARY_HALON_ACTOR;
+      static dtCore::RefPtr<dtCore::ActorType> TYPE_HATCH_ACTOR;
+      static dtCore::RefPtr<dtCore::ActorType> TYPE_FUEL_VALVE_ACTOR;
+      static dtCore::RefPtr<dtCore::ActorType> TYPE_COLLIDABLE_ACTOR;
 
      /**
       * Constructs the engine actor registry.

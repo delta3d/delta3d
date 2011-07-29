@@ -1,5 +1,5 @@
 #include <dtDIS/sharedstate.h>
-#include <dtDAL/actorproxy.h>
+#include <dtCore/actorproxy.h>
 #include <dtUtil/xercesparser.h>
 #include <dtDIS/disxml.h>
 
@@ -10,10 +10,10 @@ using namespace dtDIS;
 
 
 //////////////////////////////////////////////////////////////////////////
-bool ActorMapConfig::AddActorMapping(const DIS::EntityType& eid, const dtDAL::ActorType* at)
+bool ActorMapConfig::AddActorMapping(const DIS::EntityType& eid, const dtCore::ActorType* at)
 {
-   DEPRECATE("bool ActorMapConfig::AddActorMapping(const DIS::EntityType&, const dtDAL::ActorType*)",
-             "void EntityMap::SetEntityActorType(const DIS::EntityType&, const dtDAL::ActorType*)");
+   DEPRECATE("bool ActorMapConfig::AddActorMapping(const DIS::EntityType&, const dtCore::ActorType*)",
+             "void EntityMap::SetEntityActorType(const DIS::EntityType&, const dtCore::ActorType*)");
 
    mEntityMap->SetEntityActorType(eid, at);
    return true;
@@ -30,10 +30,10 @@ bool ActorMapConfig::RemoveActorMapping(const DIS::EntityType& eid)
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool ActorMapConfig::GetMappedActor(const DIS::EntityType& eid, const dtDAL::ActorType*& toWrite)
+bool ActorMapConfig::GetMappedActor(const DIS::EntityType& eid, const dtCore::ActorType*& toWrite)
 {
-   DEPRECATE("bool ActorMapConfig::GetMappedActor(const DIS::EntityType&, const dtDAL::ActorType*&)",
-             "const dtDAL::ActorType* EntityMap::GetMappedActorType(const DIS::EntityType&) const");
+   DEPRECATE("bool ActorMapConfig::GetMappedActor(const DIS::EntityType&, const dtCore::ActorType*&)",
+             "const dtCore::ActorType* EntityMap::GetMappedActorType(const DIS::EntityType&) const");
 
    toWrite = mEntityMap->GetMappedActorType(eid);
 
@@ -48,10 +48,10 @@ bool ActorMapConfig::GetMappedActor(const DIS::EntityType& eid, const dtDAL::Act
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool ResourceMapConfig::AddResourceMapping(const DIS::EntityType& eid, const dtDAL::ResourceDescriptor& resource)
+bool ResourceMapConfig::AddResourceMapping(const DIS::EntityType& eid, const dtCore::ResourceDescriptor& resource)
 {
-   DEPRECATE("bool ResourceMapConfig::AddResourceMapping(const DIS::EntityType&, const dtDAL::ResourceDescriptor&)",
-             "void EntityMap::SetEntityResource(const DIS::EntityType&, const dtDAL::ResourceDescriptor&)");
+   DEPRECATE("bool ResourceMapConfig::AddResourceMapping(const DIS::EntityType&, const dtCore::ResourceDescriptor&)",
+             "void EntityMap::SetEntityResource(const DIS::EntityType&, const dtCore::ResourceDescriptor&)");
    
    mEntityMap->SetEntityResource(eid, resource);
    return true;
@@ -68,13 +68,13 @@ bool ResourceMapConfig::RemoveResourceMapping(const DIS::EntityType& eid)
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool ResourceMapConfig::GetMappedResource(const DIS::EntityType& eid, dtDAL::ResourceDescriptor& toWrite) const
+bool ResourceMapConfig::GetMappedResource(const DIS::EntityType& eid, dtCore::ResourceDescriptor& toWrite) const
 {
-   DEPRECATE("bool ResourceMapConfig::GetMappedResource(const DIS::EntityType&, dtDAL::ResourceDescriptor&) const",
-             "const dtDAL::ResourceDescriptor& EntityMap::GetMappedResource(const DIS::EntityType&) const");
+   DEPRECATE("bool ResourceMapConfig::GetMappedResource(const DIS::EntityType&, dtCore::ResourceDescriptor&) const",
+             "const dtCore::ResourceDescriptor& EntityMap::GetMappedResource(const DIS::EntityType&) const");
 
    toWrite = mEntityMap->GetMappedResource(eid);
-   if (toWrite == dtDAL::ResourceDescriptor::NULL_RESOURCE)
+   if (toWrite == dtCore::ResourceDescriptor::NULL_RESOURCE)
    {
       return false;
    }

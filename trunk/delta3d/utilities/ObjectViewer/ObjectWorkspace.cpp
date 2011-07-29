@@ -6,8 +6,8 @@
 #include <dtQt/projectcontextdialog.h>
 #include <dtUtil/fileutils.h>
 #include <dtUtil/xercesparser.h>
-#include <dtDAL/project.h>
-#include <dtDAL/map.h>
+#include <dtCore/project.h>
+#include <dtCore/map.h>
 #include <dtAnim/cal3ddatabase.h>
 #include <dtCore/deltawin.h>
 
@@ -411,7 +411,7 @@ void ObjectWorkspace::OnRemoveShaderDef(const std::string& filename)
 void ObjectWorkspace::UpdateResourceLists()
 {
    // If the context path in the registry is not valid, this will not be entered
-   if (dtDAL::Project::GetInstance().IsContextValid())
+   if (dtCore::Project::GetInstance().IsContextValid())
    {
       assert(!mContextPath.empty());
       UpdateShaderList();
@@ -499,7 +499,7 @@ void ObjectWorkspace::UpdateMapList()
 
    // Populate the map list.
    QStringList mapList;
-   std::set<std::string> mapNames = dtDAL::Project::GetInstance().GetMapNames();
+   std::set<std::string> mapNames = dtCore::Project::GetInstance().GetMapNames();
    for (std::set<std::string>::iterator map = mapNames.begin(); map != mapNames.end(); map++)
    {
       mapList << map->c_str();
@@ -641,7 +641,7 @@ void ObjectWorkspace::SaveCurrentContextPath()
 
    try
    {
-      dtDAL::Project::GetInstance().SetContext(mContextPath);
+      dtCore::Project::GetInstance().SetContext(mContextPath);
 
       // Update the registry entry based on the current valid context
       settings.setValue("projectContextPath", mContextPath.c_str());

@@ -22,8 +22,8 @@
 #include <dtDirectorGUINodes/getwidgetproperty.h>
 #include <dtDirectorGUINodes/guinodemanager.h>
 
-#include <dtDAL/stringactorproperty.h>
-#include <dtDAL/stringselectoractorproperty.h>
+#include <dtCore/stringactorproperty.h>
+#include <dtCore/stringselectoractorproperty.h>
 
 #include <dtGUI/gui.h>
 #include <CEGUI/CEGUIWindow.h>
@@ -64,33 +64,33 @@ namespace dtDirector
    {
       ActionNode::BuildPropertyMap();
 
-      dtDAL::StringSelectorActorProperty* layoutProp = new dtDAL::StringSelectorActorProperty(
+      dtCore::StringSelectorActorProperty* layoutProp = new dtCore::StringSelectorActorProperty(
          "Layout", "Layout",
-         dtDAL::StringSelectorActorProperty::SetFuncType(this, &GetWidgetProperty::SetLayout),
-         dtDAL::StringSelectorActorProperty::GetFuncType(this, &GetWidgetProperty::GetLayout),
-         dtDAL::StringSelectorActorProperty::GetListFuncType(this, &GetWidgetProperty::GetLayoutList),
+         dtCore::StringSelectorActorProperty::SetFuncType(this, &GetWidgetProperty::SetLayout),
+         dtCore::StringSelectorActorProperty::GetFuncType(this, &GetWidgetProperty::GetLayout),
+         dtCore::StringSelectorActorProperty::GetListFuncType(this, &GetWidgetProperty::GetLayoutList),
          "The Layout.", "", true);
       AddProperty(layoutProp);
 
-      dtDAL::StringSelectorActorProperty* widgetProp = new dtDAL::StringSelectorActorProperty(
+      dtCore::StringSelectorActorProperty* widgetProp = new dtCore::StringSelectorActorProperty(
          "Widget", "Widget",
-         dtDAL::StringSelectorActorProperty::SetFuncType(this, &GetWidgetProperty::SetWidget),
-         dtDAL::StringSelectorActorProperty::GetFuncType(this, &GetWidgetProperty::GetWidget),
-         dtDAL::StringSelectorActorProperty::GetListFuncType(this, &GetWidgetProperty::GetWidgetList),
+         dtCore::StringSelectorActorProperty::SetFuncType(this, &GetWidgetProperty::SetWidget),
+         dtCore::StringSelectorActorProperty::GetFuncType(this, &GetWidgetProperty::GetWidget),
+         dtCore::StringSelectorActorProperty::GetListFuncType(this, &GetWidgetProperty::GetWidgetList),
          "The Widget to set the text on.", "", true);
       AddProperty(widgetProp);
 
-      dtDAL::StringActorProperty* propertyProp = new dtDAL::StringActorProperty(
+      dtCore::StringActorProperty* propertyProp = new dtCore::StringActorProperty(
          "Property", "Property",
-         dtDAL::StringActorProperty::SetFuncType(this, &GetWidgetProperty::SetProperty),
-         dtDAL::StringActorProperty::GetFuncType(this, &GetWidgetProperty::GetProperty),
+         dtCore::StringActorProperty::SetFuncType(this, &GetWidgetProperty::SetProperty),
+         dtCore::StringActorProperty::GetFuncType(this, &GetWidgetProperty::GetProperty),
          "The property to set.");
       AddProperty(propertyProp);
 
-      mpValueProp = new dtDAL::StringActorProperty(
+      mpValueProp = new dtCore::StringActorProperty(
          "Value", "Value",
-         dtDAL::StringActorProperty::SetFuncType(this, &GetWidgetProperty::SetValue),
-         dtDAL::StringActorProperty::GetFuncType(this, &GetWidgetProperty::GetValue),
+         dtCore::StringActorProperty::SetFuncType(this, &GetWidgetProperty::SetValue),
+         dtCore::StringActorProperty::GetFuncType(this, &GetWidgetProperty::GetValue),
          "The value to set.");
 
       // This will expose the properties in the editor and allow

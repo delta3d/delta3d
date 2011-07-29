@@ -22,7 +22,7 @@
 #include <dtDirector/colors.h>
 #include <dtDirectorNodes/floatvalue.h>
 
-#include <dtDAL/floatactorproperty.h>
+#include <dtCore/floatactorproperty.h>
 
 namespace dtDirector
 {
@@ -52,17 +52,17 @@ namespace dtDirector
    {
       ValueNode::BuildPropertyMap();
 
-      mProperty = new dtDAL::FloatActorProperty(
+      mProperty = new dtCore::FloatActorProperty(
          "Value", "Value",
-         dtDAL::FloatActorProperty::SetFuncType(this, &FloatValue::SetValue),
-         dtDAL::FloatActorProperty::GetFuncType(this, &FloatValue::GetValue),
+         dtCore::FloatActorProperty::SetFuncType(this, &FloatValue::SetValue),
+         dtCore::FloatActorProperty::GetFuncType(this, &FloatValue::GetValue),
          "The value.");
       AddProperty(mProperty);
 
-      mInitialProperty = new dtDAL::FloatActorProperty(
+      mInitialProperty = new dtCore::FloatActorProperty(
          "Initial Value", "Initial Value",
-         dtDAL::FloatActorProperty::SetFuncType(this, &FloatValue::SetInitialValue),
-         dtDAL::FloatActorProperty::GetFuncType(this, &FloatValue::GetInitialValue),
+         dtCore::FloatActorProperty::SetFuncType(this, &FloatValue::SetInitialValue),
+         dtCore::FloatActorProperty::GetFuncType(this, &FloatValue::GetInitialValue),
          "The initial value.");
       AddProperty(mInitialProperty);
    }

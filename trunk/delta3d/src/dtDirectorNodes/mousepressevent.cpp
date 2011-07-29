@@ -21,8 +21,8 @@
 #include <prefix/dtdirectornodesprefix.h>
 #include <dtDirectorNodes/mousepressevent.h>
 
-#include <dtDAL/actorproxy.h>
-#include <dtDAL/stringselectoractorproperty.h>
+#include <dtCore/actorproxy.h>
+#include <dtCore/stringselectoractorproperty.h>
 
 #include <dtABC/application.h>
 #include <dtCore/mouse.h>
@@ -163,11 +163,11 @@ namespace dtDirector
    {
       EventNode::BuildPropertyMap();
 
-      dtDAL::StringSelectorActorProperty* buttonProp = new dtDAL::StringSelectorActorProperty(
+      dtCore::StringSelectorActorProperty* buttonProp = new dtCore::StringSelectorActorProperty(
          "Button", "Button",
-         dtDAL::StringSelectorActorProperty::SetFuncType(this, &MousePressEvent::SetButton),
-         dtDAL::StringSelectorActorProperty::GetFuncType(this, &MousePressEvent::GetButton),
-         dtDAL::StringSelectorActorProperty::GetListFuncType(this, &MousePressEvent::GetButtonList),
+         dtCore::StringSelectorActorProperty::SetFuncType(this, &MousePressEvent::SetButton),
+         dtCore::StringSelectorActorProperty::GetFuncType(this, &MousePressEvent::GetButton),
+         dtCore::StringSelectorActorProperty::GetListFuncType(this, &MousePressEvent::GetButtonList),
          "Mouse button to listen for.", "");
       AddProperty(buttonProp);
 

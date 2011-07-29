@@ -21,9 +21,9 @@
 #ifndef DELTA_SKYBOX_ACTOR_PROXY
 #define DELTA_SKYBOX_ACTOR_PROXY
 
-#include <dtDAL/plugin_export.h>
-#include <dtDAL/actorproxy.h>
-#include <dtDAL/exceptionenum.h>
+#include <dtCore/plugin_export.h>
+#include <dtCore/actorproxy.h>
+#include <dtCore/exceptionenum.h>
 #include <dtCore/skybox.h>
 #include <dtActors/enveffectactorproxy.h>
 #include <dtUtil/enumeration.h>
@@ -69,7 +69,7 @@ namespace dtActors
       {
          dtCore::SkyBox *skyBox = dynamic_cast<dtCore::SkyBox *>(GetActor());
          if (skyBox == NULL)
-            throw dtDAL::BaseException(
+            throw dtCore::BaseException(
             "Expected a skybox actor.", __FILE__, __LINE__);
 
          skyBox->SetTexture(dtCore::SkyBox::SKYBOX_TOP,path);
@@ -80,7 +80,7 @@ namespace dtActors
       {
          dtCore::SkyBox *skyBox = dynamic_cast<dtCore::SkyBox *>(GetActor());
          if (skyBox == NULL)
-            throw dtDAL::BaseException(
+            throw dtCore::BaseException(
             "Expected a skybox actor.", __FILE__, __LINE__);
 
          skyBox->SetTexture(dtCore::SkyBox::SKYBOX_BOTTOM,path);
@@ -91,7 +91,7 @@ namespace dtActors
       {
          dtCore::SkyBox *skyBox = dynamic_cast<dtCore::SkyBox *>(GetActor());
          if (skyBox == NULL)
-            throw dtDAL::BaseException(
+            throw dtCore::BaseException(
             "Expected a skybox actor.", __FILE__, __LINE__);
 
          skyBox->SetTexture(dtCore::SkyBox::SKYBOX_FRONT,path);
@@ -102,7 +102,7 @@ namespace dtActors
       {
          dtCore::SkyBox *skyBox = dynamic_cast<dtCore::SkyBox *>(GetActor());
          if (skyBox == NULL)
-            throw dtDAL::BaseException(
+            throw dtCore::BaseException(
             "Expected a skybox actor.", __FILE__, __LINE__);
 
          skyBox->SetTexture(dtCore::SkyBox::SKYBOX_BACK,path);
@@ -113,7 +113,7 @@ namespace dtActors
       {
          dtCore::SkyBox *skyBox = dynamic_cast<dtCore::SkyBox *>(GetActor());
          if (skyBox == NULL)
-            throw dtDAL::BaseException(
+            throw dtCore::BaseException(
             "Expected a skybox actor.", __FILE__, __LINE__);
 
          skyBox->SetTexture(dtCore::SkyBox::SKYBOX_LEFT,path);
@@ -124,7 +124,7 @@ namespace dtActors
       {
          dtCore::SkyBox *skyBox = dynamic_cast<dtCore::SkyBox *>(GetActor());
          if (skyBox == NULL)
-            throw dtDAL::BaseException(
+            throw dtCore::BaseException(
             "Expected a skybox actor.", __FILE__, __LINE__);
 
          skyBox->SetTexture(dtCore::SkyBox::SKYBOX_RIGHT,path);

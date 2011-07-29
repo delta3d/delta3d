@@ -1,15 +1,15 @@
-// dtdalbindings.cpp: Python bindings for dtDAL library.
+// dtdalbindings.cpp: Python bindings for dtCore library.
 //
 //////////////////////////////////////////////////////////////////////
 
 #include <python/dtpython.h>
 
 #include <dtUtil/enumeration.h>
-#include <dtDAL/project.h>
-#include <dtDAL/map.h>
+#include <dtCore/project.h>
+#include <dtCore/map.h>
 
 using namespace boost::python;
-using namespace dtDAL;
+using namespace dtCore;
 
 void initActorPropertyBindings();
 void initActorProxyBindings();

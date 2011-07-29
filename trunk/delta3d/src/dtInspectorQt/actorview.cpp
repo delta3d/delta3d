@@ -26,13 +26,13 @@ void dtInspectorQt::ActorView::Build(QList<EntryData>& itemList)
       return;
    }
 
-   std::vector<dtDAL::BaseActorObject*> actorList;
+   std::vector<dtCore::BaseActorObject*> actorList;
    mGameManager->GetAllActors(actorList);
 
    int count = (int)actorList.size();
    for (int index = 0; index < count; ++index)
    {
-      dtDAL::BaseActorObject* actor = actorList[index];
+      dtCore::BaseActorObject* actor = actorList[index];
       if (actor)
       {
          EntryData data;
@@ -56,7 +56,7 @@ void dtInspectorQt::ActorView::OperateOn(const QVariant& itemData)
    dtCore::UniqueId id;
    id = itemData.toString().toStdString();
 
-   dtDAL::BaseActorObject* actor = mGameManager->FindActorById(id);
+   dtCore::BaseActorObject* actor = mGameManager->FindActorById(id);
    if (actor)
    {
       mOperateOn = actor;
@@ -74,7 +74,7 @@ void dtInspectorQt::ActorView::Update()
       mUI->baseNameText->setText(QString::fromStdString(mOperateOn->GetName()));
       mUI->baseRefCountLabel->setText(QString::number(mOperateOn->referenceCount()));
 
-      std::vector<dtCore::RefPtr<dtDAL::PropertyContainer> > actorList;
+      std::vector<dtCore::RefPtr<dtCore::PropertyContainer> > actorList;
       actorList.push_back(mOperateOn.get());
       mUI->propertyEditor->HandlePropertyContainersSelected(actorList);
    }

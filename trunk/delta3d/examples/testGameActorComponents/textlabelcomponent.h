@@ -4,7 +4,7 @@
 #include "testexport.h"
 #include <dtGame/actorcomponentbase.h>
 #include <dtCore/refptr.h>
-#include <dtDAL/actorproperty.h>
+#include <dtCore/actorproperty.h>
 #include <osg/Geometry>
 #include <osg/PositionAttitudeTransform>
 #include <osgText/Text>

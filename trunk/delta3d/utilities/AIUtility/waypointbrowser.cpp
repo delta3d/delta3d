@@ -96,7 +96,7 @@ void WaypointBrowser::ResetTypesTree()
 
    if (mAIPluginInterface != NULL)
    {
-      std::vector<dtCore::RefPtr<const dtDAL::ObjectType> > objectTypes;
+      std::vector<dtCore::RefPtr<const dtCore::ObjectType> > objectTypes;
       mAIPluginInterface->GetSupportedWaypointTypes(objectTypes);
 
       ObjectTypeTreeWidget* root = new ObjectTypeTreeWidget(mUi->mObjectTypeTree, tr("Waypoint Types"));
@@ -238,7 +238,7 @@ void WaypointBrowser::ResetWaypointResult()
 ///////////////////////////////////////////////////
 void WaypointBrowser::OnCreate()
 {
-   dtCore::RefPtr<const dtDAL::ObjectType> objectTypeSelected;
+   dtCore::RefPtr<const dtCore::ObjectType> objectTypeSelected;
 
    QList<QTreeWidgetItem*> list = mUi->mObjectTypeTree->selectedItems();
 

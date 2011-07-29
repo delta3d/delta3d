@@ -20,8 +20,8 @@
  */
 #include <dtHLAGM/ddmappspacecalculator.h>
 
-#include <dtDAL/datatype.h>
-#include <dtDAL/longactorproperty.h>
+#include <dtCore/datatype.h>
+#include <dtCore/longactorproperty.h>
 
 #include <dtHLAGM/ddmutil.h>
 
@@ -38,18 +38,18 @@ namespace dtHLAGM
       mAppSpaceMax(30),
       mDefaultAppSpace(0)
    {
-      AddProperty(new dtDAL::LongActorProperty(PROP_APP_SPACE_MIN, PROP_APP_SPACE_MIN,
-               dtDAL::LongActorProperty::SetFuncType(this, &DDMAppSpaceCalculator::SetAppSpaceMinimum),
-               dtDAL::LongActorProperty::GetFuncType(this, &DDMAppSpaceCalculator::GetAppSpaceMinimum)
+      AddProperty(new dtCore::LongActorProperty(PROP_APP_SPACE_MIN, PROP_APP_SPACE_MIN,
+               dtCore::LongActorProperty::SetFuncType(this, &DDMAppSpaceCalculator::SetAppSpaceMinimum),
+               dtCore::LongActorProperty::GetFuncType(this, &DDMAppSpaceCalculator::GetAppSpaceMinimum)
             ));
-      AddProperty(new dtDAL::LongActorProperty(PROP_APP_SPACE_MAX, PROP_APP_SPACE_MAX,
-               dtDAL::LongActorProperty::SetFuncType(this, &DDMAppSpaceCalculator::SetAppSpaceMaximum),
-               dtDAL::LongActorProperty::GetFuncType(this, &DDMAppSpaceCalculator::GetAppSpaceMaximum)
+      AddProperty(new dtCore::LongActorProperty(PROP_APP_SPACE_MAX, PROP_APP_SPACE_MAX,
+               dtCore::LongActorProperty::SetFuncType(this, &DDMAppSpaceCalculator::SetAppSpaceMaximum),
+               dtCore::LongActorProperty::GetFuncType(this, &DDMAppSpaceCalculator::GetAppSpaceMaximum)
             ));
 
-      AddProperty(new dtDAL::LongActorProperty(PROP_DEFAULT_APP_SPACE, PROP_DEFAULT_APP_SPACE,
-               dtDAL::LongActorProperty::SetFuncType(this, &DDMAppSpaceCalculator::SetDefaultAppSpace),
-               dtDAL::LongActorProperty::GetFuncType(this, &DDMAppSpaceCalculator::GetDefaultAppSpace)
+      AddProperty(new dtCore::LongActorProperty(PROP_DEFAULT_APP_SPACE, PROP_DEFAULT_APP_SPACE,
+               dtCore::LongActorProperty::SetFuncType(this, &DDMAppSpaceCalculator::SetDefaultAppSpace),
+               dtCore::LongActorProperty::GetFuncType(this, &DDMAppSpaceCalculator::GetDefaultAppSpace)
             ));
    }
 

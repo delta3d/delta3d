@@ -22,10 +22,10 @@
 #ifndef DELTA_PARTICLE_SYSTEM_ACTOR_PROXY
 #define DELTA_PARTICLE_SYSTEM_ACTOR_PROXY
 
-#include <dtDAL/plugin_export.h>
-#include <dtDAL/transformableactorproxy.h>
+#include <dtCore/plugin_export.h>
+#include <dtCore/transformableactorproxy.h>
 #include <dtCore/particlesystem.h>
-#include <dtDAL/exceptionenum.h>
+#include <dtCore/exceptionenum.h>
 
 namespace dtActors
 {
@@ -33,7 +33,7 @@ namespace dtActors
     * @class ParticleSystemActorProxy
     * @brief This proxy wraps the ParticleSystem Delta3D object.
     */
-   class DT_PLUGIN_EXPORT ParticleSystemActorProxy : public dtDAL::TransformableActorProxy
+   class DT_PLUGIN_EXPORT ParticleSystemActorProxy : public dtCore::TransformableActorProxy
    {
    public:
 
@@ -56,7 +56,7 @@ namespace dtActors
          dtCore::ParticleSystem* ps = dynamic_cast<dtCore::ParticleSystem*>(GetActor());
          if (!ps)
          {
-            throw dtDAL::InvalidActorException(
+            throw dtCore::InvalidActorException(
             "Actor should be type dtCore::ParticleSystem", __FILE__, __LINE__);
          }
 
@@ -68,18 +68,18 @@ namespace dtActors
 
       /**
        * Gets the method by which a particle system is rendered.
-       * @return dtDAL::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON.
+       * @return dtCore::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON.
        */
-      virtual const dtDAL::BaseActorObject::RenderMode& GetRenderMode()
+      virtual const dtCore::BaseActorObject::RenderMode& GetRenderMode()
       {
-         return dtDAL::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON;
+         return dtCore::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON;
       }
 
       /**
        * Gets the billboard used to represent particle systems.
        * @return
        */
-      virtual dtDAL::ActorProxyIcon* GetBillBoardIcon();
+      virtual dtCore::ActorProxyIcon* GetBillBoardIcon();
 
    protected:
 

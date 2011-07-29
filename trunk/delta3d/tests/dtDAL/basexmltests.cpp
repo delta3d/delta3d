@@ -33,8 +33,8 @@
 #include <cppunit/extensions/HelperMacros.h>
 #include <osgDB/Registry>
 #include <dtABC/application.h>
-#include <dtDAL/basexmlhandler.h>
-#include <dtDAL/basexmlreaderwriter.h>
+#include <dtCore/basexmlhandler.h>
+#include <dtCore/basexmlreaderwriter.h>
 #include <dtUtil/datapathutils.h>
 #include <dtUtil/fileutils.h>
 #include <dtUtil/stringutils.h>
@@ -63,10 +63,10 @@ const dtUtil::RefString ELEMENT_TAG2("tag2");
 ////////////////////////////////////////////////////////////////////////////////
 // CUSTOM XML WRITER CLASS CODE
 ////////////////////////////////////////////////////////////////////////////////
-class CustomXMLWriter : public dtDAL::BaseXMLWriter
+class CustomXMLWriter : public dtCore::BaseXMLWriter
 {
 public:
-   typedef dtDAL::BaseXMLWriter BaseClass;
+   typedef dtCore::BaseXMLWriter BaseClass;
 
    CustomXMLWriter()
    {
@@ -88,10 +88,10 @@ protected:
 ////////////////////////////////////////////////////////////////////////////////
 // CUSTOM XML HANDLER CLASS CODE
 ////////////////////////////////////////////////////////////////////////////////
-class CustomXMLHandler : public dtDAL::BaseXMLHandler
+class CustomXMLHandler : public dtCore::BaseXMLHandler
 {
 public:
-   typedef dtDAL::BaseXMLHandler BaseClass;
+   typedef dtCore::BaseXMLHandler BaseClass;
    typedef std::vector<std::string> StrVector;
 
    CustomXMLHandler()
@@ -177,10 +177,10 @@ public:
 static const dtUtil::RefString TEST_EXTENSION("xmltest");
 
 class CustomXMLReaderWriter
-   : public dtDAL::BaseXMLReaderWriter<osg::Object, CustomXMLHandler, CustomXMLWriter>
+   : public dtCore::BaseXMLReaderWriter<osg::Object, CustomXMLHandler, CustomXMLWriter>
 {
 public:
-   typedef dtDAL::BaseXMLReaderWriter<osg::Object, CustomXMLHandler, CustomXMLWriter> BaseClass;
+   typedef dtCore::BaseXMLReaderWriter<osg::Object, CustomXMLHandler, CustomXMLWriter> BaseClass;
 
    CustomXMLReaderWriter()
       : mCalledInitParser(false)
@@ -197,7 +197,7 @@ public:
       return "Custom XML Reader/Writer"; 
    }
 
-   virtual void InitParser(dtDAL::BaseXMLParser& parser, CustomXMLHandler& handler) const
+   virtual void InitParser(dtCore::BaseXMLParser& parser, CustomXMLHandler& handler) const
    {
       BaseClass::InitParser(parser, handler);
 

@@ -32,8 +32,8 @@
 
 #include <QtGui/QWidget>
 #include <vector>
-#include <dtDAL/actorproxy.h>
-#include <dtDAL/actorproperty.h>
+#include <dtCore/actorproxy.h>
+#include <dtCore/actorproperty.h>
 #include <dtQt/typedefs.h>
 
 class QComboBox;
@@ -89,7 +89,7 @@ namespace dtEditQt
       /**
        * Called when a proxy's name is changed
        */
-      void onActorProxyNameChanged(dtDAL::BaseActorObject& proxy, std::string oldName);
+      void onActorProxyNameChanged(dtCore::BaseActorObject& proxy, std::string oldName);
 
    private:
       QGroupBox* resultsGroup();

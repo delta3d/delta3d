@@ -36,7 +36,7 @@
 #include <dtAI/waypointinterface.h>
 #include <osg/Vec3>
 
-#include <dtDAL/objecttype.h>
+#include <dtCore/objecttype.h>
 #include <dtUtil/objectfactory.h>
 
 #include <dtAI/waypointpropertycache.h>
@@ -52,7 +52,7 @@ namespace dtAI
       typedef std::vector<WaypointInterface*> WaypointArray;
       typedef std::vector<const WaypointInterface*> ConstWaypointArray;
 
-      typedef dtUtil::ObjectFactory< dtCore::RefPtr<const dtDAL::ObjectType>, WaypointInterface > WaypointFactory;
+      typedef dtUtil::ObjectFactory< dtCore::RefPtr<const dtCore::ObjectType>, WaypointInterface > WaypointFactory;
 
    public: // interface declaration
       AIPluginInterface();
@@ -160,7 +160,7 @@ namespace dtAI
        *  Copies all waypoints of a specific type into a vector
        *  @param the vector of waypoints to fill
        */
-      virtual void GetWaypointsByType(const dtDAL::ObjectType& type, WaypointArray& toFill) = 0;
+      virtual void GetWaypointsByType(const dtCore::ObjectType& type, WaypointArray& toFill) = 0;
 
       /**
        * @returns true if an edge exists for (from-to)
@@ -250,7 +250,7 @@ namespace dtAI
        *   Use the Waypoint factory to create a Waypoint.
        *  @note This will auto insert, no need to call Insert() afterwards
        */
-      WaypointInterface* CreateWaypoint(const osg::Vec3& pos, const dtDAL::ObjectType& type);
+      WaypointInterface* CreateWaypoint(const osg::Vec3& pos, const dtCore::ObjectType& type);
 
       /**
        *   This creates a Waypoint like above but ensures there is not already a Waypoint within radius from at that point.
@@ -258,23 +258,23 @@ namespace dtAI
        *
        *  @return Either a new waypoint or the waypoint that already exists within radius
        */
-      WaypointInterface* CreateWaypointNoDuplicates(const osg::Vec3& pos, float radius, const dtDAL::ObjectType& type);
+      WaypointInterface* CreateWaypointNoDuplicates(const osg::Vec3& pos, float radius, const dtCore::ObjectType& type);
 
       /**
        * Checks to see if this registry supports the given waypoint type.
        * @param type The type to check support for.
        * @return true if supported, false otherwise.
        */
-      bool IsWaypointTypeSupported(dtCore::RefPtr<const dtDAL::ObjectType> type) const;
+      bool IsWaypointTypeSupported(dtCore::RefPtr<const dtCore::ObjectType> type) const;
 
       /**
        * Gets a list of waypoint types supported.
        */
-      void GetSupportedWaypointTypes(std::vector<dtCore::RefPtr<const dtDAL::ObjectType> >& actors) const;
+      void GetSupportedWaypointTypes(std::vector<dtCore::RefPtr<const dtCore::ObjectType> >& actors) const;
 
-      const dtDAL::ObjectType* GetWaypointTypeByName(const std::string& name) const;
+      const dtCore::ObjectType* GetWaypointTypeByName(const std::string& name) const;
 
-      WaypointPropertyBase* CreateWaypointPropertyContainer(const dtDAL::ObjectType& type, WaypointInterface* wp) const
+      WaypointPropertyBase* CreateWaypointPropertyContainer(const dtCore::ObjectType& type, WaypointInterface* wp) const
       {
          return mPropertyCache->GetPropertyContainer(type, wp);
       }
@@ -282,10 +282,10 @@ namespace dtAI
       /**
        *  This simply uses the factory to create the waypoint, it does not insert it.
        */
-      WaypointInterface* CreateNoInsert(const dtDAL::ObjectType& type);
+      WaypointInterface* CreateNoInsert(const dtCore::ObjectType& type);
 
       template <class WaypointDerivative>
-      void RegisterWaypointType(dtCore::RefPtr<const dtDAL::ObjectType> type)
+      void RegisterWaypointType(dtCore::RefPtr<const dtCore::ObjectType> type)
       {
          mFactory->RegisterType<WaypointDerivative>(type);
          mPropertyCache->RegisterType<WaypointDerivative>(type);

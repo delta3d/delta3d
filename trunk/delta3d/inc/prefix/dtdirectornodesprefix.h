@@ -5,7 +5,7 @@
    #ifdef _MSC_VER
       #include <dtDirector/actionnode.h>
       #include <dtDirector/director.h>
-      #include <dtDAL/arrayactorproperty.h>
+      #include <dtCore/arrayactorproperty.h>
    #else
       #include <dtDirector/actionnode.h>
       #include <dtDirector/director.h>

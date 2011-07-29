@@ -1,14 +1,14 @@
 #ifndef TEST_ACTOR_LIBRARY_ACTOR_REGISTRY_H_
 #define TEST_ACTOR_LIBRARY_ACTOR_REGISTRY_H_
 
-#include <dtDAL/actorpluginregistry.h>
+#include <dtCore/actorpluginregistry.h>
 
 #include "testexport.h"
 
-class TEST_GA_COMPONENTS_EXPORT TestActorLibraryRegistry : public dtDAL::ActorPluginRegistry
+class TEST_GA_COMPONENTS_EXPORT TestActorLibraryRegistry : public dtCore::ActorPluginRegistry
 {
 public:
-   static dtCore::RefPtr<dtDAL::ActorType> COMPONENT_GAME_ACTOR_TYPE;
+   static dtCore::RefPtr<dtCore::ActorType> COMPONENT_GAME_ACTOR_TYPE;
 
    TestActorLibraryRegistry();
 

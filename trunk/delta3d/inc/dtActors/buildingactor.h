@@ -1,10 +1,10 @@
 #ifndef BuildingActor_h__
 #define BuildingActor_h__
 
-#include <dtDAL/plugin_export.h>
-#include <dtDAL/transformableactorproxy.h>
+#include <dtCore/plugin_export.h>
+#include <dtCore/transformableactorproxy.h>
 #include <dtABC/export.h>
-#include <dtDAL/actorproperty.h>
+#include <dtCore/actorproperty.h>
 #include <osgText/Text>
 #include <dtActors/linkedpointsactorproxy.h>
 #include <dtCore/refptr.h>
@@ -12,7 +12,7 @@
 #include <dtCore/object.h>
 #include <osg/Geode>
 #include <osg/Geometry>
-#include <dtDAL/resourcedescriptor.h>
+#include <dtCore/resourcedescriptor.h>
 
 namespace dtActors
 {
@@ -169,20 +169,20 @@ namespace dtActors
       /**
       * Sets the roof texture.
       */
-      void SetRoofTexture(const dtDAL::ResourceDescriptor& value);
-      dtDAL::ResourceDescriptor GetRoofTexture() {return mRoofDescriptor;}
+      void SetRoofTexture(const dtCore::ResourceDescriptor& value);
+      dtCore::ResourceDescriptor GetRoofTexture() {return mRoofDescriptor;}
 
       /**
       * Sets the outside wall texture.
       */
-      void SetOutWallTexture(const dtDAL::ResourceDescriptor& value);
-      dtDAL::ResourceDescriptor GetOutWallTexture() {return mOutWallDescriptor;}
+      void SetOutWallTexture(const dtCore::ResourceDescriptor& value);
+      dtCore::ResourceDescriptor GetOutWallTexture() {return mOutWallDescriptor;}
 
       /**
       * Sets the inside wall texture.
       */
-      void SetInWallTexture(const dtDAL::ResourceDescriptor& value);
-      dtDAL::ResourceDescriptor GetInWallTexture() {return mInWallDescriptor;}
+      void SetInWallTexture(const dtCore::ResourceDescriptor& value);
+      dtCore::ResourceDescriptor GetInWallTexture() {return mInWallDescriptor;}
 
       /**
       * Gets the width of the segments.
@@ -361,9 +361,9 @@ namespace dtActors
       osg::ref_ptr<osg::Texture2D>     mOutWallTexture;
       osg::ref_ptr<osg::Texture2D>     mInWallTexture;
 
-      dtDAL::ResourceDescriptor        mRoofDescriptor;
-      dtDAL::ResourceDescriptor        mOutWallDescriptor;
-      dtDAL::ResourceDescriptor        mInWallDescriptor;
+      dtCore::ResourceDescriptor        mRoofDescriptor;
+      dtCore::ResourceDescriptor        mOutWallDescriptor;
+      dtCore::ResourceDescriptor        mInWallDescriptor;
 
       dtCore::RefPtr<dtCore::Transformable> mOrigin;
    };
@@ -402,7 +402,7 @@ namespace dtActors
       *
       * @return           A property, or NULL if none is needed.
       */
-      dtCore::RefPtr<dtDAL::ActorProperty> GetDeprecatedProperty(const std::string& name);
+      dtCore::RefPtr<dtCore::ActorProperty> GetDeprecatedProperty(const std::string& name);
 
       /**
       * Called when the SetRotation function is called.  The rotation will

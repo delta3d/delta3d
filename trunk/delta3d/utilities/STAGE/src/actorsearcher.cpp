@@ -39,10 +39,10 @@
 
 #include <QtCore/QStringList>
 
-#include <dtDAL/actorproxy.h>
-#include <dtDAL/actortype.h>
-#include <dtDAL/librarymanager.h>
-#include <dtDAL/map.h>
+#include <dtCore/actorproxy.h>
+#include <dtCore/actortype.h>
+#include <dtCore/librarymanager.h>
+#include <dtCore/map.h>
 
 #include <dtUtil/log.h>
 
@@ -177,10 +177,10 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void ActorSearcher::refreshAll()
    {
-      std::vector<const dtDAL::ActorType*> actorTypes;
-      std::vector<const dtDAL::ActorType*>::const_iterator actorTypesIter;
+      std::vector<const dtCore::ActorType*> actorTypes;
+      std::vector<const dtCore::ActorType*>::const_iterator actorTypesIter;
       std::set<std::string>::const_iterator setIter;
-      dtDAL::Map* map = EditorData::GetInstance().getCurrentMap();
+      dtCore::Map* map = EditorData::GetInstance().getCurrentMap();
       QStringList categoryList;
       QStringList typeList;
 
@@ -212,10 +212,10 @@ namespace dtEditQt
          EditorData::GetInstance().getMainWindow()->startWaitCursor();
 
          // walk through all the actor types and pull out the unique categories and types
-         dtDAL::LibraryManager::GetInstance().GetActorTypes(actorTypes);
+         dtCore::LibraryManager::GetInstance().GetActorTypes(actorTypes);
          for (actorTypesIter = actorTypes.begin(); actorTypesIter != actorTypes.end(); ++actorTypesIter)
          {
-            dtCore::RefPtr<const dtDAL::ActorType> type = (*actorTypesIter);
+            dtCore::RefPtr<const dtCore::ActorType> type = (*actorTypesIter);
             // get the cat
             QString newCat(type->GetCategory().c_str());
             if (!categoryList.contains(newCat))
@@ -263,8 +263,8 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void ActorSearcher::searchPressed()
    {
-      std::vector< dtCore::RefPtr<dtDAL::BaseActorObject> > foundProxies;
-      dtDAL::Map* map = EditorData::GetInstance().getCurrentMap();
+      std::vector< dtCore::RefPtr<dtCore::BaseActorObject> > foundProxies;
+      dtCore::Map* map = EditorData::GetInstance().getCurrentMap();
       if (map == NULL)
       {
          return;
@@ -294,7 +294,7 @@ namespace dtEditQt
 
       // search
       map->FindProxies(foundProxies, searchName.toStdString(), searchCategory.toStdString(),
-         searchType.toStdString(), searchClass.toStdString(), dtDAL::Map::Either);
+         searchType.toStdString(), searchClass.toStdString(), dtCore::Map::Either);
 
       // empty out our table before we add stuff
       mResultsTable->clearAll();
@@ -307,7 +307,7 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ActorSearcher::onActorProxyCreated(dtCore::RefPtr<dtDAL::BaseActorObject> proxy, bool forceNoAdjustments)
+   void ActorSearcher::onActorProxyCreated(dtCore::RefPtr<dtCore::BaseActorObject> proxy, bool forceNoAdjustments)
    {
       EditorData::GetInstance().getMainWindow()->startWaitCursor();
 

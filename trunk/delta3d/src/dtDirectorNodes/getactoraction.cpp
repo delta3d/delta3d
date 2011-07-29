@@ -21,11 +21,11 @@
 #include <prefix/dtdirectornodesprefix.h>
 #include <dtDirectorNodes/getactoraction.h>
 
-#include <dtDAL/actoridactorproperty.h>
-#include <dtDAL/actortype.h>
-#include <dtDAL/librarymanager.h>
-#include <dtDAL/stringactorproperty.h>
-#include <dtDAL/stringselectoractorproperty.h>
+#include <dtCore/actoridactorproperty.h>
+#include <dtCore/actortype.h>
+#include <dtCore/librarymanager.h>
+#include <dtCore/stringactorproperty.h>
+#include <dtCore/stringselectoractorproperty.h>
 #include <dtDirector/director.h>
 
 namespace dtDirector
@@ -55,25 +55,25 @@ namespace dtDirector
    {
       ActionNode::BuildPropertyMap();
 
-      dtDAL::StringActorProperty* nameProp = new dtDAL::StringActorProperty("ActorName", "Actor Name",
-         dtDAL::StringActorProperty::SetFuncType(this, &GetActorAction::SetActorName),
-         dtDAL::StringActorProperty::GetFuncType(this, &GetActorAction::GetActorName),
+      dtCore::StringActorProperty* nameProp = new dtCore::StringActorProperty("ActorName", "Actor Name",
+         dtCore::StringActorProperty::SetFuncType(this, &GetActorAction::SetActorName),
+         dtCore::StringActorProperty::GetFuncType(this, &GetActorAction::GetActorName),
          "Actor name to get.");
       AddProperty(nameProp);
 
-      dtDAL::StringSelectorActorProperty* classProp = new dtDAL::StringSelectorActorProperty(
+      dtCore::StringSelectorActorProperty* classProp = new dtCore::StringSelectorActorProperty(
          "Actor Type", "Actor Type",
-         dtDAL::StringSelectorActorProperty::SetFuncType(this, &GetActorAction::SetClassType),
-         dtDAL::StringSelectorActorProperty::GetFuncType(this, &GetActorAction::GetClassType),
-         dtDAL::StringSelectorActorProperty::GetListFuncType(&dtDAL::LibraryManager::GetInstance(),
-         &dtDAL::LibraryManager::GetClassTypes),
+         dtCore::StringSelectorActorProperty::SetFuncType(this, &GetActorAction::SetClassType),
+         dtCore::StringSelectorActorProperty::GetFuncType(this, &GetActorAction::GetClassType),
+         dtCore::StringSelectorActorProperty::GetListFuncType(&dtCore::LibraryManager::GetInstance(),
+         &dtCore::LibraryManager::GetClassTypes),
          "The type of the actor to get(optional).", "", false);
       AddProperty(classProp);
 
-      dtDAL::ActorIDActorProperty* actorProp = new dtDAL::ActorIDActorProperty(
+      dtCore::ActorIDActorProperty* actorProp = new dtCore::ActorIDActorProperty(
          "Actor", "Actor",
-         dtDAL::ActorIDActorProperty::SetFuncType(this, &GetActorAction::SetActor),
-         dtDAL::ActorIDActorProperty::GetFuncType(this, &GetActorAction::GetActor),
+         dtCore::ActorIDActorProperty::SetFuncType(this, &GetActorAction::SetActor),
+         dtCore::ActorIDActorProperty::GetFuncType(this, &GetActorAction::GetActor),
          "", "The actor to retrieve.");
       AddProperty(actorProp);
 
@@ -87,7 +87,7 @@ namespace dtDirector
    {
       dtGame::GameManager* gm = GetDirector()->GetGameManager();
 
-      dtDAL::BaseActorObject* actorToGet = NULL;
+      dtCore::BaseActorObject* actorToGet = NULL;
 
       // If an actual actor instance was specified, use it
       if (!mActor.ToString().empty())
@@ -97,7 +97,7 @@ namespace dtDirector
       else if (!mActorName.empty())
       {
          // If we have a name, filter by it first
-         std::vector<dtDAL::BaseActorObject*> baseList;
+         std::vector<dtCore::BaseActorObject*> baseList;
          gm->FindActorsByName(mActorName, baseList);
 
          // If we have a type, filter by it second
@@ -119,7 +119,7 @@ namespace dtDirector
       }
       else if (!mClassType.empty())
       {
-         std::vector<dtDAL::BaseActorObject*> baseList;
+         std::vector<dtCore::BaseActorObject*> baseList;
          gm->GetAllActors(baseList);
 
          // Find the first actor of the given type

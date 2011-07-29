@@ -93,7 +93,7 @@ void ShaderManagerTests::setUp()
    try
    {
       mShaderMgr =& dtCore::ShaderManager::GetInstance();
-      //dtDAL::Project::GetInstance().SetContext(projectContext);
+      //dtCore::Project::GetInstance().SetContext(projectContext);
       dtUtil::SetDataFilePathList(projectContext);
       mShaderMgr->LoadShaderDefinitions("Shaders/TestShaderDefinitions.xml", false);
 

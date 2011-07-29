@@ -87,7 +87,7 @@ namespace dtDirector
 
       std::string mPropertyName;
 
-      dtCore::RefPtr<dtDAL::ActorProperty> mResultProp;
+      dtCore::RefPtr<dtCore::ActorProperty> mResultProp;
    };
 }
 

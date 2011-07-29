@@ -8,9 +8,9 @@
 
 #include <dtCore/uniqueid.h>
 
-#include <dtDAL/project.h>
-#include <dtDAL/map.h>
-#include <dtDAL/baseactorobject.h>
+#include <dtCore/project.h>
+#include <dtCore/map.h>
+#include <dtCore/baseactorobject.h>
 
 #include <osgDB/FileNameUtils>
 
@@ -46,7 +46,7 @@ void dtInspectorQt::DirectorView::Build(QList<EntryData>& itemList)
          if (director && !director->GetParent())
          {
             std::string fileName = director->GetScriptName();
-            std::string contextDir = osgDB::convertFileNameToNativeStyle(dtDAL::Project::GetInstance().GetContext()+"/directors/");
+            std::string contextDir = osgDB::convertFileNameToNativeStyle(dtCore::Project::GetInstance().GetContext()+"/directors/");
             contextDir = osgDB::getRealPath(contextDir);
             if (!fileName.empty())
             {
@@ -143,7 +143,7 @@ void dtInspectorQt::DirectorView::BuildChildren(dtDirector::Director* parent, QL
       if (child)
       {
          std::string fileName = child->GetScriptName();
-         std::string contextDir = osgDB::convertFileNameToNativeStyle(dtDAL::Project::GetInstance().GetContext()+"/directors/");
+         std::string contextDir = osgDB::convertFileNameToNativeStyle(dtCore::Project::GetInstance().GetContext()+"/directors/");
          contextDir = osgDB::getRealPath(contextDir);
          if (!fileName.empty())
          {
@@ -172,7 +172,7 @@ void dtInspectorQt::DirectorView::Update()
 
       mUI->directorScriptGroupBox->show();
 
-      dtDAL::BaseActorObject* player = mOperateOn->GetPlayerActor();
+      dtCore::BaseActorObject* player = mOperateOn->GetPlayerActor();
       if (player)
       {
          mUI->directorScriptPlayerEdit->setText(player->GetName().c_str());
@@ -182,7 +182,7 @@ void dtInspectorQt::DirectorView::Update()
          mUI->directorScriptPlayerEdit->setText("<None>");
       }
 
-      dtDAL::BaseActorObject* owner = mOperateOn->GetScriptOwnerActor();
+      dtCore::BaseActorObject* owner = mOperateOn->GetScriptOwnerActor();
       if (owner)
       {
          mUI->directorScriptOwnerEdit->setText(owner->GetName().c_str());
@@ -192,7 +192,7 @@ void dtInspectorQt::DirectorView::Update()
          mUI->directorScriptOwnerEdit->setText("<None>");
       }
 
-      std::vector<dtCore::RefPtr<dtDAL::PropertyContainer> > actorList;
+      std::vector<dtCore::RefPtr<dtCore::PropertyContainer> > actorList;
       actorList.push_back(mOperateOn.get());
       mUI->propertyEditor->HandlePropertyContainersSelected(actorList);
    }

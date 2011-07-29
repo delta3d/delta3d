@@ -30,7 +30,7 @@
 #include <QtGui/QMouseEvent>
 #include <dtEditQt/orthoviewport.h>
 #include <dtEditQt/stagecameramotionmodel2d.h>
-#include <dtDAL/exceptionenum.h>
+#include <dtCore/exceptionenum.h>
 
 namespace dtEditQt
 {
@@ -107,7 +107,7 @@ namespace dtEditQt
       {
          if (!isInitialized())
          {
-            throw dtDAL::BaseException("Cannot refresh the viewport. "
+            throw dtCore::BaseException("Cannot refresh the viewport. "
                "It has not been initialized.", __FILE__, __LINE__);
          }
          refresh();

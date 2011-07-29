@@ -22,7 +22,7 @@
 #include <dtDirectorNodes/getapplicationconfigpropertyaction.h>
 
 #include <dtABC/application.h>
-#include <dtDAL/stringactorproperty.h>
+#include <dtCore/stringactorproperty.h>
 #include <dtDirector/director.h>
 #include <dtGame/gamemanager.h>
 
@@ -47,17 +47,17 @@ namespace dtDirector
       ActionNode::BuildPropertyMap();
 
       // Create our value links.
-      dtDAL::StringActorProperty* nameProp = new dtDAL::StringActorProperty(
+      dtCore::StringActorProperty* nameProp = new dtCore::StringActorProperty(
          "PropertyName", "Property Name",
-         dtDAL::StringActorProperty::SetFuncType(this, &GetApplicationConfigPropertyAction::SetPropertyName),
-         dtDAL::StringActorProperty::GetFuncType(this, &GetApplicationConfigPropertyAction::GetPropertyName),
+         dtCore::StringActorProperty::SetFuncType(this, &GetApplicationConfigPropertyAction::SetPropertyName),
+         dtCore::StringActorProperty::GetFuncType(this, &GetApplicationConfigPropertyAction::GetPropertyName),
          "The name of the config property to retrieve.");
       AddProperty(nameProp);
 
-      mResultProp = new dtDAL::StringActorProperty(
+      mResultProp = new dtCore::StringActorProperty(
          "Result", "Result",
-         dtDAL::StringActorProperty::SetFuncType(this, &GetApplicationConfigPropertyAction::SetResult),
-         dtDAL::StringActorProperty::GetFuncType(this, &GetApplicationConfigPropertyAction::GetResult),
+         dtCore::StringActorProperty::SetFuncType(this, &GetApplicationConfigPropertyAction::SetResult),
+         dtCore::StringActorProperty::GetFuncType(this, &GetApplicationConfigPropertyAction::GetResult),
          "The current value of the property.");
 
       // This will expose the properties in the editor and allow

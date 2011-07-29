@@ -35,8 +35,8 @@
 
 #include <dtCore/uniqueid.h>
 
-#include <dtDAL/actortype.h>
-#include <dtDAL/map.h>
+#include <dtCore/actortype.h>
+#include <dtCore/map.h>
 
 #include <dtEditQt/editordata.h>
 #include <dtEditQt/taskeditor.h>
@@ -57,7 +57,7 @@ namespace dtEditQt
    {}
 
    ///////////////////////////////////////////////////////////////////////////////
-   bool TaskUIPlugin::UpdateWidgetFromModel(QWidget& widget, const dtDAL::NamedGroupParameter& modelData) const
+   bool TaskUIPlugin::UpdateWidgetFromModel(QWidget& widget, const dtCore::NamedGroupParameter& modelData) const
    {
       TaskEditor* taskEditor = dynamic_cast<TaskEditor*>(&widget);
       if (taskEditor == NULL)
@@ -70,7 +70,7 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   bool TaskUIPlugin::UpdateModelFromWidget(QWidget& widget, dtDAL::NamedGroupParameter& modelData) const
+   bool TaskUIPlugin::UpdateModelFromWidget(QWidget& widget, dtCore::NamedGroupParameter& modelData) const
    {
       TaskEditor* taskEditor = dynamic_cast<TaskEditor*>(&widget);
       if (taskEditor == NULL)

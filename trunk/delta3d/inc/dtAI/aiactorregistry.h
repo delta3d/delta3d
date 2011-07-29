@@ -23,14 +23,14 @@
 #define DELTA_AI_ACTOR_REGISTRY
 
 #include <dtAI/export.h>
-#include <dtDAL/actorpluginregistry.h>
+#include <dtCore/actorpluginregistry.h>
 
 namespace dtAI
 {
-   class DT_AI_EXPORT AIActorRegistry : public dtDAL::ActorPluginRegistry
+   class DT_AI_EXPORT AIActorRegistry : public dtCore::ActorPluginRegistry
    {
    public:
-      static dtCore::RefPtr<dtDAL::ActorType> AI_INTERFACE_ACTOR_TYPE;
+      static dtCore::RefPtr<dtCore::ActorType> AI_INTERFACE_ACTOR_TYPE;
 
       AIActorRegistry();
 

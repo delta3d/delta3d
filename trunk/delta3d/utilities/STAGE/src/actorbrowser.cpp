@@ -39,8 +39,8 @@
 #include <dtEditQt/editorevents.h>
 #include <dtEditQt/editordata.h>
 #include <dtEditQt/mainwindow.h>
-#include <dtDAL/librarymanager.h>
-#include <dtDAL/map.h>
+#include <dtCore/librarymanager.h>
+#include <dtCore/map.h>
 #include <dtUtil/log.h>
 
 namespace dtEditQt
@@ -124,7 +124,7 @@ namespace dtEditQt
       // resets everything and marks the current expansion
       clearActorTypesTree();
 
-      dtDAL::LibraryManager::GetInstance().GetActorTypes(mActorTypes);
+      dtCore::LibraryManager::GetInstance().GetActorTypes(mActorTypes);
 
       // recreate our root.
       mRootActorType = new ActorTypeTreeWidget(mTree, tr("Actor Types"));
@@ -291,13 +291,13 @@ namespace dtEditQt
          EditorData::GetInstance().getMainWindow()->startWaitCursor();
 
          // create our new object
-         dtCore::RefPtr<dtDAL::BaseActorObject> proxy =
-            dtDAL::LibraryManager::GetInstance().CreateActorProxy(*selectedWidget->getActorType()).get();
+         dtCore::RefPtr<dtCore::BaseActorObject> proxy =
+            dtCore::LibraryManager::GetInstance().CreateActorProxy(*selectedWidget->getActorType()).get();
 
          if (proxy.valid())
          {
             // add the new proxy to the map
-            dtCore::RefPtr<dtDAL::Map> mapPtr = EditorData::GetInstance().getCurrentMap();
+            dtCore::RefPtr<dtCore::Map> mapPtr = EditorData::GetInstance().getCurrentMap();
             if (mapPtr.valid())
             {
                mapPtr->AddProxy(*(proxy.get()), true);
@@ -310,7 +310,7 @@ namespace dtEditQt
             EditorEvents::GetInstance().emitEndChangeTransaction();
 
             // Now, let the world that it should select the new actor proxy.
-            std::vector< dtCore::RefPtr<dtDAL::BaseActorObject> > actors;
+            std::vector< dtCore::RefPtr<dtCore::BaseActorObject> > actors;
             actors.push_back(proxy.get());
             EditorEvents::GetInstance().emitActorsSelected(actors);
          }

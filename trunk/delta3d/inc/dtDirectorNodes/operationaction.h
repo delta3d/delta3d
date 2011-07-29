@@ -26,7 +26,7 @@
 
 #include <dtDirector/actionnode.h>
 #include <dtDirectorNodes/nodelibraryexport.h>
-#include <dtDAL/actorproperty.h>
+#include <dtCore/actorproperty.h>
 
 namespace dtDirector
 {
@@ -120,7 +120,7 @@ namespace dtDirector
       double mValueB;
       double mResult;
       
-      dtCore::RefPtr<dtDAL::ActorProperty> mResultProp;
+      dtCore::RefPtr<dtCore::ActorProperty> mResultProp;
    };
 }
 

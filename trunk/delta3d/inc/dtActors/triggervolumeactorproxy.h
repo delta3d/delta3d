@@ -19,7 +19,7 @@
 * MG
 */
 
-#include <dtDAL/plugin_export.h>
+#include <dtCore/plugin_export.h>
 #include <dtGame/gameactorproxy.h>
 
 namespace dtActors 
@@ -36,9 +36,9 @@ namespace dtActors
 
       virtual void BuildPropertyMap();
 
-      virtual const dtDAL::BaseActorObject::RenderMode& GetRenderMode();
+      virtual const dtCore::BaseActorObject::RenderMode& GetRenderMode();
 
-      virtual dtDAL::ActorProxyIcon* GetBillBoardIcon();
+      virtual dtCore::ActorProxyIcon* GetBillBoardIcon();
 
    protected:
 

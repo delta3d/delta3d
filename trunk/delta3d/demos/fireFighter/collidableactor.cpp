@@ -42,11 +42,11 @@ void CollidableActorProxy::BuildInvokables()
    dtGame::GameActorProxy::BuildInvokables();
 }
 
-dtDAL::ActorProxyIcon* CollidableActorProxy::GetBillBoardIcon()
+dtCore::ActorProxyIcon* CollidableActorProxy::GetBillBoardIcon()
 {
    if (!mBillBoardIcon.valid())
    {
-      mBillBoardIcon = new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IMAGE_BILLBOARD_GENERIC);
+      mBillBoardIcon = new dtCore::ActorProxyIcon(dtCore::ActorProxyIcon::IMAGE_BILLBOARD_GENERIC);
    }
    return mBillBoardIcon.get();
 }

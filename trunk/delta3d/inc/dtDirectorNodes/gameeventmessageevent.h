@@ -27,7 +27,7 @@
 
 #include <dtGame/message.h>
 
-namespace dtDAL
+namespace dtCore
 {
    class GameEvent;
 }
@@ -100,8 +100,8 @@ namespace dtDirector
       /**
        * Accessor for the message type property.
        */
-      void SetEvent(dtDAL::GameEvent* value);
-      dtDAL::GameEvent* GetEvent() const;
+      void SetEvent(dtCore::GameEvent* value);
+      dtCore::GameEvent* GetEvent() const;
 
       /**
        * Callback to receive message events.
@@ -123,7 +123,7 @@ namespace dtDirector
       virtual ~GameEventMessageEvent();
 
    private:
-      dtDAL::GameEvent* mEvent;
+      dtCore::GameEvent* mEvent;
    };
 }
 

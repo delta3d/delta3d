@@ -34,7 +34,7 @@
 #include <dtCore/deltawin.h>
 #include <dtCore/scene.h>
 #include <dtCore/transform.h>
-#include <dtDAL/actorproxy.h>
+#include <dtCore/actorproxy.h>
 #include <dtActors/weatherenvironmentactor.h>
 #include <dtActors/engineactorregistry.h>
 #include <dtUtil/exception.h>
@@ -51,7 +51,7 @@ class TestGameEnvironmentApp : public dtABC::Application
 
          mGM = new dtGame::GameManager(*GetScene());
 
-         dtCore::RefPtr<dtDAL::BaseActorObject> proxy = mGM->CreateActor("dtcore.Terrain", "Infinite Terrain");
+         dtCore::RefPtr<dtCore::BaseActorObject> proxy = mGM->CreateActor("dtcore.Terrain", "Infinite Terrain");
          if (!proxy.valid())
          {
             LOG_ERROR("Failed to create the infinite terrain proxy. Aborting.");

@@ -27,7 +27,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include <dtCore/objectmotionmodel.h>
-#include <dtDAL/transformableactorproxy.h>
+#include <dtCore/transformableactorproxy.h>
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -87,14 +87,14 @@ class STAGEObjectMotionModel : public dtCore::ObjectMotionModel
       *
       * @param[in]  target  The target to add.
       */
-      void AddTarget(dtDAL::TransformableActorProxy* target);
+      void AddTarget(dtCore::TransformableActorProxy* target);
 
       /**
       * Removes a target from the subtarget list.
       *
       * @param[in]  target  The target to remove.
       */
-      void RemoveTarget(dtDAL::TransformableActorProxy* target);
+      void RemoveTarget(dtCore::TransformableActorProxy* target);
 
       /**
       * Removes all targets from the sub target list.
@@ -115,7 +115,7 @@ class STAGEObjectMotionModel : public dtCore::ObjectMotionModel
       *
       * @return            The sub target at the index.
       */
-      dtDAL::TransformableActorProxy* GetTarget(int index) {return mTargets[index];}
+      dtCore::TransformableActorProxy* GetTarget(int index) {return mTargets[index];}
 
    protected:
 
@@ -143,7 +143,7 @@ class STAGEObjectMotionModel : public dtCore::ObjectMotionModel
       */
       virtual void OnScale(const osg::Vec3& delta);
 
-      std::vector<dtDAL::TransformableActorProxy*> mTargets;
+      std::vector<dtCore::TransformableActorProxy*> mTargets;
 };
 
 ////////////////////////////////////////////////////////////////////////////////

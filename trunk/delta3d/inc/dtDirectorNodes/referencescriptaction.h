@@ -28,7 +28,7 @@
 #include <dtDirector/actionnode.h>
 #include <dtDirectorNodes/nodelibraryexport.h>
 
-#include <dtDAL/resourcedescriptor.h>
+#include <dtCore/resourcedescriptor.h>
 
 #include <dtDirectorNodes/inputnode.h>
 #include <dtDirectorNodes/outputnode.h>
@@ -89,8 +89,8 @@ namespace dtDirector
       /**
        * Accessors for property values.
        */
-      void SetDirectorResource(const dtDAL::ResourceDescriptor& value);
-      dtDAL::ResourceDescriptor GetDirectorResource();
+      void SetDirectorResource(const dtCore::ResourceDescriptor& value);
+      dtCore::ResourceDescriptor GetDirectorResource();
 
       /**
        * Accessor for the script.
@@ -113,7 +113,7 @@ namespace dtDirector
       */
       void LoadScript();
 
-      dtDAL::ResourceDescriptor mScriptResource;
+      dtCore::ResourceDescriptor mScriptResource;
       dtCore::RefPtr<dtDirector::Director> mScript;
 
       int mCoreValueIndex;

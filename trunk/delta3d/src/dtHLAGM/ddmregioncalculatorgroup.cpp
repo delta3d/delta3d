@@ -21,7 +21,7 @@
 #include <dtHLAGM/ddmregioncalculatorgroup.h>
 #include <dtHLAGM/ddmregioncalculator.h>
 
-#include <dtDAL/actorproperty.h>
+#include <dtCore/actorproperty.h>
 #include <algorithm>
 #include <vector>
 

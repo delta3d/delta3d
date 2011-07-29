@@ -43,9 +43,9 @@
 #include <dtCore/system.h>
 #include <dtGame/basemessages.h>
 #include <dtGame/messagefactory.h>
-#include <dtDAL/actorproperty.h>
-#include <dtDAL/project.h>
-#include <dtDAL/map.h>
+#include <dtCore/actorproperty.h>
+#include <dtCore/project.h>
+#include <dtCore/map.h>
 #include <dtActors/taskactorordered.h>
 #include <dtActors/taskactorrollup.h>
 #include <dtActors/taskactorgameevent.h>
@@ -611,7 +611,7 @@ void InputComponent::StopSounds()
 void InputComponent::SetupTasks()
 {
    dtGame::GameManager& mgr = *GetGameManager();
-   std::vector<dtDAL::BaseActorObject*> proxies;
+   std::vector<dtCore::BaseActorObject*> proxies;
 
    ///////////////////////// Mission Task /////////////////////////////////////
    mgr.FindActorsByName("TaskRootMission", proxies);

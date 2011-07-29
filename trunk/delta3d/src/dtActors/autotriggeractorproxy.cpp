@@ -24,12 +24,12 @@
 
 #include <dtABC/autotrigger.h>
 
-#include <dtDAL/actoractorproperty.h>
-#include <dtDAL/floatactorproperty.h>
+#include <dtCore/actoractorproperty.h>
+#include <dtCore/floatactorproperty.h>
 
 using namespace dtABC;
 using namespace dtCore;
-using namespace dtDAL;
+using namespace dtCore;
 
 namespace dtActors
 {
@@ -43,7 +43,7 @@ namespace dtActors
    ///////////////////////////////////////////////////////////////////////////////
    void AutoTriggerActorProxy::BuildPropertyMap()
    {
-      dtDAL::BaseActorObject::BuildPropertyMap();
+      dtCore::BaseActorObject::BuildPropertyMap();
 
       AutoTrigger* trigger = NULL;
       GetActor(trigger);

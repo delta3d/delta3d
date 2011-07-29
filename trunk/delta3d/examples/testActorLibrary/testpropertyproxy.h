@@ -30,12 +30,12 @@
 
 #include <dtActors/staticmeshactorproxy.h>
 
-#include <dtDAL/actorproxy.h>
-#include <dtDAL/arrayactorproperty.h>
-#include <dtDAL/gameevent.h>
-#include <dtDAL/namedgroupparameter.h>
-#include <dtDAL/plugin_export.h>
-#include <dtDAL/resourcedescriptor.h>
+#include <dtCore/actorproxy.h>
+#include <dtCore/arrayactorproperty.h>
+#include <dtCore/gameevent.h>
+#include <dtCore/namedgroupparameter.h>
+#include <dtCore/plugin_export.h>
+#include <dtCore/resourcedescriptor.h>
 
 #include <dtUtil/enumeration.h>
 #include <dtUtil/getsetmacros.h>
@@ -99,20 +99,20 @@ public:
    DT_DECLARE_ACCESSOR_INLINE(osg::Vec4, TestColor)
    DT_DECLARE_ACCESSOR_INLINE(dtUtil::EnumerationPointer<TestEnum>, TestEnum)
    DT_DECLARE_ACCESSOR_INLINE(dtCore::UniqueId, TestActor)
-   DT_DECLARE_ACCESSOR_INLINE(dtCore::RefPtr<dtDAL::GameEvent>, TestGameEvent)
+   DT_DECLARE_ACCESSOR_INLINE(dtCore::RefPtr<dtCore::GameEvent>, TestGameEvent)
 
-   DT_DECLARE_ACCESSOR_INLINE(dtDAL::ResourceDescriptor, TestSoundResource)
-   DT_DECLARE_ACCESSOR_INLINE(dtDAL::ResourceDescriptor, TestTextureResource)
+   DT_DECLARE_ACCESSOR_INLINE(dtCore::ResourceDescriptor, TestSoundResource)
+   DT_DECLARE_ACCESSOR_INLINE(dtCore::ResourceDescriptor, TestTextureResource)
 
    DT_DECLARE_ACCESSOR(dtCore::RefPtr<TestPropertyContainer>, TestPropertyContainer)
 
-// void SetTestGameEvent(dtDAL::GameEvent* event) { mTestGameEvent = event; }
-// dtDAL::GameEvent* GetTestGameEvent() { return mTestGameEvent; }
+// void SetTestGameEvent(dtCore::GameEvent* event) { mTestGameEvent = event; }
+// dtCore::GameEvent* GetTestGameEvent() { return mTestGameEvent; }
 
    // Can't use a DT_DECLARE_ACCESSOR because it returns a ref ptr to the value because it expects you may generate the group
    // data on the fly.
-   void SetTestGroup(const dtDAL::NamedGroupParameter& groupParam) { mGroupParam = new dtDAL::NamedGroupParameter(groupParam); }
-   dtCore::RefPtr<dtDAL::NamedGroupParameter> GetTestGroup() { return mGroupParam; }
+   void SetTestGroup(const dtCore::NamedGroupParameter& groupParam) { mGroupParam = new dtCore::NamedGroupParameter(groupParam); }
+   dtCore::RefPtr<dtCore::NamedGroupParameter> GetTestGroup() { return mGroupParam; }
 
    // Array of strings
    void StringArraySetIndex(int index);
@@ -148,8 +148,8 @@ protected:
    virtual ~ExampleTestPropertyProxy() { }
 
 private:
-// dtCore::RefPtr<dtDAL::GameEvent> mTestGameEvent;
-   dtCore::RefPtr<dtDAL::NamedGroupParameter> mGroupParam;
+// dtCore::RefPtr<dtCore::GameEvent> mTestGameEvent;
+   dtCore::RefPtr<dtCore::NamedGroupParameter> mGroupParam;
    std::vector<std::string>       mStringArray;
    int                            mStringArrayIndex;
    std::vector<testStruct>        mStructArray;

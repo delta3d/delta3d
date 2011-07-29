@@ -21,9 +21,9 @@
 
 #include <dtHLAGM/ddmmultienumeratedcalculator.h>
 
-#include <dtDAL/booleanactorproperty.h>
-#include <dtDAL/datatype.h>
-#include <dtDAL/longactorproperty.h>
+#include <dtCore/booleanactorproperty.h>
+#include <dtCore/datatype.h>
+#include <dtCore/longactorproperty.h>
 
 #include <dtHLAGM/ddmregiondata.h>
 #include <dtHLAGM/ddmutil.h>
@@ -50,41 +50,41 @@ namespace dtHLAGM
       mThirdDimensionValue(0),
       mThirdDimensionEnabled(false)
    {
-      AddProperty(new dtDAL::LongActorProperty(PROP_SECOND_DIMENSION_MIN, PROP_SECOND_DIMENSION_MIN,
-            dtDAL::LongActorProperty::SetFuncType(this, &DDMMultiEnumeratedCalculator::SetSecondDimensionMinimum),
-            dtDAL::LongActorProperty::GetFuncType(this, &DDMMultiEnumeratedCalculator::GetSecondDimensionMinimum)
+      AddProperty(new dtCore::LongActorProperty(PROP_SECOND_DIMENSION_MIN, PROP_SECOND_DIMENSION_MIN,
+            dtCore::LongActorProperty::SetFuncType(this, &DDMMultiEnumeratedCalculator::SetSecondDimensionMinimum),
+            dtCore::LongActorProperty::GetFuncType(this, &DDMMultiEnumeratedCalculator::GetSecondDimensionMinimum)
             ));
-      AddProperty(new dtDAL::LongActorProperty(PROP_SECOND_DIMENSION_MAX, PROP_SECOND_DIMENSION_MAX,
-            dtDAL::LongActorProperty::SetFuncType(this, &DDMMultiEnumeratedCalculator::SetSecondDimensionMaximum),
-            dtDAL::LongActorProperty::GetFuncType(this, &DDMMultiEnumeratedCalculator::GetSecondDimensionMaximum)
-            ));
-
-      AddProperty(new dtDAL::LongActorProperty(PROP_SECOND_DIMENSION_VALUE, PROP_SECOND_DIMENSION_VALUE,
-            dtDAL::LongActorProperty::SetFuncType(this, &DDMMultiEnumeratedCalculator::SetSecondDimensionValue),
-            dtDAL::LongActorProperty::GetFuncType(this, &DDMMultiEnumeratedCalculator::GetSecondDimensionValue)
-            ));
-      AddProperty(new dtDAL::BooleanActorProperty(PROP_SECOND_DIMENSION_ENABLED, PROP_SECOND_DIMENSION_ENABLED,
-            dtDAL::BooleanActorProperty::SetFuncType(this, &DDMMultiEnumeratedCalculator::SetSecondDimensionEnabled),
-            dtDAL::BooleanActorProperty::GetFuncType(this, &DDMMultiEnumeratedCalculator::IsSecondDimensionEnabled)
+      AddProperty(new dtCore::LongActorProperty(PROP_SECOND_DIMENSION_MAX, PROP_SECOND_DIMENSION_MAX,
+            dtCore::LongActorProperty::SetFuncType(this, &DDMMultiEnumeratedCalculator::SetSecondDimensionMaximum),
+            dtCore::LongActorProperty::GetFuncType(this, &DDMMultiEnumeratedCalculator::GetSecondDimensionMaximum)
             ));
 
-      AddProperty(new dtDAL::LongActorProperty(PROP_THIRD_DIMENSION_MIN, PROP_THIRD_DIMENSION_MIN,
-            dtDAL::LongActorProperty::SetFuncType(this, &DDMMultiEnumeratedCalculator::SetThirdDimensionMinimum),
-            dtDAL::LongActorProperty::GetFuncType(this, &DDMMultiEnumeratedCalculator::GetThirdDimensionMinimum)
+      AddProperty(new dtCore::LongActorProperty(PROP_SECOND_DIMENSION_VALUE, PROP_SECOND_DIMENSION_VALUE,
+            dtCore::LongActorProperty::SetFuncType(this, &DDMMultiEnumeratedCalculator::SetSecondDimensionValue),
+            dtCore::LongActorProperty::GetFuncType(this, &DDMMultiEnumeratedCalculator::GetSecondDimensionValue)
             ));
-      AddProperty(new dtDAL::LongActorProperty(PROP_THIRD_DIMENSION_MAX, PROP_THIRD_DIMENSION_MAX,
-            dtDAL::LongActorProperty::SetFuncType(this, &DDMMultiEnumeratedCalculator::SetThirdDimensionMaximum),
-            dtDAL::LongActorProperty::GetFuncType(this, &DDMMultiEnumeratedCalculator::GetThirdDimensionMaximum)
-            ));
-
-      AddProperty(new dtDAL::LongActorProperty(PROP_THIRD_DIMENSION_VALUE, PROP_THIRD_DIMENSION_VALUE,
-            dtDAL::LongActorProperty::SetFuncType(this, &DDMMultiEnumeratedCalculator::SetThirdDimensionValue),
-            dtDAL::LongActorProperty::GetFuncType(this, &DDMMultiEnumeratedCalculator::GetThirdDimensionValue)
+      AddProperty(new dtCore::BooleanActorProperty(PROP_SECOND_DIMENSION_ENABLED, PROP_SECOND_DIMENSION_ENABLED,
+            dtCore::BooleanActorProperty::SetFuncType(this, &DDMMultiEnumeratedCalculator::SetSecondDimensionEnabled),
+            dtCore::BooleanActorProperty::GetFuncType(this, &DDMMultiEnumeratedCalculator::IsSecondDimensionEnabled)
             ));
 
-      AddProperty(new dtDAL::BooleanActorProperty(PROP_THIRD_DIMENSION_ENABLED, PROP_THIRD_DIMENSION_ENABLED,
-            dtDAL::BooleanActorProperty::SetFuncType(this, &DDMMultiEnumeratedCalculator::SetThirdDimensionEnabled),
-            dtDAL::BooleanActorProperty::GetFuncType(this, &DDMMultiEnumeratedCalculator::IsThirdDimensionEnabled)
+      AddProperty(new dtCore::LongActorProperty(PROP_THIRD_DIMENSION_MIN, PROP_THIRD_DIMENSION_MIN,
+            dtCore::LongActorProperty::SetFuncType(this, &DDMMultiEnumeratedCalculator::SetThirdDimensionMinimum),
+            dtCore::LongActorProperty::GetFuncType(this, &DDMMultiEnumeratedCalculator::GetThirdDimensionMinimum)
+            ));
+      AddProperty(new dtCore::LongActorProperty(PROP_THIRD_DIMENSION_MAX, PROP_THIRD_DIMENSION_MAX,
+            dtCore::LongActorProperty::SetFuncType(this, &DDMMultiEnumeratedCalculator::SetThirdDimensionMaximum),
+            dtCore::LongActorProperty::GetFuncType(this, &DDMMultiEnumeratedCalculator::GetThirdDimensionMaximum)
+            ));
+
+      AddProperty(new dtCore::LongActorProperty(PROP_THIRD_DIMENSION_VALUE, PROP_THIRD_DIMENSION_VALUE,
+            dtCore::LongActorProperty::SetFuncType(this, &DDMMultiEnumeratedCalculator::SetThirdDimensionValue),
+            dtCore::LongActorProperty::GetFuncType(this, &DDMMultiEnumeratedCalculator::GetThirdDimensionValue)
+            ));
+
+      AddProperty(new dtCore::BooleanActorProperty(PROP_THIRD_DIMENSION_ENABLED, PROP_THIRD_DIMENSION_ENABLED,
+            dtCore::BooleanActorProperty::SetFuncType(this, &DDMMultiEnumeratedCalculator::SetThirdDimensionEnabled),
+            dtCore::BooleanActorProperty::GetFuncType(this, &DDMMultiEnumeratedCalculator::IsThirdDimensionEnabled)
             ));
    }
 

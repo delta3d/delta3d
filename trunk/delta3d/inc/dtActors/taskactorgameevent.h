@@ -22,7 +22,7 @@
 #define DELTA_TASKACTORGAMEEVENT
 
 #include <dtActors/taskactor.h>
-#include <dtDAL/gameevent.h>
+#include <dtCore/gameevent.h>
 #include <dtGame/message.h>
 
 namespace dtActors
@@ -32,7 +32,7 @@ namespace dtActors
     * Game events are simple atomic actions such as "Apple Found" or "Hostage Rescued".
     * This task actor is responsible for tracking and listening for one event.  When
     * that event is fired, the task attempts to mark itself complete.
-    * @see dtDAL::GameEvent
+    * @see dtCore::GameEvent
     */
    class DT_PLUGIN_EXPORT TaskActorGameEvent : public TaskActor
    {
@@ -53,33 +53,33 @@ namespace dtActors
           * Sets the game event being tracked by this task.
           * @param event The game event to track.
           */
-         void SetGameEvent(dtDAL::GameEvent* event) { mGameEvent = event; }
+         void SetGameEvent(dtCore::GameEvent* event) { mGameEvent = event; }
 
          /**
           * Gets the game event currently tracked by this task.
           * @return The game event or NULL if this task is not currenlty responsible
           *   for an event.
           */
-         dtDAL::GameEvent* GetGameEvent() { return mGameEvent.get(); }
+         dtCore::GameEvent* GetGameEvent() { return mGameEvent.get(); }
 
          /**
           * Gets the game event currently tracked by this task.
           * @return The game event or NULL if this task is not currenlty responsible
           *   for an event.
           */
-         const dtDAL::GameEvent* GetGameEvent() const { return mGameEvent.get(); }
+         const dtCore::GameEvent* GetGameEvent() const { return mGameEvent.get(); }
 
          /**
           * Set an alternative event that can cause this task to fail.
           * @param gameEvent Event that causes this task to fail.
           */
-         void SetFailGameEvent(dtDAL::GameEvent* gameEvent) { mGameEventFail = gameEvent; }
+         void SetFailGameEvent(dtCore::GameEvent* gameEvent) { mGameEventFail = gameEvent; }
 
          /**
           * @return Game event that will cause this task to fail; NULL if no event assigned.
           */
-         dtDAL::GameEvent* GetFailGameEvent() { return mGameEventFail.get(); }
-         const dtDAL::GameEvent* GetFailGameEvent() const { return mGameEventFail.get(); }
+         dtCore::GameEvent* GetFailGameEvent() { return mGameEventFail.get(); }
+         const dtCore::GameEvent* GetFailGameEvent() const { return mGameEventFail.get(); }
 
          /**
           * Sets the number of times the game event tracked by this task must be
@@ -115,8 +115,8 @@ namespace dtActors
          virtual ~TaskActorGameEvent();
 
       private:
-         dtCore::ObserverPtr<dtDAL::GameEvent> mGameEvent;
-         dtCore::ObserverPtr<dtDAL::GameEvent> mGameEventFail;
+         dtCore::ObserverPtr<dtCore::GameEvent> mGameEvent;
+         dtCore::ObserverPtr<dtCore::GameEvent> mGameEventFail;
          int mMinOccurances;
          int mNumTimesEventFired;
    };

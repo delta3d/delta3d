@@ -32,11 +32,11 @@
 
 #include <dtCore/deltadrawable.h>
 
-#include <dtDAL/actorproxy.h>
-#include <dtDAL/datatype.h>
+#include <dtCore/actorproxy.h>
+#include <dtCore/datatype.h>
 
-#include <dtDAL/librarymanager.h>
-#include <dtDAL/map.h>
+#include <dtCore/librarymanager.h>
+#include <dtCore/map.h>
 
 #include <dtQt/dynamicabstractcontrol.h>
 #include <dtQt/dynamiccontainercontrol.h>
@@ -150,7 +150,7 @@ namespace dtQt
       // copy passed in actors to our internal list.
       for (iter = propCons.begin(); iter != propCons.end(); ++iter)
       {
-         dtCore::RefPtr<dtDAL::PropertyContainer> propCon = (*iter);
+         dtCore::RefPtr<dtCore::PropertyContainer> propCon = (*iter);
          mSelectedPC.push_back(propCon);
          LOG_INFO("Selected property containers found a property container");
       }
@@ -186,7 +186,7 @@ namespace dtQt
       PropertyContainerRefPtrVector::const_iterator iter;
       for (iter = mSelectedPC.begin(); iter != mSelectedPC.end(); ++iter)
       {
-         dtCore::RefPtr<dtDAL::PropertyContainer> pc = (*iter);
+         dtCore::RefPtr<dtCore::PropertyContainer> pc = (*iter);
 
          // build the dynamic controls
          if (!isMultiSelect)
@@ -233,7 +233,7 @@ namespace dtQt
       else if (mSelectedPC.size() == 1)
       {
          // set the name in the group box.
-         dtCore::RefPtr<dtDAL::PropertyContainer> selectedProxy = mSelectedPC[0];
+         dtCore::RefPtr<dtCore::PropertyContainer> selectedProxy = mSelectedPC[0];
          QString label;
          label = baseGroupBoxName + " ('" + tr("Property Container") + "' selected)";
          return label;
@@ -245,7 +245,7 @@ namespace dtQt
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   std::string BasePropertyEditor::GetContainerGroupName(dtDAL::PropertyContainer* propertyContainer)
+   std::string BasePropertyEditor::GetContainerGroupName(dtCore::PropertyContainer* propertyContainer)
    {
       return "Property Container";
    }
@@ -257,20 +257,20 @@ namespace dtQt
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void BasePropertyEditor::buildDynamicControls(dtDAL::PropertyContainer& propertyContainer, DynamicGroupControl* parentControl)
+   void BasePropertyEditor::buildDynamicControls(dtCore::PropertyContainer& propertyContainer, DynamicGroupControl* parentControl)
    {
-      std::vector<dtDAL::ActorProperty*> propList;
+      std::vector<dtCore::ActorProperty*> propList;
       propertyContainer.GetPropertyList(propList);
 
       buildDynamicControls(propertyContainer, propList, parentControl);
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void BasePropertyEditor::buildDynamicControls(dtDAL::PropertyContainer& propertyContainer, const std::vector<dtDAL::ActorProperty*>& propList, DynamicGroupControl* parentControl)
+   void BasePropertyEditor::buildDynamicControls(dtCore::PropertyContainer& propertyContainer, const std::vector<dtCore::ActorProperty*>& propList, DynamicGroupControl* parentControl)
    {
-      dtDAL::ActorProperty* curProp;
+      dtCore::ActorProperty* curProp;
       DynamicAbstractControl* newControl;
-      std::vector<dtDAL::ActorProperty*>::const_iterator propIter;
+      std::vector<dtCore::ActorProperty*>::const_iterator propIter;
       int row = 0;
 
       DynamicGroupControl* parent = GetRootControl();
@@ -297,13 +297,13 @@ namespace dtQt
                newControl->SetTreeView(propertyTree);
                newControl->SetDynamicControlFactory(mControlFactory.get());
 
-               connect(newControl, SIGNAL(PropertyAboutToChange(dtDAL::PropertyContainer&, dtDAL::ActorProperty&,
+               connect(newControl, SIGNAL(PropertyAboutToChange(dtCore::PropertyContainer&, dtCore::ActorProperty&,
                                  const std::string&, const std::string&)),
-                        this, SLOT(PropertyAboutToChangeFromControl(dtDAL::PropertyContainer&, dtDAL::ActorProperty&,
+                        this, SLOT(PropertyAboutToChangeFromControl(dtCore::PropertyContainer&, dtCore::ActorProperty&,
                                  const std::string&, const std::string&)));
 
-               connect(newControl, SIGNAL(PropertyChanged(dtDAL::PropertyContainer&, dtDAL::ActorProperty&)),
-                        this, SLOT(PropertyChangedFromControl(dtDAL::PropertyContainer&, dtDAL::ActorProperty&)));
+               connect(newControl, SIGNAL(PropertyChanged(dtCore::PropertyContainer&, dtCore::ActorProperty&)),
+                        this, SLOT(PropertyChangedFromControl(dtCore::PropertyContainer&, dtCore::ActorProperty&)));
 
                // Work with the group.  Requires finding an existing group or creating one,
                // and eventually adding our new control to that group control
@@ -453,7 +453,7 @@ namespace dtQt
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void BasePropertyEditor::ActorPropertyChanged(dtDAL::PropertyContainer& propCon, dtDAL::ActorProperty& property)
+   void BasePropertyEditor::ActorPropertyChanged(dtCore::PropertyContainer& propCon, dtCore::ActorProperty& property)
    {
       propertyTree->viewport()->update();
 
@@ -465,13 +465,13 @@ namespace dtQt
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void BasePropertyEditor::ProxyNameChanged(dtDAL::BaseActorObject& propCon, std::string oldName)
+   void BasePropertyEditor::ProxyNameChanged(dtCore::BaseActorObject& propCon, std::string oldName)
    {
       UpdateTitle();
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   void BasePropertyEditor::PropertyChangedFromControl(dtDAL::PropertyContainer& propCon, dtDAL::ActorProperty& prop)
+   void BasePropertyEditor::PropertyChangedFromControl(dtCore::PropertyContainer& propCon, dtCore::ActorProperty& prop)
    {
       ActorPropertyChanged(propCon, prop);
    }

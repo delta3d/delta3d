@@ -28,12 +28,12 @@
 #ifndef DELTA_TEST_DAL_ENVIRONMENT_ACTOR
 #define DELTA_TEST_DAL_ENVIRONMENT_ACTOR
 
-#include <dtDAL/plugin_export.h>
-#include <dtDAL/environmentactor.h>
+#include <dtCore/plugin_export.h>
+#include <dtCore/environmentactor.h>
 #include <dtABC/weather.h>
 #include <dtCore/cloudplane.h>
 
-class DT_PLUGIN_EXPORT TestDALEnvironmentActor : public dtDAL::IEnvironmentActor, public dtCore::DeltaDrawable
+class DT_PLUGIN_EXPORT TestDALEnvironmentActor : public dtCore::IEnvironmentActor, public dtCore::DeltaDrawable
 {
    public:
 
@@ -111,7 +111,7 @@ class DT_PLUGIN_EXPORT TestDALEnvironmentActor : public dtDAL::IEnvironmentActor
       dtCore::RefPtr<osg::Node> mNode;
 };
 
-class DT_PLUGIN_EXPORT TestDALEnvironmentActorProxy : public dtDAL::BaseActorObject
+class DT_PLUGIN_EXPORT TestDALEnvironmentActorProxy : public dtCore::BaseActorObject
 {
    public:
 

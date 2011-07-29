@@ -1,6 +1,6 @@
 #include <dtDIS/plugins/default/actorupdatetoentitystate.h>
 
-#include <dtDAL/stringactorproperty.h>
+#include <dtCore/stringactorproperty.h>
 
 #include <dtDIS/plugins/default/espduapplicator.h>
 #include <dtDIS/propertyname.h>
@@ -71,7 +71,7 @@ void ActorUpdateToEntityState::SetEntityType(const dtCore::UniqueId& uniqueID,
       return;
    }
 
-   const dtDAL::ActorProperty* prop = aboutProxy->GetProperty(dtDIS::EntityPropertyName::ENTITY_TYPE.Get()); 
+   const dtCore::ActorProperty* prop = aboutProxy->GetProperty(dtDIS::EntityPropertyName::ENTITY_TYPE.Get()); 
    if (prop == NULL) 
    {
       LOG_WARNING("No ActorProperty named '" + dtDIS::EntityPropertyName::ENTITY_TYPE.Get() +
@@ -79,7 +79,7 @@ void ActorUpdateToEntityState::SetEntityType(const dtCore::UniqueId& uniqueID,
       return;
    }
 
-   const dtDAL::StringActorProperty *entityTypeProp = dynamic_cast<const dtDAL::StringActorProperty*>(prop);
+   const dtCore::StringActorProperty *entityTypeProp = dynamic_cast<const dtCore::StringActorProperty*>(prop);
    if (entityTypeProp == NULL) {return;}
 
    DIS::EntityType entityType;

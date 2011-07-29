@@ -6,12 +6,12 @@
 
 #include <dtCore/deltadrawable.h>
 
-#include <dtDAL/datatype.h>
-#include <dtDAL/map.h>
-#include <dtDAL/project.h>
-#include <dtDAL/resourceactorproperty.h>
-#include <dtDAL/containeractorproperty.h>
-#include <dtDAL/arrayactorpropertybase.h>
+#include <dtCore/datatype.h>
+#include <dtCore/map.h>
+#include <dtCore/project.h>
+#include <dtCore/resourceactorproperty.h>
+#include <dtCore/containeractorproperty.h>
+#include <dtCore/arrayactorpropertybase.h>
 
 #include <QtGui/QFileDialog>
 
@@ -71,23 +71,23 @@ void MapExporterPlugin::onExportButtonPressed()
       dtUtil::Packager packager;
 
       // Find out all of the assets used for the map.
-      dtDAL::Map* map = EditorData::GetInstance().getCurrentMap();
+      dtCore::Map* map = EditorData::GetInstance().getCurrentMap();
       if (map)
       {
          // Add the map file to the package.
-         std::string contextPath = dtDAL::Project::GetInstance().GetContext();
+         std::string contextPath = dtCore::Project::GetInstance().GetContext();
          std::string path = contextPath + "\\maps\\" + map->GetFileName();
          packager.AddFile(path, "maps");
 
-         std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> > proxies;
+         std::vector<dtCore::RefPtr<dtCore::BaseActorObject> > proxies;
          map->GetAllProxies(proxies);
 
          for (int proxyIndex = 0; proxyIndex < (int)proxies.size(); proxyIndex++)
          {
-            dtDAL::BaseActorObject* proxy = proxies[proxyIndex];
+            dtCore::BaseActorObject* proxy = proxies[proxyIndex];
             if (proxy)
             {
-               std::vector<const dtDAL::ActorProperty*> properties;
+               std::vector<const dtCore::ActorProperty*> properties;
                proxy->GetPropertyList(properties);
 
                for (int propIndex = 0; propIndex < (int)properties.size(); propIndex++)
@@ -113,24 +113,24 @@ void MapExporterPlugin::onExportButtonPressed()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-bool MapExporterPlugin::AddResourcesFromProperty(const dtDAL::ActorProperty* prop, dtUtil::Packager& packager)
+bool MapExporterPlugin::AddResourcesFromProperty(const dtCore::ActorProperty* prop, dtUtil::Packager& packager)
 {
    if (prop->GetPropertyType().IsResource())
    {
       // Check if this property is a resource.
-      const dtDAL::ResourceActorProperty* resourceProp =
-         dynamic_cast<const dtDAL::ResourceActorProperty*>(prop);
+      const dtCore::ResourceActorProperty* resourceProp =
+         dynamic_cast<const dtCore::ResourceActorProperty*>(prop);
 
       if (resourceProp)
       {
          // Since this is a resource property, extract the resource from it and add
          // it to the package.
-         dtDAL::ResourceDescriptor descriptor = resourceProp->GetValue();
+         dtCore::ResourceDescriptor descriptor = resourceProp->GetValue();
 
          if (descriptor.IsEmpty() == false)
          {
-            std::string contextPath = dtDAL::Project::GetInstance().GetContext();
-            std::string resourcePath = dtDAL::Project::GetInstance().GetResourcePath(descriptor);
+            std::string contextPath = dtCore::Project::GetInstance().GetContext();
+            std::string resourcePath = dtCore::Project::GetInstance().GetResourcePath(descriptor);
             std::string path = contextPath + '\\' + resourcePath;
 
             std::string resourceDir = osgDB::getFilePath(resourcePath);
@@ -145,19 +145,19 @@ bool MapExporterPlugin::AddResourcesFromProperty(const dtDAL::ActorProperty* pro
    }
 
    // If this property is a container, check each property inside it.
-   if (prop->GetPropertyType() == dtDAL::DataType::CONTAINER)
+   if (prop->GetPropertyType() == dtCore::DataType::CONTAINER)
    {
       bool returnVal = false;
 
-      const dtDAL::ContainerActorProperty* containerProp =
-         dynamic_cast<const dtDAL::ContainerActorProperty*>(prop);
+      const dtCore::ContainerActorProperty* containerProp =
+         dynamic_cast<const dtCore::ContainerActorProperty*>(prop);
 
       if (containerProp)
       {
          int propCount = containerProp->GetPropertyCount();
          for (int propIndex = 0; propIndex < propCount; propIndex++)
          {
-            const dtDAL::ActorProperty* childProp = containerProp->GetProperty(propIndex);
+            const dtCore::ActorProperty* childProp = containerProp->GetProperty(propIndex);
             if (childProp)
             {
                returnVal |= AddResourcesFromProperty(childProp, packager);
@@ -169,12 +169,12 @@ bool MapExporterPlugin::AddResourcesFromProperty(const dtDAL::ActorProperty* pro
    }
 
    // If this property is an array, then check each index of the array.
-   if (prop->GetPropertyType() == dtDAL::DataType::ARRAY)
+   if (prop->GetPropertyType() == dtCore::DataType::ARRAY)
    {
       bool returnVal = false;
 
-      const dtDAL::ArrayActorPropertyBase* arrayProp =
-         dynamic_cast<const dtDAL::ArrayActorPropertyBase*>(prop);
+      const dtCore::ArrayActorPropertyBase* arrayProp =
+         dynamic_cast<const dtCore::ArrayActorPropertyBase*>(prop);
 
       if (arrayProp)
       {

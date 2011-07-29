@@ -93,7 +93,7 @@ namespace dtDirector
       ~CompareActorPropertyAction();
 
    private:
-      void CompareLessThanGreaterThan(dtDAL::ActorProperty* prop);
+      void CompareLessThanGreaterThan(dtCore::ActorProperty* prop);
 
       dtCore::UniqueId mActor;
       std::string mPropertyName;

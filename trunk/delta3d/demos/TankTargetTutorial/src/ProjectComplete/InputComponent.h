@@ -29,8 +29,8 @@
 #include "export.h"
 #include <dtCore/refptr.h>
 #include <dtGame/baseinputcomponent.h>
-#include <dtDAL/gameevent.h>
-#include <dtDAL/gameeventmanager.h>
+#include <dtCore/gameevent.h>
+#include <dtCore/gameeventmanager.h>
 #include <dtGame/logcontroller.h>
 
 /**
@@ -65,13 +65,13 @@ private:
     * message and sends it on to the Game Manager for processing.
     * @param event The game event to fire.
     */
-   void FireGameEvent(const dtDAL::GameEvent& event);
+   void FireGameEvent(const dtCore::GameEvent& event);
 
-   dtCore::RefPtr<dtDAL::GameEvent> mToggleEngineEvent;
-   dtCore::RefPtr<dtDAL::GameEvent> mSpeedBoost;
-   dtCore::RefPtr<dtDAL::GameEvent> mTankFired;
-   dtCore::RefPtr<dtDAL::GameEvent> mTestShaders;
-   dtCore::RefPtr<dtDAL::GameEvent> mReset;
+   dtCore::RefPtr<dtCore::GameEvent> mToggleEngineEvent;
+   dtCore::RefPtr<dtCore::GameEvent> mSpeedBoost;
+   dtCore::RefPtr<dtCore::GameEvent> mTankFired;
+   dtCore::RefPtr<dtCore::GameEvent> mTestShaders;
+   dtCore::RefPtr<dtCore::GameEvent> mReset;
 
    dtCore::RefPtr<dtGame::LogController> mLogController;
    bool mInPlaybackMode;

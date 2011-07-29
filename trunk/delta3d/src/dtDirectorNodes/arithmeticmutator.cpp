@@ -23,11 +23,11 @@
 
 #include <dtDirector/director.h>
 
-#include <dtDAL/booleanactorproperty.h>
-#include <dtDAL/intactorproperty.h>
-#include <dtDAL/floatactorproperty.h>
-#include <dtDAL/doubleactorproperty.h>
-#include <dtDAL/vectoractorproperties.h>
+#include <dtCore/booleanactorproperty.h>
+#include <dtCore/intactorproperty.h>
+#include <dtCore/floatactorproperty.h>
+#include <dtCore/doubleactorproperty.h>
+#include <dtCore/vectoractorproperties.h>
 
 namespace dtDirector
 {
@@ -61,16 +61,16 @@ namespace dtDirector
       MutatorNode::BuildPropertyMap();
 
       // Create our value links.
-      dtDAL::DoubleActorProperty* leftProp = new dtDAL::DoubleActorProperty(
+      dtCore::DoubleActorProperty* leftProp = new dtCore::DoubleActorProperty(
          "A", "A",
-         dtDAL::DoubleActorProperty::SetFuncType(this, &ArithmeticMutator::SetA),
-         dtDAL::DoubleActorProperty::GetFuncType(this, &ArithmeticMutator::GetA),
+         dtCore::DoubleActorProperty::SetFuncType(this, &ArithmeticMutator::SetA),
+         dtCore::DoubleActorProperty::GetFuncType(this, &ArithmeticMutator::GetA),
          "The Left value.");
 
-      dtDAL::DoubleActorProperty* rightProp = new dtDAL::DoubleActorProperty(
+      dtCore::DoubleActorProperty* rightProp = new dtCore::DoubleActorProperty(
          "B", "B",
-         dtDAL::DoubleActorProperty::SetFuncType(this, &ArithmeticMutator::SetB),
-         dtDAL::DoubleActorProperty::GetFuncType(this, &ArithmeticMutator::GetB),
+         dtCore::DoubleActorProperty::SetFuncType(this, &ArithmeticMutator::SetB),
+         dtCore::DoubleActorProperty::GetFuncType(this, &ArithmeticMutator::GetB),
          "The Right value.");
       AddProperty(leftProp);
       AddProperty(rightProp);
@@ -88,9 +88,9 @@ namespace dtDirector
    {
       MutatorNode::OnLinkValueChanged(linkName);
 
-      dtDAL::DataType& leftType = Node::GetPropertyType("A");
-      dtDAL::DataType& rightType = Node::GetPropertyType("B");
-      dtDAL::DataType& desiredType = GetStrongerType(leftType, rightType);
+      dtCore::DataType& leftType = Node::GetPropertyType("A");
+      dtCore::DataType& rightType = Node::GetPropertyType("B");
+      dtCore::DataType& desiredType = GetStrongerType(leftType, rightType);
 
       // If our result property does not match the proper value type,
       // create one that does.
@@ -100,59 +100,59 @@ namespace dtDirector
 
          switch (desiredType.GetTypeId())
          {
-         case dtDAL::DataType::BOOLEAN_ID:
-            mProperty = new dtDAL::BooleanActorProperty(
+         case dtCore::DataType::BOOLEAN_ID:
+            mProperty = new dtCore::BooleanActorProperty(
                "Result", "Result",
-               dtDAL::BooleanActorProperty::SetFuncType(this, &ArithmeticMutator::SetResultBool),
-               dtDAL::BooleanActorProperty::GetFuncType(this, &ArithmeticMutator::GetResultBool),
+               dtCore::BooleanActorProperty::SetFuncType(this, &ArithmeticMutator::SetResultBool),
+               dtCore::BooleanActorProperty::GetFuncType(this, &ArithmeticMutator::GetResultBool),
                "The Result value.");
             break;
 
-         case dtDAL::DataType::INT_ID:
-            mProperty = new dtDAL::IntActorProperty(
+         case dtCore::DataType::INT_ID:
+            mProperty = new dtCore::IntActorProperty(
                "Result", "Result",
-               dtDAL::IntActorProperty::SetFuncType(this, &ArithmeticMutator::SetResultInt),
-               dtDAL::IntActorProperty::GetFuncType(this, &ArithmeticMutator::GetResultInt),
+               dtCore::IntActorProperty::SetFuncType(this, &ArithmeticMutator::SetResultInt),
+               dtCore::IntActorProperty::GetFuncType(this, &ArithmeticMutator::GetResultInt),
                "The Result value.");
             break;
 
-         case dtDAL::DataType::FLOAT_ID:
-            mProperty = new dtDAL::FloatActorProperty(
+         case dtCore::DataType::FLOAT_ID:
+            mProperty = new dtCore::FloatActorProperty(
                "Result", "Result",
-               dtDAL::FloatActorProperty::SetFuncType(this, &ArithmeticMutator::SetResultFloat),
-               dtDAL::FloatActorProperty::GetFuncType(this, &ArithmeticMutator::GetResultFloat),
+               dtCore::FloatActorProperty::SetFuncType(this, &ArithmeticMutator::SetResultFloat),
+               dtCore::FloatActorProperty::GetFuncType(this, &ArithmeticMutator::GetResultFloat),
                "The Result value.");
             break;
 
-         case dtDAL::DataType::DOUBLE_ID:
-            mProperty = new dtDAL::DoubleActorProperty(
+         case dtCore::DataType::DOUBLE_ID:
+            mProperty = new dtCore::DoubleActorProperty(
                "Result", "Result",
-               dtDAL::DoubleActorProperty::SetFuncType(this, &ArithmeticMutator::SetResultDouble),
-               dtDAL::DoubleActorProperty::GetFuncType(this, &ArithmeticMutator::GetResultDouble),
+               dtCore::DoubleActorProperty::SetFuncType(this, &ArithmeticMutator::SetResultDouble),
+               dtCore::DoubleActorProperty::GetFuncType(this, &ArithmeticMutator::GetResultDouble),
                "The Result value.");
             break;
 
-         case dtDAL::DataType::VEC2F_ID:
-            mProperty = new dtDAL::Vec2ActorProperty(
+         case dtCore::DataType::VEC2F_ID:
+            mProperty = new dtCore::Vec2ActorProperty(
                "Result", "Result",
-               dtDAL::Vec2ActorProperty::SetFuncType(this, &ArithmeticMutator::SetResultVec2),
-               dtDAL::Vec2ActorProperty::GetFuncType(this, &ArithmeticMutator::GetResultVec2),
+               dtCore::Vec2ActorProperty::SetFuncType(this, &ArithmeticMutator::SetResultVec2),
+               dtCore::Vec2ActorProperty::GetFuncType(this, &ArithmeticMutator::GetResultVec2),
                "The Result value.");
             break;
 
-         case dtDAL::DataType::VEC3F_ID:
-            mProperty = new dtDAL::Vec3ActorProperty(
+         case dtCore::DataType::VEC3F_ID:
+            mProperty = new dtCore::Vec3ActorProperty(
                "Result", "Result",
-               dtDAL::Vec3ActorProperty::SetFuncType(this, &ArithmeticMutator::SetResultVec3),
-               dtDAL::Vec3ActorProperty::GetFuncType(this, &ArithmeticMutator::GetResultVec3),
+               dtCore::Vec3ActorProperty::SetFuncType(this, &ArithmeticMutator::SetResultVec3),
+               dtCore::Vec3ActorProperty::GetFuncType(this, &ArithmeticMutator::GetResultVec3),
                "The Result value.");
             break;
 
-         case dtDAL::DataType::VEC4F_ID:
-            mProperty = new dtDAL::Vec4ActorProperty(
+         case dtCore::DataType::VEC4F_ID:
+            mProperty = new dtCore::Vec4ActorProperty(
                "Result", "Result",
-               dtDAL::Vec4ActorProperty::SetFuncType(this, &ArithmeticMutator::SetResultVec4),
-               dtDAL::Vec4ActorProperty::GetFuncType(this, &ArithmeticMutator::GetResultVec4),
+               dtCore::Vec4ActorProperty::SetFuncType(this, &ArithmeticMutator::SetResultVec4),
+               dtCore::Vec4ActorProperty::GetFuncType(this, &ArithmeticMutator::GetResultVec4),
                "The Result value.");
             break;
          }
@@ -164,7 +164,7 @@ namespace dtDirector
       osg::Vec4 right;
       osg::Vec4 result;
 
-      if (leftType == dtDAL::DataType::VEC2F)
+      if (leftType == dtCore::DataType::VEC2F)
       {
          osg::Vec2 vec2A = GetVec2("A");
          left.x() = vec2A.x();
@@ -172,7 +172,7 @@ namespace dtDirector
          left.z() = left.x();
          left.w() = left.x();
       }
-      else if (leftType == dtDAL::DataType::VEC3F)
+      else if (leftType == dtCore::DataType::VEC3F)
       {
          osg::Vec3 vec3A = GetVec3("A");
          left.x() = vec3A.x();
@@ -180,7 +180,7 @@ namespace dtDirector
          left.z() = vec3A.z();
          left.w() = left.x();
       }
-      else if (leftType == dtDAL::DataType::VEC4F)
+      else if (leftType == dtCore::DataType::VEC4F)
       {
          left = GetVec4("A");
       }
@@ -192,7 +192,7 @@ namespace dtDirector
          left.w() = left.x();
       }
 
-      if (rightType == dtDAL::DataType::VEC2F)
+      if (rightType == dtCore::DataType::VEC2F)
       {
          osg::Vec2 vec2A = GetVec2("B");
          right.x() = vec2A.x();
@@ -200,7 +200,7 @@ namespace dtDirector
          right.z() = right.x();
          right.w() = right.x();
       }
-      else if (rightType == dtDAL::DataType::VEC3F)
+      else if (rightType == dtCore::DataType::VEC3F)
       {
          osg::Vec3 vec3A = GetVec3("B");
          right.x() = vec3A.x();
@@ -208,7 +208,7 @@ namespace dtDirector
          right.z() = vec3A.z();
          right.w() = right.x();
       }
-      else if (rightType == dtDAL::DataType::VEC4F)
+      else if (rightType == dtCore::DataType::VEC4F)
       {
          right = GetVec4("B");
       }
@@ -225,10 +225,10 @@ namespace dtDirector
       // Store the result.
       switch (mProperty->GetPropertyType().GetTypeId())
       {
-      case dtDAL::DataType::BOOLEAN_ID:
-      case dtDAL::DataType::INT_ID:
-      case dtDAL::DataType::FLOAT_ID:
-      case dtDAL::DataType::DOUBLE_ID:
+      case dtCore::DataType::BOOLEAN_ID:
+      case dtCore::DataType::INT_ID:
+      case dtCore::DataType::FLOAT_ID:
+      case dtCore::DataType::DOUBLE_ID:
          if (GetDouble("Result") != result.x())
          {
             SetDouble(result.x(), "Result");
@@ -237,7 +237,7 @@ namespace dtDirector
          }
          break;
 
-      case dtDAL::DataType::VEC2F_ID:
+      case dtCore::DataType::VEC2F_ID:
          if (GetVec2("Result") != osg::Vec2(result.x(), result.y()))
          {
             SetVec2(osg::Vec2(result.x(), result.y()), "Result");
@@ -246,7 +246,7 @@ namespace dtDirector
          }
          break;
 
-      case dtDAL::DataType::VEC3F_ID:
+      case dtCore::DataType::VEC3F_ID:
          if (GetVec3("Result") != osg::Vec3(result.x(), result.y(), result.z()))
          {
             SetVec3(osg::Vec3(result.x(), result.y(), result.z()), "Result");
@@ -255,7 +255,7 @@ namespace dtDirector
          }
          break;
 
-      case dtDAL::DataType::VEC4F_ID:
+      case dtCore::DataType::VEC4F_ID:
          if (GetVec4("Result") != result)
          {
             SetVec4(result, "Result");
@@ -267,18 +267,18 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   bool ArithmeticMutator::CanBeType(dtDAL::DataType& type)
+   bool ArithmeticMutator::CanBeType(dtCore::DataType& type)
    {
       switch (type.GetTypeId())
       {
-      case dtDAL::DataType::BOOLEAN_ID:
-      case dtDAL::DataType::INT_ID:
-      case dtDAL::DataType::FLOAT_ID:
-      case dtDAL::DataType::DOUBLE_ID:
-      case dtDAL::DataType::VEC2F_ID:
-      case dtDAL::DataType::VEC3F_ID:
-      case dtDAL::DataType::VEC4F_ID:
-      case dtDAL::DataType::UNKNOWN_ID:
+      case dtCore::DataType::BOOLEAN_ID:
+      case dtCore::DataType::INT_ID:
+      case dtCore::DataType::FLOAT_ID:
+      case dtCore::DataType::DOUBLE_ID:
+      case dtCore::DataType::VEC2F_ID:
+      case dtCore::DataType::VEC3F_ID:
+      case dtCore::DataType::VEC4F_ID:
+      case dtCore::DataType::UNKNOWN_ID:
          return true;
 
       default:
@@ -293,13 +293,13 @@ namespace dtDirector
       {
          if (link->GetName() == "A" || link->GetName() == "B")
          {
-            if (value->CanBeType(dtDAL::DataType::BOOLEAN) ||
-                value->CanBeType(dtDAL::DataType::INT)     ||
-                value->CanBeType(dtDAL::DataType::FLOAT)   ||
-                value->CanBeType(dtDAL::DataType::DOUBLE)  ||
-                value->CanBeType(dtDAL::DataType::VEC2F)   ||
-                value->CanBeType(dtDAL::DataType::VEC3F)   ||
-                value->CanBeType(dtDAL::DataType::VEC4F))
+            if (value->CanBeType(dtCore::DataType::BOOLEAN) ||
+                value->CanBeType(dtCore::DataType::INT)     ||
+                value->CanBeType(dtCore::DataType::FLOAT)   ||
+                value->CanBeType(dtCore::DataType::DOUBLE)  ||
+                value->CanBeType(dtCore::DataType::VEC2F)   ||
+                value->CanBeType(dtCore::DataType::VEC3F)   ||
+                value->CanBeType(dtCore::DataType::VEC4F))
             {
                return true;
             }
@@ -311,31 +311,31 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   dtDAL::DataType& ArithmeticMutator::GetStrongerType(dtDAL::DataType& type1, dtDAL::DataType& type2)
+   dtCore::DataType& ArithmeticMutator::GetStrongerType(dtCore::DataType& type1, dtCore::DataType& type2)
    {
       int type1Strength = 0;
       int type2Strength = 0;
 
       switch (type1.GetTypeId())
       {
-      case dtDAL::DataType::BOOLEAN_ID:   type1Strength = 0;   break;
-      case dtDAL::DataType::INT_ID:       type1Strength = 1;   break;
-      case dtDAL::DataType::FLOAT_ID:     type1Strength = 2;   break;
-      case dtDAL::DataType::DOUBLE_ID:    type1Strength = 3;   break;
-      case dtDAL::DataType::VEC2F_ID:     type1Strength = 4;   break;
-      case dtDAL::DataType::VEC3F_ID:     type1Strength = 5;   break;
-      case dtDAL::DataType::VEC4F_ID:     type1Strength = 6;   break;
+      case dtCore::DataType::BOOLEAN_ID:   type1Strength = 0;   break;
+      case dtCore::DataType::INT_ID:       type1Strength = 1;   break;
+      case dtCore::DataType::FLOAT_ID:     type1Strength = 2;   break;
+      case dtCore::DataType::DOUBLE_ID:    type1Strength = 3;   break;
+      case dtCore::DataType::VEC2F_ID:     type1Strength = 4;   break;
+      case dtCore::DataType::VEC3F_ID:     type1Strength = 5;   break;
+      case dtCore::DataType::VEC4F_ID:     type1Strength = 6;   break;
       }
 
       switch (type2.GetTypeId())
       {
-      case dtDAL::DataType::BOOLEAN_ID:   type2Strength = 0;   break;
-      case dtDAL::DataType::INT_ID:       type2Strength = 1;   break;
-      case dtDAL::DataType::FLOAT_ID:     type2Strength = 2;   break;
-      case dtDAL::DataType::DOUBLE_ID:    type2Strength = 3;   break;
-      case dtDAL::DataType::VEC2F_ID:     type2Strength = 4;   break;
-      case dtDAL::DataType::VEC3F_ID:     type2Strength = 5;   break;
-      case dtDAL::DataType::VEC4F_ID:     type2Strength = 6;   break;
+      case dtCore::DataType::BOOLEAN_ID:   type2Strength = 0;   break;
+      case dtCore::DataType::INT_ID:       type2Strength = 1;   break;
+      case dtCore::DataType::FLOAT_ID:     type2Strength = 2;   break;
+      case dtCore::DataType::DOUBLE_ID:    type2Strength = 3;   break;
+      case dtCore::DataType::VEC2F_ID:     type2Strength = 4;   break;
+      case dtCore::DataType::VEC3F_ID:     type2Strength = 5;   break;
+      case dtCore::DataType::VEC4F_ID:     type2Strength = 6;   break;
       }
 
       if (type1Strength >= type2Strength)

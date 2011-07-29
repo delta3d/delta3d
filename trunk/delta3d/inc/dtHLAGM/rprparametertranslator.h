@@ -32,7 +32,7 @@ namespace dtUtil
    class Coordinates;
 }
 
-namespace dtDAL
+namespace dtCore
 {
    class DataType;
 }
@@ -271,7 +271,7 @@ namespace dtHLAGM
             size_t& maxSize,
             const std::string& parameterValue,
             const OneToManyMapping::ParameterDefinition& paramDef,
-            const dtDAL::DataType& parameterDataType,
+            const dtCore::DataType& parameterDataType,
             bool addNullTerminator = true) const;
 
          void MapFromSpatialToMessageParams(
@@ -315,14 +315,14 @@ namespace dtHLAGM
          void MapFromArticulationToMessageParam(
             ArticulatedParameter artParam,
             dtGame::MessageParameter& parameter,
-            const dtDAL::DataType& parameterDataType,
+            const dtCore::DataType& parameterDataType,
             const OneToManyMapping::ParameterDefinition& paramDef) const;
 
          void MapFromArticulationsToMessageParam(
             const char* buffer,
             const size_t size,
             dtGame::MessageParameter& parameter,
-            const dtDAL::DataType& parameterDataType,
+            const dtCore::DataType& parameterDataType,
             const OneToManyMapping::ParameterDefinition& paramDef) const;
 
        private:

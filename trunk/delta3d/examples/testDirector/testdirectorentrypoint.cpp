@@ -24,7 +24,7 @@
 
 #include <dtUtil/datapathutils.h>
 #include <dtCore/deltawin.h>
-#include <dtDAL/project.h>
+#include <dtCore/project.h>
 
 #include <dtGame/gamemanager.h>
 #include <dtGame/gameapplication.h>
@@ -57,7 +57,7 @@ TestDirector::~TestDirector()
 void TestDirector::Initialize(dtGame::GameApplication& app, int argc, char** argv)
 {
    std::string context = dtUtil::GetDeltaRootPath() + "/examples/data/demoMap";
-   dtDAL::Project::GetInstance().SetContext(context, true);
+   dtCore::Project::GetInstance().SetContext(context, true);
 
    std::vector<std::string> mapNames;
 

@@ -21,7 +21,7 @@
 #include <prefix/dtdirectorqtprefix.h>
 #include <dtDirectorQt/clipboard.h>
 
-#include <dtDAL/vectoractorproperties.h>
+#include <dtCore/vectoractorproperties.h>
 
 #include <dtDirector/director.h>
 #include <dtDirector/directorgraph.h>
@@ -55,7 +55,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void Clipboard::AddObject(dtDAL::PropertyContainer* object)
+   void Clipboard::AddObject(dtCore::PropertyContainer* object)
    {
       if (!object) return;
 
@@ -73,7 +73,7 @@ namespace dtDirector
       mCopied.push_back(object);
 
       // Calculate the offset.
-      dtDAL::Vec2ActorProperty* prop = dynamic_cast<dtDAL::Vec2ActorProperty*>
+      dtCore::Vec2ActorProperty* prop = dynamic_cast<dtCore::Vec2ActorProperty*>
          (object->GetProperty("Position"));
       if (prop)
       {
@@ -101,7 +101,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void Clipboard::RemoveObject(dtDAL::PropertyContainer* object)
+   void Clipboard::RemoveObject(dtCore::PropertyContainer* object)
    {
       if (!object) return;
 
@@ -118,19 +118,19 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   std::vector<dtDAL::PropertyContainer*> Clipboard::PasteObjects(DirectorGraph* graph, UndoManager* undoManager, const osg::Vec2& position, bool createLinks, bool linkExternal)
+   std::vector<dtCore::PropertyContainer*> Clipboard::PasteObjects(DirectorGraph* graph, UndoManager* undoManager, const osg::Vec2& position, bool createLinks, bool linkExternal)
    {
-      std::vector<dtDAL::PropertyContainer*> result;
+      std::vector<dtCore::PropertyContainer*> result;
 
       if (!graph) return result;
 
       int count = (int)mCopied.size();
       for (int index = 0; index < count; index++)
       {
-         dtDAL::PropertyContainer* object = mCopied[index].get();
+         dtCore::PropertyContainer* object = mCopied[index].get();
          if (object)
          {
-            dtDAL::PropertyContainer* newObject = CopyObject(object, graph, position);
+            dtCore::PropertyContainer* newObject = CopyObject(object, graph, position);
             if (newObject) result.push_back(newObject);
          }
       }
@@ -211,7 +211,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   dtDAL::PropertyContainer* Clipboard::CopyObject(dtDAL::PropertyContainer* object, DirectorGraph* parent, const osg::Vec2& position)
+   dtCore::PropertyContainer* Clipboard::CopyObject(dtCore::PropertyContainer* object, DirectorGraph* parent, const osg::Vec2& position)
    {
       if (!object || !parent) return NULL;
 
@@ -311,7 +311,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void Clipboard::LinkNode(Node* node, DirectorGraph* parent, UndoManager* undoManager, std::vector<dtDAL::PropertyContainer*>& linkNodes, bool createLinks, bool linkExternal)
+   void Clipboard::LinkNode(Node* node, DirectorGraph* parent, UndoManager* undoManager, std::vector<dtCore::PropertyContainer*>& linkNodes, bool createLinks, bool linkExternal)
    {
       if (!node || !parent) return;
 
@@ -364,7 +364,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void Clipboard::LinkInputs(InputLink* link, InputLink* fromLink, DirectorGraph* parent, UndoManager* undoManager, std::vector<dtDAL::PropertyContainer*>& linkNodes, bool createLinks, bool linkExternal)
+   void Clipboard::LinkInputs(InputLink* link, InputLink* fromLink, DirectorGraph* parent, UndoManager* undoManager, std::vector<dtCore::PropertyContainer*>& linkNodes, bool createLinks, bool linkExternal)
    {
       if (!link || !fromLink || !parent) return;
 
@@ -438,7 +438,7 @@ namespace dtDirector
                         rampNode->SetPosition(position);
 
                         // Copy the name of the input to the input node.
-                        dtDAL::ActorProperty* prop = rampNode->GetProperty("Name");
+                        dtCore::ActorProperty* prop = rampNode->GetProperty("Name");
                         if (prop) prop->FromString(link->GetName());
                      }
                   }
@@ -473,7 +473,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void Clipboard::LinkOutputs(OutputLink* link, OutputLink* fromLink, DirectorGraph* parent, UndoManager* undoManager, std::vector<dtDAL::PropertyContainer*>& linkNodes, bool createLinks, bool linkExternal)
+   void Clipboard::LinkOutputs(OutputLink* link, OutputLink* fromLink, DirectorGraph* parent, UndoManager* undoManager, std::vector<dtCore::PropertyContainer*>& linkNodes, bool createLinks, bool linkExternal)
    {
       if (!link || !fromLink || !parent) return;
 
@@ -547,7 +547,7 @@ namespace dtDirector
                         rampNode->SetPosition(position);
 
                         // Copy the name of the output to the output node.
-                        dtDAL::ActorProperty* prop = rampNode->GetProperty("Name");
+                        dtCore::ActorProperty* prop = rampNode->GetProperty("Name");
                         if (prop) prop->FromString(link->GetName());
                      }
                   }
@@ -582,7 +582,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void Clipboard::LinkValues(ValueLink* link, ValueLink* fromLink, DirectorGraph* parent, UndoManager* undoManager, std::vector<dtDAL::PropertyContainer*>& linkNodes, bool createLinks, bool linkExternal)
+   void Clipboard::LinkValues(ValueLink* link, ValueLink* fromLink, DirectorGraph* parent, UndoManager* undoManager, std::vector<dtCore::PropertyContainer*>& linkNodes, bool createLinks, bool linkExternal)
    {
       if (!link || !fromLink || !parent) return;
 
@@ -650,7 +650,7 @@ namespace dtDirector
                         rampNode->SetPosition(position);
 
                         // Copy the name of the value link to the value node.
-                        dtDAL::ActorProperty* prop = ((Node*)rampNode)->GetProperty("Name");
+                        dtCore::ActorProperty* prop = ((Node*)rampNode)->GetProperty("Name");
                         if (prop) prop->FromString(link->GetName());
                      }
                   }
@@ -685,7 +685,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void Clipboard::LinkValueNode(ValueNode* node, ValueNode* fromNode, DirectorGraph* parent, UndoManager* undoManager, std::vector<dtDAL::PropertyContainer*>& linkNodes, bool createLinks, bool linkExternal)
+   void Clipboard::LinkValueNode(ValueNode* node, ValueNode* fromNode, DirectorGraph* parent, UndoManager* undoManager, std::vector<dtCore::PropertyContainer*>& linkNodes, bool createLinks, bool linkExternal)
    {
       if (!node || !fromNode || !parent) return;
 

@@ -30,7 +30,7 @@
 
 #include <dtUtil/datapathutils.h>
 
-#include <dtDAL/datatype.h>
+#include <dtCore/datatype.h>
 
 #include <dtUtil/datapathutils.h>
 #include <dtUtil/exception.h>
@@ -111,8 +111,8 @@ CPPUNIT_TEST_SUITE_REGISTRATION(FileUtilsTests);
 
 const std::string DATA_DIR = dtUtil::GetDeltaRootPath()+dtUtil::FileUtils::PATH_SEPARATOR+"examples/data";
 const std::string TESTS_DIR = dtUtil::GetDeltaRootPath()+dtUtil::FileUtils::PATH_SEPARATOR+"tests";
-const std::string MAPPROJECTCONTEXT = TESTS_DIR + dtUtil::FileUtils::PATH_SEPARATOR + "dtDAL" + dtUtil::FileUtils::PATH_SEPARATOR + "WorkingMapProject";
-const std::string PROJECTCONTEXT = TESTS_DIR + dtUtil::FileUtils::PATH_SEPARATOR + "dtDAL" + dtUtil::FileUtils::PATH_SEPARATOR + "WorkingProject";
+const std::string MAPPROJECTCONTEXT = TESTS_DIR + dtUtil::FileUtils::PATH_SEPARATOR + "dtCore" + dtUtil::FileUtils::PATH_SEPARATOR + "WorkingMapProject";
+const std::string PROJECTCONTEXT = TESTS_DIR + dtUtil::FileUtils::PATH_SEPARATOR + "dtCore" + dtUtil::FileUtils::PATH_SEPARATOR + "WorkingProject";
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -140,7 +140,7 @@ void FileUtilsTests::setUp()
 
       dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
       fileUtils.ChangeDirectory(TESTS_DIR);
-      fileUtils.PushDirectory("dtDAL");
+      fileUtils.PushDirectory("dtCore");
 
       if (!fileUtils.DirExists("WorkingProject"))
       {
@@ -148,8 +148,8 @@ void FileUtilsTests::setUp()
       }
 
       fileUtils.PushDirectory("WorkingProject");
-      fileUtils.DirDelete(dtDAL::DataType::STATIC_MESH.GetName(), true);
-      fileUtils.DirDelete(dtDAL::DataType::TERRAIN.GetName(), true);
+      fileUtils.DirDelete(dtCore::DataType::STATIC_MESH.GetName(), true);
+      fileUtils.DirDelete(dtCore::DataType::TERRAIN.GetName(), true);
       fileUtils.PopDirectory();
 
       fileUtils.FileDelete("terrain_simple.ive");
@@ -193,7 +193,7 @@ void FileUtilsTests::tearDown()
    }
 
    std::string currentDir = fileUtils.CurrentDirectory();
-   std::string projectDir("dtDAL");
+   std::string projectDir("dtCore");
    if (currentDir.substr(currentDir.size() - projectDir.size()) == projectDir)
    {
       fileUtils.PopDirectory();

@@ -21,9 +21,9 @@
 #include <prefix/dtdirectornodesprefix.h>
 #include <dtDirectorNodes/vec4arrayvalue.h>
 
-#include <dtDAL/vectoractorproperties.h>
-#include <dtDAL/actorproperty.h>
-#include <dtDAL/arrayactorproperty.h>
+#include <dtCore/vectoractorproperties.h>
+#include <dtCore/actorproperty.h>
+#include <dtCore/arrayactorproperty.h>
 
 namespace dtDirector
 {
@@ -50,33 +50,33 @@ namespace dtDirector
    {
       ArrayValueNode::BuildPropertyMap();
 
-      mProperty = new dtDAL::Vec4ActorProperty(
+      mProperty = new dtCore::Vec4ActorProperty(
          "Value", "Value",
-         dtDAL::Vec4ActorProperty::SetFuncType(this, &Vec4ArrayValue::SetValue),
-         dtDAL::Vec4ActorProperty::GetFuncType(this, &Vec4ArrayValue::GetValue),
+         dtCore::Vec4ActorProperty::SetFuncType(this, &Vec4ArrayValue::SetValue),
+         dtCore::Vec4ActorProperty::GetFuncType(this, &Vec4ArrayValue::GetValue),
          "", "The value.");
 
-      mInitialProperty = new dtDAL::Vec4ActorProperty(
+      mInitialProperty = new dtCore::Vec4ActorProperty(
          "Value", "Value",
-         dtDAL::Vec4ActorProperty::SetFuncType(this, &Vec4ArrayValue::SetInitialValue),
-         dtDAL::Vec4ActorProperty::GetFuncType(this, &Vec4ArrayValue::GetInitialValue),
+         dtCore::Vec4ActorProperty::SetFuncType(this, &Vec4ArrayValue::SetInitialValue),
+         dtCore::Vec4ActorProperty::GetFuncType(this, &Vec4ArrayValue::GetInitialValue),
          "", "The initial value.");
 
-      mArrayProperty = new dtDAL::ArrayActorProperty<osg::Vec4>(
+      mArrayProperty = new dtCore::ArrayActorProperty<osg::Vec4>(
          "ValueList", "Value List", "All values contained in this array.",
-         dtDAL::ArrayActorProperty<osg::Vec4>::SetIndexFuncType(this, &ArrayValueNode::SetPropertyIndex),
-         dtDAL::ArrayActorProperty<osg::Vec4>::GetDefaultFuncType(this, &Vec4ArrayValue::GetDefaultValue),
-         dtDAL::ArrayActorProperty<osg::Vec4>::GetArrayFuncType(this, &Vec4ArrayValue::GetArray),
-         dtDAL::ArrayActorProperty<osg::Vec4>::SetArrayFuncType(this, &Vec4ArrayValue::SetArray),
+         dtCore::ArrayActorProperty<osg::Vec4>::SetIndexFuncType(this, &ArrayValueNode::SetPropertyIndex),
+         dtCore::ArrayActorProperty<osg::Vec4>::GetDefaultFuncType(this, &Vec4ArrayValue::GetDefaultValue),
+         dtCore::ArrayActorProperty<osg::Vec4>::GetArrayFuncType(this, &Vec4ArrayValue::GetArray),
+         dtCore::ArrayActorProperty<osg::Vec4>::SetArrayFuncType(this, &Vec4ArrayValue::SetArray),
          mProperty, "");
       AddProperty(mArrayProperty);
 
-      mInitialArrayProperty = new dtDAL::ArrayActorProperty<osg::Vec4>(
+      mInitialArrayProperty = new dtCore::ArrayActorProperty<osg::Vec4>(
          "InitialValueList", "Initial Value List", "All initial values contained in this array.",
-         dtDAL::ArrayActorProperty<osg::Vec4>::SetIndexFuncType(this, &ArrayValueNode::SetInitialPropertyIndex),
-         dtDAL::ArrayActorProperty<osg::Vec4>::GetDefaultFuncType(this, &Vec4ArrayValue::GetDefaultValue),
-         dtDAL::ArrayActorProperty<osg::Vec4>::GetArrayFuncType(this, &Vec4ArrayValue::GetInitialArray),
-         dtDAL::ArrayActorProperty<osg::Vec4>::SetArrayFuncType(this, &Vec4ArrayValue::SetInitialArray),
+         dtCore::ArrayActorProperty<osg::Vec4>::SetIndexFuncType(this, &ArrayValueNode::SetInitialPropertyIndex),
+         dtCore::ArrayActorProperty<osg::Vec4>::GetDefaultFuncType(this, &Vec4ArrayValue::GetDefaultValue),
+         dtCore::ArrayActorProperty<osg::Vec4>::GetArrayFuncType(this, &Vec4ArrayValue::GetInitialArray),
+         dtCore::ArrayActorProperty<osg::Vec4>::SetArrayFuncType(this, &Vec4ArrayValue::SetInitialArray),
          mInitialProperty, "");
       AddProperty(mInitialArrayProperty);
    }

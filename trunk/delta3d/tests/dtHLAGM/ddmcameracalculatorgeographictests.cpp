@@ -31,8 +31,8 @@
 #include <dtCore/refptr.h>
 #include <dtCore/transform.h>
 
-#include <dtDAL/datatype.h>
-#include <dtDAL/floatactorproperty.h>
+#include <dtCore/datatype.h>
+#include <dtCore/floatactorproperty.h>
 
 #include <dtHLAGM/ddmcameracalculatorgeographic.h>
 #include <dtHLAGM/ddmgeographicregiondata.h>
@@ -260,7 +260,7 @@ class DDMCameraCalculatorGeographicTests : public CPPUNIT_NS::TestFixture
 
       void TestFloatProp(const std::string& propName, float expectedDefault)
       {
-         dtDAL::FloatActorProperty* fap = NULL;
+         dtCore::FloatActorProperty* fap = NULL;
          mCamCalcGeo->GetProperty(propName, fap);
          CPPUNIT_ASSERT(fap != NULL);
          

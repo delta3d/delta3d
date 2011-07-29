@@ -21,9 +21,9 @@
 #ifndef __CAMERA_DATA_ACTOR__
 #define __CAMERA_DATA_ACTOR__
 
-#include <dtDAL/plugin_export.h>
+#include <dtCore/plugin_export.h>
 #include <osg/Vec4>
-#include <dtDAL/transformableactorproxy.h>
+#include <dtCore/transformableactorproxy.h>
 #include <dtUtil/getsetmacros.h>
 
 namespace dtCore
@@ -96,16 +96,16 @@ namespace dtActors
       DT_DECLARE_ACCESSOR_INLINE(bool, ChangeViewport)
    };
 
-   class DT_PLUGIN_EXPORT CameraDataActorProxy : public dtDAL::TransformableActorProxy
+   class DT_PLUGIN_EXPORT CameraDataActorProxy : public dtCore::TransformableActorProxy
    {
       public:
         CameraDataActorProxy();
 
         virtual void BuildPropertyMap();
 
-        virtual const dtDAL::BaseActorObject::RenderMode& GetRenderMode();
+        virtual const dtCore::BaseActorObject::RenderMode& GetRenderMode();
          
-        dtDAL::ActorProxyIcon* GetBillBoardIcon();
+        dtCore::ActorProxyIcon* GetBillBoardIcon();
 
         void ApplyDataTo(dtCore::Camera& camera);
 

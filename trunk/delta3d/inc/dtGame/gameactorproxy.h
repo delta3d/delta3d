@@ -24,7 +24,7 @@
 #define gameactorproxy_h__
 
 #include <dtGame/export.h>
-#include <dtDAL/physicalactorproxy.h>
+#include <dtCore/physicalactorproxy.h>
 #include <dtUtil/deprecationmgr.h>
 #include <dtGame/actorcomponentcontainer.h>
 
@@ -48,11 +48,11 @@ namespace dtGame
     * Game Manager
     * @see dtGame::GameManager
     */
-   class DT_GAME_EXPORT GameActorProxy : public dtDAL::PhysicalActorProxy,
+   class DT_GAME_EXPORT GameActorProxy : public dtCore::PhysicalActorProxy,
       public dtGame::ActorComponentContainer
    {
    public:
-      typedef dtDAL::PhysicalActorProxy BaseClass;
+      typedef dtCore::PhysicalActorProxy BaseClass;
 
       /**
        * Name is intended to become a property, so this constant exists for that and for the LocalActorUpdatePolicy
@@ -96,7 +96,7 @@ namespace dtGame
       GameActorProxy();
 
       /// Overridden to call BuildInvokables
-      virtual void Init(const dtDAL::ActorType& actorType);
+      virtual void Init(const dtCore::ActorType& actorType);
 
       /** 
        * The actor component was probably removed. So, we need to remove each of the properties 
@@ -411,7 +411,7 @@ namespace dtGame
        * @param[in]  name  The name of the property queried for.
        * @return           A property, or NULL if none found.
        */
-      virtual dtCore::RefPtr<dtDAL::ActorProperty> GetDeprecatedProperty(const std::string& name);
+      virtual dtCore::RefPtr<dtCore::ActorProperty> GetDeprecatedProperty(const std::string& name);
 
       //////////////////////////////
       // Actor Components are being moved over to BaseActorObject or

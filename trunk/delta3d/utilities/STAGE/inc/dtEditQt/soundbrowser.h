@@ -65,7 +65,7 @@ namespace dtEditQt
       /**
        * Constructor
        */
-      SoundBrowser(dtDAL::DataType& type, QWidget* parent = 0);
+      SoundBrowser(dtCore::DataType& type, QWidget* parent = 0);
 
       /**
        * Destructor

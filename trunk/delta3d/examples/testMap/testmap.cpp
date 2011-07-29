@@ -33,14 +33,14 @@
 #include <dtABC/beziercontroller.h>
 #include <dtABC/labelactor.h>
 #include <dtCore/orbitmotionmodel.h>
-#include <dtDAL/project.h>
-#include <dtDAL/map.h>
+#include <dtCore/project.h>
+#include <dtCore/map.h>
 #include <dtUtil/datapathutils.h>
 
 #include <iostream>
 
 using namespace dtCore;
-using namespace dtDAL;
+using namespace dtCore;
 using namespace dtABC;
 
 class TestMap : public Application

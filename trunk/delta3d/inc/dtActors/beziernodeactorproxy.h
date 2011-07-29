@@ -23,8 +23,8 @@
 #ifndef DELTA_BEZIER_NODE_ACTOR_PROXY
 #define DELTA_BEZIER_NODE_ACTOR_PROXY
 
-#include <dtDAL/transformableactorproxy.h>
-#include <dtDAL/plugin_export.h>
+#include <dtCore/transformableactorproxy.h>
+#include <dtCore/plugin_export.h>
 #include <dtCore/transformable.h>
 #include <dtABC/beziernode.h>
 #include <dtABC/beziercontrolpoint.h>
@@ -33,7 +33,7 @@
 
 namespace dtActors
 {
-   class DT_PLUGIN_EXPORT BezierNodeActorProxy : public dtDAL::TransformableActorProxy
+   class DT_PLUGIN_EXPORT BezierNodeActorProxy : public dtCore::TransformableActorProxy
    {
       public:
          /// Constructor
@@ -57,25 +57,25 @@ namespace dtActors
           * Sets the bezier control point on enter for this proxy's actor
           * @param controlPoint The entry controlPoint to set
           */
-         void SetBezierEntryControlPoint(dtDAL::BaseActorObject* controlPoint);
+         void SetBezierEntryControlPoint(dtCore::BaseActorObject* controlPoint);
 
          /**
           * Sets the bezier control point on exit for this proxy's actor
           * @param controlPoint The exit controlPoint to set
           */
-         void SetBezierExitControlPoint(dtDAL::BaseActorObject* controlPoint);
+         void SetBezierExitControlPoint(dtCore::BaseActorObject* controlPoint);
 
          /**
           * Sets the next bezier node on this proxy's actor
           * @param node The node to set
           */
-         void SetNextBezierNode(dtDAL::BaseActorObject* node);
+         void SetNextBezierNode(dtCore::BaseActorObject* node);
 
          /**
           * Sets the previous bezier node on this proxy's actor
           * @param node The node to set
           */
-         void SetPreviousBezierNode(dtDAL::BaseActorObject* node);
+         void SetPreviousBezierNode(dtCore::BaseActorObject* node);
 
          /**
           * Gets the next node on this proxy's actor
@@ -101,10 +101,10 @@ namespace dtActors
          */
          dtCore::DeltaDrawable* GetBezierExitControlPoint();
 
-         dtDAL::ActorProxyIcon* GetBillBoardIcon();
+         dtCore::ActorProxyIcon* GetBillBoardIcon();
 
 
-         const dtDAL::BaseActorObject::RenderMode& GetRenderMode();
+         const dtCore::BaseActorObject::RenderMode& GetRenderMode();
 
          /*virtual*/ void OnScale(const osg::Vec3& oldValue, const osg::Vec3& newValue);
          /*virtual*/ void OnRotation(const osg::Vec3& oldValue, const osg::Vec3& newValue);

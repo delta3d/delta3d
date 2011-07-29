@@ -27,7 +27,7 @@
 #include <osg/Vec4>
 #include <vector>
 
-namespace dtDAL
+namespace dtCore
 {
    class ActorProxyIcon;
 }
@@ -202,11 +202,11 @@ class FIRE_FIGHTER_EXPORT FireActorProxy : public GameItemActorProxy
       virtual void CreateActor() { SetActor(*new FireActor(*this)); }
 
       // Used in STAGE
-      dtDAL::ActorProxyIcon* GetBillBoardIcon();
+      dtCore::ActorProxyIcon* GetBillBoardIcon();
 
-      virtual const dtDAL::BaseActorObject::RenderMode& GetRenderMode()
+      virtual const dtCore::BaseActorObject::RenderMode& GetRenderMode()
       {
-         return dtDAL::BaseActorObject::RenderMode::DRAW_ACTOR;
+         return dtCore::BaseActorObject::RenderMode::DRAW_ACTOR;
       }
 
    protected:
@@ -219,7 +219,7 @@ class FIRE_FIGHTER_EXPORT FireActorProxy : public GameItemActorProxy
 
    private:
 
-      dtCore::RefPtr<dtDAL::ActorProxyIcon> mBillBoardIcon;
+      dtCore::RefPtr<dtCore::ActorProxyIcon> mBillBoardIcon;
 };
 
 #endif

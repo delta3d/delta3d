@@ -89,9 +89,9 @@ namespace dtDirector
    private:
       dtCore::UniqueId mActorID;
 
-      dtCore::RefPtr<dtDAL::ActorProperty> mpForwardProp;
-      dtCore::RefPtr<dtDAL::ActorProperty> mpUpProp;
-      dtCore::RefPtr<dtDAL::ActorProperty> mpRightProp;
+      dtCore::RefPtr<dtCore::ActorProperty> mpForwardProp;
+      dtCore::RefPtr<dtCore::ActorProperty> mpUpProp;
+      dtCore::RefPtr<dtCore::ActorProperty> mpRightProp;
    };
 }
 

@@ -32,7 +32,7 @@
 
 #include <QtGui/QTreeWidgetItem>
 #include <QtGui/QTreeWidget>
-#include <dtDAL/objecttype.h>
+#include <dtCore/objecttype.h>
 
 /**
  * This class is the tree widget that is used to draw the object type.  The internal
@@ -51,7 +51,7 @@ public:
     * @param parent The parent of this tree widget
     * @param actorType The Actor type of this tree entry.
     */
-   ObjectTypeTreeWidget(ObjectTypeTreeWidget* parent, dtCore::RefPtr<const dtDAL::ObjectType> actorType);
+   ObjectTypeTreeWidget(ObjectTypeTreeWidget* parent, dtCore::RefPtr<const dtCore::ObjectType> actorType);
 
    /**
     * Constructor - Use this for internal, NON leaf nodes.  These are considered to be
@@ -78,7 +78,7 @@ public:
     *
     * @return The object type for this leaf node
     */
-   dtCore::RefPtr<const dtDAL::ObjectType> GetObjectType();
+   dtCore::RefPtr<const dtCore::ObjectType> GetObjectType();
 
    /**
     * Returns true if this is a leaf node. You can check this by checking the object type for NULL.
@@ -119,12 +119,12 @@ public:
     * @return True if we succcessfully added it, false if some error or already exists.
     */
    bool RecursivelyAddCategoryAndObjectTypeAsChildren(
-      QMutableStringListIterator* listIterator, dtCore::RefPtr<const dtDAL::ObjectType> actorType);
+      QMutableStringListIterator* listIterator, dtCore::RefPtr<const dtCore::ObjectType> actorType);
 
 private:
    // the object type for this tree element.  Note that only leaf nodes have actors
    // In fact, if the object type is null, it's assumed to be an internal node
-   dtCore::RefPtr<const dtDAL::ObjectType> mObjectType;
+   dtCore::RefPtr<const dtCore::ObjectType> mObjectType;
 
    // the portion of the category segment that this tree widget represents.
    // This is only valid if it's an internal node (ie, myObjectType == null).

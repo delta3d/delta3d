@@ -1,16 +1,16 @@
 #ifndef animactorregistry_h__
 #define animactorregistry_h__
-#include <dtDAL/actorpluginregistry.h>
+#include <dtCore/actorpluginregistry.h>
 #include <dtAnim/export.h>
 
 namespace dtAnim
 {
 
-   class DT_ANIM_EXPORT AnimActorRegistry : public dtDAL::ActorPluginRegistry
+   class DT_ANIM_EXPORT AnimActorRegistry : public dtCore::ActorPluginRegistry
    {
    public:
-      static dtCore::RefPtr<dtDAL::ActorType> CAL3D_ACTOR_TYPE;       
-      static dtCore::RefPtr<dtDAL::ActorType> ANIMATION_ACTOR_TYPE;
+      static dtCore::RefPtr<dtCore::ActorType> CAL3D_ACTOR_TYPE;       
+      static dtCore::RefPtr<dtCore::ActorType> ANIMATION_ACTOR_TYPE;
 
       AnimActorRegistry();
 

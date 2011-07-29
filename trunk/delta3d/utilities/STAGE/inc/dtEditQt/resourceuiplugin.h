@@ -31,7 +31,7 @@
 #define DELTA_RESOURCE_UI_PLUGIN
 
 #include <dtEditQt/baseuiplugin.h>
-#include <dtDAL/resourcedescriptor.h>
+#include <dtCore/resourcedescriptor.h>
 
 class QWidget;
 
@@ -53,7 +53,7 @@ namespace dtEditQt
       /**
        * Sets the current resource.
        */
-      void SetResource(const dtDAL::ResourceDescriptor& resource)
+      void SetResource(const dtCore::ResourceDescriptor& resource)
       {
          mResource = resource;
       }
@@ -61,7 +61,7 @@ namespace dtEditQt
       /**
        * Retrieves the current resource.
        */
-      const dtDAL::ResourceDescriptor& GetResource() const
+      const dtCore::ResourceDescriptor& GetResource() const
       {
          return mResource;
       }
@@ -70,7 +70,7 @@ namespace dtEditQt
       virtual QWidget* CreateWidget(QWidget* parent) = 0;
 
    private:
-      dtDAL::ResourceDescriptor mResource;
+      dtCore::ResourceDescriptor mResource;
    };
 
 } // namespace dtEditQt

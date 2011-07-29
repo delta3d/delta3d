@@ -4,7 +4,7 @@
 
 #include <python/dtpython.h>
 #include <dtABC/baseabc.h>
-#include <dtDAL/map.h>
+#include <dtCore/map.h>
 #include <dtCore/camera.h>
 #include <dtCore/deltawin.h>
 #include <dtCore/keyboard.h>
@@ -156,8 +156,8 @@ void initBaseABCBindings()
    dtCore::Camera       *(BaseABC::*GetCameraNonConst)()       = &BaseABC::GetCamera;
    const dtCore::Camera *(BaseABC::*GetCameraConst   )() const = &BaseABC::GetCamera;
 
-   dtDAL::Map& (BaseABC::*LoadMap1)( const std::string&, bool ) = &BaseABC::LoadMap;
-   void (BaseABC::*LoadMap2)( dtDAL::Map&, bool ) = &BaseABC::LoadMap;
+   dtCore::Map& (BaseABC::*LoadMap1)( const std::string&, bool ) = &BaseABC::LoadMap;
+   void (BaseABC::*LoadMap2)( dtCore::Map&, bool ) = &BaseABC::LoadMap;
    dtCore::Mouse*(BaseABC::*GETMOUSE)() =&BaseABC::GetMouse;
    dtCore::View*(BaseABC::*GETVIEW)() =&BaseABC::GetView;
 

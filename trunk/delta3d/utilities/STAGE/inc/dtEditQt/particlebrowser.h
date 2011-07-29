@@ -65,7 +65,7 @@ namespace dtEditQt
       /**
        * Constructor
        */
-      ParticleBrowser(dtDAL::DataType& type, QWidget* parent=0);
+      ParticleBrowser(dtCore::DataType& type, QWidget* parent=0);
 
       /**
        * Destructor

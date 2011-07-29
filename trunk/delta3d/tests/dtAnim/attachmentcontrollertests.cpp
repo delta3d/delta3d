@@ -47,8 +47,8 @@
 #include <dtGame/gamemanager.h>
 #include <dtGame/basemessages.h>
 
-#include <dtDAL/map.h>
-#include <dtDAL/project.h>
+#include <dtCore/map.h>
+#include <dtCore/project.h>
 
 #include <dtAnim/animationgameactor.h>
 

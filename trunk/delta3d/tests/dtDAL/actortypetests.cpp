@@ -28,7 +28,7 @@
 #include <prefix/unittestprefix.h>
 #include <cppunit/extensions/HelperMacros.h>
 #include <dtCore/system.h>
-#include <dtDAL/actortype.h>
+#include <dtCore/actortype.h>
 #include <dtUtil/exception.h>
  
 class ActorTypeTests : public CPPUNIT_NS::TestFixture 
@@ -78,10 +78,10 @@ void ActorTypeTests::TestActorType()
 {
    try
    {
-      dtCore::RefPtr<dtDAL::ActorType> parentType = new dtDAL::ActorType("ParentType","Tests");
-      dtCore::RefPtr<dtDAL::ActorType> childOne = new dtDAL::ActorType("ChildOne","Tests","This is child one.",parentType.get());
-      dtCore::RefPtr<dtDAL::ActorType> childTwo = new dtDAL::ActorType("ChildTwo","Tests","This is child two.",childOne.get());
-      dtCore::RefPtr<dtDAL::ActorType> childThree = new dtDAL::ActorType("ChildThree","Tests","This is child three.",parentType.get());      
+      dtCore::RefPtr<dtCore::ActorType> parentType = new dtCore::ActorType("ParentType","Tests");
+      dtCore::RefPtr<dtCore::ActorType> childOne = new dtCore::ActorType("ChildOne","Tests","This is child one.",parentType.get());
+      dtCore::RefPtr<dtCore::ActorType> childTwo = new dtCore::ActorType("ChildTwo","Tests","This is child two.",childOne.get());
+      dtCore::RefPtr<dtCore::ActorType> childThree = new dtCore::ActorType("ChildThree","Tests","This is child three.",parentType.get());      
       
       CPPUNIT_ASSERT_MESSAGE("ParentActorType should not have had a parent.",
          parentType->GetParentActorType() == NULL);

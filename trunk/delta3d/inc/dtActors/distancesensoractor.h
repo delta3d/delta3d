@@ -21,7 +21,7 @@
 #ifndef DELTA_DISTANCE_SENSOR_ACTOR
 #define DELTA_DISTANCE_SENSOR_ACTOR
 
-#include <dtDAL/plugin_export.h>
+#include <dtCore/plugin_export.h>
 #include <dtGame/gameactor.h>
 #include <dtAI/sensor.h>
 #include <dtAI/distancesensor.h>
@@ -50,7 +50,7 @@ namespace dtActors
          virtual void BuildPropertyMap();
          virtual void BuildInvokables();
 
-         void SetAttachToProxy(dtDAL::BaseActorObject* newAttachToProxy);
+         void SetAttachToProxy(dtCore::BaseActorObject* newAttachToProxy);
 
       protected:
          virtual ~DistanceSensorActorProxy();

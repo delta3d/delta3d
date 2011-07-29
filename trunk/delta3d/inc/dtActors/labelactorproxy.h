@@ -1,18 +1,18 @@
 #ifndef labelactorproxy_h__
 #define labelactorproxy_h__
 
-#include <dtDAL/plugin_export.h>
-#include <dtDAL/transformableactorproxy.h>
+#include <dtCore/plugin_export.h>
+#include <dtCore/transformableactorproxy.h>
 
 namespace dtActors
 {
    /////////////////////////////////////////////////////////////////////////////
    // PROXY CODE
    /////////////////////////////////////////////////////////////////////////////
-   class DT_PLUGIN_EXPORT LabelActorProxy : public dtDAL::TransformableActorProxy
+   class DT_PLUGIN_EXPORT LabelActorProxy : public dtCore::TransformableActorProxy
    {
    public:
-      typedef dtDAL::TransformableActorProxy BaseClass;
+      typedef dtCore::TransformableActorProxy BaseClass;
 
       static const dtUtil::RefString CLASS_NAME;
 

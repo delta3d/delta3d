@@ -29,9 +29,9 @@
 
 #include <dtCore/refptr.h>
 
-#include <dtDAL/enumactorproperty.h>
-#include <dtDAL/longactorproperty.h>
-#include <dtDAL/stringactorproperty.h>
+#include <dtCore/enumactorproperty.h>
+#include <dtCore/longactorproperty.h>
+#include <dtCore/stringactorproperty.h>
 
 #include <dtHLAGM/ddmcalculatorgeographic.h>
 
@@ -100,7 +100,7 @@ class DDMCalculatorGeographicTests : public CPPUNIT_NS::TestFixture
             
       void TestAppSpaceProperties()
       {
-         dtDAL::LongActorProperty* lap = NULL;
+         dtCore::LongActorProperty* lap = NULL;
          mCalcGeo->GetProperty(dtHLAGM::DDMCalculatorGeographic::PROP_APP_SPACE_MIN, lap);
          CPPUNIT_ASSERT(lap != NULL);
 
@@ -121,7 +121,7 @@ class DDMCalculatorGeographicTests : public CPPUNIT_NS::TestFixture
       void TestRegionTypeProperties()
       {
 
-         dtDAL::EnumActorProperty<dtHLAGM::DDMCalculatorGeographic::DDMObjectKind>* eap = NULL;
+         dtCore::EnumActorProperty<dtHLAGM::DDMCalculatorGeographic::DDMObjectKind>* eap = NULL;
          mCalcGeo->GetProperty(dtHLAGM::DDMCalculatorGeographic::PROP_CALCULATOR_OBJECT_KIND, eap);
          CPPUNIT_ASSERT(eap != NULL);
          
@@ -195,7 +195,7 @@ class DDMCalculatorGeographicTests : public CPPUNIT_NS::TestFixture
 
       const std::string TestDimensionProperty(const std::string& name, const std::string& defaultValue)
       {
-         dtDAL::StringActorProperty* sap = NULL;
+         dtCore::StringActorProperty* sap = NULL;
          std::string testValue("myspace");
          //Mix up the value a bit to make sure reading the wrong data member doesn't happen to make the test run.
          testValue += name;
@@ -211,7 +211,7 @@ class DDMCalculatorGeographicTests : public CPPUNIT_NS::TestFixture
 
       void TestRegionTypeEnumProp(const std::string& propName)
       {
-         dtDAL::EnumActorProperty<dtHLAGM::DDMCalculatorGeographic::RegionCalculationType>* eap = NULL;
+         dtCore::EnumActorProperty<dtHLAGM::DDMCalculatorGeographic::RegionCalculationType>* eap = NULL;
          mCalcGeo->GetProperty(propName, eap);
          CPPUNIT_ASSERT(eap != NULL);
          
@@ -222,7 +222,7 @@ class DDMCalculatorGeographicTests : public CPPUNIT_NS::TestFixture
 
       void TestAppSpaceValueProp(const std::string& propName, long expectedDefault)
       {
-         dtDAL::LongActorProperty* prop = NULL;
+         dtCore::LongActorProperty* prop = NULL;
          mCalcGeo->GetProperty(propName, prop);
          CPPUNIT_ASSERT_MESSAGE("dtHLAGM::DDMCalculatorGeographic is missing the LongActorProperty:'" + propName + "'",
                                  prop != NULL);

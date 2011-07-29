@@ -8,7 +8,7 @@
 #include <QtGui/QCheckBox>
 #include <QtGui/QDockWidget>
 #include <dtActors/linkedpointsactorproxy.h>
-#include <dtDAL/actorproperty.h>
+#include <dtCore/actorproperty.h>
 #include "toolobjectmotionmodel.h"
 
 using namespace dtEditQt;
@@ -288,7 +288,7 @@ private:
    dtCore::RefPtr<dtActors::LinkedPointsActorProxy> mActiveProxy;
    dtActors::LinkedPointsActor*                     mActiveActor;
 
-   dtDAL::ActorProperty*                            mPointsProp;
+   dtCore::ActorProperty*                            mPointsProp;
    std::string                                      mOldPropValue;
 
    dtCore::RefPtr<ToolObjectMotionModel>            mPerspMotionModel;

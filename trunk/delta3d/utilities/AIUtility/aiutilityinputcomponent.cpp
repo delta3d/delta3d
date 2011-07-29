@@ -220,7 +220,7 @@ void AIUtilityInputComponent::OnWaypointTranslationBeginning()
       for (size_t pointIndex = 0; pointIndex < waypointList.size(); ++pointIndex)
       {
          const osg::Vec3& pos = waypointList[pointIndex]->GetPosition();
-         const dtDAL::ObjectType& type = waypointList[pointIndex]->GetWaypointType();
+         const dtCore::ObjectType& type = waypointList[pointIndex]->GetWaypointType();
 
          cloneList.push_back(mpAIInterface->CreateWaypoint(pos, type));
       }

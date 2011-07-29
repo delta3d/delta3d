@@ -3,10 +3,10 @@
 
 #include <dtEditQt/externaltoolargparser.h>
 #include <dtEditQt/editordata.h>
-#include <dtDAL/datatype.h>
-#include <dtDAL/resourcedescriptor.h>
-#include <dtDAL/project.h>
-#include <dtDAL/map.h>
+#include <dtCore/datatype.h>
+#include <dtCore/resourcedescriptor.h>
+#include <dtCore/project.h>
+#include <dtCore/map.h>
 
 namespace dtEditQt
 {
@@ -44,7 +44,7 @@ namespace dtEditQt
 
       virtual QString ExpandArguments(const QString& args) const
       {
-         dtDAL::Map* currentMap = EditorData::GetInstance().getCurrentMap();
+         dtCore::Map* currentMap = EditorData::GetInstance().getCurrentMap();
          QString mapFilename;
          if (currentMap)
          {
@@ -73,7 +73,7 @@ namespace dtEditQt
 
       virtual QString ExpandArguments(const QString& args) const
       {
-         dtDAL::Map* currentMap = EditorData::GetInstance().getCurrentMap();
+         dtCore::Map* currentMap = EditorData::GetInstance().getCurrentMap();
          QString mapFilename;
          if (currentMap)
          {
@@ -103,11 +103,11 @@ namespace dtEditQt
 
       virtual QString ExpandArguments(const QString& args) const
       {
-         dtDAL::ResourceDescriptor meshDescr = EditorData::GetInstance().getCurrentResource(dtDAL::DataType::STATIC_MESH);
+         dtCore::ResourceDescriptor meshDescr = EditorData::GetInstance().getCurrentResource(dtCore::DataType::STATIC_MESH);
          std::string path;
          if (!meshDescr.GetResourceIdentifier().empty())
          {
-            path = dtDAL::Project::GetInstance().GetResourcePath(meshDescr);
+            path = dtCore::Project::GetInstance().GetResourcePath(meshDescr);
          }
 
          return QString(args).replace(GetVariableText(), QString::fromStdString(path));
@@ -132,11 +132,11 @@ namespace dtEditQt
 
       virtual QString ExpandArguments(const QString& args) const
       {
-         dtDAL::ResourceDescriptor descr = EditorData::GetInstance().getCurrentResource(dtDAL::DataType::PARTICLE_SYSTEM);
+         dtCore::ResourceDescriptor descr = EditorData::GetInstance().getCurrentResource(dtCore::DataType::PARTICLE_SYSTEM);
          std::string path;
          if (!descr.GetResourceIdentifier().empty())
          {
-            path = dtDAL::Project::GetInstance().GetResourcePath(descr);
+            path = dtCore::Project::GetInstance().GetResourcePath(descr);
          }
 
          return QString(args).replace(GetVariableText(), QString::fromStdString(path));
@@ -161,11 +161,11 @@ namespace dtEditQt
 
       virtual QString ExpandArguments(const QString& args) const
       {
-         dtDAL::ResourceDescriptor descr = EditorData::GetInstance().getCurrentResource(dtDAL::DataType::SKELETAL_MESH);
+         dtCore::ResourceDescriptor descr = EditorData::GetInstance().getCurrentResource(dtCore::DataType::SKELETAL_MESH);
          std::string path;
          if (!descr.GetResourceIdentifier().empty())
          {
-            path = dtDAL::Project::GetInstance().GetResourcePath(descr);
+            path = dtCore::Project::GetInstance().GetResourcePath(descr);
          }
 
          return QString(args).replace(GetVariableText(), QString::fromStdString(path));

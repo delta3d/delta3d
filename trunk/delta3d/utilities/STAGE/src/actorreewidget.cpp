@@ -109,7 +109,7 @@ namespace dtEditQt
       QIcon icon = item->icon(0);
       QPixmap pixmap = icon.pixmap(16);
 
-      dtCore::RefPtr<const dtDAL::ActorType> actorType = item->getActorType();
+      dtCore::RefPtr<const dtCore::ActorType> actorType = item->getActorType();
       QString category  = actorType->GetCategory().c_str();
       QString name      = actorType->GetName().c_str();
       dataStream << category << name;

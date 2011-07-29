@@ -4,16 +4,16 @@
 #include <dtCore/transform.h>
 #include <dtCore/transformable.h>
 
-#include <dtDAL/arrayactorproperty.h>
-#include <dtDAL/containeractorproperty.h>
-#include <dtDAL/floatactorproperty.h>
-#include <dtDAL/functor.h>
-#include <dtDAL/intactorproperty.h>
-#include <dtDAL/mapxml.h>
-#include <dtDAL/project.h>
-#include <dtDAL/resourcedescriptor.h>
-#include <dtDAL/resourceactorproperty.h>
-#include <dtDAL/vectoractorproperties.h>
+#include <dtCore/arrayactorproperty.h>
+#include <dtCore/containeractorproperty.h>
+#include <dtCore/floatactorproperty.h>
+#include <dtCore/functor.h>
+#include <dtCore/intactorproperty.h>
+#include <dtCore/mapxml.h>
+#include <dtCore/project.h>
+#include <dtCore/resourcedescriptor.h>
+#include <dtCore/resourceactorproperty.h>
+#include <dtCore/vectoractorproperties.h>
 
 #include <dtUtil/exception.h>
 
@@ -434,13 +434,13 @@ namespace dtActors
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   std::vector<dtDAL::ResourceDescriptor> FenceActor::GetPostResourceArray(void) const
+   std::vector<dtCore::ResourceDescriptor> FenceActor::GetPostResourceArray(void) const
    {
       return mPostResourceList;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void FenceActor::SetPostResourceArray(const std::vector<dtDAL::ResourceDescriptor>& value)
+   void FenceActor::SetPostResourceArray(const std::vector<dtCore::ResourceDescriptor>& value)
    {
       mPostResourceList = value;
 
@@ -448,13 +448,13 @@ namespace dtActors
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   std::vector<dtDAL::ResourceDescriptor> FenceActor::GetSegmentResourceArray(void) const
+   std::vector<dtCore::ResourceDescriptor> FenceActor::GetSegmentResourceArray(void) const
    {
       return mSegmentResourceList;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void FenceActor::SetSegmentResourceArray(const std::vector<dtDAL::ResourceDescriptor>& value)
+   void FenceActor::SetSegmentResourceArray(const std::vector<dtCore::ResourceDescriptor>& value)
    {
       mSegmentResourceList = value;
 
@@ -507,10 +507,10 @@ namespace dtActors
       // Now find the mesh matching this index.
       if (meshIndex < (int)mPostResourceList.size())
       {
-         dtDAL::ResourceDescriptor& rd = mPostResourceList[meshIndex];
-         if (rd != dtDAL::ResourceDescriptor::NULL_RESOURCE)
+         dtCore::ResourceDescriptor& rd = mPostResourceList[meshIndex];
+         if (rd != dtCore::ResourceDescriptor::NULL_RESOURCE)
          {
-            return dtDAL::Project::GetInstance().GetResourcePath(rd);
+            return dtCore::Project::GetInstance().GetResourcePath(rd);
          }
       }
 
@@ -629,10 +629,10 @@ namespace dtActors
       // Now find the mesh matching this index.
       if (textureIndex < (int)mSegmentResourceList.size())
       {
-         dtDAL::ResourceDescriptor& rd = mSegmentResourceList[textureIndex];
-         if (rd != dtDAL::ResourceDescriptor::NULL_RESOURCE)
+         dtCore::ResourceDescriptor& rd = mSegmentResourceList[textureIndex];
+         if (rd != dtCore::ResourceDescriptor::NULL_RESOURCE)
          {
-            return dtDAL::Project::GetInstance().GetResourcePath(rd);
+            return dtCore::Project::GetInstance().GetResourcePath(rd);
          }
       }
 
@@ -1117,8 +1117,8 @@ namespace dtActors
             if (!textureName.empty())
             {
                // set up the texture state.
-               //dtDAL::ResourceDescriptor descriptor = dtDAL::ResourceDescriptor(textureName);
-               //geomData->mSegTexture->setImage(osgDB::readImageFile(dtDAL::Project::GetInstance().GetResourcePath(descriptor)));
+               //dtCore::ResourceDescriptor descriptor = dtCore::ResourceDescriptor(textureName);
+               //geomData->mSegTexture->setImage(osgDB::readImageFile(dtCore::Project::GetInstance().GetResourcePath(descriptor)));
                geomData->mSegTexture->setImage(osgDB::readImageFile(textureName));
             }
 
@@ -1191,109 +1191,109 @@ namespace dtActors
       GetActor(actor);
 
       // Post Resources Array
-      dtDAL::ResourceActorProperty* postResourceProp = new dtDAL::ResourceActorProperty(dtDAL::DataType::STATIC_MESH,
+      dtCore::ResourceActorProperty* postResourceProp = new dtCore::ResourceActorProperty(dtCore::DataType::STATIC_MESH,
          "PostMeshResource", "Post Mesh",
-         dtDAL::ResourceActorProperty::SetDescFuncType(this, &FenceActorProxy::SetPostMesh),
-         dtDAL::ResourceActorProperty::GetDescFuncType(this, &FenceActorProxy::GetPostMesh),
+         dtCore::ResourceActorProperty::SetDescFuncType(this, &FenceActorProxy::SetPostMesh),
+         dtCore::ResourceActorProperty::GetDescFuncType(this, &FenceActorProxy::GetPostMesh),
          "Defines the mesh used to represent a fence post.", "Fence");
 
-      dtDAL::ArrayActorPropertyBase* postResourceArrayProp =
-         new dtDAL::ArrayActorProperty<dtDAL::ResourceDescriptor>(
+      dtCore::ArrayActorPropertyBase* postResourceArrayProp =
+         new dtCore::ArrayActorProperty<dtCore::ResourceDescriptor>(
          "PostMeshArray", "Post Meshes",
          "Defines the meshes used to represent the fence posts.",
-         dtDAL::ArrayActorProperty<dtDAL::ResourceDescriptor>::SetIndexFuncType(this, &FenceActorProxy::SetPostResourceIndex),
-         dtDAL::ArrayActorProperty<dtDAL::ResourceDescriptor>::GetDefaultFuncType(this, &FenceActorProxy::GetDefaultPost),
-         dtDAL::ArrayActorProperty<dtDAL::ResourceDescriptor>::GetArrayFuncType(actor, &FenceActor::GetPostResourceArray),
-         dtDAL::ArrayActorProperty<dtDAL::ResourceDescriptor>::SetArrayFuncType(actor, &FenceActor::SetPostResourceArray),
+         dtCore::ArrayActorProperty<dtCore::ResourceDescriptor>::SetIndexFuncType(this, &FenceActorProxy::SetPostResourceIndex),
+         dtCore::ArrayActorProperty<dtCore::ResourceDescriptor>::GetDefaultFuncType(this, &FenceActorProxy::GetDefaultPost),
+         dtCore::ArrayActorProperty<dtCore::ResourceDescriptor>::GetArrayFuncType(actor, &FenceActor::GetPostResourceArray),
+         dtCore::ArrayActorProperty<dtCore::ResourceDescriptor>::SetArrayFuncType(actor, &FenceActor::SetPostResourceArray),
          postResourceProp, "Fence");
       AddProperty(postResourceArrayProp);
 
       // Segment Resources Array
-      dtDAL::ResourceActorProperty* segmentResourceProp =
-         new dtDAL::ResourceActorProperty(dtDAL::DataType::TEXTURE,
+      dtCore::ResourceActorProperty* segmentResourceProp =
+         new dtCore::ResourceActorProperty(dtCore::DataType::TEXTURE,
          "SegmentTextureResource", "Segment Texture",
-         dtDAL::ResourceActorProperty::SetDescFuncType(this, &FenceActorProxy::SetSegmentTexture),
-         dtDAL::ResourceActorProperty::GetDescFuncType(this, &FenceActorProxy::GetSegmentTexture),
+         dtCore::ResourceActorProperty::SetDescFuncType(this, &FenceActorProxy::SetSegmentTexture),
+         dtCore::ResourceActorProperty::GetDescFuncType(this, &FenceActorProxy::GetSegmentTexture),
          "Defines the texture used to represent a fence segment.", "Fence");
 
-      dtDAL::ArrayActorPropertyBase* segmentResourceArrayProp =
-         new dtDAL::ArrayActorProperty<dtDAL::ResourceDescriptor>(
+      dtCore::ArrayActorPropertyBase* segmentResourceArrayProp =
+         new dtCore::ArrayActorProperty<dtCore::ResourceDescriptor>(
          "SegmentTextureArray", "Segment Textures",
          "Defines the textures used to represent the fence segments.",
-         dtDAL::ArrayActorProperty<dtDAL::ResourceDescriptor>::SetIndexFuncType(this, &FenceActorProxy::SetSegmentResourceIndex),
-         dtDAL::ArrayActorProperty<dtDAL::ResourceDescriptor>::GetDefaultFuncType(this, &FenceActorProxy::GetDefaultSegment),
-         dtDAL::ArrayActorProperty<dtDAL::ResourceDescriptor>::GetArrayFuncType(actor, &FenceActor::GetSegmentResourceArray),
-         dtDAL::ArrayActorProperty<dtDAL::ResourceDescriptor>::SetArrayFuncType(actor, &FenceActor::SetSegmentResourceArray),
+         dtCore::ArrayActorProperty<dtCore::ResourceDescriptor>::SetIndexFuncType(this, &FenceActorProxy::SetSegmentResourceIndex),
+         dtCore::ArrayActorProperty<dtCore::ResourceDescriptor>::GetDefaultFuncType(this, &FenceActorProxy::GetDefaultSegment),
+         dtCore::ArrayActorProperty<dtCore::ResourceDescriptor>::GetArrayFuncType(actor, &FenceActor::GetSegmentResourceArray),
+         dtCore::ArrayActorProperty<dtCore::ResourceDescriptor>::SetArrayFuncType(actor, &FenceActor::SetSegmentResourceArray),
          segmentResourceProp, "Fence");
       AddProperty(segmentResourceArrayProp);
 
       // Segment Points.
-      dtDAL::Vec2ActorProperty* segmentPointProp =
-         new dtDAL::Vec2ActorProperty(
+      dtCore::Vec2ActorProperty* segmentPointProp =
+         new dtCore::Vec2ActorProperty(
          "SegmentPoint", "Position",
-         dtDAL::Vec2ActorProperty::SetFuncType(this, &FenceActorProxy::SetSegmentPoint),
-         dtDAL::Vec2ActorProperty::GetFuncType(this, &FenceActorProxy::GetSegmentPoint),
+         dtCore::Vec2ActorProperty::SetFuncType(this, &FenceActorProxy::SetSegmentPoint),
+         dtCore::Vec2ActorProperty::GetFuncType(this, &FenceActorProxy::GetSegmentPoint),
          "Stores the point data for a segment.",
          "Fence");
 
-      dtDAL::FloatActorProperty* segmentTexProp =
-         new dtDAL::FloatActorProperty(
+      dtCore::FloatActorProperty* segmentTexProp =
+         new dtCore::FloatActorProperty(
          "TextureY", "Texture Y",
-         dtDAL::FloatActorProperty::SetFuncType(this, &FenceActorProxy::SetSegmentPointTextureHeight),
-         dtDAL::FloatActorProperty::GetFuncType(this, &FenceActorProxy::GetSegmentPointTextureHeight),
+         dtCore::FloatActorProperty::SetFuncType(this, &FenceActorProxy::SetSegmentPointTextureHeight),
+         dtCore::FloatActorProperty::GetFuncType(this, &FenceActorProxy::GetSegmentPointTextureHeight),
          "The vertical texture coordinate.",
          "Fence");
 
-      dtDAL::ContainerActorProperty* segmentContainerProp =
-         new dtDAL::ContainerActorProperty(
+      dtCore::ContainerActorProperty* segmentContainerProp =
+         new dtCore::ContainerActorProperty(
          "SegmentPointData", "Segment Point",
          "The segment geometry point data.",
          "Fence");
       segmentContainerProp->AddProperty(segmentPointProp);
       segmentContainerProp->AddProperty(segmentTexProp);
 
-      dtDAL::ArrayActorPropertyBase* segmentPointArrayProp =
-         new dtDAL::ArrayActorProperty<FenceActor::SegmentPointData>(
+      dtCore::ArrayActorPropertyBase* segmentPointArrayProp =
+         new dtCore::ArrayActorProperty<FenceActor::SegmentPointData>(
          "SegmentPointArray", "Segment Point Array",
          "The list of segment points.",
-         dtDAL::ArrayActorProperty<FenceActor::SegmentPointData>::SetIndexFuncType(this, &FenceActorProxy::SetSegmentPointIndex),
-         dtDAL::ArrayActorProperty<FenceActor::SegmentPointData>::GetDefaultFuncType(this, &FenceActorProxy::GetDefaultSegmentPoint),
-         dtDAL::ArrayActorProperty<FenceActor::SegmentPointData>::GetArrayFuncType(actor, &FenceActor::GetSegmentPointArray),
-         dtDAL::ArrayActorProperty<FenceActor::SegmentPointData>::SetArrayFuncType(actor, &FenceActor::SetSegmentPointArray),
+         dtCore::ArrayActorProperty<FenceActor::SegmentPointData>::SetIndexFuncType(this, &FenceActorProxy::SetSegmentPointIndex),
+         dtCore::ArrayActorProperty<FenceActor::SegmentPointData>::GetDefaultFuncType(this, &FenceActorProxy::GetDefaultSegmentPoint),
+         dtCore::ArrayActorProperty<FenceActor::SegmentPointData>::GetArrayFuncType(actor, &FenceActor::GetSegmentPointArray),
+         dtCore::ArrayActorProperty<FenceActor::SegmentPointData>::SetArrayFuncType(actor, &FenceActor::SetSegmentPointArray),
          segmentContainerProp, "Fence");
       AddProperty(segmentPointArrayProp);
 
       // Resource ID Array
-      dtDAL::IntActorProperty* pointIndexProp =
-         new dtDAL::IntActorProperty(
+      dtCore::IntActorProperty* pointIndexProp =
+         new dtCore::IntActorProperty(
          "PointIndex", "Point Index",
-         dtDAL::IntActorProperty::SetFuncType(this, &FenceActorProxy::SetPointIndex),
-         dtDAL::IntActorProperty::GetFuncType(this, &FenceActorProxy::GetPointIndex),
+         dtCore::IntActorProperty::SetFuncType(this, &FenceActorProxy::SetPointIndex),
+         dtCore::IntActorProperty::GetFuncType(this, &FenceActorProxy::GetPointIndex),
          "The Index of the point.", "Build");
 
-      dtDAL::IntActorProperty* segmentIndexProp =
-         new dtDAL::IntActorProperty(
+      dtCore::IntActorProperty* segmentIndexProp =
+         new dtCore::IntActorProperty(
          "SegmentIndex", "Segment Index",
-         dtDAL::IntActorProperty::SetFuncType(this, &FenceActorProxy::SetSegmentIndex),
-         dtDAL::IntActorProperty::GetFuncType(this, &FenceActorProxy::GetSegmentIndex),
+         dtCore::IntActorProperty::SetFuncType(this, &FenceActorProxy::SetSegmentIndex),
+         dtCore::IntActorProperty::GetFuncType(this, &FenceActorProxy::GetSegmentIndex),
          "The Index of the segment.", "Build");
 
-      dtDAL::IntActorProperty* postIDProp =
-         new dtDAL::IntActorProperty(
+      dtCore::IntActorProperty* postIDProp =
+         new dtCore::IntActorProperty(
          "PostID", "Post Mesh ID",
-         dtDAL::IntActorProperty::SetFuncType(this, &FenceActorProxy::SetPostID),
-         dtDAL::IntActorProperty::GetFuncType(this, &FenceActorProxy::GetPostID),
+         dtCore::IntActorProperty::SetFuncType(this, &FenceActorProxy::SetPostID),
+         dtCore::IntActorProperty::GetFuncType(this, &FenceActorProxy::GetPostID),
          "The ID of the mesh resource to use as this post.", "Build");
 
-      dtDAL::IntActorProperty* segmentIDProp =
-         new dtDAL::IntActorProperty(
+      dtCore::IntActorProperty* segmentIDProp =
+         new dtCore::IntActorProperty(
          "SegmentID", "Segment Texture ID",
-         dtDAL::IntActorProperty::SetFuncType(this, &FenceActorProxy::SetSegmentID),
-         dtDAL::IntActorProperty::GetFuncType(this, &FenceActorProxy::GetSegmentID),
+         dtCore::IntActorProperty::SetFuncType(this, &FenceActorProxy::SetSegmentID),
+         dtCore::IntActorProperty::GetFuncType(this, &FenceActorProxy::GetSegmentID),
          "The ID of the texture resource to use as this segment.", "Build");
 
-      dtDAL::ContainerActorProperty* resourceIDContainerProp =
-         new dtDAL::ContainerActorProperty(
+      dtCore::ContainerActorProperty* resourceIDContainerProp =
+         new dtCore::ContainerActorProperty(
          "ResourceIDContainer", "Resource IDs",
          "Stores the resource ID's for posts and segments.",
          "Build");
@@ -1302,78 +1302,78 @@ namespace dtActors
       resourceIDContainerProp->AddProperty(postIDProp);
       resourceIDContainerProp->AddProperty(segmentIDProp);
 
-      dtDAL::ArrayActorPropertyBase* postIDArrayProp =
-         new dtDAL::ArrayActorProperty<FenceActor::ResourceIDData>(
+      dtCore::ArrayActorPropertyBase* postIDArrayProp =
+         new dtCore::ArrayActorProperty<FenceActor::ResourceIDData>(
          "ResourceIDArray", "Resource ID Array",
          "The list of post ID's",
-         dtDAL::ArrayActorProperty<FenceActor::ResourceIDData>::SetIndexFuncType(this, &FenceActorProxy::SetResourceIDIndex),
-         dtDAL::ArrayActorProperty<FenceActor::ResourceIDData>::GetDefaultFuncType(this, &FenceActorProxy::GetDefaultResourceID),
-         dtDAL::ArrayActorProperty<FenceActor::ResourceIDData>::GetArrayFuncType(actor, &FenceActor::GetResourceIDArray),
-         dtDAL::ArrayActorProperty<FenceActor::ResourceIDData>::SetArrayFuncType(actor, &FenceActor::SetResourceIDArray),
+         dtCore::ArrayActorProperty<FenceActor::ResourceIDData>::SetIndexFuncType(this, &FenceActorProxy::SetResourceIDIndex),
+         dtCore::ArrayActorProperty<FenceActor::ResourceIDData>::GetDefaultFuncType(this, &FenceActorProxy::GetDefaultResourceID),
+         dtCore::ArrayActorProperty<FenceActor::ResourceIDData>::GetArrayFuncType(actor, &FenceActor::GetResourceIDArray),
+         dtCore::ArrayActorProperty<FenceActor::ResourceIDData>::SetArrayFuncType(actor, &FenceActor::SetResourceIDArray),
          resourceIDContainerProp, "Build");
       AddProperty(postIDArrayProp);
 
       // Minimum Post Distance
-      dtDAL::FloatActorProperty* postMinDistanceProp =
-         new dtDAL::FloatActorProperty(
+      dtCore::FloatActorProperty* postMinDistanceProp =
+         new dtCore::FloatActorProperty(
          "PostMinDistance", "Post Min Distance",
-         dtDAL::FloatActorProperty::SetFuncType(actor, &FenceActor::SetPostMinDistance),
-         dtDAL::FloatActorProperty::GetFuncType(actor, &FenceActor::GetPostMinDistance),
+         dtCore::FloatActorProperty::SetFuncType(actor, &FenceActor::SetPostMinDistance),
+         dtCore::FloatActorProperty::GetFuncType(actor, &FenceActor::GetPostMinDistance),
          "Sets the minimum distance between each post.", "Fence");
       AddProperty(postMinDistanceProp);
 
       // Maximum Post Distance
-      dtDAL::FloatActorProperty* postMaxDistanceProp =
-         new dtDAL::FloatActorProperty(
+      dtCore::FloatActorProperty* postMaxDistanceProp =
+         new dtCore::FloatActorProperty(
          "PostMaxDistance", "Post Max Distance",
-         dtDAL::FloatActorProperty::SetFuncType(actor, &FenceActor::SetPostMaxDistance),
-         dtDAL::FloatActorProperty::GetFuncType(actor, &FenceActor::GetPostMaxDistance),
+         dtCore::FloatActorProperty::SetFuncType(actor, &FenceActor::SetPostMaxDistance),
+         dtCore::FloatActorProperty::GetFuncType(actor, &FenceActor::GetPostMaxDistance),
          "Sets the maximum distance between each post.", "Fence");
       AddProperty(postMaxDistanceProp);
 
       // Post Scale
-      dtDAL::FloatActorProperty* fenceScale =
-         new dtDAL::FloatActorProperty(
+      dtCore::FloatActorProperty* fenceScale =
+         new dtCore::FloatActorProperty(
          "FenceScale", "Fence Scale",
-         dtDAL::FloatActorProperty::SetFuncType(actor, &FenceActor::SetFenceScale),
-         dtDAL::FloatActorProperty::GetFuncType(actor, &FenceActor::GetFenceScale),
+         dtCore::FloatActorProperty::SetFuncType(actor, &FenceActor::SetFenceScale),
+         dtCore::FloatActorProperty::GetFuncType(actor, &FenceActor::GetFenceScale),
          "Sets the scale of the fence.", "Fence");
       AddProperty(fenceScale);
 
       // Segment Height
-      dtDAL::FloatActorProperty* segmentHeightProp =
-         new dtDAL::FloatActorProperty(
+      dtCore::FloatActorProperty* segmentHeightProp =
+         new dtCore::FloatActorProperty(
          "SegmentHeight", "Segment Height",
-         dtDAL::FloatActorProperty::SetFuncType(actor, &FenceActor::SetSegmentHeight),
-         dtDAL::FloatActorProperty::GetFuncType(actor, &FenceActor::GetSegmentHeight),
+         dtCore::FloatActorProperty::SetFuncType(actor, &FenceActor::SetSegmentHeight),
+         dtCore::FloatActorProperty::GetFuncType(actor, &FenceActor::GetSegmentHeight),
          "Sets the segment height.", "Fence");
       AddProperty(segmentHeightProp);
 
       // Segment Width
-      dtDAL::FloatActorProperty* segmentWidthProp =
-         new dtDAL::FloatActorProperty(
+      dtCore::FloatActorProperty* segmentWidthProp =
+         new dtCore::FloatActorProperty(
          "SegmentWidth", "Segment Width",
-         dtDAL::FloatActorProperty::SetFuncType(actor, &FenceActor::SetSegmentWidth),
-         dtDAL::FloatActorProperty::GetFuncType(actor, &FenceActor::GetSegmentWidth),
+         dtCore::FloatActorProperty::SetFuncType(actor, &FenceActor::SetSegmentWidth),
+         dtCore::FloatActorProperty::GetFuncType(actor, &FenceActor::GetSegmentWidth),
          "Sets the segment width.", "Fence");
       AddProperty(segmentWidthProp);
 
       // Top Texture Ratio.
-      dtDAL::FloatActorProperty* topTextureRatioProp =
-         new dtDAL::FloatActorProperty(
+      dtCore::FloatActorProperty* topTextureRatioProp =
+         new dtCore::FloatActorProperty(
          "TopTextureRatio", "Texture Ratio",
-         dtDAL::FloatActorProperty::SetFuncType(actor, &FenceActor::SetTopTextureRatio),
-         dtDAL::FloatActorProperty::GetFuncType(actor, &FenceActor::GetTopTextureRatio),
+         dtCore::FloatActorProperty::SetFuncType(actor, &FenceActor::SetTopTextureRatio),
+         dtCore::FloatActorProperty::GetFuncType(actor, &FenceActor::GetTopTextureRatio),
          "The amount of the segment texture (from top to bottom) to use for the top of the fence (value 0-1).",
          "Fence");
       AddProperty(topTextureRatioProp);
 
       // Scale
-      dtDAL::Vec3ActorProperty* scaleProp =
-         new dtDAL::Vec3ActorProperty(
+      dtCore::Vec3ActorProperty* scaleProp =
+         new dtCore::Vec3ActorProperty(
          "Scale", "Scale",
-         dtDAL::Vec3ActorProperty::SetFuncType(actor, &FenceActor::SetScale),
-         dtDAL::Vec3ActorProperty::GetFuncType(actor, &FenceActor::GetScale),
+         dtCore::Vec3ActorProperty::SetFuncType(actor, &FenceActor::SetScale),
+         dtCore::Vec3ActorProperty::GetFuncType(actor, &FenceActor::GetScale),
          "Sets the post max distance (x), segment width (y), and fence scale (z).",
          "Build");
       AddProperty(scaleProp);
@@ -1392,24 +1392,24 @@ namespace dtActors
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   dtDAL::ResourceDescriptor FenceActorProxy::GetDefaultPost(void)
+   dtCore::ResourceDescriptor FenceActorProxy::GetDefaultPost(void)
    {
-      return dtDAL::ResourceDescriptor::NULL_RESOURCE;
+      return dtCore::ResourceDescriptor::NULL_RESOURCE;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   dtDAL::ResourceDescriptor FenceActorProxy::GetDefaultSegment(void)
+   dtCore::ResourceDescriptor FenceActorProxy::GetDefaultSegment(void)
    {
-      return dtDAL::ResourceDescriptor::NULL_RESOURCE;
+      return dtCore::ResourceDescriptor::NULL_RESOURCE;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void FenceActorProxy::SetPostMesh(const dtDAL::ResourceDescriptor& value)
+   void FenceActorProxy::SetPostMesh(const dtCore::ResourceDescriptor& value)
    {
       FenceActor* actor = NULL;
       GetActor(actor);
 
-      std::vector<dtDAL::ResourceDescriptor> postArray = actor->GetPostResourceArray();
+      std::vector<dtCore::ResourceDescriptor> postArray = actor->GetPostResourceArray();
       if (mPostResourceIndex >= 0 && mPostResourceIndex < (int)postArray.size())
       {
          postArray[mPostResourceIndex] = value;
@@ -1418,27 +1418,27 @@ namespace dtActors
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   dtDAL::ResourceDescriptor FenceActorProxy::GetPostMesh()
+   dtCore::ResourceDescriptor FenceActorProxy::GetPostMesh()
    {
       FenceActor* actor = NULL;
       GetActor(actor);
 
-      std::vector<dtDAL::ResourceDescriptor> postArray = actor->GetPostResourceArray();
+      std::vector<dtCore::ResourceDescriptor> postArray = actor->GetPostResourceArray();
       if (mPostResourceIndex >= 0 && mPostResourceIndex < (int)postArray.size())
       {
          return postArray[mPostResourceIndex];
       }
 
-      return dtDAL::ResourceDescriptor::NULL_RESOURCE;
+      return dtCore::ResourceDescriptor::NULL_RESOURCE;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void FenceActorProxy::SetSegmentTexture(const dtDAL::ResourceDescriptor& value)
+   void FenceActorProxy::SetSegmentTexture(const dtCore::ResourceDescriptor& value)
    {
       FenceActor* actor = NULL;
       GetActor(actor);
 
-      std::vector<dtDAL::ResourceDescriptor> segmentArray = actor->GetSegmentResourceArray();
+      std::vector<dtCore::ResourceDescriptor> segmentArray = actor->GetSegmentResourceArray();
       if (mSegmentResourceIndex >= 0 && mSegmentResourceIndex < (int)segmentArray.size())
       {
          segmentArray[mSegmentResourceIndex] = value;
@@ -1447,18 +1447,18 @@ namespace dtActors
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   dtDAL::ResourceDescriptor FenceActorProxy::GetSegmentTexture()
+   dtCore::ResourceDescriptor FenceActorProxy::GetSegmentTexture()
    {
       FenceActor* actor = NULL;
       GetActor(actor);
 
-      std::vector<dtDAL::ResourceDescriptor> segmentArray = actor->GetSegmentResourceArray();
+      std::vector<dtCore::ResourceDescriptor> segmentArray = actor->GetSegmentResourceArray();
       if (mSegmentResourceIndex >= 0 && mSegmentResourceIndex < (int)segmentArray.size())
       {
          return segmentArray[mSegmentResourceIndex];
       }
 
-      return dtDAL::ResourceDescriptor::NULL_RESOURCE;
+      return dtCore::ResourceDescriptor::NULL_RESOURCE;
    }
 
    ////////////////////////////////////////////////////////////////////////////////

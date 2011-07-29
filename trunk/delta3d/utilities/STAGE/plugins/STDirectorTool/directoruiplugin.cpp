@@ -34,9 +34,9 @@
 
 #include <dtCore/uniqueid.h>
 
-#include <dtDAL/actortype.h>
-#include <dtDAL/map.h>
-#include <dtDAL/project.h>
+#include <dtCore/actortype.h>
+#include <dtCore/map.h>
+#include <dtCore/project.h>
 
 #include <dtEditQt/editordata.h>
 
@@ -70,7 +70,7 @@ namespace dtEditQt
             mEditor->show();
             if (!GetResource().IsEmpty())
             {
-               mEditor->LoadScript(dtDAL::Project::GetInstance().GetResourcePath(GetResource()));
+               mEditor->LoadScript(dtCore::Project::GetInstance().GetResourcePath(GetResource()));
             }
 
             connect(mEditor, SIGNAL(ScriptChanged(const std::string&)), this, SIGNAL(ScriptChanged(const std::string&)));

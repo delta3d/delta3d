@@ -92,7 +92,7 @@ public:
     *
     * @return  The current actor selection.
     */
-   virtual std::vector<dtDAL::BaseActorObject*> GetActorSelection();
+   virtual std::vector<dtCore::BaseActorObject*> GetActorSelection();
 
 public slots:
 
@@ -135,7 +135,7 @@ protected:
 
 private:
 
-   dtCore::RefPtr<dtDAL::BaseActorObject> mProxy;
+   dtCore::RefPtr<dtCore::BaseActorObject> mProxy;
    dtDirector::Node*  mNode;
 };
 

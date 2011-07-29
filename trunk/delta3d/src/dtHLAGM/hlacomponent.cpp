@@ -42,8 +42,8 @@
 
 #include <dtCore/uniqueid.h>
 
-#include <dtDAL/actortype.h>
-#include <dtDAL/actorproperty.h>
+#include <dtCore/actortype.h>
+#include <dtCore/actorproperty.h>
 
 #include <dtGame/message.h>
 #include <dtGame/actorupdatemessage.h>
@@ -893,10 +893,10 @@ namespace dtHLAGM
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   const ObjectToActor* HLAComponent::GetActorMapping(const dtDAL::ActorType &type) const
+   const ObjectToActor* HLAComponent::GetActorMapping(const dtCore::ActorType &type) const
    {
-      std::map<dtCore::RefPtr<const dtDAL::ActorType>, dtCore::RefPtr<ObjectToActor> >::const_iterator actorToObjectIterator;
-      dtCore::RefPtr<const dtDAL::ActorType> refActorType = &type;
+      std::map<dtCore::RefPtr<const dtCore::ActorType>, dtCore::RefPtr<ObjectToActor> >::const_iterator actorToObjectIterator;
+      dtCore::RefPtr<const dtCore::ActorType> refActorType = &type;
       const ObjectToActor* thisObjectToActor = NULL;
 
       actorToObjectIterator = mActorToObjectMap.find(refActorType);
@@ -908,10 +908,10 @@ namespace dtHLAGM
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   ObjectToActor* HLAComponent::GetActorMapping(const dtDAL::ActorType& type)
+   ObjectToActor* HLAComponent::GetActorMapping(const dtCore::ActorType& type)
    {
-      std::map<dtCore::RefPtr<const dtDAL::ActorType>, dtCore::RefPtr<ObjectToActor> >::iterator actorToObjectIterator;
-      dtCore::RefPtr<const dtDAL::ActorType> refActorType = &type;
+      std::map<dtCore::RefPtr<const dtCore::ActorType>, dtCore::RefPtr<ObjectToActor> >::iterator actorToObjectIterator;
+      dtCore::RefPtr<const dtCore::ActorType> refActorType = &type;
       ObjectToActor* thisObjectToActor = NULL;
 
       actorToObjectIterator = mActorToObjectMap.find(refActorType);
@@ -974,7 +974,7 @@ namespace dtHLAGM
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   void HLAComponent::RegisterActorMapping(dtDAL::ActorType &type,
+   void HLAComponent::RegisterActorMapping(dtCore::ActorType &type,
                                                const std::string& objTypeName,
                                                const EntityType* thisEntityType,
                                                std::vector<AttributeToPropertyList> &oneToOneActorVector,
@@ -994,7 +994,7 @@ namespace dtHLAGM
       thisActorMapping->SetOneToManyMappingVector(oneToOneActorVector);
       thisActorMapping->SetLocalOrRemoteType(localOrRemote);
 
-      dtCore::RefPtr<dtDAL::ActorType> refActorType = &type;
+      dtCore::RefPtr<dtCore::ActorType> refActorType = &type;
 
       RegisterActorMapping(*thisActorMapping);
    }
@@ -1059,7 +1059,7 @@ namespace dtHLAGM
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   void HLAComponent::UnregisterActorMapping(dtDAL::ActorType &type)
+   void HLAComponent::UnregisterActorMapping(dtCore::ActorType &type)
    {
       if (!mExecutionName.empty())
       {
@@ -1085,9 +1085,9 @@ namespace dtHLAGM
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   dtCore::RefPtr<ObjectToActor> HLAComponent::InternalUnregisterActorMapping(const dtDAL::ActorType &type)
+   dtCore::RefPtr<ObjectToActor> HLAComponent::InternalUnregisterActorMapping(const dtCore::ActorType &type)
    {
-      std::map<dtCore::RefPtr<const dtDAL::ActorType>, dtCore::RefPtr<ObjectToActor> >::iterator actorToObjectIterator;
+      std::map<dtCore::RefPtr<const dtCore::ActorType>, dtCore::RefPtr<ObjectToActor> >::iterator actorToObjectIterator;
       dtCore::RefPtr<ObjectToActor> thisObjectToActor;
 
       actorToObjectIterator = mActorToObjectMap.find(&type);
@@ -1319,8 +1319,8 @@ namespace dtHLAGM
       toFill.reserve(mObjectToActorMap.size() + mActorToObjectMap.size());
       GetAllMappings(toFill, mObjectToActorMap, mObjectToActorMap.begin());
       GetAllMappings<const ObjectToActor,
-         const std::map<dtCore::RefPtr<const dtDAL::ActorType>, dtCore::RefPtr<ObjectToActor> >,
-         std::map<dtCore::RefPtr<const dtDAL::ActorType>, dtCore::RefPtr<ObjectToActor> >::const_iterator>
+         const std::map<dtCore::RefPtr<const dtCore::ActorType>, dtCore::RefPtr<ObjectToActor> >,
+         std::map<dtCore::RefPtr<const dtCore::ActorType>, dtCore::RefPtr<ObjectToActor> >::const_iterator>
          (toFill, mActorToObjectMap, mActorToObjectMap.begin(), &ObjectToActor::IsLocalOnly);
    }
 
@@ -1357,7 +1357,7 @@ namespace dtHLAGM
 
 
    /////////////////////////////////////////////////////////////////////////////////
-   dtGame::MessageParameter* HLAComponent::FindOrAddMessageParameter(const std::string& name, dtDAL::DataType& type, dtGame::Message& msg)
+   dtGame::MessageParameter* HLAComponent::FindOrAddMessageParameter(const std::string& name, dtCore::DataType& type, dtGame::Message& msg)
    {
       //first check to see if the named parameter is one of the default parameters
       //on an actor update message.
@@ -2028,17 +2028,17 @@ namespace dtHLAGM
           const OneToManyMapping::ParameterDefinition& paramDef = paramDefList[0];
 
           // Prepare a reference for capturing parameters.
-          dtCore::RefPtr<dtDAL::NamedArrayParameter> arrayParameter;
+          dtCore::RefPtr<dtCore::NamedArrayParameter> arrayParameter;
           if (addMissingParams)
           {
-             arrayParameter = static_cast<dtDAL::NamedArrayParameter*>(FindOrAddMessageParameter(
-                paramDef.GetGameName(), dtDAL::DataType::ARRAY, message));
+             arrayParameter = static_cast<dtCore::NamedArrayParameter*>(FindOrAddMessageParameter(
+                paramDef.GetGameName(), dtCore::DataType::ARRAY, message));
 
           }
           // This is an interaction. Do not add mapped parameters that do not belong.
           else
           {
-             arrayParameter = dynamic_cast<dtDAL::NamedArrayParameter*>(message.GetParameter(paramDef.GetGameName()));
+             arrayParameter = dynamic_cast<dtCore::NamedArrayParameter*>(message.GetParameter(paramDef.GetGameName()));
           }
 
           if (!arrayParameter.valid() )
@@ -2063,10 +2063,10 @@ namespace dtHLAGM
                 messageParams.clear();
                 try
                 {
-                   dtDAL::NamedParameter* np = arrayParameter->AddParameter(paramDef.GetGameName(), paramDef.GetGameType());
+                   dtCore::NamedParameter* np = arrayParameter->AddParameter(paramDef.GetGameName(), paramDef.GetGameType());
                    messageParams.push_back(np);
                 }
-                catch (const dtDAL::InvalidParameterException& ex)
+                catch (const dtCore::InvalidParameterException& ex)
                 {
                    ex.LogException(dtUtil::Log::LOG_WARNING, *mLogger);
                 }
@@ -2119,7 +2119,7 @@ namespace dtHLAGM
       {
          // Get the parameter Game Type and Game Name.
          const OneToManyMapping::ParameterDefinition& paramDef = paramDefList[propnum];
-         dtDAL::DataType& gameParameterDataType = paramDef.GetGameType();
+         dtCore::DataType& gameParameterDataType = paramDef.GetGameType();
          const std::string& gameParameterName = paramDef.GetGameName();
 
          // This is not an HLA mapping if an HLA name has not been specified in the mapping.
@@ -2131,12 +2131,12 @@ namespace dtHLAGM
          // The about actor id and source actor ID are special cases.
          // We create a dummy parameter to allow the mapper code to work, and
          // then set it back to the message after the fact.
-         if (gameParameterDataType == dtDAL::DataType::ACTOR &&
+         if (gameParameterDataType == dtCore::DataType::ACTOR &&
             (gameParameterName == ABOUT_ACTOR_ID ||
             gameParameterName == SENDING_ACTOR_ID))
          {
-            messageParameter = dtDAL::NamedParameter::CreateFromType(
-               dtDAL::DataType::ACTOR, gameParameterName );
+            messageParameter = dtCore::NamedParameter::CreateFromType(
+               dtCore::DataType::ACTOR, gameParameterName );
 
             if (gameParameterName == ABOUT_ACTOR_ID)
                aboutParameter = messageParameter;
@@ -2262,7 +2262,7 @@ namespace dtHLAGM
       const std::string actorName = actorID.ToString();
 
       // Get Actor Type
-      dtCore::RefPtr<const dtDAL::ActorType> actorType = GetGameManager()->FindActorType(aum.GetActorTypeCategory(), aum.GetActorTypeName());
+      dtCore::RefPtr<const dtCore::ActorType> actorType = GetGameManager()->FindActorType(aum.GetActorTypeCategory(), aum.GetActorTypeName());
       if (!actorType.valid())
       {
          if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_INFO))
@@ -2685,10 +2685,10 @@ namespace dtHLAGM
       for( unsigned i = 0; curParamDef != paramDefs.end(); ++curParamDef, ++i )
       {
          const std::string& gameName = curParamDef->GetGameName();
-         dtDAL::DataType& gameType = curParamDef->GetGameType();
+         dtCore::DataType& gameType = curParamDef->GetGameType();
          const std::string& defaultValue = curParamDef->GetDefaultValue();
 
-         if (gameType == dtDAL::DataType::UNKNOWN)
+         if (gameType == dtCore::DataType::UNKNOWN)
          {
             std::ostringstream reason;
             reason << "Parameter definition \"" << curParamDef->GetGameName() << "\" ["
@@ -2704,21 +2704,21 @@ namespace dtHLAGM
 
          // This maps with message parameters, so if the about actor id or sending actor id is
          // needed, it needs to be copied to a message parameter.
-         if (gameType == dtDAL::DataType::ACTOR &&
+         if (gameType == dtCore::DataType::ACTOR &&
                gameName == ABOUT_ACTOR_ID)
          {
             dtCore::RefPtr<dtGame::MessageParameter> tmpParam =
-                  dtDAL::NamedParameter::CreateFromType(dtDAL::DataType::ACTOR,
+                  dtCore::NamedParameter::CreateFromType(dtCore::DataType::ACTOR,
                         gameName);
 
             tmpParam->FromString(message.GetAboutActorId().ToString());
             messageParameter = tmpParam.get();
          }
-         else if (gameType == dtDAL::DataType::ACTOR &&
+         else if (gameType == dtCore::DataType::ACTOR &&
                gameName == SENDING_ACTOR_ID)
          {
             dtCore::RefPtr<dtGame::MessageParameter> tmpParam =
-                  dtDAL::NamedParameter::CreateFromType(dtDAL::DataType::ACTOR,
+                  dtCore::NamedParameter::CreateFromType(dtCore::DataType::ACTOR,
                         gameName);
 
             tmpParam->FromString(message.GetSendingActorId().ToString());
@@ -2752,7 +2752,7 @@ namespace dtHLAGM
             try
             {
                dtCore::RefPtr<dtGame::MessageParameter> tmpMsgParam
-               = dtDAL::NamedParameter::CreateFromType(gameType, gameName);
+               = dtCore::NamedParameter::CreateFromType(gameType, gameName);
                tmpMsgParam->FromString(defaultValue);
                messageParameters.push_back(tmpMsgParam.get());
             }
@@ -2829,10 +2829,10 @@ namespace dtHLAGM
       dtHLAGM::OneToManyMapping::ParameterDefinition& curParamDef = *paramDefs.begin();
 
       const std::string& gameName = curParamDef.GetGameName();
-      dtDAL::DataType& gameType = curParamDef.GetGameType();
+      dtCore::DataType& gameType = curParamDef.GetGameType();
       const std::string& defaultValue = curParamDef.GetDefaultValue();
 
-      if (gameType == dtDAL::DataType::UNKNOWN)
+      if (gameType == dtCore::DataType::UNKNOWN)
       {
          std::ostringstream reason;
          reason << "Parameter definition \"" << curParamDef.GetGameName() << "\" ["
@@ -2843,8 +2843,8 @@ namespace dtHLAGM
          return;
       }
 
-      dtCore::RefPtr<const dtDAL::NamedParameter> messageParameter;
-      dtCore::RefPtr<const dtDAL::NamedArrayParameter> arrayParameter;
+      dtCore::RefPtr<const dtCore::NamedParameter> messageParameter;
+      dtCore::RefPtr<const dtCore::NamedArrayParameter> arrayParameter;
 
       //First check for a regular parameter.
       messageParameter = message.GetParameter(gameName);
@@ -2861,7 +2861,7 @@ namespace dtHLAGM
       {
          hasAtLeastOneNonDefaultedParameter = true;
 
-         if (messageParameter->GetDataType() != dtDAL::DataType::ARRAY)
+         if (messageParameter->GetDataType() != dtCore::DataType::ARRAY)
          {
             std::ostringstream reason;
             reason << "Parameter definition \"" << curParamDef.GetGameName() << "\" ["
@@ -2875,7 +2875,7 @@ namespace dtHLAGM
             return;
          }
 
-         arrayParameter = static_cast<const dtDAL::NamedArrayParameter*>(messageParameter.get());
+         arrayParameter = static_cast<const dtCore::NamedArrayParameter*>(messageParameter.get());
       }
       else if (!defaultValue.empty())
       {
@@ -2886,13 +2886,13 @@ namespace dtHLAGM
          //Since the default value is in terms of the game value always, create a fake parameter
          //add it to the translation list with the proper game name, and set it to the default
          //value.
-         dtCore::RefPtr<dtDAL::NamedArrayParameter> newArrayParameter = new dtDAL::NamedArrayParameter(gameName);
+         dtCore::RefPtr<dtCore::NamedArrayParameter> newArrayParameter = new dtCore::NamedArrayParameter(gameName);
          arrayParameter = newArrayParameter;
 
          try
          {
-            dtCore::RefPtr<dtDAL::NamedParameter> tmpMsgParam
-            = dtDAL::NamedParameter::CreateFromType(gameType, gameName);
+            dtCore::RefPtr<dtCore::NamedParameter> tmpMsgParam
+            = dtCore::NamedParameter::CreateFromType(gameType, gameName);
             tmpMsgParam->FromString(defaultValue);
             newArrayParameter->AddParameter(*tmpMsgParam);
          }
@@ -2912,7 +2912,7 @@ namespace dtHLAGM
 
          ParameterTranslator::AllocateBuffer(buffer, bufferSize, hlaType, arrayParameter->GetSize());
 
-         std::vector<dtCore::RefPtr<const dtDAL::NamedParameter> > messageParameters;
+         std::vector<dtCore::RefPtr<const dtCore::NamedParameter> > messageParameters;
 
          size_t curSize = hlaType.GetEncodedLength();
          char* curBuf = buffer;
@@ -3129,26 +3129,26 @@ namespace dtHLAGM
             const ParameterToParameterList::ParameterDefinition& pd = paramMappingItor->GetParameterDefinitions()[i];
 
             const std::string& gameParameterName = pd.GetGameName();
-            dtDAL::DataType& gameParameterType = pd.GetGameType();
+            dtCore::DataType& gameParameterType = pd.GetGameType();
             const std::string& defaultValue = pd.GetDefaultValue();
 
             //We map with message parameters, so if a
-            if (gameParameterType == dtDAL::DataType::ACTOR &&
+            if (gameParameterType == dtCore::DataType::ACTOR &&
                gameParameterName == ABOUT_ACTOR_ID)
             {
                dtCore::RefPtr<dtGame::MessageParameter> messageParameter =
-                        dtDAL::NamedParameter::CreateFromType(dtDAL::DataType::ACTOR,
+                        dtCore::NamedParameter::CreateFromType(dtCore::DataType::ACTOR,
                                  gameParameterName);
 
                messageParameter->FromString(message.GetAboutActorId().ToString());
                messageParameters.push_back(messageParameter.get());
                hasAtLeastOneNonDefaultedParameter = true;
             }
-            else if (gameParameterType == dtDAL::DataType::ACTOR &&
+            else if (gameParameterType == dtCore::DataType::ACTOR &&
                gameParameterName == SENDING_ACTOR_ID)
             {
                dtCore::RefPtr<dtGame::MessageParameter> messageParameter =
-                        dtDAL::NamedParameter::CreateFromType(dtDAL::DataType::ACTOR,
+                        dtCore::NamedParameter::CreateFromType(dtCore::DataType::ACTOR,
                                  gameParameterName);
 
                messageParameter->FromString(message.GetSendingActorId().ToString());
@@ -3174,7 +3174,7 @@ namespace dtHLAGM
                   //add it to the translation list with the proper game name, and set it to the default
                   //value.
                   dtCore::RefPtr<dtGame::MessageParameter> tmpMsgParam
-                     = dtDAL::NamedParameter::CreateFromType(gameParameterType, gameParameterName);
+                     = dtCore::NamedParameter::CreateFromType(gameParameterType, gameParameterName);
                   tmpMsgParam->FromString(defaultValue);
 
                   messageParameter = tmpMsgParam.get();
@@ -3349,7 +3349,7 @@ namespace dtHLAGM
             const std::string& defaultValue = paramDef.GetDefaultValue();
             if (!defaultValue.empty() && !propertyString.empty())
             {
-               dtDAL::DataType& propertyDataType = paramDef.GetGameType();
+               dtCore::DataType& propertyDataType = paramDef.GetGameType();
 
                //The actor id special cases are not supported here because people can't hard
                //code actor id's with default values.

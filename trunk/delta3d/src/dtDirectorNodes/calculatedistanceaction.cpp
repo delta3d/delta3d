@@ -23,8 +23,8 @@
 
 #include <dtDirector/director.h>
 
-#include <dtDAL/doubleactorproperty.h>
-#include <dtDAL/vectoractorproperties.h>
+#include <dtCore/doubleactorproperty.h>
+#include <dtCore/vectoractorproperties.h>
 
 namespace dtDirector
 {
@@ -56,22 +56,22 @@ namespace dtDirector
       ActionNode::BuildPropertyMap();
 
       // Create our value links.
-      dtDAL::Vec3ActorProperty* leftProp = new dtDAL::Vec3ActorProperty(
+      dtCore::Vec3ActorProperty* leftProp = new dtCore::Vec3ActorProperty(
          "A", "A",
-         dtDAL::Vec3ActorProperty::SetFuncType(this, &CalculateDistanceAction::SetA),
-         dtDAL::Vec3ActorProperty::GetFuncType(this, &CalculateDistanceAction::GetA),
+         dtCore::Vec3ActorProperty::SetFuncType(this, &CalculateDistanceAction::SetA),
+         dtCore::Vec3ActorProperty::GetFuncType(this, &CalculateDistanceAction::GetA),
          "The Left value.");
 
-      dtDAL::Vec3ActorProperty* rightProp = new dtDAL::Vec3ActorProperty(
+      dtCore::Vec3ActorProperty* rightProp = new dtCore::Vec3ActorProperty(
          "B", "B",
-         dtDAL::Vec3ActorProperty::SetFuncType(this, &CalculateDistanceAction::SetB),
-         dtDAL::Vec3ActorProperty::GetFuncType(this, &CalculateDistanceAction::GetB),
+         dtCore::Vec3ActorProperty::SetFuncType(this, &CalculateDistanceAction::SetB),
+         dtCore::Vec3ActorProperty::GetFuncType(this, &CalculateDistanceAction::GetB),
          "The Right value.");
 
-      mResultProp = new dtDAL::DoubleActorProperty(
+      mResultProp = new dtCore::DoubleActorProperty(
          "Result", "Result",
-         dtDAL::DoubleActorProperty::SetFuncType(this, &CalculateDistanceAction::SetResult),
-         dtDAL::DoubleActorProperty::GetFuncType(this, &CalculateDistanceAction::GetResult),
+         dtCore::DoubleActorProperty::SetFuncType(this, &CalculateDistanceAction::SetResult),
+         dtCore::DoubleActorProperty::GetFuncType(this, &CalculateDistanceAction::GetResult),
          "The resulting output value.");
 
       // This will expose the properties in the editor and allow
@@ -84,8 +84,8 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    bool CalculateDistanceAction::Update(float simDelta, float delta, int input, bool firstUpdate)
    {
-      dtDAL::DataType& leftType = GetPropertyType("A");
-      dtDAL::DataType& rightType = GetPropertyType("B");
+      dtCore::DataType& leftType = GetPropertyType("A");
+      dtCore::DataType& rightType = GetPropertyType("B");
 
       if (leftType != rightType)
       {
@@ -94,15 +94,15 @@ namespace dtDirector
       }
 
       double result;
-      if (leftType == dtDAL::DataType::VEC2F)
+      if (leftType == dtCore::DataType::VEC2F)
       {
          result = (GetVec2("B") - GetVec2("A")).length();
       }
-      else if (leftType == dtDAL::DataType::VEC3F)
+      else if (leftType == dtCore::DataType::VEC3F)
       {
          result = (GetVec3("B") - GetVec3("A")).length();
       }
-      else if (leftType == dtDAL::DataType::VEC4F)
+      else if (leftType == dtCore::DataType::VEC4F)
       {
          result = (GetVec4("B") - GetVec4("A")).length();
       }
@@ -123,9 +123,9 @@ namespace dtDirector
       {
          if (link->GetName() == "A" || link->GetName() == "B")
          {
-            if (value->CanBeType(dtDAL::DataType::VEC2F) ||
-                value->CanBeType(dtDAL::DataType::VEC3F) ||
-                value->CanBeType(dtDAL::DataType::VEC4F))
+            if (value->CanBeType(dtCore::DataType::VEC2F) ||
+                value->CanBeType(dtCore::DataType::VEC3F) ||
+                value->CanBeType(dtCore::DataType::VEC4F))
             {
                return true;
             }

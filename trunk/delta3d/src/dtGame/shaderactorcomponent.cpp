@@ -23,10 +23,10 @@
 #include <dtGame/shaderactorcomponent.h>
 #include <dtGame/gameactor.h>
 #include <dtCore/shadermanager.h>
-#include <dtDAL/resourceactorproperty.h>
-#include <dtDAL/datatype.h>
-#include <dtDAL/project.h>
-#include <dtDAL/actortype.h>
+#include <dtCore/resourceactorproperty.h>
+#include <dtCore/datatype.h>
+#include <dtCore/project.h>
+#include <dtCore/actortype.h>
 #include <dtUtil/log.h>
 
 const dtGame::ActorComponent::ACType dtGame::ShaderActorComponent::SHADER_ACTOR_COMPONENT_TYPE("ShaderActorComponent");
@@ -34,7 +34,7 @@ const dtGame::ActorComponent::ACType dtGame::ShaderActorComponent::SHADER_ACTOR_
 ////////////////////////////////////////////////////////////////////////////////
 dtGame::ShaderActorComponent::ShaderActorComponent()
 : ActorComponent(SHADER_ACTOR_COMPONENT_TYPE),
-mCurrentShaderResource(dtDAL::ResourceDescriptor::NULL_RESOURCE)
+mCurrentShaderResource(dtCore::ResourceDescriptor::NULL_RESOURCE)
 {
 
 }
@@ -42,7 +42,7 @@ mCurrentShaderResource(dtDAL::ResourceDescriptor::NULL_RESOURCE)
 ////////////////////////////////////////////////////////////////////////////////
 dtGame::ShaderActorComponent::~ShaderActorComponent()
 {
-   SetCurrentShader(dtDAL::ResourceDescriptor::NULL_RESOURCE);
+   SetCurrentShader(dtCore::ResourceDescriptor::NULL_RESOURCE);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -62,15 +62,15 @@ void dtGame::ShaderActorComponent::BuildPropertyMap()
 {
    static const dtUtil::RefString GROUPNAME("ShaderParams");
 
-   AddProperty(new dtDAL::ResourceActorProperty(dtDAL::DataType::SHADER,
+   AddProperty(new dtCore::ResourceActorProperty(dtCore::DataType::SHADER,
       "CurrentShader", "Current Shader", 
-      dtDAL::ResourceActorProperty::SetDescFuncType(this, &dtGame::ShaderActorComponent::SetCurrentShader),
-      dtDAL::ResourceActorProperty::GetDescFuncType(this, &dtGame::ShaderActorComponent::GetCurrentShader),
+      dtCore::ResourceActorProperty::SetDescFuncType(this, &dtGame::ShaderActorComponent::SetCurrentShader),
+      dtCore::ResourceActorProperty::GetDescFuncType(this, &dtGame::ShaderActorComponent::GetCurrentShader),
       "The currently applied pixel shader", GROUPNAME));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void dtGame::ShaderActorComponent::SetCurrentShader(const dtDAL::ResourceDescriptor& shaderResource)
+void dtGame::ShaderActorComponent::SetCurrentShader(const dtCore::ResourceDescriptor& shaderResource)
 {
    mCurrentShaderResource = shaderResource;
 
@@ -106,7 +106,7 @@ void dtGame::ShaderActorComponent::SetCurrentShader(const dtDAL::ResourceDescrip
 
    try
    {
-      const std::string shaderFile = dtDAL::Project::GetInstance().GetResourcePath(mCurrentShaderResource);
+      const std::string shaderFile = dtCore::Project::GetInstance().GetResourcePath(mCurrentShaderResource);
       dtCore::ShaderManager::GetInstance().LoadAndAssignShader(*actor, shaderFile);
    }
    catch (const dtUtil::Exception& e)
@@ -119,7 +119,7 @@ void dtGame::ShaderActorComponent::SetCurrentShader(const dtDAL::ResourceDescrip
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-const dtDAL::ResourceDescriptor dtGame::ShaderActorComponent::GetCurrentShader() const
+const dtCore::ResourceDescriptor dtGame::ShaderActorComponent::GetCurrentShader() const
 {
    return mCurrentShaderResource;
 }

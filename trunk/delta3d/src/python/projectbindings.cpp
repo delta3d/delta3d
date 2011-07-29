@@ -1,10 +1,10 @@
 #include <python/dtpython.h>
-#include <dtDAL/project.h>
-#include <dtDAL/map.h>
+#include <dtCore/project.h>
+#include <dtCore/map.h>
 #include <dtCore/scene.h>
 
 using namespace boost::python;
-using namespace dtDAL;
+using namespace dtCore;
 
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(SC_overloads, SetContext, 1, 2)
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(LMIS_overloads, LoadMapIntoScene, 2, 3)

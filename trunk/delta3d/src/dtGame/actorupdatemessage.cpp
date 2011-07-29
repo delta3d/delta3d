@@ -22,8 +22,8 @@
 #include <dtGame/actorupdatemessage.h>
 #include <dtGame/exceptionenum.h>
 #include <dtGame/messageparameter.h>
-#include <dtDAL/datatype.h>
-#include <dtDAL/librarymanager.h>
+#include <dtCore/datatype.h>
+#include <dtCore/librarymanager.h>
 
 namespace dtGame
 {
@@ -96,20 +96,20 @@ namespace dtGame
    }
 
    /////////////////////////////////////////////////////////////////
-   dtDAL::NamedParameter* ActorUpdateMessage::AddUpdateParameter(const std::string &name, 
-                                                            dtDAL::DataType &type)
+   dtCore::NamedParameter* ActorUpdateMessage::AddUpdateParameter(const std::string &name, 
+                                                            dtCore::DataType &type)
    {
       return mUpdateParameters->AddParameter(name, type);
    }
 
    /////////////////////////////////////////////////////////////////
-   dtDAL::NamedParameter* ActorUpdateMessage::GetUpdateParameter( const std::string &name )
+   dtCore::NamedParameter* ActorUpdateMessage::GetUpdateParameter( const std::string &name )
    {
       return mUpdateParameters->GetParameter(name);
    }
 
    /////////////////////////////////////////////////////////////////
-   const dtDAL::NamedParameter* ActorUpdateMessage::GetUpdateParameter(const std::string &name) const
+   const dtCore::NamedParameter* ActorUpdateMessage::GetUpdateParameter(const std::string &name) const
    {
       return mUpdateParameters->GetParameter(name);
    }
@@ -127,13 +127,13 @@ namespace dtGame
    }
 
    /////////////////////////////////////////////////////////////////
-   const dtDAL::ActorType* ActorUpdateMessage::GetActorType() const
+   const dtCore::ActorType* ActorUpdateMessage::GetActorType() const
    {
-      return dtDAL::LibraryManager::GetInstance().FindActorType(GetActorTypeCategory(), GetActorTypeName());
+      return dtCore::LibraryManager::GetInstance().FindActorType(GetActorTypeCategory(), GetActorTypeName());
    }
 
    /////////////////////////////////////////////////////////////////
-   void ActorUpdateMessage::SetActorType(const dtDAL::ActorType& newActorType)
+   void ActorUpdateMessage::SetActorType(const dtCore::ActorType& newActorType)
    {
       SetActorTypeCategory(newActorType.GetCategory());
       SetActorTypeName(newActorType.GetName());

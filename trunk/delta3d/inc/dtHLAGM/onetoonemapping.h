@@ -30,7 +30,7 @@
 
 #include <string>
 #include <map>
-#include <dtDAL/datatype.h>
+#include <dtCore/datatype.h>
 #include <dtCore/refptr.h>
 #include <dtHLAGM/export.h>
 #include <dtHLAGM/distypes.h>
@@ -49,7 +49,7 @@ namespace dtHLAGM
           * Constructor.
           */
          OneToOneMapping(): mHLAType(&AttributeType::UNKNOWN),
-            mGameType(&dtDAL::DataType::UNKNOWN),
+            mGameType(&dtCore::DataType::UNKNOWN),
             mRequiredForHLA(false),
             mRequiredForGame(false), mInvalid(false)
          {
@@ -68,7 +68,7 @@ namespace dtHLAGM
          OneToOneMapping(const std::string& hlaName,
             const std::string& gameName,
             const AttributeType& attributeType,
-            const dtDAL::DataType& gameType,
+            const dtCore::DataType& gameType,
             const std::string& defaultValue,
             bool requiredForHLA,
             bool requiredForGame):
@@ -123,7 +123,7 @@ namespace dtHLAGM
           *
           * @return the Data Type of the Game Type
           */
-         const dtDAL::DataType& GetGameType() const
+         const dtCore::DataType& GetGameType() const
          {
             return *mGameType;
          }
@@ -193,7 +193,7 @@ namespace dtHLAGM
           *
           * @param GameType Data Type
           */
-         void SetGameType(const dtDAL::DataType& thisGameTypeType)
+         void SetGameType(const dtCore::DataType& thisGameTypeType)
          {
             mGameType = &thisGameTypeType;
          }
@@ -314,7 +314,7 @@ namespace dtHLAGM
          const AttributeType* mHLAType;
 
          ///The Game Type.
-         const dtDAL::DataType* mGameType;
+         const dtCore::DataType* mGameType;
 
          ///The Default Value for this Attribute/Property
          std::string mDefaultValue;

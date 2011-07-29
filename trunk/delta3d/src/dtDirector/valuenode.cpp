@@ -23,9 +23,9 @@
 #include <dtDirector/colors.h>
 #include <dtDirector/director.h>
 
-#include <dtDAL/actorproperty.h>
-#include <dtDAL/booleanactorproperty.h>
-#include <dtDAL/stringactorproperty.h>
+#include <dtCore/actorproperty.h>
+#include <dtCore/booleanactorproperty.h>
+#include <dtCore/stringactorproperty.h>
 
 #include <dtDirector/valuelink.h>
 
@@ -79,7 +79,7 @@ namespace dtDirector
          {
             // As soon as we finish loading the script, remove the initial
             // property from the node.
-            dtDAL::PropertyContainer::RemoveProperty(mInitialProperty->GetName());
+            dtCore::PropertyContainer::RemoveProperty(mInitialProperty->GetName());
          }
       }
    }
@@ -89,22 +89,22 @@ namespace dtDirector
    {
       Node::BuildPropertyMap();
 
-      AddProperty(new dtDAL::StringActorProperty(
+      AddProperty(new dtCore::StringActorProperty(
          "Name", "Name",
-         dtDAL::StringActorProperty::SetFuncType(this, &ValueNode::SetName),
-         dtDAL::StringActorProperty::GetFuncType(this, &ValueNode::GetName),
+         dtCore::StringActorProperty::SetFuncType(this, &ValueNode::SetName),
+         dtCore::StringActorProperty::GetFuncType(this, &ValueNode::GetName),
          "The variables name."));
 
-      AddProperty(new dtDAL::BooleanActorProperty(
+      AddProperty(new dtCore::BooleanActorProperty(
          "Global", "Global",
-         dtDAL::BooleanActorProperty::SetFuncType(this, &ValueNode::SetGlobal),
-         dtDAL::BooleanActorProperty::GetFuncType(this, &ValueNode::GetGlobal),
+         dtCore::BooleanActorProperty::SetFuncType(this, &ValueNode::SetGlobal),
+         dtCore::BooleanActorProperty::GetFuncType(this, &ValueNode::GetGlobal),
          "True if this value node should share it's value with other value \
          nodes from all scripts of the same name and type."));
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   bool ValueNode::IsPropertyDefault(const dtDAL::ActorProperty& prop) const
+   bool ValueNode::IsPropertyDefault(const dtCore::ActorProperty& prop) const
    {
       if (GetDirector()->GetNotifier())
       {
@@ -122,7 +122,7 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void ValueNode::ResetProperty(dtDAL::ActorProperty& prop)
+   void ValueNode::ResetProperty(dtCore::ActorProperty& prop)
    {
       if (GetDirector()->GetNotifier())
       {
@@ -137,7 +137,7 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   bool ValueNode::ShouldPropertySave(const dtDAL::ActorProperty& prop) const
+   bool ValueNode::ShouldPropertySave(const dtCore::ActorProperty& prop) const
    {
       if (GetDirector()->GetNotifier())
       {
@@ -253,13 +253,13 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   dtDAL::ActorProperty* ValueNode::GetProperty(ValueNode** outNode)
+   dtCore::ActorProperty* ValueNode::GetProperty(ValueNode** outNode)
    {
       return GetProperty(0, outNode);
    }
 
    //////////////////////////////////////////////////////////////////////////
-   dtDAL::ActorProperty* ValueNode::GetProperty(int index, ValueNode** outNode)
+   dtCore::ActorProperty* ValueNode::GetProperty(int index, ValueNode** outNode)
    {
       if (outNode) *outNode = this;
 
@@ -273,7 +273,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   bool ValueNode::CanBeType(dtDAL::DataType& type)
+   bool ValueNode::CanBeType(dtCore::DataType& type)
    {
       if (GetPropertyType() == type)
       {
@@ -283,13 +283,13 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   dtDAL::DataType& ValueNode::GetPropertyType()
+   dtCore::DataType& ValueNode::GetPropertyType()
    {
       // By default, use the property of this node.
       if (GetProperty()) return GetProperty()->GetDataType();
 
       // If there is no property, return an undefined type.
-      return dtDAL::DataType::UNKNOWN;
+      return dtCore::DataType::UNKNOWN;
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -355,7 +355,7 @@ namespace dtDirector
          return;
       }
 
-      if (dtDAL::PropertyContainer::GetProperty(mInitialProperty->GetName()))
+      if (dtCore::PropertyContainer::GetProperty(mInitialProperty->GetName()))
       {
          return;
       }

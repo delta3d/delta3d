@@ -23,9 +23,9 @@
 
 #include <dtCore/object.h>
 
-#include <dtDAL/actorproxyicon.h>
-#include <dtDAL/enumactorproperty.h>
-#include <dtDAL/functor.h>
+#include <dtCore/actorproxyicon.h>
+#include <dtCore/enumactorproperty.h>
+#include <dtCore/functor.h>
 
 ///////////////////////////////////////////////////////
 VehicleActorProxy::VehicleActorProxy()
@@ -43,7 +43,7 @@ void VehicleActorProxy::BuildPropertyMap()
    dtGame::GameActorProxy::BuildPropertyMap();
 
    VehicleActor& va = static_cast<VehicleActor&>(GetGameActor());
-   AddProperty(new dtDAL::EnumActorProperty<VehicleActor::CoordSys>("CoordinateSystem", "CoordinateSystem",
+   AddProperty(new dtCore::EnumActorProperty<VehicleActor::CoordSys>("CoordinateSystem", "CoordinateSystem",
       dtUtil::MakeFunctor(&VehicleActor::SetCoordSys, va),
       dtUtil::MakeFunctor(&VehicleActor::GetCoordSys, va),
       "Sets the coordinate system"));
@@ -54,11 +54,11 @@ void VehicleActorProxy::BuildInvokables()
    dtGame::GameActorProxy::BuildInvokables();
 }
 
-dtDAL::ActorProxyIcon* VehicleActorProxy::GetBillBoardIcon()
+dtCore::ActorProxyIcon* VehicleActorProxy::GetBillBoardIcon()
 {
    if (!mBillBoardIcon.valid())
    {
-      mBillBoardIcon = new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IMAGE_BILLBOARD_STATICMESH);
+      mBillBoardIcon = new dtCore::ActorProxyIcon(dtCore::ActorProxyIcon::IMAGE_BILLBOARD_STATICMESH);
    }
    return mBillBoardIcon.get();
 }

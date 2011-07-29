@@ -7,7 +7,7 @@
 
 #include <dtCore/system.h>
 #include <dtCore/view.h>
-#include <dtDAL/transformableactorproxy.h>
+#include <dtCore/transformableactorproxy.h>
 
 namespace dtEditQt
 {

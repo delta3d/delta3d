@@ -21,7 +21,7 @@
 #include <prefix/dtdirectornodesprefix.h>
 #include <dtDirectorNodes/comparevalueaction.h>
 
-#include <dtDAL/doubleactorproperty.h>
+#include <dtCore/doubleactorproperty.h>
 
 #include <dtDirector/director.h>
 
@@ -59,16 +59,16 @@ namespace dtDirector
       ActionNode::BuildPropertyMap();
 
       // Create our value links.
-      dtDAL::DoubleActorProperty* leftProp = new dtDAL::DoubleActorProperty(
+      dtCore::DoubleActorProperty* leftProp = new dtCore::DoubleActorProperty(
          "A", "A",
-         dtDAL::DoubleActorProperty::SetFuncType(this, &CompareValueAction::SetA),
-         dtDAL::DoubleActorProperty::GetFuncType(this, &CompareValueAction::GetA),
+         dtCore::DoubleActorProperty::SetFuncType(this, &CompareValueAction::SetA),
+         dtCore::DoubleActorProperty::GetFuncType(this, &CompareValueAction::GetA),
          "Value A.");
 
-      dtDAL::DoubleActorProperty* rightProp = new dtDAL::DoubleActorProperty(
+      dtCore::DoubleActorProperty* rightProp = new dtCore::DoubleActorProperty(
          "B", "B",
-         dtDAL::DoubleActorProperty::SetFuncType(this, &CompareValueAction::SetB),
-         dtDAL::DoubleActorProperty::GetFuncType(this, &CompareValueAction::GetB),
+         dtCore::DoubleActorProperty::SetFuncType(this, &CompareValueAction::SetB),
+         dtCore::DoubleActorProperty::GetFuncType(this, &CompareValueAction::GetB),
          "Value B.");
 
       AddProperty(leftProp);
@@ -83,10 +83,10 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    bool CompareValueAction::Update(float simDelta, float delta, int input, bool firstUpdate)
    {
-      dtDAL::DataType& aType = GetPropertyType("A");
-      dtDAL::DataType& bType = GetPropertyType("B");
-      if (aType == dtDAL::DataType::STRING ||
-         bType == dtDAL::DataType::STRING)
+      dtCore::DataType& aType = GetPropertyType("A");
+      dtCore::DataType& bType = GetPropertyType("B");
+      if (aType == dtCore::DataType::STRING ||
+         bType == dtCore::DataType::STRING)
       {
          CompareAsStrings();
       }
@@ -105,10 +105,10 @@ namespace dtDirector
       {
          if (link->GetName() == "A" || link->GetName() == "B")
          {
-            if (value->CanBeType(dtDAL::DataType::STRING)  ||
-                value->CanBeType(dtDAL::DataType::INT)     ||
-                value->CanBeType(dtDAL::DataType::FLOAT)   ||
-                value->CanBeType(dtDAL::DataType::DOUBLE))
+            if (value->CanBeType(dtCore::DataType::STRING)  ||
+                value->CanBeType(dtCore::DataType::INT)     ||
+                value->CanBeType(dtCore::DataType::FLOAT)   ||
+                value->CanBeType(dtCore::DataType::DOUBLE))
             {
                return true;
             }

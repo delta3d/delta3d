@@ -45,7 +45,7 @@
 #include <dtGame/logtag.h>
 #include <dtGame/messagefactory.h>
 #include <dtLMS/lmscomponent.h>
-#include <dtDAL/gameevent.h>
+#include <dtCore/gameevent.h>
 
 #include <iostream>
 
@@ -329,7 +329,7 @@ bool TestAARInput::HandleKeyReleased(const dtCore::Keyboard* keyboard, int key)
 }
 
 //////////////////////////////////////////////////////////////////////////
-void TestAARInput::FireEvent(dtDAL::GameEvent& event)
+void TestAARInput::FireEvent(dtCore::GameEvent& event)
 {
    if (mLogController->GetLastKnownStatus().GetStateEnum() != dtGame::LogStateEnumeration::LOGGER_STATE_PLAYBACK)
    {
@@ -450,7 +450,7 @@ void TestAARInput::SendPlayerUpdateMsg(const std::string& paramName, const float
    dtCore::RefPtr<dtGame::Message> msg = GetGameManager()->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_ACTOR_UPDATED);
    dtGame::ActorUpdateMessage& aum = static_cast<dtGame::ActorUpdateMessage&>(*msg);
    aum.SetAboutActorId(mPlayer->GetId());
-   dtGame::MessageParameter* mp = aum.AddUpdateParameter(paramName, dtDAL::DataType::FLOAT);
+   dtGame::MessageParameter* mp = aum.AddUpdateParameter(paramName, dtCore::DataType::FLOAT);
    static_cast<dtGame::FloatMessageParameter*>(mp)->SetValue(value);
    GetGameManager()->SendMessage(aum);
 }

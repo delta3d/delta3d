@@ -21,7 +21,7 @@
 #include <prefix/dtgameprefix.h>
 #include <dtGame/defaultmessageprocessor.h>
 
-#include <dtDAL/actortype.h>
+#include <dtCore/actortype.h>
 
 #include <dtGame/actorupdatemessage.h>
 #include <dtGame/basemessages.h>
@@ -140,7 +140,7 @@ namespace dtGame
       const std::string& prototypeName = msg.GetPrototypeName();
 
       dtCore::RefPtr<dtGame::GameActorProxy> gap;
-      dtCore::RefPtr<const dtDAL::ActorType> type = msg.GetActorType();
+      dtCore::RefPtr<const dtCore::ActorType> type = msg.GetActorType();
 
       // If the message has a prototype, then use it to create the actor
       if (!prototypeName.empty())

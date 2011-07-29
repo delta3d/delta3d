@@ -8,7 +8,7 @@
 #include <vector>
 #include <dtCore/refptr.h>
 
-#include <dtDAL/actortype.h>
+#include <dtCore/actortype.h>
 #include <DIS/PDUType.h>
 
 #include <cstddef>

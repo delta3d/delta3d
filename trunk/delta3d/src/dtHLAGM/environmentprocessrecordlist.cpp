@@ -28,9 +28,9 @@
 #include <dtUtil/coordinates.h>
 #include <dtHLAGM/distypes.h>
 
-#include <dtDAL/namedvectorparameters.h>
-#include <dtDAL/namedfloatparameter.h>
-#include <dtDAL/namedgroupparameter.inl>
+#include <dtCore/namedvectorparameters.h>
+#include <dtCore/namedfloatparameter.h>
+#include <dtCore/namedgroupparameter.inl>
 
 namespace dtHLAGM
 {
@@ -58,7 +58,7 @@ namespace dtHLAGM
 
    /////////////////////////////////////////////////////////
    EnvironmentProcessRecord::EnvironmentProcessRecord(const std::string& recName)
-   : mParameterData(new dtDAL::NamedGroupParameter(recName))
+   : mParameterData(new dtCore::NamedGroupParameter(recName))
    {
    }
 
@@ -92,7 +92,7 @@ namespace dtHLAGM
    }
 
    /////////////////////////////////////////////////////////
-   dtDAL::NamedGroupParameter& EnvironmentProcessRecord::GetRecordData()
+   dtCore::NamedGroupParameter& EnvironmentProcessRecord::GetRecordData()
    {
       return *mParameterData;
    }

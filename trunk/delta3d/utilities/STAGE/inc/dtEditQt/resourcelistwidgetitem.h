@@ -33,7 +33,7 @@
 #include <QtGui/QListWidgetItem>
 #include <QtGui/QIcon>
 
-#include <dtDAL/project.h>
+#include <dtCore/project.h>
 
 namespace dtEditQt
 {
@@ -76,8 +76,8 @@ namespace dtEditQt
        */
 
       // resource node
-      //ResourceTreeWidget(ResourceTreeWidget* parent, const dtDAL::ResourceDescriptor resource);
-      ResourceListWidgetItem(const dtDAL::ResourceDescriptor resource,
+      //ResourceTreeWidget(ResourceTreeWidget* parent, const dtCore::ResourceDescriptor resource);
+      ResourceListWidgetItem(const dtCore::ResourceDescriptor resource,
                              const QIcon& icon, const QString& text = "",
                              QListWidget* parent = 0,
                              QListWidgetItem::ItemType type = QListWidgetItem::Type);
@@ -87,7 +87,7 @@ namespace dtEditQt
        */
       virtual ~ResourceListWidgetItem();
 
-      dtDAL::ResourceDescriptor& getResourceDescriptor();
+      dtCore::ResourceDescriptor& getResourceDescriptor();
 
       /**
        * This returns a boolean if the current resource is in fact a resource
@@ -117,7 +117,7 @@ namespace dtEditQt
        * setResourceDescriptor
        * @param ResourceDescriptor
        */
-      void setResourceDescriptor(dtDAL::ResourceDescriptor& descriptor) { mResource = descriptor; }
+      void setResourceDescriptor(dtCore::ResourceDescriptor& descriptor) { mResource = descriptor; }
 
    private:
       void setIndex(int index) { mItemIndex = index; }
@@ -126,7 +126,7 @@ namespace dtEditQt
       // This holds the type of the currently selected resource
       // only valid resources hold a resouce type - meaning
       // we exclude categories
-      dtDAL::ResourceDescriptor mResource;
+      dtCore::ResourceDescriptor mResource;
       bool                      mIsResource;
       QString                   mCategoryFullName;
       QString                   mCategoryName;

@@ -23,7 +23,7 @@
  */
 
 #include "testpropertycontainer.h"
-#include <dtDAL/propertymacros.h>
+#include <dtCore/propertymacros.h>
 
 /////////////////////////////////////////////////////
 TestPropertyContainer::TestPropertyContainer()
@@ -44,7 +44,7 @@ TestPropertyContainer::~TestPropertyContainer()
 void TestPropertyContainer::BuildPropertyMap()
 {
    static const dtUtil::RefString GROUPNAME("TestPropertyContainer");
-   typedef dtDAL::PropertyRegHelper<TestPropertyContainer&, TestPropertyContainer> PropRegHelperType;
+   typedef dtCore::PropertyRegHelper<TestPropertyContainer&, TestPropertyContainer> PropRegHelperType;
    PropRegHelperType propRegHelper(*this, this, GROUPNAME);
 
    DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(TestFloat, "Test_Float", "Test Float", "Holds a test Float property",

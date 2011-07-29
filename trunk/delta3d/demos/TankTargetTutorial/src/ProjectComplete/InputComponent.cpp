@@ -46,31 +46,31 @@ InputComponent::InputComponent(const std::string& name, bool inPlaybackMode)
 ////////////////////////////////////////////////////////////////////
 void InputComponent::SetupEvents()
 {
-   mToggleEngineEvent = dtDAL::GameEventManager::GetInstance().FindEvent("ToggleEngine");
+   mToggleEngineEvent = dtCore::GameEventManager::GetInstance().FindEvent("ToggleEngine");
    if (mToggleEngineEvent == NULL)
    {
       LOG_ERROR("Failed to find event 'ToggleEngine'. Make sure it is in the map!");
    }
 
-   mSpeedBoost = dtDAL::GameEventManager::GetInstance().FindEvent("SpeedBoost");
+   mSpeedBoost = dtCore::GameEventManager::GetInstance().FindEvent("SpeedBoost");
    if (mSpeedBoost == NULL)
    {
       LOG_ERROR("Failed to find event 'SpeedBoost'. Make sure it is in the map!");
    }
 
-   mTankFired = dtDAL::GameEventManager::GetInstance().FindEvent("TankFired");
+   mTankFired = dtCore::GameEventManager::GetInstance().FindEvent("TankFired");
    if (mTankFired == NULL)
    {
       LOG_ERROR("Failed to find event 'TankFired'. Make sure it is in the map!");
    }
 
-   mTestShaders = dtDAL::GameEventManager::GetInstance().FindEvent("TestShaders");
+   mTestShaders = dtCore::GameEventManager::GetInstance().FindEvent("TestShaders");
    if (mTestShaders == NULL)
    {
       LOG_ERROR("Failed to find event 'TestShaders'. Make sure it is in the map!");
    }
 
-   mReset = dtDAL::GameEventManager::GetInstance().FindEvent("ResetStuff");
+   mReset = dtCore::GameEventManager::GetInstance().FindEvent("ResetStuff");
    if (mReset == NULL)
    {
       LOG_ERROR("Failed to find event 'ResetStuff'. Make sure it is in the map!");
@@ -78,9 +78,9 @@ void InputComponent::SetupEvents()
 
    // Below is an example of how to create a game event directly in code. ie, without STAGE
    // Note, we set the unique id here because that is typically done in STAGE.
-   //mToggleEngineEvent = new dtDAL::GameEvent("ToggleEngine");
+   //mToggleEngineEvent = new dtCore::GameEvent("ToggleEngine");
    //mToggleEngineEvent->SetUniqueId(dtCore::UniqueId("ToggleEngine")); // best to set the ID to help replay work until we put these in the map
-   //dtDAL::GameEventManager::GetInstance().AddEvent(*mToggleEngineEvent);
+   //dtCore::GameEventManager::GetInstance().AddEvent(*mToggleEngineEvent);
 }
 
 ////////////////////////////////////////////////////////////////////
@@ -234,7 +234,7 @@ void InputComponent::ProcessMessage(const dtGame::Message& message)
 }
 
 //////////////////////////////////////////////////////////////////////////
-void InputComponent::FireGameEvent(const dtDAL::GameEvent& event)
+void InputComponent::FireGameEvent(const dtCore::GameEvent& event)
 {
    dtCore::RefPtr<dtGame::GameEventMessage> eventMsg;
    GetGameManager()->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_GAME_EVENT, eventMsg);

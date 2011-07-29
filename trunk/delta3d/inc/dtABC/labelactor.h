@@ -28,7 +28,7 @@
 // INCLUDE DIRECTIVES
 ////////////////////////////////////////////////////////////////////////////////
 #include <dtABC/export.h>
-#include <dtDAL/actorproperty.h>
+#include <dtCore/actorproperty.h>
 #include <osgText/Text>
 #include <dtCore/transformable.h>
 
@@ -250,7 +250,7 @@ namespace dtABC
           *        associated with THIS actor instance. This should only be called by
           *        the proxy that is directly associated with this actor.
           */
-         typedef std::vector<dtCore::RefPtr<dtDAL::ActorProperty> > ActorPropertyArray;
+         typedef std::vector<dtCore::RefPtr<dtCore::ActorProperty> > ActorPropertyArray;
          void CreateActorProperties(ActorPropertyArray& outProperties);
 
       protected:

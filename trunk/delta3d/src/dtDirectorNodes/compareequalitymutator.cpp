@@ -21,7 +21,7 @@
 #include <prefix/dtdirectornodesprefix.h>
 #include <dtDirectorNodes/compareequalitymutator.h>
 
-#include <dtDAL/doubleactorproperty.h>
+#include <dtCore/doubleactorproperty.h>
 
 namespace dtDirector
 {
@@ -44,10 +44,10 @@ namespace dtDirector
       CompareMutator::BuildPropertyMap();
 
       // Create our value links.
-      dtDAL::DoubleActorProperty* epsilonProp = new dtDAL::DoubleActorProperty(
+      dtCore::DoubleActorProperty* epsilonProp = new dtCore::DoubleActorProperty(
          "Epsilon", "Epsilon",
-         dtDAL::DoubleActorProperty::SetFuncType(this, &CompareEqualityMutator::SetEpsilon),
-         dtDAL::DoubleActorProperty::GetFuncType(this, &CompareEqualityMutator::GetEpsilon),
+         dtCore::DoubleActorProperty::SetFuncType(this, &CompareEqualityMutator::SetEpsilon),
+         dtCore::DoubleActorProperty::GetFuncType(this, &CompareEqualityMutator::GetEpsilon),
          "Sets the amount of floating point error to ignore.");
       AddProperty(epsilonProp);
    }
@@ -65,14 +65,14 @@ namespace dtDirector
       {
          if (link->GetName() == "A" || link->GetName() == "B")
          {
-            if (value->CanBeType(dtDAL::DataType::STRING)  ||
-                value->CanBeType(dtDAL::DataType::BOOLEAN) ||
-                value->CanBeType(dtDAL::DataType::INT)     ||
-                value->CanBeType(dtDAL::DataType::FLOAT)   ||
-                value->CanBeType(dtDAL::DataType::DOUBLE)  ||
-                value->CanBeType(dtDAL::DataType::VEC2F)   ||
-                value->CanBeType(dtDAL::DataType::VEC3F)   ||
-                value->CanBeType(dtDAL::DataType::VEC4F))
+            if (value->CanBeType(dtCore::DataType::STRING)  ||
+                value->CanBeType(dtCore::DataType::BOOLEAN) ||
+                value->CanBeType(dtCore::DataType::INT)     ||
+                value->CanBeType(dtCore::DataType::FLOAT)   ||
+                value->CanBeType(dtCore::DataType::DOUBLE)  ||
+                value->CanBeType(dtCore::DataType::VEC2F)   ||
+                value->CanBeType(dtCore::DataType::VEC3F)   ||
+                value->CanBeType(dtCore::DataType::VEC4F))
             {
                return true;
             }

@@ -40,7 +40,7 @@
 
 #include <dtCore/uniqueid.h>
 
-#include <dtDAL/datatype.h>
+#include <dtCore/datatype.h>
 
 #include <dtHLAGM/attributetoproperty.h>
 #include <dtHLAGM/distypes.h>
@@ -53,7 +53,7 @@
 #include <dtHLAGM/spatial.h>
 #include <dtHLAGM/environmentprocessrecordlist.h>
 
-#include <dtDAL/namedgroupparameter.inl>
+#include <dtCore/namedgroupparameter.inl>
 
 #include <dtUtil/coordinates.h>
 #include <dtUtil/log.h>
@@ -180,7 +180,7 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
          char* buffer = NULL;
          size_t size = 0;
 
-         mMapping.GetParameterDefinitions()[0].SetGameType(dtDAL::DataType::VEC3);
+         mMapping.GetParameterDefinitions()[0].SetGameType(dtCore::DataType::VEC3);
          mMapping.SetHLAType(dtHLAGM::RPRAttributeType::WORLD_COORDINATE_TYPE);
          dtCore::RefPtr<dtGame::Vec3MessageParameter> vec3Param = new dtGame::Vec3MessageParameter("test");
          osg::Vec3 testVec(5.0f, 4.3f, 73.9f);
@@ -204,7 +204,7 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
 
          messageParameters.clear();
 
-         mMapping.GetParameterDefinitions()[0].SetGameType(dtDAL::DataType::VEC3F);
+         mMapping.GetParameterDefinitions()[0].SetGameType(dtCore::DataType::VEC3F);
          dtCore::RefPtr<dtGame::Vec3fMessageParameter> vec3fParam = new dtGame::Vec3fMessageParameter("test");
          osg::Vec3f testVecf(5.0f, 4.3f, 73.9f);
          vec3fParam->SetValue(testVecf);
@@ -221,7 +221,7 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
 
          messageParameters.clear();
 
-         mMapping.GetParameterDefinitions()[0].SetGameType(dtDAL::DataType::VEC3D);
+         mMapping.GetParameterDefinitions()[0].SetGameType(dtCore::DataType::VEC3D);
          dtCore::RefPtr<dtGame::Vec3dMessageParameter> vec3dParam = new dtGame::Vec3dMessageParameter("test");
          osg::Vec3d testVecd(5.0, 4.3, 73.9);
          vec3dParam->SetValue(testVecd);
@@ -241,13 +241,13 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
       void TestInOutEnviornmentProcessRecordListDataTranslation()
       {
          mMapping.GetParameterDefinitions()[0].SetGameName("Records");
-         mMapping.GetParameterDefinitions()[0].SetGameType(dtDAL::DataType::GROUP);
+         mMapping.GetParameterDefinitions()[0].SetGameType(dtCore::DataType::GROUP);
          mMapping.SetHLAType(dtHLAGM::RPRAttributeType::ENVIRONMENT_RECORD_LIST_TYPE);
 
-         dtCore::RefPtr<dtDAL::NamedGroupParameter> groupParam = new dtDAL::NamedGroupParameter("Record");
+         dtCore::RefPtr<dtCore::NamedGroupParameter> groupParam = new dtCore::NamedGroupParameter("Record");
 
-         dtCore::RefPtr<dtDAL::NamedGroupParameter> rec1 = new dtDAL::NamedGroupParameter("1");
-         dtCore::RefPtr<dtDAL::NamedGroupParameter> rec2 = new dtDAL::NamedGroupParameter("2");
+         dtCore::RefPtr<dtCore::NamedGroupParameter> rec1 = new dtCore::NamedGroupParameter("1");
+         dtCore::RefPtr<dtCore::NamedGroupParameter> rec2 = new dtCore::NamedGroupParameter("2");
 
          const osg::Vec3d testPos1(-1000.4, 1.0, 7.3);
          const osg::Vec3d testPos2(11.4, -1.66, -4366.88);
@@ -291,7 +291,7 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
 
 
          std::vector<dtCore::RefPtr<dtGame::MessageParameter> > messageParametersIn;
-         dtCore::RefPtr<dtDAL::NamedGroupParameter> groupIncoming = new dtDAL::NamedGroupParameter("Record");
+         dtCore::RefPtr<dtCore::NamedGroupParameter> groupIncoming = new dtCore::NamedGroupParameter("Record");
          messageParametersIn.push_back(groupIncoming);
 
          mParameterTranslator->MapToMessageParameters(buffer, bufSize, messageParametersIn, mMapping);
@@ -303,9 +303,9 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
 
          for (unsigned i = 0; i < 2; ++i)
          {
-            CPPUNIT_ASSERT(incomingParameters[i]->GetDataType() == dtDAL::DataType::GROUP);
+            CPPUNIT_ASSERT(incomingParameters[i]->GetDataType() == dtCore::DataType::GROUP);
 
-            const dtDAL::NamedGroupParameter& groupParam = static_cast<const dtDAL::NamedGroupParameter&>(*incomingParameters[i]);
+            const dtCore::NamedGroupParameter& groupParam = static_cast<const dtCore::NamedGroupParameter&>(*incomingParameters[i]);
 
             unsigned typeCode = groupParam.GetValue("TypeCode", 0U);
             if (typeCode == EnvironmentProcessRecord::SphereRecord2Type)
@@ -442,7 +442,7 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
 
          dtCore::RefPtr<dtGame::MessageParameter> msg;
 
-         mMapping.GetParameterDefinitions()[0].SetGameType(dtDAL::DataType::VEC3);
+         mMapping.GetParameterDefinitions()[0].SetGameType(dtCore::DataType::VEC3);
          mMapping.SetHLAType(dtHLAGM::RPRAttributeType::EULER_ANGLES_TYPE);
          dtCore::RefPtr<dtGame::Vec3MessageParameter> vec3Param = new dtGame::Vec3MessageParameter("test");
          msg = vec3Param;
@@ -470,7 +470,7 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
 
          messageParameters.clear();
 
-         mMapping.GetParameterDefinitions()[0].SetGameType(dtDAL::DataType::VEC3F);
+         mMapping.GetParameterDefinitions()[0].SetGameType(dtCore::DataType::VEC3F);
          dtCore::RefPtr<dtGame::Vec3fMessageParameter> vec3fParam = new dtGame::Vec3fMessageParameter("test");
          osg::Vec3f testVecf(1.5f, 3.11f, -2.73f);
          vec3fParam->SetValue(testVecf);
@@ -490,7 +490,7 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
 
          messageParameters.clear();
 
-         mMapping.GetParameterDefinitions()[0].SetGameType(dtDAL::DataType::VEC3D);
+         mMapping.GetParameterDefinitions()[0].SetGameType(dtCore::DataType::VEC3D);
          dtCore::RefPtr<dtGame::Vec3dMessageParameter> vec3dParam = new dtGame::Vec3dMessageParameter("test");
          osg::Vec3d testVecd(1.5f, 3.11f, -2.73f);
          vec3dParam->SetValue(testVecd);
@@ -523,7 +523,7 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
          // Set the mapping direction
          mMapping.SetHLAType( dtHLAGM::RPRAttributeType::ARTICULATED_PART_TYPE );
          dtHLAGM::OneToManyMapping::ParameterDefinition& pd = mMapping.GetParameterDefinitions()[0];
-         pd.SetGameType( dtDAL::DataType::GROUP );
+         pd.SetGameType( dtCore::DataType::GROUP );
 
          // NOTE: All values used are arbitrary and have no relevance to the
          //       real world values used in articulations.
@@ -657,7 +657,7 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
 
          dtHLAGM::OneToManyMapping::ParameterDefinition& pd = mMapping.GetParameterDefinitions()[0];
 
-         pd.SetGameType(dtDAL::DataType::ENUMERATION);
+         pd.SetGameType(dtCore::DataType::ENUMERATION);
 
          pd.AddEnumerationMapping("1", "hello");
          pd.AddEnumerationMapping(expectedResult, "correct");
@@ -696,7 +696,7 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
 
          dtHLAGM::OneToManyMapping::ParameterDefinition& pd = mMapping.GetParameterDefinitions()[0];
 
-         pd.SetGameType(dtDAL::DataType::ENUMERATION);
+         pd.SetGameType(dtCore::DataType::ENUMERATION);
 
          pd.AddEnumerationMapping("2 8 342 3 8 3 9", "hello");
          pd.AddEnumerationMapping(sExpectedResult, "correct");
@@ -724,7 +724,7 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
       {
          unsigned int expectedResult = 33;
 
-         mMapping.GetParameterDefinitions()[0].SetGameType(dtDAL::DataType::UINT);
+         mMapping.GetParameterDefinitions()[0].SetGameType(dtCore::DataType::UINT);
 
          //There is a mapping the expected result, so it should be the actual result.
          mMapping.SetHLAType(dtHLAGM::RPRAttributeType::UNSIGNED_INT_TYPE);
@@ -754,7 +754,7 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
          mRuntimeMappings.Put(rtiId,actorId);
 
          mMapping.SetHLAType(dtHLAGM::RPRAttributeType::RTI_OBJECT_ID_STRUCT_TYPE);
-         InternalTestOutgoingRTIIDTypeDataTranslation(actorId.ToString(), rtiId, dtDAL::DataType::ACTOR);
+         InternalTestOutgoingRTIIDTypeDataTranslation(actorId.ToString(), rtiId, dtCore::DataType::ACTOR);
       }
 
       void TestOutgoingStringToRTIIDStructDataTranslation()
@@ -762,7 +762,7 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
          std::string rtiId = "RTIObjectIdentifierStruct:TestID";
 
          mMapping.SetHLAType(dtHLAGM::RPRAttributeType::RTI_OBJECT_ID_STRUCT_TYPE);
-         InternalTestOutgoingRTIIDTypeDataTranslation(rtiId, rtiId, dtDAL::DataType::STRING);
+         InternalTestOutgoingRTIIDTypeDataTranslation(rtiId, rtiId, dtCore::DataType::STRING);
       }
 
       void TestIncomingSpatialDataTranslation()
@@ -1233,7 +1233,7 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
          messageParameters.push_back(groupParam.get());
 
          dtHLAGM::OneToManyMapping oneToMany("default", dtHLAGM::RPRAttributeType::ARTICULATED_PART_TYPE, false);
-         dtHLAGM::OneToManyMapping::ParameterDefinition pd("ArticulatedParameter", dtDAL::DataType::GROUP, "", false);
+         dtHLAGM::OneToManyMapping::ParameterDefinition pd("ArticulatedParameter", dtCore::DataType::GROUP, "", false);
          pd.AddEnumerationMapping("3334", "dof_notadof");
          pd.AddEnumerationMapping("2231", "dof_fakerz");
          oneToMany.GetParameterDefinitions().push_back(pd);
@@ -1249,7 +1249,7 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
          msgParam = groupParam.get()->GetParameter("ArticulatedPartMessageParam0");
          CPPUNIT_ASSERT_MESSAGE("Did not find the articulated message param that should have been added", msgParam != NULL);
 
-         if(msgParam->GetDataType() == dtDAL::DataType::GROUP)
+         if(msgParam->GetDataType() == dtCore::DataType::GROUP)
          {
             dtGame::MessageParameter* Value = (*(dtGame::GroupMessageParameter*)&(*msgParam)).GetParameter("LocationYRate");
             CPPUNIT_ASSERT_MESSAGE("Did not find the locationyRate value that should have been there", Value != NULL);
@@ -1261,7 +1261,7 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
          }
          else
          {
-            CPPUNIT_ASSERT_MESSAGE("Should have been a group msg param...", msgParam->GetDataType() != dtDAL::DataType::GROUP);
+            CPPUNIT_ASSERT_MESSAGE("Should have been a group msg param...", msgParam->GetDataType() != dtCore::DataType::GROUP);
          }
       }
 
@@ -1303,36 +1303,36 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
       void SetupSpatialMapping()
       {
          mMapping.GetParameterDefinitions()[0].SetGameName("drCode");
-         mMapping.GetParameterDefinitions()[0].SetGameType(dtDAL::DataType::INT);
+         mMapping.GetParameterDefinitions()[0].SetGameType(dtCore::DataType::INT);
 
          dtHLAGM::OneToManyMapping::ParameterDefinition pdFrozen;
          pdFrozen.SetGameName("frozen");
-         pdFrozen.SetGameType(dtDAL::DataType::BOOLEAN);
+         pdFrozen.SetGameType(dtCore::DataType::BOOLEAN);
          mMapping.GetParameterDefinitions().push_back(pdFrozen);
 
          dtHLAGM::OneToManyMapping::ParameterDefinition pdWorldCoord;
          pdFrozen.SetGameName("pos");
-         pdFrozen.SetGameType(dtDAL::DataType::VEC3);
+         pdFrozen.SetGameType(dtCore::DataType::VEC3);
          mMapping.GetParameterDefinitions().push_back(pdWorldCoord);
 
          dtHLAGM::OneToManyMapping::ParameterDefinition pdOrient;
          pdFrozen.SetGameName("rot");
-         pdFrozen.SetGameType(dtDAL::DataType::VEC3);
+         pdFrozen.SetGameType(dtCore::DataType::VEC3);
          mMapping.GetParameterDefinitions().push_back(pdOrient);
 
          dtHLAGM::OneToManyMapping::ParameterDefinition pdVel;
          pdFrozen.SetGameName("vel");
-         pdFrozen.SetGameType(dtDAL::DataType::VEC3);
+         pdFrozen.SetGameType(dtCore::DataType::VEC3);
          mMapping.GetParameterDefinitions().push_back(pdVel);
 
          dtHLAGM::OneToManyMapping::ParameterDefinition pdAccel;
          pdFrozen.SetGameName("accel");
-         pdFrozen.SetGameType(dtDAL::DataType::VEC3);
+         pdFrozen.SetGameType(dtCore::DataType::VEC3);
          mMapping.GetParameterDefinitions().push_back(pdAccel);
 
          dtHLAGM::OneToManyMapping::ParameterDefinition pdAngVel;
          pdFrozen.SetGameName("angvel");
-         pdFrozen.SetGameType(dtDAL::DataType::VEC3);
+         pdFrozen.SetGameType(dtCore::DataType::VEC3);
          mMapping.GetParameterDefinitions().push_back(pdAngVel);
 
          mMapping.SetHLAType(dtHLAGM::RPRAttributeType::SPATIAL_TYPE);
@@ -1509,7 +1509,7 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
          char* buffer = NULL;
          size_t size = 0;
 
-         mMapping.GetParameterDefinitions()[0].SetGameType(dtDAL::DataType::VEC3);
+         mMapping.GetParameterDefinitions()[0].SetGameType(dtCore::DataType::VEC3);
          mMapping.SetHLAType(type);
          dtCore::RefPtr<dtGame::Vec3MessageParameter> vec3Param = new dtGame::Vec3MessageParameter("test");
          osg::Vec3 testVec(1.5f, 3.11f, -2.73f);
@@ -1542,7 +1542,7 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
          char* buffer = NULL;
          size_t size = 0;
 
-         mMapping.GetParameterDefinitions()[0].SetGameType(dtDAL::DataType::STRING);
+         mMapping.GetParameterDefinitions()[0].SetGameType(dtCore::DataType::STRING);
          mMapping.SetHLAType(dtHLAGM::RPRAttributeType::MARKING_TYPE);
          dtCore::RefPtr<dtGame::StringMessageParameter> stringParam = new dtGame::StringMessageParameter("test");
          stringParam->SetValue(testValue);
@@ -1571,7 +1571,7 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
       }
 
       void InternalTestOutgoingRTIIDTypeDataTranslation(const std::string& testValue,
-               const std::string& expectedValue, dtDAL::DataType& dataType)
+               const std::string& expectedValue, dtCore::DataType& dataType)
       {
          std::vector<dtCore::RefPtr<const dtGame::MessageParameter> > messageParameters;
 
@@ -1580,7 +1580,7 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
 
          mMapping.GetParameterDefinitions()[0].SetGameType(dataType);
          mMapping.SetHLAType(dtHLAGM::RPRAttributeType::RTI_OBJECT_ID_STRUCT_TYPE);
-         dtCore::RefPtr<dtGame::MessageParameter> param = dtDAL::NamedParameter::CreateFromType(dataType, "test");
+         dtCore::RefPtr<dtGame::MessageParameter> param = dtCore::NamedParameter::CreateFromType(dataType, "test");
          param->FromString(testValue);
          messageParameters.push_back(param.get());
 
@@ -1608,7 +1608,7 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
          char* buffer = NULL;
          size_t size = 0;
 
-         mMapping.GetParameterDefinitions()[0].SetGameType(dtDAL::DataType::STRING);
+         mMapping.GetParameterDefinitions()[0].SetGameType(dtCore::DataType::STRING);
          if (useOctet)
          {
             mMapping.SetHLAType(dtHLAGM::RPRAttributeType::OCTET_TYPE);
@@ -1668,7 +1668,7 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
          char* buffer = NULL;
          size_t size = 0;
 
-         mMapping.GetParameterDefinitions()[0].SetGameType(dtDAL::DataType::ACTOR);
+         mMapping.GetParameterDefinitions()[0].SetGameType(dtCore::DataType::ACTOR);
          mMapping.SetHLAType(dtHLAGM::RPRAttributeType::STRING_TYPE);
          dtCore::RefPtr<dtGame::ActorMessageParameter> actorParam = new dtGame::ActorMessageParameter("test");
          actorParam->SetValue(testValue);
@@ -1791,7 +1791,7 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
          char* buffer = NULL;
          size_t size = 0;
 
-         mMapping.GetParameterDefinitions()[0].SetGameType(dtDAL::DataType::STRING);
+         mMapping.GetParameterDefinitions()[0].SetGameType(dtCore::DataType::STRING);
          dtCore::RefPtr<dtGame::StringMessageParameter> stringParam = new dtGame::StringMessageParameter("test");
          stringParam->SetValue(entityTypeValue);
          messageParameters.push_back(stringParam.get());
@@ -1845,7 +1845,7 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
          dtCore::RefPtr<dtGame::DoubleMessageParameter> doubleParam = new dtGame::DoubleMessageParameter("test");
          doubleParam->SetValue(double(expectedResult));
          messageParameters.push_back(doubleParam.get());
-         mMapping.GetParameterDefinitions()[0].SetGameType(dtDAL::DataType::DOUBLE);
+         mMapping.GetParameterDefinitions()[0].SetGameType(dtCore::DataType::DOUBLE);
 
          TranslateOutgoingParameter(buffer, size, messageParameters, mMapping);
 
@@ -1866,7 +1866,7 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
          dtCore::RefPtr<dtGame::FloatMessageParameter> floatParam = new dtGame::FloatMessageParameter("test");
          floatParam->SetValue(float(expectedResult));
          messageParameters.push_back(floatParam.get());
-         mMapping.GetParameterDefinitions()[0].SetGameType(dtDAL::DataType::FLOAT);
+         mMapping.GetParameterDefinitions()[0].SetGameType(dtCore::DataType::FLOAT);
 
          TranslateOutgoingParameter(buffer, size, messageParameters, mMapping);
 
@@ -1893,7 +1893,7 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
          //       system data type is used arbitrarily for a simple test on
          //       resource parameter mapping.
          dtCore::RefPtr<dtGame::ResourceMessageParameter> resParam
-            = new dtGame::ResourceMessageParameter(dtDAL::DataType::PARTICLE_SYSTEM,"testResourceParam");
+            = new dtGame::ResourceMessageParameter(dtCore::DataType::PARTICLE_SYSTEM,"testResourceParam");
          dtCore::RefPtr<dtGame::StringMessageParameter> strParam
             = new dtGame::StringMessageParameter("testStringParam");
          dtCore::RefPtr<dtGame::EnumMessageParameter> enumParam

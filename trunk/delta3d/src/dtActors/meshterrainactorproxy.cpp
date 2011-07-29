@@ -20,14 +20,14 @@
  */
 
 #include <dtActors/meshterrainactorproxy.h>
-#include <dtDAL/datatype.h>
-#include <dtDAL/resourceactorproperty.h>
-#include <dtDAL/resourcedescriptor.h>
-#include <dtDAL/actorproxyicon.h>
+#include <dtCore/datatype.h>
+#include <dtCore/resourceactorproperty.h>
+#include <dtCore/resourcedescriptor.h>
+#include <dtCore/actorproxyicon.h>
 #include <dtUtil/log.h>
 
 using namespace dtCore;
-using namespace dtDAL;
+using namespace dtCore;
 
 namespace dtActors
 {
@@ -46,8 +46,8 @@ namespace dtActors
       DeltaObjectActorProxy::BuildPropertyMap();
 
 
-      AddProperty(new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::TERRAIN,
-            "terrain mesh", "Terrain Mesh", dtDAL::ResourceActorProperty::SetFuncType(this, &MeshTerrainActorProxy::LoadFile),
+      AddProperty(new dtCore::ResourceActorProperty(*this, dtCore::DataType::TERRAIN,
+            "terrain mesh", "Terrain Mesh", dtCore::ResourceActorProperty::SetFuncType(this, &MeshTerrainActorProxy::LoadFile),
             "The mesh that defines the geometry of the terrain.", GROUPNAME));
    }
 
@@ -77,26 +77,26 @@ namespace dtActors
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   const dtDAL::BaseActorObject::RenderMode& MeshTerrainActorProxy::GetRenderMode()
+   const dtCore::BaseActorObject::RenderMode& MeshTerrainActorProxy::GetRenderMode()
    {
-      dtDAL::ResourceDescriptor resource = GetResource("terrain mesh");
+      dtCore::ResourceDescriptor resource = GetResource("terrain mesh");
       if (resource.IsEmpty() == false)
       {
          if (resource.GetResourceIdentifier().empty() || GetActor()->GetOSGNode() == NULL)
-            return dtDAL::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON;
+            return dtCore::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON;
          else
-            return dtDAL::BaseActorObject::RenderMode::DRAW_ACTOR;
+            return dtCore::BaseActorObject::RenderMode::DRAW_ACTOR;
       }
       else
-         return dtDAL::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON;
+         return dtCore::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON;
    }
 
    //////////////////////////////////////////////////////////////////////////
-   dtDAL::ActorProxyIcon* MeshTerrainActorProxy::GetBillBoardIcon()
+   dtCore::ActorProxyIcon* MeshTerrainActorProxy::GetBillBoardIcon()
    {
       if (!mBillBoardIcon.valid())
       {
-         mBillBoardIcon = new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IMAGE_BILLBOARD_MESHTERRAIN);
+         mBillBoardIcon = new dtCore::ActorProxyIcon(dtCore::ActorProxyIcon::IMAGE_BILLBOARD_MESHTERRAIN);
       }
 
       return mBillBoardIcon.get();

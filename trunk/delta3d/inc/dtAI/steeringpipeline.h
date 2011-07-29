@@ -23,7 +23,7 @@
 #include <vector>
 #include <dtUtil/log.h>
 #include <dtUtil/functor.h>
-#include <dtDAL/propertymacros.h>
+#include <dtCore/propertymacros.h>
 #include <dtAI/steeringbehavior.h>
 
 namespace dtAI

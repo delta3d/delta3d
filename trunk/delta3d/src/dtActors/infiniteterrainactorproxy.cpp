@@ -20,10 +20,10 @@
  */
 
 #include "dtActors/infiniteterrainactorproxy.h"
-#include "dtDAL/enginepropertytypes.h"
-#include <dtDAL/functor.h>
+#include "dtCore/enginepropertytypes.h"
+#include <dtCore/functor.h>
 
-using namespace dtDAL;
+using namespace dtCore;
 using namespace dtCore;
 
 namespace dtActors
@@ -39,10 +39,10 @@ namespace dtActors
       const std::string &GROUPNAME = "InfiniteTerrain";
       TransformableActorProxy::BuildPropertyMap();
 
-      RemoveProperty(dtDAL::TransformableActorProxy::PROPERTY_COLLISION_TYPE);
-      RemoveProperty(dtDAL::TransformableActorProxy::PROPERTY_COLLISION_RADIUS);
-      RemoveProperty(dtDAL::TransformableActorProxy::PROPERTY_COLLISION_LENGTH);
-      RemoveProperty(dtDAL::TransformableActorProxy::PROPERTY_COLLISION_BOX);
+      RemoveProperty(dtCore::TransformableActorProxy::PROPERTY_COLLISION_TYPE);
+      RemoveProperty(dtCore::TransformableActorProxy::PROPERTY_COLLISION_RADIUS);
+      RemoveProperty(dtCore::TransformableActorProxy::PROPERTY_COLLISION_LENGTH);
+      RemoveProperty(dtCore::TransformableActorProxy::PROPERTY_COLLISION_BOX);
 
       InfiniteTerrain *ter = static_cast<InfiniteTerrain*>(GetActor());
 

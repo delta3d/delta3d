@@ -29,8 +29,8 @@
 #include <dtUtil/geometrycollector.h>
 #include <dtUtil/librarysharingmanager.h>
 
-#include <dtDAL/project.h>
-#include <dtDAL/map.h>
+#include <dtCore/project.h>
+#include <dtCore/map.h>
 
 #include <dtAnim/chardrawable.h>
 #include <dtAnim/cal3ddatabase.h>
@@ -154,7 +154,7 @@ void ObjectViewer::OnLoadMapFile(const std::string& filename)
 
    OnUnloadGeometryFile();
 
-   dtCore::RefPtr<dtDAL::Map> map;
+   dtCore::RefPtr<dtCore::Map> map;
 
    // Attempt to open the map.
    try
@@ -164,7 +164,7 @@ void ObjectViewer::OnLoadMapFile(const std::string& filename)
       // We'll be creating the scene by hand using decorators
       // and since the load function needs a scene, give it temp
       dtCore::RefPtr<dtCore::Scene> dummy = new dtCore::Scene;
-      map = &dtDAL::Project::GetInstance().LoadMapIntoScene(filename, *dummy);
+      map = &dtCore::Project::GetInstance().LoadMapIntoScene(filename, *dummy);
    }
    catch (dtUtil::Exception& e)
    {
@@ -216,14 +216,14 @@ void ObjectViewer::OnLoadMapFile(const std::string& filename)
       osg::Vec3 minBounds;
       osg::Vec3 maxBounds;
 
-      const std::map<dtCore::UniqueId, dtCore::RefPtr<dtDAL::BaseActorObject> >& proxies =
+      const std::map<dtCore::UniqueId, dtCore::RefPtr<dtCore::BaseActorObject> >& proxies =
          mMap->GetAllProxies();
 
-      std::map<dtCore::UniqueId,dtCore::RefPtr<dtDAL::BaseActorObject> >::const_iterator itor;
+      std::map<dtCore::UniqueId,dtCore::RefPtr<dtCore::BaseActorObject> >::const_iterator itor;
 
       for (itor = proxies.begin(); itor != proxies.end(); ++itor)
       {
-         dtDAL::BaseActorObject *proxy = const_cast<dtDAL::BaseActorObject*>(itor->second.get());
+         dtCore::BaseActorObject *proxy = const_cast<dtCore::BaseActorObject*>(itor->second.get());
 
          dtCore::DeltaDrawable* drawable = proxy->GetActor();
          if (drawable)
@@ -372,7 +372,7 @@ void ObjectViewer::OnUnloadGeometryFile()
 
       try
       {
-         dtDAL::Project::GetInstance().CloseMap(*mMap, true);
+         dtCore::Project::GetInstance().CloseMap(*mMap, true);
          mMap = NULL;
       }
       catch (const dtUtil::Exception &e)
@@ -891,13 +891,13 @@ void ObjectViewer::ClearLights()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ObjectViewer::clearProxies(const std::map<dtCore::UniqueId, dtCore::RefPtr<dtDAL::BaseActorObject> >& proxies)
+void ObjectViewer::clearProxies(const std::map<dtCore::UniqueId, dtCore::RefPtr<dtCore::BaseActorObject> >& proxies)
 {
-   std::map<dtCore::UniqueId,dtCore::RefPtr<dtDAL::BaseActorObject> >::const_iterator itor;
+   std::map<dtCore::UniqueId,dtCore::RefPtr<dtCore::BaseActorObject> >::const_iterator itor;
 
    for (itor = proxies.begin(); itor != proxies.end(); ++itor)
    {
-      dtDAL::BaseActorObject* proxy = const_cast<dtDAL::BaseActorObject*>(itor->second.get());
+      dtCore::BaseActorObject* proxy = const_cast<dtCore::BaseActorObject*>(itor->second.get());
 
       dtCore::DeltaDrawable* drawable = proxy->GetActor();
       if (drawable)

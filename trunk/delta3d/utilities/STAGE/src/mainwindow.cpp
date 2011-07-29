@@ -46,9 +46,9 @@
 #include <dtActors/volumeeditactor.h>
 #include <dtCore/deltawin.h>
 #include <dtCore/transform.h>
-#include <dtDAL/project.h>
-#include <dtDAL/librarymanager.h>
-#include <dtDAL/map.h>
+#include <dtCore/project.h>
+#include <dtCore/librarymanager.h>
+#include <dtCore/map.h>
 #include <dtUtil/datapathutils.h>
 #include <dtUtil/fileutils.h>
 #include <dtUtil/mswinmacros.h>
@@ -130,14 +130,14 @@ namespace dtEditQt
       }
 
       // Ensure that the global singletons are lazily instantiated now
-      dtDAL::LibraryManager::GetInstance();
+      dtCore::LibraryManager::GetInstance();
       EditorActions::GetInstance();
       EditorEvents::GetInstance();
       EditorData::GetInstance();
 
       // alert the project instance that we are working within STAGE
       // changed on 7/10/2006 banderegg
-      dtDAL::Project::GetInstance().SetEditMode(true);
+      dtCore::Project::GetInstance().SetEditMode(true);
 
       ViewportManager::GetInstance();
 
@@ -362,8 +362,8 @@ namespace dtEditQt
                   mPropertyWindow, SLOT(ActorPropertyChanged(ActorProxyRefPtr, ActorPropertyRefPtr)));
 
          // listen for name changes so we can update our group box label or handle undo changes
-         connect(&EditorEvents::GetInstance(), SIGNAL(ProxyNameChanged(dtDAL::BaseActorObject&, std::string)),
-                  mPropertyWindow, SLOT(ProxyNameChanged(dtDAL::BaseActorObject&, std::string)));
+         connect(&EditorEvents::GetInstance(), SIGNAL(ProxyNameChanged(dtCore::BaseActorObject&, std::string)),
+                  mPropertyWindow, SLOT(ProxyNameChanged(dtCore::BaseActorObject&, std::string)));
 
          mPropertyWindow->setFeatures(QDockWidget::AllDockWidgetFeatures);
          addDockWidget(Qt::LeftDockWidgetArea,  mPropertyWindow);
@@ -508,7 +508,7 @@ namespace dtEditQt
    {
       //The persistent pseudo-actor that is used for special-purpose editing
       mVolEditActorProxy =
-         dynamic_cast<dtActors::VolumeEditActorProxy*>(dtDAL::LibraryManager::GetInstance().CreateActorProxy("dtutil", "Volume Edit").get());
+         dynamic_cast<dtActors::VolumeEditActorProxy*>(dtCore::LibraryManager::GetInstance().CreateActorProxy("dtutil", "Volume Edit").get());
       ViewportManager::GetInstance().getMasterScene()->AddChild(mVolEditActorProxy->GetActor());
 
       //move the VolumeEditActor away from the Perspective camera so we can see it.
@@ -530,7 +530,7 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void MainWindow::enableActions()
    {
-      const bool hasProject    = dtDAL::Project::GetInstance().IsContextValid();
+      const bool hasProject    = dtCore::Project::GetInstance().IsContextValid();
       const bool hasCurrentMap = (EditorData::GetInstance().getCurrentMap() != NULL);
       const bool hasBoth       = hasProject && hasCurrentMap;
 
@@ -753,8 +753,8 @@ namespace dtEditQt
             ActorPropertyRefPtr)));
 
          // listen for name changes so we can update our group box label or handle undo changes
-         disconnect(&EditorEvents::GetInstance(), SIGNAL(ProxyNameChanged(dtDAL::BaseActorObject&, std::string)),
-                  mPropertyWindow, SLOT(ProxyNameChanged(dtDAL::BaseActorObject&, std::string)));
+         disconnect(&EditorEvents::GetInstance(), SIGNAL(ProxyNameChanged(dtCore::BaseActorObject&, std::string)),
+                  mPropertyWindow, SLOT(ProxyNameChanged(dtCore::BaseActorObject&, std::string)));
       }
 
       EditorData& editorData = EditorData::GetInstance();
@@ -890,10 +890,10 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void MainWindow::onActorPropertyChanged(dtCore::RefPtr<dtDAL::BaseActorObject> proxy,
-      dtCore::RefPtr<dtDAL::ActorProperty> property)
+   void MainWindow::onActorPropertyChanged(dtCore::RefPtr<dtCore::BaseActorObject> proxy,
+      dtCore::RefPtr<dtCore::ActorProperty> property)
    {
-      if (!dtDAL::Project::GetInstance().IsContextValid())
+      if (!dtCore::Project::GetInstance().IsContextValid())
       {
          return;
       }
@@ -907,7 +907,7 @@ namespace dtEditQt
    {
       EditorActions::GetInstance().mWasCancelled = false;
 
-      dtDAL::Map* curMap = dtEditQt::EditorData::GetInstance().getCurrentMap();
+      dtCore::Map* curMap = dtEditQt::EditorData::GetInstance().getCurrentMap();
       if (curMap == NULL)
       {
          EditorEvents::GetInstance().emitEditorCloseEvent();
@@ -973,7 +973,7 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void MainWindow::onActorProxyDestroyed(dtCore::RefPtr<dtDAL::BaseActorObject> proxy)
+   void MainWindow::onActorProxyDestroyed(dtCore::RefPtr<dtCore::BaseActorObject> proxy)
    {
       EditorData::GetInstance().getCurrentMap()->SetModified(true);
       updateWindowTitle();
@@ -981,7 +981,7 @@ namespace dtEditQt
       // JPH: Moved this into the undo manager, it's very important
       // that this undo event is created before the destroy event.
       //// Remove this actor from any groups it may have been.
-      //dtDAL::Map* map = EditorData::GetInstance().getCurrentMap();
+      //dtCore::Map* map = EditorData::GetInstance().getCurrentMap();
       //if (map)
       //{
       //   map->RemoveActorFromGroups(proxy.get());
@@ -990,7 +990,7 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void MainWindow::onActorProxyNameChanged(dtDAL::BaseActorObject& proxy, std::string oldName)
+   void MainWindow::onActorProxyNameChanged(dtCore::BaseActorObject& proxy, std::string oldName)
    {
       EditorData::GetInstance().getCurrentMap()->OnProxyRenamed(proxy);
       EditorData::GetInstance().getCurrentMap()->SetModified(true);
@@ -998,7 +998,7 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void MainWindow::onActorProxyCreated(dtCore::RefPtr<dtDAL::BaseActorObject> proxy, bool forceNoAdjustments)
+   void MainWindow::onActorProxyCreated(dtCore::RefPtr<dtCore::BaseActorObject> proxy, bool forceNoAdjustments)
    {
       EditorData::GetInstance().getCurrentMap()->SetModified(true);
       updateWindowTitle();
@@ -1072,8 +1072,8 @@ namespace dtEditQt
       connect(&EditorEvents::GetInstance(),
          SIGNAL(actorPropertyChanged(ActorProxyRefPtr, ActorPropertyRefPtr)),
          this, SLOT(onActorPropertyChanged(ActorProxyRefPtr, ActorPropertyRefPtr)));
-      connect(&EditorEvents::GetInstance(), SIGNAL(ProxyNameChanged(dtDAL::BaseActorObject&, std::string)),
-         this, SLOT(onActorProxyNameChanged(dtDAL::BaseActorObject&, std::string)));
+      connect(&EditorEvents::GetInstance(), SIGNAL(ProxyNameChanged(dtCore::BaseActorObject&, std::string)),
+         this, SLOT(onActorProxyNameChanged(dtCore::BaseActorObject&, std::string)));
       connect(&EditorEvents::GetInstance(), SIGNAL(showStatusBarMessage(const QString, int)),
          this, SLOT(showStatusBarMessage(const QString, int)));
 
@@ -1465,7 +1465,7 @@ namespace dtEditQt
 
       try
       {
-         hasBackup = dtDAL::Project::GetInstance().HasBackup(str);
+         hasBackup = dtCore::Project::GetInstance().HasBackup(str);
       }
       catch (dtUtil::Exception e)
       {
@@ -1482,8 +1482,8 @@ namespace dtEditQt
          if (result == 0)
          {
             startWaitCursor();
-            dtDAL::Map& backupMap =
-               dtDAL::Project::GetInstance().OpenMapBackup(str);
+            dtCore::Map& backupMap =
+               dtCore::Project::GetInstance().OpenMapBackup(str);
 
             EditorActions::GetInstance().changeMaps(
                EditorData::GetInstance().getCurrentMap(), &backupMap);
@@ -1501,14 +1501,14 @@ namespace dtEditQt
             }
             else
             {
-               dtDAL::Project::GetInstance().ClearBackup(str);
+               dtCore::Project::GetInstance().ClearBackup(str);
             }
             //*/
 
             startWaitCursor();
-            dtDAL::Project::GetInstance().ClearBackup(str);
+            dtCore::Project::GetInstance().ClearBackup(str);
             EditorActions::GetInstance().changeMaps(EditorData::GetInstance().getCurrentMap(),
-               &dtDAL::Project::GetInstance().GetMap(str));
+               &dtCore::Project::GetInstance().GetMap(str));
             EditorData::GetInstance().addRecentMap(str);
             endWaitCursor();
          }
@@ -1522,7 +1522,7 @@ namespace dtEditQt
          startWaitCursor();
          try
          {
-            dtDAL::Map& m = dtDAL::Project::GetInstance().GetMap(str);
+            dtCore::Map& m = dtCore::Project::GetInstance().GetMap(str);
             EditorActions::GetInstance().changeMaps(
                EditorData::GetInstance().getCurrentMap(), &m);
             EditorData::GetInstance().addRecentMap(m.GetName());

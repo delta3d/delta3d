@@ -30,23 +30,23 @@
 #include <dtCore/object.h>
 #include <dtCore/scene.h>
 
-#include <dtDAL/arrayactorproperty.h>
-#include <dtDAL/arrayactorpropertybase.h>
-#include <dtDAL/colorrgbaactorproperty.h>
-#include <dtDAL/containeractorproperty.h>
-#include <dtDAL/groupactorproperty.h>
-#include <dtDAL/intactorproperty.h>
-#include <dtDAL/namedparameter.h>
-#include <dtDAL/propertymacros.h>
-#include <dtDAL/resourceactorproperty.h>
-#include <dtDAL/stringactorproperty.h>
-#include <dtDAL/vectoractorproperties.h>
-#include <dtDAL/propertycontaineractorproperty.h>
+#include <dtCore/arrayactorproperty.h>
+#include <dtCore/arrayactorpropertybase.h>
+#include <dtCore/colorrgbaactorproperty.h>
+#include <dtCore/containeractorproperty.h>
+#include <dtCore/groupactorproperty.h>
+#include <dtCore/intactorproperty.h>
+#include <dtCore/namedparameter.h>
+#include <dtCore/propertymacros.h>
+#include <dtCore/resourceactorproperty.h>
+#include <dtCore/stringactorproperty.h>
+#include <dtCore/vectoractorproperties.h>
+#include <dtCore/propertycontaineractorproperty.h>
 
 #include <dtUtil/log.h>
 
 using namespace dtCore;
-using namespace dtDAL;
+using namespace dtCore;
 using namespace dtActors;
 
 const dtUtil::RefString ExampleTestPropertyProxy::GROUPNAME("Example Test");
@@ -70,7 +70,7 @@ ExampleTestPropertyProxy::ExampleTestPropertyProxy()
   , mTestString()
   , mTestEnum(&TestEnum::OPTION1)
   , mTestPropertyContainer(new TestPropertyContainer)
-  , mGroupParam(new dtDAL::NamedGroupParameter("test"))
+  , mGroupParam(new dtCore::NamedGroupParameter("test"))
   , mStringArrayIndex(0)
   , mIntArrayIndex(0)
   , mArrayArrayIndex(0)
@@ -88,7 +88,7 @@ void ExampleTestPropertyProxy::BuildPropertyMap()
    Object* obj = dynamic_cast<Object*>(GetActor());
    if (obj == NULL)
    {
-      throw dtDAL::InvalidActorException( "Actor should be type dtCore::Object", __FILE__, __LINE__);
+      throw dtCore::InvalidActorException( "Actor should be type dtCore::Object", __FILE__, __LINE__);
    }
 
    typedef PropertyRegHelper<ExampleTestPropertyProxy&, ExampleTestPropertyProxy> PropRegHelperType;
@@ -142,7 +142,7 @@ void ExampleTestPropertyProxy::BuildPropertyMap()
             "Holds a test String property with a max length of 10",
             PropRegHelperType, propRegHelper);
 
-   static_cast<dtDAL::StringActorProperty*>(GetProperty("Test_String2"))->SetMaxLength(10);
+   static_cast<dtCore::StringActorProperty*>(GetProperty("Test_String2"))->SetMaxLength(10);
 
    AddProperty(new ColorRgbaActorProperty("Test_Color", "Test Color",
       ColorRgbaActorProperty::SetFuncType(this, &ExampleTestPropertyProxy::SetTestColor),
@@ -169,9 +169,9 @@ void ExampleTestPropertyProxy::BuildPropertyMap()
             "Holds a test game event property",
             PropRegHelperType, propRegHelper);
 
-   mGroupParam->AddParameter("FloatParam", dtDAL::DataType::FLOAT);
-   mGroupParam->AddParameter("IntParam", dtDAL::DataType::INT);
-   mGroupParam->AddParameter("StringParam", dtDAL::DataType::STRING);
+   mGroupParam->AddParameter("FloatParam", dtCore::DataType::FLOAT);
+   mGroupParam->AddParameter("IntParam", dtCore::DataType::INT);
+   mGroupParam->AddParameter("StringParam", dtCore::DataType::STRING);
 
    DT_REGISTER_PROPERTY_WITH_LABEL(TestGroup, "Test Group Property",
             "Holds a test group property",
@@ -277,10 +277,10 @@ void ExampleTestPropertyProxy::BuildPropertyMap()
    arrayString = arrayArrayProp->ToString();
    arrayArrayProp->FromString(arrayString);
 
-   AddProperty(new dtDAL::SimplePropertyContainerActorProperty<TestPropertyContainer>("TestPropertyContainer",
+   AddProperty(new dtCore::SimplePropertyContainerActorProperty<TestPropertyContainer>("TestPropertyContainer",
             "Test Property Container",
-            dtDAL::SimplePropertyContainerActorProperty<TestPropertyContainer>::SetFuncType(this, &ExampleTestPropertyProxy::SetTestPropertyContainer),
-            dtDAL::SimplePropertyContainerActorProperty<TestPropertyContainer>::GetFuncType(this, &ExampleTestPropertyProxy::GetTestPropertyContainer),
+            dtCore::SimplePropertyContainerActorProperty<TestPropertyContainer>::SetFuncType(this, &ExampleTestPropertyProxy::SetTestPropertyContainer),
+            dtCore::SimplePropertyContainerActorProperty<TestPropertyContainer>::GetFuncType(this, &ExampleTestPropertyProxy::GetTestPropertyContainer),
             "", GROUPNAME));
 }
 

@@ -20,8 +20,8 @@
  */
 
 #include <dtAnim/animationcomponent.h>
-#include <dtDAL/gameevent.h>
-#include <dtDAL/gameeventmanager.h>
+#include <dtCore/gameevent.h>
+#include <dtCore/gameeventmanager.h>
 #include <dtGame/basemessages.h>
 #include <dtGame/defaultgroundclamper.h>
 #include <dtGame/messagetype.h>
@@ -309,7 +309,7 @@ void AnimationComponent::OnAnimationEvent(const std::string& eventName)
    if (gm != NULL)
    {
       // Find any current reference to the specified event name.
-      dtDAL::GameEvent* gameEvent = dtDAL::GameEventManager::GetInstance().FindEvent(eventName);
+      dtCore::GameEvent* gameEvent = dtCore::GameEventManager::GetInstance().FindEvent(eventName);
 
       // If the event was not found, log a warning and create it to ensure
       // an event is still fired anyway.
@@ -323,8 +323,8 @@ void AnimationComponent::OnAnimationEvent(const std::string& eventName)
          LOG_WARNING(oss.str());
 
          // Create and add the new event.
-         gameEvent = new dtDAL::GameEvent(eventName);
-         dtDAL::GameEventManager::GetInstance().AddEvent(*gameEvent);
+         gameEvent = new dtCore::GameEvent(eventName);
+         dtCore::GameEventManager::GetInstance().AddEvent(*gameEvent);
       }
 
       // DEBUG:

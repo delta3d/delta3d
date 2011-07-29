@@ -62,7 +62,7 @@ namespace dtEditQt
       /**
        * Constructor
        */
-      SkeletalMeshBrowser(dtDAL::DataType& type, QWidget* parent = 0);
+      SkeletalMeshBrowser(dtCore::DataType& type, QWidget* parent = 0);
 
       /**
        * Destructor

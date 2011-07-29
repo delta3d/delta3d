@@ -37,13 +37,13 @@
 #include <dtEditQt/gameeventdialog.h>
 #include <dtEditQt/gameeventsdialog.h>
 
-#include <dtDAL/actorproperty.h>
-#include <dtDAL/actorproxy.h>
-#include <dtDAL/datatype.h>
-#include <dtDAL/gameevent.h>
-#include <dtDAL/gameeventactorproperty.h>
-#include <dtDAL/gameeventmanager.h>
-#include <dtDAL/map.h>
+#include <dtCore/actorproperty.h>
+#include <dtCore/actorproxy.h>
+#include <dtCore/datatype.h>
+#include <dtCore/gameevent.h>
+#include <dtCore/gameeventactorproperty.h>
+#include <dtCore/gameeventmanager.h>
+#include <dtCore/map.h>
 
 #include <dtUtil/log.h>
 
@@ -60,10 +60,10 @@
 #include <QtGui/QVBoxLayout>
 
 using std::vector;
-using dtDAL::GameEvent;
-using dtDAL::Map;
-using dtDAL::BaseActorObject;
-using dtDAL::ActorProperty;
+using dtCore::GameEvent;
+using dtCore::Map;
+using dtCore::BaseActorObject;
+using dtCore::ActorProperty;
 
 namespace dtEditQt
 {
@@ -186,7 +186,7 @@ namespace dtEditQt
    //////////////////////////////////////////////////////////////////
    void GameEventsDialog::CreateNewGameEvent()
    {
-      dtCore::RefPtr<dtDAL::GameEvent> newEvent = new dtDAL::GameEvent();
+      dtCore::RefPtr<dtCore::GameEvent> newEvent = new dtCore::GameEvent();
 
       GameEventDialog editDialog(this, *newEvent, true);
       if (editDialog.exec() == QDialog::Accepted)
@@ -215,7 +215,7 @@ namespace dtEditQt
       curMap.GetAllProxies(proxies);
 
       vector<ActorProperty*> properties;
-      vector<dtDAL::GameEventActorProperty*> eventPropsToClear;
+      vector<dtCore::GameEventActorProperty*> eventPropsToClear;
       // fail if actors are in the library
       for (unsigned int j = 0; j < proxies.size(); ++j)
       {
@@ -223,9 +223,9 @@ namespace dtEditQt
          for (unsigned int k = 0; k < properties.size(); ++k)
          {
             ActorProperty* prop = properties[k];
-            if (prop->GetDataType() == dtDAL::DataType::GAME_EVENT)
+            if (prop->GetDataType() == dtCore::DataType::GAME_EVENT)
             {
-               dtDAL::GameEventActorProperty* geProp = static_cast<dtDAL::GameEventActorProperty*>(prop);
+               dtCore::GameEventActorProperty* geProp = static_cast<dtCore::GameEventActorProperty*>(prop);
                GameEvent* propEvent = geProp->GetValue();
                if (propEvent != NULL && *propEvent == *eventToDelete)
                {

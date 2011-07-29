@@ -25,7 +25,7 @@
 #include <dtAnim/posemesh.h>
 #include <dtAnim/characterwrapper.h>
 
-#include <dtDAL/basexmlreaderwriter.h>
+#include <dtCore/basexmlreaderwriter.h>
 
 #include <dtUtil/datapathutils.h>
 #include <dtUtil/xercesparser.h>
@@ -339,8 +339,8 @@ void Viewer::OnSaveCharFile(const QString& filename)
          try
          {
             // Wrap and write the data.
-            dtCore::RefPtr<dtDAL::WriteWrapperOSGObject<Cal3DModelData> > obj
-               = new dtDAL::WriteWrapperOSGObject<Cal3DModelData>(*data);
+            dtCore::RefPtr<dtCore::WriteWrapperOSGObject<Cal3DModelData> > obj
+               = new dtCore::WriteWrapperOSGObject<Cal3DModelData>(*data);
             osgDB::writeObjectFile(*obj, filename.toStdString());
          }
          catch(std::exception& e)

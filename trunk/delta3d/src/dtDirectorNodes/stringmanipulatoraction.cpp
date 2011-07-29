@@ -23,8 +23,8 @@
 
 #include <dtDirector/director.h>
 
-#include <dtDAL/stringactorproperty.h>
-#include <dtDAL/intactorproperty.h>
+#include <dtCore/stringactorproperty.h>
+#include <dtCore/intactorproperty.h>
 
 #include <dtUtil/stringutils.h>
 
@@ -62,38 +62,38 @@ namespace dtDirector
    {
       ActionNode::BuildPropertyMap();
 
-      dtDAL::IntActorProperty* indexProp = new dtDAL::IntActorProperty(
+      dtCore::IntActorProperty* indexProp = new dtCore::IntActorProperty(
          "Insert Index", "Insert Index",
-         dtDAL::IntActorProperty::SetFuncType(this, &StringManipulatorAction::SetIndex),
-         dtDAL::IntActorProperty::GetFuncType(this, &StringManipulatorAction::GetIndex),
+         dtCore::IntActorProperty::SetFuncType(this, &StringManipulatorAction::SetIndex),
+         dtCore::IntActorProperty::GetFuncType(this, &StringManipulatorAction::GetIndex),
          "The character index to insert to.");
       AddProperty(indexProp);
 
-      dtDAL::StringActorProperty* leftProp = new dtDAL::StringActorProperty(
+      dtCore::StringActorProperty* leftProp = new dtCore::StringActorProperty(
          "A", "A",
-         dtDAL::StringActorProperty::SetFuncType(this, &StringManipulatorAction::SetA),
-         dtDAL::StringActorProperty::GetFuncType(this, &StringManipulatorAction::GetA),
+         dtCore::StringActorProperty::SetFuncType(this, &StringManipulatorAction::SetA),
+         dtCore::StringActorProperty::GetFuncType(this, &StringManipulatorAction::GetA),
          "The Left value.");
       AddProperty(leftProp);
 
-      dtDAL::StringActorProperty* rightProp = new dtDAL::StringActorProperty(
+      dtCore::StringActorProperty* rightProp = new dtCore::StringActorProperty(
          "B", "B",
-         dtDAL::StringActorProperty::SetFuncType(this, &StringManipulatorAction::SetB),
-         dtDAL::StringActorProperty::GetFuncType(this, &StringManipulatorAction::GetB),
+         dtCore::StringActorProperty::SetFuncType(this, &StringManipulatorAction::SetB),
+         dtCore::StringActorProperty::GetFuncType(this, &StringManipulatorAction::GetB),
          "The Right value.");
       AddProperty(rightProp);
 
-      dtDAL::StringActorProperty* replaceProp = new dtDAL::StringActorProperty(
+      dtCore::StringActorProperty* replaceProp = new dtCore::StringActorProperty(
          "Replace With", "Replace With",
-         dtDAL::StringActorProperty::SetFuncType(this, &StringManipulatorAction::SetReplaceWith),
-         dtDAL::StringActorProperty::GetFuncType(this, &StringManipulatorAction::GetReplaceWith),
+         dtCore::StringActorProperty::SetFuncType(this, &StringManipulatorAction::SetReplaceWith),
+         dtCore::StringActorProperty::GetFuncType(this, &StringManipulatorAction::GetReplaceWith),
          "The Right value.");
       AddProperty(replaceProp);
 
-      mResultProp = new dtDAL::StringActorProperty(
+      mResultProp = new dtCore::StringActorProperty(
          "Result", "Result",
-         dtDAL::StringActorProperty::SetFuncType(this, &StringManipulatorAction::SetResult),
-         dtDAL::StringActorProperty::GetFuncType(this, &StringManipulatorAction::GetResult),
+         dtCore::StringActorProperty::SetFuncType(this, &StringManipulatorAction::SetResult),
+         dtCore::StringActorProperty::GetFuncType(this, &StringManipulatorAction::GetResult),
          "The resulting output value.");
 
       // This will expose the properties in the editor and allow

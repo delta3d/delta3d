@@ -3,8 +3,8 @@
 
 #include <dtCore/model.h>
 #include <dtCore/transformable.h>
-#include <dtDAL/transformableactorproxy.h>
-#include <dtDAL/plugin_export.h> 
+#include <dtCore/transformableactorproxy.h>
+#include <dtCore/plugin_export.h> 
 
 #include <osg/Geode>
 #include <osg/Texture2D>
@@ -65,7 +65,7 @@ private:
 ////////////////////////////////////////////////////////////////////////////////
 // And now the proxy:
 ////////////////////////////////////////////////////////////////////////////////
-class DT_PLUGIN_EXPORT BackdropActorProxy : public dtDAL::TransformableActorProxy
+class DT_PLUGIN_EXPORT BackdropActorProxy : public dtCore::TransformableActorProxy
 {
 public:
    BackdropActorProxy();

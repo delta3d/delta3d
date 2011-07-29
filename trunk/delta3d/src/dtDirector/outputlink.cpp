@@ -21,7 +21,7 @@
 
 #include <dtDirector/outputlink.h>
 
-#include <dtDAL/actorproperty.h>
+#include <dtCore/actorproperty.h>
 
 #include <dtDirector/inputlink.h>
 

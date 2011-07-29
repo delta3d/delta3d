@@ -22,8 +22,8 @@
 #include <dtDirectorGUINodes/setlayoutvisibility.h>
 #include <dtDirectorGUINodes/guinodemanager.h>
 
-#include <dtDAL/stringselectoractorproperty.h>
-#include <dtDAL/floatactorproperty.h>
+#include <dtCore/stringselectoractorproperty.h>
+#include <dtCore/floatactorproperty.h>
 
 #include <dtUtil/mathdefines.h>
 
@@ -73,18 +73,18 @@ namespace dtDirector
    {
       LatentActionNode::BuildPropertyMap();
 
-      dtDAL::StringSelectorActorProperty* layoutProp = new dtDAL::StringSelectorActorProperty(
+      dtCore::StringSelectorActorProperty* layoutProp = new dtCore::StringSelectorActorProperty(
          "Layout", "Layout",
-         dtDAL::StringSelectorActorProperty::SetFuncType(this, &SetLayoutVisibility::SetLayout),
-         dtDAL::StringSelectorActorProperty::GetFuncType(this, &SetLayoutVisibility::GetLayout),
-         dtDAL::StringSelectorActorProperty::GetListFuncType(this, &SetLayoutVisibility::GetLayoutList),
+         dtCore::StringSelectorActorProperty::SetFuncType(this, &SetLayoutVisibility::SetLayout),
+         dtCore::StringSelectorActorProperty::GetFuncType(this, &SetLayoutVisibility::GetLayout),
+         dtCore::StringSelectorActorProperty::GetListFuncType(this, &SetLayoutVisibility::GetLayoutList),
          "The Layout.", "", true);
       AddProperty(layoutProp);
 
-      dtDAL::FloatActorProperty* fadeProp = new dtDAL::FloatActorProperty(
+      dtCore::FloatActorProperty* fadeProp = new dtCore::FloatActorProperty(
          "Fade Time", "Fade Time",
-         dtDAL::FloatActorProperty::SetFuncType(this, &SetLayoutVisibility::SetFadeTime),
-         dtDAL::FloatActorProperty::GetFuncType(this, &SetLayoutVisibility::GetFadeTime),
+         dtCore::FloatActorProperty::SetFuncType(this, &SetLayoutVisibility::SetFadeTime),
+         dtCore::FloatActorProperty::GetFuncType(this, &SetLayoutVisibility::GetFadeTime),
          "The amount of time to fade the layout in or out of view.");
       AddProperty(fadeProp);
 

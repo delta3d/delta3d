@@ -31,12 +31,12 @@
 
 #include <dtQt/export.h>
 
-#include <dtDAL/resourcetreenode.h>
+#include <dtCore/resourcetreenode.h>
 #include <dtUtil/tree.h>
 
 #include <QtGui/QToolButton>
 
-namespace dtDAL
+namespace dtCore
 {
    class DataType;
 }
@@ -63,7 +63,7 @@ namespace dtQt
        */
       virtual ~ResourceSelectorWidget();
 
-      void SetResourceType(QStringList prependedActions, const dtDAL::DataType& dataType);
+      void SetResourceType(QStringList prependedActions, const dtCore::DataType& dataType);
 
       void SetResource(const QString& value);
 
@@ -75,7 +75,7 @@ namespace dtQt
       void ItemSelected(QAction* action);
 
    private:
-      void SetupMenu(const dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator& iter, QMenu* menu);
+      void SetupMenu(const dtUtil::tree<dtCore::ResourceTreeNode>::const_iterator& iter, QMenu* menu);
    };
 
 } // namespace dtQt

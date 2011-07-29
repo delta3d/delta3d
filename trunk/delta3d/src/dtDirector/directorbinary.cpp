@@ -29,8 +29,8 @@
 #include <dtDirector/nodetype.h>
 #include <dtDirector/nodemanager.h>
 
-#include <dtDAL/map.h>
-#include <dtDAL/exceptionenum.h>
+#include <dtCore/map.h>
+#include <dtCore/exceptionenum.h>
 
 #include <dtUtil/datapathutils.h>
 #include <dtUtil/fileutils.h>
@@ -52,7 +52,7 @@ namespace dtDirector
    }
 
    /////////////////////////////////////////////////////////////////
-   void BinaryParser::Parse(Director* director, dtDAL::Map* map, const std::string& filePath)
+   void BinaryParser::Parse(Director* director, dtCore::Map* map, const std::string& filePath)
    {
       if (!director)
       {
@@ -199,7 +199,7 @@ namespace dtDirector
             {
                director->AddLibrary(lib);
             }
-            catch (const dtDAL::ProjectResourceErrorException& e)
+            catch (const dtCore::ProjectResourceErrorException& e)
             {
                mMissingLibraries.push_back(lib);
 
@@ -431,7 +431,7 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void BinaryParser::ParsePropertyContainer(dtDAL::PropertyContainer* container, FILE* file)
+   void BinaryParser::ParsePropertyContainer(dtCore::PropertyContainer* container, FILE* file)
    {
       if (!file)
       {
@@ -447,7 +447,7 @@ namespace dtDirector
 
          if (container)
          {
-            dtCore::RefPtr<dtDAL::ActorProperty> prop = container->GetProperty(propName);
+            dtCore::RefPtr<dtCore::ActorProperty> prop = container->GetProperty(propName);
             if (!prop.valid())
             {
                prop = container->GetDeprecatedProperty(propName);
@@ -560,7 +560,7 @@ namespace dtDirector
       FILE* file = fopen(filePath.c_str(), "wb");
       if (!file)
       {
-         throw dtDAL::MapSaveException( std::string("Unable to open Director Script file \"") + filePath + "\" for writing.", __FILE__, __LINE__);
+         throw dtCore::MapSaveException( std::string("Unable to open Director Script file \"") + filePath + "\" for writing.", __FILE__, __LINE__);
       }
 
       try
@@ -589,7 +589,7 @@ namespace dtDirector
 
          fclose(file);
 
-         throw dtDAL::MapSaveException( std::string("Unknown exception saving Director script \"") + filePath + ("\"."), __FILE__, __LINE__);
+         throw dtCore::MapSaveException( std::string("Unknown exception saving Director script \"") + filePath + ("\"."), __FILE__, __LINE__);
       }
    }
 
@@ -828,23 +828,23 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void BinaryWriter::SavePropertyContainer(dtDAL::PropertyContainer* container, FILE* file)
+   void BinaryWriter::SavePropertyContainer(dtCore::PropertyContainer* container, FILE* file)
    {
       if (!container || !file)
       {
          throw dtUtil::Exception("Invalid data found.", __FILE__, __LINE__);
       }
 
-      std::vector<dtDAL::ActorProperty*> propList;
+      std::vector<dtCore::ActorProperty*> propList;
       container->GetPropertyList(propList);
 
-      std::vector<dtDAL::ActorProperty*> saveList;
+      std::vector<dtCore::ActorProperty*> saveList;
 
       int saveCount = 0;
       int count = (int)propList.size();
       for (int index = 0; index < count; ++index)
       {
-         dtDAL::ActorProperty* prop = propList[index];
+         dtCore::ActorProperty* prop = propList[index];
          if (prop && container->ShouldPropertySave(*prop))
          {
             saveList.push_back(prop);
@@ -855,7 +855,7 @@ namespace dtDirector
 
       for (int index = 0; index < saveCount; ++index)
       {
-         dtDAL::ActorProperty* prop = saveList[index];
+         dtCore::ActorProperty* prop = saveList[index];
          SaveString(prop->GetName(), file);
          SaveString(prop->ToString(), file);
       }

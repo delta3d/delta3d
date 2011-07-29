@@ -44,7 +44,7 @@
 
 #include <osg/Vec2>
 
-namespace dtDAL
+namespace dtCore
 {
    class BaseActorObject;
    class GameEvent;

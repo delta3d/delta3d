@@ -46,7 +46,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   dtDAL::ActorProperty* UndoPropertyEvent::GetProperty()
+   dtCore::ActorProperty* UndoPropertyEvent::GetProperty()
    {
       // If the ID is blank, then it belongs to the director.
       if (mID.ToString() == "")
@@ -79,7 +79,7 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void UndoPropertyEvent::Undo()
    {
-      dtDAL::ActorProperty* prop = GetProperty();
+      dtCore::ActorProperty* prop = GetProperty();
 
       if (prop)
       {
@@ -92,7 +92,7 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void UndoPropertyEvent::Redo()
    {
-      dtDAL::ActorProperty* prop = GetProperty();
+      dtCore::ActorProperty* prop = GetProperty();
 
       if (prop)
       {

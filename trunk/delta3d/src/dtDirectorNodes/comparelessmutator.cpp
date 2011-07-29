@@ -48,10 +48,10 @@ namespace dtDirector
       {
          if (link->GetName() == "A" || link->GetName() == "B")
          {
-            if (value->CanBeType(dtDAL::DataType::BOOLEAN) ||
-                value->CanBeType(dtDAL::DataType::INT)     ||
-                value->CanBeType(dtDAL::DataType::FLOAT)   ||
-                value->CanBeType(dtDAL::DataType::DOUBLE))
+            if (value->CanBeType(dtCore::DataType::BOOLEAN) ||
+                value->CanBeType(dtCore::DataType::INT)     ||
+                value->CanBeType(dtCore::DataType::FLOAT)   ||
+                value->CanBeType(dtCore::DataType::DOUBLE))
             {
                return true;
             }

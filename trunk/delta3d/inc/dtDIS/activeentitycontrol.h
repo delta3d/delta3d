@@ -29,7 +29,7 @@ namespace dtDIS
 
       /// finds the associated Entity
       /// @return NULL when the proxy has no matching EntityID
-      //const DIS::EntityID* GetEntity(const dtDAL::BaseActorObject* proxy);
+      //const DIS::EntityID* GetEntity(const dtCore::BaseActorObject* proxy);
       const DIS::EntityID* GetEntity(const dtCore::UniqueId& uid) const;
 
       /// finds the associated Actor

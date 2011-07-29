@@ -33,7 +33,7 @@
 #include <dtEditQt/editorevents.h>
 #include <dtEditQt/editordata.h>
 #include <dtEditQt/stagecameramotionmodel3d.h>
-#include <dtDAL/transformableactorproxy.h>
+#include <dtCore/transformableactorproxy.h>
 
 namespace dtEditQt
 {
@@ -121,9 +121,9 @@ namespace dtEditQt
 
       for (itor = selection.begin(); itor != selection.end(); ++itor)
       {
-         dtDAL::BaseActorObject* proxy = const_cast<dtDAL::BaseActorObject*>(itor->get());
-         dtDAL::TransformableActorProxy* tProxy =
-            dynamic_cast<dtDAL::TransformableActorProxy*>(proxy);
+         dtCore::BaseActorObject* proxy = const_cast<dtCore::BaseActorObject*>(itor->get());
+         dtCore::TransformableActorProxy* tProxy =
+            dynamic_cast<dtCore::TransformableActorProxy*>(proxy);
 
          if (tProxy != NULL)
          {
@@ -133,8 +133,8 @@ namespace dtEditQt
 
       mObjectMotionModel->SetInteractionEnabled(false);
 
-      saveSelectedActorOrigValues(dtDAL::TransformableActorProxy::PROPERTY_TRANSLATION);
-      saveSelectedActorOrigValues(dtDAL::TransformableActorProxy::PROPERTY_ROTATION);
+      saveSelectedActorOrigValues(dtCore::TransformableActorProxy::PROPERTY_TRANSLATION);
+      saveSelectedActorOrigValues(dtCore::TransformableActorProxy::PROPERTY_ROTATION);
       saveSelectedActorOrigValues("Scale");
    }
 
@@ -152,8 +152,8 @@ namespace dtEditQt
       // we surround it in a change transaction
       EditorEvents::GetInstance().emitBeginChangeTransaction();
       EditorData::GetInstance().getUndoManager().beginMultipleUndo();
-      updateActorSelectionProperty(dtDAL::TransformableActorProxy::PROPERTY_TRANSLATION);
-      updateActorSelectionProperty(dtDAL::TransformableActorProxy::PROPERTY_ROTATION);
+      updateActorSelectionProperty(dtCore::TransformableActorProxy::PROPERTY_TRANSLATION);
+      updateActorSelectionProperty(dtCore::TransformableActorProxy::PROPERTY_ROTATION);
       updateActorSelectionProperty("Scale");
       EditorData::GetInstance().getUndoManager().endMultipleUndo();
 

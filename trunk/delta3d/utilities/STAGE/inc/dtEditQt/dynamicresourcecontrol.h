@@ -38,7 +38,7 @@ namespace dtQt
    class SubQToolButton;
 }
 
-namespace dtDAL
+namespace dtCore
 {
    class ResourceActorProperty;
    class ResourceDescriptor;

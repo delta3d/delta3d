@@ -22,9 +22,9 @@
 #include <dtActors/triggervolumeactorproxy.h>
 #include <dtActors/triggervolumeactor.h>
 
-#include <dtDAL/datatype.h>
-#include <dtDAL/intactorproperty.h>
-#include <dtDAL/actorproxyicon.h>
+#include <dtCore/datatype.h>
+#include <dtCore/intactorproperty.h>
+#include <dtCore/actorproxyicon.h>
 
 using namespace dtActors;
 
@@ -60,23 +60,23 @@ void TriggerVolumeActorProxy::BuildPropertyMap()
 
    const std::string GROUP_TRIGGER("Trigger");
 
-   AddProperty(new dtDAL::IntActorProperty(
+   AddProperty(new dtCore::IntActorProperty(
       TriggerVolumeActorProxy::PROPERTY_MAX_TRIGGER_COUNT,
       TriggerVolumeActorProxy::PROPERTY_MAX_TRIGGER_COUNT,
-      dtDAL::IntActorProperty::SetFuncType(actor, &TriggerVolumeActor::SetMaxTriggerCount),
-      dtDAL::IntActorProperty::GetFuncType(actor, &TriggerVolumeActor::GetMaxTriggerCount),
+      dtCore::IntActorProperty::SetFuncType(actor, &TriggerVolumeActor::SetMaxTriggerCount),
+      dtCore::IntActorProperty::GetFuncType(actor, &TriggerVolumeActor::GetMaxTriggerCount),
       "Sets the maximum number of times the trigger can active.  0 means an infinite number.",
       GROUP_TRIGGER));
 }
 
 //////////////////////////////////////////////////////////////////////////
-const dtDAL::BaseActorObject::RenderMode& dtActors::TriggerVolumeActorProxy::GetRenderMode()
+const dtCore::BaseActorObject::RenderMode& dtActors::TriggerVolumeActorProxy::GetRenderMode()
 {
    if (IsInSTAGE())
    {
       if (GetRenderCollisionGeometry() == false)
       {
-         return dtDAL::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON;
+         return dtCore::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON;
       }
    }
 
@@ -84,12 +84,12 @@ const dtDAL::BaseActorObject::RenderMode& dtActors::TriggerVolumeActorProxy::Get
 }
 
 //////////////////////////////////////////////////////////////////////////
-dtDAL::ActorProxyIcon* dtActors::TriggerVolumeActorProxy::GetBillBoardIcon()
+dtCore::ActorProxyIcon* dtActors::TriggerVolumeActorProxy::GetBillBoardIcon()
 {
    if (!mBillBoardIcon.valid())
    {
-      dtDAL::ActorProxyIcon::ActorProxyIconConfig cfg(false,false,1.f);
-      mBillBoardIcon = new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IMAGE_BILLBOARD_TRIGGER, cfg);
+      dtCore::ActorProxyIcon::ActorProxyIconConfig cfg(false,false,1.f);
+      mBillBoardIcon = new dtCore::ActorProxyIcon(dtCore::ActorProxyIcon::IMAGE_BILLBOARD_TRIGGER, cfg);
    }
 
    return mBillBoardIcon.get();

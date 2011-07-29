@@ -21,12 +21,12 @@
 #include <prefix/dtdirectornodesprefix.h>
 #include <dtDirectorNodes/animateactoraction.h>
 
-#include <dtDAL/actoridactorproperty.h>
-#include <dtDAL/floatactorproperty.h>
-#include <dtDAL/stringactorproperty.h>
-#include <dtDAL/vectoractorproperties.h>
-#include <dtDAL/arrayactorproperty.h>
-#include <dtDAL/containeractorproperty.h>
+#include <dtCore/actoridactorproperty.h>
+#include <dtCore/floatactorproperty.h>
+#include <dtCore/stringactorproperty.h>
+#include <dtCore/vectoractorproperties.h>
+#include <dtCore/arrayactorproperty.h>
+#include <dtCore/containeractorproperty.h>
 
 #include <dtDirector/director.h>
 
@@ -80,88 +80,88 @@ namespace dtDirector
       LatentActionNode::BuildPropertyMap();
 
       // Create our value links.
-      dtDAL::ActorIDActorProperty* actorProp = new dtDAL::ActorIDActorProperty(
+      dtCore::ActorIDActorProperty* actorProp = new dtCore::ActorIDActorProperty(
          "Actor", "Actor",
-         dtDAL::ActorIDActorProperty::SetFuncType(this, &AnimateActorAction::SetAnimActor),
-         dtDAL::ActorIDActorProperty::GetFuncType(this, &AnimateActorAction::GetAnimActor),
+         dtCore::ActorIDActorProperty::SetFuncType(this, &AnimateActorAction::SetAnimActor),
+         dtCore::ActorIDActorProperty::GetFuncType(this, &AnimateActorAction::GetAnimActor),
          "dtActors::AnimationGameActor", "The actor to animate.");
       AddProperty(actorProp);
 
       // Animation Data Properties
       {
-         dtDAL::ContainerActorProperty* animDataProp = new dtDAL::ContainerActorProperty(
+         dtCore::ContainerActorProperty* animDataProp = new dtCore::ContainerActorProperty(
             "Anim Data", "Anim Data", "The animation data.", "");
 
-         dtDAL::StringActorProperty* nameProp = new dtDAL::StringActorProperty(
+         dtCore::StringActorProperty* nameProp = new dtCore::StringActorProperty(
             "Name", "Name",
-            dtDAL::StringActorProperty::SetFuncType(this, &AnimateActorAction::SetAnimName),
-            dtDAL::StringActorProperty::GetFuncType(this, &AnimateActorAction::GetAnimName),
+            dtCore::StringActorProperty::SetFuncType(this, &AnimateActorAction::SetAnimName),
+            dtCore::StringActorProperty::GetFuncType(this, &AnimateActorAction::GetAnimName),
             "The name of the animation to play.");
          animDataProp->AddProperty(nameProp);
 
-         dtDAL::FloatActorProperty* timeProp = new dtDAL::FloatActorProperty(
+         dtCore::FloatActorProperty* timeProp = new dtCore::FloatActorProperty(
             "Start Time", "Start Time",
-            dtDAL::FloatActorProperty::SetFuncType(this, &AnimateActorAction::SetAnimTime),
-            dtDAL::FloatActorProperty::GetFuncType(this, &AnimateActorAction::GetAnimTime),
+            dtCore::FloatActorProperty::SetFuncType(this, &AnimateActorAction::SetAnimTime),
+            dtCore::FloatActorProperty::GetFuncType(this, &AnimateActorAction::GetAnimTime),
             "The time to start the animation.");
          animDataProp->AddProperty(timeProp);
 
-         dtDAL::FloatActorProperty* durationProp = new dtDAL::FloatActorProperty(
+         dtCore::FloatActorProperty* durationProp = new dtCore::FloatActorProperty(
             "Duration", "Duration",
-            dtDAL::FloatActorProperty::SetFuncType(this, &AnimateActorAction::SetAnimDuration),
-            dtDAL::FloatActorProperty::GetFuncType(this, &AnimateActorAction::GetAnimDuration),
+            dtCore::FloatActorProperty::SetFuncType(this, &AnimateActorAction::SetAnimDuration),
+            dtCore::FloatActorProperty::GetFuncType(this, &AnimateActorAction::GetAnimDuration),
             "The duration of the animation.");
          animDataProp->AddProperty(durationProp);
 
-         dtDAL::FloatActorProperty* blendInProp = new dtDAL::FloatActorProperty(
+         dtCore::FloatActorProperty* blendInProp = new dtCore::FloatActorProperty(
             "Blend in Time", "Blend in Time",
-            dtDAL::FloatActorProperty::SetFuncType(this, &AnimateActorAction::SetBlendInTime),
-            dtDAL::FloatActorProperty::GetFuncType(this, &AnimateActorAction::GetBlendInTime),
+            dtCore::FloatActorProperty::SetFuncType(this, &AnimateActorAction::SetBlendInTime),
+            dtCore::FloatActorProperty::GetFuncType(this, &AnimateActorAction::GetBlendInTime),
             "The animation blend in time.");
          animDataProp->AddProperty(blendInProp);
 
-         dtDAL::FloatActorProperty* blendOutProp = new dtDAL::FloatActorProperty(
+         dtCore::FloatActorProperty* blendOutProp = new dtCore::FloatActorProperty(
             "Blend out Time", "Blend out Time",
-            dtDAL::FloatActorProperty::SetFuncType(this, &AnimateActorAction::SetBlendOutTime),
-            dtDAL::FloatActorProperty::GetFuncType(this, &AnimateActorAction::GetBlendOutTime),
+            dtCore::FloatActorProperty::SetFuncType(this, &AnimateActorAction::SetBlendOutTime),
+            dtCore::FloatActorProperty::GetFuncType(this, &AnimateActorAction::GetBlendOutTime),
             "The animation blend out time.");
          animDataProp->AddProperty(blendOutProp);
 
-         dtDAL::FloatActorProperty* weightProp = new dtDAL::FloatActorProperty(
+         dtCore::FloatActorProperty* weightProp = new dtCore::FloatActorProperty(
             "Weight", "Weight",
-            dtDAL::FloatActorProperty::SetFuncType(this, &AnimateActorAction::SetAnimWeight),
-            dtDAL::FloatActorProperty::GetFuncType(this, &AnimateActorAction::GetAnimWeight),
+            dtCore::FloatActorProperty::SetFuncType(this, &AnimateActorAction::SetAnimWeight),
+            dtCore::FloatActorProperty::GetFuncType(this, &AnimateActorAction::GetAnimWeight),
             "The animation weight.");
          animDataProp->AddProperty(weightProp);
 
-         dtDAL::FloatActorProperty* offsetProp = new dtDAL::FloatActorProperty(
+         dtCore::FloatActorProperty* offsetProp = new dtCore::FloatActorProperty(
             "Start Offset", "Start Offset",
-            dtDAL::FloatActorProperty::SetFuncType(this, &AnimateActorAction::SetAnimOffset),
-            dtDAL::FloatActorProperty::GetFuncType(this, &AnimateActorAction::GetAnimOffset),
+            dtCore::FloatActorProperty::SetFuncType(this, &AnimateActorAction::SetAnimOffset),
+            dtCore::FloatActorProperty::GetFuncType(this, &AnimateActorAction::GetAnimOffset),
             "The animation start offset.");
          animDataProp->AddProperty(offsetProp);
 
-         dtDAL::FloatActorProperty* speedProp = new dtDAL::FloatActorProperty(
+         dtCore::FloatActorProperty* speedProp = new dtCore::FloatActorProperty(
             "Speed", "Speed",
-            dtDAL::FloatActorProperty::SetFuncType(this, &AnimateActorAction::SetAnimSpeed),
-            dtDAL::FloatActorProperty::GetFuncType(this, &AnimateActorAction::GetAnimSpeed),
+            dtCore::FloatActorProperty::SetFuncType(this, &AnimateActorAction::SetAnimSpeed),
+            dtCore::FloatActorProperty::GetFuncType(this, &AnimateActorAction::GetAnimSpeed),
             "The animation speed.");
          animDataProp->AddProperty(speedProp);
 
-         dtDAL::ArrayActorPropertyBase* animListProp = new dtDAL::ArrayActorProperty<AnimData>(
+         dtCore::ArrayActorPropertyBase* animListProp = new dtCore::ArrayActorProperty<AnimData>(
             "Animations", "Animations", "List of animations to play.",
-            dtDAL::ArrayActorProperty<AnimData>::SetIndexFuncType(this, &AnimateActorAction::SetAnimIndex),
-            dtDAL::ArrayActorProperty<AnimData>::GetDefaultFuncType(this, &AnimateActorAction::GetDefaultAnim),
-            dtDAL::ArrayActorProperty<AnimData>::GetArrayFuncType(this, &AnimateActorAction::GetAnimArray),
-            dtDAL::ArrayActorProperty<AnimData>::SetArrayFuncType(this, &AnimateActorAction::SetAnimArray),
+            dtCore::ArrayActorProperty<AnimData>::SetIndexFuncType(this, &AnimateActorAction::SetAnimIndex),
+            dtCore::ArrayActorProperty<AnimData>::GetDefaultFuncType(this, &AnimateActorAction::GetDefaultAnim),
+            dtCore::ArrayActorProperty<AnimData>::GetArrayFuncType(this, &AnimateActorAction::GetAnimArray),
+            dtCore::ArrayActorProperty<AnimData>::SetArrayFuncType(this, &AnimateActorAction::SetAnimArray),
             animDataProp, "");
          AddProperty(animListProp);
       }
 
-      dtDAL::FloatActorProperty* timeProp = new dtDAL::FloatActorProperty(
+      dtCore::FloatActorProperty* timeProp = new dtCore::FloatActorProperty(
          "Time", "Time",
-         dtDAL::FloatActorProperty::SetFuncType(this, &AnimateActorAction::SetTime),
-         dtDAL::FloatActorProperty::GetFuncType(this, &AnimateActorAction::GetTime),
+         dtCore::FloatActorProperty::SetFuncType(this, &AnimateActorAction::SetTime),
+         dtCore::FloatActorProperty::GetFuncType(this, &AnimateActorAction::GetTime),
          "The current time.");
 
       // This will expose the properties in the editor and allow
@@ -239,7 +239,7 @@ namespace dtDirector
             count = GetPropertyCount("Actor");
             for (int index = 0; index < count; ++index)
             {
-               dtDAL::BaseActorObject* proxy = GetActor("Actor", index);
+               dtCore::BaseActorObject* proxy = GetActor("Actor", index);
                if (proxy)
                {
                   dtAnim::AnimationGameActor* actor = dynamic_cast<dtAnim::AnimationGameActor*>(proxy->GetActor());
@@ -399,7 +399,7 @@ namespace dtDirector
             int count = GetPropertyCount("Actor");
             for (int index = 0; index < count; ++index)
             {
-               dtDAL::BaseActorObject* proxy = GetActor("Actor", index);
+               dtCore::BaseActorObject* proxy = GetActor("Actor", index);
                if (proxy)
                {
                   dtAnim::AnimationGameActor* actor = dynamic_cast<dtAnim::AnimationGameActor*>(proxy->GetActor());

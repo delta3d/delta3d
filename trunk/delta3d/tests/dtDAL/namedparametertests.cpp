@@ -34,13 +34,13 @@
 #include <dtCore/scene.h>
 #include <dtCore/system.h>
 
-#include <dtDAL/actortype.h>
-#include <dtDAL/actoractorproperty.h>
-#include <dtDAL/datatype.h>
-#include <dtDAL/namedgroupparameter.h>
-#include <dtDAL/namedarrayparameter.h>
-#include <dtDAL/namedpropertycontainerparameter.h>
-#include <dtDAL/resourcedescriptor.h>
+#include <dtCore/actortype.h>
+#include <dtCore/actoractorproperty.h>
+#include <dtCore/datatype.h>
+#include <dtCore/namedgroupparameter.h>
+#include <dtCore/namedarrayparameter.h>
+#include <dtCore/namedpropertycontainerparameter.h>
+#include <dtCore/resourcedescriptor.h>
 
 #include <dtGame/gamemanager.h>
 #include <dtGame/gameactorproxy.h>
@@ -570,15 +570,15 @@ public:
     * This templated method is used to test each of the different message
     * parameters when using their list form.
     */
-   void TestResourceParameterList(dtDAL::DataType& dataType,
-      dtDAL::ResourceDescriptor& t1, dtDAL::ResourceDescriptor& t2,
-      dtDAL::ResourceDescriptor& t3, dtDAL::ResourceDescriptor& t4)
+   void TestResourceParameterList(dtCore::DataType& dataType,
+      dtCore::ResourceDescriptor& t1, dtCore::ResourceDescriptor& t2,
+      dtCore::ResourceDescriptor& t3, dtCore::ResourceDescriptor& t4)
    {
-      std::vector<dtDAL::ResourceDescriptor> valueList;
-      std::vector<dtDAL::ResourceDescriptor> testList;
+      std::vector<dtCore::ResourceDescriptor> valueList;
+      std::vector<dtCore::ResourceDescriptor> testList;
 
-      dtCore::RefPtr<dtDAL::NamedResourceParameter> param =
-         new dtDAL::NamedResourceParameter(dataType,"a",true);
+      dtCore::RefPtr<dtCore::NamedResourceParameter> param =
+         new dtCore::NamedResourceParameter(dataType,"a",true);
       CPPUNIT_ASSERT_MESSAGE("MessageParameter should support a list of values.",
          param->IsList() == true);
       testList = param->GetValueList();
@@ -599,8 +599,8 @@ public:
       //both contain a list of values my be copied.
       try
       {
-         dtCore::RefPtr<dtDAL::NamedResourceParameter> paramSingleValue =
-            new dtDAL::NamedResourceParameter(dataType,"b");
+         dtCore::RefPtr<dtCore::NamedResourceParameter> paramSingleValue =
+            new dtCore::NamedResourceParameter(dataType,"b");
          paramSingleValue->CopyFrom(*param);
          CPPUNIT_FAIL("Should not be allowed to copy a list parameter into a single value parameter.");
       }
@@ -611,8 +611,8 @@ public:
 
       try
       {
-         dtCore::RefPtr<dtDAL::NamedResourceParameter> paramSingleValue =
-            new dtDAL::NamedResourceParameter(dataType,"b");
+         dtCore::RefPtr<dtCore::NamedResourceParameter> paramSingleValue =
+            new dtCore::NamedResourceParameter(dataType,"b");
          param->CopyFrom(*paramSingleValue);
          CPPUNIT_FAIL("Should not be allowed to copy a list parameter into a single value parameter.");
       }
@@ -642,8 +642,8 @@ public:
       CPPUNIT_ASSERT_MESSAGE("List element 3 was not correct.",
          testList[3] == t4);
 
-      dtCore::RefPtr<dtDAL::NamedResourceParameter> param2 =
-            new dtDAL::NamedResourceParameter(dataType,"b",true);
+      dtCore::RefPtr<dtCore::NamedResourceParameter> param2 =
+            new dtCore::NamedResourceParameter(dataType,"b",true);
       std::string holder = param->ToString();
       param2->FromString(holder);
 
@@ -658,7 +658,7 @@ public:
          testList[3] == t4);
 
       param2 = NULL;
-      param2 = new dtDAL::NamedResourceParameter(dataType,"b",true);
+      param2 = new dtCore::NamedResourceParameter(dataType,"b",true);
 
       dtUtil::DataStream ds;
       param->ToDataStream(ds);
@@ -675,7 +675,7 @@ public:
          testList[3] == t4);
 
       param2 = NULL;
-      param2 = new dtDAL::NamedResourceParameter(dataType,"b",true);
+      param2 = new dtCore::NamedResourceParameter(dataType,"b",true);
       param2->CopyFrom(*param);
       testList = param2->GetValueList();
       CPPUNIT_ASSERT_MESSAGE("List element 0 was not correct after param copy.",
@@ -692,12 +692,12 @@ private:
    static const char* mTestActorLibrary;
    dtCore::RefPtr<dtGame::GameManager> mManager;
 
-   dtCore::RefPtr<dtDAL::NamedGroupParameter> CreateNamedGroupParameter(bool createPropCont = false);
-   dtCore::RefPtr<dtDAL::NamedArrayParameter> CreateNamedArrayParameter();
-   dtCore::RefPtr<dtDAL::BaseActorObject> mExampleActor;
+   dtCore::RefPtr<dtCore::NamedGroupParameter> CreateNamedGroupParameter(bool createPropCont = false);
+   dtCore::RefPtr<dtCore::NamedArrayParameter> CreateNamedArrayParameter();
+   dtCore::RefPtr<dtCore::BaseActorObject> mExampleActor;
 
-   void TestNamedGroupParameter(dtDAL::NamedGroupParameter& groupParam);
-   void TestNamedArrayParameter(dtDAL::NamedArrayParameter& arrarParam);
+   void TestNamedGroupParameter(dtCore::NamedGroupParameter& groupParam);
+   void TestNamedArrayParameter(dtCore::NamedArrayParameter& arrarParam);
 };
 
 
@@ -735,7 +735,7 @@ void NamedParameterTests::tearDown()
    {
       try
       {
-         dtCore::ObserverPtr<dtDAL::BaseActorObject> observerExampleActor = mExampleActor.get();
+         dtCore::ObserverPtr<dtCore::BaseActorObject> observerExampleActor = mExampleActor.get();
          mExampleActor = NULL;
          mManager->UnloadActorRegistry(mTestActorLibrary);
          mManager = NULL;
@@ -752,18 +752,18 @@ void NamedParameterTests::TestNamedResourceParameter()
 {
    try
    {
-      dtCore::RefPtr<dtDAL::NamedResourceParameter>  param = new dtDAL::NamedResourceParameter(dtDAL::DataType::STATIC_MESH, "a");
-      dtDAL::ResourceDescriptor c(dtDAL::DataType::STATIC_MESH.GetName() + ":hello1",
-         dtDAL::DataType::STATIC_MESH.GetName() + ":hello1");
+      dtCore::RefPtr<dtCore::NamedResourceParameter>  param = new dtCore::NamedResourceParameter(dtCore::DataType::STATIC_MESH, "a");
+      dtCore::ResourceDescriptor c(dtCore::DataType::STATIC_MESH.GetName() + ":hello1",
+         dtCore::DataType::STATIC_MESH.GetName() + ":hello1");
       param->SetValue(c);
-      dtDAL::ResourceDescriptor r = param->GetValue();
+      dtCore::ResourceDescriptor r = param->GetValue();
 
       CPPUNIT_ASSERT_MESSAGE("MessageParameter should not be NULL", !r.IsEmpty());
       CPPUNIT_ASSERT_MESSAGE("MessageParameter should return the value that was set", c == r);
 
       std::string holder = param->ToString();
-      std::string testValue = dtDAL::DataType::STATIC_MESH.GetName() + ":helloA";
-      dtDAL::ResourceDescriptor temp(testValue, testValue);
+      std::string testValue = dtCore::DataType::STATIC_MESH.GetName() + ":helloA";
+      dtCore::ResourceDescriptor temp(testValue, testValue);
       param->SetValue(temp);
       param->FromString(holder);
 
@@ -771,12 +771,12 @@ void NamedParameterTests::TestNamedResourceParameter()
       CPPUNIT_ASSERT_MESSAGE("MessageParameter should not be NULL", !r.IsEmpty());
       CPPUNIT_ASSERT_MESSAGE("MessageParameter should return the value that was set", c == r);
 
-      dtCore::RefPtr<dtDAL::NamedResourceParameter> param2 = new dtDAL::NamedResourceParameter(dtDAL::DataType::STATIC_MESH, "b");
+      dtCore::RefPtr<dtCore::NamedResourceParameter> param2 = new dtCore::NamedResourceParameter(dtCore::DataType::STATIC_MESH, "b");
       param2->CopyFrom(*param);
       CPPUNIT_ASSERT_MESSAGE("Copied parameter should match the original.", param->GetValue() == param2->GetValue());
 
       dtUtil::DataStream ds;
-      dtCore::RefPtr<dtDAL::NamedResourceParameter> param3 = new dtDAL::NamedResourceParameter(dtDAL::DataType::STATIC_MESH, "b");
+      dtCore::RefPtr<dtCore::NamedResourceParameter> param3 = new dtCore::NamedResourceParameter(dtCore::DataType::STATIC_MESH, "b");
 
       param->ToDataStream(ds);
       param3->FromDataStream(ds);
@@ -790,16 +790,16 @@ void NamedParameterTests::TestNamedResourceParameter()
          r == temp);
 
       //Test the list version of the resource message parameter...
-      dtDAL::ResourceDescriptor t1(dtDAL::DataType::STATIC_MESH.GetName()
-         + ":hello1", dtDAL::DataType::STATIC_MESH.GetName() + ":hello1");
-      dtDAL::ResourceDescriptor t2(dtDAL::DataType::TEXTURE.GetName()
-         + ":hello2", dtDAL::DataType::TEXTURE.GetName() + ":hello2");
-      dtDAL::ResourceDescriptor t3(dtDAL::DataType::TERRAIN.GetName()
-         + ":hello3", dtDAL::DataType::TERRAIN.GetName() + ":hello3");
-      dtDAL::ResourceDescriptor t4(dtDAL::DataType::SOUND.GetName()
-         + ":hello4", dtDAL::DataType::SOUND.GetName() + ":hello4");
+      dtCore::ResourceDescriptor t1(dtCore::DataType::STATIC_MESH.GetName()
+         + ":hello1", dtCore::DataType::STATIC_MESH.GetName() + ":hello1");
+      dtCore::ResourceDescriptor t2(dtCore::DataType::TEXTURE.GetName()
+         + ":hello2", dtCore::DataType::TEXTURE.GetName() + ":hello2");
+      dtCore::ResourceDescriptor t3(dtCore::DataType::TERRAIN.GetName()
+         + ":hello3", dtCore::DataType::TERRAIN.GetName() + ":hello3");
+      dtCore::ResourceDescriptor t4(dtCore::DataType::SOUND.GetName()
+         + ":hello4", dtCore::DataType::SOUND.GetName() + ":hello4");
 
-      TestResourceParameterList(dtDAL::DataType::STATIC_MESH,t1,t2,t3,t4);
+      TestResourceParameterList(dtCore::DataType::STATIC_MESH,t1,t2,t3,t4);
    }
    catch (dtUtil::Exception& e)
    {
@@ -815,7 +815,7 @@ void NamedParameterTests::TestNamedStringParameter()
 {
    try
    {
-      dtCore::RefPtr<dtDAL::NamedStringParameter>  param = new dtDAL::NamedStringParameter("a");
+      dtCore::RefPtr<dtCore::NamedStringParameter>  param = new dtCore::NamedStringParameter("a");
       CPPUNIT_ASSERT_MESSAGE("MessageParameter should default to empty", param->GetValue() == "");
 
       std::string c("doofus");
@@ -830,19 +830,19 @@ void NamedParameterTests::TestNamedStringParameter()
       r = param->GetValue();
       CPPUNIT_ASSERT_MESSAGE("MessageParameter should return the value that was set", c == r);
 
-      dtCore::RefPtr<dtDAL::NamedStringParameter> param2 = new dtDAL::NamedStringParameter("b");
+      dtCore::RefPtr<dtCore::NamedStringParameter> param2 = new dtCore::NamedStringParameter("b");
       param2->CopyFrom(*param);
       CPPUNIT_ASSERT_MESSAGE("Copied parameter should match the original.", param->GetValue() == param2->GetValue());
 
       dtUtil::DataStream ds;
-      dtCore::RefPtr<dtDAL::NamedStringParameter> param3 = new dtDAL::NamedStringParameter("b");
+      dtCore::RefPtr<dtCore::NamedStringParameter> param3 = new dtCore::NamedStringParameter("b");
 
       param->ToDataStream(ds);
       param3->FromDataStream(ds);
       CPPUNIT_ASSERT(param->GetValue() == param3->GetValue());
 
       //Test the list version of the message parameter.
-      TestParameterList<dtDAL::NamedStringParameter,std::string>(
+      TestParameterList<dtCore::NamedStringParameter,std::string>(
          "defaultValue","hello","from","the","stringlist");
    }
    catch (const dtUtil::Exception& e)
@@ -859,7 +859,7 @@ void NamedParameterTests::TestNamedEnumParameter()
 {
    try
    {
-      dtCore::RefPtr<dtDAL::NamedEnumParameter>  param = new dtDAL::NamedEnumParameter("a");
+      dtCore::RefPtr<dtCore::NamedEnumParameter>  param = new dtCore::NamedEnumParameter("a");
       CPPUNIT_ASSERT_MESSAGE("MessageParameter should default to empty", param->GetValue() == "");
 
       std::string c("doofus");
@@ -874,19 +874,19 @@ void NamedParameterTests::TestNamedEnumParameter()
       r = param->GetValue();
       CPPUNIT_ASSERT_MESSAGE("MessageParameter should return the value that was set", c == r);
 
-      dtCore::RefPtr<dtDAL::NamedEnumParameter> param2 = new dtDAL::NamedEnumParameter("b");
+      dtCore::RefPtr<dtCore::NamedEnumParameter> param2 = new dtCore::NamedEnumParameter("b");
       param2->CopyFrom(*param);
       CPPUNIT_ASSERT_MESSAGE("Copied parameter should match the original.", param->GetValue() == param2->GetValue());
 
       dtUtil::DataStream ds;
-      dtCore::RefPtr<dtDAL::NamedEnumParameter> param3 = new dtDAL::NamedEnumParameter("b");
+      dtCore::RefPtr<dtCore::NamedEnumParameter> param3 = new dtCore::NamedEnumParameter("b");
 
       param->ToDataStream(ds);
       param3->FromDataStream(ds);
       CPPUNIT_ASSERT(param->GetValue() == param3->GetValue());
 
       //Test the list version of the message parameter.
-      TestParameterList<dtDAL::NamedEnumParameter,std::string>(
+      TestParameterList<dtCore::NamedEnumParameter,std::string>(
          "defaultValue","enum1","enum2","enum3","enum4");
    }
    catch (const dtUtil::Exception& e)
@@ -903,7 +903,7 @@ void NamedParameterTests::TestNamedBooleanParameter()
 {
    try
    {
-      dtCore::RefPtr<dtDAL::NamedBooleanParameter>  param = new dtDAL::NamedBooleanParameter("a");
+      dtCore::RefPtr<dtCore::NamedBooleanParameter>  param = new dtCore::NamedBooleanParameter("a");
       CPPUNIT_ASSERT_MESSAGE("MessageParameter should default to false", param->GetValue() == false);
 
       bool c = true;
@@ -923,20 +923,20 @@ void NamedParameterTests::TestNamedBooleanParameter()
       r = param->GetValue();
       CPPUNIT_ASSERT_MESSAGE("MessageParameter should return the value that was set", c == r);
 
-      dtCore::RefPtr<dtDAL::NamedBooleanParameter> param2 = new dtDAL::NamedBooleanParameter("b");
+      dtCore::RefPtr<dtCore::NamedBooleanParameter> param2 = new dtCore::NamedBooleanParameter("b");
       param2->CopyFrom(*param);
       CPPUNIT_ASSERT_MESSAGE("Copied parameter should match the original.", param->GetValue() == param2->GetValue());
 
       dtUtil::DataStream ds;
       param->SetValue(false);
-      dtCore::RefPtr<dtDAL::NamedBooleanParameter> param3 = new dtDAL::NamedBooleanParameter("b", true);
+      dtCore::RefPtr<dtCore::NamedBooleanParameter> param3 = new dtCore::NamedBooleanParameter("b", true);
 
       param->ToDataStream(ds);
       param3->FromDataStream(ds);
       CPPUNIT_ASSERT(param->GetValue() == param3->GetValue());
 
       //Test the list version of the message parameter.
-      TestParameterList<dtDAL::NamedBooleanParameter,bool>(
+      TestParameterList<dtCore::NamedBooleanParameter,bool>(
          true,false,true,false,true);
    }
    catch (const dtUtil::Exception& e)
@@ -953,7 +953,7 @@ void NamedParameterTests::TestNamedUnsignedCharParameter()
 {
    try
    {
-      dtCore::RefPtr<dtDAL::NamedUnsignedCharParameter>  param = new dtDAL::NamedUnsignedCharParameter("a");
+      dtCore::RefPtr<dtCore::NamedUnsignedCharParameter>  param = new dtCore::NamedUnsignedCharParameter("a");
       CPPUNIT_ASSERT_MESSAGE("MessageParameter should default to 0", param->GetValue() == 0);
 
       unsigned char c = 201;
@@ -968,19 +968,19 @@ void NamedParameterTests::TestNamedUnsignedCharParameter()
       r = param->GetValue();
       CPPUNIT_ASSERT_MESSAGE("MessageParameter should return the value that was set", c == r);
 
-      dtCore::RefPtr<dtDAL::NamedUnsignedCharParameter> param2 = new dtDAL::NamedUnsignedCharParameter("b");
+      dtCore::RefPtr<dtCore::NamedUnsignedCharParameter> param2 = new dtCore::NamedUnsignedCharParameter("b");
       param2->CopyFrom(*param);
       CPPUNIT_ASSERT_MESSAGE("Copied parameter should match the original.", param->GetValue() == param2->GetValue());
 
       dtUtil::DataStream ds;
-      dtCore::RefPtr<dtDAL::NamedUnsignedCharParameter> param3 = new dtDAL::NamedUnsignedCharParameter("b");
+      dtCore::RefPtr<dtCore::NamedUnsignedCharParameter> param3 = new dtCore::NamedUnsignedCharParameter("b");
 
       param->ToDataStream(ds);
       param3->FromDataStream(ds);
       CPPUNIT_ASSERT(param->GetValue() == param3->GetValue());
 
       //Test the list version of the message parameter.
-      TestParameterList<dtDAL::NamedUnsignedCharParameter,unsigned char>(
+      TestParameterList<dtCore::NamedUnsignedCharParameter,unsigned char>(
          100,1,3,4,232);
    }
    catch (const dtUtil::Exception& e)
@@ -997,7 +997,7 @@ void NamedParameterTests::TestNamedUnsignedIntParameter()
 {
    try
    {
-      dtCore::RefPtr<dtDAL::NamedUnsignedIntParameter>  param = new dtDAL::NamedUnsignedIntParameter("a");
+      dtCore::RefPtr<dtCore::NamedUnsignedIntParameter>  param = new dtCore::NamedUnsignedIntParameter("a");
       CPPUNIT_ASSERT_MESSAGE("MessageParameter should default to 0", param->GetValue() == 0);
 
       unsigned int c = 201;
@@ -1012,19 +1012,19 @@ void NamedParameterTests::TestNamedUnsignedIntParameter()
       r = param->GetValue();
       CPPUNIT_ASSERT_MESSAGE("MessageParameter should return the value that was set", c == r);
 
-      dtCore::RefPtr<dtDAL::NamedUnsignedIntParameter> param2 = new dtDAL::NamedUnsignedIntParameter("b");
+      dtCore::RefPtr<dtCore::NamedUnsignedIntParameter> param2 = new dtCore::NamedUnsignedIntParameter("b");
       param2->CopyFrom(*param);
       CPPUNIT_ASSERT_MESSAGE("Copied parameter should match the original.", param->GetValue() == param2->GetValue());
 
       dtUtil::DataStream ds;
-      dtCore::RefPtr<dtDAL::NamedUnsignedIntParameter> param3 = new dtDAL::NamedUnsignedIntParameter("b");
+      dtCore::RefPtr<dtCore::NamedUnsignedIntParameter> param3 = new dtCore::NamedUnsignedIntParameter("b");
 
       param->ToDataStream(ds);
       param3->FromDataStream(ds);
       CPPUNIT_ASSERT(param->GetValue() == param3->GetValue());
 
       //Test the list version of the message parameter.
-      TestParameterList<dtDAL::NamedUnsignedIntParameter,unsigned int>(
+      TestParameterList<dtCore::NamedUnsignedIntParameter,unsigned int>(
          100,1,3,4,232);
    }
    catch (const dtUtil::Exception& e)
@@ -1041,7 +1041,7 @@ void NamedParameterTests::TestNamedIntParameter()
 {
    try
    {
-      dtCore::RefPtr<dtDAL::NamedIntParameter>  param = new dtDAL::NamedIntParameter("a");
+      dtCore::RefPtr<dtCore::NamedIntParameter>  param = new dtCore::NamedIntParameter("a");
       CPPUNIT_ASSERT_MESSAGE("MessageParameter should default to 0", param->GetValue() == 0);
 
       int c = 201;
@@ -1056,19 +1056,19 @@ void NamedParameterTests::TestNamedIntParameter()
       r = param->GetValue();
       CPPUNIT_ASSERT_MESSAGE("MessageParameter should return the value that was set", c == r);
 
-      dtCore::RefPtr<dtDAL::NamedIntParameter> param2 = new dtDAL::NamedIntParameter("b");
+      dtCore::RefPtr<dtCore::NamedIntParameter> param2 = new dtCore::NamedIntParameter("b");
       param2->CopyFrom(*param);
       CPPUNIT_ASSERT_MESSAGE("Copied parameter should match the original.", param->GetValue() == param2->GetValue());
 
       dtUtil::DataStream ds;
-      dtCore::RefPtr<dtDAL::NamedIntParameter> param3 = new dtDAL::NamedIntParameter("b");
+      dtCore::RefPtr<dtCore::NamedIntParameter> param3 = new dtCore::NamedIntParameter("b");
 
       param->ToDataStream(ds);
       param3->FromDataStream(ds);
       CPPUNIT_ASSERT(param->GetValue() == param3->GetValue());
 
       //Test the list version of the message parameter.
-      TestParameterList<dtDAL::NamedIntParameter,int>(
+      TestParameterList<dtCore::NamedIntParameter,int>(
          -100,-1,-3,-4,-232);
    }
    catch (const dtUtil::Exception& e)
@@ -1085,7 +1085,7 @@ void NamedParameterTests::TestNamedUnsignedLongIntParameter()
 {
    try
    {
-      dtCore::RefPtr<dtDAL::NamedUnsignedLongIntParameter>  param = new dtDAL::NamedUnsignedLongIntParameter("a");
+      dtCore::RefPtr<dtCore::NamedUnsignedLongIntParameter>  param = new dtCore::NamedUnsignedLongIntParameter("a");
       CPPUNIT_ASSERT_MESSAGE("MessageParameter should default to 0", param->GetValue() == 0);
 
       unsigned long c = 201;
@@ -1100,19 +1100,19 @@ void NamedParameterTests::TestNamedUnsignedLongIntParameter()
       r = param->GetValue();
       CPPUNIT_ASSERT_MESSAGE("MessageParameter should return the value that was set", c == r);
 
-      dtCore::RefPtr<dtDAL::NamedUnsignedLongIntParameter> param2 = new dtDAL::NamedUnsignedLongIntParameter("b");
+      dtCore::RefPtr<dtCore::NamedUnsignedLongIntParameter> param2 = new dtCore::NamedUnsignedLongIntParameter("b");
       param2->CopyFrom(*param);
       CPPUNIT_ASSERT_MESSAGE("Copied parameter should match the original.", param->GetValue() == param2->GetValue());
 
       dtUtil::DataStream ds;
-      dtCore::RefPtr<dtDAL::NamedUnsignedLongIntParameter> param3 = new dtDAL::NamedUnsignedLongIntParameter("b");
+      dtCore::RefPtr<dtCore::NamedUnsignedLongIntParameter> param3 = new dtCore::NamedUnsignedLongIntParameter("b");
 
       param->ToDataStream(ds);
       param3->FromDataStream(ds);
       CPPUNIT_ASSERT(param->GetValue() == param3->GetValue());
 
       //Test the list version of the message parameter.
-      TestParameterList<dtDAL::NamedUnsignedLongIntParameter,unsigned long>(
+      TestParameterList<dtCore::NamedUnsignedLongIntParameter,unsigned long>(
          10089,167,3784,4456323,23264);
    }
    catch (const dtUtil::Exception& e)
@@ -1129,7 +1129,7 @@ void NamedParameterTests::TestNamedLongIntParameter()
 {
    try
    {
-      dtCore::RefPtr<dtDAL::NamedLongIntParameter>  param = new dtDAL::NamedLongIntParameter("a");
+      dtCore::RefPtr<dtCore::NamedLongIntParameter>  param = new dtCore::NamedLongIntParameter("a");
       CPPUNIT_ASSERT_MESSAGE("MessageParameter should default to 0", param->GetValue() == 0);
 
       long c = 201;
@@ -1144,19 +1144,19 @@ void NamedParameterTests::TestNamedLongIntParameter()
       r = param->GetValue();
       CPPUNIT_ASSERT_MESSAGE("MessageParameter should return the value that was set", c == r);
 
-      dtCore::RefPtr<dtDAL::NamedLongIntParameter> param2 = new dtDAL::NamedLongIntParameter("b");
+      dtCore::RefPtr<dtCore::NamedLongIntParameter> param2 = new dtCore::NamedLongIntParameter("b");
       param2->CopyFrom(*param);
       CPPUNIT_ASSERT_MESSAGE("Copied parameter should match the original.", param->GetValue() == param2->GetValue());
 
       dtUtil::DataStream ds;
-      dtCore::RefPtr<dtDAL::NamedLongIntParameter> param3 = new dtDAL::NamedLongIntParameter("b");
+      dtCore::RefPtr<dtCore::NamedLongIntParameter> param3 = new dtCore::NamedLongIntParameter("b");
 
       param->ToDataStream(ds);
       param3->FromDataStream(ds);
       CPPUNIT_ASSERT(param->GetValue() == param3->GetValue());
 
       //Test the list version of the message parameter.
-      TestParameterList<dtDAL::NamedLongIntParameter,long>(
+      TestParameterList<dtCore::NamedLongIntParameter,long>(
          -10089,-167,-3784,-4456323,-23264);
    }
    catch (const dtUtil::Exception& e)
@@ -1173,7 +1173,7 @@ void NamedParameterTests::TestNamedUnsignedShortIntParameter()
 {
    try
    {
-      dtCore::RefPtr<dtDAL::NamedUnsignedShortIntParameter>  param = new dtDAL::NamedUnsignedShortIntParameter("a");
+      dtCore::RefPtr<dtCore::NamedUnsignedShortIntParameter>  param = new dtCore::NamedUnsignedShortIntParameter("a");
       CPPUNIT_ASSERT_MESSAGE("MessageParameter should default to 0", param->GetValue() == 0);
 
       unsigned short c = 201;
@@ -1188,19 +1188,19 @@ void NamedParameterTests::TestNamedUnsignedShortIntParameter()
       r = param->GetValue();
       CPPUNIT_ASSERT_MESSAGE("MessageParameter should return the value that was set", c == r);
 
-      dtCore::RefPtr<dtDAL::NamedUnsignedShortIntParameter> param2 = new dtDAL::NamedUnsignedShortIntParameter("b");
+      dtCore::RefPtr<dtCore::NamedUnsignedShortIntParameter> param2 = new dtCore::NamedUnsignedShortIntParameter("b");
       param2->CopyFrom(*param);
       CPPUNIT_ASSERT_MESSAGE("Copied parameter should match the original.", param->GetValue() == param2->GetValue());
 
       dtUtil::DataStream ds;
-      dtCore::RefPtr<dtDAL::NamedUnsignedShortIntParameter> param3 = new dtDAL::NamedUnsignedShortIntParameter("b");
+      dtCore::RefPtr<dtCore::NamedUnsignedShortIntParameter> param3 = new dtCore::NamedUnsignedShortIntParameter("b");
 
       param->ToDataStream(ds);
       param3->FromDataStream(ds);
       CPPUNIT_ASSERT(param->GetValue() == param3->GetValue());
 
       //Test the list version of the message parameter.
-      TestParameterList<dtDAL::NamedUnsignedShortIntParameter,unsigned short>(
+      TestParameterList<dtCore::NamedUnsignedShortIntParameter,unsigned short>(
          100,1000,10000,2000,3000);
    }
    catch (const dtUtil::Exception& e)
@@ -1217,7 +1217,7 @@ void NamedParameterTests::TestNamedShortIntParameter()
 {
    try
    {
-      dtCore::RefPtr<dtDAL::NamedShortIntParameter>  param = new dtDAL::NamedShortIntParameter("a");
+      dtCore::RefPtr<dtCore::NamedShortIntParameter>  param = new dtCore::NamedShortIntParameter("a");
       CPPUNIT_ASSERT_MESSAGE("MessageParameter should default to 0", param->GetValue() == 0);
 
       short c = 201;
@@ -1232,19 +1232,19 @@ void NamedParameterTests::TestNamedShortIntParameter()
       r = param->GetValue();
       CPPUNIT_ASSERT_MESSAGE("MessageParameter should return the value that was set", c == r);
 
-      dtCore::RefPtr<dtDAL::NamedShortIntParameter> param2 = new dtDAL::NamedShortIntParameter("b");
+      dtCore::RefPtr<dtCore::NamedShortIntParameter> param2 = new dtCore::NamedShortIntParameter("b");
       param2->CopyFrom(*param);
       CPPUNIT_ASSERT_MESSAGE("Copied parameter should match the original.", param->GetValue() == param2->GetValue());
 
       dtUtil::DataStream ds;
-      dtCore::RefPtr<dtDAL::NamedShortIntParameter> param3 = new dtDAL::NamedShortIntParameter("b");
+      dtCore::RefPtr<dtCore::NamedShortIntParameter> param3 = new dtCore::NamedShortIntParameter("b");
 
       param->ToDataStream(ds);
       param3->FromDataStream(ds);
       CPPUNIT_ASSERT(param->GetValue() == param3->GetValue());
 
       //Test the list version of the message parameter.
-      TestParameterList<dtDAL::NamedShortIntParameter,short>(
+      TestParameterList<dtCore::NamedShortIntParameter,short>(
          -10089,-167,-3784,-423,-23264);
    }
    catch (const dtUtil::Exception& e)
@@ -1261,7 +1261,7 @@ void NamedParameterTests::TestNamedFloatParameter()
 {
    try
    {
-      dtCore::RefPtr<dtDAL::NamedFloatParameter>  param = new dtDAL::NamedFloatParameter("a");
+      dtCore::RefPtr<dtCore::NamedFloatParameter>  param = new dtCore::NamedFloatParameter("a");
       CPPUNIT_ASSERT_MESSAGE("MessageParameter should default to 0.0", osg::equivalent(param->GetValue(), 0.0f, 1e-2f));
 
       CPPUNIT_ASSERT_EQUAL_MESSAGE("Precision should be 9", (unsigned int)9, param->GetNumberPrecision());
@@ -1280,20 +1280,20 @@ void NamedParameterTests::TestNamedFloatParameter()
       CPPUNIT_ASSERT_MESSAGE("MessageParameter should return the value that was set",
          osg::equivalent(c, r, 1e-2f));
 
-      dtCore::RefPtr<dtDAL::NamedFloatParameter> param2 = new dtDAL::NamedFloatParameter("b");
+      dtCore::RefPtr<dtCore::NamedFloatParameter> param2 = new dtCore::NamedFloatParameter("b");
       param2->CopyFrom(*param);
       CPPUNIT_ASSERT_MESSAGE("Copied parameter should match the original.",
          osg::equivalent(param->GetValue(), param2->GetValue(), 1e-2f));
 
       dtUtil::DataStream ds;
-      dtCore::RefPtr<dtDAL::NamedFloatParameter> param3 = new dtDAL::NamedFloatParameter("b");
+      dtCore::RefPtr<dtCore::NamedFloatParameter> param3 = new dtCore::NamedFloatParameter("b");
 
       param->ToDataStream(ds);
       param3->FromDataStream(ds);
       CPPUNIT_ASSERT(osg::equivalent(param->GetValue(), param3->GetValue(), 1e-2f));
 
       //Test the list version of the message parameter.
-      TestParameterList<dtDAL::NamedFloatParameter,float>(
+      TestParameterList<dtCore::NamedFloatParameter,float>(
          -10089.0f,167.5f,-3784.24f,-4456323.3456f,-23264.0f);
    }
    catch (const dtUtil::Exception& e)
@@ -1310,7 +1310,7 @@ void NamedParameterTests::TestNamedDoubleParameter()
 {
    try
    {
-      dtCore::RefPtr<dtDAL::NamedDoubleParameter>  param = new dtDAL::NamedDoubleParameter("a");
+      dtCore::RefPtr<dtCore::NamedDoubleParameter>  param = new dtCore::NamedDoubleParameter("a");
       CPPUNIT_ASSERT_MESSAGE("MessageParameter should default to 0.0", osg::equivalent(param->GetValue(), 0.0, 1e-2));
       CPPUNIT_ASSERT_EQUAL_MESSAGE("Precision should be 17", (unsigned int)17, param->GetNumberPrecision());
 
@@ -1328,20 +1328,20 @@ void NamedParameterTests::TestNamedDoubleParameter()
       CPPUNIT_ASSERT_MESSAGE("MessageParameter should return the value that was set",
          osg::equivalent(c, r, 1e-2));
 
-      dtCore::RefPtr<dtDAL::NamedDoubleParameter> param2 = new dtDAL::NamedDoubleParameter("b");
+      dtCore::RefPtr<dtCore::NamedDoubleParameter> param2 = new dtCore::NamedDoubleParameter("b");
       param2->CopyFrom(*param);
       CPPUNIT_ASSERT_MESSAGE("Copied parameter should match the original.",
          osg::equivalent(param->GetValue(), param2->GetValue(), 1e-2));
 
       dtUtil::DataStream ds;
-      dtCore::RefPtr<dtDAL::NamedDoubleParameter> param3 = new dtDAL::NamedDoubleParameter("b");
+      dtCore::RefPtr<dtCore::NamedDoubleParameter> param3 = new dtCore::NamedDoubleParameter("b");
 
       param->ToDataStream(ds);
       param3->FromDataStream(ds);
       CPPUNIT_ASSERT(osg::equivalent(param->GetValue(), param3->GetValue(), 1e-2));
 
       //Test the list version of the message parameter.
-      TestParameterList<dtDAL::NamedDoubleParameter,double>(
+      TestParameterList<dtCore::NamedDoubleParameter,double>(
          -10089.0, -167.5, 3784.24, -4456323.3456, 23264.0);
    }
    catch (const dtUtil::Exception& e)
@@ -1356,25 +1356,25 @@ void NamedParameterTests::TestNamedDoubleParameter()
 
 void NamedParameterTests::TestNamedVec2Parameters()
 {
-   TestNamedVecParameter<osg::Vec2,  dtDAL::NamedVec2Parameter>(2);
-   TestNamedVecParameter<osg::Vec2f, dtDAL::NamedVec2fParameter>(2);
-   TestNamedVecParameter<osg::Vec2d, dtDAL::NamedVec2dParameter>(2);
+   TestNamedVecParameter<osg::Vec2,  dtCore::NamedVec2Parameter>(2);
+   TestNamedVecParameter<osg::Vec2f, dtCore::NamedVec2fParameter>(2);
+   TestNamedVecParameter<osg::Vec2d, dtCore::NamedVec2dParameter>(2);
 
    try
    {
-      TestNamedVecParameterList<dtDAL::NamedVec2Parameter,osg::Vec2>(
+      TestNamedVecParameterList<dtCore::NamedVec2Parameter,osg::Vec2>(
          osg::Vec2(1,1),
          osg::Vec2(123,1423.234),osg::Vec2(11234.234,1.0),
          osg::Vec2(1234,-13241.294),osg::Vec2(1234.234,1.523),2
       );
 
-      TestNamedVecParameterList<dtDAL::NamedVec2fParameter,osg::Vec2f>(
+      TestNamedVecParameterList<dtCore::NamedVec2fParameter,osg::Vec2f>(
          osg::Vec2f(1.0f,1.0f),
          osg::Vec2f(123.0f,1423.234f),osg::Vec2(11234.234f,1.0f),
          osg::Vec2f(1234.0f,-13241.294f),osg::Vec2(1234.234f,1.523f),2
       );
 
-      TestNamedVecParameterList<dtDAL::NamedVec2dParameter,osg::Vec2d>(
+      TestNamedVecParameterList<dtCore::NamedVec2dParameter,osg::Vec2d>(
          osg::Vec2d(1,1),
          osg::Vec2d(123,1423.234),osg::Vec2d(11234.234,1.0),
          osg::Vec2d(1234,-13241.294),osg::Vec2d(1234.234,1.523),2
@@ -1392,26 +1392,26 @@ void NamedParameterTests::TestNamedVec2Parameters()
 
 void NamedParameterTests::TestNamedVec3Parameters()
 {
-   TestNamedVecParameter<osg::Vec3,  dtDAL::NamedVec3Parameter>(3);
-   TestNamedVecParameter<osg::Vec3f, dtDAL::NamedVec3fParameter>(3);
-   TestNamedVecParameter<osg::Vec3d, dtDAL::NamedVec3dParameter>(3);
+   TestNamedVecParameter<osg::Vec3,  dtCore::NamedVec3Parameter>(3);
+   TestNamedVecParameter<osg::Vec3f, dtCore::NamedVec3fParameter>(3);
+   TestNamedVecParameter<osg::Vec3d, dtCore::NamedVec3dParameter>(3);
    TestNamedVecParameter<osg::Vec3, dtGame::RGBColorMessageParameter>(3);
 
    try
    {
-      TestNamedVecParameterList<dtDAL::NamedVec3Parameter,osg::Vec3>(
+      TestNamedVecParameterList<dtCore::NamedVec3Parameter,osg::Vec3>(
          osg::Vec3(1,1,1),
          osg::Vec3(123,1423.234,23.2134),osg::Vec3(11234.234,1.0,23.21334),
          osg::Vec3(1234,-13241.294,2763.2134),osg::Vec3(1234.234,1.523,3423.2134),3
       );
 
-      TestNamedVecParameterList<dtDAL::NamedVec3fParameter,osg::Vec3f>(
+      TestNamedVecParameterList<dtCore::NamedVec3fParameter,osg::Vec3f>(
          osg::Vec3f(1,1,1),
          osg::Vec3f(123,1423.234,23.2134),osg::Vec3f(11234.234,1.0,23.21334),
          osg::Vec3f(1234,-13241.294,2763.2134),osg::Vec3f(1234.234,1.523,3423.2134),3
       );
 
-      TestNamedVecParameterList<dtDAL::NamedVec3dParameter,osg::Vec3d>(
+      TestNamedVecParameterList<dtCore::NamedVec3dParameter,osg::Vec3d>(
          osg::Vec3d(1,1,1),
          osg::Vec3d(123,1423.234,23.2134),osg::Vec3d(11234.234,1.0,23.21334),
          osg::Vec3d(1234,-13241.294,2763.2134),osg::Vec3d(1234.234,1.523,3423.2134),3
@@ -1435,26 +1435,26 @@ void NamedParameterTests::TestNamedVec3Parameters()
 
 void NamedParameterTests::TestNamedVec4Parameters()
 {
-   TestNamedVecParameter<osg::Vec4,  dtDAL::NamedVec4Parameter>(4);
-   TestNamedVecParameter<osg::Vec4f, dtDAL::NamedVec4fParameter>(4);
-   TestNamedVecParameter<osg::Vec4d, dtDAL::NamedVec4dParameter>(4);
+   TestNamedVecParameter<osg::Vec4,  dtCore::NamedVec4Parameter>(4);
+   TestNamedVecParameter<osg::Vec4f, dtCore::NamedVec4fParameter>(4);
+   TestNamedVecParameter<osg::Vec4d, dtCore::NamedVec4dParameter>(4);
    TestNamedVecParameter<osg::Vec4,  dtGame::RGBAColorMessageParameter>(4);
 
    try
    {
-      TestNamedVecParameterList<dtDAL::NamedVec4Parameter,osg::Vec4>(
+      TestNamedVecParameterList<dtCore::NamedVec4Parameter,osg::Vec4>(
          osg::Vec4(1,1,1,1),
          osg::Vec4(123,1423.234,234.2832,564345.634623),osg::Vec4(11234.234,1.0,10,1),
          osg::Vec4(1234,-13241.294,200.325,2352.152343),osg::Vec4(1234.234,1.523,1,2),4
       );
 
-      TestNamedVecParameterList<dtDAL::NamedVec4fParameter,osg::Vec4f>(
+      TestNamedVecParameterList<dtCore::NamedVec4fParameter,osg::Vec4f>(
         osg::Vec4f(1,1,1,1),
          osg::Vec4f(123,1423.234,234.2832,564345.634623),osg::Vec4f(11234.234,1.0,10,1),
          osg::Vec4f(1234,-13241.294,200.325,2352.152343),osg::Vec4f(1234.234,1.523,1,2),4
       );
 
-      TestNamedVecParameterList<dtDAL::NamedVec4dParameter,osg::Vec4d>(
+      TestNamedVecParameterList<dtCore::NamedVec4dParameter,osg::Vec4d>(
          osg::Vec4d(1,1,1,1),
          osg::Vec4d(123,1423.234,234.2832,564345.634623),osg::Vec4d(11234.234,1.0,10,1),
          osg::Vec4d(1234,-13241.294,200.325,2352.152343),osg::Vec4d(1234.234,1.523,1,2),4
@@ -1480,20 +1480,20 @@ void NamedParameterTests::TestNamedActorParameter()
 {
    try
    {
-      std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> > container;
-      std::vector<dtCore::RefPtr<dtDAL::ActorType> > types;
+      std::vector<dtCore::RefPtr<dtCore::BaseActorObject> > container;
+      std::vector<dtCore::RefPtr<dtCore::ActorType> > types;
 
-      dtCore::RefPtr<dtDAL::BaseActorObject> ap = mManager->CreateActor("dtcore.examples", "Test All Properties");
+      dtCore::RefPtr<dtCore::BaseActorObject> ap = mManager->CreateActor("dtcore.examples", "Test All Properties");
 
-      dtDAL::ActorActorProperty* aap = NULL;
+      dtCore::ActorActorProperty* aap = NULL;
 
-      std::vector<const dtDAL::ActorProperty*> props;
+      std::vector<const dtCore::ActorProperty*> props;
       ap->GetPropertyList(props);
       for (unsigned int j = 0; j < props.size(); ++j)
       {
-         dtDAL::DataType& dt = props[j]->GetPropertyType();
-         if (dt == dtDAL::DataType::ACTOR)
-            aap = static_cast<dtDAL::ActorActorProperty*> (const_cast<dtDAL::ActorProperty*>(props[j]));
+         dtCore::DataType& dt = props[j]->GetPropertyType();
+         if (dt == dtCore::DataType::ACTOR)
+            aap = static_cast<dtCore::ActorActorProperty*> (const_cast<dtCore::ActorProperty*>(props[j]));
       }
 
       CPPUNIT_ASSERT_MESSAGE("The actor actor property should not be NULL", aap != NULL);
@@ -1502,7 +1502,7 @@ void NamedParameterTests::TestNamedActorParameter()
 
       dtCore::RefPtr<dtGame::MessageParameter> amp = NULL;
 
-      amp = dtDAL::NamedParameter::CreateFromType(dtDAL::DataType::ACTOR, "testNamedActorParameter");
+      amp = dtCore::NamedParameter::CreateFromType(dtCore::DataType::ACTOR, "testNamedActorParameter");
 
       CPPUNIT_ASSERT_MESSAGE("The actor message parameter should not be NULL", amp != NULL);
 
@@ -1516,7 +1516,7 @@ void NamedParameterTests::TestNamedActorParameter()
       dtCore::UniqueId id3 = dtCore::UniqueId();
       dtCore::UniqueId id4 = dtCore::UniqueId();
       dtCore::UniqueId id5 = dtCore::UniqueId();
-      TestParameterList<dtDAL::NamedActorParameter,dtCore::UniqueId>(
+      TestParameterList<dtCore::NamedActorParameter,dtCore::UniqueId>(
          id1,id2,id3,id4,id5);
    }
    catch (const dtUtil::Exception& e)
@@ -1533,17 +1533,17 @@ void NamedParameterTests::TestNamedPropertyContainerParameterWithProperty()
 {
    try
    {
-//      dtCore::RefPtr<dtDAL::NamedGroupParameter> groupParam = CreateNamedGroupParameter();
+//      dtCore::RefPtr<dtCore::NamedGroupParameter> groupParam = CreateNamedGroupParameter();
 //      TestNamedGroupParameter(*groupParam);
 //
 //      // Assign to a group property then read the value back out.
-//      //dtDAL::GroupActorProperty* groupProp = dynamic_cast<dtDAL::GroupActorProperty*>(mExampleActor->GetProperty("TestGroup"));
-//      dtDAL::ActorProperty* prop = mExampleActor->GetProperty("TestGroup");
+//      //dtCore::GroupActorProperty* groupProp = dynamic_cast<dtCore::GroupActorProperty*>(mExampleActor->GetProperty("TestGroup"));
+//      dtCore::ActorProperty* prop = mExampleActor->GetProperty("TestGroup");
 //      CPPUNIT_ASSERT(prop != NULL);
 //
 //      groupParam->ApplyValueToProperty(*prop);
 //
-//      dtCore::RefPtr<dtDAL::NamedGroupParameter> groupCopy = new dtDAL::NamedGroupParameter("testCopy");
+//      dtCore::RefPtr<dtCore::NamedGroupParameter> groupCopy = new dtCore::NamedGroupParameter("testCopy");
 //      groupCopy->SetFromProperty(*prop);
 //
 //      TestNamedGroupParameter(*groupCopy);
@@ -1555,67 +1555,67 @@ void NamedParameterTests::TestNamedPropertyContainerParameterWithProperty()
 
 }
 
-dtCore::RefPtr<dtDAL::NamedGroupParameter> NamedParameterTests::CreateNamedGroupParameter(bool createPropCont)
+dtCore::RefPtr<dtCore::NamedGroupParameter> NamedParameterTests::CreateNamedGroupParameter(bool createPropCont)
 {
-   dtCore::RefPtr<dtDAL::NamedGroupParameter> groupParam;
+   dtCore::RefPtr<dtCore::NamedGroupParameter> groupParam;
    if (createPropCont)
    {
-      groupParam = new dtDAL::NamedPropertyContainerParameter("test");
+      groupParam = new dtCore::NamedPropertyContainerParameter("test");
    }
    else
    {
-      groupParam = new dtDAL::NamedGroupParameter("test");
+      groupParam = new dtCore::NamedGroupParameter("test");
    }
 
-   groupParam->AddParameter(*new dtDAL::NamedStringParameter("test1"));
-   groupParam->AddParameter("test2", dtDAL::DataType::DOUBLE);
-   groupParam->AddParameter(*new dtDAL::NamedFloatParameter("test3"));
-   groupParam->AddParameter("test4", dtDAL::DataType::INT);
+   groupParam->AddParameter(*new dtCore::NamedStringParameter("test1"));
+   groupParam->AddParameter("test2", dtCore::DataType::DOUBLE);
+   groupParam->AddParameter(*new dtCore::NamedFloatParameter("test3"));
+   groupParam->AddParameter("test4", dtCore::DataType::INT);
 
    CPPUNIT_ASSERT_MESSAGE("Should have received 4 in list for group param messages" , groupParam->GetParameterCount() == 4);
 
-   dtCore::RefPtr<dtDAL::NamedGroupParameter> internalGroup =
-      static_cast<dtDAL::NamedGroupParameter*>(groupParam->AddParameter("test5", dtDAL::DataType::GROUP));
+   dtCore::RefPtr<dtCore::NamedGroupParameter> internalGroup =
+      static_cast<dtCore::NamedGroupParameter*>(groupParam->AddParameter("test5", dtCore::DataType::GROUP));
 
-   internalGroup->AddParameter(*new dtDAL::NamedStringParameter("test1"));
-   internalGroup->AddParameter(*new dtDAL::NamedDoubleParameter("test9"));
+   internalGroup->AddParameter(*new dtCore::NamedStringParameter("test1"));
+   internalGroup->AddParameter(*new dtCore::NamedDoubleParameter("test9"));
    return groupParam;
 }
 
-void NamedParameterTests::TestNamedGroupParameter(dtDAL::NamedGroupParameter& groupParam)
+void NamedParameterTests::TestNamedGroupParameter(dtCore::NamedGroupParameter& groupParam)
 {
    CPPUNIT_ASSERT(groupParam.GetParameter("test1") != NULL);
-   CPPUNIT_ASSERT(groupParam.GetParameter("test1")->GetDataType() == dtDAL::DataType::STRING);
+   CPPUNIT_ASSERT(groupParam.GetParameter("test1")->GetDataType() == dtCore::DataType::STRING);
 
    CPPUNIT_ASSERT(groupParam.GetParameter("test2") != NULL);
-   CPPUNIT_ASSERT(groupParam.GetParameter("test2")->GetDataType() == dtDAL::DataType::DOUBLE);
+   CPPUNIT_ASSERT(groupParam.GetParameter("test2")->GetDataType() == dtCore::DataType::DOUBLE);
 
    CPPUNIT_ASSERT(groupParam.GetParameter("test3") != NULL);
-   CPPUNIT_ASSERT(groupParam.GetParameter("test3")->GetDataType() == dtDAL::DataType::FLOAT);
+   CPPUNIT_ASSERT(groupParam.GetParameter("test3")->GetDataType() == dtCore::DataType::FLOAT);
 
    CPPUNIT_ASSERT(groupParam.GetParameter("test4") != NULL);
-   CPPUNIT_ASSERT(groupParam.GetParameter("test4")->GetDataType() == dtDAL::DataType::INT);
+   CPPUNIT_ASSERT(groupParam.GetParameter("test4")->GetDataType() == dtCore::DataType::INT);
 
    CPPUNIT_ASSERT(groupParam.GetParameter("test5") != NULL);
-   CPPUNIT_ASSERT(groupParam.GetParameter("test5")->GetDataType() == dtDAL::DataType::GROUP);
+   CPPUNIT_ASSERT(groupParam.GetParameter("test5")->GetDataType() == dtCore::DataType::GROUP);
 
-   dtCore::RefPtr<dtDAL::NamedGroupParameter> internalGroup =
-      static_cast<dtDAL::NamedGroupParameter*>(groupParam.GetParameter("test5"));
+   dtCore::RefPtr<dtCore::NamedGroupParameter> internalGroup =
+      static_cast<dtCore::NamedGroupParameter*>(groupParam.GetParameter("test5"));
 
    CPPUNIT_ASSERT(internalGroup->GetParameter("test1") != NULL);
-   CPPUNIT_ASSERT(internalGroup->GetParameter("test1")->GetDataType() == dtDAL::DataType::STRING);
+   CPPUNIT_ASSERT(internalGroup->GetParameter("test1")->GetDataType() == dtCore::DataType::STRING);
 
    CPPUNIT_ASSERT(internalGroup->GetParameter("test9") != NULL);
-   CPPUNIT_ASSERT(internalGroup->GetParameter("test9")->GetDataType() == dtDAL::DataType::DOUBLE);
+   CPPUNIT_ASSERT(internalGroup->GetParameter("test9")->GetDataType() == dtCore::DataType::DOUBLE);
 
 
    CPPUNIT_ASSERT(groupParam.GetParameter("invalid-name") == NULL);
 
    //Now test getting parameters as a const group
-   const dtDAL::NamedGroupParameter& gmp = groupParam;
+   const dtCore::NamedGroupParameter& gmp = groupParam;
 
    CPPUNIT_ASSERT(gmp.GetParameter("test1") != NULL);
-   CPPUNIT_ASSERT(gmp.GetParameter("test1")->GetDataType() == dtDAL::DataType::STRING);
+   CPPUNIT_ASSERT(gmp.GetParameter("test1")->GetDataType() == dtCore::DataType::STRING);
 
    CPPUNIT_ASSERT(gmp.GetParameter("invalid-name") == NULL);
 
@@ -1634,9 +1634,9 @@ void NamedParameterTests::TestNamedGroupParameterCopy()
 {
    try
    {
-      dtCore::RefPtr<dtDAL::NamedGroupParameter> groupParam = CreateNamedGroupParameter();
+      dtCore::RefPtr<dtCore::NamedGroupParameter> groupParam = CreateNamedGroupParameter();
       TestNamedGroupParameter(*groupParam);
-      dtCore::RefPtr<dtDAL::NamedGroupParameter> groupCopy = new dtDAL::NamedGroupParameter("testCopy");
+      dtCore::RefPtr<dtCore::NamedGroupParameter> groupCopy = new dtCore::NamedGroupParameter("testCopy");
       groupCopy->CopyFrom(*groupParam);
       TestNamedGroupParameter(*groupCopy);
    }
@@ -1654,17 +1654,17 @@ void NamedParameterTests::TestNamedGroupParameterWithProperty()
 {
    try
    {
-      dtCore::RefPtr<dtDAL::NamedGroupParameter> groupParam = CreateNamedGroupParameter();
+      dtCore::RefPtr<dtCore::NamedGroupParameter> groupParam = CreateNamedGroupParameter();
       TestNamedGroupParameter(*groupParam);
 
       // Assign to a group property then read the value back out.
-      //dtDAL::GroupActorProperty* groupProp = dynamic_cast<dtDAL::GroupActorProperty*>(mExampleActor->GetProperty("TestGroup"));
-      dtDAL::ActorProperty* prop = mExampleActor->GetProperty("TestGroup");
+      //dtCore::GroupActorProperty* groupProp = dynamic_cast<dtCore::GroupActorProperty*>(mExampleActor->GetProperty("TestGroup"));
+      dtCore::ActorProperty* prop = mExampleActor->GetProperty("TestGroup");
       CPPUNIT_ASSERT(prop != NULL);
 
       groupParam->ApplyValueToProperty(*prop);
 
-      dtCore::RefPtr<dtDAL::NamedGroupParameter> groupCopy = new dtDAL::NamedGroupParameter("testCopy");
+      dtCore::RefPtr<dtCore::NamedGroupParameter> groupCopy = new dtCore::NamedGroupParameter("testCopy");
       groupCopy->SetFromProperty(*prop);
 
       TestNamedGroupParameter(*groupCopy);
@@ -1680,14 +1680,14 @@ void NamedParameterTests::TestNamedGroupParameterStream()
 {
    try
    {
-      dtCore::RefPtr<dtDAL::NamedGroupParameter> groupParam = CreateNamedGroupParameter();
+      dtCore::RefPtr<dtCore::NamedGroupParameter> groupParam = CreateNamedGroupParameter();
       TestNamedGroupParameter(*groupParam);
 
       dtUtil::DataStream ds;
 
       groupParam->ToDataStream(ds);
 
-      dtCore::RefPtr<dtDAL::NamedGroupParameter> groupCopy = new dtDAL::NamedGroupParameter("testCopy");
+      dtCore::RefPtr<dtCore::NamedGroupParameter> groupCopy = new dtCore::NamedGroupParameter("testCopy");
       groupCopy->FromDataStream(ds);
 
       TestNamedGroupParameter(*groupCopy);
@@ -1703,14 +1703,14 @@ void NamedParameterTests::TestNamedGroupParameterString()
 {
    try
    {
-      dtCore::RefPtr<dtDAL::NamedGroupParameter> groupParam = CreateNamedGroupParameter();
+      dtCore::RefPtr<dtCore::NamedGroupParameter> groupParam = CreateNamedGroupParameter();
       TestNamedGroupParameter(*groupParam);
 
       std::string s;
 
       s = groupParam->ToString();
 
-      dtCore::RefPtr<dtDAL::NamedGroupParameter> groupCopy = new dtDAL::NamedGroupParameter("testCopy");
+      dtCore::RefPtr<dtCore::NamedGroupParameter> groupCopy = new dtCore::NamedGroupParameter("testCopy");
       groupCopy->FromString(s);
 
       TestNamedGroupParameter(*groupCopy);
@@ -1721,62 +1721,62 @@ void NamedParameterTests::TestNamedGroupParameterString()
    }
 
 }
-dtCore::RefPtr<dtDAL::NamedArrayParameter> NamedParameterTests::CreateNamedArrayParameter()
+dtCore::RefPtr<dtCore::NamedArrayParameter> NamedParameterTests::CreateNamedArrayParameter()
 {
-   dtCore::RefPtr<dtDAL::NamedArrayParameter> arrayParam;
-   arrayParam = new dtDAL::NamedArrayParameter("test");
+   dtCore::RefPtr<dtCore::NamedArrayParameter> arrayParam;
+   arrayParam = new dtCore::NamedArrayParameter("test");
 
-   arrayParam->AddParameter(*new dtDAL::NamedStringParameter("test1"));
-   arrayParam->AddParameter("test2", dtDAL::DataType::DOUBLE);
-   arrayParam->AddParameter(*new dtDAL::NamedFloatParameter("test3"));
-   arrayParam->AddParameter("test4", dtDAL::DataType::INT);
+   arrayParam->AddParameter(*new dtCore::NamedStringParameter("test1"));
+   arrayParam->AddParameter("test2", dtCore::DataType::DOUBLE);
+   arrayParam->AddParameter(*new dtCore::NamedFloatParameter("test3"));
+   arrayParam->AddParameter("test4", dtCore::DataType::INT);
 
    CPPUNIT_ASSERT_MESSAGE("Should have received 4 in list for group param messages" , arrayParam->GetSize() == 4);
 
-   dtCore::RefPtr<dtDAL::NamedArrayParameter> internalArray =
-      static_cast<dtDAL::NamedArrayParameter*>(arrayParam->AddParameter("test5", dtDAL::DataType::ARRAY));
+   dtCore::RefPtr<dtCore::NamedArrayParameter> internalArray =
+      static_cast<dtCore::NamedArrayParameter*>(arrayParam->AddParameter("test5", dtCore::DataType::ARRAY));
 
-   internalArray->AddParameter(*new dtDAL::NamedStringParameter("test1"));
-   internalArray->AddParameter(*new dtDAL::NamedDoubleParameter("test9"));
+   internalArray->AddParameter(*new dtCore::NamedStringParameter("test1"));
+   internalArray->AddParameter(*new dtCore::NamedDoubleParameter("test9"));
    return arrayParam;
 }
 
-void NamedParameterTests::TestNamedArrayParameter(dtDAL::NamedArrayParameter& arrayParam)
+void NamedParameterTests::TestNamedArrayParameter(dtCore::NamedArrayParameter& arrayParam)
 {
    CPPUNIT_ASSERT_EQUAL(size_t(5), arrayParam.GetSize());
 
    CPPUNIT_ASSERT(arrayParam.GetParameter(0) != NULL);
-   CPPUNIT_ASSERT(arrayParam.GetParameter(0)->GetDataType() == dtDAL::DataType::STRING);
+   CPPUNIT_ASSERT(arrayParam.GetParameter(0)->GetDataType() == dtCore::DataType::STRING);
 
    CPPUNIT_ASSERT(arrayParam.GetParameter(1) != NULL);
-   CPPUNIT_ASSERT(arrayParam.GetParameter(1)->GetDataType() == dtDAL::DataType::DOUBLE);
+   CPPUNIT_ASSERT(arrayParam.GetParameter(1)->GetDataType() == dtCore::DataType::DOUBLE);
 
    CPPUNIT_ASSERT(arrayParam.GetParameter(2) != NULL);
-   CPPUNIT_ASSERT(arrayParam.GetParameter(2)->GetDataType() == dtDAL::DataType::FLOAT);
+   CPPUNIT_ASSERT(arrayParam.GetParameter(2)->GetDataType() == dtCore::DataType::FLOAT);
 
    CPPUNIT_ASSERT(arrayParam.GetParameter(3) != NULL);
-   CPPUNIT_ASSERT(arrayParam.GetParameter(3)->GetDataType() == dtDAL::DataType::INT);
+   CPPUNIT_ASSERT(arrayParam.GetParameter(3)->GetDataType() == dtCore::DataType::INT);
 
    CPPUNIT_ASSERT(arrayParam.GetParameter(4) != NULL);
-   CPPUNIT_ASSERT(arrayParam.GetParameter(4)->GetDataType() == dtDAL::DataType::ARRAY);
+   CPPUNIT_ASSERT(arrayParam.GetParameter(4)->GetDataType() == dtCore::DataType::ARRAY);
 
-   dtCore::RefPtr<dtDAL::NamedArrayParameter> internalArray =
-      dynamic_cast<dtDAL::NamedArrayParameter*>(arrayParam.GetParameter(4));
+   dtCore::RefPtr<dtCore::NamedArrayParameter> internalArray =
+      dynamic_cast<dtCore::NamedArrayParameter*>(arrayParam.GetParameter(4));
 
    CPPUNIT_ASSERT(internalArray->GetParameter(0) != NULL);
-   CPPUNIT_ASSERT(internalArray->GetParameter(0)->GetDataType() == dtDAL::DataType::STRING);
+   CPPUNIT_ASSERT(internalArray->GetParameter(0)->GetDataType() == dtCore::DataType::STRING);
 
    CPPUNIT_ASSERT(internalArray->GetParameter(1) != NULL);
-   CPPUNIT_ASSERT(internalArray->GetParameter(1)->GetDataType() == dtDAL::DataType::DOUBLE);
+   CPPUNIT_ASSERT(internalArray->GetParameter(1)->GetDataType() == dtCore::DataType::DOUBLE);
 
 
    CPPUNIT_ASSERT(arrayParam.GetParameter(51) == NULL);
 
    //Now test getting parameters as a const group
-   const dtDAL::NamedArrayParameter& amp = arrayParam;
+   const dtCore::NamedArrayParameter& amp = arrayParam;
 
    CPPUNIT_ASSERT(amp.GetParameter(0) != NULL);
-   CPPUNIT_ASSERT(amp.GetParameter(0)->GetDataType() == dtDAL::DataType::STRING);
+   CPPUNIT_ASSERT(amp.GetParameter(0)->GetDataType() == dtCore::DataType::STRING);
 
    CPPUNIT_ASSERT(amp.GetParameter(21) == NULL);
 
@@ -1786,9 +1786,9 @@ void NamedParameterTests::TestNamedArrayParameterCopy()
 {
    try
    {
-      dtCore::RefPtr<dtDAL::NamedArrayParameter> arrayParam = CreateNamedArrayParameter();
+      dtCore::RefPtr<dtCore::NamedArrayParameter> arrayParam = CreateNamedArrayParameter();
       TestNamedArrayParameter(*arrayParam);
-      dtCore::RefPtr<dtDAL::NamedArrayParameter> arrayCopy = new dtDAL::NamedArrayParameter("testCopy");
+      dtCore::RefPtr<dtCore::NamedArrayParameter> arrayCopy = new dtCore::NamedArrayParameter("testCopy");
       arrayCopy->CopyFrom(*arrayParam);
       TestNamedArrayParameter(*arrayCopy);
    }
@@ -1807,28 +1807,28 @@ void NamedParameterTests::TestNamedArrayParameterWithProperty()
    try
    {
       dtUtil::RefString testName("joe");
-      dtCore::RefPtr<dtDAL::NamedArrayParameter> arrayParam = new dtDAL::NamedArrayParameter(testName);
-      arrayParam->AddParameter(*new dtDAL::NamedStringParameter(testName, "hi"));
-      arrayParam->AddParameter(*new dtDAL::NamedStringParameter(testName, "Mom"));
-      arrayParam->AddParameter(*new dtDAL::NamedStringParameter(testName, "hi"));
-      arrayParam->AddParameter(*new dtDAL::NamedStringParameter(testName, "Dad"));
+      dtCore::RefPtr<dtCore::NamedArrayParameter> arrayParam = new dtCore::NamedArrayParameter(testName);
+      arrayParam->AddParameter(*new dtCore::NamedStringParameter(testName, "hi"));
+      arrayParam->AddParameter(*new dtCore::NamedStringParameter(testName, "Mom"));
+      arrayParam->AddParameter(*new dtCore::NamedStringParameter(testName, "hi"));
+      arrayParam->AddParameter(*new dtCore::NamedStringParameter(testName, "Dad"));
 
       // Assign to a array property then read the value back out.
-      //dtDAL::GroupActorProperty* arrayProp = dynamic_cast<dtDAL::GroupActorProperty*>(mExampleActor->GetProperty("TestGroup"));
-      dtDAL::ActorProperty* prop = mExampleActor->GetProperty("TestStringArray");
+      //dtCore::GroupActorProperty* arrayProp = dynamic_cast<dtCore::GroupActorProperty*>(mExampleActor->GetProperty("TestGroup"));
+      dtCore::ActorProperty* prop = mExampleActor->GetProperty("TestStringArray");
       CPPUNIT_ASSERT(prop != NULL);
 
       arrayParam->ApplyValueToProperty(*prop);
 
-      dtCore::RefPtr<dtDAL::NamedArrayParameter> arrayCopy = new dtDAL::NamedArrayParameter(testName);
+      dtCore::RefPtr<dtCore::NamedArrayParameter> arrayCopy = new dtCore::NamedArrayParameter(testName);
       arrayCopy->SetFromProperty(*prop);
 
       CPPUNIT_ASSERT_EQUAL(arrayParam->GetSize(), arrayCopy->GetSize());
 
       for (unsigned i = 0; i < arrayCopy->GetSize(); ++i)
       {
-         dtDAL::NamedStringParameter* np = dynamic_cast<dtDAL::NamedStringParameter*>(arrayParam->GetParameter(i));
-         dtDAL::NamedStringParameter* npCopy = dynamic_cast<dtDAL::NamedStringParameter*>(arrayCopy->GetParameter(i));
+         dtCore::NamedStringParameter* np = dynamic_cast<dtCore::NamedStringParameter*>(arrayParam->GetParameter(i));
+         dtCore::NamedStringParameter* npCopy = dynamic_cast<dtCore::NamedStringParameter*>(arrayCopy->GetParameter(i));
 
          CPPUNIT_ASSERT(np != NULL);
          CPPUNIT_ASSERT(npCopy != NULL);
@@ -1849,14 +1849,14 @@ void NamedParameterTests::TestNamedArrayParameterStream()
 {
    try
    {
-      dtCore::RefPtr<dtDAL::NamedArrayParameter> arrayParam = CreateNamedArrayParameter();
+      dtCore::RefPtr<dtCore::NamedArrayParameter> arrayParam = CreateNamedArrayParameter();
       TestNamedArrayParameter(*arrayParam);
 
       dtUtil::DataStream ds;
 
       arrayParam->ToDataStream(ds);
 
-      dtCore::RefPtr<dtDAL::NamedArrayParameter> arrayCopy = new dtDAL::NamedArrayParameter("testCopy");
+      dtCore::RefPtr<dtCore::NamedArrayParameter> arrayCopy = new dtCore::NamedArrayParameter("testCopy");
       arrayCopy->FromDataStream(ds);
 
       TestNamedArrayParameter(*arrayCopy);
@@ -1872,14 +1872,14 @@ void NamedParameterTests::TestNamedArrayParameterString()
 {
    try
    {
-      dtCore::RefPtr<dtDAL::NamedArrayParameter> arrayParam = CreateNamedArrayParameter();
+      dtCore::RefPtr<dtCore::NamedArrayParameter> arrayParam = CreateNamedArrayParameter();
       TestNamedArrayParameter(*arrayParam);
 
       std::string s;
 
       s = arrayParam->ToString();
 
-      dtCore::RefPtr<dtDAL::NamedArrayParameter> arrayCopy = new dtDAL::NamedArrayParameter("testCopy");
+      dtCore::RefPtr<dtCore::NamedArrayParameter> arrayCopy = new dtCore::NamedArrayParameter("testCopy");
       arrayCopy->FromString(s);
 
       TestNamedArrayParameter(*arrayCopy);
@@ -1903,7 +1903,7 @@ void NamedParameterTests::TestNamedFloatToFromDataStream()
       float randMult = dtUtil::RandFloat(0.001f, 2.003f);
       float testValue = baseValue * randMult;
 
-      dtCore::RefPtr<dtDAL::NamedFloatParameter> param = new dtDAL::NamedFloatParameter("a");
+      dtCore::RefPtr<dtCore::NamedFloatParameter> param = new dtCore::NamedFloatParameter("a");
       param->SetValue(testValue);
       CPPUNIT_ASSERT_MESSAGE("Param GetValue() should be the same", 
          osg::equivalent(testValue, param->GetValue(), 1e-2f));
@@ -1912,7 +1912,7 @@ void NamedParameterTests::TestNamedFloatToFromDataStream()
       // Test ToFrom Data Stream
       dtUtil::DataStream ds;
       //ds.SetForceLittleEndian(true);
-      dtCore::RefPtr<dtDAL::NamedFloatParameter> param2 = new dtDAL::NamedFloatParameter("b");
+      dtCore::RefPtr<dtCore::NamedFloatParameter> param2 = new dtCore::NamedFloatParameter("b");
 
       //if (counter == 29)
       //   std::cout << " used to fail here. " << std::endl;
@@ -2015,7 +2015,7 @@ void NamedParameterTests::TestNamedVec3ToFromDataStream()
       float randMult = dtUtil::RandFloat(0.001f, 2.003f);
       osg::Vec3f testValue = baseValue * randMult;
 
-      TestNamedVecParameterToFromStream<osg::Vec3f,  dtDAL::NamedVec3fParameter>(3, testValue, counter);
+      TestNamedVecParameterToFromStream<osg::Vec3f,  dtCore::NamedVec3fParameter>(3, testValue, counter);
    }
 }
 

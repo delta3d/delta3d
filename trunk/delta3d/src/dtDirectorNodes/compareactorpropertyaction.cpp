@@ -21,8 +21,8 @@
 #include <prefix/dtdirectornodesprefix.h>
 #include <dtDirectorNodes/compareactorpropertyaction.h>
 
-#include <dtDAL/actoridactorproperty.h>
-#include <dtDAL/stringactorproperty.h>
+#include <dtCore/actoridactorproperty.h>
+#include <dtCore/stringactorproperty.h>
 
 #include <dtDirector/director.h>
 
@@ -61,24 +61,24 @@ namespace dtDirector
       ActionNode::BuildPropertyMap();
 
       // Create our value links.
-      dtDAL::ActorIDActorProperty* actorProp = new dtDAL::ActorIDActorProperty(
+      dtCore::ActorIDActorProperty* actorProp = new dtCore::ActorIDActorProperty(
          "Actor", "Actor",
-         dtDAL::ActorIDActorProperty::SetFuncType(this, &CompareActorPropertyAction::SetCurrentActor),
-         dtDAL::ActorIDActorProperty::GetFuncType(this, &CompareActorPropertyAction::GetCurrentActor),
+         dtCore::ActorIDActorProperty::SetFuncType(this, &CompareActorPropertyAction::SetCurrentActor),
+         dtCore::ActorIDActorProperty::GetFuncType(this, &CompareActorPropertyAction::GetCurrentActor),
          "", "The actor with the property to retrieve.");
       AddProperty(actorProp);
 
-      dtDAL::StringActorProperty* nameProp = new dtDAL::StringActorProperty(
+      dtCore::StringActorProperty* nameProp = new dtCore::StringActorProperty(
          "PropertyName", "Property Name",
-         dtDAL::StringActorProperty::SetFuncType(this, &CompareActorPropertyAction::SetPropertyName),
-         dtDAL::StringActorProperty::GetFuncType(this, &CompareActorPropertyAction::GetPropertyName),
+         dtCore::StringActorProperty::SetFuncType(this, &CompareActorPropertyAction::SetPropertyName),
+         dtCore::StringActorProperty::GetFuncType(this, &CompareActorPropertyAction::GetPropertyName),
          "The name of the actor property to retrieve.");
       AddProperty(nameProp);
 
-      dtDAL::StringActorProperty* rightProp = new dtDAL::StringActorProperty(
+      dtCore::StringActorProperty* rightProp = new dtCore::StringActorProperty(
          "B", "B",
-         dtDAL::StringActorProperty::SetFuncType(this, &CompareActorPropertyAction::SetResult),
-         dtDAL::StringActorProperty::GetFuncType(this, &CompareActorPropertyAction::GetResult),
+         dtCore::StringActorProperty::SetFuncType(this, &CompareActorPropertyAction::SetResult),
+         dtCore::StringActorProperty::GetFuncType(this, &CompareActorPropertyAction::GetResult),
          "The value to compare against the property.");
       AddProperty(rightProp);
 
@@ -95,12 +95,12 @@ namespace dtDirector
       std::string valueA = "";
       std::string valueB = GetString("B");
 
-      dtDAL::BaseActorObject* actor = GetActor("Actor");
+      dtCore::BaseActorObject* actor = GetActor("Actor");
       if (actor)
       {
          std::string propName = GetString("PropertyName");
 
-         dtDAL::ActorProperty* prop = actor->GetProperty(propName);
+         dtCore::ActorProperty* prop = actor->GetProperty(propName);
          if (prop)
          {
             CompareLessThanGreaterThan(prop);
@@ -157,11 +157,11 @@ namespace dtDirector
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void CompareActorPropertyAction::CompareLessThanGreaterThan(dtDAL::ActorProperty* prop)
+   void CompareActorPropertyAction::CompareLessThanGreaterThan(dtCore::ActorProperty* prop)
    {
-      if (prop->GetPropertyType() == dtDAL::DataType::INT ||
-         prop->GetPropertyType() == dtDAL::DataType::DOUBLE ||
-         prop->GetPropertyType() == dtDAL::DataType::FLOAT)
+      if (prop->GetPropertyType() == dtCore::DataType::INT ||
+         prop->GetPropertyType() == dtCore::DataType::DOUBLE ||
+         prop->GetPropertyType() == dtCore::DataType::FLOAT)
       {
          double valueA = dtUtil::ToType<double>(prop->GetValueString());
          double valueB = GetDouble("B");

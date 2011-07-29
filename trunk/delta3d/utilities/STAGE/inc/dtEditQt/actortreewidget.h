@@ -36,7 +36,7 @@
 #include <QtGui/QTreeWidgetItem>
 #include <QtGui/QIcon>
 
-#include <dtDAL/project.h>
+#include <dtCore/project.h>
 
 namespace dtEditQt
 {

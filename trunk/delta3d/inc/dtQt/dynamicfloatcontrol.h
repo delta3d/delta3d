@@ -35,7 +35,7 @@
 
 class QWidget;
 
-namespace dtDAL
+namespace dtCore
 {
     class FloatActorProperty;
 }
@@ -65,7 +65,7 @@ namespace dtQt
          * @see DynamicAbstractControl#InitializeData
          */
         virtual void InitializeData(DynamicAbstractControl* newParent, PropertyEditorModel* model,
-            dtDAL::PropertyContainer* newPC, dtDAL::ActorProperty* property);
+            dtCore::PropertyContainer* newPC, dtCore::ActorProperty* property);
 
         /**
          * @see DynamicAbstractControl#updateEditorFromModel
@@ -118,7 +118,7 @@ namespace dtQt
     protected:
 
     private:
-        dtDAL::FloatActorProperty* mProperty;
+        dtCore::FloatActorProperty* mProperty;
 
         // This pointer is not really in our control.  It is constructed in the createEditor()
         // method and destroyed whenever QT feels like it (mostly when the control looses focus).

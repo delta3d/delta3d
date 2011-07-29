@@ -37,10 +37,10 @@
 #include <dtQt/propertyeditormodel.h>
 #include <dtQt/propertyeditortreeview.h>
 
-#include <dtDAL/actorproxy.h>
-#include <dtDAL/actorproperty.h>
-#include <dtDAL/datatype.h>
-#include <dtDAL/arrayactorpropertybase.h>
+#include <dtCore/actorproxy.h>
+#include <dtCore/actorproperty.h>
+#include <dtCore/datatype.h>
+#include <dtCore/arrayactorpropertybase.h>
 #include <dtUtil/log.h>
 #include <QtGui/QLabel>
 #include <QtGui/QPushButton>
@@ -69,13 +69,13 @@ namespace dtQt
 
    /////////////////////////////////////////////////////////////////////////////
    void DynamicArrayControl::InitializeData(DynamicAbstractControl* newParent,
-      PropertyEditorModel* newModel, dtDAL::PropertyContainer* newPC, dtDAL::ActorProperty* newProperty)
+      PropertyEditorModel* newModel, dtCore::PropertyContainer* newPC, dtCore::ActorProperty* newProperty)
    {
       // Note - We used to have dynamic_cast in here, but it was failing to properly cast in
       // all cases in Linux with gcc4.  So we replaced it with a static cast.
-      if (newProperty != NULL && newProperty->GetDataType() == dtDAL::DataType::ARRAY)
+      if (newProperty != NULL && newProperty->GetDataType() == dtCore::DataType::ARRAY)
       {
-         mProperty = static_cast<dtDAL::ArrayActorPropertyBase*>(newProperty);
+         mProperty = static_cast<dtCore::ArrayActorPropertyBase*>(newProperty);
          DynamicAbstractControl::InitializeData(newParent, newModel, newPC, newProperty);
 
          // Create each element.
@@ -246,7 +246,7 @@ namespace dtQt
             {
                mProperty->SetIndex(childCount + childIndex);
 
-               dtDAL::ActorProperty* propType = mProperty->GetArrayProperty();
+               dtCore::ActorProperty* propType = mProperty->GetArrayProperty();
                if (propType)
                {
                   DynamicAbstractControl* element = GetDynamicControlFactory()->CreateDynamicControl(*propType);
@@ -254,13 +254,13 @@ namespace dtQt
                   element->SetDynamicControlFactory(GetDynamicControlFactory());
                   element->SetArrayIndex(childCount + childIndex);
                   element->InitializeData(this, GetModel(), mPropContainer.get(), propType);
-                  connect(element, SIGNAL(PropertyAboutToChange(dtDAL::PropertyContainer&, dtDAL::ActorProperty&,
+                  connect(element, SIGNAL(PropertyAboutToChange(dtCore::PropertyContainer&, dtCore::ActorProperty&,
                      const std::string&, const std::string&)),
-                     this, SLOT(PropertyAboutToChangePassThrough(dtDAL::PropertyContainer&, dtDAL::ActorProperty&,
+                     this, SLOT(PropertyAboutToChangePassThrough(dtCore::PropertyContainer&, dtCore::ActorProperty&,
                      const std::string&, const std::string&)));
 
-                  connect(element, SIGNAL(PropertyChanged(dtDAL::PropertyContainer&, dtDAL::ActorProperty&)),
-                     this, SLOT(PropertyChangedPassThrough(dtDAL::PropertyContainer&, dtDAL::ActorProperty&)));
+                  connect(element, SIGNAL(PropertyChanged(dtCore::PropertyContainer&, dtCore::ActorProperty&)),
+                     this, SLOT(PropertyChangedPassThrough(dtCore::PropertyContainer&, dtCore::ActorProperty&)));
                   mChildren.push_back(element);
                }
             }

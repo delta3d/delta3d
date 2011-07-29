@@ -87,7 +87,7 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void ActionItem::OnGotoEvent()
    {
-      dtDAL::ActorProperty* prop = mNode->GetProperty("EventName");
+      dtCore::ActorProperty* prop = mNode->GetProperty("EventName");
       if (prop)
       {
          // Find the referenced value node.

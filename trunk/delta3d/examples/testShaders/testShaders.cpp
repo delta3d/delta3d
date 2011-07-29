@@ -29,7 +29,7 @@
 #include <dtCore/shadermanager.h>
 #include <dtCore/transform.h>
 #include <dtUtil/datapathutils.h>
-#include <dtDAL/project.h>
+#include <dtCore/project.h>
 
 #include <osg/Geode>
 #include <osg/ShapeDrawable>
@@ -49,7 +49,7 @@ public:
       mTotalTime = 0.0f;
 
       std::string contextName = dtUtil::GetDeltaRootPath() + "/examples/data/demoMap";
-      dtDAL::Project::GetInstance().SetContext(contextName, true);
+      dtCore::Project::GetInstance().SetContext(contextName, true);
 
       LoadGeometry();
       EnableShaders();

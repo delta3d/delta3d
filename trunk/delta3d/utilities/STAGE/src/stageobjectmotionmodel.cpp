@@ -7,8 +7,8 @@
 #include <dtCore/transform.h>
 #include <dtCore/transformable.h>
 
-#include <dtDAL/transformableactorproxy.h>
-#include <dtDAL/vectoractorproperties.h>
+#include <dtCore/transformableactorproxy.h>
+#include <dtCore/vectoractorproperties.h>
 
 #include <osg/Math>
 #include <osg/Vec3>
@@ -57,7 +57,7 @@ void STAGEObjectMotionModel::OnRightMouseReleased(void)
 //}
 
 ////////////////////////////////////////////////////////////////////////////////
-void STAGEObjectMotionModel::AddTarget(dtDAL::TransformableActorProxy* target)
+void STAGEObjectMotionModel::AddTarget(dtCore::TransformableActorProxy* target)
 {
    // Skip if there is no target to add.
    if (!target)
@@ -67,7 +67,7 @@ void STAGEObjectMotionModel::AddTarget(dtDAL::TransformableActorProxy* target)
 
    for (int subIndex = 0; subIndex < GetNumTargets(); subIndex++)
    {
-      dtDAL::TransformableActorProxy* targetProxy = GetTarget(subIndex);
+      dtCore::TransformableActorProxy* targetProxy = GetTarget(subIndex);
 
       // Skip if the target is already added.
       if (target == targetProxy)
@@ -81,7 +81,7 @@ void STAGEObjectMotionModel::AddTarget(dtDAL::TransformableActorProxy* target)
    // Make sure our primary target it set to the first target.
    if (mTargets.size() > 0)
    {
-      dtDAL::TransformableActorProxy* targetProxy = GetTarget(0);
+      dtCore::TransformableActorProxy* targetProxy = GetTarget(0);
 
       if (targetProxy)
       {
@@ -97,11 +97,11 @@ void STAGEObjectMotionModel::AddTarget(dtDAL::TransformableActorProxy* target)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void STAGEObjectMotionModel::RemoveTarget(dtDAL::TransformableActorProxy* target)
+void STAGEObjectMotionModel::RemoveTarget(dtCore::TransformableActorProxy* target)
 {
    for (int subIndex = 0; subIndex < GetNumTargets(); subIndex++)
    {
-      dtDAL::TransformableActorProxy* targetProxy = GetTarget(subIndex);
+      dtCore::TransformableActorProxy* targetProxy = GetTarget(subIndex);
 
       // Once we find the target, remove it.
       if (target == targetProxy)
@@ -114,7 +114,7 @@ void STAGEObjectMotionModel::RemoveTarget(dtDAL::TransformableActorProxy* target
    // Make sure our primary target it set to the first target.
    if (mTargets.size() > 0)
    {
-      dtDAL::TransformableActorProxy* targetProxy = GetTarget(0);
+      dtCore::TransformableActorProxy* targetProxy = GetTarget(0);
 
       if (targetProxy)
       {
@@ -141,7 +141,7 @@ void STAGEObjectMotionModel::OnTranslate(const osg::Vec3& delta)
 {
    for (int subIndex = 0; subIndex < GetNumTargets(); subIndex++)
    {
-      dtDAL::TransformableActorProxy* targetProxy = GetTarget(subIndex);
+      dtCore::TransformableActorProxy* targetProxy = GetTarget(subIndex);
 
       if (targetProxy)
       {
@@ -166,7 +166,7 @@ void STAGEObjectMotionModel::OnRotate(float delta, const osg::Vec3& axis)
 
    for (int subIndex = 0; subIndex < GetNumTargets(); subIndex++)
    {
-      dtDAL::TransformableActorProxy* targetProxy = GetTarget(subIndex);
+      dtCore::TransformableActorProxy* targetProxy = GetTarget(subIndex);
 
       if (targetProxy)
       {
@@ -199,12 +199,12 @@ void STAGEObjectMotionModel::OnScale(const osg::Vec3& delta)
 {
    for (int subIndex = 0; subIndex < GetNumTargets(); subIndex++)
    {
-      dtDAL::TransformableActorProxy* targetProxy = GetTarget(subIndex);
+      dtCore::TransformableActorProxy* targetProxy = GetTarget(subIndex);
 
       if (targetProxy)
       {
-         dtDAL::ActorProperty* prop = targetProxy->GetProperty("Scale");
-         dtDAL::Vec3ActorProperty* scaleProp = dynamic_cast<dtDAL::Vec3ActorProperty*>(prop);
+         dtCore::ActorProperty* prop = targetProxy->GetProperty("Scale");
+         dtCore::Vec3ActorProperty* scaleProp = dynamic_cast<dtCore::Vec3ActorProperty*>(prop);
 
          if (scaleProp)
          {

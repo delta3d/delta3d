@@ -27,7 +27,7 @@
 #include <dtAudio/audioactorregistry.h>
 #include <dtAudio/soundactorproxy.h>
 #include <dtAudio/soundinfo.h>
-#include <dtDAL/project.h>
+#include <dtCore/project.h>
 #include <dtUtil/datapathutils.h>
 #include <dtUtil/fileutils.h>
 #include <sstream>
@@ -102,7 +102,7 @@ namespace dtAudio
          {
             try
             {
-               fileName = dtDAL::Project::GetInstance().GetResourcePath(soundFile);
+               fileName = dtCore::Project::GetInstance().GetResourcePath(soundFile);
             }
             catch (...)
             {
@@ -366,7 +366,7 @@ namespace dtAudio
    /////////////////////////////////////////////////////////////////////////////
    void SoundComponent::RemoveSoundActorsFromWorld()
    {
-      typedef std::vector<dtDAL::BaseActorObject*> ProxyArray;
+      typedef std::vector<dtCore::BaseActorObject*> ProxyArray;
       ProxyArray proxyArray;
 
       // Evacuate all the sound actors.
@@ -407,7 +407,7 @@ namespace dtAudio
    /////////////////////////////////////////////////////////////////////////////
    void SoundComponent::GetSoundActorSounds(SoundArray& outArray)
    {
-      typedef std::vector<dtDAL::BaseActorObject*> ProxyArray;
+      typedef std::vector<dtCore::BaseActorObject*> ProxyArray;
       ProxyArray proxyArray;
       GetGameManager()->FindActorsByType(*dtAudio::AudioActorRegistry::SOUND_ACTOR_TYPE, proxyArray);
 

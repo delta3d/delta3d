@@ -114,7 +114,7 @@ namespace dtEditQt
       QDataStream dataStream(&itemData, QIODevice::WriteOnly);
       QIcon icon = item->icon(0);
       QPixmap pixmap = icon.pixmap(16);
-      dtDAL::ResourceDescriptor resource = item->getResourceDescriptor();
+      dtCore::ResourceDescriptor resource = item->getResourceDescriptor();
       QString resourceIdentity = resource.GetResourceIdentifier().c_str();
 
       dataStream << resourceIdentity;
@@ -150,7 +150,7 @@ namespace dtEditQt
       // null object - category
    }
    ///////////////////////////////////////////////////////////////////////////////
-   ResourceTreeWidget::ResourceTreeWidget(ResourceTreeWidget* parent, dtDAL::ResourceDescriptor newResource)
+   ResourceTreeWidget::ResourceTreeWidget(ResourceTreeWidget* parent, dtCore::ResourceDescriptor newResource)
       : QTreeWidgetItem(parent)
    {
       LOG_DEBUG("Initializing ResourceTreeWidget - Resource node");
@@ -170,19 +170,19 @@ namespace dtEditQt
    ResourceTreeWidget::~ResourceTreeWidget() {}
 
    ///////////////////////////////////////////////////////////////////////////////
-   dtDAL::ResourceDescriptor &ResourceTreeWidget::getResourceDescriptor()
+   dtCore::ResourceDescriptor &ResourceTreeWidget::getResourceDescriptor()
    {
       return mResource;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ResourceTreeWidget::recursivelyCreateResourceTree(const dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator& iter, const QIcon& resourceIcon)
+   void ResourceTreeWidget::recursivelyCreateResourceTree(const dtUtil::tree<dtCore::ResourceTreeNode>::const_iterator& iter, const QIcon& resourceIcon)
    {
       QIcon icon;
       icon.addPixmap(QPixmap(UIResources::ICON_TINY_FOLDER_OPEN.c_str()), QIcon::Normal, QIcon::On);
       icon.addPixmap(QPixmap(UIResources::ICON_TINY_FOLDER.c_str()), QIcon::Normal, QIcon::Off);
 
-      for (dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator i = iter.tree_ref().in();
+      for (dtUtil::tree<dtCore::ResourceTreeNode>::const_iterator i = iter.tree_ref().in();
          i != iter.tree_ref().end();
          ++i)
       {

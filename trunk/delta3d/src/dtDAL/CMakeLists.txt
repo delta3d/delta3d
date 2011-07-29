@@ -100,86 +100,11 @@ SET(LIB_PUBLIC_HEADERS
     ${HEADER_PATH}/stringselectoractorproperty.h
     ${HEADER_PATH}/transformableactorproxy.h
     ${HEADER_PATH}/typetoactorproperty.h
-	${HEADER_PATH}/vectoractorproperties.h
+   ${HEADER_PATH}/vectoractorproperties.h
 )
 
 SET(LIB_SOURCES
-    ${SOURCE_PATH}/abstractenumactorproperty.cpp
-    ${SOURCE_PATH}/actoractorproperty.cpp
-    ${SOURCE_PATH}/actoridactorproperty.cpp
-    ${SOURCE_PATH}/actorhierarchynode.cpp
-    ${SOURCE_PATH}/actorpluginregistry.cpp
-    ${SOURCE_PATH}/actorproperty.cpp
-    ${SOURCE_PATH}/actorpropertyserializer.cpp
-    ${SOURCE_PATH}/actorproxyicon.cpp
-    ${SOURCE_PATH}/actortype.cpp
-    ${SOURCE_PATH}/arrayactorpropertybase.cpp
-    ${SOURCE_PATH}/baseactorobject.cpp
-    ${SOURCE_PATH}/basexml.cpp
-    ${SOURCE_PATH}/basexmlhandler.cpp
-    ${SOURCE_PATH}/bitmaskactorproperty.cpp
-    ${SOURCE_PATH}/booleanactorproperty.cpp
-    ${SOURCE_PATH}/colorrgbaactorproperty.cpp
-    ${SOURCE_PATH}/containeractorproperty.cpp
-    ${SOURCE_PATH}/datatype.cpp
-    ${SOURCE_PATH}/defaultpropertymanager.cpp
-    ${SOURCE_PATH}/directoryresourcetypehandler.cpp
-    ${SOURCE_PATH}/doubleactorproperty.cpp
-    ${SOURCE_PATH}/enumactorproperty.cpp
-    ${SOURCE_PATH}/environmentactor.cpp
-    ${SOURCE_PATH}/exceptionenum.cpp
-    ${SOURCE_PATH}/floatactorproperty.cpp
-    ${SOURCE_PATH}/gameevent.cpp
-    ${SOURCE_PATH}/gameeventactorproperty.cpp
-    ${SOURCE_PATH}/gameeventmanager.cpp
-    ${SOURCE_PATH}/groupactorproperty.cpp
-    ${SOURCE_PATH}/intactorproperty.cpp
-    ${SOURCE_PATH}/librarymanager.cpp
-    ${SOURCE_PATH}/longactorproperty.cpp
-    ${SOURCE_PATH}/map.cpp
-    ${SOURCE_PATH}/mapcontenthandler.cpp
-    ${SOURCE_PATH}/mapheaderhandler.cpp
-    ${SOURCE_PATH}/mapxml.cpp
-    ${SOURCE_PATH}/mapxmlconstants.cpp
-    ${SOURCE_PATH}/namedactorparameter.cpp
-    ${SOURCE_PATH}/namedarrayparameter.cpp
-    ${SOURCE_PATH}/namedbitmaskparameter.cpp
-    ${SOURCE_PATH}/namedbooleanparameter.cpp
-    ${SOURCE_PATH}/namedcontainerparameter.cpp
-    ${SOURCE_PATH}/nameddoubleparameter.cpp
-    ${SOURCE_PATH}/namedenumparameter.cpp
-    ${SOURCE_PATH}/namedfloatparameter.cpp
-    ${SOURCE_PATH}/namedgameeventparameter.cpp
-    ${SOURCE_PATH}/namedgroupparameter.cpp
-    ${SOURCE_PATH}/namedintparameter.cpp
-    ${SOURCE_PATH}/namedlongintparameter.cpp
-    ${SOURCE_PATH}/namedparameter.cpp
-    ${SOURCE_PATH}/namedpropertycontainerparameter.cpp
-    ${SOURCE_PATH}/namedresourceparameter.cpp
-    ${SOURCE_PATH}/namedrgbacolorparameter.cpp
-    ${SOURCE_PATH}/namedrgbcolorparameter.cpp
-    ${SOURCE_PATH}/namedshortintparameter.cpp
-    ${SOURCE_PATH}/namedstringparameter.cpp
-    ${SOURCE_PATH}/namedunsignedcharparameter.cpp
-    ${SOURCE_PATH}/namedunsignedintparameter.cpp
-    ${SOURCE_PATH}/namedunsignedlongintparameter.cpp
-    ${SOURCE_PATH}/namedunsignedshortintparameter.cpp
-    ${SOURCE_PATH}/namedvectorparameters.cpp
-    ${SOURCE_PATH}/objecttype.cpp
-    ${SOURCE_PATH}/physicalactorproxy.cpp
-    ${SOURCE_PATH}/project.cpp
-    ${SOURCE_PATH}/projectconfig.cpp
-    ${SOURCE_PATH}/projectconfigreaderwriter.cpp
-    ${SOURCE_PATH}/projectconfigxmlhandler.cpp
-    ${SOURCE_PATH}/propertycontainer.cpp
-    ${SOURCE_PATH}/propertycontaineractorproperty.cpp
-    ${SOURCE_PATH}/resourceactorproperty.cpp
-    ${SOURCE_PATH}/resourcedescriptor.cpp
-    ${SOURCE_PATH}/resourcehelper.cpp
-    ${SOURCE_PATH}/stringactorproperty.cpp
-    ${SOURCE_PATH}/stringselectoractorproperty.cpp
-    ${SOURCE_PATH}/transformableactorproxy.cpp
-	${SOURCE_PATH}/vectoractorproperties.cpp
+   warndtdal.cpp
 )
 
 ADD_PRECOMPILED_HEADER(${LIB_NAME} prefix/dtdalprefix.h prefix/dtdalprefix.cpp LIB_SOURCES)

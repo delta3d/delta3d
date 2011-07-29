@@ -36,9 +36,9 @@
 #include <dtCore/loadable.h>
 #include <dtCore/particlesystem.h>
 
-#include <dtDAL/floatactorproperty.h>
-#include <dtDAL/functor.h>
-#include <dtDAL/vectoractorproperties.h>
+#include <dtCore/floatactorproperty.h>
+#include <dtCore/functor.h>
+#include <dtCore/vectoractorproperties.h>
 
 #include <dtGame/actorupdatemessage.h>
 #include <dtGame/basemessages.h>
@@ -323,7 +323,7 @@ void TankActor::CheckForNewTarget()
    dtCore::UniqueId closestId(mNoTargetId);
 
    // Find all the KillableActors and iterator over them, looking for a target...
-   typedef std::vector<dtDAL::BaseActorObject*> ActorProxyVector;
+   typedef std::vector<dtCore::BaseActorObject*> ActorProxyVector;
    ActorProxyVector killableActorProxies;
    GetGameActorProxy().GetGameManager()->FindActorsByType(*ActorsRegistry::KILLABLE_ACTOR_TYPE, killableActorProxies);
    for (ActorProxyVector::iterator iter = killableActorProxies.begin();
@@ -331,8 +331,8 @@ void TankActor::CheckForNewTarget()
         ++iter )
    {
       // Find the position of the target we are querying.
-      dtCore::RefPtr<dtDAL::ActorProperty> translationProp((*iter)->GetProperty(dtDAL::TransformableActorProxy::PROPERTY_TRANSLATION));
-      dtCore::RefPtr<dtDAL::Vec3ActorProperty> vec3prop(static_cast<dtDAL::Vec3ActorProperty*>(translationProp.get()));
+      dtCore::RefPtr<dtCore::ActorProperty> translationProp((*iter)->GetProperty(dtCore::TransformableActorProxy::PROPERTY_TRANSLATION));
+      dtCore::RefPtr<dtCore::Vec3ActorProperty> vec3prop(static_cast<dtCore::Vec3ActorProperty*>(translationProp.get()));
       osg::Vec3 targetPosition(vec3prop->GetValue());
 
       // Find the dtUtil::Absolute distance from the center of the target to the plane.
@@ -487,15 +487,15 @@ void TankActorProxy::BuildPropertyMap()
    TankActor& actor = dynamic_cast<TankActor&>(GetGameActor());
 
    // "Velocity" property
-   AddProperty(new dtDAL::FloatActorProperty("Velocity","Velocity",
-      dtDAL::FloatActorProperty::SetFuncType(&actor, &TankActor::SetVelocity),
-      dtDAL::FloatActorProperty::GetFuncType(&actor, &TankActor::GetVelocity),
+   AddProperty(new dtCore::FloatActorProperty("Velocity","Velocity",
+      dtCore::FloatActorProperty::SetFuncType(&actor, &TankActor::SetVelocity),
+      dtCore::FloatActorProperty::GetFuncType(&actor, &TankActor::GetVelocity),
       "Sets/gets the hover tank's velocity.", GROUP));
 
    // "Turnrate" property
-   AddProperty(new dtDAL::FloatActorProperty("Turnrate","Turn Rate",
-      dtDAL::FloatActorProperty::SetFuncType(&actor, &TankActor::SetTurnRate),
-      dtDAL::FloatActorProperty::GetFuncType(&actor, &TankActor::GetTurnRate),
+   AddProperty(new dtCore::FloatActorProperty("Turnrate","Turn Rate",
+      dtCore::FloatActorProperty::SetFuncType(&actor, &TankActor::SetTurnRate),
+      dtCore::FloatActorProperty::GetFuncType(&actor, &TankActor::GetTurnRate),
       "Sets/gets the hover tank's turn rate in degrees per second.", GROUP));
 }
 

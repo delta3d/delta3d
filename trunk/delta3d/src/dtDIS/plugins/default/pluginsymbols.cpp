@@ -3,7 +3,7 @@
 
 // should not need to include the following files:
 #include <dtGame/gamemanager.h>
-#include <dtDAL/actortype.h>
+#include <dtCore/actortype.h>
 
 dtDIS::IDISPlugin* dtDIS::CreateComponent()
 {

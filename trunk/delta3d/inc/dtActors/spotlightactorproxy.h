@@ -21,7 +21,7 @@
 #ifndef DELTA_SPOTLIGHT_ACTOR_PROXY
 #define DELTA_SPOTLIGHT_ACTOR_PROXY
 
-#include "dtDAL/plugin_export.h"
+#include "dtCore/plugin_export.h"
 #include "dtActors/positionallightactorproxy.h"
 #include <dtCore/spotlight.h>
 
@@ -62,15 +62,15 @@ namespace dtActors
         * quell it.
         * @return The billboard icon common to all lights.
         */
-        virtual dtDAL::ActorProxyIcon* GetBillBoardIcon();
+        virtual dtCore::ActorProxyIcon* GetBillBoardIcon();
 
         /**
          * Gets the current render mode for spotlights.
-         * @return dtDAL::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON.
+         * @return dtCore::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON.
          */
-        virtual const dtDAL::BaseActorObject::RenderMode& GetRenderMode() 
+        virtual const dtCore::BaseActorObject::RenderMode& GetRenderMode() 
         {
-            return dtDAL::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON;
+            return dtCore::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON;
         }
 
     protected:

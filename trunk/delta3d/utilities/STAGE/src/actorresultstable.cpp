@@ -39,7 +39,7 @@
 #include <dtEditQt/editordata.h>
 #include <dtEditQt/editorevents.h>
 #include <dtEditQt/uiresources.h>
-#include <dtDAL/map.h>
+#include <dtCore/map.h>
 
 namespace dtEditQt
 {
@@ -176,15 +176,15 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ActorResultsTable::addProxies(std::vector< dtCore::RefPtr<dtDAL::BaseActorObject> > foundProxies)
+   void ActorResultsTable::addProxies(std::vector< dtCore::RefPtr<dtCore::BaseActorObject> > foundProxies)
    {
-      std::vector< dtCore::RefPtr<dtDAL::BaseActorObject > >::const_iterator iter;
+      std::vector< dtCore::RefPtr<dtCore::BaseActorObject > >::const_iterator iter;
       int row = 0;
 
       // do something with the results
       for (iter = foundProxies.begin(); iter != foundProxies.end(); ++iter)
       {
-         dtCore::RefPtr<dtDAL::BaseActorObject> myProxy = (*iter);
+         dtCore::RefPtr<dtCore::BaseActorObject> myProxy = (*iter);
 
          addProxy(myProxy, false);
 
@@ -196,7 +196,7 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ActorResultsTable::addProxy(dtCore::RefPtr<dtDAL::BaseActorObject> myProxy, bool updateCount)
+   void ActorResultsTable::addProxy(dtCore::RefPtr<dtCore::BaseActorObject> myProxy, bool updateCount)
    {
       QString name(myProxy->GetName().c_str());
       QString type(myProxy->GetActorType().GetName().c_str());
@@ -215,7 +215,7 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ActorResultsTable::HandleProxyUpdated(dtCore::RefPtr<dtDAL::BaseActorObject> proxy)
+   void ActorResultsTable::HandleProxyUpdated(dtCore::RefPtr<dtCore::BaseActorObject> proxy)
    {
       if (mResultsTree != NULL && proxy.valid())
       {
@@ -295,7 +295,7 @@ namespace dtEditQt
 
       if (selection != NULL)
       {
-         dtCore::RefPtr<dtDAL::BaseActorObject> proxyPtr = selection->getProxy();
+         dtCore::RefPtr<dtCore::BaseActorObject> proxyPtr = selection->getProxy();
 
          // Make sure we are in sync so that we goto the right object.
          sendSelection();
@@ -306,7 +306,7 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ActorResultsTable::actorProxyAboutToBeDestroyed(dtCore::RefPtr<dtDAL::BaseActorObject> proxy)
+   void ActorResultsTable::actorProxyAboutToBeDestroyed(dtCore::RefPtr<dtCore::BaseActorObject> proxy)
    {
       QTreeWidgetItem* item;
       int index = 0;
@@ -337,16 +337,16 @@ namespace dtEditQt
    {
       if (!mRecurseProtectSendingSelection)
       {
-         dtDAL::Map* map = EditorData::GetInstance().getCurrentMap();
+         dtCore::Map* map = EditorData::GetInstance().getCurrentMap();
          QList<QTreeWidgetItem*> list = mResultsTree->selectedItems();
          QListIterator<QTreeWidgetItem*> iter(list);
-         std::vector< dtCore::RefPtr<dtDAL::BaseActorObject> > proxyVector;
+         std::vector< dtCore::RefPtr<dtCore::BaseActorObject> > proxyVector;
 
          // move the objects to a vector for the message
          while (iter.hasNext())
          {
             ActorResultsTreeItem* item = static_cast<ActorResultsTreeItem*>(iter.next());
-            dtCore::RefPtr<dtDAL::BaseActorObject> proxyPtr = item->getProxy();
+            dtCore::RefPtr<dtCore::BaseActorObject> proxyPtr = item->getProxy();
             proxyVector.push_back(proxyPtr);
 
             // Also select all other proxies that belong to its group.
@@ -358,7 +358,7 @@ namespace dtEditQt
                   int actorCount = map->GetGroupActorCount(groupIndex);
                   for (int actorIndex = 0; actorIndex < actorCount; actorIndex++)
                   {
-                     dtCore::RefPtr<dtDAL::BaseActorObject> proxy = map->GetActorFromGroup(groupIndex, actorIndex);
+                     dtCore::RefPtr<dtCore::BaseActorObject> proxy = map->GetActorFromGroup(groupIndex, actorIndex);
                      if (proxy != proxyPtr)
                      {
                         proxyVector.push_back(proxy);
@@ -390,7 +390,7 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ActorResultsTable::selectedActors(std::vector< dtCore::RefPtr<dtDAL::BaseActorObject> >& actors)
+   void ActorResultsTable::selectedActors(std::vector< dtCore::RefPtr<dtCore::BaseActorObject> >& actors)
    {
       if (!mRecurseProtectSendingSelection)
       {
@@ -482,7 +482,7 @@ namespace dtEditQt
 
    ///////////////////////////////////////////////////////////////////////////////
    ActorResultsTreeItem::ActorResultsTreeItem(QTreeWidget* parent,
-      dtCore::RefPtr<dtDAL::BaseActorObject> proxy)
+      dtCore::RefPtr<dtCore::BaseActorObject> proxy)
       : QTreeWidgetItem(parent)
       , mProxy(proxy)
    {

@@ -20,11 +20,11 @@
  */
 
 #include "dtActors/clouddomeactorproxy.h"
-#include "dtDAL/enginepropertytypes.h"
+#include "dtCore/enginepropertytypes.h"
 #include <dtCore/deltadrawable.h>
-#include <dtDAL/functor.h>
+#include <dtCore/functor.h>
 
-using namespace dtDAL;
+using namespace dtCore;
 using namespace dtCore;
 
 namespace dtActors

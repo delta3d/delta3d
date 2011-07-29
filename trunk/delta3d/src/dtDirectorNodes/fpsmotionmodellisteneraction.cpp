@@ -21,7 +21,7 @@
 #include <prefix/dtdirectornodesprefix.h>
 #include <dtDirectorNodes/fpsmotionmodellisteneraction.h>
 
-#include <dtDAL/stringactorproperty.h>
+#include <dtCore/stringactorproperty.h>
 
 #include <dtDirector/director.h>
 
@@ -67,10 +67,10 @@ namespace dtDirector
       LatentActionNode::BuildPropertyMap();
 
       // Create our value links.
-      dtDAL::StringActorProperty* nameProp = new dtDAL::StringActorProperty(
+      dtCore::StringActorProperty* nameProp = new dtCore::StringActorProperty(
          "Motion Model", "Motion Model",
-         dtDAL::StringActorProperty::SetFuncType(this, &FPSMotionModelListenerAction::SetModelName),
-         dtDAL::StringActorProperty::GetFuncType(this, &FPSMotionModelListenerAction::GetModelName),
+         dtCore::StringActorProperty::SetFuncType(this, &FPSMotionModelListenerAction::SetModelName),
+         dtCore::StringActorProperty::GetFuncType(this, &FPSMotionModelListenerAction::GetModelName),
          "The name of the motion model to attach.");
       AddProperty(nameProp);
 

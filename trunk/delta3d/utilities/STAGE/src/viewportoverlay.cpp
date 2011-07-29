@@ -39,7 +39,7 @@
 #include <dtUtil/mswinmacros.h> //for snprintf definition
 #include <dtActors/volumeeditactor.h>
 
-#include <dtDAL/actorproxyicon.h>
+#include <dtCore/actorproxyicon.h>
 
 #include <dtEditQt/editorevents.h>
 #include <dtEditQt/editoractions.h>
@@ -48,7 +48,7 @@
 #include <dtEditQt/viewportoverlay.h>
 #include <dtEditQt/viewportmanager.h>
 
-#include <dtDAL/map.h>
+#include <dtCore/map.h>
 
 namespace dtEditQt
 {
@@ -85,7 +85,7 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ViewportOverlay::onActorsSelected(std::vector< dtCore::RefPtr<dtDAL::BaseActorObject> >& actors)
+   void ViewportOverlay::onActorsSelected(std::vector< dtCore::RefPtr<dtCore::BaseActorObject> >& actors)
    {
       ViewportManager::GetInstance().refreshActorSelection(actors);
 
@@ -117,10 +117,10 @@ namespace dtEditQt
 
       for (unsigned int i = 0; i < actors.size(); ++i)
       {
-         const dtDAL::BaseActorObject::RenderMode& renderMode = actors[i]->GetRenderMode();
-         dtDAL::ActorProxyIcon* billBoardIcon = NULL;
+         const dtCore::BaseActorObject::RenderMode& renderMode = actors[i]->GetRenderMode();
+         dtCore::ActorProxyIcon* billBoardIcon = NULL;
 
-         if (renderMode == dtDAL::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON)
+         if (renderMode == dtCore::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON)
          {
             billBoardIcon = actors[i]->GetBillBoardIcon();
             if (billBoardIcon != NULL)
@@ -132,11 +132,11 @@ namespace dtEditQt
                LOG_ERROR("BaseActorObject: " + actors[i]->GetName() + " has NULL billboard.");
             }
          }
-         else if (renderMode == dtDAL::BaseActorObject::RenderMode::DRAW_ACTOR)
+         else if (renderMode == dtCore::BaseActorObject::RenderMode::DRAW_ACTOR)
          {
             select(actors[i]->GetActor());
          }
-         else if (renderMode == dtDAL::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON)
+         else if (renderMode == dtCore::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON)
          {
             billBoardIcon = actors[i]->GetBillBoardIcon();
             if (billBoardIcon != NULL)
@@ -158,7 +158,7 @@ namespace dtEditQt
          mCurrentActorSelection.push_back(actors[i]);
       }
 
-      dtDAL::Map* map = EditorData::GetInstance().getCurrentMap();
+      dtCore::Map* map = EditorData::GetInstance().getCurrentMap();
 
       if (mCurrentActorSelection.size() <= 1)
       {
@@ -205,7 +205,7 @@ namespace dtEditQt
       {
          for (int index = 0; index < (int)mCurrentActorSelection.size(); index++)
          {
-            dtDAL::BaseActorObject* proxy = mCurrentActorSelection[index].get();
+            dtCore::BaseActorObject* proxy = mCurrentActorSelection[index].get();
             if (map->FindGroupForActor(proxy) != -1)
             {
                canUngroup = true;
@@ -270,7 +270,7 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   bool ViewportOverlay::isActorSelected(dtDAL::BaseActorObject* proxy) const
+   bool ViewportOverlay::isActorSelected(dtCore::BaseActorObject* proxy) const
    {
       for (int index = 0; index < (int)mCurrentActorSelection.size(); index++)
       {
@@ -284,7 +284,7 @@ namespace dtEditQt
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   bool ViewportOverlay::isActorSelectedFirst(dtDAL::BaseActorObject* proxy) const
+   bool ViewportOverlay::isActorSelectedFirst(dtCore::BaseActorObject* proxy) const
    {
       if (mCurrentActorSelection.size() > 0)
       {
@@ -298,7 +298,7 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ViewportOverlay::removeActorFromCurrentSelection(dtDAL::BaseActorObject* proxy, bool clearAll)
+   void ViewportOverlay::removeActorFromCurrentSelection(dtCore::BaseActorObject* proxy, bool clearAll)
    {
       int foundIndex = -1;
       for (int index = 0; index < (int)mCurrentActorSelection.size(); index++)
@@ -315,12 +315,12 @@ namespace dtEditQt
          return;
       }
 
-      const dtDAL::BaseActorObject::RenderMode& renderMode = proxy->GetRenderMode();
-      dtDAL::ActorProxyIcon* billBoardIcon = NULL;
+      const dtCore::BaseActorObject::RenderMode& renderMode = proxy->GetRenderMode();
+      dtCore::ActorProxyIcon* billBoardIcon = NULL;
 
       //Make sure we remove the correct drawable from the selection list depending
       //on the render mode of the actor.
-      if (renderMode == dtDAL::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON)
+      if (renderMode == dtCore::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON)
       {
          billBoardIcon = proxy->GetBillBoardIcon();
          if (billBoardIcon != NULL)
@@ -332,11 +332,11 @@ namespace dtEditQt
             LOG_ERROR("BaseActorObject: " + proxy->GetName() + " has NULL billboard.");
          }
       }
-      else if (renderMode == dtDAL::BaseActorObject::RenderMode::DRAW_ACTOR)
+      else if (renderMode == dtCore::BaseActorObject::RenderMode::DRAW_ACTOR)
       {
          unSelect(proxy->GetActor());
       }
-      else if (renderMode == dtDAL::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON)
+      else if (renderMode == dtCore::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON)
       {
          billBoardIcon = proxy->GetBillBoardIcon();
          if (billBoardIcon != NULL)
@@ -367,7 +367,7 @@ namespace dtEditQt
    {
       for (int index = 0; index < (int)mCurrentActorSelection.size(); index++)
       {
-         removeActorFromCurrentSelection(const_cast<dtDAL::BaseActorObject*>(mCurrentActorSelection[index].get()), false);
+         removeActorFromCurrentSelection(const_cast<dtCore::BaseActorObject*>(mCurrentActorSelection[index].get()), false);
       }
 
       mCurrentActorSelection.clear();

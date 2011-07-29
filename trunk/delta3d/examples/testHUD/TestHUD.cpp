@@ -6,9 +6,9 @@
 #include <dtCore/scene.h>
 #include <dtCore/camera.h>
 #include <dtCore/transform.h>
-#include <dtDAL/project.h>
-#include <dtDAL/actorproxy.h>
-#include <dtDAL/map.h>
+#include <dtCore/project.h>
+#include <dtCore/actorproxy.h>
+#include <dtCore/map.h>
 #include <dtUtil/datapathutils.h>
 
 #include <CEGUI/CEGUIWindowManager.h>
@@ -76,15 +76,15 @@ bool TestHUD::OnButtonClicked(const CEGUI::EventArgs&) //non-static
 void TestHUD::_ConfigScene()
 {
    std::string contextName = dtUtil::GetDeltaRootPath() + "/examples/data/demoMap";
-   dtDAL::Project::GetInstance().SetContext(contextName, true);
-   dtDAL::Map &myMap = dtDAL::Project::GetInstance().GetMap("MyCoolMap");
+   dtCore::Project::GetInstance().SetContext(contextName, true);
+   dtCore::Map &myMap = dtCore::Project::GetInstance().GetMap("MyCoolMap");
 
    //Since we are in an Application we can simply call...
    LoadMap(myMap);
 
    // translate the camera to the predefined start position
    {
-      std::vector< dtCore::RefPtr<dtDAL::ActorProxy> > proxies;
+      std::vector< dtCore::RefPtr<dtCore::ActorProxy> > proxies;
       myMap.FindProxies(proxies, "startPosition");
       if (!proxies.empty())
       {

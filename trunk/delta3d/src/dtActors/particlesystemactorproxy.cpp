@@ -21,14 +21,14 @@
 
 #include <dtActors/particlesystemactorproxy.h>
 
-#include <dtDAL/actorproxyicon.h>
-#include <dtDAL/datatype.h>
-#include <dtDAL/booleanactorproperty.h>
-#include <dtDAL/functor.h>
-#include <dtDAL/resourceactorproperty.h>
+#include <dtCore/actorproxyicon.h>
+#include <dtCore/datatype.h>
+#include <dtCore/booleanactorproperty.h>
+#include <dtCore/functor.h>
+#include <dtCore/resourceactorproperty.h>
 
 using namespace dtCore;
-using namespace dtDAL;
+using namespace dtCore;
 
 namespace dtActors
 {
@@ -72,12 +72,12 @@ namespace dtActors
    }
 
    //////////////////////////////////////////////////////////////////////////
-   dtDAL::ActorProxyIcon* ParticleSystemActorProxy::GetBillBoardIcon()
+   dtCore::ActorProxyIcon* ParticleSystemActorProxy::GetBillBoardIcon()
    {
       if (!mBillBoardIcon.valid())
       {
          mBillBoardIcon =
-            new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IMAGE_BILLBOARD_PARTICLESYSTEM);
+            new dtCore::ActorProxyIcon(dtCore::ActorProxyIcon::IMAGE_BILLBOARD_PARTICLESYSTEM);
       }
 
       return mBillBoardIcon.get();

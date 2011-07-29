@@ -56,7 +56,7 @@
 
 #include <dtABC/application.h>
 
-#include <dtDAL/actortype.h>
+#include <dtCore/actortype.h>
 
 #include <dtActors/engineactorregistry.h>
 

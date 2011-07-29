@@ -39,9 +39,9 @@
 #include <dtGame/defaultmessageprocessor.h>
 #include <dtGame/gamemanager.h>
 
-#include <dtDAL/actoractorproperty.h>
-#include <dtDAL/floatactorproperty.h>
-#include <dtDAL/librarymanager.h>
+#include <dtCore/actoractorproperty.h>
+#include <dtCore/floatactorproperty.h>
+#include <dtCore/librarymanager.h>
 
 #include <dtCore/scene.h>
 #include <dtCore/system.h>
@@ -110,7 +110,7 @@ namespace dtActors
          mGameManager->AddActor(*mParentProxy, false, false);
          mGameManager->AddActor(*mDSProxy1, false, false);
 
-         dtDAL::ActorActorProperty* aap;
+         dtCore::ActorActorProperty* aap;
          mDSProxy1->GetProperty(DistanceSensorActorProxy::PROPERTY_ATTACH_TO_ACTOR, aap);
          CPPUNIT_ASSERT(aap != NULL);
          CPPUNIT_ASSERT(aap->GetValue() == NULL);
@@ -128,7 +128,7 @@ namespace dtActors
          mGameManager->AddActor(*mParentProxy, false, false);
          mGameManager->AddActor(*mDSProxy1, false, false);
 
-         dtDAL::FloatActorProperty* fap;
+         dtCore::FloatActorProperty* fap;
          mDSProxy1->GetProperty(DistanceSensorActorProxy::PROPERTY_TRIGGER_DISTANCE, fap);
          CPPUNIT_ASSERT(fap != NULL);
          CPPUNIT_ASSERT_DOUBLES_EQUAL(0.0f, fap->GetValue(), 1e-3f);
@@ -144,7 +144,7 @@ namespace dtActors
       {
          try
          {
-            dtDAL::ActorActorProperty* aap;
+            dtCore::ActorActorProperty* aap;
             mDSProxy1->GetProperty(DistanceSensorActorProxy::PROPERTY_ATTACH_TO_ACTOR, aap);
             CPPUNIT_ASSERT(aap != NULL);
             aap->SetValue(mParentProxy.get());

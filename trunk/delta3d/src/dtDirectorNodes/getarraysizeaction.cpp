@@ -21,7 +21,7 @@
 #include <prefix/dtdirectornodesprefix.h>
 #include <dtDirectorNodes/getarraysizeaction.h>
 
-#include <dtDAL/intactorproperty.h>
+#include <dtCore/intactorproperty.h>
 
 #include <dtDirector/director.h>
 #include <dtDirector/arrayvaluenode.h>
@@ -52,16 +52,16 @@ namespace dtDirector
       ActionNode::BuildPropertyMap();
 
       // Create our value links.
-      dtDAL::IntActorProperty* arrayProp = new dtDAL::IntActorProperty(
+      dtCore::IntActorProperty* arrayProp = new dtCore::IntActorProperty(
          "Array", "Array",
-         dtDAL::IntActorProperty::SetFuncType(this, &GetArraySizeAction::SetArray),
-         dtDAL::IntActorProperty::GetFuncType(this, &GetArraySizeAction::GetArray),
+         dtCore::IntActorProperty::SetFuncType(this, &GetArraySizeAction::SetArray),
+         dtCore::IntActorProperty::GetFuncType(this, &GetArraySizeAction::GetArray),
          "The array to retrieve a size from.");
 
-      dtDAL::IntActorProperty* sizeProp = new dtDAL::IntActorProperty(
+      dtCore::IntActorProperty* sizeProp = new dtCore::IntActorProperty(
          "Size", "Size",
-         dtDAL::IntActorProperty::SetFuncType(this, &GetArraySizeAction::SetSize),
-         dtDAL::IntActorProperty::GetFuncType(this, &GetArraySizeAction::GetSize),
+         dtCore::IntActorProperty::SetFuncType(this, &GetArraySizeAction::SetSize),
+         dtCore::IntActorProperty::GetFuncType(this, &GetArraySizeAction::GetSize),
          "The output size of the array.");
 
       // This will expose the properties in the editor and allow

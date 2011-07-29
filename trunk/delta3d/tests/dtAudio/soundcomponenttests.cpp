@@ -72,7 +72,7 @@ class SoundComponentTests : public CPPUNIT_NS::TestFixture
       dtCore::RefPtr<dtGame::GameManager> mGM;
       dtCore::RefPtr<dtAudio::SoundComponent> mSndComp;
       dtAudio::SoundComponent::SoundProxyRefArray mSndProxyArray;
-      dtCore::RefPtr<const dtDAL::ActorType> mSndActorType;
+      dtCore::RefPtr<const dtCore::ActorType> mSndActorType;
 };
 
 //Registers the fixture into the 'registry'
@@ -153,7 +153,7 @@ void SoundComponentTests::CreateSoundActors(int proxyTotal, bool addToGM)
 ////////////////////////////////////////////////////////////////////////////////
 int SoundComponentTests::GetGMSoundActorCount() const
 {
-   typedef std::vector<dtDAL::BaseActorObject*> ProxyArray;
+   typedef std::vector<dtCore::BaseActorObject*> ProxyArray;
    ProxyArray proxies;
    mGM->FindActorsByType(*mSndActorType, proxies);
    return int(proxies.size());

@@ -21,8 +21,8 @@
 #include <prefix/dtdirectornodesprefix.h>
 #include <dtDirectorNodes/gameeventmessageevent.h>
 
-#include <dtDAL/actorproxy.h>
-#include <dtDAL/gameeventactorproperty.h>
+#include <dtCore/actorproxy.h>
+#include <dtCore/gameeventactorproperty.h>
 
 #include <dtDirector/director.h>
 #include <dtDirector/messagegmcomponent.h>
@@ -51,10 +51,10 @@ namespace dtDirector
    {
       EventNode::BuildPropertyMap();
 
-      dtDAL::GameEventActorProperty* eventProp = new dtDAL::GameEventActorProperty(
+      dtCore::GameEventActorProperty* eventProp = new dtCore::GameEventActorProperty(
          "Event", "Event",
-         dtDAL::GameEventActorProperty::SetFuncType(this, &GameEventMessageEvent::SetEvent),
-         dtDAL::GameEventActorProperty::GetFuncType(this, &GameEventMessageEvent::GetEvent),
+         dtCore::GameEventActorProperty::SetFuncType(this, &GameEventMessageEvent::SetEvent),
+         dtCore::GameEventActorProperty::GetFuncType(this, &GameEventMessageEvent::GetEvent),
          "The Game Event.  Entries are set in the map properties.");
       AddProperty(eventProp);
 
@@ -68,7 +68,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void GameEventMessageEvent::SetEvent(dtDAL::GameEvent* value)
+   void GameEventMessageEvent::SetEvent(dtCore::GameEvent* value)
    {
       mEvent = value;
 
@@ -76,7 +76,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   dtDAL::GameEvent* GameEventMessageEvent::GetEvent() const
+   dtCore::GameEvent* GameEventMessageEvent::GetEvent() const
    {
       return mEvent;
    }
@@ -97,7 +97,7 @@ namespace dtDirector
       {
          if (link->GetName() == "Event")
          {
-            if (value->CanBeType(dtDAL::DataType::STRING))
+            if (value->CanBeType(dtCore::DataType::STRING))
             {
                return true;
             }
@@ -137,7 +137,7 @@ namespace dtDirector
          const dtGame::GameEventMessage& eventMsg =
             static_cast<const dtGame::GameEventMessage&>(message);
 
-         dtDAL::GameEvent* gameEvent = GetGameEvent("Event");
+         dtCore::GameEvent* gameEvent = GetGameEvent("Event");
          if (eventMsg.GetGameEvent() == gameEvent)
          {
             Trigger("Out");
@@ -148,7 +148,7 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void GameEventMessageEvent::UpdateName()
    {
-      dtDAL::GameEvent* gameEvent = GetGameEvent("Event");
+      dtCore::GameEvent* gameEvent = GetGameEvent("Event");
 
       mName = gameEvent ? gameEvent->GetName() : "";
    }

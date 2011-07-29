@@ -22,7 +22,7 @@
 
 #include <vector>
 
-#include <dtDAL/propertymacros.h>
+#include <dtCore/propertymacros.h>
 
 #include <dtUtil/log.h>
 #include <dtUtil/functor.h>
@@ -119,7 +119,7 @@ namespace dtAI
       {
       }
 
-      virtual void RegisterProperties(dtDAL::PropertyContainer& pc, const std::string& group)
+      virtual void RegisterProperties(dtCore::PropertyContainer& pc, const std::string& group)
       {
          mDefaultControls.RegisterProperties(pc, "Default Values");
          mDefaultState.RegisterProperties(pc, "Default Values");

@@ -21,7 +21,7 @@
 #include <prefix/dtdirectornodesprefix.h>
 #include <dtDirectorNodes/compareactoraction.h>
 
-#include <dtDAL/actoridactorproperty.h>
+#include <dtCore/actoridactorproperty.h>
 
 #include <dtDirector/director.h>
 
@@ -57,16 +57,16 @@ namespace dtDirector
       ActionNode::BuildPropertyMap();
 
       // Create our value links.
-      dtDAL::ActorIDActorProperty* leftProp = new dtDAL::ActorIDActorProperty(
+      dtCore::ActorIDActorProperty* leftProp = new dtCore::ActorIDActorProperty(
          "A", "A",
-         dtDAL::ActorIDActorProperty::SetFuncType(this, &CompareActorAction::SetA),
-         dtDAL::ActorIDActorProperty::GetFuncType(this, &CompareActorAction::GetA),
+         dtCore::ActorIDActorProperty::SetFuncType(this, &CompareActorAction::SetA),
+         dtCore::ActorIDActorProperty::GetFuncType(this, &CompareActorAction::GetA),
          "Value A.");
 
-      dtDAL::ActorIDActorProperty* rightProp = new dtDAL::ActorIDActorProperty(
+      dtCore::ActorIDActorProperty* rightProp = new dtCore::ActorIDActorProperty(
          "B", "B",
-         dtDAL::ActorIDActorProperty::SetFuncType(this, &CompareActorAction::SetB),
-         dtDAL::ActorIDActorProperty::GetFuncType(this, &CompareActorAction::GetB),
+         dtCore::ActorIDActorProperty::SetFuncType(this, &CompareActorAction::SetB),
+         dtCore::ActorIDActorProperty::GetFuncType(this, &CompareActorAction::GetB),
          "Value B.");
 
       AddProperty(leftProp);
@@ -105,8 +105,8 @@ namespace dtDirector
       {
          if (link->GetName() == "A" || link->GetName() == "B")
          {
-            if (value->CanBeType(dtDAL::DataType::ACTOR) ||
-                value->CanBeType(dtDAL::DataType::STRING))
+            if (value->CanBeType(dtCore::DataType::ACTOR) ||
+                value->CanBeType(dtCore::DataType::STRING))
             {
                return true;
             }

@@ -99,7 +99,7 @@ namespace dtDirector
 
    private:
 
-      dtCore::RefPtr<dtDAL::ActorProperty> mVectorProp;
+      dtCore::RefPtr<dtCore::ActorProperty> mVectorProp;
    };
 }
 

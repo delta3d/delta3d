@@ -21,8 +21,8 @@
 #include <prefix/dtdirectornodesprefix.h>
 #include <dtDirectorNodes/comparevectoraction.h>
 
-#include <dtDAL/floatactorproperty.h>
-#include <dtDAL/vectoractorproperties.h>
+#include <dtCore/floatactorproperty.h>
+#include <dtCore/vectoractorproperties.h>
 
 #include <dtDirector/director.h>
 
@@ -61,22 +61,22 @@ namespace dtDirector
       ActionNode::BuildPropertyMap();
 
       // Create our value links.
-      dtDAL::Vec4ActorProperty* leftProp = new dtDAL::Vec4ActorProperty(
+      dtCore::Vec4ActorProperty* leftProp = new dtCore::Vec4ActorProperty(
          "A", "A",
-         dtDAL::Vec4ActorProperty::SetFuncType(this, &CompareVectorAction::SetA),
-         dtDAL::Vec4ActorProperty::GetFuncType(this, &CompareVectorAction::GetA),
+         dtCore::Vec4ActorProperty::SetFuncType(this, &CompareVectorAction::SetA),
+         dtCore::Vec4ActorProperty::GetFuncType(this, &CompareVectorAction::GetA),
          "Value A.");
 
-      dtDAL::Vec4ActorProperty* rightProp = new dtDAL::Vec4ActorProperty(
+      dtCore::Vec4ActorProperty* rightProp = new dtCore::Vec4ActorProperty(
          "B", "B",
-         dtDAL::Vec4ActorProperty::SetFuncType(this, &CompareVectorAction::SetB),
-         dtDAL::Vec4ActorProperty::GetFuncType(this, &CompareVectorAction::GetB),
+         dtCore::Vec4ActorProperty::SetFuncType(this, &CompareVectorAction::SetB),
+         dtCore::Vec4ActorProperty::GetFuncType(this, &CompareVectorAction::GetB),
          "Value B.");
 
-      dtDAL::FloatActorProperty* epsilonProp = new dtDAL::FloatActorProperty(
+      dtCore::FloatActorProperty* epsilonProp = new dtCore::FloatActorProperty(
          "Epsilon", "Epsilon",
-         dtDAL::FloatActorProperty::SetFuncType(this, &CompareVectorAction::SetEpsilon),
-         dtDAL::FloatActorProperty::GetFuncType(this, &CompareVectorAction::GetEpsilon),
+         dtCore::FloatActorProperty::SetFuncType(this, &CompareVectorAction::SetEpsilon),
+         dtCore::FloatActorProperty::GetFuncType(this, &CompareVectorAction::GetEpsilon),
          "Epsilon for equivalency check.");
 
       AddProperty(leftProp);
@@ -92,13 +92,13 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    bool CompareVectorAction::Update(float simDelta, float delta, int input, bool firstUpdate)
    {
-      dtDAL::DataType& leftType = GetPropertyType("A");
-      dtDAL::DataType& rightType = GetPropertyType("B");
+      dtCore::DataType& leftType = GetPropertyType("A");
+      dtCore::DataType& rightType = GetPropertyType("B");
 
       osg::Vec4 valueA;
       osg::Vec4 valueB;
 
-      if (leftType == dtDAL::DataType::VEC2F)
+      if (leftType == dtCore::DataType::VEC2F)
       {
          osg::Vec2 vec2A = GetVec2("A");
          valueA.x() = vec2A.x();
@@ -106,7 +106,7 @@ namespace dtDirector
          valueA.z() = 0.0f;
          valueA.w() = 0.0f;
       }
-      else if (leftType == dtDAL::DataType::VEC3F)
+      else if (leftType == dtCore::DataType::VEC3F)
       {
          osg::Vec3 vec3A = GetVec3("A");
          valueA.x() = vec3A.x();
@@ -119,7 +119,7 @@ namespace dtDirector
          valueA = GetVec4("A");
       }
 
-      if (rightType == dtDAL::DataType::VEC2F)
+      if (rightType == dtCore::DataType::VEC2F)
       {
          osg::Vec2 vec2A = GetVec2("B");
          valueB.x() = vec2A.x();
@@ -127,7 +127,7 @@ namespace dtDirector
          valueB.z() = 0.0f;
          valueB.w() = 0.0f;
       }
-      else if (rightType == dtDAL::DataType::VEC3F)
+      else if (rightType == dtCore::DataType::VEC3F)
       {
          osg::Vec3 vec3A = GetVec3("B");
          valueB.x() = vec3A.x();
@@ -174,9 +174,9 @@ namespace dtDirector
       {
          if (link->GetName() == "A" || link->GetName() == "B")
          {
-            if (value->CanBeType(dtDAL::DataType::VEC2) ||
-                value->CanBeType(dtDAL::DataType::VEC3) ||
-                value->CanBeType(dtDAL::DataType::VEC4))
+            if (value->CanBeType(dtCore::DataType::VEC2) ||
+                value->CanBeType(dtCore::DataType::VEC3) ||
+                value->CanBeType(dtCore::DataType::VEC4))
             {
                return true;
             }

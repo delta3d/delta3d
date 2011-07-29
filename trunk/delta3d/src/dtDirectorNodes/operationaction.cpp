@@ -23,7 +23,7 @@
 
 #include <dtDirector/director.h>
 
-#include <dtDAL/doubleactorproperty.h>
+#include <dtCore/doubleactorproperty.h>
 
 namespace dtDirector
 {
@@ -63,22 +63,22 @@ namespace dtDirector
       ActionNode::BuildPropertyMap();
 
       // Create our value links.
-      dtDAL::DoubleActorProperty* leftProp = new dtDAL::DoubleActorProperty(
+      dtCore::DoubleActorProperty* leftProp = new dtCore::DoubleActorProperty(
          "A", "A",
-         dtDAL::DoubleActorProperty::SetFuncType(this, &OperationAction::SetA),
-         dtDAL::DoubleActorProperty::GetFuncType(this, &OperationAction::GetA),
+         dtCore::DoubleActorProperty::SetFuncType(this, &OperationAction::SetA),
+         dtCore::DoubleActorProperty::GetFuncType(this, &OperationAction::GetA),
          "The Left value.");
 
-      dtDAL::DoubleActorProperty* rightProp = new dtDAL::DoubleActorProperty(
+      dtCore::DoubleActorProperty* rightProp = new dtCore::DoubleActorProperty(
          "B", "B",
-         dtDAL::DoubleActorProperty::SetFuncType(this, &OperationAction::SetB),
-         dtDAL::DoubleActorProperty::GetFuncType(this, &OperationAction::GetB),
+         dtCore::DoubleActorProperty::SetFuncType(this, &OperationAction::SetB),
+         dtCore::DoubleActorProperty::GetFuncType(this, &OperationAction::GetB),
          "The Right value.");
 
-      mResultProp = new dtDAL::DoubleActorProperty(
+      mResultProp = new dtCore::DoubleActorProperty(
          "Result", "Result",
-         dtDAL::DoubleActorProperty::SetFuncType(this, &OperationAction::SetResult),
-         dtDAL::DoubleActorProperty::GetFuncType(this, &OperationAction::GetResult),
+         dtCore::DoubleActorProperty::SetFuncType(this, &OperationAction::SetResult),
+         dtCore::DoubleActorProperty::GetFuncType(this, &OperationAction::GetResult),
          "The resulting output value.");
 
       AddProperty(leftProp);
@@ -94,14 +94,14 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    bool OperationAction::Update(float simDelta, float delta, int input, bool firstUpdate)
    {
-      dtDAL::DataType& leftType = GetPropertyType("A");
-      dtDAL::DataType& rightType = GetPropertyType("B");
+      dtCore::DataType& leftType = GetPropertyType("A");
+      dtCore::DataType& rightType = GetPropertyType("B");
 
       osg::Vec4 left;
       osg::Vec4 right;
       osg::Vec4 result;
 
-      if (leftType == dtDAL::DataType::VEC2F)
+      if (leftType == dtCore::DataType::VEC2F)
       {
          osg::Vec2 vec2A = GetVec2("A");
          left.x() = vec2A.x();
@@ -109,7 +109,7 @@ namespace dtDirector
          left.z() = left.x();
          left.w() = left.x();
       }
-      else if (leftType == dtDAL::DataType::VEC3F)
+      else if (leftType == dtCore::DataType::VEC3F)
       {
          osg::Vec3 vec3A = GetVec3("A");
          left.x() = vec3A.x();
@@ -117,7 +117,7 @@ namespace dtDirector
          left.z() = vec3A.z();
          left.w() = left.x();
       }
-      else if (leftType == dtDAL::DataType::VEC4F)
+      else if (leftType == dtCore::DataType::VEC4F)
       {
          left = GetVec4("A");
       }
@@ -129,7 +129,7 @@ namespace dtDirector
          left.w() = left.x();
       }
 
-      if (rightType == dtDAL::DataType::VEC2F)
+      if (rightType == dtCore::DataType::VEC2F)
       {
          osg::Vec2 vec2A = GetVec2("B");
          right.x() = vec2A.x();
@@ -137,7 +137,7 @@ namespace dtDirector
          right.z() = right.x();
          right.w() = right.x();
       }
-      else if (rightType == dtDAL::DataType::VEC3F)
+      else if (rightType == dtCore::DataType::VEC3F)
       {
          osg::Vec3 vec3A = GetVec3("B");
          right.x() = vec3A.x();
@@ -145,7 +145,7 @@ namespace dtDirector
          right.z() = vec3A.z();
          right.w() = right.x();
       }
-      else if (rightType == dtDAL::DataType::VEC4F)
+      else if (rightType == dtCore::DataType::VEC4F)
       {
          right = GetVec4("B");
       }
@@ -186,17 +186,17 @@ namespace dtDirector
       int count = GetPropertyCount("Result");
       for (int index = 0; index < count; index++)
       {
-         dtDAL::DataType& resultType = GetPropertyType("Result", index);
+         dtCore::DataType& resultType = GetPropertyType("Result", index);
 
-         if (resultType == dtDAL::DataType::VEC2F)
+         if (resultType == dtCore::DataType::VEC2F)
          {
             SetVec2(osg::Vec2(result.x(), result.y()), "Result", index);
          }
-         else if (resultType == dtDAL::DataType::VEC3F)
+         else if (resultType == dtCore::DataType::VEC3F)
          {
             SetVec3(osg::Vec3(result.x(), result.y(), result.z()), "Result", index);
          }
-         else if (resultType == dtDAL::DataType::VEC4F)
+         else if (resultType == dtCore::DataType::VEC4F)
          {
             SetVec4(result, "Result", index);
          }
@@ -216,13 +216,13 @@ namespace dtDirector
       {
          if (link->GetName() == "A" || link->GetName() == "B")
          {
-            if (value->CanBeType(dtDAL::DataType::BOOLEAN) ||
-                value->CanBeType(dtDAL::DataType::INT)     ||
-                value->CanBeType(dtDAL::DataType::FLOAT)   ||
-                value->CanBeType(dtDAL::DataType::DOUBLE)  ||
-                value->CanBeType(dtDAL::DataType::VEC2F)   ||
-                value->CanBeType(dtDAL::DataType::VEC3F)   ||
-                value->CanBeType(dtDAL::DataType::VEC4F))
+            if (value->CanBeType(dtCore::DataType::BOOLEAN) ||
+                value->CanBeType(dtCore::DataType::INT)     ||
+                value->CanBeType(dtCore::DataType::FLOAT)   ||
+                value->CanBeType(dtCore::DataType::DOUBLE)  ||
+                value->CanBeType(dtCore::DataType::VEC2F)   ||
+                value->CanBeType(dtCore::DataType::VEC3F)   ||
+                value->CanBeType(dtCore::DataType::VEC4F))
             {
                return true;
             }

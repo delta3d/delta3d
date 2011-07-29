@@ -34,13 +34,13 @@
 #include <dtUtil/exception.h>
 #include <dtUtil/stringutils.h>
 
-#include <dtDAL/gameeventmanager.h>
-#include <dtDAL/gameevent.h>
+#include <dtCore/gameeventmanager.h>
+#include <dtCore/gameevent.h>
 
 using dtCore::RefPtr;
 using std::vector;
 
-namespace dtDAL
+namespace dtCore
 {
    
    class GameEventManagerTests : public CPPUNIT_NS::TestFixture

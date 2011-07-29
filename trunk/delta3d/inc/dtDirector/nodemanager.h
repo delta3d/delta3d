@@ -170,7 +170,7 @@ namespace dtDirector
        *
        * @return               A pointer if the node type was found or NULL if not.
        */
-      const NodeType* FindNodeType(const dtDAL::DataType& dataType);
+      const NodeType* FindNodeType(const dtCore::DataType& dataType);
 
       /** 
        *  Given the supplied NodeType full name, see if an NodeType

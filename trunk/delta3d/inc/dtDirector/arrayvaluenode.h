@@ -25,9 +25,9 @@
 #include <dtDirector/export.h>
 #include <dtDirector/valuenode.h>
 
-#include <dtDAL/arrayactorpropertybase.h>
+#include <dtCore/arrayactorpropertybase.h>
 
-namespace dtDAL
+namespace dtCore
 {
    class ActorProperty;
 }
@@ -73,14 +73,14 @@ namespace dtDirector
        *
        * @return     True if the given property is already set to default.
        */
-      virtual bool IsPropertyDefault(const dtDAL::ActorProperty& prop) const;
+      virtual bool IsPropertyDefault(const dtCore::ActorProperty& prop) const;
 
       /**
        * Resets the value of the given property to its default value.
        *
        * @param[in]   prop  The property to reset.
        */
-      virtual void ResetProperty(dtDAL::ActorProperty& prop);
+      virtual void ResetProperty(dtCore::ActorProperty& prop);
 
       /**
        * Checks if a given property should be saved out to file data.
@@ -89,7 +89,7 @@ namespace dtDirector
        *
        * @return     True if the given property should be saved.
        */
-      virtual bool ShouldPropertySave(const dtDAL::ActorProperty& prop) const;
+      virtual bool ShouldPropertySave(const dtCore::ActorProperty& prop) const;
 
       /**
        * Accessors for the name of the node.
@@ -124,7 +124,7 @@ namespace dtDirector
        *
        * @return  The property.
        */
-      virtual dtDAL::ActorProperty* GetProperty(int index, ValueNode** outNode = NULL);
+      virtual dtCore::ActorProperty* GetProperty(int index, ValueNode** outNode = NULL);
 
       /**
        * Retrieves the total number of values linked to a property.
@@ -164,14 +164,14 @@ namespace dtDirector
        *
        * @return  The array property.
        */
-      dtDAL::ArrayActorPropertyBase* GetArrayProperty();
+      dtCore::ArrayActorPropertyBase* GetArrayProperty();
 
       /**
        * Accessor to the array property.
        *
        * @return  The array property.
        */
-      dtDAL::ArrayActorPropertyBase* GetInitialArrayProperty();
+      dtCore::ArrayActorPropertyBase* GetInitialArrayProperty();
 
    protected:
 
@@ -183,8 +183,8 @@ namespace dtDirector
 
       int   mPropertyIndex;
       int   mInitialPropertyIndex;
-      dtCore::RefPtr<dtDAL::ArrayActorPropertyBase> mArrayProperty;
-      dtCore::RefPtr<dtDAL::ArrayActorPropertyBase> mInitialArrayProperty;
+      dtCore::RefPtr<dtCore::ArrayActorPropertyBase> mArrayProperty;
+      dtCore::RefPtr<dtCore::ArrayActorPropertyBase> mInitialArrayProperty;
    };
 }
 

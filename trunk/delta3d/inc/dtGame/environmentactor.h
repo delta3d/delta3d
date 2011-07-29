@@ -25,7 +25,7 @@
 #include <dtGame/export.h>
 #include <dtGame/gameactor.h>
 #include <dtGame/gameactorproxy.h>
-#include <dtDAL/environmentactor.h>
+#include <dtCore/environmentactor.h>
 
 namespace dtGame
 {
@@ -34,7 +34,7 @@ namespace dtGame
    * class as the Environment Actor.  It is expected users will derive and
    * supply their own implementation of a concrete Environment Actor.
    */
-   class DT_GAME_EXPORT IEnvGameActor : public GameActor, public dtDAL::IEnvironmentActor
+   class DT_GAME_EXPORT IEnvGameActor : public GameActor, public dtCore::IEnvironmentActor
    {
    public:
       /// Constructor

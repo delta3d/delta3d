@@ -20,23 +20,23 @@
 #ifndef POSITION_DATA_ACTOR
 #define POSITION_DATA_ACTOR
  
-#include <dtDAL/plugin_export.h>
-#include <dtDAL/transformableactorproxy.h>
+#include <dtCore/plugin_export.h>
+#include <dtCore/transformableactorproxy.h>
 #include <dtUtil/getsetmacros.h>
 
 
 namespace dtActors
 {
-   class DT_PLUGIN_EXPORT PositionDataActorProxy : public dtDAL::TransformableActorProxy
+   class DT_PLUGIN_EXPORT PositionDataActorProxy : public dtCore::TransformableActorProxy
    {
       public:
          PositionDataActorProxy();
          virtual void CreateActor();
-         virtual dtDAL::ActorProxyIcon* GetBillBoardIcon();
+         virtual dtCore::ActorProxyIcon* GetBillBoardIcon();
          virtual void BuildPropertyMap();
-         virtual const dtDAL::BaseActorObject::RenderMode& GetRenderMode();
+         virtual const dtCore::BaseActorObject::RenderMode& GetRenderMode();
 
-         void ApplyDataTo(dtDAL::BaseActorObject* actorProxy) const;
+         void ApplyDataTo(dtCore::BaseActorObject* actorProxy) const;
          void ApplyDataTo(dtCore::DeltaDrawable* drawable) const;
          void ApplyDataTo(dtCore::Transformable* transformable) const;
 

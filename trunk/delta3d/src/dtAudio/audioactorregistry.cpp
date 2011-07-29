@@ -3,24 +3,24 @@
 
 using namespace dtAudio;
 
-extern "C" DT_AUDIO_EXPORT dtDAL::ActorPluginRegistry* CreatePluginRegistry()
+extern "C" DT_AUDIO_EXPORT dtCore::ActorPluginRegistry* CreatePluginRegistry()
 {
    return new AudioActorRegistry;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 extern "C" DT_AUDIO_EXPORT void DestroyPluginRegistry(
-   dtDAL::ActorPluginRegistry *registry)
+   dtCore::ActorPluginRegistry *registry)
 {
    if (registry != NULL)
       delete registry;
 }
 
 
-dtCore::RefPtr<dtDAL::ActorType> AudioActorRegistry::SOUND_ACTOR_TYPE(new dtDAL::ActorType("Sound Actor", "dtcore.Environment","Generic Sound Actor"));
+dtCore::RefPtr<dtCore::ActorType> AudioActorRegistry::SOUND_ACTOR_TYPE(new dtCore::ActorType("Sound Actor", "dtcore.Environment","Generic Sound Actor"));
 
 dtAudio::AudioActorRegistry::AudioActorRegistry():
- dtDAL::ActorPluginRegistry("CoreActors")
+ dtCore::ActorPluginRegistry("CoreActors")
 {
 
 }

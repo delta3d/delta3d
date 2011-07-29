@@ -1,8 +1,8 @@
 #include "textlabelcomponent.h"
 
-#include <dtDAL/booleanactorproperty.h>
-#include <dtDAL/floatactorproperty.h>
-#include <dtDAL/stringactorproperty.h>
+#include <dtCore/booleanactorproperty.h>
+#include <dtCore/floatactorproperty.h>
+#include <dtCore/stringactorproperty.h>
 
 #include <dtGame/basemessages.h>
 #include <dtGame/gameactor.h>
@@ -125,33 +125,33 @@ void TextLabelComponent::BuildPropertyMap()
 {
    static const dtUtil::RefString GROUPNAME = "Text Label";
 
-   AddProperty(new dtDAL::StringActorProperty("Text", "Text",
-      dtDAL::StringActorProperty::SetFuncType(this, &TextLabelComponent::SetText),
-      dtDAL::StringActorProperty::GetFuncType(this, &TextLabelComponent::GetText),
+   AddProperty(new dtCore::StringActorProperty("Text", "Text",
+      dtCore::StringActorProperty::SetFuncType(this, &TextLabelComponent::SetText),
+      dtCore::StringActorProperty::GetFuncType(this, &TextLabelComponent::GetText),
       "",
       GROUPNAME));
 
-   AddProperty(new dtDAL::FloatActorProperty("Text Height", "Text Height",
-      dtDAL::FloatActorProperty::SetFuncType(this, &TextLabelComponent::SetHeight),
-      dtDAL::FloatActorProperty::GetFuncType(this, &TextLabelComponent::GetHeight),
+   AddProperty(new dtCore::FloatActorProperty("Text Height", "Text Height",
+      dtCore::FloatActorProperty::SetFuncType(this, &TextLabelComponent::SetHeight),
+      dtCore::FloatActorProperty::GetFuncType(this, &TextLabelComponent::GetHeight),
       "height of text above actor",
       GROUPNAME));
 
-   AddProperty(new dtDAL::FloatActorProperty("Flash Interval", "Flash Interval",
-      dtDAL::FloatActorProperty::SetFuncType(this, &TextLabelComponent::SetFlashInterval),
-      dtDAL::FloatActorProperty::GetFuncType(this, &TextLabelComponent::GetFlashInterval),
+   AddProperty(new dtCore::FloatActorProperty("Flash Interval", "Flash Interval",
+      dtCore::FloatActorProperty::SetFuncType(this, &TextLabelComponent::SetFlashInterval),
+      dtCore::FloatActorProperty::GetFuncType(this, &TextLabelComponent::GetFlashInterval),
       "interval for flashing text during alarm",
       GROUPNAME));
 
-   AddProperty(new dtDAL::BooleanActorProperty("Is Flashing", "Is Flashing",
-      dtDAL::BooleanActorProperty::SetFuncType(this, &TextLabelComponent::SetFlashing),
-      dtDAL::BooleanActorProperty::GetFuncType(this, &TextLabelComponent::IsFlashing),
+   AddProperty(new dtCore::BooleanActorProperty("Is Flashing", "Is Flashing",
+      dtCore::BooleanActorProperty::SetFuncType(this, &TextLabelComponent::SetFlashing),
+      dtCore::BooleanActorProperty::GetFuncType(this, &TextLabelComponent::IsFlashing),
       "interval for flashing text during alarm",
       GROUPNAME));
 
-   AddProperty(new dtDAL::BooleanActorProperty("Visible", "Visible",
-      dtDAL::BooleanActorProperty::SetFuncType(this, &TextLabelComponent::SetEnabled),
-      dtDAL::BooleanActorProperty::GetFuncType(this, &TextLabelComponent::IsEnabled),
+   AddProperty(new dtCore::BooleanActorProperty("Visible", "Visible",
+      dtCore::BooleanActorProperty::SetFuncType(this, &TextLabelComponent::SetEnabled),
+      dtCore::BooleanActorProperty::GetFuncType(this, &TextLabelComponent::IsEnabled),
       "",
       GROUPNAME));
 }

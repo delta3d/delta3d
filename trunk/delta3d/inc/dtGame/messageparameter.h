@@ -24,39 +24,39 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#include <dtDAL/namedparameters.h>
+#include <dtCore/namedparameters.h>
 
 namespace dtGame
 {
-   typedef dtDAL::NamedParameter                  MessageParameter;
-   typedef dtDAL::NamedGroupParameter             GroupMessageParameter;
-   typedef dtDAL::NamedBooleanParameter           BooleanMessageParameter;
-   typedef dtDAL::NamedUnsignedCharParameter      UnsignedCharMessageParameter;
-   typedef dtDAL::NamedShortIntParameter          ShortIntMessageParameter;
-   typedef dtDAL::NamedUnsignedShortIntParameter  UnsignedShortIntMessageParameter;
-   typedef dtDAL::NamedUnsignedIntParameter       UnsignedIntMessageParameter;
-   typedef dtDAL::NamedIntParameter               IntMessageParameter;
-   typedef dtDAL::NamedUnsignedLongIntParameter   UnsignedLongIntMessageParameter;
-   typedef dtDAL::NamedLongIntParameter           LongIntMessageParameter;
-   typedef dtDAL::NamedFloatParameter             FloatMessageParameter;
-   typedef dtDAL::NamedDoubleParameter            DoubleMessageParameter;
-   typedef dtDAL::NamedStringParameter            StringMessageParameter;
-   typedef dtDAL::NamedArrayParameter             ArrayMessageParameter;
-   typedef dtDAL::NamedEnumParameter              EnumMessageParameter;
-   typedef dtDAL::NamedActorParameter             ActorMessageParameter;
-   typedef dtDAL::NamedGameEventParameter         GameEventMessageParameter;
-   typedef dtDAL::NamedVec2Parameter              Vec2MessageParameter;
-   typedef dtDAL::NamedVec2fParameter             Vec2fMessageParameter;
-   typedef dtDAL::NamedVec2dParameter             Vec2dMessageParameter;
-   typedef dtDAL::NamedVec3Parameter              Vec3MessageParameter;
-   typedef dtDAL::NamedRGBColorParameter          RGBColorMessageParameter;
-   typedef dtDAL::NamedVec3fParameter             Vec3fMessageParameter;
-   typedef dtDAL::NamedVec3dParameter             Vec3dMessageParameter;
-   typedef dtDAL::NamedVec4Parameter              Vec4MessageParameter;
-   typedef dtDAL::NamedRGBAColorParameter         RGBAColorMessageParameter;
-   typedef dtDAL::NamedVec4fParameter             Vec4fMessageParameter;
-   typedef dtDAL::NamedVec4dParameter             Vec4dMessageParameter;
-   typedef dtDAL::NamedResourceParameter          ResourceMessageParameter;
+   typedef dtCore::NamedParameter                  MessageParameter;
+   typedef dtCore::NamedGroupParameter             GroupMessageParameter;
+   typedef dtCore::NamedBooleanParameter           BooleanMessageParameter;
+   typedef dtCore::NamedUnsignedCharParameter      UnsignedCharMessageParameter;
+   typedef dtCore::NamedShortIntParameter          ShortIntMessageParameter;
+   typedef dtCore::NamedUnsignedShortIntParameter  UnsignedShortIntMessageParameter;
+   typedef dtCore::NamedUnsignedIntParameter       UnsignedIntMessageParameter;
+   typedef dtCore::NamedIntParameter               IntMessageParameter;
+   typedef dtCore::NamedUnsignedLongIntParameter   UnsignedLongIntMessageParameter;
+   typedef dtCore::NamedLongIntParameter           LongIntMessageParameter;
+   typedef dtCore::NamedFloatParameter             FloatMessageParameter;
+   typedef dtCore::NamedDoubleParameter            DoubleMessageParameter;
+   typedef dtCore::NamedStringParameter            StringMessageParameter;
+   typedef dtCore::NamedArrayParameter             ArrayMessageParameter;
+   typedef dtCore::NamedEnumParameter              EnumMessageParameter;
+   typedef dtCore::NamedActorParameter             ActorMessageParameter;
+   typedef dtCore::NamedGameEventParameter         GameEventMessageParameter;
+   typedef dtCore::NamedVec2Parameter              Vec2MessageParameter;
+   typedef dtCore::NamedVec2fParameter             Vec2fMessageParameter;
+   typedef dtCore::NamedVec2dParameter             Vec2dMessageParameter;
+   typedef dtCore::NamedVec3Parameter              Vec3MessageParameter;
+   typedef dtCore::NamedRGBColorParameter          RGBColorMessageParameter;
+   typedef dtCore::NamedVec3fParameter             Vec3fMessageParameter;
+   typedef dtCore::NamedVec3dParameter             Vec3dMessageParameter;
+   typedef dtCore::NamedVec4Parameter              Vec4MessageParameter;
+   typedef dtCore::NamedRGBAColorParameter         RGBAColorMessageParameter;
+   typedef dtCore::NamedVec4fParameter             Vec4fMessageParameter;
+   typedef dtCore::NamedVec4dParameter             Vec4dMessageParameter;
+   typedef dtCore::NamedResourceParameter          ResourceMessageParameter;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -74,7 +74,7 @@ namespace dtDirector
        *
        * @return  True if this value is the proper type.
        */
-      virtual bool CanBeType(dtDAL::DataType& type);
+      virtual bool CanBeType(dtCore::DataType& type);
 
       /**
        * Determines whether a value link on this node can connect
@@ -105,7 +105,7 @@ namespace dtDirector
        *
        * @return     The stronger type.
        */
-      dtDAL::DataType& GetStrongerType(dtDAL::DataType& type1, dtDAL::DataType& type2);
+      dtCore::DataType& GetStrongerType(dtCore::DataType& type1, dtCore::DataType& type2);
 
       /**
        * Accessors for property values.

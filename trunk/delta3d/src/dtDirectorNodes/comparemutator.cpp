@@ -21,8 +21,8 @@
 #include <prefix/dtdirectornodesprefix.h>
 #include <dtDirectorNodes/comparemutator.h>
 
-#include <dtDAL/booleanactorproperty.h>
-#include <dtDAL/doubleactorproperty.h>
+#include <dtCore/booleanactorproperty.h>
+#include <dtCore/doubleactorproperty.h>
 
 namespace dtDirector
 {
@@ -52,24 +52,24 @@ namespace dtDirector
       MutatorNode::BuildPropertyMap();
 
       // Create our value links.
-      dtDAL::DoubleActorProperty* leftProp = new dtDAL::DoubleActorProperty(
+      dtCore::DoubleActorProperty* leftProp = new dtCore::DoubleActorProperty(
          "A", "A",
-         dtDAL::DoubleActorProperty::SetFuncType(this, &CompareMutator::SetA),
-         dtDAL::DoubleActorProperty::GetFuncType(this, &CompareMutator::GetA),
+         dtCore::DoubleActorProperty::SetFuncType(this, &CompareMutator::SetA),
+         dtCore::DoubleActorProperty::GetFuncType(this, &CompareMutator::GetA),
          "The Left value.");
 
-      dtDAL::DoubleActorProperty* rightProp = new dtDAL::DoubleActorProperty(
+      dtCore::DoubleActorProperty* rightProp = new dtCore::DoubleActorProperty(
          "B", "B",
-         dtDAL::DoubleActorProperty::SetFuncType(this, &CompareMutator::SetB),
-         dtDAL::DoubleActorProperty::GetFuncType(this, &CompareMutator::GetB),
+         dtCore::DoubleActorProperty::SetFuncType(this, &CompareMutator::SetB),
+         dtCore::DoubleActorProperty::GetFuncType(this, &CompareMutator::GetB),
          "The Right value.");
       AddProperty(leftProp);
       AddProperty(rightProp);
 
-      mProperty = new dtDAL::BooleanActorProperty(
+      mProperty = new dtCore::BooleanActorProperty(
          "Result", "Result",
-         dtDAL::BooleanActorProperty::SetFuncType(this, &CompareMutator::SetResult),
-         dtDAL::BooleanActorProperty::GetFuncType(this, &CompareMutator::GetResult),
+         dtCore::BooleanActorProperty::SetFuncType(this, &CompareMutator::SetResult),
+         dtCore::BooleanActorProperty::GetFuncType(this, &CompareMutator::GetResult),
          "The Result value.");
       AddProperty(mProperty);
 
@@ -86,11 +86,11 @@ namespace dtDirector
    {
       MutatorNode::OnLinkValueChanged(linkName);
 
-      dtDAL::DataType& leftType = Node::GetPropertyType("A");
-      dtDAL::DataType& rightType = Node::GetPropertyType("B");
+      dtCore::DataType& leftType = Node::GetPropertyType("A");
+      dtCore::DataType& rightType = Node::GetPropertyType("B");
 
-      if (leftType == dtDAL::DataType::STRING &&
-         rightType == dtDAL::DataType::STRING)
+      if (leftType == dtCore::DataType::STRING &&
+         rightType == dtCore::DataType::STRING)
       {
          bool result = Compare(GetString("A"), GetString("B"));
 
@@ -107,27 +107,27 @@ namespace dtDirector
       osg::Vec4 right;
       bool sameType = true;
 
-      if (leftType == dtDAL::DataType::VEC2F)
+      if (leftType == dtCore::DataType::VEC2F)
       {
-         sameType = rightType == dtDAL::DataType::VEC2F;
+         sameType = rightType == dtCore::DataType::VEC2F;
          osg::Vec2 vec2A = GetVec2("A");
          left.x() = vec2A.x();
          left.y() = vec2A.y();
          left.z() = left.x();
          left.w() = left.x();
       }
-      else if (leftType == dtDAL::DataType::VEC3F)
+      else if (leftType == dtCore::DataType::VEC3F)
       {
-         sameType = rightType == dtDAL::DataType::VEC3F;
+         sameType = rightType == dtCore::DataType::VEC3F;
          osg::Vec3 vec3A = GetVec3("A");
          left.x() = vec3A.x();
          left.y() = vec3A.y();
          left.z() = vec3A.z();
          left.w() = left.x();
       }
-      else if (leftType == dtDAL::DataType::VEC4F)
+      else if (leftType == dtCore::DataType::VEC4F)
       {
-         sameType = rightType == dtDAL::DataType::VEC4F;
+         sameType = rightType == dtCore::DataType::VEC4F;
          left = GetVec4("A");
       }
       else
@@ -138,27 +138,27 @@ namespace dtDirector
          left.w() = left.x();
       }
 
-      if (rightType == dtDAL::DataType::VEC2F)
+      if (rightType == dtCore::DataType::VEC2F)
       {
-         sameType = rightType == dtDAL::DataType::VEC2F;
+         sameType = rightType == dtCore::DataType::VEC2F;
          osg::Vec2 vec2A = GetVec2("B");
          right.x() = vec2A.x();
          right.y() = vec2A.y();
          right.z() = right.x();
          right.w() = right.x();
       }
-      else if (rightType == dtDAL::DataType::VEC3F)
+      else if (rightType == dtCore::DataType::VEC3F)
       {
-         sameType = rightType == dtDAL::DataType::VEC3F;
+         sameType = rightType == dtCore::DataType::VEC3F;
          osg::Vec3 vec3A = GetVec3("B");
          right.x() = vec3A.x();
          right.y() = vec3A.y();
          right.z() = vec3A.z();
          right.w() = right.x();
       }
-      else if (rightType == dtDAL::DataType::VEC4F)
+      else if (rightType == dtCore::DataType::VEC4F)
       {
-         sameType = rightType == dtDAL::DataType::VEC4F;
+         sameType = rightType == dtCore::DataType::VEC4F;
          right = GetVec4("B");
       }
       else
@@ -192,14 +192,14 @@ namespace dtDirector
       {
          if (link->GetName() == "A" || link->GetName() == "B")
          {
-            if (value->CanBeType(dtDAL::DataType::STRING)  ||
-                value->CanBeType(dtDAL::DataType::BOOLEAN) ||
-                value->CanBeType(dtDAL::DataType::INT)     ||
-                value->CanBeType(dtDAL::DataType::FLOAT)   ||
-                value->CanBeType(dtDAL::DataType::DOUBLE)  ||
-                value->CanBeType(dtDAL::DataType::VEC2F)   ||
-                value->CanBeType(dtDAL::DataType::VEC3F)   ||
-                value->CanBeType(dtDAL::DataType::VEC4F))
+            if (value->CanBeType(dtCore::DataType::STRING)  ||
+                value->CanBeType(dtCore::DataType::BOOLEAN) ||
+                value->CanBeType(dtCore::DataType::INT)     ||
+                value->CanBeType(dtCore::DataType::FLOAT)   ||
+                value->CanBeType(dtCore::DataType::DOUBLE)  ||
+                value->CanBeType(dtCore::DataType::VEC2F)   ||
+                value->CanBeType(dtCore::DataType::VEC3F)   ||
+                value->CanBeType(dtCore::DataType::VEC4F))
             {
                return true;
             }

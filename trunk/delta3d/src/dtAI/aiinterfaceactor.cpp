@@ -22,7 +22,7 @@
 #include <dtAI/aiinterfaceactor.h>
 #include <dtAI/deltaaiinterface.h>
 #include <dtAI/waypointtypes.h>
-#include <dtDAL/resourceactorproperty.h>
+#include <dtCore/resourceactorproperty.h>
 #include <dtUtil/datapathutils.h>
 
 namespace dtAI
@@ -96,14 +96,14 @@ namespace dtAI
     ////////////////////////////////////////////////////////////////////////////
     void AIInterfaceActorProxy::BuildPropertyMap()
     {
-       dtDAL::BaseActorObject::BuildPropertyMap();
+       dtCore::BaseActorObject::BuildPropertyMap();
 
        const dtUtil::RefString GROUPNAME = "AIInterface";
 
-       AddProperty(new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::STATIC_MESH,
+       AddProperty(new dtCore::ResourceActorProperty(*this, dtCore::DataType::STATIC_MESH,
                    PROPERTY_WAYPOINT_FILE_NAME,
                    PROPERTY_WAYPOINT_FILE_NAME,
-                   dtDAL::ResourceActorProperty::SetFuncType(this, &AIInterfaceActorProxy::LoadFile),
+                   dtCore::ResourceActorProperty::SetFuncType(this, &AIInterfaceActorProxy::LoadFile),
                    "Loads the waypoint and connectivity graph.", GROUPNAME));
     }
 

@@ -53,12 +53,12 @@
 
 #include <dtEditQt/directorbrowser.h>
 
-#include <dtDAL/project.h>
+#include <dtCore/project.h>
 
 namespace dtEditQt
 {
    ///////////////////////////////////////////////////////////////////////////////
-   DirectorBrowser::DirectorBrowser(dtDAL::DataType& type, QWidget* parent)
+   DirectorBrowser::DirectorBrowser(dtCore::DataType& type, QWidget* parent)
       : ResourceAbstractBrowser(&type, parent)
    {
       // This sets our resource icon that is visible on leaf nodes

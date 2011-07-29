@@ -23,11 +23,11 @@
 #include <dtDirector/director.h>
 #include <dtDirector/colors.h>
 
-#include <dtDAL/actorproperty.h>
-#include <dtDAL/booleanactorproperty.h>
-#include <dtDAL/stringactorproperty.h>
-#include <dtDAL/vectoractorproperties.h>
-#include <dtDAL/colorrgbaactorproperty.h>
+#include <dtCore/actorproperty.h>
+#include <dtCore/booleanactorproperty.h>
+#include <dtCore/stringactorproperty.h>
+#include <dtCore/vectoractorproperties.h>
+#include <dtCore/colorrgbaactorproperty.h>
 
 
 namespace dtDirector
@@ -98,37 +98,37 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void DirectorGraph::BuildPropertyMap(bool isParent)
    {
-      AddProperty(new dtDAL::StringActorProperty(
+      AddProperty(new dtCore::StringActorProperty(
          "Comment", "Comment",
-         dtDAL::StringActorProperty::SetFuncType(this, &DirectorGraph::SetComment),
-         dtDAL::StringActorProperty::GetFuncType(this, &DirectorGraph::GetComment),
+         dtCore::StringActorProperty::SetFuncType(this, &DirectorGraph::SetComment),
+         dtCore::StringActorProperty::GetFuncType(this, &DirectorGraph::GetComment),
          "Comment"));
 
-      AddProperty(new dtDAL::StringActorProperty(
+      AddProperty(new dtCore::StringActorProperty(
          "Name", "Name",
-         dtDAL::StringActorProperty::SetFuncType(this, &DirectorGraph::SetName),
-         dtDAL::StringActorProperty::GetFuncType(this, &DirectorGraph::GetName),
+         dtCore::StringActorProperty::SetFuncType(this, &DirectorGraph::SetName),
+         dtCore::StringActorProperty::GetFuncType(this, &DirectorGraph::GetName),
          "The Name of the Director graph."));
 
-      AddProperty(new dtDAL::StringActorProperty(
+      AddProperty(new dtCore::StringActorProperty(
          "Custom Editor", "Custom Editor",
-         dtDAL::StringActorProperty::SetFuncType(this, &DirectorGraph::SetEditor),
-         dtDAL::StringActorProperty::GetFuncType(this, &DirectorGraph::GetEditor),
+         dtCore::StringActorProperty::SetFuncType(this, &DirectorGraph::SetEditor),
+         dtCore::StringActorProperty::GetFuncType(this, &DirectorGraph::GetEditor),
          "The custom editor for use with this Director graph."));
 
       // Only sub graphs have a position.
       if (!isParent)
       {
-         AddProperty(new dtDAL::Vec2ActorProperty(
+         AddProperty(new dtCore::Vec2ActorProperty(
             "Position", "Position",
-            dtDAL::Vec2ActorProperty::SetFuncType(this, &DirectorGraph::SetPosition),
-            dtDAL::Vec2ActorProperty::GetFuncType(this, &DirectorGraph::GetPosition),
+            dtCore::Vec2ActorProperty::SetFuncType(this, &DirectorGraph::SetPosition),
+            dtCore::Vec2ActorProperty::GetFuncType(this, &DirectorGraph::GetPosition),
             "The Position of the Director graph in its parent.", "UI"));
 
-         AddProperty(new dtDAL::ColorRgbaActorProperty(
+         AddProperty(new dtCore::ColorRgbaActorProperty(
             "Color", "Color",
-            dtDAL::ColorRgbaActorProperty::SetFuncType(this, &DirectorGraph::SetColor),
-            dtDAL::ColorRgbaActorProperty::GetFuncType(this, &DirectorGraph::GetColor),
+            dtCore::ColorRgbaActorProperty::SetFuncType(this, &DirectorGraph::SetColor),
+            dtCore::ColorRgbaActorProperty::GetFuncType(this, &DirectorGraph::GetColor),
             "The UI color of the Node."));
      }
    }
@@ -294,7 +294,7 @@ namespace dtDirector
       {
          Node* node = nodes[index];
 
-         dtDAL::ActorProperty* prop = node->GetProperty(property);
+         dtCore::ActorProperty* prop = node->GetProperty(property);
          if (prop && prop->ToString() == value)
          {
             outNodes.push_back(node);

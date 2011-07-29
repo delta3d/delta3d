@@ -1,5 +1,5 @@
 #include <dtABC/baseabc.h>
-#include <dtDAL/map.h>
+#include <dtCore/map.h>
 
 #include <dtCore/keyboard.h>
 #include <dtCore/mouse.h>
@@ -8,7 +8,7 @@
 #include <dtCore/view.h>
 #include <dtCore/scene.h>
 #include <dtCore/system.h>
-#include <dtDAL/project.h>
+#include <dtCore/project.h>
 
 #include <osgViewer/View>
 #include <cassert>
@@ -152,9 +152,9 @@ dtCore::View* BaseABC::CreateDefaultView()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void BaseABC::LoadMap(dtDAL::Map& map, bool addBillBoards)
+void BaseABC::LoadMap(dtCore::Map& map, bool addBillBoards)
 {
-   typedef std::vector< dtCore::RefPtr<dtDAL::BaseActorObject> > ActorProxyVector;
+   typedef std::vector< dtCore::RefPtr<dtCore::BaseActorObject> > ActorProxyVector;
    ActorProxyVector proxies;
    map.FindProxies(proxies, "*", "dtcore", "Camera");
 
@@ -191,13 +191,13 @@ void BaseABC::LoadMap(dtDAL::Map& map, bool addBillBoards)
       LOG_INFO("At least one Camera is our map is enabled, so the default Camera in BaseABC has been disabled.")
    }
 
-   dtDAL::Project::GetInstance().LoadMapIntoScene(map, *GetScene(), addBillBoards);
+   dtCore::Project::GetInstance().LoadMapIntoScene(map, *GetScene(), addBillBoards);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-dtDAL::Map& BaseABC::LoadMap(const std::string& name, bool addBillBoards)
+dtCore::Map& BaseABC::LoadMap(const std::string& name, bool addBillBoards)
 {
-   dtDAL::Map& map = dtDAL::Project::GetInstance().GetMap(name);
+   dtCore::Map& map = dtCore::Project::GetInstance().GetMap(name);
    LoadMap(map, addBillBoards);
    return map;
 }

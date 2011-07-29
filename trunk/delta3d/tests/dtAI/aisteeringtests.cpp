@@ -26,8 +26,8 @@
 
 #include <dtUtil/templateutility.h>
 
-#include <dtDAL/propertymacros.h>
-#include <dtDAL/propertycontainer.h>
+#include <dtCore/propertymacros.h>
+#include <dtCore/propertycontainer.h>
 
 #include <dtCore/refptr.h>
 
@@ -144,7 +144,7 @@ namespace dtAI
       DT_DECLARE_ACCESSOR_INLINE(float, Pitch);
       DT_DECLARE_ACCESSOR_INLINE(float, Roll);
 
-      void RegisterProperties(dtDAL::PropertyContainer& pc, const std::string& group)
+      void RegisterProperties(dtCore::PropertyContainer& pc, const std::string& group)
       {
       }
    };
@@ -169,7 +169,7 @@ namespace dtAI
       DT_DECLARE_ACCESSOR_INLINE(float, MinElevation);
       DT_DECLARE_ACCESSOR_INLINE(float, MaxElevation);
 
-      void RegisterProperties(dtDAL::PropertyContainer& pc, const std::string& group)
+      void RegisterProperties(dtCore::PropertyContainer& pc, const std::string& group)
       {
       }
    };
@@ -186,7 +186,7 @@ namespace dtAI
       DT_DECLARE_ACCESSOR_INLINE(float, Lift);
       DT_DECLARE_ACCESSOR_INLINE(float, Yaw);
 
-      void RegisterProperties(dtDAL::PropertyContainer& pc, const std::string& group)
+      void RegisterProperties(dtCore::PropertyContainer& pc, const std::string& group)
       {
       }
    };
@@ -262,7 +262,7 @@ namespace dtAI
          mCurrentState = mDefaultState;
       }
 
-      /*virtual*/ void RegisterProperties(dtDAL::PropertyContainer& pc, const std::string& group)
+      /*virtual*/ void RegisterProperties(dtCore::PropertyContainer& pc, const std::string& group)
       {
          BaseClass::RegisterProperties(pc, group);
       }

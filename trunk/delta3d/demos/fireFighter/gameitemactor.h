@@ -24,7 +24,7 @@
 #include <dtActors/gamemeshactor.h>
 #include <fireFighter/export.h>
 #include <dtAudio/sound.h>
-#include <dtDAL/actorproxyicon.h>
+#include <dtCore/actorproxyicon.h>
 
 class FIRE_FIGHTER_EXPORT GameItemActor : public dtActors::GameMeshActor
 {
@@ -144,11 +144,11 @@ class FIRE_FIGHTER_EXPORT GameItemActorProxy : public dtActors::GameMeshActorPro
       virtual void CreateActor() { SetActor(*new GameItemActor(*this)); }
 
       // Used in STAGE
-      dtDAL::ActorProxyIcon* GetBillBoardIcon();
+      dtCore::ActorProxyIcon* GetBillBoardIcon();
 
-      virtual const dtDAL::BaseActorObject::RenderMode& GetRenderMode()
+      virtual const dtCore::BaseActorObject::RenderMode& GetRenderMode()
       {
-         return dtDAL::BaseActorObject::RenderMode::DRAW_ACTOR;
+         return dtCore::BaseActorObject::RenderMode::DRAW_ACTOR;
       }
 
    protected:
@@ -158,7 +158,7 @@ class FIRE_FIGHTER_EXPORT GameItemActorProxy : public dtActors::GameMeshActorPro
 
    private:
 
-      dtCore::RefPtr<dtDAL::ActorProxyIcon> mBillBoardIcon; 
+      dtCore::RefPtr<dtCore::ActorProxyIcon> mBillBoardIcon; 
 };
 
 #endif

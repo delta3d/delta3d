@@ -20,10 +20,10 @@
  */
 
 #include <dtActors/skyboxactorproxy.h>
-#include <dtDAL/resourceactorproperty.h>
-#include <dtDAL/datatype.h>
-#include <dtDAL/functor.h>
-#include <dtDAL/enumactorproperty.h>
+#include <dtCore/resourceactorproperty.h>
+#include <dtCore/datatype.h>
+#include <dtCore/functor.h>
+#include <dtCore/enumactorproperty.h>
 
 namespace dtActors
 {
@@ -53,40 +53,40 @@ namespace dtActors
 
       const std::string GROUPNAME = "SkyBox Textures";
 
-      AddProperty(new dtDAL::EnumActorProperty<RenderProfile>("Render Profile", "Render Profile",
-         dtDAL::EnumActorProperty<RenderProfile>::SetFuncType(this, &SkyBoxActorProxy::SetRenderProfilePreference),
-         dtDAL::EnumActorProperty<RenderProfile>::GetFuncType(this, &SkyBoxActorProxy::GetRenderProfilePreference),
+      AddProperty(new dtCore::EnumActorProperty<RenderProfile>("Render Profile", "Render Profile",
+         dtCore::EnumActorProperty<RenderProfile>::SetFuncType(this, &SkyBoxActorProxy::SetRenderProfilePreference),
+         dtCore::EnumActorProperty<RenderProfile>::GetFuncType(this, &SkyBoxActorProxy::GetRenderProfilePreference),
          "Sets the way the skybox renders.",
          "Skybox Profile"));
 
-      AddProperty(new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::TEXTURE,
+      AddProperty(new dtCore::ResourceActorProperty(*this, dtCore::DataType::TEXTURE,
          "Top Texture", "Top Texture",
-         dtDAL::ResourceActorProperty::SetFuncType(this, &SkyBoxActorProxy::SetTopTexture),
+         dtCore::ResourceActorProperty::SetFuncType(this, &SkyBoxActorProxy::SetTopTexture),
          "Sets the texture on the top of the sky box", GROUPNAME));
 
-      AddProperty(new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::TEXTURE,
+      AddProperty(new dtCore::ResourceActorProperty(*this, dtCore::DataType::TEXTURE,
          "Bottom Texture", "Bottom Texture",
-         dtDAL::ResourceActorProperty::SetFuncType(this, &SkyBoxActorProxy::SetBottomTexture),
+         dtCore::ResourceActorProperty::SetFuncType(this, &SkyBoxActorProxy::SetBottomTexture),
          "Sets the texture on the bottom of the sky box", GROUPNAME));
 
-      AddProperty(new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::TEXTURE,
+      AddProperty(new dtCore::ResourceActorProperty(*this, dtCore::DataType::TEXTURE,
          "Left Texture", "Left Texture",
-         dtDAL::ResourceActorProperty::SetFuncType(this, &SkyBoxActorProxy::SetLeftTexture),
+         dtCore::ResourceActorProperty::SetFuncType(this, &SkyBoxActorProxy::SetLeftTexture),
          "Sets the texture on the left of the sky box", GROUPNAME));
 
-      AddProperty(new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::TEXTURE,
+      AddProperty(new dtCore::ResourceActorProperty(*this, dtCore::DataType::TEXTURE,
          "Right Texture", "Right Texture",
-         dtDAL::ResourceActorProperty::SetFuncType(this, &SkyBoxActorProxy::SetRightTexture),
+         dtCore::ResourceActorProperty::SetFuncType(this, &SkyBoxActorProxy::SetRightTexture),
          "Sets the texture on the right of the sky box", GROUPNAME));
 
-      AddProperty(new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::TEXTURE,
+      AddProperty(new dtCore::ResourceActorProperty(*this, dtCore::DataType::TEXTURE,
          "Front Texture", "Front Texture",
-         dtDAL::ResourceActorProperty::SetFuncType(this, &SkyBoxActorProxy::SetFrontTexture),
+         dtCore::ResourceActorProperty::SetFuncType(this, &SkyBoxActorProxy::SetFrontTexture),
          "Sets the texture on the front of the sky box", GROUPNAME));
 
-      AddProperty(new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::TEXTURE,
+      AddProperty(new dtCore::ResourceActorProperty(*this, dtCore::DataType::TEXTURE,
          "Back Texture", "Back Texture",
-         dtDAL::ResourceActorProperty::SetFuncType(this, &SkyBoxActorProxy::SetBackTexture),
+         dtCore::ResourceActorProperty::SetFuncType(this, &SkyBoxActorProxy::SetBackTexture),
          "Sets the texture on the back of the sky box", GROUPNAME));
    }
 

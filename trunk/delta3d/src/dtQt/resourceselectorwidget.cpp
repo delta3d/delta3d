@@ -29,7 +29,7 @@
 #include <prefix/dtqtprefix.h>
 #include <dtQt/resourceselectorwidget.h>
 
-#include <dtDAL/project.h>
+#include <dtCore/project.h>
 
 #include <QtGui/QMenu>
 
@@ -50,10 +50,10 @@ namespace dtQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ResourceSelectorWidget::SetResourceType(QStringList prependedActions, const dtDAL::DataType& dataType)
+   void ResourceSelectorWidget::SetResourceType(QStringList prependedActions, const dtCore::DataType& dataType)
    {
-      dtUtil::tree<dtDAL::ResourceTreeNode> tree;
-      dtDAL::Project::GetInstance().GetResourcesOfType(dataType, tree);
+      dtUtil::tree<dtCore::ResourceTreeNode> tree;
+      dtCore::Project::GetInstance().GetResourcesOfType(dataType, tree);
       QMenu* menu = new QMenu("Resources");
       connect(menu, SIGNAL(triggered(QAction*)), this, SLOT(ItemSelected(QAction*)));
 
@@ -88,9 +88,9 @@ namespace dtQt
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void ResourceSelectorWidget::SetupMenu(const dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator& iter, QMenu* menu)
+   void ResourceSelectorWidget::SetupMenu(const dtUtil::tree<dtCore::ResourceTreeNode>::const_iterator& iter, QMenu* menu)
    {
-      for (dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator i = iter.tree_ref().in();
+      for (dtUtil::tree<dtCore::ResourceTreeNode>::const_iterator i = iter.tree_ref().in();
          i != iter.tree_ref().end();
          ++i)
       {

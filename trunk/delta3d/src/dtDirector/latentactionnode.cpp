@@ -22,7 +22,7 @@
 #include <dtDirector/latentactionnode.h>
 #include <dtDirector/colors.h>
 
-#include <dtDAL/actorproperty.h>
+#include <dtCore/actorproperty.h>
 
 namespace dtDirector
 {

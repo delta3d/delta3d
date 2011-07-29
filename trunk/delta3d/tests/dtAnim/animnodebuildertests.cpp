@@ -32,7 +32,7 @@
 #include <dtAnim/hardwaresubmesh.h>
 #include <dtAnim/submesh.h>
 
-#include <dtDAL/project.h>
+#include <dtCore/project.h>
 #include <dtUtil/datapathutils.h>
 
 #include <dtABC/application.h>
@@ -74,7 +74,7 @@ namespace dtAnim
          dtCore::System::GetInstance().Start();
 
          mHelper = new AnimationHelper();
-         dtDAL::Project::GetInstance().SetContext(dtUtil::GetDeltaRootPath() + "/examples/data/demoMap");
+         dtCore::Project::GetInstance().SetContext(dtUtil::GetDeltaRootPath() + "/examples/data/demoMap");
 
          mModelPath = dtUtil::FindFileInPathList("SkeletalMeshes/marine_test.xml");
          CPPUNIT_ASSERT(!mModelPath.empty());

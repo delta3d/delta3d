@@ -27,7 +27,7 @@
 #include <dtUtil/exception.h>
 #include <dtUtil/typetraits.h>
 
-#include <dtDAL/serializeable.h>
+#include <dtCore/serializeable.h>
 #include <dtGame/export.h>
 #include <dtGame/machineinfo.h>
 #include <dtGame/messageparameter.h>
@@ -41,7 +41,7 @@ namespace dtGame
 {
    class MessageType;
    
-   class DT_GAME_EXPORT Message : public osg::Referenced, public dtDAL::Serializeable
+   class DT_GAME_EXPORT Message : public osg::Referenced, public dtCore::Serializeable
    {
       public:
          Message();

@@ -99,7 +99,7 @@ namespace dtDirector
       dtCore::UniqueId mActor;
       std::string mPropertyName;
 
-      dtCore::RefPtr<dtDAL::ActorProperty> mResultProp;
+      dtCore::RefPtr<dtCore::ActorProperty> mResultProp;
    };
 }
 

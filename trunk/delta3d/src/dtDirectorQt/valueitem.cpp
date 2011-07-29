@@ -34,7 +34,7 @@
 #include <QtGui/QInputDialog>
 #include <QtGui/QMenu>
 
-#include <dtDAL/datatype.h>
+#include <dtCore/datatype.h>
 
 #include <dtUtil/mathdefines.h>
 
@@ -262,7 +262,7 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void ValueItem::OnGotoReference()
    {
-      dtDAL::ActorProperty* prop = mNode->GetProperty("Reference");
+      dtCore::ActorProperty* prop = mNode->GetProperty("Reference");
       if (prop)
       {
          // Find the referenced value node.
@@ -315,7 +315,7 @@ namespace dtDirector
          // Keep looping until we find an actual value, or no value.
          while (node)
          {
-            dtDAL::ActorProperty* prop = node->GetProperty("Reference");
+            dtCore::ActorProperty* prop = node->GetProperty("Reference");
             if (prop) name = prop->ToString();
 
             node = scene->GetEditor()->GetDirector()->GetValueNode(name);
@@ -351,7 +351,7 @@ namespace dtDirector
       Node* node = scene->CreateNode("Reference", "Core", position.x() + 20.0f, position.y() + 20.0f);
       if (node)
       {
-         dtDAL::ActorProperty* prop = node->GetProperty("Reference");
+         dtCore::ActorProperty* prop = node->GetProperty("Reference");
          if (prop) prop->FromString(name);
 
          scene->Refresh();

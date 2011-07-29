@@ -1,10 +1,10 @@
 #ifndef FenceActor_h__
 #define FenceActor_h__
 
-#include <dtDAL/plugin_export.h>
-#include <dtDAL/transformableactorproxy.h>
+#include <dtCore/plugin_export.h>
+#include <dtCore/transformableactorproxy.h>
 #include <dtABC/export.h>
-#include <dtDAL/actorproperty.h>
+#include <dtCore/actorproperty.h>
 #include <osgText/Text>
 #include <dtActors/linkedpointsactorproxy.h>
 #include <dtCore/refptr.h>
@@ -13,7 +13,7 @@
 #include <osg/Geode>
 #include <osg/Geometry>
 
-namespace dtDAL
+namespace dtCore
 {
    class ResourceDescriptor;
 }
@@ -182,26 +182,26 @@ namespace dtActors
       /**
       * Retrieves the list of fence post resources.
       */
-      std::vector<dtDAL::ResourceDescriptor> GetPostResourceArray() const;
+      std::vector<dtCore::ResourceDescriptor> GetPostResourceArray() const;
 
       /**
       * Functor to set the current post resource array.
       *
       * @param[in]  value  The new array.
       */
-      void SetPostResourceArray(const std::vector<dtDAL::ResourceDescriptor>& value);
+      void SetPostResourceArray(const std::vector<dtCore::ResourceDescriptor>& value);
 
       /**
       * Retrieves the list of fence post resources.
       */
-      std::vector<dtDAL::ResourceDescriptor> GetSegmentResourceArray() const;
+      std::vector<dtCore::ResourceDescriptor> GetSegmentResourceArray() const;
 
       /**
       * Functor to set the current post resource array.
       *
       * @param[in]  value  The new array.
       */
-      void SetSegmentResourceArray(const std::vector<dtDAL::ResourceDescriptor>& value);
+      void SetSegmentResourceArray(const std::vector<dtCore::ResourceDescriptor>& value);
 
       /**
       * Retrieves the list of resource IDs.
@@ -402,8 +402,8 @@ namespace dtActors
       */
       void PlaceSegmentQuad(FencePostGeomData* geomData, int quadIndex, osg::Vec3 startTop, osg::Vec3 startBot, osg::Vec3 endTop, osg::Vec3 endBot, osg::Vec2 texTopLeft, osg::Vec2 texTopRight, osg::Vec2 texBotLeft, osg::Vec2 texBotRight);
 
-      std::vector<dtDAL::ResourceDescriptor>    mPostResourceList;
-      std::vector<dtDAL::ResourceDescriptor>    mSegmentResourceList;
+      std::vector<dtCore::ResourceDescriptor>    mPostResourceList;
+      std::vector<dtCore::ResourceDescriptor>    mSegmentResourceList;
       std::vector<FenceActor::ResourceIDData>   mResourceIDList;
 
       std::vector<SegmentPointData>             mSegmentPointList;
@@ -460,24 +460,24 @@ namespace dtActors
       /**
       * Functor to retrieve the default value for a new post.
       */
-      dtDAL::ResourceDescriptor GetDefaultPost(void);
+      dtCore::ResourceDescriptor GetDefaultPost(void);
 
       /**
       * Functor to retrieve the default value for a new post.
       */
-      dtDAL::ResourceDescriptor GetDefaultSegment(void);
+      dtCore::ResourceDescriptor GetDefaultSegment(void);
 
       /**
       * Sets the mesh used as a fence post.
       */
-      void SetPostMesh(const dtDAL::ResourceDescriptor& value);
-      dtDAL::ResourceDescriptor GetPostMesh();
+      void SetPostMesh(const dtCore::ResourceDescriptor& value);
+      dtCore::ResourceDescriptor GetPostMesh();
 
       /**
       * Sets the texture used as a fence segment.
       */
-      void SetSegmentTexture(const dtDAL::ResourceDescriptor& value);
-      dtDAL::ResourceDescriptor GetSegmentTexture();
+      void SetSegmentTexture(const dtCore::ResourceDescriptor& value);
+      dtCore::ResourceDescriptor GetSegmentTexture();
 
       /**
       * Functor to set the current post ID index.

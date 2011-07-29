@@ -52,9 +52,9 @@
 #include <dtDirector/node.h>
 #include <dtDirector/nodetype.h>
 
-#include <dtDAL/map.h>
-#include <dtDAL/exceptionenum.h>
-#include <dtDAL/mapxmlconstants.h>
+#include <dtCore/map.h>
+#include <dtCore/exceptionenum.h>
+#include <dtCore/mapxmlconstants.h>
 
 #include <dtUtil/datapathutils.h>
 #include <dtUtil/fileutils.h>
@@ -73,7 +73,7 @@ namespace dtDirector
 
    /////////////////////////////////////////////////////////////////
    DirectorParser::DirectorParser()
-      : dtDAL::BaseXMLParser()
+      : dtCore::BaseXMLParser()
       , mDirectorHandler(new DirectorXMLHandler())
    {
       SetHandler(mDirectorHandler);
@@ -92,7 +92,7 @@ namespace dtDirector
 
       if (!dtUtil::FileUtils::GetInstance().FileExists(schemaFileName))
       {
-         throw dtDAL::ProjectException( "Unable to load required file \"director.xsd\", can not load director script.", __FILE__, __LINE__);
+         throw dtCore::ProjectException( "Unable to load required file \"director.xsd\", can not load director script.", __FILE__, __LINE__);
       }
 
       XMLCh* value = XMLString::transcode(schemaFileName.c_str());
@@ -108,11 +108,11 @@ namespace dtDirector
    }
 
    /////////////////////////////////////////////////////////////////
-   bool DirectorParser::Parse(Director* director, dtDAL::Map* map, const std::string& filePath)
+   bool DirectorParser::Parse(Director* director, dtCore::Map* map, const std::string& filePath)
    {
       mDirectorHandler->SetDirector(director);
       mDirectorHandler->SetMap(map);
-      if (dtDAL::BaseXMLParser::Parse(filePath))
+      if (dtCore::BaseXMLParser::Parse(filePath))
       {
          return true;
       }
@@ -141,7 +141,7 @@ namespace dtDirector
             throw dtUtil::Exception("Failed to find Director script file \'" + filePath + "\'.", __FILE__, __LINE__);
          }
 
-         dtDAL::InputSourcefStream xerStream(fileStream);
+         dtCore::InputSourcefStream xerStream(fileStream);
 
          if (mXercesParser->parseFirst(xerStream, token))
          {
@@ -240,7 +240,7 @@ namespace dtDirector
    DirectorWriter::DirectorWriter()
       : BaseXMLWriter()
    {
-      mPropSerializer = new dtDAL::ActorPropertySerializer(this);
+      mPropSerializer = new dtCore::ActorPropertySerializer(this);
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -260,7 +260,7 @@ namespace dtDirector
       std::ofstream stream(filePath.c_str(), std::ios_base::trunc|std::ios_base::binary);
       if (!stream.is_open())
       {
-         throw dtDAL::MapSaveException( std::string("Unable to open Director Script file \"") + filePath + "\" for writing.", __FILE__, __LINE__);
+         throw dtCore::MapSaveException( std::string("Unable to open Director Script file \"") + filePath + "\" for writing.", __FILE__, __LINE__);
       }
 
       mFormatTarget.SetOutputStream(&stream);
@@ -273,13 +273,13 @@ namespace dtDirector
             dtUtil::DateTime::TimeFormat::CALENDAR_DATE_AND_TIME_FORMAT);
 
          // Director.
-         BeginElement(dtDAL::MapXMLConstants::DIRECTOR_ELEMENT, dtDAL::MapXMLConstants::DIRECTOR_NAMESPACE);
+         BeginElement(dtCore::MapXMLConstants::DIRECTOR_ELEMENT, dtCore::MapXMLConstants::DIRECTOR_NAMESPACE);
          {
             // Header.
-            BeginElement(dtDAL::MapXMLConstants::HEADER_ELEMENT);
+            BeginElement(dtCore::MapXMLConstants::HEADER_ELEMENT);
             {
                // Creation timestamp.
-               BeginElement(dtDAL::MapXMLConstants::CREATE_TIMESTAMP_ELEMENT);
+               BeginElement(dtCore::MapXMLConstants::CREATE_TIMESTAMP_ELEMENT);
                {
                   if (director->GetCreateDateTime().length() == 0)
                   {
@@ -290,40 +290,40 @@ namespace dtDirector
                EndElement(); // End Create Timestamp Element.
 
                // Last update timestamp.
-               BeginElement(dtDAL::MapXMLConstants::LAST_UPDATE_TIMESTAMP_ELEMENT);
+               BeginElement(dtCore::MapXMLConstants::LAST_UPDATE_TIMESTAMP_ELEMENT);
                {
                   AddCharacters(utcTime);
                }
                EndElement(); // End Last Update Timestamp Element.
                
                // Editor version.
-               BeginElement(dtDAL::MapXMLConstants::EDITOR_VERSION_ELEMENT);
+               BeginElement(dtCore::MapXMLConstants::EDITOR_VERSION_ELEMENT);
                {
-                  AddCharacters(std::string(dtDAL::MapXMLConstants::EDITOR_VERSION));
+                  AddCharacters(std::string(dtCore::MapXMLConstants::EDITOR_VERSION));
                }
                EndElement(); // End Editor Version Element.
                
                // Schema Version.
-               BeginElement(dtDAL::MapXMLConstants::SCHEMA_VERSION_ELEMENT);
+               BeginElement(dtCore::MapXMLConstants::SCHEMA_VERSION_ELEMENT);
                {
-                  AddCharacters(std::string(dtDAL::MapXMLConstants::SCHEMA_VERSION));
+                  AddCharacters(std::string(dtCore::MapXMLConstants::SCHEMA_VERSION));
                }
                EndElement(); // End Schema Version Element.
 
                // Script Type.
-               BeginElement(dtDAL::MapXMLConstants::DIRECTOR_SCRIPT_TYPE);
+               BeginElement(dtCore::MapXMLConstants::DIRECTOR_SCRIPT_TYPE);
                {
                   AddCharacters(director->GetScriptType());
                }
                EndElement();
 
                // Properties.
-               std::vector<const dtDAL::ActorProperty*> propList;
+               std::vector<const dtCore::ActorProperty*> propList;
                director->GetPropertyList(propList);
-               for (std::vector<const dtDAL::ActorProperty*>::const_iterator i = propList.begin();
+               for (std::vector<const dtCore::ActorProperty*>::const_iterator i = propList.begin();
                   i != propList.end(); ++i)
                {
-                  const dtDAL::ActorProperty& property = *(*i);
+                  const dtCore::ActorProperty& property = *(*i);
 
                   // If the property is read only, skip it
                   if (property.IsReadOnly()) continue;
@@ -334,23 +334,23 @@ namespace dtDirector
             EndElement(); // End Header Element.
 
             // Node Libraries.
-            BeginElement(dtDAL::MapXMLConstants::LIBRARIES_ELEMENT);
+            BeginElement(dtCore::MapXMLConstants::LIBRARIES_ELEMENT);
             {
                const std::vector<std::string>& libs = director->GetAllLibraries();
                for (std::vector<std::string>::const_iterator i = libs.begin(); i != libs.end(); ++i)
                {
                   // Library.
-                  BeginElement(dtDAL::MapXMLConstants::LIBRARY_ELEMENT);
+                  BeginElement(dtCore::MapXMLConstants::LIBRARY_ELEMENT);
                   {
                      // Library name.
-                     BeginElement(dtDAL::MapXMLConstants::NAME_ELEMENT);
+                     BeginElement(dtCore::MapXMLConstants::NAME_ELEMENT);
                      {
                         AddCharacters(*i);
                      }
                      EndElement(); // End Library Name Element.
 
                      // Library version.
-                     BeginElement(dtDAL::MapXMLConstants::LIBRARY_VERSION_ELEMENT);
+                     BeginElement(dtCore::MapXMLConstants::LIBRARY_VERSION_ELEMENT);
                      {
                         AddCharacters(director->GetLibraryVersion(*i));
                      }
@@ -383,7 +383,7 @@ namespace dtDirector
                              "Unknown exception while attempting to save Director script \"%s\".",
                              director->GetName().c_str());
          mFormatTarget.SetOutputStream(NULL);
-         throw dtDAL::MapSaveException( std::string("Unknown exception saving Director script \"") + director->GetName() + ("\"."), __FILE__, __LINE__);
+         throw dtCore::MapSaveException( std::string("Unknown exception saving Director script \"") + director->GetName() + ("\"."), __FILE__, __LINE__);
       }
    }
 
@@ -393,22 +393,22 @@ namespace dtDirector
       mPropSerializer->SetCurrentPropertyContainer(graph);
 
       // Graph.
-      BeginElement(dtDAL::MapXMLConstants::DIRECTOR_GRAPH_ELEMENT);
+      BeginElement(dtCore::MapXMLConstants::DIRECTOR_GRAPH_ELEMENT);
       {
          // Graph ID.
-         BeginElement(dtDAL::MapXMLConstants::ID_ELEMENT);
+         BeginElement(dtCore::MapXMLConstants::ID_ELEMENT);
          {
             AddCharacters(graph->GetID().ToString());
          }
          EndElement(); // End Node ID Elements.
 
          // Properties.
-         std::vector<const dtDAL::ActorProperty*> propList;
+         std::vector<const dtCore::ActorProperty*> propList;
          graph->GetPropertyList(propList);
-         for (std::vector<const dtDAL::ActorProperty*>::const_iterator i = propList.begin();
+         for (std::vector<const dtCore::ActorProperty*>::const_iterator i = propList.begin();
             i != propList.end(); ++i)
          {
-            const dtDAL::ActorProperty& property = *(*i);
+            const dtCore::ActorProperty& property = *(*i);
 
             // If the property is read only, skip it
             if (property.IsReadOnly()) continue;
@@ -417,7 +417,7 @@ namespace dtDirector
          }
 
          // Event Nodes.
-         BeginElement(dtDAL::MapXMLConstants::DIRECTOR_EVENT_NODES_ELEMENT);
+         BeginElement(dtCore::MapXMLConstants::DIRECTOR_EVENT_NODES_ELEMENT);
          {
             const std::vector<dtCore::RefPtr<EventNode> >& EventNodes = graph->GetEventNodes();
             for (int nodeIndex = 0; nodeIndex < (int)EventNodes.size(); nodeIndex++)
@@ -428,7 +428,7 @@ namespace dtDirector
          EndElement(); // End Event Nodes Element.
 
          // Action Nodes.
-         BeginElement(dtDAL::MapXMLConstants::DIRECTOR_ACTION_NODES_ELEMENT);
+         BeginElement(dtCore::MapXMLConstants::DIRECTOR_ACTION_NODES_ELEMENT);
          {
             const std::vector<dtCore::RefPtr<ActionNode> >& ActionNodes = graph->GetActionNodes();
             for (int nodeIndex = 0; nodeIndex < (int)ActionNodes.size(); nodeIndex++)
@@ -439,7 +439,7 @@ namespace dtDirector
          EndElement(); // End Action Nodes Element.
 
          // Value Nodes.
-         BeginElement(dtDAL::MapXMLConstants::DIRECTOR_VALUE_NODES_ELEMENT);
+         BeginElement(dtCore::MapXMLConstants::DIRECTOR_VALUE_NODES_ELEMENT);
          {
             const std::vector<dtCore::RefPtr<ValueNode> >& ValueNodes = graph->GetValueNodes();
             for (int nodeIndex = 0; nodeIndex < (int)ValueNodes.size(); nodeIndex++)
@@ -463,36 +463,36 @@ namespace dtDirector
    {
       mPropSerializer->SetCurrentPropertyContainer(node);
 
-      BeginElement(dtDAL::MapXMLConstants::DIRECTOR_NODE_ELEMENT);
+      BeginElement(dtCore::MapXMLConstants::DIRECTOR_NODE_ELEMENT);
       {
          // Node Name.
-         BeginElement(dtDAL::MapXMLConstants::NAME_ELEMENT);
+         BeginElement(dtCore::MapXMLConstants::NAME_ELEMENT);
          {
             AddCharacters(node->GetType().GetName());
          }
          EndElement(); // End Node Name Element.
 
          // Node Category.
-         BeginElement(dtDAL::MapXMLConstants::CATEGORY_ELEMENT);
+         BeginElement(dtCore::MapXMLConstants::CATEGORY_ELEMENT);
          {
             AddCharacters(node->GetType().GetCategory());
          }
          EndElement(); // End Node Category Element.
 
          // Node ID.
-         BeginElement(dtDAL::MapXMLConstants::ID_ELEMENT);
+         BeginElement(dtCore::MapXMLConstants::ID_ELEMENT);
          {
             AddCharacters(node->GetID().ToString());
          }
          EndElement(); // End Node ID Elements.
 
          // Properties.
-         std::vector<const dtDAL::ActorProperty*> propList;
+         std::vector<const dtCore::ActorProperty*> propList;
          node->GetPropertyList(propList);
-         for (std::vector<const dtDAL::ActorProperty*>::const_iterator i = propList.begin();
+         for (std::vector<const dtCore::ActorProperty*>::const_iterator i = propList.begin();
               i != propList.end(); ++i)
          {
-            const dtDAL::ActorProperty& property = *(*i);
+            const dtCore::ActorProperty& property = *(*i);
 
             // If the property is read only, skip it
             if (property.IsReadOnly()) continue;
@@ -504,12 +504,12 @@ namespace dtDirector
          std::vector<InputLink>& inputs = node->GetInputLinks();
          for (int inputIndex = 0; inputIndex < (int)inputs.size(); inputIndex++)
          {
-            BeginElement(dtDAL::MapXMLConstants::DIRECTOR_LINKS_INPUT_ELEMENT);
+            BeginElement(dtCore::MapXMLConstants::DIRECTOR_LINKS_INPUT_ELEMENT);
             {
                InputLink& input = inputs[inputIndex];
 
                // Link Name.
-               BeginElement(dtDAL::MapXMLConstants::NAME_ELEMENT);
+               BeginElement(dtCore::MapXMLConstants::NAME_ELEMENT);
                {
                   AddCharacters(input.GetName());
                }
@@ -518,7 +518,7 @@ namespace dtDirector
                // Visibility
                if (!input.GetVisible())
                {
-                  BeginElement(dtDAL::MapXMLConstants::DIRECTOR_LINK_VISIBLE_ELEMENT);
+                  BeginElement(dtCore::MapXMLConstants::DIRECTOR_LINK_VISIBLE_ELEMENT);
                   {
                      AddCharacters("false");
                   }
@@ -532,17 +532,17 @@ namespace dtDirector
                   OutputLink* link = links[linkIndex];
                   if (!link) continue;
 
-                  BeginElement(dtDAL::MapXMLConstants::DIRECTOR_LINK_ELEMENT);
+                  BeginElement(dtCore::MapXMLConstants::DIRECTOR_LINK_ELEMENT);
                   {
                      // Linked Nodes ID.
-                     BeginElement(dtDAL::MapXMLConstants::ID_ELEMENT);
+                     BeginElement(dtCore::MapXMLConstants::ID_ELEMENT);
                      {
                         AddCharacters(link->GetOwner()->GetID().ToString());
                      }
                      EndElement(); // End ID Element.
 
                      // Linked Link Name.
-                     BeginElement(dtDAL::MapXMLConstants::NAME_ELEMENT);
+                     BeginElement(dtCore::MapXMLConstants::NAME_ELEMENT);
                      {
                         AddCharacters(link->GetName());
                      }
@@ -558,12 +558,12 @@ namespace dtDirector
          std::vector<OutputLink>& outputs = node->GetOutputLinks();
          for (int outputIndex = 0; outputIndex < (int)outputs.size(); outputIndex++)
          {
-            BeginElement(dtDAL::MapXMLConstants::DIRECTOR_LINKS_OUTPUT_ELEMENT);
+            BeginElement(dtCore::MapXMLConstants::DIRECTOR_LINKS_OUTPUT_ELEMENT);
             {
                OutputLink& output = outputs[outputIndex];
 
                // Link Name.
-               BeginElement(dtDAL::MapXMLConstants::NAME_ELEMENT);
+               BeginElement(dtCore::MapXMLConstants::NAME_ELEMENT);
                {
                   AddCharacters(output.GetName());
                }
@@ -572,7 +572,7 @@ namespace dtDirector
                // Visibility
                if (!output.GetVisible())
                {
-                  BeginElement(dtDAL::MapXMLConstants::DIRECTOR_LINK_VISIBLE_ELEMENT);
+                  BeginElement(dtCore::MapXMLConstants::DIRECTOR_LINK_VISIBLE_ELEMENT);
                   {
                      AddCharacters("false");
                   }
@@ -586,17 +586,17 @@ namespace dtDirector
                   InputLink* link = links[linkIndex];
                   if (!link) continue;
 
-                  BeginElement(dtDAL::MapXMLConstants::DIRECTOR_LINK_ELEMENT);
+                  BeginElement(dtCore::MapXMLConstants::DIRECTOR_LINK_ELEMENT);
                   {
                      // Linked Nodes ID.
-                     BeginElement(dtDAL::MapXMLConstants::ID_ELEMENT);
+                     BeginElement(dtCore::MapXMLConstants::ID_ELEMENT);
                      {
                         AddCharacters(link->GetOwner()->GetID().ToString());
                      }
                      EndElement(); // End ID Element.
 
                      // Linked Link Name.
-                     BeginElement(dtDAL::MapXMLConstants::NAME_ELEMENT);
+                     BeginElement(dtCore::MapXMLConstants::NAME_ELEMENT);
                      {
                         AddCharacters(link->GetName());
                      }
@@ -612,12 +612,12 @@ namespace dtDirector
          std::vector<ValueLink>& values = node->GetValueLinks();
          for (int valueIndex = 0; valueIndex < (int)values.size(); valueIndex++)
          {
-            BeginElement(dtDAL::MapXMLConstants::DIRECTOR_LINKS_VALUE_ELEMENT);
+            BeginElement(dtCore::MapXMLConstants::DIRECTOR_LINKS_VALUE_ELEMENT);
             {
                ValueLink& value = values[valueIndex];
 
                // Link Name.
-               BeginElement(dtDAL::MapXMLConstants::NAME_ELEMENT);
+               BeginElement(dtCore::MapXMLConstants::NAME_ELEMENT);
                {
                   AddCharacters(value.GetName());
                }
@@ -626,7 +626,7 @@ namespace dtDirector
                // Visibility
                if (value.GetVisible() == false)
                {
-                  BeginElement(dtDAL::MapXMLConstants::DIRECTOR_LINK_VISIBLE_ELEMENT);
+                  BeginElement(dtCore::MapXMLConstants::DIRECTOR_LINK_VISIBLE_ELEMENT);
                   {
                      AddCharacters("false");
                   }
@@ -634,7 +634,7 @@ namespace dtDirector
                }
 
                // Exposed.
-               BeginElement(dtDAL::MapXMLConstants::DIRECTOR_LINK_EXPOSED_ELEMENT);
+               BeginElement(dtCore::MapXMLConstants::DIRECTOR_LINK_EXPOSED_ELEMENT);
                {
                   AddCharacters(value.GetExposed()? "true": "false");
                }
@@ -643,7 +643,7 @@ namespace dtDirector
                // Is Out Value.
                if (value.IsOutLink())
                {
-                  BeginElement(dtDAL::MapXMLConstants::DIRECTOR_LINK_VALUE_IS_OUT_ELEMENT);
+                  BeginElement(dtCore::MapXMLConstants::DIRECTOR_LINK_VALUE_IS_OUT_ELEMENT);
                   {
                      AddCharacters("true");
                   }
@@ -653,7 +653,7 @@ namespace dtDirector
                // Allow Multiple values.
                if (value.AllowMultiple())
                {
-                  BeginElement(dtDAL::MapXMLConstants::DIRECTOR_LINK_VALUE_ALLOW_MULTIPLE_ELEMENT);
+                  BeginElement(dtCore::MapXMLConstants::DIRECTOR_LINK_VALUE_ALLOW_MULTIPLE_ELEMENT);
                   {
                      AddCharacters("true");
                   }
@@ -663,7 +663,7 @@ namespace dtDirector
                // Type Checking.
                if (!value.IsTypeChecking())
                {
-                  BeginElement(dtDAL::MapXMLConstants::DIRECTOR_LINK_VALUE_TYPE_CHECK_ELEMENT);
+                  BeginElement(dtCore::MapXMLConstants::DIRECTOR_LINK_VALUE_TYPE_CHECK_ELEMENT);
                   {
                      AddCharacters("false");
                   }
@@ -677,10 +677,10 @@ namespace dtDirector
                   dtCore::RefPtr<ValueNode> link = links[linkIndex];
                   if (!link.valid()) continue;
 
-                  BeginElement(dtDAL::MapXMLConstants::DIRECTOR_LINK_ELEMENT);
+                  BeginElement(dtCore::MapXMLConstants::DIRECTOR_LINK_ELEMENT);
                   {
                      // Linked Nodes ID.
-                     BeginElement(dtDAL::MapXMLConstants::ID_ELEMENT);
+                     BeginElement(dtCore::MapXMLConstants::ID_ELEMENT);
                      {
                         AddCharacters(link->GetID().ToString());
                      }

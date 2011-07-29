@@ -32,10 +32,10 @@
 ///            will write MyCoolMap into MyCoolMap.ive
 
 #include <dtUtil/log.h>
-#include <dtDAL/project.h>
-#include <dtDAL/exceptionenum.h>
+#include <dtCore/project.h>
+#include <dtCore/exceptionenum.h>
 #include <dtCore/scene.h>
-#include <dtDAL/map.h>
+#include <dtCore/map.h>
 #include <osgDB/ReaderWriter>
 #include <osgDB/Registry>
 
@@ -63,9 +63,9 @@ int main(int argc, char** argv)
 
    try
    {
-      dtDAL::Project::GetInstance().SetContext(contextPath, true);
+      dtCore::Project::GetInstance().SetContext(contextPath, true);
    }
-   catch (dtDAL::ProjectInvalidContextException& e)
+   catch (dtCore::ProjectInvalidContextException& e)
    {
       LOG_ERROR("Could not load project context");
       e.LogException();
@@ -75,9 +75,9 @@ int main(int argc, char** argv)
    dtCore::RefPtr<dtCore::Scene> scene = new dtCore::Scene();
    try
    {
-      dtDAL::Project::GetInstance().LoadMapIntoScene(mapName, *scene);
+      dtCore::Project::GetInstance().LoadMapIntoScene(mapName, *scene);
    }
-   catch (const dtDAL::ProjectFileNotFoundException& e)
+   catch (const dtCore::ProjectFileNotFoundException& e)
    {
       e.LogException();
       return 1;
@@ -99,6 +99,6 @@ int main(int argc, char** argv)
       LOG_ALWAYS(result.message());
    }
 
-   dtDAL::Project::GetInstance().CloseAllMaps(true);
+   dtCore::Project::GetInstance().CloseAllMaps(true);
    return 0;
 }

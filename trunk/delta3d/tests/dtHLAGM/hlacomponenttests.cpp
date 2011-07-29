@@ -39,11 +39,11 @@
 #include <dtCore/system.h>
 #include <dtCore/transform.h>
 
-#include <dtDAL/datatype.h>
-#include <dtDAL/project.h>
-#include <dtDAL/resourceactorproperty.h>
-#include <dtDAL/resourcedescriptor.h>
-#include <dtDAL/namedgroupparameter.inl>
+#include <dtCore/datatype.h>
+#include <dtCore/project.h>
+#include <dtCore/resourceactorproperty.h>
+#include <dtCore/resourcedescriptor.h>
+#include <dtCore/namedgroupparameter.inl>
 
 #include <dtHLAGM/attributetoproperty.h>
 #include <dtHLAGM/ddmcameracalculatorgeographic.h>
@@ -211,7 +211,7 @@ class HLAComponentTests : public CPPUNIT_NS::TestFixture
          testMsg.SetActorTypeCategory("TestHLA");
          testMsg.SetActorTypeName("Tank");
 
-         testMsg.AddUpdateParameter(dtDAL::TransformableActorProxy::PROPERTY_ROTATION, dtDAL::DataType::VEC3);
+         testMsg.AddUpdateParameter(dtCore::TransformableActorProxy::PROPERTY_ROTATION, dtCore::DataType::VEC3);
       }
 
       dtCore::RefPtr<dtGame::GameManager> mGameManager;
@@ -236,8 +236,8 @@ void HLAComponentTests::setUp()
 {
    try
    {
-      dtDAL::Project::GetInstance().CreateContext("data/ProjectContext");
-      dtDAL::Project::GetInstance().SetContext("data/ProjectContext");
+      dtCore::Project::GetInstance().CreateContext("data/ProjectContext");
+      dtCore::Project::GetInstance().SetContext("data/ProjectContext");
       dtUtil::SetDataFilePathList(dtUtil::GetDeltaDataPathList() + ":" + dtUtil::GetDeltaRootPath() + "/tests/data");
       std::string logName("HLAComponentTests");
       logger = &dtUtil::Log::GetInstance(logName);
@@ -821,7 +821,7 @@ void HLAComponentTests::TestConfigurationLocking()
    CPPUNIT_ASSERT_THROW_MESSAGE("One may not enable or disable DDM while connected.", mHLAComponent->SetDDMEnabled(!mHLAComponent->IsDDMEnabled()), dtUtil::Exception);
    CPPUNIT_ASSERT_THROW_MESSAGE("One may not clear the configuration which connected.", mHLAComponent->ClearConfiguration(), dtUtil::Exception);
 
-   dtCore::RefPtr<dtDAL::ActorType> at = new dtDAL::ActorType("a", "b");
+   dtCore::RefPtr<dtCore::ActorType> at = new dtCore::ActorType("a", "b");
    dtHLAGM::EntityType et(1,2,3,4,5,6,7);
    std::vector<dtHLAGM::AttributeToPropertyList> testVec;
    CPPUNIT_ASSERT_THROW_MESSAGE("One may not register an actor mapping while it's connected.",
@@ -1122,8 +1122,8 @@ void HLAComponentTests::TestReflectAttributes()
       CPPUNIT_ASSERT(createMsg.GetUpdateParameter("Mesh") != NULL);
 
       CPPUNIT_ASSERT(createMsg.GetUpdateParameter("Articulated Parameters Array") != NULL);
-      CPPUNIT_ASSERT_EQUAL(dtDAL::DataType::ARRAY, createMsg.GetUpdateParameter("Articulated Parameters Array")->GetDataType());
-      const dtDAL::NamedArrayParameter* articulatedParams = static_cast<const dtDAL::NamedArrayParameter*>(createMsg.GetUpdateParameter("Articulated Parameters Array"));
+      CPPUNIT_ASSERT_EQUAL(dtCore::DataType::ARRAY, createMsg.GetUpdateParameter("Articulated Parameters Array")->GetDataType());
+      const dtCore::NamedArrayParameter* articulatedParams = static_cast<const dtCore::NamedArrayParameter*>(createMsg.GetUpdateParameter("Articulated Parameters Array"));
       CPPUNIT_ASSERT_EQUAL(size_t(3), articulatedParams->GetSize());
 
       // just checking the names here to as a cursory test of functionality.
@@ -1132,8 +1132,8 @@ void HLAComponentTests::TestReflectAttributes()
       // behavior.
       for (unsigned i = 0; i < articulatedParams->GetSize(); ++i)
       {
-         CPPUNIT_ASSERT(articulatedParams->GetParameter(i)->GetDataType() == dtDAL::DataType::GROUP);
-         const dtDAL::NamedGroupParameter* curGroup = static_cast<const dtDAL::NamedGroupParameter*>(articulatedParams->GetParameter(i));
+         CPPUNIT_ASSERT(articulatedParams->GetParameter(i)->GetDataType() == dtCore::DataType::GROUP);
+         const dtCore::NamedGroupParameter* curGroup = static_cast<const dtCore::NamedGroupParameter*>(articulatedParams->GetParameter(i));
          CPPUNIT_ASSERT_EQUAL_MESSAGE(curGroup->GetName(), size_t(0), curGroup->GetName()->find("Articulated", 0));
          CPPUNIT_ASSERT(curGroup->GetParameter("OurName") != NULL);
        }
@@ -1191,15 +1191,15 @@ void HLAComponentTests::TestReflectAttributes()
                      osg::equivalent(actualRotation[1], expectedRotation[1], 1e-3f) &&
                      osg::equivalent(actualRotation[2], expectedRotation[2], 1e-3f));
 
-      dtDAL::ResourceActorProperty* rap = dynamic_cast<dtDAL::ResourceActorProperty*>(proxy->GetProperty("Mesh"));
+      dtCore::ResourceActorProperty* rap = dynamic_cast<dtCore::ResourceActorProperty*>(proxy->GetProperty("Mesh"));
       CPPUNIT_ASSERT(rap != NULL);
-      dtDAL::ResourceDescriptor rd = rap->GetValue();
+      dtCore::ResourceDescriptor rd = rap->GetValue();
       CPPUNIT_ASSERT_MESSAGE("the mesh resource should have been set.", rd.IsEmpty() == false);
       const std::string expectedMeshValue("StaticMeshes:articulation_test.ive");
       CPPUNIT_ASSERT_EQUAL(expectedMeshValue, rd.GetResourceIdentifier());
 
       //Clear the resource value.
-      rap->SetValue(dtDAL::ResourceDescriptor::NULL_RESOURCE);
+      rap->SetValue(dtCore::ResourceDescriptor::NULL_RESOURCE);
 
       //run the same reflect call again to make sure the mesh value is not sent the second time.
       mHLAComponent->reflectAttributeValues(mObjectHandle1, *ahs, "");
@@ -1262,7 +1262,7 @@ void HLAComponentTests::TestDispatchUpdate()
       //insert a bogus mapping to see if the object maps properly.
       mHLAComponent->GetRuntimeMappings().Put(entityId, fakeActorId);
 
-      dtCore::RefPtr<const dtDAL::ActorType> testTankType = mGameManager->FindActorType(testMsg->GetActorTypeCategory(), testMsg->GetActorTypeName());
+      dtCore::RefPtr<const dtCore::ActorType> testTankType = mGameManager->FindActorType(testMsg->GetActorTypeCategory(), testMsg->GetActorTypeName());
 
       CPPUNIT_ASSERT(testTankType.valid());
 
@@ -1308,7 +1308,7 @@ void HLAComponentTests::TestPrepareUpdate()
 
       PopulateTestActorUpdate(*testMsg);
 
-      dtCore::RefPtr<dtDAL::NamedArrayParameter> articArray = new dtDAL::NamedArrayParameter("Articulated Parameters Array");
+      dtCore::RefPtr<dtCore::NamedArrayParameter> articArray = new dtCore::NamedArrayParameter("Articulated Parameters Array");
       testMsg->AddUpdateParameter(*articArray);
 
       // The sub group of parameters pertaining to either an
@@ -1346,7 +1346,7 @@ void HLAComponentTests::TestPrepareUpdate()
       mHLAComponent->GetRuntimeMappings().Put(entityId, fakeActorId);
 
 
-      dtCore::RefPtr<const dtDAL::ActorType> testTankType = mGameManager->FindActorType(testMsg->GetActorTypeCategory(), testMsg->GetActorTypeName());
+      dtCore::RefPtr<const dtCore::ActorType> testTankType = mGameManager->FindActorType(testMsg->GetActorTypeCategory(), testMsg->GetActorTypeName());
 
       CPPUNIT_ASSERT(testTankType.valid());
 
@@ -1451,7 +1451,7 @@ void HLAComponentTests::TestPrepareUpdate()
                         CPPUNIT_ASSERT_EQUAL_MESSAGE("The damage state value should be 3 (Destroyed)", unsigned(3), actual);
 
                      }
-                     else if (dtDAL::TransformableActorProxy::PROPERTY_ROTATION == paramDef.GetGameName())
+                     else if (dtCore::TransformableActorProxy::PROPERTY_ROTATION == paramDef.GetGameName())
                      {
                         foundOrientationAttr = true;
                         unsigned long length;
@@ -1472,7 +1472,7 @@ void HLAComponentTests::TestPrepareUpdate()
                            length == 3 * aToPList.GetHLAType().GetEncodedLength() && length == 3 * artParam.EncodedLength());
                         //There are other tests that check the converter for rotation.
                      }
-                     else if (dtDAL::TransformableActorProxy::PROPERTY_TRANSLATION == paramDef.GetGameName())
+                     else if (dtCore::TransformableActorProxy::PROPERTY_TRANSLATION == paramDef.GetGameName())
                      {
                         CPPUNIT_FAIL("The world coordinate should not have ended up in the output.  It doesn't have a default value.");
                      }

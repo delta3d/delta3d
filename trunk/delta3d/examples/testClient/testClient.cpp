@@ -26,8 +26,8 @@
 #include "testClient.h"
 #include "clientmessageprocessor.h"
 #include <dtNetGM/clientnetworkcomponent.h>
-#include <dtDAL/gameevent.h>
-#include <dtDAL/gameeventmanager.h>
+#include <dtCore/gameevent.h>
+#include <dtCore/gameeventmanager.h>
 #include <dtCore/deltawin.h>
 #include <dtGame/basemessages.h>
 #include <dtGame/messagefactory.h>
@@ -81,8 +81,8 @@ void EchoClient::Config()
       return;
    }
 
-   mEvent = new dtDAL::GameEvent("TestMessage");
-   dtDAL::GameEventManager::GetInstance().AddEvent(*(mEvent.get()));
+   mEvent = new dtCore::GameEvent("TestMessage");
+   dtCore::GameEventManager::GetInstance().AddEvent(*(mEvent.get()));
 
 }
 

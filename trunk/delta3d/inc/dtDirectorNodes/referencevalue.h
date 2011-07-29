@@ -25,7 +25,7 @@
 #include <dtDirectorNodes/nodelibraryexport.h>
 #include <dtDirector/valuenode.h>
 
-namespace dtDAL
+namespace dtCore
 {
    class ActorProperty;
 }
@@ -128,7 +128,7 @@ namespace dtDirector
        *         via this method instead of directly to ensure that
        *         the desired property is being used.
        */
-      virtual dtDAL::ActorProperty* GetProperty(const std::string& name, int index = 0, ValueNode** outNode = NULL);
+      virtual dtCore::ActorProperty* GetProperty(const std::string& name, int index = 0, ValueNode** outNode = NULL);
 
       /**
        * Retrieves the property for this value.
@@ -138,7 +138,7 @@ namespace dtDirector
        *
        * @return  The property.
        */
-      virtual dtDAL::ActorProperty* GetProperty(int index, ValueNode** outNode = NULL);
+      virtual dtCore::ActorProperty* GetProperty(int index, ValueNode** outNode = NULL);
 
       /**
        * Retrieves whether the value can be a specified type.
@@ -147,14 +147,14 @@ namespace dtDirector
        *
        * @return  True if this value is the proper type.
        */
-      virtual bool CanBeType(dtDAL::DataType& type);
+      virtual bool CanBeType(dtCore::DataType& type);
 
       /**
        * Retrieves the type of this value.
        *
        * @return  The type.
        */
-      virtual dtDAL::DataType& GetPropertyType();
+      virtual dtCore::DataType& GetPropertyType();
 
       /**
        * Retrieves the type of this value from the action or event node it
@@ -162,7 +162,7 @@ namespace dtDirector
        *
        * @return  The type.
        */
-      dtDAL::DataType& GetNonReferencedPropertyType();
+      dtCore::DataType& GetNonReferencedPropertyType();
 
       /**
        *	Returns the referenced value node.

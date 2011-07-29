@@ -36,7 +36,7 @@
 #include <dtUtil/coordinates.h>
 #include <dtCore/system.h>
 #include <dtUtil/datapathutils.h>
-#include <dtDAL/datatype.h>
+#include <dtCore/datatype.h>
 #include <dtGame/gamemanager.h>
 #include <dtGame/gmcomponent.h>
 #include <dtGame/messagetype.h>
@@ -81,7 +81,7 @@ class MappingClassTests : public CPPUNIT_NS::TestFixture
          attrToPropListMapping.SetRequiredForHLA(false);
 
          mParamDef.SetGameName(thisString);
-         mParamDef.SetGameType(dtDAL::DataType::UINT);
+         mParamDef.SetGameType(dtCore::DataType::UINT);
          mParamDef.SetDefaultValue("0.1");
          mParamDef.SetRequiredForGame(true);
 
@@ -117,7 +117,7 @@ class MappingClassTests : public CPPUNIT_NS::TestFixture
       
          CPPUNIT_ASSERT_MESSAGE("The DIS ID should default to NULL", thisObjectToActor->GetEntityType() == NULL);
 
-         dtDAL::ActorType *thisActorType = new dtDAL::ActorType("Infinite Light",
+         dtCore::ActorType *thisActorType = new dtCore::ActorType("Infinite Light",
                              "dtcore.Lights","Directional light actor.");
          thisObjectToActor->SetActorType(*thisActorType);
          CPPUNIT_ASSERT_MESSAGE("Set Actor Type should succeed.", &thisObjectToActor->GetActorType() == thisActorType);
@@ -318,11 +318,11 @@ class MappingClassTests : public CPPUNIT_NS::TestFixture
                                 mapping.GetGameName() == thisString);
 
          CPPUNIT_ASSERT_MESSAGE("Game Type should default to unknown.",
-                                mapping.GetGameType() == dtDAL::DataType::UNKNOWN);
+                                mapping.GetGameType() == dtCore::DataType::UNKNOWN);
 
-         mapping.SetGameType(dtDAL::DataType::UINT);
+         mapping.SetGameType(dtCore::DataType::UINT);
          CPPUNIT_ASSERT_MESSAGE("Set Game Type should succeed.",
-                                mapping.GetGameType() == dtDAL::DataType::UINT);
+                                mapping.GetGameType() == dtCore::DataType::UINT);
 
          mapping.SetDefaultValue(thatString);
          CPPUNIT_ASSERT_MESSAGE("Set Default Value should succeed.",

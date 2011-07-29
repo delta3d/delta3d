@@ -21,11 +21,11 @@
 #ifndef TRIGGER_VOLUME_H
 #define TRIGGER_VOLUME_H
 
-#include <dtDAL/plugin_export.h>
+#include <dtCore/plugin_export.h>
 
 #include <dtGame/gameactor.h>
 #include <dtCore/observerptr.h>
-#include <dtDAL/functor.h>
+#include <dtCore/functor.h>
 
 #include <osg/NodeVisitor>
 

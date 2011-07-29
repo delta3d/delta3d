@@ -35,7 +35,7 @@
 
 #include <QtGui/QPushButton>
 
-#include <dtDAL/datatype.h>
+#include <dtCore/datatype.h>
 #include <dtEditQt/resourceimportdialog.h>
 
 class QPushButton;
@@ -51,7 +51,7 @@ namespace dtCore
    class Transformable;
 }
 
-namespace dtDAL
+namespace dtCore
 {
    class ResourceDescriptor;
 }
@@ -70,7 +70,7 @@ namespace dtEditQt
       /**
        * Constructor
        */
-      ResourceAbstractBrowser(dtDAL::DataType* type, QWidget* parent);
+      ResourceAbstractBrowser(dtCore::DataType* type, QWidget* parent);
 
       /**
        * Destructor
@@ -81,7 +81,7 @@ namespace dtEditQt
        * Adds a tree node
        * @brief This adds a new node to the tree
        */
-      virtual void addTreeNode(QString& nodeText, dtDAL::ResourceDescriptor descriptor, bool resource = false);
+      virtual void addTreeNode(QString& nodeText, dtCore::ResourceDescriptor descriptor, bool resource = false);
 
       /**
        * Removes a tree node
@@ -161,7 +161,7 @@ namespace dtEditQt
        * setEditorDataDescriptor
        * @brief This sets the resource descriptor in the EditorData class
        */
-      void setEditorDataDescriptor(dtDAL::ResourceDescriptor& descriptor);
+      void setEditorDataDescriptor(dtCore::ResourceDescriptor& descriptor);
 
    private slots:
       void onProjectChanged();
@@ -198,11 +198,11 @@ namespace dtEditQt
        * We don't want this called directly
        * @note This builds the resource tree by assigning a name, the data type,
        * and the parent widget
-       * @param dtDAL DataType - a simple 2 string resource path and name
+       * @param dtCore DataType - a simple 2 string resource path and name
        * @param QIcon resource icon for our leaf nodes
        * @param QWidget the parent of the widget
        */
-       virtual void buildResourceTree(dtDAL::DataType& type, QWidget* parent, const QIcon& resourceIcon);
+       virtual void buildResourceTree(dtCore::DataType& type, QWidget* parent, const QIcon& resourceIcon);
 
    protected:
       /**
@@ -241,9 +241,9 @@ namespace dtEditQt
       QString* mContext;
       QString  mFileDialogDir;
 
-      dtUtil::tree<dtDAL::ResourceTreeNode> mIterTree;
-      dtDAL::ResourceDescriptor*            mSelectedDescriptor;
-      dtDAL::DataType*                      mResourceType;
+      dtUtil::tree<dtCore::ResourceTreeNode> mIterTree;
+      dtCore::ResourceDescriptor*            mSelectedDescriptor;
+      dtCore::DataType*                      mResourceType;
       ResourceDragTree*                     mTree;
       ResourceTreeWidget*                   mRoot;
       ResourceTreeWidget*                   mSelection;

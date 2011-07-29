@@ -19,11 +19,11 @@
  * Chris Osborn
  */
 
-#include <dtDAL/datatype.h>
+#include <dtCore/datatype.h>
 #include <python/dtpython.h>
 
 using namespace boost::python;
-using namespace dtDAL;
+using namespace dtCore;
 
 void initDataTypeBindings()
 {

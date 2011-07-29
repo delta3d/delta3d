@@ -47,7 +47,7 @@ namespace osg
 }
 /// @endcond
 
-namespace dtDAL
+namespace dtCore
 {
    class ActorProperty;
    class BaseActorObject;
@@ -207,8 +207,8 @@ namespace dtAnim
        * @param the actor proxy
        * @param an empty vector to fill of actor properties
        */
-      virtual void GetActorProperties(dtDAL::BaseActorObject& pProxy,
-            std::vector<dtCore::RefPtr<dtDAL::ActorProperty> >& pFillVector);
+      virtual void GetActorProperties(dtCore::BaseActorObject& pProxy,
+            std::vector<dtCore::RefPtr<dtCore::ActorProperty> >& pFillVector);
 
       /**
        * This flag is used by the AnimationComponent to determine

@@ -35,7 +35,7 @@
 
 class QWidget;
 
-namespace dtDAL
+namespace dtCore
 {
     class AbstractEnumActorProperty;
 }
@@ -69,7 +69,7 @@ namespace dtQt
          * @see DynamicAbstractControl#InitializeData
          */
         virtual void InitializeData(DynamicAbstractControl* newParent, PropertyEditorModel* model,
-            dtDAL::PropertyContainer* pc, dtDAL::ActorProperty* property);
+            dtCore::PropertyContainer* pc, dtCore::ActorProperty* property);
 
         /**
          * @see DynamicAbstractControl#updateEditorFromModel
@@ -127,7 +127,7 @@ namespace dtQt
     protected:
 
     private:
-        dtDAL::AbstractEnumActorProperty* mProperty;
+        dtCore::AbstractEnumActorProperty* mProperty;
 
         // This pointer is not really in our control.  It is constructed in the createEditor()
         // method and destroyed whenever QT feels like it (mostly when the control looses focus).

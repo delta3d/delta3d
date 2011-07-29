@@ -9,15 +9,15 @@
 #include <dtDIS/valuemaps.h>
 #include <dtDIS/articulationconstants.h>
 
-#include <dtDAL/datatype.h>
+#include <dtCore/datatype.h>
 #include <dtUtil/stringutils.h>
-#include <dtDAL/resourcedescriptor.h>
+#include <dtCore/resourcedescriptor.h>
 
 #include <dtDIS/propertyname.h>
 #include <dtDIS/entitytypeconstants.h>
 
-#include <dtDAL/actorproxy.h>
-#include <dtDAL/namedparameter.h>
+#include <dtCore/actorproxy.h>
+#include <dtCore/namedparameter.h>
 #include <dtGame/deadreckoningcomponent.h>
 #include <dtUtil/coordinates.h>
 #include <dtUtil/bits.h>
@@ -49,22 +49,22 @@ void FullApplicator::operator ()(const DIS::EntityStatePdu& source,
    PartialApplicator partial;
    partial(source, dest, config);
 
-   dtDAL::NamedParameter* mp;
+   dtCore::NamedParameter* mp;
 
    ///Entity Marking
-   mp = dest.AddUpdateParameter(dtDIS::EnginePropertyName::ENTITY_MARKING, dtDAL::DataType::STRING);
+   mp = dest.AddUpdateParameter(dtDIS::EnginePropertyName::ENTITY_MARKING, dtCore::DataType::STRING);
    if (mp != NULL)
    {
-      dtDAL::NamedStringParameter* strAP = static_cast<dtDAL::NamedStringParameter*>(mp);
+      dtCore::NamedStringParameter* strAP = static_cast<dtCore::NamedStringParameter*>(mp);
       
       strAP->SetValue(source.getMarking().getCharacters());
    }
 
    ///Entity Type
-   mp = dest.AddUpdateParameter(dtDIS::EntityPropertyName::ENTITY_TYPE, dtDAL::DataType::STRING);
+   mp = dest.AddUpdateParameter(dtDIS::EntityPropertyName::ENTITY_TYPE, dtCore::DataType::STRING);
    if (mp != NULL)
    {
-      dtDAL::NamedStringParameter* strAP = static_cast<dtDAL::NamedStringParameter*>(mp);
+      dtCore::NamedStringParameter* strAP = static_cast<dtCore::NamedStringParameter*>(mp);
 
       const DIS::EntityType& entityType = source.getEntityType();
 
@@ -73,10 +73,10 @@ void FullApplicator::operator ()(const DIS::EntityStatePdu& source,
 
 
    //Force ID
-   mp = dest.AddUpdateParameter(dtDIS::EnginePropertyName::FORCE_ID, dtDAL::DataType::ENUMERATION);
+   mp = dest.AddUpdateParameter(dtDIS::EnginePropertyName::FORCE_ID, dtCore::DataType::ENUMERATION);
    if (mp != NULL)
    {
-      dtDAL::NamedEnumParameter* eAP = static_cast<dtDAL::NamedEnumParameter*>(mp);
+      dtCore::NamedEnumParameter* eAP = static_cast<dtCore::NamedEnumParameter*>(mp);
       std::string enumValue; //matches the SimCore BaseEntity enum values
       switch (source.getForceId())
       {
@@ -96,23 +96,23 @@ void FullApplicator::operator ()(const DIS::EntityStatePdu& source,
    }
 
    ///entity ID
-   mp = dest.AddUpdateParameter(dtDIS::EntityPropertyName::ENTITYID, dtDAL::DataType::INT);
+   mp = dest.AddUpdateParameter(dtDIS::EntityPropertyName::ENTITYID, dtCore::DataType::INT);
    if (mp != NULL)
    {
-      dtDAL::NamedIntParameter* intAP = static_cast<dtDAL::NamedIntParameter*>(mp);
+      dtCore::NamedIntParameter* intAP = static_cast<dtCore::NamedIntParameter*>(mp);
 
       intAP->SetValue(source.getEntityID().getEntity());
    }
 
-   mp = dest.AddUpdateParameter(dtDIS::EnginePropertyName::RESOURCE_DAMAGE_OFF, dtDAL::DataType::STATIC_MESH);
+   mp = dest.AddUpdateParameter(dtDIS::EnginePropertyName::RESOURCE_DAMAGE_OFF, dtCore::DataType::STATIC_MESH);
    if (mp != NULL)
    {
       if (config != NULL)
       {
-         const dtDAL::ResourceDescriptor resource = config->GetEntityMap().GetMappedResource(source.getEntityType());
-         if (resource != dtDAL::ResourceDescriptor::NULL_RESOURCE)
+         const dtCore::ResourceDescriptor resource = config->GetEntityMap().GetMappedResource(source.getEntityType());
+         if (resource != dtCore::ResourceDescriptor::NULL_RESOURCE)
          {
-            dtDAL::NamedResourceParameter* nrp = static_cast<dtDAL::NamedResourceParameter*>(mp);
+            dtCore::NamedResourceParameter* nrp = static_cast<dtCore::NamedResourceParameter*>(mp);
             nrp->SetValue(resource);
          }
          else
@@ -125,10 +125,10 @@ void FullApplicator::operator ()(const DIS::EntityStatePdu& source,
    std::string drm;
    if( ValueMap::GetDeadReckoningModelPropertyValue( source.getDeadReckoningParameters().getDeadReckoningAlgorithm(), drm ) )
    {
-      mp = dest.AddUpdateParameter( dtDIS::EnginePropertyName::DEAD_RECKONING_ALGORITHM, dtDAL::DataType::ENUMERATION );
+      mp = dest.AddUpdateParameter( dtDIS::EnginePropertyName::DEAD_RECKONING_ALGORITHM, dtCore::DataType::ENUMERATION );
       if( mp != NULL )
       {
-         dtDAL::NamedEnumParameter* ep = static_cast<dtDAL::NamedEnumParameter*>( mp );
+         dtCore::NamedEnumParameter* ep = static_cast<dtCore::NamedEnumParameter*>( mp );
          ep->SetValue( drm );
       }
    }
@@ -138,10 +138,10 @@ void FullApplicator::operator ()(const DIS::EntityStatePdu& source,
       const std::string domainStr = ValueMap::GetDomain(source.getEntityType());
       if (!domainStr.empty())
       {
-         mp = dest.AddUpdateParameter(dtDIS::EnginePropertyName::ENTITY_DOMAIN, dtDAL::DataType::ENUMERATION);
+         mp = dest.AddUpdateParameter(dtDIS::EnginePropertyName::ENTITY_DOMAIN, dtCore::DataType::ENUMERATION);
          if (mp != NULL)
          {
-            dtDAL::NamedEnumParameter* ep = static_cast<dtDAL::NamedEnumParameter*>(mp);
+            dtCore::NamedEnumParameter* ep = static_cast<dtCore::NamedEnumParameter*>(mp);
             ep->SetValue(domainStr);        
          }
       }
@@ -221,7 +221,7 @@ void FullApplicator::operator ()(const dtGame::ActorUpdateMessage& source,
       DIS::DeadReckoningParameter drparams;
       if(const dtGame::MessageParameter* mp = source.GetUpdateParameter(dtDIS::EnginePropertyName::DEAD_RECKONING_ALGORITHM) )
       {
-         const dtDAL::NamedEnumParameter* nep = static_cast< const dtDAL::NamedEnumParameter* >( mp ) ;
+         const dtCore::NamedEnumParameter* nep = static_cast< const dtCore::NamedEnumParameter* >( mp ) ;
          const std::string& val = nep->GetValue();
 
          unsigned char algo( 0 );
@@ -288,7 +288,7 @@ void PartialApplicator::operator ()(const DIS::EntityStatePdu& source,
                                     dtGame::ActorUpdateMessage& dest,
                                     dtDIS::SharedState* config) 
 {
-   dtDAL::NamedParameter* mp ;
+   dtCore::NamedParameter* mp ;
 
    // position //
    const DIS::Vector3Double& pos = source.getEntityLocation() ;
@@ -300,7 +300,7 @@ void PartialApplicator::operator ()(const DIS::EntityStatePdu& source,
    }
 
    // dtDIS Actor Property Name 
-   if ((mp = dest.AddUpdateParameter(dtDIS::EnginePropertyName::LAST_KNOWN_LOCATION, dtDAL::DataType::VEC3)))
+   if ((mp = dest.AddUpdateParameter(dtDIS::EnginePropertyName::LAST_KNOWN_LOCATION, dtCore::DataType::VEC3)))
    {
       dtGame::Vec3MessageParameter* v3mp = static_cast<dtGame::Vec3MessageParameter*>(mp);
       v3mp->SetValue(v3);
@@ -320,30 +320,30 @@ void PartialApplicator::operator ()(const DIS::EntityStatePdu& source,
    }
 
    // dtDIS Actor Property Name
-   if ((mp = dest.AddUpdateParameter(dtDIS::EnginePropertyName::LAST_KNOWN_ORIENTATION, dtDAL::DataType::VEC3)))
+   if ((mp = dest.AddUpdateParameter(dtDIS::EnginePropertyName::LAST_KNOWN_ORIENTATION, dtCore::DataType::VEC3)))
    {
-      dtDAL::NamedVec3Parameter* v3mp = static_cast< dtDAL::NamedVec3Parameter*>(mp);
+      dtCore::NamedVec3Parameter* v3mp = static_cast< dtCore::NamedVec3Parameter*>(mp);
       v3mp->SetValue(xyzRot);
    }
 
    // velocity //
 
    // dtDIS Actor Property Name
-   if ((mp = dest.AddUpdateParameter(dtDIS::EnginePropertyName::ENTITY_LINEARY_VELOCITY, dtDAL::DataType::VEC3 )))
+   if ((mp = dest.AddUpdateParameter(dtDIS::EnginePropertyName::ENTITY_LINEARY_VELOCITY, dtCore::DataType::VEC3 )))
    {
       //TODO convert to local coordinate system?
       const DIS::Vector3Float& lv = source.getEntityLinearVelocity();
       osg::Vec3 vel(lv.getX(), lv.getY(), lv.getZ());
-      dtDAL::NamedVec3Parameter* v3mp = static_cast<dtDAL::NamedVec3Parameter*>(mp);
+      dtCore::NamedVec3Parameter* v3mp = static_cast<dtCore::NamedVec3Parameter*>(mp);
       v3mp->SetValue(vel);
    }
 
    //Smoke plume
    if (ValueMap::CanHaveSmokePlume(source.getEntityType()))
    {
-      if ((mp = dest.AddUpdateParameter(dtDIS::EnginePropertyName::SMOKE_PLUME_PRESENT, dtDAL::DataType::BOOLEAN)))
+      if ((mp = dest.AddUpdateParameter(dtDIS::EnginePropertyName::SMOKE_PLUME_PRESENT, dtCore::DataType::BOOLEAN)))
       {
-         dtDAL::NamedBooleanParameter* boolAP = static_cast<dtDAL::NamedBooleanParameter*>(mp);
+         dtCore::NamedBooleanParameter* boolAP = static_cast<dtCore::NamedBooleanParameter*>(mp);
 
          if (dtUtil::Bits::Has(source.getEntityAppearance(), SMOKING_BIT) ||
              dtUtil::Bits::Has(source.getEntityAppearance(), SMOKING2_BIT))
@@ -360,9 +360,9 @@ void PartialApplicator::operator ()(const DIS::EntityStatePdu& source,
    //flames present
    if (ValueMap::CanHaveFlames(source.getEntityType()))
    {
-      if ((mp = dest.AddUpdateParameter(dtDIS::EnginePropertyName::FLAMES_PRESENT, dtDAL::DataType::BOOLEAN)))
+      if ((mp = dest.AddUpdateParameter(dtDIS::EnginePropertyName::FLAMES_PRESENT, dtCore::DataType::BOOLEAN)))
       {
-         dtDAL::NamedBooleanParameter* boolAP = static_cast<dtDAL::NamedBooleanParameter*>(mp);
+         dtCore::NamedBooleanParameter* boolAP = static_cast<dtCore::NamedBooleanParameter*>(mp);
 
          if (dtUtil::Bits::Has(source.getEntityAppearance(), FLAMING_BIT))
          {
@@ -378,9 +378,9 @@ void PartialApplicator::operator ()(const DIS::EntityStatePdu& source,
 #if 0
    UpdateAcceleration( vel ) ;
 
-   if( mp = dest.AddUpdateParameter( dtDIS::HLABaseEntityPropertyName::PROPERTY_ACCELERATION_VECTOR , dtDAL::DataType::VEC3 ) )
+   if( mp = dest.AddUpdateParameter( dtDIS::HLABaseEntityPropertyName::PROPERTY_ACCELERATION_VECTOR , dtCore::DataType::VEC3 ) )
    {
-      dtDAL::NamedVec3Parameter* v3mp = static_cast< dtDAL::NamedVec3Parameter* > ( mp ) ;
+      dtCore::NamedVec3Parameter* v3mp = static_cast< dtCore::NamedVec3Parameter* > ( mp ) ;
       v3mp->SetValue( mAcceleration ) ;
    }
 #endif
@@ -391,10 +391,10 @@ void PartialApplicator::operator ()(const DIS::EntityStatePdu& source,
    unsigned char art_param_count=source.getArticulationParameters().size();
    if( art_param_count > 0 )
    {
-      mp = dest.AddUpdateParameter( dtDIS::EnginePropertyName::ARTICULATION, dtDAL::DataType::GROUP );
+      mp = dest.AddUpdateParameter( dtDIS::EnginePropertyName::ARTICULATION, dtCore::DataType::GROUP );
       if( mp != NULL )
       {
-         dtDAL::NamedGroupParameter* articulation_group = static_cast<dtDAL::NamedGroupParameter*>( mp );
+         dtCore::NamedGroupParameter* articulation_group = static_cast<dtCore::NamedGroupParameter*>( mp );
 
          // respond to each articulation parameter
          const std::vector<DIS::ArticulationParameter>& params = source.getArticulationParameters();
@@ -440,7 +440,7 @@ void PartialApplicator::UpdateAcceleration( osg::Vec3& currentVelocity )
 #endif
 
 void PartialApplicator::AddArticulationMessageParameters(const DIS::ArticulationParameter& source,
-                                                         dtDAL::NamedGroupParameter* topgroup,
+                                                         dtCore::NamedGroupParameter* topgroup,
                                                          unsigned int param_index) const
 {
    int parametertype = source.getParameterType();
@@ -455,14 +455,14 @@ void PartialApplicator::AddArticulationMessageParameters(const DIS::Articulation
    name_array[0] = param_index + 1;  // never let the first letter value be '0'
    name_array[1] = second_letter_in_name;
    name_array[2] = '\0';
-   dtDAL::NamedGroupParameter* datagroup = new dtDAL::NamedGroupParameter( name_array );
+   dtCore::NamedGroupParameter* datagroup = new dtCore::NamedGroupParameter( name_array );
    topgroup->AddParameter( *datagroup );
 
    AddPartParameter(typeclass, datagroup);
    AddMotionParameter(typemetric, source.getParameterValue(), datagroup);
 }
 
-void PartialApplicator::AddPartParameter(unsigned int partclass, dtDAL::NamedGroupParameter* parent) const
+void PartialApplicator::AddPartParameter(unsigned int partclass, dtCore::NamedGroupParameter* parent) const
 {
    // find the node to modify
    std::string nodename;
@@ -476,7 +476,7 @@ void PartialApplicator::AddPartParameter(unsigned int partclass, dtDAL::NamedGro
    }
 }
 
-void PartialApplicator::AddMotionParameter(unsigned int motionclass, double motionvalue, dtDAL::NamedGroupParameter* parent) const
+void PartialApplicator::AddMotionParameter(unsigned int motionclass, double motionvalue, dtCore::NamedGroupParameter* parent) const
 {
    // find the property to modify
    std::string propertyname;
@@ -490,16 +490,16 @@ void PartialApplicator::AddMotionParameter(unsigned int motionclass, double moti
    }
 }
 
-void PartialApplicator::AddFloatParam(const std::string& name, float value, dtDAL::NamedGroupParameter* parent) const
+void PartialApplicator::AddFloatParam(const std::string& name, float value, dtCore::NamedGroupParameter* parent) const
 {
-   dtDAL::NamedFloatParameter* param = new dtDAL::NamedFloatParameter( name );
+   dtCore::NamedFloatParameter* param = new dtCore::NamedFloatParameter( name );
    param->SetValue( value );
    parent->AddParameter( *param );
 }
 
-void PartialApplicator::AddStringParam(const std::string& name, const std::string& value, dtDAL::NamedGroupParameter* parent) const
+void PartialApplicator::AddStringParam(const std::string& name, const std::string& value, dtCore::NamedGroupParameter* parent) const
 {
-   dtDAL::NamedStringParameter* param = new dtDAL::NamedStringParameter( name );
+   dtCore::NamedStringParameter* param = new dtCore::NamedStringParameter( name );
    param->SetValue( value );
    parent->AddParameter( *param );
 }

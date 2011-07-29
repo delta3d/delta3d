@@ -26,7 +26,7 @@
 
 #include <dtCore/uniqueid.h>
 
-namespace dtDAL
+namespace dtCore
 {
    class ActorProperty;
 }
@@ -60,7 +60,7 @@ namespace dtDirector
       /**
        * Retrieves the property for the event.
        */
-      dtDAL::ActorProperty* GetProperty();
+      dtCore::ActorProperty* GetProperty();
 
       /**
        * Perform undo.

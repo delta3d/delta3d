@@ -35,7 +35,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 // FORWARD DECLARATIONS
 ////////////////////////////////////////////////////////////////////////////////
-namespace dtDAL
+namespace dtCore
 {
    class TransformableActorProxy;
 }
@@ -235,7 +235,7 @@ namespace dtGame
           * @param velocity The transformable's instantaneous velocity for the current frame.
           */
          virtual void ClampToGround(GroundClampRangeType& type, double currentTime, dtCore::Transform& xform,
-            dtDAL::TransformableActorProxy& proxy, GroundClampingData& data,
+            dtCore::TransformableActorProxy& proxy, GroundClampingData& data,
             bool transformChanged = false,
             const osg::Vec3& velocity = osg::Vec3()) = 0;
 

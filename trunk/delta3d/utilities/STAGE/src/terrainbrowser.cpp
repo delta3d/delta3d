@@ -53,12 +53,12 @@
 
 #include <dtEditQt/terrainbrowser.h>
 
-#include <dtDAL/project.h>
+#include <dtCore/project.h>
 
 namespace dtEditQt
 {
    ///////////////////////////////////////////////////////////////////////////////
-   TerrainBrowser::TerrainBrowser(dtDAL::DataType& type, QWidget* parent)
+   TerrainBrowser::TerrainBrowser(dtCore::DataType& type, QWidget* parent)
       : ResourceAbstractBrowser(&type, parent)
    {
       // This sets our resource icon that is visible on leaf nodes

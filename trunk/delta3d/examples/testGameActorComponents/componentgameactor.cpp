@@ -2,8 +2,8 @@
 
 #include "textlabelcomponent.h"
 
-#include <dtDAL/exceptionenum.h>
-#include <dtDAL/intactorproperty.h>
+#include <dtCore/exceptionenum.h>
+#include <dtCore/intactorproperty.h>
 
 #include <dtGame/basemessages.h>
 #include <dtGame/messagetype.h>
@@ -32,9 +32,9 @@ void ComponentGameActorProxy::BuildPropertyMap()
 
    static const std::string GROUPNAME = "ComponentGameActor";
 
-   AddProperty(new dtDAL::IntActorProperty("Some Property", "Some Property",
-            dtDAL::IntActorProperty::SetFuncType(actor, &ComponentGameActor::SetSomeProperty),
-            dtDAL::IntActorProperty::GetFuncType(actor, &ComponentGameActor::GetSomeProperty),
+   AddProperty(new dtCore::IntActorProperty("Some Property", "Some Property",
+            dtCore::IntActorProperty::SetFuncType(actor, &ComponentGameActor::SetSomeProperty),
+            dtCore::IntActorProperty::GetFuncType(actor, &ComponentGameActor::GetSomeProperty),
             "", GROUPNAME));
 }
 

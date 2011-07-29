@@ -21,7 +21,7 @@
 #include <prefix/dtdirectornodesprefix.h>
 #include <dtDirectorNodes/andmutator.h>
 
-#include <dtDAL/booleanactorproperty.h>
+#include <dtCore/booleanactorproperty.h>
 
 namespace dtDirector
 {
@@ -50,17 +50,17 @@ namespace dtDirector
       MutatorNode::BuildPropertyMap();
 
       // Create our value links.
-      dtDAL::BooleanActorProperty* valuesProp = new dtDAL::BooleanActorProperty(
+      dtCore::BooleanActorProperty* valuesProp = new dtCore::BooleanActorProperty(
          "Values", "Values",
-         dtDAL::BooleanActorProperty::SetFuncType(this, &AndMutator::SetValue),
-         dtDAL::BooleanActorProperty::GetFuncType(this, &AndMutator::GetValue),
+         dtCore::BooleanActorProperty::SetFuncType(this, &AndMutator::SetValue),
+         dtCore::BooleanActorProperty::GetFuncType(this, &AndMutator::GetValue),
          "Results in true if all values are also true.");
       AddProperty(valuesProp);
 
-      mProperty = new dtDAL::BooleanActorProperty(
+      mProperty = new dtCore::BooleanActorProperty(
          "Result", "Result",
-         dtDAL::BooleanActorProperty::SetFuncType(this, &AndMutator::SetResult),
-         dtDAL::BooleanActorProperty::GetFuncType(this, &AndMutator::GetResult),
+         dtCore::BooleanActorProperty::SetFuncType(this, &AndMutator::SetResult),
+         dtCore::BooleanActorProperty::GetFuncType(this, &AndMutator::GetResult),
          "The Result value.");
       AddProperty(mProperty);
 

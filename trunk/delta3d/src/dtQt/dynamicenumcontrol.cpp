@@ -29,9 +29,9 @@
 #include <prefix/dtqtprefix.h>
 #include <dtQt/dynamicenumcontrol.h>
 
-#include <dtDAL/abstractenumactorproperty.h>
-#include <dtDAL/actorproxy.h>
-#include <dtDAL/datatype.h>
+#include <dtCore/abstractenumactorproperty.h>
+#include <dtCore/actorproxy.h>
+#include <dtCore/datatype.h>
 
 #include <dtUtil/enumeration.h>
 #include <dtUtil/log.h>
@@ -62,13 +62,13 @@ namespace dtQt
 
    /////////////////////////////////////////////////////////////////////////////////
    void DynamicEnumControl::InitializeData(DynamicAbstractControl* newParent,
-      PropertyEditorModel* newModel, dtDAL::PropertyContainer* newPC, dtDAL::ActorProperty* newProperty)
+      PropertyEditorModel* newModel, dtCore::PropertyContainer* newPC, dtCore::ActorProperty* newProperty)
    {
       // Note - Unlike the other properties, we can't static or reinterpret cast this object.
       // We need to dynamic cast it...
-      if (newProperty != NULL && newProperty->GetDataType() == dtDAL::DataType::ENUMERATION)
+      if (newProperty != NULL && newProperty->GetDataType() == dtCore::DataType::ENUMERATION)
       {
-         mProperty = dynamic_cast<dtDAL::AbstractEnumActorProperty*>(newProperty);
+         mProperty = dynamic_cast<dtCore::AbstractEnumActorProperty*>(newProperty);
          DynamicAbstractControl::InitializeData(newParent, newModel, newPC, newProperty);
       }
       else

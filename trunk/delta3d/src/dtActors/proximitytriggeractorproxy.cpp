@@ -24,16 +24,16 @@
 
 #include <dtABC/proximitytrigger.h>
 
-#include <dtDAL/actoractorproperty.h>
-#include <dtDAL/actorproxyicon.h>
-#include <dtDAL/floatactorproperty.h>
-#include <dtDAL/functor.h>
+#include <dtCore/actoractorproperty.h>
+#include <dtCore/actorproxyicon.h>
+#include <dtCore/floatactorproperty.h>
+#include <dtCore/functor.h>
 
 #include <sstream>
 
 using namespace dtABC;
 using namespace dtCore;
-using namespace dtDAL;
+using namespace dtCore;
 
 namespace dtActors
 {
@@ -115,11 +115,11 @@ namespace dtActors
       {
          //a proximity trigger does not need orientation arrows,
          //this is how to get rid of them.
-         dtDAL::ActorProxyIcon::ActorProxyIconConfig config;
+         dtCore::ActorProxyIcon::ActorProxyIconConfig config;
          config.mForwardVector = false;
          config.mUpVector = false;
 
-         mBillBoardIcon = new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IMAGE_BILLBOARD_TRIGGER, config);
+         mBillBoardIcon = new dtCore::ActorProxyIcon(dtCore::ActorProxyIcon::IMAGE_BILLBOARD_TRIGGER, config);
       }
 
       return mBillBoardIcon.get();

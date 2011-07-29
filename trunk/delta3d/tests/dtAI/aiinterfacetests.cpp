@@ -27,7 +27,7 @@
 #include <dtAI/aiplugininterface.h>
 #include <dtAI/aiactorregistry.h>
 #include <dtAI/aiinterfaceactor.h>
-#include <dtDAL/librarymanager.h>
+#include <dtCore/librarymanager.h>
 #include <dtCore/refptr.h>
 #include <osg/Vec3>
 
@@ -64,9 +64,9 @@ namespace dtAI
 
    void AIInterfaceTests::setUp()
    {
-      dtDAL::LibraryManager& libMan = dtDAL::LibraryManager::GetInstance();
+      dtCore::LibraryManager& libMan = dtCore::LibraryManager::GetInstance();
       libMan.LoadActorRegistry("dtAI");
-      dtCore::RefPtr<dtDAL::BaseActorObject> proxy = libMan.CreateActorProxy(*AIActorRegistry::AI_INTERFACE_ACTOR_TYPE);
+      dtCore::RefPtr<dtCore::BaseActorObject> proxy = libMan.CreateActorProxy(*AIActorRegistry::AI_INTERFACE_ACTOR_TYPE);
 
       mAIInterface = dynamic_cast<dtAI::AIInterfaceActorProxy*>(proxy.get())->GetAIInterface();
 
@@ -79,7 +79,7 @@ namespace dtAI
 
    void AIInterfaceTests::TestAddRemoveWaypoints()
    {
-      std::vector<dtCore::RefPtr<const dtDAL::ObjectType> > objectTypes;
+      std::vector<dtCore::RefPtr<const dtCore::ObjectType> > objectTypes;
 
       mAIInterface->GetSupportedWaypointTypes(objectTypes);
       CPPUNIT_ASSERT(!objectTypes.empty());

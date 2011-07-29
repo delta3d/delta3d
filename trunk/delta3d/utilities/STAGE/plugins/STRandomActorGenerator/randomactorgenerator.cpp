@@ -7,9 +7,9 @@
 #include <dtCore/transform.h>
 #include <dtCore/transformable.h>
 
-#include <dtDAL/librarymanager.h>
-#include <dtDAL/map.h>
-#include <dtDAL/vectoractorproperties.h>
+#include <dtCore/librarymanager.h>
+#include <dtCore/map.h>
+#include <dtCore/vectoractorproperties.h>
 
 #include <dtEditQt/editordata.h>
 #include <dtEditQt/editorevents.h>
@@ -126,12 +126,12 @@ void RandomActorGeneratorPlugin::OnRefreshActorList()
 
    dtEditQt::EditorData::GetInstance().getMainWindow()->startWaitCursor();
 
-   dtCore::RefPtr<dtDAL::Map> mapPtr = dtEditQt::EditorData::GetInstance().getCurrentMap();
-   std::vector< dtCore::RefPtr<dtDAL::BaseActorObject> > foundProxies;
+   dtCore::RefPtr<dtCore::Map> mapPtr = dtEditQt::EditorData::GetInstance().getCurrentMap();
+   std::vector< dtCore::RefPtr<dtCore::BaseActorObject> > foundProxies;
    mapPtr->FindProxies(foundProxies, std::string(""), std::string(""),
-   std::string(""), std::string(""), dtDAL::Map::Either);
+   std::string(""), std::string(""), dtCore::Map::Either);
 
-   std::vector< dtCore::RefPtr<dtDAL::BaseActorObject> >::iterator it;
+   std::vector< dtCore::RefPtr<dtCore::BaseActorObject> >::iterator it;
    for(it = foundProxies.begin(); it != foundProxies.end(); ++it)
    {
       mUI.mActorToGenerate->addItem((*it).get()->GetActor()->GetName().c_str(),
@@ -159,10 +159,10 @@ void RandomActorGeneratorPlugin::OnSelectedActorChange(ActorProxyRefPtrVector& a
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void RandomActorGeneratorPlugin::NewActorProxyInsideVolumeEditor(dtDAL::BaseActorObject* proxyToCopy)
+void RandomActorGeneratorPlugin::NewActorProxyInsideVolumeEditor(dtCore::BaseActorObject* proxyToCopy)
 {
    dtActors::VolumeEditActor* volEditActor = mMainWindow->GetVolumeEditActor();
-   dtCore::RefPtr<dtDAL::Map> currMap = dtEditQt::EditorData::GetInstance().getCurrentMap();
+   dtCore::RefPtr<dtCore::Map> currMap = dtEditQt::EditorData::GetInstance().getCurrentMap();
    osg::Vec3 spawnPoint;
 
    if(volEditActor->GetShape() == dtActors::VolumeEditActor::VolumeShapeType::BOX)
@@ -183,7 +183,7 @@ void RandomActorGeneratorPlugin::NewActorProxyInsideVolumeEditor(dtDAL::BaseActo
    //TODO remainder of shapes:
 
    //spawn a copy of the currently selected actor:
-   dtCore::RefPtr<dtDAL::BaseActorObject> aCloneProxy = proxyToCopy->Clone();
+   dtCore::RefPtr<dtCore::BaseActorObject> aCloneProxy = proxyToCopy->Clone();
    dtCore::Transformable *aClonePtr = dynamic_cast<dtCore::Transformable*>(aCloneProxy->GetActor());
    if(aClonePtr == NULL)
    {
@@ -240,8 +240,8 @@ void RandomActorGeneratorPlugin::NewActorProxyInsideVolumeEditor(dtDAL::BaseActo
       float randScale = ((mUI.mScaleMaxSpinBox->value() * rand()) / RAND_MAX)
                            + mUI.mScaleMinSpinBox->value();
 
-      dtDAL::ActorProperty* prop = aCloneProxy->GetProperty("Scale");
-      dtDAL::Vec3ActorProperty* scaleProp = dynamic_cast<dtDAL::Vec3ActorProperty*>(prop);
+      dtCore::ActorProperty* prop = aCloneProxy->GetProperty("Scale");
+      dtCore::Vec3ActorProperty* scaleProp = dynamic_cast<dtCore::Vec3ActorProperty*>(prop);
 
       if (scaleProp) //scaling is possible with this actor
       {

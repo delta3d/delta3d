@@ -24,8 +24,8 @@
 #include <dtCore/motionmodel.h>
 #include <dtCore/deltadrawable.h>
 
-#include <dtDAL/actoridactorproperty.h>
-#include <dtDAL/stringactorproperty.h>
+#include <dtCore/actoridactorproperty.h>
+#include <dtCore/stringactorproperty.h>
 
 #include <dtDirector/director.h>
 
@@ -60,17 +60,17 @@ namespace dtDirector
       ActionNode::BuildPropertyMap();
 
       // Create our value links.
-      dtDAL::StringActorProperty* nameProp = new dtDAL::StringActorProperty(
+      dtCore::StringActorProperty* nameProp = new dtCore::StringActorProperty(
          "Motion Model", "Motion Model",
-         dtDAL::StringActorProperty::SetFuncType(this, &AttachMotionModelAction::SetModelName),
-         dtDAL::StringActorProperty::GetFuncType(this, &AttachMotionModelAction::GetModelName),
+         dtCore::StringActorProperty::SetFuncType(this, &AttachMotionModelAction::SetModelName),
+         dtCore::StringActorProperty::GetFuncType(this, &AttachMotionModelAction::GetModelName),
          "The name of the motion model to attach.");
       AddProperty(nameProp);
 
-      dtDAL::ActorIDActorProperty* actorProp = new dtDAL::ActorIDActorProperty(
+      dtCore::ActorIDActorProperty* actorProp = new dtCore::ActorIDActorProperty(
          "Actor", "Actor",
-         dtDAL::ActorIDActorProperty::SetFuncType(this, &AttachMotionModelAction::SetCurrentActor),
-         dtDAL::ActorIDActorProperty::GetFuncType(this, &AttachMotionModelAction::GetCurrentActor),
+         dtCore::ActorIDActorProperty::SetFuncType(this, &AttachMotionModelAction::SetCurrentActor),
+         dtCore::ActorIDActorProperty::GetFuncType(this, &AttachMotionModelAction::GetCurrentActor),
          "", "The actor to attach the motion model to.");
       AddProperty(actorProp);
 
@@ -83,7 +83,7 @@ namespace dtDirector
    /////////////////////////////////////////////////////////////////////////////
    bool AttachMotionModelAction::Update(float simDelta, float delta, int input, bool firstUpdate)
    {
-      dtDAL::ActorProxy* proxy = GetActor("Actor");
+      dtCore::ActorProxy* proxy = GetActor("Actor");
       dtCore::Transformable* actor = NULL;
 
       if (proxy)

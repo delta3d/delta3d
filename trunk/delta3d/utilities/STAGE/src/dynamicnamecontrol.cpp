@@ -48,8 +48,8 @@ namespace dtEditQt
       : mTemporaryEditControl(NULL)
    {
       // listen for name changes so we can update our own edit control
-      connect(&EditorEvents::GetInstance(), SIGNAL(ProxyNameChanged(dtDAL::BaseActorObject&, std::string)),
-         this, SLOT(ProxyNameChanged(dtDAL::BaseActorObject&, std::string)));
+      connect(&EditorEvents::GetInstance(), SIGNAL(ProxyNameChanged(dtCore::BaseActorObject&, std::string)),
+         this, SLOT(ProxyNameChanged(dtCore::BaseActorObject&, std::string)));
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -59,10 +59,10 @@ namespace dtEditQt
 
    /////////////////////////////////////////////////////////////////////////////////
    void DynamicNameControl::InitializeData(dtQt::DynamicAbstractControl* newParent,
-      dtQt::PropertyEditorModel* newModel, dtDAL::PropertyContainer* newPC, dtDAL::ActorProperty* newProperty)
+      dtQt::PropertyEditorModel* newModel, dtCore::PropertyContainer* newPC, dtCore::ActorProperty* newProperty)
    {
       DynamicAbstractControl::InitializeData(newParent, newModel, newPC, newProperty);
-      mProxy = static_cast<dtDAL::BaseActorObject*>(newPC);
+      mProxy = static_cast<dtCore::BaseActorObject*>(newPC);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -183,7 +183,7 @@ namespace dtEditQt
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   void DynamicNameControl::ProxyNameChanged(dtDAL::BaseActorObject& proxy, std::string oldName)
+   void DynamicNameControl::ProxyNameChanged(dtCore::BaseActorObject& proxy, std::string oldName)
    {
       if (mTemporaryEditControl != NULL && &proxy == mPropContainer)
       {

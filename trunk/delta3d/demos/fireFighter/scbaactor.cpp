@@ -20,8 +20,8 @@
  */
 
 #include <fireFighter/scbaactor.h>
-#include <dtDAL/gameeventmanager.h>
-#include <dtDAL/map.h>
+#include <dtCore/gameeventmanager.h>
+#include <dtCore/map.h>
 #include <dtGame/gamemanager.h>
 #include <dtGame/message.h>
 #include <dtGame/basemessages.h>
@@ -81,7 +81,7 @@ void SCBAActor::Activate(bool enable)
       return;
    }
 
-   dtDAL::GameEvent* event = dtDAL::GameEventManager::GetInstance().FindEvent(name);
+   dtCore::GameEvent* event = dtCore::GameEventManager::GetInstance().FindEvent(name);
    if (event == NULL)
    {
       throw dtUtil::Exception("Failed to find the game event: " + name, __FILE__, __LINE__);

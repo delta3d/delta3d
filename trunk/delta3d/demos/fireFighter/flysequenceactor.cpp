@@ -32,7 +32,7 @@
 #include <dtABC/application.h>
 #include <dtAudio/audiomanager.h>
 #include <dtCore/camera.h>
-#include <dtDAL/actorproxyicon.h>
+#include <dtCore/actorproxyicon.h>
 #include <dtUtil/datapathutils.h>
 #include <fstream>
 
@@ -57,11 +57,11 @@ void FlySequenceActorProxy::BuildInvokables()
    dtGame::GameActorProxy::BuildInvokables();
 }
 
-dtDAL::ActorProxyIcon* FlySequenceActorProxy::GetBillBoardIcon()
+dtCore::ActorProxyIcon* FlySequenceActorProxy::GetBillBoardIcon()
 {
    if (!mBillBoardIcon.valid())
    {
-      mBillBoardIcon = new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IMAGE_BILLBOARD_GENERIC);
+      mBillBoardIcon = new dtCore::ActorProxyIcon(dtCore::ActorProxyIcon::IMAGE_BILLBOARD_GENERIC);
    }
    return mBillBoardIcon.get();
 }

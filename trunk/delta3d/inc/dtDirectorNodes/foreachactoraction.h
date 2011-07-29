@@ -28,7 +28,7 @@
 #include <dtDirectorNodes/nodelibraryexport.h>
 
 #include <dtCore/uniqueid.h>
-#include <dtDAL/actoridactorproperty.h>
+#include <dtCore/actoridactorproperty.h>
 
 namespace dtDirector
 {
@@ -104,7 +104,7 @@ namespace dtDirector
       std::string mClassType;
       std::string mNameFilter;
 
-      dtCore::RefPtr<dtDAL::ActorIDActorProperty> mActorProp;
+      dtCore::RefPtr<dtCore::ActorIDActorProperty> mActorProp;
 
       std::vector<dtCore::UniqueId> mFoundActors;
    };

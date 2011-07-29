@@ -22,8 +22,8 @@
 #include <dtDirector/colors.h>
 #include <dtDirectorNodes/doublevalue.h>
 
-#include <dtDAL/actorproperty.h>
-#include <dtDAL/doubleactorproperty.h>
+#include <dtCore/actorproperty.h>
+#include <dtCore/doubleactorproperty.h>
 
 namespace dtDirector
 {
@@ -53,17 +53,17 @@ namespace dtDirector
    {
       ValueNode::BuildPropertyMap();
 
-      mProperty = new dtDAL::DoubleActorProperty(
+      mProperty = new dtCore::DoubleActorProperty(
          "Value", "Value",
-         dtDAL::DoubleActorProperty::SetFuncType(this, &DoubleValue::SetValue),
-         dtDAL::DoubleActorProperty::GetFuncType(this, &DoubleValue::GetValue),
+         dtCore::DoubleActorProperty::SetFuncType(this, &DoubleValue::SetValue),
+         dtCore::DoubleActorProperty::GetFuncType(this, &DoubleValue::GetValue),
          "The value.");
       AddProperty(mProperty);
 
-      mInitialProperty = new dtDAL::DoubleActorProperty(
+      mInitialProperty = new dtCore::DoubleActorProperty(
          "Initial Value", "Initial Value",
-         dtDAL::DoubleActorProperty::SetFuncType(this, &DoubleValue::SetInitialValue),
-         dtDAL::DoubleActorProperty::GetFuncType(this, &DoubleValue::GetInitialValue),
+         dtCore::DoubleActorProperty::SetFuncType(this, &DoubleValue::SetInitialValue),
+         dtCore::DoubleActorProperty::GetFuncType(this, &DoubleValue::GetInitialValue),
          "The initial value.");
       AddProperty(mInitialProperty);
    }

@@ -109,7 +109,7 @@ namespace dtDIS
       eid.setSubcategory(0);
       eid.setSpecific(0);
 
-      const dtDAL::ActorType* actorType = config.GetEntityMap().GetMappedActorType(eid);
+      const dtCore::ActorType* actorType = config.GetEntityMap().GetMappedActorType(eid);
       
       CPPUNIT_ASSERT_MESSAGE("Did not find a matching ActorType based on the supplied DIS::EntityType",
                             actorType != NULL);
@@ -134,7 +134,7 @@ namespace dtDIS
       eid.setSubcategory(4);
       eid.setSpecific(5);
 
-      const dtDAL::ActorType* actorType = config.GetEntityMap().GetMappedActorType(eid);
+      const dtCore::ActorType* actorType = config.GetEntityMap().GetMappedActorType(eid);
 
       CPPUNIT_ASSERT_MESSAGE("Should not have found a matching ActorType based on the supplied DIS::EntityType",
                               NULL == actorType);
@@ -156,7 +156,7 @@ namespace dtDIS
       eid.setSubcategory(6);
       eid.setSpecific(7);
 
-      const dtDAL::ActorType* actorType = config.GetEntityMap().GetMappedActorType(eid);
+      const dtCore::ActorType* actorType = config.GetEntityMap().GetMappedActorType(eid);
 
       CPPUNIT_ASSERT_MESSAGE("Should have found a close match ActorType based on the supplied DIS::EntityType",
                               actorType != NULL);

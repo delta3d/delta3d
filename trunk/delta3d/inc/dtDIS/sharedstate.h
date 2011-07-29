@@ -25,8 +25,8 @@
 #include <dtDIS/dtdisexport.h>         // for export symbols
 
 #include <DIS/EntityType.h>            // for mapped dependency type.
-#include <dtDAL/actortype.h>           // for mapped dependency type.
-#include <dtDAL/resourcedescriptor.h>  // for mapped type
+#include <dtCore/actortype.h>           // for mapped dependency type.
+#include <dtCore/resourcedescriptor.h>  // for mapped type
 #include <dtCore/uniqueid.h>           // for mapped dependency type.
 #include <dtUtil/coordinates.h>
 #include <dtUtil/deprecationmgr.h>
@@ -57,9 +57,9 @@ namespace dtDIS
       {         
       }
 
-      /// Adds a mapping from the DIS::EntityID to the dtDAL::ActorType if no mapping exists.
+      /// Adds a mapping from the DIS::EntityID to the dtCore::ActorType if no mapping exists.
       /// @return true if no previous mapping existed.  false if a mapping existed already.
-      bool DEPRECATE_FUNC AddActorMapping(const DIS::EntityType& eid, const dtDAL::ActorType* at);
+      bool DEPRECATE_FUNC AddActorMapping(const DIS::EntityType& eid, const dtCore::ActorType* at);
 
       /// Takes the one to one mapping from the container for the supplied key.
       /// @param eid the key to the mapping.
@@ -70,7 +70,7 @@ namespace dtDIS
       /// @param toWrite Overwritten with the instance of the mapped ActorType.
       /// @param eid The key being stored.
       /// @return true if eid was found in the map.  false if it was not found.
-      bool DEPRECATE_FUNC GetMappedActor(const DIS::EntityType& eid, const dtDAL::ActorType*& toWrite);
+      bool DEPRECATE_FUNC GetMappedActor(const DIS::EntityType& eid, const dtCore::ActorType*& toWrite);
 
    private:
       EntityMap* mEntityMap;
@@ -87,7 +87,7 @@ namespace dtDIS
 
       /// Adds a mapping from the DIS::EntityID to the resource identifier if no mapping exists.
       /// @return true if no previous mapping existed.  false if a mapping existed already.
-      bool DEPRECATE_FUNC AddResourceMapping(const DIS::EntityType& eid, const dtDAL::ResourceDescriptor& resource);
+      bool DEPRECATE_FUNC AddResourceMapping(const DIS::EntityType& eid, const dtCore::ResourceDescriptor& resource);
 
       /// Takes the one to one mapping from the container for the supplied key.
       /// @param eid the key to the mapping.
@@ -98,7 +98,7 @@ namespace dtDIS
       /// @param toWrite Overwritten with the instance of the mapped resource identifier.
       /// @param eid The key being stored.
       /// @return true if eid was found in the map.  false if it was not found.
-      bool DEPRECATE_FUNC GetMappedResource(const DIS::EntityType& eid, dtDAL::ResourceDescriptor& toWrite) const;
+      bool DEPRECATE_FUNC GetMappedResource(const DIS::EntityType& eid, dtCore::ResourceDescriptor& toWrite) const;
 
    private:
       EntityMap* mEntityMap;

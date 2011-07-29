@@ -27,8 +27,8 @@
 #include <dtCore/deltadrawable.h>
 #include <dtCore/transform.h>
 
-#include <dtDAL/actoridactorproperty.h>
-#include <dtDAL/vectoractorproperties.h>
+#include <dtCore/actoridactorproperty.h>
+#include <dtCore/vectoractorproperties.h>
 #include <dtDirector/director.h>
 
 namespace dtDirector
@@ -63,17 +63,17 @@ namespace dtDirector
    {
       ActionNode::BuildPropertyMap();
 
-      dtDAL::ActorIDActorProperty* actorProp = new dtDAL::ActorIDActorProperty(
+      dtCore::ActorIDActorProperty* actorProp = new dtCore::ActorIDActorProperty(
          "Actor", "Actor",
-         dtDAL::ActorIDActorProperty::SetFuncType(this, &AttachCameraAction::SetCurrentActor),
-         dtDAL::ActorIDActorProperty::GetFuncType(this, &AttachCameraAction::GetCurrentActor),
+         dtCore::ActorIDActorProperty::SetFuncType(this, &AttachCameraAction::SetCurrentActor),
+         dtCore::ActorIDActorProperty::GetFuncType(this, &AttachCameraAction::GetCurrentActor),
          "", "The actor to attach the camera to.");
       AddProperty(actorProp);
 
-      dtDAL::Vec3ActorProperty* offsetProp = new dtDAL::Vec3ActorProperty(
+      dtCore::Vec3ActorProperty* offsetProp = new dtCore::Vec3ActorProperty(
          "Offset", "Parent Offset",
-         dtDAL::Vec3ActorProperty::SetFuncType(this, &AttachCameraAction::SetOffset),
-         dtDAL::Vec3ActorProperty::GetFuncType(this, &AttachCameraAction::GetOffset),
+         dtCore::Vec3ActorProperty::SetFuncType(this, &AttachCameraAction::SetOffset),
+         dtCore::Vec3ActorProperty::GetFuncType(this, &AttachCameraAction::GetOffset),
          "Translational offset from the parent actor.", "");
       AddProperty(offsetProp);
 
@@ -86,7 +86,7 @@ namespace dtDirector
    /////////////////////////////////////////////////////////////////////////////
    bool AttachCameraAction::Update(float simDelta, float delta, int input, bool firstUpdate)
    {
-      dtDAL::ActorProxy* proxy = GetActor("Actor");
+      dtCore::ActorProxy* proxy = GetActor("Actor");
       dtABC::Application* app = dtABC::Application::GetInstance(0);
       if (proxy && app)
       {

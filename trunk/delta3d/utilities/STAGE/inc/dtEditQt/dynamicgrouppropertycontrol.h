@@ -34,7 +34,7 @@
 #include <vector>
 
 
-namespace dtDAL
+namespace dtCore
 {
    class GroupActorProperty;
 }
@@ -76,7 +76,7 @@ namespace dtEditQt
           * @see DynamicAbstractControl#InitializeData
           */
          virtual void InitializeData(dtQt::DynamicAbstractControl* newParent, dtQt::PropertyEditorModel* model,
-                                     dtDAL::PropertyContainer* pc, dtDAL::ActorProperty* property);
+                                     dtCore::PropertyContainer* pc, dtCore::ActorProperty* property);
 
          /**
           * @see DynamicAbstractControl#addSelfToParentWidget
@@ -126,7 +126,7 @@ namespace dtEditQt
          //helper method for getting the appropriate plugin for the property.
          GroupUIPlugin* GetPlugin();
 
-         dtDAL::GroupActorProperty* mGroupProperty;
+         dtCore::GroupActorProperty* mGroupProperty;
 
    };
 

@@ -31,7 +31,7 @@
 #include <QtGui/QIcon>
 
 #include <dtEditQt/actortypetreewidget.h>
-#include <dtDAL/librarymanager.h>
+#include <dtCore/librarymanager.h>
 #include <dtEditQt/uiresources.h>
 #include <QtCore/QStringList>
 #include <dtUtil/log.h>
@@ -43,7 +43,7 @@ namespace dtEditQt
    const std::string ActorTypeTreeWidget::CATEGORY_SEPARATOR = ".";
 
    ///////////////////////////////////////////////////////////////////////////////
-   ActorTypeTreeWidget::ActorTypeTreeWidget(ActorTypeTreeWidget* parent, dtCore::RefPtr<const dtDAL::ActorType> actorType)
+   ActorTypeTreeWidget::ActorTypeTreeWidget(ActorTypeTreeWidget* parent, dtCore::RefPtr<const dtCore::ActorType> actorType)
       : QTreeWidgetItem(parent)
    {
       LOG_DEBUG("Initializing ActorTypeTreeWidget - leaf Actor Type Node:" + actorType->GetName());
@@ -100,7 +100,7 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   dtCore::RefPtr<const dtDAL::ActorType> ActorTypeTreeWidget::getActorType()
+   dtCore::RefPtr<const dtCore::ActorType> ActorTypeTreeWidget::getActorType()
    {
       return mActorType;
    }
@@ -139,7 +139,7 @@ namespace dtEditQt
 
    ///////////////////////////////////////////////////////////////////////////////
    bool ActorTypeTreeWidget::recursivelyAddCategoryAndActorTypeAsChildren(
-      QMutableStringListIterator* listIterator, dtCore::RefPtr<const dtDAL::ActorType> actorType)
+      QMutableStringListIterator* listIterator, dtCore::RefPtr<const dtCore::ActorType> actorType)
    {
       bool foundChildMatch = false;
       bool result          = false;

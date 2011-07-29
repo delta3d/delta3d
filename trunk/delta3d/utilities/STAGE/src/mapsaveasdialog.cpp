@@ -41,8 +41,8 @@
 #include <QtGui/QGroupBox>
 #include <QtGui/QLabel>
 
-#include <dtDAL/project.h>
-#include <dtDAL/map.h>
+#include <dtCore/project.h>
+#include <dtCore/map.h>
 
 namespace dtEditQt
 {

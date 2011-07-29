@@ -21,8 +21,8 @@
 #include <prefix/dtdirectornodesprefix.h>
 #include <dtDirectorNodes/removearrayaction.h>
 
-#include <dtDAL/arrayactorpropertybase.h>
-#include <dtDAL/intactorproperty.h>
+#include <dtCore/arrayactorpropertybase.h>
+#include <dtCore/intactorproperty.h>
 
 #include <dtDirector/arrayvaluenode.h>
 #include <dtDirector/director.h>
@@ -54,16 +54,16 @@ namespace dtDirector
       ActionNode::BuildPropertyMap();
 
       // Create our value links.
-      dtDAL::IntActorProperty* arrayProp = new dtDAL::IntActorProperty(
+      dtCore::IntActorProperty* arrayProp = new dtCore::IntActorProperty(
          "Array", "Array",
-         dtDAL::IntActorProperty::SetFuncType(this, &RemoveArrayAction::SetArray),
-         dtDAL::IntActorProperty::GetFuncType(this, &RemoveArrayAction::GetArray),
+         dtCore::IntActorProperty::SetFuncType(this, &RemoveArrayAction::SetArray),
+         dtCore::IntActorProperty::GetFuncType(this, &RemoveArrayAction::GetArray),
          "The array to remove from.");
 
-      dtDAL::IntActorProperty* indexProp = new dtDAL::IntActorProperty(
+      dtCore::IntActorProperty* indexProp = new dtCore::IntActorProperty(
          "Index", "Index",
-         dtDAL::IntActorProperty::SetFuncType(this, &RemoveArrayAction::SetIndex),
-         dtDAL::IntActorProperty::GetFuncType(this, &RemoveArrayAction::GetIndex),
+         dtCore::IntActorProperty::SetFuncType(this, &RemoveArrayAction::SetIndex),
+         dtCore::IntActorProperty::GetFuncType(this, &RemoveArrayAction::GetIndex),
          "The index of the array to remove (-1 clears the entire array).");
       AddProperty(indexProp);
 
@@ -85,7 +85,7 @@ namespace dtDirector
       ArrayValueNode* arrayNode = dynamic_cast<ArrayValueNode*>(valueNode);
       if (arrayNode)
       {
-         dtDAL::ArrayActorPropertyBase* arrayProp = arrayNode->GetArrayProperty();
+         dtCore::ArrayActorPropertyBase* arrayProp = arrayNode->GetArrayProperty();
          if (arrayProp)
          {
             if (arrayIndex < 0)

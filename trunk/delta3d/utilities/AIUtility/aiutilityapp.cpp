@@ -29,7 +29,7 @@
 
 #include <dtUtil/exception.h>
 
-#include <dtDAL/project.h>
+#include <dtCore/project.h>
 
 #include <dtCore/deltawin.h>
 #include <dtCore/system.h>
@@ -62,7 +62,7 @@ AIUtilityApp::AIUtilityApp()
 
    // Mark this app as an editor so custom libraries
    // can query what they're running in and act appropriately
-   dtDAL::Project::GetInstance().SetEditMode(true);
+   dtCore::Project::GetInstance().SetEditMode(true);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -126,7 +126,7 @@ void AIUtilityApp::SetProjectContext(const std::string& path)
 {
    try
    {
-      dtDAL::Project::GetInstance().SetContext(path);
+      dtCore::Project::GetInstance().SetContext(path);
    }
    catch (const dtUtil::Exception& ex)
    {

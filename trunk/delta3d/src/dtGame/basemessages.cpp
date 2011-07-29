@@ -21,7 +21,7 @@
 
 #include <prefix/dtgameprefix.h>
 #include <dtGame/basemessages.h>
-#include <dtDAL/gameeventmanager.h>
+#include <dtCore/gameeventmanager.h>
 #include <dtUtil/stringutils.h>
 #include <algorithm>
 #include <sstream>
@@ -121,20 +121,20 @@ namespace dtGame
    //////////////////////////////////////////////////////////////////////////////
    //////////////////////////////////////////////////////////////////////////////
 
-   void GameEventMessage::SetGameEvent(const dtDAL::GameEvent& event)
+   void GameEventMessage::SetGameEvent(const dtCore::GameEvent& event)
    {
       GameEventMessageParameter* mp = static_cast<GameEventMessageParameter*>(GetParameter("GameEvent"));
       mp->SetValue(event.GetUniqueId());
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   const dtDAL::GameEvent* GameEventMessage::GetGameEvent() const
+   const dtCore::GameEvent* GameEventMessage::GetGameEvent() const
    {
       const GameEventMessageParameter* mp = static_cast<const GameEventMessageParameter*>(GetParameter("GameEvent"));
       const dtCore::UniqueId id = mp->GetValue();
 
       //Need to look up in the event manager for the specified event.
-      dtDAL::GameEvent *event = dtDAL::GameEventManager::GetInstance().FindEvent(id);
+      dtCore::GameEvent *event = dtCore::GameEventManager::GetInstance().FindEvent(id);
       if (event == NULL)
          LOG_WARNING("Game event message parameter had an invalid game event id.");
       

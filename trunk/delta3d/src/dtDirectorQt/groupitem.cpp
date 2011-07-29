@@ -334,7 +334,7 @@ namespace dtDirector
       maxPos.y() += AUTO_BORDER_SIZE;
 
       mScene->GetEditor()->GetUndoManager()->BeginMultipleEvents("Resizing of Node \'Group Box\'.");
-      dtDAL::ActorProperty* prop = groupNode->GetProperty("Position");
+      dtCore::ActorProperty* prop = groupNode->GetProperty("Position");
       if (prop)
       {
          std::string oldValue = prop->ToString();
@@ -381,7 +381,7 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void GroupItem::OnPreSizing()
    {
-      dtDAL::ActorProperty* prop = mNode->GetProperty("Position");
+      dtCore::ActorProperty* prop = mNode->GetProperty("Position");
       if (prop)
       {
          mOldPos = prop->ToString();
@@ -398,7 +398,7 @@ namespace dtDirector
    void GroupItem::OnPostSizing()
    {
       mScene->GetEditor()->GetUndoManager()->BeginMultipleEvents("Resizing of Node \'Group Box\'.");
-      dtDAL::ActorProperty* prop = mNode->GetProperty("Position");
+      dtCore::ActorProperty* prop = mNode->GetProperty("Position");
       if (prop)
       {
          std::string value = prop->ToString();

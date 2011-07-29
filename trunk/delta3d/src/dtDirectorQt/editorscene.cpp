@@ -44,7 +44,7 @@
 #include <QtGui/QInputDialog>
 #include <QtGui/QMenu>
 
-#include <dtDAL/actoridactorproperty.h>
+#include <dtCore/actoridactorproperty.h>
 
 namespace dtDirector
 {
@@ -640,7 +640,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void EditorScene::AddSelected(dtDAL::PropertyContainer* container)
+   void EditorScene::AddSelected(dtCore::PropertyContainer* container)
    {
       // If we have the director container in the list, remove it.
       if (mSelected.size() == 1 && mSelected[0].get() == mEditor->GetDirector())
@@ -657,7 +657,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void EditorScene::RemoveSelected(dtDAL::PropertyContainer* container)
+   void EditorScene::RemoveSelected(dtCore::PropertyContainer* container)
    {
       int count = (int)mSelected.size();
       for (int index = 0; index < count; index++)
@@ -861,7 +861,7 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void EditorScene::OnCreateActorsFromSelection()
    {
-      std::vector<dtDAL::BaseActorObject*> proxies = mEditor->GetActorSelection();
+      std::vector<dtCore::BaseActorObject*> proxies = mEditor->GetActorSelection();
 
       int count = (int)proxies.size();
       for (int index = 0; index < count; ++index)
@@ -870,7 +870,7 @@ namespace dtDirector
 
          if (node)
          {
-            dtDAL::ActorIDActorProperty* prop = dynamic_cast<dtDAL::ActorIDActorProperty*>(node->GetProperty("Value"));
+            dtCore::ActorIDActorProperty* prop = dynamic_cast<dtCore::ActorIDActorProperty*>(node->GetProperty("Value"));
 
             if (prop)
             {
@@ -885,7 +885,7 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void EditorScene::OnCreateGroupForSelection()
    {
-      std::vector<dtCore::RefPtr<dtDAL::PropertyContainer> > selection = GetSelection();
+      std::vector<dtCore::RefPtr<dtCore::PropertyContainer> > selection = GetSelection();
       if (selection.empty()) return;
 
       GroupNode* groupNode = dynamic_cast<GroupNode*>(CreateNode("Group Box", "Core", 0.0f, 0.0f));

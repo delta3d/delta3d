@@ -58,14 +58,14 @@
 #include <dtCore/scene.h>
 #include <dtCore/object.h>
 #include <dtActors/engineactorregistry.h>
-#include <dtDAL/librarymanager.h>
-#include <dtDAL/map.h>
-#include <dtDAL/datatype.h>
-#include <dtDAL/project.h>
-#include <dtDAL/mapxml.h>
-#include <dtDAL/actorproperty.h>
-#include <dtDAL/resourceactorproperty.h>
-#include <dtDAL/librarymanager.h>
+#include <dtCore/librarymanager.h>
+#include <dtCore/map.h>
+#include <dtCore/datatype.h>
+#include <dtCore/project.h>
+#include <dtCore/mapxml.h>
+#include <dtCore/actorproperty.h>
+#include <dtCore/resourceactorproperty.h>
+#include <dtCore/librarymanager.h>
 #include <dtUtil/datapathutils.h>
 #include <dtUtil/log.h>
 #include <algorithm>
@@ -131,7 +131,7 @@ namespace dtEditQt
             mCreateInstanceBtn->setEnabled(true);
 
             // Set the current resource.
-            EditorData::GetInstance().setCurrentResource(dtDAL::DataType::PREFAB, selectedWidget->getResourceDescriptor());
+            EditorData::GetInstance().setCurrentResource(dtCore::DataType::PREFAB, selectedWidget->getResourceDescriptor());
             return;
       }
 
@@ -140,7 +140,7 @@ namespace dtEditQt
       mCreateInstanceBtn->setEnabled(false);
 
       // Clear the current resource.
-      EditorData::GetInstance().setCurrentResource(dtDAL::DataType::PREFAB, dtDAL::ResourceDescriptor());
+      EditorData::GetInstance().setCurrentResource(dtCore::DataType::PREFAB, dtCore::ResourceDescriptor());
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -207,7 +207,7 @@ namespace dtEditQt
    void PrefabBrowser::exportNewPrefabSlot()
    {
       PrefabSaveDialog dlg(this);
-      std::string contextDir = dtDAL::Project::GetInstance().GetContext();
+      std::string contextDir = dtCore::Project::GetInstance().GetContext();
       std::string contextDirPlusPrefab = contextDir + "/Prefabs";
       std::string categoryRelPath = mCurrentDir.substr(contextDirPlusPrefab.size());
 
@@ -307,19 +307,19 @@ namespace dtEditQt
       if (selectedWidget && selectedWidget->isResource())
       {
          dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
-         fileUtils.PushDirectory(dtDAL::Project::GetInstance().GetContext());
+         fileUtils.PushDirectory(dtCore::Project::GetInstance().GetContext());
 
-         dtDAL::ResourceDescriptor descriptor = selectedWidget->getResourceDescriptor();
-         std::string fullPath = dtDAL::Project::GetInstance().GetResourcePath(descriptor);
+         dtCore::ResourceDescriptor descriptor = selectedWidget->getResourceDescriptor();
+         std::string fullPath = dtCore::Project::GetInstance().GetResourcePath(descriptor);
 
          try
          {
             EditorData::GetInstance().getMainWindow()->startWaitCursor();
             EditorEvents::GetInstance().emitBeginChangeTransaction();
 
-            dtCore::RefPtr<dtDAL::Map> currMap = EditorData::GetInstance().getCurrentMap();
-            std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> > proxyList;
-            dtCore::RefPtr<dtDAL::MapParser> parser = new dtDAL::MapParser;
+            dtCore::RefPtr<dtCore::Map> currMap = EditorData::GetInstance().getCurrentMap();
+            std::vector<dtCore::RefPtr<dtCore::BaseActorObject> > proxyList;
+            dtCore::RefPtr<dtCore::MapParser> parser = new dtCore::MapParser;
             parser->ParsePrefab(fullPath, proxyList, currMap.get());
 
             // Auto select all of the proxies.
@@ -343,7 +343,7 @@ namespace dtEditQt
             // Un-select all proxies currently selected.
             for (; itor != itorEnd; ++itor)
             {
-               dtDAL::BaseActorObject* proxy = const_cast<dtDAL::BaseActorObject*>(itor->get());
+               dtCore::BaseActorObject* proxy = const_cast<dtCore::BaseActorObject*>(itor->get());
 
                // Un-highlight the currently selected proxy.
                if (overlay->isActorSelected(proxy))
@@ -358,7 +358,7 @@ namespace dtEditQt
 
             for (int proxyIndex = 0; proxyIndex < (int)proxyList.size(); proxyIndex++)
             {
-               dtDAL::BaseActorObject* proxy = proxyList[proxyIndex].get();
+               dtCore::BaseActorObject* proxy = proxyList[proxyIndex].get();
 
                currMap->AddProxy(*proxy, true);
                currMap->AddActorToGroup(groupIndex, proxy);
@@ -366,8 +366,8 @@ namespace dtEditQt
                // Notify the creation of the proxies.
                EditorEvents::GetInstance().emitActorProxyCreated(proxy, false);
 
-               dtDAL::TransformableActorProxy* tProxy =
-                  dynamic_cast<dtDAL::TransformableActorProxy*>(proxy);
+               dtCore::TransformableActorProxy* tProxy =
+                  dynamic_cast<dtCore::TransformableActorProxy*>(proxy);
 
                if (tProxy)
                {
@@ -414,13 +414,13 @@ namespace dtEditQt
          EditorData::GetInstance().getMainWindow()->startWaitCursor();
 
          // create our new object
-         dtCore::RefPtr<dtDAL::BaseActorObject> proxy =
-            dtDAL::LibraryManager::GetInstance().CreateActorProxy("dtActors", "Prefab");
+         dtCore::RefPtr<dtCore::BaseActorObject> proxy =
+            dtCore::LibraryManager::GetInstance().CreateActorProxy("dtActors", "Prefab");
 
          if (proxy.valid())
          {
             // add the new proxy to the map
-            dtCore::RefPtr<dtDAL::Map> mapPtr = EditorData::GetInstance().getCurrentMap();
+            dtCore::RefPtr<dtCore::Map> mapPtr = EditorData::GetInstance().getCurrentMap();
             if (mapPtr.valid())
             {
                mapPtr->AddProxy(*(proxy.get()), true);
@@ -433,8 +433,8 @@ namespace dtEditQt
             }
 
             // Set the prefab resource of the actor to the current prefab.
-            dtDAL::ResourceActorProperty* resourceProp = NULL;
-            resourceProp = dynamic_cast<dtDAL::ResourceActorProperty*>(proxy->GetProperty("PrefabResource"));
+            dtCore::ResourceActorProperty* resourceProp = NULL;
+            resourceProp = dynamic_cast<dtCore::ResourceActorProperty*>(proxy->GetProperty("PrefabResource"));
             if (resourceProp)
             {
                resourceProp->SetValue(selectedWidget->getResourceDescriptor());
@@ -447,7 +447,7 @@ namespace dtEditQt
             EditorEvents::GetInstance().emitEndChangeTransaction();
 
             // Now, let the world that it should select the new actor proxy.
-            std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> > actors;
+            std::vector<dtCore::RefPtr<dtCore::BaseActorObject> > actors;
             actors.push_back(proxy.get());
             EditorEvents::GetInstance().emitActorsSelected(actors);
          }
@@ -524,7 +524,7 @@ namespace dtEditQt
 
          //Deleting the prefab is a go!
          std::string prefabFullPath = dtEditQt::EditorData::GetInstance().getCurrentProjectContext();        
-         dtDAL::ResourceDescriptor& resDes = selItem->getResourceDescriptor();
+         dtCore::ResourceDescriptor& resDes = selItem->getResourceDescriptor();
          QString prefabName = resDes.GetResourceIdentifier().c_str();
          prefabName = prefabName.replace(QRegExp("::"), QString("/"));
          prefabFullPath += "/" + prefabName.toStdString();
@@ -599,7 +599,7 @@ namespace dtEditQt
       // resets everything and marks the current expansion
       clearPrefabTree();
 
-      dtDAL::Project& project = dtDAL::Project::GetInstance();
+      dtCore::Project& project = dtCore::Project::GetInstance();
 
       // We can't do anything if we don't have a valid context.
       if (!project.IsContextValid())
@@ -610,7 +610,7 @@ namespace dtEditQt
       EditorData::GetInstance().getMainWindow()->startWaitCursor();
 
       project.Refresh();
-      //project.GetResourcesOfType(dtDAL::DataType::PREFAB, mPrefabList);
+      //project.GetResourcesOfType(dtCore::DataType::PREFAB, mPrefabList);
 
       QIcon resourceIcon;
       resourceIcon.addPixmap(QPixmap(UIResources::ICON_ACTOR.c_str()));
@@ -656,7 +656,7 @@ namespace dtEditQt
          //Show a "Go up a folder" icon
          nextIconFullPath = UIResources::ICON_UP_FOLDER;
          ResourceListWidgetItem* aWidget = new ResourceListWidgetItem(
-                                           dtDAL::ResourceDescriptor(),
+                                           dtCore::ResourceDescriptor(),
                                            QIcon(nextIconFullPath.c_str()),
                                            "Up");         
 
@@ -704,7 +704,7 @@ namespace dtEditQt
                continue;
             }
 
-            dtCore::RefPtr<dtDAL::MapParser> parser = new dtDAL::MapParser;            
+            dtCore::RefPtr<dtCore::MapParser> parser = new dtCore::MapParser;            
             std::string iconFileName = parser->GetPrefabIconFileName(nextFileFullPath);            
             
             nextIconFullPath = "";
@@ -732,7 +732,7 @@ namespace dtEditQt
          { 
             //If this is a folder, DON'T give this a ResourceDescriptor:
             ResourceListWidgetItem* aWidget = new ResourceListWidgetItem(
-               dtDAL::ResourceDescriptor(),                              
+               dtCore::ResourceDescriptor(),                              
                QIcon(nextIconFullPath.c_str()), nextFile.c_str());
             aWidget->setCategoryFullName(nextFileFullPath.c_str());            
 
@@ -760,9 +760,9 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   dtDAL::ResourceDescriptor PrefabBrowser::createResDescriptorFromPath(std::string path)
+   dtCore::ResourceDescriptor PrefabBrowser::createResDescriptorFromPath(std::string path)
    {
-      QString relPath = path.substr(dtDAL::Project::GetInstance().GetContext().length() + 1).c_str();
+      QString relPath = path.substr(dtCore::Project::GetInstance().GetContext().length() + 1).c_str();
 
       //remove redundant slashes first:
       QRegExp re("\\\\\\\\");
@@ -778,7 +778,7 @@ namespace dtEditQt
 
       relPath = relPath.replace(QRegExp("[\\\\/]"),QString("::"));
 
-      dtDAL::ResourceDescriptor resDesc(relPath.toStdString(), relPath.toStdString());
+      dtCore::ResourceDescriptor resDesc(relPath.toStdString(), relPath.toStdString());
 
       return resDesc;
    }

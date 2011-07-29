@@ -29,9 +29,9 @@
 
 #include <dtCore/refptr.h>
 
-#include <dtDAL/booleanactorproperty.h>
-#include <dtDAL/datatype.h>
-#include <dtDAL/longactorproperty.h>
+#include <dtCore/booleanactorproperty.h>
+#include <dtCore/datatype.h>
+#include <dtCore/longactorproperty.h>
 
 #include <dtHLAGM/ddmmultienumeratedcalculator.h>
 #include <dtHLAGM/ddmregiondata.h>
@@ -69,31 +69,31 @@ class DDMMultiEnumeratedCalculatorTests : public CPPUNIT_NS::TestFixture
                   
       void TestEnabledProperties()
       {   
-         TestProperty<dtDAL::BooleanActorProperty, bool>(dtHLAGM::DDMMultiEnumeratedCalculator::PROP_SECOND_DIMENSION_ENABLED, false, true);
+         TestProperty<dtCore::BooleanActorProperty, bool>(dtHLAGM::DDMMultiEnumeratedCalculator::PROP_SECOND_DIMENSION_ENABLED, false, true);
          CPPUNIT_ASSERT(mCalc->IsSecondDimensionEnabled());
 
-         TestProperty<dtDAL::BooleanActorProperty, bool>(dtHLAGM::DDMMultiEnumeratedCalculator::PROP_THIRD_DIMENSION_ENABLED, false, true);
+         TestProperty<dtCore::BooleanActorProperty, bool>(dtHLAGM::DDMMultiEnumeratedCalculator::PROP_THIRD_DIMENSION_ENABLED, false, true);
          CPPUNIT_ASSERT(mCalc->IsThirdDimensionEnabled());
       }
          
       void TestMinMaxProperties()
       {   
-         TestProperty<dtDAL::LongActorProperty, long>(dtHLAGM::DDMMultiEnumeratedCalculator::PROP_SECOND_DIMENSION_MIN, 0, 5);
+         TestProperty<dtCore::LongActorProperty, long>(dtHLAGM::DDMMultiEnumeratedCalculator::PROP_SECOND_DIMENSION_MIN, 0, 5);
          CPPUNIT_ASSERT(mCalc->GetSecondDimensionMinimum());
 
-         TestProperty<dtDAL::LongActorProperty, long>(dtHLAGM::DDMMultiEnumeratedCalculator::PROP_SECOND_DIMENSION_MAX, 1, 12);
+         TestProperty<dtCore::LongActorProperty, long>(dtHLAGM::DDMMultiEnumeratedCalculator::PROP_SECOND_DIMENSION_MAX, 1, 12);
          CPPUNIT_ASSERT(mCalc->GetSecondDimensionMaximum());
 
-         TestProperty<dtDAL::LongActorProperty, long>(dtHLAGM::DDMMultiEnumeratedCalculator::PROP_THIRD_DIMENSION_MIN, 0, 5);
+         TestProperty<dtCore::LongActorProperty, long>(dtHLAGM::DDMMultiEnumeratedCalculator::PROP_THIRD_DIMENSION_MIN, 0, 5);
          CPPUNIT_ASSERT(mCalc->GetThirdDimensionMinimum());
 
-         TestProperty<dtDAL::LongActorProperty, long>(dtHLAGM::DDMMultiEnumeratedCalculator::PROP_THIRD_DIMENSION_MAX, 1, 12);
+         TestProperty<dtCore::LongActorProperty, long>(dtHLAGM::DDMMultiEnumeratedCalculator::PROP_THIRD_DIMENSION_MAX, 1, 12);
          CPPUNIT_ASSERT(mCalc->GetThirdDimensionMaximum());
 
-         TestProperty<dtDAL::LongActorProperty, long>(dtHLAGM::DDMMultiEnumeratedCalculator::PROP_SECOND_DIMENSION_VALUE, 0, 5);
+         TestProperty<dtCore::LongActorProperty, long>(dtHLAGM::DDMMultiEnumeratedCalculator::PROP_SECOND_DIMENSION_VALUE, 0, 5);
          CPPUNIT_ASSERT(mCalc->GetSecondDimensionValue());
 
-         TestProperty<dtDAL::LongActorProperty, long>(dtHLAGM::DDMMultiEnumeratedCalculator::PROP_THIRD_DIMENSION_VALUE, 0, 12);
+         TestProperty<dtCore::LongActorProperty, long>(dtHLAGM::DDMMultiEnumeratedCalculator::PROP_THIRD_DIMENSION_VALUE, 0, 12);
          CPPUNIT_ASSERT(mCalc->GetThirdDimensionValue());
       }
 

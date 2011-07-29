@@ -21,8 +21,8 @@
 #include <prefix/dtgameprefix.h>
 #include <dtGame/taskcomponent.h>
 
-#include <dtDAL/actortype.h>
-#include <dtDAL/booleanactorproperty.h>
+#include <dtCore/actortype.h>
+#include <dtCore/booleanactorproperty.h>
 
 #include <dtGame/actorupdatemessage.h>
 #include <dtGame/basemessages.h>
@@ -105,8 +105,8 @@ namespace dtGame
       }
 
       mTaskList.insert(std::make_pair(taskProxy.GetName(),&taskProxy));
-      const dtDAL::BooleanActorProperty *prop =
-         static_cast<const dtDAL::BooleanActorProperty *>(taskProxy.GetProperty("IsTopLevel"));
+      const dtCore::BooleanActorProperty *prop =
+         static_cast<const dtCore::BooleanActorProperty *>(taskProxy.GetProperty("IsTopLevel"));
       if (prop != NULL && prop->GetValue())
          mTopLevelTaskList.insert(std::make_pair(taskProxy.GetName(),&taskProxy));
    }

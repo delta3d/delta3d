@@ -58,8 +58,8 @@
 
 #include <dtUtil/datapathutils.h>
 
-#include <dtDAL/project.h>
-#include <dtDAL/resourcedescriptor.h>
+#include <dtCore/project.h>
+#include <dtCore/resourcedescriptor.h>
 
 #include <osg/ArgumentParser>
 #include <osg/ApplicationUsage>
@@ -137,7 +137,7 @@ void MyGameEntryPoint::OnStartup(dtGame::GameApplication& app)
 
    LOG_ALWAYS("Path list is: " + dtUtil::GetDataFilePathList() );
 
-   dtDAL::Project::GetInstance().SetContext("StageProject");
+   dtCore::Project::GetInstance().SetContext("StageProject");
 
    // Load the map we created in STAGE.
    app.GetGameManager()->ChangeMap(mMapName);
@@ -160,8 +160,8 @@ void MyGameEntryPoint::OnStartup(dtGame::GameApplication& app)
 
    //Load HLA Configuration
    dtHLAGM::HLAComponentConfig hlaCC;
-   dtDAL::ResourceDescriptor rd("Federations:HLAMapping.xml", "Federations:HLAMapping.xml");
-   const std::string mappingPath = dtDAL::Project::GetInstance().GetResourcePath(rd);
+   dtCore::ResourceDescriptor rd("Federations:HLAMapping.xml", "Federations:HLAMapping.xml");
+   const std::string mappingPath = dtCore::Project::GetInstance().GetResourcePath(rd);
    if (!mappingPath.empty())
    {
       hlaCC.LoadConfiguration(*hlaComp, mappingPath);
@@ -173,8 +173,8 @@ void MyGameEntryPoint::OnStartup(dtGame::GameApplication& app)
       throw dtGame::GameApplicationConfigException( ss.str(), __FILE__, __LINE__);
    }
 
-   dtDAL::ResourceDescriptor rd2("Federations:RPR-FOM.fed", "Federations:RPR-FOM.fed");
-   const std::string fedPath = dtDAL::Project::GetInstance().GetResourcePath(rd2);
+   dtCore::ResourceDescriptor rd2("Federations:RPR-FOM.fed", "Federations:RPR-FOM.fed");
+   const std::string fedPath = dtCore::Project::GetInstance().GetResourcePath(rd2);
 
    if (!fedPath.empty())
    {
@@ -200,7 +200,7 @@ void MyGameEntryPoint::OnStartup(dtGame::GameApplication& app)
    app.GetGameManager()->GetScene().UseSceneLight(true);
 
    // Attach our camera to the tank from the map
-   std::vector<dtDAL::BaseActorObject*> tanks;
+   std::vector<dtCore::BaseActorObject*> tanks;
    app.GetGameManager()->FindActorsByName("HoverTank", tanks);
    if (tanks.size() > 0 && tanks[0] != NULL)
    {

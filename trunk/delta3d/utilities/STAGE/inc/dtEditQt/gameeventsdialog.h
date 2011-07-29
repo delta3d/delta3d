@@ -43,7 +43,7 @@ class QPushButton;
 class QStringList;
 class QTableWidgetItem;
 
-namespace dtDAL
+namespace dtCore
 {
    class GameEvent;
 }
@@ -59,7 +59,7 @@ namespace dtEditQt
    class EventTreeItem : public QTreeWidgetItem
    {
    public:
-      EventTreeItem(QTreeWidget* parent, dtDAL::GameEvent* gameEvent)
+      EventTreeItem(QTreeWidget* parent, dtCore::GameEvent* gameEvent)
          : QTreeWidgetItem(parent)
          , mGameEvent(gameEvent)
       {
@@ -67,10 +67,10 @@ namespace dtEditQt
 
       virtual ~EventTreeItem() { }
 
-      dtDAL::GameEvent* GetEvent() { return mGameEvent; }
+      dtCore::GameEvent* GetEvent() { return mGameEvent; }
 
    private:
-      dtDAL::GameEvent* mGameEvent;
+      dtCore::GameEvent* mGameEvent;
    };
 
    ///////////////////////////////////////////////////////

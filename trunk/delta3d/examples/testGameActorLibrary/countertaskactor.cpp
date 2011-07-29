@@ -27,7 +27,7 @@
 */
 #include "countertaskactor.h"
 
-#include <dtDAL/intactorproperty.h>
+#include <dtCore/intactorproperty.h>
 
 #include <dtGame/actorupdatemessage.h>
 #include <dtGame/gamemanager.h>
@@ -64,13 +64,13 @@ void CounterTaskActorProxy::BuildPropertyMap()
 {
    dtActors::TaskActorProxy::BuildPropertyMap();
    
-   AddProperty(new dtDAL::IntActorProperty("Counter","Counter",
-            dtDAL::IntActorProperty::SetFuncType(this,&CounterTaskActorProxy::SetCounter),
-            dtDAL::IntActorProperty::GetFuncType(this,&CounterTaskActorProxy::GetCounter)));
+   AddProperty(new dtCore::IntActorProperty("Counter","Counter",
+            dtCore::IntActorProperty::SetFuncType(this,&CounterTaskActorProxy::SetCounter),
+            dtCore::IntActorProperty::GetFuncType(this,&CounterTaskActorProxy::GetCounter)));
       
-   AddProperty(new dtDAL::IntActorProperty("TargetCount","TargetCount",
-            dtDAL::IntActorProperty::SetFuncType(this,&CounterTaskActorProxy::SetTargetCount),
-            dtDAL::IntActorProperty::GetFuncType(this,&CounterTaskActorProxy::GetTargetCount)));
+   AddProperty(new dtCore::IntActorProperty("TargetCount","TargetCount",
+            dtCore::IntActorProperty::SetFuncType(this,&CounterTaskActorProxy::SetTargetCount),
+            dtCore::IntActorProperty::GetFuncType(this,&CounterTaskActorProxy::GetTargetCount)));
 }
 
 //////////////////////////////////////////////////////////////////////////////

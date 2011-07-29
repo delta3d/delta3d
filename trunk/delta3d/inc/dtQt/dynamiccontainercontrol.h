@@ -33,7 +33,7 @@
 #include <dtQt/dynamicabstractparentcontrol.h>
 #include <dtQt/dynamicsubwidgets.h>
 
-namespace dtDAL
+namespace dtCore
 {
     class ContainerActorProperty;
 }
@@ -62,7 +62,7 @@ namespace dtQt
       * @see DynamicAbstractControl#InitializeData
       */
       virtual void InitializeData(DynamicAbstractControl* newParent, PropertyEditorModel* model,
-         dtDAL::PropertyContainer* newPC, dtDAL::ActorProperty* property);
+         dtCore::PropertyContainer* newPC, dtCore::ActorProperty* property);
 
       /**
        * @see DynamicAbstractControl#updateEditorFromModel
@@ -112,7 +112,7 @@ namespace dtQt
 
       bool resizeChildren();
 
-      dtCore::RefPtr<dtDAL::ContainerActorProperty> mProperty;
+      dtCore::RefPtr<dtCore::ContainerActorProperty> mProperty;
 
       SubQLabel* mTemporaryEditControl;
    };

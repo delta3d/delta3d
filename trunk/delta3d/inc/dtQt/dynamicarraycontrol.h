@@ -33,7 +33,7 @@
 #include <dtQt/dynamicabstractparentcontrol.h>
 #include <dtQt/dynamicsubwidgets.h>
 
-namespace dtDAL
+namespace dtCore
 {
     class ArrayActorPropertyBase;
 }
@@ -73,7 +73,7 @@ namespace dtQt
        * @see DynamicAbstractControl#InitializeData
        */
       virtual void InitializeData(DynamicAbstractControl* newParent, PropertyEditorModel* model,
-         dtDAL::PropertyContainer* newPC, dtDAL::ActorProperty* property);
+         dtCore::PropertyContainer* newPC, dtCore::ActorProperty* property);
 
       /**
        * @see DynamicAbstractControl#createEditor
@@ -122,7 +122,7 @@ namespace dtQt
       /**
        * Retrieves the array property.
        */
-      dtDAL::ArrayActorPropertyBase* GetProperty() const {return mProperty;}
+      dtCore::ArrayActorPropertyBase* GetProperty() const {return mProperty;}
 
    public slots:
       /**
@@ -151,7 +151,7 @@ namespace dtQt
        */
       void UpdateButtonStates();
 
-      dtCore::RefPtr<dtDAL::ArrayActorPropertyBase> mProperty;
+      dtCore::RefPtr<dtCore::ArrayActorPropertyBase> mProperty;
 
       SubQLabel*      mTextLabel;
       SubQToolButton* mAddButton;

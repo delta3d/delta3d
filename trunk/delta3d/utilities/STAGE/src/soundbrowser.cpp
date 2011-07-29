@@ -42,7 +42,7 @@
 #include "dtEditQt/editorevents.h"
 #include "dtEditQt/uiresources.h"
 
-#include <dtDAL/project.h>
+#include <dtCore/project.h>
 
 #ifdef __APPLE__
 #include <OpenAL/alut.h>
@@ -53,7 +53,7 @@
 namespace dtEditQt
 {
    ///////////////////////////////////////////////////////////////////////////////
-   SoundBrowser::SoundBrowser(dtDAL::DataType& type, QWidget* parent)
+   SoundBrowser::SoundBrowser(dtCore::DataType& type, QWidget* parent)
       : ResourceAbstractBrowser(&type, parent)
    {
       // This sets our resource icon that is visible on leaf nodes
@@ -129,10 +129,10 @@ namespace dtEditQt
          QString file;
          QString context;
 
-         dtDAL::Project& project = dtDAL::Project::GetInstance();
+         dtCore::Project& project = dtCore::Project::GetInstance();
 
          // Find the currently selected tree item
-         dtDAL::ResourceDescriptor resource = EditorData::GetInstance().getCurrentResource(dtDAL::DataType::SOUND);
+         dtCore::ResourceDescriptor resource = EditorData::GetInstance().getCurrentResource(dtCore::DataType::SOUND);
 
          if (!resource.GetResourceIdentifier().empty())
          {

@@ -24,7 +24,7 @@
 #ifndef __WATER_GRID_BUILDER_H__
 #define __WATER_GRID_BUILDER_H__
 
-#include <dtDAL/plugin_export.h>
+#include <dtCore/plugin_export.h>
 #include <dtActors/watergridactor.h>
 
 

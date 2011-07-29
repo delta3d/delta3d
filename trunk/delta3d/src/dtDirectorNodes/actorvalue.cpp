@@ -22,8 +22,8 @@
 #include <dtDirector/colors.h>
 #include <dtDirectorNodes/actorvalue.h>
 
-#include <dtDAL/actoridactorproperty.h>
-#include <dtDAL/actorproperty.h>
+#include <dtCore/actoridactorproperty.h>
+#include <dtCore/actorproperty.h>
 
 #include <dtDirector/director.h>
 
@@ -55,17 +55,17 @@ namespace dtDirector
    {
       ValueNode::BuildPropertyMap();
 
-      mProperty = new dtDAL::ActorIDActorProperty(
+      mProperty = new dtCore::ActorIDActorProperty(
          "Value", "Value",
-         dtDAL::ActorIDActorProperty::SetFuncType(this, &ActorValue::SetValue),
-         dtDAL::ActorIDActorProperty::GetFuncType(this, &ActorValue::GetValue),
+         dtCore::ActorIDActorProperty::SetFuncType(this, &ActorValue::SetValue),
+         dtCore::ActorIDActorProperty::GetFuncType(this, &ActorValue::GetValue),
          "", "The value.");
       AddProperty(mProperty);
 
-      mInitialProperty = new dtDAL::ActorIDActorProperty(
+      mInitialProperty = new dtCore::ActorIDActorProperty(
          "Initial Value", "Initial Value",
-         dtDAL::ActorIDActorProperty::SetFuncType(this, &ActorValue::SetInitialValue),
-         dtDAL::ActorIDActorProperty::GetFuncType(this, &ActorValue::GetInitialValue),
+         dtCore::ActorIDActorProperty::SetFuncType(this, &ActorValue::SetInitialValue),
+         dtCore::ActorIDActorProperty::GetFuncType(this, &ActorValue::GetInitialValue),
          "", "The initial value.");
       AddProperty(mInitialProperty);
    }

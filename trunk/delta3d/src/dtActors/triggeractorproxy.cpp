@@ -24,16 +24,16 @@
 
 #include <dtABC/trigger.h>
 
-#include <dtDAL/actoractorproperty.h>
-#include <dtDAL/booleanactorproperty.h>
-#include <dtDAL/doubleactorproperty.h>
+#include <dtCore/actoractorproperty.h>
+#include <dtCore/booleanactorproperty.h>
+#include <dtCore/doubleactorproperty.h>
 
-#include <dtDAL/functor.h>
+#include <dtCore/functor.h>
 
 #include <sstream>
 
 using namespace dtABC;
-using namespace dtDAL;
+using namespace dtCore;
 
 namespace dtActors
 {
@@ -50,7 +50,7 @@ namespace dtActors
    ///////////////////////////////////////////////////////////////////////////////
    void TriggerActorProxy::BuildPropertyMap()
    {
-      dtDAL::BaseActorObject::BuildPropertyMap();
+      dtCore::BaseActorObject::BuildPropertyMap();
 
       const std::string GROUPNAME = "Trigger";
 

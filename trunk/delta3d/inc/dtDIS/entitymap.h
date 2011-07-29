@@ -23,8 +23,8 @@
 #define ENTITYMAP_H__
 
 #include <dtDIS/dtdisexport.h>
-#include <dtDAL/actortype.h>           // for mapped dependency type.
-#include <dtDAL/resourcedescriptor.h>  // for mapped type
+#include <dtCore/actortype.h>           // for mapped dependency type.
+#include <dtCore/resourcedescriptor.h>  // for mapped type
 #include <DIS/EntityType.h>            // for mapped dependency type.
 
 #include <map>
@@ -72,13 +72,13 @@ namespace dtDIS
       * @param at The ActorType to use
       */
       void SetEntityActorType(const DIS::EntityType& eid, 
-                              const dtDAL::ActorType* at);
+                              const dtCore::ActorType* at);
       
       /** Get the ActorType mapped to the supplied DIS EntityType.
       * @param entityType The DIS Entity type
       * @return The mapped ActorType (could be NULL)
       */     
-      const dtDAL::ActorType* GetMappedActorType(const DIS::EntityType& entityType) const;
+      const dtCore::ActorType* GetMappedActorType(const DIS::EntityType& entityType) const;
 
       /** Remove any ActorTypes mapped to the supplied DIS EntityType.
       * @param entityType The DIS Entity type
@@ -90,14 +90,14 @@ namespace dtDIS
       * @param resource The ResourceDescriptor to use
       */
       void SetEntityResource(const DIS::EntityType& eid, 
-                             const dtDAL::ResourceDescriptor& resource);
+                             const dtCore::ResourceDescriptor& resource);
 
       
       /** Get the ActorType mapped to the supplied DIS EntityType.
       * @param entityType The DIS Entity type
       * @return The mapped ActorType (could be NULL)
       */     
-      const dtDAL::ResourceDescriptor& GetMappedResource(const DIS::EntityType& entityType) const;
+      const dtCore::ResourceDescriptor& GetMappedResource(const DIS::EntityType& entityType) const;
 
       /** Remove any ResourceDescriptors mapped to the supplied DIS EntityType.
       * @param entityType The DIS Entity type
@@ -105,14 +105,14 @@ namespace dtDIS
       void RemoveEntityResource(const DIS::EntityType& eid);
 
    private:
-      const dtDAL::ActorType* GetBestMatchedActorType(const DIS::EntityType& entityType) const;
-      const dtDAL::ResourceDescriptor& GetBestMatchedResource(const DIS::EntityType& entityType) const;
+      const dtCore::ActorType* GetBestMatchedActorType(const DIS::EntityType& entityType) const;
+      const dtCore::ResourceDescriptor& GetBestMatchedResource(const DIS::EntityType& entityType) const;
 
       /// a convenience typedef
-      typedef dtCore::RefPtr<const dtDAL::ActorType> RefActorType;
+      typedef dtCore::RefPtr<const dtCore::ActorType> RefActorType;
 
       typedef std::map<DIS::EntityType,
-         std::pair<RefActorType, dtDAL::ResourceDescriptor>,details::EntityTypeCompare > EntityMapping;
+         std::pair<RefActorType, dtCore::ResourceDescriptor>,details::EntityTypeCompare > EntityMapping;
 
       EntityMapping::const_iterator FindBestMatchedEntityType(const DIS::EntityType &entityType) const;
 

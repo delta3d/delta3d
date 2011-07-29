@@ -39,6 +39,27 @@ namespace dtCore
 
          static ExceptionEnum INVALID_PARAMETER;
          static ExceptionEnum INVALID_CONTEXT;
+         static ExceptionEnum BaseException;
+
+         static ExceptionEnum ProjectInvalidContext;
+         static ExceptionEnum ProjectReadOnly;
+         static ExceptionEnum ProjectIOException;
+         static ExceptionEnum ProjectFileNotFound;
+         static ExceptionEnum ProjectResourceError;
+         static ExceptionEnum ProjectException;
+
+         static ExceptionEnum MapLoadParsingError;
+         static ExceptionEnum MapSaveError;
+         static ExceptionEnum MapException;
+
+         static ExceptionEnum XMLLoadParsingError;
+         static ExceptionEnum XMLSaveError;
+         static ExceptionEnum XMLException;
+
+         static ExceptionEnum ObjectFactoryUnknownType;
+
+         static ExceptionEnum InvalidActorException;
+         static ExceptionEnum InvalidParameter;
    
    protected:
       ExceptionEnum(const std::string &name):Enumeration(name)
@@ -62,6 +83,97 @@ namespace dtCore
    	virtual ~InvalidContextException() {};
    };
    
+   class DT_CORE_EXPORT BaseException : public dtUtil::Exception
+   {
+   public:
+      BaseException(const std::string& message, const std::string& filename, unsigned int linenum);
+      virtual ~BaseException() {};
+   };
+
+   class DT_CORE_EXPORT ProjectException : public dtUtil::Exception
+   {
+   public:
+      ProjectException(const std::string& message, const std::string& filename, unsigned int linenum);
+      virtual ~ProjectException() {};
+   };
+
+   class DT_CORE_EXPORT ProjectInvalidContextException : public ProjectException
+   {
+   public:
+      ProjectInvalidContextException(const std::string& message, const std::string& filename, unsigned int linenum);
+      virtual ~ProjectInvalidContextException() {};
+   };
+
+   class DT_CORE_EXPORT ProjectReadOnlyException : public ProjectException
+   {
+   public:
+      ProjectReadOnlyException(const std::string& message, const std::string& filename, unsigned int linenum);
+      virtual ~ProjectReadOnlyException() {};
+   };
+
+   class DT_CORE_EXPORT ProjectFileNotFoundException : public ProjectException
+   {
+   public:
+      ProjectFileNotFoundException(const std::string& message, const std::string& filename, unsigned int linenum);
+      virtual ~ProjectFileNotFoundException() {};
+   };
+
+   class DT_CORE_EXPORT ProjectResourceErrorException : public ProjectException
+   {
+   public:
+      ProjectResourceErrorException(const std::string& message, const std::string& filename, unsigned int linenum);
+      virtual ~ProjectResourceErrorException() {};
+   };
+
+   class DT_CORE_EXPORT MapParsingException : public dtUtil::Exception
+   {
+   public:
+      MapParsingException(const std::string& message, const std::string& filename, unsigned int linenum);
+      virtual ~MapParsingException() {};
+   };
+
+   class DT_CORE_EXPORT MapSaveException : public dtUtil::Exception
+   {
+   public:
+      MapSaveException(const std::string& message, const std::string& filename, unsigned int linenum);
+      virtual ~MapSaveException() {};
+   };
+
+   class DT_CORE_EXPORT MapException : public dtUtil::Exception
+   {
+   public:
+      MapException(const std::string& message, const std::string& filename, unsigned int linenum);
+      virtual ~MapException() {};
+   };
+
+   class DT_CORE_EXPORT ProjectConfigSaveException : public dtUtil::Exception
+   {
+   public:
+      ProjectConfigSaveException(const std::string& message, const std::string& filename, unsigned int linenum);
+      virtual ~ProjectConfigSaveException() {};
+   };
+
+   class DT_CORE_EXPORT XMLLoadParsingException : public dtUtil::Exception
+   {
+   public:
+      XMLLoadParsingException(const std::string& message, const std::string& filename, unsigned int linenum);
+      virtual ~XMLLoadParsingException() {};
+   };
+
+   class DT_CORE_EXPORT ObjectFactoryUnknownTypeException : public dtUtil::Exception
+   {
+   public:
+      ObjectFactoryUnknownTypeException(const std::string& message, const std::string& filename, unsigned int linenum);
+      virtual ~ObjectFactoryUnknownTypeException() {};
+   };
+
+   class DT_CORE_EXPORT InvalidActorException : public dtUtil::Exception
+   {
+   public:
+      InvalidActorException(const std::string& message, const std::string& filename, unsigned int linenum);
+      virtual ~InvalidActorException() {};
+   };
+
 }//namespace dtCore
 
 #endif // __DELTA_CORE_EXCEPTION_ENUM_H__

@@ -47,7 +47,7 @@ namespace dtHLAGM
    {}
 
    /////////////////////////////////////////////////////////////////////
-   const dtDAL::ActorType& ObjectToActor::GetActorType() const
+   const dtCore::ActorType& ObjectToActor::GetActorType() const
    {
       return *mActorType;
    }
@@ -159,7 +159,7 @@ namespace dtHLAGM
    }
 
    /////////////////////////////////////////////////////////////////////
-   void ObjectToActor::SetActorType(const dtDAL::ActorType& type)
+   void ObjectToActor::SetActorType(const dtCore::ActorType& type)
    {
       mActorType = &type;
    }

@@ -22,11 +22,11 @@
 #include <prefix/dtgameprefix.h>
 #include <dtGame/gameactorproxy.h>
 
-#include <dtDAL/actoractorproperty.h>
-#include <dtDAL/actortype.h>
-#include <dtDAL/booleanactorproperty.h>
-#include <dtDAL/enumactorproperty.h>
-#include <dtDAL/stringactorproperty.h>
+#include <dtCore/actoractorproperty.h>
+#include <dtCore/actortype.h>
+#include <dtCore/booleanactorproperty.h>
+#include <dtCore/enumactorproperty.h>
+#include <dtCore/stringactorproperty.h>
 
 #include <dtGame/actorcomponent.h>
 #include <dtGame/actorupdatemessage.h>
@@ -110,7 +110,7 @@ GameActorProxy::~GameActorProxy()
 }
 
 /////////////////////////////////////////////////////////////////////////////
-void GameActorProxy::Init(const dtDAL::ActorType& actorType)
+void GameActorProxy::Init(const dtCore::ActorType& actorType)
 {
    BaseClass::Init(actorType);
    BuildInvokables();
@@ -126,9 +126,9 @@ void GameActorProxy::Init(const dtDAL::ActorType& actorType)
 void GameActorProxy::RemoveActorComponentProperties(ActorComponent& component)
 {
    // Remove the props from the game actor - Needed because RemoveProperty is protected
-   std::vector<dtDAL::ActorProperty*> toFill;
+   std::vector<dtCore::ActorProperty*> toFill;
    component.GetPropertyList(toFill);
-   std::vector<dtDAL::ActorProperty*>::iterator i = toFill.begin(), iend = toFill.end();
+   std::vector<dtCore::ActorProperty*>::iterator i = toFill.begin(), iend = toFill.end();
    for (; i != iend; ++i)
    {
       RemoveProperty((*i)->GetName());
@@ -139,9 +139,9 @@ void GameActorProxy::RemoveActorComponentProperties(ActorComponent& component)
 void GameActorProxy::AddActorComponentProperties(ActorComponent& component)
 {
    // Add the props from the game actor - See RemoveActorComponentProperties header method.
-   std::vector<dtDAL::ActorProperty*> toFill;
+   std::vector<dtCore::ActorProperty*> toFill;
    component.GetPropertyList(toFill);
-   std::vector<dtDAL::ActorProperty*>::iterator i = toFill.begin(), iend = toFill.end();
+   std::vector<dtCore::ActorProperty*>::iterator i = toFill.begin(), iend = toFill.end();
    for (; i != iend; ++i)
    {
       AddProperty(*i);
@@ -154,9 +154,9 @@ class AddPropsFunc
 public:
    void operator() (ActorComponent& ac)
    {
-      std::vector<dtDAL::ActorProperty*> toFill;
+      std::vector<dtCore::ActorProperty*> toFill;
       ac.GetPropertyList(toFill);
-      std::vector<dtDAL::ActorProperty*>::iterator i, iend;
+      std::vector<dtCore::ActorProperty*>::iterator i, iend;
       i = toFill.begin();
       iend = toFill.end();
       for (; i != iend; ++i)
@@ -172,14 +172,14 @@ void GameActorProxy::BuildPropertyMap()
 {
    GameActor& ga = GetGameActor();
    
-   dtDAL::PhysicalActorProxy::BuildPropertyMap();
+   dtCore::PhysicalActorProxy::BuildPropertyMap();
 
    static const dtUtil::RefString PROPERTY_IS_GAME_ACTOR("IsGameActor");
    static const dtUtil::RefString PROPERTY_IS_GAME_ACTOR_LABEL("Is Game Actor");
    static const dtUtil::RefString PROPERTY_IS_GAME_ACTOR_DESC("Read only property that always returns true, used to show in STAGE");
-   dtDAL::BooleanActorProperty *bap = new dtDAL::BooleanActorProperty(PROPERTY_IS_GAME_ACTOR, PROPERTY_IS_GAME_ACTOR_LABEL,
-      dtDAL::BooleanActorProperty::SetFuncType(),
-      dtDAL::BooleanActorProperty::GetFuncType(this, &GameActorProxy::IsGameActorProxy),
+   dtCore::BooleanActorProperty *bap = new dtCore::BooleanActorProperty(PROPERTY_IS_GAME_ACTOR, PROPERTY_IS_GAME_ACTOR_LABEL,
+      dtCore::BooleanActorProperty::SetFuncType(),
+      dtCore::BooleanActorProperty::GetFuncType(this, &GameActorProxy::IsGameActorProxy),
       PROPERTY_IS_GAME_ACTOR_DESC, "");
    bap->SetReadOnly(true);
    AddProperty(bap);
@@ -187,9 +187,9 @@ void GameActorProxy::BuildPropertyMap()
    static const dtUtil::RefString PROPERTY_IS_REMOTE("IsRemote");
    static const dtUtil::RefString PROPERTY_IS_REMOTE_LABEL("Is Remote");
    static const dtUtil::RefString PROPERTY_IS_REMOTE_DESC("Sets/Gets if a game actor is remote");
-   bap = new dtDAL::BooleanActorProperty(PROPERTY_IS_REMOTE, PROPERTY_IS_REMOTE_LABEL,
-      dtDAL::BooleanActorProperty::SetFuncType(),
-      dtDAL::BooleanActorProperty::GetFuncType(this, &GameActorProxy::IsRemote),
+   bap = new dtCore::BooleanActorProperty(PROPERTY_IS_REMOTE, PROPERTY_IS_REMOTE_LABEL,
+      dtCore::BooleanActorProperty::SetFuncType(),
+      dtCore::BooleanActorProperty::GetFuncType(this, &GameActorProxy::IsRemote),
       PROPERTY_IS_REMOTE_DESC, "");
    bap->SetReadOnly(true);
    AddProperty(bap);
@@ -197,36 +197,36 @@ void GameActorProxy::BuildPropertyMap()
    static const dtUtil::RefString PROPERTY_IS_PUBLISHED("IsPublished");
    static const dtUtil::RefString PROPERTY_IS_PUBLISHED_LABEL("Is Pubilshed");
    static const dtUtil::RefString PROPERTY_IS_PUBLISHED_DESC("Sets/Gets if a game actor is published");
-   bap = new dtDAL::BooleanActorProperty(PROPERTY_IS_PUBLISHED, PROPERTY_IS_PUBLISHED_LABEL,
-      dtDAL::BooleanActorProperty::SetFuncType(),
-      dtDAL::BooleanActorProperty::GetFuncType(this, &GameActorProxy::IsPublished),
+   bap = new dtCore::BooleanActorProperty(PROPERTY_IS_PUBLISHED, PROPERTY_IS_PUBLISHED_LABEL,
+      dtCore::BooleanActorProperty::SetFuncType(),
+      dtCore::BooleanActorProperty::GetFuncType(this, &GameActorProxy::IsPublished),
       PROPERTY_IS_PUBLISHED_DESC, "");
    bap->SetReadOnly(true);
    AddProperty(bap);
 
    static const dtUtil::RefString PROPERTY_INITIAL_OWNERSHIP("Initial Ownership");
    static const dtUtil::RefString PROPERTY_INITIAL_OWNERSHIP_DESC("Sets/Gets the initial ownership of the actor proxy");
-   AddProperty(new dtDAL::EnumActorProperty<Ownership>(PROPERTY_INITIAL_OWNERSHIP, PROPERTY_INITIAL_OWNERSHIP,
-      dtDAL::EnumActorProperty<Ownership>::SetFuncType(this, &GameActorProxy::SetInitialOwnership),
-      dtDAL::EnumActorProperty<Ownership>::GetFuncType(this, &GameActorProxy::GetInitialOwnership),
+   AddProperty(new dtCore::EnumActorProperty<Ownership>(PROPERTY_INITIAL_OWNERSHIP, PROPERTY_INITIAL_OWNERSHIP,
+      dtCore::EnumActorProperty<Ownership>::SetFuncType(this, &GameActorProxy::SetInitialOwnership),
+      dtCore::EnumActorProperty<Ownership>::GetFuncType(this, &GameActorProxy::GetInitialOwnership),
       PROPERTY_INITIAL_OWNERSHIP_DESC));
 
    static const dtUtil::RefString PROPERTY_LOCAL_ACTOR_ACCEPT_UPDATE_POLICY("Local Actor Update Policy");
    static const dtUtil::RefString PROPERTY_LOCAL_ACTOR_ACCEPT_UPDATE_POLICY_DESC(
       "Sets/Gets the policy of what to do when a local actor receives a remote message that it was updated.");
-   AddProperty(new dtDAL::EnumActorProperty<LocalActorUpdatePolicy>(PROPERTY_LOCAL_ACTOR_ACCEPT_UPDATE_POLICY,
+   AddProperty(new dtCore::EnumActorProperty<LocalActorUpdatePolicy>(PROPERTY_LOCAL_ACTOR_ACCEPT_UPDATE_POLICY,
       PROPERTY_LOCAL_ACTOR_ACCEPT_UPDATE_POLICY,
-      dtDAL::EnumActorProperty<LocalActorUpdatePolicy>::SetFuncType(this, &GameActorProxy::SetLocalActorUpdatePolicy),
-      dtDAL::EnumActorProperty<LocalActorUpdatePolicy>::GetFuncType(this, &GameActorProxy::GetLocalActorUpdatePolicy),
+      dtCore::EnumActorProperty<LocalActorUpdatePolicy>::SetFuncType(this, &GameActorProxy::SetLocalActorUpdatePolicy),
+      dtCore::EnumActorProperty<LocalActorUpdatePolicy>::GetFuncType(this, &GameActorProxy::GetLocalActorUpdatePolicy),
       PROPERTY_LOCAL_ACTOR_ACCEPT_UPDATE_POLICY_DESC));
 
    static const dtUtil::RefString PROPERTY_SHADER_GROUP("ShaderGroup");
    static const dtUtil::RefString PROPERTY_SHADER_GROUP_DESC("Sets the shader group on the game actor.");
    static const dtUtil::RefString GROUPNAME("ShaderParams");
 
-   AddProperty(new dtDAL::StringActorProperty(PROPERTY_SHADER_GROUP, PROPERTY_SHADER_GROUP,
-      dtDAL::StringActorProperty::SetFuncType(&ga, &GameActor::SetShaderGroup),
-      dtDAL::StringActorProperty::GetFuncType(&ga, &GameActor::GetShaderGroup),
+   AddProperty(new dtCore::StringActorProperty(PROPERTY_SHADER_GROUP, PROPERTY_SHADER_GROUP,
+      dtCore::StringActorProperty::SetFuncType(&ga, &GameActor::SetShaderGroup),
+      dtCore::StringActorProperty::GetFuncType(&ga, &GameActor::GetShaderGroup),
       PROPERTY_SHADER_GROUP_DESC,GROUPNAME));
 
    // CURT - Remove this stuff.
@@ -355,7 +355,7 @@ void GameActorProxy::PopulateActorUpdateImpl(ActorUpdateMessage& update,
    update.SetSendingActorId(GetId());
    update.SetAboutActorId(GetId());
 
-   std::vector<const dtDAL::ActorProperty*> toFill;
+   std::vector<const dtCore::ActorProperty*> toFill;
    toFill.reserve(propNames.size());
 
    //If user supplied any specific Property names, try to find them.
@@ -372,7 +372,7 @@ void GameActorProxy::PopulateActorUpdateImpl(ActorUpdateMessage& update,
 
    for (size_t i = 0; i < toFill.size(); ++i)
    {
-      const dtDAL::ActorProperty* prop = toFill[i];
+      const dtCore::ActorProperty* prop = toFill[i];
 
       if (prop == NULL)
       {
@@ -409,7 +409,7 @@ struct ApplyActorUpdateFunc
    {
    }
 
-   void operator() (const dtCore::RefPtr<dtDAL::NamedParameter>& np)
+   void operator() (const dtCore::RefPtr<dtCore::NamedParameter>& np)
    {
       const dtUtil::RefString& paramName = np->GetName();
 
@@ -427,10 +427,10 @@ struct ApplyActorUpdateFunc
          return;
       }
 
-      const dtDAL::DataType& paramType = np->GetDataType();
+      const dtCore::DataType& paramType = np->GetDataType();
 
       // The property can now be either real or a deprecated property (which is created each time).
-      dtCore::RefPtr<dtDAL::ActorProperty> property = mGAP.GetProperty(paramName);
+      dtCore::RefPtr<dtCore::ActorProperty> property = mGAP.GetProperty(paramName);
       if (!property.valid())
       {
          property = mGAP.GetDeprecatedProperty(paramName);
@@ -468,11 +468,11 @@ struct ApplyActorUpdateFunc
       }
 
 
-      dtDAL::ActorActorProperty* aap = NULL;
+      dtCore::ActorActorProperty* aap = NULL;
 
-      if (paramType == dtDAL::DataType::ACTOR)
+      if (paramType == dtCore::DataType::ACTOR)
       {
-         aap = dynamic_cast<dtDAL::ActorActorProperty*>(property.get());
+         aap = dynamic_cast<dtCore::ActorActorProperty*>(property.get());
       }
 
       // If the property is of type ACTOR AND it is an ActorActor property not an ActorID property, it's a special case.
@@ -853,9 +853,9 @@ bool GameActorProxy::ShouldAcceptPropertyInLocalUpdate(const dtUtil::RefString& 
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-dtCore::RefPtr<dtDAL::ActorProperty> GameActorProxy::GetDeprecatedProperty(const std::string& name)
+dtCore::RefPtr<dtCore::ActorProperty> GameActorProxy::GetDeprecatedProperty(const std::string& name)
 {
-   dtCore::RefPtr<dtDAL::ActorProperty> prop = BaseClass::GetDeprecatedProperty(name);
+   dtCore::RefPtr<dtCore::ActorProperty> prop = BaseClass::GetDeprecatedProperty(name);
 
    if (!prop.valid())
    {

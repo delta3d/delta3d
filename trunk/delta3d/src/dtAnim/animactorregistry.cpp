@@ -5,13 +5,13 @@
 
 using namespace dtAnim;
 
-extern "C" DT_ANIM_EXPORT dtDAL::ActorPluginRegistry* CreatePluginRegistry()
+extern "C" DT_ANIM_EXPORT dtCore::ActorPluginRegistry* CreatePluginRegistry()
 {
    return new AnimActorRegistry;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-extern "C" DT_ANIM_EXPORT void DestroyPluginRegistry(dtDAL::ActorPluginRegistry* registry)
+extern "C" DT_ANIM_EXPORT void DestroyPluginRegistry(dtCore::ActorPluginRegistry* registry)
 {
    if (registry != NULL)
    {
@@ -19,11 +19,11 @@ extern "C" DT_ANIM_EXPORT void DestroyPluginRegistry(dtDAL::ActorPluginRegistry*
    }
 }
 
-dtCore::RefPtr<dtDAL::ActorType> AnimActorRegistry::CAL3D_ACTOR_TYPE(new dtDAL::ActorType("Cal3DGameActor", "dtanim", "Cal3DGameActor"));
-dtCore::RefPtr<dtDAL::ActorType> AnimActorRegistry::ANIMATION_ACTOR_TYPE(new dtDAL::ActorType("AnimationGameActor", "dtanim", "AnimationGameActor"));
+dtCore::RefPtr<dtCore::ActorType> AnimActorRegistry::CAL3D_ACTOR_TYPE(new dtCore::ActorType("Cal3DGameActor", "dtanim", "Cal3DGameActor"));
+dtCore::RefPtr<dtCore::ActorType> AnimActorRegistry::ANIMATION_ACTOR_TYPE(new dtCore::ActorType("AnimationGameActor", "dtanim", "AnimationGameActor"));
 
 AnimActorRegistry::AnimActorRegistry()
-   : dtDAL::ActorPluginRegistry("CoreActors")
+   : dtCore::ActorPluginRegistry("CoreActors")
 {
 
 }

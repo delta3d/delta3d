@@ -3,7 +3,7 @@
 #include "dtEditQt/resourcetreewidget.h"
 
 ////////////////////////////////////////////////////////////////////////////////
-dtEditQt::ShaderBrowser::ShaderBrowser(dtDAL::DataType& type, QWidget* parent):
+dtEditQt::ShaderBrowser::ShaderBrowser(dtCore::DataType& type, QWidget* parent):
  ResourceAbstractBrowser(&type, parent)
 {
    mGrid = new QGridLayout(this);

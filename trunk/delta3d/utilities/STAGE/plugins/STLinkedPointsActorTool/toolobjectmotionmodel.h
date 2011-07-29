@@ -27,7 +27,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include <dtCore/objectmotionmodel.h>
-#include <dtDAL/transformableactorproxy.h>
+#include <dtCore/transformableactorproxy.h>
 #include <dtUtil/functor.h>
 
 namespace dtActors

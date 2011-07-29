@@ -3,10 +3,10 @@
 #include <dtCore/environment.h>
 #include <dtCore/skydome.h>
 
-#include <dtDAL/booleanactorproperty.h>
-#include <dtDAL/datatype.h>
-#include <dtDAL/floatactorproperty.h>
-#include <dtDAL/functor.h>
+#include <dtCore/booleanactorproperty.h>
+#include <dtCore/datatype.h>
+#include <dtCore/floatactorproperty.h>
+#include <dtCore/functor.h>
 
 using namespace dtActors;
 
@@ -151,7 +151,7 @@ SkyDomeEnvironmentActorProxy::~SkyDomeEnvironmentActorProxy()
 
 void SkyDomeEnvironmentActorProxy::BuildPropertyMap()
 {
-   using namespace dtDAL;
+   using namespace dtCore;
    dtGame::GameActorProxy::BuildPropertyMap();
 
    SkyDomeEnvironmentActor *env;

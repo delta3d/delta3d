@@ -4,16 +4,16 @@
 #include <dtCore/transformable.h>
 #include <dtCore/transform.h>
 
-#include <dtDAL/arrayactorproperty.h>
-#include <dtDAL/booleanactorproperty.h>
-#include <dtDAL/containeractorproperty.h>
-#include <dtDAL/floatactorproperty.h>
-#include <dtDAL/functor.h>
-#include <dtDAL/mapxml.h>
-#include <dtDAL/project.h>
-#include <dtDAL/resourceactorproperty.h>
-#include <dtDAL/resourcedescriptor.h>
-#include <dtDAL/vectoractorproperties.h>
+#include <dtCore/arrayactorproperty.h>
+#include <dtCore/booleanactorproperty.h>
+#include <dtCore/containeractorproperty.h>
+#include <dtCore/floatactorproperty.h>
+#include <dtCore/functor.h>
+#include <dtCore/mapxml.h>
+#include <dtCore/project.h>
+#include <dtCore/resourceactorproperty.h>
+#include <dtCore/resourcedescriptor.h>
+#include <dtCore/vectoractorproperties.h>
 
 #include <dtUtil/exception.h>
 
@@ -498,45 +498,45 @@ namespace dtActors
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void BuildingActor::SetRoofTexture(const dtDAL::ResourceDescriptor& value)
+   void BuildingActor::SetRoofTexture(const dtCore::ResourceDescriptor& value)
    {
       if (mRoofTexture.valid())
       {
          // set up the texture state.
          mRoofDescriptor = value;
-         if (dtDAL::Project::GetInstance().IsContextValid())
+         if (dtCore::Project::GetInstance().IsContextValid())
          {
-            mRoofTexture->setImage(osgDB::readImageFile(dtDAL::Project::GetInstance().GetResourcePath(value)));
+            mRoofTexture->setImage(osgDB::readImageFile(dtCore::Project::GetInstance().GetResourcePath(value)));
             Visualize();
          }
       }
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void BuildingActor::SetOutWallTexture(const dtDAL::ResourceDescriptor& value)
+   void BuildingActor::SetOutWallTexture(const dtCore::ResourceDescriptor& value)
    {
       if (mOutWallTexture.valid())
       {
          // set up the texture state.
          mOutWallDescriptor = value;
-         if (dtDAL::Project::GetInstance().IsContextValid())
+         if (dtCore::Project::GetInstance().IsContextValid())
          {
-            mOutWallTexture->setImage(osgDB::readImageFile(dtDAL::Project::GetInstance().GetResourcePath(value)));
+            mOutWallTexture->setImage(osgDB::readImageFile(dtCore::Project::GetInstance().GetResourcePath(value)));
             Visualize();
          }
       }
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void BuildingActor::SetInWallTexture(const dtDAL::ResourceDescriptor& value)
+   void BuildingActor::SetInWallTexture(const dtCore::ResourceDescriptor& value)
    {
       if (mInWallTexture.valid())
       {
          // set up the texture state.
          mInWallDescriptor = value;
-         if (dtDAL::Project::GetInstance().IsContextValid())
+         if (dtCore::Project::GetInstance().IsContextValid())
          {
-            mInWallTexture->setImage(osgDB::readImageFile(dtDAL::Project::GetInstance().GetResourcePath(value)));
+            mInWallTexture->setImage(osgDB::readImageFile(dtCore::Project::GetInstance().GetResourcePath(value)));
             Visualize();
          }
       }
@@ -1398,99 +1398,99 @@ namespace dtActors
       GetActor(actor);
 
       //// Attached Actors.
-      //dtDAL::ActorIDActorProperty* attachedActorProp = new dtDAL::ActorIDActorProperty(
+      //dtCore::ActorIDActorProperty* attachedActorProp = new dtCore::ActorIDActorProperty(
       //   *this, "AttachedActor", "Attached Actor",
-      //   dtDAL::ActorIDActorProperty::SetFuncType(this, &BuildingActorProxy::SetAttachedActor),
-      //   dtDAL::ActorIDActorProperty::GetFuncType(this, &BuildingActorProxy::GetAttachedActor),
+      //   dtCore::ActorIDActorProperty::SetFuncType(this, &BuildingActorProxy::SetAttachedActor),
+      //   dtCore::ActorIDActorProperty::GetFuncType(this, &BuildingActorProxy::GetAttachedActor),
       //   "", "An attached actor.", "Internal");
 
-      //dtDAL::ArrayActorPropertyBase* attachedActorArrayProp = new dtDAL::ArrayActorProperty<dtCore::UniqueId>(
+      //dtCore::ArrayActorPropertyBase* attachedActorArrayProp = new dtCore::ArrayActorProperty<dtCore::UniqueId>(
       //   "AttachedActors", "Attached Actors", "The list actors that are attached.",
-      //   dtDAL::SetFuncType(this, &BuildingActorProxy::SetAttachedActorIndex),
-      //   dtDAL::GetFuncType(*this, &BuildingActorProxy::GetDefaultAttachedActor),
-      //   dtDAL::GetFuncType(*actor, &BuildingActor::GetAttachedList),
-      //   dtDAL::SetFuncType(actor, &BuildingActor::SetAttachedList),
+      //   dtCore::SetFuncType(this, &BuildingActorProxy::SetAttachedActorIndex),
+      //   dtCore::GetFuncType(*this, &BuildingActorProxy::GetDefaultAttachedActor),
+      //   dtCore::GetFuncType(*actor, &BuildingActor::GetAttachedList),
+      //   dtCore::SetFuncType(actor, &BuildingActor::SetAttachedList),
       //   attachedActorProp, "Internal");
       //AddProperty(attachedActorArrayProp);
 
       // Roof Texture.
-      dtDAL::ResourceActorProperty* roofTextureProp =
-         new dtDAL::ResourceActorProperty(dtDAL::DataType::TEXTURE,
+      dtCore::ResourceActorProperty* roofTextureProp =
+         new dtCore::ResourceActorProperty(dtCore::DataType::TEXTURE,
          "RoofTextureResource", "Roof Texture",
-         dtDAL::ResourceActorProperty::SetDescFuncType(actor, &BuildingActor::SetRoofTexture),
-         dtDAL::ResourceActorProperty::GetDescFuncType(actor, &BuildingActor::GetRoofTexture),
+         dtCore::ResourceActorProperty::SetDescFuncType(actor, &BuildingActor::SetRoofTexture),
+         dtCore::ResourceActorProperty::GetDescFuncType(actor, &BuildingActor::GetRoofTexture),
          "Defines the texture used when rendering the roof.", "Building");
       AddProperty(roofTextureProp);
 
       // Outside Wall Texture.
-      dtDAL::ResourceActorProperty* outWallTextureProp =
-         new dtDAL::ResourceActorProperty(dtDAL::DataType::TEXTURE,
+      dtCore::ResourceActorProperty* outWallTextureProp =
+         new dtCore::ResourceActorProperty(dtCore::DataType::TEXTURE,
          "OutWallTextureResource", "Outside Wall Texture",
-         dtDAL::ResourceActorProperty::SetDescFuncType(actor, &BuildingActor::SetOutWallTexture),
-         dtDAL::ResourceActorProperty::GetDescFuncType(actor, &BuildingActor::GetOutWallTexture),
+         dtCore::ResourceActorProperty::SetDescFuncType(actor, &BuildingActor::SetOutWallTexture),
+         dtCore::ResourceActorProperty::GetDescFuncType(actor, &BuildingActor::GetOutWallTexture),
          "Defines the texture used when rendering walls.", "Building");
       AddProperty(outWallTextureProp);
 
       // Inside Wall Texture.
-      dtDAL::ResourceActorProperty* inWallTextureProp =
-         new dtDAL::ResourceActorProperty(dtDAL::DataType::TEXTURE,
+      dtCore::ResourceActorProperty* inWallTextureProp =
+         new dtCore::ResourceActorProperty(dtCore::DataType::TEXTURE,
          "InWallTextureResource", "Inside Wall Texture",
-         dtDAL::ResourceActorProperty::SetDescFuncType(actor, &BuildingActor::SetInWallTexture),
-         dtDAL::ResourceActorProperty::GetDescFuncType(actor, &BuildingActor::GetInWallTexture),
+         dtCore::ResourceActorProperty::SetDescFuncType(actor, &BuildingActor::SetInWallTexture),
+         dtCore::ResourceActorProperty::GetDescFuncType(actor, &BuildingActor::GetInWallTexture),
          "Defines the texture used when rendering walls.", "Building");
       AddProperty(inWallTextureProp);
 
       // Flat Roof.
-      dtDAL::BooleanActorProperty* flatRoofProp =
-         new dtDAL::BooleanActorProperty(
+      dtCore::BooleanActorProperty* flatRoofProp =
+         new dtCore::BooleanActorProperty(
          "FlatRoof", "Flat Roof",
-         dtDAL::BooleanActorProperty::SetFuncType(actor, &BuildingActor::SetFlatRoofFlag),
-         dtDAL::BooleanActorProperty::GetFuncType(actor, &BuildingActor::GetFlatRoofFlag),
+         dtCore::BooleanActorProperty::SetFuncType(actor, &BuildingActor::SetFlatRoofFlag),
+         dtCore::BooleanActorProperty::GetFuncType(actor, &BuildingActor::GetFlatRoofFlag),
          "Flattens the top of the roof.", "Building");
       AddProperty(flatRoofProp);
 
       // Roof Texture Scale.
-      dtDAL::FloatActorProperty* roofTextureScaleProp =
-         new dtDAL::FloatActorProperty(
+      dtCore::FloatActorProperty* roofTextureScaleProp =
+         new dtCore::FloatActorProperty(
          "RoofTextureScale", "Roof Texture Scale",
-         dtDAL::FloatActorProperty::SetFuncType(actor, &BuildingActor::SetRoofTextureScale),
-         dtDAL::FloatActorProperty::GetFuncType(actor, &BuildingActor::GetRoofTextureScale),
+         dtCore::FloatActorProperty::SetFuncType(actor, &BuildingActor::SetRoofTextureScale),
+         dtCore::FloatActorProperty::GetFuncType(actor, &BuildingActor::GetRoofTextureScale),
          "Sets the scale of the roof texture on the building.", "Building");
       AddProperty(roofTextureScaleProp);
 
       // Wall Texture Scale.
-      dtDAL::FloatActorProperty* wallTextureScaleProp =
-         new dtDAL::FloatActorProperty(
+      dtCore::FloatActorProperty* wallTextureScaleProp =
+         new dtCore::FloatActorProperty(
          "WallTextureScale", "Wall Texture Scale",
-         dtDAL::FloatActorProperty::SetFuncType(actor, &BuildingActor::SetWallTextureScale),
-         dtDAL::FloatActorProperty::GetFuncType(actor, &BuildingActor::GetWallTextureScale),
+         dtCore::FloatActorProperty::SetFuncType(actor, &BuildingActor::SetWallTextureScale),
+         dtCore::FloatActorProperty::GetFuncType(actor, &BuildingActor::GetWallTextureScale),
          "Sets the scale of the wall texture on the building.", "Building");
       AddProperty(wallTextureScaleProp);
 
       // building height.
-      dtDAL::FloatActorProperty* buildingHeightProp =
-         new dtDAL::FloatActorProperty(
+      dtCore::FloatActorProperty* buildingHeightProp =
+         new dtCore::FloatActorProperty(
          "BuildingHeight", "Building Height",
-         dtDAL::FloatActorProperty::SetFuncType(actor, &BuildingActor::SetBuildingHeight),
-         dtDAL::FloatActorProperty::GetFuncType(actor, &BuildingActor::GetBuildingHeight),
+         dtCore::FloatActorProperty::SetFuncType(actor, &BuildingActor::SetBuildingHeight),
+         dtCore::FloatActorProperty::GetFuncType(actor, &BuildingActor::GetBuildingHeight),
          "Sets the height of the building.", "Building");
       AddProperty(buildingHeightProp);
 
       // Scale.
-      dtDAL::Vec3ActorProperty* scaleProp =
-         new dtDAL::Vec3ActorProperty(
+      dtCore::Vec3ActorProperty* scaleProp =
+         new dtCore::Vec3ActorProperty(
          "Scale", "Scale",
-         dtDAL::Vec3ActorProperty::SetFuncType(actor, &BuildingActor::SetScale),
-         dtDAL::Vec3ActorProperty::GetFuncType(actor, &BuildingActor::GetScale),
+         dtCore::Vec3ActorProperty::SetFuncType(actor, &BuildingActor::SetScale),
+         dtCore::Vec3ActorProperty::GetFuncType(actor, &BuildingActor::GetScale),
          "Sets the roof texture scale (x), wall texture scale (y), and building height (z).",
          "Internal");
       AddProperty(scaleProp);
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   dtCore::RefPtr<dtDAL::ActorProperty> BuildingActorProxy::GetDeprecatedProperty(const std::string& name)
+   dtCore::RefPtr<dtCore::ActorProperty> BuildingActorProxy::GetDeprecatedProperty(const std::string& name)
    {
-      dtCore::RefPtr<dtDAL::ActorProperty> prop = BaseClass::GetDeprecatedProperty(name);
+      dtCore::RefPtr<dtCore::ActorProperty> prop = BaseClass::GetDeprecatedProperty(name);
 
       if (!prop.valid())
       {

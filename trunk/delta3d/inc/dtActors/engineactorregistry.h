@@ -21,8 +21,8 @@
 #ifndef DELTA_ENGINE_ACTOR_REGISTRY
 #define DELTA_ENGINE_ACTOR_REGISTRY
 
-#include <dtDAL/actorpluginregistry.h>
-#include <dtDAL/plugin_export.h>
+#include <dtCore/actorpluginregistry.h>
+#include <dtCore/plugin_export.h>
 
 /** 
  * @namespace dtActors 
@@ -35,52 +35,52 @@ namespace dtActors
      * This actor registry handles the actor proxies that are supported by the core
      * Delta3D engine.
      */
-    class DT_PLUGIN_EXPORT EngineActorRegistry : public dtDAL::ActorPluginRegistry
+    class DT_PLUGIN_EXPORT EngineActorRegistry : public dtCore::ActorPluginRegistry
     {
     public:
          
-       static dtCore::RefPtr<dtDAL::ActorType> TASK_ACTOR_TYPE;
-       static dtCore::RefPtr<dtDAL::ActorType> GAME_EVENT_TASK_ACTOR_TYPE;
-       static dtCore::RefPtr<dtDAL::ActorType> ROLL_UP_TASK_ACTOR_TYPE;
-       static dtCore::RefPtr<dtDAL::ActorType> ORDERED_TASK_ACTOR_TYPE;
-       static dtCore::RefPtr<dtDAL::ActorType> INFINITE_LIGHT_ACTOR_TYPE;
-       static dtCore::RefPtr<dtDAL::ActorType> POSITIONAL_LIGHT_ACTOR_TYPE;
-       static dtCore::RefPtr<dtDAL::ActorType> SPOT_LIGHT_ACTOR_TYPE;
-       static dtCore::RefPtr<dtDAL::ActorType> STATIC_MESH_ACTOR_TYPE;
-       static dtCore::RefPtr<dtDAL::ActorType> PARTICLE_SYSTEM_ACTOR_TYPE;
-       static dtCore::RefPtr<dtDAL::ActorType> INFINITE_TERRAIN_ACTOR_TYPE;
-       static dtCore::RefPtr<dtDAL::ActorType> MESH_TERRAIN_ACTOR_TYPE;
-       static dtCore::RefPtr<dtDAL::ActorType> SKY_BOX_ACTOR_TYPE;
-       static dtCore::RefPtr<dtDAL::ActorType> SKY_DOME_ACTOR_TYPE;
-       static dtCore::RefPtr<dtDAL::ActorType> BEZIER_NODE_ACTOR_TYPE;
-       static dtCore::RefPtr<dtDAL::ActorType> BEZIER_CONTROL_POINT_ACTOR_TYPE;
-       static dtCore::RefPtr<dtDAL::ActorType> BEZIER_CONTROLLER_ACTOR_TYPE;
-       static dtCore::RefPtr<dtDAL::ActorType> CLOUD_PLANE_ACTOR_TYPE;
-       static dtCore::RefPtr<dtDAL::ActorType> CLOUD_DOME_ACTOR_TYPE;
-       static dtCore::RefPtr<dtDAL::ActorType> TRIGGER_ACTOR_TYPE;
-       static dtCore::RefPtr<dtDAL::ActorType> PROXIMITY_TRIGGER_ACTOR_TYPE;
-       static dtCore::RefPtr<dtDAL::ActorType> AUTOTRIGGER_ACTOR_TYPE;
-       static dtCore::RefPtr<dtDAL::ActorType> CAMERA_ACTOR_TYPE;
-       static dtCore::RefPtr<dtDAL::ActorType> CAMERA_DATA_ACTOR_TYPE;
-       static dtCore::RefPtr<dtDAL::ActorType> TRIPOD_ACTOR_TYPE;
-       static dtCore::RefPtr<dtDAL::ActorType> WEATHER_ENVIRONMENT_ACTOR_TYPE;
-       static dtCore::RefPtr<dtDAL::ActorType> SKYDOME_ENVIRONMENT_ACTOR_TYPE;
-       static dtCore::RefPtr<dtDAL::ActorType> COORDINATE_CONFIG_ACTOR_TYPE;
-       static dtCore::RefPtr<dtDAL::ActorType> PLAYER_START_ACTOR_TYPE;
-       static dtCore::RefPtr<dtDAL::ActorType> GAME_MESH_ACTOR_TYPE;
-       static dtCore::RefPtr<dtDAL::ActorType> WAYPOINT_VOLUME_ACTOR_TYPE;
-       static dtCore::RefPtr<dtDAL::ActorType> LABEL_ACTOR_TYPE;
-       static dtCore::RefPtr<dtDAL::ActorType> DISTANCE_SENSOR_ACTOR_TYPE;
-       static dtCore::RefPtr<dtDAL::ActorType> PREFAB_ACTOR_TYPE;
-       static dtCore::RefPtr<dtDAL::ActorType> VOLUME_EDIT_ACTOR_TYPE;
-       static dtCore::RefPtr<dtDAL::ActorType> LINKED_POINTS_ACTOR_TYPE;
-       static dtCore::RefPtr<dtDAL::ActorType> FENCE_ACTOR_TYPE;
-       static dtCore::RefPtr<dtDAL::ActorType> BUILDING_ACTOR_TYPE;
-       static dtCore::RefPtr<dtDAL::ActorType> BACKDROP_ACTOR_TYPE;
-       static dtCore::RefPtr<dtDAL::ActorType> WATER_GRID_ACTOR_TYPE;
-       static dtCore::RefPtr<dtDAL::ActorType> TRIGGER_VOLUME_ACTOR_TYPE;
-       static dtCore::RefPtr<dtDAL::ActorType> DIRECTOR_ACTOR_TYPE;
-       static dtCore::RefPtr<dtDAL::ActorType> POSITION_DATA_ACTOR_TYPE;
+       static dtCore::RefPtr<dtCore::ActorType> TASK_ACTOR_TYPE;
+       static dtCore::RefPtr<dtCore::ActorType> GAME_EVENT_TASK_ACTOR_TYPE;
+       static dtCore::RefPtr<dtCore::ActorType> ROLL_UP_TASK_ACTOR_TYPE;
+       static dtCore::RefPtr<dtCore::ActorType> ORDERED_TASK_ACTOR_TYPE;
+       static dtCore::RefPtr<dtCore::ActorType> INFINITE_LIGHT_ACTOR_TYPE;
+       static dtCore::RefPtr<dtCore::ActorType> POSITIONAL_LIGHT_ACTOR_TYPE;
+       static dtCore::RefPtr<dtCore::ActorType> SPOT_LIGHT_ACTOR_TYPE;
+       static dtCore::RefPtr<dtCore::ActorType> STATIC_MESH_ACTOR_TYPE;
+       static dtCore::RefPtr<dtCore::ActorType> PARTICLE_SYSTEM_ACTOR_TYPE;
+       static dtCore::RefPtr<dtCore::ActorType> INFINITE_TERRAIN_ACTOR_TYPE;
+       static dtCore::RefPtr<dtCore::ActorType> MESH_TERRAIN_ACTOR_TYPE;
+       static dtCore::RefPtr<dtCore::ActorType> SKY_BOX_ACTOR_TYPE;
+       static dtCore::RefPtr<dtCore::ActorType> SKY_DOME_ACTOR_TYPE;
+       static dtCore::RefPtr<dtCore::ActorType> BEZIER_NODE_ACTOR_TYPE;
+       static dtCore::RefPtr<dtCore::ActorType> BEZIER_CONTROL_POINT_ACTOR_TYPE;
+       static dtCore::RefPtr<dtCore::ActorType> BEZIER_CONTROLLER_ACTOR_TYPE;
+       static dtCore::RefPtr<dtCore::ActorType> CLOUD_PLANE_ACTOR_TYPE;
+       static dtCore::RefPtr<dtCore::ActorType> CLOUD_DOME_ACTOR_TYPE;
+       static dtCore::RefPtr<dtCore::ActorType> TRIGGER_ACTOR_TYPE;
+       static dtCore::RefPtr<dtCore::ActorType> PROXIMITY_TRIGGER_ACTOR_TYPE;
+       static dtCore::RefPtr<dtCore::ActorType> AUTOTRIGGER_ACTOR_TYPE;
+       static dtCore::RefPtr<dtCore::ActorType> CAMERA_ACTOR_TYPE;
+       static dtCore::RefPtr<dtCore::ActorType> CAMERA_DATA_ACTOR_TYPE;
+       static dtCore::RefPtr<dtCore::ActorType> TRIPOD_ACTOR_TYPE;
+       static dtCore::RefPtr<dtCore::ActorType> WEATHER_ENVIRONMENT_ACTOR_TYPE;
+       static dtCore::RefPtr<dtCore::ActorType> SKYDOME_ENVIRONMENT_ACTOR_TYPE;
+       static dtCore::RefPtr<dtCore::ActorType> COORDINATE_CONFIG_ACTOR_TYPE;
+       static dtCore::RefPtr<dtCore::ActorType> PLAYER_START_ACTOR_TYPE;
+       static dtCore::RefPtr<dtCore::ActorType> GAME_MESH_ACTOR_TYPE;
+       static dtCore::RefPtr<dtCore::ActorType> WAYPOINT_VOLUME_ACTOR_TYPE;
+       static dtCore::RefPtr<dtCore::ActorType> LABEL_ACTOR_TYPE;
+       static dtCore::RefPtr<dtCore::ActorType> DISTANCE_SENSOR_ACTOR_TYPE;
+       static dtCore::RefPtr<dtCore::ActorType> PREFAB_ACTOR_TYPE;
+       static dtCore::RefPtr<dtCore::ActorType> VOLUME_EDIT_ACTOR_TYPE;
+       static dtCore::RefPtr<dtCore::ActorType> LINKED_POINTS_ACTOR_TYPE;
+       static dtCore::RefPtr<dtCore::ActorType> FENCE_ACTOR_TYPE;
+       static dtCore::RefPtr<dtCore::ActorType> BUILDING_ACTOR_TYPE;
+       static dtCore::RefPtr<dtCore::ActorType> BACKDROP_ACTOR_TYPE;
+       static dtCore::RefPtr<dtCore::ActorType> WATER_GRID_ACTOR_TYPE;
+       static dtCore::RefPtr<dtCore::ActorType> TRIGGER_VOLUME_ACTOR_TYPE;
+       static dtCore::RefPtr<dtCore::ActorType> DIRECTOR_ACTOR_TYPE;
+       static dtCore::RefPtr<dtCore::ActorType> POSITION_DATA_ACTOR_TYPE;
 
         /**
          * Constructs the engine actor registry.
@@ -96,10 +96,10 @@ namespace dtActors
           * Get the list of deprecated ActorType names; provided for backwards
           * compatibility.
           */
-        virtual void GetReplacementActorTypes(dtDAL::ActorPluginRegistry::ActorTypeReplacements &replacements) const;
+        virtual void GetReplacementActorTypes(dtCore::ActorPluginRegistry::ActorTypeReplacements &replacements) const;
     private:
-       static dtCore::RefPtr<dtDAL::ActorType> ENVIRONMENT_ACTOR_TYPE; ///<deprecated 3/18/09
-       static dtCore::RefPtr<dtDAL::ActorType> ENV_ACTOR_TYPE; ///<deprecated 3/18/09
+       static dtCore::RefPtr<dtCore::ActorType> ENVIRONMENT_ACTOR_TYPE; ///<deprecated 3/18/09
+       static dtCore::RefPtr<dtCore::ActorType> ENV_ACTOR_TYPE; ///<deprecated 3/18/09
 
     };
 }

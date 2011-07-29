@@ -29,11 +29,11 @@
 #include <prefix/dtqtprefix.h>
 #include <dtQt/dynamicgameeventcontrol.h>
 
-#include <dtDAL/project.h>
-#include <dtDAL/datatype.h>
-#include <dtDAL/gameevent.h>
-#include <dtDAL/gameeventactorproperty.h>
-#include <dtDAL/map.h>
+#include <dtCore/project.h>
+#include <dtCore/datatype.h>
+#include <dtCore/gameevent.h>
+#include <dtCore/gameeventactorproperty.h>
+#include <dtCore/map.h>
 
 #include <QtGui/QPushButton>
 #include <QtGui/QHBoxLayout>
@@ -52,13 +52,13 @@ namespace dtQt
 
    /////////////////////////////////////////////////////////////////////////////////
    void DynamicGameEventControl::InitializeData(dtQt::DynamicAbstractControl* newParent,
-      dtQt::PropertyEditorModel* newModel, dtDAL::PropertyContainer* newPC, dtDAL::ActorProperty* newProperty)
+      dtQt::PropertyEditorModel* newModel, dtCore::PropertyContainer* newPC, dtCore::ActorProperty* newProperty)
    {
       // Note - Unlike the other properties, we can't static or reinterpret cast this object.
       // We need to dynamic cast it...
-      if (newProperty != NULL && newProperty->GetDataType() == dtDAL::DataType::GAME_EVENT)
+      if (newProperty != NULL && newProperty->GetDataType() == dtCore::DataType::GAME_EVENT)
       {
-         mProperty = dynamic_cast<dtDAL::GameEventActorProperty*>(newProperty);
+         mProperty = dynamic_cast<dtCore::GameEventActorProperty*>(newProperty);
          dtQt::DynamicAbstractControl::InitializeData(newParent, newModel, newPC, newProperty);
       }
       else
@@ -136,12 +136,12 @@ namespace dtQt
       }
 
       mTemporaryEditControl = new dtQt::SubQComboBox(wrapper, this);
-      std::vector<dtDAL::GameEvent*> events;
+      std::vector<dtCore::GameEvent*> events;
 
-      std::vector<dtDAL::Map*> maps = dtDAL::Project::GetInstance().GetOpenMaps();
+      std::vector<dtCore::Map*> maps = dtCore::Project::GetInstance().GetOpenMaps();
       for (int index = 0; index < (int)maps.size(); ++index)
       {
-         dtDAL::Map* map = maps[index];
+         dtCore::Map* map = maps[index];
          if (map)
          {
             map->GetEventManager().GetAllEvents(events);
@@ -230,12 +230,12 @@ namespace dtQt
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   void DynamicGameEventControl::actorPropertyChanged(dtDAL::PropertyContainer& propCon,
-            dtDAL::ActorProperty& property)
+   void DynamicGameEventControl::actorPropertyChanged(dtCore::PropertyContainer& propCon,
+            dtCore::ActorProperty& property)
    {
       DynamicAbstractControl::actorPropertyChanged(propCon, property);
 
-      dtDAL::GameEventActorProperty* changedProp = dynamic_cast<dtDAL::GameEventActorProperty*>(&property);
+      dtCore::GameEventActorProperty* changedProp = dynamic_cast<dtCore::GameEventActorProperty*>(&property);
 
       if (mTemporaryEditControl != NULL && &propCon == mPropContainer && changedProp == mProperty)
       {
@@ -257,15 +257,15 @@ namespace dtQt
    }
 
    //////////////////////////////////////////////////////////////////////////
-   dtDAL::GameEvent* DynamicGameEventControl::GetGameEvent(const std::string& eventID)
+   dtCore::GameEvent* DynamicGameEventControl::GetGameEvent(const std::string& eventID)
    {
-      std::vector<dtDAL::Map*> maps = dtDAL::Project::GetInstance().GetOpenMaps();
+      std::vector<dtCore::Map*> maps = dtCore::Project::GetInstance().GetOpenMaps();
       for (int index = 0; index < (int)maps.size(); ++index)
       {
-         dtDAL::Map* map = maps[index];
+         dtCore::Map* map = maps[index];
          if (map)
          {
-            dtDAL::GameEvent* event = map->GetEventManager().FindEvent(eventID);
+            dtCore::GameEvent* event = map->GetEventManager().FindEvent(eventID);
             if (event)
             {
                return event;

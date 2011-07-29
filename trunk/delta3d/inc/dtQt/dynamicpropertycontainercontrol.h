@@ -28,7 +28,7 @@
 
 #include <dtQt/dynamicabstractparentcontrol.h>
 
-#include <dtDAL/propertycontaineractorproperty.h>
+#include <dtCore/propertycontaineractorproperty.h>
 
 
 namespace dtQt
@@ -50,7 +50,7 @@ namespace dtQt
        * @see DynamicAbstractControl#InitializeData
        */
       virtual void InitializeData(DynamicAbstractControl* newParent, PropertyEditorModel* model,
-         dtDAL::PropertyContainer* newPC, dtDAL::ActorProperty* property);
+         dtCore::PropertyContainer* newPC, dtCore::ActorProperty* property);
 
       /**
        * @see DynamicAbstractControl#getDisplayName
@@ -83,7 +83,7 @@ namespace dtQt
 
    private:
 
-      dtCore::RefPtr<dtDAL::BasePropertyContainerActorProperty> mProperty;
+      dtCore::RefPtr<dtCore::BasePropertyContainerActorProperty> mProperty;
    };
 }
 #endif /* DYNAMICPROPERTYCONTAINERCONTROL_H_ */

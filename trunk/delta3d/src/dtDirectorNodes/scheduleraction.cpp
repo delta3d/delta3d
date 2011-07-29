@@ -21,11 +21,11 @@
 #include <prefix/dtdirectornodesprefix.h>
 #include <dtDirectorNodes/scheduleraction.h>
 
-#include <dtDAL/arrayactorproperty.h>
-#include <dtDAL/booleanactorproperty.h>
-#include <dtDAL/containeractorproperty.h>
-#include <dtDAL/floatactorproperty.h>
-#include <dtDAL/stringactorproperty.h>
+#include <dtCore/arrayactorproperty.h>
+#include <dtCore/booleanactorproperty.h>
+#include <dtCore/containeractorproperty.h>
+#include <dtCore/floatactorproperty.h>
+#include <dtCore/stringactorproperty.h>
 
 #include <dtDirector/director.h>
 
@@ -71,63 +71,63 @@ namespace dtDirector
       LatentActionNode::BuildPropertyMap();
 
       // Create our value links.
-      dtDAL::FloatActorProperty* timeProp = new dtDAL::FloatActorProperty(
+      dtCore::FloatActorProperty* timeProp = new dtCore::FloatActorProperty(
          "Time", "Time",
-         dtDAL::FloatActorProperty::SetFuncType(this, &SchedulerAction::SetTime),
-         dtDAL::FloatActorProperty::GetFuncType(this, &SchedulerAction::GetTime),
+         dtCore::FloatActorProperty::SetFuncType(this, &SchedulerAction::SetTime),
+         dtCore::FloatActorProperty::GetFuncType(this, &SchedulerAction::GetTime),
          "The current time (in seconds).");
 
-      dtDAL::FloatActorProperty* totalTimeProp = new dtDAL::FloatActorProperty(
+      dtCore::FloatActorProperty* totalTimeProp = new dtCore::FloatActorProperty(
          "TotalTime", "Total Time",
-         dtDAL::FloatActorProperty::SetFuncType(this, &SchedulerAction::SetTotalTime),
-         dtDAL::FloatActorProperty::GetFuncType(this, &SchedulerAction::GetTotalTime),
+         dtCore::FloatActorProperty::SetFuncType(this, &SchedulerAction::SetTotalTime),
+         dtCore::FloatActorProperty::GetFuncType(this, &SchedulerAction::GetTotalTime),
          "The total time (in seconds).");
       AddProperty(totalTimeProp);
 
-      dtDAL::BooleanActorProperty* simTimeProp = new dtDAL::BooleanActorProperty(
+      dtCore::BooleanActorProperty* simTimeProp = new dtCore::BooleanActorProperty(
          "UseSimTime", "Use Sim Time",
-         dtDAL::BooleanActorProperty::SetFuncType(this, &SchedulerAction::SetUseSimTime),
-         dtDAL::BooleanActorProperty::GetFuncType(this, &SchedulerAction::GetUseSimTime),
+         dtCore::BooleanActorProperty::SetFuncType(this, &SchedulerAction::SetUseSimTime),
+         dtCore::BooleanActorProperty::GetFuncType(this, &SchedulerAction::GetUseSimTime),
          "True to use game/sim time, false to use real time.");
       AddProperty(simTimeProp);
 
-      dtDAL::ContainerActorProperty* eventGroupProp = new dtDAL::ContainerActorProperty(
+      dtCore::ContainerActorProperty* eventGroupProp = new dtCore::ContainerActorProperty(
          "OutputEventData", "Output Event Data", "This is an output event.", "");
 
-      dtDAL::StringActorProperty* eventNameProp = new dtDAL::StringActorProperty(
+      dtCore::StringActorProperty* eventNameProp = new dtCore::StringActorProperty(
          "EventName", "Event Name",
-         dtDAL::StringActorProperty::SetFuncType(this, &SchedulerAction::SetEventName),
-         dtDAL::StringActorProperty::GetFuncType(this, &SchedulerAction::GetEventName),
+         dtCore::StringActorProperty::SetFuncType(this, &SchedulerAction::SetEventName),
+         dtCore::StringActorProperty::GetFuncType(this, &SchedulerAction::GetEventName),
          "The name of the output to fire.");
       eventGroupProp->AddProperty(eventNameProp);
 
-      dtDAL::FloatActorProperty* eventTimeProp = new dtDAL::FloatActorProperty(
+      dtCore::FloatActorProperty* eventTimeProp = new dtCore::FloatActorProperty(
          "EventTime", "Event Time",
-         dtDAL::FloatActorProperty::SetFuncType(this, &SchedulerAction::SetEventTime),
-         dtDAL::FloatActorProperty::GetFuncType(this, &SchedulerAction::GetEventTime),
+         dtCore::FloatActorProperty::SetFuncType(this, &SchedulerAction::SetEventTime),
+         dtCore::FloatActorProperty::GetFuncType(this, &SchedulerAction::GetEventTime),
          "The time that the output will fire.");
       eventGroupProp->AddProperty(eventTimeProp);
 
-      dtDAL::BooleanActorProperty* eventNormalProp = new dtDAL::BooleanActorProperty(
+      dtCore::BooleanActorProperty* eventNormalProp = new dtCore::BooleanActorProperty(
          "TriggerNormal", "Trigger on Play",
-         dtDAL::BooleanActorProperty::SetFuncType(this, &SchedulerAction::SetEventNormal),
-         dtDAL::BooleanActorProperty::GetFuncType(this, &SchedulerAction::GetEventNormal),
+         dtCore::BooleanActorProperty::SetFuncType(this, &SchedulerAction::SetEventNormal),
+         dtCore::BooleanActorProperty::GetFuncType(this, &SchedulerAction::GetEventNormal),
          "True to trigger this event on normal play.");
       eventGroupProp->AddProperty(eventNormalProp);
 
-      dtDAL::BooleanActorProperty* eventReverseProp = new dtDAL::BooleanActorProperty(
+      dtCore::BooleanActorProperty* eventReverseProp = new dtCore::BooleanActorProperty(
          "TriggerReverse", "Trigger on Reverse",
-         dtDAL::BooleanActorProperty::SetFuncType(this, &SchedulerAction::SetEventReverse),
-         dtDAL::BooleanActorProperty::GetFuncType(this, &SchedulerAction::GetEventReverse),
+         dtCore::BooleanActorProperty::SetFuncType(this, &SchedulerAction::SetEventReverse),
+         dtCore::BooleanActorProperty::GetFuncType(this, &SchedulerAction::GetEventReverse),
          "True to trigger this event on reverse play.");
       eventGroupProp->AddProperty(eventReverseProp);
 
-      dtDAL::ArrayActorPropertyBase* eventListProp = new dtDAL::ArrayActorProperty<OutputEventData>(
+      dtCore::ArrayActorPropertyBase* eventListProp = new dtCore::ArrayActorProperty<OutputEventData>(
          "EventList", "Event List", "The list of events.",
-         dtDAL::ArrayActorProperty<OutputEventData>::SetIndexFuncType(this, &SchedulerAction::SetEventIndex),
-         dtDAL::ArrayActorProperty<OutputEventData>::GetDefaultFuncType(this, &SchedulerAction::GetDefaultEvent),
-         dtDAL::ArrayActorProperty<OutputEventData>::GetArrayFuncType(this, &SchedulerAction::GetEventList),
-         dtDAL::ArrayActorProperty<OutputEventData>::SetArrayFuncType(this, &SchedulerAction::SetEventList),
+         dtCore::ArrayActorProperty<OutputEventData>::SetIndexFuncType(this, &SchedulerAction::SetEventIndex),
+         dtCore::ArrayActorProperty<OutputEventData>::GetDefaultFuncType(this, &SchedulerAction::GetDefaultEvent),
+         dtCore::ArrayActorProperty<OutputEventData>::GetArrayFuncType(this, &SchedulerAction::GetEventList),
+         dtCore::ArrayActorProperty<OutputEventData>::SetArrayFuncType(this, &SchedulerAction::SetEventList),
          eventGroupProp, "");
       AddProperty(eventListProp);
 
@@ -276,8 +276,8 @@ namespace dtDirector
          // Delay link can only connect to basic types.
          if (link->GetName() == "Time")
          {
-            if (value->CanBeType(dtDAL::DataType::FLOAT) ||
-                value->CanBeType(dtDAL::DataType::DOUBLE))
+            if (value->CanBeType(dtCore::DataType::FLOAT) ||
+                value->CanBeType(dtCore::DataType::DOUBLE))
             {
                return true;
             }

@@ -39,8 +39,8 @@
 #include <QtGui/QMessageBox>
 #include <QtGui/QGroupBox>
 #include <QtGui/QLabel>
-#include <dtDAL/project.h>
-#include <dtDAL/map.h>
+#include <dtCore/project.h>
+#include <dtCore/map.h>
 
 namespace dtEditQt
 {
@@ -122,7 +122,7 @@ namespace dtEditQt
       {
          try
          {
-            mMap = &dtDAL::Project::GetInstance().CreateMap(mNameEdit->text().toStdString(),
+            mMap = &dtCore::Project::GetInstance().CreateMap(mNameEdit->text().toStdString(),
                mFileEdit->text().toStdString());
          }
          catch(dtUtil::Exception& e)

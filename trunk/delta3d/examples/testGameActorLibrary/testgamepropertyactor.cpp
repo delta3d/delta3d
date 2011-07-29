@@ -32,25 +32,25 @@
 #include <dtCore/scene.h>
 #include <dtCore/object.h>
 
-#include <dtDAL/actoridactorproperty.h>
-#include <dtDAL/booleanactorproperty.h>
-#include <dtDAL/colorrgbaactorproperty.h>
-#include <dtDAL/doubleactorproperty.h>
-#include <dtDAL/enumactorproperty.h>
-#include <dtDAL/floatactorproperty.h>
-#include <dtDAL/gameeventactorproperty.h>
-#include <dtDAL/intactorproperty.h>
-#include <dtDAL/longactorproperty.h>
-#include <dtDAL/stringactorproperty.h>
-#include <dtDAL/vectoractorproperties.h>
-#include <dtDAL/propertycontaineractorproperty.h>
+#include <dtCore/actoridactorproperty.h>
+#include <dtCore/booleanactorproperty.h>
+#include <dtCore/colorrgbaactorproperty.h>
+#include <dtCore/doubleactorproperty.h>
+#include <dtCore/enumactorproperty.h>
+#include <dtCore/floatactorproperty.h>
+#include <dtCore/gameeventactorproperty.h>
+#include <dtCore/intactorproperty.h>
+#include <dtCore/longactorproperty.h>
+#include <dtCore/stringactorproperty.h>
+#include <dtCore/vectoractorproperties.h>
+#include <dtCore/propertycontaineractorproperty.h>
 
 #include <dtGame/messagetype.h>
 
 #include <dtUtil/log.h>
 
 using namespace dtCore;
-using namespace dtDAL;
+using namespace dtCore;
 using namespace dtActors;
 
 const std::string TestGamePropertyActor::GROUPNAME("Example Game Properties");
@@ -135,7 +135,7 @@ void TestGamePropertyActor::BuildPropertyMap()
       IntActorProperty::GetFuncType(this, &TestGamePropertyActor::GetTestInt),
       "Holds a test Int property", GROUPNAME));
 
-   dtDAL::IntActorProperty *i = new IntActorProperty("Test_Read_Only_Int", "Test_Read_Only_Int",
+   dtCore::IntActorProperty *i = new IntActorProperty("Test_Read_Only_Int", "Test_Read_Only_Int",
       IntActorProperty::SetFuncType(this, &TestGamePropertyActor::SetReadOnlyTestInt),
       IntActorProperty::GetFuncType(this, &TestGamePropertyActor::GetReadOnlyTestInt),
       "Holds a test Read Only Int property", GROUPNAME);
@@ -225,8 +225,8 @@ void TestGamePropertyActor::BuildPropertyMap()
       "Holds a test Enum property", GROUPNAME));
 
    AddProperty(new ActorIDActorProperty(*this, "Test_Actor_Id", "Test Actor Id",
-      dtDAL::ActorIDActorProperty::SetFuncType(this, &TestGamePropertyActor::SetTestActorId),
-      dtDAL::ActorIDActorProperty::GetFuncType(this, &TestGamePropertyActor::GetTestActorId),
+      dtCore::ActorIDActorProperty::SetFuncType(this, &TestGamePropertyActor::SetTestActorId),
+      dtCore::ActorIDActorProperty::GetFuncType(this, &TestGamePropertyActor::GetTestActorId),
       "dtCore::Transformable",
       "An example linked actor property", GROUPNAME));
 
@@ -235,10 +235,10 @@ void TestGamePropertyActor::BuildPropertyMap()
             GameEventActorProperty::GetFuncType(this, &TestGamePropertyActor::GetTestGameEvent),
             "Holds a test game event property", GROUPNAME));
 
-   AddProperty(new dtDAL::SimplePropertyContainerActorProperty<TestNestedPropertyContainer>("TestPropertyContainer",
+   AddProperty(new dtCore::SimplePropertyContainerActorProperty<TestNestedPropertyContainer>("TestPropertyContainer",
             "Test Property Container",
-            dtDAL::SimplePropertyContainerActorProperty<TestNestedPropertyContainer>::SetFuncType(this, &TestGamePropertyActor::SetTestPropertyContainer),
-            dtDAL::SimplePropertyContainerActorProperty<TestNestedPropertyContainer>::GetFuncType(this, &TestGamePropertyActor::GetTestPropertyContainer),
+            dtCore::SimplePropertyContainerActorProperty<TestNestedPropertyContainer>::SetFuncType(this, &TestGamePropertyActor::SetTestPropertyContainer),
+            dtCore::SimplePropertyContainerActorProperty<TestNestedPropertyContainer>::GetFuncType(this, &TestGamePropertyActor::GetTestPropertyContainer),
             "", GROUPNAME));
 }
 

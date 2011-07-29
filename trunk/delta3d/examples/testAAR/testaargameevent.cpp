@@ -27,14 +27,14 @@
  */
 
 #include "testaargameevent.h"
-#include <dtDAL/gameeventmanager.h>
+#include <dtCore/gameeventmanager.h>
 
-dtCore::RefPtr<dtDAL::GameEvent> TestAARGameEvent::EVENT_START_RECORD;
-dtCore::RefPtr<dtDAL::GameEvent> TestAARGameEvent::EVENT_BOX_PLACED;
-dtCore::RefPtr<dtDAL::GameEvent> TestAARGameEvent::EVENT_PLAYER_LEFT;
-dtCore::RefPtr<dtDAL::GameEvent> TestAARGameEvent::EVENT_PLAYER_RIGHT;
-dtCore::RefPtr<dtDAL::GameEvent> TestAARGameEvent::EVENT_PLAYER_FORWARD;
-dtCore::RefPtr<dtDAL::GameEvent> TestAARGameEvent::EVENT_PLAYER_BACKWARD;
+dtCore::RefPtr<dtCore::GameEvent> TestAARGameEvent::EVENT_START_RECORD;
+dtCore::RefPtr<dtCore::GameEvent> TestAARGameEvent::EVENT_BOX_PLACED;
+dtCore::RefPtr<dtCore::GameEvent> TestAARGameEvent::EVENT_PLAYER_LEFT;
+dtCore::RefPtr<dtCore::GameEvent> TestAARGameEvent::EVENT_PLAYER_RIGHT;
+dtCore::RefPtr<dtCore::GameEvent> TestAARGameEvent::EVENT_PLAYER_FORWARD;
+dtCore::RefPtr<dtCore::GameEvent> TestAARGameEvent::EVENT_PLAYER_BACKWARD;
 
 
 TestAARGameEvent::TestAARGameEvent() 
@@ -49,7 +49,7 @@ TestAARGameEvent::~TestAARGameEvent()
 
 void TestAARGameEvent::InitEvents()
 {
-   dtDAL::GameEventManager& geMan = dtDAL::GameEventManager::GetInstance();
+   dtCore::GameEventManager& geMan = dtCore::GameEventManager::GetInstance();
    
    EVENT_START_RECORD    = geMan.FindEvent("Event - Start Record");
    EVENT_BOX_PLACED      = geMan.FindEvent("Event - Box Placed");

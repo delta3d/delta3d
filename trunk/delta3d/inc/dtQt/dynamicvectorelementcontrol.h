@@ -33,7 +33,7 @@
 #include <dtQt/dynamicabstractcontrol.h>
 #include <dtQt/dynamicsubwidgets.h>
 
-namespace dtDAL
+namespace dtCore
 {
    class Vec3fActorProperty;
    class Vec2fActorProperty;
@@ -65,7 +65,7 @@ namespace dtQt
        *
        * @Note - We can put data in the constructor because aren't using the factory for this.
        */
-      DynamicVectorElementControl(dtDAL::Vec2fActorProperty* newVectorProp, int whichIndex,
+      DynamicVectorElementControl(dtCore::Vec2fActorProperty* newVectorProp, int whichIndex,
          const std::string& newLabel);
 
       /**
@@ -73,7 +73,7 @@ namespace dtQt
        *
        * @Note - We can put data in the constructor because aren't using the factory for this.
        */
-      DynamicVectorElementControl(dtDAL::Vec2dActorProperty* newVectorProp, int whichIndex,
+      DynamicVectorElementControl(dtCore::Vec2dActorProperty* newVectorProp, int whichIndex,
          const std::string& newLabel);
 
       /**
@@ -81,7 +81,7 @@ namespace dtQt
        *
        * @Note - We can put data in the constructor because aren't using the factory for this.
        */
-      DynamicVectorElementControl(dtDAL::Vec3fActorProperty* newVectorProp, int whichIndex,
+      DynamicVectorElementControl(dtCore::Vec3fActorProperty* newVectorProp, int whichIndex,
          const std::string& newLabel);
 
       /**
@@ -89,7 +89,7 @@ namespace dtQt
        *
        * @Note - We can put data in the constructor because aren't using the factory for this.
        */
-      DynamicVectorElementControl(dtDAL::Vec3dActorProperty* newVectorProp, int whichIndex,
+      DynamicVectorElementControl(dtCore::Vec3dActorProperty* newVectorProp, int whichIndex,
          const std::string& newLabel);
 
 
@@ -98,7 +98,7 @@ namespace dtQt
        *
        * @Note - We can put data in the constructor because aren't using the factory for this.
        */
-      DynamicVectorElementControl(dtDAL::Vec4fActorProperty* newVectorProp, int whichIndex,
+      DynamicVectorElementControl(dtCore::Vec4fActorProperty* newVectorProp, int whichIndex,
          const std::string& newLabel);
 
       /**
@@ -106,7 +106,7 @@ namespace dtQt
        *
        * @Note - We can put data in the constructor because aren't using the factory for this.
        */
-      DynamicVectorElementControl(dtDAL::Vec4dActorProperty* newVectorProp, int whichIndex,
+      DynamicVectorElementControl(dtCore::Vec4dActorProperty* newVectorProp, int whichIndex,
          const std::string& newLabel);
 
       /**
@@ -118,7 +118,7 @@ namespace dtQt
        * @see DynamicAbstractControl#InitializeData
        */
       virtual void InitializeData(DynamicAbstractControl* newParent, PropertyEditorModel* model,
-         dtDAL::PropertyContainer* pc, dtDAL::ActorProperty* property);
+         dtCore::PropertyContainer* pc, dtCore::ActorProperty* property);
 
       /**
        * @see DynamicAbstractControl#updateEditorFromModel
@@ -202,14 +202,14 @@ namespace dtQt
       std::string mToolTipTypeLabel;
       std::string mLabel;
 
-      dtDAL::ActorProperty*  mActiveProp;
+      dtCore::ActorProperty*  mActiveProp;
 
-      dtDAL::Vec2fActorProperty* mVec2fProp;
-      dtDAL::Vec3fActorProperty* mVec3fProp;
-      dtDAL::Vec4fActorProperty* mVec4fProp;
-      dtDAL::Vec2dActorProperty* mVec2dProp;
-      dtDAL::Vec3dActorProperty* mVec3dProp;
-      dtDAL::Vec4dActorProperty* mVec4dProp;
+      dtCore::Vec2fActorProperty* mVec2fProp;
+      dtCore::Vec3fActorProperty* mVec3fProp;
+      dtCore::Vec4fActorProperty* mVec4fProp;
+      dtCore::Vec2dActorProperty* mVec2dProp;
+      dtCore::Vec3dActorProperty* mVec3dProp;
+      dtCore::Vec4dActorProperty* mVec4dProp;
       int mElementIndex;
 
       // This pointer is not really in our control.  It is constructed in the createEditor()

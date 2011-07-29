@@ -42,7 +42,7 @@ class QString;
 class QTableWidget;
 class QCheckBox;
 
-namespace dtDAL
+namespace dtCore
 {
    class BaseActorObject;
 }
@@ -61,11 +61,11 @@ namespace dtEditQt
       /// Destructor
       virtual ~TaskEditor();
 
-      void SetTaskChildren(const dtDAL::NamedGroupParameter& children);
-      void GetTaskChildren(dtDAL::NamedGroupParameter& toFill) const;
+      void SetTaskChildren(const dtCore::NamedGroupParameter& children);
+      void GetTaskChildren(dtCore::NamedGroupParameter& toFill) const;
 
       ///@return true if the list being edited contains the given proxy.
-      bool HasChild(dtDAL::BaseActorObject& proxyToTest);
+      bool HasChild(dtCore::BaseActorObject& proxyToTest);
 
       /**
        * Swaps the two given rows in the model for the table.
@@ -123,7 +123,7 @@ namespace dtEditQt
       /// builds the list of children.
       void PopulateChildren();
       /// Adds a new proxy to the list of children.
-      void AddItemToList(dtDAL::BaseActorObject& proxy);
+      void AddItemToList(dtCore::BaseActorObject& proxy);
       /// sets all the verical header labels on mChildrenView to ""
       void BlankRowLabels();
 
@@ -137,8 +137,8 @@ namespace dtEditQt
       QPushButton* mMoveDown;
       QPushButton* mRemoveChild;
 
-      dtCore::RefPtr<dtDAL::NamedGroupParameter> mChildren;
-      std::set< dtCore::RefPtr<dtDAL::BaseActorObject> > mRemovedTasks;
+      dtCore::RefPtr<dtCore::NamedGroupParameter> mChildren;
+      std::set< dtCore::RefPtr<dtCore::BaseActorObject> > mRemovedTasks;
    };
 
 } // namespace dtEditQt

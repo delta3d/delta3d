@@ -28,7 +28,7 @@
 #include <dtUtil/enumeration.h>
 
 // forward declarations
-namespace dtDAL
+namespace dtCore
 {
    class GameEvent;
 }
@@ -87,7 +87,7 @@ public:
 
 protected:
    virtual void PreFrame(const double deltaFrameTime);
-   dtCore::RefPtr<dtDAL::GameEvent> mEvent;
+   dtCore::RefPtr<dtCore::GameEvent> mEvent;
 
 private:
    dtCore::RefPtr<dtGame::GameManager> mClientGM;

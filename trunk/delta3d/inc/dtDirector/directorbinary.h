@@ -33,7 +33,7 @@
 #include <stdio.h>
 
 
-namespace dtDAL
+namespace dtCore
 {
    class Map;
 }
@@ -62,7 +62,7 @@ namespace dtDirector
        *
        * @throws MapLoadParseError if a fatal error occurs in the parsing.
        */
-      void Parse(Director* director, dtDAL::Map* map, const std::string& filePath);
+      void Parse(Director* director, dtCore::Map* map, const std::string& filePath);
       
       /**
        * Parses the script type from the Director script file.
@@ -132,7 +132,7 @@ namespace dtDirector
        * @param[in]  container  The property container.
        * @param[in]  file       The file.
        */
-      void ParsePropertyContainer(dtDAL::PropertyContainer* container, FILE* file);
+      void ParsePropertyContainer(dtCore::PropertyContainer* container, FILE* file);
 
       /**
        * Parses a string value.
@@ -233,7 +233,7 @@ namespace dtDirector
        * @param[in]  container  The property container.
        * @param[in]  file       The file.
        */
-      void SavePropertyContainer(dtDAL::PropertyContainer* container, FILE* file);
+      void SavePropertyContainer(dtCore::PropertyContainer* container, FILE* file);
 
       /**
        * Saves a string value.

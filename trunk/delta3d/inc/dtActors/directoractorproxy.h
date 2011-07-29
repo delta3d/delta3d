@@ -22,10 +22,10 @@
 #ifndef directoractorproxy_h__
 #define directoractorproxy_h__
 
-#include <dtDAL/plugin_export.h>
+#include <dtCore/plugin_export.h>
 #include <dtABC/export.h>
-#include <dtDAL/actorproperty.h>
-#include <dtDAL/map.h>
+#include <dtCore/actorproperty.h>
+#include <dtCore/map.h>
 
 #include <dtGame/gameactor.h>
 #include <dtGame/gameactorproxy.h>
@@ -84,14 +84,14 @@ namespace dtActors
       *
       * @param[in]  value  The resource value.
       */
-      void SetDirectorResource(const dtDAL::ResourceDescriptor& value);
+      void SetDirectorResource(const dtCore::ResourceDescriptor& value);
 
       /**
       * Retrieves the Director Resource at the current array index.
       *
       * @return  A resource descriptor string.
       */
-      dtDAL::ResourceDescriptor GetDirectorResource();
+      dtCore::ResourceDescriptor GetDirectorResource();
 
       /**
       * Sets the current Director array index.
@@ -105,21 +105,21 @@ namespace dtActors
       *
       * @return  A default resource descriptor string.
       */
-      dtDAL::ResourceDescriptor GetDefaultDirector(void);
+      dtCore::ResourceDescriptor GetDefaultDirector(void);
 
       /**
       * Retrieves the array of Director Resources.
       *
       * @return  Resource Director Array.
       */
-      std::vector<dtDAL::ResourceDescriptor> GetDirectorArray() const;
+      std::vector<dtCore::ResourceDescriptor> GetDirectorArray() const;
 
       /**
       * Sets the Array of Director Resources.
       *
       * @param[in]  value  The new array.
       */
-      void SetDirectorArray(const std::vector<dtDAL::ResourceDescriptor>& value);
+      void SetDirectorArray(const std::vector<dtCore::ResourceDescriptor>& value);
 
       /**
        * Retrieves the list of instanced directors that are loaded.
@@ -141,7 +141,7 @@ namespace dtActors
 
       bool mNodeLogging;
 
-      std::vector<dtDAL::ResourceDescriptor> mResourceList;
+      std::vector<dtCore::ResourceDescriptor> mResourceList;
       int mResourceIndex;
    };
 
@@ -192,7 +192,7 @@ namespace dtActors
       *
       * @return  The billboard icon.
       */
-      virtual dtDAL::ActorProxyIcon* GetBillBoardIcon();
+      virtual dtCore::ActorProxyIcon* GetBillBoardIcon();
 
    protected:
 

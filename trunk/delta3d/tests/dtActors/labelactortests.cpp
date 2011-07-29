@@ -38,7 +38,7 @@
 #include <dtActors/labelactorproxy.h>
 #include <dtActors/engineactorregistry.h>
 #include <dtCore/system.h>
-#include <dtDAL/librarymanager.h>
+#include <dtCore/librarymanager.h>
 #include <dtUtil/stringutils.h>
 
 extern dtABC::Application& GetGlobalApplication();
@@ -77,7 +77,7 @@ void LabelActorTests::setUp()
    try
    {
       // Create the actor for testing.
-      dtCore::RefPtr<dtDAL::BaseActorObject> proxy = dtDAL::LibraryManager::GetInstance()
+      dtCore::RefPtr<dtCore::BaseActorObject> proxy = dtCore::LibraryManager::GetInstance()
          .CreateActorProxy(*dtActors::EngineActorRegistry::LABEL_ACTOR_TYPE);
       mLabelProxy = dynamic_cast<dtActors::LabelActorProxy*>(proxy.get());
 
@@ -184,11 +184,11 @@ void LabelActorTests::TestLabelActorCreateActorProperties()
       dtABC::LabelActor::ActorPropertyArray propArray;
       actor->CreateActorProperties(propArray);
 
-      typedef std::map<dtUtil::RefString, dtDAL::ActorProperty*> PropertyMap;
+      typedef std::map<dtUtil::RefString, dtCore::ActorProperty*> PropertyMap;
       PropertyMap propMap;
 
       // Convert the array to a map keyed on the property names.
-      dtDAL::ActorProperty* curProp = NULL; // use this for code readability.
+      dtCore::ActorProperty* curProp = NULL; // use this for code readability.
       dtABC::LabelActor::ActorPropertyArray::iterator curPropIter = propArray.begin();
       dtABC::LabelActor::ActorPropertyArray::iterator endPropArray = propArray.end();
       for (; curPropIter != endPropArray; ++curPropIter)

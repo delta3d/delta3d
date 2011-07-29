@@ -1,7 +1,7 @@
 #include <dtActors/backdropactor.h>
 
-#include <dtDAL/resourceactorproperty.h>
-#include <dtDAL/vectoractorproperties.h>
+#include <dtCore/resourceactorproperty.h>
+#include <dtCore/vectoractorproperties.h>
 
 #include <osg/Geometry>
 #include <osg/PolygonMode>
@@ -166,7 +166,7 @@ BackdropActorProxy::BackdropActorProxy()
 ////////////////////////////////////////////////////////////////////////////////
 void BackdropActorProxy::BuildPropertyMap()   
 {
-   dtDAL::TransformableActorProxy::BuildPropertyMap();
+   dtCore::TransformableActorProxy::BuildPropertyMap();
 
    static const dtUtil::RefString GROUPNAME = "Backdrop";
 
@@ -179,19 +179,19 @@ void BackdropActorProxy::BuildPropertyMap()
    }
 
    //Volume actors need to be scalable
-   AddProperty(new dtDAL::Vec3ActorProperty("Scale", "Scale",
-            dtDAL::Vec3ActorProperty::SetFuncType(actor, &BackdropActor::SetScale),
-            dtDAL::Vec3ActorProperty::GetFuncType(actor, &BackdropActor::GetScale),
+   AddProperty(new dtCore::Vec3ActorProperty("Scale", "Scale",
+            dtCore::Vec3ActorProperty::SetFuncType(actor, &BackdropActor::SetScale),
+            dtCore::Vec3ActorProperty::GetFuncType(actor, &BackdropActor::GetScale),
             "Scales", "Transformable"));
 
-   AddProperty(new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::TEXTURE,
+   AddProperty(new dtCore::ResourceActorProperty(*this, dtCore::DataType::TEXTURE,
             "Front Texture", "Front Texture",
-            dtDAL::ResourceActorProperty::SetFuncType(this, &BackdropActorProxy::SetFrontTexture),
+            dtCore::ResourceActorProperty::SetFuncType(this, &BackdropActorProxy::SetFrontTexture),
             "Sets the texture on the front of the backdrop", GROUPNAME));
 
-   AddProperty(new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::TEXTURE,
+   AddProperty(new dtCore::ResourceActorProperty(*this, dtCore::DataType::TEXTURE,
             "Back Texture", "Back Texture",
-            dtDAL::ResourceActorProperty::SetFuncType(this, &BackdropActorProxy::SetBackTexture),
+            dtCore::ResourceActorProperty::SetFuncType(this, &BackdropActorProxy::SetBackTexture),
             "Sets the texture on the back of the backdrop", GROUPNAME));
 }
 

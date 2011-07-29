@@ -55,11 +55,11 @@
 #include <dtGame/messagefactory.h>
 #include <dtGame/serverloggercomponent.h>
 
-#include <dtDAL/actortype.h>
-#include <dtDAL/floatactorproperty.h>
-#include <dtDAL/gameevent.h>
-#include <dtDAL/gameeventmanager.h>
-#include <dtDAL/stringactorproperty.h>
+#include <dtCore/actortype.h>
+#include <dtCore/floatactorproperty.h>
+#include <dtCore/gameevent.h>
+#include <dtCore/gameeventmanager.h>
+#include <dtCore/stringactorproperty.h>
 
 #include <dtLMS/lmscomponent.h>
 
@@ -166,7 +166,7 @@ TestAARMessageProcessor::CreateNewMovingActor(const std::string& meshName,
    dtCore::RefPtr<dtGame::GameActorProxy> object;
    dtCore::Transform position;
 
-   dtCore::RefPtr<const dtDAL::ActorType> playerType = GetGameManager()->FindActorType("ExampleActors", "TestPlayer");
+   dtCore::RefPtr<const dtCore::ActorType> playerType = GetGameManager()->FindActorType("ExampleActors", "TestPlayer");
    object = dynamic_cast<dtGame::GameActorProxy *>(GetGameManager()->CreateActor(*playerType).get());
 
    if (bSetLocation)
@@ -193,11 +193,11 @@ TestAARMessageProcessor::CreateNewMovingActor(const std::string& meshName,
    GetGameManager()->AddActor(*object,false,false);
 
    // set mesh, velocity, and turn rate
-   dtDAL::StringActorProperty* prop = static_cast<dtDAL::StringActorProperty *>(object->GetProperty("mesh"));
+   dtCore::StringActorProperty* prop = static_cast<dtCore::StringActorProperty *>(object->GetProperty("mesh"));
    prop->SetValue(meshName);
-   dtDAL::FloatActorProperty* velocityProp = static_cast<dtDAL::FloatActorProperty *>(object->GetProperty("velocity"));
+   dtCore::FloatActorProperty* velocityProp = static_cast<dtCore::FloatActorProperty *>(object->GetProperty("velocity"));
    velocityProp->SetValue(velocity);
-   dtDAL::FloatActorProperty* turnRateProp = static_cast<dtDAL::FloatActorProperty *>(object->GetProperty("turnrate"));
+   dtCore::FloatActorProperty* turnRateProp = static_cast<dtCore::FloatActorProperty *>(object->GetProperty("turnrate"));
    turnRateProp->SetValue(turnRate);
 
    return object;
@@ -347,12 +347,12 @@ void TestAARMessageProcessor::Reset()
       GetGameManager()->GetScene().AddChild(terrain.get());
    }
 
-   dtCore::RefPtr<const dtDAL::ActorType> playerType = GetGameManager()->FindActorType("ExampleActors", "TestPlayer");
-   dtCore::RefPtr<dtDAL::BaseActorObject> player = GetGameManager()->CreateActor(*playerType);
+   dtCore::RefPtr<const dtCore::ActorType> playerType = GetGameManager()->FindActorType("ExampleActors", "TestPlayer");
+   dtCore::RefPtr<dtCore::BaseActorObject> player = GetGameManager()->CreateActor(*playerType);
    mPlayer = dynamic_cast<dtGame::GameActorProxy*>(player.get());
    GetGameManager()->AddActor(*mPlayer, false, false);
 
-   dtDAL::StringActorProperty* prop = static_cast<dtDAL::StringActorProperty*>(mPlayer->GetProperty("mesh"));
+   dtCore::StringActorProperty* prop = static_cast<dtCore::StringActorProperty*>(mPlayer->GetProperty("mesh"));
    path = dtUtil::FindFileInPathList("models/physics_happy_sphere.ive");
    if (!path.empty())
    {
@@ -370,7 +370,7 @@ void TestAARMessageProcessor::Reset()
    }
 
    //SetupTasks();
-   std::vector<dtDAL::BaseActorObject*> toFill;
+   std::vector<dtCore::BaseActorObject*> toFill;
    GetGameManager()->FindActorsByName("Move Camera", toFill);
 
    if (toFill.size() == 0)
@@ -449,14 +449,14 @@ void TestAARMessageProcessor::UpdateTaskCamera()
 ///////////////////////////////////////////////////////////////////////////
 void TestAARMessageProcessor::UpdatePlayerActor(const dtGame::ActorUpdateMessage& aum)
 {
-   dtDAL::BaseActorObject* gap = GetGameManager()->FindActorById(aum.GetAboutActorId());
+   dtCore::BaseActorObject* gap = GetGameManager()->FindActorById(aum.GetAboutActorId());
    if (gap != mPlayer)
    {
       return;
    }
 
-   dtDAL::FloatActorProperty* playerVelocity = static_cast<dtDAL::FloatActorProperty*>(mPlayer->GetProperty("velocity"));
-   dtDAL::FloatActorProperty* playerTurnRate = static_cast<dtDAL::FloatActorProperty*>(mPlayer->GetProperty("turnrate"));
+   dtCore::FloatActorProperty* playerVelocity = static_cast<dtCore::FloatActorProperty*>(mPlayer->GetProperty("velocity"));
+   dtCore::FloatActorProperty* playerTurnRate = static_cast<dtCore::FloatActorProperty*>(mPlayer->GetProperty("turnrate"));
 
    const dtGame::MessageParameter* mp = aum.GetUpdateParameter("Velocity");
    if (mp != NULL)

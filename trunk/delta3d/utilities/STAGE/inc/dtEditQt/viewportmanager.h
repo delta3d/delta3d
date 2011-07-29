@@ -37,7 +37,7 @@
 #include <dtCore/uniqueid.h>
 #include <dtCore/deltadrawable.h>
 #include <dtUtil/enumeration.h>
-#include <dtDAL/actorproxy.h>
+#include <dtCore/actorproxy.h>
 #include <dtQt/typedefs.h>
 #include <dtABC/application.h>
 #include "export.h"
@@ -143,7 +143,7 @@ namespace dtEditQt
        * Moves an actor such that it is placed in from of the world view camera.
        * @param proxy The proxy to place.
        */
-      void placeProxyInFrontOfCamera(dtDAL::BaseActorObject* proxy);
+      void placeProxyInFrontOfCamera(dtCore::BaseActorObject* proxy);
 
       /**
        * Gets the instance of an overlay object that should be shared between viewports.
@@ -196,7 +196,7 @@ namespace dtEditQt
        * Removes all drawables from the master scene.
        */
       void clearMasterScene(const std::map< dtCore::UniqueId,
-         dtCore::RefPtr<dtDAL::BaseActorObject> >& proxies);
+         dtCore::RefPtr<dtCore::BaseActorObject> >& proxies);
 
       /**
        * Called from the first initialized viewport.  This method sets various
@@ -402,7 +402,7 @@ namespace dtEditQt
       * @param[in]  propertyContainer  The property container.
       * @param[in]  propList           The list of properties to be displayed.
       */
-      void emitModifyPropList(dtDAL::PropertyContainer& propertyContainer, std::vector<dtDAL::ActorProperty*>& propList);
+      void emitModifyPropList(dtCore::PropertyContainer& propertyContainer, std::vector<dtCore::ActorProperty*>& propList);
 
       /**
       * Enables or Disables the viewport by adding or removing it from the scene.
@@ -570,7 +570,7 @@ namespace dtEditQt
       * @param[in]  propertyContainer  The property container.
       * @param[in]  propList           The list of properties to be displayed.
       */
-      void modifyPropList(dtDAL::PropertyContainer& propertyContainer, std::vector<dtDAL::ActorProperty*>& propList);
+      void modifyPropList(dtCore::PropertyContainer& propertyContainer, std::vector<dtCore::ActorProperty*>& propList);
 
    public slots:
       /**
@@ -600,7 +600,7 @@ namespace dtEditQt
        *
        * @param[in]  actors  The list of all actors being selected.
        */
-      void refreshActorSelection(const std::vector< dtCore::RefPtr<dtDAL::BaseActorObject> >& actors);
+      void refreshActorSelection(const std::vector< dtCore::RefPtr<dtCore::BaseActorObject> >& actors);
 
       /**
        * Causes a redraw of all viewports that are connected to the viewport manager

@@ -20,7 +20,7 @@
  */
 
 #include <fireFighter/halonactors.h>
-#include <dtDAL/gameeventmanager.h>
+#include <dtCore/gameeventmanager.h>
 #include <dtGame/gamemanager.h>
 #include <dtGame/basemessages.h>
 #include <dtGame/messagefactory.h>
@@ -73,7 +73,7 @@ void PrimaryHalonActor::Activate(bool enable)
       return;
    }
 
-   dtDAL::GameEvent* event = dtDAL::GameEventManager::GetInstance().FindEvent(name);
+   dtCore::GameEvent* event = dtCore::GameEventManager::GetInstance().FindEvent(name);
    if (event == NULL)
    {
       throw dtUtil::Exception("Failed to find the game event: " + name, __FILE__, __LINE__);
@@ -133,7 +133,7 @@ void SecondaryHalonActor::Activate(bool enable)
       return;
    }
 
-   dtDAL::GameEvent* event = dtDAL::GameEventManager::GetInstance().FindEvent(name);
+   dtCore::GameEvent* event = dtCore::GameEventManager::GetInstance().FindEvent(name);
    if (event == NULL)
    {
       throw dtUtil::Exception("Failed to find the game event: " + name, __FILE__, __LINE__);

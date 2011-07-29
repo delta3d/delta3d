@@ -27,11 +27,11 @@
 #include <dtActors/staticmeshactorproxy.h>
 
 
-#include <dtDAL/resourceactorproperty.h>
-#include <dtDAL/resourcedescriptor.h>
-#include <dtDAL/actorproxyicon.h>
-#include <dtDAL/datatype.h>
-#include <dtDAL/functor.h>
+#include <dtCore/resourceactorproperty.h>
+#include <dtCore/resourcedescriptor.h>
+#include <dtCore/actorproxyicon.h>
+#include <dtCore/datatype.h>
+#include <dtCore/functor.h>
 
 #include <dtCore/object.h>
 
@@ -191,8 +191,8 @@ namespace dtActors
 
       //dtCore::Object *obj = static_cast<dtCore::Object*>(GetActor());
 
-      AddProperty(new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::STATIC_MESH,
-         "static mesh", "Static Mesh", dtDAL::ResourceActorProperty::SetFuncType(this, &StaticMeshActorProxy::LoadFile),
+      AddProperty(new dtCore::ResourceActorProperty(*this, dtCore::DataType::STATIC_MESH,
+         "static mesh", "Static Mesh", dtCore::ResourceActorProperty::SetFuncType(this, &StaticMeshActorProxy::LoadFile),
          "The static mesh resource that defines the geometry", GROUPNAME));
    }
 
@@ -244,40 +244,40 @@ namespace dtActors
 //          TextureEntry* texEntry = new TextureEntry(const_cast<osg::Texture2D *>(texItor->get()));
 //          this->mTextureSlots.push_back(texEntry);
 //          ss << texPropBaseName << count++;
-//          AddProperty(new dtDAL::ResourceActorProperty(*this,dtDAL::DataType::TEXTURE,
-//             ss.str(),"Texture",dtDAL::SetFuncType(texEntry,&TextureEntry::LoadFile),
+//          AddProperty(new dtCore::ResourceActorProperty(*this,dtCore::DataType::TEXTURE,
+//             ss.str(),"Texture",dtCore::SetFuncType(texEntry,&TextureEntry::LoadFile),
 //             "A texture slot in the static mesh.",texGroupName));
 //       }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   const dtDAL::BaseActorObject::RenderMode& StaticMeshActorProxy::GetRenderMode()
+   const dtCore::BaseActorObject::RenderMode& StaticMeshActorProxy::GetRenderMode()
    {
-      dtDAL::ResourceDescriptor resource = GetResource("static mesh");
+      dtCore::ResourceDescriptor resource = GetResource("static mesh");
       if (resource.IsEmpty() == false)
       {
          if (resource.GetResourceIdentifier().empty() || GetActor()->GetOSGNode() == NULL)
          {
-            return dtDAL::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON;
+            return dtCore::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON;
          }
          else
          {
-            return dtDAL::BaseActorObject::RenderMode::DRAW_ACTOR;
+            return dtCore::BaseActorObject::RenderMode::DRAW_ACTOR;
          }
       }
       else
       {
-         return dtDAL::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON;
+         return dtCore::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON;
       }
    }
 
    //////////////////////////////////////////////////////////////////////////
-   dtDAL::ActorProxyIcon *StaticMeshActorProxy::GetBillBoardIcon()
+   dtCore::ActorProxyIcon *StaticMeshActorProxy::GetBillBoardIcon()
    {
       if (!mBillBoardIcon.valid())
       {
          mBillBoardIcon =
-            new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IMAGE_BILLBOARD_STATICMESH);
+            new dtCore::ActorProxyIcon(dtCore::ActorProxyIcon::IMAGE_BILLBOARD_STATICMESH);
       }
 
       return mBillBoardIcon.get();

@@ -87,7 +87,7 @@ namespace dtEditQt {
        *
        * @param[in]  actors  The list of all actors being selected.
        */
-      virtual void refreshActorSelection(const std::vector< dtCore::RefPtr<dtDAL::BaseActorObject> >& actors);
+      virtual void refreshActorSelection(const std::vector< dtCore::RefPtr<dtCore::BaseActorObject> >& actors);
 
       /**
        * Tells the viewport to repaint itself.
@@ -97,7 +97,7 @@ namespace dtEditQt {
       /**
       * Retrieves the ghost proxy.
       */
-      dtDAL::BaseActorObject* GetGhostProxy() {return mGhostProxy.get();}
+      dtCore::BaseActorObject* GetGhostProxy() {return mGhostProxy.get();}
 
       /**
       * Retrieves the current mouse button pressed.
@@ -358,7 +358,7 @@ namespace dtEditQt {
       dtCore::RefPtr<STAGECameraMotionModel> mCameraMotionModel;
       dtCore::RefPtr<STAGECameraMotionModel> mDefaultCameraMotionModel;
 
-      dtCore::RefPtr<dtDAL::BaseActorObject>      mGhostProxy;
+      dtCore::RefPtr<dtCore::BaseActorObject>      mGhostProxy;
 
       Qt::MouseButton                        mMouseButton;
       Qt::MouseButtons                       mMouseButtons;
@@ -371,7 +371,7 @@ namespace dtEditQt {
       bool                                   mIsRemoved;
 
       ///From the QDropEvent, unroll the Prefab actor and add to the Map
-      void UnrollPrefab(QDropEvent* event, dtDAL::Map* mapPtr);
+      void UnrollPrefab(QDropEvent* event, dtCore::Map* mapPtr);
 
    };
 

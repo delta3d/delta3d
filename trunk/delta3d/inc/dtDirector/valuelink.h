@@ -28,13 +28,13 @@
 
 #include <dtDirector/export.h>
 
-#include <dtDAL/datatype.h>
+#include <dtCore/datatype.h>
 
 #include <dtCore/refptr.h>
 #include <dtCore/observerptr.h>
 #include <dtUtil/mswinmacros.h>
 
-namespace dtDAL
+namespace dtCore
 {
    class ActorProperty;
 }
@@ -68,7 +68,7 @@ namespace dtDirector
        *                             the same type.
        * @param[in]  exposed        If true, this value will be exposed by default.
        */
-      ValueLink(Node* owner, dtDAL::ActorProperty* prop, bool isOut = false, bool allowMultiple = false, bool typeCheck = true, bool exposed = true);
+      ValueLink(Node* owner, dtCore::ActorProperty* prop, bool isOut = false, bool allowMultiple = false, bool typeCheck = true, bool exposed = true);
 
       /**
        * Destructor.
@@ -113,7 +113,7 @@ namespace dtDirector
        *
        * @return  The property type.
        */
-      virtual dtDAL::DataType& GetPropertyType();
+      virtual dtCore::DataType& GetPropertyType();
 
       /**
        * Retrieves the property.
@@ -123,21 +123,21 @@ namespace dtDirector
        *
        * @return     The property.
        */
-      dtDAL::ActorProperty* GetProperty(int index = 0, ValueNode** outNode = NULL);
+      dtCore::ActorProperty* GetProperty(int index = 0, ValueNode** outNode = NULL);
 
       /**
        * Retrieves the default property.
        *
        * @return  The default property.
        */
-      dtDAL::ActorProperty* GetDefaultProperty();
+      dtCore::ActorProperty* GetDefaultProperty();
 
       /**
        * Sets the default property.
        *
        * @param[in]  prop  The default property.
        */
-      void SetDefaultProperty(dtDAL::ActorProperty* prop);
+      void SetDefaultProperty(dtCore::ActorProperty* prop);
 
       /**
        * Retrieves the total number of values connected.
@@ -278,7 +278,7 @@ namespace dtDirector
 #pragma warning (pop)
 #endif //DELTA_WIN32
 
-      dtCore::RefPtr<dtDAL::ActorProperty> mDefaultProperty;
+      dtCore::RefPtr<dtCore::ActorProperty> mDefaultProperty;
 
       bool mIsOut;
       bool mAllowMultiple;

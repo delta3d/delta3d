@@ -20,7 +20,7 @@
  */
 #include <dtActors/playerstartactorproxy.h>
 
-#include <dtDAL/actorproxyicon.h>
+#include <dtCore/actorproxyicon.h>
 
 namespace dtActors
 {
@@ -39,13 +39,13 @@ namespace dtActors
 
    void PlayerStartActorProxy::BuildPropertyMap()
    {
-      dtDAL::TransformableActorProxy::BuildPropertyMap();
+      dtCore::TransformableActorProxy::BuildPropertyMap();
    }
 
-   dtDAL::ActorProxyIcon* PlayerStartActorProxy::GetBillBoardIcon()
+   dtCore::ActorProxyIcon* PlayerStartActorProxy::GetBillBoardIcon()
    {
       if (!mBillBoardIcon.valid())
-         mBillBoardIcon = new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IMAGE_BILLBOARD_STATICMESH);
+         mBillBoardIcon = new dtCore::ActorProxyIcon(dtCore::ActorProxyIcon::IMAGE_BILLBOARD_STATICMESH);
 
       return mBillBoardIcon.get();
    }

@@ -28,10 +28,10 @@
 
 #include "testhlaobject.h"
 
-#include <dtDAL/enumactorproperty.h>
-#include <dtDAL/exceptionenum.h>
-#include <dtDAL/resourceactorproperty.h>
-#include <dtDAL/vectoractorproperties.h>
+#include <dtCore/enumactorproperty.h>
+#include <dtCore/exceptionenum.h>
+#include <dtCore/resourceactorproperty.h>
+#include <dtCore/vectoractorproperties.h>
 
 ////////////////////////////////////////////////////////////////////
 // Proxy Code
@@ -52,30 +52,30 @@ void TestHLAObjectProxy::BuildPropertyMap()
    TestHLAObject* actor = dynamic_cast<TestHLAObject*> (GetActor());
    if (actor == NULL)
    {
-      throw dtDAL::InvalidActorException( "Actor should be type TestHLAObject", __FILE__, __LINE__);
+      throw dtCore::InvalidActorException( "Actor should be type TestHLAObject", __FILE__, __LINE__);
    }
 
    AddProperty(
-            new dtDAL::Vec3ActorProperty("Last Known Translation", "Last Known Translation",
-                     dtDAL::Vec3ActorProperty::SetFuncType(actor, &TestHLAObject::SetLastKnownTranslation),
-                     dtDAL::Vec3ActorProperty::GetFuncType(actor, &TestHLAObject::GetLastKnownTranslation),
+            new dtCore::Vec3ActorProperty("Last Known Translation", "Last Known Translation",
+                     dtCore::Vec3ActorProperty::SetFuncType(actor, &TestHLAObject::SetLastKnownTranslation),
+                     dtCore::Vec3ActorProperty::GetFuncType(actor, &TestHLAObject::GetLastKnownTranslation),
                      "The last known correct position of this actor.  Used for remote actors only.", ""));
 
    AddProperty(
-            new dtDAL::Vec3ActorProperty("Last Known Rotation", "Last Known Rotation",
-                     dtDAL::Vec3ActorProperty::SetFuncType(this, &TestHLAObjectProxy::SetLastKnownRotation),
-                     dtDAL::Vec3ActorProperty::GetFuncType(this, &TestHLAObjectProxy::GetLastKnownRotation),
+            new dtCore::Vec3ActorProperty("Last Known Rotation", "Last Known Rotation",
+                     dtCore::Vec3ActorProperty::SetFuncType(this, &TestHLAObjectProxy::SetLastKnownRotation),
+                     dtCore::Vec3ActorProperty::GetFuncType(this, &TestHLAObjectProxy::GetLastKnownRotation),
                      "The last known correct rotation of this actor.  Used for remote actors only.", ""));
    AddProperty(
-            new dtDAL::EnumActorProperty<TestHLAObject::DamageStateEnum>("Damage State", "Damage State",
-                     dtDAL::EnumActorProperty<TestHLAObject::DamageStateEnum>::SetFuncType(actor, &TestHLAObject::SetDamageState),
-                     dtDAL::EnumActorProperty<TestHLAObject::DamageStateEnum>::GetFuncType(actor, &TestHLAObject::GetDamageState),
+            new dtCore::EnumActorProperty<TestHLAObject::DamageStateEnum>("Damage State", "Damage State",
+                     dtCore::EnumActorProperty<TestHLAObject::DamageStateEnum>::SetFuncType(actor, &TestHLAObject::SetDamageState),
+                     dtCore::EnumActorProperty<TestHLAObject::DamageStateEnum>::GetFuncType(actor, &TestHLAObject::GetDamageState),
                      "The general amount of damage sustained by the object.", ""));
 
    AddProperty(
-            new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::STATIC_MESH,
+            new dtCore::ResourceActorProperty(*this, dtCore::DataType::STATIC_MESH,
                      "Mesh", "Mesh",
-                     dtDAL::ResourceActorProperty::SetFuncType(actor, &TestHLAObject::TestLoadTheMesh),
+                     dtCore::ResourceActorProperty::SetFuncType(actor, &TestHLAObject::TestLoadTheMesh),
                      "", ""));
 
 }
@@ -95,7 +95,7 @@ void TestHLAObjectProxy::SetLastKnownRotation(const osg::Vec3& vec)
    TestHLAObject* e = dynamic_cast<TestHLAObject*> (GetActor());
    if (e == NULL)
    {
-      throw dtDAL::InvalidActorException(
+      throw dtCore::InvalidActorException(
       "Actor should be type TestHLAObject", __FILE__, __LINE__);
    }
 
@@ -107,7 +107,7 @@ osg::Vec3 TestHLAObjectProxy::GetLastKnownRotation() const
    const TestHLAObject* e = dynamic_cast<const TestHLAObject*> (GetActor());
    if (e == NULL)
    {
-      throw dtDAL::InvalidActorException(
+      throw dtCore::InvalidActorException(
       "Actor should be type TestHLAObject", __FILE__, __LINE__);
    }
 

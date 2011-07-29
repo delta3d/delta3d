@@ -2,15 +2,15 @@
 
 #include <dtABC/motionaction.h>
 
-#include <dtDAL/actoractorproperty.h>
-#include <dtDAL/enumactorproperty.h>
-#include <dtDAL/exceptionenum.h>
-#include <dtDAL/functor.h>
-#include <dtDAL/vectoractorproperties.h>
+#include <dtCore/actoractorproperty.h>
+#include <dtCore/enumactorproperty.h>
+#include <dtCore/exceptionenum.h>
+#include <dtCore/functor.h>
+#include <dtCore/vectoractorproperties.h>
 
 using namespace dtCore;
 using namespace dtABC;
-using namespace dtDAL;
+using namespace dtCore;
 
 namespace dtActors
 {
@@ -45,7 +45,7 @@ namespace dtActors
          "dtCore::Transformable",
          "Sets the parent for this Actor."));
 
-      AddProperty(new dtDAL::EnumActorProperty<MotionActionActorProxy::ParentRelationEnum>("Parent Relation","Parent Relation",
+      AddProperty(new dtCore::EnumActorProperty<MotionActionActorProxy::ParentRelationEnum>("Parent Relation","Parent Relation",
          EnumActorProperty<MotionActionActorProxy::ParentRelationEnum>::SetFuncType(this,&MotionActionActorProxy::SetActorParentRelation),
          EnumActorProperty<MotionActionActorProxy::ParentRelationEnum>::GetFuncType(this,&MotionActionActorProxy::GetActorParentRelation),
          "Sets this actors relation to its parent.", "MotionAction"));
@@ -69,7 +69,7 @@ namespace dtActors
       MotionAction* mo = static_cast< MotionAction* >( GetDrawable() );
       if ( mo == 0 )
       {
-         throw dtDAL::InvalidActorException(
+         throw dtCore::InvalidActorException(
             "Actor should be type dtABC::MotionAction", __FILE__, __LINE__);
       }
 
@@ -81,14 +81,14 @@ namespace dtActors
       MotionAction * mo = static_cast< MotionAction* >( GetDrawable() );
       if ( mo == 0 )
       {
-         throw dtDAL::InvalidActorException(
+         throw dtCore::InvalidActorException(
             "Actor should be type dtABC::MotionAction" , __FILE__, __LINE__);
       }
 
       return mo->GetParent();
    }
 
-   void MotionActionActorProxy::SetActorTargetObject(dtDAL::BaseActorObject* node)
+   void MotionActionActorProxy::SetActorTargetObject(dtCore::BaseActorObject* node)
    {
       SetLinkedActor("Target Object", node);
 
@@ -104,7 +104,7 @@ namespace dtActors
       ma->SetTargetObject(trans);
    }
 
-   void MotionActionActorProxy::SetActorParentObject(dtDAL::BaseActorObject* actor)
+   void MotionActionActorProxy::SetActorParentObject(dtCore::BaseActorObject* actor)
    {
       SetLinkedActor("Parent Object", actor);
 
@@ -215,7 +215,7 @@ namespace dtActors
    {
       dtABC::MotionAction *t = static_cast<dtABC::MotionAction*>(GetDrawable());
       if (t == NULL)
-         throw dtDAL::InvalidActorException( "Actor should be type "
+         throw dtCore::InvalidActorException( "Actor should be type "
          " dtABC::MotionAction", __FILE__, __LINE__);
 
       osg::Vec3 trans;

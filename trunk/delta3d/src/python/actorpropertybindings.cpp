@@ -1,18 +1,18 @@
 #include <python/dtpython.h>
-#include <dtDAL/datatype.h>
-#include <dtDAL/actorproperty.h>
-#include <dtDAL/enginepropertytypes.h>
+#include <dtCore/datatype.h>
+#include <dtCore/actorproperty.h>
+#include <dtCore/enginepropertytypes.h>
 #include <boost/python/register_ptr_to_python.hpp>
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 
 using namespace boost::python;
-using namespace dtDAL;
+using namespace dtCore;
 
 class ActorPropertyWrap : public ActorProperty, public wrapper<ActorProperty>
 {
    protected:
 
-   ActorPropertyWrap(dtDAL::DataType &dataType, 
+   ActorPropertyWrap(dtCore::DataType &dataType, 
 		     const std::string &name,
                      const std::string &label,
                      const std::string &desc,

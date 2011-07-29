@@ -22,7 +22,7 @@
 #include <dtDirector/arrayvaluenode.h>
 #include <dtDirector/director.h>
 
-#include <dtDAL/actorproperty.h>
+#include <dtCore/actorproperty.h>
 
 #include <dtDirector/valuelink.h>
 
@@ -70,13 +70,13 @@ namespace dtDirector
          {
             // As soon as we finish loading the script, remove the initial
             // property from the node.
-            dtDAL::PropertyContainer::RemoveProperty(mInitialArrayProperty->GetName());
+            dtCore::PropertyContainer::RemoveProperty(mInitialArrayProperty->GetName());
          }
       }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   bool ArrayValueNode::IsPropertyDefault(const dtDAL::ActorProperty& prop) const
+   bool ArrayValueNode::IsPropertyDefault(const dtCore::ActorProperty& prop) const
    {
       if (GetDirector()->GetNotifier())
       {
@@ -94,7 +94,7 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void ArrayValueNode::ResetProperty(dtDAL::ActorProperty& prop)
+   void ArrayValueNode::ResetProperty(dtCore::ActorProperty& prop)
    {
       if (GetDirector()->GetNotifier())
       {
@@ -109,7 +109,7 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   bool ArrayValueNode::ShouldPropertySave(const dtDAL::ActorProperty& prop) const
+   bool ArrayValueNode::ShouldPropertySave(const dtCore::ActorProperty& prop) const
    {
       if (GetDirector()->GetNotifier())
       {
@@ -182,7 +182,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   dtDAL::ActorProperty* ArrayValueNode::GetProperty(int index, ValueNode **outNode)
+   dtCore::ActorProperty* ArrayValueNode::GetProperty(int index, ValueNode **outNode)
    {
       mPropertyIndex = index;
       return ValueNode::GetProperty(index, outNode);
@@ -225,7 +225,7 @@ namespace dtDirector
          return;
       }
 
-      if (dtDAL::PropertyContainer::GetProperty(mInitialArrayProperty->GetName()))
+      if (dtCore::PropertyContainer::GetProperty(mInitialArrayProperty->GetName()))
       {
          return;
       }
@@ -246,13 +246,13 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   dtDAL::ArrayActorPropertyBase* ArrayValueNode::GetArrayProperty()
+   dtCore::ArrayActorPropertyBase* ArrayValueNode::GetArrayProperty()
    {
       return mArrayProperty.get();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   dtDAL::ArrayActorPropertyBase* ArrayValueNode::GetInitialArrayProperty()
+   dtCore::ArrayActorPropertyBase* ArrayValueNode::GetInitialArrayProperty()
    {
       return mInitialArrayProperty.get();
    }

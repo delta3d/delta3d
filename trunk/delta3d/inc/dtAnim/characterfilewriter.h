@@ -27,7 +27,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 #include <dtAnim/export.h>
 #include <dtCore/refptr.h>
-#include <dtDAL/basexml.h>
+#include <dtCore/basexml.h>
 
 
 
@@ -49,10 +49,10 @@ namespace dtAnim
 ////////////////////////////////////////////////////////////////////////////////
 namespace dtAnim
 {
-   class DT_ANIM_EXPORT CharacterFileWriter : public dtDAL::BaseXMLWriter
+   class DT_ANIM_EXPORT CharacterFileWriter : public dtCore::BaseXMLWriter
    {
    public:
-      typedef dtDAL::BaseXMLWriter BaseClass;
+      typedef dtCore::BaseXMLWriter BaseClass;
 
       CharacterFileWriter();
 

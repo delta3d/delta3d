@@ -35,7 +35,7 @@
 #include <dtCore/scene.h>
 #include <dtCore/system.h>
 
-#include <dtDAL/datatype.h>
+#include <dtCore/datatype.h>
 
 #include <dtGame/messageparameter.h>
 #include <dtGame/machineinfo.h>

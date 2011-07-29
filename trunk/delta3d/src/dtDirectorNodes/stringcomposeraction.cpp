@@ -22,9 +22,9 @@
 #include <prefix/dtdirectornodesprefix.h>
 #include <dtDirectorNodes/stringcomposeraction.h>
 
-//#include <dtDAL/intactorproperty.h>
-//#include <dtDAL/arrayactorproperty.h>
-//#include <dtDAL/enumactorproperty.h>
+//#include <dtCore/intactorproperty.h>
+//#include <dtCore/arrayactorproperty.h>
+//#include <dtCore/enumactorproperty.h>
 //#include <dtDirector/director.h>
 //#include <dtDirectorNodes/stringarrayvalue.h>
 //#include <dtGame/gamemanager.h>
@@ -69,16 +69,16 @@ namespace dtDirector
    {
       ActionNode::BuildPropertyMap();
 
-      dtDAL::StringActorProperty* textProp = new dtDAL::StringActorProperty("Text", "Text",
-         dtDAL::StringActorProperty::SetFuncType(this, &StringComposerAction::SetText),
-         dtDAL::StringActorProperty::GetFuncType(this, &StringComposerAction::GetText),
+      dtCore::StringActorProperty* textProp = new dtCore::StringActorProperty("Text", "Text",
+         dtCore::StringActorProperty::SetFuncType(this, &StringComposerAction::SetText),
+         dtCore::StringActorProperty::GetFuncType(this, &StringComposerAction::GetText),
          "The text that is used to compose the final string");
       AddProperty(textProp);
 
       // The value link will store this in a ref ptr
-      dtDAL::StringActorProperty* resultProp = new dtDAL::StringActorProperty("Result", "Result",
-         dtDAL::StringActorProperty::SetFuncType(this, &StringComposerAction::SetResultText),
-         dtDAL::StringActorProperty::GetFuncType(this, &StringComposerAction::GetResultText),
+      dtCore::StringActorProperty* resultProp = new dtCore::StringActorProperty("Result", "Result",
+         dtCore::StringActorProperty::SetFuncType(this, &StringComposerAction::SetResultText),
+         dtCore::StringActorProperty::GetFuncType(this, &StringComposerAction::GetResultText),
          "The text that is used to compose the final string");
       AddProperty(resultProp);
 
@@ -124,9 +124,9 @@ namespace dtDirector
          int argNumber = mValues.size() - DEFAULT_VALUE_LINK_COUNT + 1;
 
          std::string propertyName = std::string("Arg") + dtUtil::ToString(argNumber);
-         dtDAL::StringActorProperty* argProperty = new dtDAL::StringActorProperty(propertyName, propertyName,
-            dtDAL::StringActorProperty::SetFuncType(this, &StringComposerAction::SetArgument),
-            dtDAL::StringActorProperty::GetFuncType(this, &StringComposerAction::GetArgument),
+         dtCore::StringActorProperty* argProperty = new dtCore::StringActorProperty(propertyName, propertyName,
+            dtCore::StringActorProperty::SetFuncType(this, &StringComposerAction::SetArgument),
+            dtCore::StringActorProperty::GetFuncType(this, &StringComposerAction::GetArgument),
             "Sets an argument used to compose the text.");
 
          mValues.insert(mValues.end() - DEFAULT_VALUE_LINK_COUNT, ValueLink(this, argProperty, false, false, false));

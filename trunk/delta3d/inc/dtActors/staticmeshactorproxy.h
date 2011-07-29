@@ -22,7 +22,7 @@
 #define DELTA_STATIC_MESH_ACTOR_PROXY
 
 #include <osg/Texture2D>
-#include <dtDAL/plugin_export.h>
+#include <dtCore/plugin_export.h>
 #include <dtActors/deltaobjectactorproxy.h>
 
 /// @cond DOXYGEN_SHOULD_SKIP_THIS
@@ -103,14 +103,14 @@ namespace dtActors
          *  there is geometry assigned to this static mesh, RenderMode::DRAW_ACTOR
          *  is returned.
          */
-        virtual const dtDAL::BaseActorObject::RenderMode& GetRenderMode();
+        virtual const dtCore::BaseActorObject::RenderMode& GetRenderMode();
 
         /**
          * Gets the billboard used to represent static meshes if this proxy's
          * render mode is RenderMode::DRAW_BILLBOARD_ICON.
          * @return
          */
-        virtual dtDAL::ActorProxyIcon* GetBillBoardIcon();
+        virtual dtCore::ActorProxyIcon* GetBillBoardIcon();
 
     protected:
 

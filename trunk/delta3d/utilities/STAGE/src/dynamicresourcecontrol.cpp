@@ -37,11 +37,11 @@
 #include <dtEditQt/resourceuiplugin.h>
 #include <dtEditQt/editordata.h>
 
-#include <dtDAL/project.h>
-#include <dtDAL/datatype.h>
-#include <dtDAL/resourceactorproperty.h>
-#include <dtDAL/resourcedescriptor.h>
-#include <dtDAL/map.h>
+#include <dtCore/project.h>
+#include <dtCore/datatype.h>
+#include <dtCore/resourceactorproperty.h>
+#include <dtCore/resourcedescriptor.h>
+#include <dtCore/map.h>
 
 #include <QtGui/QMessageBox>
 #include <QtGui/QGridLayout>
@@ -102,7 +102,7 @@ namespace dtEditQt
       // Set the data of the action to the current resource.
       if (action && action->text() == "<Use Current>")
       {
-         dtDAL::ResourceDescriptor current = EditorData::GetInstance().getCurrentResource(GetProperty().GetDataType());
+         dtCore::ResourceDescriptor current = EditorData::GetInstance().getCurrentResource(GetProperty().GetDataType());
          action->setData(QVariant(current.GetResourceIdentifier().c_str()));
       }
 
@@ -114,7 +114,7 @@ namespace dtEditQt
    {
       NotifyParentOfPreUpdate();
 
-      if (GetProperty().GetDataType() == dtDAL::DataType::UNKNOWN)
+      if (GetProperty().GetDataType() == dtCore::DataType::UNKNOWN)
       {
          QMessageBox::critical(mPropertyTree,
             tr("Error"),tr("No Resource Property is associated with this control.  An internal error has occurred."), QMessageBox::Ok, QMessageBox::Ok);

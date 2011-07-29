@@ -29,10 +29,10 @@
 #include <prefix/dtqtprefix.h>
 #include <dtQt/dynamicabstractcontrol.h>
 
-#include <dtDAL/actorproxy.h>
-#include <dtDAL/datatype.h>
-#include <dtDAL/vectoractorproperties.h>
-#include <dtDAL/arrayactorproperty.h>
+#include <dtCore/actorproxy.h>
+#include <dtCore/datatype.h>
+#include <dtCore/vectoractorproperties.h>
+#include <dtCore/arrayactorproperty.h>
 
 #include <dtQt/dynamicabstractparentcontrol.h>
 #include <dtQt/dynamicpropertycontainercontrol.h>
@@ -69,38 +69,38 @@ namespace dtQt
 
    ///////////////////////////////////////////////////////////////////////////////
    DynamicControlFactory::DynamicControlFactory()
-      : mControlFactory(new dtUtil::ObjectFactory<dtDAL::DataType*, DynamicAbstractControl>)
+      : mControlFactory(new dtUtil::ObjectFactory<dtCore::DataType*, DynamicAbstractControl>)
    {
       // register all the data types with the dynamic control factory
-      RegisterControlForDataType<DynamicStringControl>(dtDAL::DataType::STRING);
-      RegisterControlForDataType<DynamicFloatControl>(dtDAL::DataType::FLOAT);
-      RegisterControlForDataType<DynamicDoubleControl>(dtDAL::DataType::DOUBLE);
-      RegisterControlForDataType<DynamicIntControl>(dtDAL::DataType::INT);
-      RegisterControlForDataType<DynamicLongControl>(dtDAL::DataType::LONGINT);
-      RegisterControlForDataType<DynamicBoolControl>(dtDAL::DataType::BOOLEAN);
-      RegisterControlForDataType<DynamicVecNControl<dtDAL::Vec2ActorProperty> >(dtDAL::DataType::VEC2);
-      RegisterControlForDataType<DynamicVecNControl<dtDAL::Vec2fActorProperty> >(dtDAL::DataType::VEC2F);
-      RegisterControlForDataType<DynamicVecNControl<dtDAL::Vec2dActorProperty> >(dtDAL::DataType::VEC2D);
-      RegisterControlForDataType<DynamicVecNControl<dtDAL::Vec3ActorProperty> >(dtDAL::DataType::VEC3);
-      RegisterControlForDataType<DynamicVecNControl<dtDAL::Vec3fActorProperty> >(dtDAL::DataType::VEC3F);
-      RegisterControlForDataType<DynamicVecNControl<dtDAL::Vec3dActorProperty> >(dtDAL::DataType::VEC3D);
-      RegisterControlForDataType<DynamicVecNControl<dtDAL::Vec4ActorProperty> >(dtDAL::DataType::VEC4);
-      RegisterControlForDataType<DynamicVecNControl<dtDAL::Vec4fActorProperty> >(dtDAL::DataType::VEC4F);
-      RegisterControlForDataType<DynamicVecNControl<dtDAL::Vec4dActorProperty> >(dtDAL::DataType::VEC4D);
-      RegisterControlForDataType<DynamicEnumControl>(dtDAL::DataType::ENUMERATION);
-      RegisterControlForDataType<DynamicColorRGBAControl>(dtDAL::DataType::RGBACOLOR);
-      RegisterControlForDataType<DynamicArrayControl>(dtDAL::DataType::ARRAY);
-      RegisterControlForDataType<DynamicContainerControl>(dtDAL::DataType::CONTAINER);
-      RegisterControlForDataType<DynamicPropertyContainerControl>(dtDAL::DataType::PROPERTY_CONTAINER);
-      RegisterControlForDataType<DynamicActorControl>(dtDAL::DataType::ACTOR);
-      RegisterControlForDataType<DynamicGameEventControl>(dtDAL::DataType::GAME_EVENT);
-      RegisterControlForDataType<DynamicBitMaskControl>(dtDAL::DataType::BIT_MASK);
+      RegisterControlForDataType<DynamicStringControl>(dtCore::DataType::STRING);
+      RegisterControlForDataType<DynamicFloatControl>(dtCore::DataType::FLOAT);
+      RegisterControlForDataType<DynamicDoubleControl>(dtCore::DataType::DOUBLE);
+      RegisterControlForDataType<DynamicIntControl>(dtCore::DataType::INT);
+      RegisterControlForDataType<DynamicLongControl>(dtCore::DataType::LONGINT);
+      RegisterControlForDataType<DynamicBoolControl>(dtCore::DataType::BOOLEAN);
+      RegisterControlForDataType<DynamicVecNControl<dtCore::Vec2ActorProperty> >(dtCore::DataType::VEC2);
+      RegisterControlForDataType<DynamicVecNControl<dtCore::Vec2fActorProperty> >(dtCore::DataType::VEC2F);
+      RegisterControlForDataType<DynamicVecNControl<dtCore::Vec2dActorProperty> >(dtCore::DataType::VEC2D);
+      RegisterControlForDataType<DynamicVecNControl<dtCore::Vec3ActorProperty> >(dtCore::DataType::VEC3);
+      RegisterControlForDataType<DynamicVecNControl<dtCore::Vec3fActorProperty> >(dtCore::DataType::VEC3F);
+      RegisterControlForDataType<DynamicVecNControl<dtCore::Vec3dActorProperty> >(dtCore::DataType::VEC3D);
+      RegisterControlForDataType<DynamicVecNControl<dtCore::Vec4ActorProperty> >(dtCore::DataType::VEC4);
+      RegisterControlForDataType<DynamicVecNControl<dtCore::Vec4fActorProperty> >(dtCore::DataType::VEC4F);
+      RegisterControlForDataType<DynamicVecNControl<dtCore::Vec4dActorProperty> >(dtCore::DataType::VEC4D);
+      RegisterControlForDataType<DynamicEnumControl>(dtCore::DataType::ENUMERATION);
+      RegisterControlForDataType<DynamicColorRGBAControl>(dtCore::DataType::RGBACOLOR);
+      RegisterControlForDataType<DynamicArrayControl>(dtCore::DataType::ARRAY);
+      RegisterControlForDataType<DynamicContainerControl>(dtCore::DataType::CONTAINER);
+      RegisterControlForDataType<DynamicPropertyContainerControl>(dtCore::DataType::PROPERTY_CONTAINER);
+      RegisterControlForDataType<DynamicActorControl>(dtCore::DataType::ACTOR);
+      RegisterControlForDataType<DynamicGameEventControl>(dtCore::DataType::GAME_EVENT);
+      RegisterControlForDataType<DynamicBitMaskControl>(dtCore::DataType::BIT_MASK);
 
-      size_t datatypeCount = dtDAL::DataType::EnumerateType().size();
+      size_t datatypeCount = dtCore::DataType::EnumerateType().size();
 
       for (size_t i = 0; i < datatypeCount; ++i)
       {
-         dtDAL::DataType* dt = dtDAL::DataType::EnumerateType()[i];
+         dtCore::DataType* dt = dtCore::DataType::EnumerateType()[i];
          if (dt->IsResource())
          {
             RegisterControlForDataType<DynamicResourceControl>(*dt);
@@ -109,7 +109,7 @@ namespace dtQt
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   DynamicAbstractControl* DynamicControlFactory::CreateDynamicControl(const dtDAL::ActorProperty& prop)
+   DynamicAbstractControl* DynamicControlFactory::CreateDynamicControl(const dtCore::ActorProperty& prop)
    {
       return mControlFactory->CreateObject(&prop.GetPropertyType());
    }
@@ -177,7 +177,7 @@ namespace dtQt
 
    /////////////////////////////////////////////////////////////////////////////////
    void DynamicAbstractControl::InitializeData(DynamicAbstractControl* newParent,
-      PropertyEditorModel* newModel, dtDAL::PropertyContainer* newPC, dtDAL::ActorProperty* newProperty)
+      PropertyEditorModel* newModel, dtCore::PropertyContainer* newPC, dtCore::ActorProperty* newProperty)
    {
       mParent = newParent;
       mPropContainer = newPC;
@@ -190,8 +190,8 @@ namespace dtQt
          mModel->setDescription(this);
       }
 
-      connect(this, SIGNAL(PropertyChanged(dtDAL::PropertyContainer&, dtDAL::ActorProperty&)),
-         this, SLOT(OnPropertyChanged(dtDAL::PropertyContainer&, dtDAL::ActorProperty&)));
+      connect(this, SIGNAL(PropertyChanged(dtCore::PropertyContainer&, dtCore::ActorProperty&)),
+         this, SLOT(OnPropertyChanged(dtCore::PropertyContainer&, dtCore::ActorProperty&)));
 
       mInitialized = true;
 
@@ -297,20 +297,20 @@ namespace dtQt
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void DynamicAbstractControl::PropertyAboutToChangePassThrough(dtDAL::PropertyContainer& proxy, dtDAL::ActorProperty& prop,
+   void DynamicAbstractControl::PropertyAboutToChangePassThrough(dtCore::PropertyContainer& proxy, dtCore::ActorProperty& prop,
             std::string oldValue, std::string newValue)
    {
       emit PropertyAboutToChange(proxy, prop, oldValue, newValue);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void DynamicAbstractControl::PropertyChangedPassThrough(dtDAL::PropertyContainer& proxy, dtDAL::ActorProperty& prop)
+   void DynamicAbstractControl::PropertyChangedPassThrough(dtCore::PropertyContainer& proxy, dtCore::ActorProperty& prop)
    {
       emit PropertyChanged(proxy, prop);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void DynamicAbstractControl::OnPropertyChanged(dtDAL::PropertyContainer& propCon, dtDAL::ActorProperty& prop)
+   void DynamicAbstractControl::OnPropertyChanged(dtCore::PropertyContainer& propCon, dtCore::ActorProperty& prop)
    {
       actorPropertyChanged(propCon, prop);
    }
@@ -423,7 +423,7 @@ namespace dtQt
          return;
       }
 
-      dtDAL::ArrayActorPropertyBase* arrayProp = parent->GetProperty();
+      dtCore::ArrayActorPropertyBase* arrayProp = parent->GetProperty();
       if (arrayProp)
       {
          if (!arrayProp->CanReorder())
@@ -457,7 +457,7 @@ namespace dtQt
          return;
       }
 
-      dtDAL::ArrayActorPropertyBase* arrayProp = parent->GetProperty();
+      dtCore::ArrayActorPropertyBase* arrayProp = parent->GetProperty();
       if (arrayProp)
       {
          if (!arrayProp->CanReorder() || mArrayIndex + 1 >= arrayProp->GetArraySize())
@@ -491,7 +491,7 @@ namespace dtQt
          return;
       }
 
-      dtDAL::ArrayActorPropertyBase* arrayProp = parent->GetProperty();
+      dtCore::ArrayActorPropertyBase* arrayProp = parent->GetProperty();
       if (arrayProp)
       {
          int curSize = arrayProp->GetArraySize();
@@ -528,7 +528,7 @@ namespace dtQt
          return;
       }
 
-      dtDAL::ArrayActorPropertyBase* arrayProp = parent->GetProperty();
+      dtCore::ArrayActorPropertyBase* arrayProp = parent->GetProperty();
       if (arrayProp)
       {
          int curSize = arrayProp->GetArraySize();
@@ -592,7 +592,7 @@ namespace dtQt
          return;
       }
 
-      dtDAL::ArrayActorPropertyBase* arrayProp = parent->GetProperty();
+      dtCore::ArrayActorPropertyBase* arrayProp = parent->GetProperty();
       if (arrayProp)
       {
          // Check if this element can be shifted up.
@@ -672,7 +672,7 @@ namespace dtQt
             return;
          }
 
-         dtDAL::ArrayActorPropertyBase* arrayProp = parent->GetProperty();
+         dtCore::ArrayActorPropertyBase* arrayProp = parent->GetProperty();
          if (arrayProp)
          {
             arrayProp->SetIndex(mArrayIndex);
@@ -694,7 +694,7 @@ namespace dtQt
          const DynamicArrayControl* parent = static_cast<DynamicArrayControl*>(getParent());
          if (parent)
          {
-            const dtDAL::ArrayActorPropertyBase* arrayProp = parent->GetProperty();
+            const dtCore::ArrayActorPropertyBase* arrayProp = parent->GetProperty();
             if (arrayProp)
             {
                arrayProp->SetIndex(mArrayIndex);
@@ -714,7 +714,7 @@ namespace dtQt
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void DynamicAbstractControl::actorPropertyChanged(dtDAL::PropertyContainer& propCon, dtDAL::ActorProperty& property)
+   void DynamicAbstractControl::actorPropertyChanged(dtCore::PropertyContainer& propCon, dtCore::ActorProperty& property)
    {
       NotifyParentOfPreUpdate();
       updateEditorFromModel(mWrapper);

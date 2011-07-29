@@ -58,7 +58,7 @@ namespace dtDirector
    /////////////////////////////////////////////////////////////////////////////////
    QString PropertyEditor::GetGroupBoxLabelText(const QString& baseGroupBoxName)
    {
-      std::vector<dtDAL::PropertyContainer*> selectedContainers;
+      std::vector<dtCore::PropertyContainer*> selectedContainers;
       GetSelectedPropertyContainers(selectedContainers);
 
       if (selectedContainers.size() == 1)
@@ -70,7 +70,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   std::string PropertyEditor::GetContainerGroupName(dtDAL::PropertyContainer* propertyContainer)
+   std::string PropertyEditor::GetContainerGroupName(dtCore::PropertyContainer* propertyContainer)
    {
       EventNode* eventNode = dynamic_cast<EventNode*>(propertyContainer);
       if (eventNode)
@@ -111,7 +111,7 @@ namespace dtDirector
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   void PropertyEditor::PropertyAboutToChangeFromControl(dtDAL::PropertyContainer& propCon, dtDAL::ActorProperty& prop,
+   void PropertyEditor::PropertyAboutToChangeFromControl(dtCore::PropertyContainer& propCon, dtCore::ActorProperty& prop,
             const std::string& oldValue, const std::string& newValue)
    {
       dtCore::UniqueId id = dtCore::UniqueId("");
@@ -153,7 +153,7 @@ namespace dtDirector
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   void PropertyEditor::PropertyChangedFromControl(dtDAL::PropertyContainer& propCon, dtDAL::ActorProperty& prop)
+   void PropertyEditor::PropertyChangedFromControl(dtCore::PropertyContainer& propCon, dtCore::ActorProperty& prop)
    {
       // Check if the container is a node.
       Node* node = dynamic_cast<Node*>(&propCon);

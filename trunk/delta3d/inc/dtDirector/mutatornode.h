@@ -26,7 +26,7 @@
 
 #include <dtDirector/valuenode.h>
 #include <dtDirector/export.h>
-#include <dtDAL/actorproperty.h>
+#include <dtCore/actorproperty.h>
 
 namespace dtDirector
 {
@@ -59,7 +59,7 @@ namespace dtDirector
        *
        * @return     True if the given property should be saved.
        */
-      virtual bool ShouldPropertySave(const dtDAL::ActorProperty& prop) const;
+      virtual bool ShouldPropertySave(const dtCore::ActorProperty& prop) const;
 
       /**
        * Accessors for the name of the node.

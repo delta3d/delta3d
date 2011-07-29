@@ -3,7 +3,7 @@
 #include <dtCore/deltadrawable.h>
 #include <dtCore/transformable.h>
 
-#include <dtDAL/librarymanager.h>
+#include <dtCore/librarymanager.h>
 
 #include <dtEditQt/editordata.h>
 #include <dtEditQt/editorevents.h>
@@ -198,7 +198,7 @@ void BuildingToolPlugin::initialize(dtActors::BuildingActorProxy* activeProxy)
    {
       mActiveProxy->GetActor(mActiveActor);
 
-      //dtDAL::Map* map = EditorData::GetInstance().getCurrentMap();
+      //dtCore::Map* map = EditorData::GetInstance().getCurrentMap();
 
       //if (map && mActiveActor)
       //{
@@ -209,7 +209,7 @@ void BuildingToolPlugin::initialize(dtActors::BuildingActorProxy* activeProxy)
 
       //   for (int index = 0; index < (int)attachedActorIDs.size(); index++)
       //   {
-      //      dtDAL::TransformableActorProxy* proxy = NULL;
+      //      dtCore::TransformableActorProxy* proxy = NULL;
       //      map->GetProxyById(attachedActorIDs[index], proxy);
       //      if (proxy)
       //      {

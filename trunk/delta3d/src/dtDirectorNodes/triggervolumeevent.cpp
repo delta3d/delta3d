@@ -21,8 +21,8 @@
 #include <prefix/dtdirectornodesprefix.h>
 #include <dtDirectorNodes/triggervolumeevent.h>
 
-#include <dtDAL/actoridactorproperty.h>
-#include <dtDAL/actorproxy.h>
+#include <dtCore/actoridactorproperty.h>
+#include <dtCore/actorproxy.h>
 
 namespace dtDirector
 {
@@ -63,10 +63,10 @@ namespace dtDirector
    {
       EventNode::BuildPropertyMap();
 
-      dtDAL::ActorIDActorProperty* triggerProp = new dtDAL::ActorIDActorProperty(
+      dtCore::ActorIDActorProperty* triggerProp = new dtCore::ActorIDActorProperty(
          "TriggerVolume", "Trigger Volume",
-         dtDAL::ActorIDActorProperty::SetFuncType(this, &TriggerVolumeEvent::SetTriggerVolume),
-         dtDAL::ActorIDActorProperty::GetFuncType(this, &TriggerVolumeEvent::GetTriggerVolume),
+         dtCore::ActorIDActorProperty::SetFuncType(this, &TriggerVolumeEvent::SetTriggerVolume),
+         dtCore::ActorIDActorProperty::GetFuncType(this, &TriggerVolumeEvent::GetTriggerVolume),
          "dtActors::TriggerVolumeActorProxy", "The Trigger Volume.");
       AddProperty(triggerProp);
 
@@ -106,7 +106,7 @@ namespace dtDirector
          count = GetPropertyCount("TriggerVolume");
          for (int index = 0; index < count; index++)
          {
-            dtDAL::BaseActorObject* proxy = GetActor("TriggerVolume", index);
+            dtCore::BaseActorObject* proxy = GetActor("TriggerVolume", index);
             if (proxy)
             {
                dtActors::TriggerVolumeActor* volume = NULL;

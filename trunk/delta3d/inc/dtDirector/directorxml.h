@@ -30,10 +30,10 @@
 
 #include <dtDirector/directorxmlhandler.h>
 
-#include <dtDAL/basexml.h>
+#include <dtCore/basexml.h>
 
 
-namespace dtDAL
+namespace dtCore
 {
    class Map;
    class ActorPropertySerializer;
@@ -48,7 +48,7 @@ namespace dtDirector
     *
     * @brief front end class for loading a dtDirector script file.
     */
-   class DT_DIRECTOR_EXPORT DirectorParser: public dtDAL::BaseXMLParser
+   class DT_DIRECTOR_EXPORT DirectorParser: public dtCore::BaseXMLParser
    {
    public:
 
@@ -66,7 +66,7 @@ namespace dtDirector
        *
        * @throws dtUtil::Exception if a fatal error occurs in the parsing.
        */
-      bool Parse(Director* director, dtDAL::Map* map, const std::string& filePath);
+      bool Parse(Director* director, dtCore::Map* map, const std::string& filePath);
 
       /**
        * Parses the script type from the Director script file.
@@ -111,7 +111,7 @@ namespace dtDirector
     *
     * @brief Writes a director script out to an XML file
     */
-   class DT_DIRECTOR_EXPORT DirectorWriter: public dtDAL::BaseXMLWriter
+   class DT_DIRECTOR_EXPORT DirectorWriter: public dtCore::BaseXMLWriter
    {
    public:
 
@@ -154,7 +154,7 @@ namespace dtDirector
       //disable operator =
       DirectorWriter& operator=(const DirectorWriter& assignTo) { return *this;}
 
-      dtDAL::ActorPropertySerializer* mPropSerializer;
+      dtCore::ActorPropertySerializer* mPropSerializer;
    };
 }
 

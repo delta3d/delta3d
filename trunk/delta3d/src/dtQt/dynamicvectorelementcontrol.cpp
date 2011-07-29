@@ -30,9 +30,9 @@
 #include <prefix/dtqtprefix.h>
 #include <dtQt/dynamicvectorelementcontrol.h>
 
-#include <dtDAL/actorproxy.h>
-#include <dtDAL/datatype.h>
-#include <dtDAL/vectoractorproperties.h>
+#include <dtCore/actorproxy.h>
+#include <dtCore/datatype.h>
+#include <dtCore/vectoractorproperties.h>
 
 #include <dtQt/dynamicsubwidgets.h>
 
@@ -49,7 +49,7 @@ namespace dtQt
 {
 
    ///////////////////////////////////////////////////////////////////////////////
-   DynamicVectorElementControl::DynamicVectorElementControl(dtDAL::Vec2fActorProperty* newVectorProp,
+   DynamicVectorElementControl::DynamicVectorElementControl(dtCore::Vec2fActorProperty* newVectorProp,
       int whichIndex, const std::string& newLabel)
       : mLabel(newLabel)
       , mElementIndex(whichIndex)
@@ -68,7 +68,7 @@ namespace dtQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   DynamicVectorElementControl::DynamicVectorElementControl(dtDAL::Vec2dActorProperty* newVectorProp,
+   DynamicVectorElementControl::DynamicVectorElementControl(dtCore::Vec2dActorProperty* newVectorProp,
       int whichIndex, const std::string& newLabel)
       : mLabel(newLabel)
       , mElementIndex(whichIndex)
@@ -87,7 +87,7 @@ namespace dtQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   DynamicVectorElementControl::DynamicVectorElementControl(dtDAL::Vec3fActorProperty* newVectorProp,
+   DynamicVectorElementControl::DynamicVectorElementControl(dtCore::Vec3fActorProperty* newVectorProp,
       int whichIndex, const std::string& newLabel)
       : mLabel(newLabel)
       , mElementIndex(whichIndex)
@@ -106,7 +106,7 @@ namespace dtQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   DynamicVectorElementControl::DynamicVectorElementControl(dtDAL::Vec3dActorProperty* newVectorProp,
+   DynamicVectorElementControl::DynamicVectorElementControl(dtCore::Vec3dActorProperty* newVectorProp,
       int whichIndex, const std::string& newLabel)
       : mLabel(newLabel)
       , mElementIndex(whichIndex)
@@ -125,7 +125,7 @@ namespace dtQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   DynamicVectorElementControl::DynamicVectorElementControl(dtDAL::Vec4fActorProperty* newVectorProp,
+   DynamicVectorElementControl::DynamicVectorElementControl(dtCore::Vec4fActorProperty* newVectorProp,
       int whichIndex, const std::string& newLabel)
       : mLabel(newLabel)
       , mElementIndex(whichIndex)
@@ -144,7 +144,7 @@ namespace dtQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   DynamicVectorElementControl::DynamicVectorElementControl(dtDAL::Vec4dActorProperty* newVectorProp,
+   DynamicVectorElementControl::DynamicVectorElementControl(dtCore::Vec4dActorProperty* newVectorProp,
       int whichIndex, const std::string& newLabel)
       : mLabel(newLabel)
       , mElementIndex(whichIndex)
@@ -169,7 +169,7 @@ namespace dtQt
 
    /////////////////////////////////////////////////////////////////////////////////
    void DynamicVectorElementControl::InitializeData(DynamicAbstractControl* newParent,
-      PropertyEditorModel* newModel, dtDAL::PropertyContainer* newPC, dtDAL::ActorProperty* newProperty)
+      PropertyEditorModel* newModel, dtCore::PropertyContainer* newPC, dtCore::ActorProperty* newProperty)
    {
       DynamicAbstractControl::InitializeData(newParent, newModel, newPC, newProperty);
 

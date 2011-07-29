@@ -22,8 +22,8 @@
 #include <dtDirector/colors.h>
 #include <dtDirectorNodes/booleanvalue.h>
 
-#include <dtDAL/actorproperty.h>
-#include <dtDAL/booleanactorproperty.h>
+#include <dtCore/actorproperty.h>
+#include <dtCore/booleanactorproperty.h>
 
 namespace dtDirector
 {
@@ -53,17 +53,17 @@ namespace dtDirector
    {
       ValueNode::BuildPropertyMap();
 
-      mProperty = new dtDAL::BooleanActorProperty(
+      mProperty = new dtCore::BooleanActorProperty(
          "Value", "Value",
-         dtDAL::BooleanActorProperty::SetFuncType(this, &BooleanValue::SetValue),
-         dtDAL::BooleanActorProperty::GetFuncType(this, &BooleanValue::GetValue),
+         dtCore::BooleanActorProperty::SetFuncType(this, &BooleanValue::SetValue),
+         dtCore::BooleanActorProperty::GetFuncType(this, &BooleanValue::GetValue),
          "The value.");
       AddProperty(mProperty);
 
-      mInitialProperty = new dtDAL::BooleanActorProperty(
+      mInitialProperty = new dtCore::BooleanActorProperty(
          "Initial Value", "Initial Value",
-         dtDAL::BooleanActorProperty::SetFuncType(this, &BooleanValue::SetInitialValue),
-         dtDAL::BooleanActorProperty::GetFuncType(this, &BooleanValue::GetInitialValue),
+         dtCore::BooleanActorProperty::SetFuncType(this, &BooleanValue::SetInitialValue),
+         dtCore::BooleanActorProperty::GetFuncType(this, &BooleanValue::GetInitialValue),
          "The initial value.");
       AddProperty(mInitialProperty);
    }

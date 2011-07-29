@@ -81,7 +81,7 @@ namespace dtDirector
        *
        * @return     The newly created Director script.
        */
-      dtCore::RefPtr<Director> LoadScript(const std::string& scriptFile, dtGame::GameManager* gm = NULL, dtDAL::Map* map = NULL);
+      dtCore::RefPtr<Director> LoadScript(const std::string& scriptFile, dtGame::GameManager* gm = NULL, dtCore::Map* map = NULL);
       void LoadScript(Director* director, const std::string& scriptFile);
 
       /**

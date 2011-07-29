@@ -25,7 +25,7 @@
 #include <string>
 #include <map>
 #include <iosfwd>
-#include <dtDAL/datatype.h>
+#include <dtCore/datatype.h>
 #include <dtCore/refptr.h>
 #include <dtHLAGM/export.h>
 #include <dtHLAGM/distypes.h>
@@ -49,12 +49,12 @@ namespace dtHLAGM
             public:
 
                ParameterDefinition():
-                  mGameType(&dtDAL::DataType::UNKNOWN),
+                  mGameType(&dtCore::DataType::UNKNOWN),
                   mRequiredForGame(false)
                {}
 
                ParameterDefinition(const std::string& name,
-                     dtDAL::DataType& type,
+                     dtCore::DataType& type,
                      const std::string& defaultValue,
                      bool required):
                   mGameName(name),
@@ -70,7 +70,7 @@ namespace dtHLAGM
                {}
 
                DT_DECLARE_ACCESSOR_INLINE(std::string, GameName);
-               DT_DECLARE_ACCESSOR_INLINE(dtUtil::EnumerationPointer<dtDAL::DataType>, GameType);
+               DT_DECLARE_ACCESSOR_INLINE(dtUtil::EnumerationPointer<dtCore::DataType>, GameType);
                /// The Default Value for this Attribute/Property
                DT_DECLARE_ACCESSOR_INLINE(std::string, DefaultValue);
                /// Boolean for whether this field is required for an Actor Update.

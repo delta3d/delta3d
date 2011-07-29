@@ -27,14 +27,14 @@
  * William E. Johnson II
  */
 #include <prefix/dtqtprefix.h>
-#include <dtDAL/project.h>
+#include <dtCore/project.h>
 #include <dtQt/dynamicactorcontrol.h>
 #include <dtQt/propertyeditortreeview.h>
-#include <dtDAL/actoractorproperty.h>
-#include <dtDAL/actoridactorproperty.h>
-#include <dtDAL/map.h>
-#include <dtDAL/exceptionenum.h>
-#include <dtDAL/datatype.h>
+#include <dtCore/actoractorproperty.h>
+#include <dtCore/actoridactorproperty.h>
+#include <dtCore/map.h>
+#include <dtCore/exceptionenum.h>
+#include <dtCore/datatype.h>
 #include <QtGui/QPushButton>
 #include <QtGui/QHBoxLayout>
 
@@ -56,14 +56,14 @@ namespace dtQt
 
    /////////////////////////////////////////////////////////////////////////////////
    void DynamicActorControl::InitializeData(dtQt::DynamicAbstractControl* newParent,
-      dtQt::PropertyEditorModel* newModel, dtDAL::PropertyContainer* newPC, dtDAL::ActorProperty* newProperty)
+      dtQt::PropertyEditorModel* newModel, dtCore::PropertyContainer* newPC, dtCore::ActorProperty* newProperty)
    {
       // Note - Unlike the other properties, we can't static or reinterpret cast this object.
       // We need to dynamic cast it...
-      if (newProperty != NULL && newProperty->GetDataType() == dtDAL::DataType::ACTOR)
+      if (newProperty != NULL && newProperty->GetDataType() == dtCore::DataType::ACTOR)
       {
-         mProperty = dynamic_cast<dtDAL::ActorActorProperty*>(newProperty);
-         mIdProperty = dynamic_cast<dtDAL::ActorIDActorProperty*>(newProperty);
+         mProperty = dynamic_cast<dtCore::ActorActorProperty*>(newProperty);
+         mIdProperty = dynamic_cast<dtCore::ActorIDActorProperty*>(newProperty);
          dtQt::DynamicAbstractControl::InitializeData(newParent, newModel, newPC, newProperty);
       }
       else
@@ -137,7 +137,7 @@ namespace dtQt
 
       mTemporaryEditControl = new dtQt::SubQComboBox(wrapper, this);
 
-      std::vector< dtCore::RefPtr<dtDAL::BaseActorObject> > names;
+      std::vector< dtCore::RefPtr<dtCore::BaseActorObject> > names;
       std::string proxyClass;
       if (mProperty)
       {
@@ -188,7 +188,7 @@ namespace dtQt
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   dtDAL::BaseActorObject* DynamicActorControl::getActorProxy()
+   dtCore::BaseActorObject* DynamicActorControl::getActorProxy()
    {
       if (mProperty)
       {
@@ -204,7 +204,7 @@ namespace dtQt
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   dtDAL::ActorProperty* DynamicActorControl::getActorProperty()
+   dtCore::ActorProperty* DynamicActorControl::getActorProperty()
    {
       if (mProperty)
       {
@@ -238,10 +238,10 @@ namespace dtQt
    {
       DynamicAbstractControl::getValueAsString();
 
-      dtDAL::BaseActorObject* proxy = getActorProxy();
+      dtCore::BaseActorObject* proxy = getActorProxy();
       if (!proxy)
       {
-         dtDAL::ActorProperty* prop = getActorProperty();
+         dtCore::ActorProperty* prop = getActorProperty();
          if (prop && !prop->ToString().empty())
          {
             return "<Unknown>";
@@ -285,8 +285,8 @@ namespace dtQt
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   void DynamicActorControl::actorPropertyChanged(dtDAL::PropertyContainer& propCon,
-      dtDAL::ActorProperty& property)
+   void DynamicActorControl::actorPropertyChanged(dtCore::PropertyContainer& propCon,
+      dtCore::ActorProperty& property)
    {
       DynamicAbstractControl::actorPropertyChanged(propCon, property);
 
@@ -308,14 +308,14 @@ namespace dtQt
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   void DynamicActorControl::GetActorProxies(std::vector< dtCore::RefPtr<dtDAL::BaseActorObject> >& toFill, const std::string& className)
+   void DynamicActorControl::GetActorProxies(std::vector< dtCore::RefPtr<dtCore::BaseActorObject> >& toFill, const std::string& className)
    {
       toFill.clear();
 
-      int count = dtDAL::BaseActorObject::GetInstanceCount();
+      int count = dtCore::BaseActorObject::GetInstanceCount();
       for (int index = 0; index < count; ++index)
       {
-         dtDAL::BaseActorObject* object = dtDAL::BaseActorObject::GetInstance(index);
+         dtCore::BaseActorObject* object = dtCore::BaseActorObject::GetInstance(index);
          if (object)
          {
             
@@ -325,8 +325,8 @@ namespace dtQt
                continue;
             }
 
-            dtDAL::ActorProperty* prototypeProp = object->GetProperty("Initial Ownership");
-            dtDAL::ActorProperty* ghostProp = object->GetProperty("Is Ghost");
+            dtCore::ActorProperty* prototypeProp = object->GetProperty("Initial Ownership");
+            dtCore::ActorProperty* ghostProp = object->GetProperty("Is Ghost");
             if ((!prototypeProp || prototypeProp->ToString() != "PROTOTYPE") &&
                (!ghostProp || ghostProp->ToString() == "false"))
             {

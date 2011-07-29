@@ -51,7 +51,7 @@ namespace dtUtil
    class Log;
 }
 
-namespace dtDAL
+namespace dtCore
 {
    class ActorType;
 }
@@ -345,7 +345,7 @@ namespace dtHLAGM
          void StartElementEnumMapping(const std::string& elementName, const xercesc_dt::Attributes& attrs);
 
          void ObjectToActorCharacters(const std::string& elementName, const std::string& characters);
-         const dtDAL::ActorType* FindActorType(const std::string& actorTypeFullName);
+         const dtCore::ActorType* FindActorType(const std::string& actorTypeFullName);
 
          // This parses the entity type as one string 10.1.3.... etc
          void EntityTypeCharacters(EntityType& entityType, const std::string& elementName, const std::string& characters);

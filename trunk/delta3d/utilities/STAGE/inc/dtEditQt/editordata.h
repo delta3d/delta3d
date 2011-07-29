@@ -36,9 +36,9 @@
 #include <string>
 #include <list>
 #include <dtEditQt/undomanager.h>
-#include <dtDAL/resourcedescriptor.h>
+#include <dtCore/resourcedescriptor.h>
 
-namespace dtDAL
+namespace dtCore
 {
    class Map;
 }
@@ -70,33 +70,33 @@ namespace dtEditQt
        *
        * @param Takes the current map. Should be gotten from opening a map or creating a new map
        */
-      void setCurrentMap(dtDAL::Map* map);
+      void setCurrentMap(dtCore::Map* map);
 
       /**
        * Gets the Current Map.
        *
        * @return Returns the current map that was set when opening or creating a new map
        */
-      dtDAL::Map* getCurrentMap();
+      dtCore::Map* getCurrentMap();
 
       /**
        * Fills a vector with pointers to all the currently selected actor proxies.
        */
-      void GetSelectedActors(std::vector<dtDAL::BaseActorObject*>& toFill);
+      void GetSelectedActors(std::vector<dtCore::BaseActorObject*>& toFill);
 
       /** 
        * Set the currently selected resource.
        * @param type The DataType of the resource that's selected
        * @param selectedResource The ResourceDescriptor of what's selected
        */
-      void setCurrentResource(const dtDAL::DataType& type,
-                              const dtDAL::ResourceDescriptor& selectedResource);
+      void setCurrentResource(const dtCore::DataType& type,
+                              const dtCore::ResourceDescriptor& selectedResource);
 
       /** 
        * Get the currently selected resource, based on supplied DataType.
        * @param type The DataType describing the Resource you're looking for.
        */
-      dtDAL::ResourceDescriptor getCurrentResource(const dtDAL::DataType& type);
+      dtCore::ResourceDescriptor getCurrentResource(const dtCore::DataType& type);
       
       /**
        * Gets the current grid size.
@@ -252,7 +252,7 @@ namespace dtEditQt
        * with empty strings.
        * @see setMeshResource, setTextureResource, setParticleResource
        */
-      void setCurrentSoundResource(const dtDAL::ResourceDescriptor selectedResource);
+      void setCurrentSoundResource(const dtCore::ResourceDescriptor selectedResource);
 
       /**
        * Gets the currently selected Sound resource.  This is used by the
@@ -262,7 +262,7 @@ namespace dtEditQt
        * resource.getResourceIdentifier().empty() to see if it's actually none.
        * @see setSoundResource, setMeshResource, setTextureResource
        */
-      dtDAL::ResourceDescriptor getCurrentSoundResource() { return mSoundResource; }
+      dtCore::ResourceDescriptor getCurrentSoundResource() { return mSoundResource; }
 
       /**
        * Sets the currently selected Mesh resource.  This is called when the user is
@@ -273,7 +273,7 @@ namespace dtEditQt
        * with empty strings.
        * @see setSoundResource, setTextureResource, setParticleResource
        */
-      void setCurrentMeshResource(const dtDAL::ResourceDescriptor selectedResource);
+      void setCurrentMeshResource(const dtCore::ResourceDescriptor selectedResource);
 
       /**
        * Gets the currently selected Mesh resource.  This is used by the
@@ -283,7 +283,7 @@ namespace dtEditQt
        * resource.getResourceIdentifier().empty() to see if it's actually none.
        * @see setSoundResource, setMeshResource, setTextureResource
        */
-      dtDAL::ResourceDescriptor getCurrentMeshResource() { return mMeshResource; }
+      dtCore::ResourceDescriptor getCurrentMeshResource() { return mMeshResource; }
 
       /**
        * Sets the currently selected Texture resource.  This is called when the user is
@@ -294,7 +294,7 @@ namespace dtEditQt
        * with empty strings.
        * @see setSoundResource, setMeshResource, setParticleResource, setTerrainResource
        */
-      void setCurrentTextureResource(const dtDAL::ResourceDescriptor selectedResource);
+      void setCurrentTextureResource(const dtCore::ResourceDescriptor selectedResource);
       
       /**
        * Gets the currently selected Texture resource.  This is used by the
@@ -304,7 +304,7 @@ namespace dtEditQt
        * resource.getResourceIdentifier().empty() to see if it's actually none.
        * @see setSoundResource, setMeshResource, setTextureResource
        */
-      dtDAL::ResourceDescriptor getCurrentTextureResource() { return mTextureResource; }
+      dtCore::ResourceDescriptor getCurrentTextureResource() { return mTextureResource; }
 
       /**
        * Sets the currently selected Particle resource.  This is called when the user is
@@ -315,7 +315,7 @@ namespace dtEditQt
        * with empty strings.
        * @see setSoundResource, setMeshResource, setTextureResource, setTerrainResource
        */
-      void setCurrentParticleResource(const dtDAL::ResourceDescriptor selectedResource);
+      void setCurrentParticleResource(const dtCore::ResourceDescriptor selectedResource);
 
       /**
        * Gets the currently selected Particle resource.  This is used by the
@@ -325,7 +325,7 @@ namespace dtEditQt
        * resource.getResourceIdentifier().empty() to see if it's actually none.
        * @see setSoundResource, setMeshResource, setTextureResource
        */
-      dtDAL::ResourceDescriptor getCurrentParticleResource() { return mParticleResource; }
+      dtCore::ResourceDescriptor getCurrentParticleResource() { return mParticleResource; }
 
       /**
        * Sets the currently selected Skeletal Model resource.  This is called when the user is
@@ -336,7 +336,7 @@ namespace dtEditQt
        * with empty strings.
        * @see setSoundResource, setMeshResource, setTextureResource, setTerrainResource
        */
-      void setCurrentSkeletalModelResource(const dtDAL::ResourceDescriptor selectedResource);
+      void setCurrentSkeletalModelResource(const dtCore::ResourceDescriptor selectedResource);
 
       /**
        * Gets the currently selected skeletal model resource.  This is used by the
@@ -346,7 +346,7 @@ namespace dtEditQt
        * resource.getResourceIdentifier().empty() to see if it's actually none.
        * @see setSoundResource, setMeshResource, setTextureResource
        */
-      dtDAL::ResourceDescriptor getCurrentSkeletalModelResource() { return mSkeletalModelResource; }
+      dtCore::ResourceDescriptor getCurrentSkeletalModelResource() { return mSkeletalModelResource; }
 
       /**
        * Sets the currently selected terrain resource.  This is called when the user is
@@ -357,7 +357,7 @@ namespace dtEditQt
        * with empty strings.
        * @see setSoundResource, setMeshResource, setTextureResource
        */
-      void setCurrentTerrainResource(const dtDAL::ResourceDescriptor selectedResource);
+      void setCurrentTerrainResource(const dtCore::ResourceDescriptor selectedResource);
  
       /**
        * Gets the currently selected terrain resource.  This is used by the
@@ -367,7 +367,7 @@ namespace dtEditQt
        * resource.getResourceIdentifier().empty() to see if it's actually none.
        * @see getSoundResource, getMeshResource, getTextureResource, getTerrainResource
        */
-      dtDAL::ResourceDescriptor getCurrentTerrainResource() { return mTerrainResource; }
+      dtCore::ResourceDescriptor getCurrentTerrainResource() { return mTerrainResource; }
 
       /**
       * Sets the currently selected prefab resource.  This is called when the user is
@@ -378,7 +378,7 @@ namespace dtEditQt
       * with empty strings.
       * @see setSoundResource, setMeshResource, setTextureResource
       */
-      void setCurrentPrefabResource(const dtDAL::ResourceDescriptor selectedResource);
+      void setCurrentPrefabResource(const dtCore::ResourceDescriptor selectedResource);
 
       /**
       * Gets the currently selected prefab resource.  This is used by the
@@ -388,15 +388,15 @@ namespace dtEditQt
       * resource.getResourceIdentifier().empty() to see if it's actually none.
       * @see getSoundResource, getMeshResource, getTextureResource, getTerrainResource
       */
-      dtDAL::ResourceDescriptor getCurrentPrefabResource() { return mPrefabResource; }
+      dtCore::ResourceDescriptor getCurrentPrefabResource() { return mPrefabResource; }
 
-      void setCurrentShaderResource(const dtDAL::ResourceDescriptor selectedResource);
+      void setCurrentShaderResource(const dtCore::ResourceDescriptor selectedResource);
 
-      dtDAL::ResourceDescriptor getCurrentShaderResource() { return mShaderResource; }
+      dtCore::ResourceDescriptor getCurrentShaderResource() { return mShaderResource; }
 
-      void setCurrentDirectorResource(const dtDAL::ResourceDescriptor selectedResource);
+      void setCurrentDirectorResource(const dtCore::ResourceDescriptor selectedResource);
 
-      dtDAL::ResourceDescriptor getCurrentDirectorResource() { return mDirectorResource; }
+      dtCore::ResourceDescriptor getCurrentDirectorResource() { return mDirectorResource; }
 
 
 
@@ -407,19 +407,19 @@ namespace dtEditQt
       // NOTE - This should be an dtCore::RefPtr, however QT is managing MainWindow, so we don't have to.
       MainWindow* mMainWindow;
       dtCore::RefPtr<GroupUIRegistry> mGroupUIRegistry;
-      dtCore::RefPtr<dtDAL::Map> mMap;
+      dtCore::RefPtr<dtCore::Map> mMap;
       std::string mCurrentLibraryDirectory;
       std::string mCurrentProjectContext;
 
-      dtDAL::ResourceDescriptor mSoundResource;
-      dtDAL::ResourceDescriptor mMeshResource;
-      dtDAL::ResourceDescriptor mTextureResource;
-      dtDAL::ResourceDescriptor mParticleResource;
-      dtDAL::ResourceDescriptor mTerrainResource;
-      dtDAL::ResourceDescriptor mSkeletalModelResource;
-      dtDAL::ResourceDescriptor mPrefabResource;
-      dtDAL::ResourceDescriptor mShaderResource;
-      dtDAL::ResourceDescriptor mDirectorResource;
+      dtCore::ResourceDescriptor mSoundResource;
+      dtCore::ResourceDescriptor mMeshResource;
+      dtCore::ResourceDescriptor mTextureResource;
+      dtCore::ResourceDescriptor mParticleResource;
+      dtCore::ResourceDescriptor mTerrainResource;
+      dtCore::ResourceDescriptor mSkeletalModelResource;
+      dtCore::ResourceDescriptor mPrefabResource;
+      dtCore::ResourceDescriptor mShaderResource;
+      dtCore::ResourceDescriptor mDirectorResource;
 
       std::list<std::string> mRecentMaps;
       std::list<std::string> mRecentProjects;

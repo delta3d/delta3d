@@ -41,6 +41,6 @@ namespace dtGUI
          }
    };
 
-}//namespace dtDAL
+}//namespace dtCore
 
 #endif //DELTA_GUI_EXCEPTION_ENUM

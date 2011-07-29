@@ -22,8 +22,8 @@
 #ifndef _TRIGGER_ACTOR_PROXY_H_
 #define _TRIGGER_ACTOR_PROXY_H_
 
-#include <dtDAL/plugin_export.h>
-#include <dtDAL/actorproxy.h>
+#include <dtCore/plugin_export.h>
+#include <dtCore/actorproxy.h>
 
 namespace dtActors 
 {
@@ -31,7 +31,7 @@ namespace dtActors
     /**
      * This proxy wraps placeable triggers.
      */
-    class DT_PLUGIN_EXPORT TriggerActorProxy : public dtDAL::BaseActorObject
+    class DT_PLUGIN_EXPORT TriggerActorProxy : public dtCore::BaseActorObject
     {
       public:
 
@@ -55,7 +55,7 @@ namespace dtActors
           */
          virtual void BuildPropertyMap();
 
-         void SetAction( dtDAL::BaseActorObject* action );
+         void SetAction( dtCore::BaseActorObject* action );
          dtCore::DeltaDrawable* GetAction();
 
       protected:

@@ -28,13 +28,13 @@
 
 #include <dtUtil/mathdefines.h>
 
-#include <dtDAL/gameevent.h>
-#include <dtDAL/plugin_export.h>
-#include <dtDAL/actorproxyicon.h>
+#include <dtCore/gameevent.h>
+#include <dtCore/plugin_export.h>
+#include <dtCore/actorproxyicon.h>
 
 #include <vector>
 
-namespace dtDAL
+namespace dtCore
 {
    class NamedActorParameter;
    class NamedGroupParameter;
@@ -202,25 +202,25 @@ namespace dtActors
           * Set the event to be fired when this task completes.
           * @param gameEvent Event to be fired.
           */
-         void SetNotifyCompletedEvent(dtDAL::GameEvent* gameEvent) { mNotifyEventCompleted = gameEvent; }
+         void SetNotifyCompletedEvent(dtCore::GameEvent* gameEvent) { mNotifyEventCompleted = gameEvent; }
 
          /**
           * @return Event to be fired when this task completes.
           */
-         dtDAL::GameEvent* GetNotifyCompletedEvent() { return mNotifyEventCompleted.get(); }
-         const dtDAL::GameEvent* GetNotifyCompletedEvent() const { return mNotifyEventCompleted.get(); }
+         dtCore::GameEvent* GetNotifyCompletedEvent() { return mNotifyEventCompleted.get(); }
+         const dtCore::GameEvent* GetNotifyCompletedEvent() const { return mNotifyEventCompleted.get(); }
 
          /**
           * Set the event to be fired when this task fails.
           * @param gameEvent Event to be fired.
           */
-         void SetNotifyFailedEvent( dtDAL::GameEvent* gameEvent ) { mNotifyEventFailed = gameEvent; }
+         void SetNotifyFailedEvent( dtCore::GameEvent* gameEvent ) { mNotifyEventFailed = gameEvent; }
 
          /**
           * @return Event to be fired when this task fails.
           */
-         dtDAL::GameEvent* GetNotifyFailedEvent() { return mNotifyEventFailed.get(); }
-         const dtDAL::GameEvent* GetNotifyFailedEvent() const { return mNotifyEventFailed.get(); }
+         dtCore::GameEvent* GetNotifyFailedEvent() { return mNotifyEventFailed.get(); }
+         const dtCore::GameEvent* GetNotifyFailedEvent() const { return mNotifyEventFailed.get(); }
 
          /**
           * Convienence method to reset the properties of this task to their
@@ -276,8 +276,8 @@ namespace dtActors
          bool mComplete; // mutually exclusive with mFailed
          bool mFailed; // mutually exclusive with mComplete
          bool mNotifyLMSOnUpdate;
-         dtCore::ObserverPtr<dtDAL::GameEvent> mNotifyEventCompleted;
-         dtCore::ObserverPtr<dtDAL::GameEvent> mNotifyEventFailed;
+         dtCore::ObserverPtr<dtCore::GameEvent> mNotifyEventCompleted;
+         dtCore::ObserverPtr<dtCore::GameEvent> mNotifyEventFailed;
    };
 
    /**
@@ -322,7 +322,7 @@ namespace dtActors
           *
           * @return           A property, or NULL if none is needed.
           */
-         virtual dtCore::RefPtr<dtDAL::ActorProperty> GetDeprecatedProperty(const std::string& name);
+         virtual dtCore::RefPtr<dtCore::ActorProperty> GetDeprecatedProperty(const std::string& name);
 
          /**
           * This method is called by a child task on its parent to request
@@ -379,7 +379,7 @@ namespace dtActors
           * @param gameEvent Event to be fired through the Game Manager via
           *        a Game Event Message.
           */
-         void SendGameEvent(dtDAL::GameEvent& gameEvent);
+         void SendGameEvent(dtCore::GameEvent& gameEvent);
 
          /**
           * Gets a const pointer to the parent of this task.
@@ -486,12 +486,12 @@ namespace dtActors
           * render mode is RenderMode::DRAW_BILLBOARD_ICON. Used by STAGE.
           * @return billboard icon to use
           */
-         virtual dtDAL::ActorProxyIcon* GetBillBoardIcon()
+         virtual dtCore::ActorProxyIcon* GetBillBoardIcon()
          {
             if (!mBillBoardIcon.valid())
             {
                mBillBoardIcon =
-                  new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IMAGE_BILLBOARD_GENERIC);
+                  new dtCore::ActorProxyIcon(dtCore::ActorProxyIcon::IMAGE_BILLBOARD_GENERIC);
             }
 
             return mBillBoardIcon.get();
@@ -504,26 +504,26 @@ namespace dtActors
           *  there is geometry assigned to this static mesh, RenderMode::DRAW_ACTOR
           *  is returned.
           */
-         virtual const dtDAL::BaseActorObject::RenderMode& GetRenderMode()
+         virtual const dtCore::BaseActorObject::RenderMode& GetRenderMode()
          {
-            return dtDAL::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON;
+            return dtCore::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON;
          }
 
       protected:
          /**
           * Sets the group parameter to populate the list of subtasks.
           * @param subTasks the group of tasks.  It should contain NamedActorParameters with the ids of all the subtask proxies.
-          * @see dtDAL::NamedGroupParameter
-          * @see dtDAL::NamedActorParameter
+          * @see dtCore::NamedGroupParameter
+          * @see dtCore::NamedActorParameter
           */
-         void SetSubTaskGroup(const dtDAL::NamedGroupParameter& subTasks);
+         void SetSubTaskGroup(const dtCore::NamedGroupParameter& subTasks);
 
          /**
           * @return a new NamedGroupParameter containing NamedActorParameters with the ids of all the subtask proxies.
-          * @see dtDAL::NamedGroupParameter
-          * @see dtDAL::NamedActorParameter
+          * @see dtCore::NamedGroupParameter
+          * @see dtCore::NamedActorParameter
           */
-         dtCore::RefPtr<dtDAL::NamedGroupParameter> GetSubTaskGroup() const;
+         dtCore::RefPtr<dtCore::NamedGroupParameter> GetSubTaskGroup() const;
 
          /**
           * Destroys the task actor proxy.

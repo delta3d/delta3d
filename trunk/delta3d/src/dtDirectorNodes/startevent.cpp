@@ -21,8 +21,8 @@
 #include <prefix/dtdirectornodesprefix.h>
 #include <dtDirectorNodes/startevent.h>
 
-#include <dtDAL/actorproxy.h>
-#include <dtDAL/stringactorproperty.h>
+#include <dtCore/actorproxy.h>
+#include <dtCore/stringactorproperty.h>
 
 namespace dtDirector
 {

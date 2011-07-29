@@ -59,7 +59,7 @@ namespace dtHLAGM
          ParameterToParameter(const std::string& hlaName,
                              const std::string& gameName,
                              const AttributeType& attributeType,
-                             dtDAL::DataType& gameType,
+                             dtCore::DataType& gameType,
                              const std::string& defaultValue,
                              bool requiredForGame,
                              bool requiredForHLA):

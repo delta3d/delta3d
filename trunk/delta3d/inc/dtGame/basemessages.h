@@ -26,7 +26,7 @@
 #include <dtGame/message.h>
 #include <dtGame/messagemacros.h>
 #include <dtGame/messageparameter.h>
-#include <dtDAL/gameevent.h>
+#include <dtCore/gameevent.h>
 
 namespace dtGame
 {
@@ -110,13 +110,13 @@ namespace dtGame
           * Sets the game event contained within this message.
           * @param event The game event.
           */
-         void SetGameEvent(const dtDAL::GameEvent& event);
+         void SetGameEvent(const dtCore::GameEvent& event);
 
          /**
           * Gets a reference to the game event contained within this message.
           * @return A const reference to the game event.
           */
-         const dtDAL::GameEvent* GetGameEvent() const;
+         const dtCore::GameEvent* GetGameEvent() const;
 
       protected:
          virtual ~GameEventMessage() { }
