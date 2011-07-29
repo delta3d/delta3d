@@ -119,7 +119,6 @@ ADD_LIBRARY(${LIB_NAME} SHARED
 )
 
 TARGET_LINK_LIBRARIES( ${LIB_NAME}
-                       ${DTDAL_LIBRARY}
                        ${DTGAME_LIBRARY}
                        ${DTAI_LIBRARY}
 					   ${DTDIRECTOR_LIBRARY}

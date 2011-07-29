@@ -24,7 +24,6 @@ ADD_LIBRARY(${LIB_NAME} SHARED
 )
 
 TARGET_LINK_LIBRARIES(${LIB_NAME}
-                      ${DTDAL_LIBRARY}
                       ${DTDIRECTOR_LIBRARY}
                       ${DTAUDIO_LIBRARY}
                       ${DTACTORS_LIBRARY}

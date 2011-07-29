@@ -46,7 +46,6 @@ ADD_LIBRARY(${LIB_NAME} SHARED
 INCLUDE_DIRECTORIES( ${CEGUI_INCLUDE_DIR} )
 
 TARGET_LINK_LIBRARIES(${LIB_NAME}
-                      ${DTDAL_LIBRARY}
                       ${DTDIRECTOR_LIBRARY}
                       ${DTUTIL_LIBRARY}
                       ${DTCORE_LIBRARY}

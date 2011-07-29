@@ -7,7 +7,6 @@ BUILD_EXE_EXAMPLE( testEchoServer
                    ${DTUTIL_LIBRARY}
                    ${DTCORE_LIBRARY}
                    ${DTABC_LIBRARY}
-                   ${DTDAL_LIBRARY}
                    ${DTGAME_LIBRARY}
                    ${DTNETGM_LIBRARY}
                  )                                        

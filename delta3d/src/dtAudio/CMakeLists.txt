@@ -35,7 +35,6 @@ LINK_WITH_VARIABLES(${LIB_NAME}
 TARGET_LINK_LIBRARIES( ${LIB_NAME}    
                        ${OPENAL_LIBRARY} 
                        ${DTCORE_LIBRARY}
-                       ${DTDAL_LIBRARY} #for SoundActorProxy
                        ${DTGAME_LIBRARY} #for SoundActorProxy
                        ${DTUTIL_LIBRARY}
                        optimized ${ALUT_LIBRARY} debug ${ALUT_DEBUG}
