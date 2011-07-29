@@ -20,7 +20,7 @@
  * Matthew W. Campbell
  */
 
-#include <prefix/dtdalprefix.h>
+#include <prefix/dtcoreprefix.h>
 #include <dtCore/actorproperty.h>
 #include <dtCore/namedparameter.h>
 #include <dtCore/defaultpropertymanager.h>

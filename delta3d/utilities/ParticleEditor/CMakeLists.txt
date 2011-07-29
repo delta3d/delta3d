@@ -14,7 +14,7 @@ qt4_wrap_cpp(MOC_SOURCES ${PROG_HEADERS})
 QT4_ADD_RESOURCES(RCC_SOURCES particleeditor.qrc)
 QT4_WRAP_UI(UI_SOURCES particleeditor.ui)
 
-#ADD_PRECOMPILED_HEADER(${APP_NAME} prefix/dtdalprefix.h prefix/dtdalprefix.cpp PROG_SOURCES)
+#ADD_PRECOMPILED_HEADER(${APP_NAME} prefix/dtcoreprefix.h prefix/dtdalprefix.cpp PROG_SOURCES)
 
 ADD_EXECUTABLE(${APP_NAME}
     ${PROG_HEADERS}

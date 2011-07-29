@@ -20,7 +20,7 @@
  * Extracted base functionality from mapcontenthandler by Jeff P. Houde
  */
 
-#include <prefix/dtdalprefix.h>
+#include <prefix/dtcoreprefix.h>
 
 #include <typeinfo>
 

@@ -19,7 +19,7 @@
  * Jeff P. Houde
  */
 
-#include <prefix/dtdalprefix.h>
+#include <prefix/dtcoreprefix.h>
 #include <dtCore/stringselectoractorproperty.h>
 
 #include <dtCore/datatype.h>

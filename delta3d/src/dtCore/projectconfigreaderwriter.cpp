@@ -21,7 +21,7 @@
  * 
  * David Guthrie
  */
-#include <prefix/dtdalprefix.h>
+#include <prefix/dtcoreprefix.h>
 #include <dtCore/projectconfigreaderwriter.h>
 #include <dtCore/basexml.h>
 #include <dtCore/projectconfigxmlhandler.h>

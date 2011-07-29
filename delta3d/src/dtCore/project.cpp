@@ -19,7 +19,7 @@
  * David Guthrie
  */
 
-#include <prefix/dtdalprefix.h>
+#include <prefix/dtcoreprefix.h>
 #include <string>
 #include <sstream>
 #include <set>

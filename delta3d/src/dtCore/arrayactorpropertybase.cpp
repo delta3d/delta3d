@@ -1,4 +1,4 @@
-#include <prefix/dtdalprefix.h>
+#include <prefix/dtcoreprefix.h>
 #include <dtCore/arrayactorpropertybase.h>
 #include <dtUtil/log.h>
 #include <dtUtil/stringutils.h>

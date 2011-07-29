@@ -18,7 +18,7 @@
  *
  * Eric Heine
  */
-#include <prefix/dtdalprefix.h>
+#include <prefix/dtcoreprefix.h>
 #include <dtCore/intactorproperty.h>
 
 #include <dtCore/datatype.h>

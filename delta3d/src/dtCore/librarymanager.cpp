@@ -18,7 +18,7 @@
  *
  * Matthew W. Campbell and David Guthrie
  */
-#include <prefix/dtdalprefix.h>
+#include <prefix/dtcoreprefix.h>
 
 #include <dtCore/librarymanager.h>
 #include <dtCore/actortype.h>

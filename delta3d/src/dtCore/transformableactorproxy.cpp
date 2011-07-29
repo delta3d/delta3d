@@ -18,7 +18,7 @@
  *
  * William E. Johnson II
  */
-#include <prefix/dtdalprefix.h>
+#include <prefix/dtcoreprefix.h>
 #include <dtCore/transformableactorproxy.h>
 
 #include <dtCore/scene.h>

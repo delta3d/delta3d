@@ -19,7 +19,7 @@
  * @author David Guthrie
  */
 
-#include <prefix/dtdalprefix.h>
+#include <prefix/dtcoreprefix.h>
 #include <dtCore/datatype.h>
 #include <dtCore/namedarrayparameter.h>
 #include <dtCore/exceptionenum.h>

@@ -20,7 +20,7 @@
  * Extracted actor property functionality from mapxml by Jeff P. Houde
  */
 
-#include <prefix/dtdalprefix.h>
+#include <prefix/dtcoreprefix.h>
 #include <dtCore/actorpropertyserializer.h>
 
 #include <dtCore/transform.h>
