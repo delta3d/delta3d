@@ -111,8 +111,6 @@ CPPUNIT_TEST_SUITE_REGISTRATION(FileUtilsTests);
 
 const std::string DATA_DIR = dtUtil::GetDeltaRootPath()+dtUtil::FileUtils::PATH_SEPARATOR+"examples/data";
 const std::string TESTS_DIR = dtUtil::GetDeltaRootPath()+dtUtil::FileUtils::PATH_SEPARATOR+"tests";
-const std::string MAPPROJECTCONTEXT = TESTS_DIR + dtUtil::FileUtils::PATH_SEPARATOR + "dtCore" + dtUtil::FileUtils::PATH_SEPARATOR + "WorkingMapProject";
-const std::string PROJECTCONTEXT = TESTS_DIR + dtUtil::FileUtils::PATH_SEPARATOR + "dtCore" + dtUtil::FileUtils::PATH_SEPARATOR + "WorkingProject";
 
 
 //////////////////////////////////////////////////////////////////////////
