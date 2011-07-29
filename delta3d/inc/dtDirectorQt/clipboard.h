@@ -25,7 +25,7 @@
 
 #include <dtDirector/node.h>
 #include <dtCore/uniqueid.h>
-#include <dtDAL/propertycontainer.h>
+#include <dtCore/propertycontainer.h>
 
 #include <osg/Vec2>
 
@@ -60,14 +60,14 @@ namespace dtDirector
        *
        * @param[in]  object  The object to add.
        */
-      void AddObject(dtDAL::PropertyContainer* object);
+      void AddObject(dtCore::PropertyContainer* object);
 
       /**
        * Removes an object from the clipboard.
        *
        * @param[in]  object  The object to remove.
        */
-      void RemoveObject(dtDAL::PropertyContainer* object);
+      void RemoveObject(dtCore::PropertyContainer* object);
 
       /**
        * Pastes the contents of the clipboard to a Director graph
@@ -81,7 +81,7 @@ namespace dtDirector
        *
        * @return     The list of nodes that were newly created.
        */
-      std::vector<dtDAL::PropertyContainer*> PasteObjects(DirectorGraph* graph, UndoManager* undoManager, const osg::Vec2& position = osg::Vec2(), bool createLinks = false, bool linkExternal = false);
+      std::vector<dtCore::PropertyContainer*> PasteObjects(DirectorGraph* graph, UndoManager* undoManager, const osg::Vec2& position = osg::Vec2(), bool createLinks = false, bool linkExternal = false);
 
       /**
        * Retrieves whether there are items copied to the clipboard.
@@ -99,7 +99,7 @@ namespace dtDirector
        *
        * @return     A pointer to the newly created object.
        */
-      dtDAL::PropertyContainer* CopyObject(dtDAL::PropertyContainer* object, DirectorGraph* graph, const osg::Vec2& position = osg::Vec2());
+      dtCore::PropertyContainer* CopyObject(dtCore::PropertyContainer* object, DirectorGraph* graph, const osg::Vec2& position = osg::Vec2());
 
       /**
        * Connects all the links on a pasted node.
@@ -112,7 +112,7 @@ namespace dtDirector
        *                           connections between parent and sub-graph.
        *
        */
-      void LinkNode(Node* node, DirectorGraph* parent, UndoManager* undoManager, std::vector<dtDAL::PropertyContainer*>& linkNodes, bool createLinks, bool linkExternal);
+      void LinkNode(Node* node, DirectorGraph* parent, UndoManager* undoManager, std::vector<dtCore::PropertyContainer*>& linkNodes, bool createLinks, bool linkExternal);
 
       /**
        * Links all inputs to outputs for a node.
@@ -125,7 +125,7 @@ namespace dtDirector
        * @param[in]  createLinks  If True, will create link nodes to bridge link
        *                           connections between parent and sub-graph.
        */
-      void LinkInputs(InputLink* link, InputLink* fromLink, DirectorGraph* parent, UndoManager* undoManager, std::vector<dtDAL::PropertyContainer*>& linkNodes, bool createLinks, bool linkExternal);
+      void LinkInputs(InputLink* link, InputLink* fromLink, DirectorGraph* parent, UndoManager* undoManager, std::vector<dtCore::PropertyContainer*>& linkNodes, bool createLinks, bool linkExternal);
 
       /**
        * Links all outputs to inputs for a node.
@@ -138,7 +138,7 @@ namespace dtDirector
        * @param[in]  createLinks  If True, will create link nodes to bridge link
        *                           connections between parent and sub-graph.
        */
-      void LinkOutputs(OutputLink* link, OutputLink* fromLink, DirectorGraph* parent, UndoManager* undoManager, std::vector<dtDAL::PropertyContainer*>& linkNodes, bool createLinks, bool linkExternal);
+      void LinkOutputs(OutputLink* link, OutputLink* fromLink, DirectorGraph* parent, UndoManager* undoManager, std::vector<dtCore::PropertyContainer*>& linkNodes, bool createLinks, bool linkExternal);
 
       /**
        * Links all value links with value nodes.
@@ -151,7 +151,7 @@ namespace dtDirector
        * @param[in]  createLinks  If True, will create link nodes to bridge link
        *                           connections between parent and sub-graph.
        */
-      void LinkValues(ValueLink* link, ValueLink* fromLink, DirectorGraph* parent, UndoManager* undoManager, std::vector<dtDAL::PropertyContainer*>& linkNodes, bool createLinks, bool linkExternal);
+      void LinkValues(ValueLink* link, ValueLink* fromLink, DirectorGraph* parent, UndoManager* undoManager, std::vector<dtCore::PropertyContainer*>& linkNodes, bool createLinks, bool linkExternal);
 
       /**
        * Links the value node with value links.
@@ -164,9 +164,9 @@ namespace dtDirector
        * @param[in]  createLinks  If True, will create link nodes to bridge link
        *                           connections between parent and sub-graph.
        */
-      void LinkValueNode(ValueNode* node, ValueNode* fromNode, DirectorGraph* parent, UndoManager* undoManager, std::vector<dtDAL::PropertyContainer*>& linkNodes, bool createLinks, bool linkExternal);
+      void LinkValueNode(ValueNode* node, ValueNode* fromNode, DirectorGraph* parent, UndoManager* undoManager, std::vector<dtCore::PropertyContainer*>& linkNodes, bool createLinks, bool linkExternal);
 
-      std::vector<dtCore::RefPtr<dtDAL::PropertyContainer> > mCopied;
+      std::vector<dtCore::RefPtr<dtCore::PropertyContainer> > mCopied;
       osg::Vec2  mOffset;
       bool       mFirstObject;
 

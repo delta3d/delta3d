@@ -27,10 +27,10 @@
 #include <dtABC/application.h>
 #include <dtGame/basemessages.h>
 #include <dtGame/messagetype.h>
-#include <dtDAL/map.h>
-#include <dtDAL/project.h>
-#include <dtDAL/librarymanager.h>
-#include <dtDAL/resourceactorproperty.h>
+#include <dtCore/map.h>
+#include <dtCore/project.h>
+#include <dtCore/librarymanager.h>
+#include <dtCore/resourceactorproperty.h>
 #include <dtAI/aiactorregistry.h>
 #include <dtAI/aiinterfaceactor.h>
 #include <dtAI/aiplugininterface.h>
@@ -104,7 +104,7 @@ void AIComponent::ProcessMessage(const dtGame::Message& message)
 ////////////////////////////////////////////////////////////////////////////////
 void AIComponent::AddAIInterfaceToMap(const std::string& map)
 {
-   dtDAL::Map& currentMap = dtDAL::Project::GetInstance().GetMap(map);
+   dtCore::Map& currentMap = dtCore::Project::GetInstance().GetMap(map);
 
    std::string mapFileName = osgDB::getNameLessExtension(currentMap.GetFileName());
 
@@ -113,21 +113,21 @@ void AIComponent::AddAIInterfaceToMap(const std::string& map)
 
    std::string path;
 
-   path = dtDAL::Project::GetInstance().GetContext() + "/" +
-      dtDAL::DataType::STATIC_MESH.GetName() + "/" + mapFileName + ".ai";
+   path = dtCore::Project::GetInstance().GetContext() + "/" +
+      dtCore::DataType::STATIC_MESH.GetName() + "/" + mapFileName + ".ai";
 
    while (dtUtil::FileUtils::GetInstance().FileExists(path))
    {
       ++numToTackOn;
       stringNumToTackOn = dtUtil::ToString(numToTackOn);
-      path  = dtDAL::Project::GetInstance().GetContext() + "/" +
-         dtDAL::DataType::STATIC_MESH.GetName() + "/" + mapFileName + stringNumToTackOn + ".ai";
+      path  = dtCore::Project::GetInstance().GetContext() + "/" +
+         dtCore::DataType::STATIC_MESH.GetName() + "/" + mapFileName + stringNumToTackOn + ".ai";
    }
 
    // Make sure the dtAI actor library is loaded
    if (!currentMap.HasLibrary("dtAI"))
    {
-      dtDAL::LibraryManager::GetInstance().LoadActorRegistry("dtAI");
+      dtCore::LibraryManager::GetInstance().LoadActorRegistry("dtAI");
       currentMap.AddLibrary("dtAI", "1.0");
    }
 
@@ -141,8 +141,8 @@ void AIComponent::AddAIInterfaceToMap(const std::string& map)
       throw dtUtil::Exception("Unable to save waypoint file to path \"" + path + "\".  Unknown error.", __FILE__, __LINE__);
    }
 
-   dtDAL::ResourceDescriptor rd(dtDAL::DataType::STATIC_MESH.GetName() + ":" + mapFileName + stringNumToTackOn + ".ai");
-   dtDAL::ResourceActorProperty* rap = NULL;
+   dtCore::ResourceDescriptor rd(dtCore::DataType::STATIC_MESH.GetName() + ":" + mapFileName + stringNumToTackOn + ".ai");
+   dtCore::ResourceActorProperty* rap = NULL;
    aiActor->GetProperty(dtAI::AIInterfaceActorProxy::PROPERTY_WAYPOINT_FILE_NAME, rap);
    if (rap == NULL)
    {
@@ -151,7 +151,7 @@ void AIComponent::AddAIInterfaceToMap(const std::string& map)
    rap->SetValue(rd);
 
    // Auto save until this becomes part of the undo stack
-   dtDAL::Project::GetInstance().SaveMap(currentMap);
+   dtCore::Project::GetInstance().SaveMap(currentMap);
 
    SetAIPluginInterfaceProxy(aiActor);
    AIUtilityApp& aiApp = dynamic_cast<AIUtilityApp&>(GetGameManager()->GetApplication());

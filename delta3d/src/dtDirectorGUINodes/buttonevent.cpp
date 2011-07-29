@@ -22,8 +22,8 @@
 #include <dtDirectorGUINodes/buttonevent.h>
 #include <dtDirectorGUINodes/guinodemanager.h>
 
-#include <dtDAL/intactorproperty.h>
-#include <dtDAL/stringselectoractorproperty.h>
+#include <dtCore/intactorproperty.h>
+#include <dtCore/stringselectoractorproperty.h>
 
 #include <dtGUI/gui.h>
 #include <dtGUI/scriptmodule.h>
@@ -78,28 +78,28 @@ namespace dtDirector
    {
       EventNode::BuildPropertyMap();
 
-      dtDAL::StringSelectorActorProperty* layoutProp =
-         new dtDAL::StringSelectorActorProperty(
+      dtCore::StringSelectorActorProperty* layoutProp =
+         new dtCore::StringSelectorActorProperty(
          "Layout", "Layout",
-         dtDAL::StringSelectorActorProperty::SetFuncType(this, &ButtonEvent::SetLayout),
-         dtDAL::StringSelectorActorProperty::GetFuncType(this, &ButtonEvent::GetLayout),
-         dtDAL::StringSelectorActorProperty::GetListFuncType(this, &ButtonEvent::GetLayoutList),
+         dtCore::StringSelectorActorProperty::SetFuncType(this, &ButtonEvent::SetLayout),
+         dtCore::StringSelectorActorProperty::GetFuncType(this, &ButtonEvent::GetLayout),
+         dtCore::StringSelectorActorProperty::GetListFuncType(this, &ButtonEvent::GetLayoutList),
          "The Layout.", "", true);
       AddProperty(layoutProp);
 
-      dtDAL::StringSelectorActorProperty* buttonProp =
-         new dtDAL::StringSelectorActorProperty(
+      dtCore::StringSelectorActorProperty* buttonProp =
+         new dtCore::StringSelectorActorProperty(
          "Button", "Button",
-         dtDAL::StringSelectorActorProperty::SetFuncType(this, &ButtonEvent::SetButton),
-         dtDAL::StringSelectorActorProperty::GetFuncType(this, &ButtonEvent::GetButton),
-         dtDAL::StringSelectorActorProperty::GetListFuncType(this, &ButtonEvent::GetButtonList),
+         dtCore::StringSelectorActorProperty::SetFuncType(this, &ButtonEvent::SetButton),
+         dtCore::StringSelectorActorProperty::GetFuncType(this, &ButtonEvent::GetButton),
+         dtCore::StringSelectorActorProperty::GetListFuncType(this, &ButtonEvent::GetButtonList),
          "The Button.", "", true);
       AddProperty(buttonProp);
 
-      dtDAL::IntActorProperty* clickCountProp = new dtDAL::IntActorProperty(
+      dtCore::IntActorProperty* clickCountProp = new dtCore::IntActorProperty(
          "ClickCount", "Click Count",
-         dtDAL::IntActorProperty::SetFuncType(this, &ButtonEvent::SetClickCount),
-         dtDAL::IntActorProperty::GetFuncType(this, &ButtonEvent::GetClickCount),
+         dtCore::IntActorProperty::SetFuncType(this, &ButtonEvent::SetClickCount),
+         dtCore::IntActorProperty::GetFuncType(this, &ButtonEvent::GetClickCount),
          "The number of clicks required for a Click output trigger.");
       AddProperty(clickCountProp);
 

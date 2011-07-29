@@ -26,9 +26,9 @@
 
 #include <dtAudio/audiomanager.h>
 
-#include <dtDAL/actorproperty.h>
-#include <dtDAL/functor.h>
-#include <dtDAL/gameeventmanager.h>
+#include <dtCore/actorproperty.h>
+#include <dtCore/functor.h>
+#include <dtCore/gameeventmanager.h>
 
 #include <dtGame/basemessages.h>
 #include <dtGame/gamemanager.h>
@@ -189,7 +189,7 @@ void HatchActor::Activate(bool enable)
       return;
    }
 
-   dtDAL::GameEvent* event = dtDAL::GameEventManager::GetInstance().FindEvent(name);
+   dtCore::GameEvent* event = dtCore::GameEventManager::GetInstance().FindEvent(name);
    if (event == NULL)
    {
       throw dtUtil::Exception("Failed to find the game event: " + name, __FILE__, __LINE__);
@@ -215,7 +215,7 @@ void HatchActor::OnMapLoaded(const dtGame::Message& msg)
       {
          mGameMapLoaded = true;
          // Find the game level actor and search with its node
-         std::vector<dtDAL::BaseActorObject*> proxies;
+         std::vector<dtCore::BaseActorObject*> proxies;
          GetGameActorProxy().GetGameManager()->FindActorsByType(*EntityActorRegistry::TYPE_GAME_LEVEL_ACTOR, proxies);
          GameLevelActor* gla = dynamic_cast<GameLevelActor*>(proxies[0]->GetActor());
          if (gla == NULL)

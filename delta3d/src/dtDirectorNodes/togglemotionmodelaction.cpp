@@ -24,7 +24,7 @@
 
 #include <dtCore/motionmodel.h>
 
-#include <dtDAL/stringactorproperty.h>
+#include <dtCore/stringactorproperty.h>
 
 #include <dtDirector/director.h>
 
@@ -63,10 +63,10 @@ namespace dtDirector
    {
       ActionNode::BuildPropertyMap();
 
-      dtDAL::StringActorProperty* modelProp = new dtDAL::StringActorProperty(
+      dtCore::StringActorProperty* modelProp = new dtCore::StringActorProperty(
          "Motion Model", "Motion Model",
-         dtDAL::StringActorProperty::SetFuncType(this, &ToggleMotionModelAction::SetModelName),
-         dtDAL::StringActorProperty::GetFuncType(this, &ToggleMotionModelAction::GetModelName),
+         dtCore::StringActorProperty::SetFuncType(this, &ToggleMotionModelAction::SetModelName),
+         dtCore::StringActorProperty::GetFuncType(this, &ToggleMotionModelAction::GetModelName),
          "The name of the motion model to toggle.");
       AddProperty(modelProp);
 

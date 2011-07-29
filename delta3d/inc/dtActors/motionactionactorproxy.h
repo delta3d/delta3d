@@ -1,7 +1,7 @@
 #ifndef __MOTION_ACTION_ACTOR_PROXY_H__
 #define __MOTION_ACTION_ACTOR_PROXY_H__
 
-#include <dtDAL/plugin_export.h>
+#include <dtCore/plugin_export.h>
 #include <dtUtil/enumeration.h>
 #include <dtActors/actionactorproxy.h>
 #include <osg/Vec3>
@@ -62,10 +62,10 @@ public:
    /*virtual*/ void BuildPropertyMap();
    /*virtual*/ bool IsPlaceable();
 
-   void SetActorTargetObject(dtDAL::BaseActorObject* node);
+   void SetActorTargetObject(dtCore::BaseActorObject* node);
    dtCore::DeltaDrawable* GetActorTargetObject();
 
-   void SetActorParentObject(dtDAL::BaseActorObject* actor);
+   void SetActorParentObject(dtCore::BaseActorObject* actor);
    dtCore::DeltaDrawable* GetActorParentObject();
 
    void SetActorParentRelation(ParentRelationEnum& e);

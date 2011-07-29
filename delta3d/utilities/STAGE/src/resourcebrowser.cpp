@@ -67,14 +67,14 @@ namespace dtEditQt
       mTabDirector      = new TabWrapper(this);
 
       // widgets
-      mMeshWidget       = new StaticMeshBrowser(dtDAL::DataType::STATIC_MESH, this);
-      mSkeletalWidget   = new SkeletalMeshBrowser(dtDAL::DataType::SKELETAL_MESH, this);
-      mSoundWidget      = new SoundBrowser(dtDAL::DataType::SOUND, this);
-      mParticleWidget   = new ParticleBrowser(dtDAL::DataType::PARTICLE_SYSTEM, this);
-      mTextureWidget    = new TextureBrowser(dtDAL::DataType::TEXTURE, this);
-      mTerrainWidget    = new TerrainBrowser(dtDAL::DataType::TERRAIN, this);
-      mShaderWidget     = new ShaderBrowser(dtDAL::DataType::SHADER, this);
-      mDirectorWidget   = new DirectorBrowser(dtDAL::DataType::DIRECTOR, this);
+      mMeshWidget       = new StaticMeshBrowser(dtCore::DataType::STATIC_MESH, this);
+      mSkeletalWidget   = new SkeletalMeshBrowser(dtCore::DataType::SKELETAL_MESH, this);
+      mSoundWidget      = new SoundBrowser(dtCore::DataType::SOUND, this);
+      mParticleWidget   = new ParticleBrowser(dtCore::DataType::PARTICLE_SYSTEM, this);
+      mTextureWidget    = new TextureBrowser(dtCore::DataType::TEXTURE, this);
+      mTerrainWidget    = new TerrainBrowser(dtCore::DataType::TERRAIN, this);
+      mShaderWidget     = new ShaderBrowser(dtCore::DataType::SHADER, this);
+      mDirectorWidget   = new DirectorBrowser(dtCore::DataType::DIRECTOR, this);
 
       addTabs();
 

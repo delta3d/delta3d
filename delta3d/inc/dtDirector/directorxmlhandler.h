@@ -28,9 +28,9 @@
 
 #include <dtDirector/node.h>
 
-#include <dtDAL/basexmlhandler.h>
-#include <dtDAL/actorpropertyserializer.h>
-#include <dtDAL/map.h>
+#include <dtCore/basexmlhandler.h>
+#include <dtCore/actorpropertyserializer.h>
+#include <dtCore/map.h>
 
 #include <dtCore/uniqueid.h>
 
@@ -47,7 +47,7 @@ namespace dtDirector
     *
     * @brief The SAX2 content handler for loading maps.
     */
-   class DT_DIRECTOR_EXPORT DirectorXMLHandler: public dtDAL::BaseXMLHandler
+   class DT_DIRECTOR_EXPORT DirectorXMLHandler: public dtCore::BaseXMLHandler
    {
    public:
 
@@ -97,7 +97,7 @@ namespace dtDirector
        *
        * @param[in]  map  The map.
        */
-      void SetMap(dtDAL::Map* map) {mMap = map;}
+      void SetMap(dtCore::Map* map) {mMap = map;}
 
       /**
        * Retrieves a list of missing libraries.
@@ -154,7 +154,7 @@ namespace dtDirector
       ValueLink*  mValueLink;
 
       Director*   mDirector;
-      dtCore::RefPtr<dtDAL::Map> mMap;
+      dtCore::RefPtr<dtCore::Map> mMap;
       std::string mScriptType;
       bool        mFoundScriptType;
 
@@ -166,7 +166,7 @@ namespace dtDirector
 
       std::stack<DirectorGraph*> mGraphs;
 
-      dtDAL::ActorPropertySerializer* mPropSerializer;
+      dtCore::ActorPropertySerializer* mPropSerializer;
 
       dtCore::RefPtr<Node> mNode;
       std::string mNodeName;

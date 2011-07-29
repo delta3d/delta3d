@@ -47,7 +47,7 @@ namespace dtEditQt
       Q_OBJECT
 
    public:
-      DirectorBrowser(dtDAL::DataType& type, QWidget* parent = 0);
+      DirectorBrowser(dtCore::DataType& type, QWidget* parent = 0);
       virtual ~DirectorBrowser();
 
       /**

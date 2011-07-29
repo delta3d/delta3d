@@ -43,7 +43,7 @@
 #include <dtEditQt/editordata.h>
 #include <dtEditQt/editorevents.h>
 #include <dtEditQt/resourceabstractbrowser.h>
-#include <dtDAL/resourcedescriptor.h>
+#include <dtCore/resourcedescriptor.h>
 #include <dtEditQt/resourcetreewidget.h>
 #include <dtEditQt/uiresources.h>
 #include <dtEditQt/stagecamera.h>
@@ -58,7 +58,7 @@ namespace dtEditQt
 {
 
    ///////////////////////////////////////////////////////////////////////////////
-   ResourceAbstractBrowser::ResourceAbstractBrowser(dtDAL::DataType* type, QWidget* parent)
+   ResourceAbstractBrowser::ResourceAbstractBrowser(dtCore::DataType* type, QWidget* parent)
       : QWidget(parent)
    {
       mTree = new ResourceDragTree(parent);
@@ -86,13 +86,13 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ResourceAbstractBrowser::buildResourceTree(dtDAL::DataType& type, QWidget* parent, const QIcon& resourceIcon)
+   void ResourceAbstractBrowser::buildResourceTree(dtCore::DataType& type, QWidget* parent, const QIcon& resourceIcon)
    {
       // make sure we have a valid type before we build the tree
       if (!type.GetDisplayName().empty())
       {
          // grab an instance of our project
-         dtDAL::Project& project = dtDAL::Project::GetInstance();
+         dtCore::Project& project = dtCore::Project::GetInstance();
 
          project.GetResourcesOfType(type, mIterTree);
 
@@ -146,7 +146,7 @@ namespace dtEditQt
    void ResourceAbstractBrowser::removeTreeNode()
    {
       int index;
-      //dtDAL::Project& project = dtDAL::Project::GetInstance();
+      //dtCore::Project& project = dtCore::Project::GetInstance();
 
       if (mSelection != NULL)
       {
@@ -168,7 +168,7 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ResourceAbstractBrowser::addTreeNode(QString& nodeText, dtDAL::ResourceDescriptor descriptor,
+   void ResourceAbstractBrowser::addTreeNode(QString& nodeText, dtCore::ResourceDescriptor descriptor,
       bool resource)
    {
       if (!nodeText.isEmpty())
@@ -363,7 +363,7 @@ namespace dtEditQt
    void ResourceAbstractBrowser::onProjectChanged()
    {
       // grab an instance of our project
-      dtDAL::Project& project = dtDAL::Project::GetInstance();
+      dtCore::Project& project = dtCore::Project::GetInstance();
 
       if (!project.IsContextValid())
       {
@@ -420,7 +420,7 @@ namespace dtEditQt
    void ResourceAbstractBrowser::deleteSelected()
    {
       ResourceTreeWidget* selection = currentSelection();
-      dtDAL::Project& project = dtDAL::Project::GetInstance();
+      dtCore::Project& project = dtCore::Project::GetInstance();
 
       QString categoryPath;
 
@@ -500,7 +500,7 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void ResourceAbstractBrowser::refreshSelected()
    {
-      dtDAL::Project& project = dtDAL::Project::GetInstance();
+      dtCore::Project& project = dtCore::Project::GetInstance();
       // refresh the project
       project.Refresh();
       //ResourceTreeWidget* selection = currentSelection();
@@ -543,7 +543,7 @@ namespace dtEditQt
       if (!mImportDialog->getResourceFileList().isEmpty())
       {
          QList<QString> files = mImportDialog->getResourceFileList();
-         QList<dtDAL::ResourceDescriptor> descList = mImportDialog->getDescriptorList();
+         QList<dtCore::ResourceDescriptor> descList = mImportDialog->getDescriptorList();
 
          std::string categoryRoot = mResourceType->GetName();
          QString root = QString(categoryRoot.c_str());
@@ -573,7 +573,7 @@ namespace dtEditQt
                resourcePath = QString(descList.at(i).GetResourceIdentifier().c_str());
 
                // create our own resource descriptor
-               dtDAL::ResourceDescriptor* myResource = new dtDAL::ResourceDescriptor(resourceName.toStdString(), resourcePath.toStdString());
+               dtCore::ResourceDescriptor* myResource = new dtCore::ResourceDescriptor(resourceName.toStdString(), resourcePath.toStdString());
                resource->setResourceDescriptor(*myResource);
 
                // change the selection
@@ -591,11 +591,11 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void ResourceAbstractBrowser::resetEditorDataDescriptor()
    {
-      EditorData::GetInstance().setCurrentResource(*mResourceType, dtDAL::ResourceDescriptor());
+      EditorData::GetInstance().setCurrentResource(*mResourceType, dtCore::ResourceDescriptor());
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ResourceAbstractBrowser::setEditorDataDescriptor(dtDAL::ResourceDescriptor& descriptor)
+   void ResourceAbstractBrowser::setEditorDataDescriptor(dtCore::ResourceDescriptor& descriptor)
    {
       EditorData::GetInstance().setCurrentResource(*mResourceType, descriptor);
    }

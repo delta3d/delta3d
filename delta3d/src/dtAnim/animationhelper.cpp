@@ -33,10 +33,10 @@
 
 #include <dtCore/hotspotattachment.h>
 
-#include <dtDAL/actorproperty.h>
-#include <dtDAL/actorproxy.h>
-#include <dtDAL/datatype.h>
-#include <dtDAL/resourceactorproperty.h>
+#include <dtCore/actorproperty.h>
+#include <dtCore/actorproxy.h>
+#include <dtCore/datatype.h>
+#include <dtCore/resourceactorproperty.h>
 
 #include <dtUtil/log.h>
 #include <dtUtil/mathdefines.h>
@@ -206,16 +206,16 @@ bool AnimationHelper::LoadModelAsynchronously(const std::string& pFilename, Asyn
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-void AnimationHelper::GetActorProperties(dtDAL::BaseActorObject& pProxy,
-      std::vector< dtCore::RefPtr<dtDAL::ActorProperty> >& pFillVector)
+void AnimationHelper::GetActorProperties(dtCore::BaseActorObject& pProxy,
+      std::vector< dtCore::RefPtr<dtCore::ActorProperty> >& pFillVector)
 {
    static const std::string ANIMATION_MODEL_GROUP("AnimationModel");
 
    static const std::string PROPERTY_SKELETAL_MESH_DESC
       ("The model resource that defines the skeletal mesh");
-   pFillVector.push_back(new dtDAL::ResourceActorProperty(pProxy, dtDAL::DataType::SKELETAL_MESH,
+   pFillVector.push_back(new dtCore::ResourceActorProperty(pProxy, dtCore::DataType::SKELETAL_MESH,
       PROPERTY_SKELETAL_MESH, PROPERTY_SKELETAL_MESH,
-      dtDAL::ResourceActorProperty::SetFuncType(this, (void (AnimationHelper::*)(const std::string&))(&AnimationHelper::LoadModel)),
+      dtCore::ResourceActorProperty::SetFuncType(this, (void (AnimationHelper::*)(const std::string&))(&AnimationHelper::LoadModel)),
       PROPERTY_SKELETAL_MESH_DESC, ANIMATION_MODEL_GROUP));
 }
 

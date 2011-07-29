@@ -24,15 +24,15 @@
 */
 #include <prefix/unittestprefix.h>
 #include <cppunit/extensions/HelperMacros.h>
-#include <dtDAL/functor.h>
+#include <dtCore/functor.h>
 
-using namespace dtDAL;
+using namespace dtCore;
 
 static int f0def() { return 0; }
 
 /**
 * @class DALFunctorTests
-* @brief Unit tests for the original dtDAL MakeFunctors
+* @brief Unit tests for the original dtCore MakeFunctors
 */
 class DALFunctorTests : public CPPUNIT_NS::TestFixture
 {

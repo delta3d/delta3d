@@ -22,10 +22,10 @@
 
 #include <dtCore/deltadrawable.h>
 
-#include <dtDAL/vectoractorproperties.h>
+#include <dtCore/vectoractorproperties.h>
 
 using namespace dtCore;
-using namespace dtDAL;
+using namespace dtCore;
 
 namespace dtActors 
 {

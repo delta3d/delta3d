@@ -21,8 +21,8 @@
 #include <prefix/dtdirectornodesprefix.h>
 #include <dtDirectorNodes/switchaction.h>
 
-#include <dtDAL/booleanactorproperty.h>
-#include <dtDAL/intactorproperty.h>
+#include <dtCore/booleanactorproperty.h>
+#include <dtCore/intactorproperty.h>
 #include <dtUtil/stringutils.h>
 
 namespace dtDirector
@@ -57,30 +57,30 @@ namespace dtDirector
    {
       ActionNode::BuildPropertyMap();
 
-      dtDAL::IntActorProperty* outputCountProp = new dtDAL::IntActorProperty(
+      dtCore::IntActorProperty* outputCountProp = new dtCore::IntActorProperty(
          "OutputCount", "Output Count",
-         dtDAL::IntActorProperty::SetFuncType(this, &SwitchAction::SetOutputCount),
-         dtDAL::IntActorProperty::GetFuncType(this, &SwitchAction::GetOutputCount),
+         dtCore::IntActorProperty::SetFuncType(this, &SwitchAction::SetOutputCount),
+         dtCore::IntActorProperty::GetFuncType(this, &SwitchAction::GetOutputCount),
          "The number of output links on this node.");
       AddProperty(outputCountProp);
 
-      dtDAL::IntActorProperty* currentCountProp = new dtDAL::IntActorProperty(
+      dtCore::IntActorProperty* currentCountProp = new dtCore::IntActorProperty(
          "CurrentIndex", "Current Index",
-         dtDAL::IntActorProperty::SetFuncType(this, &SwitchAction::SetCurrentIndex),
-         dtDAL::IntActorProperty::GetFuncType(this, &SwitchAction::GetCurrentIndex),
+         dtCore::IntActorProperty::SetFuncType(this, &SwitchAction::SetCurrentIndex),
+         dtCore::IntActorProperty::GetFuncType(this, &SwitchAction::GetCurrentIndex),
          "The index of the output to fire next.");
 
-      dtDAL::BooleanActorProperty* loopingProp = new dtDAL::BooleanActorProperty(
+      dtCore::BooleanActorProperty* loopingProp = new dtCore::BooleanActorProperty(
          "Looping", "Looping",
-         dtDAL::BooleanActorProperty::SetFuncType(this, &SwitchAction::SetLooping),
-         dtDAL::BooleanActorProperty::GetFuncType(this, &SwitchAction::GetLooping),
+         dtCore::BooleanActorProperty::SetFuncType(this, &SwitchAction::SetLooping),
+         dtCore::BooleanActorProperty::GetFuncType(this, &SwitchAction::GetLooping),
          "Whether this switch should loop or not.");
       AddProperty(loopingProp);
 
-      AddProperty(new dtDAL::BooleanActorProperty(
+      AddProperty(new dtCore::BooleanActorProperty(
          "AutoIncrement", "Auto Increment",
-         dtDAL::BooleanActorProperty::SetFuncType(this, &SwitchAction::SetAutoIncrement),
-         dtDAL::BooleanActorProperty::GetFuncType(this, &SwitchAction::GetAutoIncrement),
+         dtCore::BooleanActorProperty::SetFuncType(this, &SwitchAction::SetAutoIncrement),
+         dtCore::BooleanActorProperty::GetFuncType(this, &SwitchAction::GetAutoIncrement),
          "Whether this switch should auto increment the output-index after activation."));
 
       mValues.push_back(ValueLink(this, outputCountProp, false, false, true, false));

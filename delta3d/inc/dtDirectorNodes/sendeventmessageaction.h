@@ -26,9 +26,9 @@
 
 #include <dtDirector/actionnode.h>
 #include <dtDirectorNodes/nodelibraryexport.h>
-#include <dtDAL/actorproperty.h>
+#include <dtCore/actorproperty.h>
 
-namespace dtDAL
+namespace dtCore
 {
    class GameEvent;
 }
@@ -90,8 +90,8 @@ namespace dtDirector
       /**
        * Accessor for the message type property.
        */
-      void SetEvent(dtDAL::GameEvent* gameEvent);
-      dtDAL::GameEvent* GetEvent() const;
+      void SetEvent(dtCore::GameEvent* gameEvent);
+      dtCore::GameEvent* GetEvent() const;
 
       /**
        * Updates the Label.
@@ -106,7 +106,7 @@ namespace dtDirector
       ~SendEventMessageAction();
 
    private:
-      dtDAL::GameEvent*  mEvent;
+      dtCore::GameEvent*  mEvent;
    };
 }
 

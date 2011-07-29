@@ -23,7 +23,7 @@
 
 #include <dtGame/gameactor.h>
 #include <dtCore/loadable.h>
-#include <dtDAL/actorproxyicon.h>
+#include <dtCore/actorproxyicon.h>
 #include <fireFighter/export.h>
 
 namespace dtAudio
@@ -85,11 +85,11 @@ class FIRE_FIGHTER_EXPORT GameLevelActorProxy : public dtGame::GameActorProxy
        * Gets the billboard used to represent static meshes if this proxy's
        * render mode is RenderMode::DRAW_BILLBOARD_ICON.
        */
-      dtDAL::ActorProxyIcon* GetBillBoardIcon();
+      dtCore::ActorProxyIcon* GetBillBoardIcon();
 
-      virtual const dtDAL::BaseActorObject::RenderMode& GetRenderMode()
+      virtual const dtCore::BaseActorObject::RenderMode& GetRenderMode()
       {
-         return dtDAL::BaseActorObject::RenderMode::DRAW_ACTOR;
+         return dtCore::BaseActorObject::RenderMode::DRAW_ACTOR;
       }
 
    protected:
@@ -102,7 +102,7 @@ class FIRE_FIGHTER_EXPORT GameLevelActorProxy : public dtGame::GameActorProxy
 
    private:
 
-      dtCore::RefPtr<dtDAL::ActorProxyIcon> mBillboardIcon;
+      dtCore::RefPtr<dtCore::ActorProxyIcon> mBillboardIcon;
 };
 
 #endif

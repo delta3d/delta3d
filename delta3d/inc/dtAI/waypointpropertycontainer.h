@@ -22,8 +22,8 @@
 #ifndef __DELTA_WAYPOINTPROPERTYCONTAINER_H__
 #define __DELTA_WAYPOINTPROPERTYCONTAINER_H__
 
-#include <dtDAL/typetoactorproperty.h>
-#include <dtDAL/propertycontainer.h>
+#include <dtCore/typetoactorproperty.h>
+#include <dtCore/propertycontainer.h>
 #include <dtUtil/log.h>
 #include <osg/Referenced>
 
@@ -111,7 +111,7 @@ namespace dtAI
    //////////////////////////////////////////////////////////////////////////
    // WaypointPropertyBase
    //////////////////////////////////////////////////////////////////////////
-   class WaypointPropertyBase: public dtDAL::PropertyContainer
+   class WaypointPropertyBase: public dtCore::PropertyContainer
    {
    public:
       WaypointPropertyBase(){};
@@ -164,10 +164,10 @@ namespace dtAI
                            const dtUtil::RefString& desc, const dtUtil::RefString& group)
       {
          typedef typename dtUtil::FunTraits<CallTypeGet>::ObjType ClassType_;
-         typedef typename dtDAL::TypeToActorProperty<PropertyType_>::value_type ActorPropertyType;
+         typedef typename dtCore::TypeToActorProperty<PropertyType_>::value_type ActorPropertyType;
 
-         typedef typename dtDAL::TypeToActorProperty<PropertyType_>::SetValueType SetParamType;
-         typedef typename dtDAL::TypeToActorProperty<PropertyType_>::GetValueType GetParamType;
+         typedef typename dtCore::TypeToActorProperty<PropertyType_>::SetValueType SetParamType;
+         typedef typename dtCore::TypeToActorProperty<PropertyType_>::GetValueType GetParamType;
 
          typedef typename ActorPropertyType::SetFuncType SetFuncType;
          typedef typename ActorPropertyType::GetFuncType GetFuncType;
@@ -194,11 +194,11 @@ namespace dtAI
          CallTypeGet getFunc, const dtUtil::RefString& desc, const dtUtil::RefString& group)
       {
          typedef typename dtUtil::FunTraits<CallTypeGet>::ObjType ClassType_;
-         typedef typename dtDAL::TypeToActorProperty<PropertyType_>::value_type ActorPropertyType;
+         typedef typename dtCore::TypeToActorProperty<PropertyType_>::value_type ActorPropertyType;
          typedef typename ActorPropertyType::SetFuncType SetFuncType;
          typedef typename ActorPropertyType::GetFuncType GetFuncType;
 
-         typedef typename dtDAL::TypeToActorProperty<PropertyType_>::GetValueType GetParamType;
+         typedef typename dtCore::TypeToActorProperty<PropertyType_>::GetValueType GetParamType;
 
          typedef Command0<GetParamType, PropertyType_(ClassType_::*)() const> GetCmd;
 

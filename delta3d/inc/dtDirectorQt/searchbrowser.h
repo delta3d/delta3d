@@ -158,7 +158,7 @@ namespace dtDirector
        *
        * @return     True if the node is valid for the given search.
        */
-      bool TestItem(dtDAL::PropertyContainer* container, const QString& searchText, QString& outDesc);
+      bool TestItem(dtCore::PropertyContainer* container, const QString& searchText, QString& outDesc);
 
       DirectorEditor* mEditor;
 

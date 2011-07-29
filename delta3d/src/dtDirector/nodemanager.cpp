@@ -27,7 +27,7 @@
 #include <dtDirector/nodemanager.h>
 #include <dtDirector/nodetype.h>
 
-#include <dtDAL/exceptionenum.h>
+#include <dtCore/exceptionenum.h>
 
 #include <dtUtil/log.h>
 
@@ -126,7 +126,7 @@ namespace dtDirector
          msg.clear();
          msg.str("");
          msg << "Unable to load node registry " << libName;
-         throw dtDAL::ProjectResourceErrorException(msg.str(), __FILE__, __LINE__);
+         throw dtCore::ProjectResourceErrorException(msg.str(), __FILE__, __LINE__);
       }
         
       dtUtil::LibrarySharingManager::LibraryHandle::SYMBOL_ADDRESS createFn;
@@ -142,7 +142,7 @@ namespace dtDirector
          msg.str("");
          msg << "Node plugin libraries must implement the function " <<
             " CreatePluginRegistry.";
-         throw dtDAL::ProjectResourceErrorException( msg.str(), __FILE__, __LINE__);
+         throw dtCore::ProjectResourceErrorException( msg.str(), __FILE__, __LINE__);
       }
 
       if (!destroyFn)
@@ -151,7 +151,7 @@ namespace dtDirector
          msg.str("");
          msg << "Node plugin libraries must implement the function " <<
             " DestroyPluginRegistry.";
-         throw dtDAL::ProjectResourceErrorException(msg.str(), __FILE__, __LINE__);
+         throw dtCore::ProjectResourceErrorException(msg.str(), __FILE__, __LINE__);
       }
 
       // Well we made it here so that means the plugin was loaded
@@ -166,7 +166,7 @@ namespace dtDirector
          msg.str("");
          msg << "Can't add Registry Entry: " << libName << " to Registry. " <<
             "Possibly it might have been added already.";
-         throw dtDAL::ProjectResourceErrorException( msg.str(), __FILE__, __LINE__);
+         throw dtCore::ProjectResourceErrorException( msg.str(), __FILE__, __LINE__);
       }
 
       return true;
@@ -252,7 +252,7 @@ namespace dtDirector
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   const NodeType* NodeManager::FindNodeType(const dtDAL::DataType& dataType)
+   const NodeType* NodeManager::FindNodeType(const dtCore::DataType& dataType)
    {
       NodeTypeMapItor itor = mNodes.begin();
       while (itor != mNodes.end())
@@ -357,7 +357,7 @@ namespace dtDirector
       {
          error << "Requested actor type: \"" << nodeType.GetCategory() << "." <<  nodeType.GetName() <<
             "\" but is unknown or has not been registered.";
-         throw dtDAL::ObjectFactoryUnknownTypeException(error.str(), __FILE__, __LINE__);
+         throw dtCore::ObjectFactoryUnknownTypeException(error.str(), __FILE__, __LINE__);
       }
 
       return found->second;        

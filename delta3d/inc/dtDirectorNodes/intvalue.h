@@ -77,7 +77,7 @@ namespace dtDirector
        *
        * @return  True if this value is the proper type.
        */
-      virtual bool CanBeType(dtDAL::DataType& type);
+      virtual bool CanBeType(dtCore::DataType& type);
 
    private:
 

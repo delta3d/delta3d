@@ -103,7 +103,7 @@ namespace dtGame
          const std::string &GetLogFileName() const 
          {
             const StringMessageParameter *p = 
-               static_cast<const dtDAL::NamedStringParameter*>(GetParameter("LogFileName"));
+               static_cast<const dtCore::NamedStringParameter*>(GetParameter("LogFileName"));
             return p->GetValue(); 
          }
          
@@ -114,7 +114,7 @@ namespace dtGame
          void SetLogFileName(const std::string &logFileName)
          {
             StringMessageParameter *p = 
-               static_cast<dtDAL::NamedStringParameter*>(GetParameter("LogFileName"));
+               static_cast<dtCore::NamedStringParameter*>(GetParameter("LogFileName"));
             return p->SetValue(logFileName); 
          } 
                   
@@ -148,7 +148,7 @@ namespace dtGame
          const std::string &GetLogFileName() const 
          {
             const StringMessageParameter *p = 
-               static_cast<const dtDAL::NamedStringParameter*>(GetParameter("LogFileName"));
+               static_cast<const dtCore::NamedStringParameter*>(GetParameter("LogFileName"));
             return p->GetValue(); 
          }
          
@@ -159,7 +159,7 @@ namespace dtGame
          void SetLogFileName(const std::string &logFileName)
          {
             StringMessageParameter *p = 
-               static_cast<dtDAL::NamedStringParameter*>(GetParameter("LogFileName"));
+               static_cast<dtCore::NamedStringParameter*>(GetParameter("LogFileName"));
             return p->SetValue(logFileName); 
          }
                   
@@ -295,7 +295,7 @@ namespace dtGame
          const std::vector<std::string> &GetLogList() const
          {
             const StringMessageParameter *p =
-               static_cast<const dtDAL::NamedStringParameter*>(GetParameter("LogList"));
+               static_cast<const dtCore::NamedStringParameter*>(GetParameter("LogList"));
             return p->GetValueList();
          }
          
@@ -306,7 +306,7 @@ namespace dtGame
          void SetLogList(const std::vector<std::string> &logList)
          {
             StringMessageParameter *p =
-               static_cast<dtDAL::NamedStringParameter*>(GetParameter("LogList"));
+               static_cast<dtCore::NamedStringParameter*>(GetParameter("LogList"));
             p->SetValueList(logList);
          }    
                   
@@ -445,7 +445,7 @@ namespace dtGame
          const double GetAutoKeyframeInterval() const 
          {
             const DoubleMessageParameter *p = 
-               static_cast<const dtDAL::NamedDoubleParameter*>(GetParameter("AutoKeyframeInterval"));
+               static_cast<const dtCore::NamedDoubleParameter*>(GetParameter("AutoKeyframeInterval"));
             return p->GetValue(); 
          }
          
@@ -456,7 +456,7 @@ namespace dtGame
          void SetAutoKeyframeInterval(double interval)
          {
             DoubleMessageParameter *p = 
-               static_cast<dtDAL::NamedDoubleParameter*>(GetParameter("AutoKeyframeInterval"));
+               static_cast<dtCore::NamedDoubleParameter*>(GetParameter("AutoKeyframeInterval"));
             return p->SetValue(interval); 
          } 
                   
@@ -489,7 +489,7 @@ namespace dtGame
          bool GetSuccessFlag() const 
          {
             const BooleanMessageParameter *p = 
-               static_cast<const dtDAL::NamedBooleanParameter*>(GetParameter("SuccessFlag"));
+               static_cast<const dtCore::NamedBooleanParameter*>(GetParameter("SuccessFlag"));
             return p->GetValue(); 
          }
          
@@ -500,7 +500,7 @@ namespace dtGame
          void SetSuccessFlag(bool successFlag)
          {
             BooleanMessageParameter *p = 
-               static_cast<dtDAL::NamedBooleanParameter*>(GetParameter("SuccessFlag"));
+               static_cast<dtCore::NamedBooleanParameter*>(GetParameter("SuccessFlag"));
             return p->SetValue(successFlag); 
          } 
                   
@@ -511,7 +511,7 @@ namespace dtGame
          const std::string &GetFailureReason() const 
          {
             const StringMessageParameter *p = 
-               static_cast<const dtDAL::NamedStringParameter*>(GetParameter("FailureReason"));
+               static_cast<const dtCore::NamedStringParameter*>(GetParameter("FailureReason"));
             return p->GetValue(); 
          }
          
@@ -522,7 +522,7 @@ namespace dtGame
          void SetFailureReason(const std::string &logFileName)
          {
             StringMessageParameter *p = 
-               static_cast<dtDAL::NamedStringParameter*>(GetParameter("FailureReason"));
+               static_cast<dtCore::NamedStringParameter*>(GetParameter("FailureReason"));
             return p->SetValue(logFileName); 
          } 
                   

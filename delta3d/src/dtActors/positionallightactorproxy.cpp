@@ -21,9 +21,9 @@
 
 #include <dtActors/positionallightactorproxy.h>
 
-#include <dtDAL/actorproxyicon.h>
-#include <dtDAL/functor.h>
-#include <dtDAL/vectoractorproperties.h>
+#include <dtCore/actorproxyicon.h>
+#include <dtCore/functor.h>
+#include <dtCore/vectoractorproperties.h>
 
 namespace dtActors
 {
@@ -43,18 +43,18 @@ namespace dtActors
       // as one moves away from the light. It uses 3 values to manipulate
       // the attenuation. The values should be in the following form:
       // constant, linear. quadratic.
-      AddProperty(new dtDAL::Vec3ActorProperty("Attenuation", "Attenuation",
-         dtDAL::Vec3ActorProperty::SetFuncType(this, &dtActors::PositionalLightActorProxy::SetAttenuation),
-         dtDAL::Vec3ActorProperty::GetFuncType(this, &dtActors::PositionalLightActorProxy::GetAttenuation),
+      AddProperty(new dtCore::Vec3ActorProperty("Attenuation", "Attenuation",
+         dtCore::Vec3ActorProperty::SetFuncType(this, &dtActors::PositionalLightActorProxy::SetAttenuation),
+         dtCore::Vec3ActorProperty::GetFuncType(this, &dtActors::PositionalLightActorProxy::GetAttenuation),
          "Sets a light's attenuation.",GROUPNAME));
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   dtDAL::ActorProxyIcon* PositionalLightActorProxy::GetBillBoardIcon()
+   dtCore::ActorProxyIcon* PositionalLightActorProxy::GetBillBoardIcon()
    {
       if ( !mBillBoardIcon.valid() )
       {
-         mBillBoardIcon = new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IMAGE_BILLBOARD_LIGHT);
+         mBillBoardIcon = new dtCore::ActorProxyIcon(dtCore::ActorProxyIcon::IMAGE_BILLBOARD_LIGHT);
       }
 
       return mBillBoardIcon.get();

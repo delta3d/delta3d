@@ -5,14 +5,14 @@
 
    #ifdef _MSC_VER
       #include <set>
-      #include <dtDAL/physicalactorproxy.h>
-      #include <dtDAL/namedparameter.h>
+      #include <dtCore/physicalactorproxy.h>
+      #include <dtCore/namedparameter.h>
       #include <osg/Vec2>
       #include <osgGA/GUIEventAdapter>
    #else //_MSC_VER
      #include <dtUtil/refstring.h>
-     #include <dtDAL/propertycontainer.h>
-     #include <dtDAL/physicalactorproxy.h>
+     #include <dtCore/propertycontainer.h>
+     #include <dtCore/physicalactorproxy.h>
    #endif //_MSC_VER
 
 #endif //DT_USE_PCH

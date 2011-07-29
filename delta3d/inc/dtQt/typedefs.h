@@ -29,16 +29,16 @@
 
 #include <QtCore/QMetaType>
 #include <dtCore/refptr.h>
-#include <dtDAL/actorproxy.h>
-#include <dtDAL/actorproperty.h>
+#include <dtCore/actorproxy.h>
+#include <dtCore/actorproperty.h>
 #include <vector>
 
-typedef dtCore::RefPtr<dtDAL::BaseActorObject> ActorProxyRefPtr;
+typedef dtCore::RefPtr<dtCore::BaseActorObject> ActorProxyRefPtr;
 typedef std::vector<ActorProxyRefPtr> ActorProxyRefPtrVector;
-typedef dtCore::RefPtr<dtDAL::ActorProperty> ActorPropertyRefPtr;
+typedef dtCore::RefPtr<dtCore::ActorProperty> ActorPropertyRefPtr;
 
 //allows storage in a QVariant
-Q_DECLARE_METATYPE(dtCore::RefPtr<dtDAL::BaseActorObject>);
-Q_DECLARE_METATYPE(dtCore::RefPtr<dtDAL::ActorProperty>);
+Q_DECLARE_METATYPE(dtCore::RefPtr<dtCore::BaseActorObject>);
+Q_DECLARE_METATYPE(dtCore::RefPtr<dtCore::ActorProperty>);
 
 #endif // DELTA_PROPERTY_TYPEDEFS

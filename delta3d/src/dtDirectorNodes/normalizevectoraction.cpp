@@ -21,7 +21,7 @@
 #include <prefix/dtdirectornodesprefix.h>
 #include <dtDirectorNodes/normalizevectoraction.h>
 
-#include <dtDAL/stringactorproperty.h>
+#include <dtCore/stringactorproperty.h>
 
 #include <dtDirector/director.h>
 
@@ -51,10 +51,10 @@ namespace dtDirector
       ActionNode::BuildPropertyMap();
 
       // Create our value links.
-      mVectorProp = new dtDAL::StringActorProperty(
+      mVectorProp = new dtCore::StringActorProperty(
          "Vector", "Vector",
-         dtDAL::StringActorProperty::SetFuncType(this, &NormalizeVectorAction::SetVector),
-         dtDAL::StringActorProperty::GetFuncType(this, &NormalizeVectorAction::GetVector),
+         dtCore::StringActorProperty::SetFuncType(this, &NormalizeVectorAction::SetVector),
+         dtCore::StringActorProperty::GetFuncType(this, &NormalizeVectorAction::GetVector),
          "The vector to normalize.");
 
       // This will expose the properties in the editor and allow
@@ -65,20 +65,20 @@ namespace dtDirector
    /////////////////////////////////////////////////////////////////////////////
    bool NormalizeVectorAction::Update(float simDelta, float delta, int input, bool firstUpdate)
    {
-      dtDAL::DataType& vecType = GetPropertyType("Vector");
-      if (vecType == dtDAL::DataType::VEC2F)
+      dtCore::DataType& vecType = GetPropertyType("Vector");
+      if (vecType == dtCore::DataType::VEC2F)
       {
          osg::Vec2 vec = GetVec2("Vector");
          vec.normalize();
          SetVec2(vec, "Vector");
       }
-      else if (vecType == dtDAL::DataType::VEC3F)
+      else if (vecType == dtCore::DataType::VEC3F)
       {
          osg::Vec3 vec = GetVec3("Vector");
          vec.normalize();
          SetVec3(vec, "Vector");
       }
-      else if (vecType == dtDAL::DataType::VEC4F)
+      else if (vecType == dtCore::DataType::VEC4F)
       {
          osg::Vec4 vec = GetVec4("Vector");
          vec.normalize();
@@ -95,9 +95,9 @@ namespace dtDirector
       {
          if (link->GetName() == "Vector")
          {
-            if (value->CanBeType(dtDAL::DataType::VEC2F) ||
-                value->CanBeType(dtDAL::DataType::VEC3F) ||
-                value->CanBeType(dtDAL::DataType::VEC4F))
+            if (value->CanBeType(dtCore::DataType::VEC2F) ||
+                value->CanBeType(dtCore::DataType::VEC3F) ||
+                value->CanBeType(dtCore::DataType::VEC4F))
             {
                return true;
             }

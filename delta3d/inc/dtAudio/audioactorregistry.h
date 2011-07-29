@@ -22,14 +22,14 @@
 #define audioactorregistry_h__
 
 #include <dtAudio/export.h>
-#include <dtDAL/actorpluginregistry.h>
+#include <dtCore/actorpluginregistry.h>
 
 namespace dtAudio
 {
-   class DT_AUDIO_EXPORT AudioActorRegistry : public dtDAL::ActorPluginRegistry
+   class DT_AUDIO_EXPORT AudioActorRegistry : public dtCore::ActorPluginRegistry
    {
    public:
-      static dtCore::RefPtr<dtDAL::ActorType> SOUND_ACTOR_TYPE;
+      static dtCore::RefPtr<dtCore::ActorType> SOUND_ACTOR_TYPE;
 
       AudioActorRegistry();
 

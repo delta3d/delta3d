@@ -26,7 +26,7 @@
 
 #include <dtDirector/actionnode.h>
 #include <dtDirectorNodes/nodelibraryexport.h>
-#include <dtDAL/actorproperty.h>
+#include <dtCore/actorproperty.h>
 
 namespace dtDirector
 {
@@ -116,7 +116,7 @@ namespace dtDirector
       std::string mReplaceWith;
       std::string mResult;
       
-      dtCore::RefPtr<dtDAL::ActorProperty> mResultProp;
+      dtCore::RefPtr<dtCore::ActorProperty> mResultProp;
    };
 }
 

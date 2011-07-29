@@ -21,9 +21,9 @@
 
 #include <dtActors/taskactorgameevent.h>
 
-#include <dtDAL/functor.h>
-#include <dtDAL/gameeventactorproperty.h>
-#include <dtDAL/intactorproperty.h>
+#include <dtCore/functor.h>
+#include <dtCore/gameeventactorproperty.h>
+#include <dtCore/intactorproperty.h>
 
 #include <dtGame/basemessages.h>
 #include <dtGame/gamemanager.h>
@@ -145,29 +145,29 @@ namespace dtActors
       TaskActorGameEvent &task = static_cast<TaskActorGameEvent&>(GetGameActor());
 
       // Game event property.
-      AddProperty(new dtDAL::GameEventActorProperty(*this,
+      AddProperty(new dtCore::GameEventActorProperty(*this,
          TaskActorGameEventProxy::PROPERTY_EVENT_COMPLETE,
          "Game Event",
-         dtDAL::GameEventActorProperty::SetFuncType(&task, &TaskActorGameEvent::SetGameEvent),
-         dtUtil::MakeFunctor<dtDAL::GameEvent* (TaskActorGameEvent::*)(), TaskActorGameEvent>
+         dtCore::GameEventActorProperty::SetFuncType(&task, &TaskActorGameEvent::SetGameEvent),
+         dtUtil::MakeFunctor<dtCore::GameEvent* (TaskActorGameEvent::*)(), TaskActorGameEvent>
             (&TaskActorGameEvent::GetGameEvent, task),
          "Sets and gets the game event being tracked by the task.",GROUPNAME));
 
       // Fail Game Event
-      AddProperty(new dtDAL::GameEventActorProperty(*this,
+      AddProperty(new dtCore::GameEventActorProperty(*this,
          TaskActorGameEventProxy::PROPERTY_EVENT_FAIL,
          "Fail Game Event",
-         dtDAL::GameEventActorProperty::SetFuncType(&task, &TaskActorGameEvent::SetFailGameEvent),
-         dtUtil::MakeFunctor<dtDAL::GameEvent* (TaskActorGameEvent::*)(), TaskActorGameEvent>
+         dtCore::GameEventActorProperty::SetFuncType(&task, &TaskActorGameEvent::SetFailGameEvent),
+         dtUtil::MakeFunctor<dtCore::GameEvent* (TaskActorGameEvent::*)(), TaskActorGameEvent>
             (&TaskActorGameEvent::GetFailGameEvent, task),
          "Sets and gets the game event that will cause this task to fail.",GROUPNAME));
 
       // Min Occurances...
-      AddProperty(new dtDAL::IntActorProperty(
+      AddProperty(new dtCore::IntActorProperty(
          TaskActorGameEventProxy::PROPERTY_MIN_OCCURANCES,
          "Minimum Occurances",
-         dtDAL::IntActorProperty::SetFuncType(&task,&TaskActorGameEvent::SetMinOccurances),
-         dtDAL::IntActorProperty::GetFuncType(&task,&TaskActorGameEvent::GetMinOccurances),
+         dtCore::IntActorProperty::SetFuncType(&task,&TaskActorGameEvent::SetMinOccurances),
+         dtCore::IntActorProperty::GetFuncType(&task,&TaskActorGameEvent::GetMinOccurances),
          "Sets/gets the minimum number of times the game event must be fired before "
             "this task is considered complete.",GROUPNAME));
    }

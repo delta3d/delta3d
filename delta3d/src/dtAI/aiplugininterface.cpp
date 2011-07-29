@@ -39,7 +39,7 @@ namespace dtAI
    }
 
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   WaypointInterface* AIPluginInterface::CreateWaypoint(const osg::Vec3& pos, const dtDAL::ObjectType& type)
+   WaypointInterface* AIPluginInterface::CreateWaypoint(const osg::Vec3& pos, const dtCore::ObjectType& type)
    {
       WaypointInterface* newWaypoint = CreateNoInsert(type);
       newWaypoint->SetPosition(pos);
@@ -48,13 +48,13 @@ namespace dtAI
    }
 
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   WaypointInterface* AIPluginInterface::CreateNoInsert(const dtDAL::ObjectType& type)
+   WaypointInterface* AIPluginInterface::CreateNoInsert(const dtCore::ObjectType& type)
    {
       return mFactory->CreateObject(&type);
    }
 
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   WaypointInterface* AIPluginInterface::CreateWaypointNoDuplicates(const osg::Vec3& pos, float radius, const dtDAL::ObjectType& type)
+   WaypointInterface* AIPluginInterface::CreateWaypointNoDuplicates(const osg::Vec3& pos, float radius, const dtCore::ObjectType& type)
    {
       WaypointInterface* result = GetClosestWaypoint(pos, radius);
 
@@ -67,21 +67,21 @@ namespace dtAI
    }
 
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   bool AIPluginInterface::IsWaypointTypeSupported(dtCore::RefPtr<const dtDAL::ObjectType> type) const
+   bool AIPluginInterface::IsWaypointTypeSupported(dtCore::RefPtr<const dtCore::ObjectType> type) const
    {
       return mFactory->IsTypeSupported(type);
    }
 
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   void AIPluginInterface::GetSupportedWaypointTypes(std::vector<dtCore::RefPtr<const dtDAL::ObjectType> >& actors) const
+   void AIPluginInterface::GetSupportedWaypointTypes(std::vector<dtCore::RefPtr<const dtCore::ObjectType> >& actors) const
    {
       mFactory->GetSupportedTypes(actors);
    }
 
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   const dtDAL::ObjectType* AIPluginInterface::GetWaypointTypeByName(const std::string& name) const
+   const dtCore::ObjectType* AIPluginInterface::GetWaypointTypeByName(const std::string& name) const
    {
-      typedef std::vector<dtCore::RefPtr<const dtDAL::ObjectType> > ObjectTypeArray;
+      typedef std::vector<dtCore::RefPtr<const dtCore::ObjectType> > ObjectTypeArray;
 
       ObjectTypeArray waypointTypes;
       GetSupportedWaypointTypes(waypointTypes);

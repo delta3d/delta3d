@@ -33,9 +33,9 @@
 #include <QtGui/QWidget>
 #include <vector>
 #include <dtCore/refptr.h>
-#include <dtDAL/actorproxy.h>
+#include <dtCore/actorproxy.h>
 #include <dtQt/typedefs.h>
-#include <dtDAL/actorproperty.h>
+#include <dtCore/actorproperty.h>
 
 class QComboBox;
 class QGroupBox;

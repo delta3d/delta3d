@@ -38,7 +38,7 @@
 #include <map>
 
 #include <dtUtil/enumeration.h>
-#include <dtDAL/actorproxy.h>
+#include <dtCore/actorproxy.h>
 #include <dtEditQt/stagecamera.h>
 #include <dtEditQt/viewportmanager.h>
 #include <dtQt/typedefs.h>
@@ -398,7 +398,7 @@ namespace dtEditQt
        *
        * @param[in]  actors  The list of all actors being selected.
        */
-      virtual void refreshActorSelection(const std::vector< dtCore::RefPtr<dtDAL::BaseActorObject> >& actors);
+      virtual void refreshActorSelection(const std::vector< dtCore::RefPtr<dtCore::BaseActorObject> >& actors);
 
       /**
        * Tells the viewport to repaint itself.

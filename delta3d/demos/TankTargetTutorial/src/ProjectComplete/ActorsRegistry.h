@@ -26,13 +26,13 @@
 #define __GM_TUTORIAL_ACTORS_REGISTRY__
 
 #include "export.h"
-#include <dtDAL/actorpluginregistry.h>
+#include <dtCore/actorpluginregistry.h>
 
-class TUTORIAL_TANK_EXPORT ActorsRegistry : public dtDAL::ActorPluginRegistry
+class TUTORIAL_TANK_EXPORT ActorsRegistry : public dtCore::ActorPluginRegistry
 {
 public:
-   static dtCore::RefPtr<dtDAL::ActorType> TANK_ACTOR_TYPE;
-   static dtCore::RefPtr<dtDAL::ActorType> KILLABLE_ACTOR_TYPE;
+   static dtCore::RefPtr<dtCore::ActorType> TANK_ACTOR_TYPE;
+   static dtCore::RefPtr<dtCore::ActorType> KILLABLE_ACTOR_TYPE;
 
    // Constructs our registry.  Creates the actor types easy access when needed.
    ActorsRegistry();

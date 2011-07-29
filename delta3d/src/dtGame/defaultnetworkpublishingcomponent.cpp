@@ -26,7 +26,7 @@
 #include <dtGame/basemessages.h>
 #include <dtGame/actorupdatemessage.h>
 #include <dtGame/gameactorproxy.h>
-#include <dtDAL/actortype.h>
+#include <dtCore/actortype.h>
 #include <dtUtil/log.h>
 
 namespace dtGame

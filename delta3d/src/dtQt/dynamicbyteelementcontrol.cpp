@@ -43,11 +43,11 @@
 #include <dtQt/propertyeditormodel.h>
 #include <dtQt/propertyeditortreeview.h>
 
-#include <dtDAL/actorproperty.h>
-#include <dtDAL/datatype.h>
-#include <dtDAL/arrayactorpropertybase.h>
-#include <dtDAL/actorproperty.h>
-#include <dtDAL/bitmaskactorproperty.h>
+#include <dtCore/actorproperty.h>
+#include <dtCore/datatype.h>
+#include <dtCore/arrayactorpropertybase.h>
+#include <dtCore/actorproperty.h>
+#include <dtCore/bitmaskactorproperty.h>
 
 #include <dtUtil/log.h>
 
@@ -72,13 +72,13 @@ namespace dtQt
 
    /////////////////////////////////////////////////////////////////////////////////
    void DynamicByteElementControl::InitializeData(DynamicAbstractControl* newParent,
-      PropertyEditorModel* newModel, dtDAL::PropertyContainer* newPC, dtDAL::ActorProperty* newProperty)
+      PropertyEditorModel* newModel, dtCore::PropertyContainer* newPC, dtCore::ActorProperty* newProperty)
    {
       // Note - We used to have dynamic_cast in here, but it was failing to properly cast in
       // all cases in Linux with gcc4.  So we replaced it with a static cast.
-      if (newProperty != NULL && newProperty->GetDataType() == dtDAL::DataType::BIT_MASK)
+      if (newProperty != NULL && newProperty->GetDataType() == dtCore::DataType::BIT_MASK)
       {
-         mProperty = static_cast<dtDAL::BitMaskActorProperty*>(newProperty);
+         mProperty = static_cast<dtCore::BitMaskActorProperty*>(newProperty);
          DynamicAbstractControl::InitializeData(newParent, newModel, newPC, newProperty);
       }
       else

@@ -3,12 +3,12 @@
 #include <dtCore/transform.h>
 #include <dtCore/transformable.h>
 
-#include <dtDAL/arrayactorproperty.h>
-#include <dtDAL/containeractorproperty.h>
-#include <dtDAL/functor.h>
-#include <dtDAL/mapxml.h>
-#include <dtDAL/project.h>
-#include <dtDAL/vectoractorproperties.h>
+#include <dtCore/arrayactorproperty.h>
+#include <dtCore/containeractorproperty.h>
+#include <dtCore/functor.h>
+#include <dtCore/mapxml.h>
+#include <dtCore/project.h>
+#include <dtCore/vectoractorproperties.h>
 
 #include <dtGame/gamemanager.h>
 #include <dtGame/invokable.h>
@@ -581,30 +581,30 @@ namespace dtActors
       LinkedPointsActor* actor = NULL;
       GetActor(actor);
 
-      dtDAL::ContainerActorProperty* pointProp = new dtDAL::ContainerActorProperty(
+      dtCore::ContainerActorProperty* pointProp = new dtCore::ContainerActorProperty(
          "Point", "Point", "The value of the point.", "Points");
 
-      dtDAL::Vec3ActorProperty* positionProp = new dtDAL::Vec3ActorProperty(
+      dtCore::Vec3ActorProperty* positionProp = new dtCore::Vec3ActorProperty(
          "Position", "Position",
-         dtDAL::Vec3ActorProperty::SetFuncType(this, &LinkedPointsActorProxy::SetPointPosition),
-         dtDAL::Vec3ActorProperty::GetFuncType(this, &LinkedPointsActorProxy::GetPointPosition),
+         dtCore::Vec3ActorProperty::SetFuncType(this, &LinkedPointsActorProxy::SetPointPosition),
+         dtCore::Vec3ActorProperty::GetFuncType(this, &LinkedPointsActorProxy::GetPointPosition),
          "The position of the point.", "Points");
 
-      dtDAL::Vec3ActorProperty* rotationProp = new dtDAL::Vec3ActorProperty(
+      dtCore::Vec3ActorProperty* rotationProp = new dtCore::Vec3ActorProperty(
          "Rotation", "Rotation",
-         dtDAL::Vec3ActorProperty::SetFuncType(this, &LinkedPointsActorProxy::SetPointRotation),
-         dtDAL::Vec3ActorProperty::GetFuncType(this, &LinkedPointsActorProxy::GetPointRotation),
+         dtCore::Vec3ActorProperty::SetFuncType(this, &LinkedPointsActorProxy::SetPointRotation),
+         dtCore::Vec3ActorProperty::GetFuncType(this, &LinkedPointsActorProxy::GetPointRotation),
          "The rotation of the point.", "Points");
 
       pointProp->AddProperty(positionProp);
       pointProp->AddProperty(rotationProp);
 
-      dtDAL::ArrayActorPropertyBase* arrayProp = new dtDAL::ArrayActorProperty< dtCore::RefPtr<dtCore::Transformable> >(
+      dtCore::ArrayActorPropertyBase* arrayProp = new dtCore::ArrayActorProperty< dtCore::RefPtr<dtCore::Transformable> >(
          "PointList", "Point List", "The list of points.",
-         dtDAL::ArrayActorProperty< dtCore::RefPtr<dtCore::Transformable> >::SetIndexFuncType(this, &LinkedPointsActorProxy::SetPointIndex),
-         dtDAL::ArrayActorProperty< dtCore::RefPtr<dtCore::Transformable> >::GetDefaultFuncType(this, &LinkedPointsActorProxy::GetDefaultPoint),
-         dtDAL::ArrayActorProperty< dtCore::RefPtr<dtCore::Transformable> >::GetArrayFuncType(this, &LinkedPointsActorProxy::GetPointArray),
-         dtDAL::ArrayActorProperty< dtCore::RefPtr<dtCore::Transformable> >::SetArrayFuncType(this, &LinkedPointsActorProxy::SetPointArray),
+         dtCore::ArrayActorProperty< dtCore::RefPtr<dtCore::Transformable> >::SetIndexFuncType(this, &LinkedPointsActorProxy::SetPointIndex),
+         dtCore::ArrayActorProperty< dtCore::RefPtr<dtCore::Transformable> >::GetDefaultFuncType(this, &LinkedPointsActorProxy::GetDefaultPoint),
+         dtCore::ArrayActorProperty< dtCore::RefPtr<dtCore::Transformable> >::GetArrayFuncType(this, &LinkedPointsActorProxy::GetPointArray),
+         dtCore::ArrayActorProperty< dtCore::RefPtr<dtCore::Transformable> >::SetArrayFuncType(this, &LinkedPointsActorProxy::SetPointArray),
          pointProp, "Points");
       arrayProp->SetMinArraySize(1);
 

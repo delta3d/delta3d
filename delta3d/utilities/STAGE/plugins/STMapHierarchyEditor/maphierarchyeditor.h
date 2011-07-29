@@ -15,7 +15,7 @@ class QGridLayout;
 
 class NodeButton;
 
-namespace dtDAL
+namespace dtCore
 {
    class ActorHierarchyNode;
 }
@@ -47,7 +47,7 @@ public:
    
    void BuildTreeFromMap();
    void BuildTreeGUI();
-   void BuildGUIBranch(NodeButton* GUIparent, dtDAL::ActorHierarchyNode* branch);
+   void BuildGUIBranch(NodeButton* GUIparent, dtCore::ActorHierarchyNode* branch);
    void RebuildTree();
    QGridLayout* GetGridLayout();
 

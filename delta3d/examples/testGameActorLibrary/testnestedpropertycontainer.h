@@ -25,12 +25,12 @@
 #ifndef TESTPROPERTYCONTAINER_H_
 #define TESTPROPERTYCONTAINER_H_
 
-#include <dtDAL/propertycontainer.h>
+#include <dtCore/propertycontainer.h>
 #include <dtUtil/getsetmacros.h>
 /*
  * Example simple property container.  For use with the property container property example.
  */
-class TestNestedPropertyContainer : public dtDAL::PropertyContainer
+class TestNestedPropertyContainer : public dtCore::PropertyContainer
 {
 public:
    TestNestedPropertyContainer();

@@ -4,13 +4,13 @@
 #include "topbottomconnectornogap.h"
 #include "buttonconnector.h"
 
-#include <dtDAL/baseactorobject.h>
+#include <dtCore/baseactorobject.h>
 #include <dtEditQt/editorevents.h>
 #include <dtUtil/log.h>
 
 #include <QtGui/QDragEnterEvent>
 
-NodeButton::NodeButton(dtDAL::BaseActorObject* bao,
+NodeButton::NodeButton(dtCore::BaseActorObject* bao,
                        QWidget* parent, Qt::WindowFlags f /*= 0*/)
    : QWidget(parent, f)
    , mUI()

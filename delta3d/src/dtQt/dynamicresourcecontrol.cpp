@@ -29,11 +29,11 @@
 #include <prefix/dtqtprefix.h>
 #include <dtQt/dynamicresourcecontrol.h>
 
-#include <dtDAL/actorproxy.h>
-#include <dtDAL/datatype.h>
-#include <dtDAL/project.h>
-#include <dtDAL/resourcedescriptor.h>
-#include <dtDAL/resourceactorproperty.h>
+#include <dtCore/actorproxy.h>
+#include <dtCore/datatype.h>
+#include <dtCore/project.h>
+#include <dtCore/resourcedescriptor.h>
+#include <dtCore/resourceactorproperty.h>
 
 #include <dtQt/dynamiclabelcontrol.h>
 #include <dtQt/propertyeditortreeview.h>
@@ -73,13 +73,13 @@ namespace dtQt
 
    /////////////////////////////////////////////////////////////////////////////////
    void DynamicResourceControl::InitializeData(DynamicAbstractControl* newParent,
-      PropertyEditorModel* newModel, dtDAL::PropertyContainer* newPC, dtDAL::ActorProperty* newProperty)
+      PropertyEditorModel* newModel, dtCore::PropertyContainer* newPC, dtCore::ActorProperty* newProperty)
    {
       // Note - We used to have dynamic_cast in here, but it was failing to properly cast in
       // all cases in Linux with gcc4.  So we replaced it with a static cast.
       if (newProperty != NULL && newProperty->GetDataType().IsResource())
       {
-         mProperty = static_cast<dtDAL::ResourceActorProperty*>(newProperty);
+         mProperty = static_cast<dtCore::ResourceActorProperty*>(newProperty);
          DynamicAbstractControl::InitializeData(newParent, newModel, newPC, newProperty);
       }
       else
@@ -119,7 +119,7 @@ namespace dtQt
       DynamicAbstractControl::getValueAsString();
 
       // if we have no current resource, show special text that indicates the type
-      dtDAL::ResourceDescriptor resource = mProperty->GetValue();
+      dtCore::ResourceDescriptor resource = mProperty->GetValue();
       QString resourceTag;
       if (resource.IsEmpty())
       {
@@ -189,7 +189,7 @@ namespace dtQt
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   dtDAL::ResourceActorProperty& DynamicResourceControl::GetProperty()
+   dtCore::ResourceActorProperty& DynamicResourceControl::GetProperty()
    {
       return *mProperty;
    }

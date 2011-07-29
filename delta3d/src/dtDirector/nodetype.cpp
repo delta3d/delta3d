@@ -31,7 +31,7 @@ namespace dtDirector
                      const std::string& desc,
                      const NodeType* parentType,
                      const osg::Vec3& color,
-                     dtDAL::DataType& dataType)
+                     dtCore::DataType& dataType)
       : ObjectType(name, category, desc, parentType)
       , mFolder(folder)
       , mType(type)
@@ -71,7 +71,7 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   const dtDAL::DataType& NodeType::GetDataType() const
+   const dtCore::DataType& NodeType::GetDataType() const
    {
       return mDataType;
    }

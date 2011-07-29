@@ -34,7 +34,7 @@
 #include <dtQt/dynamicsubwidgets.h>
 
 // Forward References
-namespace dtDAL
+namespace dtCore
 {
    class ActorActorProperty;
    class ActorIDActorProperty;
@@ -57,7 +57,7 @@ namespace dtQt
           * @see DynamicAbstractControl#InitializeData
           */
          void InitializeData(dtQt::DynamicAbstractControl* newParent, dtQt::PropertyEditorModel* newModel,
-                             dtDAL::PropertyContainer* newPC, dtDAL::ActorProperty* newProperty);
+                             dtCore::PropertyContainer* newPC, dtCore::ActorProperty* newProperty);
 
          /**
           * @see DynamicAbstractControl#updateEditorFromModel
@@ -77,12 +77,12 @@ namespace dtQt
          /**
           * Retrieves the Actor from the ID.
           */
-         dtDAL::BaseActorObject* getActorProxy();
+         dtCore::BaseActorObject* getActorProxy();
 
          /**
           * Retrieves the current actor property.
           */
-         dtDAL::ActorProperty* getActorProperty();
+         dtCore::ActorProperty* getActorProperty();
 
          /**
           * @see DynamicAbstractControl#getDisplayName
@@ -110,8 +110,8 @@ namespace dtQt
           */
          virtual bool updateData(QWidget* widget);
 
-         void actorPropertyChanged(dtDAL::PropertyContainer& propCon,
-                  dtDAL::ActorProperty& property);
+         void actorPropertyChanged(dtCore::PropertyContainer& propCon,
+                  dtCore::ActorProperty& property);
 
          /**
           * @see DynamicAbstractControl#handleSubEditDestroy
@@ -130,10 +130,10 @@ namespace dtQt
           * @param className The class name to search for
           * @return A vector with the name and proxy pointer mapped
           */
-         void GetActorProxies(std::vector< dtCore::RefPtr<dtDAL::BaseActorObject> >& toFill, const std::string& className);
+         void GetActorProxies(std::vector< dtCore::RefPtr<dtCore::BaseActorObject> >& toFill, const std::string& className);
 
-         dtDAL::ActorActorProperty*   mProperty;
-         dtDAL::ActorIDActorProperty* mIdProperty;
+         dtCore::ActorActorProperty*   mProperty;
+         dtCore::ActorIDActorProperty* mIdProperty;
 
          // This pointer is not really in our control.  It is constructed in the createEditor()
          // method and destroyed whenever QT feels like it (mostly when the control looses focus).

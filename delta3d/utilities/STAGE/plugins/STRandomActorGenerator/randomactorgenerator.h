@@ -15,7 +15,7 @@
 //forward declarations
 class Ui_RandomActorGenerator;
 
-namespace dtDAL
+namespace dtCore
 {
    class BaseActorObject;
 }
@@ -57,7 +57,7 @@ public slots:
    void OnSelectedActorChange(ActorProxyRefPtrVector& actors);
 
 private:
-   void NewActorProxyInsideVolumeEditor(dtDAL::BaseActorObject* proxyToCopy);
+   void NewActorProxyInsideVolumeEditor(dtCore::BaseActorObject* proxyToCopy);
    osg::Vec3 RandomPointInsideBox();
    osg::Vec3 RandomPointInsideSphere();
 

@@ -63,7 +63,7 @@ namespace dtCore
    class UniqueId;
 }
 
-namespace dtDAL
+namespace dtCore
 {
    class ActorType;
 }
@@ -291,8 +291,8 @@ namespace dtHLAGM
                    RTI::InteractionParameterNotKnown,
                    RTI::FederateInternalError);
 
-         const ObjectToActor* GetActorMapping(const dtDAL::ActorType &type) const;
-         ObjectToActor* GetActorMapping(const dtDAL::ActorType &type);
+         const ObjectToActor* GetActorMapping(const dtCore::ActorType &type) const;
+         ObjectToActor* GetActorMapping(const dtCore::ActorType &type);
 
          const ObjectToActor* GetObjectMapping(const std::string& objTypeName, const EntityType* thisDisID) const;
          ObjectToActor* GetObjectMapping(const std::string& objTypeName, const EntityType* thisDisID);
@@ -319,7 +319,7 @@ namespace dtHLAGM
           * @param localOrRemote If this mapping should only apply to remotely or locally simulated objects, or both.
           *                      It defaults to both.
           */
-         void RegisterActorMapping(dtDAL::ActorType &type,
+         void RegisterActorMapping(dtCore::ActorType &type,
                                    const std::string& objTypeName,
                                    const EntityType* thisDisID,
                                    std::vector<AttributeToPropertyList> &oneToOneActorVector,
@@ -338,7 +338,7 @@ namespace dtHLAGM
           *
           * @param type the ActorType of the mapping to be removed
           */
-         void UnregisterActorMapping(dtDAL::ActorType &type);
+         void UnregisterActorMapping(dtCore::ActorType &type);
 
          /**
           * Called to Unregister an Object to Actor Mapping
@@ -531,7 +531,7 @@ namespace dtHLAGM
                                                    const RTI::AttributeHandleValuePairSet& theAttributes,
                                                    bool& hadEntityTypeProperty);
 
-         dtGame::MessageParameter* FindOrAddMessageParameter(const std::string& name, dtDAL::DataType& type, dtGame::Message& msg);
+         dtGame::MessageParameter* FindOrAddMessageParameter(const std::string& name, dtCore::DataType& type, dtGame::Message& msg);
 
          //called when connecting to the RTI to subscribe/publish all the attributes and objects in the given mapping.
          void RegisterObjectToActorWithRTI(ObjectToActor& objectToActor);
@@ -660,7 +660,7 @@ namespace dtHLAGM
 
          ObjectRuntimeMappingInfo mRuntimeMappings;
 
-         std::map<dtCore::RefPtr<const dtDAL::ActorType>, dtCore::RefPtr<ObjectToActor> > mActorToObjectMap;
+         std::map<dtCore::RefPtr<const dtCore::ActorType>, dtCore::RefPtr<ObjectToActor> > mActorToObjectMap;
          typedef std::multimap<std::string, dtCore::RefPtr<ObjectToActor> > ObjectToActorMap;
          typedef ObjectToActorMap::iterator ObjectToActorMapIter;
          ObjectToActorMap mObjectToActorMap;
@@ -670,7 +670,7 @@ namespace dtHLAGM
          std::map<std::string, dtCore::RefPtr<InteractionToMessage> > mInteractionToMessageMap;
 
          ///Does the work of unregistering, see UnregisterActorMapping
-         dtCore::RefPtr<ObjectToActor> InternalUnregisterActorMapping(const dtDAL::ActorType &type);
+         dtCore::RefPtr<ObjectToActor> InternalUnregisterActorMapping(const dtCore::ActorType &type);
          ///Does the work of unregistering, see UnregisterObjectMapping
          dtCore::RefPtr<ObjectToActor> InternalUnregisterObjectMapping(const std::string& objTypeName, const EntityType* thisDisID);
          ///Does the work of unregistering, see UnregisterMessageMapping

@@ -23,15 +23,15 @@
 
 #include <dtABC/application.h>
 
-#include <dtDAL/actoridactorproperty.h>
-#include <dtDAL/actorproxyicon.h>
-#include <dtDAL/arrayactorproperty.h>
-#include <dtDAL/booleanactorproperty.h>
-#include <dtDAL/datatype.h>
-#include <dtDAL/functor.h>
-#include <dtDAL/mapxml.h>
-#include <dtDAL/project.h>
-#include <dtDAL/resourceactorproperty.h>
+#include <dtCore/actoridactorproperty.h>
+#include <dtCore/actorproxyicon.h>
+#include <dtCore/arrayactorproperty.h>
+#include <dtCore/booleanactorproperty.h>
+#include <dtCore/datatype.h>
+#include <dtCore/functor.h>
+#include <dtCore/mapxml.h>
+#include <dtCore/project.h>
+#include <dtCore/resourceactorproperty.h>
 
 #include <dtGame/basemessages.h>
 #include <dtGame/gamemanager.h>
@@ -96,7 +96,7 @@ namespace dtActors
       dtGame::GameManager* gm = GetGameActorProxy().GetGameManager();
 
       // Find the map that this actor belongs to.
-      dtDAL::Map* map = dtDAL::Project::GetInstance().GetMapForActorProxy(GetUniqueId());
+      dtCore::Map* map = dtCore::Project::GetInstance().GetMapForActorProxy(GetUniqueId());
 
       int count = (int)mResourceList.size();
       for (int index = 0; index < count; index++)
@@ -104,13 +104,13 @@ namespace dtActors
          dtCore::RefPtr<dtDirector::Director> director = new dtDirector::Director();
          if (director.valid())
          {
-            dtDAL::ResourceDescriptor& descriptor = mResourceList[index];
+            dtCore::ResourceDescriptor& descriptor = mResourceList[index];
 
             director->Init(gm, map);
 
             director->SetNodeLogging(mNodeLogging);
-            LOG_INFO(dtDAL::Project::GetInstance().GetResourcePath(descriptor));
-            director->LoadScript(dtDAL::Project::GetInstance().GetResourcePath(descriptor));
+            LOG_INFO(dtCore::Project::GetInstance().GetResourcePath(descriptor));
+            director->LoadScript(dtCore::Project::GetInstance().GetResourcePath(descriptor));
 
             mDirectorList.push_back(director);
          }
@@ -118,7 +118,7 @@ namespace dtActors
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void DirectorActor::SetDirectorResource(const dtDAL::ResourceDescriptor& value)
+   void DirectorActor::SetDirectorResource(const dtCore::ResourceDescriptor& value)
    {
       if (mResourceIndex >= 0 && mResourceIndex < (int)mResourceList.size())
       {
@@ -127,14 +127,14 @@ namespace dtActors
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   dtDAL::ResourceDescriptor DirectorActor::GetDirectorResource()
+   dtCore::ResourceDescriptor DirectorActor::GetDirectorResource()
    {
       if (mResourceIndex >= 0 && mResourceIndex < (int)mResourceList.size())
       {
          return mResourceList[mResourceIndex];
       }
 
-      return dtDAL::ResourceDescriptor::NULL_RESOURCE;
+      return dtCore::ResourceDescriptor::NULL_RESOURCE;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -144,19 +144,19 @@ namespace dtActors
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   dtDAL::ResourceDescriptor DirectorActor::GetDefaultDirector()
+   dtCore::ResourceDescriptor DirectorActor::GetDefaultDirector()
    {
-      return dtDAL::ResourceDescriptor::NULL_RESOURCE;
+      return dtCore::ResourceDescriptor::NULL_RESOURCE;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   std::vector<dtDAL::ResourceDescriptor> DirectorActor::GetDirectorArray() const
+   std::vector<dtCore::ResourceDescriptor> DirectorActor::GetDirectorArray() const
    {
       return mResourceList;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void DirectorActor::SetDirectorArray(const std::vector<dtDAL::ResourceDescriptor>& value)
+   void DirectorActor::SetDirectorArray(const std::vector<dtCore::ResourceDescriptor>& value)
    {
       mResourceList = value;
    }
@@ -199,27 +199,27 @@ namespace dtActors
       DirectorActor* actor = NULL;
       GetActor(actor);
 
-      AddProperty(new dtDAL::BooleanActorProperty(
+      AddProperty(new dtCore::BooleanActorProperty(
          "NodeLogging", "Node Logging",
-         dtDAL::BooleanActorProperty::SetFuncType(actor, &DirectorActor::SetNodeLogging),
-         dtDAL::BooleanActorProperty::GetFuncType(actor, &DirectorActor::GetNodeLogging),
+         dtCore::BooleanActorProperty::SetFuncType(actor, &DirectorActor::SetNodeLogging),
+         dtCore::BooleanActorProperty::GetFuncType(actor, &DirectorActor::GetNodeLogging),
          "Sets the Director Graphs to log the execution of their nodes.",
          "Director"));
 
-      dtDAL::ResourceActorProperty* scriptProp = new dtDAL::ResourceActorProperty(
-         dtDAL::DataType::DIRECTOR, "DirectorGraph", "Director Script",
-         dtDAL::ResourceActorProperty::SetDescFuncType(actor, &DirectorActor::SetDirectorResource),
-         dtDAL::ResourceActorProperty::GetDescFuncType(actor, &DirectorActor::GetDirectorResource),
+      dtCore::ResourceActorProperty* scriptProp = new dtCore::ResourceActorProperty(
+         dtCore::DataType::DIRECTOR, "DirectorGraph", "Director Script",
+         dtCore::ResourceActorProperty::SetDescFuncType(actor, &DirectorActor::SetDirectorResource),
+         dtCore::ResourceActorProperty::GetDescFuncType(actor, &DirectorActor::GetDirectorResource),
          "A Director Script Resource.", "Director");
 
-      dtDAL::ArrayActorPropertyBase* scriptArrayProp =
-         new dtDAL::ArrayActorProperty<dtDAL::ResourceDescriptor>(
+      dtCore::ArrayActorPropertyBase* scriptArrayProp =
+         new dtCore::ArrayActorProperty<dtCore::ResourceDescriptor>(
          "DirectorArray", "Director Script List",
          "The Director Graphs loaded by this actor.",
-         dtDAL::ArrayActorProperty<dtDAL::ResourceDescriptor>::SetIndexFuncType(actor, &DirectorActor::SetDirectorIndex),
-         dtDAL::ArrayActorProperty<dtDAL::ResourceDescriptor>::GetDefaultFuncType(actor, &DirectorActor::GetDefaultDirector),
-         dtDAL::ArrayActorProperty<dtDAL::ResourceDescriptor>::GetArrayFuncType(actor, &DirectorActor::GetDirectorArray),
-         dtDAL::ArrayActorProperty<dtDAL::ResourceDescriptor>::SetArrayFuncType(actor, &DirectorActor::SetDirectorArray),
+         dtCore::ArrayActorProperty<dtCore::ResourceDescriptor>::SetIndexFuncType(actor, &DirectorActor::SetDirectorIndex),
+         dtCore::ArrayActorProperty<dtCore::ResourceDescriptor>::GetDefaultFuncType(actor, &DirectorActor::GetDefaultDirector),
+         dtCore::ArrayActorProperty<dtCore::ResourceDescriptor>::GetArrayFuncType(actor, &DirectorActor::GetDirectorArray),
+         dtCore::ArrayActorProperty<dtCore::ResourceDescriptor>::SetArrayFuncType(actor, &DirectorActor::SetDirectorArray),
          scriptProp, "Director");
       AddProperty(scriptArrayProp);
    }
@@ -253,17 +253,17 @@ namespace dtActors
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   const dtDAL::BaseActorObject::RenderMode& DirectorActorProxy::GetRenderMode()
+   const dtCore::BaseActorObject::RenderMode& DirectorActorProxy::GetRenderMode()
    {
-      return dtDAL::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON;
+      return dtCore::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON;
    }
 
    //////////////////////////////////////////////////////////////////////////
-   dtDAL::ActorProxyIcon* DirectorActorProxy::GetBillBoardIcon()
+   dtCore::ActorProxyIcon* DirectorActorProxy::GetBillBoardIcon()
    {
       if(!mBillBoardIcon.valid())
       {
-         mBillBoardIcon = new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IMAGE_BILLBOARD_DIRECTOR);
+         mBillBoardIcon = new dtCore::ActorProxyIcon(dtCore::ActorProxyIcon::IMAGE_BILLBOARD_DIRECTOR);
       }
 
       return mBillBoardIcon.get();

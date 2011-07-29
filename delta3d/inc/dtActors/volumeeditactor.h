@@ -1,11 +1,11 @@
 #ifndef _STAGE_VOLUME_EDIT_ACTOR_H__
 #define _STAGE_VOLUME_EDIT_ACTOR_H__
 
-#include <dtDAL/plugin_export.h>
+#include <dtCore/plugin_export.h>
 
 #include <dtCore/observerptr.h>
 #include <dtCore/transformable.h>
-#include <dtDAL/transformableactorproxy.h>
+#include <dtCore/transformableactorproxy.h>
 
 //forward Delta3D declarations
 namespace dtCore
@@ -86,7 +86,7 @@ private:
    const double                        mBaseLength;
 };
 
-class DT_PLUGIN_EXPORT VolumeEditActorProxy : public dtDAL::TransformableActorProxy
+class DT_PLUGIN_EXPORT VolumeEditActorProxy : public dtCore::TransformableActorProxy
 {
 public:
    VolumeEditActorProxy();

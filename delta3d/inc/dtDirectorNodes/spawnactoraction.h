@@ -26,10 +26,10 @@
 
 #include <dtDirector/actionnode.h>
 #include <dtDirectorNodes/nodelibraryexport.h>
-#include <dtDAL/baseactorobject.h>
-#include <dtDAL/containeractorproperty.h>
-#include <dtDAL/stringactorproperty.h>
-#include <dtDAL/booleanactorproperty.h>
+#include <dtCore/baseactorobject.h>
+#include <dtCore/containeractorproperty.h>
+#include <dtCore/stringactorproperty.h>
+#include <dtCore/booleanactorproperty.h>
 
 namespace dtDirector
 {
@@ -133,10 +133,10 @@ namespace dtDirector
       std::string mActorType;
       osg::Vec3   mSpawnLocation;
 
-      dtCore::RefPtr<dtDAL::BaseActorObject>      mTemplateActor;
-      dtDAL::ContainerActorProperty*              mContainerProp;
-      dtCore::RefPtr<dtDAL::StringActorProperty>  mNameProp;
-      dtCore::RefPtr<dtDAL::BooleanActorProperty> mGhostProp;
+      dtCore::RefPtr<dtCore::BaseActorObject>      mTemplateActor;
+      dtCore::ContainerActorProperty*              mContainerProp;
+      dtCore::RefPtr<dtCore::StringActorProperty>  mNameProp;
+      dtCore::RefPtr<dtCore::BooleanActorProperty> mGhostProp;
    };
 }
 

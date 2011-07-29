@@ -28,7 +28,7 @@
 
 #include <prefix/unittestprefix.h>
 #include <cppunit/extensions/HelperMacros.h>
-#include <dtDAL/resourcedescriptor.h>
+#include <dtCore/resourcedescriptor.h>
 #include <sstream>
 
 class ResourceDescriptorTests : public CPPUNIT_NS::TestFixture
@@ -62,18 +62,18 @@ void ResourceDescriptorTests::tearDown()
 void ResourceDescriptorTests::TestNULLResource()
 {
    CPPUNIT_ASSERT_EQUAL_MESSAGE("NULL_RESOURCE isn't empty",
-      true, dtDAL::ResourceDescriptor::NULL_RESOURCE.IsEmpty());
+      true, dtCore::ResourceDescriptor::NULL_RESOURCE.IsEmpty());
 
    CPPUNIT_ASSERT_EQUAL_MESSAGE("NULL_RESOURCE Display Name isn't empty",
-      true, dtDAL::ResourceDescriptor::NULL_RESOURCE.GetDisplayName().empty());
+      true, dtCore::ResourceDescriptor::NULL_RESOURCE.GetDisplayName().empty());
 
    CPPUNIT_ASSERT_EQUAL_MESSAGE("NULL_RESOURCE Resource Identifier isn't empty",
-      true, dtDAL::ResourceDescriptor::NULL_RESOURCE.GetResourceIdentifier().empty());
+      true, dtCore::ResourceDescriptor::NULL_RESOURCE.GetResourceIdentifier().empty());
 }
 
 void ResourceDescriptorTests::TestCreatingNULLResource()
 {
-   dtDAL::ResourceDescriptor resource("name", "id");
+   dtCore::ResourceDescriptor resource("name", "id");
    CPPUNIT_ASSERT_EQUAL_MESSAGE("Resource should not be NULL",
                                 false, resource.IsEmpty());
 
@@ -85,7 +85,7 @@ void ResourceDescriptorTests::TestCreatingNULLResource()
 
 void ResourceDescriptorTests::TestStreamOperators()
 {
-   dtDAL::ResourceDescriptor resource("name", "id");
+   dtCore::ResourceDescriptor resource("name", "id");
 
    std::ostringstream ss;
    ss << resource;
@@ -93,13 +93,13 @@ void ResourceDescriptorTests::TestStreamOperators()
    std::istringstream iss;
    iss.str(ss.str());
 
-   dtDAL::ResourceDescriptor resultResource;
+   dtCore::ResourceDescriptor resultResource;
 
    iss >> resultResource;
 
    CPPUNIT_ASSERT_EQUAL(resource, resultResource);
 
-   resource = dtDAL::ResourceDescriptor::NULL_RESOURCE;
+   resource = dtCore::ResourceDescriptor::NULL_RESOURCE;
 
    ss.str("");
 

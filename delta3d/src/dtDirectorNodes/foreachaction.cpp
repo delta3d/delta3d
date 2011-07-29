@@ -21,7 +21,7 @@
 #include <prefix/dtdirectornodesprefix.h>
 #include <dtDirectorNodes/foreachaction.h>
 
-#include <dtDAL/librarymanager.h>
+#include <dtCore/librarymanager.h>
 
 #include <dtDirector/director.h>
 
@@ -56,16 +56,16 @@ namespace dtDirector
    {
       ActionNode::BuildPropertyMap();
 
-      mItemArrayProp = new dtDAL::IntActorProperty(
+      mItemArrayProp = new dtCore::IntActorProperty(
          "Item List", "Item List",
-         dtDAL::IntActorProperty::SetFuncType(this, &ForEachAction::SetItemArray),
-         dtDAL::IntActorProperty::GetFuncType(this, &ForEachAction::GetItemArray),
+         dtCore::IntActorProperty::SetFuncType(this, &ForEachAction::SetItemArray),
+         dtCore::IntActorProperty::GetFuncType(this, &ForEachAction::GetItemArray),
          "The list of items to iterate through.");
 
-      mItemProp = new dtDAL::IntActorProperty(
+      mItemProp = new dtCore::IntActorProperty(
          "Current Item", "Current Item",
-         dtDAL::IntActorProperty::SetFuncType(this, &ForEachAction::SetCurrentItem),
-         dtDAL::IntActorProperty::GetFuncType(this, &ForEachAction::GetCurrentItem),
+         dtCore::IntActorProperty::SetFuncType(this, &ForEachAction::SetCurrentItem),
+         dtCore::IntActorProperty::GetFuncType(this, &ForEachAction::GetCurrentItem),
          "", "The currently iterated item.");
 
       // This will expose the properties in the editor and allow

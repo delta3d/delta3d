@@ -3,8 +3,8 @@
 #include <dtDIS/propertyname.h>
 #include <dtUtil/log.h>
 #include <dtUtil/stringutils.h>
-#include <dtDAL/librarymanager.h>
-#include <dtDAL/exceptionenum.h>
+#include <dtCore/librarymanager.h>
+#include <dtCore/exceptionenum.h>
 #include <dtUtil/macros.h>
 #include <xercesc/util/XercesDefs.hpp>  // for xerces namespace definition
 #include <xercesc/util/XMLString.hpp>  // for xerces string support
@@ -453,7 +453,7 @@ void EntityMapXMLHandler::endElement(const XMLCh* const uri,const XMLCh* const l
    case ACTORDATA_RESOURCE:
       {
          // modify the resource mapping
-         dtDAL::ResourceDescriptor descriptor(mCurrentResourceIdentifier);
+         dtCore::ResourceDescriptor descriptor(mCurrentResourceIdentifier);
 
          mSharedState->GetEntityMap().SetEntityResource(mCurrentEntityType, descriptor);
 
@@ -466,12 +466,12 @@ void EntityMapXMLHandler::endElement(const XMLCh* const uri,const XMLCh* const l
          // Load the library.
          try
          {
-            if (dtDAL::LibraryManager::GetInstance().GetRegistry(mLibraryName) == NULL)
+            if (dtCore::LibraryManager::GetInstance().GetRegistry(mLibraryName) == NULL)
             {
-               dtDAL::LibraryManager::GetInstance().LoadActorRegistry(mLibraryName);
+               dtCore::LibraryManager::GetInstance().LoadActorRegistry(mLibraryName);
             }
          }
-         catch (const dtDAL::ProjectResourceErrorException &e)
+         catch (const dtCore::ProjectResourceErrorException &e)
          {
             DTUNREFERENCED_PARAMETER(e);
             mMissingLibraries.push_back(mLibraryName);
@@ -497,7 +497,7 @@ void EntityMapXMLHandler::endElement(const XMLCh* const uri,const XMLCh* const l
          // modify the actor mapping
 
          // find the actortype
-         const dtDAL::ActorType* actortype = dtDAL::LibraryManager::GetInstance().FindActorType(mCurrentActorTypeCategory, mCurrentActorTypeName);
+         const dtCore::ActorType* actortype = dtCore::LibraryManager::GetInstance().FindActorType(mCurrentActorTypeCategory, mCurrentActorTypeName);
 
          if (actortype != NULL)
          {

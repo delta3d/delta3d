@@ -24,11 +24,11 @@
 #include <dtCore/transform.h>
 
 #include <dtCore/transformable.h>
-#include <dtDAL/transformableactorproxy.h>
-#include <dtDAL/actoridactorproperty.h>
-#include <dtDAL/stringactorproperty.h>
-#include <dtDAL/floatactorproperty.h>
-#include <dtDAL/vectoractorproperties.h>
+#include <dtCore/transformableactorproxy.h>
+#include <dtCore/actoridactorproperty.h>
+#include <dtCore/stringactorproperty.h>
+#include <dtCore/floatactorproperty.h>
+#include <dtCore/vectoractorproperties.h>
 #include <dtDirector/director.h>
 
 #include <dtUtil/mathdefines.h>
@@ -67,24 +67,24 @@ namespace dtDirector
       ActionNode::BuildPropertyMap();
 
       // Create our value links.
-      dtDAL::ActorIDActorProperty* actorProp = new dtDAL::ActorIDActorProperty(
+      dtCore::ActorIDActorProperty* actorProp = new dtCore::ActorIDActorProperty(
          "Actor", "Actor",
-         dtDAL::ActorIDActorProperty::SetFuncType(this, &CompareActorFacingAction::SetCurrentActor),
-         dtDAL::ActorIDActorProperty::GetFuncType(this, &CompareActorFacingAction::GetCurrentActor),
+         dtCore::ActorIDActorProperty::SetFuncType(this, &CompareActorFacingAction::SetCurrentActor),
+         dtCore::ActorIDActorProperty::GetFuncType(this, &CompareActorFacingAction::GetCurrentActor),
          "", "The actor.");
       AddProperty(actorProp);
 
-      dtDAL::ActorIDActorProperty* targetProp = new dtDAL::ActorIDActorProperty(
+      dtCore::ActorIDActorProperty* targetProp = new dtCore::ActorIDActorProperty(
          "Target", "Target",
-         dtDAL::ActorIDActorProperty::SetFuncType(this, &CompareActorFacingAction::SetTargetActor),
-         dtDAL::ActorIDActorProperty::GetFuncType(this, &CompareActorFacingAction::GetTargetActor),
+         dtCore::ActorIDActorProperty::SetFuncType(this, &CompareActorFacingAction::SetTargetActor),
+         dtCore::ActorIDActorProperty::GetFuncType(this, &CompareActorFacingAction::GetTargetActor),
          "", "The target to face.");
       AddProperty(targetProp);
 
-      dtDAL::FloatActorProperty* sizeProp = new dtDAL::FloatActorProperty(
+      dtCore::FloatActorProperty* sizeProp = new dtCore::FloatActorProperty(
          "Size", "Size",
-         dtDAL::FloatActorProperty::SetFuncType(this, &CompareActorFacingAction::SetSize),
-         dtDAL::FloatActorProperty::GetFuncType(this, &CompareActorFacingAction::GetSize),
+         dtCore::FloatActorProperty::SetFuncType(this, &CompareActorFacingAction::SetSize),
+         dtCore::FloatActorProperty::GetFuncType(this, &CompareActorFacingAction::GetSize),
          "The size of the target.");
       AddProperty(sizeProp);
 
@@ -103,8 +103,8 @@ namespace dtDirector
       dtCore::Transform transform;
       osg::Vec3 targetPos;
 
-      dtDAL::TransformableActorProxy* actor =
-         dynamic_cast<dtDAL::TransformableActorProxy*>(GetActor("Actor"));
+      dtCore::TransformableActorProxy* actor =
+         dynamic_cast<dtCore::TransformableActorProxy*>(GetActor("Actor"));
       if (actor)
       {
          dtCore::Transformable* transformable = NULL;
@@ -116,15 +116,15 @@ namespace dtDirector
       }
 
       actor =
-         dynamic_cast<dtDAL::TransformableActorProxy*>(GetActor("Target"));
+         dynamic_cast<dtCore::TransformableActorProxy*>(GetActor("Target"));
       if (!actor)
       {
          targetPos = GetVec3("Target");
       }
       else
       {
-         dtDAL::Vec3ActorProperty* vecProp =
-            dynamic_cast<dtDAL::Vec3ActorProperty*>(actor->GetProperty("Translation"));
+         dtCore::Vec3ActorProperty* vecProp =
+            dynamic_cast<dtCore::Vec3ActorProperty*>(actor->GetProperty("Translation"));
          if (vecProp)
          {
             targetPos = vecProp->GetValue();
@@ -160,8 +160,8 @@ namespace dtDirector
       {
          if (link->GetName() == "Target")
          {
-            if (value->CanBeType(dtDAL::DataType::ACTOR) ||
-                value->CanBeType(dtDAL::DataType::VEC3))
+            if (value->CanBeType(dtCore::DataType::ACTOR) ||
+                value->CanBeType(dtCore::DataType::VEC3))
             {
                return true;
             }
@@ -169,9 +169,9 @@ namespace dtDirector
          }
          else if (link->GetName() == "Size")
          {
-            if (value->CanBeType(dtDAL::DataType::INT)   ||
-                value->CanBeType(dtDAL::DataType::FLOAT) ||
-                value->CanBeType(dtDAL::DataType::DOUBLE))
+            if (value->CanBeType(dtCore::DataType::INT)   ||
+                value->CanBeType(dtCore::DataType::FLOAT) ||
+                value->CanBeType(dtCore::DataType::DOUBLE))
             {
                return true;
             }

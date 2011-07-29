@@ -46,8 +46,8 @@
 #include <osg/Texture2D>
 #include <osgViewer/GraphicsWindow>
 #include <osgViewer/View>
-#include <dtDAL/project.h>
-#include <dtDAL/map.h>
+#include <dtCore/project.h>
+#include <dtCore/map.h>
 
 using namespace dtCore;
 using namespace dtABC;
@@ -78,15 +78,15 @@ public:
       dtABC::Application::Config();
 
       std::string contextName = dtUtil::GetDeltaRootPath() + "/examples/data/demoMap";
-      dtDAL::Project::GetInstance().SetContext(contextName, true);
-      dtDAL::Map &myMap = dtDAL::Project::GetInstance().GetMap("MyCoolMap");
+      dtCore::Project::GetInstance().SetContext(contextName, true);
+      dtCore::Map &myMap = dtCore::Project::GetInstance().GetMap("MyCoolMap");
 
       //Since we are in an Application we can simply call...
       LoadMap(myMap);
 
       // translate the camera to the predefined start position
       {
-         std::vector< dtCore::RefPtr<dtDAL::BaseActorObject> > proxies;
+         std::vector< dtCore::RefPtr<dtCore::BaseActorObject> > proxies;
          myMap.FindProxies(proxies, "startPosition");
          if (!proxies.empty())
          {

@@ -33,9 +33,9 @@
 #include <dtActors/deltaobjectactorproxy.h>
 #include <dtActors/staticmeshactorproxy.h>
 
-#include <dtDAL/actorproxy.h>
-#include <dtDAL/gameevent.h>
-#include <dtDAL/plugin_export.h>
+#include <dtCore/actorproxy.h>
+#include <dtCore/gameevent.h>
+#include <dtCore/plugin_export.h>
 
 #include <dtGame/gameactor.h>
 #include <dtGame/gamemanager.h>
@@ -423,8 +423,8 @@ class DT_EXAMPLE_EXPORT TestGamePropertyActor : public dtGame::GameActorProxy
 
       void SetTextureResourceName(const std::string &fileName) { mTexture = fileName; }
 
-      void SetTestGameEvent(dtDAL::GameEvent *event) { mTestGameEvent = event; }
-      dtDAL::GameEvent *GetTestGameEvent() { return mTestGameEvent.get(); }
+      void SetTestGameEvent(dtCore::GameEvent *event) { mTestGameEvent = event; }
+      dtCore::GameEvent *GetTestGameEvent() { return mTestGameEvent.get(); }
 
       void SetTestActorId(const dtCore::UniqueId& id) { mTestId = id; }
 
@@ -470,7 +470,7 @@ class DT_EXAMPLE_EXPORT TestGamePropertyActor : public dtGame::GameActorProxy
      TestEnum *mEnum;
      std::string mSound;
      std::string mTexture;
-     dtCore::RefPtr<dtDAL::GameEvent> mTestGameEvent;
+     dtCore::RefPtr<dtCore::GameEvent> mTestGameEvent;
      dtCore::UniqueId mTestId;
      dtCore::RefPtr<TestNestedPropertyContainer> mNestedContainer;
      bool mRegisterListeners;

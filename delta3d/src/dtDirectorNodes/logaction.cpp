@@ -21,7 +21,7 @@
 #include <prefix/dtdirectornodesprefix.h>
 #include <dtDirectorNodes/logaction.h>
 
-#include <dtDAL/stringactorproperty.h>
+#include <dtCore/stringactorproperty.h>
 
 namespace dtDirector
 {
@@ -51,17 +51,17 @@ namespace dtDirector
       ActionNode::BuildPropertyMap();
 
       // Create our value links.
-      dtDAL::StringActorProperty* messageProp = new dtDAL::StringActorProperty(
+      dtCore::StringActorProperty* messageProp = new dtCore::StringActorProperty(
          "Message", "Message",
-         dtDAL::StringActorProperty::SetFuncType(this, &LogAction::SetMessage),
-         dtDAL::StringActorProperty::GetFuncType(this, &LogAction::GetMessage),
+         dtCore::StringActorProperty::SetFuncType(this, &LogAction::SetMessage),
+         dtCore::StringActorProperty::GetFuncType(this, &LogAction::GetMessage),
          "The message that will be logged.");
       AddProperty(messageProp);
 
-      dtDAL::StringActorProperty* valueProp = new dtDAL::StringActorProperty(
+      dtCore::StringActorProperty* valueProp = new dtCore::StringActorProperty(
          "Value", "Value",
-         dtDAL::StringActorProperty::SetFuncType(this, &LogAction::SetValue),
-         dtDAL::StringActorProperty::GetFuncType(this, &LogAction::GetValue),
+         dtCore::StringActorProperty::SetFuncType(this, &LogAction::SetValue),
+         dtCore::StringActorProperty::GetFuncType(this, &LogAction::GetValue),
          "The value(s) that will be logged.");
       mValues.push_back(ValueLink(this, valueProp, false, true, false));
    }

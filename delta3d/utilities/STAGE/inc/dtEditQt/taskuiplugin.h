@@ -56,13 +56,13 @@ namespace dtEditQt
        * @param widget The widget to update.  It should be a TaskEditor.
        * @param modelData The data to use to populate the widget.
        */
-      virtual bool UpdateWidgetFromModel(QWidget& widget, const dtDAL::NamedGroupParameter& modelData) const;
+      virtual bool UpdateWidgetFromModel(QWidget& widget, const dtCore::NamedGroupParameter& modelData) const;
 
       /**
        * @param widget The widget to read from.  It should be a TaskEditor.
        * @param modelData The data object to populate.
        */
-      virtual bool UpdateModelFromWidget(QWidget& widget, dtDAL::NamedGroupParameter& modelData) const;
+      virtual bool UpdateModelFromWidget(QWidget& widget, dtCore::NamedGroupParameter& modelData) const;
 
       ///@return a new instance of TaskEditor.
       virtual QWidget* CreateWidget(QWidget* parent);

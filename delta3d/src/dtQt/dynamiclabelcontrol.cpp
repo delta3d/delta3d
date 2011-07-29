@@ -29,8 +29,8 @@
 #include <prefix/dtqtprefix.h>
 #include <dtQt/dynamiclabelcontrol.h>
 
-#include <dtDAL/actorproxy.h>
-#include <dtDAL/datatype.h>
+#include <dtCore/actorproxy.h>
+#include <dtCore/datatype.h>
 
 #include <dtQt/dynamicsubwidgets.h>
 
@@ -57,9 +57,9 @@ namespace dtQt
 
    /////////////////////////////////////////////////////////////////////////////////
    void DynamicLabelControl::InitializeData(DynamicAbstractControl* newParent,
-      PropertyEditorModel* newModel, dtDAL::PropertyContainer* newPC, dtDAL::ActorProperty* newProperty)
+      PropertyEditorModel* newModel, dtCore::PropertyContainer* newPC, dtCore::ActorProperty* newProperty)
    {
-      //myProperty = dynamic_cast<dtDAL::StringActorProperty *>(newProperty);
+      //myProperty = dynamic_cast<dtCore::StringActorProperty *>(newProperty);
       DynamicAbstractControl::InitializeData(newParent, newModel, newPC, newProperty);
 
       // It's ok to do a NULL property.  It just means that someone is going to call the set

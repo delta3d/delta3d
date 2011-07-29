@@ -28,6 +28,10 @@
 #include <osg/ref_ptr>
 #include <ostream>
 
+#ifndef dtDAL
+#define dtDAL dtCore
+#endif
+
 namespace dtCore
 {
 

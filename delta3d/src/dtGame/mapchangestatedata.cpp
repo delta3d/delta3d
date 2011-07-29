@@ -22,9 +22,9 @@
 #include <dtUtil/log.h>
 #include <dtUtil/exception.h>
 
-#include <dtDAL/project.h>
-#include <dtDAL/map.h>
-#include <dtDAL/actortype.h>
+#include <dtCore/project.h>
+#include <dtCore/map.h>
+#include <dtCore/actortype.h>
 
 #include <dtGame/exceptionenum.h>
 #include <dtGame/environmentactor.h>
@@ -79,7 +79,7 @@ namespace dtGame
       // We are only changing maps if the new map list is not empty
       if (!mNewMapNames.empty())
       {
-         const std::set<std::string>& names = dtDAL::Project::GetInstance().GetMapNames();
+         const std::set<std::string>& names = dtCore::Project::GetInstance().GetMapNames();
          MapChangeStateData::NameVector::const_iterator i = mNewMapNames.begin();
          MapChangeStateData::NameVector::const_iterator end = mNewMapNames.end();
          for (; i != end; ++i)
@@ -128,23 +128,23 @@ namespace dtGame
    //////////////////////////////////////////////////////////////////////////
    void MapChangeStateData::CloseSingleMap(const std::string& mapName, bool deleteLibraries )
    {
-      dtDAL::Map& oldMap = dtDAL::Project::GetInstance().GetMap(mapName);
+      dtCore::Map& oldMap = dtCore::Project::GetInstance().GetMap(mapName);
 
       // Clear out all the game events that came from the old map
       if (mGameManager->GetRemoveGameEventsOnMapChange())
       {
-         std::vector<dtDAL::GameEvent*> events;
+         std::vector<dtCore::GameEvent*> events;
          oldMap.GetEventManager().GetAllEvents(events);
-         dtDAL::GameEventManager& mainGEM = dtDAL::GameEventManager::GetInstance();
+         dtCore::GameEventManager& mainGEM = dtCore::GameEventManager::GetInstance();
 
-         std::vector<dtDAL::GameEvent*>::const_iterator j = events.begin();
-         std::vector<dtDAL::GameEvent*>::const_iterator jend = events.end();
+         std::vector<dtCore::GameEvent*>::const_iterator j = events.begin();
+         std::vector<dtCore::GameEvent*>::const_iterator jend = events.end();
          for (; j != jend; ++j)
          {
             mainGEM.RemoveEvent((*j)->GetUniqueId());
          }
       }
-      dtDAL::Project::GetInstance().CloseMap(oldMap, deleteLibraries);
+      dtCore::Project::GetInstance().CloseMap(oldMap, deleteLibraries);
    }
 
 
@@ -163,7 +163,7 @@ namespace dtGame
             // Make the map load.
             try
             {
-               dtDAL::Project::GetInstance().GetMap(*i);
+               dtCore::Project::GetInstance().GetMap(*i);
             }
             catch (const dtUtil::Exception& ex)
             {
@@ -195,17 +195,17 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////
    void MapChangeStateData::LoadSingleMapIntoGM(const std::string& mapName)
    {
-      dtDAL::Map& map = dtDAL::Project::GetInstance().GetMap(mapName);
+      dtCore::Map& map = dtCore::Project::GetInstance().GetMap(mapName);
       // add all the events in the map to the game manager.
-      std::vector<dtDAL::GameEvent* > events;
+      std::vector<dtCore::GameEvent* > events;
       map.GetEventManager().GetAllEvents(events);
-      dtDAL::GameEventManager& mainGEM = dtDAL::GameEventManager::GetInstance();
+      dtCore::GameEventManager& mainGEM = dtCore::GameEventManager::GetInstance();
 
-      std::vector<dtDAL::GameEvent*>::const_iterator i = events.begin();
-      std::vector<dtDAL::GameEvent*>::const_iterator iend = events.end();
+      std::vector<dtCore::GameEvent*>::const_iterator i = events.begin();
+      std::vector<dtCore::GameEvent*>::const_iterator iend = events.end();
       for (; i != iend; ++i)
       {
-         dtDAL::GameEvent* currEvent = *i;
+         dtCore::GameEvent* currEvent = *i;
          if (mainGEM.FindEvent(currEvent->GetUniqueId()) == NULL)
          {
             mainGEM.AddEvent(*currEvent);
@@ -220,12 +220,12 @@ namespace dtGame
          mGameManager->SetEnvironmentActor(eap);
       }
 
-      std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> > proxies;
+      std::vector<dtCore::RefPtr<dtCore::BaseActorObject> > proxies;
       map.GetAllProxies(proxies);
 
       for (unsigned int i = 0; i < proxies.size(); ++i)
       {
-         dtDAL::BaseActorObject& aProxy = *proxies[i];
+         dtCore::BaseActorObject& aProxy = *proxies[i];
          // Ensure that we don't try and add the environment actor
          if (map.GetEnvironmentActor() == &aProxy)
          {

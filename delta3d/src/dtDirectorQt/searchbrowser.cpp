@@ -261,7 +261,7 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   bool SearchBrowser::TestItem(dtDAL::PropertyContainer* container, const QString& searchText, QString& outDesc)
+   bool SearchBrowser::TestItem(dtCore::PropertyContainer* container, const QString& searchText, QString& outDesc)
    {
       if (!container)
       {
@@ -274,13 +274,13 @@ namespace dtDirector
          return true;
       }
 
-      std::vector<dtDAL::ActorProperty*> propList;
+      std::vector<dtCore::ActorProperty*> propList;
       container->GetPropertyList(propList);
       
       int count = (int)propList.size();
       for (int index = 0; index < count; ++index)
       {
-         dtDAL::ActorProperty* prop = propList[index];
+         dtCore::ActorProperty* prop = propList[index];
          if (prop)
          {
             QString nameText = prop->GetName().c_str();

@@ -30,7 +30,7 @@
 #include <cppunit/extensions/HelperMacros.h>
 
 #include <dtHLAGM/environmentprocessrecordlist.h>
-#include <dtDAL/namedgroupparameter.inl>
+#include <dtCore/namedgroupparameter.inl>
 #include <dtUtil/mathdefines.h>
 #include <dtUtil/coordinates.h>
 #include <osg/Vec3d>
@@ -190,7 +190,7 @@ namespace dtHLAGM
          CPPUNIT_ASSERT_EQUAL(unsigned(0), recCopy.GetIndex());
          CPPUNIT_ASSERT_EQUAL(unsigned(typeCode), recCopy.GetTypeCode());
 
-         dtDAL::NamedGroupParameter& groupParam = recCopy.GetRecordData();
+         dtCore::NamedGroupParameter& groupParam = recCopy.GetRecordData();
 
          const unsigned short defShort = 0;
          const float defFloat = 0.0f;
@@ -244,7 +244,7 @@ namespace dtHLAGM
          CPPUNIT_ASSERT_EQUAL(unsigned(index), recCopy.GetIndex());
          CPPUNIT_ASSERT_EQUAL(unsigned(typeCode), recCopy.GetTypeCode());
 
-         dtDAL::NamedGroupParameter& groupParam = recCopy.GetRecordData();
+         dtCore::NamedGroupParameter& groupParam = recCopy.GetRecordData();
 
          CPPUNIT_ASSERT(dtUtil::Equivalent(mTestPos1, groupParam.GetValue(EnvironmentProcessRecord::PARAM_LOCATION, osg::Vec3d()), 0.01));
          CPPUNIT_ASSERT_MESSAGE("Because it went through the coordinate converter, it should not be bit for bit equal",
@@ -306,7 +306,7 @@ namespace dtHLAGM
          CPPUNIT_ASSERT_EQUAL(unsigned(index), recCopy.GetIndex());
          CPPUNIT_ASSERT_EQUAL(unsigned(typeCode), recCopy.GetTypeCode());
 
-         dtDAL::NamedGroupParameter& groupParam = recCopy.GetRecordData();
+         dtCore::NamedGroupParameter& groupParam = recCopy.GetRecordData();
 
          CPPUNIT_ASSERT(dtUtil::Equivalent(mTestPos1, groupParam.GetValue(EnvironmentProcessRecord::PARAM_LOCATION, osg::Vec3d()), 0.01));
          CPPUNIT_ASSERT_MESSAGE("Because it went through the coordinate converter, it should not be bit for bit equal",
@@ -343,7 +343,7 @@ namespace dtHLAGM
 
       void AddDataForElipsesAndPuffs(EnvironmentProcessRecord& rec)
       {
-         dtDAL::NamedGroupParameter& groupParam = rec.GetRecordData();
+         dtCore::NamedGroupParameter& groupParam = rec.GetRecordData();
          groupParam.SetValue(EnvironmentProcessRecord::PARAM_LOCATION, mTestPos1);
          groupParam.SetValue(EnvironmentProcessRecord::PARAM_ORIGINATION_LOCATION, mTestPos2);
          groupParam.SetValue(EnvironmentProcessRecord::PARAM_DIMENSION, mTestVec1);
@@ -356,7 +356,7 @@ namespace dtHLAGM
 
       void AddDataForSpheres(EnvironmentProcessRecord& rec)
       {
-         dtDAL::NamedGroupParameter& groupParam = rec.GetRecordData();
+         dtCore::NamedGroupParameter& groupParam = rec.GetRecordData();
          groupParam.SetValue(EnvironmentProcessRecord::PARAM_LOCATION, mTestPos1);
          groupParam.SetValue(EnvironmentProcessRecord::PARAM_RADIUS, mTestHeight);
          groupParam.SetValue(EnvironmentProcessRecord::PARAM_RADIUS_RATE, mTestRate);
@@ -366,7 +366,7 @@ namespace dtHLAGM
 
       void AddDataForState(EnvironmentProcessRecord& rec)
       {
-         dtDAL::NamedGroupParameter& groupParam = rec.GetRecordData();
+         dtCore::NamedGroupParameter& groupParam = rec.GetRecordData();
          groupParam.SetValue(EnvironmentProcessRecord::PARAM_AGENT_ENUM, (unsigned short)(41));
          groupParam.SetValue(EnvironmentProcessRecord::PARAM_GEOM_INDEX, unsigned(1));
          groupParam.SetValue(EnvironmentProcessRecord::PARAM_TOTAL_MASS, float(36.5f));

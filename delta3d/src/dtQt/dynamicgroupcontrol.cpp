@@ -124,7 +124,7 @@ namespace dtQt
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void DynamicGroupControl::actorPropertyChanged(dtDAL::PropertyContainer& propCon, dtDAL::ActorProperty& property)
+   void DynamicGroupControl::actorPropertyChanged(dtCore::PropertyContainer& propCon, dtCore::ActorProperty& property)
    {
       DynamicAbstractParentControl::actorPropertyChanged(propCon, property);
 

@@ -1,11 +1,11 @@
 #include <python/dtpython.h>
-#include <dtDAL/map.h>
+#include <dtCore/map.h>
 
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 #include <boost/python/suite/indexing/map_indexing_suite.hpp>
 
 using namespace boost::python;
-using namespace dtDAL;
+using namespace dtCore;
 
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(FP_overloads, FindProxies, 2, 6)
 

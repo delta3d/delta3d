@@ -26,11 +26,11 @@
 #include <dtCore/collisionmotionmodel.h>
 #include <dtCore/collisioncategorydefaults.h>
 
-#include <dtDAL/actoridactorproperty.h>
-#include <dtDAL/stringactorproperty.h>
-#include <dtDAL/floatactorproperty.h>
-#include <dtDAL/booleanactorproperty.h>
-#include <dtDAL/bitmaskactorproperty.h>
+#include <dtCore/actoridactorproperty.h>
+#include <dtCore/stringactorproperty.h>
+#include <dtCore/floatactorproperty.h>
+#include <dtCore/booleanactorproperty.h>
+#include <dtCore/bitmaskactorproperty.h>
 
 #include <dtDirector/director.h>
 
@@ -80,124 +80,124 @@ namespace dtDirector
    {
       ActionNode::BuildPropertyMap();
 
-      dtDAL::ActorIDActorProperty* actorProp = new dtDAL::ActorIDActorProperty(
+      dtCore::ActorIDActorProperty* actorProp = new dtCore::ActorIDActorProperty(
          "Actor", "Actor",
-         dtDAL::ActorIDActorProperty::SetFuncType(this, &CreateFPSMotionModelAction::SetCurrentActor),
-         dtDAL::ActorIDActorProperty::GetFuncType(this, &CreateFPSMotionModelAction::GetCurrentActor),
+         dtCore::ActorIDActorProperty::SetFuncType(this, &CreateFPSMotionModelAction::SetCurrentActor),
+         dtCore::ActorIDActorProperty::GetFuncType(this, &CreateFPSMotionModelAction::GetCurrentActor),
          "", "The actor to attach the motion model to.");
       AddProperty(actorProp);
 
-      dtDAL::StringActorProperty* modelProp = new dtDAL::StringActorProperty(
+      dtCore::StringActorProperty* modelProp = new dtCore::StringActorProperty(
          "Motion Model", "Motion Model",
-         dtDAL::StringActorProperty::SetFuncType(this, &CreateFPSMotionModelAction::SetModelName),
-         dtDAL::StringActorProperty::GetFuncType(this, &CreateFPSMotionModelAction::GetModelName),
+         dtCore::StringActorProperty::SetFuncType(this, &CreateFPSMotionModelAction::SetModelName),
+         dtCore::StringActorProperty::GetFuncType(this, &CreateFPSMotionModelAction::GetModelName),
          "The name of the motion model.");
       AddProperty(modelProp);
 
-      dtDAL::FloatActorProperty* heightProp = new dtDAL::FloatActorProperty(
+      dtCore::FloatActorProperty* heightProp = new dtCore::FloatActorProperty(
          "Height", "Height",
-         dtDAL::FloatActorProperty::SetFuncType(this, &CreateFPSMotionModelAction::SetHeight),
-         dtDAL::FloatActorProperty::GetFuncType(this, &CreateFPSMotionModelAction::GetHeight),
+         dtCore::FloatActorProperty::SetFuncType(this, &CreateFPSMotionModelAction::SetHeight),
+         dtCore::FloatActorProperty::GetFuncType(this, &CreateFPSMotionModelAction::GetHeight),
          "The collision height of the motion model.");
       AddProperty(heightProp);
 
-      dtDAL::FloatActorProperty* radiusProp = new dtDAL::FloatActorProperty(
+      dtCore::FloatActorProperty* radiusProp = new dtCore::FloatActorProperty(
          "Radius", "Radius",
-         dtDAL::FloatActorProperty::SetFuncType(this, &CreateFPSMotionModelAction::SetRadius),
-         dtDAL::FloatActorProperty::GetFuncType(this, &CreateFPSMotionModelAction::GetRadius),
+         dtCore::FloatActorProperty::SetFuncType(this, &CreateFPSMotionModelAction::SetRadius),
+         dtCore::FloatActorProperty::GetFuncType(this, &CreateFPSMotionModelAction::GetRadius),
          "The collision radius of the motion model.");
       AddProperty(radiusProp);
 
-      dtDAL::FloatActorProperty* stepProp = new dtDAL::FloatActorProperty(
+      dtCore::FloatActorProperty* stepProp = new dtCore::FloatActorProperty(
          "Step Height", "Step Height",
-         dtDAL::FloatActorProperty::SetFuncType(this, &CreateFPSMotionModelAction::SetStepUpHeight),
-         dtDAL::FloatActorProperty::GetFuncType(this, &CreateFPSMotionModelAction::GetStepUpHeight),
+         dtCore::FloatActorProperty::SetFuncType(this, &CreateFPSMotionModelAction::SetStepUpHeight),
+         dtCore::FloatActorProperty::GetFuncType(this, &CreateFPSMotionModelAction::GetStepUpHeight),
          "The step up height of the motion model.");
       AddProperty(stepProp);
 
-      dtDAL::FloatActorProperty* walkProp = new dtDAL::FloatActorProperty(
+      dtCore::FloatActorProperty* walkProp = new dtCore::FloatActorProperty(
          "Walk Speed", "Walk Speed",
-         dtDAL::FloatActorProperty::SetFuncType(this, &CreateFPSMotionModelAction::SetWalkSpeed),
-         dtDAL::FloatActorProperty::GetFuncType(this, &CreateFPSMotionModelAction::GetWalkSpeed),
+         dtCore::FloatActorProperty::SetFuncType(this, &CreateFPSMotionModelAction::SetWalkSpeed),
+         dtCore::FloatActorProperty::GetFuncType(this, &CreateFPSMotionModelAction::GetWalkSpeed),
          "The walk speed of the motion model.");
       AddProperty(walkProp);
 
-      dtDAL::FloatActorProperty* sideProp = new dtDAL::FloatActorProperty(
+      dtCore::FloatActorProperty* sideProp = new dtCore::FloatActorProperty(
          "Sidestep Speed", "Sidestep Speed",
-         dtDAL::FloatActorProperty::SetFuncType(this, &CreateFPSMotionModelAction::SetSidestepSpeed),
-         dtDAL::FloatActorProperty::GetFuncType(this, &CreateFPSMotionModelAction::GetSidestepSpeed),
+         dtCore::FloatActorProperty::SetFuncType(this, &CreateFPSMotionModelAction::SetSidestepSpeed),
+         dtCore::FloatActorProperty::GetFuncType(this, &CreateFPSMotionModelAction::GetSidestepSpeed),
          "The sidestep speed of the motion model.");
       AddProperty(sideProp);
 
-      dtDAL::FloatActorProperty* turnProp = new dtDAL::FloatActorProperty(
+      dtCore::FloatActorProperty* turnProp = new dtCore::FloatActorProperty(
          "Turn Speed", "Turn Speed",
-         dtDAL::FloatActorProperty::SetFuncType(this, &CreateFPSMotionModelAction::SetTurnSpeed),
-         dtDAL::FloatActorProperty::GetFuncType(this, &CreateFPSMotionModelAction::GetTurnSpeed),
+         dtCore::FloatActorProperty::SetFuncType(this, &CreateFPSMotionModelAction::SetTurnSpeed),
+         dtCore::FloatActorProperty::GetFuncType(this, &CreateFPSMotionModelAction::GetTurnSpeed),
          "The turn speed of the motion model.");
       AddProperty(turnProp);
 
-      dtDAL::FloatActorProperty* jumpSpeedProp = new dtDAL::FloatActorProperty(
+      dtCore::FloatActorProperty* jumpSpeedProp = new dtCore::FloatActorProperty(
          "Jump Speed", "Jump Speed",
-         dtDAL::FloatActorProperty::SetFuncType(this, &CreateFPSMotionModelAction::SetJumpSpeed),
-         dtDAL::FloatActorProperty::GetFuncType(this, &CreateFPSMotionModelAction::GetJumpSpeed),
+         dtCore::FloatActorProperty::SetFuncType(this, &CreateFPSMotionModelAction::SetJumpSpeed),
+         dtCore::FloatActorProperty::GetFuncType(this, &CreateFPSMotionModelAction::GetJumpSpeed),
          "The jump speed.");
       AddProperty(jumpSpeedProp);
 
-      dtDAL::FloatActorProperty* slideSpeedProp = new dtDAL::FloatActorProperty(
+      dtCore::FloatActorProperty* slideSpeedProp = new dtCore::FloatActorProperty(
          "Slide Speed", "Slide Speed",
-         dtDAL::FloatActorProperty::SetFuncType(this, &CreateFPSMotionModelAction::SetSlideSpeed),
-         dtDAL::FloatActorProperty::GetFuncType(this, &CreateFPSMotionModelAction::GetSlideSpeed),
+         dtCore::FloatActorProperty::SetFuncType(this, &CreateFPSMotionModelAction::SetSlideSpeed),
+         dtCore::FloatActorProperty::GetFuncType(this, &CreateFPSMotionModelAction::GetSlideSpeed),
          "The speed in which the target will slide down a sloped surface.");
       AddProperty(slideSpeedProp);
 
-      dtDAL::FloatActorProperty* slideThresholdProp = new dtDAL::FloatActorProperty(
+      dtCore::FloatActorProperty* slideThresholdProp = new dtCore::FloatActorProperty(
          "Slide Threshold", "Slide Threshold",
-         dtDAL::FloatActorProperty::SetFuncType(this, &CreateFPSMotionModelAction::SetSlideThreshold),
-         dtDAL::FloatActorProperty::GetFuncType(this, &CreateFPSMotionModelAction::GetSlideThreshold),
+         dtCore::FloatActorProperty::SetFuncType(this, &CreateFPSMotionModelAction::SetSlideThreshold),
+         dtCore::FloatActorProperty::GetFuncType(this, &CreateFPSMotionModelAction::GetSlideThreshold),
          "The threshold in which the target will slide down a sloped surface.");
       AddProperty(slideThresholdProp);
 
-      dtDAL::FloatActorProperty* smoothingProp = new dtDAL::FloatActorProperty(
+      dtCore::FloatActorProperty* smoothingProp = new dtCore::FloatActorProperty(
          "Smoothing Speed", "Smoothing Speed",
-         dtDAL::FloatActorProperty::SetFuncType(this, &CreateFPSMotionModelAction::SetSmoothingSpeed),
-         dtDAL::FloatActorProperty::GetFuncType(this, &CreateFPSMotionModelAction::GetSmoothingSpeed),
+         dtCore::FloatActorProperty::SetFuncType(this, &CreateFPSMotionModelAction::SetSmoothingSpeed),
+         dtCore::FloatActorProperty::GetFuncType(this, &CreateFPSMotionModelAction::GetSmoothingSpeed),
          "The speed in which the target will smoothly lerp its position.");
       AddProperty(smoothingProp);
 
-      dtDAL::BooleanActorProperty* useWasdProp = new dtDAL::BooleanActorProperty(
+      dtCore::BooleanActorProperty* useWasdProp = new dtCore::BooleanActorProperty(
          "Use WASD Keys", "Use WASD Keys",
-         dtDAL::BooleanActorProperty::SetFuncType(this, &CreateFPSMotionModelAction::SetUseWASD),
-         dtDAL::BooleanActorProperty::GetFuncType(this, &CreateFPSMotionModelAction::GetUseWASD),
+         dtCore::BooleanActorProperty::SetFuncType(this, &CreateFPSMotionModelAction::SetUseWASD),
+         dtCore::BooleanActorProperty::GetFuncType(this, &CreateFPSMotionModelAction::GetUseWASD),
          "Allow WASD Keys for motion model movement.");
       AddProperty(useWasdProp);
 
-      dtDAL::BooleanActorProperty* useArrowsProp = new dtDAL::BooleanActorProperty(
+      dtCore::BooleanActorProperty* useArrowsProp = new dtCore::BooleanActorProperty(
          "Use Arrow Keys", "Use Arrow Keys",
-         dtDAL::BooleanActorProperty::SetFuncType(this, &CreateFPSMotionModelAction::SetUseArrows),
-         dtDAL::BooleanActorProperty::GetFuncType(this, &CreateFPSMotionModelAction::GetUseArrows),
+         dtCore::BooleanActorProperty::SetFuncType(this, &CreateFPSMotionModelAction::SetUseArrows),
+         dtCore::BooleanActorProperty::GetFuncType(this, &CreateFPSMotionModelAction::GetUseArrows),
          "Allow Arrow Keys for motion model movement.");
       AddProperty(useArrowsProp);
 
-      dtDAL::BooleanActorProperty* jumpProp = new dtDAL::BooleanActorProperty(
+      dtCore::BooleanActorProperty* jumpProp = new dtCore::BooleanActorProperty(
          "Allow Jump", "Allow Jump",
-         dtDAL::BooleanActorProperty::SetFuncType(this, &CreateFPSMotionModelAction::SetAllowJump),
-         dtDAL::BooleanActorProperty::GetFuncType(this, &CreateFPSMotionModelAction::GetAllowJump),
+         dtCore::BooleanActorProperty::SetFuncType(this, &CreateFPSMotionModelAction::SetAllowJump),
+         dtCore::BooleanActorProperty::GetFuncType(this, &CreateFPSMotionModelAction::GetAllowJump),
          "Allow jumping with the motion model.");
       AddProperty(jumpProp);
 
-      dtDAL::BitMaskActorProperty* torsoProp = new dtDAL::BitMaskActorProperty(
+      dtCore::BitMaskActorProperty* torsoProp = new dtCore::BitMaskActorProperty(
          "Torso Collision", "Torso Collision",
-         dtDAL::BitMaskActorProperty::SetFuncType(this, &CreateFPSMotionModelAction::SetTorsoCollisionMask),
-         dtDAL::BitMaskActorProperty::GetFuncType(this, &CreateFPSMotionModelAction::GetTorsoCollisionMask),
-         dtDAL::BitMaskActorProperty::GetMaskListFuncType(this, &CreateFPSMotionModelAction::GetCollisionMaskList),
+         dtCore::BitMaskActorProperty::SetFuncType(this, &CreateFPSMotionModelAction::SetTorsoCollisionMask),
+         dtCore::BitMaskActorProperty::GetFuncType(this, &CreateFPSMotionModelAction::GetTorsoCollisionMask),
+         dtCore::BitMaskActorProperty::GetMaskListFuncType(this, &CreateFPSMotionModelAction::GetCollisionMaskList),
          "Torso collision bits for the motion model.");
       AddProperty(torsoProp);
 
-      dtDAL::BitMaskActorProperty* feetProp = new dtDAL::BitMaskActorProperty(
+      dtCore::BitMaskActorProperty* feetProp = new dtCore::BitMaskActorProperty(
          "Feet Collision", "Feet Collision",
-         dtDAL::BitMaskActorProperty::SetFuncType(this, &CreateFPSMotionModelAction::SetFeetCollisionMask),
-         dtDAL::BitMaskActorProperty::GetFuncType(this, &CreateFPSMotionModelAction::GetFeetCollisionMask),
-         dtDAL::BitMaskActorProperty::GetMaskListFuncType(this, &CreateFPSMotionModelAction::GetCollisionMaskList),
+         dtCore::BitMaskActorProperty::SetFuncType(this, &CreateFPSMotionModelAction::SetFeetCollisionMask),
+         dtCore::BitMaskActorProperty::GetFuncType(this, &CreateFPSMotionModelAction::GetFeetCollisionMask),
+         dtCore::BitMaskActorProperty::GetMaskListFuncType(this, &CreateFPSMotionModelAction::GetCollisionMaskList),
          "Feet collision bits for the motion model.");
       AddProperty(feetProp);
 
@@ -284,7 +284,7 @@ namespace dtDirector
             model->GetFPSCollider().SetCollisionBitsForFeet(GetUInt("Feet Collision"));
             model->SetScene(app->GetScene());
 
-            dtDAL::ActorProxy* proxy = GetActor("Actor");
+            dtCore::ActorProxy* proxy = GetActor("Actor");
             if (proxy)
             {
                dtCore::Transformable* actor = NULL;

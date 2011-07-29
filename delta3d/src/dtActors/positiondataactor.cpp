@@ -21,15 +21,15 @@
 
 #include <dtCore/transform.h>
 
-#include <dtDAL/actorproxyicon.h>
-#include <dtDAL/booleanactorproperty.h>
-#include <dtDAL/datatype.h>
+#include <dtCore/actorproxyicon.h>
+#include <dtCore/booleanactorproperty.h>
+#include <dtCore/datatype.h>
 
 namespace dtActors
 {
    //////////////////////////////////////////////////////////////////////////
    PositionDataActorProxy::PositionDataActorProxy() :
-   dtDAL::TransformableActorProxy(),
+   dtCore::TransformableActorProxy(),
    mChangeTranslation(true),
    mChangeRotation(true)
    {    
@@ -46,19 +46,19 @@ namespace dtActors
    {
       TransformableActorProxy::BuildPropertyMap();
 
-      AddProperty( new dtDAL::BooleanActorProperty("changeTranslation", "Change Position / Translation",
-         dtDAL::BooleanActorProperty::SetFuncType(this, &PositionDataActorProxy::SetChangeTranslation),
-         dtDAL::BooleanActorProperty::GetFuncType(this, &PositionDataActorProxy::GetChangeTranslation),
+      AddProperty( new dtCore::BooleanActorProperty("changeTranslation", "Change Position / Translation",
+         dtCore::BooleanActorProperty::SetFuncType(this, &PositionDataActorProxy::SetChangeTranslation),
+         dtCore::BooleanActorProperty::GetFuncType(this, &PositionDataActorProxy::GetChangeTranslation),
          "", "ModelView"));
 
-      AddProperty( new dtDAL::BooleanActorProperty("changeRotation", "Change Orientation / Rotation",
-         dtDAL::BooleanActorProperty::SetFuncType(this, &PositionDataActorProxy::SetChangeRotation),
-         dtDAL::BooleanActorProperty::GetFuncType(this, &PositionDataActorProxy::GetChangeRotation),
+      AddProperty( new dtCore::BooleanActorProperty("changeRotation", "Change Orientation / Rotation",
+         dtCore::BooleanActorProperty::SetFuncType(this, &PositionDataActorProxy::SetChangeRotation),
+         dtCore::BooleanActorProperty::GetFuncType(this, &PositionDataActorProxy::GetChangeRotation),
          "", "ModelView"));      
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void PositionDataActorProxy::ApplyDataTo(dtDAL::BaseActorObject* actorProxy) const
+   void PositionDataActorProxy::ApplyDataTo(dtCore::BaseActorObject* actorProxy) const
    {
       ApplyDataTo(actorProxy->GetActor());
    }
@@ -96,19 +96,19 @@ namespace dtActors
    }
 
    //////////////////////////////////////////////////////////////////////////
-   dtDAL::ActorProxyIcon* PositionDataActorProxy::GetBillBoardIcon()
+   dtCore::ActorProxyIcon* PositionDataActorProxy::GetBillBoardIcon()
    {
       if (!mBillBoardIcon.valid())
       {
-         mBillBoardIcon = new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IMAGE_BILLBOARD_POSITION);
+         mBillBoardIcon = new dtCore::ActorProxyIcon(dtCore::ActorProxyIcon::IMAGE_BILLBOARD_POSITION);
       }
 
       return mBillBoardIcon.get();
    }
 
    //////////////////////////////////////////////////////////////////////////
-   const dtDAL::BaseActorObject::RenderMode& PositionDataActorProxy::GetRenderMode()
+   const dtCore::BaseActorObject::RenderMode& PositionDataActorProxy::GetRenderMode()
    {
-      return dtDAL::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON;
+      return dtCore::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON;
    }
 }

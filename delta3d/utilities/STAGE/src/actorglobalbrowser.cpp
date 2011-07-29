@@ -37,10 +37,10 @@
 #include <QtGui/QPushButton>
 #include <QtCore/QStringList>
 #include <QtGui/QTreeView>
-#include <dtDAL/actorproxy.h>
-#include <dtDAL/actortype.h>
-#include <dtDAL/librarymanager.h>
-#include <dtDAL/map.h>
+#include <dtCore/actorproxy.h>
+#include <dtCore/actortype.h>
+#include <dtCore/librarymanager.h>
+#include <dtCore/map.h>
 #include <dtEditQt/actorglobalbrowser.h>
 #include <dtEditQt/actorresultstable.h>
 #include <dtEditQt/editordata.h>
@@ -81,9 +81,9 @@ namespace dtEditQt
          SLOT(onActorPropertyChanged(ActorProxyRefPtr, ActorPropertyRefPtr)));
 
       connect(&EditorEvents::GetInstance(),
-         SIGNAL(ProxyNameChanged(dtDAL::BaseActorObject&, std::string)),
+         SIGNAL(ProxyNameChanged(dtCore::BaseActorObject&, std::string)),
          this,
-         SLOT(onActorProxyNameChanged(dtDAL::BaseActorObject&, std::string)));
+         SLOT(onActorProxyNameChanged(dtCore::BaseActorObject&, std::string)));
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -115,15 +115,15 @@ namespace dtEditQt
    {
       EditorData::GetInstance().getMainWindow()->startWaitCursor();
 
-      std::vector< dtCore::RefPtr<dtDAL::BaseActorObject> > globalProxies;
-      dtDAL::Map* map = EditorData::GetInstance().getCurrentMap();
+      std::vector< dtCore::RefPtr<dtCore::BaseActorObject> > globalProxies;
+      dtCore::Map* map = EditorData::GetInstance().getCurrentMap();
 
       // empty out our table, just in case - Must happen BEFORE libraries are removed
       mResultsTable->clearAll();
 
       if (map != NULL)
       {
-         map->FindProxies(globalProxies, "", "", "", "", dtDAL::Map::NotPlaceable);
+         map->FindProxies(globalProxies, "", "", "", "", dtCore::Map::NotPlaceable);
 
          mResultsTable->addProxies(globalProxies);
       }
@@ -132,7 +132,7 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ActorGlobalBrowser::onActorProxyCreated(dtCore::RefPtr<dtDAL::BaseActorObject> proxy, bool forceNoAdjustments)
+   void ActorGlobalBrowser::onActorProxyCreated(dtCore::RefPtr<dtCore::BaseActorObject> proxy, bool forceNoAdjustments)
    {
       if (!proxy->IsPlaceable())
       {
@@ -143,7 +143,7 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ActorGlobalBrowser::onActorProxyDestroyed(dtCore::RefPtr<dtDAL::BaseActorObject> proxy)
+   void ActorGlobalBrowser::onActorProxyDestroyed(dtCore::RefPtr<dtCore::BaseActorObject> proxy)
    {
       if (!proxy->IsPlaceable())
       {
@@ -158,7 +158,7 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ActorGlobalBrowser::onActorProxyNameChanged(dtDAL::BaseActorObject& proxy, std::string oldName)
+   void ActorGlobalBrowser::onActorProxyNameChanged(dtCore::BaseActorObject& proxy, std::string oldName)
    {
       mResultsTable->HandleProxyUpdated(&proxy);
    }

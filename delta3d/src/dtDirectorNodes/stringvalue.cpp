@@ -22,7 +22,7 @@
 #include <dtDirectorNodes/stringvalue.h>
 #include <dtDirector/colors.h>
 
-#include <dtDAL/stringactorproperty.h>
+#include <dtCore/stringactorproperty.h>
 
 namespace dtDirector
 {
@@ -52,17 +52,17 @@ namespace dtDirector
    {
       ValueNode::BuildPropertyMap();
 
-      mProperty = new dtDAL::StringActorProperty(
+      mProperty = new dtCore::StringActorProperty(
          "Value", "Value",
-         dtDAL::StringActorProperty::SetFuncType(this, &StringValue::SetValue),
-         dtDAL::StringActorProperty::GetFuncType(this, &StringValue::GetValue),
+         dtCore::StringActorProperty::SetFuncType(this, &StringValue::SetValue),
+         dtCore::StringActorProperty::GetFuncType(this, &StringValue::GetValue),
          "The value.");
       AddProperty(mProperty);
 
-      mInitialProperty = new dtDAL::StringActorProperty(
+      mInitialProperty = new dtCore::StringActorProperty(
          "Initial Value", "Initial Value",
-         dtDAL::StringActorProperty::SetFuncType(this, &StringValue::SetInitialValue),
-         dtDAL::StringActorProperty::GetFuncType(this, &StringValue::GetInitialValue),
+         dtCore::StringActorProperty::SetFuncType(this, &StringValue::SetInitialValue),
+         dtCore::StringActorProperty::GetFuncType(this, &StringValue::GetInitialValue),
          "The initial value.");
       AddProperty(mInitialProperty);
    }

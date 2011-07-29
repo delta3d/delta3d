@@ -1,12 +1,12 @@
 #include <python/dtpython.h>
-#include <dtDAL/actorproxy.h>
-#include <dtDAL/actorproperty.h>
+#include <dtCore/actorproxy.h>
+#include <dtCore/actorproperty.h>
 
 #include <boost/python/register_ptr_to_python.hpp>
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 
 using namespace boost::python;
-using namespace dtDAL;
+using namespace dtCore;
 
 typedef std::vector< ActorProperty* > ActorPropertyVector;
 

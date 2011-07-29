@@ -22,12 +22,12 @@
 #define DELTA_DDM_REGION_CALCULATOR
 
 #include <dtCore/refptr.h>
-#include <dtDAL/propertycontainer.h>
-#include <dtDAL/actorproperty.h>
+#include <dtCore/propertycontainer.h>
+#include <dtCore/actorproperty.h>
 #include <dtHLAGM/export.h>
 #include <map>
 
-namespace dtDAL
+namespace dtCore
 {
    class ActorProperty;
 }
@@ -46,7 +46,7 @@ namespace dtHLAGM
     * That is, it modifies the RTI region based on implemented algoriths using the state data provided
     * on the DDMRegionData object.
     */
-   class DT_HLAGM_EXPORT DDMRegionCalculator : public dtDAL::PropertyContainer
+   class DT_HLAGM_EXPORT DDMRegionCalculator : public dtCore::PropertyContainer
    {
       public:
          static const std::string PROP_FIRST_DIMENSION_NAME;

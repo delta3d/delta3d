@@ -22,11 +22,11 @@
 #ifndef _POSITIONAL_ACTOR_PROXY_H_
 #define _POSITIONAL_ACTOR_PROXY_H_
 
-#include "dtDAL/plugin_export.h"
+#include "dtCore/plugin_export.h"
 #include "dtActors/baselightactorproxy.h"
-#include "dtDAL/transformableactorproxy.h"
+#include "dtCore/transformableactorproxy.h"
 #include <dtCore/positionallight.h>
-#include <dtDAL/exceptionenum.h>
+#include <dtCore/exceptionenum.h>
 
 namespace dtActors
 {
@@ -64,15 +64,15 @@ namespace dtActors
          * quell it.
          * @return The billboard icon common to all lights.
          */
-        virtual dtDAL::ActorProxyIcon* GetBillBoardIcon();
+        virtual dtCore::ActorProxyIcon* GetBillBoardIcon();
 
         /**
          * Gets the current render mode for positional lights.
-         * @return dtDAL::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON.
+         * @return dtCore::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON.
          */
-        virtual const dtDAL::BaseActorObject::RenderMode& GetRenderMode()
+        virtual const dtCore::BaseActorObject::RenderMode& GetRenderMode()
         {
-            return dtDAL::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON;
+            return dtCore::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON;
         }
 
         /**
@@ -84,7 +84,7 @@ namespace dtActors
             dtCore::PositionalLight *pl = dynamic_cast<dtCore::PositionalLight*>(GetActor());
             if (!pl)
             {
-                throw dtDAL::InvalidActorException(
+                throw dtCore::InvalidActorException(
                 "Actor should be type dtCore::PositionalLight", __FILE__, __LINE__);
             }
 
@@ -100,7 +100,7 @@ namespace dtActors
             dtCore::PositionalLight *pl = dynamic_cast<dtCore::PositionalLight*>(GetActor());
             if (!pl)
             {
-                throw dtDAL::InvalidActorException(
+                throw dtCore::InvalidActorException(
                 "Actor should be type dtCore::PositionalLight", __FILE__, __LINE__);
             }
 

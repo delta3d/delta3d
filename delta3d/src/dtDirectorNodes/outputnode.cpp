@@ -22,7 +22,7 @@
 #include <dtDirectorNodes/outputnode.h>
 #include <dtDirector/colors.h>
 
-#include <dtDAL/stringactorproperty.h>
+#include <dtCore/stringactorproperty.h>
 
 namespace dtDirector
 {
@@ -59,10 +59,10 @@ namespace dtDirector
    {
       ActionNode::BuildPropertyMap();
 
-      AddProperty(new dtDAL::StringActorProperty(
+      AddProperty(new dtCore::StringActorProperty(
          "Name", "Name", 
-         dtDAL::StringActorProperty::SetFuncType(this, &OutputNode::SetName),
-         dtDAL::StringActorProperty::GetFuncType(this, &OutputNode::GetName),
+         dtCore::StringActorProperty::SetFuncType(this, &OutputNode::SetName),
+         dtCore::StringActorProperty::GetFuncType(this, &OutputNode::GetName),
          "The name of the output link."));
    }
 

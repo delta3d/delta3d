@@ -38,8 +38,8 @@
 #include <dtCore/deltawin.h>
 #include <dtCore/scene.h>
 #include <dtCore/transform.h>
-#include <dtDAL/actortype.h>
-#include <dtDAL/project.h>
+#include <dtCore/actortype.h>
+#include <dtCore/project.h>
 #include <dtUtil/datapathutils.h>
 #include <dtGame/gamemanager.h>
 #include <dtGame/gameapplication.h>
@@ -108,7 +108,7 @@ void TestAAR::OnStartup(dtGame::GameApplication& app)
 
    try
    {
-      dtDAL::Project::GetInstance().SetContext(context, true);
+      dtCore::Project::GetInstance().SetContext(context, true);
    }
    catch (dtUtil::Exception& e)
    {

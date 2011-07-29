@@ -37,45 +37,45 @@
 #include <dtCore/scene.h>
 #include <dtCore/timer.h>
 
-#include <dtDAL/abstractenumactorproperty.h>
-#include <dtDAL/actoractorproperty.h>
-#include <dtDAL/actoridactorproperty.h>
-#include <dtDAL/actorproxy.h>
-#include <dtDAL/arrayactorproperty.h>
-#include <dtDAL/booleanactorproperty.h>
-#include <dtDAL/colorrgbaactorproperty.h>
-#include <dtDAL/datatype.h>
-#include <dtDAL/doubleactorproperty.h>
-#include <dtDAL/environmentactor.h>
-#include <dtDAL/floatactorproperty.h>
-#include <dtDAL/propertycontaineractorproperty.h>
-#include <dtDAL/gameevent.h>
-#include <dtDAL/gameeventmanager.h>
-#include <dtDAL/groupactorproperty.h>
-#include <dtDAL/intactorproperty.h>
-#include <dtDAL/librarymanager.h>
-#include <dtDAL/map.h>
-#include <dtDAL/mapxml.h>
-#include <dtDAL/namedactorparameter.h>
-#include <dtDAL/namedbooleanparameter.h>
-#include <dtDAL/nameddoubleparameter.h>
-#include <dtDAL/namedenumparameter.h>
-#include <dtDAL/namedfloatparameter.h>
-#include <dtDAL/namedgameeventparameter.h>
-#include <dtDAL/namedintparameter.h>
-#include <dtDAL/namedlongintparameter.h>
-#include <dtDAL/namedresourceparameter.h>
-#include <dtDAL/namedrgbacolorparameter.h>
-#include <dtDAL/namedstringparameter.h>
-#include <dtDAL/namedvectorparameters.h>
-#include <dtDAL/namedgroupparameter.h>
-#include <dtDAL/namedgroupparameter.inl>
-#include <dtDAL/physicalactorproxy.h>
-#include <dtDAL/project.h>
-#include <dtDAL/resourceactorproperty.h>
-#include <dtDAL/stringactorproperty.h>
-#include <dtDAL/vectoractorproperties.h>
-#include <dtDAL/bitmaskactorproperty.h>
+#include <dtCore/abstractenumactorproperty.h>
+#include <dtCore/actoractorproperty.h>
+#include <dtCore/actoridactorproperty.h>
+#include <dtCore/actorproxy.h>
+#include <dtCore/arrayactorproperty.h>
+#include <dtCore/booleanactorproperty.h>
+#include <dtCore/colorrgbaactorproperty.h>
+#include <dtCore/datatype.h>
+#include <dtCore/doubleactorproperty.h>
+#include <dtCore/environmentactor.h>
+#include <dtCore/floatactorproperty.h>
+#include <dtCore/propertycontaineractorproperty.h>
+#include <dtCore/gameevent.h>
+#include <dtCore/gameeventmanager.h>
+#include <dtCore/groupactorproperty.h>
+#include <dtCore/intactorproperty.h>
+#include <dtCore/librarymanager.h>
+#include <dtCore/map.h>
+#include <dtCore/mapxml.h>
+#include <dtCore/namedactorparameter.h>
+#include <dtCore/namedbooleanparameter.h>
+#include <dtCore/nameddoubleparameter.h>
+#include <dtCore/namedenumparameter.h>
+#include <dtCore/namedfloatparameter.h>
+#include <dtCore/namedgameeventparameter.h>
+#include <dtCore/namedintparameter.h>
+#include <dtCore/namedlongintparameter.h>
+#include <dtCore/namedresourceparameter.h>
+#include <dtCore/namedrgbacolorparameter.h>
+#include <dtCore/namedstringparameter.h>
+#include <dtCore/namedvectorparameters.h>
+#include <dtCore/namedgroupparameter.h>
+#include <dtCore/namedgroupparameter.inl>
+#include <dtCore/physicalactorproxy.h>
+#include <dtCore/project.h>
+#include <dtCore/resourceactorproperty.h>
+#include <dtCore/stringactorproperty.h>
+#include <dtCore/vectoractorproperties.h>
+#include <dtCore/bitmaskactorproperty.h>
 
 #include <dtUtil/datapathutils.h>
 #include <dtUtil/exception.h>
@@ -157,9 +157,9 @@ class MapTests : public CPPUNIT_NS::TestFixture
        static const std::string mExampleLibraryName;
        static const std::string mExampleGameLibraryName;
 
-       void createActors(dtDAL::Map& map);
-       dtDAL::ActorProperty* getActorProperty(dtDAL::Map& map,
-         const std::string& propName, dtDAL::DataType& type, unsigned which = 0);
+       void createActors(dtCore::Map& map);
+       dtCore::ActorProperty* getActorProperty(dtCore::Map& map,
+         const std::string& propName, dtCore::DataType& type, unsigned which = 0);
 
        dtUtil::Log* logger;
 };
@@ -176,8 +176,8 @@ const std::string MapTests::TEST_PROJECT_DIR_2="WorkingMapProject2";
 
 const std::string DATA_DIR = dtUtil::GetDeltaRootPath() + dtUtil::FileUtils::PATH_SEPARATOR + "examples/data";
 const std::string TESTS_DIR = dtUtil::GetDeltaRootPath() + dtUtil::FileUtils::PATH_SEPARATOR + "tests";
-const std::string MAPPROJECTCONTEXT = TESTS_DIR + dtUtil::FileUtils::PATH_SEPARATOR + "dtDAL" + dtUtil::FileUtils::PATH_SEPARATOR + MapTests::TEST_PROJECT_DIR;
-const std::string PROJECTCONTEXT = TESTS_DIR + dtUtil::FileUtils::PATH_SEPARATOR + "dtDAL" + dtUtil::FileUtils::PATH_SEPARATOR + "WorkingProject";
+const std::string MAPPROJECTCONTEXT = TESTS_DIR + dtUtil::FileUtils::PATH_SEPARATOR + "dtCore" + dtUtil::FileUtils::PATH_SEPARATOR + MapTests::TEST_PROJECT_DIR;
+const std::string PROJECTCONTEXT = TESTS_DIR + dtUtil::FileUtils::PATH_SEPARATOR + "dtCore" + dtUtil::FileUtils::PATH_SEPARATOR + "WorkingProject";
 
 ///////////////////////////////////////////////////////////////////////////////////////
 void MapTests::setUp()
@@ -191,7 +191,7 @@ void MapTests::setUp()
 
         dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
         std::string currentDir = fileUtils.CurrentDirectory();
-        std::string projectDir("dtDAL");
+        std::string projectDir("dtCore");
         if (currentDir.substr(currentDir.size() - projectDir.size()) != projectDir)
         {
             fileUtils.PushDirectory(projectDir);
@@ -219,22 +219,22 @@ void MapTests::setUp()
         }
 
         // Create without a maps directory so the code will test that will be created on demand.
-        dtDAL::Project::GetInstance().CreateContext(TEST_PROJECT_DIR, false);
-        dtDAL::Project::GetInstance().SetContext(TEST_PROJECT_DIR);
-        dtDAL::Project::GetInstance().CreateContext(TEST_PROJECT_DIR_2, true);
-        dtDAL::Project::GetInstance().AddContext(TEST_PROJECT_DIR_2);
+        dtCore::Project::GetInstance().CreateContext(TEST_PROJECT_DIR, false);
+        dtCore::Project::GetInstance().SetContext(TEST_PROJECT_DIR);
+        dtCore::Project::GetInstance().CreateContext(TEST_PROJECT_DIR_2, true);
+        dtCore::Project::GetInstance().AddContext(TEST_PROJECT_DIR_2);
 
         CPPUNIT_ASSERT_MESSAGE("Context 0 should have no maps dir",
-                 !fileUtils.DirExists(dtDAL::Project::GetInstance().GetContext(0) + dtUtil::FileUtils::PATH_SEPARATOR + "maps"));
+                 !fileUtils.DirExists(dtCore::Project::GetInstance().GetContext(0) + dtUtil::FileUtils::PATH_SEPARATOR + "maps"));
         CPPUNIT_ASSERT_MESSAGE("Context 1 should have a maps dir",
-                 fileUtils.DirExists(dtDAL::Project::GetInstance().GetContext(1) + dtUtil::FileUtils::PATH_SEPARATOR + "maps"));
+                 fileUtils.DirExists(dtCore::Project::GetInstance().GetContext(1) + dtUtil::FileUtils::PATH_SEPARATOR + "maps"));
 
         //copy the vector because the act of deleting a map will reload the map names list.
-        const std::set<std::string> v = dtDAL::Project::GetInstance().GetMapNames();
+        const std::set<std::string> v = dtCore::Project::GetInstance().GetMapNames();
 
         for (std::set<std::string>::const_iterator i = v.begin(); i != v.end(); ++i)
         {
-            dtDAL::Project::GetInstance().DeleteMap(*i, true);
+            dtCore::Project::GetInstance().DeleteMap(*i, true);
         }
     }
     catch (const dtUtil::Exception& e)
@@ -251,19 +251,19 @@ void MapTests::tearDown()
    bool shouldPopDir;
 
    std::string currentDir = fileUtils.CurrentDirectory();
-   std::string projectDir("dtDAL");
+   std::string projectDir("dtCore");
    shouldPopDir = currentDir.substr(currentDir.size() - projectDir.size()) == projectDir;
 
    try
    {
-      dtDAL::Project::GetInstance().SetContext(TEST_PROJECT_DIR);
-      dtDAL::Project::GetInstance().AddContext(TEST_PROJECT_DIR_2);
+      dtCore::Project::GetInstance().SetContext(TEST_PROJECT_DIR);
+      dtCore::Project::GetInstance().AddContext(TEST_PROJECT_DIR_2);
       //copy the vector because the act of deleting a map will reload the map names list.
-      const std::set<std::string> v = dtDAL::Project::GetInstance().GetMapNames();
+      const std::set<std::string> v = dtCore::Project::GetInstance().GetMapNames();
 
       for (std::set<std::string>::const_iterator i = v.begin(); i != v.end(); ++i)
       {
-         dtDAL::Project::GetInstance().DeleteMap(*i);
+         dtCore::Project::GetInstance().DeleteMap(*i);
       }
 
       std::string rbodyToDelete("WorkingMapProject/Characters/marine/marine.rbody");
@@ -277,7 +277,7 @@ void MapTests::tearDown()
          fileUtils.FileDelete(rbodyToDelete);
       }
 
-      dtDAL::Project::GetInstance().ClearAllContexts();
+      dtCore::Project::GetInstance().ClearAllContexts();
 
       if (fileUtils.DirExists("WorkingProject"))
       {
@@ -288,9 +288,9 @@ void MapTests::tearDown()
          fileUtils.DirDelete("WorkingProject2", true);
       }
 
-      if (dtDAL::LibraryManager::GetInstance().GetRegistry(mExampleLibraryName) != NULL)
+      if (dtCore::LibraryManager::GetInstance().GetRegistry(mExampleLibraryName) != NULL)
       {
-         dtDAL::LibraryManager::GetInstance().UnloadActorRegistry(mExampleLibraryName);
+         dtCore::LibraryManager::GetInstance().UnloadActorRegistry(mExampleLibraryName);
       }
 
       if (shouldPopDir)
@@ -310,11 +310,11 @@ void MapTests::tearDown()
 
 
 ///////////////////////////////////////////////////////////////////////////////////////
-void MapTests::createActors(dtDAL::Map& map)
+void MapTests::createActors(dtCore::Map& map)
 {
-   dtDAL::LibraryManager& libMgr = dtDAL::LibraryManager::GetInstance();
-   std::vector<const dtDAL::ActorType*> actorTypes;
-   std::vector<dtDAL::ActorProperty*> props;
+   dtCore::LibraryManager& libMgr = dtCore::LibraryManager::GetInstance();
+   std::vector<const dtCore::ActorType*> actorTypes;
+   std::vector<dtCore::ActorProperty*> props;
 
    libMgr.GetActorTypes(actorTypes);
 
@@ -339,7 +339,7 @@ void MapTests::createActors(dtDAL::Map& map)
          continue; // go to next actor
       }
 
-      dtCore::RefPtr<dtDAL::BaseActorObject> proxy;
+      dtCore::RefPtr<dtCore::BaseActorObject> proxy;
       // Test timing Stuff
       dtCore::Timer testClock;
       dtCore::Timer_t testClockStart = testClock.Tick();
@@ -388,9 +388,9 @@ void MapTests::TestMapAddRemoveProxies()
 {
     try
     {
-        dtDAL::Project& project = dtDAL::Project::GetInstance();
+        dtCore::Project& project = dtCore::Project::GetInstance();
 
-        dtDAL::Map& map = project.CreateMap(std::string("Neato Map"), std::string("neatomap"));
+        dtCore::Map& map = project.CreateMap(std::string("Neato Map"), std::string("neatomap"));
 
         createActors(map);
 
@@ -417,25 +417,25 @@ void MapTests::TestMapAddRemoveProxies()
         CPPUNIT_ASSERT_MESSAGE("The set of actor classes should be empty.",
             map.GetProxyActorClasses().empty());
 
-        std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> > proxies;
+        std::vector<dtCore::RefPtr<dtCore::BaseActorObject> > proxies;
         map.GetAllProxies(proxies);
 
         map.AddLibrary(mExampleLibraryName, "1.0");
-        dtDAL::LibraryManager::GetInstance().LoadActorRegistry(mExampleLibraryName);
+        dtCore::LibraryManager::GetInstance().LoadActorRegistry(mExampleLibraryName);
 
-        dtCore::RefPtr<const dtDAL::ActorType> exampleType = dtDAL::LibraryManager::GetInstance().FindActorType("dtcore.examples", "Test All Properties");
+        dtCore::RefPtr<const dtCore::ActorType> exampleType = dtCore::LibraryManager::GetInstance().FindActorType("dtcore.examples", "Test All Properties");
         CPPUNIT_ASSERT_MESSAGE("The example type is NULL", exampleType.valid());
 
-        dtCore::RefPtr<dtDAL::BaseActorObject> proxy1 = dtDAL::LibraryManager::GetInstance().CreateActorProxy(*exampleType);
+        dtCore::RefPtr<dtCore::BaseActorObject> proxy1 = dtCore::LibraryManager::GetInstance().CreateActorProxy(*exampleType);
         CPPUNIT_ASSERT_MESSAGE("proxy1 is NULL", proxy1.valid());
 
-        dtCore::RefPtr<dtDAL::BaseActorObject> proxy2 = dtDAL::LibraryManager::GetInstance().CreateActorProxy(*exampleType);
+        dtCore::RefPtr<dtCore::BaseActorObject> proxy2 = dtCore::LibraryManager::GetInstance().CreateActorProxy(*exampleType);
         CPPUNIT_ASSERT_MESSAGE("proxy2 is NULL", proxy2.valid());
 
-        dtCore::RefPtr<dtDAL::BaseActorObject> proxy3 = dtDAL::LibraryManager::GetInstance().CreateActorProxy(*exampleType);
+        dtCore::RefPtr<dtCore::BaseActorObject> proxy3 = dtCore::LibraryManager::GetInstance().CreateActorProxy(*exampleType);
         CPPUNIT_ASSERT_MESSAGE("proxy3 is NULL", proxy3.valid());
 
-        dtCore::RefPtr<dtDAL::BaseActorObject> proxy4 = dtDAL::LibraryManager::GetInstance().CreateActorProxy(*exampleType);
+        dtCore::RefPtr<dtCore::BaseActorObject> proxy4 = dtCore::LibraryManager::GetInstance().CreateActorProxy(*exampleType);
         CPPUNIT_ASSERT_MESSAGE("proxy4 is NULL", proxy4.valid());
 
         map.AddProxy(*proxy1.get());
@@ -443,15 +443,15 @@ void MapTests::TestMapAddRemoveProxies()
         map.AddProxy(*proxy3.get());
         map.AddProxy(*proxy4.get());
 
-        dynamic_cast<dtDAL::ActorIDActorProperty*>(proxy1->GetProperty("Test_Actor"))->SetValue(proxy2->GetId());
-        dynamic_cast<dtDAL::ActorIDActorProperty*>(proxy2->GetProperty("Test_Actor"))->SetValue(proxy4->GetId());
-        dynamic_cast<dtDAL::ActorIDActorProperty*>(proxy3->GetProperty("Test_Actor"))->SetValue(proxy4->GetId());
+        dynamic_cast<dtCore::ActorIDActorProperty*>(proxy1->GetProperty("Test_Actor"))->SetValue(proxy2->GetId());
+        dynamic_cast<dtCore::ActorIDActorProperty*>(proxy2->GetProperty("Test_Actor"))->SetValue(proxy4->GetId());
+        dynamic_cast<dtCore::ActorIDActorProperty*>(proxy3->GetProperty("Test_Actor"))->SetValue(proxy4->GetId());
 
         map.RemoveProxy(*proxy4.get());
 
-        CPPUNIT_ASSERT_MESSAGE("Proxy 1 should still be linked to proxy2", dynamic_cast<dtDAL::ActorIDActorProperty*>(proxy1->GetProperty("Test_Actor"))->GetValue() == proxy2->GetId());
-        CPPUNIT_ASSERT_MESSAGE("Proxy 2 is linked still", dynamic_cast<dtDAL::ActorIDActorProperty*>(proxy2->GetProperty("Test_Actor"))->GetValue().ToString().empty());
-        CPPUNIT_ASSERT_MESSAGE("Proxy 3 is linked still", dynamic_cast<dtDAL::ActorIDActorProperty*>(proxy3->GetProperty("Test_Actor"))->GetValue().ToString().empty());
+        CPPUNIT_ASSERT_MESSAGE("Proxy 1 should still be linked to proxy2", dynamic_cast<dtCore::ActorIDActorProperty*>(proxy1->GetProperty("Test_Actor"))->GetValue() == proxy2->GetId());
+        CPPUNIT_ASSERT_MESSAGE("Proxy 2 is linked still", dynamic_cast<dtCore::ActorIDActorProperty*>(proxy2->GetProperty("Test_Actor"))->GetValue().ToString().empty());
+        CPPUNIT_ASSERT_MESSAGE("Proxy 3 is linked still", dynamic_cast<dtCore::ActorIDActorProperty*>(proxy3->GetProperty("Test_Actor"))->GetValue().ToString().empty());
     }
     catch (const dtUtil::Exception& e)
     {
@@ -464,17 +464,17 @@ void MapTests::TestMapProxySearch()
 {
     try
     {
-        dtDAL::Project& project = dtDAL::Project::GetInstance();
+        dtCore::Project& project = dtCore::Project::GetInstance();
 
         project.SetContext(TEST_PROJECT_DIR);
 
-        dtDAL::Map& map = project.CreateMap(std::string("Neato Map"), std::string("neatomap"));
+        dtCore::Map& map = project.CreateMap(std::string("Neato Map"), std::string("neatomap"));
 
         createActors(map);
 
         unsigned maxId = map.GetAllProxies().size();
 
-        std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> > results;
+        std::vector<dtCore::RefPtr<dtCore::BaseActorObject> > results;
 
         map.FindProxies(results, "", "dtcore", "");
 
@@ -488,8 +488,8 @@ void MapTests::TestMapProxySearch()
         map.FindProxies(results, "", "dtcore.", "");
         CPPUNIT_ASSERT_MESSAGE("trailing dots should end with no results.", results.size() == 0);
 
-        map.FindProxies(results, "", "", "","", dtDAL::Map::Placeable);
-        for (std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> >::iterator i = results.begin();
+        map.FindProxies(results, "", "", "","", dtCore::Map::Placeable);
+        for (std::vector<dtCore::RefPtr<dtCore::BaseActorObject> >::iterator i = results.begin();
             i != results.end(); ++i)
         {
             CPPUNIT_ASSERT_MESSAGE(std::string("Proxy ") + (*i)->GetName()
@@ -497,8 +497,8 @@ void MapTests::TestMapProxySearch()
                  (*i)->IsPlaceable());
         }
 
-        map.FindProxies(results, "", "", "","", dtDAL::Map::NotPlaceable);
-        for (std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> >::iterator i = results.begin();
+        map.FindProxies(results, "", "", "","", dtCore::Map::NotPlaceable);
+        for (std::vector<dtCore::RefPtr<dtCore::BaseActorObject> >::iterator i = results.begin();
             i != results.end(); ++i)
         {
             CPPUNIT_ASSERT_MESSAGE(std::string("Proxy ") + (*i)->GetName()
@@ -510,27 +510,27 @@ void MapTests::TestMapProxySearch()
         CPPUNIT_ASSERT_MESSAGE("There should be some lights in the results.", results.size() >= 3);
 
 
-        for (std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> >::iterator i = results.begin();
+        for (std::vector<dtCore::RefPtr<dtCore::BaseActorObject> >::iterator i = results.begin();
             i != results.end(); ++i)
         {
             CPPUNIT_ASSERT_MESSAGE("All results should be instances of dtCore::Light",
                 (*i)->IsInstanceOf("dtCore::Light"));
         }
 
-        std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> > proxies;
+        std::vector<dtCore::RefPtr<dtCore::BaseActorObject> > proxies;
 
         map.GetAllProxies(proxies);
 
         for (unsigned x = 0;  x < proxies.size(); ++x)
         {
-            dtCore::RefPtr<dtDAL::BaseActorObject> proxyPTR = map.GetProxyById(proxies[x]->GetId());
+            dtCore::RefPtr<dtCore::BaseActorObject> proxyPTR = map.GetProxyById(proxies[x]->GetId());
 
-            CPPUNIT_ASSERT_MESSAGE("Proxy should be found in the map by the project.", &map == dtDAL::Project::GetInstance().GetMapForActorProxy(*proxyPTR));
+            CPPUNIT_ASSERT_MESSAGE("Proxy should be found in the map by the project.", &map == dtCore::Project::GetInstance().GetMapForActorProxy(*proxyPTR));
 
             CPPUNIT_ASSERT_MESSAGE((std::string("Proxy not found with id: ") + proxies[x]->GetId().ToString()).c_str()
                 , proxyPTR != NULL);
 
-            dtDAL::BaseActorObject& proxy = *proxyPTR.get();
+            dtCore::BaseActorObject& proxy = *proxyPTR.get();
 
             CPPUNIT_ASSERT_MESSAGE((std::string("Proxy has the wrong id. ") + proxy.GetId().ToString()).c_str() ,
                 proxy.GetId() == proxies[x]->GetId());
@@ -539,7 +539,7 @@ void MapTests::TestMapProxySearch()
             const std::string& typeName = proxy.GetActorType().GetName();
 
             map.FindProxies(results, proxy.GetName(), cat, typeName, "",
-                proxy.IsPlaceable() ? dtDAL::Map::Placeable : dtDAL::Map::NotPlaceable);
+                proxy.IsPlaceable() ? dtCore::Map::Placeable : dtCore::Map::NotPlaceable);
 
             CPPUNIT_ASSERT_MESSAGE((std::string("Results should have exactly one proxy. Id:") +
                 proxies[x]->GetId().ToString()).c_str() , results.size() == 1);
@@ -559,7 +559,7 @@ void MapTests::TestMapProxySearch()
 
             for (unsigned j = 0; j < results.size(); ++j)
             {
-               const dtDAL::ActorType& at = results[j]->GetActorType();
+               const dtCore::ActorType& at = results[j]->GetActorType();
                std::ostringstream ss;
                ss << "Each proxy in the results should have the type or be a subtype of \"" << cat << "." << typeName <<
                   "\".  The result has type \"" << at << "\"";
@@ -579,20 +579,20 @@ void MapTests::TestMapProxySearch()
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
-dtDAL::ActorProperty* MapTests::getActorProperty(dtDAL::Map& map,
-    const std::string& propName, dtDAL::DataType& type, unsigned which)
+dtCore::ActorProperty* MapTests::getActorProperty(dtCore::Map& map,
+    const std::string& propName, dtCore::DataType& type, unsigned which)
 {
-    for (std::map<dtCore::UniqueId, dtCore::RefPtr<dtDAL::BaseActorObject> >::const_iterator i = map.GetAllProxies().begin();
+    for (std::map<dtCore::UniqueId, dtCore::RefPtr<dtCore::BaseActorObject> >::const_iterator i = map.GetAllProxies().begin();
         i != map.GetAllProxies().end(); ++i)
     {
 
-        dtDAL::BaseActorObject* proxy = map.GetProxyById(i->first);
+        dtCore::BaseActorObject* proxy = map.GetProxyById(i->first);
 
         CPPUNIT_ASSERT_MESSAGE("ERROR: Proxy is NULL", proxy!= NULL );
 
         if (propName != "")
         {
-            dtDAL::ActorProperty* prop = proxy->GetProperty(propName);
+            dtCore::ActorProperty* prop = proxy->GetProperty(propName);
             //if a prop of a certain name is requested, readonly is allowed since the called should know which property
             //They will be getting.
             if (prop != NULL)
@@ -606,11 +606,11 @@ dtDAL::ActorProperty* MapTests::getActorProperty(dtDAL::Map& map,
         }
         else
         {
-            std::vector<dtDAL::ActorProperty*> props;
+            std::vector<dtCore::ActorProperty*> props;
             proxy->GetPropertyList(props);
-            for (std::vector<dtDAL::ActorProperty*>::iterator j = props.begin(); j<props.end(); ++j)
+            for (std::vector<dtCore::ActorProperty*>::iterator j = props.begin(); j<props.end(); ++j)
             {
-                dtDAL::ActorProperty* prop = *j;
+                dtCore::ActorProperty* prop = *j;
                 if (!prop->IsReadOnly() && prop->GetDataType() == type && which-- == 0)
                 {
                     //std::cout << "Using prop " << prop->GetName() << " on actor with id " << proxy->GetId() << std::endl;
@@ -633,9 +633,9 @@ void MapTests::TestLibraryMethods()
 {
     try
     {
-        dtDAL::Project& project = dtDAL::Project::GetInstance();
+        dtCore::Project& project = dtCore::Project::GetInstance();
 
-        dtDAL::Map* map = &project.CreateMap("Neato Map", "neatomap");
+        dtCore::Map* map = &project.CreateMap("Neato Map", "neatomap");
 
         std::string lib1("hello1");
         std::string lib2("hello2");
@@ -722,44 +722,44 @@ void MapTests::TestMapLibraryHandling()
 {
     try
     {
-       dtDAL::Project& project = dtDAL::Project::GetInstance();
+       dtCore::Project& project = dtCore::Project::GetInstance();
 
        const std::string mapName("Neato Map");
        const std::string mapFileName("neatomap");
 
-       dtDAL::Map* map = &project.CreateMap(mapName, mapFileName);
-       const std::string fileNameToTest = mapFileName + dtDAL::Map::MAP_FILE_EXTENSION;
+       dtCore::Map* map = &project.CreateMap(mapName, mapFileName);
+       const std::string fileNameToTest = mapFileName + dtCore::Map::MAP_FILE_EXTENSION;
 
        CPPUNIT_ASSERT_EQUAL_MESSAGE("A newly created Map doesn't have the expected generated filename.",
                                     fileNameToTest, map->GetFileName());
 
        map->AddLibrary(mExampleLibraryName, "1.0");
-       dtDAL::LibraryManager::GetInstance().LoadActorRegistry(mExampleLibraryName);
+       dtCore::LibraryManager::GetInstance().LoadActorRegistry(mExampleLibraryName);
 
        createActors(*map);
 
-       dtDAL::ActorPluginRegistry* reg = dtDAL::LibraryManager::GetInstance().GetRegistry(mExampleLibraryName);
+       dtCore::ActorPluginRegistry* reg = dtCore::LibraryManager::GetInstance().GetRegistry(mExampleLibraryName);
        CPPUNIT_ASSERT_MESSAGE("Registry for testActorLibrary should not be NULL.", reg != NULL);
 
        project.SaveMap(*map);
 
        project.CloseMap(*map, true);
 
-       reg = dtDAL::LibraryManager::GetInstance().GetRegistry(mExampleLibraryName);
+       reg = dtCore::LibraryManager::GetInstance().GetRegistry(mExampleLibraryName);
        CPPUNIT_ASSERT_MESSAGE("testActorLibrary should have been closed.", reg == NULL);
 
        map = &project.GetMap(mapName);
 
-       reg = dtDAL::LibraryManager::GetInstance().GetRegistry(mExampleLibraryName);
+       reg = dtCore::LibraryManager::GetInstance().GetRegistry(mExampleLibraryName);
        CPPUNIT_ASSERT_MESSAGE("Registry for testActorLibrary should not be NULL.", reg != NULL);
 
-       std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> > proxies;
+       std::vector<dtCore::RefPtr<dtCore::BaseActorObject> > proxies;
        //hold onto all the proxies so that the actor libraries can't be closed.
        map->GetAllProxies(proxies);
 
        project.CloseMap(*map, true);
 
-       reg = dtDAL::LibraryManager::GetInstance().GetRegistry(mExampleLibraryName);
+       reg = dtCore::LibraryManager::GetInstance().GetRegistry(mExampleLibraryName);
        CPPUNIT_ASSERT_MESSAGE("Registry for testActorLibrary should not be NULL.", reg != NULL);
 
        //cleanup the proxies
@@ -773,19 +773,19 @@ void MapTests::TestMapLibraryHandling()
 
        project.CloseMap(*map, true);
 
-       reg = dtDAL::LibraryManager::GetInstance().GetRegistry(mExampleLibraryName);
+       reg = dtCore::LibraryManager::GetInstance().GetRegistry(mExampleLibraryName);
        CPPUNIT_ASSERT_MESSAGE("Registry for testActorLibrary should not be NULL.", reg != NULL);
 
        //when the second map is closed, the libraries should not close if false is passed.
        project.CloseMap(project.GetMap(mapName + "1"), false);
 
-       reg = dtDAL::LibraryManager::GetInstance().GetRegistry(mExampleLibraryName);
+       reg = dtCore::LibraryManager::GetInstance().GetRegistry(mExampleLibraryName);
        CPPUNIT_ASSERT_MESSAGE("Registry for testActorLibrary should not be NULL.", reg != NULL);
 
        //reopen the map and close it with true to make sure the libraries close.
        project.CloseMap(project.GetMap(mapName), true);
 
-       reg = dtDAL::LibraryManager::GetInstance().GetRegistry(mExampleLibraryName);
+       reg = dtCore::LibraryManager::GetInstance().GetRegistry(mExampleLibraryName);
        CPPUNIT_ASSERT_MESSAGE("testActorLibrary should have been closed.", reg == NULL);
 
     }
@@ -800,12 +800,12 @@ void MapTests::TestMapEventsModified()
 {
    try
    {
-      dtDAL::Project& project = dtDAL::Project::GetInstance();
-      dtDAL::Map& map = project.CreateMap("Neato Map", "neatomap");
+      dtCore::Project& project = dtCore::Project::GetInstance();
+      dtCore::Map& map = project.CreateMap("Neato Map", "neatomap");
 
       CPPUNIT_ASSERT(!map.IsModified());
 
-      dtCore::RefPtr<dtDAL::GameEvent> event = new dtDAL::GameEvent("jojo", "helo");
+      dtCore::RefPtr<dtCore::GameEvent> event = new dtCore::GameEvent("jojo", "helo");
       map.GetEventManager().AddEvent(*event);
       CPPUNIT_ASSERT_MESSAGE("Adding an event should mark the map modified.", map.IsModified());
 
@@ -839,24 +839,24 @@ void MapTests::TestMapEventsModified()
 ////////////////////////////////////////////////////////////////////////////////
 void MapTests::TestIsMapFileValid()
 {
-   dtDAL::Project::GetInstance().SetContext(dtUtil::GetDeltaRootPath() + "/examples/data/demoMap");
+   dtCore::Project::GetInstance().SetContext(dtUtil::GetDeltaRootPath() + "/examples/data/demoMap");
 
    std::string validFile("maps/MyCoolMap.xml");
    std::string invalidFile("SkeletalMeshes/marine_test.xml");
 
-   dtDAL::Project& project = dtDAL::Project::GetInstance();
+   dtCore::Project& project = dtCore::Project::GetInstance();
    CPPUNIT_ASSERT(project.IsValidMapFile(validFile));
    CPPUNIT_ASSERT(!project.IsValidMapFile(invalidFile));
 }
 
 //////////////////////////////////////////////////////////////////////////
 template<class PropertyType>
-PropertyType* GetActorProperty(dtDAL::ActorProxy& proxy, dtDAL::DataType& type)
+PropertyType* GetActorProperty(dtCore::ActorProxy& proxy, dtCore::DataType& type)
 {
-   std::vector<dtDAL::ActorProperty*> props;
+   std::vector<dtCore::ActorProperty*> props;
    proxy.GetPropertyList(props);
 
-   std::vector<dtDAL::ActorProperty*>::iterator propItr = props.begin();
+   std::vector<dtCore::ActorProperty*>::iterator propItr = props.begin();
    while (propItr != props.end())
    {
       if ((*propItr)->GetDataType() == type)
@@ -880,12 +880,12 @@ void MapTests::TestMapSaveAndLoad()
    const std::string mapName("Neato Map");
    const std::string mapFileName("neatomap");
 
-   dtDAL::Map* map = NULL;
+   dtCore::Map* map = NULL;
 
    try
    {
       //create new map
-      map = &dtDAL::Project::GetInstance().CreateMap(mapName, mapFileName);
+      map = &dtCore::Project::GetInstance().CreateMap(mapName, mapFileName);
    }
    catch (const dtUtil::Exception& e)
    {
@@ -894,13 +894,13 @@ void MapTests::TestMapSaveAndLoad()
 
    map->AddLibrary(mExampleLibraryName, "1.0");
 
-   dtDAL::LibraryManager::GetInstance().LoadActorRegistry(mExampleLibraryName);
+   dtCore::LibraryManager::GetInstance().LoadActorRegistry(mExampleLibraryName);
 
    //create test actor
-   dtCore::RefPtr<dtDAL::BaseActorObject> proxy;
+   dtCore::RefPtr<dtCore::BaseActorObject> proxy;
    try
    {
-      proxy = dtDAL::LibraryManager::GetInstance().CreateActorProxy(*ExampleActorLib::TEST_ACTOR_PROPERTY_TYPE.get());
+      proxy = dtCore::LibraryManager::GetInstance().CreateActorProxy(*ExampleActorLib::TEST_ACTOR_PROPERTY_TYPE.get());
    }
    catch (const dtUtil::Exception& e)
    {
@@ -909,7 +909,7 @@ void MapTests::TestMapSaveAndLoad()
 
    map->AddProxy(*proxy);
 
-   //dtDAL::ActorProperty* prop(NULL);
+   //dtCore::ActorProperty* prop(NULL);
 
    const std::string TEST_STRING("test123  !@# < hello > ");
    const bool TEST_BOOL(true);
@@ -923,193 +923,193 @@ void MapTests::TestMapSaveAndLoad()
    const osg::Vec4d TEST_VEC4D(2.0, 3.0, 4.0, 5.0);
    const osg::Vec4 TEST_RGBA(255.f, 245.f, 235.f, 1235.f);
    const dtCore::UniqueId TEST_ACTORID;
-   const dtDAL::ResourceDescriptor TEST_RESOURCE("test", "somethingelse");
+   const dtCore::ResourceDescriptor TEST_RESOURCE("test", "somethingelse");
    const unsigned int TEST_BIT(0xFF00FF00);
 
    //string
    {
-      dtDAL::StringActorProperty* prop = GetActorProperty<dtDAL::StringActorProperty>(*proxy, dtDAL::DataType::STRING);
+      dtCore::StringActorProperty* prop = GetActorProperty<dtCore::StringActorProperty>(*proxy, dtCore::DataType::STRING);
       prop->SetValue(TEST_STRING);
    }
 
    //boolean
    {
-      dtDAL::BooleanActorProperty* prop = GetActorProperty<dtDAL::BooleanActorProperty>(*proxy, dtDAL::DataType::BOOLEAN);
+      dtCore::BooleanActorProperty* prop = GetActorProperty<dtCore::BooleanActorProperty>(*proxy, dtCore::DataType::BOOLEAN);
       prop->SetValue(TEST_BOOL);
    }
 
    //float
    {
-      dtDAL::FloatActorProperty* prop = GetActorProperty<dtDAL::FloatActorProperty>(*proxy, dtDAL::DataType::FLOAT);
+      dtCore::FloatActorProperty* prop = GetActorProperty<dtCore::FloatActorProperty>(*proxy, dtCore::DataType::FLOAT);
       prop->SetValue(TEST_FLOAT);
    }
 
    //double
    {
-      dtDAL::DoubleActorProperty* prop = GetActorProperty<dtDAL::DoubleActorProperty>(*proxy, dtDAL::DataType::DOUBLE);
+      dtCore::DoubleActorProperty* prop = GetActorProperty<dtCore::DoubleActorProperty>(*proxy, dtCore::DataType::DOUBLE);
       prop->SetValue(TEST_DOUBLE);
    }
 
    //int
    {
-      dtDAL::IntActorProperty* prop = GetActorProperty<dtDAL::IntActorProperty>(*proxy, dtDAL::DataType::INT);
+      dtCore::IntActorProperty* prop = GetActorProperty<dtCore::IntActorProperty>(*proxy, dtCore::DataType::INT);
       prop->SetValue(TEST_INT);
    }
 
 
    //vec3 / vec3f
    {
-      dtDAL::Vec3ActorProperty* prop = GetActorProperty<dtDAL::Vec3ActorProperty>(*proxy, dtDAL::DataType::VEC3);
+      dtCore::Vec3ActorProperty* prop = GetActorProperty<dtCore::Vec3ActorProperty>(*proxy, dtCore::DataType::VEC3);
       prop->SetValue(TEST_VEC3);
    }
 
 
    //vec3d
    {
-      dtDAL::Vec3dActorProperty* prop = GetActorProperty<dtDAL::Vec3dActorProperty>(*proxy, dtDAL::DataType::VEC3D);
+      dtCore::Vec3dActorProperty* prop = GetActorProperty<dtCore::Vec3dActorProperty>(*proxy, dtCore::DataType::VEC3D);
       prop->SetValue(TEST_VEC3D);
    }
 
    //vec4f
    {
-      dtDAL::Vec4fActorProperty* prop = GetActorProperty<dtDAL::Vec4fActorProperty>(*proxy, dtDAL::DataType::VEC4F);
+      dtCore::Vec4fActorProperty* prop = GetActorProperty<dtCore::Vec4fActorProperty>(*proxy, dtCore::DataType::VEC4F);
       prop->SetValue(TEST_VEC4F);
    }
 
    //vec4d
    {
-      dtDAL::Vec4dActorProperty* prop = GetActorProperty<dtDAL::Vec4dActorProperty>(*proxy, dtDAL::DataType::VEC4D);
+      dtCore::Vec4dActorProperty* prop = GetActorProperty<dtCore::Vec4dActorProperty>(*proxy, dtCore::DataType::VEC4D);
       prop->SetValue(TEST_VEC4D);
    }
 
    //rgbacolor
    {
-      dtDAL::ColorRgbaActorProperty* prop = GetActorProperty<dtDAL::ColorRgbaActorProperty>(*proxy, dtDAL::DataType::RGBACOLOR);
+      dtCore::ColorRgbaActorProperty* prop = GetActorProperty<dtCore::ColorRgbaActorProperty>(*proxy, dtCore::DataType::RGBACOLOR);
       prop->SetValue(TEST_RGBA);
    }
 
    // ActorIDProperty
    {
-      dtDAL::ActorIDActorProperty* prop = GetActorProperty<dtDAL::ActorIDActorProperty>(*proxy, dtDAL::DataType::ACTOR);
+      dtCore::ActorIDActorProperty* prop = GetActorProperty<dtCore::ActorIDActorProperty>(*proxy, dtCore::DataType::ACTOR);
       prop->SetValue(TEST_ACTORID);
    }
 
    //enumeration
    {
-      dtDAL::AbstractEnumActorProperty* prop = GetActorProperty<dtDAL::AbstractEnumActorProperty>(*proxy, dtDAL::DataType::ENUMERATION);
+      dtCore::AbstractEnumActorProperty* prop = GetActorProperty<dtCore::AbstractEnumActorProperty>(*proxy, dtCore::DataType::ENUMERATION);
       prop->SetEnumValue( *(*prop->GetList().begin()) );
    }
 
    //Resource
    {
-      dtDAL::ResourceActorProperty* prop = GetActorProperty<dtDAL::ResourceActorProperty>(*proxy, dtDAL::DataType::SOUND);
+      dtCore::ResourceActorProperty* prop = GetActorProperty<dtCore::ResourceActorProperty>(*proxy, dtCore::DataType::SOUND);
       prop->SetValue(TEST_RESOURCE);
    }
 
    //bit mask
    {
-      dtDAL::BitMaskActorProperty* prop = GetActorProperty<dtDAL::BitMaskActorProperty>(*proxy, dtDAL::DataType::BIT_MASK);
+      dtCore::BitMaskActorProperty* prop = GetActorProperty<dtCore::BitMaskActorProperty>(*proxy, dtCore::DataType::BIT_MASK);
       prop->SetValue(TEST_BIT);
    }
 
    //save map
-   dtDAL::Project::GetInstance().SaveMap(*map);
+   dtCore::Project::GetInstance().SaveMap(*map);
 
    //close map
-   dtDAL::Project::GetInstance().CloseMap(*map, true);
+   dtCore::Project::GetInstance().CloseMap(*map, true);
    map = NULL;
 
    //reopen map
-   map = &dtDAL::Project::GetInstance().GetMap(mapName);
+   map = &dtCore::Project::GetInstance().GetMap(mapName);
 
    const std::string kAssertMsg("Property value returned from Map doesn't match what was set");
 
    //string
    {
-      dtDAL::StringActorProperty* prop = GetActorProperty<dtDAL::StringActorProperty>(*proxy, dtDAL::DataType::STRING);
+      dtCore::StringActorProperty* prop = GetActorProperty<dtCore::StringActorProperty>(*proxy, dtCore::DataType::STRING);
       CPPUNIT_ASSERT_EQUAL_MESSAGE(kAssertMsg, TEST_STRING, prop->GetValue());
    }
 
    //boolean
    {
-      dtDAL::BooleanActorProperty* prop = GetActorProperty<dtDAL::BooleanActorProperty>(*proxy, dtDAL::DataType::BOOLEAN);
+      dtCore::BooleanActorProperty* prop = GetActorProperty<dtCore::BooleanActorProperty>(*proxy, dtCore::DataType::BOOLEAN);
       CPPUNIT_ASSERT_EQUAL_MESSAGE(kAssertMsg, TEST_BOOL, prop->GetValue());
    }
 
    //float
    {
-      dtDAL::FloatActorProperty* prop = GetActorProperty<dtDAL::FloatActorProperty>(*proxy, dtDAL::DataType::FLOAT);
+      dtCore::FloatActorProperty* prop = GetActorProperty<dtCore::FloatActorProperty>(*proxy, dtCore::DataType::FLOAT);
       CPPUNIT_ASSERT_EQUAL_MESSAGE(kAssertMsg, TEST_FLOAT, prop->GetValue());
    }
 
    //double
    {
-      dtDAL::DoubleActorProperty* prop = GetActorProperty<dtDAL::DoubleActorProperty>(*proxy, dtDAL::DataType::DOUBLE);
+      dtCore::DoubleActorProperty* prop = GetActorProperty<dtCore::DoubleActorProperty>(*proxy, dtCore::DataType::DOUBLE);
       CPPUNIT_ASSERT_EQUAL_MESSAGE(kAssertMsg, TEST_DOUBLE, prop->GetValue());
    }
 
    //int
    {
-      dtDAL::IntActorProperty* prop = GetActorProperty<dtDAL::IntActorProperty>(*proxy, dtDAL::DataType::INT);
+      dtCore::IntActorProperty* prop = GetActorProperty<dtCore::IntActorProperty>(*proxy, dtCore::DataType::INT);
       CPPUNIT_ASSERT_EQUAL_MESSAGE(kAssertMsg, TEST_INT, prop->GetValue());
    }
 
 
    //vec3 /vec3f
    {
-      dtDAL::Vec3ActorProperty* prop = GetActorProperty<dtDAL::Vec3ActorProperty>(*proxy, dtDAL::DataType::VEC3);
+      dtCore::Vec3ActorProperty* prop = GetActorProperty<dtCore::Vec3ActorProperty>(*proxy, dtCore::DataType::VEC3);
       CPPUNIT_ASSERT_MESSAGE(kAssertMsg, dtUtil::Equivalent(TEST_VEC3, prop->GetValue(), 1e-2f));
    }
 
    //vec3d
    {
-      dtDAL::Vec3dActorProperty* prop = GetActorProperty<dtDAL::Vec3dActorProperty>(*proxy, dtDAL::DataType::VEC3D);
+      dtCore::Vec3dActorProperty* prop = GetActorProperty<dtCore::Vec3dActorProperty>(*proxy, dtCore::DataType::VEC3D);
       CPPUNIT_ASSERT_MESSAGE(kAssertMsg, dtUtil::Equivalent(TEST_VEC3D, prop->GetValue(), 1e-2));
    }
 
    //vec4f
    {
-      dtDAL::Vec4fActorProperty* prop = GetActorProperty<dtDAL::Vec4fActorProperty>(*proxy, dtDAL::DataType::VEC4F);
+      dtCore::Vec4fActorProperty* prop = GetActorProperty<dtCore::Vec4fActorProperty>(*proxy, dtCore::DataType::VEC4F);
       CPPUNIT_ASSERT_MESSAGE(kAssertMsg, dtUtil::Equivalent(TEST_VEC4F, prop->GetValue(), 1e-2f));
    }
 
    //vec4d
    {
-      dtDAL::Vec4dActorProperty* prop = GetActorProperty<dtDAL::Vec4dActorProperty>(*proxy, dtDAL::DataType::VEC4D);
+      dtCore::Vec4dActorProperty* prop = GetActorProperty<dtCore::Vec4dActorProperty>(*proxy, dtCore::DataType::VEC4D);
       CPPUNIT_ASSERT_MESSAGE(kAssertMsg, dtUtil::Equivalent(TEST_VEC4D, prop->GetValue(), 1e-2));
    }
 
    //rgbacolor
    {
-      dtDAL::ColorRgbaActorProperty* prop = GetActorProperty<dtDAL::ColorRgbaActorProperty>(*proxy, dtDAL::DataType::RGBACOLOR);
+      dtCore::ColorRgbaActorProperty* prop = GetActorProperty<dtCore::ColorRgbaActorProperty>(*proxy, dtCore::DataType::RGBACOLOR);
       CPPUNIT_ASSERT_MESSAGE(kAssertMsg, dtUtil::Equivalent(TEST_RGBA, prop->GetValue(), 1e-2f));
    }
 
    // ActoridProperty
    {
-      dtDAL::ActorIDActorProperty* prop = GetActorProperty<dtDAL::ActorIDActorProperty>(*proxy, dtDAL::DataType::ACTOR);
+      dtCore::ActorIDActorProperty* prop = GetActorProperty<dtCore::ActorIDActorProperty>(*proxy, dtCore::DataType::ACTOR);
       CPPUNIT_ASSERT_EQUAL_MESSAGE(kAssertMsg, TEST_ACTORID, prop->GetValue());
    }
 
    //enumeration
    {
-      dtDAL::AbstractEnumActorProperty* prop = GetActorProperty<dtDAL::AbstractEnumActorProperty>(*proxy, dtDAL::DataType::ENUMERATION);
+      dtCore::AbstractEnumActorProperty* prop = GetActorProperty<dtCore::AbstractEnumActorProperty>(*proxy, dtCore::DataType::ENUMERATION);
       CPPUNIT_ASSERT_EQUAL_MESSAGE(kAssertMsg, (*prop->GetList().begin())->GetName(), prop->GetEnumValue().GetName());
    }
 
    //Resource
    {
-      dtDAL::ResourceActorProperty* prop = GetActorProperty<dtDAL::ResourceActorProperty>(*proxy, dtDAL::DataType::SOUND);
+      dtCore::ResourceActorProperty* prop = GetActorProperty<dtCore::ResourceActorProperty>(*proxy, dtCore::DataType::SOUND);
       CPPUNIT_ASSERT_EQUAL_MESSAGE(kAssertMsg, TEST_RESOURCE.GetResourceIdentifier(), prop->GetValue().GetResourceIdentifier());
    }
 
    //Bit Mask
    {
-      dtDAL::BitMaskActorProperty* prop = GetActorProperty<dtDAL::BitMaskActorProperty>(*proxy, dtDAL::DataType::BIT_MASK);
+      dtCore::BitMaskActorProperty* prop = GetActorProperty<dtCore::BitMaskActorProperty>(*proxy, dtCore::DataType::BIT_MASK);
       CPPUNIT_ASSERT_EQUAL_MESSAGE(kAssertMsg, TEST_BIT, prop->GetValue());
    }
 
-   dtDAL::Project::GetInstance().DeleteMap(*map, true);
+   dtCore::Project::GetInstance().DeleteMap(*map, true);
 }
 
 
@@ -1118,23 +1118,23 @@ void MapTests::TestMapSaveAndLoadEvents()
 {
    try
    {
-      dtDAL::Project& project = dtDAL::Project::GetInstance();
+      dtCore::Project& project = dtCore::Project::GetInstance();
 
       const std::string mapName("Neato Map");
       const std::string mapFileName("neatomap");
 
-      dtDAL::Map* map = &project.CreateMap(mapName, mapFileName);
+      dtCore::Map* map = &project.CreateMap(mapName, mapFileName);
 
       map->SetDescription("Teague is league with a \"t\".");
 
       const unsigned eventCount = 6;
 
-      std::vector<dtCore::RefPtr<dtDAL::GameEvent> > events;
+      std::vector<dtCore::RefPtr<dtCore::GameEvent> > events;
       for (unsigned i = 0; i < eventCount; ++i)
       {
          std::ostringstream ss;
          ss << "name" << i;
-         dtCore::RefPtr<dtDAL::GameEvent> ge = new dtDAL::GameEvent(ss.str(), "Test Description");
+         dtCore::RefPtr<dtCore::GameEvent> ge = new dtCore::GameEvent(ss.str(), "Test Description");
          map->GetEventManager().AddEvent(*ge);
          events.push_back(ge);
       }
@@ -1150,8 +1150,8 @@ void MapTests::TestMapSaveAndLoadEvents()
 
       for (unsigned i = 0; i < eventCount; ++i)
       {
-         dtDAL::GameEvent& expectedEvent = *events[i];
-         dtDAL::GameEvent* ge = map->GetEventManager().FindEvent(expectedEvent.GetUniqueId());
+         dtCore::GameEvent& expectedEvent = *events[i];
+         dtCore::GameEvent* ge = map->GetEventManager().FindEvent(expectedEvent.GetUniqueId());
 
          CPPUNIT_ASSERT_MESSAGE("All of the game events saved should have been loaded with the same id's",
             ge != NULL);
@@ -1172,51 +1172,51 @@ void MapTests::TestMapSaveAndLoadGroup()
 {
    try
    {
-      dtDAL::Project& project = dtDAL::Project::GetInstance();
+      dtCore::Project& project = dtCore::Project::GetInstance();
 
       std::string mapName("Neato Map");
       std::string mapFileName("neatomap");
 
-      dtDAL::LibraryManager::GetInstance().LoadActorRegistry(mExampleLibraryName);
+      dtCore::LibraryManager::GetInstance().LoadActorRegistry(mExampleLibraryName);
 
-      const dtDAL::ActorType* at = dtDAL::LibraryManager::GetInstance().FindActorType("dtcore.examples", "Test All Properties");
+      const dtCore::ActorType* at = dtCore::LibraryManager::GetInstance().FindActorType("dtcore.examples", "Test All Properties");
       CPPUNIT_ASSERT(at != NULL);
 
-      dtCore::RefPtr<dtDAL::NamedGroupParameter> expectedResult = new dtDAL::NamedGroupParameter("TestGroup");
-      dtCore::RefPtr<dtDAL::NamedGroupParameter> secondInternalGroup = static_cast<dtDAL::NamedGroupParameter*>(expectedResult->AddParameter("FloatGroup", dtDAL::DataType::GROUP));
+      dtCore::RefPtr<dtCore::NamedGroupParameter> expectedResult = new dtCore::NamedGroupParameter("TestGroup");
+      dtCore::RefPtr<dtCore::NamedGroupParameter> secondInternalGroup = static_cast<dtCore::NamedGroupParameter*>(expectedResult->AddParameter("FloatGroup", dtCore::DataType::GROUP));
     
       {
-         dtDAL::Map* map = &project.CreateMap(mapName, mapFileName);
+         dtCore::Map* map = &project.CreateMap(mapName, mapFileName);
          map->AddLibrary(mExampleLibraryName, "1.0");
 
-         dtCore::RefPtr<dtDAL::BaseActorObject> proxy = dtDAL::LibraryManager::GetInstance().CreateActorProxy(*at);
+         dtCore::RefPtr<dtCore::BaseActorObject> proxy = dtCore::LibraryManager::GetInstance().CreateActorProxy(*at);
        
-         dtDAL::GroupActorProperty* groupProp;
+         dtCore::GroupActorProperty* groupProp;
          proxy->GetProperty("TestGroup", groupProp);
 
-         const dtDAL::ResourceDescriptor rd("StaticMeshes:Chicken:Horse.ive", "StaticMeshes:Chicken:Horse.ive");
+         const dtCore::ResourceDescriptor rd("StaticMeshes:Chicken:Horse.ive", "StaticMeshes:Chicken:Horse.ive");
 
-         dtDAL::GameEvent* ge = new dtDAL::GameEvent("cow", "chicken");
+         dtCore::GameEvent* ge = new dtCore::GameEvent("cow", "chicken");
          map->GetEventManager().AddEvent(*ge);
 
          expectedResult->AddValue("SillyInt", 24);
          expectedResult->AddValue("SillyLong", 37L);
          expectedResult->AddValue("SillyString", std::string("Jojo"));
-         static_cast<dtDAL::NamedResourceParameter&>(*expectedResult->AddParameter("SillyResource1", dtDAL::DataType::STATIC_MESH)).SetValue(rd);
-         static_cast<dtDAL::NamedResourceParameter&>(*expectedResult->AddParameter("SillyResource2", dtDAL::DataType::TEXTURE)).SetValue(dtDAL::ResourceDescriptor::NULL_RESOURCE);
+         static_cast<dtCore::NamedResourceParameter&>(*expectedResult->AddParameter("SillyResource1", dtCore::DataType::STATIC_MESH)).SetValue(rd);
+         static_cast<dtCore::NamedResourceParameter&>(*expectedResult->AddParameter("SillyResource2", dtCore::DataType::TEXTURE)).SetValue(dtCore::ResourceDescriptor::NULL_RESOURCE);
 
-         dtDAL::NamedGroupParameter& internalGroup = static_cast<dtDAL::NamedGroupParameter&>(*expectedResult->AddParameter("SillyGroup", dtDAL::DataType::GROUP));
+         dtCore::NamedGroupParameter& internalGroup = static_cast<dtCore::NamedGroupParameter&>(*expectedResult->AddParameter("SillyGroup", dtCore::DataType::GROUP));
          internalGroup.AddValue("CuteString", std::string("Just a string"));
-         static_cast<dtDAL::NamedGameEventParameter&>(*internalGroup.AddParameter("CuteEvent", dtDAL::DataType::GAME_EVENT)).SetValue(ge->GetUniqueId());
-         static_cast<dtDAL::NamedActorParameter&>(*internalGroup.AddParameter("CuteActor", dtDAL::DataType::ACTOR)).SetValue(proxy->GetId());
+         static_cast<dtCore::NamedGameEventParameter&>(*internalGroup.AddParameter("CuteEvent", dtCore::DataType::GAME_EVENT)).SetValue(ge->GetUniqueId());
+         static_cast<dtCore::NamedActorParameter&>(*internalGroup.AddParameter("CuteActor", dtCore::DataType::ACTOR)).SetValue(proxy->GetId());
          internalGroup.AddValue("CuteBool", true);
 
-         static_cast<dtDAL::NamedVec2Parameter&>(*secondInternalGroup->AddParameter("CuteVec2", dtDAL::DataType::VEC2)).SetValue(osg::Vec2(1.0f, 1.3f));
-         static_cast<dtDAL::NamedVec3Parameter&>(*secondInternalGroup->AddParameter("CuteVec3", dtDAL::DataType::VEC3)).SetValue(osg::Vec3(1.0f, 1.3f, 34.7f));
-         static_cast<dtDAL::NamedVec4Parameter&>(*secondInternalGroup->AddParameter("CuteVec4", dtDAL::DataType::VEC4)).SetValue(osg::Vec4(1.0f, 1.3f, 34.7f, 77.6f));
-         static_cast<dtDAL::NamedRGBAColorParameter&>(*secondInternalGroup->AddParameter("CuteColor", dtDAL::DataType::RGBACOLOR)).SetValue(osg::Vec4(1.0f, 0.6f, 0.3f, 0.11f));
-         static_cast<dtDAL::NamedFloatParameter&>(*secondInternalGroup->AddParameter("CuteFloat", dtDAL::DataType::FLOAT)).SetValue(3.8f);
-         static_cast<dtDAL::NamedDoubleParameter&>(*secondInternalGroup->AddParameter("CuteDouble", dtDAL::DataType::DOUBLE)).SetValue(3.8f);
+         static_cast<dtCore::NamedVec2Parameter&>(*secondInternalGroup->AddParameter("CuteVec2", dtCore::DataType::VEC2)).SetValue(osg::Vec2(1.0f, 1.3f));
+         static_cast<dtCore::NamedVec3Parameter&>(*secondInternalGroup->AddParameter("CuteVec3", dtCore::DataType::VEC3)).SetValue(osg::Vec3(1.0f, 1.3f, 34.7f));
+         static_cast<dtCore::NamedVec4Parameter&>(*secondInternalGroup->AddParameter("CuteVec4", dtCore::DataType::VEC4)).SetValue(osg::Vec4(1.0f, 1.3f, 34.7f, 77.6f));
+         static_cast<dtCore::NamedRGBAColorParameter&>(*secondInternalGroup->AddParameter("CuteColor", dtCore::DataType::RGBACOLOR)).SetValue(osg::Vec4(1.0f, 0.6f, 0.3f, 0.11f));
+         static_cast<dtCore::NamedFloatParameter&>(*secondInternalGroup->AddParameter("CuteFloat", dtCore::DataType::FLOAT)).SetValue(3.8f);
+         static_cast<dtCore::NamedDoubleParameter&>(*secondInternalGroup->AddParameter("CuteDouble", dtCore::DataType::DOUBLE)).SetValue(3.8f);
 
          groupProp->SetValue(*expectedResult);
 
@@ -1229,33 +1229,33 @@ void MapTests::TestMapSaveAndLoadGroup()
          project.CloseMap(*map);
       }
 
-      dtDAL::Map* map = &project.GetMap(mapName);
+      dtCore::Map* map = &project.GetMap(mapName);
 
-      std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> > toFill;
+      std::vector<dtCore::RefPtr<dtCore::BaseActorObject> > toFill;
       map->GetAllProxies(toFill);
       CPPUNIT_ASSERT_EQUAL_MESSAGE("The map was saved with one proxy.  It should have one when loaded.", toFill.size(), size_t(1));
 
-      dtCore::RefPtr<dtDAL::BaseActorObject> proxy = toFill[0];
+      dtCore::RefPtr<dtCore::BaseActorObject> proxy = toFill[0];
  
-      dtDAL::GroupActorProperty* groupProp;
+      dtCore::GroupActorProperty* groupProp;
       proxy->GetProperty("TestGroup", groupProp);
 
-      dtCore::RefPtr<dtDAL::NamedGroupParameter> actualResult = groupProp->GetValue();
+      dtCore::RefPtr<dtCore::NamedGroupParameter> actualResult = groupProp->GetValue();
       CPPUNIT_ASSERT(actualResult.valid());
 
-      dtCore::RefPtr<dtDAL::NamedParameter> floatGroup = actualResult->RemoveParameter(secondInternalGroup->GetName());
-      dtCore::RefPtr<dtDAL::NamedGroupParameter> actualFloatGroup(dynamic_cast<dtDAL::NamedGroupParameter*>(floatGroup.get()));
+      dtCore::RefPtr<dtCore::NamedParameter> floatGroup = actualResult->RemoveParameter(secondInternalGroup->GetName());
+      dtCore::RefPtr<dtCore::NamedGroupParameter> actualFloatGroup(dynamic_cast<dtCore::NamedGroupParameter*>(floatGroup.get()));
 
       CPPUNIT_ASSERT_MESSAGE("The loaded result parameter should have group filled with floats.", actualFloatGroup.valid());
 
       CPPUNIT_ASSERT_MESSAGE("The returned group parameter doesn't match the actual\n" + actualResult->ToString() + " \n\n " + expectedResult->ToString(),
                               *expectedResult == *actualResult);
 
-      std::vector<dtDAL::NamedParameter*> savedFloatParams;
+      std::vector<dtCore::NamedParameter*> savedFloatParams;
       secondInternalGroup->GetParameters(savedFloatParams);
       for (unsigned i = 0; i < savedFloatParams.size(); ++i)
       {
-         dtDAL::NamedParameter* np = actualFloatGroup->GetParameter(savedFloatParams[i]->GetName());
+         dtCore::NamedParameter* np = actualFloatGroup->GetParameter(savedFloatParams[i]->GetName());
          CPPUNIT_ASSERT_MESSAGE(np->GetName() + " should be a parameter in the FloatGroup parameter group loaded from the map." , np != NULL);
          CPPUNIT_ASSERT_MESSAGE(np->GetName() + " parameter should have the same data type as it did before it was saved in a map." ,
             np->GetDataType() == savedFloatParams[i]->GetDataType());
@@ -1265,32 +1265,32 @@ void MapTests::TestMapSaveAndLoadGroup()
 
       CPPUNIT_ASSERT_MESSAGE("The loaded vec2 parameter should match the one saved: \n" + valueString,
          dtUtil::Equivalent(
-            static_cast<dtDAL::NamedVec2Parameter*>(secondInternalGroup->GetParameter("CuteVec2"))->GetValue(),
-            static_cast<dtDAL::NamedVec2Parameter*>(actualFloatGroup->GetParameter("CuteVec2"))->GetValue(), 1e-3f));
+            static_cast<dtCore::NamedVec2Parameter*>(secondInternalGroup->GetParameter("CuteVec2"))->GetValue(),
+            static_cast<dtCore::NamedVec2Parameter*>(actualFloatGroup->GetParameter("CuteVec2"))->GetValue(), 1e-3f));
 
       CPPUNIT_ASSERT_MESSAGE("The loaded vec3 parameter should match the one saved: \n" + valueString,
          dtUtil::Equivalent(
-            static_cast<dtDAL::NamedVec3Parameter*>(secondInternalGroup->GetParameter("CuteVec3"))->GetValue(),
-            static_cast<dtDAL::NamedVec3Parameter*>(actualFloatGroup->GetParameter("CuteVec3"))->GetValue(), 1e-3f));
+            static_cast<dtCore::NamedVec3Parameter*>(secondInternalGroup->GetParameter("CuteVec3"))->GetValue(),
+            static_cast<dtCore::NamedVec3Parameter*>(actualFloatGroup->GetParameter("CuteVec3"))->GetValue(), 1e-3f));
 
       CPPUNIT_ASSERT_MESSAGE("The loaded vec4 parameter should match the one saved: \n" + valueString,
          dtUtil::Equivalent(
-            static_cast<dtDAL::NamedVec4Parameter*>(secondInternalGroup->GetParameter("CuteVec4"))->GetValue(),
-            static_cast<dtDAL::NamedVec4Parameter*>(actualFloatGroup->GetParameter("CuteVec4"))->GetValue(), 1e-3f));
+            static_cast<dtCore::NamedVec4Parameter*>(secondInternalGroup->GetParameter("CuteVec4"))->GetValue(),
+            static_cast<dtCore::NamedVec4Parameter*>(actualFloatGroup->GetParameter("CuteVec4"))->GetValue(), 1e-3f));
 
       CPPUNIT_ASSERT_MESSAGE("The loaded color parameter should match the one saved: \n" + valueString,
          dtUtil::Equivalent(
-            static_cast<dtDAL::NamedRGBAColorParameter*>(secondInternalGroup->GetParameter("CuteColor"))->GetValue(),
-            static_cast<dtDAL::NamedRGBAColorParameter*>(actualFloatGroup->GetParameter("CuteColor"))->GetValue(), 1e-3f));
+            static_cast<dtCore::NamedRGBAColorParameter*>(secondInternalGroup->GetParameter("CuteColor"))->GetValue(),
+            static_cast<dtCore::NamedRGBAColorParameter*>(actualFloatGroup->GetParameter("CuteColor"))->GetValue(), 1e-3f));
 
       CPPUNIT_ASSERT_MESSAGE("The loaded float parameter should match the one saved: \n" + valueString,
          osg::equivalent(
-            static_cast<dtDAL::NamedFloatParameter*>(secondInternalGroup->GetParameter("CuteFloat"))->GetValue(),
-            static_cast<dtDAL::NamedFloatParameter*>(actualFloatGroup->GetParameter("CuteFloat"))->GetValue(), 1e-3f));
+            static_cast<dtCore::NamedFloatParameter*>(secondInternalGroup->GetParameter("CuteFloat"))->GetValue(),
+            static_cast<dtCore::NamedFloatParameter*>(actualFloatGroup->GetParameter("CuteFloat"))->GetValue(), 1e-3f));
       CPPUNIT_ASSERT_MESSAGE("The loaded double parameter should match the one saved: \n" + valueString,
          osg::equivalent(
-            static_cast<dtDAL::NamedDoubleParameter*>(secondInternalGroup->GetParameter("CuteDouble"))->GetValue(),
-            static_cast<dtDAL::NamedDoubleParameter*>(actualFloatGroup->GetParameter("CuteDouble"))->GetValue(), 1e-3));
+            static_cast<dtCore::NamedDoubleParameter*>(secondInternalGroup->GetParameter("CuteDouble"))->GetValue(),
+            static_cast<dtCore::NamedDoubleParameter*>(actualFloatGroup->GetParameter("CuteDouble"))->GetValue(), 1e-3));
 
       project.DeleteMap(*map, false);
    }
@@ -1305,27 +1305,27 @@ void MapTests::TestMapSaveAndLoadPropertyContainerProperty()
 {
    try
    {
-      dtDAL::Project& project = dtDAL::Project::GetInstance();
+      dtCore::Project& project = dtCore::Project::GetInstance();
 
       std::string mapName("Neato Map");
       std::string mapFileName("neatomap");
 
-      dtDAL::Map* map = &project.CreateMap(mapName, mapFileName);
+      dtCore::Map* map = &project.CreateMap(mapName, mapFileName);
       map->AddLibrary(mExampleLibraryName, "1.0");
-      dtDAL::LibraryManager::GetInstance().LoadActorRegistry(mExampleLibraryName);
+      dtCore::LibraryManager::GetInstance().LoadActorRegistry(mExampleLibraryName);
 
-      const dtDAL::ActorType* at = dtDAL::LibraryManager::GetInstance().FindActorType("dtcore.examples", "Test All Properties");
+      const dtCore::ActorType* at = dtCore::LibraryManager::GetInstance().FindActorType("dtcore.examples", "Test All Properties");
       CPPUNIT_ASSERT(at != NULL);
 
-      dtCore::RefPtr<dtDAL::BaseActorObject> actor = dtDAL::LibraryManager::GetInstance().CreateActor(*at);
+      dtCore::RefPtr<dtCore::BaseActorObject> actor = dtCore::LibraryManager::GetInstance().CreateActor(*at);
       map->AddProxy(*actor);
       dtCore::UniqueId idToSave = actor->GetId();
 
-      dtDAL::BasePropertyContainerActorProperty* bpc = NULL;
+      dtCore::BasePropertyContainerActorProperty* bpc = NULL;
       actor->GetProperty("TestPropertyContainer", bpc);
       CPPUNIT_ASSERT(bpc != NULL);
 
-      dtDAL::PropertyContainer* pc = bpc->GetValue();
+      dtCore::PropertyContainer* pc = bpc->GetValue();
       CPPUNIT_ASSERT(pc != NULL);
 
       const float testFloat(37.36f);
@@ -1333,22 +1333,22 @@ void MapTests::TestMapSaveAndLoadPropertyContainerProperty()
       const bool testBool(true);
       const int testInt(-347);
 
-      dtDAL::FloatActorProperty* fap;
+      dtCore::FloatActorProperty* fap;
       pc->GetProperty("Test_Float", fap);
       CPPUNIT_ASSERT(fap != NULL);
       fap->SetValue(testFloat);
 
-      dtDAL::DoubleActorProperty* dap;
+      dtCore::DoubleActorProperty* dap;
       pc->GetProperty("Test_Double", dap);
       CPPUNIT_ASSERT(dap != NULL);
       dap->SetValue(testDouble);
 
-      dtDAL::BooleanActorProperty* bap;
+      dtCore::BooleanActorProperty* bap;
       pc->GetProperty("Test_Boolean", bap);
       CPPUNIT_ASSERT(bap != NULL);
       bap->SetValue(testBool);
 
-      dtDAL::IntActorProperty* iap;
+      dtCore::IntActorProperty* iap;
       pc->GetProperty("Test_Int", iap);
       CPPUNIT_ASSERT(iap != NULL);
       iap->SetValue(testInt);
@@ -1396,30 +1396,30 @@ void MapTests::TestMapSaveAndLoadNestedPropertyContainerArray()
 {
    try
    {
-      dtDAL::Project& project = dtDAL::Project::GetInstance();
+      dtCore::Project& project = dtCore::Project::GetInstance();
 
       std::string mapName("Neato Map");
       std::string mapFileName("neatomap");
 
-      dtDAL::Map* map = &project.CreateMap(mapName, mapFileName);
+      dtCore::Map* map = &project.CreateMap(mapName, mapFileName);
       map->AddLibrary(mExampleGameLibraryName, "1.0");
-      dtDAL::LibraryManager::GetInstance().LoadActorRegistry(mExampleGameLibraryName);
+      dtCore::LibraryManager::GetInstance().LoadActorRegistry(mExampleGameLibraryName);
 
-      const dtDAL::ActorType* at = dtDAL::LibraryManager::GetInstance().FindActorType("ExampleActors", "TestGamePropertyActor");
+      const dtCore::ActorType* at = dtCore::LibraryManager::GetInstance().FindActorType("ExampleActors", "TestGamePropertyActor");
       CPPUNIT_ASSERT(at != NULL);
 
-      dtCore::RefPtr<dtDAL::BaseActorObject> actor = dtDAL::LibraryManager::GetInstance().CreateActor(*at);
+      dtCore::RefPtr<dtCore::BaseActorObject> actor = dtCore::LibraryManager::GetInstance().CreateActor(*at);
       map->AddProxy(*actor);
       dtCore::UniqueId idToSave = actor->GetId();
 
-      dtDAL::BasePropertyContainerActorProperty* bpc = NULL;
+      dtCore::BasePropertyContainerActorProperty* bpc = NULL;
       actor->GetProperty("TestPropertyContainer", bpc);
       CPPUNIT_ASSERT(bpc != NULL);
 
-      dtDAL::PropertyContainer* pc = bpc->GetValue();
+      dtCore::PropertyContainer* pc = bpc->GetValue();
       CPPUNIT_ASSERT(pc != NULL);
 
-      dtDAL::ArrayActorPropertyBase* arrayProp = NULL;
+      dtCore::ArrayActorPropertyBase* arrayProp = NULL;
       pc->GetProperty("TestNestedContainerArray", arrayProp);
       CPPUNIT_ASSERT(arrayProp != NULL);
 
@@ -1434,12 +1434,12 @@ void MapTests::TestMapSaveAndLoadNestedPropertyContainerArray()
       // Select the second item.
       arrayProp->SetIndex(1);
 
-      dtDAL::BasePropertyContainerActorProperty* bpcD1 = dynamic_cast<dtDAL::BasePropertyContainerActorProperty*>(arrayProp->GetArrayProperty());
+      dtCore::BasePropertyContainerActorProperty* bpcD1 = dynamic_cast<dtCore::BasePropertyContainerActorProperty*>(arrayProp->GetArrayProperty());
       CPPUNIT_ASSERT(bpcD1 != NULL);
 
       // Get the new property container at index 1 on the depth 1 array.
-      dtDAL::PropertyContainer* pcD1i1 = bpcD1->GetValue();
-      dtDAL::ArrayActorPropertyBase* arrayPropD1 = NULL;
+      dtCore::PropertyContainer* pcD1i1 = bpcD1->GetValue();
+      dtCore::ArrayActorPropertyBase* arrayPropD1 = NULL;
       pcD1i1->GetProperty("TestNestedContainerArray", arrayPropD1);
 
       CPPUNIT_ASSERT(arrayPropD1 != NULL);
@@ -1471,7 +1471,7 @@ void MapTests::TestMapSaveAndLoadNestedPropertyContainerArray()
       // Select the second item.
       arrayProp->SetIndex(1);
 
-      bpcD1 = dynamic_cast<dtDAL::BasePropertyContainerActorProperty*>(arrayProp->GetArrayProperty());
+      bpcD1 = dynamic_cast<dtCore::BasePropertyContainerActorProperty*>(arrayProp->GetArrayProperty());
       CPPUNIT_ASSERT(bpcD1 != NULL);
 
       // Get the new property container at index 1 on the depth 1 array.
@@ -1492,25 +1492,25 @@ void MapTests::TestMapSaveAndLoadNestedPropertyContainerArray()
 //This short test actually tests a lot of fairly complex things.
 //It tests that Group actor properties can be set and cause an actor to link actors when
 //loading from a map.  It tests the feature of looking into the current map being parsed
-//when calling Project::GetMapForActorProxy.  It also tests the mParsing flag on the dtDAL::MapParser
+//when calling Project::GetMapForActorProxy.  It also tests the mParsing flag on the dtCore::MapParser
 //and it tests the SubTasks property on the task actors.
 void MapTests::TestMapSaveAndLoadActorGroups()
 {
    try
    {
-      dtDAL::Project& project = dtDAL::Project::GetInstance();
+      dtCore::Project& project = dtCore::Project::GetInstance();
 
       std::string mapName("Neato Map");
       std::string mapFileName("neatomap");
 
-      dtDAL::Map* map = &project.CreateMap(mapName, mapFileName);
+      dtCore::Map* map = &project.CreateMap(mapName, mapFileName);
 
-      dtDAL::LibraryManager& libraryManager = dtDAL::LibraryManager::GetInstance();
+      dtCore::LibraryManager& libraryManager = dtCore::LibraryManager::GetInstance();
 
-      const dtDAL::ActorType* at = libraryManager.FindActorType("dtcore.Tasks", "Task Actor");
+      const dtCore::ActorType* at = libraryManager.FindActorType("dtcore.Tasks", "Task Actor");
       CPPUNIT_ASSERT(at != NULL);
 
-      dtCore::RefPtr<dtDAL::BaseActorObject> proxy = libraryManager.CreateActorProxy(*at);
+      dtCore::RefPtr<dtCore::BaseActorObject> proxy = libraryManager.CreateActorProxy(*at);
 
       map->AddProxy(*proxy);
 
@@ -1521,14 +1521,14 @@ void MapTests::TestMapSaveAndLoadActorGroups()
       std::ostringstream ss;
       for (unsigned i = 0; i < 10; ++i)
       {
-         dtCore::RefPtr<dtDAL::BaseActorObject> proxy = libraryManager.CreateActorProxy(*at);
+         dtCore::RefPtr<dtCore::BaseActorObject> proxy = libraryManager.CreateActorProxy(*at);
          subTasks.push_back(proxy->GetId());
          map->AddProxy(*proxy);
          ss.str("");
          ss << i;
       }
 
-      dtDAL::ArrayActorProperty<dtCore::UniqueId>* arrayProp = NULL;
+      dtCore::ArrayActorProperty<dtCore::UniqueId>* arrayProp = NULL;
       proxy->GetProperty("SubTaskList", arrayProp);
       CPPUNIT_ASSERT_MESSAGE("The 'SubTaskList' ArrayActorProperty was not found in the Task Actor", arrayProp != NULL);
       arrayProp->SetValue(subTasks);
@@ -1560,17 +1560,17 @@ void MapTests::TestMapSaveAndLoadActorGroups()
 ///////////////////////////////////////////////////////////////////////////////////////
 void MapTests::TestWildCard()
 {
-   CPPUNIT_ASSERT(dtDAL::Map::WildMatch("*", "sthsthsth"));
-   CPPUNIT_ASSERT(dtDAL::Map::WildMatch("sth*", "sthsthsth"));
-   CPPUNIT_ASSERT(dtDAL::Map::WildMatch("a*eda", "aeeeda"));
-   CPPUNIT_ASSERT(dtDAL::Map::WildMatch("a*eda", "aedededa"));
-   CPPUNIT_ASSERT(dtDAL::Map::WildMatch("a*eda", "aedededa"));
-   CPPUNIT_ASSERT(dtDAL::Map::WildMatch("*Cur?is? *Murphy*", "Curtiss Murphy"));
-   CPPUNIT_ASSERT(dtDAL::Map::WildMatch("?????", "12345"));
+   CPPUNIT_ASSERT(dtCore::Map::WildMatch("*", "sthsthsth"));
+   CPPUNIT_ASSERT(dtCore::Map::WildMatch("sth*", "sthsthsth"));
+   CPPUNIT_ASSERT(dtCore::Map::WildMatch("a*eda", "aeeeda"));
+   CPPUNIT_ASSERT(dtCore::Map::WildMatch("a*eda", "aedededa"));
+   CPPUNIT_ASSERT(dtCore::Map::WildMatch("a*eda", "aedededa"));
+   CPPUNIT_ASSERT(dtCore::Map::WildMatch("*Cur?is? *Murphy*", "Curtiss Murphy"));
+   CPPUNIT_ASSERT(dtCore::Map::WildMatch("?????", "12345"));
 
-   CPPUNIT_ASSERT(!dtDAL::Map::WildMatch("*Cur?i? *Murphy*", "Curtiss Murphy"));
-   CPPUNIT_ASSERT(!dtDAL::Map::WildMatch("??????", "12345"));
-   CPPUNIT_ASSERT(!dtDAL::Map::WildMatch("a?eda", "aedededa"));
+   CPPUNIT_ASSERT(!dtCore::Map::WildMatch("*Cur?i? *Murphy*", "Curtiss Murphy"));
+   CPPUNIT_ASSERT(!dtCore::Map::WildMatch("??????", "12345"));
+   CPPUNIT_ASSERT(!dtCore::Map::WildMatch("a?eda", "aedededa"));
 }
 
 
@@ -1579,22 +1579,22 @@ void MapTests::TestLoadMapIntoScene()
 {
     try
     {
-        dtDAL::Project& project = dtDAL::Project::GetInstance();
+        dtCore::Project& project = dtCore::Project::GetInstance();
 
-        dtDAL::Map& map = project.CreateMap(std::string("Neato Map"), std::string("neatomap"));
+        dtCore::Map& map = project.CreateMap(std::string("Neato Map"), std::string("neatomap"));
 
         createActors(map);
 
         std::set<dtCore::UniqueId> ids;
 
         //add all the names of the actors that should be in the scene to set so we can track them.
-        for (std::map<dtCore::UniqueId, dtCore::RefPtr<dtDAL::BaseActorObject> >::const_iterator i = map.GetAllProxies().begin();
+        for (std::map<dtCore::UniqueId, dtCore::RefPtr<dtCore::BaseActorObject> >::const_iterator i = map.GetAllProxies().begin();
             i != map.GetAllProxies().end(); ++i)
         {
-            const dtDAL::BaseActorObject::RenderMode &renderMode = const_cast<dtDAL::BaseActorObject&>(*i->second).GetRenderMode();
+            const dtCore::BaseActorObject::RenderMode &renderMode = const_cast<dtCore::BaseActorObject&>(*i->second).GetRenderMode();
 
-            if (renderMode == dtDAL::BaseActorObject::RenderMode::DRAW_ACTOR ||
-                renderMode == dtDAL::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON)
+            if (renderMode == dtCore::BaseActorObject::RenderMode::DRAW_ACTOR ||
+                renderMode == dtCore::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON)
                 ids.insert(i->first);
         }
 
@@ -1637,18 +1637,18 @@ void MapTests::TestEnvironmentMapLoading()
 {
    try
    {
-      dtDAL::LibraryManager::GetInstance().LoadActorRegistry(mExampleLibraryName);
-      dtDAL::Project &project = dtDAL::Project::GetInstance();
-      dtDAL::Map &map = project.CreateMap("TestEnvironmentMap", "TestEnvironmentMap");
+      dtCore::LibraryManager::GetInstance().LoadActorRegistry(mExampleLibraryName);
+      dtCore::Project &project = dtCore::Project::GetInstance();
+      dtCore::Map &map = project.CreateMap("TestEnvironmentMap", "TestEnvironmentMap");
 
-      std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> > container;
+      std::vector<dtCore::RefPtr<dtCore::BaseActorObject> > container;
       CPPUNIT_ASSERT(container.empty());
 
       const unsigned int numProxies = 4;
       for (unsigned int i = 0; i < numProxies; ++i)
       {
-         dtCore::RefPtr<dtDAL::BaseActorObject> p =
-            dtDAL::LibraryManager::GetInstance().CreateActorProxy("dtcore.examples", "Test All Properties");
+         dtCore::RefPtr<dtCore::BaseActorObject> p =
+            dtCore::LibraryManager::GetInstance().CreateActorProxy("dtcore.examples", "Test All Properties");
          CPPUNIT_ASSERT(p.valid());
          container.push_back(p);
       }
@@ -1660,11 +1660,11 @@ void MapTests::TestEnvironmentMapLoading()
          map.AddProxy(*container[i]);
       }
 
-      std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> > mapProxies;
+      std::vector<dtCore::RefPtr<dtCore::BaseActorObject> > mapProxies;
       map.GetAllProxies(mapProxies);
       CPPUNIT_ASSERT_MESSAGE("The map should have the correct number of proxies", mapProxies.size() == numProxies);
 
-      dtCore::RefPtr<dtDAL::BaseActorObject> envProxy = dtDAL::LibraryManager::GetInstance().CreateActorProxy("Test Environment Actor", "Test Environment Actor");
+      dtCore::RefPtr<dtCore::BaseActorObject> envProxy = dtCore::LibraryManager::GetInstance().CreateActorProxy("Test Environment Actor", "Test Environment Actor");
       CPPUNIT_ASSERT(envProxy.valid());
 
       map.SetEnvironmentActor(envProxy.get());
@@ -1678,7 +1678,7 @@ void MapTests::TestEnvironmentMapLoading()
       project.SaveMap(mapName);
       project.CloseMap(map);
 
-      dtDAL::Map &savedMap = project.GetMap(mapName);
+      dtCore::Map &savedMap = project.GetMap(mapName);
       mapProxies.clear();
       savedMap.GetAllProxies(mapProxies);
       CPPUNIT_ASSERT_MESSAGE("Saved map should have the correct number of proxies in it", mapProxies.size() == numProxies + 1);
@@ -1696,22 +1696,22 @@ void MapTests::TestEnvironmentMapLoading()
 ///////////////////////////////////////////////////////////////////////////////////////
 void MapTests::TestLoadEnvironmentMapIntoScene()
 {
-   dtDAL::LibraryManager::GetInstance().LoadActorRegistry(mExampleLibraryName);
-   dtDAL::Project &project = dtDAL::Project::GetInstance();
-   dtDAL::Map &map = project.CreateMap("TestEnvironmentMap", "TestEnvironmentMap");
+   dtCore::LibraryManager::GetInstance().LoadActorRegistry(mExampleLibraryName);
+   dtCore::Project &project = dtCore::Project::GetInstance();
+   dtCore::Map &map = project.CreateMap("TestEnvironmentMap", "TestEnvironmentMap");
    dtCore::RefPtr<dtCore::Scene> scene = new dtCore::Scene;
 
    scene->RemoveAllDrawables();
    CPPUNIT_ASSERT(scene->GetNumberOfAddedDrawable() == 0);
 
-   std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> > container;
+   std::vector<dtCore::RefPtr<dtCore::BaseActorObject> > container;
    CPPUNIT_ASSERT(container.empty());
 
    const unsigned int numProxies = 4;
    for (unsigned int i = 0; i < numProxies; ++i)
    {
-      dtCore::RefPtr<dtDAL::BaseActorObject> p =
-         dtDAL::LibraryManager::GetInstance().CreateActorProxy("dtcore.examples", "Test All Properties");
+      dtCore::RefPtr<dtCore::BaseActorObject> p =
+         dtCore::LibraryManager::GetInstance().CreateActorProxy("dtcore.examples", "Test All Properties");
       CPPUNIT_ASSERT(p.valid());
       container.push_back(p);
    }
@@ -1723,11 +1723,11 @@ void MapTests::TestLoadEnvironmentMapIntoScene()
       map.AddProxy(*container[i]);
    }
 
-   std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> > mapProxies;
+   std::vector<dtCore::RefPtr<dtCore::BaseActorObject> > mapProxies;
    map.GetAllProxies(mapProxies);
    CPPUNIT_ASSERT_MESSAGE("The map should have the correct number of proxies", mapProxies.size() == numProxies);
 
-   dtCore::RefPtr<dtDAL::BaseActorObject> envProxy = dtDAL::LibraryManager::GetInstance().CreateActorProxy("Test Environment Actor", "Test Environment Actor");
+   dtCore::RefPtr<dtCore::BaseActorObject> envProxy = dtCore::LibraryManager::GetInstance().CreateActorProxy("Test Environment Actor", "Test Environment Actor");
    CPPUNIT_ASSERT(envProxy.valid());
 
    project.LoadMapIntoScene(map, *scene);
@@ -1736,7 +1736,7 @@ void MapTests::TestLoadEnvironmentMapIntoScene()
    scene->RemoveAllDrawables();
    CPPUNIT_ASSERT(scene->GetNumberOfAddedDrawable() == 0);
 
-   dtDAL::IEnvironmentActor *tea = dynamic_cast<dtDAL::IEnvironmentActor*>(envProxy->GetActor());
+   dtCore::IEnvironmentActor *tea = dynamic_cast<dtCore::IEnvironmentActor*>(envProxy->GetActor());
    CPPUNIT_ASSERT(tea != NULL);
    unsigned int numChildren = tea->GetNumEnvironmentChildren();
    CPPUNIT_ASSERT(numChildren == 0);
@@ -1750,7 +1750,7 @@ void MapTests::TestLoadEnvironmentMapIntoScene()
    CPPUNIT_ASSERT_MESSAGE("The environment actor should have all the proxies as its children", numChildren == numProxies);
 }
 
-class OverriddenActorProxy : public dtDAL::TransformableActorProxy
+class OverriddenActorProxy : public dtCore::TransformableActorProxy
 {
    //dtCore::RefPtr<dtCore::Transformable> mActor;
 public:
@@ -1773,7 +1773,7 @@ protected:
 void MapTests::TestActorProxyRemoveProperties()
 {
    dtCore::RefPtr<OverriddenActorProxy> actorProxy = new OverriddenActorProxy;
-   std::string NameToRemove = dtDAL::TransformableActorProxy::PROPERTY_ROTATION;
+   std::string NameToRemove = dtCore::TransformableActorProxy::PROPERTY_ROTATION;
    std::string DoesntExist = "TeagueHasAHawtMom";
    CPPUNIT_ASSERT_MESSAGE("Tried to remove a property before initialized should have returned false", actorProxy->RemoveTheProperty(NameToRemove) == false );
    actorProxy->CreateActor();
@@ -1787,7 +1787,7 @@ void MapTests::TestCreateMapsMultiContext()
 {
    try
    {
-      dtDAL::Project& p = dtDAL::Project::GetInstance();
+      dtCore::Project& p = dtCore::Project::GetInstance();
       dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
 
       const std::string map1("Orz");
@@ -1841,13 +1841,13 @@ void MapTests::TestSaveAsMultiContext()
 {
    try
    {
-      dtDAL::Project& p = dtDAL::Project::GetInstance();
+      dtCore::Project& p = dtCore::Project::GetInstance();
       dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
 
       const std::string map1("Orz");
       const std::string mapSecond("/Frumple/"); // slashes because it can't be in file name.
 
-      dtDAL::Map& map = p.CreateMap(map1, map1, 0);
+      dtCore::Map& map = p.CreateMap(map1, map1, 0);
 
       CPPUNIT_ASSERT(fileUtils.FileExists(p.GetContext(0) + dtUtil::FileUtils::PATH_SEPARATOR + "maps" + dtUtil::FileUtils::PATH_SEPARATOR + map1 + ".dtmap"));
       CPPUNIT_ASSERT(!fileUtils.FileExists(p.GetContext(1) + dtUtil::FileUtils::PATH_SEPARATOR + "maps" + dtUtil::FileUtils::PATH_SEPARATOR + map1 + ".dtmap"));
@@ -1882,10 +1882,10 @@ void MapTests::TestParsingMapHeaderData()
       dtUtil::FileUtils::GetInstance().FileDelete(TESTS_DIR + "/data/ProjectContext/maps/" + mapFileName);
    }
 
-   dtDAL::Project::GetInstance().SetContext(TESTS_DIR + "/data/ProjectContext");
+   dtCore::Project::GetInstance().SetContext(TESTS_DIR + "/data/ProjectContext");
 
    //create Map
-   dtDAL::Map& map = dtDAL::Project::GetInstance().CreateMap(mapName, mapFileName);   
+   dtCore::Map& map = dtCore::Project::GetInstance().CreateMap(mapName, mapFileName);   
 
    const std::string description("{d1ae0308-cf13-4d08-81d0-18bbb7f6f724}");
    const std::string author("{0e849f31-b1ff-4555-939a-dd83d7c0259d}");
@@ -1899,18 +1899,18 @@ void MapTests::TestParsingMapHeaderData()
    map.SetCopyright(copyright);
    
    //save/close Map
-   dtDAL::Project::GetInstance().SaveMap(mapName);
-   dtDAL::Project::GetInstance().CloseAllMaps(true);
+   dtCore::Project::GetInstance().SaveMap(mapName);
+   dtCore::Project::GetInstance().CloseAllMaps(true);
 
    //Parse Map file's header data
-   dtCore::RefPtr<dtDAL::MapParser> parser = new dtDAL::MapParser();
-   dtDAL::MapHeaderData header;
+   dtCore::RefPtr<dtCore::MapParser> parser = new dtCore::MapParser();
+   dtCore::MapHeaderData header;
 
    try
    {
       header = parser->ParseMapHeaderData(TESTS_DIR + "/data/ProjectContext/maps/" + mapFileName);
    }
-   catch (const dtDAL::MapParsingException& e)
+   catch (const dtCore::MapParsingException& e)
    {
    	CPPUNIT_FAIL(e.ToString());
    }
@@ -1925,6 +1925,6 @@ void MapTests::TestParsingMapHeaderData()
    CPPUNIT_ASSERT_EQUAL_MESSAGE("Map header copyright didn't get parsed correctly", copyright, header.mCopyright);
    
    //delete the temp map file
-   dtDAL::Project::GetInstance().DeleteMap(mapName, true);
-   dtDAL::Project::GetInstance().ClearAllContexts();
+   dtCore::Project::GetInstance().DeleteMap(mapName, true);
+   dtCore::Project::GetInstance().ClearAllContexts();
 }

@@ -22,8 +22,8 @@
 #include <dtDirectorNodes/externalvaluenode.h>
 #include <dtDirectorNodes/referencevalue.h>
 
-#include <dtDAL/actorproperty.h>
-#include <dtDAL/enumactorproperty.h>
+#include <dtCore/actorproperty.h>
+#include <dtCore/enumactorproperty.h>
 
 #include <dtDirector/nodemanager.h>
 #include <dtDirector/valuelink.h>
@@ -35,7 +35,7 @@ namespace dtDirector
    ///////////////////////////////////////////////////////////////////////////////////////
    ExternalValueNode::ExternalValueNode()
        : ValueNode()
-       , mDefaultType(&dtDAL::DataType::UNKNOWN)
+       , mDefaultType(&dtCore::DataType::UNKNOWN)
    {
       mName = "Value";
       AddAuthor("Jeff P. Houde");
@@ -58,10 +58,10 @@ namespace dtDirector
    {
       ValueNode::BuildPropertyMap();
 
-      dtDAL::EnumActorProperty<dtDAL::DataType>* defaultTypeProp = new dtDAL::EnumActorProperty<dtDAL::DataType>(
+      dtCore::EnumActorProperty<dtCore::DataType>* defaultTypeProp = new dtCore::EnumActorProperty<dtCore::DataType>(
          "DefaultType", "Default Type",
-         dtDAL::EnumActorProperty<dtDAL::DataType>::SetFuncType(this, &ExternalValueNode::SetDefaultType),
-         dtDAL::EnumActorProperty<dtDAL::DataType>::GetFuncType(this, &ExternalValueNode::GetDefaultType),
+         dtCore::EnumActorProperty<dtCore::DataType>::SetFuncType(this, &ExternalValueNode::SetDefaultType),
+         dtCore::EnumActorProperty<dtCore::DataType>::GetFuncType(this, &ExternalValueNode::GetDefaultType),
          "The default type of this value link node.");
       AddProperty(defaultTypeProp);
 
@@ -182,11 +182,11 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   dtDAL::ActorProperty* ExternalValueNode::GetProperty(const std::string& name, int index, ValueNode** outNode)
+   dtCore::ActorProperty* ExternalValueNode::GetProperty(const std::string& name, int index, ValueNode** outNode)
    {
       if (mValues.size())
       {
-         dtDAL::ActorProperty* prop = mValues[0].GetProperty(index, outNode);
+         dtCore::ActorProperty* prop = mValues[0].GetProperty(index, outNode);
          if (prop && prop->GetName() == name) return prop;
       }
 
@@ -194,7 +194,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   dtDAL::ActorProperty* ExternalValueNode::GetProperty(int index, ValueNode** outNode)
+   dtCore::ActorProperty* ExternalValueNode::GetProperty(int index, ValueNode** outNode)
    {
       if (mValues.size())
       {
@@ -208,10 +208,10 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   bool ExternalValueNode::CanBeType(dtDAL::DataType& type)
+   bool ExternalValueNode::CanBeType(dtCore::DataType& type)
    {
-      dtDAL::DataType& myType = GetPropertyType();
-      if (myType == dtDAL::DataType::UNKNOWN ||
+      dtCore::DataType& myType = GetPropertyType();
+      if (myType == dtCore::DataType::UNKNOWN ||
          myType == type)
       {
          return true;
@@ -221,7 +221,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   dtDAL::DataType& ExternalValueNode::GetPropertyType()
+   dtCore::DataType& ExternalValueNode::GetPropertyType()
    {
       // If we are linked to a value link, use the type of that link.
       if (mLinks.size())
@@ -232,17 +232,17 @@ namespace dtDirector
             ValueLink* link = mLinks[index];
             Node* owner = link->GetOwner();
             ReferenceValue* refNode = dynamic_cast<ReferenceValue*>(owner);
-            dtDAL::DataType* type = NULL;
+            dtCore::DataType* type = NULL;
             if (refNode != NULL)
             {
                type = &refNode->GetNonReferencedPropertyType();
             }
-            else if (owner != NULL && link->GetPropertyType() != dtDAL::DataType::UNKNOWN)
+            else if (owner != NULL && link->GetPropertyType() != dtCore::DataType::UNKNOWN)
             {
                type = &mLinks[index]->GetPropertyType();
             }
 
-            if (type && *type != dtDAL::DataType::UNKNOWN)
+            if (type && *type != dtCore::DataType::UNKNOWN)
             {
                return *type;
             }
@@ -252,8 +252,8 @@ namespace dtDirector
       // If we are linked to another value node, use that value's type.
       if (mValues.size() && mValues[0].GetLinks().size())
       {
-         dtDAL::DataType& type = mValues[0].GetLinks()[0]->GetPropertyType();
-         if (type != dtDAL::DataType::UNKNOWN)
+         dtCore::DataType& type = mValues[0].GetLinks()[0]->GetPropertyType();
+         if (type != dtCore::DataType::UNKNOWN)
          {
             return type;
          }
@@ -264,16 +264,16 @@ namespace dtDirector
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ExternalValueNode::SetDefaultType(const dtDAL::DataType& value)
+   void ExternalValueNode::SetDefaultType(const dtCore::DataType& value)
    {
       mDefaultType = &value;
       UpdateLinkType();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   dtDAL::DataType& ExternalValueNode::GetDefaultType() const
+   dtCore::DataType& ExternalValueNode::GetDefaultType() const
    {
-      return const_cast<dtDAL::DataType&>(*mDefaultType);
+      return const_cast<dtCore::DataType&>(*mDefaultType);
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -285,9 +285,9 @@ namespace dtDirector
 
       osg::Vec3 color = GetType().GetColor();
 
-      if (GetDefaultType() != dtDAL::DataType::UNKNOWN)
+      if (GetDefaultType() != dtCore::DataType::UNKNOWN)
       {
-         dtDAL::DataType& dataType = GetDefaultType();
+         dtCore::DataType& dataType = GetDefaultType();
          const NodeType* type = NodeManager::GetInstance().FindNodeType(dataType);
          if (type)
          {
@@ -307,7 +307,7 @@ namespace dtDirector
                isTypeChecking |= link->IsTypeChecking();
                allowMultiple |= link->AllowMultiple();
 
-               dtDAL::DataType& dataType = link->GetPropertyType();
+               dtCore::DataType& dataType = link->GetPropertyType();
                const NodeType* type = NodeManager::GetInstance().FindNodeType(dataType);
                if (type)
                {

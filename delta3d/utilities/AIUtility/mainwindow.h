@@ -41,7 +41,7 @@ namespace dtAI
    class WaypointInterface;
 }
 
-namespace dtDAL
+namespace dtCore
 {
    class PropertyContainer;
    class ActorProperty;
@@ -103,7 +103,7 @@ public slots:
    void OnRemoveEdge();
    void OnAddBiDirectionalEdge();
    void OnRemoveBiDirectionalEdge();
-   void PropertyChangedFromControl(dtDAL::PropertyContainer&, dtDAL::ActorProperty&);
+   void PropertyChangedFromControl(dtCore::PropertyContainer&, dtCore::ActorProperty&);
    void OnCameraTransformChanged(const dtCore::Transform& xform);
 
    void OnPropertyEditorShowHide(bool);

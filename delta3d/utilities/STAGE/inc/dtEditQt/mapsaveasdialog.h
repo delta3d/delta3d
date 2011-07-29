@@ -37,7 +37,7 @@ class QTextEdit;
 class QCloseEvent;
 class QPushButton;
 
-namespace dtDAL
+namespace dtCore
 {
    class Map;
 }

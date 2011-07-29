@@ -25,17 +25,17 @@
 #include <dtCore/transformable.h>
 #include <dtCore/tripod.h>
 
-#include <dtDAL/actoractorproperty.h>
-#include <dtDAL/enumactorproperty.h>
+#include <dtCore/actoractorproperty.h>
+#include <dtCore/enumactorproperty.h>
 
-#include <dtDAL/functor.h>
-#include <dtDAL/vectoractorproperties.h>
+#include <dtCore/functor.h>
+#include <dtCore/vectoractorproperties.h>
 
 #include <sstream>
 
 using namespace dtActors;
 using namespace dtCore;
-using namespace dtDAL;
+using namespace dtCore;
 
 IMPLEMENT_ENUM(dtActors::TripodActorProxy::TetherModeEnum)
 TripodActorProxy::TetherModeEnum TripodActorProxy::TetherModeEnum::TETHER_PARENT_REL("TETHER_PARENT_REL");
@@ -57,7 +57,7 @@ void TripodActorProxy::CreateActor()
 ///////////////////////////////////////////////////////////////////////////////////
 void TripodActorProxy::BuildPropertyMap()
 {
-   dtDAL::BaseActorObject::BuildPropertyMap();
+   dtCore::BaseActorObject::BuildPropertyMap();
 
    static const std::string GROUPNAME = "Tripod";
 
@@ -346,9 +346,9 @@ TripodActorProxy::TetherModeEnum& TripodActorProxy::GetTetherMode() const
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-dtCore::RefPtr<dtDAL::ActorProperty> TripodActorProxy::GetDeprecatedProperty(const std::string& name)
+dtCore::RefPtr<dtCore::ActorProperty> TripodActorProxy::GetDeprecatedProperty(const std::string& name)
 {
-   dtCore::RefPtr<dtDAL::ActorProperty> result;
+   dtCore::RefPtr<dtCore::ActorProperty> result;
    if (name == "Camera")
    {
       result = new ActorActorProperty(*this, "Camera", "Camera",

@@ -43,13 +43,13 @@ void AIPropertyEditor::ExpandAll()
 }
 
 /////////////////////////////////////////////////////////////////
-void AIPropertyEditor::PropertyAboutToChangeFromControl(dtDAL::PropertyContainer& pc, dtDAL::ActorProperty& ap,
+void AIPropertyEditor::PropertyAboutToChangeFromControl(dtCore::PropertyContainer& pc, dtCore::ActorProperty& ap,
          const std::string& oldValue, const std::string& newValue)
 {
 }
 
 /////////////////////////////////////////////////////////////////
-void AIPropertyEditor::PropertyChangedFromControl(dtDAL::PropertyContainer& pc, dtDAL::ActorProperty& ap)
+void AIPropertyEditor::PropertyChangedFromControl(dtCore::PropertyContainer& pc, dtCore::ActorProperty& ap)
 {
    emit SignalPropertyChangedFromControl(pc, ap);
 }

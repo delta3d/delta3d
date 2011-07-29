@@ -30,8 +30,8 @@
 #include <dtAnim/animationchannel.h>
 #include <dtAnim/animationsequence.h>
 #include <dtAnim/characterfilewriter.h>
-#include <dtDAL/basexmlhandler.h>
-#include <dtDAL/basexmlreaderwriter.h>
+#include <dtCore/basexmlhandler.h>
+#include <dtCore/basexmlreaderwriter.h>
 #include <dtUtil/datapathutils.h>
 #include <dtUtil/fileutils.h>
 #include <dtUtil/xercesparser.h>
@@ -465,11 +465,11 @@ namespace dtAnim
    ////////////////////////////////////////////////////////////////////////////////
    // PLUGIN CLASS CODE
    ////////////////////////////////////////////////////////////////////////////////
-   class CharacterXMLReaderWriter : public dtDAL::BaseXMLReaderWriter<Cal3DModelData, CharacterFileHandler, CharacterFileWriter>
+   class CharacterXMLReaderWriter : public dtCore::BaseXMLReaderWriter<Cal3DModelData, CharacterFileHandler, CharacterFileWriter>
    {
    public:
 
-      typedef dtDAL::BaseXMLReaderWriter<CalCoreModel, CharacterFileHandler, CharacterFileWriter> BaseClass;
+      typedef dtCore::BaseXMLReaderWriter<CalCoreModel, CharacterFileHandler, CharacterFileWriter> BaseClass;
 
       CharacterXMLReaderWriter()
       {

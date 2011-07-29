@@ -59,7 +59,7 @@ namespace dtAnim
 
       try
       {
-         dtDAL::AttributeMap attrs;
+         dtCore::AttributeMap attrs;
          if (!modelData.GetModelName().empty())
          {
             attrs.SetValue(CFE::NAME_ELEMENT, modelData.GetModelName());
@@ -117,7 +117,7 @@ namespace dtAnim
       for (; curNameIter != endNameIter; ++curNameIter)
       {
          // Set the file and object names as attributes on the tag.
-         dtDAL::AttributeMap attrs;
+         dtCore::AttributeMap attrs;
          std::string curFile(modelData.GetFileForObjectName(calFileType, *curNameIter));
          attrs.SetValue(CFE::FILENAME_ELEMENT, curFile);
          attrs.SetValue(CFE::NAME_ELEMENT, *curNameIter);
@@ -421,7 +421,7 @@ namespace dtAnim
          curTime = curIter->second;
          curEvent = &curIter->first;
 
-         dtDAL::AttributeMap attrs;
+         dtCore::AttributeMap attrs;
          attrs.SetValue(CFE::EVENT_ATTR, *curEvent);
 
          // Start Event?

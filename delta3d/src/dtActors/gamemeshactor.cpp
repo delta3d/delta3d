@@ -22,11 +22,11 @@
 
 #include <dtCore/transform.h>
 
-#include <dtDAL/actorproxyicon.h>
-#include <dtDAL/booleanactorproperty.h>
-#include <dtDAL/functor.h>
-#include <dtDAL/resourceactorproperty.h>
-#include <dtDAL/vectoractorproperties.h>
+#include <dtCore/actorproxyicon.h>
+#include <dtCore/booleanactorproperty.h>
+#include <dtCore/functor.h>
+#include <dtCore/resourceactorproperty.h>
+#include <dtCore/vectoractorproperties.h>
 
 #include <dtGame/actorupdatemessage.h>
 #include <dtGame/gamemanager.h>
@@ -227,29 +227,29 @@ namespace dtActors
 
       GameMeshActor& myActor = static_cast<GameMeshActor &>(GetGameActor());
 
-      AddProperty(new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::STATIC_MESH,
-         "static mesh", "Static Mesh", dtDAL::ResourceActorProperty::SetFuncType(&myActor, &GameMeshActor::SetMesh),
+      AddProperty(new dtCore::ResourceActorProperty(*this, dtCore::DataType::STATIC_MESH,
+         "static mesh", "Static Mesh", dtCore::ResourceActorProperty::SetFuncType(&myActor, &GameMeshActor::SetMesh),
          "The static mesh resource that defines the geometry", GROUPNAME));
 
-      AddProperty(new dtDAL::BooleanActorProperty("use cache object", "Use Model Cache",
-         dtDAL::BooleanActorProperty::SetFuncType(&myActor, &GameMeshActor::SetUseCache),
-         dtDAL::BooleanActorProperty::GetFuncType(&myActor, &GameMeshActor::GetUseCache),
+      AddProperty(new dtCore::BooleanActorProperty("use cache object", "Use Model Cache",
+         dtCore::BooleanActorProperty::SetFuncType(&myActor, &GameMeshActor::SetUseCache),
+         dtCore::BooleanActorProperty::GetFuncType(&myActor, &GameMeshActor::GetUseCache),
          "Indicates whether we will try to use the cache when we load our model.", GROUPNAME));
 
-      AddProperty(new dtDAL::Vec3ActorProperty("Scale", "Scale",
-         dtDAL::Vec3ActorProperty::SetFuncType(&myActor, &GameMeshActor::SetScale),
-         dtDAL::Vec3ActorProperty::GetFuncType(&myActor, &GameMeshActor::GetScale),
+      AddProperty(new dtCore::Vec3ActorProperty("Scale", "Scale",
+         dtCore::Vec3ActorProperty::SetFuncType(&myActor, &GameMeshActor::SetScale),
+         dtCore::Vec3ActorProperty::GetFuncType(&myActor, &GameMeshActor::GetScale),
          "Scales this visual model", "Transformable"));
 
-      AddProperty(new dtDAL::Vec3ActorProperty("Model Rotation", "Model Rotation",
-         dtDAL::Vec3ActorProperty::SetFuncType(&myActor, &GameMeshActor::SetModelRotation),
-         dtDAL::Vec3ActorProperty::GetFuncType(&myActor, &GameMeshActor::GetModelRotation),
+      AddProperty(new dtCore::Vec3ActorProperty("Model Rotation", "Model Rotation",
+         dtCore::Vec3ActorProperty::SetFuncType(&myActor, &GameMeshActor::SetModelRotation),
+         dtCore::Vec3ActorProperty::GetFuncType(&myActor, &GameMeshActor::GetModelRotation),
          "Specifies the Rotation of the object",
          "Transformable"));
 
-      AddProperty(new dtDAL::Vec3ActorProperty("Model Translation", "Model Translation",
-         dtDAL::Vec3ActorProperty::SetFuncType(&myActor, &GameMeshActor::SetModelTranslation),
-         dtDAL::Vec3ActorProperty::GetFuncType(&myActor, &GameMeshActor::GetModelTranslation),
+      AddProperty(new dtCore::Vec3ActorProperty("Model Translation", "Model Translation",
+         dtCore::Vec3ActorProperty::SetFuncType(&myActor, &GameMeshActor::SetModelTranslation),
+         dtCore::Vec3ActorProperty::GetFuncType(&myActor, &GameMeshActor::GetModelTranslation),
          "Specifies the Translation of the object",
          "Transformable"));
    }
@@ -274,30 +274,30 @@ namespace dtActors
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   const dtDAL::BaseActorObject::RenderMode& GameMeshActorProxy::GetRenderMode()
+   const dtCore::BaseActorObject::RenderMode& GameMeshActorProxy::GetRenderMode()
    {
-      dtDAL::ResourceDescriptor resource = GetResource("static mesh");
+      dtCore::ResourceDescriptor resource = GetResource("static mesh");
       if (resource.IsEmpty() == false)
       {
          if (resource.GetResourceIdentifier().empty() || GetActor()->GetOSGNode() == NULL)
          {
-               return dtDAL::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON;
+               return dtCore::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON;
          }
          else
          {
-               return dtDAL::BaseActorObject::RenderMode::DRAW_ACTOR;
+               return dtCore::BaseActorObject::RenderMode::DRAW_ACTOR;
          }
       }
       else
-         return dtDAL::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON;
+         return dtCore::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON;
    }
 
    //////////////////////////////////////////////////////////////////////////
-   dtDAL::ActorProxyIcon* GameMeshActorProxy::GetBillBoardIcon()
+   dtCore::ActorProxyIcon* GameMeshActorProxy::GetBillBoardIcon()
    {
       if (!mBillBoardIcon.valid())
       {
-         mBillBoardIcon = new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IMAGE_BILLBOARD_STATICMESH);
+         mBillBoardIcon = new dtCore::ActorProxyIcon(dtCore::ActorProxyIcon::IMAGE_BILLBOARD_STATICMESH);
       }
 
       return mBillBoardIcon.get();

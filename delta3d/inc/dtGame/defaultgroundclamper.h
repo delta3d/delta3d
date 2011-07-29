@@ -38,7 +38,7 @@ namespace dtUtil
    class Log;
 }
 
-namespace dtDAL
+namespace dtCore
 {
    class TransformableActorProxy;
 }
@@ -151,7 +151,7 @@ namespace dtGame
           * @param proxy Actor that should have its bounding box calculated.
           */
          virtual void CalculateAndSetBoundingBox(osg::Vec3& modelDimensions,
-            dtDAL::TransformableActorProxy& proxy, GroundClampingData& data);
+            dtCore::TransformableActorProxy& proxy, GroundClampingData& data);
          
          /**
           * Gets the ground clamping hit that is closest to the Z value.
@@ -165,7 +165,7 @@ namespace dtGame
           * @return TRUE if a hit point was detected, otherwise FALSE if there are no points
           *         contained in the specified Isector, or
           */
-         virtual bool GetClosestHit(const dtDAL::TransformableActorProxy& proxy,
+         virtual bool GetClosestHit(const dtCore::TransformableActorProxy& proxy,
             GroundClampingData& data,
             dtCore::BatchIsector::SingleISector& single, float pointZ,
             osg::Vec3& outHit, osg::Vec3& outNormal);
@@ -181,7 +181,7 @@ namespace dtGame
           * @param outNormal Normal to capture values of the matched hit point's normal.
           * @return TRUE if a hit point was calculated, otherwise FALSE if it could not be calculated.
           */
-//         virtual bool GetMissingHit(const dtDAL::TransformableActorProxy& proxy,
+//         virtual bool GetMissingHit(const dtCore::TransformableActorProxy& proxy,
 //            GroundClampingData& data,
 //            float pointZ, osg::Vec3& outHit, osg::Vec3& outNormal);
 
@@ -191,7 +191,7 @@ namespace dtGame
           * @param data Ground Clamping Data containing model bounding box values to be updated.
           * @param outPoints Container to capture 3 detection points calculated by the actor's bounding box.
           */
-         void GetActorDetectionPoints(dtDAL::TransformableActorProxy& proxy,
+         void GetActorDetectionPoints(dtCore::TransformableActorProxy& proxy,
             GroundClampingData& data, osg::Vec3 outPoints[3]);
 
          /**
@@ -202,7 +202,7 @@ namespace dtGame
           * @param inOutPoints IN: detection points in world space.
           *                    OUT: surface points.
           */
-         virtual void GetSurfacePoints( const dtDAL::TransformableActorProxy& proxy,
+         virtual void GetSurfacePoints( const dtCore::TransformableActorProxy& proxy,
             GroundClampingData& data, const dtCore::Transform& xform,
             osg::Vec3 inOutPoints[3]);
 
@@ -218,7 +218,7 @@ namespace dtGame
           * @param velocity The transformable's instantaneous velocity for the current frame.
           */
          virtual void ClampToGround(GroundClampRangeType& type, double currentTime,
-            dtCore::Transform& xform, dtDAL::TransformableActorProxy& proxy,
+            dtCore::Transform& xform, dtCore::TransformableActorProxy& proxy,
             GroundClampingData& data, bool transformChanged = false,
             const osg::Vec3& velocity = osg::Vec3());
 
@@ -234,7 +234,7 @@ namespace dtGame
           * @return suggestedClampType is returned for the default behavior.
           */
          virtual GroundClampRangeType& GetBestClampType(GroundClampRangeType& suggestedClampType,
-            const dtDAL::TransformableActorProxy& proxy, const GroundClampingData& data,
+            const dtCore::TransformableActorProxy& proxy, const GroundClampingData& data,
             bool transformChanged, const osg::Vec3& velocity) const;
 
          /**
@@ -281,7 +281,7 @@ namespace dtGame
           * @param inOutPoints IN: Surface points that MAY be modified.
           *                    OUT: Points modified to their final positions.
           */
-         virtual void FinalizeSurfacePoints(dtDAL::TransformableActorProxy& proxy,
+         virtual void FinalizeSurfacePoints(dtCore::TransformableActorProxy& proxy,
             GroundClampingData& data, osg::Vec3 inOutPoints[3]);
 
          /**
@@ -292,7 +292,7 @@ namespace dtGame
           * @param runtimeData Set of values to be updated based on the ground clamp operation.
           */
          void ClampToGroundThreePoint(dtCore::Transform& xform,
-            dtDAL::TransformableActorProxy& proxy, GroundClampingData& data,
+            dtCore::TransformableActorProxy& proxy, GroundClampingData& data,
             RuntimeData& runtimeData);
          
          /**
@@ -305,7 +305,7 @@ namespace dtGame
           * @param runtimeData Set of values to be updated based on the ground clamp operation.
           */
          void ClampToGroundIntermittent(double currentTime,
-                  dtCore::Transform& xform, dtDAL::TransformableActorProxy& proxy,
+                  dtCore::Transform& xform, dtCore::TransformableActorProxy& proxy,
                   GroundClampingData& data, RuntimeData& runtimeData);
 
          /**
@@ -331,7 +331,7 @@ namespace dtGame
 
       private:
 
-         typedef std::pair<dtDAL::TransformableActorProxy*, GroundClampingData*> ProxyAndData;
+         typedef std::pair<dtCore::TransformableActorProxy*, GroundClampingData*> ProxyAndData;
          typedef std::vector<std::pair<dtCore::Transform, ProxyAndData> > BatchVector;
          
          BatchVector mGroundClampBatch;

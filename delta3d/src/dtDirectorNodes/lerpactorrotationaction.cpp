@@ -24,9 +24,9 @@
 #include <dtCore/transform.h>
 #include <dtCore/transformable.h>
 
-#include <dtDAL/actoridactorproperty.h>
-#include <dtDAL/floatactorproperty.h>
-#include <dtDAL/vectoractorproperties.h>
+#include <dtCore/actoridactorproperty.h>
+#include <dtCore/floatactorproperty.h>
+#include <dtCore/vectoractorproperties.h>
 
 #include <dtDirector/director.h>
 
@@ -73,44 +73,44 @@ namespace dtDirector
       LatentActionNode::BuildPropertyMap();
 
       // Create our value links.
-      dtDAL::ActorIDActorProperty* actorProp = new dtDAL::ActorIDActorProperty(
+      dtCore::ActorIDActorProperty* actorProp = new dtCore::ActorIDActorProperty(
          "Actor", "Actor",
-         dtDAL::ActorIDActorProperty::SetFuncType(this, &LerpActorRotationAction::SetLerpActor),
-         dtDAL::ActorIDActorProperty::GetFuncType(this, &LerpActorRotationAction::GetLerpActor),
+         dtCore::ActorIDActorProperty::SetFuncType(this, &LerpActorRotationAction::SetLerpActor),
+         dtCore::ActorIDActorProperty::GetFuncType(this, &LerpActorRotationAction::GetLerpActor),
          "dtCore::Transformable", "The actor to linearly interpolate.");
       AddProperty(actorProp);
 
-      dtDAL::FloatActorProperty* startTimeProp = new dtDAL::FloatActorProperty(
+      dtCore::FloatActorProperty* startTimeProp = new dtCore::FloatActorProperty(
          "StartTime", "Start Time",
-         dtDAL::FloatActorProperty::SetFuncType(this, &LerpActorRotationAction::SetStartTime),
-         dtDAL::FloatActorProperty::GetFuncType(this, &LerpActorRotationAction::GetStartTime),
+         dtCore::FloatActorProperty::SetFuncType(this, &LerpActorRotationAction::SetStartTime),
+         dtCore::FloatActorProperty::GetFuncType(this, &LerpActorRotationAction::GetStartTime),
          "The time to start the lerp.");
       AddProperty(startTimeProp);
 
-      dtDAL::FloatActorProperty* endTimeProp = new dtDAL::FloatActorProperty(
+      dtCore::FloatActorProperty* endTimeProp = new dtCore::FloatActorProperty(
          "EndTime", "End Time",
-         dtDAL::FloatActorProperty::SetFuncType(this, &LerpActorRotationAction::SetEndTime),
-         dtDAL::FloatActorProperty::GetFuncType(this, &LerpActorRotationAction::GetEndTime),
+         dtCore::FloatActorProperty::SetFuncType(this, &LerpActorRotationAction::SetEndTime),
+         dtCore::FloatActorProperty::GetFuncType(this, &LerpActorRotationAction::GetEndTime),
          "The time to end the lerp.");
       AddProperty(endTimeProp);
 
-      dtDAL::FloatActorProperty* timeProp = new dtDAL::FloatActorProperty(
+      dtCore::FloatActorProperty* timeProp = new dtCore::FloatActorProperty(
          "Time", "Time",
-         dtDAL::FloatActorProperty::SetFuncType(this, &LerpActorRotationAction::SetTime),
-         dtDAL::FloatActorProperty::GetFuncType(this, &LerpActorRotationAction::GetTime),
+         dtCore::FloatActorProperty::SetFuncType(this, &LerpActorRotationAction::SetTime),
+         dtCore::FloatActorProperty::GetFuncType(this, &LerpActorRotationAction::GetTime),
          "The current time.");
 
-      dtDAL::Vec3ActorProperty* startRotProp = new dtDAL::Vec3ActorProperty(
+      dtCore::Vec3ActorProperty* startRotProp = new dtCore::Vec3ActorProperty(
          "StartRotation", "Start Rotation",
-         dtDAL::Vec3ActorProperty::SetFuncType(this, &LerpActorRotationAction::SetStartRot),
-         dtDAL::Vec3ActorProperty::GetFuncType(this, &LerpActorRotationAction::GetStartRot),
+         dtCore::Vec3ActorProperty::SetFuncType(this, &LerpActorRotationAction::SetStartRot),
+         dtCore::Vec3ActorProperty::GetFuncType(this, &LerpActorRotationAction::GetStartRot),
          "The starting rotation of the actor.");
       AddProperty(startRotProp);
 
-      dtDAL::Vec3ActorProperty* endRotProp = new dtDAL::Vec3ActorProperty(
+      dtCore::Vec3ActorProperty* endRotProp = new dtCore::Vec3ActorProperty(
          "EndRotation", "End Rotation",
-         dtDAL::Vec3ActorProperty::SetFuncType(this, &LerpActorRotationAction::SetEndRot),
-         dtDAL::Vec3ActorProperty::GetFuncType(this, &LerpActorRotationAction::GetEndRot),
+         dtCore::Vec3ActorProperty::SetFuncType(this, &LerpActorRotationAction::SetEndRot),
+         dtCore::Vec3ActorProperty::GetFuncType(this, &LerpActorRotationAction::GetEndRot),
          "The ending rotation of the actor.");
       AddProperty(endRotProp);
 
@@ -213,7 +213,7 @@ namespace dtDirector
             int count = GetPropertyCount("Actor");
             for (int index = 0; index < count; index++)
             {
-               dtDAL::BaseActorObject* proxy = GetActor("Actor", index);
+               dtCore::BaseActorObject* proxy = GetActor("Actor", index);
                if (proxy)
                {
                   dtCore::Transformable* actor = NULL;

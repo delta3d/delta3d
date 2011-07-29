@@ -32,7 +32,7 @@
 #include <QtCore/QObject>
 #include <osg/ref_ptr>
 #include <osg/Referenced>
-#include <dtDAL/actorproxy.h>
+#include <dtCore/actorproxy.h>
 #include <dtQt/typedefs.h>
 
 /// @cond DOXYGEN_SHOULD_SKIP_THIS
@@ -58,7 +58,7 @@ namespace dtEditQt
 
    public:
       ///Simplifies the interface to a list of actor proxies.
-      typedef std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> > ActorProxyList;
+      typedef std::vector<dtCore::RefPtr<dtCore::BaseActorObject> > ActorProxyList;
 
       /**
        * Constructs the overlay.
@@ -123,8 +123,8 @@ namespace dtEditQt
        * @param proxy The proxy to test.
        * @return True if the proxy is already selected, false otherwise.
        */
-      bool isActorSelected(dtDAL::BaseActorObject* proxy) const;
-      bool isActorSelectedFirst(dtDAL::BaseActorObject* proxy) const;
+      bool isActorSelected(dtCore::BaseActorObject* proxy) const;
+      bool isActorSelectedFirst(dtCore::BaseActorObject* proxy) const;
 
       /**
        * Removes the specified actor proxy from the current selection.
@@ -133,7 +133,7 @@ namespace dtEditQt
        *  selection tree but leave the proxy, logically, in a selected state.  Setting
        *  true for this value clears the selection both visually and logically.
        */
-      void removeActorFromCurrentSelection(dtDAL::BaseActorObject* proxy, bool clearAll = true);
+      void removeActorFromCurrentSelection(dtCore::BaseActorObject* proxy, bool clearAll = true);
 
       /**
        * Clears the current selection.

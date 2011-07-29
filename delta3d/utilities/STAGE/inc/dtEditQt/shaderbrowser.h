@@ -12,7 +12,7 @@ namespace dtEditQt
       Q_OBJECT
 
    public:
-      ShaderBrowser(dtDAL::DataType& type, QWidget* parent = 0);
+      ShaderBrowser(dtCore::DataType& type, QWidget* parent = 0);
       virtual ~ShaderBrowser();
    protected:
 

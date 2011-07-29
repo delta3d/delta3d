@@ -30,7 +30,7 @@
 #include <dtGame/defaultnetworkpublishingcomponent.h>
 #include <dtUtil/datapathutils.h>
 #include <dtUtil/coordinates.h>
-#include <dtDAL/project.h>
+#include <dtCore/project.h>
 #include <dtCore/rtsmotionmodel.h>
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -79,7 +79,7 @@ void TestDISApp::Config()
 
    //need to set a ProjectContext so the ResouceActorProperty can find the StaticMesh resources
    const std::string context = dtUtil::FindFileInPathList("demoMap");
-   dtDAL::Project::GetInstance().SetContext(context);
+   dtCore::Project::GetInstance().SetContext(context);
    mGameManager->ChangeMap("MyCoolMap");  //just for something to see
 
    mGameManager->AddComponent(*mDISComponent);
@@ -95,7 +95,7 @@ public:
    FindDISActor() {};
    ~FindDISActor() {};
 
-   bool operator()(dtDAL::BaseActorObject& actor)
+   bool operator()(dtCore::BaseActorObject& actor)
    {
       if (actor.GetName().find("helo") != std::string::npos)
       {
@@ -114,7 +114,7 @@ void TestDISApp::FindActorsAndAddComponents()
 {
    FindDISActor findDisActor;
    mGameManager->FindActorsIf(findDisActor, mActorsToPublish);
-   std::vector<dtDAL::BaseActorObject*>::iterator itr = mActorsToPublish.begin();
+   std::vector<dtCore::BaseActorObject*>::iterator itr = mActorsToPublish.begin();
    while (itr != mActorsToPublish.end())
    {
       EntityTypeActorComponent* entityTypeComp = new EntityTypeActorComponent(1,1,222,1,2,2);
@@ -135,7 +135,7 @@ void TestDISApp::PostFrame(const double deltaSimTime)
       //find any published GameActors and add some new ActorComponents to them
       if (mActorsToPublish.empty()) { FindActorsAndAddComponents(); }
 
-      std::vector<dtDAL::BaseActorObject*>::iterator itr = mActorsToPublish.begin();
+      std::vector<dtCore::BaseActorObject*>::iterator itr = mActorsToPublish.begin();
       while (itr != mActorsToPublish.end())
       {
          //Tell the GameActorProxy to send an ActorUpdateMessage with all of it's ActorProperties

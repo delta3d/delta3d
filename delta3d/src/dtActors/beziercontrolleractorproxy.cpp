@@ -2,14 +2,14 @@
 
 #include <dtABC/beziercontroller.h>
 
-#include <dtDAL/actoractorproperty.h>
-#include <dtDAL/booleanactorproperty.h>
-#include <dtDAL/functor.h>
+#include <dtCore/actoractorproperty.h>
+#include <dtCore/booleanactorproperty.h>
+#include <dtCore/functor.h>
 
 #include <sstream>
 
 using namespace dtABC;
-using namespace dtDAL;
+using namespace dtCore;
 
 
 namespace dtActors
@@ -17,9 +17,9 @@ namespace dtActors
 
 int BezierControllerActorProxy::mNumControllers = 0;
 
-//const dtDAL::BaseActorObject::RenderMode& BezierControllerActorProxy::GetRenderMode()
+//const dtCore::BaseActorObject::RenderMode& BezierControllerActorProxy::GetRenderMode()
 //{
-//   return dtDAL::BaseActorObject::RenderMode::DRAW_AUTO;
+//   return dtCore::BaseActorObject::RenderMode::DRAW_AUTO;
 //}
 
 void BezierControllerActorProxy::CreateActor()
@@ -39,7 +39,7 @@ void BezierControllerActorProxy::BuildPropertyMap()
 
    BezierController* bc = static_cast<BezierController*>(GetDrawable());
 
-   AddProperty(new dtDAL::ActorActorProperty(*this, "Start Node", "Start Node",
+   AddProperty(new dtCore::ActorActorProperty(*this, "Start Node", "Start Node",
       ActorActorProperty::SetFuncType(this, &BezierControllerActorProxy::SetActorStartNode),
       ActorActorProperty::GetFuncType(this, &BezierControllerActorProxy::GetActorStartNode),
       "dtABC::BezierNode",
@@ -68,7 +68,7 @@ dtCore::DeltaDrawable* BezierControllerActorProxy::GetActorStartNode()
    return bc->GetStartNode();
 }
 
-void BezierControllerActorProxy::SetActorStartNode(dtDAL::BaseActorObject* node)
+void BezierControllerActorProxy::SetActorStartNode(dtCore::BaseActorObject* node)
 {
 
    SetLinkedActor("Start Node", node);

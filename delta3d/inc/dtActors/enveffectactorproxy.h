@@ -21,8 +21,8 @@
 #ifndef DELTA_ENVEFFECT_ACTOR_PROXY
 #define DELTA_ENVEFFECT_ACTOR_PROXY
 
-#include "dtDAL/plugin_export.h"
-#include "dtDAL/actorproxy.h"
+#include "dtCore/plugin_export.h"
+#include "dtCore/actorproxy.h"
 
 namespace dtActors 
 {
@@ -31,7 +31,7 @@ namespace dtActors
      * @class EnvEffectActorProxy
      * @brief This proxy wraps environment effects.
      */
-    class DT_PLUGIN_EXPORT EnvEffectActorProxy : public dtDAL::BaseActorObject 
+    class DT_PLUGIN_EXPORT EnvEffectActorProxy : public dtCore::BaseActorObject 
     {
     public:
 

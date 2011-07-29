@@ -27,7 +27,7 @@
 #include <dtDirector/actionnode.h>
 #include <dtDirectorNodes/nodelibraryexport.h>
 
-#include <dtDAL/intactorproperty.h>
+#include <dtCore/intactorproperty.h>
 
 namespace dtDirector
 {
@@ -94,8 +94,8 @@ namespace dtDirector
 
       int mCurrentItem;
 
-      dtCore::RefPtr<dtDAL::IntActorProperty> mItemArrayProp;
-      dtCore::RefPtr<dtDAL::IntActorProperty> mItemProp;
+      dtCore::RefPtr<dtCore::IntActorProperty> mItemArrayProp;
+      dtCore::RefPtr<dtCore::IntActorProperty> mItemProp;
    };
 }
 

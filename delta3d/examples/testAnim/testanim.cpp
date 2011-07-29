@@ -39,10 +39,10 @@
 #include <dtCore/shadermanager.h>
 #include <dtCore/transform.h>
 
-#include <dtDAL/map.h>
-#include <dtDAL/actorproxy.h>
-#include <dtDAL/actorproxy.h>
-#include <dtDAL/project.h>
+#include <dtCore/map.h>
+#include <dtCore/actorproxy.h>
+#include <dtCore/actorproxy.h>
+#include <dtCore/project.h>
 
 #include <dtGame/gamemanager.h>
 #include <dtGame/gameapplication.h>
@@ -130,7 +130,7 @@ void TestAnim::OnStartup(dtGame::GameApplication& app)
 
    std::string context = dtUtil::GetDeltaRootPath() + "/examples/data/demoMap";
 
-   typedef std::vector<dtDAL::BaseActorObject* > ProxyContainer;
+   typedef std::vector<dtCore::BaseActorObject* > ProxyContainer;
    ProxyContainer proxies;
    ProxyContainer groundActor;
 
@@ -138,7 +138,7 @@ void TestAnim::OnStartup(dtGame::GameApplication& app)
 
    try
    {
-      dtDAL::Project::GetInstance().SetContext(context, true);
+      dtCore::Project::GetInstance().SetContext(context, true);
       gameManager.ChangeMap("TestAnim");
       dtCore::System::GetInstance().Start();
       dtCore::System::GetInstance().Step();
@@ -212,7 +212,7 @@ void TestAnim::OnStartup(dtGame::GameApplication& app)
 
    if (!groundActor.empty())
    {
-      dtDAL::BaseActorObject* proxy = dynamic_cast<dtDAL::BaseActorObject*>(groundActor.front());
+      dtCore::BaseActorObject* proxy = dynamic_cast<dtCore::BaseActorObject*>(groundActor.front());
       if (proxy)
       {
          dtCore::Transformable* transform = dynamic_cast<dtCore::Transformable*>(proxy->GetActor());

@@ -33,7 +33,7 @@
 
 #include <dtDirector/director.h>
 #include <dtDirector/valuenode.h>
-#include <dtDAL/project.h>
+#include <dtCore/project.h>
 
 /**
  * @class DirectorTests
@@ -71,7 +71,7 @@ void DirectorTests::setUp()
    {
       mLogger = &dtUtil::Log::GetInstance();
 
-      dtDAL::Project::GetInstance().SetContext(dtUtil::GetDeltaRootPath() + "/tests/data/ProjectContext");
+      dtCore::Project::GetInstance().SetContext(dtUtil::GetDeltaRootPath() + "/tests/data/ProjectContext");
 
       mDirector = new dtDirector::Director();
       mDirector->Init();
@@ -103,8 +103,8 @@ void DirectorTests::TestRunScript()
 
       try
       {
-         dtDAL::ResourceDescriptor resource("Directors:test.dtdir");
-         std::string path = dtDAL::Project::GetInstance().GetResourcePath(resource);
+         dtCore::ResourceDescriptor resource("Directors:test.dtdir");
+         std::string path = dtCore::Project::GetInstance().GetResourcePath(resource);
          mDirector->LoadScript(path);
       }
       catch (dtUtil::Exception& e)
@@ -114,7 +114,7 @@ void DirectorTests::TestRunScript()
 
       try
       {
-         std::string contextPath = dtDAL::Project::GetInstance().GetContext();
+         std::string contextPath = dtCore::Project::GetInstance().GetContext();
          mDirector->SaveScript(contextPath + "/Directors/save test.dtdir");
       }
       catch (dtUtil::Exception& e)
@@ -124,7 +124,7 @@ void DirectorTests::TestRunScript()
 
       try
       {
-         std::string contextPath = dtDAL::Project::GetInstance().GetContext();
+         std::string contextPath = dtCore::Project::GetInstance().GetContext();
          mDirector->SaveScript(contextPath + "/Directors/save test.dtdirb");
       }
       catch (dtUtil::Exception& e)
@@ -134,8 +134,8 @@ void DirectorTests::TestRunScript()
 
       try
       {
-         dtDAL::ResourceDescriptor resource("Directors:save test.dtdirb");
-         std::string path = dtDAL::Project::GetInstance().GetResourcePath(resource);
+         dtCore::ResourceDescriptor resource("Directors:save test.dtdirb");
+         std::string path = dtCore::Project::GetInstance().GetResourcePath(resource);
          mDirector->LoadScript(path);
       }
       catch (dtUtil::Exception& e)

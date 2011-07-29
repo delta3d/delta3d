@@ -24,7 +24,7 @@
 
 #include <vector>
 #include <dtCore/refptr.h>
-#include <dtDAL/actorproxy.h>
+#include <dtCore/actorproxy.h>
 #include <string>
 #include <dtDIS/dtdisexport.h>
 
@@ -38,13 +38,13 @@ namespace dtDIS
       class DT_DIS_EXPORT HasProperty
       {
       public:
-         typedef std::vector<dtDAL::BaseActorObject*> ActorVector;
+         typedef std::vector<dtCore::BaseActorObject*> ActorVector;
 
          HasProperty(const std::string& prop_name);
          ~HasProperty();
          HasProperty(const HasProperty& hp);
 
-         void operator ()(dtDAL::BaseActorObject *&proxy);
+         void operator ()(dtCore::BaseActorObject *&proxy);
 
          ActorVector& GetPassedActors();
          const ActorVector& GetPassedActors() const;

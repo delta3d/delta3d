@@ -38,7 +38,7 @@
 
 class QWidget;
 
-namespace dtDAL
+namespace dtCore
 {
    class NamedGroupParameter;
 }

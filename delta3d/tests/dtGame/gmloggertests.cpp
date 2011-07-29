@@ -53,8 +53,8 @@
 #include <dtGame/actorupdatemessage.h>
 #include <dtActors/gamemeshactor.h>
 #include <dtActors/engineactorregistry.h>
-#include <dtDAL/librarymanager.h>
-#include <dtDAL/actorproxy.h>
+#include <dtCore/librarymanager.h>
+#include <dtCore/actorproxy.h>
 
 #include "testcomponent.h"
 
@@ -879,10 +879,10 @@ void GMLoggerTests::TestBinaryLogStreamJumpToKeyFrame()
          actorUpdateMessage->SetActorTypeCategory("Smith" + ss.str());
 
          actorUpdateMessage->AddUpdateParameter("Jed" + ss.str(),
-            dtDAL::DataType::STRING)->FromString("TestMe " + ss.str());
+            dtCore::DataType::STRING)->FromString("TestMe " + ss.str());
 
          actorUpdateMessage->AddUpdateParameter("Jobob" + ss.str(),
-            dtDAL::DataType::INT)->FromString(ss.str());
+            dtCore::DataType::INT)->FromString(ss.str());
 
          //Insert a keyframe every several messages...
          //if ((i%25) == 0)
@@ -951,7 +951,7 @@ void GMLoggerTests::TestPlaybackRecordCycle()
    //actor create events.
    try
    {
-      dtCore::RefPtr<dtDAL::BaseActorObject> proxy = NULL;
+      dtCore::RefPtr<dtCore::BaseActorObject> proxy = NULL;
       dtCore::RefPtr<dtGame::GameActorProxy> gameProxy = NULL;
 
       mGameManager->AddComponent(*serverController, dtGame::GameManager::ComponentPriority::NORMAL);
@@ -1169,7 +1169,7 @@ void GMLoggerTests::TestLoggerGetKeyframes()
 
    try
    {
-      dtCore::RefPtr<dtDAL::BaseActorObject> proxy = NULL;
+      dtCore::RefPtr<dtCore::BaseActorObject> proxy = NULL;
       dtCore::RefPtr<dtGame::GameActorProxy> gameProxy = NULL;
       std::string errorMsg;
       std::vector<dtGame::LogKeyframe> kfList;
@@ -1677,7 +1677,7 @@ void GMLoggerTests::TestLoggerAutoKeyframeInterval()
 
    try
    {
-      dtCore::RefPtr<dtDAL::BaseActorObject> proxy = NULL;
+      dtCore::RefPtr<dtCore::BaseActorObject> proxy = NULL;
       dtCore::RefPtr<dtGame::GameActorProxy> gameProxy = NULL;
       std::string errorMsg;
       std::vector<dtGame::LogKeyframe> kfList;
@@ -2116,7 +2116,7 @@ void GMLoggerTests::TestLoggerActorIDLists()
    //   std::vector<dtCore::UniqueId>::const_iterator itr = ids.begin();
    //   while (itr != ids.end())
    //   {
-   //      dtDAL::BaseActorObject *prox = mGameManager->FindActorById(*itr);
+   //      dtCore::BaseActorObject *prox = mGameManager->FindActorById(*itr);
    //      if (prox != NULL)
    //      {
    //         names += " " + prox->GetClassName();

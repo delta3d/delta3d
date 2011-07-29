@@ -33,7 +33,7 @@
 #include <dtAnim/cal3dmodelwrapper.h>
 #include <dtAnim/animationhelper.h>
 
-#include <dtDAL/project.h>
+#include <dtCore/project.h>
 #include <dtUtil/datapathutils.h>
 #include <dtCore/refptr.h>
 
@@ -62,7 +62,7 @@ namespace dtAnim
       //////////////////////////////////////////////////////////////////////////
       void setUp()
       {
-         dtDAL::Project::GetInstance().SetContext(dtUtil::GetDeltaRootPath() + "/examples/data/demoMap");
+         dtCore::Project::GetInstance().SetContext(dtUtil::GetDeltaRootPath() + "/examples/data/demoMap");
 
          std::string modelPath = dtUtil::FindFileInPathList("SkeletalMeshes/marine_test.xml");
          CPPUNIT_ASSERT_MESSAGE("Could not find \"SkeletalMeshes/marine_test.xml\"", !modelPath.empty());

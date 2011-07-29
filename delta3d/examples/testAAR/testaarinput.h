@@ -35,7 +35,7 @@
 #include <dtGame/logstatus.h>
 
 // Foward declarations
-namespace dtDAL
+namespace dtCore
 {
    class GameEvent;
 }
@@ -88,7 +88,7 @@ class TEST_AAR_EXPORT TestAARInput : public dtGame::BaseInputComponent
       /**
        * Utility method to fire an event message
        */
-      void FireEvent(dtDAL::GameEvent& event);
+      void FireEvent(dtCore::GameEvent& event);
 
       /**
        * Method that will go to the previous key frame

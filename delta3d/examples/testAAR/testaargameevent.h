@@ -30,7 +30,7 @@
 #define DELTA_TEST_AAR_GAME_EVENT
 
 #include <dtCore/refptr.h>
-#include <dtDAL/gameevent.h>
+#include <dtCore/gameevent.h>
 #include <dtCore/refptr.h>
 #include "export.h"
 
@@ -38,12 +38,12 @@ class TEST_AAR_EXPORT TestAARGameEvent
 {
    public:
    
-      static dtCore::RefPtr<dtDAL::GameEvent> EVENT_START_RECORD;
-      static dtCore::RefPtr<dtDAL::GameEvent> EVENT_BOX_PLACED;
-      static dtCore::RefPtr<dtDAL::GameEvent> EVENT_PLAYER_LEFT;
-      static dtCore::RefPtr<dtDAL::GameEvent> EVENT_PLAYER_RIGHT;
-      static dtCore::RefPtr<dtDAL::GameEvent> EVENT_PLAYER_FORWARD;
-      static dtCore::RefPtr<dtDAL::GameEvent> EVENT_PLAYER_BACKWARD;
+      static dtCore::RefPtr<dtCore::GameEvent> EVENT_START_RECORD;
+      static dtCore::RefPtr<dtCore::GameEvent> EVENT_BOX_PLACED;
+      static dtCore::RefPtr<dtCore::GameEvent> EVENT_PLAYER_LEFT;
+      static dtCore::RefPtr<dtCore::GameEvent> EVENT_PLAYER_RIGHT;
+      static dtCore::RefPtr<dtCore::GameEvent> EVENT_PLAYER_FORWARD;
+      static dtCore::RefPtr<dtCore::GameEvent> EVENT_PLAYER_BACKWARD;
 
       /**
        * Static function called to ensure the statics are initialized and 

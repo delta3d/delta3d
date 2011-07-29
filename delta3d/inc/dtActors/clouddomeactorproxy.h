@@ -21,8 +21,8 @@
 #ifndef DELTA_CLOUDDOME_ACTOR_PROXY
 #define DELTA_CLOUDDOME_ACTOR_PROXY
 
-#include "dtDAL/plugin_export.h"
-#include "dtDAL/actorproxy.h"
+#include "dtCore/plugin_export.h"
+#include "dtCore/actorproxy.h"
 #include <dtCore/clouddome.h>
 #include "dtActors/enveffectactorproxy.h"
 

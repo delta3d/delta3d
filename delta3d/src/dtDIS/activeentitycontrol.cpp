@@ -1,5 +1,5 @@
 #include <dtDIS/activeentitycontrol.h>
-#include <dtDAL/actorproxy.h>
+#include <dtCore/actorproxy.h>
 #include <dtUtil/log.h>
 
 using namespace dtDIS;

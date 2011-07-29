@@ -31,7 +31,7 @@
 #define DELTA_GAME_EVENT_DIALOG
 
 #include <dtCore/refptr.h>
-#include <dtDAL/gameevent.h>
+#include <dtCore/gameevent.h>
 #include <QtGui/QDialog>
 
 class QLineEdit;
@@ -47,12 +47,12 @@ namespace dtEditQt
 
    public:
       /// Constructor
-      GameEventDialog(QWidget* parent, dtDAL::GameEvent& event, bool isNew);
+      GameEventDialog(QWidget* parent, dtCore::GameEvent& event, bool isNew);
 
       /// Destructor
       virtual ~GameEventDialog() { }
 
-      inline dtDAL::GameEvent& GetEvent() { return *mGameEvent; }
+      inline dtCore::GameEvent& GetEvent() { return *mGameEvent; }
 
    public slots:
       /// slot for receiving the text changing signal
@@ -65,7 +65,7 @@ namespace dtEditQt
       QPushButton* mOKButton;
       QLineEdit*   mNameEdit;
       QTextEdit*   mDescEdit;
-      dtCore::RefPtr<dtDAL::GameEvent> mGameEvent;
+      dtCore::RefPtr<dtCore::GameEvent> mGameEvent;
    };
 
 } // namespace dtEditQt

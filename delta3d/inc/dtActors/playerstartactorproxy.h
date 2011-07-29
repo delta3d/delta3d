@@ -22,10 +22,10 @@
 #define DELTA_PLAYER_START_ACTOR_PROXY
  
 #include <dtCore/transformable.h>
-#include <dtDAL/plugin_export.h>
-#include <dtDAL/transformableactorproxy.h>
+#include <dtCore/plugin_export.h>
+#include <dtCore/transformableactorproxy.h>
 
-namespace dtDAL
+namespace dtCore
 {
    class ActorProxyIcon;
 }
@@ -47,7 +47,7 @@ namespace dtActors
       private:
    };
 
-   class DT_PLUGIN_EXPORT PlayerStartActorProxy : public dtDAL::TransformableActorProxy
+   class DT_PLUGIN_EXPORT PlayerStartActorProxy : public dtCore::TransformableActorProxy
    {
       public:
 
@@ -65,15 +65,15 @@ namespace dtActors
            * render mode is RenderMode::DRAW_BILLBOARD_ICON.
            * @return a pointer to the icon
            */
-         virtual dtDAL::ActorProxyIcon* GetBillBoardIcon();
+         virtual dtCore::ActorProxyIcon* GetBillBoardIcon();
 
          /**
            * Gets the current render mode for positional lights.
-           * @return dtDAL::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON.
+           * @return dtCore::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON.
            */
-         virtual const dtDAL::BaseActorObject::RenderMode& GetRenderMode()
+         virtual const dtCore::BaseActorObject::RenderMode& GetRenderMode()
          {
-            return dtDAL::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON;
+            return dtCore::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON;
          }
 
       protected:

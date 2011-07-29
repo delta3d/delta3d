@@ -34,7 +34,7 @@
 #include <vector>
 
 
-namespace dtDAL
+namespace dtCore
 {
     class StringActorProperty;
 }
@@ -102,8 +102,8 @@ namespace dtQt
        * to reflect the change in our editor.
        * @Note The default implementation does nothing.
        */
-      virtual void actorPropertyChanged(dtDAL::PropertyContainer& propCon,
-               dtDAL::ActorProperty& property);
+      virtual void actorPropertyChanged(dtCore::PropertyContainer& propCon,
+               dtCore::ActorProperty& property);
 
    public slots:
 

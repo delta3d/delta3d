@@ -24,8 +24,8 @@
 
 #include <osg/Vec4>
 
-#include <dtDAL/plugin_export.h>
-#include <dtDAL/transformableactorproxy.h>
+#include <dtCore/plugin_export.h>
+#include <dtCore/transformableactorproxy.h>
 
 namespace dtActors 
 {
@@ -33,7 +33,7 @@ namespace dtActors
    * @class CameraActorProxy
    * @brief This proxy wraps the Camera Delta3D object.
    */
-   class DT_PLUGIN_EXPORT CameraActorProxy : public dtDAL::TransformableActorProxy
+   class DT_PLUGIN_EXPORT CameraActorProxy : public dtCore::TransformableActorProxy
    {
    public:
 
@@ -52,9 +52,9 @@ namespace dtActors
       */
       virtual bool IsPlaceable() const { return true; }
 
-      virtual const dtDAL::BaseActorObject::RenderMode& GetRenderMode()
+      virtual const dtCore::BaseActorObject::RenderMode& GetRenderMode()
       {
-         return dtDAL::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON;
+         return dtCore::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON;
       }
 
       /**
@@ -62,7 +62,7 @@ namespace dtActors
       * render mode is RenderMode::DRAW_BILLBOARD_ICON.
       * @return
       */
-      dtDAL::ActorProxyIcon* GetBillBoardIcon();
+      dtCore::ActorProxyIcon* GetBillBoardIcon();
 
       /**
       * Gets the camera's clear color

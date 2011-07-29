@@ -24,7 +24,7 @@
 
 #include <dtCore/refptr.h>
 #include <dtAI/export.h>
-#include <dtDAL/actorproxy.h>
+#include <dtCore/actorproxy.h>
 #include <dtCore/deltadrawable.h>
 
 namespace dtAI
@@ -49,7 +49,7 @@ namespace dtAI
     * @class AIInterfaceActorProxy
     * @brief This proxy wraps the AI Interface class Delta3D object.
     */
-   class DT_AI_EXPORT AIInterfaceActorProxy : public dtDAL::BaseActorObject
+   class DT_AI_EXPORT AIInterfaceActorProxy : public dtCore::BaseActorObject
    {
    public:
       static const dtUtil::RefString CLASS_NAME;

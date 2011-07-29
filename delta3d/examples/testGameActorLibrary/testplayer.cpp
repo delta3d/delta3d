@@ -28,8 +28,8 @@
 
 #include "testplayer.h"
 
-#include <dtDAL/floatactorproperty.h>
-#include <dtDAL/stringactorproperty.h>
+#include <dtCore/floatactorproperty.h>
+#include <dtCore/stringactorproperty.h>
 
 #include <dtGame/actorupdatemessage.h>
 #include <dtGame/basemessages.h>
@@ -235,17 +235,17 @@ void TestPlayerProxy::BuildPropertyMap()
    TestPlayer* player = NULL;
    GetActor(player);
 
-   AddProperty(new dtDAL::StringActorProperty("mesh","mesh",
-      dtDAL::StringActorProperty::SetFuncType(player,&TestPlayer::SetModel),
-      dtDAL::StringActorProperty::GetFuncType(player,&TestPlayer::GetModel)));
+   AddProperty(new dtCore::StringActorProperty("mesh","mesh",
+      dtCore::StringActorProperty::SetFuncType(player,&TestPlayer::SetModel),
+      dtCore::StringActorProperty::GetFuncType(player,&TestPlayer::GetModel)));
 
-   AddProperty(new dtDAL::FloatActorProperty("velocity","velocity",
-      dtDAL::FloatActorProperty::SetFuncType(player,&TestPlayer::SetVelocity),
-      dtDAL::FloatActorProperty::GetFuncType(player,&TestPlayer::GetVelocity)));
+   AddProperty(new dtCore::FloatActorProperty("velocity","velocity",
+      dtCore::FloatActorProperty::SetFuncType(player,&TestPlayer::SetVelocity),
+      dtCore::FloatActorProperty::GetFuncType(player,&TestPlayer::GetVelocity)));
 
-   AddProperty(new dtDAL::FloatActorProperty("turnrate","turnrate",
-      dtDAL::FloatActorProperty::SetFuncType(player,&TestPlayer::SetTurnRate),
-      dtDAL::FloatActorProperty::GetFuncType(player,&TestPlayer::GetTurnRate)));
+   AddProperty(new dtCore::FloatActorProperty("turnrate","turnrate",
+      dtCore::FloatActorProperty::SetFuncType(player,&TestPlayer::SetTurnRate),
+      dtCore::FloatActorProperty::GetFuncType(player,&TestPlayer::GetTurnRate)));
 }
 
 //////////////////////////////////////////////////////////////////////////////

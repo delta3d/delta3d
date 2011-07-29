@@ -34,7 +34,7 @@
 #include <dtCore/camera.h>
 #include <dtCore/deltawin.h>
 
-#include <dtDAL/project.h>
+#include <dtCore/project.h>
 
 #include <dtGame/gamemanager.h>
 #include <dtGame/gameapplication.h>
@@ -109,7 +109,7 @@ void TestProceduralAnimation::OnStartup(dtGame::GameApplication& app)
    dtUtil::SetDataFilePathList(dataPath + ";" + dtUtil::GetDeltaRootPath() +
       "/examples/data" + ";" + dtUtil::GetDeltaRootPath() + "/examples/testProceduralAnimation/");
 
-   typedef std::vector<dtDAL::BaseActorObject*> ProxyContainer;
+   typedef std::vector<dtCore::BaseActorObject*> ProxyContainer;
    ProxyContainer proxies;
    ProxyContainer groundActor;
 
@@ -131,7 +131,7 @@ void TestProceduralAnimation::OnStartup(dtGame::GameApplication& app)
       app.GetWindow()->SetWindowTitle("TestProceduralAnimation");
 
       std::string context = dtUtil::GetDeltaRootPath() + "/examples/data/demoMap";
-      dtDAL::Project::GetInstance().SetContext(context, true);
+      dtCore::Project::GetInstance().SetContext(context, true);
 
       if (!mPerformanceTest)
       {

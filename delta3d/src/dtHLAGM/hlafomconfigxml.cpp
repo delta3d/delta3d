@@ -33,8 +33,8 @@
 #include <dtUtil/xercesutils.h>
 #include <dtUtil/log.h>
 
-#include <dtDAL/librarymanager.h>
-#include <dtDAL/actorproperty.h>
+#include <dtCore/librarymanager.h>
+#include <dtCore/actorproperty.h>
 #include <dtGame/gamemanager.h>
 #include <dtGame/messagefactory.h>
 
@@ -629,13 +629,13 @@ namespace dtHLAGM
          {
             if (mCurrentDDMPublishingCalculator.valid())
             {
-               dtDAL::ActorProperty* prop = mCurrentDDMPublishingCalculator->GetProperty(mCurrentDDMPropertyName);
+               dtCore::ActorProperty* prop = mCurrentDDMPublishingCalculator->GetProperty(mCurrentDDMPropertyName);
                if (prop != NULL)
                   prop->FromString(characters);
             }
             if (mCurrentDDMSubscriptionCalculator.valid())
             {
-               dtDAL::ActorProperty* prop = mCurrentDDMSubscriptionCalculator->GetProperty(mCurrentDDMPropertyName);
+               dtCore::ActorProperty* prop = mCurrentDDMSubscriptionCalculator->GetProperty(mCurrentDDMPropertyName);
                if (prop != NULL)
                   prop->FromString(characters);
             }
@@ -694,7 +694,7 @@ namespace dtHLAGM
       }
       else if (elementName == OBJECT_ACTOR_TYPE_ELEMENT)
       {
-         const dtDAL::ActorType* type = FindActorType(characters);
+         const dtCore::ActorType* type = FindActorType(characters);
          if (type == NULL)
          {
             std::ostringstream ss;
@@ -891,7 +891,7 @@ namespace dtHLAGM
       }
       else if (elementName == ONE_TO_MANY_GAME_DATATYPE_ELEMENT)
       {
-         dtDAL::DataType* dt = dtDAL::DataType::GetValueForName(characters);
+         dtCore::DataType* dt = dtCore::DataType::GetValueForName(characters);
          if (dt != NULL)
          {
             if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
@@ -903,7 +903,7 @@ namespace dtHLAGM
          else
          {
             std::ostringstream ss;
-            ss << "No dtDAL::DataType with name " << characters << " exists.";
+            ss << "No dtCore::DataType with name " << characters << " exists.";
             throw dtHLAGM::XmlConfigException( ss.str(), __FILE__, __LINE__);
          }
       }
@@ -988,7 +988,7 @@ namespace dtHLAGM
    }
 
    /////////////////////////////////////////////////////////////////////////////////////
-   const dtDAL::ActorType* HLAFOMConfigContentHandler::FindActorType(const std::string& actorTypeFullName)
+   const dtCore::ActorType* HLAFOMConfigContentHandler::FindActorType(const std::string& actorTypeFullName)
    {
       size_t index = actorTypeFullName.find_last_of('.');
 
@@ -1009,7 +1009,7 @@ namespace dtHLAGM
       //Make sure we have not tried to load this actor type already and failed.
       if (mMissingActorTypes.find(actorTypeFullName) == mMissingActorTypes.end())
       {
-         dtCore::RefPtr<const dtDAL::ActorType> actorType =
+         dtCore::RefPtr<const dtCore::ActorType> actorType =
             mTargetTranslator->GetGameManager()->FindActorType(actorTypeCategory, actorTypeName);
          if (actorType == NULL)
          {
@@ -1314,7 +1314,7 @@ namespace dtHLAGM
             mTargetTranslator->GetGameManager()->LoadActorRegistry(mLibName);
          }
       }
-      catch (const dtDAL::ProjectResourceErrorException& e)
+      catch (const dtCore::ProjectResourceErrorException& e)
       {
          mMissingLibraries.push_back(mLibName);
 
@@ -1370,7 +1370,7 @@ namespace dtHLAGM
             msg.str("");
             msg << "Actor plugin libraries must implement the function " <<
                " CreateParameterTranslator.";
-            throw dtDAL::ProjectResourceErrorException(msg.str(), __FILE__, __LINE__);
+            throw dtCore::ProjectResourceErrorException(msg.str(), __FILE__, __LINE__);
          }
 
           mTargetTranslator->AddParameterTranslator(*((ParameterTranslator*(*)())createFn)());

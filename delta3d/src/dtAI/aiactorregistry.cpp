@@ -25,24 +25,24 @@
 namespace dtAI
 {
 
-   extern "C" DT_AI_EXPORT dtDAL::ActorPluginRegistry* CreatePluginRegistry()
+   extern "C" DT_AI_EXPORT dtCore::ActorPluginRegistry* CreatePluginRegistry()
    {
       return new AIActorRegistry;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   extern "C" DT_AI_EXPORT void DestroyPluginRegistry(dtDAL::ActorPluginRegistry *registry)
+   extern "C" DT_AI_EXPORT void DestroyPluginRegistry(dtCore::ActorPluginRegistry *registry)
    {
       if (registry != NULL)
          delete registry;
    }
 
 
-   dtCore::RefPtr<dtDAL::ActorType> AIActorRegistry::AI_INTERFACE_ACTOR_TYPE(
-      new dtDAL::ActorType("AI Interface Actor", "dtai.AIInterface","Interface to the AI Library"));
+   dtCore::RefPtr<dtCore::ActorType> AIActorRegistry::AI_INTERFACE_ACTOR_TYPE(
+      new dtCore::ActorType("AI Interface Actor", "dtai.AIInterface","Interface to the AI Library"));
 
    AIActorRegistry::AIActorRegistry()
-      : dtDAL::ActorPluginRegistry("AIActors")
+      : dtCore::ActorPluginRegistry("AIActors")
    {
 
    }

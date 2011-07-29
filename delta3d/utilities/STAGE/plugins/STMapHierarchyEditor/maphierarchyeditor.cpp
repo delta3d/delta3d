@@ -5,8 +5,8 @@
 #include <dtCore/environment.h>
 #include <dtCore/transformable.h>
 
-#include <dtDAL/actorhierarchynode.h>
-#include <dtDAL/map.h>
+#include <dtCore/actorhierarchynode.h>
+#include <dtCore/map.h>
 
 #include <dtEditQt/editordata.h>
 #include <dtEditQt/editorevents.h>
@@ -56,25 +56,25 @@ void MapHierarchyEditorPlugin::closeEvent(QCloseEvent* event)
 ////////////////////////////////////////////////////////////////////////////////
 void MapHierarchyEditorPlugin::BuildTreeFromMap()
 {  
-   dtDAL::Map* m = dtEditQt::EditorData::GetInstance().getCurrentMap();
+   dtCore::Map* m = dtEditQt::EditorData::GetInstance().getCurrentMap();
    if (m != NULL)   
    {      
-      dtDAL::ActorHierarchyNode* currentHierNode = m->GetDrawableActorHierarchy();      
+      dtCore::ActorHierarchyNode* currentHierNode = m->GetDrawableActorHierarchy();      
       
       //The old way -- do this if there is no hierarchy defined in the map
       if(currentHierNode->GetNumChildren() == 0)
       {
          if (m->GetEnvironmentActor() != NULL)
          {
-            dtDAL::ActorHierarchyNode* envNode = new dtDAL::ActorHierarchyNode(m->GetEnvironmentActor(), currentHierNode);
+            dtCore::ActorHierarchyNode* envNode = new dtCore::ActorHierarchyNode(m->GetEnvironmentActor(), currentHierNode);
             currentHierNode->AddChild(envNode);
             currentHierNode = envNode;
          }      
 
-         const std::map<dtCore::UniqueId, dtCore::RefPtr<dtDAL::BaseActorObject> >& allProxies =
+         const std::map<dtCore::UniqueId, dtCore::RefPtr<dtCore::BaseActorObject> >& allProxies =
             m->GetAllProxies();
 
-         std::map<dtCore::UniqueId, dtCore::RefPtr<dtDAL::BaseActorObject> >::const_iterator it;
+         std::map<dtCore::UniqueId, dtCore::RefPtr<dtCore::BaseActorObject> >::const_iterator it;
          for (it = allProxies.begin(); it != allProxies.end(); ++it)
          {
             if (m->GetEnvironmentActor() != NULL &&
@@ -84,10 +84,10 @@ void MapHierarchyEditorPlugin::BuildTreeFromMap()
                continue;
             }            
            
-            dtDAL::BaseActorObject* baseActor = it->second;      
+            dtCore::BaseActorObject* baseActor = it->second;      
             if (baseActor->GetDrawable() != NULL)  //only adding Drawable Actors to the scene hierarchy
             {
-               currentHierNode->AddChild(new dtDAL::ActorHierarchyNode(baseActor, currentHierNode));
+               currentHierNode->AddChild(new dtCore::ActorHierarchyNode(baseActor, currentHierNode));
             }
          }// for 
       }
@@ -146,10 +146,10 @@ void MapHierarchyEditorPlugin::BuildTreeGUI()
    NodeButton* root = new NodeButton(NULL, this); 
    root->Place(0, 0);
 
-   dtDAL::Map* m = dtEditQt::EditorData::GetInstance().getCurrentMap();
+   dtCore::Map* m = dtEditQt::EditorData::GetInstance().getCurrentMap();
    if (m != NULL)   
    {
-      dtDAL::ActorHierarchyNode* currentHierNode = m->GetDrawableActorHierarchy();
+      dtCore::ActorHierarchyNode* currentHierNode = m->GetDrawableActorHierarchy();
      
       for (unsigned int i = 0; i < currentHierNode->GetNumChildren(); ++i)
       {
@@ -164,7 +164,7 @@ void MapHierarchyEditorPlugin::BuildTreeGUI()
 
 ////////////////////////////////////////////////////////////////////////////////
 void MapHierarchyEditorPlugin::BuildGUIBranch(NodeButton* GUIparent,
-                                              dtDAL::ActorHierarchyNode* branch)
+                                              dtCore::ActorHierarchyNode* branch)
 {
    //build a node, place it as a child of parent
    NodeButton* nextGUINode = new NodeButton(branch->GetBaseActorObject(), this);

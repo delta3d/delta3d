@@ -43,7 +43,7 @@ public slots:
 private:
 
    /** create actor, add it to mesh and set property with given name to mesh path */
-   void CreateActorFromMesh(const dtDAL::ActorType& type, const std::string& propertyName, const std::string& mesh);
+   void CreateActorFromMesh(const dtCore::ActorType& type, const std::string& propertyName, const std::string& mesh);
 
    dtEditQt::MainWindow* mMainWindow;
 

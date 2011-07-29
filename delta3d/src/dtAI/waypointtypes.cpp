@@ -23,7 +23,7 @@
 
 #include <dtAI/waypointpropertycontainer.h>
 
-#include <dtDAL/propertycontainer.h>
+#include <dtCore/propertycontainer.h>
 
 #include <dtUtil/templateutility.h>
 
@@ -34,10 +34,10 @@ namespace dtAI
    /////////////////////////////////////////////////////////////////////////////
    // WaypointTypes
    /////////////////////////////////////////////////////////////////////////////
-   dtCore::RefPtr<dtDAL::ObjectType> WaypointTypes::DEFAULT_WAYPOINT(new dtDAL::ObjectType("DefaultWaypoint", "EngineWaypointTypes"));
-   dtCore::RefPtr<dtDAL::ObjectType> WaypointTypes::NAMED_WAYPOINT(new dtDAL::ObjectType("NamedWaypoint", "EngineWaypointTypes"));
-   dtCore::RefPtr<dtDAL::ObjectType> WaypointTypes::TACTICAL_WAYPOINT(new dtDAL::ObjectType("TacticalWaypoint", "EngineWaypointTypes", "", WaypointTypes::NAMED_WAYPOINT.get()));
-   dtCore::RefPtr<dtDAL::ObjectType> WaypointTypes::WAYPOINT_COLLECTION(new dtDAL::ObjectType("WaypointCollection", "EngineWaypointTypes"))  ;
+   dtCore::RefPtr<dtCore::ObjectType> WaypointTypes::DEFAULT_WAYPOINT(new dtCore::ObjectType("DefaultWaypoint", "EngineWaypointTypes"));
+   dtCore::RefPtr<dtCore::ObjectType> WaypointTypes::NAMED_WAYPOINT(new dtCore::ObjectType("NamedWaypoint", "EngineWaypointTypes"));
+   dtCore::RefPtr<dtCore::ObjectType> WaypointTypes::TACTICAL_WAYPOINT(new dtCore::ObjectType("TacticalWaypoint", "EngineWaypointTypes", "", WaypointTypes::NAMED_WAYPOINT.get()));
+   dtCore::RefPtr<dtCore::ObjectType> WaypointTypes::WAYPOINT_COLLECTION(new dtCore::ObjectType("WaypointCollection", "EngineWaypointTypes"))  ;
 
    /////////////////////////////////////////////////////////////////////////////
    //NamedWaypoint
@@ -73,14 +73,14 @@ namespace dtAI
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   NamedWaypoint::NamedWaypoint(const dtDAL::ObjectType* ot)
+   NamedWaypoint::NamedWaypoint(const dtCore::ObjectType* ot)
       : BaseClass(ot)
    {
 
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   NamedWaypoint::NamedWaypoint(const dtDAL::ObjectType* ot, const osg::Vec3& pos)
+   NamedWaypoint::NamedWaypoint(const dtCore::ObjectType* ot, const osg::Vec3& pos)
       : BaseClass(ot)
       , mPosition(pos)
    {
@@ -88,7 +88,7 @@ namespace dtAI
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   NamedWaypoint::NamedWaypoint(const dtDAL::ObjectType* ot, const dtUtil::RefString& name)
+   NamedWaypoint::NamedWaypoint(const dtCore::ObjectType* ot, const dtUtil::RefString& name)
      : BaseClass(ot)
      , mName(name)
    {
@@ -96,7 +96,7 @@ namespace dtAI
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   NamedWaypoint::NamedWaypoint(const dtDAL::ObjectType* ot, const osg::Vec3& pos, const dtUtil::RefString& name)
+   NamedWaypoint::NamedWaypoint(const dtCore::ObjectType* ot, const osg::Vec3& pos, const dtUtil::RefString& name)
       : BaseClass(ot)
       , mName(name)
       , mPosition(pos)

@@ -22,8 +22,8 @@
 
 #include <dtActors/engineactorregistry.h>
 
-#include <dtDAL/enumactorproperty.h>
-#include <dtDAL/functor.h>
+#include <dtCore/enumactorproperty.h>
+#include <dtCore/functor.h>
 
 namespace dtActors
 {
@@ -76,10 +76,10 @@ namespace dtActors
       const std::string GROUPNAME = "Order Properties";
 
       //Add the failure type enumeration property.
-      AddProperty(new dtDAL::EnumActorProperty<TaskActorOrdered::FailureType>("Order Enforcement",
+      AddProperty(new dtCore::EnumActorProperty<TaskActorOrdered::FailureType>("Order Enforcement",
                   "Order Enforcement",
-                  dtDAL::EnumActorProperty<TaskActorOrdered::FailureType>::SetFuncType(&task,&TaskActorOrdered::SetFailureType),
-                  dtDAL::EnumActorProperty<TaskActorOrdered::FailureType>::GetFuncType(&task,&TaskActorOrdered::GetFailureType),
+                  dtCore::EnumActorProperty<TaskActorOrdered::FailureType>::SetFuncType(&task,&TaskActorOrdered::SetFailureType),
+                  dtCore::EnumActorProperty<TaskActorOrdered::FailureType>::GetFuncType(&task,&TaskActorOrdered::GetFailureType),
                   "Sets the way in which the ordered task actor handles out of order task updates.",
                   GROUPNAME));
    }

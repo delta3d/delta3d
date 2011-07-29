@@ -21,14 +21,14 @@
 #include <prefix/dtdirectornodesprefix.h>
 #include <dtDirectorNodes/staticmeshvalue.h>
 
-#include <dtDAL/resourceactorproperty.h>
+#include <dtCore/resourceactorproperty.h>
 
 namespace dtDirector
 {
    ///////////////////////////////////////////////////////////////////////////////////////
    StaticMeshValue::StaticMeshValue()
        : ValueNode()
-       , mValue(dtDAL::ResourceDescriptor::NULL_RESOURCE)
+       , mValue(dtCore::ResourceDescriptor::NULL_RESOURCE)
    {
       AddAuthor("Jeff P. Houde");
    }
@@ -49,23 +49,23 @@ namespace dtDirector
    {
       ValueNode::BuildPropertyMap();
 
-      mProperty = new dtDAL::ResourceActorProperty(
-         dtDAL::DataType::STATIC_MESH, "Resource", "Resource",
-         dtDAL::ResourceActorProperty::SetDescFuncType(this, &StaticMeshValue::SetValue),
-         dtDAL::ResourceActorProperty::GetDescFuncType(this, &StaticMeshValue::GetValue),
+      mProperty = new dtCore::ResourceActorProperty(
+         dtCore::DataType::STATIC_MESH, "Resource", "Resource",
+         dtCore::ResourceActorProperty::SetDescFuncType(this, &StaticMeshValue::SetValue),
+         dtCore::ResourceActorProperty::GetDescFuncType(this, &StaticMeshValue::GetValue),
          "The resource.");
       AddProperty(mProperty);
 
-      mInitialProperty = new dtDAL::ResourceActorProperty(
-         dtDAL::DataType::STATIC_MESH, "Initial Resource", "Initial Resource",
-         dtDAL::ResourceActorProperty::SetDescFuncType(this, &StaticMeshValue::SetInitialValue),
-         dtDAL::ResourceActorProperty::GetDescFuncType(this, &StaticMeshValue::GetInitialValue),
+      mInitialProperty = new dtCore::ResourceActorProperty(
+         dtCore::DataType::STATIC_MESH, "Initial Resource", "Initial Resource",
+         dtCore::ResourceActorProperty::SetDescFuncType(this, &StaticMeshValue::SetInitialValue),
+         dtCore::ResourceActorProperty::GetDescFuncType(this, &StaticMeshValue::GetInitialValue),
          "The initial resource.");
       AddProperty(mInitialProperty);
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void StaticMeshValue::SetValue(const dtDAL::ResourceDescriptor& value)
+   void StaticMeshValue::SetValue(const dtCore::ResourceDescriptor& value)
    {
       if (mValue != value)
       {
@@ -75,14 +75,14 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   dtDAL::ResourceDescriptor StaticMeshValue::GetValue()
+   dtCore::ResourceDescriptor StaticMeshValue::GetValue()
    {
       ValueNode::OnValueRetrieved();
       return mValue;
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void StaticMeshValue::SetInitialValue(const dtDAL::ResourceDescriptor& value)
+   void StaticMeshValue::SetInitialValue(const dtCore::ResourceDescriptor& value)
    {
       std::string oldValue = mInitialProperty->ToString();
       mInitialValue = value;
@@ -90,7 +90,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   dtDAL::ResourceDescriptor StaticMeshValue::GetInitialValue()
+   dtCore::ResourceDescriptor StaticMeshValue::GetInitialValue()
    {
       return mInitialValue;
    }

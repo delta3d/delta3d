@@ -35,48 +35,48 @@ EntityMap::~EntityMap()
 }
 
 //////////////////////////////////////////////////////////////////////////
-void EntityMap::SetEntityActorType(const DIS::EntityType& eid, const dtDAL::ActorType* at)
+void EntityMap::SetEntityActorType(const DIS::EntityType& eid, const dtCore::ActorType* at)
 {
    EntityMapping::iterator foundItr =  mEntityMap.find(eid);
 
    if (foundItr != mEntityMap.end())
    {
       //found it
-      std::pair<RefActorType, dtDAL::ResourceDescriptor> p = foundItr->second;
+      std::pair<RefActorType, dtCore::ResourceDescriptor> p = foundItr->second;
       p.first = at;
       foundItr->second = p;
    }
    else
    {
       //add it
-      std::pair<RefActorType, dtDAL::ResourceDescriptor> p(at,dtDAL::ResourceDescriptor::NULL_RESOURCE);
+      std::pair<RefActorType, dtCore::ResourceDescriptor> p(at,dtCore::ResourceDescriptor::NULL_RESOURCE);
       mEntityMap.insert(EntityMapping::value_type(eid, p));
    }
 }
 
 //////////////////////////////////////////////////////////////////////////
 void EntityMap::SetEntityResource(const DIS::EntityType& eid,
-                                 const dtDAL::ResourceDescriptor& resource)
+                                 const dtCore::ResourceDescriptor& resource)
 {
    EntityMapping::iterator foundItr =  mEntityMap.find(eid);
 
    if (foundItr != mEntityMap.end())
    {
       //found it
-      std::pair<RefActorType, dtDAL::ResourceDescriptor> p = foundItr->second;
+      std::pair<RefActorType, dtCore::ResourceDescriptor> p = foundItr->second;
       p.second = resource;
       foundItr->second = p;
    }
    else
    {
       //add it
-      std::pair<RefActorType, dtDAL::ResourceDescriptor> p(NULL,resource);
+      std::pair<RefActorType, dtCore::ResourceDescriptor> p(NULL,resource);
       mEntityMap.insert(EntityMapping::value_type(eid, p));
    }
 }
 
 //////////////////////////////////////////////////////////////////////////
-const dtDAL::ActorType* EntityMap::GetMappedActorType(const DIS::EntityType& entityType) const
+const dtCore::ActorType* EntityMap::GetMappedActorType(const DIS::EntityType& entityType) const
 {
    EntityMapping::const_iterator iter = mEntityMap.find(entityType);
    if (iter != mEntityMap.end())
@@ -95,7 +95,7 @@ void EntityMap::RemoveEntityActorType(const DIS::EntityType& eid)
    EntityMapping::iterator iter = mEntityMap.find(eid);
    if (iter != mEntityMap.end())
    {
-      if ((iter->second.second == dtDAL::ResourceDescriptor::NULL_RESOURCE ||
+      if ((iter->second.second == dtCore::ResourceDescriptor::NULL_RESOURCE ||
            iter->second.second.IsEmpty()))
       {
          //found in the map, but no resource mapped to it, so we're ok to remove
@@ -112,7 +112,7 @@ void EntityMap::RemoveEntityActorType(const DIS::EntityType& eid)
 }
 
 //////////////////////////////////////////////////////////////////////////
-const dtDAL::ResourceDescriptor& EntityMap::GetMappedResource(const DIS::EntityType& entityType) const
+const dtCore::ResourceDescriptor& EntityMap::GetMappedResource(const DIS::EntityType& entityType) const
 {
    EntityMapping::const_iterator iter = mEntityMap.find(entityType);
    if (iter != mEntityMap.end())
@@ -141,13 +141,13 @@ void EntityMap::RemoveEntityResource(const DIS::EntityType& eid)
       {
          //it still has a valid ActorType assigned, so we'll just remove
          //the ResourceDescriptor
-         iter->second.second = dtDAL::ResourceDescriptor::NULL_RESOURCE;
+         iter->second.second = dtCore::ResourceDescriptor::NULL_RESOURCE;
       }
    }   
 }
 
 //////////////////////////////////////////////////////////////////////////
-const dtDAL::ActorType* EntityMap::GetBestMatchedActorType(const DIS::EntityType& entityType) const
+const dtCore::ActorType* EntityMap::GetBestMatchedActorType(const DIS::EntityType& entityType) const
 {
    EntityMapping::const_iterator itr = FindBestMatchedEntityType(entityType);
 
@@ -160,7 +160,7 @@ const dtDAL::ActorType* EntityMap::GetBestMatchedActorType(const DIS::EntityType
 }
 
 //////////////////////////////////////////////////////////////////////////
-const dtDAL::ResourceDescriptor& EntityMap::GetBestMatchedResource(const DIS::EntityType& entityType) const
+const dtCore::ResourceDescriptor& EntityMap::GetBestMatchedResource(const DIS::EntityType& entityType) const
 {
    EntityMapping::const_iterator itr = FindBestMatchedEntityType(entityType);
 
@@ -169,7 +169,7 @@ const dtDAL::ResourceDescriptor& EntityMap::GetBestMatchedResource(const DIS::En
       return itr->second.second;
    }
 
-   return dtDAL::ResourceDescriptor::NULL_RESOURCE;
+   return dtCore::ResourceDescriptor::NULL_RESOURCE;
 }
 
 //////////////////////////////////////////////////////////////////////////

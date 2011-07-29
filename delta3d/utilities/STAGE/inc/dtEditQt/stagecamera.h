@@ -39,7 +39,7 @@
 #include <dtCore/refptr.h>
 #include <dtCore/camera.h>
 
-#include <dtDAL/transformableactorproxy.h>
+#include <dtCore/transformableactorproxy.h>
 #include <dtEditQt/export.h>
 
 namespace dtEditQt
@@ -230,13 +230,13 @@ namespace dtEditQt
        * Attaches a transformableactorproxy to the camera.
        * @param proxy The proxy to attach.
        */
-      void attachActorProxy(dtDAL::TransformableActorProxy* proxy);
+      void attachActorProxy(dtCore::TransformableActorProxy* proxy);
 
       /**
        * Removes a transformableactorproxy that is currently attached to the camera.
        * @param proxy The proxy to remove from this camera.
        */
-      void detachActorProxy(dtDAL::TransformableActorProxy* proxy);
+      void detachActorProxy(dtCore::TransformableActorProxy* proxy);
 
       /**
        * Removes all actor proxies currently attached to this camera.
@@ -267,7 +267,7 @@ namespace dtEditQt
    protected:
       struct ActorAttachment
       {
-         dtCore::RefPtr<dtDAL::TransformableActorProxy> mActor;
+         dtCore::RefPtr<dtCore::TransformableActorProxy> mActor;
          osg::Vec3 mPositionOffset;
          osg::Quat mRotationOffset;
          osg::Vec3 mInitialCameraHPR;

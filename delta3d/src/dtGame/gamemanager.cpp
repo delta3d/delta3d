@@ -44,10 +44,10 @@
 #include <dtGame/gmimpl.h>
 #include <dtGame/gmsettings.h>
 
-#include <dtDAL/actortype.h>
-#include <dtDAL/project.h>
-#include <dtDAL/map.h>
-#include <dtDAL/librarymanager.h>
+#include <dtCore/actortype.h>
+#include <dtCore/project.h>
+#include <dtCore/map.h>
+#include <dtCore/librarymanager.h>
 
 #include <dtCore/system.h>
 #include <dtCore/scene.h>
@@ -129,25 +129,25 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::GetActorTypes(std::vector<const dtDAL::ActorType*>& actorTypes)
+   void GameManager::GetActorTypes(std::vector<const dtCore::ActorType*>& actorTypes)
    {
       mGMImpl->mLibMgr->GetActorTypes(actorTypes);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   const dtDAL::ActorType* GameManager::FindActorType(const std::string& category, const std::string& name)
+   const dtCore::ActorType* GameManager::FindActorType(const std::string& category, const std::string& name)
    {
       return mGMImpl->mLibMgr->FindActorType(category, name);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   dtDAL::ActorPluginRegistry* GameManager::GetRegistry(const std::string& name)
+   dtCore::ActorPluginRegistry* GameManager::GetRegistry(const std::string& name)
    {
       return mGMImpl->mLibMgr->GetRegistry(name);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   dtDAL::ActorPluginRegistry* GameManager::GetRegistryForType(dtDAL::ActorType& actorType)
+   dtCore::ActorPluginRegistry* GameManager::GetRegistryForType(dtCore::ActorType& actorType)
    {
       return mGMImpl->mLibMgr->GetRegistryForType(actorType);
    }
@@ -1082,7 +1082,7 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   dtCore::RefPtr<dtGame::GameActorProxy> GameManager::CreateRemoteGameActor(const dtDAL::ActorType& actorType)
+   dtCore::RefPtr<dtGame::GameActorProxy> GameManager::CreateRemoteGameActor(const dtCore::ActorType& actorType)
    {
       dtCore::RefPtr<dtGame::GameActorProxy> result;
       CreateActor(actorType, result);
@@ -1102,11 +1102,11 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   dtCore::RefPtr<dtDAL::BaseActorObject> GameManager::CreateActor(const dtDAL::ActorType& actorType)
+   dtCore::RefPtr<dtCore::BaseActorObject> GameManager::CreateActor(const dtCore::ActorType& actorType)
    {
       try
       {
-         dtCore::RefPtr<dtDAL::BaseActorObject> ap = dtDAL::LibraryManager::GetInstance().CreateActor(actorType).get();
+         dtCore::RefPtr<dtCore::BaseActorObject> ap = dtCore::LibraryManager::GetInstance().CreateActor(actorType).get();
          if (ap->IsInstanceOf("dtGame::GameActor"))
          {
             dtGame::GameActorProxy* gap = dynamic_cast<dtGame::GameActorProxy*>(ap.get());
@@ -1131,9 +1131,9 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   dtCore::RefPtr<dtDAL::BaseActorObject> GameManager::CreateActor(const std::string& category, const std::string& name)
+   dtCore::RefPtr<dtCore::BaseActorObject> GameManager::CreateActor(const std::string& category, const std::string& name)
    {
-      dtCore::RefPtr<const dtDAL::ActorType> type = FindActorType(category, name);
+      dtCore::RefPtr<const dtCore::ActorType> type = FindActorType(category, name);
       if (!type.valid())
       {
          throw dtGame::UnknownActorTypeException(
@@ -1144,7 +1144,7 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::AddActor(dtDAL::BaseActorObject& actorProxy)
+   void GameManager::AddActor(dtCore::BaseActorObject& actorProxy)
    {
       if (actorProxy.GetId().ToString().empty())
       {
@@ -1280,12 +1280,12 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   dtCore::RefPtr<dtDAL::BaseActorObject> GameManager::CreateActorFromPrototype(const dtCore::UniqueId& uniqueID)
+   dtCore::RefPtr<dtCore::BaseActorObject> GameManager::CreateActorFromPrototype(const dtCore::UniqueId& uniqueID)
    {
-      dtDAL::BaseActorObject* ourObject = FindPrototypeByID(uniqueID);
+      dtCore::BaseActorObject* ourObject = FindPrototypeByID(uniqueID);
       if (ourObject != NULL)
       {
-         dtCore::RefPtr<dtDAL::BaseActorObject> temp = ourObject->Clone().get();
+         dtCore::RefPtr<dtCore::BaseActorObject> temp = ourObject->Clone().get();
          dtGame::GameActorProxy* gap = dynamic_cast<dtGame::GameActorProxy*>(temp.get());
          if (gap != NULL)
          {
@@ -1330,7 +1330,7 @@ namespace dtGame
          // Internal pointer is not valid, we are setting a new environment
          // We need to remove all the drawables from the scene and add them
          // to the new environment
-         std::vector<dtDAL::BaseActorObject*> actors;
+         std::vector<dtCore::BaseActorObject*> actors;
          GetAllActors(actors);
          mGMImpl->mScene->RemoveAllDrawables();
          mGMImpl->mScene->UseSceneLight(true);
@@ -1395,7 +1395,7 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::DeleteActor(dtDAL::BaseActorObject& actorProxy)
+   void GameManager::DeleteActor(dtCore::BaseActorObject& actorProxy)
    {
       // Is it an environment actor proxy?
       IEnvGameActorProxy* eap = dynamic_cast<IEnvGameActorProxy*>(&actorProxy);
@@ -1526,7 +1526,7 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::GetUsedActorTypes(std::set<const dtDAL::ActorType*>& toFill) const
+   void GameManager::GetUsedActorTypes(std::set<const dtCore::ActorType*>& toFill) const
    {
       toFill.clear();
 
@@ -1565,7 +1565,7 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::GetAllNonGameActors(std::vector<dtDAL::BaseActorObject*>& toFill) const
+   void GameManager::GetAllNonGameActors(std::vector<dtCore::BaseActorObject*>& toFill) const
    {
       toFill.clear();
       toFill.reserve(mGMImpl->mBaseActorObjectMap.size());
@@ -1578,7 +1578,7 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::GetAllActors(std::vector<dtDAL::BaseActorObject*>& toFill) const
+   void GameManager::GetAllActors(std::vector<dtCore::BaseActorObject*>& toFill) const
    {
       toFill.clear();
       toFill.reserve(mGMImpl->mGameActorProxyMap.size() + mGMImpl->mBaseActorObjectMap.size() + mGMImpl->mPrototypeActors.size());
@@ -1608,7 +1608,7 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::GetAllPrototypes(std::vector<dtDAL::BaseActorObject*>& toFill) const
+   void GameManager::GetAllPrototypes(std::vector<dtCore::BaseActorObject*>& toFill) const
    {
       toFill.clear();
       toFill.reserve(mGMImpl->mPrototypeActors.size());
@@ -1641,7 +1641,7 @@ namespace dtGame
       {
       }
 
-      bool operator()(dtDAL::BaseActorObject& proxy)
+      bool operator()(dtCore::BaseActorObject& proxy)
       {
          const std::string& name = proxy.GetName();
          return dtUtil::Match(const_cast<char*>(mName.c_str()), const_cast<char*>(name.c_str()));
@@ -1651,7 +1651,7 @@ namespace dtGame
    };
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::FindActorsByName(const std::string& name, std::vector<dtDAL::BaseActorObject*>& toFill) const
+   void GameManager::FindActorsByName(const std::string& name, std::vector<dtCore::BaseActorObject*>& toFill) const
    {
       toFill.reserve(mGMImpl->mGameActorProxyMap.size() + mGMImpl->mBaseActorObjectMap.size());
 
@@ -1663,21 +1663,21 @@ namespace dtGame
    class GMTypeMatchSearchFunc
    {
    public:
-      GMTypeMatchSearchFunc(const dtDAL::ActorType& type)
+      GMTypeMatchSearchFunc(const dtCore::ActorType& type)
          : mType(type)
       {
       }
 
-      bool operator()(dtDAL::BaseActorObject& proxy)
+      bool operator()(dtCore::BaseActorObject& proxy)
       {
          return proxy.GetActorType().InstanceOf(mType);
       }
 
-      const dtDAL::ActorType& mType;
+      const dtCore::ActorType& mType;
    };
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::FindActorsByType(const dtDAL::ActorType& type, std::vector<dtDAL::BaseActorObject*>& toFill) const
+   void GameManager::FindActorsByType(const dtCore::ActorType& type, std::vector<dtCore::BaseActorObject*>& toFill) const
    {
       toFill.reserve(mGMImpl->mGameActorProxyMap.size() + mGMImpl->mBaseActorObjectMap.size());
 
@@ -1694,7 +1694,7 @@ namespace dtGame
       {
       }
 
-      bool operator()(dtDAL::BaseActorObject& proxy)
+      bool operator()(dtCore::BaseActorObject& proxy)
       {
          return proxy.IsInstanceOf(mType);
       }
@@ -1704,7 +1704,7 @@ namespace dtGame
 
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::FindActorsByClassName(const std::string& className,
-      std::vector<dtDAL::BaseActorObject*>& toFill) const
+      std::vector<dtCore::BaseActorObject*>& toFill) const
    {
       if (!className.empty())
       {
@@ -1719,7 +1719,7 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::FindPrototypesByActorType(const dtDAL::ActorType& type, std::vector<dtDAL::BaseActorObject*>& toFill) const
+   void GameManager::FindPrototypesByActorType(const dtCore::ActorType& type, std::vector<dtCore::BaseActorObject*>& toFill) const
    {
       toFill.reserve(mGMImpl->mPrototypeActors.size());
 
@@ -1728,7 +1728,7 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::FindPrototypesByName(const std::string& name, std::vector<dtDAL::BaseActorObject*>& toFill) const
+   void GameManager::FindPrototypesByName(const std::string& name, std::vector<dtCore::BaseActorObject*>& toFill) const
    {
       toFill.reserve(mGMImpl->mPrototypeActors.size());
 
@@ -1737,7 +1737,7 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   dtDAL::BaseActorObject* GameManager::FindPrototypeByID(const dtCore::UniqueId& uniqueID)
+   dtCore::BaseActorObject* GameManager::FindPrototypeByID(const dtCore::UniqueId& uniqueID)
    {
       GMImpl::GameActorMap::const_iterator itor = mGMImpl->mPrototypeActors.find(uniqueID);
       if (itor != mGMImpl->mPrototypeActors.end())
@@ -1756,9 +1756,9 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   dtDAL::BaseActorObject* GameManager::FindActorById(const dtCore::UniqueId& id) const
+   dtCore::BaseActorObject* GameManager::FindActorById(const dtCore::UniqueId& id) const
    {
-      dtDAL::BaseActorObject* actorProxy = FindGameActorById(id);
+      dtCore::BaseActorObject* actorProxy = FindGameActorById(id);
 
       if (actorProxy != NULL)
       {
@@ -1845,7 +1845,7 @@ namespace dtGame
          // check whether this is a good map on the current project
          try
          {
-            dtDAL::Project::GetInstance().GetMap(*mapItor);
+            dtCore::Project::GetInstance().GetMap(*mapItor);
          }         
          catch (const dtUtil::Exception& ex)
          {
@@ -1898,15 +1898,15 @@ namespace dtGame
 
             // Get the map - no need to check further for map validity,
          // as it has already been loaded...
-         dtDAL::Map& map = dtDAL::Project::GetInstance().GetMap(*mapItor);
+         dtCore::Map& map = dtCore::Project::GetInstance().GetMap(*mapItor);
 
          // loop on all map's actors
-         std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> > proxies;
+         std::vector<dtCore::RefPtr<dtCore::BaseActorObject> > proxies;
          map.GetAllProxies(proxies);
 
          // this call will actually fire the INFO_ACTOR_DELETE message for every deleted actor
          // and will delete actors at the end of this frame.
-         std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> >::iterator i, iend;
+         std::vector<dtCore::RefPtr<dtCore::BaseActorObject> >::iterator i, iend;
          i = proxies.begin();
          iend = proxies.end();
          for (; i != iend; ++i)
@@ -2172,13 +2172,13 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::SetProjectContext(const std::string& context, bool readOnly)
    {
-      dtDAL::Project::GetInstance().SetContext(context, readOnly);
+      dtCore::Project::GetInstance().SetContext(context, readOnly);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    const std::string& GameManager::GetProjectContext() const
    {
-      return dtDAL::Project::GetInstance().GetContext();
+      return dtCore::Project::GetInstance().GetContext();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -2186,7 +2186,7 @@ namespace dtGame
    {
       if (!mGMImpl->mLoadedMaps.empty())
       {
-         dtDAL::Project& project = dtDAL::Project::GetInstance();
+         dtCore::Project& project = dtCore::Project::GetInstance();
 
          project.CloseAllMaps(true);
          // clear the maps vector because if someone happens to call shutdown again,

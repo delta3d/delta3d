@@ -32,8 +32,8 @@
 #include <dtEditQt/editordata.h>
 #include <dtEditQt/groupuiregistry.h>
 #include <dtEditQt/baseuiplugin.h>
-#include <dtDAL/map.h>
-#include <dtDAL/datatype.h>
+#include <dtCore/map.h>
+#include <dtCore/datatype.h>
 #include <dtUtil/log.h>
 
 #include <QtCore/QObject>
@@ -163,24 +163,24 @@ namespace dtEditQt
       mMainWindow = window;
    }
    //////////////////////////////////////////////////////////////////////////////
-   void EditorData::setCurrentMap(dtDAL::Map* map)
+   void EditorData::setCurrentMap(dtCore::Map* map)
    {
       mMap = map;
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   dtDAL::Map* EditorData::getCurrentMap()
+   dtCore::Map* EditorData::getCurrentMap()
    {
       return mMap.get();
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   void EditorData::GetSelectedActors(std::vector<dtDAL::BaseActorObject*>& toFill)
+   void EditorData::GetSelectedActors(std::vector<dtCore::BaseActorObject*>& toFill)
    {
       PropertyEditor* propEditor = getMainWindow()->GetPropertyEditor();
       if(propEditor != NULL)
       {
-         std::vector<dtDAL::PropertyContainer*> toFillPC;
+         std::vector<dtCore::PropertyContainer*> toFillPC;
 
          propEditor->GetSelectedPropertyContainers(toFillPC);
 
@@ -188,150 +188,150 @@ namespace dtEditQt
          toFill.reserve(toFillPC.size());
          for (size_t i = 0; i != toFillPC.size(); ++i)
          {
-            toFill.push_back(static_cast<dtDAL::BaseActorObject*>(toFillPC[i]));
+            toFill.push_back(static_cast<dtCore::BaseActorObject*>(toFillPC[i]));
          }
 
       }
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   void EditorData::setCurrentSoundResource(dtDAL::ResourceDescriptor newResource)
+   void EditorData::setCurrentSoundResource(dtCore::ResourceDescriptor newResource)
    {
       mSoundResource = newResource;
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   void EditorData::setCurrentMeshResource(dtDAL::ResourceDescriptor newResource)
+   void EditorData::setCurrentMeshResource(dtCore::ResourceDescriptor newResource)
    {
       mMeshResource = newResource;
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   void EditorData::setCurrentTextureResource(dtDAL::ResourceDescriptor newResource)
+   void EditorData::setCurrentTextureResource(dtCore::ResourceDescriptor newResource)
    {
       mTextureResource = newResource;
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   void EditorData::setCurrentParticleResource(dtDAL::ResourceDescriptor newResource)
+   void EditorData::setCurrentParticleResource(dtCore::ResourceDescriptor newResource)
    {
       mParticleResource = newResource;
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   void EditorData::setCurrentTerrainResource(dtDAL::ResourceDescriptor newResource)
+   void EditorData::setCurrentTerrainResource(dtCore::ResourceDescriptor newResource)
    {
       mTerrainResource = newResource;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void EditorData::setCurrentPrefabResource(dtDAL::ResourceDescriptor newResource)
+   void EditorData::setCurrentPrefabResource(dtCore::ResourceDescriptor newResource)
    {
       mPrefabResource = newResource;
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   void EditorData::setCurrentSkeletalModelResource(const dtDAL::ResourceDescriptor selectedResource)
+   void EditorData::setCurrentSkeletalModelResource(const dtCore::ResourceDescriptor selectedResource)
    {
       mSkeletalModelResource = selectedResource;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void EditorData::setCurrentShaderResource(const dtDAL::ResourceDescriptor selectedResource)
+   void EditorData::setCurrentShaderResource(const dtCore::ResourceDescriptor selectedResource)
    {
       mShaderResource = selectedResource;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void EditorData::setCurrentDirectorResource(const dtDAL::ResourceDescriptor selectedResource)
+   void EditorData::setCurrentDirectorResource(const dtCore::ResourceDescriptor selectedResource)
    {
       mDirectorResource = selectedResource;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void EditorData::setCurrentResource(const dtDAL::DataType& type,
-                                       const dtDAL::ResourceDescriptor& selectedResource)
+   void EditorData::setCurrentResource(const dtCore::DataType& type,
+                                       const dtCore::ResourceDescriptor& selectedResource)
    {
-      if (type == dtDAL::DataType::SOUND)
+      if (type == dtCore::DataType::SOUND)
       {
          setCurrentSoundResource(selectedResource);
       }
-      else if (type == dtDAL::DataType::STATIC_MESH)
+      else if (type == dtCore::DataType::STATIC_MESH)
       {
          setCurrentMeshResource(selectedResource);
       }
-      else if (type == dtDAL::DataType::TEXTURE)
+      else if (type == dtCore::DataType::TEXTURE)
       {
          setCurrentTextureResource(selectedResource);
       }
-      else if (type == dtDAL::DataType::PARTICLE_SYSTEM)
+      else if (type == dtCore::DataType::PARTICLE_SYSTEM)
       {
          setCurrentParticleResource(selectedResource);
       }
-      else if (type == dtDAL::DataType::TERRAIN)
+      else if (type == dtCore::DataType::TERRAIN)
       {
          setCurrentTerrainResource(selectedResource);
       }
-      else if (type == dtDAL::DataType::SKELETAL_MESH)
+      else if (type == dtCore::DataType::SKELETAL_MESH)
       {
          setCurrentSkeletalModelResource(selectedResource);
       }
-      else if (type == dtDAL::DataType::SHADER)
+      else if (type == dtCore::DataType::SHADER)
       {
          setCurrentShaderResource(selectedResource);
       }
-      else if (type == dtDAL::DataType::PREFAB)
+      else if (type == dtCore::DataType::PREFAB)
       {
          setCurrentPrefabResource(selectedResource);
       }
-      else if (type == dtDAL::DataType::DIRECTOR)
+      else if (type == dtCore::DataType::DIRECTOR)
       {
          setCurrentDirectorResource(selectedResource);
       }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   dtDAL::ResourceDescriptor EditorData::getCurrentResource(const dtDAL::DataType& type)
+   dtCore::ResourceDescriptor EditorData::getCurrentResource(const dtCore::DataType& type)
    {
-      if (type == dtDAL::DataType::SOUND)
+      if (type == dtCore::DataType::SOUND)
       {
          return getCurrentSoundResource();
       }
-      else if (type == dtDAL::DataType::STATIC_MESH)
+      else if (type == dtCore::DataType::STATIC_MESH)
       {
          return getCurrentMeshResource();
       }
-      else if (type == dtDAL::DataType::TEXTURE)
+      else if (type == dtCore::DataType::TEXTURE)
       {
          return getCurrentTextureResource();
       }
-      else if (type == dtDAL::DataType::PARTICLE_SYSTEM)
+      else if (type == dtCore::DataType::PARTICLE_SYSTEM)
       {
          return getCurrentParticleResource();
       }
-      else if (type == dtDAL::DataType::TERRAIN)
+      else if (type == dtCore::DataType::TERRAIN)
       {
          return getCurrentTerrainResource();
       }
-      else if (type == dtDAL::DataType::SKELETAL_MESH)
+      else if (type == dtCore::DataType::SKELETAL_MESH)
       {
          return getCurrentSkeletalModelResource();
       }
-      else if (type == dtDAL::DataType::SHADER)
+      else if (type == dtCore::DataType::SHADER)
       {
          return getCurrentShaderResource();
       }
-      else if (type == dtDAL::DataType::PREFAB)
+      else if (type == dtCore::DataType::PREFAB)
       {
          return getCurrentPrefabResource();
       }
-      else if (type == dtDAL::DataType::DIRECTOR)
+      else if (type == dtCore::DataType::DIRECTOR)
       {
          return getCurrentDirectorResource();
       }
       else
       {
-         return dtDAL::ResourceDescriptor();
+         return dtCore::ResourceDescriptor();
       }
    }
 } // namespace dtEditQt

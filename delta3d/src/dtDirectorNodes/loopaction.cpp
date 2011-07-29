@@ -23,7 +23,7 @@
 
 #include <dtDirector/director.h>
 
-#include <dtDAL/floatactorproperty.h>
+#include <dtCore/floatactorproperty.h>
 
 namespace dtDirector
 {
@@ -68,17 +68,17 @@ namespace dtDirector
    {
       LatentActionNode::BuildPropertyMap();
 
-      dtDAL::FloatActorProperty* periodProp = new dtDAL::FloatActorProperty(
+      dtCore::FloatActorProperty* periodProp = new dtCore::FloatActorProperty(
          "LoopPeriod", "Loop Period",
-         dtDAL::FloatActorProperty::SetFuncType(this, &LoopAction::SetLoopPeriod),
-         dtDAL::FloatActorProperty::GetFuncType(this, &LoopAction::GetLoopPeriod),
+         dtCore::FloatActorProperty::SetFuncType(this, &LoopAction::SetLoopPeriod),
+         dtCore::FloatActorProperty::GetFuncType(this, &LoopAction::GetLoopPeriod),
          "Sets the number of seconds per cycle", "");
       AddProperty(periodProp);
 
-      dtDAL::FloatActorProperty* deltaProp = new dtDAL::FloatActorProperty(
+      dtCore::FloatActorProperty* deltaProp = new dtCore::FloatActorProperty(
          "DeltaTime", "Time Delta",
-         dtDAL::FloatActorProperty::SetFuncType(this, &LoopAction::SetDeltaTime),
-         dtDAL::FloatActorProperty::GetFuncType(this, &LoopAction::GetDeltaTime),
+         dtCore::FloatActorProperty::SetFuncType(this, &LoopAction::SetDeltaTime),
+         dtCore::FloatActorProperty::GetFuncType(this, &LoopAction::GetDeltaTime),
          "Time in seconds since last update.", "");
       AddProperty(deltaProp);
 

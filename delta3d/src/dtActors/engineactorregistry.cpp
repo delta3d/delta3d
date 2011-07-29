@@ -68,62 +68,62 @@
 
 namespace dtActors
 { // "display name", "category", "description/tooltip"
-   dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::TASK_ACTOR_TYPE(new dtDAL::ActorType("Task Actor", "dtcore.Tasks","Generic task actor."));
-   dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::GAME_EVENT_TASK_ACTOR_TYPE(new dtDAL::ActorType("GameEvent Task Actor", "dtcore.Tasks","Game event task actor.", TASK_ACTOR_TYPE.get()));
-   dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::ROLL_UP_TASK_ACTOR_TYPE(new dtDAL::ActorType("Rollup Task Actor", "dtcore.Tasks", "Rollup or container based task actor.", TASK_ACTOR_TYPE.get()));
-   dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::ORDERED_TASK_ACTOR_TYPE(new dtDAL::ActorType("Ordered Task Actor", "dtcore.Tasks", "Ordered task actor similar to a roll up task actor but with a constraint on the order in which sub tasks may be completed.", TASK_ACTOR_TYPE.get()));
-   dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::INFINITE_LIGHT_ACTOR_TYPE(new dtDAL::ActorType("Infinite Light", "dtcore.Lights","Directional light actor."));
-   dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::POSITIONAL_LIGHT_ACTOR_TYPE(new dtDAL::ActorType("Positional Light", "dtcore.Lights", "Positional light actor."));
-   dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::SPOT_LIGHT_ACTOR_TYPE(new dtDAL::ActorType("Spotlight", "dtcore.Lights", "Spotlight light actor."));
-   dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::STATIC_MESH_ACTOR_TYPE(new dtDAL::ActorType("Static Mesh", "dtcore", "Loadable static mesh actor."));
-   dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::PARTICLE_SYSTEM_ACTOR_TYPE(new dtDAL::ActorType("Particle System", "dtcore", "dtCore::ParticleSystem actor."));
-   dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::INFINITE_TERRAIN_ACTOR_TYPE(new dtDAL::ActorType("Infinite Terrain", "dtcore.Terrain", "dtCore::InfiniteTerrain actor."));
-   dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::MESH_TERRAIN_ACTOR_TYPE(new dtDAL::ActorType("Mesh Terrain", "dtcore.Terrain", "An terrain actor who's geometry is represented via a mesh file."));
-   dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::SKY_BOX_ACTOR_TYPE(new dtDAL::ActorType("Sky Box", "dtcore.Environment", "dtCore::SkyBox Actor."));
-   dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::SKY_DOME_ACTOR_TYPE(new dtDAL::ActorType("Sky Dome", "dtcore.Environment", "dtCore::SkyDome Actor."));
-   dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::BEZIER_NODE_ACTOR_TYPE(new dtDAL::ActorType("Bezier Node", "dtcore.Curve", "dtABC::BezierNode Actor"));
-   dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::BEZIER_CONTROL_POINT_ACTOR_TYPE(new dtDAL::ActorType("Bezier Control Point", "dtcore.Curve", "dtABC::BezierControlPoint Actor"));
-   dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::BEZIER_CONTROLLER_ACTOR_TYPE(new dtDAL::ActorType("Bezier Controller", "dtcore.Action", "dtABC::BezierController Actor"));
-   dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::CLOUD_PLANE_ACTOR_TYPE(new dtDAL::ActorType("Cloud Plane", "dtcore.Environment", "dtCore::CloudPlane Actor."));
-   dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::CLOUD_DOME_ACTOR_TYPE(new dtDAL::ActorType("Cloud Dome", "dtcore.Environment", "dtCore::CloudDome Actor."));
-   dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::TRIGGER_ACTOR_TYPE(new dtDAL::ActorType("Trigger", "dtcore.Triggers", "dtABC::Trigger Actor."));
-   dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::PROXIMITY_TRIGGER_ACTOR_TYPE(new dtDAL::ActorType("Proximity Trigger","dtcore.Triggers", "dtABC::ProximityTrigger Actor."));
-   dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::AUTOTRIGGER_ACTOR_TYPE(new dtDAL::ActorType("AutoTrigger", "dtcore.Triggers", "dtABC::AutoTrigger Actor."));
-   dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::CAMERA_ACTOR_TYPE(new dtDAL::ActorType("Camera", "dtcore", "dtCore::Camera Actor."));
-   dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::CAMERA_DATA_ACTOR_TYPE(new dtDAL::ActorType("CameraData", "dtActors", "dtActors::CameraData Actor."));
-   dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::TRIPOD_ACTOR_TYPE(new dtDAL::ActorType("Tripod", "dtcore", "dtCore::Tripod Actor."));
-   dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::WEATHER_ENVIRONMENT_ACTOR_TYPE(new dtDAL::ActorType("WeatherEnvironment", "dtcore.Environment", "dtCore::Environment controlled by dtABC::Weather"));
-   dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::SKYDOME_ENVIRONMENT_ACTOR_TYPE(new dtDAL::ActorType("SkyDomeEnvironment", "dtcore.Environment", "dtCore::Environment plus a SkyDome"));
-   dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::COORDINATE_CONFIG_ACTOR_TYPE(new dtDAL::ActorType("Coordinate Config", "dtutil", "dtUtil::Coordinates Actor"));
-   dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::PLAYER_START_ACTOR_TYPE(new dtDAL::ActorType("Player Start", "dtcore", "This can be dropped into a map and the player actor will spawn himself there on startup"));
-   dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::WAYPOINT_VOLUME_ACTOR_TYPE(new dtDAL::ActorType("WaypointVolume", "dtai.waypoint", "dtActos::Waypoint VolumeActor"));
-   dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::LABEL_ACTOR_TYPE(new dtDAL::ActorType("Label", "dtcore", "Simple 3D label drawable."));
-   dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::GAME_MESH_ACTOR_TYPE(new dtDAL::ActorType("Game Mesh Actor", "dtcore.Game.Actors", "Game Actor that supports a single Mesh geometry"));
-   dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::DISTANCE_SENSOR_ACTOR_TYPE(new dtDAL::ActorType("Distance Sensor", "dtai.Game.Actors", "Game Actor that wraps and triggers a dtAI distance sensor."));
-   dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::VOLUME_EDIT_ACTOR_TYPE(new dtDAL::ActorType("Volume Edit", "dtutil", "dtutil::VolumeEdit actor"));
-   dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::PREFAB_ACTOR_TYPE(new dtDAL::ActorType("Prefab", "dtActors", "dtActors.Prefab actor"));
-   dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::LINKED_POINTS_ACTOR_TYPE(new dtDAL::ActorType("LinkedPoints", "dtActors", "dtActors.LinkedPoints actor"));
-   dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::FENCE_ACTOR_TYPE(new dtDAL::ActorType("Fence", "dtActors", "dtActors.Fence actor"));
-   dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::BUILDING_ACTOR_TYPE(new dtDAL::ActorType("Building", "dtActors", "dtActors.Building actor"));
-   dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::BACKDROP_ACTOR_TYPE(new dtDAL::ActorType("Backdrop", "dtActors", "dtActors.Backdrop actor"));
-   dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::WATER_GRID_ACTOR_TYPE(new dtDAL::ActorType("Water", "dtActors", "dtActors.Water actor"));
-   dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::TRIGGER_VOLUME_ACTOR_TYPE(new dtDAL::ActorType("Trigger Volume Actor", "dtActors", "dtActors.Trigger Volume Actor"));
-   dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::DIRECTOR_ACTOR_TYPE(new dtDAL::ActorType("Director Actor", "dtActors", "dtActors.Director Actor"));
-   dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::POSITION_DATA_ACTOR_TYPE(new dtDAL::ActorType("Position Data Actor", "dtActors", "dtActors.Position Data Actor"));
+   dtCore::RefPtr<dtCore::ActorType> EngineActorRegistry::TASK_ACTOR_TYPE(new dtCore::ActorType("Task Actor", "dtcore.Tasks","Generic task actor."));
+   dtCore::RefPtr<dtCore::ActorType> EngineActorRegistry::GAME_EVENT_TASK_ACTOR_TYPE(new dtCore::ActorType("GameEvent Task Actor", "dtcore.Tasks","Game event task actor.", TASK_ACTOR_TYPE.get()));
+   dtCore::RefPtr<dtCore::ActorType> EngineActorRegistry::ROLL_UP_TASK_ACTOR_TYPE(new dtCore::ActorType("Rollup Task Actor", "dtcore.Tasks", "Rollup or container based task actor.", TASK_ACTOR_TYPE.get()));
+   dtCore::RefPtr<dtCore::ActorType> EngineActorRegistry::ORDERED_TASK_ACTOR_TYPE(new dtCore::ActorType("Ordered Task Actor", "dtcore.Tasks", "Ordered task actor similar to a roll up task actor but with a constraint on the order in which sub tasks may be completed.", TASK_ACTOR_TYPE.get()));
+   dtCore::RefPtr<dtCore::ActorType> EngineActorRegistry::INFINITE_LIGHT_ACTOR_TYPE(new dtCore::ActorType("Infinite Light", "dtcore.Lights","Directional light actor."));
+   dtCore::RefPtr<dtCore::ActorType> EngineActorRegistry::POSITIONAL_LIGHT_ACTOR_TYPE(new dtCore::ActorType("Positional Light", "dtcore.Lights", "Positional light actor."));
+   dtCore::RefPtr<dtCore::ActorType> EngineActorRegistry::SPOT_LIGHT_ACTOR_TYPE(new dtCore::ActorType("Spotlight", "dtcore.Lights", "Spotlight light actor."));
+   dtCore::RefPtr<dtCore::ActorType> EngineActorRegistry::STATIC_MESH_ACTOR_TYPE(new dtCore::ActorType("Static Mesh", "dtcore", "Loadable static mesh actor."));
+   dtCore::RefPtr<dtCore::ActorType> EngineActorRegistry::PARTICLE_SYSTEM_ACTOR_TYPE(new dtCore::ActorType("Particle System", "dtcore", "dtCore::ParticleSystem actor."));
+   dtCore::RefPtr<dtCore::ActorType> EngineActorRegistry::INFINITE_TERRAIN_ACTOR_TYPE(new dtCore::ActorType("Infinite Terrain", "dtcore.Terrain", "dtCore::InfiniteTerrain actor."));
+   dtCore::RefPtr<dtCore::ActorType> EngineActorRegistry::MESH_TERRAIN_ACTOR_TYPE(new dtCore::ActorType("Mesh Terrain", "dtcore.Terrain", "An terrain actor who's geometry is represented via a mesh file."));
+   dtCore::RefPtr<dtCore::ActorType> EngineActorRegistry::SKY_BOX_ACTOR_TYPE(new dtCore::ActorType("Sky Box", "dtcore.Environment", "dtCore::SkyBox Actor."));
+   dtCore::RefPtr<dtCore::ActorType> EngineActorRegistry::SKY_DOME_ACTOR_TYPE(new dtCore::ActorType("Sky Dome", "dtcore.Environment", "dtCore::SkyDome Actor."));
+   dtCore::RefPtr<dtCore::ActorType> EngineActorRegistry::BEZIER_NODE_ACTOR_TYPE(new dtCore::ActorType("Bezier Node", "dtcore.Curve", "dtABC::BezierNode Actor"));
+   dtCore::RefPtr<dtCore::ActorType> EngineActorRegistry::BEZIER_CONTROL_POINT_ACTOR_TYPE(new dtCore::ActorType("Bezier Control Point", "dtcore.Curve", "dtABC::BezierControlPoint Actor"));
+   dtCore::RefPtr<dtCore::ActorType> EngineActorRegistry::BEZIER_CONTROLLER_ACTOR_TYPE(new dtCore::ActorType("Bezier Controller", "dtcore.Action", "dtABC::BezierController Actor"));
+   dtCore::RefPtr<dtCore::ActorType> EngineActorRegistry::CLOUD_PLANE_ACTOR_TYPE(new dtCore::ActorType("Cloud Plane", "dtcore.Environment", "dtCore::CloudPlane Actor."));
+   dtCore::RefPtr<dtCore::ActorType> EngineActorRegistry::CLOUD_DOME_ACTOR_TYPE(new dtCore::ActorType("Cloud Dome", "dtcore.Environment", "dtCore::CloudDome Actor."));
+   dtCore::RefPtr<dtCore::ActorType> EngineActorRegistry::TRIGGER_ACTOR_TYPE(new dtCore::ActorType("Trigger", "dtcore.Triggers", "dtABC::Trigger Actor."));
+   dtCore::RefPtr<dtCore::ActorType> EngineActorRegistry::PROXIMITY_TRIGGER_ACTOR_TYPE(new dtCore::ActorType("Proximity Trigger","dtcore.Triggers", "dtABC::ProximityTrigger Actor."));
+   dtCore::RefPtr<dtCore::ActorType> EngineActorRegistry::AUTOTRIGGER_ACTOR_TYPE(new dtCore::ActorType("AutoTrigger", "dtcore.Triggers", "dtABC::AutoTrigger Actor."));
+   dtCore::RefPtr<dtCore::ActorType> EngineActorRegistry::CAMERA_ACTOR_TYPE(new dtCore::ActorType("Camera", "dtcore", "dtCore::Camera Actor."));
+   dtCore::RefPtr<dtCore::ActorType> EngineActorRegistry::CAMERA_DATA_ACTOR_TYPE(new dtCore::ActorType("CameraData", "dtActors", "dtActors::CameraData Actor."));
+   dtCore::RefPtr<dtCore::ActorType> EngineActorRegistry::TRIPOD_ACTOR_TYPE(new dtCore::ActorType("Tripod", "dtcore", "dtCore::Tripod Actor."));
+   dtCore::RefPtr<dtCore::ActorType> EngineActorRegistry::WEATHER_ENVIRONMENT_ACTOR_TYPE(new dtCore::ActorType("WeatherEnvironment", "dtcore.Environment", "dtCore::Environment controlled by dtABC::Weather"));
+   dtCore::RefPtr<dtCore::ActorType> EngineActorRegistry::SKYDOME_ENVIRONMENT_ACTOR_TYPE(new dtCore::ActorType("SkyDomeEnvironment", "dtcore.Environment", "dtCore::Environment plus a SkyDome"));
+   dtCore::RefPtr<dtCore::ActorType> EngineActorRegistry::COORDINATE_CONFIG_ACTOR_TYPE(new dtCore::ActorType("Coordinate Config", "dtutil", "dtUtil::Coordinates Actor"));
+   dtCore::RefPtr<dtCore::ActorType> EngineActorRegistry::PLAYER_START_ACTOR_TYPE(new dtCore::ActorType("Player Start", "dtcore", "This can be dropped into a map and the player actor will spawn himself there on startup"));
+   dtCore::RefPtr<dtCore::ActorType> EngineActorRegistry::WAYPOINT_VOLUME_ACTOR_TYPE(new dtCore::ActorType("WaypointVolume", "dtai.waypoint", "dtActos::Waypoint VolumeActor"));
+   dtCore::RefPtr<dtCore::ActorType> EngineActorRegistry::LABEL_ACTOR_TYPE(new dtCore::ActorType("Label", "dtcore", "Simple 3D label drawable."));
+   dtCore::RefPtr<dtCore::ActorType> EngineActorRegistry::GAME_MESH_ACTOR_TYPE(new dtCore::ActorType("Game Mesh Actor", "dtcore.Game.Actors", "Game Actor that supports a single Mesh geometry"));
+   dtCore::RefPtr<dtCore::ActorType> EngineActorRegistry::DISTANCE_SENSOR_ACTOR_TYPE(new dtCore::ActorType("Distance Sensor", "dtai.Game.Actors", "Game Actor that wraps and triggers a dtAI distance sensor."));
+   dtCore::RefPtr<dtCore::ActorType> EngineActorRegistry::VOLUME_EDIT_ACTOR_TYPE(new dtCore::ActorType("Volume Edit", "dtutil", "dtutil::VolumeEdit actor"));
+   dtCore::RefPtr<dtCore::ActorType> EngineActorRegistry::PREFAB_ACTOR_TYPE(new dtCore::ActorType("Prefab", "dtActors", "dtActors.Prefab actor"));
+   dtCore::RefPtr<dtCore::ActorType> EngineActorRegistry::LINKED_POINTS_ACTOR_TYPE(new dtCore::ActorType("LinkedPoints", "dtActors", "dtActors.LinkedPoints actor"));
+   dtCore::RefPtr<dtCore::ActorType> EngineActorRegistry::FENCE_ACTOR_TYPE(new dtCore::ActorType("Fence", "dtActors", "dtActors.Fence actor"));
+   dtCore::RefPtr<dtCore::ActorType> EngineActorRegistry::BUILDING_ACTOR_TYPE(new dtCore::ActorType("Building", "dtActors", "dtActors.Building actor"));
+   dtCore::RefPtr<dtCore::ActorType> EngineActorRegistry::BACKDROP_ACTOR_TYPE(new dtCore::ActorType("Backdrop", "dtActors", "dtActors.Backdrop actor"));
+   dtCore::RefPtr<dtCore::ActorType> EngineActorRegistry::WATER_GRID_ACTOR_TYPE(new dtCore::ActorType("Water", "dtActors", "dtActors.Water actor"));
+   dtCore::RefPtr<dtCore::ActorType> EngineActorRegistry::TRIGGER_VOLUME_ACTOR_TYPE(new dtCore::ActorType("Trigger Volume Actor", "dtActors", "dtActors.Trigger Volume Actor"));
+   dtCore::RefPtr<dtCore::ActorType> EngineActorRegistry::DIRECTOR_ACTOR_TYPE(new dtCore::ActorType("Director Actor", "dtActors", "dtActors.Director Actor"));
+   dtCore::RefPtr<dtCore::ActorType> EngineActorRegistry::POSITION_DATA_ACTOR_TYPE(new dtCore::ActorType("Position Data Actor", "dtActors", "dtActors.Position Data Actor"));
 
    /// deprecated types
-   dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::ENVIRONMENT_ACTOR_TYPE(new dtDAL::ActorType("Environment", "dtcore.Environment", "dtCore::BasicEnvironment Actor."));
-   dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::ENV_ACTOR_TYPE(new dtDAL::ActorType("Env", "dtcore.Environment", "dtCore::Environment Actor."));
+   dtCore::RefPtr<dtCore::ActorType> EngineActorRegistry::ENVIRONMENT_ACTOR_TYPE(new dtCore::ActorType("Environment", "dtcore.Environment", "dtCore::BasicEnvironment Actor."));
+   dtCore::RefPtr<dtCore::ActorType> EngineActorRegistry::ENV_ACTOR_TYPE(new dtCore::ActorType("Env", "dtcore.Environment", "dtCore::Environment Actor."));
 
 
-   extern "C" DT_PLUGIN_EXPORT dtDAL::ActorPluginRegistry* CreatePluginRegistry()
+   extern "C" DT_PLUGIN_EXPORT dtCore::ActorPluginRegistry* CreatePluginRegistry()
    {
       return new EngineActorRegistry;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    extern "C" DT_PLUGIN_EXPORT void DestroyPluginRegistry(
-       dtDAL::ActorPluginRegistry *registry)
+       dtCore::ActorPluginRegistry *registry)
    {
       if (registry != NULL)
       {
@@ -133,7 +133,7 @@ namespace dtActors
 
    ///////////////////////////////////////////////////////////////////////////////
    ///////////////////////////////////////////////////////////////////////////////
-   EngineActorRegistry::EngineActorRegistry() : dtDAL::ActorPluginRegistry("CoreActors")
+   EngineActorRegistry::EngineActorRegistry() : dtCore::ActorPluginRegistry("CoreActors")
    {
       mDescription = "The actors in this registry are the default base "
          "actors provided by the Delta3D engine.";
@@ -213,7 +213,7 @@ namespace dtActors
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void EngineActorRegistry::GetReplacementActorTypes(dtDAL::ActorPluginRegistry::ActorTypeReplacements &replacements) const
+   void EngineActorRegistry::GetReplacementActorTypes(dtCore::ActorPluginRegistry::ActorTypeReplacements &replacements) const
    {
       replacements.push_back(std::make_pair(ENVIRONMENT_ACTOR_TYPE->GetFullName(), WEATHER_ENVIRONMENT_ACTOR_TYPE->GetFullName()));
       replacements.push_back(std::make_pair(ENV_ACTOR_TYPE->GetFullName(), SKY_DOME_ACTOR_TYPE->GetFullName()));

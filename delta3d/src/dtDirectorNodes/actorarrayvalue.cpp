@@ -21,9 +21,9 @@
 #include <prefix/dtdirectornodesprefix.h>
 #include <dtDirectorNodes/actorarrayvalue.h>
 
-#include <dtDAL/actoridactorproperty.h>
-#include <dtDAL/actorproperty.h>
-#include <dtDAL/arrayactorproperty.h>
+#include <dtCore/actoridactorproperty.h>
+#include <dtCore/actorproperty.h>
+#include <dtCore/arrayactorproperty.h>
 
 namespace dtDirector
 {
@@ -50,33 +50,33 @@ namespace dtDirector
    {
       ArrayValueNode::BuildPropertyMap();
 
-      mProperty = new dtDAL::ActorIDActorProperty(
+      mProperty = new dtCore::ActorIDActorProperty(
          "Value", "Value",
-         dtDAL::ActorIDActorProperty::SetFuncType(this, &ActorArrayValue::SetValue),
-         dtDAL::ActorIDActorProperty::GetFuncType(this, &ActorArrayValue::GetValue),
+         dtCore::ActorIDActorProperty::SetFuncType(this, &ActorArrayValue::SetValue),
+         dtCore::ActorIDActorProperty::GetFuncType(this, &ActorArrayValue::GetValue),
          "", "The value.");
 
-      mInitialProperty = new dtDAL::ActorIDActorProperty(
+      mInitialProperty = new dtCore::ActorIDActorProperty(
          "Value", "Value",
-         dtDAL::ActorIDActorProperty::SetFuncType(this, &ActorArrayValue::SetInitialValue),
-         dtDAL::ActorIDActorProperty::GetFuncType(this, &ActorArrayValue::GetInitialValue),
+         dtCore::ActorIDActorProperty::SetFuncType(this, &ActorArrayValue::SetInitialValue),
+         dtCore::ActorIDActorProperty::GetFuncType(this, &ActorArrayValue::GetInitialValue),
          "", "The initial value.");
 
-      mArrayProperty = new dtDAL::ArrayActorProperty<dtCore::UniqueId>(
+      mArrayProperty = new dtCore::ArrayActorProperty<dtCore::UniqueId>(
          "ValueList", "Value List", "All values contained in this array.",
-         dtDAL::ArrayActorProperty<dtCore::UniqueId>::SetIndexFuncType(this, &ArrayValueNode::SetPropertyIndex),
-         dtDAL::ArrayActorProperty<dtCore::UniqueId>::GetDefaultFuncType(this, &ActorArrayValue::GetDefaultValue),
-         dtDAL::ArrayActorProperty<dtCore::UniqueId>::GetArrayFuncType(this, &ActorArrayValue::GetArray),
-         dtDAL::ArrayActorProperty<dtCore::UniqueId>::SetArrayFuncType(this, &ActorArrayValue::SetArray),
+         dtCore::ArrayActorProperty<dtCore::UniqueId>::SetIndexFuncType(this, &ArrayValueNode::SetPropertyIndex),
+         dtCore::ArrayActorProperty<dtCore::UniqueId>::GetDefaultFuncType(this, &ActorArrayValue::GetDefaultValue),
+         dtCore::ArrayActorProperty<dtCore::UniqueId>::GetArrayFuncType(this, &ActorArrayValue::GetArray),
+         dtCore::ArrayActorProperty<dtCore::UniqueId>::SetArrayFuncType(this, &ActorArrayValue::SetArray),
          mProperty, "");
       AddProperty(mArrayProperty);
 
-      mInitialArrayProperty = new dtDAL::ArrayActorProperty<dtCore::UniqueId>(
+      mInitialArrayProperty = new dtCore::ArrayActorProperty<dtCore::UniqueId>(
          "InitialValueList", "Initial Value List", "All initial values contained in this array.",
-         dtDAL::ArrayActorProperty<dtCore::UniqueId>::SetIndexFuncType(this, &ArrayValueNode::SetInitialPropertyIndex),
-         dtDAL::ArrayActorProperty<dtCore::UniqueId>::GetDefaultFuncType(this, &ActorArrayValue::GetDefaultValue),
-         dtDAL::ArrayActorProperty<dtCore::UniqueId>::GetArrayFuncType(this, &ActorArrayValue::GetInitialArray),
-         dtDAL::ArrayActorProperty<dtCore::UniqueId>::SetArrayFuncType(this, &ActorArrayValue::SetInitialArray),
+         dtCore::ArrayActorProperty<dtCore::UniqueId>::SetIndexFuncType(this, &ArrayValueNode::SetInitialPropertyIndex),
+         dtCore::ArrayActorProperty<dtCore::UniqueId>::GetDefaultFuncType(this, &ActorArrayValue::GetDefaultValue),
+         dtCore::ArrayActorProperty<dtCore::UniqueId>::GetArrayFuncType(this, &ActorArrayValue::GetInitialArray),
+         dtCore::ArrayActorProperty<dtCore::UniqueId>::SetArrayFuncType(this, &ActorArrayValue::SetInitialArray),
          mInitialProperty, "");
       AddProperty(mInitialArrayProperty);
    }

@@ -79,7 +79,7 @@ namespace dtQt
        * @see DynamicAbstractControl#InitializeData
        */
       virtual void InitializeData(DynamicAbstractControl* newParent, PropertyEditorModel* model,
-         dtDAL::PropertyContainer* newPC, dtDAL::ActorProperty* property);
+         dtCore::PropertyContainer* newPC, dtCore::ActorProperty* property);
 
       /**
        * @see DynamicAbstractControl#updateEditorFromModel
@@ -120,7 +120,7 @@ namespace dtQt
    protected:
 
       DynamicVectorElementControl* CreateElementControl(PropertyType* prop, int index, const std::string& label,
-               PropertyEditorModel* newModel, dtDAL::PropertyContainer* newPC);
+               PropertyEditorModel* newModel, dtCore::PropertyContainer* newPC);
 
    private:
       DynamicVectorElementControl* xElement;
@@ -156,19 +156,19 @@ namespace dtQt
    /////////////////////////////////////////////////////////////////////////////////
    template <typename PropertyType>
    DynamicVectorElementControl* DynamicVecNControl<PropertyType>::CreateElementControl(PropertyType* prop, int index, const std::string& label,
-            PropertyEditorModel* newModel, dtDAL::PropertyContainer* newPC)
+            PropertyEditorModel* newModel, dtCore::PropertyContainer* newPC)
    {
       DynamicVectorElementControl* control = new DynamicVectorElementControl(prop, index, label);
       control->InitializeData(this, newModel, newPC, prop);
       mChildren.push_back(control);
 
-      connect(control, SIGNAL(PropertyAboutToChange(dtDAL::PropertyContainer&, dtDAL::ActorProperty&,
+      connect(control, SIGNAL(PropertyAboutToChange(dtCore::PropertyContainer&, dtCore::ActorProperty&,
                         const std::string&, const std::string&)),
-               this, SLOT(PropertyAboutToChangePassThrough(dtDAL::PropertyContainer&, dtDAL::ActorProperty&,
+               this, SLOT(PropertyAboutToChangePassThrough(dtCore::PropertyContainer&, dtCore::ActorProperty&,
                         const std::string&, const std::string&)));
 
-      connect(control, SIGNAL(PropertyChanged(dtDAL::PropertyContainer&, dtDAL::ActorProperty&)),
-               this, SLOT(PropertyChangedPassThrough(dtDAL::PropertyContainer&, dtDAL::ActorProperty&)));
+      connect(control, SIGNAL(PropertyChanged(dtCore::PropertyContainer&, dtCore::ActorProperty&)),
+               this, SLOT(PropertyChangedPassThrough(dtCore::PropertyContainer&, dtCore::ActorProperty&)));
 
       return control;
    }
@@ -176,7 +176,7 @@ namespace dtQt
    /////////////////////////////////////////////////////////////////////////////////
    template <typename PropertyType>
    void DynamicVecNControl<PropertyType>::InitializeData(DynamicAbstractControl* newParent,
-      PropertyEditorModel* newModel, dtDAL::PropertyContainer* newPC, dtDAL::ActorProperty* newProperty)
+      PropertyEditorModel* newModel, dtCore::PropertyContainer* newPC, dtCore::ActorProperty* newProperty)
    {
       DynamicAbstractControl::InitializeData(newParent, newModel, newPC, newProperty);
 

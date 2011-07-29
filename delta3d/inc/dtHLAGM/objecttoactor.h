@@ -34,7 +34,7 @@
 
 #include <string>
 #include <vector>
-#include <dtDAL/actortype.h>
+#include <dtCore/actortype.h>
 #include <dtCore/refptr.h>
 #include <osg/Referenced>
 #include <dtHLAGM/onetoonemapping.h>
@@ -75,7 +75,7 @@ namespace dtHLAGM
           *
           * @return the Game Actor Type
           */
-         const dtDAL::ActorType& GetActorType() const;
+         const dtCore::ActorType& GetActorType() const;
 
          /**
           * @return true if this mapping should only be used for objects simulated remotely in HLA.
@@ -168,7 +168,7 @@ namespace dtHLAGM
           *
           * @param type the Game Actor Type
           */
-         void SetActorType(const dtDAL::ActorType& type);
+         void SetActorType(const dtCore::ActorType& type);
 
          /**
           * Sets the HLA Object Type Name for this Object to Actor mapping.
@@ -233,7 +233,7 @@ namespace dtHLAGM
 
          /// The Actor Type for this Object to Actor mapping.
 
-         dtCore::RefPtr <const dtDAL::ActorType> mActorType;
+         dtCore::RefPtr <const dtCore::ActorType> mActorType;
 
          /// true if this mapping should only be used for objects simulated remotely/locally or both.
          LocalOrRemoteType* mLocalOrRemoteType;

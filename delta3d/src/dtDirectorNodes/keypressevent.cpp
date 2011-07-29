@@ -21,10 +21,10 @@
 #include <prefix/dtdirectornodesprefix.h>
 #include <dtDirectorNodes/keypressevent.h>
 
-#include <dtDAL/actorproxy.h>
-#include <dtDAL/bitmaskactorproperty.h>
-#include <dtDAL/stringselectoractorproperty.h>
-#include <dtDAL/booleanactorproperty.h>
+#include <dtCore/actorproxy.h>
+#include <dtCore/bitmaskactorproperty.h>
+#include <dtCore/stringselectoractorproperty.h>
+#include <dtCore/booleanactorproperty.h>
 
 #include <dtABC/application.h>
 #include <dtCore/keyboard.h>
@@ -192,19 +192,19 @@ namespace dtDirector
    {
       EventNode::BuildPropertyMap();
 
-      dtDAL::BitMaskActorProperty* modsProp = new dtDAL::BitMaskActorProperty(
+      dtCore::BitMaskActorProperty* modsProp = new dtCore::BitMaskActorProperty(
          "Modifiers", "Modifiers",
-         dtDAL::BitMaskActorProperty::SetFuncType(this, &KeyPressEvent::SetModifiers),
-         dtDAL::BitMaskActorProperty::GetFuncType(this, &KeyPressEvent::GetModifiers),
-         dtDAL::BitMaskActorProperty::GetMaskListFuncType(this, &KeyPressEvent::GetModifierMasks),
+         dtCore::BitMaskActorProperty::SetFuncType(this, &KeyPressEvent::SetModifiers),
+         dtCore::BitMaskActorProperty::GetFuncType(this, &KeyPressEvent::GetModifiers),
+         dtCore::BitMaskActorProperty::GetMaskListFuncType(this, &KeyPressEvent::GetModifierMasks),
          "Modifier keys to listen for along with the main key.");
       AddProperty(modsProp);
 
-      dtDAL::StringSelectorActorProperty* keyProp = new dtDAL::StringSelectorActorProperty(
+      dtCore::StringSelectorActorProperty* keyProp = new dtCore::StringSelectorActorProperty(
          "Key", "Key",
-         dtDAL::StringSelectorActorProperty::SetFuncType(this, &KeyPressEvent::SetKey),
-         dtDAL::StringSelectorActorProperty::GetFuncType(this, &KeyPressEvent::GetKey),
-         dtDAL::StringSelectorActorProperty::GetListFuncType(this, &KeyPressEvent::GetKeyList),
+         dtCore::StringSelectorActorProperty::SetFuncType(this, &KeyPressEvent::SetKey),
+         dtCore::StringSelectorActorProperty::GetFuncType(this, &KeyPressEvent::GetKey),
+         dtCore::StringSelectorActorProperty::GetListFuncType(this, &KeyPressEvent::GetKeyList),
          "Key to listen for.", "");
       AddProperty(keyProp);
 

@@ -34,15 +34,15 @@
 
 #include <dtCore/transform.h>
 
-#include <dtDAL/actorproxy.h>
-#include <dtDAL/actorproxyicon.h>
-#include <dtDAL/environmentactor.h>
-#include <dtDAL/librarymanager.h>
-#include <dtDAL/map.h>
-#include <dtDAL/mapxml.h>
-#include <dtDAL/project.h>
-#include <dtDAL/transformableactorproxy.h>
-#include <dtDAL/vectoractorproperties.h>
+#include <dtCore/actorproxy.h>
+#include <dtCore/actorproxyicon.h>
+#include <dtCore/environmentactor.h>
+#include <dtCore/librarymanager.h>
+#include <dtCore/map.h>
+#include <dtCore/mapxml.h>
+#include <dtCore/project.h>
+#include <dtCore/transformableactorproxy.h>
+#include <dtCore/vectoractorproperties.h>
 
 #include <dtEditQt/configurationmanager.h>
 #include <dtEditQt/dialogmapproperties.h>
@@ -168,7 +168,7 @@ namespace dtEditQt
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   void EditorActions::slotSelectedActors(std::vector< dtCore::RefPtr<dtDAL::BaseActorObject> >& newActors)
+   void EditorActions::slotSelectedActors(std::vector< dtCore::RefPtr<dtCore::BaseActorObject> >& newActors)
    {
       mActors.clear();
       mActors.reserve(newActors.size());
@@ -513,7 +513,7 @@ namespace dtEditQt
    {
       // Make sure we have a valid project.  The project "should" always be
       // valid since this action is only enabled when there is a valid project.
-      if (!dtDAL::Project::GetInstance().IsContextValid())
+      if (!dtCore::Project::GetInstance().IsContextValid())
       {
          slotPauseAutosave();
          QMessageBox::critical(EditorData::GetInstance().getMainWindow(), tr("Map Open Error"),
@@ -534,7 +534,7 @@ namespace dtEditQt
       dtQt::DialogListSelection openMapDialog(EditorData::GetInstance().getMainWindow(), tr("Open Existing Map"), tr("Available Maps"));
 
       QStringList listItems;
-      const std::set<std::string>& mapNames = dtDAL::Project::GetInstance().GetMapNames();
+      const std::set<std::string>& mapNames = dtCore::Project::GetInstance().GetMapNames();
       for (std::set<std::string>::const_iterator i = mapNames.begin(); i != mapNames.end(); ++i)
       {
          listItems << i->c_str();
@@ -543,7 +543,7 @@ namespace dtEditQt
       openMapDialog.SetListItems(listItems);
       if (openMapDialog.exec() == QDialog::Accepted)
       {
-         dtCore::RefPtr<dtDAL::Map> newMap;
+         dtCore::RefPtr<dtCore::Map> newMap;
 
          // Attempt to open the specified map..
          try
@@ -551,7 +551,7 @@ namespace dtEditQt
             EditorData::GetInstance().getMainWindow()->startWaitCursor();
 
             const QString& mapName = openMapDialog.GetSelectedItem();
-            newMap = &dtDAL::Project::GetInstance().GetMap(mapName.toStdString());
+            newMap = &dtCore::Project::GetInstance().GetMap(mapName.toStdString());
 
             EditorData::GetInstance().getMainWindow()->endWaitCursor();
          }
@@ -570,7 +570,7 @@ namespace dtEditQt
          }
 
          // Finally, change to the requested map.
-         dtCore::RefPtr<dtDAL::Map> mapRef = newMap;
+         dtCore::RefPtr<dtCore::Map> mapRef = newMap;
          EditorData::GetInstance().getMainWindow()->checkAndLoadBackup(newMap->GetName());
          newMap->SetModified(false);
       }
@@ -619,7 +619,7 @@ namespace dtEditQt
       std::string strippedName = osgDB::getSimpleFileName(dlg.getMapFileName());
       std::string name = osgDB::getStrippedName(strippedName);
 
-      dtDAL::Map* myMap = EditorData::GetInstance().getCurrentMap();
+      dtCore::Map* myMap = EditorData::GetInstance().getCurrentMap();
       if (myMap == NULL)
       {
          slotRestartAutosave();
@@ -630,7 +630,7 @@ namespace dtEditQt
       {
          myMap->SetDescription(dlg.getMapDescription());
          EditorData::GetInstance().getMainWindow()->startWaitCursor();
-         dtDAL::Project::GetInstance().SaveMapAs(*myMap, name, strippedName);
+         dtCore::Project::GetInstance().SaveMapAs(*myMap, name, strippedName);
          EditorData::GetInstance().getMainWindow()->endWaitCursor();
       }
       catch (const dtUtil::Exception& e)
@@ -657,7 +657,7 @@ namespace dtEditQt
       std::string fullPathSaving = fullPath + ".saving";
 
       dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
-      fileUtils.PushDirectory(dtDAL::Project::GetInstance().GetContext());
+      fileUtils.PushDirectory(dtCore::Project::GetInstance().GetContext());
       try
       {
          // If the prefab directory does not exist, create it first.
@@ -679,7 +679,7 @@ namespace dtEditQt
          ViewportOverlay* overlay = ViewportManager::GetInstance().getViewportOverlay();
          ViewportOverlay::ActorProxyList& selection = overlay->getCurrentActorSelection();
 
-         dtCore::RefPtr<dtDAL::MapWriter> writer = new dtDAL::MapWriter;
+         dtCore::RefPtr<dtCore::MapWriter> writer = new dtCore::MapWriter;
          writer->SavePrefab(selection, fullPathSaving, prefabDescrip, iconFile);
 
          //if it's successful, move it to the final file name
@@ -724,7 +724,7 @@ namespace dtEditQt
    {
       slotPauseAutosave();
 
-      dtDAL::Map* currMap = dtEditQt::EditorData::GetInstance().getCurrentMap();
+      dtCore::Map* currMap = dtEditQt::EditorData::GetInstance().getCurrentMap();
       if (currMap == NULL)
       {
          EditorEvents::GetInstance().emitEditorCloseEvent();
@@ -764,7 +764,7 @@ namespace dtEditQt
    void EditorActions::slotEditMapProperties()
    {
       DialogMapProperties mapPropsDialog((QWidget*)EditorData::GetInstance().getMainWindow());
-      dtDAL::Map* map = EditorData::GetInstance().getCurrentMap();
+      dtCore::Map* map = EditorData::GetInstance().getCurrentMap();
 
       // If the current map is invalid, issue an error, else populate the dialog
       // box with the values from the current map.  The map "should" always be
@@ -857,7 +857,7 @@ namespace dtEditQt
 
       ViewportOverlay::ActorProxyList selection = ViewportManager::GetInstance().getViewportOverlay()->getCurrentActorSelection();
       dtCore::Scene* scene = ViewportManager::GetInstance().getMasterScene();
-      dtCore::RefPtr<dtDAL::Map> currMap = EditorData::GetInstance().getCurrentMap();
+      dtCore::RefPtr<dtCore::Map> currMap = EditorData::GetInstance().getCurrentMap();
       StageCamera* worldCam = ViewportManager::GetInstance().getWorldViewCamera();
 
       // Make sure we have valid data.
@@ -901,12 +901,12 @@ namespace dtEditQt
       ViewportOverlay::ActorProxyList::iterator itor, itorEnd;
       itor    = selection.begin();
       itorEnd = selection.end();
-      std::vector< dtCore::RefPtr<dtDAL::BaseActorObject> > newSelection;
+      std::vector< dtCore::RefPtr<dtCore::BaseActorObject> > newSelection;
 
       for (; itor != itorEnd; ++itor)
       {
-         dtDAL::BaseActorObject* proxy = const_cast<dtDAL::BaseActorObject*>(itor->get());
-         dtCore::RefPtr<dtDAL::BaseActorObject> copy = proxy->Clone();
+         dtCore::BaseActorObject* proxy = const_cast<dtCore::BaseActorObject*>(itor->get());
+         dtCore::RefPtr<dtCore::BaseActorObject> copy = proxy->Clone();
          if (!copy.valid())
          {
             LOG_ERROR("Error duplicating proxy: " + proxy->GetName());
@@ -916,8 +916,8 @@ namespace dtEditQt
          // Store the original location of the proxy so we can position after
          // it has been added to the scene.
          osg::Vec3 oldPosition;
-         dtDAL::TransformableActorProxy* tProxy =
-            dynamic_cast<dtDAL::TransformableActorProxy*>(copy.get());
+         dtCore::TransformableActorProxy* tProxy =
+            dynamic_cast<dtCore::TransformableActorProxy*>(copy.get());
          if (tProxy != NULL)
          {
             oldPosition = tProxy->GetTranslation();
@@ -971,7 +971,7 @@ namespace dtEditQt
       LOG_INFO("Deleting current actor selection. ");
 
       ViewportOverlay::ActorProxyList selection = ViewportManager::GetInstance().getViewportOverlay()->getCurrentActorSelection();
-      dtCore::RefPtr<dtDAL::Map> currMap = EditorData::GetInstance().getCurrentMap();
+      dtCore::RefPtr<dtCore::Map> currMap = EditorData::GetInstance().getCurrentMap();
 
       // Make sure we have valid data.
       if (!currMap.valid())
@@ -992,8 +992,8 @@ namespace dtEditQt
       while (selection.size())
       {
          // First check if this actor is in any groups.
-         dtDAL::BaseActorObject* proxy = 
-            const_cast<dtDAL::BaseActorObject*>(selection.back().get());
+         dtCore::BaseActorObject* proxy = 
+            const_cast<dtCore::BaseActorObject*>(selection.back().get());
 
          //don't allow the main Volume Brush to be deleted:
          if (proxy->GetActor() == 
@@ -1039,13 +1039,13 @@ namespace dtEditQt
       //{
       //   // \TODO: Find out why this const_cast is necessary. It compiles without
       //   // it on MSVC 7.1, but not on gcc4.0.2 -osb
-      //   dtDAL::BaseActorObject* proxy = const_cast<dtDAL::BaseActorObject*>(itor->get());
+      //   dtCore::BaseActorObject* proxy = const_cast<dtCore::BaseActorObject*>(itor->get());
       //   deleteProxy(proxy, currMap);
       //}
       EditorData::GetInstance().getUndoManager().endMultipleUndo();
 
       // Now that we have removed the selected objects, clear the current selection.
-      std::vector< dtCore::RefPtr<dtDAL::BaseActorObject> > emptySelection;
+      std::vector< dtCore::RefPtr<dtCore::BaseActorObject> > emptySelection;
       EditorEvents::GetInstance().emitActorsSelected(emptySelection);
       EditorEvents::GetInstance().emitEndChangeTransaction();
 
@@ -1053,18 +1053,18 @@ namespace dtEditQt
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   bool EditorActions::deleteProxy(dtDAL::BaseActorObject* proxy,
-      dtCore::RefPtr<dtDAL::Map> currMap)
+   bool EditorActions::deleteProxy(dtCore::BaseActorObject* proxy,
+      dtCore::RefPtr<dtCore::Map> currMap)
    {
       bool               result   = false;
       dtCore::Scene*     scene    = ViewportManager::GetInstance().getMasterScene();
-      dtDAL::BaseActorObject* envProxy = currMap->GetEnvironmentActor();
+      dtCore::BaseActorObject* envProxy = currMap->GetEnvironmentActor();
       if (envProxy != NULL)
       {
          if (envProxy == proxy)
          {
-            dtDAL::IEnvironmentActor* envActor =
-               dynamic_cast<dtDAL::IEnvironmentActor*>(envProxy->GetActor());
+            dtCore::IEnvironmentActor* envActor =
+               dynamic_cast<dtCore::IEnvironmentActor*>(envProxy->GetActor());
             std::vector<dtCore::DeltaDrawable*> drawables;
             envActor->GetAllActors(drawables);
             envActor->RemoveAllActors();
@@ -1090,7 +1090,7 @@ namespace dtEditQt
 
       if (proxy != NULL && scene != NULL)
       {
-         dtCore::RefPtr<dtDAL::BaseActorObject> tempRef = proxy;
+         dtCore::RefPtr<dtCore::BaseActorObject> tempRef = proxy;
          scene->RemoveChild(proxy->GetActor());
          if (proxy->GetBillBoardIcon()!= NULL)
          {
@@ -1115,20 +1115,20 @@ namespace dtEditQt
    //////////////////////////////////////////////////////////////////////////////
    void EditorActions::slotOnActorCreated(ActorProxyRefPtr actor, bool forceNoAdjustments)
    {
-      dtDAL::IEnvironmentActor* envActor =
-         dynamic_cast<dtDAL::IEnvironmentActor*>(actor->GetActor());
+      dtCore::IEnvironmentActor* envActor =
+         dynamic_cast<dtCore::IEnvironmentActor*>(actor->GetActor());
       if (envActor == NULL)
       {
          return;
       }
 
-      dtDAL::Map* map = EditorData::GetInstance().getCurrentMap();
+      dtCore::Map* map = EditorData::GetInstance().getCurrentMap();
       if (map == NULL)
       {
          return;
       }
 
-      dtDAL::BaseActorObject* envProxy = map->GetEnvironmentActor();
+      dtCore::BaseActorObject* envProxy = map->GetEnvironmentActor();
       QWidget* window = static_cast<QWidget*>(EditorData::GetInstance().getMainWindow());
       if (envProxy != NULL)
       {
@@ -1142,14 +1142,14 @@ namespace dtEditQt
          if (button == QMessageBox::Yes)
          {
             dtCore::Scene* scene = ViewportManager::GetInstance().getMasterScene();
-            dtDAL::IEnvironmentActor* env =
-               dynamic_cast<dtDAL::IEnvironmentActor*>(envProxy->GetActor());
+            dtCore::IEnvironmentActor* env =
+               dynamic_cast<dtCore::IEnvironmentActor*>(envProxy->GetActor());
             if (env != NULL)
             {
                env->RemoveAllActors();
             }
             map->SetEnvironmentActor(actor.get());
-            dtDAL::Project::GetInstance().LoadMapIntoScene(*map, *scene);
+            dtCore::Project::GetInstance().LoadMapIntoScene(*map, *scene);
          }
       }
       else
@@ -1166,7 +1166,7 @@ namespace dtEditQt
             dtCore::Scene* scene = ViewportManager::GetInstance().getMasterScene();
             scene->RemoveAllDrawables();
             map->SetEnvironmentActor(actor.get());
-            dtDAL::Project::GetInstance().LoadMapIntoScene(*map, *scene);
+            dtCore::Project::GetInstance().LoadMapIntoScene(*map, *scene);
          }
       }
    }
@@ -1201,11 +1201,11 @@ namespace dtEditQt
       ViewportOverlay::ActorProxyList::iterator itor;
       for (itor = selection.begin(); itor != selection.end(); ++itor)
       {
-         dtDAL::TransformableActorProxy* proxy =
-            dynamic_cast<dtDAL::TransformableActorProxy*>(itor->get());
+         dtCore::TransformableActorProxy* proxy =
+            dynamic_cast<dtCore::TransformableActorProxy*>(itor->get());
          if (proxy != NULL)
          {
-            dtDAL::ActorProperty* prop = proxy->GetProperty(dtDAL::TransformableActorProxy::PROPERTY_TRANSLATION);
+            dtCore::ActorProperty* prop = proxy->GetProperty(dtCore::TransformableActorProxy::PROPERTY_TRANSLATION);
 
             if (prop)
             {
@@ -1237,11 +1237,11 @@ namespace dtEditQt
       ViewportOverlay::ActorProxyList::iterator itor;
       for (itor = selection.begin(); itor != selection.end(); ++itor)
       {
-         dtDAL::TransformableActorProxy* proxy =
-            dynamic_cast<dtDAL::TransformableActorProxy*>(itor->get());
+         dtCore::TransformableActorProxy* proxy =
+            dynamic_cast<dtCore::TransformableActorProxy*>(itor->get());
          if (proxy != NULL)
          {
-            dtDAL::ActorProperty* prop = proxy->GetProperty(dtDAL::TransformableActorProxy::PROPERTY_ROTATION);
+            dtCore::ActorProperty* prop = proxy->GetProperty(dtCore::TransformableActorProxy::PROPERTY_ROTATION);
 
             if (prop)
             {
@@ -1273,11 +1273,11 @@ namespace dtEditQt
       ViewportOverlay::ActorProxyList::iterator itor;
       for (itor = selection.begin(); itor != selection.end(); ++itor)
       {
-         dtDAL::TransformableActorProxy* proxy =
-            dynamic_cast<dtDAL::TransformableActorProxy*>(itor->get());
+         dtCore::TransformableActorProxy* proxy =
+            dynamic_cast<dtCore::TransformableActorProxy*>(itor->get());
          if (proxy != NULL)
          {
-            dtDAL::Vec3ActorProperty* prop = dynamic_cast<dtDAL::Vec3ActorProperty*> (proxy->GetProperty("Scale"));
+            dtCore::Vec3ActorProperty* prop = dynamic_cast<dtCore::Vec3ActorProperty*> (proxy->GetProperty("Scale"));
 
             if (prop)
             {
@@ -1400,7 +1400,7 @@ namespace dtEditQt
    //////////////////////////////////////////////////////////////////////////////
    void EditorActions::slotShowHideTriggers()
    {
-      dtDAL::Map* map;
+      dtCore::Map* map;
       map = dtEditQt::EditorData::GetInstance().getCurrentMap();
 
       if (! map)
@@ -1408,7 +1408,7 @@ namespace dtEditQt
          return;
       }      
       
-      std::vector< dtCore::RefPtr<dtDAL::BaseActorObject > > actorProxies;
+      std::vector< dtCore::RefPtr<dtCore::BaseActorObject > > actorProxies;
       map->GetAllProxies(actorProxies);
 
       if (mShowingTriggerVolumes)
@@ -1478,7 +1478,7 @@ namespace dtEditQt
          std::vector<dtCore::DeltaDrawable*> ignoredDrawables;
          for (int selectIndex = 0; selectIndex < (int)selection.size(); selectIndex++)
          {
-            dtDAL::BaseActorObject* proxy = selection[selectIndex].get();
+            dtCore::BaseActorObject* proxy = selection[selectIndex].get();
             if (proxy)
             {
                // ignore both our own geometry and the geometry of our icon if they exist
@@ -1488,9 +1488,9 @@ namespace dtEditQt
                if (billBoardDrawable) {ignoredDrawables.push_back(billBoardDrawable);}
             }
          }
-         dtDAL::BaseActorObject* proxy = selection[0];
-         dtDAL::TransformableActorProxy* tProxy =
-            dynamic_cast<dtDAL::TransformableActorProxy*>(proxy);
+         dtCore::BaseActorObject* proxy = selection[0];
+         dtCore::TransformableActorProxy* tProxy =
+            dynamic_cast<dtCore::TransformableActorProxy*>(proxy);
 
          if (tProxy != NULL)
          {
@@ -1501,8 +1501,8 @@ namespace dtEditQt
             ViewportOverlay::ActorProxyList::iterator itor;
             for (itor = selection.begin(); itor != selection.end(); ++itor)
             {
-               proxy = const_cast<dtDAL::BaseActorObject*>(itor->get());
-               tProxy = dynamic_cast<dtDAL::TransformableActorProxy*>(proxy);
+               proxy = const_cast<dtCore::BaseActorObject*>(itor->get());
+               tProxy = dynamic_cast<dtCore::TransformableActorProxy*>(proxy);
 
                if (tProxy != NULL)
                {
@@ -1536,18 +1536,18 @@ namespace dtEditQt
       ViewportOverlay::ActorProxyList& selection = overlay->getCurrentActorSelection();
 
       // Add all the selected actions into a new group.
-      dtDAL::Map* map = EditorData::GetInstance().getCurrentMap();
+      dtCore::Map* map = EditorData::GetInstance().getCurrentMap();
       if (map)
       {
          // First ungroup all actors.
          EditorData::GetInstance().getUndoManager().beginMultipleUndo();
          slotEditUngroupActors();
-         //std::vector<dtDAL::BaseActorObject*> groupActors;
+         //std::vector<dtCore::BaseActorObject*> groupActors;
 
          //while (selection.size())
          //{
          //   // First check if this actor is in any groups.
-         //   dtDAL::BaseActorObject* proxy = const_cast<dtDAL::BaseActorObject*>(selection.back().get());
+         //   dtCore::BaseActorObject* proxy = const_cast<dtCore::BaseActorObject*>(selection.back().get());
 
          //   int groupIndex = map->FindGroupForActor(proxy);
          //   if (groupIndex > -1)
@@ -1584,7 +1584,7 @@ namespace dtEditQt
          //EditorData::GetInstance().getUndoManager().beginMultipleUndo();
          //for (int index = 0; index < (int)groupActors.size(); index++)
          //{
-         //   dtDAL::BaseActorObject* proxy = groupActors[index];
+         //   dtCore::BaseActorObject* proxy = groupActors[index];
          //   map->AddActorToGroup(groupIndex, proxy);
          //   EditorData::GetInstance().getUndoManager().groupActor(proxy);
          //}
@@ -1593,7 +1593,7 @@ namespace dtEditQt
          //// Remove the current actors from any groups they are currently in.
          //for (int index = 0; index < (int)selection.size(); index++)
          //{
-         //   dtDAL::BaseActorObject* proxy = selection[index].get();
+         //   dtCore::BaseActorObject* proxy = selection[index].get();
          //   map->RemoveActorFromGroups(proxy);
          //}
 
@@ -1602,7 +1602,7 @@ namespace dtEditQt
          EditorData::GetInstance().getUndoManager().beginMultipleUndo();
          for (int index = 0; index < (int)selection.size(); index++)
          {
-            dtDAL::BaseActorObject* proxy = selection[index].get();
+            dtCore::BaseActorObject* proxy = selection[index].get();
             map->AddActorToGroup(groupIndex, proxy);
             EditorData::GetInstance().getUndoManager().groupActor(proxy);
          }
@@ -1623,14 +1623,14 @@ namespace dtEditQt
       ViewportOverlay::ActorProxyList selection = overlay->getCurrentActorSelection();
 
       // Remove all the selected actions from their current groups.
-      dtDAL::Map* map = EditorData::GetInstance().getCurrentMap();
+      dtCore::Map* map = EditorData::GetInstance().getCurrentMap();
       if (map)
       {
          EditorData::GetInstance().getUndoManager().beginMultipleUndo();
          while (selection.size())
          {
             // First check if this actor is in any groups.
-            dtDAL::BaseActorObject* proxy = const_cast<dtDAL::BaseActorObject*>(selection.back().get());
+            dtCore::BaseActorObject* proxy = const_cast<dtCore::BaseActorObject*>(selection.back().get());
 
             int groupIndex = map->FindGroupForActor(proxy);
             if (groupIndex > -1)
@@ -1670,7 +1670,7 @@ namespace dtEditQt
          //EditorData::GetInstance().getUndoManager().beginMultipleUndo();
          //for (int index = 0; index < (int)selection.size(); index++)
          //{
-         //   dtDAL::BaseActorObject* proxy = selection[index].get();
+         //   dtCore::BaseActorObject* proxy = selection[index].get();
          //   map->RemoveActorFromGroups(proxy);
          //   EditorData::GetInstance().getUndoManager().unGroupActor(proxy);
          //}
@@ -1713,8 +1713,8 @@ namespace dtEditQt
       try
       {
          changeMaps(EditorData::GetInstance().getCurrentMap(), NULL);
-         dtDAL::Project::GetInstance().CreateContext(path);
-         dtDAL::Project::GetInstance().SetContext(path);
+         dtCore::Project::GetInstance().CreateContext(path);
+         dtCore::Project::GetInstance().SetContext(path);
       }
       catch (dtUtil::Exception& e)
       {
@@ -1784,7 +1784,7 @@ namespace dtEditQt
       {
          if (EditorData::GetInstance().getCurrentMap())
          {
-            dtDAL::Project::GetInstance().SaveMapBackup(*EditorData::GetInstance().getCurrentMap());
+            dtCore::Project::GetInstance().SaveMapBackup(*EditorData::GetInstance().getCurrentMap());
          }
       }
       catch(const dtUtil::Exception& e)
@@ -1799,7 +1799,7 @@ namespace dtEditQt
       ((QMainWindow*)EditorData::GetInstance().getMainWindow())->windowTitle().clear();
       std::string name("STAGE");
       std::string projDir;
-      std::string temp = dtDAL::Project::GetInstance().GetContext();
+      std::string temp = dtCore::Project::GetInstance().GetContext();
       if (temp.empty())
       {
          return name;
@@ -1810,7 +1810,7 @@ namespace dtEditQt
       name += projDir;
 
       // if we have a map, append the name
-      dtCore::RefPtr<dtDAL::Map> map = EditorData::GetInstance().getCurrentMap();
+      dtCore::RefPtr<dtCore::Map> map = EditorData::GetInstance().getCurrentMap();
       if (map.valid())
       {
          name += " - " + map->GetName();
@@ -1856,10 +1856,10 @@ namespace dtEditQt
       }
 
       const std::string& newMapName = mActionFileRecentMap0->text().toStdString();
-      dtDAL::Map* newMap;
+      dtCore::Map* newMap;
       try
       {
-         newMap = &dtDAL::Project::GetInstance().GetMap(newMapName);
+         newMap = &dtCore::Project::GetInstance().GetMap(newMapName);
       }
       catch (dtUtil::Exception& e)
       {
@@ -1875,7 +1875,7 @@ namespace dtEditQt
    //////////////////////////////////////////////////////////////////////////////
 
    //////////////////////////////////////////////////////////////////////////////
-   void EditorActions::changeMaps(dtDAL::Map* oldMap, dtDAL::Map* newMap)
+   void EditorActions::changeMaps(dtCore::Map* oldMap, dtCore::Map* newMap)
    {
       // Make sure the two maps are different!  If they are the same, then
       // we need to close the map but make sure to re-open it.
@@ -1899,7 +1899,7 @@ namespace dtEditQt
          try
          {
             EditorEvents::GetInstance().emitLibraryAboutToBeRemoved();
-            dtDAL::Project::GetInstance().CloseMap(*oldMap,true);
+            dtCore::Project::GetInstance().CloseMap(*oldMap,true);
             EditorEvents::GetInstance().emitMapLibraryRemoved();
 
             EditorData::GetInstance().getMainWindow()->endWaitCursor();
@@ -1919,7 +1919,7 @@ namespace dtEditQt
       {
          try
          {
-            newMap = &dtDAL::Project::GetInstance().GetMap(oldMapName);
+            newMap = &dtCore::Project::GetInstance().GetMap(oldMapName);
          }
          catch (dtUtil::Exception& e)
          {
@@ -1941,7 +1941,7 @@ namespace dtEditQt
 
          try
          {
-            dtDAL::Project::GetInstance().LoadMapIntoScene(*newMap,
+            dtCore::Project::GetInstance().LoadMapIntoScene(*newMap,
                *(ViewportManager::GetInstance().getMasterScene()), true);
 
          }
@@ -1961,7 +1961,7 @@ namespace dtEditQt
       ViewportManager::GetInstance().LoadPresetCamera(1);
 
       // Now that we have changed maps, clear the current selection.
-      std::vector< dtCore::RefPtr<dtDAL::BaseActorObject> > emptySelection;
+      std::vector< dtCore::RefPtr<dtCore::BaseActorObject> > emptySelection;
       EditorEvents::GetInstance().emitActorsSelected(emptySelection);
       
    }
@@ -1976,7 +1976,7 @@ namespace dtEditQt
          propEditor->CommitCurrentEdits();   
       }      
 
-      dtDAL::Map* currMap = EditorData::GetInstance().getCurrentMap();
+      dtCore::Map* currMap = EditorData::GetInstance().getCurrentMap();
       int result = QMessageBox::NoButton;
 
       if (currMap == NULL || !currMap->IsModified())
@@ -2000,7 +2000,7 @@ namespace dtEditQt
          try
          {
             EditorData::GetInstance().getMainWindow()->startWaitCursor();
-            dtDAL::Project::GetInstance().SaveMap(*currMap);
+            dtCore::Project::GetInstance().SaveMap(*currMap);
             ((QMainWindow*)EditorData::GetInstance().getMainWindow())->setWindowTitle(
                getWindowName().c_str());
             EditorData::GetInstance().getMainWindow()->endWaitCursor();
@@ -2021,9 +2021,9 @@ namespace dtEditQt
 
       if (result == QMessageBox::No)
       {
-         if (dtDAL::Project::GetInstance().HasBackup(*currMap))
+         if (dtCore::Project::GetInstance().HasBackup(*currMap))
          {
-            dtDAL::Project::GetInstance().ClearBackup(*currMap);
+            dtCore::Project::GetInstance().ClearBackup(*currMap);
          }
       }
 
@@ -2097,7 +2097,7 @@ namespace dtEditQt
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void EditorActions::HandleMissingLibraries(const dtDAL::Map& newMap) const
+   void EditorActions::HandleMissingLibraries(const dtCore::Map& newMap) const
    {
       const std::vector<std::string>& missingLibs = newMap.GetMissingLibraries();
 
@@ -2121,7 +2121,7 @@ namespace dtEditQt
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void EditorActions::HandleMissingActorsTypes(const dtDAL::Map& newMap) const
+   void EditorActions::HandleMissingActorsTypes(const dtCore::Map& newMap) const
    {
       const std::set<std::string>& missingActorTypes = newMap.GetMissingActorTypes();
 
@@ -2138,7 +2138,7 @@ namespace dtEditQt
          {
             errors += QString::fromStdString((*itr));
 
-            std::string replacement = dtDAL::LibraryManager::GetInstance().FindActorTypeReplacement((*itr));
+            std::string replacement = dtCore::LibraryManager::GetInstance().FindActorTypeReplacement((*itr));
             if (!replacement.empty())
             {
                errors += tr(" (replace with ") + QString::fromStdString(replacement) + ")";

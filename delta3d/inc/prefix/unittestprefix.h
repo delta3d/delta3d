@@ -5,9 +5,9 @@
   #ifdef _MSC_VER
     #include <dtUtil/librarysharingmanager.h>
     #include <dtUtil/stringutils.h>
-    #include <dtDAL/enginepropertytypes.h>
+    #include <dtCore/enginepropertytypes.h>
     #include <dtABC/application.h>
-    #include <dtDAL/export.h>
+    #include <dtCore/export.h>
     #include <osg/Referenced>
     #include <algorithm>
     

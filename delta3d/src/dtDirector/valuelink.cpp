@@ -21,9 +21,9 @@
 
 #include <dtDirector/valuelink.h>
 
-#include <dtDAL/actorproperty.h>
-#include <dtDAL/resourceactorproperty.h>
-#include <dtDAL/resourcedescriptor.h>
+#include <dtCore/actorproperty.h>
+#include <dtCore/resourceactorproperty.h>
+#include <dtCore/resourcedescriptor.h>
 
 #include <dtDirector/director.h>
 #include <dtDirector/valuenode.h>
@@ -33,7 +33,7 @@
 namespace dtDirector
 {
    ///////////////////////////////////////////////////////////////////////////////////////
-   ValueLink::ValueLink(Node* owner, dtDAL::ActorProperty* prop, bool isOut, bool allowMultiple, bool typeCheck, bool exposed)
+   ValueLink::ValueLink(Node* owner, dtCore::ActorProperty* prop, bool isOut, bool allowMultiple, bool typeCheck, bool exposed)
       : mOwner(owner)
       , mProxyOwner(NULL)
       , mName("Value")
@@ -139,7 +139,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   dtDAL::DataType& ValueLink::GetPropertyType()
+   dtCore::DataType& ValueLink::GetPropertyType()
    {
       if (!mGettingType)
       {
@@ -151,9 +151,9 @@ namespace dtDirector
             ValueNode* node = mLinks[index];
             if (node && node->IsEnabled())
             {
-               if (node->GetPropertyType() != dtDAL::DataType::UNKNOWN)
+               if (node->GetPropertyType() != dtCore::DataType::UNKNOWN)
                {
-                  dtDAL::DataType& type = node->GetPropertyType();
+                  dtCore::DataType& type = node->GetPropertyType();
                   mGettingType = false;
                   return type;
                }
@@ -175,8 +175,8 @@ namespace dtDirector
 
          if (ownerValue)
          {
-            dtDAL::DataType& type = ownerValue->GetPropertyType();
-            if (type != dtDAL::DataType::UNKNOWN)
+            dtCore::DataType& type = ownerValue->GetPropertyType();
+            if (type != dtCore::DataType::UNKNOWN)
             {
                mGettingType = false;
                return type;
@@ -188,11 +188,11 @@ namespace dtDirector
 
       if (mTypeCheck && GetDefaultProperty()) return GetDefaultProperty()->GetDataType();
 
-      return dtDAL::DataType::UNKNOWN;
+      return dtCore::DataType::UNKNOWN;
    }
 
    //////////////////////////////////////////////////////////////////////////
-   dtDAL::ActorProperty* ValueLink::GetProperty(int index, ValueNode** outNode)
+   dtCore::ActorProperty* ValueLink::GetProperty(int index, ValueNode** outNode)
    {
       // Redirect if needed.
       if (mRedirector)
@@ -227,7 +227,7 @@ namespace dtDirector
 
       if (valueNode)
       {
-         dtDAL::ActorProperty* prop = valueNode->GetProperty(subIndex, outNode);
+         dtCore::ActorProperty* prop = valueNode->GetProperty(subIndex, outNode);
          if (prop)
          {
             return prop;
@@ -245,7 +245,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   dtDAL::ActorProperty* ValueLink::GetDefaultProperty()
+   dtCore::ActorProperty* ValueLink::GetDefaultProperty()
    {
       if (mRedirector) return mRedirector->GetDefaultProperty();
 
@@ -253,7 +253,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void ValueLink::SetDefaultProperty(dtDAL::ActorProperty* prop)
+   void ValueLink::SetDefaultProperty(dtCore::ActorProperty* prop)
    {
       if (mRedirector)
       {
@@ -302,7 +302,7 @@ namespace dtDirector
 
       // Always display the default property name as the current property
       // changes based on what it is linked to.
-      dtDAL::ActorProperty* prop = GetDefaultProperty();
+      dtCore::ActorProperty* prop = GetDefaultProperty();
       if (prop)
       {
          return prop->GetName().Get();
@@ -345,7 +345,7 @@ namespace dtDirector
 
       // Always display the default property name as the current property
       // changes based on what it is linked to.
-      dtDAL::ActorProperty* prop = GetDefaultProperty();
+      dtCore::ActorProperty* prop = GetDefaultProperty();
       if (prop)
       {
          std::string name = prop->GetLabel();

@@ -2,9 +2,9 @@
 #define __ACTION_ACTOR_PROXY_H__
 
 #include <dtCore/deltadrawable.h>
-#include <dtDAL/plugin_export.h>
+#include <dtCore/plugin_export.h>
 #include <dtABC/action.h>
-#include <dtDAL/actorproxy.h>
+#include <dtCore/actorproxy.h>
 
 
 /* 
@@ -32,7 +32,7 @@ namespace dtActors
 {
 
 
-   class DT_PLUGIN_EXPORT ActionActorProxy: public dtDAL::BaseActorObject
+   class DT_PLUGIN_EXPORT ActionActorProxy: public dtCore::BaseActorObject
    {
 
    public:

@@ -32,7 +32,7 @@
 
 #include <dtEditQt/resourceabstractbrowser.h>
 
-#include <dtDAL/resourcehelper.h>
+#include <dtCore/resourcehelper.h>
 
 class QAction;
 class QGroupBox;
@@ -64,7 +64,7 @@ namespace dtEditQt
       /**
        * Constructor
        */
-      TextureBrowser(dtDAL::DataType& type, QWidget* parent = 0);
+      TextureBrowser(dtCore::DataType& type, QWidget* parent = 0);
 
       /**
        * Destructor

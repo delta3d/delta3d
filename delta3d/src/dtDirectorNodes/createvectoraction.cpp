@@ -21,7 +21,7 @@
 #include <prefix/dtdirectornodesprefix.h>
 #include <dtDirectorNodes/createvectoraction.h>
 
-#include <dtDAL/stringactorproperty.h>
+#include <dtCore/stringactorproperty.h>
 
 #include <dtDirector/director.h>
 
@@ -51,34 +51,34 @@ namespace dtDirector
       ActionNode::BuildPropertyMap();
 
       // Create our value links.
-      dtDAL::StringActorProperty* xProp = new dtDAL::StringActorProperty(
+      dtCore::StringActorProperty* xProp = new dtCore::StringActorProperty(
          "X", "X",
-         dtDAL::StringActorProperty::SetFuncType(this, &CreateVectorAction::SetX),
-         dtDAL::StringActorProperty::GetFuncType(this, &CreateVectorAction::GetX),
+         dtCore::StringActorProperty::SetFuncType(this, &CreateVectorAction::SetX),
+         dtCore::StringActorProperty::GetFuncType(this, &CreateVectorAction::GetX),
          "The x value of the vector.");
 
-      dtDAL::StringActorProperty* yProp = new dtDAL::StringActorProperty(
+      dtCore::StringActorProperty* yProp = new dtCore::StringActorProperty(
          "Y", "Y",
-         dtDAL::StringActorProperty::SetFuncType(this, &CreateVectorAction::SetY),
-         dtDAL::StringActorProperty::GetFuncType(this, &CreateVectorAction::GetY),
+         dtCore::StringActorProperty::SetFuncType(this, &CreateVectorAction::SetY),
+         dtCore::StringActorProperty::GetFuncType(this, &CreateVectorAction::GetY),
          "The y value of the vector.");
 
-      dtDAL::StringActorProperty* zProp = new dtDAL::StringActorProperty(
+      dtCore::StringActorProperty* zProp = new dtCore::StringActorProperty(
          "Z", "Z",
-         dtDAL::StringActorProperty::SetFuncType(this, &CreateVectorAction::SetZ),
-         dtDAL::StringActorProperty::GetFuncType(this, &CreateVectorAction::GetZ),
+         dtCore::StringActorProperty::SetFuncType(this, &CreateVectorAction::SetZ),
+         dtCore::StringActorProperty::GetFuncType(this, &CreateVectorAction::GetZ),
          "The z value of the vector.");
 
-      dtDAL::StringActorProperty* wProp = new dtDAL::StringActorProperty(
+      dtCore::StringActorProperty* wProp = new dtCore::StringActorProperty(
          "W", "W",
-         dtDAL::StringActorProperty::SetFuncType(this, &CreateVectorAction::SetW),
-         dtDAL::StringActorProperty::GetFuncType(this, &CreateVectorAction::GetW),
+         dtCore::StringActorProperty::SetFuncType(this, &CreateVectorAction::SetW),
+         dtCore::StringActorProperty::GetFuncType(this, &CreateVectorAction::GetW),
          "The w value of the vector.");
 
-      mVectorProp = new dtDAL::StringActorProperty(
+      mVectorProp = new dtCore::StringActorProperty(
          "Vector", "Vector",
-         dtDAL::StringActorProperty::SetFuncType(this, &CreateVectorAction::SetVector),
-         dtDAL::StringActorProperty::GetFuncType(this, &CreateVectorAction::GetVector),
+         dtCore::StringActorProperty::SetFuncType(this, &CreateVectorAction::SetVector),
+         dtCore::StringActorProperty::GetFuncType(this, &CreateVectorAction::GetVector),
          "The vector to create from values.");
 
       // This will expose the properties in the editor and allow
@@ -101,16 +101,16 @@ namespace dtDirector
       int count = GetPropertyCount("Vector");
       for (int index = 0; index < count; index++)
       {
-         dtDAL::DataType& vecType = GetPropertyType("Vector", index);
-         if (vecType == dtDAL::DataType::VEC2F)
+         dtCore::DataType& vecType = GetPropertyType("Vector", index);
+         if (vecType == dtCore::DataType::VEC2F)
          {
             SetVec2(osg::Vec2(x, y), "Vector", index);
          }
-         else if (vecType == dtDAL::DataType::VEC3F)
+         else if (vecType == dtCore::DataType::VEC3F)
          {
             SetVec3(osg::Vec3(x, y, z), "Vector", index);
          }
-         else if (vecType == dtDAL::DataType::VEC4F)
+         else if (vecType == dtCore::DataType::VEC4F)
          {
             SetVec4(osg::Vec4(x, y, z, w), "Vector", index);
          }
@@ -127,9 +127,9 @@ namespace dtDirector
          // Result checks its own type
          if (link->GetName() == "Vector")
          {
-            if (value->CanBeType(dtDAL::DataType::VEC2F) ||
-                value->CanBeType(dtDAL::DataType::VEC3F) ||
-                value->CanBeType(dtDAL::DataType::VEC4F))
+            if (value->CanBeType(dtCore::DataType::VEC2F) ||
+                value->CanBeType(dtCore::DataType::VEC3F) ||
+                value->CanBeType(dtCore::DataType::VEC4F))
             {
                return true;
             }
@@ -138,9 +138,9 @@ namespace dtDirector
          else if (link->GetName() == "X" || link->GetName() == "Y" ||
                   link->GetName() == "Z" || link->GetName() == "W")
          {
-            if (value->CanBeType(dtDAL::DataType::INT)   ||
-                value->CanBeType(dtDAL::DataType::FLOAT) ||
-                value->CanBeType(dtDAL::DataType::DOUBLE))
+            if (value->CanBeType(dtCore::DataType::INT)   ||
+                value->CanBeType(dtCore::DataType::FLOAT) ||
+                value->CanBeType(dtCore::DataType::DOUBLE))
             {
                return true;
             }

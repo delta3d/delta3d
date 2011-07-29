@@ -56,7 +56,7 @@ namespace dtEditQt
         virtual ~DynamicNameControl();
 
         void InitializeData(dtQt::DynamicAbstractControl* newParent,
-           dtQt::PropertyEditorModel* newModel, dtDAL::PropertyContainer* newPC, dtDAL::ActorProperty* newProperty);
+           dtQt::PropertyEditorModel* newModel, dtCore::PropertyContainer* newPC, dtCore::ActorProperty* newProperty);
 
         /**
          * @see DynamicAbstractControl#updateEditorFromModel
@@ -100,7 +100,7 @@ namespace dtEditQt
          */
         virtual bool updateData(QWidget* widget);
 
-        virtual void ProxyNameChanged(dtDAL::BaseActorObject& proxy, std::string oldName);
+        virtual void ProxyNameChanged(dtCore::BaseActorObject& proxy, std::string oldName);
 
         /**
          * @see DynamicAbstractControl#handleSubEditDestroy
@@ -125,7 +125,7 @@ namespace dtEditQt
         // call our handleSubEditDestroy() method so we know to not hold this anymore
         dtQt::SubQLineEdit *mTemporaryEditControl;
 
-        dtCore::RefPtr<dtDAL::BaseActorObject> mProxy;
+        dtCore::RefPtr<dtCore::BaseActorObject> mProxy;
     };
 
 } // namespace dtEditQt

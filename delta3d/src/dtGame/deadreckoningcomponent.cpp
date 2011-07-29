@@ -28,7 +28,7 @@
 #include <dtUtil/log.h>
 #include <dtUtil/mathdefines.h>
 #include <dtUtil/matrixutil.h>
-#include <dtDAL/actortype.h>
+#include <dtCore/actortype.h>
 #include <dtGame/gameactor.h>
 #include <dtGame/messagetype.h>
 #include <dtGame/basemessages.h>

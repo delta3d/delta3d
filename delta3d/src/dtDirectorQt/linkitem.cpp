@@ -28,7 +28,7 @@
 
 #include <dtDirector/outputlink.h>
 
-#include <dtDAL/datatype.h>
+#include <dtCore/datatype.h>
 
 #include <QtGui/QGraphicsScene>
 #include <QtGui/QGraphicsSceneMouseEvent>
@@ -1074,7 +1074,7 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    ValueLinkItem::ValueLinkItem(NodeItem* nodeItem, int linkIndex, QGraphicsItem* parent, EditorScene* scene, const std::string& comment)
       : LinkItem(nodeItem, linkIndex, parent, scene, comment)
-      , mType(dtDAL::DataType::UNKNOWN_ID)
+      , mType(dtCore::DataType::UNKNOWN_ID)
    {
    }
 
@@ -1549,7 +1549,7 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    ValueNodeLinkItem::ValueNodeLinkItem(ValueItem* valueItem, QGraphicsItem* parent, EditorScene* scene)
       : LinkItem(valueItem, 0, parent, scene, "")
-      , mType(dtDAL::DataType::UNKNOWN_ID)
+      , mType(dtCore::DataType::UNKNOWN_ID)
    {
    }
 

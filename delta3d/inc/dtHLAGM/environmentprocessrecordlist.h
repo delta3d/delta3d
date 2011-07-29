@@ -26,7 +26,7 @@
 #define ENVIRONMENTPROCESSRECORDLIST_H_
 
 #include <dtUtil/getsetmacros.h>
-#include <dtDAL/namedgroupparameter.h>
+#include <dtCore/namedgroupparameter.h>
 #include <osg/Referenced>
 #include <dtHLAGM/export.h>
 
@@ -96,7 +96,7 @@ namespace dtHLAGM
       DT_DECLARE_ACCESSOR_GET_SET(unsigned int, Index);
       DT_DECLARE_ACCESSOR_GET_SET(unsigned int, TypeCode);
 
-      dtDAL::NamedGroupParameter& GetRecordData();
+      dtCore::NamedGroupParameter& GetRecordData();
 
       /**
        * Fills the given buffer with the encoded version of this struct.
@@ -124,7 +124,7 @@ namespace dtHLAGM
    private:
       ~EnvironmentProcessRecord();
 
-      dtCore::RefPtr<dtDAL::NamedGroupParameter> mParameterData;
+      dtCore::RefPtr<dtCore::NamedGroupParameter> mParameterData;
    };
 
    class DT_HLAGM_EXPORT EnvironmentProcessRecordList

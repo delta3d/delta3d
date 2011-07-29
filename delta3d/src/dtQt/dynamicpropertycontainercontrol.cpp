@@ -25,7 +25,7 @@
 #include <prefix/dtqtprefix.h>
 #include <dtQt/dynamicpropertycontainercontrol.h>
 
-#include <dtDAL/datatype.h>
+#include <dtCore/datatype.h>
 
 namespace dtQt
 {
@@ -39,24 +39,24 @@ namespace dtQt
 
    /////////////////////////////////////////////////////////////////////////////////
    void DynamicPropertyContainerControl::InitializeData(DynamicAbstractControl* newParent,
-      PropertyEditorModel* newModel, dtDAL::PropertyContainer* newPC, dtDAL::ActorProperty* newProperty)
+      PropertyEditorModel* newModel, dtCore::PropertyContainer* newPC, dtCore::ActorProperty* newProperty)
    {
-      if (newProperty != NULL && newProperty->GetDataType() == dtDAL::DataType::PROPERTY_CONTAINER)
+      if (newProperty != NULL && newProperty->GetDataType() == dtCore::DataType::PROPERTY_CONTAINER)
       {
-         mProperty = static_cast<dtDAL::BasePropertyContainerActorProperty*>(newProperty);
+         mProperty = static_cast<dtCore::BasePropertyContainerActorProperty*>(newProperty);
          DynamicAbstractControl::InitializeData(newParent, newModel, newPC, newProperty);
 
-         dtDAL::PropertyContainer* pc = mProperty->GetValue();
+         dtCore::PropertyContainer* pc = mProperty->GetValue();
          if (pc != NULL)
          {
-            std::vector<dtDAL::ActorProperty*> properties;
+            std::vector<dtCore::ActorProperty*> properties;
             pc->GetPropertyList(properties);
-            std::vector<dtDAL::ActorProperty*>::iterator i, iend;
+            std::vector<dtCore::ActorProperty*>::iterator i, iend;
             i = properties.begin();
             iend = properties.end();
             for (; i != iend ; ++i)
             {
-               dtDAL::ActorProperty* propType = *i;
+               dtCore::ActorProperty* propType = *i;
                if (propType != NULL)
                {
                   DynamicAbstractControl* propertyControl = GetDynamicControlFactory()->CreateDynamicControl(*propType);
@@ -67,13 +67,13 @@ namespace dtQt
                      // Note using the new property container as the container for this sub control.
                      propertyControl->InitializeData(this, newModel, pc, propType);
 
-                     connect(propertyControl, SIGNAL(PropertyAboutToChange(dtDAL::PropertyContainer&, dtDAL::ActorProperty&,
+                     connect(propertyControl, SIGNAL(PropertyAboutToChange(dtCore::PropertyContainer&, dtCore::ActorProperty&,
                                        const std::string&, const std::string&)),
-                              this, SLOT(PropertyAboutToChangePassThrough(dtDAL::PropertyContainer&, dtDAL::ActorProperty&,
+                              this, SLOT(PropertyAboutToChangePassThrough(dtCore::PropertyContainer&, dtCore::ActorProperty&,
                                        const std::string&, const std::string&)));
 
-                     connect(propertyControl, SIGNAL(PropertyChanged(dtDAL::PropertyContainer&, dtDAL::ActorProperty&)),
-                              this, SLOT(PropertyChangedPassThrough(dtDAL::PropertyContainer&, dtDAL::ActorProperty&)));
+                     connect(propertyControl, SIGNAL(PropertyChanged(dtCore::PropertyContainer&, dtCore::ActorProperty&)),
+                              this, SLOT(PropertyChangedPassThrough(dtCore::PropertyContainer&, dtCore::ActorProperty&)));
                      mChildren.push_back(propertyControl);
                   }
                }

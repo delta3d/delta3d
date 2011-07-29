@@ -25,7 +25,7 @@
 #include <dtDirectorNodes/nodelibraryexport.h>
 #include <dtDirector/valuenode.h>
 
-namespace dtDAL
+namespace dtCore
 {
    class ActorProperty;
 }
@@ -124,7 +124,7 @@ namespace dtDirector
        *         via this method instead of directly to ensure that
        *         the desired property is being used.
        */
-      virtual dtDAL::ActorProperty* GetProperty(const std::string& name, int index = 0, ValueNode** outNode = NULL);
+      virtual dtCore::ActorProperty* GetProperty(const std::string& name, int index = 0, ValueNode** outNode = NULL);
 
       /**
        * Retrieves the property for this value.
@@ -134,7 +134,7 @@ namespace dtDirector
        *
        * @return  The property.
        */
-      virtual dtDAL::ActorProperty* GetProperty(int index, ValueNode** outNode = NULL);
+      virtual dtCore::ActorProperty* GetProperty(int index, ValueNode** outNode = NULL);
 
       /**
        * Retrieves whether the value can be a specified type.
@@ -143,18 +143,18 @@ namespace dtDirector
        *
        * @return  True if this value is the proper type.
        */
-      virtual bool CanBeType(dtDAL::DataType& type);
+      virtual bool CanBeType(dtCore::DataType& type);
 
       /**
        * Retrieves the type of this value.
        *
        * @return  The type.
        */
-      virtual dtDAL::DataType& GetPropertyType();
+      virtual dtCore::DataType& GetPropertyType();
 
       // Accessor for properties
-      void SetDefaultType(const dtDAL::DataType& value);
-      dtDAL::DataType& GetDefaultType() const;
+      void SetDefaultType(const dtCore::DataType& value);
+      dtCore::DataType& GetDefaultType() const;
 
    protected:
 
@@ -166,7 +166,7 @@ namespace dtDirector
       void UpdateLinkType();
 
    private:
-      const dtDAL::DataType* mDefaultType;
+      const dtCore::DataType* mDefaultType;
    };
 }
 

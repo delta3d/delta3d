@@ -26,7 +26,7 @@
 
 #include <QtGui/QDockWidget>
 #include <dtCore/transform.h>
-#include <dtDAL/objecttype.h>
+#include <dtCore/objecttype.h>
 #include <dtUtil/tree.h>
 
 /// @cond DOXYGEN_SHOULD_SKIP_THIS

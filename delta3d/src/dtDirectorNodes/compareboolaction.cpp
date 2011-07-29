@@ -21,7 +21,7 @@
 #include <prefix/dtdirectornodesprefix.h>
 #include <dtDirectorNodes/compareboolaction.h>
 
-#include <dtDAL/booleanactorproperty.h>
+#include <dtCore/booleanactorproperty.h>
 
 #include <dtDirector/director.h>
 
@@ -57,16 +57,16 @@ namespace dtDirector
       ActionNode::BuildPropertyMap();
 
       // Create our value links.
-      dtDAL::BooleanActorProperty* leftProp = new dtDAL::BooleanActorProperty(
+      dtCore::BooleanActorProperty* leftProp = new dtCore::BooleanActorProperty(
          "A", "A",
-         dtDAL::BooleanActorProperty::SetFuncType(this, &CompareBoolAction::SetA),
-         dtDAL::BooleanActorProperty::GetFuncType(this, &CompareBoolAction::GetA),
+         dtCore::BooleanActorProperty::SetFuncType(this, &CompareBoolAction::SetA),
+         dtCore::BooleanActorProperty::GetFuncType(this, &CompareBoolAction::GetA),
          "Value A.");
 
-      dtDAL::BooleanActorProperty* rightProp = new dtDAL::BooleanActorProperty(
+      dtCore::BooleanActorProperty* rightProp = new dtCore::BooleanActorProperty(
          "B", "B",
-         dtDAL::BooleanActorProperty::SetFuncType(this, &CompareBoolAction::SetB),
-         dtDAL::BooleanActorProperty::GetFuncType(this, &CompareBoolAction::GetB),
+         dtCore::BooleanActorProperty::SetFuncType(this, &CompareBoolAction::SetB),
+         dtCore::BooleanActorProperty::GetFuncType(this, &CompareBoolAction::GetB),
          "Value B.");
 
       AddProperty(leftProp);

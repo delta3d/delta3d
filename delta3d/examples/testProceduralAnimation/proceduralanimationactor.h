@@ -29,8 +29,8 @@
 #include <dtAnim/posemesh.h>
 #include <dtGame/gmcomponent.h>
 #include <dtGame/actorupdatemessage.h>
-#include <dtDAL/datatype.h>
-#include <dtDAL/namedparameter.h>
+#include <dtCore/datatype.h>
+#include <dtCore/namedparameter.h>
 #include <dtCore/timer.h>
 #include <dtUtil/enumeration.h>
 

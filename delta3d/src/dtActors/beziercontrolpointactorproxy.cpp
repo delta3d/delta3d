@@ -22,8 +22,8 @@
 #include <dtActors/beziercontrolpointactorproxy.h>
 #include <dtActors/beziernodeactorproxy.h>
 
-#include <dtDAL/actoractorproperty.h>
-#include <dtDAL/actorproxyicon.h>
+#include <dtCore/actoractorproperty.h>
+#include <dtCore/actorproxyicon.h>
 
 #include <sstream>
 
@@ -42,7 +42,7 @@ namespace dtActors
       SetName(ss.str());
    }
 
-   void BezierControlPointActorProxy::SetBezierNode(dtDAL::BaseActorObject* node)
+   void BezierControlPointActorProxy::SetBezierNode(dtCore::BaseActorObject* node)
    {
 
       //BaseActorObject* old = GetLinkedActor("Bezier Node");
@@ -62,14 +62,14 @@ namespace dtActors
       //      //clear out old the proxy's control point to make sure we don't recurse
       //      old->SetLinkedActor("Control Point", NULL);
       //      //set the value to NULL to clear out the internal data.
-      //      static_cast<dtDAL::ActorActorProperty*>(old->GetProperty("Control Point"))->SetValue(NULL);
+      //      static_cast<dtCore::ActorActorProperty*>(old->GetProperty("Control Point"))->SetValue(NULL);
       //   }
       //}
 
       ////old and node are both non-NULL but are different.
       //if (node != NULL)
       //{
-      //   static_cast<dtDAL::ActorActorProperty*>(node->GetProperty("Control Point"))->SetValue(this);
+      //   static_cast<dtCore::ActorActorProperty*>(node->GetProperty("Control Point"))->SetValue(this);
 
       //}
 
@@ -99,27 +99,27 @@ namespace dtActors
    {
       //dtABC::BezierControlPoint *bcp = static_cast<dtABC::BezierControlPoint*> (GetActor());
 
-      dtDAL::TransformableActorProxy::BuildPropertyMap();
+      dtCore::TransformableActorProxy::BuildPropertyMap();
 
-      AddProperty(new dtDAL::ActorActorProperty(*this, "Bezier Node", "Bezier Node",
-               dtDAL::ActorActorProperty::SetFuncType(this, &BezierControlPointActorProxy::SetBezierNode),
-               dtDAL::ActorActorProperty::GetFuncType(this, &BezierControlPointActorProxy::GetBezierNode),
+      AddProperty(new dtCore::ActorActorProperty(*this, "Bezier Node", "Bezier Node",
+               dtCore::ActorActorProperty::SetFuncType(this, &BezierControlPointActorProxy::SetBezierNode),
+               dtCore::ActorActorProperty::GetFuncType(this, &BezierControlPointActorProxy::GetBezierNode),
                "dtABC::BezierNode",
                "Sets the Bezier Node of this proxy"));
    }
 
 
-   const dtDAL::BaseActorObject::RenderMode& BezierControlPointActorProxy::GetRenderMode()
+   const dtCore::BaseActorObject::RenderMode& BezierControlPointActorProxy::GetRenderMode()
    {
-         return dtDAL::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON;
+         return dtCore::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON;
    }
 
    //////////////////////////////////////////////////////////////////////////
-   dtDAL::ActorProxyIcon *BezierControlPointActorProxy::GetBillBoardIcon()
+   dtCore::ActorProxyIcon *BezierControlPointActorProxy::GetBillBoardIcon()
    {
       if (!mBillBoardIcon.valid())
       {
-         mBillBoardIcon = new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IMAGE_BILLBOARD_PATHNODE);
+         mBillBoardIcon = new dtCore::ActorProxyIcon(dtCore::ActorProxyIcon::IMAGE_BILLBOARD_PATHNODE);
       }
 
       return mBillBoardIcon.get();

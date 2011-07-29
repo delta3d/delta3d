@@ -29,12 +29,12 @@
 #include <dtCore/positionallight.h>
 #include <dtCore/transform.h>
 
-#include <dtDAL/actorproxyicon.h>
-#include <dtDAL/floatactorproperty.h>
-#include <dtDAL/functor.h>
-#include <dtDAL/gameeventmanager.h>
-#include <dtDAL/resourceactorproperty.h>
-#include <dtDAL/vectoractorproperties.h>
+#include <dtCore/actorproxyicon.h>
+#include <dtCore/floatactorproperty.h>
+#include <dtCore/functor.h>
+#include <dtCore/gameeventmanager.h>
+#include <dtCore/resourceactorproperty.h>
+#include <dtCore/vectoractorproperties.h>
 
 #include <dtGame/basemessages.h>
 #include <dtGame/invokable.h>
@@ -63,44 +63,44 @@ void FireActorProxy::BuildPropertyMap()
 
    FireActor& fa = static_cast<FireActor&>(GetGameActor());
 
-   AddProperty(new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::PARTICLE_SYSTEM,
+   AddProperty(new dtCore::ResourceActorProperty(*this, dtCore::DataType::PARTICLE_SYSTEM,
       "FlameFileName", "FlameFileName",
-      dtDAL::ResourceActorProperty::SetFuncType(&fa, &FireActor::SetFlameFilename),
+      dtCore::ResourceActorProperty::SetFuncType(&fa, &FireActor::SetFlameFilename),
       "Sets the flame file name"));
 
-   AddProperty(new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::PARTICLE_SYSTEM,
+   AddProperty(new dtCore::ResourceActorProperty(*this, dtCore::DataType::PARTICLE_SYSTEM,
       "SparkFileName", "SparkFileName",
-      dtDAL::ResourceActorProperty::SetFuncType(&fa, &FireActor::SetSparkFilename),
+      dtCore::ResourceActorProperty::SetFuncType(&fa, &FireActor::SetSparkFilename),
       "Sets the spark file name"));
 
-   AddProperty(new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::PARTICLE_SYSTEM,
+   AddProperty(new dtCore::ResourceActorProperty(*this, dtCore::DataType::PARTICLE_SYSTEM,
       "SmokeFileName", "SmokeFileName",
-      dtDAL::ResourceActorProperty::SetFuncType(&fa, &FireActor::SetSmokeFilename),
+      dtCore::ResourceActorProperty::SetFuncType(&fa, &FireActor::SetSmokeFilename),
       "Sets the smoke file name"));
 
-   AddProperty(new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::PARTICLE_SYSTEM,
+   AddProperty(new dtCore::ResourceActorProperty(*this, dtCore::DataType::PARTICLE_SYSTEM,
       "SmokeCeilingFileName", "SmokeCeilingFileName",
-      dtDAL::ResourceActorProperty::SetFuncType(&fa, &FireActor::SetSmokeCeilingFilename),
+      dtCore::ResourceActorProperty::SetFuncType(&fa, &FireActor::SetSmokeCeilingFilename),
       "Sets the smoke ceiling file name"));
 
-   AddProperty(new dtDAL::FloatActorProperty("Radius", "Radius",
-      dtDAL::FloatActorProperty::SetFuncType(&fa, &FireActor::SetRadius),
-      dtDAL::FloatActorProperty::GetFuncType(&fa, &FireActor::GetRadius),
+   AddProperty(new dtCore::FloatActorProperty("Radius", "Radius",
+      dtCore::FloatActorProperty::SetFuncType(&fa, &FireActor::SetRadius),
+      dtCore::FloatActorProperty::GetFuncType(&fa, &FireActor::GetRadius),
       "Sets the fire radius"));
 
-   AddProperty(new dtDAL::FloatActorProperty("Intensity", "Intensity",
-      dtDAL::FloatActorProperty::SetFuncType(&fa, &FireActor::SetIntensity),
-      dtDAL::FloatActorProperty::GetFuncType(&fa, &FireActor::GetIntensity),
+   AddProperty(new dtCore::FloatActorProperty("Intensity", "Intensity",
+      dtCore::FloatActorProperty::SetFuncType(&fa, &FireActor::SetIntensity),
+      dtCore::FloatActorProperty::GetFuncType(&fa, &FireActor::GetIntensity),
       "Sets the fire intensity"));
 
-   AddProperty(new dtDAL::Vec3ActorProperty("LightRotation", "LightRotation",
-      dtDAL::Vec3ActorProperty::SetFuncType(&fa, &FireActor::SetLightRotation),
-      dtDAL::Vec3ActorProperty::GetFuncType(&fa, &FireActor::GetLightRotation),
+   AddProperty(new dtCore::Vec3ActorProperty("LightRotation", "LightRotation",
+      dtCore::Vec3ActorProperty::SetFuncType(&fa, &FireActor::SetLightRotation),
+      dtCore::Vec3ActorProperty::GetFuncType(&fa, &FireActor::GetLightRotation),
       "Sets the light rotation"));
 
-   AddProperty(new dtDAL::Vec3ActorProperty("LightTranslation", "LightTranslation",
-      dtDAL::Vec3ActorProperty::SetFuncType(&fa, &FireActor::SetLightTranslation),
-      dtDAL::Vec3ActorProperty::GetFuncType(&fa, &FireActor::GetLightTranslation),
+   AddProperty(new dtCore::Vec3ActorProperty("LightTranslation", "LightTranslation",
+      dtCore::Vec3ActorProperty::SetFuncType(&fa, &FireActor::SetLightTranslation),
+      dtCore::Vec3ActorProperty::GetFuncType(&fa, &FireActor::GetLightTranslation),
       "Sets the light translation"));
 }
 
@@ -109,11 +109,11 @@ void FireActorProxy::BuildInvokables()
    dtGame::GameActorProxy::BuildInvokables();
 }
 
-dtDAL::ActorProxyIcon* FireActorProxy::GetBillBoardIcon()
+dtCore::ActorProxyIcon* FireActorProxy::GetBillBoardIcon()
 {
    if (!mBillBoardIcon.valid())
    {
-      mBillBoardIcon = new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IMAGE_BILLBOARD_GENERIC);
+      mBillBoardIcon = new dtCore::ActorProxyIcon(dtCore::ActorProxyIcon::IMAGE_BILLBOARD_GENERIC);
    }
    return mBillBoardIcon.get();
 }
@@ -251,7 +251,7 @@ void FireActor::DecreaseIntensity(float intensity)
 
          const std::string& name = "ExtinguishFire";
 
-         dtDAL::GameEvent* event = dtDAL::GameEventManager::GetInstance().FindEvent(name);
+         dtCore::GameEvent* event = dtCore::GameEventManager::GetInstance().FindEvent(name);
          if (event == NULL)
          {
             throw dtUtil::Exception("Failed to find the game event: " + name, __FILE__, __LINE__);

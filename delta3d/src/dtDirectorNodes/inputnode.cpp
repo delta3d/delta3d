@@ -21,8 +21,8 @@
 #include <prefix/dtdirectornodesprefix.h>
 #include <dtDirectorNodes/inputnode.h>
 
-#include <dtDAL/actorproxy.h>
-#include <dtDAL/stringactorproperty.h>
+#include <dtCore/actorproxy.h>
+#include <dtCore/stringactorproperty.h>
 
 #include <dtDirector/inputlink.h>
 #include <dtDirector/outputlink.h>
@@ -61,10 +61,10 @@ namespace dtDirector
    {
       EventNode::BuildPropertyMap();
 
-      AddProperty(new dtDAL::StringActorProperty(
+      AddProperty(new dtCore::StringActorProperty(
          "Name", "Name", 
-         dtDAL::StringActorProperty::SetFuncType(this, &InputNode::SetName),
-         dtDAL::StringActorProperty::GetFuncType(this, &InputNode::GetName),
+         dtCore::StringActorProperty::SetFuncType(this, &InputNode::SetName),
+         dtCore::StringActorProperty::GetFuncType(this, &InputNode::GetName),
          "The name of the input link."));
    }
 

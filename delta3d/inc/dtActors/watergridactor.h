@@ -27,7 +27,7 @@
 #define __WATERGRIDACTOR_H__
 
 #include <dtActors/basewateractor.h>
-#include <dtDAL/plugin_export.h>
+#include <dtCore/plugin_export.h>
 
 #include <dtUtil/refstring.h>
 #include <vector>
@@ -279,8 +279,8 @@ namespace dtActors
       */
       void OnMapLoadEnd();
 
-      dtDAL::ActorProxyIcon* GetBillBoardIcon();
-      /*virtual*/ const dtDAL::BaseActorObject::RenderMode& GetRenderMode();
+      dtCore::ActorProxyIcon* GetBillBoardIcon();
+      /*virtual*/ const dtCore::BaseActorObject::RenderMode& GetRenderMode();
 
       void SetSceneCamera(const std::string& name); 
       std::string GetSceneCamera() const;

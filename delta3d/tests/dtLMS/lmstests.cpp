@@ -35,9 +35,9 @@
 
 #include <dtCore/scene.h>
 
-#include <dtDAL/booleanactorproperty.h>
-#include <dtDAL/datatype.h>
-#include <dtDAL/floatactorproperty.h>
+#include <dtCore/booleanactorproperty.h>
+#include <dtCore/datatype.h>
+#include <dtCore/floatactorproperty.h>
 
 #include <dtGame/gamemanager.h>
 
@@ -252,7 +252,7 @@ void LMSTests::TestLmsComponentMessaging()
    lmsComp->GetMessageVector(msgs);
    CPPUNIT_ASSERT_MESSAGE("The Complete property is false, nothing should have happened", msgs.empty());
 
-   static_cast<dtDAL::BooleanActorProperty*>(proxy->GetProperty("Complete"))->SetValue(true);
+   static_cast<dtCore::BooleanActorProperty*>(proxy->GetProperty("Complete"))->SetValue(true);
    lmsComp->SendLmsUpdate(*proxy);
    lmsComp->GetMessageVector(msgs);
    CPPUNIT_ASSERT(!msgs.empty());
@@ -262,7 +262,7 @@ void LMSTests::TestLmsComponentMessaging()
    CPPUNIT_ASSERT_MESSAGE("The value of the message should match the property",
       msg.GetValue() == dtLMS::LmsMessageValue::ObjectiveCompletionValue::COMPLETE.GetName());
 
-   static_cast<dtDAL::BooleanActorProperty*>(proxy->GetProperty("Complete"))->SetValue(false);
+   static_cast<dtCore::BooleanActorProperty*>(proxy->GetProperty("Complete"))->SetValue(false);
    lmsComp->SendLmsUpdate(*proxy);
    lmsComp->GetMessageVector(msgs);
    CPPUNIT_ASSERT(!msgs.empty());
@@ -272,13 +272,13 @@ void LMSTests::TestLmsComponentMessaging()
    CPPUNIT_ASSERT_MESSAGE("The value of the message should match the property",
       msg.GetValue() == dtLMS::LmsMessageValue::ObjectiveCompletionValue::INCOMPLETE.GetName());
 
-   static_cast<dtDAL::BooleanActorProperty*>(proxy->GetProperty("Complete"))->SetValue(false);
+   static_cast<dtCore::BooleanActorProperty*>(proxy->GetProperty("Complete"))->SetValue(false);
    lmsComp->SendLmsUpdate(*proxy);
    lmsComp->GetMessageVector(msgs);
    CPPUNIT_ASSERT_MESSAGE("Assigning the property to its same value should do nothing", msgs.empty());
 
    const float score = 0.8f;
-   static_cast<dtDAL::FloatActorProperty*>(proxy->GetProperty("Score"))->SetValue(score);
+   static_cast<dtCore::FloatActorProperty*>(proxy->GetProperty("Score"))->SetValue(score);
    lmsComp->SendLmsUpdate(*proxy);
    lmsComp->GetMessageVector(msgs);
    CPPUNIT_ASSERT(!msgs.empty());
@@ -290,7 +290,7 @@ void LMSTests::TestLmsComponentMessaging()
    CPPUNIT_ASSERT_MESSAGE("The message type should be correct", msg.GetMessageType() == dtLMS::LmsMessageType::OBJECTIVE_SCORE);
    CPPUNIT_ASSERT_MESSAGE("The id of the message should be the proxy's name", msg.GetObjectiveID() == proxy->GetName());
 
-   static_cast<dtDAL::FloatActorProperty*>(proxy->GetProperty("Score"))->SetValue(1.3f);
+   static_cast<dtCore::FloatActorProperty*>(proxy->GetProperty("Score"))->SetValue(1.3f);
    lmsComp->SendLmsUpdate(*proxy);
    lmsComp->GetMessageVector(msgs);
    CPPUNIT_ASSERT(!msgs.empty());
@@ -302,7 +302,7 @@ void LMSTests::TestLmsComponentMessaging()
    CPPUNIT_ASSERT_MESSAGE("The message type should be correct", msg.GetMessageType() == dtLMS::LmsMessageType::OBJECTIVE_SCORE);
    CPPUNIT_ASSERT_MESSAGE("The id of the message should be the proxy's name", msg.GetObjectiveID() == proxy->GetName());
 
-   static_cast<dtDAL::FloatActorProperty*>(proxy->GetProperty("Score"))->SetValue(5.0f);
+   static_cast<dtCore::FloatActorProperty*>(proxy->GetProperty("Score"))->SetValue(5.0f);
    lmsComp->SendLmsUpdate(*proxy);
    lmsComp->GetMessageVector(msgs);
    CPPUNIT_ASSERT_MESSAGE("The value is clamped, internally, nothing should have happened", msgs.empty());

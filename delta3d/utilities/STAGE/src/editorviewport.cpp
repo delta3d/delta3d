@@ -43,15 +43,15 @@
 #include <dtEditQt/stageglwidget.h>
 #include <dtEditQt/viewportoverlay.h>
 
-#include <dtDAL/actorproxyicon.h>
-#include <dtDAL/arrayactorproperty.h>
-#include <dtDAL/librarymanager.h>
-#include <dtDAL/map.h>
-#include <dtDAL/mapxml.h>
-#include <dtDAL/project.h>
-#include <dtDAL/resourceactorproperty.h>
-#include <dtDAL/transformableactorproxy.h>
-#include <dtDAL/vectoractorproperties.h>
+#include <dtCore/actorproxyicon.h>
+#include <dtCore/arrayactorproperty.h>
+#include <dtCore/librarymanager.h>
+#include <dtCore/map.h>
+#include <dtCore/mapxml.h>
+#include <dtCore/project.h>
+#include <dtCore/resourceactorproperty.h>
+#include <dtCore/transformableactorproxy.h>
+#include <dtCore/vectoractorproperties.h>
 
 #include <dtUtil/exception.h>
 #include <dtUtil/mathdefines.h>
@@ -120,7 +120,7 @@ namespace dtEditQt
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void EditorViewport::refreshActorSelection(const std::vector< dtCore::RefPtr<dtDAL::BaseActorObject> >& actors)
+   void EditorViewport::refreshActorSelection(const std::vector< dtCore::RefPtr<dtCore::BaseActorObject> >& actors)
    {
       Viewport::refreshActorSelection(actors);
 
@@ -132,8 +132,8 @@ namespace dtEditQt
          bool canScale = false;
          for (int actorIndex = 0; actorIndex < (int)actors.size(); actorIndex++)
          {
-            dtDAL::TransformableActorProxy* targetProxy =
-               dynamic_cast<dtDAL::TransformableActorProxy*>(actors[actorIndex].get());
+            dtCore::TransformableActorProxy* targetProxy =
+               dynamic_cast<dtCore::TransformableActorProxy*>(actors[actorIndex].get());
 
             if (targetProxy)
             {
@@ -155,8 +155,8 @@ namespace dtEditQt
                if (!canScale)
                {
                   // Determine if this target can be scaled.
-                  dtDAL::ActorProperty* prop = targetProxy->GetProperty("Scale");
-                  dtDAL::Vec3ActorProperty* scaleProp = dynamic_cast<dtDAL::Vec3ActorProperty*>(prop);
+                  dtCore::ActorProperty* prop = targetProxy->GetProperty("Scale");
+                  dtCore::Vec3ActorProperty* scaleProp = dynamic_cast<dtCore::Vec3ActorProperty*>(prop);
 
                   if (scaleProp)
                   {
@@ -243,11 +243,11 @@ namespace dtEditQt
          dtCore::DeltaDrawable* drawable = NULL;
          mGhostProxy->GetActor(drawable);
 
-         const dtDAL::BaseActorObject::RenderMode& renderMode = mGhostProxy->GetRenderMode();
-         if (renderMode == dtDAL::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON ||
-            renderMode == dtDAL::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON)
+         const dtCore::BaseActorObject::RenderMode& renderMode = mGhostProxy->GetRenderMode();
+         if (renderMode == dtCore::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON ||
+            renderMode == dtCore::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON)
          {
-            dtDAL::ActorProxyIcon* billBoard = mGhostProxy->GetBillBoardIcon();
+            dtCore::ActorProxyIcon* billBoard = mGhostProxy->GetBillBoardIcon();
             if (billBoard)
             {
                ViewportManager::GetInstance().getMasterScene()->RemoveChild(billBoard->GetDrawable());
@@ -266,7 +266,7 @@ namespace dtEditQt
       bool validDrag = false;
       dtCore::DeltaDrawable* drawable = NULL;
       QByteArray ghostData;
-      dtDAL::ResourceActorProperty* resourceProp = NULL;
+      dtCore::ResourceActorProperty* resourceProp = NULL;
 
       // Create a ghost of the object being dragged into the view.
       if (event->mimeData()->hasFormat("Prefab"))
@@ -274,11 +274,11 @@ namespace dtEditQt
          validDrag = true;
          ClearGhostProxy();
          
-         mGhostProxy = dtDAL::LibraryManager::GetInstance().CreateActorProxy("dtActors", "Prefab");
+         mGhostProxy = dtCore::LibraryManager::GetInstance().CreateActorProxy("dtActors", "Prefab");
          if (mGhostProxy.valid())
          {
             ghostData = event->mimeData()->data("Prefab");
-            resourceProp = dynamic_cast<dtDAL::ResourceActorProperty*>(mGhostProxy->GetProperty("PrefabResource"));
+            resourceProp = dynamic_cast<dtCore::ResourceActorProperty*>(mGhostProxy->GetProperty("PrefabResource"));
             mGhostProxy->GetActor(drawable);
          }
       }
@@ -287,11 +287,11 @@ namespace dtEditQt
          validDrag = true;
          ClearGhostProxy();
 
-         mGhostProxy = dtDAL::LibraryManager::GetInstance().CreateActorProxy("dtcore.Game.Actors", "Game Mesh Actor");
+         mGhostProxy = dtCore::LibraryManager::GetInstance().CreateActorProxy("dtcore.Game.Actors", "Game Mesh Actor");
          if (mGhostProxy.valid())
          {
             ghostData = event->mimeData()->data("StaticMesh");
-            resourceProp = dynamic_cast<dtDAL::ResourceActorProperty*>(mGhostProxy->GetProperty("static mesh"));
+            resourceProp = dynamic_cast<dtCore::ResourceActorProperty*>(mGhostProxy->GetProperty("static mesh"));
             mGhostProxy->GetActor(drawable);
          }
       }
@@ -300,11 +300,11 @@ namespace dtEditQt
          validDrag = true;
          ClearGhostProxy();
 
-         mGhostProxy = dtDAL::LibraryManager::GetInstance().CreateActorProxy("dtanim", "AnimationGameActor");
+         mGhostProxy = dtCore::LibraryManager::GetInstance().CreateActorProxy("dtanim", "AnimationGameActor");
          if (mGhostProxy.valid())
          {
             ghostData = event->mimeData()->data("SkeletalMesh");
-            resourceProp = dynamic_cast<dtDAL::ResourceActorProperty*>(mGhostProxy->GetProperty("Skeletal Mesh"));
+            resourceProp = dynamic_cast<dtCore::ResourceActorProperty*>(mGhostProxy->GetProperty("Skeletal Mesh"));
             mGhostProxy->GetActor(drawable);
          }
       }
@@ -313,11 +313,11 @@ namespace dtEditQt
          validDrag = true;
          ClearGhostProxy();
 
-         mGhostProxy = dtDAL::LibraryManager::GetInstance().CreateActorProxy("dtcore", "Particle System");
+         mGhostProxy = dtCore::LibraryManager::GetInstance().CreateActorProxy("dtcore", "Particle System");
          if (mGhostProxy.valid())
          {
             ghostData = event->mimeData()->data("Particle");
-            resourceProp = dynamic_cast<dtDAL::ResourceActorProperty*>(mGhostProxy->GetProperty("Particle(s) File"));
+            resourceProp = dynamic_cast<dtCore::ResourceActorProperty*>(mGhostProxy->GetProperty("Particle(s) File"));
             mGhostProxy->GetActor(drawable);
          }
       }
@@ -326,11 +326,11 @@ namespace dtEditQt
          validDrag = true;
          ClearGhostProxy();
 
-         mGhostProxy = dtDAL::LibraryManager::GetInstance().CreateActorProxy("dtcore.Environment", "Sound Actor");
+         mGhostProxy = dtCore::LibraryManager::GetInstance().CreateActorProxy("dtcore.Environment", "Sound Actor");
          if (mGhostProxy.valid())
          {
             ghostData = event->mimeData()->data("Sound");
-            resourceProp = dynamic_cast<dtDAL::ResourceActorProperty*>(mGhostProxy->GetProperty("The Sound Effect"));
+            resourceProp = dynamic_cast<dtCore::ResourceActorProperty*>(mGhostProxy->GetProperty("The Sound Effect"));
             mGhostProxy->GetActor(drawable);
          }
       }
@@ -344,7 +344,7 @@ namespace dtEditQt
          QString category, name;
          dataStream >> category >> name;
 
-         mGhostProxy = dtDAL::LibraryManager::GetInstance().CreateActorProxy(category.toStdString(), name.toStdString());
+         mGhostProxy = dtCore::LibraryManager::GetInstance().CreateActorProxy(category.toStdString(), name.toStdString());
          if (mGhostProxy.valid())
          {
             mGhostProxy->GetActor(drawable);
@@ -356,11 +356,11 @@ namespace dtEditQt
          validDrag = true;
          ClearGhostProxy();
 
-         mGhostProxy = dtDAL::LibraryManager::GetInstance().CreateActorProxy("dtActors", "Director Actor");
+         mGhostProxy = dtCore::LibraryManager::GetInstance().CreateActorProxy("dtActors", "Director Actor");
          if (mGhostProxy.valid())
          {
             ghostData = event->mimeData()->data("Director");
-            dtDAL::ArrayActorProperty<dtDAL::ResourceDescriptor>* arrayProp = dynamic_cast<dtDAL::ArrayActorProperty<dtDAL::ResourceDescriptor>* >(mGhostProxy->GetProperty("DirectorArray"));
+            dtCore::ArrayActorProperty<dtCore::ResourceDescriptor>* arrayProp = dynamic_cast<dtCore::ArrayActorProperty<dtCore::ResourceDescriptor>* >(mGhostProxy->GetProperty("DirectorArray"));
             if (arrayProp)
             {
                if (arrayProp->GetArraySize() == 0)
@@ -369,7 +369,7 @@ namespace dtEditQt
                }
 
                arrayProp->SetIndex(0);
-               resourceProp = dynamic_cast<dtDAL::ResourceActorProperty*>(arrayProp->GetArrayProperty());
+               resourceProp = dynamic_cast<dtCore::ResourceActorProperty*>(arrayProp->GetArrayProperty());
             }
             mGhostProxy->GetActor(drawable);
          }
@@ -384,18 +384,18 @@ namespace dtEditQt
             QString resourceIdentity;
             dataStream >> resourceIdentity;
 
-            dtDAL::ResourceDescriptor descriptor = dtDAL::ResourceDescriptor(resourceIdentity.toStdString());
+            dtCore::ResourceDescriptor descriptor = dtCore::ResourceDescriptor(resourceIdentity.toStdString());
             resourceProp->SetValue(descriptor);
          }
 
          // Setup the drawable to be visible in the scene.
          if (drawable && mGhostProxy.valid())
          {
-            const dtDAL::BaseActorObject::RenderMode& renderMode = mGhostProxy->GetRenderMode();
-            if (renderMode == dtDAL::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON ||
-                renderMode == dtDAL::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON)
+            const dtCore::BaseActorObject::RenderMode& renderMode = mGhostProxy->GetRenderMode();
+            if (renderMode == dtCore::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON ||
+                renderMode == dtCore::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON)
             {
-               dtDAL::ActorProxyIcon* billBoard = mGhostProxy->GetBillBoardIcon();
+               dtCore::ActorProxyIcon* billBoard = mGhostProxy->GetBillBoardIcon();
                //billBoard->LoadImages();
                if (billBoard)
                {
@@ -438,7 +438,7 @@ namespace dtEditQt
             mGhostProxy->GetActor(ghostDrawable);
             std::vector<dtCore::DeltaDrawable*> ignoredDrawables;
             ignoredDrawables.push_back(ghostDrawable);
-            dtDAL::ActorProxyIcon* icon = mGhostProxy->GetBillBoardIcon();
+            dtCore::ActorProxyIcon* icon = mGhostProxy->GetBillBoardIcon();
             if (icon)
             {
                ignoredDrawables.push_back(icon->GetDrawable());
@@ -474,15 +474,15 @@ namespace dtEditQt
                   ignoredDrawables);
             }
 
-            dtDAL::TransformableActorProxy* tProxy =
-               dynamic_cast<dtDAL::TransformableActorProxy*>(mGhostProxy.get());
+            dtCore::TransformableActorProxy* tProxy =
+               dynamic_cast<dtCore::TransformableActorProxy*>(mGhostProxy.get());
 
             if (tProxy)
             {
                tProxy->SetTranslation(position);
             }
 
-            dtDAL::ActorProxyIcon* billBoard = mGhostProxy->GetBillBoardIcon();
+            dtCore::ActorProxyIcon* billBoard = mGhostProxy->GetBillBoardIcon();
             if (billBoard)
             {
                billBoard->SetRotation(osg::Matrix::rotate(getCamera()->getOrientation()));
@@ -514,7 +514,7 @@ namespace dtEditQt
 
       if (mGhostProxy.valid())
       {
-         dtCore::RefPtr<dtDAL::Map> mapPtr = EditorData::GetInstance().getCurrentMap();
+         dtCore::RefPtr<dtCore::Map> mapPtr = EditorData::GetInstance().getCurrentMap();
 
          // Unroll prefabs
          if (event->mimeData()->hasFormat("Prefab"))
@@ -531,15 +531,15 @@ namespace dtEditQt
          EditorEvents::GetInstance().emitEndChangeTransaction();
 
          // Now, let the world that it should select the new actor proxy.
-         std::vector< dtCore::RefPtr<dtDAL::BaseActorObject> > actors;
+         std::vector< dtCore::RefPtr<dtCore::BaseActorObject> > actors;
          actors.push_back(mGhostProxy.get());
          EditorEvents::GetInstance().emitActorsSelected(actors);
 
-         const dtDAL::BaseActorObject::RenderMode& renderMode = mGhostProxy->GetRenderMode();
-         if (renderMode == dtDAL::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON ||
-             renderMode == dtDAL::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON)
+         const dtCore::BaseActorObject::RenderMode& renderMode = mGhostProxy->GetRenderMode();
+         if (renderMode == dtCore::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON ||
+             renderMode == dtCore::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON)
          {
-            dtDAL::ActorProxyIcon* billBoard = mGhostProxy->GetBillBoardIcon();
+            dtCore::ActorProxyIcon* billBoard = mGhostProxy->GetBillBoardIcon();
             if (billBoard)
             {
                ViewportManager::GetInstance().getMasterScene()->RemoveChild(billBoard->GetDrawable());
@@ -836,8 +836,8 @@ namespace dtEditQt
          return false;
       }
 
-      saveSelectedActorOrigValues(dtDAL::TransformableActorProxy::PROPERTY_TRANSLATION);
-      saveSelectedActorOrigValues(dtDAL::TransformableActorProxy::PROPERTY_ROTATION);
+      saveSelectedActorOrigValues(dtCore::TransformableActorProxy::PROPERTY_TRANSLATION);
+      saveSelectedActorOrigValues(dtCore::TransformableActorProxy::PROPERTY_ROTATION);
       saveSelectedActorOrigValues("Scale");
 
       return true;
@@ -863,7 +863,7 @@ namespace dtEditQt
          ViewportOverlay::ActorProxyList& selection = ViewportManager::GetInstance().getViewportOverlay()->getCurrentActorSelection();
          for (int selectIndex = 0; selectIndex < (int)selection.size(); selectIndex++)
          {
-            dtDAL::BaseActorObject* proxy = selection[selectIndex].get();
+            dtCore::BaseActorObject* proxy = selection[selectIndex].get();
             if (proxy)
             {
                dtCore::DeltaDrawable* drawable;
@@ -874,7 +874,7 @@ namespace dtEditQt
                   ignoredDrawables.push_back(drawable);
                }
 
-               dtDAL::ActorProxyIcon* icon = proxy->GetBillBoardIcon();
+               dtCore::ActorProxyIcon* icon = proxy->GetBillBoardIcon();
                if (icon)
                {
                   ignoredDrawables.push_back(icon->GetDrawable());
@@ -884,14 +884,14 @@ namespace dtEditQt
 
          if (selection.size() > 0)
          {
-            dtDAL::TransformableActorProxy* proxy = dynamic_cast<dtDAL::TransformableActorProxy*>(selection[0].get());
+            dtCore::TransformableActorProxy* proxy = dynamic_cast<dtCore::TransformableActorProxy*>(selection[0].get());
             osg::Vec3 position = proxy->GetTranslation();
             position = ViewportManager::GetInstance().GetSnapPosition(position, true, ignoredDrawables);
             osg::Vec3 offset = position - proxy->GetTranslation();
 
             for (int selectIndex = 0; selectIndex < (int)selection.size(); selectIndex++)
             {
-               dtDAL::TransformableActorProxy* proxy = dynamic_cast<dtDAL::TransformableActorProxy*>(selection[selectIndex].get());
+               dtCore::TransformableActorProxy* proxy = dynamic_cast<dtCore::TransformableActorProxy*>(selection[selectIndex].get());
                if (proxy)
                {
                   proxy->SetTranslation(proxy->GetTranslation() + offset);
@@ -904,8 +904,8 @@ namespace dtEditQt
       // we surround it in a change transaction
       EditorEvents::GetInstance().emitBeginChangeTransaction();
       EditorData::GetInstance().getUndoManager().beginMultipleUndo();
-      updateActorSelectionProperty(dtDAL::TransformableActorProxy::PROPERTY_TRANSLATION);
-      updateActorSelectionProperty(dtDAL::TransformableActorProxy::PROPERTY_ROTATION);
+      updateActorSelectionProperty(dtCore::TransformableActorProxy::PROPERTY_TRANSLATION);
+      updateActorSelectionProperty(dtCore::TransformableActorProxy::PROPERTY_ROTATION);
       updateActorSelectionProperty("Scale");
       EditorData::GetInstance().getUndoManager().endMultipleUndo();
 
@@ -953,7 +953,7 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void EditorViewport::onGotoActor(dtCore::RefPtr<dtDAL::BaseActorObject> proxy)
+   void EditorViewport::onGotoActor(dtCore::RefPtr<dtCore::BaseActorObject> proxy)
    {
       Viewport::onGotoActor(proxy);
 
@@ -973,7 +973,7 @@ namespace dtEditQt
    //////////////////////////////////////////////////////////////////////////
    void EditorViewport::slotMoveActorOrCamera(QAction* action)
    {
-      std::vector<dtDAL::BaseActorObject*> selected;
+      std::vector<dtCore::BaseActorObject*> selected;
       EditorData::GetInstance().GetSelectedActors(selected);
       
       if (selected.empty()) {return;}
@@ -985,16 +985,16 @@ namespace dtEditQt
          dtCore::Transform camXform;
          camXform.Set(getCamera()->getPosition(), getCamera()->getOrientation());
 
-         saveSelectedActorOrigValues(dtDAL::TransformableActorProxy::PROPERTY_TRANSLATION);
-         saveSelectedActorOrigValues(dtDAL::TransformableActorProxy::PROPERTY_ROTATION);
+         saveSelectedActorOrigValues(dtCore::TransformableActorProxy::PROPERTY_TRANSLATION);
+         saveSelectedActorOrigValues(dtCore::TransformableActorProxy::PROPERTY_ROTATION);
 
-         std::vector<dtDAL::BaseActorObject*>::iterator itr = selected.begin();
+         std::vector<dtCore::BaseActorObject*>::iterator itr = selected.begin();
          while (itr != selected.end())
          {
             if ((*itr)->IsPlaceable())
             {
-               dtDAL::TransformableActorProxy* transProxy =
-                  dynamic_cast<dtDAL::TransformableActorProxy*>(*itr);
+               dtCore::TransformableActorProxy* transProxy =
+                  dynamic_cast<dtCore::TransformableActorProxy*>(*itr);
 
                if (transProxy)
                {
@@ -1007,8 +1007,8 @@ namespace dtEditQt
 
          EditorEvents::GetInstance().emitBeginChangeTransaction();
          EditorData::GetInstance().getUndoManager().beginMultipleUndo();
-         updateActorSelectionProperty(dtDAL::TransformableActorProxy::PROPERTY_TRANSLATION);
-         updateActorSelectionProperty(dtDAL::TransformableActorProxy::PROPERTY_ROTATION);
+         updateActorSelectionProperty(dtCore::TransformableActorProxy::PROPERTY_TRANSLATION);
+         updateActorSelectionProperty(dtCore::TransformableActorProxy::PROPERTY_ROTATION);
          EditorData::GetInstance().getUndoManager().endMultipleUndo();
          EditorEvents::GetInstance().emitEndChangeTransaction();
       }
@@ -1017,10 +1017,10 @@ namespace dtEditQt
       else if (action == EditorActions::GetInstance().mAlignCameraToActorAction)
       {
          EditorEvents::GetInstance().emitBeginChangeTransaction();
-         const dtDAL::BaseActorObject* firstProxy = (*selected.begin());
+         const dtCore::BaseActorObject* firstProxy = (*selected.begin());
 
-         const dtDAL::TransformableActorProxy* transProxy =
-            dynamic_cast<const dtDAL::TransformableActorProxy*>(firstProxy);
+         const dtCore::TransformableActorProxy* transProxy =
+            dynamic_cast<const dtCore::TransformableActorProxy*>(firstProxy);
 
          if (transProxy)
          {
@@ -1158,10 +1158,10 @@ namespace dtEditQt
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void EditorViewport::UnrollPrefab(QDropEvent* event, dtDAL::Map* mapPtr)
+   void EditorViewport::UnrollPrefab(QDropEvent* event, dtCore::Map* mapPtr)
    {
-      dtDAL::TransformableActorProxy* tProxy =
-         dynamic_cast<dtDAL::TransformableActorProxy*>(mGhostProxy.get());
+      dtCore::TransformableActorProxy* tProxy =
+         dynamic_cast<dtCore::TransformableActorProxy*>(mGhostProxy.get());
       osg::Vec3 offset;
       if (tProxy) offset = tProxy->GetTranslation();
 
@@ -1170,30 +1170,30 @@ namespace dtEditQt
       QString resourceIdentity;
       dataStream >> resourceIdentity;
 
-      dtDAL::ResourceDescriptor descriptor = dtDAL::ResourceDescriptor(resourceIdentity.toStdString());
+      dtCore::ResourceDescriptor descriptor = dtCore::ResourceDescriptor(resourceIdentity.toStdString());
 
       if (mapPtr)
       {
-         std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> > proxies;
+         std::vector<dtCore::RefPtr<dtCore::BaseActorObject> > proxies;
          EditorEvents::GetInstance().emitBeginChangeTransaction();
          dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
-         fileUtils.PushDirectory(dtDAL::Project::GetInstance().GetContext());
+         fileUtils.PushDirectory(dtCore::Project::GetInstance().GetContext());
          try
          {
             int groupIndex = mapPtr->GetGroupCount();
-            std::string fullPath = dtDAL::Project::GetInstance().GetResourcePath(descriptor);
+            std::string fullPath = dtCore::Project::GetInstance().GetResourcePath(descriptor);
 
-            dtCore::RefPtr<dtDAL::MapParser> parser = new dtDAL::MapParser;
+            dtCore::RefPtr<dtCore::MapParser> parser = new dtCore::MapParser;
             parser->ParsePrefab(fullPath, proxies, mapPtr);
 
             for (int proxyIndex = 0; proxyIndex < (int)proxies.size(); proxyIndex++)
             {
-               dtDAL::BaseActorObject* proxy = proxies[proxyIndex].get();
+               dtCore::BaseActorObject* proxy = proxies[proxyIndex].get();
 
                mapPtr->AddProxy(*proxy, true);
                mapPtr->AddActorToGroup(groupIndex, proxy);
 
-               tProxy = dynamic_cast<dtDAL::TransformableActorProxy*>(proxy);
+               tProxy = dynamic_cast<dtCore::TransformableActorProxy*>(proxy);
                if (tProxy)
                {
                   tProxy->SetTranslation(tProxy->GetTranslation() + offset);

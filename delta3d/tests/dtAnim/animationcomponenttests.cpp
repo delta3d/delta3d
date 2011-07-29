@@ -45,8 +45,8 @@
 #include <dtGame/basemessages.h>
 #include <dtGame/messagefactory.h>
 #include <dtGame/messagetype.h>
-#include <dtDAL/map.h>
-#include <dtDAL/project.h>
+#include <dtCore/map.h>
+#include <dtCore/project.h>
 
 #include <dtAnim/animationgameactor.h>
 #include <dtActors/engineactorregistry.h>
@@ -223,7 +223,7 @@ namespace dtAnim
    /////////////////////////////////////////////////////////////////////////////
    void AnimationComponentTests::TestAnimationPerformance()
    {
-      typedef std::vector<dtDAL::BaseActorObject*> ProxyContainer;
+      typedef std::vector<dtCore::BaseActorObject*> ProxyContainer;
       ProxyContainer proxies;
       ProxyContainer groundActor;
 
@@ -232,7 +232,7 @@ namespace dtAnim
       {
          //uses example data for now
          std::string context = dtUtil::GetDeltaRootPath() + "/examples/data/demoMap";
-         dtDAL::Project::GetInstance().SetContext(context, true);
+         dtCore::Project::GetInstance().SetContext(context, true);
          mGM->ChangeMap("AnimationPerformance");
 
          //step a few times to ensure the map loaded
@@ -352,7 +352,7 @@ namespace dtAnim
       if (!groundActor.empty())
       {
          ProxyContainer::iterator iter = groundActor.begin();
-         dtDAL::BaseActorObject* proxy = dynamic_cast<dtDAL::BaseActorObject*>(*iter);
+         dtCore::BaseActorObject* proxy = dynamic_cast<dtCore::BaseActorObject*>(*iter);
          if (proxy)
          {
             dtCore::Transformable* transform
@@ -418,8 +418,8 @@ namespace dtAnim
       {
          if (!mGM->GetCurrentMap().empty())
          {
-            dtDAL::Project::GetInstance().CloseMap(
-                  dtDAL::Project::GetInstance().GetMap(mGM->GetCurrentMap()), true);
+            dtCore::Project::GetInstance().CloseMap(
+                  dtCore::Project::GetInstance().GetMap(mGM->GetCurrentMap()), true);
          }
       }
       catch(dtUtil::Exception& e)
@@ -433,7 +433,7 @@ namespace dtAnim
    dtCore::RefPtr<AnimationHelper> AnimationComponentTests::CreateRealAnimationHelper()
    {
       dtCore::RefPtr<AnimationHelper> helper = new AnimationHelper();
-      dtDAL::Project::GetInstance().SetContext(dtUtil::GetDeltaRootPath() + "/examples/data/demoMap");
+      dtCore::Project::GetInstance().SetContext(dtUtil::GetDeltaRootPath() + "/examples/data/demoMap");
 
       std::string modelPath = dtUtil::FindFileInPathList("SkeletalMeshes/marine_test.xml");
       CPPUNIT_ASSERT(!modelPath.empty());
@@ -452,7 +452,7 @@ namespace dtAnim
       tickMessage->SetDeltaSimTime(timeStep);
 
       // Declare the test event names.
-      dtDAL::GameEventManager& gem = dtDAL::GameEventManager::GetInstance();
+      dtCore::GameEventManager& gem = dtCore::GameEventManager::GetInstance();
       const std::string eventStart1("startEvent1"); // time 0
       const std::string eventStart2("startEvent2"); // time 0
       const std::string eventStart3("startEvent3"); // time 0

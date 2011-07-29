@@ -23,17 +23,17 @@
 #include <dtCore/transform.h>
 #include <dtCore/camera.h>
 
-#include <dtDAL/actorproxyicon.h>
-#include <dtDAL/booleanactorproperty.h>
-#include <dtDAL/colorrgbaactorproperty.h>
-#include <dtDAL/enumactorproperty.h>
-#include <dtDAL/floatactorproperty.h>
-#include <dtDAL/vectoractorproperties.h>
+#include <dtCore/actorproxyicon.h>
+#include <dtCore/booleanactorproperty.h>
+#include <dtCore/colorrgbaactorproperty.h>
+#include <dtCore/enumactorproperty.h>
+#include <dtCore/floatactorproperty.h>
+#include <dtCore/vectoractorproperties.h>
 
 #include <osg/Camera>
 
 using namespace dtCore;
-using namespace dtDAL;
+using namespace dtCore;
 using namespace dtActors;
 
 
@@ -141,11 +141,11 @@ void CameraDataActorProxy::BuildPropertyMap()
 }
 
 //////////////////////////////////////////////////////////////////////////
-dtDAL::ActorProxyIcon* CameraDataActorProxy::GetBillBoardIcon()
+dtCore::ActorProxyIcon* CameraDataActorProxy::GetBillBoardIcon()
 {
    if(!mBillBoardIcon.valid())
    {
-      mBillBoardIcon = new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IMAGE_BILLBOARD_CAMERA);
+      mBillBoardIcon = new dtCore::ActorProxyIcon(dtCore::ActorProxyIcon::IMAGE_BILLBOARD_CAMERA);
    }
 
    return mBillBoardIcon.get();
@@ -260,7 +260,7 @@ dtActors::CameraDataActorProxy::CameraDataActorProxy()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-const dtDAL::BaseActorObject::RenderMode& dtActors::CameraDataActorProxy::GetRenderMode()
+const dtCore::BaseActorObject::RenderMode& dtActors::CameraDataActorProxy::GetRenderMode()
 {
-   return dtDAL::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON;
+   return dtCore::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON;
 }

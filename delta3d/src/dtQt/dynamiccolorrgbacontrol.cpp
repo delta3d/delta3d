@@ -29,9 +29,9 @@
 #include <prefix/dtqtprefix.h>
 #include <dtQt/dynamiccolorrgbacontrol.h>
 
-#include <dtDAL/actorproxy.h>
-#include <dtDAL/datatype.h>
-#include <dtDAL/colorrgbaactorproperty.h>
+#include <dtCore/actorproxy.h>
+#include <dtCore/datatype.h>
+#include <dtCore/colorrgbaactorproperty.h>
 
 #include <dtQt/dynamiccolorelementcontrol.h>
 #include <dtQt/dynamicsubwidgets.h>
@@ -71,11 +71,11 @@ namespace dtQt
 
    /////////////////////////////////////////////////////////////////////////////////
    void DynamicColorRGBAControl::InitializeData(DynamicAbstractControl* newParent,
-      PropertyEditorModel* newModel, dtDAL::PropertyContainer* newPC, dtDAL::ActorProperty* newProperty)
+      PropertyEditorModel* newModel, dtCore::PropertyContainer* newPC, dtCore::ActorProperty* newProperty)
    {
-      if (newProperty != NULL && newProperty->GetDataType() == dtDAL::DataType::RGBACOLOR)
+      if (newProperty != NULL && newProperty->GetDataType() == dtCore::DataType::RGBACOLOR)
       {
-         mProperty = static_cast<dtDAL::ColorRgbaActorProperty*>(newProperty);
+         mProperty = static_cast<dtCore::ColorRgbaActorProperty*>(newProperty);
 
          DynamicAbstractControl::InitializeData(newParent, newModel, newPC, newProperty);
 
@@ -284,19 +284,19 @@ namespace dtQt
 
    /////////////////////////////////////////////////////////////////////////////////
    DynamicColorElementControl* DynamicColorRGBAControl::CreateElementControl(int index, const std::string& label,
-            PropertyEditorModel* newModel, dtDAL::PropertyContainer* newPC)
+            PropertyEditorModel* newModel, dtCore::PropertyContainer* newPC)
    {
       DynamicColorElementControl* control = new DynamicColorElementControl(mProperty, index, label);
       control->InitializeData(this, newModel, newPC, mProperty);
       mChildren.push_back(control);
 
-      connect(control, SIGNAL(PropertyAboutToChange(dtDAL::PropertyContainer&, dtDAL::ActorProperty&,
+      connect(control, SIGNAL(PropertyAboutToChange(dtCore::PropertyContainer&, dtCore::ActorProperty&,
                         const std::string&, const std::string&)),
-               this, SLOT(PropertyAboutToChangePassThrough(dtDAL::PropertyContainer&, dtDAL::ActorProperty&,
+               this, SLOT(PropertyAboutToChangePassThrough(dtCore::PropertyContainer&, dtCore::ActorProperty&,
                         const std::string&, const std::string&)));
 
-      connect(control, SIGNAL(PropertyChanged(dtDAL::PropertyContainer&, dtDAL::ActorProperty&)),
-               this, SLOT(PropertyChangedPassThrough(dtDAL::PropertyContainer&, dtDAL::ActorProperty&)));
+      connect(control, SIGNAL(PropertyChanged(dtCore::PropertyContainer&, dtCore::ActorProperty&)),
+               this, SLOT(PropertyChangedPassThrough(dtCore::PropertyContainer&, dtCore::ActorProperty&)));
 
       return control;
    }

@@ -37,12 +37,12 @@ public:
 
 signals:
 
-   void SignalPropertyChangedFromControl(dtDAL::PropertyContainer&, dtDAL::ActorProperty&);
+   void SignalPropertyChangedFromControl(dtCore::PropertyContainer&, dtCore::ActorProperty&);
 
 public slots:
-   virtual void PropertyAboutToChangeFromControl(dtDAL::PropertyContainer&, dtDAL::ActorProperty&,
+   virtual void PropertyAboutToChangeFromControl(dtCore::PropertyContainer&, dtCore::ActorProperty&,
             const std::string& oldValue, const std::string& newValue);
-   virtual void PropertyChangedFromControl(dtDAL::PropertyContainer&, dtDAL::ActorProperty&);
+   virtual void PropertyChangedFromControl(dtCore::PropertyContainer&, dtCore::ActorProperty&);
 };
 
 #endif /* AIPROPERTYEDITOR_H_ */

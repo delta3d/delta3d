@@ -23,8 +23,8 @@
 // INCLUDE DIRECTIVES
 ////////////////////////////////////////////////////////////////////////////////
 #include <prefix/dtgameprefix.h>
-#include <dtDAL/transformableactorproxy.h>
-#include <dtDAL/propertymacros.h>
+#include <dtCore/transformableactorproxy.h>
+#include <dtCore/propertymacros.h>
 #include <dtGame/basegroundclamper.h>
 #include <dtCore/transform.h>
 #include <dtUtil/log.h>

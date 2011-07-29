@@ -21,8 +21,8 @@
 #include <prefix/dtdirectornodesprefix.h>
 #include <dtDirectorNodes/setactorpropertyaction.h>
 
-#include <dtDAL/actoridactorproperty.h>
-#include <dtDAL/stringactorproperty.h>
+#include <dtCore/actoridactorproperty.h>
+#include <dtCore/stringactorproperty.h>
 
 #include <dtDirector/director.h>
 
@@ -57,24 +57,24 @@ namespace dtDirector
       ActionNode::BuildPropertyMap();
 
       // Create our value links.
-      dtDAL::StringActorProperty* nameProp = new dtDAL::StringActorProperty(
+      dtCore::StringActorProperty* nameProp = new dtCore::StringActorProperty(
          "PropertyName", "Property Name",
-         dtDAL::StringActorProperty::SetFuncType(this, &SetActorPropertyAction::SetPropertyName),
-         dtDAL::StringActorProperty::GetFuncType(this, &SetActorPropertyAction::GetPropertyName),
+         dtCore::StringActorProperty::SetFuncType(this, &SetActorPropertyAction::SetPropertyName),
+         dtCore::StringActorProperty::GetFuncType(this, &SetActorPropertyAction::GetPropertyName),
          "The name of the actor property to retrieve.");
       AddProperty(nameProp);
 
-      dtDAL::ActorIDActorProperty* actorProp = new dtDAL::ActorIDActorProperty(
+      dtCore::ActorIDActorProperty* actorProp = new dtCore::ActorIDActorProperty(
          "Actor", "Actor",
-         dtDAL::ActorIDActorProperty::SetFuncType(this, &SetActorPropertyAction::SetCurrentActor),
-         dtDAL::ActorIDActorProperty::GetFuncType(this, &SetActorPropertyAction::GetCurrentActor),
+         dtCore::ActorIDActorProperty::SetFuncType(this, &SetActorPropertyAction::SetCurrentActor),
+         dtCore::ActorIDActorProperty::GetFuncType(this, &SetActorPropertyAction::GetCurrentActor),
          "", "The actor with the property to retrieve.");
       AddProperty(actorProp);
 
-      dtDAL::StringActorProperty* valueProp = new dtDAL::StringActorProperty(
+      dtCore::StringActorProperty* valueProp = new dtCore::StringActorProperty(
          "NewValue", "New Value",
-         dtDAL::StringActorProperty::SetFuncType(this, &SetActorPropertyAction::SetNewValue),
-         dtDAL::StringActorProperty::GetFuncType(this, &SetActorPropertyAction::GetNewValue),
+         dtCore::StringActorProperty::SetFuncType(this, &SetActorPropertyAction::SetNewValue),
+         dtCore::StringActorProperty::GetFuncType(this, &SetActorPropertyAction::GetNewValue),
          "The new value for the property.");
       AddProperty(valueProp);
 
@@ -95,21 +95,21 @@ namespace dtDirector
       int count = GetPropertyCount("Actor");
       for (int index = 0; index < count; index++)
       {
-         dtDAL::ActorProxy* actor = GetActor("Actor", index);
+         dtCore::ActorProxy* actor = GetActor("Actor", index);
          if (actor)
          {
             // First attempt to find the property based on property name,
             // if this fails, then we attempt to find the property based
             // on label name instead.
-            dtDAL::ActorProperty* prop = actor->GetProperty(propName);
+            dtCore::ActorProperty* prop = actor->GetProperty(propName);
             if (!prop)
             {
-               std::vector<dtDAL::ActorProperty*> propList;
+               std::vector<dtCore::ActorProperty*> propList;
                actor->GetPropertyList(propList);
                int count = (int)propList.size();
                for (int index = 0; index < count; ++index)
                {
-                  dtDAL::ActorProperty* testProp = propList[index];
+                  dtCore::ActorProperty* testProp = propList[index];
                   if (testProp && testProp->GetLabel() == propName)
                   {
                      prop = testProp;

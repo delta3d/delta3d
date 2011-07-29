@@ -34,7 +34,7 @@
 #include <dtQt/dynamicsubwidgets.h>
 
 // Forward References
-namespace dtDAL
+namespace dtCore
 {
    class GameEventActorProperty;
    class GameEvent;
@@ -58,7 +58,7 @@ namespace dtQt
           * @see DynamicAbstractControl#InitializeData
           */
          void InitializeData(dtQt::DynamicAbstractControl* newParent, dtQt::PropertyEditorModel* newModel,
-            dtDAL::PropertyContainer* newPC, dtDAL::ActorProperty* newProperty);
+            dtCore::PropertyContainer* newPC, dtCore::ActorProperty* newProperty);
 
          /**
           * @see DynamicAbstractControl#updateEditorFromModel
@@ -103,8 +103,8 @@ namespace dtQt
           */
          virtual bool updateData(QWidget* widget);
 
-         void actorPropertyChanged(dtDAL::PropertyContainer& propCon,
-                  dtDAL::ActorProperty& property);
+         void actorPropertyChanged(dtCore::PropertyContainer& propCon,
+                  dtCore::ActorProperty& property);
 
          /**
           * @see DynamicAbstractControl#handleSubEditDestroy
@@ -118,9 +118,9 @@ namespace dtQt
 
       private:
 
-         dtDAL::GameEvent* GetGameEvent(const std::string& eventID);
+         dtCore::GameEvent* GetGameEvent(const std::string& eventID);
 
-         dtDAL::GameEventActorProperty* mProperty;
+         dtCore::GameEventActorProperty* mProperty;
 
          // This pointer is not really in our control.  It is constructed in the createEditor()
          // method and destroyed whenever QT feels like it (mostly when the control looses focus).

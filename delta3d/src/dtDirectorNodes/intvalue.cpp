@@ -22,7 +22,7 @@
 #include <dtDirector/colors.h>
 #include <dtDirectorNodes/intvalue.h>
 
-#include <dtDAL/intactorproperty.h>
+#include <dtCore/intactorproperty.h>
 
 namespace dtDirector
 {
@@ -52,27 +52,27 @@ namespace dtDirector
    {
       ValueNode::BuildPropertyMap();
 
-      mProperty = new dtDAL::IntActorProperty(
+      mProperty = new dtCore::IntActorProperty(
          "Value", "Value",
-         dtDAL::IntActorProperty::SetFuncType(this, &IntValue::SetValue),
-         dtDAL::IntActorProperty::GetFuncType(this, &IntValue::GetValue),
+         dtCore::IntActorProperty::SetFuncType(this, &IntValue::SetValue),
+         dtCore::IntActorProperty::GetFuncType(this, &IntValue::GetValue),
          "The value.");
       AddProperty(mProperty);
 
-      mInitialProperty = new dtDAL::IntActorProperty(
+      mInitialProperty = new dtCore::IntActorProperty(
          "Initial Value", "Initial Value",
-         dtDAL::IntActorProperty::SetFuncType(this, &IntValue::SetInitialValue),
-         dtDAL::IntActorProperty::GetFuncType(this, &IntValue::GetInitialValue),
+         dtCore::IntActorProperty::SetFuncType(this, &IntValue::SetInitialValue),
+         dtCore::IntActorProperty::GetFuncType(this, &IntValue::GetInitialValue),
          "The initial value.");
      AddProperty(mInitialProperty);
    }
 
    //////////////////////////////////////////////////////////////////////////
-   bool IntValue::CanBeType(dtDAL::DataType& type)
+   bool IntValue::CanBeType(dtCore::DataType& type)
    {
-      if (type == dtDAL::DataType::INT ||
-         type == dtDAL::DataType::UINT ||
-         type == dtDAL::DataType::BIT_MASK)
+      if (type == dtCore::DataType::INT ||
+         type == dtCore::DataType::UINT ||
+         type == dtCore::DataType::BIT_MASK)
       {
          return true;
       }

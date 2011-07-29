@@ -36,7 +36,7 @@
 #include <QtGui/QTreeWidgetItem>
 #include <QtGui/QIcon>
 
-#include <dtDAL/project.h>
+#include <dtCore/project.h>
 
 namespace dtEditQt
 {
@@ -98,7 +98,7 @@ namespace dtEditQt
       ResourceTreeWidget(ResourceTreeWidget* parent = 0);
 
       // resource node
-      ResourceTreeWidget(ResourceTreeWidget* parent, const dtDAL::ResourceDescriptor resource);
+      ResourceTreeWidget(ResourceTreeWidget* parent, const dtCore::ResourceDescriptor resource);
 
       ResourceTreeWidget(ResourceTreeWidget* parent, ResourceTreeWidget* item);
 
@@ -107,13 +107,13 @@ namespace dtEditQt
        */
       virtual ~ResourceTreeWidget();
 
-      dtDAL::ResourceDescriptor& getResourceDescriptor();
+      dtCore::ResourceDescriptor& getResourceDescriptor();
 
       /**
        * Recursive function to construct the tree
        * @param An iterator of a tree that contains ResourceTreeNode
        */
-      void recursivelyCreateResourceTree(const dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator& iter, const QIcon& resourceIcon);
+      void recursivelyCreateResourceTree(const dtUtil::tree<dtCore::ResourceTreeNode>::const_iterator& iter, const QIcon& resourceIcon);
 
       /**
        * This returns a boolean if the current resource is in fact a resource
@@ -155,7 +155,7 @@ namespace dtEditQt
        * setResourceDescriptor
        * @param ResourceDescriptor
        */
-      void setResourceDescriptor(dtDAL::ResourceDescriptor& descriptor) { mResource = descriptor; }
+      void setResourceDescriptor(dtCore::ResourceDescriptor& descriptor) { mResource = descriptor; }
 
    private:
       void setIndex(int index) { mItemIndex = index; }
@@ -164,7 +164,7 @@ namespace dtEditQt
       // This holds the type of the currently selected resource
       // only valid resources hold a resouce type - meaning
       // we exclude categories
-      dtDAL::ResourceDescriptor mResource;
+      dtCore::ResourceDescriptor mResource;
       bool                      mIsResource;
       QString                   mCategoryFullName;
       QString                   mCategoryName;

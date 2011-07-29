@@ -30,7 +30,7 @@
 #include <dtCore/camera.h>
 #include <dtCore/scene.h>
 #include <dtUtil/datapathutils.h>
-#include <dtDAL/project.h>
+#include <dtCore/project.h>
 #include <dtABC/application.h>
 #include <dtAudio/audiomanager.h>
 #include <dtLMS/lmscomponent.h>
@@ -97,8 +97,8 @@ void FireFighterGameEntryPoint::Initialize(dtGame::GameApplication& app, int arg
 
    app.GetWindow()->SetWindowTitle("Fire Fighter Application");
 
-   dtDAL::Project::GetInstance().SetContext("demos/fireFighter/FireFighterProject");
-   dtUtil::SetDataFilePathList(dtDAL::Project::GetInstance().GetContext() + "/CEGUI/;" + 
+   dtCore::Project::GetInstance().SetContext("demos/fireFighter/FireFighterProject");
+   dtUtil::SetDataFilePathList(dtCore::Project::GetInstance().GetContext() + "/CEGUI/;" + 
                               dtUtil::GetDataFilePathList() + ";");
 }
 
@@ -154,8 +154,8 @@ void FireFighterGameEntryPoint::OnShutdown(dtGame::GameApplication& app)
       mLmsComponent->DisconnectFromLms();
    }
 
-   dtDAL::Map &map = dtDAL::Project::GetInstance().GetMap("GameMap");
-   dtDAL::Project::GetInstance().CloseMap(map, true);
+   dtCore::Map &map = dtCore::Project::GetInstance().GetMap("GameMap");
+   dtCore::Project::GetInstance().CloseMap(map, true);
 
    app.GetGameManager()->CloseCurrentMap();
    app.GetGameManager()->Shutdown();

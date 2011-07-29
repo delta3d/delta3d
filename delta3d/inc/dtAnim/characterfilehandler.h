@@ -28,7 +28,7 @@
 #include <dtUtil/mswinmacros.h>
 #include <dtUtil/xercesutils.h>
 #include <dtCore/refptr.h>
-#include <dtDAL/basexmlhandler.h>
+#include <dtCore/basexmlhandler.h>
 #include <vector>
 #include <string>
 #include <stack>
@@ -77,7 +77,7 @@ namespace dtAnim
      *   </character>
      * @endcode
      */
-   class DT_ANIM_EXPORT CharacterFileHandler : public dtDAL::BaseXMLHandler
+   class DT_ANIM_EXPORT CharacterFileHandler : public dtCore::BaseXMLHandler
    {
    public:
 

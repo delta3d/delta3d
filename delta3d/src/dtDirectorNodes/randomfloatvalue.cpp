@@ -21,7 +21,7 @@
 #include <prefix/dtdirectornodesprefix.h>
 #include <dtDirectorNodes/randomfloatvalue.h>
 
-#include <dtDAL/floatactorproperty.h>
+#include <dtCore/floatactorproperty.h>
 
 #include <dtUtil/mathdefines.h>
 
@@ -52,23 +52,23 @@ namespace dtDirector
    {
       ValueNode::BuildPropertyMap();
 
-      mProperty = new dtDAL::FloatActorProperty(
+      mProperty = new dtCore::FloatActorProperty(
          "Value", "Value",
-         dtDAL::FloatActorProperty::SetFuncType(this, &RandomFloatValue::SetValue),
-         dtDAL::FloatActorProperty::GetFuncType(this, &RandomFloatValue::GetValue),
+         dtCore::FloatActorProperty::SetFuncType(this, &RandomFloatValue::SetValue),
+         dtCore::FloatActorProperty::GetFuncType(this, &RandomFloatValue::GetValue),
          "The value.");
 
-      dtDAL::FloatActorProperty* minProp = new dtDAL::FloatActorProperty(
+      dtCore::FloatActorProperty* minProp = new dtCore::FloatActorProperty(
          "Min Value", "Min Value",
-         dtDAL::FloatActorProperty::SetFuncType(this, &RandomFloatValue::SetMinValue),
-         dtDAL::FloatActorProperty::GetFuncType(this, &RandomFloatValue::GetMinValue),
+         dtCore::FloatActorProperty::SetFuncType(this, &RandomFloatValue::SetMinValue),
+         dtCore::FloatActorProperty::GetFuncType(this, &RandomFloatValue::GetMinValue),
          "The minimum value.");
       AddProperty(minProp);
 
-      dtDAL::FloatActorProperty* maxProp = new dtDAL::FloatActorProperty(
+      dtCore::FloatActorProperty* maxProp = new dtCore::FloatActorProperty(
          "Max Value", "Max Value",
-         dtDAL::FloatActorProperty::SetFuncType(this, &RandomFloatValue::SetMaxValue),
-         dtDAL::FloatActorProperty::GetFuncType(this, &RandomFloatValue::GetMaxValue),
+         dtCore::FloatActorProperty::SetFuncType(this, &RandomFloatValue::SetMaxValue),
+         dtCore::FloatActorProperty::GetFuncType(this, &RandomFloatValue::GetMaxValue),
          "The minimum value.");
       AddProperty(maxProp);
    }
@@ -76,8 +76,8 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    std::string RandomFloatValue::GetValueLabel()
    {
-      dtDAL::ActorProperty* minProp = Node::GetProperty("Min Value");
-      dtDAL::ActorProperty* maxProp = Node::GetProperty("Max Value");
+      dtCore::ActorProperty* minProp = Node::GetProperty("Min Value");
+      dtCore::ActorProperty* maxProp = Node::GetProperty("Max Value");
 
       if (minProp && maxProp)
       {

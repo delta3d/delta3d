@@ -21,8 +21,8 @@
 #include <prefix/dtgameprefix.h>
 #include <dtGame/deadreckoninghelper.h>
 
-#include <dtDAL/booleanactorproperty.h>
-#include <dtDAL/propertymacros.h>
+#include <dtCore/booleanactorproperty.h>
+#include <dtCore/propertymacros.h>
 
 #include <dtGame/deadreckoningcomponent.h>
 #include <dtGame/gameactor.h>
@@ -552,7 +552,7 @@ namespace dtGame
       GetOwner(actor);
 
       static const dtUtil::RefString DEADRECKONING_GROUP = "Dead Reckoning";
-      typedef dtDAL::PropertyRegHelper<DeadReckoningHelper&, DeadReckoningHelper> PropRegType;
+      typedef dtCore::PropertyRegHelper<DeadReckoningHelper&, DeadReckoningHelper> PropRegType;
       PropRegType propRegHelper(*this, this, DEADRECKONING_GROUP);//"Dead Reckoning");
 
 
@@ -595,14 +595,14 @@ namespace dtGame
       // these were removed.  In the future, if someone strongly thinks these should be properties, it should be revisited 
       // by DG and CMM.
       /*
-      AddProperty(new dtDAL::Vec3ActorProperty("Model Dimensions", "Actor Model Dimensions",
-         dtDAL::Vec3ActorProperty::SetFuncType(this, &DeadReckoningHelper::SetModelDimensions),
-         dtDAL::Vec3ActorProperty::GetFuncType(this, &DeadReckoningHelper::GetModelDimensions),
+      AddProperty(new dtCore::Vec3ActorProperty("Model Dimensions", "Actor Model Dimensions",
+         dtCore::Vec3ActorProperty::SetFuncType(this, &DeadReckoningHelper::SetModelDimensions),
+         dtCore::Vec3ActorProperty::GetFuncType(this, &DeadReckoningHelper::GetModelDimensions),
          "Sets the x,y,z dimensions of the model the actor loads.  This is used by the ground clamping code.", DEADRECKONING_GROUP));
 
-      AddProperty(new dtDAL::BooleanActorProperty("Use Model Dimensions", "Use Model Dimensions",
-         dtDAL::BooleanActorProperty::SetFuncType(this, &DeadReckoningHelper::SetUseModelDimensions),
-         dtDAL::BooleanActorProperty::GetFuncType(this, &DeadReckoningHelper::UseModelDimensions),
+      AddProperty(new dtCore::BooleanActorProperty("Use Model Dimensions", "Use Model Dimensions",
+         dtCore::BooleanActorProperty::SetFuncType(this, &DeadReckoningHelper::SetUseModelDimensions),
+         dtCore::BooleanActorProperty::GetFuncType(this, &DeadReckoningHelper::UseModelDimensions),
          "Should the DR Component use the currently set model dimension values when ground clamping?", DEADRECKONING_GROUP));
          */
 
@@ -933,15 +933,15 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////////
-   dtCore::RefPtr<dtDAL::ActorProperty> DeadReckoningHelper::GetDeprecatedProperty(const std::string& name)
+   dtCore::RefPtr<dtCore::ActorProperty> DeadReckoningHelper::GetDeprecatedProperty(const std::string& name)
    {
       static const dtUtil::RefString DEADRECKONING_GROUP = "Dead Reckoning";
-      dtCore::RefPtr<dtDAL::ActorProperty> result;
+      dtCore::RefPtr<dtCore::ActorProperty> result;
       if (name == PROPERTY_FLYING)
       {
-         result = new dtDAL::BooleanActorProperty(name, "Should Not Follow the Ground",
-            dtDAL::BooleanActorProperty::SetFuncType(this, &DeadReckoningHelper::SetFlyingDeprecatedProperty),
-            dtDAL::BooleanActorProperty::GetFuncType(this, &DeadReckoningHelper::IsFlyingDeprecatedProperty),
+         result = new dtCore::BooleanActorProperty(name, "Should Not Follow the Ground",
+            dtCore::BooleanActorProperty::SetFuncType(this, &DeadReckoningHelper::SetFlyingDeprecatedProperty),
+            dtCore::BooleanActorProperty::GetFuncType(this, &DeadReckoningHelper::IsFlyingDeprecatedProperty),
             "DEPRECATED - USE GROUNDCLAMPTYPE INSTEAD! ", DEADRECKONING_GROUP);
       }
       return result;

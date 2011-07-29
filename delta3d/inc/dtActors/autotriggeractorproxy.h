@@ -22,8 +22,8 @@
 #ifndef _AUTO_TRIGGER_ACTOR_PROXY_H_
 #define _AUTO_TRIGGER_ACTOR_PROXY_H_
 
-#include <dtDAL/plugin_export.h>
-#include <dtDAL/actorproxy.h>
+#include <dtCore/plugin_export.h>
+#include <dtCore/actorproxy.h>
 
 namespace dtABC
 {
@@ -36,7 +36,7 @@ namespace dtActors
    * @class AutoTriggerActorProxy
    * @brief This proxy wraps auto triggers.
    */
-   class DT_PLUGIN_EXPORT AutoTriggerActorProxy : public dtDAL::BaseActorObject 
+   class DT_PLUGIN_EXPORT AutoTriggerActorProxy : public dtCore::BaseActorObject 
    {
    public:
 
@@ -63,7 +63,7 @@ namespace dtActors
       /**
       * Wrapper to set the Action on the internal Trigger.
       */
-      void SetAction( dtDAL::BaseActorObject* action );
+      void SetAction( dtCore::BaseActorObject* action );
 
    protected:
 

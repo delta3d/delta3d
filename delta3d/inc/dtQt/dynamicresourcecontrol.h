@@ -34,11 +34,11 @@
 #include <dtQt/dynamicsubwidgets.h>
 #include <dtQt/dynamiclabelcontrol.h>
 
-#include <dtDAL/resourcetreenode.h>
+#include <dtCore/resourcetreenode.h>
 
 #include <dtUtil/tree.h>
 
-namespace dtDAL
+namespace dtCore
 {
    class ResourceActorProperty;
    class ResourceDescriptor;
@@ -79,7 +79,7 @@ namespace dtQt
        * @see DynamicAbstractControl#InitializeData
        */
       virtual void InitializeData(DynamicAbstractControl* newParent, PropertyEditorModel* model,
-         dtDAL::PropertyContainer* newPC, dtDAL::ActorProperty* property);
+         dtCore::PropertyContainer* newPC, dtCore::ActorProperty* property);
 
       /**
        * @see DynamicAbstractControl#getDisplayName
@@ -117,7 +117,7 @@ namespace dtQt
        */
       virtual bool isEditable();
 
-      dtDAL::ResourceActorProperty& GetProperty();
+      dtCore::ResourceActorProperty& GetProperty();
 
    public slots:
       virtual bool updateData(QWidget* widget);
@@ -137,7 +137,7 @@ namespace dtQt
       QStringList mNonResourceOptions;
 
    private:
-      dtDAL::ResourceActorProperty* mProperty;
+      dtCore::ResourceActorProperty* mProperty;
 
       // This pointer is not really in our control.  It is constructed in the createEditor()
       // method and destroyed whenever QT feels like it (mostly when the control looses focus).

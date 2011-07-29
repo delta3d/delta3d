@@ -45,10 +45,10 @@
 #include <osg/Referenced>
 #include <vector>
 
-#include <dtDAL/datatype.h>
-#include <dtDAL/project.h>
-#include <dtDAL/resourcedescriptor.h>
-#include <dtDAL/resourcehelper.h>
+#include <dtCore/datatype.h>
+#include <dtCore/project.h>
+#include <dtCore/resourcedescriptor.h>
+#include <dtCore/resourcehelper.h>
 #include <dtUtil/fileutils.h>
 
 class QMainWindow;
@@ -72,7 +72,7 @@ namespace dtEditQt
       /**
        * Constructor
        */
-      ResourceImportDialog(QWidget* parent = 0, dtDAL::DataType& dataType = dtDAL::DataType::UNKNOWN);
+      ResourceImportDialog(QWidget* parent = 0, dtCore::DataType& dataType = dtCore::DataType::UNKNOWN);
 
       /**
        * Destructor
@@ -88,7 +88,7 @@ namespace dtEditQt
        * getType grabs the set dataType. This will be useful for terrain selection
        * @return a resource DataType
        */
-      dtDAL::DataType* getType() { return mResourceType; }
+      dtCore::DataType* getType() { return mResourceType; }
 
       /**
        * setCategory stores the category name
@@ -144,7 +144,7 @@ namespace dtEditQt
        */
       QList<QString> getResourceFileList() { return mFileList; }
 
-      QList<dtDAL::ResourceDescriptor> getDescriptorList() { return mDescriptorList; }
+      QList<dtCore::ResourceDescriptor> getDescriptorList() { return mDescriptorList; }
 
       /**
        * @brief updateData is a simple method that populates the qlineedit fields after the object
@@ -156,13 +156,13 @@ namespace dtEditQt
        * setDescriptor
        * @param const ResourceDescriptor
        */
-      void setDescriptor(const dtDAL::ResourceDescriptor& descriptor) { mDescriptor = descriptor; }
+      void setDescriptor(const dtCore::ResourceDescriptor& descriptor) { mDescriptor = descriptor; }
 
       /**
        * getDescriptor
        * @param grabs the resourceDescriptor assigned to the new resource
        */
-      const dtDAL::ResourceDescriptor& getDescriptor() const { return mDescriptor; }
+      const dtCore::ResourceDescriptor& getDescriptor() const { return mDescriptor; }
 
       /**
        * resourceCreated
@@ -194,7 +194,7 @@ namespace dtEditQt
       QComboBox* mTypeEdit;
 
       QList<QString> mFileList;
-      QList<dtDAL::ResourceDescriptor> mDescriptorList;
+      QList<dtCore::ResourceDescriptor> mDescriptorList;
       QPushButton* mImportBtn;
       QPushButton* mFileBtn;
 
@@ -207,13 +207,13 @@ namespace dtEditQt
       QStringList               mFilterList;
       QString                   mFileExt;
       QString                   mLastDirectory;
-      dtDAL::ResourceTreeNode*  mResourceTreeNode;
-      dtDAL::DataType*          mResourceType;
-      dtDAL::ResourceDescriptor mDescriptor;
+      dtCore::ResourceTreeNode*  mResourceTreeNode;
+      dtCore::DataType*          mResourceType;
+      dtCore::ResourceDescriptor mDescriptor;
       dtUtil::Log*              mLogger;
 
       // filter vector to fill for file types
-      std::vector<const dtDAL::ResourceTypeHandler*> mHandler;
+      std::vector<const dtCore::ResourceTypeHandler*> mHandler;
 
       bool mCreated;
    };
@@ -303,13 +303,13 @@ namespace dtEditQt
        * SetType sets the current resource type
        * @param DataType
        */
-      void setType(dtDAL::DataType& resourceType) { mResourceType = &resourceType; }
+      void setType(dtCore::DataType& resourceType) { mResourceType = &resourceType; }
 
       /**
        * getType grabs the set dataType. This will be useful for terrain selection
        * @return a resource DataType
        */
-      dtDAL::DataType* getType() { return mResourceType; }
+      dtCore::DataType* getType() { return mResourceType; }
 
       /**
        * Get the category Path
@@ -342,7 +342,7 @@ namespace dtEditQt
       void createCategory()
       {
          // grab an instance to our project
-         dtDAL::Project& project = dtDAL::Project::GetInstance();
+         dtCore::Project& project = dtCore::Project::GetInstance();
          //dtUtil::FileUtils& futil = dtUtil::FileUtils::GetInstance();
 
          // full path to our category
@@ -377,7 +377,7 @@ namespace dtEditQt
       QLineEdit*       mCategoryEdit;
       QString          mNewCategory;
       QString          mCurrPath;
-      dtDAL::DataType* mResourceType;
+      dtCore::DataType* mResourceType;
       bool             mCreate;
    };
 

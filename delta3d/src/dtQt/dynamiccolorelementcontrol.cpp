@@ -31,9 +31,9 @@
 #include <prefix/dtqtprefix.h>
 #include <dtQt/dynamiccolorelementcontrol.h>
 
-#include <dtDAL/actorproxy.h>
-#include <dtDAL/colorrgbaactorproperty.h>
-#include <dtDAL/datatype.h>
+#include <dtCore/actorproxy.h>
+#include <dtCore/colorrgbaactorproperty.h>
+#include <dtCore/datatype.h>
 
 #include <dtQt/dynamicsubwidgets.h>
 
@@ -46,7 +46,7 @@ namespace dtQt
 {
 
    ///////////////////////////////////////////////////////////////////////////////
-   DynamicColorElementControl::DynamicColorElementControl(dtDAL::ColorRgbaActorProperty* newColorRGBA,
+   DynamicColorElementControl::DynamicColorElementControl(dtCore::ColorRgbaActorProperty* newColorRGBA,
       int whichIndex, const std::string& newLabel)
       : mLabel(newLabel)
       , mElementIndex(whichIndex)
@@ -59,7 +59,7 @@ namespace dtQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   //DynamicColorElementControl::DynamicColorElementControl(dtDAL::ColorRgbActorProperty* colorRGB,
+   //DynamicColorElementControl::DynamicColorElementControl(dtCore::ColorRgbActorProperty* colorRGB,
    //        int whichIndex, const std::string& newLabel)
    //   : mLabel(newLabel)
    //   , mElementIndex(whichIndex)
@@ -77,7 +77,7 @@ namespace dtQt
 
    /////////////////////////////////////////////////////////////////////////////////
    void DynamicColorElementControl::InitializeData(DynamicAbstractControl* newParent,
-      PropertyEditorModel* newModel, dtDAL::PropertyContainer* newPC, dtDAL::ActorProperty* newProperty)
+      PropertyEditorModel* newModel, dtCore::PropertyContainer* newPC, dtCore::ActorProperty* newProperty)
    {
       // NOTE - This object sets it's property in the contructor.
       DynamicAbstractControl::InitializeData(newParent, newModel, newPC, newProperty);

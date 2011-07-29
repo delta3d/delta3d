@@ -23,9 +23,9 @@
 
 #include <dtCore/object.h>
 
-#include <dtDAL/actoridactorproperty.h>
-#include <dtDAL/floatactorproperty.h>
-#include <dtDAL/vectoractorproperties.h>
+#include <dtCore/actoridactorproperty.h>
+#include <dtCore/floatactorproperty.h>
+#include <dtCore/vectoractorproperties.h>
 
 #include <dtDirector/director.h>
 
@@ -72,44 +72,44 @@ namespace dtDirector
       LatentActionNode::BuildPropertyMap();
 
       // Create our value links.
-      dtDAL::ActorIDActorProperty* actorProp = new dtDAL::ActorIDActorProperty(
+      dtCore::ActorIDActorProperty* actorProp = new dtCore::ActorIDActorProperty(
          "Actor", "Actor",
-         dtDAL::ActorIDActorProperty::SetFuncType(this, &LerpActorScaleAction::SetLerpActor),
-         dtDAL::ActorIDActorProperty::GetFuncType(this, &LerpActorScaleAction::GetLerpActor),
+         dtCore::ActorIDActorProperty::SetFuncType(this, &LerpActorScaleAction::SetLerpActor),
+         dtCore::ActorIDActorProperty::GetFuncType(this, &LerpActorScaleAction::GetLerpActor),
          "dtCore::Object", "The actor to linearly interpolate.");
       AddProperty(actorProp);
 
-      dtDAL::FloatActorProperty* startTimeProp = new dtDAL::FloatActorProperty(
+      dtCore::FloatActorProperty* startTimeProp = new dtCore::FloatActorProperty(
          "StartTime", "Start Time",
-         dtDAL::FloatActorProperty::SetFuncType(this, &LerpActorScaleAction::SetStartTime),
-         dtDAL::FloatActorProperty::GetFuncType(this, &LerpActorScaleAction::GetStartTime),
+         dtCore::FloatActorProperty::SetFuncType(this, &LerpActorScaleAction::SetStartTime),
+         dtCore::FloatActorProperty::GetFuncType(this, &LerpActorScaleAction::GetStartTime),
          "The time to start the lerp.");
       AddProperty(startTimeProp);
 
-      dtDAL::FloatActorProperty* endTimeProp = new dtDAL::FloatActorProperty(
+      dtCore::FloatActorProperty* endTimeProp = new dtCore::FloatActorProperty(
          "EndTime", "End Time",
-         dtDAL::FloatActorProperty::SetFuncType(this, &LerpActorScaleAction::SetEndTime),
-         dtDAL::FloatActorProperty::GetFuncType(this, &LerpActorScaleAction::GetEndTime),
+         dtCore::FloatActorProperty::SetFuncType(this, &LerpActorScaleAction::SetEndTime),
+         dtCore::FloatActorProperty::GetFuncType(this, &LerpActorScaleAction::GetEndTime),
          "The time to end the lerp.");
       AddProperty(endTimeProp);
 
-      dtDAL::FloatActorProperty* timeProp = new dtDAL::FloatActorProperty(
+      dtCore::FloatActorProperty* timeProp = new dtCore::FloatActorProperty(
          "Time", "Time",
-         dtDAL::FloatActorProperty::SetFuncType(this, &LerpActorScaleAction::SetTime),
-         dtDAL::FloatActorProperty::GetFuncType(this, &LerpActorScaleAction::GetTime),
+         dtCore::FloatActorProperty::SetFuncType(this, &LerpActorScaleAction::SetTime),
+         dtCore::FloatActorProperty::GetFuncType(this, &LerpActorScaleAction::GetTime),
          "The current time.");
 
-      dtDAL::Vec3ActorProperty* startPosProp = new dtDAL::Vec3ActorProperty(
+      dtCore::Vec3ActorProperty* startPosProp = new dtCore::Vec3ActorProperty(
          "StartScale", "Start Scale",
-         dtDAL::Vec3ActorProperty::SetFuncType(this, &LerpActorScaleAction::SetStartScale),
-         dtDAL::Vec3ActorProperty::GetFuncType(this, &LerpActorScaleAction::GetStartScale),
+         dtCore::Vec3ActorProperty::SetFuncType(this, &LerpActorScaleAction::SetStartScale),
+         dtCore::Vec3ActorProperty::GetFuncType(this, &LerpActorScaleAction::GetStartScale),
          "The starting rotation of the actor.");
       AddProperty(startPosProp);
 
-      dtDAL::Vec3ActorProperty* endPosProp = new dtDAL::Vec3ActorProperty(
+      dtCore::Vec3ActorProperty* endPosProp = new dtCore::Vec3ActorProperty(
          "EndScale", "End Scale",
-         dtDAL::Vec3ActorProperty::SetFuncType(this, &LerpActorScaleAction::SetEndScale),
-         dtDAL::Vec3ActorProperty::GetFuncType(this, &LerpActorScaleAction::GetEndScale),
+         dtCore::Vec3ActorProperty::SetFuncType(this, &LerpActorScaleAction::SetEndScale),
+         dtCore::Vec3ActorProperty::GetFuncType(this, &LerpActorScaleAction::GetEndScale),
          "The ending rotation of the actor.");
       AddProperty(endPosProp);
 
@@ -223,7 +223,7 @@ namespace dtDirector
             int count = GetPropertyCount("Actor");
             for (int index = 0; index < count; index++)
             {
-               dtDAL::BaseActorObject* proxy = GetActor("Actor", index);
+               dtCore::BaseActorObject* proxy = GetActor("Actor", index);
                if (proxy)
                {
                   dtCore::Object* actor = NULL;

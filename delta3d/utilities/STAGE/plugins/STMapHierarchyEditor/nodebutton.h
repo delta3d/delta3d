@@ -6,7 +6,7 @@
 
 #include <QtGui/QWidget>
 
-namespace dtDAL
+namespace dtCore
 {
    class BaseActorObject;
 }
@@ -20,7 +20,7 @@ class STAGE_MAP_HIERARCHY_EDITOR_EXPORT NodeButton
    Q_OBJECT
 public:
 
-   NodeButton(dtDAL::BaseActorObject* bao,
+   NodeButton(dtCore::BaseActorObject* bao,
               QWidget* parent, Qt::WindowFlags f = 0);
    ~NodeButton();
 
@@ -65,7 +65,7 @@ private:
 
    QGridLayout*                                             mGridLayout;
 
-   dtDAL::BaseActorObject*                                  mBaseActor;
+   dtCore::BaseActorObject*                                  mBaseActor;
 };
 
 #endif //STAGE_MAP_HIERARCHY_NODE_BUTTON_H__

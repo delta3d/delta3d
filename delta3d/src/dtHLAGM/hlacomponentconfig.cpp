@@ -24,7 +24,7 @@
 #include <dtUtil/fileutils.h>
 #include <dtUtil/datapathutils.h>
 
-#include <dtDAL/actorproperty.h>
+#include <dtCore/actorproperty.h>
 
 #include <dtHLAGM/hlacomponentconfig.h>
 #include <dtHLAGM/exceptionenum.h>

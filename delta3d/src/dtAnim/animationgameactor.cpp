@@ -22,8 +22,8 @@
 #include <dtAnim/animationgameactor.h>
 #include <dtGame/gamemanager.h>
 #include <dtGame/actorupdatemessage.h>
-#include <dtDAL/resourceactorproperty.h>
-#include <dtDAL/actorproxyicon.h>
+#include <dtCore/resourceactorproperty.h>
+#include <dtCore/actorproxyicon.h>
 #include <dtGame/basemessages.h>
 #include <dtGame/invokable.h>
 #include <dtUtil/functor.h>
@@ -121,44 +121,44 @@ namespace dtAnim
    {
       dtGame::GameActorProxy::BuildPropertyMap();
 
-      typedef std::vector< dtCore::RefPtr<dtDAL::ActorProperty> > APVector;
+      typedef std::vector< dtCore::RefPtr<dtCore::ActorProperty> > APVector;
       APVector pFillVector;
 
       AnimationGameActor& actor = static_cast<AnimationGameActor&>(GetGameActor());
 
-      AddProperty(new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::SKELETAL_MESH,
+      AddProperty(new dtCore::ResourceActorProperty(*this, dtCore::DataType::SKELETAL_MESH,
          "Skeletal Mesh", "Skeletal Mesh",
-         dtDAL::ResourceActorProperty::SetFuncType(&actor, &AnimationGameActor::SetModel),
+         dtCore::ResourceActorProperty::SetFuncType(&actor, &AnimationGameActor::SetModel),
          "The model resource that defines the skeletal mesh", "AnimationBase"));
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   const dtDAL::BaseActorObject::RenderMode& AnimationGameActorProxy::GetRenderMode()
+   const dtCore::BaseActorObject::RenderMode& AnimationGameActorProxy::GetRenderMode()
    {
-      dtDAL::ResourceDescriptor resource = GetResource("Skeletal Mesh");
+      dtCore::ResourceDescriptor resource = GetResource("Skeletal Mesh");
       if (resource.IsEmpty() == false)
       {
          if (resource.GetResourceIdentifier().empty() || GetActor()->GetOSGNode() == NULL)
          {
-            return dtDAL::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON;
+            return dtCore::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON;
          }
          else
          {
-            return dtDAL::BaseActorObject::RenderMode::DRAW_ACTOR;
+            return dtCore::BaseActorObject::RenderMode::DRAW_ACTOR;
          }
       }
       else
       {
-         return dtDAL::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON;
+         return dtCore::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON;
       }
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   dtDAL::ActorProxyIcon* AnimationGameActorProxy::GetBillBoardIcon()
+   dtCore::ActorProxyIcon* AnimationGameActorProxy::GetBillBoardIcon()
    {
       if (!mBillBoardIcon.valid())
       {
-         mBillBoardIcon = new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IMAGE_BILLBOARD_STATICMESH);
+         mBillBoardIcon = new dtCore::ActorProxyIcon(dtCore::ActorProxyIcon::IMAGE_BILLBOARD_STATICMESH);
       }
 
       return mBillBoardIcon.get();

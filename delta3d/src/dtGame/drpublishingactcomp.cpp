@@ -25,8 +25,8 @@
 #include <dtGame/drpublishingactcomp.h>
 
 #include <dtUtil/mathdefines.h>
-#include <dtDAL/enginepropertytypes.h>
-#include <dtDAL/propertymacros.h>
+#include <dtCore/enginepropertytypes.h>
+#include <dtCore/propertymacros.h>
 #include <dtGame/basemessages.h>
 #include <dtGame/gameactor.h>
 #include <dtGame/invokable.h>
@@ -267,7 +267,7 @@ namespace dtGame
    {
       //static const dtUtil::RefString GROUPNAME = "DR Publishing";
 
-      typedef dtDAL::PropertyRegHelper<DRPublishingActComp&, DRPublishingActComp> PropRegType;
+      typedef dtCore::PropertyRegHelper<DRPublishingActComp&, DRPublishingActComp> PropRegType;
       PropRegType propRegHelper(*this, this, "DR Publishing");
 
       DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(VelocityAverageFrameCount, "VelocityAveragingFrameCount", "Velocity Averaging Frame Count",

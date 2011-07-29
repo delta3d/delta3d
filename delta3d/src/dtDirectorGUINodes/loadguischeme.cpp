@@ -22,7 +22,7 @@
 #include <dtDirectorGUINodes/loadguischeme.h>
 #include <dtDirectorGUINodes/guinodemanager.h>
 
-#include <dtDAL/stringactorproperty.h>
+#include <dtCore/stringactorproperty.h>
 
 #include <dtGUI/gui.h>
 #include <CEGUI/CEGUIExceptions.h>
@@ -80,11 +80,11 @@ namespace dtDirector
    {
       ActionNode::BuildPropertyMap();
 
-      dtDAL::StringActorProperty* schemeProp =
-         new dtDAL::StringActorProperty(
+      dtCore::StringActorProperty* schemeProp =
+         new dtCore::StringActorProperty(
          "Scheme", "Scheme",
-         dtDAL::StringActorProperty::SetFuncType(this, &LoadGUIScheme::SetScheme),
-         dtDAL::StringActorProperty::GetFuncType(this, &LoadGUIScheme::GetScheme),
+         dtCore::StringActorProperty::SetFuncType(this, &LoadGUIScheme::SetScheme),
+         dtCore::StringActorProperty::GetFuncType(this, &LoadGUIScheme::GetScheme),
          "The Scheme.");
       AddProperty(schemeProp);
       

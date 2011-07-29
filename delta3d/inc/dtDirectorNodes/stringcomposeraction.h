@@ -27,7 +27,7 @@
 #include <dtDirector/actionnode.h>
 #include <dtDirectorNodes/nodelibraryexport.h>
 
-#include <dtDAL/stringactorproperty.h>
+#include <dtCore/stringactorproperty.h>
 
 namespace dtDirector
 {
@@ -64,7 +64,7 @@ namespace dtDirector
 
       std::string mSourceText;
       std::string mResultText;
-      dtCore::RefPtr<dtDAL::StringActorProperty> mTextProperty;
+      dtCore::RefPtr<dtCore::StringActorProperty> mTextProperty;
    };
 }
 

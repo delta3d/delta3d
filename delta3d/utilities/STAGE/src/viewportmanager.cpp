@@ -33,8 +33,8 @@
 #include <osgDB/DatabasePager>
 #include <osgViewer/CompositeViewer>
 #include <dtUtil/log.h>
-#include <dtDAL/map.h>
-#include <dtDAL/actorproxyicon.h>
+#include <dtCore/map.h>
+#include <dtCore/actorproxyicon.h>
 #include <dtEditQt/viewportmanager.h>
 #include <dtEditQt/orthoviewport.h>
 #include <dtEditQt/perspectiveviewport.h>
@@ -178,7 +178,7 @@ namespace dtEditQt
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void ViewportManager::refreshActorSelection(const std::vector< dtCore::RefPtr<dtDAL::BaseActorObject> >& actors)
+   void ViewportManager::refreshActorSelection(const std::vector< dtCore::RefPtr<dtCore::BaseActorObject> >& actors)
    {
       std::map<std::string, Viewport*>::iterator itor;
       for (itor = mViewportList.begin(); itor != mViewportList.end(); ++itor)
@@ -218,14 +218,14 @@ namespace dtEditQt
 
    ///////////////////////////////////////////////////////////////////////////////
    void ViewportManager::clearMasterScene(
-      const std::map<dtCore::UniqueId, dtCore::RefPtr<dtDAL::BaseActorObject> >& proxies)
+      const std::map<dtCore::UniqueId, dtCore::RefPtr<dtCore::BaseActorObject> >& proxies)
    {
-      std::map< dtCore::UniqueId, dtCore::RefPtr<dtDAL::BaseActorObject> >::const_iterator itor;
+      std::map< dtCore::UniqueId, dtCore::RefPtr<dtCore::BaseActorObject> >::const_iterator itor;
 
       for (itor = proxies.begin(); itor != proxies.end(); ++itor)
       {
-         dtDAL::BaseActorObject* proxy = const_cast<dtDAL::BaseActorObject*>(itor->second.get());
-         dtDAL::ActorProxyIcon* billBoard = proxy->GetBillBoardIcon();
+         dtCore::BaseActorObject* proxy = const_cast<dtCore::BaseActorObject*>(itor->second.get());
+         dtCore::ActorProxyIcon* billBoard = proxy->GetBillBoardIcon();
          if (billBoard != NULL)
          {
             mMasterScene->RemoveChild(billBoard->GetDrawable());
@@ -299,7 +299,7 @@ namespace dtEditQt
    ////////////////////////////////////////////////////////////////////////////////
    void ViewportManager::SavePresetCamera(int index)
    {
-      dtDAL::Map::PresetCameraData data;
+      dtCore::Map::PresetCameraData data;
       data.isValid = true;
 
       Viewport* viewport = mViewportList["Perspective View"];
@@ -343,7 +343,7 @@ namespace dtEditQt
          }
       }
 
-      dtDAL::Map* map = EditorData::GetInstance().getCurrentMap();
+      dtCore::Map* map = EditorData::GetInstance().getCurrentMap();
       if (map)
       {
          map->SetPresetCameraData(index, data);
@@ -355,10 +355,10 @@ namespace dtEditQt
    ////////////////////////////////////////////////////////////////////////////////
    void ViewportManager::LoadPresetCamera(int index)
    {
-      dtDAL::Map* map = EditorData::GetInstance().getCurrentMap();
+      dtCore::Map* map = EditorData::GetInstance().getCurrentMap();
       if (map)
       {
-         dtDAL::Map::PresetCameraData data = map->GetPresetCameraData(index);
+         dtCore::Map::PresetCameraData data = map->GetPresetCameraData(index);
 
          if (data.isValid || index == 1)
          {
@@ -558,21 +558,21 @@ namespace dtEditQt
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void ViewportManager::emitModifyPropList(dtDAL::PropertyContainer& propertyContainer, std::vector<dtDAL::ActorProperty*>& propList)
+   void ViewportManager::emitModifyPropList(dtCore::PropertyContainer& propertyContainer, std::vector<dtCore::ActorProperty*>& propList)
    {
       LOG_INFO("Emitting event - [modifyPropList]");
       emit modifyPropList(propertyContainer, propList);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ViewportManager::onActorPropertyChanged(dtCore::RefPtr<dtDAL::BaseActorObject> proxy,
-      dtCore::RefPtr<dtDAL::ActorProperty> property)
+   void ViewportManager::onActorPropertyChanged(dtCore::RefPtr<dtCore::BaseActorObject> proxy,
+      dtCore::RefPtr<dtCore::ActorProperty> property)
    {
       unsigned int billBoardIndex, actorIndex;
-      const dtDAL::BaseActorObject::RenderMode& renderMode = proxy->GetRenderMode();
-      dtDAL::ActorProxyIcon* billBoard = proxy->GetBillBoardIcon();
+      const dtCore::BaseActorObject::RenderMode& renderMode = proxy->GetRenderMode();
+      dtCore::ActorProxyIcon* billBoard = proxy->GetBillBoardIcon();
 
-      if (renderMode == dtDAL::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON)
+      if (renderMode == dtCore::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON)
       {
          mMasterScene->RemoveChild(proxy->GetActor());
          mViewportOverlay->unSelect(proxy->GetActor());
@@ -591,7 +591,7 @@ namespace dtEditQt
             }
          }
       }
-      else if (renderMode == dtDAL::BaseActorObject::RenderMode::DRAW_ACTOR)
+      else if (renderMode == dtCore::BaseActorObject::RenderMode::DRAW_ACTOR)
       {
          if (billBoard == NULL)
          {
@@ -610,7 +610,7 @@ namespace dtEditQt
             mViewportOverlay->select(proxy->GetActor());
          }
       }
-      else if (renderMode == dtDAL::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON)
+      else if (renderMode == dtCore::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON)
       {
          if (billBoard == NULL)
          {
@@ -657,13 +657,13 @@ namespace dtEditQt
 
    ///////////////////////////////////////////////////////////////////////////////
    void ViewportManager::onActorProxyCreated(
-      dtCore::RefPtr<dtDAL::BaseActorObject> proxy, bool forceNoAdjustments)
+      dtCore::RefPtr<dtCore::BaseActorObject> proxy, bool forceNoAdjustments)
    {
       dtCore::Scene* scene = mMasterScene.get();
-      dtDAL::ActorProxyIcon* billBoard = NULL;
+      dtCore::ActorProxyIcon* billBoard = NULL;
 
-      const dtDAL::BaseActorObject::RenderMode& renderMode = proxy->GetRenderMode();
-      if (renderMode == dtDAL::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON)
+      const dtCore::BaseActorObject::RenderMode& renderMode = proxy->GetRenderMode();
+      if (renderMode == dtCore::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON)
       {
          billBoard = proxy->GetBillBoardIcon();
 
@@ -683,11 +683,11 @@ namespace dtEditQt
             scene->AddChild(billBoard->GetDrawable());
          }
       }
-      else if (renderMode == dtDAL::BaseActorObject::RenderMode::DRAW_ACTOR)
+      else if (renderMode == dtCore::BaseActorObject::RenderMode::DRAW_ACTOR)
       {
          scene->AddChild(proxy->GetActor());
       }
-      else if (renderMode == dtDAL::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON)
+      else if (renderMode == dtCore::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON)
       {
          scene->AddChild(proxy->GetActor());
 
@@ -725,7 +725,7 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ViewportManager::placeProxyInFrontOfCamera(dtDAL::BaseActorObject* proxy)
+   void ViewportManager::placeProxyInFrontOfCamera(dtCore::BaseActorObject* proxy)
    {
       //dont set the position on the proxy if it isnt placeable
       if(proxy->IsPlaceable())
@@ -736,9 +736,9 @@ namespace dtEditQt
 
          // If the object is a transformable (can have a position in the scene)
          // add it to the scene in front of the camera.
-         dtDAL::TransformableActorProxy* tProxy =
-            dynamic_cast<dtDAL::TransformableActorProxy*>(proxy);
-         dtDAL::ActorProperty* prop = proxy->GetProperty(dtDAL::TransformableActorProxy::PROPERTY_TRANSLATION);
+         dtCore::TransformableActorProxy* tProxy =
+            dynamic_cast<dtCore::TransformableActorProxy*>(proxy);
+         dtCore::ActorProperty* prop = proxy->GetProperty(dtCore::TransformableActorProxy::PROPERTY_TRANSLATION);
 
          if (tProxy != NULL && prop != NULL)
          {

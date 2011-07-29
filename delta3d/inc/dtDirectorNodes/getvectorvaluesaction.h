@@ -113,10 +113,10 @@ namespace dtDirector
 
       std::string mVector;
 
-      dtCore::RefPtr<dtDAL::ActorProperty> mXProp;
-      dtCore::RefPtr<dtDAL::ActorProperty> mYProp;
-      dtCore::RefPtr<dtDAL::ActorProperty> mZProp;
-      dtCore::RefPtr<dtDAL::ActorProperty> mWProp;
+      dtCore::RefPtr<dtCore::ActorProperty> mXProp;
+      dtCore::RefPtr<dtCore::ActorProperty> mYProp;
+      dtCore::RefPtr<dtCore::ActorProperty> mZProp;
+      dtCore::RefPtr<dtCore::ActorProperty> mWProp;
    };
 }
 

@@ -60,12 +60,12 @@
 #include <dtEditQt/editorevents.h>
 #include <dtEditQt/uiresources.h>
 
-#include <dtDAL/project.h>
+#include <dtCore/project.h>
 
 namespace dtEditQt
 {
    ///////////////////////////////////////////////////////////////////////////////
-   TextureBrowser::TextureBrowser(dtDAL::DataType& type, QWidget* parent)
+   TextureBrowser::TextureBrowser(dtCore::DataType& type, QWidget* parent)
       : ResourceAbstractBrowser(&type, parent)
    {
       // This sets our resource icon that is visible on leaf nodes
@@ -188,10 +188,10 @@ namespace dtEditQt
          QString file;
          QString context;
 
-         dtDAL::Project& project = dtDAL::Project::GetInstance();
+         dtCore::Project& project = dtCore::Project::GetInstance();
 
          // Find the currently selected tree item
-         dtDAL::ResourceDescriptor resource = EditorData::GetInstance().getCurrentResource(dtDAL::DataType::TEXTURE);
+         dtCore::ResourceDescriptor resource = EditorData::GetInstance().getCurrentResource(dtCore::DataType::TEXTURE);
 
          try
          {

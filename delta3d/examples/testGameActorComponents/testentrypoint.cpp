@@ -9,7 +9,7 @@
 #include <dtCore/deltawin.h>
 #include <dtCore/system.h>
 #include <dtCore/transform.h>
-#include <dtDAL/project.h>
+#include <dtCore/project.h>
 #include <dtUtil/datapathutils.h>
 #include <dtGame/baseinputcomponent.h>
 #include <dtGame/gamemanager.h>
@@ -41,7 +41,7 @@ public:
             // loop through all component game actors and
             // get their text label components.
             // Toggle flashing property on components
-            typedef std::vector<dtDAL::BaseActorObject*> ProxyList;
+            typedef std::vector<dtCore::BaseActorObject*> ProxyList;
 
             ProxyList proxies;
             GetGameManager()->FindActorsByType(*TestActorLibraryRegistry::COMPONENT_GAME_ACTOR_TYPE.get(), proxies);
@@ -98,7 +98,7 @@ public:
          app.GetWindow()->SetWindowTitle("TestGameActorComponents");
 
          std::string context = dtUtil::GetDeltaRootPath() + "/examples/data/demoMap";
-         dtDAL::Project::GetInstance().SetContext(context, true);
+         dtCore::Project::GetInstance().SetContext(context, true);
 
          gameManager.ChangeMap("MyCoolMap");
       }

@@ -39,7 +39,7 @@ namespace dtDirector
     * Director Graph structure that contains all nodes
     * within the director script.
     */
-   class DT_DIRECTOR_EXPORT DirectorGraph: public dtDAL::PropertyContainer
+   class DT_DIRECTOR_EXPORT DirectorGraph: public dtCore::PropertyContainer
    {
    public:
 

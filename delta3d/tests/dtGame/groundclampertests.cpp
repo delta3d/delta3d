@@ -50,7 +50,7 @@
 #include <dtGame/messagefactory.h>
 #include <dtGame/defaultgroundclamper.h>
 
-#include <dtDAL/actortype.h>
+#include <dtCore/actortype.h>
 
 #include <dtActors/engineactorregistry.h>
 #include <dtActors/infiniteterrainactorproxy.h>
@@ -89,7 +89,7 @@ namespace dtGame
          // Expose protected methods for public testing.
          /////////////////////////////////////////////////////////////////
          virtual void CalculateAndSetBoundingBox(osg::Vec3& modelDimensions,
-            dtDAL::TransformableActorProxy& proxy, GroundClampingData& data)
+            dtCore::TransformableActorProxy& proxy, GroundClampingData& data)
          {
             BaseClass::CalculateAndSetBoundingBox(modelDimensions, proxy, data);
          }
@@ -108,7 +108,7 @@ namespace dtGame
             BaseClass::OrientTransform(xform, rotation, location, normal);
          }
 
-         virtual void FinalizeSurfacePoints(dtDAL::TransformableActorProxy& proxy,
+         virtual void FinalizeSurfacePoints(dtCore::TransformableActorProxy& proxy,
             GroundClampingData& data, osg::Vec3 inOutPoints[3])
          {
             BaseClass::FinalizeSurfacePoints(proxy, data, inOutPoints);
@@ -122,14 +122,14 @@ namespace dtGame
          }
 
          void ClampToGroundThreePoint(dtCore::Transform& xform,
-            dtDAL::TransformableActorProxy& proxy, GroundClampingData& data,
+            dtCore::TransformableActorProxy& proxy, GroundClampingData& data,
             RuntimeData& runtimeData)
          {
             BaseClass::ClampToGroundThreePoint(xform, proxy, data, runtimeData);
          }
 
          void ClampToGroundIntermittent(double currentTime,
-            dtCore::Transform& xform, dtDAL::TransformableActorProxy& proxy,
+            dtCore::Transform& xform, dtCore::TransformableActorProxy& proxy,
             GroundClampingData& data, RuntimeData& runtimeData)
          {
             BaseClass::ClampToGroundIntermittent(currentTime, xform, proxy, data, runtimeData);

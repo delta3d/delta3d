@@ -23,8 +23,8 @@
 #ifndef DELTA_BEZIER_CONTROL_POINT_ACTOR_PROXY
 #define DELTA_BEZIER_CONTROL_POINT_ACTOR_PROXY
 
-#include <dtDAL/transformableactorproxy.h>
-#include <dtDAL/plugin_export.h>
+#include <dtCore/transformableactorproxy.h>
+#include <dtCore/plugin_export.h>
 #include <dtCore/transformable.h>
 #include <dtABC/beziercontrolpoint.h>
 #include <dtABC/beziernode.h>
@@ -33,7 +33,7 @@
 
 namespace dtActors
 {
-   class DT_PLUGIN_EXPORT BezierControlPointActorProxy : public dtDAL::TransformableActorProxy
+   class DT_PLUGIN_EXPORT BezierControlPointActorProxy : public dtCore::TransformableActorProxy
    {
       public:
          /// Constructor
@@ -57,7 +57,7 @@ namespace dtActors
           * Sets the bezier node of this actor proxy
           * @param node The proxy that contains the node
           */
-         void SetBezierNode(dtDAL::BaseActorObject* node);
+         void SetBezierNode(dtCore::BaseActorObject* node);
 
          /**
           * Gets the bezier node of this actor proxy
@@ -66,8 +66,8 @@ namespace dtActors
          dtCore::DeltaDrawable* GetBezierNode();
 
 
-         dtDAL::ActorProxyIcon* GetBillBoardIcon();
-         const dtDAL::BaseActorObject::RenderMode& GetRenderMode();
+         dtCore::ActorProxyIcon* GetBillBoardIcon();
+         const dtCore::BaseActorObject::RenderMode& GetRenderMode();
 
          /*virtual*/ void OnScale(const osg::Vec3& oldValue, const osg::Vec3& newValue);
          /*virtual*/ void OnRotation(const osg::Vec3& oldValue, const osg::Vec3& newValue);

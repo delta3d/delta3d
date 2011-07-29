@@ -29,7 +29,7 @@
 
 #include <dtCore/scene.h>
 
-#include <dtDAL/intactorproperty.h>
+#include <dtCore/intactorproperty.h>
 
 #include <dtGame/invokable.h>
 #include <dtGame/messagetype.h>
@@ -63,19 +63,19 @@ void TestGameActorProxy2::BuildPropertyMap()
    TestGameActor2* actor = NULL;
    GetActor(actor);
 
-   AddProperty(new dtDAL::IntActorProperty("Actor Deleted Count", "The number of Actor Deleted message received", 
-      dtDAL::IntActorProperty::SetFuncType(actor, &TestGameActor2::SetActorDeletedCount),
-      dtDAL::IntActorProperty::GetFuncType(actor, &TestGameActor2::GetActorDeletedCount),
+   AddProperty(new dtCore::IntActorProperty("Actor Deleted Count", "The number of Actor Deleted message received", 
+      dtCore::IntActorProperty::SetFuncType(actor, &TestGameActor2::SetActorDeletedCount),
+      dtCore::IntActorProperty::GetFuncType(actor, &TestGameActor2::GetActorDeletedCount),
       "A property marking the number of actor deleted message received.", ""));
 
-   AddProperty(new dtDAL::IntActorProperty("Actor Published Count", "The number of Actor Published message received", 
-      dtDAL::IntActorProperty::SetFuncType(actor, &TestGameActor2::SetActorPublishedCount),
-      dtDAL::IntActorProperty::GetFuncType(actor, &TestGameActor2::GetActorPublishedCount),
+   AddProperty(new dtCore::IntActorProperty("Actor Published Count", "The number of Actor Published message received", 
+      dtCore::IntActorProperty::SetFuncType(actor, &TestGameActor2::SetActorPublishedCount),
+      dtCore::IntActorProperty::GetFuncType(actor, &TestGameActor2::GetActorPublishedCount),
       "A property marking the number of actor published message received.", ""));
 
-   AddProperty(new dtDAL::IntActorProperty("Map Loaded Count", "The number of Map Loaded message received", 
-      dtDAL::IntActorProperty::SetFuncType(actor, &TestGameActor2::SetMapLoadedCount),
-      dtDAL::IntActorProperty::GetFuncType(actor, &TestGameActor2::GetMapLoadedCount),
+   AddProperty(new dtCore::IntActorProperty("Map Loaded Count", "The number of Map Loaded message received", 
+      dtCore::IntActorProperty::SetFuncType(actor, &TestGameActor2::SetMapLoadedCount),
+      dtCore::IntActorProperty::GetFuncType(actor, &TestGameActor2::GetMapLoadedCount),
       "A property marking the number of Map Loaded message received.", ""));
 }
 

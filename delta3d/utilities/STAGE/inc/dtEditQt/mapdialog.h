@@ -37,7 +37,7 @@ class QCloseEvent;
 class QPushButton;
 class QTextEdit;
 
-namespace dtDAL
+namespace dtCore
 {
    class Map;
 }
@@ -55,8 +55,8 @@ namespace dtEditQt
       /// Destructor
       virtual ~MapDialog() { }
 
-      inline dtDAL::Map* getFinalizedMap() { return mMap; }
-      inline const dtDAL::Map* getFinalizedMap() const { return mMap; }
+      inline dtCore::Map* getFinalizedMap() { return mMap; }
+      inline const dtCore::Map* getFinalizedMap() const { return mMap; }
 
    public slots:
       /// slot for receiving the text changing signal
@@ -70,7 +70,7 @@ namespace dtEditQt
       QLineEdit*   mNameEdit;
       QTextEdit*   mDescEdit;
       QLineEdit*   mFileEdit;
-      dtDAL::Map*  mMap;
+      dtCore::Map*  mMap;
    };
 
 } // namespace dtEditQt

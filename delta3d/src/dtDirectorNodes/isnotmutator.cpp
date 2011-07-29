@@ -21,7 +21,7 @@
 #include <prefix/dtdirectornodesprefix.h>
 #include <dtDirectorNodes/isnotmutator.h>
 
-#include <dtDAL/booleanactorproperty.h>
+#include <dtCore/booleanactorproperty.h>
 
 namespace dtDirector
 {
@@ -50,17 +50,17 @@ namespace dtDirector
       MutatorNode::BuildPropertyMap();
 
       // Create our value links.
-      dtDAL::BooleanActorProperty* valueProp = new dtDAL::BooleanActorProperty(
+      dtCore::BooleanActorProperty* valueProp = new dtCore::BooleanActorProperty(
          "Value", "Value",
-         dtDAL::BooleanActorProperty::SetFuncType(this, &IsNotMutator::SetValue),
-         dtDAL::BooleanActorProperty::GetFuncType(this, &IsNotMutator::GetValue),
+         dtCore::BooleanActorProperty::SetFuncType(this, &IsNotMutator::SetValue),
+         dtCore::BooleanActorProperty::GetFuncType(this, &IsNotMutator::GetValue),
          "The value to negate.");
       AddProperty(valueProp);
 
-      mProperty = new dtDAL::BooleanActorProperty(
+      mProperty = new dtCore::BooleanActorProperty(
          "Result", "Result",
-         dtDAL::BooleanActorProperty::SetFuncType(this, &IsNotMutator::SetResult),
-         dtDAL::BooleanActorProperty::GetFuncType(this, &IsNotMutator::GetResult),
+         dtCore::BooleanActorProperty::SetFuncType(this, &IsNotMutator::SetResult),
+         dtCore::BooleanActorProperty::GetFuncType(this, &IsNotMutator::GetResult),
          "The Result value.");
       AddProperty(mProperty);
 

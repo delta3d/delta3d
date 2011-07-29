@@ -22,8 +22,8 @@
 
 #include "disactorcomponents.h"
 
-#include <dtDAL/datatype.h>
-#include <dtDAL/stringactorproperty.h>
+#include <dtCore/datatype.h>
+#include <dtCore/stringactorproperty.h>
 
 #include <dtDIS/propertyname.h>
 
@@ -50,10 +50,10 @@ void EntityTypeActorComponent::OnAddedToActor(dtGame::GameActor& actor)
    //Add an ActorProptery to the parent actor
 
    actor.GetGameActorProxy().AddProperty( 
-      new dtDAL::StringActorProperty(dtDIS::EntityPropertyName::ENTITY_TYPE.Get(),
+      new dtCore::StringActorProperty(dtDIS::EntityPropertyName::ENTITY_TYPE.Get(),
       "DIS EntityType",
-      dtDAL::StringActorProperty::SetFuncType(this, &EntityTypeActorComponent::SetText),
-      dtDAL::StringActorProperty::GetFuncType(this, &EntityTypeActorComponent::GetText),
+      dtCore::StringActorProperty::SetFuncType(this, &EntityTypeActorComponent::SetText),
+      dtCore::StringActorProperty::GetFuncType(this, &EntityTypeActorComponent::GetText),
       "The DIS EntityType string",
       "DIS")
       );

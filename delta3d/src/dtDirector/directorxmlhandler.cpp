@@ -31,8 +31,8 @@
 #include <dtDirector/outputlink.h>
 #include <dtDirector/valuelink.h>
 
-#include <dtDAL/exceptionenum.h>
-#include <dtDAL/mapxmlconstants.h>
+#include <dtCore/exceptionenum.h>
+#include <dtCore/mapxmlconstants.h>
 
 #include <dtUtil/xercesutils.h>
 
@@ -98,13 +98,13 @@ namespace dtDirector
 {
    /////////////////////////////////////////////////////////////////
    DirectorXMLHandler::DirectorXMLHandler()
-      : dtDAL::BaseXMLHandler()
+      : dtCore::BaseXMLHandler()
       , mDirector(NULL)
       , mMap(NULL)
       , mFoundScriptType(false)
       , mNode(NULL)
    {
-      mPropSerializer = new dtDAL::ActorPropertySerializer(this);
+      mPropSerializer = new dtCore::ActorPropertySerializer(this);
       //dtUtil::Log::GetInstance().SetLogLevel(dtUtil::Log::LOG_DEBUG);
    }
 
@@ -123,7 +123,7 @@ namespace dtDirector
    /////////////////////////////////////////////////////////////////
    void DirectorXMLHandler::startDocument()
    {
-      dtDAL::BaseXMLHandler::startDocument();
+      dtCore::BaseXMLHandler::startDocument();
 
       mPropSerializer->SetMap(mMap.get());
       mPropSerializer->SetCurrentPropertyContainer(mDirector);
@@ -132,7 +132,7 @@ namespace dtDirector
    /////////////////////////////////////////////////////////////////
    void DirectorXMLHandler::endDocument()
    {
-      dtDAL::BaseXMLHandler::endDocument();
+      dtCore::BaseXMLHandler::endDocument();
 
       mPropSerializer->LinkActors();
       mPropSerializer->AssignGroupProperties();
@@ -146,7 +146,7 @@ namespace dtDirector
                                              const XMLCh* const qname,
                                              const xercesc::Attributes& attrs)
    {
-      dtDAL::BaseXMLHandler::ElementStarted(uri, localname, qname, attrs);
+      dtCore::BaseXMLHandler::ElementStarted(uri, localname, qname, attrs);
 
       // Library element started.
       if (mInHeaders)
@@ -160,7 +160,7 @@ namespace dtDirector
          if (!mPropSerializer->ElementStarted(localname))
          {
             // Library
-            if (XMLString::compareString(localname, dtDAL::MapXMLConstants::LIBRARY_ELEMENT) == 0)
+            if (XMLString::compareString(localname, dtCore::MapXMLConstants::LIBRARY_ELEMENT) == 0)
             {
                ClearLibraryValues();
             }
@@ -177,7 +177,7 @@ namespace dtDirector
                // Check if we are starting a property element.
                if (!mPropSerializer->ElementStarted(localname))
                {
-                  if (XMLString::compareString(localname, dtDAL::MapXMLConstants::DIRECTOR_LINKS_INPUT_ELEMENT) == 0)
+                  if (XMLString::compareString(localname, dtCore::MapXMLConstants::DIRECTOR_LINKS_INPUT_ELEMENT) == 0)
                   {
                      if (dtUtil::Log::GetInstance().IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
                         dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found Input Link");
@@ -185,7 +185,7 @@ namespace dtDirector
                      mInLink = true;
                      mInInputLink = true;
                   }
-                  else if (XMLString::compareString(localname, dtDAL::MapXMLConstants::DIRECTOR_LINKS_OUTPUT_ELEMENT) == 0)
+                  else if (XMLString::compareString(localname, dtCore::MapXMLConstants::DIRECTOR_LINKS_OUTPUT_ELEMENT) == 0)
                   {
                      if (dtUtil::Log::GetInstance().IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
                         dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found Output Link");
@@ -193,7 +193,7 @@ namespace dtDirector
                      mInLink = true;
                      mInOutputLink = true;
                   }
-                  else if (XMLString::compareString(localname, dtDAL::MapXMLConstants::DIRECTOR_LINKS_VALUE_ELEMENT) == 0)
+                  else if (XMLString::compareString(localname, dtCore::MapXMLConstants::DIRECTOR_LINKS_VALUE_ELEMENT) == 0)
                   {
                      if (dtUtil::Log::GetInstance().IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
                         dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found Value Link");
@@ -201,14 +201,14 @@ namespace dtDirector
                      mInLink = true;
                      mInValueLink = true;
                   }
-                  else if (mInLink && XMLString::compareString(localname,dtDAL::MapXMLConstants::DIRECTOR_LINK_ELEMENT) == 0)
+                  else if (mInLink && XMLString::compareString(localname,dtCore::MapXMLConstants::DIRECTOR_LINK_ELEMENT) == 0)
                   {
                      mInLinkTo = true;
                   }
                }
             }
             // Check if we are starting a node.
-            else if (XMLString::compareString(localname, dtDAL::MapXMLConstants::DIRECTOR_NODE_ELEMENT) == 0)
+            else if (XMLString::compareString(localname, dtCore::MapXMLConstants::DIRECTOR_NODE_ELEMENT) == 0)
             {
                ClearNodeValues();
                mInNode = true;
@@ -219,7 +219,7 @@ namespace dtDirector
             if (!mPropSerializer->ElementStarted(localname))
             {
                // Value node.
-               if (XMLString::compareString(localname, dtDAL::MapXMLConstants::DIRECTOR_VALUE_NODES_ELEMENT) == 0)
+               if (XMLString::compareString(localname, dtCore::MapXMLConstants::DIRECTOR_VALUE_NODES_ELEMENT) == 0)
                {
                   if (dtUtil::Log::GetInstance().IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
                      dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found Value Nodes");
@@ -227,7 +227,7 @@ namespace dtDirector
                   mInNodes = true;
                }
                // Event node.
-               else if (XMLString::compareString(localname, dtDAL::MapXMLConstants::DIRECTOR_EVENT_NODES_ELEMENT) == 0)
+               else if (XMLString::compareString(localname, dtCore::MapXMLConstants::DIRECTOR_EVENT_NODES_ELEMENT) == 0)
                {
                   if (dtUtil::Log::GetInstance().IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
                      dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found Event Nodes");
@@ -235,7 +235,7 @@ namespace dtDirector
                   mInNodes = true;
                }
                // Action node.
-               else if (XMLString::compareString(localname, dtDAL::MapXMLConstants::DIRECTOR_ACTION_NODES_ELEMENT) == 0)
+               else if (XMLString::compareString(localname, dtCore::MapXMLConstants::DIRECTOR_ACTION_NODES_ELEMENT) == 0)
                {
                   if (dtUtil::Log::GetInstance().IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
                      dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found Action Nodes");
@@ -243,7 +243,7 @@ namespace dtDirector
                   mInNodes = true;
                }
                // Graph.
-               else if (XMLString::compareString(localname, dtDAL::MapXMLConstants::DIRECTOR_GRAPH_ELEMENT) == 0)
+               else if (XMLString::compareString(localname, dtCore::MapXMLConstants::DIRECTOR_GRAPH_ELEMENT) == 0)
                {
                   if (dtUtil::Log::GetInstance().IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
                   {
@@ -264,7 +264,7 @@ namespace dtDirector
          }
       }
       // Header.
-      else if (XMLString::compareString(localname, dtDAL::MapXMLConstants::HEADER_ELEMENT) == 0)
+      else if (XMLString::compareString(localname, dtCore::MapXMLConstants::HEADER_ELEMENT) == 0)
       {
          if (dtUtil::Log::GetInstance().IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
          {
@@ -273,14 +273,14 @@ namespace dtDirector
          mInHeaders = true;
       }
       // Libraries.
-      else if (XMLString::compareString(localname, dtDAL::MapXMLConstants::LIBRARIES_ELEMENT) == 0)
+      else if (XMLString::compareString(localname, dtCore::MapXMLConstants::LIBRARIES_ELEMENT) == 0)
       {
          if (dtUtil::Log::GetInstance().IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
             dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found Libraries");
          mInLibraries = true;
       }
       // Graph.
-      else if (XMLString::compareString(localname, dtDAL::MapXMLConstants::DIRECTOR_GRAPH_ELEMENT) == 0)
+      else if (XMLString::compareString(localname, dtCore::MapXMLConstants::DIRECTOR_GRAPH_ELEMENT) == 0)
       {
          if (dtUtil::Log::GetInstance().IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
             dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found a Graph");
@@ -296,7 +296,7 @@ namespace dtDirector
                                           const XMLCh* const localname,
                                           const XMLCh* const qname)
    {
-      dtDAL::BaseXMLHandler::ElementEnded(uri, localname, qname);
+      dtCore::BaseXMLHandler::ElementEnded(uri, localname, qname);
 
       if (mInHeaders)
       {
@@ -326,21 +326,21 @@ namespace dtDirector
    /////////////////////////////////////////////////////////////////
    void DirectorXMLHandler::CombinedCharacters(const XMLCh* const chars, size_t length)
    {
-      dtDAL::BaseXMLHandler::CombinedCharacters(chars, length);
+      dtCore::BaseXMLHandler::CombinedCharacters(chars, length);
 
       xmlCharString& topEl = mElements.top();
       if (mInHeaders)
       {
          if (!mPropSerializer->Characters(topEl, chars))
          {
-            if (topEl == dtDAL::MapXMLConstants::CREATE_TIMESTAMP_ELEMENT)
+            if (topEl == dtCore::MapXMLConstants::CREATE_TIMESTAMP_ELEMENT)
             {
                if (mDirector)
                {
                   mDirector->SetCreateDateTime(dtUtil::XMLStringConverter(chars).ToString());
                }
             }
-            else if (topEl == dtDAL::MapXMLConstants::DIRECTOR_SCRIPT_TYPE)
+            else if (topEl == dtCore::MapXMLConstants::DIRECTOR_SCRIPT_TYPE)
             {
                mScriptType = dtUtil::XMLStringConverter(chars).ToString();
                mFoundScriptType = true;
@@ -355,11 +355,11 @@ namespace dtDirector
       }
       else if (mInLibraries)
       {
-         if (topEl == dtDAL::MapXMLConstants::LIBRARY_NAME_ELEMENT)
+         if (topEl == dtCore::MapXMLConstants::LIBRARY_NAME_ELEMENT)
          {
             mLibName = dtUtil::XMLStringConverter(chars).ToString();
          }
-         else if (topEl == dtDAL::MapXMLConstants::LIBRARY_VERSION_ELEMENT)
+         else if (topEl == dtCore::MapXMLConstants::LIBRARY_VERSION_ELEMENT)
          {
             mLibVersion = dtUtil::XMLStringConverter(chars).ToString();
          }
@@ -374,11 +374,11 @@ namespace dtDirector
             if (!mNode.valid())
             {
                // Get the name of the node.
-               if (topEl == dtDAL::MapXMLConstants::NAME_ELEMENT)
+               if (topEl == dtCore::MapXMLConstants::NAME_ELEMENT)
                {
                   mNodeName = dtUtil::XMLStringConverter(chars).ToString();
                }
-               else if (topEl == dtDAL::MapXMLConstants::CATEGORY_ELEMENT)
+               else if (topEl == dtCore::MapXMLConstants::CATEGORY_ELEMENT)
                {
                   mNodeCategory = dtUtil::XMLStringConverter(chars).ToString();
                }
@@ -408,12 +408,12 @@ namespace dtDirector
                if (mInLinkTo)
                {
                   // The other links node ID.
-                  if (topEl == dtDAL::MapXMLConstants::ID_ELEMENT)
+                  if (topEl == dtCore::MapXMLConstants::ID_ELEMENT)
                   {
                      mLinkNodeID = dtUtil::XMLStringConverter(chars).ToString();
                   }
                   // The other links name.
-                  else if (topEl == dtDAL::MapXMLConstants::NAME_ELEMENT)
+                  else if (topEl == dtCore::MapXMLConstants::NAME_ELEMENT)
                   {
                      mLinkToName = dtUtil::XMLStringConverter(chars).ToString();
                   }
@@ -451,7 +451,7 @@ namespace dtDirector
                      }
                   }
                }
-               else if (topEl == dtDAL::MapXMLConstants::NAME_ELEMENT)
+               else if (topEl == dtCore::MapXMLConstants::NAME_ELEMENT)
                {
                   if (mInInputLink)
                   {
@@ -500,7 +500,7 @@ namespace dtDirector
                      }
                   }
                }
-               else if (topEl == dtDAL::MapXMLConstants::DIRECTOR_LINK_VISIBLE_ELEMENT)
+               else if (topEl == dtCore::MapXMLConstants::DIRECTOR_LINK_VISIBLE_ELEMENT)
                {
                   if (mInInputLink)
                   {
@@ -524,7 +524,7 @@ namespace dtDirector
                      }
                   }
                }
-               else if (topEl == dtDAL::MapXMLConstants::DIRECTOR_LINK_EXPOSED_ELEMENT)
+               else if (topEl == dtCore::MapXMLConstants::DIRECTOR_LINK_EXPOSED_ELEMENT)
                {
                   if (mInValueLink)
                   {
@@ -534,15 +534,15 @@ namespace dtDirector
                      }
                   }
                }
-               else if (mValueLink && topEl == dtDAL::MapXMLConstants::DIRECTOR_LINK_VALUE_IS_OUT_ELEMENT)
+               else if (mValueLink && topEl == dtCore::MapXMLConstants::DIRECTOR_LINK_VALUE_IS_OUT_ELEMENT)
                {
                   mValueLink->SetOutLink(dtUtil::XMLStringConverter(chars).ToString() == "true");
                }
-               else if (mValueLink && topEl == dtDAL::MapXMLConstants::DIRECTOR_LINK_VALUE_ALLOW_MULTIPLE_ELEMENT)
+               else if (mValueLink && topEl == dtCore::MapXMLConstants::DIRECTOR_LINK_VALUE_ALLOW_MULTIPLE_ELEMENT)
                {
                   mValueLink->SetAllowMultiple(dtUtil::XMLStringConverter(chars).ToString() == "true");
                }
-               else if (mValueLink && topEl == dtDAL::MapXMLConstants::DIRECTOR_LINK_VALUE_TYPE_CHECK_ELEMENT)
+               else if (mValueLink && topEl == dtCore::MapXMLConstants::DIRECTOR_LINK_VALUE_TYPE_CHECK_ELEMENT)
                {
                   mValueLink->SetTypeChecking(dtUtil::XMLStringConverter(chars).ToString() == "true");
                }
@@ -550,7 +550,7 @@ namespace dtDirector
             }
             else if (!mPropSerializer->Characters(topEl, chars))
             {
-               if (topEl == dtDAL::MapXMLConstants::ID_ELEMENT)
+               if (topEl == dtCore::MapXMLConstants::ID_ELEMENT)
                {
                   mNode->SetID(dtCore::UniqueId(dtUtil::XMLStringConverter(chars).ToString()));
                }
@@ -558,7 +558,7 @@ namespace dtDirector
          }
          else if (!mPropSerializer->Characters(topEl, chars))
          {
-            if (topEl == dtDAL::MapXMLConstants::ID_ELEMENT)
+            if (topEl == dtCore::MapXMLConstants::ID_ELEMENT)
             {
                graph->SetID(dtCore::UniqueId(dtUtil::XMLStringConverter(chars).ToString()));
             }
@@ -569,7 +569,7 @@ namespace dtDirector
    /////////////////////////////////////////////////////////////////
    void DirectorXMLHandler::Reset()
    {
-      dtDAL::BaseXMLHandler::Reset();
+      dtCore::BaseXMLHandler::Reset();
 
       mInHeaders = false;
       mInLibraries = false;
@@ -650,7 +650,7 @@ namespace dtDirector
    {
       if (!mPropSerializer->ElementEnded(localname))
       {
-         if (XMLString::compareString(localname, dtDAL::MapXMLConstants::HEADER_ELEMENT) == 0)
+         if (XMLString::compareString(localname, dtCore::MapXMLConstants::HEADER_ELEMENT) == 0)
          {
             mInHeaders = false;
          }
@@ -674,7 +674,7 @@ namespace dtDirector
    {
       if (mInGraph)
       {
-         if (XMLString::compareString(localname, dtDAL::MapXMLConstants::DIRECTOR_GRAPH_ELEMENT) == 0)
+         if (XMLString::compareString(localname, dtCore::MapXMLConstants::DIRECTOR_GRAPH_ELEMENT) == 0)
          {
             mGraphs.pop();
             mInGraph--;
@@ -699,24 +699,24 @@ namespace dtDirector
    {
       if (mInLink)
       {
-         if (XMLString::compareString(localname, dtDAL::MapXMLConstants::DIRECTOR_LINKS_INPUT_ELEMENT) == 0 ||
-            XMLString::compareString(localname, dtDAL::MapXMLConstants::DIRECTOR_LINKS_OUTPUT_ELEMENT) == 0 ||
-            XMLString::compareString(localname, dtDAL::MapXMLConstants::DIRECTOR_LINKS_VALUE_ELEMENT) == 0)
+         if (XMLString::compareString(localname, dtCore::MapXMLConstants::DIRECTOR_LINKS_INPUT_ELEMENT) == 0 ||
+            XMLString::compareString(localname, dtCore::MapXMLConstants::DIRECTOR_LINKS_OUTPUT_ELEMENT) == 0 ||
+            XMLString::compareString(localname, dtCore::MapXMLConstants::DIRECTOR_LINKS_VALUE_ELEMENT) == 0)
          {
             ClearLinkValues();
          }
-         else if (XMLString::compareString(localname, dtDAL::MapXMLConstants::DIRECTOR_LINK_ELEMENT) == 0)
+         else if (XMLString::compareString(localname, dtCore::MapXMLConstants::DIRECTOR_LINK_ELEMENT) == 0)
          {
             ClearLinkToValues();
          }
       }
-      else if (XMLString::compareString(localname, dtDAL::MapXMLConstants::DIRECTOR_ACTION_NODES_ELEMENT) == 0 ||
-               XMLString::compareString(localname, dtDAL::MapXMLConstants::DIRECTOR_EVENT_NODES_ELEMENT) == 0  ||
-               XMLString::compareString(localname, dtDAL::MapXMLConstants::DIRECTOR_VALUE_NODES_ELEMENT) == 0)
+      else if (XMLString::compareString(localname, dtCore::MapXMLConstants::DIRECTOR_ACTION_NODES_ELEMENT) == 0 ||
+               XMLString::compareString(localname, dtCore::MapXMLConstants::DIRECTOR_EVENT_NODES_ELEMENT) == 0  ||
+               XMLString::compareString(localname, dtCore::MapXMLConstants::DIRECTOR_VALUE_NODES_ELEMENT) == 0)
       {
          EndNodesElement();
       }
-      else if (XMLString::compareString(localname, dtDAL::MapXMLConstants::DIRECTOR_NODE_ELEMENT) == 0)
+      else if (XMLString::compareString(localname, dtCore::MapXMLConstants::DIRECTOR_NODE_ELEMENT) == 0)
       {
          EndNodeElement();
       }
@@ -747,11 +747,11 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void DirectorXMLHandler::EndLibrarySection(const XMLCh* const localname)
    {
-      if (XMLString::compareString(localname, dtDAL::MapXMLConstants::LIBRARIES_ELEMENT) == 0)
+      if (XMLString::compareString(localname, dtCore::MapXMLConstants::LIBRARIES_ELEMENT) == 0)
       {
          mInLibraries = false;
       }
-      else if (XMLString::compareString(localname, dtDAL::MapXMLConstants::LIBRARY_ELEMENT) == 0)
+      else if (XMLString::compareString(localname, dtCore::MapXMLConstants::LIBRARY_ELEMENT) == 0)
       {
          EndLibraryElement();
       }
@@ -773,7 +773,7 @@ namespace dtDirector
          mDirector->AddLibrary(mLibName, mLibVersion);
          ClearLibraryValues();
       }
-      catch (const dtDAL::ProjectResourceErrorException& e)
+      catch (const dtCore::ProjectResourceErrorException& e)
       {
          mMissingLibraries.push_back(mLibName);
 

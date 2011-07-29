@@ -21,7 +21,7 @@
 #include <prefix/dtdirectornodesprefix.h>
 #include <dtDirectorNodes/setvalueaction.h>
 
-#include <dtDAL/stringactorproperty.h>
+#include <dtCore/stringactorproperty.h>
 
 #include <dtDirector/director.h>
 
@@ -52,16 +52,16 @@ namespace dtDirector
       ActionNode::BuildPropertyMap();
 
       // Create our value links.
-      dtDAL::StringActorProperty* sourceProp = new dtDAL::StringActorProperty(
+      dtCore::StringActorProperty* sourceProp = new dtCore::StringActorProperty(
          "Source", "In Value",
-         dtDAL::StringActorProperty::SetFuncType(this, &SetValueAction::SetSrc),
-         dtDAL::StringActorProperty::GetFuncType(this, &SetValueAction::GetSrc),
+         dtCore::StringActorProperty::SetFuncType(this, &SetValueAction::SetSrc),
+         dtCore::StringActorProperty::GetFuncType(this, &SetValueAction::GetSrc),
          "The Source value.");
 
-      mResultProp = new dtDAL::StringActorProperty(
+      mResultProp = new dtCore::StringActorProperty(
          "Destination", "Out Value",
-         dtDAL::StringActorProperty::SetFuncType(this, &SetValueAction::SetDest),
-         dtDAL::StringActorProperty::GetFuncType(this, &SetValueAction::GetDest),
+         dtCore::StringActorProperty::SetFuncType(this, &SetValueAction::SetDest),
+         dtCore::StringActorProperty::GetFuncType(this, &SetValueAction::GetDest),
          "The Destination value.");
 
       AddProperty(sourceProp);

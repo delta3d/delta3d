@@ -21,12 +21,12 @@
 #include <prefix/dtdirectornodesprefix.h>
 #include <dtDirectorNodes/spawnprefabaction.h>
 
-#include <dtDAL/actoridactorproperty.h>
-#include <dtDAL/stringactorproperty.h>
-#include <dtDAL/baseactorobject.h>
+#include <dtCore/actoridactorproperty.h>
+#include <dtCore/stringactorproperty.h>
+#include <dtCore/baseactorobject.h>
 
-#include <dtDAL/resourceactorproperty.h>
-#include <dtDAL/vectoractorproperties.h>
+#include <dtCore/resourceactorproperty.h>
+#include <dtCore/vectoractorproperties.h>
 
 #include <dtDirector/director.h>
 
@@ -58,24 +58,24 @@ namespace dtDirector
    {
       ActionNode::BuildPropertyMap();
 
-      dtDAL::ResourceActorProperty* prefabProp = new dtDAL::ResourceActorProperty(
-         dtDAL::DataType::PREFAB, "Prefab", "Prefab",
-         dtDAL::ResourceActorProperty::SetDescFuncType(this, &SpawnPrefabAction::SetPrefab),
-         dtDAL::ResourceActorProperty::GetDescFuncType(this, &SpawnPrefabAction::GetPrefab),
+      dtCore::ResourceActorProperty* prefabProp = new dtCore::ResourceActorProperty(
+         dtCore::DataType::PREFAB, "Prefab", "Prefab",
+         dtCore::ResourceActorProperty::SetDescFuncType(this, &SpawnPrefabAction::SetPrefab),
+         dtCore::ResourceActorProperty::GetDescFuncType(this, &SpawnPrefabAction::GetPrefab),
          "The prefab resource to spawn.");
       AddProperty(prefabProp);
 
-      dtDAL::Vec3ActorProperty* spawnPosProp = new dtDAL::Vec3ActorProperty(
+      dtCore::Vec3ActorProperty* spawnPosProp = new dtCore::Vec3ActorProperty(
          "Spawn Location", "Spawn Location",
-         dtDAL::Vec3ActorProperty::SetFuncType(this, &SpawnPrefabAction::SetSpawnLocation),
-         dtDAL::Vec3ActorProperty::GetFuncType(this, &SpawnPrefabAction::GetSpawnLocation),
+         dtCore::Vec3ActorProperty::SetFuncType(this, &SpawnPrefabAction::SetSpawnLocation),
+         dtCore::Vec3ActorProperty::GetFuncType(this, &SpawnPrefabAction::GetSpawnLocation),
          "The location to spawn the new actor.");
       AddProperty(spawnPosProp);
 
-      dtDAL::ActorIDActorProperty* actorProp = new dtDAL::ActorIDActorProperty(
+      dtCore::ActorIDActorProperty* actorProp = new dtCore::ActorIDActorProperty(
          "Out Actor", "Out Actor",
-         dtDAL::ActorIDActorProperty::SetFuncType(this, &SpawnPrefabAction::SetNewActor),
-         dtDAL::ActorIDActorProperty::GetFuncType(this, &SpawnPrefabAction::GetNewActor),
+         dtCore::ActorIDActorProperty::SetFuncType(this, &SpawnPrefabAction::SetNewActor),
+         dtCore::ActorIDActorProperty::GetFuncType(this, &SpawnPrefabAction::GetNewActor),
          "", "The actor that was spawned.");
 
       // This will expose the properties in the editor and allow
@@ -89,16 +89,16 @@ namespace dtDirector
    bool SpawnPrefabAction::Update(float simDelta, float delta, int input, bool firstUpdate)
    {
       dtGame::GameManager* gm = GetDirector()->GetGameManager();
-      dtDAL::ResourceDescriptor prefab = GetResource("Prefab");
+      dtCore::ResourceDescriptor prefab = GetResource("Prefab");
       osg::Vec3 spawnLocation = GetVec3("Spawn Location");
       osg::Vec3 spawnRotation;
-      dtDAL::BaseActorObject* locationActor = GetActor("Spawn Location");
+      dtCore::BaseActorObject* locationActor = GetActor("Spawn Location");
       if (locationActor)
       {
-         dtDAL::Vec3ActorProperty* transProp = 
-            dynamic_cast<dtDAL::Vec3ActorProperty*>(locationActor->GetProperty("Translation"));
-         dtDAL::Vec3ActorProperty* rotProp =
-            dynamic_cast<dtDAL::Vec3ActorProperty*>(locationActor->GetProperty("Rotation"));
+         dtCore::Vec3ActorProperty* transProp = 
+            dynamic_cast<dtCore::Vec3ActorProperty*>(locationActor->GetProperty("Translation"));
+         dtCore::Vec3ActorProperty* rotProp =
+            dynamic_cast<dtCore::Vec3ActorProperty*>(locationActor->GetProperty("Rotation"));
 
          if (transProp)
          {
@@ -112,13 +112,13 @@ namespace dtDirector
 
       if (gm && !prefab.IsEmpty())
       {
-         dtCore::RefPtr<dtDAL::BaseActorObject> proxy = gm->CreateActor("dtActors", "Prefab");
+         dtCore::RefPtr<dtCore::BaseActorObject> proxy = gm->CreateActor("dtActors", "Prefab");
          if (proxy.valid())
          {
-            dtDAL::Vec3ActorProperty* transProp =
-               dynamic_cast<dtDAL::Vec3ActorProperty*>(proxy->GetProperty("Translation"));
-            dtDAL::Vec3ActorProperty* rotProp =
-               dynamic_cast<dtDAL::Vec3ActorProperty*>(proxy->GetProperty("Rotation"));
+            dtCore::Vec3ActorProperty* transProp =
+               dynamic_cast<dtCore::Vec3ActorProperty*>(proxy->GetProperty("Translation"));
+            dtCore::Vec3ActorProperty* rotProp =
+               dynamic_cast<dtCore::Vec3ActorProperty*>(proxy->GetProperty("Rotation"));
 
             if (transProp)
             {
@@ -131,8 +131,8 @@ namespace dtDirector
 
             gm->AddActor(*proxy);
 
-            dtDAL::ResourceActorProperty* resourceProp = NULL;
-            resourceProp = dynamic_cast<dtDAL::ResourceActorProperty*>(proxy->GetProperty("PrefabResource"));
+            dtCore::ResourceActorProperty* resourceProp = NULL;
+            resourceProp = dynamic_cast<dtCore::ResourceActorProperty*>(proxy->GetProperty("PrefabResource"));
             if (resourceProp)
             {
                resourceProp->SetValue(prefab);
@@ -154,8 +154,8 @@ namespace dtDirector
       {
          if (link->GetName() == "Spawn Location")
          {
-            if (value->CanBeType(dtDAL::DataType::ACTOR) ||
-                value->CanBeType(dtDAL::DataType::VEC3))
+            if (value->CanBeType(dtCore::DataType::ACTOR) ||
+                value->CanBeType(dtCore::DataType::VEC3))
             {
                return true;
             }
@@ -167,13 +167,13 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void SpawnPrefabAction::SetPrefab(const dtDAL::ResourceDescriptor& value)
+   void SpawnPrefabAction::SetPrefab(const dtCore::ResourceDescriptor& value)
    {
       mPrefab = value;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   dtDAL::ResourceDescriptor SpawnPrefabAction::GetPrefab() const
+   dtCore::ResourceDescriptor SpawnPrefabAction::GetPrefab() const
    {
       return mPrefab;
    }

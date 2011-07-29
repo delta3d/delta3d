@@ -27,9 +27,9 @@
 #include <fireFighter/gamestate.h>
 #include <fireFighter/firehoseactor.h>
 #include <fireFighter/fireactor.h>
-#include <dtDAL/actorproxyicon.h>
-#include <dtDAL/gameeventmanager.h>
-#include <dtDAL/functor.h>
+#include <dtCore/actorproxyicon.h>
+#include <dtCore/gameeventmanager.h>
+#include <dtCore/functor.h>
 #include <dtCore/isector.h>
 #include <dtCore/deltawin.h>
 #include <dtCore/camera.h>
@@ -65,11 +65,11 @@ void PlayerActorProxy::BuildInvokables()
    dtGame::GameActorProxy::BuildInvokables();
 }
 
-dtDAL::ActorProxyIcon* PlayerActorProxy::GetBillBoardIcon()
+dtCore::ActorProxyIcon* PlayerActorProxy::GetBillBoardIcon()
 {
    if (!mBillBoardIcon.valid())
    {
-      mBillBoardIcon = new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IMAGE_BILLBOARD_GENERIC);
+      mBillBoardIcon = new dtCore::ActorProxyIcon(dtCore::ActorProxyIcon::IMAGE_BILLBOARD_GENERIC);
    }
    return mBillBoardIcon.get();
 }
@@ -186,7 +186,7 @@ void PlayerActor::AddItemToInventory(GameItemActor& item)
          // Acquired the fire hose, fire the event
          const std::string& name = "AcquireFireHose";
 
-         dtDAL::GameEvent* event = dtDAL::GameEventManager::GetInstance().FindEvent(name);
+         dtCore::GameEvent* event = dtCore::GameEventManager::GetInstance().FindEvent(name);
          if (event == NULL)
          {
             throw dtUtil::Exception("Failed to find the game event: " + name, __FILE__, __LINE__);

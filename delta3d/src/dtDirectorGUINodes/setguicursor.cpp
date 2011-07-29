@@ -22,7 +22,7 @@
 #include <dtDirectorGUINodes/setguicursor.h>
 #include <dtDirectorGUINodes/guinodemanager.h>
 
-#include <dtDAL/stringactorproperty.h>
+#include <dtCore/stringactorproperty.h>
 
 #include <dtGUI/gui.h>
 
@@ -63,19 +63,19 @@ namespace dtDirector
    {
       ActionNode::BuildPropertyMap();
 
-      dtDAL::StringActorProperty* imageSetProp =
-         new dtDAL::StringActorProperty(
+      dtCore::StringActorProperty* imageSetProp =
+         new dtCore::StringActorProperty(
          "Image Set", "Image Set",
-         dtDAL::StringActorProperty::SetFuncType(this, &SetGUICursor::SetImageSet),
-         dtDAL::StringActorProperty::GetFuncType(this, &SetGUICursor::GetImageSet),
+         dtCore::StringActorProperty::SetFuncType(this, &SetGUICursor::SetImageSet),
+         dtCore::StringActorProperty::GetFuncType(this, &SetGUICursor::GetImageSet),
          "The image set.");
       AddProperty(imageSetProp);
       
-      dtDAL::StringActorProperty* imageProp =
-         new dtDAL::StringActorProperty(
+      dtCore::StringActorProperty* imageProp =
+         new dtCore::StringActorProperty(
          "Image", "Image",
-         dtDAL::StringActorProperty::SetFuncType(this, &SetGUICursor::SetImage),
-         dtDAL::StringActorProperty::GetFuncType(this, &SetGUICursor::GetImage),
+         dtCore::StringActorProperty::SetFuncType(this, &SetGUICursor::SetImage),
+         dtCore::StringActorProperty::GetFuncType(this, &SetGUICursor::GetImage),
          "The arrow image file.");
       AddProperty(imageProp);
 

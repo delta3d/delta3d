@@ -23,15 +23,15 @@
 
 #include <dtCore/camera.h>
 
-#include <dtDAL/actorproxyicon.h>
-#include <dtDAL/booleanactorproperty.h>
-#include <dtDAL/colorrgbaactorproperty.h>
-#include <dtDAL/functor.h>
+#include <dtCore/actorproxyicon.h>
+#include <dtCore/booleanactorproperty.h>
+#include <dtCore/colorrgbaactorproperty.h>
+#include <dtCore/functor.h>
 
 #include <sstream>
 
 using namespace dtCore;
-using namespace dtDAL;
+using namespace dtCore;
 using namespace dtActors;
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -73,11 +73,11 @@ void CameraActorProxy::BuildPropertyMap()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-dtDAL::ActorProxyIcon* CameraActorProxy::GetBillBoardIcon()
+dtCore::ActorProxyIcon* CameraActorProxy::GetBillBoardIcon()
 {
    if (!mBillBoardIcon.valid())
    {
-      mBillBoardIcon = new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IMAGE_BILLBOARD_CAMERA);
+      mBillBoardIcon = new dtCore::ActorProxyIcon(dtCore::ActorProxyIcon::IMAGE_BILLBOARD_CAMERA);
    }
 
    return mBillBoardIcon.get();

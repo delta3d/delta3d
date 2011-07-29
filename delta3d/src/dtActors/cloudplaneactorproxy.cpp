@@ -21,7 +21,7 @@
 
 #include <dtCore/cloudplane.h>
 #include "dtActors/cloudplaneactorproxy.h"
-#include "dtDAL/enginepropertytypes.h"
+#include "dtCore/enginepropertytypes.h"
 
 namespace dtActors 
 {
@@ -38,9 +38,9 @@ namespace dtActors
 
       dtCore::CloudPlane* cp = static_cast<dtCore::CloudPlane*>(GetActor());
 
-      AddProperty(new dtDAL::Vec2fActorProperty("Wind Vector", "Wind Vector",
-         dtDAL::Vec2ActorProperty::SetFuncType(this, &dtActors::CloudPlaneActorProxy::SetWindVector),
-         dtDAL::Vec2ActorProperty::GetFuncType(cp, &dtCore::CloudPlane::GetWind),
+      AddProperty(new dtCore::Vec2fActorProperty("Wind Vector", "Wind Vector",
+         dtCore::Vec2ActorProperty::SetFuncType(this, &dtActors::CloudPlaneActorProxy::SetWindVector),
+         dtCore::Vec2ActorProperty::GetFuncType(cp, &dtCore::CloudPlane::GetWind),
          "Set wind vector (speed and direction)", GROUPNAME));
 
    }

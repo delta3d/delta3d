@@ -24,9 +24,9 @@
 #include <dtCore/scene.h>
 #include <dtCore/transform.h>
 
-#include <dtDAL/actoractorproperty.h>
-#include <dtDAL/floatactorproperty.h>
-#include <dtDAL/functor.h>
+#include <dtCore/actoractorproperty.h>
+#include <dtCore/floatactorproperty.h>
+#include <dtCore/functor.h>
 
 #include <dtGame/message.h>
 #include <dtGame/messagetype.h>
@@ -65,21 +65,21 @@ namespace dtActors
       static const dtUtil::RefString GROUP("Distance Sensor");
       static const dtUtil::RefString EMPTY;
 
-      AddProperty(new dtDAL::ActorActorProperty(*this, DistanceSensorActorProxy::PROPERTY_ATTACH_TO_ACTOR,
+      AddProperty(new dtCore::ActorActorProperty(*this, DistanceSensorActorProxy::PROPERTY_ATTACH_TO_ACTOR,
                DistanceSensorActorProxy::PROPERTY_ATTACH_TO_ACTOR,
-               dtDAL::ActorActorProperty::SetFuncType(this, &DistanceSensorActorProxy::SetAttachToProxy),
-               dtDAL::ActorActorProperty::GetFuncType(actor, &DistanceSensorActor::GetAttachToActor),
+               dtCore::ActorActorProperty::SetFuncType(this, &DistanceSensorActorProxy::SetAttachToProxy),
+               dtCore::ActorActorProperty::GetFuncType(actor, &DistanceSensorActor::GetAttachToActor),
                "dtCore::DeltaDrawable", EMPTY, GROUP));
 
-      AddProperty(new dtDAL::FloatActorProperty(DistanceSensorActorProxy::PROPERTY_TRIGGER_DISTANCE,
+      AddProperty(new dtCore::FloatActorProperty(DistanceSensorActorProxy::PROPERTY_TRIGGER_DISTANCE,
                DistanceSensorActorProxy::PROPERTY_TRIGGER_DISTANCE,
-               dtDAL::FloatActorProperty::SetFuncType(actor, &DistanceSensorActor::SetTriggerDistance),
-               dtDAL::FloatActorProperty::GetFuncType(actor, &DistanceSensorActor::GetTriggerDistance),
+               dtCore::FloatActorProperty::SetFuncType(actor, &DistanceSensorActor::SetTriggerDistance),
+               dtCore::FloatActorProperty::GetFuncType(actor, &DistanceSensorActor::GetTriggerDistance),
                EMPTY, GROUP));
    }
 
    ////////////////////////////////////////////////////
-   void DistanceSensorActorProxy::SetAttachToProxy(dtDAL::BaseActorObject* newAttachToProxy)
+   void DistanceSensorActorProxy::SetAttachToProxy(dtCore::BaseActorObject* newAttachToProxy)
    {
       SetLinkedActor(DistanceSensorActorProxy::PROPERTY_ATTACH_TO_ACTOR, newAttachToProxy);
       DistanceSensorActor* actor;

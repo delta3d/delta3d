@@ -23,8 +23,8 @@
 #include <dtCore/camera.h>
 #include <dtCore/transform.h>
 
-#include <dtDAL/datatype.h>
-#include <dtDAL/floatactorproperty.h>
+#include <dtCore/datatype.h>
+#include <dtCore/floatactorproperty.h>
 
 #include <dtHLAGM/ddmgeographicregiondata.h>
 #include <dtHLAGM/ddmregiondata.h>
@@ -43,17 +43,17 @@ namespace dtHLAGM
    //////////////////////////////////////////////////////////////
    DDMCameraCalculatorGeographic::DDMCameraCalculatorGeographic(): BaseClass(), mXRange(100), mYRange(100), mMinTimeBetweenUpdates(0.25)
    {
-      AddProperty(new dtDAL::FloatActorProperty(PROP_X_SUBSCRIPTION_RANGE, PROP_X_SUBSCRIPTION_RANGE,
-            dtDAL::FloatActorProperty::SetFuncType(this, &DDMCameraCalculatorGeographic::SetXSubscriptionRange),
-            dtDAL::FloatActorProperty::GetFuncType(this, &DDMCameraCalculatorGeographic::GetXSubscriptionRange)
+      AddProperty(new dtCore::FloatActorProperty(PROP_X_SUBSCRIPTION_RANGE, PROP_X_SUBSCRIPTION_RANGE,
+            dtCore::FloatActorProperty::SetFuncType(this, &DDMCameraCalculatorGeographic::SetXSubscriptionRange),
+            dtCore::FloatActorProperty::GetFuncType(this, &DDMCameraCalculatorGeographic::GetXSubscriptionRange)
             ));
-      AddProperty(new dtDAL::FloatActorProperty(PROP_Y_SUBSCRIPTION_RANGE, PROP_Y_SUBSCRIPTION_RANGE,
-            dtDAL::FloatActorProperty::SetFuncType(this, &DDMCameraCalculatorGeographic::SetYSubscriptionRange),
-            dtDAL::FloatActorProperty::GetFuncType(this, &DDMCameraCalculatorGeographic::GetYSubscriptionRange)
+      AddProperty(new dtCore::FloatActorProperty(PROP_Y_SUBSCRIPTION_RANGE, PROP_Y_SUBSCRIPTION_RANGE,
+            dtCore::FloatActorProperty::SetFuncType(this, &DDMCameraCalculatorGeographic::SetYSubscriptionRange),
+            dtCore::FloatActorProperty::GetFuncType(this, &DDMCameraCalculatorGeographic::GetYSubscriptionRange)
             ));
-      AddProperty(new dtDAL::FloatActorProperty(PROP_MIN_TIME_BETWEEN_UPDATES, PROP_MIN_TIME_BETWEEN_UPDATES,
-            dtDAL::FloatActorProperty::SetFuncType(this, &DDMCameraCalculatorGeographic::SetMinTimeBetweenUpdates),
-            dtDAL::FloatActorProperty::GetFuncType(this, &DDMCameraCalculatorGeographic::GetMinTimeBetweenUpdates)
+      AddProperty(new dtCore::FloatActorProperty(PROP_MIN_TIME_BETWEEN_UPDATES, PROP_MIN_TIME_BETWEEN_UPDATES,
+            dtCore::FloatActorProperty::SetFuncType(this, &DDMCameraCalculatorGeographic::SetMinTimeBetweenUpdates),
+            dtCore::FloatActorProperty::GetFuncType(this, &DDMCameraCalculatorGeographic::GetMinTimeBetweenUpdates)
             ));
    }
 

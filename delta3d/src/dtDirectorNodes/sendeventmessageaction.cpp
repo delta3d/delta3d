@@ -21,7 +21,7 @@
 #include <prefix/dtdirectornodesprefix.h>
 #include <dtDirectorNodes/sendeventmessageaction.h>
 
-#include <dtDAL/gameeventactorproperty.h>
+#include <dtCore/gameeventactorproperty.h>
 
 #include <dtDirector/director.h>
 
@@ -60,10 +60,10 @@ namespace dtDirector
    {
       ActionNode::BuildPropertyMap();
 
-      dtDAL::GameEventActorProperty* eventProp = new dtDAL::GameEventActorProperty(
+      dtCore::GameEventActorProperty* eventProp = new dtCore::GameEventActorProperty(
          "Event", "Event",
-         dtDAL::GameEventActorProperty::SetFuncType(this, &SendEventMessageAction::SetEvent),
-         dtDAL::GameEventActorProperty::GetFuncType(this, &SendEventMessageAction::GetEvent),
+         dtCore::GameEventActorProperty::SetFuncType(this, &SendEventMessageAction::SetEvent),
+         dtCore::GameEventActorProperty::GetFuncType(this, &SendEventMessageAction::GetEvent),
          "The Game Event.  Entries are set in the map properties.");
       AddProperty(eventProp);
 
@@ -84,7 +84,7 @@ namespace dtDirector
             dtGame::GameEventMessage* eventMsg = dynamic_cast<dtGame::GameEventMessage*>(message.get());
             if (eventMsg)
             {
-               dtDAL::GameEvent* gameEvent = GetGameEvent("Event");
+               dtCore::GameEvent* gameEvent = GetGameEvent("Event");
                if (gameEvent)
                {
                   eventMsg->SetGameEvent(*gameEvent);
@@ -114,14 +114,14 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void SendEventMessageAction::SetEvent(dtDAL::GameEvent* gameEvent)
+   void SendEventMessageAction::SetEvent(dtCore::GameEvent* gameEvent)
    {
       mEvent = gameEvent;
       UpdateLabel();
    }
 
    //////////////////////////////////////////////////////////////////////////
-   dtDAL::GameEvent* SendEventMessageAction::GetEvent() const
+   dtCore::GameEvent* SendEventMessageAction::GetEvent() const
    {
       return mEvent;
    }
@@ -129,7 +129,7 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void SendEventMessageAction::UpdateLabel()
    {
-      dtDAL::GameEvent* gameEvent = GetGameEvent("Event");
+      dtCore::GameEvent* gameEvent = GetGameEvent("Event");
 
       mName = gameEvent ? gameEvent->GetName() : "";
    }

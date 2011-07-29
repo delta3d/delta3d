@@ -23,9 +23,9 @@
  */
 
 #include "testnestedpropertycontainer.h"
-#include <dtDAL/propertymacros.h>
-#include <dtDAL/arrayactorpropertycomplex.h>
-#include <dtDAL/propertycontaineractorproperty.h>
+#include <dtCore/propertymacros.h>
+#include <dtCore/arrayactorpropertycomplex.h>
+#include <dtCore/propertycontaineractorproperty.h>
 
 /////////////////////////////////////////////////////
 TestNestedPropertyContainer::TestNestedPropertyContainer()
@@ -47,7 +47,7 @@ TestNestedPropertyContainer::~TestNestedPropertyContainer()
 void TestNestedPropertyContainer::BuildPropertyMap()
 {
    static const dtUtil::RefString GROUPNAME("TestNestedPropertyContainer");
-   typedef dtDAL::PropertyRegHelper<TestNestedPropertyContainer&, TestNestedPropertyContainer> PropRegHelperType;
+   typedef dtCore::PropertyRegHelper<TestNestedPropertyContainer&, TestNestedPropertyContainer> PropRegHelperType;
    PropRegHelperType propRegHelper(*this, this, GROUPNAME);
 
    DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(TestFloat, "Test_Float", "Test Float", "Holds a test Float property",
@@ -68,7 +68,7 @@ void TestNestedPropertyContainer::BuildPropertyMap()
    GetProperty("Test_Read_Only_Int")->SetReadOnly(true);
 
 
-   typedef dtDAL::ArrayActorPropertyComplex<dtCore::RefPtr<TestNestedPropertyContainer> > NestedArrayPropType;
+   typedef dtCore::ArrayActorPropertyComplex<dtCore::RefPtr<TestNestedPropertyContainer> > NestedArrayPropType;
    dtCore::RefPtr<NestedArrayPropType> arrayProp =
             new NestedArrayPropType
                ("TestNestedContainerArray", "TestNestedContainerArray",
@@ -81,11 +81,11 @@ void TestNestedPropertyContainer::BuildPropertyMap()
                 GROUPNAME
                );
 
-   dtCore::RefPtr<dtDAL::BasePropertyContainerActorProperty> propContainerProp =
-            new dtDAL::SimplePropertyContainerActorProperty<TestNestedPropertyContainer>("NestedPropContainer",
+   dtCore::RefPtr<dtCore::BasePropertyContainerActorProperty> propContainerProp =
+            new dtCore::SimplePropertyContainerActorProperty<TestNestedPropertyContainer>("NestedPropContainer",
                      "Nested Property Container",
-                     dtDAL::SimplePropertyContainerActorProperty<TestNestedPropertyContainer>::SetFuncType(arrayProp.get(), &NestedArrayPropType::SetCurrentValue),
-                     dtDAL::SimplePropertyContainerActorProperty<TestNestedPropertyContainer>::GetFuncType(arrayProp.get(), &NestedArrayPropType::GetCurrentValue),
+                     dtCore::SimplePropertyContainerActorProperty<TestNestedPropertyContainer>::SetFuncType(arrayProp.get(), &NestedArrayPropType::SetCurrentValue),
+                     dtCore::SimplePropertyContainerActorProperty<TestNestedPropertyContainer>::GetFuncType(arrayProp.get(), &NestedArrayPropType::GetCurrentValue),
                      "", GROUPNAME);
 
    arrayProp->SetArrayProperty(*propContainerProp);

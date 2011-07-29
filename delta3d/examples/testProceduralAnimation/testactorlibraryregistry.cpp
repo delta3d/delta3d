@@ -22,26 +22,26 @@
 #include "testactorlibraryregistry.h"
 #include "proceduralanimationactor.h"
 
-#include <dtDAL/actorpluginregistry.h>
-#include <dtDAL/actortype.h>
+#include <dtCore/actorpluginregistry.h>
+#include <dtCore/actortype.h>
 
-dtCore::RefPtr<dtDAL::ActorType> TestActorLibraryRegistry::IK_ACTOR_TYPE(new dtDAL::ActorType("IKActor", "TestActors"));
+dtCore::RefPtr<dtCore::ActorType> TestActorLibraryRegistry::IK_ACTOR_TYPE(new dtCore::ActorType("IKActor", "TestActors"));
 
 //////////////////////////////////////////////////////////////////////////
-extern "C" TEST_ANIM_EXPORT dtDAL::ActorPluginRegistry* CreatePluginRegistry()
+extern "C" TEST_ANIM_EXPORT dtCore::ActorPluginRegistry* CreatePluginRegistry()
 {
    return new TestActorLibraryRegistry;
 }
 
 //////////////////////////////////////////////////////////////////////////
-extern "C" TEST_ANIM_EXPORT void DestroyPluginRegistry(dtDAL::ActorPluginRegistry* registry)
+extern "C" TEST_ANIM_EXPORT void DestroyPluginRegistry(dtCore::ActorPluginRegistry* registry)
 {
    delete registry;
 }
 
 //////////////////////////////////////////////////////////////////////////
 TestActorLibraryRegistry::TestActorLibraryRegistry()
-   : dtDAL::ActorPluginRegistry("Procedural Animation Actors")
+   : dtCore::ActorPluginRegistry("Procedural Animation Actors")
 {
 }
 

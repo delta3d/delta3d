@@ -50,10 +50,10 @@
 #include <dtEditQt/stagecamera.h>
 #include <dtEditQt/uiresources.h>
 
-#include <dtDAL/project.h>
-#include <dtDAL/librarymanager.h>
-#include <dtDAL/map.h>
-#include <dtDAL/resourceactorproperty.h>
+#include <dtCore/project.h>
+#include <dtCore/librarymanager.h>
+#include <dtCore/map.h>
+#include <dtCore/resourceactorproperty.h>
 
 #include <dtCore/scene.h>
 #include <dtAnim/chardrawable.h>
@@ -68,7 +68,7 @@ namespace dtEditQt
 {
 
    ///////////////////////////////////////////////////////////////////////////////
-   SkeletalMeshBrowser::SkeletalMeshBrowser(dtDAL::DataType& type, QWidget* parent)
+   SkeletalMeshBrowser::SkeletalMeshBrowser(dtCore::DataType& type, QWidget* parent)
       : ResourceAbstractBrowser(&type, parent)
    {
       // This sets our resource icon that is visible on leaf nodes
@@ -244,10 +244,10 @@ namespace dtEditQt
          QString file;
          QString context;
 
-         dtDAL::Project& project = dtDAL::Project::GetInstance();
+         dtCore::Project& project = dtCore::Project::GetInstance();
 
          // Find the currently selected tree item
-         dtDAL::ResourceDescriptor resource = EditorData::GetInstance().getCurrentResource(dtDAL::DataType::SKELETAL_MESH);
+         dtCore::ResourceDescriptor resource = EditorData::GetInstance().getCurrentResource(dtCore::DataType::SKELETAL_MESH);
 
          try
          {
@@ -390,15 +390,15 @@ namespace dtEditQt
          * implemented as a quick and dirty solution to assigning meshes to an
          * actor of this type.
          */
-         dtCore::RefPtr<const dtDAL::ActorType> meshActor =
-            dtDAL::LibraryManager::GetInstance().FindActorType("Animation", "Animation");
+         dtCore::RefPtr<const dtCore::ActorType> meshActor =
+            dtCore::LibraryManager::GetInstance().FindActorType("Animation", "Animation");
 
          // create our new actor proxy from the mesh actor type that was
          // found by the results of our hard coded search above.
          if (meshActor != NULL)
          {
-            dtCore::RefPtr<dtDAL::BaseActorObject> proxy =
-               dtDAL::LibraryManager::GetInstance().CreateActorProxy(*meshActor).get();
+            dtCore::RefPtr<dtCore::BaseActorObject> proxy =
+               dtCore::LibraryManager::GetInstance().CreateActorProxy(*meshActor).get();
 
             // check to make sure both the mesh actor and the proxy are valid.
             // If the user has somehow modified the above hard coded static mesh object
@@ -406,7 +406,7 @@ namespace dtEditQt
             if (proxy.valid())
             {
                // grab the actor property type
-               dtDAL::ResourceActorProperty* resourceProp = dynamic_cast<dtDAL::ResourceActorProperty*>
+               dtCore::ResourceActorProperty* resourceProp = dynamic_cast<dtCore::ResourceActorProperty*>
                   (proxy->GetProperty("Skeletal Mesh"));
 
                if (resourceProp != NULL)
@@ -415,7 +415,7 @@ namespace dtEditQt
                }
 
                // add the new proxy to the map
-               dtCore::RefPtr<dtDAL::Map> mapPtr = EditorData::GetInstance().getCurrentMap();
+               dtCore::RefPtr<dtCore::Map> mapPtr = EditorData::GetInstance().getCurrentMap();
                if (mapPtr.valid())
                {
                   mapPtr->AddProxy(*proxy, true);
@@ -428,7 +428,7 @@ namespace dtEditQt
                EditorEvents::GetInstance().emitEndChangeTransaction();
 
                // Now, let the world that it should select the new actor proxy.
-               std::vector< dtCore::RefPtr<dtDAL::BaseActorObject> > actors;
+               std::vector< dtCore::RefPtr<dtCore::BaseActorObject> > actors;
 
                actors.push_back(proxy);
                EditorEvents::GetInstance().emitActorsSelected(actors);

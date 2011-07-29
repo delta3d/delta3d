@@ -30,33 +30,33 @@
    #warning "This header is deprecated. Please #include the individual header files."
 #endif
 
-#include <dtDAL/actorpluginregistry.h>
-#include <dtDAL/actorproperty.h>
-#include <dtDAL/actorproxy.h>
-#include <dtDAL/actorproxyicon.h>
-#include <dtDAL/actortype.h>
-#include <dtDAL/datatype.h>
-#include <dtDAL/directoryresourcetypehandler.h>
-#include <dtDAL/enginepropertytypes.h>
-#include <dtDAL/exceptionenum.h>
+#include <dtCore/actorpluginregistry.h>
+#include <dtCore/actorproperty.h>
+#include <dtCore/actorproxy.h>
+#include <dtCore/actorproxyicon.h>
+#include <dtCore/actortype.h>
+#include <dtCore/datatype.h>
+#include <dtCore/directoryresourcetypehandler.h>
+#include <dtCore/enginepropertytypes.h>
+#include <dtCore/exceptionenum.h>
 #include <dtUtil/fileutils.h>
-#include <dtDAL/functor.h>
-#include <dtDAL/librarymanager.h>
-#include <dtDAL/map.h>
-#include <dtDAL/mapxml.h>
-#include <dtDAL/physicalactorproxy.h>
-#include <dtDAL/plugin_export.h>
-#include <dtDAL/project.h>
-#include <dtDAL/resourcedescriptor.h>
-#include <dtDAL/resourcehelper.h>
-#include <dtDAL/resourcetreenode.h>
-#include <dtDAL/transformableactorproxy.h>
-#include <dtDAL/export.h>
+#include <dtCore/functor.h>
+#include <dtCore/librarymanager.h>
+#include <dtCore/map.h>
+#include <dtCore/mapxml.h>
+#include <dtCore/physicalactorproxy.h>
+#include <dtCore/plugin_export.h>
+#include <dtCore/project.h>
+#include <dtCore/resourcedescriptor.h>
+#include <dtCore/resourcehelper.h>
+#include <dtCore/resourcetreenode.h>
+#include <dtCore/transformableactorproxy.h>
+#include <dtCore/export.h>
 
 /** The Dynamic Actor Layer contains functionality to support the loading of 
  * map files and Actor Proxy support.
  */
-namespace dtDAL
+namespace dtCore
 {
 }
 
@@ -66,9 +66,9 @@ namespace dtDAL
 #undef _AUTOLIBNAME
 
 #if defined(_DEBUG)
-#define _AUTOLIBNAME   "dtDALd.lib"
+#define _AUTOLIBNAME   "dtCored.lib"
 #else 
-#define _AUTOLIBNAME   "dtDAL.lib"  
+#define _AUTOLIBNAME   "dtCore.lib"  
 #endif
 
 #ifndef _NOAUTOLIBMSG

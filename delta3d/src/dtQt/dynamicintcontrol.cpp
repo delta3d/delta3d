@@ -29,9 +29,9 @@
 #include <prefix/dtqtprefix.h>
 #include <dtQt/dynamicintcontrol.h>
 
-#include <dtDAL/actorproxy.h>
-#include <dtDAL/datatype.h>
-#include <dtDAL/intactorproperty.h>
+#include <dtCore/actorproxy.h>
+#include <dtCore/datatype.h>
+#include <dtCore/intactorproperty.h>
 
 #include <dtQt/dynamicsubwidgets.h>
 
@@ -60,13 +60,13 @@ namespace dtQt
 
    /////////////////////////////////////////////////////////////////////////////////
    void DynamicIntControl::InitializeData(DynamicAbstractControl* newParent,
-      PropertyEditorModel* newModel, dtDAL::PropertyContainer* newPC, dtDAL::ActorProperty* newProperty)
+      PropertyEditorModel* newModel, dtCore::PropertyContainer* newPC, dtCore::ActorProperty* newProperty)
    {
       // Note - We used to have dynamic_cast in here, but it was failing to properly cast in
       // all cases in Linux with gcc4.  So we replaced it with a static cast.
-      if (newProperty != NULL && newProperty->GetDataType() == dtDAL::DataType::INT)
+      if (newProperty != NULL && newProperty->GetDataType() == dtCore::DataType::INT)
       {
-         mProperty = static_cast<dtDAL::IntActorProperty*>(newProperty);
+         mProperty = static_cast<dtCore::IntActorProperty*>(newProperty);
          DynamicAbstractControl::InitializeData(newParent, newModel, newPC, newProperty);
       }
       else

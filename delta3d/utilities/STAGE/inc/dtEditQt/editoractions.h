@@ -35,7 +35,7 @@
 #include <QtCore/QObject>
 #include <vector>
 #include <osg/Referenced>
-#include <dtDAL/actorproxy.h>
+#include <dtCore/actorproxy.h>
 #include <dtQt/typedefs.h>
 #include <dtCore/refptr.h>
 
@@ -44,7 +44,7 @@ class QActionGroup;
 class QTimer;
 
 
-namespace dtDAL
+namespace dtCore
 {
    class Map;
 }
@@ -95,7 +95,7 @@ namespace dtEditQt
        * the proxy from the scene and map and clears up the billboard.  Finally, it emits
        * the appropriate about to and delete proxy events.
        */
-      bool deleteProxy(dtDAL::BaseActorObject* proxy, dtCore::RefPtr<dtDAL::Map> currMap);
+      bool deleteProxy(dtCore::BaseActorObject* proxy, dtCore::RefPtr<dtCore::Map> currMap);
 
       ///Get the container of ExternalTools, const-like
       const QList<ExternalTool*>& GetExternalTools() const;
@@ -514,11 +514,11 @@ namespace dtEditQt
        * @param oldMap The map that is currently loaded and needs to be unloaded.
        * @param newMap The new map to load.
        */
-      void changeMaps(dtDAL::Map* oldMap, dtDAL::Map* newMap);
+      void changeMaps(dtCore::Map* oldMap, dtCore::Map* newMap);
 
-      void HandleMissingLibraries(const dtDAL::Map& newMap) const;
+      void HandleMissingLibraries(const dtCore::Map& newMap) const;
 
-      void HandleMissingActorsTypes(const dtDAL::Map& newMap) const;
+      void HandleMissingActorsTypes(const dtCore::Map& newMap) const;
 
 
       void setupFileActions();
@@ -528,7 +528,7 @@ namespace dtEditQt
       void setupWindowActions();
 
       QTimer* mTimer;
-      std::vector< dtCore::RefPtr<dtDAL::BaseActorObject> > mActors;
+      std::vector< dtCore::RefPtr<dtCore::BaseActorObject> > mActors;
 
       ///Singleton instance of this class.
       static dtCore::RefPtr<EditorActions> sInstance;

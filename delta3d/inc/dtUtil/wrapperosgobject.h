@@ -44,7 +44,7 @@ namespace dtUtil
       : osg::Object(obj, copyop)
       {}
 
-      META_Object("dtDAL", WrapperOSGObject);
+      META_Object("dtCore", WrapperOSGObject);
    };
 }
 

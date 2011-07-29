@@ -43,7 +43,7 @@ namespace dtGame
    class Message;
 }
 
-namespace dtDAL
+namespace dtCore
 {
    class GameEvent;
 }

@@ -41,11 +41,11 @@
 #include <dtEditQt/editorevents.h>
 #include <dtEditQt/viewportmanager.h>
 
-#include <dtDAL/actorproperty.h>
-#include <dtDAL/actorproxy.h>
-#include <dtDAL/datatype.h>
-#include <dtDAL/librarymanager.h>
-#include <dtDAL/map.h>
+#include <dtCore/actorproperty.h>
+#include <dtCore/actorproxy.h>
+#include <dtCore/datatype.h>
+#include <dtCore/librarymanager.h>
+#include <dtCore/map.h>
 
 #include <dtQt/dynamicabstractcontrol.h>
 #include <dtQt/dynamiccontainercontrol.h>
@@ -83,19 +83,19 @@ namespace dtEditQt
    {
       dtQt::DynamicControlFactory& dcfactory = GetDynamicControlFactory();
 
-      size_t datatypeCount = dtDAL::DataType::EnumerateType().size();
+      size_t datatypeCount = dtCore::DataType::EnumerateType().size();
 
       for (size_t i = 0; i < datatypeCount; ++i)
       {
-         dtDAL::DataType* dt = dtDAL::DataType::EnumerateType()[i];
+         dtCore::DataType* dt = dtCore::DataType::EnumerateType()[i];
          if (dt->IsResource())
          {
             dcfactory.RegisterControlForDataType<STAGEDynamicResourceControl>(*dt);
          }
       }
 
-      dcfactory.RegisterControlForDataType<STAGEDynamicActorControl>(dtDAL::DataType::ACTOR);
-      dcfactory.RegisterControlForDataType<STAGEDynamicGroupPropertyControl>(dtDAL::DataType::GROUP);
+      dcfactory.RegisterControlForDataType<STAGEDynamicActorControl>(dtCore::DataType::ACTOR);
+      dcfactory.RegisterControlForDataType<STAGEDynamicGroupPropertyControl>(dtCore::DataType::GROUP);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -106,13 +106,13 @@ namespace dtEditQt
    /////////////////////////////////////////////////////////////////////////////////
    QString PropertyEditor::GetGroupBoxLabelText(const QString& baseGroupBoxName)
    {
-      std::vector<dtDAL::PropertyContainer*> selectedActors;
+      std::vector<dtCore::PropertyContainer*> selectedActors;
       GetSelectedPropertyContainers(selectedActors);
 
       if (selectedActors.size() == 1)
       {
          // set the name in the group box.
-         dtDAL::BaseActorObject* selectedProxy = dynamic_cast<dtDAL::BaseActorObject*>(selectedActors[0]);
+         dtCore::BaseActorObject* selectedProxy = dynamic_cast<dtCore::BaseActorObject*>(selectedActors[0]);
 
          if (selectedProxy != NULL)
          {
@@ -134,7 +134,7 @@ namespace dtEditQt
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   void PropertyEditor::buildDynamicControls(dtDAL::PropertyContainer& propCon, dtQt::DynamicGroupControl* parentControl)
+   void PropertyEditor::buildDynamicControls(dtCore::PropertyContainer& propCon, dtQt::DynamicGroupControl* parentControl)
    {
       dtQt::DynamicGroupControl* parent = GetRootControl();
       if (parentControl != NULL)
@@ -142,7 +142,7 @@ namespace dtEditQt
          parent = parentControl;
       }
 
-      dtDAL::BaseActorObject* proxy = dynamic_cast<dtDAL::BaseActorObject*>(&propCon);
+      dtCore::BaseActorObject* proxy = dynamic_cast<dtCore::BaseActorObject*>(&propCon);
 
       if (proxy != NULL)
       {
@@ -179,7 +179,7 @@ namespace dtEditQt
          baseGroupControl->addChildControl(labelControl, propertyEditorModel);
       }
 
-      std::vector<dtDAL::ActorProperty*> propList;
+      std::vector<dtCore::ActorProperty*> propList;
       propCon.GetPropertyList(propList);
 
       ViewportManager::GetInstance().emitModifyPropList(propCon, propList);
@@ -217,10 +217,10 @@ namespace dtEditQt
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   void PropertyEditor::PropertyAboutToChangeFromControl(dtDAL::PropertyContainer& propCon, dtDAL::ActorProperty& prop,
+   void PropertyEditor::PropertyAboutToChangeFromControl(dtCore::PropertyContainer& propCon, dtCore::ActorProperty& prop,
             const std::string& oldValue, const std::string& newValue)
    {
-      dtDAL::BaseActorObject* proxy = dynamic_cast<dtDAL::BaseActorObject*>(&propCon);
+      dtCore::BaseActorObject* proxy = dynamic_cast<dtCore::BaseActorObject*>(&propCon);
       if (proxy != NULL)
       {
          EditorEvents::GetInstance().emitActorPropertyAboutToChange(proxy, &prop, oldValue, newValue);
@@ -228,11 +228,11 @@ namespace dtEditQt
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   void PropertyEditor::PropertyChangedFromControl(dtDAL::PropertyContainer& propCon, dtDAL::ActorProperty& prop)
+   void PropertyEditor::PropertyChangedFromControl(dtCore::PropertyContainer& propCon, dtCore::ActorProperty& prop)
    {
       BasePropertyEditor::PropertyChangedFromControl(propCon, prop);
 
-      dtDAL::BaseActorObject* proxy = dynamic_cast<dtDAL::BaseActorObject*>(&propCon);
+      dtCore::BaseActorObject* proxy = dynamic_cast<dtCore::BaseActorObject*>(&propCon);
       if (proxy != NULL)
       {
          EditorEvents::GetInstance().emitActorPropertyChanged(proxy, &prop);

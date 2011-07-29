@@ -33,7 +33,7 @@
 #include <dtQt/dynamicabstractcontrol.h>
 #include <dtQt/dynamicsubwidgets.h>
 
-namespace dtDAL
+namespace dtCore
 {
    class BitMaskActorProperty;
 }
@@ -63,7 +63,7 @@ namespace dtQt
        * @see DynamicAbstractControl#InitializeData
        */
       virtual void InitializeData(DynamicAbstractControl* newParent, PropertyEditorModel* model,
-         dtDAL::PropertyContainer* newPC, dtDAL::ActorProperty* property);
+         dtCore::PropertyContainer* newPC, dtCore::ActorProperty* property);
 
       /**
        * @see DynamicAbstractControl#updateEditorFromModel
@@ -136,7 +136,7 @@ namespace dtQt
 
    private:
 
-      dtDAL::BitMaskActorProperty* mProperty;
+      dtCore::BitMaskActorProperty* mProperty;
 
       int             mIndex;
       SubQLabel*      mTextLabel;

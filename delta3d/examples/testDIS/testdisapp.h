@@ -21,7 +21,7 @@ namespace dtCore
    class RTSMotionModel;
 }
 
-namespace dtDAL
+namespace dtCore
 {
    class BaseActorObject;
 }
@@ -44,7 +44,7 @@ private:
    dtCore::RefPtr<dtCore::RTSMotionModel> mMotion;
    std::string mConnectionXml;
    std::string mActorTypeMapping;
-   std::vector<dtDAL::BaseActorObject*> mActorsToPublish;
+   std::vector<dtCore::BaseActorObject*> mActorsToPublish;
 
    void FindActorsAndAddComponents();
 };

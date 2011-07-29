@@ -24,11 +24,11 @@
 ////////////////////////////////////////////////////////////////////////////////
 #include <dtABC/labelactor.h>
 
-#include <dtDAL/booleanactorproperty.h>
-#include <dtDAL/enumactorproperty.h>
-#include <dtDAL/floatactorproperty.h>
-#include <dtDAL/stringactorproperty.h>
-#include <dtDAL/vectoractorproperties.h>
+#include <dtCore/booleanactorproperty.h>
+#include <dtCore/enumactorproperty.h>
+#include <dtCore/floatactorproperty.h>
+#include <dtCore/stringactorproperty.h>
+#include <dtCore/vectoractorproperties.h>
 
 #include <osg/Geode>
 #include <osg/Geometry>
@@ -407,7 +407,7 @@ namespace dtABC
    /////////////////////////////////////////////////////////////////////////////
    void LabelActor::CreateActorProperties(ActorPropertyArray& outProperties)
    {
-      using namespace dtDAL;
+      using namespace dtCore;
 
       const std::string group("Label Actor");
 

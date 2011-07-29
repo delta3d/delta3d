@@ -37,12 +37,12 @@
 #include <dtUtil/datapathutils.h>
 #include <dtCore/scene.h>
 #include <dtABC/application.h>
-#include <dtDAL/actortype.h>
-#include <dtDAL/actorpluginregistry.h>
-#include <dtDAL/datatype.h>
-#include <dtDAL/project.h>
-#include <dtDAL/librarymanager.h>
-#include <dtDAL/namedgroupparameter.inl>
+#include <dtCore/actortype.h>
+#include <dtCore/actorpluginregistry.h>
+#include <dtCore/datatype.h>
+#include <dtCore/project.h>
+#include <dtCore/librarymanager.h>
+#include <dtCore/namedgroupparameter.inl>
 #include <dtGame/messagetype.h>
 #include <dtGame/gamemanager.h>
 
@@ -169,7 +169,7 @@ void HLAConfigTests::CheckObjectToActorMapping(
    bool localOnly,
    const std::vector<dtHLAGM::AttributeToPropertyList>& props)
 {
-   dtCore::RefPtr<const dtDAL::ActorType> type = mGameManager->FindActorType(category, name);
+   dtCore::RefPtr<const dtCore::ActorType> type = mGameManager->FindActorType(category, name);
    CPPUNIT_ASSERT(type.valid());
 
    dtCore::RefPtr<const dtHLAGM::ObjectToActor> otoa;
@@ -368,20 +368,20 @@ void HLAConfigTests::TestConfigure()
             dtHLAGM::AttributeToPropertyList attrToProp( entityTypeHLAAttrName, dtHLAGM::RPRAttributeType::ENTITY_TYPE, true);
             attrToProp.GetParameterDefinitions().push_back(
                dtHLAGM::OneToManyMapping::ParameterDefinition(
-                  "Entity Type", dtDAL::DataType::ENUMERATION, "", false));
+                  "Entity Type", dtCore::DataType::ENUMERATION, "", false));
             props.push_back(attrToProp);
          }
 
          {
             dtHLAGM::AttributeToPropertyList attrToProp("EntityIdentifier", dtHLAGM::RPRAttributeType::ENTITY_IDENTIFIER_TYPE, true);
-            attrToProp.GetParameterDefinitions().push_back(dtHLAGM::OneToManyMapping::ParameterDefinition("sendingActorId", dtDAL::DataType::ACTOR, "", true));
+            attrToProp.GetParameterDefinitions().push_back(dtHLAGM::OneToManyMapping::ParameterDefinition("sendingActorId", dtCore::DataType::ACTOR, "", true));
             props.push_back(attrToProp);
          }
 
          {
             dtHLAGM::AttributeToPropertyList attrToProp("DamageState", dtHLAGM::RPRAttributeType::UNSIGNED_INT_TYPE, false);
 
-            dtHLAGM::OneToManyMapping::ParameterDefinition pd("Damage State", dtDAL::DataType::ENUMERATION, "Destroyed", false);
+            dtHLAGM::OneToManyMapping::ParameterDefinition pd("Damage State", dtCore::DataType::ENUMERATION, "Destroyed", false);
 
             pd.AddEnumerationMapping("0", "No Damage");
             pd.AddEnumerationMapping("1", "Damaged");
@@ -395,21 +395,21 @@ void HLAConfigTests::TestConfigure()
          {
             dtHLAGM::AttributeToPropertyList attrToProp("Orientation", dtHLAGM::RPRAttributeType::EULER_ANGLES_TYPE, true);
 
-            dtHLAGM::OneToManyMapping::ParameterDefinition pd(dtDAL::TransformableActorProxy::PROPERTY_ROTATION, dtDAL::DataType::VEC3, "", true);
+            dtHLAGM::OneToManyMapping::ParameterDefinition pd(dtCore::TransformableActorProxy::PROPERTY_ROTATION, dtCore::DataType::VEC3, "", true);
             attrToProp.GetParameterDefinitions().push_back(pd);
             props.push_back(attrToProp);
          }
 
          {
             dtHLAGM::AttributeToPropertyList attrToProp("WorldLocation", dtHLAGM::RPRAttributeType::WORLD_COORDINATE_TYPE, true);
-            dtHLAGM::OneToManyMapping::ParameterDefinition pd(dtDAL::TransformableActorProxy::PROPERTY_TRANSLATION, dtDAL::DataType::VEC3, "", true);
+            dtHLAGM::OneToManyMapping::ParameterDefinition pd(dtCore::TransformableActorProxy::PROPERTY_TRANSLATION, dtCore::DataType::VEC3, "", true);
             attrToProp.GetParameterDefinitions().push_back(pd);
             props.push_back(attrToProp);
          }
 
          {
             dtHLAGM::AttributeToPropertyList attrToProp("", dtHLAGM::AttributeType::UNKNOWN, false);
-            dtHLAGM::OneToManyMapping::ParameterDefinition pd("Mesh", dtDAL::DataType::STATIC_MESH, "StaticMeshes:articulation_test.ive", false);
+            dtHLAGM::OneToManyMapping::ParameterDefinition pd("Mesh", dtCore::DataType::STATIC_MESH, "StaticMeshes:articulation_test.ive", false);
             attrToProp.GetParameterDefinitions().push_back(pd);
             props.push_back(attrToProp);
          }
@@ -419,7 +419,7 @@ void HLAConfigTests::TestConfigure()
             dtHLAGM::AttributeToPropertyList attrToProp( entityTypeHLAAttrName, dtHLAGM::RPRAttributeType::ENTITY_TYPE, true);
             attrToProp.GetParameterDefinitions().push_back(
                dtHLAGM::OneToManyMapping::ParameterDefinition(
-                  "Entity Type As String", dtDAL::DataType::STRING, "", false));
+                  "Entity Type As String", dtCore::DataType::STRING, "", false));
             props.push_back(attrToProp);
          }
 
@@ -428,7 +428,7 @@ void HLAConfigTests::TestConfigure()
             dtHLAGM::AttributeToPropertyList attrToProp(mappingHLAAttrName, dtHLAGM::RPRAttributeType::STRING_TYPE, false);
             attrToProp.GetParameterDefinitions().push_back(
                dtHLAGM::OneToManyMapping::ParameterDefinition(
-                  "Object Mapping Name", dtDAL::DataType::STRING, "", false));
+                  "Object Mapping Name", dtCore::DataType::STRING, "", false));
             props.push_back(attrToProp);
          }
 
@@ -436,7 +436,7 @@ void HLAConfigTests::TestConfigure()
             dtHLAGM::AttributeToPropertyList attrToProp("ArticulatedParametersArray", dtHLAGM::RPRAttributeType::ARTICULATED_PART_SINGLE_TYPE, false);
             attrToProp.SetIsArray(true);
 
-            dtHLAGM::OneToManyMapping::ParameterDefinition pd("Articulated Parameters Array", dtDAL::DataType::GROUP, "unknown", false);
+            dtHLAGM::OneToManyMapping::ParameterDefinition pd("Articulated Parameters Array", dtCore::DataType::GROUP, "unknown", false);
 
             pd.AddEnumerationMapping("0", "unknown");
             pd.AddEnumerationMapping("2048", "dof_periscope");
@@ -457,7 +457,7 @@ void HLAConfigTests::TestConfigure()
          {
             dtHLAGM::AttributeToPropertyList attrToProp(entityTypeHLAAttrName, dtHLAGM::RPRAttributeType::ENTITY_TYPE, true);
 
-            dtHLAGM::OneToManyMapping::ParameterDefinition pd("Entity Type", dtDAL::DataType::ENUMERATION, "", false);
+            dtHLAGM::OneToManyMapping::ParameterDefinition pd("Entity Type", dtCore::DataType::ENUMERATION, "", false);
             attrToProp.GetParameterDefinitions().push_back(pd);
             props.push_back(attrToProp);
          }
@@ -465,7 +465,7 @@ void HLAConfigTests::TestConfigure()
          {
             dtHLAGM::AttributeToPropertyList attrToProp("EntityIdentifier", dtHLAGM::RPRAttributeType::ENTITY_IDENTIFIER_TYPE, true);
 
-            dtHLAGM::OneToManyMapping::ParameterDefinition pd("sendingActorId", dtDAL::DataType::ACTOR, "", true);
+            dtHLAGM::OneToManyMapping::ParameterDefinition pd("sendingActorId", dtCore::DataType::ACTOR, "", true);
             attrToProp.GetParameterDefinitions().push_back(pd);
             props.push_back(attrToProp);
          }
@@ -473,7 +473,7 @@ void HLAConfigTests::TestConfigure()
          {
             dtHLAGM::AttributeToPropertyList attrToProp("DamageState", dtHLAGM::RPRAttributeType::UNSIGNED_INT_TYPE, false);
 
-            dtHLAGM::OneToManyMapping::ParameterDefinition pd("Damage State", dtDAL::DataType::ENUMERATION, "Destroyed", false);
+            dtHLAGM::OneToManyMapping::ParameterDefinition pd("Damage State", dtCore::DataType::ENUMERATION, "Destroyed", false);
 
             pd.AddEnumerationMapping("0", "No Damage");
             pd.AddEnumerationMapping("1", "Damaged");
@@ -487,21 +487,21 @@ void HLAConfigTests::TestConfigure()
          {
             dtHLAGM::AttributeToPropertyList attrToProp("Orientation", dtHLAGM::RPRAttributeType::EULER_ANGLES_TYPE, true);
 
-            dtHLAGM::OneToManyMapping::ParameterDefinition pd(dtDAL::TransformableActorProxy::PROPERTY_ROTATION, dtDAL::DataType::VEC3, "", true);
+            dtHLAGM::OneToManyMapping::ParameterDefinition pd(dtCore::TransformableActorProxy::PROPERTY_ROTATION, dtCore::DataType::VEC3, "", true);
             attrToProp.GetParameterDefinitions().push_back(pd);
             props.push_back(attrToProp);
          }
 
          {
             dtHLAGM::AttributeToPropertyList attrToProp("WorldLocation", dtHLAGM::RPRAttributeType::WORLD_COORDINATE_TYPE, true);
-            dtHLAGM::OneToManyMapping::ParameterDefinition pd(dtDAL::TransformableActorProxy::PROPERTY_TRANSLATION, dtDAL::DataType::VEC3, "", true);
+            dtHLAGM::OneToManyMapping::ParameterDefinition pd(dtCore::TransformableActorProxy::PROPERTY_TRANSLATION, dtCore::DataType::VEC3, "", true);
             attrToProp.GetParameterDefinitions().push_back(pd);
             props.push_back(attrToProp);
          }
 
          {
             dtHLAGM::AttributeToPropertyList attrToProp("VelocityVector", dtHLAGM::RPRAttributeType::VELOCITY_VECTOR_TYPE, false);
-            dtHLAGM::OneToManyMapping::ParameterDefinition pd("Velocity Vector", dtDAL::DataType::VEC3D, "", false);
+            dtHLAGM::OneToManyMapping::ParameterDefinition pd("Velocity Vector", dtCore::DataType::VEC3D, "", false);
             attrToProp.GetParameterDefinitions().push_back(pd);
             props.push_back(attrToProp);
          }
@@ -526,18 +526,18 @@ void HLAConfigTests::TestConfigure()
          std::vector<dtHLAGM::AttributeToPropertyList> props;
          {
             dtHLAGM::AttributeToPropertyList attrToProp("VelocityVector", dtHLAGM::RPRAttributeType::VELOCITY_VECTOR_TYPE, false);
-            dtHLAGM::OneToManyMapping::ParameterDefinition pd("Velocity Vector", dtDAL::DataType::VEC3D, "", false);
+            dtHLAGM::OneToManyMapping::ParameterDefinition pd("Velocity Vector", dtCore::DataType::VEC3D, "", false);
             attrToProp.GetParameterDefinitions().push_back(pd);
             props.push_back(attrToProp);
          }
 
          {
             dtHLAGM::AttributeToPropertyList attrToProp("AccelerationVector", dtHLAGM::RPRAttributeType::VELOCITY_VECTOR_TYPE, false);
-            dtHLAGM::OneToManyMapping::ParameterDefinition pd0("accelX", dtDAL::DataType::FLOAT, "", false);
+            dtHLAGM::OneToManyMapping::ParameterDefinition pd0("accelX", dtCore::DataType::FLOAT, "", false);
             attrToProp.GetParameterDefinitions().push_back(pd0);
-            dtHLAGM::OneToManyMapping::ParameterDefinition pd1("accelY", dtDAL::DataType::FLOAT, "", false);
+            dtHLAGM::OneToManyMapping::ParameterDefinition pd1("accelY", dtCore::DataType::FLOAT, "", false);
             attrToProp.GetParameterDefinitions().push_back(pd1);
-            dtHLAGM::OneToManyMapping::ParameterDefinition pd2("accelZ", dtDAL::DataType::FLOAT, "", false);
+            dtHLAGM::OneToManyMapping::ParameterDefinition pd2("accelZ", dtCore::DataType::FLOAT, "", false);
             attrToProp.GetParameterDefinitions().push_back(pd2);
             props.push_back(attrToProp);
          }
@@ -549,7 +549,7 @@ void HLAConfigTests::TestConfigure()
          {
             dtHLAGM::AttributeToPropertyList attrToProp("Orientation", dtHLAGM::RPRAttributeType::EULER_ANGLES_TYPE, true);
 
-            dtHLAGM::OneToManyMapping::ParameterDefinition pd(dtDAL::TransformableActorProxy::PROPERTY_ROTATION, dtDAL::DataType::VEC3, "", true);
+            dtHLAGM::OneToManyMapping::ParameterDefinition pd(dtCore::TransformableActorProxy::PROPERTY_ROTATION, dtCore::DataType::VEC3, "", true);
             attrToProp.GetParameterDefinitions().push_back(pd);
             props.push_back(attrToProp);
          }
@@ -563,7 +563,7 @@ void HLAConfigTests::TestConfigure()
          {
             dtHLAGM::AttributeToPropertyList attrToProp("Orientation", dtHLAGM::RPRAttributeType::EULER_ANGLES_TYPE, true);
 
-            dtHLAGM::OneToManyMapping::ParameterDefinition pd(dtDAL::TransformableActorProxy::PROPERTY_ROTATION, dtDAL::DataType::VEC3, "", true);
+            dtHLAGM::OneToManyMapping::ParameterDefinition pd(dtCore::TransformableActorProxy::PROPERTY_ROTATION, dtCore::DataType::VEC3, "", true);
             attrToProp.GetParameterDefinitions().push_back(pd);
             props.push_back(attrToProp);
          }
@@ -575,7 +575,7 @@ void HLAConfigTests::TestConfigure()
          std::vector<dtHLAGM::ParameterToParameterList> params;
          {
             dtHLAGM::ParameterToParameterList paramToParam("DetonationLocation", dtHLAGM::RPRAttributeType::WORLD_COORDINATE_TYPE, true);
-            dtHLAGM::OneToManyMapping::ParameterDefinition pd("Location", dtDAL::DataType::VEC3, "", true);
+            dtHLAGM::OneToManyMapping::ParameterDefinition pd("Location", dtCore::DataType::VEC3, "", true);
             paramToParam.GetParameterDefinitions().push_back(pd);
             params.push_back(paramToParam);
          }
@@ -587,19 +587,19 @@ void HLAConfigTests::TestConfigure()
          std::vector<dtHLAGM::ParameterToParameterList> params;
          {
             dtHLAGM::ParameterToParameterList paramToParam("FiringObjectIdentifier", dtHLAGM::RPRAttributeType::ENTITY_IDENTIFIER_TYPE, true);
-            dtHLAGM::OneToManyMapping::ParameterDefinition pd("aboutActorId", dtDAL::DataType::ACTOR, "", true);
+            dtHLAGM::OneToManyMapping::ParameterDefinition pd("aboutActorId", dtCore::DataType::ACTOR, "", true);
             paramToParam.GetParameterDefinitions().push_back(pd);
             params.push_back(paramToParam);
          }
          {
             dtHLAGM::ParameterToParameterList paramToParam("FireControlSolutionRange", dtHLAGM::RPRAttributeType::FLOAT_TYPE, true);
-            dtHLAGM::OneToManyMapping::ParameterDefinition pd("LateTime", dtDAL::DataType::FLOAT, "", true);
+            dtHLAGM::OneToManyMapping::ParameterDefinition pd("LateTime", dtCore::DataType::FLOAT, "", true);
             paramToParam.GetParameterDefinitions().push_back(pd);
             params.push_back(paramToParam);
          }
          {
             dtHLAGM::ParameterToParameterList paramToParam("MunitionType", dtHLAGM::RPRAttributeType::ENTITY_TYPE, true);
-            dtHLAGM::OneToManyMapping::ParameterDefinition pd("TestProp", dtDAL::DataType::ENUMERATION, "LARGE EXPLOSION", true);
+            dtHLAGM::OneToManyMapping::ParameterDefinition pd("TestProp", dtCore::DataType::ENUMERATION, "LARGE EXPLOSION", true);
 
             pd.AddEnumerationMapping("2 2 225 2 2 0 0", "LARGE BULLET");
             pd.AddEnumerationMapping("2 9 225 2 14 0 0", "SHORT SMOKE");
@@ -614,7 +614,7 @@ void HLAConfigTests::TestConfigure()
          {
             dtHLAGM::ParameterToParameterList paramToParam(
                dtHLAGM::HLAComponent::PARAM_NAME_MAPPING_NAME, dtHLAGM::RPRAttributeType::STRING_TYPE, false);
-            dtHLAGM::OneToManyMapping::ParameterDefinition pd("Mapping Name", dtDAL::DataType::STRING, "", false);
+            dtHLAGM::OneToManyMapping::ParameterDefinition pd("Mapping Name", dtCore::DataType::STRING, "", false);
             paramToParam.GetParameterDefinitions().push_back(pd);
             params.push_back(paramToParam);
          }

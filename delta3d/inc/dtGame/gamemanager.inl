@@ -47,12 +47,12 @@ namespace dtGame
    class FindFuncWrapper
    {
    public:
-      FindFuncWrapper(FindFunctor& ifFunc, std::vector<dtDAL::BaseActorObject*>& selectedActors)
+      FindFuncWrapper(FindFunctor& ifFunc, std::vector<dtCore::BaseActorObject*>& selectedActors)
       : mFunc(ifFunc)
       , mSelectedActors(selectedActors)
       {}
 
-      void operator () (dtDAL::BaseActorObject& proxy)
+      void operator () (dtCore::BaseActorObject& proxy)
       {
          if (mFunc(proxy))
          {
@@ -62,7 +62,7 @@ namespace dtGame
 
    private:
       FindFunctor& mFunc;
-      std::vector<dtDAL::BaseActorObject*>& mSelectedActors;
+      std::vector<dtCore::BaseActorObject*>& mSelectedActors;
    };
 
    template <typename UnaryFunctor>
@@ -85,7 +85,7 @@ namespace dtGame
    }
 
    template <typename FindFunctor>
-   inline void GameManager::FindActorsIf(FindFunctor& ifFunc, std::vector<dtDAL::BaseActorObject*>& toFill) const
+   inline void GameManager::FindActorsIf(FindFunctor& ifFunc, std::vector<dtCore::BaseActorObject*>& toFill) const
    {
       toFill.clear();
       FindFuncWrapper<FindFunctor> findWrapper(ifFunc, toFill);
@@ -93,7 +93,7 @@ namespace dtGame
    }
 
    template <typename FindFunctor>
-   inline void GameManager::FindPrototypesIf(FindFunctor& ifFunc, std::vector<dtDAL::BaseActorObject*>& toFill) const
+   inline void GameManager::FindPrototypesIf(FindFunctor& ifFunc, std::vector<dtCore::BaseActorObject*>& toFill) const
    {
       toFill.clear();
       FindFuncWrapper<FindFunctor> findWrapper(ifFunc, toFill);

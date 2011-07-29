@@ -22,8 +22,8 @@
 #define __InfiniteLightActorProxy__h
 
 #include <dtCore/infinitelight.h>
-#include <dtDAL/actorproxy.h>
-#include <dtDAL/plugin_export.h>
+#include <dtCore/actorproxy.h>
+#include <dtCore/plugin_export.h>
 #include <dtActors/baselightactorproxy.h>
 
 #include <osg/Vec3>

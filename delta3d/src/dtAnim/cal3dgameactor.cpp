@@ -30,10 +30,10 @@
 #include <dtCore/scene.h>
 #include <dtCore/system.h>
 
-#include <dtDAL/actorproxyicon.h>
-#include <dtDAL/groupactorproperty.h>
-#include <dtDAL/intactorproperty.h>
-#include <dtDAL/resourceactorproperty.h>
+#include <dtCore/actorproxyicon.h>
+#include <dtCore/groupactorproperty.h>
+#include <dtCore/intactorproperty.h>
+#include <dtCore/resourceactorproperty.h>
 
 #include <dtGame/actorupdatemessage.h>
 #include <dtGame/basemessages.h>
@@ -187,25 +187,25 @@ namespace dtAnim
       Cal3DGameActor* myActor = NULL;
       GetActor(myActor);
 
-      AddProperty(new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::SKELETAL_MESH,
+      AddProperty(new dtCore::ResourceActorProperty(*this, dtCore::DataType::SKELETAL_MESH,
          "Skeletal Mesh", "Skeletal Mesh",
-         dtDAL::ResourceActorProperty::SetFuncType(myActor, &Cal3DGameActor::SetModel),
+         dtCore::ResourceActorProperty::SetFuncType(myActor, &Cal3DGameActor::SetModel),
          "The model resource that defines the skeletal mesh", GROUPNAME));
 
-      AddProperty(new dtDAL::GroupActorProperty(Cal3DGameActor::PropertyNames::ANIMATION_GROUP,
+      AddProperty(new dtCore::GroupActorProperty(Cal3DGameActor::PropertyNames::ANIMATION_GROUP,
          Cal3DGameActor::PropertyNames::ANIMATION_GROUP_LABEL,
-         dtDAL::GroupActorProperty::SetFuncType(myActor, &Cal3DGameActor::ApplyAnimationGroup),
-         dtDAL::GroupActorProperty::GetFuncType(myActor, &Cal3DGameActor::MakeAnimationGroup),
+         dtCore::GroupActorProperty::SetFuncType(myActor, &Cal3DGameActor::ApplyAnimationGroup),
+         dtCore::GroupActorProperty::GetFuncType(myActor, &Cal3DGameActor::MakeAnimationGroup),
          "A pipe for processing animation requests",
          "Slot: animation parameter",
          "no thanks editor",
          false));
 
       ///\todo make a UChar actor property and use it here.
-      AddProperty(new dtDAL::IntActorProperty(Cal3DGameActor::PropertyNames::RENDER_MODE,
+      AddProperty(new dtCore::IntActorProperty(Cal3DGameActor::PropertyNames::RENDER_MODE,
          Cal3DGameActor::PropertyNames::RENDER_MODE_LABEL,
-         dtDAL::IntActorProperty::SetFuncType(myActor, &Cal3DGameActor::SetRenderMode),
-         dtDAL::IntActorProperty::GetFuncType(myActor, &Cal3DGameActor::GetRenderMode),
+         dtCore::IntActorProperty::SetFuncType(myActor, &Cal3DGameActor::SetRenderMode),
+         dtCore::IntActorProperty::GetFuncType(myActor, &Cal3DGameActor::GetRenderMode),
          "Bits to control what is rendered.",
          "No idea what is meant by _group name_"));
    }
@@ -216,31 +216,31 @@ namespace dtAnim
       dtGame::GameActorProxy::BuildInvokables();
    }
 
-   const dtDAL::BaseActorObject::RenderMode& Cal3DGameActorProxy::GetRenderMode()
+   const dtCore::BaseActorObject::RenderMode& Cal3DGameActorProxy::GetRenderMode()
    {
-      dtDAL::ResourceDescriptor resource = GetResource("Skeletal Mesh");
+      dtCore::ResourceDescriptor resource = GetResource("Skeletal Mesh");
       if (resource.IsEmpty() == false)
       {
          if (resource.GetResourceIdentifier().empty() || GetActor()->GetOSGNode() == NULL)
          {
-            return dtDAL::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON;
+            return dtCore::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON;
          }
          else
          {
-            return dtDAL::BaseActorObject::RenderMode::DRAW_ACTOR;
+            return dtCore::BaseActorObject::RenderMode::DRAW_ACTOR;
          }
       }
       else
       {
-         return dtDAL::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON;
+         return dtCore::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON;
       }
    }
 
-   dtDAL::ActorProxyIcon* Cal3DGameActorProxy::GetBillBoardIcon()
+   dtCore::ActorProxyIcon* Cal3DGameActorProxy::GetBillBoardIcon()
    {
       if (!mBillBoardIcon.valid())
       {
-         mBillBoardIcon = new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IMAGE_BILLBOARD_STATICMESH);
+         mBillBoardIcon = new dtCore::ActorProxyIcon(dtCore::ActorProxyIcon::IMAGE_BILLBOARD_STATICMESH);
       }
 
       return mBillBoardIcon.get();
@@ -252,27 +252,27 @@ namespace dtAnim
       SetActor(*new Cal3DGameActor(*this));
    }
 
-   void Cal3DGameActor::ApplyAnimationGroup(const dtDAL::NamedGroupParameter& prop)
+   void Cal3DGameActor::ApplyAnimationGroup(const dtCore::NamedGroupParameter& prop)
    {
       // unpack the creative method used to pack all the needed params into the group.
       unsigned int childcount = prop.GetParameterCount();
       for (unsigned int child=0; child<childcount; ++child)
       {
-         if (const dtDAL::NamedParameter* childparam = prop.GetParameter(Cal3DGameActor::PropertyNames::ANIMATION_BLEND_GROUP + dtUtil::ToString(child)))
+         if (const dtCore::NamedParameter* childparam = prop.GetParameter(Cal3DGameActor::PropertyNames::ANIMATION_BLEND_GROUP + dtUtil::ToString(child)))
          {
-            const dtDAL::NamedGroupParameter* childgroup = static_cast<const dtDAL::NamedGroupParameter*>(childparam);
-            const dtDAL::NamedParameter* idchild = childgroup->GetParameter(Cal3DGameActor::PropertyNames::ANIMATION_BLEND_ID + dtUtil::ToString(child));
-            const dtDAL::NamedParameter* wchild = childgroup->GetParameter(Cal3DGameActor::PropertyNames::ANIMATION_BLEND_WEIGHT + dtUtil::ToString(child));
+            const dtCore::NamedGroupParameter* childgroup = static_cast<const dtCore::NamedGroupParameter*>(childparam);
+            const dtCore::NamedParameter* idchild = childgroup->GetParameter(Cal3DGameActor::PropertyNames::ANIMATION_BLEND_ID + dtUtil::ToString(child));
+            const dtCore::NamedParameter* wchild = childgroup->GetParameter(Cal3DGameActor::PropertyNames::ANIMATION_BLEND_WEIGHT + dtUtil::ToString(child));
             if (idchild && wchild)
             {
-               const dtDAL::NamedUnsignedIntParameter* idparam = static_cast<const dtDAL::NamedUnsignedIntParameter*>(idchild);
-               const dtDAL::NamedFloatParameter* wparam = static_cast<const dtDAL::NamedFloatParameter*>(wchild);
+               const dtCore::NamedUnsignedIntParameter* idparam = static_cast<const dtCore::NamedUnsignedIntParameter*>(idchild);
+               const dtCore::NamedFloatParameter* wparam = static_cast<const dtCore::NamedFloatParameter*>(wchild);
 
                float delay = 0.f;
-               const dtDAL::NamedParameter* dchild = childgroup->GetParameter(Cal3DGameActor::PropertyNames::ANIMATION_BLEND_DELAY + dtUtil::ToString(child));
+               const dtCore::NamedParameter* dchild = childgroup->GetParameter(Cal3DGameActor::PropertyNames::ANIMATION_BLEND_DELAY + dtUtil::ToString(child));
                if (dchild)
                {
-                  const dtDAL::NamedFloatParameter* dparam = static_cast<const dtDAL::NamedFloatParameter*>(dchild);
+                  const dtCore::NamedFloatParameter* dparam = static_cast<const dtCore::NamedFloatParameter*>(dchild);
                   delay = dparam->GetValue();
                }
 
@@ -283,9 +283,9 @@ namespace dtAnim
       }
    }
 
-   dtCore::RefPtr<dtDAL::NamedGroupParameter> Cal3DGameActor::MakeAnimationGroup()
+   dtCore::RefPtr<dtCore::NamedGroupParameter> Cal3DGameActor::MakeAnimationGroup()
    {
-      dtCore::RefPtr<dtDAL::NamedGroupParameter> group = new dtDAL::NamedGroupParameter(Cal3DGameActor::PropertyNames::ANIMATION_GROUP);
+      dtCore::RefPtr<dtCore::NamedGroupParameter> group = new dtCore::NamedGroupParameter(Cal3DGameActor::PropertyNames::ANIMATION_GROUP);
       ///\todo add all animations currently being blended
       return group;
    }

@@ -39,14 +39,14 @@
 #include <dtCore/system.h>
 #include <dtCore/timer.h>
 
-#include <dtDAL/datatype.h>
-#include <dtDAL/resourcedescriptor.h>
-#include <dtDAL/actortype.h>
-#include <dtDAL/project.h>
-#include <dtDAL/map.h>
-#include <dtDAL/actorproperty.h>
-#include <dtDAL/gameeventmanager.h>
-#include <dtDAL/gameevent.h>
+#include <dtCore/datatype.h>
+#include <dtCore/resourcedescriptor.h>
+#include <dtCore/actortype.h>
+#include <dtCore/project.h>
+#include <dtCore/map.h>
+#include <dtCore/actorproperty.h>
+#include <dtCore/gameeventmanager.h>
+#include <dtCore/gameevent.h>
 
 #include <dtUtil/fileutils.h>
 #include <dtUtil/datastream.h>
@@ -139,8 +139,8 @@ private:
    static const char* mTestGameActorLibrary;
    static const char* mTestActorLibrary;
 
-   void createActors(dtDAL::Map& map);
-   void RemoveOneProxy(dtDAL::Map& map);
+   void createActors(dtCore::Map& map);
+   void RemoveOneProxy(dtCore::Map& map);
 
    void TestDefaultMessageProcessorWithLocalOrRemoteActorCreates(bool remote);
    void TestDefaultMessageProcessorWithLocalOrRemoteActorUpdates(bool remote, bool partial,
@@ -178,8 +178,8 @@ void MessageTests::setUp()
       dtCore::System::GetInstance().SetShutdownOnWindowClose(false);
       dtCore::System::GetInstance().Start();
 
-      dtDAL::Project::GetInstance().CreateContext("data/TestGameProject");
-      dtDAL::Project::GetInstance().SetContext("data/TestGameProject");
+      dtCore::Project::GetInstance().CreateContext("data/TestGameProject");
+      dtCore::Project::GetInstance().SetContext("data/TestGameProject");
    }
    catch (const dtUtil::Exception& ex)
    {
@@ -199,13 +199,13 @@ void MessageTests::tearDown()
          dtCore::System::GetInstance().SetPause(false);
          dtCore::System::GetInstance().Stop();
 
-         dtDAL::GameEventManager::GetInstance().ClearAllEvents();
+         dtCore::GameEventManager::GetInstance().ClearAllEvents();
          mGameManager->DeleteAllActors(true);
 
          if (!mGameManager->GetCurrentMap().empty())
          {
-            dtDAL::Project::GetInstance().CloseMap(dtDAL::Project::GetInstance().GetMap(mGameManager->GetCurrentMap()), true);
-            dtDAL::Project::GetInstance().DeleteMap(dtDAL::Project::GetInstance().GetMap(mGameManager->GetCurrentMap()));
+            dtCore::Project::GetInstance().CloseMap(dtCore::Project::GetInstance().GetMap(mGameManager->GetCurrentMap()), true);
+            dtCore::Project::GetInstance().DeleteMap(dtCore::Project::GetInstance().GetMap(mGameManager->GetCurrentMap()));
          }
 
          mGameManager->UnloadActorRegistry(mTestGameActorLibrary);
@@ -216,8 +216,8 @@ void MessageTests::tearDown()
       {
          if (!mGameManager->GetCurrentMap().empty())
          {
-            dtDAL::Project::GetInstance().CloseMap(dtDAL::Project::GetInstance().GetMap(mGameManager->GetCurrentMap()), true);
-            dtDAL::Project::GetInstance().DeleteMap(dtDAL::Project::GetInstance().GetMap(mGameManager->GetCurrentMap()));
+            dtCore::Project::GetInstance().CloseMap(dtCore::Project::GetInstance().GetMap(mGameManager->GetCurrentMap()), true);
+            dtCore::Project::GetInstance().DeleteMap(dtCore::Project::GetInstance().GetMap(mGameManager->GetCurrentMap()));
          }
          CPPUNIT_FAIL((std::string("Error: ") + e.ToString()).c_str());
       }
@@ -236,11 +236,11 @@ void MessageTests::tearDown()
    }
 }
 
-void MessageTests::createActors(dtDAL::Map& map)
+void MessageTests::createActors(dtCore::Map& map)
 {
    map.ClearProxies();
 
-   std::vector<const dtDAL::ActorType*> actorTypes;
+   std::vector<const dtCore::ActorType*> actorTypes;
 
    actorTypes.push_back(dtActors::EngineActorRegistry::TASK_ACTOR_TYPE.get());
    actorTypes.push_back(dtActors::EngineActorRegistry::GAME_EVENT_TASK_ACTOR_TYPE.get());
@@ -268,7 +268,7 @@ void MessageTests::createActors(dtDAL::Map& map)
 
    for (unsigned int i = 0; i < actorTypes.size(); ++i)
    {
-      dtCore::RefPtr<dtDAL::BaseActorObject> proxy;
+      dtCore::RefPtr<dtCore::BaseActorObject> proxy;
 
       proxy = mGameManager->CreateActor(*actorTypes[i]);
       proxy->SetName(dtUtil::ToString(i));
@@ -444,10 +444,10 @@ void MessageTests::TestBaseMessages()
       aum1->SetAboutActorId(dtCore::UniqueId());
       dtUtil::DataStream stream;
 
-      dtGame::MessageParameter* o = aum1->AddUpdateParameter("param1", dtDAL::DataType::FLOAT);
-      dtGame::MessageParameter* t = aum1->AddUpdateParameter("param2", dtDAL::DataType::INT);
-      dtGame::MessageParameter* h = aum1->AddUpdateParameter("param3", dtDAL::DataType::DOUBLE);
-      dtGame::MessageParameter* f = aum1->AddUpdateParameter("param4", dtDAL::DataType::BOOLEAN);
+      dtGame::MessageParameter* o = aum1->AddUpdateParameter("param1", dtCore::DataType::FLOAT);
+      dtGame::MessageParameter* t = aum1->AddUpdateParameter("param2", dtCore::DataType::INT);
+      dtGame::MessageParameter* h = aum1->AddUpdateParameter("param3", dtCore::DataType::DOUBLE);
+      dtGame::MessageParameter* f = aum1->AddUpdateParameter("param4", dtCore::DataType::BOOLEAN);
 
       CPPUNIT_ASSERT_MESSAGE("MessageParameter o should not be NULL", o != NULL);
       CPPUNIT_ASSERT_MESSAGE("MessageParameter t should not be NULL", t != NULL);
@@ -489,7 +489,7 @@ void MessageTests::TestBaseMessages()
       dtCore::RefPtr<dtGame::ActorUpdateMessage> actorMsg = new dtGame::ActorUpdateMessage;
       actorMsg->SetActorTypeName("Tripod");
       actorMsg->SetActorTypeCategory("dtcore");
-      dtCore::RefPtr<const dtDAL::ActorType> type = actorMsg->GetActorType();
+      dtCore::RefPtr<const dtCore::ActorType> type = actorMsg->GetActorType();
       CPPUNIT_ASSERT(type.valid());
       CPPUNIT_ASSERT_MESSAGE("The message type should be correct", type.get() == dtActors::EngineActorRegistry::TRIPOD_ACTOR_TYPE);
    }
@@ -624,7 +624,7 @@ void MessageTests::TestMessageDelivery()
 
       CPPUNIT_ASSERT_MESSAGE("The message created should not be NULL", msg != NULL);
 
-      dtCore::RefPtr<const dtDAL::ActorType> type = mGameManager->FindActorType("ExampleActors","Test1Actor");
+      dtCore::RefPtr<const dtCore::ActorType> type = mGameManager->FindActorType("ExampleActors","Test1Actor");
 
       CPPUNIT_ASSERT(type != NULL);
       dtCore::RefPtr<dtGame::GameActorProxy> gap;
@@ -632,7 +632,7 @@ void MessageTests::TestMessageDelivery()
 
       CPPUNIT_ASSERT(gap->IsGameActorProxy());
       mGameManager->AddActor(*gap, false, false);
-      std::set<const dtDAL::ActorType*> typeSet;
+      std::set<const dtCore::ActorType*> typeSet;
       mGameManager->GetUsedActorTypes(typeSet);
       CPPUNIT_ASSERT_MESSAGE("The amount of actor types supported should not be 0", typeSet.size() != 0);
 
@@ -711,10 +711,10 @@ void MessageTests::TestActorPublish()
       CPPUNIT_ASSERT(tc->GetGameManager() != NULL);
       CPPUNIT_ASSERT(rc->GetGameManager() != NULL);
 
-      dtCore::RefPtr<const dtDAL::ActorType> type = mGameManager->FindActorType("ExampleActors","Test1Actor");
+      dtCore::RefPtr<const dtCore::ActorType> type = mGameManager->FindActorType("ExampleActors","Test1Actor");
 
       CPPUNIT_ASSERT(type != NULL);
-      dtCore::RefPtr<dtDAL::BaseActorObject> ap = mGameManager->CreateActor(*type);
+      dtCore::RefPtr<dtCore::BaseActorObject> ap = mGameManager->CreateActor(*type);
 
       CPPUNIT_ASSERT(ap->IsGameActorProxy());
       dtCore::RefPtr<dtGame::GameActorProxy> gap = dynamic_cast<dtGame::GameActorProxy*>(ap.get());
@@ -1075,28 +1075,28 @@ void MessageTests::TestChangeMapGameEvents()
       // NOTE - This whole test should be with a map or with the GM. It definitely doesn't belong with
       // message tests.
 
-      dtDAL::Project& project = dtDAL::Project::GetInstance();
+      dtCore::Project& project = dtCore::Project::GetInstance();
       std::string mapName = "Many Game Actors";
-      dtDAL::Map* map = &project.CreateMap(mapName, "mga");
+      dtCore::Map* map = &project.CreateMap(mapName, "mga");
 
-      dtCore::RefPtr<dtDAL::GameEvent> event;
+      dtCore::RefPtr<dtCore::GameEvent> event;
 
-      event = new dtDAL::GameEvent("one", "");
+      event = new dtCore::GameEvent("one", "");
       map->GetEventManager().AddEvent(*event);
-      event = new dtDAL::GameEvent("two", "");
+      event = new dtCore::GameEvent("two", "");
       map->GetEventManager().AddEvent(*event);
-      event = new dtDAL::GameEvent("three", "");
+      event = new dtCore::GameEvent("three", "");
       map->GetEventManager().AddEvent(*event);
 
       project.SaveMap(*map);
       project.CloseMap(*map);
 
       //clear the events just to make sure.
-      dtDAL::GameEventManager& geMan = dtDAL::GameEventManager::GetInstance();
+      dtCore::GameEventManager& geMan = dtCore::GameEventManager::GetInstance();
       geMan.ClearAllEvents();
 
       // add one event that is not in the map - it shouldn't be removed by changing maps.
-      event = new dtDAL::GameEvent("non-map event", "");
+      event = new dtCore::GameEvent("non-map event", "");
       geMan.AddEvent(*event);
       CPPUNIT_ASSERT_EQUAL_MESSAGE("Should be one event.", geMan.GetNumEvents(), (unsigned int) 1);
 
@@ -1163,9 +1163,9 @@ void MessageTests::CheckMapNames(const dtGame::MapMessage& mapLoadedMsg,
          mapNames == mapNamesGet);
 }
 
-void MessageTests::RemoveOneProxy(dtDAL::Map& map)
+void MessageTests::RemoveOneProxy(dtCore::Map& map)
 {
-   std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> > toFill;
+   std::vector<dtCore::RefPtr<dtCore::BaseActorObject> > toFill;
    map.FindProxies(toFill, "", TestGameActorLibrary::TEST_TANK_GAME_ACTOR_PROXY_TYPE->GetCategory(),
          TestGameActorLibrary::TEST_TANK_GAME_ACTOR_PROXY_TYPE->GetName());
 
@@ -1177,31 +1177,31 @@ void MessageTests::TestChangeMap()
 {
    try
    {
-      dtDAL::Project& project = dtDAL::Project::GetInstance();
+      dtCore::Project& project = dtCore::Project::GetInstance();
       dtGame::GameManager::NameVector mapNamesExpected;
       mapNamesExpected.push_back("Many Game Actors");
       mapNamesExpected.push_back("Many Game Actors the second");
 
-      dtCore::RefPtr<dtDAL::Map> mapA = &project.CreateMap(mapNamesExpected[0], "mga");
-      dtCore::RefPtr<dtDAL::Map> mapB = &project.CreateMap(mapNamesExpected[1], "mgb");
+      dtCore::RefPtr<dtCore::Map> mapA = &project.CreateMap(mapNamesExpected[0], "mga");
+      dtCore::RefPtr<dtCore::Map> mapB = &project.CreateMap(mapNamesExpected[1], "mgb");
 
       dtGame::GameManager::NameVector mapNames2Expected;
       mapNames2Expected.push_back("Many More Game Actors");
       mapNames2Expected.push_back("Many More Game Actors the second");
-      dtCore::RefPtr<dtDAL::Map> map2A = &project.CreateMap(mapNames2Expected[0], "mg2");
-      dtCore::RefPtr<dtDAL::Map> map2B = &project.CreateMap(mapNames2Expected[1], "mg2b");
+      dtCore::RefPtr<dtCore::Map> map2A = &project.CreateMap(mapNames2Expected[0], "mg2");
+      dtCore::RefPtr<dtCore::Map> map2B = &project.CreateMap(mapNames2Expected[1], "mg2b");
 
       createActors(*mapA);
       createActors(*mapB);
       createActors(*map2A);
       createActors(*map2B);
 
-      dtCore::RefPtr<dtDAL::GameEvent> reusedEvent = new dtDAL::GameEvent("eventX", "Event");
-      mapA->GetEventManager().AddEvent(*new dtDAL::GameEvent("event1", "Event"));
-      mapA->GetEventManager().AddEvent(*new dtDAL::GameEvent("event2", "Event"));
+      dtCore::RefPtr<dtCore::GameEvent> reusedEvent = new dtCore::GameEvent("eventX", "Event");
+      mapA->GetEventManager().AddEvent(*new dtCore::GameEvent("event1", "Event"));
+      mapA->GetEventManager().AddEvent(*new dtCore::GameEvent("event2", "Event"));
       mapA->GetEventManager().AddEvent(*reusedEvent);
-      mapB->GetEventManager().AddEvent(*new dtDAL::GameEvent("event3", "Event"));
-      mapB->GetEventManager().AddEvent(*new dtDAL::GameEvent("event4", "Event"));
+      mapB->GetEventManager().AddEvent(*new dtCore::GameEvent("event3", "Event"));
+      mapB->GetEventManager().AddEvent(*new dtCore::GameEvent("event4", "Event"));
       mapB->GetEventManager().AddEvent(*reusedEvent);
 
       mapA->AddLibrary(mTestGameActorLibrary, "1.0");
@@ -1209,10 +1209,10 @@ void MessageTests::TestChangeMap()
       mapA->AddLibrary(mTestGameActorLibrary, "1.0");
       mapB->AddLibrary(mTestActorLibrary, "1.0");
 
-      map2A->GetEventManager().AddEvent(*new dtDAL::GameEvent("event5", "Event"));
-      map2A->GetEventManager().AddEvent(*new dtDAL::GameEvent("event6", "Event"));
-      map2B->GetEventManager().AddEvent(*new dtDAL::GameEvent("event7", "Event"));
-      map2B->GetEventManager().AddEvent(*new dtDAL::GameEvent("event8", "Event"));
+      map2A->GetEventManager().AddEvent(*new dtCore::GameEvent("event5", "Event"));
+      map2A->GetEventManager().AddEvent(*new dtCore::GameEvent("event6", "Event"));
+      map2B->GetEventManager().AddEvent(*new dtCore::GameEvent("event7", "Event"));
+      map2B->GetEventManager().AddEvent(*new dtCore::GameEvent("event8", "Event"));
 
       map2A->AddLibrary(mTestGameActorLibrary, "1.0");
       map2A->AddLibrary(mTestActorLibrary, "1.0");
@@ -1276,7 +1276,7 @@ void MessageTests::TestChangeMap()
                                     mapA->GetAllProxies().size() + mapB->GetAllProxies().size() - 2,
                                     mGameManager->GetNumAllActors());
 
-      dtDAL::GameEventManager& mainGEM = dtDAL::GameEventManager::GetInstance();
+      dtCore::GameEventManager& mainGEM = dtCore::GameEventManager::GetInstance();
       //2 from each map, and one that is shared with the same unique id.
       CPPUNIT_ASSERT_EQUAL(5U, mainGEM.GetNumEvents());
       CPPUNIT_ASSERT(mainGEM.FindEvent("event1") != NULL);
@@ -1388,15 +1388,15 @@ void MessageTests::TestGameEventMessage()
 {
    try
    {
-      dtDAL::GameEventManager& eventMgr = dtDAL::GameEventManager::GetInstance();
+      dtCore::GameEventManager& eventMgr = dtCore::GameEventManager::GetInstance();
       dtCore::RefPtr<dtGame::Message> message =
             mGameManager->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_GAME_EVENT);
       dtGame::GameEventMessage* gameEventMsg = static_cast<dtGame::GameEventMessage*>(message.get());
 
-      eventMgr.AddEvent(*(new dtDAL::GameEvent("TestEvent1","This is test event one.")));
+      eventMgr.AddEvent(*(new dtCore::GameEvent("TestEvent1","This is test event one.")));
 
-      dtDAL::GameEvent* event = eventMgr.FindEvent("TestEvent1");
-      const dtDAL::GameEvent* event2;
+      dtCore::GameEvent* event = eventMgr.FindEvent("TestEvent1");
+      const dtCore::GameEvent* event2;
       gameEventMsg->SetGameEvent(*event);
       event2 = gameEventMsg->GetGameEvent();
 
@@ -1480,10 +1480,10 @@ void MessageTests::TestDefaultMessageProcessorWithLocalOrRemoteActorUpdates(bool
          dtGame::GameActorProxy::LocalActorUpdatePolicy& policy)
 {
 
-   dtCore::RefPtr<const dtDAL::ActorType> type = mGameManager->FindActorType("ExampleActors","Test1Actor");
+   dtCore::RefPtr<const dtCore::ActorType> type = mGameManager->FindActorType("ExampleActors","Test1Actor");
 
    CPPUNIT_ASSERT(type != NULL);
-   dtCore::RefPtr<dtDAL::BaseActorObject> ap = mGameManager->CreateActor(*type);
+   dtCore::RefPtr<dtCore::BaseActorObject> ap = mGameManager->CreateActor(*type);
 
    CPPUNIT_ASSERT(ap->IsGameActorProxy());
    dtCore::RefPtr<dtGame::GameActorProxy> gap = dynamic_cast<dtGame::GameActorProxy*>(ap.get());
@@ -1637,10 +1637,10 @@ void MessageTests::TestDefaultMessageProcessorWithLocalOrRemoteActorDeletes(bool
    dtGame::DefaultMessageProcessor& defMsgProcessor = *new dtGame::DefaultMessageProcessor();
    mGameManager->AddComponent(defMsgProcessor, dtGame::GameManager::ComponentPriority::NORMAL);
 
-   dtCore::RefPtr<const dtDAL::ActorType> type = mGameManager->FindActorType("ExampleActors","Test1Actor");
+   dtCore::RefPtr<const dtCore::ActorType> type = mGameManager->FindActorType("ExampleActors","Test1Actor");
 
    CPPUNIT_ASSERT(type != NULL);
-   dtCore::RefPtr<dtDAL::BaseActorObject> ap = mGameManager->CreateActor(*type);
+   dtCore::RefPtr<dtCore::BaseActorObject> ap = mGameManager->CreateActor(*type);
 
    CPPUNIT_ASSERT(ap->IsGameActorProxy());
    dtCore::RefPtr<dtGame::GameActorProxy> gap = dynamic_cast<dtGame::GameActorProxy*>(ap.get());
@@ -1689,10 +1689,10 @@ void MessageTests::TestDefaultMessageProcessorWithLocalOrRemoteActorCreates(bool
    dtGame::DefaultMessageProcessor& defMsgProcessor = *new dtGame::DefaultMessageProcessor();
    mGameManager->AddComponent(defMsgProcessor, dtGame::GameManager::ComponentPriority::NORMAL);
 
-   dtCore::RefPtr<const dtDAL::ActorType> type = mGameManager->FindActorType("ExampleActors","Test1Actor");
+   dtCore::RefPtr<const dtCore::ActorType> type = mGameManager->FindActorType("ExampleActors","Test1Actor");
 
    CPPUNIT_ASSERT(type != NULL);
-   dtCore::RefPtr<dtDAL::BaseActorObject> ap = mGameManager->CreateActor(*type);
+   dtCore::RefPtr<dtCore::BaseActorObject> ap = mGameManager->CreateActor(*type);
 
    CPPUNIT_ASSERT(ap->IsGameActorProxy());
    dtCore::RefPtr<dtGame::GameActorProxy> gap = dynamic_cast<dtGame::GameActorProxy*>(ap.get());
@@ -1772,7 +1772,7 @@ void MessageTests::TestRemoteActorCreatesFromPrototype()
    dtGame::DefaultMessageProcessor& defMsgProcessor = *new dtGame::DefaultMessageProcessor();
    mGameManager->AddComponent(defMsgProcessor, dtGame::GameManager::ComponentPriority::NORMAL);
 
-   dtCore::RefPtr<const dtDAL::ActorType> type = mGameManager->FindActorType("ExampleActors","Test1Actor");
+   dtCore::RefPtr<const dtCore::ActorType> type = mGameManager->FindActorType("ExampleActors","Test1Actor");
    CPPUNIT_ASSERT(type != NULL);
 
    // Create a prototype actor to work with.
@@ -1789,7 +1789,7 @@ void MessageTests::TestRemoteActorCreatesFromPrototype()
 
    // Now we need to actually create an actor from our prototype. Use that to populate a create message.
    // Note, we don't actually add our temp actor to the GM. It acts like a 'remote' actor on another system.
-   dtCore::RefPtr<dtDAL::BaseActorObject> tempBogusPrototype = mGameManager->CreateActorFromPrototype(prototypeId);
+   dtCore::RefPtr<dtCore::BaseActorObject> tempBogusPrototype = mGameManager->CreateActorFromPrototype(prototypeId);
    dtCore::RefPtr<dtGame::GameActorProxy> tempBogusGameProxy = dynamic_cast<dtGame::GameActorProxy*>(tempBogusPrototype.get());
    dtCore::RefPtr<TestGameActor1> tempBogusActor = dynamic_cast<TestGameActor1*>(tempBogusPrototype->GetActor());
    tempBogusActor->SetTickLocals(11);
@@ -1856,7 +1856,7 @@ void MessageTests::TestActorEnteredWorldMessage()
    mGameManager->AddComponent(*tc, dtGame::GameManager::ComponentPriority::HIGHEST);
    std::vector<dtCore::RefPtr<const dtGame::Message> > msgs;
 
-   dtCore::RefPtr<dtDAL::BaseActorObject> proxy = mGameManager->CreateActor("ExampleActors", "Test1Actor");
+   dtCore::RefPtr<dtCore::BaseActorObject> proxy = mGameManager->CreateActor("ExampleActors", "Test1Actor");
    CPPUNIT_ASSERT(proxy.valid());
    dtGame::GameActorProxy* gap = dynamic_cast<dtGame::GameActorProxy*>(proxy.get());
    CPPUNIT_ASSERT_MESSAGE("A Test1Actor actor was created. The dynamic_cast to a GameActorProxy should not be NULL", gap != NULL);
@@ -1896,9 +1896,9 @@ void MessageTests::DoTestOfPartialUpdateDoesNotCreateActor(bool testWithPartial)
    dtGame::DefaultMessageProcessor& defMsgProcessor = *new dtGame::DefaultMessageProcessor();
    mGameManager->AddComponent(defMsgProcessor, dtGame::GameManager::ComponentPriority::NORMAL);
 
-   dtCore::RefPtr<const dtDAL::ActorType> type = mGameManager->FindActorType("ExampleActors","Test1Actor");
+   dtCore::RefPtr<const dtCore::ActorType> type = mGameManager->FindActorType("ExampleActors","Test1Actor");
    CPPUNIT_ASSERT(type != NULL);
-   dtCore::RefPtr<dtDAL::BaseActorObject> ap = mGameManager->CreateActor(*type);
+   dtCore::RefPtr<dtCore::BaseActorObject> ap = mGameManager->CreateActor(*type);
 
    CPPUNIT_ASSERT(ap->IsGameActorProxy());
    dtCore::RefPtr<dtGame::GameActorProxy> gap = dynamic_cast<dtGame::GameActorProxy*>(ap.get());

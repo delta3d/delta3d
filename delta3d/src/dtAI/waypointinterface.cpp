@@ -22,7 +22,7 @@
 #include <dtAI/waypointinterface.h>
 #include <dtAI/waypointpropertycontainer.h>
 
-#include <dtDAL/propertycontainer.h>
+#include <dtCore/propertycontainer.h>
 
 #include <dtUtil/templateutility.h>
 
@@ -33,7 +33,7 @@ namespace dtAI
    WaypointID WaypointInterface::mIDCounter = 0;
 
    /////////////////////////////////////////////////////////////////////////////
-   WaypointInterface::WaypointInterface(const dtDAL::ObjectType* wpt)
+   WaypointInterface::WaypointInterface(const dtCore::ObjectType* wpt)
       : mID(mIDCounter++)
       , mWaypointType(wpt)
    {
@@ -73,7 +73,7 @@ namespace dtAI
 
 
    /////////////////////////////////////////////////////////////////////////////
-   const dtDAL::ObjectType& WaypointInterface::GetWaypointType() const
+   const dtCore::ObjectType& WaypointInterface::GetWaypointType() const
    {
       return *mWaypointType;
    }

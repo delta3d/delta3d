@@ -26,7 +26,7 @@
 #include <string>
 #include <iostream>
 #include <dtUtil/coordinates.h>
-#include <dtDAL/datatype.h>
+#include <dtCore/datatype.h>
 #include <dtGame/messagetype.h>
 #include <dtHLAGM/objecttoactor.h>
 #include <dtHLAGM/interactiontomessage.h>

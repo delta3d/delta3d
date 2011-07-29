@@ -43,8 +43,8 @@
 #include "dtEditQt/editordata.h"
 #include "dtEditQt/editorevents.h"
 #include "dtEditQt/viewportmanager.h"
-#include "dtDAL/project.h"
-#include "dtDAL/map.h"
+#include "dtCore/project.h"
+#include "dtCore/map.h"
 
 #include <osgDB/FileNameUtils>
 

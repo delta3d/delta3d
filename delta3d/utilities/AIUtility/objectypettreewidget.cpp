@@ -38,7 +38,7 @@
 const std::string ObjectTypeTreeWidget::CATEGORY_SEPARATOR = ".";
 
 ///////////////////////////////////////////////////////////////////////////////
-ObjectTypeTreeWidget::ObjectTypeTreeWidget(ObjectTypeTreeWidget* parent, dtCore::RefPtr<const dtDAL::ObjectType> objectType)
+ObjectTypeTreeWidget::ObjectTypeTreeWidget(ObjectTypeTreeWidget* parent, dtCore::RefPtr<const dtCore::ObjectType> objectType)
    : QTreeWidgetItem(parent)
 {
    LOG_DEBUG("Initializing ObjectTypeTreeWidget - leaf Actor Type Node:" + objectType->GetName());
@@ -95,7 +95,7 @@ ObjectTypeTreeWidget::ObjectTypeTreeWidget(QTreeWidget* parent, const QString& s
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-dtCore::RefPtr<const dtDAL::ObjectType> ObjectTypeTreeWidget::GetObjectType()
+dtCore::RefPtr<const dtCore::ObjectType> ObjectTypeTreeWidget::GetObjectType()
 {
    return mObjectType;
 }
@@ -134,7 +134,7 @@ QString ObjectTypeTreeWidget::GetCategoryOrName()
 
 ///////////////////////////////////////////////////////////////////////////////
 bool ObjectTypeTreeWidget::RecursivelyAddCategoryAndObjectTypeAsChildren(
-   QMutableStringListIterator* listIterator, dtCore::RefPtr<const dtDAL::ObjectType> objectType)
+   QMutableStringListIterator* listIterator, dtCore::RefPtr<const dtCore::ObjectType> objectType)
 {
    bool foundChildMatch = false;
    bool result          = false;

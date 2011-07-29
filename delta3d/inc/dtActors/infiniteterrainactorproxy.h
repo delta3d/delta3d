@@ -21,8 +21,8 @@
 #ifndef DELTA_INFINITETERRAIN_ACTOR_PROXY
 #define DELTA_INFINITETERRAIN_ACTOR_PROXY
 
-#include <dtDAL/plugin_export.h>
-#include <dtDAL/transformableactorproxy.h>
+#include <dtCore/plugin_export.h>
+#include <dtCore/transformableactorproxy.h>
 #include <dtCore/infiniteterrain.h>
 
 namespace dtActors 
@@ -31,7 +31,7 @@ namespace dtActors
      * @class InfiniteTerrainActorProxy
      * @brief This proxy wraps the InfiniteTerrain Delta3D object.
      */
-    class DT_PLUGIN_EXPORT InfiniteTerrainActorProxy : public dtDAL::TransformableActorProxy
+    class DT_PLUGIN_EXPORT InfiniteTerrainActorProxy : public dtCore::TransformableActorProxy
     {
     public:
 

@@ -39,4 +39,8 @@
 #   endif 
 #endif
 
+#ifndef dtDAL
+#define dtDAL dtCore
+#endif
+
 #endif // DELTA_CORE_EXPORT

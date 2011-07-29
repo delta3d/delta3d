@@ -39,7 +39,7 @@
 #include <QtGui/QGraphicsColorizeEffect>
 #include <QtGui/QMenu>
 
-#include <dtDAL/datatype.h>
+#include <dtCore/datatype.h>
 
 #include <dtUtil/mathdefines.h>
 
@@ -1208,7 +1208,7 @@ namespace dtDirector
          return;
       }
 
-      dtDAL::ActorProperty* prop = mNode->GetProperty("Position");
+      dtCore::ActorProperty* prop = mNode->GetProperty("Position");
       if (prop) mOldPosition = prop->ToString();
 
       mChainSelecting = mScene->IsHoldingShift();
@@ -1267,7 +1267,7 @@ namespace dtDirector
          return;
       }
 
-      dtDAL::ActorProperty* prop = mNode->GetProperty("Position");
+      dtCore::ActorProperty* prop = mNode->GetProperty("Position");
       if (prop)
       {
          std::string value = prop->ToString();
@@ -1482,8 +1482,8 @@ namespace dtDirector
          return color;
       }
 
-      dtDAL::DataType& dataType = link->GetPropertyType();
-      if (dataType == dtDAL::DataType::UNKNOWN)
+      dtCore::DataType& dataType = link->GetPropertyType();
+      if (dataType == dtCore::DataType::UNKNOWN)
       {
          osg::Vec4 ownerColor = link->GetOwner()->GetColor();
          color = QColor(ownerColor[0]*255, ownerColor[1]*255, ownerColor[2]*255, ownerColor[3]*255);

@@ -34,7 +34,7 @@
 
 class QWidget;
 
-namespace dtDAL
+namespace dtCore
 {
    class NamedGroupParameter;
 }
@@ -53,20 +53,20 @@ namespace dtEditQt
       virtual const std::string& GetName() const = 0;
 
       /**
-       * Implementations should update the data displayed in the widget with the given dtDAL::GroupNamedParameter.
+       * Implementations should update the data displayed in the widget with the given dtCore::GroupNamedParameter.
        * @return true if the operation was successful.
        * @param widget The widget to update.
        * @param modelData The data to use to populate the widget.
        */
-      virtual bool UpdateWidgetFromModel(QWidget& widget, const dtDAL::NamedGroupParameter& modelData) const = 0;
+      virtual bool UpdateWidgetFromModel(QWidget& widget, const dtCore::NamedGroupParameter& modelData) const = 0;
 
       /**
-       * Implementations should fill the given dtDAL::GroupNamedParameter with the values in widget.
+       * Implementations should fill the given dtCore::GroupNamedParameter with the values in widget.
        * @return true if the operation was successful.
        * @param widget The widget to update from.
        * @param modelData The data object to populate.
        */
-      virtual bool UpdateModelFromWidget(QWidget& widget, dtDAL::NamedGroupParameter& modelData) const = 0;
+      virtual bool UpdateModelFromWidget(QWidget& widget, dtCore::NamedGroupParameter& modelData) const = 0;
 
       ///@return a new instance of the widget this plugin manipulates giving it the specified UI parent.
       virtual QWidget* CreateWidget(QWidget* parent) = 0;

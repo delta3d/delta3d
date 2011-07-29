@@ -21,7 +21,7 @@
 #include <prefix/dtdirectornodesprefix.h>
 #include <dtDirectorNodes/randomintvalue.h>
 
-#include <dtDAL/intactorproperty.h>
+#include <dtCore/intactorproperty.h>
 
 #include <dtUtil/mathdefines.h>
 
@@ -52,23 +52,23 @@ namespace dtDirector
    {
       ValueNode::BuildPropertyMap();
 
-      mProperty = new dtDAL::IntActorProperty(
+      mProperty = new dtCore::IntActorProperty(
          "Value", "Value",
-         dtDAL::IntActorProperty::SetFuncType(this, &RandomIntValue::SetValue),
-         dtDAL::IntActorProperty::GetFuncType(this, &RandomIntValue::GetValue),
+         dtCore::IntActorProperty::SetFuncType(this, &RandomIntValue::SetValue),
+         dtCore::IntActorProperty::GetFuncType(this, &RandomIntValue::GetValue),
          "The value.");
 
-      dtDAL::IntActorProperty* minProp = new dtDAL::IntActorProperty(
+      dtCore::IntActorProperty* minProp = new dtCore::IntActorProperty(
          "Min Value", "Min Value",
-         dtDAL::IntActorProperty::SetFuncType(this, &RandomIntValue::SetMinValue),
-         dtDAL::IntActorProperty::GetFuncType(this, &RandomIntValue::GetMinValue),
+         dtCore::IntActorProperty::SetFuncType(this, &RandomIntValue::SetMinValue),
+         dtCore::IntActorProperty::GetFuncType(this, &RandomIntValue::GetMinValue),
          "The minimum value.");
       AddProperty(minProp);
 
-      dtDAL::IntActorProperty* maxProp = new dtDAL::IntActorProperty(
+      dtCore::IntActorProperty* maxProp = new dtCore::IntActorProperty(
          "Max Value", "Max Value",
-         dtDAL::IntActorProperty::SetFuncType(this, &RandomIntValue::SetMaxValue),
-         dtDAL::IntActorProperty::GetFuncType(this, &RandomIntValue::GetMaxValue),
+         dtCore::IntActorProperty::SetFuncType(this, &RandomIntValue::SetMaxValue),
+         dtCore::IntActorProperty::GetFuncType(this, &RandomIntValue::GetMaxValue),
          "The minimum value.");
       AddProperty(maxProp);
    }
@@ -76,8 +76,8 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    std::string RandomIntValue::GetValueLabel()
    {
-      dtDAL::ActorProperty* minProp = Node::GetProperty("Min Value");
-      dtDAL::ActorProperty* maxProp = Node::GetProperty("Max Value");
+      dtCore::ActorProperty* minProp = Node::GetProperty("Min Value");
+      dtCore::ActorProperty* maxProp = Node::GetProperty("Max Value");
 
       if (minProp && maxProp)
       {

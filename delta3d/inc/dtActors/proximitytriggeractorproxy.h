@@ -23,8 +23,8 @@
 #ifndef _PROXIMITY_TRIGGER_ACTOR_PROXY_H_
 #define _PROXIMITY_TRIGGER_ACTOR_PROXY_H_
 
-#include <dtDAL/plugin_export.h>
-#include <dtDAL/transformableactorproxy.h>
+#include <dtCore/plugin_export.h>
+#include <dtCore/transformableactorproxy.h>
 
 namespace dtABC
 {
@@ -37,7 +37,7 @@ namespace dtActors
     /**
      * This proxy wraps placeable triggers.
      */
-    class DT_PLUGIN_EXPORT ProximityTriggerActorProxy : public dtDAL::TransformableActorProxy 
+    class DT_PLUGIN_EXPORT ProximityTriggerActorProxy : public dtCore::TransformableActorProxy 
     {
     public:
 
@@ -55,11 +55,11 @@ namespace dtActors
 
         /**
         * Gets the method by which a particle system is rendered.
-        * @return dtDAL::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON.
+        * @return dtCore::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON.
         */
-        virtual const dtDAL::BaseActorObject::RenderMode& GetRenderMode() 
+        virtual const dtCore::BaseActorObject::RenderMode& GetRenderMode() 
         {
-           return dtDAL::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON;
+           return dtCore::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON;
         }
 
         /**
@@ -67,12 +67,12 @@ namespace dtActors
         * render mode is RenderMode::DRAW_BILLBOARD_ICON.
         * @return
         */
-        dtDAL::ActorProxyIcon* GetBillBoardIcon();
+        dtCore::ActorProxyIcon* GetBillBoardIcon();
 
         /**
         * Wrapper to set the Action on the internal Trigger.
         */
-        void SetAction(dtDAL::BaseActorObject* action);
+        void SetAction(dtCore::BaseActorObject* action);
 
         /**
         * Wrapper to get the Action on the internal Trigger.

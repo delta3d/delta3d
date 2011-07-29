@@ -41,7 +41,7 @@ namespace dtCore
    class Camera;
 }
 
-namespace dtDAL
+namespace dtCore
 {
    class ActorProxyIcon;
 }
@@ -131,11 +131,11 @@ class FIRE_FIGHTER_EXPORT FlySequenceActorProxy : public dtGame::GameActorProxy
       virtual void OnEnteredWorld();
 
       // Used in STAGE
-      dtDAL::ActorProxyIcon* GetBillBoardIcon();
+      dtCore::ActorProxyIcon* GetBillBoardIcon();
 
-      virtual const dtDAL::BaseActorObject::RenderMode& GetRenderMode()
+      virtual const dtCore::BaseActorObject::RenderMode& GetRenderMode()
       {
-         return dtDAL::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON;
+         return dtCore::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON;
       }
 
    protected:
@@ -145,7 +145,7 @@ class FIRE_FIGHTER_EXPORT FlySequenceActorProxy : public dtGame::GameActorProxy
 
    private:
 
-       dtCore::RefPtr<dtDAL::ActorProxyIcon> mBillBoardIcon;
+       dtCore::RefPtr<dtCore::ActorProxyIcon> mBillBoardIcon;
 };
 
 

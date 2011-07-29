@@ -34,9 +34,9 @@
 
 
 #include <dtUtil/tree.h>
-#include <dtDAL/propertycontainer.h>
-#include <dtDAL/actorproperty.h>
-#include <dtDAL/actortype.h>
+#include <dtCore/propertycontainer.h>
+#include <dtCore/actorproperty.h>
+#include <dtCore/actortype.h>
 #include <dtQt/typedefs.h>
 
 #include <dtQt/dynamicabstractcontrol.h>
@@ -49,7 +49,7 @@ class QGridLayout;
 class QScrollView;
 class QGroupBox;
 
-namespace dtDAL
+namespace dtCore
 {
    class DataType;
    class ActorProperty;
@@ -73,7 +73,7 @@ namespace dtQt
    {
       Q_OBJECT
    public:
-      typedef std::vector<dtCore::RefPtr<dtDAL::PropertyContainer> > PropertyContainerRefPtrVector;
+      typedef std::vector<dtCore::RefPtr<dtCore::PropertyContainer> > PropertyContainerRefPtrVector;
 
       /**
        * Constructor
@@ -101,7 +101,7 @@ namespace dtQt
       }
 
       ///Fills a vector with pointers to all the currently selected actor proxies.
-      void GetSelectedPropertyContainers(std::vector<dtDAL::PropertyContainer*>& toFill)
+      void GetSelectedPropertyContainers(std::vector<dtCore::PropertyContainer*>& toFill)
       {
          toFill.clear();
          toFill.reserve(mSelectedPC.size());
@@ -120,26 +120,26 @@ namespace dtQt
        */
       void HandlePropertyContainersSelected(PropertyContainerRefPtrVector& actors);
 
-      void ActorPropertyChanged(dtDAL::PropertyContainer& propCon,
-         dtDAL::ActorProperty& property);
+      void ActorPropertyChanged(dtCore::PropertyContainer& propCon,
+         dtCore::ActorProperty& property);
 
-      void ProxyNameChanged(dtDAL::BaseActorObject& pc, std::string oldName);
+      void ProxyNameChanged(dtCore::BaseActorObject& pc, std::string oldName);
       void UpdateTitle();
 
-      virtual void PropertyAboutToChangeFromControl(dtDAL::PropertyContainer&, dtDAL::ActorProperty&,
+      virtual void PropertyAboutToChangeFromControl(dtCore::PropertyContainer&, dtCore::ActorProperty&,
                const std::string& oldValue, const std::string& newValue) = 0;
-      virtual void PropertyChangedFromControl(dtDAL::PropertyContainer&, dtDAL::ActorProperty&);
+      virtual void PropertyChangedFromControl(dtCore::PropertyContainer&, dtCore::ActorProperty&);
 
    protected:
 
       /**
        * Add all the dynamic controls for this proxy object.
        */
-      virtual void buildDynamicControls(dtDAL::PropertyContainer& propertyContainer, DynamicGroupControl* parentControl = NULL);
-      void buildDynamicControls(dtDAL::PropertyContainer& propertyContainer, const std::vector<dtDAL::ActorProperty*>& propList, DynamicGroupControl* parentControl = NULL);
+      virtual void buildDynamicControls(dtCore::PropertyContainer& propertyContainer, DynamicGroupControl* parentControl = NULL);
+      void buildDynamicControls(dtCore::PropertyContainer& propertyContainer, const std::vector<dtCore::ActorProperty*>& propList, DynamicGroupControl* parentControl = NULL);
 
       virtual QString GetGroupBoxLabelText(const QString& baseGroupBoxName);
-      virtual std::string GetContainerGroupName(dtDAL::PropertyContainer* propertyContainer);
+      virtual std::string GetContainerGroupName(dtCore::PropertyContainer* propertyContainer);
 
       DynamicGroupControl* GetRootControl();
 
@@ -149,7 +149,7 @@ namespace dtQt
 
    private:
       // list of what the editor thinks is the last known selected actors
-      std::vector<dtCore::RefPtr<dtDAL::PropertyContainer> > mSelectedPC;
+      std::vector<dtCore::RefPtr<dtCore::PropertyContainer> > mSelectedPC;
 
       dtCore::RefPtr<DynamicControlFactory> mControlFactory;
 

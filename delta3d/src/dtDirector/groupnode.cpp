@@ -22,9 +22,9 @@
 #include <dtDirector/groupnode.h>
 #include <dtDirector/colors.h>
 
-#include <dtDAL/actorproperty.h>
-#include <dtDAL/vectoractorproperties.h>
-#include <dtDAL/colorrgbaactorproperty.h>
+#include <dtCore/actorproperty.h>
+#include <dtCore/vectoractorproperties.h>
+#include <dtCore/colorrgbaactorproperty.h>
 
 namespace dtDirector
 {
@@ -62,16 +62,16 @@ namespace dtDirector
 
       mValues.clear();
 
-      AddProperty(new dtDAL::Vec2ActorProperty(
+      AddProperty(new dtCore::Vec2ActorProperty(
          "Size", "Size",
-         dtDAL::Vec2ActorProperty::SetFuncType(this, &GroupNode::SetSize),
-         dtDAL::Vec2ActorProperty::GetFuncType(this, &GroupNode::GetSize),
+         dtCore::Vec2ActorProperty::SetFuncType(this, &GroupNode::SetSize),
+         dtCore::Vec2ActorProperty::GetFuncType(this, &GroupNode::GetSize),
          "The UI size of the Node.", "Info"));
 
-      AddProperty(new dtDAL::ColorRgbaActorProperty(
+      AddProperty(new dtCore::ColorRgbaActorProperty(
          "Color", "Color",
-         dtDAL::ColorRgbaActorProperty::SetFuncType(this, &Node::SetColor),
-         dtDAL::ColorRgbaActorProperty::GetFuncType(this, &Node::GetColor),
+         dtCore::ColorRgbaActorProperty::SetFuncType(this, &Node::SetColor),
+         dtCore::ColorRgbaActorProperty::GetFuncType(this, &Node::GetColor),
          "The UI color of the Node."));
    }
 }

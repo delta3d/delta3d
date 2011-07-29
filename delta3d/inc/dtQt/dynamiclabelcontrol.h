@@ -33,7 +33,7 @@
 #include <dtQt/dynamicabstractcontrol.h>
 
 
-namespace dtDAL
+namespace dtCore
 {
     //class StringActorProperty;
 }
@@ -66,7 +66,7 @@ namespace dtQt
          * @see DynamicAbstractControl#InitializeData
          */
         virtual void InitializeData(DynamicAbstractControl* newParent, PropertyEditorModel* model,
-            dtDAL::PropertyContainer* newPC, dtDAL::ActorProperty* property);
+            dtCore::PropertyContainer* newPC, dtCore::ActorProperty* property);
 
          /**
          * @see DynamicAbstractControl#getDisplayName
@@ -105,7 +105,7 @@ namespace dtQt
 
     private:
         // eventually, this should be a label property
-        //dtDAL::StringActorProperty *myProperty;
+        //dtCore::StringActorProperty *myProperty;
 
         // whether it has a property or not, this holds the display values
         // if you have a property, it originally comes from the property, if not,

@@ -40,7 +40,7 @@
 #include <dtAnim/cal3dmodelwrapper.h>
 
 #include <dtCore/refptr.h>
-#include <dtDAL/project.h>
+#include <dtCore/project.h>
 #include <dtUtil/datapathutils.h>
 #include <dtUtil/refstring.h>
 
@@ -69,7 +69,7 @@ namespace dtAnim
 
          void setUp()
          {
-            dtDAL::Project::GetInstance().SetContext(dtUtil::GetDeltaRootPath() + "/examples/data/demoMap");
+            dtCore::Project::GetInstance().SetContext(dtUtil::GetDeltaRootPath() + "/examples/data/demoMap");
             AnimNodeBuilder& nodeBuilder = Cal3DDatabase::GetInstance().GetNodeBuilder();
             if (nodeBuilder.SupportsSoftware())
             {

@@ -30,7 +30,7 @@ namespace dtCore
    class Object;
 }
 
-namespace dtDAL
+namespace dtCore
 {
    class ActorProxyIcon;
 }
@@ -98,11 +98,11 @@ class FIRE_FIGHTER_EXPORT VehicleActorProxy : public dtGame::GameActorProxy
        * render mode is RenderMode::DRAW_BILLBOARD_ICON.
        * @return
        */
-      dtDAL::ActorProxyIcon* GetBillBoardIcon();
+      dtCore::ActorProxyIcon* GetBillBoardIcon();
 
-      virtual const dtDAL::BaseActorObject::RenderMode& GetRenderMode()
+      virtual const dtCore::BaseActorObject::RenderMode& GetRenderMode()
       {
-         return dtDAL::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON;
+         return dtCore::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON;
       }
 
    protected:
@@ -112,7 +112,7 @@ class FIRE_FIGHTER_EXPORT VehicleActorProxy : public dtGame::GameActorProxy
 
    private:
 
-      dtCore::RefPtr<dtDAL::ActorProxyIcon> mBillboardIcon;
+      dtCore::RefPtr<dtCore::ActorProxyIcon> mBillboardIcon;
 };
 
 #endif

@@ -30,7 +30,7 @@
 #include <dtCore/camera.h>    // for accessor
 #include <dtCore/view.h>      // for accessor
 
-namespace dtDAL
+namespace dtCore
 {
    class Map;
 }
@@ -124,14 +124,14 @@ namespace dtABC
       /// @throws ExceptionEnum::MapLoadParsingError if an error occurs reading the map file.
       /// @throws ExceptionEnum::ProjectFileNotFound if the map does not exist.
       /// @throws ExceptionEnum::ProjectInvalidContext if the context is not set.
-      dtDAL::Map& LoadMap(const std::string& name, bool addBillBoards = false);
+      dtCore::Map& LoadMap(const std::string& name, bool addBillBoards = false);
 
       /// Loads a map into the scene held by BaseABC. If there is a Camera contained within your Map, the default
       /// Camera in BaseABC will be disabled.
       /// @param map The map to load into the scene
       /// @param addBillBoards pass true to add the billboards for any proxies that have the drawmode set to add the billboards.
       /// @throws ExceptionEnum::ProjectInvalidContext if the context is not set.
-      void LoadMap(dtDAL::Map& map, bool addBillBoards = false);
+      void LoadMap(dtCore::Map& map, bool addBillBoards = false);
 
    protected:
 

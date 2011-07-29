@@ -25,7 +25,7 @@
 
 #include <dtAnim/characterwrapper.h>
 #include <dtUtil/datapathutils.h>
-#include <dtDAL/project.h>
+#include <dtCore/project.h>
 
 #include <dtCore/refptr.h>
 #include <dtCore/transform.h>
@@ -61,7 +61,7 @@ namespace dtAnim
 
    void CharacterWrapperTests::setUp()
    {
-      dtDAL::Project::GetInstance().SetContext(dtUtil::GetDeltaRootPath() + "/examples/data/demoMap");
+      dtCore::Project::GetInstance().SetContext(dtUtil::GetDeltaRootPath() + "/examples/data/demoMap");
 
       std::string modelPath = dtUtil::FindFileInPathList("SkeletalMeshes/marine_test.xml");
       CPPUNIT_ASSERT(!modelPath.empty());

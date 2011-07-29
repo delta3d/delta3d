@@ -23,9 +23,9 @@
 #include <fireFighter/utilityfunctions.h>
 #include <dtAudio/sound.h>
 #include <dtCore/particlesystem.h>
-#include <dtDAL/resourceactorproperty.h>
-#include <dtDAL/datatype.h>
-#include <dtDAL/functor.h>
+#include <dtCore/resourceactorproperty.h>
+#include <dtCore/datatype.h>
+#include <dtCore/functor.h>
 #include <dtUtil/log.h>
 #include <osg/MatrixTransform>
 
@@ -46,9 +46,9 @@ void DDGActorProxy::BuildPropertyMap()
 
    DDGActor& ddg = static_cast<DDGActor&>(GetGameActor());
 
-   AddProperty(new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::STATIC_MESH,
+   AddProperty(new dtCore::ResourceActorProperty(*this, dtCore::DataType::STATIC_MESH,
       "Model", "Model",
-      dtDAL::ResourceActorProperty::SetFuncType(&ddg, &DDGActor::LoadFile),
+      dtCore::ResourceActorProperty::SetFuncType(&ddg, &DDGActor::LoadFile),
       "Loads the model file for the ship"));
 }
 

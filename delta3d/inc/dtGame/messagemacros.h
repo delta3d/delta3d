@@ -25,7 +25,7 @@
 #ifndef MESSAGEMACROS_H_
 #define MESSAGEMACROS_H_
 
-#include <dtDAL/typetoactorproperty.h>
+#include <dtCore/typetoactorproperty.h>
 
 
 /**
@@ -76,7 +76,7 @@
    public: \
 
 #define DECLARE_PARAMETER_INLINE(Type, ParamName) \
-      typedef dtDAL::TypeToActorProperty<Type>::named_parameter_type TYPE_##ParamName; \
+      typedef dtCore::TypeToActorProperty<Type>::named_parameter_type TYPE_##ParamName; \
       \
       void Set ## ParamName(dtUtil::TypeTraits<Type>::param_type value)\
       {\
@@ -96,12 +96,12 @@
          CLS::CLS() {
 
 #define DT_ADD_PARAMETER(Type, ParamName) \
-   typedef dtDAL::TypeToActorProperty<Type>::named_parameter_type TYPE_##ParamName; \
+   typedef dtCore::TypeToActorProperty<Type>::named_parameter_type TYPE_##ParamName; \
    static const dtUtil::RefString PARAM_NAME_##ParamName(#ParamName); \
    AddParameter(new TYPE_##ParamName(PARAM_NAME_##ParamName));
 
 #define DT_ADD_PARAMETER_WITH_DEFAULT(Type, ParamName, Default) \
-   typedef dtDAL::TypeToActorProperty<Type>::named_parameter_type TYPE_##ParamName; \
+   typedef dtCore::TypeToActorProperty<Type>::named_parameter_type TYPE_##ParamName; \
    static const dtUtil::RefString PARAM_NAME_##ParamName(#ParamName); \
    AddParameter(new TYPE_##ParamName(PARAM_NAME_##ParamName, Default));
 

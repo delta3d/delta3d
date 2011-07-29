@@ -33,8 +33,8 @@
 #include <dtAI/aiplugininterface.h>
 #include <dtAI/aiinterfaceactor.h>
 #include <dtAI/aiactorregistry.h>
-#include <dtDAL/librarymanager.h>
-#include <dtDAL/project.h>
+#include <dtCore/librarymanager.h>
+#include <dtCore/project.h>
 
 #include <dtCore/refptr.h>
 #include <dtUtil/mathdefines.h>
@@ -88,9 +88,9 @@ CPPUNIT_TEST_SUITE_REGISTRATION( WaypointGraphTests );
 
 void WaypointGraphTests::setUp()
 {
-   dtDAL::LibraryManager& libMan = dtDAL::LibraryManager::GetInstance();
+   dtCore::LibraryManager& libMan = dtCore::LibraryManager::GetInstance();
    libMan.LoadActorRegistry("dtAI");
-   dtCore::RefPtr<dtDAL::BaseActorObject> proxy = libMan.CreateActorProxy(*AIActorRegistry::AI_INTERFACE_ACTOR_TYPE);
+   dtCore::RefPtr<dtCore::BaseActorObject> proxy = libMan.CreateActorProxy(*AIActorRegistry::AI_INTERFACE_ACTOR_TYPE);
 
    mAIInterface = dynamic_cast<dtAI::AIInterfaceActorProxy*>(proxy.get())->GetAIInterface();
 
@@ -628,7 +628,7 @@ void WaypointGraphTests::TestLoadSave()
 {
    CreateWaypoints();
 
-   //dtDAL::Project& proj = dtDAL::Project::GetInstance();
+   //dtCore::Project& proj = dtCore::Project::GetInstance();
    //std::string filePath = proj.GetContext();
    std::string filename = "WaypointGraphTests_TestWaypointFile.ai";
    //std::string fullFilename = filePath + '/' + filename;

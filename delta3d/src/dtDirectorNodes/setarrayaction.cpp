@@ -24,9 +24,9 @@
 #include <dtCore/transform.h>
 #include <dtCore/transformable.h>
 
-#include <dtDAL/arrayactorpropertybase.h>
-#include <dtDAL/intactorproperty.h>
-#include <dtDAL/stringactorproperty.h>
+#include <dtCore/arrayactorpropertybase.h>
+#include <dtCore/intactorproperty.h>
+#include <dtCore/stringactorproperty.h>
 
 #include <dtDirector/arrayvaluenode.h>
 #include <dtDirector/director.h>
@@ -63,23 +63,23 @@ namespace dtDirector
       ActionNode::BuildPropertyMap();
 
       // Create our value links.
-      dtDAL::IntActorProperty* arrayProp = new dtDAL::IntActorProperty(
+      dtCore::IntActorProperty* arrayProp = new dtCore::IntActorProperty(
          "Array", "Array",
-         dtDAL::IntActorProperty::SetFuncType(this, &SetArrayAction::SetArray),
-         dtDAL::IntActorProperty::GetFuncType(this, &SetArrayAction::GetArray),
+         dtCore::IntActorProperty::SetFuncType(this, &SetArrayAction::SetArray),
+         dtCore::IntActorProperty::GetFuncType(this, &SetArrayAction::GetArray),
          "The array to set or insert into.");
 
-      dtDAL::IntActorProperty* indexProp = new dtDAL::IntActorProperty(
+      dtCore::IntActorProperty* indexProp = new dtCore::IntActorProperty(
          "Index", "Index",
-         dtDAL::IntActorProperty::SetFuncType(this, &SetArrayAction::SetIndex),
-         dtDAL::IntActorProperty::GetFuncType(this, &SetArrayAction::GetIndex),
+         dtCore::IntActorProperty::SetFuncType(this, &SetArrayAction::SetIndex),
+         dtCore::IntActorProperty::GetFuncType(this, &SetArrayAction::GetIndex),
          "The index of the array to set or insert into (-1 appends to end on insert).");
       AddProperty(indexProp);
 
-      dtDAL::StringActorProperty* valueProp = new dtDAL::StringActorProperty(
+      dtCore::StringActorProperty* valueProp = new dtCore::StringActorProperty(
          "Value", "Value",
-         dtDAL::StringActorProperty::SetFuncType(this, &SetArrayAction::SetValue),
-         dtDAL::StringActorProperty::GetFuncType(this, &SetArrayAction::GetValue),
+         dtCore::StringActorProperty::SetFuncType(this, &SetArrayAction::SetValue),
+         dtCore::StringActorProperty::GetFuncType(this, &SetArrayAction::GetValue),
          "The value to set or insert into the array.");
       AddProperty(valueProp);
 
@@ -113,7 +113,7 @@ namespace dtDirector
             ArrayValueNode* arrayNode = dynamic_cast<ArrayValueNode*>(valueNode);
             if (arrayNode)
             {
-               dtDAL::ArrayActorPropertyBase* arrayProp = arrayNode->GetArrayProperty();
+               dtCore::ArrayActorPropertyBase* arrayProp = arrayNode->GetArrayProperty();
                if (arrayProp)
                {
                   arrayProp->Insert(arrayIndex);

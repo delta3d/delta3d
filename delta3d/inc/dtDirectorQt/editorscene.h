@@ -183,14 +183,14 @@ namespace dtDirector
        *
        * @param[in]  container  The item to add.
        */
-      void AddSelected(dtDAL::PropertyContainer* container);
+      void AddSelected(dtCore::PropertyContainer* container);
 
       /**
        * Removes an item from the selected list.
        *
        * @param[in]  container  The item to remove.
        */
-      void RemoveSelected(dtDAL::PropertyContainer* container);
+      void RemoveSelected(dtCore::PropertyContainer* container);
 
       /**
        * Creates a new node.
@@ -232,7 +232,7 @@ namespace dtDirector
       /**
        * Retrieves the current selection.
        */
-      std::vector<dtCore::RefPtr<dtDAL::PropertyContainer> >& GetSelection() {return mSelected;}
+      std::vector<dtCore::RefPtr<dtCore::PropertyContainer> >& GetSelection() {return mSelected;}
 
       /**
        * Refreshes the property editor.

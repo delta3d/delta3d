@@ -2,13 +2,13 @@
 #define linkedpointarrayactorproxy_h__
 
 #include <dtGame/gameactor.h>
-#include <dtDAL/plugin_export.h>
-#include <dtDAL/transformableactorproxy.h>
+#include <dtCore/plugin_export.h>
+#include <dtCore/transformableactorproxy.h>
 #include <dtABC/export.h>
-#include <dtDAL/actorproperty.h>
+#include <dtCore/actorproperty.h>
 #include <osgText/Text>
 #include <dtCore/transformable.h>
-#include <dtDAL/gameevent.h>
+#include <dtCore/gameevent.h>
 #include <osg/Geode>
 #include <osg/ShapeDrawable>
 
@@ -320,10 +320,10 @@ namespace dtActors
    /////////////////////////////////////////////////////////////////////////////
    // PROXY CODE
    /////////////////////////////////////////////////////////////////////////////
-   class DT_PLUGIN_EXPORT LinkedPointsActorProxy : public dtDAL::TransformableActorProxy
+   class DT_PLUGIN_EXPORT LinkedPointsActorProxy : public dtCore::TransformableActorProxy
    {
    public:
-      typedef dtDAL::TransformableActorProxy BaseClass;
+      typedef dtCore::TransformableActorProxy BaseClass;
 
       static const dtUtil::RefString CLASS_NAME;
 

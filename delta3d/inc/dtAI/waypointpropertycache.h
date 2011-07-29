@@ -25,7 +25,7 @@
 #include <dtUtil/log.h>
 #include <osg/Referenced>
 
-#include <dtDAL/objecttype.h>
+#include <dtCore/objecttype.h>
 #include <dtUtil/objectfactory.h>
 #include <dtCore/refptr.h>
 
@@ -41,7 +41,7 @@ namespace dtAI
       {
       }
 
-      WaypointPropertyBase* GetPropertyContainer(const dtDAL::ObjectType& waypointType, WaypointInterface* wt)
+      WaypointPropertyBase* GetPropertyContainer(const dtCore::ObjectType& waypointType, WaypointInterface* wt)
       {
          WaypointPropertyBase* wpb = mPropertyFactory->CreateObject(&waypointType);
          wpb->Set(wt);
@@ -50,13 +50,13 @@ namespace dtAI
       }
 
       template <class WaypointDerivative>
-      void RegisterType(dtCore::RefPtr<const dtDAL::ObjectType> type)
+      void RegisterType(dtCore::RefPtr<const dtCore::ObjectType> type)
       {
          mPropertyFactory->RegisterType<WaypointPropertyContainer<WaypointDerivative> >(type);
       }
 
    private:
-      typedef dtUtil::ObjectFactory< dtCore::RefPtr<const dtDAL::ObjectType>, WaypointPropertyBase> WaypointPropertyFactory;
+      typedef dtUtil::ObjectFactory< dtCore::RefPtr<const dtCore::ObjectType>, WaypointPropertyBase> WaypointPropertyFactory;
 
       dtCore::RefPtr<WaypointPropertyFactory> mPropertyFactory;
    };

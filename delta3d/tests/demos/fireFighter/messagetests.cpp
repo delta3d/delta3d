@@ -31,7 +31,7 @@
 #include <dtCore/system.h>
 #include <dtCore/scene.h>
 #include <dtCore/timer.h> // for appsleep
-#include <dtDAL/project.h>
+#include <dtCore/project.h>
 #include <dtGame/gamemanager.h>
 #include <dtGame/gmcomponent.h>
 #include <dtGame/defaultmessageprocessor.h>
@@ -72,7 +72,7 @@ void FireFighterMessageTests::setUp()
    mGM->SetApplication(*mApp);
    dtAudio::AudioManager::Instantiate();
    mGM->LoadActorRegistry("fireFighter");
-   //dtDAL::Project::GetInstance().SetContext("../demos/fireFighter/fireFighterProject");
+   //dtCore::Project::GetInstance().SetContext("../demos/fireFighter/fireFighterProject");
 }
 
 void FireFighterMessageTests::tearDown()

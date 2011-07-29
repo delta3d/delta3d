@@ -20,8 +20,8 @@
  */
 #include <dtHLAGM/ddmcalculatorgeographic.h>
 
-#include <dtDAL/enumactorproperty.h>
-#include <dtDAL/longactorproperty.h>
+#include <dtCore/enumactorproperty.h>
+#include <dtCore/longactorproperty.h>
 
 #include <dtHLAGM/ddmgeographicregiondata.h>
 #include <dtHLAGM/ddmregiondata.h>
@@ -85,41 +85,41 @@ namespace dtHLAGM
    {
       mCoordinates.SetIncomingCoordinateType(dtUtil::IncomingCoordinateType::GEODETIC);
 
-      AddProperty(new dtDAL::EnumActorProperty<DDMCalculatorGeographic::DDMObjectKind>(PROP_CALCULATOR_OBJECT_KIND, PROP_CALCULATOR_OBJECT_KIND,
-            dtDAL::EnumActorProperty<DDMCalculatorGeographic::DDMObjectKind>::SetFuncType(this, &DDMCalculatorGeographic::SetCalculatorObjectKind),
-            dtDAL::EnumActorProperty<DDMCalculatorGeographic::DDMObjectKind>::GetFuncType(this, &DDMCalculatorGeographic::GetCalculatorObjectKind)
+      AddProperty(new dtCore::EnumActorProperty<DDMCalculatorGeographic::DDMObjectKind>(PROP_CALCULATOR_OBJECT_KIND, PROP_CALCULATOR_OBJECT_KIND,
+            dtCore::EnumActorProperty<DDMCalculatorGeographic::DDMObjectKind>::SetFuncType(this, &DDMCalculatorGeographic::SetCalculatorObjectKind),
+            dtCore::EnumActorProperty<DDMCalculatorGeographic::DDMObjectKind>::GetFuncType(this, &DDMCalculatorGeographic::GetCalculatorObjectKind)
             ));
 
-      AddProperty(new dtDAL::EnumActorProperty<DDMCalculatorGeographic::RegionCalculationType>(PROP_FRIENDLY_REGION_TYPE, PROP_FRIENDLY_REGION_TYPE,
-            dtDAL::EnumActorProperty<DDMCalculatorGeographic::RegionCalculationType>::SetFuncType(this, &DDMCalculatorGeographic::SetFriendlyRegionType),
-            dtDAL::EnumActorProperty<DDMCalculatorGeographic::RegionCalculationType>::GetFuncType(this, &DDMCalculatorGeographic::GetFriendlyRegionType)
+      AddProperty(new dtCore::EnumActorProperty<DDMCalculatorGeographic::RegionCalculationType>(PROP_FRIENDLY_REGION_TYPE, PROP_FRIENDLY_REGION_TYPE,
+            dtCore::EnumActorProperty<DDMCalculatorGeographic::RegionCalculationType>::SetFuncType(this, &DDMCalculatorGeographic::SetFriendlyRegionType),
+            dtCore::EnumActorProperty<DDMCalculatorGeographic::RegionCalculationType>::GetFuncType(this, &DDMCalculatorGeographic::GetFriendlyRegionType)
             ));
-      AddProperty(new dtDAL::EnumActorProperty<DDMCalculatorGeographic::RegionCalculationType>(PROP_ENEMY_REGION_TYPE, PROP_ENEMY_REGION_TYPE,
-            dtDAL::EnumActorProperty<DDMCalculatorGeographic::RegionCalculationType>::SetFuncType(this, &DDMCalculatorGeographic::SetEnemyRegionType),
-            dtDAL::EnumActorProperty<DDMCalculatorGeographic::RegionCalculationType>::GetFuncType(this, &DDMCalculatorGeographic::GetEnemyRegionType)
+      AddProperty(new dtCore::EnumActorProperty<DDMCalculatorGeographic::RegionCalculationType>(PROP_ENEMY_REGION_TYPE, PROP_ENEMY_REGION_TYPE,
+            dtCore::EnumActorProperty<DDMCalculatorGeographic::RegionCalculationType>::SetFuncType(this, &DDMCalculatorGeographic::SetEnemyRegionType),
+            dtCore::EnumActorProperty<DDMCalculatorGeographic::RegionCalculationType>::GetFuncType(this, &DDMCalculatorGeographic::GetEnemyRegionType)
             ));
-      AddProperty(new dtDAL::EnumActorProperty<DDMCalculatorGeographic::RegionCalculationType>(PROP_NEUTRAL_REGION_TYPE, PROP_NEUTRAL_REGION_TYPE,
-            dtDAL::EnumActorProperty<DDMCalculatorGeographic::RegionCalculationType>::SetFuncType(this, &DDMCalculatorGeographic::SetNeutralRegionType),
-            dtDAL::EnumActorProperty<DDMCalculatorGeographic::RegionCalculationType>::GetFuncType(this, &DDMCalculatorGeographic::GetNeutralRegionType)
-            ));
-
-      AddProperty(new dtDAL::EnumActorProperty<DDMCalculatorGeographic::RegionCalculationType>(PROP_DEFAULT_REGION_TYPE, PROP_DEFAULT_REGION_TYPE,
-            dtDAL::EnumActorProperty<DDMCalculatorGeographic::RegionCalculationType>::SetFuncType(this, &DDMCalculatorGeographic::SetDefaultRegionType),
-            dtDAL::EnumActorProperty<DDMCalculatorGeographic::RegionCalculationType>::GetFuncType(this, &DDMCalculatorGeographic::GetDefaultRegionType)
+      AddProperty(new dtCore::EnumActorProperty<DDMCalculatorGeographic::RegionCalculationType>(PROP_NEUTRAL_REGION_TYPE, PROP_NEUTRAL_REGION_TYPE,
+            dtCore::EnumActorProperty<DDMCalculatorGeographic::RegionCalculationType>::SetFuncType(this, &DDMCalculatorGeographic::SetNeutralRegionType),
+            dtCore::EnumActorProperty<DDMCalculatorGeographic::RegionCalculationType>::GetFuncType(this, &DDMCalculatorGeographic::GetNeutralRegionType)
             ));
 
+      AddProperty(new dtCore::EnumActorProperty<DDMCalculatorGeographic::RegionCalculationType>(PROP_DEFAULT_REGION_TYPE, PROP_DEFAULT_REGION_TYPE,
+            dtCore::EnumActorProperty<DDMCalculatorGeographic::RegionCalculationType>::SetFuncType(this, &DDMCalculatorGeographic::SetDefaultRegionType),
+            dtCore::EnumActorProperty<DDMCalculatorGeographic::RegionCalculationType>::GetFuncType(this, &DDMCalculatorGeographic::GetDefaultRegionType)
+            ));
 
-      AddProperty(new dtDAL::LongActorProperty(PROP_FRIENDLY_APPSPACE, PROP_FRIENDLY_APPSPACE,
-            dtDAL::LongActorProperty::SetFuncType(this, &DDMCalculatorGeographic::SetFriendlyAppSpace),
-            dtDAL::LongActorProperty::GetFuncType(this, &DDMCalculatorGeographic::GetFriendlyAppSpace)
+
+      AddProperty(new dtCore::LongActorProperty(PROP_FRIENDLY_APPSPACE, PROP_FRIENDLY_APPSPACE,
+            dtCore::LongActorProperty::SetFuncType(this, &DDMCalculatorGeographic::SetFriendlyAppSpace),
+            dtCore::LongActorProperty::GetFuncType(this, &DDMCalculatorGeographic::GetFriendlyAppSpace)
             ));
-      AddProperty(new dtDAL::LongActorProperty(PROP_ENEMY_APPSPACE, PROP_ENEMY_APPSPACE,
-            dtDAL::LongActorProperty::SetFuncType(this, &DDMCalculatorGeographic::SetEnemyAppSpace),
-            dtDAL::LongActorProperty::GetFuncType(this, &DDMCalculatorGeographic::GetEnemyAppSpace)
+      AddProperty(new dtCore::LongActorProperty(PROP_ENEMY_APPSPACE, PROP_ENEMY_APPSPACE,
+            dtCore::LongActorProperty::SetFuncType(this, &DDMCalculatorGeographic::SetEnemyAppSpace),
+            dtCore::LongActorProperty::GetFuncType(this, &DDMCalculatorGeographic::GetEnemyAppSpace)
             ));
-      AddProperty(new dtDAL::LongActorProperty(PROP_NEUTRAL_APPSPACE, PROP_NEUTRAL_APPSPACE,
-            dtDAL::LongActorProperty::SetFuncType(this, &DDMCalculatorGeographic::SetNeutralAppSpace),
-            dtDAL::LongActorProperty::GetFuncType(this, &DDMCalculatorGeographic::GetNeutralAppSpace)
+      AddProperty(new dtCore::LongActorProperty(PROP_NEUTRAL_APPSPACE, PROP_NEUTRAL_APPSPACE,
+            dtCore::LongActorProperty::SetFuncType(this, &DDMCalculatorGeographic::SetNeutralAppSpace),
+            dtCore::LongActorProperty::GetFuncType(this, &DDMCalculatorGeographic::GetNeutralAppSpace)
             ));
    }
 

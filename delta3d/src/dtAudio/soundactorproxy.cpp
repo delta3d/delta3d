@@ -23,11 +23,11 @@
 
 #include <dtAudio/audiomanager.h>
 
-#include <dtDAL/actorproxyicon.h>
-#include <dtDAL/booleanactorproperty.h>
-#include <dtDAL/floatactorproperty.h>
-#include <dtDAL/resourceactorproperty.h>
-#include <dtDAL/vectoractorproperties.h>
+#include <dtCore/actorproxyicon.h>
+#include <dtCore/booleanactorproperty.h>
+#include <dtCore/floatactorproperty.h>
+#include <dtCore/resourceactorproperty.h>
+#include <dtCore/vectoractorproperties.h>
 
 #include <dtGame/gamemanager.h>
 #include <dtGame/invokable.h>
@@ -36,7 +36,7 @@
 #include <dtUtil/mathdefines.h>
 
 using namespace dtAudio;
-using namespace dtDAL;
+using namespace dtCore;
 
 namespace dtAudio
 {
@@ -354,7 +354,7 @@ namespace dtAudio
            BooleanActorProperty::GetFuncType(this, &SoundActorProxy::IsPlayedAtStartup),
            "Will play sound at startup", GROUPNAME));
 
-        AddProperty(new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::SOUND,
+        AddProperty(new dtCore::ResourceActorProperty(*this, dtCore::DataType::SOUND,
            PROPERTY_SOUND_EFFECT,
            PROPERTY_SOUND_EFFECT,
            ResourceActorProperty::SetFuncType(this, &SoundActorProxy::LoadFile),
@@ -428,12 +428,12 @@ namespace dtAudio
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    dtDAL::ActorProxyIcon* SoundActorProxy::GetBillBoardIcon()
+    dtCore::ActorProxyIcon* SoundActorProxy::GetBillBoardIcon()
     {
         if (!mBillBoardIcon.valid())
         {
             mBillBoardIcon =
-                 new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IMAGE_BILLBOARD_SOUND);
+                 new dtCore::ActorProxyIcon(dtCore::ActorProxyIcon::IMAGE_BILLBOARD_SOUND);
         }
 
         return mBillBoardIcon.get();

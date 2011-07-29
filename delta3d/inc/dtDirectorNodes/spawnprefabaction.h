@@ -87,8 +87,8 @@ namespace dtDirector
       /**
        * Accessors for property values.
        */
-      void SetPrefab(const dtDAL::ResourceDescriptor& value);
-      dtDAL::ResourceDescriptor GetPrefab() const;
+      void SetPrefab(const dtCore::ResourceDescriptor& value);
+      dtCore::ResourceDescriptor GetPrefab() const;
 
       void SetSpawnLocation(const osg::Vec3& value);
       osg::Vec3 GetSpawnLocation() const;
@@ -105,7 +105,7 @@ namespace dtDirector
 
    private:
 
-      dtDAL::ResourceDescriptor mPrefab;
+      dtCore::ResourceDescriptor mPrefab;
       osg::Vec3                 mSpawnLocation;
    };
 }

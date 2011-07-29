@@ -33,7 +33,7 @@
 #include <dtQt/dynamicabstractcontrol.h>
 #include <dtQt/dynamicsubwidgets.h>
 
-namespace dtDAL
+namespace dtCore
 {
    class StringActorProperty;
    class StringSelectorActorProperty;
@@ -65,7 +65,7 @@ namespace dtQt
        * @see DynamicAbstractControl#InitializeData
        */
       virtual void InitializeData(DynamicAbstractControl* newParent, PropertyEditorModel* model,
-         dtDAL::PropertyContainer* newPC, dtDAL::ActorProperty* property);
+         dtCore::PropertyContainer* newPC, dtCore::ActorProperty* property);
 
       /**
        * @see DynamicAbstractControl#updateEditorFromModel
@@ -122,8 +122,8 @@ namespace dtQt
    protected:
 
    private:
-      dtDAL::StringActorProperty* mProperty;
-      dtDAL::StringSelectorActorProperty* mSelectorProperty;
+      dtCore::StringActorProperty* mProperty;
+      dtCore::StringSelectorActorProperty* mSelectorProperty;
 
       // This pointer is not really in our control.  It is constructed in the createEditor()
       // method and destroyed whenever QT feels like it (mostly when the control looses focus).

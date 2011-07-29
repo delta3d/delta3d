@@ -21,7 +21,7 @@
 #include <prefix/dtdirectornodesprefix.h>
 #include <dtDirectorNodes/referencevalue.h>
 
-#include <dtDAL/propertymacros.h>
+#include <dtCore/propertymacros.h>
 
 #include <dtDirector/director.h>
 #include <dtDirector/valuelink.h>
@@ -54,10 +54,10 @@ namespace dtDirector
       ValueNode::BuildPropertyMap();
       RemoveProperty("Global");
 
-      dtDAL::StringActorProperty* refProp = new dtDAL::StringActorProperty(
+      dtCore::StringActorProperty* refProp = new dtCore::StringActorProperty(
          "Reference", "Referenced Value",
-         dtDAL::StringActorProperty::SetFuncType(this, &ReferenceValue::SetReference),
-         dtDAL::StringActorProperty::GetFuncType(this, &ReferenceValue::GetReference),
+         dtCore::StringActorProperty::SetFuncType(this, &ReferenceValue::SetReference),
+         dtCore::StringActorProperty::GetFuncType(this, &ReferenceValue::GetReference),
          "This will set the referenced value, set this to the same name as the value you want to reference.");
       AddProperty(refProp);
 
@@ -145,11 +145,11 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   dtDAL::ActorProperty* ReferenceValue::GetProperty(const std::string& name, int index, ValueNode** outNode)
+   dtCore::ActorProperty* ReferenceValue::GetProperty(const std::string& name, int index, ValueNode** outNode)
    {
       if (name == "Value" && !mValues.empty())
       {
-         dtDAL::ActorProperty* prop = mValues[0].GetProperty(index, outNode);
+         dtCore::ActorProperty* prop = mValues[0].GetProperty(index, outNode);
          //if (prop && prop->GetName() == name) return prop;
          if (prop) return prop;
       }
@@ -158,7 +158,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   dtDAL::ActorProperty* ReferenceValue::GetProperty(int index, ValueNode** outNode)
+   dtCore::ActorProperty* ReferenceValue::GetProperty(int index, ValueNode** outNode)
    {
       if (!mValues.empty() && !mValues[0].GetLinks().empty())
       {
@@ -169,21 +169,21 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   bool ReferenceValue::CanBeType(dtDAL::DataType& type)
+   bool ReferenceValue::CanBeType(dtCore::DataType& type)
    {
-      dtDAL::DataType& myType = GetPropertyType();
+      dtCore::DataType& myType = GetPropertyType();
 
-      return myType == dtDAL::DataType::UNKNOWN || myType == type;
+      return myType == dtCore::DataType::UNKNOWN || myType == type;
    }
 
    //////////////////////////////////////////////////////////////////////////
-   dtDAL::DataType& ReferenceValue::GetPropertyType()
+   dtCore::DataType& ReferenceValue::GetPropertyType()
    {
       // If we are linked to another value node, use that value's type.
       if (!mValues.empty() && !mValues[0].GetLinks().empty())
       {
-         dtDAL::DataType& type = mValues[0].GetLinks()[0]->GetPropertyType();
-         if (type != dtDAL::DataType::UNKNOWN)
+         dtCore::DataType& type = mValues[0].GetLinks()[0]->GetPropertyType();
+         if (type != dtCore::DataType::UNKNOWN)
          {
             return type;
          }
@@ -193,7 +193,7 @@ namespace dtDirector
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   dtDAL::DataType& ReferenceValue::GetNonReferencedPropertyType()
+   dtCore::DataType& ReferenceValue::GetNonReferencedPropertyType()
    {
       // If we are linked to a value link, use the type of that link.
       if (!mLinks.empty())
@@ -201,8 +201,8 @@ namespace dtDirector
          int count = (int)mLinks.size();
          for (int index = 0; index < count; index++)
          {
-            dtDAL::DataType& type = mLinks[index]->GetPropertyType();
-            if (type != dtDAL::DataType::UNKNOWN)
+            dtCore::DataType& type = mLinks[index]->GetPropertyType();
+            if (type != dtCore::DataType::UNKNOWN)
             {
                return type;
             }
@@ -210,7 +210,7 @@ namespace dtDirector
       }
 
       // If we have no connections yet, the type is undefined.
-      return dtDAL::DataType::UNKNOWN;
+      return dtCore::DataType::UNKNOWN;
    }
 
    //////////////////////////////////////////////////////////////////////////

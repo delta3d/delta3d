@@ -143,16 +143,16 @@ namespace dtAudio
       *  strange considering you cannot actually draw a sound, however, this informs the
       *  world that this proxy's actor and billboard should be represented in the scene.
       */
-      virtual const dtDAL::BaseActorObject::RenderMode& GetRenderMode()
+      virtual const dtCore::BaseActorObject::RenderMode& GetRenderMode()
       {
-         return dtDAL::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON;
+         return dtCore::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON;
       }
 
       /**
       * Gets the billboard icon associated with sound actor proxies.
       * @return
       */
-      virtual dtDAL::ActorProxyIcon* GetBillBoardIcon();
+      virtual dtCore::ActorProxyIcon* GetBillBoardIcon();
 
       /// Builds the invokables of this actor
       void BuildInvokables();

@@ -20,11 +20,11 @@
  */
 
 #include <fireFighter/firehoseactor.h>
-#include <dtDAL/resourceactorproperty.h>
+#include <dtCore/resourceactorproperty.h>
 #include <dtCore/particlesystem.h>
-#include <dtDAL/gameeventmanager.h>
-#include <dtDAL/map.h>
-#include <dtDAL/functor.h>
+#include <dtCore/gameeventmanager.h>
+#include <dtCore/map.h>
+#include <dtCore/functor.h>
 #include <dtGame/gamemanager.h>
 #include <dtGame/message.h>
 #include <dtGame/basemessages.h>
@@ -48,7 +48,7 @@ void FireHoseActorProxy::BuildPropertyMap()
 
    FireHoseActor &fha = static_cast<FireHoseActor&>(GetGameActor());
 
-   AddProperty(new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::PARTICLE_SYSTEM,
+   AddProperty(new dtCore::ResourceActorProperty(*this, dtCore::DataType::PARTICLE_SYSTEM,
       "StreamFile", "StreamFile",
       dtUtil::MakeFunctor(&FireHoseActor::SetStreamFilename, fha),
       "Sets the stream file particle system"));

@@ -8,7 +8,7 @@
 #include <dtDIS/acknowledgeconstants.h>
 
 // should not need to include this to compile!
-#include <dtDAL/actorproxy.h>
+#include <dtCore/actorproxy.h>
 
 
 using namespace dtDIS;

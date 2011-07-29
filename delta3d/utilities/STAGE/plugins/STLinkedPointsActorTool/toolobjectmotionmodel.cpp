@@ -9,7 +9,7 @@
 #include <dtCore/transform.h>
 #include <dtCore/transformable.h>
 
-#include <dtDAL/transformableactorproxy.h>
+#include <dtCore/transformableactorproxy.h>
 
 #include <osg/Math>
 #include <osg/Matrix>

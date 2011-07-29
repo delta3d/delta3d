@@ -43,13 +43,13 @@
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QMessageBox>
 
-#include <dtDAL/gameevent.h>
+#include <dtCore/gameevent.h>
 
 namespace dtEditQt
 {
 
    /// Constructor
-   GameEventDialog::GameEventDialog(QWidget* parent, dtDAL::GameEvent& event, bool isNew)
+   GameEventDialog::GameEventDialog(QWidget* parent, dtCore::GameEvent& event, bool isNew)
       : QDialog(parent)
    {
       if (isNew)

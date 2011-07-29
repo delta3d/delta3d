@@ -25,7 +25,7 @@
 #include <dtDirector/valuenode.h>
 #include <dtDirectorNodes/nodelibraryexport.h>
 
-#include <dtDAL/resourcedescriptor.h>
+#include <dtCore/resourcedescriptor.h>
 
 namespace dtDirector
 {
@@ -78,31 +78,31 @@ namespace dtDirector
        *
        * @param[in]  value  The value.
        */
-      void SetValue(const dtDAL::ResourceDescriptor& value);
+      void SetValue(const dtCore::ResourceDescriptor& value);
 
       /**
        * Retrieves the value.
        *
        * @return  The value.
        */
-      dtDAL::ResourceDescriptor GetValue();
+      dtCore::ResourceDescriptor GetValue();
 
       /**
        * Sets the value.
        *
        * @param[in]  value  The value.
        */
-      void SetInitialValue(const dtDAL::ResourceDescriptor& value);
+      void SetInitialValue(const dtCore::ResourceDescriptor& value);
 
       /**
        * Retrieves the value.
        *
        * @return  The value.
        */
-      dtDAL::ResourceDescriptor GetInitialValue();
+      dtCore::ResourceDescriptor GetInitialValue();
 
-      dtDAL::ResourceDescriptor mValue;
-      dtDAL::ResourceDescriptor mInitialValue;
+      dtCore::ResourceDescriptor mValue;
+      dtCore::ResourceDescriptor mInitialValue;
    };
 }
 

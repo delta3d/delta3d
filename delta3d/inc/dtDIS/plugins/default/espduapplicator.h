@@ -35,7 +35,7 @@ namespace DIS
 }
 ///@endcond
 
-namespace dtDAL
+namespace dtCore
 {
    class NamedGroupParameter;
 }
@@ -92,17 +92,17 @@ namespace dtDIS
 #endif
 
    private:
-      /// builds the dtDAL::NamedGroupParameter by adding dtDAL::NamedParameters
+      /// builds the dtCore::NamedGroupParameter by adding dtCore::NamedParameters
       /// to the parent group parameter from the data within the DIS::ArticulationParameter.
       /// @param source the DIS data to be read.
-      /// @param topgroup the valid dtDAL::NamedGroupParameter instance to be built.
+      /// @param topgroup the valid dtCore::NamedGroupParameter instance to be built.
       void AddArticulationMessageParameters(const DIS::ArticulationParameter& source,
-                                            dtDAL::NamedGroupParameter* topgroup,
+                                            dtCore::NamedGroupParameter* topgroup,
                                             unsigned int param_index) const;
-      void AddPartParameter(unsigned int partclass, dtDAL::NamedGroupParameter* parent) const;
-      void AddMotionParameter(unsigned int motionclass, double motionvalue, dtDAL::NamedGroupParameter* parent) const;
-      void AddFloatParam(const std::string& name, float value, dtDAL::NamedGroupParameter* parent) const;
-      void AddStringParam(const std::string& name, const std::string& value, dtDAL::NamedGroupParameter* parent) const;
+      void AddPartParameter(unsigned int partclass, dtCore::NamedGroupParameter* parent) const;
+      void AddMotionParameter(unsigned int motionclass, double motionvalue, dtCore::NamedGroupParameter* parent) const;
+      void AddFloatParam(const std::string& name, float value, dtCore::NamedGroupParameter* parent) const;
+      void AddStringParam(const std::string& name, const std::string& value, dtCore::NamedGroupParameter* parent) const;
 //      void UpdateAcceleration( osg::Vec3& currentVelocity ) ;
    };
 

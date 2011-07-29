@@ -24,8 +24,8 @@
 
 #include <dtCore/transform.h>
 #include <dtCore/transformable.h>
-#include <dtDAL/actoridactorproperty.h>
-#include <dtDAL/vectoractorproperties.h>
+#include <dtCore/actoridactorproperty.h>
+#include <dtCore/vectoractorproperties.h>
 #include <dtDirector/director.h>
 #include <dtGame/gamemanager.h>
 
@@ -55,28 +55,28 @@ namespace dtDirector
    {
       ActionNode::BuildPropertyMap();
 
-      dtDAL::ActorIDActorProperty* actorProp = new dtDAL::ActorIDActorProperty(
+      dtCore::ActorIDActorProperty* actorProp = new dtCore::ActorIDActorProperty(
          "Actor", "Actor",
-         dtDAL::ActorIDActorProperty::SetFuncType(this, &GetActorOrientationAction::SetActor),
-         dtDAL::ActorIDActorProperty::GetFuncType(this, &GetActorOrientationAction::GetActor),
+         dtCore::ActorIDActorProperty::SetFuncType(this, &GetActorOrientationAction::SetActor),
+         dtCore::ActorIDActorProperty::GetFuncType(this, &GetActorOrientationAction::GetActor),
          "dtCore::Transformable",
          "The actor whose orientation we want.");
       AddProperty(actorProp);
 
-      mpForwardProp = new dtDAL::Vec3ActorProperty(
+      mpForwardProp = new dtCore::Vec3ActorProperty(
          "Forward", "Forward",
-         dtDAL::Vec3ActorProperty::SetFuncType(this, &GetActorOrientationAction::SetEmptyVec),
-         dtDAL::Vec3ActorProperty::GetFuncType(this, &GetActorOrientationAction::GetEmptyVec),
+         dtCore::Vec3ActorProperty::SetFuncType(this, &GetActorOrientationAction::SetEmptyVec),
+         dtCore::Vec3ActorProperty::GetFuncType(this, &GetActorOrientationAction::GetEmptyVec),
          "The actor's forward vector.");
-      mpUpProp = new dtDAL::Vec3ActorProperty(
+      mpUpProp = new dtCore::Vec3ActorProperty(
          "Up", "Up",
-         dtDAL::Vec3ActorProperty::SetFuncType(this, &GetActorOrientationAction::SetEmptyVec),
-         dtDAL::Vec3ActorProperty::GetFuncType(this, &GetActorOrientationAction::GetEmptyVec),
+         dtCore::Vec3ActorProperty::SetFuncType(this, &GetActorOrientationAction::SetEmptyVec),
+         dtCore::Vec3ActorProperty::GetFuncType(this, &GetActorOrientationAction::GetEmptyVec),
          "The actor's up vector.");
-      mpRightProp = new dtDAL::Vec3ActorProperty(
+      mpRightProp = new dtCore::Vec3ActorProperty(
          "Right", "Right",
-         dtDAL::Vec3ActorProperty::SetFuncType(this, &GetActorOrientationAction::SetEmptyVec),
-         dtDAL::Vec3ActorProperty::GetFuncType(this, &GetActorOrientationAction::GetEmptyVec),
+         dtCore::Vec3ActorProperty::SetFuncType(this, &GetActorOrientationAction::SetEmptyVec),
+         dtCore::Vec3ActorProperty::GetFuncType(this, &GetActorOrientationAction::GetEmptyVec),
          "The actor's right vector.");
 
       mValues.push_back(ValueLink(this, actorProp));
@@ -89,7 +89,7 @@ namespace dtDirector
    bool GetActorOrientationAction::Update(float simDelta, float delta, int input, bool firstUpdate)
    {
       dtCore::UniqueId actorID = GetActorID("Actor");
-      dtDAL::BaseActorObject* proxy = GetDirector()->GetGameManager()->FindActorById(actorID);
+      dtCore::BaseActorObject* proxy = GetDirector()->GetGameManager()->FindActorById(actorID);
       if (proxy != NULL)
       {
          dtCore::Transformable* actor = NULL;

@@ -34,9 +34,9 @@
 #include <QtGui/QLineEdit>
 #include <QtGui/QDoubleValidator>
 #include <dtQt/dynamiccontainercontrol.h>
-#include <dtDAL/actorproperty.h>
-#include <dtDAL/datatype.h>
-#include <dtDAL/containeractorproperty.h>
+#include <dtCore/actorproperty.h>
+#include <dtCore/datatype.h>
+#include <dtCore/containeractorproperty.h>
 #include <dtUtil/log.h>
 #include <dtQt/propertyeditormodel.h>
 #include <dtQt/propertyeditortreeview.h>
@@ -58,13 +58,13 @@ namespace dtQt
 
    /////////////////////////////////////////////////////////////////////////////////
    void DynamicContainerControl::InitializeData(DynamicAbstractControl* newParent,
-      PropertyEditorModel* newModel, dtDAL::PropertyContainer* newPC, dtDAL::ActorProperty* newProperty)
+      PropertyEditorModel* newModel, dtCore::PropertyContainer* newPC, dtCore::ActorProperty* newProperty)
    {
       // Note - We used to have dynamic_cast in here, but it was failing to properly cast in
       // all cases in Linux with gcc4.  So we replaced it with a static cast.
-      if (newProperty != NULL && newProperty->GetDataType() == dtDAL::DataType::CONTAINER)
+      if (newProperty != NULL && newProperty->GetDataType() == dtCore::DataType::CONTAINER)
       {
-         mProperty = static_cast<dtDAL::ContainerActorProperty*>(newProperty);
+         mProperty = static_cast<dtCore::ContainerActorProperty*>(newProperty);
          DynamicAbstractControl::InitializeData(newParent, newModel, newPC, newProperty);
          resizeChildren();
       }
@@ -204,7 +204,7 @@ namespace dtQt
 
          for (int index = 0; index < size; index++)
          {
-            dtDAL::ActorProperty* propType = mProperty->GetProperty(index);
+            dtCore::ActorProperty* propType = mProperty->GetProperty(index);
             if (propType)
             {
                DynamicAbstractControl* propertyControl = GetDynamicControlFactory()->CreateDynamicControl(*propType);
@@ -214,13 +214,13 @@ namespace dtQt
                   propertyControl->SetDynamicControlFactory(GetDynamicControlFactory());
                   propertyControl->InitializeData(this, model, mPropContainer, propType);
 
-                  connect(propertyControl, SIGNAL(PropertyAboutToChange(dtDAL::PropertyContainer&, dtDAL::ActorProperty&,
+                  connect(propertyControl, SIGNAL(PropertyAboutToChange(dtCore::PropertyContainer&, dtCore::ActorProperty&,
                      const std::string&, const std::string&)),
-                     this, SLOT(PropertyAboutToChangePassThrough(dtDAL::PropertyContainer&, dtDAL::ActorProperty&,
+                     this, SLOT(PropertyAboutToChangePassThrough(dtCore::PropertyContainer&, dtCore::ActorProperty&,
                      const std::string&, const std::string&)));
 
-                  connect(propertyControl, SIGNAL(PropertyChanged(dtDAL::PropertyContainer&, dtDAL::ActorProperty&)),
-                     this, SLOT(PropertyChangedPassThrough(dtDAL::PropertyContainer&, dtDAL::ActorProperty&)));
+                  connect(propertyControl, SIGNAL(PropertyChanged(dtCore::PropertyContainer&, dtCore::ActorProperty&)),
+                     this, SLOT(PropertyChangedPassThrough(dtCore::PropertyContainer&, dtCore::ActorProperty&)));
                   mChildren.push_back(propertyControl);
                }
             }

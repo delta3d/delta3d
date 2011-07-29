@@ -57,7 +57,7 @@ namespace dtGame
    /**
     * @class Invokable
     * @brief An Invokable is a queriable method interface that can be added to a dtGame::GameActorProxy just
-    * as a dtDAL::ActorProperty represents a data value on the actor.
+    * as a dtCore::ActorProperty represents a data value on the actor.
     * Invoking the invokable requires a dtGame::Message as a parameter.  The actual code is executed by calling
     * a Functor that takes 1 parameter, the message, and returns nothing.  The method must take a const Method reference.
     * @see dtGame::Message

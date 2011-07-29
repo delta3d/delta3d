@@ -26,8 +26,8 @@
 #include <fireFighter/hatchactor.h>
 #include <dtGame/invokable.h>
 #include <dtGame/gamemanager.h>
-#include <dtDAL/resourceactorproperty.h>
-#include <dtDAL/functor.h>
+#include <dtCore/resourceactorproperty.h>
+#include <dtCore/functor.h>
 #include <dtUtil/log.h>
 #include <dtAudio/audiomanager.h>
 #include <osg/MatrixTransform>
@@ -49,7 +49,7 @@ void GameLevelActorProxy::BuildPropertyMap()
 
    GameLevelActor& gla = static_cast<GameLevelActor&>(GetGameActor());
 
-   AddProperty(new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::STATIC_MESH,
+   AddProperty(new dtCore::ResourceActorProperty(*this, dtCore::DataType::STATIC_MESH,
       "Model", "Model",
       dtUtil::MakeFunctor(&GameLevelActor::LoadFile, gla),
       "Loads the model file for the level"));
@@ -60,11 +60,11 @@ void GameLevelActorProxy::BuildInvokables()
    dtGame::GameActorProxy::BuildInvokables();
 }
 
-dtDAL::ActorProxyIcon* GameLevelActorProxy::GetBillBoardIcon()
+dtCore::ActorProxyIcon* GameLevelActorProxy::GetBillBoardIcon()
 {
    if (!mBillBoardIcon.valid())
    {
-      mBillBoardIcon = new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IMAGE_BILLBOARD_STATICMESH);
+      mBillBoardIcon = new dtCore::ActorProxyIcon(dtCore::ActorProxyIcon::IMAGE_BILLBOARD_STATICMESH);
    }
    return mBillBoardIcon.get();
 }

@@ -21,7 +21,7 @@
 #ifndef weatherenvironmentactor_h__
 #define weatherenvironmentactor_h__
 
-#include <dtDAL/plugin_export.h>
+#include <dtCore/plugin_export.h>
 #include <dtGame/environmentactor.h>
 #include <dtABC/weather.h>
 #include <dtCore/cloudplane.h>

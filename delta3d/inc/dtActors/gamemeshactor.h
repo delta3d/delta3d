@@ -24,7 +24,7 @@
 
 #include <dtGame/gameactor.h>
 #include <dtGame/gameactorproxy.h>
-#include <dtDAL/plugin_export.h>
+#include <dtCore/plugin_export.h>
 #include <dtCore/loadable.h>
 #include <dtCore/model.h>
 
@@ -227,14 +227,14 @@ namespace dtActors
        *  there is geometry assigned to this static mesh, RenderMode::DRAW_ACTOR
        *  is returned.
        */
-      virtual const dtDAL::BaseActorObject::RenderMode& GetRenderMode();
+      virtual const dtCore::BaseActorObject::RenderMode& GetRenderMode();
 
       /**
        * Gets the billboard used to represent static mesh if this proxy's
        * render mode is RenderMode::DRAW_BILLBOARD_ICON. Used by STAGE.
        * @return
        */
-      virtual dtDAL::ActorProxyIcon* GetBillBoardIcon();
+      virtual dtCore::ActorProxyIcon* GetBillBoardIcon();
 
    protected:
 

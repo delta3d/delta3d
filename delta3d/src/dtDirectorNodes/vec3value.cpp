@@ -22,7 +22,7 @@
 #include <dtDirectorNodes/vec3value.h>
 #include <dtDirector/colors.h>
 
-#include <dtDAL/vectoractorproperties.h>
+#include <dtCore/vectoractorproperties.h>
 
 namespace dtDirector
 {
@@ -50,17 +50,17 @@ namespace dtDirector
    {
       ValueNode::BuildPropertyMap();
 
-      mProperty = new dtDAL::Vec3ActorProperty(
+      mProperty = new dtCore::Vec3ActorProperty(
          "Value", "Value",
-         dtDAL::Vec3ActorProperty::SetFuncType(this, &Vec3Value::SetValue),
-         dtDAL::Vec3ActorProperty::GetFuncType(this, &Vec3Value::GetValue),
+         dtCore::Vec3ActorProperty::SetFuncType(this, &Vec3Value::SetValue),
+         dtCore::Vec3ActorProperty::GetFuncType(this, &Vec3Value::GetValue),
          "The value.");
       AddProperty(mProperty);
 
-      mInitialProperty = new dtDAL::Vec3ActorProperty(
+      mInitialProperty = new dtCore::Vec3ActorProperty(
          "Initial Value", "Initial Value",
-         dtDAL::Vec3ActorProperty::SetFuncType(this, &Vec3Value::SetInitialValue),
-         dtDAL::Vec3ActorProperty::GetFuncType(this, &Vec3Value::GetInitialValue),
+         dtCore::Vec3ActorProperty::SetFuncType(this, &Vec3Value::SetInitialValue),
+         dtCore::Vec3ActorProperty::GetFuncType(this, &Vec3Value::GetInitialValue),
          "The initial value.");
       AddProperty(mInitialProperty);
    }

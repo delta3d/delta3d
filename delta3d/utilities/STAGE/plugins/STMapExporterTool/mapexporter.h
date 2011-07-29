@@ -16,7 +16,7 @@ namespace dtEditQt
    class Viewport;
 }
 
-namespace dtDAL
+namespace dtCore
 {
    class ActorProperty;
 }
@@ -64,7 +64,7 @@ public slots:
     *
     * @return     Returns true if it was a valid resource property.
     */
-   bool AddResourcesFromProperty(const dtDAL::ActorProperty* prop, dtUtil::Packager& packager);
+   bool AddResourcesFromProperty(const dtCore::ActorProperty* prop, dtUtil::Packager& packager);
 
    /**
     * Find any resources referenced by the given OSG node and all its children.

@@ -33,7 +33,7 @@
 #include <dtEditQt/export.h>
 #include <QtGui/QMainWindow>
 #include <QtCore/QMap>
-#include <dtDAL/actorproxy.h>
+#include <dtCore/actorproxy.h>
 #include <dtQt/typedefs.h>
 
 class QSplitter;
@@ -239,7 +239,7 @@ namespace dtEditQt
 
       void onActorProxyDestroyed(ActorProxyRefPtr proxy);
 
-      void onActorProxyNameChanged(dtDAL::BaseActorObject& proxy, std::string oldName);
+      void onActorProxyNameChanged(dtCore::BaseActorObject& proxy, std::string oldName);
 
       void onMapPropertyChanged();
 

@@ -24,7 +24,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 #include <prefix/dtgameprefix.h>
 #include <dtCore/batchisector.h>
-#include <dtDAL/transformableactorproxy.h>
+#include <dtCore/transformableactorproxy.h>
 #include <dtGame/defaultgroundclamper.h>
 #include <dtUtil/log.h>
 #include <dtUtil/boundingshapeutils.h>
@@ -75,7 +75,7 @@ namespace dtGame
    
    /////////////////////////////////////////////////////////////////////////////
    void DefaultGroundClamper::CalculateAndSetBoundingBox(osg::Vec3& modelDimensions,
-         dtDAL::TransformableActorProxy& proxy, GroundClampingData& data)
+         dtCore::TransformableActorProxy& proxy, GroundClampingData& data)
    {
       if (GetLogger().IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
       {
@@ -102,7 +102,7 @@ namespace dtGame
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   bool DefaultGroundClamper::GetClosestHit( const dtDAL::TransformableActorProxy& proxy,
+   bool DefaultGroundClamper::GetClosestHit( const dtCore::TransformableActorProxy& proxy,
       GroundClampingData& data, dtCore::BatchIsector::SingleISector& single, float pointZ,
       osg::Vec3& outHit, osg::Vec3& outNormal)
    {
@@ -179,7 +179,7 @@ namespace dtGame
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void DefaultGroundClamper::GetActorDetectionPoints(dtDAL::TransformableActorProxy& proxy,
+   void DefaultGroundClamper::GetActorDetectionPoints(dtCore::TransformableActorProxy& proxy,
       GroundClampingData& data, osg::Vec3 outPoints[3])
    {
       osg::Vec3 modelDimensions = data.GetModelDimensions();
@@ -230,7 +230,7 @@ namespace dtGame
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void DefaultGroundClamper::GetSurfacePoints(const dtDAL::TransformableActorProxy& proxy,
+   void DefaultGroundClamper::GetSurfacePoints(const dtCore::TransformableActorProxy& proxy,
       GroundClampingData& data, const dtCore::Transform& xform, osg::Vec3 inOutPoints[3])
    {
       dtUtil::Log& logger = GetLogger();
@@ -313,7 +313,7 @@ namespace dtGame
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void DefaultGroundClamper::FinalizeSurfacePoints(dtDAL::TransformableActorProxy& proxy,
+   void DefaultGroundClamper::FinalizeSurfacePoints(dtCore::TransformableActorProxy& proxy,
       GroundClampingData& data, osg::Vec3 inOutPoints[3])
    {
       // No implementation for this class but this method is a placeholder
@@ -322,7 +322,7 @@ namespace dtGame
 
    /////////////////////////////////////////////////////////////////////////////
    void DefaultGroundClamper::ClampToGroundThreePoint(dtCore::Transform& xform,
-      dtDAL::TransformableActorProxy& proxy, GroundClampingData& data,
+      dtCore::TransformableActorProxy& proxy, GroundClampingData& data,
       DefaultGroundClamper::RuntimeData& runtimeData)
    {
       dtUtil::Log& logger = GetLogger();
@@ -386,7 +386,7 @@ namespace dtGame
    /////////////////////////////////////////////////////////////////////////////
    void DefaultGroundClamper::ClampToGroundIntermittent(double currentTime,
             dtCore::Transform& xform,
-            dtDAL::TransformableActorProxy& proxy, GroundClampingData& data,
+            dtCore::TransformableActorProxy& proxy, GroundClampingData& data,
             DefaultGroundClamper::RuntimeData& runtimeData)
    {
       //probably need some smoothing code here.
@@ -487,7 +487,7 @@ namespace dtGame
 
          dtCore::BatchIsector::SingleISector& single = mIsector->EnableAndGetISector(index);
 
-         dtDAL::TransformableActorProxy* proxy = i->second.first;
+         dtCore::TransformableActorProxy* proxy = i->second.first;
          GroundClampingData* gcData = i->second.second;
 
          // Get the proxy's actor since it has the transform data.
@@ -535,7 +535,7 @@ namespace dtGame
 
    /////////////////////////////////////////////////////////////////////////////
    void DefaultGroundClamper::ClampToGround(DefaultGroundClamper::GroundClampRangeType& type,
-      double currentTime, dtCore::Transform& xform, dtDAL::TransformableActorProxy& proxy,
+      double currentTime, dtCore::Transform& xform, dtCore::TransformableActorProxy& proxy,
       GroundClampingData& data, bool transformChanged, const osg::Vec3& velocity)
    {
       // Get the actor that has the transform data.
@@ -631,7 +631,7 @@ namespace dtGame
    /////////////////////////////////////////////////////////////////////////////
    DefaultGroundClamper::GroundClampRangeType& DefaultGroundClamper::GetBestClampType(
       DefaultGroundClamper::GroundClampRangeType& suggestedClampType,
-      const dtDAL::TransformableActorProxy& proxy, const GroundClampingData& data,
+      const dtCore::TransformableActorProxy& proxy, const GroundClampingData& data,
       bool transformChanged, const osg::Vec3& velocity) const
    {
       // The Default Ground Clamper will not make any assumptions in this case.

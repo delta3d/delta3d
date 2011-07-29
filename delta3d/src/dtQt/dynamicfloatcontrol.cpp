@@ -29,9 +29,9 @@
 #include <prefix/dtqtprefix.h>
 #include <dtQt/dynamicfloatcontrol.h>
 
-#include <dtDAL/actorproxy.h>
-#include <dtDAL/datatype.h>
-#include <dtDAL/floatactorproperty.h>
+#include <dtCore/actorproxy.h>
+#include <dtCore/datatype.h>
+#include <dtCore/floatactorproperty.h>
 
 #include <dtQt/dynamicsubwidgets.h>
 
@@ -59,13 +59,13 @@ namespace dtQt
 
    /////////////////////////////////////////////////////////////////////////////////
    void DynamicFloatControl::InitializeData(DynamicAbstractControl* newParent,
-      PropertyEditorModel* newModel, dtDAL::PropertyContainer* newPC, dtDAL::ActorProperty* newProperty)
+      PropertyEditorModel* newModel, dtCore::PropertyContainer* newPC, dtCore::ActorProperty* newProperty)
    {
       // Note - We used to have dynamic_cast in here, but it was failing to properly cast in
       // all cases in Linux with gcc4.  So we replaced it with a static cast.
-      if (newProperty != NULL && newProperty->GetDataType() == dtDAL::DataType::FLOAT)
+      if (newProperty != NULL && newProperty->GetDataType() == dtCore::DataType::FLOAT)
       {
-         mProperty = static_cast<dtDAL::FloatActorProperty*>(newProperty);
+         mProperty = static_cast<dtCore::FloatActorProperty*>(newProperty);
          DynamicAbstractControl::InitializeData(newParent, newModel, newPC, newProperty);
       }
       else

@@ -29,7 +29,7 @@
 #include <dtAI/waypointpair.h>
 #include <dtAI/waypointtypes.h>
 
-#include <dtDAL/actorproperty.h>
+#include <dtCore/actorproperty.h>
 
 #include <dtUtil/datastream.h>
 #include <dtUtil/exception.h>
@@ -115,7 +115,7 @@ namespace dtAI
                {
                   std::string objectTypeName;
                   ds.Read(objectTypeName);
-                  const dtDAL::ObjectType* ot = mAIInterface->GetWaypointTypeByName(objectTypeName);
+                  const dtCore::ObjectType* ot = mAIInterface->GetWaypointTypeByName(objectTypeName);
                   if(ot != NULL)
                   {
                      unsigned numWaypoints = 0;
@@ -170,7 +170,7 @@ namespace dtAI
                         {
                            std::string propertyName;
                            ds.Read(propertyName);
-                           dtDAL::ActorProperty* prop = propCon->GetProperty(propertyName);
+                           dtCore::ActorProperty* prop = propCon->GetProperty(propertyName);
                            //skip read only- note: we still are reading the name, its mentioned
                            //below on the writing code and should most likely be refactored
                            if(prop != NULL && !prop->IsReadOnly())
@@ -179,7 +179,7 @@ namespace dtAI
                            }
                            else if(prop == NULL)
                            {
-                              throw dtDAL::BaseException(
+                              throw dtCore::BaseException(
                                  "Error reading Waypoint file '" + filename + ".", __FILE__, __LINE__);
                            }
                         }
@@ -204,7 +204,7 @@ namespace dtAI
                   }
                   else
                   {
-                     throw dtDAL::BaseException(
+                     throw dtCore::BaseException(
                         "Error reading Waypoint file '" + filename + ".", __FILE__, __LINE__);
                   }
                }
@@ -212,7 +212,7 @@ namespace dtAI
                ds.Read(fileStart);
                if(fileStart != WaypointFileHeader::FILE_START_END_CHAR)
                {
-                  throw dtDAL::BaseException(
+                  throw dtCore::BaseException(
                      "Error reading Waypoint file '" + filename + ".", __FILE__, __LINE__);
                }
 
@@ -268,7 +268,7 @@ namespace dtAI
             }
             else
             {
-               throw dtDAL::BaseException(
+               throw dtCore::BaseException(
                   "Error Assigning WaypointCollection children while loading file", __FILE__, __LINE__);
             }
          }
@@ -310,7 +310,7 @@ namespace dtAI
       ds.Write(WaypointFileHeader::VERSION_MAJOR);
       ds.Write(WaypointFileHeader::VERSION_MINOR);
 
-      typedef std::vector<dtCore::RefPtr<const dtDAL::ObjectType> > ObjectTypeArray;
+      typedef std::vector<dtCore::RefPtr<const dtCore::ObjectType> > ObjectTypeArray;
 
       ObjectTypeArray waypointTypes;
       mAIInterface->GetSupportedWaypointTypes(waypointTypes);
@@ -331,7 +331,7 @@ namespace dtAI
          {
             dtCore::RefPtr<WaypointPropertyBase> propCon = mAIInterface->CreateWaypointPropertyContainer(**ob_iter, wpArray.front());
 
-            typedef std::vector<const dtDAL::ActorProperty *> PropertyArray;
+            typedef std::vector<const dtCore::ActorProperty *> PropertyArray;
             PropertyArray propArray;
             propCon->GetPropertyList(propArray);
 
@@ -431,7 +431,7 @@ namespace dtAI
          }
          else
          {
-            throw dtDAL::BaseException(
+            throw dtCore::BaseException(
                "Error reading Waypoint file.", __FILE__, __LINE__);
          }
       }

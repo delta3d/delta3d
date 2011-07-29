@@ -20,8 +20,8 @@
  */
 #include <dtLMS/lmscomponent.h>
 
-#include <dtDAL/booleanactorproperty.h>
-#include <dtDAL/floatactorproperty.h>
+#include <dtCore/booleanactorproperty.h>
+#include <dtCore/floatactorproperty.h>
 
 #include <dtGame/gameactorproxy.h>
 #include <dtGame/message.h>
@@ -79,10 +79,10 @@ namespace dtLMS
 
       // does this task require notifying an LMS of its changes in status?
       bool notifyLms = false;
-      dtDAL::ActorProperty* prop = proxy->GetProperty("NotifyLMSOnUpdate");
+      dtCore::ActorProperty* prop = proxy->GetProperty("NotifyLMSOnUpdate");
       if (prop != NULL)
       {
-         notifyLms = static_cast<dtDAL::BooleanActorProperty*>(prop)->GetValue();
+         notifyLms = static_cast<dtCore::BooleanActorProperty*>(prop)->GetValue();
       }
 
       if (notifyLms)
@@ -162,7 +162,7 @@ namespace dtLMS
       // if the completion status changed, then send message to LMS;
       // also we will remember the last value we sent so that we can
       // just send when changed
-      dtDAL::BooleanActorProperty* prop = static_cast<dtDAL::BooleanActorProperty*>(proxy.GetProperty("Complete"));
+      dtCore::BooleanActorProperty* prop = static_cast<dtCore::BooleanActorProperty*>(proxy.GetProperty("Complete"));
       bool taskIsComplete = prop->GetValue();
 
       if (taskIsComplete != currentTask->second.GetCompleted())
@@ -182,7 +182,7 @@ namespace dtLMS
       // if the score changed, then send message to LMS;
       // also we will remember the last value we sent so that we can
       // just send when changed
-      float taskScore = static_cast<dtDAL::FloatActorProperty*>(proxy.GetProperty("Score"))->GetValue();
+      float taskScore = static_cast<dtCore::FloatActorProperty*>(proxy.GetProperty("Score"))->GetValue();
       if (taskScore != currentTask->second.GetScore())
       {
          if (mNeedValidSocket)

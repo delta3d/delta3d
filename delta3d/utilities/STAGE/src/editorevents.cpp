@@ -48,14 +48,14 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void EditorEvents::emitActorsSelected(std::vector< dtCore::RefPtr<dtDAL::BaseActorObject> >& actors)
+   void EditorEvents::emitActorsSelected(std::vector< dtCore::RefPtr<dtCore::BaseActorObject> >& actors)
    {
       LOG_INFO("Emitting UI event - [actorsSelected]");
       emit selectedActors(actors);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void EditorEvents::emitGotoActor(dtCore::RefPtr<dtDAL::BaseActorObject> actor)
+   void EditorEvents::emitGotoActor(dtCore::RefPtr<dtCore::BaseActorObject> actor)
    {
       LOG_INFO("Emitting UI event - [gotoActor]");
       emit gotoActor(actor);
@@ -74,21 +74,21 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void EditorEvents::emitActorProxyCreated(dtCore::RefPtr<dtDAL::BaseActorObject> proxy, bool forceNoAdjustments)
+   void EditorEvents::emitActorProxyCreated(dtCore::RefPtr<dtCore::BaseActorObject> proxy, bool forceNoAdjustments)
    {
       LOG_INFO("Emitting UI event - [actorProxyCreated]");
       emit actorProxyCreated(proxy, forceNoAdjustments);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void EditorEvents::emitActorProxyAboutToBeDestroyed(dtCore::RefPtr<dtDAL::BaseActorObject> proxy)
+   void EditorEvents::emitActorProxyAboutToBeDestroyed(dtCore::RefPtr<dtCore::BaseActorObject> proxy)
    {
       LOG_INFO("Emitting UI event - [actorProxyAboutToBeDestroyed]");
       emit actorProxyAboutToBeDestroyed(proxy);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void EditorEvents::emitActorProxyDestroyed(dtCore::RefPtr<dtDAL::BaseActorObject> proxy)
+   void EditorEvents::emitActorProxyDestroyed(dtCore::RefPtr<dtCore::BaseActorObject> proxy)
    {
       LOG_INFO("Emitting UI event - [actorProxyDestroyed]");
       emit actorProxyDestroyed(proxy);
@@ -131,15 +131,15 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void EditorEvents::emitProxyNameChanged(dtDAL::BaseActorObject& proxy, std::string oldName)
+   void EditorEvents::emitProxyNameChanged(dtCore::BaseActorObject& proxy, std::string oldName)
    {
       LOG_INFO("Emitting UI event - [proxyNameChanged]");
       emit ProxyNameChanged(proxy, oldName);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void EditorEvents::emitActorPropertyChanged(dtCore::RefPtr<dtDAL::BaseActorObject> proxy,
-      dtCore::RefPtr<dtDAL::ActorProperty> property)
+   void EditorEvents::emitActorPropertyChanged(dtCore::RefPtr<dtCore::BaseActorObject> proxy,
+      dtCore::RefPtr<dtCore::ActorProperty> property)
    {
       // I removed logging from this event.  This is called when the user
       // manipulates actors in the viewports which means the log file is going to have
@@ -150,8 +150,8 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void EditorEvents::emitActorPropertyAboutToChange(dtCore::RefPtr<dtDAL::BaseActorObject> proxy,
-      dtCore::RefPtr<dtDAL::ActorProperty> property, std::string oldValue, std::string newValue)
+   void EditorEvents::emitActorPropertyAboutToChange(dtCore::RefPtr<dtCore::BaseActorObject> proxy,
+      dtCore::RefPtr<dtCore::ActorProperty> property, std::string oldValue, std::string newValue)
    {
       // no logging here, just like with property changed.
       // note, if this is not sent out before a property changed event (see above)

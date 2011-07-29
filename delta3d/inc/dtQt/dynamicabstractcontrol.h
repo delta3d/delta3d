@@ -31,8 +31,8 @@
 
 #include <dtQt/export.h>
 #include <QtCore/QObject>
-#include <dtDAL/actorproxy.h>
-#include <dtDAL/actorproperty.h>
+#include <dtCore/actorproxy.h>
+#include <dtCore/actorproperty.h>
 #include <dtQt/typedefs.h>
 #include <QtGui/QAbstractItemDelegate>
 
@@ -48,7 +48,7 @@ class QPainter;
 class QSize;
 class QColor;
 
-namespace dtDAL
+namespace dtCore
 {
    class PropertyContainer;
    class ActorProperty;
@@ -98,7 +98,7 @@ namespace dtQt
       * that.
       */
       virtual void InitializeData(DynamicAbstractControl* newParent, PropertyEditorModel* model,
-               dtDAL::PropertyContainer* pc, dtDAL::ActorProperty* property);
+               dtCore::PropertyContainer* pc, dtCore::ActorProperty* property);
 
       /**
       * This method is called by the delegate between the model and the view when data should
@@ -297,24 +297,24 @@ namespace dtQt
       * to reflect the change in our editor.
       * @Note The default implementation does nothing.
       */
-      virtual void actorPropertyChanged(dtDAL::PropertyContainer& propCon, dtDAL::ActorProperty& property);
+      virtual void actorPropertyChanged(dtCore::PropertyContainer& propCon, dtCore::ActorProperty& property);
 
    signals:
-      void PropertyAboutToChange(dtDAL::PropertyContainer&, dtDAL::ActorProperty& prop,
+      void PropertyAboutToChange(dtCore::PropertyContainer&, dtCore::ActorProperty& prop,
                std::string oldValue, std::string newValue);
 
-      void PropertyChanged(dtDAL::PropertyContainer&, dtDAL::ActorProperty& prop);
+      void PropertyChanged(dtCore::PropertyContainer&, dtCore::ActorProperty& prop);
 
    public slots:
       /// This is so child controls can, if desired can be connected to this which will emit the related signal.
-      void PropertyAboutToChangePassThrough(dtDAL::PropertyContainer&, dtDAL::ActorProperty& prop,
+      void PropertyAboutToChangePassThrough(dtCore::PropertyContainer&, dtCore::ActorProperty& prop,
                std::string oldValue, std::string newValue);
 
       /// This is so child controls can, if desired can be connected to this which will emit the related signal.
-      void PropertyChangedPassThrough(dtDAL::PropertyContainer&, dtDAL::ActorProperty& prop);
+      void PropertyChangedPassThrough(dtCore::PropertyContainer&, dtCore::ActorProperty& prop);
 
       /// Event handler when the property has changed.
-      void OnPropertyChanged(dtDAL::PropertyContainer& propCon, dtDAL::ActorProperty& prop);
+      void OnPropertyChanged(dtCore::PropertyContainer& propCon, dtCore::ActorProperty& prop);
 
       /**
       * Called when we should take the data out of the controls and put it into the
@@ -372,8 +372,8 @@ namespace dtQt
       bool mInitialized;
       int  mArrayIndex;
 
-      dtCore::RefPtr<dtDAL::PropertyContainer> mPropContainer;
-      dtDAL::ActorProperty*                    mBaseProperty;
+      dtCore::RefPtr<dtCore::PropertyContainer> mPropContainer;
+      dtCore::ActorProperty*                    mBaseProperty;
 
       // The parent control of this control.  All controls have a parent except root level
       // controls which are likely to be groups
@@ -404,10 +404,10 @@ namespace dtQt
    public:
       DynamicControlFactory();
 
-      DynamicAbstractControl* CreateDynamicControl(const dtDAL::ActorProperty& prop);
+      DynamicAbstractControl* CreateDynamicControl(const dtCore::ActorProperty& prop);
 
       template <typename DynControlType>
-      void RegisterControlForDataType(dtDAL::DataType& dataType)
+      void RegisterControlForDataType(dtCore::DataType& dataType)
       {
          mControlFactory->RemoveType(&dataType);
          mControlFactory->RegisterType<DynControlType>(&dataType);
@@ -416,7 +416,7 @@ namespace dtQt
    private:
       ~DynamicControlFactory();
       // the dynamic control factory can create objects for each type.
-      dtCore::RefPtr< dtUtil::ObjectFactory<dtDAL::DataType*, DynamicAbstractControl> > mControlFactory;
+      dtCore::RefPtr< dtUtil::ObjectFactory<dtCore::DataType*, DynamicAbstractControl> > mControlFactory;
    };
 } // namespace dtEditQt
 

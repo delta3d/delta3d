@@ -30,8 +30,8 @@
 
 #include <dtEditQt/dynamicgrouppropertycontrol.h>
 
-#include <dtDAL/datatype.h>
-#include <dtDAL/groupactorproperty.h>
+#include <dtCore/datatype.h>
+#include <dtCore/groupactorproperty.h>
 
 #include <dtEditQt/editordata.h>
 #include <dtEditQt/groupuiregistry.h>
@@ -106,13 +106,13 @@ namespace dtEditQt
 
    /////////////////////////////////////////////////////////////////////////////////
    void STAGEDynamicGroupPropertyControl::InitializeData(dtQt::DynamicAbstractControl* newParent,
-      dtQt::PropertyEditorModel* newModel, dtDAL::PropertyContainer* propCon, dtDAL::ActorProperty* newProperty)
+      dtQt::PropertyEditorModel* newModel, dtCore::PropertyContainer* propCon, dtCore::ActorProperty* newProperty)
    {
       // Note - We used to have dynamic_cast in here, but it was failing to properly cast in
       // all cases in Linux with gcc4.  So we replaced it with a static cast.
-      if (newProperty != NULL && newProperty->GetDataType() == dtDAL::DataType::GROUP)
+      if (newProperty != NULL && newProperty->GetDataType() == dtCore::DataType::GROUP)
       {
-         mGroupProperty = dynamic_cast<dtDAL::GroupActorProperty*>(newProperty);
+         mGroupProperty = dynamic_cast<dtCore::GroupActorProperty*>(newProperty);
          DynamicAbstractControl::InitializeData(newParent, newModel, propCon, newProperty);
       }
       else
@@ -228,7 +228,7 @@ namespace dtEditQt
          dialog->exec();
          if (dialog->result() == QDialog::Accepted)
          {
-            dtCore::RefPtr<dtDAL::NamedGroupParameter> param = new dtDAL::NamedGroupParameter(mGroupProperty->GetName());
+            dtCore::RefPtr<dtCore::NamedGroupParameter> param = new dtCore::NamedGroupParameter(mGroupProperty->GetName());
             plugin->UpdateModelFromWidget(*pluginWidget, *param);
             // give undo manager the ability to create undo/redo events
             emit PropertyAboutToChange(*mPropContainer, *mGroupProperty,

@@ -20,12 +20,12 @@
  */
 
 #include <dtActors/prefabactorproxy.h>
-#include <dtDAL/datatype.h>
-#include <dtDAL/resourceactorproperty.h>
-#include <dtDAL/mapxml.h>
-#include <dtDAL/project.h>
+#include <dtCore/datatype.h>
+#include <dtCore/resourceactorproperty.h>
+#include <dtCore/mapxml.h>
+#include <dtCore/project.h>
 #include <dtUtil/exception.h>
-#include <dtDAL/functor.h>
+#include <dtCore/functor.h>
 
 namespace dtActors
 {
@@ -76,14 +76,14 @@ namespace dtActors
       PrefabActor* actor = NULL;
       GetActor(actor);
 
-      AddProperty(new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::PREFAB,
+      AddProperty(new dtCore::ResourceActorProperty(*this, dtCore::DataType::PREFAB,
          "PrefabResource", "Prefab",
-         dtDAL::ResourceActorProperty::SetFuncType(this, &PrefabActorProxy::SetPrefab),
+         dtCore::ResourceActorProperty::SetFuncType(this, &PrefabActorProxy::SetPrefab),
          "Defines the Prefab resource to use.", "Prefab"));
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void PrefabActorProxy::SetMap(dtDAL::Map* map)
+   void PrefabActorProxy::SetMap(dtCore::Map* map)
    {
       mMap = map;
    }
@@ -102,7 +102,7 @@ namespace dtActors
       // First remove the current actors from any previous Prefabs...
       for (int proxyIndex = 0; proxyIndex < (int)mProxies.size(); proxyIndex++)
       {
-         dtDAL::BaseActorObject* proxy = mProxies[proxyIndex].get();
+         dtCore::BaseActorObject* proxy = mProxies[proxyIndex].get();
          if (proxy)
          {
             dtCore::DeltaDrawable* proxyActor = NULL;
@@ -120,15 +120,15 @@ namespace dtActors
       if (!fileName.empty())
       {
          dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
-         fileUtils.PushDirectory(dtDAL::Project::GetInstance().GetContext());
+         fileUtils.PushDirectory(dtCore::Project::GetInstance().GetContext());
          try
          {
-            dtCore::RefPtr<dtDAL::MapParser> parser = new dtDAL::MapParser;
+            dtCore::RefPtr<dtCore::MapParser> parser = new dtCore::MapParser;
             parser->ParsePrefab(fileName, mProxies, mMap.get());
 
             for (int proxyIndex = 0; proxyIndex < (int)mProxies.size(); proxyIndex++)
             {
-               dtDAL::BaseActorObject* proxy = mProxies[proxyIndex].get();
+               dtCore::BaseActorObject* proxy = mProxies[proxyIndex].get();
 
                dtCore::DeltaDrawable* proxyActor = NULL;
                proxy->GetActor(proxyActor);
@@ -148,7 +148,7 @@ namespace dtActors
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> >& PrefabActorProxy::GetPrefabProxies()
+   std::vector<dtCore::RefPtr<dtCore::BaseActorObject> >& PrefabActorProxy::GetPrefabProxies()
    {
       return mProxies;
    }

@@ -104,7 +104,7 @@ namespace dtDirector
       ~CompareActorFacingAction();
 
    private:
-      void CompareLessThanGreaterThan(dtDAL::ActorProperty* prop);
+      void CompareLessThanGreaterThan(dtCore::ActorProperty* prop);
 
       dtCore::UniqueId mActor;
       dtCore::UniqueId mTarget;

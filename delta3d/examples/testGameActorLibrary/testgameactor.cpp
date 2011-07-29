@@ -29,9 +29,9 @@
 
 #include <dtCore/scene.h>
 
-#include <dtDAL/actoridactorproperty.h>
-#include <dtDAL/booleanactorproperty.h>
-#include <dtDAL/intactorproperty.h>
+#include <dtCore/actoridactorproperty.h>
+#include <dtCore/booleanactorproperty.h>
+#include <dtCore/intactorproperty.h>
 
 #include <dtGame/invokable.h>
 #include <dtGame/messageparameter.h>
@@ -130,33 +130,33 @@ void TestGameActorProxy1::BuildPropertyMap()
    static const dtUtil::RefString PROPERTY_HAS_FIRED("Has Fired");
    static const dtUtil::RefString PROPERTY_HAS_FIRED_LABEL("Has this actor fired");
    static const dtUtil::RefString PROPERTY_HAS_FIRED_DESC("Sets/Gets if this actor has fired.");
-   AddProperty(new dtDAL::BooleanActorProperty(PROPERTY_HAS_FIRED, PROPERTY_HAS_FIRED_LABEL,
-      dtDAL::BooleanActorProperty::SetFuncType(actor, &TestGameActor1::SetOneIsFired),
-      dtDAL::BooleanActorProperty::GetFuncType(actor, &TestGameActor1::OneIsFired),
+   AddProperty(new dtCore::BooleanActorProperty(PROPERTY_HAS_FIRED, PROPERTY_HAS_FIRED_LABEL,
+      dtCore::BooleanActorProperty::SetFuncType(actor, &TestGameActor1::SetOneIsFired),
+      dtCore::BooleanActorProperty::GetFuncType(actor, &TestGameActor1::OneIsFired),
       PROPERTY_HAS_FIRED_DESC, ""));
 
    static const dtUtil::RefString PROPERTY_LOCAL_TICK_COUNT("Local Tick Count");
    static const dtUtil::RefString PROPERTY_LOCAL_TICK_COUNT_LABEL("The number of local tick messages received");
    static const dtUtil::RefString PROPERTY_LOCAL_TICK_COUNT_DESC("Sets/Gets the number of remote tick messages counted.");
-   AddProperty(new dtDAL::IntActorProperty(PROPERTY_LOCAL_TICK_COUNT, PROPERTY_LOCAL_TICK_COUNT_LABEL,
-      dtDAL::IntActorProperty::SetFuncType(actor, &TestGameActor1::SetTickLocals),
-      dtDAL::IntActorProperty::GetFuncType(actor, &TestGameActor1::GetTickLocals),
+   AddProperty(new dtCore::IntActorProperty(PROPERTY_LOCAL_TICK_COUNT, PROPERTY_LOCAL_TICK_COUNT_LABEL,
+      dtCore::IntActorProperty::SetFuncType(actor, &TestGameActor1::SetTickLocals),
+      dtCore::IntActorProperty::GetFuncType(actor, &TestGameActor1::GetTickLocals),
       PROPERTY_LOCAL_TICK_COUNT_DESC, ""));
 
    static const dtUtil::RefString PROPERTY_REMOTE_TICK_COUNT("Remote Tick Count");
    static const dtUtil::RefString PROPERTY_REMOTE_TICK_COUNT_LABEL("The number of remote tick messages received");
    static const dtUtil::RefString PROPERTY_REMOTE_TICK_COUNT_DESC("Sets/Gets the number of remote tick messages counted.");
-   AddProperty(new dtDAL::IntActorProperty(PROPERTY_REMOTE_TICK_COUNT, PROPERTY_REMOTE_TICK_COUNT_LABEL,
-      dtDAL::IntActorProperty::SetFuncType(actor, &TestGameActor1::SetTickRemotes),
-      dtDAL::IntActorProperty::GetFuncType(actor, &TestGameActor1::GetTickRemotes),
+   AddProperty(new dtCore::IntActorProperty(PROPERTY_REMOTE_TICK_COUNT, PROPERTY_REMOTE_TICK_COUNT_LABEL,
+      dtCore::IntActorProperty::SetFuncType(actor, &TestGameActor1::SetTickRemotes),
+      dtCore::IntActorProperty::GetFuncType(actor, &TestGameActor1::GetTickRemotes),
       PROPERTY_REMOTE_TICK_COUNT_DESC, ""));
 
    static const dtUtil::RefString PROPERTY_TEST_ACTOR_ID("Test_Actor_Id");
    static const dtUtil::RefString PROPERTY_TEST_ACTOR_ID_LABEL("Test Actor Id");
    static const dtUtil::RefString PROPERTY_TEST_ACTOR_ID_DESC("An example linked actor property");
-   AddProperty(new dtDAL::ActorIDActorProperty(*this, PROPERTY_TEST_ACTOR_ID, PROPERTY_TEST_ACTOR_ID_LABEL,
-      dtDAL::ActorIDActorProperty::SetFuncType(actor, &TestGameActor1::SetTestActorId),
-      dtDAL::ActorIDActorProperty::GetFuncType(actor, &TestGameActor1::GetTestActorId),
+   AddProperty(new dtCore::ActorIDActorProperty(*this, PROPERTY_TEST_ACTOR_ID, PROPERTY_TEST_ACTOR_ID_LABEL,
+      dtCore::ActorIDActorProperty::SetFuncType(actor, &TestGameActor1::SetTestActorId),
+      dtCore::ActorIDActorProperty::GetFuncType(actor, &TestGameActor1::GetTestActorId),
       "dtCore::Transformable",
       PROPERTY_TEST_ACTOR_ID_DESC, ""));
 

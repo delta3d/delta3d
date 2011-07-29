@@ -44,10 +44,10 @@
 #include <QtGui/QDoubleSpinBox>
 #include <QtCore/QSettings>
 #include <dtCore/transform.h>
-#include <dtDAL/map.h>
-#include <dtDAL/project.h>
-#include <dtDAL/propertycontainer.h>
-#include <dtDAL/actorproperty.h>
+#include <dtCore/map.h>
+#include <dtCore/project.h>
+#include <dtCore/propertycontainer.h>
+#include <dtCore/actorproperty.h>
 
 #include <dtAI/aiplugininterface.h>
 #include <dtAI/aidebugdrawable.h>
@@ -153,8 +153,8 @@ MainWindow::MainWindow(QWidget& mainWidget)
    connect(mPropertyEditor.toggleViewAction(), SIGNAL(toggled(bool)), this, SLOT(OnPropertyEditorShowHide(bool)));
    connect(mWaypointBrowser->toggleViewAction(), SIGNAL(toggled(bool)), this, SLOT(OnWaypointBrowserShowHide(bool)));
 
-   connect(&mPropertyEditor, SIGNAL(SignalPropertyChangedFromControl(dtDAL::PropertyContainer&, dtDAL::ActorProperty&)),
-            this, SLOT(PropertyChangedFromControl(dtDAL::PropertyContainer&, dtDAL::ActorProperty&)));
+   connect(&mPropertyEditor, SIGNAL(SignalPropertyChangedFromControl(dtCore::PropertyContainer&, dtCore::ActorProperty&)),
+            this, SLOT(PropertyChangedFromControl(dtCore::PropertyContainer&, dtCore::ActorProperty&)));
 
    connect(mWaypointBrowser, SIGNAL(RequestCameraTransformChange(const dtCore::Transform&)),
             this, SLOT(OnChildRequestCameraTransformChange(const dtCore::Transform&)));
@@ -213,7 +213,7 @@ void MainWindow::showEvent(QShowEvent* e)
       // We need to provide an alternative way to get around maps
       // that crash on load other than modifying this code or the registry.
 
-      //if(dtDAL::Project::GetInstance().IsContextValid())
+      //if(dtCore::Project::GetInstance().IsContextValid())
       //{
       //   ChangeMap(settings.value(CURRENT_MAP_SETTING.c_str()).toString());
       //}
@@ -278,7 +278,7 @@ void MainWindow::OnOpenMap()
    dtQt::DialogListSelection openMapDialog(this, tr("Open Existing Map"), tr("Available Maps"));
 
    QStringList listItems;
-   const std::set<std::string>& mapNames = dtDAL::Project::GetInstance().GetMapNames();
+   const std::set<std::string>& mapNames = dtCore::Project::GetInstance().GetMapNames();
    for (std::set<std::string>::const_iterator i = mapNames.begin(); i != mapNames.end(); ++i)
    {
       listItems << i->c_str();
@@ -371,7 +371,7 @@ void MainWindow::OnPreferences()
 ////////////////////////////////////////////////////////////////////////////////
 void MainWindow::EnableOrDisableControls()
 {
-   mUi->mActionOpenMap->setEnabled(!dtDAL::Project::GetInstance().GetContext().empty());
+   mUi->mActionOpenMap->setEnabled(!dtCore::Project::GetInstance().GetContext().empty());
    mUi->mActionCloseMap->setEnabled(!mCurrentMapName.isEmpty());
    // Stop from changing context unless the map is closed. It works around a bug.
    // since the map doesn't change immediately in the GM, we can't just change maps.
@@ -557,7 +557,7 @@ void MainWindow::OnRemoveBiDirectionalEdge()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void MainWindow::PropertyChangedFromControl(dtDAL::PropertyContainer& pc, dtDAL::ActorProperty& ap)
+void MainWindow::PropertyChangedFromControl(dtCore::PropertyContainer& pc, dtCore::ActorProperty& ap)
 {
    dtAI::WaypointRenderInfo& ri = mPluginInterface->GetDebugDrawable()->GetRenderInfo();
    if (&pc == &ri)
@@ -618,7 +618,7 @@ void MainWindow::OnPropertyEditorShowHide(bool checked)
 ////////////////////////////////////////////////////////////////////////////////
 void MainWindow::RefreshPropertyEditor(std::vector<dtAI::WaypointInterface*>& selectedWaypoints)
 {
-   std::vector<dtCore::RefPtr<dtDAL::PropertyContainer> > propertyContainers;
+   std::vector<dtCore::RefPtr<dtCore::PropertyContainer> > propertyContainers;
    propertyContainers.reserve(selectedWaypoints.size());
 
    for (size_t i = 0; i < selectedWaypoints.size(); ++i)

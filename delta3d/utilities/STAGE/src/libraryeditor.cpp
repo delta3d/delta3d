@@ -44,9 +44,9 @@
 #include <dtEditQt/editorevents.h>
 #include <dtEditQt/editoractions.h>
 #include <dtEditQt/mainwindow.h>
-#include <dtDAL/librarymanager.h>
-#include <dtDAL/actorpluginregistry.h>
-#include <dtDAL/map.h>
+#include <dtCore/librarymanager.h>
+#include <dtCore/actorpluginregistry.h>
+#include <dtCore/map.h>
 #include <dtUtil/log.h>
 
 #include <osgDB/FileNameUtils>
@@ -68,7 +68,7 @@ namespace dtEditQt
    void LibraryEditor::GetLibraryNames(std::vector<QListWidgetItem*>& items) const
    {
       items.clear();
-      dtDAL::Map* currentMap = EditorData::GetInstance().getCurrentMap();
+      dtCore::Map* currentMap = EditorData::GetInstance().getCurrentMap();
       if (currentMap == NULL)
       {
          return;
@@ -79,10 +79,10 @@ namespace dtEditQt
       for (unsigned int i = 0; i < libNames.size(); ++i)
       {
          QListWidgetItem* p = new QListWidgetItem;
-         dtDAL::ActorPluginRegistry* reg =
-            dtDAL::LibraryManager::GetInstance().GetRegistry(libNames[i]);
+         dtCore::ActorPluginRegistry* reg =
+            dtCore::LibraryManager::GetInstance().GetRegistry(libNames[i]);
          QString toolTip = tr("File: ") +
-            tr(dtDAL::LibraryManager::GetInstance().GetPlatformSpecificLibraryName(libNames[i]).c_str()) +
+            tr(dtCore::LibraryManager::GetInstance().GetPlatformSpecificLibraryName(libNames[i]).c_str()) +
             tr(" \nDescription: ") + tr(reg->GetDescription().c_str());
          p->setText(tr(libNames[i].c_str()));
          p->setToolTip(toolTip);
@@ -127,7 +127,7 @@ namespace dtEditQt
 
       try
       {
-         dtDAL::LibraryManager::GetInstance().LoadActorRegistry(libName);
+         dtCore::LibraryManager::GetInstance().LoadActorRegistry(libName);
       }
       catch(const dtUtil::Exception& e)
       {
@@ -151,8 +151,8 @@ namespace dtEditQt
          tr("Are you sure you want to remove this library?"),
          tr("&Yes"), tr("&No"), QString::null, 1) == 0)
       {
-         dtDAL::Map* curMap = EditorData::GetInstance().getCurrentMap();
-         std::vector< dtCore::RefPtr<dtDAL::BaseActorObject> > proxies;
+         dtCore::Map* curMap = EditorData::GetInstance().getCurrentMap();
+         std::vector< dtCore::RefPtr<dtCore::BaseActorObject> > proxies;
          curMap->GetAllProxies(proxies);
          std::vector<std::string> loadedLibs = curMap->GetAllLibraries();
 
@@ -162,14 +162,14 @@ namespace dtEditQt
          {
             if (loadedLibs[i] == libToRemove)
             {
-               dtDAL::ActorPluginRegistry* reg =
-                  dtDAL::LibraryManager::GetInstance().GetRegistry(loadedLibs[i]);
+               dtCore::ActorPluginRegistry* reg =
+                  dtCore::LibraryManager::GetInstance().GetRegistry(loadedLibs[i]);
 
                unsigned int numActorsInScene = 0;
                // fail if actors are in the library
                for (unsigned int j = 0; j < proxies.size(); ++j)
                {
-                  dtCore::RefPtr<const dtDAL::ActorType> type = &proxies[j]->GetActorType();
+                  dtCore::RefPtr<const dtCore::ActorType> type = &proxies[j]->GetActorType();
                   if (reg->IsActorTypeSupported(type))
                   {
                      ++numActorsInScene;
@@ -186,7 +186,7 @@ namespace dtEditQt
 
                EditorEvents::GetInstance().emitLibraryAboutToBeRemoved();
                curMap->RemoveLibrary(libToRemove);
-               dtDAL::LibraryManager::GetInstance().UnloadActorRegistry(libToRemove);
+               dtCore::LibraryManager::GetInstance().UnloadActorRegistry(libToRemove);
                RefreshLibraries();
                EditorEvents::GetInstance().emitMapLibraryRemoved();
                if (curMap->GetAllLibraries().size() > 0)
@@ -203,7 +203,7 @@ namespace dtEditQt
       if (GetLibraryListWidget().currentItem() != NULL && GetLibraryListWidget().currentRow() > 0)
       {
          int row = GetLibraryListWidget().currentRow();
-         dtDAL::Map* curMap = EditorData::GetInstance().getCurrentMap();
+         dtCore::Map* curMap = EditorData::GetInstance().getCurrentMap();
          curMap->InsertLibrary(row - 1, GetLibraryListWidget().currentItem()->text().toStdString(), "");
          dtQt::BaseLibraryListEditor::ShiftLibraryUp();
       }
@@ -214,7 +214,7 @@ namespace dtEditQt
       if (GetLibraryListWidget().currentItem() != NULL && GetLibraryListWidget().currentRow() < (GetLibraryListWidget().count() - 1))
       {
          int row = GetLibraryListWidget().currentRow();
-         dtDAL::Map* curMap = EditorData::GetInstance().getCurrentMap();
+         dtCore::Map* curMap = EditorData::GetInstance().getCurrentMap();
          curMap->InsertLibrary(row + 1, GetLibraryListWidget().currentItem()->text().toStdString(), "");
          dtQt::BaseLibraryListEditor::ShiftLibraryDown();
       }

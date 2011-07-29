@@ -28,13 +28,13 @@
 #ifndef DELTA_TEST_ACTOR_LIB
 #define DELTA_TEST_ACTOR_LIB
 
-#include <dtDAL/plugin_export.h>
-#include <dtDAL/actorpluginregistry.h>
+#include <dtCore/plugin_export.h>
+#include <dtCore/actorpluginregistry.h>
 
-class DT_PLUGIN_EXPORT ExampleActorLib : public dtDAL::ActorPluginRegistry
+class DT_PLUGIN_EXPORT ExampleActorLib : public dtCore::ActorPluginRegistry
 {
    public:
-      static dtCore::RefPtr<dtDAL::ActorType> TEST_ACTOR_PROPERTY_TYPE;
+      static dtCore::RefPtr<dtCore::ActorType> TEST_ACTOR_PROPERTY_TYPE;
 
       ExampleActorLib();
       void RegisterActorTypes();

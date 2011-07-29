@@ -8,9 +8,9 @@
 #include "testai.h"
 #include <dtCore/camera.h>
 #include <dtCore/transform.h>
-#include <dtDAL/map.h>
-#include <dtDAL/project.h>
-#include <dtDAL/exceptionenum.h>
+#include <dtCore/map.h>
+#include <dtCore/project.h>
+#include <dtCore/exceptionenum.h>
 #include <dtUtil/datapathutils.h>
 
 #include <dtAI/waypoint.h>
@@ -27,7 +27,7 @@
 
 using namespace dtCore;
 using namespace dtABC;
-using namespace dtDAL;
+using namespace dtCore;
 using namespace dtAI;
 
 TestAI::TestAI(const std::string& pMapFilename, const std::string& configFilename)

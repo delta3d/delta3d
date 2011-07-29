@@ -29,25 +29,25 @@
 #ifndef TEST_GAME_ACTOR_LIBRARY_H_
 #define TEST_GAME_ACTOR_LIBRARY_H_
 
-#include <dtDAL/actorpluginregistry.h>
+#include <dtCore/actorpluginregistry.h>
 #include "export.h"
 
-class DT_EXAMPLE_EXPORT TestGameActorLibrary : public dtDAL::ActorPluginRegistry
+class DT_EXAMPLE_EXPORT TestGameActorLibrary : public dtCore::ActorPluginRegistry
 {
    public:
-      static dtCore::RefPtr<dtDAL::ActorType> TEST1_GAME_ACTOR_PROXY_TYPE;
-      static dtCore::RefPtr<dtDAL::ActorType> TEST2_GAME_ACTOR_PROXY_TYPE;
-      static dtCore::RefPtr<dtDAL::ActorType> TEST_GAME_ACTOR_CRASH_PROXY_TYPE;
-      static dtCore::RefPtr<dtDAL::ActorType> TEST_PLAYER_GAME_ACTOR_PROXY_TYPE;
-      static dtCore::RefPtr<dtDAL::ActorType> TEST_TASK_GAME_ACTOR_PROXY_TYPE;
-      static dtCore::RefPtr<dtDAL::ActorType> TEST_COUNTER_TASK_GAME_ACTOR_PROXY_TYPE;
-      static dtCore::RefPtr<dtDAL::ActorType> TEST_TANK_GAME_ACTOR_PROXY_TYPE;
-      static dtCore::RefPtr<dtDAL::ActorType> TEST_JET_GAME_ACTOR_PROXY_TYPE;
-      static dtCore::RefPtr<dtDAL::ActorType> TEST_CULTURAL_FEATURE_GAME_ACTOR_PROXY_TYPE;
-      static dtCore::RefPtr<dtDAL::ActorType> TEST_SENSOR_GAME_ACTOR_PROXY_TYPE;
-      static dtCore::RefPtr<dtDAL::ActorType> TEST_HELICOPTER_GAME_ACTOR_PROXY_TYPE;
-      static dtCore::RefPtr<dtDAL::ActorType> TEST_ENVIRONMENT_GAME_ACTOR_PROXY_TYPE;
-      static dtCore::RefPtr<dtDAL::ActorType> TEST_GAME_PROPERTY_PROXY_TYPE;
+      static dtCore::RefPtr<dtCore::ActorType> TEST1_GAME_ACTOR_PROXY_TYPE;
+      static dtCore::RefPtr<dtCore::ActorType> TEST2_GAME_ACTOR_PROXY_TYPE;
+      static dtCore::RefPtr<dtCore::ActorType> TEST_GAME_ACTOR_CRASH_PROXY_TYPE;
+      static dtCore::RefPtr<dtCore::ActorType> TEST_PLAYER_GAME_ACTOR_PROXY_TYPE;
+      static dtCore::RefPtr<dtCore::ActorType> TEST_TASK_GAME_ACTOR_PROXY_TYPE;
+      static dtCore::RefPtr<dtCore::ActorType> TEST_COUNTER_TASK_GAME_ACTOR_PROXY_TYPE;
+      static dtCore::RefPtr<dtCore::ActorType> TEST_TANK_GAME_ACTOR_PROXY_TYPE;
+      static dtCore::RefPtr<dtCore::ActorType> TEST_JET_GAME_ACTOR_PROXY_TYPE;
+      static dtCore::RefPtr<dtCore::ActorType> TEST_CULTURAL_FEATURE_GAME_ACTOR_PROXY_TYPE;
+      static dtCore::RefPtr<dtCore::ActorType> TEST_SENSOR_GAME_ACTOR_PROXY_TYPE;
+      static dtCore::RefPtr<dtCore::ActorType> TEST_HELICOPTER_GAME_ACTOR_PROXY_TYPE;
+      static dtCore::RefPtr<dtCore::ActorType> TEST_ENVIRONMENT_GAME_ACTOR_PROXY_TYPE;
+      static dtCore::RefPtr<dtCore::ActorType> TEST_GAME_PROPERTY_PROXY_TYPE;
 
       /// Constructor
       TestGameActorLibrary();

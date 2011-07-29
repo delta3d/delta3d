@@ -115,7 +115,7 @@ namespace dtEditQt
       QDataStream dataStream(&itemData, QIODevice::WriteOnly);
       QIcon icon = item->icon();
       QPixmap pixmap = icon.pixmap(16);
-      dtDAL::ResourceDescriptor resource = item->getResourceDescriptor();
+      dtCore::ResourceDescriptor resource = item->getResourceDescriptor();
       QString resourceIdentity = resource.GetDisplayName().c_str();
 
       dataStream << resourceIdentity;
@@ -138,7 +138,7 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
 
    ///////////////////////////////////////////////////////////////////////////////
-   ResourceListWidgetItem::ResourceListWidgetItem(const dtDAL::ResourceDescriptor resource,
+   ResourceListWidgetItem::ResourceListWidgetItem(const dtCore::ResourceDescriptor resource,
       const QIcon& icon, const QString& text /* = "" */, QListWidget* parent /* = 0 */,
       QListWidgetItem::ItemType type /* = QListWidgetItem::Type */)
          : QListWidgetItem(icon, text, parent, type)
@@ -158,7 +158,7 @@ namespace dtEditQt
    ResourceListWidgetItem::~ResourceListWidgetItem() {}
 
    ///////////////////////////////////////////////////////////////////////////////
-   dtDAL::ResourceDescriptor& ResourceListWidgetItem::getResourceDescriptor()
+   dtCore::ResourceDescriptor& ResourceListWidgetItem::getResourceDescriptor()
    {
       return mResource;
    }

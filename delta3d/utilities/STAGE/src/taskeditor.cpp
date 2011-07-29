@@ -33,13 +33,13 @@
 
 #include <dtCore/uniqueid.h>
 
-#include <dtDAL/actorproxy.h>
-#include <dtDAL/actortype.h>
-#include <dtDAL/booleanactorproperty.h>
-#include <dtDAL/datatype.h>
-#include <dtDAL/map.h>
-#include <dtDAL/namedactorparameter.h>
-#include <dtDAL/namedgroupparameter.h>
+#include <dtCore/actorproxy.h>
+#include <dtCore/actortype.h>
+#include <dtCore/booleanactorproperty.h>
+#include <dtCore/datatype.h>
+#include <dtCore/map.h>
+#include <dtCore/namedactorparameter.h>
+#include <dtCore/namedgroupparameter.h>
 
 #include <dtEditQt/editordata.h>
 
@@ -172,26 +172,26 @@ namespace dtEditQt
          mChildrenView->setItemSelected(mChildrenView->currentItem(), true);
       }
 
-      dtDAL::Map* m = EditorData::GetInstance().getCurrentMap();
+      dtCore::Map* m = EditorData::GetInstance().getCurrentMap();
       if (m == NULL)
       {
          LOG_ERROR("Unable read the children of a task actor without a valid current map.");
          return;
       }
-      dtDAL::Map& currMap = *m;
+      dtCore::Map& currMap = *m;
 
       if (mChildren.valid())
       {
-         std::vector<dtDAL::NamedParameter*> toFill;
+         std::vector<dtCore::NamedParameter*> toFill;
          mChildren->GetParameters(toFill);
 
          for (unsigned i = 0; i < toFill.size(); ++i)
          {
-            dtDAL::NamedParameter* np = toFill[i];
-            if (np->GetDataType() == dtDAL::DataType::ACTOR)
+            dtCore::NamedParameter* np = toFill[i];
+            if (np->GetDataType() == dtCore::DataType::ACTOR)
             {
-               dtCore::UniqueId id = static_cast<dtDAL::NamedActorParameter*>(np)->GetValue();
-               dtDAL::BaseActorObject* child = currMap.GetProxyById(id);
+               dtCore::UniqueId id = static_cast<dtCore::NamedActorParameter*>(np)->GetValue();
+               dtCore::BaseActorObject* child = currMap.GetProxyById(id);
                if (child != NULL)
                {
                   AddItemToList(*child);
@@ -243,14 +243,14 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void TaskEditor::AddItemToList(dtDAL::BaseActorObject& proxy)
+   void TaskEditor::AddItemToList(dtCore::BaseActorObject& proxy)
    {
-      const dtDAL::ActorType& at = proxy.GetActorType();
+      const dtCore::ActorType& at = proxy.GetActorType();
       QTableWidgetItem* nm       = new QTableWidgetItem;
       QTableWidgetItem* type     = new QTableWidgetItem;
 
       nm->setText(tr(proxy.GetName().c_str()));
-      nm->setData(Qt::UserRole, QVariant::fromValue(dtCore::RefPtr<dtDAL::BaseActorObject>(&proxy)));
+      nm->setData(Qt::UserRole, QVariant::fromValue(dtCore::RefPtr<dtCore::BaseActorObject>(&proxy)));
       type->setText(tr((at.GetFullName()).c_str()));
 
       int row = mChildrenView->rowCount();
@@ -261,7 +261,7 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   bool TaskEditor::HasChild(dtDAL::BaseActorObject& proxyToTest)
+   bool TaskEditor::HasChild(dtCore::BaseActorObject& proxyToTest)
    {
       for (int i = 0; i < mChildrenView->rowCount(); ++i)
       {
@@ -269,7 +269,7 @@ namespace dtEditQt
          if (item != NULL)
          {
             QVariant v = item->data(Qt::UserRole);
-            dtCore::RefPtr<dtDAL::BaseActorObject> proxy = v.value< dtCore::RefPtr<dtDAL::BaseActorObject> >();
+            dtCore::RefPtr<dtCore::BaseActorObject> proxy = v.value< dtCore::RefPtr<dtCore::BaseActorObject> >();
             if (proxy->GetId() == proxyToTest.GetId())
             {
                return true;
@@ -284,7 +284,7 @@ namespace dtEditQt
    {
       LOGN_DEBUG("taskeditor.cpp", "Refresh Combo Box");
       mComboBox->clear();
-      dtDAL::Map* m = EditorData::GetInstance().getCurrentMap();
+      dtCore::Map* m = EditorData::GetInstance().getCurrentMap();
 
       if (m == NULL)
       {
@@ -294,20 +294,20 @@ namespace dtEditQt
 
       const std::string topLevelProperty("IsTopLevel");
 
-      std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> > toFill;
-      std::vector<dtDAL::BaseActorObject*> selectedActors;
+      std::vector<dtCore::RefPtr<dtCore::BaseActorObject> > toFill;
+      std::vector<dtCore::BaseActorObject*> selectedActors;
       m->FindProxies(toFill, "", "dtcore.Tasks", "Task Actor");
       EditorData::GetInstance().GetSelectedActors(selectedActors);
 
       for (unsigned i = 0; i < toFill.size(); ++i)
       {
-         dtDAL::BaseActorObject* ap = toFill[i].get();
+         dtCore::BaseActorObject* ap = toFill[i].get();
          bool isRemoved = mRemovedTasks.find(ap) != mRemovedTasks.end();
          // We don't want to see actors with parents unless it has been removed from the current parent actor
          // or the checkbox has been selected by the user to explicitly show them.
          if (!isRemoved && mShowTasksWithParents->checkState() == Qt::Unchecked)
          {
-            dtDAL::BooleanActorProperty* bap = static_cast<dtDAL::BooleanActorProperty*>(ap->GetProperty(topLevelProperty));
+            dtCore::BooleanActorProperty* bap = static_cast<dtCore::BooleanActorProperty*>(ap->GetProperty(topLevelProperty));
             if (bap == NULL)
             {
                LOG_ERROR("A task actor named \"" + ap->GetName() + "\" with type \"" + ap->GetActorType().GetCategory()
@@ -336,7 +336,7 @@ namespace dtEditQt
          if (!isSelected && !HasChild(*ap))
          {
             //TODO if it's not the currently selected actor
-            QVariant v = QVariant::fromValue(dtCore::RefPtr<dtDAL::BaseActorObject>(ap));
+            QVariant v = QVariant::fromValue(dtCore::RefPtr<dtCore::BaseActorObject>(ap));
             mComboBox->addItem(tr(ap->GetName().c_str()), v);
          }
 
@@ -380,7 +380,7 @@ namespace dtEditQt
          if (item != NULL)
          {
             QVariant v = item->data(Qt::UserRole);
-            dtCore::RefPtr<dtDAL::BaseActorObject> proxy = v.value<dtCore::RefPtr<dtDAL::BaseActorObject> >();
+            dtCore::RefPtr<dtCore::BaseActorObject> proxy = v.value<dtCore::RefPtr<dtCore::BaseActorObject> >();
             mRemovedTasks.insert(proxy);
          }
 
@@ -428,12 +428,12 @@ namespace dtEditQt
       if (index >= 0)
       {
          QVariant v = mComboBox->itemData(index);
-         dtCore::RefPtr<dtDAL::BaseActorObject> proxy = v.value<dtCore::RefPtr<dtDAL::BaseActorObject> >();
+         dtCore::RefPtr<dtCore::BaseActorObject> proxy = v.value<dtCore::RefPtr<dtCore::BaseActorObject> >();
          AddItemToList(*proxy);
          BlankRowLabels();
 
          //remove the item being added from the removed list, if necessary.
-         std::set<dtCore::RefPtr<dtDAL::BaseActorObject> >::iterator itor = mRemovedTasks.find(proxy);
+         std::set<dtCore::RefPtr<dtCore::BaseActorObject> >::iterator itor = mRemovedTasks.find(proxy);
          if (itor != mRemovedTasks.end())
          {
             mRemovedTasks.erase(itor);
@@ -458,14 +458,14 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void TaskEditor::SetTaskChildren(const dtDAL::NamedGroupParameter& children)
+   void TaskEditor::SetTaskChildren(const dtCore::NamedGroupParameter& children)
    {
-      mChildren = new dtDAL::NamedGroupParameter(children);
+      mChildren = new dtCore::NamedGroupParameter(children);
       PopulateChildren();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void TaskEditor::GetTaskChildren(dtDAL::NamedGroupParameter& toFill) const
+   void TaskEditor::GetTaskChildren(dtCore::NamedGroupParameter& toFill) const
    {
       for (int i = 0; i < mChildrenView->rowCount(); ++i)
       {
@@ -473,10 +473,10 @@ namespace dtEditQt
          if (item != NULL)
          {
             QVariant v = item->data(Qt::UserRole);
-            dtCore::RefPtr<dtDAL::BaseActorObject> proxy = v.value<dtCore::RefPtr<dtDAL::BaseActorObject> >();
+            dtCore::RefPtr<dtCore::BaseActorObject> proxy = v.value<dtCore::RefPtr<dtCore::BaseActorObject> >();
             std::ostringstream ss;
             ss << i;
-            dtCore::RefPtr<dtDAL::NamedActorParameter> aParam = new dtDAL::NamedActorParameter(ss.str());
+            dtCore::RefPtr<dtCore::NamedActorParameter> aParam = new dtCore::NamedActorParameter(ss.str());
             aParam->SetValue(proxy->GetId());
             toFill.AddParameter(*aParam);
          }

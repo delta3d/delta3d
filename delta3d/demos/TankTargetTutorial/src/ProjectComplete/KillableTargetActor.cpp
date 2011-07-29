@@ -32,8 +32,8 @@
 #include <dtCore/shaderparameter.h>
 #include <dtCore/shaderparamoscillator.h>
 
-#include <dtDAL/functor.h>
-#include <dtDAL/intactorproperty.h>
+#include <dtCore/functor.h>
+#include <dtCore/intactorproperty.h>
 
 #include <dtGame/actorupdatemessage.h>
 #include <dtGame/basemessages.h>
@@ -355,15 +355,15 @@ void KillableTargetActorProxy::BuildPropertyMap()
    actor.SetUseCache(false);
 
    // "Max Health" property
-   AddProperty(new dtDAL::IntActorProperty("Max Health", "Max Health",
-      dtDAL::IntActorProperty::SetFuncType(&actor, &KillableTargetActor::SetMaxHealth),
-      dtDAL::IntActorProperty::GetFuncType(&actor, &KillableTargetActor::GetMaxHealth),
+   AddProperty(new dtCore::IntActorProperty("Max Health", "Max Health",
+      dtCore::IntActorProperty::SetFuncType(&actor, &KillableTargetActor::SetMaxHealth),
+      dtCore::IntActorProperty::GetFuncType(&actor, &KillableTargetActor::GetMaxHealth),
       "Sets/gets the target max health (i.e. the damaged it can sustain before going boom)", GROUP));
 
    // "Current Health" property
-   AddProperty(new dtDAL::IntActorProperty("Current Health", "Current Health",
-      dtDAL::IntActorProperty::SetFuncType(&actor, &KillableTargetActor::SetCurrentHealth),
-      dtDAL::IntActorProperty::GetFuncType(&actor, &KillableTargetActor::GetCurrentHealth),
+   AddProperty(new dtCore::IntActorProperty("Current Health", "Current Health",
+      dtCore::IntActorProperty::SetFuncType(&actor, &KillableTargetActor::SetCurrentHealth),
+      dtCore::IntActorProperty::GetFuncType(&actor, &KillableTargetActor::GetCurrentHealth),
       "Sets/gets the target current health", GROUP));
 }
 

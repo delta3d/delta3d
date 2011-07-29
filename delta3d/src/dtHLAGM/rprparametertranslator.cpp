@@ -34,7 +34,7 @@
 #include <dtHLAGM/environmentprocessrecordlist.h>
 
 #include <dtGame/deadreckoningcomponent.h>
-#include <dtDAL/namedgroupparameter.inl>
+#include <dtCore/namedgroupparameter.inl>
 
 namespace dtHLAGM
 {
@@ -144,9 +144,9 @@ namespace dtHLAGM
       if (parameters[1].valid())
       {
          const dtGame::MessageParameter& frozenParam = *parameters[1];
-         const dtDAL::DataType& dataType = mapping.GetParameterDefinitions()[1].GetGameType();
+         const dtCore::DataType& dataType = mapping.GetParameterDefinitions()[1].GetGameType();
 
-         if (dataType == dtDAL::DataType::BOOLEAN && frozenParam.GetDataType() == dataType)
+         if (dataType == dtCore::DataType::BOOLEAN && frozenParam.GetDataType() == dataType)
          {
             spatial.SetFrozen(static_cast<const dtGame::BooleanMessageParameter&>(frozenParam).GetValue());
          }
@@ -203,7 +203,7 @@ namespace dtHLAGM
    {
       EnvironmentProcessRecordList processList(mCoordinates);
 
-      if (parameter.GetDataType() != dtDAL::DataType::GROUP)
+      if (parameter.GetDataType() != dtCore::DataType::GROUP)
       {
          mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
                              "The parameter named \"%s\" could not be encoded into a \"%s\" struct because it is not a group message parameter.",
@@ -213,19 +213,19 @@ namespace dtHLAGM
       else
       {
          // just checked the datatype above, so no need to dynamic cast.
-         const dtDAL::NamedGroupParameter& rootGroupParam = static_cast<const dtDAL::NamedGroupParameter&>(parameter);
+         const dtCore::NamedGroupParameter& rootGroupParam = static_cast<const dtCore::NamedGroupParameter&>(parameter);
 
-         std::vector<const dtDAL::NamedParameter*> subParams;
+         std::vector<const dtCore::NamedParameter*> subParams;
          rootGroupParam.GetParameters(subParams);
 
-         std::vector<const dtDAL::NamedParameter*>::const_iterator i, iend;
+         std::vector<const dtCore::NamedParameter*>::const_iterator i, iend;
          i = subParams.begin();
          iend = subParams.end();
 
          for (;i != iend; ++i)
          {
-            const dtDAL::NamedParameter* item = *i;
-            const dtDAL::NamedGroupParameter* groupItem = dynamic_cast<const dtDAL::NamedGroupParameter*>(item);
+            const dtCore::NamedParameter* item = *i;
+            const dtCore::NamedGroupParameter* groupItem = dynamic_cast<const dtCore::NamedGroupParameter*>(item);
 
             if (groupItem != NULL)
             {
@@ -250,20 +250,20 @@ namespace dtHLAGM
    {
       osg::Vec3 position;
 
-      const dtDAL::DataType& parameterDataType = parameter.GetDataType();
+      const dtCore::DataType& parameterDataType = parameter.GetDataType();
 
-      if (parameterDataType == dtDAL::DataType::VEC3)
+      if (parameterDataType == dtCore::DataType::VEC3)
       {
          position = static_cast<const dtGame::Vec3MessageParameter&>(parameter).GetValue();
       }
-      else if (parameterDataType == dtDAL::DataType::VEC3F)
+      else if (parameterDataType == dtCore::DataType::VEC3F)
       {
          osg::Vec3f posTemp = static_cast<const dtGame::Vec3fMessageParameter&>(parameter).GetValue();
          position.x() = posTemp.x();
          position.y() = posTemp.y();
          position.z() = posTemp.z();
       }
-      else if (parameterDataType == dtDAL::DataType::VEC3D)
+      else if (parameterDataType == dtCore::DataType::VEC3D)
       {
          osg::Vec3d posTemp = static_cast<const dtGame::Vec3dMessageParameter&>(parameter).GetValue();
          //We're loosing precision here if a Vec3 is not compiled as a vec3d, but the
@@ -329,21 +329,21 @@ namespace dtHLAGM
    osg::Vec3d RPRParameterTranslator::CoordConvertRotationParameter(
             const dtGame::MessageParameter& parameter) const
    {
-      const dtDAL::DataType& parameterDataType = parameter.GetDataType();
+      const dtCore::DataType& parameterDataType = parameter.GetDataType();
 
       osg::Vec3 result;
       osg::Vec3 angleReordered;
-      if (parameterDataType == dtDAL::DataType::VEC3)
+      if (parameterDataType == dtCore::DataType::VEC3)
       {
          osg::Vec3 angle = static_cast<const dtGame::Vec3MessageParameter&>(parameter).GetValue();
          angleReordered.set(angle[2], angle[0], angle[1]);
       }
-      else if (parameterDataType == dtDAL::DataType::VEC3F)
+      else if (parameterDataType == dtCore::DataType::VEC3F)
       {
          osg::Vec3f angle = static_cast<const dtGame::Vec3fMessageParameter&>(parameter).GetValue();
          angleReordered.set(angle[2], angle[0], angle[1]);
       }
-      else if (parameterDataType == dtDAL::DataType::VEC3D)
+      else if (parameterDataType == dtCore::DataType::VEC3D)
       {
          osg::Vec3d angle = static_cast<const dtGame::Vec3dMessageParameter&>(parameter).GetValue();
          angleReordered.set(angle[2], angle[0], angle[1]);
@@ -395,15 +395,15 @@ namespace dtHLAGM
    osg::Vec3f RPRParameterTranslator::CoordConvertVelocityParameter(
             const dtGame::MessageParameter& parameter) const
    {
-      const dtDAL::DataType& parameterDataType = parameter.GetDataType();
+      const dtCore::DataType& parameterDataType = parameter.GetDataType();
       osg::Vec3 result;
 
-      if (parameterDataType == dtDAL::DataType::VEC3)
+      if (parameterDataType == dtCore::DataType::VEC3)
       {
          const osg::Vec3& preResult = static_cast<const dtGame::Vec3MessageParameter&>(parameter).GetValue();
          result = mCoordinates.GetOriginRotationMatrixInverse().preMult(preResult);
       }
-      else if (parameterDataType == dtDAL::DataType::VEC3F)
+      else if (parameterDataType == dtCore::DataType::VEC3F)
       {
          const osg::Vec3f& preResult = static_cast<const dtGame::Vec3fMessageParameter&>(parameter).GetValue();
          result = mCoordinates.GetOriginRotationMatrixInverse().preMult(preResult);
@@ -432,13 +432,13 @@ namespace dtHLAGM
    osg::Vec3f RPRParameterTranslator::CoordConvertAngularVelocityParameter(
             const dtGame::MessageParameter& parameter) const
    {
-      const dtDAL::DataType& parameterDataType = parameter.GetDataType();
+      const dtCore::DataType& parameterDataType = parameter.GetDataType();
       osg::Vec3f result;
-      if (parameterDataType == dtDAL::DataType::VEC3)
+      if (parameterDataType == dtCore::DataType::VEC3)
       {
          result = osg::Vec3f(static_cast<const dtGame::Vec3MessageParameter&>(parameter).GetValue());
       }
-      else if (parameterDataType == dtDAL::DataType::VEC3F)
+      else if (parameterDataType == dtCore::DataType::VEC3F)
       {
          result = static_cast<const dtGame::Vec3fMessageParameter&>(parameter).GetValue();
       }
@@ -474,14 +474,14 @@ namespace dtHLAGM
    {
       std::stringstream valueAsString;
 
-      if( parameter.GetDataType() == dtDAL::DataType::ENUMERATION )
+      if( parameter.GetDataType() == dtCore::DataType::ENUMERATION )
       {
          const std::string& msgParamValue
             = static_cast<const dtGame::EnumMessageParameter&>(parameter).GetValue();
 
          valueAsString << (GetEnumValue(msgParamValue, paramDef, false).c_str());
       }
-      else if( parameter.GetDataType() == dtDAL::DataType::STRING )
+      else if( parameter.GetDataType() == dtCore::DataType::STRING )
       {
          valueAsString << (static_cast<const dtGame::StringMessageParameter&>
             (parameter).GetValue().c_str());
@@ -507,11 +507,11 @@ namespace dtHLAGM
          size_t& maxSize,
          const std::string& parameterValue,
          const OneToManyMapping::ParameterDefinition& paramDef,
-         const dtDAL::DataType& parameterDataType,
+         const dtCore::DataType& parameterDataType,
          bool addNullTerminator) const
    {
       std::string value;
-      if (parameterDataType == dtDAL::DataType::ENUMERATION)
+      if (parameterDataType == dtCore::DataType::ENUMERATION)
       {
          value = GetEnumValue(parameterValue, paramDef, false);
       }
@@ -581,7 +581,7 @@ namespace dtHLAGM
 
       //most of the current mappings use only one parameter, so save off the first one to make it easy.
       const dtGame::MessageParameter& parameter = *parameters[0];
-      const dtDAL::DataType& parameterDataType  = parameter.GetDataType();
+      const dtCore::DataType& parameterDataType  = parameter.GetDataType();
       const OneToManyMapping::ParameterDefinition& paramDef = mapping.GetParameterDefinitions()[0];
 
       if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
@@ -662,11 +662,11 @@ namespace dtHLAGM
          {
             double* value = (double*)(&buffer[0]);
 
-            if (parameter.GetDataType() == dtDAL::DataType::DOUBLE)
+            if (parameter.GetDataType() == dtCore::DataType::DOUBLE)
             {
                *value = static_cast<const dtGame::DoubleMessageParameter&>(parameter).GetValue();
             }
-            else if (parameter.GetDataType() == dtDAL::DataType::FLOAT)
+            else if (parameter.GetDataType() == dtCore::DataType::FLOAT)
             {
                *value = double(static_cast<const dtGame::FloatMessageParameter&>(parameter).GetValue());
             }
@@ -681,11 +681,11 @@ namespace dtHLAGM
          {
             float* value = (float*)(&buffer[0]);
 
-            if (parameter.GetDataType() == dtDAL::DataType::DOUBLE)
+            if (parameter.GetDataType() == dtCore::DataType::DOUBLE)
             {
                *value = float(static_cast<const dtGame::DoubleMessageParameter&>(parameter).GetValue());
             }
-            else if (parameter.GetDataType() == dtDAL::DataType::FLOAT)
+            else if (parameter.GetDataType() == dtCore::DataType::FLOAT)
             {
                *value = static_cast<const dtGame::FloatMessageParameter&>(parameter).GetValue();
             }
@@ -709,9 +709,9 @@ namespace dtHLAGM
                   {
             bool addNullTerminator = hlaType == RPRAttributeType::STRING_TYPE;
 
-            if (parameterDataType == dtDAL::DataType::STRING ||
-                     parameterDataType == dtDAL::DataType::ENUMERATION ||
-                     parameterDataType == dtDAL::DataType::ACTOR)
+            if (parameterDataType == dtCore::DataType::STRING ||
+                     parameterDataType == dtCore::DataType::ENUMERATION ||
+                     parameterDataType == dtCore::DataType::ACTOR)
             {
                MapFromStringParamToCharArray(buffer, maxSize,
                         parameter.ToString(),
@@ -728,7 +728,7 @@ namespace dtHLAGM
          }
          case (RPRAttributeType::MARKING_TYPE_ENUM):
          {
-            if (parameterDataType == dtDAL::DataType::STRING)
+            if (parameterDataType == dtCore::DataType::STRING)
             {
                const std::string& markingText = static_cast<const dtGame::StringMessageParameter&>(parameter).GetValue();
 
@@ -745,7 +745,7 @@ namespace dtHLAGM
          }
          case (RPRAttributeType::MARKING_TYPE_32_ENUM):
          {
-            if (parameterDataType == dtDAL::DataType::STRING)
+            if (parameterDataType == dtCore::DataType::STRING)
             {
                const std::string& markingText = static_cast<const dtGame::StringMessageParameter&>(parameter).GetValue();
 
@@ -762,7 +762,7 @@ namespace dtHLAGM
          }
          case (RPRAttributeType::ENTITY_IDENTIFIER_TYPE_ENUM):
          {
-            if (parameterDataType == dtDAL::DataType::ACTOR)
+            if (parameterDataType == dtCore::DataType::ACTOR)
             {
                dtCore::UniqueId aid = static_cast<const dtGame::ActorMessageParameter&>(parameter).GetValue();
 
@@ -784,7 +784,7 @@ namespace dtHLAGM
          }
          case (RPRAttributeType::RTI_OBJECT_ID_STRUCT_TYPE_ENUM):
          {
-            if (parameterDataType == dtDAL::DataType::ACTOR)
+            if (parameterDataType == dtCore::DataType::ACTOR)
             {
                const dtCore::UniqueId& value = static_cast<const dtGame::ActorMessageParameter&>(parameter).GetValue();
 
@@ -812,8 +812,8 @@ namespace dtHLAGM
             }
             // enumeration doesn't really make sense for an ID, but the method it calls supports
             // enumerations, so there is no reason to limit it.
-            else if (parameterDataType == dtDAL::DataType::STRING ||
-                     parameterDataType == dtDAL::DataType::ENUMERATION)
+            else if (parameterDataType == dtCore::DataType::STRING ||
+                     parameterDataType == dtCore::DataType::ENUMERATION)
             {
                MapFromStringParamToCharArray(buffer, maxSize,
                         parameter.ToString(),
@@ -830,7 +830,7 @@ namespace dtHLAGM
          }
          case (RPRAttributeType::ARTICULATED_PART_SINGLE_TYPE_ENUM):
          {
-            if (parameterDataType == dtDAL::DataType::GROUP)
+            if (parameterDataType == dtCore::DataType::GROUP)
             {
                ArticulatedParameter artParam;
                if (MapFromParamToArticulation(artParam, parameter, paramDef))
@@ -887,11 +887,11 @@ namespace dtHLAGM
                   position[0], position[1], position[2]);
       }
 
-      if (parameter.GetDataType() == dtDAL::DataType::VEC3)
+      if (parameter.GetDataType() == dtCore::DataType::VEC3)
       {
          static_cast<dtGame::Vec3MessageParameter&>(parameter).SetValue(position);
       }
-      else if (parameter.GetDataType() == dtDAL::DataType::VEC3F)
+      else if (parameter.GetDataType() == dtCore::DataType::VEC3F)
       {
          static_cast<dtGame::Vec3fMessageParameter&>(parameter).SetValue(
             osg::Vec3f(position.x(), position.y(), position.z()));
@@ -904,7 +904,7 @@ namespace dtHLAGM
    {
       osg::Vec3 result = mCoordinates.ConvertToLocalRotation(eulerAngles.GetPsi(), eulerAngles.GetTheta(), eulerAngles.GetPhi());
 
-      if (parameter.GetDataType() == dtDAL::DataType::VEC3)
+      if (parameter.GetDataType() == dtCore::DataType::VEC3)
       {
          //convert to x,y,z
          osg::Vec3 thisEulerAngle(result[1], result[2], result[0]);
@@ -912,7 +912,7 @@ namespace dtHLAGM
          static_cast<dtGame::Vec3MessageParameter&>(parameter).SetValue(thisEulerAngle);
          parameter.WriteToLog(*mLogger);
       }
-      else if (parameter.GetDataType() == dtDAL::DataType::VEC3D)
+      else if (parameter.GetDataType() == dtCore::DataType::VEC3D)
       {
          //convert to x,y,z
          osg::Vec3d thisEulerAngle(result[1], result[2], result[0]);
@@ -943,11 +943,11 @@ namespace dtHLAGM
             LOGN_ERROR("coordinates.cpp", "With local coordinates in globe mode, only GEOCENTRIC coordinates types are supported.");
          }
       }
-      if (parameter.GetDataType() == dtDAL::DataType::VEC3)
+      if (parameter.GetDataType() == dtCore::DataType::VEC3)
       {
          static_cast<dtGame::Vec3MessageParameter&>(parameter).SetValue(thisVector);
       }
-      else if (parameter.GetDataType() == dtDAL::DataType::VEC3F)
+      else if (parameter.GetDataType() == dtCore::DataType::VEC3F)
       {
          static_cast<dtGame::Vec3fMessageParameter&>(parameter).SetValue(
             osg::Vec3f(thisVector.x(), thisVector.y(), thisVector.z()));
@@ -958,11 +958,11 @@ namespace dtHLAGM
    void RPRParameterTranslator::CoordConvertAngularVelocityVector(const VelocityVector& velocityVector,
             dtGame::MessageParameter& parameter) const
    {
-      if (parameter.GetDataType() == dtDAL::DataType::VEC3)
+      if (parameter.GetDataType() == dtCore::DataType::VEC3)
       {
          static_cast<dtGame::Vec3MessageParameter&>(parameter).SetValue(velocityVector);
       }
-      else if (parameter.GetDataType() == dtDAL::DataType::VEC3F)
+      else if (parameter.GetDataType() == dtCore::DataType::VEC3F)
       {
          static_cast<dtGame::Vec3fMessageParameter&>(parameter).SetValue(
             osg::Vec3f(velocityVector));
@@ -1008,9 +1008,9 @@ namespace dtHLAGM
       if (parameters[1].valid())
       {
          dtGame::MessageParameter& frozenParam = *parameters[1];
-         const dtDAL::DataType& dataType = mapping.GetParameterDefinitions()[1].GetGameType();
+         const dtCore::DataType& dataType = mapping.GetParameterDefinitions()[1].GetGameType();
 
-         if (dataType == dtDAL::DataType::BOOLEAN && frozenParam.GetDataType() == dataType)
+         if (dataType == dtCore::DataType::BOOLEAN && frozenParam.GetDataType() == dataType)
          {
             static_cast<dtGame::BooleanMessageParameter&>(frozenParam).SetValue(spatial.IsFrozen());
          }
@@ -1063,7 +1063,7 @@ namespace dtHLAGM
             const size_t size,
             dtGame::MessageParameter& parameter) const
    {
-      if (parameter.GetDataType() != dtDAL::DataType::GROUP)
+      if (parameter.GetDataType() != dtCore::DataType::GROUP)
       {
          mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
                              "The parameter named \"%s\" could not be decoded from a \"%s\" struct because it is not a group message parameter.",
@@ -1073,7 +1073,7 @@ namespace dtHLAGM
       else
       {
          // just checked the datatype above, so no need to dynamic cast.
-         dtDAL::NamedGroupParameter& rootGroupParam = static_cast<dtDAL::NamedGroupParameter&>(parameter);
+         dtCore::NamedGroupParameter& rootGroupParam = static_cast<dtCore::NamedGroupParameter&>(parameter);
 
          EnvironmentProcessRecordList processList(mCoordinates);
          if (processList.Decode(buffer, size))
@@ -1219,7 +1219,7 @@ namespace dtHLAGM
          value.append(1, c);
       }
 
-      if (parameter.GetDataType() == dtDAL::DataType::ENUMERATION)
+      if (parameter.GetDataType() == dtCore::DataType::ENUMERATION)
          value = GetEnumValue(value, paramDef, true);
 
       parameter.FromString(value);
@@ -1316,10 +1316,10 @@ namespace dtHLAGM
          ArticulatedParts& artParts = curParamValue.GetArticulatedParts();
 
          // Prepare loop variables
-         const dtDAL::NamedParameter* curNamedParam = NULL;
-         std::vector<const dtDAL::NamedParameter*> params;
+         const dtCore::NamedParameter* curNamedParam = NULL;
+         std::vector<const dtCore::NamedParameter*> params;
          curGroupParam->GetParameters( params );
-         std::vector<const dtDAL::NamedParameter*>::iterator paramIter = params.begin();
+         std::vector<const dtCore::NamedParameter*>::iterator paramIter = params.begin();
 
          // Collect the articulated value. The loop avoids the overhead of
          // searching over several names possible for the float parameter.
@@ -1541,7 +1541,7 @@ namespace dtHLAGM
       dtGame::MessageParameter& parameter = *parameters[0];
       const OneToManyMapping::ParameterDefinition& paramDef = mapping.GetParameterDefinitions()[0];
 
-      const dtDAL::DataType& parameterDataType = parameter.GetDataType();
+      const dtCore::DataType& parameterDataType = parameter.GetDataType();
 
       if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
       {
@@ -1586,11 +1586,11 @@ namespace dtHLAGM
                osg::swapBytes((char*)(&value), sizeof(double));
             }
 
-            if (parameterDataType == dtDAL::DataType::DOUBLE)
+            if (parameterDataType == dtCore::DataType::DOUBLE)
             {
                static_cast<dtGame::DoubleMessageParameter&>(parameter).SetValue(value);
             }
-            else if (parameterDataType == dtDAL::DataType::FLOAT)
+            else if (parameterDataType == dtCore::DataType::FLOAT)
             {
                static_cast<dtGame::FloatMessageParameter&>(parameter).SetValue(float(value));
             }
@@ -1605,11 +1605,11 @@ namespace dtHLAGM
                osg::swapBytes((char*)(&value), sizeof(float));
             }
 
-            if (parameterDataType == dtDAL::DataType::DOUBLE)
+            if (parameterDataType == dtCore::DataType::DOUBLE)
             {
                static_cast<dtGame::DoubleMessageParameter&>(parameter).SetValue(double(value));
             }
-            else if (parameterDataType == dtDAL::DataType::FLOAT)
+            else if (parameterDataType == dtCore::DataType::FLOAT)
             {
                static_cast<dtGame::FloatMessageParameter&>(parameter).SetValue(value);
             }
@@ -1652,8 +1652,8 @@ namespace dtHLAGM
          case (RPRAttributeType::ENTITY_TYPE_ENUM):
          {
             // Convert to Entity Type from either an Enum or a String.
-            if( parameterDataType == dtDAL::DataType::ENUMERATION
-               || parameterDataType == dtDAL::DataType::STRING )
+            if( parameterDataType == dtCore::DataType::ENUMERATION
+               || parameterDataType == dtCore::DataType::STRING )
             {
                // Since this is a valid type, convert the buffer to
                // an Entity Type object.
@@ -1665,7 +1665,7 @@ namespace dtHLAGM
                stringValue << entityType;
 
                // Write the value to the property
-               if( parameterDataType == dtDAL::DataType::ENUMERATION )
+               if( parameterDataType == dtCore::DataType::ENUMERATION )
                {
                   std::string mappedValue = GetEnumValue(stringValue.str(), paramDef, true);
                   static_cast<dtGame::EnumMessageParameter&>(parameter).SetValue(mappedValue);
@@ -1689,9 +1689,9 @@ namespace dtHLAGM
          {
             bool stopAtNullTerminator = hlaType == RPRAttributeType::STRING_TYPE;
 
-            if (parameterDataType == dtDAL::DataType::STRING ||
-                parameterDataType == dtDAL::DataType::ENUMERATION ||
-                parameterDataType == dtDAL::DataType::ACTOR)
+            if (parameterDataType == dtCore::DataType::STRING ||
+                parameterDataType == dtCore::DataType::ENUMERATION ||
+                parameterDataType == dtCore::DataType::ACTOR)
             {
                MapFromCharArrayToStringParam(buffer, size,
                      parameter,
@@ -1708,7 +1708,7 @@ namespace dtHLAGM
          }
          case (RPRAttributeType::MARKING_TYPE_ENUM):
          {
-            if (parameterDataType == dtDAL::DataType::STRING)
+            if (parameterDataType == dtCore::DataType::STRING)
             {
                std::string markingText;
                CopyBufferToMarkingText(buffer, markingText, RPRAttributeType::MARKING_TYPE.GetEncodedLength());
@@ -1726,7 +1726,7 @@ namespace dtHLAGM
          }
          case (RPRAttributeType::MARKING_TYPE_32_ENUM):
          {
-            if (parameterDataType == dtDAL::DataType::STRING)
+            if (parameterDataType == dtCore::DataType::STRING)
             {
                std::string markingText;
                CopyBufferToMarkingText(buffer, markingText, RPRAttributeType::MARKING_TYPE_32.GetEncodedLength());
@@ -1746,7 +1746,7 @@ namespace dtHLAGM
          {
             EntityIdentifier eid;
             eid.Decode(buffer);
-            if (parameterDataType == dtDAL::DataType::ACTOR)
+            if (parameterDataType == dtCore::DataType::ACTOR)
             {
                const dtCore::UniqueId* oid = mRuntimeMappings.GetId(eid);
                if (oid != NULL)
@@ -1763,7 +1763,7 @@ namespace dtHLAGM
          }
          case (RPRAttributeType::RTI_OBJECT_ID_STRUCT_TYPE_ENUM):
          {
-            if (parameterDataType == dtDAL::DataType::ACTOR)
+            if (parameterDataType == dtCore::DataType::ACTOR)
             {
                std::string value;
                for (unsigned i = 0; i < size; ++i)
@@ -1781,8 +1781,8 @@ namespace dtHLAGM
                static_cast<dtGame::ActorMessageParameter&>(parameter)
                   .SetValue( actorId != NULL ? *actorId : dtCore::UniqueId(""));
             }
-            else if (parameterDataType == dtDAL::DataType::STRING ||
-                  parameterDataType == dtDAL::DataType::ENUMERATION)
+            else if (parameterDataType == dtCore::DataType::STRING ||
+                  parameterDataType == dtCore::DataType::ENUMERATION)
             {
                MapFromCharArrayToStringParam(buffer, size,
                      static_cast<dtGame::StringMessageParameter&>(parameter), paramDef);
@@ -1838,44 +1838,44 @@ namespace dtHLAGM
    void RPRParameterTranslator::SetIntegerValue(unsigned value, dtGame::MessageParameter& parameter,
       const OneToManyMapping& mapping, unsigned parameterDefIndex) const
    {
-      const dtDAL::DataType& parameterDataType = parameter.GetDataType();
+      const dtCore::DataType& parameterDataType = parameter.GetDataType();
       const OneToManyMapping::ParameterDefinition& paramDef = mapping.GetParameterDefinitions()[parameterDefIndex];
 
       parameter.WriteToLog(*mLogger);
-      if (parameterDataType == dtDAL::DataType::UINT)
+      if (parameterDataType == dtCore::DataType::UINT)
       {
          static_cast<dtGame::UnsignedIntMessageParameter&>(parameter).SetValue(unsigned(value));
       }
-      else if (parameterDataType == dtDAL::DataType::ULONGINT)
+      else if (parameterDataType == dtCore::DataType::ULONGINT)
       {
          static_cast<dtGame::UnsignedLongIntMessageParameter&>(parameter).SetValue((unsigned long)(value));
       }
-      else if (parameterDataType == dtDAL::DataType::USHORTINT)
+      else if (parameterDataType == dtCore::DataType::USHORTINT)
       {
          static_cast<dtGame::UnsignedShortIntMessageParameter&>(parameter).SetValue((unsigned short)(value));
       }
-      else if (parameterDataType == dtDAL::DataType::UCHAR)
+      else if (parameterDataType == dtCore::DataType::UCHAR)
       {
          static_cast<dtGame::UnsignedCharMessageParameter&>(parameter).SetValue((unsigned char)(value));
       }
-      else if (parameterDataType == dtDAL::DataType::INT)
+      else if (parameterDataType == dtCore::DataType::INT)
       {
          static_cast<dtGame::IntMessageParameter&>(parameter).SetValue(int(value));
       }
-      else if (parameterDataType == dtDAL::DataType::LONGINT)
+      else if (parameterDataType == dtCore::DataType::LONGINT)
       {
          static_cast<dtGame::LongIntMessageParameter&>(parameter).SetValue(long(value));
       }
-      else if (parameterDataType == dtDAL::DataType::SHORTINT)
+      else if (parameterDataType == dtCore::DataType::SHORTINT)
       {
          static_cast<dtGame::ShortIntMessageParameter&>(parameter).SetValue(short(value));
       }
-      else if (parameterDataType == dtDAL::DataType::BOOLEAN)
+      else if (parameterDataType == dtCore::DataType::BOOLEAN)
       {
          static_cast<dtGame::BooleanMessageParameter&>(parameter).SetValue(value != 0);
       }
-      else if (parameterDataType == dtDAL::DataType::ENUMERATION
-         || parameterDataType == dtDAL::DataType::STRING
+      else if (parameterDataType == dtCore::DataType::ENUMERATION
+         || parameterDataType == dtCore::DataType::STRING
          || parameterDataType.IsResource() )
       {
          std::string mappedValue;
@@ -1894,45 +1894,45 @@ namespace dtHLAGM
    unsigned RPRParameterTranslator::GetIntegerValue(const dtGame::MessageParameter& parameter,
       const OneToManyMapping& mapping, unsigned parameterDefIndex) const
    {
-      const dtDAL::DataType& parameterDataType = parameter.GetDataType();
+      const dtCore::DataType& parameterDataType = parameter.GetDataType();
       const OneToManyMapping::ParameterDefinition& paramDef = mapping.GetParameterDefinitions()[parameterDefIndex];
 
       parameter.WriteToLog(*mLogger);
 
-      if (parameterDataType == dtDAL::DataType::UINT)
+      if (parameterDataType == dtCore::DataType::UINT)
       {
          return unsigned(static_cast<const dtGame::UnsignedIntMessageParameter&>(parameter).GetValue());
       }
-      else if (parameterDataType == dtDAL::DataType::ULONGINT)
+      else if (parameterDataType == dtCore::DataType::ULONGINT)
       {
          return unsigned(static_cast<const dtGame::UnsignedLongIntMessageParameter&>(parameter).GetValue());
       }
-      else if (parameterDataType == dtDAL::DataType::USHORTINT)
+      else if (parameterDataType == dtCore::DataType::USHORTINT)
       {
          return unsigned(static_cast<const dtGame::UnsignedShortIntMessageParameter&>(parameter).GetValue());
       }
-      else if (parameterDataType == dtDAL::DataType::UCHAR)
+      else if (parameterDataType == dtCore::DataType::UCHAR)
       {
          return unsigned(static_cast<const dtGame::UnsignedCharMessageParameter&>(parameter).GetValue());
       }
-      else if (parameterDataType == dtDAL::DataType::INT)
+      else if (parameterDataType == dtCore::DataType::INT)
       {
          return unsigned(static_cast<const dtGame::IntMessageParameter&>(parameter).GetValue());
       }
-      else if (parameterDataType == dtDAL::DataType::LONGINT)
+      else if (parameterDataType == dtCore::DataType::LONGINT)
       {
          return unsigned(static_cast<const dtGame::LongIntMessageParameter&>(parameter).GetValue());
       }
-      else if (parameterDataType == dtDAL::DataType::SHORTINT)
+      else if (parameterDataType == dtCore::DataType::SHORTINT)
       {
          return unsigned(static_cast<const dtGame::ShortIntMessageParameter&>(parameter).GetValue());
       }
-      else if (parameterDataType == dtDAL::DataType::BOOLEAN)
+      else if (parameterDataType == dtCore::DataType::BOOLEAN)
       {
          return unsigned(static_cast<const dtGame::BooleanMessageParameter&>(parameter).GetValue());
       }
-      else if (parameterDataType == dtDAL::DataType::ENUMERATION
-         || parameterDataType == dtDAL::DataType::STRING
+      else if (parameterDataType == dtCore::DataType::ENUMERATION
+         || parameterDataType == dtCore::DataType::STRING
          || parameterDataType.IsResource() )
       {
          std::string valueAsString;
@@ -1958,12 +1958,12 @@ namespace dtHLAGM
    void RPRParameterTranslator::MapFromArticulationToMessageParam(
       ArticulatedParameter tempparam,
       dtGame::MessageParameter& parameter,
-      const dtDAL::DataType& parameterDataType,
+      const dtCore::DataType& parameterDataType,
       const OneToManyMapping::ParameterDefinition& paramDef) const
    {
       ParameterValue& curParamValue = tempparam.GetParameterValue();
 
-      dtDAL::NamedGroupParameter* newGroupParam = dynamic_cast<dtDAL::NamedGroupParameter*>(&parameter);
+      dtCore::NamedGroupParameter* newGroupParam = dynamic_cast<dtCore::NamedGroupParameter*>(&parameter);
 
       if (newGroupParam == NULL)
       {
@@ -2117,7 +2117,7 @@ namespace dtHLAGM
       const char* buffer,
       const size_t size,
       dtGame::MessageParameter& parameter,
-      const dtDAL::DataType& parameterDataType,
+      const dtCore::DataType& parameterDataType,
       const OneToManyMapping::ParameterDefinition& paramDef) const
    {
       //Create articulated part
@@ -2160,26 +2160,26 @@ namespace dtHLAGM
       static const std::string baseNameAttach("AttachedPartMessageParam");
       std::string nameString;
 
-      std::vector<dtDAL::NamedGroupParameter*> createdGroups;
+      std::vector<dtCore::NamedGroupParameter*> createdGroups;
 
       int attach = 0, artic = 0;
       for(unsigned count = 0; count < amount; ++count)
       {
          ArticulatedParameter artParam;
          artParam.Decode(bufferPos);
-         dtCore::RefPtr<dtDAL::NamedGroupParameter> newGroup;
+         dtCore::RefPtr<dtCore::NamedGroupParameter> newGroup;
 
          if (artParam.GetParameterValue().GetArticulatedParameterType() == ArticulatedPart)
          {
             dtUtil::MakeIndexString(artic, nameString, 1);
             ++artic;
-            newGroup = new dtDAL::NamedGroupParameter(baseNameArtic + nameString);
+            newGroup = new dtCore::NamedGroupParameter(baseNameArtic + nameString);
          }
          else
          {
             dtUtil::MakeIndexString(attach, nameString, 1);
             ++attach;
-            newGroup = new dtDAL::NamedGroupParameter(baseNameAttach + nameString);
+            newGroup = new dtCore::NamedGroupParameter(baseNameAttach + nameString);
          }
 
          MapFromArticulationToMessageParam(artParam, *newGroup, parameterDataType, paramDef);
@@ -2190,13 +2190,13 @@ namespace dtHLAGM
          gParams->AddParameter(*newGroup);
       }
 
-      std::vector<dtDAL::NamedGroupParameter*>::iterator i, iend;
+      std::vector<dtCore::NamedGroupParameter*>::iterator i, iend;
       i = createdGroups.begin();
       iend = createdGroups.end();
 
       for (; i != iend; ++i)
       {
-         dtDAL::NamedGroupParameter* curArtParam = *i;
+         dtCore::NamedGroupParameter* curArtParam = *i;
 
          int attachedTo = curArtParam->GetValue("OurParent", int(0));
          curArtParam->RemoveParameter("OurParent");

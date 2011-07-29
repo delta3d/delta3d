@@ -21,8 +21,8 @@
 
 #include <dtAI/waypointmanager.h>
 
-#include <dtDAL/actortype.h>
-#include <dtDAL/librarymanager.h>
+#include <dtCore/actortype.h>
+#include <dtCore/librarymanager.h>
 
 #include <osg/Vec3>
 #include <osg/Matrix>

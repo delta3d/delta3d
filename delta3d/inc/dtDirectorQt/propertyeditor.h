@@ -40,7 +40,7 @@ namespace dtQt
    class PropertyEditorModel;
 }
 
-namespace dtDAL
+namespace dtCore
 {
    class DataType;
    class ActorProperty;
@@ -91,16 +91,16 @@ namespace dtDirector
        */
       virtual ~PropertyEditor();
 
-      void PropertyAboutToChangeFromControl(dtDAL::PropertyContainer& propCon, dtDAL::ActorProperty& prop,
+      void PropertyAboutToChangeFromControl(dtCore::PropertyContainer& propCon, dtCore::ActorProperty& prop,
                const std::string& oldValue, const std::string& newValue);
 
-      void PropertyChangedFromControl(dtDAL::PropertyContainer& propCon, dtDAL::ActorProperty& prop);
+      void PropertyChangedFromControl(dtCore::PropertyContainer& propCon, dtCore::ActorProperty& prop);
 
    public slots:
    protected:
 
       virtual QString GetGroupBoxLabelText(const QString& baseGroupBoxName);
-      virtual std::string GetContainerGroupName(dtDAL::PropertyContainer* propertyContainer);
+      virtual std::string GetContainerGroupName(dtCore::PropertyContainer* propertyContainer);
 
       /// Called on the close event
       virtual void closeEvent(QCloseEvent* e);

@@ -65,7 +65,7 @@ namespace dtEditQt
       /**
        * Constructor
        */
-      StaticMeshBrowser(dtDAL::DataType& type, QWidget* parent = 0);
+      StaticMeshBrowser(dtCore::DataType& type, QWidget* parent = 0);
 
       /**
        * Destructor

@@ -25,7 +25,7 @@
 #include <dtAnim/export.h>
 #include <dtAnim/cal3danimator.h>
 #include <dtAnim/cal3ddatabase.h>
-#include <dtDAL/namedgroupparameter.h>  // for function signatures
+#include <dtCore/namedgroupparameter.h>  // for function signatures
 #include <string>                  // for static constants
 
 // namespace specific forward declarations
@@ -88,8 +88,8 @@ namespace dtAnim
 
       virtual void OnEnteredWorld();
 
-      void ApplyAnimationGroup(const dtDAL::NamedGroupParameter& prop);
-      dtCore::RefPtr<dtDAL::NamedGroupParameter> MakeAnimationGroup();
+      void ApplyAnimationGroup(const dtCore::NamedGroupParameter& prop);
+      dtCore::RefPtr<dtCore::NamedGroupParameter> MakeAnimationGroup();
 
       dtAnim::Cal3DAnimator* GetAnimator();
       const dtAnim::Cal3DAnimator* GetAnimator() const;
@@ -149,14 +149,14 @@ namespace dtAnim
       *  there is geometry assigned to this static mesh, RenderMode::DRAW_ACTOR
       *  is returned.
       */
-      virtual const dtDAL::BaseActorObject::RenderMode& GetRenderMode();
+      virtual const dtCore::BaseActorObject::RenderMode& GetRenderMode();
 
       /**
       * Gets the billboard used to represent static mesh if this proxy's
       * render mode is RenderMode::DRAW_BILLBOARD_ICON. Used by STAGE.
       * @return
       */
-      virtual dtDAL::ActorProxyIcon* GetBillBoardIcon();
+      virtual dtCore::ActorProxyIcon* GetBillBoardIcon();
 
    protected:
 

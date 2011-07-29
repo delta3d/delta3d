@@ -4,7 +4,7 @@
 #include <dtInspectorQt/iview.h>
 #include <dtCore/observerptr.h>
 #include <QtCore/QObject>
-#include <dtDAL/baseactorobject.h>
+#include <dtCore/baseactorobject.h>
 #include <dtQt/basepropertyeditor.h>
 
 /// @cond DOXYGEN_SHOULD_SKIP_THIS
@@ -41,7 +41,7 @@ namespace dtInspectorQt
 
    private:
       Ui::InspectorWidget* mUI;
-      dtCore::ObserverPtr<dtDAL::BaseActorObject> mOperateOn;
+      dtCore::ObserverPtr<dtCore::BaseActorObject> mOperateOn;
 
       void BuildChildren(osg::Group* parent, QList<EntryData>& childList);
       void Update();

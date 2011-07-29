@@ -21,9 +21,9 @@
 #include <prefix/dtdirectornodesprefix.h>
 #include <dtDirectorNodes/getarrayaction.h>
 
-#include <dtDAL/arrayactorpropertybase.h>
-#include <dtDAL/intactorproperty.h>
-#include <dtDAL/stringactorproperty.h>
+#include <dtCore/arrayactorpropertybase.h>
+#include <dtCore/intactorproperty.h>
+#include <dtCore/stringactorproperty.h>
 
 #include <dtDirector/director.h>
 #include <dtDirector/arrayvaluenode.h>
@@ -55,23 +55,23 @@ namespace dtDirector
       ActionNode::BuildPropertyMap();
 
       // Create our value links.
-      dtDAL::IntActorProperty* arrayProp = new dtDAL::IntActorProperty(
+      dtCore::IntActorProperty* arrayProp = new dtCore::IntActorProperty(
          "Array", "Array",
-         dtDAL::IntActorProperty::SetFuncType(this, &GetArrayAction::SetArray),
-         dtDAL::IntActorProperty::GetFuncType(this, &GetArrayAction::GetArray),
+         dtCore::IntActorProperty::SetFuncType(this, &GetArrayAction::SetArray),
+         dtCore::IntActorProperty::GetFuncType(this, &GetArrayAction::GetArray),
          "The array to retrieve a value from.");
 
-      dtDAL::IntActorProperty* indexProp = new dtDAL::IntActorProperty(
+      dtCore::IntActorProperty* indexProp = new dtCore::IntActorProperty(
          "Index", "Index",
-         dtDAL::IntActorProperty::SetFuncType(this, &GetArrayAction::SetIndex),
-         dtDAL::IntActorProperty::GetFuncType(this, &GetArrayAction::GetIndex),
+         dtCore::IntActorProperty::SetFuncType(this, &GetArrayAction::SetIndex),
+         dtCore::IntActorProperty::GetFuncType(this, &GetArrayAction::GetIndex),
          "The index of the array.");
       AddProperty(indexProp);
 
-      dtDAL::StringActorProperty* valueProp = new dtDAL::StringActorProperty(
+      dtCore::StringActorProperty* valueProp = new dtCore::StringActorProperty(
          "Value", "Value",
-         dtDAL::StringActorProperty::SetFuncType(this, &GetArrayAction::SetValue),
-         dtDAL::StringActorProperty::GetFuncType(this, &GetArrayAction::GetValue),
+         dtCore::StringActorProperty::SetFuncType(this, &GetArrayAction::SetValue),
+         dtCore::StringActorProperty::GetFuncType(this, &GetArrayAction::GetValue),
          "The retrieved value.");
       AddProperty(valueProp);
 

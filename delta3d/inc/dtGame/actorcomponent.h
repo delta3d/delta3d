@@ -25,7 +25,7 @@
 #define actorcomponent_h__
 
 #include <dtGame/export.h>
-#include <dtDAL/propertycontainer.h>
+#include <dtCore/propertycontainer.h>
 #include <dtUtil/refstring.h>
 #include <dtUtil/getsetmacros.h>
 
@@ -47,7 +47,7 @@ namespace dtGame
     * actor component until the OnEnteredWorld() method. This gives each actor component a chance
     * to initialize and get properties from the map regardless of order.
     */
-   class DT_GAME_EXPORT ActorComponent : public dtDAL::PropertyContainer
+   class DT_GAME_EXPORT ActorComponent : public dtCore::PropertyContainer
    {
 
    public:

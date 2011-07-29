@@ -36,9 +36,9 @@
 #include <stack>
 #include <string>
 #include <list>
-#include <dtDAL/actorproxy.h>
-#include <dtDAL/actortype.h>
-#include <dtDAL/actorproperty.h>
+#include <dtCore/actorproxy.h>
+#include <dtCore/actortype.h>
+#include <dtCore/actorproperty.h>
 #include <dtQt/typedefs.h>
 
 namespace dtCore
@@ -157,7 +157,7 @@ namespace dtEditQt
       /**
        * When the name changes, trap this event.
        */
-      void onProxyNameChanged(dtDAL::BaseActorObject&, std::string);
+      void onProxyNameChanged(dtCore::BaseActorObject&, std::string);
 
       /**
        * Called when a map, project, or libraries change.  Clears all undo/redo events.
@@ -234,19 +234,19 @@ namespace dtEditQt
        * Internal method to handle an undo/redo for a property value change.  Creates
        * the appropriate undo or redo event.
        */
-      void handleUndoRedoPropertyValue(ChangeEvent* event, dtDAL::BaseActorObject* proxy, bool isUndo);
+      void handleUndoRedoPropertyValue(ChangeEvent* event, dtCore::BaseActorObject* proxy, bool isUndo);
 
       /**
        * Internal method to handle an undo/redo for a name change event.  Creates
        * the appropriate undo or redo event.
        */
-      void handleUndoRedoNameChange(ChangeEvent* event, dtDAL::BaseActorObject* proxy, bool isUndo);
+      void handleUndoRedoNameChange(ChangeEvent* event, dtCore::BaseActorObject* proxy, bool isUndo);
 
       /**
        * Internal method to handle an undo/redo of a create proxy, which really
        * means deleting the object and creating an appropriate delete undo or redo event.
        */
-      void handleUndoRedoCreateObject(ChangeEvent* event, dtDAL::BaseActorObject* proxy, bool isUndo);
+      void handleUndoRedoCreateObject(ChangeEvent* event, dtCore::BaseActorObject* proxy, bool isUndo);
 
       /**
        * Internal method to handle an undo/redo of a delete proxy, which really
@@ -257,7 +257,7 @@ namespace dtEditQt
       /**
       * Internal method to handle an undo/redo of group creation.
       */
-      void handleUndoRedoCreateGroup(ChangeEvent* event, dtDAL::BaseActorObject* proxy, bool createGroup, bool isUndo);
+      void handleUndoRedoCreateGroup(ChangeEvent* event, dtCore::BaseActorObject* proxy, bool createGroup, bool isUndo);
 
       /**
        * Internal method to create a complete change event for a proxy.  This event is
@@ -266,7 +266,7 @@ namespace dtEditQt
        * @return Returns a new instance of a ChangeEvent.  You must delete this or make
        * an dtCore::RefPtr for it
        */
-      ChangeEvent* createFullUndoEvent(dtDAL::BaseActorObject* proxy);
+      ChangeEvent* createFullUndoEvent(dtCore::BaseActorObject* proxy);
 
       /**
        * Determines what type of event we are working with and calls the appropriate

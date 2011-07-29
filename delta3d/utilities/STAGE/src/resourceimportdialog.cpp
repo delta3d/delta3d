@@ -40,8 +40,8 @@
 #include <map>
 
 #include "dtEditQt/resourceimportdialog.h"
-#include <dtDAL/datatype.h>
-#include <dtDAL/project.h>
+#include <dtCore/datatype.h>
+#include <dtCore/project.h>
 #include <dtUtil/fileutils.h>
 #include <dtUtil/log.h>
 
@@ -49,7 +49,7 @@ namespace dtEditQt
 {
 
    ///////////////////////////////////////////////////////////////////////////////
-   ResourceImportDialog::ResourceImportDialog(QWidget* parent, dtDAL::DataType& dataType)
+   ResourceImportDialog::ResourceImportDialog(QWidget* parent, dtCore::DataType& dataType)
       : QDialog(parent)
    {
       setWindowTitle(tr("Import Resources"));
@@ -124,7 +124,7 @@ namespace dtEditQt
       mCatEdit->insert(getCategory());
 
       mHandler.clear();
-      dtDAL::Project& project = dtDAL::Project::GetInstance();
+      dtCore::Project& project = dtCore::Project::GetInstance();
       project.GetHandlersForDataType(*mResourceType, mHandler);
 
       // populate the type edit drop down
@@ -184,7 +184,7 @@ namespace dtEditQt
       QString context;
       //bool isTerrain = false;
 
-      dtDAL::Project& project = dtDAL::Project::GetInstance();
+      dtCore::Project& project = dtCore::Project::GetInstance();
       context = QString(project.GetContext().c_str());
 
       mNameEdit->clear();
@@ -218,7 +218,7 @@ namespace dtEditQt
          std::map<std::string, std::string>::iterator iter;
 
          // spin through the filters for the selected combobox
-         if (*mResourceType == dtDAL::DataType::TERRAIN)
+         if (*mResourceType == dtCore::DataType::TERRAIN)
          {
             // if we find our filters than the handler will be updated with the correct file filters
             // otherwise the loop will end safely when i reaches the handler size
@@ -340,7 +340,7 @@ namespace dtEditQt
       QString fullPath;
       QString suffix;
 
-      dtDAL::Project& project = dtDAL::Project::GetInstance();
+      dtCore::Project& project = dtCore::Project::GetInstance();
       //dtUtil::FileUtils& fileUtil = dtUtil::FileUtils::GetInstance();
 
       if (!mFileList.isEmpty())

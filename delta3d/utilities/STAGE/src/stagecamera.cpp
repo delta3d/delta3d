@@ -33,7 +33,7 @@
 #include <dtCore/transform.h>
 #include <dtUtil/matrixutil.h>
 #include <dtUtil/log.h>
-#include <dtDAL/actorproxyicon.h>
+#include <dtCore/actorproxyicon.h>
 
 namespace dtEditQt
 {
@@ -324,17 +324,17 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void StageCamera::attachActorProxy(dtDAL::TransformableActorProxy* proxy)
+   void StageCamera::attachActorProxy(dtCore::TransformableActorProxy* proxy)
    {
       ActorAttachment toAttach;
-      const dtDAL::BaseActorObject::RenderMode& renderMode = proxy->GetRenderMode();
+      const dtCore::BaseActorObject::RenderMode& renderMode = proxy->GetRenderMode();
       osg::Matrix rotMat;
       osg::Quat rotOffset;
 
-      if (renderMode == dtDAL::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON)
+      if (renderMode == dtCore::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON)
       {
          osg::Vec3 billBoardPos;
-         dtDAL::ActorProxyIcon* billBoard = proxy->GetBillBoardIcon();
+         dtCore::ActorProxyIcon* billBoard = proxy->GetBillBoardIcon();
 
          if (billBoard != NULL)
          {
@@ -389,12 +389,12 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void StageCamera::detachActorProxy(dtDAL::TransformableActorProxy* proxy)
+   void StageCamera::detachActorProxy(dtCore::TransformableActorProxy* proxy)
    {
       std::list<ActorAttachment>::iterator itor;
       for (itor = mAttachedProxies.begin(); itor != mAttachedProxies.end(); ++itor)
       {
-         dtDAL::TransformableActorProxy* toRemove = itor->mActor.get();
+         dtCore::TransformableActorProxy* toRemove = itor->mActor.get();
          if (toRemove == proxy)
          {
             mAttachedProxies.erase(itor);
@@ -427,7 +427,7 @@ namespace dtEditQt
 
       for (itor = mAttachedProxies.begin(); itor != mAttachedProxies.end(); ++itor)
       {
-         dtDAL::TransformableActorProxy* tProxy = itor->mActor.get();
+         dtCore::TransformableActorProxy* tProxy = itor->mActor.get();
          osg::Vec3 deltaHPR, tPos, actorHPR;
          osg::Quat pitchRotate, yawRotate;
          osg::Matrix newRotationMat;

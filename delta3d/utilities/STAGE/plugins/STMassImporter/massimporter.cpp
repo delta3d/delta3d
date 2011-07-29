@@ -3,9 +3,9 @@
 
 #include <assert.h>
 
-#include <dtDAL/resourceactorproperty.h>
-#include <dtDAL/librarymanager.h>
-#include <dtDAL/map.h>
+#include <dtCore/resourceactorproperty.h>
+#include <dtCore/librarymanager.h>
+#include <dtCore/map.h>
 #include <dtEditQt/editordata.h>
 #include <dtEditQt/editorevents.h>
 #include <dtEditQt/pluginmanager.h>
@@ -35,13 +35,13 @@ MassImporterPlugin::MassImporterPlugin(dtEditQt::MainWindow* mw)
    // open file menu when user presses the button
    connect(ui.mChooseFiles, SIGNAL(clicked()), this, SLOT(OnChooseFiles()));   
 
-   typedef std::vector<const dtDAL::ActorType*> TypeList;
+   typedef std::vector<const dtCore::ActorType*> TypeList;
    TypeList types;
-   dtDAL::LibraryManager::GetInstance().GetActorTypes(types);
+   dtCore::LibraryManager::GetInstance().GetActorTypes(types);
    int idx = 0;
    for(TypeList::const_iterator i = types.begin(); i != types.end(); ++i)
    {
-      const dtDAL::ActorType* type = *i; 
+      const dtCore::ActorType* type = *i; 
       const QVariant id(type->GetUniqueId().c_str());      
       ui.mActorTypes->addItem(type->GetFullName().c_str(), id);
       if(type->GetFullName() == "dtcore.Static Mesh")
@@ -86,13 +86,13 @@ void MassImporterPlugin::OnChooseFiles()
    QVariant t = mActorType->itemData(mActorType->currentIndex());
    std::string typeId = t.toString().toStdString();
 
-   const dtDAL::ActorType* actorType = NULL;
+   const dtCore::ActorType* actorType = NULL;
 
    // search for actor type with given unique id.
    // would be nice if there was a method in the library manager for this
-   typedef std::vector<const dtDAL::ActorType*> TypeList;
+   typedef std::vector<const dtCore::ActorType*> TypeList;
    TypeList types;
-   dtDAL::LibraryManager::GetInstance().GetActorTypes(types);
+   dtCore::LibraryManager::GetInstance().GetActorTypes(types);
    for(TypeList::const_iterator i = types.begin(); i != types.end(); ++i)
    {
       if((*i)->GetUniqueId() == typeId)
@@ -125,7 +125,7 @@ void MassImporterPlugin::OnChooseFiles()
 }
 
 
-void MassImporterPlugin::CreateActorFromMesh(const dtDAL::ActorType& type, const std::string& propertyName, const std::string& mesh)
+void MassImporterPlugin::CreateActorFromMesh(const dtCore::ActorType& type, const std::string& propertyName, const std::string& mesh)
 {
    using namespace dtEditQt;   
 
@@ -142,15 +142,15 @@ void MassImporterPlugin::CreateActorFromMesh(const dtDAL::ActorType& type, const
 
    // check if an actor with this name is already in map. If it is, update it.
    // If not: create a new actor.
-   dtCore::RefPtr<dtDAL::BaseActorObject> proxy;
-   dtCore::RefPtr<dtDAL::Map> mapPtr = EditorData::GetInstance().getCurrentMap();
-   std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> > proxies;
+   dtCore::RefPtr<dtCore::BaseActorObject> proxy;
+   dtCore::RefPtr<dtCore::Map> mapPtr = EditorData::GetInstance().getCurrentMap();
+   std::vector<dtCore::RefPtr<dtCore::BaseActorObject> > proxies;
    mapPtr->FindProxies(proxies, actorName, type.GetCategory(), type.GetName());
 
    if(proxies.empty())
    {
       // create new actor
-      proxy = dtDAL::LibraryManager::GetInstance().CreateActorProxy(type);
+      proxy = dtCore::LibraryManager::GetInstance().CreateActorProxy(type);
       
       proxy->SetName(actorName);
 
@@ -169,7 +169,7 @@ void MassImporterPlugin::CreateActorFromMesh(const dtDAL::ActorType& type, const
    }   
 
    // set mesh property to mesh path
-   dtDAL::ResourceActorProperty* resourceProperty;
+   dtCore::ResourceActorProperty* resourceProperty;
    proxy->GetProperty(propertyName, resourceProperty);
    
    if(resourceProperty == 0)
@@ -178,7 +178,7 @@ void MassImporterPlugin::CreateActorFromMesh(const dtDAL::ActorType& type, const
    }
    else
    {
-      dtDAL::ResourceDescriptor meshDescriptor(relPath.toStdString());
+      dtCore::ResourceDescriptor meshDescriptor(relPath.toStdString());
       resourceProperty->SetValue(meshDescriptor);
       EditorEvents::GetInstance().emitActorPropertyChanged(proxy, resourceProperty);
    }

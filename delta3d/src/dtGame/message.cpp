@@ -160,7 +160,7 @@ namespace dtGame
    }
   
    ///////////////////////////////////////////////////////////////////////////////
-   void Message::AddParameter(dtDAL::NamedParameter* param)
+   void Message::AddParameter(dtCore::NamedParameter* param)
    {
       if (param == NULL)
       {

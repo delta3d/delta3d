@@ -27,7 +27,7 @@
 */
 #include <prefix/unittestprefix.h>
 #include <cppunit/extensions/HelperMacros.h>
-#include <dtDAL/actortype.h>
+#include <dtCore/actortype.h>
 #include <dtGame/gameactorproxy.h>
 #include <dtGame/gamemanager.h>
 #include <dtGame/taskcomponent.h>
@@ -134,16 +134,16 @@ void GMTaskComponentTests::TestTaskComponentTaskTracking()
    {
       unsigned int i;
       dtCore::RefPtr<dtGame::TaskComponent> taskComponent = new dtGame::TaskComponent();
-      dtCore::RefPtr<dtDAL::BaseActorObject> proxy = NULL;
+      dtCore::RefPtr<dtCore::BaseActorObject> proxy = NULL;
       dtCore::RefPtr<dtGame::GameActorProxy> gameProxy = NULL;
 
       mGameManager->AddComponent(*taskComponent,dtGame::GameManager::ComponentPriority::NORMAL);
       mGameManager->AddComponent(*(new dtGame::DefaultMessageProcessor()), dtGame::GameManager::ComponentPriority::HIGHEST);
 
-      dtCore::RefPtr<const dtDAL::ActorType> playerType = mGameManager->FindActorType("ExampleActors", "Test1Actor");
+      dtCore::RefPtr<const dtCore::ActorType> playerType = mGameManager->FindActorType("ExampleActors", "Test1Actor");
       CPPUNIT_ASSERT_MESSAGE("Could not find test player actor type.",playerType != NULL);
 
-      dtCore::RefPtr<const dtDAL::ActorType> taskType = mGameManager->FindActorType("dtcore.Tasks","Task Actor");
+      dtCore::RefPtr<const dtCore::ActorType> taskType = mGameManager->FindActorType("dtcore.Tasks","Task Actor");
       CPPUNIT_ASSERT_MESSAGE("Could not find task actor type.",taskType != NULL);
 
       //Add and remove a few task actors...
@@ -212,12 +212,12 @@ void GMTaskComponentTests::TestChangeMap()
       mGameManager->AddComponent(*(new dtGame::DefaultMessageProcessor()), dtGame::GameManager::ComponentPriority::HIGHEST);
 
       //Create some actors...
-      dtCore::RefPtr<const dtDAL::ActorType> taskType = mGameManager->FindActorType("dtcore.Tasks","Task Actor");
+      dtCore::RefPtr<const dtCore::ActorType> taskType = mGameManager->FindActorType("dtcore.Tasks","Task Actor");
       CPPUNIT_ASSERT_MESSAGE("Could not find task actor type.",taskType != NULL);
 
       for (unsigned int i=0; i<20; i++)
       {
-         dtCore::RefPtr<dtDAL::BaseActorObject> proxy = NULL;
+         dtCore::RefPtr<dtCore::BaseActorObject> proxy = NULL;
          dtCore::RefPtr<dtGame::GameActorProxy> gameProxy = NULL;
 
          proxy = mGameManager->CreateActor(*taskType);
@@ -268,12 +268,12 @@ void GMTaskComponentTests::TestGetTasks()
       mGameManager->AddComponent(*(new dtGame::DefaultMessageProcessor()), dtGame::GameManager::ComponentPriority::HIGHEST);
 
       //Create some actors...
-      dtCore::RefPtr<const dtDAL::ActorType> taskType = mGameManager->FindActorType("dtcore.Tasks","Task Actor");
+      dtCore::RefPtr<const dtCore::ActorType> taskType = mGameManager->FindActorType("dtcore.Tasks","Task Actor");
       CPPUNIT_ASSERT_MESSAGE("Could not find task actor type.",taskType != NULL);
 
       for (i=0; i<20; i++)
       {
-         dtCore::RefPtr<dtDAL::BaseActorObject> proxy = NULL;
+         dtCore::RefPtr<dtCore::BaseActorObject> proxy = NULL;
          dtCore::RefPtr<dtGame::GameActorProxy> gameProxy = NULL;
 
          proxy = mGameManager->CreateActor(*taskType);

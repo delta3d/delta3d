@@ -3,9 +3,9 @@
 #include <dtCore/model.h>
 #include <dtCore/transform.h>
 
-#include <dtDAL/enumactorproperty.h>
-#include <dtDAL/functor.h>
-#include <dtDAL/vectoractorproperties.h>
+#include <dtCore/enumactorproperty.h>
+#include <dtCore/functor.h>
+#include <dtCore/vectoractorproperties.h>
 
 #include <dtUtil/log.h>
 
@@ -238,7 +238,7 @@ void VolumeEditActor::SetupWireOutline()
 
 ////////////////////////////////////////////////////////////////////////////////
 VolumeEditActorProxy::VolumeEditActorProxy()
-   : dtDAL::TransformableActorProxy()
+   : dtCore::TransformableActorProxy()
 {
 }
 
@@ -271,16 +271,16 @@ void VolumeEditActorProxy::BuildPropertyMap()
       return;
    }
 
-   AddProperty(new dtDAL::EnumActorProperty<VolumeEditActor::VolumeShapeType>(
+   AddProperty(new dtCore::EnumActorProperty<VolumeEditActor::VolumeShapeType>(
       "Shape", "Shape",
-      dtDAL::EnumActorProperty<VolumeEditActor::VolumeShapeType>::SetFuncType(this, &VolumeEditActorProxy::SetShape),
-      dtDAL::EnumActorProperty<VolumeEditActor::VolumeShapeType>::GetFuncType(this, &VolumeEditActorProxy::GetShape),
+      dtCore::EnumActorProperty<VolumeEditActor::VolumeShapeType>::SetFuncType(this, &VolumeEditActorProxy::SetShape),
+      dtCore::EnumActorProperty<VolumeEditActor::VolumeShapeType>::GetFuncType(this, &VolumeEditActorProxy::GetShape),
       "Sets the shape for this Volume Editor", groupName));
 
    //Volume actors need to be scalable
-   AddProperty(new dtDAL::Vec3ActorProperty("Scale", "Scale",
-      dtDAL::Vec3ActorProperty::SetFuncType(actor, &VolumeEditActor::SetScale),
-      dtDAL::Vec3ActorProperty::GetFuncType(actor, &VolumeEditActor::GetScale),
+   AddProperty(new dtCore::Vec3ActorProperty("Scale", "Scale",
+      dtCore::Vec3ActorProperty::SetFuncType(actor, &VolumeEditActor::SetScale),
+      dtCore::Vec3ActorProperty::GetFuncType(actor, &VolumeEditActor::GetScale),
       "Scales", "Transformable"));
 }
 

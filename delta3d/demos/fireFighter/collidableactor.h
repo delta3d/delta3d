@@ -23,7 +23,7 @@
 
 #include <dtGame/gameactor.h>
 #include <fireFighter/export.h>
-#include <dtDAL/actorproxyicon.h>
+#include <dtCore/actorproxyicon.h>
 
 class FIRE_FIGHTER_EXPORT CollidableActor : public dtGame::GameActor
 {
@@ -60,11 +60,11 @@ class FIRE_FIGHTER_EXPORT CollidableActorProxy : public dtGame::GameActorProxy
        * Gets the billboard used to represent static meshes if this proxy's
        * render mode is RenderMode::DRAW_BILLBOARD_ICON.
        */
-      dtDAL::ActorProxyIcon* GetBillBoardIcon();
+      dtCore::ActorProxyIcon* GetBillBoardIcon();
 
-      virtual const dtDAL::BaseActorObject::RenderMode& GetRenderMode()
+      virtual const dtCore::BaseActorObject::RenderMode& GetRenderMode()
       {
-         return dtDAL::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON;
+         return dtCore::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON;
       }
 
    protected:
@@ -74,7 +74,7 @@ class FIRE_FIGHTER_EXPORT CollidableActorProxy : public dtGame::GameActorProxy
 
    private:
 
-      dtCore::RefPtr<dtDAL::ActorProxyIcon> mBillboardIcon;
+      dtCore::RefPtr<dtCore::ActorProxyIcon> mBillboardIcon;
 };
 
 #endif

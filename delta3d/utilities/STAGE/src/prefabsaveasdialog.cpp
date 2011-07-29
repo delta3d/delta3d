@@ -46,8 +46,8 @@
 #include <QtGui/QLabel>
 #include <QtGui/QToolButton>
 
-#include <dtDAL/project.h>
-#include <dtDAL/map.h>
+#include <dtCore/project.h>
+#include <dtCore/map.h>
 #include <dtEditQt/editoractions.h>
 #include <dtEditQt/editordata.h>
 
@@ -79,7 +79,7 @@ namespace dtEditQt
       label = new QLabel(tr("Icon:\n(Click to change)"), groupBox);
       label->setAlignment(Qt::AlignRight);
 
-      mIconFilePath = dtDAL::Project::GetInstance().GetContext();
+      mIconFilePath = dtCore::Project::GetInstance().GetContext();
 
       //make sure Prefabs folder exists
       if (! dtUtil::FileUtils::GetInstance().FileExists(mIconFilePath + "/Prefabs"))
@@ -258,7 +258,7 @@ namespace dtEditQt
    bool PrefabSaveDialog::EnsureIconFolderExists()
    {      
       dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
-      fileUtils.PushDirectory(dtDAL::Project::GetInstance().GetContext());
+      fileUtils.PushDirectory(dtCore::Project::GetInstance().GetContext());
 
       std::string prefabIconsDir = EditorActions::PREFAB_DIRECTORY + "/icons";
 

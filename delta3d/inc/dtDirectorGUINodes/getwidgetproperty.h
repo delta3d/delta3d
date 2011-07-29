@@ -124,7 +124,7 @@ namespace dtDirector
       std::string mLayout;
       std::string mWidget;
       std::string mProperty;
-      dtCore::RefPtr<dtDAL::ActorProperty> mpValueProp;
+      dtCore::RefPtr<dtCore::ActorProperty> mpValueProp;
    };
 }
 

@@ -21,8 +21,8 @@
 #include <prefix/dtdirectornodesprefix.h>
 #include <dtDirectorNodes/delayaction.h>
 
-#include <dtDAL/booleanactorproperty.h>
-#include <dtDAL/floatactorproperty.h>
+#include <dtCore/booleanactorproperty.h>
+#include <dtCore/floatactorproperty.h>
 
 #include <dtDirector/director.h>
 
@@ -63,23 +63,23 @@ namespace dtDirector
       LatentActionNode::BuildPropertyMap();
 
       // Create our value links.
-      dtDAL::FloatActorProperty* delayProp = new dtDAL::FloatActorProperty(
+      dtCore::FloatActorProperty* delayProp = new dtCore::FloatActorProperty(
          "Delay", "Delay",
-         dtDAL::FloatActorProperty::SetFuncType(this, &DelayAction::SetDelay),
-         dtDAL::FloatActorProperty::GetFuncType(this, &DelayAction::GetDelay),
+         dtCore::FloatActorProperty::SetFuncType(this, &DelayAction::SetDelay),
+         dtCore::FloatActorProperty::GetFuncType(this, &DelayAction::GetDelay),
          "The time delay (in seconds).");
       AddProperty(delayProp);
 
-      dtDAL::FloatActorProperty* elapsedTimeProp = new dtDAL::FloatActorProperty(
+      dtCore::FloatActorProperty* elapsedTimeProp = new dtCore::FloatActorProperty(
          "Elapsed Time", "Elapsed Time",
-         dtDAL::FloatActorProperty::SetFuncType(this, &DelayAction::SetElapsedTime),
-         dtDAL::FloatActorProperty::GetFuncType(this, &DelayAction::GetElapsedTime),
+         dtCore::FloatActorProperty::SetFuncType(this, &DelayAction::SetElapsedTime),
+         dtCore::FloatActorProperty::GetFuncType(this, &DelayAction::GetElapsedTime),
          "The elapsed time (in seconds).");
 
-      dtDAL::BooleanActorProperty* simTimeProp = new dtDAL::BooleanActorProperty(
+      dtCore::BooleanActorProperty* simTimeProp = new dtCore::BooleanActorProperty(
          "UseSimTime", "Use Sim Time",
-         dtDAL::BooleanActorProperty::SetFuncType(this, &DelayAction::SetUseSimTime),
-         dtDAL::BooleanActorProperty::GetFuncType(this, &DelayAction::GetUseSimTime),
+         dtCore::BooleanActorProperty::SetFuncType(this, &DelayAction::SetUseSimTime),
+         dtCore::BooleanActorProperty::GetFuncType(this, &DelayAction::GetUseSimTime),
          "True to use game/sim time, false to use real time.");
       AddProperty(simTimeProp);
 
@@ -180,9 +180,9 @@ namespace dtDirector
          // Delay link can only connect to basic types.
          if (link->GetName() == "Delay")
          {
-            if (value->CanBeType(dtDAL::DataType::INT)   ||
-                value->CanBeType(dtDAL::DataType::FLOAT) ||
-                value->CanBeType(dtDAL::DataType::DOUBLE))
+            if (value->CanBeType(dtCore::DataType::INT)   ||
+                value->CanBeType(dtCore::DataType::FLOAT) ||
+                value->CanBeType(dtCore::DataType::DOUBLE))
             {
                return true;
             }

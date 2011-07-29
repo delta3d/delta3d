@@ -1,7 +1,7 @@
 #ifndef skydomeenvironmentactor_h__
 #define skydomeenvironmentactor_h__
 
-#include <dtDAL/plugin_export.h>
+#include <dtCore/plugin_export.h>
 #include <dtGame/environmentactor.h>
 #include <dtCore/refptr.h>
 

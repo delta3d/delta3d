@@ -47,7 +47,7 @@ namespace dtEditQt
       Q_OBJECT
 
    public:
-      TerrainBrowser(dtDAL::DataType& type, QWidget* parent = 0);
+      TerrainBrowser(dtCore::DataType& type, QWidget* parent = 0);
       virtual ~TerrainBrowser();
 
       /**

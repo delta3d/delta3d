@@ -116,7 +116,7 @@ namespace dtDirector
       std::string mZ;
       std::string mW;
 
-      dtCore::RefPtr<dtDAL::ActorProperty> mVectorProp;
+      dtCore::RefPtr<dtCore::ActorProperty> mVectorProp;
    };
 }
 

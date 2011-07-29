@@ -45,7 +45,7 @@ public:
     */
    virtual ~PropertyEditor();
 
-   void PropertyAboutToChangeFromControl(dtDAL::PropertyContainer& propCon, dtDAL::ActorProperty& prop,
+   void PropertyAboutToChangeFromControl(dtCore::PropertyContainer& propCon, dtCore::ActorProperty& prop,
             const std::string& oldValue, const std::string& newValue);
 
 protected:

@@ -22,8 +22,8 @@
 
 #include <dtCore/transform.h>
 
-#include <dtDAL/datatype.h>
-#include <dtDAL/floatactorproperty.h>
+#include <dtCore/datatype.h>
+#include <dtCore/floatactorproperty.h>
 
 #include <assert.h>
 
@@ -127,14 +127,14 @@ namespace dtActors
    {
       static const std::string GROUPNAME = "Spacing";
 
-      dtDAL::TransformableActorProxy::BuildPropertyMap();
+      dtCore::TransformableActorProxy::BuildPropertyMap();
       WaypointVolumeActor* volume = NULL;
       GetActor(volume);
 
       //Description...
-      AddProperty(new dtDAL::FloatActorProperty("name","label",
-               dtDAL::FloatActorProperty::SetFuncType(volume, &WaypointVolumeActor::SetWaypointSpacing),
-               dtDAL::FloatActorProperty::GetFuncType(volume, &WaypointVolumeActor::GetWaypointSpacing),
+      AddProperty(new dtCore::FloatActorProperty("name","label",
+               dtCore::FloatActorProperty::SetFuncType(volume, &WaypointVolumeActor::SetWaypointSpacing),
+               dtCore::FloatActorProperty::GetFuncType(volume, &WaypointVolumeActor::GetWaypointSpacing),
                "Sets/gets the spacing between waypoints in explorer tool.",GROUPNAME));
    }
 

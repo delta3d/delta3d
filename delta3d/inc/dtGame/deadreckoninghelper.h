@@ -36,7 +36,7 @@
 #include <dtGame/basegroundclamper.h>
 #include <dtGame/actorcomponent.h>
 
-namespace dtDAL
+namespace dtCore
 {
    class ActorProperty;
 }
@@ -570,7 +570,7 @@ namespace dtGame
          bool GetForceUprightRotation() const;
 
          /// Supports the following deprecated properties: 'Flying' 
-         virtual dtCore::RefPtr<dtDAL::ActorProperty> GetDeprecatedProperty(const std::string& name);
+         virtual dtCore::RefPtr<dtCore::ActorProperty> GetDeprecatedProperty(const std::string& name);
 
       protected:
          virtual ~DeadReckoningHelper();// {}

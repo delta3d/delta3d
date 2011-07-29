@@ -361,7 +361,7 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void MacroItem::BeginMoveEvent()
    {
-      dtDAL::ActorProperty* prop = mGraph->GetProperty("Position");
+      dtCore::ActorProperty* prop = mGraph->GetProperty("Position");
       if (prop) mOldPosition = prop->ToString();
 
       mChainSelecting = mScene->IsHoldingShift();
@@ -415,7 +415,7 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void MacroItem::EndMoveEvent()
    {
-      dtDAL::ActorProperty* prop = mGraph->GetProperty("Position");
+      dtCore::ActorProperty* prop = mGraph->GetProperty("Position");
       if (prop)
       {
          std::string value = prop->ToString();

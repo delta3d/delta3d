@@ -22,12 +22,12 @@
 
 #include <dtCore/environment.h>
 
-#include <dtDAL/booleanactorproperty.h>
-#include <dtDAL/colorrgbaactorproperty.h>
-#include <dtDAL/enumactorproperty.h>
+#include <dtCore/booleanactorproperty.h>
+#include <dtCore/colorrgbaactorproperty.h>
+#include <dtCore/enumactorproperty.h>
 
-#include <dtDAL/floatactorproperty.h>
-#include <dtDAL/stringactorproperty.h>
+#include <dtCore/floatactorproperty.h>
+#include <dtCore/stringactorproperty.h>
 
 #include <dtUtil/datetime.h>
 
@@ -49,7 +49,7 @@ namespace dtActors
 
    void WeatherEnvironmentActorProxy::BuildPropertyMap()
    {
-      using namespace dtDAL;
+      using namespace dtCore;
 
       WeatherEnvironmentActor *env = static_cast<WeatherEnvironmentActor*>(GetActor());
 
@@ -106,8 +106,8 @@ namespace dtActors
          "Determines whether the environment should use sim time to update or not"));
 
       AddProperty(new ColorRgbaActorProperty("Sky Color", "Sky Color",
-         dtDAL::ColorRgbaActorProperty::SetFuncType(env, &WeatherEnvironmentActor::SetSkyColor),
-         dtDAL::ColorRgbaActorProperty::GetFuncType(env, &WeatherEnvironmentActor::GetSkyColor),
+         dtCore::ColorRgbaActorProperty::SetFuncType(env, &WeatherEnvironmentActor::SetSkyColor),
+         dtCore::ColorRgbaActorProperty::GetFuncType(env, &WeatherEnvironmentActor::GetSkyColor),
          "Sets the sky color of this environment"));
 
       AddProperty(new FloatActorProperty("Rate of Change", "Rate of change",

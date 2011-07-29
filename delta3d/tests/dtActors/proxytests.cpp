@@ -31,32 +31,32 @@
 
 #include <dtCore/refptr.h>
 
-#include <dtDAL/abstractenumactorproperty.h>
-#include <dtDAL/actoractorproperty.h>
-#include <dtDAL/actoridactorproperty.h>
-#include <dtDAL/arrayactorpropertybase.h>
-#include <dtDAL/booleanactorproperty.h>
-#include <dtDAL/colorrgbaactorproperty.h>
-#include <dtDAL/containeractorproperty.h>
-#include <dtDAL/datatype.h>
-#include <dtDAL/doubleactorproperty.h>
-#include <dtDAL/floatactorproperty.h>
-#include <dtDAL/gameevent.h>
-#include <dtDAL/gameeventactorproperty.h>
-#include <dtDAL/gameeventmanager.h>
-#include <dtDAL/groupactorproperty.h>
-#include <dtDAL/intactorproperty.h>
-#include <dtDAL/librarymanager.h>
-#include <dtDAL/longactorproperty.h>
-#include <dtDAL/namedfloatparameter.h>
-#include <dtDAL/namedgroupparameter.h>
-#include <dtDAL/namedintparameter.h>
-#include <dtDAL/namedstringparameter.h>
-#include <dtDAL/project.h>
-#include <dtDAL/stringactorproperty.h>
-#include <dtDAL/vectoractorproperties.h>
-#include <dtDAL/bitmaskactorproperty.h>
-#include <dtDAL/defaultpropertymanager.h>
+#include <dtCore/abstractenumactorproperty.h>
+#include <dtCore/actoractorproperty.h>
+#include <dtCore/actoridactorproperty.h>
+#include <dtCore/arrayactorpropertybase.h>
+#include <dtCore/booleanactorproperty.h>
+#include <dtCore/colorrgbaactorproperty.h>
+#include <dtCore/containeractorproperty.h>
+#include <dtCore/datatype.h>
+#include <dtCore/doubleactorproperty.h>
+#include <dtCore/floatactorproperty.h>
+#include <dtCore/gameevent.h>
+#include <dtCore/gameeventactorproperty.h>
+#include <dtCore/gameeventmanager.h>
+#include <dtCore/groupactorproperty.h>
+#include <dtCore/intactorproperty.h>
+#include <dtCore/librarymanager.h>
+#include <dtCore/longactorproperty.h>
+#include <dtCore/namedfloatparameter.h>
+#include <dtCore/namedgroupparameter.h>
+#include <dtCore/namedintparameter.h>
+#include <dtCore/namedstringparameter.h>
+#include <dtCore/project.h>
+#include <dtCore/stringactorproperty.h>
+#include <dtCore/vectoractorproperties.h>
+#include <dtCore/bitmaskactorproperty.h>
+#include <dtCore/defaultpropertymanager.h>
 
 #include <dtActors/engineactorregistry.h>
 #include <testActorLibrary/testactorlib.h>
@@ -66,7 +66,7 @@
 
 #include <iostream>
 
-using dtDAL::DataType;
+using dtCore::DataType;
 using dtCore::RefPtr;
 
 class ProxyTest : public CPPUNIT_NS::TestFixture
@@ -86,22 +86,22 @@ public:
    void TestBezierProxies();
 
 private:
-   dtDAL::LibraryManager& libMgr;
-   std::vector<const dtDAL::ActorType*> actors;
-   std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> > proxies;
+   dtCore::LibraryManager& libMgr;
+   std::vector<const dtCore::ActorType*> actors;
+   std::vector<dtCore::RefPtr<dtCore::BaseActorObject> > proxies;
    static const std::string mExampleLibraryName;
 
-   void testProps(dtDAL::BaseActorObject& proxy);
-   void testProp(dtDAL::BaseActorObject& proxy, dtDAL::ActorProperty* prop, bool isElement = false);
-   void compareProxies(dtDAL::BaseActorObject& ap1, dtDAL::BaseActorObject& ap2);
-   void compareProperties(dtDAL::ActorProperty* prop1, dtDAL::ActorProperty* prop2);
+   void testProps(dtCore::BaseActorObject& proxy);
+   void testProp(dtCore::BaseActorObject& proxy, dtCore::ActorProperty* prop, bool isElement = false);
+   void compareProxies(dtCore::BaseActorObject& ap1, dtCore::BaseActorObject& ap2);
+   void compareProperties(dtCore::ActorProperty* prop1, dtCore::ActorProperty* prop2);
 };
 
 CPPUNIT_TEST_SUITE_REGISTRATION(ProxyTest);
 
 const std::string ProxyTest::mExampleLibraryName="testActorLibrary";
 
-ProxyTest::ProxyTest() : libMgr(dtDAL::LibraryManager::GetInstance())
+ProxyTest::ProxyTest() : libMgr(dtCore::LibraryManager::GetInstance())
 {
 }
 
@@ -123,12 +123,12 @@ void ProxyTest::tearDown()
    proxies.clear();
    actors.clear();
    libMgr.UnloadActorRegistry(mExampleLibraryName);
-   dtDAL::GameEventManager::GetInstance().ClearAllEvents();
+   dtCore::GameEventManager::GetInstance().ClearAllEvents();
 }
 
-void ProxyTest::testProps(dtDAL::BaseActorObject& proxy)
+void ProxyTest::testProps(dtCore::BaseActorObject& proxy)
 {
-   std::vector<dtDAL::ActorProperty*> props;
+   std::vector<dtCore::ActorProperty*> props;
    proxy.GetPropertyList(props);
 
    for (unsigned int i = 0; i < props.size(); ++i)
@@ -142,7 +142,7 @@ void ProxyTest::testProps(dtDAL::BaseActorObject& proxy)
    }
 }
 
-static void SimpleStringToFromDataStreamCheck(dtUtil::DataStream& ds, dtDAL::ActorProperty& p)
+static void SimpleStringToFromDataStreamCheck(dtUtil::DataStream& ds, dtCore::ActorProperty& p)
 {
    if (p.IsReadOnly())
    {
@@ -169,7 +169,7 @@ static void SimpleStringToFromDataStreamCheck(dtUtil::DataStream& ds, dtDAL::Act
             " both times", expected, actual);
 }
 
-void ProxyTest::testProp(dtDAL::BaseActorObject& proxy, dtDAL::ActorProperty* prop, bool isElement)
+void ProxyTest::testProp(dtCore::BaseActorObject& proxy, dtCore::ActorProperty* prop, bool isElement)
 {
    std::string proxyTypeName = proxy.GetActorType().GetName();
    std::string name = prop->GetName();
@@ -181,7 +181,7 @@ void ProxyTest::testProp(dtDAL::BaseActorObject& proxy, dtDAL::ActorProperty* pr
    if(prop->IsReadOnly())
    {
       // Test and make sure you can't set the property
-      dtDAL::ActorProperty* p = prop;
+      dtCore::ActorProperty* p = prop;
       const std::string& str = p->ToString();
       bool shouldBeFalse = p->FromString(str);
       CPPUNIT_ASSERT_MESSAGE("Should not have been able to set the string value on an read only property", !shouldBeFalse);
@@ -202,11 +202,11 @@ void ProxyTest::testProp(dtDAL::BaseActorObject& proxy, dtDAL::ActorProperty* pr
 
    if (prop->GetDataType() == DataType::FLOAT)
    {
-      dtDAL::FloatActorProperty* prop1 = NULL;
+      dtCore::FloatActorProperty* prop1 = NULL;
 
       if (isElement)
       {
-         prop1 = dynamic_cast<dtDAL::FloatActorProperty*>(prop);
+         prop1 = dynamic_cast<dtCore::FloatActorProperty*>(prop);
       }
       else
       {
@@ -232,10 +232,10 @@ void ProxyTest::testProp(dtDAL::BaseActorObject& proxy, dtDAL::ActorProperty* pr
    }
    else if (prop->GetDataType() == DataType::DOUBLE)
    {
-      dtDAL::DoubleActorProperty* prop1 = NULL;
+      dtCore::DoubleActorProperty* prop1 = NULL;
       if (isElement)
       {
-         prop1 = dynamic_cast<dtDAL::DoubleActorProperty*>(prop);
+         prop1 = dynamic_cast<dtCore::DoubleActorProperty*>(prop);
       }
       else
       {
@@ -262,10 +262,10 @@ void ProxyTest::testProp(dtDAL::BaseActorObject& proxy, dtDAL::ActorProperty* pr
    else if (prop->GetDataType() == DataType::INT)
    {
       SimpleStringToFromDataStreamCheck(ds, *prop);
-      dtDAL::IntActorProperty* prop1 = NULL;
+      dtCore::IntActorProperty* prop1 = NULL;
       if (isElement)
       {
-         prop1 = dynamic_cast<dtDAL::IntActorProperty*>(prop);
+         prop1 = dynamic_cast<dtCore::IntActorProperty*>(prop);
       }
       else
       {
@@ -282,10 +282,10 @@ void ProxyTest::testProp(dtDAL::BaseActorObject& proxy, dtDAL::ActorProperty* pr
    {
       SimpleStringToFromDataStreamCheck(ds, *prop);
 
-      dtDAL::LongActorProperty* prop1 = NULL;
+      dtCore::LongActorProperty* prop1 = NULL;
       if (isElement)
       {
-         prop1 = dynamic_cast<dtDAL::LongActorProperty*>(prop);
+         prop1 = dynamic_cast<dtCore::LongActorProperty*>(prop);
       }
       else
       {
@@ -311,10 +311,10 @@ void ProxyTest::testProp(dtDAL::BaseActorObject& proxy, dtDAL::ActorProperty* pr
       {
          return;
       }
-      dtDAL::StringActorProperty* prop1 = NULL;
+      dtCore::StringActorProperty* prop1 = NULL;
       if (isElement)
       {
-         prop1 = dynamic_cast<dtDAL::StringActorProperty*>(prop);
+         prop1 = dynamic_cast<dtCore::StringActorProperty*>(prop);
       }
       else
       {
@@ -335,10 +335,10 @@ void ProxyTest::testProp(dtDAL::BaseActorObject& proxy, dtDAL::ActorProperty* pr
       //there have been some problems with Normal Rescaling
       if (name != "Normal Rescaling" && name != "Collision Geometry")
       {
-         dtDAL::BooleanActorProperty* boolProp = NULL;
+         dtCore::BooleanActorProperty* boolProp = NULL;
          if (isElement)
          {
-            boolProp = dynamic_cast<dtDAL::BooleanActorProperty*>(prop);
+            boolProp = dynamic_cast<dtCore::BooleanActorProperty*>(prop);
          }
          else
          {
@@ -357,10 +357,10 @@ void ProxyTest::testProp(dtDAL::BaseActorObject& proxy, dtDAL::ActorProperty* pr
    {
       SimpleStringToFromDataStreamCheck(ds, *prop);
 
-      dtDAL::AbstractEnumActorProperty* eap = NULL;
+      dtCore::AbstractEnumActorProperty* eap = NULL;
       if (isElement)
       {
-         eap = dynamic_cast<dtDAL::AbstractEnumActorProperty*>(prop);
+         eap = dynamic_cast<dtCore::AbstractEnumActorProperty*>(prop);
       }
       else
       {
@@ -385,14 +385,14 @@ void ProxyTest::testProp(dtDAL::BaseActorObject& proxy, dtDAL::ActorProperty* pr
    }
    else if (prop->GetDataType() == DataType::ACTOR)
    {
-      dtDAL::ActorActorProperty* aap = NULL;
-      dtDAL::ActorIDActorProperty* aidap = NULL;
+      dtCore::ActorActorProperty* aap = NULL;
+      dtCore::ActorIDActorProperty* aidap = NULL;
       if (isElement)
       {
-         aap = dynamic_cast<dtDAL::ActorActorProperty*>(prop);
+         aap = dynamic_cast<dtCore::ActorActorProperty*>(prop);
          if (aap == NULL)
          {
-            aidap = dynamic_cast<dtDAL::ActorIDActorProperty*>(prop);
+            aidap = dynamic_cast<dtCore::ActorIDActorProperty*>(prop);
             CPPUNIT_ASSERT(aidap != NULL);
          }
 
@@ -417,7 +417,7 @@ void ProxyTest::testProp(dtDAL::BaseActorObject& proxy, dtDAL::ActorProperty* pr
          CPPUNIT_ASSERT_MESSAGE(std::string("Value should be NULL, but it's not"), aap->GetValue() == NULL);
 
          const std::string& actorClass = aap->GetDesiredActorClass();
-         dtDAL::BaseActorObject* tempProxy  = NULL;
+         dtCore::BaseActorObject* tempProxy  = NULL;
 
          for(unsigned int i = 0; i < proxies.size(); ++i)
          {
@@ -431,7 +431,7 @@ void ProxyTest::testProp(dtDAL::BaseActorObject& proxy, dtDAL::ActorProperty* pr
          CPPUNIT_ASSERT_MESSAGE("TempProxy should not be NULL", tempProxy != NULL);
 
          aap->SetValue(tempProxy);
-         dtDAL::BaseActorObject* ap = aap->GetValue();
+         dtCore::BaseActorObject* ap = aap->GetValue();
 
          CPPUNIT_ASSERT_MESSAGE("GetValue should return what it was set to", ap == tempProxy);
 
@@ -448,10 +448,10 @@ void ProxyTest::testProp(dtDAL::BaseActorObject& proxy, dtDAL::ActorProperty* pr
    }
    else if (prop->GetDataType() == DataType::VEC3)
    {
-      dtDAL::Vec3ActorProperty* prop1 = NULL;
+      dtCore::Vec3ActorProperty* prop1 = NULL;
       if (isElement)
       {
-         prop1 = dynamic_cast<dtDAL::Vec3ActorProperty*>(prop);
+         prop1 = dynamic_cast<dtCore::Vec3ActorProperty*>(prop);
       }
       else
       {
@@ -513,10 +513,10 @@ void ProxyTest::testProp(dtDAL::BaseActorObject& proxy, dtDAL::ActorProperty* pr
    }
    else if (prop->GetDataType() == DataType::VEC3F)
    {
-      dtDAL::Vec3fActorProperty* prop1 = NULL;
+      dtCore::Vec3fActorProperty* prop1 = NULL;
       if (isElement)
       {
-         prop1 = dynamic_cast<dtDAL::Vec3fActorProperty*>(prop);
+         prop1 = dynamic_cast<dtCore::Vec3fActorProperty*>(prop);
       }
       else
       {
@@ -566,10 +566,10 @@ void ProxyTest::testProp(dtDAL::BaseActorObject& proxy, dtDAL::ActorProperty* pr
    }
    else if (prop->GetDataType() == DataType::VEC3D)
    {
-      dtDAL::Vec3dActorProperty* prop1 = NULL;
+      dtCore::Vec3dActorProperty* prop1 = NULL;
       if (isElement)
       {
-         prop1 = dynamic_cast<dtDAL::Vec3dActorProperty*>(prop);
+         prop1 = dynamic_cast<dtCore::Vec3dActorProperty*>(prop);
       }
       else
       {
@@ -619,10 +619,10 @@ void ProxyTest::testProp(dtDAL::BaseActorObject& proxy, dtDAL::ActorProperty* pr
    }
    else if (prop->GetDataType() == DataType::VEC4)
    {
-      dtDAL::Vec4ActorProperty* prop1 = NULL;
+      dtCore::Vec4ActorProperty* prop1 = NULL;
       if (isElement)
       {
-         prop1 = dynamic_cast<dtDAL::Vec4ActorProperty*>(prop);
+         prop1 = dynamic_cast<dtCore::Vec4ActorProperty*>(prop);
       }
       else
       {
@@ -660,10 +660,10 @@ void ProxyTest::testProp(dtDAL::BaseActorObject& proxy, dtDAL::ActorProperty* pr
    }
    else if (prop->GetDataType() == DataType::VEC4F)
    {
-      dtDAL::Vec4fActorProperty* prop1 = NULL;
+      dtCore::Vec4fActorProperty* prop1 = NULL;
       if (isElement)
       {
-         prop1 = dynamic_cast<dtDAL::Vec4fActorProperty*>(prop);
+         prop1 = dynamic_cast<dtCore::Vec4fActorProperty*>(prop);
       }
       else
       {
@@ -702,10 +702,10 @@ void ProxyTest::testProp(dtDAL::BaseActorObject& proxy, dtDAL::ActorProperty* pr
    }
    else if (prop->GetDataType() == DataType::VEC4D)
    {
-      dtDAL::Vec4dActorProperty* prop1 = NULL;
+      dtCore::Vec4dActorProperty* prop1 = NULL;
       if (isElement)
       {
-         prop1 = dynamic_cast<dtDAL::Vec4dActorProperty*>(prop);
+         prop1 = dynamic_cast<dtCore::Vec4dActorProperty*>(prop);
       }
       else
       {
@@ -744,10 +744,10 @@ void ProxyTest::testProp(dtDAL::BaseActorObject& proxy, dtDAL::ActorProperty* pr
    }
    else if (prop->GetDataType() == DataType::VEC2)
    {
-      dtDAL::Vec2ActorProperty* prop1 = NULL;
+      dtCore::Vec2ActorProperty* prop1 = NULL;
       if (isElement)
       {
-         prop1 = dynamic_cast<dtDAL::Vec2ActorProperty*>(prop);
+         prop1 = dynamic_cast<dtCore::Vec2ActorProperty*>(prop);
       }
       else
       {
@@ -785,10 +785,10 @@ void ProxyTest::testProp(dtDAL::BaseActorObject& proxy, dtDAL::ActorProperty* pr
    }
    else if (prop->GetDataType() == DataType::VEC2F)
    {
-      dtDAL::Vec2fActorProperty* prop1 = NULL;
+      dtCore::Vec2fActorProperty* prop1 = NULL;
       if (isElement)
       {
-         prop1 = dynamic_cast<dtDAL::Vec2fActorProperty*>(prop);
+         prop1 = dynamic_cast<dtCore::Vec2fActorProperty*>(prop);
       }
       else
       {
@@ -826,10 +826,10 @@ void ProxyTest::testProp(dtDAL::BaseActorObject& proxy, dtDAL::ActorProperty* pr
    }
    else if (prop->GetDataType() == DataType::VEC2D)
    {
-      dtDAL::Vec2dActorProperty* prop1 = NULL;
+      dtCore::Vec2dActorProperty* prop1 = NULL;
       if (isElement)
       {
-         prop1 = dynamic_cast<dtDAL::Vec2dActorProperty*>(prop);
+         prop1 = dynamic_cast<dtCore::Vec2dActorProperty*>(prop);
       }
       else
       {
@@ -867,10 +867,10 @@ void ProxyTest::testProp(dtDAL::BaseActorObject& proxy, dtDAL::ActorProperty* pr
    }
    else if (prop->GetDataType() == DataType::RGBACOLOR)
    {
-      dtDAL::ColorRgbaActorProperty* prop1 = NULL;
+      dtCore::ColorRgbaActorProperty* prop1 = NULL;
       if (isElement)
       {
-         prop1 = dynamic_cast<dtDAL::ColorRgbaActorProperty*>(prop);
+         prop1 = dynamic_cast<dtCore::ColorRgbaActorProperty*>(prop);
       }
       else
       {
@@ -908,23 +908,23 @@ void ProxyTest::testProp(dtDAL::BaseActorObject& proxy, dtDAL::ActorProperty* pr
    }
    else if (prop->GetDataType() == DataType::GAME_EVENT)
    {
-      dtDAL::GameEventActorProperty* prop1 = NULL;
+      dtCore::GameEventActorProperty* prop1 = NULL;
       if (isElement)
       {
-         prop1 = dynamic_cast<dtDAL::GameEventActorProperty*>(prop);
+         prop1 = dynamic_cast<dtCore::GameEventActorProperty*>(prop);
       }
       else
       {
          proxy.GetProperty(prop->GetName(), prop1);
       }
 
-      RefPtr<dtDAL::GameEvent> event = new dtDAL::GameEvent("TestEvent","This is a test game event.");
-      dtDAL::GameEventManager::GetInstance().AddEvent(*event);
+      RefPtr<dtCore::GameEvent> event = new dtCore::GameEvent("TestEvent","This is a test game event.");
+      dtCore::GameEventManager::GetInstance().AddEvent(*event);
       prop1->SetValue(event.get());
 
       SimpleStringToFromDataStreamCheck(ds, *prop);
 
-      dtDAL::GameEvent* eventToCheck = prop1->GetValue();
+      dtCore::GameEvent* eventToCheck = prop1->GetValue();
       CPPUNIT_ASSERT_MESSAGE("Game Event name was equal.",
                              eventToCheck->GetName() == event->GetName());
       CPPUNIT_ASSERT_MESSAGE("Game Event descriptions were not equal.",
@@ -951,40 +951,40 @@ void ProxyTest::testProp(dtDAL::BaseActorObject& proxy, dtDAL::ActorProperty* pr
    {
       if (prop->GetName() == "TestGroup")
       {
-         dtDAL::GroupActorProperty* prop1 = NULL;
+         dtCore::GroupActorProperty* prop1 = NULL;
          if (isElement)
          {
-            prop1 = dynamic_cast<dtDAL::GroupActorProperty*>(prop);
+            prop1 = dynamic_cast<dtCore::GroupActorProperty*>(prop);
          }
          else
          {
             proxy.GetProperty(prop->GetName(), prop1);
          }
 
-         RefPtr<dtDAL::NamedGroupParameter> param = new dtDAL::NamedGroupParameter("TestGroup");
+         RefPtr<dtCore::NamedGroupParameter> param = new dtCore::NamedGroupParameter("TestGroup");
 
-         param->AddParameter(*new dtDAL::NamedIntParameter("horse", 4));
-         param->AddParameter(*new dtDAL::NamedFloatParameter("cow", 4.3f));
-         param->AddParameter(*new dtDAL::NamedStringParameter("pig", "hello"));
+         param->AddParameter(*new dtCore::NamedIntParameter("horse", 4));
+         param->AddParameter(*new dtCore::NamedFloatParameter("cow", 4.3f));
+         param->AddParameter(*new dtCore::NamedStringParameter("pig", "hello"));
 
          prop1->SetValue(*param);
 
          SimpleStringToFromDataStreamCheck(ds, *prop);
 
-         RefPtr<dtDAL::NamedGroupParameter> valParam = prop1->GetValue();
+         RefPtr<dtCore::NamedGroupParameter> valParam = prop1->GetValue();
          CPPUNIT_ASSERT(valParam.valid());
          CPPUNIT_ASSERT_EQUAL(valParam->GetName(), param->GetName());
          CPPUNIT_ASSERT_EQUAL(valParam->GetParameterCount(), param->GetParameterCount());
 
-         dtDAL::NamedIntParameter* intParam = dynamic_cast<dtDAL::NamedIntParameter*>(valParam->GetParameter("horse"));
+         dtCore::NamedIntParameter* intParam = dynamic_cast<dtCore::NamedIntParameter*>(valParam->GetParameter("horse"));
          CPPUNIT_ASSERT(intParam != NULL);
          CPPUNIT_ASSERT_EQUAL(4, intParam->GetValue());
 
-         dtDAL::NamedFloatParameter* floatParam = dynamic_cast<dtDAL::NamedFloatParameter*>(valParam->GetParameter("cow"));
+         dtCore::NamedFloatParameter* floatParam = dynamic_cast<dtCore::NamedFloatParameter*>(valParam->GetParameter("cow"));
          CPPUNIT_ASSERT(floatParam != NULL);
          CPPUNIT_ASSERT_EQUAL(4.3f, floatParam->GetValue());
 
-         dtDAL::NamedStringParameter* stringParam = dynamic_cast<dtDAL::NamedStringParameter*>(valParam->GetParameter("pig"));
+         dtCore::NamedStringParameter* stringParam = dynamic_cast<dtCore::NamedStringParameter*>(valParam->GetParameter("pig"));
          CPPUNIT_ASSERT(stringParam != NULL);
          CPPUNIT_ASSERT_EQUAL(std::string("hello"), stringParam->GetValue());
 
@@ -996,10 +996,10 @@ void ProxyTest::testProp(dtDAL::BaseActorObject& proxy, dtDAL::ActorProperty* pr
    }
    else if (prop->GetDataType() == DataType::ARRAY)
    {
-      dtDAL::ArrayActorPropertyBase* prop1 = NULL;
+      dtCore::ArrayActorPropertyBase* prop1 = NULL;
       if (isElement)
       {
-         prop1 = dynamic_cast<dtDAL::ArrayActorPropertyBase*>(prop);
+         prop1 = dynamic_cast<dtCore::ArrayActorPropertyBase*>(prop);
       }
       else
       {
@@ -1018,10 +1018,10 @@ void ProxyTest::testProp(dtDAL::BaseActorObject& proxy, dtDAL::ActorProperty* pr
    }
    else if (prop->GetDataType() == DataType::CONTAINER)
    {
-      dtDAL::ContainerActorProperty* prop1 = NULL;
+      dtCore::ContainerActorProperty* prop1 = NULL;
       if (isElement)
       {
-         prop1 = dynamic_cast<dtDAL::ContainerActorProperty*>(prop);
+         prop1 = dynamic_cast<dtCore::ContainerActorProperty*>(prop);
       }
       else
       {
@@ -1040,10 +1040,10 @@ void ProxyTest::testProp(dtDAL::BaseActorObject& proxy, dtDAL::ActorProperty* pr
    else if (prop->GetDataType() == DataType::BIT_MASK)
    {
       SimpleStringToFromDataStreamCheck(ds, *prop);
-      dtDAL::BitMaskActorProperty* prop1 = NULL;
+      dtCore::BitMaskActorProperty* prop1 = NULL;
       if (isElement)
       {
-         prop1 = dynamic_cast<dtDAL::BitMaskActorProperty*>(prop);
+         prop1 = dynamic_cast<dtCore::BitMaskActorProperty*>(prop);
       }
       else
       {
@@ -1067,15 +1067,15 @@ void ProxyTest::testProp(dtDAL::BaseActorObject& proxy, dtDAL::ActorProperty* pr
    }
 }
 
-void ProxyTest::compareProxies(dtDAL::BaseActorObject& ap1, dtDAL::BaseActorObject& ap2)
+void ProxyTest::compareProxies(dtCore::BaseActorObject& ap1, dtCore::BaseActorObject& ap2)
 {
-   std::vector<dtDAL::ActorProperty*> props;
+   std::vector<dtCore::ActorProperty*> props;
    ap1.GetPropertyList(props);
 
    for(unsigned int i = 0; i < props.size(); ++i)
    {
       std::string str = props[i]->GetName();
-      dtDAL::ActorProperty* prop2 = ap2.GetProperty(str);
+      dtCore::ActorProperty* prop2 = ap2.GetProperty(str);
 
       CPPUNIT_ASSERT(prop2 != NULL);
 
@@ -1083,43 +1083,43 @@ void ProxyTest::compareProxies(dtDAL::BaseActorObject& ap1, dtDAL::BaseActorObje
    }
 }
 
-void ProxyTest::compareProperties(dtDAL::ActorProperty* prop1, dtDAL::ActorProperty* prop2)
+void ProxyTest::compareProperties(dtCore::ActorProperty* prop1, dtCore::ActorProperty* prop2)
 {
    std::string str = prop1->GetName();
    const float epsilon = 0.01f;
 
    if(prop1->GetDataType() == DataType::FLOAT)
    {
-      CPPUNIT_ASSERT(osg::equivalent(((dtDAL::FloatActorProperty*)prop1)->GetValue(),
-                                     ((dtDAL::FloatActorProperty*)prop2)->GetValue(), (float)epsilon));
+      CPPUNIT_ASSERT(osg::equivalent(((dtCore::FloatActorProperty*)prop1)->GetValue(),
+                                     ((dtCore::FloatActorProperty*)prop2)->GetValue(), (float)epsilon));
    }
    else if(prop1->GetDataType() == DataType::DOUBLE)
    {
-      CPPUNIT_ASSERT(osg::equivalent(((dtDAL::DoubleActorProperty*)prop1)->GetValue(),
-                                     ((dtDAL::DoubleActorProperty*)prop2)->GetValue(), (double)epsilon));
+      CPPUNIT_ASSERT(osg::equivalent(((dtCore::DoubleActorProperty*)prop1)->GetValue(),
+                                     ((dtCore::DoubleActorProperty*)prop2)->GetValue(), (double)epsilon));
    }
    else if(prop1->GetDataType() == DataType::INT)
    {
-      CPPUNIT_ASSERT(((dtDAL::IntActorProperty*)prop1)->GetValue() ==
-                     ((dtDAL::IntActorProperty*)prop2)->GetValue());
+      CPPUNIT_ASSERT(((dtCore::IntActorProperty*)prop1)->GetValue() ==
+                     ((dtCore::IntActorProperty*)prop2)->GetValue());
       CPPUNIT_ASSERT(prop1->ToString() == prop2->ToString());
    }
    else if(prop1->GetDataType() == DataType::LONGINT)
    {
-      CPPUNIT_ASSERT(((dtDAL::LongActorProperty*)prop1)->GetValue() ==
-                     ((dtDAL::LongActorProperty*)prop2)->GetValue());
+      CPPUNIT_ASSERT(((dtCore::LongActorProperty*)prop1)->GetValue() ==
+                     ((dtCore::LongActorProperty*)prop2)->GetValue());
       CPPUNIT_ASSERT(prop1->ToString() == prop2->ToString());
    }
    else if(prop1->GetDataType() == DataType::STRING)
    {
-      CPPUNIT_ASSERT(((dtDAL::StringActorProperty*)prop1)->GetValue() ==
-                     ((dtDAL::StringActorProperty*)prop2)->GetValue());
+      CPPUNIT_ASSERT(((dtCore::StringActorProperty*)prop1)->GetValue() ==
+                     ((dtCore::StringActorProperty*)prop2)->GetValue());
       CPPUNIT_ASSERT(prop1->ToString() == prop2->ToString());
    }
    else if(prop1->GetDataType() == DataType::BOOLEAN)
    {
-      CPPUNIT_ASSERT(((dtDAL::BooleanActorProperty*)prop1)->GetValue() ==
-                     ((dtDAL::BooleanActorProperty*)prop2)->GetValue());
+      CPPUNIT_ASSERT(((dtCore::BooleanActorProperty*)prop1)->GetValue() ==
+                     ((dtCore::BooleanActorProperty*)prop2)->GetValue());
       CPPUNIT_ASSERT(prop1->ToString() == prop2->ToString());
    }
    else if(prop1->GetDataType() == DataType::ENUMERATION)
@@ -1128,134 +1128,134 @@ void ProxyTest::compareProperties(dtDAL::ActorProperty* prop1, dtDAL::ActorPrope
    }
    else if(prop1->GetDataType() == DataType::ACTOR)
    {
-      CPPUNIT_ASSERT(((dtDAL::ActorActorProperty*)prop1)->GetValue() ==
-                     ((dtDAL::ActorActorProperty*)prop2)->GetValue());
+      CPPUNIT_ASSERT(((dtCore::ActorActorProperty*)prop1)->GetValue() ==
+                     ((dtCore::ActorActorProperty*)prop2)->GetValue());
       CPPUNIT_ASSERT(prop1->ToString() == prop2->ToString());
    }
    else if(prop1->GetDataType() == DataType::VEC3)
    {
       //if (true) continue;
       std::ostringstream ss;
-      ss << ((dtDAL::Vec3ActorProperty*)prop1)->GetValue() << " vs " << ((dtDAL::Vec3ActorProperty*)prop2)->GetValue();
+      ss << ((dtCore::Vec3ActorProperty*)prop1)->GetValue() << " vs " << ((dtCore::Vec3ActorProperty*)prop2)->GetValue();
       CPPUNIT_ASSERT_MESSAGE(prop1->GetName() + " value should be the same: " + ss.str(),
-                             osg::equivalent(((dtDAL::Vec3ActorProperty*)prop1)->GetValue()[0],
-                                             ((dtDAL::Vec3ActorProperty*)prop2)->GetValue()[0], epsilon)
-                             && osg::equivalent(((dtDAL::Vec3ActorProperty*)prop1)->GetValue()[1],
-                                                ((dtDAL::Vec3ActorProperty*)prop2)->GetValue()[1], epsilon)
-                             && osg::equivalent(((dtDAL::Vec3ActorProperty*)prop1)->GetValue()[2],
-                                                ((dtDAL::Vec3ActorProperty*)prop2)->GetValue()[2], epsilon)
+                             osg::equivalent(((dtCore::Vec3ActorProperty*)prop1)->GetValue()[0],
+                                             ((dtCore::Vec3ActorProperty*)prop2)->GetValue()[0], epsilon)
+                             && osg::equivalent(((dtCore::Vec3ActorProperty*)prop1)->GetValue()[1],
+                                                ((dtCore::Vec3ActorProperty*)prop2)->GetValue()[1], epsilon)
+                             && osg::equivalent(((dtCore::Vec3ActorProperty*)prop1)->GetValue()[2],
+                                                ((dtCore::Vec3ActorProperty*)prop2)->GetValue()[2], epsilon)
                              );
    }
    else if(prop1->GetDataType() == DataType::VEC3F)
    {
       //if (true) continue;
       std::ostringstream ss;
-      ss << ((dtDAL::Vec3fActorProperty*)prop1)->GetValue() << " vs " << ((dtDAL::Vec3fActorProperty*)prop2)->GetValue();
+      ss << ((dtCore::Vec3fActorProperty*)prop1)->GetValue() << " vs " << ((dtCore::Vec3fActorProperty*)prop2)->GetValue();
       CPPUNIT_ASSERT_MESSAGE(prop1->GetName() + " value should be the same: " + ss.str(),
-                             osg::equivalent(((dtDAL::Vec3fActorProperty*)prop1)->GetValue()[0],
-                                             ((dtDAL::Vec3fActorProperty*)prop2)->GetValue()[0], epsilon)
-                             && osg::equivalent(((dtDAL::Vec3fActorProperty*)prop1)->GetValue()[1],
-                                                ((dtDAL::Vec3fActorProperty*)prop2)->GetValue()[1], epsilon)
-                             && osg::equivalent(((dtDAL::Vec3fActorProperty*)prop1)->GetValue()[2],
-                                                ((dtDAL::Vec3fActorProperty*)prop2)->GetValue()[2], epsilon)
+                             osg::equivalent(((dtCore::Vec3fActorProperty*)prop1)->GetValue()[0],
+                                             ((dtCore::Vec3fActorProperty*)prop2)->GetValue()[0], epsilon)
+                             && osg::equivalent(((dtCore::Vec3fActorProperty*)prop1)->GetValue()[1],
+                                                ((dtCore::Vec3fActorProperty*)prop2)->GetValue()[1], epsilon)
+                             && osg::equivalent(((dtCore::Vec3fActorProperty*)prop1)->GetValue()[2],
+                                                ((dtCore::Vec3fActorProperty*)prop2)->GetValue()[2], epsilon)
                              );
    }
    else if(prop1->GetDataType() == DataType::VEC3D)
    {
       //if (true) continue;
       std::ostringstream ss;
-      ss << ((dtDAL::Vec3dActorProperty*)prop1)->GetValue() << " vs " << ((dtDAL::Vec3dActorProperty*)prop2)->GetValue();
+      ss << ((dtCore::Vec3dActorProperty*)prop1)->GetValue() << " vs " << ((dtCore::Vec3dActorProperty*)prop2)->GetValue();
       CPPUNIT_ASSERT_MESSAGE(prop1->GetName() + " value should be the same: " + ss.str(),
-                             osg::equivalent(((dtDAL::Vec3dActorProperty*)prop1)->GetValue()[0],
-                                             ((dtDAL::Vec3dActorProperty*)prop2)->GetValue()[0], (double)epsilon)
-                             && osg::equivalent(((dtDAL::Vec3dActorProperty*)prop1)->GetValue()[1],
-                                                ((dtDAL::Vec3dActorProperty*)prop2)->GetValue()[1], (double)epsilon)
-                             && osg::equivalent(((dtDAL::Vec3dActorProperty*)prop1)->GetValue()[2],
-                                                ((dtDAL::Vec3dActorProperty*)prop2)->GetValue()[2], (double)epsilon)
+                             osg::equivalent(((dtCore::Vec3dActorProperty*)prop1)->GetValue()[0],
+                                             ((dtCore::Vec3dActorProperty*)prop2)->GetValue()[0], (double)epsilon)
+                             && osg::equivalent(((dtCore::Vec3dActorProperty*)prop1)->GetValue()[1],
+                                                ((dtCore::Vec3dActorProperty*)prop2)->GetValue()[1], (double)epsilon)
+                             && osg::equivalent(((dtCore::Vec3dActorProperty*)prop1)->GetValue()[2],
+                                                ((dtCore::Vec3dActorProperty*)prop2)->GetValue()[2], (double)epsilon)
                              );
    }
    else if(prop1->GetDataType() == DataType::VEC4)
    {
       std::ostringstream ss;
-      ss << ((dtDAL::Vec4ActorProperty*)prop1)->GetValue() << " vs " << ((dtDAL::Vec4ActorProperty*)prop2)->GetValue();
+      ss << ((dtCore::Vec4ActorProperty*)prop1)->GetValue() << " vs " << ((dtCore::Vec4ActorProperty*)prop2)->GetValue();
       CPPUNIT_ASSERT_MESSAGE(prop1->GetName() + " value should be the same: " + ss.str(),
-                             osg::equivalent(((dtDAL::Vec4ActorProperty*)prop1)->GetValue()[0],
-                                             ((dtDAL::Vec4ActorProperty*)prop2)->GetValue()[0], epsilon)
-                             && osg::equivalent(((dtDAL::Vec4ActorProperty*)prop1)->GetValue()[1],
-                                                ((dtDAL::Vec4ActorProperty*)prop2)->GetValue()[1], epsilon)
-                             && osg::equivalent(((dtDAL::Vec4ActorProperty*)prop1)->GetValue()[2],
-                                                ((dtDAL::Vec4ActorProperty*)prop2)->GetValue()[2], epsilon)
-                             && osg::equivalent(((dtDAL::Vec4ActorProperty*)prop1)->GetValue()[3],
-                                                ((dtDAL::Vec4ActorProperty*)prop2)->GetValue()[3], epsilon)
+                             osg::equivalent(((dtCore::Vec4ActorProperty*)prop1)->GetValue()[0],
+                                             ((dtCore::Vec4ActorProperty*)prop2)->GetValue()[0], epsilon)
+                             && osg::equivalent(((dtCore::Vec4ActorProperty*)prop1)->GetValue()[1],
+                                                ((dtCore::Vec4ActorProperty*)prop2)->GetValue()[1], epsilon)
+                             && osg::equivalent(((dtCore::Vec4ActorProperty*)prop1)->GetValue()[2],
+                                                ((dtCore::Vec4ActorProperty*)prop2)->GetValue()[2], epsilon)
+                             && osg::equivalent(((dtCore::Vec4ActorProperty*)prop1)->GetValue()[3],
+                                                ((dtCore::Vec4ActorProperty*)prop2)->GetValue()[3], epsilon)
                              );
    }
    else if(prop1->GetDataType() == DataType::VEC4F)
    {
       std::ostringstream ss;
-      ss << ((dtDAL::Vec4fActorProperty*)prop1)->GetValue() << " vs " << ((dtDAL::Vec4fActorProperty*)prop2)->GetValue();
+      ss << ((dtCore::Vec4fActorProperty*)prop1)->GetValue() << " vs " << ((dtCore::Vec4fActorProperty*)prop2)->GetValue();
       CPPUNIT_ASSERT_MESSAGE(prop1->GetName() + " value should be the same: " + ss.str(),
-                             osg::equivalent(((dtDAL::Vec4fActorProperty*)prop1)->GetValue()[0],
-                                             ((dtDAL::Vec4fActorProperty*)prop2)->GetValue()[0], epsilon)
-                             && osg::equivalent(((dtDAL::Vec4fActorProperty*)prop1)->GetValue()[1],
-                                                ((dtDAL::Vec4fActorProperty*)prop2)->GetValue()[1], epsilon)
-                             && osg::equivalent(((dtDAL::Vec4fActorProperty*)prop1)->GetValue()[2],
-                                                ((dtDAL::Vec4fActorProperty*)prop2)->GetValue()[2], epsilon)
-                             && osg::equivalent(((dtDAL::Vec4fActorProperty*)prop1)->GetValue()[3],
-                                                ((dtDAL::Vec4fActorProperty*)prop2)->GetValue()[3], epsilon)
+                             osg::equivalent(((dtCore::Vec4fActorProperty*)prop1)->GetValue()[0],
+                                             ((dtCore::Vec4fActorProperty*)prop2)->GetValue()[0], epsilon)
+                             && osg::equivalent(((dtCore::Vec4fActorProperty*)prop1)->GetValue()[1],
+                                                ((dtCore::Vec4fActorProperty*)prop2)->GetValue()[1], epsilon)
+                             && osg::equivalent(((dtCore::Vec4fActorProperty*)prop1)->GetValue()[2],
+                                                ((dtCore::Vec4fActorProperty*)prop2)->GetValue()[2], epsilon)
+                             && osg::equivalent(((dtCore::Vec4fActorProperty*)prop1)->GetValue()[3],
+                                                ((dtCore::Vec4fActorProperty*)prop2)->GetValue()[3], epsilon)
                              );
    }
    else if(prop1->GetDataType() == DataType::VEC4D)
    {
       std::ostringstream ss;
-      ss << ((dtDAL::Vec4dActorProperty*)prop1)->GetValue() << " vs " << ((dtDAL::Vec4dActorProperty*)prop2)->GetValue();
+      ss << ((dtCore::Vec4dActorProperty*)prop1)->GetValue() << " vs " << ((dtCore::Vec4dActorProperty*)prop2)->GetValue();
       CPPUNIT_ASSERT_MESSAGE(prop1->GetName() + " value should be the same: " + ss.str(),
-                             osg::equivalent(((dtDAL::Vec4dActorProperty*)prop1)->GetValue()[0],
-                                             ((dtDAL::Vec4dActorProperty*)prop2)->GetValue()[0], (double)epsilon)
-                             && osg::equivalent(((dtDAL::Vec4dActorProperty*)prop1)->GetValue()[1],
-                                                ((dtDAL::Vec4dActorProperty*)prop2)->GetValue()[1], (double)epsilon)
-                             && osg::equivalent(((dtDAL::Vec4dActorProperty*)prop1)->GetValue()[2],
-                                                ((dtDAL::Vec4dActorProperty*)prop2)->GetValue()[2], (double)epsilon)
-                             && osg::equivalent(((dtDAL::Vec4dActorProperty*)prop1)->GetValue()[3],
-                                                ((dtDAL::Vec4dActorProperty*)prop2)->GetValue()[3], (double)epsilon)
+                             osg::equivalent(((dtCore::Vec4dActorProperty*)prop1)->GetValue()[0],
+                                             ((dtCore::Vec4dActorProperty*)prop2)->GetValue()[0], (double)epsilon)
+                             && osg::equivalent(((dtCore::Vec4dActorProperty*)prop1)->GetValue()[1],
+                                                ((dtCore::Vec4dActorProperty*)prop2)->GetValue()[1], (double)epsilon)
+                             && osg::equivalent(((dtCore::Vec4dActorProperty*)prop1)->GetValue()[2],
+                                                ((dtCore::Vec4dActorProperty*)prop2)->GetValue()[2], (double)epsilon)
+                             && osg::equivalent(((dtCore::Vec4dActorProperty*)prop1)->GetValue()[3],
+                                                ((dtCore::Vec4dActorProperty*)prop2)->GetValue()[3], (double)epsilon)
                              );
    }
    else if(prop1->GetDataType() == DataType::VEC2)
    {
       std::ostringstream ss;
-      ss << ((dtDAL::Vec2ActorProperty*)prop1)->GetValue() << " vs " << ((dtDAL::Vec2ActorProperty*)prop2)->GetValue();
+      ss << ((dtCore::Vec2ActorProperty*)prop1)->GetValue() << " vs " << ((dtCore::Vec2ActorProperty*)prop2)->GetValue();
       CPPUNIT_ASSERT_MESSAGE(prop1->GetName() + " value should be the same: " + ss.str(),
-                             osg::equivalent(((dtDAL::Vec2ActorProperty*)prop1)->GetValue()[0],
-                                             ((dtDAL::Vec2ActorProperty*)prop2)->GetValue()[0], epsilon)
-                             && osg::equivalent(((dtDAL::Vec2ActorProperty*)prop1)->GetValue()[1],
-                                                ((dtDAL::Vec2ActorProperty*)prop2)->GetValue()[1], epsilon)
+                             osg::equivalent(((dtCore::Vec2ActorProperty*)prop1)->GetValue()[0],
+                                             ((dtCore::Vec2ActorProperty*)prop2)->GetValue()[0], epsilon)
+                             && osg::equivalent(((dtCore::Vec2ActorProperty*)prop1)->GetValue()[1],
+                                                ((dtCore::Vec2ActorProperty*)prop2)->GetValue()[1], epsilon)
                              );
    }
    else if(prop1->GetDataType() == DataType::VEC2F)
    {
       std::ostringstream ss;
-      ss << ((dtDAL::Vec2fActorProperty*)prop1)->GetValue() << " vs " << ((dtDAL::Vec2fActorProperty*)prop2)->GetValue();
+      ss << ((dtCore::Vec2fActorProperty*)prop1)->GetValue() << " vs " << ((dtCore::Vec2fActorProperty*)prop2)->GetValue();
       CPPUNIT_ASSERT_MESSAGE(prop1->GetName() + " value should be the same: " + ss.str(),
-                             osg::equivalent(((dtDAL::Vec2fActorProperty*)prop1)->GetValue()[0],
-                                             ((dtDAL::Vec2fActorProperty*)prop2)->GetValue()[0], epsilon)
-                             && osg::equivalent(((dtDAL::Vec2fActorProperty*)prop1)->GetValue()[1],
-                                                ((dtDAL::Vec2fActorProperty*)prop2)->GetValue()[1], epsilon)
+                             osg::equivalent(((dtCore::Vec2fActorProperty*)prop1)->GetValue()[0],
+                                             ((dtCore::Vec2fActorProperty*)prop2)->GetValue()[0], epsilon)
+                             && osg::equivalent(((dtCore::Vec2fActorProperty*)prop1)->GetValue()[1],
+                                                ((dtCore::Vec2fActorProperty*)prop2)->GetValue()[1], epsilon)
                              );
    }
    else if(prop1->GetDataType() == DataType::VEC2D)
    {
       std::ostringstream ss;
-      ss << ((dtDAL::Vec2dActorProperty*)prop1)->GetValue() << " vs " << ((dtDAL::Vec2dActorProperty*)prop2)->GetValue();
+      ss << ((dtCore::Vec2dActorProperty*)prop1)->GetValue() << " vs " << ((dtCore::Vec2dActorProperty*)prop2)->GetValue();
       CPPUNIT_ASSERT_MESSAGE(prop1->GetName() + " value should be the same: " + ss.str(),
-                             osg::equivalent(((dtDAL::Vec2dActorProperty*)prop1)->GetValue()[0],
-                                             ((dtDAL::Vec2dActorProperty*)prop2)->GetValue()[0], (double)epsilon)
-                             && osg::equivalent(((dtDAL::Vec2dActorProperty*)prop1)->GetValue()[1],
-                                                ((dtDAL::Vec2dActorProperty*)prop2)->GetValue()[1], (double)epsilon)
+                             osg::equivalent(((dtCore::Vec2dActorProperty*)prop1)->GetValue()[0],
+                                             ((dtCore::Vec2dActorProperty*)prop2)->GetValue()[0], (double)epsilon)
+                             && osg::equivalent(((dtCore::Vec2dActorProperty*)prop1)->GetValue()[1],
+                                                ((dtCore::Vec2dActorProperty*)prop2)->GetValue()[1], (double)epsilon)
                              );
    }
    else if(prop1->GetDataType() == DataType::RGBACOLOR)
    {
-      dtDAL::ColorRgbaActorProperty& colorProp1 = *static_cast<dtDAL::ColorRgbaActorProperty*>(prop1);
-      dtDAL::ColorRgbaActorProperty& colorProp2 = *static_cast<dtDAL::ColorRgbaActorProperty*>(prop2);
+      dtCore::ColorRgbaActorProperty& colorProp1 = *static_cast<dtCore::ColorRgbaActorProperty*>(prop1);
+      dtCore::ColorRgbaActorProperty& colorProp2 = *static_cast<dtCore::ColorRgbaActorProperty*>(prop2);
       std::ostringstream ss;
       ss << colorProp1.GetValue() << " vs "
          << colorProp2.GetValue();
@@ -1272,8 +1272,8 @@ void ProxyTest::compareProperties(dtDAL::ActorProperty* prop1, dtDAL::ActorPrope
    }
    else if (prop1->GetDataType() == DataType::GAME_EVENT)
    {
-      dtDAL::GameEventActorProperty& geProp1 = *static_cast<dtDAL::GameEventActorProperty*>(prop1);
-      dtDAL::GameEventActorProperty& geProp2 = *static_cast<dtDAL::GameEventActorProperty*>(prop2);
+      dtCore::GameEventActorProperty& geProp1 = *static_cast<dtCore::GameEventActorProperty*>(prop1);
+      dtCore::GameEventActorProperty& geProp2 = *static_cast<dtCore::GameEventActorProperty*>(prop2);
       if (geProp1.GetValue() == NULL)
       {
          CPPUNIT_ASSERT(geProp2.GetValue() == NULL);
@@ -1289,8 +1289,8 @@ void ProxyTest::compareProperties(dtDAL::ActorProperty* prop1, dtDAL::ActorPrope
    }
    else if (prop1->GetDataType() == DataType::GROUP)
    {
-      dtDAL::GroupActorProperty& gProp1 = *static_cast<dtDAL::GroupActorProperty*>(prop1);
-      dtDAL::GroupActorProperty& gProp2 = *static_cast<dtDAL::GroupActorProperty*>(prop2);
+      dtCore::GroupActorProperty& gProp1 = *static_cast<dtCore::GroupActorProperty*>(prop1);
+      dtCore::GroupActorProperty& gProp2 = *static_cast<dtCore::GroupActorProperty*>(prop2);
       CPPUNIT_ASSERT_MESSAGE("Group actor properties must not return NULL", gProp1.GetValue().valid());
       CPPUNIT_ASSERT_MESSAGE("Group actor properties must not return NULL", gProp2.GetValue().valid());
 
@@ -1299,8 +1299,8 @@ void ProxyTest::compareProperties(dtDAL::ActorProperty* prop1, dtDAL::ActorPrope
    }
    else if (prop1->GetDataType() == DataType::ARRAY)
    {
-      dtDAL::ArrayActorPropertyBase& aProp1 = *static_cast<dtDAL::ArrayActorPropertyBase*>(prop1);
-      dtDAL::ArrayActorPropertyBase& aProp2 = *static_cast<dtDAL::ArrayActorPropertyBase*>(prop2);
+      dtCore::ArrayActorPropertyBase& aProp1 = *static_cast<dtCore::ArrayActorPropertyBase*>(prop1);
+      dtCore::ArrayActorPropertyBase& aProp2 = *static_cast<dtCore::ArrayActorPropertyBase*>(prop2);
 
       // First check the size of the arrays.
       CPPUNIT_ASSERT(aProp1.GetArraySize() == aProp2.GetArraySize());
@@ -1317,8 +1317,8 @@ void ProxyTest::compareProperties(dtDAL::ActorProperty* prop1, dtDAL::ActorPrope
    }
    else if (prop1->GetDataType() == DataType::CONTAINER)
    {
-      dtDAL::ContainerActorProperty& cProp1 = *static_cast<dtDAL::ContainerActorProperty*>(prop1);
-      dtDAL::ContainerActorProperty& cProp2 = *static_cast<dtDAL::ContainerActorProperty*>(prop2);
+      dtCore::ContainerActorProperty& cProp1 = *static_cast<dtCore::ContainerActorProperty*>(prop1);
+      dtCore::ContainerActorProperty& cProp2 = *static_cast<dtCore::ContainerActorProperty*>(prop2);
 
       // First check the size of the containers.
       CPPUNIT_ASSERT(cProp1.GetPropertyCount() == cProp2.GetPropertyCount());
@@ -1333,8 +1333,8 @@ void ProxyTest::compareProperties(dtDAL::ActorProperty* prop1, dtDAL::ActorPrope
    }
    else if(prop1->GetDataType() == DataType::BIT_MASK)
    {
-      CPPUNIT_ASSERT(((dtDAL::BitMaskActorProperty*)prop1)->GetValue() ==
-         ((dtDAL::BitMaskActorProperty*)prop2)->GetValue());
+      CPPUNIT_ASSERT(((dtCore::BitMaskActorProperty*)prop1)->GetValue() ==
+         ((dtCore::BitMaskActorProperty*)prop2)->GetValue());
       CPPUNIT_ASSERT(prop1->ToString() == prop2->ToString());
    }
 }
@@ -1343,7 +1343,7 @@ void ProxyTest::TestProxies()
 {
    try
    {
-      RefPtr<dtDAL::BaseActorObject> proxy;
+      RefPtr<dtCore::BaseActorObject> proxy;
 
       proxy = libMgr.CreateActorProxy(*ExampleActorLib::TEST_ACTOR_PROPERTY_TYPE).get();
       CPPUNIT_ASSERT(proxy != NULL);
@@ -1358,13 +1358,13 @@ void ProxyTest::TestProxies()
 
          compareProxies(*proxy, *proxy->Clone());
 
-         CPPUNIT_ASSERT(!dtDAL::Project::GetInstance().GetEditMode());
+         CPPUNIT_ASSERT(!dtCore::Project::GetInstance().GetEditMode());
          CPPUNIT_ASSERT_MESSAGE("The proxy should return false for being in STAGE", !proxy->IsInSTAGE());
-         dtDAL::Project::GetInstance().SetEditMode(true);
-         CPPUNIT_ASSERT(dtDAL::Project::GetInstance().GetEditMode());
+         dtCore::Project::GetInstance().SetEditMode(true);
+         CPPUNIT_ASSERT(dtCore::Project::GetInstance().GetEditMode());
          CPPUNIT_ASSERT_MESSAGE("The proxy should return true for being in STAGE", proxy->IsInSTAGE());
-         dtDAL::Project::GetInstance().SetEditMode(false);
-         CPPUNIT_ASSERT(!dtDAL::Project::GetInstance().GetEditMode());
+         dtCore::Project::GetInstance().SetEditMode(false);
+         CPPUNIT_ASSERT(!dtCore::Project::GetInstance().GetEditMode());
          CPPUNIT_ASSERT_MESSAGE("The proxy should return false for being in STAGE", !proxy->IsInSTAGE());
       }
    }
@@ -1378,45 +1378,45 @@ void ProxyTest::TestBezierProxies()
 {
    try
    {
-      dtDAL::LibraryManager& libMgr = dtDAL::LibraryManager::GetInstance();
-      RefPtr<const dtDAL::ActorType>  at    = libMgr.FindActorType("dtcore.Curve", "Bezier Node");
+      dtCore::LibraryManager& libMgr = dtCore::LibraryManager::GetInstance();
+      RefPtr<const dtCore::ActorType>  at    = libMgr.FindActorType("dtcore.Curve", "Bezier Node");
       CPPUNIT_ASSERT(at != NULL);
 
-      RefPtr<dtDAL::BaseActorObject> one   = libMgr.CreateActorProxy(*at);
-      RefPtr<dtDAL::BaseActorObject> two   = libMgr.CreateActorProxy(*at);
-      RefPtr<dtDAL::BaseActorObject> three = libMgr.CreateActorProxy(*at);
+      RefPtr<dtCore::BaseActorObject> one   = libMgr.CreateActorProxy(*at);
+      RefPtr<dtCore::BaseActorObject> two   = libMgr.CreateActorProxy(*at);
+      RefPtr<dtCore::BaseActorObject> three = libMgr.CreateActorProxy(*at);
 
       at = libMgr.FindActorType("dtcore.Curve", "Bezier Control Point");
       CPPUNIT_ASSERT(at != NULL);
 
-      RefPtr<dtDAL::BaseActorObject> entryBCP = libMgr.CreateActorProxy(*at);
-      RefPtr<dtDAL::BaseActorObject> exitBCP = libMgr.CreateActorProxy(*at);
+      RefPtr<dtCore::BaseActorObject> entryBCP = libMgr.CreateActorProxy(*at);
+      RefPtr<dtCore::BaseActorObject> exitBCP = libMgr.CreateActorProxy(*at);
 
-      dtDAL::ActorActorProperty* prevProp1    = static_cast<dtDAL::ActorActorProperty*>(one->GetProperty("Previous Bezier Node"));
+      dtCore::ActorActorProperty* prevProp1    = static_cast<dtCore::ActorActorProperty*>(one->GetProperty("Previous Bezier Node"));
       CPPUNIT_ASSERT_MESSAGE("Actor type should not be NULL", prevProp1 != NULL);
-      dtDAL::ActorActorProperty* nextProp1    = static_cast<dtDAL::ActorActorProperty*>(one->GetProperty("Next Bezier Node"));
+      dtCore::ActorActorProperty* nextProp1    = static_cast<dtCore::ActorActorProperty*>(one->GetProperty("Next Bezier Node"));
       CPPUNIT_ASSERT_MESSAGE("Actor type should not be NULL", nextProp1 != NULL);
-      dtDAL::ActorActorProperty* entryCtrlPntProp1 = static_cast<dtDAL::ActorActorProperty*>(one->GetProperty("Entry Control Point"));
+      dtCore::ActorActorProperty* entryCtrlPntProp1 = static_cast<dtCore::ActorActorProperty*>(one->GetProperty("Entry Control Point"));
       CPPUNIT_ASSERT_MESSAGE("Actor type should not be NULL", entryCtrlPntProp1 != NULL);
-      dtDAL::ActorActorProperty* exitCtrlPntProp1 = static_cast<dtDAL::ActorActorProperty*>(one->GetProperty("Exit Control Point"));
+      dtCore::ActorActorProperty* exitCtrlPntProp1 = static_cast<dtCore::ActorActorProperty*>(one->GetProperty("Exit Control Point"));
       CPPUNIT_ASSERT_MESSAGE("Actor type should not be NULL", exitCtrlPntProp1 != NULL);
 
-      dtDAL::ActorActorProperty* prevProp2    = static_cast<dtDAL::ActorActorProperty*>(two->GetProperty("Previous Bezier Node"));
+      dtCore::ActorActorProperty* prevProp2    = static_cast<dtCore::ActorActorProperty*>(two->GetProperty("Previous Bezier Node"));
       CPPUNIT_ASSERT_MESSAGE("Actor property should not be NULL", prevProp2 != NULL);
-      dtDAL::ActorActorProperty* nextProp2    = static_cast<dtDAL::ActorActorProperty*>(two->GetProperty("Next Bezier Node"));
+      dtCore::ActorActorProperty* nextProp2    = static_cast<dtCore::ActorActorProperty*>(two->GetProperty("Next Bezier Node"));
       CPPUNIT_ASSERT_MESSAGE("Actor property should not be NULL", nextProp2 != NULL);
-      dtDAL::ActorActorProperty* entryCtrlPntProp2 = static_cast<dtDAL::ActorActorProperty*>(two->GetProperty("Entry Control Point"));
+      dtCore::ActorActorProperty* entryCtrlPntProp2 = static_cast<dtCore::ActorActorProperty*>(two->GetProperty("Entry Control Point"));
       CPPUNIT_ASSERT_MESSAGE("Actor property should not be NULL", entryCtrlPntProp2 != NULL);
-      dtDAL::ActorActorProperty* exitCtrlPntProp2 = static_cast<dtDAL::ActorActorProperty*>(two->GetProperty("Exit Control Point"));
+      dtCore::ActorActorProperty* exitCtrlPntProp2 = static_cast<dtCore::ActorActorProperty*>(two->GetProperty("Exit Control Point"));
       CPPUNIT_ASSERT_MESSAGE("Actor type should not be NULL", exitCtrlPntProp2 != NULL);
 
-      dtDAL::ActorActorProperty* prevProp3    = static_cast<dtDAL::ActorActorProperty*>(three->GetProperty("Previous Bezier Node"));
+      dtCore::ActorActorProperty* prevProp3    = static_cast<dtCore::ActorActorProperty*>(three->GetProperty("Previous Bezier Node"));
       CPPUNIT_ASSERT_MESSAGE("Actor property should not be NULL", prevProp3 != NULL);
-      dtDAL::ActorActorProperty* nextProp3    = static_cast<dtDAL::ActorActorProperty*>(three->GetProperty("Next Bezier Node"));
+      dtCore::ActorActorProperty* nextProp3    = static_cast<dtCore::ActorActorProperty*>(three->GetProperty("Next Bezier Node"));
       CPPUNIT_ASSERT_MESSAGE("Actor property should not be NULL", nextProp3 != NULL);
-      dtDAL::ActorActorProperty* entryCtrlPntProp3 = static_cast<dtDAL::ActorActorProperty*>(three->GetProperty("Entry Control Point"));
+      dtCore::ActorActorProperty* entryCtrlPntProp3 = static_cast<dtCore::ActorActorProperty*>(three->GetProperty("Entry Control Point"));
       CPPUNIT_ASSERT_MESSAGE("Actor property should not be NULL", entryCtrlPntProp3 != NULL);
-      dtDAL::ActorActorProperty* exitCtrlPntProp3 = static_cast<dtDAL::ActorActorProperty*>(three->GetProperty("Exit Control Point"));
+      dtCore::ActorActorProperty* exitCtrlPntProp3 = static_cast<dtCore::ActorActorProperty*>(three->GetProperty("Exit Control Point"));
       CPPUNIT_ASSERT_MESSAGE("Actor type should not be NULL", exitCtrlPntProp3 != NULL);
 
       CPPUNIT_ASSERT_MESSAGE("The first proxy should not have a previous node", prevProp1->GetValue() == NULL);

@@ -23,8 +23,8 @@
 
 #include <dtCore/object.h>
 
-#include <dtDAL/functor.h>
-#include <dtDAL/vectoractorproperties.h>
+#include <dtCore/functor.h>
+#include <dtCore/vectoractorproperties.h>
 
 #include <dtUtil/matrixutil.h>
 
@@ -45,21 +45,21 @@ namespace dtActors
       dtCore::Object *actor = NULL;
       GetActor(actor);
 
-      AddProperty(new dtDAL::Vec3ActorProperty("Scale", "Scale",
-         dtDAL::Vec3ActorProperty::SetFuncType(actor, &dtCore::Object::SetScale),
-         dtDAL::Vec3ActorProperty::GetFuncType(actor, &dtCore::Object::GetScale),
+      AddProperty(new dtCore::Vec3ActorProperty("Scale", "Scale",
+         dtCore::Vec3ActorProperty::SetFuncType(actor, &dtCore::Object::SetScale),
+         dtCore::Vec3ActorProperty::GetFuncType(actor, &dtCore::Object::GetScale),
          "Specifies the scale of the object",
          "Transformable"));
 
-      AddProperty(new dtDAL::Vec3ActorProperty("Model Rotation", "Model Rotation",
-         dtDAL::Vec3ActorProperty::SetFuncType(actor, &dtCore::Object::SetModelRotation),
-         dtDAL::Vec3ActorProperty::GetFuncType(actor, &dtCore::Object::GetModelRotation),
+      AddProperty(new dtCore::Vec3ActorProperty("Model Rotation", "Model Rotation",
+         dtCore::Vec3ActorProperty::SetFuncType(actor, &dtCore::Object::SetModelRotation),
+         dtCore::Vec3ActorProperty::GetFuncType(actor, &dtCore::Object::GetModelRotation),
          "Specifies the Rotation of the object",
          "Transformable"));
 
-      AddProperty(new dtDAL::Vec3ActorProperty("Model Translation", "Model Translation",
-         dtDAL::Vec3ActorProperty::SetFuncType(actor, &dtCore::Object::SetModelTranslation),
-         dtDAL::Vec3ActorProperty::GetFuncType(actor, &dtCore::Object::GetModelTranslation),
+      AddProperty(new dtCore::Vec3ActorProperty("Model Translation", "Model Translation",
+         dtCore::Vec3ActorProperty::SetFuncType(actor, &dtCore::Object::SetModelTranslation),
+         dtCore::Vec3ActorProperty::GetFuncType(actor, &dtCore::Object::GetModelTranslation),
          "Specifies the Translation of the object",
          "Transformable"));
    }

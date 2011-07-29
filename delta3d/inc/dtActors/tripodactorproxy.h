@@ -23,8 +23,8 @@
 #define DELTA_TRIPOD_ACTOR_PROXY
 
 #include <osg/Vec3>
-#include <dtDAL/actorproxy.h>
-#include <dtDAL/plugin_export.h>
+#include <dtCore/actorproxy.h>
+#include <dtCore/plugin_export.h>
 #include <dtUtil/deprecationmgr.h>
 
 namespace dtActors
@@ -33,7 +33,7 @@ namespace dtActors
    * @class TripodActorProxy
    * @brief This proxy wraps the dtCore::Tripod Delta3D object.
    */
-   class DT_PLUGIN_EXPORT TripodActorProxy : public dtDAL::BaseActorObject
+   class DT_PLUGIN_EXPORT TripodActorProxy : public dtCore::BaseActorObject
    {
 
    public:
@@ -76,7 +76,7 @@ namespace dtActors
       * Sets the camera which this tripod will move
       * @param cameraProxy the camera to move
       */
-      DEPRECATE_FUNC void SetCamera( dtDAL::BaseActorObject* cameraProxy );
+      DEPRECATE_FUNC void SetCamera( dtCore::BaseActorObject* cameraProxy );
 
       /**
       * Gets the camera which this tripod is moving
@@ -88,7 +88,7 @@ namespace dtActors
       * Sets the transformable which this tripod will move
       * @param transformableProxy the transformable to move
       */
-      void SetChild(dtDAL::BaseActorObject* cameraProxy);
+      void SetChild(dtCore::BaseActorObject* cameraProxy);
 
       /**
       * Gets the transformable which this tripod is moving
@@ -101,7 +101,7 @@ namespace dtActors
       * move the camera in relation to
       * @param transformableProxy the parent transformable
       */
-      void SetAttachToTransformable( dtDAL::BaseActorObject* transformableProxy );
+      void SetAttachToTransformable( dtCore::BaseActorObject* transformableProxy );
 
       /**
       * Gets the transformable (i.e. parent) which this tripod is
@@ -114,7 +114,7 @@ namespace dtActors
       * Sets the transformable you wish to target the parent at
       * @param targetProxy the desired target
       */
-      void SetLookAtTarget( dtDAL::BaseActorObject* targetProxy );
+      void SetLookAtTarget( dtCore::BaseActorObject* targetProxy );
 
       /**
       * Gets the transformable which the parent is targeted at
@@ -183,7 +183,7 @@ namespace dtActors
       TetherModeEnum& GetTetherMode() const;
 
       /// Supports the following deprecated properties: 'Camera' 
-      virtual dtCore::RefPtr<dtDAL::ActorProperty> GetDeprecatedProperty(const std::string& name);
+      virtual dtCore::RefPtr<dtCore::ActorProperty> GetDeprecatedProperty(const std::string& name);
 
    protected:
 

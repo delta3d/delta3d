@@ -29,17 +29,17 @@
 #include "KillableTargetActor.h"
 #include <dtCore/shadermanager.h>
 
-dtCore::RefPtr<dtDAL::ActorType> ActorsRegistry::TANK_ACTOR_TYPE(new dtDAL::ActorType("Tank","MyActors.Tanks","A really cool tank!."));
-dtCore::RefPtr<dtDAL::ActorType> ActorsRegistry::KILLABLE_ACTOR_TYPE(new dtDAL::ActorType("KillableTarget", "MyActors.Targets", "Would wouldn't want to shoot this thing?"));
+dtCore::RefPtr<dtCore::ActorType> ActorsRegistry::TANK_ACTOR_TYPE(new dtCore::ActorType("Tank","MyActors.Tanks","A really cool tank!."));
+dtCore::RefPtr<dtCore::ActorType> ActorsRegistry::KILLABLE_ACTOR_TYPE(new dtCore::ActorType("KillableTarget", "MyActors.Targets", "Would wouldn't want to shoot this thing?"));
 
 ///////////////////////////////////////////////////////////////////////////////
-extern "C" TUTORIAL_TANK_EXPORT dtDAL::ActorPluginRegistry* CreatePluginRegistry()
+extern "C" TUTORIAL_TANK_EXPORT dtCore::ActorPluginRegistry* CreatePluginRegistry()
 {
    return new ActorsRegistry();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-extern "C" TUTORIAL_TANK_EXPORT void DestroyPluginRegistry(dtDAL::ActorPluginRegistry *registry)
+extern "C" TUTORIAL_TANK_EXPORT void DestroyPluginRegistry(dtCore::ActorPluginRegistry *registry)
 {
    if (registry != NULL)
    {
@@ -49,7 +49,7 @@ extern "C" TUTORIAL_TANK_EXPORT void DestroyPluginRegistry(dtDAL::ActorPluginReg
 
 //////////////////////////////////////////////////////////////////////////
 ActorsRegistry::ActorsRegistry() :
-   dtDAL::ActorPluginRegistry("TutorialActors")
+   dtCore::ActorPluginRegistry("TutorialActors")
 {
    SetDescription("This is a library of actors used by the Game Manager Tutorials.");
 

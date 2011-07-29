@@ -31,7 +31,7 @@
 #include <dtGame/gmsettings.h>
 #include <dtGame/machineinfo.h>
 #include <dtGame/messagefactory.h>
-#include <dtDAL/librarymanager.h>
+#include <dtCore/librarymanager.h>
 #include <dtGame/gamemanager.h>
 #include <dtGame/mapchangestatedata.h>
 #include <dtGame/gmcomponent.h>
@@ -40,7 +40,7 @@
 
 
 
-namespace dtDAL
+namespace dtCore
 {
    class BaseActorObject;
 }
@@ -100,7 +100,7 @@ namespace dtGame
        * Removes the proxy from the scene
        * @param proxy the proxy to remove from the scene.
        */
-      void RemoveActorFromScene(GameManager& gm, dtDAL::BaseActorObject& proxy);
+      void RemoveActorFromScene(GameManager& gm, dtCore::BaseActorObject& proxy);
 
       /**
        * Private helper method to send an environment changed message
@@ -109,7 +109,7 @@ namespace dtGame
       void SendEnvironmentChangedMessage(GameManager& gm, IEnvGameActorProxy* envActor);
 
       typedef std::map< dtCore::UniqueId, dtCore::RefPtr<GameActorProxy> > GameActorMap;
-      typedef std::map< dtCore::UniqueId, dtCore::RefPtr<dtDAL::BaseActorObject> > ActorMap;
+      typedef std::map< dtCore::UniqueId, dtCore::RefPtr<dtCore::BaseActorObject> > ActorMap;
 
       /// stats for the work of the GM - in a class so its less obtrusive to the gm
       GMStatistics mGMStatistics;
@@ -142,7 +142,7 @@ namespace dtGame
       std::queue<dtCore::RefPtr<const Message> > mSendMessageQueue;
 
       dtCore::RefPtr<dtCore::Scene> mScene;
-      dtCore::RefPtr<dtDAL::LibraryManager> mLibMgr;
+      dtCore::RefPtr<dtCore::LibraryManager> mLibMgr;
       GameManager::NameVector mLoadedMaps;
       dtCore::RefPtr<MapChangeStateData> mMapChangeStateData;
 

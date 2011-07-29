@@ -33,7 +33,7 @@
 #include <dtQt/dynamicabstractcontrol.h>
 #include <dtQt/dynamicsubwidgets.h>
 
-namespace dtDAL
+namespace dtCore
 {
     //class Vec3ActorProperty;
     class ColorRgbaActorProperty;
@@ -60,7 +60,7 @@ namespace dtQt
          *
          * @Note - We can put data in the constructor because aren't using the factory for this.
          */
-        DynamicColorElementControl(dtDAL::ColorRgbaActorProperty* colorRGBA, int whichIndex,
+        DynamicColorElementControl(dtCore::ColorRgbaActorProperty* colorRGBA, int whichIndex,
             const std::string& newLabel);
 
         /**
@@ -68,7 +68,7 @@ namespace dtQt
          *
          * @Note - We can put data in the constructor because aren't using the factory for this.
          */
-        //DynamicColorElementControl(dtDAL::Vec4ActorProperty* newVectorProp, int whichIndex,
+        //DynamicColorElementControl(dtCore::Vec4ActorProperty* newVectorProp, int whichIndex,
         //    const std::string& newLabel);
 
         /**
@@ -80,7 +80,7 @@ namespace dtQt
          * @see DynamicAbstractControl#InitializeData
          */
         virtual void InitializeData(DynamicAbstractControl* newParent, PropertyEditorModel* model,
-            dtDAL::PropertyContainer* pc, dtDAL::ActorProperty* property);
+            dtCore::PropertyContainer* pc, dtCore::ActorProperty* property);
 
         /**
          * @see DynamicAbstractControl#updateEditorFromModel
@@ -155,8 +155,8 @@ namespace dtQt
 
         std::string mLabel;
 
-        //dtDAL::ColorRgbActorProperty *mColorRGB;
-        dtDAL::ColorRgbaActorProperty *mColorRGBA;
+        //dtCore::ColorRgbActorProperty *mColorRGB;
+        dtCore::ColorRgbaActorProperty *mColorRGBA;
         int mElementIndex;
 
         // This pointer is not really in our control.  It is constructed in the createEditor()

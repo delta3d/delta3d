@@ -35,7 +35,7 @@
 
 #include <dtCore/refptr.h>
 #include <dtUtil/tree.h>
-#include <dtDAL/actortype.h>
+#include <dtCore/actortype.h>
 #include <dtEditQt/actortypetreewidget.h>
 #include <dtEditQt/actortreewidget.h>
 
@@ -98,7 +98,7 @@ namespace dtEditQt
 
    private:
       // known list of actor types
-      std::vector<const dtDAL::ActorType*> mActorTypes;
+      std::vector<const dtCore::ActorType*> mActorTypes;
 
       /**
        * Creates the main User Interface for the Actor Browser

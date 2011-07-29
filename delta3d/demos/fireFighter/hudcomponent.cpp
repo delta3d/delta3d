@@ -39,8 +39,8 @@
 #include <dtGame/taskcomponent.h>
 #include <dtGame/exceptionenum.h>
 #include <dtGame/messagefactory.h>
-#include <dtDAL/gameevent.h>
-#include <dtDAL/project.h>
+#include <dtCore/gameevent.h>
+#include <dtCore/project.h>
 
 #include <dtLMS/lmscomponent.h>
 
@@ -106,9 +106,9 @@ void HUDComponent::SetupGUI(dtABC::BaseABC& app)
    mGUI = new dtGUI::GUI(app.GetCamera(), app.GetKeyboard(), app.GetMouse());
 
    //overwrite the default search path, to found our local files.
-   mGUI->SetResourceGroupDirectory("imagesets", dtDAL::Project::GetInstance().GetContext() + "/CEGUI");
-   mGUI->SetResourceGroupDirectory("fonts", dtDAL::Project::GetInstance().GetContext() + "/CEGUI");
-   mGUI->SetResourceGroupDirectory("looknfeels", dtDAL::Project::GetInstance().GetContext() + "/CEGUI");
+   mGUI->SetResourceGroupDirectory("imagesets", dtCore::Project::GetInstance().GetContext() + "/CEGUI");
+   mGUI->SetResourceGroupDirectory("fonts", dtCore::Project::GetInstance().GetContext() + "/CEGUI");
+   mGUI->SetResourceGroupDirectory("looknfeels", dtCore::Project::GetInstance().GetContext() + "/CEGUI");
    try
    {
       mGUI->LoadScheme("WindowsLook.scheme");
@@ -764,7 +764,7 @@ unsigned int HUDComponent::RecursivelyAddTasks(const std::string& indent,
          const dtActors::TaskActorGameEvent* tage = dynamic_cast<const dtActors::TaskActorGameEvent*>(task);
          if (tage != NULL)
          {
-            const dtDAL::GameEvent* event = tage->GetGameEvent();
+            const dtCore::GameEvent* event = tage->GetGameEvent();
             oss << indent << event->GetDescription();
          }
          else
@@ -784,7 +784,7 @@ unsigned int HUDComponent::RecursivelyAddTasks(const std::string& indent,
          const dtActors::TaskActorGameEvent* tage = dynamic_cast<const dtActors::TaskActorGameEvent*>(task);
          if (tage != NULL)
          {
-            const dtDAL::GameEvent* event = tage->GetGameEvent();
+            const dtCore::GameEvent* event = tage->GetGameEvent();
             oss << indent << event->GetDescription();
          }
          else

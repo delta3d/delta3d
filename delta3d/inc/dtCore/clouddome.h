@@ -89,7 +89,7 @@ namespace dtCore
       float GetSpeedX() const { return mSpeedX; }
       float GetSpeedY() const { return mSpeedY; }
       float GetBias() const { return mBias; }
-      osg::Vec3 GetCloudColor() const { return mCloudColor; } //return-by-value for dtDAL propety types
+      osg::Vec3 GetCloudColor() const { return mCloudColor; } //return-by-value for dtCore propety types
       bool GetEnable() const { return mEnable; }
 
       void SetScale(float scale) { mScale = scale; }

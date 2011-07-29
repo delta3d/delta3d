@@ -25,7 +25,7 @@
 #include <dtDirector/export.h>
 #include <dtDirector/node.h>
 
-namespace dtDAL
+namespace dtCore
 {
    class ActorProperty;
 }
@@ -88,14 +88,14 @@ namespace dtDirector
        *
        * @return     True if the given property is already set to default.
        */
-      virtual bool IsPropertyDefault(const dtDAL::ActorProperty& prop) const;
+      virtual bool IsPropertyDefault(const dtCore::ActorProperty& prop) const;
 
       /**
        * Resets the value of the given property to its default value.
        *
        * @param[in]   prop  The property to reset.
        */
-      virtual void ResetProperty(dtDAL::ActorProperty& prop);
+      virtual void ResetProperty(dtCore::ActorProperty& prop);
 
       /**
        * Checks if a given property should be saved out to file data.
@@ -104,7 +104,7 @@ namespace dtDirector
        *
        * @return     True if the given property should be saved.
        */
-      virtual bool ShouldPropertySave(const dtDAL::ActorProperty& prop) const;
+      virtual bool ShouldPropertySave(const dtCore::ActorProperty& prop) const;
 
       /**
        * Connects this node to a specified value link.
@@ -163,8 +163,8 @@ namespace dtDirector
        *
        * @return  The property.
        */
-      dtDAL::ActorProperty* GetProperty(ValueNode** outNode = NULL);
-      virtual dtDAL::ActorProperty* GetProperty(int index, ValueNode** outNode = NULL);
+      dtCore::ActorProperty* GetProperty(ValueNode** outNode = NULL);
+      virtual dtCore::ActorProperty* GetProperty(int index, ValueNode** outNode = NULL);
 
       /**
        * Retrieves the total number of values linked to a value link.
@@ -182,14 +182,14 @@ namespace dtDirector
        *
        * @return  True if this value is the proper type.
        */
-      virtual bool CanBeType(dtDAL::DataType& type);
+      virtual bool CanBeType(dtCore::DataType& type);
 
       /**
        * Retrieves the property type of this value.
        *
        * @return  The type.
        */
-      virtual dtDAL::DataType& GetPropertyType();
+      virtual dtCore::DataType& GetPropertyType();
 
       /**
        * Retrieves the links list.
@@ -265,8 +265,8 @@ namespace dtDirector
        */
       virtual ~ValueNode();
 
-      dtCore::RefPtr<dtDAL::ActorProperty> mProperty;
-      dtCore::RefPtr<dtDAL::ActorProperty> mInitialProperty;
+      dtCore::RefPtr<dtCore::ActorProperty> mProperty;
+      dtCore::RefPtr<dtCore::ActorProperty> mInitialProperty;
 
       bool mHasInitialValue;
       bool mIsGlobal;

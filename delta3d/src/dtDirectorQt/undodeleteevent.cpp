@@ -45,14 +45,14 @@ namespace dtDirector
       , mName("")
       , mCategory("")
    {
-      dtDAL::PropertyContainer* container = NULL;
+      dtCore::PropertyContainer* container = NULL;
 
       // Memorize all of the current nodes properties, in case we need to
       // undo this event and restore the node.
       Node* node = mEditor->GetDirector()->GetNode(nodeID);
       if (node)
       {
-         container = dynamic_cast<dtDAL::PropertyContainer*>(node);
+         container = dynamic_cast<dtCore::PropertyContainer*>(node);
          mName = node->GetType().GetName();
          mCategory = node->GetType().GetCategory();
 
@@ -88,19 +88,19 @@ namespace dtDirector
       if (!container)
       {
          graph = mEditor->GetDirector()->GetGraph(nodeID);
-         container = dynamic_cast<dtDAL::PropertyContainer*>(graph);
+         container = dynamic_cast<dtCore::PropertyContainer*>(graph);
       }
 
       // Save the properties of this container.
       if (container)
       {
-         std::vector<dtDAL::ActorProperty*> propList;
+         std::vector<dtCore::ActorProperty*> propList;
          container->GetPropertyList(propList);
 
          int count = (int)propList.size();
          for (int index = 0; index < count; index++)
          {
-            dtDAL::ActorProperty* prop = propList[index];
+            dtCore::ActorProperty* prop = propList[index];
             if (prop && !prop->IsReadOnly())
             {
                PropData data;
@@ -157,7 +157,7 @@ namespace dtDirector
    {
       DirectorGraph* parent = mEditor->GetDirector()->GetGraph(mParentID);
 
-      dtCore::RefPtr<dtDAL::PropertyContainer> container = NULL;
+      dtCore::RefPtr<dtCore::PropertyContainer> container = NULL;
       dtCore::RefPtr<Node> node = NULL;
 
       // An empty name means the node is a graph.
@@ -198,7 +198,7 @@ namespace dtDirector
          for (int index = 0; index < count; index++)
          {
             PropData& data = mProperties[index];
-            dtDAL::ActorProperty* prop = container->GetProperty(data.mPropName);
+            dtCore::ActorProperty* prop = container->GetProperty(data.mPropName);
             if (prop) prop->FromString(data.mValue);
          }
       }

@@ -31,33 +31,33 @@
 #include <fireFighter/hatchactor.h>
 #include <fireFighter/fuelvalveactor.h>
 
-dtCore::RefPtr<dtDAL::ActorType> EntityActorRegistry::TYPE_FLY_SEQUENCE(new dtDAL::ActorType("FlySequence", "FlySequence", "The actor runs the intro movie"));
-dtCore::RefPtr<dtDAL::ActorType> EntityActorRegistry::TYPE_FIRE_ACTOR(new dtDAL::ActorType("FireActor", "FireActor"));
-dtCore::RefPtr<dtDAL::ActorType> EntityActorRegistry::TYPE_DDG_ACTOR(new dtDAL::ActorType("DDGActor", "DDGActor"));
-dtCore::RefPtr<dtDAL::ActorType> EntityActorRegistry::TYPE_PLAYER_ACTOR(new dtDAL::ActorType("PlayerActor", "PlayerActor"));
-dtCore::RefPtr<dtDAL::ActorType> EntityActorRegistry::TYPE_GAME_LEVEL_ACTOR(new dtDAL::ActorType("GameLevelActor", "GameLevelActor"));
-dtCore::RefPtr<dtDAL::ActorType> EntityActorRegistry::TYPE_FIRE_HOSE_ACTOR(new dtDAL::ActorType("FireHoseActor", "FireHoseActor"));
-dtCore::RefPtr<dtDAL::ActorType> EntityActorRegistry::TYPE_FIRE_SUIT_ACTOR(new dtDAL::ActorType("FireSuitActor", "FireSuitActor"));
-dtCore::RefPtr<dtDAL::ActorType> EntityActorRegistry::TYPE_SCBA_ACTOR(new dtDAL::ActorType("SCBAActor", "SCBAActor"));
-dtCore::RefPtr<dtDAL::ActorType> EntityActorRegistry::TYPE_PRIMARY_HALON_ACTOR(new dtDAL::ActorType("PrimaryHalonActor", "PrimaryHalonActor"));
-dtCore::RefPtr<dtDAL::ActorType> EntityActorRegistry::TYPE_SECONDARY_HALON_ACTOR(new dtDAL::ActorType("SecondaryHalonActor", "SecondaryHalonActor"));
-dtCore::RefPtr<dtDAL::ActorType> EntityActorRegistry::TYPE_HATCH_ACTOR(new dtDAL::ActorType("HatchActor", "HatchActor"));
-dtCore::RefPtr<dtDAL::ActorType> EntityActorRegistry::TYPE_FUEL_VALVE_ACTOR(new dtDAL::ActorType("FuelValveActor", "FuelValveActor"));
-dtCore::RefPtr<dtDAL::ActorType> EntityActorRegistry::TYPE_COLLIDABLE_ACTOR(new dtDAL::ActorType("CollidableActor", "CollidableActor"));
+dtCore::RefPtr<dtCore::ActorType> EntityActorRegistry::TYPE_FLY_SEQUENCE(new dtCore::ActorType("FlySequence", "FlySequence", "The actor runs the intro movie"));
+dtCore::RefPtr<dtCore::ActorType> EntityActorRegistry::TYPE_FIRE_ACTOR(new dtCore::ActorType("FireActor", "FireActor"));
+dtCore::RefPtr<dtCore::ActorType> EntityActorRegistry::TYPE_DDG_ACTOR(new dtCore::ActorType("DDGActor", "DDGActor"));
+dtCore::RefPtr<dtCore::ActorType> EntityActorRegistry::TYPE_PLAYER_ACTOR(new dtCore::ActorType("PlayerActor", "PlayerActor"));
+dtCore::RefPtr<dtCore::ActorType> EntityActorRegistry::TYPE_GAME_LEVEL_ACTOR(new dtCore::ActorType("GameLevelActor", "GameLevelActor"));
+dtCore::RefPtr<dtCore::ActorType> EntityActorRegistry::TYPE_FIRE_HOSE_ACTOR(new dtCore::ActorType("FireHoseActor", "FireHoseActor"));
+dtCore::RefPtr<dtCore::ActorType> EntityActorRegistry::TYPE_FIRE_SUIT_ACTOR(new dtCore::ActorType("FireSuitActor", "FireSuitActor"));
+dtCore::RefPtr<dtCore::ActorType> EntityActorRegistry::TYPE_SCBA_ACTOR(new dtCore::ActorType("SCBAActor", "SCBAActor"));
+dtCore::RefPtr<dtCore::ActorType> EntityActorRegistry::TYPE_PRIMARY_HALON_ACTOR(new dtCore::ActorType("PrimaryHalonActor", "PrimaryHalonActor"));
+dtCore::RefPtr<dtCore::ActorType> EntityActorRegistry::TYPE_SECONDARY_HALON_ACTOR(new dtCore::ActorType("SecondaryHalonActor", "SecondaryHalonActor"));
+dtCore::RefPtr<dtCore::ActorType> EntityActorRegistry::TYPE_HATCH_ACTOR(new dtCore::ActorType("HatchActor", "HatchActor"));
+dtCore::RefPtr<dtCore::ActorType> EntityActorRegistry::TYPE_FUEL_VALVE_ACTOR(new dtCore::ActorType("FuelValveActor", "FuelValveActor"));
+dtCore::RefPtr<dtCore::ActorType> EntityActorRegistry::TYPE_COLLIDABLE_ACTOR(new dtCore::ActorType("CollidableActor", "CollidableActor"));
 
-extern "C" FIRE_FIGHTER_EXPORT dtDAL::ActorPluginRegistry* CreatePluginRegistry()
+extern "C" FIRE_FIGHTER_EXPORT dtCore::ActorPluginRegistry* CreatePluginRegistry()
 {
    return new EntityActorRegistry;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-extern "C" FIRE_FIGHTER_EXPORT void DestroyPluginRegistry(dtDAL::ActorPluginRegistry *registry)
+extern "C" FIRE_FIGHTER_EXPORT void DestroyPluginRegistry(dtCore::ActorPluginRegistry *registry)
 {
    delete registry;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-EntityActorRegistry::EntityActorRegistry() : dtDAL::ActorPluginRegistry("FireFighterActors")
+EntityActorRegistry::EntityActorRegistry() : dtCore::ActorPluginRegistry("FireFighterActors")
 {
    
 }

@@ -28,9 +28,9 @@
 #include <dtAI/export.h>
 #include <dtAI/primitives.h>
 
-#include <dtDAL/objecttype.h>
+#include <dtCore/objecttype.h>
 
-namespace dtDAL
+namespace dtCore
 {
    class PropertyContainer;
 }
@@ -42,7 +42,7 @@ namespace dtAI
    class DT_AI_EXPORT WaypointInterface
    {
    public:
-      WaypointInterface(const dtDAL::ObjectType* wpt);
+      WaypointInterface(const dtCore::ObjectType* wpt);
 
       bool operator==(const WaypointInterface& pWay) const;
       bool operator!=(const WaypointInterface& pWay) const;
@@ -55,7 +55,7 @@ namespace dtAI
       //you must remove it first and re-add it to the AIPluginInterface
       void SetID(WaypointID pID);
 
-      const dtDAL::ObjectType& GetWaypointType() const;
+      const dtCore::ObjectType& GetWaypointType() const;
 
       virtual std::string ToString() const;
 
@@ -79,7 +79,7 @@ namespace dtAI
 
    private:
       WaypointID mID;
-      dtCore::RefPtr<const dtDAL::ObjectType> mWaypointType;
+      dtCore::RefPtr<const dtCore::ObjectType> mWaypointType;
 
       static WaypointID mIDCounter;
    };

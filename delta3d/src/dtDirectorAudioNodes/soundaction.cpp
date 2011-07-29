@@ -28,11 +28,11 @@
 #include <dtCore/transform.h>
 #include <dtCore/transformable.h>
 
-#include <dtDAL/actoridactorproperty.h>
-#include <dtDAL/booleanactorproperty.h>
-#include <dtDAL/floatactorproperty.h>
-#include <dtDAL/project.h>
-#include <dtDAL/resourceactorproperty.h>
+#include <dtCore/actoridactorproperty.h>
+#include <dtCore/booleanactorproperty.h>
+#include <dtCore/floatactorproperty.h>
+#include <dtCore/project.h>
+#include <dtCore/resourceactorproperty.h>
 
 #include <dtDirector/director.h>
 
@@ -42,7 +42,7 @@ namespace dtDirector
    SoundAction::SoundAction()
       : LatentActionNode()
       , mpSound(NULL)
-      , mSoundResourceResource(dtDAL::ResourceDescriptor::NULL_RESOURCE)
+      , mSoundResourceResource(dtCore::ResourceDescriptor::NULL_RESOURCE)
       , mSoundActor("")
       , mPitch(1.0f)
       , mGain(1.0f)
@@ -85,41 +85,41 @@ namespace dtDirector
       LatentActionNode::BuildPropertyMap();
 
       // Create our value links.
-      dtDAL::ActorIDActorProperty* actorProp = new dtDAL::ActorIDActorProperty(
+      dtCore::ActorIDActorProperty* actorProp = new dtCore::ActorIDActorProperty(
          "Actor", "Actor",
-         dtDAL::ActorIDActorProperty::SetFuncType(this, &SoundAction::SetSoundActor),
-         dtDAL::ActorIDActorProperty::GetFuncType(this, &SoundAction::GetSoundActor),
+         dtCore::ActorIDActorProperty::SetFuncType(this, &SoundAction::SetSoundActor),
+         dtCore::ActorIDActorProperty::GetFuncType(this, &SoundAction::GetSoundActor),
          "dtAudio::Sound", "The sound actor.");
       AddProperty(actorProp);
 
-      AddProperty(new dtDAL::ResourceActorProperty(
-         dtDAL::DataType::SOUND, "Sound", "Sound",
-         dtDAL::ResourceActorProperty::SetDescFuncType(this, &SoundAction::SetSoundResource),
-         dtDAL::ResourceActorProperty::GetDescFuncType(this, &SoundAction::GetSoundResource),
+      AddProperty(new dtCore::ResourceActorProperty(
+         dtCore::DataType::SOUND, "Sound", "Sound",
+         dtCore::ResourceActorProperty::SetDescFuncType(this, &SoundAction::SetSoundResource),
+         dtCore::ResourceActorProperty::GetDescFuncType(this, &SoundAction::GetSoundResource),
          "A sound resource to play from this action."));
 
-      AddProperty(new dtDAL::FloatActorProperty(
+      AddProperty(new dtCore::FloatActorProperty(
          "Gain", "Gain",
-         dtDAL::FloatActorProperty::SetFuncType(this, &SoundAction::SetGain),
-         dtDAL::FloatActorProperty::GetFuncType(this, &SoundAction::GetGain),
+         dtCore::FloatActorProperty::SetFuncType(this, &SoundAction::SetGain),
+         dtCore::FloatActorProperty::GetFuncType(this, &SoundAction::GetGain),
          "The resource sound's pitch."));
 
-      AddProperty(new dtDAL::FloatActorProperty(
+      AddProperty(new dtCore::FloatActorProperty(
          "Pitch", "Pitch",
-         dtDAL::FloatActorProperty::SetFuncType(this, &SoundAction::SetPitch),
-         dtDAL::FloatActorProperty::GetFuncType(this, &SoundAction::GetPitch),
+         dtCore::FloatActorProperty::SetFuncType(this, &SoundAction::SetPitch),
+         dtCore::FloatActorProperty::GetFuncType(this, &SoundAction::GetPitch),
          "The resource sound's pitch."));
 
-      AddProperty(new dtDAL::BooleanActorProperty(
+      AddProperty(new dtCore::BooleanActorProperty(
          "ListenerRelative", "Listener Relative",
-         dtDAL::BooleanActorProperty::SetFuncType(this, &SoundAction::SetListenerRelative),
-         dtDAL::BooleanActorProperty::GetFuncType(this, &SoundAction::GetListenerRelative),
+         dtCore::BooleanActorProperty::SetFuncType(this, &SoundAction::SetListenerRelative),
+         dtCore::BooleanActorProperty::GetFuncType(this, &SoundAction::GetListenerRelative),
          "Whether the resource sound is listener relative or not."));
 
-      AddProperty(new dtDAL::BooleanActorProperty(
+      AddProperty(new dtCore::BooleanActorProperty(
          "Looping", "Looping",
-         dtDAL::BooleanActorProperty::SetFuncType(this, &SoundAction::SetLooping),
-         dtDAL::BooleanActorProperty::GetFuncType(this, &SoundAction::GetLooping),
+         dtCore::BooleanActorProperty::SetFuncType(this, &SoundAction::SetLooping),
+         dtCore::BooleanActorProperty::GetFuncType(this, &SoundAction::GetLooping),
          "Whether the resource sound is looping or not."));
 
       // This will expose the properties in the editor and allow
@@ -196,13 +196,13 @@ namespace dtDirector
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void SoundAction::SetSoundResource(const dtDAL::ResourceDescriptor& value)
+   void SoundAction::SetSoundResource(const dtCore::ResourceDescriptor& value)
    {
       mSoundResourceResource = value;
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   dtDAL::ResourceDescriptor SoundAction::GetSoundResource()
+   dtCore::ResourceDescriptor SoundAction::GetSoundResource()
    {
       return mSoundResourceResource;
    }
@@ -280,10 +280,10 @@ namespace dtDirector
    ///////////////////////////////////////////////////////////////////////////////
    void SoundAction::PlaySoundResource()
    {
-      if (mpSound == NULL && mSoundResourceResource != dtDAL::ResourceDescriptor::NULL_RESOURCE)
+      if (mpSound == NULL && mSoundResourceResource != dtCore::ResourceDescriptor::NULL_RESOURCE)
       {
          mpSound = dtAudio::AudioManager::GetInstance().NewSound();
-         mpSound->LoadFile(dtDAL::Project::GetInstance().GetResourcePath(mSoundResourceResource).c_str());
+         mpSound->LoadFile(dtCore::Project::GetInstance().GetResourcePath(mSoundResourceResource).c_str());
          mpSound->SetGain(GetGain());
          mpSound->SetPitch(GetPitch());
          mpSound->SetListenerRelative(GetListenerRelative());

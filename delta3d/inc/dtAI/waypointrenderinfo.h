@@ -27,14 +27,14 @@
 #include <osg/Vec3>
 #include <osg/Vec4>
 #include <dtUtil/refstring.h>
-#include <dtDAL/propertycontainer.h>
+#include <dtCore/propertycontainer.h>
 
-#include <dtDAL/propertymacros.h>
+#include <dtCore/propertymacros.h>
 
 namespace dtAI
 {
 
-   class DT_AI_EXPORT WaypointRenderInfo : public dtDAL::PropertyContainer
+   class DT_AI_EXPORT WaypointRenderInfo : public dtCore::PropertyContainer
    {
    public:
       typedef osg::Vec4 Color;

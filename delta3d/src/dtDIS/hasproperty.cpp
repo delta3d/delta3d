@@ -19,9 +19,9 @@ HasProperty::HasProperty(const HasProperty& hp)
 {
 }
 
-void HasProperty::operator ()(dtDAL::BaseActorObject *&proxy)
+void HasProperty::operator ()(dtCore::BaseActorObject *&proxy)
 {
-   const dtDAL::ActorProperty* ap = proxy->GetProperty( mPropName );
+   const dtCore::ActorProperty* ap = proxy->GetProperty( mPropName );
    if( ap == NULL )
    {
       return;

@@ -27,7 +27,7 @@
 #include <dtDirector/latentactionnode.h>
 #include <dtDirectorAudioNodes/nodelibraryexport.h>
 
-#include <dtDAL/resourcedescriptor.h>
+#include <dtCore/resourcedescriptor.h>
 
 namespace dtAudio
 {
@@ -93,8 +93,8 @@ namespace dtDirector
       void SetSoundActor(const dtCore::UniqueId& value);
       dtCore::UniqueId GetSoundActor();
 
-      void SetSoundResource(const dtDAL::ResourceDescriptor& value);
-      dtDAL::ResourceDescriptor GetSoundResource();
+      void SetSoundResource(const dtCore::ResourceDescriptor& value);
+      dtCore::ResourceDescriptor GetSoundResource();
 
       void SetGain(float value);
       float GetGain();
@@ -118,7 +118,7 @@ namespace dtDirector
    private:
 
       dtCore::UniqueId mSoundActor;
-      dtDAL::ResourceDescriptor mSoundResourceResource;
+      dtCore::ResourceDescriptor mSoundResourceResource;
       float mGain;
       float mPitch;
       bool mListenerRelative;

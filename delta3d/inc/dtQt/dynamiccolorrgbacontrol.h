@@ -35,7 +35,7 @@
 class QLabel;
 class QColorDialog;
 
-namespace dtDAL
+namespace dtCore
 {
    class ColorRgbaActorProperty;
 }
@@ -71,7 +71,7 @@ namespace dtQt
        * @see DynamicAbstractControl#InitializeData
        */
       virtual void InitializeData(DynamicAbstractControl* newParent, PropertyEditorModel* model,
-               dtDAL::PropertyContainer* pc, dtDAL::ActorProperty* property);
+               dtCore::PropertyContainer* pc, dtCore::ActorProperty* property);
 
       /**
        * @see DynamicAbstractControl#addSelfToParentWidget
@@ -141,7 +141,7 @@ namespace dtQt
    protected:
 
       DynamicColorElementControl* CreateElementControl(int index, const std::string& label,
-               PropertyEditorModel* newModel, dtDAL::PropertyContainer* newPC);
+               PropertyEditorModel* newModel, dtCore::PropertyContainer* newPC);
 
    private:
 
@@ -150,7 +150,7 @@ namespace dtQt
       DynamicColorElementControl* bElement;
       DynamicColorElementControl* aElement;
 
-      dtDAL::ColorRgbaActorProperty* mProperty;
+      dtCore::ColorRgbaActorProperty* mProperty;
 
       SubQLabel *mTemporaryEditOnlyTextLabel;
       SubQToolButton *mTemporaryColorPicker;

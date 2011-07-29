@@ -21,7 +21,7 @@
 #include <prefix/dtdirectornodesprefix.h>
 #include <dtDirectorNodes/ownervalue.h>
 
-#include <dtDAL/actoridactorproperty.h>
+#include <dtCore/actoridactorproperty.h>
 #include <dtDirector/colors.h>
 #include <dtDirector/director.h>
 
@@ -51,10 +51,10 @@ namespace dtDirector
    {
       ValueNode::BuildPropertyMap();
 
-      mProperty = new dtDAL::ActorIDActorProperty(
+      mProperty = new dtCore::ActorIDActorProperty(
          "Value", "Value",
-         dtDAL::ActorIDActorProperty::SetFuncType(this, &OwnerValue::SetValue),
-         dtDAL::ActorIDActorProperty::GetFuncType(this, &OwnerValue::GetValue),
+         dtCore::ActorIDActorProperty::SetFuncType(this, &OwnerValue::SetValue),
+         dtCore::ActorIDActorProperty::GetFuncType(this, &OwnerValue::GetValue),
          "", "The value.");
    }
 

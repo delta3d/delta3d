@@ -24,9 +24,9 @@
 #include <dtCore/transform.h>
 #include <dtCore/transformable.h>
 
-#include <dtDAL/actoridactorproperty.h>
-#include <dtDAL/booleanactorproperty.h>
-#include <dtDAL/stringactorproperty.h>
+#include <dtCore/actoridactorproperty.h>
+#include <dtCore/booleanactorproperty.h>
+#include <dtCore/stringactorproperty.h>
 
 #include <dtDirector/director.h>
 
@@ -67,24 +67,24 @@ namespace dtDirector
       ActionNode::BuildPropertyMap();
 
       // Create our value links.
-      dtDAL::ActorIDActorProperty* actorProp = new dtDAL::ActorIDActorProperty(
+      dtCore::ActorIDActorProperty* actorProp = new dtCore::ActorIDActorProperty(
          "Actor", "Actor",
-         dtDAL::ActorIDActorProperty::SetFuncType(this, &ToggleAction::SetToggleActor),
-         dtDAL::ActorIDActorProperty::GetFuncType(this, &ToggleAction::GetToggleActor),
+         dtCore::ActorIDActorProperty::SetFuncType(this, &ToggleAction::SetToggleActor),
+         dtCore::ActorIDActorProperty::GetFuncType(this, &ToggleAction::GetToggleActor),
          "dtCore::Transformable", "The actor with a property to toggle.");
       AddProperty(actorProp);
 
-      dtDAL::StringActorProperty* toggleActorProp = new dtDAL::StringActorProperty(
+      dtCore::StringActorProperty* toggleActorProp = new dtCore::StringActorProperty(
          "TogglePropertyName", "Toggle Property Name",
-         dtDAL::StringActorProperty::SetFuncType(this, &ToggleAction::SetTogglePropertyName),
-         dtDAL::StringActorProperty::GetFuncType(this, &ToggleAction::GetTogglePropertyName),
+         dtCore::StringActorProperty::SetFuncType(this, &ToggleAction::SetTogglePropertyName),
+         dtCore::StringActorProperty::GetFuncType(this, &ToggleAction::GetTogglePropertyName),
          "The name of the boolean actor property to toggle.");
       AddProperty(toggleActorProp);
 
-      dtDAL::BooleanActorProperty* toggleBoolean = new dtDAL::BooleanActorProperty(
+      dtCore::BooleanActorProperty* toggleBoolean = new dtCore::BooleanActorProperty(
          "ToggleBoolean", "Toggle Boolean",
-         dtDAL::BooleanActorProperty::SetFuncType(this, &ToggleAction::SetToggleBoolean),
-         dtDAL::BooleanActorProperty::GetFuncType(this, &ToggleAction::GetToggleBoolean),
+         dtCore::BooleanActorProperty::SetFuncType(this, &ToggleAction::SetToggleBoolean),
+         dtCore::BooleanActorProperty::GetFuncType(this, &ToggleAction::GetToggleBoolean),
          "A boolean value to toggle on and off with this action.");
 
       // This will expose the properties in the editor and allow
@@ -122,12 +122,12 @@ namespace dtDirector
             // Toggle our attached actor property
             for (int index = 0; index < count; index++)
             {
-               dtDAL::BaseActorObject* proxy = GetActor("Actor", index);
+               dtCore::BaseActorObject* proxy = GetActor("Actor", index);
                if (proxy)
                {
                   std::string togglePropertyString = GetString("TogglePropertyName");
 
-                  dtDAL::BooleanActorProperty* toggleProperty;
+                  dtCore::BooleanActorProperty* toggleProperty;
                   proxy->GetProperty(togglePropertyString, toggleProperty);
 
                   if (toggleProperty)

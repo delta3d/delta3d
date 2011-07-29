@@ -30,9 +30,9 @@
 #include <dtQt/dynamicbitmaskcontrol.h>
 #include <dtQt/dynamicbyteelementcontrol.h>
 
-#include <dtDAL/actorproxy.h>
-#include <dtDAL/datatype.h>
-#include <dtDAL/bitmaskactorproperty.h>
+#include <dtCore/actorproxy.h>
+#include <dtCore/datatype.h>
+#include <dtCore/bitmaskactorproperty.h>
 
 #include <dtQt/dynamicsubwidgets.h>
 #include <dtQt/propertyeditormodel.h>
@@ -64,13 +64,13 @@ namespace dtQt
 
    /////////////////////////////////////////////////////////////////////////////////
    void DynamicBitMaskControl::InitializeData(DynamicAbstractControl* newParent,
-      PropertyEditorModel* newModel, dtDAL::PropertyContainer* newPC, dtDAL::ActorProperty* newProperty)
+      PropertyEditorModel* newModel, dtCore::PropertyContainer* newPC, dtCore::ActorProperty* newProperty)
    {
       // Note - We used to have dynamic_cast in here, but it was failing to properly cast in
       // all cases in Linux with gcc4.  So we replaced it with a static cast.
-      if (newProperty != NULL && newProperty->GetDataType() == dtDAL::DataType::BIT_MASK)
+      if (newProperty != NULL && newProperty->GetDataType() == dtCore::DataType::BIT_MASK)
       {
-         mProperty = static_cast<dtDAL::BitMaskActorProperty*>(newProperty);
+         mProperty = static_cast<dtCore::BitMaskActorProperty*>(newProperty);
          DynamicAbstractParentControl::InitializeData(newParent, newModel, newPC, newProperty);
 
          for (int byteIndex = 0; byteIndex < 4; byteIndex++)
@@ -79,13 +79,13 @@ namespace dtQt
             element->SetTreeView(mPropertyTree);
             element->SetDynamicControlFactory(GetDynamicControlFactory());
             element->InitializeData(this, GetModel(), mPropContainer, mProperty);
-            connect(element, SIGNAL(PropertyAboutToChange(dtDAL::PropertyContainer&, dtDAL::ActorProperty&,
+            connect(element, SIGNAL(PropertyAboutToChange(dtCore::PropertyContainer&, dtCore::ActorProperty&,
                const std::string&, const std::string&)),
-               this, SLOT(PropertyAboutToChangePassThrough(dtDAL::PropertyContainer&, dtDAL::ActorProperty&,
+               this, SLOT(PropertyAboutToChangePassThrough(dtCore::PropertyContainer&, dtCore::ActorProperty&,
                const std::string&, const std::string&)));
 
-            connect(element, SIGNAL(PropertyChanged(dtDAL::PropertyContainer&, dtDAL::ActorProperty&)),
-               this, SLOT(PropertyChangedPassThrough(dtDAL::PropertyContainer&, dtDAL::ActorProperty&)));
+            connect(element, SIGNAL(PropertyChanged(dtCore::PropertyContainer&, dtCore::ActorProperty&)),
+               this, SLOT(PropertyChangedPassThrough(dtCore::PropertyContainer&, dtCore::ActorProperty&)));
             mChildren.push_back(element);
          }
 

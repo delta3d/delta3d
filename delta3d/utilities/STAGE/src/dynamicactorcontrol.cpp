@@ -27,14 +27,14 @@
  * William E. Johnson II
  */
 #include <prefix/stageprefix.h>
-#include <dtDAL/project.h>
+#include <dtCore/project.h>
 #include <dtEditQt/dynamicactorcontrol.h>
 #include <dtQt/propertyeditortreeview.h>
-#include <dtDAL/actoractorproperty.h>
-#include <dtDAL/actoridactorproperty.h>
-#include <dtDAL/map.h>
-#include <dtDAL/exceptionenum.h>
-#include <dtDAL/datatype.h>
+#include <dtCore/actoractorproperty.h>
+#include <dtCore/actoridactorproperty.h>
+#include <dtCore/map.h>
+#include <dtCore/exceptionenum.h>
+#include <dtCore/datatype.h>
 #include <QtGui/QPushButton>
 #include <QtGui/QHBoxLayout>
 
@@ -91,14 +91,14 @@ namespace dtEditQt
    void STAGEDynamicActorControl::onGotoClicked()
    {
       NotifyParentOfPreUpdate();
-      dtDAL::BaseActorObject* proxy = getActorProxy();
+      dtCore::BaseActorObject* proxy = getActorProxy();
       if (proxy != NULL)
       {
-         dtCore::RefPtr<dtDAL::BaseActorObject> refProxy(proxy);
+         dtCore::RefPtr<dtCore::BaseActorObject> refProxy(proxy);
 
          EditorEvents::GetInstance().emitGotoActor(refProxy);
 
-         std::vector< dtCore::RefPtr<dtDAL::BaseActorObject> > vec;
+         std::vector< dtCore::RefPtr<dtCore::BaseActorObject> > vec;
          vec.push_back(refProxy);
 
          EditorEvents::GetInstance().emitActorsSelected(vec);

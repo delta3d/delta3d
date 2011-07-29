@@ -25,12 +25,12 @@
 
 #include <dtCore/scene.h>
 
-#include <dtDAL/actoridactorproperty.h>
-#include <dtDAL/stringselectoractorproperty.h>
-#include <dtDAL/containeractorproperty.h>
-#include <dtDAL/actortype.h>
-#include <dtDAL/librarymanager.h>
-#include <dtDAL/vectoractorproperties.h>
+#include <dtCore/actoridactorproperty.h>
+#include <dtCore/stringselectoractorproperty.h>
+#include <dtCore/containeractorproperty.h>
+#include <dtCore/actortype.h>
+#include <dtCore/librarymanager.h>
+#include <dtCore/vectoractorproperties.h>
 
 #include <dtDirector/director.h>
 
@@ -64,42 +64,42 @@ namespace dtDirector
    {
       ActionNode::BuildPropertyMap();
 
-      dtDAL::StringSelectorActorProperty* typeProp = new dtDAL::StringSelectorActorProperty(
+      dtCore::StringSelectorActorProperty* typeProp = new dtCore::StringSelectorActorProperty(
          "Actor Type", "Actor Type",
-         dtDAL::StringSelectorActorProperty::SetFuncType(this, &SpawnActorAction::SetActorType),
-         dtDAL::StringSelectorActorProperty::GetFuncType(this, &SpawnActorAction::GetActorType),
-         dtDAL::StringSelectorActorProperty::GetListFuncType(this, &SpawnActorAction::GetActorTypeList),
+         dtCore::StringSelectorActorProperty::SetFuncType(this, &SpawnActorAction::SetActorType),
+         dtCore::StringSelectorActorProperty::GetFuncType(this, &SpawnActorAction::GetActorType),
+         dtCore::StringSelectorActorProperty::GetListFuncType(this, &SpawnActorAction::GetActorTypeList),
          "The type of the actor to spawn.");
       AddProperty(typeProp);
 
-      mNameProp = new dtDAL::StringActorProperty(
+      mNameProp = new dtCore::StringActorProperty(
          "Name", "Name",
-         dtDAL::StringSelectorActorProperty::SetFuncType(this, &SpawnActorAction::SetActorName),
-         dtDAL::StringSelectorActorProperty::GetFuncType(this, &SpawnActorAction::GetActorName),
+         dtCore::StringSelectorActorProperty::SetFuncType(this, &SpawnActorAction::SetActorName),
+         dtCore::StringSelectorActorProperty::GetFuncType(this, &SpawnActorAction::GetActorName),
          "Actor name.");
 
-      mGhostProp = new dtDAL::BooleanActorProperty(
+      mGhostProp = new dtCore::BooleanActorProperty(
          "Is Ghost", "Is Ghost",
-         dtDAL::BooleanActorProperty::SetFuncType(this, &SpawnActorAction::SetGhost),
-         dtDAL::BooleanActorProperty::GetFuncType(this, &SpawnActorAction::GetGhost),
+         dtCore::BooleanActorProperty::SetFuncType(this, &SpawnActorAction::SetGhost),
+         dtCore::BooleanActorProperty::GetFuncType(this, &SpawnActorAction::GetGhost),
          "Is this proxy a ghost.");
 
-      dtDAL::Vec3ActorProperty* spawnPosProp = new dtDAL::Vec3ActorProperty(
+      dtCore::Vec3ActorProperty* spawnPosProp = new dtCore::Vec3ActorProperty(
          "Spawn Location", "Spawn Location",
-         dtDAL::Vec3ActorProperty::SetFuncType(this, &SpawnActorAction::SetSpawnLocation),
-         dtDAL::Vec3ActorProperty::GetFuncType(this, &SpawnActorAction::GetSpawnLocation),
+         dtCore::Vec3ActorProperty::SetFuncType(this, &SpawnActorAction::SetSpawnLocation),
+         dtCore::Vec3ActorProperty::GetFuncType(this, &SpawnActorAction::GetSpawnLocation),
          "The location to spawn the new actor.");
       AddProperty(spawnPosProp);
 
-      mContainerProp = new dtDAL::ContainerActorProperty(
+      mContainerProp = new dtCore::ContainerActorProperty(
          "Actor Properties", "Actor Properties",
          "The properties of the new actor to be spawned.", "");
       AddProperty(mContainerProp);
 
-      dtDAL::ActorIDActorProperty* actorProp = new dtDAL::ActorIDActorProperty(
+      dtCore::ActorIDActorProperty* actorProp = new dtCore::ActorIDActorProperty(
          "Out Actor", "Out Actor",
-         dtDAL::ActorIDActorProperty::SetFuncType(this, &SpawnActorAction::SetOutActor),
-         dtDAL::ActorIDActorProperty::GetFuncType(this, &SpawnActorAction::GetOutActor),
+         dtCore::ActorIDActorProperty::SetFuncType(this, &SpawnActorAction::SetOutActor),
+         dtCore::ActorIDActorProperty::GetFuncType(this, &SpawnActorAction::GetOutActor),
          "", "The actor that was spawned.");
 
       // This will expose the properties in the editor and allow
@@ -114,13 +114,13 @@ namespace dtDirector
    {
       osg::Vec3 spawnLocation = GetVec3("Spawn Location");
       osg::Vec3 spawnRotation;
-      dtDAL::BaseActorObject* locationActor = GetActor("Spawn Location");
+      dtCore::BaseActorObject* locationActor = GetActor("Spawn Location");
       if (locationActor)
       {
-         dtDAL::Vec3ActorProperty* transProp =
-            dynamic_cast<dtDAL::Vec3ActorProperty*>(locationActor->GetProperty("Translation"));
-         dtDAL::Vec3ActorProperty* rotProp =
-            dynamic_cast<dtDAL::Vec3ActorProperty*>(locationActor->GetProperty("Rotation"));
+         dtCore::Vec3ActorProperty* transProp =
+            dynamic_cast<dtCore::Vec3ActorProperty*>(locationActor->GetProperty("Translation"));
+         dtCore::Vec3ActorProperty* rotProp =
+            dynamic_cast<dtCore::Vec3ActorProperty*>(locationActor->GetProperty("Rotation"));
 
          if (transProp)
          {
@@ -134,14 +134,14 @@ namespace dtDirector
 
       if (mTemplateActor.valid())
       {
-         dtCore::RefPtr<dtDAL::BaseActorObject> proxy = mTemplateActor->Clone();
+         dtCore::RefPtr<dtCore::BaseActorObject> proxy = mTemplateActor->Clone();
 
          if (proxy.valid())
          {
-            dtDAL::Vec3ActorProperty* transProp =
-               dynamic_cast<dtDAL::Vec3ActorProperty*>(proxy->GetProperty("Translation"));
-            dtDAL::Vec3ActorProperty* rotProp =
-               dynamic_cast<dtDAL::Vec3ActorProperty*>(proxy->GetProperty("Rotation"));
+            dtCore::Vec3ActorProperty* transProp =
+               dynamic_cast<dtCore::Vec3ActorProperty*>(proxy->GetProperty("Translation"));
+            dtCore::Vec3ActorProperty* rotProp =
+               dynamic_cast<dtCore::Vec3ActorProperty*>(proxy->GetProperty("Rotation"));
 
             if (transProp)
             {
@@ -194,8 +194,8 @@ namespace dtDirector
       {
          if (link->GetName() == "Spawn Location")
          {
-            if (value->CanBeType(dtDAL::DataType::ACTOR) ||
-                value->CanBeType(dtDAL::DataType::VEC3))
+            if (value->CanBeType(dtCore::DataType::ACTOR) ||
+                value->CanBeType(dtCore::DataType::VEC3))
             {
                return true;
             }
@@ -231,12 +231,12 @@ namespace dtDirector
          std::string name;
          std::string category;
 
-         std::vector<const dtDAL::ActorType*> types;
-         dtDAL::LibraryManager::GetInstance().GetActorTypes(types);
+         std::vector<const dtCore::ActorType*> types;
+         dtCore::LibraryManager::GetInstance().GetActorTypes(types);
          int count = (int)types.size();
          for (int index = 0; index < count; ++index)
          {
-            const dtDAL::ActorType* type = types[index];
+            const dtCore::ActorType* type = types[index];
             if (type)
             {
                if (type->GetFullName() == actorType)
@@ -257,17 +257,17 @@ namespace dtDirector
                mName = "";
             }
 
-            mTemplateActor = dtDAL::LibraryManager::GetInstance().CreateActor(category, name);
+            mTemplateActor = dtCore::LibraryManager::GetInstance().CreateActor(category, name);
             if (mTemplateActor.valid())
             {
                mContainerProp->AddProperty(mNameProp);
 
-               std::vector<dtDAL::ActorProperty*> propList;
+               std::vector<dtCore::ActorProperty*> propList;
                mTemplateActor->GetPropertyList(propList);
                int count = (int)propList.size();
                for (int index = 0; index < count; ++index)
                {
-                  dtDAL::ActorProperty* prop = propList[index];
+                  dtCore::ActorProperty* prop = propList[index];
                   if (prop)
                   {
                      mContainerProp->AddProperty(prop);
@@ -300,12 +300,12 @@ namespace dtDirector
    {
       std::map<std::string, std::string> listMap;
 
-      std::vector<const dtDAL::ActorType*> types;
-      dtDAL::LibraryManager::GetInstance().GetActorTypes(types);
+      std::vector<const dtCore::ActorType*> types;
+      dtCore::LibraryManager::GetInstance().GetActorTypes(types);
       int count = (int)types.size();
       for (int index = 0; index < count; ++index)
       {
-         const dtDAL::ActorType* type = types[index];
+         const dtCore::ActorType* type = types[index];
          if (type)
          {
             listMap[type->GetFullName()] = "x";

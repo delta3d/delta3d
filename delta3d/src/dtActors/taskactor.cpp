@@ -29,18 +29,18 @@
 #include <dtGame/messagetype.h>
 #include <dtGame/messagefactory.h>
 
-#include <dtDAL/actoridactorproperty.h>
-#include <dtDAL/arrayactorproperty.h>
-#include <dtDAL/booleanactorproperty.h>
-#include <dtDAL/doubleactorproperty.h>
-#include <dtDAL/floatactorproperty.h>
-#include <dtDAL/functor.h>
-#include <dtDAL/gameeventactorproperty.h>
-#include <dtDAL/groupactorproperty.h>
-#include <dtDAL/map.h>
-#include <dtDAL/namedparameter.h>
-#include <dtDAL/project.h>
-#include <dtDAL/stringactorproperty.h>
+#include <dtCore/actoridactorproperty.h>
+#include <dtCore/arrayactorproperty.h>
+#include <dtCore/booleanactorproperty.h>
+#include <dtCore/doubleactorproperty.h>
+#include <dtCore/floatactorproperty.h>
+#include <dtCore/functor.h>
+#include <dtCore/gameeventactorproperty.h>
+#include <dtCore/groupactorproperty.h>
+#include <dtCore/map.h>
+#include <dtCore/namedparameter.h>
+#include <dtCore/project.h>
+#include <dtCore/stringactorproperty.h>
 
 #include <sstream>
 
@@ -205,101 +205,101 @@ namespace dtActors
       TaskActor &task = static_cast<TaskActor &>(GetGameActor());
 
       //DisplayName...
-      AddProperty(new dtDAL::StringActorProperty("DisplayName","Display Name",
-         dtDAL::StringActorProperty::SetFuncType(&task,&TaskActor::SetDisplayName),
-         dtDAL::StringActorProperty::GetFuncType(&task,&TaskActor::GetDisplayName),
+      AddProperty(new dtCore::StringActorProperty("DisplayName","Display Name",
+         dtCore::StringActorProperty::SetFuncType(&task,&TaskActor::SetDisplayName),
+         dtCore::StringActorProperty::GetFuncType(&task,&TaskActor::GetDisplayName),
          "Sets/gets the display name (ie. user viewable) of this task.",GROUPNAME));
 
       //Passing Score...
-      AddProperty(new dtDAL::FloatActorProperty("PassingScore","Passing Score",
-         dtDAL::FloatActorProperty::SetFuncType(&task,&TaskActor::SetPassingScore),
-         dtDAL::FloatActorProperty::GetFuncType(&task,&TaskActor::GetPassingScore),
+      AddProperty(new dtCore::FloatActorProperty("PassingScore","Passing Score",
+         dtCore::FloatActorProperty::SetFuncType(&task,&TaskActor::SetPassingScore),
+         dtCore::FloatActorProperty::GetFuncType(&task,&TaskActor::GetPassingScore),
          "Sets/gets the passing score for this task.",GROUPNAME));
 
       //Score...
-      AddProperty(new dtDAL::FloatActorProperty("Score","Score",
-         dtDAL::FloatActorProperty::SetFuncType(&task,&TaskActor::SetScore),
-         dtDAL::FloatActorProperty::GetFuncType(&task,&TaskActor::GetScore),
+      AddProperty(new dtCore::FloatActorProperty("Score","Score",
+         dtCore::FloatActorProperty::SetFuncType(&task,&TaskActor::SetScore),
+         dtCore::FloatActorProperty::GetFuncType(&task,&TaskActor::GetScore),
          "Sets/gets the current score of this task.",GROUPNAME));
 
       //Weight...
-      AddProperty(new dtDAL::FloatActorProperty("Weight","Weight",
-         dtDAL::FloatActorProperty::SetFuncType(&task,&TaskActor::SetWeight),
-         dtDAL::FloatActorProperty::GetFuncType(&task,&TaskActor::GetWeight),
+      AddProperty(new dtCore::FloatActorProperty("Weight","Weight",
+         dtCore::FloatActorProperty::SetFuncType(&task,&TaskActor::SetWeight),
+         dtCore::FloatActorProperty::GetFuncType(&task,&TaskActor::GetWeight),
          "Sets/gets the current weight assigned to this task.",GROUPNAME));
 
       //Complete...
-      AddProperty(new dtDAL::BooleanActorProperty("Complete","Complete",
-         dtDAL::BooleanActorProperty::SetFuncType(&task,&TaskActor::SetComplete),
-         dtDAL::BooleanActorProperty::GetFuncType(&task,&TaskActor::IsComplete),
+      AddProperty(new dtCore::BooleanActorProperty("Complete","Complete",
+         dtCore::BooleanActorProperty::SetFuncType(&task,&TaskActor::SetComplete),
+         dtCore::BooleanActorProperty::GetFuncType(&task,&TaskActor::IsComplete),
          "Gets the complete status of this task.",GROUPNAME));
 
       //NotifyLMSOnUpdate
-      AddProperty(new dtDAL::BooleanActorProperty("NotifyLMSOnUpdate","Notify LMS On Update",
-         dtDAL::BooleanActorProperty::SetFuncType(&task,&TaskActor::SetNotifyLMSOnUpdate),
-         dtDAL::BooleanActorProperty::GetFuncType(&task,&TaskActor::GetNotifyLMSOnUpdate),
+      AddProperty(new dtCore::BooleanActorProperty("NotifyLMSOnUpdate","Notify LMS On Update",
+         dtCore::BooleanActorProperty::SetFuncType(&task,&TaskActor::SetNotifyLMSOnUpdate),
+         dtCore::BooleanActorProperty::GetFuncType(&task,&TaskActor::GetNotifyLMSOnUpdate),
          "Sets/gets the flag that determines if this task should notify an LMS when it is updated.",GROUPNAME));
 
       //Completed time...
-      AddProperty(new dtDAL::DoubleActorProperty("CompleteTime","Complete Time",
-                  dtDAL::DoubleActorProperty::SetFuncType(&task,&TaskActor::SetCompletedTimeStamp),
-                  dtDAL::DoubleActorProperty::GetFuncType(&task,&TaskActor::GetCompletedTimeStamp),
+      AddProperty(new dtCore::DoubleActorProperty("CompleteTime","Complete Time",
+                  dtCore::DoubleActorProperty::SetFuncType(&task,&TaskActor::SetCompletedTimeStamp),
+                  dtCore::DoubleActorProperty::GetFuncType(&task,&TaskActor::GetCompletedTimeStamp),
                   "Gets the simulation time in which this task was completed.",GROUPNAME));
 
       //IsTopLevel...
-      AddProperty(new dtDAL::BooleanActorProperty("IsTopLevel","Top Level Task",
-         dtDAL::BooleanActorProperty::SetFuncType(),
-         dtDAL::BooleanActorProperty::GetFuncType(this, &TaskActorProxy::IsTopLevelTask),
+      AddProperty(new dtCore::BooleanActorProperty("IsTopLevel","Top Level Task",
+         dtCore::BooleanActorProperty::SetFuncType(),
+         dtCore::BooleanActorProperty::GetFuncType(this, &TaskActorProxy::IsTopLevelTask),
          "Sets/gets whether or not this task contains a parent task.",GROUPNAME));
       GetProperty("IsTopLevel")->SetReadOnly(true);
 
       // A Task in the Task List
-      dtDAL::ActorIDActorProperty* actorProp = new dtDAL::ActorIDActorProperty(
+      dtCore::ActorIDActorProperty* actorProp = new dtCore::ActorIDActorProperty(
          *this, "Task", "Task",
-         dtDAL::ActorIDActorProperty::SetFuncType(this, &TaskActorProxy::SetSubTask),
-         dtDAL::ActorIDActorProperty::GetFuncType(this, &TaskActorProxy::GetSubTask),
+         dtCore::ActorIDActorProperty::SetFuncType(this, &TaskActorProxy::SetSubTask),
+         dtCore::ActorIDActorProperty::GetFuncType(this, &TaskActorProxy::GetSubTask),
          "dtActors::TaskActor", "A sub task", GROUPNAME);
 
       // The Task List.
-      AddProperty(new dtDAL::ArrayActorProperty<dtCore::UniqueId>(
+      AddProperty(new dtCore::ArrayActorProperty<dtCore::UniqueId>(
          "SubTaskList", "Sub Task List", "List of sub tasks",
-         dtDAL::ArrayActorProperty<dtCore::UniqueId>::SetIndexFuncType(this, &TaskActorProxy::TaskArraySetIndex),
-         dtDAL::ArrayActorProperty<dtCore::UniqueId>::GetDefaultFuncType(this, &TaskActorProxy::TaskArrayGetDefault),
-         dtDAL::ArrayActorProperty<dtCore::UniqueId>::GetArrayFuncType(this, &TaskActorProxy::TaskArrayGetValue),
-         dtDAL::ArrayActorProperty<dtCore::UniqueId>::SetArrayFuncType(this, &TaskActorProxy::TaskArraySetValue),
+         dtCore::ArrayActorProperty<dtCore::UniqueId>::SetIndexFuncType(this, &TaskActorProxy::TaskArraySetIndex),
+         dtCore::ArrayActorProperty<dtCore::UniqueId>::GetDefaultFuncType(this, &TaskActorProxy::TaskArrayGetDefault),
+         dtCore::ArrayActorProperty<dtCore::UniqueId>::GetArrayFuncType(this, &TaskActorProxy::TaskArrayGetValue),
+         dtCore::ArrayActorProperty<dtCore::UniqueId>::SetArrayFuncType(this, &TaskActorProxy::TaskArraySetValue),
          actorProp, GROUPNAME));
 
       // Notify Completed Event
-      AddProperty(new dtDAL::GameEventActorProperty(*this,
+      AddProperty(new dtCore::GameEventActorProperty(*this,
          TaskActorProxy::PROPERTY_EVENT_NOTIFY_COMPLETED,
          "Notify Completed Event",
-         dtDAL::GameEventActorProperty::SetFuncType(&task, &TaskActor::SetNotifyCompletedEvent),
-         dtUtil::MakeFunctor<dtDAL::GameEvent* (TaskActor::*)(), TaskActor> // djmc new attempt
+         dtCore::GameEventActorProperty::SetFuncType(&task, &TaskActor::SetNotifyCompletedEvent),
+         dtUtil::MakeFunctor<dtCore::GameEvent* (TaskActor::*)(), TaskActor> // djmc new attempt
             (&TaskActor::GetNotifyCompletedEvent, task),
          "Sets and gets the game event that will be sent when this task completes.",GROUPNAME));
 
       // Notify Failed Event
-      AddProperty(new dtDAL::GameEventActorProperty(*this,
+      AddProperty(new dtCore::GameEventActorProperty(*this,
          TaskActorProxy::PROPERTY_EVENT_NOTIFY_FAILED,
          "Notify Failed Event",
-         dtDAL::GameEventActorProperty::SetFuncType(&task, &TaskActor::SetNotifyFailedEvent),
-         dtUtil::MakeFunctor<dtDAL::GameEvent* (TaskActor::*)(), TaskActor>
+         dtCore::GameEventActorProperty::SetFuncType(&task, &TaskActor::SetNotifyFailedEvent),
+         dtUtil::MakeFunctor<dtCore::GameEvent* (TaskActor::*)(), TaskActor>
             (&TaskActor::GetNotifyFailedEvent, task),
          "Sets and gets the game event that will be sent when this task fails.",GROUPNAME));
 
       // REMOVE USELESS PROPERTIES - These properties really should not show in
       // STAGE and ought to be completely removed from the object completely.
       // However, the overhead is part of sub-classing GameActor.
-      RemoveProperty(dtDAL::TransformableActorProxy::PROPERTY_ROTATION);
-      RemoveProperty(dtDAL::TransformableActorProxy::PROPERTY_TRANSLATION);
-      RemoveProperty(dtDAL::TransformableActorProxy::PROPERTY_NORMAL_RESCALING);
+      RemoveProperty(dtCore::TransformableActorProxy::PROPERTY_ROTATION);
+      RemoveProperty(dtCore::TransformableActorProxy::PROPERTY_TRANSLATION);
+      RemoveProperty(dtCore::TransformableActorProxy::PROPERTY_NORMAL_RESCALING);
       RemoveProperty("Render Proxy Node");
       RemoveProperty("Show Collision Geometry"); //"ODE Show Collision Geometry"
-      RemoveProperty(dtDAL::TransformableActorProxy::PROPERTY_COLLISION_TYPE);
-      RemoveProperty(dtDAL::TransformableActorProxy::PROPERTY_COLLISION_RADIUS);
-      RemoveProperty(dtDAL::TransformableActorProxy::PROPERTY_COLLISION_LENGTH);
-      RemoveProperty(dtDAL::TransformableActorProxy::PROPERTY_COLLISION_BOX);
-      RemoveProperty(dtDAL::TransformableActorProxy::PROPERTY_ENABLE_COLLISION);
+      RemoveProperty(dtCore::TransformableActorProxy::PROPERTY_COLLISION_TYPE);
+      RemoveProperty(dtCore::TransformableActorProxy::PROPERTY_COLLISION_RADIUS);
+      RemoveProperty(dtCore::TransformableActorProxy::PROPERTY_COLLISION_LENGTH);
+      RemoveProperty(dtCore::TransformableActorProxy::PROPERTY_COLLISION_BOX);
+      RemoveProperty(dtCore::TransformableActorProxy::PROPERTY_ENABLE_COLLISION);
       RemoveProperty("Enable Dynamics"); // "ODE Enable Dynamics"
       RemoveProperty("Mass"); // "ODE Mass"
       RemoveProperty("Center of Gravity"); // "ODE Center of Gravity"
@@ -313,9 +313,9 @@ namespace dtActors
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   dtCore::RefPtr<dtDAL::ActorProperty> TaskActorProxy::GetDeprecatedProperty(const std::string& name)
+   dtCore::RefPtr<dtCore::ActorProperty> TaskActorProxy::GetDeprecatedProperty(const std::string& name)
    {
-      dtCore::RefPtr<dtDAL::ActorProperty> prop = dtGame::GameActorProxy::GetDeprecatedProperty(name);
+      dtCore::RefPtr<dtCore::ActorProperty> prop = dtGame::GameActorProxy::GetDeprecatedProperty(name);
 
       if (!prop.valid())
       {
@@ -323,9 +323,9 @@ namespace dtActors
          {
             // The SubTasks property was changed from a GroupActorProperty to
             // an ArrayActorProperty.
-            prop = new dtDAL::GroupActorProperty("SubTasks", "Sub Task Actor List",
-               dtDAL::GroupActorProperty::SetFuncType(this, &TaskActorProxy::SetSubTaskGroup),
-               dtDAL::GroupActorProperty::GetFuncType(this, &TaskActorProxy::GetSubTaskGroup),
+            prop = new dtCore::GroupActorProperty("SubTasks", "Sub Task Actor List",
+               dtCore::GroupActorProperty::SetFuncType(this, &TaskActorProxy::SetSubTaskGroup),
+               dtCore::GroupActorProperty::GetFuncType(this, &TaskActorProxy::GetSubTaskGroup),
                "The list of subtasks.", "BaseTask", "TaskChildren");
          }
          else if (name == "TaskList")
@@ -599,7 +599,7 @@ namespace dtActors
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   void TaskActorProxy::SetSubTaskGroup(const dtDAL::NamedGroupParameter& subTasks)
+   void TaskActorProxy::SetSubTaskGroup(const dtCore::NamedGroupParameter& subTasks)
    {
       //first remove all subtasks, even if the parameter may have some
       //of the same tasks in it.
@@ -614,14 +614,14 @@ namespace dtActors
 
       mSubTasks.clear();
 
-      std::vector<const dtDAL::NamedParameter*> toFill;
+      std::vector<const dtCore::NamedParameter*> toFill;
       subTasks.GetParameters(toFill);
 
       for (unsigned i = 0; i < toFill.size(); ++i)
       {
-         if (toFill[i]->GetDataType() == dtDAL::DataType::ACTOR)
+         if (toFill[i]->GetDataType() == dtCore::DataType::ACTOR)
          {
-            const dtCore::UniqueId& id = static_cast<const dtDAL::NamedActorParameter*>(toFill[i])->GetValue();
+            const dtCore::UniqueId& id = static_cast<const dtCore::NamedActorParameter*>(toFill[i])->GetValue();
             if (IsInGM())
             {
                TaskActorProxy* taskActor = NULL;
@@ -633,7 +633,7 @@ namespace dtActors
             else
             {
                TaskActorProxy* taskActor = NULL;
-               dtDAL::Map* m = dtDAL::Project::GetInstance().GetMapForActorProxy(*this);
+               dtCore::Map* m = dtCore::Project::GetInstance().GetMapForActorProxy(*this);
                if (m != NULL)
                {
                    m->GetProxyById(id, taskActor);
@@ -647,9 +647,9 @@ namespace dtActors
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   dtCore::RefPtr<dtDAL::NamedGroupParameter> TaskActorProxy::GetSubTaskGroup() const
+   dtCore::RefPtr<dtCore::NamedGroupParameter> TaskActorProxy::GetSubTaskGroup() const
    {
-      dtCore::RefPtr<dtDAL::NamedGroupParameter> result = new dtDAL::NamedGroupParameter("SubTasks");
+      dtCore::RefPtr<dtCore::NamedGroupParameter> result = new dtCore::NamedGroupParameter("SubTasks");
       std::ostringstream ss;
 
       ss << mSubTasks.size();
@@ -661,13 +661,13 @@ namespace dtActors
          ss << i;
          std::string s = ss.str();
          s.insert(s.begin(), stringLength - s.size(), '0');
-         result->AddParameter(*new dtDAL::NamedActorParameter(s, mSubTasks[i]));
+         result->AddParameter(*new dtCore::NamedActorParameter(s, mSubTasks[i]));
       }
       return result;
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void TaskActorProxy::SendGameEvent(dtDAL::GameEvent& gameEvent)
+   void TaskActorProxy::SendGameEvent(dtCore::GameEvent& gameEvent)
    {
       dtGame::GameManager* gm = GetGameManager();
       if ( gm != NULL )
@@ -709,7 +709,7 @@ namespace dtActors
       // Get the actor at the current index and put it into the non-index slot.
       std::string name = "Task";
       name += dtUtil::ToString(mSubTaskIndex);
-      dtDAL::BaseActorObject* proxy = GetLinkedActor(name);
+      dtCore::BaseActorObject* proxy = GetLinkedActor(name);
       if (proxy)
       {
          SetLinkedActor("Task", proxy);

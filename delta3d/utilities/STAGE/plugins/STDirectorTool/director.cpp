@@ -22,8 +22,8 @@
 #include "director.h"
 #include "directoruiplugin.h"
 
-#include <dtDAL/actoridactorproperty.h>
-#include <dtDAL/datatype.h>
+#include <dtCore/actoridactorproperty.h>
+#include <dtCore/datatype.h>
 
 #include <dtDirectorQt/propertyeditor.h>
 
@@ -109,19 +109,19 @@ DirectorToolEditor::DirectorToolEditor()
    {
       dtQt::DynamicControlFactory& dcfactory = propEditor->GetDynamicControlFactory();
 
-      size_t datatypeCount = dtDAL::DataType::EnumerateType().size();
+      size_t datatypeCount = dtCore::DataType::EnumerateType().size();
 
       for (size_t i = 0; i < datatypeCount; ++i)
       {
-         dtDAL::DataType* dt = dtDAL::DataType::EnumerateType()[i];
+         dtCore::DataType* dt = dtCore::DataType::EnumerateType()[i];
          if (dt->IsResource())
          {
             dcfactory.RegisterControlForDataType<STAGEDynamicResourceControl>(*dt);
          }
       }
 
-      dcfactory.RegisterControlForDataType<STAGEDynamicActorControl>(dtDAL::DataType::ACTOR);
-      dcfactory.RegisterControlForDataType<STAGEDynamicGroupPropertyControl>(dtDAL::DataType::GROUP);
+      dcfactory.RegisterControlForDataType<STAGEDynamicActorControl>(dtCore::DataType::ACTOR);
+      dcfactory.RegisterControlForDataType<STAGEDynamicGroupPropertyControl>(dtCore::DataType::GROUP);
    }
 
    connect(&dtEditQt::EditorEvents::GetInstance(), SIGNAL(currentMapChanged()),
@@ -134,9 +134,9 @@ DirectorToolEditor::~DirectorToolEditor()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-std::vector<dtDAL::BaseActorObject*> DirectorToolEditor::GetActorSelection()
+std::vector<dtCore::BaseActorObject*> DirectorToolEditor::GetActorSelection()
 {
-   std::vector<dtDAL::BaseActorObject*> selection;
+   std::vector<dtCore::BaseActorObject*> selection;
    EditorData::GetInstance().GetSelectedActors(selection);
 
    return selection;
@@ -153,7 +153,7 @@ void DirectorToolEditor::OnGotoActor()
 {
    if (mProxy.valid())
    {
-      std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> > toSelect;
+      std::vector<dtCore::RefPtr<dtCore::BaseActorObject> > toSelect;
       toSelect.push_back(mProxy);
 
       EditorEvents::GetInstance().emitActorsSelected(toSelect);
@@ -166,14 +166,14 @@ void DirectorToolEditor::OnUseCurrentActor()
 {
    if (mNode && mNode->GetType().GetFullName() == "General.Actor")
    {
-      std::vector<dtDAL::BaseActorObject*> selection;
+      std::vector<dtCore::BaseActorObject*> selection;
       EditorData::GetInstance().GetSelectedActors(selection);
 
       if (selection.size())
       {
          mProxy = selection[0];
 
-         dtDAL::ActorIDActorProperty* prop = dynamic_cast<dtDAL::ActorIDActorProperty*>(mNode->GetProperty("Value"));
+         dtCore::ActorIDActorProperty* prop = dynamic_cast<dtCore::ActorIDActorProperty*>(mNode->GetProperty("Value"));
          if (prop)
          {
             prop->SetValue(mProxy->GetId());
@@ -189,7 +189,7 @@ bool DirectorToolEditor::OnContextValueNode(dtCore::RefPtr<dtDirector::Node> nod
    mNode = node;
    if (node->GetType().GetFullName() == "General.Actor" || node->GetType().GetFullName() == "Core.Player")
    {
-      dtDAL::ActorIDActorProperty* prop = dynamic_cast<dtDAL::ActorIDActorProperty*>(node->GetProperty("Value"));
+      dtCore::ActorIDActorProperty* prop = dynamic_cast<dtCore::ActorIDActorProperty*>(node->GetProperty("Value"));
       if (prop)
       {
          bool hasDefault = false;
@@ -217,7 +217,7 @@ bool DirectorToolEditor::OnDoubleClickValueNode(dtCore::RefPtr<dtDirector::Node>
 {
    if (node->GetType().GetFullName() == "General.Actor" || node->GetType().GetFullName() == "Core.Player")
    {
-      dtDAL::ActorIDActorProperty* prop = dynamic_cast<dtDAL::ActorIDActorProperty*>(node->GetProperty("Value"));
+      dtCore::ActorIDActorProperty* prop = dynamic_cast<dtCore::ActorIDActorProperty*>(node->GetProperty("Value"));
       if (prop)
       {
          mProxy = prop->GetActorProxy();

@@ -41,7 +41,7 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   bool MutatorNode::ShouldPropertySave(const dtDAL::ActorProperty& prop) const
+   bool MutatorNode::ShouldPropertySave(const dtCore::ActorProperty& prop) const
    {
       if (prop.GetName() == "Result")
       {
@@ -66,7 +66,7 @@ namespace dtDirector
       // is redirected.
       for (int valueIndex = 0; valueIndex < (int)mValues.size(); valueIndex++)
       {
-         dtDAL::ActorProperty* prop = mValues[valueIndex].GetDefaultProperty();
+         dtCore::ActorProperty* prop = mValues[valueIndex].GetDefaultProperty();
          if (prop && prop->GetName() == name)
          {
             propertyCount = mValues[valueIndex].GetPropertyCount();
@@ -76,7 +76,7 @@ namespace dtDirector
       // Did not find any overrides, so return the default.
       if (propertyCount == 0)
       {
-         if (name == "Value" || dtDAL::PropertyContainer::GetProperty(name))
+         if (name == "Value" || dtCore::PropertyContainer::GetProperty(name))
          {
             return 1;
          }

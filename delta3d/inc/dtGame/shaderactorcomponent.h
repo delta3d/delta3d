@@ -24,7 +24,7 @@
 
 #include <dtGame/export.h>
 #include <dtGame/actorcomponentbase.h>
-#include <dtDAL/resourcedescriptor.h>
+#include <dtCore/resourcedescriptor.h>
 
 namespace dtGame
 {
@@ -47,23 +47,23 @@ namespace dtGame
 
       /** 
        * Apply the supplied pixel shader resource to the parent GameActor.
-       * @param shaderResource The pixel shader resource to apply.  Uses dtDAL::Project
+       * @param shaderResource The pixel shader resource to apply.  Uses dtCore::Project
        * to resolve the actual filename.
        */
-      virtual void SetCurrentShader(const dtDAL::ResourceDescriptor& shaderResource);
+      virtual void SetCurrentShader(const dtCore::ResourceDescriptor& shaderResource);
 
       /** 
        * Get the currently applied shader as the ResourceDescriptor.
        * @return The currently applied shader ResourceDescriptor.  Could be empty
        * if none has been applied.
        */
-      const dtDAL::ResourceDescriptor GetCurrentShader() const;
+      const dtCore::ResourceDescriptor GetCurrentShader() const;
 
    protected:
       virtual ~ShaderActorComponent();
    	
    private:
-      dtDAL::ResourceDescriptor mCurrentShaderResource;
+      dtCore::ResourceDescriptor mCurrentShaderResource;
    };
 
 }

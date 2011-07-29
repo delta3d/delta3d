@@ -24,8 +24,8 @@
 
 #include <dtDirector/export.h>
 
-#include <dtDAL/objecttype.h>
-#include <dtDAL/datatype.h>
+#include <dtCore/objecttype.h>
+#include <dtCore/datatype.h>
 #include <osg/Vec3>
 
 namespace dtDirector
@@ -40,7 +40,7 @@ namespace dtDirector
    * @note
    *   NodeTypes for each node must be unique.
    */
-   class DT_DIRECTOR_EXPORT NodeType: public dtDAL::ObjectType
+   class DT_DIRECTOR_EXPORT NodeType: public dtCore::ObjectType
    {
    public:
 
@@ -82,7 +82,7 @@ namespace dtDirector
             const std::string& desc="",
             const NodeType* parentType = NULL,
             const osg::Vec3& color = osg::Vec3(150, 150, 150),
-            dtDAL::DataType& dataType = dtDAL::DataType::UNKNOWN);
+            dtCore::DataType& dataType = dtCore::DataType::UNKNOWN);
 
       /**
        * Gets the parent or "super" type of this node type.
@@ -120,7 +120,7 @@ namespace dtDirector
        *
        * @return  The data type.
        */
-      const dtDAL::DataType& GetDataType() const;
+      const dtCore::DataType& GetDataType() const;
 
    protected:
 
@@ -134,7 +134,7 @@ namespace dtDirector
       std::string       mFolder;
       NodeTypeEnum      mType;
       osg::Vec3         mColor;
-      dtDAL::DataType&  mDataType;
+      dtCore::DataType&  mDataType;
    };
 }
 

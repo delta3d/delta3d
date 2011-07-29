@@ -22,11 +22,11 @@
 #ifndef prefabactorproxy_h__
 #define prefabactorproxy_h__
 
-#include <dtDAL/plugin_export.h>
-#include <dtDAL/transformableactorproxy.h>
+#include <dtCore/plugin_export.h>
+#include <dtCore/transformableactorproxy.h>
 #include <dtABC/export.h>
-#include <dtDAL/actorproperty.h>
-#include <dtDAL/map.h>
+#include <dtCore/actorproperty.h>
+#include <dtCore/map.h>
 #include <osgText/Text>
 #include <dtCore/transformable.h>
 
@@ -51,10 +51,10 @@ namespace dtActors
    /////////////////////////////////////////////////////////////////////////////
    // PROXY CODE
    /////////////////////////////////////////////////////////////////////////////
-   class DT_PLUGIN_EXPORT PrefabActorProxy : public dtDAL::TransformableActorProxy
+   class DT_PLUGIN_EXPORT PrefabActorProxy : public dtCore::TransformableActorProxy
    {
    public:
-      typedef dtDAL::TransformableActorProxy BaseClass;
+      typedef dtCore::TransformableActorProxy BaseClass;
 
       static const dtUtil::RefString CLASS_NAME;
 
@@ -64,19 +64,19 @@ namespace dtActors
 
       virtual void BuildPropertyMap();
 
-      void SetMap(dtDAL::Map* map);
+      void SetMap(dtCore::Map* map);
 
       void SetPrefab(const std::string& fileName);
 
-      std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> >& GetPrefabProxies();
+      std::vector<dtCore::RefPtr<dtCore::BaseActorObject> >& GetPrefabProxies();
 
    protected:
       virtual ~PrefabActorProxy();
 
    private:
-      std::vector<dtCore::RefPtr<dtDAL::BaseActorObject> > mProxies;
+      std::vector<dtCore::RefPtr<dtCore::BaseActorObject> > mProxies;
 
-      dtCore::RefPtr<dtDAL::Map> mMap;
+      dtCore::RefPtr<dtCore::Map> mMap;
    };
 }
 #endif // prefabactorproxy_h__

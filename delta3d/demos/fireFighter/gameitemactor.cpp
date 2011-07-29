@@ -25,10 +25,10 @@
 
 #include <dtCore/scene.h>
 
-#include <dtDAL/booleanactorproperty.h>
-#include <dtDAL/datatype.h>
-#include <dtDAL/functor.h>
-#include <dtDAL/resourceactorproperty.h>
+#include <dtCore/booleanactorproperty.h>
+#include <dtCore/datatype.h>
+#include <dtCore/functor.h>
+#include <dtCore/resourceactorproperty.h>
 
 #include <dtGame/gamemanager.h>
 
@@ -49,22 +49,22 @@ void GameItemActorProxy::BuildPropertyMap()
 
    GameItemActor& gia = static_cast<GameItemActor&>(GetGameActor());
 
-   AddProperty(new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::SOUND,
+   AddProperty(new dtCore::ResourceActorProperty(*this, dtCore::DataType::SOUND,
       "InventorySound", "InventorySound",
       dtUtil::MakeFunctor(&GameItemActor::SetInventoryAddSnd, gia),
       "Sets the inventory sound for this item"));
 
-   AddProperty(new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::SOUND,
+   AddProperty(new dtCore::ResourceActorProperty(*this, dtCore::DataType::SOUND,
       "ItemUseSound", "ItemUseSound",
       dtUtil::MakeFunctor(&GameItemActor::SetItemUseSnd, gia),
       "Sets the inventory sound for this item"));
 
-   AddProperty(new dtDAL::BooleanActorProperty("Activate", "Activate",
+   AddProperty(new dtCore::BooleanActorProperty("Activate", "Activate",
       dtUtil::MakeFunctor(&GameItemActor::Activate, gia),
       dtUtil::MakeFunctor(&GameItemActor::IsActivated, gia),
       "Activates this item"));
 
-   AddProperty(new dtDAL::BooleanActorProperty("Collectable", "Collectable",
+   AddProperty(new dtCore::BooleanActorProperty("Collectable", "Collectable",
       dtUtil::MakeFunctor(&GameItemActor::SetCollectable, gia),
       dtUtil::MakeFunctor(&GameItemActor::IsCollectable, gia),
       "Returns true if this item is collectable"));
@@ -75,11 +75,11 @@ void GameItemActorProxy::BuildInvokables()
    dtActors::GameMeshActorProxy::BuildInvokables();
 }
 
-dtDAL::ActorProxyIcon* GameItemActorProxy::GetBillBoardIcon()
+dtCore::ActorProxyIcon* GameItemActorProxy::GetBillBoardIcon()
 {
    if (!mBillBoardIcon.valid())
    {
-      mBillBoardIcon = new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IMAGE_BILLBOARD_STATICMESH);
+      mBillBoardIcon = new dtCore::ActorProxyIcon(dtCore::ActorProxyIcon::IMAGE_BILLBOARD_STATICMESH);
    }
    return mBillBoardIcon.get();
 }

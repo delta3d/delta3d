@@ -21,9 +21,9 @@
 #include <prefix/dtdirectornodesprefix.h>
 #include <dtDirectorNodes/foreachactoraction.h>
 
-#include <dtDAL/stringselectoractorproperty.h>
-#include <dtDAL/booleanactorproperty.h>
-#include <dtDAL/librarymanager.h>
+#include <dtCore/stringselectoractorproperty.h>
+#include <dtCore/booleanactorproperty.h>
+#include <dtCore/librarymanager.h>
 
 #include <dtDirector/director.h>
 
@@ -58,26 +58,26 @@ namespace dtDirector
    {
       ActionNode::BuildPropertyMap();
 
-      dtDAL::StringSelectorActorProperty* classProp = new dtDAL::StringSelectorActorProperty(
+      dtCore::StringSelectorActorProperty* classProp = new dtCore::StringSelectorActorProperty(
          "Actor Type", "Actor Type",
-         dtDAL::StringSelectorActorProperty::SetFuncType(this, &ForEachActorAction::SetClassType),
-         dtDAL::StringSelectorActorProperty::GetFuncType(this, &ForEachActorAction::GetClassType),
-         dtDAL::StringSelectorActorProperty::GetListFuncType(&dtDAL::LibraryManager::GetInstance(),
-         &dtDAL::LibraryManager::GetClassTypes),
+         dtCore::StringSelectorActorProperty::SetFuncType(this, &ForEachActorAction::SetClassType),
+         dtCore::StringSelectorActorProperty::GetFuncType(this, &ForEachActorAction::GetClassType),
+         dtCore::StringSelectorActorProperty::GetListFuncType(&dtCore::LibraryManager::GetInstance(),
+         &dtCore::LibraryManager::GetClassTypes),
          "The type of actor to iterate through (optional).", "", false);
       AddProperty(classProp);
 
-      dtDAL::StringActorProperty* filterProp = new dtDAL::StringActorProperty(
+      dtCore::StringActorProperty* filterProp = new dtCore::StringActorProperty(
          "Name Filter", "Name Filter",
-         dtDAL::StringActorProperty::SetFuncType(this, &ForEachActorAction::SetNameFilter),
-         dtDAL::StringActorProperty::GetFuncType(this, &ForEachActorAction::GetNameFilter),
+         dtCore::StringActorProperty::SetFuncType(this, &ForEachActorAction::SetNameFilter),
+         dtCore::StringActorProperty::GetFuncType(this, &ForEachActorAction::GetNameFilter),
          "The name to filter actors with (optional).");
       AddProperty(filterProp);
 
-      mActorProp = new dtDAL::ActorIDActorProperty(
+      mActorProp = new dtCore::ActorIDActorProperty(
          "Current Actor", "Current Actor",
-         dtDAL::ActorIDActorProperty::SetFuncType(this, &ForEachActorAction::SetCurrentActor),
-         dtDAL::ActorIDActorProperty::GetFuncType(this, &ForEachActorAction::GetCurrentActor),
+         dtCore::ActorIDActorProperty::SetFuncType(this, &ForEachActorAction::SetCurrentActor),
+         dtCore::ActorIDActorProperty::GetFuncType(this, &ForEachActorAction::GetCurrentActor),
          "", "The currently iterated actor.");
 
       // This will expose the properties in the editor and allow
@@ -100,10 +100,10 @@ namespace dtDirector
             std::string classType = GetString("Actor Type");
             std::string nameFilter = GetString("Name Filter");
 
-            int count = dtDAL::BaseActorObject::GetInstanceCount();
+            int count = dtCore::BaseActorObject::GetInstanceCount();
             for (int index = 0; index < count; ++index)
             {
-               dtDAL::BaseActorObject* object = dtDAL::BaseActorObject::GetInstance(index);
+               dtCore::BaseActorObject* object = dtCore::BaseActorObject::GetInstance(index);
                if (object)
                {
                   if (!classType.empty() && classType != "<None>" &&
@@ -126,8 +126,8 @@ namespace dtDirector
                      }
                   }
 
-                  dtDAL::ActorProperty* prototypeProp = object->GetProperty("Initial Ownership");
-                  dtDAL::ActorProperty* ghostProp = object->GetProperty("Is Ghost");
+                  dtCore::ActorProperty* prototypeProp = object->GetProperty("Initial Ownership");
+                  dtCore::ActorProperty* ghostProp = object->GetProperty("Is Ghost");
                   if ((!prototypeProp || prototypeProp->ToString() != "PROTOTYPE") &&
                      (!ghostProp || ghostProp->ToString() == "false"))
                   {

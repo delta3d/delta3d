@@ -38,8 +38,8 @@
 #include <dtEditQt/actortypetreewidget.h>
 #include <dtActors/prefabactorproxy.h>
 #include <dtCore/refptr.h>
-#include <dtDAL/actortype.h>
-#include <dtDAL/resourcetreenode.h>
+#include <dtCore/actortype.h>
+#include <dtCore/resourcetreenode.h>
 #include <dtUtil/tree.h>
 
 class QAction;
@@ -176,7 +176,7 @@ namespace dtEditQt
       * Convenience method that builds a Prefab resource descriptor using
       * the absolute path to the XML file defining the Prefab.
       */
-      dtDAL::ResourceDescriptor createResDescriptorFromPath(std::string path);
+      dtCore::ResourceDescriptor createResDescriptorFromPath(std::string path);
 
       // Layout Objects
       QGridLayout* mGrid;
