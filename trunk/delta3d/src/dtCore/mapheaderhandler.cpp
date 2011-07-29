@@ -19,7 +19,7 @@
  * Erik Johnson
  */
 
-#include <prefix/dtdalprefix.h>
+#include <prefix/dtcoreprefix.h>
 #include <dtCore/mapheaderhandler.h>
 #include <dtCore/mapxmlconstants.h>
 #include <dtUtil/xercesutils.h>

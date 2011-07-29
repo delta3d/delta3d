@@ -22,7 +22,7 @@
  * David Guthrie
  */
 
-#include <prefix/dtdalprefix.h>
+#include <prefix/dtcoreprefix.h>
 #include <dtCore/projectconfigxmlhandler.h>
 #include <dtCore/exceptionenum.h>
 #include <xercesc/util/XMLString.hpp>

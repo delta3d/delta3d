@@ -19,7 +19,7 @@
  * Jeffrey Houde.
  */
 
-#include <prefix/dtdalprefix.h>
+#include <prefix/dtcoreprefix.h>
 #include <dtCore/containeractorproperty.h>
 #include <dtCore/datatype.h>
 #include <iostream>

@@ -22,7 +22,7 @@
  * David Guthrie
  */
 
-#include <prefix/dtdalprefix.h>
+#include <prefix/dtcoreprefix.h>
 #include <dtCore/namedpropertycontainerparameter.h>
 #include <dtCore/propertycontainer.h>
 #include <dtCore/propertycontaineractorproperty.h>

@@ -18,7 +18,7 @@
  *
  * Eric Heine
  */
-#include <prefix/dtdalprefix.h>
+#include <prefix/dtcoreprefix.h>
 #include <dtCore/actoractorproperty.h>
 #include <dtCore/map.h>
 #include <dtCore/project.h>

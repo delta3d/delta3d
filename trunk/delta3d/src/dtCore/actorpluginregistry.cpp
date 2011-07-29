@@ -18,7 +18,7 @@
  *
  * Matthew W. Campbell
  */
-#include <prefix/dtdalprefix.h>
+#include <prefix/dtcoreprefix.h>
 #include "dtCore/actorpluginregistry.h"
 #include <dtCore/scene.h>
 

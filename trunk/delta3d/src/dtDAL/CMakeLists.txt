@@ -107,8 +107,6 @@ SET(LIB_SOURCES
    warndtdal.cpp
 )
 
-ADD_PRECOMPILED_HEADER(${LIB_NAME} prefix/dtdalprefix.h prefix/dtdalprefix.cpp LIB_SOURCES)
-
 ADD_LIBRARY(${LIB_NAME} SHARED
     ${LIB_PUBLIC_HEADERS}
     ${LIB_SOURCES}

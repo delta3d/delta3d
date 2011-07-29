@@ -22,7 +22,7 @@
  * David Guthrie
  */
 
-#include <prefix/dtdalprefix.h>
+#include <prefix/dtcoreprefix.h>
 #include <dtCore/objecttype.h>
 
 #include <iostream>

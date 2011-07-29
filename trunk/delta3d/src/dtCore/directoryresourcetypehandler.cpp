@@ -19,7 +19,7 @@
  * David Guthrie
  */
 
-#include <prefix/dtdalprefix.h>
+#include <prefix/dtcoreprefix.h>
 #include <osgDB/FileNameUtils>
 #include <dtUtil/fileutils.h>
 #include <dtUtil/stringutils.h>

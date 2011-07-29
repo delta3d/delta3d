@@ -18,7 +18,7 @@
  *
  * Matthew W. Campbell
  */
-#include <prefix/dtdalprefix.h>
+#include <prefix/dtcoreprefix.h>
 #include <dtCore/gameeventmanager.h>
 #include <dtCore/exceptionenum.h>
 #include <dtCore/gameevent.h>

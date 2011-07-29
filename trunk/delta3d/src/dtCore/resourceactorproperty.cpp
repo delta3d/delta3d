@@ -1,4 +1,4 @@
-#include <prefix/dtdalprefix.h>
+#include <prefix/dtcoreprefix.h>
 #include <dtCore/resourceactorproperty.h>
 #include <dtCore/actorproxy.h>
 #include <dtCore/resourcedescriptor.h>

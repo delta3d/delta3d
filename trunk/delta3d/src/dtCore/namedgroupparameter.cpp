@@ -19,7 +19,7 @@
  * @author David Guthrie
  */
 
-#include <prefix/dtdalprefix.h>
+#include <prefix/dtcoreprefix.h>
 #include <dtCore/namedgroupparameter.h>
 #include <dtCore/groupactorproperty.h>
 #include <dtCore/exceptionenum.h>
