@@ -29,7 +29,6 @@ TARGET_LINK_LIBRARIES( ${LIB_NAME}
                        ${DTGAME_LIBRARY}
                        ${DTABC_LIBRARY}
                        ${DTANIM_LIBRARY}
-                       ${DTDAL_LIBRARY}
                        ${DTDIRECTOR_LIBRARY}
                        ${DTDIRECTORQT_LIBRARY}
                        ${QT_QTCORE_LIBRARY}

@@ -6,6 +6,5 @@ BUILD_EXE_EXAMPLE( testGameEnvironment
                    ${DTCORE_LIBRARY}
                    ${DTGAME_LIBRARY}
                    ${DTABC_LIBRARY}
-                   ${DTDAL_LIBRARY}
                    ${DTACTORS_LIBRARY}
                  )

@@ -44,7 +44,6 @@ LINK_WITH_VARIABLES(${APP_NAME}
 TARGET_LINK_LIBRARIES( ${APP_NAME}
                        ${DTUTIL_LIBRARY}
                        ${DTCORE_LIBRARY}
-                       ${DTDAL_LIBRARY}
                        ${DTANIM_LIBRARY}
                        ${DTQT_LIBRARY}
                      )

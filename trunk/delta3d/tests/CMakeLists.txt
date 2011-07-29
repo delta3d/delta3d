@@ -72,7 +72,6 @@ TARGET_LINK_LIBRARIES( ${PROG_NAME}
                        ${DTUTIL_LIBRARY}
                        ${DTCORE_LIBRARY}
                        ${DTAI_LIBRARY}
-                       ${DTDAL_LIBRARY}
                        ${DTLMS_LIBRARY}
                        ${DTACTORS_LIBRARY}
                        ${DTABC_LIBRARY}

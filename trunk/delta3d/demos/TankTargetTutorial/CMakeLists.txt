@@ -26,7 +26,6 @@ TARGET_LINK_LIBRARIES( ${LIB_NAME}
                        ${DTABC_LIBRARY}
                        ${DTACTORS_LIBRARY}
                        ${DTCORE_LIBRARY}
-                       ${DTDAL_LIBRARY}
                        ${DTGAME_LIBRARY}
                        ${DTGUI_LIBRARY}
                        ${DTUTIL_LIBRARY}
