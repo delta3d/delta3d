@@ -16,6 +16,7 @@ SET(LIB_PUBLIC_HEADERS ${HEADER_PATH}/actorarrayvalue.h
     ${HEADER_PATH}/booleanvalue.h
     ${HEADER_PATH}/calculatedistanceaction.h
     ${HEADER_PATH}/callremoteeventaction.h
+    ${HEADER_PATH}/changemapaction.h
     ${HEADER_PATH}/compareactoraction.h
     ${HEADER_PATH}/compareactorfacingaction.h
     ${HEADER_PATH}/compareactorpropertyaction.h
@@ -64,6 +65,7 @@ SET(LIB_PUBLIC_HEADERS ${HEADER_PATH}/actorarrayvalue.h
     ${HEADER_PATH}/outputnode.h
     ${HEADER_PATH}/ownervalue.h
     ${HEADER_PATH}/playervalue.h
+    ${HEADER_PATH}/quitapplicationaction.h
     ${HEADER_PATH}/randomfloatvalue.h
     ${HEADER_PATH}/randomintvalue.h
     ${HEADER_PATH}/referencescriptaction.h
@@ -110,6 +112,7 @@ SET(LIB_SOURCES ${SOURCE_PATH}/actorarrayvalue.cpp
     ${SOURCE_PATH}/booleanvalue.cpp
     ${SOURCE_PATH}/calculatedistanceaction.cpp
     ${SOURCE_PATH}/callremoteeventaction.cpp
+    ${SOURCE_PATH}/changemapaction.cpp
     ${SOURCE_PATH}/compareactoraction.cpp
     ${SOURCE_PATH}/compareactorfacingaction.cpp
     ${SOURCE_PATH}/compareactorpropertyaction.cpp
@@ -157,6 +160,7 @@ SET(LIB_SOURCES ${SOURCE_PATH}/actorarrayvalue.cpp
     ${SOURCE_PATH}/outputnode.cpp
     ${SOURCE_PATH}/ownervalue.cpp
     ${SOURCE_PATH}/playervalue.cpp
+    ${SOURCE_PATH}/quitapplicationaction.cpp
     ${SOURCE_PATH}/randomfloatvalue.cpp
     ${SOURCE_PATH}/randomintvalue.cpp
     ${SOURCE_PATH}/referencescriptaction.cpp

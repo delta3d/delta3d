@@ -19,8 +19,8 @@
  * Author: Eric R. Heine
  */
 
-#ifndef setwidgetproperty_h__
-#define setwidgetproperty_h__
+#ifndef setwidgetposition_h__
+#define setwidgetposition_h__
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -35,14 +35,14 @@ namespace CEGUI
 namespace dtDirector
 {
    ////////////////////////////////////////////////////////////////////////////////
-   class GUI_NODE_LIBRARY_EXPORT SetWidgetProperty : public ActionNode
+   class GUI_NODE_LIBRARY_EXPORT SetWidgetPosition : public ActionNode
    {
    public:
 
       /**
        * Constructor.
        */
-      SetWidgetProperty();
+      SetWidgetPosition();
 
       /**
        * Initializes the Node.
@@ -108,28 +108,24 @@ namespace dtDirector
       std::vector<std::string> GetWidgetList();
       void RecurseWidgetList(std::vector<std::string>& widgetList, CEGUI::Window* parent);
 
-      void SetProperty(const std::string& value);
-      std::string GetProperty() const;
-
-      void SetValue(const std::string& value);
-      std::string GetValue() const;
+      void SetPosition(const osg::Vec4& value);
+      osg::Vec4 GetPosition() const;
 
    protected:
 
       /**
        * Destructor.
        */
-      ~SetWidgetProperty();
+      ~SetWidgetPosition();
 
    private:
 
       std::string mLayout;
       std::string mWidget;
-      std::string mProperty;
-      std::string mValue;
+      osg::Vec4 mPosition;
    };
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#endif // setwidgetproperty_h__
+#endif // setwidgetposition_h__

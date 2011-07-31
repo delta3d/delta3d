@@ -80,6 +80,8 @@ namespace dtDirector
       static dtCore::RefPtr<dtDirector::NodeType> CREATE_FPS_MOTION_MODEL_ACTION_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> ATTACH_CAMERA_ACTION_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> ATTACH_MOTION_MODEL_ACTION_NODE_TYPE;
+      static dtCore::RefPtr<dtDirector::NodeType> CHANGE_MAP_NODE_TYPE;
+      static dtCore::RefPtr<dtDirector::NodeType> QUIT_APPLICATION_NODE_TYPE;
 
       static dtCore::RefPtr<dtDirector::NodeType> COMPARE_BOOL_ACTION_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> COMPARE_VALUE_ACTION_NODE_TYPE;

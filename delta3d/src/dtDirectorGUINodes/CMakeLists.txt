@@ -9,6 +9,7 @@ SET(SOURCE_PATH ${DELTA3D_SOURCE_DIR}/src/${LIB_NAME})
 SET(LIB_PUBLIC_HEADERS
     ${HEADER_PATH}/activatewidget.h
     ${HEADER_PATH}/buttonevent.h
+    ${HEADER_PATH}/getwidgetposition.h
     ${HEADER_PATH}/getwidgetproperty.h
     ${HEADER_PATH}/guinodemanager.h
     ${HEADER_PATH}/loadguischeme.h
@@ -16,6 +17,7 @@ SET(LIB_PUBLIC_HEADERS
     ${HEADER_PATH}/nodelibraryregistry.h
     ${HEADER_PATH}/setguicursor.h
     ${HEADER_PATH}/setlayoutvisibility.h
+    ${HEADER_PATH}/setwidgetposition.h
     ${HEADER_PATH}/setwidgetproperty.h
     ${HEADER_PATH}/setwidgettext.h
     ${HEADER_PATH}/toggleguicursor.h
@@ -25,12 +27,14 @@ SET(LIB_PUBLIC_HEADERS
 SET(LIB_SOURCES
     ${SOURCE_PATH}/activatewidget.cpp
     ${SOURCE_PATH}/buttonevent.cpp
+    ${SOURCE_PATH}/getwidgetposition.cpp
     ${SOURCE_PATH}/getwidgetproperty.cpp
     ${SOURCE_PATH}/guinodemanager.cpp
     ${SOURCE_PATH}/loadguischeme.cpp
     ${SOURCE_PATH}/nodelibraryregistry.cpp
     ${SOURCE_PATH}/setguicursor.cpp
     ${SOURCE_PATH}/setlayoutvisibility.cpp
+    ${SOURCE_PATH}/setwidgetposition.cpp
     ${SOURCE_PATH}/setwidgetproperty.cpp
     ${SOURCE_PATH}/setwidgettext.cpp
     ${SOURCE_PATH}/toggleguicursor.cpp

@@ -19,34 +19,34 @@
  * Author: Eric R. Heine
  */
 
-#include <dtDirectorGUINodes/getwidgetproperty.h>
+#include <dtDirectorGUINodes/setwidgetposition.h>
 #include <dtDirectorGUINodes/guinodemanager.h>
 
 #include <dtCore/stringactorproperty.h>
 #include <dtCore/stringselectoractorproperty.h>
+#include <dtCore/vectoractorproperties.h>
 
 #include <dtGUI/gui.h>
 #include <CEGUI/CEGUIWindow.h>
-#include <CEGUI/CEGUIExceptions.h>
 
 #include <dtDirector/director.h>
 
 namespace dtDirector
 {
    /////////////////////////////////////////////////////////////////////////////
-   GetWidgetProperty::GetWidgetProperty()
+   SetWidgetPosition::SetWidgetPosition()
       : ActionNode()
    {
       AddAuthor("Eric R. Heine");
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   GetWidgetProperty::~GetWidgetProperty()
+   SetWidgetPosition::~SetWidgetPosition()
    {
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void GetWidgetProperty::Init(const NodeType& nodeType, DirectorGraph* graph)
+   void SetWidgetPosition::Init(const NodeType& nodeType, DirectorGraph* graph)
    {
       ActionNode::Init(nodeType, graph);
 
@@ -54,55 +54,48 @@ namespace dtDirector
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void GetWidgetProperty::OnFinishedLoading()
+   void SetWidgetPosition::OnFinishedLoading()
    {
       GUINodeManager::GetLayout(GetString("Layout"));
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void GetWidgetProperty::BuildPropertyMap()
+   void SetWidgetPosition::BuildPropertyMap()
    {
       ActionNode::BuildPropertyMap();
 
       dtCore::StringSelectorActorProperty* layoutProp = new dtCore::StringSelectorActorProperty(
          "Layout", "Layout",
-         dtCore::StringSelectorActorProperty::SetFuncType(this, &GetWidgetProperty::SetLayout),
-         dtCore::StringSelectorActorProperty::GetFuncType(this, &GetWidgetProperty::GetLayout),
-         dtCore::StringSelectorActorProperty::GetListFuncType(this, &GetWidgetProperty::GetLayoutList),
+         dtCore::StringSelectorActorProperty::SetFuncType(this, &SetWidgetPosition::SetLayout),
+         dtCore::StringSelectorActorProperty::GetFuncType(this, &SetWidgetPosition::GetLayout),
+         dtCore::StringSelectorActorProperty::GetListFuncType(this, &SetWidgetPosition::GetLayoutList),
          "The Layout.", "", true);
       AddProperty(layoutProp);
 
       dtCore::StringSelectorActorProperty* widgetProp = new dtCore::StringSelectorActorProperty(
          "Widget", "Widget",
-         dtCore::StringSelectorActorProperty::SetFuncType(this, &GetWidgetProperty::SetWidget),
-         dtCore::StringSelectorActorProperty::GetFuncType(this, &GetWidgetProperty::GetWidget),
-         dtCore::StringSelectorActorProperty::GetListFuncType(this, &GetWidgetProperty::GetWidgetList),
+         dtCore::StringSelectorActorProperty::SetFuncType(this, &SetWidgetPosition::SetWidget),
+         dtCore::StringSelectorActorProperty::GetFuncType(this, &SetWidgetPosition::GetWidget),
+         dtCore::StringSelectorActorProperty::GetListFuncType(this, &SetWidgetPosition::GetWidgetList),
          "The Widget to set the text on.", "", true);
       AddProperty(widgetProp);
 
-      dtCore::StringActorProperty* propertyProp = new dtCore::StringActorProperty(
-         "Property", "Property",
-         dtCore::StringActorProperty::SetFuncType(this, &GetWidgetProperty::SetProperty),
-         dtCore::StringActorProperty::GetFuncType(this, &GetWidgetProperty::GetProperty),
-         "The property to set.");
-      AddProperty(propertyProp);
-
-      mpValueProp = new dtCore::StringActorProperty(
-         "Value", "Value",
-         dtCore::StringActorProperty::SetFuncType(this, &GetWidgetProperty::SetValue),
-         dtCore::StringActorProperty::GetFuncType(this, &GetWidgetProperty::GetValue),
-         "The value to set.");
+      dtCore::Vec4ActorProperty* valueProp = new dtCore::Vec4ActorProperty(
+         "Position", "Position",
+         dtCore::Vec4ActorProperty::SetFuncType(this, &SetWidgetPosition::SetPosition),
+         dtCore::Vec4ActorProperty::GetFuncType(this, &SetWidgetPosition::GetPosition),
+         "The position to set on the widget in Unified Dims (xScale, xOffset, yScale, yOffset).");
+      AddProperty(valueProp);
 
       // This will expose the properties in the editor and allow
       // them to be connected to ValueNodes.
       mValues.push_back(ValueLink(this, layoutProp, false, false, true, false));
       mValues.push_back(ValueLink(this, widgetProp, false, false, true, false));
-      mValues.push_back(ValueLink(this, propertyProp));
-      mValues.push_back(ValueLink(this, mpValueProp, true, true, false));
+      mValues.push_back(ValueLink(this, valueProp));
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   bool GetWidgetProperty::Update(float simDelta, float delta, int input, bool firstUpdate)
+   bool SetWidgetPosition::Update(float simDelta, float delta, int input, bool firstUpdate)
    {
       CEGUI::Window* layout = GUINodeManager::GetLayout(GetString("Layout"));
       if (!layout)
@@ -115,19 +108,13 @@ namespace dtDirector
       if (gui)
       {
          std::string widgetName = GetString("Widget");
-         std::string prop = GetString("Property");
+         osg::Vec4 position = GetVec4("Position");
 
          CEGUI::Window* widget = gui->GetWidget(widgetName);
          if (widget)
          {
-            try
-            {
-               SetString(widget->getProperty(prop).c_str(), "Value");
-            }
-            catch (CEGUI::UnknownObjectException e)
-            {
-               LOG_ERROR("There is no property named " + prop);
-            }
+            widget->setPosition(CEGUI::UVector2(CEGUI::UDim(position.x(), position.y()),
+               CEGUI::UDim(position.z(), position.w())));
          }
       }
 
@@ -136,11 +123,10 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void GetWidgetProperty::UpdateName()
+   void SetWidgetPosition::UpdateName()
    {
       std::string layoutName = GetString("Layout");
       std::string widgetName = GetString("Widget");
-      std::string prop = GetString("Property");
 
       if (layoutName.empty())
       {
@@ -159,19 +145,10 @@ namespace dtDirector
          }
          mName += widgetName;
       }
-
-      if (!prop.empty())
-      {
-         if (!mName.empty())
-         {
-            mName += " - ";
-         }
-         mName += prop;
-      }
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void GetWidgetProperty::OnLinkValueChanged(const std::string& linkName)
+   void SetWidgetPosition::OnLinkValueChanged(const std::string& linkName)
    {
       if (!GetDirector()->IsLoading())
       {
@@ -182,7 +159,7 @@ namespace dtDirector
 
             UpdateName();
          }
-         else if (linkName == "Widget" || linkName == "Property")
+         else if (linkName == "Widget" || linkName == "Text")
          {
             UpdateName();
          }
@@ -190,7 +167,7 @@ namespace dtDirector
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void GetWidgetProperty::SetLayout(const std::string& value)
+   void SetWidgetPosition::SetLayout(const std::string& value)
    {
       mLayout = value;
 
@@ -203,19 +180,19 @@ namespace dtDirector
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   std::string GetWidgetProperty::GetLayout() const
+   std::string SetWidgetPosition::GetLayout() const
    {
       return mLayout;
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   std::vector<std::string> GetWidgetProperty::GetLayoutList()
+   std::vector<std::string> SetWidgetPosition::GetLayoutList()
    {
       return GUINodeManager::GetLayoutList();
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void GetWidgetProperty::SetWidget(const std::string& value)
+   void SetWidgetPosition::SetWidget(const std::string& value)
    {
       mWidget = value;
 
@@ -223,13 +200,13 @@ namespace dtDirector
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   std::string GetWidgetProperty::GetWidget() const
+   std::string SetWidgetPosition::GetWidget() const
    {
       return mWidget;
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   std::vector<std::string> GetWidgetProperty::GetWidgetList()
+   std::vector<std::string> SetWidgetPosition::GetWidgetList()
    {
       std::vector<std::string> list;
       RecurseWidgetList(list, GUINodeManager::GetLayout(GetString("Layout")));
@@ -237,7 +214,7 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void GetWidgetProperty::RecurseWidgetList(std::vector<std::string>& widgetList, CEGUI::Window* parent)
+   void SetWidgetPosition::RecurseWidgetList(std::vector<std::string>& widgetList, CEGUI::Window* parent)
    {
       if (!parent)
       {
@@ -259,28 +236,15 @@ namespace dtDirector
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void GetWidgetProperty::SetProperty(const std::string& value)
+   void SetWidgetPosition::SetPosition(const osg::Vec4& value)
    {
-      mProperty = value;
-
-      UpdateName();
+      mPosition = value;
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   std::string GetWidgetProperty::GetProperty() const
+   osg::Vec4 SetWidgetPosition::GetPosition() const
    {
-      return mProperty;
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   void GetWidgetProperty::SetValue(const std::string& value)
-   {
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   std::string GetWidgetProperty::GetValue() const
-   {
-      return "";
+      return mPosition;
    }
 }
 

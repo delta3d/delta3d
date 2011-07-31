@@ -24,76 +24,79 @@
 #include <dtDirector/colors.h>
 
 // Events
+#include <dtDirectorNodes/gameeventmessageevent.h>
+#include <dtDirectorNodes/gamemessageevent.h>
 #include <dtDirectorNodes/inputnode.h>
+#include <dtDirectorNodes/keypressevent.h>
+#include <dtDirectorNodes/mousepressevent.h>
 #include <dtDirectorNodes/startevent.h>
 #include <dtDirectorNodes/remoteevent.h>
 #include <dtDirectorNodes/triggervolumeevent.h>
-#include <dtDirectorNodes/gamemessageevent.h>
-#include <dtDirectorNodes/gameeventmessageevent.h>
-#include <dtDirectorNodes/keypressevent.h>
-#include <dtDirectorNodes/mousepressevent.h>
 
 // Actions
-#include <dtDirectorNodes/outputnode.h>
-#include <dtDirectorNodes/referencescriptaction.h>
-#include <dtDirectorNodes/callremoteeventaction.h>
-#include <dtDirectorNodes/setvalueaction.h>
-#include <dtDirectorNodes/setarrayaction.h>
-#include <dtDirectorNodes/getarrayaction.h>
-#include <dtDirectorNodes/getarraysizeaction.h>
-#include <dtDirectorNodes/removearrayaction.h>
-#include <dtDirectorNodes/createvectoraction.h>
-#include <dtDirectorNodes/getvectorvaluesaction.h>
-#include <dtDirectorNodes/normalizevectoraction.h>
-#include <dtDirectorNodes/getapplicationconfigpropertyaction.h>
-#include <dtDirectorNodes/getactoraction.h>
-#include <dtDirectorNodes/getactorpropertyaction.h>
-#include <dtDirectorNodes/setactorpropertyaction.h>
-#include <dtDirectorNodes/operationaction.h>
+#include <dtDirectorNodes/animateactoraction.h>
+#include <dtDirectorNodes/attachcameraaction.h>
+#include <dtDirectorNodes/attachmotionmodelaction.h>
 #include <dtDirectorNodes/calculatedistanceaction.h>
+#include <dtDirectorNodes/callremoteeventaction.h>
+#include <dtDirectorNodes/changemapaction.h>
 #include <dtDirectorNodes/compareactoraction.h>
 #include <dtDirectorNodes/compareboolaction.h>
 #include <dtDirectorNodes/comparevalueaction.h>
 #include <dtDirectorNodes/comparevectoraction.h>
 #include <dtDirectorNodes/compareactorpropertyaction.h>
 #include <dtDirectorNodes/compareactorfacingaction.h>
+#include <dtDirectorNodes/createfpsmotionmodelaction.h>
+#include <dtDirectorNodes/createvectoraction.h>
 #include <dtDirectorNodes/delayaction.h>
-#include <dtDirectorNodes/toggleaction.h>
-#include <dtDirectorNodes/scheduleraction.h>
+#include <dtDirectorNodes/foreachaction.h>
+#include <dtDirectorNodes/foreachactoraction.h>
+#include <dtDirectorNodes/fpsmotionmodellisteneraction.h>
+#include <dtDirectorNodes/getactoraction.h>
+#include <dtDirectorNodes/getactororientationaction.h>
+#include <dtDirectorNodes/getactorpropertyaction.h>
+#include <dtDirectorNodes/getapplicationconfigpropertyaction.h>
+#include <dtDirectorNodes/getarrayaction.h>
+#include <dtDirectorNodes/getarraysizeaction.h>
+#include <dtDirectorNodes/getvectorvaluesaction.h>
 #include <dtDirectorNodes/lerpactorrotationaction.h>
 #include <dtDirectorNodes/lerpactorscaleaction.h>
 #include <dtDirectorNodes/lerpactortranslationaction.h>
-#include <dtDirectorNodes/loopaction.h>
-#include <dtDirectorNodes/animateactoraction.h>
-#include <dtDirectorNodes/sendmessageaction.h>
-#include <dtDirectorNodes/sendeventmessageaction.h>
 #include <dtDirectorNodes/logaction.h>
-#include <dtDirectorNodes/switchaction.h>
-#include <dtDirectorNodes/attachcameraaction.h>
-#include <dtDirectorNodes/attachmotionmodelaction.h>
-#include <dtDirectorNodes/createfpsmotionmodelaction.h>
+#include <dtDirectorNodes/loopaction.h>
+#include <dtDirectorNodes/normalizevectoraction.h>
+#include <dtDirectorNodes/operationaction.h>
+#include <dtDirectorNodes/outputnode.h>
+#include <dtDirectorNodes/quitapplicationaction.h>
+#include <dtDirectorNodes/referencescriptaction.h>
+#include <dtDirectorNodes/removearrayaction.h>
+#include <dtDirectorNodes/removearrayaction.h>
+#include <dtDirectorNodes/scheduleraction.h>
+#include <dtDirectorNodes/sendeventmessageaction.h>
+#include <dtDirectorNodes/sendmessageaction.h>
+#include <dtDirectorNodes/setactorpropertyaction.h>
+#include <dtDirectorNodes/setarrayaction.h>
+#include <dtDirectorNodes/setvalueaction.h>
 #include <dtDirectorNodes/spawnactoraction.h>
 #include <dtDirectorNodes/spawnprefabaction.h>
-#include <dtDirectorNodes/togglemotionmodelaction.h>
-#include <dtDirectorNodes/togglemousecursoraction.h>
-#include <dtDirectorNodes/getactororientationaction.h>
-#include <dtDirectorNodes/foreachaction.h>
-#include <dtDirectorNodes/foreachactoraction.h>
 #include <dtDirectorNodes/stringmanipulatoraction.h>
 #include <dtDirectorNodes/stringcomposeraction.h>
-#include <dtDirectorNodes/fpsmotionmodellisteneraction.h>
+#include <dtDirectorNodes/switchaction.h>
+#include <dtDirectorNodes/toggleaction.h>
+#include <dtDirectorNodes/togglemotionmodelaction.h>
+#include <dtDirectorNodes/togglemousecursoraction.h>
 
 // Mutators
+#include <dtDirectorNodes/andmutator.h>
 #include <dtDirectorNodes/addmutator.h>
-#include <dtDirectorNodes/subtractmutator.h>
-#include <dtDirectorNodes/multiplymutator.h>
-#include <dtDirectorNodes/dividemutator.h>
 #include <dtDirectorNodes/compareequalitymutator.h>
 #include <dtDirectorNodes/comparelessmutator.h>
 #include <dtDirectorNodes/comparegreatermutator.h>
+#include <dtDirectorNodes/dividemutator.h>
 #include <dtDirectorNodes/isnotmutator.h>
-#include <dtDirectorNodes/andmutator.h>
+#include <dtDirectorNodes/multiplymutator.h>
 #include <dtDirectorNodes/ormutator.h>
+#include <dtDirectorNodes/subtractmutator.h>
 
 // Values
 #include <dtDirectorNodes/actorarrayvalue.h>
@@ -103,6 +106,8 @@
 #include <dtDirectorNodes/externalvaluenode.h>
 #include <dtDirectorNodes/floatvalue.h>
 #include <dtDirectorNodes/intvalue.h>
+#include <dtDirectorNodes/ownervalue.h>
+#include <dtDirectorNodes/playervalue.h>
 #include <dtDirectorNodes/randomfloatvalue.h>
 #include <dtDirectorNodes/randomintvalue.h>
 #include <dtDirectorNodes/referencevalue.h>
@@ -115,8 +120,6 @@
 #include <dtDirectorNodes/vec3value.h>
 #include <dtDirectorNodes/vec4arrayvalue.h>
 #include <dtDirectorNodes/vec4value.h>
-#include <dtDirectorNodes/playervalue.h>
-#include <dtDirectorNodes/ownervalue.h>
 
 // Misc
 #include <dtDirector/groupnode.h>
@@ -186,6 +189,8 @@ namespace dtDirector
    RefPtr<NodeType> NodeLibraryRegistry::CREATE_FPS_MOTION_MODEL_ACTION_NODE_TYPE(new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE,"Create FPS Motion Model",   "Scene",       "Operations",  "Creates an FPS motion model.", NULL, Colors::BLUE));
    RefPtr<NodeType> NodeLibraryRegistry::ATTACH_CAMERA_ACTION_NODE_TYPE(         new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Attach Camera",             "Scene",       "Operations",  "Attach the applications camera to an actor.", NULL, Colors::BLUE));
    RefPtr<NodeType> NodeLibraryRegistry::ATTACH_MOTION_MODEL_ACTION_NODE_TYPE(   new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Attach Motion Model",       "Scene",       "Operations",  "Attach a motion model to an actor.", NULL, Colors::BLUE));
+   RefPtr<NodeType> NodeLibraryRegistry::CHANGE_MAP_NODE_TYPE(                   new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Change Map",                "Scene",       "Operations",  "Change the map set currently loaded by the GameManager.", NULL, Colors::BLUE));
+   RefPtr<NodeType> NodeLibraryRegistry::QUIT_APPLICATION_NODE_TYPE(             new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Quit Application",          "Scene",       "Operations",  "Tells the application to quit.", NULL, Colors::BLUE));
 
    RefPtr<NodeType> NodeLibraryRegistry::COMPARE_BOOL_ACTION_NODE_TYPE(          new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Compare Bool",              "General",     "Condition",   "Compares two bool values A and B.", NULL, Colors::BLUE));
    RefPtr<NodeType> NodeLibraryRegistry::COMPARE_VALUE_ACTION_NODE_TYPE(         new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Compare Value",             "General",     "Condition",   "Compares two numerical values A and B.", NULL, Colors::BLUE));
@@ -318,6 +323,8 @@ namespace dtDirector
       mNodeFactory->RegisterType<CreateFPSMotionModelAction>(CREATE_FPS_MOTION_MODEL_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<AttachCameraAction>(ATTACH_CAMERA_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<AttachMotionModelAction>(ATTACH_MOTION_MODEL_ACTION_NODE_TYPE.get());
+      mNodeFactory->RegisterType<ChangeMapAction>(CHANGE_MAP_NODE_TYPE.get());
+      mNodeFactory->RegisterType<QuitApplicationAction>(QUIT_APPLICATION_NODE_TYPE.get());
 
       mNodeFactory->RegisterType<CompareBoolAction>(COMPARE_BOOL_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<CompareValueAction>(COMPARE_VALUE_ACTION_NODE_TYPE.get());

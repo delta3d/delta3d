@@ -19,43 +19,25 @@
  * Author: Eric R. Heine
  */
 
-#ifndef setwidgetproperty_h__
-#define setwidgetproperty_h__
+#ifndef changemapaction_h__
+#define changemapaction_h__
 
 ////////////////////////////////////////////////////////////////////////////////
 
 #include <dtDirector/actionnode.h>
-#include <dtDirectorGUINodes/nodelibraryexport.h>
-
-namespace CEGUI
-{
-   class Window;
-}
+#include <dtDirectorNodes/nodelibraryexport.h>
 
 namespace dtDirector
 {
    ////////////////////////////////////////////////////////////////////////////////
-   class GUI_NODE_LIBRARY_EXPORT SetWidgetProperty : public ActionNode
+   class NODE_LIBRARY_EXPORT ChangeMapAction: public ActionNode
    {
    public:
 
       /**
        * Constructor.
        */
-      SetWidgetProperty();
-
-      /**
-       * Initializes the Node.
-       *
-       * @param[in]  nodeType  The node type.
-       * @param[in]  graph     The graph that owns this node.
-       */
-      virtual void Init(const NodeType& nodeType, DirectorGraph* graph);
-
-      /**
-       * Event handler called when a script has finished loading.
-       */
-      virtual void OnFinishedLoading();
+      ChangeMapAction();
 
       /**
        * This method is called in init, which instructs the node
@@ -84,52 +66,30 @@ namespace dtDirector
       virtual bool Update(float simDelta, float delta, int input, bool firstUpdate);
 
       /**
-       * Updates the display name of the node.
-       */
-      void UpdateName();
-
-      /**
-       * This event is called by value nodes that are linked via
-       * value links when that value has changed.
-       *
-       * @param[in]  linkName  The name of the value link that is changing.
-       */
-      virtual void OnLinkValueChanged(const std::string& linkName);
-
-      /**
        * Accessors for property values.
        */
-      void SetLayout(const std::string& value);
-      std::string GetLayout() const;
-      std::vector<std::string> GetLayoutList();
+      void SetMap(const std::string& value);
+      const std::string& GetMap();
 
-      void SetWidget(const std::string& value);
-      std::string GetWidget() const;
-      std::vector<std::string> GetWidgetList();
-      void RecurseWidgetList(std::vector<std::string>& widgetList, CEGUI::Window* parent);
-
-      void SetProperty(const std::string& value);
-      std::string GetProperty() const;
-
-      void SetValue(const std::string& value);
-      std::string GetValue() const;
+      /**
+       * Retrieves the display name for the node.
+       *
+       * @return  The display name of the node.
+       */
+      virtual const std::string& GetName();
 
    protected:
 
       /**
        * Destructor.
        */
-      ~SetWidgetProperty();
+      ~ChangeMapAction();
 
    private:
-
-      std::string mLayout;
-      std::string mWidget;
-      std::string mProperty;
-      std::string mValue;
+      std::string mMap;
    };
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#endif // setwidgetproperty_h__
+#endif // changemapaction_h__

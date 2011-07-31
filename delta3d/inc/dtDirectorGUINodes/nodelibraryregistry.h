@@ -47,6 +47,8 @@ namespace dtDirector
       static dtCore::RefPtr<dtDirector::NodeType> SET_WIDGET_TEXT_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> TOGGLE_GUI_CURSOR;
       static dtCore::RefPtr<dtDirector::NodeType> ACTIVATE_WIDGET_TYPE;
+      static dtCore::RefPtr<dtDirector::NodeType> GET_WIDGET_POSITION_NODE_TYPE;
+      static dtCore::RefPtr<dtDirector::NodeType> SET_WIDGET_POSITION_NODE_TYPE;
 
       /// Values
 

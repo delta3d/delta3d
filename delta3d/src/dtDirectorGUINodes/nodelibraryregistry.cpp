@@ -28,10 +28,12 @@
 
 // Actions
 #include <dtDirectorGUINodes/activatewidget.h>
+#include <dtDirectorGUINodes/getwidgetposition.h>
 #include <dtDirectorGUINodes/getwidgetproperty.h>
 #include <dtDirectorGUINodes/loadguischeme.h>
 #include <dtDirectorGUINodes/setguicursor.h>
 #include <dtDirectorGUINodes/setlayoutvisibility.h>
+#include <dtDirectorGUINodes/setwidgetposition.h>
 #include <dtDirectorGUINodes/setwidgetproperty.h>
 #include <dtDirectorGUINodes/setwidgettext.h>
 #include <dtDirectorGUINodes/toggleguicursor.h>
@@ -71,6 +73,8 @@ namespace dtDirector
    RefPtr<NodeType> NodeLibraryRegistry::SET_WIDGET_TEXT_NODE_TYPE(      new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Set Widget Text",       "GUI", "GUI", "Sets the text on a widget.",             NULL, Colors::BLUE2));
    RefPtr<NodeType> NodeLibraryRegistry::TOGGLE_GUI_CURSOR(              new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Toggle GUI Cursor",     "GUI", "GUI", "Shows/hides the GUI cursor.",            NULL, Colors::BLUE2));
    RefPtr<NodeType> NodeLibraryRegistry::ACTIVATE_WIDGET_TYPE(           new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Activate Widget",       "GUI", "GUI", "Activates a particular widget.",         NULL, Colors::BLUE2));
+   RefPtr<NodeType> NodeLibraryRegistry::GET_WIDGET_POSITION_NODE_TYPE(  new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Get Widget Position",   "GUI", "GUI", "Gets a widget's position.",              NULL, Colors::BLUE2));
+   RefPtr<NodeType> NodeLibraryRegistry::SET_WIDGET_POSITION_NODE_TYPE(  new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Set Widget Position",   "GUI", "GUI", "Sets a widget's position.",              NULL, Colors::BLUE2));
 
    // Values
 
@@ -107,6 +111,8 @@ namespace dtDirector
       mNodeFactory->RegisterType<SetWidgetText>(SET_WIDGET_TEXT_NODE_TYPE.get());
       mNodeFactory->RegisterType<ToggleGUICursor>(TOGGLE_GUI_CURSOR.get());
       mNodeFactory->RegisterType<ActivateWidget>(ACTIVATE_WIDGET_TYPE.get());
+      mNodeFactory->RegisterType<GetWidgetPosition>(GET_WIDGET_POSITION_NODE_TYPE.get());
+      mNodeFactory->RegisterType<SetWidgetPosition>(SET_WIDGET_POSITION_NODE_TYPE.get());
 
       // Values
    }
