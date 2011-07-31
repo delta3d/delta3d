@@ -194,7 +194,7 @@ namespace dtDirector
 
             UpdateName();
          }
-         else if (linkName == "Widget" || linkName == "Text")
+         else if (linkName == "Widget" || linkName == "Property" || linkName == "Value")
          {
             UpdateName();
          }
