@@ -38,6 +38,8 @@ namespace dtUtil
    class DT_UTIL_EXPORT LogFile
    {
    public:
+      static const std::string LogFile::LOG_DEFAULT_NAME;
+
       ///Change the name of the log file (defaults to "delta3d_log.html")
       static void SetFileName(const std::string& name);
 
@@ -51,8 +53,6 @@ namespace dtUtil
       ///Get the current HTML title string.
       static const std::string& GetTitle();
    };
-
-   extern const std::string LOG_DEFAULT_NAME;
 
    /**
     * Helps making logging a little easier.  However, if printf style
@@ -77,15 +77,15 @@ namespace dtUtil
 
    #define LOGN_ALWAYS(name, msg) LOGN(dtUtil::Log::LOG_ALWAYS, name, msg)
 
-   #define LOG_DEBUG(msg) LOGN_DEBUG(dtUtil::LOG_DEFAULT_NAME, msg)
+   #define LOG_DEBUG(msg) LOGN_DEBUG(dtUtil::LogFile::LOG_DEFAULT_NAME, msg)
 
-   #define LOG_INFO(msg) LOGN_INFO(dtUtil::LOG_DEFAULT_NAME, msg)
+   #define LOG_INFO(msg) LOGN_INFO(dtUtil::LogFile::LOG_DEFAULT_NAME, msg)
 
-   #define LOG_WARNING(msg) LOGN_WARNING(dtUtil::LOG_DEFAULT_NAME, msg)
+   #define LOG_WARNING(msg) LOGN_WARNING(dtUtil::LogFile::LOG_DEFAULT_NAME, msg)
 
-   #define LOG_ERROR(msg) LOGN_ERROR(dtUtil::LOG_DEFAULT_NAME, msg)
+   #define LOG_ERROR(msg) LOGN_ERROR(dtUtil::LogFile::LOG_DEFAULT_NAME, msg)
 
-   #define LOG_ALWAYS(msg) LOGN_ALWAYS(dtUtil::LOG_DEFAULT_NAME, msg)
+   #define LOG_ALWAYS(msg) LOGN_ALWAYS(dtUtil::LogFile::LOG_DEFAULT_NAME, msg)
 
    struct LogImpl;
 
@@ -208,7 +208,7 @@ namespace dtUtil
        * Retrieve singleton instance of the log class for a give string name.
        * @param name logger name
        */
-      static Log& GetInstance(const std::string& name = LOG_DEFAULT_NAME);
+      static Log& GetInstance(const std::string& name = LogFile::LOG_DEFAULT_NAME);
 
       ///Sets the default LogMessageType for new logs
       static void SetDefaultLogLevel(LogMessageType newLevel);
