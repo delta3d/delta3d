@@ -25,12 +25,12 @@ namespace dtUtil
    template<class _Key, class _HashFcn, class _LessKey>
    struct HashCompare
    {
-      size_t operator() (const _Key& k)
+      size_t operator() (const _Key& k) const
       {
-         _HashFcn h
+         _HashFcn h;
          return h(k);
       }
-      bool operator() (const _Key& k1, const _Key& k2)
+      bool operator() (const _Key& k1, const _Key& k2) const
       {
          _LessKey l;
          return l(k1, k2);
