@@ -35,6 +35,13 @@ namespace dtUtil
          _LessKey l;
          return l(k1, k2);
       }
+      
+      enum
+		{	// parameters for hash table
+		bucket_size = 4,	// 0 < bucket_size
+		min_buckets = 8
+      };	// min_buckets = 2 ^^ N, 0 < N
+
    };
 #elif defined(__GNUG__)
    template<class _Key, class _LessKey>
