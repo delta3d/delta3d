@@ -20,6 +20,7 @@ SET(LIB_PUBLIC_HEADERS
     ${HEADER_PATH}/setwidgetposition.h
     ${HEADER_PATH}/setwidgetproperty.h
     ${HEADER_PATH}/setwidgettext.h
+    ${HEADER_PATH}/setwidgetvisibility.h
     ${HEADER_PATH}/toggleguicursor.h
    )
 
@@ -37,6 +38,7 @@ SET(LIB_SOURCES
     ${SOURCE_PATH}/setwidgetposition.cpp
     ${SOURCE_PATH}/setwidgetproperty.cpp
     ${SOURCE_PATH}/setwidgettext.cpp
+    ${SOURCE_PATH}/setwidgetvisibility.cpp
     ${SOURCE_PATH}/toggleguicursor.cpp
    )
 

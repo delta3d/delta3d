@@ -49,6 +49,7 @@ namespace dtDirector
       static dtCore::RefPtr<dtDirector::NodeType> ACTIVATE_WIDGET_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> GET_WIDGET_POSITION_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> SET_WIDGET_POSITION_NODE_TYPE;
+      static dtCore::RefPtr<dtDirector::NodeType> SET_WIDGET_VISIBILITY_NODE_TYPE;
 
       /// Values
 
