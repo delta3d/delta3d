@@ -36,6 +36,7 @@
 #include <dtDirectorGUINodes/setwidgetposition.h>
 #include <dtDirectorGUINodes/setwidgetproperty.h>
 #include <dtDirectorGUINodes/setwidgettext.h>
+#include <dtDirectorGUINodes/setwidgetvisibility.h>
 #include <dtDirectorGUINodes/toggleguicursor.h>
 
 // Values
@@ -75,6 +76,7 @@ namespace dtDirector
    RefPtr<NodeType> NodeLibraryRegistry::ACTIVATE_WIDGET_TYPE(           new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Activate Widget",       "GUI", "GUI", "Activates a particular widget.",         NULL, Colors::BLUE2));
    RefPtr<NodeType> NodeLibraryRegistry::GET_WIDGET_POSITION_NODE_TYPE(  new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Get Widget Position",   "GUI", "GUI", "Gets a widget's position.",              NULL, Colors::BLUE2));
    RefPtr<NodeType> NodeLibraryRegistry::SET_WIDGET_POSITION_NODE_TYPE(  new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Set Widget Position",   "GUI", "GUI", "Sets a widget's position.",              NULL, Colors::BLUE2));
+   RefPtr<NodeType> NodeLibraryRegistry::SET_WIDGET_VISIBILITY_NODE_TYPE(new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Set Widget Visibility", "GUI", "GUI", "Show/hide a widget.",                    NULL, Colors::BLUE2));
 
    // Values
 
@@ -113,6 +115,7 @@ namespace dtDirector
       mNodeFactory->RegisterType<ActivateWidget>(ACTIVATE_WIDGET_TYPE.get());
       mNodeFactory->RegisterType<GetWidgetPosition>(GET_WIDGET_POSITION_NODE_TYPE.get());
       mNodeFactory->RegisterType<SetWidgetPosition>(SET_WIDGET_POSITION_NODE_TYPE.get());
+      mNodeFactory->RegisterType<SetWidgetVisibility>(SET_WIDGET_VISIBILITY_NODE_TYPE.get());
 
       // Values
    }
