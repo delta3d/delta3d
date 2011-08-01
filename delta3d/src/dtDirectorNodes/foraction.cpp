@@ -31,6 +31,9 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    ForAction::ForAction()
       : ActionNode()
+      , mStartIndex(0)
+      , mEndIndex(0)
+      , mCurrentIndex(0)
    {
       AddAuthor("Eric R. Heine");
    }
