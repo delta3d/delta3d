@@ -30,7 +30,7 @@
 #include <dtCore/observerptr.h>
 #include <osg/Node>
 
-#include <map>
+#include <dtUtil/hashmap.h>
 #include <vector>
 #include <string>
 
@@ -397,12 +397,14 @@ namespace dtCore
          ///Count of the total number of shaders in the shader manager.
          unsigned int mTotalShaderCount;
 
+         typedef dtUtil::HashMap<std::string, dtCore::RefPtr<ShaderGroup> > ShaderGroupListType;
          ///List of the shader groups currently loaded by the manager.
-         std::map<std::string, dtCore::RefPtr<ShaderGroup> > mShaderGroups;
+         ShaderGroupListType mShaderGroups;
 
+         typedef dtUtil::HashMap<std::string, ShaderCacheEntry> ShaderProgramListType;
          ///Shader program cache which stores compiled shader programs that may
          ///be shared amongst the loaded shaders.
-         std::map<std::string, ShaderCacheEntry> mShaderProgramCache;
+         ShaderProgramListType mShaderProgramCache;
 
          // list of all the actively assigned nodes.  Each active entry has a ref to its instance 
          // of the shader as well as a weak reference to the node itself.  

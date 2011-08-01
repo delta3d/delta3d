@@ -42,7 +42,7 @@ namespace dtCore
    ///////////////////////////////////////////////////////////////////////////////
    void ShaderGroup::AddShader(ShaderProgram &shader, bool isDefault)
    {
-      std::map<std::string,dtCore::RefPtr<ShaderProgram> >::iterator itor =
+      ShaderListType::iterator itor =
          mShaders.find(shader.GetName());
 
       if (itor != mShaders.end())
@@ -57,7 +57,7 @@ namespace dtCore
    ///////////////////////////////////////////////////////////////////////////////
    void ShaderGroup::RemoveShader(ShaderProgram &shader)
    {
-      std::map<std::string,dtCore::RefPtr<ShaderProgram> >::iterator itor =
+      ShaderListType::iterator itor =
          mShaders.find(shader.GetName());
 
       if (itor == mShaders.end())
@@ -84,7 +84,7 @@ namespace dtCore
    ///////////////////////////////////////////////////////////////////////////////
    void ShaderGroup::RemoveShader(const std::string &shaderName)
    {
-      std::map<std::string,dtCore::RefPtr<ShaderProgram> >::iterator itor =
+      ShaderListType::iterator itor =
          mShaders.find(shaderName);
       RemoveShader(*(itor->second));
    }
@@ -92,7 +92,7 @@ namespace dtCore
    ///////////////////////////////////////////////////////////////////////////////
    ShaderProgram *ShaderGroup::FindShader(const std::string &name)
    {
-      std::map<std::string,dtCore::RefPtr<ShaderProgram> >::iterator itor =
+      ShaderListType::iterator itor =
          mShaders.find(name);
 
       if (itor != mShaders.end())
@@ -104,7 +104,7 @@ namespace dtCore
    ///////////////////////////////////////////////////////////////////////////////
    const ShaderProgram *ShaderGroup::FindShader(const std::string &name) const
    {
-      std::map<std::string,dtCore::RefPtr<ShaderProgram> >::const_iterator itor =
+      ShaderListType::const_iterator itor =
          mShaders.find(name);
 
       if (itor != mShaders.end())
@@ -121,7 +121,7 @@ namespace dtCore
       if (mShaders.empty())
          return;
 
-      std::map<std::string,dtCore::RefPtr<ShaderProgram> >::iterator itor;
+      ShaderListType::iterator itor;
       toFill.reserve(mShaders.size());
       for (itor=mShaders.begin(); itor!=mShaders.end(); ++itor)
          toFill.push_back(itor->second);
@@ -130,7 +130,7 @@ namespace dtCore
    ///////////////////////////////////////////////////////////////////////////////
    void ShaderGroup::Update()
    {
-      std::map<std::string,dtCore::RefPtr<ShaderProgram> >::iterator itor;
+      ShaderListType::iterator itor;
       for (itor=mShaders.begin(); itor!= mShaders.end(); ++itor)
       {
          if (itor->second->IsDirty())

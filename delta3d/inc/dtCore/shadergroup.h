@@ -27,7 +27,7 @@
 #include <dtCore/refptr.h>
 #include <osg/Referenced>
 
-#include <map>
+#include <dtUtil/assocvector.h>
 #include <vector>
 
 namespace dtCore
@@ -154,7 +154,9 @@ namespace dtCore
       private:
          std::string mName;
          bool mIsDirty;
-         std::map<std::string,dtCore::RefPtr<ShaderProgram> > mShaders;
+         // This one is not a hash map because the order matters when it comes to the default, at least sort of.
+         typedef dtUtil::AssocVector<std::string, dtCore::RefPtr<ShaderProgram> > ShaderListType;
+         ShaderListType mShaders;
          dtCore::RefPtr<ShaderProgram> mDefaultShader;
    };
 }

@@ -26,6 +26,7 @@
 
 #include <dtGame/export.h>
 #include <dtGame/actorcomponentcontainer.h>
+#include <dtUtil/assocvector.h>
 
 namespace dtGame
 {
@@ -43,7 +44,7 @@ namespace dtGame
    public:
 
       /** a map from component type strings to components */
-      typedef std::map<ActorComponent::ACType, dtCore::RefPtr<ActorComponent> > ActorComponentMap;
+      typedef dtUtil::AssocVector<ActorComponent::ACType, dtCore::RefPtr<ActorComponent> > ActorComponentMap;
 
       //CTOR
       ActorComponentBase();

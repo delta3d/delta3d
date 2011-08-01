@@ -26,8 +26,9 @@
 //////////////////////////////////////////////////////////////////////
 
 #include <string>
-
 #include <iosfwd>
+
+#include <dtUtil/hash.h>
 
 #include <dtCore/export.h>
 
@@ -84,5 +85,16 @@ namespace dtCore
    DT_CORE_EXPORT dtUtil::DataStream& operator >> (dtUtil::DataStream& ds, UniqueId& id);
 
 } // namespace dtCore
+
+namespace dtUtil
+{
+   template<>
+   struct hash<dtCore::UniqueId>
+   {
+     size_t operator()(const dtCore::UniqueId& id) const
+     { return dtUtil::__hash_string(id.ToString().c_str()); }
+   };
+
+} // namespace dtUtil
 
 #endif // DELTA_UNIQUEID

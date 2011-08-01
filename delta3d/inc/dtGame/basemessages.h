@@ -90,7 +90,7 @@ namespace dtGame
       protected:
          /// Destructor
          virtual ~MapMessage() { }
-         dtCore::RefPtr<GroupMessageParameter> mMapNames;
+         dtCore::RefPtr<ArrayMessageParameter> mMapNames;
    };
 
    class DT_GAME_EXPORT GameEventMessage : public Message

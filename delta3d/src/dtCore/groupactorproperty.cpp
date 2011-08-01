@@ -67,7 +67,14 @@ namespace dtCore
    ////////////////////////////////////////////////////////////////////////////
    void GroupActorProperty::SetValue(const NamedGroupParameter& value)
    {
-      !IsReadOnly() ? mSetPropFunctor(value) : LOG_WARNING("SetValue has been called on a property that is read only.");
+      if (!IsReadOnly())
+      {
+         mSetPropFunctor(value);
+      }
+      else
+      {
+         LOG_WARNING("SetValue has been called on a property that is read only.");
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////

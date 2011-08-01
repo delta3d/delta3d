@@ -34,7 +34,7 @@
 #include <cstdarg>
 //#include <cstdio>
 #include <ctime>
-#include <map>
+#include <dtUtil/hashmap.h>
 
 namespace dtUtil
 {
@@ -84,7 +84,7 @@ namespace dtUtil
       ////////////////////////////////////////////////////////////////
       Log* GetInstance(const std::string& name)
       {
-         std::map<std::string, dtCore::RefPtr<Log> >::iterator i = mInstances.find(name);
+         dtUtil::HashMap<std::string, dtCore::RefPtr<Log> >::iterator i = mInstances.find(name);
          if (i == mInstances.end())
          {
             return NULL;
@@ -95,7 +95,7 @@ namespace dtUtil
       ////////////////////////////////////////////////////////////////
       void SetAllLogLevels(const Log::LogMessageType &newLevel)
       {
-         std::map<std::string, dtCore::RefPtr<Log> >::iterator i, iend;
+         dtUtil::HashMap<std::string, dtCore::RefPtr<Log> >::iterator i, iend;
 
          i = mInstances.begin();
          iend = mInstances.end();
@@ -109,7 +109,7 @@ namespace dtUtil
 
       OpenThreads::Mutex mMutex;
    private:
-      std::map<std::string, dtCore::RefPtr<Log> > mInstances;
+      dtUtil::HashMap<std::string, dtCore::RefPtr<Log> > mInstances;
    };
 
    ////////////////////////////////////////////////////////////////////
@@ -163,15 +163,13 @@ namespace dtUtil
       {
       }
 
-      static const std::string mDefaultName;
-
       unsigned int mOutputStreamBit; ///<the current output stream option
       std::string mName;
       Log::LogMessageType mLevel;
       Log::LogObserverContainer mObservers;
    };
 
-   const std::string LogImpl::mDefaultName("");
+   DT_UTIL_EXPORT const std::string LOG_DEFAULT_NAME("");
    //////////////////////////////////////////////////////////////////////////
    //////////////////////////////////////////////////////////////////////////
 
@@ -305,19 +303,6 @@ namespace dtUtil
       {
          LOG_MANAGER->mLogObserverFile->LogHorizRule();
       }
-   }
-
-   //////////////////////////////////////////////////////////////////////////
-   Log& Log::GetInstance()
-   {
-      static Log* kDefaultLog = NULL;
-
-      if (kDefaultLog == NULL)
-      {
-         kDefaultLog = &GetInstance(LogImpl::mDefaultName);
-      }
-
-      return *kDefaultLog;
    }
 
    //////////////////////////////////////////////////////////////////////////

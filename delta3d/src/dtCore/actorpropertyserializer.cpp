@@ -1488,7 +1488,7 @@ namespace dtCore
    ////////////////////////////////////////////////////////////////////////////////
    void ActorPropertySerializer::EnterPropertyContainer()
    {
-      SerializerRuntimeData& data = Top();
+      //SerializerRuntimeData& data = Top();
 
       dtCore::ActorProperty* actorProperty = GetNestedProperty();
 
@@ -1533,7 +1533,7 @@ namespace dtCore
          return;
       }
 
-      SerializerRuntimeData& data = Top();
+      //SerializerRuntimeData& data = Top();
 
       //arrayProp = dynamic_cast<ArrayActorPropertyBase*>(GetNestedProperty());
       //if (!arrayProp)
@@ -1612,7 +1612,7 @@ namespace dtCore
          return;
       }
 
-      SerializerRuntimeData& data = Top();
+      //SerializerRuntimeData& data = Top();
 
       // Find the property we want to edit based on how deep the container is nested.
       //containerProp = dynamic_cast<ContainerActorProperty*>(GetNestedProperty());

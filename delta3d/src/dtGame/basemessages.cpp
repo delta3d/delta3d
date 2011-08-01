@@ -77,28 +77,27 @@ namespace dtGame
    class InsertStringParameterFunc
    {
       public:
-         InsertStringParameterFunc(GroupMessageParameter& param):
+         InsertStringParameterFunc(ArrayMessageParameter& param):
             mCount(0),
-            mGroupParam(param)
+            mArrayParam(param)
          {
          }
 
          void operator() (const std::string& str)
          {
-            std::string name;
-            dtUtil::MakeIndexString(mCount, name);
-            mGroupParam.AddParameter(*new StringMessageParameter(name, str));
+            static const dtUtil::RefString name("map");
+            mArrayParam.AddParameter(*new StringMessageParameter(name, str));
             ++mCount;
          }
 
          int mCount;
-         GroupMessageParameter& mGroupParam;
+         ArrayMessageParameter& mArrayParam;
    };
    //////////////////////////////////////////////////////////////////////////////
    /// Constructor
    MapMessage::MapMessage() : Message()
    {
-      mMapNames = new GroupMessageParameter(PARAM_MAP_NAMES); 
+      mMapNames = new ArrayMessageParameter(PARAM_MAP_NAMES);
       AddParameter(mMapNames.get());
    }
 
@@ -106,7 +105,7 @@ namespace dtGame
    void MapMessage::GetMapNames(std::vector<std::string>& toFill) const
    {  
       toFill.clear();
-      toFill.reserve(mMapNames->GetParameterCount());
+      toFill.reserve(mMapNames->GetSize());
       GetStringParameterFunc parameterFunc(toFill);
       mMapNames->ForEachParameter(parameterFunc);
    }

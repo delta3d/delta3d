@@ -70,6 +70,12 @@ namespace dtCore
 
          virtual bool operator==(const NamedParameter& toCompare) const;
 
+         template <class UnaryFunction>
+         void ForEachParameter(UnaryFunction function) const
+         {
+            std::for_each(mParameterList.begin(), mParameterList.end(), function);
+         }
+
       protected:
          NamedArrayParameter(DataType& dataType, const dtUtil::RefString& name);
          virtual ~NamedArrayParameter();

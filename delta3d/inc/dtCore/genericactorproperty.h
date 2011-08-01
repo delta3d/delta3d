@@ -98,7 +98,14 @@ namespace dtCore
        */
       void SetValue(SetType value)
       {
-         !IsReadOnly() ? SetPropFunctor(value) : LOG_WARNING("SetValue has been called on a property that is read only.");
+         if (!IsReadOnly())
+         {
+            SetPropFunctor(value);
+         }
+         else
+         {
+            LOG_WARNING("SetValue has been called on a property that is read only.");
+         }
       }
 
       /**

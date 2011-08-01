@@ -3,6 +3,15 @@
 #include <ostream>
 #ifdef __GNUG__
 #  include <ext/hash_set>
+namespace __gnu_cxx
+{
+   template<>
+     struct hash<std::string>
+     {
+      size_t operator()(const std::string& string) const
+        { return __gnu_cxx::__stl_hash_string(string.c_str()); }
+     };
+}
 #elif defined(_MSC_VER)
 #  include <hash_set>
 #else
@@ -27,13 +36,7 @@ namespace dtUtil
 #endif
 
 #ifdef __GNUG__
-   struct hashString
-   {
-     size_t operator()(const std::string& string) const
-       { return __gnu_cxx::__stl_hash_string(string.c_str()); }
-   };
-
-   static __gnu_cxx::hash_set<std::string, hashString> StringSet(3000);
+   static __gnu_cxx::hash_set<std::string> StringSet(3000);
 #elif defined(_MSC_VER)
    static stdext::hash_set<std::string> StringSet;
 #else

@@ -22,7 +22,6 @@
 #ifndef DELTA_MESSAGE
 #define DELTA_MESSAGE
 
-#include <map>
 #include <climits>
 #include <dtUtil/exception.h>
 #include <dtUtil/typetraits.h>
@@ -31,6 +30,8 @@
 #include <dtGame/export.h>
 #include <dtGame/machineinfo.h>
 #include <dtGame/messageparameter.h>
+
+#include <dtUtil/assocvector.h>
 
 namespace dtUtil
 {
@@ -218,7 +219,8 @@ namespace dtGame
          dtCore::RefPtr<const MachineInfo> mDestination;
          dtCore::UniqueId mSendingActorId, mAboutActorId;
          
-         std::map<std::string,dtCore::RefPtr<MessageParameter> > mParameterList;
+         typedef dtUtil::AssocVector<std::string,dtCore::RefPtr<MessageParameter> > ParameterListType;
+         ParameterListType mParameterList;
          
          dtCore::RefPtr<const Message> mCausingMessage;
    };
