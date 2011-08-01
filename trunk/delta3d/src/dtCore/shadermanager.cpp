@@ -142,7 +142,7 @@ namespace dtCore
    /////////////////////////////////////////////////////////////////////////////
    void ShaderManager::AddShaderGroupPrototype(ShaderGroup& shaderGroup)
    {
-      std::map<std::string,dtCore::RefPtr<ShaderGroup> >::iterator itor =
+      ShaderGroupListType::iterator itor =
          mShaderGroups.find(shaderGroup.GetName());
 
       //Do not allow shader groups with the same name...
@@ -170,7 +170,7 @@ namespace dtCore
    ///////////////////////////////////////////////////////////////////////////////
    void ShaderManager::RemoveShaderGroupPrototype(const std::string& name)
    {
-      std::map<std::string,dtCore::RefPtr<ShaderGroup> >::iterator itor =
+      ShaderGroupListType::iterator itor =
          mShaderGroups.find(name);
 
       mTotalShaderCount -= itor->second->GetNumShaders();
@@ -186,7 +186,7 @@ namespace dtCore
    /////////////////////////////////////////////////////////////////////////////
    const ShaderGroup *ShaderManager::FindShaderGroupPrototype(const std::string& name) const
    {
-      std::map<std::string,dtCore::RefPtr<ShaderGroup> >::const_iterator itor =
+      ShaderGroupListType::const_iterator itor =
             mShaderGroups.find(name);
 
       if (itor != mShaderGroups.end())
@@ -202,7 +202,7 @@ namespace dtCore
    /////////////////////////////////////////////////////////////////////////////
    ShaderGroup *ShaderManager::FindShaderGroupPrototype(const std::string& name)
    {
-      std::map<std::string,dtCore::RefPtr<ShaderGroup> >::iterator itor =
+      ShaderGroupListType::iterator itor =
             mShaderGroups.find(name);
 
       if (itor != mShaderGroups.end())
@@ -218,7 +218,7 @@ namespace dtCore
    /////////////////////////////////////////////////////////////////////////////
    void ShaderManager::GetAllShaderGroupPrototypes(std::vector<dtCore::RefPtr<ShaderGroup> >& toFill)
    {
-      std::map<std::string,dtCore::RefPtr<ShaderGroup> >::iterator itor;
+      ShaderGroupListType::iterator itor;
 
       toFill.clear();
       toFill.reserve(mShaderGroups.size());
@@ -245,7 +245,7 @@ namespace dtCore
    const ShaderProgram* ShaderManager::InternalFindShader(const std::string& shaderName,
          const std::string& groupName) const
    {
-      std::map<std::string,dtCore::RefPtr<ShaderGroup> >::const_iterator itor;
+      ShaderGroupListType::const_iterator itor;
 
       if (!groupName.empty())
       {
@@ -401,7 +401,7 @@ namespace dtCore
 
       std::string cacheKey = shader.GetGeometryCacheKey() + ":" + shader.GetVertexCacheKey() + ":" + shader.GetFragmentCacheKey();
 
-      std::map<std::string,ShaderCacheEntry>::iterator itor =
+      ShaderProgramListType::iterator itor =
          mShaderProgramCache.find(cacheKey);
 
       //If we found the cache entry, the the shader uses the same programs,
@@ -497,7 +497,7 @@ namespace dtCore
       LOG_WARNING("Attempting to reload ALL Shaders using file[" + fileName + "]. This is a test behavior and may result in artifacts or changes in the scene.");
 
       std::vector<ActiveNodeEntry> mCopiedNodeList;
-      std::map<std::string,dtCore::RefPtr<ShaderGroup> >::const_iterator groupItor;
+      ShaderGroupListType::const_iterator groupItor;
 
       // Loop through our active nodes and make a copy of each one.
       for (int i = mActiveNodeList.size() - 1; i >= 0; i--)

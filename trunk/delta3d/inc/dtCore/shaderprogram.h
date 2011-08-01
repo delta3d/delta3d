@@ -30,7 +30,7 @@
 #include <osg/Shader>
 
 #include <string>
-#include <map>
+#include <dtUtil/assocvector.h>
 
 namespace dtCore
 {
@@ -284,7 +284,8 @@ namespace dtCore
 
       //List of parameters attached to this shader.  Parameters could be texture handles,
       //floats, ints, or special parameters like simulation time, or simulation delta time.
-      std::map<std::string,dtCore::RefPtr<ShaderParameter> > mParameters;
+      typedef dtUtil::AssocVector<std::string,dtCore::RefPtr<ShaderParameter> > ParameterListType;
+      ParameterListType mParameters;
 
       // Note - removed mParentGroup since it was only used when you mark a shader dirty.  Since 
       // a template shader can never be marked dirty and an instanced Shader doesn't need a parent group, 

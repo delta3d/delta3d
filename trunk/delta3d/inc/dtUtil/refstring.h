@@ -1,6 +1,7 @@
 #ifndef DELTA_REFSTRING
 #define DELTA_REFSTRING
 #include <dtUtil/export.h>
+#include <dtUtil/hash.h>
 
 #include <string>
 #include <iosfwd>
@@ -80,6 +81,20 @@ namespace dtUtil
    }
 
    DT_UTIL_EXPORT std::ostream& operator<<(std::ostream& stream, const RefString& rs);
+
+   template<>
+   struct hash<const dtUtil::RefString>
+   {
+     size_t operator()(const dtUtil::RefString& string) const
+     { return dtUtil::__hash_string(string.c_str()); }
+   };
+
+   template<>
+   struct hash<dtUtil::RefString>
+   {
+     size_t operator()(const dtUtil::RefString& string) const
+     { return dtUtil::__hash_string(string.c_str()); }
+   };
 }
 
 #endif /*REFSTRING_H_*/

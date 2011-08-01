@@ -99,7 +99,7 @@ namespace dtCore
    ///////////////////////////////////////////////////////////////////////////////
    void ShaderProgram::AddParameter(ShaderParameter& newParam)
    {
-      std::map<std::string,dtCore::RefPtr<ShaderParameter> >::iterator itor =
+      ParameterListType::iterator itor =
          mParameters.find(newParam.GetName());
 
       if (itor != mParameters.end())
@@ -114,7 +114,7 @@ namespace dtCore
    ///////////////////////////////////////////////////////////////////////////////
    void ShaderProgram::RemoveParameter(ShaderParameter& param)
    {
-      std::map<std::string, dtCore::RefPtr<ShaderParameter> >::iterator itor =
+      ParameterListType::iterator itor =
          mParameters.find(param.GetName());
 
       if (itor == mParameters.end())
@@ -132,7 +132,7 @@ namespace dtCore
    ///////////////////////////////////////////////////////////////////////////////
    void ShaderProgram::RemoveParameter(const std::string& name)
    {
-      std::map<std::string,dtCore::RefPtr<ShaderParameter> >::iterator itor =
+      ParameterListType::iterator itor =
          mParameters.find(name);
 
       if (itor == mParameters.end())
@@ -150,7 +150,7 @@ namespace dtCore
    ///////////////////////////////////////////////////////////////////////////////
    const ShaderParameter *ShaderProgram::FindParameter(const std::string& name) const
    {
-      std::map<std::string,dtCore::RefPtr<ShaderParameter> >::const_iterator itor =
+      ParameterListType::const_iterator itor =
          mParameters.find(name);
 
       if (itor != mParameters.end())
@@ -166,7 +166,7 @@ namespace dtCore
    ///////////////////////////////////////////////////////////////////////////////
    ShaderParameter* ShaderProgram::FindParameter(const std::string& name)
    {
-      std::map<std::string,dtCore::RefPtr<ShaderParameter> >::iterator itor =
+      ParameterListType::iterator itor =
          mParameters.find(name);
 
       if (itor != mParameters.end())
@@ -182,7 +182,7 @@ namespace dtCore
    ///////////////////////////////////////////////////////////////////////////////
    void ShaderProgram::GetParameterList(std::vector<dtCore::RefPtr<ShaderParameter> >& toFill) const
    {
-      std::map<std::string,dtCore::RefPtr<ShaderParameter> >::const_iterator itor;
+      ParameterListType::const_iterator itor;
 
       toFill.clear();
       for (itor=mParameters.begin(); itor!=mParameters.end(); ++itor)
@@ -268,7 +268,7 @@ namespace dtCore
    ///////////////////////////////////////////////////////////////////////////////
    void ShaderProgram::Update()
    {
-      std::map<std::string,dtCore::RefPtr<ShaderParameter> >::iterator itor;
+      ParameterListType::iterator itor;
 
       for (itor=mParameters.begin(); itor!=mParameters.end(); ++itor)
       {
@@ -305,7 +305,7 @@ namespace dtCore
       newShader->mFragmentCacheKey = mFragmentCacheKey;
 
       // copy all of the parameters. 
-      std::map<std::string,dtCore::RefPtr<ShaderParameter> >::const_iterator paramItor;
+      ParameterListType::const_iterator paramItor;
       for (paramItor=mParameters.begin(); paramItor!=mParameters.end(); ++paramItor)
       {
          dtCore::ShaderParameter *newParam = paramItor->second->Clone();

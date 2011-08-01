@@ -52,41 +52,40 @@ namespace dtUtil
       static const std::string& GetTitle();
    };
 
+   extern const std::string LOG_DEFAULT_NAME;
+
    /**
     * Helps making logging a little easier.  However, if printf style
     *   logging is desired, you cannot use this macro.
     */
    #define DT_LOG_SOURCE __FILE__, __FUNCTION__, __LINE__
 
-   #define LOG_DEBUG(msg)\
-      dtUtil::Log::GetInstance().LogMessage(DT_LOG_SOURCE, msg, dtUtil::Log::LOG_DEBUG);
+   #define LOGN(level, name, msg) \
+   {\
+      dtUtil::Log& _logger = dtUtil::Log::GetInstance(name); \
+      if (_logger.IsLevelEnabled(level)) \
+         _logger.LogMessage(DT_LOG_SOURCE, msg, level); \
+   }\
 
-   #define LOG_INFO(msg)\
-      dtUtil::Log::GetInstance().LogMessage(DT_LOG_SOURCE, msg, dtUtil::Log::LOG_INFO);
+   #define LOGN_DEBUG(name, msg) LOGN(dtUtil::Log::LOG_DEBUG, name, msg)
 
-   #define LOG_WARNING(msg)\
-      dtUtil::Log::GetInstance().LogMessage(DT_LOG_SOURCE, msg, dtUtil::Log::LOG_WARNING);
+   #define LOGN_INFO(name, msg) LOGN(dtUtil::Log::LOG_INFO, name, msg)
 
-   #define LOG_ERROR(msg)\
-      dtUtil::Log::GetInstance().LogMessage(DT_LOG_SOURCE, msg, dtUtil::Log::LOG_ERROR);
+   #define LOGN_WARNING(name, msg) LOGN(dtUtil::Log::LOG_WARNING, name, msg)
 
-   #define LOG_ALWAYS(msg)\
-      dtUtil::Log::GetInstance().LogMessage(DT_LOG_SOURCE, msg, dtUtil::Log::LOG_ALWAYS);
+   #define LOGN_ERROR(name, msg) LOGN(dtUtil::Log::LOG_ERROR, name, msg)
 
-   #define LOGN_DEBUG(name, msg)\
-      dtUtil::Log::GetInstance(name).LogMessage(DT_LOG_SOURCE, msg, dtUtil::Log::LOG_DEBUG);
+   #define LOGN_ALWAYS(name, msg) LOGN(dtUtil::Log::LOG_ALWAYS, name, msg)
 
-   #define LOGN_INFO(name, msg)\
-      dtUtil::Log::GetInstance(name).LogMessage(DT_LOG_SOURCE, msg, dtUtil::Log::LOG_INFO);
+   #define LOG_DEBUG(msg) LOGN_DEBUG(dtUtil::LOG_DEFAULT_NAME, msg)
 
-   #define LOGN_WARNING(name, msg)\
-      dtUtil::Log::GetInstance(name).LogMessage(DT_LOG_SOURCE, msg, dtUtil::Log::LOG_WARNING);
+   #define LOG_INFO(msg) LOGN_INFO(dtUtil::LOG_DEFAULT_NAME, msg)
 
-   #define LOGN_ERROR(name, msg)\
-      dtUtil::Log::GetInstance(name).LogMessage(DT_LOG_SOURCE, msg, dtUtil::Log::LOG_ERROR);
+   #define LOG_WARNING(msg) LOGN_WARNING(dtUtil::LOG_DEFAULT_NAME, msg)
 
-   #define LOGN_ALWAYS(name, msg)\
-      dtUtil::Log::GetInstance(name).LogMessage(DT_LOG_SOURCE, msg, dtUtil::Log::LOG_ALWAYS);
+   #define LOG_ERROR(msg) LOGN_ERROR(dtUtil::LOG_DEFAULT_NAME, msg)
+
+   #define LOG_ALWAYS(msg) LOGN_ALWAYS(dtUtil::LOG_DEFAULT_NAME, msg)
 
    struct LogImpl;
 
@@ -206,15 +205,10 @@ namespace dtUtil
       static LogMessageType GetLogLevelForString(const std::string& levelString);
 
       /*
-       * Retrieve the default singleton instance of the log class.
-       */
-      static Log& GetInstance();
-
-      /*
        * Retrieve singleton instance of the log class for a give string name.
        * @param name logger name
        */
-      static Log& GetInstance(const std::string& name);
+      static Log& GetInstance(const std::string& name = LOG_DEFAULT_NAME);
 
       ///Sets the default LogMessageType for new logs
       static void SetDefaultLogLevel(LogMessageType newLevel);

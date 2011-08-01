@@ -24,6 +24,7 @@
 #include <queue>
 #include <set>
 #include <list>
+#include <map>
 
 #include <dtCore/uniqueid.h>
 #include <dtCore/timer.h>
@@ -38,6 +39,7 @@
 #include <dtGame/environmentactor.h>
 #include <dtCore/scene.h>
 
+#include <dtUtil/hashmap.h>
 
 
 namespace dtCore
@@ -108,8 +110,8 @@ namespace dtGame
        */
       void SendEnvironmentChangedMessage(GameManager& gm, IEnvGameActorProxy* envActor);
 
-      typedef std::map< dtCore::UniqueId, dtCore::RefPtr<GameActorProxy> > GameActorMap;
-      typedef std::map< dtCore::UniqueId, dtCore::RefPtr<dtCore::BaseActorObject> > ActorMap;
+      typedef dtUtil::HashMap< dtCore::UniqueId, dtCore::RefPtr<GameActorProxy> > GameActorMap;
+      typedef dtUtil::HashMap< dtCore::UniqueId, dtCore::RefPtr<dtCore::BaseActorObject> > ActorMap;
 
       /// stats for the work of the GM - in a class so its less obtrusive to the gm
       GMStatistics mGMStatistics;
@@ -128,11 +130,11 @@ namespace dtGame
       MessageFactory mFactory;
 
       typedef std::pair<dtCore::RefPtr<GameActorProxy>, std::string> ProxyInvokablePair;
-      typedef std::multimap<const MessageType*, ProxyInvokablePair > GlobalMessageListenerMap;
+      typedef dtUtil::HashMultiMap<const MessageType*, ProxyInvokablePair > GlobalMessageListenerMap;
       GlobalMessageListenerMap mGlobalMessageListeners;
 
       typedef std::multimap<dtCore::UniqueId, ProxyInvokablePair > ProxyInvokableMap;
-      typedef std::map<const MessageType*,  ProxyInvokableMap> ActorMessageListenerMap;
+      typedef dtUtil::HashMap<const MessageType*,  ProxyInvokableMap> ActorMessageListenerMap;
       ActorMessageListenerMap mActorMessageListeners;
 
       typedef std::list<dtCore::RefPtr<dtGame::GMComponent> > GMComponentContainer;

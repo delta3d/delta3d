@@ -83,7 +83,7 @@ namespace dtGame
          return false;
       }
       
-      std::map< std::string, dtCore::RefPtr<MessageParameter> >::const_iterator i, j;
+      ParameterListType::const_iterator i, j;
       i = mParameterList.begin();
       j = toCompare.mParameterList.begin();
       
@@ -106,7 +106,7 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////
    void Message::ToString(std::string& toFill) const
    {
-      for (std::map<std::string,dtCore::RefPtr<MessageParameter> >::const_iterator i = mParameterList.begin(); 
+      for (ParameterListType::const_iterator i = mParameterList.begin();
          i != mParameterList.end();
          ++i)
       {
@@ -121,7 +121,7 @@ namespace dtGame
       bool okay = true;
 
       std::istringstream iss(source);
-      for (std::map<std::string,dtCore::RefPtr<MessageParameter> >::iterator i = mParameterList.begin(); 
+      for (ParameterListType::iterator i = mParameterList.begin();
          i != mParameterList.end();
          ++i)
       {
@@ -136,7 +136,7 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////
    void Message::ToDataStream(DataStream& stream) const
    {
-      for (std::map< std::string, dtCore::RefPtr<MessageParameter> >::const_iterator i = mParameterList.begin(); 
+      for (ParameterListType::const_iterator i = mParameterList.begin();
          i != mParameterList.end();
          ++i)
       {
@@ -149,7 +149,7 @@ namespace dtGame
    {
       bool okay = true;
 
-      for (std::map< std::string, dtCore::RefPtr<MessageParameter> >::iterator i = mParameterList.begin(); 
+      for (ParameterListType::iterator i = mParameterList.begin();
          i != mParameterList.end();
          ++i)
       {
@@ -168,7 +168,7 @@ namespace dtGame
          "NULL parameters are not legal.", __FILE__, __LINE__);
       }
       
-      std::map<std::string,dtCore::RefPtr<MessageParameter> >::iterator itor =
+      ParameterListType::iterator itor =
          mParameterList.find(param->GetName());         
       if (itor != mParameterList.end())
       {
@@ -184,7 +184,7 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////
    MessageParameter* Message::GetParameter(const std::string& name)
    {
-      std::map< std::string, dtCore::RefPtr<MessageParameter> >::iterator itor =
+      ParameterListType::iterator itor =
          mParameterList.find(name);
          
       if (itor != mParameterList.end())
@@ -199,7 +199,7 @@ namespace dtGame
    
    const MessageParameter* Message::GetParameter(const std::string& name) const
    {
-      std::map<std::string,dtCore::RefPtr<MessageParameter> >::const_iterator itor =
+      ParameterListType::const_iterator itor =
          mParameterList.find(name);
          
       if (itor != mParameterList.end())
@@ -217,7 +217,7 @@ namespace dtGame
       paramList.clear();
       paramList.reserve(mParameterList.size());
 
-      std::map<std::string,dtCore::RefPtr<MessageParameter> >::const_iterator itor = mParameterList.begin();
+      ParameterListType::const_iterator itor = mParameterList.begin();
       for (; itor != mParameterList.end(); ++itor)
       {
          paramList.push_back((*itor).second.get());
@@ -229,7 +229,7 @@ namespace dtGame
       paramList.clear();
       paramList.reserve(mParameterList.size());
 
-      std::map<std::string,dtCore::RefPtr<MessageParameter> >::iterator itor = mParameterList.begin();
+      ParameterListType::iterator itor = mParameterList.begin();
       for (; itor != mParameterList.end(); ++itor)
       {
          paramList.push_back((*itor).second.get());
@@ -246,11 +246,11 @@ namespace dtGame
       msg.mSource         = mSource;
       
       //copy parameters
-      for (std::map<std::string, dtCore::RefPtr<MessageParameter> >::const_iterator i = mParameterList.begin();     
+      for (ParameterListType::const_iterator i = mParameterList.begin();
             i != mParameterList.end();
             ++i)
       {
-         std::map<std::string,dtCore::RefPtr<MessageParameter> >::iterator copyTo = msg.mParameterList.find(i->first);
+         ParameterListType::iterator copyTo = msg.mParameterList.find(i->first);
          if (copyTo != msg.mParameterList.end())
          {
             copyTo->second->CopyFrom(*i->second);

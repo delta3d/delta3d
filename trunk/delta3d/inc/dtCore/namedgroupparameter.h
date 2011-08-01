@@ -28,8 +28,8 @@
 #include <dtCore/datatype.h>
 
 #include <dtCore/refptr.h>
+#include <dtUtil/assocvector.h>
 
-#include <map>
 #include <vector>
 
 namespace dtCore
@@ -37,7 +37,7 @@ namespace dtCore
    class DT_CORE_EXPORT NamedGroupParameter : public NamedParameter
    {
       public:
-         typedef std::map<dtUtil::RefString, dtCore::RefPtr<NamedParameter> > ParameterList;
+         typedef dtUtil::AssocVector<dtUtil::RefString, dtCore::RefPtr<NamedParameter> > ParameterList;
 
          NamedGroupParameter(const dtUtil::RefString& name);
          NamedGroupParameter(const NamedGroupParameter& toCopy);
