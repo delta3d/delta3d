@@ -36,6 +36,7 @@
 #include <dtUtil/fileutils.h>
 #include <dtUtil/xercesparser.h>
 #include <dtUtil/log.h>
+#include <dtUtil/stringutils.h>
 #include <dtUtil/threadpool.h>
 
 namespace dtAnim
@@ -608,6 +609,15 @@ namespace dtAnim
             dtCore::RefPtr<CalOptions> calOptions = new CalOptions(*coreModelData, "skeleton");
             dtCore::RefPtr<osgDB::ReaderWriter::Options> options = CalOptions::CreateOSGOptions(*calOptions);
             fileUtils.ReadObject(skelFile, options.get());
+
+            size_t boneCount = coreModel->getCoreSkeleton()->getVectorCoreBone().size();
+
+            if (handler->mShaderMaxBones < boneCount)
+            {
+               LOG_ERROR("Not enough shader bones for the skeleton:'" + skelFile + "'."
+                  "  Automatically setting shader max bones to " + dtUtil::ToString(boneCount));
+               handler->mShaderMaxBones = boneCount;
+            }
          }
          else
          {
