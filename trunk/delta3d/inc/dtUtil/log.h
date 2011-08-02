@@ -38,7 +38,7 @@ namespace dtUtil
    class DT_UTIL_EXPORT LogFile
    {
    public:
-      static const std::string LogFile::LOG_DEFAULT_NAME;
+      static const std::string LOG_DEFAULT_NAME;
 
       ///Change the name of the log file (defaults to "delta3d_log.html")
       static void SetFileName(const std::string& name);
@@ -213,13 +213,13 @@ namespace dtUtil
       ///Sets the default LogMessageType for new logs
       static void SetDefaultLogLevel(LogMessageType newLevel);
 
-      /** 
-        *  Set the LogMessageType for all existing Log instances.  
+      /**
+        *  Set the LogMessageType for all existing Log instances.
         *  @see SetLogLevel()
         */
       static void SetAllLogLevels(LogMessageType newLevel);
 
-      /** 
+      /**
         *  Add an observer that receives all log messages via callback.  The
         *  TO_OBSERVER OutputStreamOptions bit must be set in order for LogObservers
         *  to get triggered.
@@ -229,7 +229,7 @@ namespace dtUtil
         */
       void AddObserver(LogObserver& observer);
 
-      /** 
+      /**
         * Remove an existing LogObserver from the container.
         * @see AddObserver()
         * @param observer The LogObserver to remove
@@ -238,13 +238,13 @@ namespace dtUtil
 
       typedef std::vector<dtCore::RefPtr<LogObserver> > LogObserverContainer;
 
-      /** 
+      /**
         *  Get all registered LogObservers that are registered to receive log messages.
         *  @return The container of LogObservers (could be empty)
         */
       const LogObserverContainer& GetObservers() const;
 
-      /** 
+      /**
         *  Get all registered LogObservers that are registered to receive log messages.
         *  @return The container of LogObservers (could be empty)
         */
@@ -285,7 +285,7 @@ namespace dtUtil
    protected:
       /**
        * Opens the log file and writes the html header information.
-       * All new logs are created with the global default log level. 
+       * All new logs are created with the global default log level.
        */
       Log(const std::string& name);
 
@@ -297,7 +297,7 @@ namespace dtUtil
    private:
       LogImpl* mImpl;
    };
-  
+
 } // namespace dtUtil
 
 #endif // DELTA_LOG
