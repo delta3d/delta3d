@@ -19,8 +19,6 @@
  * Jeff P. Houde
  */
 
-#include <prefix/dtcoreprefix.h>
-
 #include <osgDB/FileNameUtils>
 
 #include <dtDirector/director.h>
