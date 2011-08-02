@@ -614,7 +614,7 @@ namespace dtAnim
 
             if (handler->mShaderMaxBones < boneCount)
             {
-               LOG_ERROR("Not enough shader bones for the skeleton:'" + skelFile + "'."
+               LOG_ERROR("Not enough shader bones (" + filename + ") for the skeleton:'" + skelFile + "'."
                   "  Automatically setting shader max bones to " + dtUtil::ToString(boneCount));
                handler->mShaderMaxBones = boneCount;
             }
