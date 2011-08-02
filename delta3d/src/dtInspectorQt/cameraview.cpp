@@ -1,4 +1,5 @@
 #include <dtInspectorQt/cameraview.h>
+#include <dtInspectorQt/transformableview.h>
 #include "ui_dtinspectorqt.h"
 
 #include <dtABC/application.h>
@@ -25,6 +26,7 @@ dtInspectorQt::CameraView::CameraView(Ui::InspectorWidget& ui)
 dtInspectorQt::CameraView::~CameraView()
 {
    mOperateOn = NULL;
+   TransformableView::GetInstance(*mUI).Destroy();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -76,6 +78,8 @@ void dtInspectorQt::CameraView::OperateOn(const QVariant& itemData)
 //////////////////////////////////////////////////////////////////////////
 void dtInspectorQt::CameraView::Update()
 {
+   dtInspectorQt::TransformableView::GetInstance(*mUI).OperateOn(mOperateOn.get());
+
    if (mOperateOn.valid())
    {
       mUI->baseGroupBox->show();

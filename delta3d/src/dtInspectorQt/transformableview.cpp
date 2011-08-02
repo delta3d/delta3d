@@ -3,11 +3,13 @@
 #include <dtCore/odegeomwrap.h>
 #include "ui_dtinspectorqt.h"
 
+//static
+dtInspectorQt::TransformableView* dtInspectorQt::TransformableView::mInstance(NULL);
+
 //////////////////////////////////////////////////////////////////////////
 dtInspectorQt::TransformableView::TransformableView(Ui::InspectorWidget &ui)
 :mUI(&ui)
 {
-   mFilterName = QString("dtCore::Transformable");
 
    connect(mUI->transXEdit, SIGNAL(valueChanged(double)), this, SLOT(OnXYZHPRChanged(double)));
    connect(mUI->transYEdit, SIGNAL(valueChanged(double)), this, SLOT(OnXYZHPRChanged(double)));
@@ -30,23 +32,10 @@ dtInspectorQt::TransformableView::~TransformableView()
 }
 
 //////////////////////////////////////////////////////////////////////////
-void dtInspectorQt::TransformableView::OperateOn(dtCore::Base* b)
+void dtInspectorQt::TransformableView::OperateOn(dtCore::Transformable* trans)
 {
-   dtCore::Transformable *trans = dynamic_cast<dtCore::Transformable*>(b);
-
    mOperateOn = trans;
    Update();
-}
-
-//////////////////////////////////////////////////////////////////////////
-bool dtInspectorQt::TransformableView::IsOfType(QString name, dtCore::Base* object)
-{
-   if (name == mFilterName && dynamic_cast<dtCore::Transformable*>(object) != NULL)
-   {
-      return true;
-   }
-
-   return false;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -147,5 +136,26 @@ void dtInspectorQt::TransformableView::OnCollideBits(const QString& text)
    if (mOperateOn.valid())
    {
       mOperateOn->GetGeomWrapper()->SetCollisionCollideBits(text.toULong());
+   }
+}
+
+//////////////////////////////////////////////////////////////////////////
+dtInspectorQt::TransformableView& dtInspectorQt::TransformableView::GetInstance(Ui::InspectorWidget& ui)
+{
+   if (mInstance == NULL)
+   {
+      mInstance = new TransformableView(ui);
+   }
+
+   return *mInstance;
+}
+
+//////////////////////////////////////////////////////////////////////////
+void dtInspectorQt::TransformableView::Destroy()
+{
+   if (mInstance)
+   {
+      delete mInstance;
+      mInstance = NULL;
    }
 }
