@@ -37,7 +37,7 @@ bool CEGUIKeyboardListener::HandleKeyPressed(const dtCore::Keyboard* keyboard, i
    }
 
    MakeCurrent();
-   return CEGUI::System::getSingleton().injectChar( static_cast<CEGUI::utf32>(key) );   
+   return CEGUI::System::getSingleton().injectChar( static_cast<CEGUI::utf32>(key) );
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -47,7 +47,7 @@ bool CEGUIKeyboardListener::HandleKeyReleased(const dtCore::Keyboard* keyboard, 
    if( CEGUI::Key::Scan scanKey = KeyboardKeyToKeyScan(key) )
    {
       MakeCurrent();
-      
+
       handled = CEGUI::System::getSingleton().injectKeyUp(scanKey);
    }
 
@@ -181,106 +181,132 @@ CEGUI::Key::Scan CEGUIKeyboardListener::KeyboardKeyToKeyScan( int key )
       {
          return CEGUI::Key::Tab;
       }
+      case 'a':
       case 'A':
       {
          return CEGUI::Key::A;
       }
+      case 'b':
       case 'B':
       {
          return CEGUI::Key::B;
       }
+      case 'c':
       case 'C':
       {
          return CEGUI::Key::C;
       }
+      case 'd':
       case 'D':
       {
          return CEGUI::Key::D;
       }
+      case 'e':
       case 'E':
       {
          return CEGUI::Key::E;
       }
+      case 'f':
       case 'F':
       {
          return CEGUI::Key::F;
       }
+      case 'g':
       case 'G':
       {
          return CEGUI::Key::G;
       }
+      case 'h':
       case 'H':
       {
          return CEGUI::Key::H;
       }
+      case 'i':
       case 'I':
       {
          return CEGUI::Key::I;
       }
+      case 'j':
       case 'J':
       {
          return CEGUI::Key::J;
       }
+      case 'k':
       case 'K':
       {
          return CEGUI::Key::K;
       }
+      case 'l':
       case 'L':
       {
          return CEGUI::Key::L;
       }
+      case 'm':
       case 'M':
       {
          return CEGUI::Key::M;
       }
+      case 'n':
       case 'N':
       {
          return CEGUI::Key::N;
       }
+      case 'o':
       case 'O':
       {
          return CEGUI::Key::O;
       }
+      case 'p':
       case 'P':
       {
          return CEGUI::Key::P;
       }
+      case 'q':
       case 'Q':
       {
          return CEGUI::Key::Q;
       }
+      case 'r':
       case 'R':
       {
          return CEGUI::Key::R;
       }
+      case 's':
       case 'S':
       {
          return CEGUI::Key::S;
       }
+      case 't':
       case 'T':
       {
          return CEGUI::Key::T;
       }
+      case 'u':
       case 'U':
       {
          return CEGUI::Key::U;
       }
+      case 'v':
       case 'V':
       {
          return CEGUI::Key::V;
       }
+      case 'w':
       case 'W':
       {
          return CEGUI::Key::W;
       }
+      case 'x':
       case 'X':
       {
          return CEGUI::Key::X;
       }
+      case 'y':
       case 'Y':
       {
          return CEGUI::Key::Y;
       }
+      case 'z':
       case 'Z':
       {
          return CEGUI::Key::Z;
