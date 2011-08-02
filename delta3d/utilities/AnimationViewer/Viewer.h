@@ -148,6 +148,8 @@ private:
    void InitWireDecorator();
    void CreateBoneBasisDisplay();
 
+   int GetMaxBoneAffectedBoneIDForAnimation(int animationID);
+
    dtCore::RefPtr<dtCore::Object> mAttachmentObject;
 
    std::string mTempFile;

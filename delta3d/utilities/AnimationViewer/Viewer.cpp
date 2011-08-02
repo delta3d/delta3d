@@ -32,6 +32,7 @@
 #include <dtUtil/stringutils.h>
 #include <dtUtil/fileutils.h>
 #include <dtUtil/log.h>
+#include <dtUtil/mathdefines.h>
 
 #include <xercesc/sax/SAXParseException.hpp>  // for base class
 #include <xercesc/util/XMLString.hpp>
@@ -55,6 +56,7 @@
 #include <cal3d/submesh.h>
 #include <cal3d/coremodel.h>
 #include <cal3d/coresubmesh.h>
+#include <cal3d/coretrack.h>
 #include <cal3d/morphtargetmixer.h>
 
 #include <dtAnim/hotspotdriver.h>
@@ -485,6 +487,25 @@ void Viewer::CreateBoneBasisDisplay()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+int Viewer::GetMaxBoneAffectedBoneIDForAnimation(int animationID)
+{
+   Cal3DModelWrapper* wrapper = mCharacter->GetCal3DWrapper();
+   std::list<CalCoreTrack*>& trackList =
+      wrapper->GetCalModel()->getCoreModel()->getCoreAnimation(animationID)->getListCoreTrack();
+
+   std::list<CalCoreTrack*>::iterator trackIter = trackList.begin();
+
+   int maxID = -1;
+   while(trackIter != trackList.end())
+   {
+      maxID = dtUtil::Max(maxID, (*trackIter)->getCoreBoneId());
+      ++trackIter;
+   }
+
+   return maxID;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void Viewer::OnLoadPoseMeshFile(const std::string& filename)
 {
    dtAnim::Cal3DModelWrapper* rapper = mCharacter->GetCal3DWrapper();
@@ -519,9 +540,20 @@ void Viewer::OnStartAnimation(unsigned int id, float weight, float delay)
    if (mCharacter.valid())
    {
       Cal3DModelWrapper* wrapper = mCharacter->GetCal3DWrapper();
-      wrapper->BlendCycle(id, weight, delay);
+      CalCoreSkeleton* skeleton = wrapper->GetCalModel()->getCoreModel()->getCoreSkeleton();
 
-      LOG_DEBUG("Started:" + dtUtil::ToString(id) + ", weight:" + dtUtil::ToString(weight) + ", delay:" + dtUtil::ToString(delay));
+      int maxTrackBone = GetMaxBoneAffectedBoneIDForAnimation(id);
+      int maxSkeletonBone = skeleton->getVectorCoreBone().size();
+
+      if (maxTrackBone < maxSkeletonBone)
+      {
+         wrapper->BlendCycle(id, weight, delay);
+         LOG_DEBUG("Started:" + dtUtil::ToString(id) + ", weight:" + dtUtil::ToString(weight) + ", delay:" + dtUtil::ToString(delay));
+      }
+      else
+      {
+          QMessageBox::warning(NULL, "Error", "This animation is incompatible with current skeleton.", QMessageBox::Ok);
+      }
    }
 }
 
@@ -543,7 +575,20 @@ void Viewer::OnStartAction(unsigned int id, float delayIn, float delayOut)
    if (mCharacter.valid())
    {
       Cal3DModelWrapper* wrapper = mCharacter->GetCal3DWrapper();
-      wrapper->ExecuteAction(id, delayIn, delayOut);
+      CalCoreSkeleton* skeleton = wrapper->GetCalModel()->getCoreModel()->getCoreSkeleton();
+
+      int maxTrackBone = GetMaxBoneAffectedBoneIDForAnimation(id);
+      int maxSkeletonBone = skeleton->getVectorCoreBone().size();
+
+      if (maxTrackBone < maxSkeletonBone)
+      {
+         Cal3DModelWrapper* wrapper = mCharacter->GetCal3DWrapper();
+         wrapper->ExecuteAction(id, delayIn, delayOut);
+      }
+      else
+      {
+         QMessageBox::warning(NULL, "Error", "This animation is incompatible with current skeleton.", QMessageBox::Ok);
+      }
    }
 }
 
