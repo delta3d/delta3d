@@ -114,6 +114,7 @@ namespace dtUtil
 
    ////////////////////////////////////////////////////////////////////
    ////////////////////////////////////////////////////////////////////
+   const std::string LogFile::LOG_DEFAULT_NAME("");
 
    /** This will close the existing file (if opened) and create a new file with
     *  the supplied filename.
@@ -169,7 +170,6 @@ namespace dtUtil
       Log::LogObserverContainer mObservers;
    };
 
-   DT_UTIL_EXPORT const std::string LOG_DEFAULT_NAME("");
    //////////////////////////////////////////////////////////////////////////
    //////////////////////////////////////////////////////////////////////////
 
@@ -196,7 +196,7 @@ namespace dtUtil
 
 
    //////////////////////////////////////////////////////////////////////////
-   void Log::LogMessage(const std::string& file, const std::string& method, 
+   void Log::LogMessage(const std::string& file, const std::string& method,
                         int line, const std::string& msg, LogMessageType msgType) const
    {
       if (mImpl->mOutputStreamBit == Log::NO_OUTPUT)
@@ -229,7 +229,7 @@ namespace dtUtil
 
 
       if (dtUtil::Bits::Has(mImpl->mOutputStreamBit, Log::TO_FILE))
-      {         
+      {
          LOG_MANAGER->mLogObserverFile->LogMessage(logData);
       }
 
