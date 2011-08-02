@@ -94,9 +94,9 @@ namespace dtDirector
          // Iterate through each found actor.
          GetDirector()->PushStack(this, 11);
 
-         mCurrentIndex = GetPropertyCount("Start Index");
-         int endIndex = GetPropertyCount("End Index");
-         for (int index = mCurrentIndex; index < endIndex; ++index)
+         mCurrentIndex = GetInt("Start Index");
+         int endIndex = GetInt("End Index");
+         for (int index = mCurrentIndex; index <= endIndex; ++index)
          {
             // We push a stack so that we can execute the entire "For"
             // output chain before we return back to this node.
@@ -108,7 +108,7 @@ namespace dtDirector
       // If the input is 10, it means we are iterating through an actor.
       else if (input == 10)
       {
-         int endIndex = GetPropertyCount("End Index");
+         int endIndex = GetInt("End Index");
          if (mCurrentIndex <= endIndex)
          {
             SetInt(mCurrentIndex, "Current Index");
