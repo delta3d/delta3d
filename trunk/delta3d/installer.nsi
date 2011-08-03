@@ -30,7 +30,7 @@
 !define PRODUCT_WEB_SITE "http://www.delta3d.org"
 !define PRODUCT_DIR_REGKEY "Software\Delta3D"
 !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME}"
-!define PRODUCT_UNINST_ROOT_KEY "HKLM"
+!define PRODUCT_UNINST_ROOT_KEY "HKCU"
 !define PRODUCT_STARTMENU_REGVAL "NSIS:StartMenuDir"
 
 ; MUI 1.67 compatible ------
