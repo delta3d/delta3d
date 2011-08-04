@@ -43,7 +43,7 @@ void dtInspectorQt::DirectorView::Build(QList<EntryData>& itemList)
       for (int index = 0; index < count; ++index)
       {
          dtDirector::Director* director = scriptList[index];
-         if (director && !director->GetParent())
+         if (director && !director->GetParent() && !director->IsCachedInstance())
          {
             std::string fileName = director->GetScriptName();
             std::string contextDir = osgDB::convertFileNameToNativeStyle(dtCore::Project::GetInstance().GetContext()+"/directors/");

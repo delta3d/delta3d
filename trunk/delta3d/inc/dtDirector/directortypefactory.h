@@ -74,21 +74,22 @@ namespace dtDirector
       /**
        * Loads a Director script.  An exception will occur on error.
        *
-       * @param[in]  director    The pre-created director script to load into.
-       * @param[in]  scriptFile  The name of the script file to load.
-       * @param[in]  gm          The game manager.
-       * @param[in]  map         The map.
+       * @param[in]  director     The pre-created director script to load into.
+       * @param[in]  scriptFile   The name of the script file to load.
+       * @param[in]  gm           The game manager.
+       * @param[in]  map          The map.
+       * @param[in]  cacheScript  True to cache the loaded script.
        *
        * @return     The newly created Director script.
        */
-      dtCore::RefPtr<Director> LoadScript(const std::string& scriptFile, dtGame::GameManager* gm = NULL, dtCore::Map* map = NULL);
-      void LoadScript(Director* director, const std::string& scriptFile);
+      dtCore::RefPtr<Director> LoadScript(const std::string& scriptFile, dtGame::GameManager* gm = NULL, dtCore::Map* map = NULL, bool cacheScript = false);
+      void LoadScript(Director* director, const std::string& scriptFile, bool cacheScript = false);
 
       /**
        * Saves a Director script.  An exception will occur on error.
        *
-       * @param[in]  director    The director script to save.
-       * @param[in]  scriptFile  The name of the script file to save.
+       * @param[in]  director     The director script to save.
+       * @param[in]  scriptFile   The name of the script file to save.
        */
       void SaveScript(Director* director, const std::string& scriptFile);
 
@@ -105,6 +106,34 @@ namespace dtDirector
        */
       const std::vector<Director*>& GetScriptInstances() const;
 
+      /**
+       * Adds a script to the cache.
+       *
+       * @param[in]  director  The script to add.
+       *
+       * @return     True if the script was cached properly.
+       */
+      bool AddCacheScript(Director* director);
+
+      /**
+       * Removes a script from the cache.
+       *
+       * @param[in]  script  The script path to remove.
+       *
+       * @return     True if the script was removed from the cache.
+       */
+      bool RemoveCacheScript(const std::string& script);
+
+      /**
+       * Retrieves a cached script if it exists.
+       *
+       * @param[in]  script  The script to retrieve.
+       *
+       * @return     The cached script, if it exists.
+       */
+      Director* GetCachedScript(const std::string& script);
+      const Director* GetCachedScript(const std::string& script) const;
+
    private:
       DirectorTypeFactory();
       ~DirectorTypeFactory();
@@ -114,6 +143,8 @@ namespace dtDirector
 
       // A list of all loaded Director scripts.
       std::vector<Director*> mScriptInstances;
+
+      std::map<std::string, dtCore::RefPtr<Director> > mCachedScripts;
 
       // Static instance of this class.
       static DirectorTypeFactory* mInstance;

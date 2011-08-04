@@ -90,6 +90,243 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   dtCore::RefPtr<DirectorGraph> DirectorGraph::Clone(Director* parent)
+   {
+      DirectorGraph* newGraph = new DirectorGraph(parent);
+      if (!newGraph)
+      {
+         return NULL;
+      }
+
+      newGraph->BuildPropertyMap(true);
+
+      newGraph->mID = mID;
+      newGraph->CopyPropertiesFrom(*this);
+
+      parent->SetGraphRoot(newGraph);
+      InternalClone(newGraph);
+
+      return newGraph;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   dtCore::RefPtr<DirectorGraph> DirectorGraph::Clone(DirectorGraph* parent)
+   {
+      DirectorGraph* newGraph = new DirectorGraph(parent->GetDirector());
+      if (!newGraph)
+      {
+         return NULL;
+      }
+
+      newGraph->BuildPropertyMap(false);
+
+      newGraph->mID = mID;
+      newGraph->CopyPropertiesFrom(*this);
+
+      parent->AddGraph(newGraph);
+      InternalClone(newGraph);
+
+      return newGraph;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void DirectorGraph::InternalClone(DirectorGraph* newGraph)
+   {
+      if (!newGraph)
+      {
+         return;
+      }
+
+      Director* script = newGraph->GetDirector();
+
+      std::vector<dtCore::RefPtr<Node> > allNodes;
+
+      // Clone Event Nodes.
+      std::vector<dtCore::RefPtr<EventNode> > eventNodes = GetEventNodes();
+      int count = (int)eventNodes.size();
+      for (int index = 0; index < count; ++index)
+      {
+         Node* node = eventNodes[index];
+         if (node)
+         {
+            node->Clone(newGraph);
+            allNodes.push_back(node);
+         }
+      }
+
+      // Clone Action Nodes.
+      std::vector<dtCore::RefPtr<ActionNode> > actionNodes = GetActionNodes();
+      count = (int)actionNodes.size();
+      for (int index = 0; index < count; ++index)
+      {
+         Node* node = actionNodes[index];
+         if (node)
+         {
+            node->Clone(newGraph);
+            allNodes.push_back(node);
+         }
+      }
+
+      // Clone Value Nodes.
+      std::vector<dtCore::RefPtr<ValueNode> > valueNodes = GetValueNodes();
+      count = (int)valueNodes.size();
+      for (int index = 0; index < count; ++index)
+      {
+         Node* node = valueNodes[index];
+         if (node)
+         {
+            node->Clone(newGraph);
+            allNodes.push_back(node);
+         }
+      }
+
+      // Clone sub-Graphs.
+      std::vector<dtCore::RefPtr<DirectorGraph> > subGraphs = GetSubGraphs();
+      count = (int)subGraphs.size();
+      for (int index = 0; index < count; ++index)
+      {
+         DirectorGraph* graph = subGraphs[index];
+         if (graph)
+         {
+            graph->Clone(newGraph);
+         }
+      }
+
+      // Connect links together again.
+      count = (int)allNodes.size();
+      for (int index = 0; index < count; ++index)
+      {
+         // Get the original node.
+         Node* node = allNodes[index];
+         if (node)
+         {
+            // Find the matching cloned node.
+            Node* newNode = newGraph->GetNode(node->GetID());
+            if (newNode)
+            {
+               // Iterate through each output link on the original node.
+               int linkCount = (int)node->GetOutputLinks().size();
+               for (int linkIndex = 0; linkIndex < linkCount; ++linkIndex)
+               {
+                  OutputLink& link = node->GetOutputLinks()[linkIndex];
+                  OutputLink& newLink = newNode->GetOutputLinks()[linkIndex];
+
+                  // Iterate through each connection for this link.
+                  int targetCount = (int)link.GetLinks().size();
+                  for (int targetIndex = 0; targetIndex < targetCount; ++targetIndex)
+                  {
+                     InputLink* targetLink = link.GetLinks()[targetIndex];
+                     if (targetLink)
+                     {
+                        // Find the matching cloned target node.
+                        Node* newTargetNode = script->GetNode(targetLink->GetOwner()->GetID());
+                        if (newTargetNode)
+                        {
+                           // Make the connection.
+                           newLink.Connect(newTargetNode->GetInputLink(targetLink->GetName()));
+                        }
+                     }
+                  }
+               }
+
+               // Iterate through each value link on the original node.
+               linkCount = (int)node->GetValueLinks().size();
+               for (int linkIndex = 0; linkIndex < linkCount; ++linkIndex)
+               {
+                  ValueLink& link = node->GetValueLinks()[linkIndex];
+                  ValueLink& newLink = newNode->GetValueLinks()[linkIndex];
+
+                  // Iterate through each connection for this link.
+                  int targetCount = (int)link.GetLinks().size();
+                  for (int targetIndex = 0; targetIndex < targetCount; ++targetIndex)
+                  {
+                     ValueNode* targetNode = link.GetLinks()[targetIndex];
+                     if (targetNode)
+                     {
+                        // Find the matching cloned target node.
+                        Node* newTargetNode = script->GetNode(targetNode->GetID());
+                        if (newTargetNode && newTargetNode->AsValueNode())
+                        {
+                           // Make the connection.
+                           newLink.Connect(newTargetNode->AsValueNode());
+                        }
+                     }
+                  }
+               }
+            }
+         }
+      }
+
+      count = (int)subGraphs.size();
+      for (int index = 0; index < count; ++index)
+      {
+         DirectorGraph* graph = subGraphs[index];
+         if (graph)
+         {
+            // Iterate through all the output link nodes within the graph.
+            std::vector<dtCore::RefPtr<ActionNode> > outputNodes = graph->GetOutputNodes();
+            int linkCount = (int)outputNodes.size();
+            for (int linkIndex = 0; linkIndex < linkCount; ++linkIndex)
+            {
+               Node* linkNode = outputNodes[linkIndex];
+
+               if (linkNode)
+               {
+                  Node* newLinkNode = newGraph->GetNode(linkNode->GetID());
+
+                  // Iterate through the connections for this output node.
+                  int targetCount = (int)linkNode->GetOutputLinks()[0].GetLinks().size();
+                  for (int targetIndex = 0; targetIndex < targetCount; ++targetIndex)
+                  {
+                     InputLink* targetLink = linkNode->GetOutputLinks()[0].GetLinks()[targetIndex];
+                     if (targetLink)
+                     {
+                        // Find the matching cloned target node.
+                        Node* newTargetNode = script->GetNode(targetLink->GetOwner()->GetID());
+                        if (newTargetNode)
+                        {
+                           // Make the connection.
+                           newLinkNode->GetOutputLinks()[0].Connect(newTargetNode->GetInputLink(targetLink->GetName()));
+                        }
+                     }
+                  }
+               }
+            }
+
+            // Iterate through all the value link nodes within the graph.
+            std::vector<dtCore::RefPtr<ValueNode> > valueNodes = graph->GetExternalValueNodes();
+            linkCount = (int)valueNodes.size();
+            for (int linkIndex = 0; linkIndex < linkCount; ++linkIndex)
+            {
+               Node* linkNode = valueNodes[linkIndex];
+
+               if (linkNode)
+               {
+                  Node* newLinkNode = newGraph->GetNode(linkNode->GetID());
+
+                  // Iterate through the connections for this value node.
+                  int targetCount = (int)linkNode->GetValueLinks()[0].GetLinks().size();
+                  for (int targetIndex = 0; targetIndex < targetCount; ++targetIndex)
+                  {
+                     ValueNode* targetNode = linkNode->GetValueLinks()[0].GetLinks()[targetIndex];
+                     if (targetNode)
+                     {
+                        // Find the matching cloned target node.
+                        Node* newTargetNode = script->GetNode(targetNode->GetID());
+                        if (newTargetNode && newTargetNode->AsValueNode())
+                        {
+                           // Make the connection.
+                           newLinkNode->GetValueLinks()[0].Connect(newTargetNode->AsValueNode());
+                        }
+                     }
+                  }
+               }
+            }
+         }
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    std::string DirectorGraph::GetDefaultPropertyKey() const
    {
       return "Director Graph";

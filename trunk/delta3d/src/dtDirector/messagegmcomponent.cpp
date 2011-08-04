@@ -28,6 +28,7 @@ namespace dtDirector
    //////////////////////////////////////////////
    MessageGMComponent::MessageGMComponent()
       : dtGame::GMComponent("DirectorMessageGMComponent")
+      , mIsProcessingMessages(false)
    {
    }
 
@@ -46,6 +47,7 @@ namespace dtDirector
    //////////////////////////////////////////////
    void MessageGMComponent::ProcessMessage(const dtGame::Message& message)
    {
+      mIsProcessingMessages = true;
       std::map<std::string, std::map<dtDirector::Node*, MsgFunc> >::iterator i =
          mRegisteredCallbacks.find(message.GetMessageType().GetName());
 
@@ -79,6 +81,7 @@ namespace dtDirector
             }
          }
       }
+      mIsProcessingMessages = false;
 
       // Now clear all unregistered messages from the listing.
       if (!mDeleteQueue.empty())
@@ -141,6 +144,21 @@ namespace dtDirector
       if (i != mRegisteredCallbacks.end())
       {
          i->second.insert(i->second.end(), std::make_pair<dtDirector::Node*, MsgFunc>(node, callback));
+
+         // If this message type is queued to be removed, make sure we
+         // no longer queue it because it is being registered again.
+         if (!mDeleteQueue.empty())
+         {
+            for (size_t q = 0; q < mDeleteQueue.size(); ++q)
+            {
+               if (msgType == mDeleteQueue[q].msgType &&
+                   node == mDeleteQueue[q].node)
+               {
+                  mDeleteQueue.erase(mDeleteQueue.begin() + q);
+                  break;
+               }
+            }
+         }
       }
    }
 
@@ -153,10 +171,36 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void MessageGMComponent::UnRegisterMessage(const std::string& msgType, dtDirector::Node* node)
    {
-      deleteQueue item;
-      item.msgType = msgType;
-      item.node = node;
-      mDeleteQueue.push_back(item);
+      if (mIsProcessingMessages)
+      {
+         deleteQueue item;
+         item.msgType = msgType;
+         item.node = node;
+         mDeleteQueue.push_back(item);
+         return;
+      }
+
+      std::map<std::string, std::map<dtDirector::Node*, MsgFunc> >::iterator i = mRegisteredCallbacks.begin();
+      while (i != mRegisteredCallbacks.end())
+      {
+         std::map<dtDirector::Node*, MsgFunc>::iterator a = i->second.begin();
+
+         while(a != i->second.end())
+         {
+            if (msgType == "" || msgType == i->first)
+            {
+               if (node == a->first)
+               {
+                  i->second.erase(a++);
+                  break;
+               }
+            }
+
+            ++a;
+         }
+
+         ++i;
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////

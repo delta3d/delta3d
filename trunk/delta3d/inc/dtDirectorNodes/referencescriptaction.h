@@ -92,6 +92,9 @@ namespace dtDirector
       void SetDirectorResource(const dtCore::ResourceDescriptor& value);
       dtCore::ResourceDescriptor GetDirectorResource();
 
+      void SetUseCache(bool value);
+      bool GetUseCache() const;
+
       /**
        * Accessor for the script.
        */
@@ -117,6 +120,7 @@ namespace dtDirector
       dtCore::RefPtr<dtDirector::Director> mScript;
 
       int mCoreValueIndex;
+      bool mUseCache;
    };
 }
 

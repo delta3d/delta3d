@@ -91,6 +91,43 @@ namespace dtDirector
       }
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   dtCore::RefPtr<Director> Director::Clone()
+   {
+      dtCore::RefPtr<Director> newDirector = NULL;
+
+      DirectorTypeFactory* factory = DirectorTypeFactory::GetInstance();
+      if (factory)
+      {
+         std::string scriptType = GetScriptType();
+         newDirector = factory->CreateDirector(scriptType);
+         if (newDirector)
+         {
+            newDirector->Init(mGameManager, mMap);
+            newDirector->mScriptName = mScriptName;
+            newDirector->mScriptOwner = mScriptOwner;
+            newDirector->mResource = mResource;
+            newDirector->mModified = mModified;
+            newDirector->mStarted = false;
+            newDirector->mLoading = false;
+            newDirector->mDebugging = false;
+            newDirector->mShouldStep = false;
+            newDirector->mLibraries = mLibraries;
+            newDirector->mLibraryVersionMap = mLibraryVersionMap;
+            newDirector->mLogNodes = mLogNodes;
+            newDirector->mMissingNodeTypes = mMissingNodeTypes;
+            newDirector->mMissingLibraries = mMissingLibraries;
+            newDirector->mHasDeprecatedProperty = mHasDeprecatedProperty;
+            newDirector->SetActive(mActive);
+            newDirector->CopyPropertiesFrom(*this);
+
+            GetGraphRoot()->Clone(newDirector);
+         }
+      }
+
+      return newDirector;
+   }
+
    //////////////////////////////////////////////////////////////////////////
    void Director::Init(dtGame::GameManager* gm, dtDAL::Map* map)
    {
@@ -191,6 +228,27 @@ namespace dtDirector
    void Director::ClearThreads()
    {
       mThreads.clear();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool Director::IsCachedInstance() const
+   {
+      dtDirector::DirectorTypeFactory* factory = dtDirector::DirectorTypeFactory::GetInstance();
+      if (factory)
+      {
+         const dtDirector::Director* cache = factory->GetCachedScript(GetScriptName());
+         if (cache == this)
+         {
+            return true;
+         }
+      }
+
+      if (GetParent())
+      {
+         return GetParent()->IsCachedInstance();
+      }
+
+      return false;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -965,6 +1023,12 @@ namespace dtDirector
    const DirectorGraph* Director::GetGraphRoot() const
    {
       return mGraph.get();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void Director::SetGraphRoot(DirectorGraph* root)
+   {
+      mGraph = root;
    }
 
    //////////////////////////////////////////////////////////////////////////

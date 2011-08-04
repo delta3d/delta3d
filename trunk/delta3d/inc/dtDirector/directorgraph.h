@@ -49,6 +49,14 @@ namespace dtDirector
       DirectorGraph(Director* director);
 
       /**
+       * Clones this graph.
+       *
+       * @param[in]  parent  The parent script or graph that will own the new graph.
+       */
+      dtCore::RefPtr<DirectorGraph> Clone(Director* parent);
+      dtCore::RefPtr<DirectorGraph> Clone(DirectorGraph* parent);
+
+      /**
        * Retrieves the key name used to identify this container with the
        * default property manager.  This method should be overloaded to
        * provide a valid key based on the container type.
@@ -65,7 +73,7 @@ namespace dtDirector
        * @see GetDeprecatedProperty to handle old properties that need
        *       to be removed.
        */
-      virtual void BuildPropertyMap(bool isParent = false);
+      virtual void BuildPropertyMap(bool isRoot = false);
 
       /**
        * Accessors for the Graph ID.
@@ -261,6 +269,10 @@ namespace dtDirector
       std::vector<dtCore::RefPtr<DirectorGraph> >& GetSubGraphs() {return mSubGraphs;}
       const std::vector<dtCore::RefPtr<DirectorGraph> >& GetSubGraphs() const {return mSubGraphs;}
 
+   private:
+
+      void InternalClone(DirectorGraph* newGraph);
+
    protected:
 
       ~DirectorGraph();
@@ -282,7 +294,6 @@ namespace dtDirector
       std::vector<dtCore::RefPtr<ValueNode> >  mValueNodes;
 
       osg::Vec4 mColor;
-
    };
 }
 
