@@ -120,6 +120,12 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    bool EventNode::Test(const std::string& outputName, const dtCore::UniqueId* instigator, bool countTrigger)
    {
+      // If this node is part of a cached instance, then we don't want to trigger.
+      if (GetDirector() && GetDirector()->IsCachedInstance())
+      {
+         return false;
+      }
+
       // If this event has a trigger count limit,
       // disable the event when that limit is met.
       if (mMaxTriggerCount > 0)

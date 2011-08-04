@@ -80,6 +80,11 @@ namespace dtDirector
       Director();
 
       /**
+       * Clones an instance of this script.
+       */
+      dtCore::RefPtr<Director> Clone();
+
+      /**
        * Initializes the Director.
        *
        * @param[in]  map  The current map.
@@ -113,6 +118,11 @@ namespace dtDirector
        * Clears all running threads to stop all current nodes.
        */
       void ClearThreads();
+
+      /**
+       * Retrieves whether this script is a cached instance.
+       */
+      bool IsCachedInstance() const;
 
       /**
        * Retrieves whether the script has started.
@@ -196,7 +206,7 @@ namespace dtDirector
       /**
       * Retrieves the currently loaded script.
       */
-      const std::string& GetScriptName() {return mScriptName;}
+      const std::string& GetScriptName() const {return mScriptName;}
 
       /**
        * Access to the script resource descriptor.
@@ -429,6 +439,11 @@ namespace dtDirector
        */
       DirectorGraph* GetGraphRoot();
       const DirectorGraph* GetGraphRoot() const;
+
+      /**
+       * Sets the graph root.
+       */
+      void SetGraphRoot(DirectorGraph* root);
 
       /**
        * Retrieves a graph of the given id.
@@ -687,6 +702,7 @@ namespace dtDirector
       std::set<std::string> mMissingNodeTypes;
       std::vector<std::string> mMissingLibraries;
       bool mHasDeprecatedProperty;
+      bool mIsCachedInstance;
 
       friend class ValueNode;
       friend class ArrayValueNode;

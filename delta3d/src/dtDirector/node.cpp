@@ -85,9 +85,12 @@ namespace dtDirector
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   dtCore::RefPtr<Node> Node::Clone()
+   dtCore::RefPtr<Node> Node::Clone(DirectorGraph* graph)
    {
-      std::ostringstream error;
+      if (!graph)
+      {
+         return NULL;
+      }
 
       // First tell the node manager to create a new node using this
       // nodes type.
@@ -95,16 +98,53 @@ namespace dtDirector
 
       try
       {
-         copy = NodeManager::GetInstance().CreateNode(*mType, mGraph).get();
+         copy = NodeManager::GetInstance().CreateNode(*mType, graph).get();
       }
       catch(const dtUtil::Exception &e)
       {
-         error << "Clone of Commander Node: " << mType->GetName() << " failed. Reason was: " << e.What();
+         std::ostringstream error;
+         error << "Clone of Node: " << mType->GetName() << " failed. Reason was: " << e.What();
          LOG_ERROR(error.str());
          return NULL;
       }
 
+      copy->SetID(mID);
       copy->CopyPropertiesFrom(*this);
+
+      // Input Links.
+      std::vector<InputLink>& inputs = GetInputLinks();
+      int count = (int)inputs.size();
+      int saveCount = 0;
+      for (int index = 0; index < count; index++)
+      {
+         InputLink& input = inputs[index];
+         InputLink& copyInput = copy->GetInputLinks()[index];
+         copyInput.SetVisible(input.GetVisible());
+      }
+
+      // Output Links.
+      std::vector<OutputLink>& outputs = GetOutputLinks();
+      count = (int)outputs.size();
+      saveCount = 0;
+      for (int index = 0; index < count; index++)
+      {
+         OutputLink& output = outputs[index];
+         OutputLink& copyOutput = copy->GetOutputLinks()[index];
+         copyOutput.SetVisible(output.GetVisible());
+      }
+
+      // Value Links.
+      std::vector<ValueLink>& values = GetValueLinks();
+      count = (int)values.size();
+      saveCount = 0;
+      for (int index = 0; index < count; index++)
+      {
+         ValueLink& value = values[index];
+         ValueLink& copyValue = copy->GetValueLinks()[index];
+
+         copyValue.SetExposed(value.GetExposed());
+         copyValue.SetVisible(value.GetVisible());
+      }
 
       return copy;
    }
@@ -417,6 +457,7 @@ namespace dtDirector
          if (prop && prop->GetName() == name)
          {
             propertyCount = mValues[valueIndex].GetPropertyCount();
+            break;
          }
       }
 

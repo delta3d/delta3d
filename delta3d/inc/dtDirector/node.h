@@ -100,9 +100,11 @@ namespace dtDirector
        * current state of this node's property set and copies their values
        * to the newly created clone.
        *
+       * @param[in]  graph  The graph for the new node to be cloned to.
+       *
        * @return The cloned node.
        */
-      virtual dtCore::RefPtr<Node> Clone();
+      dtCore::RefPtr<Node> Clone(DirectorGraph* graph);
 
       /**
        * This method is called in init, which instructs the node

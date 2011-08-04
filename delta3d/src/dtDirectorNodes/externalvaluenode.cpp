@@ -178,7 +178,7 @@ namespace dtDirector
          return mValues[0].GetPropertyCount();
       }
 
-      return Node::GetPropertyCount();
+      return ValueNode::GetPropertyCount();
    }
 
    //////////////////////////////////////////////////////////////////////////

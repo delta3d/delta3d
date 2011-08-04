@@ -25,6 +25,7 @@
 
 #include <dtDAL/project.h>
 #include <dtDAL/resourceactorproperty.h>
+#include <dtDAL/booleanactorproperty.h>
 
 #include <osgDB/FileNameUtils>
 
@@ -33,6 +34,7 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    ReferenceScriptAction::ReferenceScriptAction()
       : ActionNode()
+      , mUseCache(true)
    {
       AddAuthor("Jeff P. Houde");
       SetColorRGB(Colors::GREEN); 
@@ -83,7 +85,13 @@ namespace dtDirector
 
       mCoreValueIndex = (int)mValues.size();
 
-      // Create our value links.
+      dtDAL::BooleanActorProperty* cacheProp = new dtDAL::BooleanActorProperty(
+         "Use Cache", "Use Cache", 
+         dtDAL::BooleanActorProperty::SetFuncType(this, &ReferenceScriptAction::SetUseCache),
+         dtDAL::BooleanActorProperty::GetFuncType(this, &ReferenceScriptAction::GetUseCache),
+         "Whether this script should be saved and loaded from cached memory.");
+      AddProperty(cacheProp);
+
       dtDAL::ResourceActorProperty* scriptProp = new dtDAL::ResourceActorProperty(
          dtDAL::DataType::DIRECTOR, "DirectorGraph", "Director Graph",
          dtDAL::ResourceActorProperty::SetDescFuncType(this, &ReferenceScriptAction::SetDirectorResource),
@@ -109,6 +117,18 @@ namespace dtDirector
    dtDAL::ResourceDescriptor ReferenceScriptAction::GetDirectorResource()
    {
       return mScriptResource;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void ReferenceScriptAction::SetUseCache(bool value)
+   {
+      mUseCache = value;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool ReferenceScriptAction::GetUseCache() const
+   {
+      return mUseCache;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -254,7 +274,7 @@ namespace dtDirector
          {
             try
             {
-               mScript = factory->LoadScript(dtDAL::Project::GetInstance().GetResourcePath(mScriptResource), GetDirector()->GetGameManager(), GetDirector()->GetMap());
+               mScript = factory->LoadScript(dtDAL::Project::GetInstance().GetResourcePath(mScriptResource), GetDirector()->GetGameManager(), GetDirector()->GetMap(), GetBoolean("Use Cache"));
 
                if (mScript)
                {

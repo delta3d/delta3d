@@ -78,7 +78,7 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   dtCore::RefPtr<Director> DirectorTypeFactory::LoadScript(const std::string& scriptFile, dtGame::GameManager* gm, dtDAL::Map* map)
+   dtCore::RefPtr<Director> DirectorTypeFactory::LoadScript(const std::string& scriptFile, dtGame::GameManager* gm, dtDAL::Map* map, bool cacheScript)
    {
       dtCore::RefPtr<Director> newDirector = NULL;
 
@@ -102,55 +102,65 @@ namespace dtDirector
       }
 
       std::string fileName = osgDB::getNameLessExtension(scriptFile) + "." + ext;
+      fileName = osgDB::getRealPath(fileName);
 
-      try
+      // First attempt to load a cached script.
+      Director* cache = GetCachedScript(fileName);
+      if (cache)
       {
-         if (binaryFormat)
-         {
-            dtCore::RefPtr<BinaryParser> parser = new BinaryParser();
-            if (parser.valid())
-            {
-               scriptType = parser->ParseScriptType(fileName);
-               newDirector = CreateDirector(scriptType);
-               if (!newDirector.valid())
-               {
-                  throw dtUtil::Exception("Failed to load script, \'" + scriptType + "\' is an unknown script type.  Please ensure that any plugin libraries for this script type are properly loaded.", __FILE__, __LINE__);
-               }
-
-               newDirector->mLoading = true;
-               newDirector->Init(gm, map);
-               parser->Parse(newDirector, map, fileName);
-               newDirector->mMissingNodeTypes = parser->GetMissingNodeTypes();
-               newDirector->mMissingLibraries = parser->GetMissingLibraries();
-               newDirector->mHasDeprecatedProperty = parser->HasDeprecatedProperty();
-            }
-         }
-         else
-         {
-            dtCore::RefPtr<DirectorParser> parser = new DirectorParser();
-            if (parser.valid())
-            {
-               scriptType = parser->ParseScriptType(fileName);
-               newDirector = CreateDirector(scriptType);
-               if (!newDirector.valid())
-               {
-                  throw dtUtil::Exception("Failed to load script, \'" + scriptType + "\' is an unknown script type.  Please ensure that any plugin libraries for this script type are properly loaded.", __FILE__, __LINE__);
-               }
-
-               newDirector->mLoading = true;
-               newDirector->Init(gm, map);
-               parser->Parse(newDirector, map, fileName);
-               newDirector->mMissingNodeTypes = parser->GetMissingNodeTypes();
-               newDirector->mMissingLibraries = parser->GetMissingLibraries();
-               newDirector->mHasDeprecatedProperty = parser->HasDeprecatedProperty();
-            }
-         }
+         newDirector = cache->Clone();
       }
-      catch (const dtUtil::Exception& e)
+      else
       {
-         std::string error = "Unable to parse " + scriptFile + " with error " + e.What();
-         dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__, error.c_str());
-         throw e;
+         try
+         {
+            if (binaryFormat)
+            {
+               dtCore::RefPtr<BinaryParser> parser = new BinaryParser();
+               if (parser.valid())
+               {
+                  scriptType = parser->ParseScriptType(fileName);
+                  newDirector = CreateDirector(scriptType);
+                  if (!newDirector.valid())
+                  {
+                     throw dtUtil::Exception("Failed to load script, \'" + scriptType + "\' is an unknown script type.  Please ensure that any plugin libraries for this script type are properly loaded.", __FILE__, __LINE__);
+                  }
+
+                  newDirector->mLoading = true;
+                  newDirector->Init(gm, map);
+                  parser->Parse(newDirector, map, fileName);
+                  newDirector->mMissingNodeTypes = parser->GetMissingNodeTypes();
+                  newDirector->mMissingLibraries = parser->GetMissingLibraries();
+                  newDirector->mHasDeprecatedProperty = parser->HasDeprecatedProperty();
+               }
+            }
+            else
+            {
+               dtCore::RefPtr<DirectorParser> parser = new DirectorParser();
+               if (parser.valid())
+               {
+                  scriptType = parser->ParseScriptType(fileName);
+                  newDirector = CreateDirector(scriptType);
+                  if (!newDirector.valid())
+                  {
+                     throw dtUtil::Exception("Failed to load script, \'" + scriptType + "\' is an unknown script type.  Please ensure that any plugin libraries for this script type are properly loaded.", __FILE__, __LINE__);
+                  }
+
+                  newDirector->mLoading = true;
+                  newDirector->Init(gm, map);
+                  parser->Parse(newDirector, map, fileName);
+                  newDirector->mMissingNodeTypes = parser->GetMissingNodeTypes();
+                  newDirector->mMissingLibraries = parser->GetMissingLibraries();
+                  newDirector->mHasDeprecatedProperty = parser->HasDeprecatedProperty();
+               }
+            }
+         }
+         catch (const dtUtil::Exception& e)
+         {
+            std::string error = "Unable to parse " + scriptFile + " with error " + e.What();
+            dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__, error.c_str());
+            throw e;
+         }
       }
 
       if (newDirector->mMissingNodeTypes.size() > 0 ||
@@ -162,6 +172,13 @@ namespace dtDirector
 
       newDirector->mLoading = false;
       newDirector->mScriptName = fileName;
+
+      // If we are caching this script, and it is not already cached,
+      // then we should create a clone of this script to be stored in cache.
+      if (cacheScript && !cache)
+      {
+         AddCacheScript(newDirector->Clone());
+      }
 
       std::vector<Node*> nodes;
       newDirector->GetAllNodes(nodes);
@@ -175,7 +192,7 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void DirectorTypeFactory::LoadScript(Director* director, const std::string& scriptFile)
+   void DirectorTypeFactory::LoadScript(Director* director, const std::string& scriptFile, bool cacheScript)
    {
       if (!director)
       {
@@ -202,40 +219,51 @@ namespace dtDirector
       }
 
       std::string fileName = osgDB::getNameLessExtension(scriptFile) + "." + ext;
+      fileName = osgDB::getRealPath(fileName);
 
-      try
+      // First attempt to load a cached script.
+      Director* cache = GetCachedScript(fileName);
+      if (cache)
       {
-         director->mLoading = true;
-
-         if (binaryFormat)
-         {
-            dtCore::RefPtr<BinaryParser> parser = new BinaryParser();
-            if (parser.valid())
-            {
-               parser->Parse(director, director->GetMap(), fileName);
-               director->mMissingNodeTypes = parser->GetMissingNodeTypes();
-               director->mMissingLibraries = parser->GetMissingLibraries();
-               director->mHasDeprecatedProperty = parser->HasDeprecatedProperty();
-            }
-         }
-         else
-         {
-            dtCore::RefPtr<DirectorParser> parser = new DirectorParser();
-            if (parser.valid())
-            {
-               parser->Parse(director, director->GetMap(), fileName);
-               director->mMissingNodeTypes = parser->GetMissingNodeTypes();
-               director->mMissingLibraries = parser->GetMissingLibraries();
-               director->mHasDeprecatedProperty = parser->HasDeprecatedProperty();
-            }
-         }
+         director->CopyPropertiesFrom(*cache);
+         director->SetGraphRoot(cache->GetGraphRoot()->Clone(director));
       }
-      catch (const dtUtil::Exception& e)
+      else
       {
-         std::string error = "Unable to parse " + scriptFile + " with error " + e.What();
-         dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__, error.c_str());
-         director->mLoading = false;
-         throw e;
+         try
+         {
+            director->mLoading = true;
+
+            if (binaryFormat)
+            {
+               dtCore::RefPtr<BinaryParser> parser = new BinaryParser();
+               if (parser.valid())
+               {
+                  parser->Parse(director, director->GetMap(), fileName);
+                  director->mMissingNodeTypes = parser->GetMissingNodeTypes();
+                  director->mMissingLibraries = parser->GetMissingLibraries();
+                  director->mHasDeprecatedProperty = parser->HasDeprecatedProperty();
+               }
+            }
+            else
+            {
+               dtCore::RefPtr<DirectorParser> parser = new DirectorParser();
+               if (parser.valid())
+               {
+                  parser->Parse(director, director->GetMap(), fileName);
+                  director->mMissingNodeTypes = parser->GetMissingNodeTypes();
+                  director->mMissingLibraries = parser->GetMissingLibraries();
+                  director->mHasDeprecatedProperty = parser->HasDeprecatedProperty();
+               }
+            }
+         }
+         catch (const dtUtil::Exception& e)
+         {
+            std::string error = "Unable to parse " + scriptFile + " with error " + e.What();
+            dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__, error.c_str());
+            director->mLoading = false;
+            throw e;
+         }
       }
 
       if (director->mMissingNodeTypes.size() > 0 ||
@@ -247,6 +275,13 @@ namespace dtDirector
 
       director->mLoading = false;
       director->mScriptName = fileName;
+
+      // If we are caching this script, and it is not already cached,
+      // then we should create a clone of this script to be stored in cache.
+      if (cacheScript && !cache)
+      {
+         AddCacheScript(director->Clone());
+      }
 
       std::vector<Node*> nodes;
       director->GetAllNodes(nodes);
@@ -278,6 +313,7 @@ namespace dtDirector
       }
 
       std::string fileName = osgDB::getNameLessExtension(scriptFile) + "." + ext;
+      fileName = osgDB::getRealPath(fileName);
 
       try
       {
@@ -306,6 +342,13 @@ namespace dtDirector
       }
 
       director->mScriptName = fileName;
+
+      // Re-cache if we need to.
+      Director* cache = GetCachedScript(fileName);
+      if (cache)
+      {
+         AddCacheScript(director->Clone());
+      }
 
       director->mModified = false;
       director->mMissingNodeTypes.clear();
@@ -350,5 +393,76 @@ namespace dtDirector
    const std::vector<Director*>& DirectorTypeFactory::GetScriptInstances() const
    {
       return mScriptInstances;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool DirectorTypeFactory::AddCacheScript(Director* director)
+   {
+      if (!director || director->GetScriptName().empty())
+      {
+         return false;
+      }
+
+      mCachedScripts[director->GetScriptName()] = director;
+
+      return true;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool DirectorTypeFactory::RemoveCacheScript(const std::string& script)
+   {
+      if (script.empty())
+      {
+         return false;
+      }
+
+      std::map<std::string, dtCore::RefPtr<Director> >::iterator iter =
+         mCachedScripts.find(script);
+
+      if (iter == mCachedScripts.end())
+      {
+         return false;
+      }
+
+      mCachedScripts.erase(iter);
+      return true;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   Director* DirectorTypeFactory::GetCachedScript(const std::string& script)
+   {
+      if (script.empty())
+      {
+         return NULL;
+      }
+
+      std::map<std::string, dtCore::RefPtr<Director> >::iterator iter =
+         mCachedScripts.find(script);
+
+      if (iter == mCachedScripts.end())
+      {
+         return NULL;
+      }
+
+      return iter->second.get();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   const Director* DirectorTypeFactory::GetCachedScript(const std::string& script) const
+   {
+      if (script.empty())
+      {
+         return NULL;
+      }
+
+      std::map<std::string, dtCore::RefPtr<Director> >::const_iterator iter =
+         mCachedScripts.find(script);
+
+      if (iter == mCachedScripts.end())
+      {
+         return NULL;
+      }
+
+      return iter->second.get();
    }
 } // namespace dtDirector

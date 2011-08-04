@@ -119,6 +119,7 @@ namespace dtDirector
 
       std::map<std::string, std::map<dtDirector::Node*, MsgFunc> > mRegisteredCallbacks;
 
+      bool mIsProcessingMessages;
       std::vector<deleteQueue> mDeleteQueue;
    };
 
