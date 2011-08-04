@@ -1,0 +1,35 @@
+<html>
+
+	<head>
+		<title>TestAAR After Action Review</title>
+	
+		<style type="text/css">
+			p.indented {text-indent: 2em; font-family: Arial; color: #FFFD86}
+			h4.bold {font-family: Arial; color: #FFFD86;}
+			h5.bold {font-family: Arial; color: #FFFD86;}
+		</style>
+
+      <script src="APIWrapper.js"></script>
+      <script src="LoadXml.js"></script>
+      <script src="ProcessObjectives.js"></script>
+      <script src="ReviewPage.js"></script>
+
+	</head>
+	
+	<body bgcolor="#6E6C84" onunload="UnloadPage()">
+
+			<p>
+				<h2 style="color:#FFFD86; text-align: center">Delta3D AAR-LMS Integration Demo<br>After Action Review</h2>
+			</p>
+			
+			<div id="ObjectiveTable"/>
+
+         <!--Load list of objectives from server-->
+			<script>
+			   LoadPage();
+            WriteObjectives();
+         </script>
+
+	</body>
+
+</html>
