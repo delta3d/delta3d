@@ -12,7 +12,7 @@
 
 FIND_PATH(DELTA_DIR inc/dtCore/dt.h
     HINTS
-    ${CMAKE_SOURCE_DIR}/../delta3d
+    ${CMAKE_SOURCE_DIR}
     $ENV{DELTA_ROOT}
     $ENV{DELTA_INC}
     PATHS
@@ -36,7 +36,7 @@ FIND_PATH(DELTA3D_INCLUDE_DIR NAMES dtCore/dt.h
        include
 )
 
-FIND_PATH( DELTA3D_LIB_DIR NAMES libdtCore.so libdtCore.dylib dtCore.dll .
+FIND_PATH( DELTA3D_LIB_DIR NAMES libdtCore.so libdtCore.dylib dtCore.lib .
     HINTS
        ${DELTA_DIR}
     PATH_SUFFIXES
