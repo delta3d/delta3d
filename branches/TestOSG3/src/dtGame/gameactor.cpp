@@ -91,6 +91,11 @@ namespace dtGame
       return *mProxy;
    }
 
+   bool GameActor::IsGameActorProxyValid() const
+   {
+      return mProxy.valid();
+   }
+
    ///////////////////////////////////////////////////////////////////////////////////////////////////////
    void GameActor::BuildActorComponents()
    {

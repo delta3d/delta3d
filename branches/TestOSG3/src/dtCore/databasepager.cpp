@@ -53,6 +53,10 @@ static void ReadDBPagerConfig(osgDB::DatabasePager& pager, dtUtil::ConfigPropert
    }
 
    std::string value;
+   if (pager.getIncrementalCompileOperation() == NULL)
+   {
+      pager.setIncrementalCompileOperation(new osgUtil::IncrementalCompileOperation());
+   }
 
    value = config->GetConfigPropertyValue(DatabasePager::DATABASE_PAGER_PRECOMPILE_OBJECTS);
    if (!value.empty())
@@ -67,21 +71,33 @@ static void ReadDBPagerConfig(osgDB::DatabasePager& pager, dtUtil::ConfigPropert
       unsigned int maxNum = dtUtil::ToType<unsigned int>(value);
       //Can't be less than 1.  That doesn't make sense.
       maxNum = std::max(maxNum, 1U);
+#if defined(OSG_VERSION_MAJOR) && OSG_VERSION_MAJOR >= 3
+      pager.getIncrementalCompileOperation()->setMaximumNumOfObjectsToCompilePerFrame(maxNum);
+#else
       pager.setMaximumNumOfObjectsToCompilePerFrame(maxNum);
+#endif
    }
 
    value = config->GetConfigPropertyValue(DatabasePager::DATABASE_PAGER_MIN_TIME_FOR_OBJECT_COMPILE);
    if (!value.empty())
    {
       float minTime = dtUtil::ToType<float>(value);
+#if defined(OSG_VERSION_MAJOR) && OSG_VERSION_MAJOR >= 3
+      pager.getIncrementalCompileOperation()->setMinimumTimeAvailableForGLCompileAndDeletePerFrame(minTime);
+#else
       pager.setMinimumTimeAvailableForGLCompileAndDeletePerFrame(minTime);
+#endif
    }
 
    value = config->GetConfigPropertyValue(DatabasePager::DATABASE_PAGER_TARGET_FRAMERATE);
    if (!value.empty())
    {
       double target = dtUtil::ToType<double>(value);
+#if defined(OSG_VERSION_MAJOR) && OSG_VERSION_MAJOR >= 3
+      pager.getIncrementalCompileOperation()->setTargetFrameRate(target);
+#else
       pager.setTargetFrameRate(target);
+#endif
    }
 //   else if (dtCore::System::GetInstance().GetUsesFixedTimeStep())
 //   {
@@ -138,12 +154,14 @@ static void ReadDBPagerConfig(osgDB::DatabasePager& pager, dtUtil::ConfigPropert
       }
    }
 
+#if OSG_VERSION_MAJOR < 3
    value = config->GetConfigPropertyValue(DatabasePager::DATABASE_PAGER_EXPIRY_DELAY);
    if (!value.empty())
    {
       double delay = dtUtil::ToType<double>(value);
       pager.setExpiryDelay(delay);
    }
+#endif
 
    value = config->GetConfigPropertyValue(DatabasePager::DATABASE_PAGER_MAX_PAGED_LOD);
    if (!value.empty())
@@ -176,13 +194,21 @@ const dtUtil::ConfigProperties* dtCore::DatabasePager::GetConfiguration() const
 //////////////////////////////////////////////////////////////////////////
 void dtCore::DatabasePager::SetTargetFrameRate( double targetFR )
 {
+#if defined(OSG_VERSION_MAJOR) && OSG_VERSION_MAJOR >= 3
+   mDatabasePager->getIncrementalCompileOperation()->setTargetFrameRate(targetFR);
+#else
    mDatabasePager->setTargetFrameRate(targetFR);
+#endif
 }
 
 //////////////////////////////////////////////////////////////////////////
 double dtCore::DatabasePager::GetTargetFrameRate() const
 {
+#if defined(OSG_VERSION_MAJOR) && OSG_VERSION_MAJOR >= 3
+   return mDatabasePager->getIncrementalCompileOperation()->getTargetFrameRate();
+#else
    return mDatabasePager->getTargetFrameRate();
+#endif
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -213,5 +239,9 @@ void dtCore::DatabasePager::UpdateSceneGraph(const osg::FrameStamp* framestamp) 
 //////////////////////////////////////////////////////////////////////////
 void dtCore::DatabasePager::CompileGLObjects(osg::State& state, double& availableTime) const
 {
+#if defined(OSG_VERSION_MAJOR) && OSG_VERSION_MAJOR >= 3
+   mDatabasePager->getIncrementalCompileOperation()->compileAllForNextFrame();
+#else
    mDatabasePager->compileGLObjects(state, availableTime);
+#endif
 }

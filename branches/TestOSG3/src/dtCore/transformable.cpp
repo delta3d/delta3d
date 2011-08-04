@@ -860,11 +860,7 @@ void Transformable::ClearCollisionGeometry()
    //collision geometry, that will remove the geode from this node.
    if(mImpl->mGeomGeod.valid())
    {
-      #if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR >= 1 && OSG_VERSION_MINOR >= 1
       mImpl->mGeomGeod->removeDrawables(0,mImpl->mGeomGeod->getNumDrawables());
-      #else
-      mImpl->mGeomGeod->removeDrawable(0,mImpl->mGeomGeod->getNumDrawables());
-      #endif
    }
 }
 

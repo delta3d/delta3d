@@ -33,6 +33,7 @@
 #include <osg/CullFace>
 #include <osg/Math>
 #include <osg/BlendFunc>
+#include <osg/Version>
 #include <osg/GLExtensions>
 
 #include <cassert>
@@ -355,12 +356,20 @@ namespace dtAnim
       /// this processes the lowest LOD at the moment,
       /// because that's what's loaded at the front of the VBO.
       osg::Drawable::Extensions* glExt = osg::Drawable::getExtensions(0, true);
+#if defined(OPENSCENEGRAPH_MAJOR_VERSION) && OPENSCENEGRAPH_MAJOR_VERSION >= 3
+      mMeshVBO->getOrCreateGLBufferObject(0)->bindBuffer();
+#else
       mMeshVBO->bindBuffer(0);
+#endif
       osg::Vec3f* vertexArray = reinterpret_cast<osg::Vec3f*>(glExt->glMapBuffer(GL_ARRAY_BUFFER_ARB, GL_READ_WRITE_ARB));
 
       functor.setVertexArray(mVertexCount[0], vertexArray);
      
+#if defined(OPENSCENEGRAPH_MAJOR_VERSION) && OPENSCENEGRAPH_MAJOR_VERSION >= 3
+      mMeshEBO->getOrCreateGLBufferObject(0)->bindBuffer();
+#else
       mMeshEBO->bindBuffer(0);
+#endif
 
       void* indexArray = glExt->glMapBuffer(GL_ELEMENT_ARRAY_BUFFER_ARB, GL_READ_WRITE_ARB);
       if (indexArray != NULL)
@@ -381,8 +390,13 @@ namespace dtAnim
 
       glExt->glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER_ARB);
       glExt->glUnmapBuffer(GL_ARRAY_BUFFER_ARB);
+#if defined(OPENSCENEGRAPH_MAJOR_VERSION) && OPENSCENEGRAPH_MAJOR_VERSION >= 3
+      mMeshVBO->getOrCreateGLBufferObject(0)->unbindBuffer();
+      mMeshEBO->getOrCreateGLBufferObject(0)->unbindBuffer();
+#else
       mMeshVBO->unbindBuffer(0);
       mMeshEBO->unbindBuffer(0);
+#endif
    }
 
    ////////////////////////////////////////////////////////////////////////////////////////
@@ -473,7 +487,11 @@ namespace dtAnim
 
             const Extensions* glExt = getExtensions(state.getContextID(), true);
 
+#if defined(OPENSCENEGRAPH_MAJOR_VERSION) && OPENSCENEGRAPH_MAJOR_VERSION >= 3
+            state.bindVertexBufferObject(mMeshVBO->getOrCreateGLBufferObject(renderInfo.getContextID()));
+#else
             state.bindVertexBufferObject(mMeshVBO);
+#endif
 
             // Get the transformed vertices for this frame
             if (!initializedThisDraw)
@@ -505,8 +523,11 @@ namespace dtAnim
             state.setTexCoordPointer(1, 2, GL_FLOAT, STRIDE_BYTES, BUFFER_OFFSET(8 + offset));
 
             //make the call to render
+#if defined(OPENSCENEGRAPH_MAJOR_VERSION) && OPENSCENEGRAPH_MAJOR_VERSION >= 3
+            state.bindElementBufferObject(mMeshEBO->getOrCreateGLBufferObject(renderInfo.getContextID()));
+#else
             state.bindElementBufferObject(mMeshEBO);
-
+#endif
             glDrawElements(GL_TRIANGLES, mFaceCount[lodIndex] * 3U, (sizeof(CalIndex) < 4) ?
                            GL_UNSIGNED_SHORT: GL_UNSIGNED_INT, INDEX_OFFSET(3U * mFaceOffsets[lodIndex]));
 
