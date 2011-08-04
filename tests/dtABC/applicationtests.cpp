@@ -517,12 +517,22 @@ namespace dtTest
       osgDB::DatabasePager* pager = app.GetView()->GetOsgViewerView()->getDatabasePager();
       if (pager != NULL)
       {
-         pager->setTargetFrameRate(100.0);
-         pager->setMaximumNumOfObjectsToCompilePerFrame(2);
+#if defined(OSG_VERSION_MAJOR) && OSG_VERSION_MAJOR >= 3
+         if (pager->getIncrementalCompileOperation() == NULL)
+         {
+            pager->setIncrementalCompileOperation(new osgUtil::IncrementalCompileOperation());
+         }
+         pager->getIncrementalCompileOperation()->setTargetFrameRate(100);
+         pager->getIncrementalCompileOperation()->setMaximumNumOfObjectsToCompilePerFrame(2);
+#else
+         pager->setTargetFrameRate(100);
          pager->setMinimumTimeAvailableForGLCompileAndDeletePerFrame(0.001);
+         pager->setExpiryDelay(10.0);
+#endif
+
+
          pager->setDoPreCompile(true);
          pager->setSchedulePriority(OpenThreads::Thread::THREAD_PRIORITY_DEFAULT);
-         pager->setExpiryDelay(10.0);
          pager->setDrawablePolicy(osgDB::DatabasePager::DO_NOT_MODIFY_DRAWABLE_SETTINGS);
       }
    }
@@ -535,12 +545,7 @@ namespace dtTest
 
       osgDB::DatabasePager* pager = app->GetView()->GetDatabasePager()->GetOsgDatabasePager();
 
-#if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR <= 2  && OSG_VERSION_MINOR <= 4
-      bool ignoreThreadPrioritySupport =
-         pager->setSchedulePriority(OpenThreads::Thread::THREAD_PRIORITY_DEFAULT) == -1;
-#else
       pager->setSchedulePriority(OpenThreads::Thread::THREAD_PRIORITY_DEFAULT);
-#endif
 
       app->SetConfigPropertyValue(dtABC::Application::SIM_FRAME_RATE, "32.1");
       app->SetConfigPropertyValue(dtABC::Application::MAX_TIME_BETWEEN_DRAWS, "1.03");
@@ -563,15 +568,17 @@ namespace dtTest
          CPPUNIT_ASSERT_DOUBLES_EQUAL(1.03, system.GetMaxTimeBetweenDraws(), 0.01);
 
          CPPUNIT_ASSERT(! pager->getDoPreCompile());
+#if defined(OSG_VERSION_MAJOR) && OSG_VERSION_MAJOR >= 3
+         CPPUNIT_ASSERT_EQUAL(700U, pager->getIncrementalCompileOperation()->getMaximumNumOfObjectsToCompilePerFrame());
+         CPPUNIT_ASSERT_DOUBLES_EQUAL(31.0, pager->getIncrementalCompileOperation()->getMinimumTimeAvailableForGLCompileAndDeletePerFrame(), 0.01);
+         CPPUNIT_ASSERT_DOUBLES_EQUAL(100.0, pager->getIncrementalCompileOperation()->getTargetFrameRate(), 0.01);
+#else
          CPPUNIT_ASSERT_EQUAL(700U, pager->getMaximumNumOfObjectsToCompilePerFrame());
          CPPUNIT_ASSERT_DOUBLES_EQUAL(31.0, pager->getMinimumTimeAvailableForGLCompileAndDeletePerFrame(), 0.01);
          CPPUNIT_ASSERT_DOUBLES_EQUAL(6.23, pager->getExpiryDelay(), 0.01);
-
-         CPPUNIT_ASSERT(pager->getDrawablePolicy() == osgDB::DatabasePager::DO_NOT_MODIFY_DRAWABLE_SETTINGS);
          CPPUNIT_ASSERT_DOUBLES_EQUAL(100.0, pager->getTargetFrameRate(), 0.01);
-#if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR <= 2  && OSG_VERSION_MINOR <= 4
-         CPPUNIT_ASSERT(pager->getSchedulePriority() == OpenThreads::Thread::THREAD_PRIORITY_DEFAULT);
 #endif
+         CPPUNIT_ASSERT(pager->getDrawablePolicy() == osgDB::DatabasePager::DO_NOT_MODIFY_DRAWABLE_SETTINGS);
 
          //-------------------------------------
 
@@ -588,11 +595,6 @@ namespace dtTest
 //                  "set, should pickup the one from the system",
 //                  system.GetFrameRate(), pager->getTargetFrameRate(), 0.01);
 
-#if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR <= 2  && OSG_VERSION_MINOR <= 4
-         CPPUNIT_ASSERT(ignoreThreadPrioritySupport ||
-                  pager->getSchedulePriority() == OpenThreads::Thread::THREAD_PRIORITY_MAX);
-#endif
-
          //-------------------------------------
 
          app->SetConfigPropertyValue(dtABC::Application::USE_FIXED_TIME_STEP, "false");
@@ -604,12 +606,12 @@ namespace dtTest
 
          ///Check before deleting the pager.
          CPPUNIT_ASSERT(pager->getDrawablePolicy() == osgDB::DatabasePager::USE_VERTEX_BUFFER_OBJECTS);
+#if defined(OSG_VERSION_MAJOR) && OSG_VERSION_MAJOR >= 3
+         CPPUNIT_ASSERT_DOUBLES_EQUAL(31.6, pager->getIncrementalCompileOperation()->getTargetFrameRate(), 0.01);
+#else
          CPPUNIT_ASSERT_DOUBLES_EQUAL(31.6, pager->getTargetFrameRate(), 0.01);
-
-#if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR <= 2  && OSG_VERSION_MINOR <= 4
-         CPPUNIT_ASSERT(ignoreThreadPrioritySupport ||
-                  pager->getSchedulePriority() == OpenThreads::Thread::THREAD_PRIORITY_HIGH);
 #endif
+
 
          // Destroying and re-creating the pager should not affect the settings because it should re-read them.
          // so we test that be deleting and recreating the pager after setting and reading the properties.
@@ -622,7 +624,12 @@ namespace dtTest
 
          ///Check after deleting the pager.
          CPPUNIT_ASSERT(pager->getDrawablePolicy() == osgDB::DatabasePager::USE_VERTEX_BUFFER_OBJECTS);
+
+#if defined(OSG_VERSION_MAJOR) && OSG_VERSION_MAJOR >= 3
+         CPPUNIT_ASSERT_DOUBLES_EQUAL(31.6, pager->getIncrementalCompileOperation()->getTargetFrameRate(), 0.01);
+#else
          CPPUNIT_ASSERT_DOUBLES_EQUAL(31.6, pager->getTargetFrameRate(), 0.01);
+#endif
 
 #if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR <= 2  && OSG_VERSION_MINOR <= 4
          CPPUNIT_ASSERT(ignoreThreadPrioritySupport ||

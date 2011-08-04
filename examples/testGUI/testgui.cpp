@@ -124,7 +124,7 @@ private:
          mGUI->LoadScheme("WindowsLook.scheme");
          mGUI->SetMouseCursor("WindowsLook", "MouseArrow");
 
-         CEGUI::Window* sheet = mGUI->GetRootSheet();
+         //CEGUI::Window* sheet = mGUI->GetRootSheet();
 
          ///We'll make a new ScriptModule which will handle subscribing callbacks
          ///to widgets when it loads the Layout file.

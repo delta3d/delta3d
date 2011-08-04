@@ -34,6 +34,7 @@
 #include <cal3d/hardwaremodel.h>
 #include <osg/CullFace>
 #include <osg/BlendFunc>
+#include <osg/Version>
 
 namespace dtAnim
 {
@@ -189,7 +190,11 @@ void HardwareSubmeshDrawable::drawImplementation(osg::RenderInfo& renderInfo) co
    // Prepare to bind buffer objects
    state.disableAllVertexArrays();
 
+#if defined(OPENSCENEGRAPH_MAJOR_VERSION) && OPENSCENEGRAPH_MAJOR_VERSION >= 3
+   state.bindVertexBufferObject(mVertexVBO->getOrCreateGLBufferObject(renderInfo.getContextID()));
+#else
    state.bindVertexBufferObject(mVertexVBO);
+#endif
 
    unsigned stride = 18 * sizeof(float);
 
@@ -204,7 +209,11 @@ void HardwareSubmeshDrawable::drawImplementation(osg::RenderInfo& renderInfo) co
    state.setTexCoordPointer(2, 4, GL_FLOAT, stride, BUFFER_OFFSET(10));
    state.setTexCoordPointer(3, 4, GL_FLOAT, stride, BUFFER_OFFSET(14));
 
+#if defined(OPENSCENEGRAPH_MAJOR_VERSION) && OPENSCENEGRAPH_MAJOR_VERSION >= 3
+   state.bindElementBufferObject(mIndexEBO->getOrCreateGLBufferObject(renderInfo.getContextID()));
+#else
    state.bindElementBufferObject(mIndexEBO);
+#endif
 
    // Make the call to render
    glDrawElements(GL_TRIANGLES,  faceCount * 3, (sizeof(CalIndex) < 4) ?

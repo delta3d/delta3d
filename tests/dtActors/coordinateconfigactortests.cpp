@@ -70,8 +70,8 @@ class CoordinateConfigActorTests : public CPPUNIT_NS::TestFixture
 
       void tearDown()
       {
-         mCoordinateProxy = NULL;
          mCoordinateConfigActor = NULL;
+         mCoordinateProxy = NULL;
       }
 
       void TestBasics()

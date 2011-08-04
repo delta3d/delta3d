@@ -29,6 +29,9 @@
 #pragma warning ( disable : 4624 )
 #endif
 
+// Must be first because of a hawknl conflict with osg.  This is not a directly required include, but indirectly
+#include <osgDB/Serializer>
+
 #include <dtNetGM/export.h>
 #include <string>
 #include <gnelib.h>

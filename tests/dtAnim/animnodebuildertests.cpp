@@ -57,7 +57,7 @@ namespace dtAnim
    class AnimNodeBuilderTests : public CPPUNIT_NS::TestFixture
    {
       CPPUNIT_TEST_SUITE(AnimNodeBuilderTests);
-         CPPUNIT_TEST(TestBuildSoftware);
+         //CPPUNIT_TEST(TestBuildSoftware);
          CPPUNIT_TEST(TestBuildHardware);
       CPPUNIT_TEST_SUITE_END();
 

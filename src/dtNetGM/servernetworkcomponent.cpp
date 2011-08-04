@@ -18,6 +18,9 @@
  *
  * Pjotr van Amerongen, Curtiss Murphy
  */
+// Must be first because of a hawknl conflict with osg.  This is not a directly required include, but indirectly
+#include <osgDB/Serializer>
+
 #include <dtNetGM/servernetworkcomponent.h>
 #include <dtNetGM/networkcomponent.h>
 #include <dtNetGM/networkbridge.h>

@@ -77,7 +77,6 @@ class EmbeddedWindowSystemWrapper: public osg::GraphicsContext::WindowingSystemI
          return mInterface->getNumScreens(screenIdentifier);
       }
 
-#if defined(OPENSCENEGRAPH_MAJOR_VERSION) && OPENSCENEGRAPH_MAJOR_VERSION >= 2 && defined(OPENSCENEGRAPH_MINOR_VERSION) && OPENSCENEGRAPH_MINOR_VERSION >= 8
       virtual void getScreenSettings(const osg::GraphicsContext::ScreenIdentifier& si, osg::GraphicsContext::ScreenSettings& resolution)
       {
          mInterface->getScreenSettings(si, resolution);
@@ -87,8 +86,8 @@ class EmbeddedWindowSystemWrapper: public osg::GraphicsContext::WindowingSystemI
       {
          mInterface->enumerateScreenSettings(si, rl);
       }
-#endif
 
+#if defined(OPENSCENEGRAPH_MAJOR_VERSION) && OPENSCENEGRAPH_MAJOR_VERSION < 3
       virtual void getScreenResolution(const osg::GraphicsContext::ScreenIdentifier& screenIdentifier,
          unsigned int& width, unsigned int& height)
       {
@@ -106,6 +105,16 @@ class EmbeddedWindowSystemWrapper: public osg::GraphicsContext::WindowingSystemI
       {
          return mInterface->setScreenRefreshRate(screenIdentifier, refreshRate);
       }
+
+#else
+      virtual bool setScreenSettings(const osg::GraphicsContext::ScreenIdentifier& screenIdentifier, const osg::GraphicsContext::ScreenSettings& resolution)
+      {
+         return mInterface->setScreenSettings(screenIdentifier, resolution);
+      }
+
+#endif
+
+
 
       virtual osg::GraphicsContext* createGraphicsContext(osg::GraphicsContext::Traits* traits)
       {

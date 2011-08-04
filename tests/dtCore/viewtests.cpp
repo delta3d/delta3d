@@ -112,13 +112,15 @@ CPPUNIT_TEST_SUITE_REGISTRATION(ViewTests);
    public:
       TestPager() {};
 
-      osgDB::DatabasePager::PagedLODList GetPagedLODList()
+      osgDB::DatabasePager::PagedLODList& GetPagedLODList()
       {
-#if defined(OPENSCENEGRAPH_MAJOR_VERSION) && OPENSCENEGRAPH_MAJOR_VERSION == 2 && defined(OPENSCENEGRAPH_MINOR_VERSION) && OPENSCENEGRAPH_MINOR_VERSION >= 4 && OPENSCENEGRAPH_MINOR_VERSION <= 6
-         return _pagedLODList;
+         // must be a pointer for osg 3.  Should be fine in 2.8
+#if defined(OPENSCENEGRAPH_MAJOR_VERSION) && OPENSCENEGRAPH_MAJOR_VERSION >= 3
+         return *_activePagedLODList;
 #else
          return _activePagedLODList;
 #endif
+
       }
    };
 
