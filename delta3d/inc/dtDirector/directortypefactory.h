@@ -24,6 +24,7 @@
 
 #include <dtDirector/export.h>
 #include <dtDirector/director.h>
+#include <dtDirector/directorxml.h>
 
 #include <dtUtil/objectfactory.h>
 
@@ -143,6 +144,9 @@ namespace dtDirector
 
       // A list of all loaded Director scripts.
       std::vector<Director*> mScriptInstances;
+
+      std::vector<dtCore::RefPtr<DirectorParser> > mXMLParserList;
+      int mCurrentXMLParser;
 
       std::map<std::string, dtCore::RefPtr<Director> > mCachedScripts;
 
