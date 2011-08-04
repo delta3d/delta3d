@@ -7,28 +7,40 @@
 find_path(RTI_INCLUDE_DIR
    NAMES
       RTI.hh
+   PATH_SUFFIXES 
+      /include/ng6
+   HINTS
+      $ENV{DELTA_ROOT}/../portico-1.0rc1
+      $ENV{DELTA_ROOT}/../portico/
+      $ENV{PORTICO_DIR}
    PATHS
-      $ENV{DELTA_ROOT}/../portico-1.0rc1/include/ng6
-      $ENV{DELTA_ROOT}/../portico/include/ng6
-      $ENV{PORTICO_DIR}/include/ng6
+       $ENV{PROGRAMFILES}/Portico/portico-1.0.2
 )
 
 find_library(RTI_LIBRARY
    NAMES
       libRTI-NG RTI-NG
+   PATH_SUFFIXES
+      lib
+   HINTS
+      $ENV{DELTA_ROOT}/../portico-1.0rc1
+      $ENV{DELTA_ROOT}/../portico
+      $ENV{PORTICO_DIR}
    PATHS
-      $ENV{DELTA_ROOT}/../portico-1.0rc1/lib
-      $ENV{DELTA_ROOT}/../portico/lib
-      $ENV{PORTICO_DIR}/lib
+      $ENV{PROGRAMFILES}/Portico/portico-1.0.2
 )
 
 find_library(RTI_FEDTIME_LIBRARY
    NAMES
       libFedTime FedTime
+   PATH_SUFFIXES
+      lib      
+   HINTS
+      $ENV{DELTA_ROOT}/../portico-1.0rc1
+      $ENV{DELTA_ROOT}/../portico
+      $ENV{PORTICO_DIR}
    PATHS
-      $ENV{DELTA_ROOT}/../portico-1.0rc1/lib
-      $ENV{DELTA_ROOT}/../portico/lib
-      $ENV{PORTICO_DIR}/lib
+      $ENV{PROGRAMFILES}/Portico/portico-1.0.2      
 )
 
 set(RTI_FOUND "NO")
