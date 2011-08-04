@@ -233,6 +233,11 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    bool Director::IsCachedInstance() const
    {
+      if (GetParent())
+      {
+         return GetParent()->IsCachedInstance();
+      }
+
       dtDirector::DirectorTypeFactory* factory = dtDirector::DirectorTypeFactory::GetInstance();
       if (factory)
       {
@@ -241,11 +246,6 @@ namespace dtDirector
          {
             return true;
          }
-      }
-
-      if (GetParent())
-      {
-         return GetParent()->IsCachedInstance();
       }
 
       return false;
