@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<prefab xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dMap" xsi:schemaLocation="delta3dMap map.xsd">
+    <header>
+        <description>This is the actor that represents the player.</description>
+        <editorVersion>2.7.0</editorVersion>
+        <schemaVersion>1.0</schemaVersion>
+        <icon></icon>
+    </header>
+    <libraries>
+        <library>
+            <name>dtActors</name>
+            <version></version>
+        </library>
+        <library>
+            <name>dtActors</name>
+            <version></version>
+        </library>
+    </libraries>
+    <actors>
+        <actor>
+            <type>dtcore.Camera</type>
+            <id>e0e81277-db7f-435d-86ca-02d8db009ada</id>
+            <name>PlayerHead_02</name>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>CUBE</enumerated>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>0.100000</value1>
+                    <value2>0.100000</value2>
+                    <value3>0.100000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Enable Collision</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Collision Collide Mask</name>
+                <bitMask>129</bitMask>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Camera</type>
+            <id>58d6cfdc-4fcc-4655-a52e-d4dcf3749433</id>
+            <name>PlayerBody_03</name>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-0.750000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>CUBE</enumerated>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>0.100000</value1>
+                    <value2>0.100000</value2>
+                    <value3>1.500000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Enable Collision</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Collision Collide Mask</name>
+                <bitMask>129</bitMask>
+            </property>
+        </actor>
+    </actors>
+</prefab>
