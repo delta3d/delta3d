@@ -123,9 +123,10 @@ namespace dtDirector
          {
             mLoopTimeElapsed += simDelta;
 
-            if (mLoopTimeElapsed > mLoopPeriod)
+            float loopPeriod = GetFloat("LoopPeriod");
+            if (mLoopTimeElapsed > loopPeriod)
             {
-               mLoopTimeElapsed -= mLoopPeriod;
+               mLoopTimeElapsed -= loopPeriod;
 
                SetFloat(simDelta, "DeltaTime");
 
