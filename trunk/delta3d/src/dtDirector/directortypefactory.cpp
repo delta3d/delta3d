@@ -20,7 +20,6 @@
  */
 
 #include <dtDirector/directortypefactory.h>
-#include <dtDirector/directorxml.h>
 #include <dtDirector/directorbinary.h>
 
 #include <dtDAL/project.h>
@@ -49,6 +48,7 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    DirectorTypeFactory::DirectorTypeFactory()
       : mFactory(new dtUtil::ObjectFactory<std::string, Director>)
+      , mCurrentXMLParser(-1)
    {
       // Register our default Director script type.
       RegisterScriptType<Director>("Scenario");
@@ -136,7 +136,13 @@ namespace dtDirector
             }
             else
             {
-               dtCore::RefPtr<DirectorParser> parser = new DirectorParser();
+               mCurrentXMLParser++;
+               if (mCurrentXMLParser >= mXMLParserList.size())
+               {
+                  mXMLParserList.push_back(new DirectorParser());
+               }
+               dtCore::RefPtr<DirectorParser> parser = mXMLParserList[mCurrentXMLParser];
+
                if (parser.valid())
                {
                   scriptType = parser->ParseScriptType(fileName);
@@ -153,10 +159,29 @@ namespace dtDirector
                   newDirector->mMissingLibraries = parser->GetMissingLibraries();
                   newDirector->mHasDeprecatedProperty = parser->HasDeprecatedProperty();
                }
+
+               mCurrentXMLParser--;
+
+               // Unload any extra parsers created for referenced scripts.
+               if (mCurrentXMLParser == -1)
+               {
+                  mXMLParserList.resize(1);
+               }
             }
          }
          catch (const dtUtil::Exception& e)
          {
+            if (!binaryFormat)
+            {
+               mCurrentXMLParser--;
+
+               // Unload any extra parsers created for referenced scripts.
+               if (mCurrentXMLParser == -1)
+               {
+                  mXMLParserList.resize(1);
+               }
+            }
+
             std::string error = "Unable to parse " + scriptFile + " with error " + e.What();
             dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__, error.c_str());
             throw e;
