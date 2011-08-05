@@ -70,10 +70,10 @@ namespace dtDirector
       /**
        * @see DocumentHandler#startElement
        */
-      virtual void ElementStarted( const XMLCh*  const  uri,
-                                 const XMLCh*  const  localname,
-                                 const XMLCh*  const  qname,
-                                 const xercesc::Attributes& attrs );
+      virtual void ElementStarted(const XMLCh* const uri,
+                                  const XMLCh* const localname,
+                                  const XMLCh* const qname,
+                                  const xercesc::Attributes& attrs);
 
       /**
        * @see DocumentHandler#endElement

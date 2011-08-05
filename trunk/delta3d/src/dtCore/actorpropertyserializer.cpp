@@ -134,7 +134,7 @@ namespace dtCore
 
       // Only save properties that should be saved.
       dtCore::SerializerRuntimeData& data = Top();
-      if (!data.mPropertyContainer || !data.mPropertyContainer->ShouldPropertySave(property))
+      if (!data.mPropertyContainer.valid() || !data.mPropertyContainer->ShouldPropertySave(property))
       {
          return;
       }
@@ -475,7 +475,7 @@ namespace dtCore
                // If the property was not found, attempt to get a temporary one instead.
                if (!data.mActorProperty.valid())
                {
-                  data.mActorProperty = data.mPropertyContainer->GetDeprecatedProperty(propName);
+                  data.mActorProperty = data.mPropertyContainer->GetDeprecatedProperty(propName).get();
                   if (data.mActorProperty.valid())
                   {
                      data.mHasDeprecatedProperty = true;
@@ -519,7 +519,7 @@ namespace dtCore
 
          return true;
       }
-     
+
       return false;
    }
 
@@ -896,7 +896,7 @@ namespace dtCore
       if (data.mParameterStack.empty())
       {
          data.mInGroupProperty = false;
-         mGroupParameters.insert(std::make_pair(data.mPropertyContainer,
+         mGroupParameters.insert(std::make_pair(data.mPropertyContainer.get(),
             std::make_pair(data.mActorProperty->GetName(), topParam)));
       }
    }
@@ -1158,7 +1158,7 @@ namespace dtCore
                }
                else
                {
-                  mActorLinking.insert(std::make_pair(data.mPropertyContainer, std::make_pair(actorProperty->GetName(), dtCore::UniqueId(dataValue))));
+                  mActorLinking.insert(std::make_pair(data.mPropertyContainer.get(), std::make_pair(actorProperty->GetName(), dtCore::UniqueId(dataValue))));
                }
             }
             dataType = NULL;
@@ -1203,7 +1203,7 @@ namespace dtCore
                         dataValue.c_str(), p.GetDataType().GetName().c_str());
                      p.SetValue(dtCore::ResourceDescriptor::NULL_RESOURCE);
                      dataType = NULL;
-                  }                  
+                  }
                }
                else if (topEl == MapXMLConstants::ACTOR_PROPERTY_RESOURCE_DISPLAY_ELEMENT)
                {
@@ -1870,7 +1870,7 @@ namespace dtCore
    {
       SerializerRuntimeData& data = Top();
 
-      dtCore::ActorProperty* prop = data.mActorProperty;
+      dtCore::ActorProperty* prop = data.mActorProperty.get();
       int count = (int)data.mNestedTypes.size()-1;
       for (int index = 0; index < count; ++index)
       {
@@ -1909,7 +1909,7 @@ namespace dtCore
       SerializerRuntimeData& data = Top();
 
       dtCore::ActorProperty* prop = GetNestedProperty();
-      if (prop && prop != data.mActorProperty)
+      if (prop && prop != data.mActorProperty.get())
       {
          data.mNestedPropertyType = DataType::GetValueForName(prop->GetDataType().GetName());
          return data.mNestedPropertyType;

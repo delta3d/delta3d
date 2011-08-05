@@ -50,7 +50,7 @@ void SequenceMixer::Update(float dt)
    const AnimationSequence::AnimationContainer& childAnims
       = mRootSequence->GetChildAnimations();
 
-   // Update the root sequence's elapsed time since its update method does not. 
+   // Update the root sequence's elapsed time since its update method does not.
    if ( ! childAnims.empty())
    {
       mRootSequence->SetElapsedTime(mRootSequence->GetElapsedTime() + dt);
