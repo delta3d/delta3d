@@ -1727,7 +1727,10 @@ namespace dtDirector
       for (int index = 0; index < count; ++index)
       {
          ValueNode* node = valueNodes[index];
-         if (node)
+         // We want to ignore value link and reference nodes because
+         // we don't actually want to set those values.
+         if (node && node->GetType().GetFullName() != "Core.Reference" &&
+            node->GetType().GetFullName() != "Core.Value Link")
          {
             StateValueData data;
             data.id = node->GetID();
