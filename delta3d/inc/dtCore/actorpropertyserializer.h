@@ -48,8 +48,8 @@ namespace dtCore
    {
       SerializerRuntimeData();
 
-      dtCore::RefPtr<PropertyContainer> mPropertyContainer;
-      dtCore::RefPtr<ActorProperty> mActorProperty;
+      dtCore::ObserverPtr<PropertyContainer> mPropertyContainer;
+      dtCore::ObserverPtr<ActorProperty> mActorProperty;
       DataType* mActorPropertyType;
       DataType* mNestedPropertyType;
       DataType* mParameterTypeToCreate;
@@ -124,7 +124,7 @@ namespace dtCore
        * Resets the serializer.
        */
       void Reset();
-      
+
       /**
        * Writes a property.
        */
@@ -209,7 +209,7 @@ namespace dtCore
        */
       void WriteParameter(const NamedParameter& param);
 
-      /** 
+      /**
        * Writes the supplied string into a StringActorProperty element.
        * @param str The StringProperties string value. Will wrap into a CDATA
        * struct to allow for reading/writing HTML strings.

@@ -137,7 +137,7 @@ namespace dtDirector
             else
             {
                mCurrentXMLParser++;
-               if (mCurrentXMLParser >= mXMLParserList.size())
+               if (mCurrentXMLParser >= (int)mXMLParserList.size())
                {
                   mXMLParserList.push_back(new DirectorParser());
                }
