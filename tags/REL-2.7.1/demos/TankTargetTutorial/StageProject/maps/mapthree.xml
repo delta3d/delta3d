@@ -1,0 +1,651 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dMap" xsi:schemaLocation="delta3dMap map.xsd">
+    <header>
+        <name>mapthree</name>
+        <description>Another Map</description>
+        <author></author>
+        <comment></comment>
+        <copyright></copyright>
+        <createTimestamp>2006-07-27T10:49:46.0-05:00</createTimestamp>
+        <lastUpdateTimestamp>2006-07-27T11:11:31.0-05:00</lastUpdateTimestamp>
+        <editorVersion>1.1.0</editorVersion>
+        <schemaVersion>1.0</schemaVersion>
+    </header>
+    <libraries>
+        <library>
+            <name>TutorialLibrary</name>
+            <version></version>
+        </library>
+    </libraries>
+    <actors>
+        <actor>
+            <type>MyActors.Targets.KillableTarget</type>
+            <id>0209bba9-6a21-45b9-a448-0d5fa5c0a995</id>
+            <name>KillableTarget</name>
+            <property>
+                <name>Center of Gravity</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Collision Geometry</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collision Length</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>NONE</enumerated>
+            </property>
+            <property>
+                <name>Enable Dynamics</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Initial Ownership</name>
+                <enumerated>Server+Published</enumerated>
+            </property>
+            <property>
+                <name>Mass</name>
+                <float>4.188790321350098</float>
+            </property>
+            <property>
+                <name>Max Health</name>
+                <integer>100</integer>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>0.400000</value1>
+                    <value2>0.400000</value2>
+                    <value3>0.400000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>ShaderGroup</name>
+                <string></string>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-31.431389</value1>
+                    <value2>15.005484</value2>
+                    <value3>-5.902289</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::happyBlimp.ive</resourceDisplayName>
+                <resource>StaticMeshes::happyBlimp.ive</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>MyActors.Tanks.Tank</type>
+            <id>217b929e-66b2-45a5-9e21-1bc5ac60f36b</id>
+            <name>HoverTank</name>
+            <property>
+                <name>Center of Gravity</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Collision Geometry</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collision Length</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>NONE</enumerated>
+            </property>
+            <property>
+                <name>Enable Dynamics</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Initial Ownership</name>
+                <enumerated>Server+Published</enumerated>
+            </property>
+            <property>
+                <name>Mass</name>
+                <float>4.188790321350098</float>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>1.000000</value1>
+                    <value2>1.000000</value2>
+                    <value3>1.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>ShaderGroup</name>
+                <string></string>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>8.111472</value1>
+                    <value2>-15.948938</value2>
+                    <value3>-13.025898</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Turnrate</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Velocity</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::bmp_hover.ive</resourceDisplayName>
+                <resource>StaticMeshes::bmp_hover.ive</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>MyActors.Targets.KillableTarget</type>
+            <id>434f68fe-8c01-4dd0-bb7d-765d3560f0bf</id>
+            <name>KillableTarget</name>
+            <property>
+                <name>Center of Gravity</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Collision Geometry</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collision Length</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>NONE</enumerated>
+            </property>
+            <property>
+                <name>Enable Dynamics</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Initial Ownership</name>
+                <enumerated>Server+Published</enumerated>
+            </property>
+            <property>
+                <name>Mass</name>
+                <float>4.188790321350098</float>
+            </property>
+            <property>
+                <name>Max Health</name>
+                <integer>100</integer>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>-1.019847</value1>
+                    <value2>2.500114</value2>
+                    <value3>33.722252</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>0.300000</value1>
+                    <value2>0.300000</value2>
+                    <value3>0.300000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>ShaderGroup</name>
+                <string></string>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>110.288010</value1>
+                    <value2>0.201004</value2>
+                    <value3>6.328625</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::happyBlimp.ive</resourceDisplayName>
+                <resource>StaticMeshes::happyBlimp.ive</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Static Mesh</type>
+            <id>4bcb00c6-2dda-47d7-a061-8949eaf1dd3e</id>
+            <name>Terrain</name>
+            <property>
+                <name>Center of Gravity</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Collision Geometry</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collision Length</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>NONE</enumerated>
+            </property>
+            <property>
+                <name>Enable Dynamics</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Mass</name>
+                <float>4.188790321350098</float>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>3.699999</value1>
+                    <value2>0.000010</value2>
+                    <value3>0.000010</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>3.000000</value1>
+                    <value2>3.000000</value2>
+                    <value3>1.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-1.547338</value1>
+                    <value2>21.363609</value2>
+                    <value3>-16.299416</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::terrain_simple.ive</resourceDisplayName>
+                <resource>StaticMeshes::terrain_simple.ive</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>MyActors.Targets.KillableTarget</type>
+            <id>5425edb4-d3c7-4e41-8bd2-b15fc8c0222c</id>
+            <name>KillableTarget</name>
+            <property>
+                <name>Center of Gravity</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Collision Geometry</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collision Length</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>NONE</enumerated>
+            </property>
+            <property>
+                <name>Enable Dynamics</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Initial Ownership</name>
+                <enumerated>Server+Published</enumerated>
+            </property>
+            <property>
+                <name>Mass</name>
+                <float>4.188790321350098</float>
+            </property>
+            <property>
+                <name>Max Health</name>
+                <integer>100</integer>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000002</value1>
+                    <value2>0.000001</value2>
+                    <value3>45.100002</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>0.400001</value1>
+                    <value2>0.400001</value2>
+                    <value3>0.400002</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>ShaderGroup</name>
+                <string></string>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>121.179016</value1>
+                    <value2>18.256958</value2>
+                    <value3>-5.902290</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::happyBlimp.ive</resourceDisplayName>
+                <resource>StaticMeshes::happyBlimp.ive</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>MyActors.Targets.KillableTarget</type>
+            <id>77cef717-c8c1-499d-8b04-d9200af5caf1</id>
+            <name>KillableTarget</name>
+            <property>
+                <name>Center of Gravity</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Collision Geometry</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collision Length</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>NONE</enumerated>
+            </property>
+            <property>
+                <name>Enable Dynamics</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Initial Ownership</name>
+                <enumerated>Server+Published</enumerated>
+            </property>
+            <property>
+                <name>Mass</name>
+                <float>4.188790321350098</float>
+            </property>
+            <property>
+                <name>Max Health</name>
+                <integer>100</integer>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000003</value1>
+                    <value2>0.000002</value2>
+                    <value3>-52.899994</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>0.400003</value1>
+                    <value2>0.400003</value2>
+                    <value3>0.400003</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>ShaderGroup</name>
+                <string></string>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>9.046909</value1>
+                    <value2>80.601517</value2>
+                    <value3>-2.251657</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::happyBlimp.ive</resourceDisplayName>
+                <resource>StaticMeshes::happyBlimp.ive</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>MyActors.Targets.KillableTarget</type>
+            <id>8712bc25-5252-4938-99e4-3c5f62810414</id>
+            <name>KillableTarget</name>
+            <property>
+                <name>Center of Gravity</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Collision Geometry</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collision Length</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>NONE</enumerated>
+            </property>
+            <property>
+                <name>Enable Dynamics</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Initial Ownership</name>
+                <enumerated>Server+Published</enumerated>
+            </property>
+            <property>
+                <name>Mass</name>
+                <float>4.188790321350098</float>
+            </property>
+            <property>
+                <name>Max Health</name>
+                <integer>100</integer>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000001</value1>
+                    <value2>0.000001</value2>
+                    <value3>23.600000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>0.400001</value1>
+                    <value2>0.400001</value2>
+                    <value3>0.400001</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>ShaderGroup</name>
+                <string></string>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>70.934402</value1>
+                    <value2>14.044952</value2>
+                    <value3>-2.251657</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::happyBlimp.ive</resourceDisplayName>
+                <resource>StaticMeshes::happyBlimp.ive</resource>
+            </property>
+        </actor>
+    </actors>
+</map>
