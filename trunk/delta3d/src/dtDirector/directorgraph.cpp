@@ -257,73 +257,73 @@ namespace dtDirector
          }
       }
 
-      count = (int)subGraphs.size();
-      for (int index = 0; index < count; ++index)
-      {
-         DirectorGraph* graph = subGraphs[index];
-         if (graph)
-         {
-            // Iterate through all the output link nodes within the graph.
-            std::vector<dtCore::RefPtr<ActionNode> > outputNodes = graph->GetOutputNodes();
-            int linkCount = (int)outputNodes.size();
-            for (int linkIndex = 0; linkIndex < linkCount; ++linkIndex)
-            {
-               Node* linkNode = outputNodes[linkIndex];
+      //count = (int)subGraphs.size();
+      //for (int index = 0; index < count; ++index)
+      //{
+      //   DirectorGraph* graph = subGraphs[index];
+      //   if (graph)
+      //   {
+      //      // Iterate through all the output link nodes within the graph.
+      //      std::vector<dtCore::RefPtr<ActionNode> > outputNodes = graph->GetOutputNodes();
+      //      int linkCount = (int)outputNodes.size();
+      //      for (int linkIndex = 0; linkIndex < linkCount; ++linkIndex)
+      //      {
+      //         Node* linkNode = outputNodes[linkIndex];
 
-               if (linkNode)
-               {
-                  Node* newLinkNode = newGraph->GetNode(linkNode->GetID());
+      //         if (linkNode)
+      //         {
+      //            Node* newLinkNode = newGraph->GetNode(linkNode->GetID());
 
-                  // Iterate through the connections for this output node.
-                  int targetCount = (int)linkNode->GetOutputLinks()[0].GetLinks().size();
-                  for (int targetIndex = 0; targetIndex < targetCount; ++targetIndex)
-                  {
-                     InputLink* targetLink = linkNode->GetOutputLinks()[0].GetLinks()[targetIndex];
-                     if (targetLink)
-                     {
-                        // Find the matching cloned target node.
-                        Node* newTargetNode = script->GetNode(targetLink->GetOwner()->GetID());
-                        if (newTargetNode)
-                        {
-                           // Make the connection.
-                           newLinkNode->GetOutputLinks()[0].Connect(newTargetNode->GetInputLink(targetLink->GetName()));
-                        }
-                     }
-                  }
-               }
-            }
+      //            // Iterate through the connections for this output node.
+      //            int targetCount = (int)linkNode->GetOutputLinks()[0].GetLinks().size();
+      //            for (int targetIndex = 0; targetIndex < targetCount; ++targetIndex)
+      //            {
+      //               InputLink* targetLink = linkNode->GetOutputLinks()[0].GetLinks()[targetIndex];
+      //               if (targetLink)
+      //               {
+      //                  // Find the matching cloned target node.
+      //                  Node* newTargetNode = script->GetNode(targetLink->GetOwner()->GetID());
+      //                  if (newTargetNode)
+      //                  {
+      //                     // Make the connection.
+      //                     newLinkNode->GetOutputLinks()[0].Connect(newTargetNode->GetInputLink(targetLink->GetName()));
+      //                  }
+      //               }
+      //            }
+      //         }
+      //      }
 
-            // Iterate through all the value link nodes within the graph.
-            std::vector<dtCore::RefPtr<ValueNode> > valueNodes = graph->GetExternalValueNodes();
-            linkCount = (int)valueNodes.size();
-            for (int linkIndex = 0; linkIndex < linkCount; ++linkIndex)
-            {
-               Node* linkNode = valueNodes[linkIndex];
+      //      // Iterate through all the value link nodes within the graph.
+      //      std::vector<dtCore::RefPtr<ValueNode> > valueNodes = graph->GetExternalValueNodes();
+      //      linkCount = (int)valueNodes.size();
+      //      for (int linkIndex = 0; linkIndex < linkCount; ++linkIndex)
+      //      {
+      //         Node* linkNode = valueNodes[linkIndex];
 
-               if (linkNode)
-               {
-                  Node* newLinkNode = newGraph->GetNode(linkNode->GetID());
+      //         if (linkNode)
+      //         {
+      //            Node* newLinkNode = newGraph->GetNode(linkNode->GetID());
 
-                  // Iterate through the connections for this value node.
-                  int targetCount = (int)linkNode->GetValueLinks()[0].GetLinks().size();
-                  for (int targetIndex = 0; targetIndex < targetCount; ++targetIndex)
-                  {
-                     ValueNode* targetNode = linkNode->GetValueLinks()[0].GetLinks()[targetIndex];
-                     if (targetNode)
-                     {
-                        // Find the matching cloned target node.
-                        Node* newTargetNode = script->GetNode(targetNode->GetID());
-                        if (newTargetNode && newTargetNode->AsValueNode())
-                        {
-                           // Make the connection.
-                           newLinkNode->GetValueLinks()[0].Connect(newTargetNode->AsValueNode());
-                        }
-                     }
-                  }
-               }
-            }
-         }
-      }
+      //            // Iterate through the connections for this value node.
+      //            int targetCount = (int)linkNode->GetValueLinks()[0].GetLinks().size();
+      //            for (int targetIndex = 0; targetIndex < targetCount; ++targetIndex)
+      //            {
+      //               ValueNode* targetNode = linkNode->GetValueLinks()[0].GetLinks()[targetIndex];
+      //               if (targetNode)
+      //               {
+      //                  // Find the matching cloned target node.
+      //                  Node* newTargetNode = script->GetNode(targetNode->GetID());
+      //                  if (newTargetNode && newTargetNode->AsValueNode())
+      //                  {
+      //                     // Make the connection.
+      //                     newLinkNode->GetValueLinks()[0].Connect(newTargetNode->AsValueNode());
+      //                  }
+      //               }
+      //            }
+      //         }
+      //      }
+      //   }
+      //}
    }
 
    ////////////////////////////////////////////////////////////////////////////////
