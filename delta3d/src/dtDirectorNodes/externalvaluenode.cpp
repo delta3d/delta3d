@@ -77,6 +77,8 @@ namespace dtDirector
       ValueNode::OnLinkValueChanged(linkName);
 
       UpdateLinkType();
+
+      ValueNode::OnValueChanged();
    }
 
    //////////////////////////////////////////////////////////////////////////
