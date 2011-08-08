@@ -1730,7 +1730,8 @@ namespace dtDirector
          // We want to ignore value link and reference nodes because
          // we don't actually want to set those values.
          if (node && node->GetType().GetFullName() != "Core.Reference" &&
-            node->GetType().GetFullName() != "Core.Value Link")
+            node->GetType().GetNodeType() != dtDirector::NodeType::LINK_NODE &&
+            node->GetType().GetNodeType() != dtDirector::NodeType::MUTATOR_NODE)
          {
             StateValueData data;
             data.id = node->GetID();
