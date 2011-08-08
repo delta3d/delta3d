@@ -53,10 +53,12 @@ static void ReadDBPagerConfig(osgDB::DatabasePager& pager, dtUtil::ConfigPropert
    }
 
    std::string value;
+#if defined(OSG_VERSION_MAJOR) && OSG_VERSION_MAJOR >= 3
    if (pager.getIncrementalCompileOperation() == NULL)
    {
       pager.setIncrementalCompileOperation(new osgUtil::IncrementalCompileOperation());
    }
+#endif
 
    value = config->GetConfigPropertyValue(DatabasePager::DATABASE_PAGER_PRECOMPILE_OBJECTS);
    if (!value.empty())
