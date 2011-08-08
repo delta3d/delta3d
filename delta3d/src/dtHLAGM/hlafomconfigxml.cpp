@@ -1431,35 +1431,35 @@ namespace dtHLAGM
 
    void HLAFOMConfigContentHandler::error(const xercesc_dt::SAXParseException& exc)
    {
-      mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__,
-         //"ERROR %d:%d - %s:%s - %s", exc.getLineNumber(),
-         "ERROR %d:%d", exc.getLineNumber(),
-         exc.getColumnNumber());// dtUtil::XMLStringConverter(exc.getPublicId()).c_str(),
-         //dtUtil::XMLStringConverter(exc.getSystemId()).c_str(),
-         //dtUtil::XMLStringConverter(exc.getMessage()).c_str());
+      std::stringstream ss;
+      ss << "Line: " << exc.getLineNumber() << " Col: " << exc.getColumnNumber() << " " <<
+             dtUtil::XMLStringConverter(exc.getMessage()).c_str();
+
+      mLogger->LogMessage(DT_LOG_SOURCE, ss.str(), dtUtil::Log::LOG_ERROR);
+
       mTargetTranslator = NULL;
       throw exc;
    }
 
    void HLAFOMConfigContentHandler::fatalError(const xercesc_dt::SAXParseException& exc)
    {
-      mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-         //"FATAL-ERROR %d:%d - %s:%s - %s", exc.getLineNumber(),
-               "FATAL-ERROR %d:%d", exc.getLineNumber(),
-         exc.getColumnNumber());//, dtUtil::XMLStringConverter(exc.getPublicId()).c_str(),
-         //dtUtil::XMLStringConverter(exc.getSystemId()).c_str(),
-         //dtUtil::XMLStringConverter(exc.getMessage()).c_str());
+      std::stringstream ss;
+      ss << "Line: " << exc.getLineNumber() << " Col: " << exc.getColumnNumber() << " " <<
+         dtUtil::XMLStringConverter(exc.getMessage()).c_str();
+
+      mLogger->LogMessage(DT_LOG_SOURCE, ss.str(), dtUtil::Log::LOG_ERROR);
+
       mTargetTranslator = NULL;
       throw exc;
    }
 
    void HLAFOMConfigContentHandler::warning(const xercesc_dt::SAXParseException& exc)
    {
-      mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
-         "WARNING %d:%d - %s:%s - %s", exc.getLineNumber(),
-         exc.getColumnNumber(), dtUtil::XMLStringConverter(exc.getPublicId()).c_str(),
-         dtUtil::XMLStringConverter(exc.getSystemId()).c_str(),
-         dtUtil::XMLStringConverter(exc.getMessage()).c_str());
+      std::stringstream ss;
+      ss << "Line: " << exc.getLineNumber() << " Col: " << exc.getColumnNumber() << " " <<
+         dtUtil::XMLStringConverter(exc.getMessage()).c_str();
+
+      mLogger->LogMessage(DT_LOG_SOURCE, ss.str(), dtUtil::Log::LOG_WARNING);
    }
 
    void HLAFOMConfigContentHandler::resetDocument()
