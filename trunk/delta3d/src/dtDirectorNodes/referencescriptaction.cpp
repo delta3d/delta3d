@@ -107,6 +107,31 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   void ReferenceScriptAction::OnLinkValueChanged(const std::string& linkName)
+   {
+      // Propagate the changed event to the value link within the
+      // referenced script.
+      if (mScript.valid())
+      {
+         DirectorGraph* graph = mScript->GetGraphRoot();
+         if (graph)
+         {
+            std::vector<dtCore::RefPtr<ValueNode> > values = graph->GetExternalValueNodes();
+            int count = (int)values.size();
+            for (int index = 0; index < count; index++)
+            {
+               ValueNode* node = values[index];
+               if (node->GetName() == linkName)
+               {
+                  node->OnLinkValueChanged(linkName);
+                  break;
+               }
+            }
+         }
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    void ReferenceScriptAction::SetDirectorResource(const dtDAL::ResourceDescriptor& value)
    {
       mScriptResource = value;
