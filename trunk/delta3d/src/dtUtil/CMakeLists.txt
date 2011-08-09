@@ -44,6 +44,7 @@ SET( LIB_SOURCES
    )
    
 SET( LIB_PUBLIC_HEADERS
+    ${HEADER_PATH}/assocvector.h
     ${HEADER_PATH}/barycentric.h
     ${HEADER_PATH}/bits.h
     ${HEADER_PATH}/boundingshapeutils.h
@@ -69,6 +70,7 @@ SET( LIB_PUBLIC_HEADERS
     ${HEADER_PATH}/generic.h
     ${HEADER_PATH}/geometrycollector.h
     ${HEADER_PATH}/getsetmacros.h
+    ${HEADER_PATH}/hash.h
     ${HEADER_PATH}/hotspotdefinition.h
     ${HEADER_PATH}/hotspotxml.h
     ${HEADER_PATH}/kdtree.h
