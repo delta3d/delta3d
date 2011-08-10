@@ -46,6 +46,10 @@
 #ifndef INCLUDE_KDTREE_KDTREE_HPP
 #define INCLUDE_KDTREE_KDTREE_HPP
 
+#ifdef DELTA_WIN32
+   #pragma warning(disable : 4396) // the inline specifier cannot be used when a friend declaration refers to a specialization of a function template
+#endif
+
 
 //
 //  This number is guarenteed to change with every release.
