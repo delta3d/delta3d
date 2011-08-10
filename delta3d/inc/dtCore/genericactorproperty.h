@@ -82,7 +82,11 @@ namespace dtCore
       {
          if (GetDataType() != otherProp.GetDataType())
          {
-            LOG_ERROR("Property types are incompatible. Cannot make copy.");
+            LOG_ERROR(std::string("Property types are incompatible. Cannot copy from ") +
+                     otherProp.GetLabel() + "(" +
+                     otherProp.GetDataType().GetDisplayName() + ") to " +
+                     GetLabel() + "(" +
+                     GetDataType().GetDisplayName() + ")");
             return;
          }
 
