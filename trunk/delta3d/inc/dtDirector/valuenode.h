@@ -131,6 +131,13 @@ namespace dtDirector
       virtual void OnConnectionChange();
 
       /**
+       * Sets the enabled status of the node.
+       *
+       * @param[in]  enabled   True to enable.
+       */
+      virtual void SetEnabled(bool enabled);
+
+      /**
        * Accessors for the name of the node.
        */
       virtual std::string GetValueLabel();

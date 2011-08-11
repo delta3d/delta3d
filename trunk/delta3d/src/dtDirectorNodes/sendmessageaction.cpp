@@ -118,6 +118,8 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void SendMessageAction::OnLinkValueChanged(const std::string& linkName)
    {
+      ActionNode::OnLinkValueChanged(linkName);
+
       UpdateName();
    }
 

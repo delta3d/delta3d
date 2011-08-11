@@ -129,6 +129,8 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void LoadGUIScheme::OnLinkValueChanged(const std::string& linkName)
    {
+      ActionNode::OnLinkValueChanged(linkName);
+
       if (!GetDirector()->IsLoading())
       {
          if (linkName == "Scheme")

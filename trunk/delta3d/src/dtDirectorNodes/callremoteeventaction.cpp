@@ -278,6 +278,8 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void CallRemoteEventAction::OnLinkValueChanged(const std::string& linkName)
    {
+      LatentActionNode::OnLinkValueChanged(linkName);
+
       if (linkName == "EventName")
       {
          UpdateName();

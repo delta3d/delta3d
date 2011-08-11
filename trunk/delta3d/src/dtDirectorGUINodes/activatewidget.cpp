@@ -139,6 +139,8 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void ActivateWidget::OnLinkValueChanged(const std::string& linkName)
    {
+      ActionNode::OnLinkValueChanged(linkName);
+
       if (!GetDirector()->IsLoading())
       {
          if (linkName == "Layout")

@@ -155,7 +155,7 @@ namespace dtDirector
        *
        * @param[in]  linkName  The name of the value link that is changing.
        */
-      virtual void OnLinkValueChanged(const std::string& linkName) {}
+      virtual void OnLinkValueChanged(const std::string& linkName);
 
       /**
        * Retrieves the key name used to identify this container with the
@@ -272,7 +272,7 @@ namespace dtDirector
        *
        * @param[in]  enabled   True to enable.
        */
-      void SetEnabled(bool enabled);
+      virtual void SetEnabled(bool enabled);
 
       /**
        * Retrieves whether this node is enabled.
@@ -663,6 +663,7 @@ namespace dtDirector
       osg::Vec2          mPosition;
 
       bool               mEnabled;
+      bool               mIsEnabled;
 
       Director*          mDirector;
       DirectorGraph*     mGraph;

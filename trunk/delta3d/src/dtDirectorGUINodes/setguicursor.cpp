@@ -133,6 +133,8 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void SetGUICursor::OnLinkValueChanged(const std::string& linkName)
    {
+      ActionNode::OnLinkValueChanged(linkName);
+
       if (!GetDirector()->IsLoading())
       {
          if (linkName == "Image Set" ||

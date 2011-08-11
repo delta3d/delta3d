@@ -119,6 +119,8 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void ButtonEvent::OnLinkValueChanged(const std::string& linkName)
    {
+      EventNode::OnLinkValueChanged(linkName);
+
       if (!GetDirector()->IsLoading())
       {
          UpdateName();
