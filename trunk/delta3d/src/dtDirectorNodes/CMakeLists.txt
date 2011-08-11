@@ -40,12 +40,13 @@ SET(LIB_PUBLIC_HEADERS ${HEADER_PATH}/actorarrayvalue.h
     ${HEADER_PATH}/fpsmotionmodellisteneraction.h
     ${HEADER_PATH}/gameeventmessageevent.h
     ${HEADER_PATH}/gamemessageevent.h
-    ${HEADER_PATH}/getactoraction.h
+    ${HEADER_PATH}/getactoraction.h    
     ${HEADER_PATH}/getactororientationaction.h
     ${HEADER_PATH}/getapplicationconfigpropertyaction.h
     ${HEADER_PATH}/getactorpropertyaction.h
     ${HEADER_PATH}/getarrayaction.h
     ${HEADER_PATH}/getarraysizeaction.h
+    ${HEADER_PATH}/getparentactoraction.h
     ${HEADER_PATH}/getvectorvaluesaction.h
     ${HEADER_PATH}/inputnode.h
     ${HEADER_PATH}/intvalue.h
@@ -139,10 +140,11 @@ SET(LIB_SOURCES ${SOURCE_PATH}/actorarrayvalue.cpp
     ${SOURCE_PATH}/gamemessageevent.cpp
     ${SOURCE_PATH}/getactororientationaction.cpp
     ${SOURCE_PATH}/getapplicationconfigpropertyaction.cpp
-    ${SOURCE_PATH}/getactoraction.cpp
+    ${SOURCE_PATH}/getactoraction.cpp    
     ${SOURCE_PATH}/getactorpropertyaction.cpp
     ${SOURCE_PATH}/getarrayaction.cpp
     ${SOURCE_PATH}/getarraysizeaction.cpp
+    ${SOURCE_PATH}/getparentactoraction.cpp
     ${SOURCE_PATH}/getvectorvaluesaction.cpp
     ${SOURCE_PATH}/inputnode.cpp
     ${SOURCE_PATH}/intvalue.cpp
