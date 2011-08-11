@@ -457,6 +457,12 @@ namespace dtAnim
       return mCalModel->getCoreModel()->getCoreMesh(meshID)->getName();
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   int Cal3DModelWrapper::GetCoreMeshID(const std::string& name) const
+   {
+      return mCalModel->getCoreModel()->getCoreMeshId(name);
+   }
+
    /////////////////////////////////////////////////////////////////////////////
    int Cal3DModelWrapper::GetCoreMaterialCount() const
    {
@@ -562,7 +568,7 @@ namespace dtAnim
 
       mCalModel->getCoreModel()->scale(scale);
    }
-   
+
    /////////////////////////////////////////////////////////////////////////////
    float Cal3DModelWrapper::GetScale() const
    {

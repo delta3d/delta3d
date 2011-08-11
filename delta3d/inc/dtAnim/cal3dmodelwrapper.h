@@ -154,6 +154,9 @@ namespace dtAnim
       ///Get the name for the mesh using the supplied meshID
       const std::string& GetCoreMeshName(int meshID) const;
 
+      ///Get the id for a mesh using the supplied name
+      int GetCoreMeshID(const std::string& name) const;
+
       int GetCoreAnimationCount() const;
 
       /// Get the Cal3D rotation values.
