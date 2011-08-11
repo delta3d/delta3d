@@ -59,6 +59,7 @@
 #include <dtDirectorNodes/getapplicationconfigpropertyaction.h>
 #include <dtDirectorNodes/getarrayaction.h>
 #include <dtDirectorNodes/getarraysizeaction.h>
+#include <dtDirectorNodes/getparentactoraction.h>
 #include <dtDirectorNodes/getvectorvaluesaction.h>
 #include <dtDirectorNodes/lerpactorrotationaction.h>
 #include <dtDirectorNodes/lerpactorscaleaction.h>
@@ -159,7 +160,7 @@ namespace dtDirector
    RefPtr<NodeType> NodeLibraryRegistry::LOG_ACTION_NODE_TYPE(                   new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Log Message",               "General",     "Base",        "Writes out a message to the log.", NULL, Colors::BLUE));
    RefPtr<NodeType> NodeLibraryRegistry::CALL_REMOTE_EVENT_ACTION_NODE_TYPE(     new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Call Remote Event",         "Core",        "Base",        "Calls all remote event nodes with a given name in parallel, and waits until their entire chains are finished before continuing.", NULL, Colors::BLUE));
    RefPtr<NodeType> NodeLibraryRegistry::DELAY_ACTION_NODE_TYPE(                 new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Delay",                     "General",     "Base",        "Performs a time delay.", NULL, Colors::BLUE));
-   RefPtr<NodeType> NodeLibraryRegistry::LOOP_ACTION_NODE_TYPE(                  new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Loop",                      "General",     "Base",        "Continually fires its 'Cycle' output after a given time period while active.", NULL, Colors::BLUE2));
+   RefPtr<NodeType> NodeLibraryRegistry::LOOP_ACTION_NODE_TYPE(                  new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Loop",                      "General",     "Base",        "Continually fires its 'Cycle' output after a given time period while active.", NULL, Colors::BLUE));
    RefPtr<NodeType> NodeLibraryRegistry::SWITCH_ACTION_NODE_TYPE(                new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Switch",                    "General",     "Base",        "Fires outputs in sequence based on the number of inputs received.", NULL, Colors::BLUE));
    RefPtr<NodeType> NodeLibraryRegistry::FPS_MOTION_MODEL_LISTENER_NODE_TYPE(    new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "FPS Motion Model Listener", "Scene",       "Base",        "Listens for state changes on an FPS motion model.", NULL, Colors::BLUE));
 
@@ -167,6 +168,7 @@ namespace dtDirector
    RefPtr<NodeType> NodeLibraryRegistry::GET_ACTOR_ACTION_NODE_TYPE(              new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Get Actor",                       "General", "Access", "Retrieves the actor with the given name from the GameManager.", NULL, Colors::BLUE));
    RefPtr<NodeType> NodeLibraryRegistry::GET_ACTOR_PROPERTY_ACTION_NODE_TYPE(     new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Get Actor Property",              "General", "Access", "Retrieves the value of a property from an actor.", NULL, Colors::BLUE));
    RefPtr<NodeType> NodeLibraryRegistry::GET_ACTOR_ORIENTATION_ACTION(            new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Get Actor Orientation",           "General", "Access", "Retrieves the orientation vectors of an actor.", NULL, Colors::BLUE));
+   RefPtr<NodeType> NodeLibraryRegistry::GET_PARENT_ACTOR_ACTION_NODE_TYPE(       new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Get Parent Actor",                "General", "Access", "Retrieves the parent of an actor with the given name from the GameManager.", NULL, Colors::BLUE));
    RefPtr<NodeType> NodeLibraryRegistry::GET_VECTOR_VALUES_ACTION_NODE_TYPE(      new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Get Vector Values",               "General", "Access", "Extracts the values in a vector to individual parts.", NULL, Colors::BLUE));
    RefPtr<NodeType> NodeLibraryRegistry::GET_ARRAY_VALUE_ACTION_NODE_TYPE(        new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Get Array Value",                 "General", "Access", "Retrieves the value of an array index.", NULL, Colors::BLUE));
    RefPtr<NodeType> NodeLibraryRegistry::GET_ARRAY_SIZE_ACTION_NODE_TYPE(         new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Get Array Size",                  "General", "Access", "Retrieves the total size of an array.", NULL, Colors::BLUE));
@@ -302,6 +304,7 @@ namespace dtDirector
       mNodeFactory->RegisterType<GetActorAction>(GET_ACTOR_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<GetActorPropertyAction>(GET_ACTOR_PROPERTY_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<GetActorOrientationAction>(GET_ACTOR_ORIENTATION_ACTION.get());
+      mNodeFactory->RegisterType<GetParentActorAction>(GET_PARENT_ACTOR_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<GetVectorValuesAction>(GET_VECTOR_VALUES_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<GetArrayAction>(GET_ARRAY_VALUE_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<GetArraySizeAction>(GET_ARRAY_SIZE_ACTION_NODE_TYPE.get());
