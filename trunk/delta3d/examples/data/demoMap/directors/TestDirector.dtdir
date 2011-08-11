@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <director xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dDirector" xsi:schemaLocation="delta3dDirector director.xsd">
     <header>
         <createTimestamp>2011-07-12T10:00:25-08:00</createTimestamp>
-        <lastUpdateTimestamp>2011-07-14T10:48:11-08:00</lastUpdateTimestamp>
-        <editorVersion>2.7.0</editorVersion>
+        <lastUpdateTimestamp>2011-08-11T14:49:48-08:00</lastUpdateTimestamp>
+        <editorVersion>2.7.1</editorVersion>
         <schemaVersion>1.0</schemaVersion>
         <scriptType>Scenario</scriptType>
         <property>
@@ -1664,6 +1665,11 @@
                         <allowmultiple>true</allowmultiple>
                     </valuelink>
                     <valuelink>
+                        <name>ActorFilters</name>
+                        <exposed>false</exposed>
+                        <allowmultiple>true</allowmultiple>
+                    </valuelink>
+                    <valuelink>
                         <name>EventName</name>
                         <exposed>false</exposed>
                     </valuelink>
@@ -1702,6 +1708,11 @@
                         <name>Instigator</name>
                         <exposed>false</exposed>
                         <isout>true</isout>
+                        <allowmultiple>true</allowmultiple>
+                    </valuelink>
+                    <valuelink>
+                        <name>ActorFilters</name>
+                        <exposed>false</exposed>
                         <allowmultiple>true</allowmultiple>
                     </valuelink>
                     <valuelink>
@@ -1825,10 +1836,6 @@
                         <name>EventName</name>
                         <string>Started</string>
                     </property>
-                    <property>
-                        <name>Local Event</name>
-                        <boolean>true</boolean>
-                    </property>
                     <inputlink>
                         <name>Call Event</name>
                         <link>
@@ -1845,10 +1852,6 @@
                     </valuelink>
                     <valuelink>
                         <name>EventName</name>
-                        <exposed>false</exposed>
-                    </valuelink>
-                    <valuelink>
-                        <name>Local Event</name>
                         <exposed>false</exposed>
                     </valuelink>
                     <valuelink>
@@ -1933,10 +1936,6 @@
                         <name>EventName</name>
                         <string>Ended</string>
                     </property>
-                    <property>
-                        <name>Local Event</name>
-                        <boolean>true</boolean>
-                    </property>
                     <inputlink>
                         <name>Call Event</name>
                         <link>
@@ -1957,10 +1956,6 @@
                     </valuelink>
                     <valuelink>
                         <name>EventName</name>
-                        <exposed>false</exposed>
-                    </valuelink>
-                    <valuelink>
-                        <name>Local Event</name>
                         <exposed>false</exposed>
                     </valuelink>
                     <valuelink>
@@ -2787,6 +2782,11 @@
                         <allowmultiple>true</allowmultiple>
                     </valuelink>
                     <valuelink>
+                        <name>ActorFilters</name>
+                        <exposed>false</exposed>
+                        <allowmultiple>true</allowmultiple>
+                    </valuelink>
+                    <valuelink>
                         <name>EventName</name>
                         <exposed>false</exposed>
                     </valuelink>
@@ -2825,6 +2825,11 @@
                         <name>Instigator</name>
                         <exposed>false</exposed>
                         <isout>true</isout>
+                        <allowmultiple>true</allowmultiple>
+                    </valuelink>
+                    <valuelink>
+                        <name>ActorFilters</name>
+                        <exposed>false</exposed>
                         <allowmultiple>true</allowmultiple>
                     </valuelink>
                     <valuelink>
@@ -2948,10 +2953,6 @@
                         <name>EventName</name>
                         <string>Started</string>
                     </property>
-                    <property>
-                        <name>Local Event</name>
-                        <boolean>true</boolean>
-                    </property>
                     <inputlink>
                         <name>Call Event</name>
                         <link>
@@ -2968,10 +2969,6 @@
                     </valuelink>
                     <valuelink>
                         <name>EventName</name>
-                        <exposed>false</exposed>
-                    </valuelink>
-                    <valuelink>
-                        <name>Local Event</name>
                         <exposed>false</exposed>
                     </valuelink>
                     <valuelink>
@@ -3056,10 +3053,6 @@
                         <name>EventName</name>
                         <string>Ended</string>
                     </property>
-                    <property>
-                        <name>Local Event</name>
-                        <boolean>true</boolean>
-                    </property>
                     <inputlink>
                         <name>Call Event</name>
                         <link>
@@ -3080,10 +3073,6 @@
                     </valuelink>
                     <valuelink>
                         <name>EventName</name>
-                        <exposed>false</exposed>
-                    </valuelink>
-                    <valuelink>
-                        <name>Local Event</name>
                         <exposed>false</exposed>
                     </valuelink>
                     <valuelink>
@@ -3748,6 +3737,11 @@
                         <allowmultiple>true</allowmultiple>
                     </valuelink>
                     <valuelink>
+                        <name>ActorFilters</name>
+                        <exposed>false</exposed>
+                        <allowmultiple>true</allowmultiple>
+                    </valuelink>
+                    <valuelink>
                         <name>EventName</name>
                         <exposed>false</exposed>
                     </valuelink>
@@ -3786,6 +3780,11 @@
                         <name>Instigator</name>
                         <exposed>false</exposed>
                         <isout>true</isout>
+                        <allowmultiple>true</allowmultiple>
+                    </valuelink>
+                    <valuelink>
+                        <name>ActorFilters</name>
+                        <exposed>false</exposed>
                         <allowmultiple>true</allowmultiple>
                     </valuelink>
                     <valuelink>
@@ -3909,10 +3908,6 @@
                         <name>EventName</name>
                         <string>Started</string>
                     </property>
-                    <property>
-                        <name>Local Event</name>
-                        <boolean>true</boolean>
-                    </property>
                     <inputlink>
                         <name>Call Event</name>
                         <link>
@@ -3929,10 +3924,6 @@
                     </valuelink>
                     <valuelink>
                         <name>EventName</name>
-                        <exposed>false</exposed>
-                    </valuelink>
-                    <valuelink>
-                        <name>Local Event</name>
                         <exposed>false</exposed>
                     </valuelink>
                     <valuelink>
@@ -4017,10 +4008,6 @@
                         <name>EventName</name>
                         <string>Ended</string>
                     </property>
-                    <property>
-                        <name>Local Event</name>
-                        <boolean>true</boolean>
-                    </property>
                     <inputlink>
                         <name>Call Event</name>
                         <link>
@@ -4041,10 +4028,6 @@
                     </valuelink>
                     <valuelink>
                         <name>EventName</name>
-                        <exposed>false</exposed>
-                    </valuelink>
-                    <valuelink>
-                        <name>Local Event</name>
                         <exposed>false</exposed>
                     </valuelink>
                     <valuelink>
@@ -4709,6 +4692,11 @@
                         <allowmultiple>true</allowmultiple>
                     </valuelink>
                     <valuelink>
+                        <name>ActorFilters</name>
+                        <exposed>false</exposed>
+                        <allowmultiple>true</allowmultiple>
+                    </valuelink>
+                    <valuelink>
                         <name>EventName</name>
                         <exposed>false</exposed>
                     </valuelink>
@@ -4747,6 +4735,11 @@
                         <name>Instigator</name>
                         <exposed>false</exposed>
                         <isout>true</isout>
+                        <allowmultiple>true</allowmultiple>
+                    </valuelink>
+                    <valuelink>
+                        <name>ActorFilters</name>
+                        <exposed>false</exposed>
                         <allowmultiple>true</allowmultiple>
                     </valuelink>
                     <valuelink>
@@ -4870,10 +4863,6 @@
                         <name>EventName</name>
                         <string>Started</string>
                     </property>
-                    <property>
-                        <name>Local Event</name>
-                        <boolean>true</boolean>
-                    </property>
                     <inputlink>
                         <name>Call Event</name>
                         <link>
@@ -4890,10 +4879,6 @@
                     </valuelink>
                     <valuelink>
                         <name>EventName</name>
-                        <exposed>false</exposed>
-                    </valuelink>
-                    <valuelink>
-                        <name>Local Event</name>
                         <exposed>false</exposed>
                     </valuelink>
                     <valuelink>
@@ -4978,10 +4963,6 @@
                         <name>EventName</name>
                         <string>Ended</string>
                     </property>
-                    <property>
-                        <name>Local Event</name>
-                        <boolean>true</boolean>
-                    </property>
                     <inputlink>
                         <name>Call Event</name>
                         <link>
@@ -5002,10 +4983,6 @@
                     </valuelink>
                     <valuelink>
                         <name>EventName</name>
-                        <exposed>false</exposed>
-                    </valuelink>
-                    <valuelink>
-                        <name>Local Event</name>
                         <exposed>false</exposed>
                     </valuelink>
                     <valuelink>
@@ -5543,6 +5520,11 @@
                         <allowmultiple>true</allowmultiple>
                     </valuelink>
                     <valuelink>
+                        <name>ActorFilters</name>
+                        <exposed>false</exposed>
+                        <allowmultiple>true</allowmultiple>
+                    </valuelink>
+                    <valuelink>
                         <name>EventName</name>
                         <exposed>false</exposed>
                     </valuelink>
@@ -5581,6 +5563,11 @@
                         <name>Instigator</name>
                         <exposed>false</exposed>
                         <isout>true</isout>
+                        <allowmultiple>true</allowmultiple>
+                    </valuelink>
+                    <valuelink>
+                        <name>ActorFilters</name>
+                        <exposed>false</exposed>
                         <allowmultiple>true</allowmultiple>
                     </valuelink>
                     <valuelink>
@@ -5864,10 +5851,6 @@
                         <name>EventName</name>
                         <string>Open Door</string>
                     </property>
-                    <property>
-                        <name>Local Event</name>
-                        <boolean>true</boolean>
-                    </property>
                     <inputlink>
                         <name>Call Event</name>
                         <link>
@@ -5892,10 +5875,6 @@
                         <exposed>false</exposed>
                     </valuelink>
                     <valuelink>
-                        <name>Local Event</name>
-                        <exposed>false</exposed>
-                    </valuelink>
-                    <valuelink>
                         <name>Instigator</name>
                         <exposed>false</exposed>
                     </valuelink>
@@ -5915,10 +5894,6 @@
                         <name>EventName</name>
                         <string>Close Door</string>
                     </property>
-                    <property>
-                        <name>Local Event</name>
-                        <boolean>true</boolean>
-                    </property>
                     <inputlink>
                         <name>Call Event</name>
                         <link>
@@ -5936,10 +5911,6 @@
                     </valuelink>
                     <valuelink>
                         <name>EventName</name>
-                        <exposed>false</exposed>
-                    </valuelink>
-                    <valuelink>
-                        <name>Local Event</name>
                         <exposed>false</exposed>
                     </valuelink>
                     <valuelink>
@@ -6817,6 +6788,11 @@
                             <allowmultiple>true</allowmultiple>
                         </valuelink>
                         <valuelink>
+                            <name>ActorFilters</name>
+                            <exposed>false</exposed>
+                            <allowmultiple>true</allowmultiple>
+                        </valuelink>
+                        <valuelink>
                             <name>EventName</name>
                             <exposed>false</exposed>
                         </valuelink>
@@ -6855,6 +6831,11 @@
                             <name>Instigator</name>
                             <exposed>false</exposed>
                             <isout>true</isout>
+                            <allowmultiple>true</allowmultiple>
+                        </valuelink>
+                        <valuelink>
+                            <name>ActorFilters</name>
+                            <exposed>false</exposed>
                             <allowmultiple>true</allowmultiple>
                         </valuelink>
                         <valuelink>
@@ -7030,10 +7011,6 @@
                             <name>EventName</name>
                             <string>Started</string>
                         </property>
-                        <property>
-                            <name>Local Event</name>
-                            <boolean>true</boolean>
-                        </property>
                         <inputlink>
                             <name>Call Event</name>
                             <link>
@@ -7050,10 +7027,6 @@
                         </valuelink>
                         <valuelink>
                             <name>EventName</name>
-                            <exposed>false</exposed>
-                        </valuelink>
-                        <valuelink>
-                            <name>Local Event</name>
                             <exposed>false</exposed>
                         </valuelink>
                         <valuelink>
@@ -7138,10 +7111,6 @@
                             <name>EventName</name>
                             <string>Ended</string>
                         </property>
-                        <property>
-                            <name>Local Event</name>
-                            <boolean>true</boolean>
-                        </property>
                         <inputlink>
                             <name>Call Event</name>
                             <link>
@@ -7162,10 +7131,6 @@
                         </valuelink>
                         <valuelink>
                             <name>EventName</name>
-                            <exposed>false</exposed>
-                        </valuelink>
-                        <valuelink>
-                            <name>Local Event</name>
                             <exposed>false</exposed>
                         </valuelink>
                         <valuelink>
@@ -8198,6 +8163,11 @@
                             <allowmultiple>true</allowmultiple>
                         </valuelink>
                         <valuelink>
+                            <name>ActorFilters</name>
+                            <exposed>false</exposed>
+                            <allowmultiple>true</allowmultiple>
+                        </valuelink>
+                        <valuelink>
                             <name>EventName</name>
                             <exposed>false</exposed>
                         </valuelink>
@@ -8236,6 +8206,11 @@
                             <name>Instigator</name>
                             <exposed>false</exposed>
                             <isout>true</isout>
+                            <allowmultiple>true</allowmultiple>
+                        </valuelink>
+                        <valuelink>
+                            <name>ActorFilters</name>
+                            <exposed>false</exposed>
                             <allowmultiple>true</allowmultiple>
                         </valuelink>
                         <valuelink>
@@ -8411,10 +8386,6 @@
                             <name>EventName</name>
                             <string>Started</string>
                         </property>
-                        <property>
-                            <name>Local Event</name>
-                            <boolean>true</boolean>
-                        </property>
                         <inputlink>
                             <name>Call Event</name>
                             <link>
@@ -8431,10 +8402,6 @@
                         </valuelink>
                         <valuelink>
                             <name>EventName</name>
-                            <exposed>false</exposed>
-                        </valuelink>
-                        <valuelink>
-                            <name>Local Event</name>
                             <exposed>false</exposed>
                         </valuelink>
                         <valuelink>
@@ -8519,10 +8486,6 @@
                             <name>EventName</name>
                             <string>Ended</string>
                         </property>
-                        <property>
-                            <name>Local Event</name>
-                            <boolean>true</boolean>
-                        </property>
                         <inputlink>
                             <name>Call Event</name>
                             <link>
@@ -8543,10 +8506,6 @@
                         </valuelink>
                         <valuelink>
                             <name>EventName</name>
-                            <exposed>false</exposed>
-                        </valuelink>
-                        <valuelink>
-                            <name>Local Event</name>
                             <exposed>false</exposed>
                         </valuelink>
                         <valuelink>
@@ -9336,6 +9295,11 @@
                         <allowmultiple>true</allowmultiple>
                     </valuelink>
                     <valuelink>
+                        <name>ActorFilters</name>
+                        <exposed>false</exposed>
+                        <allowmultiple>true</allowmultiple>
+                    </valuelink>
+                    <valuelink>
                         <name>EventName</name>
                         <exposed>false</exposed>
                     </valuelink>
@@ -9520,10 +9484,6 @@
                     <property>
                         <name>Delay</name>
                         <float>3</float>
-                    </property>
-                    <property>
-                        <name>UseSimTime</name>
-                        <boolean>false</boolean>
                     </property>
                     <inputlink>
                         <name>Start</name>
@@ -10090,10 +10050,6 @@
                         <name>EventName</name>
                         <string>Open Door</string>
                     </property>
-                    <property>
-                        <name>Local Event</name>
-                        <boolean>true</boolean>
-                    </property>
                     <inputlink>
                         <name>Call Event</name>
                         <link>
@@ -10110,10 +10066,6 @@
                     </valuelink>
                     <valuelink>
                         <name>EventName</name>
-                        <exposed>false</exposed>
-                    </valuelink>
-                    <valuelink>
-                        <name>Local Event</name>
                         <exposed>false</exposed>
                     </valuelink>
                     <valuelink>
@@ -10136,10 +10088,6 @@
                         <name>EventName</name>
                         <string>Open Door</string>
                     </property>
-                    <property>
-                        <name>Local Event</name>
-                        <boolean>true</boolean>
-                    </property>
                     <inputlink>
                         <name>Call Event</name>
                         <link>
@@ -10156,10 +10104,6 @@
                     </valuelink>
                     <valuelink>
                         <name>EventName</name>
-                        <exposed>false</exposed>
-                    </valuelink>
-                    <valuelink>
-                        <name>Local Event</name>
                         <exposed>false</exposed>
                     </valuelink>
                     <valuelink>
@@ -11050,6 +10994,11 @@
                             <allowmultiple>true</allowmultiple>
                         </valuelink>
                         <valuelink>
+                            <name>ActorFilters</name>
+                            <exposed>false</exposed>
+                            <allowmultiple>true</allowmultiple>
+                        </valuelink>
+                        <valuelink>
                             <name>EventName</name>
                             <exposed>false</exposed>
                         </valuelink>
@@ -11088,6 +11037,11 @@
                             <name>Instigator</name>
                             <exposed>false</exposed>
                             <isout>true</isout>
+                            <allowmultiple>true</allowmultiple>
+                        </valuelink>
+                        <valuelink>
+                            <name>ActorFilters</name>
+                            <exposed>false</exposed>
                             <allowmultiple>true</allowmultiple>
                         </valuelink>
                         <valuelink>
@@ -11211,10 +11165,6 @@
                             <name>EventName</name>
                             <string>Started</string>
                         </property>
-                        <property>
-                            <name>Local Event</name>
-                            <boolean>true</boolean>
-                        </property>
                         <inputlink>
                             <name>Call Event</name>
                             <link>
@@ -11231,10 +11181,6 @@
                         </valuelink>
                         <valuelink>
                             <name>EventName</name>
-                            <exposed>false</exposed>
-                        </valuelink>
-                        <valuelink>
-                            <name>Local Event</name>
                             <exposed>false</exposed>
                         </valuelink>
                         <valuelink>
@@ -11325,10 +11271,6 @@
                             <name>EventName</name>
                             <string>Ended</string>
                         </property>
-                        <property>
-                            <name>Local Event</name>
-                            <boolean>true</boolean>
-                        </property>
                         <inputlink>
                             <name>Call Event</name>
                             <link>
@@ -11349,10 +11291,6 @@
                         </valuelink>
                         <valuelink>
                             <name>EventName</name>
-                            <exposed>false</exposed>
-                        </valuelink>
-                        <valuelink>
-                            <name>Local Event</name>
                             <exposed>false</exposed>
                         </valuelink>
                         <valuelink>
@@ -12034,6 +11972,11 @@
                             <allowmultiple>true</allowmultiple>
                         </valuelink>
                         <valuelink>
+                            <name>ActorFilters</name>
+                            <exposed>false</exposed>
+                            <allowmultiple>true</allowmultiple>
+                        </valuelink>
+                        <valuelink>
                             <name>EventName</name>
                             <exposed>false</exposed>
                         </valuelink>
@@ -12072,6 +12015,11 @@
                             <name>Instigator</name>
                             <exposed>false</exposed>
                             <isout>true</isout>
+                            <allowmultiple>true</allowmultiple>
+                        </valuelink>
+                        <valuelink>
+                            <name>ActorFilters</name>
+                            <exposed>false</exposed>
                             <allowmultiple>true</allowmultiple>
                         </valuelink>
                         <valuelink>
@@ -12195,10 +12143,6 @@
                             <name>EventName</name>
                             <string>Started</string>
                         </property>
-                        <property>
-                            <name>Local Event</name>
-                            <boolean>true</boolean>
-                        </property>
                         <inputlink>
                             <name>Call Event</name>
                             <link>
@@ -12215,10 +12159,6 @@
                         </valuelink>
                         <valuelink>
                             <name>EventName</name>
-                            <exposed>false</exposed>
-                        </valuelink>
-                        <valuelink>
-                            <name>Local Event</name>
                             <exposed>false</exposed>
                         </valuelink>
                         <valuelink>
@@ -12309,10 +12249,6 @@
                             <name>EventName</name>
                             <string>Ended</string>
                         </property>
-                        <property>
-                            <name>Local Event</name>
-                            <boolean>true</boolean>
-                        </property>
                         <inputlink>
                             <name>Call Event</name>
                             <link>
@@ -12333,10 +12269,6 @@
                         </valuelink>
                         <valuelink>
                             <name>EventName</name>
-                            <exposed>false</exposed>
-                        </valuelink>
-                        <valuelink>
-                            <name>Local Event</name>
                             <exposed>false</exposed>
                         </valuelink>
                         <valuelink>
@@ -13021,6 +12953,11 @@
                             <allowmultiple>true</allowmultiple>
                         </valuelink>
                         <valuelink>
+                            <name>ActorFilters</name>
+                            <exposed>false</exposed>
+                            <allowmultiple>true</allowmultiple>
+                        </valuelink>
+                        <valuelink>
                             <name>EventName</name>
                             <exposed>false</exposed>
                         </valuelink>
@@ -13059,6 +12996,11 @@
                             <name>Instigator</name>
                             <exposed>false</exposed>
                             <isout>true</isout>
+                            <allowmultiple>true</allowmultiple>
+                        </valuelink>
+                        <valuelink>
+                            <name>ActorFilters</name>
+                            <exposed>false</exposed>
                             <allowmultiple>true</allowmultiple>
                         </valuelink>
                         <valuelink>
@@ -13238,10 +13180,6 @@
                             <name>EventName</name>
                             <string>Started</string>
                         </property>
-                        <property>
-                            <name>Local Event</name>
-                            <boolean>true</boolean>
-                        </property>
                         <inputlink>
                             <name>Call Event</name>
                             <link>
@@ -13258,10 +13196,6 @@
                         </valuelink>
                         <valuelink>
                             <name>EventName</name>
-                            <exposed>false</exposed>
-                        </valuelink>
-                        <valuelink>
-                            <name>Local Event</name>
                             <exposed>false</exposed>
                         </valuelink>
                         <valuelink>
@@ -13411,10 +13345,6 @@
                             <name>EventName</name>
                             <string>Ended</string>
                         </property>
-                        <property>
-                            <name>Local Event</name>
-                            <boolean>true</boolean>
-                        </property>
                         <inputlink>
                             <name>Call Event</name>
                             <link>
@@ -13435,10 +13365,6 @@
                         </valuelink>
                         <valuelink>
                             <name>EventName</name>
-                            <exposed>false</exposed>
-                        </valuelink>
-                        <valuelink>
-                            <name>Local Event</name>
                             <exposed>false</exposed>
                         </valuelink>
                         <valuelink>
@@ -14384,6 +14310,11 @@
                         <allowmultiple>true</allowmultiple>
                     </valuelink>
                     <valuelink>
+                        <name>ActorFilters</name>
+                        <exposed>false</exposed>
+                        <allowmultiple>true</allowmultiple>
+                    </valuelink>
+                    <valuelink>
                         <name>EventName</name>
                         <exposed>false</exposed>
                     </valuelink>
@@ -14422,6 +14353,11 @@
                         <name>Instigator</name>
                         <exposed>false</exposed>
                         <isout>true</isout>
+                        <allowmultiple>true</allowmultiple>
+                    </valuelink>
+                    <valuelink>
+                        <name>ActorFilters</name>
+                        <exposed>false</exposed>
                         <allowmultiple>true</allowmultiple>
                     </valuelink>
                     <valuelink>
@@ -14545,10 +14481,6 @@
                         <name>EventName</name>
                         <string>Started</string>
                     </property>
-                    <property>
-                        <name>Local Event</name>
-                        <boolean>true</boolean>
-                    </property>
                     <inputlink>
                         <name>Call Event</name>
                         <link>
@@ -14565,10 +14497,6 @@
                     </valuelink>
                     <valuelink>
                         <name>EventName</name>
-                        <exposed>false</exposed>
-                    </valuelink>
-                    <valuelink>
-                        <name>Local Event</name>
                         <exposed>false</exposed>
                     </valuelink>
                     <valuelink>
@@ -14653,10 +14581,6 @@
                         <name>EventName</name>
                         <string>Ended</string>
                     </property>
-                    <property>
-                        <name>Local Event</name>
-                        <boolean>true</boolean>
-                    </property>
                     <inputlink>
                         <name>Call Event</name>
                         <link>
@@ -14677,10 +14601,6 @@
                     </valuelink>
                     <valuelink>
                         <name>EventName</name>
-                        <exposed>false</exposed>
-                    </valuelink>
-                    <valuelink>
-                        <name>Local Event</name>
                         <exposed>false</exposed>
                     </valuelink>
                     <valuelink>
@@ -15349,6 +15269,11 @@
                         <allowmultiple>true</allowmultiple>
                     </valuelink>
                     <valuelink>
+                        <name>ActorFilters</name>
+                        <exposed>false</exposed>
+                        <allowmultiple>true</allowmultiple>
+                    </valuelink>
+                    <valuelink>
                         <name>EventName</name>
                         <exposed>false</exposed>
                     </valuelink>
@@ -15387,6 +15312,11 @@
                         <name>Instigator</name>
                         <exposed>false</exposed>
                         <isout>true</isout>
+                        <allowmultiple>true</allowmultiple>
+                    </valuelink>
+                    <valuelink>
+                        <name>ActorFilters</name>
+                        <exposed>false</exposed>
                         <allowmultiple>true</allowmultiple>
                     </valuelink>
                     <valuelink>
@@ -15510,10 +15440,6 @@
                         <name>EventName</name>
                         <string>Started</string>
                     </property>
-                    <property>
-                        <name>Local Event</name>
-                        <boolean>true</boolean>
-                    </property>
                     <inputlink>
                         <name>Call Event</name>
                         <link>
@@ -15530,10 +15456,6 @@
                     </valuelink>
                     <valuelink>
                         <name>EventName</name>
-                        <exposed>false</exposed>
-                    </valuelink>
-                    <valuelink>
-                        <name>Local Event</name>
                         <exposed>false</exposed>
                     </valuelink>
                     <valuelink>
@@ -15618,10 +15540,6 @@
                         <name>EventName</name>
                         <string>Ended</string>
                     </property>
-                    <property>
-                        <name>Local Event</name>
-                        <boolean>true</boolean>
-                    </property>
                     <inputlink>
                         <name>Call Event</name>
                         <link>
@@ -15642,10 +15560,6 @@
                     </valuelink>
                     <valuelink>
                         <name>EventName</name>
-                        <exposed>false</exposed>
-                    </valuelink>
-                    <valuelink>
-                        <name>Local Event</name>
                         <exposed>false</exposed>
                     </valuelink>
                     <valuelink>
@@ -16314,6 +16228,11 @@
                         <allowmultiple>true</allowmultiple>
                     </valuelink>
                     <valuelink>
+                        <name>ActorFilters</name>
+                        <exposed>false</exposed>
+                        <allowmultiple>true</allowmultiple>
+                    </valuelink>
+                    <valuelink>
                         <name>EventName</name>
                         <exposed>false</exposed>
                     </valuelink>
@@ -16352,6 +16271,11 @@
                         <name>Instigator</name>
                         <exposed>false</exposed>
                         <isout>true</isout>
+                        <allowmultiple>true</allowmultiple>
+                    </valuelink>
+                    <valuelink>
+                        <name>ActorFilters</name>
+                        <exposed>false</exposed>
                         <allowmultiple>true</allowmultiple>
                     </valuelink>
                     <valuelink>
@@ -16475,10 +16399,6 @@
                         <name>EventName</name>
                         <string>Started</string>
                     </property>
-                    <property>
-                        <name>Local Event</name>
-                        <boolean>true</boolean>
-                    </property>
                     <inputlink>
                         <name>Call Event</name>
                         <link>
@@ -16495,10 +16415,6 @@
                     </valuelink>
                     <valuelink>
                         <name>EventName</name>
-                        <exposed>false</exposed>
-                    </valuelink>
-                    <valuelink>
-                        <name>Local Event</name>
                         <exposed>false</exposed>
                     </valuelink>
                     <valuelink>
@@ -16583,10 +16499,6 @@
                         <name>EventName</name>
                         <string>Ended</string>
                     </property>
-                    <property>
-                        <name>Local Event</name>
-                        <boolean>true</boolean>
-                    </property>
                     <inputlink>
                         <name>Call Event</name>
                         <link>
@@ -16607,10 +16519,6 @@
                     </valuelink>
                     <valuelink>
                         <name>EventName</name>
-                        <exposed>false</exposed>
-                    </valuelink>
-                    <valuelink>
-                        <name>Local Event</name>
                         <exposed>false</exposed>
                     </valuelink>
                     <valuelink>
@@ -17279,6 +17187,11 @@
                         <allowmultiple>true</allowmultiple>
                     </valuelink>
                     <valuelink>
+                        <name>ActorFilters</name>
+                        <exposed>false</exposed>
+                        <allowmultiple>true</allowmultiple>
+                    </valuelink>
+                    <valuelink>
                         <name>EventName</name>
                         <exposed>false</exposed>
                     </valuelink>
@@ -17317,6 +17230,11 @@
                         <name>Instigator</name>
                         <exposed>false</exposed>
                         <isout>true</isout>
+                        <allowmultiple>true</allowmultiple>
+                    </valuelink>
+                    <valuelink>
+                        <name>ActorFilters</name>
+                        <exposed>false</exposed>
                         <allowmultiple>true</allowmultiple>
                     </valuelink>
                     <valuelink>
@@ -17440,10 +17358,6 @@
                         <name>EventName</name>
                         <string>Started</string>
                     </property>
-                    <property>
-                        <name>Local Event</name>
-                        <boolean>true</boolean>
-                    </property>
                     <inputlink>
                         <name>Call Event</name>
                         <link>
@@ -17460,10 +17374,6 @@
                     </valuelink>
                     <valuelink>
                         <name>EventName</name>
-                        <exposed>false</exposed>
-                    </valuelink>
-                    <valuelink>
-                        <name>Local Event</name>
                         <exposed>false</exposed>
                     </valuelink>
                     <valuelink>
@@ -17548,10 +17458,6 @@
                         <name>EventName</name>
                         <string>Ended</string>
                     </property>
-                    <property>
-                        <name>Local Event</name>
-                        <boolean>true</boolean>
-                    </property>
                     <inputlink>
                         <name>Call Event</name>
                         <link>
@@ -17572,10 +17478,6 @@
                     </valuelink>
                     <valuelink>
                         <name>EventName</name>
-                        <exposed>false</exposed>
-                    </valuelink>
-                    <valuelink>
-                        <name>Local Event</name>
                         <exposed>false</exposed>
                     </valuelink>
                     <valuelink>
@@ -18244,6 +18146,11 @@
                         <allowmultiple>true</allowmultiple>
                     </valuelink>
                     <valuelink>
+                        <name>ActorFilters</name>
+                        <exposed>false</exposed>
+                        <allowmultiple>true</allowmultiple>
+                    </valuelink>
+                    <valuelink>
                         <name>EventName</name>
                         <exposed>false</exposed>
                     </valuelink>
@@ -18282,6 +18189,11 @@
                         <name>Instigator</name>
                         <exposed>false</exposed>
                         <isout>true</isout>
+                        <allowmultiple>true</allowmultiple>
+                    </valuelink>
+                    <valuelink>
+                        <name>ActorFilters</name>
+                        <exposed>false</exposed>
                         <allowmultiple>true</allowmultiple>
                     </valuelink>
                     <valuelink>
@@ -18405,10 +18317,6 @@
                         <name>EventName</name>
                         <string>Started</string>
                     </property>
-                    <property>
-                        <name>Local Event</name>
-                        <boolean>true</boolean>
-                    </property>
                     <inputlink>
                         <name>Call Event</name>
                         <link>
@@ -18425,10 +18333,6 @@
                     </valuelink>
                     <valuelink>
                         <name>EventName</name>
-                        <exposed>false</exposed>
-                    </valuelink>
-                    <valuelink>
-                        <name>Local Event</name>
                         <exposed>false</exposed>
                     </valuelink>
                     <valuelink>
@@ -18513,10 +18417,6 @@
                         <name>EventName</name>
                         <string>Ended</string>
                     </property>
-                    <property>
-                        <name>Local Event</name>
-                        <boolean>true</boolean>
-                    </property>
                     <inputlink>
                         <name>Call Event</name>
                         <link>
@@ -18537,10 +18437,6 @@
                     </valuelink>
                     <valuelink>
                         <name>EventName</name>
-                        <exposed>false</exposed>
-                    </valuelink>
-                    <valuelink>
-                        <name>Local Event</name>
                         <exposed>false</exposed>
                     </valuelink>
                     <valuelink>
@@ -19680,10 +19576,6 @@
                         <name>Delay</name>
                         <float>0.050000001</float>
                     </property>
-                    <property>
-                        <name>UseSimTime</name>
-                        <boolean>false</boolean>
-                    </property>
                     <inputlink>
                         <name>Start</name>
                         <link>
@@ -20011,6 +19903,11 @@
                             <allowmultiple>true</allowmultiple>
                         </valuelink>
                         <valuelink>
+                            <name>ActorFilters</name>
+                            <exposed>false</exposed>
+                            <allowmultiple>true</allowmultiple>
+                        </valuelink>
+                        <valuelink>
                             <name>EventName</name>
                             <exposed>false</exposed>
                         </valuelink>
@@ -20049,6 +19946,11 @@
                             <name>Instigator</name>
                             <exposed>false</exposed>
                             <isout>true</isout>
+                            <allowmultiple>true</allowmultiple>
+                        </valuelink>
+                        <valuelink>
+                            <name>ActorFilters</name>
+                            <exposed>false</exposed>
                             <allowmultiple>true</allowmultiple>
                         </valuelink>
                         <valuelink>
@@ -20205,10 +20107,6 @@
                             <name>EventName</name>
                             <string>Started</string>
                         </property>
-                        <property>
-                            <name>Local Event</name>
-                            <boolean>true</boolean>
-                        </property>
                         <inputlink>
                             <name>Call Event</name>
                             <link>
@@ -20225,10 +20123,6 @@
                         </valuelink>
                         <valuelink>
                             <name>EventName</name>
-                            <exposed>false</exposed>
-                        </valuelink>
-                        <valuelink>
-                            <name>Local Event</name>
                             <exposed>false</exposed>
                         </valuelink>
                         <valuelink>
@@ -20347,10 +20241,6 @@
                             <name>EventName</name>
                             <string>Ended</string>
                         </property>
-                        <property>
-                            <name>Local Event</name>
-                            <boolean>true</boolean>
-                        </property>
                         <inputlink>
                             <name>Call Event</name>
                             <link>
@@ -20371,10 +20261,6 @@
                         </valuelink>
                         <valuelink>
                             <name>EventName</name>
-                            <exposed>false</exposed>
-                        </valuelink>
-                        <valuelink>
-                            <name>Local Event</name>
                             <exposed>false</exposed>
                         </valuelink>
                         <valuelink>
@@ -21087,6 +20973,11 @@
                         <allowmultiple>true</allowmultiple>
                     </valuelink>
                     <valuelink>
+                        <name>ActorFilters</name>
+                        <exposed>false</exposed>
+                        <allowmultiple>true</allowmultiple>
+                    </valuelink>
+                    <valuelink>
                         <name>EventName</name>
                         <exposed>false</exposed>
                     </valuelink>
@@ -21125,6 +21016,11 @@
                         <name>Instigator</name>
                         <exposed>false</exposed>
                         <isout>true</isout>
+                        <allowmultiple>true</allowmultiple>
+                    </valuelink>
+                    <valuelink>
+                        <name>ActorFilters</name>
+                        <exposed>false</exposed>
                         <allowmultiple>true</allowmultiple>
                     </valuelink>
                     <valuelink>
@@ -21235,10 +21131,6 @@
                         <exposed>false</exposed>
                     </valuelink>
                     <valuelink>
-                        <name>Local Event</name>
-                        <exposed>false</exposed>
-                    </valuelink>
-                    <valuelink>
                         <name>Instigator</name>
                         <exposed>false</exposed>
                     </valuelink>
@@ -21257,10 +21149,6 @@
                     <property>
                         <name>Delay</name>
                         <float>0</float>
-                    </property>
-                    <property>
-                        <name>UseSimTime</name>
-                        <boolean>false</boolean>
                     </property>
                     <inputlink>
                         <name>Start</name>
@@ -21347,10 +21235,6 @@
                         <exposed>false</exposed>
                     </valuelink>
                     <valuelink>
-                        <name>Local Event</name>
-                        <exposed>false</exposed>
-                    </valuelink>
-                    <valuelink>
                         <name>Instigator</name>
                         <exposed>false</exposed>
                     </valuelink>
@@ -21394,10 +21278,6 @@
                         <exposed>false</exposed>
                     </valuelink>
                     <valuelink>
-                        <name>Local Event</name>
-                        <exposed>false</exposed>
-                    </valuelink>
-                    <valuelink>
                         <name>Instigator</name>
                         <exposed>false</exposed>
                     </valuelink>
@@ -21434,10 +21314,6 @@
                     </valuelink>
                     <valuelink>
                         <name>EventName</name>
-                        <exposed>false</exposed>
-                    </valuelink>
-                    <valuelink>
-                        <name>Local Event</name>
                         <exposed>false</exposed>
                     </valuelink>
                     <valuelink>
@@ -21695,6 +21571,11 @@
                             <allowmultiple>true</allowmultiple>
                         </valuelink>
                         <valuelink>
+                            <name>ActorFilters</name>
+                            <exposed>false</exposed>
+                            <allowmultiple>true</allowmultiple>
+                        </valuelink>
+                        <valuelink>
                             <name>EventName</name>
                             <exposed>false</exposed>
                         </valuelink>
@@ -21733,6 +21614,11 @@
                             <name>Instigator</name>
                             <exposed>false</exposed>
                             <isout>true</isout>
+                            <allowmultiple>true</allowmultiple>
+                        </valuelink>
+                        <valuelink>
+                            <name>ActorFilters</name>
+                            <exposed>false</exposed>
                             <allowmultiple>true</allowmultiple>
                         </valuelink>
                         <valuelink>
@@ -21916,10 +21802,6 @@
                             <name>EventName</name>
                             <string>Started</string>
                         </property>
-                        <property>
-                            <name>Local Event</name>
-                            <boolean>true</boolean>
-                        </property>
                         <inputlink>
                             <name>Call Event</name>
                             <link>
@@ -21936,10 +21818,6 @@
                         </valuelink>
                         <valuelink>
                             <name>EventName</name>
-                            <exposed>false</exposed>
-                        </valuelink>
-                        <valuelink>
-                            <name>Local Event</name>
                             <exposed>false</exposed>
                         </valuelink>
                         <valuelink>
@@ -22092,10 +21970,6 @@
                             <name>EventName</name>
                             <string>Ended</string>
                         </property>
-                        <property>
-                            <name>Local Event</name>
-                            <boolean>true</boolean>
-                        </property>
                         <inputlink>
                             <name>Call Event</name>
                             <link>
@@ -22116,10 +21990,6 @@
                         </valuelink>
                         <valuelink>
                             <name>EventName</name>
-                            <exposed>false</exposed>
-                        </valuelink>
-                        <valuelink>
-                            <name>Local Event</name>
                             <exposed>false</exposed>
                         </valuelink>
                         <valuelink>
@@ -23608,6 +23478,11 @@
                             <allowmultiple>true</allowmultiple>
                         </valuelink>
                         <valuelink>
+                            <name>ActorFilters</name>
+                            <exposed>false</exposed>
+                            <allowmultiple>true</allowmultiple>
+                        </valuelink>
+                        <valuelink>
                             <name>EventName</name>
                             <exposed>false</exposed>
                         </valuelink>
@@ -23646,6 +23521,11 @@
                             <name>Instigator</name>
                             <exposed>false</exposed>
                             <isout>true</isout>
+                            <allowmultiple>true</allowmultiple>
+                        </valuelink>
+                        <valuelink>
+                            <name>ActorFilters</name>
+                            <exposed>false</exposed>
                             <allowmultiple>true</allowmultiple>
                         </valuelink>
                         <valuelink>
@@ -23769,10 +23649,6 @@
                             <name>EventName</name>
                             <string>Started</string>
                         </property>
-                        <property>
-                            <name>Local Event</name>
-                            <boolean>true</boolean>
-                        </property>
                         <inputlink>
                             <name>Call Event</name>
                             <link>
@@ -23789,10 +23665,6 @@
                         </valuelink>
                         <valuelink>
                             <name>EventName</name>
-                            <exposed>false</exposed>
-                        </valuelink>
-                        <valuelink>
-                            <name>Local Event</name>
                             <exposed>false</exposed>
                         </valuelink>
                         <valuelink>
@@ -23880,10 +23752,6 @@
                             <name>EventName</name>
                             <string>Ended</string>
                         </property>
-                        <property>
-                            <name>Local Event</name>
-                            <boolean>true</boolean>
-                        </property>
                         <inputlink>
                             <name>Call Event</name>
                             <link>
@@ -23904,10 +23772,6 @@
                         </valuelink>
                         <valuelink>
                             <name>EventName</name>
-                            <exposed>false</exposed>
-                        </valuelink>
-                        <valuelink>
-                            <name>Local Event</name>
                             <exposed>false</exposed>
                         </valuelink>
                         <valuelink>
@@ -24490,6 +24354,9 @@
                         </link>
                     </outputlink>
                     <outputlink>
+                        <name>Finished</name>
+                    </outputlink>
+                    <outputlink>
                         <name>Failed</name>
                         <visible>false</visible>
                     </outputlink>
@@ -24948,6 +24815,9 @@
                             <id>f44f99e7-7936-4254-bca2-66b3f25e25af</id>
                             <name>TurnOff</name>
                         </link>
+                    </outputlink>
+                    <outputlink>
+                        <name>Finished</name>
                     </outputlink>
                     <outputlink>
                         <name>Failed</name>
@@ -25415,8 +25285,8 @@
             <property>
                 <name>Position</name>
                 <vec2>
-                    <value1>1323.673706</value1>
-                    <value2>-346.888123</value2>
+                    <value1>1315.673706</value1>
+                    <value2>-344.888123</value2>
                 </vec2>
             </property>
             <property>
@@ -25863,10 +25733,6 @@
                     <property>
                         <name>Delay</name>
                         <float>2</float>
-                    </property>
-                    <property>
-                        <name>UseSimTime</name>
-                        <boolean>false</boolean>
                     </property>
                     <inputlink>
                         <name>Start</name>
@@ -26786,6 +26652,11 @@
                             <allowmultiple>true</allowmultiple>
                         </valuelink>
                         <valuelink>
+                            <name>ActorFilters</name>
+                            <exposed>false</exposed>
+                            <allowmultiple>true</allowmultiple>
+                        </valuelink>
+                        <valuelink>
                             <name>EventName</name>
                             <exposed>false</exposed>
                         </valuelink>
@@ -26824,6 +26695,11 @@
                             <name>Instigator</name>
                             <exposed>false</exposed>
                             <isout>true</isout>
+                            <allowmultiple>true</allowmultiple>
+                        </valuelink>
+                        <valuelink>
+                            <name>ActorFilters</name>
+                            <exposed>false</exposed>
                             <allowmultiple>true</allowmultiple>
                         </valuelink>
                         <valuelink>
@@ -26980,10 +26856,6 @@
                             <name>EventName</name>
                             <string>Started</string>
                         </property>
-                        <property>
-                            <name>Local Event</name>
-                            <boolean>true</boolean>
-                        </property>
                         <inputlink>
                             <name>Call Event</name>
                             <link>
@@ -27000,10 +26872,6 @@
                         </valuelink>
                         <valuelink>
                             <name>EventName</name>
-                            <exposed>false</exposed>
-                        </valuelink>
-                        <valuelink>
-                            <name>Local Event</name>
                             <exposed>false</exposed>
                         </valuelink>
                         <valuelink>
@@ -27122,10 +26990,6 @@
                             <name>EventName</name>
                             <string>Ended</string>
                         </property>
-                        <property>
-                            <name>Local Event</name>
-                            <boolean>true</boolean>
-                        </property>
                         <inputlink>
                             <name>Call Event</name>
                             <link>
@@ -27146,10 +27010,6 @@
                         </valuelink>
                         <valuelink>
                             <name>EventName</name>
-                            <exposed>false</exposed>
-                        </valuelink>
-                        <valuelink>
-                            <name>Local Event</name>
                             <exposed>false</exposed>
                         </valuelink>
                         <valuelink>
