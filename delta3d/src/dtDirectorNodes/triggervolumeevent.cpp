@@ -91,6 +91,8 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void TriggerVolumeEvent::OnLinkValueChanged(const std::string& linkName)
    {
+      EventNode::OnLinkValueChanged(linkName);
+
       if (linkName == "TriggerVolume")
       {
          // Un-register all old volumes.

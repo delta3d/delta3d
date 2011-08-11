@@ -109,6 +109,8 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void ReferenceScriptAction::OnLinkValueChanged(const std::string& linkName)
    {
+      ActionNode::OnLinkValueChanged(linkName);
+
       // Propagate the changed event to the value link within the
       // referenced script.
       if (mScript.valid())

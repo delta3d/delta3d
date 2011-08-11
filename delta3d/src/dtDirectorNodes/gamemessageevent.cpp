@@ -78,6 +78,8 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void GameMessageEvent::OnLinkValueChanged(const std::string& linkName)
    {
+      EventNode::OnLinkValueChanged(linkName);
+
       if (linkName == "Message Type")
       {
          RegisterMessages();

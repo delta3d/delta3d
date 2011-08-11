@@ -209,6 +209,8 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void SpawnActorAction::OnLinkValueChanged(const std::string& linkName)
    {
+      ActionNode::OnLinkValueChanged(linkName);
+
       if (linkName == "Actor Type")
       {
          UpdateTemplate();

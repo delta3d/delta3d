@@ -45,6 +45,7 @@ namespace dtDirector
    Node::Node()
       : mLogNode(false)
       , mEnabled(true)
+      , mIsEnabled(true)
       , mDirector(NULL)
       , mGraph(NULL)
    {
@@ -252,6 +253,21 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   void Node::OnLinkValueChanged(const std::string& linkName)
+   {
+      // As a special case to help optimize a very highly used property
+      // that can also be exposed as a value link.  Any time a value is
+      // connected to the Enabled flag value link, it will change the
+      // internal value stored within this node.  This reduces the need
+      // to check for connected values whenever we need to check if the
+      // node is enabled.
+      if (linkName == "Enabled")
+      {
+         mIsEnabled = GetBoolean("Enabled");
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    std::string Node::GetDefaultPropertyKey() const
    {
       return std::string("Director Node: ") + mType->GetFullName();
@@ -359,12 +375,19 @@ namespace dtDirector
    void Node::SetEnabled(bool enabled)
    {
       mEnabled = enabled;
+      mIsEnabled = GetBoolean("Enabled");
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    bool Node::IsEnabled()
    {
-      return GetBoolean("Enabled");
+      // We no longer check for link redirections when checking this
+      // flag because we now copy any linked value to the internal
+      // enabled flag stored in this node.  This is for optimization
+      // purposes.
+      ////return GetBoolean("Enabled");
+
+      return mIsEnabled;
    }
 
    ////////////////////////////////////////////////////////////////////////////////

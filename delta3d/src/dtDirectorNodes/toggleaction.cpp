@@ -159,6 +159,8 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void ToggleAction::OnLinkValueChanged(const std::string& linkName)
    {
+      ActionNode::OnLinkValueChanged(linkName);
+
       if (linkName == "Actor")
       {
          std::string name;

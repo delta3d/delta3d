@@ -205,6 +205,13 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
+   void ValueNode::SetEnabled(bool enabled)
+   {
+      Node::SetEnabled(enabled);
+      OnValueChanged();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    std::string ValueNode::GetValueLabel()
    {
       std::string label = "";
