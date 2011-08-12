@@ -224,6 +224,11 @@ namespace dtDirector
    {
       if (!link || !value) return false;
 
+      if (GetDirector()->IsLoading())
+      {
+         return true;
+      }
+
       if (link->IsTypeChecking())
       {
          if (!value->CanBeType(link->GetPropertyType()))
