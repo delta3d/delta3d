@@ -280,10 +280,10 @@ namespace dtABC
             mEnvironment->SetVisibility(100000.f);
             break;
          case VIS_FAR:
-            mEnvironment->SetVisibility(50000.f);
+            mEnvironment->SetVisibility(40000.f);
             break;
          case VIS_MODERATE:
-            mEnvironment->SetVisibility(25000.f);
+            mEnvironment->SetVisibility(16000.f);
             break;
          case VIS_LIMITED:
             mEnvironment->SetVisibility(8000.f);
