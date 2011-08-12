@@ -107,8 +107,8 @@ namespace dtABC
       enum VisibilityType
       {
          VIS_UNLIMITED = 0, ///<no restrictions
-         VIS_FAR = 1,       ///<50km
-         VIS_MODERATE = 2,  ///<25km
+         VIS_FAR = 1,       ///<40km
+         VIS_MODERATE = 2,  ///<16km
          VIS_LIMITED = 3,   ///<8km
          VIS_CLOSE = 4      ///<1.5km
       };
