@@ -39,6 +39,8 @@
 #include <dtDirector/director.h>
 #include <dtDirector/nodemanager.h>
 
+#include <dtUtil/stringutils.h>
+
 namespace dtDirector
 {
    ///////////////////////////////////////////////////////////////////////////////////////
@@ -623,10 +625,13 @@ namespace dtDirector
    osg::Vec2 Node::GetVec2(const std::string& name, int index)
    {
       dtDAL::ActorProperty* prop = GetProperty(name, index);
-      dtDAL::Vec2ActorProperty* vecProp = dynamic_cast<dtDAL::Vec2ActorProperty*>(prop);
-      if (vecProp)
+      if (prop)
       {
-         return vecProp->GetValue();
+         std::string str = prop->ToString();
+
+         osg::Vec2 newValue;
+         dtUtil::ParseVec<osg::Vec2>(str, newValue, 2);
+         return newValue;
       }
 
       return osg::Vec2();
@@ -636,10 +641,13 @@ namespace dtDirector
    osg::Vec3 Node::GetVec3(const std::string& name, int index)
    {
       dtDAL::ActorProperty* prop = GetProperty(name, index);
-      dtDAL::Vec3ActorProperty* vecProp = dynamic_cast<dtDAL::Vec3ActorProperty*>(prop);
-      if (vecProp)
+      if (prop)
       {
-         return vecProp->GetValue();
+         std::string str = prop->ToString();
+
+         osg::Vec3 newValue;
+         dtUtil::ParseVec<osg::Vec3>(str, newValue, 3);
+         return newValue;
       }
 
       return osg::Vec3();
@@ -649,10 +657,13 @@ namespace dtDirector
    osg::Vec4 Node::GetVec4(const std::string& name, int index)
    {
       dtDAL::ActorProperty* prop = GetProperty(name, index);
-      dtDAL::Vec4ActorProperty* vecProp = dynamic_cast<dtDAL::Vec4ActorProperty*>(prop);
-      if (vecProp)
+      if (prop)
       {
-         return vecProp->GetValue();
+         std::string str = prop->ToString();
+
+         osg::Vec4 newValue;
+         dtUtil::ParseVec<osg::Vec4>(str, newValue, 4);
+         return newValue;
       }
 
       return osg::Vec4();
@@ -823,20 +834,26 @@ namespace dtDirector
          for (index = 0; index < count; index++)
          {
             dtDAL::ActorProperty* prop = GetProperty(name, index);
-            dtDAL::Vec2ActorProperty* vecProp = dynamic_cast<dtDAL::Vec2ActorProperty*>(prop);
-            if (vecProp)
+            if (prop)
             {
-               vecProp->SetValue(value);
+               std::ostringstream stream;
+               stream.precision(2 * sizeof(float) + 1);
+               stream << value;
+
+               prop->FromString(stream.str());
             }
          }
       }
       else
       {
          dtDAL::ActorProperty* prop = GetProperty(name, index);
-         dtDAL::Vec2ActorProperty* vecProp = dynamic_cast<dtDAL::Vec2ActorProperty*>(prop);
-         if (vecProp)
+         if (prop)
          {
-            vecProp->SetValue(value);
+            std::ostringstream stream;
+            stream.precision(2 * sizeof(float) + 1);
+            stream << value;
+
+            prop->FromString(stream.str());
          }
       }
    }
@@ -850,20 +867,26 @@ namespace dtDirector
          for (index = 0; index < count; index++)
          {
             dtDAL::ActorProperty* prop = GetProperty(name, index);
-            dtDAL::Vec3ActorProperty* vecProp = dynamic_cast<dtDAL::Vec3ActorProperty*>(prop);
-            if (vecProp)
+            if (prop)
             {
-               vecProp->SetValue(value);
+               std::ostringstream stream;
+               stream.precision(2 * sizeof(float) + 1);
+               stream << value;
+
+               prop->FromString(stream.str());
             }
          }
       }
       else
       {
          dtDAL::ActorProperty* prop = GetProperty(name, index);
-         dtDAL::Vec3ActorProperty* vecProp = dynamic_cast<dtDAL::Vec3ActorProperty*>(prop);
-         if (vecProp)
+         if (prop)
          {
-            vecProp->SetValue(value);
+            std::ostringstream stream;
+            stream.precision(2 * sizeof(float) + 1);
+            stream << value;
+
+            prop->FromString(stream.str());
          }
       }
    }
@@ -877,20 +900,26 @@ namespace dtDirector
          for (index = 0; index < count; index++)
          {
             dtDAL::ActorProperty* prop = GetProperty(name, index);
-            dtDAL::Vec4ActorProperty* vecProp = dynamic_cast<dtDAL::Vec4ActorProperty*>(prop);
-            if (vecProp)
+            if (prop)
             {
-               vecProp->SetValue(value);
+               std::ostringstream stream;
+               stream.precision(2 * sizeof(float) + 1);
+               stream << value;
+
+               prop->FromString(stream.str());
             }
          }
       }
       else
       {
          dtDAL::ActorProperty* prop = GetProperty(name, index);
-         dtDAL::Vec4ActorProperty* vecProp = dynamic_cast<dtDAL::Vec4ActorProperty*>(prop);
-         if (vecProp)
+         if (prop)
          {
-            vecProp->SetValue(value);
+            std::ostringstream stream;
+            stream.precision(2 * sizeof(float) + 1);
+            stream << value;
+
+            prop->FromString(stream.str());
          }
       }
    }
