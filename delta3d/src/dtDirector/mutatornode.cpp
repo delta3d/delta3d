@@ -57,25 +57,9 @@ namespace dtDirector
       return "";
    }
 
-   //////////////////////////////////////////////////////////////////////////
-   dtDAL::ActorProperty* MutatorNode::GetProperty(const std::string& name, int index, ValueNode** outNode)
-   {
-      if (index == 0 && name == mProperty->GetName())
-      {
-         return mProperty;
-      }
-
-      return Node::GetProperty(name, index, outNode);
-   }
-
    ////////////////////////////////////////////////////////////////////////////////
    int MutatorNode::GetPropertyCount(const std::string& name)
    {
-      if (name == mProperty->GetName())
-      {
-         return 1;
-      }
-
       int propertyCount = 0;
 
       // First iterate through all value links to see if this property

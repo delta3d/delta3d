@@ -27,7 +27,6 @@
 #include <dtDirector/mutatornode.h>
 #include <dtDirectorNodes/nodelibraryexport.h>
 
-
 namespace dtDirector
 {
    ////////////////////////////////////////////////////////////////////////////////
@@ -47,11 +46,6 @@ namespace dtDirector
        * @param[in]  graph     The graph that owns this node.
        */
       virtual void Init(const NodeType& nodeType, DirectorGraph* graph);
-
-      /**
-       * Event handler called when a script has finished loading.
-       */
-      virtual void OnFinishedLoading();
 
       /**
        * This method is called in init, which instructs the node
@@ -81,13 +75,6 @@ namespace dtDirector
        * @return  True if this value is the proper type.
        */
       virtual bool CanBeType(dtCore::DataType& type);
-
-      /**
-       * Retrieves the property type of this value.
-       *
-       * @return  The type.
-       */
-      virtual dtCore::DataType& GetPropertyType();
 
       /**
        * Determines whether a value link on this node can connect
@@ -123,14 +110,32 @@ namespace dtDirector
       /**
        * Accessors for property values.
        */
-      void SetA(double value);
-      double GetA() const;
+      void SetA(double value) {mValueA = value;}
+      double GetA() const     {return mValueA;}
 
-      void SetB(double value);
-      double GetB() const;
+      void SetB(double value) {mValueB = value;}
+      double GetB() const     {return mValueB;}
 
-      void SetResult(const std::string& value);
-      const std::string& GetResult() const;
+      void SetResultBool(bool value) {mResultBool = value;}
+      bool GetResultBool() const     {return mResultBool;}
+
+      void SetResultInt(int value) {mResultInt = value;}
+      int GetResultInt() const     {return mResultInt;}
+
+      void SetResultFloat(float value) {mResultFloat = value;}
+      float GetResultFloat() const     {return mResultFloat;}
+
+      void SetResultDouble(double value) {mResultDouble = value;}
+      double GetResultDouble() const     {return mResultDouble;}
+
+      void SetResultVec2(const osg::Vec2& value) {mResultVec2 = value;}
+      const osg::Vec2& GetResultVec2() const     {return mResultVec2;}
+
+      void SetResultVec3(const osg::Vec3& value) {mResultVec3 = value;}
+      const osg::Vec3& GetResultVec3() const     {return mResultVec3;}
+
+      void SetResultVec4(const osg::Vec4& value) {mResultVec4 = value;}
+      const osg::Vec4& GetResultVec4() const     {return mResultVec4;}
 
    protected:
 
@@ -144,9 +149,13 @@ namespace dtDirector
       double mValueA;
       double mValueB;
 
-      std::string mResult;
-
-      dtCore::DataType* mResultType;
+      bool      mResultBool;
+      int       mResultInt;
+      float     mResultFloat;
+      double    mResultDouble;
+      osg::Vec2 mResultVec2;
+      osg::Vec3 mResultVec3;
+      osg::Vec4 mResultVec4;
    };
 }
 
