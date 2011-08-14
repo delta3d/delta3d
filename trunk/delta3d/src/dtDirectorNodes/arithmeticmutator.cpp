@@ -23,8 +23,11 @@
 
 #include <dtDirector/director.h>
 
-#include <dtCore/stringactorproperty.h>
+#include <dtCore/booleanactorproperty.h>
+#include <dtCore/intactorproperty.h>
+#include <dtCore/floatactorproperty.h>
 #include <dtCore/doubleactorproperty.h>
+#include <dtCore/vectoractorproperties.h>
 
 namespace dtDirector
 {
@@ -33,8 +36,10 @@ namespace dtDirector
       : MutatorNode()
       , mValueA(0.0f)
       , mValueB(0.0f)
-      , mResult("")
-      , mResultType(NULL)
+      , mResultBool(false)
+      , mResultInt(0)
+      , mResultFloat(0.0f)
+      , mResultDouble(0.0)
    {
       AddAuthor("Jeff P. Houde");
    }
@@ -48,14 +53,6 @@ namespace dtDirector
    void ArithmeticMutator::Init(const NodeType& nodeType, DirectorGraph* graph)
    {
       MutatorNode::Init(nodeType, graph);
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   void ArithmeticMutator::OnFinishedLoading()
-   {
-      MutatorNode::OnFinishedLoading();
-
-      OnLinkValueChanged("Result");
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -78,13 +75,6 @@ namespace dtDirector
       AddProperty(leftProp);
       AddProperty(rightProp);
 
-      mProperty = new dtCore::StringActorProperty(
-         "Result", "Result",
-         dtCore::StringActorProperty::SetFuncType(this, &ArithmeticMutator::SetResult),
-         dtCore::StringActorProperty::GetFuncType(this, &ArithmeticMutator::GetResult),
-         "The Result value.");
-      //AddProperty(mProperty);
-
       // This will expose the properties in the editor and allow
       // them to be connected to ValueNodes.
       mValues.push_back(ValueLink(this, leftProp, false, false, false));
@@ -98,19 +88,77 @@ namespace dtDirector
    {
       MutatorNode::OnLinkValueChanged(linkName);
 
-      // Skip this calculation while we are in the loading process or we
-      // are not changing one of our input values.
-      if (GetDirector()->IsLoading() ||
-         (linkName != mProperty->GetName() &&
-         linkName != "A" && linkName != "B"))
-      {
-         return;
-      }
-
       dtCore::DataType& leftType = Node::GetPropertyType("A");
       dtCore::DataType& rightType = Node::GetPropertyType("B");
       dtCore::DataType& desiredType = GetStrongerType(leftType, rightType);
-      mResultType = &desiredType;
+
+      // If our result property does not match the proper value type,
+      // create one that does.
+      if (!mProperty || desiredType != mProperty->GetPropertyType())
+      {
+         RemoveProperty("Result");
+
+         switch (desiredType.GetTypeId())
+         {
+         case dtCore::DataType::BOOLEAN_ID:
+            mProperty = new dtCore::BooleanActorProperty(
+               "Result", "Result",
+               dtCore::BooleanActorProperty::SetFuncType(this, &ArithmeticMutator::SetResultBool),
+               dtCore::BooleanActorProperty::GetFuncType(this, &ArithmeticMutator::GetResultBool),
+               "The Result value.");
+            break;
+
+         case dtCore::DataType::INT_ID:
+            mProperty = new dtCore::IntActorProperty(
+               "Result", "Result",
+               dtCore::IntActorProperty::SetFuncType(this, &ArithmeticMutator::SetResultInt),
+               dtCore::IntActorProperty::GetFuncType(this, &ArithmeticMutator::GetResultInt),
+               "The Result value.");
+            break;
+
+         case dtCore::DataType::FLOAT_ID:
+            mProperty = new dtCore::FloatActorProperty(
+               "Result", "Result",
+               dtCore::FloatActorProperty::SetFuncType(this, &ArithmeticMutator::SetResultFloat),
+               dtCore::FloatActorProperty::GetFuncType(this, &ArithmeticMutator::GetResultFloat),
+               "The Result value.");
+            break;
+
+         case dtCore::DataType::DOUBLE_ID:
+            mProperty = new dtCore::DoubleActorProperty(
+               "Result", "Result",
+               dtCore::DoubleActorProperty::SetFuncType(this, &ArithmeticMutator::SetResultDouble),
+               dtCore::DoubleActorProperty::GetFuncType(this, &ArithmeticMutator::GetResultDouble),
+               "The Result value.");
+            break;
+
+         case dtCore::DataType::VEC2F_ID:
+            mProperty = new dtCore::Vec2ActorProperty(
+               "Result", "Result",
+               dtCore::Vec2ActorProperty::SetFuncType(this, &ArithmeticMutator::SetResultVec2),
+               dtCore::Vec2ActorProperty::GetFuncType(this, &ArithmeticMutator::GetResultVec2),
+               "The Result value.");
+            break;
+
+         case dtCore::DataType::VEC3F_ID:
+            mProperty = new dtCore::Vec3ActorProperty(
+               "Result", "Result",
+               dtCore::Vec3ActorProperty::SetFuncType(this, &ArithmeticMutator::SetResultVec3),
+               dtCore::Vec3ActorProperty::GetFuncType(this, &ArithmeticMutator::GetResultVec3),
+               "The Result value.");
+            break;
+
+         case dtCore::DataType::VEC4F_ID:
+            mProperty = new dtCore::Vec4ActorProperty(
+               "Result", "Result",
+               dtCore::Vec4ActorProperty::SetFuncType(this, &ArithmeticMutator::SetResultVec4),
+               dtCore::Vec4ActorProperty::GetFuncType(this, &ArithmeticMutator::GetResultVec4),
+               "The Result value.");
+            break;
+         }
+
+         AddProperty(mProperty);
+      }
 
       osg::Vec4 left;
       osg::Vec4 right;
@@ -175,25 +223,45 @@ namespace dtDirector
       result = PerformOperation(left, right);
 
       // Store the result.
-      switch (desiredType.GetTypeId())
+      switch (mProperty->GetPropertyType().GetTypeId())
       {
       case dtCore::DataType::BOOLEAN_ID:
       case dtCore::DataType::INT_ID:
       case dtCore::DataType::FLOAT_ID:
       case dtCore::DataType::DOUBLE_ID:
-         SetDouble(result.x(), "Result");
+         if (GetDouble("Result") != result.x())
+         {
+            SetDouble(result.x(), "Result");
+
+            OnValueChanged();
+         }
          break;
 
       case dtCore::DataType::VEC2F_ID:
-         SetVec2(osg::Vec2(result.x(), result.y()), "Result");
+         if (GetVec2("Result") != osg::Vec2(result.x(), result.y()))
+         {
+            SetVec2(osg::Vec2(result.x(), result.y()), "Result");
+
+            OnValueChanged();
+         }
          break;
 
       case dtCore::DataType::VEC3F_ID:
-         SetVec3(osg::Vec3(result.x(), result.y(), result.z()), "Result");
+         if (GetVec3("Result") != osg::Vec3(result.x(), result.y(), result.z()))
+         {
+            SetVec3(osg::Vec3(result.x(), result.y(), result.z()), "Result");
+
+            OnValueChanged();
+         }
          break;
 
       case dtCore::DataType::VEC4F_ID:
-         SetVec4(result, "Result");
+         if (GetVec4("Result") != result)
+         {
+            SetVec4(result, "Result");
+
+            OnValueChanged();
+         }
          break;
       }
    }
@@ -216,15 +284,6 @@ namespace dtDirector
       default:
          return false;
       }
-   }
-
-   //////////////////////////////////////////////////////////////////////////
-   dtCore::DataType& ArithmeticMutator::GetPropertyType()
-   {
-      if (mResultType) return *mResultType;
-
-      // If there is no property, return an undefined type.
-      return dtCore::DataType::UNKNOWN;
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -285,54 +344,6 @@ namespace dtDirector
       }
 
       return type2;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   void ArithmeticMutator::SetA(double value)
-   {
-      if (mValueA != value)
-      {
-         mValueA = value;
-         OnValueChanged();
-      }
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   double ArithmeticMutator::GetA() const
-   {
-      return mValueA;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   void ArithmeticMutator::SetB(double value)
-   {
-      if (mValueB != value)
-      {
-         mValueB = value;
-         OnValueChanged();
-      }
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   double ArithmeticMutator::GetB() const
-   {
-      return mValueB;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   void ArithmeticMutator::SetResult(const std::string& value)
-   {
-      if (mResult != value)
-      {
-         mResult = value;
-         OnValueChanged();
-      }
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   const std::string& ArithmeticMutator::GetResult() const
-   {
-      return mResult;
    }
 }
 
