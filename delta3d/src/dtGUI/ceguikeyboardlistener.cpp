@@ -447,6 +447,46 @@ CEGUI::Key::Scan CEGUIKeyboardListener::KeyboardKeyToKeyScan( int key )
       {
          return CEGUI::Key::NumLock;
       }
+      case osgGA::GUIEventAdapter::KEY_KP_0:
+      {
+         return CEGUI::Key::Numpad0;
+      }
+      case osgGA::GUIEventAdapter::KEY_KP_1:
+      {
+         return CEGUI::Key::Numpad1;
+      }
+      case osgGA::GUIEventAdapter::KEY_KP_2:
+      {
+         return CEGUI::Key::Numpad2;
+      }
+      case osgGA::GUIEventAdapter::KEY_KP_3:
+      {
+         return CEGUI::Key::Numpad3;
+      }
+      case osgGA::GUIEventAdapter::KEY_KP_4:
+      {
+         return CEGUI::Key::Numpad4;
+      }
+      case osgGA::GUIEventAdapter::KEY_KP_5:
+      {
+         return CEGUI::Key::Numpad5;
+      }
+      case osgGA::GUIEventAdapter::KEY_KP_6:
+      {
+         return CEGUI::Key::Numpad6;
+      }
+      case osgGA::GUIEventAdapter::KEY_KP_7:
+      {
+         return CEGUI::Key::Numpad7;
+      }
+      case osgGA::GUIEventAdapter::KEY_KP_8:
+      {
+         return CEGUI::Key::Numpad8;
+      }
+      case osgGA::GUIEventAdapter::KEY_KP_9:
+      {
+         return CEGUI::Key::Numpad9;
+      }
       case osgGA::GUIEventAdapter::KEY_KP_Divide:
       {
          return CEGUI::Key::Divide;
