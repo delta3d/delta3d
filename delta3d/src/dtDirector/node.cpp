@@ -26,15 +26,15 @@
 #include <dtDirector/valuenode.h>
 #include <dtDirector/colors.h>
 
-#include <dtDAL/actoractorproperty.h>
-#include <dtDAL/actoridactorproperty.h>
-#include <dtDAL/actorproperty.h>
-#include <dtDAL/booleanactorproperty.h>
-#include <dtDAL/gameevent.h>
-#include <dtDAL/gameeventactorproperty.h>
-#include <dtDAL/stringactorproperty.h>
-#include <dtDAL/vectoractorproperties.h>
-#include <dtDAL/resourceactorproperty.h>
+#include <dtCore/actoractorproperty.h>
+#include <dtCore/actoridactorproperty.h>
+#include <dtCore/actorproperty.h>
+#include <dtCore/booleanactorproperty.h>
+#include <dtCore/gameevent.h>
+#include <dtCore/gameeventactorproperty.h>
+#include <dtCore/stringactorproperty.h>
+#include <dtCore/vectoractorproperties.h>
+#include <dtCore/resourceactorproperty.h>
 
 #include <dtDirector/director.h>
 #include <dtDirector/nodemanager.h>
@@ -155,53 +155,53 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void Node::BuildPropertyMap()
    {
-      dtDAL::BooleanActorProperty* enabledProp = new dtDAL::BooleanActorProperty(
+      dtCore::BooleanActorProperty* enabledProp = new dtCore::BooleanActorProperty(
          "Enabled", "Enabled",
-         dtDAL::BooleanActorProperty::SetFuncType(this, &Node::SetEnabled),
-         dtDAL::BooleanActorProperty::GetFuncType(this, &Node::GetEnabled),
+         dtCore::BooleanActorProperty::SetFuncType(this, &Node::SetEnabled),
+         dtCore::BooleanActorProperty::GetFuncType(this, &Node::GetEnabled),
          "Enabled status of this Node (Disabled nodes will not run during graph execution).");
       AddProperty(enabledProp);
 
-      AddProperty(new dtDAL::StringActorProperty(
+      AddProperty(new dtCore::StringActorProperty(
          "Comment", "Comment",
-         dtDAL::StringActorProperty::SetFuncType(this, &Node::SetComment),
-         dtDAL::StringActorProperty::GetFuncType(this, &Node::GetComment),
+         dtCore::StringActorProperty::SetFuncType(this, &Node::SetComment),
+         dtCore::StringActorProperty::GetFuncType(this, &Node::GetComment),
          "Generic text field used to describe why this node is here."));
 
-      AddProperty(new dtDAL::BooleanActorProperty(
+      AddProperty(new dtCore::BooleanActorProperty(
          "LogNode", "Log Node",
-         dtDAL::BooleanActorProperty::SetFuncType(this, &Node::SetNodeLogging),
-         dtDAL::BooleanActorProperty::GetFuncType(this, &Node::GetNodeLogging),
+         dtCore::BooleanActorProperty::SetFuncType(this, &Node::SetNodeLogging),
+         dtCore::BooleanActorProperty::GetFuncType(this, &Node::GetNodeLogging),
          "Prints a log message when this node is executed."));
 
-      dtDAL::StringActorProperty* authorProp =
-         new dtDAL::StringActorProperty("Authors", "Node Author(s)",
-         dtDAL::StringActorProperty::SetFuncType(),
-         dtDAL::StringActorProperty::GetFuncType(this, &Node::GetAuthors),
+      dtCore::StringActorProperty* authorProp =
+         new dtCore::StringActorProperty("Authors", "Node Author(s)",
+         dtCore::StringActorProperty::SetFuncType(),
+         dtCore::StringActorProperty::GetFuncType(this, &Node::GetAuthors),
          "The author(s) of this node, as well as all inherited nodes.", "Info");
       authorProp->SetReadOnly(true);
       AddProperty(authorProp);
 
-      dtDAL::StringActorProperty* typeProp = new dtDAL::StringActorProperty(
+      dtCore::StringActorProperty* typeProp = new dtCore::StringActorProperty(
          "Type", "Type",
-         dtDAL::StringActorProperty::SetFuncType(),
-         dtDAL::StringActorProperty::GetFuncType(this, &Node::GetTypeName),
+         dtCore::StringActorProperty::SetFuncType(),
+         dtCore::StringActorProperty::GetFuncType(this, &Node::GetTypeName),
          "The nodes type.", "Info");
       typeProp->SetReadOnly(true);
       AddProperty(typeProp);
 
-      dtDAL::StringActorProperty* descProp = new dtDAL::StringActorProperty(
+      dtCore::StringActorProperty* descProp = new dtCore::StringActorProperty(
          "Description", "Description",
-         dtDAL::StringActorProperty::SetFuncType(),
-         dtDAL::StringActorProperty::GetFuncType(this, &Node::GetDescription),
+         dtCore::StringActorProperty::SetFuncType(),
+         dtCore::StringActorProperty::GetFuncType(this, &Node::GetDescription),
          "Generic text field used to describe the basic functionality of this node.", "Info");
       descProp->SetReadOnly(true);
       AddProperty(descProp);
 
-      AddProperty(new dtDAL::Vec2ActorProperty(
+      AddProperty(new dtCore::Vec2ActorProperty(
          "Position", "Position",
-         dtDAL::Vec2ActorProperty::SetFuncType(this, &Node::SetPosition),
-         dtDAL::Vec2ActorProperty::GetFuncType(this, &Node::GetPosition),
+         dtCore::Vec2ActorProperty::SetFuncType(this, &Node::SetPosition),
+         dtCore::Vec2ActorProperty::GetFuncType(this, &Node::GetPosition),
          "The UI Position of the Node.", "Info"));
 
       mValues.push_back(ValueLink(this, enabledProp, false, false, true, false));
@@ -237,18 +237,18 @@ namespace dtDirector
          {
             return false;
          }
-         else if (link->GetPropertyType() == dtDAL::DataType::ACTOR)
+         else if (link->GetPropertyType() == dtCore::DataType::ACTOR)
          {
             std::string desiredClass;
-            dtDAL::BaseActorObject* proxyValue = NULL;
+            dtCore::BaseActorObject* proxyValue = NULL;
 
             // Handle both: ActorIDActorProperty and ActorActorProperty (do nothing if redirected)
-            if (IS_A(link->GetProperty(), dtDAL::ActorIDActorProperty*))
-               desiredClass = static_cast<dtDAL::ActorIDActorProperty*>(link->GetProperty())->GetDesiredActorClass();
-            else if (IS_A(value->GetProperty(), dtDAL::ActorActorProperty*))
-               desiredClass = static_cast<dtDAL::ActorActorProperty*>(link->GetProperty())->GetDesiredActorClass();
+            if (IS_A(link->GetProperty(), dtCore::ActorIDActorProperty*))
+               desiredClass = static_cast<dtCore::ActorIDActorProperty*>(link->GetProperty())->GetDesiredActorClass();
+            else if (IS_A(value->GetProperty(), dtCore::ActorActorProperty*))
+               desiredClass = static_cast<dtCore::ActorActorProperty*>(link->GetProperty())->GetDesiredActorClass();
 
-            if (IS_A(value->GetProperty(), dtDAL::ActorIDActorProperty*) || IS_A(value->GetProperty(), dtDAL::ActorActorProperty*))
+            if (IS_A(value->GetProperty(), dtCore::ActorIDActorProperty*) || IS_A(value->GetProperty(), dtCore::ActorActorProperty*))
                proxyValue = value->GetActor(value->GetProperty()->GetName());
 
             if (proxyValue && !desiredClass.empty() && !proxyValue->IsInstanceOf(desiredClass))
@@ -444,7 +444,7 @@ namespace dtDirector
    {
       for (int valueIndex = 0; valueIndex < (int)mValues.size(); valueIndex++)
       {
-         dtDAL::ActorProperty* prop = mValues[valueIndex].GetDefaultProperty();
+         dtCore::ActorProperty* prop = mValues[valueIndex].GetDefaultProperty();
          if (prop && prop->GetName() == name)
          {
             return (int)mValues[valueIndex].GetLinks().size();
@@ -459,7 +459,7 @@ namespace dtDirector
    {
       for (int valueIndex = 0; valueIndex < (int)mValues.size(); valueIndex++)
       {
-         dtDAL::ActorProperty* prop = mValues[valueIndex].GetDefaultProperty();
+         dtCore::ActorProperty* prop = mValues[valueIndex].GetDefaultProperty();
          if (prop && prop->GetName() == name)
          {
             if (index < (int)mValues[valueIndex].GetLinks().size())
@@ -483,7 +483,7 @@ namespace dtDirector
       // is redirected.
       for (int valueIndex = 0; valueIndex < (int)mValues.size(); valueIndex++)
       {
-         dtDAL::ActorProperty* prop = mValues[valueIndex].GetDefaultProperty();
+         dtCore::ActorProperty* prop = mValues[valueIndex].GetDefaultProperty();
          if (prop && prop->GetName() == name)
          {
             propertyCount = mValues[valueIndex].GetPropertyCount();
@@ -492,7 +492,7 @@ namespace dtDirector
       }
 
       // Did not find any overrides, so return the default.
-      if (propertyCount == 0 && dtDAL::PropertyContainer::GetProperty(name))
+      if (propertyCount == 0 && dtCore::PropertyContainer::GetProperty(name))
       {
          return 1;
       }
@@ -501,13 +501,13 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   dtDAL::ActorProperty* Node::GetProperty(const std::string& name, int index, ValueNode** outNode)
+   dtCore::ActorProperty* Node::GetProperty(const std::string& name, int index, ValueNode** outNode)
    {
       // First iterate through all value links to see if this property
       // is redirected.
       for (int valueIndex = 0; valueIndex < (int)mValues.size(); valueIndex++)
       {
-         dtDAL::ActorProperty* prop = mValues[valueIndex].GetDefaultProperty();
+         dtCore::ActorProperty* prop = mValues[valueIndex].GetDefaultProperty();
          if (prop && prop->GetName() == name)
          {
             return mValues[valueIndex].GetProperty(index, outNode);
@@ -517,26 +517,32 @@ namespace dtDirector
       // Did not find any overrides, so return the default.
       if (index == 0)
       {
-         return dtDAL::PropertyContainer::GetProperty(name);
+         return dtCore::PropertyContainer::GetProperty(name);
       }
 
       return NULL;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   dtDAL::DataType& Node::GetPropertyType(const std::string& name, int index)
+   dtCore::DataType& Node::GetPropertyType(const std::string& name, int index)
    {
-      dtDAL::ActorProperty* prop = GetProperty(name, index);
-      if (prop)
+      ValueNode* node = NULL;
+
+      dtCore::ActorProperty* prop = GetProperty(name, index, &node);
+      if (node != NULL)
+      {
+         return node->GetPropertyType();
+      }
+      else if (prop)
       {
          return prop->GetDataType();
       }
 
-      return dtDAL::DataType::UNKNOWN;
+      return dtCore::DataType::UNKNOWN;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void Node::LogValueRetrieved(ValueNode* valueNode, dtDAL::ActorProperty* prop)
+   void Node::LogValueRetrieved(ValueNode* valueNode, dtCore::ActorProperty* prop)
    {
       // Log the comment for this value.
       if (GetDirector()->GetNodeLogging() && valueNode && valueNode->GetNodeLogging())
@@ -552,7 +558,7 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void Node::LogValueChanged(ValueNode* valueNode, dtDAL::ActorProperty* prop, const std::string& oldVal)
+   void Node::LogValueChanged(ValueNode* valueNode, dtCore::ActorProperty* prop, const std::string& oldVal)
    {
       // Log the comment for this value.
       if (GetDirector()->GetNodeLogging() && valueNode && valueNode->GetNodeLogging())
@@ -616,7 +622,7 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    std::string Node::GetString(const std::string& name, int index)
    {
-      dtDAL::ActorProperty* prop = GetProperty(name, index);
+      dtCore::ActorProperty* prop = GetProperty(name, index);
       if (prop) return prop->ToString();
       return "";
    }
@@ -624,7 +630,7 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    osg::Vec2 Node::GetVec2(const std::string& name, int index)
    {
-      dtDAL::ActorProperty* prop = GetProperty(name, index);
+      dtCore::ActorProperty* prop = GetProperty(name, index);
       if (prop)
       {
          std::string str = prop->ToString();
@@ -640,7 +646,7 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    osg::Vec3 Node::GetVec3(const std::string& name, int index)
    {
-      dtDAL::ActorProperty* prop = GetProperty(name, index);
+      dtCore::ActorProperty* prop = GetProperty(name, index);
       if (prop)
       {
          std::string str = prop->ToString();
@@ -656,7 +662,7 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    osg::Vec4 Node::GetVec4(const std::string& name, int index)
    {
-      dtDAL::ActorProperty* prop = GetProperty(name, index);
+      dtCore::ActorProperty* prop = GetProperty(name, index);
       if (prop)
       {
          std::string str = prop->ToString();
@@ -672,7 +678,7 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    dtCore::UniqueId Node::GetActorID(const std::string& name, int index)
    {
-      dtDAL::ActorProperty* prop = GetProperty(name, index);
+      dtCore::ActorProperty* prop = GetProperty(name, index);
       if (prop) return dtCore::UniqueId(prop->ToString());
 
       dtCore::UniqueId emptyID;
@@ -681,15 +687,15 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   dtDAL::BaseActorObject* Node::GetActor(const std::string& name, int index)
+   dtCore::BaseActorObject* Node::GetActor(const std::string& name, int index)
    {
-      dtDAL::ActorProperty* prop = GetProperty(name, index);
+      dtCore::ActorProperty* prop = GetProperty(name, index);
       if (!prop) return NULL;
 
-      dtDAL::ActorIDActorProperty* actorIdProp = dynamic_cast<dtDAL::ActorIDActorProperty*>(prop);
+      dtCore::ActorIDActorProperty* actorIdProp = dynamic_cast<dtCore::ActorIDActorProperty*>(prop);
       if (actorIdProp)
       {
-         dtDAL::BaseActorObject* proxy = NULL;
+         dtCore::BaseActorObject* proxy = NULL;
 
          dtCore::UniqueId id = actorIdProp->GetValue();
 
@@ -710,12 +716,12 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   dtDAL::GameEvent* Node::GetGameEvent(const std::string& name, int index)
+   dtCore::GameEvent* Node::GetGameEvent(const std::string& name, int index)
    {
-      dtDAL::ActorProperty* prop = GetProperty(name, index);
+      dtCore::ActorProperty* prop = GetProperty(name, index);
       if (!prop) return NULL;
 
-      dtDAL::GameEventActorProperty* eventProp = dynamic_cast<dtDAL::GameEventActorProperty*>(prop);
+      dtCore::GameEventActorProperty* eventProp = dynamic_cast<dtCore::GameEventActorProperty*>(prop);
       if (eventProp)
       {
          return eventProp->GetValue();
@@ -725,12 +731,12 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   dtDAL::ResourceDescriptor Node::GetResource(const std::string& name, int index)
+   dtCore::ResourceDescriptor Node::GetResource(const std::string& name, int index)
    {
-      dtDAL::ActorProperty* prop = GetProperty(name, index);
-      if (!prop) return dtDAL::ResourceDescriptor::NULL_RESOURCE;
+      dtCore::ActorProperty* prop = GetProperty(name, index);
+      if (!prop) return dtCore::ResourceDescriptor::NULL_RESOURCE;
 
-      dtDAL::ResourceActorProperty* resourceProp = dynamic_cast<dtDAL::ResourceActorProperty*>(prop);
+      dtCore::ResourceActorProperty* resourceProp = dynamic_cast<dtCore::ResourceActorProperty*>(prop);
       if (resourceProp)
       {
          return resourceProp->GetValue();
@@ -739,10 +745,10 @@ namespace dtDirector
       std::string resourceIdentifier = prop->ToString();
       if (!resourceIdentifier.empty())
       {
-         return dtDAL::ResourceDescriptor(resourceIdentifier);
+         return dtCore::ResourceDescriptor(resourceIdentifier);
       }
 
-      return dtDAL::ResourceDescriptor::NULL_RESOURCE;
+      return dtCore::ResourceDescriptor::NULL_RESOURCE;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -808,7 +814,7 @@ namespace dtDirector
          int count = GetPropertyCount(name);
          for (index = 0; index < count; index++)
          {
-            dtDAL::ActorProperty* prop = GetProperty(name, index);
+            dtCore::ActorProperty* prop = GetProperty(name, index);
             if (prop)
             {
                prop->FromString(value);
@@ -817,7 +823,7 @@ namespace dtDirector
       }
       else
       {
-         dtDAL::ActorProperty* prop = GetProperty(name, index);
+         dtCore::ActorProperty* prop = GetProperty(name, index);
          if (prop)
          {
             prop->FromString(value);
@@ -833,7 +839,7 @@ namespace dtDirector
          int count = GetPropertyCount(name);
          for (index = 0; index < count; index++)
          {
-            dtDAL::ActorProperty* prop = GetProperty(name, index);
+            dtCore::ActorProperty* prop = GetProperty(name, index);
             if (prop)
             {
                std::ostringstream stream;
@@ -846,7 +852,7 @@ namespace dtDirector
       }
       else
       {
-         dtDAL::ActorProperty* prop = GetProperty(name, index);
+         dtCore::ActorProperty* prop = GetProperty(name, index);
          if (prop)
          {
             std::ostringstream stream;
@@ -866,7 +872,7 @@ namespace dtDirector
          int count = GetPropertyCount(name);
          for (index = 0; index < count; index++)
          {
-            dtDAL::ActorProperty* prop = GetProperty(name, index);
+            dtCore::ActorProperty* prop = GetProperty(name, index);
             if (prop)
             {
                std::ostringstream stream;
@@ -879,7 +885,7 @@ namespace dtDirector
       }
       else
       {
-         dtDAL::ActorProperty* prop = GetProperty(name, index);
+         dtCore::ActorProperty* prop = GetProperty(name, index);
          if (prop)
          {
             std::ostringstream stream;
@@ -899,7 +905,7 @@ namespace dtDirector
          int count = GetPropertyCount(name);
          for (index = 0; index < count; index++)
          {
-            dtDAL::ActorProperty* prop = GetProperty(name, index);
+            dtCore::ActorProperty* prop = GetProperty(name, index);
             if (prop)
             {
                std::ostringstream stream;
@@ -912,7 +918,7 @@ namespace dtDirector
       }
       else
       {
-         dtDAL::ActorProperty* prop = GetProperty(name, index);
+         dtCore::ActorProperty* prop = GetProperty(name, index);
          if (prop)
          {
             std::ostringstream stream;
@@ -931,15 +937,15 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void Node::SetGameEvent(dtDAL::GameEvent* value, const std::string& name, int index)
+   void Node::SetGameEvent(dtCore::GameEvent* value, const std::string& name, int index)
    {
       if (index == -1)
       {
          int count = GetPropertyCount(name);
          for (index = 0; index < count; index++)
          {
-            dtDAL::ActorProperty* prop = GetProperty(name, index);
-            dtDAL::GameEventActorProperty* eventProp = dynamic_cast<dtDAL::GameEventActorProperty*>(prop);
+            dtCore::ActorProperty* prop = GetProperty(name, index);
+            dtCore::GameEventActorProperty* eventProp = dynamic_cast<dtCore::GameEventActorProperty*>(prop);
             if (eventProp)
             {
                eventProp->SetValue(value);
@@ -948,8 +954,8 @@ namespace dtDirector
       }
       else
       {
-         dtDAL::ActorProperty* prop = GetProperty(name, index);
-         dtDAL::GameEventActorProperty* eventProp = dynamic_cast<dtDAL::GameEventActorProperty*>(prop);
+         dtCore::ActorProperty* prop = GetProperty(name, index);
+         dtCore::GameEventActorProperty* eventProp = dynamic_cast<dtCore::GameEventActorProperty*>(prop);
          if (eventProp)
          {
             eventProp->SetValue(value);
@@ -958,7 +964,7 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void Node::SetResource(const dtDAL::ResourceDescriptor& value, const std::string& name, int index)
+   void Node::SetResource(const dtCore::ResourceDescriptor& value, const std::string& name, int index)
    {
       SetString(value.GetResourceIdentifier(), name, index);
    }
