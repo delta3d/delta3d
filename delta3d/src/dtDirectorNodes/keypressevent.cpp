@@ -95,6 +95,12 @@ namespace dtDirector
                bool shiftL    = keyboard->GetButton(osgGA::GUIEventAdapter::KEY_Shift_L)->GetState();
                bool shiftR    = keyboard->GetButton(osgGA::GUIEventAdapter::KEY_Shift_R)->GetState();
 
+               // If we don't want any modifiers, then fail on any modifiers used
+               if (mods == 0 && (controlL || controlR || altL || altR || shiftL || shiftR))
+               {
+                  return false;
+               }
+
                if ((mods & MOD_CONTROL) == MOD_CONTROL)
                {
                   if (!controlL && !controlR)
@@ -130,6 +136,12 @@ namespace dtDirector
                }
                else if ((mods & MOD_LEFT_SHIFT && !shiftL) ||
                   (mods & MOD_RIGHT_SHIFT && !shiftR))
+               {
+                  return false;
+               }
+
+               // If we want any modifier, then at least one modifier has to be true
+               if (mods & MOD_ANY && (!controlL && !controlR && !altL && !altR && !shiftL && !shiftR))
                {
                   return false;
                }
@@ -241,7 +253,7 @@ namespace dtDirector
    void KeyPressEvent::UpdateName()
    {
       mName.clear();
-      
+
       unsigned int mods = GetInt("Modifiers");
       if ((mods & MOD_CONTROL) == MOD_CONTROL)
       {

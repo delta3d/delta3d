@@ -5,7 +5,8 @@ SET(LIB_NAME     dtDirectorNodes)
 SET(HEADER_PATH ${DELTA3D_SOURCE_DIR}/inc/${LIB_NAME})
 SET(SOURCE_PATH ${DELTA3D_SOURCE_DIR}/src/${LIB_NAME})
 
-SET(LIB_PUBLIC_HEADERS ${HEADER_PATH}/actorarrayvalue.h
+SET(LIB_PUBLIC_HEADERS
+    ${HEADER_PATH}/actorarrayvalue.h
     ${HEADER_PATH}/actorvalue.h
     ${HEADER_PATH}/addmutator.h
     ${HEADER_PATH}/andmutator.h
@@ -49,6 +50,7 @@ SET(LIB_PUBLIC_HEADERS ${HEADER_PATH}/actorarrayvalue.h
     ${HEADER_PATH}/getparentactoraction.h
     ${HEADER_PATH}/getvectorvaluesaction.h
     ${HEADER_PATH}/inputnode.h
+    ${HEADER_PATH}/intarrayvalue.h
     ${HEADER_PATH}/intvalue.h
     ${HEADER_PATH}/isnotmutator.h
     ${HEADER_PATH}/keypressevent.h
@@ -103,7 +105,8 @@ SET(LIB_PUBLIC_HEADERS ${HEADER_PATH}/actorarrayvalue.h
 )
 
 
-SET(LIB_SOURCES ${SOURCE_PATH}/actorarrayvalue.cpp
+SET(LIB_SOURCES
+    ${SOURCE_PATH}/actorarrayvalue.cpp
     ${SOURCE_PATH}/actorvalue.cpp
     ${SOURCE_PATH}/addmutator.cpp
     ${SOURCE_PATH}/andmutator.cpp
@@ -147,6 +150,7 @@ SET(LIB_SOURCES ${SOURCE_PATH}/actorarrayvalue.cpp
     ${SOURCE_PATH}/getparentactoraction.cpp
     ${SOURCE_PATH}/getvectorvaluesaction.cpp
     ${SOURCE_PATH}/inputnode.cpp
+    ${SOURCE_PATH}/intarrayvalue.cpp
     ${SOURCE_PATH}/intvalue.cpp
     ${SOURCE_PATH}/isnotmutator.cpp
     ${SOURCE_PATH}/keypressevent.cpp

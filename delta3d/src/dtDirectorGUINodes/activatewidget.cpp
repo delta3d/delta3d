@@ -23,7 +23,6 @@
 #include <dtDirectorGUINodes/guinodemanager.h>
 
 #include <dtDAL/stringactorproperty.h>
-#include <dtDAL/stringselectoractorproperty.h>
 
 #include <dtGUI/gui.h>
 #include <CEGUI/CEGUIWindow.h>
@@ -53,48 +52,25 @@ namespace dtDirector
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void ActivateWidget::OnFinishedLoading()
-   {
-      GUINodeManager::GetLayout(GetString("Layout"));
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
    void ActivateWidget::BuildPropertyMap()
    {
       ActionNode::BuildPropertyMap();
 
-      dtDAL::StringSelectorActorProperty* layoutProp = new dtDAL::StringSelectorActorProperty(
-         "Layout", "Layout",
-         dtDAL::StringSelectorActorProperty::SetFuncType(this, &ActivateWidget::SetLayout),
-         dtDAL::StringSelectorActorProperty::GetFuncType(this, &ActivateWidget::GetLayout),
-         dtDAL::StringSelectorActorProperty::GetListFuncType(this, &ActivateWidget::GetLayoutList),
-         "The Layout.", "", true);
-      AddProperty(layoutProp);
-
-      dtDAL::StringSelectorActorProperty* widgetProp = new dtDAL::StringSelectorActorProperty(
+      dtDAL::StringActorProperty* widgetProp = new dtDAL::StringActorProperty(
          "Widget", "Widget",
-         dtDAL::StringSelectorActorProperty::SetFuncType(this, &ActivateWidget::SetWidget),
-         dtDAL::StringSelectorActorProperty::GetFuncType(this, &ActivateWidget::GetWidget),
-         dtDAL::StringSelectorActorProperty::GetListFuncType(this, &ActivateWidget::GetWidgetList),
-         "The Widget to activate.", "", true);
+         dtDAL::StringActorProperty::SetFuncType(this, &ActivateWidget::SetWidget),
+         dtDAL::StringActorProperty::GetFuncType(this, &ActivateWidget::GetWidget),
+         "The Widget to activate.");
       AddProperty(widgetProp);
 
       // This will expose the properties in the editor and allow
       // them to be connected to ValueNodes.
-      mValues.push_back(ValueLink(this, layoutProp, false, false, true, false));
       mValues.push_back(ValueLink(this, widgetProp, false, false, true, false));
    }
 
    /////////////////////////////////////////////////////////////////////////////
    bool ActivateWidget::Update(float simDelta, float delta, int input, bool firstUpdate)
    {
-      CEGUI::Window* layout = GUINodeManager::GetLayout(GetString("Layout"));
-      if (!layout)
-      {
-         ActivateOutput("Failed");
-         return false;
-      }
-
       dtGUI::GUI* gui = GUINodeManager::GetGUI();
       if (gui)
       {
@@ -105,6 +81,11 @@ namespace dtDirector
          {
             widget->activate();
          }
+         else
+         {
+            ActivateOutput("Failed");
+            return false;
+         }
       }
 
       // Fire the "Out" link
@@ -114,25 +95,14 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void ActivateWidget::UpdateName()
    {
-      std::string layoutName = GetString("Layout");
       std::string widgetName = GetString("Widget");
-
-      if (layoutName.empty())
+      if (!widgetName.empty())
       {
-         mName.clear();
+         mName = widgetName;
       }
       else
       {
-         mName = "Layout: " + layoutName;
-      }
-
-      if (!widgetName.empty())
-      {
-         if (!mName.empty())
-         {
-            mName += "::";
-         }
-         mName += widgetName;
+         mName.clear();
       }
    }
 
@@ -143,43 +113,11 @@ namespace dtDirector
 
       if (!GetDirector()->IsLoading())
       {
-         if (linkName == "Layout")
-         {
-            std::string layoutName = GetString("Layout");
-            GUINodeManager::GetLayout(layoutName);
-
-            UpdateName();
-         }
-         else if (linkName == "Widget")
+         if (linkName == "Widget")
          {
             UpdateName();
          }
       }
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   void ActivateWidget::SetLayout(const std::string& value)
-   {
-      mLayout = value;
-
-      UpdateName();
-
-      if (!GetDirector()->IsLoading())
-      {
-         GUINodeManager::GetLayout(mLayout);
-      }
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   std::string ActivateWidget::GetLayout() const
-   {
-      return mLayout;
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   std::vector<std::string> ActivateWidget::GetLayoutList()
-   {
-      return GUINodeManager::GetLayoutList();
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -195,36 +133,5 @@ namespace dtDirector
    {
       return mWidget;
    }
-
-   /////////////////////////////////////////////////////////////////////////////
-   std::vector<std::string> ActivateWidget::GetWidgetList()
-   {
-      std::vector<std::string> list;
-      RecurseWidgetList(list, GUINodeManager::GetLayout(GetString("Layout")));
-      return list;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   void ActivateWidget::RecurseWidgetList(std::vector<std::string>& widgetList, CEGUI::Window* parent)
-   {
-      if (!parent)
-      {
-         return;
-      }
-
-      size_t count = parent->getChildCount();
-      for (size_t index = 0; index < count; ++index)
-      {
-         CEGUI::Window* child = parent->getChildAtIdx(index);
-
-         if (child)
-         {
-            widgetList.push_back(child->getName().c_str());
-         }
-
-         RecurseWidgetList(widgetList, child);
-      }
-   }
 }
-
 ////////////////////////////////////////////////////////////////////////////////

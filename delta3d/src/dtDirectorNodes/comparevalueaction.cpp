@@ -108,7 +108,8 @@ namespace dtDirector
             if (value->CanBeType(dtCore::DataType::STRING)  ||
                 value->CanBeType(dtCore::DataType::INT)     ||
                 value->CanBeType(dtCore::DataType::FLOAT)   ||
-                value->CanBeType(dtCore::DataType::DOUBLE))
+                value->CanBeType(dtCore::DataType::DOUBLE)  ||
+                value->CanBeType(dtCore::DataType::STRING))
             {
                return true;
             }

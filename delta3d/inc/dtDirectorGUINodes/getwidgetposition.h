@@ -53,11 +53,6 @@ namespace dtDirector
       virtual void Init(const NodeType& nodeType, DirectorGraph* graph);
 
       /**
-       * Event handler called when a script has finished loading.
-       */
-      virtual void OnFinishedLoading();
-
-      /**
        * This method is called in init, which instructs the node
        * to create its properties.  Methods implementing this should
        * be sure to call their parent class's buildPropertyMap method to
@@ -99,14 +94,8 @@ namespace dtDirector
       /**
        * Accessors for property values.
        */
-      void SetLayout(const std::string& value);
-      std::string GetLayout() const;
-      std::vector<std::string> GetLayoutList();
-
       void SetWidget(const std::string& value);
       std::string GetWidget() const;
-      std::vector<std::string> GetWidgetList();
-      void RecurseWidgetList(std::vector<std::string>& widgetList, CEGUI::Window* parent);
 
       void SetPosition(const osg::Vec4& value);
       osg::Vec4 GetPosition() const;
@@ -119,7 +108,6 @@ namespace dtDirector
       ~GetWidgetPosition();
 
    private:
-
       std::string mLayout;
       std::string mWidget;
       dtCore::RefPtr<dtCore::ActorProperty> mpPositionProp;
