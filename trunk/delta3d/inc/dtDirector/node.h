@@ -39,8 +39,8 @@
 #include <dtUtil/stringutils.h>
 #include <dtUtil/mswinmacros.h>
 
-#include <dtDAL/propertycontainer.h>
-#include <dtDAL/resourcedescriptor.h>
+#include <dtCore/propertycontainer.h>
+#include <dtCore/resourcedescriptor.h>
 
 #include <osg/Vec2>
 
@@ -67,7 +67,7 @@ namespace dtDirector
     *      the NodeManager. If they are not created in this fashion,
     *      the node types will not be set correctly.
     */
-   class DT_DIRECTOR_EXPORT Node : public dtDAL::PropertyContainer
+   class DT_DIRECTOR_EXPORT Node : public dtCore::PropertyContainer
    {
    public:
 
@@ -347,7 +347,7 @@ namespace dtDirector
        *         via this method instead of directly to ensure that
        *         the desired property is being used.
        */
-      virtual dtDAL::ActorProperty* GetProperty(const std::string& name, int index = 0, ValueNode** outNode = NULL);
+      virtual dtCore::ActorProperty* GetProperty(const std::string& name, int index = 0, ValueNode** outNode = NULL);
 
       /**
        * Retrieves the type of the property of the given name.
@@ -357,7 +357,7 @@ namespace dtDirector
        *
        * @return     The Data Type of the property.
        */
-      dtDAL::DataType& GetPropertyType(const std::string& name, int index = 0);
+      dtCore::DataType& GetPropertyType(const std::string& name, int index = 0);
 
       /**
       * Logs when a value is retrieved.
@@ -365,7 +365,7 @@ namespace dtDirector
       * @param[in]  valueNode  The value node that was retrieved.
       * @param[in]  prop       The property of that value node.
       */
-      void LogValueRetrieved(ValueNode* valueNode, dtDAL::ActorProperty* prop);
+      void LogValueRetrieved(ValueNode* valueNode, dtCore::ActorProperty* prop);
 
       /**
       * Logs when a value is changed.
@@ -373,7 +373,7 @@ namespace dtDirector
       * @param[in]  valueNode  The value node that was retrieved.
       * @param[in]  prop       The property of that value node.
       */
-      void LogValueChanged(ValueNode* valueNode, dtDAL::ActorProperty* prop, const std::string& oldVal);
+      void LogValueChanged(ValueNode* valueNode, dtCore::ActorProperty* prop, const std::string& oldVal);
 
       /**
        * This method is provided for ease of use.  It will retrieve the
@@ -408,13 +408,13 @@ namespace dtDirector
       {
          T result = 0;
          ValueNode* node = NULL;
-         dtDAL::ActorProperty* prop = GetProperty(name, index, &node);
+         dtCore::ActorProperty* prop = GetProperty(name, index, &node);
          if (prop)
          {
             std::string val = prop->ToString();
-            
+
             // Special case for boolean values.
-            if (prop->GetDataType() == dtDAL::DataType::BOOLEAN)
+            if (prop->GetDataType() == dtCore::DataType::BOOLEAN)
             {
                if (val == "true") val = "1";
                else if (val == "false") val = "0";
@@ -437,14 +437,14 @@ namespace dtDirector
       osg::Vec3 GetVec3(const std::string& name = "Value", int index = 0);
       osg::Vec4 GetVec4(const std::string& name = "Value", int index = 0);
       dtCore::UniqueId GetActorID(const std::string& name = "Value", int index = 0);
-      dtDAL::BaseActorObject* GetActor(const std::string& name = "Value", int index = 0);
-      dtDAL::GameEvent* GetGameEvent(const std::string& name = "Value", int index = 0);
-      dtDAL::ResourceDescriptor GetResource(const std::string& name = "Value", int index = 0);
+      dtCore::BaseActorObject* GetActor(const std::string& name = "Value", int index = 0);
+      dtCore::GameEvent* GetGameEvent(const std::string& name = "Value", int index = 0);
+      dtCore::ResourceDescriptor GetResource(const std::string& name = "Value", int index = 0);
 
       /**
        * This method is provided for ease of use.  It will allow you to
        * set the formatted string value of a value node directly.
-       * 
+       *
        * @param[in]  value  The new value to set.
        * @param[in]  name   The name of the value link.
        * @param[in]  index  The value node index, in case of multiple linking.
@@ -474,7 +474,7 @@ namespace dtDirector
             for (index = 0; index < count; index++)
             {
                ValueNode* node = NULL;
-               dtDAL::ActorProperty* prop = GetProperty(name, index, &node);
+               dtCore::ActorProperty* prop = GetProperty(name, index, &node);
                if (prop)
                {
                   std::string oldVal = prop->GetValueString();
@@ -488,7 +488,7 @@ namespace dtDirector
          }
          else
          {
-            dtDAL::ActorProperty* prop = GetProperty(name, index);
+            dtCore::ActorProperty* prop = GetProperty(name, index);
             if (prop)
             {
                std::string val = dtUtil::ToString(value);
@@ -507,8 +507,8 @@ namespace dtDirector
       void SetVec4(osg::Vec4 value, const std::string& name = "Value", int index = -1);
       void SetString(const std::string& value, const std::string& name = "Value", int index = -1);
       void SetActorID(const dtCore::UniqueId& value, const std::string& name = "Value", int index = -1);
-      void SetGameEvent(dtDAL::GameEvent* value, const std::string& name = "Value", int index = -1);
-      void SetResource(const dtDAL::ResourceDescriptor& value, const std::string& name = "Value", int index = -1);
+      void SetGameEvent(dtCore::GameEvent* value, const std::string& name = "Value", int index = -1);
+      void SetResource(const dtCore::ResourceDescriptor& value, const std::string& name = "Value", int index = -1);
 
       /**
        * Retrieves the input list.
@@ -609,7 +609,7 @@ namespace dtDirector
    protected:
 
       /**
-       *	Protected Destructor.  dtCore::RefPtr will handle its destruction.
+       *  Protected Destructor.  dtCore::RefPtr will handle its destruction.
        */
       virtual ~Node();
 
@@ -620,7 +620,7 @@ namespace dtDirector
 
       osg::Vec4      mColor;
       std::string    mName;
-     
+
    private:
       /**
        * Hidden Copy Constructor.
@@ -630,7 +630,7 @@ namespace dtDirector
       Node(const Node&);
 
       /**
-       *	Hidden Assignment operator.
+       *  Hidden Assignment operator.
        *
        * @param[in]  left   This.
        * @param[in]  right  The node to copy from.
@@ -645,7 +645,7 @@ namespace dtDirector
       bool GetEnabled() const;
 
       /**
-       *	Sets the types of the node.
+       *  Sets the types of the node.
        * This can only be called from the NodeManager.
        *
        * @param[in]  type  The type of the node.

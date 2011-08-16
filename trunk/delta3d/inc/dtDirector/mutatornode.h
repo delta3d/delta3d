@@ -67,6 +67,23 @@ namespace dtDirector
       virtual std::string GetValueLabel();
 
       /**
+       * Retrieves a property of the given name.  This is overloaded
+       * to provide functionality of redirected properties (from the
+       * use of ValueLink's).
+       *
+       * @param[in]  name     The name of the property.
+       * @param[in]  index    The property index, in case of multiple linking.
+       * @param[in]  outNode  If provided, will retrieve the value node that owns this property (if any).
+       *
+       * @return     A pointer to the property, NULL if none found.
+       *
+       * @note  All properties used within nodes should be retrieved
+       *         via this method instead of directly to ensure that
+       *         the desired property is being used.
+       */
+      virtual dtCore::ActorProperty* GetProperty(const std::string& name, int index = 0, ValueNode** outNode = NULL);
+
+      /**
        * Retrieves the total number of values linked to a value link.
        *
        * @param[in]  name  The name of the value link.
