@@ -23,7 +23,6 @@
 #include <dtDirectorGUINodes/guinodemanager.h>
 
 #include <dtCore/stringactorproperty.h>
-#include <dtCore/stringselectoractorproperty.h>
 #include <dtCore/vectoractorproperties.h>
 
 #include <dtGUI/gui.h>
@@ -54,30 +53,15 @@ namespace dtDirector
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void SetWidgetPosition::OnFinishedLoading()
-   {
-      GUINodeManager::GetLayout(GetString("Layout"));
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
    void SetWidgetPosition::BuildPropertyMap()
    {
       ActionNode::BuildPropertyMap();
 
-      dtCore::StringSelectorActorProperty* layoutProp = new dtCore::StringSelectorActorProperty(
-         "Layout", "Layout",
-         dtCore::StringSelectorActorProperty::SetFuncType(this, &SetWidgetPosition::SetLayout),
-         dtCore::StringSelectorActorProperty::GetFuncType(this, &SetWidgetPosition::GetLayout),
-         dtCore::StringSelectorActorProperty::GetListFuncType(this, &SetWidgetPosition::GetLayoutList),
-         "The Layout.", "", true);
-      AddProperty(layoutProp);
-
-      dtCore::StringSelectorActorProperty* widgetProp = new dtCore::StringSelectorActorProperty(
+      dtCore::StringActorProperty* widgetProp = new dtCore::StringActorProperty(
          "Widget", "Widget",
-         dtCore::StringSelectorActorProperty::SetFuncType(this, &SetWidgetPosition::SetWidget),
-         dtCore::StringSelectorActorProperty::GetFuncType(this, &SetWidgetPosition::GetWidget),
-         dtCore::StringSelectorActorProperty::GetListFuncType(this, &SetWidgetPosition::GetWidgetList),
-         "The Widget to set the text on.", "", true);
+         dtCore::StringActorProperty::SetFuncType(this, &SetWidgetPosition::SetWidget),
+         dtCore::StringActorProperty::GetFuncType(this, &SetWidgetPosition::GetWidget),
+         "The Widget to set the text on.");
       AddProperty(widgetProp);
 
       dtCore::Vec4ActorProperty* valueProp = new dtCore::Vec4ActorProperty(
@@ -89,7 +73,6 @@ namespace dtDirector
 
       // This will expose the properties in the editor and allow
       // them to be connected to ValueNodes.
-      mValues.push_back(ValueLink(this, layoutProp, false, false, true, false));
       mValues.push_back(ValueLink(this, widgetProp, false, false, true, false));
       mValues.push_back(ValueLink(this, valueProp));
    }
@@ -97,13 +80,6 @@ namespace dtDirector
    /////////////////////////////////////////////////////////////////////////////
    bool SetWidgetPosition::Update(float simDelta, float delta, int input, bool firstUpdate)
    {
-      CEGUI::Window* layout = GUINodeManager::GetLayout(GetString("Layout"));
-      if (!layout)
-      {
-         ActivateOutput("Failed");
-         return false;
-      }
-
       dtGUI::GUI* gui = GUINodeManager::GetGUI();
       if (gui)
       {
@@ -116,6 +92,11 @@ namespace dtDirector
             widget->setPosition(CEGUI::UVector2(CEGUI::UDim(position.x(), position.y()),
                CEGUI::UDim(position.z(), position.w())));
          }
+         else
+         {
+            ActivateOutput("Failed");
+            return false;
+         }
       }
 
       // Fire the "Out" link
@@ -125,25 +106,14 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void SetWidgetPosition::UpdateName()
    {
-      std::string layoutName = GetString("Layout");
       std::string widgetName = GetString("Widget");
-
-      if (layoutName.empty())
+      if (!widgetName.empty())
       {
-         mName.clear();
+         mName = widgetName;
       }
       else
       {
-         mName = "Layout: " + layoutName;
-      }
-
-      if (!widgetName.empty())
-      {
-         if (!mName.empty())
-         {
-            mName += "::";
-         }
-         mName += widgetName;
+         mName.clear();
       }
    }
 
@@ -154,50 +124,17 @@ namespace dtDirector
 
       if (!GetDirector()->IsLoading())
       {
-         if (linkName == "Layout")
-         {
-            std::string layoutName = GetString("Layout");
-            GUINodeManager::GetLayout(layoutName);
-
-            UpdateName();
-         }
-         else if (linkName == "Widget" || linkName == "Text")
+         if (linkName == "Widget")
          {
             UpdateName();
          }
       }
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   void SetWidgetPosition::SetLayout(const std::string& value)
-   {
-      mLayout = value;
-
-      UpdateName();
-
-      if (!GetDirector()->IsLoading())
-      {
-         GUINodeManager::GetLayout(mLayout);
-      }
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   std::string SetWidgetPosition::GetLayout() const
-   {
-      return mLayout;
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   std::vector<std::string> SetWidgetPosition::GetLayoutList()
-   {
-      return GUINodeManager::GetLayoutList();
    }
 
    /////////////////////////////////////////////////////////////////////////////
    void SetWidgetPosition::SetWidget(const std::string& value)
    {
       mWidget = value;
-
       UpdateName();
    }
 
@@ -205,36 +142,6 @@ namespace dtDirector
    std::string SetWidgetPosition::GetWidget() const
    {
       return mWidget;
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   std::vector<std::string> SetWidgetPosition::GetWidgetList()
-   {
-      std::vector<std::string> list;
-      RecurseWidgetList(list, GUINodeManager::GetLayout(GetString("Layout")));
-      return list;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   void SetWidgetPosition::RecurseWidgetList(std::vector<std::string>& widgetList, CEGUI::Window* parent)
-   {
-      if (!parent)
-      {
-         return;
-      }
-
-      size_t count = parent->getChildCount();
-      for (size_t index = 0; index < count; ++index)
-      {
-         CEGUI::Window* child = parent->getChildAtIdx(index);
-
-         if (child)
-         {
-            widgetList.push_back(child->getName().c_str());
-         }
-
-         RecurseWidgetList(widgetList, child);
-      }
    }
 
    /////////////////////////////////////////////////////////////////////////////

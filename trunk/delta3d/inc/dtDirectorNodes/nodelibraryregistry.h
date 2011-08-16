@@ -133,8 +133,9 @@ namespace dtDirector
       static dtCore::RefPtr<dtDirector::NodeType> VEC3_VALUE_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> VEC4_VALUE_NODE_TYPE;
 
-      static dtCore::RefPtr<dtDirector::NodeType> STRING_ARRAY_VALUE_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> ACTOR_ARRAY_VALUE_NODE_TYPE;
+      static dtCore::RefPtr<dtDirector::NodeType> INT_ARRAY_VALUE_NODE_TYPE;
+      static dtCore::RefPtr<dtDirector::NodeType> STRING_ARRAY_VALUE_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> VEC2_ARRAY_VALUE_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> VEC3_ARRAY_VALUE_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> VEC4_ARRAY_VALUE_NODE_TYPE;

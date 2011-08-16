@@ -40,7 +40,9 @@ namespace dtDirector
 
       MOD_LEFT_SHIFT = 0x10,
       MOD_RIGHT_SHIFT = 0x20,
-      MOD_SHIFT = MOD_LEFT_SHIFT | MOD_RIGHT_SHIFT
+      MOD_SHIFT = MOD_LEFT_SHIFT | MOD_RIGHT_SHIFT,
+
+      MOD_ANY = MOD_CONTROL | MOD_ALT | MOD_SHIFT
    };
 
    class KeyPressEvent;

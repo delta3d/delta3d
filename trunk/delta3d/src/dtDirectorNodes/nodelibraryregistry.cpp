@@ -107,6 +107,7 @@
 #include <dtDirectorNodes/doublevalue.h>
 #include <dtDirectorNodes/externalvaluenode.h>
 #include <dtDirectorNodes/floatvalue.h>
+#include <dtDirectorNodes/intarrayvalue.h>
 #include <dtDirectorNodes/intvalue.h>
 #include <dtDirectorNodes/ownervalue.h>
 #include <dtDirectorNodes/playervalue.h>
@@ -244,8 +245,9 @@ namespace dtDirector
    RefPtr<NodeType> NodeLibraryRegistry::VEC3_VALUE_NODE_TYPE(                   new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "Vec3",                      "General",     "Base",        "An x,y,z vector value.", NULL, Colors::MANGENTA, dtCore::DataType::VEC3));
    RefPtr<NodeType> NodeLibraryRegistry::VEC4_VALUE_NODE_TYPE(                   new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "Vec4",                      "General",     "Base",        "An x,y,z,w vector value.", NULL, Colors::MANGENTA, dtCore::DataType::VEC4));
 
-   RefPtr<NodeType> NodeLibraryRegistry::STRING_ARRAY_VALUE_NODE_TYPE(           new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "String Array",              "General",     "Arrays",      "An array of string values.", NULL, Colors::CYAN, dtCore::DataType::STRING));
    RefPtr<NodeType> NodeLibraryRegistry::ACTOR_ARRAY_VALUE_NODE_TYPE(            new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "Actor Array",               "General",     "Arrays",      "An array of actor values.", NULL, Colors::MANGENTA, dtCore::DataType::ACTOR));
+   RefPtr<NodeType> NodeLibraryRegistry::INT_ARRAY_VALUE_NODE_TYPE(              new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "Int Array",                 "General",     "Arrays",      "An array of int values.", NULL, Colors::BLUE, dtCore::DataType::INT));
+   RefPtr<NodeType> NodeLibraryRegistry::STRING_ARRAY_VALUE_NODE_TYPE(           new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "String Array",              "General",     "Arrays",      "An array of string values.", NULL, Colors::CYAN, dtCore::DataType::STRING));
    RefPtr<NodeType> NodeLibraryRegistry::VEC2_ARRAY_VALUE_NODE_TYPE(             new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "Vec2 Array",                "General",     "Arrays",      "An array of vec2 values.", NULL, Colors::MANGENTA, dtCore::DataType::VEC2));
    RefPtr<NodeType> NodeLibraryRegistry::VEC3_ARRAY_VALUE_NODE_TYPE(             new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "Vec3 Array",                "General",     "Arrays",      "An array of vec3 values.", NULL, Colors::MANGENTA, dtCore::DataType::VEC3));
    RefPtr<NodeType> NodeLibraryRegistry::VEC4_ARRAY_VALUE_NODE_TYPE(             new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "Vec4 Array",                "General",     "Arrays",      "An array of vec4 values.", NULL, Colors::MANGENTA, dtCore::DataType::VEC4));
@@ -380,8 +382,9 @@ namespace dtDirector
       mNodeFactory->RegisterType<Vec3Value>(VEC3_VALUE_NODE_TYPE.get());
       mNodeFactory->RegisterType<Vec4Value>(VEC4_VALUE_NODE_TYPE.get());
 
-      mNodeFactory->RegisterType<StringArrayValue>(STRING_ARRAY_VALUE_NODE_TYPE.get());
       mNodeFactory->RegisterType<ActorArrayValue>(ACTOR_ARRAY_VALUE_NODE_TYPE.get());
+      mNodeFactory->RegisterType<IntArrayValue>(INT_ARRAY_VALUE_NODE_TYPE.get());
+      mNodeFactory->RegisterType<StringArrayValue>(STRING_ARRAY_VALUE_NODE_TYPE.get());
       mNodeFactory->RegisterType<Vec2ArrayValue>(VEC2_ARRAY_VALUE_NODE_TYPE.get());
       mNodeFactory->RegisterType<Vec3ArrayValue>(VEC3_ARRAY_VALUE_NODE_TYPE.get());
       mNodeFactory->RegisterType<Vec4ArrayValue>(VEC4_ARRAY_VALUE_NODE_TYPE.get());
