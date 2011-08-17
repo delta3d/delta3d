@@ -96,7 +96,7 @@ namespace dtCore
        */
 #if XERCES_VERSION_MAJOR < 3
       virtual void characters(const XMLCh* const chars, const unsigned int length);
-      virtual void ignorableWhitespace(const XMLCh* const, const unsigned int) {}
+      virtual void ignorableWhitespace(const XMLCh* const, const unsigned int);
 #else
       virtual void characters(const XMLCh* const chars, const XMLSize_t length);
       virtual void ignorableWhitespace(const XMLCh* const, const XMLSize_t);
