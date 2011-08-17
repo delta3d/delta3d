@@ -19,7 +19,7 @@
  * Author: Eric R. Heine
  */
 #include <prefix/dtdirectornodesprefix.h>
-#include <dtDirectorNodes/IntArrayValue.h>
+#include <dtDirectorNodes/intarrayvalue.h>
 
 #include <dtCore/arrayactorproperty.h>
 #include <dtCore/intactorproperty.h>
