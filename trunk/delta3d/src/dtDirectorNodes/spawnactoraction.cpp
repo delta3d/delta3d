@@ -270,7 +270,7 @@ namespace dtDirector
                for (int index = 0; index < count; ++index)
                {
                   dtCore::ActorProperty* prop = propList[index];
-                  if (prop)
+                  if (prop && !prop->IsReadOnly())
                   {
                      mContainerProp->AddProperty(prop);
                   }
