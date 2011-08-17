@@ -48,6 +48,7 @@ SET(LIB_PUBLIC_HEADERS
     ${HEADER_PATH}/getarrayaction.h
     ${HEADER_PATH}/getarraysizeaction.h
     ${HEADER_PATH}/getparentactoraction.h
+    ${HEADER_PATH}/getrandomvalueaction.h
     ${HEADER_PATH}/getvectorvaluesaction.h
     ${HEADER_PATH}/inputnode.h
     ${HEADER_PATH}/intarrayvalue.h
@@ -148,6 +149,7 @@ SET(LIB_SOURCES
     ${SOURCE_PATH}/getarrayaction.cpp
     ${SOURCE_PATH}/getarraysizeaction.cpp
     ${SOURCE_PATH}/getparentactoraction.cpp
+    ${SOURCE_PATH}/getrandomvalueaction.cpp
     ${SOURCE_PATH}/getvectorvaluesaction.cpp
     ${SOURCE_PATH}/inputnode.cpp
     ${SOURCE_PATH}/intarrayvalue.cpp

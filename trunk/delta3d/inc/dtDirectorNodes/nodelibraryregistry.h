@@ -64,6 +64,7 @@ namespace dtDirector
       static dtCore::RefPtr<dtDirector::NodeType> FOR_ACTION_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> FOR_EACH_ACTION_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> FOR_EACH_ACTOR_ACTION_NODE_TYPE;
+      static dtCore::RefPtr<dtDirector::NodeType> GET_RANDOM_VALUE_NODE_TYPE;
 
       static dtCore::RefPtr<dtDirector::NodeType> OPERATION_ACTION_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> STRING_MANIPULATOR_ACTION_NODE_TYPE;

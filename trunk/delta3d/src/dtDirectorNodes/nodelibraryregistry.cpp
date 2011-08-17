@@ -60,6 +60,7 @@
 #include <dtDirectorNodes/getarrayaction.h>
 #include <dtDirectorNodes/getarraysizeaction.h>
 #include <dtDirectorNodes/getparentactoraction.h>
+#include <dtDirectorNodes/getrandomvalueaction.h>
 #include <dtDirectorNodes/getvectorvaluesaction.h>
 #include <dtDirectorNodes/lerpactorrotationaction.h>
 #include <dtDirectorNodes/lerpactorscaleaction.h>
@@ -176,6 +177,7 @@ namespace dtDirector
    RefPtr<NodeType> NodeLibraryRegistry::FOR_ACTION_NODE_TYPE(                    new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "For",                             "General", "Access", "Iterates from one index to another activating a chain every loop.", NULL, Colors::BLUE));
    RefPtr<NodeType> NodeLibraryRegistry::FOR_EACH_ACTION_NODE_TYPE(               new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "For Each",                        "General", "Access", "Iterates through a list of given items and triggers the \"Each Item\" output link for each item found.", NULL, Colors::BLUE));
    RefPtr<NodeType> NodeLibraryRegistry::FOR_EACH_ACTOR_ACTION_NODE_TYPE(         new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "For Each Actor",                  "General", "Access", "Retrieves all actors with optional class and name filters and iterates through them individually via the \"Each Actor\" output link.", NULL, Colors::BLUE));
+   RefPtr<NodeType> NodeLibraryRegistry::GET_RANDOM_VALUE_NODE_TYPE(              new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Get Random Value",                "General", "Access", "Gets a random value between Min and Max (to use when Min and Max are variable).", NULL, Colors::BLUE));
 
    RefPtr<NodeType> NodeLibraryRegistry::OPERATION_ACTION_NODE_TYPE(             new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Arithmetic Operation",      "General",     "Operations",  "Performs a simple operation between two values A and B and outputs to Result.", NULL, Colors::BLUE));
    RefPtr<NodeType> NodeLibraryRegistry::STRING_MANIPULATOR_ACTION_NODE_TYPE(    new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "String Manipulator",        "General",     "Operations",  "Performs a string operation.", NULL, Colors::BLUE));
@@ -313,6 +315,7 @@ namespace dtDirector
       mNodeFactory->RegisterType<ForAction>(FOR_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<ForEachAction>(FOR_EACH_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<ForEachActorAction>(FOR_EACH_ACTOR_ACTION_NODE_TYPE.get());
+      mNodeFactory->RegisterType<GetRandomValueAction>(GET_RANDOM_VALUE_NODE_TYPE.get());
 
       mNodeFactory->RegisterType<OperationAction>(OPERATION_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<StringManipulatorAction>(STRING_MANIPULATOR_ACTION_NODE_TYPE.get());
