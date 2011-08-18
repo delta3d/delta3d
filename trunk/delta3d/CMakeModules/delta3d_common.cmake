@@ -14,8 +14,8 @@ set(DT_COMMON_RUN "true")
 #where to find the root Delta3D folder
 FIND_PATH(DELTA3D_ROOT src
           HINTS
+          $ENV{DELTA_ROOT}
           ${CMAKE_SOURCE_DIR}
-          ENV DELTA_ROOT
           DOC "The root folder of Delta3D"
           )
 
