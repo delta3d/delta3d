@@ -37,6 +37,7 @@ namespace dtDirector
 
       /// Events
       static dtCore::RefPtr<dtDirector::NodeType> BUTTON_EVENT_NODE_TYPE;
+      static dtCore::RefPtr<dtDirector::NodeType> SLIDER_EVENT_NODE_TYPE;
 
       /// Actions
       static dtCore::RefPtr<dtDirector::NodeType> LOAD_GUI_SCHEME_NODE_TYPE;

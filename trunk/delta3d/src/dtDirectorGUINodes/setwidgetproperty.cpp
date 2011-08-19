@@ -82,7 +82,7 @@ namespace dtDirector
       // them to be connected to ValueNodes.
       mValues.push_back(ValueLink(this, widgetProp, false, false, true, false));
       mValues.push_back(ValueLink(this, propertyProp));
-      mValues.push_back(ValueLink(this, valueProp));
+      mValues.push_back(ValueLink(this, valueProp, false, false, false));
    }
 
    /////////////////////////////////////////////////////////////////////////////
