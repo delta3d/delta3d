@@ -25,6 +25,7 @@
 
 // Events
 #include <dtDirectorGUINodes/buttonevent.h>
+#include <dtDirectorGUINodes/sliderevent.h>
 
 // Actions
 #include <dtDirectorGUINodes/activatewidget.h>
@@ -64,6 +65,7 @@ namespace dtDirector
 
    // Events
    RefPtr<NodeType> NodeLibraryRegistry::BUTTON_EVENT_NODE_TYPE(         new dtDirector::NodeType(dtDirector::NodeType::EVENT_NODE,  "Button Event",          "GUI", "GUI", "React to a GUI Button Event.", NULL, Colors::ORANGE));
+   RefPtr<NodeType> NodeLibraryRegistry::SLIDER_EVENT_NODE_TYPE(         new dtDirector::NodeType(dtDirector::NodeType::EVENT_NODE,  "Slider Event",          "GUI", "GUI", "React to a GUI Slider Event.", NULL, Colors::ORANGE));
 
    // Actions
    RefPtr<NodeType> NodeLibraryRegistry::LOAD_GUI_SCHEME_NODE_TYPE(      new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Load Scheme",           "GUI", "GUI", "Load a GUI Scheme.",                     NULL, Colors::BLUE2));
@@ -103,6 +105,7 @@ namespace dtDirector
    {
       // Events
       mNodeFactory->RegisterType<ButtonEvent>(BUTTON_EVENT_NODE_TYPE.get());
+      mNodeFactory->RegisterType<SliderEvent>(SLIDER_EVENT_NODE_TYPE.get());
 
       // Actions
       mNodeFactory->RegisterType<LoadGUIScheme>(LOAD_GUI_SCHEME_NODE_TYPE.get());
