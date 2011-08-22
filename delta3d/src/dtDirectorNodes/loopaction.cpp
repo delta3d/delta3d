@@ -31,6 +31,7 @@ namespace dtDirector
    {
       INPUT_START = 0,
       INPUT_STOP,
+      INPUT_OUT,
       INPUT_FIRE_CYCLE
    };
 
@@ -60,6 +61,7 @@ namespace dtDirector
       mInputs.push_back(InputLink(this, "Stop", "Make the Cycle stop firing."));
 
       mOutputs.clear();
+      mOutputs.push_back(OutputLink(this, "Out", "Activates when the loop gets started."));
       mOutputs.push_back(OutputLink(this, "Cycle", "Activates when the time elapsed is greater than the period."));
    }
 
@@ -104,11 +106,17 @@ namespace dtDirector
 
             // Put this on the stack so it will finish
             // execution of its chain before we continue
-            GetDirector()->PushStack(this, INPUT_FIRE_CYCLE);
+            GetDirector()->PushStack(this, INPUT_OUT);
          }
          else if (input == INPUT_STOP)
          {
             mIsLooping = false;
+         }
+         else if (input == INPUT_OUT)
+         {
+            // If we're here, we're on the stack, fire and bail out
+            ActivateOutput("Out");
+            return false;
          }
          else //if (input == INPUT_FIRE_CYCLE)
          {
