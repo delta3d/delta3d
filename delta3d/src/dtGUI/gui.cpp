@@ -504,13 +504,12 @@ Widget* GUI::CreateWidget(const std::string& typeName, const std::string& name)
 ////////////////////////////////////////////////////////////////////////////////
 void GUI::OnMessage(dtCore::Base::MessageData *data)
 {
-   if( data->message == dtCore::System::MESSAGE_PRE_FRAME )
+   if (data->message == dtCore::System::MESSAGE_PRE_FRAME)
    {
-      //_CheckCamera();
+      // deltaTime[0] is simulated time, [1] is real frame rate time
+      const double *deltaTime = static_cast<const double*>(data->userData);
 
-      const double deltaTime = *static_cast<const double*>(data->userData);
-
-      CEGUI::System::getSingletonPtr()->injectTimePulse(static_cast<float>(deltaTime));
+      CEGUI::System::getSingletonPtr()->injectTimePulse(static_cast<float>(deltaTime[1]));
    }
 }
 
