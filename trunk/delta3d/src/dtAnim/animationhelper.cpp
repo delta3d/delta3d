@@ -321,7 +321,7 @@ void AnimationHelper::SetCommandCallbacksEnabled(bool enable)
    // Clear any commands that may have been collected if
    // commands are being disabled. This will prevent them
    // from being executed on the next call to ExecuteCommands.
-   if ( ! enable && ! mCommands.empty())
+   if (!enable && !mCommands.empty())
    {
       mCommands.clear();
    }
@@ -385,7 +385,7 @@ AnimationHelper::TimeOffsetCommand* AnimationHelper::RegisterCommandCallback_Int
    }
 
    // Add the callback only if it is not currently registered for the current time.
-   if ( ! cmdExists)
+   if (!cmdExists)
    {
       if(timeOffset < 0.0f)
       {
@@ -537,7 +537,6 @@ unsigned AnimationHelper::CollectCommandCallbacks(Animatable& anim,
       } // End loop
    }
 
-   // Inform how many were collected.
    return count;
 }
 
@@ -639,7 +638,7 @@ unsigned AnimationHelper::ClearAnimationEventCallbacks()
    // by this object.
    TimeOffsetCommand* curStruct = NULL;
    CommandMap::iterator curIter = mCommandMap.begin();
-   for (; curIter != mCommandMap.end(); )
+   for (; curIter != mCommandMap.end();)
    {
       curStruct = curIter->second.get();
 
