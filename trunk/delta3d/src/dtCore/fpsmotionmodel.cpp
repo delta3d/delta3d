@@ -156,6 +156,11 @@ void FPSMotionModel::SetEnabled(bool enabled)
          ResetMousePosition();
       }
 
+      mForwardBackCtrl = 0.0f;
+      mSidestepCtrl = 0.0f;
+      mLookLeftRightCtrl = 0.0f;
+      mLookUpDownCtrl = 0.0f;
+
       if (mLookUpDownAxis.valid())
       {
          mLookUpDownAxis->SetState(0.0f);
