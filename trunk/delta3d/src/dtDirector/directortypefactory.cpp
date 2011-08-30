@@ -198,19 +198,19 @@ namespace dtDirector
       newDirector->mLoading = false;
       newDirector->mScriptName = fileName;
 
-      // If we are caching this script, and it is not already cached,
-      // then we should create a clone of this script to be stored in cache.
-      if (cacheScript && !cache)
-      {
-         AddCacheScript(newDirector->Clone());
-      }
-
       std::vector<Node*> nodes;
       newDirector->GetAllNodes(nodes);
       int count = (int)nodes.size();
       for (int index = 0; index < count; ++index)
       {
          nodes[index]->OnFinishedLoading();
+      }
+
+      // If we are caching this script, and it is not already cached,
+      // then we should create a clone of this script to be stored in cache.
+      if (cacheScript && !cache)
+      {
+         AddCacheScript(newDirector->Clone());
       }
 
       return newDirector;

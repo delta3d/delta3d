@@ -109,7 +109,7 @@ namespace dtDirector
             newDirector->mResource = mResource;
             newDirector->mModified = mModified;
             newDirector->mStarted = false;
-            newDirector->mLoading = false;
+            newDirector->mLoading = true;
             newDirector->mDebugging = false;
             newDirector->mShouldStep = false;
             newDirector->mLibraries = mLibraries;
@@ -122,6 +122,8 @@ namespace dtDirector
             newDirector->CopyPropertiesFrom(*this);
 
             GetGraphRoot()->Clone(newDirector);
+
+            newDirector->mLoading = false;
          }
       }
 
