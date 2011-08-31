@@ -37,6 +37,10 @@ namespace dtDirector
       , mEvent(NULL)
    {
       AddAuthor("Jeff P. Houde");
+
+      // Clear out the random id that is generated
+      mAboutActorID = "";
+      mSendingActorID = "";
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -67,7 +71,23 @@ namespace dtDirector
          "The Game Event.  Entries are set in the map properties.");
       AddProperty(eventProp);
 
+      dtCore::ActorIDActorProperty* aboutProp = new dtCore::ActorIDActorProperty(
+         "About Actor", "About Actor",
+         dtCore::ActorIDActorProperty::SetFuncType(this, &SendEventMessageAction::SetAboutActor),
+         dtCore::ActorIDActorProperty::GetFuncType(this, &SendEventMessageAction::GetAboutActor),
+         "", "The actor this event is about.");
+      AddProperty(aboutProp);
+
+      dtCore::ActorIDActorProperty* sendingProp = new dtCore::ActorIDActorProperty(
+         "Sending Actor", "Sending Actor",
+         dtCore::ActorIDActorProperty::SetFuncType(this, &SendEventMessageAction::SetSendingActor),
+         dtCore::ActorIDActorProperty::GetFuncType(this, &SendEventMessageAction::GetSendingActor),
+         "", "The actor that is sending this event.");
+      AddProperty(sendingProp);
+
       mValues.push_back(ValueLink(this, eventProp, false, false, true, false));
+      mValues.push_back(ValueLink(this, aboutProp, false, false, true));
+      mValues.push_back(ValueLink(this, sendingProp, false, false, true));
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -88,6 +108,8 @@ namespace dtDirector
                if (gameEvent)
                {
                   eventMsg->SetGameEvent(*gameEvent);
+                  eventMsg->SetAboutActorId(GetActorID("About Actor"));
+                  eventMsg->SetSendingActorId(GetActorID("Sending Actor"));
 
                   gm->SendMessage(*eventMsg);
                   OutputLink* output = GetOutputLink("Success");
@@ -126,6 +148,30 @@ namespace dtDirector
    dtCore::GameEvent* SendEventMessageAction::GetEvent() const
    {
       return mEvent;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void SendEventMessageAction::SetAboutActor(const dtCore::UniqueId& id)
+   {
+      mAboutActorID = id;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   const dtCore::UniqueId& SendEventMessageAction::GetAboutActor() const
+   {
+      return mAboutActorID;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void SendEventMessageAction::SetSendingActor(const dtCore::UniqueId& id)
+   {
+      mSendingActorID = id;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   const dtCore::UniqueId& SendEventMessageAction::GetSendingActor() const
+   {
+      return mSendingActorID;
    }
 
    ////////////////////////////////////////////////////////////////////////////////

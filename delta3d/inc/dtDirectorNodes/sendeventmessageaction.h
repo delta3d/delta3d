@@ -94,19 +94,30 @@ namespace dtDirector
       dtCore::GameEvent* GetEvent() const;
 
       /**
+       * get/set for the 'about' actor field of the message
+       */
+      void SetAboutActor(const dtCore::UniqueId& id);
+      const dtCore::UniqueId& GetAboutActor() const;
+
+      /**
+       * get/set for the 'sending' actor field of the message
+       */
+      void SetSendingActor(const dtCore::UniqueId& id);
+      const dtCore::UniqueId& GetSendingActor() const;
+
+      /**
        * Updates the Label.
        */
       void UpdateLabel();
 
    protected:
 
-      /**
-       * Destructor.
-       */
       ~SendEventMessageAction();
 
    private:
-      dtCore::GameEvent*  mEvent;
+      dtCore::GameEvent* mEvent;
+      dtCore::UniqueId mAboutActorID;
+      dtCore::UniqueId mSendingActorID;
    };
 }
 
