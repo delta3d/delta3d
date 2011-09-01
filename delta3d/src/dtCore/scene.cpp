@@ -24,23 +24,6 @@ namespace dtCore
 ///the intersect traversal mask the Scene uses
 const int SCENE_INTERSECT_MASK = 0x0fffffff;
 
-class DT_CORE_EXPORT ParticleSystemFreezer : public osg::NodeVisitor
-{
-public:
-   ParticleSystemFreezer();
-   void SetFreezing(bool freeze) { mFreezing = freeze; }
-   bool GetFreezing() const { return mFreezing; }
-
-   virtual void apply(osg::Node& node);
-
-private:
-   bool mFreezing;
-
-   typedef std::map<osgParticle::ParticleSystem*, bool> ParticleSystemBoolMap;
-   ParticleSystemBoolMap mPreviousFrozenState;
-};
-
-
 class SceneImpl
 {
 public:
@@ -70,56 +53,11 @@ public:
    Scene::Mode mRenderMode;
    Scene::Face mRenderFace;
 
-   ParticleSystemFreezer mFreezer;
-
    dtCore::RefPtr<dtCore::DatabasePager> mPager;
 };
 
 
 IMPLEMENT_MANAGEMENT_LAYER(Scene)
-/////////////////////////////////////////////
-ParticleSystemFreezer::ParticleSystemFreezer()
-   : osg::NodeVisitor(TRAVERSE_ALL_CHILDREN)
-   , mFreezing(true)
-{
-   // Since we are setting all ParticleSystems to be frozen, we don't care
-   // about the previous state of the last attempt to freeze.
-   if (mFreezing)
-   {
-      mPreviousFrozenState.clear();
-   }
-}
-/////////////////////////////////////////////
-void ParticleSystemFreezer::apply(osg::Node& node)
-{
-   if (osgParticle::ParticleSystemUpdater* psu = dynamic_cast<osgParticle::ParticleSystemUpdater*>(&node))
-   {
-      for (unsigned int i = 0; i < psu->getNumParticleSystems(); ++i)
-      {
-         if (osgParticle::ParticleSystem* ps = psu->getParticleSystem(i))
-         {
-            if (mFreezing)
-            {
-               // Save the previous frozen state of the ParticleSystem, so subsequent attempts
-               // to unfreeze it will bring it back to the way it was.
-               mPreviousFrozenState.insert(ParticleSystemBoolMap::value_type(ps, ps->isFrozen()));
-
-               // Allow me to break the ice. My name is Freeze. Learn it well.
-               // For it's the chilling sound of your doom. -Mr. Freeze
-               ps->setFrozen(mFreezing);
-            }
-            else
-            {
-               // Restore the previous state.
-               ps->setFrozen(mPreviousFrozenState[ps]);
-            }
-         }
-      }
-   }
-
-   traverse(node);
-}
-
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
@@ -627,18 +565,6 @@ void Scene::OnMessage(MessageData* data)
       {
          mImpl->mPhysicsController->Iterate(dt);
       }
-   }
-   else if (data->message == dtCore::System::MESSAGE_PAUSE_START)
-   {
-      // Freeze all particle systems.
-      mImpl->mFreezer.SetFreezing(true);
-      GetSceneNode()->accept(mImpl->mFreezer);
-   }
-   else if (data->message == dtCore::System::MESSAGE_PAUSE_END)
-   {
-      // Unfreeze all particle systems.
-      mImpl->mFreezer.SetFreezing(false);
-      GetSceneNode()->accept(mImpl->mFreezer);
    }
    else if (data->message == dtCore::System::MESSAGE_EXIT)
    {
