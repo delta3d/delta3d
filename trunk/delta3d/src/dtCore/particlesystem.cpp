@@ -3,10 +3,11 @@
 //////////////////////////////////////////////////////////////////////
 
 #include <prefix/dtcoreprefix.h>
-#include <dtCore/particlesystem.h>
 #include <dtCore/collisioncategorydefaults.h>
-#include <dtUtil/log.h>
 #include <dtCore/observerptr.h>
+#include <dtCore/particlesystem.h>
+#include <dtCore/system.h>
+#include <dtUtil/log.h>
 
 #include <osg/Group>
 #include <osg/NodeVisitor>
@@ -69,12 +70,17 @@ ParticleSystem::ParticleSystem(std::string name)
    RegisterInstance(this);
 
    SetCollisionCategoryBits(COLLISION_CATEGORY_MASK_PARTICLESYSTEM);
+
+   AddSender(&System::GetInstance());
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 ParticleSystem::~ParticleSystem()
 {
    mLayers.clear();
+
+   RemoveSender(&System::GetInstance());
+
    DeregisterInstance(this);
 }
 
@@ -282,6 +288,19 @@ const osgParticle::Program& ParticleLayer::GetProgram() const
 bool ParticleLayer::operator==(const ParticleLayer& testLayer) const
 {
    return testLayer.mLayerName == mLayerName;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void ParticleSystem::OnMessage(MessageData* data)
+{
+   if (data->message == dtCore::System::MESSAGE_PAUSE_START)
+   {
+      OnPause();
+   }
+   else if (data->message == dtCore::System::MESSAGE_PAUSE_END)
+   {
+      OnUnpause();
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -626,6 +645,46 @@ void ParticleSystem::CloneParticleSystemDrawables()
    mParticleSystemUpdater->getParent(0)->removeChild(mParticleSystemUpdater.get());
 
    mParticleSystemUpdater = newParticleSystemUpdater;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void ParticleSystem::OnPause()
+{
+   if (osgParticle::ParticleSystemUpdater* psu = GetParticleSystemUpdater())
+   {
+      for (unsigned int i = 0; i < psu->getNumParticleSystems(); ++i)
+      {
+         if (osgParticle::ParticleSystem* ps = psu->getParticleSystem(i))
+         {
+            // Save the previous frozen state of the ParticleSystem, so subsequent attempts
+            // to unfreeze it will bring it back to the way it was.
+            mWasFrozenBeforePauseMap.insert(ParticleSystemBoolMap::value_type(ps, ps->isFrozen()));
+
+            // Allow me to break the ice. My name is Freeze. Learn it well.
+            // For it's the chilling sound of your doom. -Mr. Freeze
+            ps->setFrozen(true);
+         }
+      }
+   }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void ParticleSystem::OnUnpause()
+{
+   if (osgParticle::ParticleSystemUpdater* psu = GetParticleSystemUpdater())
+   {
+      for (unsigned int i = 0; i < psu->getNumParticleSystems(); ++i)
+      {
+         if (osgParticle::ParticleSystem* ps = psu->getParticleSystem(i))
+         {
+            // If there was a previous state restore it
+            if (mWasFrozenBeforePauseMap.find(ps) != mWasFrozenBeforePauseMap.end())
+            {
+               ps->setFrozen(mWasFrozenBeforePauseMap[ps]);
+            }
+         }
+      }
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////

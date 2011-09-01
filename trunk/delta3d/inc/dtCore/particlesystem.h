@@ -152,6 +152,9 @@ namespace dtCore
 
       public:
 
+         ///Performs collision detection and updates physics
+         virtual void OnMessage(MessageData* data);
+
          ///Load a file from disk
          virtual osg::Node* LoadFile( const std::string& filename, bool useCache = true);
 
@@ -243,6 +246,8 @@ namespace dtCore
          void CloneParticleSystemDrawables();
 
       private:
+         void OnPause();
+         void OnUnpause();
 
          /**
           * Whether or not the particle system is enabled.
@@ -269,6 +274,9 @@ namespace dtCore
          RefPtr<osg::Node> mOriginalLoadedParticleSystem;
          RefPtr<osgParticle::ParticleSystemUpdater> mParticleSystemUpdater;
 
+         // Map of particle systems and their frozen states before a pause
+         typedef std::map<osgParticle::ParticleSystem*, bool> ParticleSystemBoolMap;
+         ParticleSystemBoolMap mWasFrozenBeforePauseMap;
    };
 }
 
