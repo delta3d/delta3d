@@ -81,7 +81,7 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    bool CustomEditorTool::BeginSave()
    {
-      if (!GetGraph() || !GetEditor())
+      if (!GetGraph())
       {
          return false;
       }
@@ -93,7 +93,10 @@ namespace dtDirector
       mRowHeight = 0;
 
       // Prepare the undo manager for multiple events.
-      GetEditor()->GetUndoManager()->BeginMultipleEvents("\'" + mToolName + "\' editor tool application.");
+      if (GetEditor())
+      {
+         GetEditor()->GetUndoManager()->BeginMultipleEvents("\'" + mToolName + "\' editor tool application.");
+      }
 
       std::vector<dtDirector::Node*> nodes;
       GetGraph()->GetAllNodes(nodes);
@@ -218,7 +221,14 @@ namespace dtDirector
          }
 
          // Delete the node.
-         GetEditor()->DeleteNode(node->GetID());
+         if (GetEditor())
+         {
+            GetEditor()->DeleteNode(node->GetID());
+         }
+         else
+         {
+            GetGraph()->DeleteNode(node->GetID());
+         }
       }
 
       return true;
@@ -227,7 +237,7 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    bool CustomEditorTool::EndSave()
    {
-      if (!GetGraph() || !GetEditor())
+      if (!GetGraph())
       {
          return false;
       }
@@ -319,16 +329,19 @@ namespace dtDirector
       for (int nodeIndex = 0; nodeIndex < nodeCount; ++nodeIndex)
       {
          dtDirector::Node* node = nodes[nodeIndex];
-         if (node)
+         if (node && GetEditor())
          {
             GetEditor()->OnNodeCreated(node);
          }
       }
 
       // Finalize the undo events.
-      GetEditor()->GetUndoManager()->EndMultipleEvents();
+      if (GetEditor())
+      {
+         GetEditor()->GetUndoManager()->EndMultipleEvents();
 
-      GetEditor()->Refresh();
+         GetEditor()->Refresh();
+      }
 
       return true;
    }
