@@ -403,18 +403,34 @@ namespace dtGUI
        */
       unsigned ClearSearchSuffixes();
 
+      /**
+       * Setting this allows the entire GUI to be rendered to texture and
+       *   then overlayed on the screen.  This may be significantly increase frametime
+       *   because the GUI is flaged dynamic variance which causes the render pipeline to
+       *   stall until its rendered which is usually last.
+       */
+      void SetPreRenderGUIToTexture(bool b);
+      bool GetPreRenderGUIToTexture() const;
+
    protected:
       virtual ~GUI();
    	
    private:
       void _SetupInternalGraph();
       void _SetupDefaultUI();
+      void CreateGUITexture();
+      void AddOrthoQuad(osg::Camera* cn, osg::Texture2D* tx, const std::string& texUniform);
+      void InitAndBindToTarget(osg::Camera* cn, osg::Texture2D* tx, int width, int height);
+      void BindTextureUniformToNode(osg::Node* node, osg::Texture2D* tex, const std::string& name, unsigned texUnit);
+      void BindShaders(osg::Node* node, const std::string& vertShader, const std::string& fragShader);
 
       ///used to receive "preframe"-delta-messages
       void OnMessage(dtCore::Base::MessageData *data);
 
       static void _SetupSystemAndRenderer();
       static bool SystemAndRendererCreatedByHUD;
+      
+      bool mPreRenderToTexture;
 
       dtCore::RefPtr<dtGUI::CEGUIKeyboardListener> mKeyboardListener; ///needed for injection mouse-events to the cegui
       dtCore::RefPtr<dtGUI::CEGUIMouseListener>    mMouseListener; ///needed for injection keyboard-events to the cegui
@@ -426,6 +442,12 @@ namespace dtGUI
       dtCore::RefPtr<dtCore::Mouse>         mMouse; ///observed mouse
 
       std::map<std::string, CEGUI::Window*> mLayoutMap;
+
+      dtCore::RefPtr<osg::Camera> mGUICamera;
+      dtCore::RefPtr<osg::Camera> mGUIPreRenderCamera;
+      dtCore::RefPtr<osg::Camera> mGUICameraScreen;
+      dtCore::RefPtr<osg::Texture2D> mGUITexture;
+
    };
 }
 #endif // GUI_h__
