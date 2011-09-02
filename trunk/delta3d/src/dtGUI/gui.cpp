@@ -12,7 +12,9 @@
 #include <osg/Drawable>
 #include <osg/StateSet>
 #include <osg/Geode>
+#include <osg/Geometry>
 #include <osg/Texture2D>
+#include <osg/BlendFunc>
 #include <osgDB/FileNameUtils>
 #include <osgViewer/GraphicsWindow>
 
@@ -33,6 +35,25 @@
 
 using namespace dtGUI;
 IMPLEMENT_MANAGEMENT_LAYER(GUI)
+
+
+std::string GUIVertexShader = 
+" "
+"void main()"
+"{"
+   "gl_Position = ftransform();"
+"}";
+
+std::string GUIFragmentShader = 
+"uniform sampler2D GUITexture;"
+"uniform float ScreenWidth;"
+"uniform float ScreenHeight;"
+"void main ()"
+"{"   
+"vec2 texCoords = vec2(gl_FragCoord.x / ScreenWidth, gl_FragCoord.y / ScreenHeight);"
+   "vec4 result = texture2D(GUITexture, texCoords);"
+   "gl_FragColor = result;"
+"}";
 
 namespace dtGUI
 {
@@ -103,8 +124,84 @@ namespace dtGUI
 
 };
 
+
+
 //////////////////////////////////////////////////////////////////////////
-//CEGUI Logger
+osg::Node* _CreateQuad( osg::Texture2D *tex, int renderBin )
+{
+   osg::Geometry* geo = new osg::Geometry;
+   geo->setUseDisplayList( false );
+   osg::Vec4Array* colors = new osg::Vec4Array;
+   colors->push_back(osg::Vec4(1.0f,1.0f,1.0f,1.0f));
+   geo->setColorArray(colors);
+   geo->setColorBinding(osg::Geometry::BIND_OVERALL);
+   osg::Vec3Array *vx = new osg::Vec3Array;
+   vx->push_back(osg::Vec3(0, 0, 0));
+   vx->push_back(osg::Vec3(1, 0, 0));
+   vx->push_back(osg::Vec3(1, 1, 0 ));
+   vx->push_back(osg::Vec3(0, 1, 0));
+   geo->setVertexArray(vx);
+   osg::Vec3Array *nx = new osg::Vec3Array;
+   nx->push_back(osg::Vec3(0, 0, 1));
+   geo->setNormalArray(nx);
+   if(tex != NULL)
+   {
+      osg::Vec2Array *tx = new osg::Vec2Array;
+      tx->push_back(osg::Vec2(0, 0)); 
+      tx->push_back(osg::Vec2(1, 0));
+      tx->push_back(osg::Vec2(1, 1));
+      tx->push_back(osg::Vec2(0, 1));
+      geo->setTexCoordArray(0, tx);
+      geo->getOrCreateStateSet()->setTextureAttributeAndModes(0, tex, osg::StateAttribute::ON);
+   }
+
+   geo->addPrimitiveSet(new osg::DrawArrays(GL_QUADS, 0, 4));
+   osg::Geode *geode = new osg::Geode;
+   geode->addDrawable(geo);
+   geode->setCullingActive(false);
+   osg::StateSet* ss = geode->getOrCreateStateSet();
+   ss->setMode( GL_LIGHTING, osg::StateAttribute::OVERRIDE | osg::StateAttribute::OFF );
+   ss->setMode( GL_DEPTH_TEST, osg::StateAttribute::OVERRIDE | osg::StateAttribute::OFF );
+   //ss->setRenderBinDetails( renderBin, "RenderBin" );
+
+   ss->setRenderBinDetails(11, "RenderBin");
+   ss->setMode(GL_BLEND, osg::StateAttribute::ON);
+   ss->setTextureMode(0, GL_TEXTURE_2D, osg::StateAttribute::ON);
+   ss->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+
+   osg::BlendFunc* bf = new osg::BlendFunc();
+   bf->setFunction(osg::BlendFunc::SRC_ALPHA ,osg::BlendFunc::ONE_MINUS_SRC_ALPHA);
+   ss->setAttributeAndModes(bf);
+
+
+   return geode;
+}
+
+//////////////////////////////////////////////////////////////////////////
+osg::Texture2D* _CreateTexture(int width, int height, bool mipmap)
+{
+   osg::Texture2D* tex = new osg::Texture2D();
+   tex->setTextureSize(width, height);
+   tex->setWrap( osg::Texture::WRAP_S, osg::Texture::CLAMP_TO_EDGE);
+   tex->setWrap( osg::Texture::WRAP_T, osg::Texture::CLAMP_TO_EDGE);
+   //tex->setSourceFormat( GL_RGBA );
+   tex->setInternalFormat(GL_RGBA);
+   if(mipmap)
+   {
+      tex->setFilter(osg::Texture2D::MIN_FILTER, osg::Texture2D::LINEAR_MIPMAP_LINEAR);
+   }
+   else
+   {
+      tex->setFilter(osg::Texture2D::MIN_FILTER, osg::Texture2D::LINEAR);
+   }
+
+   tex->setFilter(osg::Texture2D::MAG_FILTER,osg::Texture2D::LINEAR);
+   return tex;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//CEGUI Logger 
 //////////////////////////////////////////////////////////////////////////
 class CEGUILogger : public CEGUI::Logger
 {
@@ -154,8 +251,9 @@ bool GUI::SystemAndRendererCreatedByHUD = false;
 ////////////////////////////////////////////////////////////////////////////////
 GUI::GUI(dtCore::Camera* camera,
          dtCore::Keyboard* keyboard,
-         dtCore::Mouse* mouse):
-mRootSheet(NULL)
+         dtCore::Mouse* mouse)
+: mRootSheet(NULL)
+, mPreRenderToTexture(false)
 {
    mMouseListener    = new CEGUIMouseListener();
    mKeyboardListener = new CEGUIKeyboardListener();
@@ -212,16 +310,17 @@ GUI::~GUI()
 ////////////////////////////////////////////////////////////////////////////////
 void GUI::_SetupInternalGraph()
 {
-   osg::Camera* camera = new osg::Camera();
+   mInternalGraph = new osg::Group();
+   mGUICamera = new osg::Camera();
 
    //don't clear the color buffer (allows the UI to be superimposed on the scene)
-   camera->setClearMask(GL_DEPTH_BUFFER_BIT);
-   camera->setRenderOrder(osg::Camera::POST_RENDER, 100);
+   mGUICamera->setClearMask(GL_DEPTH_BUFFER_BIT);
+   mGUICamera->setRenderOrder(osg::Camera::POST_RENDER, 100);
 
    // we don't want the camera to grab event focus from the viewers main camera(s).
-   camera->setAllowEventFocus(false);
+   mGUICamera->setAllowEventFocus(false);
 
-   mInternalGraph = camera;
+   mGUICamera->addChild(mInternalGraph);
 
    osg::StateSet* states = mInternalGraph->getOrCreateStateSet();
 
@@ -252,6 +351,7 @@ void GUI::SetCamera(dtCore::Camera* camera)
    {
       mCamera->GetOSGCamera()->addChild(mInternalGraph.get());
    }
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -861,3 +961,128 @@ unsigned GUI::ClearSearchSuffixes()
 {
    return mResProvider.ClearSearchSuffixes();
 }
+
+////////////////////////////////////////////////////////////////////////////////
+void dtGUI::GUI::SetPreRenderGUIToTexture(bool b)
+{
+   mPreRenderToTexture = b;
+
+   if(mPreRenderToTexture)
+   {
+      if(mGUIPreRenderCamera.valid())
+      {
+
+         mCamera->GetOSGCamera()->removeChild(mGUIPreRenderCamera.get());
+         mCamera->GetOSGCamera()->removeChild(mGUICameraScreen.get());
+         mGUIPreRenderCamera = NULL;
+         mGUICameraScreen = NULL;
+         mGUITexture = NULL;
+      }
+
+      mGUIPreRenderCamera = new osg::Camera();
+      int width = mCamera->GetOSGCamera()->getViewport()->width();
+      int height = mCamera->GetOSGCamera()->getViewport()->height();
+
+      mGUIPreRenderCamera->setRenderOrder(osg::Camera::PRE_RENDER, 1);
+      mGUIPreRenderCamera->setClearMask(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+      mGUIPreRenderCamera->setClearColor(osg::Vec4(0.0f, 0.0f, 0.0f, 0.0f));
+
+      mGUITexture = _CreateTexture(width, height, false);
+      mGUIPreRenderCamera->setReferenceFrame(osg::Transform::ABSOLUTE_RF);
+      mGUIPreRenderCamera->setProjectionMatrixAsOrtho2D(0.0, 1.0, 0.0, 1.0);
+      mGUIPreRenderCamera->setViewport(0, 0, width, height);
+      mGUIPreRenderCamera->setRenderTargetImplementation( osg::Camera::FRAME_BUFFER_OBJECT );
+      mGUIPreRenderCamera->detach( osg::Camera::COLOR_BUFFER );
+      mGUIPreRenderCamera->attach( osg::Camera::COLOR_BUFFER, mGUITexture.get());
+
+      mGUICameraScreen = new osg::Camera();
+      mGUICameraScreen->setRenderOrder(osg::Camera::POST_RENDER, 1);
+
+      //don't clear the color buffer (allows the UI to be superimposed on the scene)
+      mGUICameraScreen->setClearMask(GL_DEPTH_BUFFER_BIT);
+      mGUIPreRenderCamera->setClearMask(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+      mGUIPreRenderCamera->setClearColor(osg::Vec4(0.0f, 0.0f, 0.0f, 0.0f));
+
+      mGUICameraScreen->setReferenceFrame(osg::Transform::ABSOLUTE_RF);
+      mGUICameraScreen->setProjectionMatrixAsOrtho2D(0.0, 1.0, 0.0, 1.0);
+      mGUICameraScreen->setViewport(0, 0, width, height);
+      AddOrthoQuad(mGUICameraScreen.get(), mGUITexture.get(), "GUITexture");
+
+      osg::StateSet* guiScreenStateSet = mGUICameraScreen->getStateSet();
+      osg::Uniform* screenWidth = guiScreenStateSet->getOrCreateUniform("ScreenWidth", osg::Uniform::FLOAT);
+      osg::Uniform* screenHeight = guiScreenStateSet->getOrCreateUniform("ScreenHeight", osg::Uniform::FLOAT);
+
+      screenWidth->set(float(width));
+      screenHeight->set(float(height));
+
+      osg::StateSet* states = mInternalGraph->getOrCreateStateSet();
+
+      states->setMode(GL_DEPTH_TEST,osg::StateAttribute::OFF);
+      states->setRenderBinDetails(11, "RenderBin");
+      states->setMode(GL_BLEND, osg::StateAttribute::ON);
+      states->setTextureMode(0, GL_TEXTURE_2D, osg::StateAttribute::ON);
+      states->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+
+      osg::BlendFunc* bf = new osg::BlendFunc();
+      bf->setFunction(osg::BlendFunc::SRC_ALPHA ,osg::BlendFunc::ONE_MINUS_SRC_ALPHA);
+      states->setAttributeAndModes(bf);
+
+      mCamera->GetOSGCamera()->addChild(mGUIPreRenderCamera.get());
+      mCamera->GetOSGCamera()->addChild(mGUICameraScreen.get());
+      
+    
+      mCamera->GetOSGCamera()->removeChild(mInternalGraph.get());
+      mGUICamera->setNodeMask(0x0);
+
+      mGUIPreRenderCamera->addChild(mInternalGraph.get());
+      mGUIPreRenderCamera->setNodeMask(0xFFFFFFFF);
+      mGUICameraScreen->setNodeMask(0xFFFFFFFF);
+   }
+   else
+   {
+
+      if(mGUIPreRenderCamera.valid())
+      {
+         mGUIPreRenderCamera->setNodeMask(0x0);
+         mGUIPreRenderCamera->removeChild(mInternalGraph.get());
+
+         mGUICameraScreen->setNodeMask(0x0);
+
+         mCamera->GetOSGCamera()->addChild(mInternalGraph.get());
+         mGUICamera->setNodeMask(0xFFFFFFFF);
+
+      }
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+bool dtGUI::GUI::GetPreRenderGUIToTexture() const
+{
+   return mPreRenderToTexture;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void GUI::AddOrthoQuad(osg::Camera* cn, osg::Texture2D* tx, const std::string& texUniform)
+{
+   osg::Node* quad = _CreateQuad(tx, 11);
+   cn->addChild(quad);
+
+   osg::ref_ptr<osg::Shader> vertShader = new osg::Shader(osg::Shader::VERTEX, GUIVertexShader);
+   osg::ref_ptr<osg::Shader> fragShader = new osg::Shader(osg::Shader::FRAGMENT, GUIFragmentShader);
+
+   osg::ref_ptr<osg::Program> shaderProgram = new osg::Program();
+   shaderProgram->addShader(vertShader.get());
+   shaderProgram->addShader(fragShader.get());
+
+   osg::StateSet* ss = quad->getOrCreateStateSet();
+   ss->setAttribute(shaderProgram.get(), osg::StateAttribute::ON);
+
+   if(tx != NULL)
+   {
+      osg::StateSet* ss = quad->getOrCreateStateSet();
+      osg::Uniform* uniform = new osg::Uniform(osg::Uniform::SAMPLER_2D, texUniform);
+      uniform->set(int(0));
+      ss->addUniform(uniform);
+   }
+}
+
