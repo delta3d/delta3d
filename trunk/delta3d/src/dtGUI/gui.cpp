@@ -41,7 +41,7 @@ std::string GUIVertexShader =
 " "
 "void main()"
 "{"
-   "gl_Position = ftransform();"
+"gl_Position = ftransform();"
 "}";
 
 std::string GUIFragmentShader = 
@@ -51,8 +51,8 @@ std::string GUIFragmentShader =
 "void main ()"
 "{"   
 "vec2 texCoords = vec2(gl_FragCoord.x / ScreenWidth, gl_FragCoord.y / ScreenHeight);"
-   "vec4 result = texture2D(GUITexture, texCoords);"
-   "gl_FragColor = result;"
+"vec4 result = texture2D(GUITexture, texCoords);"
+"gl_FragColor = result;"
 "}";
 
 namespace dtGUI
@@ -101,7 +101,7 @@ namespace dtGUI
 
          const CEGUI::Size& ceguiSize = CEGUI::System::getSingleton().getRenderer()->getDisplaySize();
          if (ceguiSize.d_width != state->getCurrentViewport()->width() ||
-             ceguiSize.d_height != state->getCurrentViewport()->height())
+            ceguiSize.d_height != state->getCurrentViewport()->height())
          {
             CEGUI::System::getSingleton().notifyDisplaySizeChanged(CEGUI::Size(state->getCurrentViewport()->width(), state->getCurrentViewport()->height()));
          }
@@ -252,8 +252,8 @@ bool GUI::SystemAndRendererCreatedByHUD = false;
 GUI::GUI(dtCore::Camera* camera,
          dtCore::Keyboard* keyboard,
          dtCore::Mouse* mouse)
-: mRootSheet(NULL)
-, mPreRenderToTexture(false)
+         : mRootSheet(NULL)
+         , mPreRenderToTexture(false)
 {
    mMouseListener    = new CEGUIMouseListener();
    mKeyboardListener = new CEGUIKeyboardListener();
@@ -310,17 +310,13 @@ GUI::~GUI()
 ////////////////////////////////////////////////////////////////////////////////
 void GUI::_SetupInternalGraph()
 {
-   mInternalGraph = new osg::Group();
-   mGUICamera = new osg::Camera();
+   osg::Camera* camera = new osg::Camera();
+   mInternalGraph = camera;//new osg::Group();
 
-   //don't clear the color buffer (allows the UI to be superimposed on the scene)
-   mGUICamera->setClearMask(GL_DEPTH_BUFFER_BIT);
-   mGUICamera->setRenderOrder(osg::Camera::POST_RENDER, 100);
-
-   // we don't want the camera to grab event focus from the viewers main camera(s).
-   mGUICamera->setAllowEventFocus(false);
-
-   mGUICamera->addChild(mInternalGraph);
+   camera->setClearMask(GL_DEPTH_BUFFER_BIT);
+   camera->setRenderOrder(osg::Camera::POST_RENDER, 100);
+   //// we don't want the camera to grab event focus from the viewers main camera(s).
+   camera->setAllowEventFocus(false);
 
    osg::StateSet* states = mInternalGraph->getOrCreateStateSet();
 
@@ -413,22 +409,22 @@ void GUI::_SetupSystemAndRenderer()
       //CEGUI::DefaultResourceProvider* rp = static_cast<CEGUI::DefaultResourceProvider*>(CEGUI::System::getSingleton().getResourceProvider());
 
       CEGUI::Imageset::setDefaultResourceGroup("imagesets");
-//      SetResourceGroupDirectory("imagesets", dtUtil::FindFileInPathList("imagesets"));
-//
+      //      SetResourceGroupDirectory("imagesets", dtUtil::FindFileInPathList("imagesets"));
+      //
       CEGUI::WidgetLookManager::setDefaultResourceGroup("looknfeel");
-//      SetResourceGroupDirectory("looknfeels", dtUtil::FindFileInPathList("looknfeel"));
-//
+      //      SetResourceGroupDirectory("looknfeels", dtUtil::FindFileInPathList("looknfeel"));
+      //
       CEGUI::WindowManager::setDefaultResourceGroup("layouts");
-//      SetResourceGroupDirectory("layouts", dtUtil::FindFileInPathList("layouts"));
-//
+      //      SetResourceGroupDirectory("layouts", dtUtil::FindFileInPathList("layouts"));
+      //
       CEGUI::ScriptModule::setDefaultResourceGroup("lua_scripts");
-//      SetResourceGroupDirectory("lua_scripts", dtUtil::FindFileInPathList("lua_scripts"));
-//
+      //      SetResourceGroupDirectory("lua_scripts", dtUtil::FindFileInPathList("lua_scripts"));
+      //
       CEGUI::Scheme::setDefaultResourceGroup("schemes");
-//      SetResourceGroupDirectory("schemes", dtUtil::FindFileInPathList("schemes"));
-//
+      //      SetResourceGroupDirectory("schemes", dtUtil::FindFileInPathList("schemes"));
+      //
       CEGUI::Font::setDefaultResourceGroup("fonts");
-//      SetResourceGroupDirectory("fonts", dtUtil::FindFileInPathList("fonts"));
+      //      SetResourceGroupDirectory("fonts", dtUtil::FindFileInPathList("fonts"));
 
       if (CEGUI::System::getSingletonPtr() == NULL)
       {
@@ -571,7 +567,7 @@ CEGUI::Window* GUI::LoadLayout(Widget* parent, const std::string& fileName,
 
 ////////////////////////////////////////////////////////////////////////////////
 Widget* GUI::CreateWidget(Widget* parent, const std::string& typeName,
-                                 const std::string& name)
+                          const std::string& name)
 {
    Widget* newWidget = CreateWidget(typeName, name);
    if (parent)
@@ -628,7 +624,7 @@ void GUI::SetResourceGroupDirectory(const std::string& resourceType, const std::
 
 ////////////////////////////////////////////////////////////////////////////////
 std::string GUI::SetResourceGroupFromResource(const std::string& resourceGroup,
-                                                     const std::string& resourceToFind)
+                                              const std::string& resourceToFind)
 {
    //using data file search paths, find the resource and set the resourceGroup to that path
    const std::string fullPath = dtUtil::FindFileInPathList(resourceToFind);
@@ -818,8 +814,8 @@ bool GUI::IsImagesetPresent(const std::string& imagesetName)
 
 ////////////////////////////////////////////////////////////////////////////////
 void GUI::CreateImageset(const std::string& imagesetName,
-                                const std::string& fileName,
-                                const std::string& resourceGroup)
+                         const std::string& fileName,
+                         const std::string& resourceGroup)
 {
    _SetupSystemAndRenderer();
    CEGUI::ImagesetManager::getSingleton().createFromImageFile(imagesetName, fileName, resourceGroup);
@@ -847,7 +843,7 @@ void GUI::AutoScaleImageset(const std::string& imagesetName, bool autoScale)
 
 ////////////////////////////////////////////////////////////////////////////////
 void GUI::DefineImage(const std::string& imagesetName, const std::string& image,
-   osg::Vec2 position, osg::Vec2 size, osg::Vec2 offset)
+                      osg::Vec2 position, osg::Vec2 size, osg::Vec2 offset)
 {
    _SetupSystemAndRenderer();
    if (IsImagesetPresent(imagesetName))
@@ -861,10 +857,10 @@ void GUI::DefineImage(const std::string& imagesetName, const std::string& image,
 
 ////////////////////////////////////////////////////////////////////////////////
 dtCore::RefPtr<osg::Texture2D> GUI::CreateRenderTargetTexture(Widget& widget,
-                                                                     const osg::Vec2* dimensions,
-                                                                     const std::string& newImagesetName,
-                                                                     const std::string& propertyName,
-                                                                     const std::string& newImageName)
+                                                              const osg::Vec2* dimensions,
+                                                              const std::string& newImagesetName,
+                                                              const std::string& propertyName,
+                                                              const std::string& newImageName)
 {
 
    if (!widget.isPropertyPresent(propertyName))
@@ -918,7 +914,7 @@ dtCore::RefPtr<osg::Texture2D> GUI::CreateRenderTargetTexture(Widget& widget,
 }
 
 dtCore::RefPtr<dtCore::Camera> GUI::CreateCameraForRenderTargetTexture(osg::Texture2D& renderTargetTexture,
-                                                                              const osg::Vec2& viewDimensions)
+                                                                       const osg::Vec2& viewDimensions)
 {
    // Create a Camera to render the specified target texture.
    dtCore::Camera* rttCam = new dtCore::Camera("RTTCamera");
@@ -938,14 +934,14 @@ dtCore::RefPtr<dtCore::Camera> GUI::CreateCameraForRenderTargetTexture(osg::Text
 
 ////////////////////////////////////////////////////////////////////////////////
 bool GUI::AddSearchSuffix(const std::string& resourceGroup,
-                                       const std::string& searchSuffix)
+                          const std::string& searchSuffix)
 {
    return mResProvider.AddSearchSuffix(resourceGroup, searchSuffix);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 bool GUI::RemoveSearchSuffix(const std::string& resourceGroup,
-                                          const std::string& searchSuffix)
+                             const std::string& searchSuffix)
 {
    return mResProvider.RemoveSearchSuffix(resourceGroup, searchSuffix);
 }
@@ -979,7 +975,11 @@ void dtGUI::GUI::SetPreRenderGUIToTexture(bool b)
          mGUITexture = NULL;
       }
 
-      mGUIPreRenderCamera = new osg::Camera();
+      mGUIPreRenderCamera = new osg::Camera(static_cast<const osg::Camera&>(*mInternalGraph), osg::CopyOp::SHALLOW_COPY);
+
+      mCamera->GetOSGCamera()->removeChild(mInternalGraph.get());
+      mInternalGraph = NULL;
+
       int width = mCamera->GetOSGCamera()->getViewport()->width();
       int height = mCamera->GetOSGCamera()->getViewport()->height();
 
@@ -1015,7 +1015,7 @@ void dtGUI::GUI::SetPreRenderGUIToTexture(bool b)
       screenWidth->set(float(width));
       screenHeight->set(float(height));
 
-      osg::StateSet* states = mInternalGraph->getOrCreateStateSet();
+      osg::StateSet* states = mGUIPreRenderCamera->getOrCreateStateSet();
 
       states->setMode(GL_DEPTH_TEST,osg::StateAttribute::OFF);
       states->setRenderBinDetails(11, "RenderBin");
@@ -1029,28 +1029,42 @@ void dtGUI::GUI::SetPreRenderGUIToTexture(bool b)
 
       mCamera->GetOSGCamera()->addChild(mGUIPreRenderCamera.get());
       mCamera->GetOSGCamera()->addChild(mGUICameraScreen.get());
-      
-    
-      mCamera->GetOSGCamera()->removeChild(mInternalGraph.get());
-      mGUICamera->setNodeMask(0x0);
 
-      mGUIPreRenderCamera->addChild(mInternalGraph.get());
-      mGUIPreRenderCamera->setNodeMask(0xFFFFFFFF);
-      mGUICameraScreen->setNodeMask(0xFFFFFFFF);
+      mInternalGraph = mGUIPreRenderCamera;
    }
    else
    {
 
       if(mGUIPreRenderCamera.valid())
       {
-         mGUIPreRenderCamera->setNodeMask(0x0);
-         mGUIPreRenderCamera->removeChild(mInternalGraph.get());
+         //osg::Camera* camera = new osg::Camera(static_cast<const osg::Camera&>(*mGUIPreRenderCamera), osg::CopyOp::SHALLOW_COPY);
+         osg::Camera* camera = new osg::Camera();
+         for(unsigned i = 0; i < mGUIPreRenderCamera->getNumChildren(); ++i)
+         {
+            camera->addChild(mGUIPreRenderCamera->getChild(i));
+         }
 
-         mGUICameraScreen->setNodeMask(0x0);
+         mCamera->GetOSGCamera()->removeChild(mGUIPreRenderCamera.get());
+         mCamera->GetOSGCamera()->removeChild(mGUICameraScreen.get());
+         mGUIPreRenderCamera = NULL;
+         mGUICameraScreen = NULL;
+         mGUITexture = NULL;
+
+         mInternalGraph = camera;
+
+         camera->setClearMask(GL_DEPTH_BUFFER_BIT);
+         camera->setRenderOrder(osg::Camera::POST_RENDER, 100);
+         //// we don't want the camera to grab event focus from the viewers main camera(s).
+         camera->setAllowEventFocus(false);
+
+         osg::StateSet* states = mInternalGraph->getOrCreateStateSet();
+
+         //m_pInternalGraph->setName("internal_GUI_Geode");
+         states->setMode(GL_DEPTH_TEST,osg::StateAttribute::OFF);
+         states->setMode(GL_BLEND, osg::StateAttribute::ON);
+         states->setTextureMode(0, GL_TEXTURE_2D, osg::StateAttribute::ON);
 
          mCamera->GetOSGCamera()->addChild(mInternalGraph.get());
-         mGUICamera->setNodeMask(0xFFFFFFFF);
-
       }
    }
 }
