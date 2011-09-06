@@ -443,7 +443,6 @@ namespace dtGUI
 
       std::map<std::string, CEGUI::Window*> mLayoutMap;
 
-      dtCore::RefPtr<osg::Camera> mGUICamera;
       dtCore::RefPtr<osg::Camera> mGUIPreRenderCamera;
       dtCore::RefPtr<osg::Camera> mGUICameraScreen;
       dtCore::RefPtr<osg::Texture2D> mGUITexture;
