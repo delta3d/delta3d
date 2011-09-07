@@ -83,6 +83,9 @@ namespace dtDirector
        */
       void SetLoopPeriod(float secondsPerCycle);
 
+      void SetUseSimTime(bool value);
+      bool GetUseSimTime();
+
    protected:
 
       ~LoopAction();
@@ -96,6 +99,7 @@ namespace dtDirector
       float mLoopPeriod;
       float mLoopTimeElapsed;
       float mDeltaTime;
+      bool  mUseSimTime;
 
    };
 }
