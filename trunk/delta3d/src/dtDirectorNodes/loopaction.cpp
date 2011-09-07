@@ -23,6 +23,7 @@
 
 #include <dtDirector/director.h>
 
+#include <dtCore/booleanactorproperty.h>
 #include <dtCore/floatactorproperty.h>
 
 namespace dtDirector
@@ -42,6 +43,7 @@ namespace dtDirector
       , mLoopPeriod(0.0f)
       , mLoopTimeElapsed(0.0f)
       , mDeltaTime(0.0f)
+      , mUseSimTime(true)
    {
       AddAuthor("MG");
    }
@@ -84,6 +86,12 @@ namespace dtDirector
          "Time in seconds since last update.", "");
       AddProperty(deltaProp);
 
+      dtCore::BooleanActorProperty* simTimeProp = new dtCore::BooleanActorProperty(
+         "UseSimTime", "Use Sim Time",
+         dtCore::BooleanActorProperty::SetFuncType(this, &LoopAction::SetUseSimTime),
+         dtCore::BooleanActorProperty::GetFuncType(this, &LoopAction::GetUseSimTime),
+         "True to use game/sim time, false to use real time.");
+      AddProperty(simTimeProp);
 
       // This will expose the properties in the editor and allow
       // them to be connected to ValueNodes.
@@ -102,7 +110,14 @@ namespace dtDirector
             mIsLooping = true;
             mLoopTimeElapsed = 0.0f;
 
-            SetFloat(simDelta, "DeltaTime");
+            if (mUseSimTime)
+            {
+               SetFloat(simDelta, "DeltaTime");
+            }
+            else
+            {
+               SetFloat(delta, "DeltaTime");
+            }
 
             // Put this on the stack so it will finish
             // execution of its chain before we continue
@@ -129,14 +144,28 @@ namespace dtDirector
       {
          if (mIsLooping && input == INPUT_START)
          {
-            mLoopTimeElapsed += simDelta;
+            if (mUseSimTime)
+            {
+               mLoopTimeElapsed += simDelta;
+            }
+            else
+            {
+               mLoopTimeElapsed += delta;
+            }
 
             float loopPeriod = GetFloat("LoopPeriod");
             if (mLoopTimeElapsed > loopPeriod)
             {
                mLoopTimeElapsed -= loopPeriod;
 
-               SetFloat(simDelta, "DeltaTime");
+               if (mUseSimTime)
+               {
+                  SetFloat(simDelta, "DeltaTime");
+               }
+               else
+               {
+                  SetFloat(delta, "DeltaTime");
+               }
 
                // Put this on the stack so it will finish
                // execution of its chain before we continue
@@ -161,6 +190,17 @@ namespace dtDirector
       mLoopPeriod = secondsPerCycle;
    }
 
+   //////////////////////////////////////////////////////////////////////////
+   void LoopAction::SetUseSimTime(bool value)
+   {
+      mUseSimTime = value;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   bool LoopAction::GetUseSimTime()
+   {
+      return mUseSimTime;
+   }
 
    ////////////////////////////////////////////////////////////////////////////////
    float LoopAction::GetDeltaTime() const
