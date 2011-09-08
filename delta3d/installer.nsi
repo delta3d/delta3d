@@ -11,7 +11,7 @@
 !ifdef OUTFILE
   OutFile "${OUTFILE}"
 !else
-  OutFile dt_${VERSION}_vs2008_sdk__setup.exe
+  OutFile dt_${VERSION}_vs2008_sdk_setup.exe
 !endif
 
 !ifndef DELTA_BUILD_DIR
