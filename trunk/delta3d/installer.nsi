@@ -1,8 +1,8 @@
 ; define INSTALL_CHM (no value) to install the index.chm file instead of the html files (defaults to include the html files)
 ; use VERSION = x to define which version number to use (defaults to "anonymous-build")
 ; use DELTA_BUILD_DIR = x to define which delta3d subfolder contains the Delta3D binary files (defaults to "build")
-; use OUTFILE = x to overwrite the output file name (defaults to "dt_win32_${VERSION}_setup.exe")
-
+; use OUTFILE = x to overwrite the output file name (defaults to "dt_${VERSION}_vs2008_sdk__setup.exe")
+; define NOCOMPRESS (no value) to turn off the compression (for faster compiles)
 
 !ifndef VERSION
   !define VERSION 'anonymous-build'
@@ -11,7 +11,7 @@
 !ifdef OUTFILE
   OutFile "${OUTFILE}"
 !else
-  OutFile dt_win32_${VERSION}_setup.exe
+  OutFile dt_${VERSION}_vs2008_sdk__setup.exe
 !endif
 
 !ifndef DELTA_BUILD_DIR
