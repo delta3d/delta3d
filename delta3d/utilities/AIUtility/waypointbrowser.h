@@ -57,10 +57,12 @@ public:
    void SetPluginInterface(dtAI::AIPluginInterface* plugin);
 
    void GetCameraTransform(dtCore::Transform& xform);
+   const dtCore::ObjectType* GetSelectedWaypointType();
 
 signals:
    void RequestCameraTransformChange(const dtCore::Transform& xform);
    void UndoCommandGenerated(QUndoCommand* command);
+   void WaypointTypeSelected(const dtCore::ObjectType* type);
 
 protected:
    /**
@@ -94,10 +96,11 @@ public slots:
    void OnGoto();
    void SetCameraTransform(const dtCore::Transform& xform);
    void ResetWaypointResult();
-   void OnWaypointSelectionChanged(std::vector<dtAI::WaypointInterface*>& selectedWaypoints);   
+   void OnWaypointSelectionChanged(std::vector<dtAI::WaypointInterface*>& selectedWaypoints);
 protected slots:
    void EnableDisable();
    void WaypointsSelectedFromBrowser();
+   void WaypointTypeSelectionChanged();
 
 private:
 

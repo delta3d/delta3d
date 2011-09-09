@@ -51,6 +51,7 @@
 
 #include <dtAI/aiplugininterface.h>
 #include <dtAI/aidebugdrawable.h>
+#include <dtAI/waypointgraph.h>
 #include <dtAI/waypointrenderinfo.h>
 
 #include <set>
@@ -67,13 +68,13 @@ const std::string MainWindow::RENDER_BACKFACES_SETTING("SelectionBasedRendering"
 
 //////////////////////////////////////////////
 MainWindow::MainWindow(QWidget& mainWidget)
-: mUi(new Ui::MainWindow)
-, mCentralWidget(mainWidget)
-, mPropertyEditor(*new AIPropertyEditor(*this))
-, mWaypointBrowser(NULL)
-, mPluginInterface(NULL)
-, mSelectionBasedRendering(false)
-, mRenderBackfaces(false)
+   : mUi(new Ui::MainWindow)
+   , mCentralWidget(mainWidget)
+   , mPropertyEditor(*new AIPropertyEditor(*this))
+   , mWaypointBrowser(NULL)
+   , mPluginInterface(NULL)
+   , mSelectionBasedRendering(false)
+   , mRenderBackfaces(false)
 {
    mUi->setupUi(this);
 
@@ -149,6 +150,10 @@ MainWindow::MainWindow(QWidget& mainWidget)
    connect(mUi->mActionDeselectAllWaypoints, SIGNAL(triggered()), this, SLOT(OnDeselectAllWaypoints()));
    connect(mUi->mActionSelectInverseWaypoints, SIGNAL(triggered()), this, SLOT(OnSelectInverseWaypoints()));
    connect(mUi->mActionGroundClamp, SIGNAL(triggered()), this, SLOT(OnGroundClampSelectedWaypoints()));
+   connect(mUi->mActionConvertType, SIGNAL(triggered()), this, SLOT(OnConvertWaypointTypes()));
+
+   connect(mWaypointBrowser, SIGNAL(WaypointTypeSelected(const dtCore::ObjectType*)),
+      this, SLOT(OnWaypointTypeSelectionChanged(const dtCore::ObjectType*)));
 
    connect(mPropertyEditor.toggleViewAction(), SIGNAL(toggled(bool)), this, SLOT(OnPropertyEditorShowHide(bool)));
    connect(mWaypointBrowser->toggleViewAction(), SIGNAL(toggled(bool)), this, SLOT(OnWaypointBrowserShowHide(bool)));
@@ -193,6 +198,7 @@ void MainWindow::showEvent(QShowEvent* e)
       mSelectionBasedRendering = settings.value(SELECTION_RENDERING_SETTING.c_str()).toBool();
       mRenderBackfaces = settings.value(RENDER_BACKFACES_SETTING.c_str()).toBool();
       settings.endGroup();
+
 
       if (!projectContext.isEmpty())
       {
@@ -557,6 +563,106 @@ void MainWindow::OnRemoveBiDirectionalEdge()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void MainWindow::OnConvertWaypointTypes()
+{
+   const dtCore::ObjectType* type = mWaypointBrowser->GetSelectedWaypointType();
+
+   // temp Alert the user
+   // TODO, need to create an undo command for this
+   if (!QMessageBox::question(this, tr("Warning"), tr("There is currently no way to undo this action, would you like"
+      "to perform it anyway?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes) == 1)
+   {
+      return;
+   }
+
+   // Only attempt to convert if we have a valid type
+   if (type)
+   {
+      dtAI::WaypointGraph& graph = mPluginInterface->GetWaypointGraph();
+
+      std::vector<dtAI::WaypointInterface*> selectedWaypoints =
+         WaypointSelection::GetInstance().GetWaypointList();
+
+      // All of the data we need to store in order to recreate the selected waypoints
+      std::vector<dtAI::WaypointID> sourcePointList;
+      std::vector<osg::Vec3> sourcePointPositionList;
+      std::vector<dtAI::WaypointGraph::ConstWaypointArray> sourceConnections;
+      std::vector<std::vector<bool> > isBiDirectionalList;
+
+      // Store information about each selected points that we want to preserve in the conversion
+      for (size_t pointIndex = 0; pointIndex < selectedWaypoints.size(); ++pointIndex)
+      {
+         dtAI::WaypointID currentSourcePointID = selectedWaypoints[pointIndex]->GetID();
+
+         // Store the id and the position (all waypoints have this)
+         sourcePointList.push_back(currentSourcePointID);
+         sourcePointPositionList.push_back(selectedWaypoints[pointIndex]->GetPosition());
+
+         // Prepare to store all other waypoint ID's that the current one is connected to
+         sourceConnections.push_back(dtAI::WaypointGraph::ConstWaypointArray());
+
+         // Get the current source we're operating on
+         size_t currentSourceIndex = sourcePointList.size() - 1;
+
+         graph.GetAllEdgesFromWaypoint(currentSourcePointID, sourceConnections[currentSourceIndex]);
+
+         // Removes edges to ourself
+         RemoveDegenerateEdges(currentSourcePointID, sourceConnections[currentSourceIndex]);
+
+         std::vector<bool> currentBidirectionalList;
+
+         // Go through every waypoint that the current is connected to in order
+         // to see if it connects back (bidirectional)
+         for (size_t extIndex = 0; extIndex < sourceConnections[currentSourceIndex].size(); ++extIndex)
+         {
+            bool isBidirectional = false;
+
+            dtAI::WaypointID currentExternalID =
+               sourceConnections[currentSourceIndex][extIndex]->GetID();
+
+            if (mPluginInterface->HasEdge(currentExternalID, currentSourcePointID))
+            {
+               isBidirectional = true;
+            }
+
+            currentBidirectionalList.push_back(isBidirectional);
+         }
+
+         isBiDirectionalList.push_back(currentBidirectionalList);
+      }
+
+      // Remove all the selected waypoints so we can recreate them as their new type
+      mWaypointBrowser->OnDelete();
+
+      // Recreate all the selected with their new type
+      for (size_t pointIndex = 0; pointIndex < sourcePointList.size(); ++pointIndex)
+      {
+         dtAI::WaypointInterface* wp = mPluginInterface->CreateNoInsert(*type);
+         wp->SetPosition(sourcePointPositionList[pointIndex]);
+         wp->SetID(sourcePointList[pointIndex]);
+
+         // Re-add the waypoint, now with its new type
+         mPluginInterface->InsertWaypoint(wp);
+      }
+
+      // Recreate all the previously existing edges between the points
+      for (size_t pointIndex = 0; pointIndex < sourcePointList.size(); ++pointIndex)
+      {
+         for (size_t connectionIndex = 0; connectionIndex < sourceConnections[pointIndex].size(); ++connectionIndex)
+         {
+            dtAI::WaypointID connectionID = sourceConnections[pointIndex][connectionIndex]->GetID();
+            graph.AddEdge(sourcePointList[pointIndex], connectionID);
+
+            if (isBiDirectionalList[pointIndex][connectionIndex])
+            {
+               graph.AddEdge(connectionID, sourcePointList[pointIndex]);
+            }
+         }
+      }
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void MainWindow::PropertyChangedFromControl(dtCore::PropertyContainer& pc, dtCore::ActorProperty& ap)
 {
    dtAI::WaypointRenderInfo& ri = mPluginInterface->GetDebugDrawable()->GetRenderInfo();
@@ -747,6 +853,12 @@ void MainWindow::OnWaypointBrushSizeChanged(double value)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void MainWindow::OnWaypointTypeSelectionChanged(const dtCore::ObjectType* type)
+{
+   mUi->mActionConvertType->setEnabled(type != NULL);
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void MainWindow::OnUndoCommandCreated(QUndoCommand* undoCommand)
 {
    mUndoStack->push(undoCommand);
@@ -781,4 +893,26 @@ bool MainWindow::MaybeSave()
 void MainWindow::OnGroundClampSelectedWaypoints()
 {
    emit GroundClampSelectedWaypoints();
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+void MainWindow::RemoveDegenerateEdges(const dtAI::WaypointID sourcePoint,
+                                       std::vector<const dtAI::WaypointInterface*>& connections)
+{
+   struct InterfaceEqualToID
+   {
+      dtAI::WaypointID mID;
+
+      InterfaceEqualToID(dtAI::WaypointID id)
+         : mID(id) {}
+
+      bool operator()(const dtAI::WaypointInterface* current)
+      {
+         return current->GetID() == mID;
+      }
+   };
+
+   // Using the erase-remove idiom to remove any connections to itself (degenerate)
+   connections.erase(std::remove_if(connections.begin(), connections.end(), InterfaceEqualToID(sourcePoint)), connections.end());
 }

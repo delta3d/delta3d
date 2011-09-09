@@ -26,7 +26,7 @@
 #define AIUTILITY_MAIN_WINDOW
 
 #include <QtGui/QMainWindow>
-
+#include <dtAI/primitives.h>
 #include <dtCore/transform.h>
 
 /// @cond DOXYGEN_SHOULD_SKIP_THIS
@@ -44,6 +44,7 @@ namespace dtAI
 namespace dtCore
 {
    class PropertyContainer;
+   class ObjectType;
    class ActorProperty;
 }
 
@@ -103,6 +104,7 @@ public slots:
    void OnRemoveEdge();
    void OnAddBiDirectionalEdge();
    void OnRemoveBiDirectionalEdge();
+   void OnConvertWaypointTypes();
    void PropertyChangedFromControl(dtCore::PropertyContainer&, dtCore::ActorProperty&);
    void OnCameraTransformChanged(const dtCore::Transform& xform);
 
@@ -121,6 +123,7 @@ private slots:
    void OnSelectWaypointPointMode();
    void OnSelectWaypontBrushMode();
    void OnWaypointBrushSizeChanged(double value);
+   void OnWaypointTypeSelectionChanged(const dtCore::ObjectType* type);
    void OnGroundClampSelectedWaypoints();
 
 private:
@@ -145,6 +148,9 @@ private:
    QUndoStack* mUndoStack;
    bool mSelectionBasedRendering; ///Do we only render expensive graphics for selected waypoints
    bool mRenderBackfaces;
+
+   void RemoveDegenerateEdges(const dtAI::WaypointID sourcePoint,
+      std::vector<const dtAI::WaypointInterface*>& connections);
 };
 
 #endif /*AIUTILITY_MAIN_WINDOW*/
