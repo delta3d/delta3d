@@ -40,8 +40,8 @@
 
 ///////////////////////////////////////////////////
 WaypointBrowser::WaypointBrowser(QWidget* parent)
-: QDockWidget(parent)
-, mAIPluginInterface(NULL)
+   : QDockWidget(parent)
+   , mAIPluginInterface(NULL)
 {
    mUi = new Ui::WaypointBrowser();
    mUi->setupUi(this);
@@ -56,6 +56,8 @@ WaypointBrowser::WaypointBrowser(QWidget* parent)
 
    connect(&WaypointSelection::GetInstance(), SIGNAL(WaypointSelectionChanged(std::vector<dtAI::WaypointInterface*>&)),
            this, SLOT(OnWaypointSelectionChanged(std::vector<dtAI::WaypointInterface*>&)));
+
+   connect(mUi->mObjectTypeTree, SIGNAL(itemSelectionChanged()), this, SLOT(WaypointTypeSelectionChanged()));
 
    QDoubleValidator* validator = new QDoubleValidator(mUi->mDistanceEdit);
    validator->setDecimals(8);
@@ -335,6 +337,27 @@ void WaypointBrowser::GetCameraTransform(dtCore::Transform& xform)
    xform = mCameraTransform;
 }
 
+////////////////////////////////////////////////////////////////////////////////
+const dtCore::ObjectType* WaypointBrowser::GetSelectedWaypointType()
+{
+   dtCore::RefPtr<const dtCore::ObjectType> objectTypeSelected;
+
+   QList<QTreeWidgetItem*> list = mUi->mObjectTypeTree->selectedItems();
+
+   ObjectTypeTreeWidget* selectedItem = NULL;
+   if (!list.isEmpty())
+   {
+      selectedItem = dynamic_cast<ObjectTypeTreeWidget*>(list[0]);
+   }
+
+   if (selectedItem != NULL && selectedItem->IsLeafNode())
+   {
+      objectTypeSelected = selectedItem->GetObjectType();
+   }
+
+   return objectTypeSelected.get();
+}
+
 ///////////////////////////////////////////////////
 void WaypointBrowser::SetCameraTransform(const dtCore::Transform& xform)
 {
@@ -426,6 +449,26 @@ void WaypointBrowser::OnWaypointSelectionChanged(std::vector<dtAI::WaypointInter
    EnableDisable();
 
    connect(mUi->mWaypointList, SIGNAL(itemSelectionChanged()), this, SLOT(WaypointsSelectedFromBrowser()));
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void WaypointBrowser::WaypointTypeSelectionChanged()
+{
+   QList<QTreeWidgetItem*> list = mUi->mObjectTypeTree->selectedItems();
+   const dtCore::ObjectType* currentType = NULL;
+
+   if (list.count() == 1)
+   {
+      ObjectTypeTreeWidget* selectedItem = NULL;
+      selectedItem = dynamic_cast<ObjectTypeTreeWidget*>(list[0]);
+
+      if (selectedItem)
+      {
+         currentType = selectedItem->GetObjectType().get();
+      }
+   }
+
+   emit WaypointTypeSelected(currentType);
 }
 
 ///////////////////////////////////////////////////

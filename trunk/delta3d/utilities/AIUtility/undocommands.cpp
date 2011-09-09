@@ -85,9 +85,6 @@ void AddWaypointCommand::undo()
    }
 }
 
-
-
-
 ////////////////////////////////////////////////////////////////////////////////
 AddEdgeCommand::AddEdgeCommand(dtAI::WaypointInterface& fromWp,
                                dtAI::WaypointInterface& toWp,
