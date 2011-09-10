@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<Imageset Name="TitleImage" Imagefile="imagesets/title.tga" NativeHorzRes="1024" NativeVertRes="550" AutoScaled="true">
+   <Image Name="TitleImage" XPos="0" YPos="0" Width="256" Height="64" />
+</Imageset>
