@@ -49,6 +49,8 @@ class DeltaDrawableTests : public CPPUNIT_NS::TestFixture
       CPPUNIT_TEST(TestDeactiveThenAddedToScene);
       CPPUNIT_TEST(TestDeactiveAddedToSceneThenActive);
       CPPUNIT_TEST(TestAddedAndRemovedCallbacks);
+      CPPUNIT_TEST(TestAddingItselfAsAChild);
+      CPPUNIT_TEST(TestAddingChildWithExistingParent);
    CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -61,6 +63,8 @@ public:
    void TestDeactiveThenAddedToScene();
    void TestDeactiveAddedToSceneThenActive();
    void TestAddedAndRemovedCallbacks();
+   void TestAddingItselfAsAChild();
+   void TestAddingChildWithExistingParent();
 
 private:
    bool HasChild(dtCore::DeltaDrawable* parent, dtCore::DeltaDrawable* child);
@@ -385,3 +389,26 @@ void DeltaDrawableTests::TestAddedAndRemovedCallbacks()
    CPPUNIT_ASSERT_EQUAL(1, subDrawable->mRemovedCalled);
 }
 
+//////////////////////////////////////////////////////////////////////////
+void DeltaDrawableTests::TestAddingItselfAsAChild()
+{
+   using namespace dtCore;
+   RefPtr<Transformable> drawable1 = new Transformable();
+
+   bool added = drawable1->AddChild(drawable1.get());
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("Should not be able to add a DeltaDrawable as a child of itself", false, added);
+}
+
+//////////////////////////////////////////////////////////////////////////
+void DeltaDrawableTests::TestAddingChildWithExistingParent()
+{
+   using namespace dtCore;
+   RefPtr<Transformable> parent1 = new Transformable("parent1");
+   RefPtr<Transformable> parent2 = new Transformable("parent2");
+   RefPtr<Transformable> child = new Transformable("child");
+
+   parent1->AddChild(child);
+
+   bool result = parent2->AddChild(child);
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("Should not be able to add a DeltaDrawable as a child if it already has a parent", false, result);
+}

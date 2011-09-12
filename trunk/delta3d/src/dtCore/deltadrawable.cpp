@@ -394,14 +394,6 @@ namespace dtCore
    ////////////////////////////////////////////////////////////////////////////////
    bool DeltaDrawablePrivate::AddChild(DeltaDrawable* child, DeltaDrawable* parent)
    {
-      if (!CanBeChild(child))
-      {
-         Log::GetInstance().LogMessage(Log::LOG_WARNING, __FILE__,
-            "DeltaDrawable: '%s' cannot be added as a child to '%s'",
-            child->GetName().c_str(), parent->GetName().c_str());
-         return false;
-      }
-
       child->SetParent(parent);
       mChildList.push_back(child);
 
@@ -485,7 +477,17 @@ DeltaDrawable::~DeltaDrawable()
  */
 bool DeltaDrawable::AddChild(DeltaDrawable* child)
 {
-   return mPvt->AddChild(child, this);
+   if (CanBeChild(child))
+   {
+      return mPvt->AddChild(child, this);
+   }
+   else
+   {
+      Log::GetInstance().LogMessage(Log::LOG_WARNING, __FILE__,
+         "DeltaDrawable: '%s' cannot be added as a child to '%s'",
+         child->GetName().c_str(), this->GetName().c_str());
+      return false;
+   }
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -542,8 +544,10 @@ bool DeltaDrawable::CanBeChild(DeltaDrawable* child) const
    {
       return false;
    }
-
-   return mPvt->CanBeChild(child);
+   else
+   {
+      return mPvt->CanBeChild(child);
+   }
 }
 
 void DeltaDrawable::RenderProxyNode(bool enable)
