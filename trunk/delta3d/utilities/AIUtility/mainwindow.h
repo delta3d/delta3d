@@ -29,6 +29,8 @@
 #include <dtAI/primitives.h>
 #include <dtCore/transform.h>
 
+#include <vector>
+
 /// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace Ui
 {
