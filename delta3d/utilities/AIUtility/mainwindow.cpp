@@ -895,24 +895,26 @@ void MainWindow::OnGroundClampSelectedWaypoints()
    emit GroundClampSelectedWaypoints();
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
+// function object needs to be placed outside function (64-bit debian)
+struct InterfaceEqualToID
+{
+   dtAI::WaypointID mID;
+
+   InterfaceEqualToID(dtAI::WaypointID id)
+      : mID(id) {}
+
+   bool operator()(const dtAI::WaypointInterface * current)
+   {
+      return current->GetID() == mID;
+   }
+};
 
 ////////////////////////////////////////////////////////////////////////////////
 void MainWindow::RemoveDegenerateEdges(const dtAI::WaypointID sourcePoint,
                                        std::vector<const dtAI::WaypointInterface*>& connections)
 {
-   struct InterfaceEqualToID
-   {
-      dtAI::WaypointID mID;
-
-      InterfaceEqualToID(dtAI::WaypointID id)
-         : mID(id) {}
-
-      bool operator()(const dtAI::WaypointInterface* current)
-      {
-         return current->GetID() == mID;
-      }
-   };
-
    // Using the erase-remove idiom to remove any connections to itself (degenerate)
    connections.erase(std::remove_if(connections.begin(), connections.end(), InterfaceEqualToID(sourcePoint)), connections.end());
 }
