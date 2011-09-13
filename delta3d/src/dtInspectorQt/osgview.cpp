@@ -37,7 +37,7 @@ void dtInspectorQt::OSGView::Build(QList<EntryData>& itemList)
    EntryData data;
    data.name = sceneNode->getName().c_str();
    data.type = sceneNode->className();
-   data.itemData = QVariant(reinterpret_cast<int>(sceneNode));
+   data.itemData = qVariantFromValue((void *)sceneNode); // QVariant(reinterpret_cast<int>(sceneNode));
    BuildChildren(sceneNode->asGroup(), data.children);
    itemList.push_back(data);
 
@@ -92,7 +92,7 @@ void dtInspectorQt::OSGView::BuildChildren(osg::Group* parent, QList<EntryData>&
          EntryData data;
          data.name = currentNode->getName().c_str();
          data.type = currentNode->className();
-         data.itemData = QVariant(reinterpret_cast<int>(currentNode));
+         data.itemData = qVariantFromValue((void *)currentNode);
          BuildChildren(currentNode->asGroup(), data.children);
          childList.push_back(data);
       }
