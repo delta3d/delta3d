@@ -115,13 +115,18 @@ void Mouse::AddMouseListener(MouseListener* mouseListener)
 
 void Mouse::InsertMouseListener(const MouseListenerList::value_type& pos, MouseListener* ml)
 {
-   MouseListenerList::iterator iter = std::find( mMouseListeners.begin() , mMouseListeners.end() , pos );
+   MouseListenerList::iterator iter = std::find(mMouseListeners.begin(), mMouseListeners.end(), pos);
    mMouseListeners.insert(iter,ml);
 }
 
 void Mouse::RemoveMouseListener(MouseListener* mouseListener)
 {
    mMouseListeners.remove(mouseListener);
+}
+
+bool Mouse::HasMouseListener(MouseListener* mouseListener)
+{
+   return std::find(mMouseListeners.begin(), mMouseListeners.end(), mouseListener) != mMouseListeners.end();
 }
 
 bool Mouse::MouseScroll( osgGA::GUIEventAdapter::ScrollingMotion sm )

@@ -103,6 +103,11 @@ namespace dtCore
       /// @param mouseListener the listener to remove
       void RemoveMouseListener(MouseListener* mouseListener);
 
+      /// Tries to find the given the listener in our list of listeners
+      /// @param mouseListener the listener to check
+      /// @return true if the mouse listener is in our list
+      bool HasMouseListener(MouseListener* mouseListener);
+
       /// For injecting mouse scroll events.
       /// @param sm the scroll type
       virtual bool MouseScroll(osgGA::GUIEventAdapter::ScrollingMotion sm);
