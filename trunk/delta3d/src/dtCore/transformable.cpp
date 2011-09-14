@@ -249,10 +249,13 @@ bool GetAbsoluteMatrixNew(const osg::Node* node, osg::Matrix& wcMatrix)
          osg::Transform* txNode = curNode->asTransform();
          if (txNode != NULL)
          {
-            osg::Camera* camera = dynamic_cast<osg::Camera*>(curNode);
+#if OSG_VERSION_GREATER_OR_EQUAL(3, 1, 0)
             // This depends on a submission to osg, but it's much faster than the
-            // dynamic cast above.
-            //osg::Camera* camera = txNode->asCamera();
+            // dynamic cast below
+            osg::Camera* camera = txNode->asCamera();
+#else
+            osg::Camera* camera = dynamic_cast<osg::Camera*>(curNode);
+#endif
 
             if (camera != NULL && (camera->getReferenceFrame() != osg::Transform::RELATIVE_RF || camera->getNumParents() == 0))
             {
