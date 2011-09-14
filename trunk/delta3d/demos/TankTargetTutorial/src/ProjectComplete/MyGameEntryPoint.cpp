@@ -39,6 +39,7 @@
 
 #include <dtGame/gamemanager.h>
 #include <dtGame/defaultmessageprocessor.h>
+#include <dtGame/defaultnetworkpublishingcomponent.h>
 #include <dtGame/gameapplication.h>
 #include <dtGame/exceptionenum.h>
 #include <dtGame/binarylogstream.h>
@@ -142,12 +143,13 @@ void MyGameEntryPoint::OnStartup(dtGame::GameApplication& app)
    // Load the map we created in STAGE.
    app.GetGameManager()->ChangeMap(mMapName);
 
-   // Add Component - DefaultMessageProcessor
-   dtGame::DefaultMessageProcessor* dmp = new dtGame::DefaultMessageProcessor("DefaultMessageProcessor");
+   // Add Component - DefaultMessageProcessor.  Applies updates about remote actors, needed for networing and logging and playback.
+   dtCore::RefPtr<dtGame::DefaultMessageProcessor> dmp = new dtGame::DefaultMessageProcessor();
    app.GetGameManager()->AddComponent(*dmp,dtGame::GameManager::ComponentPriority::HIGHEST);
 
-   // NO LONGER NECESSARY - Register our messages with the Game Manager message factory - part 5
-   ///TutorialMessageType::RegisterMessageTypes(app.GetGameManager()->GetMessageFactory());
+   // Add Component - DefaultNetworkPublishingComponent  Forwards messages to the network.
+   dtCore::RefPtr<dtGame::DefaultNetworkPublishingComponent> dnp = new dtGame::DefaultNetworkPublishingComponent();
+   app.GetGameManager()->AddComponent(*dnp,dtGame::GameManager::ComponentPriority::HIGHEST);
 
    // Add Component - Input Component
    dtCore::RefPtr<InputComponent> inputComp = new InputComponent("InputComponent", mInPlaybackMode);
@@ -155,7 +157,7 @@ void MyGameEntryPoint::OnStartup(dtGame::GameApplication& app)
 
 #ifdef HLA
    // Add Component - HLAComponent
-   dtCore::RefPtr<dtHLAGM::HLAComponent> hlaComp = new dtHLAGM::HLAComponent("HLAComponent");
+   dtCore::RefPtr<dtHLAGM::HLAComponent> hlaComp = new dtHLAGM::HLAComponent();
    app.GetGameManager()->AddComponent(*hlaComp, dtGame::GameManager::ComponentPriority::NORMAL);
 
    //Load HLA Configuration
