@@ -17,6 +17,7 @@
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
  * Author: Eric R. Heine
+ * Author: Rudy T. Alfaro
  */
 #include <prefix/dtdirectornodesprefix.h>
 #include <dtDirectorNodes/calculatedistanceaction.h>
@@ -37,6 +38,7 @@ namespace dtDirector
       , mResultProp(NULL)
    {
       AddAuthor("Eric R. Heine");
+      AddAuthor("Rudy T. Alfaro");
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -106,6 +108,23 @@ namespace dtDirector
       {
          result = (GetVec4("B") - GetVec4("A")).length();
       }
+      else if (leftType == dtCore::DataType::ACTOR)
+      {         
+         //Get the transforms of the actors
+         dtCore::Transform firstTransform;
+         dtCore::Transform secondTransform;
+         GetActor("A")->GetActor()->AsTransformable()->GetTransform(firstTransform);
+         GetActor("B")->GetActor()->AsTransformable()->GetTransform(secondTransform);
+
+         //Get the translations
+         osg::Vec3f firstTranslation;
+         osg::Vec3f secondTranslation;
+         firstTransform.GetTranslation(firstTranslation);
+         secondTransform.GetTranslation(secondTranslation);   
+
+         //Result gets the distance squared.
+         result = (firstTranslation - secondTranslation).length2();
+      }
 
       int count = GetPropertyCount("Result");
       for (int index = 0; index < count; index++)
@@ -125,7 +144,8 @@ namespace dtDirector
          {
             if (value->CanBeType(dtCore::DataType::VEC2F) ||
                 value->CanBeType(dtCore::DataType::VEC3F) ||
-                value->CanBeType(dtCore::DataType::VEC4F))
+                value->CanBeType(dtCore::DataType::VEC4F) ||
+                value->CanBeType(dtCore::DataType::ACTOR))
             {
                return true;
             }

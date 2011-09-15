@@ -17,6 +17,7 @@
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
  * Author: Eric R. Heine
+ * Author: Rudy T. Alfaro
  */
 
 #ifndef CALCULATE_DISTANCE_ACTION_NODE
@@ -27,6 +28,7 @@
 #include <dtDirector/actionnode.h>
 #include <dtDirectorNodes/nodelibraryexport.h>
 #include <dtCore/actorproperty.h>
+#include <dtCore/transform.h>
 
 namespace dtDirector
 {
