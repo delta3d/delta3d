@@ -138,6 +138,11 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    bool CalculateDistanceAction::CanConnectValue(ValueLink* link, ValueNode* value)
    {
+      if (GetDirector()->IsLoading())
+      {
+         return true;
+      }
+
       if (ActionNode::CanConnectValue(link, value))
       {
          if (link->GetName() == "A" || link->GetName() == "B")
