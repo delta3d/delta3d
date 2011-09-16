@@ -34,6 +34,7 @@ namespace dtDirector
       : ActionNode()
       , mValueA(osg::Vec3())
       , mValueB(osg::Vec3())
+      , mSquaredResult(false)
       , mResult(0.0f)
       , mResultProp(NULL)
    {
@@ -70,6 +71,13 @@ namespace dtDirector
          dtCore::Vec3ActorProperty::GetFuncType(this, &CalculateDistanceAction::GetB),
          "The Right value.");
 
+      dtCore::BooleanActorProperty* squaredResult = new dtCore::BooleanActorProperty(
+         "SquaredResult", "Squared Result",
+         dtCore::BooleanActorProperty::SetFuncType(this, &CalculateDistanceAction::SetSquaredResult),
+         dtCore::BooleanActorProperty::GetFuncType(this, &CalculateDistanceAction::GetSquaredResult),
+         "Whether the result is to be squared or not.");
+    
+
       mResultProp = new dtCore::DoubleActorProperty(
          "Result", "Result",
          dtCore::DoubleActorProperty::SetFuncType(this, &CalculateDistanceAction::SetResult),
@@ -80,7 +88,10 @@ namespace dtDirector
       // them to be connected to ValueNodes.
       mValues.push_back(ValueLink(this, leftProp, false, false, false));
       mValues.push_back(ValueLink(this, rightProp, false, false, false));
+      mValues.push_back(ValueLink(this, squaredResult, false, false, false));
       mValues.push_back(ValueLink(this, mResultProp.get(), true, true));
+
+      AddProperty(squaredResult);
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -99,14 +110,29 @@ namespace dtDirector
       if (leftType == dtCore::DataType::VEC2F)
       {
          result = (GetVec2("B") - GetVec2("A")).length();
+
+         if(mSquaredResult)
+         {
+            result *= result;
+         }
       }
       else if (leftType == dtCore::DataType::VEC3F)
       {
          result = (GetVec3("B") - GetVec3("A")).length();
+
+         if(mSquaredResult)
+         {
+            result *= result;
+         }
       }
       else if (leftType == dtCore::DataType::VEC4F)
       {
          result = (GetVec4("B") - GetVec4("A")).length();
+
+         if(mSquaredResult)
+         {
+            result *= result;
+         }
       }
       else if (leftType == dtCore::DataType::ACTOR)
       {         
@@ -122,8 +148,15 @@ namespace dtDirector
          firstTransform.GetTranslation(firstTranslation);
          secondTransform.GetTranslation(secondTranslation);   
 
-         //Result gets the distance squared.
-         result = (firstTranslation - secondTranslation).length2();
+         if(mSquaredResult)
+         {
+            //Result gets the distance squared.
+            result = (firstTranslation - secondTranslation).length2();
+         }
+         else
+         {
+            result = (firstTranslation - secondTranslation).length();
+         }
       }
 
       int count = GetPropertyCount("Result");
@@ -160,6 +193,18 @@ namespace dtDirector
       }
 
       return false;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void CalculateDistanceAction::SetSquaredResult(bool value)
+   {
+      mSquaredResult = value;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   bool CalculateDistanceAction::GetSquaredResult()
+   {
+      return mSquaredResult;
    }
 
    //////////////////////////////////////////////////////////////////////////
