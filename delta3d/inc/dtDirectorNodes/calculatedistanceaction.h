@@ -27,7 +27,7 @@
 
 #include <dtDirector/actionnode.h>
 #include <dtDirectorNodes/nodelibraryexport.h>
-#include <dtCore/actorproperty.h>
+#include <dtCore/booleanactorproperty.h>
 #include <dtCore/transform.h>
 
 namespace dtDirector
@@ -95,6 +95,9 @@ namespace dtDirector
       void SetB(const osg::Vec3& value);
       osg::Vec3 GetB();
 
+      void SetSquaredResult(bool value);
+      bool GetSquaredResult();
+
       void SetResult(double value);
       double GetResult();
 
@@ -110,6 +113,7 @@ namespace dtDirector
 
       osg::Vec3 mValueA;
       osg::Vec3 mValueB;
+      bool mSquaredResult;
       double mResult;
       
       dtCore::RefPtr<dtCore::ActorProperty> mResultProp;
