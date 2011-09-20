@@ -141,7 +141,7 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   dtDAL::ResourceDescriptor ReferenceScriptAction::GetDirectorResource()
+   dtDAL::ResourceDescriptor ReferenceScriptAction::GetDirectorResource() const
    {
       return mScriptResource;
    }
@@ -159,7 +159,7 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   dtDirector::Director* ReferenceScriptAction::GetDirectorScript()
+   dtDirector::Director* ReferenceScriptAction::GetDirectorScript() const
    {
       return mScript;
    }
