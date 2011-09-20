@@ -86,12 +86,7 @@ MACRO(ADD_DELTA3D_SUBFOLDERS)
       SET(DTTERRAIN_AVAILABLE "YES")
    ENDIF (BUILD_TERRAIN)
 
-   IF (BUILD_TESTS)
-      OPTION(AUTO_RUN_TESTS "Automatically runs the unit tests upon successful compile and link" ON)
 
-      FIND_PACKAGE(CPPUNIT) #for unit tests
-      ADD_SUBDIRECTORY(tests)
-   ENDIF (BUILD_TESTS)
 
    ADD_SUBDIRECTORY(src/dtActors)
    ADD_SUBDIRECTORY(src/dtUtil)
@@ -107,6 +102,7 @@ MACRO(ADD_DELTA3D_SUBFOLDERS)
 
    IF (DTANIM_AVAILABLE)
       ADD_SUBDIRECTORY(src/dtDirectorNodes)
+      SET(DTDIRECTOR_NODES_AVAILABLE "YES")
    ENDIF (DTANIM_AVAILABLE)
 
    ADD_SUBDIRECTORY(src/dtGame)
@@ -120,6 +116,13 @@ MACRO(ADD_DELTA3D_SUBFOLDERS)
       ADD_SUBDIRECTORY(src/dtDirectorQt)
    ENDIF (QT4_FOUND)
 
+   IF (BUILD_TESTS)
+      OPTION(AUTO_RUN_TESTS "Automatically runs the unit tests upon successful compile and link" ON)
+
+      FIND_PACKAGE(CPPUNIT) #for unit tests
+      ADD_SUBDIRECTORY(tests)
+   ENDIF (BUILD_TESTS)
+   
    ADD_SUBDIRECTORY(demos)
    ADD_SUBDIRECTORY(examples)
    ADD_SUBDIRECTORY(utilities)

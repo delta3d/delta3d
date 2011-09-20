@@ -109,29 +109,41 @@ namespace dtDirector
       double result;
       if (leftType == dtCore::DataType::VEC2F)
       {
-         result = (GetVec2("B") - GetVec2("A")).length();
+         const osg::Vec2 diff = GetVec2("B") - GetVec2("A");
 
          if(mSquaredResult)
          {
-            result *= result;
+            result = diff.length2();
+         }
+         else
+         {
+            result = diff.length();
          }
       }
       else if (leftType == dtCore::DataType::VEC3F)
       {
-         result = (GetVec3("B") - GetVec3("A")).length();
+         const osg::Vec3f diff = GetVec3("B") - GetVec3("A");
 
          if(mSquaredResult)
          {
-            result *= result;
+            result = diff.length2();
+         }
+         else
+         {
+            result = diff.length();
          }
       }
       else if (leftType == dtCore::DataType::VEC4F)
       {
-         result = (GetVec4("B") - GetVec4("A")).length();
+         const osg::Vec4f diff = GetVec4("B") - GetVec4("A");
 
          if(mSquaredResult)
          {
-            result *= result;
+            result = diff.length2();
+         }
+         else
+         {
+            result = diff.length();
          }
       }
       else if (leftType == dtCore::DataType::ACTOR)
