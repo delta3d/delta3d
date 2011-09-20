@@ -98,7 +98,7 @@ namespace dtDirector
        * Accessors for property values.
        */
       void SetDirectorResource(const dtCore::ResourceDescriptor& value);
-      dtCore::ResourceDescriptor GetDirectorResource();
+      dtCore::ResourceDescriptor GetDirectorResource() const;
 
       void SetUseCache(bool value);
       bool GetUseCache() const;
@@ -106,7 +106,7 @@ namespace dtDirector
       /**
        * Accessor for the script.
        */
-      dtDirector::Director* GetDirectorScript();
+      dtDirector::Director* GetDirectorScript() const;
 
       void RefreshLinks();
 
