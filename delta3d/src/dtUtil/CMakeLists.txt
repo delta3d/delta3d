@@ -71,6 +71,7 @@ SET( LIB_PUBLIC_HEADERS
     ${HEADER_PATH}/geometrycollector.h
     ${HEADER_PATH}/getsetmacros.h
     ${HEADER_PATH}/hash.h
+    ${HEADER_PATH}/hashmap.h
     ${HEADER_PATH}/hotspotdefinition.h
     ${HEADER_PATH}/hotspotxml.h
     ${HEADER_PATH}/kdtree.h
