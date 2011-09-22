@@ -58,6 +58,7 @@ namespace dtUtil
          CPPUNIT_TEST(TestEquivalentVec4);
          CPPUNIT_TEST(TestMatrixEulerConversions);
          CPPUNIT_TEST(TestEquivalentReals);
+         CPPUNIT_TEST(TestAngleBetweenVectors);
       CPPUNIT_TEST_SUITE_END();
 
    public:
@@ -76,6 +77,7 @@ namespace dtUtil
       void TestEquivalentVec4();
       void TestEquivalentReals();
       void TestMatrixEulerConversions();
+      void TestAngleBetweenVectors();
 
    private:
       template <typename Real>
@@ -422,4 +424,31 @@ namespace dtUtil
 
       // Note, this should check doubles also, but I don't know the limit values for this.
    }
+
+   //////////////////////////////////////////////////////////////////////////
+   void MathTests::TestAngleBetweenVectors()
+   {
+      const float delta = 0.02f; //fudge factor to allow for roundoff errors
+
+      //90 degrees apart
+      const osg::Vec3 v1(0.f, 1.f, 0.f); const osg::Vec3 v2(1.f, 0.f, 0.f);     
+      
+      const float a12 = dtUtil::GetAngleBetweenVectors(v1, v2);
+      CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("Angle between vectors should have been 90", 90.f, a12, delta);
+
+      const float a21 = dtUtil::GetAngleBetweenVectors(v2, v1);
+      CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("Angle between vectors should have been 90", 90.f, a21, delta);
+
+      //180 degrees apart
+      const osg::Vec3 v3(1.f, 1.f, 0.f);  const osg::Vec3 v4(-1.f, -1.f, 0.f);
+      const float a34 = dtUtil::GetAngleBetweenVectors(v3, v4);
+      CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("Angle between vectors should have been 180", 180.f, a34, delta);
+
+      //45 degrees apart
+      const osg::Vec3 v5(0.f, 1.f, 0.f); const osg::Vec3 v6(-1.f, 1.f, 0.f);
+      const float a56 = dtUtil::GetAngleBetweenVectors(v5, v6);
+      CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("Angle between vectors should have been 45", 45.f, a56, delta);
+
+   }
+
 } // namespace dtUtil

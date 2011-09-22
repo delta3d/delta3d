@@ -274,10 +274,10 @@ namespace dtUtil
     * Returns the angle between the two given vectors
     * @param v1 The first vector.
     * @param v2 The second vector.
-    * @return the angle in degrees between the vectors
+    * @return the angle in degrees between the vectors (0..180)
     */
    template <typename TVec>
-   inline float GetAngleBetweenVectors(TVec v1, TVec v2)
+   inline typename TVec::value_type GetAngleBetweenVectors(TVec v1, TVec v2)
    {
       v1.normalize();
       v2.normalize();
