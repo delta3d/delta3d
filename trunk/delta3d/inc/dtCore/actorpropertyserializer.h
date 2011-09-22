@@ -233,9 +233,9 @@ namespace dtCore
       //parses the text data from the xml and stores it in the property.
       void ParseParameterData(BaseXMLHandler::xmlCharString& topEl, std::string& dataValue);
 
-      //parses one item out of the xml and stores it in the proper element of the osg Vec#.
-      template <typename VecType>
-      void ParseVec(BaseXMLHandler::xmlCharString& topEl, const std::string& dataValue, VecType& vec, size_t vecSize);
+      //parses one item out of the xml and sets the property value if it's the final element.
+      //returns true if the final element has been set
+      bool ParseVec(BaseXMLHandler::xmlCharString& topEl, const std::string& dataValue, size_t vecSize);
 
       void EnterPropertyContainer();
 
@@ -277,6 +277,7 @@ namespace dtCore
       //is stored until the end.
       std::multimap<dtCore::PropertyContainer*, std::pair<std::string, dtCore::UniqueId> > mActorLinking;
 
+      osg::Vec4 mVecBeingParsed;
    };
 }
 
