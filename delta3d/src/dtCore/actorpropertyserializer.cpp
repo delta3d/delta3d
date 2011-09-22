@@ -58,6 +58,7 @@
 
 #include <osgDB/FileNameUtils>
 #include <typeinfo> //for std:bad_cast
+#include <limits> // for std::numeric_limits
 
 XERCES_CPP_NAMESPACE_USE
 
@@ -1061,82 +1062,92 @@ namespace dtCore
          }
       case DataType::VEC2_ID:
          {
-            Vec2ActorProperty& p = static_cast<Vec2ActorProperty&>(*actorProperty);
-            osg::Vec2 vec = p.GetValue();
-            ParseVec(topEl, dataValue, vec, 2);
-            p.SetValue(vec);
+            if (ParseVec(topEl, dataValue, 2))
+            {
+               Vec2ActorProperty& p = static_cast<Vec2ActorProperty&>(*actorProperty);
+               p.SetValue(osg::Vec2(mVecBeingParsed.x(), mVecBeingParsed.y()));
+            }
             break;
          }
       case DataType::VEC2F_ID:
          {
-            Vec2fActorProperty& p = static_cast<Vec2fActorProperty&>(*actorProperty);
-            osg::Vec2f vec = p.GetValue();
-            ParseVec(topEl, dataValue, vec, 2);
-            p.SetValue(vec);
+            if (ParseVec(topEl, dataValue, 2))
+            {
+               Vec2fActorProperty& p = static_cast<Vec2fActorProperty&>(*actorProperty);
+               p.SetValue(osg::Vec2f(mVecBeingParsed.x(), mVecBeingParsed.y()));
+            }
             break;
          }
       case DataType::VEC2D_ID:
          {
-            Vec2dActorProperty& p = static_cast<Vec2dActorProperty&>(*actorProperty);
-            osg::Vec2d vec = p.GetValue();
-            ParseVec(topEl, dataValue, vec, 2);
-            p.SetValue(vec);
+            if (ParseVec(topEl, dataValue, 2))
+            {
+               Vec2dActorProperty& p = static_cast<Vec2dActorProperty&>(*actorProperty);
+               p.SetValue(osg::Vec2d(mVecBeingParsed.x(), mVecBeingParsed.y()));
+            }
             break;
          }
       case DataType::VEC3_ID:
          {
-            Vec3ActorProperty& p = static_cast<Vec3ActorProperty&>(*actorProperty);
-            osg::Vec3 vec = p.GetValue();
-            ParseVec(topEl, dataValue, vec, 3);
-            p.SetValue(vec);
+            if (ParseVec(topEl, dataValue, 3))
+            {
+               Vec3ActorProperty& p = static_cast<Vec3ActorProperty&>(*actorProperty);
+               p.SetValue(osg::Vec3(mVecBeingParsed.x(), mVecBeingParsed.y(), mVecBeingParsed.z()));
+            }
             break;
          }
       case DataType::VEC3F_ID:
          {
-            Vec3fActorProperty& p = static_cast<Vec3fActorProperty&>(*actorProperty);
-            osg::Vec3f vec = p.GetValue();
-            ParseVec(topEl, dataValue, vec, 3);
-            p.SetValue(vec);
+            if (ParseVec(topEl, dataValue, 3))
+            {
+               Vec3fActorProperty& p = static_cast<Vec3fActorProperty&>(*actorProperty);
+               p.SetValue(osg::Vec3f(mVecBeingParsed.x(), mVecBeingParsed.y(), mVecBeingParsed.z()));
+            }
             break;
          }
       case DataType::VEC3D_ID:
          {
-            Vec3dActorProperty& p = static_cast<Vec3dActorProperty&>(*actorProperty);
-            osg::Vec3d vec = p.GetValue();
-            ParseVec(topEl, dataValue, vec, 3);
-            p.SetValue(vec);
+            if (ParseVec(topEl, dataValue, 3))
+            {
+               Vec3dActorProperty& p = static_cast<Vec3dActorProperty&>(*actorProperty);
+               p.SetValue(osg::Vec3d(mVecBeingParsed.x(), mVecBeingParsed.y(), mVecBeingParsed.z()));
+            }
             break;
          }
       case DataType::VEC4_ID:
          {
-            Vec4ActorProperty& p = static_cast<Vec4ActorProperty&>(*actorProperty);
-            osg::Vec4 vec = p.GetValue();
-            ParseVec(topEl, dataValue, vec, 4);
-            p.SetValue(vec);
+            if (ParseVec(topEl, dataValue, 4))
+            {
+               Vec4ActorProperty& p = static_cast<Vec4ActorProperty&>(*actorProperty);
+               p.SetValue(mVecBeingParsed);
+            }
             break;
          }
       case DataType::VEC4F_ID:
          {
-            Vec4fActorProperty& p = static_cast<Vec4fActorProperty&>(*actorProperty);
-            osg::Vec4f vec = p.GetValue();
-            ParseVec(topEl, dataValue, vec, 4);
-            p.SetValue(vec);
+            if (ParseVec(topEl, dataValue, 4))
+            {
+               Vec4fActorProperty& p = static_cast<Vec4fActorProperty&>(*actorProperty);
+               p.SetValue(osg::Vec4f(mVecBeingParsed));
+            }
             break;
          }
       case DataType::VEC4D_ID:
          {
-            Vec4dActorProperty& p = static_cast<Vec4dActorProperty&>(*actorProperty);
-            osg::Vec4d vec = p.GetValue();
-            ParseVec(topEl, dataValue, vec, 4);
-            p.SetValue(vec);
+            if (ParseVec(topEl, dataValue, 4))
+            {
+               Vec4dActorProperty& p = static_cast<Vec4dActorProperty&>(*actorProperty);
+               p.SetValue(osg::Vec4d(mVecBeingParsed));
+            }
             break;
          }
       case DataType::RGBACOLOR_ID:
          {
-            ColorRgbaActorProperty& p = static_cast<ColorRgbaActorProperty&>(*actorProperty);
-            osg::Vec4 vec = p.GetValue();
-            ParseVec(topEl, dataValue, vec, 4);
-            p.SetValue(vec);
+            if (ParseVec(topEl, dataValue, 4))
+            {
+               ColorRgbaActorProperty& p = static_cast<ColorRgbaActorProperty&>(*actorProperty);
+               p.SetValue(mVecBeingParsed);
+            }
             break;
          }
       case DataType::ACTOR_ID:
@@ -1319,82 +1330,92 @@ namespace dtCore
          }
       case DataType::VEC2_ID:
          {
-            NamedVec2Parameter& p = static_cast<NamedVec2Parameter&>(np);
-            osg::Vec2 vec = p.GetValue();
-            ParseVec(topEl, dataValue, vec, 2);
-            p.SetValue(vec);
+            if (ParseVec(topEl, dataValue, 2))
+            {
+               NamedVec2Parameter& p = static_cast<NamedVec2Parameter&>(np);
+               p.SetValue(osg::Vec2(mVecBeingParsed.x(), mVecBeingParsed.y()));
+            }
             break;
          }
       case DataType::VEC2F_ID:
          {
-            NamedVec2fParameter& p = static_cast<NamedVec2fParameter&>(np);
-            osg::Vec2f vec = p.GetValue();
-            ParseVec(topEl, dataValue, vec, 2);
-            p.SetValue(vec);
+            if (ParseVec(topEl, dataValue, 2))
+            {
+               NamedVec2fParameter& p = static_cast<NamedVec2fParameter&>(np);
+               p.SetValue(osg::Vec2f(mVecBeingParsed.x(), mVecBeingParsed.y()));
+            }
             break;
          }
       case DataType::VEC2D_ID:
          {
-            NamedVec2dParameter& p = static_cast<NamedVec2dParameter&>(np);
-            osg::Vec2d vec = p.GetValue();
-            ParseVec(topEl, dataValue, vec, 2);
-            p.SetValue(vec);
+            if (ParseVec(topEl, dataValue, 2))
+            {
+               NamedVec2dParameter& p = static_cast<NamedVec2dParameter&>(np);
+               p.SetValue(osg::Vec2d(mVecBeingParsed.x(), mVecBeingParsed.y()));
+            }
             break;
          }
       case DataType::VEC3_ID:
          {
-            NamedVec3Parameter& p = static_cast<NamedVec3Parameter&>(np);
-            osg::Vec3 vec = p.GetValue();
-            ParseVec(topEl, dataValue, vec, 3);
-            p.SetValue(vec);
+            if (ParseVec(topEl, dataValue, 3))
+            {
+               NamedVec3Parameter& p = static_cast<NamedVec3Parameter&>(np);
+               p.SetValue(osg::Vec3(mVecBeingParsed.x(), mVecBeingParsed.y(), mVecBeingParsed.z()));
+            }
             break;
          }
       case DataType::VEC3F_ID:
          {
-            NamedVec3fParameter& p = static_cast<NamedVec3fParameter&>(np);
-            osg::Vec3f vec = p.GetValue();
-            ParseVec(topEl, dataValue, vec, 3);
-            p.SetValue(vec);
+            if (ParseVec(topEl, dataValue, 3))
+            {
+               NamedVec3fParameter& p = static_cast<NamedVec3fParameter&>(np);
+               p.SetValue(osg::Vec3f(mVecBeingParsed.x(), mVecBeingParsed.y(), mVecBeingParsed.z()));
+            }
             break;
          }
       case DataType::VEC3D_ID:
          {
-            NamedVec3dParameter& p = static_cast<NamedVec3dParameter&>(np);
-            osg::Vec3d vec = p.GetValue();
-            ParseVec(topEl, dataValue, vec, 3);
-            p.SetValue(vec);
+            if (ParseVec(topEl, dataValue, 3))
+            {
+               NamedVec3dParameter& p = static_cast<NamedVec3dParameter&>(np);
+               p.SetValue(osg::Vec3d(mVecBeingParsed.x(), mVecBeingParsed.y(), mVecBeingParsed.z()));
+            }
             break;
          }
       case DataType::VEC4_ID:
          {
-            NamedVec4Parameter& p = static_cast<NamedVec4Parameter&>(np);
-            osg::Vec4 vec = p.GetValue();
-            ParseVec(topEl, dataValue, vec, 4);
-            p.SetValue(vec);
+            if (ParseVec(topEl, dataValue, 4))
+            {
+               NamedVec4Parameter& p = static_cast<NamedVec4Parameter&>(np);
+               p.SetValue(mVecBeingParsed);
+            }
             break;
          }
       case DataType::VEC4F_ID:
          {
-            NamedVec4fParameter& p = static_cast<NamedVec4fParameter&>(np);
-            osg::Vec4f vec = p.GetValue();
-            ParseVec(topEl, dataValue, vec, 4);
-            p.SetValue(vec);
+            if (ParseVec(topEl, dataValue, 4))
+            {
+               NamedVec4fParameter& p = static_cast<NamedVec4fParameter&>(np);
+               p.SetValue(osg::Vec4f(mVecBeingParsed));
+            }
             break;
          }
       case DataType::VEC4D_ID:
          {
-            NamedVec4dParameter& p = static_cast<NamedVec4dParameter&>(np);
-            osg::Vec4d vec = p.GetValue();
-            ParseVec(topEl, dataValue, vec, 4);
-            p.SetValue(vec);
+            if (ParseVec(topEl, dataValue, 4))
+            {
+               NamedVec4dParameter& p = static_cast<NamedVec4dParameter&>(np);
+               p.SetValue(osg::Vec4d(mVecBeingParsed));
+            }
             break;
          }
       case DataType::RGBACOLOR_ID:
          {
-            NamedRGBAColorParameter& p = static_cast<NamedRGBAColorParameter&>(np);
-            osg::Vec4 vec = p.GetValue();
-            ParseVec(topEl, dataValue, vec, 4);
-            p.SetValue(vec);
+            if (ParseVec(topEl, dataValue, 4))
+            {
+               NamedRGBAColorParameter& p = static_cast<NamedRGBAColorParameter&>(np);
+               p.SetValue(mVecBeingParsed);
+            }
             break;
          }
       case DataType::ACTOR_ID:
@@ -1447,42 +1468,58 @@ namespace dtCore
    }
 
    //////////////////////////////////////////////////////////////////////////
-   template <typename VecType>
-   void ActorPropertySerializer::ParseVec(BaseXMLHandler::xmlCharString& topEl, const std::string& dataValue, VecType& vec, size_t vecSize)
+   bool ActorPropertySerializer::ParseVec(BaseXMLHandler::xmlCharString& topEl, const std::string& dataValue, size_t vecSize)
    {
+      // Bail out if this is a property element
+      if (topEl == MapXMLConstants::ACTOR_PROPERTY_VEC2_ELEMENT ||
+         topEl == MapXMLConstants::ACTOR_PROPERTY_VEC3_ELEMENT ||
+         topEl == MapXMLConstants::ACTOR_PROPERTY_VEC4_ELEMENT ||
+         topEl == MapXMLConstants::ACTOR_PROPERTY_COLOR_RGBA_ELEMENT ||
+         topEl == MapXMLConstants::ACTOR_PROPERTY_COLOR_RGBA_ELEMENT)
+      {
+         return false;
+      }
+
       char* endMarker;
       double value = strtod(dataValue.c_str(), &endMarker);
+      bool isVecComplete = false;
 
       if (topEl == MapXMLConstants::ACTOR_VEC_1_ELEMENT || topEl == MapXMLConstants::ACTOR_COLOR_R_ELEMENT)
       {
-         vec[0] = value;
+         // Since this is our first element, clear out any previous values with NaNs
+         // so that if one of the values is not in the xml file we are parsing
+         // it will be obvious
+         osg::Vec4::value_type nan = std::numeric_limits<osg::Vec4::value_type>::quiet_NaN();
+         mVecBeingParsed = osg::Vec4(nan, nan, nan, nan);
+
+         mVecBeingParsed[0] = value;
       }
       else if (topEl == MapXMLConstants::ACTOR_VEC_2_ELEMENT || topEl == MapXMLConstants::ACTOR_COLOR_G_ELEMENT)
       {
-         vec[1] = value;
+         mVecBeingParsed[1] = value;
+
+         // If we are a Vec2, then we are complete
+         isVecComplete = vecSize == 2;
       }
       else if (vecSize >= 3 && (topEl == MapXMLConstants::ACTOR_VEC_3_ELEMENT || topEl == MapXMLConstants::ACTOR_COLOR_B_ELEMENT))
       {
-         vec[2] = value;
+         mVecBeingParsed[2] = value;
+
+         // If we are a Vec3, then we are complete
+         isVecComplete = vecSize == 3;
       }
       else if (vecSize == 4 && (topEl == MapXMLConstants::ACTOR_VEC_4_ELEMENT || topEl == MapXMLConstants::ACTOR_COLOR_A_ELEMENT))
       {
-         vec[3] = value;
+         mVecBeingParsed[3] = value;
+         isVecComplete = true;
       }
       else
       {
-         if (topEl == MapXMLConstants::ACTOR_PROPERTY_VEC2_ELEMENT ||
-            topEl == MapXMLConstants::ACTOR_PROPERTY_VEC3_ELEMENT ||
-            topEl == MapXMLConstants::ACTOR_PROPERTY_VEC4_ELEMENT ||
-            topEl == MapXMLConstants::ACTOR_PROPERTY_COLOR_RGBA_ELEMENT ||
-            topEl == MapXMLConstants::ACTOR_PROPERTY_COLOR_RGBA_ELEMENT)
-         {
-            return;
-         }
-
          mParser->mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
             "Got an invalid element for a Vec%u: %s", unsigned(vecSize), dtUtil::XMLStringConverter(topEl.c_str()).c_str());
       }
+
+      return isVecComplete;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
