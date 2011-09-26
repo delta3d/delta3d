@@ -44,6 +44,9 @@ namespace dtDirector
    /////////////////////////////////////////////////////////////////////////////
    SliderEvent::~SliderEvent()
    {
+      DestroyConnection(mValueChangedConnection);
+      DestroyConnection(mThumbTrackStartedConnection);
+      DestroyConnection(mThumbTrackEndedConnection);
    }
 
    /////////////////////////////////////////////////////////////////////////////
