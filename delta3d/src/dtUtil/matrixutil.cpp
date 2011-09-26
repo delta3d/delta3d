@@ -206,7 +206,15 @@ void MatrixUtil::MatrixToHpr(osg::Vec3& hpr, const osg::Matrix& rotation)
       double cr = ClampUnity(-mat(2,1));
       double sr = ClampUnity(mat(0,1));
 
-      hpr[0] = 0.0f;
+      if (hpr[1] < 0.f)
+      {
+         hpr[0] = 180.f;
+      }
+      else
+      {
+         hpr[0] = 0.0f;
+      }
+
       hpr[2] = osg::RadiansToDegrees(atan2(sr,cr));
    }
    else
