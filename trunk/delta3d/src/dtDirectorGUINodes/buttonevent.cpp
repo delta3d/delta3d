@@ -45,6 +45,13 @@ namespace dtDirector
    /////////////////////////////////////////////////////////////////////////////
    ButtonEvent::~ButtonEvent()
    {
+      DestroyConnection(mClickedConnection);
+      DestroyConnection(mDoubleClickedConnection);
+      DestroyConnection(mEnterConnection);
+      DestroyConnection(mLeaveConnection);
+      DestroyConnection(mClickedConnection);
+      DestroyConnection(mDownConnection);
+      DestroyConnection(mUpConnection);
    }
 
    /////////////////////////////////////////////////////////////////////////////
