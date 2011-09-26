@@ -26,6 +26,7 @@
 
 #include <prefix/unittestprefix.h>
 #include <cppunit/extensions/HelperMacros.h>
+#include <dtCore/transform.h>
 #include <dtUtil/mathdefines.h>
 #include <dtUtil/matrixutil.h>
 #include <osg/Vec2>
@@ -39,7 +40,7 @@
 #include <cmath>
 #include <limits>
 #include <sstream>
-
+#include <ostream>
 namespace dtUtil
 {
    /// Math unit tests for dtUtil
@@ -59,6 +60,7 @@ namespace dtUtil
          CPPUNIT_TEST(TestMatrixEulerConversions);
          CPPUNIT_TEST(TestEquivalentReals);
          CPPUNIT_TEST(TestAngleBetweenVectors);
+         CPPUNIT_TEST(TestMatrixToHPRWithNegativePitch);
       CPPUNIT_TEST_SUITE_END();
 
    public:
@@ -78,6 +80,7 @@ namespace dtUtil
       void TestEquivalentReals();
       void TestMatrixEulerConversions();
       void TestAngleBetweenVectors();
+      void TestMatrixToHPRWithNegativePitch();
 
    private:
       template <typename Real>
@@ -449,6 +452,38 @@ namespace dtUtil
       const float a56 = dtUtil::GetAngleBetweenVectors(v5, v6);
       CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("Angle between vectors should have been 45", 45.f, a56, delta);
 
+   }
+
+
+   std::string ToString(const osg::Vec3& vec)
+   {
+      std::ostringstream ss;
+      ss.precision(8);
+
+      ss << "[" << vec[0] << "," << vec[1] << "," << vec[2] << "]";
+      return ss.str();
+   }
+   //////////////////////////////////////////////////////////////////////////
+   void MathTests::TestMatrixToHPRWithNegativePitch()
+   {
+      dtCore::Transform xform;
+      const osg::Vec3 set(0.f, -90.f, 0.f);
+      xform.SetRotation(set);
+
+      osg::Vec3 get;
+      xform.GetRotation(get);
+
+      //Because of the -90, there are multiple, valid solutions, so it's okay
+      //if the get didn't return exactly what was set.
+      if (!Equivalent(set,get, 0.001f))
+      {
+         const osg::Vec3 equivVec(180.f, -90.f, 180.f);
+
+         std::string str = "The set HPR didn't get returned correctly: " + 
+            ToString(equivVec) + " != " + ToString(get);     
+
+         CPPUNIT_ASSERT_MESSAGE(str, Equivalent(equivVec,get, 0.001f));
+      }
    }
 
 } // namespace dtUtil
