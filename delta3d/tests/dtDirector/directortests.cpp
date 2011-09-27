@@ -103,7 +103,7 @@ void DirectorTests::TestRunScript()
 
       try
       {
-         dtCore::ResourceDescriptor resource("Directors:test.dtdir");
+         dtCore::ResourceDescriptor resource("directors:test.dtdir");
          std::string path = dtCore::Project::GetInstance().GetResourcePath(resource);
          mDirector->LoadScript(path);
       }
@@ -115,7 +115,7 @@ void DirectorTests::TestRunScript()
       try
       {
          std::string contextPath = dtCore::Project::GetInstance().GetContext();
-         mDirector->SaveScript(contextPath + "/Directors/save test.dtdir");
+         mDirector->SaveScript(contextPath + "/directors/save test.dtdir");
       }
       catch (dtUtil::Exception& e)
       {
@@ -125,7 +125,7 @@ void DirectorTests::TestRunScript()
       try
       {
          std::string contextPath = dtCore::Project::GetInstance().GetContext();
-         mDirector->SaveScript(contextPath + "/Directors/save test.dtdirb");
+         mDirector->SaveScript(contextPath + "/directors/save test.dtdirb");
       }
       catch (dtUtil::Exception& e)
       {
@@ -134,7 +134,7 @@ void DirectorTests::TestRunScript()
 
       try
       {
-         dtCore::ResourceDescriptor resource("Directors:save test.dtdirb");
+         dtCore::ResourceDescriptor resource("directors:save test.dtdirb");
          std::string path = dtCore::Project::GetInstance().GetResourcePath(resource);
          mDirector->LoadScript(path);
       }
