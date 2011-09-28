@@ -116,6 +116,7 @@ namespace  dtCore
    /////////////////////////////////////////////////////////////////
    void BaseXMLHandler::endDocument()
    {
+      mReachedEnd = true;
       mLogger->LogMessage(DT_LOG_SOURCE, "Parsing Map Document Ended.", dtUtil::Log::LOG_DEBUG);
    }
 
@@ -297,6 +298,13 @@ namespace  dtCore
       while (!mElements.empty()) mElements.pop();
 
       resetErrors();
+      mReachedEnd = false;
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   bool BaseXMLHandler::HandledDesiredData() const
+   {
+      return mReachedEnd;
    }
 
    ////////////////////////////////////////////////////////////////////////////////

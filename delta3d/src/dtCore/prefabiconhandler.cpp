@@ -20,7 +20,7 @@
  */
 
 #include <prefix/dtcoreprefix.h>
-#include <dtCore/mapheaderhandler.h>
+#include <dtCore/prefabiconhandler.h>
 #include <dtCore/mapxmlconstants.h>
 #include <dtUtil/xercesutils.h>
 #include <xercesc/util/XMLString.hpp>
@@ -29,44 +29,44 @@ XERCES_CPP_NAMESPACE_USE
 using namespace dtCore;
 
 ////////////////////////////////////////////////////////////////////////////////
-dtCore::MapHeaderHandler::MapHeaderHandler()
-: mIsHeaderParsed(false)
+dtCore::PrefabIconHandler::PrefabIconHandler()
+: mIsIconParsed(false)
 {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-dtCore::MapHeaderHandler::~MapHeaderHandler()
+dtCore::PrefabIconHandler::~PrefabIconHandler()
 {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-const MapHeaderData& MapHeaderHandler::GetHeaderData() const
+std::string PrefabIconHandler::GetIconName() const
 {
-   return mHeaderData;
+   return mIconName;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-bool MapHeaderHandler::HandledDesiredData() const
+bool PrefabIconHandler::HandledDesiredData() const
 {
-   return mIsHeaderParsed;
+   return mIsIconParsed;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void MapHeaderHandler::ElementEnded(const XMLCh* const uri, const XMLCh* const localname, const XMLCh* const qname)
+void PrefabIconHandler::ElementEnded(const XMLCh* const uri, const XMLCh* const localname, const XMLCh* const qname)
 {
    BaseXMLHandler::ElementEnded(uri, localname, qname);
 
-   if (XMLString::compareString(localname, MapXMLConstants::HEADER_ELEMENT) == 0)
+   if (XMLString::compareString(localname, MapXMLConstants::ICON_ELEMENT) == 0)
    {
-      mIsHeaderParsed = true;
+      mIsIconParsed = true;
    }
 }
 
 //////////////////////////////////////////////////////////////////////////
 #if XERCES_VERSION_MAJOR < 3
-void MapHeaderHandler::characters(const XMLCh* const chars, const unsigned int length)
+void PrefabIconHandler::characters(const XMLCh* const chars, const unsigned int length)
 #else
-void MapHeaderHandler::characters(const XMLCh* const chars, const XMLSize_t length)
+void PrefabIconHandler::characters(const XMLCh* const chars, const XMLSize_t length)
 #endif
 {
    BaseXMLHandler::characters(chars, length);
@@ -75,41 +75,9 @@ void MapHeaderHandler::characters(const XMLCh* const chars, const XMLSize_t leng
 
    const std::string str = dtUtil::XMLStringConverter(chars).ToString();
 
-   if (topEl == MapXMLConstants::NAME_ELEMENT)
+   if (topEl == MapXMLConstants::ICON_ELEMENT)
    {
-      mHeaderData.mName = str;
-   }            
-   else if (topEl == MapXMLConstants::DESCRIPTION_ELEMENT)
-   {
-      mHeaderData.mDescription = str;
-   }
-   else if (topEl == MapXMLConstants::AUTHOR_ELEMENT)
-   {
-      mHeaderData.mAuthor = str;
-   }
-   else if (topEl == MapXMLConstants::COMMENT_ELEMENT)
-   {
-      mHeaderData.mComment = str;
-   }
-   else if (topEl == MapXMLConstants::COPYRIGHT_ELEMENT)
-   {
-      mHeaderData.mCopyright = str;
-   }
-   else if (topEl == MapXMLConstants::CREATE_TIMESTAMP_ELEMENT)
-   {
-      mHeaderData.mCreateTime = str;
-   }
-   else if (topEl == MapXMLConstants::LAST_UPDATE_TIMESTAMP_ELEMENT)
-   {
-      mHeaderData.mLastUpdateTime = str;
-   }
-   else if (topEl == MapXMLConstants::EDITOR_VERSION_ELEMENT)
-   {
-      mHeaderData.mEditorVersion = str;
-   }
-   else if (topEl == MapXMLConstants::SCHEMA_VERSION_ELEMENT)
-   {
-      mHeaderData.mSchemaVersion = str;
+      mIconName = str;
    }
 }
 

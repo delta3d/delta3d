@@ -175,6 +175,15 @@ namespace dtCore
 
       virtual void Reset();
 
+      /**
+       * Returns whether the data this handler wanted to parse has been reached
+       * or not.  The default case returns true when the end of the document
+       * has been reached, but if you only need to read to a certain piece of
+       * information, you can override this function for your case.
+       * @see MapHeaderHandler::HandledDesiredData
+       */
+      virtual bool HandledDesiredData() const;
+
       dtUtil::Log* mLogger;
 
    protected: // This class is referenced counted, but this causes an error...
@@ -196,6 +205,7 @@ namespace dtCore
       int mErrorCount;
       int mFatalErrorCount;
       int mWarningCount;
+      bool mReachedEnd;
    };
 }
 #endif

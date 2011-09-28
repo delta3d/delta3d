@@ -19,12 +19,11 @@
  * Erik Johnson
  */
 
-#ifndef MAPHEADERHANDLER_h__
-#define MAPHEADERHANDLER_h__
+#ifndef prefabiconhandler_h__
+#define prefabiconhandler_h__
 
 #include <dtCore/export.h>
 #include <dtCore/basexmlhandler.h>
-#include <dtCore/mapheaderdata.h>
 
 namespace dtCore
 {
@@ -33,16 +32,16 @@ namespace dtCore
      * create a new Map or any content in the map file. 
      * @see MapParser
      */
-   class MapHeaderHandler : public dtCore::BaseXMLHandler
+   class PrefabIconHandler : public dtCore::BaseXMLHandler
    {
    public:
-      MapHeaderHandler();
+      PrefabIconHandler();
 
       /** 
-       * Get the parsed MapHeaderData.
-       * @return The header data from the Map file, after it's been parsed
+       * Get the parsed icon name.
+       * @return The icon name for the prefab file
        */
-      const MapHeaderData& GetHeaderData() const;
+      std::string GetIconName() const;
 
       /** 
        * Has the Map file header data been parsed yet?
@@ -58,12 +57,12 @@ namespace dtCore
 #endif
 
    protected:
-      virtual ~MapHeaderHandler();
+      virtual ~PrefabIconHandler();
       
    private:
-      MapHeaderData mHeaderData;
-      bool mIsHeaderParsed;
+      std::string mIconName;
+      bool mIsIconParsed;
    };
 }
 
-#endif // MAPHEADERHANDLER_h__
+#endif // prefabiconhandler_h__

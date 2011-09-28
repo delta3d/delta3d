@@ -50,11 +50,6 @@ namespace dtCore
    {
       public:
 
-         enum PrefabReadMode {
-            PREFAB_READ_ALL,
-            PREFAB_ICON_ONLY
-         };
-
          ///Constructor
          MapContentHandler();
 
@@ -105,13 +100,12 @@ namespace dtCore
          /**
          * Initializes the content handler to load a map.
          */
-         void SetMapMode() {mLoadingPrefab = false; mPrefabReadMode = PREFAB_READ_ALL;}
+         void SetMapMode() { mLoadingPrefab = false; }
 
          /**
          * Initializes the content handler to load a prefab.
          */
-         void SetPrefabMode(std::vector<dtCore::RefPtr<dtCore::BaseActorObject> >& proxyList,
-               PrefabReadMode readMode = PREFAB_READ_ALL, dtCore::Map* map = NULL);
+         void SetPrefabMode(std::vector<dtCore::RefPtr<dtCore::BaseActorObject> >& proxyList, dtCore::Map* map = NULL);
 
          /**
          * Get prefab icon file name.  If there isn't one, returns ""
@@ -179,7 +173,6 @@ namespace dtCore
          bool mFoundMapName;
 
          bool mLoadingPrefab;
-         PrefabReadMode mPrefabReadMode;
          std::string mPrefabIconFileName;
          std::vector<dtCore::RefPtr<dtCore::BaseActorObject> >* mPrefabProxyList;
 
