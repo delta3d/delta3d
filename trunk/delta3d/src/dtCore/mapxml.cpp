@@ -49,18 +49,19 @@
 #include <dtCore/transform.h>
 
 #include <dtCore/actorhierarchynode.h>
+#include <dtCore/actorpropertyserializer.h>
 #include <dtCore/mapxml.h>
 #include <dtCore/map.h>
 #include <dtCore/exceptionenum.h>
 #include <dtCore/gameevent.h>
 #include <dtCore/gameeventmanager.h>
+#include <dtCore/librarymanager.h>
 #include <dtCore/mapxmlconstants.h>
 #include <dtCore/mapcontenthandler.h>
 #include <dtCore/mapheaderhandler.h>
-#include <dtCore/transformableactorproxy.h>
-#include <dtCore/librarymanager.h>
-#include <dtCore/actorpropertyserializer.h>
+#include <dtCore/prefabiconhandler.h>
 #include <dtCore/project.h>
+#include <dtCore/transformableactorproxy.h>
 
 #include <dtUtil/datapathutils.h>
 #include <dtUtil/fileutils.h>
@@ -356,7 +357,7 @@ namespace dtCore
    /////////////////////////////////////////////////////////////////////////////
    bool MapParser::ParsePrefab(const std::string& path, std::vector<dtCore::RefPtr<dtCore::BaseActorObject> >& proxyList, dtCore::Map* map)
    {
-      mMapHandler->SetPrefabMode(proxyList, dtCore::MapContentHandler::PREFAB_READ_ALL, map);
+      mMapHandler->SetPrefabMode(proxyList, map);
       std::ifstream mapfstream(path.c_str());
       if (BaseXMLParser::Parse(mapfstream))
       {
@@ -371,32 +372,14 @@ namespace dtCore
    /////////////////////////////////////////////////////////////////////////////
    const std::string MapParser::GetPrefabIconFileName(const std::string& path)
    {
-      std::vector<dtCore::RefPtr<dtCore::BaseActorObject> > proxyList; //just an empty list
-      std::string iconFileName = "";
-
-      SetParsing(true);
-      mMapHandler->SetPrefabMode(proxyList, MapContentHandler::PREFAB_ICON_ONLY);
-      mXercesParser->setContentHandler(mMapHandler.get());
-      mXercesParser->setErrorHandler(mMapHandler.get());
-
-      std::ifstream fileStream(path.c_str());
-      try
+      dtCore::RefPtr<PrefabIconHandler> handler = new PrefabIconHandler();
+      if (!ParseMapByToken(path, handler))
       {
-         InputSourcefStream xerStream(fileStream);
-         mXercesParser->parse(xerStream);
-      }
-      catch(const dtUtil::Exception&)
-      {
-         //Probably the icon has been found, the exception to stop parsing has
-         //been thrown, so there's nothing to do here.
+         //error
+         throw dtCore::MapParsingException( "Could not parse the Prefab's icon name.", __FILE__, __LINE__);
       }
 
-      iconFileName = mMapHandler->GetPrefabIconFileName();
-
-      mMapHandler->ClearMap();
-      SetParsing(false);
-
-      return iconFileName;
+      return handler->GetIconName();
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -531,42 +514,12 @@ namespace dtCore
    /////////////////////////////////////////////////////////////////////////////
    dtCore::MapHeaderData MapParser::ParseMapHeaderData(const std::string& mapFilename) const
    {
-      if (dtUtil::FileUtils::GetInstance().FileExists(mapFilename) == false)
-      {
-         throw dtCore::MapParsingException("Map file not found: "+mapFilename, __FILE__, __LINE__);
-      }
-
       dtCore::RefPtr<MapHeaderHandler> handler = new MapHeaderHandler();
-
-      mXercesParser->setContentHandler(handler.get());
-      mXercesParser->setErrorHandler(handler.get());
-
-      XMLPScanToken token;
-      std::ifstream fileStream(mapFilename.c_str());
-      InputSourcefStream xerStream(fileStream);
-
-      if (!mXercesParser->parseFirst(xerStream, token))
+      if (!ParseMapByToken(mapFilename, handler))
       {
          //error
          throw dtCore::MapParsingException( "Could not parse the Map's header data.", __FILE__, __LINE__);
       }
-
-      while (mXercesParser->parseNext(token))
-      {
-         if (handler->HeaderParsed())
-         {
-            //finished parsing the header data
-            break;
-         }
-      }
-
-      if (handler->HeaderParsed() == false)
-      {
-         //error
-         throw dtCore::MapParsingException( "Could not parse all the Map's header data.", __FILE__, __LINE__);
-      }
-
-      mXercesParser->parseReset(token);
 
       return handler->GetHeaderData();
    }
@@ -611,6 +564,44 @@ namespace dtCore
       return mMapHandler->HasDeprecatedProperty();
    }
 
+   ///////////////////////////////////////////////////////////////////////////////
+   bool MapParser::ParseMapByToken(const std::string& mapFilename, BaseXMLHandler* handler) const
+   {
+      if (dtUtil::FileUtils::GetInstance().FileExists(mapFilename) == false)
+      {
+         throw dtCore::MapParsingException("Map file not found: "+mapFilename, __FILE__, __LINE__);
+      }
+
+      mXercesParser->setContentHandler(handler);
+      mXercesParser->setErrorHandler(handler);
+
+      XMLPScanToken token;
+      std::ifstream fileStream(mapFilename.c_str());
+      InputSourcefStream xerStream(fileStream);
+
+      if (!mXercesParser->parseFirst(xerStream, token))
+      {
+         return false;
+      }
+
+      while (mXercesParser->parseNext(token))
+      {
+         if (handler->HandledDesiredData())
+         {
+            //finished parsing the header data
+            break;
+         }
+      }
+
+      if (handler->HandledDesiredData() == false)
+      {
+         return false;
+      }
+
+      mXercesParser->parseReset(token);
+
+      return true;
+   }
 
    //////////////////////////////////////////////////////////////////////////
    //////////////////////////////////////////////////////////////////////////

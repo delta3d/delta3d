@@ -115,6 +115,8 @@ namespace dtCore
       MapParser(const MapParser& copyParser);
       MapParser& operator=(const MapParser& assignParser);
 
+      bool ParseMapByToken(const std::string& mapFilename, BaseXMLHandler* handler) const;
+
       dtCore::RefPtr<MapContentHandler> mMapHandler;
    };
 

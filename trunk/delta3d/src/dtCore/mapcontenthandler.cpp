@@ -111,7 +111,6 @@ namespace  dtCore
       , mBaseActorObject(NULL)
       , mGroupIndex(-1)
       , mLoadingPrefab(false)
-      , mPrefabReadMode(PREFAB_READ_ALL)
       , mPrefabIconFileName("")
       , mPrefabProxyList(NULL)
       , mCurrentHierNode(NULL)
@@ -348,13 +347,6 @@ namespace  dtCore
       else if (mInPresetCameras)
       {
          EndPresetCameraSection(localname);
-      }
-
-      if(mLoadingPrefab && mPrefabReadMode == PREFAB_ICON_ONLY &&
-         (XMLString::compareString(localname, MapXMLConstants::ICON_ELEMENT) == 0))
-      {
-         //Got the icon file name -- time to stop parsing
-         throw(dtUtil::Exception("Icon found", __FILE__, __LINE__));
       }
    }
 
@@ -743,12 +735,10 @@ namespace  dtCore
 
    ////////////////////////////////////////////////////////////////////////////////
    void MapContentHandler::SetPrefabMode(std::vector<dtCore::RefPtr<dtCore::BaseActorObject> >& proxyList,
-      PrefabReadMode readMode, dtCore::Map* map)
+      dtCore::Map* map)
    {
       mLoadingPrefab = true;
       mPrefabProxyList = &proxyList;
-      
-      mPrefabReadMode = readMode;
       mMap = map;
    }
 
