@@ -38,7 +38,7 @@ namespace dtAnim
       std::string  mName;            ///< an identifier for this pose mesh instance
       std::string  mRootName;        ///< an identifier for the bone that will give the global forward
       osg::Vec3    mRootForward;     ///< the direction that end effectors are relative to
-      std::string  mEffectorName;    ///< an identifier for the end effector bone     
+      std::string  mEffectorName;    ///< an identifier for the end effector bone
       osg::Vec3    mEffectorForward; ///< the direction that is forward in the end effector's bone's space
       StringVector mAnimations;      ///< a list of name triples for animation triangles
    };
@@ -58,7 +58,7 @@ namespace dtAnim
 
       typedef std::stack<PoseNode> NodeStack;
       typedef std::vector<PoseMeshData> PoseMeshDataVector;
-      
+
       // Node names
       static const char POSE_NODE[];
       static const char TRIANGLE_NODE[];

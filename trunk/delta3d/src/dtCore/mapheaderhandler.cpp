@@ -63,13 +63,9 @@ void MapHeaderHandler::ElementEnded(const XMLCh* const uri, const XMLCh* const l
 }
 
 //////////////////////////////////////////////////////////////////////////
-#if XERCES_VERSION_MAJOR < 3
-void MapHeaderHandler::characters(const XMLCh* const chars, const unsigned int length)
-#else
-void MapHeaderHandler::characters(const XMLCh* const chars, const XMLSize_t length)
-#endif
+void MapHeaderHandler::CombinedCharacters(const XMLCh* const chars, size_t length)
 {
-   BaseXMLHandler::characters(chars, length);
+   BaseXMLHandler::CombinedCharacters(chars, length);
 
    xmlCharString& topEl = mElements.top();
 
