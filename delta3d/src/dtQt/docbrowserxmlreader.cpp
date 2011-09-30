@@ -225,7 +225,7 @@ namespace dtQt
    {
       std::ostringstream errStrm;
       dtUtil::XMLStringConverter sysIDConverter(e.getSystemId());
-      dtUtil::XMLStringConverter msgConverter(e.getMessage());      
+      dtUtil::XMLStringConverter msgConverter(e.getMessage());
 
       errStrm << "\nError at file " << sysIDConverter.ToString()
          << ", line " << e.getLineNumber()

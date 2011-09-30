@@ -51,11 +51,7 @@ namespace dtCore
       virtual bool HandledDesiredData() const;
 
       virtual void ElementEnded(const XMLCh* const uri, const XMLCh* const localname, const XMLCh* const qname);
-#if XERCES_VERSION_MAJOR < 3
-      virtual void characters(const XMLCh* const chars, const unsigned int length);
-#else
-      virtual void characters(const XMLCh* const chars, const XMLSize_t length);
-#endif
+      virtual void CombinedCharacters(const XMLCh* const chars, size_t length);
 
    protected:
       virtual ~MapHeaderHandler();

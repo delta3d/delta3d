@@ -88,11 +88,8 @@ namespace dtAnim
       CharacterFileHandler();
       ~CharacterFileHandler();
 
-#if XERCES_VERSION_MAJOR < 3
-      virtual void characters(const XMLCh* const chars, const unsigned int length);
-#else
-      virtual void characters(const XMLCh* const chars, const XMLSize_t length);
-#endif
+      virtual void CombinedCharacters(const XMLCh* const chars, size_t length);
+
       virtual void endDocument();
       virtual void startDocument();
 
