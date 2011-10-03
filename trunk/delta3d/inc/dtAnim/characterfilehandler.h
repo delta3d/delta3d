@@ -227,8 +227,8 @@ namespace dtAnim
       void HandleEventAttributes(const std::string& elementName,
          dtUtil::AttributeSearch::ResultMap& attrs);
 
-      typedef std::stack<std::string> ElementStack;
-      ElementStack mElements;
+      //typedef std::stack<std::string> ElementStack;
+      //ElementStack mElements;
 
       bool mInSkinningShader;
       bool mInLOD;

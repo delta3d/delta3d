@@ -231,16 +231,24 @@ namespace  dtCore
 #endif
    {
 
-      xmlCharString& topEl = mElements.top();
-
-      mCombinedCharacters.append(chars, length);
-
-      if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+      if (!mElements.empty())
       {
-         mLogger->LogMessage(DT_LOG_SOURCE,
-            "Found characters for element '" +
-            dtUtil::XMLStringConverter(topEl.c_str()).ToString() + "' '" + dtUtil::XMLStringConverter(chars).ToString() + "'",
-            dtUtil::Log::LOG_DEBUG);
+         xmlCharString& topEl = mElements.top();
+
+         mCombinedCharacters.append(chars, length);
+
+         if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+         {
+            mLogger->LogMessage(DT_LOG_SOURCE,
+               "Found characters for element '" +
+               dtUtil::XMLStringConverter(topEl.c_str()).ToString() + "' '" + dtUtil::XMLStringConverter(chars).ToString() + "'",
+               dtUtil::Log::LOG_DEBUG);
+         }
+      }
+      else
+      {
+         int i = 0;
+         ++i;
       }
    }
 
@@ -315,8 +323,8 @@ namespace  dtCore
 
       std::stringstream ss;
 
-      ss << dtUtil::XMLStringConverter(exc.getMessage()).c_str() << 
-         ". Ln:" << exc.getLineNumber() << " Col:" << exc.getColumnNumber() << 
+      ss << dtUtil::XMLStringConverter(exc.getMessage()).c_str() <<
+         ". Ln:" << exc.getLineNumber() << " Col:" << exc.getColumnNumber() <<
          " PublicID:" << publicID << " SystemID:" << systemID;
 
       return ss.str();
