@@ -120,6 +120,7 @@ namespace dtAI
       dtAI::WaypointID GetMaxWaypointID() const;
       void GetWaypointsByType(const dtCore::ObjectType& type, WaypointArray& toFill);
       WaypointInterface* GetClosestWaypoint(const osg::Vec3& pos, float maxRadius);
+      WaypointInterface* GetClosestNamedWaypoint(const std::string& name, const osg::Vec3& pos, float maxRadius);
       bool GetWaypointsAtRadius(const osg::Vec3& pos, float radius, WaypointArray& arrayToFill);
 
    protected:

@@ -130,6 +130,12 @@ namespace dtAI
        */
       virtual WaypointInterface* GetClosestWaypoint(const osg::Vec3& pos, float maxDistance) = 0;
 
+       /**
+       * Finds the closest waypoint to a given point with a specific name.  O(n) search.
+       * @return the waypoint found, or NULL if no waypoints exist
+       */
+      virtual WaypointInterface* GetClosestNamedWaypoint(const std::string& name, const osg::Vec3& pos, float maxDistance) = 0;
+
       /**
        * Searches for waypoints within radius of a point.
        * @param pos, the point to search from
