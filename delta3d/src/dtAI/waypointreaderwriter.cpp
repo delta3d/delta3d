@@ -34,7 +34,7 @@
 #include <dtUtil/datastream.h>
 #include <dtUtil/exception.h>
 
-#include <fstream>
+#include <osgDB\fstream>
 
 namespace dtAI
 {
@@ -77,7 +77,7 @@ namespace dtAI
    bool WaypointReaderWriter::LoadWaypointFile(const std::string& filename)
    {
       bool read_file_ok = false;
-      std::ifstream infile;
+      osgDB::fstream infile;
 
       //we have to hold all the edges until all the waypoints are added
       typedef std::vector<std::pair<WaypointID, WaypointID> > EdgeArray;
@@ -137,7 +137,7 @@ namespace dtAI
 
                         if(!propCon.valid())
                         {
-                            propCon = mAIInterface->CreateWaypointPropertyContainer(*ot, wi);
+                           propCon = mAIInterface->CreateWaypointPropertyContainer(*ot, wi);
                         }
 
                         propCon->Set(wi);
@@ -296,9 +296,9 @@ namespace dtAI
    /////////////////////////////////////////////////////////////////////////////
    bool WaypointReaderWriter::SaveWaypointFile(const std::string& filename)
    {
-      std::ofstream outfile;
+      osgDB::fstream outfile;
 
-      outfile.open(filename.c_str(), std::ios_base::binary | std::ofstream::out);
+      outfile.open(filename.c_str(), osgDB::fstream::ios_base::binary | osgDB::fstream::out);
       if (outfile.fail())
       {
          return false;
