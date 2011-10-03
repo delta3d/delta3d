@@ -34,13 +34,13 @@
 #include <dtUtil/log.h>
 
 #include <cassert>
-#include <fstream>
 #include <exception>
 #include <algorithm>
 
+#include <osgDB\fstream>
+
 namespace dtAI
 {
-
    class InvalidWaypointFileID: public std::exception
    {
       virtual const char* what() const throw()
@@ -138,7 +138,7 @@ namespace dtAI
    {
       //note: the id is not related to the size of the waypoints
       //checking id < mWaypoints.size() is invalid if waypoints are
-      //inserted then removed 
+      //inserted then removed
 
       //we return NULL if no waypoint is found matching this id
       WaypointMap::iterator i = mWaypoints.find(id);
@@ -202,7 +202,7 @@ namespace dtAI
    /////////////////////////////////////////////////////////////////////////////
    bool WaypointManager::WriteFile(const std::string& pFileToWrite)
    {
-      std::ofstream outfile;
+      osgDB::fstream outfile;
 
       outfile.open(pFileToWrite.c_str(), std::ofstream::out);
       if (outfile.fail())
@@ -265,7 +265,8 @@ namespace dtAI
       Clear();
 
       bool read_file_ok = false;
-      std::ifstream infile;
+
+      osgDB::fstream infile;
 
       infile.open(pFileToRead.c_str());
       if (infile.is_open())
