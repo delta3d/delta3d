@@ -16,7 +16,7 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * Erik Johnson
+ * Eric R. Heine
  */
 
 #ifndef directorheaderhandler_h__
@@ -29,8 +29,8 @@
 namespace dtDirector
 {
    /** 
-     * Used as an XML handler to parse just the Map file's header data. Will not
-     * create a new Map or any content in the map file. 
+     * Used as an XML handler to parse just the Director file's header data. Will not
+     * create a new Director or any content in the Director file. 
      * @see MapParser
      */
    class DirectorHeaderHandler : public dtCore::BaseXMLHandler
@@ -39,13 +39,13 @@ namespace dtDirector
       DirectorHeaderHandler();
 
       /** 
-       * Get the parsed MapHeaderData.
-       * @return The header data from the Map file, after it's been parsed
+       * Get the parsed DirectorHeaderData.
+       * @return The header data from the Director file, after it's been parsed
        */
       const DirectorHeaderData& GetHeaderData() const;
 
       /** 
-       * Has the Map file header data been parsed yet?
+       * Has the Director file header data been parsed yet?
        * @return true if finished parsing correctly, false otherwise
        */
       virtual bool HandledDesiredData() const;

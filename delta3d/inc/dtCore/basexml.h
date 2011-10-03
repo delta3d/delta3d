@@ -98,6 +98,14 @@ namespace dtCore
 
       void SetParsing(bool parsing);
 
+      /**
+       * Parses the given XML file token by token until the handler has the
+       * information it wants or the end of the file has been reached.
+       *
+       * @param[in]  filename  The full path filename to parse.
+       * @param[in]  handler   The XML handler that determines what information to parse.
+       * @return true if the file was parsed successfully
+       */
       bool ParseFileByToken(const std::string& filename, BaseXMLHandler* handler) const;
 
       virtual ~BaseXMLParser();
@@ -135,7 +143,7 @@ namespace dtCore
       /**
        * @Note  Create your own Save functions in your inherited classes.
        */
-         
+
       dtUtil::Log* mLogger;
 
    protected:
@@ -167,7 +175,7 @@ namespace dtCore
             std::ostream* mOutStream;
             dtUtil::Log*  mLogger;
       };
-         
+
       typedef std::basic_string<XMLCh> xmlCharString;
       static const int indentSize = 4;
 
@@ -193,7 +201,7 @@ namespace dtCore
       virtual void AddCharacters(const std::string& string);
 
       void AddIndent();
-         
+
       //disable copy constructor
       BaseXMLWriter(const BaseXMLWriter& toCopy): mFormatter("UTF-8", NULL, &mFormatTarget, xercesc::XMLFormatter::NoEscapes, xercesc::XMLFormatter::DefaultUnRep) {}
       //disable operator =
