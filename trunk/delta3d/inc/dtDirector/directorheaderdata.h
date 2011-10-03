@@ -16,7 +16,7 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * Erik Johnson
+ * Eric R. Heine
  */
 
 #ifndef directorheaderdata_h__
@@ -27,7 +27,7 @@
 namespace dtDirector
 {
    /**
-    * Structure used to hold all the data related to the Map's xml file.
+    * Structure used to hold all the data related to the Director's xml file.
     */
    struct DirectorHeaderData : public dtCore::MapHeaderData
    {
