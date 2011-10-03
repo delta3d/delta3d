@@ -373,7 +373,7 @@ namespace dtCore
    const std::string MapParser::GetPrefabIconFileName(const std::string& path)
    {
       dtCore::RefPtr<PrefabIconHandler> handler = new PrefabIconHandler();
-      if (!ParseMapByToken(path, handler))
+      if (!ParseFileByToken(path, handler))
       {
          //error
          throw dtCore::MapParsingException( "Could not parse the Prefab's icon name.", __FILE__, __LINE__);
@@ -515,7 +515,7 @@ namespace dtCore
    dtCore::MapHeaderData MapParser::ParseMapHeaderData(const std::string& mapFilename) const
    {
       dtCore::RefPtr<MapHeaderHandler> handler = new MapHeaderHandler();
-      if (!ParseMapByToken(mapFilename, handler))
+      if (!ParseFileByToken(mapFilename, handler))
       {
          //error
          throw dtCore::MapParsingException( "Could not parse the Map's header data.", __FILE__, __LINE__);
@@ -562,45 +562,6 @@ namespace dtCore
    bool MapParser::HasDeprecatedProperty() const
    {
       return mMapHandler->HasDeprecatedProperty();
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
-   bool MapParser::ParseMapByToken(const std::string& mapFilename, BaseXMLHandler* handler) const
-   {
-      if (dtUtil::FileUtils::GetInstance().FileExists(mapFilename) == false)
-      {
-         throw dtCore::MapParsingException("Map file not found: "+mapFilename, __FILE__, __LINE__);
-      }
-
-      mXercesParser->setContentHandler(handler);
-      mXercesParser->setErrorHandler(handler);
-
-      XMLPScanToken token;
-      std::ifstream fileStream(mapFilename.c_str());
-      InputSourcefStream xerStream(fileStream);
-
-      if (!mXercesParser->parseFirst(xerStream, token))
-      {
-         return false;
-      }
-
-      while (mXercesParser->parseNext(token))
-      {
-         if (handler->HandledDesiredData())
-         {
-            //finished parsing the header data
-            break;
-         }
-      }
-
-      if (handler->HandledDesiredData() == false)
-      {
-         return false;
-      }
-
-      mXercesParser->parseReset(token);
-
-      return true;
    }
 
    //////////////////////////////////////////////////////////////////////////

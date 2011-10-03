@@ -199,6 +199,45 @@ namespace dtCore
       mParsing = parsing;
    }
 
+   ///////////////////////////////////////////////////////////////////////////////
+   bool BaseXMLParser::ParseFileByToken(const std::string& filename, BaseXMLHandler* handler) const
+   {
+      if (dtUtil::FileUtils::GetInstance().FileExists(filename) == false)
+      {
+         throw dtCore::XMLLoadParsingException("Could not find file to parse: " + filename, __FILE__, __LINE__);
+      }
+
+      mXercesParser->setContentHandler(handler);
+      mXercesParser->setErrorHandler(handler);
+
+      XMLPScanToken token;
+      std::ifstream fileStream(filename.c_str());
+      InputSourcefStream xerStream(fileStream);
+
+      if (!mXercesParser->parseFirst(xerStream, token))
+      {
+         return false;
+      }
+
+      while (mXercesParser->parseNext(token))
+      {
+         if (handler->HandledDesiredData())
+         {
+            //finished parsing the header data
+            break;
+         }
+      }
+
+      if (handler->HandledDesiredData() == false)
+      {
+         return false;
+      }
+
+      mXercesParser->parseReset(token);
+
+      return true;
+   }
+
    /////////////////////////////////////////////////////////////////
    /////////////////////////////////////////////////////////////////
 
@@ -280,7 +319,7 @@ namespace dtCore
    {
       XMLCh* attrsX = attributes.empty() ? NULL : XMLString::transcode(attributes.c_str());
       XMLCh* nameX = XMLString::transcode(name.c_str());
-      
+
       BeginElement(nameX, attrsX, closeImmediately);
 
       XMLString::release(&nameX);

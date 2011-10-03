@@ -88,7 +88,7 @@ namespace dtCore
           * file's header data. Will not create a Map nor anything contained in the Map.
           * @param mapFilename The Map file to parse
           * @return The parsed MapHeaderData
-          * @throws dtCore::MapParsingException if file can't be found, or any parsing errors
+          * @throws dtCore::XMLLoadParsingException if file can't be found, or any parsing errors
           */
          dtCore::MapHeaderData ParseMapHeaderData(const std::string& mapFilename) const;
 
@@ -114,8 +114,6 @@ namespace dtCore
    private:
       MapParser(const MapParser& copyParser);
       MapParser& operator=(const MapParser& assignParser);
-
-      bool ParseMapByToken(const std::string& mapFilename, BaseXMLHandler* handler) const;
 
       dtCore::RefPtr<MapContentHandler> mMapHandler;
    };

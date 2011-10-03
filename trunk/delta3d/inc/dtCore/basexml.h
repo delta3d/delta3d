@@ -98,6 +98,8 @@ namespace dtCore
 
       void SetParsing(bool parsing);
 
+      bool ParseFileByToken(const std::string& filename, BaseXMLHandler* handler) const;
+
       virtual ~BaseXMLParser();
 
    public:
