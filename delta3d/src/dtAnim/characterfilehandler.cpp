@@ -196,7 +196,7 @@ void CharacterFileHandler::HandleEventAttributes(const std::string& elementName,
       if (iter != attrs.end())
       {
          std::string eventName = iter->second;
-         
+
          if (elementName == CFE::EVENT_ON_START_ELEMENT)
          {
             animatable->mEventTimeMap.insert(std::make_pair(eventName, 0.0f));
@@ -219,6 +219,8 @@ void CharacterFileHandler::HandleEventAttributes(const std::string& elementName,
 void CharacterFileHandler::startElement( const XMLCh* const uri,const XMLCh* const localname,
                                                  const XMLCh* const qname, const XERCES_CPP_NAMESPACE_QUALIFIER Attributes& attrs )
 {
+   dtCore::BaseXMLHandler::startElement(uri, localname, qname, attrs);
+
    dtUtil::XMLStringConverter elementName(localname);
    std::string elementStr = elementName.ToString();
 
@@ -420,9 +422,6 @@ void CharacterFileHandler::startElement( const XMLCh* const uri,const XMLCh* con
    {
       mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__, errorString);
    }
-
-   //push elemet
-   mElements.push(elementStr);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -430,7 +429,6 @@ void CharacterFileHandler::endElement(const XMLCh* const uri,
                                       const XMLCh* const localname,
                                       const XMLCh* const qname)
 {
-
    if (mElements.empty())
    {
       mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
@@ -440,13 +438,15 @@ void CharacterFileHandler::endElement(const XMLCh* const uri,
       return;
    }
 
-   const char* lname = mElements.top().c_str();
+   const char* lname = dtUtil::XMLStringConverter(mElements.top().c_str()).ToString().c_str();
 
    if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
    {
       mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__,
                            "Ending element: \"%s\"", lname);
    }
+
+   dtCore::BaseXMLHandler::endElement(uri, localname, qname);
 
    std::string elementStr = dtUtil::XMLStringConverter(localname).ToString();
 
@@ -474,8 +474,6 @@ void CharacterFileHandler::endElement(const XMLCh* const uri,
    {
       mInSequenceChild = false;
    }
-
-   mElements.pop();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -518,7 +516,7 @@ void CharacterFileHandler::CombinedCharacters(const XMLCh* const chars, size_t l
 ////////////////////////////////////////////////////////////////////////////////
 void CharacterFileHandler::SkinningShaderCharacters(const XMLCh* const chars)
 {
-   std::string& topEl = mElements.top();
+   const std::string& topEl = dtUtil::XMLStringConverter(mElements.top().c_str()).ToString();
    if (topEl == CFE::SHADER_GROUP_ELEMENT)
    {
       mShaderGroup = dtUtil::XMLStringConverter(chars).ToString();
@@ -536,7 +534,7 @@ void CharacterFileHandler::SkinningShaderCharacters(const XMLCh* const chars)
 ////////////////////////////////////////////////////////////////////////////////
 void CharacterFileHandler::LODCharacters(const XMLCh* const chars)
 {
-   std::string& topEl = mElements.top();
+   const std::string& topEl = dtUtil::XMLStringConverter(mElements.top().c_str()).ToString();
 
    double value = dtUtil::ToType<double>(dtUtil::XMLStringConverter(chars).ToString());
 
@@ -557,7 +555,7 @@ void CharacterFileHandler::LODCharacters(const XMLCh* const chars)
 ////////////////////////////////////////////////////////////////////////////////
 void CharacterFileHandler::ScaleCharacters(const XMLCh* const chars)
 {
-   std::string& topEl = mElements.top();
+   const std::string& topEl = dtUtil::XMLStringConverter(mElements.top().c_str()).ToString();
    if (topEl == CFE::SCALE_FACTOR_ELEMENT)
    {
       mScale = dtUtil::ToType<float>(dtUtil::XMLStringConverter(chars).ToString());
@@ -569,7 +567,7 @@ bool CharacterFileHandler::AnimatableCharacters(const XMLCh* const chars, Animat
 {
    bool result = true;
 
-   std::string& topEl = mElements.top();
+   const std::string& topEl = dtUtil::XMLStringConverter(mElements.top().c_str()).ToString();
 
    if (topEl == CFE::NAME_ELEMENT)
    {
@@ -611,7 +609,7 @@ bool CharacterFileHandler::AnimatableCharacters(const XMLCh* const chars, Animat
 ////////////////////////////////////////////////////////////////////////////////
 void CharacterFileHandler::AnimChannelCharacters(const XMLCh* const chars)
 {
-   std::string& topEl = mElements.top();
+   const std::string& topEl = dtUtil::XMLStringConverter(mElements.top().c_str()).ToString();
    AnimationChannelStruct& pChannel = mAnimationChannels.back();
 
    if (!AnimatableCharacters(chars, pChannel))
@@ -653,7 +651,7 @@ void CharacterFileHandler::AnimChannelCharacters(const XMLCh* const chars)
 ////////////////////////////////////////////////////////////////////////////////
 void CharacterFileHandler::AnimSequenceCharacters(const XMLCh* const chars)
 {
-   std::string& topEl = mElements.top();
+   const std::string& topEl = dtUtil::XMLStringConverter(mElements.top().c_str()).ToString();
    AnimationSequenceStruct& pSequence = mAnimationSequences.back();
 
    if (mElements.empty())
@@ -687,10 +685,10 @@ void CharacterFileHandler::AnimSequenceCharacters(const XMLCh* const chars)
 ////////////////////////////////////////////////////////////////////////////////
 void CharacterFileHandler::AnimSequenceChildCharacters(const XMLCh* const chars)
 {
-   std::string& topEl = mElements.top();
+   const std::string& topEl = dtUtil::XMLStringConverter(mElements.top().c_str()).ToString();
    AnimationSequenceStruct& sequence = mAnimationSequences.back();
    AnimatableOverrideStruct* curStruct = NULL;
-   
+
    if ( ! sequence.GetChildren().empty())
    {
       curStruct = &sequence.GetChildren().back();
