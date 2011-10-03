@@ -42,25 +42,25 @@
 #   pragma warning(pop)
 #endif
 
-#include <osgDB/FileNameUtils>
-
+#include <dtCore/exceptionenum.h>
+#include <dtCore/map.h>
+#include <dtCore/mapxmlconstants.h>
 #include <dtCore/transformable.h>
 #include <dtCore/transform.h>
 
 #include <dtDirector/director.h>
+#include <dtDirector/directorheaderhandler.h>
 #include <dtDirector/directorxml.h>
 #include <dtDirector/node.h>
 #include <dtDirector/nodetype.h>
-
-#include <dtCore/map.h>
-#include <dtCore/exceptionenum.h>
-#include <dtCore/mapxmlconstants.h>
 
 #include <dtUtil/datapathutils.h>
 #include <dtUtil/fileutils.h>
 #include <dtUtil/datetime.h>
 #include <dtUtil/xercesutils.h>
 #include <dtUtil/log.h>
+
+#include <osgDB/FileNameUtils>
 
 #include <iostream>
 #include <fstream>
@@ -214,7 +214,20 @@ namespace dtDirector
 
       return mDirectorHandler->GetScriptType();
    }
-   
+
+   ///////////////////////////////////////////////////////////////////////////////
+   dtDirector::DirectorHeaderData DirectorParser::ParseDirectorHeaderData(const std::string& directorFilename) const
+   {
+      dtCore::RefPtr<DirectorHeaderHandler> handler = new DirectorHeaderHandler();
+      if (!ParseFileByToken(directorFilename, handler))
+      {
+         //error
+         throw dtCore::MapParsingException( "Could not parse the Director's header data.", __FILE__, __LINE__);
+      }
+
+      return handler->GetHeaderData();
+   }
+
    /////////////////////////////////////////////////////////////////
    const std::set<std::string>& DirectorParser::GetMissingNodeTypes()
    {
@@ -295,14 +308,14 @@ namespace dtDirector
                   AddCharacters(utcTime);
                }
                EndElement(); // End Last Update Timestamp Element.
-               
+
                // Editor version.
                BeginElement(dtCore::MapXMLConstants::EDITOR_VERSION_ELEMENT);
                {
                   AddCharacters(std::string(dtCore::MapXMLConstants::EDITOR_VERSION));
                }
                EndElement(); // End Editor Version Element.
-               
+
                // Schema Version.
                BeginElement(dtCore::MapXMLConstants::SCHEMA_VERSION_ELEMENT);
                {
