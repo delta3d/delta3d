@@ -106,7 +106,7 @@ namespace dtCore
       void SetWind(osg::Vec2 wv);
 
       ///Sets the Wind Vector (speed and direction) on the Cloud Plane
-      void SetWind(float x, float y);      
+      void SetWind(float x, float y);
 
       osg::Vec2 GetWind() const {return mWind;}
 

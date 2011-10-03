@@ -160,10 +160,10 @@ namespace dtCore
       const dtUtil::DateTime& GetDateTime() const;
       dtUtil::DateTime& GetDateTime();
 
-      /** 
+      /**
         * Set whether we use the System's simulation time for the environment
         * or a static value.
-        * @param useSimTime If true, the Environment's time will be kept in sync with the 
+        * @param useSimTime If true, the Environment's time will be kept in sync with the
         * dtCore::System Simulation time. False will keep a static time.
         * @see dtCore::System::GetSimulationClockTime()
         * @see SetDateTime()
@@ -194,7 +194,7 @@ namespace dtCore
 
       /** Replace the internal Group node that contains all the added Drawable
         * children with the supplied.  This will add all previously added children
-        * to the new node.  
+        * to the new node.
         * @param pNode The new Group node to use as the parent of all added Drawables.
         * @see AddChid()
         */
@@ -225,7 +225,7 @@ namespace dtCore
       {
          struct TableEntry
          {
-            TableEntry() 
+            TableEntry()
                : ind(0.0)
                , dep(0.0)
             {
@@ -233,7 +233,7 @@ namespace dtCore
 
             TableEntry(double independent, double dependent)
                : ind(independent)
-               , dep(dependent) 
+               , dep(dependent)
             {
             }
 
