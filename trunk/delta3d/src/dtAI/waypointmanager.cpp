@@ -37,7 +37,7 @@
 #include <exception>
 #include <algorithm>
 
-#include <osgDB\fstream>
+#include <osgDB/fstream>
 
 namespace dtAI
 {
