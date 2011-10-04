@@ -34,7 +34,7 @@
 #include <dtUtil/datastream.h>
 #include <dtUtil/exception.h>
 
-#include <osgDB\fstream>
+#include <osgDB/fstream>
 
 namespace dtAI
 {
