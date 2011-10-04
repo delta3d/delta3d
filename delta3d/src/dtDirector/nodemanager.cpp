@@ -34,7 +34,7 @@
 namespace dtDirector
 {
    static const std::string NODE_LIBRARY("dtDirectorNodes");
-   
+
    // Singleton global variable for the library manager.
    dtCore::RefPtr<NodeManager> NodeManager::mInstance(NULL);
 
@@ -114,9 +114,9 @@ namespace dtDirector
       }
 
       dtUtil::LibrarySharingManager& lsm = dtUtil::LibrarySharingManager::GetInstance();
-        
+
       RegistryEntry newEntry;
-        
+
       try
       {
          newEntry.lib = lsm.LoadSharedLibrary(libName);
@@ -128,7 +128,7 @@ namespace dtDirector
          msg << "Unable to load node registry " << libName;
          throw dtCore::ProjectResourceErrorException(msg.str(), __FILE__, __LINE__);
       }
-        
+
       dtUtil::LibrarySharingManager::LibraryHandle::SYMBOL_ADDRESS createFn;
       dtUtil::LibrarySharingManager::LibraryHandle::SYMBOL_ADDRESS destroyFn;
       createFn = newEntry.lib->FindSymbol("CreatePluginRegistry");
@@ -190,11 +190,11 @@ namespace dtDirector
       std::vector<dtCore::RefPtr<const NodeType> > nodeTypes;
       entry.registry->RegisterNodeTypes();
       entry.registry->GetSupportedNodeTypes(nodeTypes);
-      
+
       NodePluginRegistry::NodeTypeReplacements replacements;
       entry.registry->GetReplacementNodeTypes(replacements);
       mReplacementNodes.insert(mReplacementNodes.end(), replacements.begin(), replacements.end());
-      
+
       int numUniqueActors = 0;
       for (unsigned int i = 0; i < nodeTypes.size(); i++)
       {
@@ -288,12 +288,12 @@ namespace dtDirector
    ///////////////////////////////////////////////////////////////////////////////
    dtCore::RefPtr<Node> NodeManager::CreateNode(const NodeType& nodeType, DirectorGraph* graph)
    {
-      NodePluginRegistry* apr = GetRegistryForType(nodeType); 
+      NodePluginRegistry* apr = GetRegistryForType(nodeType);
 
       if (dtUtil::Log::GetInstance().IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
       {
-         dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, 
-            "Creating node of type \"%s\".", 
+         dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+            "Creating node of type \"%s\".",
             nodeType.GetFullName().c_str());
       }
 
@@ -309,9 +309,9 @@ namespace dtDirector
       dtCore::RefPtr<const NodeType> type = FindNodeType(name, category);
       if(!type.valid())
       {
-         dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__, 
-            "No node exists of the specified name \"%s\" and category \"%s\".", 
-            name.c_str(), category.c_str());
+         dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
+            "No node exists of the specified name \"%s\" (%s) and category \"%s\".",
+            name.c_str(), graph->GetDirector()->GetScriptName().c_str(), category.c_str());
          return NULL;
       }
 
@@ -326,11 +326,11 @@ namespace dtDirector
          for (RegistryMapItor i = mRegistries.begin(); i != mRegistries.end(); ++i)
          {
             dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-                              "Node manager has loaded registry library \"%s\"", 
+                              "Node manager has loaded registry library \"%s\"",
                               i->first.c_str());
-         }          
+         }
       }
-       
+
       RegistryMapItor itor = mRegistries.find(name);
 
       if (itor == mRegistries.end())
@@ -344,7 +344,7 @@ namespace dtDirector
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   NodePluginRegistry *NodeManager::GetRegistryForType(const NodeType& nodeType) 
+   NodePluginRegistry *NodeManager::GetRegistryForType(const NodeType& nodeType)
    {
       std::ostringstream error;
 
@@ -360,7 +360,7 @@ namespace dtDirector
          throw dtCore::ObjectFactoryUnknownTypeException(error.str(), __FILE__, __LINE__);
       }
 
-      return found->second;        
+      return found->second;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -382,7 +382,7 @@ namespace dtDirector
    {
       if (libName == NODE_LIBRARY)
       {
-         dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, 
+         dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
             "Unloading the default director node library \"%s\".", NODE_LIBRARY.c_str());
       }
 
@@ -390,8 +390,8 @@ namespace dtDirector
 
       if (regItor == mRegistries.end())
       {
-         dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__, 
-            "Attempted to unload director node registry \"%s\" which was not loaded.", 
+         dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
+            "Attempted to unload director node registry \"%s\" which was not loaded.",
             libName.c_str());
          return;
       }
@@ -452,7 +452,7 @@ namespace dtDirector
    {
       return dtUtil::LibrarySharingManager::GetPlatformSpecificLibraryName(libBase);
    }
-   
+
    ///////////////////////////////////////////////////////////////////////////////
    std::string NodeManager::GetPlatformIndependentLibraryName(const std::string &libName)
    {
@@ -463,7 +463,7 @@ namespace dtDirector
    bool NodeManager::LoadOptionalNodeRegistry(const std::string &libName)
    {
       const std::string actualLibName = GetPlatformSpecificLibraryName(libName);
-      std::string fullLibraryName = osgDB::findLibraryFile(actualLibName);            
+      std::string fullLibraryName = osgDB::findLibraryFile(actualLibName);
 
       //If the file wasn't found using OSG paths, try the LibrarySharingManager's paths
       if (fullLibraryName.empty())
