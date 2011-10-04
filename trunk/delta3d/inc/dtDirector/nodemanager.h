@@ -54,7 +54,7 @@ namespace dtDirector
       /**
        * Function pointer to the create function implemented in the NodePlugin.
        */
-      typedef NodePluginRegistry *(*CreatePluginRegistryFn)();
+      typedef NodePluginRegistry* (*CreatePluginRegistryFn)();
 
       /**
        * Function pointer to the destroy function implemented in the NodePlugin.
@@ -88,12 +88,12 @@ namespace dtDirector
       /**
        * Gets the singleton instance of the NodeManager.
        */
-      static NodeManager &GetInstance();
+      static NodeManager& GetInstance();
 
       /**
        * Loads a node registry by loading a dynamic library
        * containing the node registry implementation.
-       * @note The library file must contain two exported "C" methods: 
+       * @note The library file must contain two exported "C" methods:
        * "CreatePluginRegistry" and "DestroyPluginRegistry".  See NodePluginRegistry
        * for more information.
        *
@@ -106,7 +106,7 @@ namespace dtDirector
        *              library cannot be found or the create and destroy
        *              functions are not found in the library.
        */
-      bool LoadNodeRegistry(const std::string &libName);
+      bool LoadNodeRegistry(const std::string& libName);
 
       /**
        * Inserts the pair of parameters into the container.
@@ -117,7 +117,7 @@ namespace dtDirector
        *
        * @return              true if successfully added, false if not
        */
-      bool AddRegistryEntry(const std::string &libName, const RegistryEntry& entry);
+      bool AddRegistryEntry(const std::string& libName, const RegistryEntry& entry);
 
       /**
        * Unloads a node registry.  This unloads the dynamic library
@@ -126,7 +126,7 @@ namespace dtDirector
        *
        * @param[in]  libName  The system independent name of the library to load.
        */
-      void UnloadNodeRegistry(const std::string &libName);
+      void UnloadNodeRegistry(const std::string& libName);
 
       /**
        * Retrieves whether the library is already in the registry.
@@ -135,7 +135,7 @@ namespace dtDirector
        *
        * @return  True if the library is in the registry.
        */
-      bool IsInRegistry(const std::string &libName) const;
+      bool IsInRegistry(const std::string& libName) const;
 
       /**
        * Retrieves the libraries node type (retrieved from the
@@ -172,7 +172,7 @@ namespace dtDirector
        */
       const NodeType* FindNodeType(const dtCore::DataType& dataType);
 
-      /** 
+      /**
        *  Given the supplied NodeType full name, see if an NodeType
        *  replacement has been registered.
        *
@@ -221,7 +221,7 @@ namespace dtDirector
        *
        * @return  A handle to the registry or NULL if it is not currently loaded.
        */
-      NodePluginRegistry *GetRegistry(const std::string &name);
+      NodePluginRegistry *GetRegistry(const std::string& name);
 
       /**
        * Retrieves the registry for a specified node type.
@@ -253,7 +253,7 @@ namespace dtDirector
        *  library name would be ExampleActors.dll, however, on Unix based
        *  platforms, the resulting name would be libExampleActors.so.
        */
-      std::string GetPlatformSpecificLibraryName(const std::string &libBase);
+      std::string GetPlatformSpecificLibraryName(const std::string& libBase);
 
       /**
        * Strips off the path and platform specific library prefix and extensions
@@ -263,7 +263,7 @@ namespace dtDirector
        *
        * @return  A platform independent library name.
        */
-      std::string GetPlatformIndependentLibraryName(const std::string &libName);
+      std::string GetPlatformIndependentLibraryName(const std::string& libName);
 
     private:
 
@@ -286,14 +286,14 @@ namespace dtDirector
        *
        * @return     false if the library failed to load.
        */
-      bool LoadOptionalNodeRegistry(const std::string &libName);
+      bool LoadOptionalNodeRegistry(const std::string& libName);
 
       /// Singleton instance of the class.
       static dtCore::RefPtr<NodeManager> mInstance;
 
       /// Maps an actor type to the registry that created it.
       NodeTypeMap mNodes;
-      
+
       NodePluginRegistry::NodeTypeReplacements mReplacementNodes;
 
       /// List of the currently loaded actor registries.
