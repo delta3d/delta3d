@@ -258,6 +258,7 @@ namespace dtDirector
          try
          {
             director->mLoading = true;
+            director->mScriptName = fileName;
 
             if (binaryFormat)
             {
@@ -299,7 +300,7 @@ namespace dtDirector
       }
 
       director->mLoading = false;
-      director->mScriptName = fileName;
+
 
       // If we are caching this script, and it is not already cached,
       // then we should create a clone of this script to be stored in cache.
