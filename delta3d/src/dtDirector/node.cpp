@@ -1000,6 +1000,20 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
+   const ValueLink* Node::GetValueLink(const std::string& name) const
+   {
+      int count = (int)mValues.size();
+      for (int index = 0; index < count; index++)
+      {
+         if (mValues[index].GetName() == name)
+         {
+            return &mValues[index];
+         }
+      }
+
+      return NULL;
+   }
+   //////////////////////////////////////////////////////////////////////////
    ValueLink* Node::GetValueLink(const std::string& name)
    {
       int count = (int)mValues.size();

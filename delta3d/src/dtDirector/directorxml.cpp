@@ -684,7 +684,7 @@ namespace dtDirector
                }
 
                // Links.
-               std::vector<ValueNode*>& links = value.GetLinks();
+               const std::vector<ValueNode*>& links = value.GetLinks();
                for (int linkIndex = 0; linkIndex < (int)links.size(); linkIndex++)
                {
                   dtCore::RefPtr<ValueNode> link = links[linkIndex];

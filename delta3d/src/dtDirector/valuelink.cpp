@@ -245,7 +245,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   dtCore::ActorProperty* ValueLink::GetDefaultProperty()
+   dtCore::ActorProperty* ValueLink::GetDefaultProperty() const
    {
       if (mRedirector) return mRedirector->GetDefaultProperty();
 
@@ -293,7 +293,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   std::string ValueLink::GetName()
+   std::string ValueLink::GetName() const
    {
       if (mRedirector)
       {
@@ -444,6 +444,14 @@ namespace dtDirector
       }
 
       return result;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   const std::vector<ValueNode*>& ValueLink::GetLinks() const
+   {
+      if (mRedirector) return mRedirector->GetLinks();
+
+      return mLinks;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
