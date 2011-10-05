@@ -188,7 +188,7 @@ namespace dtDirector
             std::string source = node->GetString("Name");
             dtDirector::ValueLink& link = node->GetValueLinks()[0];
 
-            std::vector<dtDirector::ValueNode*>& connectedLinks = link.GetLinks();
+            const std::vector<dtDirector::ValueNode*>& connectedLinks = link.GetLinks();
             int linkCount = (int)connectedLinks.size();
             if (!link.GetVisible())
             {

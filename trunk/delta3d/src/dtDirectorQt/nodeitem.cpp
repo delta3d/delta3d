@@ -1239,7 +1239,7 @@ namespace dtDirector
          for (int valIndex = 0; valIndex < valCount; ++valIndex)
          {
             ValueData& data = mValues[valIndex];
-            std::vector<ValueNode*>& nodes = data.link->GetLinks();
+            const std::vector<ValueNode*>& nodes = data.link->GetLinks();
             int nodeCount = (int)nodes.size();
             for (int nodeIndex = 0; nodeIndex < nodeCount; ++nodeIndex)
             {
@@ -1308,7 +1308,7 @@ namespace dtDirector
          for (int valIndex = 0; valIndex < valCount; ++valIndex)
          {
             ValueData& data = mValues[valIndex];
-            std::vector<ValueNode*>& nodes = data.link->GetLinks();
+            const std::vector<ValueNode*>& nodes = data.link->GetLinks();
             int nodeCount = (int)nodes.size();
             for (int nodeIndex = 0; nodeIndex < nodeCount; ++nodeIndex)
             {

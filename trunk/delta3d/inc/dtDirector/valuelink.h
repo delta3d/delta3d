@@ -130,7 +130,7 @@ namespace dtDirector
        *
        * @return  The default property.
        */
-      dtCore::ActorProperty* GetDefaultProperty();
+      dtCore::ActorProperty* GetDefaultProperty() const;
 
       /**
        * Sets the default property.
@@ -151,7 +151,7 @@ namespace dtDirector
        *
        * @return  The name of the link.
        */
-      std::string GetName();
+      std::string GetName() const;
 
       /**
        * Sets the name of the link.
@@ -256,6 +256,7 @@ namespace dtDirector
       /**
        * Retrieves the list of links.
        */
+      const std::vector<ValueNode*>& GetLinks() const;
       std::vector<ValueNode*>& GetLinks();
 
    private:

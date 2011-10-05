@@ -805,7 +805,7 @@ namespace dtDirector
             fwrite(&exposed, sizeof(bool), 1, file);
 
             // Links.
-            std::vector<ValueNode*>& links = value.GetLinks();
+            const std::vector<ValueNode*>& links = value.GetLinks();
             int linkCount = (int)links.size();
             fwrite(&linkCount, sizeof(int), 1, file);
             for (int linkIndex = 0; linkIndex < linkCount; linkIndex++)

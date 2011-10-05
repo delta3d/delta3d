@@ -538,6 +538,7 @@ namespace dtDirector
       InputLink* GetInputLink(const std::string& name);
       OutputLink* GetOutputLink(const std::string& name);
       ValueLink* GetValueLink(const std::string& name);
+      const ValueLink* GetValueLink(const std::string& name) const;
 
       /**
        * Triggers an output on this node.
