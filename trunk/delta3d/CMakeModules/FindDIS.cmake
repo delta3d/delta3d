@@ -33,6 +33,7 @@ FIND_PATH(DIS_CPPUTILS_INCLUDE_DIR DIS/DataStream.h
     $ENV{DIS_DIR}/include
     $ENV{DIS_DIR}
     ${DELTA3D_EXT_DIR}/inc
+    ${DELTA3D_EXT_DIR}/inc/DIS/CppUtils
     $ENV{DELTA_ROOT}/ext/inc
     $ENV{DELTA_ROOT}/../open-dis/CppUtils
     ~/Library/Frameworks
