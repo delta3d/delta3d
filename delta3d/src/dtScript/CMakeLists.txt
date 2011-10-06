@@ -34,9 +34,6 @@ SET_TARGET_PROPERTIES(${LIB_NAME}
 
 INCLUDE(ModuleInstall OPTIONAL)
 
-#little hack to get the .dll into /bin and .lib into /lib
 IF (MSVC_IDE)
-  SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES PREFIX "../../bin/")
-  SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES IMPORT_PREFIX "../")
   SET(CMAKE_SHARED_LINKER_FLAGS "/NODEFAULTLIB:python25_d /NODEFAULTLIB:python26_d /NODEFAULTLIB:python27_d") #ignore the auto-link library Python adds in
 ENDIF (MSVC_IDE)

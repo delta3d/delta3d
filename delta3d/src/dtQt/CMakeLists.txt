@@ -86,11 +86,8 @@ endif (X11_FOUND)
 
 INCLUDE(ModuleInstall OPTIONAL)
 
-#little hack to get the .dll into /bin and .lib into /lib
 IF (MSVC_IDE)
   SET_TARGET_PROPERTIES(${LIB_NAME}
                      PROPERTIES DEFINE_SYMBOL DT_QT_LIBRARY)
-  SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES PREFIX "../../bin/")
-  SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES IMPORT_PREFIX "../")
 ENDIF (MSVC_IDE)
 

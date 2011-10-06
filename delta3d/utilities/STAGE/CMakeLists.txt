@@ -71,12 +71,6 @@ SET_TARGET_PROPERTIES(${APP_NAME}
 
 INCLUDE(ModuleInstall OPTIONAL)
 
-#little hack to get the .dll into /bin and .lib into /lib
-IF (MSVC_IDE)
-  SET_TARGET_PROPERTIES(${APP_NAME} PROPERTIES PREFIX "../../bin/")
-  SET_TARGET_PROPERTIES(${APP_NAME} PROPERTIES IMPORT_PREFIX "../../lib/")
-ENDIF (MSVC_IDE)
-
 # export symbols so plugins get access
 SET_TARGET_PROPERTIES(${APP_NAME} PROPERTIES ENABLE_EXPORTS true)
 
