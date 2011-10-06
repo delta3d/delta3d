@@ -70,7 +70,8 @@ void EntityMap::SetEntityResource(const DIS::EntityType& eid,
    else
    {
       //add it
-      std::pair<RefActorType, dtCore::ResourceDescriptor> p(NULL,resource);
+      RefActorType refType = NULL;
+      std::pair<RefActorType, dtCore::ResourceDescriptor> p(refType,resource);
       mEntityMap.insert(EntityMapping::value_type(eid, p));
    }
 }
