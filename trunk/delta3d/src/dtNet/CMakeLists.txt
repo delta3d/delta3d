@@ -18,9 +18,3 @@ ADD_LIBRARY(${LIB_NAME} STATIC
 )
 
 INCLUDE(ModuleInstall OPTIONAL)
-
-#little hack to get the .dll into /bin and .lib into /lib
-IF (MSVC)
-  SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES PREFIX "/../../lib/")
-  SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES IMPORT_PREFIX "../")
-ENDIF (MSVC)

@@ -123,13 +123,6 @@ TARGET_LINK_LIBRARIES( ${EXP_HELP}
                        Comctl32
                       )
 
-
-#little hack to get the .dll into /bin and .lib into /lib
-IF (MSVC_IDE)
-  SET_TARGET_PROPERTIES(${EXP_HELP} PROPERTIES PREFIX "../../bin/")
-  SET_TARGET_PROPERTIES(${EXP_HELP} PROPERTIES IMPORT_PREFIX "../")
-ENDIF (MSVC_IDE)
-
 IF (MSVC)
   SET_TARGET_PROPERTIES(${EXP_HELP} PROPERTIES SUFFIX ".dlo")
 ENDIF (MSVC)

@@ -31,12 +31,8 @@ ADD_DEFINITIONS(-DZIP_STD)
 # OSG doesn't want the "lib" on the front
 SET(CMAKE_SHARED_MODULE_PREFIX "")
 
-#little hack to get the .dll into /bin and .lib into /lib
 IF (MSVC_IDE)
   SET_TARGET_PROPERTIES(${LIB_NAME}
                      PROPERTIES DEFINE_SYMBOL DT_UTIL_LIBRARY)
-
-  SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES PREFIX "../../bin/")
-  SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES IMPORT_PREFIX "../")
 ENDIF (MSVC_IDE)
 
