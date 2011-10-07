@@ -38,6 +38,9 @@ INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/utilities/Di
 qt4_wrap_cpp(MOC_SOURCES ${LIB_HEADERS})
 QT4_WRAP_UI(UI_SOURCES dialogeditor.ui)
 
+#put the binary into a "Director plugins" folder
+SETUP_PLUGIN_OUTPUT_DIRS(directorplugins)
+
 ADD_LIBRARY(${LIB_NAME} MODULE
    ${LIB_HEADERS}
    ${LIB_SOURCES}
@@ -60,11 +63,7 @@ TARGET_LINK_LIBRARIES( ${LIB_NAME}
 SET_TARGET_PROPERTIES(${LIB_NAME}
                      PROPERTIES DEFINE_SYMBOL DT_DIRECTOR_DIALOG_EDITOR_PLUGIN)
 
-#put the binary into a "Director plugins" folder
-SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin/directorplugins)
-
 #make sure that the debug build is the only one that gets built in the debug folder.
 IF (MSVC)
-  SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES OUTPUT_NAME ../${LIB_NAME})
   SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES DEBUG_OUTPUT_NAME ${LIB_NAME})
 ENDIF (MSVC)
