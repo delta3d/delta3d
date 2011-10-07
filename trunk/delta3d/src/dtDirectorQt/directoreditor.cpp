@@ -64,8 +64,7 @@
 #include <dtDAL/resourceactorproperty.h>
 
 #include <osgDB/FileNameUtils>
-#include <phonon/MediaObject> //for sounds
-
+#include <phonon/mediaobject.h>//for sounds
 namespace dtDirector
 {
    std::map<std::string, CustomEditorTool*> DirectorEditor::mCustomTools;
