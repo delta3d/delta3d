@@ -571,6 +571,9 @@ namespace dtDirector
    {
       dtCore::BaseXMLHandler::Reset();
 
+      mScriptType = "";
+      mFoundScriptType = false;
+
       mInHeaders = false;
       mInLibraries = false;
       mInValueNodes = false;
