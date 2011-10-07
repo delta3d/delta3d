@@ -52,8 +52,8 @@ Environment::Environment(const std::string& name)
    , mWindMaxSpeed(1.5f)
    , mCurrentWindSpeed(0.0f)
    , mDesiredWindSpeed(0.0f)
-   , mCurrentWindDirection(-osg::Y_AXIS)
    , mDesiredWindDirection(-osg::Y_AXIS)
+   , mCurrentWindDirection(-osg::Y_AXIS)
    , mUseSimTime(false)
 {
    RegisterInstance(this);
