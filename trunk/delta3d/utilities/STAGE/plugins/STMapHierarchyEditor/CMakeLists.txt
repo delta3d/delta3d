@@ -15,6 +15,9 @@ QT4_WRAP_UI(UI_SOURCES maphierarchyeditor.ui)
 QT4_WRAP_UI(UI_SOURCES nodebutton.ui)
 QT4_WRAP_UI(UI_SOURCES topbottomconnectornogap.ui)
 
+#put the binary into a "STAGE plugins" folder
+SETUP_PLUGIN_OUTPUT_DIRS(stplugins)
+
 ADD_LIBRARY(${LIB_NAME} MODULE
    ${LIB_HEADERS}
    ${LIB_SOURCES}
@@ -38,12 +41,8 @@ TARGET_LINK_LIBRARIES( ${LIB_NAME}
 SET_TARGET_PROPERTIES(${LIB_NAME}
    PROPERTIES DEFINE_SYMBOL STAGE_MAP_HIERARCHY_EDITOR_PLUGIN)
 
-#put the binary into a "STAGE plugins" folder
-SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin/stplugins)
-
 #make sure that the debug build is the only one that gets built in the debug folder.
 IF (MSVC)
-  SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES OUTPUT_NAME ../${LIB_NAME})
   SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES DEBUG_OUTPUT_NAME ${LIB_NAME})
 ENDIF (MSVC)  
 
