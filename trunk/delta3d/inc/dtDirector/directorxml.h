@@ -137,7 +137,7 @@ namespace dtDirector
        * @throws     ExceptionEnum::MapSaveError if any errors occur saving the file.
        */
       void Save(Director* director, const std::string& filePath);
-         
+
    protected:
       virtual ~DirectorWriter(); ///Protected destructor so that this could be subclassed.
 
@@ -156,6 +156,20 @@ namespace dtDirector
        * @param[in]  node  The Node.
        */
       void SaveNode(Node* node);
+
+      /**
+       *	Saves output to input link connections.
+       *
+       * @param[in]  script       The script to save.
+       */
+      void SaveChainLinks(dtDirector::Director* script);
+
+      /**
+       *	Saves value link connections.
+       *
+       * @param[in]  script  The script to save.
+       */
+      void SaveValueLinks(dtDirector::Director* script);
 
       //disable copy constructor
       DirectorWriter(const DirectorWriter& toCopy): BaseXMLWriter(toCopy) {}

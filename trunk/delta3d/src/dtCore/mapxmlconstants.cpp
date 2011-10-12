@@ -97,6 +97,14 @@ namespace dtCore
    XMLCh* MapXMLConstants::DIRECTOR_LINKS_VALUE_ELEMENT = NULL;
    XMLCh* MapXMLConstants::DIRECTOR_LINK_ELEMENT = NULL;
 
+   XMLCh* MapXMLConstants::DIRECTOR_LINK_CHAIN_CONNECTION = NULL;
+   XMLCh* MapXMLConstants::DIRECTOR_LINK_VALUE_CONNECTION = NULL;
+
+   XMLCh* MapXMLConstants::DIRECTOR_LINK_OUTPUT_OWNER_ELEMENT = NULL;
+   XMLCh* MapXMLConstants::DIRECTOR_LINK_INPUT_OWNER_ELEMENT = NULL;
+   XMLCh* MapXMLConstants::DIRECTOR_LINK_OUTPUT_NAME_ELEMENT = NULL;
+   XMLCh* MapXMLConstants::DIRECTOR_LINK_INPUT_NAME_ELEMENT = NULL;
+
    XMLCh* MapXMLConstants::DIRECTOR_LINK_VISIBLE_ELEMENT = NULL;
    XMLCh* MapXMLConstants::DIRECTOR_LINK_EXPOSED_ELEMENT = NULL;
    XMLCh* MapXMLConstants::DIRECTOR_LINK_VALUE_IS_OUT_ELEMENT = NULL;
@@ -235,6 +243,14 @@ namespace dtCore
       DIRECTOR_LINKS_VALUE_ELEMENT = xercesc::XMLString::transcode("valuelink");
       DIRECTOR_LINK_ELEMENT = xercesc::XMLString::transcode("link");
 
+      DIRECTOR_LINK_CHAIN_CONNECTION = xercesc::XMLString::transcode("chainLinkConnection");
+      DIRECTOR_LINK_VALUE_CONNECTION = xercesc::XMLString::transcode("valueLinkConnection");
+
+      DIRECTOR_LINK_OUTPUT_OWNER_ELEMENT = xercesc::XMLString::transcode("outputOwner");
+      DIRECTOR_LINK_INPUT_OWNER_ELEMENT = xercesc::XMLString::transcode("inputOwner");
+      DIRECTOR_LINK_OUTPUT_NAME_ELEMENT = xercesc::XMLString::transcode("outputName");
+      DIRECTOR_LINK_INPUT_NAME_ELEMENT = xercesc::XMLString::transcode("inputName");
+
       DIRECTOR_LINK_VISIBLE_ELEMENT = xercesc::XMLString::transcode("visible");
       DIRECTOR_LINK_EXPOSED_ELEMENT = xercesc::XMLString::transcode("exposed");
       DIRECTOR_LINK_VALUE_IS_OUT_ELEMENT = xercesc::XMLString::transcode("isout");
@@ -361,6 +377,14 @@ namespace dtCore
       xercesc::XMLString::release(&DIRECTOR_LINKS_OUTPUT_ELEMENT);
       xercesc::XMLString::release(&DIRECTOR_LINKS_VALUE_ELEMENT);
       xercesc::XMLString::release(&DIRECTOR_LINK_ELEMENT);
+
+      xercesc::XMLString::release(&DIRECTOR_LINK_CHAIN_CONNECTION);
+      xercesc::XMLString::release(&DIRECTOR_LINK_VALUE_CONNECTION);
+
+      xercesc::XMLString::release(&DIRECTOR_LINK_OUTPUT_OWNER_ELEMENT);
+      xercesc::XMLString::release(&DIRECTOR_LINK_INPUT_OWNER_ELEMENT);
+      xercesc::XMLString::release(&DIRECTOR_LINK_OUTPUT_NAME_ELEMENT);
+      xercesc::XMLString::release(&DIRECTOR_LINK_INPUT_NAME_ELEMENT);
 
       xercesc::XMLString::release(&DIRECTOR_LINK_VISIBLE_ELEMENT);
       xercesc::XMLString::release(&DIRECTOR_LINK_EXPOSED_ELEMENT);

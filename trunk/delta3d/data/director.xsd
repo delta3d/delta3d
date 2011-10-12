@@ -17,9 +17,11 @@
 
     <xsd:complexType name="DirectorType">
         <xsd:sequence>
-            <xsd:element name="header"      type="HeaderType"/>
-            <xsd:element name="libraries"   type="LibrariesType"/>
-            <xsd:element name="graph"       type="GraphType"/>
+            <xsd:element name="header"               type="HeaderType"/>
+            <xsd:element name="libraries"            type="LibrariesType"/>
+            <xsd:element name="graph"                type="GraphType"/>
+            <xsd:element name="chainLinkConnection"  minOccurs="0" maxOccurs="unbounded" type="ChainLinkConnectionType"/>
+            <xsd:element name="valueLinkConnection"  minOccurs="0" maxOccurs="unbounded" type="ValueLinkConnectionType"/>
         </xsd:sequence>
     </xsd:complexType>
 
@@ -31,7 +33,7 @@
             <!-- map won't validate unless the version number is correct -->
             <xsd:element name="schemaVersion"        type="xsd:string" fixed="1.0"/>
             <xsd:element name="scriptType"           type="xsd:string" minOccurs="0" maxOccurs="1"/>
-            <xsd:element name="inherits" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
+            <xsd:element name="importedScript" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
             <xsd:element name="property" minOccurs="0" maxOccurs="unbounded" type="PropertyType"/>
         </xsd:sequence>
     </xsd:complexType>
@@ -96,6 +98,23 @@
                     </xsd:sequence>
                 </xsd:complexType>
             </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="ChainLinkConnectionType">
+        <xsd:sequence>
+            <xsd:element name="outputOwner"   type="xsd:string"/>
+            <xsd:element name="inputOwner"    type="xsd:string"/>
+            <xsd:element name="outputName"    type="xsd:string"/>
+            <xsd:element name="inputName"     type="xsd:string"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="ValueLinkConnectionType">
+        <xsd:sequence>
+            <xsd:element name="outputOwner"   type="xsd:string"/>
+            <xsd:element name="inputOwner"    type="xsd:string"/>
+            <xsd:element name="outputName"    type="xsd:string"/>
         </xsd:sequence>
     </xsd:complexType>
 

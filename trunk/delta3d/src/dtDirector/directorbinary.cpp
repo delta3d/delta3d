@@ -35,7 +35,7 @@
 #include <dtUtil/datetime.h>
 #include <dtUtil/log.h>
 
-#define BINARY_SCRIPT_VERSION 2.0f
+#define BINARY_SCRIPT_VERSION 3.0f
 
 namespace dtDirector
 {
@@ -68,6 +68,12 @@ namespace dtDirector
          float version = ParseHeader(director, file);
 
          ParseGraph(version, director->GetGraphRoot(), file);
+
+         if (version >= 3.0f)
+         {
+            ParseChainConnections(director, file);
+            ParseValueConnections(director, file);
+         }
 
          LinkNodes(director);
          fclose(file);
@@ -379,26 +385,33 @@ namespace dtDirector
             link->SetVisible(visible);
          }
 
-         // Links.
-         int linkCount = 0;
-         fread(&linkCount, sizeof(int), 1, file);
-         for (int linkIndex = 0; linkIndex < linkCount; linkIndex++)
+         // Link connection data has been moved since version 3.0,
+         // see ParseChainConnections().
+         if (version < 3.0f)
          {
-            // Linked Node ID.
-            std::string linkedID = ParseString(file);
-
-            if (!linkedID.empty())
+            // Links.
+            int linkCount = 0;
+            fread(&linkCount, sizeof(int), 1, file);
+            for (int linkIndex = 0; linkIndex < linkCount; linkIndex++)
             {
-               // Linked Input Name.
-               std::string linkedName = ParseString(file);
+               // Linked Node ID.
+               std::string linkedID = ParseString(file);
 
-               if (link)
+               if (!linkedID.empty())
                {
-                  ToLinkData data;
-                  data.outputLink = link;
-                  data.linkNodeID = linkedID;
-                  data.linkToName = linkedName;
-                  mLinkList.push_back(data);
+                  // Linked Input Name.
+                  std::string linkedName = ParseString(file);
+
+                  if (link)
+                  {
+                     ToLinkData data;
+                     data.outputNodeID   = link->GetOwner()->GetID().ToString();
+                     data.inputNodeID    = linkedID;
+                     data.outputLinkName = link->GetName();
+                     data.inputLinkName  = linkedName;
+                     data.isValue        = false;
+                     mLinkList.push_back(data);
+                  }
                }
             }
          }
@@ -433,22 +446,62 @@ namespace dtDirector
             link->SetExposed(exposed);
          }
 
-         // Links.
-         int linkCount = 0;
-         fread(&linkCount, sizeof(int), 1, file);
-         for (int linkIndex = 0; linkIndex < linkCount; linkIndex++)
+         // Link connection data has been moved since version 3.0,
+         // see ParseValueConnections().
+         if (version < 3.0f)
          {
-            // Linked Node ID.
-            std::string linkedID = ParseString(file);
-
-            if (!linkedID.empty() && link)
+            // Links.
+            int linkCount = 0;
+            fread(&linkCount, sizeof(int), 1, file);
+            for (int linkIndex = 0; linkIndex < linkCount; linkIndex++)
             {
-               ToLinkData data;
-               data.valueLink  = link;
-               data.linkNodeID = linkedID;
-               mLinkList.push_back(data);
+               // Linked Node ID.
+               std::string linkedID = ParseString(file);
+
+               if (!linkedID.empty() && link)
+               {
+                  ToLinkData data;
+                  data.outputNodeID   = link->GetOwner()->GetID().ToString();
+                  data.inputNodeID    = linkedID;
+                  data.outputLinkName = link->GetName();
+                  data.isValue        = true;
+                  mLinkList.push_back(data);
+               }
             }
          }
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void BinaryParser::ParseChainConnections(Director* script, FILE* file)
+   {
+      int linkCount = 0;
+      fread(&linkCount, sizeof(int), 1, file);
+      for (int linkIndex = 0; linkIndex < linkCount; linkIndex++)
+      {
+         ToLinkData data;
+         data.outputNodeID   = ParseString(file);
+         data.inputNodeID    = ParseString(file);
+         data.outputLinkName = ParseString(file);
+         data.inputLinkName  = ParseString(file);
+         data.isValue = false;
+         mLinkList.push_back(data);
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void BinaryParser::ParseValueConnections(Director* script, FILE* file)
+   {
+      int linkCount = 0;
+      fread(&linkCount, sizeof(int), 1, file);
+      for (int linkIndex = 0; linkIndex < linkCount; linkIndex++)
+      {
+         ToLinkData data;
+         data.outputNodeID   = ParseString(file);
+         data.inputNodeID    = ParseString(file);
+         data.outputLinkName = ParseString(file);
+         data.isValue = true;
+         mLinkList.push_back(data);
       }
    }
 
@@ -516,30 +569,35 @@ namespace dtDirector
       int count = (int)mLinkList.size();
       for (int index = 0; index < count; index++)
       {
-         dtCore::RefPtr<Node> linkNode = director->GetNode(dtCore::UniqueId(mLinkList[index].linkNodeID), true);
+         dtCore::RefPtr<Node> outputNode = director->GetNode(dtCore::UniqueId(mLinkList[index].outputNodeID), true);
+         dtCore::RefPtr<Node> inputNode = director->GetNode(dtCore::UniqueId(mLinkList[index].inputNodeID), true);
 
-         // If we have both an ID and a name, we can link them.
-         if (linkNode.valid())
+         if (outputNode.valid() && inputNode.valid())
          {
             // Connect a value link to a value node.
-            if (mLinkList[index].valueLink)
+            if (mLinkList[index].isValue)
             {
-               ValueNode* valueNode = linkNode->AsValueNode();
-               if (!mLinkList[index].valueLink->Connect(valueNode))
+               ValueLink* link = outputNode->GetValueLink(mLinkList[index].outputLinkName);
+               ValueNode* valueNode = inputNode->AsValueNode();
+               if (link && valueNode)
                {
-                  // If the connection failed, it may require another link
-                  // connection before it can be made.  Add to the failed
-                  // list and try this again later.
-                  failedLinks.push_back(mLinkList[index]);
+                  if (!link->Connect(valueNode))
+                  {
+                     // If the connection failed, it may require another link
+                     // connection before it can be made.  Add to the failed
+                     // list and try this again later.
+                     failedLinks.push_back(mLinkList[index]);
+                  }
                }
             }
-            else if (!mLinkList[index].linkToName.empty())
+            // Connect chain links.
+            else
             {
-               // Connect an output link to an input link.
-               if (mLinkList[index].outputLink)
+               OutputLink* outputLink = outputNode->GetOutputLink(mLinkList[index].outputLinkName);
+               InputLink* inputLink = inputNode->GetInputLink(mLinkList[index].inputLinkName);
+               if (outputLink && inputLink)
                {
-                  InputLink* link = linkNode->GetInputLink(mLinkList[index].linkToName);
-                  if (link) link->Connect(mLinkList[index].outputLink);
+                  outputLink->Connect(inputLink);
                }
             }
          }
@@ -590,6 +648,9 @@ namespace dtDirector
          SaveHeader(director, file);
 
          SaveGraph(director->GetGraphRoot(), file);
+
+         SaveChainConnections(director, file);
+         SaveValueConnections(director, file);
 
          fclose(file);
       }
@@ -789,26 +850,26 @@ namespace dtDirector
             // Output Visibility.
             fwrite(&visible, sizeof(bool), 1, file);
 
-            // Links.
-            std::vector<InputLink*>& links = output.GetLinks();
-            int linkCount = (int)links.size();
-            fwrite(&linkCount, sizeof(int), 1, file);
-            for (int linkIndex = 0; linkIndex < linkCount; linkIndex++)
-            {
-               InputLink* link = links[linkIndex];
-               if (link)
-               {
-                  // Linked Node ID.
-                  SaveString(link->GetOwner()->GetID().ToString(), file);
+            //// Links.
+            //std::vector<InputLink*>& links = output.GetLinks();
+            //int linkCount = (int)links.size();
+            //fwrite(&linkCount, sizeof(int), 1, file);
+            //for (int linkIndex = 0; linkIndex < linkCount; linkIndex++)
+            //{
+            //   InputLink* link = links[linkIndex];
+            //   if (link)
+            //   {
+            //      // Linked Node ID.
+            //      SaveString(link->GetOwner()->GetID().ToString(), file);
 
-                  // Linked input name.
-                  SaveString(link->GetName(), file);
-               }
-               else
-               {
-                  SaveString("", file);
-               }
-            }
+            //      // Linked input name.
+            //      SaveString(link->GetName(), file);
+            //   }
+            //   else
+            //   {
+            //      SaveString("", file);
+            //   }
+            //}
          }
       }
 
@@ -844,21 +905,148 @@ namespace dtDirector
             bool exposed = value.GetExposed();
             fwrite(&exposed, sizeof(bool), 1, file);
 
-            // Links.
-            const std::vector<ValueNode*>& links = value.GetLinks();
-            int linkCount = (int)links.size();
-            fwrite(&linkCount, sizeof(int), 1, file);
-            for (int linkIndex = 0; linkIndex < linkCount; linkIndex++)
+            //// Links.
+            //const std::vector<ValueNode*>& links = value.GetLinks();
+            //int linkCount = (int)links.size();
+            //fwrite(&linkCount, sizeof(int), 1, file);
+            //for (int linkIndex = 0; linkIndex < linkCount; linkIndex++)
+            //{
+            //   ValueNode* link = links[linkIndex];
+            //   if (link)
+            //   {
+            //      // Linked Node ID.
+            //      SaveString(link->GetID().ToString(), file);
+            //   }
+            //   else
+            //   {
+            //      SaveString("", file);
+            //   }
+            //}
+         }
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void BinaryWriter::SaveChainConnections(Director* script, FILE* file)
+   {
+      std::vector<Node*> nodes;
+      script->GetAllNodes(nodes);
+
+      int linkCount = 0;
+      int count = (int)nodes.size();
+      for (int index = 0; index < count; ++index)
+      {
+         Node* node = nodes[index];
+         if (node)
+         {
+            std::vector<OutputLink>& outputs = node->GetOutputLinks();
+            for (int outputIndex = 0; outputIndex < (int)outputs.size(); outputIndex++)
             {
-               ValueNode* link = links[linkIndex];
-               if (link)
+               OutputLink& output = outputs[outputIndex];
+
+               std::vector<InputLink*>& links = output.GetLinks();
+               for (int linkIndex = 0; linkIndex < (int)links.size(); linkIndex++)
                {
-                  // Linked Node ID.
-                  SaveString(link->GetID().ToString(), file);
+                  InputLink* input = links[linkIndex];
+                  if (!input) continue;
+
+                  linkCount++;
                }
-               else
+            }
+         }
+      }
+
+      fwrite(&linkCount, sizeof(int), 1, file);
+
+      for (int index = 0; index < count; ++index)
+      {
+         Node* node = nodes[index];
+         if (node)
+         {
+            std::vector<OutputLink>& outputs = node->GetOutputLinks();
+            for (int outputIndex = 0; outputIndex < (int)outputs.size(); outputIndex++)
+            {
+               OutputLink& output = outputs[outputIndex];
+
+               std::vector<InputLink*>& links = output.GetLinks();
+               for (int linkIndex = 0; linkIndex < (int)links.size(); linkIndex++)
                {
-                  SaveString("", file);
+                  InputLink* input = links[linkIndex];
+                  if (!input) continue;
+
+                  // Output link owner.
+                  SaveString(output.GetOwner()->GetID().ToString(), file);
+
+                  // Input link owner.
+                  SaveString(input->GetOwner()->GetID().ToString(), file);
+
+                  // Output link name.
+                  SaveString(output.GetName(), file);
+
+                  // Input link name.
+                  SaveString(input->GetName(), file);
+               }
+            }
+         }
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void BinaryWriter::SaveValueConnections(Director* script, FILE* file)
+   {
+      std::vector<Node*> nodes;
+      script->GetAllNodes(nodes);
+
+      int linkCount = 0;
+      int count = (int)nodes.size();
+      for (int index = 0; index < count; ++index)
+      {
+         Node* node = nodes[index];
+         if (node)
+         {
+            std::vector<ValueLink>& outputs = node->GetValueLinks();
+            for (int outputIndex = 0; outputIndex < (int)outputs.size(); outputIndex++)
+            {
+               ValueLink& output = outputs[outputIndex];
+
+               std::vector<ValueNode*>& links = output.GetLinks();
+               for (int linkIndex = 0; linkIndex < (int)links.size(); linkIndex++)
+               {
+                  ValueNode* input = links[linkIndex];
+                  if (!input) continue;
+
+                  linkCount++;
+               }
+            }
+         }
+      }
+
+      fwrite(&linkCount, sizeof(int), 1, file);
+
+      for (int index = 0; index < count; ++index)
+      {
+         Node* node = nodes[index];
+         if (node)
+         {
+            std::vector<ValueLink>& outputs = node->GetValueLinks();
+            for (int outputIndex = 0; outputIndex < (int)outputs.size(); outputIndex++)
+            {
+               ValueLink& output = outputs[outputIndex];
+
+               std::vector<ValueNode*>& links = output.GetLinks();
+               for (int linkIndex = 0; linkIndex < (int)links.size(); linkIndex++)
+               {
+                  ValueNode* input = links[linkIndex];
+                  if (!input) continue;
+
+                  // Output link owner.
+                  SaveString(output.GetOwner()->GetID().ToString(), file);
+
+                  // Input link owner.
+                  SaveString(input->GetID().ToString(), file);
+
+                  // Output link name.
+                  SaveString(output.GetName(), file);
                }
             }
          }

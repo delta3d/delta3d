@@ -289,6 +289,24 @@ namespace dtDirector
          mGraphs.push(mDirector->GetGraphRoot());
          mPropSerializer->SetCurrentPropertyContainer(mGraphs.top());
       }
+      // Chain Link Connections.
+      else if (XMLString::compareString(localname, dtCore::MapXMLConstants::DIRECTOR_LINK_CHAIN_CONNECTION) == 0)
+      {
+         if (dtUtil::Log::GetInstance().IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+            dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found Chain Link Connection");
+
+         mInLink = true;
+         mInOutputLink = true;
+      }
+      // Value Link Connections.
+      else if (XMLString::compareString(localname, dtCore::MapXMLConstants::DIRECTOR_LINK_VALUE_CONNECTION) == 0)
+      {
+         if (dtUtil::Log::GetInstance().IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+            dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found Value Link Connection");
+
+         mInLink = true;
+         mInValueLink = true;
+      }
    }
 
    /////////////////////////////////////////////////////////////////
@@ -319,6 +337,14 @@ namespace dtDirector
          else
          {
             EndGraphSection(localname);
+         }
+      }
+      else if (mInLink)
+      {
+         if (XMLString::compareString(localname, dtCore::MapXMLConstants::DIRECTOR_LINK_CHAIN_CONNECTION) == 0 ||
+            XMLString::compareString(localname, dtCore::MapXMLConstants::DIRECTOR_LINK_VALUE_CONNECTION) == 0)
+         {
+            ClearLinkValues();
          }
       }
    }
@@ -437,28 +463,34 @@ namespace dtDirector
                      {
                         mLinkList.push_back(ToLinkData());
                         int index = (int)mLinkList.size() - 1;
-                        mLinkList[index].linkNodeID = mLinkNodeID;
-                        mLinkList[index].valueLink = mValueLink;
+                        mLinkList[index].outputNodeID = mValueLink->GetOwner()->GetID().ToString();
+                        mLinkList[index].inputNodeID = mLinkNodeID;
+                        mLinkList[index].outputLinkName = mValueLink->GetName();
+                        mLinkList[index].isValue = true;
                         mLinkNodeID.clear();
                      }
                      else if (!mLinkToName.empty())
                      {
                         mLinkList.push_back(ToLinkData());
                         int index = (int)mLinkList.size() - 1;
-                        mLinkList[index].linkNodeID = mLinkNodeID;
-                        mLinkList[index].linkToName = mLinkToName;
-                        mLinkNodeID.clear();
 
                         // Connect an input link to an output link.
                         if (mInputLink)
                         {
-                           mLinkList[index].inputLink = mInputLink;
+                           mLinkList[index].outputNodeID = mLinkNodeID;
+                           mLinkList[index].inputNodeID = mInputLink->GetOwner()->GetID().ToString();
+                           mLinkList[index].outputLinkName = mLinkToName;
+                           mLinkList[index].inputLinkName = mInputLink->GetName();
                         }
                         // Connect an output link to an input link.
                         else if (mOutputLink)
                         {
-                           mLinkList[index].outputLink = mOutputLink;
+                           mLinkList[index].outputNodeID = mOutputLink->GetOwner()->GetID().ToString();
+                           mLinkList[index].inputNodeID = mLinkNodeID;
+                           mLinkList[index].outputLinkName = mOutputLink->GetName();
+                           mLinkList[index].inputLinkName = mLinkToName;
                         }
+                        mLinkNodeID.clear();
                      }
                   }
                }
@@ -575,6 +607,40 @@ namespace dtDirector
             }
          }
       }
+      // Link Connections.
+      else if (mInLink)
+      {
+         if (topEl == dtCore::MapXMLConstants::DIRECTOR_LINK_OUTPUT_OWNER_ELEMENT)
+         {
+            mLinkOutputOwnerID = dtUtil::XMLStringConverter(chars).ToString();
+         }
+         else if (topEl == dtCore::MapXMLConstants::DIRECTOR_LINK_OUTPUT_NAME_ELEMENT)
+         {
+            mLinkOutputName = dtUtil::XMLStringConverter(chars).ToString();
+         }
+         else if (topEl == dtCore::MapXMLConstants::DIRECTOR_LINK_INPUT_OWNER_ELEMENT)
+         {
+            mLinkNodeID = dtUtil::XMLStringConverter(chars).ToString();
+         }
+         else if (topEl == dtCore::MapXMLConstants::DIRECTOR_LINK_INPUT_NAME_ELEMENT)
+         {
+            mLinkToName = dtUtil::XMLStringConverter(chars).ToString();
+         }
+
+         if (!mLinkOutputOwnerID.empty() &&
+            !mLinkOutputName.empty() &&
+            !mLinkNodeID.empty() &&
+            (mInValueLink || !mLinkToName.empty()))
+         {
+            mLinkList.push_back(ToLinkData());
+            int index = (int)mLinkList.size() - 1;
+            mLinkList[index].outputNodeID = mLinkOutputOwnerID;
+            mLinkList[index].inputNodeID = mLinkNodeID;
+            mLinkList[index].outputLinkName = mLinkOutputName;
+            mLinkList[index].inputLinkName = mLinkToName;
+            mLinkList[index].isValue = mInValueLink;
+         }
+      }
    }
 
    /////////////////////////////////////////////////////////////////
@@ -655,6 +721,8 @@ namespace dtDirector
    {
       mInLinkTo = false;
 
+      mLinkOutputOwnerID.clear();
+      mLinkOutputName.clear();
       mLinkNodeID.clear();
       mLinkToName.clear();
    }
@@ -817,36 +885,35 @@ namespace dtDirector
       int count = (int)mLinkList.size();
       for (int index = 0; index < count; index++)
       {
-         dtCore::RefPtr<Node> linkNode = mDirector->GetNode(dtCore::UniqueId(mLinkList[index].linkNodeID), true);
+         dtCore::RefPtr<Node> outputNode = mDirector->GetNode(dtCore::UniqueId(mLinkList[index].outputNodeID), true);
+         dtCore::RefPtr<Node> inputNode = mDirector->GetNode(dtCore::UniqueId(mLinkList[index].inputNodeID), true);
 
-         // If we have both an ID and a name, we can link them.
-         if (linkNode.valid())
+         if (outputNode.valid() && inputNode.valid())
          {
             // Connect a value link to a value node.
-            if (mLinkList[index].valueLink)
+            if (mLinkList[index].isValue)
             {
-               ValueNode* valueNode = linkNode->AsValueNode();
-               if (!mLinkList[index].valueLink->Connect(valueNode))
+               ValueLink* link = outputNode->GetValueLink(mLinkList[index].outputLinkName);
+               ValueNode* valueNode = inputNode->AsValueNode();
+               if (link && valueNode)
                {
-                  // If the connection failed, it may require another link
-                  // connection before it can be made.  Add to the failed
-                  // list and try this again later.
-                  failedLinks.push_back(mLinkList[index]);
+                  if (!link->Connect(valueNode))
+                  {
+                     // If the connection failed, it may require another link
+                     // connection before it can be made.  Add to the failed
+                     // list and try this again later.
+                     failedLinks.push_back(mLinkList[index]);
+                  }
                }
             }
-            else if (!mLinkList[index].linkToName.empty())
+            // Connect chain links.
+            else
             {
-               // Connect an input link to an output link.
-               if (mLinkList[index].inputLink)
+               OutputLink* outputLink = outputNode->GetOutputLink(mLinkList[index].outputLinkName);
+               InputLink* inputLink = inputNode->GetInputLink(mLinkList[index].inputLinkName);
+               if (outputLink && inputLink)
                {
-                  OutputLink* link = linkNode->GetOutputLink(mLinkList[index].linkToName);
-                  if (link) link->Connect(mLinkList[index].inputLink);
-               }
-               // Connect an output link to an input link.
-               else if (mLinkList[index].outputLink)
-               {
-                  InputLink* link = linkNode->GetInputLink(mLinkList[index].linkToName);
-                  if (link) link->Connect(mLinkList[index].outputLink);
+                  outputLink->Connect(inputLink);
                }
             }
          }
@@ -860,5 +927,7 @@ namespace dtDirector
          mLinkList = failedLinks;
          LinkNodes();
       }
+
+      mLinkList.clear();
    }
 }
