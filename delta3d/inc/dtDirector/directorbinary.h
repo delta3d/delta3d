@@ -63,7 +63,7 @@ namespace dtDirector
        * @throws MapLoadParseError if a fatal error occurs in the parsing.
        */
       void Parse(Director* director, dtCore::Map* map, const std::string& filePath);
-      
+
       /**
        * Parses the script type from the Director script file.
        *
@@ -84,6 +84,11 @@ namespace dtDirector
        * Retrieves all missing libraries.
        */
       const std::vector<std::string>& GetMissingLibraries();
+
+      /**
+       *	Retrieves all missing imported scripts.
+       */
+      const std::vector<std::string>& GetMissingImportedScripts();
 
       /**
        * Retrieves whether any loaded properties were deprecated.
@@ -172,6 +177,7 @@ namespace dtDirector
 
       std::vector<std::string> mMissingLibraries;
       std::set<std::string>    mMissingNodeTypes;
+      std::vector<std::string> mMissingImportedScripts;
       bool                     mHasDeprecatedProperty;
       std::string              mScriptType;
    };

@@ -44,7 +44,7 @@ namespace dtUtil
 }
 
 
-/** 
+/**
  * Provides a node-based hierarchy for script processing.
  */
 namespace dtDirector
@@ -169,6 +169,29 @@ namespace dtDirector
       const std::vector<dtCore::ObserverPtr<Director> >& GetChildren() const;
 
       /**
+       *	Imports a script into this one.
+       *
+       * @param[in]  scriptId  The resource id of the script to import.
+       *
+       * @return     Returns true on success.
+       */
+      bool ImportScript(const std::string& scriptId);
+
+      /**
+       *	Removes a script that was imported.
+       *
+       * @param[in]  scriptId  The resource id of the imported script to remove.
+       *
+       * return      Returns true on success.
+       */
+      bool RemoveImportedScript(const std::string& scriptId);
+
+      /**
+       *	Retrieves the list of inherited scripts.
+       */
+      const std::vector<dtCore::RefPtr<Director> >& GetImportedScriptList() const;
+
+      /**
        * Retrieves the script ID.
        *
        * @return  Script ID.
@@ -239,6 +262,11 @@ namespace dtDirector
       const std::vector<std::string>& GetMissingLibraries();
 
       /**
+       *	Retrieves all missing imported scripts.
+       */
+      const std::vector<std::string>& GetMissingImportedScripts();
+
+      /**
        * Retrieves whether any loaded properties were deprecated.
        */
       bool HasDeprecatedProperty() const;
@@ -264,6 +292,11 @@ namespace dtDirector
        *       to be removed.
        */
       virtual void BuildPropertyMap();
+
+      /**
+       *	Initializes the script when it starts.
+       */
+      virtual void OnStart();
 
       /**
        * Updates the Director.
@@ -457,12 +490,13 @@ namespace dtDirector
       /**
        * Retrieves a node of the given the id.
        *
-       * @param[in]  id  The id of the node.
+       * @param[in]  id                      The id of the node.
+       * @param[in]  includeImportedScripts  True to find nodes within all imported scripts as well.
        *
        * @return     A pointer to the node or NULL if not found.
        */
-      Node* GetNode(const dtCore::UniqueId& id);
-      const Node* GetNode(const dtCore::UniqueId& id) const;
+      Node* GetNode(const dtCore::UniqueId& id, bool includeImportedScripts = false);
+      const Node* GetNode(const dtCore::UniqueId& id, bool includeImportedScripts = false) const;
 
       /**
        * Retrieves a list of nodes that are of a certain type.
@@ -697,10 +731,13 @@ namespace dtDirector
       dtCore::ObserverPtr<Director> mParent;
       std::vector<dtCore::ObserverPtr<Director> > mChildren;
 
+      std::vector<dtCore::RefPtr<Director> > mImportedScriptList;
+
       dtCore::RefPtr<DirectorNotifier> mNotifier;
 
       std::set<std::string> mMissingNodeTypes;
       std::vector<std::string> mMissingLibraries;
+      std::vector<std::string> mMissingImportedScripts;
       bool mHasDeprecatedProperty;
       bool mIsCachedInstance;
 

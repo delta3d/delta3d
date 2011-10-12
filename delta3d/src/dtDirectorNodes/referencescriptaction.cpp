@@ -37,7 +37,7 @@ namespace dtDirector
       , mUseCache(true)
    {
       AddAuthor("Jeff P. Houde");
-      SetColorRGB(Colors::GREEN); 
+      SetColorRGB(Colors::GREEN);
 
       mScriptResource = dtDAL::ResourceDescriptor::NULL_RESOURCE;
       mCoreValueIndex = 0;
@@ -63,18 +63,7 @@ namespace dtDirector
    {
       if (mScript.valid())
       {
-         std::vector<Node*> nodes;
-         mScript->GetAllNodes(nodes);
-
-         int count = (int)nodes.size();
-         for (int index = 0; index < count; ++index)
-         {
-            Node* node = nodes[index];
-            if (node)
-            {
-               node->OnStart();
-            }
-         }
+         mScript->OnStart();
       }
    }
 
@@ -86,7 +75,7 @@ namespace dtDirector
       mCoreValueIndex = (int)mValues.size();
 
       dtDAL::BooleanActorProperty* cacheProp = new dtDAL::BooleanActorProperty(
-         "Use Cache", "Use Cache", 
+         "Use Cache", "Use Cache",
          dtDAL::BooleanActorProperty::SetFuncType(this, &ReferenceScriptAction::SetUseCache),
          dtDAL::BooleanActorProperty::GetFuncType(this, &ReferenceScriptAction::GetUseCache),
          "Whether this script should be saved and loaded from cached memory.");

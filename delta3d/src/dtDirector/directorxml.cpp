@@ -330,6 +330,8 @@ namespace dtDirector
                }
                EndElement();
 
+               // Inheritances
+
                // Properties.
                std::vector<const dtCore::ActorProperty*> propList;
                director->GetPropertyList(propList);

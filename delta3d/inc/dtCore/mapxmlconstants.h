@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- * 
+ *
  * David Guthrie
  */
 
@@ -58,6 +58,7 @@ namespace dtCore
          static XMLCh* DIRECTOR_ELEMENT;
          static XMLCh* DIRECTOR_NAMESPACE;
          static XMLCh* DIRECTOR_SCRIPT_TYPE;
+         static XMLCh* DIRECTOR_IMPORTED_SCRIPT;
 
          static XMLCh* HEADER_ELEMENT;
          static XMLCh* NAME_ELEMENT;
@@ -94,7 +95,7 @@ namespace dtCore
          static XMLCh* DIRECTOR_LINKS_OUTPUT_ELEMENT;
          static XMLCh* DIRECTOR_LINKS_VALUE_ELEMENT;
          static XMLCh* DIRECTOR_LINK_ELEMENT;
-         
+
          static XMLCh* DIRECTOR_LINK_VISIBLE_ELEMENT;
          static XMLCh* DIRECTOR_LINK_EXPOSED_ELEMENT;
          static XMLCh* DIRECTOR_LINK_VALUE_IS_OUT_ELEMENT;

@@ -32,6 +32,7 @@ SET(LIB_PUBLIC_HEADERS ${HEADER_PATH}/actionitem.h
     ${HEADER_PATH}/graphbrowser.h
     ${HEADER_PATH}/graphtabs.h
     ${HEADER_PATH}/groupitem.h
+    ${HEADER_PATH}/importeditor.h
     ${HEADER_PATH}/libraryeditor.h
     ${HEADER_PATH}/linkitem.h
     ${HEADER_PATH}/lockitem.h
@@ -70,6 +71,7 @@ SET(LIB_SOURCES ${SOURCE_PATH}/actionitem.cpp
     ${SOURCE_PATH}/graphbrowser.cpp
     ${SOURCE_PATH}/graphtabs.cpp
     ${SOURCE_PATH}/groupitem.cpp
+    ${SOURCE_PATH}/importeditor.cpp
     ${SOURCE_PATH}/libraryeditor.cpp
     ${SOURCE_PATH}/linkitem.cpp
     ${SOURCE_PATH}/lockitem.cpp

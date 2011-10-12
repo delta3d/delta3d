@@ -90,7 +90,7 @@ namespace dtDirector
        *             if not found.
        */
       DirectorGraph* GetGraph(const dtCore::UniqueId& id);
-      
+
       /**
        * Retrieves a node of the given ID.
        *

@@ -35,7 +35,7 @@
 #include <dtUtil/datetime.h>
 #include <dtUtil/log.h>
 
-#define BINARY_SCRIPT_VERSION 1.0f
+#define BINARY_SCRIPT_VERSION 2.0f
 
 namespace dtDirector
 {
@@ -89,7 +89,7 @@ namespace dtDirector
          throw dtUtil::Exception( std::string("Unknown exception loading Director script \"") + filePath + ("\"."), __FILE__, __LINE__);
       }
    }
-   
+
    /////////////////////////////////////////////////////////////////
    const std::string& BinaryParser::ParseScriptType(const std::string& filePath)
    {
@@ -139,6 +139,12 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   const std::vector<std::string>& BinaryParser::GetMissingImportedScripts()
+   {
+      return mMissingImportedScripts;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    bool BinaryParser::HasDeprecatedProperty() const
    {
       return mHasDeprecatedProperty;
@@ -185,8 +191,26 @@ namespace dtDirector
          throw dtUtil::Exception("Attempted to load an invalid script type.", __FILE__, __LINE__);
       }
 
-      // Node Libraries.
       int count = 0;
+
+      // Imported Scripts.
+      if (version >= 2.0f)
+      {
+         fread(&count, sizeof(int), 1, file);
+         for (int index = 0; index < count; ++index)
+         {
+            std::string scriptId = ParseString(file);
+            if (!scriptId.empty())
+            {
+               if (!director->ImportScript(scriptId))
+               {
+                  mMissingImportedScripts.push_back(scriptId);
+               }
+            }
+         }
+      }
+
+      // Node Libraries.
       fread(&count, sizeof(int), 1, file);
       for (int index = 0; index < count; ++index)
       {
@@ -492,7 +516,7 @@ namespace dtDirector
       int count = (int)mLinkList.size();
       for (int index = 0; index < count; index++)
       {
-         dtCore::RefPtr<Node> linkNode = director->GetNode(dtCore::UniqueId(mLinkList[index].linkNodeID));
+         dtCore::RefPtr<Node> linkNode = director->GetNode(dtCore::UniqueId(mLinkList[index].linkNodeID), true);
 
          // If we have both an ID and a name, we can link them.
          if (linkNode.valid())
@@ -619,9 +643,24 @@ namespace dtDirector
       // Script type.
       SaveString(director->GetScriptType(), file);
 
+      int count = (int)director->GetImportedScriptList().size();
+      fwrite(&count, sizeof(int), 1, file);
+
+      for (int index = 0; index < count; ++index)
+      {
+         std::string scriptId = "";
+         dtDirector::Director* script = director->GetImportedScriptList()[index];
+         if (script)
+         {
+            scriptId = script->GetResource().GetResourceIdentifier();
+         }
+
+         SaveString(scriptId, file);
+      }
+
       // Node Libraries.
       const std::vector<std::string>& libs = director->GetAllLibraries();
-      int count = (int)libs.size();
+      count = (int)libs.size();
       fwrite(&count, sizeof(int), 1, file);
 
       for (int index = 0; index < count; ++index)
@@ -722,7 +761,7 @@ namespace dtDirector
             SaveString(input.GetName(), file);
          }
       }
-      
+
       // Output Links.
       std::vector<OutputLink>& outputs = node->GetOutputLinks();
       count = (int)outputs.size();

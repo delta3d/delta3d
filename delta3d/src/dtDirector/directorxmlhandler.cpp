@@ -351,6 +351,17 @@ namespace dtDirector
                   throw dtUtil::Exception("Attempted to load an invalid script type.", __FILE__, __LINE__);
                }
             }
+            else if (topEl == dtCore::MapXMLConstants::DIRECTOR_IMPORTED_SCRIPT)
+            {
+               std::string importedScript = dtUtil::XMLStringConverter(chars).ToString();
+               if (!importedScript.empty())
+               {
+                  if (!mDirector->ImportScript(importedScript))
+                  {
+                     mMissingImportedScripts.push_back(importedScript);
+                  }
+               }
+            }
          }
       }
       else if (mInLibraries)
@@ -806,7 +817,7 @@ namespace dtDirector
       int count = (int)mLinkList.size();
       for (int index = 0; index < count; index++)
       {
-         dtCore::RefPtr<Node> linkNode = mDirector->GetNode(dtCore::UniqueId(mLinkList[index].linkNodeID));
+         dtCore::RefPtr<Node> linkNode = mDirector->GetNode(dtCore::UniqueId(mLinkList[index].linkNodeID), true);
 
          // If we have both an ID and a name, we can link them.
          if (linkNode.valid())

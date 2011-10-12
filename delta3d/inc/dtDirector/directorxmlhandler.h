@@ -105,6 +105,11 @@ namespace dtDirector
       const std::vector<std::string>& GetMissingLibraries() {return mMissingLibraries;}
 
       /**
+       *	Retrieves a list of missing inheritances.
+       */
+      const std::vector<std::string>& GetMissingImportedScripts() {return mMissingImportedScripts;}
+
+      /**
        * Retrieves a list of missing actor types.
        */
       const std::set<std::string>& GetMissingNodeTypes() {return mMissingNodeTypes;}
@@ -163,6 +168,7 @@ namespace dtDirector
 
       std::vector<std::string> mMissingLibraries;
       std::set<std::string> mMissingNodeTypes;
+      std::vector<std::string> mMissingImportedScripts;
 
       std::stack<DirectorGraph*> mGraphs;
 

@@ -104,6 +104,7 @@
     <addaction name="separator"/>
     <addaction name="action_Manage_Plugins"/>
     <addaction name="action_Manage_Libraries"/>
+    <addaction name="action_Manage_Imported_Scripts"/>
    </widget>
    <widget class="QMenu" name="menu_View">
     <property name="title">
@@ -983,6 +984,14 @@
   <action name="actionNone">
    <property name="text">
     <string>&lt;None&gt;</string>
+   </property>
+  </action>
+  <action name="action_Manage_Imported_Scripts">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Manage Imported Scripts...</string>
    </property>
   </action>
  </widget>
