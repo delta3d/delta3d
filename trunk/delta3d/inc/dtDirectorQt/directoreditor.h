@@ -93,7 +93,7 @@ namespace dtDirector
        * Retrieves whether we are currently in debugging mode.
        */
       bool IsDebugging() const;
-      
+
       /**
        * Retrieves the editor notifier.
        */
@@ -202,7 +202,7 @@ namespace dtDirector
        * @param[in]  node  The node to refresh.
        */
       void RefreshGlow(Node* node);
-      
+
       /**
        * Refreshes the graph browser.
        */
@@ -448,6 +448,11 @@ namespace dtDirector
        * Event handler when the manage libraries button is pressed.
        */
       void on_action_Manage_Libraries_triggered();
+
+      /**
+       *	Event handler when the manager imported scripts button is pressed.
+       */
+      void on_action_Manage_Imported_Scripts_triggered();
 
       /**
        * Event handler when the show node palette button is pressed.

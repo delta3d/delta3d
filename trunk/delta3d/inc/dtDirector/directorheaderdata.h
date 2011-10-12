@@ -32,6 +32,7 @@ namespace dtDirector
    struct DirectorHeaderData : public dtCore::MapHeaderData
    {
       std::string mScriptType;
+      std::vector<std::string> mImportedScriptList;
    };
 }
 

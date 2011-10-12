@@ -49,6 +49,7 @@ namespace dtDirector
       , mMap(NULL)
       , mModified(false)
       , mStarted(false)
+      , mLoading(false)
       , mDebugging(false)
       , mShouldStep(false)
       , mGraph(NULL)
@@ -117,9 +118,20 @@ namespace dtDirector
             newDirector->mLogNodes = mLogNodes;
             newDirector->mMissingNodeTypes = mMissingNodeTypes;
             newDirector->mMissingLibraries = mMissingLibraries;
+            newDirector->mMissingImportedScripts = mMissingImportedScripts;
             newDirector->mHasDeprecatedProperty = mHasDeprecatedProperty;
             newDirector->SetActive(mActive);
             newDirector->CopyPropertiesFrom(*this);
+
+            int count = (int)mImportedScriptList.size();
+            for (int index = 0; index < count; ++index)
+            {
+               Director* imported = mImportedScriptList[index];
+               if (imported)
+               {
+                  newDirector->ImportScript(imported->GetResource().GetResourceIdentifier());
+               }
+            }
 
             GetGraphRoot()->Clone(newDirector);
 
@@ -186,6 +198,7 @@ namespace dtDirector
       mModified = false;
       mMissingNodeTypes.clear();
       mMissingLibraries.clear();
+      mMissingImportedScripts.clear();
       mHasDeprecatedProperty = false;
 
       LoadDefaultLibraries();
@@ -322,6 +335,83 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   bool Director::ImportScript(const std::string& scriptId)
+   {
+      int count = (int)mImportedScriptList.size();
+      for (int index = 0; index < count; ++index)
+      {
+         // If this script is already inherited, then we can do nothing and bail out.
+         Director* imported = mImportedScriptList[index];
+         if (imported && imported->GetResource().GetResourceIdentifier() == scriptId)
+         {
+            return false;
+         }
+      }
+
+      // If we get here, we want to attempt to load our inherited script and
+      // add it to our list.
+      dtCore::ResourceDescriptor rd(scriptId);
+      std::string path = dtCore::Project::GetInstance().GetResourcePath(rd);
+
+      DirectorTypeFactory* factory = DirectorTypeFactory::GetInstance();
+      if (factory)
+      {
+         try
+         {
+            dtCore::RefPtr<dtDirector::Director> importedScript = factory->LoadScript(path, GetGameManager(), GetMap(), true);
+            if (importedScript.valid())
+            {
+               importedScript->SetScriptOwner(GetScriptOwner());
+               importedScript->SetNodeLogging(GetNodeLogging());
+               importedScript->SetResource(rd);
+               importedScript->SetParent(this);
+
+               if (HasStarted())
+               {
+                  importedScript->OnStart();
+               }
+
+               mImportedScriptList.push_back(importedScript);
+               return true;
+            }
+         }
+         catch (const dtUtil::Exception& e)
+         {
+            std::string error = std::string("Unable to import ") + rd.GetDisplayName().c_str() + " with error " + e.What().c_str();
+            LOG_ERROR(error.c_str());
+         }
+      }
+
+      // if we failed to add this script for any reason, return false.
+      return false;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool Director::RemoveImportedScript(const std::string& scriptId)
+   {
+      int count = (int)mImportedScriptList.size();
+      for (int index = 0; index < count; ++index)
+      {
+         Director* script = mImportedScriptList[index];
+
+         if (script && scriptId == script->GetResource().GetResourceIdentifier())
+         {
+            script->SetParent(NULL);
+            mImportedScriptList.erase(mImportedScriptList.begin() + index);
+            return true;
+         }
+      }
+
+      return false;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   const std::vector<dtCore::RefPtr<dtDirector::Director> >& Director::GetImportedScriptList() const
+   {
+      return mImportedScriptList;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    const dtCore::UniqueId& Director::GetID() const
    {
       return mID;
@@ -369,6 +459,12 @@ namespace dtDirector
    const std::vector<std::string>& Director::GetMissingLibraries()
    {
       return mMissingLibraries;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   const std::vector<std::string>& Director::GetMissingImportedScripts()
+   {
+      return mMissingImportedScripts;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -460,23 +556,45 @@ namespace dtDirector
          "Copyright information."));
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   void Director::OnStart()
+   {
+      // Init imported scripts first.
+      int count = (int)mImportedScriptList.size();
+      for (int index = 0; index < count; ++index)
+      {
+         Director* imported = mImportedScriptList[index];
+         if (imported)
+         {
+            imported->OnStart();
+         }
+      }
+
+      if (mStarted)
+      {
+         return;
+      }
+
+      // Notify all nodes that the script is started.
+      std::vector<Node*> nodes;
+      GetAllNodes(nodes);
+      count = (int)nodes.size();
+      for (int index = 0; index < count; index++)
+      {
+         Node* node = nodes[index];
+         if (node) node->OnStart();
+      }
+
+      mStarted = true;
+   }
+
    //////////////////////////////////////////////////////////////////////////
    void Director::Update(float simDelta, float delta)
    {
       // On the first update, make sure we notify all nodes that are have started.
-      if (!mStarted)
+      if (!HasStarted())
       {
-         // Notify all nodes that the script is started.
-         std::vector<Node*> nodes;
-         GetAllNodes(nodes);
-         int count = (int)nodes.size();
-         for (int index = 0; index < count; index++)
-         {
-            Node* node = nodes[index];
-            if (node) node->OnStart();
-         }
-
-         mStarted = true;
+         OnStart();
       }
 
       if (mNotifier.valid())
@@ -1040,14 +1158,50 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   Node* Director::GetNode(const dtCore::UniqueId& id)
+   Node* Director::GetNode(const dtCore::UniqueId& id, bool includeImportedScripts)
    {
+      if (includeImportedScripts)
+      {
+         int count = (int)mImportedScriptList.size();
+         for (int index = 0; index < count; ++index)
+         {
+            Director* imported = mImportedScriptList[index];
+            if (imported)
+            {
+               Node* node = imported->GetNode(id, true);
+
+               if (node)
+               {
+                  return node;
+               }
+            }
+         }
+      }
+
       return mGraph->GetNode(id);
    }
 
    //////////////////////////////////////////////////////////////////////////
-   const Node* Director::GetNode(const dtCore::UniqueId& id) const
+   const Node* Director::GetNode(const dtCore::UniqueId& id, bool includeImportedScripts) const
    {
+      if (includeImportedScripts)
+      {
+         int count = (int)mImportedScriptList.size();
+         for (int index = 0; index < count; ++index)
+         {
+            Director* imported = mImportedScriptList[index];
+            if (imported)
+            {
+               Node* node = imported->GetNode(id, true);
+
+               if (node)
+               {
+                  return node;
+               }
+            }
+         }
+      }
+
       return mGraph->GetNode(id);
    }
 

@@ -118,6 +118,10 @@ void DirectorHeaderHandler::CombinedCharacters(const XMLCh* const chars, size_t 
    {
       mHeaderData.mScriptType = str;
    }
+   else if (topEl == dtCore::MapXMLConstants::DIRECTOR_IMPORTED_SCRIPT)
+   {
+      mHeaderData.mImportedScriptList.push_back(str);
+   }
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -27,6 +27,7 @@
 #include <dtDirectorQt/graphbrowser.h>
 #include <dtDirectorQt/graphtabs.h>
 #include <dtDirectorQt/libraryeditor.h>
+#include <dtDirectorQt/importeditor.h>
 #include <dtDirectorQt/nodetabs.h>
 #include <dtDirectorQt/plugindialog.h>
 #include <dtDirectorQt/pluginmanager.h>
@@ -457,7 +458,7 @@ namespace dtDirector
       {
          QMenu* menu = new QMenu();
          connect(menu, SIGNAL(triggered(QAction*)), this, SLOT(OnNewScriptTypeTriggered(QAction*)));
-         
+
          int count = (int)scriptTypes.size();
          for (int index = 0; index < count; ++index)
          {
@@ -608,7 +609,7 @@ namespace dtDirector
          }
       }
    }
-   
+
    ////////////////////////////////////////////////////////////////////////////////
    void DirectorEditor::RefreshGraphBrowser()
    {
@@ -1540,6 +1541,24 @@ namespace dtDirector
       libEdit.exec();
 
       RefreshNodeScenes();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::on_action_Manage_Imported_Scripts_triggered()
+   {
+      // We need a director to manage libraries.
+      if (!GetDirector())
+      {
+         QMessageBox::critical(NULL, tr("Failure"),
+            tr("A Director must be open in order to manage imported scripts"),
+            tr("OK"));
+         return;
+      }
+
+      ImportEditor importEditor(this);
+      importEditor.exec();
+
+      Refresh();
    }
 
    //////////////////////////////////////////////////////////////////////////

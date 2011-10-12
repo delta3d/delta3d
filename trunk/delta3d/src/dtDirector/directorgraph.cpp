@@ -219,7 +219,7 @@ namespace dtDirector
                      if (targetLink)
                      {
                         // Find the matching cloned target node.
-                        Node* newTargetNode = script->GetNode(targetLink->GetOwner()->GetID());
+                        Node* newTargetNode = script->GetNode(targetLink->GetOwner()->GetID(), true);
                         if (newTargetNode)
                         {
                            // Make the connection.
@@ -244,7 +244,7 @@ namespace dtDirector
                      if (targetNode)
                      {
                         // Find the matching cloned target node.
-                        Node* newTargetNode = script->GetNode(targetNode->GetID());
+                        Node* newTargetNode = script->GetNode(targetNode->GetID(), true);
                         if (newTargetNode && newTargetNode->AsValueNode())
                         {
                            // Make the connection.
@@ -284,7 +284,7 @@ namespace dtDirector
                      if (targetLink)
                      {
                         // Find the matching cloned target node.
-                        Node* newTargetNode = script->GetNode(targetLink->GetOwner()->GetID());
+                        Node* newTargetNode = script->GetNode(targetLink->GetOwner()->GetID(), true);
                         if (newTargetNode)
                         {
                            // Make the connection.
@@ -314,7 +314,7 @@ namespace dtDirector
                      if (targetNode)
                      {
                         // Find the matching cloned target node.
-                        Node* newTargetNode = script->GetNode(targetNode->GetID());
+                        Node* newTargetNode = script->GetNode(targetNode->GetID(), true);
                         if (newTargetNode && newTargetNode->AsValueNode())
                         {
                            // Make the connection.
