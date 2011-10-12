@@ -132,6 +132,22 @@ namespace dtDirector
       void ParseNode(float version, DirectorGraph* graph, FILE* file);
 
       /**
+       *	Parses all chain connections.
+       *
+       * @param[in]  script  The script.
+       * @param[in]  file    The file.
+       */
+      void ParseChainConnections(Director* script, FILE* file);
+
+      /**
+       *	Parses all value connections.
+       *
+       * @param[in]  script  The script.
+       * @param[in]  file    The file.
+       */
+      void ParseValueConnections(Director* script, FILE* file);
+
+      /**
        * Parses a property container.
        *
        * @param[in]  container  The property container.
@@ -162,15 +178,15 @@ namespace dtDirector
       {
          ToLinkData()
          {
-            outputLink = NULL;
-            valueLink = NULL;
+            isValue = false;
          }
 
-         std::string linkNodeID;
-         std::string linkToName;
+         std::string outputNodeID;
+         std::string inputNodeID;
+         std::string outputLinkName;
+         std::string inputLinkName;
 
-         OutputLink* outputLink;
-         ValueLink*  valueLink;
+         bool isValue;
       };
 
       std::vector<ToLinkData>  mLinkList;
@@ -232,6 +248,22 @@ namespace dtDirector
        * @param[in]  file  The file.
        */
       void SaveNode(Node* node, FILE* file);
+
+      /**
+       *	Saves all chain connections.
+       *
+       * @param[in]  script  The script.
+       * @param[in]  file    The file.
+       */
+      void SaveChainConnections(Director* script, FILE* file);
+
+      /**
+       *	Saves all value connections.
+       *
+       * @param[in]  script  The script.
+       * @param[in]  file    The file.
+       */
+      void SaveValueConnections(Director* script, FILE* file);
 
       /**
        * Saves a property container.

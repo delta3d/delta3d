@@ -178,6 +178,8 @@ namespace dtDirector
       std::string mNodeName;
       std::string mNodeCategory;
 
+      std::string mLinkOutputOwnerID;
+      std::string mLinkOutputName;
       std::string mLinkNodeID;
       std::string mLinkToName;
 
@@ -185,17 +187,15 @@ namespace dtDirector
       {
          ToLinkData()
          {
-            inputLink = NULL;
-            outputLink = NULL;
-            valueLink = NULL;
+            isValue = false;
          }
 
-         std::string linkNodeID;
-         std::string linkToName;
+         std::string outputNodeID;
+         std::string inputNodeID;
 
-         InputLink*  inputLink;
-         OutputLink* outputLink;
-         ValueLink*  valueLink;
+         std::string outputLinkName;
+         std::string inputLinkName;
+         bool isValue;
       };
 
       std::vector<ToLinkData> mLinkList;
