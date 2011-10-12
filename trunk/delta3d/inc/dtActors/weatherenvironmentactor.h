@@ -48,7 +48,7 @@ namespace dtActors
 
             private:
 
-               CloudCoverEnum(const std::string &name, dtABC::Weather::CloudType tp)
+               CloudCoverEnum(const std::string& name, dtABC::Weather::CloudType tp)
                   : dtUtil::Enumeration(name), mValue(tp)
                {
                   AddInstance(this);
@@ -215,19 +215,19 @@ namespace dtActors
          };
 
          /// Constructor
-         WeatherEnvironmentActor(dtGame::GameActorProxy &proxy);
+         WeatherEnvironmentActor(dtGame::GameActorProxy& proxy);
 
          /**
            * Adds an actor proxy to the internal hierarchy of the environment
            * @param proxy The proxy to add
            */
-         virtual void AddActor(dtCore::DeltaDrawable &dd);
+         virtual void AddActor(dtCore::DeltaDrawable& dd);
 
          /**
            * Removes an actor proxy from the internal hierarchy
            * @param proxy The proxy to remove
            */
-         virtual void RemoveActor(dtCore::DeltaDrawable &dd);
+         virtual void RemoveActor(dtCore::DeltaDrawable& dd);
 
          /**
            * Removes all actors associated with this environment
@@ -239,14 +239,14 @@ namespace dtActors
            * @param proxy The proxy to look for
            * @return True if it contains it, false if not
            */
-         virtual bool ContainsActor(dtCore::DeltaDrawable &dd) const;
+         virtual bool ContainsActor(dtCore::DeltaDrawable& dd) const;
 
          /**
            * const version of the above function
            * Gets all the actors associated with this environment
            * @param vec The vector to fill
            */
-         virtual void GetAllActors(std::vector<dtCore::DeltaDrawable*> &vec);
+         virtual void GetAllActors(std::vector<dtCore::DeltaDrawable*>& vec);
 
          /**
            * Sets the date and time on this environment
@@ -269,7 +269,7 @@ namespace dtActors
            * @param min The minute to get
            * @param sec The second to get
            */
-         virtual void GetTimeAndDate(unsigned &year, unsigned &month, unsigned &day, unsigned &hour, unsigned &min, unsigned &sec) const;
+         virtual void GetTimeAndDate(unsigned& year, unsigned& month, unsigned& day, unsigned& hour, unsigned& min, unsigned& sec) const;
 
          /**
           * Gets the number of children of this environment
@@ -280,7 +280,7 @@ namespace dtActors
           * Sets the time and date from a string
           * @param timeAndDate The string to parse
           */
-         void SetTimeAndDateString(const std::string &timeAndDate);
+         void SetTimeAndDateString(const std::string& timeAndDate);
 
          /**
           * Gets the time and date in a string format
@@ -345,7 +345,7 @@ namespace dtActors
           * Sets the weather theme for this environment
           * @param theme The theme to set
           */
-         void SetWeatherTheme(WeatherThemeEnum &theme);
+         void SetWeatherTheme(WeatherThemeEnum& theme);
 
          /**
           * Gets the current weather theme
@@ -358,13 +358,13 @@ namespace dtActors
           * @param time The time period
           * @param season The season
           */
-         void SetTimePeriodAndSeason(TimePeriodEnum &time, SeasonEnum &season);
+         void SetTimePeriodAndSeason(TimePeriodEnum& time, SeasonEnum& season);
 
          /**
           * Sets the wind type on this environment
           * @param windType The new wind type
           */
-         void SetWindType(WindTypeEnum &windType);
+         void SetWindType(WindTypeEnum& windType);
 
          /**
           * Gets the current wind type
@@ -376,7 +376,7 @@ namespace dtActors
           * Sets the wind direction on this environment
           * @param windType The new wind type
           */
-         void SetWindDirection(WindDirectionEnum &windDirection);
+         void SetWindDirection(WindDirectionEnum& windDirection);
 
          /**
           * Gets the current wind direction
@@ -400,7 +400,7 @@ namespace dtActors
           * Sets the sky color on this environment
           * @param color The color to set, in RGBA format
           */
-         void SetSkyColor(const osg::Vec4 &color);
+         void SetSkyColor(const osg::Vec4& color);
 
          /**
           * Gets the current sky color
@@ -424,7 +424,7 @@ namespace dtActors
           * Sets the time period on this environment
           * @param period The new time period
           */
-         void SetTimePeriod(TimePeriodEnum &period);
+         void SetTimePeriod(TimePeriodEnum& period);
 
          /**
           * Gets the current time period of this environment
@@ -435,7 +435,7 @@ namespace dtActors
           * Sets the season on this environment
           * @param season The new season
           */
-         void SetSeason(SeasonEnum &season);
+         void SetSeason(SeasonEnum& season);
 
          /**
           * Gets the current season
@@ -445,7 +445,7 @@ namespace dtActors
          /**
           * Sets the current cloud cover
           */
-         void SetCloudCover(CloudCoverEnum &clouds);
+         void SetCloudCover(CloudCoverEnum& clouds);
 
          /**
           * Gets the current cloud cover
@@ -464,7 +464,7 @@ namespace dtActors
           * @param str The string to use to parse and validate
           * @return true on success
           */
-         bool ValidateUTCString(const std::string &str);
+         bool ValidateUTCString(const std::string& str);
 
          bool mIsCloudPlaneEnabled;
          dtCore::RefPtr<dtABC::Weather> mWeather;
