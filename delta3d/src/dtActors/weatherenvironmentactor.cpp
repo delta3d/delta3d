@@ -38,20 +38,24 @@ namespace dtActors
    /////////////////////////////////////////////////////////////
    // Actor Proxy code
    /////////////////////////////////////////////////////////////
+
+   /////////////////////////////////////////////////////////////////////////////
    WeatherEnvironmentActorProxy::WeatherEnvironmentActorProxy()
    {
       SetClassName("dtCore::Environment");
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    WeatherEnvironmentActorProxy::~WeatherEnvironmentActorProxy()
    {
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    void WeatherEnvironmentActorProxy::BuildPropertyMap()
    {
       using namespace dtCore;
 
-      WeatherEnvironmentActor *env = static_cast<WeatherEnvironmentActor*>(GetActor());
+      WeatherEnvironmentActor* env = static_cast<WeatherEnvironmentActor*>(GetActor());
 
       dtGame::GameActorProxy::BuildPropertyMap();
 
@@ -116,6 +120,7 @@ namespace dtActors
          "Sets the rate of change of this environment. This effects how fast clouds move, etc."));
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    void WeatherEnvironmentActorProxy::BuildInvokables()
    {
       //WeatherEnvironmentActor *env = static_cast<WeatherEnvironmentActor*>(GetActor());
@@ -123,6 +128,7 @@ namespace dtActors
       dtGame::GameActorProxy::BuildInvokables();
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    void WeatherEnvironmentActorProxy::OnEnteredWorld()
    {
 
@@ -130,7 +136,7 @@ namespace dtActors
 
    ////////////////////////////////////////////////////////////////////////
    // Actor code
-   ////////////////////////////////////////////////////////////////////////'
+   ////////////////////////////////////////////////////////////////////////
    IMPLEMENT_ENUM(WeatherEnvironmentActor::CloudCoverEnum);
    WeatherEnvironmentActor::CloudCoverEnum WeatherEnvironmentActor::CloudCoverEnum::CLEAR("Clear",       dtABC::Weather::CLOUD_CLEAR);
    WeatherEnvironmentActor::CloudCoverEnum WeatherEnvironmentActor::CloudCoverEnum::FEW("Few",           dtABC::Weather::CLOUD_FEW);
@@ -183,7 +189,8 @@ namespace dtActors
    WeatherEnvironmentActor::WindDirectionEnum WeatherEnvironmentActor::WindDirectionEnum::WIND_DIRECTION_WEST("Wind Direction West", dtABC::Weather::WIND_DIRECTION_WEST);
    WeatherEnvironmentActor::WindDirectionEnum WeatherEnvironmentActor::WindDirectionEnum::WIND_DIRECTION_NORTH_WEST("Wind Direction North West", dtABC::Weather::WIND_DIRECTION_NORTH_WEST);
 
-   WeatherEnvironmentActor::WeatherEnvironmentActor(dtGame::GameActorProxy &proxy)
+   /////////////////////////////////////////////////////////////////////////////
+   WeatherEnvironmentActor::WeatherEnvironmentActor(dtGame::GameActorProxy& proxy)
       : dtGame::IEnvGameActor(proxy)
       , mIsCloudPlaneEnabled(false)
       , mWeather(new dtABC::Weather)
@@ -195,25 +202,30 @@ namespace dtActors
       EnableCloudPlane(false);
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    WeatherEnvironmentActor::~WeatherEnvironmentActor()
    {
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    void WeatherEnvironmentActor::AddActor(dtCore::DeltaDrawable& dd)
    {
       mWeather->GetEnvironment()->AddChild(&dd);
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    void WeatherEnvironmentActor::RemoveActor(dtCore::DeltaDrawable& dd)
    {
       mWeather->GetEnvironment()->RemoveChild(&dd);
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    bool WeatherEnvironmentActor::ContainsActor(dtCore::DeltaDrawable& dd) const
    {
       return mWeather->GetEnvironment()->GetChildIndex(&dd) < mWeather->GetEnvironment()->GetNumChildren();
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    void WeatherEnvironmentActor::RemoveAllActors()
    {
       while (mWeather->GetEnvironment()->GetNumChildren() > 0)
@@ -222,6 +234,7 @@ namespace dtActors
       }
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    void WeatherEnvironmentActor::GetAllActors(std::vector<dtCore::DeltaDrawable*>& vec)
    {
       vec.clear();
@@ -232,22 +245,26 @@ namespace dtActors
       }
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    void WeatherEnvironmentActor::GetTimeAndDate(unsigned& year, unsigned& month, unsigned& day, unsigned& hour, unsigned& min, unsigned& sec) const
    {
       mWeather->GetEnvironment()->GetDateTime(year, month, day, hour, min, sec);
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    void WeatherEnvironmentActor::SetTimeAndDate(const unsigned year, const unsigned month, const unsigned day,
-                                              const unsigned hour, const unsigned min,   const unsigned sec)
+                                                const unsigned hour, const unsigned min,   const unsigned sec)
    {
       mWeather->GetEnvironment()->SetDateTime(year, month, day, hour, min, sec);
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    unsigned int WeatherEnvironmentActor::GetNumEnvironmentChildren() const
    {
       return mWeather->GetEnvironment()->GetNumChildren();
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    void WeatherEnvironmentActor::SetTimeAndDateString(const std::string& timeAndDate)
    {
       if (timeAndDate.empty())
@@ -264,27 +281,32 @@ namespace dtActors
       }
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    std::string WeatherEnvironmentActor::GetCurrentTimeAndDateString() const
    {
       return dtUtil::DateTime::ToString(dtUtil::DateTime(dtUtil::DateTime::TimeOrigin::LOCAL_TIME),
          dtUtil::DateTime::TimeFormat::CALENDAR_DATE_AND_TIME_FORMAT);
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    void WeatherEnvironmentActor::SetUseSimTime(bool useSimTime)
    {
       mWeather->GetEnvironment()->SetUseSimTime(useSimTime);
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    bool WeatherEnvironmentActor::GetUseSimTime() const
    {
       return mWeather->GetEnvironment()->GetUseSimTime();
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    dtABC::Weather& WeatherEnvironmentActor::GetWeather()
    {
       return *mWeather;
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    std::string WeatherEnvironmentActor::GetTimeAndDateString() const
    {
       std::ostringstream oss;
@@ -339,6 +361,7 @@ namespace dtActors
       return oss.str();
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    void WeatherEnvironmentActor::EnableCloudPlane(bool enable)
    {
       /*if (enable == false && mIsCloudPlaneEnabled)
@@ -369,26 +392,31 @@ namespace dtActors
       }
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    bool WeatherEnvironmentActor::IsCloudPlaneEnabled() const
    {
       return mIsCloudPlaneEnabled;
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    void WeatherEnvironmentActor::EnableFog(bool enable)
    {
       mWeather->GetEnvironment()->SetFogEnable(enable);
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    bool WeatherEnvironmentActor::IsFogEnabled() const
    {
       return mWeather->GetEnvironment()->GetFogEnable();
    }
 
-   void WeatherEnvironmentActor::SetWeatherVisibility(WeatherEnvironmentActor::VisibilityTypeEnum &visibility)
+   /////////////////////////////////////////////////////////////////////////////
+   void WeatherEnvironmentActor::SetWeatherVisibility(WeatherEnvironmentActor::VisibilityTypeEnum& visibility)
    {
       mWeather->SetBasicVisibilityType(visibility.GetEnumValue());
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    WeatherEnvironmentActor::VisibilityTypeEnum& WeatherEnvironmentActor::GetWeatherVisibility()
    {
       for (unsigned int i = 0; i < WeatherEnvironmentActor::VisibilityTypeEnum::EnumerateType().size(); i++)
@@ -403,11 +431,13 @@ namespace dtActors
       return WeatherEnvironmentActor::VisibilityTypeEnum::VISIBILITY_UNLIMITED;
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    void WeatherEnvironmentActor::SetWeatherTheme(WeatherEnvironmentActor::WeatherThemeEnum& theme)
    {
       mWeather->SetTheme(theme.GetEnumValue());
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    WeatherEnvironmentActor::WeatherThemeEnum& WeatherEnvironmentActor::GetWeatherTheme()
    {
       for (unsigned int i = 0; i < WeatherEnvironmentActor::WeatherThemeEnum::Enumerate().size(); i++)
@@ -422,16 +452,19 @@ namespace dtActors
       return WeatherEnvironmentActor::WeatherThemeEnum::THEME_CUSTOM;
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    void WeatherEnvironmentActor::SetTimePeriodAndSeason(WeatherEnvironmentActor::TimePeriodEnum& time, WeatherEnvironmentActor::SeasonEnum& season)
    {
       mWeather->SetTimePeriodAndSeason(time.GetEnumValue(), season.GetEnumValue());
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    void WeatherEnvironmentActor::SetWindType(WeatherEnvironmentActor::WindTypeEnum& windType)
    {
       mWeather->SetBasicWindType(windType.GetEnumValue());
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    WeatherEnvironmentActor::WindTypeEnum& WeatherEnvironmentActor::GetWindType()
    {
       for (unsigned int i = 0; i < WeatherEnvironmentActor::WindTypeEnum::EnumerateType().size(); i++)
@@ -446,11 +479,13 @@ namespace dtActors
       return WeatherEnvironmentActor::WindTypeEnum::WIND_NONE;
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    void WeatherEnvironmentActor::SetWindDirection(WeatherEnvironmentActor::WindDirectionEnum& windDirection)
    {
       mWeather->SetBasicWindDirection(windDirection.GetEnumValue());
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    WeatherEnvironmentActor::WindDirectionEnum& WeatherEnvironmentActor::GetWindDirection()
    {
       for (unsigned int i = 0; i < WeatherEnvironmentActor::WindDirectionEnum::EnumerateType().size(); i++)
@@ -465,22 +500,26 @@ namespace dtActors
       return WeatherEnvironmentActor::WindDirectionEnum::WIND_DIRECTION_NORTH;
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    float WeatherEnvironmentActor::GetWindSpeed() const
    {
       return mWeather->GetEnvironment()->GetWindSpeed();
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    osg::Vec3 WeatherEnvironmentActor::GetWindDirectionVector() const
    {
       return mWeather->GetEnvironment()->GetWindDirection();
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    void WeatherEnvironmentActor::SetSkyColor(const osg::Vec4& color)
    {
       osg::Vec3 tempColor(color[0], color[1], color[2]);
       mWeather->GetEnvironment()->SetSkyColor(tempColor);
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    osg::Vec4 WeatherEnvironmentActor::GetSkyColor() const
    {
       osg::Vec3 color;
@@ -488,16 +527,19 @@ namespace dtActors
       return osg::Vec4(color[0], color[1], color[2], 0.0f);
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    void WeatherEnvironmentActor::SetRateOfChange(float rate)
    {
       mWeather->SetRateOfChange(rate);
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    float WeatherEnvironmentActor::GetRateOfChange() const
    {
       return mWeather->GetRateOfChange();
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    void WeatherEnvironmentActor::SetTimePeriod(TimePeriodEnum& period)
    {
       dtABC::Weather::Season s;
@@ -506,6 +548,7 @@ namespace dtActors
       mWeather->SetTimePeriodAndSeason(period.GetEnumValue(), s);
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    WeatherEnvironmentActor::TimePeriodEnum& WeatherEnvironmentActor::GetTimePeriod() const
    {
       for (unsigned int i = 0; i < WeatherEnvironmentActor::TimePeriodEnum::EnumerateType().size(); i++)
@@ -524,6 +567,7 @@ namespace dtActors
       return WeatherEnvironmentActor::TimePeriodEnum::TIME_DAY;
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    void WeatherEnvironmentActor::SetSeason(SeasonEnum& season)
    {
       dtABC::Weather::TimePeriod p;
@@ -532,6 +576,7 @@ namespace dtActors
       mWeather->SetTimePeriodAndSeason(p, season.GetEnumValue());
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    WeatherEnvironmentActor::SeasonEnum& WeatherEnvironmentActor::GetSeason() const
    {
       for (unsigned int i = 0; i < WeatherEnvironmentActor::SeasonEnum::EnumerateType().size(); i++)
@@ -550,11 +595,13 @@ namespace dtActors
       return WeatherEnvironmentActor::SeasonEnum::SEASON_SUMMER;
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    void WeatherEnvironmentActor::SetCloudCover(CloudCoverEnum& clouds)
    {
       mWeather->SetBasicCloudType(clouds.GetEnumValue());
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    WeatherEnvironmentActor::CloudCoverEnum& WeatherEnvironmentActor::GetCloudCover() const
    {
       for (unsigned int i = 0; i < WeatherEnvironmentActor::CloudCoverEnum::EnumerateType().size(); i++)
@@ -570,6 +617,7 @@ namespace dtActors
       return WeatherEnvironmentActor::CloudCoverEnum::CLEAR;
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    bool WeatherEnvironmentActor::ValidateUTCString(const std::string& str)
    {
       std::istringstream iss(str);
