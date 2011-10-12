@@ -643,6 +643,7 @@ namespace dtDirector
       // Script type.
       SaveString(director->GetScriptType(), file);
 
+      // Imported Scripts.
       int count = (int)director->GetImportedScriptList().size();
       fwrite(&count, sizeof(int), 1, file);
 

@@ -331,6 +331,19 @@ namespace dtDirector
                EndElement();
 
                // Inheritances
+               int count = (int)director->GetImportedScriptList().size();
+               for (int index = 0; index < count; ++index)
+               {
+                  Director* imported = director->GetImportedScriptList()[index];
+                  if (imported)
+                  {
+                     BeginElement(dtCore::MapXMLConstants::DIRECTOR_IMPORTED_SCRIPT);
+                     {
+                        AddCharacters(imported->GetResource().GetResourceIdentifier());
+                     }
+                     EndElement();
+                  }
+               }
 
                // Properties.
                std::vector<const dtCore::ActorProperty*> propList;
