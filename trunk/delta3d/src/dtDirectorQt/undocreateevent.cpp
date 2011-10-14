@@ -27,8 +27,8 @@ namespace dtDirector
 {
    //////////////////////////////////////////////////////////////////////////
    UndoCreateEvent::UndoCreateEvent(DirectorEditor* editor,
-                                    const dtCore::UniqueId& nodeID,
-                                    const dtCore::UniqueId& parentID)
+                                    const dtDirector::ID& nodeID,
+                                    const dtDirector::ID& parentID)
       : UndoDeleteEvent(editor, nodeID, parentID)
    {
    }

@@ -178,10 +178,10 @@ namespace dtDirector
       std::string mNodeName;
       std::string mNodeCategory;
 
-      std::string mLinkOutputOwnerID;
-      std::string mLinkOutputName;
-      std::string mLinkNodeID;
-      std::string mLinkToName;
+      ID           mLinkOutputOwnerID;
+      std::string  mLinkOutputName;
+      ID           mLinkNodeID;
+      std::string  mLinkToName;
 
       struct ToLinkData
       {
@@ -190,8 +190,8 @@ namespace dtDirector
             isValue = false;
          }
 
-         std::string outputNodeID;
-         std::string inputNodeID;
+         ID          outputNodeID;
+         ID          inputNodeID;
 
          std::string outputLinkName;
          std::string inputLinkName;

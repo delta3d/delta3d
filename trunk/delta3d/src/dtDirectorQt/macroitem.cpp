@@ -284,7 +284,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   dtCore::UniqueId MacroItem::GetID()
+   dtDirector::ID MacroItem::GetID()
    {
       if (mGraph.valid())
       {
@@ -315,7 +315,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   bool MacroItem::HasID(const dtCore::UniqueId& id)
+   bool MacroItem::HasID(const dtDirector::ID& id)
    {
       int count = (int)mInputs.size();
       for (int index = 0; index < count; index++)
@@ -431,7 +431,7 @@ namespace dtDirector
          }
          else
          {
-            event->SetDescription("Movement of \'" + mGraph->GetEditor() + 
+            event->SetDescription("Movement of \'" + mGraph->GetEditor() +
                "\' Macro Node \'" + mGraph->GetName() + "\'.");
          }
          mScene->GetEditor()->GetUndoManager()->AddEvent(event.get());

@@ -28,7 +28,7 @@ namespace dtDirector
 {
    //////////////////////////////////////////////////////////////////////////
    UndoPropertyEvent::UndoPropertyEvent(DirectorEditor* editor,
-                                        const dtCore::UniqueId& id,
+                                        const dtDirector::ID& id,
                                         const std::string& propName,
                                         const std::string& oldValue,
                                         const std::string& newValue)
@@ -49,7 +49,7 @@ namespace dtDirector
    dtCore::ActorProperty* UndoPropertyEvent::GetProperty()
    {
       // If the ID is blank, then it belongs to the director.
-      if (mID.ToString() == "")
+      if (mID.id.ToString() == "")
       {
          return mEditor->GetDirector()->GetProperty(mPropName);
       }

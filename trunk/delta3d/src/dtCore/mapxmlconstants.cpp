@@ -91,6 +91,7 @@ namespace dtCore
    XMLCh* MapXMLConstants::DIRECTOR_NODE_ELEMENT = NULL;
    XMLCh* MapXMLConstants::CATEGORY_ELEMENT = NULL;
    XMLCh* MapXMLConstants::ID_ELEMENT = NULL;
+   XMLCh* MapXMLConstants::ID_INDEX_ELEMENT = NULL;
 
    XMLCh* MapXMLConstants::DIRECTOR_LINKS_INPUT_ELEMENT = NULL;
    XMLCh* MapXMLConstants::DIRECTOR_LINKS_OUTPUT_ELEMENT = NULL;
@@ -100,7 +101,9 @@ namespace dtCore
    XMLCh* MapXMLConstants::DIRECTOR_LINK_CHAIN_CONNECTION = NULL;
    XMLCh* MapXMLConstants::DIRECTOR_LINK_VALUE_CONNECTION = NULL;
 
+   XMLCh* MapXMLConstants::DIRECTOR_LINK_OUTPUT_OWNER_INDEX_ELEMENT = NULL;
    XMLCh* MapXMLConstants::DIRECTOR_LINK_OUTPUT_OWNER_ELEMENT = NULL;
+   XMLCh* MapXMLConstants::DIRECTOR_LINK_INPUT_OWNER_INDEX_ELEMENT = NULL;
    XMLCh* MapXMLConstants::DIRECTOR_LINK_INPUT_OWNER_ELEMENT = NULL;
    XMLCh* MapXMLConstants::DIRECTOR_LINK_OUTPUT_NAME_ELEMENT = NULL;
    XMLCh* MapXMLConstants::DIRECTOR_LINK_INPUT_NAME_ELEMENT = NULL;
@@ -237,6 +240,7 @@ namespace dtCore
       DIRECTOR_NODE_ELEMENT = xercesc::XMLString::transcode("node");
       CATEGORY_ELEMENT = xercesc::XMLString::transcode("category");
       ID_ELEMENT = xercesc::XMLString::transcode("id");
+      ID_INDEX_ELEMENT = xercesc::XMLString::transcode("idIndex");
 
       DIRECTOR_LINKS_INPUT_ELEMENT = xercesc::XMLString::transcode("inputlink");
       DIRECTOR_LINKS_OUTPUT_ELEMENT = xercesc::XMLString::transcode("outputlink");
@@ -246,7 +250,9 @@ namespace dtCore
       DIRECTOR_LINK_CHAIN_CONNECTION = xercesc::XMLString::transcode("chainLinkConnection");
       DIRECTOR_LINK_VALUE_CONNECTION = xercesc::XMLString::transcode("valueLinkConnection");
 
+      DIRECTOR_LINK_OUTPUT_OWNER_INDEX_ELEMENT = xercesc::XMLString::transcode("outputOwnerIndex");
       DIRECTOR_LINK_OUTPUT_OWNER_ELEMENT = xercesc::XMLString::transcode("outputOwner");
+      DIRECTOR_LINK_INPUT_OWNER_INDEX_ELEMENT = xercesc::XMLString::transcode("inputOwnerIndex");
       DIRECTOR_LINK_INPUT_OWNER_ELEMENT = xercesc::XMLString::transcode("inputOwner");
       DIRECTOR_LINK_OUTPUT_NAME_ELEMENT = xercesc::XMLString::transcode("outputName");
       DIRECTOR_LINK_INPUT_NAME_ELEMENT = xercesc::XMLString::transcode("inputName");
@@ -372,6 +378,7 @@ namespace dtCore
       xercesc::XMLString::release(&DIRECTOR_NODE_ELEMENT);
       xercesc::XMLString::release(&CATEGORY_ELEMENT);
       xercesc::XMLString::release(&ID_ELEMENT);
+      xercesc::XMLString::release(&ID_INDEX_ELEMENT);
 
       xercesc::XMLString::release(&DIRECTOR_LINKS_INPUT_ELEMENT);
       xercesc::XMLString::release(&DIRECTOR_LINKS_OUTPUT_ELEMENT);
@@ -381,7 +388,9 @@ namespace dtCore
       xercesc::XMLString::release(&DIRECTOR_LINK_CHAIN_CONNECTION);
       xercesc::XMLString::release(&DIRECTOR_LINK_VALUE_CONNECTION);
 
+      xercesc::XMLString::release(&DIRECTOR_LINK_OUTPUT_OWNER_INDEX_ELEMENT);
       xercesc::XMLString::release(&DIRECTOR_LINK_OUTPUT_OWNER_ELEMENT);
+      xercesc::XMLString::release(&DIRECTOR_LINK_INPUT_OWNER_INDEX_ELEMENT);
       xercesc::XMLString::release(&DIRECTOR_LINK_INPUT_OWNER_ELEMENT);
       xercesc::XMLString::release(&DIRECTOR_LINK_OUTPUT_NAME_ELEMENT);
       xercesc::XMLString::release(&DIRECTOR_LINK_INPUT_NAME_ELEMENT);

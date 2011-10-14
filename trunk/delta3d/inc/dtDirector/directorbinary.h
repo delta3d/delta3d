@@ -125,27 +125,29 @@ namespace dtDirector
       /**
        * Parses node data.
        *
-       * @param[in]  version   The file version.
-       * @param[in]  graph  The parent graph.
-       * @param[in]  file   The file.
+       * @param[in]  version  The file version.
+       * @param[in]  graph    The parent graph.
+       * @param[in]  file     The file.
        */
       void ParseNode(float version, DirectorGraph* graph, FILE* file);
 
       /**
        *	Parses all chain connections.
        *
-       * @param[in]  script  The script.
-       * @param[in]  file    The file.
+       * @param[in]  version  The file version.
+       * @param[in]  script   The script.
+       * @param[in]  file     The file.
        */
-      void ParseChainConnections(Director* script, FILE* file);
+      void ParseChainConnections(float version, Director* script, FILE* file);
 
       /**
        *	Parses all value connections.
        *
-       * @param[in]  script  The script.
-       * @param[in]  file    The file.
+       * @param[in]  version  The file version.
+       * @param[in]  script   The script.
+       * @param[in]  file     The file.
        */
-      void ParseValueConnections(Director* script, FILE* file);
+      void ParseValueConnections(float version, Director* script, FILE* file);
 
       /**
        * Parses a property container.
@@ -181,8 +183,8 @@ namespace dtDirector
             isValue = false;
          }
 
-         std::string outputNodeID;
-         std::string inputNodeID;
+         ID          outputNodeID;
+         ID          inputNodeID;
          std::string outputLinkName;
          std::string inputLinkName;
 

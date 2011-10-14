@@ -57,6 +57,8 @@ namespace dtDirector
       , mGameManager(NULL)
       , mMessageGMComponent(NULL)
       , mParent(NULL)
+      , mMasterNodeFreeIndex(-1)
+      , mMasterGraphFreeIndex(-1)
       , mActive(true)
    {
       mScriptOwner = "";
@@ -1152,13 +1154,35 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   DirectorGraph* Director::GetGraph(const dtCore::UniqueId& id)
+   DirectorGraph* Director::GetGraph(const ID& id)
    {
-      return mGraph->GetGraph(id);
+      int count = (int)mMasterGraphList.size();
+      if (id.index > -1 && id.index < count)
+      {
+         if (mMasterGraphList[id.index].graph &&
+             mMasterGraphList[id.index].graph->GetID().id == id.id)
+         {
+            return mMasterGraphList[id.index].graph;
+         }
+      }
+      // If the index is not available, then we have to iterate and search
+      // every graph.
+      else
+      {
+         for (int index = 0; index < count; ++index)
+         {
+            if (mMasterGraphList[index].graph &&
+               mMasterGraphList[index].graph->GetID().id == id.id)
+            {
+               return mMasterGraphList[index].graph;
+            }
+         }
+      }
+      return NULL;
    }
 
    //////////////////////////////////////////////////////////////////////////
-   Node* Director::GetNode(const dtCore::UniqueId& id, bool includeImportedScripts)
+   Node* Director::GetNode(const ID& id, bool includeImportedScripts)
    {
       if (includeImportedScripts)
       {
@@ -1178,11 +1202,33 @@ namespace dtDirector
          }
       }
 
-      return mGraph->GetNode(id);
+      int count = (int)mMasterNodeList.size();
+      if (id.index > -1 && id.index < count)
+      {
+         if (mMasterNodeList[id.index].node &&
+            mMasterNodeList[id.index].node->GetID().id == id.id)
+         {
+            return mMasterNodeList[id.index].node;
+         }
+      }
+      // If the index is not available, then we have to iterate and search
+      // every graph.
+      else
+      {
+         for (int index = 0; index < count; ++index)
+         {
+            if (mMasterNodeList[index].node &&
+               mMasterNodeList[index].node->GetID().id == id.id)
+            {
+               return mMasterNodeList[index].node;
+            }
+         }
+      }
+      return NULL;
    }
 
    //////////////////////////////////////////////////////////////////////////
-   const Node* Director::GetNode(const dtCore::UniqueId& id, bool includeImportedScripts) const
+   const Node* Director::GetNode(const ID& id, bool includeImportedScripts) const
    {
       if (includeImportedScripts)
       {
@@ -1202,7 +1248,29 @@ namespace dtDirector
          }
       }
 
-      return mGraph->GetNode(id);
+      int count = (int)mMasterNodeList.size();
+      if (id.index > -1 && id.index < count)
+      {
+         if (mMasterNodeList[id.index].node &&
+            mMasterNodeList[id.index].node->GetID().id == id.id)
+         {
+            return mMasterNodeList[id.index].node;
+         }
+      }
+      // If the index is not available, then we have to iterate and search
+      // every graph.
+      else
+      {
+         for (int index = 0; index < count; ++index)
+         {
+            if (mMasterNodeList[index].node &&
+               mMasterNodeList[index].node->GetID().id == id.id)
+            {
+               return mMasterNodeList[index].node;
+            }
+         }
+      }
+      return NULL;
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -1230,15 +1298,21 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   bool Director::DeleteGraph(const dtCore::UniqueId& id)
+   bool Director::DeleteGraph(const ID& id)
    {
       return mGraph->DeleteGraph(id);
    }
 
    //////////////////////////////////////////////////////////////////////////
-   bool Director::DeleteNode(const dtCore::UniqueId& id)
+   bool Director::DeleteNode(const ID& id)
    {
-      return mGraph->DeleteNode(id);
+      Node* node = GetNode(id);
+      if (node && node->GetGraph())
+      {
+         return node->GetGraph()->DeleteNode(id);
+      }
+
+      return false;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -1821,6 +1895,270 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   bool Director::MasterListAddNode(Node* node, int index)
+   {
+      if (!node)
+      {
+         return false;
+      }
+
+      if (index <= -1)
+      {
+         // Make more room in the master node list if we need to.
+         if (mMasterNodeFreeIndex == -1)
+         {
+            MasterNodeListData data;
+            data.index = (int)mMasterNodeList.size();
+            data.node = node;
+            data.next = -1;
+
+            node->mID.index = data.index;
+
+            mMasterNodeList.push_back(data);
+            return true;
+         }
+         // If we have any free nodes available, use it.
+         else if (mMasterNodeFreeIndex > -1 && mMasterNodeFreeIndex < (int)mMasterNodeList.size())
+         {
+            int nextFree = mMasterNodeList[mMasterNodeFreeIndex].next;
+
+            mMasterNodeList[mMasterNodeFreeIndex].node = node;
+            mMasterNodeList[mMasterNodeFreeIndex].next = -1;
+
+            node->mID.index = mMasterNodeFreeIndex;
+
+            // Iterate to the next available free node.
+            mMasterNodeFreeIndex = nextFree;
+
+            return true;
+         }
+      }
+      else
+      {
+         // If the desired index is beyond of the list size, expand the list.
+         while (index >= (int)mMasterNodeList.size())
+         {
+            MasterNodeListData data;
+            data.index = (int)mMasterNodeList.size();
+            data.node = NULL;
+            data.next = mMasterNodeFreeIndex;
+
+            mMasterNodeList.push_back(data);
+
+            mMasterNodeFreeIndex = data.index;
+         }
+
+         // If the desired index is within our current master list size...
+         if (index < (int)mMasterNodeList.size())
+         {
+            // If the desired index is being used, move the used node somewhere else.
+            if (mMasterNodeList[index].node)
+            {
+               Node* movingNode = mMasterNodeList[index].node;
+               int moveToIndex = mMasterNodeFreeIndex;
+               if (moveToIndex == -1)
+               {
+                  moveToIndex = (int)mMasterNodeList.size();
+               }
+
+               // Remove this node and re-add it to another index position.
+               MasterListRemoveNode(movingNode);
+               MasterListAddNode(movingNode, moveToIndex);
+            }
+
+            // If the desired index is free, then place this node at that position.
+            if (!mMasterNodeList[index].node)
+            {
+               mMasterNodeList[index].node = node;
+               node->mID.index = index;
+
+               // Make sure we remove this index from the free list.
+               int lastFreeIndex = -1;
+               int freeIndex = mMasterNodeFreeIndex;
+               while (freeIndex > -1)
+               {
+                  if (freeIndex == index)
+                  {
+                     if (lastFreeIndex > -1)
+                     {
+                        mMasterNodeList[lastFreeIndex].next = mMasterNodeList[index].next;
+                     }
+                     else if (mMasterNodeFreeIndex == index)
+                     {
+                        mMasterNodeFreeIndex = mMasterNodeList[mMasterNodeFreeIndex].next;
+                     }
+
+                     mMasterNodeList[index].next = -1;
+                     break;
+                  }
+                  lastFreeIndex = freeIndex;
+                  freeIndex = mMasterNodeList[freeIndex].next;
+               }
+               return true;
+            }
+         }
+      }
+
+      return false;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool Director::MasterListRemoveNode(Node* node)
+   {
+      if (!node)
+      {
+         return false;
+      }
+
+      int index = node->mID.index;
+
+      if (index > -1 && index < (int)mMasterNodeList.size() &&
+         mMasterNodeList[index].node == node)
+      {
+         mMasterNodeList[index].node = NULL;
+         mMasterNodeList[index].next = mMasterNodeFreeIndex;
+         mMasterNodeFreeIndex = index;
+
+         node->mID.index = -1;
+         return true;
+      }
+
+      return false;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool Director::MasterListAddGraph(DirectorGraph* graph, int index)
+   {
+      if (!graph)
+      {
+         return false;
+      }
+
+      if (index <= -1)
+      {
+         // Make more room in the master graph list if we need to.
+         if (mMasterGraphFreeIndex == -1)
+         {
+            MasterGraphListData data;
+            data.index = (int)mMasterGraphList.size();
+            data.graph = graph;
+            data.next = -1;
+
+            graph->mID.index = data.index;
+
+            mMasterGraphList.push_back(data);
+            return true;
+         }
+         // If we have any free graphs available, use it.
+         else if (mMasterGraphFreeIndex > -1 && mMasterGraphFreeIndex < (int)mMasterGraphList.size())
+         {
+            int nextFree = mMasterGraphList[mMasterGraphFreeIndex].next;
+
+            mMasterGraphList[mMasterGraphFreeIndex].graph = graph;
+            mMasterGraphList[mMasterGraphFreeIndex].next  = -1;
+
+            graph->mID.index = mMasterGraphFreeIndex;
+
+            // Iterate to the next available free graph.
+            mMasterGraphFreeIndex = nextFree;
+
+            return true;
+         }
+      }
+      else
+      {
+         // If the desired index is beyond of the list size, expand the list.
+         while (index >= (int)mMasterGraphList.size())
+         {
+            MasterGraphListData data;
+            data.index = (int)mMasterGraphList.size();
+            data.graph = NULL;
+            data.next = mMasterGraphFreeIndex;
+
+            mMasterGraphList.push_back(data);
+
+            mMasterGraphFreeIndex = data.index;
+         }
+
+         // If the desired index is within our current master list size...
+         if (index < (int)mMasterGraphList.size())
+         {
+            // If the desired index is being used, move the used graph somewhere else.
+            if (mMasterGraphList[index].graph)
+            {
+               DirectorGraph* movingGraph = mMasterGraphList[index].graph;
+               int moveToIndex = mMasterGraphFreeIndex;
+               if (moveToIndex == -1)
+               {
+                  moveToIndex = (int)mMasterGraphList.size();
+               }
+
+               // Remove this node and re-add it to another index position.
+               MasterListRemoveGraph(movingGraph);
+               MasterListAddGraph(movingGraph, moveToIndex);
+            }
+
+            // If the desired index is already free, then place this node at that position.
+            if (!mMasterGraphList[index].graph)
+            {
+               mMasterGraphList[index].graph = graph;
+               graph->mID.index = index;
+
+               // Make sure we remove this index from the free list.
+               int lastFreeIndex = -1;
+               int freeIndex = mMasterGraphFreeIndex;
+               while (freeIndex > -1)
+               {
+                  if (freeIndex == index)
+                  {
+                     if (lastFreeIndex > -1)
+                     {
+                        mMasterGraphList[lastFreeIndex].next = mMasterGraphList[index].next;
+                     }
+                     else if (mMasterGraphFreeIndex == index)
+                     {
+                        mMasterGraphFreeIndex = mMasterGraphList[mMasterGraphFreeIndex].next;
+                     }
+
+                     mMasterGraphList[index].next = -1;
+                     break;
+                  }
+                  lastFreeIndex = freeIndex;
+                  freeIndex = mMasterGraphList[freeIndex].next;
+               }
+               return true;
+            }
+         }
+      }
+
+      return false;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool Director::MasterListRemoveGraph(DirectorGraph* graph)
+   {
+      if (!graph)
+      {
+         return false;
+      }
+
+      int index = graph->mID.index;
+
+      if (index > -1 && index < (int)mMasterGraphList.size() &&
+         mMasterGraphList[index].graph == graph)
+      {
+         mMasterGraphList[index].graph = NULL;
+         mMasterGraphList[index].next  = mMasterGraphFreeIndex;
+         mMasterGraphFreeIndex = index;
+
+         graph->mID.index = -1;
+         return true;
+      }
+
+      return false;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    void Director::GetThreadState(std::vector<Director::StateThreadData>& threads, const ThreadData& thread) const
    {
       StateThreadData data;
@@ -1837,7 +2175,7 @@ namespace dtDirector
          }
          else
          {
-            stackData.id = "";
+            stackData.id.clear();
          }
          stackData.index = stack.index;
          stackData.finished = stack.finished;
@@ -1936,9 +2274,9 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Node* Director::RecurseFindNode(const dtCore::UniqueId& id, Director* script)
+   Node* Director::RecurseFindNode(const ID& id, Director* script)
    {
-      if (!script || id.ToString().empty())
+      if (!script || id.id.ToString().empty())
       {
          return NULL;
       }

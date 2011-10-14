@@ -39,6 +39,11 @@ namespace dtDirector
       , mComment("")
    {
       SetColorRGB(Colors::GREEN);
+
+      if (director)
+      {
+         director->MasterListAddGraph(this);
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -55,38 +60,40 @@ namespace dtDirector
       }
       mSubGraphs.clear();
 
-      count = (int)mEventNodes.size();
-      for (int index = 0; index < count; ++index)
+      if (mDirector)
       {
-         Node* node = mEventNodes[index];
-         if (node)
+         count = (int)mEventNodes.size();
+         for (int index = 0; index < count; ++index)
          {
-            node->SetGraph(NULL);
+            mDirector->MasterListRemoveNode(mEventNodes[index]);
          }
       }
       mEventNodes.clear();
 
-      count = (int)mActionNodes.size();
-      for (int index = 0; index < count; ++index)
+      if (mDirector)
       {
-         Node* node = mActionNodes[index];
-         if (node)
+         count = (int)mActionNodes.size();
+         for (int index = 0; index < count; ++index)
          {
-            node->SetGraph(NULL);
+            mDirector->MasterListRemoveNode(mActionNodes[index]);
          }
+         mActionNodes.clear();
       }
-      mActionNodes.clear();
 
-      count = (int)mValueNodes.size();
-      for (int index = 0; index < count; ++index)
+      if (mDirector)
       {
-         Node* node = mValueNodes[index];
-         if (node)
+         count = (int)mValueNodes.size();
+         for (int index = 0; index < count; ++index)
          {
-            node->SetGraph(NULL);
+            mDirector->MasterListRemoveNode(mValueNodes[index]);
          }
+         mValueNodes.clear();
       }
-      mValueNodes.clear();
+
+      if (mDirector)
+      {
+         mDirector->MasterListRemoveGraph(this);
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -372,59 +379,58 @@ namespace dtDirector
      }
    }
 
-   //////////////////////////////////////////////////////////////////////////
-   DirectorGraph* DirectorGraph::GetGraph(const dtCore::UniqueId& id)
+   ////////////////////////////////////////////////////////////////////////////////
+   bool DirectorGraph::SetID(const ID& id)
    {
-      if (GetID() == id) return this;
-
-      int count = (int)mSubGraphs.size();
-      for (int index = 0; index < count; index++)
+      bool result = true;
+      if (id.index != mID.index)
       {
-         DirectorGraph* result = mSubGraphs[index]->GetGraph(id);
-         if (result) return result;
+         result = SetIDIndex(id.index);
+      }
+
+      SetID(id.id);
+      return result;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool DirectorGraph::SetIDIndex(int index)
+   {
+      mDirector->MasterListRemoveGraph(this);
+
+      return mDirector->MasterListAddGraph(this, index);
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   DirectorGraph* DirectorGraph::GetGraph(const ID& id)
+   {
+      if (mDirector)
+      {
+         return mDirector->GetGraph(id);
       }
 
       return NULL;
    }
 
    //////////////////////////////////////////////////////////////////////////
-   Node* DirectorGraph::GetNode(const dtCore::UniqueId& id)
+   Node* DirectorGraph::GetNode(const ID& id)
    {
-      int count = (int)mEventNodes.size();
-      for (int index = 0; index < count; index++)
+      if (mDirector)
       {
-         if (mEventNodes[index]->GetID() == id)
-         {
-            return mEventNodes[index];
-         }
-      }
+         Node* node = mDirector->GetNode(id);
 
-      count = (int)mActionNodes.size();
-      for (int index = 0; index < count; index++)
-      {
-         if (mActionNodes[index]->GetID() == id)
+         // If this node exists in the script, make sure it is within this graph.
+         if (node)
          {
-            return mActionNodes[index];
-         }
-      }
+            DirectorGraph* parent = node->GetGraph();
+            while (parent)
+            {
+               if (parent == this)
+               {
+                  return node;
+               }
 
-      count = (int)mValueNodes.size();
-      for (int index = 0; index < count; index++)
-      {
-         if (mValueNodes[index]->GetID() == id)
-         {
-            return mValueNodes[index];
-         }
-      }
-
-      count = (int)mSubGraphs.size();
-      for (int index = 0; index < count; index++)
-      {
-         DirectorGraph* graph = mSubGraphs[index];
-         if (graph)
-         {
-            Node* node = graph->GetNode(id);
-            if (node) return node;
+               parent = parent->GetParent();
+            }
          }
       }
 
@@ -432,43 +438,25 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   const Node* DirectorGraph::GetNode(const dtCore::UniqueId& id) const
+   const Node* DirectorGraph::GetNode(const ID& id) const
    {
-      int count = (int)mEventNodes.size();
-      for (int index = 0; index < count; index++)
+      if (mDirector)
       {
-         if (mEventNodes[index]->GetID() == id)
-         {
-            return mEventNodes[index];
-         }
-      }
+         const Node* node = mDirector->GetNode(id);
 
-      count = (int)mActionNodes.size();
-      for (int index = 0; index < count; index++)
-      {
-         if (mActionNodes[index]->GetID() == id)
+         // If this node exists in the script, make sure it is within this graph.
+         if (node)
          {
-            return mActionNodes[index];
-         }
-      }
+            const DirectorGraph* parent = node->GetGraph();
+            while (parent)
+            {
+               if (parent == this)
+               {
+                  return node;
+               }
 
-      count = (int)mValueNodes.size();
-      for (int index = 0; index < count; index++)
-      {
-         if (mValueNodes[index]->GetID() == id)
-         {
-            return mValueNodes[index];
-         }
-      }
-
-      count = (int)mSubGraphs.size();
-      for (int index = 0; index < count; index++)
-      {
-         DirectorGraph* graph = mSubGraphs[index];
-         if (graph)
-         {
-            Node* node = graph->GetNode(id);
-            if (node) return node;
+               parent = parent->GetParent();
+            }
          }
       }
 
@@ -582,7 +570,7 @@ namespace dtDirector
       int count = (int)mValueNodes.size();
       for (int index = 0; index < count; index++)
       {
-         if (mValueNodes[index]->GetName() == name)
+         if (mValueNodes[index] && mValueNodes[index]->GetName() == name)
          {
             return mValueNodes[index];
          }
@@ -605,35 +593,62 @@ namespace dtDirector
       return NULL;
    }
 
-   //////////////////////////////////////////////////////////////////////////
+   ////////////////////////////////////////////////////////////////////////////////
+   void DirectorGraph::SetParent(DirectorGraph* parent)
+   {
+      if (mDirector)
+      {
+         mDirector->MasterListRemoveGraph(this);
+      }
+
+      mParent = parent;
+
+      if (mParent)
+      {
+         mDirector = mParent->GetDirector();
+
+         if (mDirector)
+         {
+            mDirector->MasterListAddGraph(this);
+         }
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    bool DirectorGraph::AddNode(Node* node)
    {
+      bool result = false;
       ValueNode* valueNode = node->AsValueNode();
       if (valueNode)
       {
          mValueNodes.push_back(valueNode);
-         return true;
+         result = true;
       }
 
       EventNode* eventNode = node->AsEventNode();
       if (eventNode)
       {
          mEventNodes.push_back(eventNode);
-         return true;
+         result = true;
       }
 
       ActionNode* actionNode = node->AsActionNode();
       if (actionNode)
       {
          mActionNodes.push_back(actionNode);
-         return true;
+         result = true;
       }
 
-      return false;
+      if (mDirector)
+      {
+         mDirector->MasterListAddNode(node);
+      }
+
+      return result;
    }
 
    //////////////////////////////////////////////////////////////////////////
-   bool DirectorGraph::DeleteGraph(const dtCore::UniqueId& id)
+   bool DirectorGraph::DeleteGraph(const ID& id)
    {
       // Check sub graphs
       int count = (int)mSubGraphs.size();
@@ -643,6 +658,11 @@ namespace dtDirector
          if (graph && graph->GetID() == id)
          {
             // Remove the sub graph.
+            if (mDirector)
+            {
+               mDirector->MasterListRemoveGraph(graph);
+            }
+
             mSubGraphs.erase(mSubGraphs.begin() + index);
 
             return true;
@@ -659,7 +679,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   bool DirectorGraph::DeleteNode(const dtCore::UniqueId& id)
+   bool DirectorGraph::DeleteNode(const ID& id)
    {
       // Search for the node and remove it from the list.
       int count = (int)mEventNodes.size();
@@ -667,6 +687,10 @@ namespace dtDirector
       {
          if (mEventNodes[index]->GetID() == id)
          {
+            if (mDirector)
+            {
+               mDirector->MasterListRemoveNode(mEventNodes[index]);
+            }
             mEventNodes.erase(mEventNodes.begin() + index);
             return true;
          }
@@ -677,6 +701,10 @@ namespace dtDirector
       {
          if (mActionNodes[index]->GetID() == id)
          {
+            if (mDirector)
+            {
+               mDirector->MasterListRemoveNode(mActionNodes[index]);
+            }
             mActionNodes.erase(mActionNodes.begin() + index);
             return true;
          }
@@ -687,6 +715,10 @@ namespace dtDirector
       {
          if (mValueNodes[index]->GetID() == id)
          {
+            if (mDirector)
+            {
+               mDirector->MasterListRemoveNode(mValueNodes[index]);
+            }
             mValueNodes.erase(mValueNodes.begin() + index);
             return true;
          }
@@ -714,13 +746,13 @@ namespace dtDirector
          graph->BuildPropertyMap();
       }
 
-      // First remove the graph from their parents.
+      // First remove the graph from its parent.
       if (graph->mParent)
       {
          graph->mParent->RemoveGraph(graph);
       }
 
-      graph->mParent = this;
+      graph->SetParent(this);
       mSubGraphs.push_back(graph);
 
       return graph;
@@ -738,8 +770,8 @@ namespace dtDirector
          {
             if (mSubGraphs[index] == graph)
             {
+               graph->SetParent(NULL);
                mSubGraphs.erase(mSubGraphs.begin() + index);
-               graph->mParent = NULL;
                return;
             }
          }

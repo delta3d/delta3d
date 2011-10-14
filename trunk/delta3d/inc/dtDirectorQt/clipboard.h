@@ -172,8 +172,8 @@ namespace dtDirector
 
       std::vector<Node*> mPasted;
       std::vector<DirectorGraph*> mPastedGraphs;
-      std::map<dtCore::UniqueId, Node*> mIDNewToOld;
-      std::map<dtCore::UniqueId, Node*> mIDOldToNew;
+      std::map<dtDirector::ID, Node*> mIDNewToOld;
+      std::map<dtDirector::ID, Node*> mIDOldToNew;
 
       static Clipboard* mInstance;
    };

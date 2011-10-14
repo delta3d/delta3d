@@ -53,6 +53,7 @@
 
     <xsd:complexType name="GraphType">
         <xsd:sequence>
+            <xsd:element name="idIndex"     minOccurs="0" maxOccurs="1" type="xsd:int" />
             <xsd:element name="id"          minOccurs="0" maxOccurs="1" type="xsd:string"/>
             <xsd:element name="property"    minOccurs="0" maxOccurs="unbounded" type="PropertyType"/>
             <xsd:element name="eventnodes"  type="NodeType"/>
@@ -69,6 +70,7 @@
                     <xsd:sequence>
                         <xsd:element name="name"      type="xsd:string"/>
                         <xsd:element name="category"  type="xsd:string"/>
+                        <xsd:element name="idIndex"   type="xsd:int" minOccurs="0" maxOccurs="1"/>
                         <xsd:element name="id"        type="xsd:string"/>
                         <xsd:element name="property"   minOccurs="0" maxOccurs="unbounded" type="PropertyType"/>
                         <xsd:element name="inputlink"  minOccurs="0" maxOccurs="unbounded" type="LinkType"/>
@@ -103,18 +105,22 @@
 
     <xsd:complexType name="ChainLinkConnectionType">
         <xsd:sequence>
-            <xsd:element name="outputOwner"   type="xsd:string"/>
-            <xsd:element name="inputOwner"    type="xsd:string"/>
-            <xsd:element name="outputName"    type="xsd:string"/>
-            <xsd:element name="inputName"     type="xsd:string"/>
+            <xsd:element name="outputOwnerIndex" type="xsd:int" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="outputOwner"      type="xsd:string"/>
+            <xsd:element name="inputOwnerIndex"  type="xsd:int" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="inputOwner"       type="xsd:string"/>
+            <xsd:element name="outputName"       type="xsd:string"/>
+            <xsd:element name="inputName"        type="xsd:string"/>
         </xsd:sequence>
     </xsd:complexType>
 
     <xsd:complexType name="ValueLinkConnectionType">
         <xsd:sequence>
-            <xsd:element name="outputOwner"   type="xsd:string"/>
-            <xsd:element name="inputOwner"    type="xsd:string"/>
-            <xsd:element name="outputName"    type="xsd:string"/>
+            <xsd:element name="outputOwnerIndex" type="xsd:int" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="outputOwner"      type="xsd:string"/>
+            <xsd:element name="inputOwnerIndex"  type="xsd:int" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="inputOwner"       type="xsd:string"/>
+            <xsd:element name="outputName"       type="xsd:string"/>
         </xsd:sequence>
     </xsd:complexType>
 

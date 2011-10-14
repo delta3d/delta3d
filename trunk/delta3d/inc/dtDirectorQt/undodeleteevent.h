@@ -56,8 +56,8 @@ namespace dtDirector
        * @param[in]  parentID  The ID of the parent graph that owns this node.
        */
       UndoDeleteEvent(DirectorEditor* editor,
-                      const dtCore::UniqueId& nodeID,
-                      const dtCore::UniqueId& parentID);
+                      const dtDirector::ID& nodeID,
+                      const dtDirector::ID& parentID);
 
       /**
        * Perform undo.
@@ -115,8 +115,8 @@ namespace dtDirector
 
       struct LinkData
       {
-         dtCore::UniqueId mSourceID;
-         dtCore::UniqueId mDestID;
+         dtDirector::ID mSourceID;
+         dtDirector::ID mDestID;
 
          std::string mSource;
          std::string mDest;
@@ -124,8 +124,8 @@ namespace dtDirector
          bool mVisible;
       };
 
-      dtCore::UniqueId mParentID;
-      dtCore::UniqueId mNodeID;
+      dtDirector::ID mParentID;
+      dtDirector::ID mNodeID;
 
       std::string mName;
       std::string mCategory;

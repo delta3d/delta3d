@@ -114,7 +114,7 @@ namespace dtDirector
    void PropertyEditor::PropertyAboutToChangeFromControl(dtCore::PropertyContainer& propCon, dtCore::ActorProperty& prop,
             const std::string& oldValue, const std::string& newValue)
    {
-      dtCore::UniqueId id = dtCore::UniqueId("");
+      dtDirector::ID id;
 
       std::string undoDescription = "Property modification for ";
       // Check if the container is for a graph.

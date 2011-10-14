@@ -341,14 +341,14 @@ namespace dtDirector
        *
        * @return  The ID.
        */
-      virtual dtCore::UniqueId GetID();
+      virtual dtDirector::ID GetID();
 
       /**
        * Checks if this item contains a node of the given ID.
        *
        * @param[in]  id  The ID to check.
        */
-      virtual bool HasID(const dtCore::UniqueId& id);
+      virtual bool HasID(const dtDirector::ID& id);
 
       /**
        * Retrieves the links.

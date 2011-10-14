@@ -37,8 +37,8 @@ namespace dtDirector
 {
    //////////////////////////////////////////////////////////////////////////
    UndoDeleteEvent::UndoDeleteEvent(DirectorEditor* editor,
-                                    const dtCore::UniqueId& nodeID,
-                                    const dtCore::UniqueId& parentID)
+                                    const dtDirector::ID& nodeID,
+                                    const dtDirector::ID& parentID)
       : UndoEvent(editor)
       , mParentID(parentID)
       , mNodeID(nodeID)
@@ -171,11 +171,11 @@ namespace dtDirector
             // Initialize the graph.
             graph->BuildPropertyMap();
 
-            // Restore the graphs ID.
-            graph->SetID(mNodeID);
-
             // Add the graph back to its parent.
             parent->AddGraph(graph);
+
+            // Restore the graphs ID.
+            graph->SetID(mNodeID);
          }
       }
       else
@@ -243,8 +243,19 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void UndoDeleteEvent::Redo(bool isParent)
    {
+      // Now execute all sub events.
+      int count = (int)mSubEvents.size();
+      for (int index = 0; index < count; index++)
+      {
+         dtCore::RefPtr<UndoDeleteEvent> event = mSubEvents[index];
+         if (event.valid())
+         {
+            event->Redo(false);
+         }
+      }
+
       // Remove the node from all UI's
-      int count = mEditor->GetGraphTabs()->count();
+      count = mEditor->GetGraphTabs()->count();
       for (int index = 0; index < count; index++)
       {
          EditorView* view = dynamic_cast<EditorView*>(mEditor->GetGraphTabs()->widget(index));
@@ -276,17 +287,6 @@ namespace dtDirector
          mEditor->GetDirector()->DeleteNode(mNodeID);
       }
 
-      // Now execute all sub events.
-      count = (int)mSubEvents.size();
-      for (int index = 0; index < count; index++)
-      {
-         dtCore::RefPtr<UndoDeleteEvent> event = mSubEvents[index];
-         if (event.valid())
-         {
-            event->Redo(false);
-         }
-      }
-
       // Save the refresh for the parent event only.
       if (isParent)
       {
@@ -303,7 +303,7 @@ namespace dtDirector
    {
       LinkData mainData;
       mainData.mSourceID = link.GetOwner()->GetID();
-      mainData.mDestID = "";
+      mainData.mDestID.clear();
       mainData.mSource = link.GetName();
       mainData.mDest = "";
       mainData.mVisible = link.GetVisible();
@@ -334,7 +334,7 @@ namespace dtDirector
    {
       LinkData mainData;
       mainData.mSourceID = link.GetOwner()->GetID();
-      mainData.mDestID = "";
+      mainData.mDestID.clear();
       mainData.mSource = link.GetName();
       mainData.mDest = "";
       mainData.mVisible = link.GetVisible();
@@ -364,7 +364,7 @@ namespace dtDirector
    {
       LinkData mainData;
       mainData.mSourceID = link.GetOwner()->GetID();
-      mainData.mDestID = "";
+      mainData.mDestID.clear();
       mainData.mSource = link.GetName();
       mainData.mDest = "";
       mainData.mVisible = link.GetVisible();
@@ -453,7 +453,7 @@ namespace dtDirector
          {
             OutputLink* sourceLink = sourceNode->GetOutputLink(data.mSource);
             if (sourceLink) sourceLink->SetVisible(data.mVisible);
-            
+
             if (destNode)
             {
                InputLink* destLink = destNode->GetInputLink(data.mDest);

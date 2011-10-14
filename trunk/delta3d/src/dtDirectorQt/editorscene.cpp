@@ -560,7 +560,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   NodeItem* EditorScene::GetNodeItem(const dtCore::UniqueId& id, bool exactMatch)
+   NodeItem* EditorScene::GetNodeItem(const dtDirector::ID& id, bool exactMatch)
    {
       int count = (int)mNodes.size();
       for (int index = 0; index < count; index++)
@@ -606,7 +606,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   MacroItem* EditorScene::GetGraphItem(const dtCore::UniqueId& id)
+   MacroItem* EditorScene::GetGraphItem(const dtDirector::ID& id)
    {
       int count = (int)mNodes.size();
       for (int index = 0; index < count; index++)
@@ -896,7 +896,7 @@ namespace dtDirector
          int count = (int)selection.size();
          for (int index = 0; index < count; index++)
          {
-            dtCore::UniqueId id("");
+            dtDirector::ID id;
             Node* node = dynamic_cast<Node*>(selection[index].get());
             if (node)
             {
@@ -911,7 +911,7 @@ namespace dtDirector
                }
             }
 
-            if (!id.ToString().empty())
+            if (!id.id.ToString().empty())
             {
                NodeItem* item = GetNodeItem(id, true);
                if (item) nodeItems.push_back(item);
