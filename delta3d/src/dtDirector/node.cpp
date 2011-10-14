@@ -111,7 +111,7 @@ namespace dtDirector
          return NULL;
       }
 
-      copy->SetID(mID);
+      copy->SetID(mID.id);
       copy->CopyPropertiesFrom(*this);
 
       // Input Links.
@@ -292,6 +292,27 @@ namespace dtDirector
       mType = &type;
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   bool Node::SetID(const ID& id)
+   {
+      bool result = true;
+      if (id.index != mID.index)
+      {
+         result = SetIDIndex(id.index);
+      }
+
+      SetID(id.id);
+      return result;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool Node::SetIDIndex(int index)
+   {
+      mDirector->MasterListRemoveNode(this);
+
+      return mDirector->MasterListAddNode(this, index);
+   }
+
    //////////////////////////////////////////////////////////////////////////
    const std::string& Node::GetName()
    {
@@ -410,7 +431,7 @@ namespace dtDirector
       return result;
    }
 
-   //////////////////////////////////////////////////////////////////////////
+   ////////////////////////////////////////////////////////////////////////////////
    bool Node::Disconnect()
    {
       bool result = false;

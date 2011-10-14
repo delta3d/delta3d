@@ -237,15 +237,12 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void ReferenceValue::SetReference(const std::string& value)
    {
-      if (value != GetID().ToString())
+      if (mReference != value)
       {
-         if (mReference != value)
-         {
-            mReference = value;
+         mReference = value;
 
-            // Now attempt to find the actual value and link with it.
-            UpdateReference();
-         }
+         // Now attempt to find the actual value and link with it.
+         UpdateReference();
       }
    }
 
@@ -299,8 +296,11 @@ namespace dtDirector
                }
             }
 
-            mValues[0].Connect(node);
-            SetColor(node->GetColor());
+            if (node != this)
+            {
+               mValues[0].Connect(node);
+               SetColor(node->GetColor());
+            }
             return;
          }
       }

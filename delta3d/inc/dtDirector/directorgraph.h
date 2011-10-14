@@ -78,8 +78,16 @@ namespace dtDirector
       /**
        * Accessors for the Graph ID.
        */
-      void SetID(const dtCore::UniqueId& id) {mID = id;}
-      const dtCore::UniqueId& GetID() {return mID;}
+      bool SetID(const ID& id);
+      void SetID(const dtCore::UniqueId& id) {mID.id = id;}
+      const ID& GetID() {return mID;}
+
+      /**
+       *	Attempts to set the ID index for this node.
+       *
+       * @param[in]  index  The new index.
+       */
+      bool SetIDIndex(int index);
 
       /**
        * Retrieves a graph of the given ID.
@@ -89,7 +97,7 @@ namespace dtDirector
        * @return     A pointer to the graph found, or NULL
        *             if not found.
        */
-      DirectorGraph* GetGraph(const dtCore::UniqueId& id);
+      DirectorGraph* GetGraph(const ID& id);
 
       /**
        * Retrieves a node of the given ID.
@@ -99,8 +107,8 @@ namespace dtDirector
        * @return     A pointer to the node found, or NULL
        *             if not found.
        */
-      Node* GetNode(const dtCore::UniqueId& id);
-      const Node* GetNode(const dtCore::UniqueId& id) const;
+      Node* GetNode(const ID& id);
+      const Node* GetNode(const ID& id) const;
 
       /**
        * Retrieves a list of nodes that are of a certain type.
@@ -148,12 +156,13 @@ namespace dtDirector
       /**
        * Setter for parent.
        */
-      void SetParent(DirectorGraph* parent) {mParent = parent;}
+      void SetParent(DirectorGraph* parent);
 
       /**
        * Getter for parent.
        */
       DirectorGraph* GetParent() {return mParent;}
+      const DirectorGraph* GetParent() const {return mParent;}
 
       /**
        * Adds a node to the graph.
@@ -169,7 +178,7 @@ namespace dtDirector
        *
        * @return     True if the graph was found and removed.
        */
-      bool DeleteGraph(const dtCore::UniqueId& id);
+      bool DeleteGraph(const ID& id);
 
       /**
        * Deletes a node.
@@ -178,7 +187,7 @@ namespace dtDirector
        *
        * @return     True if the node was found and removed.
        */
-      bool DeleteNode(const dtCore::UniqueId& id);
+      bool DeleteNode(const ID& id);
 
       /**
        * Retrieves the director.
@@ -277,7 +286,7 @@ namespace dtDirector
 
       ~DirectorGraph();
 
-      dtCore::UniqueId mID;
+      ID mID;
 
       Director*      mDirector;
       DirectorGraph* mParent;
@@ -294,6 +303,8 @@ namespace dtDirector
       std::vector<dtCore::RefPtr<ValueNode> >  mValueNodes;
 
       osg::Vec4 mColor;
+
+      friend class Director;
    };
 }
 

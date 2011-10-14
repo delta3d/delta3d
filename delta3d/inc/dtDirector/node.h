@@ -59,6 +59,38 @@ namespace dtDirector
    class LatentActionNode;
    class ValueNode;
 
+   struct ID
+   {
+      ID()
+      {
+         index = -1;
+      }
+
+      void clear()
+      {
+         index = -1;
+         id = "";
+      }
+
+      bool operator==(const ID& rhs) const
+      {
+         return index == rhs.index && id == rhs.id;
+      }
+
+      bool operator<(const ID& rhs) const
+      {
+         return index < rhs.index;
+      }
+
+      bool operator>(const ID& rhs) const
+      {
+         return index > rhs.index;
+      }
+
+      int              index;
+      dtCore::UniqueId id;
+   };
+
    /**
     * This is the base class for all node objects.
     *
@@ -176,14 +208,22 @@ namespace dtDirector
        *
        * @return  The unique ID.
        */
-      const dtCore::UniqueId& GetID() const {return mID;}
+      const ID& GetID() const {return mID;}
 
       /**
        * Sets the ID of the node.
        *
        * @param[in]  id  The ID.
        */
-      void SetID(const dtCore::UniqueId& id) {mID = id;}
+      bool SetID(const ID& id);
+      void SetID(const dtCore::UniqueId& id) {mID.id = id;}
+
+      /**
+       *	Attempts to set the ID index for this node.
+       *
+       * @param[in]  index  The new index.
+       */
+      bool SetIDIndex(int index);
 
       /**
        * Retrieves the display name for the node.
@@ -295,7 +335,7 @@ namespace dtDirector
        * @return  The graph.
        */
       DirectorGraph* GetGraph() {return mGraph;}
-      void SetGraph(DirectorGraph* graph) {mGraph = graph;}
+      const DirectorGraph* GetGraph() const {return mGraph;}
 
       /**
        * Disconnects all links from this node.
@@ -655,7 +695,7 @@ namespace dtDirector
 
 
       // Properties.
-      dtCore::UniqueId   mID;
+      ID                 mID;
       std::string        mComment;
       bool               mLogNode;
       std::string        mAuthors;
@@ -677,6 +717,9 @@ namespace dtDirector
 #if defined DELTA_WIN32
 #pragma warning (pop)
 #endif //DELTA_WIN32
+
+      friend class Director;
+      friend class DirectorGraph;
    };
 }
 

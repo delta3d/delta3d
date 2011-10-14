@@ -445,9 +445,13 @@ namespace dtDirector
                if (mInLinkTo)
                {
                   // The other links node ID.
-                  if (topEl == dtCore::MapXMLConstants::ID_ELEMENT)
+                  if (topEl == dtCore::MapXMLConstants::ID_INDEX_ELEMENT)
                   {
-                     mLinkNodeID = dtUtil::XMLStringConverter(chars).ToString();
+                     mLinkNodeID.index = dtUtil::ToType<int>(dtUtil::XMLStringConverter(chars).ToString());
+                  }
+                  else if (topEl == dtCore::MapXMLConstants::ID_ELEMENT)
+                  {
+                     mLinkNodeID.id = dtCore::UniqueId(dtUtil::XMLStringConverter(chars).ToString());
                   }
                   // The other links name.
                   else if (topEl == dtCore::MapXMLConstants::NAME_ELEMENT)
@@ -456,17 +460,17 @@ namespace dtDirector
                   }
 
                   // If we have both an ID and a name, we can link them.
-                  if (!mLinkNodeID.empty())
+                  if (!mLinkNodeID.id.ToString().empty())
                   {
                      // Connect a value link to a value node.
                      if (mValueLink)
                      {
                         mLinkList.push_back(ToLinkData());
                         int index = (int)mLinkList.size() - 1;
-                        mLinkList[index].outputNodeID = mValueLink->GetOwner()->GetID().ToString();
-                        mLinkList[index].inputNodeID = mLinkNodeID;
+                        mLinkList[index].outputNodeID   = mValueLink->GetOwner()->GetID();
+                        mLinkList[index].inputNodeID    = mLinkNodeID;
                         mLinkList[index].outputLinkName = mValueLink->GetName();
-                        mLinkList[index].isValue = true;
+                        mLinkList[index].isValue        = true;
                         mLinkNodeID.clear();
                      }
                      else if (!mLinkToName.empty())
@@ -478,14 +482,14 @@ namespace dtDirector
                         if (mInputLink)
                         {
                            mLinkList[index].outputNodeID = mLinkNodeID;
-                           mLinkList[index].inputNodeID = mInputLink->GetOwner()->GetID().ToString();
+                           mLinkList[index].inputNodeID = mInputLink->GetOwner()->GetID();
                            mLinkList[index].outputLinkName = mLinkToName;
                            mLinkList[index].inputLinkName = mInputLink->GetName();
                         }
                         // Connect an output link to an input link.
                         else if (mOutputLink)
                         {
-                           mLinkList[index].outputNodeID = mOutputLink->GetOwner()->GetID().ToString();
+                           mLinkList[index].outputNodeID = mOutputLink->GetOwner()->GetID();
                            mLinkList[index].inputNodeID = mLinkNodeID;
                            mLinkList[index].outputLinkName = mOutputLink->GetName();
                            mLinkList[index].inputLinkName = mLinkToName;
@@ -593,7 +597,11 @@ namespace dtDirector
             }
             else if (!mPropSerializer->Characters(topEl, chars))
             {
-               if (topEl == dtCore::MapXMLConstants::ID_ELEMENT)
+               if (topEl == dtCore::MapXMLConstants::ID_INDEX_ELEMENT)
+               {
+                  mNode->SetIDIndex(dtUtil::ToType<int>(dtUtil::XMLStringConverter(chars).ToString()));
+               }
+               else if (topEl == dtCore::MapXMLConstants::ID_ELEMENT)
                {
                   mNode->SetID(dtCore::UniqueId(dtUtil::XMLStringConverter(chars).ToString()));
                }
@@ -601,7 +609,11 @@ namespace dtDirector
          }
          else if (!mPropSerializer->Characters(topEl, chars))
          {
-            if (topEl == dtCore::MapXMLConstants::ID_ELEMENT)
+            if (topEl == dtCore::MapXMLConstants::ID_INDEX_ELEMENT)
+            {
+               graph->SetIDIndex(dtUtil::ToType<int>(dtUtil::XMLStringConverter(chars).ToString()));
+            }
+            else if (topEl == dtCore::MapXMLConstants::ID_ELEMENT)
             {
                graph->SetID(dtCore::UniqueId(dtUtil::XMLStringConverter(chars).ToString()));
             }
@@ -610,35 +622,43 @@ namespace dtDirector
       // Link Connections.
       else if (mInLink)
       {
-         if (topEl == dtCore::MapXMLConstants::DIRECTOR_LINK_OUTPUT_OWNER_ELEMENT)
+         if (topEl == dtCore::MapXMLConstants::DIRECTOR_LINK_OUTPUT_OWNER_INDEX_ELEMENT)
          {
-            mLinkOutputOwnerID = dtUtil::XMLStringConverter(chars).ToString();
+            mLinkOutputOwnerID.index = dtUtil::ToType<int>(dtUtil::XMLStringConverter(chars).ToString());
+         }
+         else if (topEl == dtCore::MapXMLConstants::DIRECTOR_LINK_OUTPUT_OWNER_ELEMENT)
+         {
+            mLinkOutputOwnerID.id = dtCore::UniqueId(dtUtil::XMLStringConverter(chars).ToString());
          }
          else if (topEl == dtCore::MapXMLConstants::DIRECTOR_LINK_OUTPUT_NAME_ELEMENT)
          {
             mLinkOutputName = dtUtil::XMLStringConverter(chars).ToString();
          }
+         else if (topEl == dtCore::MapXMLConstants::DIRECTOR_LINK_INPUT_OWNER_INDEX_ELEMENT)
+         {
+            mLinkNodeID.index = dtUtil::ToType<int>(dtUtil::XMLStringConverter(chars).ToString());
+         }
          else if (topEl == dtCore::MapXMLConstants::DIRECTOR_LINK_INPUT_OWNER_ELEMENT)
          {
-            mLinkNodeID = dtUtil::XMLStringConverter(chars).ToString();
+            mLinkNodeID.id = dtCore::UniqueId(dtUtil::XMLStringConverter(chars).ToString());
          }
          else if (topEl == dtCore::MapXMLConstants::DIRECTOR_LINK_INPUT_NAME_ELEMENT)
          {
             mLinkToName = dtUtil::XMLStringConverter(chars).ToString();
          }
 
-         if (!mLinkOutputOwnerID.empty() &&
+         if (!mLinkOutputOwnerID.id.ToString().empty() &&
             !mLinkOutputName.empty() &&
-            !mLinkNodeID.empty() &&
+            !mLinkNodeID.id.ToString().empty() &&
             (mInValueLink || !mLinkToName.empty()))
          {
             mLinkList.push_back(ToLinkData());
             int index = (int)mLinkList.size() - 1;
-            mLinkList[index].outputNodeID = mLinkOutputOwnerID;
-            mLinkList[index].inputNodeID = mLinkNodeID;
+            mLinkList[index].outputNodeID   = mLinkOutputOwnerID;
+            mLinkList[index].inputNodeID    = mLinkNodeID;
             mLinkList[index].outputLinkName = mLinkOutputName;
-            mLinkList[index].inputLinkName = mLinkToName;
-            mLinkList[index].isValue = mInValueLink;
+            mLinkList[index].inputLinkName  = mLinkToName;
+            mLinkList[index].isValue        = mInValueLink;
          }
       }
    }
@@ -885,8 +905,8 @@ namespace dtDirector
       int count = (int)mLinkList.size();
       for (int index = 0; index < count; index++)
       {
-         dtCore::RefPtr<Node> outputNode = mDirector->GetNode(dtCore::UniqueId(mLinkList[index].outputNodeID), true);
-         dtCore::RefPtr<Node> inputNode = mDirector->GetNode(dtCore::UniqueId(mLinkList[index].inputNodeID), true);
+         dtCore::RefPtr<Node> outputNode = mDirector->GetNode(mLinkList[index].outputNodeID, true);
+         dtCore::RefPtr<Node> inputNode = mDirector->GetNode(mLinkList[index].inputNodeID, true);
 
          if (outputNode.valid() && inputNode.valid())
          {

@@ -504,7 +504,7 @@ namespace dtDirector
 
       if (mLatentIcon)
       {
-         mLatentIcon->setPos(bounds.width() - 
+         mLatentIcon->setPos(bounds.width() -
             mLatentIcon->boundingRect().width() * mLatentIcon->scale(), 0);
       }
    }
@@ -635,9 +635,9 @@ namespace dtDirector
    void NodeItem::SetupValues()
    {
       float maxWidth = MIN_VALUE_NAME_SIZE;
-      
+
       // Mutator nodes do not have a minimum width.
-      if (mNode.valid() && 
+      if (mNode.valid() &&
          mNode->GetType().GetNodeType() == dtDirector::NodeType::MUTATOR_NODE)
       {
          maxWidth = 0.0f;
@@ -871,18 +871,18 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   dtCore::UniqueId NodeItem::GetID()
+   dtDirector::ID NodeItem::GetID()
    {
       if (mNode.valid())
       {
          return mNode->GetID();
       }
 
-      return dtCore::UniqueId();
+      return dtDirector::ID();
    }
 
    //////////////////////////////////////////////////////////////////////////
-   bool NodeItem::HasID(const dtCore::UniqueId& id)
+   bool NodeItem::HasID(const dtDirector::ID& id)
    {
       if (mNode.valid())
       {

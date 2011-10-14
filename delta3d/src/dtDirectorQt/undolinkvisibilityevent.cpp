@@ -31,7 +31,7 @@
 namespace dtDirector
 {
    //////////////////////////////////////////////////////////////////////////
-   UndoLinkVisibilityEvent::UndoLinkVisibilityEvent(DirectorEditor* editor, const dtCore::UniqueId& nodeID, int linkType, const std::string& linkName, bool show, bool expose)
+   UndoLinkVisibilityEvent::UndoLinkVisibilityEvent(DirectorEditor* editor, const dtDirector::ID& nodeID, int linkType, const std::string& linkName, bool show, bool expose)
       : UndoEvent(editor)
       , mID(nodeID)
       , mLinkType(linkType)
@@ -136,7 +136,7 @@ namespace dtDirector
             break;
          }
       }
-      
+
       Node* node = mEditor->GetDirector()->GetNode(mID);
       if (node)
       {

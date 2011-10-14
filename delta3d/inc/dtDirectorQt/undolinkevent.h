@@ -56,8 +56,8 @@ namespace dtDirector
        */
       UndoLinkEvent(DirectorEditor* editor,
                     LinkType type,
-                    const dtCore::UniqueId& sourceID,
-                    const dtCore::UniqueId& destID,
+                    const dtDirector::ID& sourceID,
+                    const dtDirector::ID& destID,
                     const std::string& sourceLinkName,
                     const std::string& destLinkName,
                     bool connecting);
@@ -91,8 +91,8 @@ namespace dtDirector
 
       LinkType mType;
 
-      dtCore::UniqueId mSourceID;
-      dtCore::UniqueId mDestID;
+      dtDirector::ID mSourceID;
+      dtDirector::ID mDestID;
 
       std::string mSource;
       std::string mDest;

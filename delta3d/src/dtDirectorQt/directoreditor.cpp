@@ -891,7 +891,7 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void DirectorEditor::DeleteNode(dtCore::UniqueId id)
+   void DirectorEditor::DeleteNode(dtDirector::ID id)
    {
       Node* node = mDirector->GetNode(id);
       if (node)
@@ -1446,8 +1446,8 @@ namespace dtDirector
          NodeItem* item = dynamic_cast<NodeItem*>(selection[index]);
          if (item)
          {
-            dtCore::UniqueId id;
-            dtCore::UniqueId parentID;
+            dtDirector::ID id;
+            dtDirector::ID parentID;
 
             // Find the node IDs.
             if (item->GetNode())
@@ -1476,10 +1476,6 @@ namespace dtDirector
             dtCore::RefPtr<UndoDeleteEvent> event = new UndoDeleteEvent(this, id, parentID);
             GetUndoManager()->AddEvent(event);
 
-            // Delete the node or graph.
-            mDirector->DeleteNode(id);
-            mDirector->DeleteGraph(id);
-
             // Remove the node from all UI's
             int graphCount = mUI.graphTab->count();
             for (int graphIndex = 0; graphIndex < graphCount; graphIndex++)
@@ -1506,6 +1502,10 @@ namespace dtDirector
                   if (nodeItem) view->GetScene()->DeleteNode(nodeItem);
                }
             }
+
+            // Delete the node or graph.
+            mDirector->DeleteNode(id);
+            mDirector->DeleteGraph(id);
          }
       }
 

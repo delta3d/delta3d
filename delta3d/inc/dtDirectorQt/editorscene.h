@@ -159,7 +159,7 @@ namespace dtDirector
        * @return     A pointer to the NodeItem with the matching ID,
        *             or NULL if not found.
        */
-      NodeItem* GetNodeItem(const dtCore::UniqueId& id, bool exactMatch = false);
+      NodeItem* GetNodeItem(const dtDirector::ID& id, bool exactMatch = false);
       NodeItem* GetNodeItem(Node* node, bool exactMatch = false);
 
       /**
@@ -169,7 +169,7 @@ namespace dtDirector
        *
        * @return     The graph item that contains this graph.
        */
-      MacroItem* GetGraphItem(const dtCore::UniqueId& id);
+      MacroItem* GetGraphItem(const dtDirector::ID& id);
 
       /**
        * Batch selection.  To be used when we are purposely selecting multiple

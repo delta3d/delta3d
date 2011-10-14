@@ -35,7 +35,7 @@
 #include <dtUtil/datetime.h>
 #include <dtUtil/log.h>
 
-#define BINARY_SCRIPT_VERSION 3.0f
+#define BINARY_SCRIPT_VERSION 3.5f
 
 namespace dtDirector
 {
@@ -71,8 +71,8 @@ namespace dtDirector
 
          if (version >= 3.0f)
          {
-            ParseChainConnections(director, file);
-            ParseValueConnections(director, file);
+            ParseChainConnections(version, director, file);
+            ParseValueConnections(version, director, file);
          }
 
          LinkNodes(director);
@@ -265,6 +265,12 @@ namespace dtDirector
       }
 
       // Graph ID.
+      if (version >= 3.5f)
+      {
+         int index = -1;
+         fread(&index, sizeof(int), 1, file);
+         graph->SetIDIndex(index);
+      }
       graph->SetID(dtCore::UniqueId(ParseString(file)));
 
       // Properties.
@@ -337,6 +343,17 @@ namespace dtDirector
       }
 
       // Node ID.
+      if (version >= 3.5f)
+      {
+         int index = -1;
+         fread(&index, sizeof(int), 1, file);
+
+         if (newNode.valid())
+         {
+            newNode->SetIDIndex(index);
+         }
+      }
+
       std::string nodeID = ParseString(file);
       if (newNode.valid())
       {
@@ -395,9 +412,10 @@ namespace dtDirector
             for (int linkIndex = 0; linkIndex < linkCount; linkIndex++)
             {
                // Linked Node ID.
-               std::string linkedID = ParseString(file);
+               ID linkedID;
+               linkedID.id = dtCore::UniqueId(ParseString(file));
 
-               if (!linkedID.empty())
+               if (!linkedID.id.ToString().empty())
                {
                   // Linked Input Name.
                   std::string linkedName = ParseString(file);
@@ -405,7 +423,7 @@ namespace dtDirector
                   if (link)
                   {
                      ToLinkData data;
-                     data.outputNodeID   = link->GetOwner()->GetID().ToString();
+                     data.outputNodeID   = link->GetOwner()->GetID();
                      data.inputNodeID    = linkedID;
                      data.outputLinkName = link->GetName();
                      data.inputLinkName  = linkedName;
@@ -456,12 +474,13 @@ namespace dtDirector
             for (int linkIndex = 0; linkIndex < linkCount; linkIndex++)
             {
                // Linked Node ID.
-               std::string linkedID = ParseString(file);
+               ID linkedID;
+               linkedID.id = dtCore::UniqueId(ParseString(file));
 
-               if (!linkedID.empty() && link)
+               if (!linkedID.id.ToString().empty() && link)
                {
                   ToLinkData data;
-                  data.outputNodeID   = link->GetOwner()->GetID().ToString();
+                  data.outputNodeID   = link->GetOwner()->GetID();
                   data.inputNodeID    = linkedID;
                   data.outputLinkName = link->GetName();
                   data.isValue        = true;
@@ -473,33 +492,49 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void BinaryParser::ParseChainConnections(Director* script, FILE* file)
+   void BinaryParser::ParseChainConnections(float version, Director* script, FILE* file)
    {
       int linkCount = 0;
       fread(&linkCount, sizeof(int), 1, file);
       for (int linkIndex = 0; linkIndex < linkCount; linkIndex++)
       {
          ToLinkData data;
-         data.outputNodeID   = ParseString(file);
-         data.inputNodeID    = ParseString(file);
-         data.outputLinkName = ParseString(file);
-         data.inputLinkName  = ParseString(file);
+         if (version >= 3.5f)
+         {
+            fread(&data.outputNodeID.index, sizeof(int), 1, file);
+         }
+         data.outputNodeID.id = dtCore::UniqueId(ParseString(file));
+         if (version >= 3.5f)
+         {
+            fread(&data.inputNodeID.index, sizeof(int), 1, file);
+         }
+         data.inputNodeID.id  = dtCore::UniqueId(ParseString(file));
+         data.outputLinkName  = ParseString(file);
+         data.inputLinkName   = ParseString(file);
          data.isValue = false;
          mLinkList.push_back(data);
       }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void BinaryParser::ParseValueConnections(Director* script, FILE* file)
+   void BinaryParser::ParseValueConnections(float version, Director* script, FILE* file)
    {
       int linkCount = 0;
       fread(&linkCount, sizeof(int), 1, file);
       for (int linkIndex = 0; linkIndex < linkCount; linkIndex++)
       {
          ToLinkData data;
-         data.outputNodeID   = ParseString(file);
-         data.inputNodeID    = ParseString(file);
-         data.outputLinkName = ParseString(file);
+         if (version >= 3.5f)
+         {
+            fread(&data.outputNodeID.index, sizeof(int), 1, file);
+         }
+         data.outputNodeID.id = dtCore::UniqueId(ParseString(file));
+         if (version >= 3.5f)
+         {
+            fread(&data.inputNodeID.index, sizeof(int), 1, file);
+         }
+         data.inputNodeID.id  = dtCore::UniqueId(ParseString(file));
+         data.outputLinkName  = ParseString(file);
          data.isValue = true;
          mLinkList.push_back(data);
       }
@@ -569,8 +604,8 @@ namespace dtDirector
       int count = (int)mLinkList.size();
       for (int index = 0; index < count; index++)
       {
-         dtCore::RefPtr<Node> outputNode = director->GetNode(dtCore::UniqueId(mLinkList[index].outputNodeID), true);
-         dtCore::RefPtr<Node> inputNode = director->GetNode(dtCore::UniqueId(mLinkList[index].inputNodeID), true);
+         dtCore::RefPtr<Node> outputNode = director->GetNode(mLinkList[index].outputNodeID, true);
+         dtCore::RefPtr<Node> inputNode = director->GetNode(mLinkList[index].inputNodeID, true);
 
          if (outputNode.valid() && inputNode.valid())
          {
@@ -744,7 +779,8 @@ namespace dtDirector
       }
 
       // Graph ID.
-      SaveString(graph->GetID().ToString(), file);
+      fwrite(&graph->GetID().index, sizeof(int), 1, file);
+      SaveString(graph->GetID().id.ToString(), file);
 
       // Properties.
       SavePropertyContainer(graph, file);
@@ -795,7 +831,8 @@ namespace dtDirector
       SaveString(node->GetType().GetCategory(), file);
 
       // Node ID.
-      SaveString(node->GetID().ToString(), file);
+      fwrite(&node->GetID().index, sizeof(int), 1, file);
+      SaveString(node->GetID().id.ToString(), file);
 
       // Properties.
       SavePropertyContainer(node, file);
@@ -975,10 +1012,12 @@ namespace dtDirector
                   if (!input) continue;
 
                   // Output link owner.
-                  SaveString(output.GetOwner()->GetID().ToString(), file);
+                  fwrite(&output.GetOwner()->GetID().index, sizeof(int), 1, file);
+                  SaveString(output.GetOwner()->GetID().id.ToString(), file);
 
                   // Input link owner.
-                  SaveString(input->GetOwner()->GetID().ToString(), file);
+                  fwrite(&input->GetOwner()->GetID().index, sizeof(int), 1, file);
+                  SaveString(input->GetOwner()->GetID().id.ToString(), file);
 
                   // Output link name.
                   SaveString(output.GetName(), file);
@@ -1040,10 +1079,12 @@ namespace dtDirector
                   if (!input) continue;
 
                   // Output link owner.
-                  SaveString(output.GetOwner()->GetID().ToString(), file);
+                  fwrite(&output.GetOwner()->GetID().index, sizeof(int), 1, file);
+                  SaveString(output.GetOwner()->GetID().id.ToString(), file);
 
                   // Input link owner.
-                  SaveString(input->GetID().ToString(), file);
+                  fwrite(&input->GetID().index, sizeof(int), 1, file);
+                  SaveString(input->GetID().id.ToString(), file);
 
                   // Output link name.
                   SaveString(output.GetName(), file);

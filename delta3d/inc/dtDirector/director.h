@@ -26,6 +26,7 @@
 #include <dtDirector/directorgraph.h>
 #include <dtDirector/messagegmcomponent.h>
 #include <dtDirector/directornotifier.h>
+#include <dtDirector/node.h>
 
 #include <dtDAL/map.h>
 
@@ -485,7 +486,7 @@ namespace dtDirector
        *
        * @return     A pointer to the graph or NULL if not found.
        */
-      DirectorGraph* GetGraph(const dtCore::UniqueId& id);
+      DirectorGraph* GetGraph(const ID& id);
 
       /**
        * Retrieves a node of the given the id.
@@ -495,8 +496,8 @@ namespace dtDirector
        *
        * @return     A pointer to the node or NULL if not found.
        */
-      Node* GetNode(const dtCore::UniqueId& id, bool includeImportedScripts = false);
-      const Node* GetNode(const dtCore::UniqueId& id, bool includeImportedScripts = false) const;
+      Node* GetNode(const ID& id, bool includeImportedScripts = false);
+      const Node* GetNode(const ID& id, bool includeImportedScripts = false) const;
 
       /**
        * Retrieves a list of nodes that are of a certain type.
@@ -544,7 +545,7 @@ namespace dtDirector
        *
        * @return     True if the graph was found and removed.
        */
-      bool DeleteGraph(const dtCore::UniqueId& id);
+      bool DeleteGraph(const ID& id);
 
       /**
        * Deletes a node.
@@ -553,7 +554,7 @@ namespace dtDirector
        *
        * @return     True if the node was found and removed.
        */
-      bool DeleteNode(const dtCore::UniqueId& id);
+      bool DeleteNode(const ID& id);
 
       /**
        * Toggles the debug mode.
@@ -625,17 +626,34 @@ namespace dtDirector
 
    private:
 
+      /**
+       *	Adds or removes a node from the node master list.
+       *
+       * @param[in]  node   The node to add or remove.
+       * @param[in]  index  A desired index to place this node if possible.
+       */
+      bool MasterListAddNode(Node* node, int index = -1);
+      bool MasterListRemoveNode(Node* node);
+
+      /**
+       *	Adds or removes a graph from the graph master list.
+       *
+       * @param[in]  graph  The graph to add or remove.
+       */
+      bool MasterListAddGraph(DirectorGraph* graph, int index = -1);
+      bool MasterListRemoveGraph(DirectorGraph* graph);
+
       void GetThreadState(std::vector<StateThreadData>& threads, const ThreadData& thread) const;
       void GetValueState(std::vector<StateValueData>& values, const Director* child) const;
       void GetValueState(std::vector<StateValueData>& values, const DirectorGraph* graph) const;
 
       void RestoreThreadState(const StateThreadData& threadState, std::vector<ThreadData>& threads);
-      Node* RecurseFindNode(const dtCore::UniqueId& id, Director* script);
+      Node* RecurseFindNode(const ID& id, Director* script);
 
       // State Stack Data.
       struct StateStackData
       {
-         dtCore::UniqueId id;
+         ID id;
          int   index;
          bool  finished;
 
@@ -650,7 +668,7 @@ namespace dtDirector
 
       struct StateValueData
       {
-         dtCore::UniqueId id;
+         ID id;
          std::string      value;
       };
 
@@ -741,8 +759,31 @@ namespace dtDirector
       bool mHasDeprecatedProperty;
       bool mIsCachedInstance;
 
+      struct MasterNodeListData
+      {
+         int index;
+         Node* node;
+         int next;
+      };
+
+      struct MasterGraphListData
+      {
+         int index;
+         DirectorGraph* graph;
+         int next;
+      };
+
+      std::vector<MasterNodeListData>  mMasterNodeList;
+      std::vector<MasterGraphListData> mMasterGraphList;
+
+      int                              mMasterNodeFreeIndex;
+      int                              mMasterGraphFreeIndex;
+
+      //friend class DirectorGraph;
+      friend class Node;
       friend class ValueNode;
       friend class ArrayValueNode;
+      friend class DirectorGraph;
       friend class DirectorTypeFactory;
 
       // Switch to enable/disable this director

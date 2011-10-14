@@ -44,8 +44,8 @@ namespace dtDirector
        * @param[in]  parentID  The ID of the parent graph that owns this node.
        */
       UndoCreateEvent(DirectorEditor* editor,
-                      const dtCore::UniqueId& nodeID,
-                      const dtCore::UniqueId& parentID);
+                      const dtDirector::ID& nodeID,
+                      const dtDirector::ID& parentID);
 
       /**
        * Perform undo.

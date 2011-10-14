@@ -78,7 +78,7 @@ namespace dtDirector
       if (prop)
       {
          osg::Vec2 pos = prop->GetValue();
-         
+
          // The offset is always set to the first objects position.
          if (mFirstObject)
          {
@@ -143,21 +143,19 @@ namespace dtDirector
       }
 
       // Now add all created nodes to the undo manager.
-      if (undoManager && (!mPasted.empty() || !mPastedGraphs.empty()))
+      if (undoManager && !result.empty())
       {
+         Node* node = dynamic_cast<Node*>(result[0]);
+         DirectorGraph* graph = dynamic_cast<DirectorGraph*>(result[0]);
+
          std::string undoDescription = "Paste operation of ";
-         if (mPasted.size() == 1)
+         if (result.size() == 1)
          {
-            Node* node = mPasted[0];
             if (node)
             {
                undoDescription += "Node \'" + node->GetTypeName() + "\'.";
             }
-         }
-         else if (mPastedGraphs.size() == 1)
-         {
-            DirectorGraph* graph = mPastedGraphs[0];
-            if (graph)
+            else if (graph)
             {
                if (graph->GetEditor().empty())
                {
@@ -176,27 +174,35 @@ namespace dtDirector
          }
          undoManager->BeginMultipleEvents(undoDescription);
 
+         count = (int)result.size();
          for (int index = 0; index < count; index++)
          {
-            Node* node = mPasted[index];
+            dtDirector::ID id;
+            dtDirector::ID parentId;
+
+            Node* node = dynamic_cast<Node*>(result[index]);
             if (node)
             {
-               dtCore::RefPtr<UndoCreateEvent> event = new UndoCreateEvent(
-                  undoManager->GetEditor(), node->GetID(), node->GetGraph()->GetID());
-               undoManager->AddEvent(event);
+               id = node->GetID();
+               parentId = node->GetGraph()->GetID();
             }
-         }
-
-         count = mPastedGraphs.size();
-         for (int index = 0; index < count; index++)
-         {
-            DirectorGraph* subGraph = mPastedGraphs[index];
-            if (subGraph)
+            else
             {
-               dtCore::RefPtr<UndoCreateEvent> event = new UndoCreateEvent(
-                  undoManager->GetEditor(), subGraph->GetID(), subGraph->GetParent()->GetID());
-               undoManager->AddEvent(event);
+               DirectorGraph* graph = dynamic_cast<DirectorGraph*>(result[index]);
+               if (graph)
+               {
+                  id = graph->GetID();
+                  parentId = graph->GetParent()->GetID();
+               }
+               else
+               {
+                  continue;
+               }
             }
+
+            dtCore::RefPtr<UndoCreateEvent> event = new UndoCreateEvent(
+               undoManager->GetEditor(), id, parentId);
+            undoManager->AddEvent(event);
          }
 
          undoManager->EndMultipleEvents();

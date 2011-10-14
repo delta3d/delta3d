@@ -52,7 +52,7 @@ namespace dtDirector
        * @param[in]  newValue  The new property value.
        */
       UndoPropertyEvent(DirectorEditor* editor,
-                        const dtCore::UniqueId& id,
+                        const dtDirector::ID& id,
                         const std::string& propName,
                         const std::string& oldValue,
                         const std::string& newValue);
@@ -79,7 +79,7 @@ namespace dtDirector
        */
       virtual ~UndoPropertyEvent();
 
-      dtCore::UniqueId mID;
+      dtDirector::ID   mID;
       std::string      mPropName;
       std::string      mOldValue;
       std::string      mNewValue;

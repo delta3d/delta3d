@@ -23,7 +23,9 @@
 #define NODE_TABS
 
 #include <dtDirectorQt/export.h>
+
 #include <dtDirector/nodetype.h>
+#include <dtDirector/director.h>
 
 #include <QtGui/QToolBox>
 
@@ -87,6 +89,7 @@ namespace dtDirector
    private:
 
       DirectorEditor* mpEditor;
+      dtCore::RefPtr<dtDirector::Director> mpDirector;
       DirectorGraph* mpGraph;
    };
 } // namespace dtDirector

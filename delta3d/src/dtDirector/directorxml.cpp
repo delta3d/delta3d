@@ -427,9 +427,15 @@ namespace dtDirector
       BeginElement(dtCore::MapXMLConstants::DIRECTOR_GRAPH_ELEMENT);
       {
          // Graph ID.
+         BeginElement(dtCore::MapXMLConstants::ID_INDEX_ELEMENT);
+         {
+            AddCharacters(dtUtil::ToString(graph->GetID().index));
+         }
+         EndElement(); // End Node ID Elements.
+
          BeginElement(dtCore::MapXMLConstants::ID_ELEMENT);
          {
-            AddCharacters(graph->GetID().ToString());
+            AddCharacters(graph->GetID().id.ToString());
          }
          EndElement(); // End Node ID Elements.
 
@@ -511,9 +517,15 @@ namespace dtDirector
          EndElement(); // End Node Category Element.
 
          // Node ID.
+         BeginElement(dtCore::MapXMLConstants::ID_INDEX_ELEMENT);
+         {
+            AddCharacters(dtUtil::ToString(node->GetID().index));
+         }
+         EndElement(); // End Node ID Elements.
+
          BeginElement(dtCore::MapXMLConstants::ID_ELEMENT);
          {
-            AddCharacters(node->GetID().ToString());
+            AddCharacters(node->GetID().id.ToString());
          }
          EndElement(); // End Node ID Elements.
 
@@ -681,16 +693,28 @@ namespace dtDirector
                   BeginElement(dtCore::MapXMLConstants::DIRECTOR_LINK_CHAIN_CONNECTION);
                   {
                      // Output link owner.
+                     BeginElement(dtCore::MapXMLConstants::DIRECTOR_LINK_OUTPUT_OWNER_INDEX_ELEMENT);
+                     {
+                        AddCharacters(dtUtil::ToString(output.GetOwner()->GetID().index));
+                     }
+                     EndElement(); // End output link owner.
+
                      BeginElement(dtCore::MapXMLConstants::DIRECTOR_LINK_OUTPUT_OWNER_ELEMENT);
                      {
-                        AddCharacters(output.GetOwner()->GetID().ToString());
+                        AddCharacters(output.GetOwner()->GetID().id.ToString());
                      }
                      EndElement(); // End output link owner.
 
                      // Input link owner.
+                     BeginElement(dtCore::MapXMLConstants::DIRECTOR_LINK_INPUT_OWNER_INDEX_ELEMENT);
+                     {
+                        AddCharacters(dtUtil::ToString(input->GetOwner()->GetID().index));
+                     }
+                     EndElement(); // End input link owner.
+
                      BeginElement(dtCore::MapXMLConstants::DIRECTOR_LINK_INPUT_OWNER_ELEMENT);
                      {
-                        AddCharacters(input->GetOwner()->GetID().ToString());
+                        AddCharacters(input->GetOwner()->GetID().id.ToString());
                      }
                      EndElement(); // End input link owner.
 
@@ -741,16 +765,28 @@ namespace dtDirector
                   BeginElement(dtCore::MapXMLConstants::DIRECTOR_LINK_VALUE_CONNECTION);
                   {
                      // Output link owner.
+                     BeginElement(dtCore::MapXMLConstants::DIRECTOR_LINK_OUTPUT_OWNER_INDEX_ELEMENT);
+                     {
+                        AddCharacters(dtUtil::ToString(output.GetOwner()->GetID().index));
+                     }
+                     EndElement(); // End output link owner.
+
                      BeginElement(dtCore::MapXMLConstants::DIRECTOR_LINK_OUTPUT_OWNER_ELEMENT);
                      {
-                        AddCharacters(output.GetOwner()->GetID().ToString());
+                        AddCharacters(output.GetOwner()->GetID().id.ToString());
                      }
                      EndElement(); // End output link owner.
 
                      // Input link owner.
+                     BeginElement(dtCore::MapXMLConstants::DIRECTOR_LINK_INPUT_OWNER_INDEX_ELEMENT);
+                     {
+                        AddCharacters(dtUtil::ToString(input->GetID().index));
+                     }
+                     EndElement(); // End input link owner.
+
                      BeginElement(dtCore::MapXMLConstants::DIRECTOR_LINK_INPUT_OWNER_ELEMENT);
                      {
-                        AddCharacters(input->GetID().ToString());
+                        AddCharacters(input->GetID().id.ToString());
                      }
                      EndElement(); // End input link owner.
 

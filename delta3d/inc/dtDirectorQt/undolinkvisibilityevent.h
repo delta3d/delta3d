@@ -48,7 +48,7 @@ namespace dtDirector
        * @param[in]  show       Whether the link was shown or not.
        * @param[in]  expose     Whether the link was exposed or not.
        */
-      UndoLinkVisibilityEvent(DirectorEditor* editor, const dtCore::UniqueId& nodeID, int linkType, const std::string& linkName, bool show, bool expose = false);
+      UndoLinkVisibilityEvent(DirectorEditor* editor, const dtDirector::ID& nodeID, int linkType, const std::string& linkName, bool show, bool expose = false);
 
       /**
        * Perform undo.
@@ -71,7 +71,7 @@ namespace dtDirector
       OutputLink* GetOutputLink();
       ValueLink* GetValueLink();
 
-      dtCore::UniqueId  mID;
+      dtDirector::ID    mID;
       int               mLinkType;
       std::string       mLinkName;
       bool              mShow;

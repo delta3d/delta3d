@@ -29,8 +29,8 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    UndoLinkEvent::UndoLinkEvent(DirectorEditor* editor,
                                 LinkType type,
-                                const dtCore::UniqueId& sourceID,
-                                const dtCore::UniqueId& destID,
+                                const dtDirector::ID& sourceID,
+                                const dtDirector::ID& destID,
                                 const std::string& sourceLinkName,
                                 const std::string& destLinkName,
                                 bool connecting)

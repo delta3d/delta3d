@@ -228,7 +228,7 @@ namespace dtDirector
        *
        * @param[in]  id  The ID of the node to delete.
        */
-      void DeleteNode(dtCore::UniqueId id);
+      void DeleteNode(dtDirector::ID id);
 
       /**
        * Event handler when viewing the context menu of a value node.
@@ -633,8 +633,8 @@ namespace dtDirector
 
       struct TabStateData
       {
-         dtCore::UniqueId id;
-         QPointF          pos;
+         dtDirector::ID id;
+         QPointF        pos;
       };
       std::vector<TabStateData>mTabStates;
       int                      mSavedTabIndex;
