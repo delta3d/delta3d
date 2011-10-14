@@ -24,6 +24,8 @@
 
 #include <dtCore/mapheaderdata.h>
 
+#include <vector>
+
 namespace dtDirector
 {
    /**
