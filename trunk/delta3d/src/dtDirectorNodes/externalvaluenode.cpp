@@ -225,6 +225,13 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    dtCore::DataType& ExternalValueNode::GetPropertyType()
    {
+      // If we have a default type, use that
+      dtCore::DataType& defaultType = GetDefaultType();
+      if (defaultType != dtCore::DataType::UNKNOWN)
+      {
+         return defaultType;
+      }
+
       // If we are linked to a value link, use the type of that link.
       if (mLinks.size())
       {
@@ -262,7 +269,7 @@ namespace dtDirector
       }
 
       // If we have no connections yet, the type is undefined.
-      return GetDefaultType();
+      return defaultType;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
