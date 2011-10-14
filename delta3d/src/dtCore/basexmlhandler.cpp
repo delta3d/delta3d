@@ -299,6 +299,7 @@ namespace  dtCore
    void BaseXMLHandler::Reset()
    {
       while (!mElements.empty()) mElements.pop();
+      mCombinedCharacters.clear();
 
       resetErrors();
       mReachedEnd = false;
