@@ -23,7 +23,7 @@
 #define DIRECTORQT_UNDO_LINK_EVENT
 
 #include <dtDirectorQt/undoevent.h>
-
+#include <dtDirector/node.h>
 #include <dtCore/uniqueid.h>
 
 namespace dtDirector
