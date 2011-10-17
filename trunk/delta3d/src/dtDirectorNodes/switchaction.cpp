@@ -32,8 +32,8 @@ namespace dtDirector
       : ActionNode()
       , mOutputCount(1)
       , mLooping(false)
-      , mCurrentIndex(1)
       , mAutoIncrement(true)
+      , mCurrentIndex(1)
    {
       AddAuthor("Eric R. Heine");
    }

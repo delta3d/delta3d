@@ -33,8 +33,8 @@ namespace dtDirector
       : LatentActionNode()
       , mDelay(1.0f)
       , mElapsedTime(0.0f)
-      , mIsActive(false)
       , mUseSimTime(true)
+      , mIsActive(false)
    {
       AddAuthor("Jeff P. Houde");
    }
