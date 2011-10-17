@@ -41,13 +41,13 @@ namespace dtDirector
    /////////////////////////////////////////////////////////////////////////////
    SoundAction::SoundAction()
       : LatentActionNode()
-      , mpSound(NULL)
-      , mSoundResourceResource(dtCore::ResourceDescriptor::NULL_RESOURCE)
       , mSoundActor("")
-      , mPitch(1.0f)
+      , mSoundResourceResource(dtCore::ResourceDescriptor::NULL_RESOURCE)
       , mGain(1.0f)
+      , mPitch(1.0f)
       , mListenerRelative(false)
       , mLooping(false)
+      , mpSound(NULL)
    {
       AddAuthor("Michael Guerrero");
       AddAuthor("Eric R. Heine");

@@ -1089,7 +1089,7 @@ namespace dtDirector
          // If the links are far enough apart in height, draw an "S" connection.
          if (bottomNodeTop - topNodeBottom > MIN_NODE_HEIGHT)
          {
-            float halfX = (start.x() + end.x()) / 2.0f;
+            //float halfX = (start.x() + end.x()) / 2.0f;
             float halfY = (bottomNodeTop + topNodeBottom) / 2.0f;
 
             float rightX = 0.0f;
