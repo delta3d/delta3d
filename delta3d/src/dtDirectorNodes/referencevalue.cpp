@@ -261,7 +261,7 @@ namespace dtDirector
       DirectorGraph* graph = GetGraph();
       while (graph)
       {
-         if (node = graph->GetValueNode(mReference, false))
+         if ((node = graph->GetValueNode(mReference, false)) != NULL)
          {
             break;
          }
