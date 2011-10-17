@@ -24,6 +24,7 @@
 
 #include <dtDirectorQt/export.h>
 
+#include <dtDirector/node.h>
 #include <dtDirector/director.h>
 
 #include "ui_directoreditor.h"

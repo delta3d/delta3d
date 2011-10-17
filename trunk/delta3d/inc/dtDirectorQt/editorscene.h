@@ -26,6 +26,7 @@
 #include <dtDirectorQt/propertyeditor.h>
 
 #include <dtDirector/director.h>
+#include <dtDirector/node.h>
 
 #include <dtCore/refptr.h>
 

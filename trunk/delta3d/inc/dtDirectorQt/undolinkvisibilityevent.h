@@ -22,6 +22,7 @@
 #ifndef DIRECTORQT_UNDO_LINK_VISIBILITY_EVENT
 #define DIRECTORQT_UNDO_LINK_VISIBILITY_EVENT
 
+#include <dtDirector/node.h>
 #include <dtDirectorQt/undoevent.h>
 #include <dtCore/uniqueid.h>
 

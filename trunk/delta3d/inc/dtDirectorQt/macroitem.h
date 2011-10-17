@@ -24,6 +24,7 @@
 
 #include <dtDirectorQt/nodeitem.h>
 #include <dtDirector/directorgraph.h>
+#include <dtDirector/node.h>
 
 namespace dtDirector
 {
