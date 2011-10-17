@@ -23,6 +23,7 @@
 #define DIRECTORQT_UNDO_PROPERTY_EVENT
 
 #include <dtDirectorQt/undoevent.h>
+#include <dtDirector/node.h>
 
 #include <dtCore/uniqueid.h>
 

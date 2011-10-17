@@ -24,6 +24,7 @@
 
 #include <dtDirectorQt/undoevent.h>
 
+#include <dtDirector/node.h>
 #include <dtDirector/inputlink.h>
 #include <dtDirector/outputlink.h>
 #include <dtDirector/valuelink.h>

@@ -22,6 +22,7 @@
 #ifndef DIRECTORQT_UNDO_CREATE_EVENT
 #define DIRECTORQT_UNDO_CREATE_EVENT
 
+#include <dtDirector/node.h>
 #include <dtDirectorQt/undodeleteevent.h>
 
 #include <dtCore/uniqueid.h>
