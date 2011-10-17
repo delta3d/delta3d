@@ -34,6 +34,7 @@
 #include <dtDirectorQt/linkitem.h>
 #include <dtDirectorQt/groupitem.h>
 
+#include <dtDirector/node.h>
 #include <dtDirector/nodemanager.h>
 #include <dtDirector/nodetype.h>
 #include <dtDirector/groupnode.h>

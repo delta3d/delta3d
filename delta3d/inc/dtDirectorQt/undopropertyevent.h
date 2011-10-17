@@ -25,8 +25,6 @@
 #include <dtDirectorQt/undoevent.h>
 #include <dtDirector/node.h>
 
-#include <dtCore/uniqueid.h>
-
 namespace dtCore
 {
    class ActorProperty;

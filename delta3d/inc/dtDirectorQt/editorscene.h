@@ -26,7 +26,6 @@
 #include <dtDirectorQt/propertyeditor.h>
 
 #include <dtDirector/director.h>
-#include <dtDirector/node.h>
 
 #include <dtCore/refptr.h>
 
@@ -45,6 +44,8 @@ namespace dtDirector
    class DirectorGraph;
    class NodeItem;
    class MacroItem;
+   class Node;
+   struct ID;
 
    /**
    * @class EditorScene
