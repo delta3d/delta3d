@@ -152,7 +152,6 @@ namespace dtDirector
       }
       else
       {
-         int itemCount = mImportView->count();
          mDeleteButton->setEnabled(row >= 0);
       }
    }

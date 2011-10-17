@@ -729,7 +729,7 @@ namespace dtDirector
       {
          mMenuPos.setX(x);
          mMenuPos.setY(y);
-         DirectorGraph* graph = CreateMacro(category);
+         CreateMacro(category);
 
          mEditor->RefreshGraph(mGraph.get());
          mEditor->Refresh();
@@ -852,7 +852,7 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void EditorScene::OnCreateCustomEditedMacro(QAction* action)
    {
-      DirectorGraph* graph = CreateMacro(action->statusTip().toStdString());
+      CreateMacro(action->statusTip().toStdString());
 
       mEditor->RefreshGraph(mGraph.get());
       mEditor->Refresh();
