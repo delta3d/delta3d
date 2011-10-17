@@ -27,7 +27,6 @@
 
 #include <dtDirector/director.h>
 #include <dtDirector/directorgraph.h>
-#include <dtDirector/node.h>
 #include <dtDirector/nodemanager.h>
 
 #include <QtGui/QGraphicsRectItem>

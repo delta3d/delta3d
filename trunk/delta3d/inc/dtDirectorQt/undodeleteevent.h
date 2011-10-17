@@ -30,7 +30,6 @@
 #include <dtDirector/valuelink.h>
 #include <dtDirector/valuenode.h>
 
-#include <dtCore/uniqueid.h>
 #include <dtCore/refptr.h>
 
 #include <vector>
@@ -40,7 +39,6 @@ namespace dtDirector
 {
    class DirectorEditor;
    class DirectorGraph;
-   class Node;
 
    /**
     * Undo event for a property change.

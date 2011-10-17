@@ -21,7 +21,7 @@
 #include <prefix/dtdirectorqtprefix.h>
 #include <dtDirectorQt/undocreateevent.h>
 #include <dtDirectorQt/directoreditor.h>
-
+#include <dtDirector/node.h>
 
 namespace dtDirector
 {
