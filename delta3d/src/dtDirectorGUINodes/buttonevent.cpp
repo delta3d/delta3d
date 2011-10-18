@@ -301,7 +301,7 @@ namespace dtDirector
    bool ButtonEvent::OnClicked(const CEGUI::EventArgs& e)
    {
       const CEGUI::MouseEventArgs& mouseArgs = static_cast<const CEGUI::MouseEventArgs&>(e);
-      if (mouseArgs.clickCount == GetInt("ClickCount"))
+      if (mouseArgs.clickCount == (unsigned int)GetInt("ClickCount"))
       {
          Trigger("Clicked");
       }

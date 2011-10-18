@@ -252,8 +252,8 @@ bool GUI::SystemAndRendererCreatedByHUD = false;
 GUI::GUI(dtCore::Camera* camera,
          dtCore::Keyboard* keyboard,
          dtCore::Mouse* mouse)
-         : mRootSheet(NULL)
-         , mPreRenderToTexture(false)
+         : mPreRenderToTexture(false)
+         , mRootSheet(NULL)
 {
    mMouseListener    = new CEGUIMouseListener();
    mKeyboardListener = new CEGUIKeyboardListener();
