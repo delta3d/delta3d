@@ -84,8 +84,10 @@ namespace dtAnim
       unsigned int GetMaxBoneID(CalCoreMesh& mesh);
 
       typedef std::map<std::string, osg::ref_ptr<osg::Texture2D> > TextureMap;
-      typedef TextureMap::allocator_type::value_type TextureMapping;
-      TextureMap mTextures;
+      typedef std::map<std::string, cal3d::RefPtr<CalCoreAnimation> > AnimationMap;
+
+      TextureMap mTextureCache;
+      AnimationMap mAnimationCache;
 
    };
 
