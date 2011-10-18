@@ -39,7 +39,7 @@ class ActorPropertyWrap : public ActorProperty, public wrapper<ActorProperty>
 
       void CopyFrom( ActorProperty* otherProp )
       {
-         #if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
+         #if defined( _MSC_VER ) && ( _MSC_VER >= 1400 ) // MSVC 8.0
          call<void>( this->get_override("CopyFrom").ptr(), otherProp );
          #else
          this->get_override( "CopyFrom" )( otherProp );
@@ -48,7 +48,7 @@ class ActorPropertyWrap : public ActorProperty, public wrapper<ActorProperty>
    	
       const std::string ToString()
       {
-         #if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
+         #if defined( _MSC_VER ) && ( _MSC_VER >= 1400 ) // MSVC 8.0
          return call<const std::string&>( this->get_override("ToString").ptr() );
          #else
 		   return this->get_override("ToString")();
