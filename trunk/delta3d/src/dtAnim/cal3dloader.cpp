@@ -546,8 +546,6 @@ namespace dtAnim
 
       dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
 
-      osgDB::Registry* osgRegistry = osgDB::Registry::instance();
-
       dtCore::RefPtr<Cal3DModelData> coreModelData;
 
       //gotta parse the file and create/store a new CalCoreModel
