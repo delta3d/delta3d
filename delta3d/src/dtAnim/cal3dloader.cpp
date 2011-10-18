@@ -516,7 +516,6 @@ namespace dtAnim
    // CLASS CODE
    /////////////////////////////////////////////////////////////////////////////
    Cal3DLoader::Cal3DLoader()
-      : mTextures()
    {
    }
 
@@ -674,9 +673,35 @@ namespace dtAnim
                {
                   dtCore::RefPtr<CalOptions> calOptions = new CalOptions(*coreModelData, (*animItr).mName);
                   dtCore::RefPtr<osgDB::ReaderWriter::Options> options = CalOptions::CreateOSGOptions(*calOptions);
-                  if (fileUtils.ReadObject(filename, options.get()) == NULL)
+
+                  AnimationMap::iterator cachedAnimIter = mAnimationCache.find(filename);
+                  if (cachedAnimIter == mAnimationCache.end())
                   {
-                     LOG_ERROR("Can't load animation '" + filename +"':" + CalError::getLastErrorDescription());
+                     if (fileUtils.ReadObject(filename, options.get()) != NULL)
+                     {
+                        std::string animName = (*animItr).mName.empty() ? filename : (*animItr).mName;
+
+                        // Retrieve the animation we just loaded to store in the cache
+                        int id = coreModel->getCoreAnimationId(animName);
+
+                        CalCoreAnimation* animToCache = coreModel->getCoreAnimation(id);
+
+                        if (animToCache)
+                        {
+                           mAnimationCache[filename] = cal3d::RefPtr<CalCoreAnimation>(animToCache);
+                        }
+                     }
+                     else
+                     {
+                        LOG_ERROR("Can't load animation '" + filename +"':" + CalError::getLastErrorDescription());
+                     }
+                  }
+                  else
+                  {
+                     int id = coreModel->addCoreAnimation(cachedAnimIter->second.get());
+                     coreModel->addAnimationName(cachedAnimIter->second->getName(), id);
+
+                     coreModelData->RegisterFile(filename, (*animItr).mName);
                   }
                }
                else
@@ -1223,9 +1248,9 @@ namespace dtAnim
             std::string strFilename;
             strFilename = pCoreMaterial->getMapFilename(mapId);
 
-            TextureMap::iterator textureIterator = mTextures.find(strFilename);
+            TextureMap::iterator textureIterator = mTextureCache.find(strFilename);
 
-            if (textureIterator == mTextures.end())
+            if (textureIterator == mTextureCache.end())
             {
                // load the texture from the file
                osg::Image* img = osgDB::readImageFile(path + strFilename);
@@ -1240,7 +1265,7 @@ namespace dtAnim
                texture->setImage(img);
                texture->setWrap(osg::Texture::WRAP_S, osg::Texture::REPEAT);
                texture->setWrap(osg::Texture::WRAP_T, osg::Texture::REPEAT);
-               mTextures[strFilename] = texture;
+               mTextureCache[strFilename] = texture;
 
                // store the opengl texture id in the user data of the map
                pCoreMaterial->setMapUserData(mapId, (Cal::UserData)texture);
@@ -1281,7 +1306,10 @@ namespace dtAnim
     */
    void Cal3DLoader::PurgeAllCaches()
    {
-      mTextures.clear();
+      // Note: The texture cache has also passed pointers to corematerial userdata.
+      // This may need to be cleaned up to avoid potential crashes after this function is called.
+      mTextureCache.clear();
+      mAnimationCache.clear();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
