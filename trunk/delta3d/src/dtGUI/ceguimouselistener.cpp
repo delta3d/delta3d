@@ -82,8 +82,6 @@ bool CEGUIMouseListener::HandleMouseMoved(const dtCore::Mouse* mouse, float x, f
 
    UpdateWindowSize();
 
-   float xDelta = x - mMouseX;
-   float yDelta = y - mMouseY;
    //CEGUI::System::getSingleton().injectMouseMove((x - mMouseX) * mHalfWidth, (y - mMouseY) * -mHalfHeight);
    mMouseX = x;
    mMouseY = y;
