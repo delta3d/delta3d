@@ -348,8 +348,8 @@ namespace dtEditQt
       mActionBrushShape = new QAction(QIcon(UIResources::ICON_BRUSH_CUBE.c_str()), tr("Brush Shape"), this);
       mActionBrushShape->setStatusTip(tr("Changes STAGE Brush shape."));
       connect(mActionBrushShape, SIGNAL(triggered()), this, SLOT(slotChangeBrushShape()));
-     
-	  // Brush - Reset Position and Scale and Rotation
+
+    // Brush - Reset Position and Scale and Rotation
       mActionBrushReset = new QAction(QIcon(UIResources::ICON_BRUSH_RESET.c_str()), tr("Reset/Recall Brush"), this);
       mActionBrushReset->setStatusTip(tr("Bring Brush back in front of camera."));
       connect(mActionBrushReset, SIGNAL(triggered()), this, SLOT(slotResetBrush()));
@@ -652,7 +652,7 @@ namespace dtEditQt
    bool EditorActions::SaveNewPrefab(std::string category, std::string prefabName,
                                      std::string iconFile, std::string prefabDescrip)
    {
-      std::string fullPath = EditorActions::PREFAB_DIRECTORY + dtUtil::FileUtils::PATH_SEPARATOR 
+      std::string fullPath = EditorActions::PREFAB_DIRECTORY + dtUtil::FileUtils::PATH_SEPARATOR
          + category + "/" + prefabName;
       std::string fullPathSaving = fullPath + ".saving";
 
@@ -992,16 +992,16 @@ namespace dtEditQt
       while (selection.size())
       {
          // First check if this actor is in any groups.
-         dtCore::BaseActorObject* proxy = 
+         dtCore::BaseActorObject* proxy =
             const_cast<dtCore::BaseActorObject*>(selection.back().get());
 
          //don't allow the main Volume Brush to be deleted:
-         if (proxy->GetActor() == 
+         if (proxy->GetActor() ==
                EditorData::GetInstance().getMainWindow()->GetVolumeEditActor())
          {
             selection.pop_back();
             continue;
-         }         
+         }
 
          int groupIndex = currMap->FindGroupForActor(proxy);
          if (groupIndex > -1)
@@ -1016,7 +1016,7 @@ namespace dtEditQt
                deleteProxy(proxy, currMap);
 
                // Now remove this actor from the selection list.
-               for (int selectionIndex = 0; 
+               for (int selectionIndex = 0;
                     selectionIndex < (int)selection.size(); selectionIndex++)
                {
                   if (selection[selectionIndex].get() == proxy)
@@ -1084,7 +1084,6 @@ namespace dtEditQt
                EditorEvents::GetInstance().emitActorProxyDestroyed(proxy);
                result = true;
             }
-            return result;
          }
       }
 
@@ -1303,16 +1302,16 @@ namespace dtEditQt
       dtActors::VolumeEditActor::VolumeShapeType& shapeType = EditorData::GetInstance().getMainWindow()->GetVolumeEditActor()->GetShape();
 
       if (shapeType == dtActors::VolumeEditActor::VolumeShapeType::BOX)
-      {       
+      {
             mActionBrushShape->setIcon(QIcon(UIResources::ICON_BRUSH_SPHERE.c_str()));
             EditorData::GetInstance().getMainWindow()->GetVolumeEditActor()->SetShape(
-                                   dtActors::VolumeEditActor::VolumeShapeType::SPHERE);            
+                                   dtActors::VolumeEditActor::VolumeShapeType::SPHERE);
       }
       else //change back to BOX
-      {       
-            mActionBrushShape->setIcon(QIcon(UIResources::ICON_BRUSH_CUBE.c_str()));            
+      {
+            mActionBrushShape->setIcon(QIcon(UIResources::ICON_BRUSH_CUBE.c_str()));
             EditorData::GetInstance().getMainWindow()->GetVolumeEditActor()->SetShape(
-                                      dtActors::VolumeEditActor::VolumeShapeType::BOX);       
+                                      dtActors::VolumeEditActor::VolumeShapeType::BOX);
       }
 
       ViewportManager::GetInstance().refreshAllViewports();
@@ -1321,7 +1320,7 @@ namespace dtEditQt
    //////////////////////////////////////////////////////////////////////////////
    void EditorActions::slotResetBrush()
    {
-      dtActors::VolumeEditActor* theBrushActor = 
+      dtActors::VolumeEditActor* theBrushActor =
                 EditorData::GetInstance().getMainWindow()->GetVolumeEditActor();
 
       //make sure the brush is not masked away:
@@ -1332,16 +1331,16 @@ namespace dtEditQt
       }
 
       theBrushActor->SetScale(osg::Vec3(1.0f, 1.0f, 1.0f));
-      
+
       dtCore::Transform xForm;
-      
+
       StageCamera* worldCam = ViewportManager::GetInstance().getWorldViewCamera();
-      worldCam->getDeltaCamera()->GetTransform(xForm);           
-      
+      worldCam->getDeltaCamera()->GetTransform(xForm);
+
       //move brush away from the camera a bit so we can see it
-      osg::Vec3 viewDir = worldCam->getViewDir();      
+      osg::Vec3 viewDir = worldCam->getViewDir();
       double len = theBrushActor->GetBaseLength();
-    
+
       osg::Vec3 trans = xForm.GetTranslation();
       trans[0] += viewDir[0] * len * 5.0;
       trans[1] += viewDir[1] * len * 5.0;
@@ -1351,7 +1350,7 @@ namespace dtEditQt
       //Volume brush's rotation should be 0,0,0
       xForm.SetRotation(0.0f, 0.0f, 0.0f);
 
-      theBrushActor->SetTransform(xForm);      
+      theBrushActor->SetTransform(xForm);
 
       ViewportManager::GetInstance().refreshAllViewports();
    }
@@ -1359,7 +1358,7 @@ namespace dtEditQt
    //////////////////////////////////////////////////////////////////////////////
    void EditorActions::slotShowHideBrush()
    {
-      dtActors::VolumeEditActor* theBrushActor = 
+      dtActors::VolumeEditActor* theBrushActor =
          EditorData::GetInstance().getMainWindow()->GetVolumeEditActor();
 
       if (theBrushActor->GetOSGNode()->getNodeMask() == 0)
@@ -1388,10 +1387,10 @@ namespace dtEditQt
          for (size_t i = 0; i < apl.size(); ++i)
          {
             aplrp.push_back(apl[i]);
-         }      
+         }
          EditorEvents::GetInstance().emitActorsSelected(aplrp);
 
-         theBrushActor->GetOSGNode()->setNodeMask(0);         
+         theBrushActor->GetOSGNode()->setNodeMask(0);
       }
 
       ViewportManager::GetInstance().refreshAllViewports();
@@ -1406,38 +1405,38 @@ namespace dtEditQt
       if (! map)
       {
          return;
-      }      
-      
+      }
+
       std::vector< dtCore::RefPtr<dtCore::BaseActorObject > > actorProxies;
       map->GetAllProxies(actorProxies);
 
       if (mShowingTriggerVolumes)
       {
-         mShowingTriggerVolumes = false;         
+         mShowingTriggerVolumes = false;
       }
       else
       {
-         mShowingTriggerVolumes = true;         
+         mShowingTriggerVolumes = true;
       }
 
       for(size_t i = 0; i < actorProxies.size(); ++i)
-      {         
+      {
          if (actorProxies[i]->GetActorType().GetName() == "Trigger Volume Actor")
          {
-            dtCore::Transformable* actr = 
+            dtCore::Transformable* actr =
                dynamic_cast<dtCore::Transformable* >(actorProxies[i]->GetActor());
 
             if (actr)
-            {  
+            {
                if (mShowingTriggerVolumes)
-               { 
+               {
                   //show trigger volumes
-                  actr->RenderCollisionGeometry(true, true);                  
+                  actr->RenderCollisionGeometry(true, true);
                }
                else
                {
                   //hide trigger volumes
-                  actr->RenderCollisionGeometry(false);                  
+                  actr->RenderCollisionGeometry(false);
                }
             }
          }
@@ -1695,7 +1694,7 @@ namespace dtEditQt
       {
          const std::string contextName = dialog.getProjectPath().toStdString();
          SlotChangeProjectContext(contextName);
-      }      
+      }
 
       slotRestartAutosave();
    }
@@ -1739,7 +1738,7 @@ namespace dtEditQt
       EditorData::GetInstance().addRecentProject(path);
       EditorEvents::GetInstance().emitProjectChanged();
       refreshRecentProjects();
-      
+
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -1963,7 +1962,7 @@ namespace dtEditQt
       // Now that we have changed maps, clear the current selection.
       std::vector< dtCore::RefPtr<dtCore::BaseActorObject> > emptySelection;
       EditorEvents::GetInstance().emitActorsSelected(emptySelection);
-      
+
    }
 
    //////////////////////////////////////////////////////////////////////////////
@@ -1973,8 +1972,8 @@ namespace dtEditQt
       PropertyEditor* propEditor = EditorData::GetInstance().getMainWindow()->GetPropertyEditor();
       if(propEditor != NULL)
       {
-         propEditor->CommitCurrentEdits();   
-      }      
+         propEditor->CommitCurrentEdits();
+      }
 
       dtCore::Map* currMap = EditorData::GetInstance().getCurrentMap();
       int result = QMessageBox::NoButton;

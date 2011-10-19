@@ -179,6 +179,11 @@ namespace dtEditQt
        */
       void selectedActors(ActorProxyRefPtrVector& actors);
 
+      /**
+       * Specifically handle key press events when the widget has focus
+       */
+      void keyPressEvent(QKeyEvent* event);
+
    private:
       /**
        * Simple utility to get the currently selected item.  Only one.

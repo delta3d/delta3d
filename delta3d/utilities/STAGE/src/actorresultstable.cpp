@@ -28,11 +28,12 @@
  * Curtiss Murphy
  */
 #include <prefix/stageprefix.h>
+#include <QtCore/QStringList>
 #include <QtGui/QGridLayout>
 #include <QtGui/QGroupBox>
 #include <QtGui/QHeaderView>
+#include <QtGui/QKeyEvent>
 #include <QtGui/QPushButton>
-#include <QtCore/QStringList>
 #include <QtGui/QTreeWidgetItem>
 #include <dtEditQt/actorresultstable.h>
 #include <dtEditQt/editoractions.h>
@@ -152,30 +153,6 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ActorResultsTable::updateResultsCount()
-   {
-      QString newTitle;
-
-      if (mParentBox != NULL)
-      {
-         int count = mResultsTree->topLevelItemCount();
-
-         // add the count if it's greater than 0 and account for the 's'.
-         if (count > 0)
-         {
-            newTitle = mParentBaseTitle + " (" + QString::number(count) + " Actor" +
-               ((count > 1) ? "s" : "") + ")";
-         }
-         else
-         {
-            newTitle = mParentBaseTitle;
-         }
-
-         mParentBox->setTitle(newTitle);
-      }
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
    void ActorResultsTable::addProxies(std::vector< dtCore::RefPtr<dtCore::BaseActorObject> > foundProxies)
    {
       std::vector< dtCore::RefPtr<dtCore::BaseActorObject > >::const_iterator iter;
@@ -244,24 +221,6 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   ActorResultsTreeItem* ActorResultsTable::getSelectedResultTreeWidget()
-   {
-      ActorResultsTreeItem* returnVal = NULL;
-
-      if (mResultsTree != NULL)
-      {
-         QList<QTreeWidgetItem*> list = mResultsTree->selectedItems();
-
-         if (!list.isEmpty())
-         {
-            returnVal = dynamic_cast<ActorResultsTreeItem*>(list[0]);
-         }
-      }
-
-      return returnVal;
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
    void ActorResultsTable::doEnableButtons()
    {
       QList<QTreeWidgetItem*> list = mResultsTree->selectedItems();
@@ -277,6 +236,26 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
+   void ActorResultsTable::UnselectAllItemsManually(QTreeWidgetItem* keepSelectedItem)
+   {
+      QTreeWidgetItem* item;
+      int index = 0;
+
+      // clear any selections - Yes, there is a clearSelection() method, but that method also
+      // resets the current item, which causes wierd keyboard focus issues that will resend
+      // a selection event sometimes or cause the selection to flicker...  it's sloppy.  So,
+      // the easiest thing to do was just unselect items one at a time.
+      while (NULL != (item = mResultsTree->topLevelItem(index)))
+      {
+         if (item != keepSelectedItem && mResultsTree->isItemSelected(item))
+         {
+            mResultsTree->setItemSelected(item, false);
+         }
+         ++index;
+      }
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
    // SLOTS
    ///////////////////////////////////////////////////////////////////////////////
 
@@ -286,50 +265,6 @@ namespace dtEditQt
       mResultsTree->clear();
       doEnableButtons();
       updateResultsCount();
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
-   void ActorResultsTable::gotoPressed()
-   {
-      ActorResultsTreeItem* selection = getSelectedResultTreeWidget();
-
-      if (selection != NULL)
-      {
-         dtCore::RefPtr<dtCore::BaseActorObject> proxyPtr = selection->getProxy();
-
-         // Make sure we are in sync so that we goto the right object.
-         sendSelection();
-
-         // now tell the viewports to goto that actor
-         EditorEvents::GetInstance().emitGotoActor(proxyPtr);
-      }
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
-   void ActorResultsTable::actorProxyAboutToBeDestroyed(dtCore::RefPtr<dtCore::BaseActorObject> proxy)
-   {
-      QTreeWidgetItem* item;
-      int index = 0;
-
-      // iterate through our top level items until we have no more.
-      while (NULL != (item = mResultsTree->topLevelItem(index)))
-      {
-         ActorResultsTreeItem* treeItem = static_cast<ActorResultsTreeItem*>(item);
-
-         if (proxy == treeItem->getProxy())
-         {
-            mResultsTree->takeTopLevelItem(index);
-            updateResultsCount();
-            doEnableButtons();
-            break;  // we're done
-         }
-
-         ++index;
-      }
-
-      // NOTE - it is very likely that a delete operation also sends a selection event.  It's
-      // supposed to.  So we should not have to handle our selection separately.  We'll get
-      // an event.
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -379,6 +314,91 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
+   void ActorResultsTable::gotoPressed()
+   {
+      ActorResultsTreeItem* selection = getSelectedResultTreeWidget();
+
+      if (selection != NULL)
+      {
+         dtCore::RefPtr<dtCore::BaseActorObject> proxyPtr = selection->getProxy();
+
+         // Make sure we are in sync so that we goto the right object.
+         sendSelection();
+
+         // now tell the viewports to goto that actor
+         EditorEvents::GetInstance().emitGotoActor(proxyPtr);
+      }
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void ActorResultsTable::duplicatePressed()
+   {
+      // absolutely, positively, guarantee that the our selection is the same as the
+      // rest of the system. If out of sync, the user duplicates the WRONG objects!!!
+      sendSelection();
+
+      // Protect from recursive issues.
+      mRecurseProtectEmitSelectionChanged = true;
+
+      // Go ahead and unselect all items now. That prevents a wierd recursive event effect.
+      UnselectAllItemsManually(NULL);
+
+      // duplicate the currently selected actors
+      EditorActions::GetInstance().slotEditDuplicateActors();
+
+      mRecurseProtectEmitSelectionChanged = false;
+
+      updateResultsCount();
+      doEnableButtons();
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void ActorResultsTable::deletePressed()
+   {
+      // absolutely, positively, guarantee that the our selection is the same as the
+      // rest of the system. If out of sync, the user deletes the WRONG objects!!!
+      sendSelection();
+
+      // Protect from recursive issues.
+      mRecurseProtectEmitSelectionChanged = true;
+
+      // delete the currently selected actors
+      EditorActions::GetInstance().slotEditDeleteActors();
+
+      mRecurseProtectEmitSelectionChanged = false;
+
+      updateResultsCount();
+      doEnableButtons();
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void ActorResultsTable::actorProxyAboutToBeDestroyed(dtCore::RefPtr<dtCore::BaseActorObject> proxy)
+   {
+      QTreeWidgetItem* item;
+      int index = 0;
+
+      // iterate through our top level items until we have no more.
+      while (NULL != (item = mResultsTree->topLevelItem(index)))
+      {
+         ActorResultsTreeItem* treeItem = static_cast<ActorResultsTreeItem*>(item);
+
+         if (proxy == treeItem->getProxy())
+         {
+            mResultsTree->takeTopLevelItem(index);
+            updateResultsCount();
+            doEnableButtons();
+            break;  // we're done
+         }
+
+         ++index;
+      }
+
+      // NOTE - it is very likely that a delete operation also sends a selection event.  It's
+      // supposed to.  So we should not have to handle our selection separately.  We'll get
+      // an event.
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
    void ActorResultsTable::onSelectionChanged()
    {
       if (!mRecurseProtectSendingSelection)
@@ -410,64 +430,57 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ActorResultsTable::UnselectAllItemsManually(QTreeWidgetItem* keepSelectedItem)
+   void ActorResultsTable::keyPressEvent(QKeyEvent* event)
    {
-      QTreeWidgetItem* item;
-      int index = 0;
-
-      // clear any selections - Yes, there is a clearSelection() method, but that method also
-      // resets the current item, which causes wierd keyboard focus issues that will resend
-      // a selection event sometimes or cause the selection to flicker...  it's sloppy.  So,
-      // the easiest thing to do was just unselect items one at a time.
-      while (NULL != (item = mResultsTree->topLevelItem(index)))
+      switch(event->key())
       {
-         if (item != keepSelectedItem && mResultsTree->isItemSelected(item))
+      case Qt::Key_Delete:
          {
-            mResultsTree->setItemSelected(item, false);
+            deletePressed();
          }
-         ++index;
       }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ActorResultsTable::deletePressed()
+   ActorResultsTreeItem* ActorResultsTable::getSelectedResultTreeWidget()
    {
-      // absolutely, positively, guarantee that the our selection is the same as the
-      // rest of the system. If out of sync, the user deletes the WRONG objects!!!
-      sendSelection();
+      ActorResultsTreeItem* returnVal = NULL;
 
-      // Protect from recursive issues.
-      mRecurseProtectEmitSelectionChanged = true;
+      if (mResultsTree != NULL)
+      {
+         QList<QTreeWidgetItem*> list = mResultsTree->selectedItems();
 
-      // delete the currently selected actors
-      EditorActions::GetInstance().slotEditDeleteActors();
+         if (!list.isEmpty())
+         {
+            returnVal = dynamic_cast<ActorResultsTreeItem*>(list[0]);
+         }
+      }
 
-      mRecurseProtectEmitSelectionChanged = false;
-
-      updateResultsCount();
-      doEnableButtons();
+      return returnVal;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ActorResultsTable::duplicatePressed()
+   void ActorResultsTable::updateResultsCount()
    {
-      // absolutely, positively, guarantee that the our selection is the same as the
-      // rest of the system. If out of sync, the user duplicates the WRONG objects!!!
-      sendSelection();
+      QString newTitle;
 
-      // Protect from recursive issues.
-      mRecurseProtectEmitSelectionChanged = true;
+      if (mParentBox != NULL)
+      {
+         int count = mResultsTree->topLevelItemCount();
 
-      // Go ahead and unselect all items now. That prevents a wierd recursive event effect.
-      UnselectAllItemsManually(NULL);
+         // add the count if it's greater than 0 and account for the 's'.
+         if (count > 0)
+         {
+            newTitle = mParentBaseTitle + " (" + QString::number(count) + " Actor" +
+               ((count > 1) ? "s" : "") + ")";
+         }
+         else
+         {
+            newTitle = mParentBaseTitle;
+         }
 
-      // duplicate the currently selected actors
-      EditorActions::GetInstance().slotEditDuplicateActors();
-
-      mRecurseProtectEmitSelectionChanged = false;
-
-      updateResultsCount();
-      doEnableButtons();
+         mParentBox->setTitle(newTitle);
+      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
