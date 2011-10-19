@@ -282,6 +282,11 @@ namespace dtDirector
                if (linkNode)
                {
                   Node* newLinkNode = newGraph->GetNode(linkNode->GetID());
+                  if (newLinkNode == NULL)
+                  {
+                     LOG_ALWAYS("Could not find link node in new graph when cloning script.");
+                     continue;
+                  }
 
                   // Iterate through the connections for this output node.
                   int targetCount = (int)linkNode->GetOutputLinks()[0].GetLinks().size();
