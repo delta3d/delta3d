@@ -111,7 +111,7 @@ namespace dtDirector
          return NULL;
       }
 
-      copy->SetID(mID.id);
+      copy->SetID(mID);
       copy->CopyPropertiesFrom(*this);
 
       // Input Links.
