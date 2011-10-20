@@ -18,15 +18,17 @@
  *
  * Pjotr van Amerongen, Curtiss Murphy, David Guthrie
  */
+// Must be first because of a hawknl conflict with osg.  This is not a directly required include, but indirectly
+#include <osgDB/Serializer>
+
 #include <dtNetGM/clientnetworkcomponent.h>
 #include <dtNetGM/clientconnectionlistener.h>
 #include <dtNetGM/networkbridge.h>
 #include <dtNetGM/networkcomponent.h>
-#include <dtGame/basemessages.h>
 #include <dtGame/messagetype.h>
 #include <dtGame/messagefactory.h>
+#include <dtGame/basemessages.h>
 #include <dtCore/system.h>
-#include <OpenThreads/Block>
 
 
 namespace dtNetGM

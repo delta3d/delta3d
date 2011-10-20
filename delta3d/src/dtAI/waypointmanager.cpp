@@ -81,11 +81,7 @@ namespace dtAI
    /////////////////////////////////////////////////////////////////////////////
    WaypointManager::~WaypointManager()
    {
-#if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR >= 1 && OSG_VERSION_MINOR >= 1
       mDrawable->removeDrawables(0, 1);
-#else
-      mDrawable->removeDrawable(0, 1);
-#endif
       mDrawable = NULL;
 
       Clear();

@@ -50,11 +50,7 @@ bool StatsHandler::SelectNextType()
    }
 
    osg::Stats* stats;
-#if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR >= 2  && OSG_VERSION_MINOR >= 8
    stats = mViewer->getViewerStats();
-#else
-   stats = mViewer->getStats();
-#endif
    if (stats == NULL)
    {
       return false;
@@ -1075,11 +1071,7 @@ void StatsHandler::SetUpScene(osgViewer::ViewerBase* viewer)
    osg::Vec4 colorDP( 1.0f,1.0f,0.5f,1.0f);
 
    osg::Stats* stats;
-#if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR >= 2  && OSG_VERSION_MINOR >= 8
    stats = mViewer->getViewerStats();
-#else
-   stats = mViewer->getStats();
-#endif
 
    // frame rate stats
    {
@@ -1845,20 +1837,12 @@ osg::Node* StatsHandler::CreateCameraTimeStats(const std::string& font, osg::Vec
 ////////////////////////////////////////////////////////////////////////////////
 void StatsHandler::PrintOutStats( osgViewer::ViewerBase * viewer )
 {
-#if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR >= 2  && OSG_VERSION_MINOR >= 8
    if (viewer->getViewerStats())
-#else
-   if (viewer->getStats())
-#endif
    {
       osg::notify(osg::NOTICE)<<std::endl<<"Stats report:"<<std::endl;
       typedef std::vector<osg::Stats*> StatsList;
       StatsList statsList;
-#if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR >= 2  && OSG_VERSION_MINOR >= 8
       statsList.push_back(viewer->getViewerStats());
-#else
-      statsList.push_back(viewer->getStats());
-#endif
 
       osgViewer::ViewerBase::Contexts contexts;
       viewer->getContexts(contexts);
@@ -1875,11 +1859,7 @@ void StatsHandler::PrintOutStats( osgViewer::ViewerBase * viewer )
          }
       }
 
-#if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR >= 2  && OSG_VERSION_MINOR >= 8
-      for(int i = viewer->getViewerStats()->getEarliestFrameNumber(); i<= viewer->getViewerStats()->getLatestFrameNumber()-1; ++i)
-#else
-      for(int i = viewer->getStats()->getEarliestFrameNumber(); i<= viewer->getStats()->getLatestFrameNumber()-1; ++i)
-#endif
+      for(unsigned i = viewer->getViewerStats()->getEarliestFrameNumber(); i<= viewer->getViewerStats()->getLatestFrameNumber()-1; ++i)
       {
          for(StatsList::iterator itr = statsList.begin();
             itr != statsList.end();

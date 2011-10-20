@@ -58,6 +58,7 @@ namespace dtQt
       return mInterface->getNumScreens(screenIdentifier);
    }
 
+#if defined(OPENSCENEGRAPH_MAJOR_VERSION) && OPENSCENEGRAPH_MAJOR_VERSION < 3
    /////////////////////////////////////////////////////////////
    void QtGuiWindowSystemWrapper::getScreenResolution(const osg::GraphicsContext::ScreenIdentifier& screenIdentifier,
             unsigned int& width, unsigned int& height)
@@ -78,8 +79,15 @@ namespace dtQt
    {
       return mInterface->setScreenRefreshRate(screenIdentifier, refreshRate);
    }
+#else
+   /////////////////////////////////////////////////////////////
+   bool QtGuiWindowSystemWrapper::setScreenSettings(const osg::GraphicsContext::ScreenIdentifier& screenIdentifier, const osg::GraphicsContext::ScreenSettings& resolution)
+   {
+      return mInterface->setScreenSettings(screenIdentifier, resolution);
+   }
+#endif
 
-#if defined(OPENSCENEGRAPH_MAJOR_VERSION) && OPENSCENEGRAPH_MAJOR_VERSION >= 2 && defined(OPENSCENEGRAPH_MINOR_VERSION) && OPENSCENEGRAPH_MINOR_VERSION >= 8
+
    /////////////////////////////////////////////////////////////
    void QtGuiWindowSystemWrapper::getScreenSettings(const osg::GraphicsContext::ScreenIdentifier& si, osg::GraphicsContext::ScreenSettings & resolution)
    {
@@ -91,7 +99,6 @@ namespace dtQt
    {
       mInterface->enumerateScreenSettings(si, rl);
    }
-#endif
 
    /////////////////////////////////////////////////////////////
    osg::GraphicsContext* QtGuiWindowSystemWrapper::createGraphicsContext(osg::GraphicsContext::Traits* traits)
