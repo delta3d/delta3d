@@ -20,6 +20,9 @@
 * THE SOFTWARE.
 */
 
+// Must be first because of a hawknl conflict with osg.  This is not a directly required include, but indirectly
+#include <osgDB/Serializer>
+
 #include "testdisapp.h"
 #include "disactorcomponents.h"
 #include <dtDIS/mastercomponent.h>
