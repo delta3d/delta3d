@@ -18,6 +18,8 @@
  *
  * @author Pjotr van Amerongen
  */
+// Must be first because of a hawknl conflict with osg.  This is not a directly required include, but indirectly
+#include <osgDB/Serializer>
 
 #include <dtNetGM/serverconnectionlistener.h>
 #include <dtNetGM/clientconnectionlistener.h>

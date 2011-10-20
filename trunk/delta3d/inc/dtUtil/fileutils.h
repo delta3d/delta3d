@@ -31,14 +31,23 @@
 #include <dtUtil/exception.h>
 #include <dtUtil/export.h>
 
+#include <osg/Version>
 #include <osgDB/FileUtils>
 #include <osgDB/ReaderWriter>
 
 /// @cond DOXYGEN_SHOULD_SKIP_THIS
+
+#if OPENSCENEGRAPH_MAJOR_VERSION < 3
 namespace osgDB
 {
    class ArchiveExtended;
 }
+#else
+namespace osgDB
+{
+   typedef Archive ArchiveExtended;
+}
+#endif
 /// @endcond
 
 namespace dtUtil

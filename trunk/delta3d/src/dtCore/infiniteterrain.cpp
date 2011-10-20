@@ -15,6 +15,7 @@
 #include <osg/TexEnv>
 #include <osg/Texture2D>
 #include <osg/PrimitiveSet>
+#include <osg/LOD>
 #include <osgDB/ReadFile>
 
 namespace dtCore
