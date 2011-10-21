@@ -1,5 +1,5 @@
 <?xml version="1.0" ?>
-<GUIScheme Name="WindowsLookSkin">
+<GUIScheme Name="WindowsLook">
 	<Imageset Filename="WindowsLook.imageset" />
 	<Imageset Name = "Reticle" Filename = "reticle.imageset" />
 	<LookNFeel Filename="WindowsLook.looknfeel" />
