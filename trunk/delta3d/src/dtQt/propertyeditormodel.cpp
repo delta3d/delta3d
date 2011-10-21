@@ -38,6 +38,7 @@ namespace dtQt
    PropertyEditorModel::PropertyEditorModel(QObject* parent)
       : QAbstractItemModel(parent), rootControl(NULL)
    {
+      mIsReadOnly = false;
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -212,7 +213,7 @@ namespace dtQt
    {
       DynamicAbstractControl* property = GetAbstractControlFromIndex(index);
 
-      if (!index.isValid() || property == NULL || index.column() != 1)
+      if (IsReadOnly() || !index.isValid() || property == NULL || index.column() != 1)
       {
          return false;
       }
