@@ -29,6 +29,9 @@
 
 #include <dtDirector/director.h>
 
+#include <osgDB/FileNameUtils>
+
+
 namespace dtDirector
 {
    /////////////////////////////////////////////////////////////////////////////
@@ -55,15 +58,17 @@ namespace dtDirector
    /////////////////////////////////////////////////////////////////////////////
    void LoadGUIScheme::OnFinishedLoading()
    {
-      std::string schema = GetString("Scheme");
-      if (!schema.empty())
+      std::string schemeFile = GetString("Scheme");
+      if (!schemeFile.empty())
       {
+         std::string scheme = osgDB::getNameLessExtension(schemeFile);
+
          dtGUI::GUI* gui = GUINodeManager::GetGUI();
-         if (gui)
+         if (gui && !gui->IsSchemePresent(scheme))
          {
             try
             {
-               gui->LoadScheme(schema);
+               gui->LoadScheme(schemeFile);
             }
             catch(CEGUI::Exception& e)
             {
@@ -87,7 +92,7 @@ namespace dtDirector
          dtCore::StringActorProperty::GetFuncType(this, &LoadGUIScheme::GetScheme),
          "The Scheme.");
       AddProperty(schemeProp);
-      
+
       // This will expose the properties in the editor and allow
       // them to be connected to ValueNodes.
       mValues.push_back(ValueLink(this, schemeProp, false, true, true, false));
