@@ -121,6 +121,9 @@ namespace dtQt
       virtual bool insertRows(int row, int count, const QModelIndex& parent = QModelIndex());
       virtual bool removeRows(int position, int rows, const QModelIndex& parent);
 
+      void SetReadOnly(bool readOnly) {mIsReadOnly = readOnly;}
+      bool IsReadOnly() const {return mIsReadOnly;}
+
    protected:
       //inline IProperty *childAt(IProperty *parent, int pos) const
       // {
@@ -132,6 +135,7 @@ namespace dtQt
    private:
       //void refreshHelper(DynamicAbstractControl *property);
       DynamicGroupControl* rootControl;//IProperty *m_initialInput;
+      bool mIsReadOnly;
 
       // the parent control class needs to be a friend so that it can call a stupid beginremoverow method.
       friend class DynamicAbstractParentControl;

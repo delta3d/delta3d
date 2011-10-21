@@ -114,6 +114,12 @@ namespace dtQt
       /// @return the dynamic control factory.  This is handy for registering new types.
       DynamicControlFactory& GetDynamicControlFactory();
 
+      void SetReadOnly(bool readOnly);
+      bool IsReadOnly() const;
+
+      ///Event handler for when containers are selected.
+      virtual void OnContainersSelected(const std::vector<dtCore::RefPtr<dtCore::PropertyContainer> >& selection);
+
    public slots:
       /**
        * Handles the actor selection changed event message from EditorEvents
