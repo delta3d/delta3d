@@ -103,6 +103,31 @@ namespace dtQt
       return *mControlFactory;
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   void BasePropertyEditor::SetReadOnly(bool readOnly)
+   {
+      if (propertyModel)
+      {
+         propertyModel->SetReadOnly(readOnly);
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool BasePropertyEditor::IsReadOnly() const
+   {
+      if (propertyModel)
+      {
+         return propertyModel->IsReadOnly();
+      }
+
+      return false;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void BasePropertyEditor::OnContainersSelected(const std::vector<dtCore::RefPtr<dtCore::PropertyContainer> >& selection)
+   {
+   }
+
    /////////////////////////////////////////////////////////////////////////////
    void BasePropertyEditor::setupUI()
    {
@@ -160,6 +185,7 @@ namespace dtQt
       mainAreaWidget->setUpdatesEnabled(false);
       actorPropBox->setUpdatesEnabled(false);
 
+      OnContainersSelected(mSelectedPC);
       refreshSelectedActors();
 
       // turn them back on, so it looks right
