@@ -170,10 +170,11 @@ namespace dtDirector
    const QColor NodeItem::LINE_COLOR(0, 0, 0, 50);
 
    //////////////////////////////////////////////////////////////////////////
-   NodeItem::NodeItem(Node* node, QGraphicsItem* parent, EditorScene* scene)
+   NodeItem::NodeItem(Node* node, bool imported, QGraphicsItem* parent, EditorScene* scene)
        : QGraphicsPolygonItem(parent, scene)
        , mScene(scene)
        , mLoading(true)
+       , mIsImported(imported)
        , mTitle(NULL)
        , mTitleBG(NULL)
        , mLatentIcon(NULL)
@@ -191,11 +192,11 @@ namespace dtDirector
        , mHasHiddenLinks(false)
        , mChainSelecting(false)
    {
-      setFlag(QGraphicsItem::ItemIsMovable, true);
+      setFlag(QGraphicsItem::ItemIsMovable, !imported);
       setFlag(QGraphicsItem::ItemIsSelectable, true);
 
 #if(QT_VERSION >= 0x00040600)
-      setFlag(QGraphicsItem::ItemSendsGeometryChanges, true);
+      setFlag(QGraphicsItem::ItemSendsGeometryChanges, !imported);
 #endif
    }
 
@@ -352,6 +353,14 @@ namespace dtDirector
          mTitleBG = new QGraphicsRectItem(this, scene());
          mTitle = new GraphicsTextItem(mTitleBG, scene());
 
+         if (mIsImported)
+         {
+            QFont font = mTitle->font();
+            font = QFont(font.family(), font.pointSize(), font.weight(), false);
+            mTitle->setFont(font);
+            mTitle->setDefaultTextColor(Qt::darkGray);
+         }
+
          mTitleBG->setPen(Qt::NoPen);
          mTitleBG->setBrush(Qt::NoBrush);
          mTitleBG->setFlag(QGraphicsItem::ItemClipsChildrenToShape, true);
@@ -397,7 +406,17 @@ namespace dtDirector
       {
          mComment = new GraphicsTextItem(this, scene());
 
-         mComment->setDefaultTextColor(Qt::darkGreen);
+         if (mIsImported)
+         {
+            QFont font = mComment->font();
+            font = QFont(font.family(), font.pointSize(), font.weight(), false);
+            mComment->setFont(font);
+            mComment->setDefaultTextColor(Qt::darkGray);
+         }
+         else
+         {
+            mComment->setDefaultTextColor(Qt::darkGreen);
+         }
       }
 
       mComment->setPlainText(text.c_str());
@@ -448,6 +467,13 @@ namespace dtDirector
             data.linkGraphic = new InputLinkItem(this, (int)mInputs.size()-1, this, mScene, data.link->GetComment());
             data.linkName = new GraphicsTextItem(data.linkGraphic, mScene);
             data.linkName->setAcceptHoverEvents(false);
+            if (mIsImported)
+            {
+               QFont font = data.linkName->font();
+               font = QFont(font.family(), font.pointSize(), font.weight(), false);
+               data.linkName->setFont(font);
+               data.linkName->setDefaultTextColor(Qt::darkGray);
+            }
          }
       }
 
@@ -466,6 +492,13 @@ namespace dtDirector
             data.linkGraphic = new OutputLinkItem(this, (int)mOutputs.size()-1, this, mScene, data.link->GetComment());
             data.linkName = new GraphicsTextItem(data.linkGraphic, mScene);
             data.linkName->setAcceptHoverEvents(false);
+            if (mIsImported)
+            {
+               QFont font = data.linkName->font();
+               font = QFont(font.family(), font.pointSize(), font.weight(), false);
+               data.linkName->setFont(font);
+               data.linkName->setDefaultTextColor(Qt::darkGray);
+            }
          }
       }
 
@@ -486,6 +519,13 @@ namespace dtDirector
             data.linkGraphic = new ValueLinkItem(this, (int)mValues.size()-1, this, mScene, data.link->GetComment());
             data.linkName = new GraphicsTextItem(data.linkGraphic, mScene);
             data.linkName->setAcceptHoverEvents(false);
+            if (mIsImported)
+            {
+               QFont font = data.linkName->font();
+               font = QFont(font.family(), font.pointSize(), font.weight(), false);
+               data.linkName->setFont(font);
+               data.linkName->setDefaultTextColor(Qt::darkGray);
+            }
          }
       }
    }
@@ -527,9 +567,9 @@ namespace dtDirector
 
          // Create the link graphic.
          data.linkGraphic->setPolygon(poly);
-         data.linkGraphic->setPen(GetNodeColor());
+         data.linkGraphic->setPen(QPen(Qt::darkGray));
          data.linkGraphic->setBrush(GetNodeColor());
-         data.linkGraphic->SetPenColor(GetNodeColor());
+         data.linkGraphic->SetPenColor(Qt::darkGray);
 
          // Set the link text, and position it right aligned with the link graphic.
          data.linkName->setPlainText(data.link->GetName().c_str());
@@ -586,9 +626,9 @@ namespace dtDirector
 
          // Create the link graphic.
          data.linkGraphic->setPolygon(poly);
-         data.linkGraphic->setPen(GetNodeColor());
+         data.linkGraphic->setPen(QPen(Qt::darkGray));
          data.linkGraphic->setBrush(GetNodeColor());
-         data.linkGraphic->SetPenColor(GetNodeColor());
+         data.linkGraphic->SetPenColor(Qt::darkGray);
 
          // Set the link text, and position it right aligned with the link graphic.
          data.linkName->setPlainText(data.link->GetName().c_str());
@@ -902,7 +942,8 @@ namespace dtDirector
          if (output.link)
          {
             int linkCount = (int)output.link->GetLinks().size();
-            output.ResizeLinks(linkCount, mScene);
+            std::vector<InputLink> removedLinks = output.link->GetOwner()->GetRemovedImportedOutputLinkConnections(output.link->GetName());
+            output.ResizeLinks(linkCount + (int)removedLinks.size(), mScene);
             for (int linkIndex = 0; linkIndex < linkCount; linkIndex++)
             {
                InputLink* link = output.link->GetLinks()[linkIndex];
@@ -917,6 +958,25 @@ namespace dtDirector
                   if (item->mInputs[inputIndex].link == link)
                   {
                      ConnectLinks(output, item->mInputs[inputIndex], linkIndex, true);
+                     item->mInputs[inputIndex].linkGraphic->SetHighlight(false);
+                     break;
+                  }
+               }
+            }
+            for (int linkIndex = 0; linkIndex < (int)removedLinks.size(); linkIndex++)
+            {
+               InputLink& link = removedLinks[linkIndex];
+
+               NodeItem* item = mScene->GetNodeItem(link.GetOwner()->GetID());
+               if (!item) continue;
+
+               int inputCount = (int)item->mInputs.size();
+               for (int inputIndex = 0; inputIndex < inputCount; inputIndex++)
+               {
+                  if (item->mInputs[inputIndex].link->GetOwner()->GetID() == link.GetOwner()->GetID() &&
+                      item->mInputs[inputIndex].link->GetName() == link.GetName())
+                  {
+                     ConnectLinks(output, item->mInputs[inputIndex], linkIndex + linkCount, true);
                      item->mInputs[inputIndex].linkGraphic->SetHighlight(false);
                      break;
                   }
@@ -951,12 +1011,24 @@ namespace dtDirector
                      if (outputData.link == output)
                      {
                         int count = (int)output->GetLinks().size();
-                        outputData.ResizeLinks(count, mScene);
+                        std::vector<InputLink> removedLinks = output->GetOwner()->GetRemovedImportedOutputLinkConnections(output->GetName());
+                        outputData.ResizeLinks(count + (int)removedLinks.size(), mScene);
                         for (int index = 0; index < count; index++)
                         {
                            if (output->GetLinks()[index] == input.link)
                            {
                               ConnectLinks(item->mOutputs[outputIndex], input, index, false);
+                              break;
+                           }
+                        }
+                        for (int index = 0; index < (int)removedLinks.size(); index++)
+                        {
+                           InputLink& link = removedLinks[index];
+
+                           if (link.GetOwner()->GetID() == input.link->GetOwner()->GetID() &&
+                               link.GetName() == input.link->GetName())
+                           {
+                              ConnectLinks(item->mOutputs[outputIndex], input, index + count, false);
                               break;
                            }
                         }
@@ -979,7 +1051,8 @@ namespace dtDirector
          if (value.link)
          {
             int linkCount = (int)value.link->GetLinks().size();
-            value.ResizeLinks(linkCount, mScene);
+            std::vector<ValueNode*> removedLinks = value.link->GetOwner()->GetRemovedImportedValueLinkConnections(value.link->GetName());
+            value.ResizeLinks(linkCount + (int)removedLinks.size(), mScene);
             for (int linkIndex = 0; linkIndex < linkCount; linkIndex++)
             {
                ValueNode* valueNode = value.link->GetLinks()[linkIndex];
@@ -989,6 +1062,16 @@ namespace dtDirector
                if (!item) continue;
 
                ConnectLinks(value, item, linkIndex);
+            }
+            for (int linkIndex = 0; linkIndex < (int)removedLinks.size(); ++linkIndex)
+            {
+               ValueNode* valueNode = removedLinks[linkIndex];
+               if (!valueNode) continue;
+
+               NodeItem* item = mScene->GetNodeItem(valueNode->GetID());
+               if (!item) continue;
+
+               ConnectLinks(value, item, linkIndex + linkCount);
             }
          }
 
@@ -1469,6 +1552,11 @@ namespace dtDirector
          }
       }
 
+      if (mIsImported)
+      {
+         color = color.light(150);
+      }
+
       return color;
    }
 
@@ -1505,11 +1593,21 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void NodeItem::SetBackgroundGradient( unsigned int gradientHeight )
+   void NodeItem::SetBackgroundGradient()
    {
-      QLinearGradient linearGradient(0,0,0,gradientHeight);
-      QColor colorLight = GetNodeColor().light(150);
-      QColor colorDark = GetNodeColor().dark(100);
+      QColor nodeColor = GetNodeColor();
+      QColor colorLight = nodeColor.light(150);
+      QColor colorDark = nodeColor.dark(100);
+
+      float height = mNodeHeight;
+      //if (mIsImported)
+      //{
+      //   height = mNodeHeight * 0.5f;
+      //   colorDark.setAlphaF(0.25f);
+      //}
+
+      QLinearGradient linearGradient(0, 0, 0, height);
+      linearGradient.setSpread(QGradient::ReflectSpread);
 
       linearGradient.setColorAt(0.0, colorLight);
       linearGradient.setColorAt(1.0, colorDark);
@@ -1520,7 +1618,14 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void NodeItem::SetDefaultPen()
    {
-      setPen(QPen(LINE_COLOR, 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+      QColor lineColor = LINE_COLOR;
+      if (mIsImported)
+      {
+         lineColor.setAlphaF(lineColor.alphaF() * 0.5f);
+         lineColor = lineColor.light(150);
+      }
+
+      setPen(QPen(lineColor, 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
       if(!mNode || !mNode->IsEnabled())
       {
          mNodePen = pen();

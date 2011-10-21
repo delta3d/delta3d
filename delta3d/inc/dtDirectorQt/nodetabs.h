@@ -53,7 +53,7 @@ namespace dtDirector
       /**
        * Sets the editor.
        */
-      void SetEditor(DirectorEditor* editor);
+      void SetEditor(DirectorEditor* editor, dtDirector::Director* nodeSceneDirector);
 
       /**
        * Refresh the scene to display newly loaded nodes

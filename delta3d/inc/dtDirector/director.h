@@ -172,20 +172,29 @@ namespace dtDirector
       /**
        *	Imports a script into this one.
        *
-       * @param[in]  scriptId  The resource id of the script to import.
+       * @param[in]  scriptResource  The resource of the script to import.
        *
        * @return     Returns true on success.
        */
-      bool ImportScript(const std::string& scriptId);
+      Director* ImportScript(const std::string& scriptResource);
 
       /**
        *	Removes a script that was imported.
        *
-       * @param[in]  scriptId  The resource id of the imported script to remove.
+       * @param[in]  scriptResource  The resource of the imported script to remove.
        *
-       * return      Returns true on success.
+       * @return     Returns true on success.
        */
-      bool RemoveImportedScript(const std::string& scriptId);
+      bool RemoveImportedScript(const std::string& scriptResource);
+
+      /**
+       *	Retrieves the imported script.
+       *
+       * @param[in]  scriptResource  The resource of the imported script to retrieve.
+       *
+       * @return     Returns the script if found.
+       */
+      Director* GetImportedScript(const std::string& scriptResource);
 
       /**
        *	Retrieves the list of inherited scripts.
@@ -231,6 +240,7 @@ namespace dtDirector
       * Retrieves the currently loaded script.
       */
       const std::string& GetScriptName() const {return mScriptName;}
+      void SetScriptName(const std::string& name) {mScriptName = name;}
 
       /**
        * Access to the script resource descriptor.
@@ -420,6 +430,12 @@ namespace dtDirector
       dtDAL::BaseActorObject* GetScriptOwnerActor() const;
 
       /**
+       *	Sets this script as imported.
+       */
+      void SetImported(bool imported) {mIsImported = imported;}
+      bool IsImported() const {return mIsImported;}
+
+      /**
        * Inserts a node library with the given name at the given position.
        * If a library of the given name is already listed, the version
        * will be updated and the order adjusted to match the iterator.
@@ -486,7 +502,7 @@ namespace dtDirector
        *
        * @return     A pointer to the graph or NULL if not found.
        */
-      DirectorGraph* GetGraph(const ID& id);
+      DirectorGraph* GetGraph(const ID& id, bool includeImportedScripts = false);
 
       /**
        * Retrieves a node of the given the id.
@@ -523,9 +539,10 @@ namespace dtDirector
       /**
        * Retrieves a list of all nodes in the Director.
        *
-       * @param[out]  outNodes  A list of nodes found.
+       * @param[out]  outNodes                A list of nodes found.
+       * @param[in]   includeImportedScripts  True to include all nodes from imported scripts.
        */
-      void GetAllNodes(std::vector<Node*>& outNodes);
+      void GetAllNodes(std::vector<Node*>& outNodes, bool includeImportedScripts = false);
 
       /**
        * Retrieves a value node with the given name.
@@ -650,6 +667,9 @@ namespace dtDirector
       void RestoreThreadState(const StateThreadData& threadState, std::vector<ThreadData>& threads);
       Node* RecurseFindNode(const ID& id, Director* script);
 
+      void RecurseImportScriptGraphs(DirectorGraph* src, DirectorGraph* dst);
+      bool RecurseRemoveUnusedImportedGraphs(DirectorGraph* graph);
+
       // State Stack Data.
       struct StateStackData
       {
@@ -757,7 +777,7 @@ namespace dtDirector
       std::vector<std::string> mMissingLibraries;
       std::vector<std::string> mMissingImportedScripts;
       bool mHasDeprecatedProperty;
-      bool mIsCachedInstance;
+      bool mIsImported;
 
       struct MasterNodeListData
       {

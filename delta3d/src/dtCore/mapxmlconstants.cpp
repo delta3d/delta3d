@@ -100,6 +100,8 @@ namespace dtCore
 
    XMLCh* MapXMLConstants::DIRECTOR_LINK_CHAIN_CONNECTION = NULL;
    XMLCh* MapXMLConstants::DIRECTOR_LINK_VALUE_CONNECTION = NULL;
+   XMLCh* MapXMLConstants::DIRECTOR_REMOVED_LINK_CHAIN_CONNECTION = NULL;
+   XMLCh* MapXMLConstants::DIRECTOR_REMOVED_LINK_VALUE_CONNECTION = NULL;
 
    XMLCh* MapXMLConstants::DIRECTOR_LINK_OUTPUT_OWNER_INDEX_ELEMENT = NULL;
    XMLCh* MapXMLConstants::DIRECTOR_LINK_OUTPUT_OWNER_ELEMENT = NULL;
@@ -249,6 +251,8 @@ namespace dtCore
 
       DIRECTOR_LINK_CHAIN_CONNECTION = xercesc::XMLString::transcode("chainLinkConnection");
       DIRECTOR_LINK_VALUE_CONNECTION = xercesc::XMLString::transcode("valueLinkConnection");
+      DIRECTOR_REMOVED_LINK_CHAIN_CONNECTION = xercesc::XMLString::transcode("removedChainLinkConnection");
+      DIRECTOR_REMOVED_LINK_VALUE_CONNECTION = xercesc::XMLString::transcode("removedValueLinkConnection");
 
       DIRECTOR_LINK_OUTPUT_OWNER_INDEX_ELEMENT = xercesc::XMLString::transcode("outputOwnerIndex");
       DIRECTOR_LINK_OUTPUT_OWNER_ELEMENT = xercesc::XMLString::transcode("outputOwner");
@@ -387,6 +391,8 @@ namespace dtCore
 
       xercesc::XMLString::release(&DIRECTOR_LINK_CHAIN_CONNECTION);
       xercesc::XMLString::release(&DIRECTOR_LINK_VALUE_CONNECTION);
+      xercesc::XMLString::release(&DIRECTOR_REMOVED_LINK_CHAIN_CONNECTION);
+      xercesc::XMLString::release(&DIRECTOR_REMOVED_LINK_VALUE_CONNECTION);
 
       xercesc::XMLString::release(&DIRECTOR_LINK_OUTPUT_OWNER_INDEX_ELEMENT);
       xercesc::XMLString::release(&DIRECTOR_LINK_OUTPUT_OWNER_ELEMENT);

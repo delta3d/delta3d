@@ -138,6 +138,7 @@ namespace dtDirector
       mPropSerializer->AssignGroupProperties();
 
       LinkNodes();
+      RemoveLinkNodes();
    }
 
    /////////////////////////////////////////////////////////////////
@@ -252,13 +253,8 @@ namespace dtDirector
 
                   mInGraph++;
 
-                  DirectorGraph* parent = mGraphs.top();
-                  DirectorGraph* newGraph = new DirectorGraph(mDirector);
-                  newGraph->SetParent(parent);
-                  newGraph->BuildPropertyMap();
-                  parent->GetSubGraphs().push_back(newGraph);
-                  mGraphs.push(newGraph);
-                  mPropSerializer->SetCurrentPropertyContainer(newGraph);
+                  mGraphID.clear();
+                  mIsGraphImported = false;
                }
             }
          }
@@ -286,8 +282,8 @@ namespace dtDirector
             dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found a Graph");
          mInGraph++;
 
-         mGraphs.push(mDirector->GetGraphRoot());
-         mPropSerializer->SetCurrentPropertyContainer(mGraphs.top());
+         mGraphID.clear();
+         mIsGraphImported = false;
       }
       // Chain Link Connections.
       else if (XMLString::compareString(localname, dtCore::MapXMLConstants::DIRECTOR_LINK_CHAIN_CONNECTION) == 0)
@@ -305,6 +301,24 @@ namespace dtDirector
             dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found Value Link Connection");
 
          mInLink = true;
+         mInValueLink = true;
+      }
+      // Removed Chain Link Connections.
+      else if (XMLString::compareString(localname, dtCore::MapXMLConstants::DIRECTOR_REMOVED_LINK_CHAIN_CONNECTION) == 0)
+      {
+         if (dtUtil::Log::GetInstance().IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+            dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found Chain Link Connection");
+
+         mInRemoveLink = true;
+         mInOutputLink = true;
+      }
+      // Removed Value Link Connections.
+      else if (XMLString::compareString(localname, dtCore::MapXMLConstants::DIRECTOR_REMOVED_LINK_VALUE_CONNECTION) == 0)
+      {
+         if (dtUtil::Log::GetInstance().IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+            dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found Value Link Connection");
+
+         mInRemoveLink = true;
          mInValueLink = true;
       }
    }
@@ -343,6 +357,14 @@ namespace dtDirector
       {
          if (XMLString::compareString(localname, dtCore::MapXMLConstants::DIRECTOR_LINK_CHAIN_CONNECTION) == 0 ||
             XMLString::compareString(localname, dtCore::MapXMLConstants::DIRECTOR_LINK_VALUE_CONNECTION) == 0)
+         {
+            ClearLinkValues();
+         }
+      }
+      else if (mInRemoveLink)
+      {
+         if (XMLString::compareString(localname, dtCore::MapXMLConstants::DIRECTOR_REMOVED_LINK_CHAIN_CONNECTION) == 0 ||
+            XMLString::compareString(localname, dtCore::MapXMLConstants::DIRECTOR_REMOVED_LINK_VALUE_CONNECTION) == 0)
          {
             ClearLinkValues();
          }
@@ -403,10 +425,10 @@ namespace dtDirector
       }
       else if (mInGraph)
       {
-         DirectorGraph* graph = mGraphs.top();
-
          if (mInNode)
          {
+            DirectorGraph* graph = mGraphs.top();
+
             // If we don't have a node yet.
             if (!mNode.valid())
             {
@@ -593,7 +615,6 @@ namespace dtDirector
                {
                   mValueLink->SetTypeChecking(dtUtil::XMLStringConverter(chars).ToString() == "true");
                }
-
             }
             else if (!mPropSerializer->Characters(topEl, chars))
             {
@@ -609,13 +630,66 @@ namespace dtDirector
          }
          else if (!mPropSerializer->Characters(topEl, chars))
          {
-            if (topEl == dtCore::MapXMLConstants::ID_INDEX_ELEMENT)
+            if (topEl == dtCore::MapXMLConstants::DIRECTOR_IMPORTED_SCRIPT)
             {
-               graph->SetIDIndex(dtUtil::ToType<int>(dtUtil::XMLStringConverter(chars).ToString()));
+               mIsGraphImported = dtUtil::XMLStringConverter(chars).ToString() == "true"? true: false;
+            }
+            else if (topEl == dtCore::MapXMLConstants::ID_INDEX_ELEMENT)
+            {
+               mGraphID.index = dtUtil::ToType<int>(dtUtil::XMLStringConverter(chars).ToString());
             }
             else if (topEl == dtCore::MapXMLConstants::ID_ELEMENT)
             {
-               graph->SetID(dtCore::UniqueId(dtUtil::XMLStringConverter(chars).ToString()));
+               mGraphID.id = dtCore::UniqueId(dtUtil::XMLStringConverter(chars).ToString());
+
+               // If this graph is meant to be imported, then attempt to find the graph
+               // as it should already exist.
+               dtCore::RefPtr<DirectorGraph> graph = NULL;
+               if (mIsGraphImported && !mGraphs.empty())
+               {
+                  ID tempID = mGraphID;
+                  tempID.index = -1;
+                  graph = mDirector->GetGraph(tempID);
+
+                  // If the graph was not found, it may have been removed from the
+                  // imported script in which it came from.  In this case, we still
+                  // need to create a graph for the loading process to complete
+                  // properly, but this graph will not be added to the script.
+                  if (!graph)
+                  {
+                     graph = new DirectorGraph(mDirector);
+                     graph->BuildPropertyMap();
+                  }
+
+                  graph->SetID(mGraphID);
+                  mGraphs.push(graph);
+                  mPropSerializer->SetCurrentPropertyContainer(graph);
+               }
+               // Otherwise, create a new graph.
+               else
+               {
+                  DirectorGraph* parent = NULL;
+                  if (mGraphs.empty())
+                  {
+                     graph = mDirector->GetGraphRoot();
+                  }
+                  else
+                  {
+                     graph = new DirectorGraph(mDirector);
+                     parent = mGraphs.top();
+                     graph->SetParent(parent);
+                     graph->BuildPropertyMap();
+                     parent->GetSubGraphs().push_back(graph);
+                  }
+
+                  if (mGraphID.index > -1)
+                  {
+                     graph->SetIDIndex(mGraphID.index);
+                  }
+                  graph->SetID(mGraphID.id);
+                  mGraphs.push(graph);
+                  mPropSerializer->SetCurrentPropertyContainer(graph);
+               }
             }
          }
       }
@@ -661,6 +735,48 @@ namespace dtDirector
             mLinkList[index].isValue        = mInValueLink;
          }
       }
+      // Removed Link Connections.
+      else if (mInRemoveLink)
+      {
+         if (topEl == dtCore::MapXMLConstants::DIRECTOR_LINK_OUTPUT_OWNER_INDEX_ELEMENT)
+         {
+            mLinkOutputOwnerID.index = dtUtil::ToType<int>(dtUtil::XMLStringConverter(chars).ToString());
+         }
+         else if (topEl == dtCore::MapXMLConstants::DIRECTOR_LINK_OUTPUT_OWNER_ELEMENT)
+         {
+            mLinkOutputOwnerID.id = dtCore::UniqueId(dtUtil::XMLStringConverter(chars).ToString());
+         }
+         else if (topEl == dtCore::MapXMLConstants::DIRECTOR_LINK_OUTPUT_NAME_ELEMENT)
+         {
+            mLinkOutputName = dtUtil::XMLStringConverter(chars).ToString();
+         }
+         else if (topEl == dtCore::MapXMLConstants::DIRECTOR_LINK_INPUT_OWNER_INDEX_ELEMENT)
+         {
+            mLinkNodeID.index = dtUtil::ToType<int>(dtUtil::XMLStringConverter(chars).ToString());
+         }
+         else if (topEl == dtCore::MapXMLConstants::DIRECTOR_LINK_INPUT_OWNER_ELEMENT)
+         {
+            mLinkNodeID.id = dtCore::UniqueId(dtUtil::XMLStringConverter(chars).ToString());
+         }
+         else if (topEl == dtCore::MapXMLConstants::DIRECTOR_LINK_INPUT_NAME_ELEMENT)
+         {
+            mLinkToName = dtUtil::XMLStringConverter(chars).ToString();
+         }
+
+         if (!mLinkOutputOwnerID.id.ToString().empty() &&
+            !mLinkOutputName.empty() &&
+            !mLinkNodeID.id.ToString().empty() &&
+            (mInValueLink || !mLinkToName.empty()))
+         {
+            mRemovedLinkList.push_back(ToLinkData());
+            int index = (int)mRemovedLinkList.size() - 1;
+            mRemovedLinkList[index].outputNodeID   = mLinkOutputOwnerID;
+            mRemovedLinkList[index].inputNodeID    = mLinkNodeID;
+            mRemovedLinkList[index].outputLinkName = mLinkOutputName;
+            mRemovedLinkList[index].inputLinkName  = mLinkToName;
+            mRemovedLinkList[index].isValue        = mInValueLink;
+         }
+      }
    }
 
    /////////////////////////////////////////////////////////////////
@@ -679,6 +795,7 @@ namespace dtDirector
       mInNodes = false;
 
       mInLink = false;
+      mInRemoveLink = false;
       mInInputLink = false;
       mInOutputLink = false;
       mInValueLink = false;
@@ -693,6 +810,7 @@ namespace dtDirector
 
       mPropSerializer->Reset();
       mLinkList.clear();
+      mRemovedLinkList.clear();
 
       ClearLibraryValues();
       ClearNodeValues();
@@ -725,6 +843,7 @@ namespace dtDirector
    void DirectorXMLHandler::ClearLinkValues()
    {
       mInLink = false;
+      mInRemoveLink = false;
       mInInputLink = false;
       mInOutputLink = false;
       mInValueLink = false;
@@ -917,6 +1036,8 @@ namespace dtDirector
                ValueNode* valueNode = inputNode->AsValueNode();
                if (link && valueNode)
                {
+                  link->SetExposed(true);
+                  link->SetVisible(true);
                   if (!link->Connect(valueNode))
                   {
                      // If the connection failed, it may require another link
@@ -933,6 +1054,9 @@ namespace dtDirector
                InputLink* inputLink = inputNode->GetInputLink(mLinkList[index].inputLinkName);
                if (outputLink && inputLink)
                {
+                  outputLink->SetVisible(true);
+                  inputLink->SetVisible(true);
+
                   outputLink->Connect(inputLink);
                }
             }
@@ -949,5 +1073,42 @@ namespace dtDirector
       }
 
       mLinkList.clear();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void DirectorXMLHandler::RemoveLinkNodes()
+   {
+      int count = (int)mRemovedLinkList.size();
+      for (int index = 0; index < count; index++)
+      {
+         dtCore::RefPtr<Node> outputNode = mDirector->GetNode(mRemovedLinkList[index].outputNodeID, true);
+         dtCore::RefPtr<Node> inputNode = mDirector->GetNode(mRemovedLinkList[index].inputNodeID, true);
+
+         if (outputNode.valid() && inputNode.valid())
+         {
+            // Disconnect a value link from a value node.
+            if (mRemovedLinkList[index].isValue)
+            {
+               ValueLink* link = outputNode->GetValueLink(mRemovedLinkList[index].outputLinkName);
+               ValueNode* valueNode = inputNode->AsValueNode();
+               if (link && valueNode)
+               {
+                  link->Disconnect(valueNode);
+               }
+            }
+            // Disconnect chain links.
+            else
+            {
+               OutputLink* outputLink = outputNode->GetOutputLink(mRemovedLinkList[index].outputLinkName);
+               InputLink* inputLink = inputNode->GetInputLink(mRemovedLinkList[index].inputLinkName);
+               if (outputLink && inputLink)
+               {
+                  outputLink->Disconnect(inputLink);
+               }
+            }
+         }
+      }
+
+      mRemovedLinkList.clear();
    }
 }

@@ -75,7 +75,7 @@ namespace dtDirector
           */
          bool GetAlwaysHighlight() {return mAlwaysHighlight;}
 
-         void SetHighlightConnector(bool enable, QGraphicsPathItem* connector);
+         void SetHighlightConnector(bool enable, QGraphicsPathItem* connector, bool isReadOnly = false, bool isRemoved = false);
 
          static const unsigned int LINE_WIDTH;
 

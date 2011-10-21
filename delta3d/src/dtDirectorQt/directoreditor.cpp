@@ -181,16 +181,29 @@ namespace dtDirector
    {
       mDirector = director;
 
+      dtCore::RefPtr<Director> nodeSceneDirector = new dtDirector::Director();
+      if (nodeSceneDirector)
+      {
+         nodeSceneDirector->Init(mDirector->GetGameManager(), mDirector->GetMap());
+         nodeSceneDirector->SetScriptName("NodeScene");
+
+         DirectorTypeFactory* factory = DirectorTypeFactory::GetInstance();
+         if (factory)
+         {
+            factory->AddCacheScript(nodeSceneDirector);
+         }
+      }
+
       // Setup node scenes
-      mUI.eventNodeTabWidget->SetEditor(this);
-      mUI.actionNodeTabWidget->SetEditor(this);
-      mUI.mutatorNodeTabWidget->SetEditor(this);
-      mUI.variableNodeTabWidget->SetEditor(this);
-      mUI.macroNodeTabWidget->SetEditor(this);
-      mUI.linkNodeTabWidget->SetEditor(this);
-      mUI.miscNodeTabWidget->SetEditor(this);
-      mUI.referenceNodeTabWidget->SetEditor(this);
-      mUI.searchNodeTabWidget->SetEditor(this);
+      mUI.eventNodeTabWidget->SetEditor(this, nodeSceneDirector);
+      mUI.actionNodeTabWidget->SetEditor(this, nodeSceneDirector);
+      mUI.mutatorNodeTabWidget->SetEditor(this, nodeSceneDirector);
+      mUI.variableNodeTabWidget->SetEditor(this, nodeSceneDirector);
+      mUI.macroNodeTabWidget->SetEditor(this, nodeSceneDirector);
+      mUI.linkNodeTabWidget->SetEditor(this, nodeSceneDirector);
+      mUI.miscNodeTabWidget->SetEditor(this, nodeSceneDirector);
+      mUI.referenceNodeTabWidget->SetEditor(this, nodeSceneDirector);
+      mUI.searchNodeTabWidget->SetEditor(this, nodeSceneDirector);
       RefreshNodeScenes();
 
       mUI.graphTab->clear();
@@ -582,6 +595,35 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::RefreshGraphs()
+   {
+      // Now refresh the all editors that view the same graph.
+      int count = mUI.graphTab->count();
+      for (int index = 0; index < count; index++)
+      {
+         EditorView* view = dynamic_cast<EditorView*>(mUI.graphTab->widget(index));
+         if (view && view->GetScene())
+         {
+            DirectorGraph* graph = view->GetScene()->GetGraph();
+            if (graph)
+            {
+               // First remember the position of the translation node.
+               QPointF trans = view->GetScene()->GetTranslationItem()->pos();
+               view->GetScene()->SetGraph(graph);
+               view->GetScene()->GetTranslationItem()->setPos(trans);
+            }
+         }
+      }
+
+      // Now make sure we re-build our graph list.
+      EditorView* currentView = dynamic_cast<EditorView*>(mUI.graphTab->currentWidget());
+      if (currentView && currentView->GetScene() && currentView->GetScene()->GetGraph())
+      {
+         mUI.graphBrowser->BuildGraphList(currentView->GetScene()->GetGraph());
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    void DirectorEditor::RefreshNode(Node* node)
    {
       EditorView* view = dynamic_cast<EditorView*>(mUI.graphTab->currentWidget());
@@ -674,9 +716,22 @@ namespace dtDirector
 
             if (scene->HasSelection())
             {
-               bCanDelete = true;
                bCanCopy = true;
+               bCanDelete = true;
                bCanCreateSubMacro = true;
+
+               // Only allow deletion on non-imported items.
+               QList<QGraphicsItem*> selection = scene->selectedItems();
+               int count = selection.count();
+               for (int index = 0; index < count; ++index)
+               {
+                  NodeItem* nodeItem = dynamic_cast<NodeItem*>(selection[index]);
+                  if (nodeItem && !nodeItem->IsEditable())
+                  {
+                     bCanDelete = false;
+                     bCanCreateSubMacro = false;
+                  }
+               }
             }
 
             scene->GetMacroSelectionAction()->setEnabled(bCanCreateSubMacro);
@@ -898,7 +953,7 @@ namespace dtDirector
       {
          // Create an undo event.
          dtCore::RefPtr<UndoDeleteEvent> event = new UndoDeleteEvent(this, id, node->GetGraph()->GetID());
-         event->SetDescription("Deletion of Node \'" + node->GetTypeName() + "\'");
+         event->SetDescription("Deletion of Node \'" + node->GetTypeName() + "\'.");
          GetUndoManager()->AddEvent(event);
 
          // Delete the node.
@@ -916,6 +971,42 @@ namespace dtDirector
                if (nodeItem) view->GetScene()->DeleteNode(nodeItem);
             }
          }
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::DeleteGraph(dtDirector::ID id)
+   {
+      DirectorGraph* graph = mDirector->GetGraph(id);
+      if (graph && graph->GetParent())
+      {
+         // Create an undo event.
+         dtCore::RefPtr<UndoDeleteEvent> event = new UndoDeleteEvent(this, id, graph->GetParent()->GetID());
+         event->SetDescription("Deletion of Macro Node \'" + graph->GetName() + "\'.");
+         GetUndoManager()->AddEvent(event);
+
+         // Remove the graph from all UI's
+         int graphCount = mUI.graphTab->count();
+         for (int graphIndex = 0; graphIndex < graphCount; graphIndex++)
+         {
+            EditorView* view = dynamic_cast<EditorView*>(mUI.graphTab->widget(graphIndex));
+            if (view && view->GetScene())
+            {
+               // If we are currently within the graph that was deleted, step up to the parent.
+               if (view->GetScene()->GetGraph() &&
+                  view->GetScene()->GetGraph()->GetID() == id)
+               {
+                  view->GetScene()->SetGraph(graph->GetParent());
+               }
+
+               // We need to find the node item that belongs to the scene.
+               NodeItem* graphItem = view->GetScene()->GetGraphItem(id);
+               if (graphItem) view->GetScene()->DeleteNode(graphItem);
+            }
+         }
+
+         // Delete the graph.
+         mDirector->DeleteGraph(id);
       }
    }
 
@@ -2135,6 +2226,8 @@ namespace dtDirector
                mDirector->SetNotifier(NULL);
             }
          }
+
+         mDirector = NULL;
       }
    }
 
@@ -2448,7 +2541,7 @@ namespace dtDirector
    ///////////////////////////////////////////////////////////////////////////////
    void DirectorEditor::CreateNodeScene(NodeTabs* nodeTabs)
    {
-      nodeTabs->SetEditor(this);
+      nodeTabs->SetEditor(this, NULL);
 
       connect(nodeTabs, SIGNAL(CreateNode(const QString&, const QString&, const QString&)),
          this, SLOT(OnCreateNodeEvent(const QString&, const QString&, const QString&)));

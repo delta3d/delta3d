@@ -93,7 +93,15 @@ namespace dtDirector
       }
       else
       {
-         linkGraphic->setPen(mLinkGraphicPen);
+         QPen drawPen = mLinkGraphicPen;
+         if (mNodeItem->IsImported())
+         {
+            QColor color = drawPen.color();
+            color.setAlphaF(color.alphaF() * 0.5f);
+            drawPen.setColor(color.light(150));
+         }
+
+         linkGraphic->setPen(drawPen);
       }
    }
 
@@ -117,15 +125,28 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void LinkItem::SetHighlightConnector(bool enable, QGraphicsPathItem* connector)
+   void LinkItem::SetHighlightConnector(bool enable, QGraphicsPathItem* connector, bool isReadOnly, bool isRemoved)
    {
-      if( enable )
+      if (enable)
       {
          connector->setPen(mHighlightPen);
       }
       else
       {
-         connector->setPen(mLinkGraphicPen);
+         QPen drawPen = mLinkGraphicPen;
+         if (isRemoved)
+         {
+            drawPen.setWidth(1);
+            QVector<qreal> dashes;
+            dashes << 2 << 6;
+            drawPen.setDashPattern(dashes);
+         }
+         else if (isReadOnly)
+         {
+            drawPen.setWidth(1);
+         }
+
+         connector->setPen(drawPen);
       }
       connector->setZValue(connector->zValue() + (enable ? 10 : -10));
    }
@@ -659,20 +680,33 @@ namespace dtDirector
 
          if (!inputLink)
          {
-            for (unsigned int i = 0; i < data.link->GetLinks().size(); i++)
+            unsigned int i = 0;
+            for (i = 0; i < data.link->GetLinks().size(); i++)
+            {
+               InputLink* link = data.link->GetLinks()[i];
+               QGraphicsPathItem* connector = (i < data.linkConnectors.size()) ? data.linkConnectors[i] : NULL;
+               if (connector && link)
+               {
+                  bool readOnly = data.link->GetOwner()->IsOutputLinkImported(data.link->GetName(), link->GetOwner()->GetID(), link->GetName());
+                  SetHighlightConnector(mAlwaysHighlight || enable, connector, readOnly);
+               }
+            }
+            for (;i < (int)data.linkConnectors.size(); i++)
             {
                QGraphicsPathItem* connector = (i < data.linkConnectors.size()) ? data.linkConnectors[i] : NULL;
                if (connector)
                {
-                  SetHighlightConnector(mAlwaysHighlight || enable, connector);
+                  SetHighlightConnector(false, connector, true, true);
                }
             }
          }
          else
          {
-            for (unsigned int i = 0; i < data.link->GetLinks().size(); i++)
+            unsigned int i = 0;
+            for (; i < data.link->GetLinks().size(); i++)
             {
-               if (data.link->GetLinks()[i] != inputLink)
+               InputLink* link = data.link->GetLinks()[i];
+               if (link != inputLink)
                {
                   continue;
                }
@@ -680,7 +714,16 @@ namespace dtDirector
                QGraphicsPathItem* connector = (i < data.linkConnectors.size()) ? data.linkConnectors[i] : NULL;
                if (connector)
                {
-                  SetHighlightConnector(mAlwaysHighlight || enable, connector);
+                  bool readOnly = data.link->GetOwner()->IsOutputLinkImported(data.link->GetName(), link->GetOwner()->GetID(), link->GetName());
+                  SetHighlightConnector(mAlwaysHighlight || enable, connector, readOnly);
+               }
+            }
+            for (;i < (int)data.linkConnectors.size(); i++)
+            {
+               QGraphicsPathItem* connector = (i < data.linkConnectors.size()) ? data.linkConnectors[i] : NULL;
+               if (connector)
+               {
+                  SetHighlightConnector(false, connector, true, true);
                }
             }
          }
@@ -1100,37 +1143,59 @@ namespace dtDirector
          ValueData& data = mNodeItem->GetValues()[mLinkIndex];
          if (!valueNode)
          {
-            int count = (int)data.linkConnectors.size();
-            for (int index = 0; index < count; index++)
+            int count = (int)data.link->GetLinks().size();
+            int index = 0;
+            for (; index < count; index++)
             {
-               QGraphicsPathItem* connector = data.linkConnectors[index];
+               ValueNode* link = data.link->GetLinks()[index];
+               QGraphicsPathItem* connector = (index < (int)data.linkConnectors.size()) ? data.linkConnectors[index] : NULL;
+               if (connector && link)
+               {
+                  bool readOnly = data.link->GetOwner()->IsValueLinkImported(data.link->GetName(), link->GetID());
+                  SetHighlightConnector(enable, connector, readOnly);
+               }
+            }
+            for (;index < (int)data.linkConnectors.size(); index++)
+            {
+               QGraphicsPathItem* connector = (index < (int)data.linkConnectors.size()) ? data.linkConnectors[index] : NULL;
                if (connector)
                {
-                  SetHighlightConnector(enable, connector);
+                  SetHighlightConnector(false, connector, true, true);
                }
             }
          }
          else
          {
             int count = (int)data.link->GetLinks().size();
-            for (int index = 0; index < count; index++)
+            int index = 0;
+            for (; index < count; index++)
             {
-               if (data.link->GetLinks()[index] == valueNode)
+               ValueNode* link = data.link->GetLinks()[index];
+               if (link == valueNode)
                {
                   if (index < (int)data.linkConnectors.size())
                   {
                      QGraphicsPathItem* connector = data.linkConnectors[index];
                      if (connector)
                      {
-                        SetHighlightConnector(enable, connector);
+                        bool readOnly = data.link->GetOwner()->IsValueLinkImported(data.link->GetName(), link->GetID());
+                        SetHighlightConnector(enable, connector, readOnly);
                      }
                   }
+               }
+            }
+            for (; index < (int)data.linkConnectors.size(); ++index)
+            {
+               QGraphicsPathItem* connector = (index < (int)data.linkConnectors.size()) ? data.linkConnectors[index] : NULL;
+               if (connector)
+               {
+                  SetHighlightConnector(false, connector, true, true);
                }
             }
          }
       }
    }
-   
+
    //////////////////////////////////////////////////////////////////////////
    void ValueLinkItem::Disconnect(ValueNode* output)
    {
@@ -1761,7 +1826,7 @@ namespace dtDirector
 
                   std::string undoDescription = "Connection of value link between Value Node \'" +
                      mNodeItem->GetNode()->GetTypeName() + "\' and ";
-                  
+
                   if (item->mNodeItem->GetNode())
                   {
                      undoDescription += "Node \'" + item->mNodeItem->GetNode()->GetTypeName() + "\'.";

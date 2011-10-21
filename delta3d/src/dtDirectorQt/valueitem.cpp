@@ -44,8 +44,8 @@
 namespace dtDirector
 {
    //////////////////////////////////////////////////////////////////////////
-   ValueItem::ValueItem(Node* node, QGraphicsItem* parent, EditorScene* scene)
-       : NodeItem(node, parent, scene)
+   ValueItem::ValueItem(Node* node, bool imported, QGraphicsItem* parent, EditorScene* scene)
+       : NodeItem(node, imported, parent, scene)
        , mValueText(NULL)
        , mValueLink(NULL)
    {
@@ -114,7 +114,7 @@ namespace dtDirector
          SetComment(mNode->GetComment());
 
          SetDefaultPen();
-         SetBackgroundGradient(mNodeHeight);
+         SetBackgroundGradient();
 
          DrawGlow();
       }
@@ -129,6 +129,14 @@ namespace dtDirector
       {
          mTitle = new GraphicsTextItem(this, scene());
          mTitle->setTextWidth(MIN_NODE_WIDTH);
+
+         if (mIsImported)
+         {
+            QFont font = mTitle->font();
+            font = QFont(font.family(), font.pointSize(), font.weight(), false);
+            mTitle->setFont(font);
+            mTitle->setDefaultTextColor(Qt::darkGray);
+         }
 
 #if(QT_VERSION >= 0x00040500)
          mTitle->setFlag(QGraphicsItem::ItemIgnoresParentOpacity, true);
@@ -191,6 +199,14 @@ namespace dtDirector
       {
          mValueText = new GraphicsTextItem(this, scene());
          mValueText->setTextWidth(MIN_NODE_WIDTH);
+
+         if (mIsImported)
+         {
+            QFont font = mValueText->font();
+            font = QFont(font.family(), font.pointSize(), font.weight(), false);
+            mValueText->setFont(font);
+            mValueText->setDefaultTextColor(Qt::darkGray);
+         }
 
 #if(QT_VERSION >= 0x00040500)
          mValueText->setFlag(QGraphicsItem::ItemIgnoresParentOpacity, true);

@@ -7,8 +7,8 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2009-12-21T16:14:44-08:00</createTimestamp>
-        <lastUpdateTimestamp>2011-07-19T00:48:49-08:00</lastUpdateTimestamp>
-        <editorVersion>2.7.0</editorVersion>
+        <lastUpdateTimestamp>2011-10-21T01:52:33-08:00</lastUpdateTimestamp>
+        <editorVersion>2.7.2</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
     <libraries>
@@ -3013,7 +3013,7 @@
             <property>
                 <name>Rotation</name>
                 <vec3>
-                    <value1>3.890078</value1>
+                    <value1>3.890079</value1>
                     <value2>7.993374</value2>
                     <value3>0.000000</value3>
                 </vec3>
@@ -3626,8 +3626,8 @@
                         <property>
                             <name>DirectorGraph</name>
                             <resourceType>Directors</resourceType>
-                            <resourceDisplayName>Directors:Init.dtdir</resourceDisplayName>
-                            <resource>Directors:Init.dtdir</resource>
+                            <resourceDisplayName>Directors:ImportedInit.dtdir</resourceDisplayName>
+                            <resource>Directors:ImportedInit.dtdir</resource>
                         </property>
                     </element>
                     <element>
@@ -4006,7 +4006,7 @@
                 <name>Rotation</name>
                 <vec3>
                     <value1>2.432071</value1>
-                    <value2>6.384969</value2>
+                    <value2>6.384974</value2>
                     <value3>-9.111162</value3>
                 </vec3>
             </property>

@@ -143,6 +143,14 @@ namespace dtDirector
 
    private:
 
+      struct ToLinkData
+      {
+         ID          outputNodeID;
+         ID          inputNodeID;
+         std::string outputLinkName;
+         std::string inputLinkName;
+      };
+
       /**
        * Saves a graph.
        *
@@ -158,18 +166,11 @@ namespace dtDirector
       void SaveNode(Node* node);
 
       /**
-       *	Saves output to input link connections.
+       *	Finds and saves all link connections.
        *
        * @param[in]  script       The script to save.
        */
-      void SaveChainLinks(dtDirector::Director* script);
-
-      /**
-       *	Saves value link connections.
-       *
-       * @param[in]  script  The script to save.
-       */
-      void SaveValueLinks(dtDirector::Director* script);
+      void SaveLinkConnections(dtDirector::Director* script);
 
       //disable copy constructor
       DirectorWriter(const DirectorWriter& toCopy): BaseXMLWriter(toCopy) {}

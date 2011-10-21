@@ -72,34 +72,42 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    std::string PropertyEditor::GetContainerGroupName(dtCore::PropertyContainer* propertyContainer)
    {
-      EventNode* eventNode = dynamic_cast<EventNode*>(propertyContainer);
-      if (eventNode)
+      Node* node = dynamic_cast<Node*>(propertyContainer);
+      if (node)
       {
-         return std::string("Event Node '") + eventNode->GetType().GetFullName().c_str() + "'";
-      }
+         EventNode* eventNode = node->AsEventNode();
+         if (eventNode)
+         {
+            return std::string("Event Node '") + eventNode->GetType().GetFullName().c_str() + "'";
+         }
 
-      ActionNode* actionNode = dynamic_cast<ActionNode*>(propertyContainer);
-      if (actionNode)
-      {
-         return std::string("Action Node '") + actionNode->GetType().GetFullName().c_str() + "'";
-      }
+         ActionNode* actionNode = node->AsActionNode();
+         if (actionNode)
+         {
+            return std::string("Action Node '") + actionNode->GetType().GetFullName().c_str() + "'";
+         }
 
-      ValueNode* valueNode = dynamic_cast<ValueNode*>(propertyContainer);
-      if (valueNode)
-      {
-         return std::string("Value Node '") + valueNode->GetType().GetFullName().c_str() + "'";
+         ValueNode* valueNode = node->AsValueNode();
+         if (valueNode)
+         {
+            return std::string("Value Node '") + valueNode->GetType().GetFullName().c_str() + "'";
+         }
       }
-
-      DirectorGraph* graph = dynamic_cast<DirectorGraph*>(propertyContainer);
-      if (graph)
+      else
       {
-         return std::string("Macro '") + graph->GetName().c_str() + "'";
-      }
-
-      Director* director = dynamic_cast<Director*>(propertyContainer);
-      if (director)
-      {
-         return std::string("Director '") + director->GetName().c_str() + "'";
+         DirectorGraph* graph = dynamic_cast<DirectorGraph*>(propertyContainer);
+         if (graph)
+         {
+            return std::string("Macro '") + graph->GetName().c_str() + "'";
+         }
+         else
+         {
+            Director* director = dynamic_cast<Director*>(propertyContainer);
+            if (director)
+            {
+               return std::string("Director '") + director->GetName().c_str() + "'";
+            }
+         }
       }
 
       return "Unknown Container";
@@ -108,6 +116,55 @@ namespace dtDirector
    /////////////////////////////////////////////////////////////////////////////////
    void PropertyEditor::closeEvent(QCloseEvent* e)
    {
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void PropertyEditor::OnContainersSelected(const std::vector<dtCore::RefPtr<dtCore::PropertyContainer> >& selection)
+   {
+      bool editable = true;
+
+      int count = (int)selection.size();
+      for (int index = 0; index < count; ++index)
+      {
+         dtCore::PropertyContainer* propertyContainer = selection[index];
+         if (!propertyContainer)
+         {
+            continue;
+         }
+
+         Node* node = dynamic_cast<Node*>(propertyContainer);
+         if (node)
+         {
+            if (node->IsImported())
+            {
+               editable = false;
+               break;
+            }
+         }
+         else
+         {
+            DirectorGraph* graph = dynamic_cast<DirectorGraph*>(propertyContainer);
+            if (graph)
+            {
+               if (graph->IsImported())
+               {
+                  editable = false;
+                  break;
+               }
+            }
+            else
+            {
+               Director* director = dynamic_cast<Director*>(propertyContainer);
+               if (director && director->IsImported())
+               {
+                  editable = false;
+                  break;
+               }
+            }
+         }
+      }
+
+      SetReadOnly(!editable);
    }
 
    /////////////////////////////////////////////////////////////////////////////////

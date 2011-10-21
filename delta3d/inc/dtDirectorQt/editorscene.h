@@ -85,6 +85,14 @@ namespace dtDirector
       void SetGraph(DirectorGraph* graph);
 
       /**
+       *	Shows the nodes within a given graph.
+       *
+       * @param[in]  graph     The graph to show.
+       * @param[in]  imported  Whether this graph is imported.
+       */
+      void ShowNodes(DirectorGraph* graph, bool imported);
+
+      /**
        * Retrieves the current graph.
        *
        * @return  The current graph.

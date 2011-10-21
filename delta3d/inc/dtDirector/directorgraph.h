@@ -64,6 +64,15 @@ namespace dtDirector
       virtual std::string GetDefaultPropertyKey() const;
 
       /**
+       * Checks if a given property should be saved out to file data.
+       *
+       * @param[in]  prop  The property.
+       *
+       * @return     True if the given property should be saved.
+       */
+      virtual bool ShouldPropertySave(const dtCore::ActorProperty& prop) const;
+
+      /**
        * This method is called in init, which instructs the director
        * to create its properties.  Methods implementing this should
        * be sure to call their parent class's buildPropertyMap method to
@@ -278,6 +287,12 @@ namespace dtDirector
       std::vector<dtCore::RefPtr<DirectorGraph> >& GetSubGraphs() {return mSubGraphs;}
       const std::vector<dtCore::RefPtr<DirectorGraph> >& GetSubGraphs() const {return mSubGraphs;}
 
+      /**
+       *	Set Imported status.
+       */
+      void SetImported(bool imported) {mIsImported = imported;}
+      bool IsImported() const;
+
    private:
 
       void InternalClone(DirectorGraph* newGraph);
@@ -295,6 +310,8 @@ namespace dtDirector
       std::string mComment;
       std::string mEditor;
       osg::Vec2   mPosition;
+
+      bool        mIsImported;
 
       std::vector<dtCore::RefPtr<DirectorGraph> > mSubGraphs;
 

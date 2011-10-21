@@ -129,6 +129,7 @@ namespace dtDirector
        * Retrieves the list of links.
        */
       std::vector<OutputLink*>& GetLinks() {return mLinks;}
+      const std::vector<OutputLink*>& GetLinks() const {return mLinks;}
 
       /**
        * Connects this input to an output.

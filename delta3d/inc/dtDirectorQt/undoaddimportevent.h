@@ -19,58 +19,45 @@
  * Author: Jeff P. Houde
  */
 
-#ifndef DIRECTORQT_ACTION_ITEM
-#define DIRECTORQT_ACTION_ITEM
+#ifndef DIRECTORQT_UNDO_ADD_IMPORT_EVENT
+#define DIRECTORQT_UNDO_ADD_IMPORT_EVENT
 
-#include <dtDirectorQt/nodeitem.h>
+#include <dtDirectorQt/undoremoveimportevent.h>
 
 namespace dtDirector
 {
    /**
-    * Draws a node in the graphics view.
+    * Undo event for adding an imported script.
     */
-   class ActionItem : public NodeItem
+   class UndoAddImportEvent: public UndoRemoveImportEvent
    {
-      Q_OBJECT
    public:
 
       /**
        * Constructor.
        *
-       * @param[in]  node      The Director Node.
-       * @param[in]  imported  True if this node is an imported node.
-       * @param[in]  parent    The parent item.
-       * @param[in]  scene     The scene.
+       * @param[in]  editor  The editor.
+       * @param[in]  script  The script that was imported.
        */
-      ActionItem(Node* node, bool imported, QGraphicsItem* parent = 0, EditorScene* scene = 0);
+      UndoAddImportEvent(DirectorEditor* editor, const std::string& script);
 
       /**
-       * Draws the node.
+       * Perform undo.
        */
-      virtual void Draw();
-
-   public slots:
+      virtual void Undo();
 
       /**
-       * Event handler when you want to jump to an event.
+       * Perform redo.
        */
-      void OnGotoEvent();
+      virtual void Redo();
 
    protected:
 
       /**
-       * Event handler when the context menu event has triggered.
+       * Destructor.
        */
-      void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
-
-      /**
-       * Event handler when the user double clicks this node.
-       *
-       * @param[in]  event  The mouse event.
-       */
-      void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);
-
+      virtual ~UndoAddImportEvent();
    };
 }
 
-#endif
+#endif // DIRECTORQT_UNDO_ADD_IMPORT_EVENT

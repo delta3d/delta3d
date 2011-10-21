@@ -23,12 +23,13 @@
 #include <dtDirectorQt/importeditor.h>
 #include <dtDirectorQt/directoreditor.h>
 #include <dtDirectorQt/undomanager.h>
-//#include <dtDirectorQt/undoaddlibraryevent.h>
-//#include <dtDirectorQt/undoremovelibraryevent.h>
+#include <dtDirectorQt/undoaddimportevent.h>
+#include <dtDirectorQt/undoremoveimportevent.h>
 
 #include <dtDAL/project.h>
 
 #include <dtDirector/director.h>
+#include <dtDirector/directorgraph.h>
 
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QHBoxLayout>
@@ -112,12 +113,14 @@ namespace dtDirector
       relPath.prepend("Directors:");
 
       // Attempt to import the script.
-      if (mEditor->GetDirector()->ImportScript(relPath.toStdString()))
+      dtDirector::Director* imported = mEditor->GetDirector()->ImportScript(relPath.toStdString());
+
+      if (imported)
       {
-         // Add an undo event.
-         //dtCore::RefPtr<UndoImportScriptEvent> event = new UndoImportScriptEvent(mEditor, relPath);
-         //event->SetDescription("Importing script \'" + relPath.toStdString() + "\'.");
-         //mEditor->GetUndoManager()->AddEvent(event);
+         // Create an undo event.
+         dtCore::RefPtr<UndoAddImportEvent> event = new UndoAddImportEvent(mEditor, relPath.toStdString());
+         event->SetDescription("Importing script \'" + relPath.toStdString() + "\'.");
+         mEditor->GetUndoManager()->AddEvent(event);
 
          Refresh();
       }
@@ -131,13 +134,13 @@ namespace dtDirector
          tr("&Yes"), tr("&No"), QString::null, 1) == 0)
       {
          std::string toRemove = mImportView->currentItem()->text().toStdString();
+
          if (mEditor->GetDirector()->RemoveImportedScript(toRemove))
          {
-            // Add an undo event.
-            //dtCore::RefPtr<UndoRemoveScriptEvent> event = new UndoRemoveScriptEvent(mEditor, relPath);
-            //event->SetDescription("Removal of imported script \'" + relPath.toStdString() + "\'.");
-            //mEditor->GetUndoManager()->AddEvent(event);
-
+            // Create an undo event.
+            dtCore::RefPtr<UndoRemoveImportEvent> event = new UndoRemoveImportEvent(mEditor, toRemove);
+            event->SetDescription("Removal of imported script \'" + toRemove + "\'.");
+            mEditor->GetUndoManager()->AddEvent(event);
             Refresh();
          }
       }
@@ -191,6 +194,8 @@ namespace dtDirector
       {
          mImportView->setCurrentItem(mImportView->item(mImportView->count() - 1));
       }
+
+      mEditor->RefreshGraphs();
    }
 
 } // namespace dtDirector

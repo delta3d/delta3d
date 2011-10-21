@@ -130,16 +130,22 @@ namespace dtDirector
       /**
        * Constructor.
        *
-       * @param[in]  node    The Director Node.
-       * @param[in]  parent  The parent item.
-       * @param[in]  scene   The scene.
+       * @param[in]  node      The Director Node.
+       * @param[in]  imported  True if this node is an imported node.
+       * @param[in]  parent    The parent item.
+       * @param[in]  scene     The scene.
        */
-      NodeItem(Node* node, QGraphicsItem* parent = 0, EditorScene* scene = 0);
+      NodeItem(Node* node, bool imported, QGraphicsItem* parent = 0, EditorScene* scene = 0);
 
       /**
        * Destructor.
        */
       virtual ~NodeItem();
+
+      /**
+       *	Retrieves whether this node is editable.
+       */
+      virtual bool IsEditable() const {return !mIsImported;}
 
       /**
        * Draws the node.
@@ -402,6 +408,11 @@ namespace dtDirector
        */
       virtual QColor GetValueLinkColor(ValueLink* link) const;
 
+      /**
+       *	Retrieves whether this item is referencing an imported node
+       */
+      bool IsImported() const {return mIsImported;}
+
 
       static const QColor LINE_COLOR;
 
@@ -459,7 +470,7 @@ namespace dtDirector
       /**
        *	Set a gradient brush.
        */
-      void SetBackgroundGradient(unsigned int gradientHeight);
+      void SetBackgroundGradient();
 
       /**
        *	Set a dark foreground pen.
@@ -488,6 +499,7 @@ namespace dtDirector
 
       EditorScene* mScene;
       bool         mLoading;
+      bool         mIsImported;
 
       std::string  mOldPosition;
 
