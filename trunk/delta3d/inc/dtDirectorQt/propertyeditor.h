@@ -91,6 +91,8 @@ namespace dtDirector
        */
       virtual ~PropertyEditor();
 
+      virtual void OnContainersSelected(const std::vector<dtCore::RefPtr<dtCore::PropertyContainer> >& selection);
+
       void PropertyAboutToChangeFromControl(dtCore::PropertyContainer& propCon, dtCore::ActorProperty& prop,
                const std::string& oldValue, const std::string& newValue);
 

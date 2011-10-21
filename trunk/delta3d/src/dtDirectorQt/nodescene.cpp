@@ -73,14 +73,14 @@ namespace dtDirector
          case NodeType::MUTATOR_NODE:
          case NodeType::VALUE_NODE:
             {
-               item = new ValueItem(node, mpItem, NULL);
+               item = new ValueItem(node, false, mpItem, NULL);
                break;
             }
          case NodeType::MACRO_NODE:
             {
                if (IS_A(node.get(), ReferenceScriptAction*))
                {
-                  item = new ScriptItem(node, mpItem, NULL);
+                  item = new ScriptItem(node, false, mpItem, NULL);
                }
                else
                {
@@ -92,7 +92,7 @@ namespace dtDirector
             {
                if (IS_A(node.get(), GroupNode*))
                {
-                  item = new GroupItem(node, mpItem, NULL, true);
+                  item = new GroupItem(node, false, mpItem, NULL, true);
                   break;
                }
             }
@@ -100,10 +100,10 @@ namespace dtDirector
             {
                if (name == "Value Link" && category == "Core")
                {
-                  item = new ValueItem(node, mpItem, NULL);
+                  item = new ValueItem(node, false, mpItem, NULL);
                   break;
                }
-               item = new ActionItem(node, mpItem, NULL);
+               item = new ActionItem(node, false, mpItem, NULL);
                break;
             }
          }
@@ -149,7 +149,7 @@ namespace dtDirector
          graph->SetEditor(editor);
          graph->SetPosition(osg::Vec2(NODE_BUFFER, mHeight));
 
-         NodeItem* item = new MacroItem(graph, mpItem, NULL);
+         NodeItem* item = new MacroItem(graph, false, mpItem, NULL);
          if (item != NULL)
          {
             item->setFlag(QGraphicsItem::ItemIsMovable, false);
@@ -280,24 +280,24 @@ namespace dtDirector
          mouseEvent->ignore();
          return;
       }
-      
+
       //we'll render the NodeItem into a Pixmap, so there's something to see while
       //it's being dragged.
 
-      //size of the image to cover the item.  The width is padded to account for 
+      //size of the image to cover the item.  The width is padded to account for
       //any additional geometry on the left side.
       int imageWidth = mpDraggedItem->boundingRect().width()+mpDraggedItem->boundingRect().height();
       int imageHeight = mpDraggedItem->boundingRect().height();
-      
+
       QImage image(imageWidth, imageHeight, QImage::Format_ARGB32_Premultiplied);
       image.fill(qRgba(0, 0, 0, 0));
 
       QPainter painter;
       painter.begin(&image);
       painter.setBrush(mpDraggedItem->brush());
-      
+
       //shift to the right to account for some negative geometry
-      painter.translate(mpDraggedItem->boundingRect().height()/2, 0); 
+      painter.translate(mpDraggedItem->boundingRect().height()/2, 0);
 
       painter.drawPolygon(mpDraggedItem->polygon(), Qt::WindingFill);
       painter.end();

@@ -115,12 +115,11 @@ namespace dtDirector
        * Parses graph data.
        *
        * @param[in]  version   The file version.
-       * @param[in]  graph     The graph to parse to.
+       * @param[in]  director  The director script.
+       * @param[in]  parent    The parent of the graph.
        * @param[in]  file      The file.
-       *
-       * @return     The new Graph.
        */
-      void ParseGraph(float version, DirectorGraph* graph, FILE* file);
+      void ParseGraph(float version, Director* director, DirectorGraph* parent, FILE* file);
 
       /**
        * Parses node data.
@@ -132,22 +131,13 @@ namespace dtDirector
       void ParseNode(float version, DirectorGraph* graph, FILE* file);
 
       /**
-       *	Parses all chain connections.
+       *	Parses all link connections.
        *
        * @param[in]  version  The file version.
        * @param[in]  script   The script.
        * @param[in]  file     The file.
        */
-      void ParseChainConnections(float version, Director* script, FILE* file);
-
-      /**
-       *	Parses all value connections.
-       *
-       * @param[in]  version  The file version.
-       * @param[in]  script   The script.
-       * @param[in]  file     The file.
-       */
-      void ParseValueConnections(float version, Director* script, FILE* file);
+      void ParseLinkConnections(float version, Director* script, FILE* file);
 
       /**
        * Parses a property container.
@@ -172,6 +162,7 @@ namespace dtDirector
        * @parma[in]  director  The director script.
        */
       void LinkNodes(Director* director);
+      void RemoveLinkNodes(Director* director);
 
       BinaryParser(const BinaryParser& copyParser);
       BinaryParser& operator=(const BinaryParser& assignParser);
@@ -192,6 +183,7 @@ namespace dtDirector
       };
 
       std::vector<ToLinkData>  mLinkList;
+      std::vector<ToLinkData>  mRemovedLinkList;
 
       std::vector<std::string> mMissingLibraries;
       std::set<std::string>    mMissingNodeTypes;
@@ -227,6 +219,14 @@ namespace dtDirector
 
    private:
 
+      struct ToLinkData
+      {
+         ID          outputNodeID;
+         ID          inputNodeID;
+         std::string outputLinkName;
+         std::string inputLinkName;
+      };
+
       /**
        * Saves the header data.
        *
@@ -252,20 +252,12 @@ namespace dtDirector
       void SaveNode(Node* node, FILE* file);
 
       /**
-       *	Saves all chain connections.
+       *	Finds and saves all link connections.
        *
-       * @param[in]  script  The script.
+       * @param[in]  script  The script to save.
        * @param[in]  file    The file.
        */
-      void SaveChainConnections(Director* script, FILE* file);
-
-      /**
-       *	Saves all value connections.
-       *
-       * @param[in]  script  The script.
-       * @param[in]  file    The file.
-       */
-      void SaveValueConnections(Director* script, FILE* file);
+      void SaveLinkConnections(dtDirector::Director* script, FILE* file);
 
       /**
        * Saves a property container.

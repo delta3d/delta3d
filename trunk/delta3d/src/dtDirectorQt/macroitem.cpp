@@ -41,8 +41,8 @@
 namespace dtDirector
 {
    //////////////////////////////////////////////////////////////////////////
-   MacroItem::MacroItem(DirectorGraph* graph, QGraphicsItem* parent, EditorScene* scene)
-       : NodeItem(NULL, parent, scene)
+   MacroItem::MacroItem(DirectorGraph* graph, bool imported, QGraphicsItem* parent, EditorScene* scene)
+       : NodeItem(NULL, imported, parent, scene)
        , mGraph(graph)
    {
    }
@@ -95,7 +95,7 @@ namespace dtDirector
          }
 
          SetDefaultPen();
-         SetBackgroundGradient(mNodeHeight);
+         SetBackgroundGradient();
 
          DrawGlow();
       }
@@ -219,7 +219,36 @@ namespace dtDirector
 
       if (!mGraph.valid()) return;
 
-      std::vector<dtCore::RefPtr<EventNode> > inputs = mGraph->GetInputNodes();
+      ID id = mGraph->GetID();
+      id.index = -1;
+
+      // First show links from each imported script.
+      int count = (int)mGraph->GetDirector()->GetImportedScriptList().size();
+      for (int index = 0; index < count; ++index)
+      {
+         Director* imported = mGraph->GetDirector()->GetImportedScriptList()[index];
+         if (imported)
+         {
+            DirectorGraph* importedGraph = imported->GetGraph(id);
+            if (importedGraph)
+            {
+               FindLinks(importedGraph);
+            }
+         }
+      }
+
+      FindLinks(mGraph.get());
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void MacroItem::FindLinks(DirectorGraph* graph)
+   {
+      if (!graph)
+      {
+         return;
+      }
+
+      std::vector<dtCore::RefPtr<EventNode> > inputs = graph->GetInputNodes();
       int count = (int)inputs.size();
       for (int index = 0; index < count; index++)
       {
@@ -235,10 +264,17 @@ namespace dtDirector
             data.linkGraphic = new InputLinkItem(this, (int)mInputs.size()-1, this, mScene, data.link->GetComment());
             data.linkName = new GraphicsTextItem(data.linkGraphic, mScene);
             data.linkName->setAcceptHoverEvents(false);
+            if (mIsImported)
+            {
+               QFont font = data.linkName->font();
+               font = QFont(font.family(), font.pointSize(), font.weight(), false);
+               data.linkName->setFont(font);
+               data.linkName->setDefaultTextColor(Qt::darkGray);
+            }
          }
       }
 
-      std::vector<dtCore::RefPtr<ActionNode> > outputs = mGraph->GetOutputNodes();
+      std::vector<dtCore::RefPtr<ActionNode> > outputs = graph->GetOutputNodes();
       count = (int)outputs.size();
       for (int index = 0; index < count; index++)
       {
@@ -254,10 +290,17 @@ namespace dtDirector
             data.linkGraphic = new OutputLinkItem(this, (int)mOutputs.size()-1, this, mScene, data.link->GetComment());
             data.linkName = new GraphicsTextItem(data.linkGraphic, mScene);
             data.linkName->setAcceptHoverEvents(false);
+            if (mIsImported)
+            {
+               QFont font = data.linkName->font();
+               font = QFont(font.family(), font.pointSize(), font.weight(), false);
+               data.linkName->setFont(font);
+               data.linkName->setDefaultTextColor(Qt::darkGray);
+            }
          }
       }
 
-      std::vector<dtCore::RefPtr<ValueNode> > values = mGraph->GetExternalValueNodes();
+      std::vector<dtCore::RefPtr<ValueNode> > values = graph->GetExternalValueNodes();
       count = (int)values.size();
       for (int index = 0; index < count; index++)
       {
@@ -273,6 +316,13 @@ namespace dtDirector
             data.linkGraphic = new ValueLinkItem(this, (int)mValues.size()-1, this, mScene, data.link->GetComment());
             data.linkName = new GraphicsTextItem(data.linkGraphic, mScene);
             data.linkName->setAcceptHoverEvents(false);
+            if (mIsImported)
+            {
+               QFont font = data.linkName->font();
+               font = QFont(font.family(), font.pointSize(), font.weight(), false);
+               data.linkName->setFont(font);
+               data.linkName->setDefaultTextColor(Qt::darkGray);
+            }
          }
       }
    }
@@ -353,6 +403,11 @@ namespace dtDirector
       {
          osg::Vec4 rgba = mGraph->GetColor();
          color.setRgbF(rgba.r(), rgba.g(), rgba.b(), rgba.a());
+
+         if (mIsImported)
+         {
+            color = color.light(150);
+         }
       }
 
       return color;

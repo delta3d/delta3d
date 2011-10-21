@@ -17,11 +17,13 @@
 
     <xsd:complexType name="DirectorType">
         <xsd:sequence>
-            <xsd:element name="header"               type="HeaderType"/>
-            <xsd:element name="libraries"            type="LibrariesType"/>
-            <xsd:element name="graph"                type="GraphType"/>
-            <xsd:element name="chainLinkConnection"  minOccurs="0" maxOccurs="unbounded" type="ChainLinkConnectionType"/>
-            <xsd:element name="valueLinkConnection"  minOccurs="0" maxOccurs="unbounded" type="ValueLinkConnectionType"/>
+            <xsd:element name="header"                      type="HeaderType"/>
+            <xsd:element name="libraries"                   type="LibrariesType"/>
+            <xsd:element name="graph"                       type="GraphType"/>
+            <xsd:element name="chainLinkConnection"         minOccurs="0" maxOccurs="unbounded" type="ChainLinkConnectionType"/>
+            <xsd:element name="valueLinkConnection"         minOccurs="0" maxOccurs="unbounded" type="ValueLinkConnectionType"/>
+            <xsd:element name="removedChainLinkConnection"  minOccurs="0" maxOccurs="unbounded" type="ChainLinkConnectionType"/>
+            <xsd:element name="removedValueLinkConnection"  minOccurs="0" maxOccurs="unbounded" type="ValueLinkConnectionType"/>
         </xsd:sequence>
     </xsd:complexType>
 
@@ -53,13 +55,14 @@
 
     <xsd:complexType name="GraphType">
         <xsd:sequence>
-            <xsd:element name="idIndex"     minOccurs="0" maxOccurs="1" type="xsd:int" />
-            <xsd:element name="id"          minOccurs="0" maxOccurs="1" type="xsd:string"/>
-            <xsd:element name="property"    minOccurs="0" maxOccurs="unbounded" type="PropertyType"/>
-            <xsd:element name="eventnodes"  type="NodeType"/>
-            <xsd:element name="actionnodes" type="NodeType"/>
-            <xsd:element name="valuenodes"  type="NodeType"/>
-            <xsd:element name="graph"       minOccurs="0" maxOccurs="unbounded" type="GraphType"/>
+            <xsd:element name="importedScript" minOccurs="0" maxOccurs="1" type="xsd:boolean"/>
+            <xsd:element name="idIndex"        minOccurs="0" maxOccurs="1" type="xsd:int" />
+            <xsd:element name="id"             minOccurs="0" maxOccurs="1" type="xsd:string"/>
+            <xsd:element name="property"       minOccurs="0" maxOccurs="unbounded" type="PropertyType"/>
+            <xsd:element name="eventnodes"     type="NodeType"/>
+            <xsd:element name="actionnodes"    type="NodeType"/>
+            <xsd:element name="valuenodes"     type="NodeType"/>
+            <xsd:element name="graph"          minOccurs="0" maxOccurs="unbounded" type="GraphType"/>
         </xsd:sequence>
     </xsd:complexType>
 

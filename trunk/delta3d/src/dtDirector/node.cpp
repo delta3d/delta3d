@@ -38,6 +38,7 @@
 
 #include <dtDirector/director.h>
 #include <dtDirector/nodemanager.h>
+#include <dtDirector/directortypefactory.h>
 
 #include <dtUtil/stringutils.h>
 
@@ -1034,6 +1035,37 @@ namespace dtDirector
 
       return NULL;
    }
+
+   //////////////////////////////////////////////////////////////////////////
+   const InputLink* Node::GetInputLink(const std::string& name) const
+   {
+      int count = (int)mInputs.size();
+      for (int index = 0; index < count; index++)
+      {
+         if (mInputs[index].GetName() == name)
+         {
+            return &mInputs[index];
+         }
+      }
+
+      return NULL;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   const OutputLink* Node::GetOutputLink(const std::string& name) const
+   {
+      int count = (int)mOutputs.size();
+      for (int index = 0; index < count; index++)
+      {
+         if (mOutputs[index].GetName() == name)
+         {
+            return &mOutputs[index];
+         }
+      }
+
+      return NULL;
+   }
+
    //////////////////////////////////////////////////////////////////////////
    ValueLink* Node::GetValueLink(const std::string& name)
    {
@@ -1047,6 +1079,242 @@ namespace dtDirector
       }
 
       return NULL;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   std::vector<OutputLink> Node::GetRemovedImportedInputLinkConnections(const std::string& inputName) const
+   {
+      std::vector<OutputLink> links;
+
+      if (IsImported())
+      {
+         const Node* originalNode = GetOriginalImportedNode();
+         if (originalNode)
+         {
+            const InputLink* myInput = GetInputLink(inputName);
+            const InputLink* oInput = originalNode->GetInputLink(inputName);
+            if (myInput && oInput)
+            {
+               const std::vector<OutputLink*>& myLinks = myInput->GetLinks();
+               const std::vector<OutputLink*>& oLinks = oInput->GetLinks();
+
+               for (int oLinkIndex = 0; oLinkIndex < (int)oLinks.size(); ++oLinkIndex)
+               {
+                  OutputLink* oOutput = oLinks[oLinkIndex];
+                  if (oOutput)
+                  {
+                     bool found = false;
+                     for (int myLinkIndex = 0; myLinkIndex < (int)myLinks.size(); ++myLinkIndex)
+                     {
+                        OutputLink* myOutput = myLinks[myLinkIndex];
+                        if (myOutput &&
+                           oOutput->GetOwner()->GetID() == myOutput->GetOwner()->GetID() &&
+                           oOutput->GetName() == myOutput->GetName())
+                        {
+                           found = true;
+                           break;
+                        }
+                     }
+
+                     if (!found)
+                     {
+                        OutputLink removedLink(oOutput->GetOwner(), oOutput->GetName());
+                        links.push_back(removedLink);
+                     }
+                  }
+               }
+            }
+         }
+      }
+
+      return links;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   std::vector<InputLink> Node::GetRemovedImportedOutputLinkConnections(const std::string& outputName) const
+   {
+      std::vector<InputLink> links;
+
+      if (IsImported())
+      {
+         const Node* originalNode = GetOriginalImportedNode();
+         if (originalNode)
+         {
+            const OutputLink* myOutput = GetOutputLink(outputName);
+            const OutputLink* oOutput = originalNode->GetOutputLink(outputName);
+            if (myOutput && oOutput)
+            {
+               const std::vector<InputLink*>& myLinks = myOutput->GetLinks();
+               const std::vector<InputLink*>& oLinks = oOutput->GetLinks();
+
+               for (int oLinkIndex = 0; oLinkIndex < (int)oLinks.size(); ++oLinkIndex)
+               {
+                  InputLink* oInput = oLinks[oLinkIndex];
+                  if (oInput)
+                  {
+                     bool found = false;
+                     for (int myLinkIndex = 0; myLinkIndex < (int)myLinks.size(); ++myLinkIndex)
+                     {
+                        InputLink* myInput = myLinks[myLinkIndex];
+                        if (myInput &&
+                           oInput->GetOwner()->GetID() == myInput->GetOwner()->GetID() &&
+                           oInput->GetName() == myInput->GetName())
+                        {
+                           found = true;
+                           break;
+                        }
+                     }
+
+                     if (!found)
+                     {
+                        InputLink removedLink(oInput->GetOwner(), oInput->GetName());
+                        links.push_back(removedLink);
+                     }
+                  }
+               }
+            }
+         }
+      }
+
+      return links;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   std::vector<ValueNode*> Node::GetRemovedImportedValueLinkConnections(const std::string& valueName) const
+   {
+      std::vector<ValueNode*> links;
+
+      if (IsImported())
+      {
+         const Node* originalNode = GetOriginalImportedNode();
+         if (originalNode)
+         {
+            const ValueLink* myValue = GetValueLink(valueName);
+            const ValueLink* oValue = originalNode->GetValueLink(valueName);
+            if (myValue && oValue)
+            {
+               const std::vector<ValueNode*>& myLinks = myValue->GetLinks();
+               const std::vector<ValueNode*>& oLinks = oValue->GetLinks();
+
+               for (int oLinkIndex = 0; oLinkIndex < (int)oLinks.size(); ++oLinkIndex)
+               {
+                  ValueNode* oValueNode = oLinks[oLinkIndex];
+                  if (oValueNode)
+                  {
+                     bool found = false;
+                     for (int myLinkIndex = 0; myLinkIndex < (int)myLinks.size(); ++myLinkIndex)
+                     {
+                        ValueNode* myValueNode = myLinks[myLinkIndex];
+                        if (myValueNode &&
+                           oValueNode->GetID() == myValueNode->GetID())
+                        {
+                           found = true;
+                           break;
+                        }
+                     }
+
+                     if (!found)
+                     {
+                        links.push_back(oValueNode);
+                     }
+                  }
+               }
+            }
+         }
+      }
+
+      return links;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool Node::IsInputLinkImported(const std::string& inputName, const ID& targetID, const std::string& outputName) const
+   {
+      if (IsImported())
+      {
+         const Node* originalNode = GetOriginalImportedNode();
+         if (originalNode)
+         {
+            const InputLink* myInput = GetInputLink(inputName);
+            const InputLink* oInput = originalNode->GetInputLink(inputName);
+            if (myInput && oInput)
+            {
+               const std::vector<OutputLink*>& oLinks = oInput->GetLinks();
+
+               for (int oLinkIndex = 0; oLinkIndex < (int)oLinks.size(); ++oLinkIndex)
+               {
+                  OutputLink* oOutput = oLinks[oLinkIndex];
+                  if (oOutput &&
+                     oOutput->GetOwner()->GetID() == targetID &&
+                     oOutput->GetName() == outputName)
+                  {
+                     return true;
+                  }
+               }
+            }
+         }
+      }
+
+      return false;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool Node::IsOutputLinkImported(const std::string& outputName, const ID& targetID, const std::string& inputName) const
+   {
+      if (IsImported())
+      {
+         const Node* originalNode = GetOriginalImportedNode();
+         if (originalNode)
+         {
+            const OutputLink* myOutput = GetOutputLink(outputName);
+            const OutputLink* oOutput = originalNode->GetOutputLink(outputName);
+            if (myOutput && oOutput)
+            {
+               const std::vector<InputLink*>& oLinks = oOutput->GetLinks();
+
+               for (int oLinkIndex = 0; oLinkIndex < (int)oLinks.size(); ++oLinkIndex)
+               {
+                  InputLink* oInput = oLinks[oLinkIndex];
+                  if (oInput &&
+                     oInput->GetOwner()->GetID() == targetID &&
+                     oInput->GetName() == inputName)
+                  {
+                     return true;
+                  }
+               }
+            }
+         }
+      }
+
+      return false;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool Node::IsValueLinkImported(const std::string& valueName, const ID& targetID) const
+   {
+      if (IsImported())
+      {
+         const Node* originalNode = GetOriginalImportedNode();
+         if (originalNode)
+         {
+            const ValueLink* myValue = GetValueLink(valueName);
+            const ValueLink* oValue = originalNode->GetValueLink(valueName);
+            if (myValue && oValue)
+            {
+               const std::vector<ValueNode*>& oLinks = oValue->GetLinks();
+
+               for (int oLinkIndex = 0; oLinkIndex < (int)oLinks.size(); ++oLinkIndex)
+               {
+                  const ValueNode* oValueNode = oLinks[oLinkIndex];
+                  if (oValueNode && oValueNode->GetID() == targetID)
+                  {
+                     return true;
+                  }
+               }
+            }
+         }
+      }
+
+      return false;
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -1101,6 +1369,55 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    ValueNode* Node::AsValueNode()
    {
+      return NULL;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool Node::IsImported() const
+   {
+      if (mDirector)
+      {
+         return mDirector->IsImported();
+      }
+      return false;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   const Node* Node::GetOriginalImportedNode() const
+   {
+      if (IsImported())
+      {
+         // Get all our imported scripts and find their original cached equivalent for comparison.
+         Director* topDirector = GetTopDirector();
+         if (!topDirector)
+         {
+            return NULL;
+         }
+         const std::vector<dtCore::RefPtr<Director> >& importedScripts = topDirector->GetImportedScriptList();
+
+         DirectorTypeFactory* factory = DirectorTypeFactory::GetInstance();
+         std::vector<const Director*> cachedScripts;
+         if (factory)
+         {
+            int count = (int)importedScripts.size();
+            for (int index = 0; index < count; ++index)
+            {
+               const Director* cachedScript = factory->GetCachedScript(importedScripts[index]->GetScriptName());
+               cachedScripts.push_back(cachedScript);
+            }
+         }
+
+         int cacheCount = (int)cachedScripts.size();
+         for (int cacheIndex = 0; cacheIndex < cacheCount; ++cacheIndex)
+         {
+            const Director* cachedScript = cachedScripts[cacheIndex];
+            if (cachedScript)
+            {
+               return cachedScript->GetNode(GetID());
+            }
+         }
+      }
+
       return NULL;
    }
 }

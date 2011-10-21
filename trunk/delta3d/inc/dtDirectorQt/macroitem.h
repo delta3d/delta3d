@@ -42,11 +42,12 @@ namespace dtDirector
       /**
        * Constructor.
        *
-       * @param[in]  graph   The Director Graph.
-       * @param[in]  parent  The parent item.
-       * @param[in]  scene   The scene.
+       * @param[in]  graph     The Director Graph.
+       * @param[in]  imported  True if this node is an imported node.
+       * @param[in]  parent    The parent item.
+       * @param[in]  scene     The scene.
        */
-      MacroItem(DirectorGraph* graph, QGraphicsItem* parent = 0, EditorScene* scene = 0);
+      MacroItem(DirectorGraph* graph, bool imported, QGraphicsItem* parent = 0, EditorScene* scene = 0);
 
       /**
        * Draws the node.
@@ -69,6 +70,13 @@ namespace dtDirector
        * Finds all of the links.
        */
       virtual void FindLinks();
+
+      /**
+       *	Finds all links from the given graph.
+       *
+       * @param[in]  graph  The graph.
+       */
+      virtual void FindLinks(DirectorGraph* graph);
 
       /**
        * Retrieves whether the node is contained.

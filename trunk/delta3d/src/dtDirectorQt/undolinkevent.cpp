@@ -75,8 +75,8 @@ namespace dtDirector
       // Inputs.
       case INPUT_LINK:
          {
-            Node* sourceNode = mEditor->GetDirector()->GetNode(mSourceID);
-            Node* destNode = mEditor->GetDirector()->GetNode(mDestID);
+            Node* sourceNode = mEditor->GetDirector()->GetNode(mSourceID, true);
+            Node* destNode = mEditor->GetDirector()->GetNode(mDestID, true);
 
             if (sourceNode && destNode)
             {
@@ -95,8 +95,8 @@ namespace dtDirector
       // Values.
       case VALUE_LINK:
          {
-            Node* sourceNode = mEditor->GetDirector()->GetNode(mSourceID);
-            Node* destNode = mEditor->GetDirector()->GetNode(mDestID);
+            Node* sourceNode = mEditor->GetDirector()->GetNode(mSourceID, true);
+            Node* destNode = mEditor->GetDirector()->GetNode(mDestID, true);
 
             if (sourceNode && destNode)
             {
@@ -119,8 +119,8 @@ namespace dtDirector
       // Inputs.
       case INPUT_LINK:
          {
-            Node* sourceNode = mEditor->GetDirector()->GetNode(mSourceID);
-            Node* destNode = mEditor->GetDirector()->GetNode(mDestID);
+            Node* sourceNode = mEditor->GetDirector()->GetNode(mSourceID, true);
+            Node* destNode = mEditor->GetDirector()->GetNode(mDestID, true);
 
             if (sourceNode && destNode)
             {
@@ -139,8 +139,8 @@ namespace dtDirector
       // Values.
       case VALUE_LINK:
          {
-            Node* sourceNode = mEditor->GetDirector()->GetNode(mSourceID);
-            Node* destNode = mEditor->GetDirector()->GetNode(mDestID);
+            Node* sourceNode = mEditor->GetDirector()->GetNode(mSourceID, true);
+            Node* destNode = mEditor->GetDirector()->GetNode(mDestID, true);
 
             if (sourceNode && destNode)
             {

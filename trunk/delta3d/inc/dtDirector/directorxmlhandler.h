@@ -149,6 +149,7 @@ namespace dtDirector
       bool mInNode;
 
       bool mInLink;
+      bool mInRemoveLink;
       bool mInInputLink;
       bool mInOutputLink;
       bool mInValueLink;
@@ -170,7 +171,7 @@ namespace dtDirector
       std::set<std::string> mMissingNodeTypes;
       std::vector<std::string> mMissingImportedScripts;
 
-      std::stack<DirectorGraph*> mGraphs;
+      std::stack<dtCore::RefPtr<DirectorGraph> > mGraphs;
 
       dtCore::ActorPropertySerializer* mPropSerializer;
 
@@ -182,6 +183,9 @@ namespace dtDirector
       std::string  mLinkOutputName;
       ID           mLinkNodeID;
       std::string  mLinkToName;
+
+      ID           mGraphID;
+      bool         mIsGraphImported;
 
       struct ToLinkData
       {
@@ -199,6 +203,7 @@ namespace dtDirector
       };
 
       std::vector<ToLinkData> mLinkList;
+      std::vector<ToLinkData> mRemovedLinkList;
 
       //Reset all of the internal data/state variables
       void Reset();
@@ -223,6 +228,7 @@ namespace dtDirector
        * Links all nodes together at the end of the load.
        */
       void LinkNodes();
+      void RemoveLinkNodes();
    };
 }
 #endif

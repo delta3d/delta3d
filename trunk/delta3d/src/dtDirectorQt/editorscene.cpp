@@ -109,7 +109,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void EditorScene::SetGraph(dtDirector::DirectorGraph* graph)
+   void EditorScene::SetGraph(DirectorGraph* graph)
    {
       // First clear the current items.
       int count = (int)mNodes.size();
@@ -136,12 +136,48 @@ namespace dtDirector
 
       if (!mGraph) return;
 
+      ShowNodes(mGraph.get(), false);
+
+      mEditor->Refresh();
+      CenterAll();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void EditorScene::ShowNodes(DirectorGraph* graph, bool imported)
+   {
+      ID id = graph->GetID();
+      id.index = -1;
+
+      // Show the nodes within each imported script first.
+      int count = (int)graph->GetDirector()->GetImportedScriptList().size();
+      for (int index = 0; index < count; ++index)
+      {
+         Director* imported = mGraph->GetDirector()->GetImportedScriptList()[index];
+         if (imported)
+         {
+            DirectorGraph* importedGraph = NULL;
+            if (mGraph == mGraph->GetDirector()->GetGraphRoot())
+            {
+               importedGraph = imported->GetGraphRoot();
+            }
+            else
+            {
+               importedGraph = imported->GetGraph(id);
+            }
+
+            if (importedGraph)
+            {
+               ShowNodes(importedGraph, true);
+            }
+         }
+      }
+
       // Create all nodes in the graph.
-      count = (int)mGraph->GetEventNodes().size();
+      count = (int)graph->GetEventNodes().size();
       for (int index = 0; index < count; index++)
       {
-         Node* node = mGraph->GetEventNodes()[index].get();
-         ActionItem* item = new ActionItem(node, mTranslationItem, this);
+         Node* node = graph->GetEventNodes()[index].get();
+         ActionItem* item = new ActionItem(node, imported, mTranslationItem, this);
          if (item)
          {
             item->setZValue(10.0f);
@@ -149,27 +185,27 @@ namespace dtDirector
          }
       }
 
-      count = (int)mGraph->GetActionNodes().size();
+      count = (int)graph->GetActionNodes().size();
       for (int index = 0; index < count; index++)
       {
-         Node* node = mGraph->GetActionNodes()[index].get();
+         Node* node = graph->GetActionNodes()[index].get();
          NodeItem* item = NULL;
 
          // Special case for reference script nodes.
          if (IS_A(node, ReferenceScriptAction*))
          {
-            item = new ScriptItem(node, mTranslationItem, this);
+            item = new ScriptItem(node, imported, mTranslationItem, this);
             item->setZValue(10.0f);
          }
          // Special case for group frame nodes.
          else if (IS_A(node, GroupNode*))
          {
-            item = new GroupItem(node, mTranslationItem, this);
+            item = new GroupItem(node, imported, mTranslationItem, this);
             item->setZValue(0.0f);
          }
          else
          {
-            item = new ActionItem(node, mTranslationItem, this);
+            item = new ActionItem(node, imported, mTranslationItem, this);
             item->setZValue(10.0f);
          }
 
@@ -179,11 +215,11 @@ namespace dtDirector
          }
       }
 
-      count = (int)mGraph->GetValueNodes().size();
+      count = (int)graph->GetValueNodes().size();
       for (int index = 0; index < count; index++)
       {
-         Node* node = mGraph->GetValueNodes()[index].get();
-         ValueItem* item = new ValueItem(node, mTranslationItem, this);
+         Node* node = graph->GetValueNodes()[index].get();
+         ValueItem* item = new ValueItem(node, imported, mTranslationItem, this);
          if (item)
          {
             item->setZValue(20.0f);
@@ -191,20 +227,34 @@ namespace dtDirector
          }
       }
 
-      count = (int)mGraph->GetSubGraphs().size();
+      count = (int)graph->GetSubGraphs().size();
       for (int index = 0; index < count; index++)
       {
-         DirectorGraph* graph = mGraph->GetSubGraphs()[index].get();
-         MacroItem* item = new MacroItem(graph, mTranslationItem, this);
-         if (item)
+         DirectorGraph* macro = graph->GetSubGraphs()[index].get();
+
+         if (macro)
          {
-            item->setZValue(10.0f);
-            mNodes.push_back(item);
+            ID id = macro->GetID();
+            id.index = -1;
+
+            // If the macro already exists, bail.
+            if (GetGraphItem(id))
+            {
+               continue;
+            }
+
+            DirectorGraph* parentGraph = mGraph->GetGraph(id);
+            if (parentGraph)
+            {
+               MacroItem* item = new MacroItem(parentGraph, imported, mTranslationItem, this);
+               if (item)
+               {
+                  item->setZValue(10.0f);
+                  mNodes.push_back(item);
+               }
+            }
          }
       }
-
-      mEditor->Refresh();
-      CenterAll();
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -216,6 +266,13 @@ namespace dtDirector
 
       // If snap to grid is disabled, then don't snap.
       if (!mEditor->GetSnapGridAction()->isChecked())
+      {
+         return position;
+      }
+
+      // Don't snap imported nodes, because they are non-movable.
+      if ((item->GetNode() && item->GetNode()->IsImported()) ||
+         (item->GetMacro() && item->GetMacro()->IsImported()))
       {
          return position;
       }

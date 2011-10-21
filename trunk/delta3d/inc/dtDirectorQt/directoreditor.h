@@ -191,6 +191,11 @@ namespace dtDirector
       void RefreshGraph(DirectorGraph* graph);
 
       /**
+       *	Refreshes all graphs visible in tab views.
+       */
+      void RefreshGraphs();
+
+      /**
        * Refreshes a single node.
        *
        * @param[in]  node  The node to refresh.
@@ -230,6 +235,13 @@ namespace dtDirector
        * @param[in]  id  The ID of the node to delete.
        */
       void DeleteNode(dtDirector::ID id);
+
+      /**
+       *	Deletes a director graph.
+       *
+       * @param[in]  id  The Id of the graph to delete.
+       */
+      void DeleteGraph(dtDirector::ID id);
 
       /**
        * Event handler when viewing the context menu of a value node.

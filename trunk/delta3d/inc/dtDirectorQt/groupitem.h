@@ -61,11 +61,12 @@ namespace dtDirector
       /**
        * Constructor.
        *
-       * @param[in]  node       The Director Node.
-       * @param[in]  parent     The parent item.
-       * @param[in]  scene      The scene.
+       * @param[in]  node      The Director Node.
+       * @param[in]  imported  True if this node is an imported node.
+       * @param[in]  parent    The parent item.
+       * @param[in]  scene     The scene.
        */
-      GroupItem(Node* node, QGraphicsItem* parent = 0, EditorScene* scene = 0, bool inPalette = false);
+      GroupItem(Node* node, bool imported, QGraphicsItem* parent = 0, EditorScene* scene = 0, bool inPalette = false);
 
       /**
        * Destructor.
@@ -129,7 +130,7 @@ namespace dtDirector
        * Event handler that will resize the group to fit items currently contained.
        */
       void SizeToFit();
-      
+
    protected:
       /**
        *	Find and store all node-items inside our rect.

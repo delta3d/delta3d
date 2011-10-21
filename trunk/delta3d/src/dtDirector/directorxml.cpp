@@ -53,6 +53,7 @@
 #include <dtDirector/directorxml.h>
 #include <dtDirector/node.h>
 #include <dtDirector/nodetype.h>
+#include <dtDirector/directortypefactory.h>
 
 #include <dtUtil/datapathutils.h>
 #include <dtUtil/fileutils.h>
@@ -391,8 +392,7 @@ namespace dtDirector
 
             SaveGraphs(director->GetGraphRoot());
 
-            SaveChainLinks(director);
-            SaveValueLinks(director);
+            SaveLinkConnections(director);
          }
          EndElement(); // End Director Element.
 
@@ -426,6 +426,16 @@ namespace dtDirector
       // Graph.
       BeginElement(dtCore::MapXMLConstants::DIRECTOR_GRAPH_ELEMENT);
       {
+         // Imported.
+         if (graph->IsImported())
+         {
+            BeginElement(dtCore::MapXMLConstants::DIRECTOR_IMPORTED_SCRIPT);
+            {
+               AddCharacters("true");
+            }
+            EndElement(); // End Imported.
+         }
+
          // Graph ID.
          BeginElement(dtCore::MapXMLConstants::ID_INDEX_ELEMENT);
          {
@@ -668,139 +678,292 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void DirectorWriter::SaveChainLinks(Director* script)
+   void DirectorWriter::SaveLinkConnections(Director* script)
    {
+      std::vector<ToLinkData> addedChainLinks;
+      std::vector<ToLinkData> removedChainLinks;
+      std::vector<ToLinkData> addedValueLinks;
+      std::vector<ToLinkData> removedValueLinks;
+
       std::vector<Node*> nodes;
-      script->GetAllNodes(nodes);
+      script->GetAllNodes(nodes, true);
 
       int count = (int)nodes.size();
       for (int index = 0; index < count; ++index)
       {
-         Node* node = nodes[index];
-         if (node)
+         Node* myNode = nodes[index];
+         if (myNode)
          {
-            std::vector<OutputLink>& outputs = node->GetOutputLinks();
+            // Now iterate through all output links on this node.
+            std::vector<OutputLink>& outputs = myNode->GetOutputLinks();
             for (int outputIndex = 0; outputIndex < (int)outputs.size(); outputIndex++)
             {
                OutputLink& output = outputs[outputIndex];
 
+               // Find all links that were removed from the original imported node.
+               std::vector<InputLink> removedLinks = myNode->GetRemovedImportedOutputLinkConnections(output.GetName());
+               int removedCount = (int)removedLinks.size();
+               for (int removedIndex = 0; removedIndex < removedCount; ++removedIndex)
+               {
+                  InputLink& link = removedLinks[removedIndex];
+
+                  // If we get here, it means the link connection was removed and should be saved.
+                  ToLinkData data;
+                  data.outputNodeID   = myNode->GetID();
+                  data.inputNodeID    = link.GetOwner()->GetID();
+                  data.outputLinkName = output.GetName();
+                  data.inputLinkName  = link.GetName();
+                  removedChainLinks.push_back(data);
+               }
+
+               // Iterate through all connected links and check if they are new.
                std::vector<InputLink*>& links = output.GetLinks();
                for (int linkIndex = 0; linkIndex < (int)links.size(); linkIndex++)
                {
                   InputLink* input = links[linkIndex];
-                  if (!input) continue;
+                  if (!input) continue;;
 
-                  BeginElement(dtCore::MapXMLConstants::DIRECTOR_LINK_CHAIN_CONNECTION);
+                  if (!myNode->IsOutputLinkImported(output.GetName(), input->GetOwner()->GetID(), input->GetName()))
                   {
-                     // Output link owner.
-                     BeginElement(dtCore::MapXMLConstants::DIRECTOR_LINK_OUTPUT_OWNER_INDEX_ELEMENT);
-                     {
-                        AddCharacters(dtUtil::ToString(output.GetOwner()->GetID().index));
-                     }
-                     EndElement(); // End output link owner.
-
-                     BeginElement(dtCore::MapXMLConstants::DIRECTOR_LINK_OUTPUT_OWNER_ELEMENT);
-                     {
-                        AddCharacters(output.GetOwner()->GetID().id.ToString());
-                     }
-                     EndElement(); // End output link owner.
-
-                     // Input link owner.
-                     BeginElement(dtCore::MapXMLConstants::DIRECTOR_LINK_INPUT_OWNER_INDEX_ELEMENT);
-                     {
-                        AddCharacters(dtUtil::ToString(input->GetOwner()->GetID().index));
-                     }
-                     EndElement(); // End input link owner.
-
-                     BeginElement(dtCore::MapXMLConstants::DIRECTOR_LINK_INPUT_OWNER_ELEMENT);
-                     {
-                        AddCharacters(input->GetOwner()->GetID().id.ToString());
-                     }
-                     EndElement(); // End input link owner.
-
-                     // Output link name.
-                     BeginElement(dtCore::MapXMLConstants::DIRECTOR_LINK_OUTPUT_NAME_ELEMENT);
-                     {
-                        AddCharacters(output.GetName());
-                     }
-                     EndElement(); // End output link name.
-
-                     // Input link name.
-                     BeginElement(dtCore::MapXMLConstants::DIRECTOR_LINK_INPUT_NAME_ELEMENT);
-                     {
-                        AddCharacters(input->GetName());
-                     }
-                     EndElement(); // End input link name.
+                     ToLinkData data;
+                     data.outputNodeID   = myNode->GetID();
+                     data.inputNodeID    = input->GetOwner()->GetID();
+                     data.outputLinkName = output.GetName();
+                     data.inputLinkName  = input->GetName();
+                     addedChainLinks.push_back(data);
                   }
-                  EndElement(); // End Link Element.
+               }
+            }
+
+            // Now iterate through all value links on this node.
+            std::vector<ValueLink>& values = myNode->GetValueLinks();
+            for (int valueIndex = 0; valueIndex < (int)values.size(); valueIndex++)
+            {
+               ValueLink& valueLink = values[valueIndex];
+
+               // Find all links that were removed from the original imported node.
+               std::vector<ValueNode*> removedLinks = myNode->GetRemovedImportedValueLinkConnections(valueLink.GetName());
+               int removedCount = (int)removedLinks.size();
+               for (int removedIndex = 0; removedIndex < removedCount; ++removedIndex)
+               {
+                  ValueNode* link = removedLinks[removedIndex];
+
+                  // If we get here, it means the link connection was removed and should be saved.
+                  ToLinkData data;
+                  data.outputNodeID   = myNode->GetID();
+                  data.inputNodeID    = link->GetID();
+                  data.outputLinkName = valueLink.GetName();
+                  removedValueLinks.push_back(data);
+               }
+
+               // Iterate through all connected links and check if they are new.
+               std::vector<ValueNode*>& links = valueLink.GetLinks();
+               for (int linkIndex = 0; linkIndex < (int)links.size(); linkIndex++)
+               {
+                  ValueNode* link = links[linkIndex];
+                  if (!link) continue;;
+
+                  if (!myNode->IsValueLinkImported(valueLink.GetName(), link->GetID()))
+                  {
+                     ToLinkData data;
+                     data.outputNodeID   = myNode->GetID();
+                     data.inputNodeID    = link->GetID();
+                     data.outputLinkName = valueLink.GetName();
+                     addedValueLinks.push_back(data);
+                  }
                }
             }
          }
       }
-   }
 
-   ////////////////////////////////////////////////////////////////////////////////
-   void DirectorWriter::SaveValueLinks(Director* script)
-   {
-      std::vector<Node*> nodes;
-      script->GetAllNodes(nodes);
-
-      int count = (int)nodes.size();
+      // Output all added chain link connections.
+      count = (int)addedChainLinks.size();
       for (int index = 0; index < count; ++index)
       {
-         Node* node = nodes[index];
-         if (node)
+         ToLinkData& data = addedChainLinks[index];
+
+         BeginElement(dtCore::MapXMLConstants::DIRECTOR_LINK_CHAIN_CONNECTION);
          {
-            std::vector<ValueLink>& outputs = node->GetValueLinks();
-            for (int outputIndex = 0; outputIndex < (int)outputs.size(); outputIndex++)
+            // Output link owner.
+            BeginElement(dtCore::MapXMLConstants::DIRECTOR_LINK_OUTPUT_OWNER_INDEX_ELEMENT);
             {
-               ValueLink& output = outputs[outputIndex];
-
-               const std::vector<ValueNode*>& links = output.GetLinks();
-               for (int linkIndex = 0; linkIndex < (int)links.size(); linkIndex++)
-               {
-                  dtCore::RefPtr<ValueNode> input = links[linkIndex];
-                  if (!input.valid()) continue;
-
-                  BeginElement(dtCore::MapXMLConstants::DIRECTOR_LINK_VALUE_CONNECTION);
-                  {
-                     // Output link owner.
-                     BeginElement(dtCore::MapXMLConstants::DIRECTOR_LINK_OUTPUT_OWNER_INDEX_ELEMENT);
-                     {
-                        AddCharacters(dtUtil::ToString(output.GetOwner()->GetID().index));
-                     }
-                     EndElement(); // End output link owner.
-
-                     BeginElement(dtCore::MapXMLConstants::DIRECTOR_LINK_OUTPUT_OWNER_ELEMENT);
-                     {
-                        AddCharacters(output.GetOwner()->GetID().id.ToString());
-                     }
-                     EndElement(); // End output link owner.
-
-                     // Input link owner.
-                     BeginElement(dtCore::MapXMLConstants::DIRECTOR_LINK_INPUT_OWNER_INDEX_ELEMENT);
-                     {
-                        AddCharacters(dtUtil::ToString(input->GetID().index));
-                     }
-                     EndElement(); // End input link owner.
-
-                     BeginElement(dtCore::MapXMLConstants::DIRECTOR_LINK_INPUT_OWNER_ELEMENT);
-                     {
-                        AddCharacters(input->GetID().id.ToString());
-                     }
-                     EndElement(); // End input link owner.
-
-                     // Output link name.
-                     BeginElement(dtCore::MapXMLConstants::DIRECTOR_LINK_OUTPUT_NAME_ELEMENT);
-                     {
-                        AddCharacters(output.GetName());
-                     }
-                     EndElement(); // End output link name.
-                  }
-                  EndElement(); // End Link Element.
-               }
+               AddCharacters(dtUtil::ToString(data.outputNodeID.index));
             }
+            EndElement(); // End output link owner.
+
+            BeginElement(dtCore::MapXMLConstants::DIRECTOR_LINK_OUTPUT_OWNER_ELEMENT);
+            {
+               AddCharacters(data.outputNodeID.id.ToString());
+            }
+            EndElement(); // End output link owner.
+
+            // Input link owner.
+            BeginElement(dtCore::MapXMLConstants::DIRECTOR_LINK_INPUT_OWNER_INDEX_ELEMENT);
+            {
+               AddCharacters(dtUtil::ToString(data.inputNodeID.index));
+            }
+            EndElement(); // End input link owner.
+
+            BeginElement(dtCore::MapXMLConstants::DIRECTOR_LINK_INPUT_OWNER_ELEMENT);
+            {
+               AddCharacters(data.inputNodeID.id.ToString());
+            }
+            EndElement(); // End input link owner.
+
+            // Output link name.
+            BeginElement(dtCore::MapXMLConstants::DIRECTOR_LINK_OUTPUT_NAME_ELEMENT);
+            {
+               AddCharacters(data.outputLinkName);
+            }
+            EndElement(); // End output link name.
+
+            // Input link name.
+            BeginElement(dtCore::MapXMLConstants::DIRECTOR_LINK_INPUT_NAME_ELEMENT);
+            {
+               AddCharacters(data.inputLinkName);
+            }
+            EndElement(); // End input link name.
          }
+         EndElement(); // End Link Element.
+      }
+
+      // Output all added value link connections.
+      count = (int)addedValueLinks.size();
+      for (int index = 0; index < count; ++index)
+      {
+         ToLinkData& data = addedValueLinks[index];
+
+         BeginElement(dtCore::MapXMLConstants::DIRECTOR_LINK_VALUE_CONNECTION);
+         {
+            // Output link owner.
+            BeginElement(dtCore::MapXMLConstants::DIRECTOR_LINK_OUTPUT_OWNER_INDEX_ELEMENT);
+            {
+               AddCharacters(dtUtil::ToString(data.outputNodeID.index));
+            }
+            EndElement(); // End output link owner.
+
+            BeginElement(dtCore::MapXMLConstants::DIRECTOR_LINK_OUTPUT_OWNER_ELEMENT);
+            {
+               AddCharacters(data.outputNodeID.id.ToString());
+            }
+            EndElement(); // End output link owner.
+
+            // Input link owner.
+            BeginElement(dtCore::MapXMLConstants::DIRECTOR_LINK_INPUT_OWNER_INDEX_ELEMENT);
+            {
+               AddCharacters(dtUtil::ToString(data.inputNodeID.index));
+            }
+            EndElement(); // End input link owner.
+
+            BeginElement(dtCore::MapXMLConstants::DIRECTOR_LINK_INPUT_OWNER_ELEMENT);
+            {
+               AddCharacters(data.inputNodeID.id.ToString());
+            }
+            EndElement(); // End input link owner.
+
+            // Output link name.
+            BeginElement(dtCore::MapXMLConstants::DIRECTOR_LINK_OUTPUT_NAME_ELEMENT);
+            {
+               AddCharacters(data.outputLinkName);
+            }
+            EndElement(); // End output link name.
+         }
+         EndElement(); // End Link Element.
+      }
+
+      // Output all removed chain link connections.
+      count = (int)removedChainLinks.size();
+      for (int index = 0; index < count; ++index)
+      {
+         ToLinkData& data = removedChainLinks[index];
+
+         BeginElement(dtCore::MapXMLConstants::DIRECTOR_REMOVED_LINK_CHAIN_CONNECTION);
+         {
+            // Output link owner.
+            BeginElement(dtCore::MapXMLConstants::DIRECTOR_LINK_OUTPUT_OWNER_INDEX_ELEMENT);
+            {
+               AddCharacters(dtUtil::ToString(data.outputNodeID.index));
+            }
+            EndElement(); // End output link owner.
+
+            BeginElement(dtCore::MapXMLConstants::DIRECTOR_LINK_OUTPUT_OWNER_ELEMENT);
+            {
+               AddCharacters(data.outputNodeID.id.ToString());
+            }
+            EndElement(); // End output link owner.
+
+            // Input link owner.
+            BeginElement(dtCore::MapXMLConstants::DIRECTOR_LINK_INPUT_OWNER_INDEX_ELEMENT);
+            {
+               AddCharacters(dtUtil::ToString(data.inputNodeID.index));
+            }
+            EndElement(); // End input link owner.
+
+            BeginElement(dtCore::MapXMLConstants::DIRECTOR_LINK_INPUT_OWNER_ELEMENT);
+            {
+               AddCharacters(data.inputNodeID.id.ToString());
+            }
+            EndElement(); // End input link owner.
+
+            // Output link name.
+            BeginElement(dtCore::MapXMLConstants::DIRECTOR_LINK_OUTPUT_NAME_ELEMENT);
+            {
+               AddCharacters(data.outputLinkName);
+            }
+            EndElement(); // End output link name.
+
+            // Input link name.
+            BeginElement(dtCore::MapXMLConstants::DIRECTOR_LINK_INPUT_NAME_ELEMENT);
+            {
+               AddCharacters(data.inputLinkName);
+            }
+            EndElement(); // End input link name.
+         }
+         EndElement(); // End Link Element.
+      }
+
+      // Output all removed value link connections.
+      count = (int)removedValueLinks.size();
+      for (int index = 0; index < count; ++index)
+      {
+         ToLinkData& data = removedValueLinks[index];
+
+         BeginElement(dtCore::MapXMLConstants::DIRECTOR_REMOVED_LINK_VALUE_CONNECTION);
+         {
+            // Output link owner.
+            BeginElement(dtCore::MapXMLConstants::DIRECTOR_LINK_OUTPUT_OWNER_INDEX_ELEMENT);
+            {
+               AddCharacters(dtUtil::ToString(data.outputNodeID.index));
+            }
+            EndElement(); // End output link owner.
+
+            BeginElement(dtCore::MapXMLConstants::DIRECTOR_LINK_OUTPUT_OWNER_ELEMENT);
+            {
+               AddCharacters(data.outputNodeID.id.ToString());
+            }
+            EndElement(); // End output link owner.
+
+            // Input link owner.
+            BeginElement(dtCore::MapXMLConstants::DIRECTOR_LINK_INPUT_OWNER_INDEX_ELEMENT);
+            {
+               AddCharacters(dtUtil::ToString(data.inputNodeID.index));
+            }
+            EndElement(); // End input link owner.
+
+            BeginElement(dtCore::MapXMLConstants::DIRECTOR_LINK_INPUT_OWNER_ELEMENT);
+            {
+               AddCharacters(data.inputNodeID.id.ToString());
+            }
+            EndElement(); // End input link owner.
+
+            // Output link name.
+            BeginElement(dtCore::MapXMLConstants::DIRECTOR_LINK_OUTPUT_NAME_ELEMENT);
+            {
+               AddCharacters(data.outputLinkName);
+            }
+            EndElement(); // End output link name.
+         }
+         EndElement(); // End Link Element.
       }
    }
 }

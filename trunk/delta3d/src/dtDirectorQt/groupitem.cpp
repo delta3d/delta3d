@@ -44,8 +44,8 @@
 namespace dtDirector
 {
    //////////////////////////////////////////////////////////////////////////
-   GroupItem::GroupItem(Node* node, QGraphicsItem* parent, EditorScene* scene, bool inPalette)
-       : NodeItem(node, parent, scene)
+   GroupItem::GroupItem(Node* node, bool imported, QGraphicsItem* parent, EditorScene* scene, bool inPalette)
+       : NodeItem(node, imported, parent, scene)
        , mInnerRect(NULL)
        , mInPalette(inPalette)
    {
@@ -55,7 +55,7 @@ namespace dtDirector
          mResizer[index]->Init();
       }
 
-      setFlag(QGraphicsItem::ItemIsMovable, true);
+      setFlag(QGraphicsItem::ItemIsMovable, !imported);
       setFlag(QGraphicsItem::ItemIsSelectable, true);
    }
 
@@ -191,7 +191,7 @@ namespace dtDirector
    void GroupItem::EndMoveEvent()
    {
       NodeItem::EndMoveEvent();
-      
+
       mScene->BeginBatchSelection();
       for (int i = 0; i < mGroupedItems.size(); i++)
       {
@@ -279,7 +279,7 @@ namespace dtDirector
                 type == ResizeItem::RESIZE_BOT_RIGHT)
             {
                newMax.setX(sizerPos.x());
-               
+
                if (newMax.x() - newMin.x() < MIN_NODE_WIDTH)
                {
                   newMax.setX(newMin.x() + MIN_NODE_WIDTH);

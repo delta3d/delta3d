@@ -420,8 +420,8 @@ namespace dtDirector
       for (int index = 0; index < count; index++)
       {
          LinkData& data = mInputs[index];
-         Node* sourceNode = mEditor->GetDirector()->GetNode(data.mSourceID);
-         Node* destNode = mEditor->GetDirector()->GetNode(data.mDestID);
+         Node* sourceNode = mEditor->GetDirector()->GetNode(data.mSourceID, true);
+         Node* destNode = mEditor->GetDirector()->GetNode(data.mDestID, true);
 
          if (sourceNode)
          {
@@ -445,8 +445,8 @@ namespace dtDirector
       for (int index = 0; index < count; index++)
       {
          LinkData& data = mOutputs[index];
-         Node* sourceNode = mEditor->GetDirector()->GetNode(data.mSourceID);
-         Node* destNode = mEditor->GetDirector()->GetNode(data.mDestID);
+         Node* sourceNode = mEditor->GetDirector()->GetNode(data.mSourceID, true);
+         Node* destNode = mEditor->GetDirector()->GetNode(data.mDestID, true);
 
          if (sourceNode)
          {
@@ -470,8 +470,8 @@ namespace dtDirector
       for (int index = 0; index < count; index++)
       {
          LinkData& data = mValues[index];
-         Node* sourceNode = mEditor->GetDirector()->GetNode(data.mSourceID);
-         Node* destNode = mEditor->GetDirector()->GetNode(data.mDestID);
+         Node* sourceNode = mEditor->GetDirector()->GetNode(data.mSourceID, true);
+         Node* destNode = mEditor->GetDirector()->GetNode(data.mDestID, true);
 
          if (sourceNode)
          {

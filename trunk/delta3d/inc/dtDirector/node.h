@@ -74,7 +74,7 @@ namespace dtDirector
 
       bool operator==(const ID& rhs) const
       {
-         return index == rhs.index && id == rhs.id;
+         return id == rhs.id;
       }
 
       bool operator<(const ID& rhs) const
@@ -578,7 +578,38 @@ namespace dtDirector
       InputLink* GetInputLink(const std::string& name);
       OutputLink* GetOutputLink(const std::string& name);
       ValueLink* GetValueLink(const std::string& name);
+
+      const InputLink* GetInputLink(const std::string& name) const;
+      const OutputLink* GetOutputLink(const std::string& name) const;
       const ValueLink* GetValueLink(const std::string& name) const;
+
+      /**
+       *	This will retrieve a list of link connections that were removed
+       * from the original imported version of this node.
+       * @note  Only works on nodes that are imported.
+       *
+       * @param[in]  inputName   The name of the input link.
+       * @param[in]  outputName  The name of the output link.
+       * @param[in]  valueName   The name of the value link.
+       */
+      std::vector<OutputLink> GetRemovedImportedInputLinkConnections(const std::string& inputName) const;
+      std::vector<InputLink>  GetRemovedImportedOutputLinkConnections(const std::string& outputName) const;
+      std::vector<ValueNode*> GetRemovedImportedValueLinkConnections(const std::string& valueName) const;
+
+      /**
+       *	Tests whether a given link exists as part of an imported script.
+       * @note  Only works on nodes that are imported.
+       *
+       * @param[in]  inputName   The name of the input link.
+       * @param[in]  outputName  The name of the output link.
+       * @param[in]  valueName   The name of the value link.
+       * @param[in]  targetID    The ID of the connected node.
+       *
+       * @return     True if this link is part of the imported script.
+       */
+      bool IsInputLinkImported(const std::string& inputName, const ID& targetID, const std::string& outputName) const;
+      bool IsOutputLinkImported(const std::string& outputName, const ID& targetID, const std::string& inputName) const;
+      bool IsValueLinkImported(const std::string& valueName, const ID& targetID) const;
 
       /**
        * Triggers an output on this node.
@@ -641,6 +672,12 @@ namespace dtDirector
       void SetColorRGB(const osg::Vec3& color) { SetColor(osg::Vec4(color, 225)/255.0f); }
       void SetColorRGBA(int r, int g, int b, int a = 225) { SetColor(osg::Vec4(r, g, b, a)/255.0f); }
 
+      /**
+       *	Retrieves whether this node is from an imported script.
+       */
+      bool IsImported() const;
+
+      const Node* GetOriginalImportedNode() const;
 
       /**
        * Allow access to the NodePluginRegistry.

@@ -325,8 +325,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>107</width>
-              <height>278</height>
+              <width>98</width>
+              <height>28</height>
              </rect>
             </property>
             <attribute name="label">
@@ -358,8 +358,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>107</width>
-              <height>278</height>
+              <width>98</width>
+              <height>28</height>
              </rect>
             </property>
             <attribute name="label">
@@ -388,8 +388,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>107</width>
-              <height>278</height>
+              <width>98</width>
+              <height>28</height>
              </rect>
             </property>
             <attribute name="label">
@@ -418,8 +418,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>107</width>
-              <height>278</height>
+              <width>98</width>
+              <height>28</height>
              </rect>
             </property>
             <attribute name="label">
@@ -448,8 +448,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>107</width>
-              <height>278</height>
+              <width>98</width>
+              <height>28</height>
              </rect>
             </property>
             <attribute name="label">
@@ -478,8 +478,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>107</width>
-              <height>278</height>
+              <width>98</width>
+              <height>28</height>
              </rect>
             </property>
             <attribute name="label">
@@ -514,8 +514,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>107</width>
-              <height>278</height>
+              <width>98</width>
+              <height>28</height>
              </rect>
             </property>
             <attribute name="label">
@@ -553,8 +553,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>107</width>
-              <height>278</height>
+              <width>98</width>
+              <height>28</height>
              </rect>
             </property>
             <attribute name="label">
@@ -988,7 +988,7 @@
   </action>
   <action name="action_Manage_Imported_Scripts">
    <property name="enabled">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="text">
     <string>Manage Imported Scripts...</string>

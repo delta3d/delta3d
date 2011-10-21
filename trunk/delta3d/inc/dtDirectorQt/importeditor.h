@@ -31,6 +31,7 @@
 namespace dtDirector
 {
    class DirectorEditor;
+   class DirectorGraph;
 
    class ImportEditor : public QDialog
    {

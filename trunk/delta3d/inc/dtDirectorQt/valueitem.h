@@ -39,11 +39,12 @@ namespace dtDirector
       /**
        * Constructor.
        *
-       * @param[in]  node    The Director Node.
-       * @param[in]  parent  The parent item.
-       * @param[in]  scene   The scene.
+       * @param[in]  node      The Director Node.
+       * @param[in]  imported  True if this node is an imported node.
+       * @param[in]  parent    The parent item.
+       * @param[in]  scene     The scene.
        */
-      ValueItem(Node* node, QGraphicsItem* parent = 0, EditorScene* scene = 0);
+      ValueItem(Node* node, bool imported, QGraphicsItem* parent = 0, EditorScene* scene = 0);
 
       /**
        * Draws the node.

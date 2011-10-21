@@ -37,6 +37,8 @@ namespace dtDirector
       : mDirector(director)
       , mParent(NULL)
       , mComment("")
+      , mEditor("")
+      , mIsImported(false)
    {
       SetColorRGB(Colors::GREEN);
 
@@ -107,7 +109,7 @@ namespace dtDirector
 
       newGraph->BuildPropertyMap(true);
 
-      newGraph->mID = mID;
+      newGraph->SetID(mID);
       newGraph->CopyPropertiesFrom(*this);
 
       parent->SetGraphRoot(newGraph);
@@ -127,7 +129,7 @@ namespace dtDirector
 
       newGraph->BuildPropertyMap(false);
 
-      newGraph->mID = mID;
+      newGraph->SetID(mID);
       newGraph->CopyPropertiesFrom(*this);
 
       parent->AddGraph(newGraph);
@@ -344,6 +346,12 @@ namespace dtDirector
    std::string DirectorGraph::GetDefaultPropertyKey() const
    {
       return "Director Graph";
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool DirectorGraph::ShouldPropertySave(const dtCore::ActorProperty& prop) const
+   {
+      return !IsImported();
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -878,6 +886,12 @@ namespace dtDirector
       }
 
       return nodes;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool DirectorGraph::IsImported() const
+   {
+      return mIsImported;// || mDirector->IsImported();
    }
 }
 

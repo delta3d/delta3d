@@ -42,8 +42,8 @@
 namespace dtDirector
 {
    //////////////////////////////////////////////////////////////////////////
-   ScriptItem::ScriptItem(Node* node, QGraphicsItem* parent, EditorScene* scene)
-      : ActionItem(node, parent, scene)
+   ScriptItem::ScriptItem(Node* node, bool imported, QGraphicsItem* parent, EditorScene* scene)
+      : ActionItem(node, imported, parent, scene)
    {
    }
 
@@ -88,9 +88,9 @@ namespace dtDirector
          setPolygon(mPolygon);
 
          SetComment(mNode->GetComment());
-      
+
          SetDefaultPen();
-         SetBackgroundGradient(mNodeHeight);
+         SetBackgroundGradient();
 
          DrawGlow();
       }
@@ -216,7 +216,7 @@ namespace dtDirector
             menu.setDefaultAction(editScriptAction);
          }
       }
-      
+
       menu.addAction(mScene->GetMacroSelectionAction());
       menu.addAction(mScene->GetGroupSelectionAction());
       menu.addSeparator();

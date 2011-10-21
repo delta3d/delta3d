@@ -42,19 +42,14 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void NodeTabs::SetEditor(DirectorEditor* editor)
+   void NodeTabs::SetEditor(DirectorEditor* editor, dtDirector::Director* nodeSceneDirector)
    {
       mpEditor = editor;
 
-      if (mpEditor->GetDirector())
+      if (nodeSceneDirector)
       {
-         mpDirector = new dtDirector::Director();
-         if (mpDirector)
-         {
-            mpDirector->Init(editor->GetDirector()->GetGameManager(), editor->GetDirector()->GetMap());
-
-            mpGraph = new DirectorGraph(mpDirector);
-         }
+         mpDirector = nodeSceneDirector;
+         mpGraph = new DirectorGraph(nodeSceneDirector);
       }
    }
 

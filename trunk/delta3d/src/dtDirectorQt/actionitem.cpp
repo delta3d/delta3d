@@ -36,8 +36,8 @@
 namespace dtDirector
 {
    //////////////////////////////////////////////////////////////////////////
-   ActionItem::ActionItem(Node* node, QGraphicsItem* parent, EditorScene* scene)
-       : NodeItem(node, parent, scene)
+   ActionItem::ActionItem(Node* node, bool imported, QGraphicsItem* parent, EditorScene* scene)
+       : NodeItem(node, imported, parent, scene)
    {
    }
 
@@ -76,7 +76,7 @@ namespace dtDirector
          SetComment(mNode->GetComment());
 
          SetDefaultPen();
-         SetBackgroundGradient(mNodeHeight);
+         SetBackgroundGradient();
 
          DrawGlow();
       }

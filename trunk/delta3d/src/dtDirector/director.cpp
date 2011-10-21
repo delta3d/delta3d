@@ -57,6 +57,8 @@ namespace dtDirector
       , mGameManager(NULL)
       , mMessageGMComponent(NULL)
       , mParent(NULL)
+      , mHasDeprecatedProperty(false)
+      , mIsImported(false)
       , mMasterNodeFreeIndex(-1)
       , mMasterGraphFreeIndex(-1)
       , mActive(true)
@@ -196,6 +198,8 @@ namespace dtDirector
 
       mLibraries.clear();
       mLibraryVersionMap.clear();
+
+      mImportedScriptList.clear();
 
       mModified = false;
       mMissingNodeTypes.clear();
@@ -337,22 +341,22 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   bool Director::ImportScript(const std::string& scriptId)
+   dtDirector::Director* Director::ImportScript(const std::string& scriptResource)
    {
       int count = (int)mImportedScriptList.size();
       for (int index = 0; index < count; ++index)
       {
          // If this script is already inherited, then we can do nothing and bail out.
          Director* imported = mImportedScriptList[index];
-         if (imported && imported->GetResource().GetResourceIdentifier() == scriptId)
+         if (imported && imported->GetResource().GetResourceIdentifier() == scriptResource)
          {
-            return false;
+            return NULL;
          }
       }
 
       // If we get here, we want to attempt to load our inherited script and
       // add it to our list.
-      dtCore::ResourceDescriptor rd(scriptId);
+      dtCore::ResourceDescriptor rd(scriptResource);
       std::string path = dtCore::Project::GetInstance().GetResourcePath(rd);
 
       DirectorTypeFactory* factory = DirectorTypeFactory::GetInstance();
@@ -363,18 +367,21 @@ namespace dtDirector
             dtCore::RefPtr<dtDirector::Director> importedScript = factory->LoadScript(path, GetGameManager(), GetMap(), true);
             if (importedScript.valid())
             {
+               importedScript->SetImported(true);
+               importedScript->SetParent(this);
                importedScript->SetScriptOwner(GetScriptOwner());
                importedScript->SetNodeLogging(GetNodeLogging());
                importedScript->SetResource(rd);
-               importedScript->SetParent(this);
 
                if (HasStarted())
                {
                   importedScript->OnStart();
                }
 
+               RecurseImportScriptGraphs(importedScript->GetGraphRoot(), GetGraphRoot());
+
                mImportedScriptList.push_back(importedScript);
-               return true;
+               return importedScript;
             }
          }
          catch (const dtUtil::Exception& e)
@@ -385,19 +392,22 @@ namespace dtDirector
       }
 
       // if we failed to add this script for any reason, return false.
-      return false;
+      return NULL;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   bool Director::RemoveImportedScript(const std::string& scriptId)
+   bool Director::RemoveImportedScript(const std::string& scriptResource)
    {
       int count = (int)mImportedScriptList.size();
       for (int index = 0; index < count; ++index)
       {
          Director* script = mImportedScriptList[index];
 
-         if (script && scriptId == script->GetResource().GetResourceIdentifier())
+         if (script && scriptResource == script->GetResource().GetResourceIdentifier())
          {
+            // Cleanup unused graphs that were part of this imported script.
+            RecurseRemoveUnusedImportedGraphs(script->GetGraphRoot());
+
             script->SetParent(NULL);
             mImportedScriptList.erase(mImportedScriptList.begin() + index);
             return true;
@@ -405,6 +415,23 @@ namespace dtDirector
       }
 
       return false;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   dtDirector::Director* Director::GetImportedScript(const std::string& scriptResource)
+   {
+      int count = (int)mImportedScriptList.size();
+      for (int index = 0; index < count; ++index)
+      {
+         Director* script = mImportedScriptList[index];
+
+         if (script && scriptResource == script->GetResource().GetResourceIdentifier())
+         {
+            return script;
+         }
+      }
+
+      return NULL;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -1154,8 +1181,26 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   DirectorGraph* Director::GetGraph(const ID& id)
+   DirectorGraph* Director::GetGraph(const ID& id, bool includeImportedScripts)
    {
+      if (includeImportedScripts)
+      {
+         int count = (int)mImportedScriptList.size();
+         for (int index = 0; index < count; ++index)
+         {
+            Director* imported = mImportedScriptList[index];
+            if (imported)
+            {
+               DirectorGraph* graph = imported->GetGraph(id, true);
+
+               if (graph)
+               {
+                  return graph;
+               }
+            }
+         }
+      }
+
       int count = (int)mMasterGraphList.size();
       if (id.index > -1 && id.index < count)
       {
@@ -1286,8 +1331,21 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void Director::GetAllNodes(std::vector<Node*>& outNodes)
+   void Director::GetAllNodes(std::vector<Node*>& outNodes, bool includeImportedScripts)
    {
+      if (includeImportedScripts)
+      {
+         int count = (int)mImportedScriptList.size();
+         for (int index = 0; index < count; ++index)
+         {
+            Director* imported = mImportedScriptList[index];
+            if (imported)
+            {
+               imported->GetAllNodes(outNodes, true);
+            }
+         }
+      }
+
       mGraph->GetAllNodes(outNodes);
    }
 
@@ -2302,5 +2360,94 @@ namespace dtDirector
       }
 
       return NULL;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void Director::RecurseImportScriptGraphs(DirectorGraph* src, DirectorGraph* dst)
+   {
+      if (!src || !dst)
+      {
+         return;
+      }
+
+      int count = (int)src->GetSubGraphs().size();
+      for (int index = 0; index < count; ++index)
+      {
+         DirectorGraph* subSrc = src->GetSubGraphs()[index];
+         if (subSrc)
+         {
+            ID id;
+            id.id = subSrc->GetID().id;
+
+            // If a proxy for this graph doesn't already exist, create it.
+            DirectorGraph* subDst = GetGraph(id);
+            if (!subDst)
+            {
+               subDst = dst->AddGraph();
+               if (subDst)
+               {
+                  subDst->SetImported(true);
+                  subDst->SetID(subSrc->GetID().id);
+
+                  subDst->CopyPropertiesFrom(*subSrc);
+               }
+            }
+
+            // Now recurse its children graphs.
+            if (subDst)
+            {
+               RecurseImportScriptGraphs(subSrc, subDst);
+            }
+         }
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool Director::RecurseRemoveUnusedImportedGraphs(DirectorGraph* graph)
+   {
+      if (!graph)
+      {
+         return false;
+      }
+
+      bool result = false;
+      int count = (int)graph->GetSubGraphs().size();
+      for (int index = 0; index < count; ++index)
+      {
+         // Start by recursing to the last children in the tree.
+         result |= RecurseRemoveUnusedImportedGraphs(graph->GetSubGraphs()[index]);
+      }
+
+      // If this graph has no children, or the children graphs were removed...
+      if (count == 0 || result)
+      {
+         // Check if a copy of this graph exists in the main script.
+         ID id = graph->GetID();
+         id.index = -1;
+
+         DirectorGraph* mainGraph = GetGraph(id);
+
+         // If we don't find a graph, return true so previous recursions know
+         // it is safe to remove their graphs.
+         if (!mainGraph)
+         {
+            return true;
+         }
+         // If we have a copy of this graph, then check if it is empty.
+         else if (mainGraph &&
+            mainGraph->GetEventNodes().empty() &&
+            mainGraph->GetActionNodes().empty() &&
+            mainGraph->GetValueNodes().empty() &&
+            mainGraph->GetSubGraphs().empty())
+         {
+            // If the graph is empty, we want to remove it and then return true
+            // so the previous recursions know it is safe to remove their graphs.
+            DeleteGraph(mainGraph->GetID());
+            return true;
+         }
+
+         return false;
+      }
+      return true;
    }
 }
