@@ -893,6 +893,32 @@ namespace dtDirector
    {
       return mIsImported;// || mDirector->IsImported();
    }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   std::vector<DirectorGraph*> DirectorGraph::GetImportedGraphs()
+   {
+      ID id = GetID();
+      id.index = -1;
+
+      std::vector<DirectorGraph*> importedGraphs;
+
+      const std::vector<dtCore::RefPtr<Director> >& importedScripts = mDirector->GetImportedScriptList();
+      int count = (int)importedScripts.size();
+      for (int index = 0; index < count; ++index)
+      {
+         Director* importedScript = importedScripts[index];
+         if (importedScript)
+         {
+            DirectorGraph* importedGraph = importedScript->GetGraph(id);
+            if (importedGraph)
+            {
+               importedGraphs.push_back(importedGraph);
+            }
+         }
+      }
+
+      return importedGraphs;
+   }
 }
 
 //////////////////////////////////////////////////////////////////////////
