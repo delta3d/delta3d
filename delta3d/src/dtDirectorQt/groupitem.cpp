@@ -49,10 +49,20 @@ namespace dtDirector
        , mInnerRect(NULL)
        , mInPalette(inPalette)
    {
-      for (int index = 0; index < ResizeItem::RESIZE_COUNT; ++index)
+      if (!imported)
       {
-         mResizer[index] = new ResizeItem(this, parent, mScene, (ResizeItem::ResizeType)index);
-         mResizer[index]->Init();
+         for (int index = 0; index < ResizeItem::RESIZE_COUNT; ++index)
+         {
+            mResizer[index] = new ResizeItem(this, parent, mScene, (ResizeItem::ResizeType)index);
+            mResizer[index]->Init();
+         }
+      }
+      else
+      {
+         for (int index = 0; index < ResizeItem::RESIZE_COUNT; ++index)
+         {
+            mResizer[index] = NULL;
+         }
       }
 
       setFlag(QGraphicsItem::ItemIsMovable, !imported);
