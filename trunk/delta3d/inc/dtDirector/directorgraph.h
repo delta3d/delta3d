@@ -292,6 +292,7 @@ namespace dtDirector
        */
       void SetImported(bool imported) {mIsImported = imported;}
       bool IsImported() const;
+      std::vector<DirectorGraph*> GetImportedGraphs();
 
    private:
 
