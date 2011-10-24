@@ -644,7 +644,7 @@ namespace dtDirector
       EditorView* view = dynamic_cast<EditorView*>(mUI.graphTab->currentWidget());
       if (view && view->GetScene())
       {
-         NodeItem* item = view->GetScene()->GetNodeItem(node);
+         NodeItem* item = view->GetScene()->GetNodeItem(node->GetID());
          if (item)
          {
             item->DrawGlow();
