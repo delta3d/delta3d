@@ -28,6 +28,8 @@
 
 namespace dtDirector
 {
+   class EditorNotifier;
+
    /**
     * Draws a macro in the graph view.
     *
@@ -58,6 +60,7 @@ namespace dtDirector
        * Draws a glow around the node.
        */
       virtual void DrawGlow();
+      float GetMaxGlowForGraph(EditorNotifier* notifier, DirectorGraph* graph);
 
       /**
        * Create Title
