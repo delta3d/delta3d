@@ -79,7 +79,7 @@ void DirectorToolPlugin::Destroy()
 ////////////////////////////////////////////////////////////////////////////////
 void DirectorToolPlugin::OnToolButtonPressed()
 {
-   dtDirector::Director* director = new dtDirector::Director();
+   dtCore::RefPtr<dtDirector::Director> director = new dtDirector::Director();
    if (director)
    {
       director->Init(NULL, dtEditQt::EditorData::GetInstance().getCurrentMap());
@@ -249,18 +249,18 @@ public:
    /** get a description of the plugin */
    virtual std::string GetDescription() { return "Plugin to access the editing tool for a Director Script."; }
 
-   virtual void GetDependencies(std::list<std::string>& deps) 
+   virtual void GetDependencies(std::list<std::string>& deps)
    {
    }
 
    /** construct the plugin and return a pointer to it */
-   virtual Plugin* Create(MainWindow* mw) 
+   virtual Plugin* Create(MainWindow* mw)
    {
       mPlugin = new DirectorToolPlugin(mw);
       return mPlugin;
    }
 
-   virtual void Destroy() 
+   virtual void Destroy()
    {
       delete mPlugin;
    }
@@ -268,7 +268,7 @@ public:
 private:
 
    Plugin* mPlugin;
-}; 
+};
 } //namespace DirectorToolPlugin
 
 extern "C" DT_DIRECTOR_TOOL_EXPORT dtEditQt::PluginFactory* CreatePluginFactory()
