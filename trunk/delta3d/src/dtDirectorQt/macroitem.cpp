@@ -115,7 +115,83 @@ namespace dtDirector
       EditorNotifier* notifier = mScene->GetEditor()->GetNotifier();
 
       // Update the glow of this item only if a node inside it is glowing.
-      DirectorGraph* graph = mGraph.get();
+      if (notifier)
+      {
+         maxGlow = GetMaxGlowForGraph(notifier, mGraph.get());
+
+         // If the graph is imported, find all imported graphs and get their glow values.
+         if (mGraph->IsImported())
+         {
+            std::vector<DirectorGraph*> importedGraphs = mGraph->GetImportedGraphs();
+            int count = (int)importedGraphs.size();
+            for (int index = 0; index < count; ++index)
+            {
+               DirectorGraph* graph = importedGraphs[index];
+               if (graph)
+               {
+                  float glow = GetMaxGlowForGraph(notifier, graph);
+                  if (glow > maxGlow)
+                  {
+                     maxGlow = glow;
+                  }
+               }
+            }
+         }
+      }
+
+      if (maxGlow > 0.5f)
+      {
+         SetHighlight(1.0f);
+      }
+      else
+      {
+         SetHighlight(maxGlow * 2.0f);
+      }
+
+      std::vector<dtCore::RefPtr<EventNode> > inputs = mGraph->GetInputNodes();
+      int count = (int)inputs.size();
+      int inputIndex = 0;
+      for (int index = 0; index < count; index++)
+      {
+         if (inputs[index]->IsEnabled())
+         {
+            EditorNotifier::GlowData* glowData =
+               notifier->GetGlowData(inputs[inputIndex]);
+            if (glowData && glowData->input > -1)
+            {
+               InputData& data = mInputs[index];
+               data.DrawGlow(glowData->inputGlow);
+            }
+
+            inputIndex++;
+         }
+      }
+
+      std::vector<dtCore::RefPtr<ActionNode> > outputs = mGraph->GetOutputNodes();
+      count = (int)outputs.size();
+      int outputIndex = 0;
+      for (int index = 0; index < count; index++)
+      {
+         if (outputs[index]->IsEnabled())
+         {
+            EditorNotifier::GlowData* glowData =
+               notifier->GetGlowData(outputs[index]);
+            if (glowData && !glowData->outputGlows.empty())
+            {
+               OutputData& data = mOutputs[outputIndex];
+               data.DrawGlow(glowData->outputGlows[0]);
+            }
+
+            outputIndex++;
+         }
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   float MacroItem::GetMaxGlowForGraph(EditorNotifier* notifier, DirectorGraph* graph)
+   {
+      float maxGlow = 0.0f;
+
       if (notifier && graph)
       {
          std::vector<Node*> nodes;
@@ -136,54 +212,9 @@ namespace dtDirector
                }
             }
          }
-
-         if (maxGlow > 0.5f)
-         {
-            SetHighlight(1.0f);
-         }
-         else
-         {
-            SetHighlight(maxGlow * 2.0f);
-         }
-
-         std::vector<dtCore::RefPtr<EventNode> > inputs = mGraph->GetInputNodes();
-         count = (int)inputs.size();
-         int inputIndex = 0;
-         for (int index = 0; index < count; index++)
-         {
-            if (inputs[index]->IsEnabled())
-            {
-               EditorNotifier::GlowData* glowData =
-                  notifier->GetGlowData(inputs[inputIndex]);
-               if (glowData && glowData->input > -1)
-               {
-                  InputData& data = mInputs[index];
-                  data.DrawGlow(glowData->inputGlow);
-               }
-
-               inputIndex++;
-            }
-         }
-
-         std::vector<dtCore::RefPtr<ActionNode> > outputs = mGraph->GetOutputNodes();
-         count = (int)outputs.size();
-         int outputIndex = 0;
-         for (int index = 0; index < count; index++)
-         {
-            if (outputs[index]->IsEnabled())
-            {
-               EditorNotifier::GlowData* glowData =
-                  notifier->GetGlowData(outputs[index]);
-               if (glowData && !glowData->outputGlows.empty())
-               {
-                  OutputData& data = mOutputs[outputIndex];
-                  data.DrawGlow(glowData->outputGlows[0]);
-               }
-
-               outputIndex++;
-            }
-         }
       }
+
+      return maxGlow;
    }
 
    //////////////////////////////////////////////////////////////////////////
