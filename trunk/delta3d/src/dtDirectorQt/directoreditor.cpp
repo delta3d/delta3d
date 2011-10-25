@@ -1125,10 +1125,13 @@ namespace dtDirector
       }
 
       // First find out if the node exists in the current script.
-      Node* testNode = mDirector->GetNode(node->GetID());
+      Node* testNode = mDirector->GetNode(node->GetID(), true);
       if (testNode == node)
       {
-         OpenGraph(node->GetGraph());
+         ID id = node->GetGraph()->GetID();
+         id.index = -1;
+         DirectorGraph* graph = mDirector->GetGraph(id);
+         OpenGraph(graph);
          EditorScene* scene = GetPropertyEditor()->GetScene();
          if (scene)
          {

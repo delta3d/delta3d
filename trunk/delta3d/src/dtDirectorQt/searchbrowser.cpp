@@ -93,7 +93,7 @@ namespace dtDirector
 
       mSearchEdit = new QLineEdit(mGroupBox);
       innerLayout->addWidget(mSearchEdit, 1, 1, 1, 1);
-      
+
       mSearchButton = new QToolButton(mGroupBox);
       mSearchButton->setText("Search");
       innerLayout->addWidget(mSearchButton, 1, 2, 1, 1);
@@ -101,6 +101,7 @@ namespace dtDirector
       mNodeTree = new QTreeWidget(mGroupBox);
       innerLayout->addWidget(mNodeTree, 2, 1, 1, 2);
       mNodeTree->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+      mNodeTree->setExpandsOnDoubleClick(false);
       mNodeTree->setColumnCount(2);
       QStringList headerLabels;
       headerLabels.push_back("Node");
@@ -111,6 +112,8 @@ namespace dtDirector
       connect(mSearchEdit, SIGNAL(returnPressed()), this, SLOT(OnSearch()));
       connect(mSearchButton, SIGNAL(clicked()), this, SLOT(OnSearch()));
       connect(mNodeTree, SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)),
+         this, SLOT(OnFocusItem(QTreeWidgetItem*, int)));
+      connect(mNodeTree, SIGNAL(itemActivated(QTreeWidgetItem*, int)),
          this, SLOT(OnFocusItem(QTreeWidgetItem*, int)));
    }
 
@@ -153,7 +156,7 @@ namespace dtDirector
       if (script)
       {
          DirectorGraph* graph = script->GetGraphRoot();
-         SearchGraph(graph, searchText);
+         SearchGraph(graph, searchText, true, NULL);
       }
 
       mNodeTree->expandAll();
@@ -186,7 +189,7 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   bool SearchBrowser::SearchGraph(DirectorGraph* graph, const QString& searchText, QTreeWidgetItem* parent)
+   bool SearchBrowser::SearchGraph(DirectorGraph* graph, const QString& searchText, bool searchImportedScripts, QTreeWidgetItem* parent)
    {
       bool result = false;
       if (!graph)
@@ -208,7 +211,7 @@ namespace dtDirector
             SearchMacroItem* item = new SearchMacroItem(subGraph, descText);
             if (item)
             {
-               addMacro |= SearchGraph(subGraph, searchText, item);
+               addMacro |= SearchGraph(subGraph, searchText, searchImportedScripts, item);
 
                if (addMacro)
                {
@@ -228,7 +231,7 @@ namespace dtDirector
 
       // Add any found nodes to the list.
       std::vector<Node*> nodes;
-      graph->GetAllNodes(nodes, false);
+      graph->GetAllNodes(nodes, false, searchImportedScripts);
 
       QString descText;
 
@@ -276,7 +279,7 @@ namespace dtDirector
 
       std::vector<dtCore::ActorProperty*> propList;
       container->GetPropertyList(propList);
-      
+
       int count = (int)propList.size();
       for (int index = 0; index < count; ++index)
       {
