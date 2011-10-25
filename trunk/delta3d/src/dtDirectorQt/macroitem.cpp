@@ -118,26 +118,22 @@ namespace dtDirector
          return;
       }
 
-      // Update the glow of this item only if a node inside it is glowing.
-      if (notifier)
-      {
-         maxGlow = GetMaxGlowForGraph(notifier, mGraph.get());
+      maxGlow = GetMaxGlowForGraph(notifier, mGraph.get());
 
-         // If the graph is imported, find all imported graphs and get their glow values.
-         if (mGraph->IsImported())
+      // If the graph is imported, find all imported graphs and get their glow values.
+      if (mGraph->IsImported())
+      {
+         std::vector<DirectorGraph*> importedGraphs = mGraph->GetImportedGraphs();
+         int count = (int)importedGraphs.size();
+         for (int index = 0; index < count; ++index)
          {
-            std::vector<DirectorGraph*> importedGraphs = mGraph->GetImportedGraphs();
-            int count = (int)importedGraphs.size();
-            for (int index = 0; index < count; ++index)
+            DirectorGraph* graph = importedGraphs[index];
+            if (graph)
             {
-               DirectorGraph* graph = importedGraphs[index];
-               if (graph)
+               float glow = GetMaxGlowForGraph(notifier, graph);
+               if (glow > maxGlow)
                {
-                  float glow = GetMaxGlowForGraph(notifier, graph);
-                  if (glow > maxGlow)
-                  {
-                     maxGlow = glow;
-                  }
+                  maxGlow = glow;
                }
             }
          }
@@ -258,17 +254,14 @@ namespace dtDirector
       id.index = -1;
 
       // First show links from each imported script.
-      int count = (int)mGraph->GetDirector()->GetImportedScriptList().size();
+      std::vector<DirectorGraph*> importedGraphs = mGraph->GetImportedGraphs();
+      int count = (int)importedGraphs.size();
       for (int index = 0; index < count; ++index)
       {
-         Director* imported = mGraph->GetDirector()->GetImportedScriptList()[index];
-         if (imported)
+         DirectorGraph* importedGraph = importedGraphs[index];
+         if (importedGraph)
          {
-            DirectorGraph* importedGraph = imported->GetGraph(id);
-            if (importedGraph)
-            {
-               FindLinks(importedGraph);
-            }
+            FindLinks(importedGraph);
          }
       }
 
