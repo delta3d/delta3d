@@ -578,8 +578,26 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   ValueNode* DirectorGraph::GetValueNode(const std::string& name, bool searchSubgraphs)
+   ValueNode* DirectorGraph::GetValueNode(const std::string& name, bool searchSubgraphs, bool searchImportedGraph)
    {
+      if (searchImportedGraph && IsImported() || mDirector->GetGraphRoot() == this)
+      {
+         std::vector<DirectorGraph*> importedGraphs = GetImportedGraphs();
+         int count = (int)importedGraphs.size();
+         for (int index = 0; index < count; ++index)
+         {
+            DirectorGraph* importedGraph = importedGraphs[index];
+            if (importedGraph)
+            {
+               ValueNode* foundNode = importedGraph->GetValueNode(name, searchSubgraphs, true);
+               if (foundNode)
+               {
+                  return foundNode;
+               }
+            }
+         }
+      }
+
       int count = (int)mValueNodes.size();
       for (int index = 0; index < count; index++)
       {
@@ -597,7 +615,7 @@ namespace dtDirector
             DirectorGraph* graph = mSubGraphs[index];
             if (graph)
             {
-               ValueNode* node = graph->GetValueNode(name);
+               ValueNode* node = graph->GetValueNode(name, true, searchImportedGraph);
                if (node) return node;
             }
          }
@@ -897,22 +915,41 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    std::vector<DirectorGraph*> DirectorGraph::GetImportedGraphs()
    {
-      ID id = GetID();
-      id.index = -1;
-
       std::vector<DirectorGraph*> importedGraphs;
 
       const std::vector<dtCore::RefPtr<Director> >& importedScripts = mDirector->GetImportedScriptList();
       int count = (int)importedScripts.size();
-      for (int index = 0; index < count; ++index)
+
+      if (mDirector->GetGraphRoot() == this)
       {
-         Director* importedScript = importedScripts[index];
-         if (importedScript)
+         for (int index = 0; index < count; ++index)
          {
-            DirectorGraph* importedGraph = importedScript->GetGraph(id);
-            if (importedGraph)
+            Director* importedScript = importedScripts[index];
+            if (importedScript)
             {
-               importedGraphs.push_back(importedGraph);
+               DirectorGraph* importedGraph = importedScript->GetGraphRoot();
+               if (importedGraph)
+               {
+                  importedGraphs.push_back(importedGraph);
+               }
+            }
+         }
+      }
+      else
+      {
+         ID id = GetID();
+         id.index = -1;
+
+         for (int index = 0; index < count; ++index)
+         {
+            Director* importedScript = importedScripts[index];
+            if (importedScript)
+            {
+               DirectorGraph* importedGraph = importedScript->GetGraph(id);
+               if (importedGraph)
+               {
+                  importedGraphs.push_back(importedGraph);
+               }
             }
          }
       }
