@@ -543,8 +543,22 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void DirectorGraph::GetAllNodes(std::vector<Node*>& outNodes, bool searchSubGraphs)
+   void DirectorGraph::GetAllNodes(std::vector<Node*>& outNodes, bool searchSubGraphs, bool searchImportedGraphs)
    {
+      if (searchImportedGraphs)
+      {
+         std::vector<DirectorGraph*> importedGraphs = GetImportedGraphs();
+         int count = (int)importedGraphs.size();
+         for (int index = 0; index < count; ++index)
+         {
+            DirectorGraph* importedGraph = importedGraphs[index];
+            if (importedGraph)
+            {
+               importedGraph->GetAllNodes(outNodes, false, false);
+            }
+         }
+      }
+
       int count = (int)mEventNodes.size();
       for (int index = 0; index < count; index++)
       {
