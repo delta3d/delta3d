@@ -145,10 +145,11 @@ namespace dtDirector
       /**
        * Retrieves a list of all nodes in the graph.
        *
-       * @param[out]  outNodes  A list of nodes found.
-       * @param[in]   searchSubGraphs  True to recursively check sub graphs for nodes.
+       * @param[out]  outNodes              A list of nodes found.
+       * @param[in]   searchSubGraphs       True to recursively check sub graphs for nodes.
+       * @param[in]   searchImportedGraphs  True to retrieve nodes within all imported graphs
        */
-      void GetAllNodes(std::vector<Node*>& outNodes, bool searchSubGraphs = true);
+      void GetAllNodes(std::vector<Node*>& outNodes, bool searchSubGraphs = true, bool searchImportedGraphs = false);
 
       /**
        * Retrieves a value node with the given name.
