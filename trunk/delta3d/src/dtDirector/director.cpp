@@ -97,7 +97,7 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   dtCore::RefPtr<Director> Director::Clone()
+   dtCore::RefPtr<Director> Director::Clone(Director* parent)
    {
       dtCore::RefPtr<Director> newDirector = NULL;
 
@@ -126,14 +126,22 @@ namespace dtDirector
             newDirector->mHasDeprecatedProperty = mHasDeprecatedProperty;
             newDirector->SetActive(mActive);
             newDirector->CopyPropertiesFrom(*this);
+            newDirector->SetImported(IsImported());
+            newDirector->SetParent(parent);
 
+            // Clone the imported scripts.
             int count = (int)mImportedScriptList.size();
             for (int index = 0; index < count; ++index)
             {
                Director* imported = mImportedScriptList[index];
                if (imported)
                {
-                  newDirector->ImportScript(imported->GetResource().GetResourceIdentifier());
+                  dtCore::RefPtr<Director> importedClone = imported->Clone(parent? parent: newDirector);
+                  if (importedClone)
+                  {
+                     newDirector->mImportedScriptList.push_back(importedClone);
+                     importedClone->SetParent(newDirector);
+                  }
                }
             }
 
@@ -364,11 +372,10 @@ namespace dtDirector
       {
          try
          {
-            dtCore::RefPtr<dtDirector::Director> importedScript = factory->LoadScript(path, GetGameManager(), GetMap(), true);
+            dtCore::RefPtr<dtDirector::Director> importedScript = factory->LoadScript(path, GetGameManager(), GetMap(), true, this);
             if (importedScript.valid())
             {
                importedScript->SetImported(true);
-               importedScript->SetParent(this);
                importedScript->SetScriptOwner(GetScriptOwner());
                importedScript->SetNodeLogging(GetNodeLogging());
                importedScript->SetResource(rd);
@@ -1185,13 +1192,15 @@ namespace dtDirector
    {
       if (includeImportedScripts)
       {
+         ID graphID = id;
+         graphID.index = -1;
          int count = (int)mImportedScriptList.size();
          for (int index = 0; index < count; ++index)
          {
             Director* imported = mImportedScriptList[index];
             if (imported)
             {
-               DirectorGraph* graph = imported->GetGraph(id, true);
+               DirectorGraph* graph = imported->GetGraph(graphID, true);
 
                if (graph)
                {

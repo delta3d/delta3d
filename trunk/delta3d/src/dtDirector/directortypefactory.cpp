@@ -78,7 +78,7 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   dtCore::RefPtr<Director> DirectorTypeFactory::LoadScript(const std::string& scriptFile, dtGame::GameManager* gm, dtDAL::Map* map, bool cacheScript)
+   dtCore::RefPtr<Director> DirectorTypeFactory::LoadScript(const std::string& scriptFile, dtGame::GameManager* gm, dtDAL::Map* map, bool cacheScript, Director* parent)
    {
       dtCore::RefPtr<Director> newDirector = NULL;
 
@@ -109,6 +109,7 @@ namespace dtDirector
       if (cache)
       {
          newDirector = cache->Clone();
+         newDirector->SetParent(parent);
       }
       else
       {
@@ -128,6 +129,7 @@ namespace dtDirector
 
                   newDirector->mLoading = true;
                   newDirector->Init(gm, map);
+                  newDirector->SetParent(parent);
                   parser->Parse(newDirector, map, fileName);
                   newDirector->mMissingNodeTypes = parser->GetMissingNodeTypes();
                   newDirector->mMissingLibraries = parser->GetMissingLibraries();
@@ -154,6 +156,7 @@ namespace dtDirector
 
                   newDirector->mLoading = true;
                   newDirector->Init(gm, map);
+                  newDirector->SetParent(parent);
                   parser->Parse(newDirector, map, fileName);
                   newDirector->mMissingNodeTypes = parser->GetMissingNodeTypes();
                   newDirector->mMissingLibraries = parser->GetMissingLibraries();

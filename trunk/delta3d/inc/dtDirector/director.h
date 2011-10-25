@@ -83,7 +83,7 @@ namespace dtDirector
       /**
        * Clones an instance of this script.
        */
-      dtCore::RefPtr<Director> Clone();
+      dtCore::RefPtr<Director> Clone(Director* parent = NULL);
 
       /**
        * Initializes the Director.

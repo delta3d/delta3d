@@ -110,6 +110,7 @@ namespace dtDirector
       newGraph->BuildPropertyMap(true);
 
       newGraph->SetID(mID);
+      newGraph->SetImported(IsImported());
       newGraph->CopyPropertiesFrom(*this);
 
       parent->SetGraphRoot(newGraph);
@@ -130,6 +131,7 @@ namespace dtDirector
       newGraph->BuildPropertyMap(false);
 
       newGraph->SetID(mID);
+      newGraph->SetImported(IsImported());
       newGraph->CopyPropertiesFrom(*this);
 
       parent->AddGraph(newGraph);
@@ -210,11 +212,36 @@ namespace dtDirector
          if (node)
          {
             // Find the matching cloned node.
-            Node* newNode = newGraph->GetNode(node->GetID());
+            Node* newNode = script->GetNode(node->GetID(), true);
             if (newNode)
             {
+               // Iterate through each input link on the original node.
+               int linkCount = (int)node->GetInputLinks().size();
+               for (int linkIndex = 0; linkIndex < linkCount; ++linkIndex)
+               {
+                  InputLink& link = node->GetInputLinks()[linkIndex];
+                  InputLink& newLink = newNode->GetInputLinks()[linkIndex];
+
+                  // Iterate through each connection for this link.
+                  int targetCount = (int)link.GetLinks().size();
+                  for (int targetIndex = 0; targetIndex < targetCount; ++targetIndex)
+                  {
+                     OutputLink* targetLink = link.GetLinks()[targetIndex];
+                     if (targetLink)
+                     {
+                        // Find the matching cloned target node.
+                        Node* newTargetNode = script->GetNode(targetLink->GetOwner()->GetID(), true);
+                        if (newTargetNode)
+                        {
+                           // Make the connection.
+                           newLink.Connect(newTargetNode->GetOutputLink(targetLink->GetName()));
+                        }
+                     }
+                  }
+               }
+
                // Iterate through each output link on the original node.
-               int linkCount = (int)node->GetOutputLinks().size();
+               linkCount = (int)node->GetOutputLinks().size();
                for (int linkIndex = 0; linkIndex < linkCount; ++linkIndex)
                {
                   OutputLink& link = node->GetOutputLinks()[linkIndex];
@@ -283,7 +310,7 @@ namespace dtDirector
 
                if (linkNode)
                {
-                  Node* newLinkNode = newGraph->GetNode(linkNode->GetID());
+                  Node* newLinkNode = script->GetNode(linkNode->GetID(), true);
                   if (newLinkNode == NULL)
                   {
                      LOG_ALWAYS("Could not find link node in new graph when cloning script.");
@@ -318,7 +345,7 @@ namespace dtDirector
 
                if (linkNode)
                {
-                  Node* newLinkNode = newGraph->GetNode(linkNode->GetID());
+                  Node* newLinkNode = script->GetNode(linkNode->GetID(), true);
 
                   // Iterate through the connections for this value node.
                   int targetCount = (int)linkNode->GetValueLinks()[0].GetLinks().size();
@@ -945,6 +972,13 @@ namespace dtDirector
                if (importedGraph)
                {
                   importedGraphs.push_back(importedGraph);
+
+                  // Now recurse up the import chain.
+                  std::vector<DirectorGraph*> recursedGraphs = importedGraph->GetImportedGraphs();
+                  if (!recursedGraphs.empty())
+                  {
+                     importedGraphs.insert(importedGraphs.end(), recursedGraphs.begin(), recursedGraphs.end());
+                  }
                }
             }
          }
@@ -963,6 +997,13 @@ namespace dtDirector
                if (importedGraph)
                {
                   importedGraphs.push_back(importedGraph);
+
+                  // Now recurse up the import chain.
+                  std::vector<DirectorGraph*> recursedGraphs = importedGraph->GetImportedGraphs();
+                  if (!recursedGraphs.empty())
+                  {
+                     importedGraphs.insert(importedGraphs.end(), recursedGraphs.begin(), recursedGraphs.end());
+                  }
                }
             }
          }
