@@ -261,12 +261,13 @@ namespace dtDirector
       DirectorGraph* graph = GetGraph();
       while (graph)
       {
-         if ((node = graph->GetValueNode(mReference, false)) != NULL)
+         if ((node = graph->GetValueNode(mReference, false, true)) != NULL)
          {
             break;
          }
          graph = graph->GetParent();
       }
+
       return node;
    }
 

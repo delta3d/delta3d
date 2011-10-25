@@ -290,7 +290,7 @@ namespace dtDirector
          DirectorGraph* graph = mNode->GetGraph();
          while (graph)
          {
-            refNode = graph->GetValueNode(name, false);
+            refNode = graph->GetValueNode(name, false, true);
             if (refNode) break;
 
             graph = graph->GetParent();
@@ -300,13 +300,29 @@ namespace dtDirector
          {
             // Center the view on the referenced node.
             EditorScene* scene = mScene;
-            scene->SetGraph(refNode->GetGraph());
-            NodeItem* item = scene->GetNodeItem(refNode->GetID(), true);
-            if (item)
+            DirectorGraph* newGraph = NULL;
+
+            if (refNode->GetGraph() == refNode->GetGraph()->GetDirector()->GetGraphRoot())
             {
-               scene->clearSelection();
-               item->setSelected(true);
-               scene->CenterSelection();
+               newGraph = scene->GetEditor()->GetDirector()->GetGraphRoot();
+            }
+            else
+            {
+               ID graphID = refNode->GetGraph()->GetID();
+               graphID.index = -1;
+               newGraph = scene->GetEditor()->GetDirector()->GetGraph(graphID, false);
+            }
+
+            if (newGraph)
+            {
+               scene->SetGraph(newGraph);
+               NodeItem* item = scene->GetNodeItem(refNode->GetID(), true);
+               if (item)
+               {
+                  scene->clearSelection();
+                  item->setSelected(true);
+                  scene->CenterSelection();
+               }
             }
          }
       }
