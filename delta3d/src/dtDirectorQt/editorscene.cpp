@@ -152,7 +152,7 @@ namespace dtDirector
       int count = (int)graph->GetDirector()->GetImportedScriptList().size();
       for (int index = 0; index < count; ++index)
       {
-         Director* imported = mGraph->GetDirector()->GetImportedScriptList()[index];
+         Director* imported = graph->GetDirector()->GetImportedScriptList()[index];
          if (imported)
          {
             DirectorGraph* importedGraph = NULL;
