@@ -41,6 +41,7 @@
 
 #include <dtCore/timer.h>
 #include <dtCore/scene.h>
+#include <dtCore/exceptionenum.h>
 #include <dtABC/application.h>
 
 #include <dtUtil/fileutils.h>
@@ -219,7 +220,16 @@ int main(int argc, char* argv[])
    //Set delta data.
    dtUtil::SetDataFilePathList(dtUtil::GetDeltaDataPathList());
 
-   GlobalApplication = new UnitTestApplication();
+   try
+   {
+	   GlobalApplication = new UnitTestApplication();
+   }
+   catch (const dtCore::InvalidContextException& e)
+   {
+      LOG_ERROR("Could not create the unit test Application: "+e.ToString());
+      return 1; //error
+   }
+
    GlobalApplication->Config();
 
    ///Reset the windowing system for osg to use an embedded one.
