@@ -1387,12 +1387,9 @@ namespace dtDirector
    {
       if (IsImported())
       {
-         // Get all our imported scripts and find their original cached equivalent for comparison.
          Director* topDirector = GetTopDirector();
-         if (!topDirector)
-         {
-            return NULL;
-         }
+
+         // Get all our imported scripts and find their original cached equivalent for comparison.
          const std::vector<dtCore::RefPtr<Director> >& importedScripts = topDirector->GetImportedScriptList();
 
          DirectorTypeFactory* factory = DirectorTypeFactory::GetInstance();
@@ -1413,7 +1410,7 @@ namespace dtDirector
             const Director* cachedScript = cachedScripts[cacheIndex];
             if (cachedScript)
             {
-               return cachedScript->GetNode(GetID());
+               return cachedScript->GetNode(GetID(), true);
             }
          }
       }

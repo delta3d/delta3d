@@ -80,10 +80,11 @@ namespace dtDirector
        * @param[in]  gm           The game manager.
        * @param[in]  map          The map.
        * @param[in]  cacheScript  True to cache the loaded script.
+       * @param[in]  parent       The parent for this script.
        *
        * @return     The newly created Director script.
        */
-      dtCore::RefPtr<Director> LoadScript(const std::string& scriptFile, dtGame::GameManager* gm = NULL, dtCore::Map* map = NULL, bool cacheScript = false);
+      dtCore::RefPtr<Director> LoadScript(const std::string& scriptFile, dtGame::GameManager* gm = NULL, dtCore::Map* map = NULL, bool cacheScript = false, Director* parent = NULL);
       void LoadScript(Director* director, const std::string& scriptFile, bool cacheScript = false);
 
       /**
