@@ -113,6 +113,10 @@ namespace dtDirector
 
       float maxGlow = 0.0f;
       EditorNotifier* notifier = mScene->GetEditor()->GetNotifier();
+      if (notifier == NULL)
+      {
+         return;
+      }
 
       // Update the glow of this item only if a node inside it is glowing.
       if (notifier)
