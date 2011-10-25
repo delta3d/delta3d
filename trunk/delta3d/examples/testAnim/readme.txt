@@ -9,7 +9,7 @@ Usage:
 
 
 ** Visual Studio **
-If running via Visual Studio, edit the testAAR project settings:
+If running via Visual Studio, edit the testAnim project settings:
  - Debugging->Command: GameStart.exe (or "GameStartD.exe" for debug).
  - Debugging->Command Arguments: testAnim
  
