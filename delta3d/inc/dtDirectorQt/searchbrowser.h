@@ -122,7 +122,7 @@ namespace dtDirector
       bool HasSearchFocus() const;
 
    public slots:
-      
+
       /**
        * Builds the Graph list with all nodes found.
        */
@@ -141,13 +141,14 @@ namespace dtDirector
       /**
        * Performs a recursive search within the given graph.
        *
-       * @param[in]  graph       The graph to search.
-       * @param[in]  searchText  The search text.
-       * @param[in]  parent      The parent.
+       * @param[in]  graph                  The graph to search.
+       * @param[in]  searchText             The search text.
+       * @param[in]  searchImportedScripts  True to search nodes in imported scripts as well.
+       * @param[in]  parent                 The parent.
        *
        * @return     True if nodes were found.
        */
-      bool SearchGraph(DirectorGraph* graph, const QString& searchText, QTreeWidgetItem* parent = NULL);
+      bool SearchGraph(DirectorGraph* graph, const QString& searchText, bool searchImportedScripts = false, QTreeWidgetItem* parent = NULL);
 
       /**
        * Tests whether the given test matches with a property of the given node.
