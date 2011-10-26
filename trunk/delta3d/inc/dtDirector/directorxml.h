@@ -98,6 +98,11 @@ namespace dtDirector
       const std::vector<std::string>& GetMissingLibraries();
 
       /**
+       *	Retrieves all missing imported scripts.
+       */
+      const std::vector<std::string>& GetMissingImportedScripts();
+
+      /**
        * Retrieves whether any loaded properties were deprecated.
        */
       bool HasDeprecatedProperty() const;
