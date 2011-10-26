@@ -404,9 +404,37 @@ namespace dtDirector
                std::string importedScript = dtUtil::XMLStringConverter(chars).ToString();
                if (!importedScript.empty())
                {
-                  if (!mDirector->ImportScript(importedScript))
+                  Director* script = mDirector->ImportScript(importedScript);
+                  if (!script)
                   {
                      mMissingImportedScripts.push_back(importedScript);
+                  }
+                  else
+                  {
+                     if (!script->GetMissingNodeTypes().empty())
+                     {
+                        std::set<std::string>::const_iterator iter;
+                        for (iter = script->GetMissingNodeTypes().begin(); iter != script->GetMissingNodeTypes().end(); ++iter)
+                        {
+                           std::string nodeType = *iter;
+                           if (mMissingNodeTypes.find(nodeType) == mMissingNodeTypes.end())
+                           {
+                              mMissingNodeTypes.insert(mMissingNodeTypes.end(), nodeType);
+                           }
+                        }
+                     }
+                     if (!script->GetMissingLibraries().empty())
+                     {
+                        mMissingLibraries.insert(mMissingLibraries.end(),
+                           script->GetMissingLibraries().begin(),
+                           script->GetMissingLibraries().end());
+                     }
+                     if (!script->GetMissingImportedScripts().empty())
+                     {
+                        mMissingImportedScripts.insert(mMissingImportedScripts.end(),
+                           script->GetMissingImportedScripts().begin(),
+                           script->GetMissingImportedScripts().end());
+                     }
                   }
                }
             }
