@@ -172,6 +172,7 @@ namespace dtDirector
 
       std::vector<Node*> mPasted;
       std::vector<DirectorGraph*> mPastedGraphs;
+      std::vector<std::string> mAddedLibraries;
       std::map<dtDirector::ID, Node*> mIDNewToOld;
       std::map<dtDirector::ID, Node*> mIDOldToNew;
 
