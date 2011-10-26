@@ -28,6 +28,7 @@
 #include <dtDirector/nodemanager.h>
 
 #include <dtDirectorQt/undocreateevent.h>
+#include <dtDirectorQt/undoaddlibraryevent.h>
 #include <dtDirectorQt/undomanager.h>
 
 namespace dtDirector
@@ -124,6 +125,7 @@ namespace dtDirector
 
       if (!graph) return result;
 
+      mAddedLibraries.clear();
       int count = (int)mCopied.size();
       for (int index = 0; index < count; index++)
       {
@@ -146,7 +148,7 @@ namespace dtDirector
       if (undoManager && !result.empty())
       {
          Node* node = dynamic_cast<Node*>(result[0]);
-         DirectorGraph* graph = dynamic_cast<DirectorGraph*>(result[0]);
+         DirectorGraph* addedGraph = dynamic_cast<DirectorGraph*>(result[0]);
 
          std::string undoDescription = "Paste operation of ";
          if (result.size() == 1)
@@ -155,16 +157,16 @@ namespace dtDirector
             {
                undoDescription += "Node \'" + node->GetTypeName() + "\'.";
             }
-            else if (graph)
+            else if (addedGraph)
             {
-               if (graph->GetEditor().empty())
+               if (addedGraph->GetEditor().empty())
                {
-                  undoDescription += "Macro Node \'" + graph->GetName() + "\'.";
+                  undoDescription += "Macro Node \'" + addedGraph->GetName() + "\'.";
                }
                else
                {
-                  undoDescription += "\'" + graph->GetEditor() + "\' Macro Node \'" +
-                     graph->GetName() + "\'.";
+                  undoDescription += "\'" + addedGraph->GetEditor() + "\' Macro Node \'" +
+                     addedGraph->GetName() + "\'.";
                }
             }
          }
@@ -188,11 +190,11 @@ namespace dtDirector
             }
             else
             {
-               DirectorGraph* graph = dynamic_cast<DirectorGraph*>(result[index]);
-               if (graph)
+               DirectorGraph* addedGraph = dynamic_cast<DirectorGraph*>(result[index]);
+               if (addedGraph)
                {
-                  id = graph->GetID();
-                  parentId = graph->GetParent()->GetID();
+                  id = addedGraph->GetID();
+                  parentId = addedGraph->GetParent()->GetID();
                }
                else
                {
@@ -205,13 +207,26 @@ namespace dtDirector
             undoManager->AddEvent(event);
          }
 
+         // Added Libraries.
+         int libCount = (int)graph->GetDirector()->GetAllLibraries().size();
+         count = (int)mAddedLibraries.size();
+         for (int index = 0; index < count; ++index)
+         {
+            std::string libraryName = mAddedLibraries[index];
+
+            dtCore::RefPtr<UndoAddLibraryEvent> event = new UndoAddLibraryEvent(
+               undoManager->GetEditor(), libraryName, libCount + index - (int)mAddedLibraries.size());
+            undoManager->AddEvent(event);
+         }
+
          undoManager->EndMultipleEvents();
       }
 
-      mIDNewToOld.clear();
-      mIDOldToNew.clear();
       mPasted.clear();
       mPastedGraphs.clear();
+      mAddedLibraries.clear();
+      mIDNewToOld.clear();
+      mIDOldToNew.clear();
 
       return result;
    }
@@ -231,7 +246,13 @@ namespace dtDirector
          NodePluginRegistry* reg = NodeManager::GetInstance().GetRegistryForType(node->GetType());
          if (!reg || !parent->GetDirector()->HasLibrary(reg->GetName()))
          {
-            return NULL;
+            // If the library does not exist, attempt to add it first.
+            if (!parent->GetDirector()->AddLibrary(reg->GetName()))
+            {
+               return NULL;
+            }
+
+            mAddedLibraries.push_back(reg->GetName());
          }
 
          dtCore::RefPtr<Node> newNode = nodeManager.CreateNode(node->GetType(), parent);
