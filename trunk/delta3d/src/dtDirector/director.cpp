@@ -29,6 +29,8 @@
 #include <dtDirector/nodemanager.h>
 #include <dtDirector/directortypefactory.h>
 
+#include <dtUtil/exception.h>
+
 
 #define SAFETY_TIMER 0.1f
 
@@ -365,16 +367,26 @@ namespace dtDirector
       // If we get here, we want to attempt to load our inherited script and
       // add it to our list.
       dtCore::ResourceDescriptor rd(scriptResource);
-      std::string path = dtCore::Project::GetInstance().GetResourcePath(rd);
 
       DirectorTypeFactory* factory = DirectorTypeFactory::GetInstance();
       if (factory)
       {
          try
          {
+            std::string path = dtCore::Project::GetInstance().GetResourcePath(rd);
+
             dtCore::RefPtr<dtDirector::Director> importedScript = factory->LoadScript(path, GetGameManager(), GetMap(), true, this);
             if (importedScript.valid())
             {
+               // If the imported script is not a valid script type, we cannot support
+               // importing this script.
+               if (GetScriptType() != importedScript->GetScriptType())
+               {
+                  std::string error = std::string("Unable to import ") + rd.GetDisplayName().c_str() + ":  Script type is not compatible.";
+                  LOG_WARNING(error.c_str());
+                  return NULL;
+               }
+
                importedScript->SetImported(true);
                importedScript->SetScriptOwner(GetScriptOwner());
                importedScript->SetNodeLogging(GetNodeLogging());
@@ -394,7 +406,8 @@ namespace dtDirector
          catch (const dtUtil::Exception& e)
          {
             std::string error = std::string("Unable to import ") + rd.GetDisplayName().c_str() + " with error " + e.What().c_str();
-            LOG_ERROR(error.c_str());
+            LOG_WARNING(error.c_str());
+            return NULL;
          }
       }
 
