@@ -308,6 +308,35 @@ namespace dtDirector
             }
 
             // Display a warning message if there were libraries that could not be loaded.
+            const std::vector<std::string>& missingImportedScripts = mDirector->GetMissingImportedScripts();
+            if (!missingImportedScripts.empty())
+            {
+               QString warning = "The following Scripts failed to import properly:\n";
+
+               int count = (int)missingImportedScripts.size();
+               for (int index = 0; index < count; ++index)
+               {
+                  QString importName = missingImportedScripts[index].c_str();
+                  warning += "\t" + importName + "\n";
+               }
+
+               warning += "\nThis is most likely due to the imported script file being ";
+               warning += "removed or re-saved under a different script type that is ";
+               warning += "incompatible with the current script.";
+               warning += "\n\nSaving this script will cause these imported scripts to ";
+               warning += "be removed.";
+
+               QMessageBox messageBox("Imported scripts were not loaded!",
+                  warning, QMessageBox::Warning,
+                  QMessageBox::Ok,
+                  QMessageBox::NoButton,
+                  QMessageBox::NoButton,
+                  this);
+
+               messageBox.exec();
+            }
+
+            // Display a warning message if there were libraries that could not be loaded.
             const std::vector<std::string>& missingLibraries = mDirector->GetMissingLibraries();
             if (!missingLibraries.empty())
             {

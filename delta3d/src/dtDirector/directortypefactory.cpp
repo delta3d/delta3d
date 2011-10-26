@@ -133,6 +133,7 @@ namespace dtDirector
                   parser->Parse(newDirector, map, fileName);
                   newDirector->mMissingNodeTypes = parser->GetMissingNodeTypes();
                   newDirector->mMissingLibraries = parser->GetMissingLibraries();
+                  newDirector->mMissingImportedScripts = parser->GetMissingImportedScripts();
                   newDirector->mHasDeprecatedProperty = parser->HasDeprecatedProperty();
                }
             }
@@ -160,6 +161,7 @@ namespace dtDirector
                   parser->Parse(newDirector, map, fileName);
                   newDirector->mMissingNodeTypes = parser->GetMissingNodeTypes();
                   newDirector->mMissingLibraries = parser->GetMissingLibraries();
+                  newDirector->mMissingImportedScripts = parser->GetMissingImportedScripts();
                   newDirector->mHasDeprecatedProperty = parser->HasDeprecatedProperty();
                }
 
@@ -193,6 +195,7 @@ namespace dtDirector
 
       if (newDirector->mMissingNodeTypes.size() > 0 ||
          newDirector->mMissingLibraries.size() > 0 ||
+         newDirector->mMissingImportedScripts.size() > 0 ||
          newDirector->mHasDeprecatedProperty)
       {
          newDirector->mModified = true;
@@ -271,6 +274,7 @@ namespace dtDirector
                   parser->Parse(director, director->GetMap(), fileName);
                   director->mMissingNodeTypes = parser->GetMissingNodeTypes();
                   director->mMissingLibraries = parser->GetMissingLibraries();
+                  director->mMissingImportedScripts = parser->GetMissingImportedScripts();
                   director->mHasDeprecatedProperty = parser->HasDeprecatedProperty();
                }
             }
@@ -282,6 +286,7 @@ namespace dtDirector
                   parser->Parse(director, director->GetMap(), fileName);
                   director->mMissingNodeTypes = parser->GetMissingNodeTypes();
                   director->mMissingLibraries = parser->GetMissingLibraries();
+                  director->mMissingImportedScripts = parser->GetMissingImportedScripts();
                   director->mHasDeprecatedProperty = parser->HasDeprecatedProperty();
                }
             }
@@ -297,6 +302,7 @@ namespace dtDirector
 
       if (director->mMissingNodeTypes.size() > 0 ||
          director->mMissingLibraries.size() > 0 ||
+         director->mMissingImportedScripts.size() > 0 ||
          director->mHasDeprecatedProperty)
       {
          director->mModified = true;
@@ -382,6 +388,7 @@ namespace dtDirector
       director->mModified = false;
       director->mMissingNodeTypes.clear();
       director->mMissingLibraries.clear();
+      director->mMissingImportedScripts.clear();
       director->mHasDeprecatedProperty = false;
    }
 

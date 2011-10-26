@@ -242,6 +242,12 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   const std::vector<std::string>& DirectorParser::GetMissingImportedScripts()
+   {
+      return mDirectorHandler->GetMissingImportedScripts();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    bool DirectorParser::HasDeprecatedProperty() const
    {
       return mDirectorHandler->HasDeprecatedProperty();
