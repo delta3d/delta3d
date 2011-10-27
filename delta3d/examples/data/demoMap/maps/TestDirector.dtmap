@@ -7,7 +7,7 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2009-12-21T16:14:44-08:00</createTimestamp>
-        <lastUpdateTimestamp>2011-10-21T01:52:33-08:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2011-10-27T21:54:29-08:00</lastUpdateTimestamp>
         <editorVersion>2.7.2</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
@@ -1899,7 +1899,7 @@
             <property>
                 <name>Model Rotation</name>
                 <vec3>
-                    <value1>-180.000000</value1>
+                    <value1>180.000000</value1>
                     <value2>0.000000</value2>
                     <value3>-0.000000</value3>
                 </vec3>
@@ -3626,8 +3626,8 @@
                         <property>
                             <name>DirectorGraph</name>
                             <resourceType>Directors</resourceType>
-                            <resourceDisplayName>Directors:ImportedInit.dtdir</resourceDisplayName>
-                            <resource>Directors:ImportedInit.dtdir</resource>
+                            <resourceDisplayName>Directors:Init.dtdir</resourceDisplayName>
+                            <resource>Directors:Init.dtdir</resource>
                         </property>
                     </element>
                     <element>
@@ -4501,6 +4501,36 @@
                 <rotationY>0.225703</rotationY>
                 <rotationZ>-0.664888</rotationZ>
                 <rotationW>0.674238</rotationW>
+            </perspectiveView>
+            <topView>
+                <positionX>34.212406</positionX>
+                <positionY>10.702178</positionY>
+                <positionZ>-0.000001</positionZ>
+                <zoom>1.000000</zoom>
+            </topView>
+            <sideView>
+                <positionX>34.212406</positionX>
+                <positionY>10.702178</positionY>
+                <positionZ>-0.000001</positionZ>
+                <zoom>1.000000</zoom>
+            </sideView>
+            <frontView>
+                <positionX>34.212406</positionX>
+                <positionY>10.702178</positionY>
+                <positionZ>-0.000001</positionZ>
+                <zoom>1.000000</zoom>
+            </frontView>
+        </presetCamera>
+        <presetCamera>
+            <index>7</index>
+            <perspectiveView>
+                <positionX>11.853666</positionX>
+                <positionY>12.155996</positionY>
+                <positionZ>4.730078</positionZ>
+                <rotationX>-0.000683</rotationX>
+                <rotationY>-0.389936</rotationY>
+                <rotationZ>0.920840</rotationZ>
+                <rotationW>0.001612</rotationW>
             </perspectiveView>
             <topView>
                 <positionX>34.212406</positionX>
