@@ -2,7 +2,7 @@
 <director xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dDirector" xsi:schemaLocation="delta3dDirector director.xsd">
     <header>
         <createTimestamp>2011-07-12T10:00:25-08:00</createTimestamp>
-        <lastUpdateTimestamp>2011-10-20T22:30:12-08:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2011-10-27T22:17:31-08:00</lastUpdateTimestamp>
         <editorVersion>2.7.2</editorVersion>
         <schemaVersion>1.0</schemaVersion>
         <scriptType>Scenario</scriptType>
@@ -535,8 +535,8 @@
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>3548.933838</value1>
-                        <value2>-73.350761</value2>
+                        <value1>-1145.679565</value1>
+                        <value2>-79.302612</value2>
                     </vec2>
                 </property>
                 <property>
@@ -1031,8 +1031,8 @@
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>3456.433838</value1>
-                        <value2>-127.850670</value2>
+                        <value1>-1238.179565</value1>
+                        <value2>-133.802551</value2>
                     </vec2>
                 </property>
                 <property>
@@ -1327,8 +1327,8 @@
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>3568.933838</value1>
-                        <value2>75.504494</value2>
+                        <value1>-1125.679565</value1>
+                        <value2>69.552612</value2>
                     </vec2>
                 </property>
                 <valuelink>
@@ -16271,8 +16271,8 @@
             <property>
                 <name>Position</name>
                 <vec2>
-                    <value1>3809.800293</value1>
-                    <value2>-86.350761</value2>
+                    <value1>-884.813049</value1>
+                    <value2>-92.302612</value2>
                 </vec2>
             </property>
             <property>
@@ -16293,7 +16293,7 @@
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>-588.042236</value1>
+                            <value1>-607.796082</value1>
                             <value2>3.814301</value2>
                         </vec2>
                     </property>
@@ -16367,7 +16367,7 @@
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>-592.042236</value1>
+                            <value1>-611.796082</value1>
                             <value2>-48.328125</value2>
                         </vec2>
                     </property>
@@ -16399,8 +16399,8 @@
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>-453.980072</value1>
-                            <value2>-361.185699</value2>
+                            <value1>-494.980103</value1>
+                            <value2>-374.185699</value2>
                         </vec2>
                     </property>
                     <inputlink>
@@ -16529,8 +16529,8 @@
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>-453.979828</value1>
-                            <value2>16.814301</value2>
+                            <value1>-494.979858</value1>
+                            <value2>3.814301</value2>
                         </vec2>
                     </property>
                     <inputlink>
@@ -16577,8 +16577,8 @@
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>-303.341431</value1>
-                            <value2>-177.470566</value2>
+                            <value1>-305.341553</value1>
+                            <value2>-213.685959</value2>
                         </vec2>
                     </property>
                     <property>
@@ -16598,8 +16598,8 @@
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>-443.980103</value1>
-                            <value2>-177.470566</value2>
+                            <value1>-469.480225</value1>
+                            <value2>-213.685959</value2>
                         </vec2>
                     </property>
                     <property>
@@ -16619,8 +16619,8 @@
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>-443.979858</value1>
-                            <value2>200.529434</value2>
+                            <value1>-469.479706</value1>
+                            <value2>151.967896</value2>
                         </vec2>
                     </property>
                     <property>
@@ -16640,8 +16640,8 @@
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>-303.341187</value1>
-                            <value2>200.529434</value2>
+                            <value1>-305.341522</value1>
+                            <value2>151.967896</value2>
                         </vec2>
                     </property>
                     <property>
@@ -26241,52 +26241,12 @@
         <inputName>Stop</inputName>
     </chainLinkConnection>
     <chainLinkConnection>
-        <outputOwnerIndex>472</outputOwnerIndex>
-        <outputOwner>9a587fcd-e558-4e5c-b22e-4c01ef7d69c0</outputOwner>
-        <inputOwnerIndex>480</inputOwnerIndex>
-        <inputOwner>fbc1bb6e-4957-47a9-b5b8-28f731eff962</inputOwner>
-        <outputName>Out</outputName>
-        <inputName>Call Event</inputName>
-    </chainLinkConnection>
-    <chainLinkConnection>
-        <outputOwnerIndex>473</outputOwnerIndex>
-        <outputOwner>bbd99fcb-74f2-4fbd-92d6-7c7c8bc85c1d</outputOwner>
-        <inputOwnerIndex>522</inputOwnerIndex>
-        <inputOwner>a61cb9da-edba-4ecb-8d4e-6382f2500456</inputOwner>
-        <outputName>Out</outputName>
-        <inputName>Stop</inputName>
-    </chainLinkConnection>
-    <chainLinkConnection>
-        <outputOwnerIndex>474</outputOwnerIndex>
-        <outputOwner>c1b3efc8-9dfc-483a-bb35-f90b47f7557d</outputOwner>
-        <inputOwnerIndex>520</inputOwnerIndex>
-        <inputOwner>c1c66fd9-241b-4b96-b8cb-38ef9b85e193</inputOwner>
-        <outputName>Out</outputName>
-        <inputName>Play</inputName>
-    </chainLinkConnection>
-    <chainLinkConnection>
-        <outputOwnerIndex>475</outputOwnerIndex>
-        <outputOwner>15454fad-7088-4e5b-a9ba-49061b3ca880</outputOwner>
-        <inputOwnerIndex>478</inputOwnerIndex>
-        <inputOwner>6f00fa87-84d5-4506-9e2e-8d8143f537d2</inputOwner>
-        <outputName>Enter</outputName>
-        <inputName>Call Event</inputName>
-    </chainLinkConnection>
-    <chainLinkConnection>
         <outputOwnerIndex>475</outputOwnerIndex>
         <outputOwner>15454fad-7088-4e5b-a9ba-49061b3ca880</outputOwner>
         <inputOwnerIndex>482</inputOwnerIndex>
         <inputOwner>c81c7385-8f22-4fa4-8b4b-9f5e91ca9423</inputOwner>
         <outputName>Enter</outputName>
         <inputName>Play</inputName>
-    </chainLinkConnection>
-    <chainLinkConnection>
-        <outputOwnerIndex>475</outputOwnerIndex>
-        <outputOwner>15454fad-7088-4e5b-a9ba-49061b3ca880</outputOwner>
-        <inputOwnerIndex>478</inputOwnerIndex>
-        <inputOwner>6f00fa87-84d5-4506-9e2e-8d8143f537d2</inputOwner>
-        <outputName>Leave</outputName>
-        <inputName>Call Event</inputName>
     </chainLinkConnection>
     <chainLinkConnection>
         <outputOwnerIndex>475</outputOwnerIndex>
@@ -26406,22 +26366,6 @@
         <inputOwnerIndex>494</inputOwnerIndex>
         <inputOwner>a7975e79-e43a-497d-ba42-0da6a0b2f165</inputOwner>
         <outputName>Stopped</outputName>
-        <inputName>Call Event</inputName>
-    </chainLinkConnection>
-    <chainLinkConnection>
-        <outputOwnerIndex>491</outputOwnerIndex>
-        <outputOwner>dde19bd3-03b5-49e5-876d-c62b003fbeee</outputOwner>
-        <inputOwnerIndex>479</inputOwnerIndex>
-        <inputOwner>6fd66cd6-abb6-4142-b14e-ce0c4dc93b47</inputOwner>
-        <outputName>Idle In</outputName>
-        <inputName>Call Event</inputName>
-    </chainLinkConnection>
-    <chainLinkConnection>
-        <outputOwnerIndex>492</outputOwnerIndex>
-        <outputOwner>886eda85-a74a-4a86-abb7-ee16a1aec099</outputOwner>
-        <inputOwnerIndex>479</inputOwnerIndex>
-        <inputOwner>6fd66cd6-abb6-4142-b14e-ce0c4dc93b47</inputOwner>
-        <outputName>Idle Out</outputName>
         <inputName>Call Event</inputName>
     </chainLinkConnection>
     <chainLinkConnection>
