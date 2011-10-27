@@ -27,6 +27,7 @@
 #include <dtDirector/directorgraph.h>
 #include <dtDirector/nodemanager.h>
 
+#include <dtDirectorQt/directoreditor.h>
 #include <dtDirectorQt/undocreateevent.h>
 #include <dtDirectorQt/undoaddlibraryevent.h>
 #include <dtDirectorQt/undomanager.h>
@@ -407,7 +408,10 @@ namespace dtDirector
             if ((linkExternal || createLinks) && mIDOldToNew.find(owner->GetID()) == mIDOldToNew.end())
             {
                DirectorGraph* myNodeGraph = link->GetOwner()->GetGraph();
-               DirectorGraph* otherNodeGraph = owner->GetGraph();
+
+               ID otherGraphID = owner->GetGraph()->GetID();
+               otherGraphID.index = -1;
+               DirectorGraph* otherNodeGraph = undoManager->GetEditor()->GetDirector()->GetGraph(otherGraphID);
 
                // If my new node is an input link node, it can only
                // connect its input to a node that is on its parent graph.
@@ -516,7 +520,10 @@ namespace dtDirector
             if ((linkExternal || createLinks) && mIDOldToNew.find(owner->GetID()) == mIDOldToNew.end())
             {
                DirectorGraph* myNodeGraph = link->GetOwner()->GetGraph();
-               DirectorGraph* otherNodeGraph = owner->GetGraph();
+
+               ID otherGraphID = owner->GetGraph()->GetID();
+               otherGraphID.index = -1;
+               DirectorGraph* otherNodeGraph = undoManager->GetEditor()->GetDirector()->GetGraph(otherGraphID);
 
                // If my new node is an output link node, it can only
                // connect its outputs to a node that is on its parent graph.
@@ -625,7 +632,10 @@ namespace dtDirector
             if ((linkExternal || createLinks) && mIDOldToNew.find(owner->GetID()) == mIDOldToNew.end())
             {
                DirectorGraph* myNodeGraph = link->GetOwner()->GetGraph();
-               DirectorGraph* otherNodeGraph = owner->GetGraph();
+
+               ID otherGraphID = owner->GetGraph()->GetID();
+               otherGraphID.index = -1;
+               DirectorGraph* otherNodeGraph = undoManager->GetEditor()->GetDirector()->GetGraph(otherGraphID);
 
                // If my new node is a value link node, it can only
                // connect its value to a node that is on its parent graph.
