@@ -181,29 +181,27 @@ namespace dtDirector
    {
       mDirector = director;
 
-      dtCore::RefPtr<Director> nodeSceneDirector = new dtDirector::Director();
-      if (nodeSceneDirector)
+      if (!mNodeSceneDirector.valid())
       {
-         nodeSceneDirector->Init(mDirector->GetGameManager(), mDirector->GetMap());
-         nodeSceneDirector->SetScriptName("NodeScene");
-
-         DirectorTypeFactory* factory = DirectorTypeFactory::GetInstance();
-         if (factory)
+         mNodeSceneDirector = new dtDirector::Director();
+         if (mNodeSceneDirector)
          {
-            factory->AddCacheScript(nodeSceneDirector);
+            mNodeSceneDirector->Init(mDirector->GetGameManager(), mDirector->GetMap());
+            mNodeSceneDirector->SetScriptName("NodeScene");
+            mNodeSceneDirector->SetVisibleInInspector(false);
          }
-      }
 
-      // Setup node scenes
-      mUI.eventNodeTabWidget->SetEditor(this, nodeSceneDirector);
-      mUI.actionNodeTabWidget->SetEditor(this, nodeSceneDirector);
-      mUI.mutatorNodeTabWidget->SetEditor(this, nodeSceneDirector);
-      mUI.variableNodeTabWidget->SetEditor(this, nodeSceneDirector);
-      mUI.macroNodeTabWidget->SetEditor(this, nodeSceneDirector);
-      mUI.linkNodeTabWidget->SetEditor(this, nodeSceneDirector);
-      mUI.miscNodeTabWidget->SetEditor(this, nodeSceneDirector);
-      mUI.referenceNodeTabWidget->SetEditor(this, nodeSceneDirector);
-      mUI.searchNodeTabWidget->SetEditor(this, nodeSceneDirector);
+         // Setup node scenes
+         mUI.eventNodeTabWidget->SetEditor(this, mNodeSceneDirector);
+         mUI.actionNodeTabWidget->SetEditor(this, mNodeSceneDirector);
+         mUI.mutatorNodeTabWidget->SetEditor(this, mNodeSceneDirector);
+         mUI.variableNodeTabWidget->SetEditor(this, mNodeSceneDirector);
+         mUI.macroNodeTabWidget->SetEditor(this, mNodeSceneDirector);
+         mUI.linkNodeTabWidget->SetEditor(this, mNodeSceneDirector);
+         mUI.miscNodeTabWidget->SetEditor(this, mNodeSceneDirector);
+         mUI.referenceNodeTabWidget->SetEditor(this, mNodeSceneDirector);
+         mUI.searchNodeTabWidget->SetEditor(this, mNodeSceneDirector);
+      }
       RefreshNodeScenes();
 
       mUI.graphTab->clear();

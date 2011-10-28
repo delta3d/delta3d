@@ -126,6 +126,13 @@ namespace dtDirector
       bool IsCachedInstance() const;
 
       /**
+       *	Retrieves whether this script should be visible within Inspector.
+       */
+      bool IsVisibleInInspector() const;
+
+      void SetVisibleInInspector(bool visible) {mIsVisibleInInspector = visible;}
+
+      /**
        * Retrieves whether the script has started.
        */
       bool HasStarted() const {return mStarted;}
@@ -673,7 +680,7 @@ namespace dtDirector
       // State Stack Data.
       struct StateStackData
       {
-         ID id;
+         ID    id;
          int   index;
          bool  finished;
 
@@ -683,6 +690,7 @@ namespace dtDirector
       // State Thread Data.
       struct StateThreadData
       {
+         int id;
          std::vector<StateStackData> stack;
       };
 
@@ -745,6 +753,8 @@ namespace dtDirector
       std::string mAuthor;
       std::string mCopyright;
       std::string mCreationTime;
+
+      bool mIsVisibleInInspector;
 
       dtDAL::ResourceDescriptor mResource;
 

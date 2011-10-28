@@ -633,6 +633,8 @@ namespace dtDirector
        */
       void RefreshReferenceScene();
 
+      dtCore::RefPtr<Director> mNodeSceneDirector;
+
       Ui::DirectorEditor       mUI;
 
       dtQt::DocBrowser*        mDocBrowser;

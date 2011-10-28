@@ -48,6 +48,7 @@ namespace dtDirector
       , mCurrentThread(-1)
       , mThreadID(0)
       , mQueueingThreads(false)
+      , mIsVisibleInInspector(true)
       , mMap(NULL)
       , mModified(false)
       , mStarted(false)
@@ -283,6 +284,12 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   bool Director::IsVisibleInInspector() const
+   {
+      return mIsVisibleInInspector;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    void Director::SetParent(Director* parent)
    {
       if (parent == this)
@@ -293,6 +300,7 @@ namespace dtDirector
       if (mParent.valid())
       {
          mParent->RemoveChild(this);
+         mIsVisibleInInspector = true;
       }
 
       mParent = parent;
@@ -300,6 +308,7 @@ namespace dtDirector
       if (mParent.valid())
       {
          mParent->AddChild(this);
+         mIsVisibleInInspector = false;
       }
    }
 
@@ -400,6 +409,7 @@ namespace dtDirector
                RecurseImportScriptGraphs(importedScript->GetGraphRoot(), GetGraphRoot());
 
                mImportedScriptList.push_back(importedScript);
+
                return importedScript;
             }
          }
@@ -2242,6 +2252,7 @@ namespace dtDirector
    void Director::GetThreadState(std::vector<Director::StateThreadData>& threads, const ThreadData& thread) const
    {
       StateThreadData data;
+      data.id = thread.id;
 
       int count = (int)thread.stack.size();
       for (int index = 0; index < count; ++index)
@@ -2329,6 +2340,7 @@ namespace dtDirector
    void Director::RestoreThreadState(const StateThreadData& threadState, std::vector<ThreadData>& threads)
    {
       ThreadData thread;
+      thread.id = threadState.id;
 
       int count = (int)threadState.stack.size();
       for (int index = 0; index < count; ++index)
