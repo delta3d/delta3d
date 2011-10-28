@@ -440,6 +440,7 @@ namespace dtDirector
       }
 
       mCachedScripts[director->GetScriptName()] = director;
+      director->SetVisibleInInspector(false);
 
       return true;
    }
