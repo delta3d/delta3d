@@ -799,6 +799,8 @@ namespace dtDirector
 
       try
       {
+         director->CleanIDs();
+
          SaveHeader(director, file);
 
          SaveGraph(director->GetGraphRoot(), file);

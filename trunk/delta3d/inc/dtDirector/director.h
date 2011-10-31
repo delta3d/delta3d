@@ -588,6 +588,11 @@ namespace dtDirector
 
       void StepDebugger();
 
+      /**
+       *	Cleans up all ID indexes.
+       */
+      void CleanIDs();
+
    protected:
 
       /**
