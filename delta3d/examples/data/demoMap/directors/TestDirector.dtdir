@@ -2,7 +2,7 @@
 <director xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dDirector" xsi:schemaLocation="delta3dDirector director.xsd">
     <header>
         <createTimestamp>2011-07-12T10:00:25-08:00</createTimestamp>
-        <lastUpdateTimestamp>2011-10-27T22:17:31-08:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2011-10-31T23:35:13-08:00</lastUpdateTimestamp>
         <editorVersion>2.7.2</editorVersion>
         <schemaVersion>1.0</schemaVersion>
         <scriptType>Scenario</scriptType>
