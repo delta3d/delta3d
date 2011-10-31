@@ -115,6 +115,8 @@ namespace dtDirector
 
       SetupPlugins();
 
+      RestoreWindow();
+
       mClickSound = Phonon::createPlayer(Phonon::MusicCategory,
                                          Phonon::MediaSource(":/sounds/click.wav"));
       connect(mClickSound, SIGNAL(stateChanged(Phonon::State, Phonon::State)), this, SLOT(OnStateChanged(Phonon::State, Phonon::State)));
@@ -2111,55 +2113,6 @@ namespace dtDirector
    {
       QMainWindow::showEvent(event);
 
-      // Retrieve the last loaded script.
-      QSettings settings("MOVES", "Director Editor");
-
-      settings.beginGroup("MainWindow");
-      resize(settings.value("Size", QSize(800, 600)).toSize());
-      move(settings.value("Pos", QPoint(100, 100)).toPoint());
-
-      // When restoring the window state, first see if the key exists.
-      if (settings.contains("State"))
-      {
-         QByteArray state = settings.value("State").toByteArray();
-         restoreState(state);
-      }
-
-      // When restoring the window state, first see if the key exists.
-      if (settings.contains("Geom"))
-      {
-         QByteArray state = settings.value("Geom").toByteArray();
-         restoreGeometry(state);
-      }
-      settings.endGroup();
-
-      settings.beginGroup("PaletteWindow");
-      mUI.nodePalette->resize(settings.value("Size", QSize(219, 371)).toSize());
-      mUI.nodePalette->move(settings.value("Pos", QPoint(0, 55)).toPoint());
-      settings.endGroup();
-
-      settings.beginGroup("PropertyWindow");
-      mUI.propertyEditor->resize(settings.value("Size", QSize(400, 150)).toSize());
-      mUI.propertyEditor->move(settings.value("Pos", QPoint(0, 430)).toPoint());
-      settings.endGroup();
-
-      settings.beginGroup("GraphWindow");
-      mUI.graphBrowser->resize(settings.value("Size", QSize(396, 150)).toSize());
-      mUI.graphBrowser->move(settings.value("Pos", QPoint(404, 430)).toPoint());
-      settings.endGroup();
-
-      settings.beginGroup("SearchWindow");
-      mUI.searchBrowser->resize(settings.value("Size", QSize(195, 121)).toSize());
-      mUI.searchBrowser->move(settings.value("Pos", QPoint(605, 180)).toPoint());
-      settings.endGroup();
-
-      settings.beginGroup("ThreadWindow");
-      mUI.threadBrowser->resize(settings.value("Size", QSize(195, 121)).toSize());
-      mUI.threadBrowser->move(settings.value("Pos", QPoint(605, 305)).toPoint());
-      settings.endGroup();
-
-      mUI.threadBrowser->hide();
-
       if (mDirector.valid() && mUI.graphTab->count() == 0)
       {
          OpenGraph(mDirector->GetGraphRoot());
@@ -2613,6 +2566,59 @@ namespace dtDirector
       {
          mUI.referenceNodeTabWidget->SearchReferenceNodes(view->GetScene()->GetGraph());
       }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::RestoreWindow()
+   {
+      // Retrieve the last loaded script.
+      QSettings settings("MOVES", "Director Editor");
+
+      settings.beginGroup("MainWindow");
+      resize(settings.value("Size", QSize(800, 600)).toSize());
+      move(settings.value("Pos", QPoint(100, 100)).toPoint());
+
+      // When restoring the window state, first see if the key exists.
+      if (settings.contains("State"))
+      {
+         QByteArray state = settings.value("State").toByteArray();
+         restoreState(state);
+      }
+
+      // When restoring the window state, first see if the key exists.
+      if (settings.contains("Geom"))
+      {
+         QByteArray state = settings.value("Geom").toByteArray();
+         restoreGeometry(state);
+      }
+      settings.endGroup();
+
+      settings.beginGroup("PaletteWindow");
+      mUI.nodePalette->resize(settings.value("Size", QSize(219, 371)).toSize());
+      mUI.nodePalette->move(settings.value("Pos", QPoint(0, 55)).toPoint());
+      settings.endGroup();
+
+      settings.beginGroup("PropertyWindow");
+      mUI.propertyEditor->resize(settings.value("Size", QSize(400, 150)).toSize());
+      mUI.propertyEditor->move(settings.value("Pos", QPoint(0, 430)).toPoint());
+      settings.endGroup();
+
+      settings.beginGroup("GraphWindow");
+      mUI.graphBrowser->resize(settings.value("Size", QSize(396, 150)).toSize());
+      mUI.graphBrowser->move(settings.value("Pos", QPoint(404, 430)).toPoint());
+      settings.endGroup();
+
+      settings.beginGroup("SearchWindow");
+      mUI.searchBrowser->resize(settings.value("Size", QSize(195, 121)).toSize());
+      mUI.searchBrowser->move(settings.value("Pos", QPoint(605, 180)).toPoint());
+      settings.endGroup();
+
+      settings.beginGroup("ThreadWindow");
+      mUI.threadBrowser->resize(settings.value("Size", QSize(195, 121)).toSize());
+      mUI.threadBrowser->move(settings.value("Pos", QPoint(605, 305)).toPoint());
+      settings.endGroup();
+
+      mUI.threadBrowser->hide();
    }
 
    //////////////////////////////////////////////////////////////////////////
