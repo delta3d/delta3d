@@ -1997,15 +1997,18 @@ namespace dtDirector
    {
       QString text = mUI.nodeSearchEdit->text();
 
-      mUI.nodeTabs->setCurrentWidget(mUI.searchNodeTab);
-
-      EditorView* view = dynamic_cast<EditorView*>(mUI.graphTab->currentWidget());
-      DirectorGraph* graph = NULL;
-      if (view && view->GetScene())
+      if (!text.isEmpty())
       {
-         graph = view->GetScene()->GetGraph();
+         mUI.nodeTabs->setCurrentWidget(mUI.searchNodeTab);
+
+         EditorView* view = dynamic_cast<EditorView*>(mUI.graphTab->currentWidget());
+         DirectorGraph* graph = NULL;
+         if (view && view->GetScene())
+         {
+            graph = view->GetScene()->GetGraph();
+         }
+         mUI.searchNodeTabWidget->SearchNodes(text, graph);
       }
-      mUI.searchNodeTabWidget->SearchNodes(text, graph);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
