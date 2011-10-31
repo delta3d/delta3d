@@ -2,7 +2,7 @@
 <director xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dDirector" xsi:schemaLocation="delta3dDirector director.xsd">
     <header>
         <createTimestamp>2011-10-21T01:34:19-08:00</createTimestamp>
-        <lastUpdateTimestamp>2011-10-27T22:02:13-08:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2011-10-31T23:32:59-08:00</lastUpdateTimestamp>
         <editorVersion>2.7.2</editorVersion>
         <schemaVersion>1.0</schemaVersion>
         <scriptType>Scenario</scriptType>
@@ -40,6 +40,18 @@
     <graph>
         <idIndex>0</idIndex>
         <id>d3a1de40-fddb-47a3-ae9e-a5306f7a2330</id>
+        <property>
+            <name>Comment</name>
+            <string></string>
+        </property>
+        <property>
+            <name>Name</name>
+            <string>Director Script</string>
+        </property>
+        <property>
+            <name>Custom Editor</name>
+            <string></string>
+        </property>
         <eventnodes>
             <node>
                 <name>Start Event</name>
@@ -649,14 +661,6 @@
                     <name>Name</name>
                     <string>Start Pos</string>
                 </property>
-                <property>
-                    <name>Initial Value</name>
-                    <vec3>
-                        <value1>0.000000</value1>
-                        <value2>0.000000</value2>
-                        <value3>0.000000</value3>
-                    </vec3>
-                </property>
                 <valuelink>
                     <name>Enabled</name>
                     <exposed>false</exposed>
@@ -699,10 +703,6 @@
                 <property>
                     <name>Name</name>
                     <string>Desired Height</string>
-                </property>
-                <property>
-                    <name>Initial Value</name>
-                    <float>0</float>
                 </property>
                 <valuelink>
                     <name>Enabled</name>
@@ -778,7 +778,7 @@
                     </vec2>
                 </property>
                 <property>
-                    <name>Initial Value</name>
+                    <name>Value</name>
                     <actorId>1af6ec4e-1270-44b3-b30b-20ebbfac269d</actorId>
                 </property>
                 <valuelink>
@@ -801,14 +801,6 @@
                 <property>
                     <name>Name</name>
                     <string>Start Rot</string>
-                </property>
-                <property>
-                    <name>Initial Value</name>
-                    <vec3>
-                        <value1>0.000000</value1>
-                        <value2>0.000000</value2>
-                        <value3>0.000000</value3>
-                    </vec3>
                 </property>
                 <valuelink>
                     <name>Enabled</name>
@@ -1142,7 +1134,7 @@
                         </vec2>
                     </property>
                     <property>
-                        <name>Initial Value</name>
+                        <name>Value</name>
                         <actorId>1af6ec4e-1270-44b3-b30b-20ebbfac269d</actorId>
                     </property>
                     <valuelink>
@@ -1163,7 +1155,7 @@
                         </vec2>
                     </property>
                     <property>
-                        <name>Initial Value</name>
+                        <name>Value</name>
                         <actorId>b2acefd8-12a5-47a1-8035-b6537de811d7</actorId>
                     </property>
                     <valuelink>
@@ -1186,14 +1178,6 @@
                     <property>
                         <name>Name</name>
                         <string>Start Pos</string>
-                    </property>
-                    <property>
-                        <name>Initial Value</name>
-                        <vec3>
-                            <value1>0.000000</value1>
-                            <value2>0.000000</value2>
-                            <value3>0.000000</value3>
-                        </vec3>
                     </property>
                     <valuelink>
                         <name>Enabled</name>
@@ -1287,7 +1271,7 @@
                         </vec2>
                     </property>
                     <property>
-                        <name>Initial Value</name>
+                        <name>Value</name>
                         <actorId>1af6ec4e-1270-44b3-b30b-20ebbfac269d</actorId>
                     </property>
                     <valuelink>
@@ -1681,7 +1665,7 @@
                         <string>Player Height</string>
                     </property>
                     <property>
-                        <name>Initial Value</name>
+                        <name>Value</name>
                         <float>1.5633301</float>
                     </property>
                     <valuelink>
@@ -1730,14 +1714,6 @@
                     <property>
                         <name>Name</name>
                         <string>Player Pos</string>
-                    </property>
-                    <property>
-                        <name>Initial Value</name>
-                        <vec3>
-                            <value1>0.000000</value1>
-                            <value2>0.000000</value2>
-                            <value3>0.000000</value3>
-                        </vec3>
                     </property>
                     <valuelink>
                         <name>Enabled</name>
@@ -2145,10 +2121,6 @@
                         <name>Global</name>
                         <boolean>true</boolean>
                     </property>
-                    <property>
-                        <name>Initial Value</name>
-                        <actorId></actorId>
-                    </property>
                     <valuelink>
                         <name>Enabled</name>
                         <exposed>false</exposed>
@@ -2174,12 +2146,6 @@
                         <name>Global</name>
                         <boolean>true</boolean>
                     </property>
-                    <property>
-                        <name>InitialValueList</name>
-                        <array>
-                            <size>0</size>
-                        </array>
-                    </property>
                     <valuelink>
                         <name>Enabled</name>
                         <exposed>false</exposed>
@@ -2204,12 +2170,6 @@
                     <property>
                         <name>Global</name>
                         <boolean>true</boolean>
-                    </property>
-                    <property>
-                        <name>InitialValueList</name>
-                        <array>
-                            <size>0</size>
-                        </array>
                     </property>
                     <valuelink>
                         <name>Enabled</name>
@@ -2878,10 +2838,6 @@
                                 <value2>225.614990</value2>
                             </vec2>
                         </property>
-                        <property>
-                            <name>Initial Value</name>
-                            <string></string>
-                        </property>
                         <valuelink>
                             <name>Enabled</name>
                             <exposed>false</exposed>
@@ -2902,10 +2858,6 @@
                         <property>
                             <name>Name</name>
                             <string>Rotation Value</string>
-                        </property>
-                        <property>
-                            <name>Initial Value</name>
-                            <integer>0</integer>
                         </property>
                         <valuelink>
                             <name>Enabled</name>
@@ -2954,10 +2906,6 @@
                                 <value1>301.500336</value1>
                                 <value2>636.365417</value2>
                             </vec2>
-                        </property>
-                        <property>
-                            <name>Initial Value</name>
-                            <string></string>
                         </property>
                         <valuelink>
                             <name>Enabled</name>
@@ -3569,14 +3517,6 @@
                             <name>Name</name>
                             <string>Object Position</string>
                         </property>
-                        <property>
-                            <name>Initial Value</name>
-                            <vec3>
-                                <value1>0.000000</value1>
-                                <value2>0.000000</value2>
-                                <value3>0.000000</value3>
-                            </vec3>
-                        </property>
                         <valuelink>
                             <name>Enabled</name>
                             <exposed>false</exposed>
@@ -3595,7 +3535,7 @@
                             </vec2>
                         </property>
                         <property>
-                            <name>Initial Value</name>
+                            <name>Value</name>
                             <double>5</double>
                         </property>
                         <valuelink>
@@ -3639,10 +3579,6 @@
                         <property>
                             <name>Name</name>
                             <string>Current Actor</string>
-                        </property>
-                        <property>
-                            <name>Initial Value</name>
-                            <actorId></actorId>
                         </property>
                         <valuelink>
                             <name>Enabled</name>
@@ -3711,7 +3647,7 @@
                             <string>Object Size</string>
                         </property>
                         <property>
-                            <name>Initial Value</name>
+                            <name>Value</name>
                             <double>0.75</double>
                         </property>
                         <valuelink>
@@ -3845,10 +3781,6 @@
                             <name>Name</name>
                             <string>Index</string>
                         </property>
-                        <property>
-                            <name>Initial Value</name>
-                            <integer>0</integer>
-                        </property>
                         <valuelink>
                             <name>Enabled</name>
                             <exposed>false</exposed>
@@ -3931,14 +3863,6 @@
                                 <value1>456.405273</value1>
                                 <value2>54.140793</value2>
                             </vec2>
-                        </property>
-                        <property>
-                            <name>Initial Value</name>
-                            <vec3>
-                                <value1>0.000000</value1>
-                                <value2>0.000000</value2>
-                                <value3>0.000000</value3>
-                            </vec3>
                         </property>
                         <valuelink>
                             <name>Enabled</name>
