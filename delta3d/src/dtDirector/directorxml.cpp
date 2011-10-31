@@ -287,6 +287,7 @@ namespace dtDirector
 
       try
       {
+         director->CleanIDs();
          WriteHeader();
 
          const std::string& utcTime = dtUtil::DateTime::ToString(dtUtil::DateTime(dtUtil::DateTime::TimeOrigin::LOCAL_TIME),

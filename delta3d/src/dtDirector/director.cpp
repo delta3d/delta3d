@@ -1451,6 +1451,66 @@ namespace dtDirector
       mShouldStep = true;
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   void Director::CleanIDs()
+   {
+      int count = (int)mMasterNodeList.size();
+      int lastIndex = count - 1;
+      for (int index = 0; index < count; ++index)
+      {
+         MasterNodeListData& data = mMasterNodeList[index];
+
+         // As soon as we find a free index we want to find a later used
+         // index and move it there.
+         if (!data.node)
+         {
+            for (; lastIndex > index; --lastIndex)
+            {
+               Node* node = mMasterNodeList[lastIndex].node;
+               if (node)
+               {
+                  MasterListRemoveNode(node);
+                  MasterListAddNode(node, index);
+                  break;
+               }
+            }
+
+            if (lastIndex <= index)
+            {
+               break;
+            }
+         }
+      }
+
+      count = (int)mMasterGraphList.size();
+      lastIndex = count - 1;
+      for (int index = 0; index < count; ++index)
+      {
+         MasterGraphListData& data = mMasterGraphList[index];
+
+         // As soon as we find a free index we want to find a later used
+         // index and move it there.
+         if (!data.graph)
+         {
+            for (; lastIndex > index; --lastIndex)
+            {
+               DirectorGraph* graph = mMasterGraphList[lastIndex].graph;
+               if (graph)
+               {
+                  MasterListRemoveGraph(graph);
+                  MasterListAddGraph(graph, index);
+                  break;
+               }
+            }
+
+            if (lastIndex <= index)
+            {
+               break;
+            }
+         }
+      }
+   }
+
    //////////////////////////////////////////////////////////////////////////
    bool Director::UpdateThread(ThreadData& data, float simDelta, float delta)
    {
