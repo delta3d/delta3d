@@ -633,6 +633,11 @@ namespace dtDirector
        */
       void RefreshReferenceScene();
 
+      /**
+       *	Restores the geometry of the window.
+       */
+      void RestoreWindow();
+
       dtCore::RefPtr<Director> mNodeSceneDirector;
 
       Ui::DirectorEditor       mUI;
