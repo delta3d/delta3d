@@ -277,53 +277,61 @@ namespace dtDirector
       }
       else
       {
-         DirectorGraph* graph = dynamic_cast<DirectorGraph*>(object);
-         if (graph)
+         DirectorGraph* copiedGraph = dynamic_cast<DirectorGraph*>(object);
+         if (copiedGraph)
          {
             dtCore::RefPtr<DirectorGraph> newGraph = parent->AddGraph();
             if (newGraph.valid())
             {
-               newGraph->CopyPropertiesFrom(*graph);
+               newGraph->CopyPropertiesFrom(*copiedGraph);
                mPastedGraphs.push_back(newGraph.get());
 
                // Offset the position of the new node based on our offset and position.
                newGraph->SetPosition(newGraph->GetPosition() - mOffset + position);
 
-               // Now we need to copy the entire contents of the children as well.
-               int count = (int)graph->GetEventNodes().size();
-               for (int index = 0; index < count; index++)
+               std::vector<DirectorGraph*> graphList = copiedGraph->GetImportedGraphs();
+               graphList.push_back(copiedGraph);
+               int graphCount = (int)graphList.size();
+               for (int graphIndex = 0; graphIndex < graphCount; ++graphIndex)
                {
-                  Node* node = graph->GetEventNodes()[index].get();
-                  if (node)
+                  DirectorGraph* graph = graphList[graphIndex];
+
+                  // Now we need to copy the entire contents of the children as well.
+                  int count = (int)graph->GetEventNodes().size();
+                  for (int index = 0; index < count; index++)
                   {
-                     CopyObject(node, newGraph.get(), mOffset);
+                     Node* node = graph->GetEventNodes()[index].get();
+                     if (node)
+                     {
+                        CopyObject(node, newGraph.get(), mOffset);
+                     }
+                  }
+
+                  count = (int)graph->GetActionNodes().size();
+                  for (int index = 0; index < count; index++)
+                  {
+                     Node* node = graph->GetActionNodes()[index].get();
+                     if (node)
+                     {
+                        CopyObject(node, newGraph.get(), mOffset);
+                     }
+                  }
+
+                  count = (int)graph->GetValueNodes().size();
+                  for (int index = 0; index < count; index++)
+                  {
+                     Node* node = graph->GetValueNodes()[index].get();
+                     if (node)
+                     {
+                        CopyObject(node, newGraph.get(), mOffset);
+                     }
                   }
                }
 
-               count = (int)graph->GetActionNodes().size();
+               int count = (int)copiedGraph->GetSubGraphs().size();
                for (int index = 0; index < count; index++)
                {
-                  Node* node = graph->GetActionNodes()[index].get();
-                  if (node)
-                  {
-                     CopyObject(node, newGraph.get(), mOffset);
-                  }
-               }
-
-               count = (int)graph->GetValueNodes().size();
-               for (int index = 0; index < count; index++)
-               {
-                  Node* node = graph->GetValueNodes()[index].get();
-                  if (node)
-                  {
-                     CopyObject(node, newGraph.get(), mOffset);
-                  }
-               }
-
-               count = (int)graph->GetSubGraphs().size();
-               for (int index = 0; index < count; index++)
-               {
-                  DirectorGraph* subGraph = graph->GetSubGraphs()[index].get();
+                  DirectorGraph* subGraph = copiedGraph->GetSubGraphs()[index].get();
                   if (subGraph)
                   {
                      CopyObject(subGraph, newGraph.get(), mOffset);
