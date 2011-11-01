@@ -2,7 +2,7 @@
 <director xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dDirector" xsi:schemaLocation="delta3dDirector director.xsd">
     <header>
         <createTimestamp>2011-10-21T01:34:19-08:00</createTimestamp>
-        <lastUpdateTimestamp>2011-10-31T23:32:59-08:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2011-11-01T03:35:16-08:00</lastUpdateTimestamp>
         <editorVersion>2.7.2</editorVersion>
         <schemaVersion>1.0</schemaVersion>
         <scriptType>Scenario</scriptType>
@@ -1327,7 +1327,7 @@
             <property>
                 <name>Position</name>
                 <vec2>
-                    <value1>172.483810</value1>
+                    <value1>172.484009</value1>
                     <value2>93.533340</value2>
                 </vec2>
             </property>
@@ -1569,7 +1569,7 @@
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>43.908958</value1>
+                            <value1>34.908958</value1>
                             <value2>13.000000</value2>
                         </vec2>
                     </property>
@@ -1586,9 +1586,11 @@
                     </inputlink>
                     <inputlink>
                         <name>Stop</name>
+                        <visible>false</visible>
                     </inputlink>
                     <outputlink>
                         <name>Out</name>
+                        <visible>false</visible>
                     </outputlink>
                     <outputlink>
                         <name>Cycle</name>
@@ -1599,7 +1601,7 @@
                     </valuelink>
                     <valuelink>
                         <name>LoopPeriod</name>
-                        <exposed>false</exposed>
+                        <exposed>true</exposed>
                     </valuelink>
                     <valuelink>
                         <name>DeltaTime</name>
@@ -2033,7 +2035,7 @@
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>-563.287659</value1>
+                            <value1>-577.287659</value1>
                             <value2>9.405914</value2>
                         </vec2>
                     </property>
@@ -2065,7 +2067,7 @@
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>-451.526550</value1>
+                            <value1>-465.526550</value1>
                             <value2>9.405914</value2>
                         </vec2>
                     </property>
@@ -2078,9 +2080,11 @@
                     </inputlink>
                     <inputlink>
                         <name>Stop</name>
+                        <visible>false</visible>
                     </inputlink>
                     <outputlink>
                         <name>Out</name>
+                        <visible>false</visible>
                     </outputlink>
                     <outputlink>
                         <name>Cycle</name>
@@ -2091,7 +2095,7 @@
                     </valuelink>
                     <valuelink>
                         <name>LoopPeriod</name>
-                        <exposed>false</exposed>
+                        <exposed>true</exposed>
                     </valuelink>
                     <valuelink>
                         <name>DeltaTime</name>
@@ -3008,7 +3012,7 @@
                         <property>
                             <name>Position</name>
                             <vec2>
-                                <value1>-695.776428</value1>
+                                <value1>-702.776428</value1>
                                 <value2>-76.859207</value2>
                             </vec2>
                         </property>
@@ -3243,7 +3247,7 @@
                         <property>
                             <name>Position</name>
                             <vec2>
-                                <value1>-577.118164</value1>
+                                <value1>-584.118164</value1>
                                 <value2>-76.859207</value2>
                             </vec2>
                         </property>
@@ -3260,9 +3264,11 @@
                         </inputlink>
                         <inputlink>
                             <name>Stop</name>
+                            <visible>false</visible>
                         </inputlink>
                         <outputlink>
                             <name>Out</name>
+                            <visible>false</visible>
                         </outputlink>
                         <outputlink>
                             <name>Cycle</name>
@@ -3273,7 +3279,7 @@
                         </valuelink>
                         <valuelink>
                             <name>LoopPeriod</name>
-                            <exposed>false</exposed>
+                            <exposed>true</exposed>
                         </valuelink>
                         <valuelink>
                             <name>DeltaTime</name>

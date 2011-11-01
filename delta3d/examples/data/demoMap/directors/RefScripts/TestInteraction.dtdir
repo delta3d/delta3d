@@ -2,7 +2,7 @@
 <director xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dDirector" xsi:schemaLocation="delta3dDirector director.xsd">
     <header>
         <createTimestamp>2011-10-31T23:35:30-08:00</createTimestamp>
-        <lastUpdateTimestamp>2011-10-31T23:35:30-08:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2011-11-01T03:21:10-08:00</lastUpdateTimestamp>
         <editorVersion>2.7.2</editorVersion>
         <schemaVersion>1.0</schemaVersion>
         <scriptType>Scenario</scriptType>
@@ -386,7 +386,7 @@
                     </valuelink>
                     <valuelink>
                         <name>SquaredResult</name>
-                        <exposed>true</exposed>
+                        <exposed>false</exposed>
                         <typecheck>false</typecheck>
                     </valuelink>
                     <valuelink>
@@ -404,8 +404,8 @@
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>340.841064</value1>
-                            <value2>13.000006</value2>
+                            <value1>341.841064</value1>
+                            <value2>13.000000</value2>
                         </vec2>
                     </property>
                     <inputlink>
@@ -448,8 +448,8 @@
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>570.020508</value1>
-                            <value2>0.000005</value2>
+                            <value1>571.020508</value1>
+                            <value2>-0.000001</value2>
                         </vec2>
                     </property>
                     <property>
@@ -515,7 +515,7 @@
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>430.841003</value1>
+                            <value1>431.841003</value1>
                             <value2>157.999969</value2>
                         </vec2>
                     </property>
@@ -580,7 +580,7 @@
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>350.841003</value1>
+                            <value1>351.841003</value1>
                             <value2>157.999969</value2>
                         </vec2>
                     </property>
