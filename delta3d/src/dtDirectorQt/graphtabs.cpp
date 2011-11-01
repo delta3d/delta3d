@@ -70,7 +70,11 @@ namespace dtDirector
       if (e->button() == Qt::MidButton)
       {
          // TODO: Find the tab that you are mousing over.
-         //mEditor->OnGraphTabClosed(currentIndex());
+         int tabIndex = tabBar()->tabAt(e->pos());
+         if (tabIndex > -1 && tabIndex < count())
+         {
+            mEditor->on_graphTab_tabCloseRequested(tabIndex);
+         }
       }
    }
 
