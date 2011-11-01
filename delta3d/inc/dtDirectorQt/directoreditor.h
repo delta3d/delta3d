@@ -136,7 +136,8 @@ namespace dtDirector
       /**
        * Accessor for the Director.
        */
-      Director* GetDirector() const {return mDirector.get();}
+      Director* GetDirector() {return mDirector.get();}
+      const Director* GetDirector() const {return mDirector.get();}
 
       /**
        * Accessor for the graph tab widget.
