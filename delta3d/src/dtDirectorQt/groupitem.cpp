@@ -460,6 +460,11 @@ namespace dtDirector
       QAction* sizeToFitAction = menu.addAction("Size to Fit Contents");
       connect(sizeToFitAction, SIGNAL(triggered()), this, SLOT(SizeToFit()));
 
+      if (IsImported())
+      {
+         sizeToFitAction->setEnabled(false);
+      }
+
       menu.addSeparator();
       menu.addAction(mScene->GetMacroSelectionAction());
       menu.addSeparator();

@@ -718,6 +718,7 @@ namespace dtDirector
 
       bool bHasParent = false;
       bool bCanDelete = false;
+      bool bCanCut = false;
       bool bCanCopy = false;
 
       bool bCanShowLinks = false;
@@ -745,6 +746,7 @@ namespace dtDirector
 
             if (scene->HasSelection())
             {
+               bCanCut = true;
                bCanCopy = true;
                bCanDelete = true;
                bCanCreateSubMacro = true;
@@ -758,6 +760,7 @@ namespace dtDirector
                   if (nodeItem && !nodeItem->IsEditable())
                   {
                      bCanDelete = false;
+                     bCanCut = false;
                      bCanCreateSubMacro = false;
                   }
                }
@@ -890,7 +893,7 @@ namespace dtDirector
       }
 
       // Copy and Cut buttons.
-      mUI.action_Cut->setEnabled(bCanCopy);
+      mUI.action_Cut->setEnabled(bCanCut);
       mUI.action_Copy->setEnabled(bCanCopy);
 
       // Paste button.
