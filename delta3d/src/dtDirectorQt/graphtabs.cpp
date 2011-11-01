@@ -69,7 +69,6 @@ namespace dtDirector
 
       if (e->button() == Qt::MidButton)
       {
-         // TODO: Find the tab that you are mousing over.
          int tabIndex = tabBar()->tabAt(e->pos());
          if (tabIndex > -1 && tabIndex < count())
          {
