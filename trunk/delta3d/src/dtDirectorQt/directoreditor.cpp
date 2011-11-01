@@ -273,7 +273,7 @@ namespace dtDirector
       if (!fileName.empty())
       {
          // Clear the script.
-         mDirector->Clear();
+         GetDirector()->Clear();
          mUI.graphTab->clear();
          GetUndoManager()->Clear();
 
@@ -297,18 +297,18 @@ namespace dtDirector
             if (factory)
             {
                // Determine if we need to change our Director object.
-               if (mDirector->GetResource() == dtDAL::ResourceDescriptor::NULL_RESOURCE)
+               if (GetDirector()->GetResource() == dtDAL::ResourceDescriptor::NULL_RESOURCE)
                {
-                  mDirector = factory->LoadScript(mFullFileName, mDirector->GetGameManager(), mDirector->GetMap());
+                  SetDirector(factory->LoadScript(mFullFileName, GetDirector()->GetGameManager(), GetDirector()->GetMap()));
                }
                else
                {
-                  factory->LoadScript(mDirector, mFullFileName);
+                  factory->LoadScript(GetDirector(), mFullFileName);
                }
             }
 
             // Display a warning message if there were libraries that could not be loaded.
-            const std::vector<std::string>& missingImportedScripts = mDirector->GetMissingImportedScripts();
+            const std::vector<std::string>& missingImportedScripts = GetDirector()->GetMissingImportedScripts();
             if (!missingImportedScripts.empty())
             {
                QString warning = "The following Scripts failed to import properly:\n";
@@ -337,7 +337,7 @@ namespace dtDirector
             }
 
             // Display a warning message if there were libraries that could not be loaded.
-            const std::vector<std::string>& missingLibraries = mDirector->GetMissingLibraries();
+            const std::vector<std::string>& missingLibraries = GetDirector()->GetMissingLibraries();
             if (!missingLibraries.empty())
             {
                QString warning = "The following Node Libraries could not be included:\n";
@@ -366,7 +366,7 @@ namespace dtDirector
             }
 
             // Display a warning message if there were nodes that could not be loaded.
-            const std::set<std::string>& missingNodes = mDirector->GetMissingNodeTypes();
+            const std::set<std::string>& missingNodes = GetDirector()->GetMissingNodeTypes();
             if (!missingNodes.empty())
             {
                QString warning = "The following node types could not be created:\n";
@@ -405,8 +405,8 @@ namespace dtDirector
             RefreshRecentFiles();
 
             // Create a single tab with the default graph.
-            OpenGraph(mDirector->GetGraphRoot());
-            mUI.graphBrowser->BuildGraphList(mDirector->GetGraphRoot());
+            OpenGraph(GetDirector()->GetGraphRoot());
+            mUI.graphBrowser->BuildGraphList(GetDirector()->GetGraphRoot());
 
             RefreshNodeScenes();
             return true;
@@ -462,7 +462,7 @@ namespace dtDirector
          TabStateData& data = mTabStates[index];
 
          // Search for the proper graph.
-         dtDirector::DirectorGraph* graph = mDirector->GetGraph(data.id);
+         dtDirector::DirectorGraph* graph = GetDirector()->GetGraph(data.id);
          if (graph)
          {
             OpenGraph(graph, true);
@@ -558,7 +558,7 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void DirectorEditor::Refresh()
    {
-      if (!mDirector.valid()) {return;}
+      if (!GetDirector()) {return;}
 
       // Refresh the button states.
       RefreshButtonStates();
@@ -584,9 +584,9 @@ namespace dtDirector
          }
       }
 
-      if (!mUI.graphTab->count() && mDirector.valid())
+      if (!mUI.graphTab->count() && GetDirector())
       {
-         OpenGraph(mDirector->GetGraphRoot(), true);
+         OpenGraph(GetDirector()->GetGraphRoot(), true);
       }
 
       // Refresh the Scene.
@@ -916,22 +916,22 @@ namespace dtDirector
 
          // If we have just entered debug mode, make sure
          // we show the thread browser.
-         if (mDirector->IsDebugging() &&
+         if (GetDirector()->IsDebugging() &&
             mUI.actionPause->isEnabled())
          {
             mUI.threadBrowser->show();
          }
 
          mUI.menuDebug->setEnabled(true);
-         mUI.actionPause->setEnabled(!mDirector->IsDebugging());
-         mUI.actionContinue->setEnabled(mDirector->IsDebugging());
-         mUI.actionStep_Next->setEnabled(mDirector->IsDebugging());
+         mUI.actionPause->setEnabled(!GetDirector()->IsDebugging());
+         mUI.actionContinue->setEnabled(GetDirector()->IsDebugging());
+         mUI.actionStep_Next->setEnabled(GetDirector()->IsDebugging());
          mUI.actionToggle_Break_Point->setEnabled(bCanToggleBreakPoint);
          mUI.actionToggle_Break_Point->setChecked(bBreakPointChecked);
       }
       else
       {
-         if (mDirector->GetResource() != dtDAL::ResourceDescriptor::NULL_RESOURCE)
+         if (GetDirector()->GetResource() != dtDAL::ResourceDescriptor::NULL_RESOURCE)
          {
             mUI.action_New->setEnabled(false);
             mUI.action_Load->setEnabled(false);
@@ -980,7 +980,7 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void DirectorEditor::DeleteNode(dtDirector::ID id)
    {
-      Node* node = mDirector->GetNode(id);
+      Node* node = GetDirector()->GetNode(id);
       if (node)
       {
          // Create an undo event.
@@ -989,7 +989,7 @@ namespace dtDirector
          GetUndoManager()->AddEvent(event);
 
          // Delete the node.
-         mDirector->DeleteNode(id);
+         GetDirector()->DeleteNode(id);
 
          // Remove the node from all UI's
          int graphCount = mUI.graphTab->count();
@@ -1009,7 +1009,7 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void DirectorEditor::DeleteGraph(dtDirector::ID id)
    {
-      DirectorGraph* graph = mDirector->GetGraph(id);
+      DirectorGraph* graph = GetDirector()->GetGraph(id);
       if (graph && graph->GetParent())
       {
          // Create an undo event.
@@ -1038,7 +1038,7 @@ namespace dtDirector
          }
 
          // Delete the graph.
-         mDirector->DeleteGraph(id);
+         GetDirector()->DeleteGraph(id);
       }
    }
 
@@ -1157,12 +1157,12 @@ namespace dtDirector
       }
 
       // First find out if the node exists in the current script.
-      Node* testNode = mDirector->GetNode(node->GetID(), true);
+      Node* testNode = GetDirector()->GetNode(node->GetID(), true);
       if (testNode == node)
       {
          ID id = node->GetGraph()->GetID();
          id.index = -1;
-         DirectorGraph* graph = mDirector->GetGraph(id);
+         DirectorGraph* graph = GetDirector()->GetGraph(id);
          OpenGraph(graph);
          EditorScene* scene = GetPropertyEditor()->GetScene();
          if (scene)
@@ -1630,8 +1630,8 @@ namespace dtDirector
             }
 
             // Delete the node or graph.
-            mDirector->DeleteNode(id);
-            mDirector->DeleteGraph(id);
+            GetDirector()->DeleteNode(id);
+            GetDirector()->DeleteGraph(id);
          }
       }
 
@@ -1936,22 +1936,22 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void DirectorEditor::on_actionPause_triggered()
    {
-      mDirector->ToggleDebugEnabled(true);
-      mDirector->StepDebugger();
+      GetDirector()->ToggleDebugEnabled(true);
+      GetDirector()->StepDebugger();
       RefreshButtonStates();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    void DirectorEditor::on_actionContinue_triggered()
    {
-      mDirector->ToggleDebugEnabled(false);
+      GetDirector()->ToggleDebugEnabled(false);
       RefreshButtonStates();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    void DirectorEditor::on_actionStep_Next_triggered()
    {
-      mDirector->StepDebugger();
+      GetDirector()->StepDebugger();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -2119,9 +2119,9 @@ namespace dtDirector
    {
       QMainWindow::showEvent(event);
 
-      if (mDirector.valid() && mUI.graphTab->count() == 0)
+      if (GetDirector() && mUI.graphTab->count() == 0)
       {
-         OpenGraph(mDirector->GetGraphRoot());
+         OpenGraph(GetDirector()->GetGraphRoot());
       }
 
       RefreshNewMenu();
@@ -2197,7 +2197,7 @@ namespace dtDirector
       }
 
       // If we get down to here, it means we are closing the editor.
-      if (mDirector)
+      if (GetDirector())
       {
          EditorNotifier* notifier = GetNotifier();
          if (notifier)
@@ -2212,11 +2212,11 @@ namespace dtDirector
             // remove the notifier.
             if (notifier->GetEditors().empty())
             {
-               mDirector->SetNotifier(NULL);
+               GetDirector()->SetNotifier(NULL);
             }
          }
 
-         mDirector = NULL;
+         SetDirector(NULL);
       }
    }
 
@@ -2225,16 +2225,16 @@ namespace dtDirector
    {
       // Clear the script.
       mUI.graphTab->clear();
-      mDirector->Clear();
+      GetDirector()->Clear();
       GetUndoManager()->Clear();
 
       mFileName.clear();
       mFullFileName.clear();
 
-      if (!scriptType.empty() && scriptType != mDirector->GetScriptType())
+      if (!scriptType.empty() && scriptType != GetDirector()->GetScriptType())
       {
-         dtGame::GameManager* gm = mDirector->GetGameManager();
-         dtDAL::Map* map = mDirector->GetMap();
+         dtGame::GameManager* gm = GetDirector()->GetGameManager();
+         dtDAL::Map* map = GetDirector()->GetMap();
 
          DirectorTypeFactory* factory = DirectorTypeFactory::GetInstance();
          if (factory)
@@ -2242,18 +2242,18 @@ namespace dtDirector
             SetDirector(factory->CreateDirector(scriptType));
          }
 
-         if (!mDirector.valid())
+         if (!GetDirector())
          {
-            mDirector = new Director();
+            SetDirector(new Director());
          }
 
-         mDirector->Init(gm, map);
+         GetDirector()->Init(gm, map);
          RefreshNodeScenes();
       }
 
       // Create a single tab with the default graph.
-      OpenGraph(mDirector->GetGraphRoot());
-      mUI.graphBrowser->BuildGraphList(mDirector->GetGraphRoot());
+      OpenGraph(GetDirector()->GetGraphRoot());
+      mUI.graphBrowser->BuildGraphList(GetDirector()->GetGraphRoot());
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -2298,7 +2298,7 @@ namespace dtDirector
          QStringList files = settings.value("recentFileList").toStringList();
          files.removeAll(fileName.c_str());
 
-         mDirector->SaveScript(fullFileName);
+         GetDirector()->SaveScript(fullFileName);
 
          // We only set the current edited file and save the undo manager
          // if we are not debugging.  If we are debugging, we should remain
@@ -2323,7 +2323,7 @@ namespace dtDirector
          settings.setValue("recentFileList", files);
          RefreshRecentFiles();
 
-         dtDAL::ResourceDescriptor resource = mDirector->GetResource();
+         dtDAL::ResourceDescriptor resource = GetDirector()->GetResource();
 
          // If we are saving this script as a new file while debugging
          // in game, then find out the resource type of the script
@@ -2345,7 +2345,7 @@ namespace dtDirector
          // If we are dealing with a resourced script, make sure we go through
          // every other script that is referencing this resource and reload
          // them.
-         if (mDirector->GetResource() != dtDAL::ResourceDescriptor::NULL_RESOURCE)
+         if (GetDirector()->GetResource() != dtDAL::ResourceDescriptor::NULL_RESOURCE)
          {
             // First find all editors that are editing this particular
             // script resource and clear their tabs.
