@@ -26,6 +26,8 @@
 
 #include <QtGui/QTabWidget>
 
+class QPushButton;
+
 namespace dtDirector
 {
    class DirectorEditor;
@@ -54,6 +56,10 @@ namespace dtDirector
       */
       void SetDirectorEditor(DirectorEditor* editor);
 
+   public slots:
+
+      void OnAddNewTabButton();
+
    protected:
 
       /**
@@ -79,6 +85,8 @@ namespace dtDirector
 
 
       DirectorEditor* mEditor;
+
+      QPushButton* mAddButton;
    };
 } // namespace dtDirector
 

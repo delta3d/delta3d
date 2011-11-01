@@ -26,19 +26,34 @@
 #include <dtDirector/director.h>
 
 #include <QtGui/QMouseEvent>
+#include <QtGui/QPushButton>
 
 namespace dtDirector
 {
    ////////////////////////////////////////////////////////////////////////////////
    GraphTabs::GraphTabs(QWidget* parent)
       : QTabWidget(parent)
+      , mEditor(NULL)
+      , mAddButton(NULL)
    {
+      mAddButton = new QPushButton(QIcon(":/icons/debug_step.png"), "", this);
+
+      setCornerWidget(mAddButton);
+
+      connect(mAddButton, SIGNAL(pressed()), this, SLOT(OnAddNewTabButton()));
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void GraphTabs::SetDirectorEditor(DirectorEditor* editor)
    {
       mEditor = editor;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void GraphTabs::OnAddNewTabButton()
+   {
+      // Create a new tab and set it to the home graph.
+      mEditor->OpenGraph(mEditor->GetDirector()->GetGraphRoot(), true);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -64,8 +79,7 @@ namespace dtDirector
    {
       QTabWidget::mouseDoubleClickEvent(e);
 
-      // Create a new tab and set it to the home graph.
-      mEditor->OpenGraph(mEditor->GetDirector()->GetGraphRoot(), true);
+      OnAddNewTabButton();
    }
 } // namespace dtDirector
 
