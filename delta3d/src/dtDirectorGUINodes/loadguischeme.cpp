@@ -61,18 +61,21 @@ namespace dtDirector
       std::string schemeFile = GetString("Scheme");
       if (!schemeFile.empty())
       {
-         std::string scheme = osgDB::getNameLessExtension(schemeFile);
-
-         dtGUI::GUI* gui = GUINodeManager::GetGUI();
-         if (gui && !gui->IsSchemePresent(scheme))
+         if (GetDirector()->GetGameManager())
          {
-            try
+            std::string scheme = osgDB::getNameLessExtension(schemeFile);
+
+            dtGUI::GUI* gui = GUINodeManager::GetGUI();
+            if (gui && !gui->IsSchemePresent(scheme))
             {
-               gui->LoadScheme(schemeFile);
-            }
-            catch(CEGUI::Exception& e)
-            {
-               e;
+               try
+               {
+                  gui->LoadScheme(schemeFile);
+               }
+               catch(CEGUI::Exception& e)
+               {
+                  e;
+               }
             }
          }
       }
