@@ -319,6 +319,13 @@ namespace dtDirector
        */
       DirectorGraph* CreateMacro(const std::string& editorName);
 
+      /**
+       *	Begins dragging of copied nodes.
+       */
+      void CopiedNodeBeginDrag(QGraphicsSceneMouseEvent* event);
+
+      void PaintItemChildren(QPainter* painter, QGraphicsItem* item, QStyleOptionGraphicsItem* options);
+
    private:
       DirectorEditor*            mEditor;
       EditorView*                mView;

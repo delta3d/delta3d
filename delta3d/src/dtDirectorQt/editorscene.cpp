@@ -33,6 +33,7 @@
 #include <dtDirectorQt/macroitem.h>
 #include <dtDirectorQt/linkitem.h>
 #include <dtDirectorQt/groupitem.h>
+#include <dtDirectorQt/clipboard.h>
 
 #include <dtDirector/node.h>
 #include <dtDirector/nodemanager.h>
@@ -44,6 +45,10 @@
 #include <QtGui/QGraphicsSceneMouseEvent>
 #include <QtGui/QInputDialog>
 #include <QtGui/QMenu>
+#include <QtGui/QDrag>
+#include <QtCore/QMimeData>
+#include <QtGui/QPainter>
+#include <QtGui/QImage>
 
 #include <dtCore/actoridactorproperty.h>
 
@@ -1068,12 +1073,19 @@ namespace dtDirector
       }
       else
       {
-         QList<QGraphicsItem*> itemList = selectedItems();
-         int count = (int)itemList.size();
-         for (int index = 0; index < count; index++)
+         if (mHoldingAlt)
          {
-            NodeItem* item = dynamic_cast<NodeItem*>(itemList[index]);
-            if (item) item->BeginMoveEvent();
+            CopiedNodeBeginDrag(event);
+         }
+         else
+         {
+            QList<QGraphicsItem*> itemList = selectedItems();
+            int count = (int)itemList.size();
+            for (int index = 0; index < count; index++)
+            {
+               NodeItem* item = dynamic_cast<NodeItem*>(itemList[index]);
+               if (item) item->BeginMoveEvent();
+            }
          }
       }
    }
@@ -1083,7 +1095,7 @@ namespace dtDirector
    {
       QGraphicsScene::mouseReleaseEvent(event);
 
-      // If you have pressed and released the mouse on an empty
+      // If you have pressed and released the right mouse on an empty
       // area and did not drag, then it should clear the current
       // selection instead.
       if (mDragging)
@@ -1203,51 +1215,88 @@ namespace dtDirector
    ///////////////////////////////////////////////////////////////////////////////
    void EditorScene::dragMoveEvent(QGraphicsSceneDragDropEvent* event)
    {
-
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void EditorScene::dropEvent(QGraphicsSceneDragDropEvent* event)
    {
       const QMimeData *mime = event->mimeData();
-      if (!mime->hasFormat("data"))
+      if (mime->hasFormat("data"))
       {
-         event->ignore();
+         QByteArray itemData = mime->data("data");
+         QDataStream dataStream(&itemData, QIODevice::ReadOnly);
+
+         QString name; //name of the Node type
+         QString category; //category of the Node
+         QString refName; //referenced value name.
+         QPoint hotspot; //the dragging hotspot position (distance from the left corner)
+
+         dataStream >> name >> category >> refName >> hotspot;
+
+         QPointF pos = event->scenePos() - mTranslationItem->scenePos() - hotspot;
+
+         if (!name.isEmpty() && !refName.isEmpty())
+         {
+            mEditor->GetUndoManager()->BeginMultipleEvents("Creation of Node \'" + name.toStdString() + "\'.");
+         }
+
+         Node* item = CreateNodeItem(name.toStdString(), category.toStdString(), pos.x(), pos.y());
+
+         if (!refName.isEmpty())
+         {
+            if (item)
+            {
+               item->SetString(refName.toStdString(), "Reference");
+               dtCore::RefPtr<UndoPropertyEvent> event =
+                  new UndoPropertyEvent(mEditor, mGraph->GetID(), "Reference", "", refName.toStdString());
+               mEditor->GetUndoManager()->AddEvent(event.get());
+               mEditor->RefreshNode(item);
+            }
+
+            mEditor->GetUndoManager()->EndMultipleEvents();
+         }
+         return;
+      }
+      else if (mime->hasFormat("DragCopyEvent"))
+      {
+         QByteArray itemData = mime->data("DragCopyEvent");
+         QDataStream dataStream(&itemData, QIODevice::ReadOnly);
+         QPoint hotspot; // The original position of the mouse when this copy was started.
+         dataStream >> hotspot;
+
+         mEditor->on_action_Copy_triggered();
+
+         QPointF pos = event->scenePos() - mTranslationItem->scenePos() - hotspot;
+         Clipboard& clipboard = Clipboard::GetInstance();
+
+         std::vector<dtDAL::PropertyContainer*> newSelection;
+         newSelection = clipboard.PasteObjects(mGraph.get(), mEditor->GetUndoManager(), osg::Vec2(pos.x(), pos.y()));
+
+         mEditor->RefreshGraph(mGraph.get());
+
+         int count = (int)newSelection.size();
+         for (int index = 0; index < count; ++index)
+         {
+            Node* node = dynamic_cast<Node*>(newSelection[index]);
+            if (node)
+            {
+               NodeItem* item = GetNodeItem(node->GetID(), true);
+               if (item) item->setSelected(true);
+            }
+            else
+            {
+               DirectorGraph* graph = dynamic_cast<DirectorGraph*>(newSelection[index]);
+               if (graph)
+               {
+                  MacroItem* item = GetGraphItem(graph->GetID());
+                  if (item) item->setSelected(true);
+               }
+            }
+         }
          return;
       }
 
-      QByteArray itemData = mime->data("data");
-      QDataStream dataStream(&itemData, QIODevice::ReadOnly);
-
-      QString name; //name of the Node type
-      QString category; //category of the Node
-      QString refName; //referenced value name.
-      QPoint hotspot; //the dragging hotspot position (distance from the left corner)
-
-      dataStream >> name >> category >> refName >> hotspot;
-
-      QPointF pos = event->scenePos() - mTranslationItem->scenePos() - hotspot;
-
-      if (!name.isEmpty() && !refName.isEmpty())
-      {
-         mEditor->GetUndoManager()->BeginMultipleEvents("Creation of Node \'" + name.toStdString() + "\'.");
-      }
-
-      Node* item = CreateNodeItem(name.toStdString(), category.toStdString(), pos.x(), pos.y());
-
-      if (!refName.isEmpty())
-      {
-         if (item)
-         {
-            item->SetString(refName.toStdString(), "Reference");
-            dtCore::RefPtr<UndoPropertyEvent> event =
-               new UndoPropertyEvent(mEditor, mGraph->GetID(), "Reference", "", refName.toStdString());
-            mEditor->GetUndoManager()->AddEvent(event.get());
-            mEditor->RefreshNode(item);
-         }
-
-         mEditor->GetUndoManager()->EndMultipleEvents();
-      }
+      event->ignore();
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -1351,6 +1400,197 @@ namespace dtDirector
       }
 
       return NULL;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void EditorScene::CopiedNodeBeginDrag(QGraphicsSceneMouseEvent* event)
+   {
+      QRectF iconBounds;
+      QPoint topLeftPos;
+
+      bool first = true;
+      QList<QGraphicsItem*> itemList = selectedItems();
+      int count = (int)itemList.size();
+      for (int index = 0; index < count; index++)
+      {
+         NodeItem* item = dynamic_cast<NodeItem*>(itemList[index]);
+         if (item)
+         {
+            QRectF itemBounds = item->sceneBoundingRect();
+            if (first)
+            {
+               iconBounds = itemBounds;
+               topLeftPos = item->scenePos().toPoint();
+               first = false;
+            }
+            else
+            {
+               if (iconBounds.left() > itemBounds.left())
+               {
+                  iconBounds.setLeft(itemBounds.left());
+               }
+               if (iconBounds.right() < itemBounds.right())
+               {
+                  iconBounds.setRight(itemBounds.right());
+               }
+               if (iconBounds.top() > itemBounds.top())
+               {
+                  iconBounds.setTop(itemBounds.top());
+               }
+               if (iconBounds.bottom() < itemBounds.bottom())
+               {
+                  iconBounds.setBottom(itemBounds.bottom());
+               }
+
+               if (topLeftPos.x() > item->scenePos().toPoint().x())
+               {
+                  topLeftPos.setX(item->scenePos().toPoint().x());
+               }
+               if (topLeftPos.y() > item->scenePos().toPoint().y())
+               {
+                  topLeftPos.setY(item->scenePos().toPoint().y());
+               }
+            }
+         }
+      }
+
+      QImage icon(iconBounds.width() + LINK_LENGTH * 2, iconBounds.height() + LINK_LENGTH * 2, QImage::Format_ARGB32_Premultiplied);
+      icon.fill(qRgba(0, 0, 0, 0));
+
+      QPainter painter;
+      painter.begin(&icon);
+
+      QStyleOptionGraphicsItem* options = new QStyleOptionGraphicsItem();
+
+      for (int index = 0; index < count; index++)
+      {
+         NodeItem* item = dynamic_cast<NodeItem*>(itemList[index]);
+         if (item)
+         {
+            //shift to the right to account for some negative geometry
+            QRectF itemSceneBound = item->sceneBoundingRect();
+            QRectF itemBound = item->boundingRect();
+            QPoint offset = QPoint(
+               (itemSceneBound.left() - iconBounds.left()) - itemBound.left() + LINK_LENGTH,
+               (itemSceneBound.top() - iconBounds.top()) - itemBound.top() + LINK_LENGTH);
+
+            painter.translate(offset);
+            PaintItemChildren(&painter, item, options);
+            painter.translate(-offset);
+
+            // Draw all link connections.
+            int outputCount = (int)item->GetOutputs().size();
+            for (int outputIndex = 0; outputIndex < outputCount; ++outputIndex)
+            {
+               OutputData& data = item->GetOutputs()[outputIndex];
+               int connectionCount = (int)data.link->GetLinks().size();
+               for (int connectionIndex = 0; connectionIndex < connectionCount; ++connectionIndex)
+               {
+                  InputLink* link = data.link->GetLinks()[connectionIndex];
+                  if (link)
+                  {
+                     NodeItem* linkedItem = GetNodeItem(link->GetOwner(), false);
+                     if (linkedItem && linkedItem->isSelected())
+                     {
+                        QGraphicsPathItem* connectionGraphic = data.linkConnectors[connectionIndex];
+                        if (connectionGraphic)
+                        {
+                           //shift to the right to account for some negative geometry
+                           itemSceneBound = connectionGraphic->sceneBoundingRect();
+                           itemBound = connectionGraphic->boundingRect();
+                           offset = QPoint(
+                              (itemSceneBound.left() - iconBounds.left()) - itemBound.left() + LINK_LENGTH,
+                              (itemSceneBound.top() - iconBounds.top()) - itemBound.top() + LINK_LENGTH);
+
+                           painter.translate(offset);
+                           PaintItemChildren(&painter, connectionGraphic, options);
+                           painter.translate(-offset);
+                        }
+                     }
+                  }
+               }
+            }
+
+            int valueCount = (int)item->GetValues().size();
+            for (int valueIndex = 0; valueIndex < valueCount; ++valueIndex)
+            {
+               ValueData& data = item->GetValues()[valueIndex];
+               int connectionCount = (int)data.link->GetLinks().size();
+               for (int connectionIndex = 0; connectionIndex < connectionCount; ++connectionIndex)
+               {
+                  ValueNode* link = data.link->GetLinks()[connectionIndex];
+                  if (link)
+                  {
+                     NodeItem* linkedItem = GetNodeItem(link, false);
+                     if (linkedItem && linkedItem->isSelected())
+                     {
+                        QGraphicsPathItem* connectionGraphic = data.linkConnectors[connectionIndex];
+                        if (connectionGraphic)
+                        {
+                           //shift to the right to account for some negative geometry
+                           itemSceneBound = connectionGraphic->sceneBoundingRect();
+                           itemBound = connectionGraphic->boundingRect();
+                           offset = QPoint(
+                              (itemSceneBound.left() - iconBounds.left()) - itemBound.left() + LINK_LENGTH,
+                              (itemSceneBound.top() - iconBounds.top()) - itemBound.top() + LINK_LENGTH);
+
+                           painter.translate(offset);
+                           PaintItemChildren(&painter, connectionGraphic, options);
+                           painter.translate(-offset);
+                        }
+                     }
+                  }
+               }
+            }
+         }
+      }
+
+      painter.end();
+
+      QDrag* drag = new QDrag(event->widget());
+      QMimeData* mime = new QMimeData;
+      drag->setMimeData(mime);
+
+      float zoom = GetView()->GetZoomScale();
+
+      icon = icon.scaled(icon.width() * zoom, icon.height() * zoom);
+      QPixmap pix = QPixmap::fromImage(icon);
+      drag->setPixmap(pix);
+
+      QPoint hotspot(event->scenePos().toPoint() - iconBounds.topLeft().toPoint());
+      hotspot += QPoint(LINK_LENGTH, LINK_LENGTH);
+      hotspot *= zoom;
+      drag->setHotSpot(hotspot);
+
+      QByteArray itemData;
+      QDataStream dataStream(&itemData, QIODevice::WriteOnly);
+
+      hotspot = QPoint(event->scenePos().toPoint() - topLeftPos);
+      dataStream << hotspot;
+
+      mime->setData("DragCopyEvent", itemData);
+      drag->exec();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void EditorScene::PaintItemChildren(QPainter* painter, QGraphicsItem* item, QStyleOptionGraphicsItem* options)
+   {
+      painter->setOpacity(0.5f);
+      item->paint(painter, options);
+
+      int count = item->children().count();
+      for (int index = 0; index < count; ++index)
+      {
+         QGraphicsItem* child = item->children()[index];
+         if (child)
+         {
+            painter->translate(child->pos());
+
+            PaintItemChildren(painter, child, options);
+
+            painter->translate(-child->pos());
+         }
+      }
    }
 } // namespace dtDirector
 
