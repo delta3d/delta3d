@@ -108,6 +108,8 @@ namespace dtDirector
        */
       NodeItem* GetNodeItemAtPos(const QPointF& pos);
 
+      void PaintItemChildren(QPainter* painter, QGraphicsItem* item, QStyleOptionGraphicsItem* options);
+
       DirectorEditor* mpEditor;
       DirectorGraph* mpGraph;
       QGraphicsRectItem* mpItem;
