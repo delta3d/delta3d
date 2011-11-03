@@ -105,12 +105,12 @@ namespace dtEditQt
          }
 
          ConfigurationManager::GetInstance().ReadXML(mSTAGEConfigFullPath);
-      }      
+      }
 
       //Setup stylesheet based on what's in the configuration file.
-      //Note that stylesheet has to be setup for qApp before ANYTHING in the 
+      //Note that stylesheet has to be setup for qApp before ANYTHING in the
       //qApp starts up or the stylesheet does not get applied.
-      std::string styleSheetFile = 
+      std::string styleSheetFile =
          ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::GENERAL,
                                                          CONF_MGR_STYLESHEET);
       if (styleSheetFile != "")
@@ -122,8 +122,8 @@ namespace dtEditQt
             styleSheetFile = dtUtil::GetDeltaRootPath() + "/utilities/STAGE/style/" + styleSheetFile;
          }
 
-         QFile file(styleSheetFile.c_str());         
-         file.open(QFile::ReadOnly);         
+         QFile file(styleSheetFile.c_str());
+         file.open(QFile::ReadOnly);
          QString ss = QString(file.readAll());
 
          qApp->setStyleSheet(ss);
@@ -166,7 +166,7 @@ namespace dtEditQt
 
    ///////////////////////////////////////////////////////////////////////////////
    MainWindow::~MainWindow()
-   {      
+   {
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -231,13 +231,13 @@ namespace dtEditQt
                                              CONF_MGR_SHOW_PROPERTY_EDITOR) != "false")
       {
          mWindowMenu->addAction(editorActions.mActionWindowsPropertyEditor);
-      }      
+      }
 
       if(ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT,
                                          CONF_MGR_SHOW_ACTOR_BROWSER) != "false" ||
          ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT,
                                          CONF_MGR_SHOW_PREFAB_BROWSER) != "false")
-      {      
+      {
          mWindowMenu->addAction(editorActions.mActionWindowsActor);
       }
 
@@ -669,8 +669,8 @@ namespace dtEditQt
          if (!maps.empty())
          {
             mapToLoad = maps.front();
-         }         
-         
+         }
+
          if (EditorData::GetInstance().getLoadLastMap())
          {
             checkAndLoadBackup(mapToLoad);
@@ -787,7 +787,7 @@ namespace dtEditQt
       settings.setValue(EditorSettings::SAVE_MILLISECONDS, EditorActions::GetInstance().mSaveMilliSeconds);
       settings.setValue(EditorSettings::SELECTION_COLOR, editorData.getSelectionColor());
       settings.endGroup();
-      
+
       //camera speed settings
       settings.beginGroup(EditorSettings::CAMERA_SPEED_GROUP);
       QString perspName(mPerspView->getName().c_str());
@@ -886,7 +886,7 @@ namespace dtEditQt
       }
 
       //Save the Plugin state
-      mPluginManager->StoreActivePluginsToConfigFile();      
+      mPluginManager->StoreActivePluginsToConfigFile();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -1087,7 +1087,7 @@ namespace dtEditQt
       if (!action)
       {
          return;
-      }      
+      }
 
       mToolsToolBar->addAction(action);
       action->setActionGroup(mToolModeActionGroup);
@@ -1125,10 +1125,10 @@ namespace dtEditQt
    void MainWindow::SetNormalToolMode()
    {
       //Only go to normal mode if something else isn't "checked"
-      //This is because we may have switched between "Linked Tool" mode 
-      //to "Backdrop" mode and don't want to change to Normal mode. 
+      //This is because we may have switched between "Linked Tool" mode
+      //to "Backdrop" mode and don't want to change to Normal mode.
       //
-      //However, if all we have done is turn off one of those modes, then we 
+      //However, if all we have done is turn off one of those modes, then we
       //do want to "go normal."
       QList<QAction*> actions = mToolsToolBar->actions();
       for (int actionIndex = 0; actionIndex < (int)actions.size(); actionIndex++)
@@ -1136,8 +1136,8 @@ namespace dtEditQt
          if(actions[actionIndex]->isChecked())
          {
             return;  //something is already checked.
-         }         
-      }     
+         }
+      }
 
       mNormalToolMode->setChecked(true);
    }
@@ -1169,7 +1169,7 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void MainWindow::findAndLoadPreferences()
    {
-      EditorSettings testSettings;      
+      EditorSettings testSettings;
 
       //If there are no user preferences .ini file (must be the first time they
       //have ever loaded STAGE) ... see if we can't find a default.ini file
@@ -1177,7 +1177,7 @@ namespace dtEditQt
       QVariant val = testSettings.value(EditorSettings::SAVE_MILLISECONDS, -1);
       if (val == -1)
       {
-         //attempt to locate a "default" ini file and copy it to the 
+         //attempt to locate a "default" ini file and copy it to the
          //user's directory
          std::string src = dtUtil::FileUtils::GetInstance().CurrentDirectory()
                             + "/default.ini";
@@ -1199,7 +1199,7 @@ namespace dtEditQt
             {
                try
                {
-                  dtUtil::FileUtils::GetInstance().MakeDirectory(path);                  
+                  dtUtil::FileUtils::GetInstance().MakeDirectory(path);
                }
                catch (dtUtil::Exception e)
                {
@@ -1218,9 +1218,9 @@ namespace dtEditQt
                   LOG_ERROR("Unable to copy default.ini to user preferences folder.");
                }
             }
-         }         
+         }
       }
-      testSettings.endGroup();     
+      testSettings.endGroup();
 
       EditorSettings settings;
 
