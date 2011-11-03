@@ -139,7 +139,7 @@ namespace dtDirector
                Director* imported = mImportedScriptList[index];
                if (imported)
                {
-                  dtCore::RefPtr<Director> importedClone = imported->Clone(parent? parent: newDirector);
+                  dtCore::RefPtr<Director> importedClone = imported->Clone(parent? parent: newDirector.get());
                   if (importedClone)
                   {
                      newDirector->mImportedScriptList.push_back(importedClone);
