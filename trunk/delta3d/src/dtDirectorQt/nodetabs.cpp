@@ -64,6 +64,11 @@ namespace dtDirector
          delete item;
       }
 
+      if (!mpEditor->GetDirector())
+      {
+         return;
+      }
+
       // In the case of showing Macro nodes, make sure we show our
       // standard Macro along with custom editor macros.
       if (nodeType == NodeType::MACRO_NODE)
