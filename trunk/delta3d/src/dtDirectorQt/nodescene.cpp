@@ -307,7 +307,7 @@ namespace dtDirector
       drag->setMimeData(mime);
 
       float zoom = mpEditor->GetPropertyEditor()->GetScene()->GetView()->GetZoomScale();
-      image = image.scaled(image.width() * zoom, image.height() * zoom);
+      image = image.scaled(image.width() * zoom, image.height() * zoom, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
       drag->setPixmap(QPixmap::fromImage(image));
 
       QPoint hotspot(mouseEvent->scenePos().toPoint() - mpDraggedItem->sceneBoundingRect().topLeft().toPoint());
