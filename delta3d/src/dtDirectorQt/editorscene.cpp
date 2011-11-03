@@ -1498,9 +1498,10 @@ namespace dtDirector
                            //shift to the right to account for some negative geometry
                            itemSceneBound = connectionGraphic->sceneBoundingRect();
                            itemBound = connectionGraphic->boundingRect();
+                           int penWidth = connectionGraphic->pen().width();
                            offset = QPoint(
-                              (itemSceneBound.left() - iconBounds.left()) - itemBound.left() + LINK_LENGTH,
-                              (itemSceneBound.top() - iconBounds.top()) - itemBound.top() + LINK_LENGTH);
+                              (itemSceneBound.left() - iconBounds.left()) - itemBound.left() + LINK_LENGTH - penWidth / 2,
+                              (itemSceneBound.top() - iconBounds.top()) - itemBound.top() + LINK_LENGTH - penWidth / 2);
 
                            painter.translate(offset);
                            PaintItemChildren(&painter, connectionGraphic, options);
@@ -1530,9 +1531,10 @@ namespace dtDirector
                            //shift to the right to account for some negative geometry
                            itemSceneBound = connectionGraphic->sceneBoundingRect();
                            itemBound = connectionGraphic->boundingRect();
+                           int penWidth = connectionGraphic->pen().width();
                            offset = QPoint(
-                              (itemSceneBound.left() - iconBounds.left()) - itemBound.left() + LINK_LENGTH,
-                              (itemSceneBound.top() - iconBounds.top()) - itemBound.top() + LINK_LENGTH);
+                              (itemSceneBound.left() - iconBounds.left()) - itemBound.left() + LINK_LENGTH - penWidth / 2,
+                              (itemSceneBound.top() - iconBounds.top()) - itemBound.top() + LINK_LENGTH - penWidth / 2);
 
                            painter.translate(offset);
                            PaintItemChildren(&painter, connectionGraphic, options);
