@@ -1555,7 +1555,7 @@ namespace dtDirector
 
       float zoom = GetView()->GetZoomScale();
 
-      icon = icon.scaled(icon.width() * zoom, icon.height() * zoom);
+      icon = icon.scaled(icon.width() * zoom, icon.height() * zoom, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
       QPixmap pix = QPixmap::fromImage(icon);
       drag->setPixmap(pix);
 
