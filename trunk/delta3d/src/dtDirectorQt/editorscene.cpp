@@ -1073,19 +1073,31 @@ namespace dtDirector
       }
       else
       {
+         QList<QGraphicsItem*> itemList = selectedItems();
+         int count = (int)itemList.size();
+
          if (mHoldingAlt)
          {
-            CopiedNodeBeginDrag(event);
-         }
-         else
-         {
-            QList<QGraphicsItem*> itemList = selectedItems();
-            int count = (int)itemList.size();
-            for (int index = 0; index < count; index++)
+            // Only attempt to drag-copy nodes if you are hovering your mouse over a selected node.
+            QGraphicsItem* highlightedItem = itemAt(event->scenePos());
+            if (highlightedItem)
             {
-               NodeItem* item = dynamic_cast<NodeItem*>(itemList[index]);
-               if (item) item->BeginMoveEvent();
+               for (int index = 0; index < count; index++)
+               {
+                  if (highlightedItem == itemList[index])
+                  {
+                     CopiedNodeBeginDrag(event);
+                     return;
+                  }
+               }
             }
+         }
+
+         // If we get here, it means we are not drag-copying but instead are moving nodes.
+         for (int index = 0; index < count; index++)
+         {
+            NodeItem* item = dynamic_cast<NodeItem*>(itemList[index]);
+            if (item) item->BeginMoveEvent();
          }
       }
    }
@@ -1215,6 +1227,23 @@ namespace dtDirector
    ///////////////////////////////////////////////////////////////////////////////
    void EditorScene::dragMoveEvent(QGraphicsSceneDragDropEvent* event)
    {
+      const QMimeData *mime = event->mimeData();
+      if (mime->hasFormat("DragCopyEvent"))
+      {
+         // Only allow this item to be dropped if the mouse has moved a significant amount away from it's origin.
+         QByteArray itemData = mime->data("DragCopyEvent");
+         QDataStream dataStream(&itemData, QIODevice::ReadOnly);
+         QPoint hotspot; // The original position of the mouse when this copy was started.
+         QPoint oldMousePos;
+         dataStream >> hotspot >> oldMousePos;
+
+         QPoint mousePos = event->scenePos().toPoint();
+         QPoint move = mousePos - oldMousePos;
+         if (move.manhattanLength() <= 150)
+         {
+            event->ignore();
+         }
+      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -1262,7 +1291,8 @@ namespace dtDirector
          QByteArray itemData = mime->data("DragCopyEvent");
          QDataStream dataStream(&itemData, QIODevice::ReadOnly);
          QPoint hotspot; // The original position of the mouse when this copy was started.
-         dataStream >> hotspot;
+         QPoint oldMousePos;
+         dataStream >> hotspot >> oldMousePos;
 
          mEditor->on_action_Copy_triggered();
 
@@ -1559,7 +1589,8 @@ namespace dtDirector
       QPixmap pix = QPixmap::fromImage(icon);
       drag->setPixmap(pix);
 
-      QPoint hotspot(event->scenePos().toPoint() - iconBounds.topLeft().toPoint());
+      QPoint mousePos = event->scenePos().toPoint();
+      QPoint hotspot(mousePos - iconBounds.topLeft().toPoint());
       hotspot += QPoint(LINK_LENGTH, LINK_LENGTH);
       hotspot *= zoom;
       drag->setHotSpot(hotspot);
@@ -1568,7 +1599,7 @@ namespace dtDirector
       QDataStream dataStream(&itemData, QIODevice::WriteOnly);
 
       hotspot = QPoint(event->scenePos().toPoint() - topLeftPos);
-      dataStream << hotspot;
+      dataStream << hotspot << mousePos;
 
       mime->setData("DragCopyEvent", itemData);
       drag->exec();
