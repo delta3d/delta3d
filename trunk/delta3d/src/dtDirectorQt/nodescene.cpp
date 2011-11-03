@@ -254,6 +254,7 @@ namespace dtDirector
    ///////////////////////////////////////////////////////////////////////////////
    void NodeScene::dragMoveEvent(QGraphicsSceneDragDropEvent* event)
    {
+      event->ignore();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -328,7 +329,7 @@ namespace dtDirector
 
       //store the name, category, and hotspot data for the upcoming drop event
       mime->setData("data", itemData);
-      drag->exec();
+      drag->exec(Qt::CopyAction, Qt::CopyAction);
       mpDraggedItem = NULL;
    }
 
