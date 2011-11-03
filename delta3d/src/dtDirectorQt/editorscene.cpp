@@ -1075,29 +1075,27 @@ namespace dtDirector
       {
          QList<QGraphicsItem*> itemList = selectedItems();
          int count = (int)itemList.size();
-
-         if (mHoldingAlt)
+         if (count > 0)
          {
-            // Only attempt to drag-copy nodes if you are hovering your mouse over a selected node.
-            QGraphicsItem* highlightedItem = itemAt(event->scenePos());
-            if (highlightedItem)
+            if (mHoldingAlt)
             {
-               for (int index = 0; index < count; index++)
+               for (int index = 0; index < count; ++index)
                {
-                  if (highlightedItem == itemList[index])
+                  QGraphicsItem* item = itemList[index];
+                  if (item && item->sceneBoundingRect().contains(event->scenePos()))
                   {
                      CopiedNodeBeginDrag(event);
                      return;
                   }
                }
             }
-         }
 
-         // If we get here, it means we are not drag-copying but instead are moving nodes.
-         for (int index = 0; index < count; index++)
-         {
-            NodeItem* item = dynamic_cast<NodeItem*>(itemList[index]);
-            if (item) item->BeginMoveEvent();
+            // If we get here, it means we are not drag-copying but instead are moving nodes.
+            for (int index = 0; index < count; index++)
+            {
+               NodeItem* item = dynamic_cast<NodeItem*>(itemList[index]);
+               if (item) item->BeginMoveEvent();
+            }
          }
       }
    }
