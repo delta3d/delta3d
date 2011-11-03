@@ -29,6 +29,8 @@
 #include <dtDirectorQt/macroitem.h>
 #include <dtDirectorQt/scriptitem.h>
 #include <dtDirectorQt/valueitem.h>
+#include <dtDirectorQt/editorscene.h>
+#include <dtDirectorQt/editorview.h>
 #include <dtDirector/groupnode.h>
 #include <dtDirectorNodes/referencescriptaction.h>
 
@@ -283,33 +285,36 @@ namespace dtDirector
 
       //we'll render the NodeItem into a Pixmap, so there's something to see while
       //it's being dragged.
-
-      //size of the image to cover the item.  The width is padded to account for
-      //any additional geometry on the left side.
-      int imageWidth = mpDraggedItem->boundingRect().width()+mpDraggedItem->boundingRect().height();
-      int imageHeight = mpDraggedItem->boundingRect().height();
+      int imageWidth = mpDraggedItem->sceneBoundingRect().width() + LINK_LENGTH * 2;
+      int imageHeight = mpDraggedItem->sceneBoundingRect().height() + LINK_LENGTH * 2;
 
       QImage image(imageWidth, imageHeight, QImage::Format_ARGB32_Premultiplied);
       image.fill(qRgba(0, 0, 0, 0));
 
       QPainter painter;
       painter.begin(&image);
-      painter.setBrush(mpDraggedItem->brush());
 
       //shift to the right to account for some negative geometry
-      painter.translate(mpDraggedItem->boundingRect().height()/2, 0);
+      painter.translate(QPoint(
+         -mpDraggedItem->boundingRect().left() + LINK_LENGTH,
+         -mpDraggedItem->boundingRect().top() + LINK_LENGTH));
 
-      painter.drawPolygon(mpDraggedItem->polygon(), Qt::WindingFill);
+      PaintItemChildren(&painter, mpDraggedItem, new QStyleOptionGraphicsItem());
       painter.end();
 
       QDrag* drag = new QDrag(mouseEvent->widget());
       QMimeData* mime = new QMimeData;
       drag->setMimeData(mime);
+
+      float zoom = mpEditor->GetPropertyEditor()->GetScene()->GetView()->GetZoomScale();
+      image = image.scaled(image.width() * zoom, image.height() * zoom);
       drag->setPixmap(QPixmap::fromImage(image));
 
-      QPoint hotspot(mouseEvent->scenePos().toPoint() - static_cast<QGraphicsItem*>(mpDraggedItem)->scenePos().toPoint());
+      QPoint hotspot(mouseEvent->scenePos().toPoint() - mpDraggedItem->sceneBoundingRect().topLeft().toPoint());
+      hotspot += QPoint(LINK_LENGTH, LINK_LENGTH);
+      hotspot *= zoom;
 
-      drag->setHotSpot(hotspot + QPoint(mpDraggedItem->boundingRect().height()/2.f, 0.f));
+      drag->setHotSpot(hotspot);
 
       QVariant name = mpDraggedItem->QGraphicsItem::data(Qt::UserRole);
       QVariant category = mpDraggedItem->QGraphicsItem::data(Qt::UserRole + 1);
@@ -317,6 +322,8 @@ namespace dtDirector
 
       QByteArray itemData;
       QDataStream dataStream(&itemData, QIODevice::WriteOnly);
+
+      hotspot = QPoint(mouseEvent->scenePos().toPoint() - mpDraggedItem->scenePos().toPoint());
       dataStream <<  name.toString() << category.toString() << refName.toString() << QPoint(hotspot);
 
       //store the name, category, and hotspot data for the upcoming drop event
@@ -345,6 +352,27 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void NodeScene::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
    {
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void NodeScene::PaintItemChildren(QPainter* painter, QGraphicsItem* item, QStyleOptionGraphicsItem* options)
+   {
+      painter->setOpacity(0.5f);
+      item->paint(painter, options);
+
+      int count = item->children().count();
+      for (int index = 0; index < count; ++index)
+      {
+         QGraphicsItem* child = item->children()[index];
+         if (child)
+         {
+            painter->translate(child->pos());
+
+            PaintItemChildren(painter, child, options);
+
+            painter->translate(-child->pos());
+         }
+      }
    }
 } // namespace dtDirector
 
