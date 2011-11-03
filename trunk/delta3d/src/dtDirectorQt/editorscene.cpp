@@ -1226,7 +1226,12 @@ namespace dtDirector
    void EditorScene::dragMoveEvent(QGraphicsSceneDragDropEvent* event)
    {
       const QMimeData *mime = event->mimeData();
-      if (mime->hasFormat("DragCopyEvent"))
+      if (mime->hasFormat("data"))
+      {
+         event->acceptProposedAction();
+         return;
+      }
+      else if (mime->hasFormat("DragCopyEvent"))
       {
          // Only allow this item to be dropped if the mouse has moved a significant amount away from it's origin.
          QByteArray itemData = mime->data("DragCopyEvent");
@@ -1237,11 +1242,17 @@ namespace dtDirector
 
          QPoint mousePos = event->scenePos().toPoint();
          QPoint move = mousePos - oldMousePos;
-         if (move.manhattanLength() <= 150)
+         if (move.manhattanLength() <= 75)
          {
             event->ignore();
+            return;
          }
+
+         event->acceptProposedAction();
+         return;
       }
+
+      event->ignore();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -1600,7 +1611,7 @@ namespace dtDirector
       dataStream << hotspot << mousePos;
 
       mime->setData("DragCopyEvent", itemData);
-      drag->exec();
+      drag->exec(Qt::CopyAction, Qt::CopyAction);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
