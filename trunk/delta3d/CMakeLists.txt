@@ -86,29 +86,22 @@ MACRO(ADD_DELTA3D_SUBFOLDERS)
       SET(DTTERRAIN_AVAILABLE "YES")
    ENDIF (BUILD_TERRAIN)
 
-
-
    ADD_SUBDIRECTORY(src/dtActors)
    ADD_SUBDIRECTORY(src/dtUtil)
    ADD_SUBDIRECTORY(src/dtCore)
    ADD_SUBDIRECTORY(src/dtAI)
    ADD_SUBDIRECTORY(src/dtABC)
    ADD_SUBDIRECTORY(src/dtDAL)
-
-   IF (BUILD_DIRECTOR)
-      ADD_SUBDIRECTORY(src/dtDirector)
-   ENDIF (BUILD_DIRECTOR)
+   ADD_SUBDIRECTORY(src/dtDirector)
 
    IF (DTAUDIO_AVAILABLE)
       ADD_SUBDIRECTORY(src/dtDirectorAudioNodes)
    ENDIF (DTAUDIO_AVAILABLE)
 
-   IF (BUILD_DIRECTOR)
-     IF (DTANIM_AVAILABLE)
-        ADD_SUBDIRECTORY(src/dtDirectorNodes)
-        SET(DTDIRECTOR_NODES_AVAILABLE "YES")
-     ENDIF (DTANIM_AVAILABLE)
-   ENDIF (BUILD_DIRECTOR)
+   IF (DTANIM_AVAILABLE)
+      ADD_SUBDIRECTORY(src/dtDirectorNodes)
+      SET(DTDIRECTOR_NODES_AVAILABLE "YES")
+   ENDIF (DTANIM_AVAILABLE)
 
    ADD_SUBDIRECTORY(src/dtGame)
    ADD_SUBDIRECTORY(src/dtInputISense)
@@ -118,9 +111,6 @@ MACRO(ADD_DELTA3D_SUBFOLDERS)
       ADD_SUBDIRECTORY(src/dtQt)
       SET(DTQT_AVAILABLE "YES")
       ADD_SUBDIRECTORY(src/dtInspectorQt)
-      IF (BUILD_DIRECTOR)
-         ADD_SUBDIRECTORY(src/dtDirectorQt)
-      ENDIF (BUILD_DIRECTOR)
    ENDIF (QT4_FOUND)
 
    IF (BUILD_TESTS)
@@ -150,7 +140,6 @@ OPTION(BUILD_HLA           "Enables the building of dtHLA related projects (requ
 OPTION(BUILD_PLIB          "Enabes the building of dtInputPLIB (requires PLIB)" ON)
 OPTION(BUILD_NET           "Enables the building of dtNet/dtNetGM (requires HawkNL,GNE,Boost)" OFF)
 OPTION(BUILD_TERRAIN       "Enables the building of dtTerrain (requires GDAL)" ON)
-OPTION(BUILD_DIRECTOR      "Enables the building of dtDirector" ON)
 OPTION(BUILD_TESTS         "Enables the building of the unit tests (requires CPPUNIT)" ON)
 OPTION(BUILD_ZIP_PLUGIN    "Build the modified osg zip plugin that support archives, only needed for osg 2.8" ON)
 

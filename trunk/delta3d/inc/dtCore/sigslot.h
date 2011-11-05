@@ -46,6 +46,7 @@
 #define SIGSLOT_H__
 
 #include <dtCore/export.h>
+#include <stdlib.h>
 #include <set>
 #include <list>
 
