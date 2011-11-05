@@ -4,6 +4,7 @@
 //includes gl without needed the windows headers.
 #include <osg/GL>
 #include <osg/GLU>
+#include <GL/glu.h>
 
 #if defined( __APPLE__ )
 //needed for something in CEGUI. weird.
