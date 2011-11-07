@@ -7,7 +7,7 @@ ENDIF(COMMAND cmake_policy)
 
 MACRO(ADD_DELTA3D_SUBFOLDERS)
    #optional external dependencies
-   IF (BUILD_ANIM)  
+   IF (BUILD_ANIM)
       FIND_PACKAGE(Cal3d)   #for dtAnim
       ADD_SUBDIRECTORY(src/dtAnim)
       SET(DTANIM_AVAILABLE "YES")
@@ -19,28 +19,28 @@ MACRO(ADD_DELTA3D_SUBFOLDERS)
       SET(DTAUDIO_AVAILABLE "YES")
    ENDIF (BUILD_AUDIO)
 
-   IF (BUILD_BINDINGS) 
-      FIND_PACKAGE(Boost COMPONENTS python REQUIRED)      #for dtNet, dtNetGM, Python bindings  
+   IF (BUILD_BINDINGS)
+      FIND_PACKAGE(Boost COMPONENTS python REQUIRED)      #for dtNet, dtNetGM, Python bindings
       FIND_PACKAGE(PythonLibs) #for Python bindings
       ADD_SUBDIRECTORY(src/python)
       ADD_SUBDIRECTORY(src/dtScript)
    ENDIF (BUILD_BINDINGS)
-	
-   IF (BUILD_DIS)  
+
+   IF (BUILD_DIS)
       FIND_PACKAGE(DIS)     #for dtDIS
       FIND_PACKAGE(HAWKNL)  #for dtNet, dtNetGM, dtDIS
       ADD_SUBDIRECTORY(src/dtDIS)
       SET(DTDIS_AVAILABLE "YES")
-   ENDIF (BUILD_DIS)  
+   ENDIF (BUILD_DIS)
 
-   IF (BUILD_GUI)  
+   IF (BUILD_GUI)
       OPTION(BUILD_WITH_OLD_CEGUI  "ON = build using legacy CEGUI 0.6.x compatability, OFF = build using CEGUI 0.7.x compatibility" OFF)
       MARK_AS_ADVANCED(BUILD_WITH_OLD_CEGUI)
       FIND_PACKAGE(CEGUI)   #for dtGUI
       SET(DTGUI_AVAILABLE "YES")
       ADD_SUBDIRECTORY(src/dtGUI)
-	  ADD_SUBDIRECTORY(src/dtDirectorGUINodes)
-   ENDIF (BUILD_GUI) 
+    ADD_SUBDIRECTORY(src/dtDirectorGUINodes)
+   ENDIF (BUILD_GUI)
 
    IF (BUILD_HLA)
       IF (USE_RTIS)
@@ -51,10 +51,10 @@ MACRO(ADD_DELTA3D_SUBFOLDERS)
          ELSE (USE_CERTI)
             IF (USE_MAK)
                FIND_PACKAGE(RTIMAK REQUIRED)
-            ELSE (USE_MAK) 
+            ELSE (USE_MAK)
                IF (USE_PORTICO)
                   FIND_PACKAGE(RTIPortico REQUIRED)
-               ELSE (USE_PORTICO) 
+               ELSE (USE_PORTICO)
                   MESSAGE("No HLA RTI selected, choose USE_CERTI, USE_RTIS, USE_PORTICO or USE_MAK")
                ENDIF (USE_PORTICO)
             ENDIF (USE_MAK)
@@ -78,7 +78,7 @@ MACRO(ADD_DELTA3D_SUBFOLDERS)
       ADD_SUBDIRECTORY(src/dtNetGM)
       SET(DTNET_AVAILABLE "YES")
       SET(DTNETGM_AVAILABLE "YES")
-   ENDIF (BUILD_NET)  
+   ENDIF (BUILD_NET)
 
    IF (BUILD_TERRAIN)
       FIND_PACKAGE(GDAL)    #for dtTerrain
@@ -110,6 +110,7 @@ MACRO(ADD_DELTA3D_SUBFOLDERS)
    IF (QT4_FOUND)
       ADD_SUBDIRECTORY(src/dtQt)
       SET(DTQT_AVAILABLE "YES")
+      ADD_SUBDIRECTORY(src/dtDirectorQt)
       ADD_SUBDIRECTORY(src/dtInspectorQt)
    ENDIF (QT4_FOUND)
 
@@ -119,7 +120,7 @@ MACRO(ADD_DELTA3D_SUBFOLDERS)
       FIND_PACKAGE(CPPUNIT) #for unit tests
       ADD_SUBDIRECTORY(tests)
    ENDIF (BUILD_TESTS)
-   
+
    ADD_SUBDIRECTORY(demos)
    ADD_SUBDIRECTORY(examples)
    ADD_SUBDIRECTORY(utilities)
@@ -182,7 +183,7 @@ SET(DELTA_DIR ${CMAKE_SOURCE_DIR})
 
 FIND_PACKAGE(OpenGL REQUIRED)
 
-# Add macro functions 
+# Add macro functions
 INCLUDE(UtilityMacros)
 INCLUDE(BuildExample)
 INCLUDE(BuildBinding)
@@ -221,7 +222,7 @@ IF(APPLE)
    endif()
 
    if (NOT CMAKE_OSX_DEPLOYMENT_TARGET)
-     # use 10.5 because osg atomics won't build on less. 
+     # use 10.5 because osg atomics won't build on less.
      set(CMAKE_OSX_DEPLOYMENT_TARGET "10.5" CACHE STRING "Build SDK root" FORCE)
    endif()
 
@@ -232,7 +233,7 @@ IF(APPLE)
    SET(CMAKE_C_FLAGS_RELWITHDEBINFO "-O2 -gdwarf-2")
    INCLUDE_DIRECTORIES(/usr/include/malloc)
 ELSE (APPLE)
-   #We only want X11 if we are not running on OSX, but still with a unix-like environment 
+   #We only want X11 if we are not running on OSX, but still with a unix-like environment
    IF(UNIX)
       FIND_PACKAGE(X11)
       FIND_LIBRARY(XXF86VM_LIBRARY Xxf86vm)
@@ -262,12 +263,12 @@ IF(WIN32)
 
 ########################################################################################################
 # the foolowing options are MSVC specific,
-# the first DELTA3D_MSVC_VERSIONED_DLL activate a custom build-time layout that should allow to run examples and application 
+# the first DELTA3D_MSVC_VERSIONED_DLL activate a custom build-time layout that should allow to run examples and application
 # fron bin folder without requiring installation step.
 # it also prepend "osg${OPENSCENEGRAPH_SOVERSION}-" to only .dll files, leaving .lib files untouched in lib
-# it also use a hack to get rid of Debug and Release folder in MSVC projects 
+# it also use a hack to get rid of Debug and Release folder in MSVC projects
 # all the .dll and .pdb are in bin and all the .lib and .exp are in lib
-# 
+#
 # the second option disable incremental linking in debug build , that is enabled by default by CMake
 ##########################################################################################################
 
@@ -305,7 +306,7 @@ IF (NOT WIN32)
 ENDIF (NOT WIN32)
 
 IF (NOT WIN32 AND NOT APPLE)
-   FIND_PACKAGE(UUID REQUIRED) 
+   FIND_PACKAGE(UUID REQUIRED)
 ENDIF (NOT WIN32 AND NOT APPLE)
 
 # Make the required external dependency headers visible to everything
@@ -364,21 +365,21 @@ SET (CMAKE_RUNTIME_OUTPUT_DIRECTORY  ${OUTPUT_BINDIR} CACHE PATH "build director
 IF(WIN32)
   SET (CMAKE_LIBRARY_OUTPUT_DIRECTORY  ${OUTPUT_BINDIR} CACHE PATH "build directory")
 ELSE(WIN32)
-  SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${OUTPUT_LIBDIR} CACHE PATH "build directory") 
+  SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${OUTPUT_LIBDIR} CACHE PATH "build directory")
 ENDIF(WIN32)
 
-# For each configuration (Debug, Release, MinSizeRel... and/or anything the user chooses) 
-FOREACH(CONF ${CMAKE_CONFIGURATION_TYPES}) 
-# Go uppercase (DEBUG, RELEASE...) 
-STRING(TOUPPER "${CONF}" CONF) 
-SET("CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${CONF}" "${OUTPUT_LIBDIR}") 
-SET("CMAKE_RUNTIME_OUTPUT_DIRECTORY_${CONF}" "${OUTPUT_BINDIR}") 
-IF(WIN32) 
-  SET("CMAKE_LIBRARY_OUTPUT_DIRECTORY_${CONF}" "${OUTPUT_BINDIR}") 
-ELSE() 
-  SET("CMAKE_LIBRARY_OUTPUT_DIRECTORY_${CONF}" "${OUTPUT_LIBDIR}") 
-ENDIF() 
-ENDFOREACH() 
+# For each configuration (Debug, Release, MinSizeRel... and/or anything the user chooses)
+FOREACH(CONF ${CMAKE_CONFIGURATION_TYPES})
+# Go uppercase (DEBUG, RELEASE...)
+STRING(TOUPPER "${CONF}" CONF)
+SET("CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${CONF}" "${OUTPUT_LIBDIR}")
+SET("CMAKE_RUNTIME_OUTPUT_DIRECTORY_${CONF}" "${OUTPUT_BINDIR}")
+IF(WIN32)
+  SET("CMAKE_LIBRARY_OUTPUT_DIRECTORY_${CONF}" "${OUTPUT_BINDIR}")
+ELSE()
+  SET("CMAKE_LIBRARY_OUTPUT_DIRECTORY_${CONF}" "${OUTPUT_LIBDIR}")
+ENDIF()
+ENDFOREACH()
 
 # Expose CMAKE_INCLUDE_PATH and CMAKE_LIBARY_PATH to the GUI so users
 # may set these values without needing to manipulate the environment.
@@ -403,20 +404,20 @@ SET(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} CACHE STRING "(EXPERIMENTAL) You may 
 
 
 
-# This is for an advanced option to give aggressive warnings 
+# This is for an advanced option to give aggressive warnings
 # under different compilers. If yours is not implemented, this option
 # will not be made available.
 IF(CMAKE_COMPILER_IS_GNUCXX)
-   # To be complete, we might also do GNUCC flags, 
+   # To be complete, we might also do GNUCC flags,
    # but everything here is C++ code.
    # -Wshadow and -Woverloaded-virtual are also interesting flags, but OSG
    # returns too many hits.
-   # FYI, if we do implement GNUCC, then -Wmissing-prototypes in another 
+   # FYI, if we do implement GNUCC, then -Wmissing-prototypes in another
    # interesting C-specific flag.
    # Also, there is a bug in gcc 4.0. Under C++, -pedantic will create
    # errors instead of warnings for certain issues, including superfluous
    # semicolons and commas, and the use of long long. -fpermissive seems
-   # to be the workaround. 
+   # to be the workaround.
    SET(DELTA3D_AGGRESSIVE_WARNING_FLAGS "-Wall -Wparentheses -Wformat=2 -Wno-long-long -Wno-import -pedantic -Wreturn-type -Wmissing-braces -Wunknown-pragmas -Wunused -fpermissive")
 ELSE(CMAKE_COMPILER_IS_GNUCXX)
    IF(MSVC)
@@ -426,7 +427,7 @@ ELSE(CMAKE_COMPILER_IS_GNUCXX)
       SET(DELTA3D_AGGRESSIVE_WARNING_FLAGS "/Wall /W4")
    ELSE(MSVC)
       # CMake lacks an elseif, so other non-gcc, non-VS compilers need
-      # to be listed below. If unhandled, DELTA3D_AGGRESSIVE_WARNING_FLAGS should 
+      # to be listed below. If unhandled, DELTA3D_AGGRESSIVE_WARNING_FLAGS should
       # remain unset.
    ENDIF(MSVC)
 ENDIF(CMAKE_COMPILER_IS_GNUCXX)
@@ -444,7 +445,7 @@ IF(DELTA3D_AGGRESSIVE_WARNING_FLAGS)
          SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${DELTA3D_AGGRESSIVE_WARNING_FLAGS}" CACHE STRING "Flags used by the compiler during all build types." FORCE)
       ENDIF(NOT "${OLD_CMAKE_CXX_FLAGS_WAS_SET}")
    ELSE(DELTA3D_USE_AGGRESSIVE_WARNINGS)
-      # FIXME: This will lose any changes made after OLD_CMAKE_CXX_FLAGS was 
+      # FIXME: This will lose any changes made after OLD_CMAKE_CXX_FLAGS was
       # set. The better way would be to parse the string and remove each
       # option explicitly.
       IF("${OLD_CMAKE_CXX_FLAGS_WAS_SET}")
