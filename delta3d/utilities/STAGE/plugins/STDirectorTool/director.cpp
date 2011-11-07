@@ -145,7 +145,10 @@ std::vector<dtCore::BaseActorObject*> DirectorToolEditor::GetActorSelection()
 //////////////////////////////////////////////////////////////////////////
 void DirectorToolEditor::OnMapChanged()
 {
-   GetDirector()->SetMap(dtEditQt::EditorData::GetInstance().getCurrentMap());
+   if (GetDirector())
+   {
+      GetDirector()->SetMap(dtEditQt::EditorData::GetInstance().getCurrentMap());
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
