@@ -506,7 +506,22 @@ namespace dtActors
          mRoofDescriptor = value;
          if (dtCore::Project::GetInstance().IsContextValid())
          {
-            mRoofTexture->setImage(osgDB::readImageFile(dtCore::Project::GetInstance().GetResourcePath(value)));
+            if (mRoofDescriptor.IsEmpty())
+            {
+               mRoofTexture = new osg::Texture2D();
+               mRoofTexture->setWrap(osg::Texture2D::WRAP_S, osg::Texture2D::REPEAT);
+               mRoofTexture->setWrap(osg::Texture2D::WRAP_T, osg::Texture2D::REPEAT);
+
+               osg::StateSet* stateset = mRoofGeom->getOrCreateStateSet();
+               stateset->setTextureAttributeAndModes(0, mRoofTexture.get(), osg::StateAttribute::ON);
+
+               // Make sure we render both sides, so disable cull face.
+               stateset->setMode(GL_CULL_FACE, osg::StateAttribute::OFF | osg::StateAttribute::OVERRIDE);
+            }
+            else
+            {
+               mRoofTexture->setImage(osgDB::readImageFile(dtCore::Project::GetInstance().GetResourcePath(value)));
+            }
             Visualize();
          }
       }
@@ -521,7 +536,16 @@ namespace dtActors
          mOutWallDescriptor = value;
          if (dtCore::Project::GetInstance().IsContextValid())
          {
-            mOutWallTexture->setImage(osgDB::readImageFile(dtCore::Project::GetInstance().GetResourcePath(value)));
+            if (mOutWallDescriptor.IsEmpty())
+            {
+               mOutWallTexture = new osg::Texture2D();
+               mOutWallTexture->setWrap(osg::Texture2D::WRAP_S, osg::Texture2D::REPEAT);
+               mOutWallTexture->setWrap(osg::Texture2D::WRAP_T, osg::Texture2D::REPEAT);
+            }
+            else
+            {
+               mOutWallTexture->setImage(osgDB::readImageFile(dtCore::Project::GetInstance().GetResourcePath(value)));
+            }
             Visualize();
          }
       }
@@ -536,7 +560,16 @@ namespace dtActors
          mInWallDescriptor = value;
          if (dtCore::Project::GetInstance().IsContextValid())
          {
-            mInWallTexture->setImage(osgDB::readImageFile(dtCore::Project::GetInstance().GetResourcePath(value)));
+            if (mInWallDescriptor.IsEmpty())
+            {
+               mInWallTexture = new osg::Texture2D();
+               mInWallTexture->setWrap(osg::Texture2D::WRAP_S, osg::Texture2D::REPEAT);
+               mInWallTexture->setWrap(osg::Texture2D::WRAP_T, osg::Texture2D::REPEAT);
+            }
+            else
+            {
+               mInWallTexture->setImage(osgDB::readImageFile(dtCore::Project::GetInstance().GetResourcePath(value)));
+            }
             Visualize();
          }
       }
