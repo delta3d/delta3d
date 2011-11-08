@@ -33,7 +33,7 @@
 #endif
 
 
-#if defined( _DEBUG) && (defined DELTA_WIN32)
+#if defined( _DEBUG) && (defined DELTA_WIN32) && !defined(_WIN64)
    #define DEPRECATE(a,b) {                                            \
       void * fptr;                                                     \
       _asm { mov fptr, ebp }                                           \
