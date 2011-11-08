@@ -106,17 +106,6 @@ void TripodActorProxy::BuildPropertyMap()
       "Sets the tether mode for this tripod actor.", GROUPNAME));
 }
 
-///////////////////////////////////////////////////////////////////////////////////
-void TripodActorProxy::SetCamera(BaseActorObject* cameraProxy)
-{
-   SetChild(cameraProxy);
-}
-
-///////////////////////////////////////////////////////////////////////////////////
-DeltaDrawable* TripodActorProxy::GetCamera()
-{
-   return GetChild();
-}
 
 ///////////////////////////////////////////////////////////////////////////////////
 void TripodActorProxy::SetChild(BaseActorObject* childProxy)
@@ -357,4 +346,20 @@ dtCore::RefPtr<dtCore::ActorProperty> TripodActorProxy::GetDeprecatedProperty(co
          "dtCore::Camera", "DEPRECATED - USE Child INSTEAD.");
    }
    return result;
+}
+
+///////////////////////////////////////////////////////////////////////////////////
+void TripodActorProxy::SetCamera(BaseActorObject* cameraProxy)
+{
+   DEPRECATE("void TripodActorProxy::SetCamera(BaseActorObject*)",
+      "void TripodActorProxy::SetChild(BaseActorObject*)");
+   SetChild(cameraProxy);
+}
+
+///////////////////////////////////////////////////////////////////////////////////
+DeltaDrawable* TripodActorProxy::GetCamera()
+{
+   DEPRECATE("DeltaDrawable* TripodActorProxy::GetCamera()",
+      "DeltaDrawable* TripodActorProxy::GetChild()");
+   return GetChild();
 }

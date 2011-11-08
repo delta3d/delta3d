@@ -72,17 +72,6 @@ namespace dtActors
       */
       virtual bool IsPlaceable() const { return false; }
 
-      /**
-      * Sets the camera which this tripod will move
-      * @param cameraProxy the camera to move
-      */
-      DEPRECATE_FUNC void SetCamera( dtCore::BaseActorObject* cameraProxy );
-
-      /**
-      * Gets the camera which this tripod is moving
-      * @return the camera which the tripod is moving
-      */
-      DEPRECATE_FUNC dtCore::DeltaDrawable* GetCamera();
 
       /**
       * Sets the transformable which this tripod will move
@@ -184,6 +173,13 @@ namespace dtActors
 
       /// Supports the following deprecated properties: 'Camera' 
       virtual dtCore::RefPtr<dtCore::ActorProperty> GetDeprecatedProperty(const std::string& name);
+
+
+      /** Deprecated 5/23/2011. Call SetChild() instead. */
+      DEPRECATE_FUNC void SetCamera(dtCore::BaseActorObject* cameraProxy);
+
+      /** Deprecated 5/23/2011. Call GetChild() instead. */
+      DEPRECATE_FUNC dtCore::DeltaDrawable* GetCamera();
 
    protected:
 
