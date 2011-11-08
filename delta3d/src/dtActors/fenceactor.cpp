@@ -240,7 +240,7 @@ namespace dtActors
       }
 
       // If there are no meshes setup for the posts yet, use the default sphere/line schema.
-      if (mPostResourceList.size() == 0)
+      if (mPostResourceList.empty() || mSegmentPointList.empty())
       {
          BaseClass::Visualize(pointIndex);
          return;
@@ -755,7 +755,7 @@ namespace dtActors
    dtCore::Transformable* FenceActor::CreatePointDrawable(osg::Vec3 position)
    {
       // If we are not ready to render our fence, default to the parent rendering.
-      if (mPostResourceList.size() == 0)
+      if (mPostResourceList.empty() || mSegmentPointList.empty())
       {
          return BaseClass::CreatePointDrawable(position);
       }
