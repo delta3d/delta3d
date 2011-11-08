@@ -25,7 +25,6 @@
 
 #include <dtGame/export.h>
 #include <dtCore/physicalactorproxy.h>
-#include <dtUtil/deprecationmgr.h>
 #include <dtGame/actorcomponentcontainer.h>
 
 namespace dtUtil
