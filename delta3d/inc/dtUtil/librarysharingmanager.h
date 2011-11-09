@@ -54,26 +54,12 @@ namespace dtUtil
             return *mInstance;
          }
 
-         ///DEPRECATE 2/16/10 use derived Exceptions instead
-         class DT_UTIL_EXPORT ExceptionEnum : public dtUtil::Enumeration
-         {
-               DECLARE_ENUM(ExceptionEnum);
-            public:
-               static ExceptionEnum LibraryLoadingError;
-            protected:
-               ExceptionEnum(const std::string &name) : Enumeration(name)
-               {
-                  AddInstance(this);
-               }
-         };
-
          class LibraryLoadingException : public dtUtil::Exception
          {
          public:
          	LibraryLoadingException(const std::string& message, const std::string& filename, unsigned int linenum);
          	virtual ~LibraryLoadingException() {};
          };
-         
 
          /**
           * @class LibraryHandle

@@ -111,16 +111,22 @@ namespace dtCore
 
    void Button::AddButtonListener(ButtonHandler* buttonHandler)
    {
+      DEPRECATE("void Button::AddButtonListener(ButtonHandler*)",
+         "void Button::AddButtonHandler(ButtonHandler*)");
       AddButtonHandler(buttonHandler);
    }
 
    void Button::InsertButtonListener(const ButtonHandlerList::value_type& pos, ButtonHandler* bl)
    {
+      DEPRECATE("void Button::InsertButtonListener(const ButtonHandlerList::value_type&, ButtonHandler*)",
+         "void Button::InsertButtonHandler(const ButtonHandlerList::value_type&, ButtonHandler*)");
       InsertButtonHandler(pos, bl);
    }
 
    void Button::RemoveButtonListener(ButtonHandler* buttonHandler)
    {
+      DEPRECATE("void Button::RemoveButtonListener(ButtonHandler*)",
+         "void Button::RemoveButtonHandler(ButtonHandler*)");
       RemoveButtonHandler(buttonHandler);
    }
 

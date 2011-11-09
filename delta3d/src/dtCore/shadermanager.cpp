@@ -36,14 +36,6 @@ namespace dtCore
    dtCore::RefPtr<ShaderManager> ShaderManager::mInstance(NULL);
 
    /////////////////////////////////////////////////////////////////////////////
-   IMPLEMENT_ENUM(ShaderException)
-   ShaderException ShaderException::SHADER_SOURCE_ERROR("SHADER_SOURCE_ERROR");
-   ShaderException ShaderException::DUPLICATE_SHADERGROUP_FOUND("DUPLICATE_SHADERGROUP_FOUND");
-   ShaderException ShaderException::XML_PARSER_ERROR("XML_PARSER_ERROR");
-   ShaderException ShaderException::DUPLICATE_SHADER_PARAMETER_FOUND("DUPLICATE_SHADER_PARAMETER_FOUND");
-
-
-   /////////////////////////////////////////////////////////////////////////////
    ShaderManager::ShaderManager()
       : dtCore::Base("ShaderManager")
    {
@@ -657,27 +649,23 @@ namespace dtCore
    ShaderSourceException::ShaderSourceException(const std::string& message, const std::string& filename, unsigned int linenum)
       :dtUtil::Exception(message, filename, linenum)
    {
-      mType = &ShaderException::SHADER_SOURCE_ERROR;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    DuplicateShaderGroupException::DuplicateShaderGroupException(const std::string& message, const std::string& filename, unsigned int linenum)
       :dtUtil::Exception(message, filename, linenum)
    {
-      mType = &ShaderException::DUPLICATE_SHADERGROUP_FOUND;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    ShaderXmlParserException::ShaderXmlParserException(const std::string& message, const std::string& filename, unsigned int linenum)
       :dtUtil::Exception(message, filename, linenum)
    {
-      mType = &ShaderException::XML_PARSER_ERROR;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    DuplicateShaderParameterException::DuplicateShaderParameterException(const std::string& message, const std::string& filename, unsigned int linenum)
       :dtUtil::Exception(message, filename, linenum)
    {
-      mType = &ShaderException::DUPLICATE_SHADER_PARAMETER_FOUND;
    }
 }

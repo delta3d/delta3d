@@ -84,24 +84,6 @@ namespace dtUtil
       FileInfo(): size(0), lastModified(0), fileType(FILE_NOT_FOUND), isInArchive(false) {}
    };
 
-   /**
-    * DEPRECATE 2/16/10 use derived Exceptions instead
-    * @brief An enumeration of exception types that will be thrown by fileutils.
-    */
-   class DT_UTIL_EXPORT FileExceptionEnum : public dtUtil::Enumeration
-   {
-         DECLARE_ENUM(FileExceptionEnum);
-      public:
-         static FileExceptionEnum IOException;
-         static FileExceptionEnum FileNotFound;
-
-      protected:
-         FileExceptionEnum(const std::string &name) : Enumeration(name)
-         {
-            AddInstance(this);
-         }
-   };
-
    class FileUtilIOException : public dtUtil::Exception
    {
    public:

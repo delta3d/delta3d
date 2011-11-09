@@ -73,7 +73,7 @@ class FileUtilsTests : public CPPUNIT_NS::TestFixture
 
       void setUp();
       void tearDown();
-      
+
       void testFileIO1();
       void testFileIO2();
       void testRelativePath();
@@ -83,7 +83,7 @@ class FileUtilsTests : public CPPUNIT_NS::TestFixture
       void testDirectoryContentsWithOneFilter();
       void testDirectoryContentsWithTwoFilters();
       void testDirectoryContentsWithDuplicateFilter();
-      
+
       void testLoadFromArchive();
       void testArchiveRelativePath();
       void testIsSameFileInArchive();
@@ -227,7 +227,7 @@ void FileUtilsTests::testFileIO1()
          fileUtils.GetFileInfo(file2 + "euaoeuaiao.ao.u");
       }
       catch (const dtUtil::Exception& ex)
-      {         
+      {
          CPPUNIT_FAIL(ex.ToString());
       }
 
@@ -715,7 +715,7 @@ void FileUtilsTests::testLoadFromArchive()
    }
 
    fileUtils.ChangeDirectory(TESTS_DIR);
-   
+
 }
 
 void FileUtilsTests::testArchiveRelativePath()
@@ -821,7 +821,7 @@ void FileUtilsTests::testLoadFromPasswordProtectedArchive()
    osgDB::Registry* reg = osgDB::Registry::instance();
    if(reg != NULL)
    {
-      osgDB::AuthenticationMap* auth = new osgDB::AuthenticationMap();  
+      osgDB::AuthenticationMap* auth = new osgDB::AuthenticationMap();
       auth->addAuthenticationDetails("ZipPlugin", new osgDB::AuthenticationDetails("ZipPlugin", "delta3d"));
       reg->setAuthenticationMap(auth);
    }
@@ -840,7 +840,7 @@ void FileUtilsTests::testLoadFromPasswordProtectedArchive()
 
    osg::Node* nodeFile = dtUtil::FileUtils::GetInstance().ReadNode(meshContents[0]);
    CPPUNIT_ASSERT_MESSAGE("Node should not be NULL", nodeFile != NULL);
-   
+
 
    fileUtils.ChangeDirectory(TESTS_DIR);
 

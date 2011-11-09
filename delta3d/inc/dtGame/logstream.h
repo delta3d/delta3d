@@ -32,28 +32,6 @@
 
 namespace dtGame
 {
-   /**
-    * DEPRECATE 2/16/10 use the derived Exceptions instead
-    * This exception enumeration defines the possible exceptions that may
-    * be thrown by LogStream operations.
-    */
-   class DT_GAME_EXPORT LogStreamException : public dtUtil::Enumeration
-   {
-      DECLARE_ENUM(LogStreamException);
-
-   public:
-      ///Throw when an error occurs while performing IO operations on the stream.
-      ///This includes creating or opening a stream.
-      static LogStreamException LOGGER_IO_EXCEPTION;
-
-   private:
-      LogStreamException(const std::string& name)
-         : dtUtil::Enumeration(name)
-      {
-         AddInstance(this);
-      }
-   };
-
    ///Thrown when an error occurs while performing IO operations on the stream.
    ///This includes creating or opening a stream.
    class DT_GAME_EXPORT LogStreamIOException : public dtUtil::Exception

@@ -28,47 +28,6 @@
 
 namespace dtCore
 {
-   /**
-    * DEPRECATE 2/16/10 use derived Exceptions instead
-    * Exceptions for the dtCore namespace
-    */
-   class DT_CORE_EXPORT ExceptionEnum : public dtUtil::Enumeration
-   {
-      DECLARE_ENUM(ExceptionEnum);
-      public:
-
-         static ExceptionEnum INVALID_PARAMETER;
-         static ExceptionEnum INVALID_CONTEXT;
-         static ExceptionEnum BaseException;
-
-         static ExceptionEnum ProjectInvalidContext;
-         static ExceptionEnum ProjectReadOnly;
-         static ExceptionEnum ProjectIOException;
-         static ExceptionEnum ProjectFileNotFound;
-         static ExceptionEnum ProjectResourceError;
-         static ExceptionEnum ProjectException;
-
-         static ExceptionEnum MapLoadParsingError;
-         static ExceptionEnum MapSaveError;
-         static ExceptionEnum MapException;
-
-         static ExceptionEnum XMLLoadParsingError;
-         static ExceptionEnum XMLSaveError;
-         static ExceptionEnum XMLException;
-
-         static ExceptionEnum ObjectFactoryUnknownType;
-
-         static ExceptionEnum InvalidActorException;
-         static ExceptionEnum InvalidParameter;
-   
-   protected:
-      ExceptionEnum(const std::string &name):Enumeration(name)
-      {
-         AddInstance(this);
-      }
-   
-   };
-
    class DT_CORE_EXPORT InvalidParameterException : public dtUtil::Exception
    {
    public:

@@ -36,13 +36,6 @@ namespace dtUtil
    const DataStream::SeekTypeEnum DataStream::SeekTypeEnum::END("END");
 
    /////////////////////////////////////////////////////////////////////////////
-   IMPLEMENT_ENUM(DataStreamException)
-   DataStreamException DataStreamException::BUFFER_INVALID("BUFFER_INVALID");
-   DataStreamException DataStreamException::BUFFER_WRITE_ERROR("BUFFER_WRITE_ERROR");
-   DataStreamException DataStreamException::BUFFER_READ_ERROR("BUFFER_READ_ERROR");
-   DataStreamException DataStreamException::BUFFER_INVALID_POS("BUFFER_INVALID_POS");
-
-   /////////////////////////////////////////////////////////////////////////////
    DataStream::DataStream()
       : mBuffer(NULL)
       , mBufferSize(0)
@@ -889,27 +882,23 @@ namespace dtUtil
    DataStreamBufferInvalid::DataStreamBufferInvalid(const std::string& message, const std::string& filename, unsigned int linenum)
       : dtUtil::Exception(message, filename, linenum)
    {
-      mType = &DataStreamException::BUFFER_INVALID;
    }
 
    /////////////////////////////////////////////////////////////////////////////
    DataStreamBufferReadError::DataStreamBufferReadError(const std::string& message, const std::string& filename, unsigned int linenum)
       : dtUtil::Exception(message, filename, linenum)
    {
-      mType = &DataStreamException::BUFFER_READ_ERROR;
    }
 
    /////////////////////////////////////////////////////////////////////////////
    DataStreamBufferWriteError::DataStreamBufferWriteError(const std::string& message, const std::string& filename, unsigned int linenum)
       : dtUtil::Exception(message, filename, linenum)
    {
-      mType = &DataStreamException::BUFFER_WRITE_ERROR;
    }
 
    /////////////////////////////////////////////////////////////////////////////
    DataStreamBufferInvalidPos::DataStreamBufferInvalidPos(const std::string& message, const std::string& filename, unsigned int linenum)
       : dtUtil::Exception(message, filename, linenum)
    {
-      mType = &DataStreamException::BUFFER_INVALID_POS;
    }
 } // namespace dtUtil

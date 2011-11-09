@@ -316,20 +316,4 @@ namespace dtCore
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void NamedResourceParameter::SetValue(const dtCore::ResourceDescriptor* descriptor)
-   {
-      DEPRECATE("void NamedResourceParameter::SetValue(const dtCore::ResourceDescriptor*)",
-         "void NamedResourceParameter::SetValue(const dtCore::ResourceDescriptor&)");
-
-      if (descriptor)
-      {
-         SetValue(*descriptor);
-      }
-      else
-      {
-         SetValue(dtCore::ResourceDescriptor::NULL_RESOURCE);
-      }
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
 }

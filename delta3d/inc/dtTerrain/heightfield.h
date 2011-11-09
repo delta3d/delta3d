@@ -29,34 +29,6 @@
 
 namespace dtTerrain
 {
-   /**
-    * DEPRECATE 2/16/10
-    * This enumeration defines the different types of exceptions the height field may
-    * throw if an error occurs.
-    */
-   class HeightFieldException : public dtUtil::Enumeration
-   {
-      DECLARE_ENUM(HeightFieldException);
-      public:
-         
-         ///Thrown when an operation occurs on a heightfield with dimensions smaller or larger
-         ///than the heightfield has room for.
-         static HeightFieldException OUT_OF_BOUNDS;
-         
-         ///Thrown if the heightfield data has not been allocated before it is used.
-         static HeightFieldException INVALID_HEIGHTFIELD;
-         
-         ///Thrown when an invalid image format is specified when converting it to 
-         ///a heightfield.
-         static HeightFieldException INVALID_IMAGE_FORMAT;
-         
-      private:
-         HeightFieldException(const std::string &name) : dtUtil::Enumeration(name)
-         {
-            AddInstance(this);
-         }
-   };
-
    class HeightFieldOutOfBoundsException : public dtUtil::Exception
    {
    public:

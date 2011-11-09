@@ -167,24 +167,20 @@ namespace dtCore
        */
       void RemoveAxisHandler(AxisHandler* axisHandler);
 
-      /**
-       * This has been deprecated: use the AddButtonHandler method instead.
-       */
+      /// This has been deprecated: use the AddButtonHandler method instead.
+      /// Deprecated 2/15/2011
       DEPRECATE_FUNC void AddButtonListener(ButtonHandler* buttonHandler);
 
-      /**
-       * This has been deprecated: use the RemoveButtonHandler method instead.
-       */
+      /// This has been deprecated: use the RemoveButtonHandler method instead.
+      /// Deprecated 2/15/2011
       DEPRECATE_FUNC void RemoveButtonListener(ButtonHandler* buttonHandler);
 
-      /**
-       * This has been deprecated: use the AddAxisHandler method instead.
-       */
+      /// This has been deprecated: use the AddAxisHandler method instead.
+      /// Deprecated 2/15/2011
       DEPRECATE_FUNC void AddAxisListener(AxisHandler* axisHandler);
 
-      /**
-       * This has been deprecated: use the RemoveAxisHandler method instead.
-       */
+      /// This has been deprecated: use the RemoveAxisHandler method instead.
+      /// Deprecated 2/15/2011
       DEPRECATE_FUNC void RemoveAxisListener(AxisHandler* axisHandler);
 
       /**

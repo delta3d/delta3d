@@ -56,6 +56,7 @@ namespace dtCore
       DECLARE_MANAGEMENT_LAYER(CollisionMotionModel);
 
    public:
+      /// Deprecated 7/28/2011
       DEPRECATE_FUNC CollisionMotionModel(float pHeight, float pRadius, float k, float theta,
                            dtCore::Scene* pScene,
                            Keyboard* keyboard,

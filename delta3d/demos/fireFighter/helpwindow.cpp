@@ -173,6 +173,6 @@ void HelpWindow::InitGui(dtGUI::GUI& gui, CEGUI::Window* mainWindow)
    {
       std::ostringstream oss;
       oss << "CEGUI exception caught: " << e.getMessage().c_str();
-      throw dtUtil::Exception(ExceptionEnum::CEGUI_EXCEPTION, oss.str(), __FILE__, __LINE__);
+      throw CEGUIException(oss.str(), __FILE__, __LINE__);
    }
 }

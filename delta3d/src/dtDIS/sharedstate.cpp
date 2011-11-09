@@ -119,21 +119,25 @@ SharedState::~SharedState()
 
 ActorMapConfig& SharedState::GetActorMap()
 {
+   DEPRECATE("ActorMapConfig& SharedState::GetActorMap()", "N/A");
    return mActorMapConfig;
 }
 
 const ActorMapConfig& SharedState::GetActorMap() const
 {
+   DEPRECATE("const ActorMapConfig& SharedState::GetActorMap() const", "N/A");
    return mActorMapConfig;
 }
 
 ResourceMapConfig& SharedState::GetResourceMap()
 {
+   DEPRECATE("ResourceMapConfig& SharedState::GetResourceMap()", "N/A");
    return mResourceMapConfig;
 }
 
 const ResourceMapConfig& SharedState::GetResourceMap() const
 {
+   DEPRECATE("const ResourceMapConfig& SharedState::GetResourceMap() const", "N/A");
    return mResourceMapConfig;
 }
 

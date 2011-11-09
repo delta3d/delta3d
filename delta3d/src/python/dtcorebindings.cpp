@@ -3,7 +3,6 @@
 //////////////////////////////////////////////////////////////////////
 
 #include <python/dtpython.h>
-#include <dtCore/globals.h>
 
 using namespace boost::python;
 using namespace dtCore;
@@ -77,12 +76,6 @@ void initFPSColliderBindings();
 
 BOOST_PYTHON_MODULE(PyDtCore)
 {
-   def("SetDataFilePathList", SetDataFilePathList);
-   def("GetDataFilePathList", GetDataFilePathList);
-   def("GetDeltaDataPathList", GetDeltaDataPathList);
-   def("GetDeltaRootPath", GetDeltaRootPath);
-   def("GetEnvironment", GetEnvironment);
-
    initOSGVec2();
    initOSGVec3();
    initOSGVec4();

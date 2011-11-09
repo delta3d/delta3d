@@ -51,43 +51,63 @@ namespace dtCore
     * It's ugly, but it works.
     */
 
-   template <typename CallType> inline 
+   /// Deprecated 4/27/2010
+   template <typename CallType> inline
    DEPRECATE_FUNC dtUtil::Functor<typename dtUtil::FunTraits<CallType>::ResultType, typename dtUtil::FunTraits<CallType>::TypeListType>
    MakeFunctor(CallType fun)
    {
+      DEPRECATE("dtUtil::Functor<typename dtUtil::FunTraits<CallType>::ResultType, typename dtUtil::FunTraits<CallType>::TypeListType> dtCore::MakeFunctor(CallType)",
+         "dtUtil::Functor<typename dtUtil::FunTraits<CallType>::ResultType, typename dtUtil::FunTraits<CallType>::TypeListType> dtUtil::MakeFunctor(CallType)");
       return dtUtil::Functor<typename dtUtil::FunTraits<CallType>::ResultType, typename dtUtil::FunTraits<CallType>::TypeListType>(fun);
    }
+
+   /// Deprecated 4/27/2010
    template <typename CallType, class PObj> inline 
    DEPRECATE_FUNC dtUtil::Functor<typename dtUtil::FunTraits<CallType>::ResultType, typename dtUtil::FunTraits<CallType>::TypeListType>
    MakeFunctor(PObj& pobj, CallType memfun)
    {
+      DEPRECATE("dtUtil::Functor<typename dtUtil::FunTraits<CallType>::ResultType, typename dtUtil::FunTraits<CallType>::TypeListType> dtCore::MakeFunctor(PObj&, CallType)",
+         "dtUtil::Functor<typename dtUtil::FunTraits<CallType>::ResultType, typename dtUtil::FunTraits<CallType>::TypeListType> dtUtil::MakeFunctor(PObj&, CallType)");
       return dtUtil::Functor<typename dtUtil::FunTraits<CallType>::ResultType, typename dtUtil::FunTraits<CallType>::TypeListType>(&pobj, memfun);
    }
+
+   /// Deprecated 4/27/2010
    template <typename CallType, class Fun> inline 
    DEPRECATE_FUNC dtUtil::Functor<typename dtUtil::FunTraits<CallType>::ResultType, typename dtUtil::FunTraits<CallType>::TypeListType>
    MakeFunctor(Fun const& fun)
    {
+      DEPRECATE("dtUtil::Functor<typename dtUtil::FunTraits<CallType>::ResultType, typename dtUtil::FunTraits<CallType>::TypeListType> dtCore::MakeFunctor(Fun const&)",
+         "dtUtil::Functor<typename dtUtil::FunTraits<CallType>::ResultType, typename dtUtil::FunTraits<CallType>::TypeListType> dtUtil::MakeFunctor(Fun const&)");
       return dtUtil::Functor<typename dtUtil::FunTraits<CallType>::ResultType, typename dtUtil::FunTraits<CallType>::TypeListType>(fun);
    }
 
+   /// Deprecated 4/27/2010
    template <typename CallType> inline 
    DEPRECATE_FUNC dtUtil::Functor<typename dtUtil::FunTraits<CallType>::ResultType, typename dtUtil::FunTraits<CallType>::TypeListType>
    MakeFunctorRet(CallType fun)
    {
+      DEPRECATE("dtUtil::Functor<typename dtUtil::FunTraits<CallType>::ResultType, typename dtUtil::FunTraits<CallType>::TypeListType> dtCore::MakeFunctorRet(CallType)",
+         "dtUtil::Functor<typename dtUtil::FunTraits<CallType>::ResultType, typename dtUtil::FunTraits<CallType>::TypeListType> dtUtil::MakeFunctorRet(CallType)");
       return dtUtil::Functor<typename dtUtil::FunTraits<CallType>::ResultType, typename dtUtil::FunTraits<CallType>::TypeListType>(fun);
    }
 
+   /// Deprecated 4/27/2010
    template <typename CallType, class PObj> inline 
    dtUtil::Functor<typename dtUtil::FunTraits<CallType>::ResultType, typename dtUtil::FunTraits<CallType>::TypeListType> 
    DEPRECATE_FUNC MakeFunctorRet(PObj& pobj, CallType memfun)
    {
+      DEPRECATE("dtUtil::Functor<typename dtUtil::FunTraits<CallType>::ResultType, typename dtUtil::FunTraits<CallType>::TypeListType> dtCore::MakeFunctorRet(PObj&, CallType)",
+         "dtUtil::Functor<typename dtUtil::FunTraits<CallType>::ResultType, typename dtUtil::FunTraits<CallType>::TypeListType> dtUtil::MakeFunctorRet(PObj&, CallType)");
       return dtUtil::Functor<typename dtUtil::FunTraits<CallType>::ResultType, typename dtUtil::FunTraits<CallType>::TypeListType>(&pobj, memfun);
    }
 
+   /// Deprecated 4/27/2010
    template <typename CallType, class Fun> inline 
    DEPRECATE_FUNC dtUtil::Functor<typename dtUtil::FunTraits<CallType>::ResultType, typename dtUtil::FunTraits<CallType>::TypeListType>
    MakeFunctorRet(Fun const& fun)
    {
+      DEPRECATE("dtUtil::Functor<typename dtUtil::FunTraits<CallType>::ResultType, typename dtUtil::FunTraits<CallType>::TypeListType> dtCore::MakeFunctorRet(Fun const&)",
+         "dtUtil::Functor<typename dtUtil::FunTraits<CallType>::ResultType, typename dtUtil::FunTraits<CallType>::TypeListType> dtUtil::MakeFunctorRet(Fun const&)");
       return dtUtil::Functor<typename dtUtil::FunTraits<CallType>::ResultType, typename dtUtil::FunTraits<CallType>::TypeListType>(fun);
    }
 

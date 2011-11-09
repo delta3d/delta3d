@@ -1859,7 +1859,7 @@ void StatsHandler::PrintOutStats( osgViewer::ViewerBase * viewer )
          }
       }
 
-      for(unsigned i = viewer->getViewerStats()->getEarliestFrameNumber(); i<= viewer->getViewerStats()->getLatestFrameNumber()-1; ++i)
+      for(int i = viewer->getViewerStats()->getEarliestFrameNumber(); i<= viewer->getViewerStats()->getLatestFrameNumber()-1; ++i)
       {
          for(StatsList::iterator itr = statsList.begin();
             itr != statsList.end();

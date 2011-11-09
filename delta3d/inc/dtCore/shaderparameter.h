@@ -41,26 +41,6 @@ namespace dtCore
 {
    class ShaderProgram;
 
-   /**
-    * DEPRECATE 2/16/10 use derived Exceptions instead
-    * Exceptions a shader parameter may throw.
-    */
-   class DT_CORE_EXPORT ShaderParameterException : public dtUtil::Enumeration
-   {
-      DECLARE_ENUM(ShaderParameterException);
-      public:
-
-         ///Throw if a parameter is applied to the rendering state when one or
-         ///more of its attributes are invalid.
-         static ShaderParameterException INVALID_ATTRIBUTE;
-
-      private:
-         ShaderParameterException(const std::string &name) : dtUtil::Enumeration(name)
-         {
-            AddInstance(this);
-         }
-   };
-
    class ShaderParameterInvalidAttributeException : public dtUtil::Exception
    {
    public:

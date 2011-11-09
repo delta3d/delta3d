@@ -33,34 +33,6 @@ namespace dtTerrain
 {
    class Terrain;
 
-   /**
-    * DEPRECATE 2/16/10 use derived Exceptions instead
-    * These exceptions are used by terrain data readers when an error occurs
-    * during the load process.
-    */
-   class DT_TERRAIN_EXPORT TerrainDataReaderException : public dtUtil::Enumeration
-   {
-      DECLARE_ENUM(TerrainDataReaderException);
-      public:
-
-         ///Thrown when a particular data file was not found.
-         static TerrainDataReaderException DATA_RESOURCE_NOT_FOUND;
-
-         ///Thrown if an error was encountered while reading the terrain data.
-         static TerrainDataReaderException COULD_NOT_READ_DATA;
-
-         ///Thrown if a third party data reader plugin could not be found.
-         static TerrainDataReaderException READER_PLUGIN_NOT_FOUND;
-
-      protected:
-
-         ///Simple enumeration constructor.
-         TerrainDataReaderException(const std::string &name) : dtUtil::Enumeration(name)
-         {
-            AddInstance(this);
-         }
-   };
-
    class TerrainDataResourceNotFoundException : public dtUtil::Exception
    {
    public:

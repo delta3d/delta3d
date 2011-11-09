@@ -202,10 +202,13 @@ void CoreTests::TestHeightOfTerrainWithSkybox()
    dtCore::System::GetInstance().Config();
    dtCore::System::GetInstance().Step();
 
-   const float hot = application->GetScene()->GetHeightOfTerrain(0.f, 0.f);
+   float hot = 0.0f;
+   bool success = application->GetScene()->GetHeightOfTerrain(hot, 0.f, 0.f);
 
    CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The height of terrain of an empty scene should be zero.",
                                         0.f, hot, 0.0001f);
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("Getting the height of the terrain in an empty scene should fail.",
+      false, success);
 }
 
 //////////////////////////////////////////////////////////////////////////

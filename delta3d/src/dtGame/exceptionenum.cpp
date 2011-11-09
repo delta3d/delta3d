@@ -23,62 +23,45 @@
 
 namespace dtGame
 {
-   IMPLEMENT_ENUM(ExceptionEnum)
-
-   ExceptionEnum ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION("General Game Manager Exception");
-   ExceptionEnum ExceptionEnum::INVALID_PARAMETER("Invalid method parameter");   
-   ExceptionEnum ExceptionEnum::UNKNOWN_ACTOR_TYPE("Unknown actor type");
-   ExceptionEnum ExceptionEnum::ACTOR_IS_REMOTE("Actor is remote");   
-   ExceptionEnum ExceptionEnum::INVALID_ACTOR_STATE("Invalid Actor State");
-   ExceptionEnum ExceptionEnum::GAME_APPLICATION_CONFIG_ERROR("Game Application Config Failed.");
-   ExceptionEnum ExceptionEnum::DEAD_RECKONING_EXCEPTION("Dead Reckoning Exception");
-
    ////////////////////////////////////////////////////////////////////////////////
    dtGame::GeneralGameManagerException::GeneralGameManagerException(const std::string& message, const std::string& filename, unsigned int linenum)
       : dtUtil::Exception(message, filename, linenum)
    {
-      mType = &dtGame::ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    dtGame::InvalidParameterException::InvalidParameterException(const std::string& message, const std::string& filename, unsigned int linenum)
       : dtUtil::Exception(message, filename, linenum)
    {
-      mType = &dtGame::ExceptionEnum::INVALID_PARAMETER;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    dtGame::UnknownActorTypeException::UnknownActorTypeException(const std::string& message, const std::string& filename, unsigned int linenum)
       : dtUtil::Exception(message, filename, linenum)
    {
-      mType = &dtGame::ExceptionEnum::UNKNOWN_ACTOR_TYPE;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    dtGame::ActorIsRemoteException::ActorIsRemoteException(const std::string& message, const std::string& filename, unsigned int linenum)
       : dtUtil::Exception(message, filename, linenum)
    {
-      mType = &dtGame::ExceptionEnum::ACTOR_IS_REMOTE;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    dtGame::InvalidActorStateException::InvalidActorStateException(const std::string& message, const std::string& filename, unsigned int linenum)
       : dtUtil::Exception(message, filename, linenum)
    {
-      mType = &dtGame::ExceptionEnum::INVALID_ACTOR_STATE;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    dtGame::GameApplicationConfigException::GameApplicationConfigException(const std::string& message, const std::string& filename, unsigned int linenum)
       : dtUtil::Exception(message, filename, linenum)
    {
-      mType = &dtGame::ExceptionEnum::GAME_APPLICATION_CONFIG_ERROR;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    dtGame::DeadReckoningException::DeadReckoningException(const std::string& message, const std::string& filename, unsigned int linenum)
       : dtUtil::Exception(message, filename, linenum)
    {
-      mType = &dtGame::ExceptionEnum::DEAD_RECKONING_EXCEPTION;
    }
 }

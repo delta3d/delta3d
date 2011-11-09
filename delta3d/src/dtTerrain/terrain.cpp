@@ -44,15 +44,6 @@ namespace dtTerrain
    //////////////////////////////////////////////////////////////////////////
    IMPLEMENT_MANAGEMENT_LAYER(Terrain);
 
-   //////////////////////////////////////////////////////////////////////////
-   IMPLEMENT_ENUM(TerrainException);
-   TerrainException TerrainException::NULL_POINTER("NULL_POINTER");
-   TerrainException TerrainException::INVALID_RESOURCE_PATH("INVALID_RESOURCE_PATH");
-   TerrainException TerrainException::UNSUPPORTED_DATA_FORMAT("UNSUPPORTED_DATA_FORMAT");
-   TerrainException TerrainException::INVALID_DATA_READER("INVALID_DATA_READER");
-   TerrainException TerrainException::INVALID_DATA_RENDERER("INVALID_DATA_RENDERER");
-   TerrainException TerrainException::INVALID_DECORATION_LAYER("INVALID_DECORATION_LAYER");
-
    //////////////////////////////////////////////////////////////////////////    
    class TerrainCullCallback : public osg::NodeCallback
    {
@@ -817,26 +808,22 @@ namespace dtTerrain
    NullPointerException::NullPointerException(const std::string& message, const std::string& filename, unsigned int linenum)
       : dtUtil::Exception(message, filename, linenum)
    {
-      mType = &TerrainException::NULL_POINTER;
    }
     ////////////////////////////////////////////////////////////////////////////////
    InvalidDataRendererException::InvalidDataRendererException(const std::string& message, const std::string& filename, unsigned int linenum) 
       : dtUtil::Exception(message, filename, linenum)
    {
-      mType = &TerrainException::INVALID_DATA_RENDERER;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    InvalidDataReaderException::InvalidDataReaderException(const std::string& message, const std::string& filename, unsigned int linenum) 
       : dtUtil::Exception(message, filename, linenum)
    {
-      mType = &TerrainException::INVALID_DATA_READER;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    InvalidDecorationLayerException::InvalidDecorationLayerException(const std::string& message, const std::string& filename, unsigned int linenum) 
       : dtUtil::Exception(message, filename, linenum)
    {
-      mType = &TerrainException::INVALID_DECORATION_LAYER;
    }
 }

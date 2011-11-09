@@ -331,13 +331,6 @@ namespace dtAnim
       /// @return the offset time used when playing looping animations.
       float GetAnimationTime();
 
-      /** Get the CAL3D CalHardwareModel representation for this CalModel.
-       *  Warning! This violates the protective services brought to you by the wrapper; use
-       *  with caution.
-       *  @return The hardware model represented by this CalModel
-       */
-      DEPRECATE_FUNC CalHardwareModel* GetOrCreateCalHardwareModel();
-
       /**
        * Determines if animation updates can be performed depending if any queued
        * animations are present. If bind poses are allowed then this will always

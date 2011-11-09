@@ -33,10 +33,6 @@
 
 namespace dtGame
 {
-   IMPLEMENT_ENUM(MessageFactory::MessageFactoryException);
-   MessageFactory::MessageFactoryException MessageFactory::MessageFactoryException::TYPE_ALREADY_REGISTERED("Type already registered");
-   MessageFactory::MessageFactoryException MessageFactory::MessageFactoryException::TYPE_NOT_REGISTERED("Type not registered");
-
    dtCore::RefPtr<dtUtil::ObjectFactory<const MessageType*, Message> >
       MessageFactory::mMessageFactory (new dtUtil::ObjectFactory<const MessageType*, Message>);
 
@@ -171,7 +167,6 @@ namespace dtGame
                                                                                                 unsigned int linenum)
       :dtUtil::Exception(message, filename, linenum)
    {
-      mType = &MessageFactory::MessageFactoryException::TYPE_ALREADY_REGISTERED;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -180,7 +175,6 @@ namespace dtGame
                                                                                         unsigned int linenum)
       :dtUtil::Exception(message, filename, linenum)
    {
-      mType = &MessageFactory::MessageFactoryException::TYPE_NOT_REGISTERED;
    }
 
    IMPLEMENT_ENUM(MessageType);

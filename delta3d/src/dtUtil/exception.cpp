@@ -28,28 +28,10 @@
 
 namespace dtUtil
 {
-   IMPLEMENT_ENUM(BaseExceptionType);
-   BaseExceptionType BaseExceptionType::GENERAL_EXCEPTION("GENERAL_EXCEPTION");
-
-   //////////////////////////////////////////////////////////////////////////
-   Exception::Exception(Enumeration& type, const std::string& message, const std::string& filename,
-         unsigned int lineNum)
-      : mType(&type)
-      , mMessage(message)
-      , mFileName(osgDB::getSimpleFileName(filename))
-      , mLineNum(lineNum)
-   {
-      DEPRECATE("dtUtil::Exception(dtUtil::Enumeration&, const std::string&, const std::string&, unsigned int)",
-                "dtUtil::Exception(const std::string&, const std::string&, unsigned int)");
-
-      LogException(dtUtil::Log::LOG_DEBUG, dtUtil::Log::GetInstance());
-   }
-
    //////////////////////////////////////////////////////////////////////////
    Exception::Exception(const std::string& message, const std::string& filename,
          unsigned int lineNum)
-      : mType(&BaseExceptionType::GENERAL_EXCEPTION)
-      , mMessage(message)
+      : mMessage(message)
       , mFileName(osgDB::getSimpleFileName(filename))
       , mLineNum(lineNum)
    {
@@ -116,14 +98,6 @@ namespace dtUtil
    unsigned int Exception::Line() const
    {
       return mLineNum;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   const Enumeration& Exception::TypeEnum() const
-   {
-      DEPRECATE("const dtUtil::Enumeration& dtUtil::Exception::TypeEnum() const",
-                "N/A");
-      return *mType;
    }
 
    //////////////////////////////////////////////////////////////////////////

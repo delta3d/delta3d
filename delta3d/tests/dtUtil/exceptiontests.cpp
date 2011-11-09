@@ -42,7 +42,6 @@ class ExceptionTests : public CPPUNIT_NS::TestFixture
    CPPUNIT_TEST_SUITE(ExceptionTests);
       CPPUNIT_TEST(TestThrow);
       CPPUNIT_TEST(TestLogAndPrintFunctions);
-      CPPUNIT_TEST(TestEnum);
    CPPUNIT_TEST_SUITE_END();
 
    public:
@@ -59,33 +58,9 @@ class ExceptionTests : public CPPUNIT_NS::TestFixture
        */
       void TestLogAndPrintFunctions();
 
-      /**
-       * Tests that the enumeration in the instance is what was given during construction
-       */
-      void TestEnum();
-
    private:
       dtUtil::Log* mLogger;
-
-   public:
-      class TestEnumType : public dtUtil::Enumeration
-      {
-         DECLARE_ENUM(TestEnumType);
-      public:
-         static TestEnumType ENUM;
-
-      private:
-         TestEnumType(const std::string& name) : dtUtil::Enumeration(name)
-         {
-            AddInstance(this);
-         }
-      };
 };
-
-IMPLEMENT_ENUM(ExceptionTests::TestEnumType)
-ExceptionTests::TestEnumType
-ExceptionTests::TestEnumType::ENUM("ENUM");
-
 
 // Registers the fixture into the 'registry'
 CPPUNIT_TEST_SUITE_REGISTRATION(ExceptionTests);
@@ -158,21 +133,3 @@ void ExceptionTests::TestLogAndPrintFunctions()
    }
 }
 
-///////////////////////////////////////////////////////////////////////////////
-void ExceptionTests::TestEnum()
-{
-    //to be DEPRECATE
-   try
-   {
-      dtUtil::Exception testException(TestEnumType::ENUM, "test exception", "enumerationtests.cpp", __LINE__);
-      CPPUNIT_ASSERT(TestEnumType::ENUM == testException.TypeEnum());
-   }
-   catch (const dtUtil::Exception& e)
-   {
-      CPPUNIT_FAIL((std::string("Error: ") + e.What()).c_str());
-   }
-   catch (const std::exception& e)
-   {
-      CPPUNIT_FAIL((std::string("Error: ") + e.what()).c_str());
-   }
-}

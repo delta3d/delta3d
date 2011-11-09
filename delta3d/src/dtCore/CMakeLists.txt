@@ -88,7 +88,6 @@ SET(LIB_PUBLIC_HEADERS
                 ${HEADER_PATH}/genericactorproperty.h
                 ${HEADER_PATH}/generickeyboardlistener.h
                 ${HEADER_PATH}/genericmouselistener.h
-                ${HEADER_PATH}/globals.h
                 ${HEADER_PATH}/groupactorproperty.h
                 ${HEADER_PATH}/hotspotattachment.h
                 ${HEADER_PATH}/infinitelight.h
@@ -279,7 +278,6 @@ SET(LIB_SOURCES
                 ${SOURCE_PATH}/gameeventmanager.cpp
                 ${SOURCE_PATH}/generickeyboardlistener.cpp
                 ${SOURCE_PATH}/genericmouselistener.cpp
-                ${SOURCE_PATH}/globals.cpp
                 ${SOURCE_PATH}/groupactorproperty.cpp
                 ${SOURCE_PATH}/hotspotattachment.cpp
                 ${SOURCE_PATH}/infinitelight.cpp
