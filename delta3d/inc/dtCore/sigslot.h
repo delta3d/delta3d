@@ -48,10 +48,10 @@
 #include <dtCore/export.h>
 #include <set>
 #include <list>
-
+#include <cstddef> //for NULL
 
 // You may define this policy to be any of the classes below, or use your own that
-// implemements the same interface as the classes below.
+// implements the same interface as the classes below.
 #ifndef SIGSLOT_DEFAULT_MT_POLICY
 #  define SIGSLOT_DEFAULT_MT_POLICY multi_threaded_local
 #endif
