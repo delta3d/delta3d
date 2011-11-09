@@ -43,11 +43,6 @@
 namespace dtTerrain
 {
    //////////////////////////////////////////////////////////////////////////
-   IMPLEMENT_ENUM(LCCAnalyzerException);
-   LCCAnalyzerException LCCAnalyzerException::INVALID_CACHE("INVALID_CACHE");
-   LCCAnalyzerException LCCAnalyzerException::NO_VALID_GEO_IMAGES("NO_VALID_GEO_IMAGES");
-
-   //////////////////////////////////////////////////////////////////////////
    IMPLEMENT_ENUM(LCCAnalyzerResourceName);
    const LCCAnalyzerResourceName LCCAnalyzerResourceName::IMAGE_EXT(".bmp");
    const LCCAnalyzerResourceName LCCAnalyzerResourceName::BASE_LCC_COLOR("baselcc");
@@ -576,13 +571,11 @@ namespace dtTerrain
    LCCInvalidCacheException::LCCInvalidCacheException(const std::string& message, const std::string& filename, unsigned int linenum)
       : dtUtil::Exception(message, filename, linenum)
    {
-      mType = &LCCAnalyzerException::INVALID_CACHE;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    LCCNoValidGeoImagesException::LCCNoValidGeoImagesException(const std::string& message, const std::string& filename, unsigned int linenum)
       : dtUtil::Exception(message, filename, linenum)
    {
-      mType = &LCCAnalyzerException::NO_VALID_GEO_IMAGES;
    }
 }

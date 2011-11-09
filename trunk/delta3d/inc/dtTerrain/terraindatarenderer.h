@@ -33,30 +33,6 @@ namespace dtTerrain
 {
    class Terrain;
    
-   /**
-    * DEPRECATE 2/16/10
-    * This enumeration contains generic errors that could occur in terrain
-    * renderers.  Subclass this enumeration for specific error handling
-    * identification.
-    */
-   class DT_TERRAIN_EXPORT TerrainRendererException : public dtUtil::BaseExceptionType
-   {
-      DECLARE_ENUM(TerrainRendererException);
-      public:
-      
-         ///Thrown if the heightfield data is invalid when the renderer
-         ///initializes itself.
-         static TerrainRendererException INVALID_HEIGHTFIELD_DATA;
-         
-      protected:
-         
-         ///Simple enumeration constructor.
-         TerrainRendererException(const std::string &name) : dtUtil::BaseExceptionType(name)
-         {
-            AddInstance(this);
-         }
-   };
-
    class InvalidHeightfieldDataException : public dtUtil::Exception
    {
    public:

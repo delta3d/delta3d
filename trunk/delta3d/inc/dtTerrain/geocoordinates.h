@@ -29,26 +29,6 @@
 
 namespace dtTerrain
 {
-   /**
-    * DEPRECATE 2/16/10 use derived Exceptions instead
-    * This class contains the various types of exceptions that the
-    * coordinate system class may throw during a given operation.  
-    */
-   class DT_TERRAIN_EXPORT GeoCoordinatesException : public dtUtil::Enumeration 
-   {
-      DECLARE_ENUM(GeoCoordinatesException);
-      public:
-      
-         ///Thrown if the user attempts to set an invalid value.
-         static GeoCoordinatesException OUT_OF_BOUNDS;
-         
-      protected:
-         GeoCoordinatesException(const std::string &name) : dtUtil::Enumeration(name)
-         {
-            AddInstance(this);
-         }
-   };
-   
    class GeoCoordinatesOutOfBoundsException : public dtUtil::Exception
    {
    public:

@@ -28,38 +28,6 @@
 namespace dtGame
 {
 
-   ///DEPRECATE 2/16/10 use derived Exception classes instead
-   class DT_GAME_EXPORT ExceptionEnum : public dtUtil::Enumeration
-   {
-      DECLARE_ENUM(ExceptionEnum);
-      public:
-         ///Exception enumeration used for general game manager exceptions.
-         static ExceptionEnum GENERAL_GAMEMANAGER_EXCEPTION;
-
-         ///Exception enumeration used for method invalid parameters.
-         static ExceptionEnum INVALID_PARAMETER;
-         
-         ///Exception enumeration used when trying to create a actor on the game manager with an unknown type.
-         static ExceptionEnum UNKNOWN_ACTOR_TYPE;
-         
-         ///Exception enumeration used when an actor is remote and an operation only applicable to local actors is requested.
-         static ExceptionEnum ACTOR_IS_REMOTE;
-
-         ///Exception enumeration used when actors are in invalid states and code can't continue.
-         static ExceptionEnum INVALID_ACTOR_STATE;
-
-         ///Game application was unable to initialize for some reason.
-         static ExceptionEnum GAME_APPLICATION_CONFIG_ERROR;
-
-         ///Used when an error occurs working with the dead reckoning component.
-         static ExceptionEnum DEAD_RECKONING_EXCEPTION;
-      protected:
-         ExceptionEnum(const std::string &name) : Enumeration(name)
-         {
-            AddInstance(this);
-         }
-   };
-
    ///Exception enumeration used for general game manager exceptions.
    class DT_GAME_EXPORT GeneralGameManagerException : public dtUtil::Exception
    {

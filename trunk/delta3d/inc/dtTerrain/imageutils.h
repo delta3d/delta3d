@@ -29,30 +29,6 @@
 
 namespace dtTerrain
 {
-   /**
-    * DEPRECATE 2/16/10
-    * Defines exceptions that may be thrown from the image utility methods.
-    */
-   class ImageUtilException : public dtUtil::Enumeration
-   {
-      DECLARE_ENUM(ImageUtilException);
-      public:
-      
-         static ImageUtilException INVALID_IMAGE_DIMENSIONS;
-         
-         ///Thrown if the geo-specific image is of the wrong format.
-         static ImageUtilException INVALID_RASTER_FORMAT;
-         
-         ///Thrown if the analyzer could not load files needed for processing.
-         static ImageUtilException LOAD_FAILED;
-      
-      protected:
-         ImageUtilException(const std::string &name) : dtUtil::Enumeration(name)
-         {
-            AddInstance(this);
-         }
-   };
-
    class InvalidImageDimensionsException : public dtUtil::Exception
    {
    public:

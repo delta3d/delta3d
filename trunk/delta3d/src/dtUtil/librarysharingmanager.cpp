@@ -39,10 +39,6 @@ using std::set;
 
 namespace dtUtil
 {
-   IMPLEMENT_ENUM(LibrarySharingManager::ExceptionEnum)
-
-   LibrarySharingManager::ExceptionEnum LibrarySharingManager::ExceptionEnum::LibraryLoadingError("Base Exception");
-
    bool LibrarySharingManager::LibraryHandle::IsShuttingDown() const
    {
       return (!LibrarySharingManager::mInstance.valid()) || LibrarySharingManager::mInstance->mShuttingDown;
@@ -144,7 +140,7 @@ namespace dtUtil
 #endif
          if (handle != NULL)
          {
-			 return new InternalLibraryHandle(fullLibraryName, handle, close);
+       return new InternalLibraryHandle(fullLibraryName, handle, close);
          }
 
          return NULL;
@@ -420,6 +416,5 @@ namespace dtUtil
    LibrarySharingManager::LibraryLoadingException::LibraryLoadingException(const std::string& message, const std::string& filename, unsigned int linenum)
       : dtUtil::Exception(message, filename, linenum)
    {
-      mType = &ExceptionEnum::LibraryLoadingError;
    }
 } // namespace dtUtil

@@ -178,11 +178,6 @@ namespace dtCore
       const std::pair<Face,Mode> GetRenderState() const;
 
       /**
-       * This has been deprecated, use the new GetHeightOfTerrain() defined below.
-       */
-      DEPRECATE_FUNC float GetHeightOfTerrain(float x, float y);
-
-      /**
        * Get the height of terrain at the specified (X,Y) below given height range
        * [minZ, maxZ] (default [10k, -10k]). This essentially does an intersection
        * check of the whole scene from (X,Y,maxZ) to (X,Y,minZ). Any geometry that

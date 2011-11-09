@@ -191,9 +191,6 @@ namespace dtCore
           */
          const std::string& GetEditorType() const { return mEditorType; };
 
-         ///Deprecated 12/11/09
-         DEPRECATE_FUNC void SetValue(ResourceDescriptor* value);
-
 
       private:
          BaseActorObject* mActor;

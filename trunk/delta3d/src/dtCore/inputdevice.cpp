@@ -146,21 +146,29 @@ namespace dtCore
 
    void InputDevice::AddButtonListener(ButtonHandler* buttonHandler)
    {
+      DEPRECATE("void InputDevice::AddButtonListener(ButtonHandler*)",
+         "void InputDevice::AddButtonHandler(ButtonHandler*)");
       AddButtonHandler(buttonHandler);
    }
 
    void InputDevice::RemoveButtonListener(ButtonHandler* buttonHandler)
    {
+      DEPRECATE("void InputDevice::RemoveButtonListener(ButtonHandler*)",
+         "void InputDevice::RemoveButtonHandler(ButtonHandler*)");
       RemoveButtonHandler(buttonHandler);
    }
 
    void InputDevice::AddAxisListener(AxisHandler* axisHandler)
    {
+      DEPRECATE("void InputDevice::AddAxisListener(AxisHandler*)",
+         "void InputDevice::AddAxisHandler(AxisHandler*)");
       AddAxisHandler(axisHandler);
    }
 
    void InputDevice::RemoveAxisListener(AxisHandler* axisHandler)
    {
+      DEPRECATE("void InputDevice::RemoveAxisListener(AxisHandler*)",
+         "void InputDevice::RemoveAxisHandler(AxisHandler*)");
       RemoveAxisHandler(axisHandler);
    }
 

@@ -99,7 +99,6 @@ namespace dtCore
       mAxisHandlers.remove(axisHandler);
    }
 
-   /** Deprecated 2/15/2011*/
    void Axis::AddAxisListener(AxisHandler* axisHandler)
    {
       DEPRECATE("void Axis::AddAxisListener(AxisHandler*)",
@@ -107,7 +106,6 @@ namespace dtCore
       AddAxisHandler(axisHandler);
    }
 
-   /** Deprecated 2/15/2011*/
    void Axis::InsertAxisListener(const AxisHandlerList::value_type& pos, AxisHandler* al)
    {
       DEPRECATE("void Axis::InsertAxisListener(const AxisHandlerList::value_type&, AxisHandler*)",
@@ -115,7 +113,6 @@ namespace dtCore
       InsertAxisHandler(pos, al);
    }
 
-   /** Deprecated 2/15/2011*/
    void Axis::RemoveAxisListener(AxisHandler* axisHandler)
    {
       DEPRECATE("void Axis::RemoveAxisListener(AxisHandler*)",

@@ -130,9 +130,6 @@ namespace dtUtil
    const LocalCoordinateType LocalCoordinateType::CARTESIAN_FLAT_EARTH("Cartesian Flat Earth");
    const LocalCoordinateType LocalCoordinateType::CARTESIAN("Cartesian");
 
-   IMPLEMENT_ENUM(CoordinateConversionExceptionEnum)
-   CoordinateConversionExceptionEnum CoordinateConversionExceptionEnum::INVALID_INPUT("Illegal argument");
-
    /////////////////////////////////////////////////////////////////////////////
    Coordinates::Coordinates()
       : mLocalCoordinateType(&LocalCoordinateType::CARTESIAN_UTM)
@@ -1947,6 +1944,5 @@ namespace dtUtil
    CoordinateConversionInvalidInput::CoordinateConversionInvalidInput(const std::string& message, const std::string& filename, unsigned int linenum)
       : dtUtil::Exception(message, filename, linenum)
    {
-      mType = &CoordinateConversionExceptionEnum::INVALID_INPUT;
    }
 } // namespace dtUtil

@@ -60,30 +60,6 @@ namespace dtTerrain
          }
    };
 
-   /**
-    * DEPRECATE 2/16/10
-    * Defines the exceptions thrown by the lcc analyzer.
-    */
-   class LCCAnalyzerException : public dtUtil::Enumeration
-   {
-      DECLARE_ENUM(LCCAnalyzerException);
-      public:
-
-         ///Thrown if the user failed to enable caching.  Currently terrain data
-         ///caching must be enabled for the analyzer to work properly.
-         static LCCAnalyzerException INVALID_CACHE;
-
-         ///Thrown if LCC analyzing occurs before valid geographical images are
-         ///assigned to the analyzer.
-         static LCCAnalyzerException NO_VALID_GEO_IMAGES;
-
-      protected:
-         LCCAnalyzerException(const std::string &name) : dtUtil::Enumeration(name)
-         {
-            AddInstance(this);
-         }
-   };
-   
    class LCCInvalidCacheException : public dtUtil::Exception
    {
    public:

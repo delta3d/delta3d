@@ -105,21 +105,26 @@ namespace dtCore
 
       const AxisHandlerList& GetHandlers() const { return mAxisHandlers; }
 
-      /**
-       * This has been deprecated: use the AddAxisHandler method instead.
-       */
+      /// This has been deprecated: use the AddAxisHandler method instead.
+      /// Deprecated 2/15/2011
       DEPRECATE_FUNC void AddAxisListener(AxisHandler* axisHandler);
 
       /// This has been deprecated: use the InsertAxisHandler method instead.
+      /// Deprecated 2/15/2011
       DEPRECATE_FUNC void InsertAxisListener(const AxisHandlerList::value_type& pos, AxisHandler* al);
 
-      /**
-       * This has been deprecated: use the RemoveAxisHandler method instead.
-       */
+      /// This has been deprecated: use the RemoveAxisHandler method instead.
+      /// Deprecated 2/15/2011
       DEPRECATE_FUNC void RemoveAxisListener(AxisHandler* axisHandler);
 
       /// This has been deprecated: use the GetHandlers method instead.
-      DEPRECATE_FUNC const AxisHandlerList& GetListeners() const { return GetHandlers(); }
+      /// Deprecated 2/15/2011
+      DEPRECATE_FUNC const AxisHandlerList& GetListeners() const
+      {
+         DEPRECATE("const AxisHandlerList& Axis::GetListeners()",
+            "const AxisHandlerList& Axis::GetHandlers()");
+         return GetHandlers();
+      }
 
       /**
        * Adds an axis observer.

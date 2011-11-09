@@ -46,44 +46,6 @@ namespace dtTerrain
    class TerrainDecorationLayer;
    class PagedTerrainTile;
 
-   /**
-    * DEPRECATE 2/16/10
-    * This class enumerates the different exceptions that can be thrown by
-    * terrain instances.
-    */
-   class DT_TERRAIN_EXPORT TerrainException : public dtUtil::Enumeration
-   {
-      DECLARE_ENUM(TerrainException);
-      public:
-
-         ///Thrown if an invalid pointer was encountered during terrain operations.
-         static TerrainException NULL_POINTER;
-
-         ///Thrown if a specified resource could not be read or loaded.
-         static TerrainException INVALID_RESOURCE_PATH;
-
-         ///Thrown if the current data reader does not support the specified
-         ///resource.
-         static TerrainException UNSUPPORTED_DATA_FORMAT;
-
-         ///Thrown if the terrain requires a data reader but it is currently invalid.
-         static TerrainException INVALID_DATA_READER;
-
-         ///Thrown if the terrain encounters an invalid data renderer.
-         static TerrainException INVALID_DATA_RENDERER;
-
-         ///Thrown if an invalid decoration layer is added to the terrain.
-         static TerrainException INVALID_DECORATION_LAYER;
-
-      protected:
-
-         ///Simple enumeration constructor.
-         TerrainException(const std::string &name) : dtUtil::Enumeration(name)
-         {
-            AddInstance(this);
-         }
-   };
-
    class NullPointerException : public dtUtil::Exception
    {
    public:

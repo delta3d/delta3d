@@ -24,22 +24,25 @@
 #include <dtUtil/exception.h>
 #include <fireFighter/export.h>
 
-class FIRE_FIGHTER_EXPORT ExceptionEnum : public dtUtil::Enumeration
+class FIRE_FIGHTER_EXPORT CEGUIException : public dtUtil::Exception
 {
-   DECLARE_ENUM(ExceptionEnum);
+public:
+   CEGUIException(const std::string& message, const std::string& filename, unsigned int linenum);
+   virtual ~CEGUIException() {};
+};
 
-   public:
+class FIRE_FIGHTER_EXPORT CommandLineException : public dtUtil::Exception
+{
+public:
+   CommandLineException(const std::string& message, const std::string& filename, unsigned int linenum);
+   virtual ~CommandLineException() {};
+};
 
-      static ExceptionEnum CEGUI_EXCEPTION;
-      static ExceptionEnum COMMAND_LINE_EXCEPTION;
-      static ExceptionEnum MISSING_REQUIRED_ACTOR_EXCEPTION;
-
-   private:
-
-      ExceptionEnum(const std::string &name) : dtUtil::Enumeration(name)
-      {
-         AddInstance(this);
-      }
+class FIRE_FIGHTER_EXPORT MissingActorException : public dtUtil::Exception
+{
+public:
+   MissingActorException(const std::string& message, const std::string& filename, unsigned int linenum);
+   virtual ~MissingActorException() {};
 };
 
 #endif

@@ -78,8 +78,6 @@ namespace dtCore
 
          virtual bool operator==(const NamedParameter& toCompare) const;
 
-         ///deprecated 12/11/09
-         DEPRECATE_FUNC void SetValue(const dtCore::ResourceDescriptor* descriptor); 
       protected:
          virtual ~NamedResourceParameter();
 

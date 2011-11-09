@@ -75,8 +75,7 @@ void FireFighterGameEntryPoint::Initialize(dtGame::GameApplication& app, int arg
    if (parser.read("-h") || parser.read("--help"))
    {
       parser.getApplicationUsage()->write(std::cerr);
-      throw dtUtil::Exception(ExceptionEnum::COMMAND_LINE_EXCEPTION, "Command Line Error.",
-         __FILE__, __LINE__);
+      throw CommandLineException("Command Line Error.", __FILE__, __LINE__);
    }
 
    int commandLineParam = 0;

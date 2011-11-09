@@ -40,12 +40,6 @@
 namespace dtTerrain
 {
    //////////////////////////////////////////////////////////////////////////
-   IMPLEMENT_ENUM(ImageUtilException);
-   ImageUtilException ImageUtilException::INVALID_IMAGE_DIMENSIONS("INVALID_IMAGE_DIMENSIONS");
-   ImageUtilException ImageUtilException::INVALID_RASTER_FORMAT("INVALID_RASTER_FORMAT");
-   ImageUtilException ImageUtilException::LOAD_FAILED("LOAD_FAILED");
-
-   //////////////////////////////////////////////////////////////////////////
    osg::Vec3 ImageUtils::HeightColorMap::GetColor(float height) const
    {
       osg::Vec3 color;
@@ -869,20 +863,17 @@ namespace dtTerrain
    InvalidImageDimensionsException::InvalidImageDimensionsException(const std::string& message, const std::string& filename, unsigned int linenum)
       : dtUtil::Exception(message, filename, linenum)
    {
-      mType = &ImageUtilException::INVALID_IMAGE_DIMENSIONS;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    InvalidRasterFormatException::InvalidRasterFormatException(const std::string& message, const std::string& filename, unsigned int linenum)
       : dtUtil::Exception(message, filename, linenum)   
    {
-      mType = &ImageUtilException::INVALID_RASTER_FORMAT;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    LoadFailedException::LoadFailedException(const std::string& message, const std::string& filename, unsigned int linenum)
       : dtUtil::Exception(message, filename, linenum)
    {
-      mType = &ImageUtilException::LOAD_FAILED;
    }
 }

@@ -40,20 +40,6 @@ namespace dtGame
    {
       public:
 
-         class DT_GAME_EXPORT MessageFactoryException : public dtUtil::Enumeration
-         {
-            DECLARE_ENUM(MessageFactoryException);
-            public:
-               static MessageFactoryException TYPE_ALREADY_REGISTERED;
-               static MessageFactoryException TYPE_NOT_REGISTERED;
-            private:
-               MessageFactoryException(const std::string &name) : dtUtil::Enumeration(name)
-               {
-                  AddInstance(this);
-               }
-               virtual ~MessageFactoryException() {}
-         };
-
          class MessageTypeAlreadyRegisteredException : public dtUtil::Exception
          {
          public:
@@ -67,8 +53,6 @@ namespace dtGame
          	MessageTypeNotRegisteredException(const std::string& message, const std::string& filename, unsigned int linenum);
          	virtual ~MessageTypeNotRegisteredException() {};
          };
-         
-         
 
          /// Constructor
          MessageFactory(const std::string& name, const MachineInfo& machine, const std::string& desc = "");

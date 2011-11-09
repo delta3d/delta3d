@@ -425,22 +425,6 @@ void Scene::UnRegisterCollidable(Transformable* collidable) const
 }
 
 /////////////////////////////////////////////
-float Scene::GetHeightOfTerrain(float x, float y)
-{
-   // Deprecated January 4th, 2010
-   DEPRECATE(
-      "float dtCore::Scene::GetHeightOfTerrain(float x, float y)",
-      "bool dtCore::Scene::GetHeightOfTerrain(float& heightOfTerrain, float x, float y, float maxZ, float minZ)");
-
-   float heightOfTerrain = 0.f;
-
-   // max and min z stretch from "way up high" to "way down low"
-   GetHeightOfTerrain(heightOfTerrain, x, y, 10000.f, -10000.f);
-
-   return heightOfTerrain;
-}
-
-/////////////////////////////////////////////
 bool Scene::GetHeightOfTerrain(float& heightOfTerrain, float x, float y, float maxZ, float minZ)
 {
    bool heightFound = false;

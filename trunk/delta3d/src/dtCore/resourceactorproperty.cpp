@@ -112,22 +112,6 @@ void ResourceActorProperty::CopyFrom(const ActorProperty& otherProp)
    SetValue(prop.GetValue());
 }
 
-////////////////////////////////////////////////////////////////////////////
-void ResourceActorProperty::SetValue(ResourceDescriptor* value)
-{
-   DEPRECATE("void ResourceActorProperty::SetValue(ResourceDescriptor*)",
-             "void ResourceActorProperty::SetValue(const ResourceDescriptor&)");
-
-   if (value)
-   {
-      SetValue(*value);
-   }
-   else
-   {
-      SetValue(dtCore::ResourceDescriptor::NULL_RESOURCE);
-   }
-}
-
 ////////////////////////////////////////////////////////////////////////////////
 void ResourceActorProperty::SetValue(const ResourceDescriptor& value)
 {

@@ -30,12 +30,6 @@
 namespace dtTerrain
 {
    //////////////////////////////////////////////////////////////////////////
-   IMPLEMENT_ENUM(HeightFieldException);
-   HeightFieldException HeightFieldException::OUT_OF_BOUNDS("OUT_OF_BOUNDS");
-   HeightFieldException HeightFieldException::INVALID_HEIGHTFIELD("INVALID_HEIGHTFIELD");
-   HeightFieldException HeightFieldException::INVALID_IMAGE_FORMAT("INVALID_IMAGE_FORMAT");
-   
-   //////////////////////////////////////////////////////////////////////////
    HeightField::HeightField()
    {
       mNumColumns = mNumRows = 0;
@@ -171,20 +165,17 @@ namespace dtTerrain
    HeightFieldOutOfBoundsException::HeightFieldOutOfBoundsException(const std::string& message, const std::string& filename, unsigned int linenum)
       :dtUtil::Exception(message, filename, linenum)
    {
-      mType = &HeightFieldException::OUT_OF_BOUNDS;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    HeightFieldInvalidException::HeightFieldInvalidException(const std::string& message, const std::string& filename, unsigned int linenum)
       :dtUtil::Exception(message, filename, linenum)
    {
-      mType = &HeightFieldException::INVALID_HEIGHTFIELD;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    HeightFieldInvalidImageException::HeightFieldInvalidImageException(const std::string& message, const std::string& filename, unsigned int linenum)
       :dtUtil::Exception(message, filename, linenum)
    {
-      mType = &HeightFieldException::INVALID_IMAGE_FORMAT;
    }
 }

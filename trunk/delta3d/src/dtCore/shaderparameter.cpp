@@ -28,11 +28,6 @@
 namespace dtCore
 {
    ///////////////////////////////////////////////////////////////////////////////
-   IMPLEMENT_ENUM(ShaderParameterException)
-   ShaderParameterException ShaderParameterException::INVALID_ATTRIBUTE("INVALID_ATTRIBUTE");
-   ///////////////////////////////////////////////////////////////////////////////
-
-   ///////////////////////////////////////////////////////////////////////////////
    IMPLEMENT_ENUM(ShaderParameter::ParamType)
    const ShaderParameter::ParamType ShaderParameter::ParamType::FLOAT("FLOAT");
    const ShaderParameter::ParamType ShaderParameter::ParamType::FLOAT_VEC2("FLOAT_VEC2");
@@ -111,6 +106,5 @@ namespace dtCore
    ShaderParameterInvalidAttributeException::ShaderParameterInvalidAttributeException(const std::string& message, const std::string& filename, unsigned int linenum)
       : dtUtil::Exception(message, filename, linenum)
    {
-      mType = &dtCore::ShaderParameterException::INVALID_ATTRIBUTE;
    }
 }

@@ -112,21 +112,26 @@ namespace dtCore
 
       const ButtonHandlerList& GetHandlers() const { return mButtonHandlers; }
 
-      /**
-      * This has been deprecated: use the AddButtonHandler method instead.
-       */
+      /// This has been deprecated: use the AddButtonHandler method instead.
+      /// Deprecated 2/15/2011
       DEPRECATE_FUNC void AddButtonListener(ButtonHandler* buttonHandler);
 
       /// This has been deprecated: use the InsertButtonHandler method instead.
+      /// Deprecated 2/15/2011
       DEPRECATE_FUNC void InsertButtonListener(const ButtonHandlerList::value_type& pos, ButtonHandler* bl);
 
-      /**
-      * This has been deprecated: use the RemoveButtonHandler method instead.
-       */
+      /// This has been deprecated: use the RemoveButtonHandler method instead.
+      /// Deprecated 2/15/2011
       DEPRECATE_FUNC void RemoveButtonListener(ButtonHandler* buttonHandler);
 
       /// This has been deprecated: use the GetHandlers method instead.
-      DEPRECATE_FUNC const ButtonHandlerList& GetListeners() const { return mButtonHandlers; }
+      /// Deprecated 2/15/2011
+      DEPRECATE_FUNC const ButtonHandlerList& GetListeners() const
+      {
+         DEPRECATE("const ButtonHandlerList& Button::GetListeners()",
+            "const ButtonHandlerList& Button::GetHandlers()");
+         return mButtonHandlers;
+      }
 
       /**
        * Adds a button observer.

@@ -31,23 +31,6 @@
 
 namespace dtUtil
 {
-   class DT_UTIL_EXPORT BaseExceptionType : public dtUtil::Enumeration
-   {
-      DECLARE_ENUM(BaseExceptionType);
-
-      public:
-
-         static BaseExceptionType GENERAL_EXCEPTION;
-
-      protected:
-
-         BaseExceptionType(const std::string& name)
-            : dtUtil::Enumeration(name)
-         {
-            AddInstance(this);
-         }
-   };
-
    /*
     * This is the exception class used throughout Delta3D.  Users should derive
     * and create concrete instances.
@@ -118,19 +101,6 @@ namespace dtUtil
           */
          void LogException(dtUtil::Log::LogMessageType level, dtUtil::Log& logger) const;
 
-
-          /**
-           * Deprecated 2/16/10 in favor of Exception(const std::string&, const std::string&, unsigned int) 
-           */
-         DEPRECATE_FUNC Exception(Enumeration& type, const std::string& message, const std::string& filename, unsigned int linenum);
-
-         /**
-          * Deprecated 2/16/10
-          */
-         DEPRECATE_FUNC const Enumeration& TypeEnum() const;
-
-      protected:
-         Enumeration* mType; ///<Deprecated 2/16/10
       private:
          std::string mMessage, mFileName;
          unsigned int mLineNum;

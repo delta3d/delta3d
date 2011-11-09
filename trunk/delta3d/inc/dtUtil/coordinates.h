@@ -191,25 +191,6 @@ namespace dtUtil
          virtual ~LocalCoordinateType() {}
    };
 
-   //DEPRECATE 2/16/10 use CoordinateConversionInvalidInput instead
-   class DT_UTIL_EXPORT CoordinateConversionExceptionEnum : public dtUtil::Enumeration
-   {
-      DECLARE_ENUM(CoordinateConversionExceptionEnum);
-
-      public:
-         /**
-          * Thrown when the input to a conversion function is invalid
-          */
-         static CoordinateConversionExceptionEnum INVALID_INPUT;
-
-      private:
-         CoordinateConversionExceptionEnum(const std::string& name): dtUtil::Enumeration(name)
-         {
-            AddInstance(this);
-         }
-         virtual ~CoordinateConversionExceptionEnum() {}
-   };
-
    ///Coordinate exception
    class CoordinateConversionInvalidInput : public dtUtil::Exception
    {

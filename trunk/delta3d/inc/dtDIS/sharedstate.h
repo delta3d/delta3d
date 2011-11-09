@@ -58,15 +58,18 @@ namespace dtDIS
       }
 
       /// Adds a mapping from the DIS::EntityID to the dtCore::ActorType if no mapping exists.
+      /// Deprecated 7/29/2011
       /// @return true if no previous mapping existed.  false if a mapping existed already.
       bool DEPRECATE_FUNC AddActorMapping(const DIS::EntityType& eid, const dtCore::ActorType* at);
 
       /// Takes the one to one mapping from the container for the supplied key.
+      /// Deprecated 3/17/2011
       /// @param eid the key to the mapping.
       /// @return true if eid was found in the map.  false if it was not found.
       bool DEPRECATE_FUNC RemoveActorMapping(const DIS::EntityType& eid);
 
       /// Introduces the ActorType mapped to the EntityID.
+      /// Deprecated 7/29/2011
       /// @param toWrite Overwritten with the instance of the mapped ActorType.
       /// @param eid The key being stored.
       /// @return true if eid was found in the map.  false if it was not found.
@@ -86,15 +89,18 @@ namespace dtDIS
       }
 
       /// Adds a mapping from the DIS::EntityID to the resource identifier if no mapping exists.
+         /// Deprecated 7/29/2011
       /// @return true if no previous mapping existed.  false if a mapping existed already.
       bool DEPRECATE_FUNC AddResourceMapping(const DIS::EntityType& eid, const dtCore::ResourceDescriptor& resource);
 
       /// Takes the one to one mapping from the container for the supplied key.
+      /// Deprecated 3/17/2011
       /// @param eid the key to the mapping.
       /// @return true if eid was found and removed from the map.  false if it was not removed.
       bool DEPRECATE_FUNC RemoveResourceMapping(const DIS::EntityType& eid);
 
       /// Introduces the ActorType mapped to the EntityID.
+      /// Deprecated 7/29/2011
       /// @param toWrite Overwritten with the instance of the mapped resource identifier.
       /// @param eid The key being stored.
       /// @return true if eid was found in the map.  false if it was not found.

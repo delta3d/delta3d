@@ -244,24 +244,6 @@ namespace dtUtil
       bool mForceLittleEndian;
    };
 
-   ///DEPRECATE 2/16/10  Use derived dtUtil::Exceptions instead
-   class DT_UTIL_EXPORT DataStreamException : public dtUtil::Enumeration
-   {
-      DECLARE_ENUM(DataStreamException);
-   public:
-
-      static DataStreamException BUFFER_INVALID;
-      static DataStreamException BUFFER_READ_ERROR;
-      static DataStreamException BUFFER_WRITE_ERROR;
-      static DataStreamException BUFFER_INVALID_POS;
-
-   private:
-      DataStreamException(const std::string& name) : dtUtil::Enumeration(name)
-      {
-         AddInstance(this);
-      }
-   };
-
    class DT_UTIL_EXPORT DataStreamBufferInvalid : public dtUtil::Exception
    {
    public:

@@ -52,9 +52,6 @@ void initShaderManagerBindings()
    const ShaderProgram* (ShaderManagerWrap::*FindShaderPrototype1)(const std::string&,const std::string&) const = &ShaderManagerWrap::FindShaderPrototype;
    ShaderProgram* (ShaderManagerWrap::*FindShaderPrototype2)(const std::string&,const std::string&) = &ShaderManagerWrap::FindShaderPrototype;
 
-
-   class_<ShaderException, bases<dtUtil::Enumeration>, boost::noncopyable>("ShaderException", no_init)
-      ;
    class_<ShaderManagerWrap, boost::noncopyable>("ShaderManager", no_init)
       .def("GetInstance", &ShaderManagerWrap::GetInstance, return_value_policy<reference_existing_object>())
       .staticmethod("GetInstance")

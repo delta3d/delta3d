@@ -46,33 +46,6 @@ namespace dtCore
 {
    class DeltaDrawable;
 
-   /**
-    * DEPRECATE 2/16/10  Use the concrete dtUtil::Exceptions instead
-    */
-   class DT_CORE_EXPORT ShaderException : public dtUtil::Enumeration
-   {
-      DECLARE_ENUM(ShaderException);
-      public:
-
-         ///Thrown when an error occurs setting a shader source.
-         static ShaderException SHADER_SOURCE_ERROR;
-
-         ///Thrown when a shader with the same name is added to the manager.
-         static ShaderException DUPLICATE_SHADERGROUP_FOUND;
-
-         ///Thrown when an error is encountered while parsing an XML shader file.
-         static ShaderException XML_PARSER_ERROR;
-
-         ///Thrown when there is a duplicate shader parameter added to a shader.
-         static ShaderException DUPLICATE_SHADER_PARAMETER_FOUND;
-
-      private:
-         ShaderException(const std::string& name) : dtUtil::Enumeration(name)
-         {
-            AddInstance(this);
-         }
-   };
-
    class ShaderSourceException : public dtUtil::Exception
    {
    public:

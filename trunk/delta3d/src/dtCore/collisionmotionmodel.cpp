@@ -55,6 +55,9 @@ CollisionMotionModel::CollisionMotionModel(float pHeight, float pRadius, float k
    , mCollider(pHeight, pRadius, k, theta, pScene)
    , mCanJump(true)
 {
+   DEPRECATE("CollisionMotionModel::CollisionMotionModel(float, float, float, float, dtCore::Scene*, Keyboard*, Mouse*, float, float, float, bool, bool)",
+      "CollisionMotionModel::CollisionMotionModel(float, float, float, dtCore::Scene*, Keyboard*, Mouse*, float, float, float, float, float, float, bool, bool, bool)");
+
    // parent class FPSMotionModel has set name as "FPSMotionModel" in its constructor;
    // so now manually reset name correctly here
    SetName("CollisionMotionModel");

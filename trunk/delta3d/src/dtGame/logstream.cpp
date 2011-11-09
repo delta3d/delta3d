@@ -24,14 +24,10 @@
 
 namespace dtGame
 {
-   IMPLEMENT_ENUM(LogStreamException);
-   LogStreamException LogStreamException::LOGGER_IO_EXCEPTION("LOGGER_IO_EXCEPTION");  
-
    ////////////////////////////////////////////////////////////////////////////////
    LogStreamIOException::LogStreamIOException(const std::string& message, const std::string& filename, unsigned int linenum)
       :dtUtil::Exception(message, filename, linenum)
    {
-      mType = &LogStreamException::LOGGER_IO_EXCEPTION;
    }
 
    ////////////////////////////////////////////////////////////////////////////////

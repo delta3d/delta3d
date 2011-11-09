@@ -33,29 +33,6 @@
 
 namespace dtTerrain
 {
-   /**
-    * DEPRECATE 2/16/10
-    * Defines the exception used by the vegetation decorator.
-    */
-   class DT_TERRAIN_EXPORT VegetationException : public dtUtil::Enumeration
-   {
-      DECLARE_ENUM(VegetationException);
-      public:
-
-         ///Thrown if no LCC data was specified before analyzing occurs.
-         static VegetationException INVALID_LCC_TYPES;
-
-         ///Thrown if the slope-aspect image could not be loaded when processing vegetation
-         ///placement.
-         static VegetationException INVALID_SLOPE_ASPECT_IMAGE;
-
-      protected:
-         VegetationException(const std::string &name) : dtUtil::Enumeration(name)
-         {
-            AddInstance(this);
-         }
-   };
-
    class VegetationInvalidLCCTypesException : public dtUtil::Exception
    {
    public:

@@ -42,13 +42,6 @@
 
 namespace dtTerrain
 {
-
-   //////////////////////////////////////////////////////////////////////////
-   IMPLEMENT_ENUM(VegetationException);
-   VegetationException VegetationException::INVALID_LCC_TYPES("INVALID_LCC_TYPES");
-   VegetationException VegetationException::INVALID_SLOPE_ASPECT_IMAGE("INVALID_SLOPE_ASPECT_IMAGE");
-
-
    //////////////////////////////////////////////////////////////////////////
    VegetationDecorator::VegetationDecorator(const std::string &name) : TerrainDecorationLayer(name)
    {
@@ -427,12 +420,10 @@ namespace dtTerrain
    ////////////////////////////////////////////////////////////////////////////////
    VegetationInvalidLCCTypesException::VegetationInvalidLCCTypesException(const std::string& message, const std::string& filename, unsigned int linenum) : dtUtil::Exception(message, filename, linenum)
    {
-      mType = &VegetationException::INVALID_LCC_TYPES;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    VegetationInvalidSlopeAspectImageException::VegetationInvalidSlopeAspectImageException(const std::string& message, const std::string& filename, unsigned int linenum) : dtUtil::Exception(message, filename, linenum)
    {
-      mType = &VegetationException::INVALID_SLOPE_ASPECT_IMAGE;
    }
 }

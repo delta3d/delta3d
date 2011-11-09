@@ -20,8 +20,22 @@
  */
 #include <fireFighter/exception.h>
 
-IMPLEMENT_ENUM(ExceptionEnum);
+////////////////////////////////////////////////////////////////////////////////
+CEGUIException::CEGUIException(const std::string& message, const std::string& filename, unsigned int linenum)
+: dtUtil::Exception(message, filename, linenum)
+{
+}
 
-ExceptionEnum ExceptionEnum::CEGUI_EXCEPTION("CEGUI_EXCEPTION");
-ExceptionEnum ExceptionEnum::COMMAND_LINE_EXCEPTION("COMMAND_LINE_EXCEPTION");
-ExceptionEnum ExceptionEnum::MISSING_REQUIRED_ACTOR_EXCEPTION("MISSING_REQUIRED_ACTOR_EXCEPTION");
+////////////////////////////////////////////////////////////////////////////////
+CommandLineException::CommandLineException(const std::string& message, const std::string& filename, unsigned int linenum)
+: dtUtil::Exception(message, filename, linenum)
+{
+}
+
+////////////////////////////////////////////////////////////////////////////////
+MissingActorException::MissingActorException(const std::string& message, const std::string& filename, unsigned int linenum)
+: dtUtil::Exception(message, filename, linenum)
+{
+}
+
+////////////////////////////////////////////////////////////////////////////////

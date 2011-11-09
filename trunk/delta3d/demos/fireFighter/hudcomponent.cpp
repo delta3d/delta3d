@@ -122,8 +122,7 @@ void HUDComponent::SetupGUI(dtABC::BaseABC& app)
    }
    catch(const CEGUI::Exception& e)
    {
-      throw dtUtil::Exception(ExceptionEnum::CEGUI_EXCEPTION, e.getMessage().c_str(),
-         __FILE__, __LINE__);
+      throw CEGUIException(e.getMessage().c_str(), __FILE__, __LINE__);
    }
 }
 
@@ -737,7 +736,7 @@ void HUDComponent::UpdateMediumDetailData(CEGUI::Window* parent)
       }
       else
       {
-         throw dtUtil::Exception(dtGame::ExceptionEnum::INVALID_PARAMETER, "Unable to find LMSComponent", __FILE__, __LINE__);
+         throw dtCore::InvalidParameterException("Unable to find LMSComponent", __FILE__, __LINE__);
       }
    }
 }

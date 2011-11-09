@@ -594,21 +594,6 @@ namespace dtAnim
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   CalHardwareModel* Cal3DModelWrapper::GetOrCreateCalHardwareModel()
-   {
-      //deprecated 10/20/2009
-      DEPRECATE("Cal3DModelWrapper::GetOrCreateCalHardwareModel",
-         "Cal3DModelData::GetOrCreateCalHardwareModel");
-
-      if (!mHardwareModel)
-      {
-         mHardwareModel = new CalHardwareModel(GetCalModel()->getCoreModel());
-      }
-
-      return mHardwareModel;
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
    void Cal3DModelWrapper::SetMaterialSet(int materialSetID)
    {
       mCalModel->setMaterialSet(materialSetID);

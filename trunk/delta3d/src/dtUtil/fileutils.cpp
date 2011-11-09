@@ -97,11 +97,6 @@ _CRTIMP extern int errno;
 
 namespace dtUtil
 {
-   IMPLEMENT_ENUM(FileExceptionEnum)
-
-   FileExceptionEnum FileExceptionEnum::IOException("File IO Exception");
-   FileExceptionEnum FileExceptionEnum::FileNotFound("File Not Found");
-
    dtCore::RefPtr<FileUtils> FileUtils::mInstance;
 
 #ifdef DELTA_WIN32
@@ -1801,14 +1796,12 @@ namespace dtUtil
    FileUtilIOException::FileUtilIOException(const std::string& message, const std::string& filename, unsigned int linenum)
       : dtUtil::Exception(message, filename, linenum)
    {
-      mType = &dtUtil::FileExceptionEnum::IOException;
    }
 
    /////////////////////////////////////////////////////////////////////////////
    FileNotFoundException::FileNotFoundException(const std::string& message, const std::string& filename, unsigned int linenum)
       : dtUtil::Exception(message, filename, linenum)
    {
-      mType = &dtUtil::FileExceptionEnum::FileNotFound;
    }
 
 } // namespace dtUtil

@@ -28,10 +28,6 @@
 namespace dtTerrain
 {
    //////////////////////////////////////////////////////////////////////////
-   IMPLEMENT_ENUM(GeoCoordinatesException);
-   GeoCoordinatesException GeoCoordinatesException::OUT_OF_BOUNDS("OUT_OF_BOUNDS");
-
-   //////////////////////////////////////////////////////////////////////////
    //These constants are hardcoded from the WGS84 standard.
    const double GeoCoordinates::EQUATORIAL_RADIUS = 6378137.0;
    const double GeoCoordinates::POLAR_RADIUS = 6356752.3142451794975639668;
@@ -39,7 +35,6 @@ namespace dtTerrain
 
    osg::Vec3d GeoCoordinates::gOriginOffset;
    GeoCoordinates GeoCoordinates::geoOrigin;
-
 
    //////////////////////////////////////////////////////////////////////////
    GeoCoordinates::GeoCoordinates()
@@ -220,6 +215,5 @@ namespace dtTerrain
    GeoCoordinatesOutOfBoundsException::GeoCoordinatesOutOfBoundsException(const std::string& message, const std::string& filename, unsigned int linenum)
       : dtUtil::Exception(message, filename, linenum)
    {
-      mType = &GeoCoordinatesException::OUT_OF_BOUNDS;
    }
 }
