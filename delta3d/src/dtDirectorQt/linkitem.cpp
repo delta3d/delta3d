@@ -615,18 +615,15 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void OutputLinkItem::DrawGlow(float glow)
    {
-      float highlightAlpha = 1.0f;
       if (glow > 0.5f)
       {
          SetAlwaysHighlight(true);
          SetHighlightAlpha(1.0f);
-         highlightAlpha = 1.0f;
       }
       else if (glow > 0.0f)
       {
          SetAlwaysHighlight(true);
          SetHighlightAlpha(glow * 2.0f);
-         highlightAlpha = glow * 2.0f;
       }
       else if (glow == 0.0f)
       {
