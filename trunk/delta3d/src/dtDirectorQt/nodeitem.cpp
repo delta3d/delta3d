@@ -613,7 +613,6 @@ namespace dtDirector
          QPointF(LINK_LENGTH, LINK_SIZE/2) <<
          QPointF(LINK_LENGTH - LINK_SIZE/2, LINK_SIZE) <<
          QPointF(0, LINK_SIZE);
-      float offset = 0;
 
       int visibleCount = 0;
       unsigned int count = mOutputs.size();
@@ -638,7 +637,6 @@ namespace dtDirector
 
          float x = -nameBounds.width();
          float y = (LINK_SIZE/2) - (nameBounds.height()/2);
-         offset = -y;
          data.linkName->setPos(x, y);
       }
 

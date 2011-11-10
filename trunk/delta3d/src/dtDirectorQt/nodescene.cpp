@@ -209,7 +209,6 @@ namespace dtDirector
          NodeItem* nodeItem = dynamic_cast<NodeItem*>(itemList[index]);
          if (nodeItem)
          {
-            QPointF pos = nodeItem->scenePos();
             float width = nodeItem->GetNodeWidth();
 
             osg::Vec2 newPos = osg::Vec2(center - (width * 0.5f), mHeight);
