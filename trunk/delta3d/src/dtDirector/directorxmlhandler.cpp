@@ -213,6 +213,35 @@ namespace dtDirector
             {
                ClearNodeValues();
                mInNode = true;
+
+               // Make sure we have a graph.
+               if (mGraphID.id.ToString().empty())
+               {
+                  // In older versions, graphs did not save their ID values.
+                  // For this case, we need to create a new graph and add it
+                  // to the stack.
+                  dtCore::RefPtr<DirectorGraph> graph = NULL;
+                  if (mGraphs.empty())
+                  {
+                     graph = mDirector->GetGraphRoot();
+                  }
+                  else
+                  {
+                     graph = new DirectorGraph(mDirector);
+                     DirectorGraph* parent = mGraphs.top();
+                     graph->SetParent(parent);
+                     graph->BuildPropertyMap();
+                     parent->GetSubGraphs().push_back(graph);
+                  }
+
+                  if (graph)
+                  {
+                     mGraphID = graph->GetID();
+
+                     mGraphs.push(graph);
+                     mPropSerializer->SetCurrentPropertyContainer(graph);
+                  }
+               }
             }
          }
          else
