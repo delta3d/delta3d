@@ -119,6 +119,7 @@ private:
 
    struct A
    {
+      A() {}
       virtual ~A() {}
       int f0def() { return 2; }
       int f1def(int i) { return i; }
@@ -309,7 +310,7 @@ void FunctorTests::TestMemberFunctors()
    Functor2 f2memfnconst(&a, &A::f2defconst);
    CPPUNIT_ASSERT(f2memfnconst(1, 1) == 2);
    CPPUNIT_ASSERT(f2memfnconst(1, 2) == 3);
-   A const ac;
+   const A ac;
    Functor2 f2memfnconst_(&ac, &A::f2defconst);
    CPPUNIT_ASSERT(f2memfnconst_(1, 1) == 2);
    CPPUNIT_ASSERT(f2memfnconst_(1, 2) == 3);
