@@ -28,19 +28,12 @@
 
 namespace dtGUI
 {
-   class DT_GUI_EXPORT ExceptionEnum : public dtUtil::Enumeration
+   class DT_GUI_EXPORT GenericCEGUIException : public dtUtil::Exception
    {
-         DECLARE_ENUM(ExceptionEnum);
-      public:
-         static ExceptionEnum GenericCEGUIException;
-
-      protected:
-         ExceptionEnum(const std::string &name) : Enumeration(name)
-         {
-            AddInstance(this);
-         }
+   public:
+      GenericCEGUIException(const std::string& message, const std::string& filename, unsigned int linenum);
+      virtual ~GenericCEGUIException() {};
    };
-
 }//namespace dtCore
 
 #endif //DELTA_GUI_EXCEPTION_ENUM
