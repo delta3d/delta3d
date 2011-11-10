@@ -88,8 +88,6 @@ namespace dtAI
       {
          mSearchLevels.clear();
 
-         WaypointMap::iterator iter = mWaypointOwnership.begin();
-
          // If we loaded a legacy ai file, then it is important to make sure
          // that the WaypointManager doesn't delete our Waypoints before this
          mWaypointOwnership.clear();

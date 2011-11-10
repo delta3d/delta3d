@@ -1618,33 +1618,33 @@ namespace dtUtil
       double t9;      // Term in coordinate conversion formula - GP to y
       double tmd;     // True Meridional distance
       double tmdo;    // True Meridional distance for latitude of origin
-      double temp_Origin;
-      double temp_Long;
+      //double temp_Origin;
+      //double temp_Long;
 
       if (Longitude > osg::PI)
       {
          Longitude -= (2 * osg::PI);
       }
-      if ((Longitude < (params.TranMerc_Origin_Long - MAX_DELTA_LONG))
-          || (Longitude > (params.TranMerc_Origin_Long + MAX_DELTA_LONG)))
-      {
-         if (Longitude < 0)
-         {
-            temp_Long = Longitude + 2 * osg::PI;
-         }
-         else
-         {
-            temp_Long = Longitude;
-         }
-         if (params.TranMerc_Origin_Long < 0)
-         {
-            temp_Origin = params.TranMerc_Origin_Long + 2 * osg::PI;
-         }
-         else
-         {
-            temp_Origin = params.TranMerc_Origin_Long;
-         }
-      }
+      //if ((Longitude < (params.TranMerc_Origin_Long - MAX_DELTA_LONG))
+      //    || (Longitude > (params.TranMerc_Origin_Long + MAX_DELTA_LONG)))
+      //{
+         //if (Longitude < 0)
+         //{
+         //   temp_Long = Longitude + 2 * osg::PI;
+         //}
+         //else
+         //{
+         //   temp_Long = Longitude;
+         //}
+         //if (params.TranMerc_Origin_Long < 0)
+         //{
+         //   temp_Origin = params.TranMerc_Origin_Long + 2 * osg::PI;
+         //}
+         //else
+         //{
+         //   temp_Origin = params.TranMerc_Origin_Long;
+         //}
+      //}
 
       /*
        *  Delta Longitude
@@ -1750,7 +1750,7 @@ namespace dtUtil
       double eta4;
       double ftphi;   // Footpoint latitude
       int    i;       // Loop iterator
-      double s;       // Sine of latitude
+      //double s;       // Sine of latitude
       double sn;      // Radius of curvature in the prime vertical
       double sr;      // Radius of curvature in the meridian
       double t;       // Tangent of latitude
@@ -1791,7 +1791,7 @@ namespace dtUtil
       sn = params.SPHSN(ftphi);
 
       // Sine Cosine terms
-      s = sin(ftphi);
+      //s = sin(ftphi);
       c = cos(ftphi);
 
       // Tangent Value
