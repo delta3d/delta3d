@@ -118,7 +118,7 @@ namespace dtDirector
       // Input Links.
       std::vector<InputLink>& inputs = GetInputLinks();
       int count = (int)inputs.size();
-      int saveCount = 0;
+      //int saveCount = 0;
       for (int index = 0; index < count; index++)
       {
          InputLink& input = inputs[index];
@@ -129,7 +129,7 @@ namespace dtDirector
       // Output Links.
       std::vector<OutputLink>& outputs = GetOutputLinks();
       count = (int)outputs.size();
-      saveCount = 0;
+      //saveCount = 0;
       for (int index = 0; index < count; index++)
       {
          OutputLink& output = outputs[index];
@@ -140,7 +140,7 @@ namespace dtDirector
       // Value Links.
       std::vector<ValueLink>& values = GetValueLinks();
       count = (int)values.size();
-      saveCount = 0;
+      //saveCount = 0;
       for (int index = 0; index < count; index++)
       {
          ValueLink& value = values[index];

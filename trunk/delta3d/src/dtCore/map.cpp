@@ -374,16 +374,16 @@ namespace dtCore
    {
       std::map<std::string,std::string>::iterator old = mLibraryVersionMap.find(name);
 
-      bool alreadyExists;
+      //bool alreadyExists;
       if (old != mLibraryVersionMap.end())
       {
          old->second = version;
-         alreadyExists = true;
+         //alreadyExists = true;
       }
       else
       {
          mLibraryVersionMap.insert(make_pair(name,version));
-         alreadyExists = false;
+         //alreadyExists = false;
       }
 
       for (std::vector<std::string>::iterator i = mLibraryOrder.begin(); i != mLibraryOrder.end(); ++i)
