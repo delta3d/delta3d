@@ -12,8 +12,7 @@ using namespace dtCore;
 
 void initCollisionMotionModelBindings()
 {
-
-   class_<CollisionMotionModel, bases<MotionModel>, RefPtr<CollisionMotionModel> >("CollisionMotionModel", init<float, float, float, float, Scene*, Keyboard*, Mouse*>())
+   class_<CollisionMotionModel, bases<MotionModel>, RefPtr<CollisionMotionModel> >("CollisionMotionModel", init<float, float, float, Scene*, Keyboard*, Mouse*>())
       .def("SetDefaultMappings", &CollisionMotionModel::SetDefaultMappings)
       .def("SetWalkForwardBackwardAxis", &CollisionMotionModel::SetWalkForwardBackwardAxis)
       .def("GetWalkForwardBackwardAxis", &CollisionMotionModel::GetWalkForwardBackwardAxis, return_internal_reference<>())

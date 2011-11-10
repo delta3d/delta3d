@@ -28,22 +28,6 @@
 namespace dtHLAGM
 {
 
-   class DT_HLAGM_EXPORT ExceptionEnum : public dtUtil::Enumeration
-   {
-      DECLARE_ENUM(ExceptionEnum);
-      public:
-         ///Used when an exception was received from the XML parser.
-         static ExceptionEnum XML_INTERNAL_EXCEPTION;
-
-         ///Used when the parser encounters errors or the parser is unable to setup the configuration.
-         static ExceptionEnum XML_CONFIG_EXCEPTION;
-      protected:
-         ExceptionEnum(const std::string &name) : dtUtil::Enumeration(name)
-         {
-            AddInstance(this);
-         }
-   };
-
    class XmlInternalException : public dtUtil::Exception
    {
    public:
@@ -57,8 +41,6 @@ namespace dtHLAGM
    	XmlConfigException(const std::string& message, const std::string& filename, unsigned int linenum);
    	virtual ~XmlConfigException() {};
    };
-   
-
 }
 
 #endif /*DELTA_HLAGM_throw dtUtil::ExceptionION_ENUM*/
