@@ -181,8 +181,7 @@ void CEUIDrawable::Config()
          dtUtil::Log::GetInstance().LogMessage(Log::LOG_ERROR, __FUNCTION__,
             "CEGUI says: %s", e.getMessage().c_str());
 
-         throw dtUtil::Exception(ExceptionEnum::GenericCEGUIException, 
-            "Can't initialize dtGUI system. UI operations will fail!", __FILE__, __LINE__);
+         throw dtGUI::GenericCEGUIException("Can't initialize dtGUI system. UI operations will fail!", __FILE__, __LINE__);
       }
    }
     
