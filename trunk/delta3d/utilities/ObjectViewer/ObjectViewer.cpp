@@ -514,7 +514,6 @@ void ObjectViewer::OnSetLightType(int id, int type)
    case 0: // Infinite
       {
          newLight = new dtCore::InfiniteLight(id, lightName.toStdString());
-         //newLight->GetLightSource()->getLight()->setPosition(osg::Vec4(-osg::Y_AXIS, 0.0f));
          break;
       }
 
@@ -561,21 +560,13 @@ void ObjectViewer::OnSetLightType(int id, int type)
          }
       }
 
+      // Copy the transform from the light to the attached transformable.
+      dtCore::Transform transform;
+      newLight->GetTransform(transform);
+      newLight->SetTransform(dtCore::Transform());
+      lightArrowTransformable->SetTransform(transform);
+
       lightArrowTransformable->AddChild(newLight);
-
-      dtCore::RefPtr<dtCore::Object> lightArrow = mLightArrow[id];
-      if (lightArrow.valid())
-      {
-         dtCore::Transform transform;
-
-         if (type == 0)
-         {
-            // Infinite lights are pointing down the Z axis.
-            transform.SetRotation(osg::Matrix::rotate(osg::DegreesToRadians(-90.0f), osg::X_AXIS));
-         }
-
-         lightArrow->SetTransform(transform, dtCore::Transformable::REL_CS);
-      }
 
       GetScene()->RegisterLight(newLight);
    }
@@ -802,19 +793,9 @@ void ObjectViewer::InitLights()
       }
 
       bool enabled = light->GetEnabled();
-
       dtCore::RefPtr<dtCore::Object> lightArrow = new dtCore::Object;
       lightArrow->LoadFile("examples/data/models/LightArrow.ive");
       lightArrow->SetActive(enabled);
-
-      dtCore::Transform transform;
-
-      // Infinite lights point in a different direction than others.
-      if (dynamic_cast<dtCore::InfiniteLight*>(light.get()))
-      {
-         transform.SetRotation(osg::Matrix::rotate(osg::DegreesToRadians(-90.0f), osg::X_AXIS));
-         lightArrow->SetTransform(transform);
-      }
 
       dtCore::RefPtr<dtCore::Transformable> lightArrowTransformable = new dtCore::Transformable;
       lightArrowTransformable->AddChild(lightArrow.get());
@@ -822,6 +803,7 @@ void ObjectViewer::InitLights()
       lightArrowTransformable->AddChild(light);
 
       // Copy the transform from the light to the attached transformable.
+      dtCore::Transform transform;
       light->GetTransform(transform);
       light->SetTransform(dtCore::Transform());
       lightArrowTransformable->SetTransform(transform);
@@ -841,7 +823,7 @@ void ObjectViewer::InitLights()
 
    // The built in scene skylight has problems with being updated
    // by the motion model so reset it with a custom one here.
-   OnSetLightType(0, 0);
+   //OnSetLightType(0, 0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
