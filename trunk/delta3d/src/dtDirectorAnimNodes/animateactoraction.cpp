@@ -18,8 +18,7 @@
  *
  * Author: Jeff P. Houde
  */
-#include <prefix/dtdirectornodesprefix.h>
-#include <dtDirectorNodes/animateactoraction.h>
+#include <dtDirectorAnimNodes/animateactoraction.h>
 
 #include <dtCore/actoridactorproperty.h>
 #include <dtCore/floatactorproperty.h>

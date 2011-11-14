@@ -374,8 +374,46 @@ namespace dtDirector
       std::string typeName     = ParseString(file);
       std::string typeCategory = ParseString(file);
 
+      std::string nodeName = typeName;
+      std::string nodeCategory = typeCategory;
+
+      dtCore::RefPtr<Node> newNode = NULL;
+
       dtDirector::NodeManager& nodeManager = dtDirector::NodeManager::GetInstance();
-      dtCore::RefPtr<Node> newNode = nodeManager.CreateNode(typeName, typeCategory, graph);
+      while (!newNode.valid() && !nodeName.empty() && !nodeCategory.empty())
+      {
+         newNode = nodeManager.CreateNode(nodeName, nodeCategory, graph).get();
+         if (!newNode.valid())
+         {
+            // Attempt to find a replacement for this node.
+            dtDirector::NodePluginRegistry::NodeReplacementData repData;
+            repData = nodeManager.FindNodeTypeReplacement(nodeCategory + "." + nodeName);
+
+            // Attempt to load the library that contains the node.
+            if (!repData.library.empty())
+            {
+               if (!graph->GetDirector()->HasLibrary(repData.library))
+               {
+                  graph->GetDirector()->AddLibrary(repData.library);
+                  mHasDeprecatedProperty = true;
+               }
+            }
+
+            nodeName = repData.newName;
+            nodeCategory = repData.newCategory;
+         }
+      }
+
+      if (newNode.valid())
+      {
+         // Now make sure the new node is part of a valid library.
+         NodePluginRegistry* reg = NodeManager::GetInstance().GetRegistryForType(newNode->GetType());
+         if (reg && !graph->GetDirector()->HasLibrary(reg->GetName()))
+         {
+            newNode = NULL;
+         }
+      }
+
       if (!newNode.valid())
       {
          std::string nodeType = typeCategory + "." + typeName;

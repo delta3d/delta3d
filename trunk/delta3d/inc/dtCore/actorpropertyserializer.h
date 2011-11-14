@@ -69,6 +69,7 @@ namespace dtCore
 
       void Reset()
       {
+         mHasDeprecatedProperty = false;
          mInActorProperty = false;
          mNestedTypes.clear();
 
@@ -167,6 +168,7 @@ namespace dtCore
        * Returns whether or not the map had a temporary property in it.
        */
       bool HasDeprecatedProperty() const { return mData.top().mHasDeprecatedProperty; }
+      void SetDeprecatedProperty() {mData.top().mHasDeprecatedProperty = true;}
 
    private:
 

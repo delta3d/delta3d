@@ -425,6 +425,12 @@ namespace dtDirector
                this);
 
             messageBox.exec();
+
+            // Create a single tab with the default graph.
+            OpenGraph(GetDirector()->GetGraphRoot());
+            mUI.graphBrowser->BuildGraphList(GetDirector()->GetGraphRoot());
+
+            RefreshNodeScenes();
          }
       }
 

@@ -10,7 +10,6 @@ SET(LIB_PUBLIC_HEADERS
     ${HEADER_PATH}/actorvalue.h
     ${HEADER_PATH}/addmutator.h
     ${HEADER_PATH}/andmutator.h
-    ${HEADER_PATH}/animateactoraction.h
     ${HEADER_PATH}/arithmeticmutator.h
     ${HEADER_PATH}/attachcameraaction.h
     ${HEADER_PATH}/attachmotionmodelaction.h
@@ -111,7 +110,6 @@ SET(LIB_SOURCES
     ${SOURCE_PATH}/actorvalue.cpp
     ${SOURCE_PATH}/addmutator.cpp
     ${SOURCE_PATH}/andmutator.cpp
-    ${SOURCE_PATH}/animateactoraction.cpp
     ${SOURCE_PATH}/arithmeticmutator.cpp
     ${SOURCE_PATH}/attachcameraaction.cpp
     ${SOURCE_PATH}/attachmotionmodelaction.cpp
@@ -218,7 +216,6 @@ TARGET_LINK_LIBRARIES(${LIB_NAME}
                       ${DTDIRECTOR_LIBRARY}
                       ${DTACTORS_LIBRARY}
                       ${DTGAME_LIBRARY}
-                      ${DTANIM_LIBRARY}
                      )
 
 SET_TARGET_PROPERTIES(${LIB_NAME}
