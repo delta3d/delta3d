@@ -405,7 +405,7 @@ namespace dtDirector
    void NodeLibraryRegistry::GetReplacementNodeTypes(NodeLibraryRegistry::NodeTypeReplacements &replacements) const
    {
       NodeLibraryRegistry::NodeReplacementData animateActorData;
-      animateActorData.library = "dtDirectorAnimNodesss";
+      animateActorData.library = "dtDirectorAnimNodes";
       animateActorData.newName = "Animate Actor";
       animateActorData.newCategory = "Cinematic";
       replacements.push_back(std::make_pair<std::string, NodeLibraryRegistry::NodeReplacementData>("Cinematic.Animate Actor", animateActorData));
