@@ -170,7 +170,7 @@ namespace dtDirector
                // Unload any extra parsers created for referenced scripts.
                if (mCurrentXMLParser == -1)
                {
-                  mXMLParserList.resize(1);
+                  mXMLParserList.clear();
                }
             }
          }
@@ -183,7 +183,7 @@ namespace dtDirector
                // Unload any extra parsers created for referenced scripts.
                if (mCurrentXMLParser == -1)
                {
-                  mXMLParserList.resize(1);
+                  mXMLParserList.clear();
                }
             }
 

@@ -34,6 +34,7 @@ TARGET_LINK_LIBRARIES( ${LIB_NAME}
                        ${DTANIM_LIBRARY}
                        ${DTDIRECTOR_LIBRARY}
                        ${DTDIRECTORQT_LIBRARY}
+                       dtDirectorAnimNodes
                        ${QT_QTCORE_LIBRARY}
                        ${QT_QTGUI_LIBRARY}
                        ${QT_QTOPENGL_LIBRARY}

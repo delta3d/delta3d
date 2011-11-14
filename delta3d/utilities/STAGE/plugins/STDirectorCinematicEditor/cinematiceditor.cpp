@@ -32,7 +32,7 @@
 #include <dtDirectorQt/editorscene.h>
 
 #include <dtDirectorNodes/scheduleraction.h>
-#include <dtDirectorNodes/animateactoraction.h>
+#include <dtDirectorAnimNodes/animateactoraction.h>
 
 #include <dtCore/object.h>
 #include <dtDAL/arrayactorpropertybase.h>
@@ -1995,6 +1995,11 @@ void DirectorCinematicEditorPlugin::OnSave()
          // Create our animation action.
          if (actorData.mAnimationData.size())
          {
+            if (!GetGraph()->GetDirector()->HasLibrary("dtDirectorAnimNodes"))
+            {
+               GetGraph()->GetDirector()->AddLibrary("dtDirectorAnimNodes");
+            }
+
             dtDirector::AnimateActorAction* animNode =
                dynamic_cast<dtDirector::AnimateActorAction*>(
                CreateNode("Animate Actor", "Cinematic", startNode));

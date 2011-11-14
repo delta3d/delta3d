@@ -503,7 +503,44 @@ namespace dtDirector
                if (!mNodeName.empty() && !mNodeCategory.empty())
                {
                   dtDirector::NodeManager& nodeManager = dtDirector::NodeManager::GetInstance();
-                  mNode = nodeManager.CreateNode(mNodeName, mNodeCategory, graph).get();
+
+                  std::string nodeName = mNodeName;
+                  std::string nodeCategory = mNodeCategory;
+
+                  while (!mNode.valid() && !nodeName.empty() && !nodeCategory.empty())
+                  {
+                     mNode = nodeManager.CreateNode(nodeName, nodeCategory, graph).get();
+                     if (!mNode.valid())
+                     {
+                        // Attempt to find a replacement for this node.
+                        dtDirector::NodePluginRegistry::NodeReplacementData repData;
+                        repData = nodeManager.FindNodeTypeReplacement(nodeCategory + "." + nodeName);
+
+                        // Attempt to load the library that contains the node.
+                        if (!repData.library.empty())
+                        {
+                           if (!mDirector->HasLibrary(repData.library))
+                           {
+                              mDirector->AddLibrary(repData.library);
+                              mPropSerializer->SetDeprecatedProperty();
+                           }
+                        }
+
+                        nodeName = repData.newName;
+                        nodeCategory = repData.newCategory;
+                     }
+                  }
+
+                  if (mNode.valid())
+                  {
+                     // Now make sure the new node is part of a valid library.
+                     NodePluginRegistry* reg = NodeManager::GetInstance().GetRegistryForType(mNode->GetType());
+                     if (reg && !mDirector->HasLibrary(reg->GetName()))
+                     {
+                        mNode = NULL;
+                     }
+                  }
+
                   if (!mNode.valid())
                   {
                      std::string nodeType = mNodeCategory + "." + mNodeName;

@@ -56,7 +56,7 @@ namespace dtDirector
     * }
     *
     * extern "C" DT_EXAMPLE_EXPORT void DestroyPluginRegistry(dtDirector::NodePluginRegistry* registry)
-    * { 
+    * {
     *   if (registry != NULL)
     *   delete registry;
     * }
@@ -122,18 +122,37 @@ namespace dtDirector
        */
       void GetSupportedNodeTypes(std::vector<dtCore::RefPtr<const NodeType> >& nodes);
 
-      /** 
+      /**
         * Container of <old, new> NodeType names.  First entry is the full name of the
         * old NodeType.  Second entry is the full name of the new NodeType to
         * use instead.
         */
-      typedef std::vector<std::pair<std::string, std::string> > NodeTypeReplacements;
+      struct NodeReplacementData
+      {
+         NodeReplacementData()
+         {
+         }
 
-      /** 
+         ~NodeReplacementData()
+         {
+         }
+
+         bool operator==(const NodeReplacementData& rhs) const
+         {
+            return (rhs.library == library && rhs.newName == newName);
+         }
+
+         std::string library;
+         std::string newName;
+         std::string newCategory;
+      };
+      typedef std::vector<std::pair<std::string, NodeReplacementData> > NodeTypeReplacements;
+
+      /**
        * Get the NodeTypeReplacements for this NodePluginRegistry.  This list
        * is used to provide some backwards compatibility with applications or maps
        * referring to older, deprecated NodeTypes.  Override in derived classes
-       * if previous NodeTypes have been modified and backwards compatibility is 
+       * if previous NodeTypes have been modified and backwards compatibility is
        * desired.
        *
        * @param[in]  replacements  The container to fill out with NodeType replacements

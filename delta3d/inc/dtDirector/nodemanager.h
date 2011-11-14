@@ -180,7 +180,7 @@ namespace dtDirector
        *
        * @return               The full NodeType name to use instead (or empty, if nothing is registered)
        */
-      std::string FindNodeTypeReplacement(const std::string& fullName) const;
+      NodePluginRegistry::NodeReplacementData FindNodeTypeReplacement(const std::string& fullName) const;
 
       /**
        * Creates a new node.  The node type is used by the node

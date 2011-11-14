@@ -270,7 +270,7 @@ namespace dtDirector
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   std::string NodeManager::FindNodeTypeReplacement(const std::string& fullName) const
+   NodePluginRegistry::NodeReplacementData NodeManager::FindNodeTypeReplacement(const std::string& fullName) const
    {
       NodePluginRegistry::NodeTypeReplacements::const_iterator itr = mReplacementNodes.begin();
       while (itr != mReplacementNodes.end())
@@ -282,7 +282,7 @@ namespace dtDirector
          ++itr;
       }
 
-      return std::string();
+      return NodePluginRegistry::NodeReplacementData();
    }
 
    /////////////////////////////////////////////////////////////////////////////

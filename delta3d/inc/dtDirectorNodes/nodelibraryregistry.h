@@ -97,7 +97,6 @@ namespace dtDirector
       static dtCore::RefPtr<dtDirector::NodeType> LERP_ACTOR_ROTATION_ACTION_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> LERP_ACTOR_SCALE_ACTION_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> LERP_ACTOR_TRANSLATION_ACTION_NODE_TYPE;
-      static dtCore::RefPtr<dtDirector::NodeType> ANIMATE_ACTOR_ACTION_NODE_TYPE;
 
       static dtCore::RefPtr<dtDirector::NodeType> SEND_MESSAGE_ACTION_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> SEND_EVENT_MESSAGE_ACTION_NODE_TYPE;
@@ -171,6 +170,17 @@ namespace dtDirector
       {
          return "Core";
       }
+
+      /**
+       * Get the NodeTypeReplacements for this NodePluginRegistry.  This list
+       * is used to provide some backwards compatibility with applications or maps
+       * referring to older, deprecated NodeTypes.  Override in derived classes
+       * if previous NodeTypes have been modified and backwards compatibility is
+       * desired.
+       *
+       * @param[in]  replacements  The container to fill out with NodeType replacements
+       */
+      virtual void GetReplacementNodeTypes(NodeLibraryRegistry::NodeTypeReplacements &replacements) const;
    };
 }
 

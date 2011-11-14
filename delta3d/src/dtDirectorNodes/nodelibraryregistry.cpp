@@ -34,7 +34,6 @@
 #include <dtDirectorNodes/triggervolumeevent.h>
 
 // Actions
-#include <dtDirectorNodes/animateactoraction.h>
 #include <dtDirectorNodes/attachcameraaction.h>
 #include <dtDirectorNodes/attachmotionmodelaction.h>
 #include <dtDirectorNodes/calculatedistanceaction.h>
@@ -210,7 +209,6 @@ namespace dtDirector
    RefPtr<NodeType> NodeLibraryRegistry::LERP_ACTOR_ROTATION_ACTION_NODE_TYPE(   new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Lerp Actor Rotation",       "Cinematic",   "Cinematic",   "Linearly interpolates the rotation of an actor.", NULL, Colors::BLUE));
    RefPtr<NodeType> NodeLibraryRegistry::LERP_ACTOR_SCALE_ACTION_NODE_TYPE(      new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Lerp Actor Scale",          "Cinematic",   "Cinematic",   "Linearly interpolates the scale of an actor.", NULL, Colors::BLUE));
    RefPtr<NodeType> NodeLibraryRegistry::LERP_ACTOR_TRANSLATION_ACTION_NODE_TYPE(new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Lerp Actor Translation",    "Cinematic",   "Cinematic",   "Linearly interpolates the position of an actor.", NULL, Colors::BLUE));
-   RefPtr<NodeType> NodeLibraryRegistry::ANIMATE_ACTOR_ACTION_NODE_TYPE(         new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Animate Actor",             "Cinematic",   "Cinematic",   "Animates a skeletal mesh actor.", NULL, Colors::BLUE));
 
    RefPtr<NodeType> NodeLibraryRegistry::SEND_MESSAGE_ACTION_NODE_TYPE(          new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Send Message Action",       "Messages",    "Messages",    "Sends a Game Message.", NULL, Colors::BLUE));
    RefPtr<NodeType> NodeLibraryRegistry::SEND_EVENT_MESSAGE_ACTION_NODE_TYPE(    new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Send Event Message Action", "Messages",    "Messages",    "Sends a Game Event Message.", NULL, Colors::BLUE));
@@ -348,7 +346,6 @@ namespace dtDirector
       mNodeFactory->RegisterType<LerpActorRotationAction>(LERP_ACTOR_ROTATION_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<LerpActorScaleAction>(LERP_ACTOR_SCALE_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<LerpActorTranslationAction>(LERP_ACTOR_TRANSLATION_ACTION_NODE_TYPE.get());
-      mNodeFactory->RegisterType<AnimateActorAction>(ANIMATE_ACTOR_ACTION_NODE_TYPE.get());
 
       mNodeFactory->RegisterType<SendMessageAction>(SEND_MESSAGE_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<SendEventMessageAction>(SEND_EVENT_MESSAGE_ACTION_NODE_TYPE.get());
@@ -402,5 +399,15 @@ namespace dtDirector
 
       // Misc
       mNodeFactory->RegisterType<GroupNode>(GROUP_BOX_NODE_TYPE.get());
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void NodeLibraryRegistry::GetReplacementNodeTypes(NodeLibraryRegistry::NodeTypeReplacements &replacements) const
+   {
+      NodeLibraryRegistry::NodeReplacementData animateActorData;
+      animateActorData.library = "dtDirectorAnimNodesss";
+      animateActorData.newName = "Animate Actor";
+      animateActorData.newCategory = "Cinematic";
+      replacements.push_back(std::make_pair<std::string, NodeLibraryRegistry::NodeReplacementData>("Cinematic.Animate Actor", animateActorData));
    }
 }
