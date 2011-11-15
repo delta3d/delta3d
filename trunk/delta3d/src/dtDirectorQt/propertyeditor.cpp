@@ -171,47 +171,6 @@ namespace dtDirector
    void PropertyEditor::PropertyAboutToChangeFromControl(dtCore::PropertyContainer& propCon, dtCore::ActorProperty& prop,
             const std::string& oldValue, const std::string& newValue)
    {
-      dtDirector::ID id;
-
-      std::string undoDescription = "Property modification for ";
-      // Check if the container is for a graph.
-      DirectorGraph* graph = dynamic_cast<DirectorGraph*>(&propCon);
-      if (graph)
-      {
-         if (graph->GetEditor().empty())
-         {
-            undoDescription += "Macro Node \'" + graph->GetName() + "\'.";
-         }
-         else
-         {
-            undoDescription += "\'" + graph->GetEditor() + "\' Macro Node \'" + graph->GetName() + "\'.";
-         }
-         id = graph->GetID();
-      }
-      else
-      {
-         // Check if the container is for a node.
-         Node* node = dynamic_cast<Node*>(&propCon);
-         if (node)
-         {
-            undoDescription += "Node \'" + node->GetTypeName() + "\'.";
-            id = node->GetID();
-         }
-         // If it is not a graph or a node, then it is the director.
-         else
-         {
-            undoDescription += "Script.";
-         }
-      }
-
-      dtCore::RefPtr<UndoPropertyEvent> event = new UndoPropertyEvent(mDirectorEditor, id, prop.GetName(), oldValue, newValue);
-      event->SetDescription(undoDescription);
-      mDirectorEditor->GetUndoManager()->AddEvent(event.get());
-   }
-
-   /////////////////////////////////////////////////////////////////////////////////
-   void PropertyEditor::PropertyChangedFromControl(dtCore::PropertyContainer& propCon, dtCore::ActorProperty& prop)
-   {
       // Check if the container is a node.
       Node* node = dynamic_cast<Node*>(&propCon);
       if (node)
@@ -232,57 +191,100 @@ namespace dtDirector
                item->ConnectLinks(true);
             }
          }
+      }
+      else
+      {
+         // Check if the container is a graph.
+         DirectorGraph* graph = dynamic_cast<DirectorGraph*>(&propCon);
+         if (graph)
+         {
+            MacroItem* item = mScene->GetGraphItem(graph->GetID());
 
-         return;
+            // Re-Draw the node.
+            if (item)
+            {
+               item->Draw();
+               item->ConnectLinks(true);
+            }
+
+            // Update all tabs to make sure their names are correct.
+            int count = mGraphTabs->count();
+            for (int index = 0; index < count; index++)
+            {
+               EditorView* view = dynamic_cast<EditorView*>(mGraphTabs->widget(index));
+               if (view && view->GetScene()->GetGraph() == graph)
+               {
+                  mGraphTabs->setTabText(index, graph->GetName().c_str());
+               }
+            }
+
+            mDirectorEditor->RefreshGraphBrowser();
+         }
+         else
+         {
+            // Check if the container is the director.
+            Director* director = dynamic_cast<Director*>(&propCon);
+            if (director)
+            {
+               UpdateTitle();
+
+               // Update all tabs to make sure their names are correct.
+               int count = mGraphTabs->count();
+               for (int index = 0; index < count; index++)
+               {
+                  EditorView* view = dynamic_cast<EditorView*>(mGraphTabs->widget(index));
+                  if (view && view->GetScene()->GetGraph() == director->GetGraphRoot())
+                  {
+                     mGraphTabs->setTabText(index, director->GetGraphRoot()->GetName().c_str());
+                  }
+               }
+            }
+         }
       }
 
-      // Check if the container is a graph.
-      DirectorGraph* graph = dynamic_cast<DirectorGraph*>(&propCon);
-      if (graph)
+      if (oldValue != newValue)
       {
-         MacroItem* item = mScene->GetGraphItem(graph->GetID());
-
-         // Re-Draw the node.
-         if (item)
+         dtDirector::ID id;
+         std::string undoDescription = "Property modification for ";
+         // Check if the container is for a graph.
+         DirectorGraph* graph = dynamic_cast<DirectorGraph*>(&propCon);
+         if (graph)
          {
-            item->Draw();
-            item->ConnectLinks(true);
-         }
-
-         // Update all tabs to make sure their names are correct.
-         int count = mGraphTabs->count();
-         for (int index = 0; index < count; index++)
-         {
-            EditorView* view = dynamic_cast<EditorView*>(mGraphTabs->widget(index));
-            if (view && view->GetScene()->GetGraph() == graph)
+            if (graph->GetEditor().empty())
             {
-               mGraphTabs->setTabText(index, graph->GetName().c_str());
+               undoDescription += "Macro Node \'" + graph->GetName() + "\'.";
+            }
+            else
+            {
+               undoDescription += "\'" + graph->GetEditor() + "\' Macro Node \'" + graph->GetName() + "\'.";
+            }
+            id = graph->GetID();
+         }
+         else
+         {
+            // Check if the container is for a node.
+            Node* node = dynamic_cast<Node*>(&propCon);
+            if (node)
+            {
+               undoDescription += "Node \'" + node->GetTypeName() + "\'.";
+               id = node->GetID();
+            }
+            // If it is not a graph or a node, then it is the director.
+            else
+            {
+               undoDescription += "Script.";
             }
          }
 
-         mDirectorEditor->RefreshGraphBrowser();
-         return;
+         dtCore::RefPtr<UndoPropertyEvent> event = new UndoPropertyEvent(mDirectorEditor, id, prop.GetName(), oldValue, newValue);
+         event->SetDescription(undoDescription);
+         mDirectorEditor->GetUndoManager()->AddEvent(event.get());
       }
+   }
 
-      // Check if the container is the director.
-      Director* director = dynamic_cast<Director*>(&propCon);
-      if (director)
-      {
-         UpdateTitle();
-
-         // Update all tabs to make sure their names are correct.
-         int count = mGraphTabs->count();
-         for (int index = 0; index < count; index++)
-         {
-            EditorView* view = dynamic_cast<EditorView*>(mGraphTabs->widget(index));
-            if (view && view->GetScene()->GetGraph() == director->GetGraphRoot())
-            {
-               mGraphTabs->setTabText(index, director->GetGraphRoot()->GetName().c_str());
-            }
-         }
-
-         return;
-      }
+   /////////////////////////////////////////////////////////////////////////////////
+   void PropertyEditor::PropertyChangedFromControl(dtCore::PropertyContainer& propCon, dtCore::ActorProperty& prop)
+   {
    }
 
 
