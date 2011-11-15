@@ -110,6 +110,9 @@ namespace dtDirector
       DirectorEditor* mDirectorEditor;
       EditorScene*    mScene;
       GraphTabs*      mGraphTabs;
+
+      std::string     mOldValue;
+      std::string     mNewValue;
    };
 
 } // namespace dtDirector

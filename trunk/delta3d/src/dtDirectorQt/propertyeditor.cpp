@@ -171,6 +171,13 @@ namespace dtDirector
    void PropertyEditor::PropertyAboutToChangeFromControl(dtCore::PropertyContainer& propCon, dtCore::ActorProperty& prop,
             const std::string& oldValue, const std::string& newValue)
    {
+      mOldValue = oldValue;
+      mNewValue = newValue;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////
+   void PropertyEditor::PropertyChangedFromControl(dtCore::PropertyContainer& propCon, dtCore::ActorProperty& prop)
+   {
       // Check if the container is a node.
       Node* node = dynamic_cast<Node*>(&propCon);
       if (node)
@@ -242,7 +249,7 @@ namespace dtDirector
          }
       }
 
-      if (oldValue != newValue)
+      if (mOldValue != mNewValue)
       {
          dtDirector::ID id;
          std::string undoDescription = "Property modification for ";
@@ -276,15 +283,10 @@ namespace dtDirector
             }
          }
 
-         dtCore::RefPtr<UndoPropertyEvent> event = new UndoPropertyEvent(mDirectorEditor, id, prop.GetName(), oldValue, newValue);
+         dtCore::RefPtr<UndoPropertyEvent> event = new UndoPropertyEvent(mDirectorEditor, id, prop.GetName(), mOldValue, mNewValue);
          event->SetDescription(undoDescription);
          mDirectorEditor->GetUndoManager()->AddEvent(event.get());
       }
-   }
-
-   /////////////////////////////////////////////////////////////////////////////////
-   void PropertyEditor::PropertyChangedFromControl(dtCore::PropertyContainer& propCon, dtCore::ActorProperty& prop)
-   {
    }
 
 
