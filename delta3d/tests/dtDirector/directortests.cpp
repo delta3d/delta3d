@@ -19,7 +19,7 @@
 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 * THE SOFTWARE.
-* 
+*
 * This software was developed by Alion Science and Technology Corporation under
 * circumstances in which the U. S. Government may have rights in the software.
 *
@@ -52,20 +52,21 @@ class DirectorTests : public CPPUNIT_NS::TestFixture {
        * Tests the running of the loaded script.
        */
       void TestRunScript();
-         
+
    private:
       dtUtil::Log* mLogger;
 
    public:
 
       dtCore::RefPtr<dtDirector::Director> mDirector;
+      dtCore::RefPtr<dtDirector::Director> mDirector2;
 };
 
 // Registers the fixture into the 'registry'
 CPPUNIT_TEST_SUITE_REGISTRATION( DirectorTests );
 
 ///////////////////////////////////////////////////////////////////////////////
-void DirectorTests::setUp() 
+void DirectorTests::setUp()
 {
    try
    {
@@ -75,6 +76,9 @@ void DirectorTests::setUp()
 
       mDirector = new dtDirector::Director();
       mDirector->Init();
+
+      mDirector2 = new dtDirector::Director();
+      mDirector2->Init();
    }
    catch (const dtUtil::Exception& e)
    {
@@ -88,30 +92,34 @@ void DirectorTests::setUp()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void DirectorTests::tearDown() 
+void DirectorTests::tearDown()
 {
    mLogger = NULL;
    mDirector = NULL;
+   mDirector2 = NULL;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 void DirectorTests::TestRunScript()
-{	
+{
    try
    {
       mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__,  __LINE__, "Testing Director Graph.\n");
 
+      // Load our test script.
       try
       {
          dtCore::ResourceDescriptor resource("directors:test.dtdir");
          std::string path = dtCore::Project::GetInstance().GetResourcePath(resource);
          mDirector->LoadScript(path);
+         mDirector2->LoadScript(path);
       }
       catch (dtUtil::Exception& e)
       {
          CPPUNIT_FAIL(std::string("dtDirector test script didn't load correctly: ") + e.ToString());
       }
 
+      // Test XML saving.
       try
       {
          std::string contextPath = dtCore::Project::GetInstance().GetContext();
@@ -122,6 +130,7 @@ void DirectorTests::TestRunScript()
          CPPUNIT_FAIL(std::string("dtDirector test script didn't save in XML correctly: ") + e.ToString());
       }
 
+      // Test Binary Saving.
       try
       {
          std::string contextPath = dtCore::Project::GetInstance().GetContext();
@@ -132,6 +141,7 @@ void DirectorTests::TestRunScript()
          CPPUNIT_FAIL(std::string("dtDirector test script didn't save in binary correctly: ") + e.ToString());
       }
 
+      // Test Binary Loading.
       try
       {
          dtCore::ResourceDescriptor resource("directors:save test.dtdirb");
@@ -148,9 +158,10 @@ void DirectorTests::TestRunScript()
       CPPUNIT_ASSERT_MESSAGE("dtDirector's Graph Root didn't have any EventNodes", mDirector->GetGraphRoot()->GetEventNodes().empty() == false);
 
       std::vector<dtDirector::Node*> nodes;
-      mDirector->GetNodes("Remote Event", "Core", "EventName", "First", nodes);
-      CPPUNIT_ASSERT_MESSAGE("Couldn't find the node Remote Event 'First' after loading script", nodes.empty() == false);
+      mDirector->GetNodes("Remote Event", "Core", "EventName", "Execute Test", nodes);
+      CPPUNIT_ASSERT_MESSAGE("Couldn't find the node Remote Event 'Execute Test' after loading script", nodes.empty() == false);
 
+      // Trigger our test execution event.
       int count = (int)nodes.size();
       for (int index = 0; index < count; index++)
       {
@@ -161,16 +172,26 @@ void DirectorTests::TestRunScript()
          }
       }
 
+      // Wait for the test script to complete.
       while (mDirector->IsRunning())
       {
          mDirector->Update(0.5f, 0.5f);
       }
 
+      // Once the test is complete, our result value should be true.
       dtDirector::ValueNode* result = mDirector->GetValueNode("Result");
       CPPUNIT_ASSERT_MESSAGE("Could not get the ValueNode named 'Result'", result != NULL);
 
-      float resultValue = result->GetDouble();
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("'Result' ValueNode didn't have the correct returned value", 100.f, resultValue);
+      bool resultValue = result->GetBoolean();
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("'Result' ValueNode didn't have the correct returned value", true, resultValue);
+
+      // Now check the global result value on the second loaded script to make sure
+      // global values work properly.
+      result = mDirector2->GetValueNode("Result");
+      CPPUNIT_ASSERT_MESSAGE("Could not get the ValueNode named 'Result'", result != NULL);
+
+      resultValue = result->GetBoolean();
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("'Result' ValueNode didn't have the correct returned value", true, resultValue);
    }
    catch (const dtUtil::Exception& e)
    {
