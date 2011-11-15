@@ -581,6 +581,11 @@ namespace dtDirector
       bool DeleteNode(const ID& id);
 
       /**
+       *	Retrieves whether this script has been modified during the loading process.
+       */
+      bool IsModified() const {return mModified;}
+
+      /**
        * Toggles the debug mode.
        */
       void ToggleDebugEnabled(bool enabled);

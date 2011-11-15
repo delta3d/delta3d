@@ -711,7 +711,7 @@ namespace dtDirector
          title = mFileName.c_str();
       }
 
-      if (GetUndoManager()->IsModified()) title += "*";
+      if (GetUndoManager()->IsModified() || GetDirector()->IsModified()) title += "*";
 
       if (GetDirector())
       {
@@ -868,7 +868,7 @@ namespace dtDirector
       }
 
       // Save button.
-      mUI.action_Save->setEnabled(GetUndoManager()->IsModified());
+      mUI.action_Save->setEnabled(GetUndoManager()->IsModified() || GetDirector()->IsModified());
       mUI.action_Save_as->setEnabled(true);
 
       // Parent button.
@@ -1315,7 +1315,7 @@ namespace dtDirector
    void DirectorEditor::on_action_Load_triggered()
    {
       // Check if the undo manager has some un-committed changes first.
-      if (GetUndoManager()->IsModified())
+      if (GetUndoManager()->IsModified() || GetDirector()->IsModified())
       {
          QMessageBox confirmationBox("Save Changes?",
             "Would you like to save your current Director Script first?",
@@ -1354,7 +1354,7 @@ namespace dtDirector
       }
 
       // Check if the undo manager has some un-committed changes first.
-      if (GetUndoManager()->IsModified())
+      if (GetUndoManager()->IsModified() || GetDirector()->IsModified())
       {
          QMessageBox confirmationBox("Save Changes?",
             "Would you like to save your current Director Script first?",
@@ -2026,7 +2026,7 @@ namespace dtDirector
       if (action)
       {
          // Check if the undo manager has some un-committed changes first.
-         if (GetUndoManager()->IsModified())
+         if (GetUndoManager()->IsModified() || GetDirector()->IsModified())
          {
             QMessageBox confirmationBox("Save Changes?",
                "Would you like to save your current Director Script first?",
@@ -2180,7 +2180,7 @@ namespace dtDirector
       mPluginManager->StoreActivePluginsToConfigFile();
 
       // Check if the undo manager has some un-committed changes first.
-      if (GetUndoManager()->IsModified())
+      if (GetUndoManager()->IsModified() || GetDirector()->IsModified())
       {
          QMessageBox confirmationBox("Save Changes?",
             "Would you like to save your current Director Script first?",

@@ -1133,11 +1133,6 @@ namespace dtDirector
       else
          mLibraries.push_back(name);
 
-      if (!alreadyExists)
-      {
-         mModified = true;
-      }
-
       return !alreadyExists;
    }
 
@@ -1166,7 +1161,6 @@ namespace dtDirector
          }
       }
 
-      mModified = true;
       return true;
    }
 
