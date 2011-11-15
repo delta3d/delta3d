@@ -79,7 +79,7 @@ namespace dtQt
          DynamicAbstractControl::InitializeData(newParent, newModel, newPC, newProperty);
 
          // Create each element.
-         resizeChildren(false, false, true);
+         resizeChildren(false, false);
       }
       else
       {
@@ -215,17 +215,14 @@ namespace dtQt
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void DynamicArrayControl::resizeChildren(bool forceRefresh, bool isChild, bool initializing)
+   void DynamicArrayControl::resizeChildren(bool forceRefresh, bool isChild)
    {
       int childCount = getChildCount();
       int size = mProperty->GetArraySize();
-      bool dataChanged = false;
 
       PropertyEditorModel* model = GetModel();
       if (model != NULL)
       {
-         std::string oldValue = mProperty->ToString();
-
          // If we are removing, clear all the children and then add the proper amount back.
          // This is done so all items will be refreshed.
          if (size < childCount || forceRefresh)
@@ -272,25 +269,12 @@ namespace dtQt
                UpdateButtonStates();
             }
          }
-
-         if (!initializing)
-         {
-            PropertyAboutToChange(*mPropContainer, *mProperty,
-               oldValue, mProperty->ToString());
-
-            dataChanged = true;
-         }
       }
 
       // update our label
       if (mTextLabel !=  NULL)
       {
          mTextLabel->setText(getValueAsString());
-      }
-
-      if (dataChanged)
-      {
-         PropertyChanged(*mPropContainer, *mProperty);
       }
    }
 
@@ -322,7 +306,14 @@ namespace dtQt
    void DynamicArrayControl::onAddClicked()
    {
       NotifyParentOfPreUpdate();
+
+      std::string oldValue = mProperty->ToString();
       mProperty->Insert(mProperty->GetArraySize());
+
+      PropertyAboutToChange(*mPropContainer, *mProperty,
+         oldValue, mProperty->ToString());
+      PropertyChanged(*mPropContainer, *mProperty);
+
       resizeChildren();
    }
 
@@ -330,14 +321,27 @@ namespace dtQt
    void DynamicArrayControl::onClearClicked()
    {
       NotifyParentOfPreUpdate();
+
+      std::string oldValue = mProperty->ToString();
       mProperty->Clear();
+
+      PropertyAboutToChange(*mPropContainer, *mProperty,
+         oldValue, mProperty->ToString());
+      PropertyChanged(*mPropContainer, *mProperty);
+
       resizeChildren();
    }
 
    /////////////////////////////////////////////////////////////////////////////
    void DynamicArrayControl::onResetClicked()
    {
+      std::string oldValue = mProperty->ToString();
       DynamicAbstractParentControl::onResetClicked();
+
+      PropertyAboutToChange(*mPropContainer, *mProperty,
+         oldValue, mProperty->ToString());
+      PropertyChanged(*mPropContainer, *mProperty);
+
       resizeChildren();
    }
 
