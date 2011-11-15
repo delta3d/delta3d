@@ -387,6 +387,11 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void NodeTabs::AddCustomEditor(const std::string& editor)
    {
+      if (mpEditor==NULL || mpGraph==NULL)
+      {
+         return;
+      }
+      
       // Make sure the category tab exists.
       NodeScene* scene = NULL;
       QGraphicsView* view = NULL;
