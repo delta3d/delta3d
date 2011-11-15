@@ -537,7 +537,14 @@ namespace dtDirector
                      NodePluginRegistry* reg = NodeManager::GetInstance().GetRegistryForType(mNode->GetType());
                      if (reg && !mDirector->HasLibrary(reg->GetName()))
                      {
-                        mNode = NULL;
+                        if (mDirector->AddLibrary(reg->GetName()))
+                        {
+                           mPropSerializer->SetDeprecatedProperty();
+                        }
+                        else
+                        {
+                           mNode = NULL;
+                        }
                      }
                   }
 

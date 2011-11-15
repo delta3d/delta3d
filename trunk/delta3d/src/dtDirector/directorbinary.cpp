@@ -410,7 +410,14 @@ namespace dtDirector
          NodePluginRegistry* reg = NodeManager::GetInstance().GetRegistryForType(newNode->GetType());
          if (reg && !graph->GetDirector()->HasLibrary(reg->GetName()))
          {
-            newNode = NULL;
+            if (graph->GetDirector()->AddLibrary(reg->GetName()))
+            {
+               mHasDeprecatedProperty = true;
+            }
+            else
+            {
+               newNode = NULL;
+            }
          }
       }
 
