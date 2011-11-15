@@ -112,7 +112,7 @@ namespace dtQt
        * @param[in]  isChild       True if a child control is calling this from its parent.
        * @param[in]  initializing  True if we are initializing the list.
        */
-      void resizeChildren(bool forceRefresh = false, bool isChild = false, bool initializing = false);
+      void resizeChildren(bool forceRefresh = false, bool isChild = false);
 
       /**
        * Sets the focus on a particular property index.
