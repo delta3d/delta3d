@@ -79,12 +79,12 @@ namespace dtDirector
 
       bool operator<(const ID& rhs) const
       {
-         return index < rhs.index;
+         return id < rhs.id;
       }
 
       bool operator>(const ID& rhs) const
       {
-         return index > rhs.index;
+         return id > rhs.id;
       }
 
       int              index;
