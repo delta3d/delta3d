@@ -621,6 +621,11 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    ValueNode* DirectorGraph::GetValueNode(const std::string& name, bool searchSubgraphs, bool searchImportedGraph)
    {
+      if (!GetDirector())
+      {
+         return NULL;
+      }
+
       if (searchImportedGraph && (IsImported() || mDirector->GetGraphRoot() == this))
       {
          std::vector<DirectorGraph*> importedGraphs = GetImportedGraphs();
