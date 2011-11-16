@@ -546,6 +546,99 @@ namespace dtActors
       return point1 + (normal * distance);
    }
 
+   ///////////////////////////////////////////////////////////////////////////////
+   void LinkedPointsActor::SetLineWidth(float width)
+   {
+      // Iterate through all of our points, finding the geometry, and setting the line width
+      for (size_t pointIndex = 0; pointIndex < mPointList.size(); ++pointIndex)
+      {
+         dtActors::LinkedPointsGeomNode* point =
+            dynamic_cast<dtActors::LinkedPointsGeomNode*>(GetPointDrawable(pointIndex));
+         if (point != NULL)
+         {
+            for (size_t geomIndex = 0; geomIndex < point->mGeomList.size(); ++geomIndex)
+            {
+               dtActors::LinkedPointsGeomData* geomData =
+                  dynamic_cast<dtActors::LinkedPointsGeomData*>(point->mGeomList[geomIndex].get());
+               if (geomData != NULL)
+               {
+                  // The cylinder's radius determines the line width
+                  geomData->mSegCylinder->setRadius(width);
+               }
+            }
+         }
+      }
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void LinkedPointsActor::SetPointRadius(float radius)
+   {
+      // Iterate through all of our points, finding the geometry, and setting the line width
+      for (size_t pointIndex = 0; pointIndex < mPointList.size(); ++pointIndex)
+      {
+         dtActors::LinkedPointsGeomNode* point =
+            dynamic_cast<dtActors::LinkedPointsGeomNode*>(GetPointDrawable(pointIndex));
+         if (point != NULL)
+         {
+            for (size_t geomIndex = 0; geomIndex < point->mGeomList.size(); ++geomIndex)
+            {
+               dtActors::LinkedPointsGeomData* geomData =
+                  dynamic_cast<dtActors::LinkedPointsGeomData*>(point->mGeomList[geomIndex].get());
+               if (geomData != NULL)
+               {
+                  geomData->mPointSphere->setRadius(radius);
+               }
+            }
+         }
+      }
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void LinkedPointsActor::SetLineColor(const osg::Vec4& color)
+   {
+      // Iterate through all of our points, finding the geometry, and setting the line width
+      for (size_t pointIndex = 0; pointIndex < mPointList.size(); ++pointIndex)
+      {
+         dtActors::LinkedPointsGeomNode* point =
+            dynamic_cast<dtActors::LinkedPointsGeomNode*>(GetPointDrawable(pointIndex));
+         if (point != NULL)
+         {
+            for (size_t geomIndex = 0; geomIndex < point->mGeomList.size(); ++geomIndex)
+            {
+               dtActors::LinkedPointsGeomData* geomData =
+                  dynamic_cast<dtActors::LinkedPointsGeomData*>(point->mGeomList[geomIndex].get());
+               if (geomData != NULL)
+               {
+                  geomData->mSegDrawable->setColor(color);
+               }
+            }
+         }
+      }
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void LinkedPointsActor::SetPointColor(const osg::Vec4& color)
+   {
+      // Iterate through all of our points, finding the geometry, and setting the line width
+      for (size_t pointIndex = 0; pointIndex < mPointList.size(); ++pointIndex)
+      {
+         dtActors::LinkedPointsGeomNode* point =
+            dynamic_cast<dtActors::LinkedPointsGeomNode*>(GetPointDrawable(pointIndex));
+         if (point != NULL)
+         {
+            for (size_t geomIndex = 0; geomIndex < point->mGeomList.size(); ++geomIndex)
+            {
+               dtActors::LinkedPointsGeomData* geomData =
+                  dynamic_cast<dtActors::LinkedPointsGeomData*>(point->mGeomList[geomIndex].get());
+               if (geomData != NULL)
+               {
+                  geomData->mPointDrawable->setColor(color);
+               }
+            }
+         }
+      }
+   }
+
    /////////////////////////////////////////////////////////////////////////////
    // PROXY CODE
    /////////////////////////////////////////////////////////////////////////////

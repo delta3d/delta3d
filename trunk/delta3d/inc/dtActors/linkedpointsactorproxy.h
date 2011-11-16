@@ -306,6 +306,34 @@ namespace dtActors
       */
       osg::Vec3 FindNearestPointOnLine(osg::Vec3 point1, osg::Vec3 point2, osg::Vec3 testPoint);
 
+      /**
+      * Set the visual width of the line segment part of the visualization
+      *
+      * @param[in]  width  The width to make the line segment
+      */
+      void SetLineWidth(float width);
+
+      /**
+      * Set the visual radius of the point part of the visualization
+      *
+      * @param[in]  radius  The radius to make the point
+      */
+      void SetPointRadius(float radius);
+
+      /**
+      * Set the color of the line segment part of the visualization
+      *
+      * @param[in]  color  The color to make the line segment
+      */
+      void SetLineColor(const osg::Vec4& color);
+
+      /**
+      * Set the color of the point part of the visualization
+      *
+      * @param[in]  color  The color to make the point
+      */
+      void SetPointColor(const osg::Vec4& color);
+
    protected:
       virtual ~LinkedPointsActor();
 
