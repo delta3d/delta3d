@@ -195,8 +195,8 @@ namespace dtActors
    ////////////////////////////////////////////////////////////////////////////////
    void LinkedPointsActor::Visualize(int pointIndex)
    {
-      // Don't visualize during a map load or if we're not in STAGE.
-      if (mProxy->IsLoading() || !mProxy->IsInSTAGE())
+      // Don't visualize during a map load or if we're not in STAGE unless we're set to visualize.
+      if (mProxy->IsLoading() || (!mProxy->IsInSTAGE() && !mVisualize))
       {
          return;
       }
