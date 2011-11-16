@@ -711,8 +711,8 @@ void NamedParameterTests::setUp()
    dtUtil::SetDataFilePathList(dtUtil::GetDeltaDataPathList());
    try
    {
-      dtUtil::Log* logger;
-      logger = &dtUtil::Log::GetInstance("MessageParameter");
+      //dtUtil::Log* logger;
+      //logger = &dtUtil::Log::GetInstance("MessageParameter");
       //logger->SetLogLevel(dtUtil::Log::LOG_DEBUG);
 
       mManager = new dtGame::GameManager(*GetGlobalApplication().GetScene());
