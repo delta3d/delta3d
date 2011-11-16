@@ -225,9 +225,9 @@ namespace dtUtil
    template <typename Real>
    void MathTests::TestRandFloatTmpl()
    {
-      const Real range1min = -12.7, range1max = 50020.9;
-      const Real range2min = 9.6, range2max = 1497.16;
-      const Real range3min = -96000.1, range3max = -94000.3;
+      const Real range1min = (Real)-12.7, range1max = (Real)50020.9;
+      const Real range2min = (Real)9.6, range2max = (Real)1497.16;
+      const Real range3min = (Real)-96000.1, range3max = (Real)-94000.3;
       Real result = 0.0f;
 
       result = RandFloat(range1min, range1max);
