@@ -36,19 +36,20 @@
 #define S_ISREG(x) (((x) & S_IFMT) == S_IFREG)
 #endif
 
-
+////////////////////////////////////////////////////////////////////////////////
 ZipArchive::ZipArchive()
 : mZipLoaded(false)
 , mZipRecord(NULL)
 {
 }
 
+////////////////////////////////////////////////////////////////////////////////
 ZipArchive::~ZipArchive()
 {
 
 }
 
-/** close the archive.*/
+////////////////////////////////////////////////////////////////////////////////
 void ZipArchive::close()
 {
    if(mZipLoaded) 
@@ -61,18 +62,19 @@ void ZipArchive::close()
 
 }
 
-/** return true if file exists in archive.*/
+////////////////////////////////////////////////////////////////////////////////
 bool ZipArchive::fileExists(const std::string& filename) const
-{
+{   
    return GetZipEntry(filename) != NULL;
 }
 
-/** Get the file name which represents the master file recorded in the Archive.*/
+////////////////////////////////////////////////////////////////////////////////
 std::string ZipArchive::getMasterFileName() const
 {
    return std::string();
 }
 
+////////////////////////////////////////////////////////////////////////////////
 std::string ZipArchive::getArchiveFileName() const
 {
    std::string result;
@@ -83,7 +85,7 @@ std::string ZipArchive::getArchiveFileName() const
    return result;
 }
 
-/** Get the full list of file names available in the archive.*/
+////////////////////////////////////////////////////////////////////////////////
 bool ZipArchive::getFileNames(osgDB::Archive::FileNameList& fileNameList) const
 {
    if(mZipLoaded)
@@ -104,8 +106,7 @@ bool ZipArchive::getFileNames(osgDB::Archive::FileNameList& fileNameList) const
    }
 }
 
-
-
+////////////////////////////////////////////////////////////////////////////////
 bool ZipArchive::open(const std::string& file, ArchiveStatus status, const osgDB::ReaderWriter::Options* options)
 {
    std::string ext = osgDB::getLowerCaseFileExtension(file);
@@ -129,6 +130,7 @@ bool ZipArchive::open(const std::string& file, ArchiveStatus status, const osgDB
    }
 }
 
+////////////////////////////////////////////////////////////////////////////////
 bool ZipArchive::open(std::istream& fin, const osgDB::ReaderWriter::Options* options)
 {
    osgDB::ReaderWriter::ReadResult result = osgDB::ReaderWriter::ReadResult(osgDB::ReaderWriter::ReadResult::FILE_NOT_HANDLED);
@@ -168,6 +170,7 @@ bool ZipArchive::open(std::istream& fin, const osgDB::ReaderWriter::Options* opt
    }
 }
 
+////////////////////////////////////////////////////////////////////////////////
 osgDB::ReaderWriter::ReadResult ZipArchive::readObject(const std::string& file, const osgDB::ReaderWriter::Options* options) const
 {
    osgDB::ReaderWriter::ReadResult rresult = osgDB::ReaderWriter::ReadResult::FILE_NOT_HANDLED;
@@ -201,6 +204,7 @@ osgDB::ReaderWriter::ReadResult ZipArchive::readObject(const std::string& file, 
    return rresult;
 }
 
+////////////////////////////////////////////////////////////////////////////////
 osgDB::ReaderWriter::ReadResult ZipArchive::readImage(const std::string& file,const osgDB::ReaderWriter::Options* options) const
 {
    osgDB::ReaderWriter::ReadResult rresult = osgDB::ReaderWriter::ReadResult::FILE_NOT_HANDLED;
@@ -234,6 +238,7 @@ osgDB::ReaderWriter::ReadResult ZipArchive::readImage(const std::string& file,co
    return rresult;
 }
 
+////////////////////////////////////////////////////////////////////////////////
 osgDB::ReaderWriter::ReadResult ZipArchive::readHeightField(const std::string& file,const osgDB::ReaderWriter::Options* options) const
 {
    osgDB::ReaderWriter::ReadResult rresult = osgDB::ReaderWriter::ReadResult::FILE_NOT_HANDLED;
@@ -267,6 +272,7 @@ osgDB::ReaderWriter::ReadResult ZipArchive::readHeightField(const std::string& f
    return rresult;
 }
 
+////////////////////////////////////////////////////////////////////////////////
 osgDB::ReaderWriter::ReadResult ZipArchive::readNode(const std::string& file,const osgDB::ReaderWriter::Options* options) const
 {
    osgDB::ReaderWriter::ReadResult rresult = osgDB::ReaderWriter::ReadResult::FILE_NOT_HANDLED;
@@ -300,27 +306,43 @@ osgDB::ReaderWriter::ReadResult ZipArchive::readNode(const std::string& file,con
    return rresult;
 }
 
+////////////////////////////////////////////////////////////////////////////////
+osgDB::ReaderWriter::ReadResult ZipArchive::readShader(const std::string& /*fileName*/,const Options* /*=NULL*/) const
+{
+   return osgDB::ReaderWriter::ReadResult::FILE_NOT_HANDLED;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 osgDB::ReaderWriter::WriteResult ZipArchive::writeObject(const osg::Object& /*obj*/,const std::string& /*fileName*/,const osgDB::ReaderWriter::Options*) const
 {
    return osgDB::ReaderWriter::WriteResult(osgDB::ReaderWriter::WriteResult::FILE_NOT_HANDLED);
 }
 
+////////////////////////////////////////////////////////////////////////////////
 osgDB::ReaderWriter::WriteResult ZipArchive::writeImage(const osg::Image& /*image*/,const std::string& /*fileName*/,const osgDB::ReaderWriter::Options*) const
 {
    return osgDB::ReaderWriter::WriteResult(osgDB::ReaderWriter::WriteResult::FILE_NOT_HANDLED);
 }
 
+////////////////////////////////////////////////////////////////////////////////
 osgDB::ReaderWriter::WriteResult ZipArchive::writeHeightField(const osg::HeightField& /*heightField*/,const std::string& /*fileName*/,const osgDB::ReaderWriter::Options*) const
 {
    return osgDB::ReaderWriter::WriteResult(osgDB::ReaderWriter::WriteResult::FILE_NOT_HANDLED);
 }
 
+////////////////////////////////////////////////////////////////////////////////
 osgDB::ReaderWriter::WriteResult ZipArchive::writeNode(const osg::Node& /*node*/,const std::string& /*fileName*/,const osgDB::ReaderWriter::Options*) const
 {
    return osgDB::ReaderWriter::WriteResult(osgDB::ReaderWriter::WriteResult::FILE_NOT_HANDLED);
 }
 
+////////////////////////////////////////////////////////////////////////////////
+osgDB::ReaderWriter::WriteResult ZipArchive::writeShader(const osg::Shader& /*shader*/,const std::string& /*fileName*/,const Options* /*=NULL*/) const
+{
+    return osgDB::ReaderWriter::WriteResult(osgDB::ReaderWriter::WriteResult::FILE_NOT_HANDLED);	
+}
 
+////////////////////////////////////////////////////////////////////////////////
 osgDB::ReaderWriter* ZipArchive::ReadFromZipEntry(const ZIPENTRY* ze, const osgDB::ReaderWriter::Options* options, std::stringstream& buffer) const
 {
    if (ze != 0)
@@ -354,6 +376,7 @@ osgDB::ReaderWriter* ZipArchive::ReadFromZipEntry(const ZIPENTRY* ze, const osgD
    return NULL;
 }
 
+////////////////////////////////////////////////////////////////////////////////
 void CleanupFileString(std::string& strFileOrDir)
 {
    if (strFileOrDir.empty())
@@ -383,6 +406,7 @@ void CleanupFileString(std::string& strFileOrDir)
    }
 }
 
+////////////////////////////////////////////////////////////////////////////////
 void ZipArchive::IndexZipFiles(HZIP hz)
 {
    if(hz != NULL && !mZipLoaded)
@@ -419,6 +443,7 @@ void ZipArchive::IndexZipFiles(HZIP hz)
    }
 }
 
+////////////////////////////////////////////////////////////////////////////////
 ZIPENTRY* ZipArchive::GetZipEntry(const std::string& filename)
 {
    ZIPENTRY* ze = NULL;
@@ -434,6 +459,7 @@ ZIPENTRY* ZipArchive::GetZipEntry(const std::string& filename)
    return ze;
 }
 
+////////////////////////////////////////////////////////////////////////////////
 const ZIPENTRY* ZipArchive::GetZipEntry(const std::string& filename) const
 {
    ZIPENTRY* ze = NULL;   
@@ -449,6 +475,7 @@ const ZIPENTRY* ZipArchive::GetZipEntry(const std::string& filename) const
    return ze;
 }
 
+////////////////////////////////////////////////////////////////////////////////
 osgDB::FileType ZipArchive::getFileType(const std::string& filename) const
 {
    const ZIPENTRY* ze = GetZipEntry(filename);
@@ -471,6 +498,7 @@ osgDB::FileType ZipArchive::getFileType(const std::string& filename) const
    return osgDB::FILE_NOT_FOUND;
 }
 
+////////////////////////////////////////////////////////////////////////////////
 osgDB::DirectoryContents ZipArchive::getDirectoryContents(const std::string& dirName) const
 {
    osgDB::DirectoryContents dirContents;
@@ -516,6 +544,7 @@ osgDB::DirectoryContents ZipArchive::getDirectoryContents(const std::string& dir
    return dirContents;
 }
 
+////////////////////////////////////////////////////////////////////////////////
 std::string ZipArchive::ReadPassword(const osgDB::ReaderWriter::Options* options) const
 {
    //try pulling it off the options first
@@ -554,6 +583,7 @@ std::string ZipArchive::ReadPassword(const osgDB::ReaderWriter::Options* options
    return password;
 }
 
+////////////////////////////////////////////////////////////////////////////////
 bool ZipArchive::CheckZipErrorCode(ZRESULT result) const
 {
    if(result == ZR_OK)
@@ -577,6 +607,6 @@ bool ZipArchive::CheckZipErrorCode(ZRESULT result) const
 
       return false;
    }
-
 }
+
 
