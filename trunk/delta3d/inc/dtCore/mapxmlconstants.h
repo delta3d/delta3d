@@ -45,6 +45,7 @@ namespace dtCore
 
          static const char* const EDITOR_VERSION;
          static const char* const SCHEMA_VERSION;
+         static const char* const DIRECTOR_SCHEMA_VERSION;
 
          static XMLCh* BEGIN_XML_DECL;
          static XMLCh* END_XML_DECL;

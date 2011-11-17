@@ -46,6 +46,7 @@ namespace dtCore
 
    const char* const MapXMLConstants::EDITOR_VERSION = Delta3DGetVersion();
    const char* const MapXMLConstants::SCHEMA_VERSION = "1.0";
+   const char* const MapXMLConstants::DIRECTOR_SCHEMA_VERSION = "2.0";
 
    XMLCh* MapXMLConstants::BEGIN_XML_DECL = NULL;
    XMLCh* MapXMLConstants::END_XML_DECL = NULL;
