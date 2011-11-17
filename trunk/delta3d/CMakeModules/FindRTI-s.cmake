@@ -52,7 +52,8 @@ ENDIF (APPLE)
 IF (WIN32)
      SET(PATHLIST 
 	${RTIS_ROOT_DIR}/lib/winnt_vc++-8.0
-	${RTIS_ROOT_DIR}/lib/winnt_vc++-7.1		
+	${RTIS_ROOT_DIR}/lib/winnt_vc++-7.1
+	${RTIS_ROOT_DIR}/lib/winnt_vc++-9.0
      )
 ENDIF (WIN32)
 
