@@ -58,6 +58,16 @@ void TestAI::Config()
    // set the waypoint manager to not (redundantly) delete waypoints
    dtAI::WaypointManager::GetInstance().SetDeleteOnClear(false);
 
+   try
+   {
+      std::string contextName =  dtUtil::GetDeltaRootPath()+"/examples/data/demoMap";
+      Project::GetInstance().SetContext(contextName);
+   }
+   catch (const dtUtil::Exception& e)
+   {
+      e.LogException();
+   }
+
    LoadDemoMap(mMapFilename);
 
    // turn on viewing of waypoints
@@ -105,12 +115,14 @@ void TestAI::Config()
    WaypointManager::WaypointMap::const_iterator iter = pContainer.begin();
    const Waypoint* pWaypoint = (*iter).second;
 
+   std::string characterFile = dtUtil::FindFileInPathList("SkeletalMeshes/marine.xml");
+
    // spawn our character
-   mCharacter = new dtAI::AICharacter(GetScene(), pWaypoint, "demoMap/SkeletalMeshes/marine.xml", 3);
+   mCharacter = new dtAI::AICharacter(GetScene(), pWaypoint, characterFile, 3);
 
    // add the two Cameras as children so they get moved along with the character
-   mCharacter->GetCharacter()->AddChild( GetCamera() );
-   mCharacter->GetCharacter()->AddChild( mOverheadCamera.get() );
+   mCharacter->GetCharacter()->AddChild(GetCamera());
+   mCharacter->GetCharacter()->AddChild(mOverheadCamera.get());
 
    GoToWaypoint(1);
 
@@ -216,8 +228,6 @@ void TestAI::LoadDemoMap(const std::string& pStr)
 {
    try
    {
-      std::string contextName =  dtUtil::GetDeltaRootPath()+"/examples/data/demoMap";
-      Project::GetInstance().SetContext(contextName);
       std::string pContext = Project::GetInstance().GetContext();
       Map &myMap = Project::GetInstance().GetMap(pStr);
 
