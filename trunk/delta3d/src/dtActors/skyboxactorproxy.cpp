@@ -37,7 +37,7 @@ namespace dtActors
    SkyBoxActorProxy::SkyBoxActorProxy()
       : mRenderProfile(&RenderProfile::DEFAULT)
    {
-
+      SetClassName("dtActors::Skybox");
    }
 
    /////////////////////////////////////////////////////////////////////////////
