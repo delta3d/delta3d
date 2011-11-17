@@ -139,7 +139,14 @@ namespace dtGame
       {
          ActorComponent& component = (*iter->second);
          GameActor* self = static_cast<GameActor*>(this);
-         if (self != NULL && self->GetGameActorProxy().IsInGM())
+         GameActorProxy* proxy = NULL;
+
+         if (self->IsGameActorProxyValid())
+         {
+            proxy = &self->GetGameActorProxy();
+         }
+
+         if (self != NULL && component.GetIsInGM() || (proxy != NULL && proxy->IsInGM()))
          {
             component.SetIsInGM(false);
             component.OnRemovedFromWorld();
@@ -147,7 +154,10 @@ namespace dtGame
          component.OnRemovedFromActor(*self);
 
          // Remove the props from the game actor - This is temporary. See the note in AddComponent()
-         self->GetGameActorProxy().RemoveActorComponentProperties(component);
+         if (proxy != NULL)
+         {
+            self->GetGameActorProxy().RemoveActorComponentProperties(component);
+         }
 
          OnActorComponentRemoved(component);
          mComponents.erase(iter);

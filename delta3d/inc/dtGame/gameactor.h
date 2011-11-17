@@ -71,6 +71,9 @@ namespace dtGame
        */
       const GameActorProxy& GetGameActorProxy() const;
 
+      /// this exists only to get around an issue that happens during delete of the game actor.  It should always be true otherwise.
+      bool IsGameActorProxyValid() const;
+
       /**
         * Override this to add your own Actor Components.
         * Note - actor components do the BuildPropertyMap during the AddComponent method, so set
