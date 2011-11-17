@@ -153,13 +153,7 @@ void TestPreRender::CreateTextureScene()
    dtCore::Project::GetInstance().SetContext(contextName, true);
 
    // Load the map into our custom scene
-   dtCore::Map& map = dtCore::Project::GetInstance().LoadMapIntoScene("MyCoolMap", *mTextureScene);
-
-   std::vector<dtCore::RefPtr<dtCore::BaseActorObject> > container;
-   map.FindProxies(container, "", "", "", "dtCore::SkyBox");
-
-   // Add the skybox to the main scene as well
-   GetScene()->AddChild(container[0]->GetActor());
+   dtCore::Project::GetInstance().LoadMapIntoScene("MyCoolMap", *mTextureScene);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
