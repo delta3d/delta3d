@@ -234,7 +234,16 @@ namespace dtUtil
             }
 
             // Remove the left most character from the data string.
-            data = &data[1];
+            // Some versions of the stl can be picky so don't allow the subscript to go out of range.
+            if (data.length() > 1)
+            {
+               data = &data[1];
+            }
+            else
+            {
+               // Don't leave leftovers like brackets
+               data.clear();
+            }
 
             // We are done once our depth returns to 0.
             if (depth <= 0)
