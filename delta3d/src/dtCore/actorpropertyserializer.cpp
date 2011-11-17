@@ -110,6 +110,11 @@ namespace dtCore
       Top().ClearParameterValues();
    }
 
+   bool ActorPropertySerializer::HasPropertyContainer()
+   {
+      return Top().mPropertyContainer.valid();
+   }
+
    //////////////////////////////////////////////////////////////////////////
    void ActorPropertySerializer::Reset()
    {
@@ -458,6 +463,11 @@ namespace dtCore
       }
 
       SerializerRuntimeData& data = Top();
+
+      if (!data.mPropertyContainer.valid())
+      {
+         return false;
+      }
 
       if (data.mInActorProperty)
       {

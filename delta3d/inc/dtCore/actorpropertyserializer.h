@@ -120,6 +120,7 @@ namespace dtCore
 
       /// Sets the property container to work on.  This will be set the current one on the internal stack.
       void SetCurrentPropertyContainer(dtCore::PropertyContainer* pc);
+      bool HasPropertyContainer();
 
       /**
        * Resets the serializer.

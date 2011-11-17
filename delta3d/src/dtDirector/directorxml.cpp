@@ -327,7 +327,7 @@ namespace dtDirector
                // Schema Version.
                BeginElement(dtCore::MapXMLConstants::SCHEMA_VERSION_ELEMENT);
                {
-                  AddCharacters(std::string(dtCore::MapXMLConstants::SCHEMA_VERSION));
+                  AddCharacters(std::string(dtCore::MapXMLConstants::DIRECTOR_SCHEMA_VERSION));
                }
                EndElement(); // End Schema Version Element.
 

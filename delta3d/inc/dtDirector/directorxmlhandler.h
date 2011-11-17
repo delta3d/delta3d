@@ -163,6 +163,9 @@ namespace dtDirector
       dtCore::RefPtr<dtCore::Map> mMap;
       std::string mScriptType;
       bool        mFoundScriptType;
+      bool        mHasImportedScripts;
+
+      float       mSchemaVersion;
 
       std::string mLibName;
       std::string mLibVersion;

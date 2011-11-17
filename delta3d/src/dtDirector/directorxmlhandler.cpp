@@ -102,6 +102,8 @@ namespace dtDirector
       , mDirector(NULL)
       , mMap(NULL)
       , mFoundScriptType(false)
+      , mHasImportedScripts(false)
+      , mSchemaVersion(1.0f)
       , mNode(NULL)
    {
       mPropSerializer = new dtCore::ActorPropertySerializer(this);
@@ -215,7 +217,7 @@ namespace dtDirector
                mInNode = true;
 
                // Make sure we have a graph.
-               if (mGraphID.id.ToString().empty())
+               if (mGraphID.id.ToString().empty() && mHasImportedScripts)
                {
                   // In older versions, graphs did not save their ID values.
                   // For this case, we need to create a new graph and add it
@@ -223,7 +225,10 @@ namespace dtDirector
                   dtCore::RefPtr<DirectorGraph> graph = NULL;
                   if (mGraphs.empty())
                   {
-                     graph = mDirector->GetGraphRoot();
+                     if (mDirector)
+                     {
+                        graph = mDirector->GetGraphRoot();
+                     }
                   }
                   else
                   {
@@ -284,6 +289,30 @@ namespace dtDirector
 
                   mGraphID.clear();
                   mIsGraphImported = false;
+
+                  mPropSerializer->SetCurrentPropertyContainer(NULL);
+
+                  // If we know we aren't importing, create the graph immediately.
+                  if (!mHasImportedScripts)
+                  {
+                     dtCore::RefPtr<DirectorGraph> graph = NULL;
+
+                     if (mGraphs.empty())
+                     {
+                        graph = mDirector->GetGraphRoot();
+                     }
+                     else
+                     {
+                        DirectorGraph* parent = mGraphs.top();
+                        graph = new DirectorGraph(mDirector);
+                        graph->SetParent(parent);
+                        parent->GetSubGraphs().push_back(graph);
+                        graph->BuildPropertyMap();
+                     }
+
+                     mGraphs.push(graph);
+                     mPropSerializer->SetCurrentPropertyContainer(graph);
+                  }
                }
             }
          }
@@ -313,6 +342,30 @@ namespace dtDirector
 
          mGraphID.clear();
          mIsGraphImported = false;
+
+         mPropSerializer->SetCurrentPropertyContainer(NULL);
+
+         // If we know we aren't importing, create the graph immediately.
+         if (!mHasImportedScripts)
+         {
+            dtCore::RefPtr<DirectorGraph> graph = NULL;
+
+            if (mGraphs.empty())
+            {
+               graph = mDirector->GetGraphRoot();
+            }
+            else
+            {
+               DirectorGraph* parent = mGraphs.top();
+               graph = new DirectorGraph(mDirector);
+               graph->SetParent(parent);
+               parent->GetSubGraphs().push_back(graph);
+               graph->BuildPropertyMap();
+            }
+
+            mGraphs.push(graph);
+            mPropSerializer->SetCurrentPropertyContainer(graph);
+         }
       }
       // Chain Link Connections.
       else if (XMLString::compareString(localname, dtCore::MapXMLConstants::DIRECTOR_LINK_CHAIN_CONNECTION) == 0)
@@ -372,7 +425,7 @@ namespace dtDirector
          if (mInNodes)
          {
             EndNodeSection(localname);
-            if (!mInNodes)
+            if (!mInNodes && !mGraphs.empty())
             {
                mPropSerializer->SetCurrentPropertyContainer(mGraphs.top());
             }
@@ -408,6 +461,15 @@ namespace dtDirector
       xmlCharString& topEl = mElements.top();
       if (mInHeaders)
       {
+         // If we find any header actor properties, we have gone passed the point
+         // where we should have found a script type.  If we are searching for a
+         // script type, we can stop now and assume it is the default type.
+         if (!mFoundScriptType && topEl == dtCore::MapXMLConstants::ACTOR_PROPERTY_ELEMENT)
+         {
+            mFoundScriptType = true;
+            mScriptType = "Scenario";
+         }
+
          if (!mPropSerializer->Characters(topEl, chars))
          {
             if (topEl == dtCore::MapXMLConstants::CREATE_TIMESTAMP_ELEMENT)
@@ -416,6 +478,10 @@ namespace dtDirector
                {
                   mDirector->SetCreateDateTime(dtUtil::XMLStringConverter(chars).ToString());
                }
+            }
+            else if (topEl == dtCore::MapXMLConstants::SCHEMA_VERSION_ELEMENT)
+            {
+               mSchemaVersion = dtUtil::ToType<float>(dtUtil::XMLStringConverter(chars).ToString());
             }
             else if (topEl == dtCore::MapXMLConstants::DIRECTOR_SCRIPT_TYPE)
             {
@@ -430,6 +496,7 @@ namespace dtDirector
             }
             else if (topEl == dtCore::MapXMLConstants::DIRECTOR_IMPORTED_SCRIPT)
             {
+               mHasImportedScripts = true;
                std::string importedScript = dtUtil::XMLStringConverter(chars).ToString();
                if (!importedScript.empty())
                {
@@ -731,65 +798,68 @@ namespace dtDirector
          }
          else if (!mPropSerializer->Characters(topEl, chars))
          {
-            if (topEl == dtCore::MapXMLConstants::DIRECTOR_IMPORTED_SCRIPT)
+            if (mHasImportedScripts)
             {
-               mIsGraphImported = dtUtil::XMLStringConverter(chars).ToString() == "true"? true: false;
-            }
-            else if (topEl == dtCore::MapXMLConstants::ID_INDEX_ELEMENT)
-            {
-               mGraphID.index = dtUtil::ToType<int>(dtUtil::XMLStringConverter(chars).ToString());
-            }
-            else if (topEl == dtCore::MapXMLConstants::ID_ELEMENT)
-            {
-               mGraphID.id = dtCore::UniqueId(dtUtil::XMLStringConverter(chars).ToString());
-
-               // If this graph is meant to be imported, then attempt to find the graph
-               // as it should already exist.
-               dtCore::RefPtr<DirectorGraph> graph = NULL;
-               if (mIsGraphImported && !mGraphs.empty())
+               if (topEl == dtCore::MapXMLConstants::DIRECTOR_IMPORTED_SCRIPT)
                {
-                  ID tempID = mGraphID;
-                  tempID.index = -1;
-                  graph = mDirector->GetGraph(tempID);
-
-                  // If the graph was not found, it may have been removed from the
-                  // imported script in which it came from.  In this case, we still
-                  // need to create a graph for the loading process to complete
-                  // properly, but this graph will not be added to the script.
-                  if (!graph)
-                  {
-                     graph = new DirectorGraph(mDirector);
-                     graph->BuildPropertyMap();
-                  }
-
-                  graph->SetID(mGraphID);
-                  mGraphs.push(graph);
-                  mPropSerializer->SetCurrentPropertyContainer(graph);
+                  mIsGraphImported = dtUtil::XMLStringConverter(chars).ToString() == "true"? true: false;
                }
-               // Otherwise, create a new graph.
-               else
+               else if (topEl == dtCore::MapXMLConstants::ID_INDEX_ELEMENT)
                {
-                  DirectorGraph* parent = NULL;
-                  if (mGraphs.empty())
+                  mGraphID.index = dtUtil::ToType<int>(dtUtil::XMLStringConverter(chars).ToString());
+               }
+               else if (topEl == dtCore::MapXMLConstants::ID_ELEMENT)
+               {
+                  mGraphID.id = dtCore::UniqueId(dtUtil::XMLStringConverter(chars).ToString());
+
+                  // If this graph is meant to be imported, then attempt to find the graph
+                  // as it should already exist.
+                  dtCore::RefPtr<DirectorGraph> graph = NULL;
+                  if (mIsGraphImported && !mGraphs.empty() && mHasImportedScripts)
                   {
-                     graph = mDirector->GetGraphRoot();
+                     ID tempID = mGraphID;
+                     tempID.index = -1;
+                     graph = mDirector->GetGraph(tempID);
+
+                     // If the graph was not found, it may have been removed from the
+                     // imported script in which it came from.  In this case, we still
+                     // need to create a graph for the loading process to complete
+                     // properly, but this graph will not be added to the script.
+                     if (!graph)
+                     {
+                        graph = new DirectorGraph(mDirector);
+                        graph->BuildPropertyMap();
+                     }
+
+                     graph->SetID(mGraphID);
+                     mGraphs.push(graph);
+                     mPropSerializer->SetCurrentPropertyContainer(graph);
                   }
+                  // Otherwise, create a new graph.
                   else
                   {
-                     graph = new DirectorGraph(mDirector);
-                     parent = mGraphs.top();
-                     graph->SetParent(parent);
-                     graph->BuildPropertyMap();
-                     parent->GetSubGraphs().push_back(graph);
-                  }
+                     DirectorGraph* parent = NULL;
+                     if (mGraphs.empty())
+                     {
+                        graph = mDirector->GetGraphRoot();
+                     }
+                     else
+                     {
+                        graph = new DirectorGraph(mDirector);
+                        parent = mGraphs.top();
+                        graph->SetParent(parent);
+                        graph->BuildPropertyMap();
+                        parent->GetSubGraphs().push_back(graph);
+                     }
 
-                  if (mGraphID.index > -1)
-                  {
-                     graph->SetIDIndex(mGraphID.index);
+                     if (mGraphID.index > -1)
+                     {
+                        graph->SetIDIndex(mGraphID.index);
+                     }
+                     graph->SetID(mGraphID.id);
+                     mGraphs.push(graph);
+                     mPropSerializer->SetCurrentPropertyContainer(graph);
                   }
-                  graph->SetID(mGraphID.id);
-                  mGraphs.push(graph);
-                  mPropSerializer->SetCurrentPropertyContainer(graph);
                }
             }
          }
@@ -887,6 +957,9 @@ namespace dtDirector
 
       mScriptType = "";
       mFoundScriptType = false;
+      mHasImportedScripts = false;
+
+      mSchemaVersion = 1.0f;
 
       mInHeaders = false;
       mInLibraries = false;
@@ -1092,7 +1165,10 @@ namespace dtDirector
 
       try
       {
-         mDirector->AddLibrary(mLibName, mLibVersion);
+         if (mDirector)
+         {
+            mDirector->AddLibrary(mLibName, mLibVersion);
+         }
          ClearLibraryValues();
       }
       catch (const dtCore::ProjectResourceErrorException& e)
