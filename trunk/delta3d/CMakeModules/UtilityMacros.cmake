@@ -205,3 +205,50 @@ MACRO(LINK_WITH_VARIABLES TRGTNAME)
       ENDIF (WIN32)
     ENDFOREACH(varname)
 ENDMACRO(LINK_WITH_VARIABLES TRGTNAME)
+
+# Try to ascertain the version...
+MACRO(FIND_OSG_VERSION)
+    IF(OSG_INCLUDE_DIR)
+
+        SET(_osg_Version_file "${OSG_INCLUDE_DIR}/osg/Version")
+        IF("${OSG_INCLUDE_DIR}" MATCHES "\\.framework$" AND NOT EXISTS "${_osg_Version_file}")
+            SET(_osg_Version_file "${OSG_INCLUDE_DIR}/Headers/Version")
+        ENDIF()
+
+        IF(EXISTS "${_osg_Version_file}")
+          FILE(READ "${_osg_Version_file}" _osg_Version_contents)
+        ELSE()
+          SET(_osg_Version_contents "unknown")
+        ENDIF()
+
+        STRING(REGEX MATCH ".*#define OSG_VERSION_MAJOR[ \t]+[0-9]+.*"
+            _osg_old_defines "${_osg_Version_contents}")
+        STRING(REGEX MATCH ".*#define OPENSCENEGRAPH_MAJOR_VERSION[ \t]+[0-9]+.*"
+            _osg_new_defines "${_osg_Version_contents}")
+        IF(_osg_old_defines)
+            STRING(REGEX REPLACE ".*#define OSG_VERSION_MAJOR[ \t]+([0-9]+).*"
+                "\\1" _osg_VERSION_MAJOR ${_osg_Version_contents})
+            STRING(REGEX REPLACE ".*#define OSG_VERSION_MINOR[ \t]+([0-9]+).*"
+                "\\1" _osg_VERSION_MINOR ${_osg_Version_contents})
+            STRING(REGEX REPLACE ".*#define OSG_VERSION_PATCH[ \t]+([0-9]+).*"
+                "\\1" _osg_VERSION_PATCH ${_osg_Version_contents})
+        ELSEIF(_osg_new_defines)
+            STRING(REGEX REPLACE ".*#define OPENSCENEGRAPH_MAJOR_VERSION[ \t]+([0-9]+).*"
+                "\\1" _osg_VERSION_MAJOR ${_osg_Version_contents})
+            STRING(REGEX REPLACE ".*#define OPENSCENEGRAPH_MINOR_VERSION[ \t]+([0-9]+).*"
+                "\\1" _osg_VERSION_MINOR ${_osg_Version_contents})
+            STRING(REGEX REPLACE ".*#define OPENSCENEGRAPH_PATCH_VERSION[ \t]+([0-9]+).*"
+                "\\1" _osg_VERSION_PATCH ${_osg_Version_contents})
+        ELSE()
+            MESSAGE("[ FindOpenSceneGraph.cmake:${CMAKE_CURRENT_LIST_LINE} ] "
+                "Failed to parse version number, please report this as a bug")
+        ENDIF()
+
+        SET(OSG_VERSION_MAJOR ${_osg_VERSION_MAJOR})
+        SET(OSG_VERSION_MINOR ${_osg_VERSION_MINOR})
+        SET(OSG_VERSION_PATCH ${_osg_VERSION_PATCH})
+
+        SET(OPENSCENEGRAPH_VERSION "${_osg_VERSION_MAJOR}.${_osg_VERSION_MINOR}.${_osg_VERSION_PATCH}"
+                                    CACHE INTERNAL "The version of OSG which was detected")                
+    ENDIF()
+ENDMACRO(FIND_OSG_VERSION)

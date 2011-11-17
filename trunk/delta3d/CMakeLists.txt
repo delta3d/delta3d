@@ -143,7 +143,6 @@ OPTION(BUILD_PLIB          "Enabes the building of dtInputPLIB (requires PLIB)" 
 OPTION(BUILD_NET           "Enables the building of dtNet/dtNetGM (requires HawkNL,GNE,Boost)" OFF)
 OPTION(BUILD_TERRAIN       "Enables the building of dtTerrain (requires GDAL)" ON)
 OPTION(BUILD_TESTS         "Enables the building of the unit tests (requires CPPUNIT)" ON)
-OPTION(BUILD_ZIP_PLUGIN    "Build the modified osg zip plugin that support archives, only needed for osg 2.8" ON)
 
 OPTION(BUILD_EXAMPLES      "Enables the building of the Delta3D example projects" ON)
 OPTION(BUILD_DEMOS         "Enables the building of the Delta3D demo projects" ON)
@@ -320,6 +319,11 @@ INCLUDE_DIRECTORIES(
    ${XERCES_INCLUDE_DIR}
 )
 
+# See if we need to include Delta3D's version of the osgDB Zip plugin
+FIND_OSG_VERSION() #from UtilityMacros.cmake
+IF (OSG_VERSION_MAJOR AND OSG_VERSION_MAJOR LESS 3)
+  SET(BUILD_ZIP_PLUGIN ON)
+ENDIF (OSG_VERSION_MAJOR AND OSG_VERSION_MAJOR LESS 3)
 
 IF (BUILD_WITH_QT)
    SET(QT_USE_QTOPENGL "true")
