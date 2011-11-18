@@ -1,1 +1,0 @@
-#include <dtCore/functor.h>

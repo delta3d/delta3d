@@ -1,4 +1,0 @@
-<?xml version="1.0" ?>
-<Imageset Name = "Reticle" Imagefile = "Reticle-3-white-trans.tga" NativeHorzRes = "128" NativeVertRes = "128" AutoScaled = "false">
-	<Image Name = "White" XPos = "0" YPos = "0" Width = "128" Height = "128" />
-</Imageset> 
