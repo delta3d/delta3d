@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" id="Application">
+	<xs:element name="Application">
+		<xs:complexType>
+			<xs:sequence minOccurs="0">
+				<xs:element name="Window">
+					<xs:complexType>
+						<xs:attribute name="Name" type="xs:string" use="required"/>
+						<xs:attribute name="X" type="xs:string" use="required"/>
+						<xs:attribute name="Y" type="xs:string" use="required"/>
+						<xs:attribute name="Width" type="xs:string" use="required"/>
+						<xs:attribute name="Height" type="xs:string" use="required"/>
+						<xs:attribute name="PixelDepth" type="xs:string" use="required"/>
+						<xs:attribute name="RefreshRate" type="xs:string" use="required"/>
+						<xs:attribute name="ShowCursor" type="xs:string" use="required"/>
+						<xs:attribute name="FullScreen" type="xs:string" use="required"/>
+						<xs:attribute name="ChangeDisplayResolution" type="xs:string" use="required"/>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="Scene">
+					<xs:complexType>
+						<xs:attribute name="Name" type="xs:string" use="required" form="unqualified"/>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="Camera">
+					<xs:complexType>
+						<xs:attribute name="Name" type="xs:string" use="required" form="unqualified"/>
+						<xs:attribute name="WindowInstance" type="xs:string" use="required" form="unqualified"/>
+						<xs:attribute name="SceneInstance" type="xs:string" use="required" form="unqualified"/>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="Log" minOccurs="0" maxOccurs="unbounded">
+					<xs:complexType>
+						<xs:attribute name="Name" type="xs:string" form="unqualified"/>
+						<xs:attribute name="Level" type="xs:string" use="required" form="unqualified"/>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="LibraryPath" minOccurs="0" maxOccurs="unbounded" type="xs:string" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

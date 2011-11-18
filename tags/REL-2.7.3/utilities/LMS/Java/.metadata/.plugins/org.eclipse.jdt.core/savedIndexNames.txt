@@ -1,0 +1,10 @@
+C:\devel\Delta3d-ECS\utilities\LMS\Java\.metadata\.plugins\org.eclipse.jdt.core\2787639519.index
+C:\devel\Delta3d-ECS\utilities\LMS\Java\.metadata\.plugins\org.eclipse.jdt.core\3530734587.index
+C:\devel\Delta3d-ECS\utilities\LMS\Java\.metadata\.plugins\org.eclipse.jdt.core\989563514.index
+C:\devel\Delta3d-ECS\utilities\LMS\Java\.metadata\.plugins\org.eclipse.jdt.core\3236852990.index
+C:\devel\Delta3d-ECS\utilities\LMS\Java\.metadata\.plugins\org.eclipse.jdt.core\2135232387.index
+C:\devel\Delta3d-ECS\utilities\LMS\Java\.metadata\.plugins\org.eclipse.jdt.core\241174357.index
+C:\devel\Delta3d-ECS\utilities\LMS\Java\.metadata\.plugins\org.eclipse.jdt.core\652116824.index
+C:\devel\Delta3d-ECS\utilities\LMS\Java\.metadata\.plugins\org.eclipse.jdt.core\826128741.index
+C:\devel\Delta3d-ECS\utilities\LMS\Java\.metadata\.plugins\org.eclipse.jdt.core\3418296825.index
+C:\devel\Delta3d-ECS\utilities\LMS\Java\.metadata\.plugins\org.eclipse.jdt.core\206928529.index
