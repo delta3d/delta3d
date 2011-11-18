@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<item key="org.eclipse.debug.internal.ui.views.expression.ExpressionInformationControl_DEBUGPOPUP_HEIGHT" value="789"/>
+	<item key="org.eclipse.debug.internal.ui.views.expression.ExpressionInformationControl_DEBUGPOPUP_WIDTH" value="731"/>
+	<section name="org.eclipse.debug.ui.LAUNCH_CONFIGURATIONS_DIALOG_SECTION">
+		<item key="org.eclipse.debug.ui.DIALOG_HEIGHT" value="580"/>
+		<item key="org.eclipse.debug.ui.DIALOG_SASH_WEIGHTS_1" value="230"/>
+		<item key="org.eclipse.debug.ui.DIALOG_ORIGIN_Y" value="281"/>
+		<item key="org.eclipse.debug.ui.DIALOG_WIDTH" value="737"/>
+		<item key="org.eclipse.debug.ui.DIALOG_SASH_WEIGHTS_2" value="769"/>
+		<item key="org.eclipse.debug.ui.DIALOG_ORIGIN_X" value="687"/>
+	</section>
+</section>
