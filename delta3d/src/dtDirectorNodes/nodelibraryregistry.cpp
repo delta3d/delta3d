@@ -404,10 +404,31 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void NodeLibraryRegistry::GetReplacementNodeTypes(NodeLibraryRegistry::NodeTypeReplacements &replacements) const
    {
-      NodeLibraryRegistry::NodeReplacementData animateActorData;
-      animateActorData.library = "dtDirectorAnimNodes";
-      animateActorData.newName = "Animate Actor";
-      animateActorData.newCategory = "Cinematic";
-      replacements.push_back(std::make_pair<std::string, NodeLibraryRegistry::NodeReplacementData>("Cinematic.Animate Actor", animateActorData));
+      {
+         NodeLibraryRegistry::NodeReplacementData nodeData;
+         nodeData.library = "dtDirectorAnimNodes";
+         nodeData.newName = "Animate Actor";
+         nodeData.newCategory = "Cinematic";
+
+         replacements.push_back(std::make_pair<std::string, NodeLibraryRegistry::NodeReplacementData>("Cinematic.Animate Actor", nodeData));
+      }      
+
+      {
+         NodeLibraryRegistry::NodeReplacementData nodeData;
+         nodeData.library = "dtDirectorNodes";
+         nodeData.newName = "Arithmetic Operation";
+         nodeData.newCategory = "General";
+
+         replacements.push_back(std::make_pair<std::string, NodeLibraryRegistry::NodeReplacementData>("General.Binary Operation", nodeData));
+      }
+
+      {
+         NodeLibraryRegistry::NodeReplacementData nodeData;
+         nodeData.library = "dtDirectorNodes";
+         nodeData.newName = "Vec3";
+         nodeData.newCategory = "General";
+
+         replacements.push_back(std::make_pair<std::string, NodeLibraryRegistry::NodeReplacementData>("General.Vector", nodeData));
+      }
    }
 }
