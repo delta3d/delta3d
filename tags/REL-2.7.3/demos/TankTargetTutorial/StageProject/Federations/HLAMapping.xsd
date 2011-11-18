@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+	targetNamespace="hlaComponent"
+	elementFormDefault="qualified"
+	attributeFormDefault="unqualified">
+
+  <xsd:annotation>
+    <xsd:documentation xml:lang="en">
+      Delta3D HLA Component configuration
+    </xsd:documentation>
+  </xsd:annotation>
+
+  <xsd:element name="hla" type="HLAMappingType"/>
+
+  <xsd:complexType name="HLAMappingType">
+    <xsd:sequence>
+      <xsd:element name="header" type="HeaderType"/>
+      <xsd:element name="libraries" type="LibrariesType"/>
+      <xsd:element name="objects" type="ObjectsType"/>
+      <xsd:element name="interactions" type="InteractionsType"/>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="HeaderType">
+    <xsd:sequence>
+      <xsd:element name="name"   type="xsd:string"/>
+      <xsd:element name="description" type="xsd:string"/>
+      <xsd:element name="disEntityTypes" type="xsd:boolean"/>
+      <xsd:element name="disEntityTypeAttribute" type="xsd:string"/>
+      <xsd:element name="author"   type="xsd:string"/>
+      <xsd:element name="comment"  type="xsd:string" minOccurs="0"/>
+      <xsd:element name="copyright" type="xsd:string" minOccurs="0"/>
+      <!-- document won't validate unless the version number is correct -->
+      <xsd:element name="schemaVersion" type="xsd:string" fixed="1.0"/>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="LibrariesType">
+    <xsd:sequence>
+      <xsd:element name="actorLibrary" minOccurs="0" maxOccurs="unbounded">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="name" type="xsd:string"/>
+            <xsd:element name="version" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="translatorLibrary" minOccurs="0" maxOccurs="unbounded">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="name" type="xsd:string"/>
+            <xsd:element name="version" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="ObjectsType">
+    <xsd:sequence>
+      <xsd:element name="object" minOccurs="0" maxOccurs="unbounded">  
+        <xsd:attribute name="name" type="xsd:string"/>
+        <xsd:attribute name="extends" type="xsd:string"/>
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:choice>
+	      <xsd:complexType>
+                <xsd:sequence>
+                  <xsd:element name="objectClass" type="xsd:string" />
+                  <xsd:element name="actorType" type="xsd:string"/>
+                  <xsd:element name="remoteOnly" type="xsd:boolean" minOccurs="0" maxOccurs="1" />
+                  <xsd:element name="disEntityEnum" minOccurs="0" maxOccurs="1" type="DISEntityEnumType"/>
+                </xsd:sequence>
+              </xsd:complexType>	             
+              <xsd:element name="abstract" type="xsd:string"/>
+            </xsd:choice>
+            <xsd:element name="entityIdAttributeName" type="xsd:boolean" minOccurs="0" maxOccurs="1" />
+            <xsd:element name="attrToProp" minOccurs="0" maxOccurs="unbounded" type="OneToOneType"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="objectHandler" minOccurs="0" maxOccurs="unbounded">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="objectClass" type="xsd:string" />
+            <xsd:element name="disEntityEnum" minOccurs="0" maxOccurs="1" type="DISEntityEnumType"/>
+            <xsd:element name="handler" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="actorTypeHandler" minOccurs="0" maxOccurs="unbounded">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="actorType" type="xsd:string"/>
+            <xsd:element name="handler" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="InteractionsType">
+    <xsd:sequence>
+      <xsd:element name="interaction" minOccurs="0" maxOccurs="unbounded">
+        <xsd:attribute name="name" type="xsd:string"/>
+        <xsd:attribute name="extends" type="xsd:string"/>
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:choice>
+		        <xsd:complexType>
+		          <xsd:sequence>
+		            <xsd:element name="interactionClass" type="xsd:string" />
+		            <xsd:element name="messageType" type="xsd:string"/>
+		          </xsd:sequence>
+		        </xsd:complexType>	             
+              <xsd:element name="abstract" type="xsd:string"/>
+            </xsd:choice>
+            <xsd:element name="paramToParam" minOccurs="0" maxOccurs="unbounded" type="OneToOneType"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="interactionHandler" minOccurs="0" maxOccurs="unbounded">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="interactionClass" type="xsd:string" />
+            <xsd:element name="handler" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="messageHandler" minOccurs="0" maxOccurs="unbounded">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="messageType" type="xsd:string"/>
+            <xsd:element name="handler" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="DISEntityEnumType">
+    <xsd:sequence>
+       <xsd:element name="kind" type="xsd:int" minOccurs="0" maxOccurs="1" />      
+       <xsd:element name="domain" type="xsd:int" minOccurs="0" maxOccurs="1" />      
+       <xsd:element name="country" type="xsd:int" minOccurs="0" maxOccurs="1"/>      
+       <xsd:element name="category" type="xsd:int" minOccurs="0" maxOccurs="1" />      
+       <xsd:element name="subcategory" type="xsd:int" minOccurs="0" maxOccurs="1"/>      
+       <xsd:element name="specific" type="xsd:int" minOccurs="0" maxOccurs="1"/>      
+       <xsd:element name="extra" type="xsd:int" minOccurs="0" maxOccurs="1"/>      
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="OneToOneType">
+    <xsd:sequence>
+      <xsd:element name="hlaName" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="hlaDataType" type="xsd:string" minOccurs="0" maxOccurs="1"/> 
+      <xsd:element name="hlaRequired" type="xsd:boolean" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="gameName" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="gameDataType" type="xsd:string" minOccurs="0" maxOccurs="1"/> 
+      <xsd:element name="gameRequired" type="xsd:boolean" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="default" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+      
+      <xsd:element name="enumerationMapping" minOccurs="0" maxOccurs="1">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="value" type="xsd:string">
+    	        <xsd:attribute name="id" type="xsd:int"/>      	
+            </xsd:element>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      
+    </xsd:sequence>
+  </xsd:complexType>
+
+
+</xsd:schema>
