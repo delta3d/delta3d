@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<GUILayout>
+
+   <Window Type="WindowsLook/StaticImage" Name="Reticle" >
+      <Property Name="Rotation" Value="x:0 y:0 z:0" />
+      <Property Name="FrameEnabled" Value="false" />
+      <Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
+      <Property Name="UnifiedAreaRect" Value="{{0.5,-24},{0.5,-24},{0.5,24},{0.5,24}}" />
+      <Property Name="Image" Value="set:Reticle image:White" />
+      <Property Name="MousePassThroughEnabled" Value="true" />  
+      <Property Name="ImageColours" Value="tl:88FFFFFF tr:88FFFFFF bl:88FFFFFF br:88FFFFFF" />
+      <Property Name="BackgroundEnabled" Value="false" />
+   </Window> 
+    
+</GUILayout>
