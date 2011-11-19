@@ -527,12 +527,6 @@ namespace dtCore
                         dataValue.c_str(), dtUtil::XMLStringConverter(topEl.c_str()).c_str());
                   }
 
-                  if (!GetNestedProperty())
-                  {
-                     std::cout << "topEL: " << dtUtil::XMLStringConverter(topEl.c_str()).ToString() << std::endl;
-                     std::cout << "characters: " << dataValue << std::endl;
-                  }
-
                   //we now have the property, the type, and the data.
                   ParsePropertyData(topEl, dataValue, GetNestedType(), GetNestedProperty());
                }
