@@ -491,6 +491,11 @@ namespace dtCore
                   {
                      data.mHasDeprecatedProperty = true;
                   }
+                  else
+                  {
+                     mParser->mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
+                        "No property found for \"(%s, %s).\"", data.mPropertyContainer->GetDefaultPropertyKey().c_str(), propName.c_str());
+                  }
                }
             }
             else if (data.mActorProperty != NULL)
@@ -520,6 +525,12 @@ namespace dtCore
                         GetNestedProperty()->GetDataType().GetName().c_str(),
                         GetNestedType()->GetName().c_str(),
                         dataValue.c_str(), dtUtil::XMLStringConverter(topEl.c_str()).c_str());
+                  }
+
+                  if (!GetNestedProperty())
+                  {
+                     std::cout << "topEL: " << dtUtil::XMLStringConverter(topEl.c_str()).ToString() << std::endl;
+                     std::cout << "characters: " << dataValue << std::endl;
                   }
 
                   //we now have the property, the type, and the data.
