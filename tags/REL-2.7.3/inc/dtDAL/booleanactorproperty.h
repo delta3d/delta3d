@@ -1,1 +1,0 @@
-#include <dtCore/booleanactorproperty.h>
