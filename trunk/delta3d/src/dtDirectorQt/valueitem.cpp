@@ -449,23 +449,26 @@ namespace dtDirector
    {
       NodeItem::mouseDoubleClickEvent(event);
 
-      // Check the double click event handler first.
-      if (!mScene->GetEditor()->OnDoubleClickValueNode(mNode.get()))
+      if (event->button() == Qt::LeftButton)
       {
-         // If this value is a reference node, jump to its' referenced value.
-         if (mNode->GetType().GetFullName() == "Core.Reference")
+         // Check the double click event handler first.
+         if (!mScene->GetEditor()->OnDoubleClickValueNode(mNode.get()))
          {
-            OnGotoReference();
-         }
-         // If this value is a value link node, jump to the parent graph.
-         else if (mNode->GetType().GetFullName() == "Core.Value Link")
-         {
-            mScene->GetEditor()->on_action_Step_Out_Of_Graph_triggered();
-         }
-         // Anything else creates a new reference.
-         else
-         {
-            OnCreateReference();
+            // If this value is a reference node, jump to its' referenced value.
+            if (mNode->GetType().GetFullName() == "Core.Reference")
+            {
+               OnGotoReference();
+            }
+            // If this value is a value link node, jump to the parent graph.
+            else if (mNode->GetType().GetFullName() == "Core.Value Link")
+            {
+               mScene->GetEditor()->on_action_Step_Out_Of_Graph_triggered();
+            }
+            // Anything else creates a new reference.
+            else
+            {
+               OnCreateReference();
+            }
          }
       }
    }

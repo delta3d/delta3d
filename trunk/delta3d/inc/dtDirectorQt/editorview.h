@@ -63,6 +63,8 @@ namespace dtDirector
        */
       float GetZoomScale() const {return mCurrentScale;}
 
+      void SetZoomScale(float zoom);
+
    protected:
 
       /**

@@ -114,8 +114,14 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void EditorScene::SetGraph(DirectorGraph* graph)
+   void EditorScene::SetGraph(DirectorGraph* graph, bool rememberHistory)
    {
+      // If we are currently within a valid graph, save it in history.
+      if (rememberHistory && mGraph.valid())
+      {
+         AddGraphHistory(mGraph.get());
+      }
+
       // First clear the current items.
       int count = (int)mNodes.size();
       for (int index = 0; index < count; index++)
@@ -1000,6 +1006,13 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void EditorScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
    {
+      // Back button should switch graphs to its parent if able.
+      if (event->button() == Qt::XButton1 ||
+          event->button() == Qt::XButton2)
+      {
+         return;
+      }
+
       mDragging = false;
       mHasDragged = false;
       mBandSelecting = false;
@@ -1103,6 +1116,18 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void EditorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
    {
+      // Back button should switch graphs to its parent if able.
+      if (event->button() == Qt::XButton1)
+      {
+         GraphHistoryBack();
+         return;
+      }
+      else if (event->button() == Qt::XButton2)
+      {
+         GraphHistoryForward();
+         return;
+      }
+
       QGraphicsScene::mouseReleaseEvent(event);
 
       // If you have pressed and released the right mouse on an empty
@@ -1631,6 +1656,88 @@ namespace dtDirector
             PaintItemChildren(painter, child, options);
 
             painter->translate(-child->pos());
+         }
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void EditorScene::AddGraphHistory(dtDirector::DirectorGraph* graph)
+   {
+      if (!graph)
+      {
+         return;
+      }
+
+      GraphHistoryData data;
+      data.graph = graph;
+      data.pos = mTranslationItem->pos();
+      data.zoom = GetView()->GetZoomScale();
+
+      mPrevHistory.push_back(data);
+      mNextHistory.clear();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void EditorScene::GraphHistoryBack()
+   {
+      if (!mPrevHistory.empty())
+      {
+         // Retrieve a previous data that is valid.
+         GraphHistoryData data;
+         while (!data.graph.valid())
+         {
+            data = mPrevHistory.back();
+            mPrevHistory.pop_back();
+         }
+
+         if (data.graph.valid())
+         {
+            // If we found a valid graph to go back to, then
+            // push our current graph into the forward history.
+            if (mGraph.valid())
+            {
+               GraphHistoryData data;
+               data.graph = mGraph;
+               data.pos = mTranslationItem->pos();
+               data.zoom = GetView()->GetZoomScale();
+
+               mNextHistory.push_back(data);
+            }
+
+            // Apply the graph change.
+            SetGraph(data.graph.get(), false);
+            mTranslationItem->setPos(data.pos);
+            GetView()->SetZoomScale(data.zoom);
+         }
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void EditorScene::GraphHistoryForward()
+   {
+      if (!mNextHistory.empty())
+      {
+         // Retrieve a forward data that is valid.
+         GraphHistoryData data;
+         while (!data.graph.valid())
+         {
+            data = mNextHistory.back();
+            mNextHistory.pop_back();
+         }
+
+         if (data.graph.valid())
+         {
+            // If we found a valid graph to go forward to, then
+            // push our current graph into the back history.
+            if (mGraph.valid())
+            {
+               AddGraphHistory(mGraph.get());
+            }
+
+            // Apply the graph change.
+            SetGraph(data.graph.get(), false);
+            mTranslationItem->setPos(data.pos);
+            GetView()->SetZoomScale(data.zoom);
          }
       }
    }
