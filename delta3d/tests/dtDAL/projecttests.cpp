@@ -19,7 +19,7 @@
 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 * THE SOFTWARE.
-* 
+*
 * This software was developed by Alion Science and Technology Corporation under
 * circumstances in which the U. S. Government may have rights in the software.
 *
@@ -50,7 +50,7 @@
 
 #include <cppunit/extensions/HelperMacros.h>
 
-namespace dtCore 
+namespace dtCore
 {
    class ResourceTreeNode;
    class DataType;
@@ -284,27 +284,27 @@ void ProjectTests::printTree(const dtUtil::tree<dtCore::ResourceTreeNode>::const
 
 void ProjectTests::TestReadonlyFailure()
 {
-   try 
+   try
    {
       dtCore::Project& p = dtCore::Project::GetInstance();
 
 
       p.CreateContext(TEST_PROJECT_DIR);
 
-      try 
+      try
       {
          p.SetContext(TEST_PROJECT_DIR);
-      } 
+      }
       catch (const dtUtil::Exception& e)
       {
          CPPUNIT_FAIL(std::string("Project should have been able to set context. Exception: ") + e.ToString());
       }
 
-      try 
+      try
       {
          p.SetContext(TEST_PROJECT_DIR, true);
-      } 
-      catch (const dtUtil::Exception& e) 
+      }
+      catch (const dtUtil::Exception& e)
       {
          CPPUNIT_FAIL(std::string("Project should have been able to set context. Exception: ") + e.ToString());
       }
@@ -312,30 +312,30 @@ void ProjectTests::TestReadonlyFailure()
       CPPUNIT_ASSERT_MESSAGE("context should be valid", p.IsContextValid());
       CPPUNIT_ASSERT_MESSAGE("context should be valid", p.IsReadOnly());
 
-      try 
+      try
       {
          p.Refresh();
-      } 
-      catch (const dtUtil::Exception& e) 
+      }
+      catch (const dtUtil::Exception& e)
       {
          CPPUNIT_FAIL(std::string("Project should have been able to call refresh: ") + e.ToString());
       }
 
-      try 
+      try
       {
          dtUtil::tree<dtCore::ResourceTreeNode> toFill;
          p.GetResourcesOfType(dtCore::DataType::STATIC_MESH, toFill);
-      } 
-      catch (const dtUtil::Exception& e) 
+      }
+      catch (const dtUtil::Exception& e)
       {
          CPPUNIT_FAIL(std::string("Project should have been able to call GetResourcesOfType: ") + e.ToString());
       }
 
-      try 
+      try
       {
          p.GetAllResources();
-      } 
-      catch (const dtUtil::Exception& e) 
+      }
+      catch (const dtUtil::Exception& e)
       {
          CPPUNIT_FAIL(std::string("Project should have been able to call GetResourcesOfType: ") + e.ToString());
       }
@@ -365,8 +365,8 @@ void ProjectTests::TestReadonlyFailure()
       CPPUNIT_ASSERT_THROW_MESSAGE("CreateMap() should have thrown exception on a ReadOnly ProjectContext",
                                    p.CreateMap("name-o", "testFile"),dtCore::ProjectReadOnlyException);
 
-   } 
-   catch (const dtUtil::Exception& ex) 
+   }
+   catch (const dtUtil::Exception& ex)
    {
       CPPUNIT_FAIL(ex.ToString());
    }
@@ -839,8 +839,8 @@ void ProjectTests::TestProject()
       dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
       std::string originalPathList = dtUtil::GetDataFilePathList();
 
-      std::string crapPath("/usr/:%**/../^^jojo/funky/\\\\/,/,.uchor");
-      
+      std::string crapPath("/usr:%**/../^^jojo/funky/\\\\/,/,.uchor");
+
       CPPUNIT_ASSERT_THROW(p.CreateContext(crapPath), dtUtil::Exception);
       CPPUNIT_ASSERT_THROW(p.SetContext(crapPath), dtUtil::Exception);
 
@@ -896,12 +896,12 @@ void ProjectTests::TestProject()
             dtUtil::GetDataFilePathList().find(originalPathList) != std::string::npos);
 
       std::string projectDir2("Test2Project");
-      try 
+      try
       {
          p.CreateContext(projectDir2);
          p.SetContext(projectDir2);
-      } 
-      catch (const dtUtil::Exception& e) 
+      }
+      catch (const dtUtil::Exception& e)
       {
          CPPUNIT_FAIL(std::string(std::string("Project should have been able to Set context. Exception: ") + e.ToString()).c_str());
       }
@@ -951,7 +951,7 @@ void ProjectTests::TestDeletingBackupFromReadOnlyContext()
 
    CPPUNIT_ASSERT_MESSAGE("Didn't find a Map backup, can't go on with test",
                           true == proj.HasBackup(testMap));
-   
+
    proj.SetContext(TEST_PROJECT_DIR, true); //now we're read only
 
    //trying to delete a Map backup in a read-only ProjectContext should throw
@@ -1045,7 +1045,7 @@ void ProjectTests::TestMapSaveAndLoadMapName()
    CPPUNIT_ASSERT_MESSAGE("Map was saved.  The map should have no backups.",
                           !project.HasBackup(*map) && !project.HasBackup(newMapName));
 
-   CPPUNIT_ASSERT_EQUAL_MESSAGE("Map should have the new saved name", newMapName, map->GetSavedName());     
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("Map should have the new saved name", newMapName, map->GetSavedName());
 
    project.DeleteMap(*map);
 }
