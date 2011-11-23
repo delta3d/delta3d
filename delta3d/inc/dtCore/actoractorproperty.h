@@ -76,6 +76,12 @@ namespace dtCore
          BaseActorObject* GetValue() const;
 
          /**
+          *	Gets and Sets whether this property shows prototype actors.
+          */
+         void SetShowPrototypes(bool enabled) {mShowPrototypes = enabled;}
+         bool GetShowPrototypes() const {return mShowPrototypes;}
+
+         /**
           * Gets the drawable that this property is representing
           * @return The actor
           */
@@ -112,6 +118,7 @@ namespace dtCore
          SetFuncType SetPropFunctor;
          GetFuncType GetActorFunctor;
          dtUtil::RefString mDesiredActorClass;
+         bool mShowPrototypes;
 
       protected:
          virtual ~ActorActorProperty() { }

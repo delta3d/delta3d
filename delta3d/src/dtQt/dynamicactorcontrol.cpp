@@ -312,25 +312,42 @@ namespace dtQt
    {
       toFill.clear();
 
+      bool showPrototypes = false;
+      if (mProperty)
+      {
+         showPrototypes = mProperty->GetShowPrototypes();
+      }
+
+      if (mIdProperty)
+      {
+         showPrototypes = mIdProperty->GetShowPrototypes();
+      }
+
       int count = dtCore::BaseActorObject::GetInstanceCount();
       for (int index = 0; index < count; ++index)
       {
          dtCore::BaseActorObject* object = dtCore::BaseActorObject::GetInstance(index);
          if (object)
          {
-            
-
             if (!className.empty() && !object->IsInstanceOf(className))
             {
                continue;
             }
 
-            dtCore::ActorProperty* prototypeProp = object->GetProperty("Initial Ownership");
             dtCore::ActorProperty* ghostProp = object->GetProperty("Is Ghost");
-            if ((!prototypeProp || prototypeProp->ToString() != "PROTOTYPE") &&
-               (!ghostProp || ghostProp->ToString() == "false"))
+            if (!ghostProp || ghostProp->ToString() == "false")
             {
-               toFill.push_back(object);
+               dtCore::ActorProperty* prototypeProp = object->GetProperty("Initial Ownership");
+               bool isPrototype = false;
+               if (prototypeProp && prototypeProp->ToString() == "PROTOTYPE")
+               {
+                  isPrototype = true;
+               }
+
+               if (!isPrototype || showPrototypes)
+               {
+                  toFill.push_back(object);
+               }
             }
          }
       }
