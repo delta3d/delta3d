@@ -40,6 +40,7 @@ namespace dtCore
       , SetPropFunctor(Set)
       , GetActorFunctor(Get)
       , mDesiredActorClass(desiredActorClass)
+      , mShowPrototypes(false)
    {
    }
 

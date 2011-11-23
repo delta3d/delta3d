@@ -43,6 +43,7 @@ namespace dtCore
       , SetIdFunctor(Set)
       , GetIdFunctor(Get)
       , mDesiredActorClass(desiredActorClass)
+      , mShowPrototypes(false)
    {
    }
 
@@ -60,6 +61,7 @@ namespace dtCore
       , SetIdFunctor(Set)
       , GetIdFunctor(Get)
       , mDesiredActorClass(desiredActorClass)
+      , mShowPrototypes(false)
    {
    }
 
