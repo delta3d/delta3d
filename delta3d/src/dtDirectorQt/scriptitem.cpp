@@ -269,7 +269,10 @@ namespace dtDirector
    {
       ActionItem::mouseDoubleClickEvent(event);
 
-      EditScript();
+      if (event->button() == Qt::LeftButton)
+      {
+         EditScript();
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////

@@ -54,6 +54,23 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   void EditorView::SetZoomScale(float zoom)
+   {
+      if (zoom == 0.0f)
+      {
+         return;
+      }
+
+      mGoalScale = zoom;
+
+      float inc = mGoalScale / mCurrentScale;
+
+      mCurrentScale *= inc;
+
+      scale(inc, inc);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    void EditorView::wheelEvent(QWheelEvent* event)
    {
       // Delta is in eighths of degrees

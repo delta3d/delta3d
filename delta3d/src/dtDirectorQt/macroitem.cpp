@@ -697,18 +697,21 @@ namespace dtDirector
    {
       NodeItem::mouseDoubleClickEvent(event);
 
-      // If this graph contains a custom editor, add an option to open it with that editor.
-      if (!mGraph->GetEditor().empty())
+      if (event->button() == Qt::LeftButton)
       {
-         CustomEditorTool* tool = DirectorEditor::GetRegisteredTool(mGraph->GetEditor());
-         if (tool)
+         // If this graph contains a custom editor, add an option to open it with that editor.
+         if (!mGraph->GetEditor().empty())
          {
-            tool->Open(mScene->GetEditor(), mGraph.get());
-            return;
+            CustomEditorTool* tool = DirectorEditor::GetRegisteredTool(mGraph->GetEditor());
+            if (tool)
+            {
+               tool->Open(mScene->GetEditor(), mGraph.get());
+               return;
+            }
          }
-      }
 
-      OpenMacro();
+         OpenMacro();
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////

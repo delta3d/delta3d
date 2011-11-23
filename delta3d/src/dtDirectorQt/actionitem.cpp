@@ -224,17 +224,20 @@ namespace dtDirector
    {
       NodeItem::mouseDoubleClickEvent(event);
 
-      // Double clicking a remote event or call remote event node will
-      // jump the view to the next remote event found.
-      if (mNode->GetType().GetFullName() == "Core.Remote Event" ||
-         mNode->GetType().GetFullName() == "Core.Call Remote Event")
+      if (event->button() == Qt::LeftButton)
       {
-         OnGotoEvent();
-      }
-      else if (mNode->GetType().GetFullName() == "Core.Input Link" ||
-         mNode->GetType().GetFullName() == "Core.Output Link")
-      {
-         mScene->GetEditor()->on_action_Step_Out_Of_Graph_triggered();
+         // Double clicking a remote event or call remote event node will
+         // jump the view to the next remote event found.
+         if (mNode->GetType().GetFullName() == "Core.Remote Event" ||
+            mNode->GetType().GetFullName() == "Core.Call Remote Event")
+         {
+            OnGotoEvent();
+         }
+         else if (mNode->GetType().GetFullName() == "Core.Input Link" ||
+            mNode->GetType().GetFullName() == "Core.Output Link")
+         {
+            mScene->GetEditor()->on_action_Step_Out_Of_Graph_triggered();
+         }
       }
    }
 }

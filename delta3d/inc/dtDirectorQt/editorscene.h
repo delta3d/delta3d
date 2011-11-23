@@ -82,7 +82,7 @@ namespace dtDirector
        *
        * @param[in]  graph  The Graph to view.
        */
-      void SetGraph(DirectorGraph* graph);
+      void SetGraph(DirectorGraph* graph, bool rememberHistory = true);
 
       /**
        *	Shows the nodes within a given graph.
@@ -326,6 +326,21 @@ namespace dtDirector
 
       void PaintItemChildren(QPainter* painter, QGraphicsItem* item, QStyleOptionGraphicsItem* options);
 
+      /**
+       *	Adds a graph to the previous history data.
+       */
+      void AddGraphHistory(dtDirector::DirectorGraph* graph);
+
+      /**
+       *	Attempts to go back in graph history.
+       */
+      void GraphHistoryBack();
+
+      /**
+       *	Attempts to go forward in graph history.
+       */
+      void GraphHistoryForward();
+
    private:
       DirectorEditor*            mEditor;
       EditorView*                mView;
@@ -334,6 +349,16 @@ namespace dtDirector
       GraphTabs*                 mGraphTabs;
 
       dtCore::ObserverPtr<dtDirector::DirectorGraph> mGraph;
+
+      struct GraphHistoryData
+      {
+         dtCore::ObserverPtr<dtDirector::DirectorGraph> graph;
+         QPointF pos;
+         float zoom;
+      };
+
+      std::vector<GraphHistoryData> mPrevHistory;
+      std::vector<GraphHistoryData> mNextHistory;
 
       std::vector<NodeItem*>     mNodes;
 

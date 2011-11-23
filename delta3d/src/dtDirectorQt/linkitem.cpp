@@ -156,6 +156,12 @@ namespace dtDirector
    {
       if (!mouseEvent) return;
 
+      if (mouseEvent->button() == Qt::XButton1 ||
+         mouseEvent->button() == Qt::XButton2)
+      {
+         return;
+      }
+
       if (mouseEvent->modifiers() == Qt::AltModifier)
       {
          mAltModifier = true;

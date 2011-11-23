@@ -260,14 +260,18 @@ namespace dtDirector
    void NodeScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* mouseEvent)
    {
       QGraphicsScene::mouseDoubleClickEvent(mouseEvent);
-      QPointF scenePos = mouseEvent->scenePos();
-      NodeItem* selectedItem = GetNodeItemAtPos(scenePos);
-      if (selectedItem != NULL)
+
+      if (mouseEvent->button() == Qt::LeftButton)
       {
-         QString name = selectedItem->QGraphicsItem::data(Qt::UserRole).toString();
-         QString category = selectedItem->QGraphicsItem::data(Qt::UserRole + 1).toString();
-         QString refName = selectedItem->QGraphicsItem::data(Qt::UserRole + 2).toString();
-         emit CreateNode(name, category, refName);
+         QPointF scenePos = mouseEvent->scenePos();
+         NodeItem* selectedItem = GetNodeItemAtPos(scenePos);
+         if (selectedItem != NULL)
+         {
+            QString name = selectedItem->QGraphicsItem::data(Qt::UserRole).toString();
+            QString category = selectedItem->QGraphicsItem::data(Qt::UserRole + 1).toString();
+            QString refName = selectedItem->QGraphicsItem::data(Qt::UserRole + 2).toString();
+            emit CreateNode(name, category, refName);
+         }
       }
    }
 
