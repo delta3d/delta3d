@@ -117,7 +117,7 @@ namespace dtDirector
    void EditorScene::SetGraph(DirectorGraph* graph, bool rememberHistory)
    {
       // If we are currently within a valid graph, save it in history.
-      if (rememberHistory && mGraph.valid())
+      if (rememberHistory && mGraph.valid() && mGraph.get() != graph)
       {
          AddGraphHistory(mGraph.get());
       }
@@ -1704,10 +1704,22 @@ namespace dtDirector
                mNextHistory.push_back(data);
             }
 
+            dtCore::ObserverPtr<dtDirector::DirectorGraph> oldGraph = mGraph.get();
+
             // Apply the graph change.
             SetGraph(data.graph.get(), false);
             mTranslationItem->setPos(data.pos);
             GetView()->SetZoomScale(data.zoom);
+
+            // Now auto select the old graph in case it belongs within this graph.
+            if (oldGraph.valid())
+            {
+               MacroItem* macroItem = GetGraphItem(oldGraph->GetID());
+               if (macroItem)
+               {
+                  macroItem->setSelected(true);
+               }
+            }
          }
       }
    }
@@ -1731,13 +1743,30 @@ namespace dtDirector
             // push our current graph into the back history.
             if (mGraph.valid())
             {
-               AddGraphHistory(mGraph.get());
+               GraphHistoryData data;
+               data.graph = mGraph.get();
+               data.pos = mTranslationItem->pos();
+               data.zoom = GetView()->GetZoomScale();
+
+               mPrevHistory.push_back(data);
             }
+
+            dtCore::ObserverPtr<dtDirector::DirectorGraph> oldGraph = mGraph.get();
 
             // Apply the graph change.
             SetGraph(data.graph.get(), false);
             mTranslationItem->setPos(data.pos);
             GetView()->SetZoomScale(data.zoom);
+
+            // Now auto select the old graph in case it belongs within this graph.
+            if (oldGraph.valid())
+            {
+               MacroItem* macroItem = GetGraphItem(oldGraph->GetID());
+               if (macroItem)
+               {
+                  macroItem->setSelected(true);
+               }
+            }
          }
       }
    }
