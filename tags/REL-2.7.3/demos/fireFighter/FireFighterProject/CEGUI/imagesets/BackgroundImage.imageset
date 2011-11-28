@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<Imageset Name="BackgroundImage" Imagefile="imagesets/portBow2.tga" NativeHorzRes="1024" NativeVertRes="550" AutoScaled="true">
+   <Image Name="BackgroundImage" XPos="0" YPos="0" Width="1024" Height="1024" />
+</Imageset>

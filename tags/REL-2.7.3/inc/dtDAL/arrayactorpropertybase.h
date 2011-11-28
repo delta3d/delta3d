@@ -1,0 +1,1 @@
+#include <dtCore/arrayactorpropertybase.h>
