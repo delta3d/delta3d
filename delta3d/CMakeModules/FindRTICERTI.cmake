@@ -25,7 +25,7 @@ SET(CERTI_PATHS
       "$ENV{PROGRAMFILES}/certi 3.3.3/lib"
       "$ENV{PROGRAMFILES}/certi 3.4.0/lib"
       $ENV{CERTI_HOME}/release
-      ENV{CERTI_HOME}/lib)
+      $ENV{CERTI_HOME}/lib)
 
 
 FIND_LIBRARY(RTI_LIBRARY
