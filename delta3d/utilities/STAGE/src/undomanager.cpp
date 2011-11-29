@@ -568,7 +568,7 @@ namespace dtEditQt
                dtCore::ActorProperty* actorProp = proxy->GetProperty(undoProp->mPropertyName);
 
                // put our value back
-               if (actorProp != NULL)
+               if (actorProp != NULL && !actorProp->IsReadOnly())
                {
                   actorProp->FromString(undoProp->mOldValue);
                }
