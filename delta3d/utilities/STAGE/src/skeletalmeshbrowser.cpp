@@ -263,7 +263,7 @@ namespace dtEditQt
          {
             file.replace("\\", "/");
 
-            if (meshScene->GetChildIndex(previewObject.get()) == (unsigned)meshScene->GetNumberOfAddedDrawable())
+            if (previewObject.valid() && meshScene->GetChildIndex(previewObject.get()) == (unsigned)meshScene->GetNumberOfAddedDrawable())
             {
                meshScene->AddChild(previewObject.get());
             }
