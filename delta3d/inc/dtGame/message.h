@@ -23,8 +23,6 @@
 #define DELTA_MESSAGE
 
 #include <climits>
-#include <dtUtil/exception.h>
-#include <dtUtil/typetraits.h>
 
 #include <dtCore/serializeable.h>
 #include <dtGame/export.h>

@@ -26,6 +26,7 @@
 #include <dtCore/namedpropertycontainerparameter.h>
 #include <dtCore/propertycontainer.h>
 #include <dtCore/propertycontaineractorproperty.h>
+#include <dtUtil/exception.h>
 
 namespace dtCore
 {

@@ -30,6 +30,7 @@
 #include <dtCore/map.h>
 
 #include <dtUtil/stringutils.h>
+#include <dtUtil/log.h>
 
 #include <osgDB/FileNameUtils>
 

@@ -30,6 +30,7 @@
 #include <dtCore/basexmlhandler.h>
 #include <dtCore/namedgroupparameter.h>
 #include <dtCore/propertycontainer.h>
+#include <dtCore/observerptr.h>
 
 #include <stack>
 

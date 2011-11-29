@@ -32,8 +32,9 @@
 #include <dtCore/actorproxyicon.h>
 #include <dtCore/datatype.h>
 #include <dtCore/functor.h>
-
 #include <dtCore/object.h>
+
+#include <dtUtil/log.h>
 
 #include <sstream>
 #include <set>
