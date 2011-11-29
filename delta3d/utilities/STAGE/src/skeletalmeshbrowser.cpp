@@ -272,7 +272,7 @@ namespace dtEditQt
 
             if (animWrap.valid())
             {
-               if (previewObject.valid())
+               if (!previewObject.valid())
                {
                   previewObject = new dtAnim::CharDrawable(animWrap);
                   meshScene->AddChild(previewObject.get());
@@ -310,7 +310,10 @@ namespace dtEditQt
       setCreateAction->setEnabled(false);
 
       // When any item is selected, clear the scene
-      meshScene->RemoveChild(previewObject.get());
+      if (previewObject.valid())
+      {
+         meshScene->RemoveChild(previewObject.get());
+      }
       perspView->refresh();
 
       if (mSelection != NULL)
