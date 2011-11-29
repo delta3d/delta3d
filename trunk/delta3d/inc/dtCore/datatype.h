@@ -23,7 +23,6 @@
 #define DELTA_DATATYPES
 
 #include <dtUtil/enumeration.h>
-#include <dtUtil/fileutils.h>
 #include <dtCore/export.h>
 
 
@@ -278,11 +277,6 @@ namespace dtCore
           */
          void SetTypeId(unsigned char newId) { mId = newId; }
 
-         ///**
-         //* Gets the file extensions available for this resource.
-         //*/
-         //const dtUtil::FileExtensionList& GetExtensions() const {return mExtensions;}
-
       protected:
          virtual int Compare(const std::string& nameString) const;
 
@@ -295,7 +289,6 @@ namespace dtCore
 
           bool mResource;
           std::string mAltName, mDisplayName;
-          //dtUtil::FileExtensionList mExtensions;
           unsigned char mId;
    };
 }

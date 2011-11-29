@@ -26,6 +26,7 @@
 #include <dtQt/dynamicpropertycontainercontrol.h>
 
 #include <dtCore/datatype.h>
+#include <dtUtil/log.h>
 
 namespace dtQt
 {

@@ -24,7 +24,6 @@
 #include <dtUtil/datastream.h>
 #include <dtGame/exceptionenum.h>
 #include <dtGame/message.h>
-#include <dtGame/machineinfo.h>
 #include <dtGame/messagetype.h>
 
 using dtUtil::DataStream;
