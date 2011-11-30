@@ -99,7 +99,7 @@ void dtUtil::LogObserverFile::TimeTag(std::string prefix)
    t = localtime(&cTime);
    logFile << prefix
       << std::setw(2) << std::setfill('0') << (1900+t->tm_year) << "/"
-      << std::setw(2) << std::setfill('0') << t->tm_mon << "/"
+      << std::setw(2) << std::setfill('0') << t->tm_mon+1 << "/"
       << std::setw(2) << std::setfill('0') << t->tm_mday << " "
       << std::setw(2) << std::setfill('0') << t->tm_hour << ":"
       << std::setw(2) << std::setfill('0') << t->tm_min << ":"
@@ -137,7 +137,7 @@ void dtUtil::LogObserverFile::LogMessage(const LogData& logData)
       break;
 
    case Log::LOG_WARNING:
-      color = "<b><font color=#808000>";
+      color = "<b><font color=#CCCC00>";
       break;
 
    case Log::LOG_ALWAYS:
@@ -156,32 +156,34 @@ void dtUtil::LogObserverFile::LogMessage(const LogData& logData)
       lineEnd += htmlNewline.size() + 1;
    }
    
-   logFile << color << Log::GetLogLevelString(logData.type) << " "
-      << std::setw(2) << std::setfill('0') << logData.time.tm_hour
-      << std::setw(2) << std::setfill('0') << logData.time.tm_min
-      << std::setw(2) << std::setfill('0') << logData.time.tm_sec << " ";
+   logFile << color << "[" << std::setw(2) << std::setfill('0') << logData.time.tm_hour << ":"
+      << std::setw(2) << std::setfill('0') << logData.time.tm_min << ":"
+      << std::setw(2) << std::setfill('0') << logData.time.tm_sec 
+      << " " << Log::GetLogLevelString(logData.type) << "] ";
+
+   logFile << htmlMsg << " [";
 
    if (!logData.logName.empty())
    {
-      logFile << "'" << logData.logName << "'";
+      logFile << "'" << logData.logName << "' ";
    }
    
+   if (!logData.method.empty())
+   {
+      logFile << logData.method << "()";
+   }
+
    if (!logData.file.empty())
    {
       logFile << " " << logData.file;
+
+      if (logData.line > 0)
+      {
+         logFile << "(" << logData.line << ")";
+      }
    }
 
-   if (!logData.method.empty())
-   {
-      logFile << ":" << logData.method;
-   }
-
-   if (logData.line > 0)
-   {
-      logFile << ":" << logData.line;
-   }
-
-   logFile << "-" << htmlMsg << "</font></b><br>" << std::endl;
+   logFile << "]" << "</font></b><br>" << std::endl;
 
    logFile.flush(); //Make sure everything is written, in case of a crash.
 }
