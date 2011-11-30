@@ -23,18 +23,26 @@ XercesErrorHandler::~XercesErrorHandler()
 void XercesErrorHandler::warning(const XERCES_CPP_NAMESPACE_QUALIFIER SAXParseException& e)
 {
    char* msg = XMLString::transcode(e.getMessage());
-   std::string line = ToString(e.getLineNumber());
-   LOG_WARNING("Xerces parsing warning occurred at line " + line + ", with message: " + std::string(msg))
+   char* file = XMLString::transcode(e.getSystemId());
+
+   std::string line = dtUtil::ToString(e.getLineNumber());
+   std::string filename = dtUtil::ToString(file);
+   LOG_WARNING("XML parsing warning in '" + filename + "'(" + line + "): " + std::string(msg));
    XMLString::release(&msg);
+   XMLString::release(&file);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void XercesErrorHandler::error(const XERCES_CPP_NAMESPACE_QUALIFIER SAXParseException& e)
 {
    char* msg = XMLString::transcode(e.getMessage());
+   char* file = XMLString::transcode(e.getSystemId());
+
    std::string line = dtUtil::ToString(e.getLineNumber());
-   LOG_ERROR("Xerces error occurred while parsing at line, " + line + ", with message: " + std::string(msg))
+   std::string filename = dtUtil::ToString(file);
+   LOG_ERROR("XML parsing error in '" + filename + "'(" + line + "): " + std::string(msg));
    XMLString::release(&msg);
+   XMLString::release(&file);
    throw(e);
 }
 
@@ -42,9 +50,13 @@ void XercesErrorHandler::error(const XERCES_CPP_NAMESPACE_QUALIFIER SAXParseExce
 void XercesErrorHandler::fatalError(const XERCES_CPP_NAMESPACE_QUALIFIER SAXParseException& e)
 {
    char* msg = XMLString::transcode(e.getMessage());
+   char* file = XMLString::transcode(e.getSystemId());
+
    std::string line = dtUtil::ToString(e.getLineNumber());
-   LOG_ERROR("Xerces fatal error occurred while parsing at line, " + line + ", with message: " + std::string(msg))
+   std::string filename = dtUtil::ToString(file);
+   LOG_ERROR("XML fatal parsing error in '" + filename + "'(" + line + "): " + std::string(msg));
    XMLString::release(&msg);
+   XMLString::release(&file);
    throw(e);
 }
 
