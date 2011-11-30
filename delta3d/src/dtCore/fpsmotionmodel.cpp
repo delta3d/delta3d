@@ -12,6 +12,7 @@
 
 #include <dtUtil/mathdefines.h>
 #include <dtUtil/matrixutil.h>
+#include <dtUtil/functor.h>
 
 #include <osg/Quat>
 #include <osgViewer/View>
@@ -26,20 +27,36 @@ namespace dtCore
 
 IMPLEMENT_MANAGEMENT_LAYER(FPSMotionModel)
 
-
-FPSMotionModel::FPSAxisHandler::FPSAxisHandler(const SetFunctor& setFunc)
-   : mSetFunctor(setFunc)
+/**
+* Helper class used to call the supplied functor when an axis value
+* changes.  Used only by the FPSMotionModel.
+*/
+class DT_CORE_EXPORT FPSAxisHandler :  public dtCore::AxisHandler
 {
-}
+public:
+   typedef dtUtil::Functor<bool, TYPELIST_2(double,double)> SetFunctor;
+
+   FPSAxisHandler(const SetFunctor& setFunc)
+   : mSetFunctor(setFunc)
+   {
+   }
+
+   virtual ~FPSAxisHandler() {};
 
 ///When the axis changes, just call the functor with the new values
-bool FPSMotionModel::FPSAxisHandler::HandleAxisStateChanged(const Axis* axis,
-                                                       double oldState,
-                                                       double newState,
-                                                       double delta)
-{
-   return mSetFunctor(newState, delta);
-}
+   virtual bool HandleAxisStateChanged(const Axis* axis,
+      double oldState,
+      double newState,
+      double delta)
+   {
+      return mSetFunctor(newState, delta);
+   }
+
+private:
+   SetFunctor mSetFunctor;
+};
+
+
 
 
 ////////////////////////////////////////////////////////////////////////////////

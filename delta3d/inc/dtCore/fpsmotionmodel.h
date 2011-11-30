@@ -28,7 +28,6 @@
 #include <dtCore/motionmodel.h>
 #include <dtCore/axishandler.h>
 #include <dtCore/inputdevice.h>
-#include <dtUtil/functor.h>
 #include <dtCore/scene.h>
 #include <dtCore/mouse.h>
 #include <dtCore/keyboard.h>
@@ -45,6 +44,7 @@ namespace dtCore
    class ButtonsToAxis;
    class LogicalAxis;
    class LogicalInputDevice;
+   class FPSAxisHandler;
 
    /**
     * A motion model used for typical First Person Shooter motion.
@@ -129,28 +129,7 @@ namespace dtCore
        */
       Keyboard* GetKeyboard() const { return mKeyboard.get(); }
 
-      ///internal class, used by FPSMotionModel for InputDevice listening
-      /**
-       * Helper class used to call the supplied functor when an axis value
-       * changes.  Used only by the FPSMotionModel.
-       */
-      class DT_CORE_EXPORT FPSAxisHandler :  public dtCore::AxisHandler
-      {
-      public:
-         typedef dtUtil::Functor<bool, TYPELIST_2(double,double)> SetFunctor;
 
-         FPSAxisHandler(const SetFunctor& setFunc);
-
-         virtual ~FPSAxisHandler() {};
-
-         virtual bool HandleAxisStateChanged(const Axis* axis,
-                                       double oldState,
-                                       double newState,
-                                       double delta);
-
-      private:
-         SetFunctor mSetFunctor;
-      };
 
    public:
       /**
