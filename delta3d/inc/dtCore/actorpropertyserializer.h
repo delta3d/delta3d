@@ -32,6 +32,8 @@
 #include <dtCore/propertycontainer.h>
 #include <dtCore/observerptr.h>
 
+#include <osg/Vec4>
+
 #include <stack>
 
 namespace dtCore
