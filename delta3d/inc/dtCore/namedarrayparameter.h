@@ -25,6 +25,7 @@
 
 #include <dtCore/namedparameter.h>
 #include <vector>
+#include <algorithm>
 
 namespace dtCore
 {
