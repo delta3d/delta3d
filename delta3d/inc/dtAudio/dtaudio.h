@@ -38,7 +38,12 @@ namespace dtAudio
             "system at start of method, if this appears then an error occurred before this "
             "method was called.";
 
-   //implemented in audiomanager.cpp
+
+   /** Utility function used to work with OpenAL's error messaging system. It's used
+    * in multiple places throughout dtAudio. It's not in AudioManager because we
+    * don't want things like Sound to directly access the AudioManager.
+    * Returns true on error, false if no error. Implemented in audiomanager.cpp.
+    */
    bool DT_AUDIO_EXPORT CheckForError(const std::string& userMessage,
             const std::string& msgFunction,
             int lineNumber);

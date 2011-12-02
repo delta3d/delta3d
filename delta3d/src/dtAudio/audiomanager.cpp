@@ -42,9 +42,8 @@ const char*           AudioManager::_EaxGet = "EAXGet";
 
 IMPLEMENT_MANAGEMENT_LAYER(AudioManager)
 
-namespace dtAudio {
-
-
+namespace dtAudio
+{
    /////////////////////////////////////////////////////////////////////////////
    // OSG Object for holding sound buffer data loaded from the following
    // OSG plugin. This will allow the Audio Manager to access buffer information
@@ -146,7 +145,7 @@ namespace dtAudio {
          bf.freq = ALsizei(freq);
          CheckForError("data = alutLoadMemoryFromFileImage", __FUNCTION__, __LINE__);
          delete [] memBuffer;
-         
+
          return ReaderWriter::ReadResult(userData.get(), ReaderWriter::ReadResult::FILE_LOADED);
       }
    };
@@ -166,8 +165,20 @@ bool CheckForError(const std::string& userMessage,
    if (error != AL_NO_ERROR)
    {
       std::ostringstream finalStream;
-      finalStream << "User Message: [" << userMessage << "] OpenAL Message: [" << alGetString(error) << "]";
+
+      const ALchar* alErrorString = alGetString(error);
+      std::string errorStringToPrint((alErrorString ? alErrorString: ""));
+
+      // If no OpenAL context is present, we will be unable to get a descriptive
+      // error string so the best we can do is to return the error code.
+      if (errorStringToPrint.empty())
+      {
+         errorStringToPrint = std::string("description unavailable - OpenAL code: ") + dtUtil::ToString(error);
+      }
+
+      finalStream << "User Message: [" << userMessage << "] OpenAL Message: [" << errorStringToPrint << "]";
       dtUtil::Log::GetInstance("audiomanager.cpp").LogMessage(dtUtil::Log::LOG_WARNING, msgFunction, lineNumber, finalStream.str().c_str());
+
       return AL_TRUE;
    }
    else
@@ -188,8 +199,6 @@ bool CheckForError(const std::string& userMessage,
 } //namespace dtAudio
 
 ////////////////////////////////////////////////////////////////////////////////
-// public member functions
-// default consructor
 AudioManager::AudioManager(const std::string& name /*= "audiomanager"*/,
                            ALCdevice* dev /* = NULL */, ALCcontext* cntxt /* = NULL */, bool shutdownPassedInContexts)
    : Base(name)
@@ -238,7 +247,6 @@ AudioManager::AudioManager(const std::string& name /*= "audiomanager"*/,
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// destructor
 AudioManager::~AudioManager()
 {
    CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
@@ -285,7 +293,6 @@ AudioManager::~AudioManager()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// create the singleton manager
 void AudioManager::Instantiate(const std::string& name, ALCdevice* dev, ALCcontext* cntxt, bool shutdownPassedInContexts)
 {
    if (_Mgr.get())
@@ -301,7 +308,6 @@ void AudioManager::Instantiate(const std::string& name, ALCdevice* dev, ALCconte
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// destroy the singleton manager
 void AudioManager::Destroy()
 {
    _Mic = NULL;
@@ -320,7 +326,6 @@ void AudioManager::SetOpenALDevice(const ALCchar* deviceName)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// static instance accessor
 AudioManager& AudioManager::GetInstance()
 {
    return *_Mgr;
@@ -328,7 +333,6 @@ AudioManager& AudioManager::GetInstance()
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// static listener accessor
 Listener* AudioManager::GetListener()
 {
    return static_cast<Listener*>(_Mic.get());
@@ -360,7 +364,6 @@ void SetSpeedOfSound(float s)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// message receiver
 void AudioManager::OnMessage(MessageData* data)
 {
    CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
@@ -477,7 +480,6 @@ void AudioManager::UnPauseSounds()
       }
    }
 }
-
 
 ////////////////////////////////////////////////////////////////////////////////
 Sound* AudioManager::NewSound()
@@ -648,7 +650,7 @@ ALint AudioManager::LoadFile(const std::string& file)
 #endif // ALUT_API_MAJOR_VERSION
 
    alBufferData(bd->buf, bd->format, data, bd->size, bd->freq);
-    
+
 #if !defined (_MSC_VER) || !defined (DONT_ALUT_FREE)
    free(data);
    data = NULL;
@@ -889,7 +891,7 @@ int AudioManager::UnloadSound(Sound* snd)
 bool AudioManager::ReleaseSoundSource(Sound& snd, const std::string& errorMessage,
    const std::string& callerFunctionName, int callerFunctionLineNum )
 {
-   return snd.ReleaseSource(); 
+   return snd.ReleaseSource();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
