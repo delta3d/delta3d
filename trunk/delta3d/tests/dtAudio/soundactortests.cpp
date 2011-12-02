@@ -46,6 +46,7 @@
 #include <dtGame/gamemanager.h>
 
 #include <dtUtil/datapathutils.h>
+#include <dtUtil/exception.h>
 
 extern dtABC::Application& GetGlobalApplication();
 
