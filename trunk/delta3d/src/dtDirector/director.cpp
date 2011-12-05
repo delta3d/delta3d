@@ -694,7 +694,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   int Director::BeginThread(Node* node, int index, bool reverseQueue)
+   int Director::BeginThread(Node* node, int index, bool reverseQueue, bool immediate)
    {
       // Always create threads on the proxy if able.
       if (GetParent())
@@ -776,7 +776,7 @@ namespace dtDirector
       data.stack.push_back(stack);
       threadList->push_back(data);
 
-      if (mStarted && !mImmediateMode && *curThread == -1 && !mDebugging)
+      if (mStarted && !mImmediateMode && *curThread == -1 && !mDebugging && immediate)
       {
          dtCore::Timer_t time = dtCore::Timer::Instance()->Tick();
 
