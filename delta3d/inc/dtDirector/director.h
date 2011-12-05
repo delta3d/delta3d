@@ -330,10 +330,11 @@ namespace dtDirector
        * @param[in]  node          The starting node to update.
        * @param[in]  index         The index of the input being activated.
        * @param[in]  reverseQueue  If true, will push the new thread to the front of the queue.
+       * @param[in]  immediate     True to attempt to immediately execute the thread.
        *
        * @return     The ID if the new thread created.
        */
-      int BeginThread(Node* node, int index, bool reverseQueue = false);
+      int BeginThread(Node* node, int index, bool reverseQueue = false, bool immediate = true);
 
       /**
        * Pushes a new item to the thread stack.

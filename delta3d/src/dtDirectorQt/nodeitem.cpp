@@ -1444,7 +1444,7 @@ namespace dtDirector
          {
             link->Activate();
 
-            mScene->GetEditor()->GetDirector()->BeginThread(mNode.get(), 0);
+            mScene->GetEditor()->GetDirector()->BeginThread(mNode.get(), 0, false, false);
          }
       }
    }
