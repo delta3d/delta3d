@@ -182,8 +182,6 @@ namespace dtDirector
       LoadDefaultLibraries();
 
       BuildPropertyMap();
-
-      mGraph->BuildPropertyMap(true);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -199,6 +197,7 @@ namespace dtDirector
 
       // Reset our graph data.
       mGraph = new DirectorGraph(this);
+      mGraph->BuildPropertyMap(true);
       SetName("Director Script");
       SetComment("");
       SetDescription("");
