@@ -841,8 +841,8 @@ void ProjectTests::TestProject()
 
       std::string crapPath("/usr:%**/../^^jojo/funky/\\\\/,/,.uchor");
 
-      CPPUNIT_ASSERT_THROW(p.CreateContext(crapPath), dtUtil::Exception);
-      CPPUNIT_ASSERT_THROW(p.SetContext(crapPath), dtUtil::Exception);
+      CPPUNIT_ASSERT_THROW(p.CreateContext(crapPath), dtCore::ProjectInvalidContextException);
+      CPPUNIT_ASSERT_THROW(p.SetContext(crapPath), dtCore::ProjectInvalidContextException);
 
 
       if (fileUtils.FileExists(TEST_PROJECT_DIR))
