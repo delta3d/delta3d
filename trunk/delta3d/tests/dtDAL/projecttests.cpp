@@ -839,7 +839,11 @@ void ProjectTests::TestProject()
       dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
       std::string originalPathList = dtUtil::GetDataFilePathList();
 
-      std::string crapPath("/usr:%**/../^^jojo/funky/\\\\/,/,.uchor");
+#ifdef DELTA3D_WIN32      
+      std::string crapPath("/:%**/../^^jojo/funky/\\\\/,/,.uchor");
+#else
+      std::string crapPath("/usr/:%**/../^^jojo/funky/\\\\/,/,.uchor");
+#endif
 
       CPPUNIT_ASSERT_THROW(p.CreateContext(crapPath), dtCore::ProjectInvalidContextException);
       CPPUNIT_ASSERT_THROW(p.SetContext(crapPath), dtCore::ProjectInvalidContextException);
