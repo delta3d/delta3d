@@ -581,9 +581,9 @@ namespace dtUtil
       str.reserve(strSize);
       for (unsigned i = strSize; i > 0; --i)
       {
-         unsigned char c;
-         Read(c);
-         str.append(1, (char)c);
+         unsigned char c2;
+         Read(c2);
+         str.append(1, (char)c2);
       }
    }
 
