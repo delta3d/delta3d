@@ -259,10 +259,10 @@ namespace dtUtil
             std::string actualLibName2 = GetPlatformSpecificLibraryName(libName, !assumeModule);
             if (actualLibName != actualLibName2)
             {
-               std::ostringstream msg;
+               std::ostringstream msg2;
                // First, try and load the dynamic library.
-               msg << "Re-attempting using the module extension: " << actualLibName2;
-               LOG_ALWAYS(msg.str());
+               msg2 << "Re-attempting using the module extension: " << actualLibName2;
+               LOG_ALWAYS(msg2.str());
                dynLib = InternalLibraryHandle::LoadSharedLibrary(actualLibName2);
             }
          }

@@ -161,11 +161,11 @@ namespace dtUtil
 
       while (!paths.empty())
       {
-         std::string dir = paths.top();
+         std::string dir2 = paths.top();
 
-         if (mkdir(dir.c_str(), 0755) < 0)
+         if (mkdir(dir2.c_str(), 0755) < 0)
          {
-            osg::notify(osg::DEBUG_INFO) << "osgDB::makeDirectory():  "  << strerror(errno) << std::endl;
+            osg::notify(osg::DEBUG_INFO) << "osgDB::makeDirectory():  " << strerror(errno) << std::endl;
             return false;
          }
          paths.pop();
@@ -462,7 +462,7 @@ namespace dtUtil
             {
                absDir = absDir.substr(0, lastSlash);
             }
-            
+
          }
          else
          {
@@ -482,7 +482,7 @@ namespace dtUtil
 
       std::string archiveName;
       std::string fileInArchive;
-      
+
       bool isInArchive = SplitArchiveFilename(strFile, archiveName, fileInArchive);
 
       if(isInArchive)
@@ -727,7 +727,7 @@ namespace dtUtil
             throw dtUtil::FileNotFoundException( std::string("Cannot find valid archive for path: ") + path, __FILE__, __LINE__);
          }
       }
-      else 
+      else
       {
          if (chdir(path.c_str()) == -1)
          {
@@ -874,12 +874,12 @@ namespace dtUtil
          }
 
          SplitArchiveFilename(absoluteFilename, archiveName, fileInArchiveName);
-         
+
          const osgDB::ArchiveExtended* a = FindArchive(archiveName);
          if(a != NULL)
          {
              DirGetFilesInArchive(*a, absoluteFilename, dirContents);
-         }        
+         }
          else
          {
             throw dtUtil::FileUtilIOException(
@@ -890,7 +890,7 @@ namespace dtUtil
       {
          dirContents = osgDB::getDirectoryContents(path);
       }
-   
+
       if(extensions.empty())
       {
          return dirContents;
@@ -1252,7 +1252,7 @@ namespace dtUtil
          {
             file2ArchiveName = ArchiveRelativeToAbsolute(file2);
          }
-         
+
          SplitArchiveFilename(file1ArchiveName, file1ArchiveName, file1InArchive);
          SplitArchiveFilename(file2ArchiveName, file2ArchiveName, file2InArchive);
 
@@ -1420,7 +1420,7 @@ namespace dtUtil
 #else
          std::string archiveExtension = ".zip";
          {
-#endif      
+#endif
 
          std::string::size_type positionArchive = filename.find(archiveExtension+'/');
          if (positionArchive==std::string::npos) positionArchive = filename.find(archiveExtension+'\\');
@@ -1435,15 +1435,15 @@ namespace dtUtil
          }
          else //maybe it is an archive
          {
-            std::string::size_type positionArchive = filename.find(archiveExtension);
-            if (positionArchive!=std::string::npos)
+            std::string::size_type positionArchive2 = filename.find(archiveExtension);
+            if (positionArchive2 != std::string::npos)
             {
                archiveFilename = filename;
                return false;
             }
          }
       }
-      
+
       return false;
    }
 
@@ -1483,7 +1483,7 @@ namespace dtUtil
 
       if(info.fileType != FILE_NOT_FOUND)
       {
-         
+
          info.extensionlessFileName = osgDB::getStrippedName(choppedStr);
          info.baseName = osgDB::getSimpleFileName(choppedStr);
          info.fileName = choppedStr;
@@ -1525,7 +1525,7 @@ namespace dtUtil
          archiveResult = reg->getFromArchiveCache(archiveFilename);
          if(archiveResult == NULL)
          {
-            //attempt to load  
+            //attempt to load
             dtCore::RefPtr<osgDB::ReaderWriter::Options> options = reg->getOptions() ?
                static_cast<osgDB::ReaderWriter::Options*>(reg->getOptions()->clone(osg::CopyOp::SHALLOW_COPY)) :
             new osgDB::ReaderWriter::Options;
@@ -1624,7 +1624,7 @@ namespace dtUtil
             result = obj;
          }
          else
-         {       
+         {
             osgDB::Archive* arch = FindArchive(archiveFilename);
             if(arch != NULL)
             {
@@ -1675,7 +1675,7 @@ namespace dtUtil
             result = dynamic_cast<osg::Node*>(obj);
          }
          else
-         {         
+         {
             osgDB::Archive* arch = FindArchive(archiveFilename);
             if(arch != NULL)
             {

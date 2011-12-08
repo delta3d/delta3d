@@ -11,6 +11,7 @@
 
 namespace dtUtil
 {
+   /////////////////////////////////////////////////////////////////////////////
    UTMParameters::UTMParameters()
    {
       TranMerc_a = 6378137.0;         // Semi-major axis of ellipsoid i meters
@@ -73,11 +74,11 @@ namespace dtUtil
       tn4 = tn3 * tn;
       tn5 = tn4 * tn;
 
-      TranMerc_ap = TranMerc_a * (1.e0 - tn + 5.e0 * (tn2 - tn3)/4.e0
-                                  + 81.e0 * (tn4 - tn5)/64.e0 );
+      TranMerc_ap = TranMerc_a * (1.e0 - tn + 5.e0 * (tn2 - tn3) / 4.e0
+                                  + 81.e0 * (tn4 - tn5)/64.e0);
       TranMerc_bp = 3.e0 * TranMerc_a * (tn - tn2 + 7.e0 * (tn3 - tn4)
-                                         /8.e0 + 55.e0 * tn5/64.e0 )/2.e0;
-      TranMerc_cp = 15.e0 * TranMerc_a * (tn2 - tn3 + 3.e0 * (tn4 - tn5 )/4.e0) /16.0;
+                                         /8.e0 + 55.e0 * tn5 / 64.e0) / 2.e0;
+      TranMerc_cp = 15.e0 * TranMerc_a * (tn2 - tn3 + 3.e0 * (tn4 - tn5) / 4.e0) / 16.0;
       TranMerc_dp = 35.e0 * TranMerc_a * (tn3 - tn4 + 11.e0 * tn5 / 16.e0) / 48.e0;
       TranMerc_ep = 315.e0 * TranMerc_a * (tn4 - tn5) / 512.e0;
       Coordinates::ConvertGeodeticToTransverseMercator(*this, MAX_LAT, MAX_DELTA_LONG, TranMerc_Delta_Easting,
@@ -86,7 +87,9 @@ namespace dtUtil
                                                        dummy_northing);
       TranMerc_Origin_Lat = Origin_Latitude;
       if (Central_Meridian > osg::PI)
+      {
          Central_Meridian -= (2*osg::PI);
+      }
       TranMerc_Origin_Long = Central_Meridian;
       TranMerc_False_Northing = False_Northing;
       TranMerc_False_Easting = False_Easting;
@@ -104,7 +107,7 @@ namespace dtUtil
    /////////////////////////////////////////////////////////////////////////////
    double UTMParameters::SPHSN(double Latitude) const
    {
-      return ((double) (TranMerc_a / sqrt( 1.e0 - TranMerc_es * pow(sin(Latitude), 2))));
+      return ((double) (TranMerc_a / sqrt(1.e0 - TranMerc_es * pow(sin(Latitude), 2))));
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -492,9 +495,9 @@ namespace dtUtil
       {
          if (*mIncomingCoordinateType == IncomingCoordinateType::GEOCENTRIC)
          {
-            position[0] = (loc[0]/semiMajorAxis)*GetGlobeRadius();
-            position[1] = (loc[1]/semiMajorAxis)*GetGlobeRadius();
-            position[2] = (loc[2]/semiMajorAxis)*GetGlobeRadius();
+            position[0] = (loc[0] / semiMajorAxis) * GetGlobeRadius();
+            position[1] = (loc[1] / semiMajorAxis) * GetGlobeRadius();
+            position[2] = (loc[2] / semiMajorAxis) * GetGlobeRadius();
          }
          else
          {
@@ -1268,7 +1271,7 @@ namespace dtUtil
       // Numbers used to scale utm to meters
       static long resolutionDivisor[6] = {100000, 10000, 1000, 100, 10, 1};
 
-      char z_char;
+      unsigned char z_char;
 
       // Is it too long?
       if ( mgrs.length() > 15 )
@@ -1279,9 +1282,9 @@ namespace dtUtil
       std::string working;
       if ((mgrs.length() % 2) != 0)
       {
-         if (!(isdigit(mgrs[0]) &&
-               isdigit(mgrs[1]) &&
-               isalpha(mgrs[2]) ))
+         if (!(isdigit(static_cast<unsigned char>(mgrs[0])) &&
+               isdigit(static_cast<unsigned char>(mgrs[1])) &&
+               isalpha(static_cast<unsigned char>(mgrs[2]))))
          {
             throw CoordinateConversionInvalidInput("The string must begin with 2 digits followed by a letter.", __FILE__, __LINE__);
          }
@@ -1298,16 +1301,16 @@ namespace dtUtil
       }
 
       // Are the first two characters letters?
-      if (!(isalpha( working[0] ) && isalpha( working[1] )) )
+      if (!(isalpha(static_cast<unsigned char>(working[0])) &&
+          isalpha(static_cast<unsigned char>(working[1]))))
       {
          throw CoordinateConversionInvalidInput("The intra-zone grid designations must be letters.", __FILE__, __LINE__);
       }
 
-
       // Are the rest of the characters numbers?
       for (unsigned int i = 2; i < working.length(); ++i)
       {
-         if (!isdigit(working[i]))
+         if (!isdigit(static_cast<unsigned char>(working[i])))
          {
             throw CoordinateConversionInvalidInput("All characters following the zone designations must be digits.", __FILE__, __LINE__);
          }
@@ -1321,8 +1324,8 @@ namespace dtUtil
       char e_char, n_char;
       int e_num, n_num;
       // Mac OS g++ complains about size_t not being an unsigned int here.
-      sprintf( control, "%%c%%c%%%ud%%%ud", unsigned(numLen), unsigned(numLen) );
-      int sscanf_return = sscanf( working.c_str(), control, &e_char, &n_char, &e_num, &n_num );
+      sprintf(control, "%%c%%c%%%ud%%%ud", unsigned(numLen), unsigned(numLen));
+      int sscanf_return = sscanf(working.c_str(), control, &e_char, &n_char, &e_num, &n_num);
       if (sscanf_return != 4)
       {
          throw CoordinateConversionInvalidInput("Internal error when parsing input.  Check input syntax: " + mgrs, __FILE__, __LINE__);
@@ -1331,15 +1334,15 @@ namespace dtUtil
       // The string has passed error checking.
 
       // convert lower to upper case for leading chars
-      if (islower(z_char))
+      if (islower(static_cast<unsigned char>(z_char)))
       {
          z_char = toupper(z_char);
       }
-      if (islower(e_char))
+      if (islower(static_cast<unsigned char>(e_char)))
       {
          e_char = toupper(e_char);
       }
-      if (islower(n_char))
+      if (islower(static_cast<unsigned char>(n_char)))
       {
          n_char = toupper(n_char);
       }
@@ -1692,9 +1695,9 @@ namespace dtUtil
 
       // northing
       t1 = (tmd - tmdo) * params.TranMerc_Scale_Factor;
-      t2 = sn * s * c * params.TranMerc_Scale_Factor/ 2.e0;
+      t2 = sn * s * c * params.TranMerc_Scale_Factor / 2.e0;
       t3 = sn * s * c3 * params.TranMerc_Scale_Factor * (5.e0 - tan2 + 9.e0 * eta
-                                                  + 4.e0 * eta2) /24.e0;
+                                                  + 4.e0 * eta2) / 24.e0;
 
       t4 = sn * s * c5 * params.TranMerc_Scale_Factor * (61.e0 - 58.e0 * tan2
                                                   + tan4 + 270.e0 * eta - 330.e0 * tan2 * eta + 445.e0 * eta2
@@ -1710,12 +1713,12 @@ namespace dtUtil
 
       // Easting
       t6 = sn * c * params.TranMerc_Scale_Factor;
-      t7 = sn * c3 * params.TranMerc_Scale_Factor * (1.e0 - tan2 + eta ) /6.e0;
+      t7 = sn * c3 * params.TranMerc_Scale_Factor * (1.e0 - tan2 + eta) / 6.e0;
       t8 = sn * c5 * params.TranMerc_Scale_Factor * (5.e0 - 18.e0 * tan2 + tan4
                                               + 14.e0 * eta - 58.e0 * tan2 * eta + 13.e0 * eta2 + 4.e0 * eta3
-                                              - 64.e0 * tan2 * eta2 - 24.e0 * tan2 * eta3 )/ 120.e0;
-      t9 = sn * c7 * params.TranMerc_Scale_Factor * ( 61.e0 - 479.e0 * tan2
-                                               + 179.e0 * tan4 - tan6 ) /5040.e0;
+                                              - 64.e0 * tan2 * eta2 - 24.e0 * tan2 * eta3) / 120.e0;
+      t9 = sn * c7 * params.TranMerc_Scale_Factor * (61.e0 - 479.e0 * tan2
+                                               + 179.e0 * tan4 - tan6) / 5040.e0;
 
       Easting = params.TranMerc_False_Easting + dlam * t6 + pow(dlam,3.e0) * t7
         + pow(dlam,5.e0) * t8 + pow(dlam,7.e0) * t9;
@@ -1724,7 +1727,7 @@ namespace dtUtil
    /////////////////////////////////////////////////////////////////////////////
    void Coordinates::ConvertTransverseMercatorToGeodetic(const UTMParameters& params,
             double Easting, double Northing,
-            double &Latitude, double &Longitude)
+            double& Latitude, double& Longitude)
    {      // BEGIN Convert_Transverse_Mercator_To_Geodetic
 
       /*
@@ -1775,11 +1778,11 @@ namespace dtUtil
 
       // First Estimate
       sr = params.SPHSR(0.e0);
-      ftphi = tmd/sr;
+      ftphi = tmd / sr;
 
       for (i = 0; i < 5; ++i)
       {
-         t10 = params.SPHTMD (ftphi);
+         t10 = params.SPHTMD(ftphi);
          sr = params.SPHSR(ftphi);
          ftphi = ftphi + (tmd - t10) / sr;
       }
@@ -1818,9 +1821,9 @@ namespace dtUtil
                * eta3 - 66.e0 * tan2 * eta2 - 90.e0 * tan4
                * eta + 88.e0 * eta4 + 225.e0 * tan4 * eta2
                + 84.e0 * tan2* eta3 - 192.e0 * tan2 * eta4)
-               / ( 720.e0 * sr * pow(sn,5) * pow(params.TranMerc_Scale_Factor, 6) );
+               / (720.e0 * sr * pow(sn,5) * pow(params.TranMerc_Scale_Factor, 6));
       t13 = t * ( 1385.e0 + 3633.e0 * tan2 + 4095.e0 * tan4 + 1575.e0
-               * pow(t,6))/ (40320.e0 * sr * pow(sn,7) * pow(params.TranMerc_Scale_Factor,8));
+               * pow(t,6)) / (40320.e0 * sr * pow(sn,7) * pow(params.TranMerc_Scale_Factor,8));
       Latitude = ftphi - pow(de,2) * t10 + pow(de,4) * t11 - pow(de,6) * t12
       + pow(de,8) * t13;
 
@@ -1856,14 +1859,14 @@ namespace dtUtil
    void Coordinates::GeodeticToGeocentric(double phi, double lambda, double elevation,
                                           double& x, double& y, double& z)
    {
-      double esqu = 2.0*Geocent_f - Geocent_f*Geocent_f;
-      double n = Geocent_a/sqrt(1.0-esqu*pow(sin(phi), 2.0));
+      double esqu = 2.0 * Geocent_f - Geocent_f*Geocent_f;
+      double n = Geocent_a/sqrt(1.0 - esqu * pow(sin(phi), 2.0));
 
-      x = (n + elevation)*cos(phi)*cos(lambda);
+      x = (n + elevation) * cos(phi) * cos(lambda);
 
-      y = (n + elevation)*cos(phi)*sin(lambda);
+      y = (n + elevation) * cos(phi) * sin(lambda);
 
-      z = (n*(1.0-esqu) + elevation)*sin(phi);
+      z = (n*(1.0-esqu) + elevation) * sin(phi);
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -1899,10 +1902,10 @@ namespace dtUtil
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   std::string Coordinates::XYZToMGRS(const osg::Vec3 &pos)
+   std::string Coordinates::XYZToMGRS(const osg::Vec3& pos)
    {
       // preserve the old value
-      const dtUtil::IncomingCoordinateType &oldType = GetIncomingCoordinateType();
+      const dtUtil::IncomingCoordinateType& oldType = GetIncomingCoordinateType();
 
       SetIncomingCoordinateType(dtUtil::IncomingCoordinateType::GEODETIC);
       osg::Vec3d latLonElev = ConvertToRemoteTranslation(pos);
@@ -1926,9 +1929,9 @@ namespace dtUtil
    /////////////////////////////////////////////////////////////////////////////
    osg::Vec3 Coordinates::ConvertMGRSToXYZ(const std::string& mgrs)
    {
-      const dtUtil::IncomingCoordinateType &oldType = GetIncomingCoordinateType();
+      const dtUtil::IncomingCoordinateType& oldType = GetIncomingCoordinateType();
       unsigned int zone = 0;
-      double easting =0, northing =0;
+      double easting = 0, northing = 0;
 
       ConvertMGRSToUTM(0,0, mgrs, zone, easting, northing);
       SetIncomingCoordinateType(dtUtil::IncomingCoordinateType::UTM);
