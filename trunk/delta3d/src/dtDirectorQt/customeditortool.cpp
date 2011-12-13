@@ -338,6 +338,8 @@ namespace dtDirector
       // Finalize the undo events.
       if (GetEditor())
       {
+         GetEditor()->RefreshGraphItem(GetGraph());
+
          GetEditor()->GetUndoManager()->EndMultipleEvents();
 
          GetEditor()->Refresh();

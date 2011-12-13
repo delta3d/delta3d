@@ -68,7 +68,7 @@ namespace dtEditQt
 
       mMasterScene->GetSceneNode()->addChild(mViewportOverlay->getOverlayGroup()); //TODO testing
 
-      //mMasterView->SetCamera(mWorldCamera->getDeltaCamera());     
+      //mMasterView->SetCamera(mWorldCamera->getDeltaCamera());
 
       EditorEvents* editorEvents = &EditorEvents::GetInstance();
 
@@ -473,7 +473,7 @@ namespace dtEditQt
       LOG_INFO("Emitting event - [shouldBeginActorMode]");
       emit shouldBeginActorMode(vp, position, overrideDefault, result);
    }
-   
+
    ////////////////////////////////////////////////////////////////////////////////
    void ViewportManager::emitBeginActorMode(Viewport* vp, QMouseEvent* e, bool* overrideDefault)
    {
@@ -811,7 +811,10 @@ namespace dtEditQt
    ////////////////////////////////////////////////////////////////////////////////
    bool ViewportManager::EnableViewport(Viewport* viewport, bool enable)
    {
-      if (GetApplication() == NULL) {return false;}
+      if (GetApplication() == NULL || !viewport)
+      {
+         return false;
+      }
 
       if (enable)
       {
