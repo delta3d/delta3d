@@ -673,6 +673,21 @@ namespace dtDirector
       }
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::RefreshGraphItem(DirectorGraph* graph)
+   {
+      EditorView* view = dynamic_cast<EditorView*>(mUI.graphTab->currentWidget());
+      if (view && view->GetScene())
+      {
+         MacroItem* item = view->GetScene()->GetGraphItem(graph->GetID());
+         if (item)
+         {
+            item->Draw();
+            item->ConnectLinks(true);
+         }
+      }
+   }
+
    //////////////////////////////////////////////////////////////////////////
    void DirectorEditor::RefreshGlow(Node* node)
    {

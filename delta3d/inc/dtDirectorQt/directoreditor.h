@@ -204,6 +204,13 @@ namespace dtDirector
       void RefreshNode(Node* node);
 
       /**
+       *	Refreshes a single graph node item.
+       *
+       * @param[in]  graph  The graph to refresh.
+       */
+      void RefreshGraphItem(DirectorGraph* graph);
+
+      /**
        * Refreshes the glow for a single node.
        *
        * @param[in]  node  The node to refresh.
