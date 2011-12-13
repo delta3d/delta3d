@@ -111,7 +111,7 @@ namespace dtNetGM
       }
       else
       {
-         LOG_ERROR("Network connection failed.");
+         LOG_ERROR( "Could not connect to server \"" + host + "\" at " + address.toString() );
          return false;
       }
       return true;
