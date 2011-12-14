@@ -16,8 +16,9 @@ using namespace dtActors;
 IMPLEMENT_MANAGEMENT_LAYER(TriggerVolumeActor)
 
 ////////////////////////////////////////////////////////////////////////////////
-TriggerVolumeActor::TriggerVolumeActor(dtActors::TriggerVolumeActorProxy& proxy)
-   : dtGame::GameActor(proxy)
+TriggerVolumeActor::TriggerVolumeActor(dtActors::TriggerVolumeActorProxy& proxy,
+                                       const std::string& name)
+   : dtGame::GameActor(proxy, name)
    , mMaxTriggerCount(0)
    , mTriggerCount(0)
 {
