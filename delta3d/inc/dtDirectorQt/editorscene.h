@@ -281,6 +281,13 @@ namespace dtDirector
    protected:
 
       /**
+       *	Key press events.
+       *
+       * @param[in]  event  The keyboard event.
+       */
+      void keyPressEvent(QKeyEvent* event);
+
+      /**
        * Mouse button events.
        *
        * @param[in]  event  The mouse event.
