@@ -912,11 +912,21 @@ namespace dtEditQt
       {
          EditorEvents::GetInstance().emitEditorCloseEvent();
          e->accept();
+
+         mPropertyWindow->hide();
          return;
       }
 
       dtEditQt::EditorActions::GetInstance().slotFileExit();
-      EditorActions::GetInstance().mWasCancelled ? e->ignore() : e->accept();
+      if (EditorActions::GetInstance().mWasCancelled)
+      {
+         e->ignore();
+      }
+      else
+      {
+         e->accept();
+         mPropertyWindow->hide();
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
