@@ -180,7 +180,7 @@ namespace dtDirector
                   DirectorEditor* editor = mEditorList[editorIndex];
                   if (editor)
                   {
-                     editor->RefreshNode(node);
+                     editor->RefreshNodeItem(node);
                   }
                }
             }

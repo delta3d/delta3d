@@ -1313,7 +1313,7 @@ namespace dtDirector
                dtCore::RefPtr<UndoPropertyEvent> event =
                   new UndoPropertyEvent(mEditor, mGraph->GetID(), "Reference", "", refName.toStdString());
                mEditor->GetUndoManager()->AddEvent(event.get());
-               mEditor->RefreshNode(item);
+               mEditor->RefreshNodeItem(item);
             }
 
             mEditor->GetUndoManager()->EndMultipleEvents();

@@ -87,7 +87,7 @@ namespace dtDirector
       Node* node = mEditor->GetDirector()->GetNode(mID);
       if (node)
       {
-         mEditor->RefreshNode(node);
+         mEditor->RefreshNodeItem(node);
       }
       else
       {
@@ -140,7 +140,7 @@ namespace dtDirector
       Node* node = mEditor->GetDirector()->GetNode(mID);
       if (node)
       {
-         mEditor->RefreshNode(node);
+         mEditor->RefreshNodeItem(node);
       }
       else
       {
