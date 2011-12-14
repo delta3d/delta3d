@@ -46,7 +46,7 @@ namespace dtActors
 
       typedef dtUtil::Functor<void, TYPELIST_2(dtCore::Transformable*, TriggerEventType)> EventFuncType;
 
-      TriggerVolumeActor(dtActors::TriggerVolumeActorProxy& proxy);
+      TriggerVolumeActor(dtActors::TriggerVolumeActorProxy& proxy, const std::string& name = "TriggerVolumeActor");
 
       void SetMaxTriggerCount(int maxTriggercount) { mMaxTriggerCount = maxTriggercount; }
       int GetMaxTriggerCount() const               { return mMaxTriggerCount; }
