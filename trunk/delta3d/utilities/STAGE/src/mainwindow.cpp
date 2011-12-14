@@ -786,6 +786,11 @@ namespace dtEditQt
       settings.setValue(EditorSettings::ACTOR_CREATION_OFFSET, editorData.GetActorCreationOffset());
       settings.setValue(EditorSettings::SAVE_MILLISECONDS, EditorActions::GetInstance().mSaveMilliSeconds);
       settings.setValue(EditorSettings::SELECTION_COLOR, editorData.getSelectionColor());
+      
+      //Volume edit brush shape, visibility
+      settings.setValue(EditorSettings::VOLUME_EDIT_VISIBLE, GetVolumeEditActor()->GetOSGNode()->getNodeMask() ? "true" : "false");
+      settings.setValue(EditorSettings::VOLUME_EDIT_SHAPE, QString::fromStdString(GetVolumeEditActor()->GetShape().GetName()));
+
       settings.endGroup();
 
       //camera speed settings
@@ -1309,6 +1314,30 @@ namespace dtEditQt
          QColor color = qvariant_cast<QColor>(settings.value(EditorSettings::SELECTION_COLOR));
          EditorData::GetInstance().setSelectionColor(color);
       }
+
+      //volume edit show/hide
+      if (settings.contains(EditorSettings::VOLUME_EDIT_VISIBLE))
+      {
+         //By default, the volume edit brush is visible, so we only need to toggle it
+         //if we should hide it.
+         bool visibile = settings.value(EditorSettings::VOLUME_EDIT_VISIBLE).toBool();
+         if (visibile == false)
+         {
+            EditorActions::GetInstance().slotShowHideBrush();
+         }
+      }
+
+      //volume edit shape
+      if (settings.contains(EditorSettings::VOLUME_EDIT_SHAPE))
+      {
+         const std::string shapeName = settings.value(EditorSettings::VOLUME_EDIT_SHAPE).toString().toStdString();
+         dtActors::VolumeEditActor::VolumeShapeType* shapeType = dtActors::VolumeEditActor::VolumeShapeType::GetValueForName(shapeName);
+         if (shapeType)
+         {
+            EditorActions::GetInstance().setBrushShape(*shapeType);
+         }
+      }
+
       settings.endGroup();
 
       //Camera speed settings

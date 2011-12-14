@@ -30,7 +30,6 @@
 #include <prefix/stageprefix.h>
 #include <dtEditQt/editoractions.h>
 
-#include <dtActors/volumeeditactor.h>
 
 #include <dtCore/transform.h>
 
@@ -347,7 +346,7 @@ namespace dtEditQt
       // Brush - Change Shape
       mActionBrushShape = new QAction(QIcon(UIResources::ICON_BRUSH_CUBE.c_str()), tr("Brush Shape"), this);
       mActionBrushShape->setStatusTip(tr("Changes STAGE Brush shape."));
-      connect(mActionBrushShape, SIGNAL(triggered()), this, SLOT(slotChangeBrushShape()));
+      connect(mActionBrushShape, SIGNAL(triggered()), this, SLOT(slotCycleBrushShape()));
 
     // Brush - Reset Position and Scale and Rotation
       mActionBrushReset = new QAction(QIcon(UIResources::ICON_BRUSH_RESET.c_str()), tr("Reset/Recall Brush"), this);
@@ -1297,25 +1296,42 @@ namespace dtEditQt
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   void EditorActions::slotChangeBrushShape()
+   void EditorActions::slotCycleBrushShape()
    {
       dtActors::VolumeEditActor::VolumeShapeType& shapeType = EditorData::GetInstance().getMainWindow()->GetVolumeEditActor()->GetShape();
 
       if (shapeType == dtActors::VolumeEditActor::VolumeShapeType::BOX)
       {
-            mActionBrushShape->setIcon(QIcon(UIResources::ICON_BRUSH_SPHERE.c_str()));
-            EditorData::GetInstance().getMainWindow()->GetVolumeEditActor()->SetShape(
-                                   dtActors::VolumeEditActor::VolumeShapeType::SPHERE);
+         setBrushShape(dtActors::VolumeEditActor::VolumeShapeType::SPHERE);
       }
       else //change back to BOX
       {
-            mActionBrushShape->setIcon(QIcon(UIResources::ICON_BRUSH_CUBE.c_str()));
-            EditorData::GetInstance().getMainWindow()->GetVolumeEditActor()->SetShape(
-                                      dtActors::VolumeEditActor::VolumeShapeType::BOX);
+         setBrushShape(dtActors::VolumeEditActor::VolumeShapeType::BOX);
       }
 
       ViewportManager::GetInstance().refreshAllViewports();
    }
+
+   //////////////////////////////////////////////////////////////////////////
+   void EditorActions::setBrushShape(const dtActors::VolumeEditActor::VolumeShapeType& shapeType)
+   {
+      if (shapeType == dtActors::VolumeEditActor::VolumeShapeType::BOX)
+      {
+         mActionBrushShape->setIcon(QIcon(UIResources::ICON_BRUSH_CUBE.c_str()));
+      }
+      else if (shapeType == dtActors::VolumeEditActor::VolumeShapeType::SPHERE)
+      {
+         mActionBrushShape->setIcon(QIcon(UIResources::ICON_BRUSH_SPHERE.c_str()));
+      }
+      else
+      {
+         //unsupported type
+         return;
+      }
+
+      EditorData::GetInstance().getMainWindow()->GetVolumeEditActor()->SetShape(shapeType);
+   }
+
 
    //////////////////////////////////////////////////////////////////////////////
    void EditorActions::slotResetBrush()

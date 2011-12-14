@@ -130,7 +130,7 @@ void VolumeEditActor::SetScale(const osg::Vec3& xyz)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void VolumeEditActor::SetShape(VolumeShapeType& shape)
+void VolumeEditActor::SetShape(const VolumeShapeType& shape)
 {
    if (shape == VolumeShapeType::BOX)
    {
