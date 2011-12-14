@@ -49,6 +49,7 @@
 #include <QtCore/QMimeData>
 #include <QtGui/QPainter>
 #include <QtGui/QImage>
+#include <QtGui/QKeyEvent>
 
 #include <dtCore/actoridactorproperty.h>
 
@@ -1000,6 +1001,22 @@ namespace dtDirector
          mEditor->GetUndoManager()->AddEvent(event);
 
          mEditor->GetUndoManager()->EndMultipleEvents();
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void EditorScene::keyPressEvent(QKeyEvent* event)
+   {
+      if (event->key() == Qt::Key_Backspace)
+      {
+         if (event->modifiers() == Qt::ShiftModifier)
+         {
+            GraphHistoryForward();
+         }
+         else
+         {
+            GraphHistoryBack();
+         }
       }
    }
 
