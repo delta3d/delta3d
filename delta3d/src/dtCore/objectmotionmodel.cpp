@@ -614,7 +614,7 @@ void ObjectMotionModel::InitArrows(void)
    //}
 
    float ringRadius             = 0.08f;
-   float ringVisibleThickness   = 0.003f;
+   float ringVisibleThickness   = 0.002f;
    float ringSelectionThickness = 0.01f;
    for (int arrowIndex = 0; arrowIndex < ARROW_TYPE_MAX; arrowIndex++)
    {
@@ -749,7 +749,7 @@ void ObjectMotionModel::InitArrows(void)
    mArrows[ARROW_TYPE_UP].translationTransform->SetTransform(transformZ);
    mArrows[ARROW_TYPE_UP].rotationTransform->SetTransform(transformZ);
    mArrows[ARROW_TYPE_UP].scaleTransform->SetTransform(transformZ);
-   mArrows[ARROW_TYPE_UP].arrowCylinderColor = osg::Vec4(0.0f, 0.0f, 1.0f, 0.5f);
+   mArrows[ARROW_TYPE_UP].arrowCylinderColor = osg::Vec4(0.1f, 0.1f, 1.0f, 0.5f);
    mArrows[ARROW_TYPE_UP].arrowConeColor = osg::Vec4(0.3f, 0.3f, 1.0f, 0.5f);
 
    SetArrowHighlight(ARROW_TYPE_MAX);
@@ -863,7 +863,7 @@ dtCore::DeltaDrawable* ObjectMotionModel::MousePick(void)
    }
 
    osg::Vec3 startPoint, endPoint;
-   GetMouseLine(GetMousePosition(), startPoint, endPoint);
+   GetMouseLine(GetMousePosition(), endPoint, startPoint);
 
    // Can't do anything if we don't have a valid mouse line.
    if (startPoint != endPoint)
@@ -873,7 +873,33 @@ dtCore::DeltaDrawable* ObjectMotionModel::MousePick(void)
 
       if (isector->Update())
       {
+         // First only test for rotation picking.
          const dtCore::BatchIsector::HitList& hitlist = isector->GetSingleISector(0).GetHitList();
+         for (dtCore::BatchIsector::HitList::const_reverse_iterator hitItr = hitlist.rbegin();
+            hitItr != hitlist.rend();
+            ++hitItr)
+         {
+            for (osg::NodePath::const_reverse_iterator nodeItr = hitItr->getNodePath().rbegin();
+               nodeItr != hitItr->getNodePath().rend();
+               ++nodeItr)
+            {
+               osg::Node* node = (*nodeItr);
+               if (node == mScaleTransform->GetOSGNode())
+               {
+                  return mScaleTransform.get();
+               }
+
+               for (int ArrowIndex = 0; ArrowIndex < ARROW_TYPE_MAX; ++ArrowIndex)
+               {
+                  if (node == mArrows[ArrowIndex].rotationTransform->GetOSGNode())
+                  {
+                     return mArrows[ArrowIndex].rotationTransform.get();
+                  }
+               }
+            }
+         }
+
+         // If we are not trying to rotate, then check the rest of the motion types.
          for (dtCore::BatchIsector::HitList::const_reverse_iterator hitItr = hitlist.rbegin();
             hitItr != hitlist.rend();
             ++hitItr)
@@ -893,10 +919,6 @@ dtCore::DeltaDrawable* ObjectMotionModel::MousePick(void)
                   if (node == mArrows[ArrowIndex].translationTransform->GetOSGNode())
                   {
                      return mArrows[ArrowIndex].translationTransform.get();
-                  }
-                  else if (node == mArrows[ArrowIndex].rotationTransform->GetOSGNode())
-                  {
-                     return mArrows[ArrowIndex].rotationTransform.get();
                   }
                   else if (node == mArrows[ArrowIndex].scaleTransform->GetOSGNode())
                   {
@@ -1066,6 +1088,9 @@ void ObjectMotionModel::SetArrowHighlight(ArrowType arrowType)
       mArrows[arrowIndex].arrowCone->setColor(color);
 
       osg::Vec4 highlightColor = mArrows[arrowIndex].arrowCylinderColor;
+      highlightColor.r() *= 2.0f;
+      highlightColor.g() *= 2.0f;
+      highlightColor.b() *= 2.0f;
 
       if (arrowIndex == mHoverArrow)
       {
@@ -1082,7 +1107,7 @@ void ObjectMotionModel::SetArrowHighlight(ArrowType arrowType)
          else if (mMotionType == MOTION_TYPE_TRANSLATION)
          {
             mArrows[arrowIndex].arrowCylinder->setColor(highlightColor);
-            mArrows[arrowIndex].arrowCone->setColor(mArrows[arrowIndex].arrowConeColor);
+            mArrows[arrowIndex].arrowCone->setColor(highlightColor);
          }
          else if (mMotionType == MOTION_TYPE_SCALE)
          {
@@ -1096,7 +1121,7 @@ void ObjectMotionModel::SetArrowHighlight(ArrowType arrowType)
    {
       if (mMotionType == MOTION_TYPE_SCALE)
       {
-         mScaleOrb->setColor(osg::Vec4(1.0f, 1.0f, 1.0f, 0.5f));
+         mScaleOrb->setColor(osg::Vec4(1.0f, 1.0f, 1.0f, 1.0f));
       }
    }
 }
