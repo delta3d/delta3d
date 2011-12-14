@@ -38,6 +38,7 @@
 #include <dtCore/actorproxy.h>
 #include <dtQt/typedefs.h>
 #include <dtCore/refptr.h>
+#include <dtActors/volumeeditactor.h>
 
 class QAction;
 class QActionGroup;
@@ -123,10 +124,17 @@ namespace dtEditQt
        *  is QMessageBox::Ignore.
        * @note If the current map is invalid, this method will return
        *  QMessageBox::Ignore.
-       * @note If any errors occured while saving the current map, this method
+       * @note If any errors occurred while saving the current map, this method
        *  will return QMessageBox::Abort.
        */
       int SaveCurrentMapChanges(bool askPermission);
+
+      /** 
+       * Set the volume editor's brush shape. Will adjust the shape and update the
+       * toolbar icons.
+       * @param shapeType The shape to use. 
+       */
+      void setBrushShape(const dtActors::VolumeEditActor::VolumeShapeType& shapeType);
 
       /**
        * The actions for this class are public.  Essentially, this whole class is here
@@ -400,9 +408,10 @@ namespace dtEditQt
       void slotEditMapProperties();
 
       /**
-       * Slot - Change the STAGE Brush shape (box, sphere, cone, etc)
+       * Slot - Cycle through the STAGE Brush shapes (box, sphere, cone, etc)
        */
-      void slotChangeBrushShape();
+      void slotCycleBrushShape();
+
 
       /**
        * Slot - Reset the STAGE Brush (reset to cube and put in front of camera)

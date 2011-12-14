@@ -66,7 +66,7 @@ public:
    VolumeShapeType& GetShape();
 
    void SetScale(const osg::Vec3& xyz);
-   void SetShape(VolumeShapeType& shape);
+   void SetShape(const VolumeShapeType& shape);
 
    void EnableOutline(bool doEnable);
 

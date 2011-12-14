@@ -90,6 +90,9 @@ namespace dtEditQt
 
       static const QString CAMERA_SPEED_GROUP;
 
+      static const QString VOLUME_EDIT_VISIBLE;
+      static const QString VOLUME_EDIT_SHAPE;
+
       // Snap settings
       static const QString SNAP_GROUP;
 
