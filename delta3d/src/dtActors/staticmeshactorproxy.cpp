@@ -277,8 +277,9 @@ namespace dtActors
    {
       if (!mBillBoardIcon.valid())
       {
+         dtCore::ActorProxyIcon::ActorProxyIconConfig cfg(false,false,1.f);
          mBillBoardIcon =
-            new dtCore::ActorProxyIcon(dtCore::ActorProxyIcon::IMAGE_BILLBOARD_STATICMESH);
+            new dtCore::ActorProxyIcon(dtCore::ActorProxyIcon::IMAGE_BILLBOARD_STATICMESH, cfg);
       }
 
       return mBillBoardIcon.get();
