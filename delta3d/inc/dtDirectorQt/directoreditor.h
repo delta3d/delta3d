@@ -201,7 +201,7 @@ namespace dtDirector
        *
        * @param[in]  node  The node to refresh.
        */
-      void RefreshNode(Node* node);
+      void RefreshNodeItem(Node* node);
 
       /**
        *	Refreshes a single graph node item.

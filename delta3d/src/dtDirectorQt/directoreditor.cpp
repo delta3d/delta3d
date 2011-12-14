@@ -659,7 +659,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void DirectorEditor::RefreshNode(Node* node)
+   void DirectorEditor::RefreshNodeItem(Node* node)
    {
       EditorView* view = dynamic_cast<EditorView*>(mUI.graphTab->currentWidget());
       if (view && view->GetScene())
@@ -2089,7 +2089,7 @@ namespace dtDirector
          dtCore::RefPtr<UndoPropertyEvent> event =
             new UndoPropertyEvent(this, scene->GetGraph()->GetID(), "Reference", "", refName.toStdString());
          GetUndoManager()->AddEvent(event.get());
-         RefreshNode(item);
+         RefreshNodeItem(item);
       }
       GetUndoManager()->EndMultipleEvents();
 
@@ -2216,6 +2216,12 @@ namespace dtDirector
             }
          }
       }
+
+      mUI.propertyEditor->hide();
+      mUI.graphBrowser->hide();
+      mUI.searchBrowser->hide();
+      mUI.threadBrowser->hide();
+      mUI.nodePalette->hide();
 
       // If we get down to here, it means we are closing the editor.
       if (GetDirector())
