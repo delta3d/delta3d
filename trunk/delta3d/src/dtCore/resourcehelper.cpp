@@ -168,44 +168,30 @@ namespace dtCore
             }
             else if (d == DataType::STATIC_MESH)
             {
-               description = "Static Mesh Files";
+               std::map<std::string, std::string> extContainer;
 
-               extFilter.insert(std::make_pair("ive","Open Scene Graph binary scene data."));
-               handler = new DefaultResourceTypeHandler(d, "Open Scene Graph binary scene data.", extFilter);
-               extMap.insert(std::make_pair("ive", dtCore::RefPtr<ResourceTypeHandler>(handler)));
+               extContainer.insert(std::make_pair("3dc","3D Canvas file"));
+               extContainer.insert(std::make_pair("ac","AC3D geometry format"));
+               extContainer.insert(std::make_pair("dxf","AutoCAD file"));
+               extContainer.insert(std::make_pair("ive","Open Scene Graph binary scene data."));
+               extContainer.insert(std::make_pair("lwo","LightWave Object"));
+               extContainer.insert(std::make_pair("md2","Quake model file"));
+               extContainer.insert(std::make_pair("mdl","MDL"));
+               extContainer.insert(std::make_pair("obj","Wavefront Technologies OBJ format"));
+               extContainer.insert(std::make_pair("flt","Open-Flight model."));
+               extContainer.insert(std::make_pair("osg","Open Scene Graph ascii scene data."));
+               extContainer.insert(std::make_pair("3ds","3D Studio Max."));
+               extContainer.insert(std::make_pair("ai","Waypoint file."));
+               extContainer.insert(std::make_pair("zip","Wrapping another file in a zip."));
 
-               extFilter.insert(std::make_pair("osgt","Open Scene Graph binary scene data."));
-               handler = new DefaultResourceTypeHandler(d, "Open Scene Graph binary scene data.", extFilter);
-               extMap.insert(std::make_pair("osgt", dtCore::RefPtr<ResourceTypeHandler>(handler)));
+               handler = new DefaultResourceTypeHandler(d, "Static Mesh Files", extContainer);
 
-               extFilter.insert(std::make_pair("osgb","Open Scene Graph binary scene data."));
-               handler = new DefaultResourceTypeHandler(d, "Open Scene Graph binary scene data.", extFilter);
-               extMap.insert(std::make_pair("osgb", dtCore::RefPtr<ResourceTypeHandler>(handler)));
-
-               extFilter.clear();
-               extFilter.insert(std::make_pair("osg","Open Scene Graph ascii scene data."));
-               handler = new DefaultResourceTypeHandler(d, "Open Scene Graph ascii scene data.", extFilter);
-               extMap.insert(std::make_pair("osg", dtCore::RefPtr<ResourceTypeHandler>(handler)));
-
-               extFilter.clear();
-               extFilter.insert(std::make_pair("flt","Open-Flight model."));
-               handler = new DefaultResourceTypeHandler(d, "Open-Flight model.", extFilter);
-               extMap.insert(std::make_pair("flt", dtCore::RefPtr<ResourceTypeHandler>(handler)));
-
-               extFilter.clear();
-               extFilter.insert(std::make_pair("3ds","3D Studio Max."));
-               handler = new DefaultResourceTypeHandler(d, "3D Studio Max.", extFilter);
-               extMap.insert(std::make_pair("3ds", dtCore::RefPtr<ResourceTypeHandler>(handler)));
-
-               extFilter.clear();
-               extFilter.insert(std::make_pair("ai","Waypoint file."));
-               handler = new DefaultResourceTypeHandler(d, "Waypoint File.", extFilter);
-               extMap.insert(std::make_pair("ai", dtCore::RefPtr<ResourceTypeHandler>(handler)));
-
-               extFilter.clear();
-               extFilter.insert(std::make_pair("zip","Wrapping another file in a zip."));
-               handler = new DefaultResourceTypeHandler(d, "Wrapping another file in a zip.", extFilter);
-               extMap.insert(std::make_pair("zip", dtCore::RefPtr<ResourceTypeHandler>(handler)));
+               std::map<std::string, std::string>::iterator extItr = extContainer.begin();
+               while (extItr != extContainer.end())
+               {
+                  extMap.insert(std::make_pair(extItr->first, dtCore::RefPtr<ResourceTypeHandler>(handler)));
+                  ++extItr;
+               }
             }
             else if (d == DataType::SKELETAL_MESH)
             {
