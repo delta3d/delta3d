@@ -627,9 +627,9 @@ void ObjectMotionModel::InitArrows(void)
       mArrows[arrowIndex].rotationSelectionGeode = new osg::Geode();
       mArrows[arrowIndex].scaleGeode             = new osg::Geode();
 
-      osg::Cylinder* cylinder = new osg::Cylinder(osg::Vec3(0.0f, 0.0f, 0.07f), 0.01f, 0.1f);
-      osg::Cone*     cone     = new osg::Cone(osg::Vec3(0.0f, 0.0f, 0.125f), 0.018f, 0.03f);
-      osg::Box*      box      = new osg::Box(osg::Vec3(0.0f, 0.0f, 0.17f), 0.02f, 0.02f, 0.02f);
+      osg::Cylinder* cylinder = new osg::Cylinder(osg::Vec3(0.0f, 0.0f, 0.07f), 0.005f, 0.1f);
+      osg::Cone*     cone     = new osg::Cone(osg::Vec3(0.0f, 0.0f, 0.125f), 0.015f, 0.02f);
+      osg::Box*      box      = new osg::Box(osg::Vec3(0.0f, 0.0f, 0.17f), 0.015f, 0.015f, 0.015f);
 
 //      osg::Cylinder* ring     = new osg::Cylinder(osg::Vec3(0.0f, 0.0f, 0.0f), 0.07f, 0.001f);
       osg::TriangleMesh* ring = GenerateRing(ringRadius - ringVisibleThickness, ringRadius + ringVisibleThickness, 40);
@@ -734,8 +734,8 @@ void ObjectMotionModel::InitArrows(void)
    mArrows[ARROW_TYPE_RIGHT].translationTransform->SetTransform(transformX);
    mArrows[ARROW_TYPE_RIGHT].rotationTransform->SetTransform(transformX);
    mArrows[ARROW_TYPE_RIGHT].scaleTransform->SetTransform(transformX);
-   mArrows[ARROW_TYPE_RIGHT].arrowCylinderColor = osg::Vec4(1.0f, 0.0f, 0.0f, 0.5f);
-   mArrows[ARROW_TYPE_RIGHT].arrowConeColor = osg::Vec4(1.0f, 0.3f, 0.3f, 0.5f);
+   mArrows[ARROW_TYPE_RIGHT].arrowCylinderColor = osg::Vec4(1.0f, 0.0f, 0.0f, 0.6f);
+   mArrows[ARROW_TYPE_RIGHT].arrowConeColor = osg::Vec4(1.0f, 0.3f, 0.3f, 0.6f);
 
    dtCore::Transform transformY;
    transformY.SetTranslation(0.0f, 0.0f, 0.0f);
@@ -743,16 +743,16 @@ void ObjectMotionModel::InitArrows(void)
    mArrows[ARROW_TYPE_AT].translationTransform->SetTransform(transformY);
    mArrows[ARROW_TYPE_AT].rotationTransform->SetTransform(transformY);
    mArrows[ARROW_TYPE_AT].scaleTransform->SetTransform(transformY);
-   mArrows[ARROW_TYPE_AT].arrowCylinderColor = osg::Vec4(0.0f, 1.0f, 0.0f, 0.5f);
-   mArrows[ARROW_TYPE_AT].arrowConeColor = osg::Vec4(0.3f, 1.0f, 0.3f, 0.5f);
+   mArrows[ARROW_TYPE_AT].arrowCylinderColor = osg::Vec4(0.0f, 1.0f, 0.0f, 0.6f);
+   mArrows[ARROW_TYPE_AT].arrowConeColor = osg::Vec4(0.3f, 1.0f, 0.3f, 0.6f);
 
    dtCore::Transform transformZ;
    transformZ.SetTranslation(0.0f, 0.0f, 0.0f);
    mArrows[ARROW_TYPE_UP].translationTransform->SetTransform(transformZ);
    mArrows[ARROW_TYPE_UP].rotationTransform->SetTransform(transformZ);
    mArrows[ARROW_TYPE_UP].scaleTransform->SetTransform(transformZ);
-   mArrows[ARROW_TYPE_UP].arrowCylinderColor = osg::Vec4(0.1f, 0.1f, 1.0f, 0.5f);
-   mArrows[ARROW_TYPE_UP].arrowConeColor = osg::Vec4(0.3f, 0.3f, 1.0f, 0.5f);
+   mArrows[ARROW_TYPE_UP].arrowCylinderColor = osg::Vec4(0.1f, 0.1f, 1.0f, 0.6f);
+   mArrows[ARROW_TYPE_UP].arrowConeColor = osg::Vec4(0.3f, 0.3f, 1.0f, 0.6f);
 
    SetArrowHighlight(ARROW_TYPE_MAX);
 }
@@ -1118,12 +1118,12 @@ void ObjectMotionModel::SetArrowHighlight(ArrowType arrowType)
       }
    }
 
-   mScaleOrb->setColor(osg::Vec4(0.75f, 0.75f, 0.75f, 0.5f));
+   mScaleOrb->setColor(osg::Vec4(0.75f, 0.75f, 0.75f, 0.6f));
    if (mHoverArrow == ARROW_TYPE_ALL)
    {
       if (mMotionType == MOTION_TYPE_SCALE)
       {
-         mScaleOrb->setColor(osg::Vec4(1.0f, 1.0f, 1.0f, 1.0f));
+         mScaleOrb->setColor(osg::Vec4(1.0f, 1.0f, 1.0f, 0.6f));
       }
    }
 }
