@@ -34,6 +34,8 @@
 #include <dtEditQt/editordata.h>
 #include <dtEditQt/stagecameramotionmodel3d.h>
 #include <dtCore/transformableactorproxy.h>
+#include <dtCore/map.h>
+#include <dtCore/actorproxyicon.h>
 
 namespace dtEditQt
 {
@@ -46,6 +48,8 @@ namespace dtEditQt
 
       ViewportManager::GetInstance().setWorldViewCamera(getCamera());
 
+      mObjectMotionModel->SetScale(2.5f);
+
       // Create our camera model.
       mDefaultCameraMotionModel = new STAGECameraMotionModel3D();
       mDefaultCameraMotionModel->SetCamera(getCamera());
@@ -53,7 +57,7 @@ namespace dtEditQt
 
       mCameraMotionModel = mDefaultCameraMotionModel;
 
-      GetObjectMotionModel()->SetMaxObjectDistanceFromCamera(5000.0f);
+      GetObjectMotionModel()->SetMaxObjectDistanceFromCamera(5000000.0f);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -161,5 +165,38 @@ namespace dtEditQt
       EditorEvents::GetInstance().emitEndChangeTransaction();
 
       getCamera()->removeAllActorAttachments();
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void PerspectiveViewport::updateActorProxyBillboards()
+   {
+      dtCore::Map* currentMap = EditorData::GetInstance().getCurrentMap();
+      std::vector<dtCore::RefPtr<dtCore::BaseActorObject> > proxies;
+      std::vector<dtCore::RefPtr<dtCore::BaseActorObject> >::iterator itor;
+
+      if (currentMap == NULL || getCamera() == NULL)
+      {
+         return;
+      }
+
+      currentMap->GetAllProxies(proxies);
+      for (itor = proxies.begin(); itor != proxies.end(); ++itor)
+      {
+         dtCore::BaseActorObject* proxy = itor->get();
+         const dtCore::BaseActorObject::RenderMode& renderMode = proxy->GetRenderMode();
+
+         if (renderMode == dtCore::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON ||
+            renderMode == dtCore::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON)
+         {
+            dtCore::ActorProxyIcon* billBoard = proxy->GetBillBoardIcon();
+            if (billBoard != NULL)
+            {
+               billBoard->SetRotation(osg::Matrix::rotate(getCamera()->getOrientation()));
+            }
+         }
+         else if (renderMode == dtCore::BaseActorObject::RenderMode::DRAW_AUTO)
+         {
+         }
+      }
    }
 } // namespace dtEditQt

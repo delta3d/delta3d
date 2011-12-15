@@ -712,6 +712,7 @@ void ObjectMotionModel::InitArrows(void)
    mAngleCylinder  = new osg::Cylinder(osg::Vec3(0.0f, 0.0f, ringRadius * 0.5f), 0.001f, ringRadius);
    mAngleDrawable  = new osg::ShapeDrawable(mAngleCylinder.get());
 
+   mAngleGeode->setNodeMask(ARROW_NODE_MASK);
    mAngleTransform->GetOSGNode()->asGroup()->addChild(mAngleGeode.get());
    mTargetTransform->addChild(mAngleTransform->GetOSGNode());
 
@@ -719,6 +720,7 @@ void ObjectMotionModel::InitArrows(void)
    mAngleOriginGeode     = new osg::Geode();
    mAngleOriginCylinder  = new osg::Cylinder(osg::Vec3(0.0f, 0.0f, ringRadius * 0.5f), 0.001f, ringRadius);
    mAngleOriginDrawable  = new osg::ShapeDrawable(mAngleOriginCylinder.get());
+   mAngleOriginGeode->setNodeMask(ARROW_NODE_MASK);
 
    mAngleOriginTransform->GetOSGNode()->asGroup()->addChild(mAngleOriginGeode.get());
    mTargetTransform->addChild(mAngleOriginTransform->GetOSGNode());

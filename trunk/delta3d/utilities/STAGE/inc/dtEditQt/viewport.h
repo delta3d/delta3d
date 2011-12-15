@@ -534,7 +534,7 @@ namespace dtEditQt
        *  to the needs of the actor proxy billboards, therefore, a different
        *  implementation is required.
        */
-      void updateActorProxyBillboards();
+      virtual void updateActorProxyBillboards();
 
 
       /// Called by the mouse move event with the adjusted x and y so that subclasses can do what they need.
