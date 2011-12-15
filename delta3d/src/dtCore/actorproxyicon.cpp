@@ -141,12 +141,38 @@ namespace dtCore
       osg::MatrixTransform* scaleMatrix = new osg::MatrixTransform();
       scaleMatrix->setMatrix(osg::Matrix::scale(osg::Vec3(mConfig.mScale,mConfig.mScale,mConfig.mScale)));
 
-      osg::Geode *billBoard = new osg::Geode();
-      billBoard->addDrawable(geom);
-      scaleMatrix->addChild(billBoard);
+      osg::Geode* geode = new osg::Geode();
+      geode->addDrawable(geom);
+
+      dtCore::Transform transform;
+
+      transform.SetRotation(0.0f, -90.0f, 0.0f);
+      mTopTransform = new dtCore::Transformable();
+      mTopTransform->GetOSGNode()->asGroup()->addChild(geode);
+      mTopTransform->GetOSGNode()->setNodeMask(0x00001000);
+      mTopTransform->SetTransform(transform);
+      scaleMatrix->addChild(mTopTransform->GetOSGNode());
+
+      transform.SetRotation(90.0f, 0.0f, 0.0f);
+      mSideTransform = new dtCore::Transformable();
+      mSideTransform->GetOSGNode()->asGroup()->addChild(geode);
+      mSideTransform->GetOSGNode()->setNodeMask(0x00002000);
+      mSideTransform->SetTransform(transform);
+      scaleMatrix->addChild(mSideTransform->GetOSGNode());
+
+      transform.SetRotation(0.0f, 0.0f, 0.0f);
+      mFrontTransform = new dtCore::Transformable();
+      mFrontTransform->GetOSGNode()->asGroup()->addChild(geode);
+      mFrontTransform->GetOSGNode()->setNodeMask(0x00004000);
+      mFrontTransform->SetTransform(transform);
+      scaleMatrix->addChild(mFrontTransform->GetOSGNode());
+
+      mPerspTransform = new dtCore::Transformable();
+      mPerspTransform->GetOSGNode()->asGroup()->addChild(geode);
+      mPerspTransform->GetOSGNode()->setNodeMask(0x00008000);
+      scaleMatrix->addChild(mPerspTransform->GetOSGNode());
 
       mIconNode->GetMatrixNode()->addChild(scaleMatrix);
-
 
       mBillBoard = new BillBoardDrawable();
       mBillBoard->AddChild(mIconNode.get());
@@ -221,6 +247,18 @@ namespace dtCore
       return mBillBoard.get();
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   dtCore::Transformable* ActorProxyIcon::GetPerspectiveTransform()
+   {
+      return mPerspTransform;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   const dtCore::Transformable* ActorProxyIcon::GetPerspectiveTransform() const
+   {
+      return mPerspTransform;
+   }
+
    //////////////////////////////////////////////////////////////////////////
    bool ActorProxyIcon::OwnsDrawable(dtCore::DeltaDrawable *drawable) const
    {
@@ -257,9 +295,9 @@ namespace dtCore
    void ActorProxyIcon::SetRotation(const osg::Matrix &mat)
    {
       dtCore::Transform tx;
-      mIconNode->GetTransform(tx);
+      mPerspTransform->GetTransform(tx);
       tx.SetRotation(mat);
-      mIconNode->SetTransform(tx);
+      mPerspTransform->SetTransform(tx);
    }
 
    //////////////////////////////////////////////////////////////////////////

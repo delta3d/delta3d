@@ -49,7 +49,7 @@ namespace dtEditQt
    {
       setViewType(OrthoViewType::TOP,false);
 
-      mObjectMotionModel->SetScale(450.0f);
+      mObjectMotionModel->SetScale(750.0f);
 
       // Create our camera model.
       mDefaultCameraMotionModel = new STAGECameraMotionModel2D();
@@ -90,17 +90,23 @@ namespace dtEditQt
          mViewType = &OrthoViewType::TOP;
          getCamera()->resetRotation();
          getCamera()->pitch(-90);
+         mEnabledMask = 0xFFFF1FFF;
+         mDisabledMask = 0x0000100F;
       }
       else if (type == OrthoViewType::FRONT)
       {
          mViewType = &OrthoViewType::FRONT;
          getCamera()->resetRotation();
+         mEnabledMask = 0xFFFF4FFF;
+         mDisabledMask = 0x0000400F;
       }
       else if (type == OrthoViewType::SIDE)
       {
          mViewType = &OrthoViewType::SIDE;
          getCamera()->resetRotation();
          getCamera()->yaw(90);
+         mEnabledMask = 0xFFFF2FFF;
+         mDisabledMask = 0x0000200F;
       }
 
       if (refreshView)

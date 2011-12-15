@@ -27,7 +27,7 @@ void dtEditQt::STAGEGLWidget::mouseMoveEvent(QMouseEvent* e)
 
    dtQt::OSGAdapterWidget::mouseMoveEvent(e);
 
-   if (mViewport!= NULL)
+   if (mViewport != NULL)
    {
       mViewport->mouseMoveEvent(e);
    }
@@ -133,7 +133,7 @@ void dtEditQt::STAGEGLWidget::dropEvent(QDropEvent* event)
 ////////////////////////////////////////////////////////////////////////////////
 void dtEditQt::STAGEGLWidget::paintGL()
 {
-   if (mViewport == NULL || mViewport->GetIsRemoved()) 
+   if (mViewport == NULL || mViewport->GetIsRemoved())
    {
       return;
    }
@@ -155,7 +155,7 @@ void dtEditQt::STAGEGLWidget::paintGL()
    {
       ViewportManager::GetInstance().EnableViewport(mViewport, false);
       mViewport->SetEnabled(false); //disable the Viewport
-   }   
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -73,6 +73,8 @@ namespace dtEditQt
       , mObjectMotionModel(NULL)
       , mGhostProxy(NULL)
       , mSkipUpdateForCam(false)
+      , mEnabledMask(0xFFFF8FFF)
+      , mDisabledMask(0x0000800F)
       , mEnabled(false)
       , mIsRemoved(false)
    {
@@ -86,7 +88,7 @@ namespace dtEditQt
       STAGEGLWidget* glWidget = dynamic_cast<STAGEGLWidget*>(this->GetQGLWidget());
       if (NULL != glWidget)
       {
-         glWidget->SetViewport(this);      	
+         glWidget->SetViewport(this);
       }
    }
 
@@ -273,7 +275,7 @@ namespace dtEditQt
       {
          validDrag = true;
          ClearGhostProxy();
-         
+
          mGhostProxy = dtCore::LibraryManager::GetInstance().CreateActorProxy("dtActors", "Prefab");
          if (mGhostProxy.valid())
          {
@@ -507,7 +509,7 @@ namespace dtEditQt
          event->ignore();
 
          //wipe out any potential ghost proxy that might be triggering this drop
-         ClearGhostProxy(); 
+         ClearGhostProxy();
 
          return;
       }
@@ -975,7 +977,7 @@ namespace dtEditQt
    {
       std::vector<dtCore::BaseActorObject*> selected;
       EditorData::GetInstance().GetSelectedActors(selected);
-      
+
       if (selected.empty()) {return;}
 
       //align the selected actors to the camera's position/rotation
@@ -1012,7 +1014,7 @@ namespace dtEditQt
          EditorData::GetInstance().getUndoManager().endMultipleUndo();
          EditorEvents::GetInstance().emitEndChangeTransaction();
       }
-      
+
       //align the camera to the selected Actor
       else if (action == EditorActions::GetInstance().mAlignCameraToActorAction)
       {
@@ -1031,7 +1033,7 @@ namespace dtEditQt
             osg::Quat rot;
             xform.GetRotation(rot);
             getCamera()->setRotation(rot);
-            getCameraMotionModel()->SetCamera(getCamera());//to reset the camera        
+            getCameraMotionModel()->SetCamera(getCamera());//to reset the camera
          }
          EditorEvents::GetInstance().emitEndChangeTransaction();
       }
@@ -1131,7 +1133,16 @@ namespace dtEditQt
          return;
       }
 
-      GetObjectMotionModel()->SetEnabled(mEnabled);
+      GetObjectMotionModel()->SetEnabled(enabled);
+
+      if (enabled)
+      {
+         getCamera()->getDeltaCamera()->GetOSGCamera()->setCullMask(mEnabledMask);
+      }
+      else
+      {
+         getCamera()->getDeltaCamera()->GetOSGCamera()->setCullMask(mDisabledMask);
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -1141,7 +1152,7 @@ namespace dtEditQt
    }
 
    //////////////////////////////////////////////////////////////////////////
-   bool EditorViewport::IsSupportedDragDropFormat(const QDropEvent* event) const 
+   bool EditorViewport::IsSupportedDragDropFormat(const QDropEvent* event) const
    {
       if (event->mimeData()->hasFormat("Prefab")      ||
          event->mimeData()->hasFormat("StaticMesh")   ||

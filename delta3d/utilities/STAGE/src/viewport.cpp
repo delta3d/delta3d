@@ -862,34 +862,6 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void Viewport::updateActorProxyBillboards()
    {
-      dtCore::Map* currentMap = EditorData::GetInstance().getCurrentMap();
-      std::vector<dtCore::RefPtr<dtCore::BaseActorObject> > proxies;
-      std::vector<dtCore::RefPtr<dtCore::BaseActorObject> >::iterator itor;
-
-      if (currentMap == NULL || getCamera() == NULL)
-      {
-         return;
-      }
-
-      currentMap->GetAllProxies(proxies);
-      for (itor = proxies.begin(); itor != proxies.end(); ++itor)
-      {
-         dtCore::BaseActorObject* proxy = itor->get();
-         const dtCore::BaseActorObject::RenderMode& renderMode = proxy->GetRenderMode();
-
-         if (renderMode == dtCore::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON ||
-            renderMode == dtCore::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON)
-         {
-            dtCore::ActorProxyIcon* billBoard = proxy->GetBillBoardIcon();
-            if (billBoard != NULL)
-            {
-               billBoard->SetRotation(osg::Matrix::rotate(getCamera()->getOrientation()));
-            }
-         }
-         else if (renderMode == dtCore::BaseActorObject::RenderMode::DRAW_AUTO)
-         {
-         }
-      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////

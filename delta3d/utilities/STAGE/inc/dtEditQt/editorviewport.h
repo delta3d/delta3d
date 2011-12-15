@@ -45,6 +45,7 @@ namespace dtEditQt {
       Q_OBJECT
 
    public:
+
       /**
        * Sets whether or not an actor should be linked to the camera when
        * in translate mode.
@@ -243,7 +244,7 @@ namespace dtEditQt {
        */
       virtual void onMouseMoveEvent(QMouseEvent* e, float dx, float dy);
 
-      /** 
+      /**
        * Is this QDropEvent something the Viewport supports?
        * @return true if the QDropEvent is supported, false otherwise
        */
@@ -325,14 +326,14 @@ namespace dtEditQt {
       */
       virtual void keyReleaseEvent(QKeyEvent* e);
 
-      /** 
+      /**
       * Enable or disable this Viewport.  High level control over if this
       * Viewport is considered enabled or not.
       * @param enabled: true to enabled, false to disable
       */
       void SetEnabled(bool enabled);
 
-      /** 
+      /**
       * Is this Viewport considered to be enabled or not
       * @return true if enabled, false otherwise
       */
@@ -366,8 +367,11 @@ namespace dtEditQt {
 
       bool                                   mSkipUpdateForCam;
 
+      osg::Node::NodeMask                    mEnabledMask;
+      osg::Node::NodeMask                    mDisabledMask;
+
    private:
-      bool                                   mEnabled;  //is this Viewport Enabled?
+      bool                                   mEnabled;
       bool                                   mIsRemoved;
 
       ///From the QDropEvent, unroll the Prefab actor and add to the Map

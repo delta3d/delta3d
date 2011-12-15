@@ -73,7 +73,7 @@ namespace dtCore
       public:
          BillBoardDrawable()
          {
-            mNode = new osg::Group() ;
+            mNode = new osg::Group();
          }
 
          virtual bool AddChild(dtCore::DeltaDrawable* child)
@@ -150,6 +150,12 @@ namespace dtCore
        */
       const dtCore::DeltaDrawable* GetDrawable() const;
 
+      /**
+       *	Gets the perspective billboard transform.
+       */
+      dtCore::Transformable* GetPerspectiveTransform();
+      const dtCore::Transformable* GetPerspectiveTransform() const;
+
       bool OwnsDrawable(dtCore::DeltaDrawable* drawable) const;
 
       void SetPosition(const osg::Vec3& newPos);
@@ -207,6 +213,10 @@ namespace dtCore
       ///The actual billboard drawable which includes the billboard and an arrow
       ///depicting its actor's orientation.
       dtCore::RefPtr<dtCore::DeltaDrawable> mBillBoard;
+      dtCore::RefPtr<dtCore::Transformable> mTopTransform;
+      dtCore::RefPtr<dtCore::Transformable> mSideTransform;
+      dtCore::RefPtr<dtCore::Transformable> mFrontTransform;
+      dtCore::RefPtr<dtCore::Transformable> mPerspTransform;
 
       ///The underlying Delta3D drawable object.
       dtCore::RefPtr<dtCore::Transformable> mIconNode;

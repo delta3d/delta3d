@@ -71,6 +71,16 @@ namespace dtEditQt
       */
       void detachCurrentSelectionFromCamera();
 
+      /**
+       * Spins through the actor proxies currently in the map and if they
+       * are using billboards to represent themselves, orient the billboards
+       * to be inline with the camera.
+       * @note The billboard behavior of OpenSceneGraph was not suitable to
+       *  to the needs of the actor proxy billboards, therefore, a different
+       *  implementation is required.
+       */
+      virtual void updateActorProxyBillboards();
+
    public slots:
 
    protected:
