@@ -664,16 +664,9 @@ namespace dtEditQt
          EditorActions::GetInstance().refreshRecentProjects();
          endWaitCursor();
 
-         std::string mapToLoad = "";
-         std::list<std::string>& maps = EditorData::GetInstance().getRecentMaps();
-         if (!maps.empty())
-         {
-            mapToLoad = maps.front();
-         }
-
          if (EditorData::GetInstance().getLoadLastMap())
          {
-            checkAndLoadBackup(mapToLoad);
+            QTimer::singleShot(1000, this, SLOT(onAutoLoadMap()));
          }
 
          EditorActions::GetInstance().getTimer()->start();
@@ -736,27 +729,22 @@ namespace dtEditQt
       repaint();
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   void MainWindow::onAutoLoadMap()
+   {
+      std::string mapToLoad = "";
+      std::list<std::string>& maps = EditorData::GetInstance().getRecentMaps();
+      if (!maps.empty())
+      {
+         mapToLoad = maps.front();
+      }
+
+      checkAndLoadBackup(mapToLoad);
+   }
+
    ///////////////////////////////////////////////////////////////////////////////
    void MainWindow::onEditorShutDown()
    {
-      if(mPropertyWindow != NULL)
-      {
-         // listen for selection changed event
-         disconnect(&EditorEvents::GetInstance(), SIGNAL(selectedActors(ActorProxyRefPtrVector&)),
-            mPropertyWindow, SLOT(HandleActorsSelected(ActorProxyRefPtrVector&)));
-
-         // listen for property change events and update the tree.  These can be generated
-         // by the viewports, or the tree itself.
-         disconnect(&EditorEvents::GetInstance(), SIGNAL(actorPropertyChanged(ActorProxyRefPtr,
-            ActorPropertyRefPtr)),
-            mPropertyWindow, SLOT(ActorPropertyChanged(ActorProxyRefPtr,
-            ActorPropertyRefPtr)));
-
-         // listen for name changes so we can update our group box label or handle undo changes
-         disconnect(&EditorEvents::GetInstance(), SIGNAL(ProxyNameChanged(dtCore::BaseActorObject&, std::string)),
-                  mPropertyWindow, SLOT(ProxyNameChanged(dtCore::BaseActorObject&, std::string)));
-      }
-
       EditorData& editorData = EditorData::GetInstance();
       EditorSettings settings;
 
@@ -786,7 +774,7 @@ namespace dtEditQt
       settings.setValue(EditorSettings::ACTOR_CREATION_OFFSET, editorData.GetActorCreationOffset());
       settings.setValue(EditorSettings::SAVE_MILLISECONDS, EditorActions::GetInstance().mSaveMilliSeconds);
       settings.setValue(EditorSettings::SELECTION_COLOR, editorData.getSelectionColor());
-      
+
       //Volume edit brush shape, visibility
       settings.setValue(EditorSettings::VOLUME_EDIT_VISIBLE, GetVolumeEditActor()->GetOSGNode()->getNodeMask() ? "true" : "false");
       settings.setValue(EditorSettings::VOLUME_EDIT_SHAPE, QString::fromStdString(GetVolumeEditActor()->GetShape().GetName()));
@@ -869,6 +857,26 @@ namespace dtEditQt
       }
       settings.setValue(EditorSettings::RECENT_PROJECTS, projectStringList);
 
+      if(mPropertyWindow != NULL)
+      {
+         // listen for selection changed event
+         disconnect(&EditorEvents::GetInstance(), SIGNAL(selectedActors(ActorProxyRefPtrVector&)),
+            mPropertyWindow, SLOT(HandleActorsSelected(ActorProxyRefPtrVector&)));
+
+         // listen for property change events and update the tree.  These can be generated
+         // by the viewports, or the tree itself.
+         disconnect(&EditorEvents::GetInstance(), SIGNAL(actorPropertyChanged(ActorProxyRefPtr,
+            ActorPropertyRefPtr)),
+            mPropertyWindow, SLOT(ActorPropertyChanged(ActorProxyRefPtr,
+            ActorPropertyRefPtr)));
+
+         // listen for name changes so we can update our group box label or handle undo changes
+         disconnect(&EditorEvents::GetInstance(), SIGNAL(ProxyNameChanged(dtCore::BaseActorObject&, std::string)),
+                  mPropertyWindow, SLOT(ProxyNameChanged(dtCore::BaseActorObject&, std::string)));
+
+         mPropertyWindow->hide();
+      }
+
       //Check to see if the user wants the app to remember the recently loaded map.
       if (EditorData::GetInstance().getLoadLastMap() == false ||
           EditorData::GetInstance().getCurrentMap() == NULL)
@@ -917,8 +925,6 @@ namespace dtEditQt
       {
          EditorEvents::GetInstance().emitEditorCloseEvent();
          e->accept();
-
-         mPropertyWindow->hide();
          return;
       }
 
@@ -930,7 +936,6 @@ namespace dtEditQt
       else
       {
          e->accept();
-         mPropertyWindow->hide();
       }
    }
 
