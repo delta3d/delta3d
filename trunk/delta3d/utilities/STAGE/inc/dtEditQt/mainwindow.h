@@ -84,7 +84,7 @@ namespace dtEditQt
       void loadLibraryPaths();
 
       /**
-       * Loads the last Project Context if there is one defined and the "load 
+       * Loads the last Project Context if there is one defined and the "load
        * last project" user preference is set to true.
        * @return true if Project Context was set
        */
@@ -184,6 +184,11 @@ namespace dtEditQt
        * This slot is triggered when the application is started and initialized.
        */
       void onEditorInitiated();
+
+      /**
+       *	Auto loads the last loaded map.
+       */
+      void onAutoLoadMap();
 
       /**
        * This slot is triggered just before the editor is about to shut down.  This is
