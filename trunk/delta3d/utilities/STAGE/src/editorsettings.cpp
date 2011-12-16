@@ -71,6 +71,7 @@ namespace dtEditQt
    const QString EditorSettings::SELECTION_COLOR("Selection_Color");
    const QString EditorSettings::RIGID_CAMERA("Rigid_Camera_Movement");
    const QString EditorSettings::ACTOR_CREATION_OFFSET("Actor_Creation_Offset");
+   const QString EditorSettings::NUM_RECENT_PROJECTS("Num_Recent_Projects");
 
    const QString EditorSettings::CAMERA_SPEED_GROUP("Camera_Speed");
 

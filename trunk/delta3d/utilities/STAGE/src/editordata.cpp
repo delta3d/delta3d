@@ -57,6 +57,7 @@ namespace dtEditQt
       , mUseGlobalOrientationForViewportWidget(false)
       , mActorCreationDistance(5.f)
       , mSelectionColor(Qt::red)
+      , mNumRecentProjects(5)
    {
       LOG_DEBUG("Initializing Editor Data.");
 
@@ -136,7 +137,7 @@ namespace dtEditQt
          }
       }
 
-      if (mRecentProjects.size() < 4)
+      if (mRecentProjects.size() < mNumRecentProjects)
       {
          mRecentProjects.push_front(fileinfo.absoluteFilePath().toStdString());
       }

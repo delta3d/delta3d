@@ -218,6 +218,12 @@ namespace dtEditQt
       // Mutator
       inline void SetActorCreationOffset(const float actorCreationDistance) { mActorCreationDistance = actorCreationDistance; }
 
+      // Accessor
+      inline float GetNumRecentProjects() const { return mNumRecentProjects; }
+
+      // Mutator
+      inline void SetNumRecentProjects(const float numRecentProjects) { mNumRecentProjects = numRecentProjects; }
+
       ///@return the ui registry for group actor properties
       GroupUIRegistry& GetGroupUIRegistry();
 
