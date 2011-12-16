@@ -357,14 +357,14 @@ namespace dtCore
        */
       virtual void OnTranslate(const osg::Vec3& delta);
 
-      /** 
-       * Can be used by derivative classes to know when a Translation event 
+      /**
+       * Can be used by derivative classes to know when a Translation event
        * begins.
        */
       virtual void OnTranslateBegin() {};
 
-      /** 
-       * Can be used by derivative classes to know when a Translation event 
+      /**
+       * Can be used by derivative classes to know when a Translation event
        * ends.
        */
       virtual void OnTranslateEnd() {};
@@ -377,14 +377,14 @@ namespace dtCore
        */
       virtual void OnRotate(float delta, const osg::Vec3& axis);
 
-      /** 
-       * Can be used by derivative classes to know when a Rotation event 
+      /**
+       * Can be used by derivative classes to know when a Rotation event
        * begins.
        */
       virtual void OnRotateBegin() {};
 
-      /** 
-       * Can be used by derivative classes to know when a Rotation event 
+      /**
+       * Can be used by derivative classes to know when a Rotation event
        * ends.
        */
       virtual void OnRotateEnd() {};
@@ -396,14 +396,14 @@ namespace dtCore
        */
       virtual void OnScale(const osg::Vec3& delta);
 
-      /** 
-       * Can be used by derivative classes to know when a Scale event 
+      /**
+       * Can be used by derivative classes to know when a Scale event
        * begins.
        */
       virtual void OnScaleBegin() {};
 
-      /** 
-       * Can be used by derivative classes to know when a Scale event 
+      /**
+       * Can be used by derivative classes to know when a Scale event
        * ends.
        */
       virtual void OnScaleEnd() {};
