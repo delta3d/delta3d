@@ -632,8 +632,8 @@ void ObjectMotionModel::InitArrows(void)
       osg::Box*      box      = new osg::Box(osg::Vec3(0.0f, 0.0f, 0.17f), 0.015f, 0.015f, 0.015f);
 
 //      osg::Cylinder* ring     = new osg::Cylinder(osg::Vec3(0.0f, 0.0f, 0.0f), 0.07f, 0.001f);
-      osg::TriangleMesh* ring = GenerateRing(ringRadius - ringVisibleThickness, ringRadius + ringVisibleThickness, 40);
-      osg::TriangleMesh* selectionRing = GenerateRing(ringRadius - ringSelectionThickness, ringRadius + ringSelectionThickness, 40);
+      osg::TriangleMesh* ring = GenerateRing(ringRadius - ringVisibleThickness, ringRadius + ringVisibleThickness, 80);
+      osg::TriangleMesh* selectionRing = GenerateRing(ringRadius - ringSelectionThickness, ringRadius + ringSelectionThickness, 80);
 
       mArrows[arrowIndex].arrowCylinder = new osg::ShapeDrawable(cylinder);
       mArrows[arrowIndex].arrowCone     = new osg::ShapeDrawable(cone);
@@ -800,14 +800,25 @@ osg::TriangleMesh* ObjectMotionModel::GenerateRing(float minRadius, float maxRad
 
    osg::Vec3 minVertex = osg::Vec3(minRadius, 0.0f, 0.0f);
    osg::Vec3 maxVertex = osg::Vec3(maxRadius, 0.0f, 0.0f);
+   osg::Vec3 midVertex = osg::Vec3(minRadius + ((maxRadius - minRadius) / 2), 0.0f, 0.0f);
+   osg::Vec3 lowVertex = osg::Vec3(minRadius * 0.9f, 0.0f, 0.0f);
    osg::Vec3 axis = osg::Vec3(0.0f, 0.0f, 1.0f);
 
    osg::Matrix rotationMatrix;
    for (int segmentIndex = 0; segmentIndex < segments; segmentIndex++)
    {
-      rotationMatrix = rotationMatrix.rotate(segmentAngle * segmentIndex, axis);
+      float angle = segmentAngle * segmentIndex;
+      rotationMatrix = rotationMatrix.rotate(angle, axis);
 
-      osg::Vec3 vert = minVertex * rotationMatrix;
+      osg::Vec3 minV = minVertex;
+      osg::Vec3 maxV = maxVertex;
+      if (segmentIndex % (segments / 4) == 0)
+      {
+         maxV = midVertex;
+         minV = lowVertex;
+      }
+
+      osg::Vec3 vert = minV * rotationMatrix;
       vertices->push_back(vert);
       indices->push_back((int)vertices->size()-1);
 
@@ -819,7 +830,7 @@ osg::TriangleMesh* ObjectMotionModel::GenerateRing(float minRadius, float maxRad
          indices->push_back((int)vertices->size()-2);
       }
 
-      vert = maxVertex * rotationMatrix;
+      vert = maxV * rotationMatrix;
       vertices->push_back(vert);
       indices->push_back((int)vertices->size()-1);
 
