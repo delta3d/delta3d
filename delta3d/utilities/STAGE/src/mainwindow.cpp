@@ -634,96 +634,41 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void MainWindow::onEditorInitiated()
    {
-      setUpdatesEnabled(false);
+      enableActions();
 
-      try
+      // Load the custom library paths if they exist
+      loadLibraryPaths();
+      findAndLoadPreferences();
+      mPerspView->onEditorPreferencesChanged();
+
+      if (EditorData::GetInstance().getLoadLastProject() == false)
       {
-         enableActions();
-
-         // Load the custom library paths if they exist
-         loadLibraryPaths();
-         findAndLoadPreferences();
-         mPerspView->onEditorPreferencesChanged();
-
-         if (EditorData::GetInstance().getLoadLastProject() == false)
+         //Display the Project Change dialog to prompt the user
+         EditorActions::GetInstance().slotProjectChangeContext();
+      }
+      else
+      {
+         std::list<std::string>& projects = EditorData::GetInstance().getRecentProjects();
+         if (!projects.empty())
          {
-            //Display the Project Change dialog to prompt the user
-            EditorActions::GetInstance().slotProjectChangeContext();
-         }
-         else
-         {
-            std::list<std::string>& projects = EditorData::GetInstance().getRecentProjects();
-            if (!projects.empty())
-            {
-               const std::string path = projects.front();
-               EditorActions::GetInstance().SlotChangeProjectContext(path);
-            }
-         }
-
-         startWaitCursor();
-         EditorActions::GetInstance().refreshRecentProjects();
-         endWaitCursor();
-
-         if (EditorData::GetInstance().getLoadLastMap())
-         {
-            QTimer::singleShot(1000, this, SLOT(onAutoLoadMap()));
-         }
-
-         EditorActions::GetInstance().getTimer()->start();
-
-         updateWindowTitle();
-         //findAndLoadPreferences();
-
-         setUpdatesEnabled(true);
-         if (mPropertyWindow != NULL)
-         {
-            mPropertyWindow->setUpdatesEnabled(true);
-         }
-         if (mActorDockWidg != NULL)
-         {
-            mActorDockWidg->setUpdatesEnabled(true);
-         }
-         if (mResourceBrowser != NULL)
-         {
-            mResourceBrowser->setUpdatesEnabled(true);
+            const std::string path = projects.front();
+            EditorActions::GetInstance().SlotChangeProjectContext(path);
          }
       }
-      catch(const dtUtil::Exception& ex)
-      {
-         setUpdatesEnabled(true);
-         if(mPropertyWindow != NULL)
-         {
-            mPropertyWindow->setUpdatesEnabled(true);
-         }
-         if (mActorDockWidg != NULL)
-         {
-            mActorDockWidg->setUpdatesEnabled(true);
-         }
-         if (mResourceBrowser != NULL)
-         {
-            mResourceBrowser->setUpdatesEnabled(true);
-         }
 
-         throw ex;
-      }
-      catch(const std::exception& ex)
-      {
-         setUpdatesEnabled(true);
-         if (mPropertyWindow != NULL)
-         {
-            mPropertyWindow->setUpdatesEnabled(true);
-         }
-         if (mActorDockWidg != NULL)
-         {
-            mActorDockWidg->setUpdatesEnabled(true);
-         }
-         if (mResourceBrowser != NULL)
-         {
-            mResourceBrowser->setUpdatesEnabled(true);
-         }
+      startWaitCursor();
+      EditorActions::GetInstance().refreshRecentProjects();
+      endWaitCursor();
 
-         throw ex;
+      if (EditorData::GetInstance().getLoadLastMap())
+      {
+         QTimer::singleShot(1000, this, SLOT(onAutoLoadMap()));
       }
+
+      EditorActions::GetInstance().getTimer()->start();
+
+      updateWindowTitle();
+      //findAndLoadPreferences();
 
       update();
       repaint();
