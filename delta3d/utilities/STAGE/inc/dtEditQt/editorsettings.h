@@ -87,6 +87,7 @@ namespace dtEditQt
       static const QString SELECTION_COLOR;
       static const QString RIGID_CAMERA;
       static const QString ACTOR_CREATION_OFFSET;
+      static const QString NUM_RECENT_PROJECTS;
 
       static const QString CAMERA_SPEED_GROUP;
 

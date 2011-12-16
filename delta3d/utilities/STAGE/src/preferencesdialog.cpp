@@ -77,6 +77,9 @@ namespace dtEditQt
       validator->setDecimals(4);
       mActorOffsetDistance->setValidator(validator);
 
+      mNumRecentProjects = new QSpinBox;
+      mNumRecentProjects->setMinimum(1);
+      mNumRecentProjects->setMaximum(25);
 
       mProjectCheck->setToolTip(tr("Enables the loading of the most recently loaded project on startup."));
       mMapCheck->setToolTip(tr("Enables the loading of most recently used map on startup. Note that a map cannot be loaded without a project."));
@@ -84,6 +87,7 @@ namespace dtEditQt
       mColor->setToolTip(tr("Selects the color that will be used to highlight selected actors."));
       mSaveMins->setToolTip(tr("Selects the number of minutes in between autosaves. Setting the number of minutes to zero will disable autosave."));
       mActorOffsetDistance->setToolTip(tr("How far away new or duplicated objects should be. Should be small (1.0) for indoor maps, large for big objects, outdoors (10.0)."));
+      mNumRecentProjects->setToolTip(tr("The number of recent projects that will be listed in the File->Recent Projects menu."));
 
       vLay->addWidget(group);
 
@@ -101,7 +105,6 @@ namespace dtEditQt
       grid->addWidget(label, 2, 0);
       grid->addWidget(mRigidCamCheck, 2, 2);
 
-
       label = new QLabel(tr("Autosave Delay"));
       label->setToolTip(tr("Selects the number of minutes in between autosaves. Setting the number of minutes to zero will disable autosave."));
       grid->addWidget(label, 4, 0);
@@ -116,6 +119,11 @@ namespace dtEditQt
       label->setToolTip(tr("How far away new or duplicated objects should be. Should be small (1.0) for indoor maps, large for big objects, outdoors (10.0)."));
       grid->addWidget(label, 6, 0);
       grid->addWidget(mActorOffsetDistance, 6, 2);
+
+      label = new QLabel(tr("Number of Recent Projects"));
+      label->setToolTip(tr("The number of recent projects that will be listed in the File->Recent Projects menu."));
+      grid->addWidget(label, 7, 0);
+      grid->addWidget(mNumRecentProjects, 7, 2);
 
       mSaveMins->setMinimum(0);
       mSaveMins->setMaximum(60);
@@ -152,6 +160,8 @@ namespace dtEditQt
 
       float actorOffsetDistance = EditorData::GetInstance().GetActorCreationOffset();
       mActorOffsetDistance->setText(QString::number(actorOffsetDistance, 'f', 5));
+
+      mNumRecentProjects->setValue(EditorData::GetInstance().GetNumRecentProjects());
 
       setModal(true);
       //resize(200, 300);
@@ -211,6 +221,8 @@ namespace dtEditQt
       {
          EditorData::GetInstance().SetActorCreationOffset(result);
       }
+
+      EditorData::GetInstance().SetNumRecentProjects(mNumRecentProjects->value());
 
       accept();
    }

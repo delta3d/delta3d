@@ -74,6 +74,7 @@ namespace dtEditQt
       QPushButton* mColor;
       QSpinBox*    mSaveMins;
       QLineEdit*   mActorOffsetDistance;
+      QSpinBox*    mNumRecentProjects;
 
       /// Helper method to set the new color palette and text
       void setNewPalette();

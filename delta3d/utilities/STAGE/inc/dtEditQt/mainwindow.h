@@ -282,6 +282,11 @@ namespace dtEditQt
        */
       void showStatusBarMessage(const QString message, int timeout);
 
+      /**
+       * The recent projects menu
+       */
+      void RefreshRecentProjectsMenu();
+
    protected:
       /**
        * Called when the window receives the event to close itself.

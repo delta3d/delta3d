@@ -177,11 +177,6 @@ namespace dtEditQt
       mRecentProjs = new QMenu(tr("Recent Projects"), this);
       mRecentMaps  = new QMenu(tr("Recent Maps"),     this);
 
-      for (int i=0; i<5; i++)
-      {
-         mRecentProjs->addAction(editorActions.mActionRecentProjects[i]);
-      }
-
       mFileMenu = menuBar()->addMenu(tr("&File"));
       mFileMenu->addAction(editorActions.mActionFileNewMap);
       mFileMenu->addAction(editorActions.mActionFileOpenMap);
@@ -656,9 +651,9 @@ namespace dtEditQt
          }
       }
 
-      startWaitCursor();
-      EditorActions::GetInstance().refreshRecentProjects();
-      endWaitCursor();
+      //startWaitCursor();
+      //EditorActions::GetInstance().refreshRecentProjects();
+      //endWaitCursor();
 
       if (EditorData::GetInstance().getLoadLastMap())
       {
@@ -717,6 +712,7 @@ namespace dtEditQt
       settings.setValue(EditorSettings::LOAD_RECENT_MAPS, editorData.getLoadLastMap());
       settings.setValue(EditorSettings::RIGID_CAMERA, editorData.getRigidCamera());
       settings.setValue(EditorSettings::ACTOR_CREATION_OFFSET, editorData.GetActorCreationOffset());
+      settings.setValue(EditorSettings::NUM_RECENT_PROJECTS, editorData.GetNumRecentProjects());
       settings.setValue(EditorSettings::SAVE_MILLISECONDS, EditorActions::GetInstance().mSaveMilliSeconds);
       settings.setValue(EditorSettings::SELECTION_COLOR, editorData.getSelectionColor());
 
@@ -1016,6 +1012,8 @@ namespace dtEditQt
          this, SLOT(onEditorShutDown()));
       connect(&EditorEvents::GetInstance(), SIGNAL(projectChanged()),
          this, SLOT(enableActions()));
+      connect(&EditorEvents::GetInstance(), SIGNAL(projectChanged()),
+         this, SLOT(RefreshRecentProjectsMenu()));
       connect(&EditorEvents::GetInstance(), SIGNAL(currentMapChanged()),
          this, SLOT(enableActions()));
       connect(&EditorEvents::GetInstance(), SIGNAL(projectChanged()),
@@ -1249,6 +1247,16 @@ namespace dtEditQt
          if (success)
          {
             EditorData::GetInstance().SetActorCreationOffset(actorCreationOffset);
+         }
+      }
+
+      if (settings.contains(EditorSettings::NUM_RECENT_PROJECTS))
+      {
+         bool success;
+         unsigned int numRecentProjects = settings.value(EditorSettings::NUM_RECENT_PROJECTS).toUInt(&success);
+         if (success)
+         {
+            EditorData::GetInstance().SetNumRecentProjects(numRecentProjects);
          }
       }
 
@@ -1565,6 +1573,16 @@ namespace dtEditQt
    void MainWindow::showStatusBarMessage(const QString message, int timeout)
    {
       statusBar()->showMessage(message, timeout);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void MainWindow::RefreshRecentProjectsMenu()
+   {
+      mRecentProjs->clear();
+      for (size_t i = 0; i < EditorActions::GetInstance().mActionRecentProjects.size(); ++i)
+      {
+         mRecentProjs->addAction(EditorActions::GetInstance().mActionRecentProjects[i]);
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////

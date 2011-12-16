@@ -166,7 +166,7 @@ namespace dtEditQt
       QAction* mActionFileChangeProject;
 
       ///List of Actions corresponding to the recently loaded Project Contexts
-      QAction* mActionRecentProjects[5];
+      std::vector<QAction*> mActionRecentProjects;
 
       // Action - File - Recent Map0
       QAction* mActionFileRecentMap0;

@@ -250,14 +250,6 @@ namespace dtEditQt
       mActionFileExit->setShortcut(tr("Alt+F4"));
       mActionFileExit->setStatusTip(tr("Exit the level editor."));
       connect(mActionFileExit, SIGNAL(triggered()), this, SLOT(slotFileExit()));
-
-      // recent Project Contexts
-      for (int i=0; i<5; i++)
-      {
-         mActionRecentProjects[i] = new QAction(this);
-         mActionRecentProjects[i]->setVisible(false);
-         connect(mActionRecentProjects[i], SIGNAL(triggered()), this, SLOT(slotOpenRecentProject()));
-      }
    }
 
    //////////////////////////////////////////////////////////////////////////////
@@ -451,22 +443,21 @@ namespace dtEditQt
    {
       std::list<std::string> recentProjects = EditorData::GetInstance().getRecentProjects();
 
-      int numRecentProjects = qMin(recentProjects.size(), size_t(5));
+      int numRecentProjects = qMin(recentProjects.size(), size_t(EditorData::GetInstance().GetNumRecentProjects()));
 
       std::list<std::string>::iterator itr = recentProjects.begin();
 
-      for (int i=0; i<numRecentProjects; ++i)
+      mActionRecentProjects.clear();
+      for (int i = 0; i < numRecentProjects; ++i)
       {
          QString path = QFileInfo(QString::fromStdString(*itr)).absoluteFilePath();
          QString text = tr("&%1 %2").arg(i+1).arg(path);
-         mActionRecentProjects[i]->setText(text);
-         mActionRecentProjects[i]->setData(QString::fromStdString(*itr));
-         mActionRecentProjects[i]->setVisible(true);
+         QAction* recentProject = new QAction(this);
+         recentProject->setText(text);
+         recentProject->setData(QString::fromStdString(*itr));
+         connect(recentProject, SIGNAL(triggered()), this, SLOT(slotOpenRecentProject()));
+         mActionRecentProjects.push_back(recentProject);
          ++itr;
-      }
-      for (int j=numRecentProjects; j<5; ++j)
-      {
-         mActionRecentProjects[j]->setVisible(false);
       }
    }
 
@@ -1752,9 +1743,8 @@ namespace dtEditQt
       EditorData::GetInstance().getMainWindow()->endWaitCursor();
       EditorData::GetInstance().setCurrentProjectContext(path);
       EditorData::GetInstance().addRecentProject(path);
-      EditorEvents::GetInstance().emitProjectChanged();
       refreshRecentProjects();
-
+      EditorEvents::GetInstance().emitProjectChanged();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
