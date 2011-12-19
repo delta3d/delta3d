@@ -77,7 +77,7 @@ namespace dtQt
    /////////////////////////////////////////////////////////////////////////////////
    void DynamicActorControl::updateEditorFromModel(QWidget* widget)
    {
-      if (widget == mWrapper && mTemporaryEditControl)
+      if (widget != NULL && widget == mWrapper && mTemporaryEditControl)
       {
          int index = mTemporaryEditControl->findText(getValueAsString());
          mTemporaryEditControl->setCurrentIndex(index);
