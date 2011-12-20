@@ -41,6 +41,7 @@ namespace dtDirector
 
       /// Actions
       static dtCore::RefPtr<dtDirector::NodeType> LOAD_GUI_SCHEME_NODE_TYPE;
+      static dtCore::RefPtr<dtDirector::NodeType> LOAD_LAYOUT_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> SET_GUI_CURSOR_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> SET_LAYOUT_VISIBILITY_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> GET_WIDGET_PROPERTY_NODE_TYPE;

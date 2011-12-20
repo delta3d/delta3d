@@ -13,6 +13,7 @@ SET(LIB_PUBLIC_HEADERS
     ${HEADER_PATH}/getwidgetproperty.h
     ${HEADER_PATH}/guinodemanager.h
     ${HEADER_PATH}/loadguischeme.h
+    ${HEADER_PATH}/loadlayout.h
     ${HEADER_PATH}/nodelibraryexport.h
     ${HEADER_PATH}/nodelibraryregistry.h
     ${HEADER_PATH}/setguicursor.h
@@ -33,6 +34,7 @@ SET(LIB_SOURCES
     ${SOURCE_PATH}/getwidgetproperty.cpp
     ${SOURCE_PATH}/guinodemanager.cpp
     ${SOURCE_PATH}/loadguischeme.cpp
+    ${SOURCE_PATH}/loadlayout.cpp
     ${SOURCE_PATH}/nodelibraryregistry.cpp
     ${SOURCE_PATH}/setguicursor.cpp
     ${SOURCE_PATH}/setlayoutvisibility.cpp
