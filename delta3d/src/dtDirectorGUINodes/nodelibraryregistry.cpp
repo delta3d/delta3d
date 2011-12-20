@@ -32,6 +32,7 @@
 #include <dtDirectorGUINodes/getwidgetposition.h>
 #include <dtDirectorGUINodes/getwidgetproperty.h>
 #include <dtDirectorGUINodes/loadguischeme.h>
+#include <dtDirectorGUINodes/loadlayout.h>
 #include <dtDirectorGUINodes/setguicursor.h>
 #include <dtDirectorGUINodes/setlayoutvisibility.h>
 #include <dtDirectorGUINodes/setwidgetposition.h>
@@ -69,6 +70,7 @@ namespace dtDirector
 
    // Actions
    RefPtr<NodeType> NodeLibraryRegistry::LOAD_GUI_SCHEME_NODE_TYPE(      new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Load Scheme",           "GUI", "GUI", "Load a GUI Scheme.",                     NULL, Colors::BLUE2));
+   RefPtr<NodeType> NodeLibraryRegistry::LOAD_LAYOUT_NODE_TYPE(          new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Load Layout",           "GUI", "GUI", "Load a GUI Layout.",                     NULL, Colors::BLUE2));
    RefPtr<NodeType> NodeLibraryRegistry::SET_GUI_CURSOR_NODE_TYPE(       new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Set Cursor",            "GUI", "GUI", "Set GUI Cursor.",                        NULL, Colors::BLUE2));
    RefPtr<NodeType> NodeLibraryRegistry::SET_LAYOUT_VISIBILITY_NODE_TYPE(new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Set Layout Visibility", "GUI", "GUI", "Show or Hide a GUI Layout.",             NULL, Colors::BLUE2));
    RefPtr<NodeType> NodeLibraryRegistry::GET_WIDGET_PROPERTY_NODE_TYPE(  new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Get Widget Property",   "GUI", "GUI", "Gets a property's value from a widget.", NULL, Colors::BLUE2));
@@ -109,6 +111,7 @@ namespace dtDirector
 
       // Actions
       mNodeFactory->RegisterType<LoadGUIScheme>(LOAD_GUI_SCHEME_NODE_TYPE.get());
+      mNodeFactory->RegisterType<LoadLayout>(LOAD_LAYOUT_NODE_TYPE.get());
       mNodeFactory->RegisterType<SetGUICursor>(SET_GUI_CURSOR_NODE_TYPE.get());
       mNodeFactory->RegisterType<SetLayoutVisibility>(SET_LAYOUT_VISIBILITY_NODE_TYPE.get());
       mNodeFactory->RegisterType<GetWidgetProperty>(GET_WIDGET_PROPERTY_NODE_TYPE.get());
