@@ -11,7 +11,7 @@
 #include <QtCore/QString>
 
 #include <QtGui/QLayout>
-
+#include <QtGui/QWidget>
 
 namespace dtDirector
 {
@@ -19,7 +19,12 @@ namespace dtDirector
 }
 
 class QGridLayout;
+class DialogChoiceItem;
+class DialogLineItem;
 class DialogTreeWidget;
+class DirectorDialogEditorPlugin;
+class QLineEdit;
+class QTreeWidgetItem;
 
 /**
  * Base class for a dialog line type.  This class should be inherited
