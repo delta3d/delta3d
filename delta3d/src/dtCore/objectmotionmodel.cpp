@@ -614,7 +614,7 @@ void ObjectMotionModel::InitArrows(void)
    //}
 
    float ringRadius             = 0.08f;
-   float ringVisibleThickness   = 0.002f;
+   float ringVisibleThickness   = 0.004f;
    float ringSelectionThickness = 0.01f;
    for (int arrowIndex = 0; arrowIndex < ARROW_TYPE_MAX; arrowIndex++)
    {
@@ -627,9 +627,9 @@ void ObjectMotionModel::InitArrows(void)
       mArrows[arrowIndex].rotationSelectionGeode = new osg::Geode();
       mArrows[arrowIndex].scaleGeode             = new osg::Geode();
 
-      osg::Cylinder* cylinder = new osg::Cylinder(osg::Vec3(0.0f, 0.0f, 0.07f), 0.005f, 0.1f);
-      osg::Cone*     cone     = new osg::Cone(osg::Vec3(0.0f, 0.0f, 0.125f), 0.015f, 0.02f);
-      osg::Box*      box      = new osg::Box(osg::Vec3(0.0f, 0.0f, 0.17f), 0.015f, 0.015f, 0.015f);
+      osg::Cylinder* cylinder = new osg::Cylinder(osg::Vec3(0.0f, 0.0f, 0.07f), 0.005f, 0.15f);
+      osg::Cone*     cone     = new osg::Cone(osg::Vec3(0.0f, 0.0f, 0.15f), 0.015f, 0.02f);
+      osg::Box*      box      = new osg::Box(osg::Vec3(0.0f, 0.0f, 0.2f), 0.015f, 0.015f, 0.015f);
 
 //      osg::Cylinder* ring     = new osg::Cylinder(osg::Vec3(0.0f, 0.0f, 0.0f), 0.07f, 0.001f);
       osg::TriangleMesh* ring = GenerateRing(ringRadius - ringVisibleThickness, ringRadius + ringVisibleThickness, 80);
@@ -751,7 +751,7 @@ void ObjectMotionModel::InitArrows(void)
    mArrows[ARROW_TYPE_UP].translationTransform->SetTransform(transformZ);
    mArrows[ARROW_TYPE_UP].rotationTransform->SetTransform(transformZ);
    mArrows[ARROW_TYPE_UP].scaleTransform->SetTransform(transformZ);
-   mArrows[ARROW_TYPE_UP].arrowCylinderColor = osg::Vec4(0.1f, 0.1f, 1.0f, 0.6f);
+   mArrows[ARROW_TYPE_UP].arrowCylinderColor = osg::Vec4(0.0f, 0.0f, 1.0f, 0.6f);
    mArrows[ARROW_TYPE_UP].arrowConeColor = osg::Vec4(0.3f, 0.3f, 1.0f, 0.6f);
 
    SetArrowHighlight(ARROW_TYPE_MAX);
@@ -1081,13 +1081,19 @@ void ObjectMotionModel::SetArrowHighlight(ArrowType arrowType)
 {
    mHoverArrow = arrowType;
 
+   float brightness = 1.0f;
+   //if (arrowType != ARROW_TYPE_MAX)
+   //{
+   //   brightness = 0.5f;
+   //}
+
    for (int arrowIndex = 0; arrowIndex < ARROW_TYPE_MAX; arrowIndex++)
    {
       osg::Vec4 color = mArrows[arrowIndex].arrowCylinderColor;
       color.r() = color.r() * 0.5f;
       color.g() = color.g() * 0.5f;
       color.b() = color.b() * 0.5f;
-      color.a() = color.a();
+      color.a() = color.a() * brightness;
 
       mArrows[arrowIndex].rotationRing->setColor(color);
       mArrows[arrowIndex].arrowCylinder->setColor(color);
@@ -1097,13 +1103,13 @@ void ObjectMotionModel::SetArrowHighlight(ArrowType arrowType)
       color.r() = color.r() * 0.5f;
       color.g() = color.g() * 0.5f;
       color.b() = color.b() * 0.5f;
-      color.a() = color.a();
+      color.a() = color.a() * brightness;
       mArrows[arrowIndex].arrowCone->setColor(color);
 
       osg::Vec4 highlightColor = mArrows[arrowIndex].arrowCylinderColor;
-      highlightColor.r() *= 2.0f;
-      highlightColor.g() *= 2.0f;
-      highlightColor.b() *= 2.0f;
+      highlightColor.r() *= 20.0f;
+      highlightColor.g() *= 20.0f;
+      highlightColor.b() *= 20.0f;
 
       if (arrowIndex == mHoverArrow)
       {

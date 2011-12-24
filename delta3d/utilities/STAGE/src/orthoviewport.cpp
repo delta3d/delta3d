@@ -49,7 +49,7 @@ namespace dtEditQt
    {
       setViewType(OrthoViewType::TOP,false);
 
-      mObjectMotionModel->SetScale(750.0f);
+      mObjectMotionModel->SetScale(450.0f);
 
       // Create our camera model.
       mDefaultCameraMotionModel = new STAGECameraMotionModel2D();
