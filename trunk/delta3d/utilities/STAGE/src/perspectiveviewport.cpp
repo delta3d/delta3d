@@ -48,7 +48,7 @@ namespace dtEditQt
 
       ViewportManager::GetInstance().setWorldViewCamera(getCamera());
 
-      mObjectMotionModel->SetScale(2.5f);
+      mObjectMotionModel->SetScale(1.0f);
 
       // Create our camera model.
       mDefaultCameraMotionModel = new STAGECameraMotionModel3D();
