@@ -1703,6 +1703,12 @@ namespace dtDirector
          GraphHistoryData data;
          while (!data.graph.valid())
          {
+            // Bail out if we ran out of history.
+            if (mPrevHistory.empty())
+            {
+               return;
+            }
+
             data = mPrevHistory.back();
             mPrevHistory.pop_back();
          }
@@ -1750,6 +1756,12 @@ namespace dtDirector
          GraphHistoryData data;
          while (!data.graph.valid())
          {
+            // Bail out if we ran out of history.
+            if (mNextHistory.empty())
+            {
+               return;
+            }
+
             data = mNextHistory.back();
             mNextHistory.pop_back();
          }
