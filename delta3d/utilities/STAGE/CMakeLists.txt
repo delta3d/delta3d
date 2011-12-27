@@ -19,6 +19,8 @@ file(GLOB PROG_SOURCES "src/*.cpp" "*.rc")
 list(REMOVE_ITEM PROG_SOURCES ${SOURCE_PATH}/src/precomp.cpp)
 
 INCLUDE_DIRECTORIES(${SOURCE_PATH}/inc ${QT_INCLUDE_DIR}
+                                  ${ALUT_INCLUDE_DIR} #for dtAudio
+                                  ${OPENAL_INCLUDE_DIR} #for dtAudio
                                   ${CAL3D_INCLUDE_DIR} #for dtAnim
                                   ${CMAKE_CURRENT_BINARY_DIR} # for ui*.h files
                                   )

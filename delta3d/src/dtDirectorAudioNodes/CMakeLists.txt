@@ -16,6 +16,9 @@ SET(LIB_SOURCES ${SOURCE_PATH}/nodelibraryregistry.cpp
     ${SOURCE_PATH}/soundaction.cpp
    )
 
+INCLUDE_DIRECTORIES ( ${ALUT_INCLUDE_DIR} #for dtAudio
+                      ${OPENAL_INCLUDE_DIR} #for dtAudio
+                     )
 
 
 ADD_LIBRARY(${LIB_NAME} SHARED
