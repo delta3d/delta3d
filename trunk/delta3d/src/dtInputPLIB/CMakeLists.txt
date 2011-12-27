@@ -7,6 +7,8 @@ file(GLOB LIB_PUBLIC_HEADERS "${HEADER_PATH}/*.h")
 file(GLOB LIB_SOURCES "*.cpp")
 list(REMOVE_ITEM LIB_SOURCES ${SOURCE_PATH}/precomp.cpp)
 
+INCLUDE_DIRECTORIES( ${PLIB_INCLUDE_DIR} )
+
 ADD_LIBRARY(${LIB_NAME} SHARED                        
     ${LIB_PUBLIC_HEADERS}                         
     ${LIB_SOURCES}
