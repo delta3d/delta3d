@@ -66,7 +66,7 @@ void dtUtil::LogObserverFile::OpenFile()
    logFile.open(LogFile::GetFileName().c_str());
    if (!logFile.is_open())
    {
-      std::cout << "could not open file \""<<LogFile::GetFileName()<<"\"" << std::endl;
+      std::cerr << "Could not open the Log file \""<<LogFile::GetFileName()<<"\"" << std::endl;
       mOpenFailed = true;
       return;
    }
