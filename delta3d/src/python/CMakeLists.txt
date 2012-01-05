@@ -84,6 +84,12 @@ SET(TARGET_SRC
   ufomotionmodelbindings.cpp
   viewbindings.cpp
   walkmotionmodelbindings.cpp
+  
+  actorpropertybindings.cpp
+  actorproxybindings.cpp
+  datatypebindings.cpp
+  mapbindings.cpp
+  projectbindings.cpp
 )
   
 SET(TARGET_H ${CMAKE_SOURCE_DIR}/inc/python/dtpython.h)
@@ -164,24 +170,6 @@ IF (DTAUDIO_AVAILABLE)
                         )
 ENDIF (DTAUDIO_AVAILABLE)
 
-
-################
-SET(DAL_BINDINGS "PyDtDAL")
-
-SET(TARGET_SRC 
-  actorpropertybindings.cpp
-  actorproxybindings.cpp
-  datatypebindings.cpp
-  dtdalbindings.cpp
-  mapbindings.cpp
-  projectbindings.cpp
-)
-
-SET(TARGET_H ${CMAKE_SOURCE_DIR}/inc/python/dtpython.h)
-
-BUILD_PYTHON_BINDING(${DAL_BINDINGS} 
-                     ${DTDAL_LIBRARY}
-                    )
 
 ################
 IF (DTANIM_AVAILABLE)

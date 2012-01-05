@@ -2,7 +2,6 @@ from PyDtUtil import *
 from PyDtCore import *
 from PyDtAI import *
 from PyDtABC import *
-from PyDtDAL import *
 from PyDtAnim import *
 
 import sys
