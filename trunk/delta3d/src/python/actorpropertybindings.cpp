@@ -146,13 +146,13 @@ void initActorPropertyBindings()
       .def( "GetValue", &Vec2ActorProperty::GetValue )
       ;
 
-      class_<  Vec2fActorProperty, 
-            bases< ActorProperty >,
-            dtCore::RefPtr< Vec2fActorProperty >,
-            boost::noncopyable >( "Vec2fActorProperty", no_init )
-      .def( "SetValue", &Vec2fActorProperty::SetValue )
-      .def( "GetValue", &Vec2fActorProperty::GetValue )
-      ;
+      //class_<  Vec2fActorProperty, 
+      //      bases< ActorProperty >,
+      //      dtCore::RefPtr< Vec2fActorProperty >,
+      //      boost::noncopyable >( "Vec2fActorProperty", no_init )
+      //.def( "SetValue", &Vec2fActorProperty::SetValue )
+      //.def( "GetValue", &Vec2fActorProperty::GetValue )
+      //;
 
    class_<  Vec2dActorProperty, 
             bases< ActorProperty >,
@@ -170,13 +170,13 @@ void initActorPropertyBindings()
       .def( "GetValue", &Vec3ActorProperty::GetValue )
       ;
 
-   class_<  Vec3fActorProperty, 
-            bases< ActorProperty >,
-            dtCore::RefPtr< Vec3fActorProperty >,
-            boost::noncopyable >( "Vec3fActorProperty", no_init )
-      .def( "SetValue", &Vec3fActorProperty::SetValue )
-      .def( "GetValue", &Vec3fActorProperty::GetValue )
-      ;
+   //class_<  Vec3fActorProperty, 
+   //         bases< ActorProperty >,
+   //         dtCore::RefPtr< Vec3fActorProperty >,
+   //         boost::noncopyable >( "Vec3fActorProperty", no_init )
+   //   .def( "SetValue", &Vec3fActorProperty::SetValue )
+   //   .def( "GetValue", &Vec3fActorProperty::GetValue )
+   //   ;
 
    class_<  Vec3dActorProperty, 
             bases< ActorProperty >,
@@ -194,13 +194,13 @@ void initActorPropertyBindings()
       .def( "GetValue", &Vec4ActorProperty::GetValue )
       ;
 
-   class_<  Vec4fActorProperty, 
-            bases< ActorProperty >,
-            dtCore::RefPtr< Vec4fActorProperty >,
-            boost::noncopyable >( "Vec4fActorProperty", no_init )
-      .def( "SetValue", &Vec4fActorProperty::SetValue )
-      .def( "GetValue", &Vec4fActorProperty::GetValue )
-      ;
+   //class_<  Vec4fActorProperty, 
+   //         bases< ActorProperty >,
+   //         dtCore::RefPtr< Vec4fActorProperty >,
+   //         boost::noncopyable >( "Vec4fActorProperty", no_init )
+   //   .def( "SetValue", &Vec4fActorProperty::SetValue )
+   //   .def( "GetValue", &Vec4fActorProperty::GetValue )
+   //   ;
 
    class_<  Vec4dActorProperty, 
             bases< ActorProperty >,

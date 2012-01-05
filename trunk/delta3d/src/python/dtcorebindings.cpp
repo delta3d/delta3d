@@ -74,6 +74,12 @@ void initUFOMotionModelBindings();
 void initWalkMotionModelBindings();
 void initFPSColliderBindings();
 
+void initActorPropertyBindings();
+void initActorProxyBindings();
+void initDataTypeBindings();
+void initMapBindings();
+void initProjectBindings();
+
 BOOST_PYTHON_MODULE(PyDtCore)
 {
    initOSGVec2();
@@ -147,4 +153,11 @@ BOOST_PYTHON_MODULE(PyDtCore)
    initShaderManagerBindings();
    initShaderProgramBindings();
    initOSGNodeBindings();
+
+   initActorPropertyBindings();
+   initActorProxyBindings();
+   initDataTypeBindings();
+   initMapBindings();
+   initProjectBindings();
+
 }
