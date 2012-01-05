@@ -19,7 +19,7 @@
  * Author: Jeff P. Houde
  */
 
-#include <dtDirectorGUINodes/LoadLayout.h>
+#include <dtDirectorGUINodes/loadlayout.h>
 #include <dtDirectorGUINodes/guinodemanager.h>
 
 #include <dtCore/booleanactorproperty.h>
