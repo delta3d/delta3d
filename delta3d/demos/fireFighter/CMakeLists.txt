@@ -1,7 +1,7 @@
 SET (LIB_NAME fireFighter)
 file(GLOB LIB_SOURCES "*.cpp" "*.h")
 
-INCLUDE_DIRECTORIES( ${CEGUI_INCLUDE_DIR
+INCLUDE_DIRECTORIES( ${CEGUI_INCLUDE_DIR}
                      ${ALUT_INCLUDE_DIR} #for dtAudio
                      ${OPENAL_INCLUDE_DIR} #for dtAudio}
                      )
