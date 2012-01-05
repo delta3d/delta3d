@@ -261,6 +261,8 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void MainWindow::setupToolbar()
    {
+      //NOTE: Modify the onResetWindows() method when adding new Toolbars!
+
       mFileToolBar = new QToolBar(this);
       mFileToolBar->setObjectName("FileToolBar");
       mFileToolBar->setWindowTitle(tr("File Toolbar"));
@@ -624,6 +626,16 @@ namespace dtEditQt
       }
 
       ResetSplitters();
+
+      //delete and rebuild our toolbars
+      delete mFileToolBar;
+      delete mEditToolBar;
+      delete mUndoToolBar;
+      delete mBrushToolBar;
+      delete mToolsToolBar;
+      delete mExternalToolsToolBar;
+
+      setupToolbar();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
