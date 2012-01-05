@@ -38,7 +38,7 @@
 
 namespace dtUtil
 {
-   static const char* sLogFileName = "delta3d_log.html";
+   static std::string sLogFileName = "delta3d_log.html";
 
 #ifdef _DEBUG
    static std::string sTitle("Delta 3D Engine Log File (Debug Libs)");
@@ -124,7 +124,7 @@ namespace dtUtil
    {
       //std::cout << "LogFile try to change files to " << name << std::endl;
 
-      sLogFileName = name.c_str();
+      sLogFileName = name;
       if (LOG_MANAGER == NULL)
       {
          LOG_MANAGER = new LogManager;
@@ -139,7 +139,7 @@ namespace dtUtil
 
    const std::string LogFile::GetFileName()
    {
-      return std::string(sLogFileName);
+      return sLogFileName;
    }
 
    void LogFile::SetTitle(const std::string& title)
