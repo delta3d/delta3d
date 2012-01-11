@@ -440,7 +440,7 @@ namespace dtGame
             mGMImpl->mMapChangeStateData->ContinueMapChange();
 
             // Update mLoadedMaps only when a Map Change takes place.
-            // This check is needed to keep the name vec consistent, as single maps may be loaded/unloaded 
+            // This check is needed to keep the name vec consistent, as single maps may be loaded/unloaded
             // without changing the whole set.
             if ((*pPrevState == MapChangeStateData::MapChangeState::LOAD || *pPrevState == MapChangeStateData::MapChangeState::UNLOAD) &&
                mGMImpl->mMapChangeStateData->GetCurrentState() == MapChangeStateData::MapChangeState::IDLE)
@@ -1836,17 +1836,17 @@ namespace dtGame
    void GameManager::OpenAdditionalMapSet( const NameVector& mapNames )
    {
       NameVector actuallyLoadedMaps;
-      
+
       // Loop on map vec, and directly load all of them.
-      // This will send 
+      // This will send
       NameVector::const_iterator mapItor = mapNames.begin();
       for(; mapItor != mapNames.end(); ++mapItor)
-      {         
+      {
          // check whether this is a good map on the current project
          try
          {
             dtCore::Project::GetInstance().GetMap(*mapItor);
-         }         
+         }
          catch (const dtUtil::Exception& ex)
          {
             // if can't open this map, log an erro and keep going with the rest of the map list
@@ -1876,7 +1876,7 @@ namespace dtGame
          mapMessage->SetMapNames(actuallyLoadedMaps);
 
          SendMessage(*mapMessage);
-      }      
+      }
    }
 
 
@@ -2198,6 +2198,7 @@ namespace dtGame
       DeleteAllActors();
       // flush all the deleted messages
       DoSendMessages();
+      DoSendNetworkMessages();
       // remove all the actors.
       RemoveDeletedActors();
 
