@@ -63,7 +63,7 @@ namespace dtCore
                            Mouse* mouse,
                            float maxWalkSpeed = 5.0f,
                            float maxTurnSpeed = 1.5f,
-                           float maxSidestepSpeed = 5.0f,                           
+                           float maxSidestepSpeed = 5.0f,
                            bool useWASD = true,
                            bool useArrowKeys = true);
 
@@ -94,7 +94,7 @@ namespace dtCore
                            Mouse* mouse,
                            float maxWalkSpeed = 5.0f,
                            float maxTurnSpeed = 1.5f,
-                           float maxSidestepSpeed = 5.0f,   
+                           float maxSidestepSpeed = 5.0f,
                            float jumpSpeed = 5.0f,
                            float slideSpeed = 5.0f,
                            float slideThreshold = 0.1f,
@@ -132,10 +132,23 @@ namespace dtCore
        */
       bool GetCanJump() const { return mCanJump; }
 
+      /**
+       * Sets if the Target can jump
+       * @param jump True to enable jumping
+       */
+      void SetCollisionEnabled(bool enabled) { mCollisionEnabled = enabled; }
+
+      /**
+       * Returns true if the target can jump
+       * @return mCanJump
+       */
+      bool GetCollisionEnabled() const { return mCollisionEnabled; }
+
    private:
 
       FPSCollider mCollider;
       bool mCanJump;
+      bool mCollisionEnabled;
    };
 } // namespace dtCore
 
