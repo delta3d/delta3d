@@ -195,7 +195,7 @@ void GameActorProxy::BuildPropertyMap()
    AddProperty(bap);
 
    static const dtUtil::RefString PROPERTY_IS_PUBLISHED("IsPublished");
-   static const dtUtil::RefString PROPERTY_IS_PUBLISHED_LABEL("Is Pubilshed");
+   static const dtUtil::RefString PROPERTY_IS_PUBLISHED_LABEL("Is Published");
    static const dtUtil::RefString PROPERTY_IS_PUBLISHED_DESC("Sets/Gets if a game actor is published");
    bap = new dtCore::BooleanActorProperty(PROPERTY_IS_PUBLISHED, PROPERTY_IS_PUBLISHED_LABEL,
       dtCore::BooleanActorProperty::SetFuncType(),
