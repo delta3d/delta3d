@@ -54,6 +54,7 @@ CollisionMotionModel::CollisionMotionModel(float pHeight, float pRadius, float k
                     maxSidestepSpeed, pHeight, k, useWASD, useArrowKeys)
    , mCollider(pHeight, pRadius, k, theta, pScene)
    , mCanJump(true)
+   , mCollisionEnabled(true)
 {
    DEPRECATE("CollisionMotionModel::CollisionMotionModel(float, float, float, float, dtCore::Scene*, Keyboard*, Mouse*, float, float, float, bool, bool)",
       "CollisionMotionModel::CollisionMotionModel(float, float, float, dtCore::Scene*, Keyboard*, Mouse*, float, float, float, float, float, float, bool, bool, bool)");
@@ -95,6 +96,7 @@ CollisionMotionModel::CollisionMotionModel(float pHeight,
                     maxSidestepSpeed, pHeight, stepUpHeight, useWASD, useArrowKeys)
    , mCollider(pHeight, pRadius, stepUpHeight, 0.0f, pScene)
    , mCanJump(canJump)
+   , mCollisionEnabled(true)
 {
    // parent class FPSMotionModel has set name as "FPSMotionModel" in its constructor;
    // so now manually reset name correctly here
@@ -158,7 +160,10 @@ void CollisionMotionModel::PerformTranslation(const double deltaTime)
    velocity = velocity * mat;
 
    // perform integration step, physically constraining translation path to environment
-   currentXYZ = mCollider.Update(currentXYZ, velocity, deltaTime, mCanJump ? GetKeyboard()->GetKeyState(' ') : false);
+   if (mCollisionEnabled)
+   {
+      currentXYZ = mCollider.Update(currentXYZ, velocity, deltaTime, mCanJump ? GetKeyboard()->GetKeyState(' ') : false);
+   }
 
    // apply changes (new position)
    transform.SetTranslation(currentXYZ);
