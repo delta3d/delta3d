@@ -120,7 +120,7 @@ namespace dtCore
          virtual void OnRotation(const osg::Vec3 &oldValue, const osg::Vec3 &newValue) { }
 
          /**
-          * Called when the SetScale function is called
+          * Called when the SetTranslation function is called
           * @param oldValue The previous value
           * @param newValue The new value
           */
