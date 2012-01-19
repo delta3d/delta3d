@@ -44,7 +44,8 @@ namespace dtGame
    /**
     * class GameActorProxy
     * This is the base class for all of the actor proxies utilized by the
-    * Game Manager
+    * Game Manager. A GameActorProxy/GameActor can receive and send GameManager
+    * messages and is also a container for ActorComponents.
     * @see dtGame::GameManager
     */
    class DT_GAME_EXPORT GameActorProxy : public dtCore::PhysicalActorProxy,
@@ -151,7 +152,13 @@ namespace dtGame
       virtual void BuildPropertyMap();
 
       /**
-       * Creates the invokables associated with this proxy.
+       * Overwrite to construct the Invokables for this GameActorProxy. Be sure
+       * to call the inherited parent's method to include inherited Invokables.
+       * @note The GameActor associated with this GameActorProxy has not been added
+       * to the GameManager at this point.
+       * @note Don't forget to tie the Invokable to the actual MessageType by calling
+       * RegisterForMessages() (typically in OnEnteredWorld())
+       * @see AddInvokable()
        */
       virtual void BuildInvokables();
 
@@ -163,38 +170,39 @@ namespace dtGame
       virtual void BuildActorComponents();
 
       /**
-       * Adds a new invokable to the this proxy's list of invokables.
-       * @param the new invokable to add.
+       * Adds a new Invokable to the this proxy's list of Invokables.
+       * @param newInvokable The new invokable to add.
        * @note
        *      Invokables must have unique names, therefore, if one
        *      is added that who's name collides with another, the invokable
        *      is not added and an error message is logged.
+       * @see RemoveInvokable()
        */
       void AddInvokable(Invokable& newInvokable);
 
       /**
-       * Remove this invokable from the proxy's list
+       * Remove this Invokable from the proxy's list
        */
       void RemoveInvokable(const std::string& name);
 
       /**
-       * Remove this invokable from the proxy's list
+       * Remove this Invokable from the proxy's list
        */
       void RemoveInvokable(Invokable*);
 
       /**
-       * @return the invokable with the given name or NULL if it doesn't have one with that name.
+       * @return the Invokable with the given name or NULL if it doesn't have one with that name.
        */
       Invokable* GetInvokable(const std::string& name);
 
       /**
-       * Gets a list of the invokables currently registered for this
+       * Gets a list of the Invokables currently registered for this
        * Game actor proxy.
        */
       void GetInvokables(std::vector<Invokable*>& toFill);
 
       /**
-       * Gets a const list of the invokables currently registered for this
+       * Gets a const list of the Invokable currently registered for this
        * Game actor proxy.
        */
       void GetInvokables(std::vector<const Invokable*>& toFill) const;
@@ -386,9 +394,8 @@ namespace dtGame
                const std::string& invokableName = PROCESS_MSG_INVOKABLE);
 
       /**
-       * Returns true if the actor has been added to the
-       * Game Manager yet or if not.
-       * then is set to true upon being added to the GM
+       * @return True if this GameActorProxy has been added to the GameManager yet,
+       * false otherwise.
        */
       bool IsInGM() const;
 
@@ -486,7 +493,9 @@ namespace dtGame
       virtual ~GameActorProxy();
 
       /**
-       * Called when an actor is first placed in the "world"
+       * Called when an actor is first placed in the "world". This is a good place
+       * to register Invokables with MessageTypes.
+       * @see RegisterForMessages()
        */
       virtual void OnEnteredWorld() { }
 

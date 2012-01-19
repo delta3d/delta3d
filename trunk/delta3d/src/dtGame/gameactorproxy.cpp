@@ -701,8 +701,8 @@ void GameActorProxy::RegisterForMessages(const MessageType& type, const std::str
    else
    {
       std::ostringstream oss;
-      oss << "Could not register the messagetype: " << type.GetName() << " with the invokable: " <<
-         invokableName << " because the actor is not in the Game Manager yet.";
+      oss << "Could not register the messagetype: '" << type.GetName() << "' with the invokable: '" <<
+         invokableName << "' because the Actor is not in the Game Manager yet.";
       mLogger.LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, oss.str());
    }
 }
