@@ -49,7 +49,7 @@ typedef osgViewer::GraphicsWindowX11::WindowData WindowData;
    #define  BIT(a)   (1<<a)
 #endif
 
-///@cond
+///@cond IGNORE
 namespace osgViewer
 {
    class CompositeViewer;

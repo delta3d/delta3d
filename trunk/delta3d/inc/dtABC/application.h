@@ -31,7 +31,7 @@
 #include <string>
 #include <map>
 
-///@cond
+///@cond IGNORE
 namespace osgViewer
 {
    class CompositeViewer;

@@ -29,7 +29,7 @@
 
 class CalHardwareModel;
 
- /// @cond
+ /// @cond IGNORE
 namespace osg
 {
    class Program;

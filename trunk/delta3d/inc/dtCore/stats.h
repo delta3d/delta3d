@@ -40,7 +40,7 @@
 #include <osgText/Text>
 #include <osg/Switch>
 
-/// @cond
+/// @cond IGNORE
 namespace osg
 {
    class Geometry;
