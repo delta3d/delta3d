@@ -47,6 +47,10 @@ namespace dtGame
 
    typedef TickMessage SystemMessage;
 
+   /**
+     * Used by the GameManager to indicate a timer has triggered.
+     * @see GameManager::SetTimer()
+     */
    DT_DECLARE_MESSAGE_BEGIN(TimerElapsedMessage, Message, DT_GAME_EXPORT)
       /// The name of the timer that elapsed
       DECLARE_PARAMETER_INLINE(std::string, TimerName)

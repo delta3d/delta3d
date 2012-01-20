@@ -6,7 +6,7 @@
 #include <osg/Array>
 #include <osg/Geode>
 
-///@cond
+///@cond IGNORE
 namespace osg
 {
    class Geometry;

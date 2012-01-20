@@ -474,7 +474,7 @@ namespace dtGame
       /**
        * Removes an actor or game actor from the game manager.
        * Game actors are not actually removed until the end of the current frame so that
-       * messages can propogate.  Regular actor proxies are removed immediately.
+       * messages can propagate.  Regular actor proxies are removed immediately.
        * An INFO_ACTOR_DELETE message is only sent if it's a game actor and is local.
        * @param The actor to remove
        */
@@ -771,15 +771,18 @@ namespace dtGame
 
 
       /**
-       * Sets a timer on the game mananger.  It will send out a timer message when it expires.
+       * Sets a timer on the GameManager.  It will send out a TimerElapsedMessage 
+       * of type MessageType::INFO_TIMER_ELAPSED when it expires.
        * @param name The name of the timer
-       * @param aboutActor the actor to put in the about field of the message.  If this
+       * @param aboutActor the actor to put in the "about" field of the message.  If this
        *    is NULL, the timer is a "global" timer in that it is not bound to any
        *    particular actor.  This is generally only useful if components need to use the
        *    timer functionality of the game manager.
        * @param time The time of the timer in seconds.
-       * @param repeat True to repeat the timer, false if once only
+       * @param repeat True to repeat the timer every time seconds; false to 
+       *               fire the timer only once.
        * @param realTime True if this time should use real time, or false if it should use simulation time.
+       * @see ClearTimer()
        */
       void SetTimer(const std::string& name, const GameActorProxy* aboutActor, float time,
                bool repeat = false, bool realTime = false);
@@ -789,6 +792,7 @@ namespace dtGame
        * @param name the name of the timer to remove.
        * @param proxy The proxy this timer is associated with or NULL if the timer
        *    was registered as a "global" timer.
+       * @see SetTimer()
        */
       void ClearTimer(const std::string& name, const GameActorProxy* proxy);
 
