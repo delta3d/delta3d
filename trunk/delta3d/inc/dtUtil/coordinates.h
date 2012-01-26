@@ -23,7 +23,7 @@
 
 // coordinates.h: Declaration of the coordinates class.
 //
-//////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 
 #include <map>
 #include <set>
@@ -47,8 +47,8 @@ namespace dtUtil
 
    const double METERS_PER_DEGREE = 1852.0*60; /* The number of meters per longitude degree on the equator */
 
-   const double MIN_LAT = ( (-80.5 * osg::PI) / 180.0 ); /* -80.5 degrees in radians    */
-   const double MAX_LAT = ( (84.5 * osg::PI) / 180.0 );  /* 84.5 degrees in radians     */
+   const double MIN_LAT = ((-80.5 * osg::PI) / 180.0); /* -80.5 degrees in radians    */
+   const double MAX_LAT = ((84.5 * osg::PI) / 180.0);  /* 84.5 degrees in radians     */
    const double MIN_EASTING = 100000;
    const double MAX_EASTING = 900000;
    const double MIN_NORTHING = 0;
@@ -195,7 +195,7 @@ namespace dtUtil
    class CoordinateConversionInvalidInput : public dtUtil::Exception
    {
    public:
-   	CoordinateConversionInvalidInput(const std::string& message, const std::string& filename, unsigned int linenum);
+      CoordinateConversionInvalidInput(const std::string& message, const std::string& filename, unsigned int linenum);
       virtual ~CoordinateConversionInvalidInput() {};
    };
 

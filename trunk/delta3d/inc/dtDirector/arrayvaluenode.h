@@ -177,7 +177,7 @@ namespace dtDirector
 
 
       /**
-       *	Protected Destructor.  dtCore::RefPtr will handle its destruction.
+       *    Protected Destructor.  dtCore::RefPtr will handle its destruction.
        */
       virtual ~ArrayValueNode();
 

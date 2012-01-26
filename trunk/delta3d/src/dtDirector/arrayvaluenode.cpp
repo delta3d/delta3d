@@ -48,6 +48,9 @@ namespace dtDirector
    void ArrayValueNode::Init(const NodeType& nodeType, DirectorGraph* graph)
    {
       Node::Init(nodeType, graph);
+
+      // Creating default values will erroneously set hasInitialValue to true so we undo it here.
+      mHasInitialValue = false;
    }
 
    ////////////////////////////////////////////////////////////////////////////////

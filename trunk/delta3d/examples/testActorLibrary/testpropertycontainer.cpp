@@ -18,7 +18,7 @@
  *
  * This software was developed by Alion Science and Technology Corporation under
  * circumstances in which the U. S. Government may have rights in the software.
- * 
+ *
  * David Guthrie
  */
 
@@ -27,7 +27,7 @@
 
 /////////////////////////////////////////////////////
 TestPropertyContainer::TestPropertyContainer()
-: mTestFloat(3.7)
+: mTestFloat(3.7f)
 , mTestBool(true)
 , mTestDouble(46.22)
 , mTestInt(6)
