@@ -298,6 +298,9 @@ void StringUtilTests::TestToType()
       int iVal = dtUtil::ToType<int>("46");
       CPPUNIT_ASSERT_EQUAL(46, iVal);
 
+      iVal = dtUtil::ToType<int>("");
+      CPPUNIT_ASSERT_EQUAL(0, iVal);
+
       unsigned int uiVal = dtUtil::ToType<unsigned int>("49");
       CPPUNIT_ASSERT_EQUAL(49U, uiVal);
 
