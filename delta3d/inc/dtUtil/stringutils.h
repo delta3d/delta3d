@@ -288,7 +288,7 @@ namespace dtUtil
    template<typename T>
    T ToType(const std::string& u)
    {
-      T result;
+      T result = T();
       std::istringstream is;
       is.str(u);
       is >> result;
