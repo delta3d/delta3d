@@ -1,6 +1,6 @@
 /*
  * Delta3D Open Source Game and Simulation Engine
- * Copyright (C) 2008, Alion Science and Technology
+ * Copyright (C) 2008-2012, Alion Science and Technology
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -25,19 +25,36 @@
 
 namespace dtUtil
 {
-   /// Interface for having configuration properties. 
+   /** 
+     * Pure virtual interface used to get and set name/value pairs of data,
+     * typically used for configuration settings. Derive and provide an implementation
+     * for the methods. Store the name/value pairs in a container for later lookup.
+     */
    class ConfigProperties
    {
       public:
-         /// @return a string value that is paired with the given name.  The default is returned if the property is not set.
+         /** 
+           * Get the value corresponding to the supplied name. If the name isn't
+           * found, the defaultValue should be returned.
+           * @return a string value that is paired with the given name.
+           * @param name The name of the configuration to find the value for
+           * @param defaultValue If name isn't found, this value should be returned
+           */
          virtual const std::string& GetConfigPropertyValue(const std::string& name, const std::string& defaultValue = "") const = 0;
 
-         /// Sets the value of a given config property.
+         /** 
+           * Sets the value of a given config property.
+           * @param name The name of the configuration to set the value on
+           * @param value The value to assign to the configuration
+           */
          virtual void SetConfigPropertyValue(const std::string& name, const std::string& value) = 0;
 
-         /// Removes a property with the given name
+         /** 
+           * Removes the configuration with the given name.
+           * @param name The name of the configuration to use. If not found, nothing
+           * should happen.
+           */
          virtual void RemoveConfigPropertyValue(const std::string& name) = 0;
-
    };
 }
 
