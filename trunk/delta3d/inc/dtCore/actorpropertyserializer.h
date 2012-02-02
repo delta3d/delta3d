@@ -45,6 +45,7 @@ namespace dtCore
    class MapContentHandler;
    class ArrayActorPropertyBase;
    class ContainerActorProperty;
+   class ContainerSelectorActorProperty;
    class BasePropertyContainerActorProperty;
 
    struct SerializerRuntimeData
@@ -198,7 +199,12 @@ namespace dtCore
       /**
        * Writes a container actor property.
        */
-      void WriteContainer(const ContainerActorProperty& arrayProp, char* numberConversionBuffer, size_t bufferMax);
+      void WriteContainer(const ContainerActorProperty& containerProp, char* numberConversionBuffer, size_t bufferMax);
+
+      /**
+       *	Writes a container selector actor property.
+       */
+      void WriteContainerSelector(const ContainerSelectorActorProperty& containerProp, char* numberConversionBuffer, size_t bufferMax);
 
       /**
        * Writes a single property container.
@@ -249,7 +255,10 @@ namespace dtCore
       void ParseArray(BaseXMLHandler::xmlCharString& topEl, std::string& dataValue, ArrayActorPropertyBase* arrayProp);
 
       //parses the data for a container property.
-      void ParseContainer(BaseXMLHandler::xmlCharString& topEl, std::string& dataValue, ContainerActorProperty* arrayProp);
+      void ParseContainer(BaseXMLHandler::xmlCharString& topEl, std::string& dataValue, ContainerActorProperty* containerProp);
+
+      //parses the data for a container selector property.
+      void ParseContainerSelector(BaseXMLHandler::xmlCharString& topEl, std::string& dataValue, ContainerSelectorActorProperty* containerProp);
 
       //decides on a property's datatype base on the name of the element.
       DataType* ParsePropertyType(const XMLCh* const localname, bool errorIfNotFound = true);

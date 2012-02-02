@@ -30,6 +30,7 @@
 #include <dtCore/namedarrayparameter.h>
 #include <dtCore/namedbooleanparameter.h>
 #include <dtCore/namedcontainerparameter.h>
+#include <dtCore/namedcontainerselectorparameter.h>
 #include <dtCore/nameddoubleparameter.h>
 #include <dtCore/namedenumparameter.h>
 #include <dtCore/namedfloatparameter.h>
@@ -232,6 +233,9 @@ namespace dtCore
          break;
       case dtCore::DataType::CONTAINER_ID:
          param = new NamedContainerParameter(name);
+         break;
+      case dtCore::DataType::CONTAINER_SELECTOR_ID:
+         param = new NamedContainerSelectorParameter(name);
          break;
       case dtCore::DataType::STATICMESH_ID:
       case dtCore::DataType::TEXTURE_ID:

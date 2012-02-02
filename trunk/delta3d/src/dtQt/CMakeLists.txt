@@ -24,6 +24,7 @@ dynamicbyteelementcontrol.cpp
 dynamiccolorrgbacontrol.cpp
 dynamiccolorelementcontrol.cpp
 dynamiccontainercontrol.cpp
+dynamiccontainerselectorcontrol.cpp
 dynamicdoublecontrol.cpp
 dynamicenumcontrol.cpp
 dynamicfloatcontrol.cpp
