@@ -814,7 +814,7 @@ namespace dtCore
       dtCore::PropertyContainer* propCon = containerProp.GetContainer();
       if (propCon != NULL)
       {
-         std::vector<const dtCore::ActorProperty*> properties;
+         std::vector<dtCore::ActorProperty*> properties;
          propCon->GetPropertyList(properties);
 
          dtCore::SerializerRuntimeData data;
@@ -822,12 +822,14 @@ namespace dtCore
          data.mPropertyContainer = propCon;
          mData.push(data);
 
-         std::vector<const dtCore::ActorProperty*>::const_iterator i, iend;
+         std::vector<dtCore::ActorProperty*>::const_iterator i, iend;
          i = properties.begin();
          iend = properties.end();
          // Save out the data for each index.
          for (; i != iend; ++i)
          {
+            data.mActorProperty = *i;
+            data.mActorPropertyType = &(*i)->GetDataType();
             // Write the data for the current property.
             WriteProperty(**i);
          }
@@ -1825,8 +1827,17 @@ namespace dtCore
                ActorProperty* prop = propList[index];
                if (prop)
                {
+                  dtCore::SerializerRuntimeData data;
+                  data = Top();
+                  data.mPropertyContainer = propCon;
+                  data.mActorProperty = prop;
+                  data.mActorPropertyType = &prop->GetDataType();
+                  mData.push(data);
+
                   DataType* propType = &prop->GetDataType();
                   ParsePropertyData(topEl, dataValue, propType, prop);
+
+                  mData.pop();
                }
             }
          }
@@ -2075,6 +2086,25 @@ namespace dtCore
                if (contActorProp)
                {
                   prop = contActorProp->GetCurrentProperty();
+               }
+               else
+               {
+                  ContainerSelectorActorProperty* contSelActorProp = dynamic_cast<ContainerSelectorActorProperty*>(prop);
+                  if (contSelActorProp)
+                  {
+                     int propIndex = contSelActorProp->GetCurrentPropertyIndex();
+                     dtCore::PropertyContainer* propCon = contSelActorProp->GetContainer();
+                     if (propCon)
+                     {
+                        std::vector<dtCore::ActorProperty*> propList;
+                        propCon->GetPropertyList(propList);
+
+                        if (propIndex > -1 && propIndex < (int)propList.size())
+                        {
+                           prop = propList[propIndex];
+                        }
+                     }
+                  }
                }
             }
             break;
