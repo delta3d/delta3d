@@ -33,6 +33,7 @@
 #include <dtCore/arrayactorpropertybase.h>
 #include <dtCore/colorrgbaactorproperty.h>
 #include <dtCore/containeractorproperty.h>
+#include <dtCore/containerselectoractorproperty.h>
 #include <dtCore/propertycontaineractorproperty.h>
 #include <dtCore/datatype.h>
 
@@ -232,6 +233,11 @@ namespace dtCore
             WriteContainer(static_cast<const ContainerActorProperty&>(property), numberConversionBuffer, bufferMax);
             break;
          }
+      case DataType::CONTAINER_SELECTOR_ID:
+         {
+            WriteContainerSelector(static_cast<const ContainerSelectorActorProperty&>(property), numberConversionBuffer, bufferMax);
+            break;
+         }
       case DataType::PROPERTY_CONTAINER_ID:
          {
             WritePropertyContainer(static_cast<const BasePropertyContainerActorProperty&>(property));
@@ -317,8 +323,8 @@ namespace dtCore
             {
                data.mNestedTypes.push_back(NEST_ARRAY);
             }
-            else if (XMLString::compareString(localname,
-               MapXMLConstants::ACTOR_PROPERTY_CONTAINER_ELEMENT) == 0)
+            else if (XMLString::compareString(localname, MapXMLConstants::ACTOR_PROPERTY_CONTAINER_ELEMENT) == 0 ||
+               XMLString::compareString(localname, MapXMLConstants::ACTOR_PROPERTY_CONTAINER_SELECTOR_ELEMENT) == 0)
             {
                data.mNestedTypes.push_back(NEST_CONTAINER);
             }
@@ -376,7 +382,8 @@ namespace dtCore
          }
          return true;
       }
-      else if (XMLString::compareString(localname, MapXMLConstants::ACTOR_PROPERTY_CONTAINER_ELEMENT) == 0)
+      else if (XMLString::compareString(localname, MapXMLConstants::ACTOR_PROPERTY_CONTAINER_ELEMENT) == 0 ||
+         XMLString::compareString(localname, MapXMLConstants::ACTOR_PROPERTY_CONTAINER_SELECTOR_ELEMENT) == 0)
       {
          if (!data.mNestedTypes.empty())
          {
@@ -675,6 +682,12 @@ namespace dtCore
             // TODO CONTAINER: Save a container that was part of a group.
             break;
          }
+         case DataType::CONTAINER_SELECTOR_ID:
+         {
+            //mWriter->BeginElement(MapXMLConstants::ACTOR_PROPERTY_CONTAINER_SELECTOR_ELEMENT);
+            // TODO CONTAINER SELECTOR: Save a container selector that was part of a group.
+            break;
+         }
          default:
          {
             if (dataType.IsResource())
@@ -773,17 +786,54 @@ namespace dtCore
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void ActorPropertySerializer::WriteContainer(const ContainerActorProperty& arrayProp, char* numberConversionBuffer, size_t bufferMax)
+   void ActorPropertySerializer::WriteContainer(const ContainerActorProperty& containerProp, char* numberConversionBuffer, size_t bufferMax)
    {
       mWriter->BeginElement(MapXMLConstants::ACTOR_PROPERTY_CONTAINER_ELEMENT);
 
       // Save out the data for each index.
-      for (int index = 0; index < arrayProp.GetPropertyCount(); index++)
+      for (int index = 0; index < containerProp.GetPropertyCount(); index++)
       {
          // Write the data for the current property.
-         WriteProperty(*arrayProp.GetProperty(index));
+         WriteProperty(*containerProp.GetProperty(index));
       }
 
+      mWriter->EndElement();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void ActorPropertySerializer::WriteContainerSelector(const ContainerSelectorActorProperty& containerProp, char* numberConversionBuffer, size_t bufferMax)
+   {
+      mWriter->BeginElement(MapXMLConstants::ACTOR_PROPERTY_CONTAINER_SELECTOR_ELEMENT);
+
+      // Save out the container type name.
+      mWriter->BeginElement(MapXMLConstants::ACTOR_TYPE_ELEMENT);
+      mWriter->AddCharacters(containerProp.GetValue());
+      mWriter->EndElement();
+
+      // Save out each property contained within the selected container.
+      dtCore::PropertyContainer* propCon = containerProp.GetContainer();
+      if (propCon != NULL)
+      {
+         std::vector<const dtCore::ActorProperty*> properties;
+         propCon->GetPropertyList(properties);
+
+         dtCore::SerializerRuntimeData data;
+         data = Top();
+         data.mPropertyContainer = propCon;
+         mData.push(data);
+
+         std::vector<const dtCore::ActorProperty*>::const_iterator i, iend;
+         i = properties.begin();
+         iend = properties.end();
+         // Save out the data for each index.
+         for (; i != iend; ++i)
+         {
+            // Write the data for the current property.
+            WriteProperty(**i);
+         }
+
+         mData.pop();
+      }
       mWriter->EndElement();
    }
 
@@ -1214,6 +1264,12 @@ namespace dtCore
             ParseContainer(topEl, dataValue, containerProp);
             break;
          }
+      case DataType::CONTAINER_SELECTOR_ID:
+         {
+            ContainerSelectorActorProperty* containerProp = static_cast<ContainerSelectorActorProperty*>(actorProperty);
+            ParseContainerSelector(topEl, dataValue, containerProp);
+            break;
+         }
       default:
          {
             if (dataType->IsResource())
@@ -1633,6 +1689,7 @@ namespace dtCore
       else if (topEl == MapXMLConstants::ACTOR_ARRAY_ELEMENT ||
          topEl == MapXMLConstants::ACTOR_PROPERTY_ARRAY_ELEMENT ||
          topEl == MapXMLConstants::ACTOR_PROPERTY_CONTAINER_ELEMENT ||
+         topEl == MapXMLConstants::ACTOR_PROPERTY_CONTAINER_SELECTOR_ELEMENT ||
          topEl == MapXMLConstants::ACTOR_PROPERTY_ELEMENT)
       {
       }
@@ -1647,7 +1704,8 @@ namespace dtCore
             // If the element is the name of the property, we only care
             // about it if we are parsing container elements.
             if (topEl != MapXMLConstants::ACTOR_PROPERTY_NAME_ELEMENT ||
-               (propType == &DataType::ARRAY || propType == &DataType::CONTAINER))
+               (propType == &DataType::ARRAY || propType == &DataType::CONTAINER ||
+               propType == &DataType::CONTAINER_SELECTOR))
             {
                ParsePropertyData(topEl, dataValue, propType, prop);
             }
@@ -1677,6 +1735,7 @@ namespace dtCore
       if (topEl == MapXMLConstants::ACTOR_ARRAY_ELEMENT ||
          topEl == MapXMLConstants::ACTOR_PROPERTY_ARRAY_ELEMENT ||
          topEl == MapXMLConstants::ACTOR_PROPERTY_CONTAINER_ELEMENT ||
+         topEl == MapXMLConstants::ACTOR_PROPERTY_CONTAINER_SELECTOR_ELEMENT ||
          topEl == MapXMLConstants::ACTOR_PROPERTY_ELEMENT)
       {
       }
@@ -1705,6 +1764,71 @@ namespace dtCore
          {
             DataType* propType = &prop->GetDataType();
             ParsePropertyData(topEl, dataValue, propType, prop);
+         }
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void ActorPropertySerializer::ParseContainerSelector(BaseXMLHandler::xmlCharString& topEl, std::string& dataValue, ContainerSelectorActorProperty* containerProp)
+   {
+      if (mData.empty())
+      {
+         LOG_ERROR("Data stack is empty.");
+         return;
+      }
+
+      // Skipped elements.
+      if (topEl == MapXMLConstants::ACTOR_ARRAY_ELEMENT ||
+         topEl == MapXMLConstants::ACTOR_PROPERTY_ARRAY_ELEMENT ||
+         topEl == MapXMLConstants::ACTOR_PROPERTY_CONTAINER_ELEMENT ||
+         topEl == MapXMLConstants::ACTOR_PROPERTY_CONTAINER_SELECTOR_ELEMENT ||
+         topEl == MapXMLConstants::ACTOR_PROPERTY_ELEMENT)
+      {
+      }
+      // The container type name.
+      else if (topEl == MapXMLConstants::ACTOR_TYPE_ELEMENT)
+      {
+         containerProp->SetValue(dataValue);
+      }
+      else if (topEl == MapXMLConstants::ACTOR_PROPERTY_NAME_ELEMENT)
+      {
+         // Find the property in the container with the given name.
+         dtCore::PropertyContainer* propCon = containerProp->GetContainer();
+         if (propCon)
+         {
+            std::vector<const dtCore::ActorProperty*> propList;
+            propCon->GetPropertyList(propList);
+            int count = (int)propList.size();
+            for (int index = 0; index < count; ++index)
+            {
+               if (propList[index]->GetName() == dataValue)
+               {
+                  containerProp->SetCurrentPropertyIndex(index);
+                  break;
+               }
+            }
+         }
+      }
+      // Unrecognized elements are checked with the contained property type
+      else
+      {
+         int index = containerProp->GetCurrentPropertyIndex();
+         dtCore::PropertyContainer* propCon = containerProp->GetContainer();
+
+         if (index > -1 && propCon)
+         {
+            std::vector<dtCore::ActorProperty*> propList;
+            propCon->GetPropertyList(propList);
+
+            if (index < (int)propList.size())
+            {
+               ActorProperty* prop = propList[index];
+               if (prop)
+               {
+                  DataType* propType = &prop->GetDataType();
+                  ParsePropertyData(topEl, dataValue, propType, prop);
+               }
+            }
          }
       }
    }
@@ -1796,6 +1920,11 @@ namespace dtCore
          MapXMLConstants::ACTOR_PROPERTY_CONTAINER_ELEMENT) == 0)
       {
          return &DataType::CONTAINER;
+      }
+      else if (XMLString::compareString(localname,
+         MapXMLConstants::ACTOR_PROPERTY_CONTAINER_SELECTOR_ELEMENT) == 0)
+      {
+         return &DataType::CONTAINER_SELECTOR;
       }
       else if (XMLString::compareString(localname,
          MapXMLConstants::ACTOR_PROPERTY_PROPERTY_CONTAINER_ELEMENT) == 0)

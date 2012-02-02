@@ -43,7 +43,7 @@ namespace dtCore
             VEC4_ID, VEC3_ID, VEC2_ID, VEC4F_ID, VEC3F_ID, VEC2F_ID, VEC4D_ID, VEC3D_ID, VEC2D_ID,
             RGBCOLOR_ID, RGBACOLOR_ID, GROUP_ID, ACTOR_ID, ENUMERATION_ID, GAMEEVENT_ID,
             STATICMESH_ID, TEXTURE_ID, TERRAIN_ID, SOUND_ID, PARTICLESYSTEM_ID,
-            SKELETAL_MESH_ID, ARRAY_ID, CONTAINER_ID, PROPERTY_CONTAINER_ID, PREFAB_ID,
+            SKELETAL_MESH_ID, ARRAY_ID, CONTAINER_ID, CONTAINER_SELECTOR_ID, PROPERTY_CONTAINER_ID, PREFAB_ID,
             SHADER_ID, DIRECTOR_ID, BIT_MASK_ID
          };
 
@@ -186,6 +186,11 @@ namespace dtCore
          static DataType CONTAINER;
 
          /**
+          *	A Container selector.
+          */
+         static DataType CONTAINER_SELECTOR;
+
+         /**
           * A list of property containers
           */
          static DataType PROPERTY_CONTAINER;
@@ -241,7 +246,7 @@ namespace dtCore
          */
          static DataType PREFAB;
 
-         /** 
+         /**
           *  A pixel shader definition
           */
          static DataType SHADER;

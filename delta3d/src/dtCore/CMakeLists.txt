@@ -60,6 +60,7 @@ SET(LIB_PUBLIC_HEADERS
                 ${HEADER_PATH}/colorrgbaactorproperty.h
                 ${HEADER_PATH}/compass.h
                 ${HEADER_PATH}/containeractorproperty.h
+                ${HEADER_PATH}/containerselectoractorproperty.h
                 ${HEADER_PATH}/databasepager.h
                 ${HEADER_PATH}/datatype.h
                 ${HEADER_PATH}/defaultpropertymanager.h
@@ -121,6 +122,7 @@ SET(LIB_PUBLIC_HEADERS
                 ${HEADER_PATH}/namedbitmaskparameter.h
                 ${HEADER_PATH}/namedbooleanparameter.h
                 ${HEADER_PATH}/namedcontainerparameter.h
+                ${HEADER_PATH}/namedcontainerselectorparameter.h
                 ${HEADER_PATH}/nameddoubleparameter.h
                 ${HEADER_PATH}/namedenumparameter.h
                 ${HEADER_PATH}/namedfloatparameter.h
@@ -252,6 +254,7 @@ SET(LIB_SOURCES
                 ${SOURCE_PATH}/colorrgbaactorproperty.cpp
                 ${SOURCE_PATH}/compass.cpp
                 ${SOURCE_PATH}/containeractorproperty.cpp
+                ${SOURCE_PATH}/containerselectoractorproperty.cpp
                 ${SOURCE_PATH}/databasepager.cpp
                 ${SOURCE_PATH}/datatype.cpp
                 ${SOURCE_PATH}/defaultpropertymanager.cpp
@@ -309,6 +312,7 @@ SET(LIB_SOURCES
                 ${SOURCE_PATH}/namedbitmaskparameter.cpp
                 ${SOURCE_PATH}/namedbooleanparameter.cpp
                 ${SOURCE_PATH}/namedcontainerparameter.cpp
+                ${SOURCE_PATH}/namedcontainerselectorparameter.cpp
                 ${SOURCE_PATH}/nameddoubleparameter.cpp
                 ${SOURCE_PATH}/namedenumparameter.cpp
                 ${SOURCE_PATH}/namedfloatparameter.cpp

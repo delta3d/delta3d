@@ -40,6 +40,7 @@
 #include <dtQt/dynamicboolcontrol.h>
 #include <dtQt/dynamiccolorrgbacontrol.h>
 #include <dtQt/dynamiccontainercontrol.h>
+#include <dtQt/dynamiccontainerselectorcontrol.h>
 #include <dtQt/dynamicdoublecontrol.h>
 #include <dtQt/dynamicenumcontrol.h>
 #include <dtQt/dynamicfloatcontrol.h>
@@ -91,6 +92,7 @@ namespace dtQt
       RegisterControlForDataType<DynamicColorRGBAControl>(dtCore::DataType::RGBACOLOR);
       RegisterControlForDataType<DynamicArrayControl>(dtCore::DataType::ARRAY);
       RegisterControlForDataType<DynamicContainerControl>(dtCore::DataType::CONTAINER);
+      RegisterControlForDataType<DynamicContainerSelectorControl>(dtCore::DataType::CONTAINER_SELECTOR);
       RegisterControlForDataType<DynamicPropertyContainerControl>(dtCore::DataType::PROPERTY_CONTAINER);
       RegisterControlForDataType<DynamicActorControl>(dtCore::DataType::ACTOR);
       RegisterControlForDataType<DynamicGameEventControl>(dtCore::DataType::GAME_EVENT);

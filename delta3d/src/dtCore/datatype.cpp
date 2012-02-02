@@ -22,7 +22,7 @@
 #include <prefix/dtcoreprefix.h>
 #include <dtCore/datatype.h>
 
-namespace dtCore 
+namespace dtCore
 {
    IMPLEMENT_ENUM(DataType);
    //////////////////////////////////////
@@ -85,6 +85,7 @@ namespace dtCore
    DataType DataType::GROUP("GROUP", "Group", false, GROUP_ID);
    DataType DataType::ARRAY("ARRAY", "Array", false, ARRAY_ID);
    DataType DataType::CONTAINER("CONTAINER", "Container", false, CONTAINER_ID);
+   DataType DataType::CONTAINER_SELECTOR("CONTAINER_SELECTOR", "Container Selector", false, CONTAINER_SELECTOR_ID);
    DataType DataType::PROPERTY_CONTAINER("PROPERTY_CONTAINER", "Property Container", false, PROPERTY_CONTAINER_ID);
    DataType DataType::ACTOR("ACTOR", "Actor", false, ACTOR_ID);
 
