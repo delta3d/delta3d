@@ -32,7 +32,7 @@ JobXML::JobXML() : JobSGML(), mDocument(NULL), mDOMImplementor(NULL)
 }
 
 JobXML::~JobXML()
-{ 
+{
 }
 
 void JobXML::Execute( PackageProfile *profile )
@@ -69,11 +69,11 @@ XMLNode *JobXML::CreateDocument( std::string rootName )
       return NULL;
    }
    catch (...)
-   {      
+   {
       std::cout << "[Error] Creating XML document!" << std::endl;
       return NULL;
    }
-   
+
    return mDocument->getDocumentElement();
 }
 
@@ -86,8 +86,8 @@ void JobXML::SaveToFile(std::string strFile)
 {
    // error check filename
    if (strFile.empty())
-   {      
-      std::cout << "[Error] Filename: '" << strFile << "' is not valid." << std::endl; 
+   {
+      std::cout << "[Error] Filename: '" << strFile << "' is not valid." << std::endl;
       return;
    }
 
@@ -118,7 +118,7 @@ void JobXML::SaveToFile(std::string strFile)
       return;
    }
    catch (...)
-   {      
+   {
       std::cout << "[Error] Creating XML document!" << std::endl;
       return;
    }
@@ -188,7 +188,7 @@ void JobXML::SaveToFile(std::string strFile)
    {
       writer = mDOMImplementor->createDOMWriter();
       if ( writer == NULL ) return;
-   }   
+   }
    catch ( const OutOfMemoryException &e )
    {
       char* message = XMLString::transcode( e.getMessage() );
@@ -204,7 +204,7 @@ void JobXML::SaveToFile(std::string strFile)
       return;
    }
    catch (...)
-   {      
+   {
       std::cout << "[Error] Creating XML document!" << std::endl;
       return;
    }
@@ -237,8 +237,9 @@ void JobXML::SaveToFile(std::string strFile)
 
 
    // do it
-   XMLCh *filename = XMLString::transcode( strFile.c_str() );   
-   writer->writeNode( &LocalFileFormatTarget( filename ), (*mDocument) );
+   XMLCh *filename = XMLString::transcode( strFile.c_str() );
+   LocalFileFormatTarget localFileFormatTarget( filename );
+   writer->writeNode( &localFileFormatTarget, (*mDocument) );
    XMLString::release( &filename );
 
    // cleanup
@@ -253,11 +254,11 @@ XMLNode *JobXML::AddElement( XMLNode *parent, std::string element, std::string c
    if ( parent == NULL ) return NULL;
 
    // create element
-   XMLCh *elementName = XMLString::transcode( element.c_str() );   
+   XMLCh *elementName = XMLString::transcode( element.c_str() );
    DOMElement *elementNode = mDocument->createElement( elementName );
    XMLString::release( &elementName );
    if ( elementNode == NULL )
-   {     
+   {
       std::cout << "[Error] Creating element: " << element << "." << std::endl;
       return NULL;
    }
@@ -274,7 +275,7 @@ XMLNode *JobXML::AddElement( XMLNode *parent, std::string element, std::string c
       if ( textNode == NULL )
       {
          std::cout << "[Error] Creating content: " << content
-            << " for element: " << element << "." << std::endl;         
+            << " for element: " << element << "." << std::endl;
       }
       else
       {
@@ -308,7 +309,7 @@ void JobXML::AddComment( XMLNode *parent, std::string comment )
    DOMComment *commentNode = mDocument->createComment( commentStr );
    XMLString::release( &commentStr );
    if ( commentNode == NULL )
-   {     
+   {
       std::cout << "[Warning] Creating comment: " << comment << "." << std::endl;
       return;
    }
@@ -324,7 +325,7 @@ void JobXML::SetContent( XMLNode *element, std::string content )
    if ( content.length() == 0 ) return;
 
    // create content
-   XMLCh *contentText = XMLString::transcode( content.c_str() );   
+   XMLCh *contentText = XMLString::transcode( content.c_str() );
    DOMText *textNode = mDocument->createTextNode( contentText );
    XMLString::release( &contentText );
    if ( textNode == NULL )
@@ -332,7 +333,7 @@ void JobXML::SetContent( XMLNode *element, std::string content )
       char* name = XMLString::transcode( element->getNodeName() );
       std::cout << "[Error] Creating content: " << content
          << " for element: " << name << "." << std::endl;
-      XMLString::release( &name );      
+      XMLString::release( &name );
       return;
    }
 
@@ -396,7 +397,7 @@ XMLNode *JobXML::deepCopyElement( XMLNode **copy, const XMLNode *original )
    int childElementCount=0;
    XMLNode *itr = original->getFirstChild();
    for ( ; itr != NULL; itr = itr->getNextSibling() )
-   {      
+   {
       if ( itr->getNodeType() == XMLNode::ELEMENT_NODE )
       {
          deepCopyElement( &newElement, itr );
