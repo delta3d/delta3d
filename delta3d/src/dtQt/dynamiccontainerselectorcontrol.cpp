@@ -1,7 +1,7 @@
 /* -*-c++-*-
  * Delta3D Simulation Training And Game Editor (STAGE)
  * STAGE - This source file (.h & .cpp) - Using 'The MIT License'
- * Copyright (C) 2005-2008, Alion Science and Technology Corporation
+ * Copyright (C) 2012, MOVES Institute
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
