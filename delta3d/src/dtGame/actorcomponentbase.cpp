@@ -72,7 +72,7 @@ namespace dtGame
       component.Init();
 
       // add actor component properties to the game actor itself
-      // note - the only reason we do this is to make other parts of the system work (like STAGE). 
+      // note - the only reason we do this is to make other parts of the system work (like STAGE).
       // In the future, STAGE (et al) should use the actor components directly and we won't add them to the game actor
       // Remove the props from the game actor - This is temporary. See the note in AddComponent()
       self->GetGameActorProxy().AddActorComponentProperties(component);
@@ -101,7 +101,7 @@ namespace dtGame
          //os << "Actor component of type " << type.Get() << " not found!";
          //throw dtUtil::Exception(os.str(), __FILE__, __LINE__);
       }
-      else 
+      else
       {
          return (*iter).second.get();
       }

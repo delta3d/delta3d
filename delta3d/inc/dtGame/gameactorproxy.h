@@ -98,25 +98,25 @@ namespace dtGame
       /// Overridden to call BuildInvokables
       virtual void Init(const dtCore::ActorType& actorType);
 
-      /** 
-       * The actor component was probably removed. So, we need to remove each of the properties 
-       * from the actor component that were added to our actor. 
+      /**
+       * The actor component was probably removed. So, we need to remove each of the properties
+       * from the actor component that were added to our actor.
        *
-       * Note - this is sort of temporary code because the actor component props are 
-       * stored on both the game actor proxy AND on the actor component itself. In the future, 
+       * Note - this is sort of temporary code because the actor component props are
+       * stored on both the game actor proxy AND on the actor component itself. In the future,
        * tools like STAGE should know how to resolve this and this whole method can go away.
        */
       void RemoveActorComponentProperties(ActorComponent& component);
 
-      /** 
-       * We are probably adding this actor component. So, we need to add each of the properties 
-       * on the actor component to our proxy. 
+      /**
+       * We are probably adding this actor component. So, we need to add each of the properties
+       * on the actor component to our proxy.
        *
-       * Note - this is sort of temporary code because the actor component props are 
-       * stored on both the game actor proxy AND on the actor component itself. In the future, 
+       * Note - this is sort of temporary code because the actor component props are
+       * stored on both the game actor proxy AND on the actor component itself. In the future,
        * tools like STAGE should know how to resolve this and this whole method can go away.
        */
-      void AddActorComponentProperties(ActorComponent& component);
+      virtual void AddActorComponentProperties(ActorComponent& component);
 
       /**
        * This is a shortcut to avoid having to dynamic cast to a GameActorProxy.
@@ -221,11 +221,11 @@ namespace dtGame
        * @param propNames  the properties to include in the update message.
        * @param flagAsPartial Marks the ActorUpdateMessage as partial or not (default is true)
        */
-      virtual void NotifyPartialActorUpdate(const std::vector<dtUtil::RefString>& propNames, 
+      virtual void NotifyPartialActorUpdate(const std::vector<dtUtil::RefString>& propNames,
          bool flagAsPartial = true);
 
       /**
-       * This is like NotifyFullActorUpdate() except that your subclass might only want to 
+       * This is like NotifyFullActorUpdate() except that your subclass might only want to
        * send some properties. If you use this, you MUST override GetPartialUpdateProperties()
        * to set which properties will be sent.
        * Note - This will do nothing if the actor is Remote.
@@ -234,8 +234,8 @@ namespace dtGame
       virtual void NotifyPartialActorUpdate(bool flagAsPartial = true);
 
       /**
-       * Override this and add whatever properties you want to go out when you call 
-       * NotifyPartialActorUpdate(). Note - you should not use NotifyPartialActorUpdate() 
+       * Override this and add whatever properties you want to go out when you call
+       * NotifyPartialActorUpdate(). Note - you should not use NotifyPartialActorUpdate()
        * without overriding this - the default implementation logs a warning.
        * Note - This will do nothing if the actor is Remote.
        */
@@ -531,7 +531,7 @@ namespace dtGame
        * @param propNames Optional list of names of Properties to include in the ActorUpdateMessage.  Default
        *                  will use all existing Properties.
        */
-      void PopulateActorUpdateImpl(ActorUpdateMessage& update, 
+      void PopulateActorUpdateImpl(ActorUpdateMessage& update,
                                    const std::vector<dtUtil::RefString>& propNames = std::vector<dtUtil::RefString>());
 
       /**
