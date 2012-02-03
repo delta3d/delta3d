@@ -53,7 +53,7 @@ namespace dtCore
       SerializerRuntimeData();
 
       dtCore::ObserverPtr<PropertyContainer> mPropertyContainer;
-      dtCore::ObserverPtr<ActorProperty> mActorProperty;
+      dtCore::RefPtr<ActorProperty> mActorProperty;
       DataType* mActorPropertyType;
       DataType* mNestedPropertyType;
       DataType* mParameterTypeToCreate;
