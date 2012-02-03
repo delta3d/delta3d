@@ -464,7 +464,7 @@ void Application::SetConfigPropertyValue(const std::string& name, const std::str
    if (!mConfigProperties.insert(std::make_pair(name, value)).second)
    {
       AppConfigPropertyMap::iterator i = mConfigProperties.find(name);
-      /// "i" can't be the "end()" because the insert returned false, meaning it does have that key.
+      // "i" can't be the "end()" because the insert returned false, meaning it does have that key.
       i->second = value;
    }
 }
