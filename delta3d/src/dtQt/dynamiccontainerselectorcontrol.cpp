@@ -239,7 +239,10 @@ namespace dtQt
             }
          }
 
-         model->insertRows(0, count, model->IndexOf(this));
+         if (count > 0)
+         {
+            model->insertRows(0, count, model->IndexOf(this));
+         }
       }
    }
 
