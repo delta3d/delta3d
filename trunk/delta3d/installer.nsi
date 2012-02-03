@@ -102,6 +102,7 @@ Section "!Delta3D" Delta3DSection
   File /x *d.exe .\${DELTA_BUILD_DIR}\bin\*.exe
   File /nonfatal /x *d.dle .\.\${DELTA_BUILD_DIR}\bin\*.dle
   File /nonfatal /x *d.dlo .\.\${DELTA_BUILD_DIR}\bin\*.dlo
+  File /nonfatal .\${DELTA_BUILD_DIR}\bin\*.conf ;any .conf file (e.g., qt.conf)
   
   ;bin/stplugins   STAGE release plugins
   SetOutPath "$INSTDIR\${DELTA_BUILD_DIR}\bin\stplugins"
