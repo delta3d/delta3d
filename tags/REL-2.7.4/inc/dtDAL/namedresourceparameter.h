@@ -1,1 +1,0 @@
-#include <dtCore/namedresourceparameter.h>
