@@ -746,6 +746,14 @@ namespace dtEditQt
       settings.setValue(sideName, mViewportContainers.value(sideName)->GetCameraSpeed());
       settings.endGroup();
 
+      // Clip distance settings.
+      settings.beginGroup(EditorSettings::CLIP_DISTANCE_GROUP);
+      settings.setValue(perspName, mViewportContainers.value(perspName)->GetClipDistance());
+      settings.setValue(topName, mViewportContainers.value(topName)->GetClipDistance());
+      settings.setValue(frontName, mViewportContainers.value(frontName)->GetClipDistance());
+      settings.setValue(sideName, mViewportContainers.value(sideName)->GetClipDistance());
+      settings.endGroup();
+
       // Save our current snap settings.
       settings.beginGroup(EditorSettings::SNAP_GROUP);
       settings.setValue(EditorSettings::SNAP_TRANSLATION_ENABLED, ViewportManager::GetInstance().GetSnapTranslationEnabled());
@@ -1318,6 +1326,14 @@ namespace dtEditQt
       ReadCameraSpeed(settings, QString::fromStdString(mSideView->getName()));
       settings.endGroup();
 
+      // Clip distance settings.
+      settings.beginGroup(EditorSettings::CLIP_DISTANCE_GROUP);
+      ReadClipDistance(settings, QString::fromStdString(mPerspView->getName()));
+      ReadClipDistance(settings, QString::fromStdString(mTopView->getName()));
+      ReadClipDistance(settings, QString::fromStdString(mFrontView->getName()));
+      ReadClipDistance(settings, QString::fromStdString(mSideView->getName()));
+      settings.endGroup();
+
       // Snap settings.
       settings.beginGroup(EditorSettings::SNAP_GROUP);
 
@@ -1685,6 +1701,19 @@ namespace dtEditQt
          if (mViewportContainers.contains(viewName))
          {
             mViewportContainers.value(viewName)->SetCameraSpeed(value);
+         }
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void MainWindow::ReadClipDistance(const EditorSettings& settings, const QString& viewName) const
+   {
+      if (settings.contains(viewName))
+      {
+         int value = settings.value(viewName).toInt();
+         if (mViewportContainers.contains(viewName))
+         {
+            mViewportContainers.value(viewName)->SetClipDistance(value);
          }
       }
    }

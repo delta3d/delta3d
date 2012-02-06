@@ -56,7 +56,7 @@ namespace dtEditQt
       ICON_BRUSH_SPHERE = ":/icons/sphere.png";
       ICON_BRUSH_RESET = ":/icons/resetBrush.png";
 
-      ICON_EYE = ":/icons/eye.png";      
+      ICON_EYE = ":/icons/eye.png";
 
       ICON_TOOLMODE_NORMAL = ":/icons/normalmode.png";
 
@@ -64,6 +64,9 @@ namespace dtEditQt
       ICON_VIEWMODE_LIGHTING = ":/icons/lightingmode_tiny.png";
       ICON_VIEWMODE_WIREFRAME = ":/icons/wireframemode_tiny.png";
       ICON_VIEWMODE_TEXTURES_AND_LIGHTING = ":/icons/texturelightingmode_tiny.png";
+
+      ICON_VIEWCONTROL_CAMERA_SPEED = ":/icons/alignCameraToActor.png";
+      ICON_VIEWCONTROL_CLIP_DISTANCE = ":/icons/eye.png";
 
       ICON_TINY_FOLDER = ":/icons/folder_tiny.png";
       ICON_TINY_FOLDER_OPEN = ":/icons/folderopen_tiny.png";
@@ -137,6 +140,9 @@ namespace dtEditQt
    std::string UIResources::ICON_VIEWMODE_LIGHTING("");
    std::string UIResources::ICON_VIEWMODE_WIREFRAME("");
    std::string UIResources::ICON_VIEWMODE_TEXTURES_AND_LIGHTING("");
+
+   std::string UIResources::ICON_VIEWCONTROL_CAMERA_SPEED("");
+   std::string UIResources::ICON_VIEWCONTROL_CLIP_DISTANCE("");
 
    std::string UIResources::ICON_TINY_FOLDER("");
    std::string UIResources::ICON_TINY_FOLDER_OPEN("");

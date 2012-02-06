@@ -80,7 +80,7 @@ namespace dtEditQt
       meshScene = new dtCore::Scene();
 
       camera = new StageCamera();
-      camera->makePerspective(60.0f,1.333f,0.1f,100000.0f);
+      camera->makePerspective(60.0f,1.333f,0.01f,100000.0f);
 
       QSplitter* splitter = new QSplitter(Qt::Vertical,this);
 
@@ -104,7 +104,7 @@ namespace dtEditQt
       // This corrects the stretch for the last row
       grid->setRowStretch(1,0);
 
-      camera->makePerspective(60.0f,1.333f,0.1f,100000.0f);
+      camera->makePerspective(60.0f,1.333f,0.01f,100000.0f);
    }
 
    ///////////////////////////////////////////////////////////////////////////////

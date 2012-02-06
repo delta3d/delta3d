@@ -62,12 +62,12 @@ namespace dtEditQt
       static std::string ICON_EDIT_RESET_TRANSLATION;
       static std::string ICON_EDIT_RESET_ROTATION;
       static std::string ICON_EDIT_RESET_SCALE;
-      
+
       static std::string ICON_BRUSH_CUBE;
       static std::string ICON_BRUSH_SPHERE;
       static std::string ICON_BRUSH_RESET;
-      
-      static std::string ICON_EYE;      
+
+      static std::string ICON_EYE;
 
       static std::string ICON_TOOLMODE_NORMAL;
 
@@ -75,6 +75,9 @@ namespace dtEditQt
       static std::string ICON_VIEWMODE_LIGHTING;
       static std::string ICON_VIEWMODE_WIREFRAME;
       static std::string ICON_VIEWMODE_TEXTURES_AND_LIGHTING;
+
+      static std::string ICON_VIEWCONTROL_CAMERA_SPEED;
+      static std::string ICON_VIEWCONTROL_CLIP_DISTANCE;
 
       static std::string ICON_TINY_FOLDER;
       static std::string ICON_TINY_FOLDER_OPEN;
@@ -111,7 +114,7 @@ namespace dtEditQt
       static std::string ICON_ACTOR;
       static std::string SPLASH_SCREEN;
       static std::string ICON_APPLICATION;
-      
+
       static std::string ICON_NO_ICON;
       static std::string ICON_UP_FOLDER;
       static std::string ICON_FOLDER;

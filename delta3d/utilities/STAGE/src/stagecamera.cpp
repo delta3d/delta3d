@@ -50,6 +50,7 @@ namespace dtEditQt
    {
       resetRotation();
       setPosition(osg::Vec3(0, 0, 0));
+      mDeltaCamera->SetNearFarCullingMode(dtCore::Camera::NO_AUTO_NEAR_FAR);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -126,7 +127,7 @@ namespace dtEditQt
       mZNear                  = nearZ;
       mZFar                   = farZ;
       mProjType               = ORTHOGRAPHIC;
-      
+
       mDeltaCamera->SetOrtho(mOrthoLeft, mOrthoRight, mOrthoBottom, mOrthoTop,
                              mZNear, mZFar);
    }
@@ -139,7 +140,7 @@ namespace dtEditQt
       mZNear                  = nearZ;
       mZFar                   = farZ;
       mProjType               = PERSPECTIVE;
-      
+
       mDeltaCamera->SetPerspectiveParams(mFovY, mAspectRatio, mZNear, mZFar);
    }
 
@@ -340,7 +341,7 @@ namespace dtEditQt
          {
             dtCore::Transform xform;
             mDeltaCamera->GetTransform(xform);
-            
+
             billBoardPos = proxy->GetTranslation();
             toAttach.mActor = proxy;
             toAttach.mPositionOffset = billBoardPos - xform.GetTranslation();

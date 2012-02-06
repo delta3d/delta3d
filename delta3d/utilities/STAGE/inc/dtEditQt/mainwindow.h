@@ -404,6 +404,7 @@ namespace dtEditQt
       void SetupRecentProjects() const;
 
       void ReadCameraSpeed(const EditorSettings &settings, const QString& viewName) const;
+      void ReadClipDistance(const EditorSettings& settings, const QString& viewName) const;
 
       friend class EditorActions;
    };
