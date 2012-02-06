@@ -74,12 +74,19 @@ namespace dtEditQt
        */
       void setViewport(Viewport* viewPort);
 
-      /** 
+      /**
        * Get the current setting for the camera speed associated with this
        * ViewportContainer.
        * @return the current value of the camera speed widget
        */
       int GetCameraSpeed() const;
+
+      /**
+       *	Get the current camera speed setting associated with this viewport.
+       *
+       * @return  The current value of the clip distance widget.
+       */
+      int GetClipDistance() const;
 
    public slots:
       /**
@@ -141,10 +148,17 @@ namespace dtEditQt
        */
       void onViewportRenderStyleChanged();
 
-      /** Set the speed of the Camera in this ViewportContainer. 
+      /** Set the speed of the Camera in this ViewportContainer.
        *  @param value The value of the camera speed UI widget (not the actual camera speed)
        */
       void SetCameraSpeed(int value);
+
+      /**
+       *	Set the clipping distance of the camera for this ViewportContainer.
+       *
+       * @param[in]  The value of the clip distance in the UI widget (not the actual clip distance)
+       */
+      void SetClipDistance(int value);
 
       void OnCameraMoved(double x, double y, double z);
 
@@ -173,7 +187,10 @@ namespace dtEditQt
       QLabel*           mViewportTitle;
       QFrame*           mToolBar;
       QList<QLineEdit*> mPositionEditWidgets;
+      QLabel*           mCameraSpeedLabel;
       QSlider*          mCameraSpeedSlider;
+      QLabel*           mClipDistanceLabel;
+      QSlider*          mClipDistanceSlider;
 
       QActionGroup* mRenderStyleActionGroup;
 

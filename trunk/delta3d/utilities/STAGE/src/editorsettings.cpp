@@ -74,6 +74,7 @@ namespace dtEditQt
    const QString EditorSettings::NUM_RECENT_PROJECTS("Num_Recent_Projects");
 
    const QString EditorSettings::CAMERA_SPEED_GROUP("Camera_Speed");
+   const QString EditorSettings::CLIP_DISTANCE_GROUP("Clip_Distance");
 
    const QString EditorSettings::VOLUME_EDIT_VISIBLE("Volume_Edit_Visible");
    const QString EditorSettings::VOLUME_EDIT_SHAPE("Volume_Edit_Shape");

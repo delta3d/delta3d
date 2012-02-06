@@ -77,7 +77,7 @@ namespace dtEditQt
       previewObject = new dtCore::Object();
       meshScene->AddChild(previewObject.get());
       camera = new StageCamera();
-      camera->makePerspective(60.0f,1.333f,0.1f,100000.0f);
+      camera->makePerspective(60.0f,1.333f,0.01f,100000.0f);
 
       QSplitter* splitter = new QSplitter(Qt::Vertical, this);
 

@@ -90,6 +90,7 @@ namespace dtEditQt
       static const QString NUM_RECENT_PROJECTS;
 
       static const QString CAMERA_SPEED_GROUP;
+      static const QString CLIP_DISTANCE_GROUP;
 
       static const QString VOLUME_EDIT_VISIBLE;
       static const QString VOLUME_EDIT_SHAPE;
@@ -119,7 +120,7 @@ namespace dtEditQt
       static const QString EXTERNAL_TOOL_WORKING_DIR;
       static const QString EXTERNAL_TOOL_ICON;
 
-      ///Plugins      
+      ///Plugins
       static const QString ACTIVE_PLUGINS;
 
       /**

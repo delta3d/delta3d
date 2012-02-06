@@ -52,11 +52,20 @@ namespace dtEditQt
    const float MINCAMSPEED = 0.2f;
    const float MAXCAMSPEED = 5.f;
 
+   // Clip distance limit values.
+   const float MINNEARCLIPDISTANCE = 0.01f;
+   const float MAXNEARCLIPDISTANCE = 1.0f;
+   const float MINFARCLIPDISTANCE = 50.0f;
+   const float MAXFARCLIPDISTANCE = 100000.0f;
+
    ///////////////////////////////////////////////////////////////////////////////
    ViewportContainer::ViewportContainer(Viewport* vp, QWidget* parent)
       : QWidget(parent)
       , mLayout(new QVBoxLayout(this))
+      , mCameraSpeedLabel(NULL)
       , mCameraSpeedSlider(NULL)
+      , mClipDistanceLabel(NULL)
+      , mClipDistanceSlider(NULL)
    {
       mLayout->setMargin(0);
       mLayout->setSpacing(0);
@@ -174,14 +183,39 @@ namespace dtEditQt
 
       SetupPositionWidgets(layout);
 
-      //camera speed widget
+      // Camera speed icon.
+      mCameraSpeedLabel = new QLabel("", this);
+      QPixmap pix = QPixmap(UIResources::ICON_VIEWCONTROL_CAMERA_SPEED.c_str());
+      pix = pix.scaled(24, 24);
+      mCameraSpeedLabel->setPixmap(pix);
+
+      // Camera speed control.
       mCameraSpeedSlider = new QSlider(Qt::Horizontal, this);
       mCameraSpeedSlider->setToolTip(tr("Camera motion speed"));
       mCameraSpeedSlider->setRange(1, 5);
       mCameraSpeedSlider->setMinimumWidth(30);
       connect(mCameraSpeedSlider, SIGNAL(valueChanged(int)), this, SLOT(SetCameraSpeed(int)));
 
+      // Clip distance icon.
+      mClipDistanceLabel = new QLabel("", this);
+      pix = QPixmap(UIResources::ICON_VIEWCONTROL_CLIP_DISTANCE.c_str());
+      pix = pix.scaled(24, 24);
+      mClipDistanceLabel->setPixmap(pix);
+
+      // Clip distance control.
+      mClipDistanceSlider = new QSlider(Qt::Horizontal, this);
+      mClipDistanceSlider->setToolTip(tr("Camera View Distance"));
+      mClipDistanceSlider->setRange(1, 8);
+      mClipDistanceSlider->setMinimumWidth(30);
+      connect(mClipDistanceSlider, SIGNAL(valueChanged(int)), this, SLOT(SetClipDistance(int)));
+
+      layout->addSpacing(8);
+      layout->addWidget(mCameraSpeedLabel);
       layout->addWidget(mCameraSpeedSlider);
+
+      layout->addSpacing(8);
+      layout->addWidget(mClipDistanceLabel);
+      layout->addWidget(mClipDistanceSlider);
 
       layout->addStretch(1);
       layout->addLayout(mButtonLayout);
@@ -234,10 +268,44 @@ namespace dtEditQt
       }
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   void ViewportContainer::SetClipDistance(int value)
+   {
+      // If someone else called this, then we'll update the widget to match.
+      if (sender() != mClipDistanceSlider)
+      {
+         mClipDistanceSlider->setValue(value);
+      }
+
+      if (mViewPort != NULL)
+      {
+         // Assume the supplied value is in the range of the widget.
+         const float uiMin = mClipDistanceSlider->minimum();
+         const float uiMax = mClipDistanceSlider->maximum();
+
+         const float nearClip = dtUtil::MapRangeValue(float(value), uiMin, uiMax,
+                                                      MINNEARCLIPDISTANCE, MAXNEARCLIPDISTANCE);
+
+         const float farClip = dtUtil::MapRangeValue(float(value), uiMin, uiMax,
+                                                      MINFARCLIPDISTANCE, MAXFARCLIPDISTANCE);
+
+         mViewPort->getCamera()->setNearClipPlane(nearClip);
+         mViewPort->getCamera()->setFarClipPlane(farClip);
+
+         mViewPort->refresh();
+      }
+   }
+
    //////////////////////////////////////////////////////////////////////////
    int ViewportContainer::GetCameraSpeed() const
    {
       return mCameraSpeedSlider->value();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   int ViewportContainer::GetClipDistance() const
+   {
+      return mClipDistanceSlider->value();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
