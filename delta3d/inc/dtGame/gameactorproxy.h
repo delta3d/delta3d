@@ -106,7 +106,7 @@ namespace dtGame
        * stored on both the game actor proxy AND on the actor component itself. In the future,
        * tools like STAGE should know how to resolve this and this whole method can go away.
        */
-      void RemoveActorComponentProperties(ActorComponent& component);
+      virtual void RemoveActorComponentProperties(ActorComponent& component);
 
       /**
        * We are probably adding this actor component. So, we need to add each of the properties
