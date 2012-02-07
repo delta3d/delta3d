@@ -77,6 +77,13 @@ void STAGERTSCameraMotionModel::SetGroundHeight(float height)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+
+float STAGERTSCameraMotionModel::GetGroundHeight() const
+{
+   return mMinCameraHeight;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void STAGERTSCameraMotionModel::OnMessage(MessageData *data)
 {
    if(data->message != dtCore::System::MESSAGE_PRE_FRAME &&

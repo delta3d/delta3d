@@ -14,9 +14,12 @@
 #include <dtCore/keyboard.h>
 #include <dtCore/mouse.h>
 #include <dtCore/transform.h>
+#include <dtCore/vectoractorproperties.h>
 
 
 const std::string RTSCameraPlugin::PLUGIN_NAME = "RTS Camera";
+
+static const float GROUND_HEIGHT_OFFSET = 5;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -33,6 +36,9 @@ RTSCameraPlugin::RTSCameraPlugin(MainWindow* mw)
 
    connect(&EditorEvents::GetInstance(), SIGNAL(selectedActors(ActorProxyRefPtrVector &)),
       this, SLOT(onActorsSelected(ActorProxyRefPtrVector &)));
+
+   connect(&EditorEvents::GetInstance(), SIGNAL(actorPropertyChanged(ActorProxyRefPtr, ActorPropertyRefPtr)),
+      this, SLOT(onActorPropertyChanged(ActorProxyRefPtr, ActorPropertyRefPtr)));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -80,7 +86,30 @@ void RTSCameraPlugin::onActorsSelected(ActorProxyRefPtrVector& actors)
 
       if (mMotionModel.valid())
       {
-         mMotionModel->SetGroundHeight(lowestHeight - 5);
+         mMotionModel->SetGroundHeight(lowestHeight - GROUND_HEIGHT_OFFSET);
+      }
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void RTSCameraPlugin::onActorPropertyChanged(ActorProxyRefPtr proxy, ActorPropertyRefPtr property)
+{
+   if (!mMotionModel.valid())
+   {
+      return;
+   }
+
+   // If the property changed was the actors translation property, then
+   // we may need to update our calculated ground height to match.
+   if (property->GetName() == dtCore::TransformableActorProxy::PROPERTY_TRANSLATION)
+   {
+      float height = mMotionModel->GetGroundHeight() + GROUND_HEIGHT_OFFSET;
+
+      dtCore::Vec3ActorProperty* vecProp = dynamic_cast<dtCore::Vec3ActorProperty*>(property.get());
+      if (vecProp && vecProp->GetValue().z() < height)
+      {
+         height = vecProp->GetValue().z();
+         mMotionModel->SetGroundHeight(height - GROUND_HEIGHT_OFFSET);
       }
    }
 }
