@@ -5,6 +5,8 @@
 #include <dtEditQt/mainwindow.h>
 #include <dtEditQt/plugininterface.h>
 
+#include "stagertscameramotionmodel.h"
+
 using namespace dtEditQt;
 
 namespace dtEditQt
@@ -16,7 +18,7 @@ namespace dtEditQt
  * The RTSCameraPlugin is a plugin that is used as a tool
  * to place a LinkedPointsActor into the world.
  */
-class DT_RTS_CAMERA_EXPORT RTSCameraPlugin 
+class DT_RTS_CAMERA_EXPORT RTSCameraPlugin
    : public QWidget
    , public Plugin
 {
@@ -25,7 +27,7 @@ class DT_RTS_CAMERA_EXPORT RTSCameraPlugin
 public:
 
    const static std::string PLUGIN_NAME;
-   
+
    RTSCameraPlugin(MainWindow* mw);
 
    ~RTSCameraPlugin();
@@ -34,9 +36,17 @@ public:
 
 public slots:
 
+   /**
+   * Handles when actors are selected.
+   *
+   * @param[in]  actors  The list of actors being selected.
+   */
+   void onActorsSelected(ActorProxyRefPtrVector& actors);
+
 private:
 
    MainWindow* mMainWindow;
+   dtCore::RefPtr<STAGERTSCameraMotionModel> mMotionModel;
 };
 
 #endif // RTS_CAMERA_PLUGIN

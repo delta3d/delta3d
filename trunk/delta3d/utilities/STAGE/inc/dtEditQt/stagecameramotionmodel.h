@@ -41,7 +41,7 @@ namespace dtEditQt
    class EditorViewport;
 
    /**
-   * This motion model should be inherited to provide 
+   * This motion model should be inherited to provide
    */
    class DT_EDITQT_EXPORT STAGECameraMotionModel : public dtCore::MotionModel
    {
@@ -69,6 +69,12 @@ namespace dtEditQt
       * Sets the camera for STAGE.
       */
       virtual void SetCamera(StageCamera* camera);
+
+      /**
+       *	Retrieves the camera assigned to this model.
+       */
+      const StageCamera* GetCamera() const;
+      StageCamera* GetCamera();
 
       /**
       * Sets the current viewport.

@@ -37,7 +37,7 @@ namespace dtCore
 }
 
 /**
-* This motion model should be inherited to provide 
+* RTS Motion for the STAGE Camera.
 */
 class STAGERTSCameraMotionModel : public dtEditQt::STAGECameraMotionModel
 {
@@ -66,6 +66,13 @@ public:
    * Sets the camera for STAGE.
    */
    virtual void SetCamera(dtEditQt::StageCamera* camera);
+
+   /**
+    *	Sets the ground height.
+    *
+    * @param[in]  height  The height of the ground.
+    */
+   void SetGroundHeight(float height);
 
    /**
    * Message handler callback.
