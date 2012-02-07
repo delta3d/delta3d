@@ -96,7 +96,7 @@ namespace dtGame
       if (iter == mComponents.end())
       {
          return NULL;
-         // Should not through an exception, all the comments say NULL is OK.
+         // Should not throw an exception, all the comments say NULL is OK.
          //std::ostringstream os;
          //os << "Actor component of type " << type.Get() << " not found!";
          //throw dtUtil::Exception(os.str(), __FILE__, __LINE__);
