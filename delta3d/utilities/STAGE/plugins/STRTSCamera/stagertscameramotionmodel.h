@@ -75,6 +75,11 @@ public:
    void SetGroundHeight(float height);
 
    /**
+    *	Gets the ground height.
+    */
+   float GetGroundHeight() const;
+
+   /**
    * Message handler callback.
    *
    * @param[in] data  The message data
