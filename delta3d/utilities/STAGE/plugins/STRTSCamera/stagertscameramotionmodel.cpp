@@ -27,7 +27,7 @@ STAGERTSCameraMotionModel::STAGERTSCameraMotionModel(dtCore::Mouse* mouse, const
    , mDistance(100.0f)
    , mCurrentDistance(100.0f)
    , mLinearRate(1.0f)
-   , mMinCameraHeight(-10.f)
+   , mMinCameraHeight(-5.f)
    , mTransitionSpeed(2.0f)
    , mMouse(mouse)
 {
@@ -58,7 +58,7 @@ void STAGERTSCameraMotionModel::SetCamera(dtEditQt::StageCamera* camera)
       mDistance = 0.0f;
       if (forward.z() != 1.0f)
       {
-         mDistance = xyz.z() / (1.0f - forward.z());
+         mDistance = (xyz.z() - mMinCameraHeight) / (1.0f - forward.z());
       }
 
       mCurrentDistance = mDistance;
@@ -67,6 +67,13 @@ void STAGERTSCameraMotionModel::SetCamera(dtEditQt::StageCamera* camera)
       mFocalPoint = xyz - (mFocalOffset * mDistance);
       mCurrentTranslation = mFocalPoint;
    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void STAGERTSCameraMotionModel::SetGroundHeight(float height)
+{
+   mMinCameraHeight = height;
+   SetCamera(GetCamera());
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -251,7 +258,7 @@ bool STAGERTSCameraMotionModel::WheelEvent(int delta)
       mFocalPoint += translation;
       if (mFocalPoint.z() < mMinCameraHeight) mFocalPoint.z() = mMinCameraHeight;
 
-      mDistance = mFocalPoint.z();
+      mDistance = (mFocalPoint.z() - mMinCameraHeight);
       dtUtil::ClampMin(mDistance, 1.f);
 
       return true;
