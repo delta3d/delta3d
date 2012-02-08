@@ -21,14 +21,13 @@
 #include <prefix/dtdirectornodesprefix.h>
 #include <dtDirectorNodes/lerpactorrotationaction.h>
 
-#include <dtCore/transform.h>
-#include <dtCore/transformable.h>
-
 #include <dtCore/actoridactorproperty.h>
 #include <dtCore/floatactorproperty.h>
+#include <dtCore/transform.h>
+#include <dtCore/transformable.h>
 #include <dtCore/vectoractorproperties.h>
-
 #include <dtDirector/director.h>
+#include <dtUtil/matrixutil.h>
 
 namespace dtDirector
 {
@@ -202,13 +201,26 @@ namespace dtDirector
             }
             float alpha = (curTime - startTime) * timeScalar;
 
-            osg::Quat startRot(osg::Vec4(GetVec3("StartRotation"), 0.0f));
-            osg::Quat endRot(osg::Vec4(GetVec3("EndRotation"), 0.0f));
+            // Rotation vectors are pitch, roll, heading, so convert it to hpr
+            osg::Vec3 startPRHVec = GetVec3("StartRotation");
+            osg::Vec3 endPRHVec = GetVec3("EndRotation");
+            osg::Vec3 startHPRVec, endHPRVec;
+            startHPRVec.x() = startPRHVec.z();
+            startHPRVec.y() = startPRHVec.x();
+            startHPRVec.z() = startPRHVec.y();
+            endHPRVec.x() = endPRHVec.z();
+            endHPRVec.y() = endPRHVec.x();
+            endHPRVec.z() = endPRHVec.y();
+
+            // Now convert the HPRVector to a matrix and then to a quaternion
+            osg::Matrix startMatrix, endMatrix;
+            dtUtil::MatrixUtil::HprToMatrix(startMatrix, startHPRVec);
+            dtUtil::MatrixUtil::HprToMatrix(endMatrix, endHPRVec);
+            osg::Quat startRot = startMatrix.getRotate();
+            osg::Quat endRot = endMatrix.getRotate();
 
             osg::Quat newRot;
             newRot.slerp(alpha, startRot, endRot);
-
-            osg::Vec3 rotation = newRot.asVec3();
 
             int count = GetPropertyCount("Actor");
             for (int index = 0; index < count; index++)
@@ -222,7 +234,7 @@ namespace dtDirector
                   {
                      dtCore::Transform transform;
                      actor->GetTransform(transform);
-                     transform.SetRotation(rotation.z(), rotation.x(), rotation.y());
+                     transform.SetRotation(newRot);
                      actor->SetTransform(transform);
                   }
                }
