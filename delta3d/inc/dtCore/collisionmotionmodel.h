@@ -46,7 +46,7 @@ namespace dtCore
                            Keyboard* keyboard,
                            Mouse* mouse,
                            float maxWalkSpeed = 5.0f,
-                           float maxTurnSpeed = 1.5f,
+                           float maxTurnSpeed = 100.f,
                            float maxSidestepSpeed = 5.0f,
                            bool useWASD = true,
                            bool useArrowKeys = true);
