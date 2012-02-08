@@ -2522,11 +2522,11 @@ void DirectorCinematicEditorPlugin::LerpActors(int time)
             osg::Vec3 newPos = startPos + ((endPos - startPos) * alpha);
 
             // Lerp Rotation
-            osg::Quat startRot(osg::Vec4(prev->mTransform.GetRotation(), 0.0f));
-            osg::Quat endRot(osg::Vec4(next->mTransform.GetRotation(), 0.0f));
+            osg::Quat startRot, endRot;
+            prev->mTransform.GetRotation(startRot);
+            next->mTransform.GetRotation(endRot);
             osg::Quat lerpRot;
             lerpRot.slerp(alpha, startRot, endRot);
-            osg::Vec3 newRot = lerpRot.asVec3();
 
             // Lerp Scale
             osg::Vec3 startScale = prev->mScale;
@@ -2537,7 +2537,7 @@ void DirectorCinematicEditorPlugin::LerpActors(int time)
             dtCore::Transform transform;
             actor->GetTransform(transform);
             transform.SetTranslation(newPos);
-            transform.SetRotation(newRot.x(), newRot.y(), newRot.z());
+            transform.SetRotation(lerpRot);
             actor->SetTransform(transform);
 
             dtCore::Object* obj = dynamic_cast<dtCore::Object*>(actor);
