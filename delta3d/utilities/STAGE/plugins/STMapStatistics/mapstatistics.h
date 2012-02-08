@@ -5,8 +5,8 @@
 #include <dtEditQt/mainwindow.h>
 #include <dtEditQt/plugininterface.h>
 #include <QtGui/QDockWidget>
+#include <QtGui/QTreeWidget>
 #include <QtGui/QPushButton>
-#include <QtGui/QLineEdit>
 
 using namespace dtEditQt;
 
@@ -25,6 +25,11 @@ namespace osg
 {
    class Node;
    class Geode;
+}
+
+namespace osgUtil
+{
+   class StatsVisitor;
 }
 /// @endcond
 
@@ -56,15 +61,14 @@ public slots:
 private:
    MainWindow*   mMainWindow;
    QPushButton*  mCalculateButton;
-   QLineEdit*    mSceneVertsEdit;
-   QLineEdit*    mScenePrimitivesEdit;
-   QLineEdit*    mSelectionVertsEdit;
-   QLineEdit*    mSelectionPrimitivesEdit;
+   QTreeWidget* mStatTable;
 
    typedef std::map<std::string, dtCore::RefPtr<osg::Geode> > GeodeNodeMap;
 
    void GetGeometryMetrics(dtCore::BaseActorObject* actor, unsigned int& outVerts, unsigned int& outPrimitives);
    void GetGeometryMetrics(GeodeNodeMap& nodeMap, unsigned int& outVerts, unsigned int& outPrimitives);
+
+   unsigned int GetTotalPrimitivesFromStatVisitor(osgUtil::StatsVisitor& visitor);
 };
 
 #endif // MAP_STATISTICS_PLUGIN
