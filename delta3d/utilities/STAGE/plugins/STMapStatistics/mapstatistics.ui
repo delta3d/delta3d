@@ -68,15 +68,15 @@
       </column>
       <item>
        <property name="text">
-        <string>Scene</string>
-       </property>
-       <property name="text">
-        <string/>
+        <string>Selected</string>
        </property>
       </item>
       <item>
        <property name="text">
-        <string>Selected</string>
+        <string>Scene</string>
+       </property>
+       <property name="text">
+        <string/>
        </property>
       </item>
      </widget>

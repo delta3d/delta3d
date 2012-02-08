@@ -68,6 +68,7 @@ private:
    void GetGeometryMetrics(dtCore::BaseActorObject* actor, unsigned int& outVerts, unsigned int& outPrimitives);
    void GetGeometryMetrics(GeodeNodeMap& nodeMap, unsigned int& outVerts, unsigned int& outPrimitives);
 
+   void AddStatsToItem(osgUtil::StatsVisitor&, QTreeWidgetItem& item);
    unsigned int GetTotalPrimitivesFromStatVisitor(osgUtil::StatsVisitor& visitor);
 };
 
