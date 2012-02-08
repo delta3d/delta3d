@@ -87,13 +87,7 @@ void MapStatisticsPlugin::onCalculateButtonPressed()
             selectedList[selectIndex]->GetActor()->GetOSGNode()->accept(*statVisitor);
          }
 
-         // Update "Selected" widgets
-         {
-            QTreeWidgetItem* vertTotalWidget = new QTreeWidgetItem(selectedItem, QStringList("vertices"));
-            QTreeWidgetItem* primTotalWidget = new QTreeWidgetItem(selectedItem, QStringList("primitives"));
-            vertTotalWidget->setText(1,dtUtil::ToString(statVisitor->_instancedStats._vertexCount).c_str());
-            primTotalWidget->setText(1,dtUtil::ToString(GetTotalPrimitivesFromStatVisitor(*statVisitor)).c_str());
-         }
+         AddStatsToItem(*statVisitor, *selectedItem);
       }
 
       // Calculate for the entire map
@@ -108,13 +102,7 @@ void MapStatisticsPlugin::onCalculateButtonPressed()
              proxies[proxyIndex]->GetActor()->GetOSGNode()->accept(*statVisitor);
          }
 
-         // Update "Scene" widgets
-         {
-            QTreeWidgetItem* vertTotalWidget = new QTreeWidgetItem(sceneItem, QStringList("vertices"));
-            QTreeWidgetItem* primTotalWidget = new QTreeWidgetItem(sceneItem, QStringList("primitives"));
-            vertTotalWidget->setText(1,dtUtil::ToString(statVisitor->_instancedStats._vertexCount).c_str());
-            primTotalWidget->setText(1,dtUtil::ToString(GetTotalPrimitivesFromStatVisitor(*statVisitor)).c_str());
-         }
+         AddStatsToItem(*statVisitor, *sceneItem);
       }
 
       //statVisitor->print(std::cout);
@@ -176,6 +164,60 @@ void MapStatisticsPlugin::GetGeometryMetrics(GeodeNodeMap& nodeMap, unsigned int
 
       ++iter;
    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void MapStatisticsPlugin::AddStatsToItem(osgUtil::StatsVisitor& statsVisitor, QTreeWidgetItem& item)
+{
+   QTreeWidgetItem* vertTotalWidget = new QTreeWidgetItem(&item, QStringList("vertices"));
+   QTreeWidgetItem* primTotalWidget = new QTreeWidgetItem(&item, QStringList("primitives"));
+
+   vertTotalWidget->setText(1,dtUtil::ToString(statsVisitor._instancedStats._vertexCount).c_str());
+   primTotalWidget->setText(1,dtUtil::ToString(GetTotalPrimitivesFromStatVisitor(statsVisitor)).c_str());
+
+   QTreeWidgetItem* uniqueWidget = new QTreeWidgetItem(&item, QStringList("unique"));
+
+   QTreeWidgetItem* uniqueStateWidget = new QTreeWidgetItem(uniqueWidget, QStringList("StateSets"));
+   QTreeWidgetItem* uniqueGroupWidget = new QTreeWidgetItem(uniqueWidget, QStringList("Groups"));
+   QTreeWidgetItem* uniqueTransformWidget = new QTreeWidgetItem(uniqueWidget, QStringList("Transforms"));
+   QTreeWidgetItem* uniqueLODWidget = new QTreeWidgetItem(uniqueWidget, QStringList("LOD"));
+   QTreeWidgetItem* uniqueSwitchWidget = new QTreeWidgetItem(uniqueWidget, QStringList("Switch"));
+   QTreeWidgetItem* uniqueGeodeWidget = new QTreeWidgetItem(uniqueWidget, QStringList("Geode"));
+   QTreeWidgetItem* uniqueDrawableWidget = new QTreeWidgetItem(uniqueWidget, QStringList("Drawable"));
+   QTreeWidgetItem* uniqueGeometryWidget = new QTreeWidgetItem(uniqueWidget, QStringList("Geometry"));
+   QTreeWidgetItem* uniqueFastGeometryWidget = new QTreeWidgetItem(uniqueWidget, QStringList("Fast Geometry"));
+
+   uniqueStateWidget->setText(1,dtUtil::ToString(statsVisitor._statesetSet.size()).c_str());
+   uniqueGroupWidget->setText(1,dtUtil::ToString(statsVisitor._groupSet.size()).c_str());
+   uniqueTransformWidget->setText(1,dtUtil::ToString(statsVisitor._transformSet.size()).c_str());
+   uniqueLODWidget->setText(1,dtUtil::ToString(statsVisitor._lodSet.size()).c_str());
+   uniqueSwitchWidget->setText(1,dtUtil::ToString(statsVisitor._switchSet.size()).c_str());
+   uniqueGeodeWidget->setText(1,dtUtil::ToString(statsVisitor._geodeSet.size()).c_str());
+   uniqueDrawableWidget->setText(1,dtUtil::ToString(statsVisitor._drawableSet.size()).c_str());
+   uniqueGeometryWidget->setText(1,dtUtil::ToString(statsVisitor._geometrySet.size()).c_str());
+   uniqueFastGeometryWidget->setText(1,dtUtil::ToString(statsVisitor._fastGeometrySet.size()).c_str());
+
+   QTreeWidgetItem* instanceWidget = new QTreeWidgetItem(&item, QStringList("instance"));
+
+   QTreeWidgetItem* instanceStateWidget = new QTreeWidgetItem(instanceWidget, QStringList("StateSets"));
+   QTreeWidgetItem* instanceGroupWidget = new QTreeWidgetItem(instanceWidget, QStringList("Groups"));
+   QTreeWidgetItem* instanceTransformWidget = new QTreeWidgetItem(instanceWidget, QStringList("Transforms"));
+   QTreeWidgetItem* instanceLODWidget = new QTreeWidgetItem(instanceWidget, QStringList("LOD"));
+   QTreeWidgetItem* instanceSwitchWidget = new QTreeWidgetItem(instanceWidget, QStringList("Switch"));
+   QTreeWidgetItem* instanceeGeodeWidget = new QTreeWidgetItem(instanceWidget, QStringList("Geode"));
+   QTreeWidgetItem* instanceeDrawableWidget = new QTreeWidgetItem(instanceWidget, QStringList("Drawable"));
+   QTreeWidgetItem* instanceeGeometryWidget = new QTreeWidgetItem(instanceWidget, QStringList("Geometry"));
+   QTreeWidgetItem* instanceFastGeometryWidget = new QTreeWidgetItem(instanceWidget, QStringList("Fast Geometry"));
+
+   uniqueStateWidget->setText(1, dtUtil::ToString(statsVisitor._numInstancedStateSet).c_str());
+   uniqueGroupWidget->setText(1, dtUtil::ToString(statsVisitor._numInstancedGroup).c_str());
+   uniqueTransformWidget->setText(1, dtUtil::ToString(statsVisitor._numInstancedTransform).c_str());
+   uniqueLODWidget->setText(1, dtUtil::ToString(statsVisitor._numInstancedLOD).c_str());
+   uniqueSwitchWidget->setText(1, dtUtil::ToString(statsVisitor._numInstancedSwitch).c_str());
+   uniqueGeodeWidget->setText(1, dtUtil::ToString(statsVisitor._numInstancedGeode).c_str());
+   instanceeDrawableWidget->setText(1, dtUtil::ToString(statsVisitor._numInstancedDrawable).c_str());
+   uniqueGeometryWidget->setText(1, dtUtil::ToString(statsVisitor._numInstancedDrawable).c_str());
+   uniqueFastGeometryWidget->setText(1, dtUtil::ToString(statsVisitor._numInstancedFastGeometry).c_str());
 }
 
 ////////////////////////////////////////////////////////////////////////////////
