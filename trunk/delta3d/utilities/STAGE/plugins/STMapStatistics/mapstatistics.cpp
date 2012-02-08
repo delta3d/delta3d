@@ -16,6 +16,7 @@
 #include <osg/Geode>
 #include <osg/Geometry>
 #include <osg/Group>
+#include <osg/Version>
 #include <osgUtil/Statistics>
 
 const std::string MapStatisticsPlugin::PLUGIN_NAME = "Map Statistics";
@@ -185,7 +186,6 @@ void MapStatisticsPlugin::AddStatsToItem(osgUtil::StatsVisitor& statsVisitor, QT
    QTreeWidgetItem* uniqueGeodeWidget = new QTreeWidgetItem(uniqueWidget, QStringList("Geode"));
    QTreeWidgetItem* uniqueDrawableWidget = new QTreeWidgetItem(uniqueWidget, QStringList("Drawable"));
    QTreeWidgetItem* uniqueGeometryWidget = new QTreeWidgetItem(uniqueWidget, QStringList("Geometry"));
-   QTreeWidgetItem* uniqueFastGeometryWidget = new QTreeWidgetItem(uniqueWidget, QStringList("Fast Geometry"));
 
    uniqueStateWidget->setText(1,dtUtil::ToString(statsVisitor._statesetSet.size()).c_str());
    uniqueGroupWidget->setText(1,dtUtil::ToString(statsVisitor._groupSet.size()).c_str());
@@ -195,7 +195,11 @@ void MapStatisticsPlugin::AddStatsToItem(osgUtil::StatsVisitor& statsVisitor, QT
    uniqueGeodeWidget->setText(1,dtUtil::ToString(statsVisitor._geodeSet.size()).c_str());
    uniqueDrawableWidget->setText(1,dtUtil::ToString(statsVisitor._drawableSet.size()).c_str());
    uniqueGeometryWidget->setText(1,dtUtil::ToString(statsVisitor._geometrySet.size()).c_str());
+
+#if defined(OSG_VERSION_MAJOR) && OSG_VERSION_MAJOR >= 3
+   QTreeWidgetItem* uniqueFastGeometryWidget = new QTreeWidgetItem(uniqueWidget, QStringList("Fast Geometry"));
    uniqueFastGeometryWidget->setText(1,dtUtil::ToString(statsVisitor._fastGeometrySet.size()).c_str());
+#endif
 
    QTreeWidgetItem* instanceWidget = new QTreeWidgetItem(&item, QStringList("instance"));
 
@@ -207,7 +211,6 @@ void MapStatisticsPlugin::AddStatsToItem(osgUtil::StatsVisitor& statsVisitor, QT
    QTreeWidgetItem* instanceeGeodeWidget = new QTreeWidgetItem(instanceWidget, QStringList("Geode"));
    QTreeWidgetItem* instanceeDrawableWidget = new QTreeWidgetItem(instanceWidget, QStringList("Drawable"));
    QTreeWidgetItem* instanceeGeometryWidget = new QTreeWidgetItem(instanceWidget, QStringList("Geometry"));
-   QTreeWidgetItem* instanceFastGeometryWidget = new QTreeWidgetItem(instanceWidget, QStringList("Fast Geometry"));
 
    uniqueStateWidget->setText(1, dtUtil::ToString(statsVisitor._numInstancedStateSet).c_str());
    uniqueGroupWidget->setText(1, dtUtil::ToString(statsVisitor._numInstancedGroup).c_str());
@@ -217,7 +220,11 @@ void MapStatisticsPlugin::AddStatsToItem(osgUtil::StatsVisitor& statsVisitor, QT
    uniqueGeodeWidget->setText(1, dtUtil::ToString(statsVisitor._numInstancedGeode).c_str());
    instanceeDrawableWidget->setText(1, dtUtil::ToString(statsVisitor._numInstancedDrawable).c_str());
    uniqueGeometryWidget->setText(1, dtUtil::ToString(statsVisitor._numInstancedDrawable).c_str());
+
+#if defined(OSG_VERSION_MAJOR) && OSG_VERSION_MAJOR >= 3
+   QTreeWidgetItem* instanceFastGeometryWidget = new QTreeWidgetItem(instanceWidget, QStringList("Fast Geometry"));
    uniqueFastGeometryWidget->setText(1, dtUtil::ToString(statsVisitor._numInstancedFastGeometry).c_str());
+#endif
 }
 
 ////////////////////////////////////////////////////////////////////////////////
