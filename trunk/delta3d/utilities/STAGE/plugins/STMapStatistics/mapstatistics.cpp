@@ -16,6 +16,7 @@
 #include <osg/Geode>
 #include <osg/Geometry>
 #include <osg/Group>
+#include <osgUtil/Statistics>
 
 const std::string MapStatisticsPlugin::PLUGIN_NAME = "Map Statistics";
 
@@ -24,7 +25,7 @@ const std::string MapStatisticsPlugin::PLUGIN_NAME = "Map Statistics";
 MapStatisticsPlugin::MapStatisticsPlugin(MainWindow* mw)
    : mMainWindow(mw)
    , mCalculateButton(NULL)
-   , mSceneVertsEdit(NULL)
+   , mStatTable(NULL)
 {
    // apply layout made with QT designer
    Ui_MapStatistics ui;
@@ -32,11 +33,8 @@ MapStatisticsPlugin::MapStatisticsPlugin(MainWindow* mw)
 
    mMainWindow->addDockWidget(Qt::RightDockWidgetArea, this);
 
-   mCalculateButton         = ui.calculateButton;
-   mSceneVertsEdit          = ui.sceneVertices;
-   mScenePrimitivesEdit     = ui.scenePrimitives;
-   mSelectionVertsEdit      = ui.actorVertices;
-   mSelectionPrimitivesEdit = ui.actorPrimitives;
+   mCalculateButton = ui.calculateButton;
+   mStatTable = ui.statTable;
 
    connect(mCalculateButton, SIGNAL(clicked()), this, SLOT(onCalculateButtonPressed()));
 }
@@ -61,48 +59,65 @@ void MapStatisticsPlugin::closeEvent(QCloseEvent* event)
 ////////////////////////////////////////////////////////////////////////////////
 void MapStatisticsPlugin::onCalculateButtonPressed()
 {
-   unsigned int vertTotal = 0;
-   unsigned int primitiveTotal = 0;
+   mStatTable->clear();
 
-   unsigned int tempVertCount = 0;
-   unsigned int tempPrimitiveCount = 0;
+   // Add the starting items
+   QTreeWidgetItem* selectedItem = new QTreeWidgetItem;
+   QTreeWidgetItem* sceneItem = new QTreeWidgetItem;
 
-   std::vector<dtCore::BaseActorObject*> selectedList;
-   EditorData::GetInstance().GetSelectedActors(selectedList);
+   selectedItem->setText(0, "Selected");
+   sceneItem->setText(0, "Scene");
 
-   for (size_t selectIndex = 0; selectIndex < selectedList.size(); ++selectIndex)
-   {
-      GetGeometryMetrics(selectedList[selectIndex], tempVertCount, tempPrimitiveCount);
+   mStatTable->addTopLevelItem(selectedItem);
+   mStatTable->addTopLevelItem(sceneItem);
 
-      vertTotal += tempVertCount;
-      primitiveTotal += tempPrimitiveCount;
-   }
-
-   mSelectionVertsEdit->setText(dtUtil::ToString(vertTotal).c_str());
-   mSelectionPrimitivesEdit->setText(dtUtil::ToString(primitiveTotal).c_str());
-
-   // Reset stat counts so we can use these again
-   vertTotal = primitiveTotal = 0;
-
-   // Grab data from every proxy in the map
+   // Only calculate if there is a map loaded
    dtCore::Map* map = EditorData::GetInstance().getCurrentMap();
    if (map)
    {
-      std::vector<dtCore::RefPtr<dtCore::BaseActorObject> > proxies;
-      map->GetAllProxies(proxies);
+      osg::ref_ptr<osgUtil::StatsVisitor> statVisitor = new osgUtil::StatsVisitor;
 
-      for (int proxyIndex = 0; proxyIndex < (int)proxies.size(); proxyIndex++)
+      // Calculate for the current selection
       {
-         tempVertCount = tempPrimitiveCount = 0;
-         GetGeometryMetrics(proxies[proxyIndex].get(), tempVertCount, tempPrimitiveCount);
+         std::vector<dtCore::BaseActorObject*> selectedList;
+         EditorData::GetInstance().GetSelectedActors(selectedList);
 
-         // Accumulate the totals
-         vertTotal += tempVertCount;
-         primitiveTotal += tempPrimitiveCount;
+         for (size_t selectIndex = 0; selectIndex < selectedList.size(); ++selectIndex)
+         {
+            selectedList[selectIndex]->GetActor()->GetOSGNode()->accept(*statVisitor);
+         }
+
+         // Update "Selected" widgets
+         {
+            QTreeWidgetItem* vertTotalWidget = new QTreeWidgetItem(selectedItem, QStringList("vertices"));
+            QTreeWidgetItem* primTotalWidget = new QTreeWidgetItem(selectedItem, QStringList("primitives"));
+            vertTotalWidget->setText(1,dtUtil::ToString(statVisitor->_instancedStats._vertexCount).c_str());
+            primTotalWidget->setText(1,dtUtil::ToString(GetTotalPrimitivesFromStatVisitor(*statVisitor)).c_str());
+         }
       }
 
-      mSceneVertsEdit->setText(dtUtil::ToString(vertTotal).c_str());
-      mScenePrimitivesEdit->setText(dtUtil::ToString(primitiveTotal).c_str());
+      // Calculate for the entire map
+      {
+         statVisitor->reset();
+
+         std::vector<dtCore::RefPtr<dtCore::BaseActorObject> > proxies;
+         map->GetAllProxies(proxies);
+
+         for (int proxyIndex = 0; proxyIndex < (int)proxies.size(); proxyIndex++)
+         {
+             proxies[proxyIndex]->GetActor()->GetOSGNode()->accept(*statVisitor);
+         }
+
+         // Update "Scene" widgets
+         {
+            QTreeWidgetItem* vertTotalWidget = new QTreeWidgetItem(sceneItem, QStringList("vertices"));
+            QTreeWidgetItem* primTotalWidget = new QTreeWidgetItem(sceneItem, QStringList("primitives"));
+            vertTotalWidget->setText(1,dtUtil::ToString(statVisitor->_instancedStats._vertexCount).c_str());
+            primTotalWidget->setText(1,dtUtil::ToString(GetTotalPrimitivesFromStatVisitor(*statVisitor)).c_str());
+         }
+      }
+
+      //statVisitor->print(std::cout);
    }
 }
 
@@ -161,6 +176,21 @@ void MapStatisticsPlugin::GetGeometryMetrics(GeodeNodeMap& nodeMap, unsigned int
 
       ++iter;
    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+unsigned int MapStatisticsPlugin::GetTotalPrimitivesFromStatVisitor(osgUtil::StatsVisitor& visitor)
+{
+   unsigned int instancedPrimitives = 0;
+   osgUtil::Statistics::PrimitiveCountMap::iterator iter;
+   for(iter = visitor._instancedStats.GetPrimitivesBegin();
+       iter != visitor._instancedStats.GetPrimitivesEnd();
+       ++iter)
+   {
+      instancedPrimitives += iter->second;
+   }
+
+   return instancedPrimitives;
 }
 
 ////////////////////////////////////////////////////////////
