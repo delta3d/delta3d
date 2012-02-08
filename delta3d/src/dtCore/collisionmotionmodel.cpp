@@ -25,14 +25,9 @@
 
 #include <dtCore/keyboard.h>
 #include <dtCore/mouse.h>
-#include <dtCore/inputdevice.h>
-#include <dtCore/logicalinputdevice.h>
 #include <dtCore/scene.h>
-#include <dtCore/system.h>
-#include <dtCore/transformable.h>
 #include <dtCore/transform.h>
 #include <dtUtil/mathdefines.h>
-#include <dtUtil/matrixutil.h>
 
 
 namespace dtCore

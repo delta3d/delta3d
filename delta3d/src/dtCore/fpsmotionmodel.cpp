@@ -4,13 +4,10 @@
 #include <prefix/dtcoreprefix.h>
 #include <dtCore/fpsmotionmodel.h>
 
-#include <dtCore/logicalinputdevice.h>
 
 #include <dtCore/system.h>
-#include <dtCore/transformable.h>
 #include <dtCore/transform.h>
 
-#include <dtUtil/mathdefines.h>
 #include <dtUtil/matrixutil.h>
 #include <dtUtil/functor.h>
 
@@ -641,8 +638,8 @@ void FPSMotionModel::UpdateMouse(const double deltaTime)
 
       osg::Matrix rot;
       transform.GetRotation(rot);
-      float deltaZ = rotationMovement[0] * mMaximumTurnSpeed;
-      float deltaX = rotationMovement[1] * mMaximumTurnSpeed;
+      float deltaZ = rotationMovement[0] * mMaximumTurnSpeed * deltaTime;
+      float deltaX = rotationMovement[1] * mMaximumTurnSpeed * deltaTime;
 
       osg::Vec3 upVector      = dtUtil::MatrixUtil::GetRow3(rot, 2);
       osg::Vec3 forwardVector = dtUtil::MatrixUtil::GetRow3(rot, 1);
