@@ -26,12 +26,10 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include <dtCore/motionmodel.h>
-#include <dtCore/axishandler.h>
-#include <dtCore/inputdevice.h>
 #include <dtCore/scene.h>
 #include <dtCore/mouse.h>
 #include <dtCore/keyboard.h>
-
+#include <dtCore/logicalinputdevice.h>
 #include <osg/Vec3>
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -39,11 +37,7 @@
 namespace dtCore
 {
    class Axis;
-   class AxisToAxis;
-   class ButtonAxisToAxis;
-   class ButtonsToAxis;
    class LogicalAxis;
-   class LogicalInputDevice;
    class FPSAxisHandler;
 
    /**
@@ -70,7 +64,7 @@ namespace dtCore
       FPSMotionModel(Keyboard* keyboard = 0,
                      Mouse* mouse = 0,
                      float maxWalkSpeed = 5.0f,
-                     float maxTurnSpeed = 1.5f,
+                     float maxTurnSpeed = 100.f,
                      float maxSidestepSpeed = 5.0f,
                      float height = 2.0f,
                      float maxStepUpDist = 1.0f,
@@ -84,7 +78,7 @@ namespace dtCore
       virtual ~FPSMotionModel();
 
       /**
-       * This method can be overriden in subclasses to produce
+       * This method can be overwritten in subclasses to produce
        * desired rotation behavior
        *
        * @param deltaTime The time change
@@ -92,7 +86,7 @@ namespace dtCore
       virtual void UpdateMouse(const double deltaTime);
 
       /**
-       * This method can be overriden in subclasses to produce
+       * This method can be overwritten in subclasses to produce
        * desired translation behavior
        * Note: Any collision detection/response and other physical
        * constraints should be applied here

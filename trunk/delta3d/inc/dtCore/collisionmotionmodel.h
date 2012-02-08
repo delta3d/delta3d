@@ -23,31 +23,15 @@
 #ifndef __DELTA_collisionmotionmodel_H__
 #define __DELTA_collisionmotionmodel_H__
 
-#include <dtCore/motionmodel.h>
-#include <dtCore/fpscollider.h>
-#include <dtCore/transformable.h>
-#include <dtCore/inputdevice.h>
 #include <dtCore/export.h>
-
-#include <dtUtil/functor.h>
-
 #include <dtCore/fpsmotionmodel.h>
+#include <dtCore/fpscollider.h>
+
 
 #include <dtUtil/deprecationmgr.h>
 
 namespace dtCore
 {
-   class Axis;
-   class AxisToAxis;
-   class ButtonAxisToAxis;
-   class ButtonsToAxis;
-   class Keyboard;
-   class LogicalAxis;
-   class LogicalInputDevice;
-   class Mouse;
-   class Scene;
-   class Isector;
-
    /**
     * Collision Motion Model uses ode collision meshes to allow typical FPS Camera interaction with the environment
     */
@@ -93,7 +77,7 @@ namespace dtCore
                            Keyboard* keyboard,
                            Mouse* mouse,
                            float maxWalkSpeed = 5.0f,
-                           float maxTurnSpeed = 1.5f,
+                           float maxTurnSpeed = 100.f,
                            float maxSidestepSpeed = 5.0f,
                            float jumpSpeed = 5.0f,
                            float slideSpeed = 5.0f,
