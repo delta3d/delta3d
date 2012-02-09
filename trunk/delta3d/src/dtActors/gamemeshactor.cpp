@@ -42,7 +42,6 @@ namespace dtActors
    //////////////////////////////////////////////////////////////////////////////
    GameMeshActor::GameMeshActor(dtGame::GameActorProxy& proxy)
       : dtGame::GameActor(proxy)
-      , mAlreadyInScene(false)
       , mUseCache(true)
       , mModel(new dtCore::Model)
       , mMeshNode(NULL)
@@ -65,7 +64,7 @@ namespace dtActors
          mLoader.SetMeshFilename(meshFile);
 
          // For the initial setting, load the mesh when we first enter the world so we can use the cache variable
-         if (mAlreadyInScene)
+         if (GetSceneParent())
          {
             LoadMesh();
          }
@@ -113,8 +112,6 @@ namespace dtActors
       // really being added to the scene
       if (scene != NULL)
       {
-         mAlreadyInScene = true;
-
          if (!mLoader.GetFilename().empty())
          {
             LoadMesh();

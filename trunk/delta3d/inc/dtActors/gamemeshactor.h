@@ -170,16 +170,13 @@ namespace dtActors
             {
                mFilename = newFilename;
             }
-      };      
+      };
 
    private:
       // Does the work of loading the mesh.
       void LoadMesh();
 
       GameMeshLoader mLoader;
-      
-      // tracks whether we should do a notify when we change the mesh
-      bool mAlreadyInScene;
       bool mUseCache;
 
       dtCore::RefPtr<dtCore::Model> mModel;
